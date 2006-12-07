@@ -385,6 +385,7 @@ namespace System.Windows.Forms
 	internal class GnomeUtil
 	{
 		const string libgdk = "libgdk-x11-2.0.so.0";
+		const string libgdk_pixbuf = "libgdk_pixbuf-2.0.so.0";
 		const string libgtk = "libgtk-x11-2.0.so.0";
 		const string libglib = "libglib-2.0.so.0";
 		const string libgobject = "libgobject-2.0.so.0";
@@ -394,7 +395,7 @@ namespace System.Windows.Forms
 		[DllImport(librsvg)]
 		static extern IntPtr rsvg_pixbuf_from_file_at_size (string file_name, int  width, int  height, out IntPtr error);
 		
-		[DllImport(libgdk)]
+		[DllImport(libgdk_pixbuf)]
 		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out UIntPtr buffer_size, string type, out IntPtr error, IntPtr option_dummy);
 		
 		[DllImport(libglib)]

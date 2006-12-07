@@ -1,3 +1,9 @@
+2006-12-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: gdk_pixbuf_save_to_buffer is part of libgdk-pixbuf,
+	  not libgdk (though it makes me wonder why I didn't have any
+	  problems)
+
 2006-12-07  Chris Toshok  <toshok@ximian.com>
 
 	[ you had to know this was coming after that last commit...]
