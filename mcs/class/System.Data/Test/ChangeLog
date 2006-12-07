@@ -1,3 +1,7 @@
+2006-12-07  Nagappan A  <anagappan@novell.com>
+
+	* Mono.Data.SqlExpressions: Created directory.
+
 2006-07-18 Dean Brettle <dean@brettle.com>
 	* SqlTest.cs: Added test for inserting zero-length varbinary.
 
