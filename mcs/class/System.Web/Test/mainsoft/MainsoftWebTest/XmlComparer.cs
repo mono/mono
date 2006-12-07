@@ -89,6 +89,9 @@ namespace MonoTests.stand_alone.WebHarness
 			if (expected.Attributes != null && actual.Attributes != null) {
 				if (!AreEqualAttribs (expected.Attributes, actual.Attributes))
 					return false;
+
+				_actual = actual.OuterXml;
+				_expected = expected.OuterXml;
 			}
 			else //one of nodes has no attrs
 				if (expected.Attributes != null || actual.Attributes != null)

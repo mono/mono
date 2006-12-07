@@ -93,6 +93,7 @@ namespace MonoTests.stand_alone.WebHarness
 			catch (Exception e) {
 				//swallow e when there is XML error and fallback
 				//to the text comparison
+				Assert.AreEqual (origin, derived, msg);
 			}
 			if (!test) {
 				Assert.AreEqual (_compareExpect, _compareActual, msg);
