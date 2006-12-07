@@ -285,6 +285,37 @@ namespace System.Windows.Forms {
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 
 
+
+		// Double buffering
+		internal virtual void CreateOffscreenDrawable (IntPtr handle,
+							       int width, int height,
+							       out object offscreen_drawable,
+							       out Graphics offscreen_dc)
+		{
+			Bitmap bmp = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+			offscreen_drawable = bmp;
+			offscreen_dc = Graphics.FromImage (bmp);
+		}
+
+		internal virtual void DestroyOffscreenDrawable (object offscreen_drawable,
+								Graphics offscreen_dc)
+		{
+			Bitmap bmp = (Bitmap)offscreen_drawable;
+
+			bmp.Dispose ();
+			offscreen_dc.Dispose ();
+		}
+
+		internal virtual void BlitFromOffscreen (IntPtr dest_handle,
+							 Graphics dest_dc,
+							 object offscreen_drawable,
+							 Graphics offscreen_dc,
+							 Rectangle r)
+		{
+			dest_dc.DrawImage ((Bitmap)offscreen_drawable, r, r, GraphicsUnit.Pixel);
+		}
+
 #endregion	// XplatUI Driver Methods
 	}
 

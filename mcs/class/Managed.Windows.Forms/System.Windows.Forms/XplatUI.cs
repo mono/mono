@@ -966,6 +966,42 @@ namespace System.Windows.Forms {
 			driver.UpdateWindow(handle);
 		}
 
+		// double buffering
+		internal static void CreateOffscreenDrawable (IntPtr handle,
+							    int width, int height,
+							    out object offscreen_drawable,
+							    out Graphics offscreen_dc)
+		{
+#if DriverDebug
+			Console.WriteLine("CreateOffscreenDrawable({2}, {0},{1}): Called", width, height, Window(handle));
+#endif
+			driver.CreateOffscreenDrawable (handle, width, height,
+							out offscreen_drawable,
+							out offscreen_dc);
+		}
+
+		internal static void DestroyOffscreenDrawable (object offscreen_drawable,
+							     Graphics offscreen_dc)
+		{
+#if DriverDebug
+			Console.WriteLine("DestroyOffscreenDrawable(): Called");
+#endif
+			driver.DestroyOffscreenDrawable (offscreen_drawable, offscreen_dc);
+		}
+
+		internal static void BlitFromOffscreen (IntPtr dest_handle,
+						      Graphics dest_dc,
+						      object offscreen_drawable,
+						      Graphics offscreen_dc,
+						      Rectangle r)
+		{
+#if DriverDebug
+			Console.WriteLine("BlitFromOffscreen({0}): Called", Window(dest_handle));
+#endif
+			driver.BlitFromOffscreen (dest_handle, dest_dc, offscreen_drawable, offscreen_dc, r);
+		}
+
+
 		// Santa's little helper
 		internal static void Version() {
 			Console.WriteLine("Xplat version $Revision: $");

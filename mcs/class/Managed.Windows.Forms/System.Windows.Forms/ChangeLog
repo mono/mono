@@ -1,3 +1,18 @@
+2006-12-07  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUI.cs: add 3 calls (CreateOffscreenDrawable,
+	DestroyOffscreenDrawable, and BlitFromOffscreen) that encompass
+	all the behavior we need for double buffering.
+
+	* XplatUIDriver.cs: implement the 3 double buffer methods using a
+	client side Bitmap, just like the old Control-based double buffer
+	code did.  The methods are virtual, so each XplatUI driver
+	subclass can replace the implementation to use a faster, platform
+	specific approach.
+
+	* Control.cs: make use of the 3 Offscreen XplatUI calls in the
+	double buffer code, and clean things up a bit in the process.
+
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: reindent WndProc.

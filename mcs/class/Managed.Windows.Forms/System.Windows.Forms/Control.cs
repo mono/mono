@@ -120,8 +120,8 @@ namespace System.Windows.Forms
 		ContextMenu context_menu; // Context menu associated with the control
 
 		// double buffering
-		Graphics dc_mem; // Graphics context for double buffering
-		Bitmap bmp_mem; // Bitmap for double buffering control
+		Graphics backbuffer_dc;
+		object backbuffer;
 		Region invalid_region;
 
 		ControlBindingsCollection data_bindings;
@@ -791,15 +791,7 @@ namespace System.Windows.Forms
 			if (!is_disposed && disposing) {
 				Capture = false;
 
-				if (dc_mem!=null) {
-					dc_mem.Dispose();
-					dc_mem=null;
-				}
-
-				if (bmp_mem!=null) {
-					bmp_mem.Dispose();
-					bmp_mem=null;
-				}
+				DisposeBackBuffer ();
 
 				if (invalid_region!=null) {
 					invalid_region.Dispose();
@@ -918,44 +910,41 @@ namespace System.Windows.Forms
 			get { return Hwnd.bmp_g; }
 		}
 
-		private void ImageBufferNeedsRedraw () {
+		private void InvalidateBackBuffer ()
+		{
 			if (invalid_region != null)
 				invalid_region.Dispose();
 			invalid_region = new Region (ClientRectangle);
 		}
 
-		private Bitmap ImageBuffer {
-			get {
-				if (bmp_mem==null) {
-					CreateBuffers(this.Width, this.Height);
-				}
-				return bmp_mem;
-			}
-		}
-
-		internal void CreateBuffers (int width, int height) {
-			if (width < 1) {
-				width = 1;
-			}
-
-			if (height < 1) {
-				height = 1;
-			}
-
-			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
-			ImageBufferNeedsRedraw ();
-		}
-
-		internal void InvalidateBuffers ()
+		private void CreateBackBuffer ()
 		{
-			if (dc_mem != null) {
-				dc_mem.Dispose ();
-			}
+			if (backbuffer != null)
+				return;
 
-			dc_mem = null;
-			bmp_mem = null;
-			ImageBufferNeedsRedraw ();
+			int width = Width;
+			int height = Height;
+
+			if (width < 1) width = 1;
+			if (height < 1) height = 1;
+
+			XplatUI.CreateOffscreenDrawable (Handle, width, height, out backbuffer, out backbuffer_dc);
+			InvalidateBackBuffer ();
+		}
+
+		private void DisposeBackBuffer ()
+		{
+			if (backbuffer == null)
+				return;
+
+			XplatUI.DestroyOffscreenDrawable (backbuffer, backbuffer_dc);
+			backbuffer = null;
+			backbuffer_dc = null;
+
+
+			if (invalid_region != null)
+				invalid_region.Dispose ();
+			invalid_region = null;
 		}
 
 		internal static void SetChildColor(Control parent) {
@@ -967,7 +956,6 @@ namespace System.Windows.Forms
 					SetChildColor(child);
 				}
 			}
-				
 		}
 
 		internal bool Select(Control control) {
@@ -4032,19 +4020,21 @@ namespace System.Windows.Forms
 				}
 
 				if (invalid_region != null && !invalid_region.IsVisible (paint_event.ClipRectangle)) {
+
 					// Just blit the previous image
-					paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
-					XplatUI.PaintEventEnd(Handle, true);
+					XplatUI.BlitFromOffscreen (Handle, paint_event.Graphics, backbuffer, backbuffer_dc, paint_event.ClipRectangle);
+					XplatUI.PaintEventEnd (Handle, true);
 					return;
 				}
 
 				Graphics dc = null;
 				Graphics back_dc = null;
-				Bitmap backbuffer = null;
+				object back = null;
 				if (ThemeEngine.Current.DoubleBufferingSupported) {
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						backbuffer = ImageBuffer;
-						back_dc = Graphics.FromImage (backbuffer);
+						CreateBackBuffer ();
+						back = backbuffer;
+						back_dc = backbuffer_dc;
 						dc = paint_event.SetGraphics (back_dc);
 					}
 				}
@@ -4063,12 +4053,12 @@ namespace System.Windows.Forms
 
 				if (ThemeEngine.Current.DoubleBufferingSupported)
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
+						XplatUI.BlitFromOffscreen (Handle, dc, back, back_dc, paint_event.ClipRectangle);
 						paint_event.SetGraphics (dc);
 						invalid_region.Exclude (paint_event.ClipRectangle);
-						back_dc.Dispose ();
-						if (backbuffer != bmp_mem)
-							backbuffer.Dispose();
+
+						if (back != backbuffer)
+							XplatUI.DestroyOffscreenDrawable (back, back_dc);
 					}
 
 				XplatUI.PaintEventEnd(Handle, true);
@@ -4560,7 +4550,7 @@ namespace System.Windows.Forms
 					// would be more at home in
 					// NotifyInvalidated..
 					if (e.InvalidRect == ClientRectangle) {
-						ImageBufferNeedsRedraw ();
+						InvalidateBackBuffer ();
 					}
 					else {
 						// we need this Inflate call here so
@@ -4821,7 +4811,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnSizeChanged(EventArgs e) {
-			InvalidateBuffers ();
+			DisposeBackBuffer ();
 			OnResize(e);
 			EventHandler eh = (EventHandler)(Events [SizeChangedEvent]);
 			if (eh != null)
