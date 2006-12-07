@@ -65,7 +65,11 @@ namespace NUnit.Core
 
 		protected override internal void ProcessException(Exception exception, TestCaseResult testResult)
 		{
+#if TARGET_JVM //sometimes JAVA has a wider exception hierarchy, i.e. ArrayIndexOutOfBoundsException : IndexOutOfBoundsException; we ignore this.
+			if (expectedException.IsAssignableFrom(exception.GetType()))
+#else
 			if (expectedException.Equals(exception.GetType()))
+#endif
 			{
 				if (expectedMessage != null && !expectedMessage.Equals(exception.Message))
 				{
