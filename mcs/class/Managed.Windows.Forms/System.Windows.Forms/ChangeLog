@@ -1,5 +1,12 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: make tab_stop private.
+
+	* Label.cs: set TabStop, not tab_stop.  reformat some event
+	add/remove methods to make them more compact.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* RadioButton.cs: fix TabStop handling.
 
 2006-12-06  Chris Toshok  <toshok@ximian.com>

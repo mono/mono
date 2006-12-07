@@ -66,70 +66,46 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
-			add {
-				base.BackgroundImageChanged += value;
-			}
-			remove {
-				base.BackgroundImageChanged -= value;
-			}
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {
-			add {
-				base.ImeModeChanged += value;
-			}
-			remove {
-				base.ImeModeChanged -= value;
-			}
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown {
-			add {
-				base.KeyDown += value;
-			}
-			remove {
-				base.KeyDown -= value;
-			}
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
 		}
 
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress {
-			add {
-				base.KeyPress += value;
-			}
-			remove {
-				base.KeyPress -= value;
-			}
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
 		}
 
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp {
-			add {
-				base.KeyUp += value;
-			}
-			remove {
-				base.KeyUp -= value;
-			}
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
 		}
 
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged {
-			add {
-				base.TabStopChanged += value;
-			}
-			remove {
-				base.TabStopChanged -= value;
-			}
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
 		}
 
 		public event EventHandler TextAlignChanged {
@@ -142,7 +118,7 @@ namespace System.Windows.Forms
     		{
 			// Defaults in the Spec
 			autosize = false;
-			tab_stop = false;
+			TabStop = false;
 			string_format = new StringFormat();
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
