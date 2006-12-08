@@ -1637,6 +1637,7 @@ namespace System.Windows.Forms
 				if (background_image!=value) {
 					background_image=value;
 					OnBackgroundImageChanged(EventArgs.Empty);
+					Invalidate ();
 				}
 			}
 		}
