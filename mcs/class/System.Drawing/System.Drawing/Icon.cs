@@ -174,7 +174,7 @@ namespace System.Drawing
 
 		public Icon (Type type, string resource)
 		{
-			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
+			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 					throw new FileNotFoundException (msg);
