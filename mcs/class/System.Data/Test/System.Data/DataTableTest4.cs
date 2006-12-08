@@ -290,7 +290,7 @@ namespace Monotests_System.Data
 		}
 
 		//Test properties of a table which does not belongs to a DataSet
-		private void TestTableSchema (DataTable table, string tableName, DataSet ds)
+		private void VerifyTableSchema (DataTable table, string tableName, DataSet ds)
 		{
 			//Test Schema 
 			//Check Properties of Table
@@ -388,7 +388,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (3, row ["DepartmentID"], "#75");
 		}
 
-		private void TestTable_WithChildren (DataTable table, string tableName, DataSet ds)
+		private void VerifyTable_WithChildren (DataTable table, string tableName, DataSet ds)
 		{
 			//Test Schema 
 			//Check Properties of Table
@@ -487,7 +487,7 @@ namespace Monotests_System.Data
 
 		}
 
-		private void TestDiffGramElement1 (XmlReader reader)	
+		private void VerifyDiffGramElement1 (XmlReader reader)	
 		{
 			//This method checks the properties of the <id> element
 			Assert.AreEqual (true, reader.IsStartElement (), "#1");
@@ -501,7 +501,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#9");
 		}
 
-		private void TestDiffGramElement3 (XmlReader reader)
+		private void VerifyDiffGramElement3 (XmlReader reader)
 		{
 			//This method checks the property of </id> end elem
 			Assert.AreEqual (false, reader.IsStartElement (), "#1");
@@ -510,7 +510,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#4");
 		}
 
-		private void TestDiffGramElement2 (XmlReader reader)
+		private void VerifyDiffGramElement2 (XmlReader reader)
 		{
 			//This method tests the properties of the <DummyItem> elemnent
 			Assert.AreEqual (true, reader.IsStartElement (), "#1");
@@ -524,7 +524,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#9");
 		}
 
-		private void TestDiffGramElement4 (XmlReader reader)
+		private void VerifyDiffGramElement4 (XmlReader reader)
 		{
 			//This method checks the properties of </DummyItem> end element
 			Assert.AreEqual (false, reader.IsStartElement (), "#1");
@@ -533,7 +533,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#4");
 		}
 		
-		private void TestDiffGramElement5 (XmlReader reader)
+		private void VerifyDiffGramElement5 (XmlReader reader)
 		{
 			//This method check the properties of </DummyTable> end element
 			Assert.AreEqual (false, reader.IsStartElement (), "#1");
@@ -582,7 +582,7 @@ namespace Monotests_System.Data
 			DataTable table = new DataTable ();
 			//Read the Xml and the Schema into a table which does not belongs to any DataSet
 			table.ReadXml (fileName1);
-			TestTableSchema (table, parentTable1.TableName, parentTable1.DataSet);
+			VerifyTableSchema (table, parentTable1.TableName, parentTable1.DataSet);
 		}
 
 		[Test]
@@ -623,7 +623,7 @@ namespace Monotests_System.Data
 			//Read the Xml and the Schema into a table which already belongs to a DataSet
 			//and the table name matches with the table in the source XML 
 			table.ReadXml (fileName1);
-			TestTableSchema (table, parentTable1.TableName, null);
+			VerifyTableSchema (table, parentTable1.TableName, null);
 		}
 
 		[Test]
@@ -642,7 +642,7 @@ namespace Monotests_System.Data
 
 			DataTable table = new DataTable ();
 			table.ReadXml (fileName1);
-			TestTableSchema (table, parentTable1.TableName, null);
+			VerifyTableSchema (table, parentTable1.TableName, null);
 		}
 
 		[Test]
@@ -662,7 +662,7 @@ namespace Monotests_System.Data
 			DataTable table = new DataTable ();
 			table.ReadXml (fileName1);
 					
-			TestTable_WithChildren (table, parentTable1.TableName, parentTable1.DataSet);
+			VerifyTable_WithChildren (table, parentTable1.TableName, parentTable1.DataSet);
 		
 			
 			//Check Properties of First Child Table
@@ -1052,7 +1052,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#34");
 
 			reader.Read ();
-			TestDiffGramElement1 (reader);
+			VerifyDiffGramElement1 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#35");
@@ -1060,10 +1060,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("1", reader.Value, "#37");
 
 			reader.Read ();
-			TestDiffGramElement3 (reader);
+			VerifyDiffGramElement3 (reader);
 	
 			reader.Read ();		
-			TestDiffGramElement2 (reader);
+			VerifyDiffGramElement2 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#38");
@@ -1098,7 +1098,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#61");
 
 			reader.Read ();
-			TestDiffGramElement1 (reader);
+			VerifyDiffGramElement1 (reader);
 			 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#62");
@@ -1106,10 +1106,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("2", reader.Value, "#64");
 
 			reader.Read ();
-			TestDiffGramElement3 (reader);
+			VerifyDiffGramElement3 (reader);
 		
 			reader.Read ();	
-			TestDiffGramElement2 (reader);
+			VerifyDiffGramElement2 (reader);
 	
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#65");
@@ -1117,10 +1117,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Changed_DummyItem 2", reader.Value, "#67");
 
 			reader.Read ();
-			TestDiffGramElement4 (reader);
+			VerifyDiffGramElement4 (reader);
 
 			reader.Read ();
-			TestDiffGramElement5 (reader);	
+			VerifyDiffGramElement5 (reader);	
 
 			reader.Read ();
 			Assert.AreEqual (true, reader.IsStartElement (), "#68");
@@ -1137,7 +1137,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#79");
 
 			reader.Read ();
-			TestDiffGramElement1 (reader);
+			VerifyDiffGramElement1 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#80");
@@ -1145,10 +1145,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("3", reader.Value, "#82");
 
 			reader.Read ();
-			TestDiffGramElement3 (reader);
+			VerifyDiffGramElement3 (reader);
 
 			reader.Read ();
-			TestDiffGramElement2 (reader);
+			VerifyDiffGramElement2 (reader);
 
 	
 			reader.Read();
@@ -1157,10 +1157,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("DummyItem 3", reader.Value, "#85");
 
 			reader.Read ();
-			TestDiffGramElement4 (reader);
+			VerifyDiffGramElement4 (reader);
 
 			reader.Read ();
-			TestDiffGramElement5 (reader);
+			VerifyDiffGramElement5 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (false, reader.IsStartElement (), "#86");
@@ -1194,7 +1194,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#110");
 
 			reader.Read ();
-			TestDiffGramElement1 (reader);
+			VerifyDiffGramElement1 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#111");
@@ -1202,10 +1202,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("2", reader.Value, "#113");
 
 			reader.Read ();
-			TestDiffGramElement3 (reader);
+			VerifyDiffGramElement3 (reader);
 
 			reader.Read ();
-			TestDiffGramElement2 (reader);
+			VerifyDiffGramElement2 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#114");
@@ -1213,10 +1213,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("DummyItem 2", reader.Value, "#116");
 			
 			reader.Read ();
-			TestDiffGramElement4 (reader);		
+			VerifyDiffGramElement4 (reader);		
 			
 			reader.Read ();
-			TestDiffGramElement5 (reader);
+			VerifyDiffGramElement5 (reader);
 
 			reader.Read ();
 			Assert.AreEqual (false, reader.IsStartElement (), "#117");

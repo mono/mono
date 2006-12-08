@@ -242,7 +242,7 @@ namespace Monotests_System.Data
 		}
 
 		//Test properties of a table which does not belongs to a DataSet
-		private void TestTableSchema (DataTable table, string tableName, DataSet ds)
+		private void VerifyTableSchema (DataTable table, string tableName, DataSet ds)
 		{
 			//Check Properties of Table
 			Assert.AreEqual ("", table.Namespace, "#1");
@@ -323,7 +323,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (false, col.Unique, "#65");
 		}
 
-		private void TestParentTableSchema (DataTable table, string tableName, DataSet ds)
+		private void VerifyParentTableSchema (DataTable table, string tableName, DataSet ds)
 		{
 			//Check Properties of Table
 			Assert.AreEqual ("", table.Namespace, "#1");
@@ -442,7 +442,7 @@ namespace Monotests_System.Data
 			DataTable table = new DataTable ();
 			table.ReadXmlSchema (stream);
 
-			TestTableSchema (table, parentTable.TableName, parentTable.DataSet);
+			VerifyTableSchema (table, parentTable.TableName, parentTable.DataSet);
 			stream.Dispose ();
 		}	
 		
@@ -480,7 +480,7 @@ namespace Monotests_System.Data
 			DataTable table = new DataTable ();
 			table.ReadXmlSchema (stream);
 
-			TestTableSchema (table, parentTable.TableName, null);
+			VerifyTableSchema (table, parentTable.TableName, null);
 			stream.Dispose ();
 		}
 		
@@ -505,7 +505,7 @@ namespace Monotests_System.Data
 			table.ReadXmlSchema (stream);
 			
 			//Test Property of Parent	
-			TestParentTableSchema (table, parentTable.TableName, parentTable.DataSet);
+			VerifyParentTableSchema (table, parentTable.TableName, parentTable.DataSet);
 			
 			
 			//Check Properties of First Child Table
