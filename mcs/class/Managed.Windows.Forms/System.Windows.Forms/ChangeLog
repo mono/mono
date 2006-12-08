@@ -3,7 +3,7 @@
 	* ThemeWin32Classic.cs (DataGridPaintRows): handle case where
 	rowcnt is 0 (such as with an empty datasource), and make sure we
 	initialize not_usedarea.Y to cells.Y, so we don't draw over the
-	other areas (caption, parent row, etc, etc).
+	other areas (caption, parent row, etc, etc).  Fixes bug #80095.
 
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
