@@ -46,7 +46,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -68,7 +68,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
+					/>
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='FalseTestTask'
 					/>
 				</Project>
 			";
@@ -79,7 +83,18 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			IEnumerator en = project.UsingTasks.GetEnumerator ();
 			en.MoveNext ();
+
+			Assert.AreEqual ("Test/resources/TestTasks.dll", ((UsingTask) en.Current).AssemblyFile, "A1");
+			Assert.AreEqual ("TrueTestTask", ((UsingTask) en.Current).TaskName, "A2");
+
+			en.MoveNext ();
+
+			Assert.AreEqual ("Test/resources/TestTasks.dll", ((UsingTask) en.Current).AssemblyFile, "A3");
+			Assert.AreEqual ("FalseTestTask", ((UsingTask) en.Current).TaskName, "A4");
+
+			Assert.IsFalse (en.MoveNext ());
 		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCopyTo1 ()
@@ -88,7 +103,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -109,7 +124,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -130,7 +145,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -152,7 +167,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -164,7 +179,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			project.UsingTasks.CopyTo (new UsingTask [1], 2);
 		}
-
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestCopyTo5 ()
@@ -173,7 +187,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<UsingTask
 						AssemblyFile='Test/resources/TestTasks.dll'
-						TaskName='SimpleTask'
+						TaskName='TrueTestTask'
 					/>
 				</Project>
 			";
@@ -185,5 +199,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			project.UsingTasks.CopyTo (new UsingTask [1], 1);
 		}
+
+		[Test]
+		public void TestCopyTo6 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='TrueTestTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			UsingTask[] array = new UsingTask [1];
+			project.UsingTasks.CopyTo (array, 0);
+
+			Assert.AreEqual ("TrueTestTask", array [0].TaskName, "A1");
+		}
 	}
 }
+
