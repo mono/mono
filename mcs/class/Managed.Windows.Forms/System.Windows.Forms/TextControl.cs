@@ -1020,7 +1020,7 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0} [# {1}], Y: {2}, soft: {3},  Text {4}",
+			Console.Write("Line {0} [# {1}], Y: {2}, soft: {3},  Text: '{4}'",
 					line.line_no, line.GetHashCode(), line.Y, line.soft_break,
 					line.text != null ? line.text.ToString() : "undefined");
 
@@ -1410,6 +1410,9 @@ namespace System.Windows.Forms {
 
 			document_x = 0;
 			document_y = 0;
+
+			if (owner.IsHandleCreated)
+				owner.Invalidate ();
 		}
 
 		internal void PositionCaret(Line line, int pos) {
