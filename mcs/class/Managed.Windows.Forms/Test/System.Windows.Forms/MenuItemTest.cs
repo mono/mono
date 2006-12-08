@@ -195,5 +195,68 @@ namespace MonoTests.System.Windows.Forms
 			mi2.Text = "C2";
 			Assert.AreEqual ("C2", mi2.Text, "#9");
 		}
+
+		bool event_reached;
+		void event_test (object sender, EventArgs e)
+		{
+			event_reached = true;
+		}
+
+#if false
+		void test_drawevent (object sender, DrawItemEventArgs e)
+		{
+			event_reached = true;
+		}
+
+		void test_measureevent (object sender, MeasureItemEventArgs e)
+		{
+			event_reached = true;
+		}
+#endif
+
+		[Test]
+		public void CloneEventTest ()
+		{
+			MenuItem mi1, mi2;
+
+			event_reached = false;
+			mi1 = new MenuItem ();
+			mi1.Click += new EventHandler (event_test);
+			mi2 = mi1.CloneMenu ();
+			mi2.PerformClick ();
+			Assert.IsTrue (event_reached);
+
+			event_reached = false;
+			mi1 = new MenuItem ();
+			mi1.Select += new EventHandler (event_test);
+			mi2 = mi1.CloneMenu ();
+			mi2.PerformSelect ();
+			Assert.IsTrue (event_reached);
+
+#if no
+			// these three can't be tested because of the broken MenuItem.CloneMenu
+
+			event_reached = false;
+			mi1 = new MenuItem ();
+			mi1.Popup += new EventHandler (test_event);
+			mi2 = mi1.CloneMenu ();
+			mi2.PerformPopup ();
+			Assert.IsTrue (event_reached);
+
+			event_reached = false;
+			mi1 = new MenuItem ();
+			mi1.DrawItem += new DrawItemEventHandler (test_drawevent);
+			mi2 = mi1.CloneMenu ();
+			mi2.PerformDrawItem (new DrawItemEventArgs (null, null, Rectangle.Empty, 1, DrawItemState.None));
+			Assert.IsTrue (event_reached);
+
+			event_reached = false;
+			mi1 = new MenuItem ();
+			mi1.MeasureItem += new MeasureItemEventHandler (test_measureevent);
+			mi2 = mi1.CloneMenu ();
+			mi2.PerformMeasureItem (new MeasureItemEventArgs (null, 1));
+			Assert.IsTrue (event_reached);
+#endif
+		}
 	}
 }

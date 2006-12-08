@@ -479,14 +479,12 @@ namespace System.Windows.Forms
 			Text = menuitem.Text;
 			Visible = menuitem.Visible;
 
-#if notyet
 			// Events
-			Click = menuitem.Click;
-			DrawItem = menuitem.DrawItem;
-			MeasureItem = menuitem.MeasureItem;
-			Popup = menuitem.Popup;
-			Select = menuitem.Select;
-#endif
+			Events[ClickEvent] = menuitem.Events[ClickEvent];
+			Events[DrawItemEvent] = menuitem.Events[DrawItemEvent];
+			Events[MeasureItemEvent] = menuitem.Events[MeasureItemEvent];
+			Events[PopupEvent] = menuitem.Events[PopupEvent];
+			Events[SelectEvent] = menuitem.Events[SelectEvent];
 		}
 
 		protected override void Dispose (bool disposing)

@@ -1,3 +1,9 @@
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
+	* MenuItem.cs: add back in the event cloning code.  I didn't know
+	how to do it in the face of the EventHandlerList work i'd done
+	last week.  Fixes bug #80183.
+
 2006-12-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Add an invalidate to the BackgroundImage setter.
