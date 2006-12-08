@@ -497,7 +497,7 @@ namespace System.Windows.Forms
 
 			property_descriptor = null;
 
-			if (value.ListManager != null)
+			if (value != null && value.ListManager != null)
 				CheckValidDataSource (value.ListManager);
 		}
 

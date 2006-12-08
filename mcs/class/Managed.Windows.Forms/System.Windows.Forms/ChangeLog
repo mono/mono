@@ -1,5 +1,10 @@
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridColumnStyle.cs (SetDataGrid): don't try to access a null
+	grid.
+
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
 	[ Fixes bug #80167 ]
 	
 	* ThemeWin32Classic.cs: don't draw the image if the button's flat
