@@ -2059,20 +2059,16 @@ namespace System.Data {
 						mode = ds.ReadXml (reader);
 					} else 
 						mode = DataSet.ReadXml (reader);
-				  } catch (Exception e) {
-				    if (e.Message == String.Format ("Cannot load diffGram. Table '{0}' is missing in the destination dataset",
-								    reader.LocalName)) {
+				  } catch (DataException e) {
 					mode = XmlReadMode.DiffGram;
 					if (isTableNameBlank)
 						TableName = String.Empty;
-				    }
 				  } finally {
 					if (!isPartOfDataSet)
 						ds.Tables.Remove (this);
 				  }
 				  return mode;
-			}
-			else {
+			} else {
 				mode = ds.ReadXml (reader, XmlReadMode.ReadSchema);
 			}
 			if (mode == XmlReadMode.InferSchema)
