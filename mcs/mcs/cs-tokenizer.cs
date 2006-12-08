@@ -573,7 +573,7 @@ namespace Mono.CSharp
 
 			if (the_token == Token.OP_GENERICS_GT)
 				return true;
-			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
+			else if (the_token == Token.COMMA || the_token == Token.DOT || the_token == Token.DOUBLE_COLON)
 				goto start;
 			else if (the_token == Token.INTERR || the_token == Token.STAR)
 				goto again;
