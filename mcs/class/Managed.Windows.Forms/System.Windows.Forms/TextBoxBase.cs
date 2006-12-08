@@ -70,6 +70,8 @@ namespace System.Windows.Forms {
 		static internal int		track_width = 2;	//
 		static internal int		track_border = 5;	//
 		internal DateTime		click_last;
+		internal int			click_point_x;
+		internal int 			click_point_y;
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
 		#if Debug
@@ -1463,15 +1465,26 @@ namespace System.Windows.Forms {
 			base.OnLostFocusInternal (e);
 		}
 
+		private bool IsDoubleClick (MouseEventArgs e)
+		{
+			TimeSpan interval = DateTime.Now - click_last;
+			if (interval.TotalMilliseconds > SystemInformation.DoubleClickTime)
+				return false;
+			Size dcs = SystemInformation.DoubleClickSize;
+			if (e.X < click_point_x - dcs.Width / 2 || e.X > click_point_x + dcs.Width / 2)
+				return false;
+			if (e.Y < click_point_y - dcs.Height / 2 || e.Y > click_point_y + dcs.Height / 2)
+				return false;
+			return true;
+		}
+
 		private void TextBoxBase_MouseDown (object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left) {
-				TimeSpan interval;
-
-				interval = DateTime.Now - click_last;
+				
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 
-				if (interval.TotalMilliseconds < SystemInformation.DoubleClickTime) {
+				if (IsDoubleClick (e)) {
 					switch (click_mode) {
 					case CaretSelection.Position:
 						SelectWord ();
@@ -1503,6 +1516,8 @@ namespace System.Windows.Forms {
 					click_mode = CaretSelection.Position;
 				}
 
+				click_point_x = e.X;
+				click_point_y = e.Y;
 				click_last = DateTime.Now;
 			}
 
