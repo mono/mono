@@ -161,7 +161,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAdditionalLibPaths ()
 		{
 			MCExtended mc = new MCExtended ();
@@ -236,7 +235,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDefineConstants ()
 		{
 			MCExtended mc = new MCExtended ();
@@ -387,7 +385,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestMainEntryPoint ()
 		{
 			MCExtended mc = new MCExtended ();
@@ -508,7 +505,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestReferences ()
 		{
 			MCExtended mc = new MCExtended ();
@@ -539,7 +535,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestResponseFiles ()
 		{
 			MCExtended mc = new MCExtended ();
@@ -661,7 +656,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestWin32Resource ()
 		{
 			MCExtended mc = new MCExtended ();
