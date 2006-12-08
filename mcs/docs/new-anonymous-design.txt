@@ -99,17 +99,34 @@ The new code fundamentally changes the concept of CaptureContexts and
 ScopeInfos.  CaptureContext is completely gone while the ScopeInfo has
 been completely redesigned.
 
-Each method containing anonymous methods introduces a "root scope" in
-which all other scopes are nested.  This root scope is also called the
-anonymous method's host (class `AnonymousMethodHost' in anonymous.cs).
+Unfortunately, computing the "root scope" of an anonymous method is
+very difficult and was the primary reason for the update in late
+November 2006.  Consider the following example:
 
-The root scope deals with everything related to generics and also
-hosts the parameters and `this'.  All other scopes are nested inside
-the root scope.
+	====
+	TestDelegate d = null;
+	for (int i = 1; i <= 5; i++) {
+		int k = i;
+		TestDelegate temp = delegate {
+			Console.WriteLine ("i = {0}, k = {1}", i, k);
+			sum_i += 1 << i;
+			sum_k += 1 << k;
+		};
+		temp ();
+		d += temp;
+	}
+	====
 
-Note that if you have child scopes, they're all nested directly inside
-the root scope, not inside each other.  Because of that, we don't need
-to link / reparent them.
+Note that we're instantiating the same anonymous method multiple times
+inside a loop.  The important thing is that each instantiation must
+get the current version of `k'; ie. we must create a new instance 'k's
+helper-class for each instantiation.  They all share `i's helper-class.
+
+This means that the anonymous method needs to be hosted in the inner
+helper-class.
+
+Because of that, we need to compute all the scopes before actually
+creating the anonymous method.
 
 Anonymous Methods and Generics:
 -------------------------------
