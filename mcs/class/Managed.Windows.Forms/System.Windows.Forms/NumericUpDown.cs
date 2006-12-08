@@ -245,6 +245,8 @@ namespace System.Windows.Forms {
 		[Bindable(true)]
 		public decimal Value {
 			get {
+				if (UserEdit)
+					ParseEditText();
 				return dvalue;
 			}
 
