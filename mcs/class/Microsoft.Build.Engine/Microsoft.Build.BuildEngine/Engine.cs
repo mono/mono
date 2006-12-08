@@ -195,7 +195,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project CreateNewProject ()
 		{
-			if (defaultTasksRegistered == true)
+			if (defaultTasksRegistered)
 				CheckBinPath ();
 			// FIXME: I don't really know if it should be here
 			LogBuildStarted ();
@@ -305,7 +305,7 @@ namespace Microsoft.Build.BuildEngine {
 			Project defaultTasksProject = CreateNewProject ();
 			
 			if (binPath != null) {
-				if (File.Exists (Path.Combine (binPath, defaultTasksProjectName)) == true) {
+				if (File.Exists (Path.Combine (binPath, defaultTasksProjectName))) {
 					defaultTasksProject.Load (Path.Combine (binPath, defaultTasksProjectName));
 					defaultTasks = defaultTasksProject.TaskDatabase;
 				} else {

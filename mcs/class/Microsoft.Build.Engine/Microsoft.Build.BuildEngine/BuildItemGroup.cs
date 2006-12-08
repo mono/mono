@@ -38,7 +38,6 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItemGroup : IEnumerable {
 	
-		XmlAttribute		condition;
 		bool			isImported;
 		List <BuildItem>	buildItems;
 		GroupingCollection	parentCollection;
@@ -60,9 +59,8 @@ namespace Microsoft.Build.BuildEngine {
 			if (!FromXml)
 				return;
 
-			this.condition = xmlElement.GetAttributeNode ("Condition");
 			foreach (XmlNode xn in xmlElement.ChildNodes) {
-				if (xn is XmlElement == false)
+				if (!(xn is XmlElement))
 					continue;
 					
 				XmlElement xe = (XmlElement) xn;
@@ -171,32 +169,27 @@ namespace Microsoft.Build.BuildEngine {
 			return array;
 		}
 
+		[MonoTODO]
+		// FIXME: whether we can invoke get_Condition on BuildItemGroup not based on XML
 		public string Condition {
 			get {
-				if (condition != null)
-					return condition.Value;
+				if (FromXml)
+					return itemGroupElement.GetAttribute ("Condition");
 				else
 					return String.Empty;
 			}
 			set {
-				if (condition != null)
-					condition.Value = value;
+				if (FromXml)
+					itemGroupElement.SetAttribute ("Condition", value);
 			}
 		}
 
 		public int Count {
-			get {
-				if (buildItems != null)
-					return buildItems.Count;
-				else
-					return 0;
-			}
+			get { return buildItems.Count; }
 		}
 
 		public bool IsImported {
-			get {
-				return isImported;
-			}
+			get { return isImported; }
 		}
 
 		

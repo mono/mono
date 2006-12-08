@@ -50,6 +50,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (import == null)
 				throw new ArgumentNullException ("import");
 			
+			// FIXME: MSBuild silently refuses to add second import
 			if (imports.Contains (import))
 				throw new InvalidOperationException ("Import already added.");
 			

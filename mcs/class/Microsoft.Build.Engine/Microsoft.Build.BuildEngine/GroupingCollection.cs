@@ -61,9 +61,8 @@ namespace Microsoft.Build.BuildEngine {
 					yield return o;
 					continue;
 				}
-				if (o is BuildChoose) {
+				if (o is BuildChoose)
 					yield return o;
-				}
 			}
 		}
 
@@ -74,9 +73,8 @@ namespace Microsoft.Build.BuildEngine {
 					yield return o;
 					continue;
 				}
-				if (o is BuildChoose) {
+				if (o is BuildChoose)
 					yield return o;
-				}
 			}
 		}
 
@@ -94,9 +92,8 @@ namespace Microsoft.Build.BuildEngine {
 					yield return o;
 					continue;
 				}
-				if (o is BuildChoose) {
+				if (o is BuildChoose)
 					yield return o;
-				}
 			}
 		}
 
@@ -108,18 +105,21 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		internal void Add (BuildPropertyGroup bpg) {
+		internal void Add (BuildPropertyGroup bpg)
+		{
 			bpg.GroupingCollection = this;
 			allGroups.Add (bpg);
 			propertyGroups++;
 		}
 		
-		internal void Add (BuildItemGroup big) {
+		internal void Add (BuildItemGroup big)
+		{
 			allGroups.Add (big);
 			itemGroups++;
 		}
 		
-		internal void Add (BuildChoose bc) {
+		internal void Add (BuildChoose bc)
+		{
 			allGroups.Add (bc);
 			chooses++;
 		}

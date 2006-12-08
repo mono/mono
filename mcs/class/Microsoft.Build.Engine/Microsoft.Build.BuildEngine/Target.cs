@@ -77,6 +77,25 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
+		[MonoTODO]
+		public BuildTask AddNewTask (string taskName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			foreach (BuildTask bt in buildTasks)
+				yield return bt;
+		}
+
+		public void RemoveTask (BuildTask buildTask)
+		{
+			if (buildTask == null)
+				throw new ArgumentNullException ("buildTask");
+			buildTasks.Remove (buildTask);
+		}
+		
 		internal bool Build ()
 		{
 			bool result;
@@ -114,7 +133,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 			LogTargetStarted ();
 			
-			if (this.batchingImpl.BuildNeeded ()) {
+			if (batchingImpl.BuildNeeded ()) {
 				foreach (BuildTask bt in buildTasks) {
 					result = batchingImpl.BatchBuildTask (bt);
 				
@@ -146,7 +165,7 @@ namespace Microsoft.Build.BuildEngine {
 					this.project.Targets [t].Build ();
 			}
 		}
-		
+
 		private void LogTargetSkipped ()
 		{
 			BuildMessageEventArgs bmea;
@@ -171,26 +190,6 @@ namespace Microsoft.Build.BuildEngine {
 			engine.EventSource.FireTargetFinished (this, tfea);
 		}
 	
-		[MonoTODO]
-		public BuildTask AddNewTask (string taskName)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IEnumerator GetEnumerator ()
-		{
-			foreach (BuildTask bt in buildTasks) {
-				yield return bt;
-			}
-		}
-
-		public void RemoveTask (BuildTask buildTask)
-		{
-			if (buildTask == null)
-				throw new ArgumentNullException ("buildTask");
-			buildTasks.Remove (buildTask);
-		}
-
 		public string Condition {
 			get { return targetElement.GetAttribute ("Condition"); }
 			set { targetElement.SetAttribute ("Condition", value); }

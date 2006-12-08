@@ -90,8 +90,9 @@ namespace Microsoft.Build.BuildEngine {
 			targets = new TargetCollection (this);
 			
 			taskDatabase = new TaskDatabase ();
-			if (engine.DefaultTasksRegistered == true)
+			if (engine.DefaultTasksRegistered) {
 				taskDatabase.CopyTasks (engine.DefaultTasks);
+			}
 			
 			globalProperties = new BuildPropertyGroup ();
 			fullFileName = String.Empty;
@@ -161,23 +162,20 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public bool Build (string targetName)
 		{
-			if (targets.Exists (targetName) == false)
-				throw new Exception (String.Format ("Target {0} does not exist.", targetName));
-			
-			return this.targets [targetName].Build ();
+			return Build (new string [1] { targetName });
 		}
 		
 		[MonoTODO]
 		public bool Build (string[] targetNames)
 		{
-			return Build (targetNames, new Hashtable ());
+			return Build (targetNames, null);
 		}
 		
 		[MonoTODO]
 		public bool Build (string[] targetNames,
 				   IDictionary targetOutputs)
 		{
-			return Build (targetNames, new Hashtable (), BuildSettings.None);
+			return Build (targetNames, targetOutputs, BuildSettings.None);
 		}
 		
 		[MonoTODO]
@@ -187,21 +185,24 @@ namespace Microsoft.Build.BuildEngine {
 		
 		{
 			CheckUnloaded ();
+			
 			if (targetNames.Length == 0) {
-				if (defaultTargets != null && defaultTargets.Length != 0) {
+				if (defaultTargets != null && defaultTargets.Length != 0)
 					targetNames = defaultTargets;
-				}
-				else if (firstTargetName != null) {
+				else if (firstTargetName != null)
 					targetNames = new string [1] { firstTargetName};
-				}
 				else
 					return false;
 			}
+			
 			foreach (string target in targetNames) {
-				if (Build (target) == false) {
+				if (!targets.Exists (target))
+					throw new InvalidOperationException (String.Format ("Target {0} does not exist.", target));
+				
+				if (!targets [target].Build ())
 					return false;
-				}
 			}
+				
 			return true;
 		}
 
@@ -249,32 +250,6 @@ namespace Microsoft.Build.BuildEngine {
 				return node.InnerXml;
 		}
 
-		// Does the actual loading.
-		private void DoLoad (TextReader textReader)
-		{
-			ParentEngine.RemoveLoadedProject (this);
-
-			XmlReaderSettings settings = new XmlReaderSettings ();
-
-			if (SchemaFile != null) {
-				settings.Schemas.Add (null, SchemaFile);
-				settings.ValidationType = ValidationType.Schema;
-				settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
-			}
-
-			XmlReader xmlReader = XmlReader.Create (textReader, settings);
-			xmlDocument.Load (xmlReader);
-
-			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != ns) {
-				throw new InvalidProjectFileException (
-					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
-					" If the project is authored in the MSBuild 2003 format, please add " +
-					"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-					"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ");
-			}
-			ProcessXml ();
-			ParentEngine.AddLoadedProject (this);
-		}
 
 		public void Load (string projectFileName)
 		{
@@ -299,89 +274,6 @@ namespace Microsoft.Build.BuildEngine {
 			DoLoad (new StringReader (projectXml));
 		}
 
-		internal void Unload ()
-		{
-			unloaded = true;
-		}
-
-		internal void CheckUnloaded ()
-		{
-			if (unloaded)
-				throw new InvalidOperationException ("This project object is no longer valid.");
-		}
-
-		private void ProcessXml ()
-		{
-			XmlElement xmlElement = xmlDocument.DocumentElement;
-			if (xmlElement.Name != "Project")
-				throw new InvalidProjectFileException ("Invalid root element.");
-			if (xmlElement.GetAttributeNode ("DefaultTargets") != null)
-				defaultTargets = xmlElement.GetAttribute ("DefaultTargets").Split (';');
-			else
-				defaultTargets = new string [0];
-			
-			ProcessElements (xmlElement, null);
-			
-			isDirty = false;
-			Evaluate ();
-		}
-
-		private void InitializeProperties ()
-		{
-			BuildProperty bp;
-
-			foreach (BuildProperty gp in GlobalProperties) {
-				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
-				EvaluatedProperties.AddProperty (bp);
-			}
-			
-			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
-				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
-				EvaluatedProperties.AddProperty (bp);
-			}
-
-			bp = new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved);
-			EvaluatedProperties.AddProperty (bp);
-		}
-
-		internal void Evaluate ()
-		{
-			evaluatedItems = new BuildItemGroup (null, this);
-			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
-			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedProperties = new BuildPropertyGroup ();
-
-			InitializeProperties ();
-
-			// FIXME: questionable order of evaluation
-			
-			foreach (Import import in Imports)
-				import.Evaluate ();
-			
-			foreach (BuildPropertyGroup bpg in PropertyGroups) {
-				if (bpg.Condition == String.Empty)
-					bpg.Evaluate ();
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (bpg.Condition);
-					if (ce.BoolEvaluate (this))
-						bpg.Evaluate ();
-				}
-			}
-			
-			foreach (BuildItemGroup big in ItemGroups) {
-				if (big.Condition == String.Empty)
-					big.Evaluate ();
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (big.Condition);
-					if (ce.BoolEvaluate (this))
-						big.Evaluate ();
-				}
-			}
-			
-			foreach (UsingTask usingTask in UsingTasks)
-				usingTask.Evaluate ();
-		}
 
 		public void MarkProjectAsDirty ()
 		{
@@ -534,6 +426,60 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
+		internal void Unload ()
+		{
+			unloaded = true;
+		}
+
+		internal void CheckUnloaded ()
+		{
+			if (unloaded)
+				throw new InvalidOperationException ("This project object is no longer valid.");
+		}
+				
+		// Does the actual loading.
+		private void DoLoad (TextReader textReader)
+		{
+			ParentEngine.RemoveLoadedProject (this);
+
+			XmlReaderSettings settings = new XmlReaderSettings ();
+
+			if (SchemaFile != null) {
+				settings.Schemas.Add (null, SchemaFile);
+				settings.ValidationType = ValidationType.Schema;
+				settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
+			}
+
+			XmlReader xmlReader = XmlReader.Create (textReader, settings);
+			xmlDocument.Load (xmlReader);
+
+			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != ns) {
+				throw new InvalidProjectFileException (
+					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
+					" If the project is authored in the MSBuild 2003 format, please add " +
+					"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
+					"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ");
+			}
+			ProcessXml ();
+			ParentEngine.AddLoadedProject (this);
+		}
+
+		private void ProcessXml ()
+		{
+			XmlElement xmlElement = xmlDocument.DocumentElement;
+			if (xmlElement.Name != "Project")
+				throw new InvalidProjectFileException ("Invalid root element.");
+			if (xmlElement.GetAttributeNode ("DefaultTargets") != null)
+				defaultTargets = xmlElement.GetAttribute ("DefaultTargets").Split (';');
+			else
+				defaultTargets = new string [0];
+			
+			ProcessElements (xmlElement, null);
+			
+			isDirty = false;
+			Evaluate ();
+		}
+		
 		internal void ProcessElements (XmlElement rootElement, ImportedProject ip)
 		{
 			foreach (XmlNode xn in rootElement.ChildNodes) {
@@ -571,6 +517,64 @@ namespace Microsoft.Build.BuildEngine {
 					}
 				}
 			}
+		}
+		
+		internal void Evaluate ()
+		{
+			evaluatedItems = new BuildItemGroup (null, this);
+			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
+			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedProperties = new BuildPropertyGroup ();
+
+			InitializeProperties ();
+
+			// FIXME: questionable order of evaluation
+			
+			foreach (Import import in Imports)
+				import.Evaluate ();
+			
+			foreach (BuildPropertyGroup bpg in PropertyGroups) {
+				if (bpg.Condition == String.Empty)
+					bpg.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (bpg.Condition);
+					if (ce.BoolEvaluate (this))
+						bpg.Evaluate ();
+				}
+			}
+			
+			foreach (BuildItemGroup big in ItemGroups) {
+				if (big.Condition == String.Empty)
+					big.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (big.Condition);
+					if (ce.BoolEvaluate (this))
+						big.Evaluate ();
+				}
+			}
+
+			
+			foreach (UsingTask usingTask in UsingTasks)
+				usingTask.Evaluate ();
+		}
+
+		private void InitializeProperties ()
+		{
+			BuildProperty bp;
+
+			foreach (BuildProperty gp in GlobalProperties) {
+				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
+				EvaluatedProperties.AddProperty (bp);
+			}
+			
+			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
+				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
+				EvaluatedProperties.AddProperty (bp);
+			}
+
+			bp = new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved);
+			EvaluatedProperties.AddProperty (bp);
 		}
 		
 		private void AddProjectExtensions (XmlElement xmlElement)

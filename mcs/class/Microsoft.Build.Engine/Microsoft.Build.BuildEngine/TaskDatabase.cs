@@ -54,13 +54,14 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			assemblyInformation.Add (classname, assemblyLoadInfo);
 			Assembly assembly;
-			if (assemblyLoadInfo.InfoType == LoadInfoType.AssemblyFilename) {
+
+			if (assemblyLoadInfo.InfoType == LoadInfoType.AssemblyFilename)
 				assembly = Assembly.LoadFrom (assemblyLoadInfo.Filename);
-			} else if (assemblyLoadInfo.InfoType == LoadInfoType.AssemblyName) {
+			else if (assemblyLoadInfo.InfoType == LoadInfoType.AssemblyName)
 				assembly = Assembly.Load (assemblyLoadInfo.AssemblyName);
-			} else {
+			else
 				assembly = Assembly.Load (assemblyLoadInfo.AssemblyNameString);
-			}
+			
 			Type type = assembly.GetType (classname);
 			typesByFullName.Add (classname, type);
 			typesByShortName.Add (GetShortName (classname), type);
@@ -68,12 +69,11 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public Type GetTypeFromClassName (string classname)
 		{
-			if (typesByFullName.ContainsKey (classname) == false) {
-				if (typesByShortName.ContainsKey (classname) == false)
+			if (!typesByFullName.ContainsKey (classname)) {
+				if (!typesByShortName.ContainsKey (classname))
 					throw new Exception ("Not registered task.");
-				else {
+				else
 					return typesByShortName [classname];
-				}
 			} else
 				return typesByFullName [classname];
 		}

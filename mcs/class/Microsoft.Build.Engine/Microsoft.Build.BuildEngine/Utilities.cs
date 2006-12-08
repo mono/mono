@@ -56,9 +56,9 @@ namespace Microsoft.Build.BuildEngine {
 			StringBuilder sb = new StringBuilder ();
 			
 			foreach (char c in unescapedExpression) {
-				if (charsToEscape.Contains (c)) {
+				if (charsToEscape.Contains (c))
 					sb.AppendFormat ("%{0:x2}", (int) c);
-				} else
+				else
 					sb.Append (c);
 			}
 			

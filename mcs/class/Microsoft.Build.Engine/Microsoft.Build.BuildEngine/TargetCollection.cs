@@ -68,9 +68,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (KeyValuePair <string, Target> kvp in targetsByName) {
+			foreach (KeyValuePair <string, Target> kvp in targetsByName)
 				yield return kvp.Value;
-			}
 		}
 
 		public void RemoveTarget (Target targetToRemove)

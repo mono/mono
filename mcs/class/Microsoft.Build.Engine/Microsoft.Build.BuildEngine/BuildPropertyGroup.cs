@@ -97,9 +97,8 @@ namespace Microsoft.Build.BuildEngine {
 				prop = new BuildProperty (parentProject, xe);
 				AddProperty (prop);
 				return prop;
-			} else {
+			} else
 				throw new InvalidOperationException ("This method is only valid for persisted <System.Object[]> elements.");
-			}
 		}
 
 		internal void AddProperty (BuildProperty property)
