@@ -1463,48 +1463,47 @@ namespace System.Windows.Forms {
 			base.OnLostFocusInternal (e);
 		}
 
-		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {
+		private void TextBoxBase_MouseDown (object sender, MouseEventArgs e)
+		{
 			if (e.Button == MouseButtons.Left) {
 				TimeSpan interval;
 
 				interval = DateTime.Now - click_last;
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 
-				// Handle place caret/select word/select line behaviour
-				if (e.Clicks == 1) {
-					if (SystemInformation.DoubleClickTime < interval.TotalMilliseconds) {
-						#if DebugClick
-							Console.WriteLine("Single Click Invalidating from char {0} to char {1} ({2})", document.selection_start.pos, document.selection_end.pos, document.selection_start.line.text.ToString(document.selection_start.pos, document.selection_end.pos - document.selection_start.pos));
-						#endif
-						document.SetSelectionToCaret(true);
-						click_mode = CaretSelection.Position;
-					} else if (this is RichTextBox) {
-						#if DebugClick
-							Console.WriteLine("Tripple Click Selecting line");
-						#endif
-						document.ExpandSelection(CaretSelection.Line, false);
-						click_mode = CaretSelection.Line;
-					} else {
-						document.SetSelectionToCaret(true);
-					}
-				} else {
-					// We select the line if the word is already selected, and vice versa
-					if (click_mode != CaretSelection.Word) {
-						if (click_mode == CaretSelection.Line) {
-							document.Invalidate(document.selection_start.line, 0, document.selection_start.line, document.selection_start.line.text.Length);
-						}
+				if (interval.TotalMilliseconds < SystemInformation.DoubleClickTime) {
+					switch (click_mode) {
+					case CaretSelection.Position:
+						SelectWord ();
 						click_mode = CaretSelection.Word;
+						break;
+					case CaretSelection.Word:
+
+						if (this is TextBox) {
+							document.SetSelectionToCaret (true);
+							click_mode = CaretSelection.Position;
+							break;
+						}
+
+						document.ExpandSelection (CaretSelection.Line, false);
+						click_mode = CaretSelection.Line;
+						break;
+					case CaretSelection.Line:
+
+						// Gotta do this first because Exanding to a word
+						// from a line doesn't really work
+						document.SetSelectionToCaret (true);
 
 						SelectWord ();
-					} else if (this is RichTextBox) {
-						click_mode = CaretSelection.Line;
-						document.ExpandSelection(CaretSelection.Line, false);	// Setting initial selection
+						click_mode = CaretSelection.Word;
+						break;
 					}
+				} else {
+					document.SetSelectionToCaret (true);
+					click_mode = CaretSelection.Position;
 				}
 
-				// Reset
 				click_last = DateTime.Now;
-				return;
 			}
 
 			if ((e.Button == MouseButtons.Middle) && (((int)Environment.OSVersion.Platform == 4) || ((int)Environment.OSVersion.Platform == 128))) {
@@ -1518,47 +1517,6 @@ namespace System.Windows.Forms {
 				Paste (Clipboard.GetDataObject (true), null, true);
 
 			}
-
-			#if Debug
-				LineTag	tag;
-				Line	line;
-				int	pos;
-
-				if (e.Button == MouseButtons.Right) {
-					draw_lines = !draw_lines;
-					this.Invalidate();
-					Console.WriteLine("SelectedText: {0}, length {1}", this.SelectedText, this.SelectionLength);
-					Console.WriteLine("Selection start: {0}", this.SelectionStart);
-
-					this.SelectionStart = 10;
-					this.SelectionLength = 5;
-
-					return;
-				}
-
-				tag = document.FindTag(e.X + document.ViewPortX, e.Y + document.ViewPortY, out pos, false);
-
-				Console.WriteLine("Click found tag {0}, character {1}", tag, pos);
-				line = tag.line;
-				switch(current) {
-					case 4: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("impact", 20, FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Red)); break;
-					case 1: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial unicode ms", 24, FontStyle.Italic, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.DarkGoldenrod)); break;
-					case 2: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("arial", 10, FontStyle.Regular, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Aquamarine)); break;
-					case 3: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 16, FontStyle.Underline, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.Turquoise)); break;
-					case 0: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, new Font("times roman", 64, FontStyle.Italic | FontStyle.Bold, GraphicsUnit.Pixel), ThemeEngine.Current.ResPool.GetSolidBrush(Color.LightSeaGreen)); break;
-					case 5: LineTag.FormatText(tag.line, pos, (pos+10)<line.Text.Length ? 10 : line.Text.Length - pos+1, ((TextBoxBase)sender).Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor)); break;
-				}
-				current++;
-				if (current==6) {
-					current=0;
-				}
-
-				// Update/Recalculate what we see
-				document.UpdateView(line, 0);
-
-				// Make sure our caret is properly positioned and sized
-				document.AlignCaret();
-			#endif
 		}
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {

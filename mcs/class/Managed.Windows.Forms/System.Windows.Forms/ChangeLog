@@ -1,3 +1,9 @@
+2006-12-08  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Reworked the mouse down code so I could get it
+	to behave like MS, we now ignore the eventargs.Click and just
+	track state ourself, which we were already doing anyways.
+	
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: the mousewheel code shouldn't try to scroll in a
