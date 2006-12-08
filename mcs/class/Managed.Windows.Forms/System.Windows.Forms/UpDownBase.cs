@@ -300,7 +300,6 @@ namespace System.Windows.Forms
 
 			TabIndexChanged += new EventHandler (TabIndexChangedHandler);
 			
-			txtView.MouseWheel += new MouseEventHandler(txtView_MouseWheel);
 			txtView.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
 			txtView.KeyPress += new KeyPressEventHandler(OnTextBoxKeyPress);
 //			txtView.LostFocus += new EventHandler(OnTextBoxLostFocus);
@@ -340,14 +339,6 @@ namespace System.Windows.Forms
 			}
 			
 			txtView.Bounds = new Rectangle(text_displacement, 0, ClientSize.Width - spinner_width, Height);
-		}
-
-		private void txtView_MouseWheel(object sender, MouseEventArgs e) {
-			if (e.Delta > 0) {
-				UpButton();
-			} else if (e.Delta < 0) {
-				DownButton();
-			}
 		}
 
 		private void TabIndexChangedHandler (object sender, EventArgs e)
@@ -633,9 +624,14 @@ namespace System.Windows.Forms
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
-			// prevent this event from firing twice for the same mouse action!
-			if (GetChildAtPoint(new Point(e.X, e.Y)) == null)
-				txtView_MouseWheel(null, e);
+			if (e.Delta > 0) 
+			{
+				UpButton();
+			} 
+			else if (e.Delta < 0) 
+			{
+				DownButton();
+			}
 		}
 
 		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) {
