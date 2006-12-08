@@ -1,3 +1,11 @@
+2006-12-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Change ButtonBase_DrawImage to use the
+	Graphics.DrawImage (image, int, int, int, int) overload instead
+	of Graphics.DrawImage (image, int, int).  GDI+ can't figure out
+	the dpi difference and was blurring images it drew.
+	[Fixes bug #79960]
+
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs (DataGridPaintRows): handle case where

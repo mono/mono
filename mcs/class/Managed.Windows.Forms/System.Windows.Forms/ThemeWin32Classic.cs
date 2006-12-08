@@ -349,7 +349,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (button.Enabled) {
-				dc.DrawImage(i, image_x, image_y); 
+				dc.DrawImage(i, image_x, image_y, image_width, image_height); 
 			}
 			else {
 				CPDrawImageDisabled(dc, i, image_x, image_y, ColorControl);
