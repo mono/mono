@@ -40,26 +40,64 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
-		[MonoTODO]
 		protected internal override void AddResponseFileCommands (CommandLineBuilderExtension commandLine)
 		{
 			base.AddResponseFileCommands (commandLine);
-			
-			if (AllowUnsafeBlocks == true)
-				commandLine.AppendSwitch ("/unsafe");
+
+			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
+			if (Bag ["AllowUnsafeBlocks"] != null)
+				if (AllowUnsafeBlocks)
+					commandLine.AppendSwitch ("/unsafe+");
+				else
+					commandLine.AppendSwitch ("/unsafe-");
+
 			//baseAddress
-			//checkForOverflowUnderflow
+			
+			if (Bag ["CheckForOverflowUnderflow"] != null)
+				if (CheckForOverflowUnderflow)
+					commandLine.AppendSwitch ("/checked+");
+				else
+					commandLine.AppendSwitch ("/checked-");
+
+			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
+
 			commandLine.AppendSwitchIfNotNull ("/nowarn:", DisabledWarnings);
+
 			commandLine.AppendSwitchIfNotNull ("/doc:", DocumentationFile);
+
 			//errorReport
+
+			if (GenerateFullPaths)
+				commandLine.AppendSwitch ("/fullpaths");
+
 			commandLine.AppendSwitchIfNotNull ("/langversion:", LangVersion);
+
+			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
+
 			//moduleAssemblyName
+			
 			if (NoStandardLib)
 				commandLine.AppendSwitch ("/nostdlib");
+
 			//platform
-			commandLine.AppendSwitchIfNotNull ("/warn:", WarningLevel.ToString ());
-			//warningsAsErrors
-			//warningNotAsErrors
+			//
+			if (References != null)
+				foreach (ITaskItem item in References)
+					commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
+
+			if (ResponseFiles != null)
+				foreach (ITaskItem item in ResponseFiles) 
+					commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.ItemSpec));
+
+			if (Bag ["WarningLevel"] != null)
+				commandLine.AppendSwitchIfNotNull ("/warn:", WarningLevel.ToString ());
+
+			commandLine.AppendSwitchIfNotNull ("/warnaserror+:", WarningsAsErrors);
+
+			commandLine.AppendSwitchIfNotNull ("/warnaserror-:", WarningsNotAsErrors);
+
+			if (Win32Resource != null)
+				commandLine.AppendSwitchIfNotNull ("/win32res:", String.Format ("\"{0}\"", Win32Resource));
 		}
 
 		[MonoTODO]
@@ -149,7 +187,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		public int WarningLevel {
-			get { return GetIntParameterWithDefault ("WarningLevel", 2); }
+			get { return GetIntParameterWithDefault ("WarningLevel", 4); }
 			set { Bag ["WarningLevel"] = value; }
 		}
 

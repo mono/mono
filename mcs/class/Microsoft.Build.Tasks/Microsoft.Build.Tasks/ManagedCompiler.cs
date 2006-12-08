@@ -53,12 +53,12 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
-			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
 			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
+
 			commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
-			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
+
 			if (Bag ["DelaySign"] != null)
 				if (DelaySign)
 					commandLine.AppendSwitch ("/delaysign+");
@@ -73,41 +73,30 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
 			// FIXME: add ids from metadata
-			if (LinkResources != null) {
-				foreach (ITaskItem item in LinkResources) {
+			if (LinkResources != null)
+				foreach (ITaskItem item in LinkResources)
 						commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
-				}
-			}
-			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
+			
 			if (NoLogo)
 				commandLine.AppendSwitch ("/nologo");
+
 			if (Bag ["Optimize"] != null)
 				if (Optimize)
 					commandLine.AppendSwitch ("/optimize+");
 				else
 					commandLine.AppendSwitch ("/optimize-");
+
 			if (OutputAssembly != null)
 				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
-			if (References != null) {
-				foreach (ITaskItem item in References) {
-					commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
-				}
-			}
-			if (Resources != null) {
-				foreach (ITaskItem item in Resources) {
+			
+			if (Resources != null)
+				foreach (ITaskItem item in Resources)
 						commandLine.AppendSwitchIfNotNull ("/resource:", item.ItemSpec);
-				}
-			}
-			if (ResponseFiles != null) {
-				foreach (ITaskItem item in ResponseFiles) {
-						commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.ItemSpec));
-				}
-			}
-			if (Sources != null) {
-				foreach (ITaskItem item in Sources) {
+
+			if (Sources != null)
+				foreach (ITaskItem item in Sources)
 						commandLine.AppendFileNameIfNotNull (item.ItemSpec);
-				}
-			}
+			
 			if (TargetType != null)
 				commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
 			if (Bag ["TreatWarningsAsErrors"] != null)
@@ -116,7 +105,6 @@ namespace Microsoft.Build.Tasks {
 				else
 					commandLine.AppendSwitch ("/warnaserror-");
 			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
-			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 
 		[MonoTODO]
