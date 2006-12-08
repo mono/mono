@@ -191,7 +191,7 @@ namespace Mono.Security.Protocol.Tls {
 		}
 
 		// only called inside the lock
-		static private ClientSessionInfo FromContext (Context context)
+		static private ClientSessionInfo FromContext (Context context, bool checkValidity)
 		{
 			if (context == null)
 				return null;
@@ -213,7 +213,7 @@ namespace Mono.Security.Protocol.Tls {
 				return null;
 
 			// yes, so what's its status ?
-			if (!si.Valid) {
+			if (checkValidity && !si.Valid) {
 				si.Dispose ();
 				cache.Remove (uid);
 				return null;
@@ -226,7 +226,9 @@ namespace Mono.Security.Protocol.Tls {
 		static public bool SetContextInCache (Context context)
 		{
 			lock (locker) {
-				ClientSessionInfo csi = FromContext (context);
+				// Don't check the validity because the masterKey of the ClientSessionInfo
+				// can still be null when this is called the first time
+				ClientSessionInfo csi = FromContext (context, false);
 				if (csi == null)
 					return false;
 
@@ -239,7 +241,7 @@ namespace Mono.Security.Protocol.Tls {
 		static public bool SetContextFromCache (Context context)
 		{
 			lock (locker) {
-				ClientSessionInfo csi = FromContext (context);
+				ClientSessionInfo csi = FromContext (context, true);
 				if (csi == null)
 					return false;
 
