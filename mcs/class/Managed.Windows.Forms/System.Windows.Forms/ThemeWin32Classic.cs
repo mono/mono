@@ -1160,11 +1160,17 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// XXX this should be moved elsewhere and turned into 1 g.FillRectangle call, not grid.DataGridRows.Length separate calls
-			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
-			not_usedarea.Y = rect_row.Y + rect_row.Height;
-			not_usedarea.Width = cells.Width + grid.RowHeadersArea.Width;
 			not_usedarea.X = 0;
+			// the rowcnt == 0 check is needed because
+			// otherwise we'd draw over the caption on
+			// empty datasources (since rect_row would be
+			// Empty)
+			if (rowcnt == 0)
+				not_usedarea.Y = cells.Y;
+			else
+				not_usedarea.Y = rect_row.Y + rect_row.Height;
+			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
+			not_usedarea.Width = cells.Width + grid.RowHeadersArea.Width;
 
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 		}
