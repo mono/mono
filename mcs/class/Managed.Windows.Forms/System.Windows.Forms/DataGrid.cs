@@ -1693,6 +1693,9 @@ namespace System.Windows.Forms
 			int pixels;
 
 			if (ctrl_pressed) { // scroll horizontally
+				if (!horiz_scrollbar.Visible)
+					return;
+
 				if (e.Delta > 0) {
 					/* left */
 					pixels = Math.Max (horiz_scrollbar.Minimum,
@@ -1707,6 +1710,9 @@ namespace System.Windows.Forms
 				GridHScrolled (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, pixels));
 				horiz_scrollbar.Value = pixels;
 			} else {
+				if (!vert_scrollbar.Visible)
+					return;
+
 				if (e.Delta > 0) {
 					/* up */
 					pixels = Math.Max (vert_scrollbar.Minimum,

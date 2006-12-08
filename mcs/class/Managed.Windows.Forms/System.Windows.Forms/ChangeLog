@@ -1,3 +1,8 @@
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: the mousewheel code shouldn't try to scroll in a
+	direction if that scrollbar isn't shown.  fixes bug #80158.
+
 2006-12-08  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown.cs: Update value on getter. Fixes #79950
