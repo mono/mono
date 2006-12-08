@@ -1,3 +1,9 @@
+2006-12-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono.1: Document the MONO_TLS_SESSION_CACHE_TIMEOUT environment 
+	variable that can be used to control the validity period of the 
+	SSL/TLS negotiation cache.
+
 2006-11-29  Joshua Tauberer  <jit@occams.info>
 
 	* mkbundle.1: Corrected minor errors, added --nomain option.

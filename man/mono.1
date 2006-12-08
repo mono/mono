@@ -782,6 +782,14 @@ include "clearlooks", "nice" and "win32".
 .Sp
 The default is "win32".  
 .TP
+.I "MONO_TLS_SESSION_CACHE_TIMEOUT"
+The time, in seconds, that the SSL/TLS session cache will keep it's entry to
+avoid a new negotiation between the client and a server. Negotiation are very
+CPU intensive so an application-specific custom value may prove useful for 
+small embedded systems.
+.Sp
+The default is 180 seconds.
+.TP
 .I "MONO_THREADS_PER_CPU"
 The maximum number of threads in the general threadpool will be
 20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
