@@ -2911,7 +2911,7 @@ namespace System.Windows.Forms
 				caption_area.Height = CaptionFont.Height;
 				if (caption_area.Height < back_button_image.Height)
 					caption_area.Height = back_button_image.Height;
-				caption_area.Height += 6;
+				caption_area.Height += 2;
 			}
 			else
 				caption_area.Height = 0;

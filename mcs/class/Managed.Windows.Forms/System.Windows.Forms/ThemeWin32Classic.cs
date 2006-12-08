@@ -876,9 +876,13 @@ namespace System.Windows.Forms
 			g.FillRectangle (ResPool.GetSolidBrush (grid.CaptionBackColor),
 					 modified_area);
 
+			Rectangle text_rect = grid.caption_area;
+			text_rect.Y += text_rect.Height / 2 - grid.CaptionFont.Height / 2;
+			text_rect.Height = grid.CaptionFont.Height;
+			
 			g.DrawString (grid.CaptionText, grid.CaptionFont,
 				      ResPool.GetSolidBrush (grid.CaptionForeColor),
-				      grid.caption_area);
+				      text_rect);
 
 			if (modified_area.IntersectsWith (grid.back_button_rect)) {
 				g.DrawImage (grid.back_button_image, grid.back_button_rect);
