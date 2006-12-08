@@ -239,7 +239,7 @@ namespace System.Windows.Forms {
 			if (form != null && (form.AcceptButton == button as IButtonControl))
 				paint_acceptbutton_black_border = true;
 			
-			CL_Draw_Button(dc, button.ClientRectangle, button.flat_style,
+			CL_Draw_Button(dc, button.ClientRectangle, button.FlatStyle,
 					  button.is_entered, button.is_enabled, button.is_pressed,
 					  first_gradient_color, second_gradient_color,
 					  paint_acceptbutton_black_border);
@@ -384,7 +384,7 @@ namespace System.Windows.Forms {
 		
 		protected override void ButtonBase_DrawFocus( ButtonBase button, Graphics dc ) {
 			
-			if ( !button.is_enabled || button.flat_style == FlatStyle.Popup )
+			if ( !button.is_enabled || button.FlatStyle == FlatStyle.Popup )
 				return;
 			
 			Pen pen = ResPool.GetPen( button_focus_color );

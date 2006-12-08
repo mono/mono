@@ -203,10 +203,10 @@ namespace System.Windows.Forms
 			// Fill button with a nice linear gradient brush
 			Rectangle lgbRectangle = Rectangle.Inflate (buttonRectangle, -1, -1);
 			
-			if (button.flat_style != FlatStyle.Popup || ((button.flat_style == FlatStyle.Popup) && button.is_entered)) {
+			if (button.FlatStyle != FlatStyle.Popup || ((button.FlatStyle == FlatStyle.Popup) && button.is_entered)) {
 				LinearGradientBrush lgbr;
 				if (!button.is_pressed && !check_or_radio_checked) {
-					if (button.flat_style == FlatStyle.Flat) {
+					if (button.FlatStyle == FlatStyle.Flat) {
 						lgbr = new LinearGradientBrush (new Point (0, 0), new Point (0, height - 1), use_color, first_color);
 						lgbr.Blend = FlatBlend;
 					} else {

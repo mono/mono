@@ -609,7 +609,7 @@ namespace System.Windows.Forms
 			Rectangle buttonRectangle = button.ClientRectangle;
 			
 			StateType state_type = StateType.Normal;
-			ShadowType shadow_type = button.flat_style == FlatStyle.Flat ? ShadowType.In : ShadowType.Out;
+			ShadowType shadow_type = button.FlatStyle == FlatStyle.Flat ? ShadowType.In : ShadowType.Out;
 			string detail = "buttondefault";
 			
 			if (((button is CheckBox) && (((CheckBox)button).check_state == CheckState.Checked)) ||
@@ -633,7 +633,7 @@ namespace System.Windows.Forms
 			if (button.Focused)
 				gtk_widget_grab_focus (global_gtk_button);
 			
-			if (button.flat_style == FlatStyle.Flat)
+			if (button.FlatStyle == FlatStyle.Flat)
 				gtk_paint_flat_box (current_style,
 						    current_gdk_drawable,
 						    (int) state_type,
@@ -644,7 +644,7 @@ namespace System.Windows.Forms
 						    buttonRectangle.X, buttonRectangle.Y,
 						    buttonRectangle.Width, buttonRectangle.Height);
 			else
-			if (button.flat_style != FlatStyle.Popup || (button.flat_style == FlatStyle.Popup && button.is_entered))
+			if (button.FlatStyle != FlatStyle.Popup || (button.FlatStyle == FlatStyle.Popup && button.is_entered))
 				gtk_paint_box (current_style,
 					       current_gdk_drawable,
 					       (int) state_type,

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	public abstract class ButtonBase : Control {
 		#region Local Variables
-		internal FlatStyle		flat_style;
+		FlatStyle flat_style;
 		internal int			image_index;
 		internal Image			image;
 		internal ImageList		image_list;

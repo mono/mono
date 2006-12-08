@@ -150,7 +150,7 @@ namespace System.Windows.Forms
 			dc.FillRectangle (is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
 			
 			// First, draw the image
-			if ((button.image != null) || (button.image_list != null))
+			if (button.FlatStyle != FlatStyle.System && ((button.image != null) || (button.image_list != null)))
 				ButtonBase_DrawImage(button, dc);
 			
 			// Draw the button: Draw border, etc.
