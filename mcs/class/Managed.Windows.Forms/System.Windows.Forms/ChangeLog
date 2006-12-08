@@ -1,3 +1,9 @@
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: comment out the two MakeTransparent calls for the
+	time being so people using trunk (and not 1.2.2) on windows can
+	actually use the datagrid.  This deals with bug #80151.
+
 2006-12-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Change ButtonBase_DrawImage to use the
