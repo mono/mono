@@ -1,3 +1,9 @@
+2006-12-08  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Ugh, ClientSize can be 0,0 sometimes, so we need
+	to watch ourselves when setting the canvas size and setting the
+	scrollbar values.
+
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: comment out the two MakeTransparent calls for the

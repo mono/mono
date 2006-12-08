@@ -1552,14 +1552,14 @@ namespace System.Windows.Forms {
 		{
 			if (hscroll.Visible) {
 				//vscroll.Maximum += hscroll.Height;
-				canvas_height = ClientSize.Height - hscroll.Height;
+				canvas_height = Math.Max (0, ClientSize.Height - hscroll.Height);
 			} else {
 				canvas_height = ClientSize.Height;
 			}
 
 			if (vscroll.Visible) {
 				//hscroll.Maximum += vscroll.Width;
-				canvas_width = ClientSize.Width - vscroll.Width;
+				canvas_width = Math.Max (0, ClientSize.Width - vscroll.Width);
 			} else {
 				canvas_width = ClientSize.Width;
 			}
@@ -1568,9 +1568,18 @@ namespace System.Windows.Forms {
 			document.ViewPortWidth = canvas_width;
 			document.ViewPortHeight = canvas_height;
 
+			if (canvas_height < 1 || canvas_width < 1)
+				return;
+
 			// We always move them, they just might not be displayed
-			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Height - hscroll.Height, ClientSize.Width - (vscroll.Visible ? vscroll.Width : 0), hscroll.Height);
-			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height - (hscroll.Visible ? hscroll.Height : 0));
+			hscroll.Bounds = new Rectangle (ClientRectangle.Left,
+					Math.Max (0, ClientRectangle.Height - hscroll.Height),
+					Math.Max (0, ClientSize.Width - (vscroll.Visible ? vscroll.Width : 0)),
+					hscroll.Height);
+
+			vscroll.Bounds = new Rectangle (Math.Max (0, ClientRectangle.Right - vscroll.Width),
+					ClientRectangle.Top, vscroll.Width,
+					Math.Max (0, ClientSize.Height - (hscroll.Visible ? hscroll.Height : 0)));
 			
 		}
 
@@ -1813,6 +1822,9 @@ namespace System.Windows.Forms {
 		internal void CaretMoved(object sender, EventArgs e) {
 			Point	pos;
 			int	height;
+
+			if (canvas_width < 1 || canvas_height < 1)
+				return;
 			
 			pos = document.Caret;
 			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
@@ -1870,7 +1882,7 @@ namespace System.Windows.Forms {
 			}
 
 			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
-				vscroll.Value = pos.Y - canvas_height + height;
+				vscroll.Value = Math.Max (0, pos.Y - canvas_height + height);
 			}
 		}
 
