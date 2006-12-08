@@ -1,3 +1,9 @@
+2006-12-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientSessionCache.cs: Check for a new environment variable to 
+	control the cache validity period (MONO_TLS_SESSION_CACHE_TIMEOUT).
+	Fix bug #80174.
+
 2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherSuite.cs: Avoid creating a CryptoStream and a MemoryStream in

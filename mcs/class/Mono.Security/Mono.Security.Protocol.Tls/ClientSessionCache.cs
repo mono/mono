@@ -33,8 +33,9 @@ namespace Mono.Security.Protocol.Tls {
 
 	internal class ClientSessionInfo : IDisposable {
 
-		// we keep this item valid for 3 minutes (if unused)
-		private const int ValidityInterval = 3 * 60;
+		// (by default) we keep this item valid for 3 minutes (if unused)
+		private const int DefaultValidityInterval = 3 * 60;
+		private static readonly int ValidityInterval;
 
 		private bool disposed;
 		private DateTime validuntil;
@@ -43,6 +44,21 @@ namespace Mono.Security.Protocol.Tls {
 		// see RFC2246 - Section 7
 		private byte[] sid;
 		private byte[] masterSecret;
+
+		static ClientSessionInfo ()
+		{
+			string user_cache_timeout = Environment.GetEnvironmentVariable ("MONO_TLS_SESSION_CACHE_TIMEOUT");
+			if (user_cache_timeout == null) {
+				ValidityInterval = DefaultValidityInterval;
+			} else {
+				try {
+					ValidityInterval = Int32.Parse (user_cache_timeout);
+				}
+				catch {
+					ValidityInterval = DefaultValidityInterval;
+				}
+			}
+		}
 
 		public ClientSessionInfo (string hostname, byte[] id)
 		{
