@@ -517,9 +517,9 @@ namespace System.Windows.Forms
 
 				int old_row = current_cell.RowNumber;
 
-				current_cell = value;
+				EnsureCellVisibility (value);
 
-				EnsureCellVisibility (current_cell);
+				current_cell = value;
 
 				InvalidateRowHeader (old_row);
 				InvalidateRowHeader (current_cell.RowNumber);
