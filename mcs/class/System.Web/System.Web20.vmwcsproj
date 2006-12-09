@@ -854,6 +854,7 @@
 		<Compile Include="System.Web.UI\ExpressionBindingCollection.cs"/>
 		<Compile Include="System.Web.UI\ExtractTemplateValuesMethod.cs"/>
 		<Compile Include="System.Web.UI\FilterableAttribute.cs"/>
+		<Compile Include="System.Web.UI\HiddenFieldPageStatePersister.cs"/>
 		<Compile Include="System.Web.UI\HierarchicalDataSourceControl.cs"/>
 		<Compile Include="System.Web.UI\HierarchicalDataSourceView.cs"/>
 		<Compile Include="System.Web.UI\Html32TextWriter.cs"/>
