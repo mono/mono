@@ -4906,6 +4906,11 @@ namespace Mono.CSharp {
 								TypeManager.CSharpName (t), TypeManager.CSharpSignature (mi));
 							return false;
 						}
+
+						// Always prefer generics enumerators
+						if (TypeManager.IsGenericType(mi.ReturnType))
+							continue;
+
 						Report.SymbolRelatedToPreviousError (result);
 						Report.SymbolRelatedToPreviousError (mi);
 						Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
