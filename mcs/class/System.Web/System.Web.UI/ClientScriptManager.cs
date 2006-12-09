@@ -473,7 +473,7 @@ namespace System.Web.UI
 		{
 			if (!page.EnableEventValidation || fieldValue == null || fieldValue.Length == 0)
 				return;
-			LosFormatter fmt = page.GetFormatter ();
+			IStateFormatter fmt = page.GetFormatter ();
 			eventValidationValues = (List <int>)fmt.Deserialize (fieldValue);
 		}
 		
@@ -482,8 +482,8 @@ namespace System.Web.UI
 			if (!page.EnableEventValidation || eventValidationValues == null || eventValidationValues.Count == 0)
 				return;
 			eventValidationValues.Sort ();
-			LosFormatter fmt = page.GetFormatter ();
-			RegisterHiddenField (EventStateFieldName, fmt.SerializeToBase64 (eventValidationValues));
+			IStateFormatter fmt = page.GetFormatter ();
+			RegisterHiddenField (EventStateFieldName, fmt.Serialize (eventValidationValues));
 		}
 
 		internal string EventStateFieldName

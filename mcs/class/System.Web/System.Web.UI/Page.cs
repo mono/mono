@@ -86,7 +86,7 @@ public class Page : TemplateControl, IHttpHandler
 	private HttpContext _context;
 	private ValidatorCollection _validators;
 	private bool renderingForm;
-	private object _savedViewState;
+	private string _savedViewState;
 	private ArrayList _requiresPostBack;
 	private ArrayList _requiresPostBackCopy;
 	private ArrayList requiresPostDataChanged;
@@ -100,6 +100,7 @@ public class Page : TemplateControl, IHttpHandler
 	string clientTarget;
 	ClientScriptManager scriptManager;
 	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
+	PageStatePersister page_state_persister;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
@@ -320,6 +321,13 @@ public class Page : TemplateControl, IHttpHandler
 		set { _viewStateMac = value; }
 	}
 
+#if NET_1_1
+	internal bool EnableViewStateMacInternal {
+		get { return _viewStateMac; }
+		set { _viewStateMac = value; }
+	}
+#endif
+	
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("The URL of a page used for error redirection.")]
@@ -968,43 +976,15 @@ public class Page : TemplateControl, IHttpHandler
 			postBackScriptRendered = true;
 		}
 
-		if (handleViewState) {
-			string vs = GetViewStateString ();
-			writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
-			writer.WriteLine ("value=\"{0}\" />", vs);
-		}
+		if (handleViewState)
+			writer.WriteLine ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"{0}\" />", _savedViewState);
 
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
-	internal LosFormatter GetFormatter ()
+	internal IStateFormatter GetFormatter ()
 	{
-#if NET_2_0
-		PagesSection config = (PagesSection) WebConfigurationManager.GetSection ("system.web/pages");
-#else
-		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
-#endif
-		byte [] vkey = null;
-		if (config.EnableViewStateMac) {
-#if NET_2_0
-			MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
-			vkey = mconfig.ValidationKeyBytes;
-#else
-			MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
-			vkey = mconfig.ValidationKey;
-#endif
-		}
-
-		return new LosFormatter (config.EnableViewStateMac, vkey);
-	}
-
-	string GetViewStateString ()
-	{
-		if (_savedViewState == null)
-			return null;
-
-		LosFormatter fmt = GetFormatter ();
-		return fmt.SerializeToBase64 (_savedViewState);
+		return new ObjectStateFormatter (this);
 	}
 
 	internal object GetSavedViewState ()
@@ -1457,46 +1437,69 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual void SavePageStateToPersistenceMedium (object viewState)
 	{
-		_savedViewState = viewState;
+		PageStatePersister persister = this.PageStatePersister;
+		if (persister == null)
+			return;
+		Pair pair = viewState as Pair;
+		if (pair != null) {
+			persister.ViewState = pair.First;
+			persister.ControlState = pair.Second;
+		} else
+			persister.ViewState = viewState;
+		persister.Save ();
 	}
 
+	internal string RawViewState {
+		get {
+			NameValueCollection postdata = _requestValueCollection;
+			string view_state;
+			if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
+				return null;
+
+			if (view_state == "")
+				return null;
+			return view_state;
+		}
+		set { _savedViewState = value; }
+	}
+
+#if NET_2_0
+	protected virtual 
+#else
+	internal
+#endif
+	PageStatePersister PageStatePersister {
+		get {
+			if (page_state_persister == null)
+				page_state_persister = new HiddenFieldPageStatePersister (this);
+			return page_state_persister;
+		}
+	}
+	
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual object LoadPageStateFromPersistenceMedium ()
 	{
-		NameValueCollection postdata = _requestValueCollection;
-		string view_state;
-		if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
+		PageStatePersister persister = this.PageStatePersister;
+		if (persister == null)
 			return null;
-
-		if (view_state == "")
-			return null;
-
-		LosFormatter fmt = GetFormatter ();
-		try {
-			return fmt.Deserialize (view_state);
-		} catch (Exception e) {
-			throw new HttpException ("Error restoring page viewstate.", e);
-		}
+		persister.Load ();
+		return new Pair (persister.ViewState, persister.ControlState);
 	}
 
 	internal void LoadPageViewState()
 	{
-		object sState = LoadPageStateFromPersistenceMedium ();
+		Pair sState = LoadPageStateFromPersistenceMedium () as Pair;
 		if (sState != null) {
+			if (allow_load) {
 #if NET_2_0
-			Triplet data = (Triplet) sState;
-			if (allow_load) {
-				LoadPageControlState (data.Third);
-				LoadViewStateRecursive (data.First);
-				_requiresPostBack = data.Second as ArrayList;
-			}
-#else
-			Pair pair = (Pair) sState;
-			if (allow_load) {
-				LoadViewStateRecursive (pair.First);
-				_requiresPostBack = pair.Second as ArrayList;
-			}
+				LoadPageControlState (sState.Second);
 #endif
+				Pair vsr = sState.First as Pair;
+				if (vsr != null) {
+					LoadViewStateRecursive (vsr.First);
+					_requiresPostBack = vsr.Second as ArrayList;
+				}
+			}
 		}
 	}
 
@@ -1511,27 +1514,23 @@ public class Page : TemplateControl, IHttpHandler
 
 		object viewState = SaveViewStateRecursive ();
 		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
+		Pair vsr = null;
 
-#if NET_2_0
-		Triplet triplet = new Triplet ();
-		triplet.First = viewState;
-		triplet.Second = reqPostback;
-		triplet.Third = controlState;
-
-		if (triplet.First == null && triplet.Second == null && triplet.Third == null)
-			triplet = null;
-			
-		SavePageStateToPersistenceMedium (triplet);
-#else
+		if (viewState != null || reqPostback != null)
+			vsr = new Pair (viewState, reqPostback);
 		Pair pair = new Pair ();
-		pair.First = viewState;
-		pair.Second = reqPostback;
 
-		if (pair.First == null && pair.Second == null)
-			pair = null;
-			
-		SavePageStateToPersistenceMedium (pair);
+		pair.First = vsr;
+#if NET_2_0
+		pair.Second = controlState;
+#else
+		pair.Second = null;
 #endif
+		if (pair.First == null && pair.Second == null)
+			SavePageStateToPersistenceMedium (null);
+		else
+			SavePageStateToPersistenceMedium (pair);		
+
 	}
 
 	public virtual void Validate ()

@@ -26,50 +26,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Web.UI
 {
-	public abstract class PageStatePersister
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	abstract class PageStatePersister
 	{
+		object control_state;
+		object view_state;
+		Page page;
+		IStateFormatter state_formatter;
+		
 		protected PageStatePersister (Page page)
 		{
+			if (page == null)
+				throw new ArgumentNullException ("page");
+			this.page = page;
 		}
 
-		public object ControlState 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public object ControlState  {
+			get { return control_state; }
+			set { control_state = value; }
 		}
 
-		public object ViewState 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public object ViewState  {
+			get { return view_state; }
+			set { view_state = value; }
 		}
 
-		protected Page Page 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		protected Page Page {
+			get { return page; }
+			set { page = value; }
 		}
 
 		protected IStateFormatter StateFormatter 
 		{
 			get {
-				throw new NotImplementedException ();
+				if (state_formatter == null)
+					state_formatter = page.GetFormatter ();
+				return state_formatter;
 			}
 		}
 
@@ -78,4 +76,3 @@ namespace System.Web.UI
 		public abstract void Save ();
 	}
 }
-#endif

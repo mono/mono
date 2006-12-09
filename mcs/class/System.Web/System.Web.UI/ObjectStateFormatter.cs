@@ -44,6 +44,8 @@ using System.Text;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Web.Configuration;
 
 namespace System.Web.UI {
 #if NET_2_0
@@ -51,11 +53,85 @@ namespace System.Web.UI {
 #else
 	internal
 #endif
-	sealed class ObjectStateFormatter : IFormatter
-#if NET_2_0
-		, IStateFormatter
-#endif
+	sealed class ObjectStateFormatter : IFormatter, IStateFormatter
 	{
+		Page page;
+		HashAlgorithm algo;
+		byte [] vkey;
+
+		internal ObjectStateFormatter ()
+		{
+		}
+		
+		internal ObjectStateFormatter (Page page)
+		{
+			this.page = page;
+		}
+
+		internal ObjectStateFormatter (byte [] vkey)
+		{
+			this.vkey = vkey;
+		}
+		
+		internal bool EnableMac {
+			get {
+				if (page == null) {
+					if (vkey == null)
+						return false;
+					return true;
+				} else {
+				
+#if NET_2_0
+					return page.EnableViewStateMac;
+#elif NET_1_1
+					return page.EnableViewStateMacInternal;
+#else
+					return false;
+#endif
+				}
+			}
+		}
+
+		internal HashAlgorithm GetAlgo () {
+			if (algo != null)
+				return algo;
+			if (!EnableMac)
+				return null;
+			
+			byte [] algoKey;
+			if (page != null) {
+#if NET_2_0
+				MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
+				algoKey = mconfig.ValidationKeyBytes;
+#else
+				MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+				algoKey = mconfig.ValidationKey;
+#endif
+			} else
+				algoKey = vkey;
+			
+			return new HMACSHA1 (algoKey);
+		}
+
+		static int ValidateInput (HashAlgorithm algo, byte [] data, int offset, int size)
+		{
+			if (algo == null)
+				throw new HttpException ("Unable to validate data.");
+			
+			int hash_size = algo.HashSize / 8;
+			if (size != 0 && size < hash_size)
+				throw new HttpException ("Unable to validate data.");
+
+			int data_length = size - hash_size;
+			MemoryStream data_stream = new MemoryStream (data, offset, data_length, false, false);
+			byte [] hash = algo.ComputeHash (data_stream);
+			for (int i = 0; i < hash_size; i++) {
+				if (hash [i] != data [data_length + i])
+					throw new HttpException ("Unable to validate data.");
+			}
+			return data_length;
+		}
+		
 		public object Deserialize (Stream inputStream)
 		{
 			if (inputStream == null)
@@ -68,15 +144,20 @@ namespace System.Web.UI {
 		{
 			if (inputString == null)
 				throw new ArgumentNullException ("inputString");
-#if !NET_2_0
+#if NET_2_0
+			if (inputString.Length == 0)
+				throw new ArgumentNullException ("inputString");
+#else
 			if (inputString == "")
 				return "";
 #endif
 			byte [] buffer = Convert.FromBase64String (inputString);
-			if (buffer == null || buffer.Length == 0)
+			int length;
+			if (buffer == null || (length = buffer.Length) == 0)
 				throw new ArgumentNullException ("inputString");
-
-			return Deserialize (new MemoryStream (buffer));
+			if (page != null && EnableMac)
+				length = ValidateInput (GetAlgo (), buffer, 0, length);
+			return Deserialize (new MemoryStream (buffer, 0, length, false, false));
 		}
 		
 		public string Serialize (object stateGraph)
@@ -90,7 +171,14 @@ namespace System.Web.UI {
 			#if TRACE
 				ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
 			#endif
-			
+			if (EnableMac && ms.Length > 0) {
+				HashAlgorithm algo = GetAlgo ();
+				if (algo != null) {
+					byte [] hash = algo.ComputeHash (ms.GetBuffer (), 0, (int) ms.Length);
+					ms.Write (hash, 0, hash.Length);
+				}
+				
+			}
 			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 		}
 		

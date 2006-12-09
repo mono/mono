@@ -1,11 +1,12 @@
 //
-// System.Web.UI.IStateFormatter.cs
+// System.Web.Compilation.AppCodeCompiler: A compiler for the App_Code folder
 //
 // Authors:
-//      Sanjay Gupta (gsanjay@novell.com)
+//   Marek Habersack (grendello@gmail.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2006 Marek Habersack
 //
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,22 +27,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Security.Permissions;
 
-
-using System;
-
-namespace System.Web.UI
+namespace System.Web.UI 
 {
 #if NET_2_0
+	// CAS
+        [AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+        [AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public
 #else
 	internal
 #endif
-	interface IStateFormatter
+	class HiddenFieldPageStatePersister : PageStatePersister
 	{
-		object Deserialize (string serializationState);
-		string Serialize (object state);
+		public HiddenFieldPageStatePersister (Page page)
+			: base(page)
+		{
+		}
+		
+		public override void Load ()
+		{
+			IStateFormatter formatter = StateFormatter;
+			Pair pair = formatter.Deserialize (Page.RawViewState) as Pair;
+			if (pair != null) {
+				ViewState = pair.First;
+				ControlState = pair.Second;
+			}
+		}
+
+		public override void Save ()
+		{
+			IStateFormatter formatter = StateFormatter;
+			Page.RawViewState = formatter.Serialize (new Pair (ViewState, ControlState));
+		}
 	}
 }
-
 

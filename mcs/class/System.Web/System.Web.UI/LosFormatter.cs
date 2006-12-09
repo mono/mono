@@ -39,12 +39,11 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class LosFormatter {
 
-		ObjectStateFormatter osf = new ObjectStateFormatter ();
-		bool enable_mac;
-		HashAlgorithm algo;
+		ObjectStateFormatter osf;
 		
 		public LosFormatter ()
 		{
+			osf = new ObjectStateFormatter ();
 		}
 
 #if NET_1_1
@@ -61,25 +60,10 @@ namespace System.Web.UI {
 #endif
 		LosFormatter (bool enableMac, byte[] macKeyModifier)
 		{
-			this.enable_mac = enableMac;
 			if (enableMac)
-				algo = new HMACSHA1 (macKeyModifier);
-		}
-
-		int ValidateInput (byte [] data, int offset, int size)
-		{
-			int hash_size = algo.HashSize / 8;
-			if (size != 0 && size < hash_size)
-				throw new HttpException ("Unable to validate data.");
-
-			int data_length = size - hash_size;
-			MemoryStream data_stream = new MemoryStream (data, offset, data_length, false, false);
-			byte [] hash = algo.ComputeHash (data_stream);
-			for (int i = 0; i < hash_size; i++) {
-				if (hash [i] != data [data_length + i])
-					throw new HttpException ("Unable to validate data.");
-			}
-			return data_length;
+				osf = new ObjectStateFormatter (macKeyModifier);
+			else
+				osf = new ObjectStateFormatter ();
 		}
 
 		public object Deserialize (Stream stream)
@@ -116,24 +100,12 @@ namespace System.Web.UI {
 			if (input == null)
 				return null;
 
-			if (!enable_mac)
-				return osf.Deserialize (input);
-
-			byte [] buffer = Convert.FromBase64String (input);
-			int length = buffer.Length;
-			length = ValidateInput (buffer, 0, length);
-			return osf.Deserialize (new MemoryStream (buffer, 0, length, false, false));
+			return osf.Deserialize (input);
 		}
 
 		internal string SerializeToBase64 (object value)
 		{
-			MemoryStream ms = new MemoryStream ();
-			osf.Serialize (ms, value);
-			if (enable_mac && ms.Length > 0) {
-				byte [] hash = algo.ComputeHash (ms.GetBuffer (), 0, (int) ms.Length);
-				ms.Write (hash, 0, hash.Length);
-			}
-			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
+			return osf.Serialize (value);
 		}
 
 		public void Serialize (Stream stream, object value)

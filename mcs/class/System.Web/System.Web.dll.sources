@@ -493,6 +493,7 @@ System.Web.UI/ExpressionBindingCollection.cs
 System.Web.UI/ExpressionBinding.cs
 System.Web.UI/ExtractTemplateValuesMethod.cs
 System.Web.UI/FilterableAttribute.cs
+System.Web.UI/HiddenFieldPageStatePersister.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
 System.Web.UI/HierarchicalDataSourceView.cs
 System.Web.UI/Html32TextWriter.cs

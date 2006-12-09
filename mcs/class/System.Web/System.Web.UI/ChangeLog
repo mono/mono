@@ -1,3 +1,28 @@
+2006-12-09  Marek Habersack  <grendello@gmail.com>
+
+	* HiddenFieldPageStatePersister.cs: Implement the 2.0 class (used
+	also in the 1.x profile)
+
+	* ObjectStateFormatter.cs: Implement the IStateFormatter interface
+
+	* ClientScriptManager.cs: Use IStateFormatter instead of
+	LosFormatter.
+	Use the IStateFormatter interface when registering the hidden
+	field with the state.
+
+	* LosFormatter.cs: Use ObjectStateFormatter
+
+	* PageStatePersister.cs: Make the class available as internal for
+	1.x profile.
+	Constructor throws an exception on its page parameter being null.
+	Implemented several properties: ControlState, ViewState, Page,
+	StateFormatter
+
+	* Page.cs: Use new state persister for all the profiles.
+	Use the new HiddenFieldPageStatePersister class.
+
+	* IStateFormatter.cs: Make the class available as internal for 1.x profile.
+
 2006-12-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: fixed TemplateSourceDirectory	initialization
