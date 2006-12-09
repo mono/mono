@@ -31,10 +31,7 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-//#if GMCS_SOURCE
-	partial
-//#endif
-	class TypeManager {
+public partial class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
 	//
@@ -60,6 +57,7 @@ namespace Mono.CSharp {
 	static public Type multicast_delegate_type;
 	static public Type void_type;
 	static public Type null_type;
+	static public Type enumeration_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
 	static public Type icloneable_type;
@@ -439,6 +437,11 @@ namespace Mono.CSharp {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
+#if GMCS_SOURCE && MS_COMPATIBLE
+        if (t.IsGenericType && !t.IsGenericTypeDefinition)
+            t = t.GetGenericTypeDefinition ();
+#endif
+
 		if (t is TypeBuilder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
 			if (container != null)
@@ -1342,7 +1345,7 @@ namespace Mono.CSharp {
 					      MemberFilter filter, object criteria)
 	{
 #if MS_COMPATIBLE && GMCS_SOURCE
-		if (t.IsGenericType)
+		if (t.IsGenericType && !t.IsGenericTypeDefinition)
 			t = t.GetGenericTypeDefinition ();
 #endif
 
@@ -1432,6 +1435,11 @@ namespace Mono.CSharp {
 	{
 		MemberCache cache;
 
+#if GMCS_SOURCE && MS_COMPATIBLE
+        if (t.IsGenericType && !t.IsGenericTypeDefinition)
+            t = t.GetGenericTypeDefinition();
+#endif
+
 		//
 		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
 		// and we can ask the DeclSpace for the MemberCache.
@@ -1467,7 +1475,7 @@ namespace Mono.CSharp {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-		if (t == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
+		if (t.IsArray) { //  == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
 			used_cache = true;
 			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
@@ -1554,7 +1562,7 @@ namespace Mono.CSharp {
 			return true;
 
 #if MS_COMPATIBLE && GMCS_SOURCE
-		if (t.IsGenericParameter)
+		if (t.IsGenericParameter || t.IsGenericType)
 			return false;
 #endif
 		return t.IsEnum;
@@ -1671,13 +1679,6 @@ namespace Mono.CSharp {
 
 	public static bool IsSubclassOf (Type type, Type base_type)
 	{
-		// TODO: msaf
-//		if (base_type.IsSealed) 
-//		{
-//			Console.WriteLine ("Is sealed " + TypeManager.CSharpName (base_type));
-//			return false;
-//		}
-
 		TypeParameter tparam = LookupTypeParameter (type);
 		TypeParameter pparam = LookupTypeParameter (base_type);
 
@@ -2729,13 +2730,8 @@ namespace Mono.CSharp {
 
 	public static bool IsEqual (Type a, Type b)
 	{
-		if (a.Equals (b)) {
-			// MS BCL returns true even when enum types arer different
-			if (a.BaseType == TypeManager.enum_type || b.BaseType == TypeManager.enum_type)
-				return a.FullName == b.FullName;
-
+		if (a.Equals (b))
 			return true;
-		}
 
 #if GMCS_SOURCE
 		if (a.IsGenericParameter && b.IsGenericParameter) {
@@ -2803,6 +2799,10 @@ namespace Mono.CSharp {
 		Type t = m.DeclaringType.GetGenericTypeDefinition ();
 		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
 			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+#if MS_COMPATIBLE
+        return m;
+#endif
 
 		if (m is ConstructorInfo) {
 			foreach (ConstructorInfo c in t.GetConstructors (bf))
