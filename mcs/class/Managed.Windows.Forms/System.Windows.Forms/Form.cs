@@ -314,6 +314,8 @@ namespace System.Windows.Forms {
 
 			set {
 				cancel_button = value;
+				if (cancel_button.DialogResult == DialogResult.None)
+					cancel_button.DialogResult = DialogResult.Cancel;
 			}
 		}
 

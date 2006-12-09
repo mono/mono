@@ -1,5 +1,10 @@
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
+	* ButtonTest.cs: add tests for DialogResult changes when setting
+	Form.AcceptButton and Form.CancelButton.
+
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
 	* MenuItemTest.cs: add test for menu item events when cloning menu
 	items.  Tests for the bug in #80183.
 

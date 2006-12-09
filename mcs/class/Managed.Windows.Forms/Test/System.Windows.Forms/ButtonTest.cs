@@ -92,6 +92,62 @@ namespace MonoTests.System.Windows.Forms
 			B1.Visible = true;
 			f.Controls.Add (B1);
 			Assert.AreEqual (DialogResult.No, B1.DialogResult, "#6");
+			f.Dispose();
+
+			// check cancel button behavior
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			f.CancelButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.Cancel, B1.DialogResult, "#7");
+			f.Dispose ();
+
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			B1.DialogResult = DialogResult.No;
+			f.CancelButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.No, B1.DialogResult, "#8");
+			f.Dispose ();
+
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			B1.DialogResult = DialogResult.No;
+			B1.DialogResult = DialogResult.None;
+			f.CancelButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.Cancel, B1.DialogResult, "#9");
+			f.Dispose ();
+
+			// check accept button behavior
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			f.AcceptButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.None, B1.DialogResult, "#10");
+			f.Dispose ();
+
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			B1.DialogResult = DialogResult.No;
+			f.AcceptButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.No, B1.DialogResult, "#11");
+			f.Dispose ();
+
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			B1 = new Button ();
+			B1.DialogResult = DialogResult.No;
+			B1.DialogResult = DialogResult.None;
+			f.AcceptButton = B1;
+			f.Controls.Add (B1);
+			Assert.AreEqual (DialogResult.None, B1.DialogResult, "#12");
 			f.Dispose ();
 		}
 

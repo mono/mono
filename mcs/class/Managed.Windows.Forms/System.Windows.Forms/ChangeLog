@@ -1,3 +1,8 @@
+2006-12-08  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs (set_CancelButton): if the button's DialogResult is
+	None, set it to Cancel.  Fixes bug 80180.
+
 2006-12-08  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Ugh, ClientSize can be 0,0 sometimes, so we need
