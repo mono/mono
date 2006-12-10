@@ -176,21 +176,10 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents (HtmlTextWriter writer)
+#if !NET_2_0
+		protected override void RenderContents (HtmlTextWriter writer)
 		{
-#if NET_2_0
-			bool havePage = Page != null;
-#endif
 			foreach (ListItem item in Items) {
-#if NET_2_0
-				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
-#endif
 				writer.WriteBeginTag ("option");
 				if (item.Selected) {
 					writer.WriteAttribute ("selected", "selected", false);
@@ -204,6 +193,7 @@ namespace System.Web.UI.WebControls {
 				writer.WriteLine ();
 			}
 		}
+#endif
 
 #if NET_2_0
 		protected internal

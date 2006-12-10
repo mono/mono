@@ -426,9 +426,29 @@ namespace System.Web.UI.WebControls {
 			base.PerformSelect ();
 		}
 
-		protected internal override void RenderContents (HtmlTextWriter w)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
-			base.RenderContents (w);
+			bool selected = false;
+			bool havePage = Page != null;
+			for (int i = 0; i < Items.Count; i++) {
+				ListItem item = Items [i];
+				if (havePage)
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
+				writer.WriteBeginTag ("option");
+				if (item.Selected) {
+					if (selected)
+						VerifyMultiSelect ();
+					writer.WriteAttribute ("selected", "selected", false);
+					selected = true;
+				}
+				writer.WriteAttribute ("value", item.Value, true);
+
+				writer.Write (">");
+				string encoded = HttpUtility.HtmlEncode (item.Text);
+				writer.Write (encoded);
+				writer.WriteEndTag ("option");
+				writer.WriteLine ();
+			}
 		}
 
 #endif		

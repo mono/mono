@@ -1,3 +1,10 @@
+2006-12-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ListControl.cs:
+	* ListBox.cs:
+	* DropDownList.cs:
+	fixed rendering for 2.0			
+
 2006-12-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetaisView.cs: fixed: rendering.

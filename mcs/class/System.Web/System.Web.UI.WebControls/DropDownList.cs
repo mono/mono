@@ -161,12 +161,8 @@ namespace System.Web.UI.WebControls {
 			return base.CreateControlCollection();
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents(HtmlTextWriter writer) {
+#if !NET_2_0
+		protected override void RenderContents(HtmlTextWriter writer) {
 			int		count;
 			ListItem	item;
 			bool		selected;
@@ -180,10 +176,6 @@ namespace System.Web.UI.WebControls {
 
 			for (int i = 0; i < count; i++) {
 				item = Items[i];
-#if NET_2_0
-				if (Page != null)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
-#endif
 				writer.WriteBeginTag("option");
 				if (item.Selected) {
 					if (selected) {
@@ -200,15 +192,13 @@ namespace System.Web.UI.WebControls {
 				writer.WriteEndTag("option");
 				writer.WriteLine();
 			}
-			
-			base.RenderContents(writer);
 		}
+#endif
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		protected internal override void VerifyMultiSelect ()
 		{
-			throw new NotImplementedException ();
+			throw new HttpException ("DropDownList only may have a single selected item");
 		}
 #endif		
 		

@@ -178,11 +178,17 @@ namespace MonoTests.System.Web.UI.WebControls {
 		#endregion
 		private Hashtable changed = new Hashtable ();
 
+#if NET_2_0
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ListControlPage.aspx", "ListControlPage.aspx");
+#else
 			WebTest.CopyResource (GetType (), "ListControlPage.aspx", "ListControlPage.aspx");
+#endif
 		}
+#endif
 
 		[Test]
 		public void DefaultProperties ()
