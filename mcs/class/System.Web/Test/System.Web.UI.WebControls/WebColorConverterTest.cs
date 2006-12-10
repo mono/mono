@@ -45,9 +45,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class WebColorConverterTest 
 	{
 		[Test]
-#if TARGET_JVM //BUG #6490
-		[Category ("NotWorking")]
-#endif
 		public void Basic () 
 		{
 			WebColorConverter	conv;
