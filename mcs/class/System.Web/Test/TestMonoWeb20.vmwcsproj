@@ -15,7 +15,6 @@
     <Version>2.0</Version>
     <StartupObject>
     </StartupObject>
-    <jarserver>ipa</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,7 +83,6 @@
     </ApplicationServerType>
     <Version>2.0</Version>
     <JDKName>1.5.0_05</JDKName>
-    <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
