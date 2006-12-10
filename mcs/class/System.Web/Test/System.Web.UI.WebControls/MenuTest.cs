@@ -1319,6 +1319,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotDotNet")] // implementation specific
 		public void Menu_PostBack ()
 		{
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
@@ -1327,7 +1328,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "Menu1";
-			fr.Controls["__EVENTARGUMENT"].Value = "root\\node2";
+			fr.Controls ["__EVENTARGUMENT"].Value = "0_1";
 			t.Request = fr;
 			PageDelegates pd = new PageDelegates ();
 			pd.PreRender = _MenuItemsPost;

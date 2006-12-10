@@ -1786,17 +1786,20 @@ namespace System.Web.UI.WebControls
 			
 		Unit GetItemSpacing (MenuItem item, bool dynamic)
 		{
-			Unit itemSpacing;
+			Unit itemSpacing = Unit.Empty;
 			
 			if (item.Selected) {
 				if (levelSelectedStyles != null && item.Depth < levelSelectedStyles.Count) {
 					itemSpacing = levelSelectedStyles [item.Depth].ItemSpacing;
 					if (itemSpacing != Unit.Empty) return itemSpacing;
 				}
-				
-				if (dynamic) itemSpacing = DynamicSelectedStyle.ItemSpacing;
-				else itemSpacing = StaticSelectedStyle.ItemSpacing;
-				if (itemSpacing != Unit.Empty) return itemSpacing;
+
+				if (dynamic && dynamicSelectedStyle != null)
+					itemSpacing = dynamicSelectedStyle.ItemSpacing;
+				else if (!dynamic && staticSelectedStyle != null)
+					itemSpacing = staticSelectedStyle.ItemSpacing;
+				if (itemSpacing != Unit.Empty)
+					return itemSpacing;
 			}
 			
 			if (levelMenuItemStyles != null && item.Depth < levelMenuItemStyles.Count) {
