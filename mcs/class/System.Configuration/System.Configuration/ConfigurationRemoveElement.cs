@@ -34,29 +34,40 @@ using System.Configuration;
 
 namespace System.Configuration
 {
-	internal sealed class ConfigurationRemoveElement : ConfigurationElement
+	partial class ConfigurationElementCollection
 	{
-		ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-		string _name = "";
-
-		internal ConfigurationRemoveElement (ConfigurationElement origElement)
+		sealed class ConfigurationRemoveElement : ConfigurationElement
 		{
-			foreach (ConfigurationProperty p in origElement.Properties)
-				if (p.IsKey)
+			readonly ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection ();
+			readonly ConfigurationElement _origElement;
+			readonly ConfigurationElementCollection _origCollection;
+
+			internal ConfigurationRemoveElement (ConfigurationElement origElement, ConfigurationElementCollection origCollection)
+			{
+				_origElement = origElement;
+				_origCollection = origCollection;
+
+				foreach (ConfigurationProperty p in origElement.Properties)
+					if (p.IsKey) {
+						properties.Add (p);
+					}
+			}
+
+			internal object KeyValue
+			{
+				get
 				{
-					properties.Add(p);
-					_name = p.Name;
+					foreach (ConfigurationProperty p in Properties)
+						_origElement [p] = this [p];
+
+					return _origCollection.GetElementKey (_origElement);
 				}
-		}
+			}
 
-		internal object KeyValue
-		{
-			get { return base [_name]; }
-		}
-
-		protected internal override ConfigurationPropertyCollection Properties 
-		{
-			get { return properties; }
+			protected internal override ConfigurationPropertyCollection Properties
+			{
+				get { return properties; }
+			}
 		}
 	}
 }

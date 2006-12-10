@@ -1,3 +1,9 @@
+2006-12-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ConfigurationElementCollection.cs
+	* ConfigurationRemoveElement.cs: fixed key for <remove> element in
+	ConfigurationRemoveElement class
+
 2006-11-28  Marek Habersack  <grendello@gmail.com>
 
 	* SectionGroupInfo.cs: Implement merging of section groups with

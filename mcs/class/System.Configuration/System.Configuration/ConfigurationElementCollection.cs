@@ -38,7 +38,7 @@ using System.Xml;
 namespace System.Configuration 
 {
 	[DebuggerDisplayAttribute ("Count = {Count}")]
-	public abstract class ConfigurationElementCollection : ConfigurationElement, ICollection, IEnumerable
+	public abstract partial class ConfigurationElementCollection : ConfigurationElement, ICollection, IEnumerable
 	{
 		ArrayList list = new ArrayList ();
 		ArrayList removed;
@@ -476,7 +476,7 @@ namespace System.Configuration
 				}
 				else if (elementName == removeElementName) {
 					ConfigurationElement elem = CreateNewElementInternal (null);
-					ConfigurationRemoveElement removeElem = new ConfigurationRemoveElement (elem);
+					ConfigurationRemoveElement removeElem = new ConfigurationRemoveElement (elem, this);
 					removeElem.DeserializeElement (reader, true);
 					BaseRemove (removeElem.KeyValue);
 					modified = false;
