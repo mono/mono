@@ -349,7 +349,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (dg);
 			p.Controls.Add (ods);
 			p.Controls.Add (lce); 
-			dg.DataSourceID = "MyObject";
+			dg.DataSource = ods;
 			dg.DataBind ();
 			
 		}
@@ -386,7 +386,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (dg);
 			p.Controls.Add (ods);
 			p.Controls.Add (lce);
-			dg.DataSourceID = "MyObject";
+			dg.DataSource = ods;
 			dg.DataBind ();
 
 		}
