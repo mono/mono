@@ -6,13 +6,26 @@
 #region "dunno"
 #endregion
 
+#if FALSE
+	#region Fields
+		#if B
+			int a;
+		#else
+			bool a;
+		#endif
+	#endregion
+#endif
+
 #if FLAG_FALSE
+        #pragma foo
         namespace ns1
 #else
         #if FLAG_FALSE
                         #if FLAG_FALSE
+                                #error No error
                                 namespace ns2
                         #else
+                                #line aa
                                 namespace ns3
                         #endif
         #else

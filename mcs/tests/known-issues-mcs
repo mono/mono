@@ -7,6 +7,4 @@
 test-50.cs IGNORE	# Windows-only tests
 test-67.cs IGNORE	# Windows-only test
 
-test-476.cs
-
 test-xml-027.cs
