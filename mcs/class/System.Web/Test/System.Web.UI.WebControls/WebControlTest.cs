@@ -37,6 +37,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -451,7 +452,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				style="color:BlueViolet;background-color:Red;border-color:Green;border-width:12px;border-style:Dotted;height:6px;width:6.5cm;background-color: #ff00ff">
 				</xml>
 			*/
-			Assert.AreEqual(w.Render(), w_copy.Render(), "VS1");
+			HtmlDiff.AssertAreEqual (w.Render(), w_copy.Render(), "VS1");
 		}
 
 		[Test]
