@@ -1,3 +1,8 @@
+2006-12-10  David Elkind  <davide@mainsoft.com>
+
+	* SmtpSection.cs : Removed unnecessary initialization
+	* SmtpNetworkElement.cs : Removed unnecessary initialization
+
 2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultProxySection.cs :

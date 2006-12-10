@@ -37,66 +37,34 @@ namespace System.Net.Configuration {
 
         public sealed class SmtpNetworkElement : ConfigurationElement
         {
-                static ConfigurationProperty defaultCredentialsProp;
-                static ConfigurationProperty hostProp;
-                static ConfigurationProperty passwordProp;
-                static ConfigurationProperty portProp;
-                static ConfigurationProperty userNameProp;
-                static ConfigurationPropertyCollection properties;
-
-                static SmtpNetworkElement ()
-                {
-                        defaultCredentialsProp = new ConfigurationProperty ("defaultCredentials", typeof (bool), false);
-                        hostProp = new ConfigurationProperty ("host", typeof (string));
-                        passwordProp = new ConfigurationProperty ("password", typeof (string));
-                        portProp = new ConfigurationProperty ("port", typeof (int), 25);
-                        userNameProp = new ConfigurationProperty ("userName", typeof (string));
-                        properties = new ConfigurationPropertyCollection ();
-
-                        properties.Add (defaultCredentialsProp);
-                        properties.Add (hostProp);
-                        properties.Add (passwordProp);
-                        properties.Add (portProp);
-                        properties.Add (userNameProp);
-
-                }
-
-                protected override void PostDeserialize ()
-                {
-                }
-
                 [ConfigurationProperty ("defaultCredentials", DefaultValue = "False")]
                 public bool DefaultCredentials {
-                        get { return (bool) base [defaultCredentialsProp];}
-                        set { base[defaultCredentialsProp] = value; }
+					get { return (bool) base ["defaultCredentials"]; }
+					set { base ["defaultCredentials"] = value; }
                 }
 
                 [ConfigurationProperty ("host")]
                 public string Host {
-                        get { return (string) base [hostProp];}
-                        set { base[hostProp] = value; }
+					get { return (string) base ["host"]; }
+					set { base ["host"] = value; }
                 }
 
                 [ConfigurationProperty ("password")]
                 public string Password {
-                        get { return (string) base [passwordProp];}
-                        set { base[passwordProp] = value; }
+					get { return (string) base ["password"]; }
+					set { base ["password"] = value; }
                 }
 
                 [ConfigurationProperty ("port", DefaultValue = "25")]
                 public int Port {
-                        get { return (int) base [portProp];}
-                        set { base[portProp] = value; }
+					get { return (int) base ["port"]; }
+					set { base ["port"] = value; }
                 }
 
                 [ConfigurationProperty ("userName")]
                 public string UserName {
-                        get { return (string) base [userNameProp];}
-                        set { base[userNameProp] = value; }
-                }
-
-                protected override ConfigurationPropertyCollection Properties {
-                        get { return properties; }
+					get { return (string) base ["userName"]; }
+					set { base ["userName"] = value; }
                 }
 
         }

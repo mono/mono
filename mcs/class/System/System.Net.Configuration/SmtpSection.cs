@@ -38,53 +38,27 @@ namespace System.Net.Configuration {
 
         public sealed class SmtpSection : ConfigurationSection
         {
-                static ConfigurationProperty deliveryMethodProp;
-                static ConfigurationProperty fromProp;
-                static ConfigurationProperty networkProp;
-                static ConfigurationProperty specifiedPickupDirectoryProp;
-                static ConfigurationPropertyCollection properties;
-
-                static SmtpSection ()
-                {
-                        deliveryMethodProp = new ConfigurationProperty ("deliveryMethod", typeof (SmtpDeliveryMethod), SmtpDeliveryMethod.Network);
-                        fromProp = new ConfigurationProperty ("from", typeof (string));
-                        networkProp = new ConfigurationProperty ("network", typeof (SmtpNetworkElement));
-                        specifiedPickupDirectoryProp = new ConfigurationProperty ("specifiedPickupDirectory", typeof (SmtpSpecifiedPickupDirectoryElement));
-                        properties = new ConfigurationPropertyCollection ();
-
-                        properties.Add (deliveryMethodProp);
-                        properties.Add (fromProp);
-                        properties.Add (networkProp);
-                        properties.Add (specifiedPickupDirectoryProp);
-
-                }
-
                 [ConfigurationProperty ("deliveryMethod", DefaultValue = "Network")]
                 public SmtpDeliveryMethod DeliveryMethod {
-                        get { return (SmtpDeliveryMethod) base [deliveryMethodProp];}
-                        set { base[deliveryMethodProp] = value; }
+					get { return (SmtpDeliveryMethod) base ["deliveryMethod"]; }
+					set { base ["deliveryMethod"] = value; }
                 }
 
                 [ConfigurationProperty ("from")]
                 public string From {
-                        get { return (string) base [fromProp];}
-                        set { base[fromProp] = value; }
+					get { return (string) base ["from"]; }
+					set { base ["from"] = value; }
                 }
 
                 [ConfigurationProperty ("network")]
                 public SmtpNetworkElement Network {
-                        get { return (SmtpNetworkElement) base [networkProp];}
+					get { return (SmtpNetworkElement) base ["network"]; }
                 }
 
                 [ConfigurationProperty ("specifiedPickupDirectory")]
                 public SmtpSpecifiedPickupDirectoryElement SpecifiedPickupDirectory {
-                        get { return (SmtpSpecifiedPickupDirectoryElement) base [specifiedPickupDirectoryProp];}
+					get { return (SmtpSpecifiedPickupDirectoryElement) base ["specifiedPickupDirectory"]; }
                 }
-
-                protected override ConfigurationPropertyCollection Properties {
-                        get { return properties; }
-                }
-
         }
 
 }
