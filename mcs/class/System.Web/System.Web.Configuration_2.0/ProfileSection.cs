@@ -49,7 +49,7 @@ namespace System.Web.Configuration
 		{
 			autoSaveEnabledProp = new ConfigurationProperty ("automaticSaveEnabled", typeof (bool), true);
 			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlProfileProvider");
-			inheritsProp = new ConfigurationProperty ("inheritsProps", typeof (string), "");
+			inheritsProp = new ConfigurationProperty ("inherits", typeof (string), "");
 			propertySettingsProp = new ConfigurationProperty ("properties", typeof (RootProfilePropertySettingsCollection), null);
 			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null);
 			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
