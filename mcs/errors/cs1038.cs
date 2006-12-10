@@ -1,4 +1,4 @@
-// cs1035.cs: #endregion directive expected
+// CS1038: #endregion directive expected
 // Line: 5
 
 #region
