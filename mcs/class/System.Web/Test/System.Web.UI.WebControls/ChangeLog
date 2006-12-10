@@ -1,5 +1,9 @@
 2006-12-10  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* MasterPageTest.cs: added NotWorking attribute.
+
+2006-12-10  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* ThemeTest.cs: fixed test.
 
 2006-12-10  Igor Zelmanovich   <igorz@mainsoft.com>

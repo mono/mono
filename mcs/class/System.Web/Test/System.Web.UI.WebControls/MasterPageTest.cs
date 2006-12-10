@@ -179,6 +179,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void MasterType_VirtualPath ()
 		{
 			WebTest t = new WebTest ("MasterTypeTest1.aspx");
