@@ -1,5 +1,9 @@
 2006-12-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Menu.cs: fixed: rendering.
+
+2006-12-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControl.cs:
 	* ListBox.cs:
 	* DropDownList.cs:

@@ -1759,7 +1759,7 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				writer.AddAttribute ("width", "100%");
-				RenderMenu (writer, item.ChildItems, true, false, item.Depth + 1, notLast);
+				RenderMenu (writer, item.ChildItems, Orientation == Orientation.Vertical, false, item.Depth + 1, notLast);
 				if (item.Depth + 2 == StaticDisplayLevels)
 					RenderDynamicMenu (writer, item.ChildItems);
 				writer.RenderEndTag ();	// TD
