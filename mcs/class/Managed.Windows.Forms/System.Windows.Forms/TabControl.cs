@@ -205,21 +205,36 @@ namespace System.Windows.Forms {
 			get { return selected_index; }
 			set {
 
-				if (!this.IsHandleCreated) {
-					selected_index = value;
-					return;
-				}
-
 				if (value < -1) {
+#if NET_1_1
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to -1.");
+#else
+					throw new ArgumentOutOfRangeException ("'" + value + "' is not a valid value for 'value'. " +
+						"'value' must be greater than or equal to -1.");
+
+#endif
 				}
 
-				if (value >= TabCount)
+				if (!this.IsHandleCreated) {
+					if (selected_index != value) {
+						selected_index = value;
+#if NET_1_1
+						OnSelectedIndexChanged (EventArgs.Empty);
+#endif
+					}
 					return;
+				}
+
+				if (value >= TabCount) {
+					if (value != selected_index)
+						OnSelectedIndexChanged (EventArgs.Empty);
+					return;
+				}
 
 				if (value == selected_index) {
-					Invalidate(GetTabRect (selected_index));
+					if (selected_index > -1)
+						Invalidate(GetTabRect (selected_index));
 					return;
 				}
 
@@ -248,7 +263,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				if (selected_index != -1) {
+				if (selected_index != -1 && value != -1) {
 					if (!refresh)
 						invalid = GetTabRect (selected_index);
 					((TabPage) Controls [selected_index]).SetVisible (false);
@@ -426,6 +441,8 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+			if (selected_index >= TabCount)
+				selected_index = 0;
 			ResizeTabPages ();
 		}
 

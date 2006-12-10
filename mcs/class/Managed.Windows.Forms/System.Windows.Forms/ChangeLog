@@ -1,3 +1,11 @@
+2006-12-10  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Raise SelectedIndexChanged for 1.1 if the
+	SelectedIndex value is changed (even if it's not valid).
+	Reset SelectedIndex to 0 when the handle is created and if
+	the current index is invalid.
+	Fixes SelectdeIndex unit tests and #80128
+
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (set_CurrentCell): because EnsureCellVisibility
