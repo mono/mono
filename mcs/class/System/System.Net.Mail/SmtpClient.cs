@@ -85,9 +85,6 @@ namespace System.Net.Mail {
 		}
 
 		public SmtpClient (string host, int port) {
-
-			Console.WriteLine ("Hello, world");
-			
 			SmtpSection cfg = (SmtpSection) ConfigurationManager.GetSection ("system.net/mailSettings/smtp");
 
 			if (cfg != null) {
