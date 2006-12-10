@@ -1,4 +1,4 @@
-2006-12-04  David Elkind  <davide@mainsoft.com>
+2006-12-10  David Elkind  <davide@mainsoft.com>
 
 	* Attachment.cs - proper file name handling added
 	* AttachmentBase.cs - proper MIME type handling added
