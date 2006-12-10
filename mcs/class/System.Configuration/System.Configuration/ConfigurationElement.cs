@@ -572,24 +572,11 @@ namespace System.Configuration
 				if (at == null) continue;
 				string name = at.Name != null ? at.Name : prop.Name;
 
-				if (
-				    /* if we have no default value, don't bother to check further */
-				    at.DefaultValue != null && at.DefaultValue != ConfigurationProperty.NoDefaultValue
-				    )
-				{
-					try {
-						Convert.ChangeType (at.DefaultValue, prop.PropertyType);
-					}
-					catch {
-						throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
-												       name));
-					}
-				}
-
 				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (t, typeof(ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
-				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : new DefaultValidator();
-				
-				TypeConverter converter = TypeDescriptor.GetConverter (prop.PropertyType);
+				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : null;
+
+				TypeConverterAttribute convertAttr = (TypeConverterAttribute) Attribute.GetCustomAttribute (t, typeof (TypeConverterAttribute));
+				TypeConverter converter = convertAttr != null ? (TypeConverter) Activator.CreateInstance (Type.GetType (convertAttr.ConverterTypeName)) : null;
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
 				
 				cp.CollectionAttribute = Attribute.GetCustomAttribute (prop, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;

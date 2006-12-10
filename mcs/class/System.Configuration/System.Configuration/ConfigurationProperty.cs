@@ -35,11 +35,11 @@ namespace System.Configuration
 {
 	public sealed class ConfigurationProperty
 	{
-		internal static object NoDefaultValue = new object ();
+		internal static readonly object NoDefaultValue = new object ();
 		
 		string name;
 		Type type;
-		object default_value = NoDefaultValue;
+		object default_value;
 		TypeConverter converter;
 		ConfigurationValidatorBase validation;
 		ConfigurationPropertyOptions flags;
@@ -76,11 +76,30 @@ namespace System.Configuration
 					string description)
 		{
 			this.name = name;
-			this.converter = converter;
+			this.converter = converter != null ? converter : TypeDescriptor.GetConverter (type);
+			if (default_value != null) {
+				if (default_value == NoDefaultValue) {
+					switch (Type.GetTypeCode (type)) {
+					case TypeCode.Object:
+						default_value = null;
+						break;
+					case TypeCode.String:
+						default_value = String.Empty;
+						break;
+					default:
+						default_value = Activator.CreateInstance (type);
+						break;
+					}
+				}
+				else
+				if (!type.IsAssignableFrom(default_value.GetType()))
+					throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
+												   name));
+			}
 			this.default_value = default_value;
 			this.flags = flags;
 			this.type = type;
-			this.validation = validation;
+			this.validation = validation != null ? validation : new DefaultValidator ();
 			this.description = description;
 		}
 

@@ -1,3 +1,11 @@
+2006-12-10  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConfigurationElement.cs: Delegate parameter checking and default
+		assigning to Configuratin property.
+	* ConfigurationProperty.cs:
+		Ensure the TypeConvert and Validator always exist.
+		Ensure the primitive types are properly initialized.
+
 2006-12-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationElementCollection.cs
