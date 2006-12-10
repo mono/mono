@@ -187,20 +187,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		public void Theme_TestThemeNotExistExeption()
-		{
-			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_ThemeNotExistException));
-			string page = t.Run ();
-			Assert.AreEqual (404, t.Response.StatusCode, "404 status was expected, actual result: "+page);
-		}
-
-		public static  void _ThemeNotExistException (Page p)
-		{
-			p.Theme = "NotExistTheme";
-		}
-
-		[Test]
-		[Category ("NunitWeb")]
+		[ExpectedException (typeof (HttpException))]
 		public void Theme_SetThemeException ()
 		{
 			string page=new WebTest (PageInvoker.CreateOnPreInit (SetThemeExeption)).Run ();

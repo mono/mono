@@ -41,10 +41,13 @@ namespace System.Web.UI
 {
 	internal sealed class ThemeDirectoryCompiler
 	{
-		public static Type GetCompiledType (string virtualPath, HttpContext context)
+		public static Type GetCompiledType (string theme, HttpContext context)
 		{
+			string virtualPath = "~/App_Themes/" + theme + "/";
 			string physicalPath = context.Request.MapPath (virtualPath);
-			string[] skin_files = Directory.GetFiles (physicalPath, "*.skin");
+			if (!Directory.Exists (physicalPath))
+				throw new HttpException (String.Format ("Theme '{0}' cannot be found in the application or global theme directories.", theme));
+			string [] skin_files = Directory.GetFiles (physicalPath, "*.skin");
 
 			PageThemeParser ptp = new PageThemeParser (physicalPath, context);
 			
@@ -80,9 +83,9 @@ namespace System.Web.UI
 			return compiler.GetCompiledType ();
 		}
 
-		public static PageTheme GetCompiledInstance (string virtualPath, HttpContext context)
+		public static PageTheme GetCompiledInstance (string theme, HttpContext context)
 		{
-			Type t = ThemeDirectoryCompiler.GetCompiledType (virtualPath, context);
+			Type t = ThemeDirectoryCompiler.GetCompiledType (theme, context);
 			if (t == null)
 				return null;
 
