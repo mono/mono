@@ -99,9 +99,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6502
-		[Category ("NotWorking")]
-#endif
 		public void TreeNode_AssignToDefaultProperties ()
 		{
 			PokerTreeNode tn = new PokerTreeNode ();
