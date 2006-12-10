@@ -1,4 +1,4 @@
-@echo ff
+@echo off
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -83,6 +83,18 @@ set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 REM ********************************************************
 @echo Building GH solution...
 REM ********************************************************
+xcopy /y Test\mainsoft\NunitWeb\NunitWeb\Resources\*.as* Test\mainsoft\MainsoftWebApp20\
+xcopy /y Test\mainsoft\NunitWeb\NunitWeb\Resources\*.master Test\mainsoft\MainsoftWebApp20\
+xcopy /y Test\mainsoft\NunitWebResources\*.* Test\mainsoft\MainsoftWebApp20\
+pushd Test\mainsoft\MainsoftWebApp20\
+xcopy /y WizardTest.skin App_Themes\Theme1\
+xcopy /y Theme1.skin App_Themes\Theme1\
+xcopy /y Theme2.skin App_Themes\Theme2\
+mkdir XXX
+for %%i in (*.as*) DO sed "s/CodeFile=/CodeBehind=/" %%i > XXX\%%i
+move /Y XXX\* .
+rmdir XXX
+popd
 
 msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 

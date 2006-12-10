@@ -10,7 +10,7 @@
     <SkipValidation>True</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <GHProjectType>3</GHProjectType>
-    <PreCompile>False</PreCompile>
+    <PreCompile>True</PreCompile>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>tomcat</ApplicationServerType>
@@ -33,7 +33,6 @@
     <GHProjectType>3</GHProjectType>
     <Version>2.0</Version>
     <ApplicationServerType>tomcat</ApplicationServerType>
-    <jarserver>ipa</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -109,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="My.master" />
-    <Content Include="UrlProperty.ascx" />
     <Content Include="UrlProperty.aspx" />
     <Content Include="XMLDataSourceTest.xml" />
     <Content Include="XMLDataSourceTest.xsl" />
@@ -129,6 +127,9 @@
     <Compile Include="UrlProperty.ascx.cs">
       <DependentUpon>UrlProperty.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UrlProperty.ascx.designer.cs">
+      <DependentUpon>UrlProperty.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +160,34 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClientScript.js" />
+    <Content Include="EvalTest.aspx" />
+    <Content Include="EventValidationTest1.aspx" />
+    <Content Include="EventValidationTest2.aspx" />
+    <Content Include="ListControlPage.aspx" />
+    <Content Include="Mapping.aspx" />
+    <Content Include="Mapping1.aspx" />
+    <Content Include="MasterTypeTest1.aspx" />
+    <Content Include="MasterTypeTest2.aspx" />
     <Content Include="My.ashx" />
+    <Content Include="MyPageWithDerivedMaster.aspx" />
+    <Content Include="NoEventValidation.aspx" />
+    <Content Include="TemplateUserControl.ascx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CrossPagePosting1.aspx" />
+    <Content Include="CrossPagePosting2.aspx" />
+    <Content Include="MyDerived.master" />
+    <Content Include="PageCultureTest.aspx" />
+    <Content Include="PageLifecycleTest.aspx" />
+    <Content Include="PageValidationTest.aspx" />
+    <Content Include="WebMapping.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="adapters.browser" />
+    <Content Include="AsyncPage.aspx" />
+    <Content Include="TextBoxTestlPage.aspx" />
+    <Content Include="UrlProperty.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
