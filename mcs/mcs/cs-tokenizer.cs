@@ -212,7 +212,6 @@ namespace Mono.CSharp
 		Hashtable defines;
 
 		const int TAKING        = 1;
-		const int TAKEN_BEFORE  = 2;
 		const int ELSE_SEEN     = 4;
 		const int PARENT_TAKING = 8;
 		const int REGION        = 16;		
@@ -1858,6 +1857,12 @@ namespace Mono.CSharp
 			Report.Error (1032, Location,
 				"Cannot define or undefine preprocessor symbols after first token in file");
 		}
+
+		void Eror_WrongPreprocessorLocation ()
+		{
+			Report.Error (1040, Location,
+				"Preprocessor directives must appear as the first non-whitespace character on a line");
+		}
 		
 		//
 		// Set to false to stop handling preprocesser directives
@@ -1868,7 +1873,8 @@ namespace Mono.CSharp
 		// if true, then the code continues processing the code
 		// if false, the code stays in a loop until another directive is
 		// reached.
-		//
+		// When caller_is_taking is false we ignore all directives except the ones
+		// which can help us to identify where the #if block ends
 		bool handle_preprocessing_directive (bool caller_is_taking)
 		{
 			string cmd, arg;
@@ -1885,22 +1891,6 @@ namespace Mono.CSharp
 			// The first group of pre-processing instructions is always processed
 			//
 			switch (cmd){
-			case "pragma":
-				if (RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotStandardized (Location, "#pragma");
-					return caller_is_taking;
-				}
-
-				PreProcessPragma (arg);
-				return caller_is_taking;
-
-			case "line":
-				if (!PreProcessLine (arg))
-					Report.Error (
-						1576, Location,
-						"The line number specified for #line directive is missing or invalid");
-				return caller_is_taking;
-
 			case "region":
 				region_directive = true;
 				arg = "true";
@@ -1915,31 +1905,25 @@ namespace Mono.CSharp
 					Error_InvalidDirective ();
 					return true;
 				}
-				bool taking = false;
+
+				int flags = region_directive ? REGION : 0;
 				if (ifstack == null)
 					ifstack = new Stack (2);
-
 				if (ifstack.Count == 0){
-					taking = true;
+					flags |= PARENT_TAKING;
 				} else {
 					int state = (int) ifstack.Peek ();
-					if ((state & TAKING) != 0)
-						taking = true;
+					if ((state & TAKING) != 0) {
+						flags |= PARENT_TAKING;
+					}
 				}
 
-				if (eval (arg) && taking){
-					int push = TAKING | TAKEN_BEFORE | PARENT_TAKING;
-					if (region_directive)
-						push |= REGION;
-					ifstack.Push (push);
+				if (caller_is_taking && eval (arg)) {
+					ifstack.Push (flags | TAKING);
 					return true;
-				} else {
-					int push = (taking ? PARENT_TAKING : 0);
-					if (region_directive)
-						push |= REGION;
-					ifstack.Push (push);
-					return false;
 				}
+				ifstack.Push (flags);
+				return false;
 				
 			case "endif":
 				if (ifstack == null || ifstack.Count == 0){
@@ -1986,12 +1970,12 @@ namespace Mono.CSharp
 						return true;
 					}
 
-					if ((state & (TAKEN_BEFORE | TAKING)) != 0)
+					if ((state & TAKING) != 0)
 						return false;
 
 					if (eval (arg) && ((state & PARENT_TAKING) != 0)){
 						state = (int) ifstack.Pop ();
-						ifstack.Push (state | TAKING | TAKEN_BEFORE);
+						ifstack.Push (state | TAKING);
 						return true;
 					} else 
 						return false;
@@ -2016,21 +2000,35 @@ namespace Mono.CSharp
 
 					ifstack.Pop ();
 
-					bool ret;
-					if ((state & TAKEN_BEFORE) == 0){
-						ret = ((state & PARENT_TAKING) != 0);
-					} else
-						ret = false;
+					bool ret = false;
+					if ((state & PARENT_TAKING) != 0) {
+						ret = (state & TAKING) == 0;
 					
-					if (ret)
-						state |= TAKING;
-					else
-						state &= ~TAKING;
-					
+						if (ret)
+							state |= TAKING;
+						else
+							state &= ~TAKING;
+					}
+	
 					ifstack.Push (state | ELSE_SEEN);
 					
 					return ret;
 				}
+				case "define":
+					if (any_token_seen){
+						Error_TokensSeen ();
+						return caller_is_taking;
+					}
+					PreProcessDefinition (true, arg);
+					return caller_is_taking;
+
+				case "undef":
+					if (any_token_seen){
+						Error_TokensSeen ();
+						return caller_is_taking;
+					}
+					PreProcessDefinition (false, arg);
+					return caller_is_taking;
 			}
 
 			//
@@ -2040,22 +2038,6 @@ namespace Mono.CSharp
 				return false;
 					
 			switch (cmd){
-			case "define":
-				if (any_token_seen){
-					Error_TokensSeen ();
-					return true;
-				}
-				PreProcessDefinition (true, arg);
-				return true;
-
-			case "undef":
-				if (any_token_seen){
-					Error_TokensSeen ();
-					return true;
-				}
-				PreProcessDefinition (false, arg);
-				return true;
-
 			case "error":
 				Report.Error (1029, Location, "#error: '" + arg + "'");
 				return true;
@@ -2063,6 +2045,22 @@ namespace Mono.CSharp
 			case "warning":
 				Report.Warning (1030, 1, Location, "#warning: `{0}'", arg);
 				return true;
+
+			case "pragma":
+				if (RootContext.Version == LanguageVersion.ISO_1) {
+					Report.FeatureIsNotStandardized (Location, "#pragma");
+					return true;
+				}
+
+				PreProcessPragma (arg);
+				return true;
+
+			case "line":
+				if (!PreProcessLine (arg))
+					Report.Error (
+						1576, Location,
+						"The line number specified for #line directive is missing or invalid");
+				return caller_is_taking;
 			}
 
 			Report.Error (1024, Location, "Wrong preprocessor directive");
@@ -2229,16 +2227,8 @@ namespace Mono.CSharp
 			bool comments_seen = false;
 			
 			val = null;
-			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1;) {
-				if (c == ' ')
-					continue;
-				
-				if (c == '\t') {
-					continue;
-				}
-				
-				if (c == ' ' || c == '\f' || c == '\v' || c == 0xa0)
+				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == 0xa0)
 					continue;
 
 				if (c == '\r') {
@@ -2366,48 +2356,48 @@ namespace Mono.CSharp
 					return Token.DOT;
 				}
 				
-				/* For now, ignore pre-processor commands */
-				// FIXME: In C# the '#' is not limited to appear
-				// on the first column.
 				if (c == '#') {
 					// return NONE if we're not processing directives (during token peeks)
 					if (!process_directives)
 						return Token.NONE;
 
-					bool cont = true;
 					if (tokens_seen || comments_seen) {
-                                               error_details = "Preprocessor directives must appear as the first" +
-					       " non-whitespace character on a line.";
-
-                                               Report.Error (1040, Location, error_details);
-
-                                               return Token.ERROR;
-                                       }
+						Eror_WrongPreprocessorLocation ();
+						return Token.ERROR;
+					}
 					
-				start_again:
-					
-					cont = handle_preprocessing_directive (cont);
+					if (handle_preprocessing_directive (true))
+						continue;
 
-					if (cont){
+					bool directive_expected = false;
+					while ((c = getChar ()) != -1) {
+						if (col == 1) {
+							directive_expected = true;
+						} else if (!directive_expected) {
+							// TODO: Implement comment support for disabled code and uncomment this code
+//							if (c == '#') {
+//								Eror_WrongPreprocessorLocation ();
+//								return Token.ERROR;
+//							}
+							continue;
+						}
+
+						if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' || c == '\v' )
+							continue;
+
+						if (c == '#') {
+							if (handle_preprocessing_directive (false))
+								break;
+						}
+						directive_expected = false;
+					}
+
+					if (c != -1) {
+						tokens_seen = false;
 						continue;
 					}
 
-					bool skipping = false;
-					for (;(c = getChar ()) != -1;){
-						if (c == '\n'){
-							skipping = false;
-						} else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
-							continue;
-						else if (c != '#')
-							skipping = true;
-						if (c == '#' && !skipping)
-							goto start_again;
-					}
-					any_token_seen |= tokens_seen;
-					tokens_seen = false;
-					if (c == -1)
-						Report.Error (1027, Location, "Expected `#endif' directive");
-					continue;
+					return Token.EOF;
 				}
 				
 				if (c == '"') 
@@ -2575,11 +2565,12 @@ namespace Mono.CSharp
 		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
+				current_location = new Location (ref_line, Col);
 				int state = (int) ifstack.Pop ();
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
-//				else 
-//					Report.Error (1027, Location, "Expected `#endif' directive");
+				else 
+					Report.Error (1027, Location, "Expected `#endif' directive");
 			}
 		}
 	}

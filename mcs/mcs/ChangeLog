@@ -1,3 +1,11 @@
+2006-12-10  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs #80093, and #75984
+	* cs-tokenizer.cs (handle_preprocessing_directive): Fixed #if/#else/#endif
+	logic, it seems to me as it worked before "by coincidence".
+	(xtoken): Simplified to use reworked handle_preprocessing_directive.
+	(cleanup): Enabled endif check.
+
 2006-12-09  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80162
