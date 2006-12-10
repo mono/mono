@@ -40,6 +40,9 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using System.Reflection;
+using System.Net.Configuration;
+using System.Configuration;
 
 namespace System.Net.Mail {
 	public class SmtpClient
@@ -61,6 +64,7 @@ namespace System.Net.Mail {
 		StreamWriter writer;
 		StreamReader reader;
 		int boundaryIndex;
+		MailAddress defaultFrom;
 
 		Mutex mutex = new Mutex ();
 
@@ -80,31 +84,42 @@ namespace System.Net.Mail {
 		{
 		}
 
-		[MonoTODO ("Default settings aren't loaded from configuration files.")]
-		public SmtpClient (string host, int port)
-		{
-			// FIXME: load from configuration
-			if (String.IsNullOrEmpty (host))
-				Host = "127.0.0.1";
-			else
-				Host = host;
-			
-			// FIXME: load from configuration
-			if (port == 0)
-				Port = 25;
-			else
-				Port = port;
+		public SmtpClient (string host, int port) {
 
-			// FIXME: load credentials from configuration
+			Console.WriteLine ("Hello, world");
+			
+			SmtpSection cfg = (SmtpSection) ConfigurationManager.GetSection ("system.net/mailSettings/smtp");
+
+			if (cfg != null) {
+				this.host = cfg.Network.Host;
+				this.port = cfg.Network.Port;
+				if (cfg.Network.UserName != null) {
+					string password = String.Empty;
+
+					if (cfg.Network.Password != null)
+						password = cfg.Network.Password;
+
+					Credentials = new CCredentialsByHost (cfg.Network.UserName, password);
+				}
+
+				if (cfg.From != null)
+					defaultFrom = new MailAddress (cfg.From);
+			}
+
+			if (!String.IsNullOrEmpty (host))
+				this.host = host;
+
+			if (port != 0)
+				this.port = port;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO ("SSL/TLS support isn't available.")]
+		[MonoTODO]
 		public X509CertificateCollection ClientCertificates {
-			get { return clientCertificates; }
+			get { throw new NotImplementedException ("Client certificates are not supported"); return clientCertificates; }
 		}
 
 		public ICredentialsByHost Credentials {
@@ -117,7 +132,6 @@ namespace System.Net.Mail {
 			set { deliveryMethod = value; }
 		}
 
-		[MonoTODO ("SSL/TLS support isn't available.")]
 		public bool EnableSsl {
 			get { return enableSsl; }
 			set { enableSsl = value; }
@@ -165,10 +179,10 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO ("This property is current ignored.")]
+		[MonoTODO]
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
-			set { useDefaultCredentials = value; }
+			set { throw new NotImplementedException ("Default credentials are not supported"); }
 		}
 
 		#endregion // Properties
@@ -184,6 +198,7 @@ namespace System.Net.Mail {
 		private void EndSection (string section)
 		{
 			SendData (String.Format ("--{0}--", section));
+			SendData (string.Empty);
 		}
 
 		private string GenerateBoundary ()
@@ -209,23 +224,56 @@ namespace System.Net.Mail {
 				SendCompleted (this, e);
 		}
 
-		private SmtpResponse Read ()
-		{
-			SmtpResponse response;
+		private SmtpResponse Read () {
+			byte [] buffer = new byte [512];
+			int position = 0;
+			bool lastLine = false;
 
-			char[] buf = new char [3];
-			reader.Read (buf, 0, 3);
-			reader.Read ();
+			do {
+				int readLength = stream.Read (buffer, position, buffer.Length - position);
+				if (readLength > 0) {
+					int available = position + readLength - 1;
+					if (available > 4 && (buffer [available] == '\n' || buffer [available] == '\r'))
+						for (int index = available - 3; ; index--) {
+							if (index < 0 || buffer [index] == '\n' || buffer [index] == '\r') {
+								lastLine = buffer [index + 4] == ' ';
+								break;
+							}
+						}
 
-			response.StatusCode = (SmtpStatusCode) Int32.Parse (new String (buf));
-			response.Description = reader.ReadLine ();
+					// move position
+					position += readLength;
 
-			return response;
+					// check if buffer is full
+					if (position == buffer.Length) {
+						byte [] newBuffer = new byte [buffer.Length * 2];
+						Array.Copy (buffer, 0, newBuffer, 0, buffer.Length);
+						buffer = newBuffer;
+					}
+				}
+				else {
+					break;
+				}
+			} while (!lastLine);
+
+			if (position > 0) {
+				Encoding encoding = new ASCIIEncoding ();
+
+				string line = encoding.GetString (buffer, 0, position - 1);
+
+				// parse the line to the lastResponse object
+				SmtpResponse response = SmtpResponse.Parse (line);
+
+				return response;
+			}
+			else {
+				throw new System.IO.IOException ("Connection closed");
+			}
 		}
 
-		[MonoTODO ("Message attachments support is incomplete.")]
-		public void Send (MailMessage message)
-		{
+		public void Send (MailMessage message) {
+			CheckHostAndPort ();
+
 			// Block while sending
 			mutex.WaitOne ();
 
@@ -235,25 +283,34 @@ namespace System.Net.Mail {
 			stream = client.GetStream ();
 			writer = new StreamWriter (stream);
 			reader = new StreamReader (stream);
-			boundaryIndex = 0;
-			string boundary = GenerateBoundary ();
-
-			bool hasAlternateViews = (message.AlternateViews.Count > 0);
-			bool hasAttachments = (message.Attachments.Count > 0);
 
 			status = Read ();
 			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
+				throw new SmtpException (status.StatusCode, status.Description);
 
-			// HELO
-			status = SendCommand (Command.Helo, Dns.GetHostName ());
-			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
+			// EHLO
+			status = SendCommand (Command.Ehlo, Dns.GetHostName ());
 
+			if (IsError (status)) {
+				throw new SmtpException (status.StatusCode, status.Description);
+			}
+
+			if (EnableSsl) {
+				InitiateSecureConnection ();
+			}
+
+			PerformAuthentication ();
+
+			MailAddress from = message.From;
+
+			if (from == null)
+				from = defaultFrom;
+			
 			// MAIL FROM:
-			status = SendCommand (Command.MailFrom, message.From.Address);
-			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
+			status = SendCommand (Command.MailFrom, from.Address);
+			if (IsError (status)) {
+				throw new SmtpException (status.StatusCode, status.Description);
+			}
 
 			// Send RCPT TO: for all recipients
 			List<SmtpFailedRecipientException> sfre = new List<SmtpFailedRecipientException> ();
@@ -261,17 +318,17 @@ namespace System.Net.Mail {
 			for (int i = 0; i < message.To.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.To [i].Address);
 				if (IsError (status)) 
-					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.To [i].Address.ToString ()));
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.To [i].Address));
 			}
 			for (int i = 0; i < message.CC.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.CC [i].Address);
 				if (IsError (status)) 
-					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.CC [i].Address.ToString ()));
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.CC [i].Address));
 			}
 			for (int i = 0; i < message.Bcc.Count; i ++) {
 				status = SendCommand (Command.RcptTo, message.Bcc [i].Address);
 				if (IsError (status)) 
-					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address.ToString ()));
+					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address));
 			}
 
 #if TARGET_JVM // List<T>.ToArray () is not supported
@@ -288,21 +345,10 @@ namespace System.Net.Mail {
 			// DATA
 			status = SendCommand (Command.Data);
 			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
-
-			// Figure out the message content type
-			ContentType messageContentType = message.BodyContentType;
-			if (hasAttachments || hasAlternateViews) {
-				messageContentType.Boundary = boundary;
-
-				if (hasAttachments)
-					messageContentType.MediaType = "multipart/mixed";
-				else
-					messageContentType.MediaType = "multipart/alternative";
-			}
+				throw new SmtpException (status.StatusCode, status.Description);
 
 			// Send message headers
-			SendHeader (HeaderName.From, message.From.ToString ());
+			SendHeader (HeaderName.From, from.ToString ());
 			SendHeader (HeaderName.To, message.To.ToString ());
 			if (message.CC.Count > 0)
 				SendHeader (HeaderName.Cc, message.CC.ToString ());
@@ -313,78 +359,30 @@ namespace System.Net.Mail {
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, message.Headers [s]);
 
-			SendHeader ("Content-Type", messageContentType.ToString ());
-			SendData ("");
+			AddPriorityHeader (message);
 
-			if (hasAlternateViews) {
-				string innerBoundary = boundary;
+			bool hasAlternateViews = (message.AlternateViews.Count > 0);
+			bool hasAttachments = (message.Attachments.Count > 0);
 
-				// The body is *technically* an alternative view.  The body text goes FIRST because
-				// that is most compatible with non-MIME readers.
-				//
-				// If there are attachments, then the main content-type is multipart/mixed and
-				// the subpart has type multipart/alternative.  Then all of the views have their
-				// own types.  
-				//
-				// If there are no attachments, then the main content-type is multipart/alternative
-				// and we don't need this subpart.
-
-				if (hasAttachments) {
-					innerBoundary = GenerateBoundary ();
-					ContentType contentType = new ContentType ("multipart/alternative");
-					contentType.Boundary = innerBoundary;
-					StartSection (boundary, contentType);
-				}
-				
-				// Start the section for the body text.  This is either section "1" or "0" depending
-				// on whether there are attachments.
-
-				StartSection (innerBoundary, messageContentType, TransferEncoding.QuotedPrintable);
-				SendData (message.Body);
-
-				// Send message attachments.
-				SendAttachments (message.Attachments, innerBoundary);
-
-				if (hasAttachments) 
-					EndSection (innerBoundary);
+			if (hasAttachments || hasAlternateViews) {
+				SendMultipartBody (message);
 			}
 			else {
-				// If this is multipart then we need to send a boundary before the body.
-				if (hasAttachments) {
-					// FIXME: check this
-					ContentType contentType = new ContentType ("multipart/alternative");
-					StartSection (boundary, contentType, TransferEncoding.QuotedPrintable);
-				}
-				SendData (message.Body);
-			}
-
-			// Send attachments
-			if (hasAttachments) {
-				string innerBoundary = boundary;
-
-				// If we have alternate views and attachments then we need to nest this part inside another
-				// boundary.  Otherwise, we are cool with the boundary we have.
-
-				if (hasAlternateViews) {
-					innerBoundary = GenerateBoundary ();
-					ContentType contentType = new ContentType ("multipart/mixed");
-					contentType.Boundary = innerBoundary;
-					StartSection (boundary, contentType);
-				}
-
-				SendAttachments (message.Attachments, innerBoundary);
-
-				if (hasAlternateViews)
-					EndSection (innerBoundary);
+				SendSimpleBody (message);
 			}
 
 			SendData (".");
 
 			status = Read ();
 			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
+				throw new SmtpException (status.StatusCode, status.Description);
 
-			status = SendCommand (Command.Quit);
+			try {
+				status = SendCommand (Command.Quit);
+			}
+			catch (System.IO.IOException) {
+				//We excuse server for the rude connection closing as a response to QUIT
+			}
 
 			writer.Close ();
 			reader.Close ();
@@ -424,12 +422,105 @@ namespace System.Net.Mail {
 			throw new NotImplementedException ();
 		}
 
-		private void SendAttachments (AttachmentCollection attachments, string boundary)
-		{
+		private void AddPriorityHeader (MailMessage message) {
+			switch (message.Priority) {
+			case MailPriority.High:
+				SendHeader (HeaderName.Priority, "Urgent");
+				SendHeader (HeaderName.Importance, "high");
+				SendHeader (HeaderName.XPriority, "1");
+				break;
+			case MailPriority.Low:
+				SendHeader (HeaderName.Priority, "Non-Urgent");
+				SendHeader (HeaderName.Importance, "low");
+				SendHeader (HeaderName.XPriority, "5");
+				break;
+			}
+		}
+
+		private void SendSimpleBody (MailMessage message) {
+			SendHeader ("Content-Type", message.BodyContentType.ToString ());
+			SendData (string.Empty);
+
+			SendData (message.Body);
+		}
+
+		private void SendMultipartBody (MailMessage message) {
+			boundaryIndex = 0;
+			string boundary = GenerateBoundary ();
+
+			// Figure out the message content type
+			ContentType messageContentType = message.BodyContentType;
+			messageContentType.Boundary = boundary;
+			messageContentType.MediaType = "multipart/mixed";
+
+			SendHeader ("Content-Type", messageContentType.ToString ());
+			SendData (string.Empty);
+
+			SendData (message.Body);
+			SendData (string.Empty);
+
+			message.AlternateViews.Add (AlternateView.CreateAlternateViewFromString (message.Body, new ContentType ("text/plain")));
+
+			if (message.AlternateViews.Count > 0) {
+				SendAlternateViews (message, boundary);
+			}
+
+			if (message.Attachments.Count > 0) {
+				SendAttachments (message, boundary);
+			}
+
+			EndSection (boundary);
+		}
+
+		private void SendAlternateViews (MailMessage message, string boundary) {
+			AlternateViewCollection alternateViews = message.AlternateViews;
+
+			string inner_boundary = GenerateBoundary ();
+
+			ContentType messageContentType = message.BodyContentType;
+			messageContentType.Boundary = inner_boundary;
+			messageContentType.MediaType = "multipart/alternative";
+
+			StartSection (boundary, messageContentType);
+
+			for (int i = 0; i < alternateViews.Count; i += 1) {
+				ContentType contentType = new ContentType (alternateViews [i].ContentType.ToString ());
+				StartSection (inner_boundary, contentType, alternateViews [i].TransferEncoding);
+
+				switch (alternateViews [i].TransferEncoding) {
+				case TransferEncoding.Base64:
+					byte [] content = new byte [alternateViews [i].ContentStream.Length];
+					alternateViews [i].ContentStream.Read (content, 0, content.Length);
+#if TARGET_JVM
+					SendData (Convert.ToBase64String (content));
+#else
+					    SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
+#endif
+					break;
+				case TransferEncoding.QuotedPrintable:
+					StreamReader sr = new StreamReader (alternateViews [i].ContentStream);
+					SendData (ToQuotedPrintable (sr.ReadToEnd ()));
+					break;
+				//case TransferEncoding.SevenBit:
+				//case TransferEncoding.Unknown:
+				default:
+					SendData ("TO BE IMPLEMENTED");
+					break;
+				}
+
+				SendData (string.Empty);
+			}
+
+			EndSection (inner_boundary);
+		}
+
+		private void SendAttachments (MailMessage message, string boundary) {
+			AttachmentCollection attachments = message.Attachments;
+
 			for (int i = 0; i < attachments.Count; i += 1) {
-				// FIXME: check this
-				ContentType contentType = new ContentType ("multipart/alternative");
-				StartSection (boundary, contentType, attachments [i].TransferEncoding);
+				ContentType contentType = new ContentType (attachments [i].ContentType.ToString ());
+				attachments [i].ContentDisposition.FileName = attachments [i].Name;
+				StartSection (boundary, contentType, attachments [i].TransferEncoding, attachments [i].ContentDisposition);
 
 				switch (attachments [i].TransferEncoding) {
 				case TransferEncoding.Base64:
@@ -451,6 +542,8 @@ namespace System.Net.Mail {
 					SendData ("TO BE IMPLEMENTED");
 					break;
 				}
+
+				SendData (string.Empty);
 			}
 		}
 
@@ -476,9 +569,10 @@ namespace System.Net.Mail {
 
 		private void StartSection (string section, ContentType sectionContentType)
 		{
+			SendData (string.Empty);
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
-			SendData ("");
+			SendData (string.Empty);
 		}
 
 		private void StartSection (string section, ContentType sectionContentType,TransferEncoding transferEncoding)
@@ -486,11 +580,18 @@ namespace System.Net.Mail {
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
-			SendData ("");
+			SendData (string.Empty);
 		}
 
-		private string ToQuotedPrintable (string input)
-		{
+		private void StartSection (string section, ContentType sectionContentType, TransferEncoding transferEncoding, ContentDisposition contentDisposition) {
+			SendData (String.Format ("--{0}", section));
+			SendHeader ("content-type", sectionContentType.ToString ());
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+			SendHeader ("content-disposition", contentDisposition.ToString ());
+			SendData (string.Empty);
+		}
+
+		private string ToQuotedPrintable (string input) {
 			StringReader reader = new StringReader (input);
 			StringWriter writer = new StringWriter ();
 			int i;
@@ -520,22 +621,85 @@ namespace System.Net.Mail {
 			return "unknown";
 		}
 
-/*
-		[MonoTODO]
-		private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
-		{
-			throw new NotImplementedException ();
+		private void InitiateSecureConnection () {
+			SmtpResponse response = SendCommand (Command.StartTls);
+
+			if (IsError (response)) {
+				throw new SmtpException (SmtpStatusCode.GeneralFailure, "Server does not support secure connections.");
+			}
+
+			ChangeToSSLSocket ();
 		}
-*/
+
+		private bool ChangeToSSLSocket () {
+#if TARGET_JVM
+			java.lang.Class c = vmw.common.TypeUtils.ToClass (stream);
+			java.lang.reflect.Method m = c.getMethod ("ChangeToSSLSocket", null);
+			m.invoke (stream, new object [] { });
+
+			return true;
+
+#else
+			throw new NotImplementedException ();
+#endif
+		}
+
+		void CheckHostAndPort () {
+			if (String.IsNullOrEmpty (Host))
+				throw new InvalidOperationException ("The SMTP host was not specified");
+
+			if (Port == 0)
+				Port = 25;
+		}
+		
+		void PerformAuthentication () {
+			if (UseDefaultCredentials) {
+				Authenticate (
+					CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").UserName,
+					CredentialCache.DefaultCredentials.GetCredential (new System.Uri ("smtp://" + host), "basic").Password);
+			}
+			else if (Credentials != null) {
+				Authenticate (
+					Credentials.GetCredential (host, port, "smtp").UserName,
+					Credentials.GetCredential (host, port, "smtp").Password);
+			}
+		}
+
+		void Authenticate (string Username, string Password) {
+			SmtpResponse status = SendCommand (Command.AuthLogin);
+			if (((int) status.StatusCode) != 334) {
+				throw new SmtpException (status.StatusCode, status.Description);
+			}
+
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username)));
+			if (((int) status.StatusCode) != 334) {
+				throw new SmtpException (status.StatusCode, status.Description);
+			}
+
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password)));
+			if (IsError (status)) {
+				throw new SmtpException (status.StatusCode, status.Description);
+			}
+		}
+		/*
+				[MonoTODO]
+				private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
+				{
+					throw new NotImplementedException ();
+				}
+		*/
 		#endregion // Methods
 
 		// The Command struct is used to store constant string values representing SMTP commands.
 		private struct Command {
 			public const string Data = "DATA";
 			public const string Helo = "HELO";
+			public const string Ehlo = "EHLO";
 			public const string MailFrom = "MAIL FROM:";
 			public const string Quit = "QUIT";
 			public const string RcptTo = "RCPT TO:";
+			public const string StartTls = "STARTTLS";
+			public const string AuthLogin = "AUTH LOGIN";
 		}
 
 		// The HeaderName struct is used to store constant string values representing mail headers.
@@ -549,13 +713,51 @@ namespace System.Net.Mail {
 			public const string To = "To";
 			public const string MimeVersion = "MIME-Version";
 			public const string MessageId = "Message-ID";
+			public const string Priority = "Priority";
+			public const string Importance = "Importance";
+			public const string XPriority = "X-Priority";
 		}
 
 		// This object encapsulates the status code and description of an SMTP response.
 		private struct SmtpResponse {
 			public SmtpStatusCode StatusCode;
 			public string Description;
+
+			public static SmtpResponse Parse (string line) {
+				SmtpResponse response = new SmtpResponse ();
+
+				if (line.Length < 4)
+					throw new SmtpException ("Response is to short " +
+								   line.Length + ".");
+
+				if ((line [3] != ' ') && (line [3] != '-'))
+					throw new SmtpException ("Response format is wrong.(" +
+								 line + ")");
+
+				// parse the response code
+				response.StatusCode = (SmtpStatusCode) Int32.Parse (line.Substring (0, 3));
+
+				// set the rawsponse
+				response.Description = line;
+
+				return response;
+			}
 		}
+	}
+
+	class CCredentialsByHost : ICredentialsByHost
+	{
+		public CCredentialsByHost (string userName, string password) {
+			this.userName = userName;
+			this.password = password;
+		}
+
+		public NetworkCredential GetCredential (string host, int port, string authenticationType) {
+			return new NetworkCredential (userName, password);
+		}
+
+		private string userName;
+		private string password;
 	}
 }
 

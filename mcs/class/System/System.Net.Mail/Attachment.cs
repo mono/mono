@@ -46,34 +46,40 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		[MonoTODO]
-		public Attachment (string fileName) : base (fileName)
-		{
+		public Attachment (string fileName)
+			: base (fileName) {
+			InitName (fileName);
+		}
+
+		public Attachment (string fileName, string mediaType)
+			: base (fileName, mediaType) {
+			InitName (fileName);
+		}
+
+		public Attachment (string fileName, ContentType contentType)
+			: base (fileName, contentType) {
+			InitName (fileName);
 		}
 
 		[MonoTODO]
-		public Attachment (string fileName, string mediaType) : base (fileName, mediaType)
-		{
+		public Attachment (Stream contentStream, ContentType contentType)
+			: base (contentStream, contentType) {
+			//FIXME: What should we do with the name???
 		}
 
 		[MonoTODO]
-		public Attachment (string fileName, ContentType contentType) : base (fileName, contentType)
-		{
+		public Attachment (Stream contentStream, string mediaType)
+			: base (contentStream, mediaType) {
+			//FIXME: What should we do with the name???
 		}
 
 		[MonoTODO]
-		public Attachment (Stream contentStream, ContentType contentType) : base (contentStream, contentType)
-		{
-		}
+		public Attachment (Stream contentStream, string name, string mediaType)
+			: base (contentStream, mediaType) {
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
 
-		[MonoTODO]
-		public Attachment (Stream contentStream, string mediaType) : base (contentStream, mediaType)
-		{
-		}
-
-		[MonoTODO]
-		public Attachment (Stream contentStream, string name, string mediaType) : base (contentStream, mediaType)
-		{
 			Name = name;
 		}
 
@@ -142,6 +148,15 @@ namespace System.Net.Mail {
 		}
 
 		#endregion // Methods
+
+		private void InitName (string fileName) {
+			if (fileName == null) {
+				throw new ArgumentNullException ("fileName");
+			}
+
+			Name = fileName.Substring (fileName.LastIndexOf ('\\') + 1);
+		}
+
 	}
 }
 

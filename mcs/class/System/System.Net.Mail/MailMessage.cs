@@ -60,20 +60,8 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		public MailMessage ()
-		{
-		}
-
-		[MonoTODO ("FormatException")]
-		public MailMessage (MailAddress from, MailAddress to)
-		{
-			if (from == null || to == null)
-				throw new ArgumentNullException ();
-			
-			From = from;
-
+		public MailMessage () {
 			this.to = new MailAddressCollection ();
-			this.to.Add (to);
 
 			alternateViews = new AlternateViewCollection ();
 			attachments = new AttachmentCollection ();
@@ -82,6 +70,17 @@ namespace System.Net.Mail {
 			headers = new NameValueCollection ();
 
 			headers.Add ("MIME-Version", "1.0");
+		}
+
+		[MonoTODO ("FormatException")]
+		public MailMessage (MailAddress from, MailAddress to)
+			: this () {
+			if (from == null || to == null)
+				throw new ArgumentNullException ();
+
+			From = from;
+
+			this.to.Add (to);
 		}
 
 		public MailMessage (string from, string to)
