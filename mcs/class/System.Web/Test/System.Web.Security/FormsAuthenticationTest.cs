@@ -38,12 +38,13 @@ namespace MonoTests.System.Web.Security {
 			Assert.IsFalse (FormsAuthentication.RequireSSL, "RequireSSL");
 			Assert.IsTrue (FormsAuthentication.SlidingExpiration, "SlidingExpiration");
 #if NET_2_0
-			Assert.IsNull (FormsAuthentication.CookieDomain, "CookieDomain");
+			// MSDN: The default is an empty string ("") but null.
+			Assert.AreEqual ("", FormsAuthentication.CookieDomain, "CookieDomain");
 			Assert.AreEqual (HttpCookieMode.UseDeviceProfile, FormsAuthentication.CookieMode, "CookieMode");
 			Assert.IsTrue (FormsAuthentication.CookiesSupported, "CookiesSupported");
-			Assert.AreEqual ("/default.aspx", FormsAuthentication.DefaultUrl);
+			Assert.AreEqual ("/NunitWeb/default.aspx", FormsAuthentication.DefaultUrl);
 			Assert.IsFalse (FormsAuthentication.EnableCrossAppRedirects, "EnableCrossAppRedirects");
-			Assert.AreEqual ("/login.aspx", FormsAuthentication.LoginUrl, "LoginUrl");
+			Assert.AreEqual ("/NunitWeb/login.aspx", FormsAuthentication.LoginUrl, "LoginUrl");
 #endif
 		}
 
