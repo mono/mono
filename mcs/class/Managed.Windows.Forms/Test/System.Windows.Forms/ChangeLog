@@ -1,3 +1,7 @@
+2006-12-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TabControlTest.cs: Added SelectedIndex tests.
+
 2006-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* ButtonTest.cs: add tests for DialogResult changes when setting
@@ -713,4 +717,5 @@
 2004-11-29  Ravindra <rkumar@novell.com> 
 	* ImageIndexConverter.cs : Test for ImageIndexConversion.
 	
+
 

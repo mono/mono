@@ -13,14 +13,13 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-
-
-
-namespace MonoTests.System.Windows.Forms {
-
+namespace MonoTests.System.Windows.Forms
+{
 	[TestFixture]
 	public class TabControlTest
 	{
+		private int _selected_index_changed = 0;
+
 		private class TabControlPoker : TabControl {
 
 			public bool CheckIsInputKey (Keys key)
@@ -32,6 +31,12 @@ namespace MonoTests.System.Windows.Forms {
 			{
 				base.WndProc (ref m);
 			}
+		}
+
+		[SetUp]
+		public void SetUp ()
+		{
+			_selected_index_changed = 0;
 		}
 
 		[Test]
@@ -132,22 +137,215 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		public void SetSelectedIndex ()
+		public void SelectedIndex ()
 		{
-			// bug #78395
+			TabControl tab = new TabControl ();
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
+
+			tab.SelectedIndex = 0;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#A1");
+#else
+			Assert.AreEqual (1, _selected_index_changed, "#A1");
+#endif
+			Assert.AreEqual (0, tab.SelectedIndex, "#A2");
+
+			tab.SelectedIndex = -1;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#B1");
+#else
+			Assert.AreEqual (2, _selected_index_changed, "#B1");
+#endif
+			Assert.AreEqual (-1, tab.SelectedIndex, "#B2");
+
+			tab.SelectedIndex = 1;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#C1");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#C1");
+#endif
+			Assert.AreEqual (1, tab.SelectedIndex, "#C2");
+
+			tab.SelectedIndex = 1;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#D1");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#D1");
+#endif
+			Assert.AreEqual (1, tab.SelectedIndex, "#D2");
+
+
+			tab.SelectedIndex = 6;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#E1");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#E1");
+#endif
+			Assert.AreEqual (6, tab.SelectedIndex, "#E2");
+
+			tab.SelectedIndex = 6;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#E31");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#E3");
+#endif
+			Assert.AreEqual (6, tab.SelectedIndex, "#E4");
+
+
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tab);
+
+			form.Show ();
+
+			Assert.AreEqual (0, tab.SelectedIndex, "#E5");
+
+			tab.SelectedIndex = 0;
+#if NET_2_0
+			Assert.AreEqual (1, _selected_index_changed, "#F1");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#F1");
+#endif
+			Assert.AreEqual (0, tab.SelectedIndex, "#F2");
+
+			tab.SelectedIndex = -1;
+#if NET_2_0
+			Assert.AreEqual (2, _selected_index_changed, "#G1");
+#else
+			Assert.AreEqual (5, _selected_index_changed, "#G1");
+#endif
+			Assert.AreEqual (-1, tab.SelectedIndex, "#G2");
+
+			tab.SelectedIndex = 1;
+#if NET_2_0
+			Assert.AreEqual (3, _selected_index_changed, "#H1");
+#else
+			Assert.AreEqual (6, _selected_index_changed, "#H1");
+#endif
+			Assert.AreEqual (1, tab.SelectedIndex, "#H2");
+
+			tab.SelectedIndex = 1;
+#if NET_2_0
+			Assert.AreEqual (3, _selected_index_changed, "#I1");
+#else
+			Assert.AreEqual (6, _selected_index_changed, "#I1");
+#endif
+			Assert.AreEqual (1, tab.SelectedIndex, "#I2");
+
+			form.Dispose ();
+		}
+
+		[Test] // bug #78395
+		public void SelectedIndex_Ignore ()
+		{
 			TabControl c = new TabControl ();
+			c.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
 			c.SelectedIndex = 0;
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#1");
+#else
+			Assert.AreEqual (1, _selected_index_changed, "#1");
+#endif
 
 			c.TabPages.Add (new TabPage ());
 			c.TabPages.Add (new TabPage ());
-			Assert.AreEqual (0, c.SelectedIndex, "#1");
+			Assert.AreEqual (0, c.SelectedIndex, "#2");
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			f.Controls.Add (c);
 			f.Show ();
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#3");
+#else
+			Assert.AreEqual (1, _selected_index_changed, "#3");
+#endif
 			c.SelectedIndex = 2; // beyond the pages - ignored
-			Assert.AreEqual (0, c.SelectedIndex, "#2");
+#if NET_2_0
+			Assert.AreEqual (1, _selected_index_changed, "#4");
+#else
+			Assert.AreEqual (2, _selected_index_changed, "#4");
+#endif
+			Assert.AreEqual (0, c.SelectedIndex, "#4");
 			f.Dispose ();
+		}
+
+		[Test]
+		public void SelectedIndex_Negative ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			TabControl tab = new TabControl ();
+			tab.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
+			form.Controls.Add (tab);
+
+			Assert.AreEqual (-1, tab.SelectedIndex, "#A1");
+			tab.SelectedIndex = -1;
+			Assert.AreEqual (-1, tab.SelectedIndex, "#A2");
+			Assert.AreEqual (0, _selected_index_changed, "#A3");
+
+			try {
+				tab.SelectedIndex = -2;
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf ("'-2'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'SelectedIndex'") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#B6");
+				Assert.IsNotNull (ex.ParamName, "#B7");
+				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#B8");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf ("'-2'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'value'") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
+			}
+#endif
+
+			Assert.AreEqual (0, _selected_index_changed, "#C1");
+			Assert.AreEqual (-1, tab.SelectedIndex, "#C2");
+			form.Show ();
+			Assert.AreEqual (0, _selected_index_changed, "#C3");
+			Assert.AreEqual (-1, tab.SelectedIndex, "#C4");
+
+			try {
+				tab.SelectedIndex = -5;
+				Assert.Fail ("#D1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf ("'-5'") != -1, "#D4");
+				Assert.IsTrue (ex.Message.IndexOf ("'SelectedIndex'") != -1, "#D5");
+				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#D6");
+				Assert.IsNotNull (ex.ParamName, "#D7");
+				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#D8");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf ("'-5'") != -1, "#D4");
+				Assert.IsTrue (ex.Message.IndexOf ("'value'") != -1, "#D5");
+				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#D6");
+				Assert.IsNull (ex.ParamName, "#D7");
+			}
+#endif
+
+			Assert.AreEqual (-1, tab.SelectedIndex, "#E1");
+			tab.SelectedIndex = -1;
+			Assert.AreEqual (-1, tab.SelectedIndex, "#E2");
+			Assert.AreEqual (0, _selected_index_changed, "#E3");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -210,6 +408,11 @@ namespace MonoTests.System.Windows.Forms {
 			form.ShowInTaskbar = false;
 			form.Show ();
 			form.Dispose ();
+		}
+
+		private void SelectedIndexChanged (object sender, EventArgs e)
+		{
+			_selected_index_changed++;
 		}
 	}
 }
