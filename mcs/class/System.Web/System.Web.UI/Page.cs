@@ -1012,11 +1012,10 @@ public class Page : TemplateControl, IHttpHandler
 
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
-		if (data == null)
-			return;
+		if (!second)
+			_requiresPostBackCopy = (_requiresPostBack == null) ? null : (ArrayList) _requiresPostBack.Clone ();
 
-		if (_requiresPostBackCopy == null && _requiresPostBack != null)
-			_requiresPostBackCopy = (ArrayList) _requiresPostBack.Clone ();
+		if (data != null) {
 
 		Hashtable used = new Hashtable ();
 		foreach (string id in data.AllKeys){
@@ -1057,6 +1056,7 @@ public class Page : TemplateControl, IHttpHandler
 				secondPostData.Add (real_id, data [id]);
 			}
 		}
+		}
 
 		ArrayList list1 = null;
 		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
@@ -1071,14 +1071,16 @@ public class Page : TemplateControl, IHttpHandler
 	
 						requiresPostDataChanged.Add (pbdh);
 					}
-				} else if (second) {
+				} else if (!second) {
 					if (list1 == null)
 						list1 = new ArrayList ();
 					list1.Add (id);
 				}
 			}
 		}
-		_requiresPostBack = list1;
+		_requiresPostBackCopy = second ? null : list1;
+		if (second)
+			secondPostData = null;
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1409,6 +1411,9 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
+
+		if (_requiresPostBack.Contains (control.UniqueID))
+			return;
 
 		_requiresPostBack.Add (control.UniqueID);
 	}

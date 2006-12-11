@@ -1037,6 +1037,54 @@ namespace MonoTests.System.Web.UI {
 		#endregion
 #endif
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void ProcessPostData_Second_Try ()  //Just flow and not implementation detail
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ProcessPostData_Second_Try_Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "__Page";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			Assert.AreEqual ("CustomPostBackDataHandler_LoadPostData", t.UserData, "User data does not been created fail");
+		}
+
+		public static void ProcessPostData_Second_Try_Load (Page p)
+		{
+			CustomPostBackDataHandler c = new CustomPostBackDataHandler ();
+			c.ID = "CustomPostBackDataHandler1";
+			p.Form.Controls.Add (c);
+		}
+
+		class CustomPostBackDataHandler : WebControl, IPostBackDataHandler
+		{
+			protected override void OnInit (EventArgs e)
+			{
+				base.OnInit (e);
+				Page.RegisterRequiresPostBack (this);
+			}
+
+			#region IPostBackDataHandler Members
+
+			public bool LoadPostData (string postDataKey, global::System.Collections.Specialized.NameValueCollection postCollection)
+			{
+				WebTest.CurrentTest.UserData = "CustomPostBackDataHandler_LoadPostData";
+				return false;
+			}
+
+			public void RaisePostDataChangedEvent ()
+			{
+			}
+
+			#endregion
+		}
+
+
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{

@@ -1,3 +1,9 @@
+2006-12-11 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed and optimized ProcessPostData
+	The "second try" used for controls that created at OnLoad.
+	fixed for controls that use RgisterRequeresPostBack to handle post data.
+
 2006-11-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: The specified theme must exist as either an application theme. 
