@@ -85,6 +85,7 @@ namespace System.Net.Mail {
 		}
 
 		public SmtpClient (string host, int port) {
+#if CONFIGURATION_DEP
 			SmtpSection cfg = (SmtpSection) ConfigurationManager.GetSection ("system.net/mailSettings/smtp");
 
 			if (cfg != null) {
@@ -102,6 +103,7 @@ namespace System.Net.Mail {
 				if (cfg.From != null)
 					defaultFrom = new MailAddress (cfg.From);
 			}
+#endif
 
 			if (!String.IsNullOrEmpty (host))
 				this.host = host;

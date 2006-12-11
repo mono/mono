@@ -1,3 +1,8 @@
+2006-12-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : use CONFIGURATION_DEP when it is
+	  System.Configuration.dll dependent.
+
 2006-12-10  David Elkind  <davide@mainsoft.com>
 
 	* Attachment.cs - proper file name handling added
