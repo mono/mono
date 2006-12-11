@@ -30,7 +30,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head id="Head1" runat="server">
-    <link href="Mainsoft.Web.Administration.css" rel="stylesheet" type="text/css" />
+    <link href="<%= Page.ClientScript.GetWebResourceUrl (typeof(Util), "Mainsoft.Web.Administration.aspnetconfig.Mainsoft.Web.Administration.css") %>" rel="stylesheet" type="text/css" />
     <title>Configuration Utility</title>
 </head>
 <body>
