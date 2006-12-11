@@ -273,6 +273,15 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Private Methods
+
+		internal override ContextMenu GetContextMenuInternal ()
+		{
+			ContextMenu  res = base.GetContextMenuInternal ();
+			if (res == menu)
+				return null;
+			return res;
+		}
+
 		private void menu_Popup(object sender, EventArgs e) {
 			if (SelectionLength == 0) {
 				cut.Enabled = false;

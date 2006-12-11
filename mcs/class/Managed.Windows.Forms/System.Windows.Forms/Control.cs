@@ -1833,7 +1833,7 @@ namespace System.Windows.Forms
 		[MWFCategory("Behavior")]
 		public virtual ContextMenu ContextMenu {
 			get {
-				return context_menu;
+				return GetContextMenuInternal ();
 			}
 
 			set {
@@ -1842,6 +1842,11 @@ namespace System.Windows.Forms
 					OnContextMenuChanged(EventArgs.Empty);
 				}
 			}
+		}
+
+		internal virtual ContextMenu GetContextMenuInternal ()
+		{
+			return context_menu;
 		}
 
 		[Browsable(false)]

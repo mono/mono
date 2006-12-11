@@ -2,6 +2,9 @@
 
 	* TextBoxBase.cs: We need to cap this value, since Maximum -
 	ViewPortHeight can be less than zero.
+	* TextBox.cs: Don't tell the world that we have a context menu.
+	* Control.cs: New method so that we can control whether or not the
+	context menu is visible outside MWF.
 
 2006-12-11  Everaldo Canuto  <everaldo@simios.org>
 
