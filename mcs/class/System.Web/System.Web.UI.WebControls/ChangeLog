@@ -1,3 +1,10 @@
+2006-12-11 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* RadioButton.cs: fixed:
+	When GroupName is not defined UniqueID is used instead for name attribute.
+	CheckedChanged is raised only when control is checked.
+	
+
 2006-12-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed: rendering.

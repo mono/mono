@@ -1,3 +1,7 @@
+2006-12-11  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* RadioButtonTest.cs: added tests.
+
 2006-12-10  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* MasterPageTest.cs: added NotWorking attribute.

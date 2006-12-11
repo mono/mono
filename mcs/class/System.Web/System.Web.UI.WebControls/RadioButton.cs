@@ -68,6 +68,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				string unique = UniqueID;
 				string gn = GroupName;
+				if (gn.Length == 0)
+					return unique;
 				int colon = -1;
 				if (unique != null)
 					colon = unique.IndexOf (':');
@@ -111,19 +113,12 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
-			bool old_checked = Checked;
-			
-			if (postCollection[NameAttribute] == postDataKey) {
-				Checked = true;
-			} else {
-				Checked = false;
-			}
+			bool checkedOnClient = postCollection[NameAttribute] == postDataKey;
+			if (Checked == checkedOnClient)
+				return false;
 
-			if (old_checked != Checked) {
-				return (true);
-			} else {
-				return (false);
-			}
+			Checked = checkedOnClient;
+			return checkedOnClient;			
 		}
 
 #if NET_2_0

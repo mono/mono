@@ -187,6 +187,20 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (t2.IndexOf ("name=\"mono\"") != -1, "#02");
 		}
 
+		[Test]
+		public void NameAttr2 () {
+			TestRadioButton b1 = new TestRadioButton ();
+			b1.ID = "monoId";
+			Page p = new Page ();
+#if NET_2_0
+			p.EnableEventValidation = false;
+#endif
+			p.ID = "MyPage";
+			p.Controls.Add (b1);
+			string t1 = b1.Render ();
+			Assert.IsTrue (t1.IndexOf ("name=\"monoId\"") != -1, "#01");
+		}
+
 #if NET_2_0
 		[Test]
 		public void RaisePostDataChangedEvent ()
@@ -205,7 +219,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void RaisePostDataChangedEvent_PostBack ()
 		{
@@ -219,23 +232,39 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["RadioButton1"].Value = "RadioButton1";
 			t.Request = fr;
-			t.Run ();
+			event_CheckedChanged2_flag = false;
+			html = t.Run ();
 			if (t.UserData == null)
 				Assert.Fail ("RaisePostDataChangedEvent Failed#1");
 			Assert.AreEqual ("CheckedChanged", (string) t.UserData, "RaisePostDataChangedEvent Failed#2");
+			Assert.IsFalse (event_CheckedChanged2_flag, "RaisePostDataChangedEvent Failed#3");
 		}
 
 		public static void RaisePostDataChangedEvent_Init (Page p)
 		{
 			TestRadioButton b = new TestRadioButton ();
 			b.ID = "RadioButton1";
+			b.GroupName = "RadioButton1";
 			b.CheckedChanged+=new EventHandler(event_CheckedChanged);
 			p.Form.Controls.Add (b);
+			
+			TestRadioButton b2 = new TestRadioButton ();
+			b2.ID = "RadioButton2";
+			b2.GroupName = "RadioButton1";
+			b2.CheckedChanged += new EventHandler (event_CheckedChanged2);
+			p.Form.Controls.Add (b2);
+			if (!p.IsPostBack)
+				b2.Checked = true;
 		}
 
 		public static void event_CheckedChanged (object sender, EventArgs e)
 		{
 			WebTest.CurrentTest.UserData = "CheckedChanged";
+		}
+		static bool event_CheckedChanged2_flag;
+		public static void event_CheckedChanged2 (object sender, EventArgs e)
+		{
+			event_CheckedChanged2_flag = true;
 		}
 
 		#region help_class
@@ -278,7 +307,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void LoadPostData ()  //Just flow and not implementation detail
 		{
@@ -287,8 +315,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "RadioButton1";
+			fr.Controls.Add ("RadioButton1");
+			fr.Controls["__EVENTTARGET"].Value = "__Page";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["RadioButton1"].Value = "RadioButton1";
 			t.Request = fr;
 			t.Run ();
 
