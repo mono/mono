@@ -163,6 +163,8 @@ namespace Mainsoft.Web.Security
 
 		public static void InitializeSchema (string connectionString)
 		{
+			RegisterUnloadHandler (connectionString);
+
 			if (IsSchemaExists (connectionString))
 				return;
 
@@ -215,6 +217,65 @@ namespace Mainsoft.Web.Security
 			}
 
 			return false;
+		}
+
+		static void RegisterUnloadHandler (string connectionString)
+		{
+			DerbyUnloadManager derbyMan = new DerbyUnloadManager (connectionString);
+			derbyMan.RegisterUnloadHandler ();
+		}
+	}
+
+	internal class DerbyUnloadManager
+	{
+		private string _releaseString = null;
+
+		public DerbyUnloadManager (string connectionString)
+		{
+			_releaseString = connectionString;
+
+			string [] parts = _releaseString.Split (';');
+			bool found = false;
+
+			for (int i=0; i<parts.Length; i++)
+			{
+				if (parts[i].ToLower().Trim().StartsWith("create"))
+				{
+					parts[i] = parts[i].ToLower().Trim().Replace("create", "shutdown");
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				_releaseString = string.Join (";", parts);
+			else
+			{
+				if (!_releaseString.Trim ().EndsWith (";"))
+					_releaseString += ";";
+
+				_releaseString += "shutdown=true";
+			}
+		}
+
+		public void UnloadHandler (object sender, EventArgs e)
+		{
+			OleDbConnection connection = new OleDbConnection (_releaseString);
+
+			try {
+				connection.Open ();
+			}
+			catch (Exception) {
+			}
+		}
+
+		public void RegisterUnloadHandler ()
+		{
+			AppDomain.CurrentDomain.DomainUnload += new EventHandler (UnloadHandler);
+		}
+
+		public void UnregisterUnloadHandler ()
+		{
+			AppDomain.CurrentDomain.DomainUnload -= new EventHandler (UnloadHandler);
 		}
 	}
 }
