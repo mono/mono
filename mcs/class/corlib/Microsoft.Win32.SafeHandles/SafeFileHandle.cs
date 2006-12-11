@@ -29,21 +29,23 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 
 namespace Microsoft.Win32.SafeHandles {
 
-	[MonoTODO("Not implemented on Mono")]
 	public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
-
 		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
 			SetHandle (preexistingHandle);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected override bool ReleaseHandle ()
 		{
-			throw new NotImplementedException ();
+			MonoIOError error;
+			
+			MonoIO.Close (DangerousGetHandle (), out error);
+
+			return error == MonoIOError.ERROR_SUCCESS;
 		}
 
 	}

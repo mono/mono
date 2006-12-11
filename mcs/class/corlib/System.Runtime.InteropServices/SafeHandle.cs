@@ -30,6 +30,17 @@
 //     For details, see:
 //     http://blogs.msdn.com/cbrumme/archive/2004/02/20/77460.aspx
 //
+// On implementing SafeHandles:
+//     http://blogs.msdn.com/bclteam/archive/2005/03/15/396335.aspx
+//
+// Issues:
+//     The System.Runtime.ConstrainedExecution.ReliabilityContractAttribute has
+//     not been applied to any APIs here yet.
+//
+//     TODO: Although DangerousAddRef has been implemented, I need to
+//     find out whether the runtime performs the P/Invoke if the
+//     handle has been disposed already.
+//
 
 #if NET_2_0
 using System;
@@ -39,8 +50,13 @@ using System.Runtime.ConstrainedExecution;
 namespace System.Runtime.InteropServices
 {
 	public abstract class SafeHandle : CriticalFinalizerObject, IDisposable {
-		object handle_lock = new object ();
+		//
+		// Warning: the offset of handle is mapped inside the runtime
+		// if you move this, you must updated the runtime definition of
+		// MonoSafeHandle
+		//
 		protected IntPtr handle;
+		object handle_lock = new object ();
 		IntPtr invalid_handle_value;
 		int refcount = 0;
 		bool owns_handle;
@@ -75,6 +91,16 @@ namespace System.Runtime.InteropServices
 		public void DangerousAddRef (ref bool success)
 		{
 			lock (handle_lock){
+				if (handle == invalid_handle_value || refcount == 0){
+					//
+					// In MS, calling sf.Close () followed by a call
+					// to P/Invoke with SafeHandles throws this, but
+					// am left wondering: when would "success" be
+					// set to false?
+					//
+					throw new ObjectDisposedException ("handle");
+				}
+				
 				refcount++;
 				success = true;
 			}
@@ -87,10 +113,13 @@ namespace System.Runtime.InteropServices
 
 		public void DangerousRelease ()
 		{
+			Console.WriteLine ("DangerousRelease called");
 			lock (handle_lock){
 				refcount--;
-				if (refcount == 0)
+				if (refcount == 0 && owns_handle){
 					ReleaseHandle ();
+					handle = invalid_handle_value;
+				}
 			}
 		}
 
@@ -138,6 +167,14 @@ namespace System.Runtime.InteropServices
 
 		public abstract bool IsInvalid {
 			get;
+		}
+
+		~SafeHandle ()
+		{
+			if (owns_handle){
+				ReleaseHandle ();
+				handle = invalid_handle_value;
+			}
 		}
 	}
 }
