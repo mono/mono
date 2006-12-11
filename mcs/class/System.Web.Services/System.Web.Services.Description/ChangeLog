@@ -1,5 +1,10 @@
 2006-12-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebServicesInteroperability.cs :
+	  Format extension could be XmlElement, so don't expect wrong cast.
+
+2006-12-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ProtocolImporter.cs : (ImportsEncodedNamespace) XmlSchemaExternal
 	  could be of other types than XmlSchemaImport.
 

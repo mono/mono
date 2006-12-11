@@ -312,8 +312,11 @@ namespace System.Web.Services.Description
 		
 		static void CheckExtensions (ConformanceCheckContext ctx, ConformanceChecker checker, ServiceDescriptionFormatExtensionCollection extensions)
 		{
-			foreach (ServiceDescriptionFormatExtension ext in extensions)
-				checker.Check (ctx, ext);
+			foreach (object o in extensions) {
+				ServiceDescriptionFormatExtension ext = o as ServiceDescriptionFormatExtension;
+				if (ext != null)
+					checker.Check (ctx, ext);
+			}
 		}
 	}
 }
