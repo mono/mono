@@ -1,3 +1,10 @@
+2006-12-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.Common.targets: Added.
+
+	* xbuild/Microsoft.CSharp.targets: Move common part to
+	Microsoft.Common.targets.
+
 2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.Common.tasks: Fix a typo (GetFrameworkPath).

@@ -16,7 +16,7 @@ install-extras:
 	$(INSTALL_DATA) xbuild/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
-#	$(INSTALL_DATA) xbuild/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
 #	cp xbuild/Microsoft.CSharp.targets xbuild/Microsoft.CSharp.Targets
 #	$(INSTALL_DATA) xbuild/Microsoft.CSharp.Targets $(DESTDIR)$(EXTRAS_DIR)
 
@@ -29,5 +29,6 @@ EXTRA_DISTFILES = \
 	xbuild/Microsoft.Common.tasks \
 	xbuild/Microsoft.Build.xsd \
 	xbuild/Microsoft.CSharp.targets \
+	xbuild/Microsoft.Common.targets \
 	xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	xbuild/MSBuild/Microsoft.Build.Core.xsd

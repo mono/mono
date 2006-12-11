@@ -1,45 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<!--	xbuild Import support is flawed so we need to put everything into one file. -->
-	<!-- COMMON -->
-
-	<PropertyGroup>
-		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
-		<TargetExt Condition="'$(OutputType)' == 'Exe'">.exe</TargetExt>
-		<TargetExt Condition="'$(OutputType)' == 'Library'">.dll</TargetExt>
-		<TargetExt Condition="'$(OutputType)' == 'Netmodule'">.netmodule</TargetExt>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
-		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
-		<!--<OutputPath Condition="'$(OutputPath)' != ''">$(OutputPath)\</OutputPath>-->
-		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
-	</PropertyGroup>
-
-	<Target Name="PrepareForBuild">
-		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
-		
-		<MakeDir 
-			Condition="'$(OutputPath)' != ''"
-			Directories="$(OutputPath)"
-		/>
-	</Target>
-
-	<Target Name="ResolveAssemblyReferences">
-		<ResolveAssemblyReference
-			Assemblies="@(Reference)"
-			SearchPaths=" "
-		>
-			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
-		</ResolveAssemblyReference>
-	</Target>
-
-	<Target Name="Build" DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences;CoreCompile"/>
-
-	<!-- END OF COMMON -->
-
-
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
 		<Language>C#</Language>
@@ -103,5 +63,7 @@
 			<!-- ToolPath="$(CscToolPath)" -->
 
 	</Target>
+
+	<Import Project="Microsoft.Common.targets" />
 
 </Project>
