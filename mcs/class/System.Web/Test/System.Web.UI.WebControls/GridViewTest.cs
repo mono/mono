@@ -344,12 +344,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		ArrayList myds = new ArrayList ();
 		public bool InitilizePager;
 
-		[SetUp]
-		public void SetupTestCase ()
-		{
-			Thread.Sleep (100);
-		}
-
 		[TestFixtureSetUp]
 		public void GridViewInit ()
 		{
@@ -2038,8 +2032,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (pageHTML.IndexOf ("DeleteSuccess") < 0) {
 				Assert.Fail ("DeleteFail");
 			}
-
-			Unload();
 		}
 
 		[Test]
@@ -2064,8 +2056,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			pageHTML = t.Run ();
 			Assert.AreEqual (0, t.UserData , "ObjectDataSource after delete from grid");
-
-			Unload();
 		}
 
 		public static void GridView_checkrows (Page p)
@@ -2105,27 +2095,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]
 		public void GridView_PostBackUpdateItem ()
 		{
-
-			//
-			// This test fails because:
-//2) MonoTests.System.Web.UI.WebControls.GridViewTest.GridView_PostBackUpdateItem : NUnit.Framework.AssertionException: Update button not been createdIndex is less than 0 or more than or equal to the list count.
-//Parameter name: index
-//0
-//  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00000]
-//  at NUnit.Framework.Assert.Fail (System.String message) [0x00000]
-//  at MonoTests.System.Web.UI.WebControls.GridViewTest.GridView_checkrowsupdate (System.Web.UI.Page p) [0x00000]
-//  at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)
-//  at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]
-//  ----> NUnit.Framework.AssertionException : Update button not been createdIndex is less than 0 or more than or equal to the list count.Parameter name: index
-//0^M
-//  at System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke (System.Runtime.Remoting.Proxies.RealProxy rp, IMessage msg, System.Exception& exc, System.Object[]& out_args) [0x00188] in /home/cvs/mcs/class/corlib/System.Runtime.Remoting.Proxies/RealProxy.cs:221
-//--AssertionException
-//  at MonoTests.System.Web.UI.WebControls.GridViewTest.GridView_checkrowsupdate (System.Web.UI.Page p) [0x00000]
-//  at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)   at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]  Tests not run:
-//			
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.Load = GridView_postbackupdateitem;
@@ -2182,11 +2153,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("1001", merged_data[1], "Row before update#1");
 			Assert.AreEqual ("TestEname", merged_data[2], "Row before update#2");
 			Assert.AreEqual ("TestLname", merged_data[3], "Row before update#3");
-			Unload();
 		}
 
 		public static void GridView_postbackupdateitem (Page p)
 		{
+			if (!p.IsPostBack)
+				DataObject.Reset ();
+
 			GridView grid = new GridView ();
 			ObjectDataSource ds = new ObjectDataSource ();
 
@@ -2274,7 +2247,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (pageHTML.IndexOf ("EditSuccess") < 0) {
 				Assert.Fail ("EditFail");
 			}
-			Unload();
 		}
 
 		[Test]
@@ -2366,11 +2338,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			object o = g.SelectedValue;
 		}
 
-        public void Unload()
-        {
-            WebTest.Unload();
-        }
-
         [TestFixtureTearDown]
         public void TearDown()
         {
@@ -2443,6 +2410,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static DataTable Select ()
 		{
 			return ds;
+		}
+
+		public static void Reset ()
+		{
+			ds = CreateDataTable ();
 		}
 
 		public static DataTable Delete (string ID, string FName, string LName)
