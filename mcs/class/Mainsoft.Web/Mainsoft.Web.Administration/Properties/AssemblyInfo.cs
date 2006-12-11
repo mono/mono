@@ -36,6 +36,8 @@ using System.Web.UI;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: WebResource ("Mainsoft.Web.Administration.resources.mainsoft.jpg", "image/jpeg")]
 [assembly: WebResource ("Mainsoft.Web.Administration.resources.untitled.bmp", "image/jpeg")]
+[assembly: WebResource ("Mainsoft.Web.Administration.aspnetconfig.Mainsoft.Web.Administration.css", "text/css")]
+
 
 
 
