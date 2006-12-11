@@ -1183,5 +1183,22 @@ namespace MonoTests.System.Xml
 			doc.LoadXml (xml);
 			XmlNodeList nodeList = doc.GetElementsByTagName ("Signature");
 		}
+
+		class MyXmlDocument : XmlDocument
+		{
+			public override XmlAttribute CreateAttribute (string p, string l, string n)
+			{
+				return base.CreateAttribute (p, "hijacked", n);
+			}
+		}
+
+		[Test]
+		public void UseOverridenCreateAttribute ()
+		{
+			XmlDocument doc = new MyXmlDocument ();
+			doc.LoadXml ("<root a='sane' />");
+			AssertNotNull (doc.DocumentElement.GetAttributeNode ("hijacked"));
+			AssertNull (doc.DocumentElement.GetAttributeNode ("a"));
+		}
 	}
 }

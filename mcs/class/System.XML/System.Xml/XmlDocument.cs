@@ -783,7 +783,7 @@ namespace System.Xml
 				reader.MoveToFirstAttribute ();
 			else if (reader.NodeType != XmlNodeType.Attribute)
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
-			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, false, false); // different NameTable
+			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 #if NET_2_0
 			if (reader.SchemaInfo != null)
 				SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
