@@ -12,7 +12,6 @@
     <asp:FormView runat="server" ID="fv1" DataSourceID="DataSource1" BackColor="White" BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" CellPadding="4" ForeColor="Black" GridLines="Vertical" >
     <ItemTemplate>
     <uc1:ReadOnlyPropertyControl runat="server" ID="wuc1" ReadOnlyProperty='<%# Bind("Chars") %>' />
-    <uc1:ReadOnlyPropertyControl runat="server" ID="wuc2" ReadOnlyField='<%# Bind("Chars") %>' />
     </ItemTemplate>
     </asp:FormView>
     <asp:ObjectDataSource ID="DataSource1" runat="server" TypeName="System.Guid" SelectMethod="ToByteArray" />
