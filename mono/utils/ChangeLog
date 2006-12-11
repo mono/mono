@@ -1,4 +1,8 @@
 
+Mon Dec 11 15:08:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-mmap.c, mono-mmap.h, Makefile.am: introduced mmap-like API.
+
 Mon Nov 27 16:03:58 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* strtod.c: fix, again, 64 bit issues.
