@@ -49,7 +49,7 @@ namespace Microsoft.Build.Tasks {
 			
 			foreach (ITaskItem directory in directories) {
 				try {
-					Directory.Delete (directory.GetMetadata ("FullPath"), true);
+					Directory.Delete (directory.GetMetadata ("FullPath"));
 					temporaryRemovedDirectories.Add (directory);
 				}
 				catch (DirectoryNotFoundException ex) {

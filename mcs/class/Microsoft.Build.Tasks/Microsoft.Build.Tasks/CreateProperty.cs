@@ -34,7 +34,6 @@ namespace Microsoft.Build.Tasks {
 	public class CreateProperty : TaskExtension {
 	
 		string[] value;
-		string[] valueSetByTask;
 	
 		public CreateProperty ()
 		{
@@ -42,8 +41,6 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			valueSetByTask = value;
-		
 			return true;
 		}
 
@@ -53,10 +50,10 @@ namespace Microsoft.Build.Tasks {
 			set { this.@value = value; }
 		}
 
-		// FIXME: is this value after evaluation?
+		[MonoTODO]
 		[Output]
 		public string[] ValueSetByTask {
-			get { return valueSetByTask; }
+			get { return @value; }
 		}
 	}
 }

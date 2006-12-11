@@ -48,9 +48,20 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="Test\Microsoft.Build.Tasks\ALTest.cs" />
     <Compile Include="Test\Microsoft.Build.Tasks\Consts.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\CreateItemTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\CreatePropertyTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\CscTest.cs" />
     <Compile Include="Test\Microsoft.Build.Tasks\ErrorTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\GetFrameworkPathTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\GetFrameworkSdkPathTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\MakeDirTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\ManagedCompilerTest.cs" />
     <Compile Include="Test\Microsoft.Build.Tasks\MessageTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\RemoveDirTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\TestEngine.cs" />
+    <Compile Include="Test\Microsoft.Build.Tasks\WarningTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Engine" />
