@@ -44,6 +44,8 @@ namespace System.Timers
 		double interval;
 		ISynchronizeInvoke so;
 		ManualResetEvent wait;
+		Thread thread;
+		object locker = new object ();
 
 		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
@@ -84,9 +86,10 @@ namespace System.Timers
 
 				enabled = value;
 				if (value) {
-					Thread t = new Thread (new ThreadStart (StartTimer));
-					t.IsBackground = true;
-					t.Start ();
+					wait = new ManualResetEvent (false);
+					thread = new Thread (new ThreadStart (StartTimer));
+					thread.IsBackground = true;
+					thread.Start ();
 				} else {
 					StopTimer ();
 				}
@@ -175,8 +178,6 @@ namespace System.Timers
 
 		void StartTimer ()
 		{
-			wait = new ManualResetEvent (false);
-
 			WaitCallback wc = new WaitCallback (Callback);
 			while (enabled && wait.WaitOne ((int) interval, false) == false) {
 				if (autoReset == false)
@@ -184,16 +185,25 @@ namespace System.Timers
 
 				ThreadPool.QueueUserWorkItem (wc, this);
 			}
-			
+
 			wc = null;
-			((IDisposable) wait).Dispose ();
-			wait = null;
+
+			lock (locker) {
+				((IDisposable) wait).Dispose ();
+				wait = null;
+			}
 		}
 
 		void StopTimer ()
 		{
-			if (wait != null)
-				wait.Set ();
+			lock (locker) {
+				if (wait != null)
+					wait.Set ();
+			}
+
+			// the sleep speeds up the join under linux
+			Thread.Sleep (0);
+			thread.Join ();
 		}
 	}
 }

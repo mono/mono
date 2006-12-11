@@ -1,3 +1,8 @@
+2006-03-19  Robert Jordan  <robertj@gmx.net>
+
+	* Timer.cs: Fix race condition of the wait handle object.
+	Fixes bug #77847.
+
 2005-11-16  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* TimersDescriptionAttribute.cs: Revert Description property fix 
