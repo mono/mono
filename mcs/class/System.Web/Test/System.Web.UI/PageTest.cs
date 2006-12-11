@@ -1035,7 +1035,6 @@ namespace MonoTests.System.Web.UI {
 			#endregion
 		}
 		#endregion
-#endif
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -1083,6 +1082,7 @@ namespace MonoTests.System.Web.UI {
 
 			#endregion
 		}
+#endif
 
 
 		[TestFixtureTearDown]
