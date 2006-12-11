@@ -161,7 +161,7 @@ namespace System.IO
 #endif
 
 			if (bufferSize <= 0)
-				throw new ArgumentOutOfRangeException ("Positive number required.");
+				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
 
 			if (mode < FileMode.CreateNew || mode > FileMode.Append)
 				throw new ArgumentOutOfRangeException ("mode", "Enum value was out of legal range.");

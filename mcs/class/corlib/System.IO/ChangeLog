@@ -1,3 +1,9 @@
+
+Mon Dec 11 11:40:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* FileStream.cs: correct exception message patch from
+	Markus Mauhart <mmauhart@chello.at>.
+
 2006-11-28  Duncan Mak  <duncan@novell.com>
 
 	* TextReader.cs (Dispose): Expose as public in NET_2_0.
