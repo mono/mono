@@ -1095,7 +1095,7 @@ namespace System.Windows.Forms {
 				if (Visible)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
-				if (Opacity < 1.0 || TransparencyKey != Color.Empty) {
+				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_LAYERED;
 				}
 

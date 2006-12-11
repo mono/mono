@@ -1,5 +1,10 @@
 2006-12-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Use opacity instead of Opactiy to determine if we need
+	to set the WS_EX_LAYERED bit.  [Fixes bug #80185]
+
+2006-12-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Fix NRE if Control.Site was set to null.
 
 2006-12-11  Chris Toshok  <toshok@ximian.com>
