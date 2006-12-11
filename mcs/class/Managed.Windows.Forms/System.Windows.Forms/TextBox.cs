@@ -240,12 +240,12 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnGotFocus(EventArgs e) {
-			SelectAll ();
 			base.OnGotFocus (e);
 		}
 
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated (e);
+			SelectAll ();
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {

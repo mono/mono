@@ -1109,7 +1109,7 @@ namespace System.Windows.Forms {
 			selection_visible = value;
 
 			// cursor and selection are enemies, we can't have both in the same room at the same time
-			if (owner.IsHandleCreated)
+			if (owner.IsHandleCreated && !owner.show_caret_w_selection)
 				XplatUI.CaretVisible (owner.Handle, !selection_visible);
 		}
 

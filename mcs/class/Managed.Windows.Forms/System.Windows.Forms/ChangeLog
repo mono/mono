@@ -1,3 +1,19 @@
+2006-12-11  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Draw the caret and the selection when a flag is
+	set on the owner.
+	* TextBoxBase.cs: We want to draw the caret and the selection for
+	TextBox but not for TextBoxBase.
+	- If the window is resized and scrolling is no longer needed (the
+	whole doc is visible) set the scroll position to zero.
+	- Scroll to the caret when the document is recalculated (this
+	might be wrong, need a lot of testing here)
+	- The default SelectWord (the one TextBox uses) should move the
+	caret to the end of the word.
+	- SelectAll moves the caret to the end of the selection.
+	* TextBox.cs: We don't selectall on focus, we just do it when the
+	control is created.
+	
 2006-12-11  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: stub in a 2.0 override for ProcessKeyEventArgs.

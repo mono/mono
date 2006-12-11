@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
 		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
+		internal bool show_caret_w_selection;  // TextBox shows the caret when the selection is visible
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
@@ -98,6 +99,7 @@ namespace System.Windows.Forms {
 			word_wrap = true;
 			richtext = false;
 			show_selection = false;
+			show_caret_w_selection = (this is TextBox);
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			document.HeightChanged += new EventHandler(document_HeightChanged);
@@ -736,6 +738,7 @@ namespace System.Windows.Forms {
 			last = document.GetLine(document.Lines);
 			document.SetSelectionStart(document.GetLine(1), 0);
 			document.SetSelectionEnd(last, last.text.Length);
+			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 			selection_length = -1;
 		}
 
@@ -1552,14 +1555,14 @@ namespace System.Windows.Forms {
 		{
 			if (hscroll.Visible) {
 				//vscroll.Maximum += hscroll.Height;
-				canvas_height = Math.Max (0, ClientSize.Height - hscroll.Height);
+				canvas_height = ClientSize.Height - hscroll.Height;
 			} else {
 				canvas_height = ClientSize.Height;
 			}
 
 			if (vscroll.Visible) {
 				//hscroll.Maximum += vscroll.Width;
-				canvas_width = Math.Max (0, ClientSize.Width - vscroll.Width);
+				canvas_width = ClientSize.Width - vscroll.Width;
 			} else {
 				canvas_width = ClientSize.Width;
 			}
@@ -1639,6 +1642,7 @@ namespace System.Windows.Forms {
 			}
 
 			document.SetSelection (document.caret.line, start, document.caret.line, end);
+			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 		}
 
 		internal void CalculateDocument() {
@@ -1647,6 +1651,7 @@ namespace System.Windows.Forms {
 			}
 			document.RecalculateDocument(CreateGraphicsInternal());
 			CalculateScrollBars();
+			ScrollToCaret ();
 			Invalidate();
 		}
 
@@ -1827,6 +1832,7 @@ namespace System.Windows.Forms {
 				return;
 			
 			pos = document.Caret;
+
 			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
 
 
@@ -1879,6 +1885,10 @@ namespace System.Windows.Forms {
 
 			if (pos.Y < document.ViewPortY) {
 				vscroll.Value = pos.Y;
+			} else if (pos.Y < document.ViewPortHeight) {
+				// The window has probably been resized, making the entire thing visible, so
+				// we need to set the scroll position back to zero.
+				vscroll.Value = 0;
 			}
 
 			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
