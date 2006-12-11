@@ -90,6 +90,7 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
+		[Category("NotWorking")]
 		public void AddNode ()
 		{
 			new WebTest (new HandlerInvoker (AddNode_delegate)).Run ();
@@ -119,6 +120,7 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
+		[Category("NotWorking")]
 		public void AddNode2_nullParent ()
 		{
 			new WebTest (new HandlerInvoker (AddNode2_nullParent_delegate)).Run ();
@@ -132,6 +134,7 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
+		[Category("NotWorking")]
 		public void AddNode2 ()
 		{
 			new WebTest (new HandlerInvoker (AddNode2_delegate)).Run ();
@@ -146,6 +149,7 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category("NotWorking")]
 		public void IsAccessibleFrom1 ()
 		{
 			new WebTest (new HandlerInvoker (IsAccessibleFrom1_delegate)).Run ();
