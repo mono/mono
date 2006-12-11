@@ -1461,6 +1461,10 @@ namespace System.Windows.Forms {
 
 				DisplayCaret ();
 			}
+
+			if (owner.IsHandleCreated && selection_visible) {
+				InvalidateSelectionArea ();
+			}
 		}
 
 		internal void CaretLostFocus() {
@@ -1515,7 +1519,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (owner.Focused && !selection_visible) {
+			if (owner.Focused && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}
