@@ -1,3 +1,7 @@
+2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.Common.tasks: Fix a typo (GetFrameworkPath).
+
 2006-10-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.CSharp.targets: Added empty SearchPaths to Csc.
