@@ -654,10 +654,15 @@ namespace Mono.CSharp
 
 				PushPosition ();
 
-				// disable preprocessing directives when peeking
-				process_directives = false;
+				// Backup preprocessor flow data because we'll restore cursor possition
+				Stack ifstack_backup = null;
+				if (ifstack != null && ifstack.Count != 0)
+					ifstack_backup = (Stack)ifstack.Clone ();
+
 				int new_token = xtoken ();
-				process_directives = true;
+
+				if (ifstack_backup != null)
+					ifstack = ifstack_backup;
 
 				PopPosition ();
 
@@ -1865,11 +1870,6 @@ namespace Mono.CSharp
 		}
 		
 		//
-		// Set to false to stop handling preprocesser directives
-		// 
-		bool process_directives = true;
-
-		//
 		// if true, then the code continues processing the code
 		// if false, the code stays in a loop until another directive is
 		// reached.
@@ -2357,10 +2357,6 @@ namespace Mono.CSharp
 				}
 				
 				if (c == '#') {
-					// return NONE if we're not processing directives (during token peeks)
-					if (!process_directives)
-						return Token.NONE;
-
 					if (tokens_seen || comments_seen) {
 						Eror_WrongPreprocessorLocation ();
 						return Token.ERROR;
