@@ -1,3 +1,8 @@
+2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS8.cs: Normalize the private key X integer, not it's ASN.1
+	container, to 20 bytes.
+
 2006-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Remove compatibility block where all padding wasn't 

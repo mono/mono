@@ -334,7 +334,7 @@ namespace Mono.Security.Cryptography {
 					throw new CryptographicException ("invalid private key format");
 
 				// X is ALWAYS 20 bytes (no matter if the key length is 512 or 1024 bits)
-				dsaParameters.X = Normalize (privateKey, 20);
+				dsaParameters.X = Normalize (pvk.Value, 20);
 				DSA dsa = DSA.Create ();
 				dsa.ImportParameters (dsaParameters);
 				return dsa;
