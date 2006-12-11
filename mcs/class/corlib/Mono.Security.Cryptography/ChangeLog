@@ -1,3 +1,7 @@
+2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS8.cs: Synchronize source with Mono.Security.dll
+
 2006-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: Ensure that the results of Encrypt and Decrypt will
