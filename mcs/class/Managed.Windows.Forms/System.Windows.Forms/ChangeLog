@@ -6,8 +6,6 @@
 	TextBox but not for TextBoxBase.
 	- If the window is resized and scrolling is no longer needed (the
 	whole doc is visible) set the scroll position to zero.
-	- Scroll to the caret when the document is recalculated (this
-	might be wrong, need a lot of testing here)
 	- The default SelectWord (the one TextBox uses) should move the
 	caret to the end of the word.
 	- SelectAll moves the caret to the end of the selection.

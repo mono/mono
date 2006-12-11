@@ -1651,8 +1651,14 @@ namespace System.Windows.Forms {
 			}
 			document.RecalculateDocument(CreateGraphicsInternal());
 			CalculateScrollBars();
-			ScrollToCaret ();
-			Invalidate();
+
+			 if (document.caret.line != null && document.caret.line.Y < document.ViewPortHeight) {
+				// The window has probably been resized, making the entire thing visible, so
+				// we need to set the scroll position back to zero.
+				vscroll.Value = 0;
+			 }
+
+			 Invalidate();
 		}
 
 		internal void CalculateScrollBars () {
@@ -1885,10 +1891,6 @@ namespace System.Windows.Forms {
 
 			if (pos.Y < document.ViewPortY) {
 				vscroll.Value = pos.Y;
-			} else if (pos.Y < document.ViewPortHeight) {
-				// The window has probably been resized, making the entire thing visible, so
-				// we need to set the scroll position back to zero.
-				vscroll.Value = 0;
 			}
 
 			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
