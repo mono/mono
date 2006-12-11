@@ -778,14 +778,9 @@ MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoPro
 	gunichar2 *shell_path = NULL;
 	gchar *env_vars = NULL;
 	gboolean free_shell_path = TRUE;
-#ifdef PLATFORM_WIN32
-	gchar *newcmd, *tmp;
-#endif
 	gchar *spath = NULL;
 	MonoString *cmd = proc_start_info->arguments;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	startinfo.cb=sizeof(STARTUPINFO);
 	startinfo.dwFlags=STARTF_USESTDHANDLES;
 	startinfo.hStdInput=stdin_handle;
@@ -803,11 +798,17 @@ MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoPro
 	 * This hack is needed to deal with paths containing spaces */
 	shell_path = NULL;
 	free_shell_path = FALSE;
-	tmp = mono_string_to_utf8 (cmd);
-	newcmd = g_strdup_printf ("%s %s", spath, tmp);
-	cmd = mono_string_new_wrapper (newcmd);
-	g_free (newcmd);
-	g_free (tmp);
+	if (cmd) {
+		gchar *newcmd, *tmp;
+		tmp = mono_string_to_utf8 (cmd);
+		newcmd = g_strdup_printf ("%s %s", spath, tmp);
+		cmd = mono_string_new_wrapper (newcmd);
+		g_free (tmp);
+		g_free (newcmd);
+	}
+	else {
+		cmd = mono_string_new_wrapper (spath);
+	}
 #else
 	shell_path = g_utf8_to_utf16 (spath, -1, NULL, NULL, NULL);
 #endif
@@ -863,7 +864,7 @@ MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoPro
 		dir=mono_string_chars (proc_start_info->working_directory);
 	}
 	
-	ret=CreateProcess (shell_path, mono_string_chars (cmd), NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, env_vars, dir, &startinfo, &procinfo);
+	ret=CreateProcess (shell_path, cmd? mono_string_chars (cmd): NULL, NULL, NULL, TRUE, CREATE_UNICODE_ENVIRONMENT, env_vars, dir, &startinfo, &procinfo);
 
 	g_free (env_vars);
 	if (free_shell_path)
