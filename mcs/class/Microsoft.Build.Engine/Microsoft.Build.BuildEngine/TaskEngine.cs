@@ -152,8 +152,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildItemGroup newItems = CollectItemGroup (propertyInfo, o, itemName);
 			
-			if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
-				BuildItemGroup big = (BuildItemGroup) parentProject.EvaluatedItemsByName [itemName];
+			if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
+				BuildItemGroup big = parentProject.EvaluatedItemsByName [itemName];
 				big.Clear ();
 				parentProject.EvaluatedItemsByName.Remove (itemName);
 				parentProject.EvaluatedItemsByName.Add (itemName, newItems);

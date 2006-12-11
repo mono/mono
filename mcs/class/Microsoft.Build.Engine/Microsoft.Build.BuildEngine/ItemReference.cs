@@ -137,8 +137,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (itemName != String.Empty) {
 				BuildItemGroup big;
-				if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
-					big = (BuildItemGroup)parentProject.EvaluatedItemsByName [itemName];
+				if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
+					big = parentProject.EvaluatedItemsByName [itemName];
 					return big.ConvertToITaskItemArray (transform);
 				} else
 					return null;
@@ -150,8 +150,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (itemName != String.Empty) {
 				BuildItemGroup big;
-				if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
-					big = (BuildItemGroup)parentProject.EvaluatedItemsByName [itemName];
+				if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
+					big = parentProject.EvaluatedItemsByName [itemName];
 					
 					return big.ConvertToString (transform, separator);
 				} else

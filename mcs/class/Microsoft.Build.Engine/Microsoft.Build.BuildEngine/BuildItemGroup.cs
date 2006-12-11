@@ -73,11 +73,10 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			foreach (BuildItem bi in buildItems) {
 				if (bi.Condition == String.Empty)
-					bi.Evaluate ();
+					bi.Evaluate (true);
 				else {
 					ConditionExpression ce = ConditionParser.ParseCondition (bi.Condition);
-					if (ce.BoolEvaluate (parentProject))
-						bi.Evaluate ();
+					bi.Evaluate (ce.BoolEvaluate (parentProject));
 				}
 			}
 		}

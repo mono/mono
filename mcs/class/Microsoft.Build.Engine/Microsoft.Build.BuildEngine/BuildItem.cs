@@ -184,12 +184,11 @@ namespace Microsoft.Build.BuildEngine {
 			if (Include == String.Empty)
 				throw new InvalidProjectFileException ("Item must have Include attribute.");
 			
-			foreach (XmlElement xe in xmlElement.ChildNodes) {
+			foreach (XmlElement xe in xmlElement.ChildNodes)
 				this.SetMetadata (xe.Name, xe.InnerText);
-			}
 		}
 
-		internal void Evaluate ()
+		internal void Evaluate (bool evaluatedTo)
 		{
 			DirectoryScanner directoryScanner;
 			OldExpression includeExpr, excludeExpr;
@@ -218,24 +217,38 @@ namespace Microsoft.Build.BuildEngine {
 			directoryScanner.Scan ();
 			
 			foreach (string matchedFile in directoryScanner.MatchedFilenames) {
-				AddEvaluatedItem (matchedFile);
+				AddEvaluatedItem (evaluatedTo, matchedFile);
 			}
 		}
 		
-		private void AddEvaluatedItem (string itemSpec)
+		private void AddEvaluatedItem (bool evaluatedTo, string itemSpec)
 		{
 			Project project = this.parentItemGroup.Project;
-			
+			BuildItemGroup big;			
 			BuildItem bi = new BuildItem (this);
 			bi.finalItemSpec = itemSpec;
-			project.EvaluatedItems.AddItem (bi);
-			if (project.EvaluatedItemsByName.Contains (bi.name) == false) {
-				BuildItemGroup big = new BuildItemGroup (null, project);
-				project.EvaluatedItemsByName.Add (bi.name, big);
+
+			if (evaluatedTo) {
+				project.EvaluatedItems.AddItem (bi);
+	
+				if (!project.EvaluatedItemsByName.ContainsKey (bi.name)) {
+					big = new BuildItemGroup (null, project);
+					project.EvaluatedItemsByName.Add (bi.name, big);
+				} else {
+					big = project.EvaluatedItemsByName [bi.name];
+				}
+
 				big.AddItem (bi);
-			} else {
-				((BuildItemGroup) project.EvaluatedItemsByName [bi.name]).AddItem (bi);
 			}
+
+			if (!project.EvaluatedItemsByNameIgnoringCondition.ContainsKey (bi.name)) {
+				big = new BuildItemGroup (null, project);
+				project.EvaluatedItemsByNameIgnoringCondition.Add (bi.name, big);
+			} else {
+				big = project.EvaluatedItemsByNameIgnoringCondition [bi.name];
+			}
+
+			big.AddItem (bi);
 		}
 		
 		internal string ConvertToString (OldExpression transform)

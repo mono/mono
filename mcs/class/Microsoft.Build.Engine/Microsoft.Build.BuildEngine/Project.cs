@@ -42,7 +42,6 @@ namespace Microsoft.Build.BuildEngine {
 	public class Project {
 	
 		bool				buildEnabled;
-		//IDictionary			conditionedProperties;
 		Dictionary <string, List <string>>	conditionedProperties;
 		string[]			defaultTargets;
 		Encoding			encoding;
@@ -197,7 +196,8 @@ namespace Microsoft.Build.BuildEngine {
 			
 			foreach (string target in targetNames) {
 				if (!targets.Exists (target))
-					throw new InvalidOperationException (String.Format ("Target {0} does not exist.", target));
+					// FIXME: test if it's logged
+					return false;
 				
 				if (!targets [target].Build ())
 					return false;
@@ -220,7 +220,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByName.ContainsKey (itemName))
 				return evaluatedItemsByName [itemName];
 			else
-				return null;
+				return new BuildItemGroup ();
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName)
@@ -228,12 +228,17 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByNameIgnoringCondition.ContainsKey (itemName))
 				return evaluatedItemsByNameIgnoringCondition [itemName];
 			else
-				return null;
+				return new BuildItemGroup ();
 		}
 
 		public string GetEvaluatedProperty (string propertyName)
 		{
-			return (string) evaluatedProperties [propertyName];
+			if (propertyName == null)
+				throw new ArgumentNullException ("propertyName");
+
+			BuildProperty bp = evaluatedProperties [propertyName];
+
+			return bp == null ? null : (string) bp;
 		}
 
 		public string GetProjectExtensions (string id)
@@ -243,7 +248,6 @@ namespace Microsoft.Build.BuildEngine {
 
 			XmlNode node = xmlDocument.SelectSingleNode (String.Format ("/tns:Project/tns:ProjectExtensions/tns:{0}", id), XmlNamespaceManager);
 
-			// FIXME: InnerXml or InnerText?
 			if (node == null)
 				return String.Empty;
 			else
@@ -351,7 +355,6 @@ namespace Microsoft.Build.BuildEngine {
 			xmlDocument.Save (outTextWriter);
 		}
 
-		[MonoTODO]
 		public void SetImportedProperty (string propertyName,
 						 string propertyValue,
 						 string condition,
@@ -361,7 +364,6 @@ namespace Microsoft.Build.BuildEngine {
 				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup);
 		}
 
-		[MonoTODO]
 		public void SetImportedProperty (string propertyName,
 						 string propertyValue,
 						 string condition,
@@ -383,10 +385,34 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void SetProjectExtensions (string id, string xmlText)
 		{
-			throw new NotImplementedException ();
+			XmlNode projectExtensions, node;
+
+			if (id == null || id == String.Empty || xmlText == null)
+				return;
+
+			projectExtensions = xmlDocument.SelectSingleNode ("/tns:Project/tns:ProjectExtensions", XmlNamespaceManager);
+			
+			
+			if (projectExtensions == null) {
+				projectExtensions = xmlDocument.CreateElement ("ProjectExtensions", XmlNamespace);
+				xmlDocument.DocumentElement.AppendChild (projectExtensions);
+
+				node = xmlDocument.CreateElement (id, XmlNamespace);
+				node.InnerXml = xmlText;
+				projectExtensions.AppendChild (node);
+			} else {
+				node = xmlDocument.SelectSingleNode (String.Format ("/tns:Project/tns:ProjectExtensions/tns:{0}", id), XmlNamespaceManager);
+
+				if (node == null) {
+					node = xmlDocument.CreateElement (id, XmlNamespace);
+					projectExtensions.AppendChild (node);
+				}
+				
+				node.InnerXml = xmlText;
+				
+			}
 		}
 		
 		[MonoTODO]
@@ -683,11 +709,11 @@ namespace Microsoft.Build.BuildEngine {
 			get { return evaluatedItemsIgnoringCondition; }
 		}
 		
-		internal IDictionary EvaluatedItemsByName {
+		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByName {
 			get { return evaluatedItemsByName; }
 		}
 		
-		internal IDictionary EvaluatedItemsByNameIgnoringCondition {
+		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByNameIgnoringCondition {
 			get { return evaluatedItemsByNameIgnoringCondition; }
 		}
 
