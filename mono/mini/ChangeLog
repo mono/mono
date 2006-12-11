@@ -1,4 +1,10 @@
 
+Mon Dec 11 19:08:33 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, debug-debugger.c, tramp-*.c: fixed 
+	mono_debugger_create_notification_function() to use
+	mono_global_codeman_reserve () instead of a dynamic code manager.
+
 Tue Dec 5 17:54:50 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, jit-icalls.h, jit-icalls.c: remove the 
