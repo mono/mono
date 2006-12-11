@@ -1,4 +1,8 @@
 
+Mon Dec 11 19:22:35 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: remove the use of the dynamic code manager here, too.
+
 Mon Dec 11 19:08:33 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, debug-debugger.c, tramp-*.c: fixed 
