@@ -195,7 +195,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build ("T");
 
 			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
+			Assert.AreEqual (2, tl.TargetFinishedEvents, "A2");
 		}
 
 		[Test]
@@ -222,7 +222,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build (new string [1] { "T" }, null, BuildSettings.None);
 
 			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
+			Assert.AreEqual (2, tl.TargetFinishedEvents, "A2");
 		}
 
 		[Test]
@@ -250,7 +250,25 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
 
 			Assert.AreEqual (1, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (1, tl.TargetFinishedEvents, "A1");
+			Assert.AreEqual (1, tl.TargetFinishedEvents, "A2");
+		}
+
+		[Test]
+		public void TestBuild5 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Build ("target_that_doesnt_exist"));
 		}
 
 		[Test]
@@ -286,6 +304,170 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, project.GetConditionedPropertyValues ("D").Length, "A4");
 			Assert.AreEqual (0, project.GetConditionedPropertyValues ("E").Length, "A5");
 			Assert.AreEqual ("A", project.GetConditionedPropertyValues ("C") [0], "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetEvaluatedItemsByName1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.GetEvaluatedItemsByName (null);
+		}
+
+		[Test]
+		public void TestGetEvaluatedItemsByName2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='1' />
+						<B Include='2' Condition='true' />
+						<C Include='3' Condition='false' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup big;
+
+			big = project.GetEvaluatedItemsByName (String.Empty);
+
+			Assert.AreEqual (0, big.Count, "A1");
+
+			big = project.GetEvaluatedItemsByName ("A");
+
+			Assert.AreEqual (1, big.Count, "A2");
+			Assert.AreEqual ("1", big [0].FinalItemSpec, "A3");
+
+			big = project.GetEvaluatedItemsByName ("B");
+
+			Assert.AreEqual (1, big.Count, "A4");
+			Assert.AreEqual ("2", big [0].FinalItemSpec, "A5");
+
+			big = project.GetEvaluatedItemsByName ("C");
+
+			Assert.AreEqual (0, big.Count, "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetEvaluatedItemsByNameIgnoringCondition1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.GetEvaluatedItemsByNameIgnoringCondition (null);
+		}
+
+		[Test]
+		public void TestGetEvaluatedItemsByNameIgnoringCondition2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='1' />
+						<B Include='2' Condition='true' />
+						<C Include='3' Condition='false' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup big;
+
+			big = project.GetEvaluatedItemsByNameIgnoringCondition (String.Empty);
+
+			Assert.AreEqual (0, big.Count, "A1");
+
+			big = project.GetEvaluatedItemsByNameIgnoringCondition ("A");
+
+			Assert.AreEqual (1, big.Count, "A2");
+			Assert.AreEqual ("1", big [0].FinalItemSpec, "A3");
+
+			big = project.GetEvaluatedItemsByNameIgnoringCondition ("B");
+
+			Assert.AreEqual (1, big.Count, "A4");
+			Assert.AreEqual ("2", big [0].FinalItemSpec, "A5");
+
+			big = project.GetEvaluatedItemsByNameIgnoringCondition ("C");
+
+			Assert.AreEqual (1, big.Count, "A6");
+			Assert.AreEqual ("3", big [0].FinalItemSpec, "A7");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetEvaluatedProperty1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.GetEvaluatedProperty (null);
+		}
+		[Test]
+		public void TestGetEvaluatedProperty2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A>1</A>
+						<B Condition='true'>2</B>
+						<C Condition='false'>3</C>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual ("1", project.GetEvaluatedProperty ("A"), "A1");
+			Assert.AreEqual ("2", project.GetEvaluatedProperty ("B"), "A2");
+			Assert.IsNull (project.GetEvaluatedProperty ("C"), "A3");
 		}
 
 		[Test]
@@ -482,6 +664,45 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.LoadXml (documentString);
 
 			Assert.IsNull (project.SchemaFile, "A1");
+		}
+		[Test]
+		[Ignore ("NRE on .NET 2.0")]
+		public void TestSetProjectExtensions1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.SetProjectExtensions (null, null);
+		}
+
+		[Test]
+		public void TestSetProjectExtensions2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.SetProjectExtensions ("name", "1");
+			Assert.AreEqual ("1", project.GetProjectExtensions ("name"), "A1");
+			project.SetProjectExtensions ("name", "2");
+			Assert.AreEqual ("2", project.GetProjectExtensions ("name"), "A2");
 		}
 	}
 }

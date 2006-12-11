@@ -1,3 +1,7 @@
+2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectTest.cs: Added more tests.
+
 2006-12-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* UsingTaskCollectionTest.cs: Change task name to TrueTestTask and add
