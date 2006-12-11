@@ -1,3 +1,10 @@
+2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Fix DSA certificates (with parameters) and don't throw
+	an exception in the case where parameters aren't part of the 
+	certificate. This fix makes all 405 PKCS#12 test cases from PKITS 
+	works using Mono :).
+
 2006-12-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Add decoding of RFC3280 mandatory and optional 
