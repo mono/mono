@@ -2952,6 +2952,18 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public virtual ListViewItem this [string key] {
+				get {
+					int idx = IndexOfKey (key);
+					if (idx == -1)
+						return null;
+
+					return (ListViewItem) list [idx];
+				}
+			}
+#endif
+
 			bool ICollection.IsSynchronized {
 				get { return true; }
 			}
@@ -3090,6 +3102,22 @@ namespace System.Windows.Forms
 				return list.IndexOf (item);
 			}
 
+#if NET_2_0
+			public int IndexOfKey (string key)
+			{
+				if (key == null || key.Length == 0)
+					return -1;
+
+				for (int i = 0; i < list.Count; i++) {
+					ListViewItem lvi = (ListViewItem) list [i];
+					if (String.Compare (key, lvi.Name, true) == 0)
+						return i;
+				}
+
+				return -1;
+			}
+#endif
+
 			public ListViewItem Insert (int index, ListViewItem item)
 			{
 				if (index < 0 || index > list.Count)
@@ -3115,6 +3143,15 @@ namespace System.Windows.Forms
 				return this.Insert (index, new ListViewItem (text, imageIndex));
 			}
 
+#if NET_2_0
+			public ListViewItem Insert (int index, string key, string text, int imageIndex)
+			{
+				ListViewItem lvi = new ListViewItem (text, imageIndex);
+				lvi.Name = key;
+				return Insert (index, lvi);
+			}
+#endif
+
 			public virtual void Remove (ListViewItem item)
 			{
 				if (!list.Contains (item))
@@ -3139,6 +3176,16 @@ namespace System.Windows.Forms
 				if (selection_changed)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
+
+#if NET_2_0
+			public void RemoveByKey (string key)
+			{
+				int idx = IndexOfKey (key);
+				if (idx != -1)
+					RemoveAt (idx);
+			}
+#endif
+
 			#endregion	// Public Methods
 
 			internal event CollectionChangedHandler Changed;

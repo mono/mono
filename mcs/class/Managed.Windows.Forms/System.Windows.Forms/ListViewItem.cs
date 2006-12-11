@@ -50,6 +50,9 @@ namespace System.Windows.Forms
 		private ListViewSubItemCollection sub_items;
 		private object tag;
 		private bool use_item_style = true;
+#if NET_2_0
+		private string name = String.Empty;
+#endif
 
 		Rectangle bounds;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
@@ -256,6 +259,19 @@ namespace System.Windows.Forms
 			get { return owner; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[Localizable (true)]
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value == null ? String.Empty : name;
+			}
+		}
+#endif
+
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
@@ -367,6 +383,9 @@ namespace System.Windows.Forms
 			clone.tag = this.tag;
 			clone.use_item_style = this.use_item_style;
 			clone.owner = null;
+#if NET_2_0
+			clone.name = name;
+#endif
 
 			return clone;
 		}
