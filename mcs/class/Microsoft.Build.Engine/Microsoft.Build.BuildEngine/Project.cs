@@ -53,7 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 		string				firstTargetName;
 		string				fullFileName;
 		BuildPropertyGroup		globalProperties;
-		GroupingCollection		groups;
+		GroupingCollection		groupingCollection;
 		bool				isDirty;
 		bool				isValidated;
 		BuildItemGroupCollection	itemGroups;
@@ -81,11 +81,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			parentEngine  = engine;
 			xmlDocument = new XmlDocument ();
-			groups = new GroupingCollection ();
-			imports = new ImportCollection (this);
+			groupingCollection = new GroupingCollection (this);
+			imports = new ImportCollection (groupingCollection);
 			usingTasks = new UsingTaskCollection (this);
-			itemGroups = new BuildItemGroupCollection (groups);
-			propertyGroups = new BuildPropertyGroupCollection (groups);
+			itemGroups = new BuildItemGroupCollection (groupingCollection);
+			propertyGroups = new BuildPropertyGroupCollection (groupingCollection);
 			targets = new TargetCollection (this);
 			
 			taskDatabase = new TaskDatabase ();
@@ -555,32 +555,9 @@ namespace Microsoft.Build.BuildEngine {
 
 			InitializeProperties ();
 
-			// FIXME: questionable order of evaluation
-			
-			foreach (Import import in Imports)
-				import.Evaluate ();
-			
-			foreach (BuildPropertyGroup bpg in PropertyGroups) {
-				if (bpg.Condition == String.Empty)
-					bpg.Evaluate ();
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (bpg.Condition);
-					if (ce.BoolEvaluate (this))
-						bpg.Evaluate ();
-				}
-			}
-			
-			foreach (BuildItemGroup big in ItemGroups) {
-				if (big.Condition == String.Empty)
-					big.Evaluate ();
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (big.Condition);
-					if (ce.BoolEvaluate (this))
-						big.Evaluate ();
-				}
-			}
+			groupingCollection.Evaluate ();
 
-			
+			//FIXME: UsingTasks aren't really evaluated. (shouldn't use expressions or anything)
 			foreach (UsingTask usingTask in UsingTasks)
 				usingTask.Evaluate ();
 		}
@@ -651,7 +628,6 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
 			ItemGroups.Add (big);
-			//big.Evaluate ();
 		}
 		
 		private void AddPropertyGroup (XmlElement xmlElement)
@@ -660,7 +636,6 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
 			PropertyGroups.Add (bpg);
-			//bpg.Evaluate ();
 		}
 		
 		private void AddChoose (XmlElement xmlElement)
@@ -669,7 +644,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("xmlElement");
 				
 			BuildChoose bc = new BuildChoose (xmlElement, this);
-			groups.Add (bc);
+			groupingCollection.Add (bc);
 			
 		}
 		

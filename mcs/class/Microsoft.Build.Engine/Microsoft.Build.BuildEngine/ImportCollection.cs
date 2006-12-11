@@ -36,45 +36,50 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	public class ImportCollection : ICollection, IEnumerable {
 		
-		List <Import>	imports;
-		//Project		parentProject;
+		GroupingCollection groupingCollection;
 		
-		internal ImportCollection (Project parentProject)
+		internal ImportCollection (GroupingCollection groupingCollection)
 		{
-		//	this.parentProject = parentProject;
-			this.imports = new List <Import> ();
+			this.groupingCollection = groupingCollection;
 		}
 		
 		internal void Add (Import import)
 		{
-			if (import == null)
-				throw new ArgumentNullException ("import");
-			
-			// FIXME: MSBuild silently refuses to add second import
-			if (imports.Contains (import))
-				throw new InvalidOperationException ("Import already added.");
-			
-			imports.Add (import);
+			groupingCollection.Add (import);
 		}
 		
 		public void CopyTo (Array array, int index)
 		{
-			imports.CopyTo ((Import[]) array, index);
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("Index was outside the bounds of the array.");
+			if (array.Rank > 1)
+				throw new ArgumentException ("array is multidimensional");
+			if ((array.Length > 0) && (index >= array.Length))
+				throw new ArgumentException ("Index was outside the bounds of the array.");
+			if (index + this.Count > array.Length)
+				throw new ArgumentException ("Not enough room from index to end of array for this BuildItemGroupCollection");
+
+			IEnumerator it = GetEnumerator ();
+			int i = index;
+			while (it.MoveNext ()) {
+				array.SetValue(it.Current, i++);
+			}
 		}
 		
 		public void CopyTo (Import[] array, int index)
 		{
-			imports.CopyTo (array, index);
+			CopyTo ((Array) array, index);
 		}
 		
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (Import i in imports)
-				yield return i;
+			return groupingCollection.GetImportEnumerator ();
 		}
 		
 		public int Count {
-			get { return imports.Count; }
+			get { return groupingCollection.Imports; }
 		}
 		
 		public bool IsSynchronized  {
@@ -82,7 +87,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public object SyncRoot {
-			get { return this; }
+			get { return null; }
 		}
 	}
 }

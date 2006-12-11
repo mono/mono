@@ -50,18 +50,39 @@ namespace Microsoft.Build.BuildEngine {
 			this.originalProject = originalProject;
 
 			if (ProjectPath == String.Empty)
-				throw new InvalidProjectFileException ("Project required attribute \"Project\" is missing from element <Import>.");
+				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
 		}
 
 		internal void Evaluate ()
 		{
-			string file;
+			evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
+			string filename = GetFullPath ();
+
+			if (EvaluatedProjectPath == String.Empty)
+				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+			
+			if (!File.Exists (filename)) {
+				throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", filename));
+			}
+			
+			ImportedProject importedProject = new ImportedProject ();
+			importedProject.Load (filename);
+
+			project.ProcessElements (importedProject.XmlDocument.DocumentElement, importedProject);
+		}
+
+		string EvaluateProjectPath (string file)
+		{
 			OldExpression exp;
 
 			exp = new OldExpression (project);
-			exp.ParseSource (ProjectPath);
-			
-			file = evaluatedProjectPath = (string) exp.ConvertTo (typeof (string));
+			exp.ParseSource (file);
+			return (string) exp.ConvertTo (typeof (string));
+		}
+
+		string GetFullPath ()
+		{
+			string file = EvaluatedProjectPath;
 
 			if (!Path.IsPathRooted (EvaluatedProjectPath) && project.FullFileName != String.Empty) {
 				string dir;
@@ -71,15 +92,8 @@ namespace Microsoft.Build.BuildEngine {
 					dir = Path.GetDirectoryName (originalProject.FullFileName);
 				file = Path.Combine (dir, EvaluatedProjectPath);
 			}
-
-			if (!File.Exists (file)) {
-				throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", file));
-			}
 			
-			ImportedProject importedProject = new ImportedProject ();
-			importedProject.Load (file);
-			// FIXME: UGLY HACK
-			project.ProcessElements (importedProject.XmlDocument.DocumentElement, importedProject);
+			return file;
 		}
 		
 		public string Condition {

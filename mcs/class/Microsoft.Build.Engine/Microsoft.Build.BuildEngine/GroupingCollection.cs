@@ -29,99 +29,156 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class GroupingCollection : IEnumerable {
 		
-		IList	allGroups;
+		int	imports;
 		int	itemGroups;
 		int	propertyGroups;
 		int	chooses;
+
+		LinkedList <object>	list;
+		LinkedListNode <object>	iterator;
+		Project	project;
 	
-		public GroupingCollection ()
+		public GroupingCollection (Project project)
 		{
-			allGroups = new ArrayList ();
+			this.project = project;
+			list = new LinkedList <object> ();
+			iterator = null;
 		}
 
 		public IEnumerator GetChooseEnumerator ()
 		{
-			foreach (object o in allGroups)
+			foreach (object o in list)
 				if (o is BuildChoose)
 					yield return o;
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (object o in allGroups) {
-				if (o is BuildItemGroup) {
+			return list.GetEnumerator ();
+		}
+
+		public IEnumerator GetImportEnumerator ()
+		{
+			foreach (object o in list)
+				if (o is Import)
 					yield return o;
-					continue;
-				}
-				if (o is BuildPropertyGroup) {
-					yield return o;
-					continue;
-				}
-				if (o is BuildChoose)
-					yield return o;
-			}
 		}
 
 		public IEnumerator GetItemGroupAndChooseEnumerator ()
 		{
-			foreach (object o in allGroups) {
-				if (o is BuildItemGroup) {
+			foreach (object o in list)
+				if (o is BuildItemGroup || o is BuildPropertyGroup)
 					yield return o;
-					continue;
-				}
-				if (o is BuildChoose)
-					yield return o;
-			}
 		}
 
 		public IEnumerator GetItemGroupEnumerator ()
 		{
-			foreach (object o in allGroups)
+			foreach (object o in list)
 				if (o is BuildItemGroup)
 					yield return o;
 		}
 
 		public IEnumerator GetPropertyGroupAndChooseEnumerator ()
 		{
-			foreach (object o in allGroups) {
-				if (o is BuildPropertyGroup) {
+			foreach (object o in list)
+				if (o is BuildPropertyGroup || o is BuildChoose)
 					yield return o;
-					continue;
-				}
-				if (o is BuildChoose)
-					yield return o;
-			}
 		}
 
 		public IEnumerator GetPropertyGroupEnumerator ()
 		{
-			foreach (object o in allGroups) {
+			foreach (object o in list)
 				if (o is BuildPropertyGroup)
 					yield return o;
-			}
 		}
 		
 		internal void Add (BuildPropertyGroup bpg)
 		{
 			bpg.GroupingCollection = this;
-			allGroups.Add (bpg);
 			propertyGroups++;
+			if (iterator == null)
+				list.AddLast (bpg);
+			else
+				list.AddAfter (iterator, bpg);
 		}
 		
 		internal void Add (BuildItemGroup big)
 		{
-			allGroups.Add (big);
 			itemGroups++;
+			if (iterator == null)
+				list.AddLast (big);
+			else
+				list.AddAfter (iterator, big);
 		}
 		
 		internal void Add (BuildChoose bc)
 		{
-			allGroups.Add (bc);
 			chooses++;
+			if (iterator == null)
+				list.AddLast (bc);
+			else
+				list.AddAfter (iterator, bc);
+		}
+
+		internal void Add (Import import)
+		{
+			imports++;
+			if (iterator == null)
+				list.AddLast (import);
+			else
+				list.AddAfter (iterator, import);
+		}
+
+		internal void Evaluate ()
+		{
+			Evaluate (EvaluationType.Property);
+
+			Evaluate (EvaluationType.Item);
+		}
+
+		// FIXME: check conditions on groups/imports
+		void Evaluate (EvaluationType type)
+		{
+			BuildItemGroup big;
+			BuildPropertyGroup bpg;
+			Import import;
+
+			if (type == EvaluationType.Property) {
+				iterator = list.First;
+
+				while (iterator != null) {
+					if (iterator.Value is BuildPropertyGroup) {
+						bpg = (BuildPropertyGroup) iterator.Value;
+						bpg.Evaluate ();
+					} else if (iterator.Value is Import) {
+						import = (Import) iterator.Value;
+						import.Evaluate ();
+					}
+
+					iterator = iterator.Next;
+				}
+			} else {
+				iterator = list.First;
+
+				while (iterator != null) {
+					if (iterator.Value is BuildItemGroup) {
+						big = (BuildItemGroup) iterator.Value;
+
+						big.Evaluate ();
+					}
+
+					iterator = iterator.Next;
+				}
+			}
+		}
+
+		internal int Imports {
+			get { return this.imports; }
 		}
 		
 		internal int ItemGroups {
@@ -135,6 +192,11 @@ namespace Microsoft.Build.BuildEngine {
 		internal int Chooses {
 			get { return this.chooses; }
 		} 
+	}
+
+	enum EvaluationType {
+		Property,
+		Item
 	}
 }
 

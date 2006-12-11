@@ -1,5 +1,20 @@
 2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildWhen.cs, BuildPropertyGroupCollection.cs,
+	BuildItemGroupCollection.cs: Little changes related to
+	GroupingCollection.
+
+	* ImportCollection.cs: Use GroupingCollection not an internal list.
+
+	* Import.cs (Evaluate): Split to functions and check if
+	EvaluatedProjectPath is empty.
+
+	* GroupingCollection.cs, Project.cs: Move evaluation to
+	GroupingCollection. Change algorithm to use 2 passes: first for property
+	groups and imports and second for item groups.
+
+2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* TaskEngine.cs, ItemReference.cs: Use IDictionary <string,
 	BuildItemGroup> not IDictionary.
 
