@@ -1,3 +1,7 @@
+2006-12-10  Chris Toshok  <toshok@ximian.com>
+
+	* ColumnClickEventArgsTest.cs: new tests.
+
 2006-12-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TabControlTest.cs: Added SelectedIndex tests.
