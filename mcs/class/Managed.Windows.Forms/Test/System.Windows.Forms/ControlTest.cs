@@ -6,11 +6,12 @@
 //
 
 using System;
-using System.Windows.Forms;
+using InvalidEnumArgumentException = System.ComponentModel.InvalidEnumArgumentException;
 using System.Drawing;
-using System.Threading;
 using System.Reflection;
 using System.Runtime.Remoting;
+using System.Threading;
+using System.Windows.Forms;
 
 using NUnit.Framework;
 
@@ -903,6 +904,22 @@ namespace MonoTests.System.Windows.Forms
 			c = new Control();
 			c.BackColor = Color.Empty;
 			Assert.AreEqual(Control.DefaultBackColor, c.BackColor, "Setting empty color failed");
+		}
+
+		[Test]
+		public void Dock_Value_Invalid ()
+		{
+			Control c = new Control ();
+			try {
+				c.Dock = (DockStyle) 666;
+				Assert.Fail ("#1");
+			} catch (InvalidEnumArgumentException ex) {
+				Assert.AreEqual (typeof (InvalidEnumArgumentException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNotNull (ex.ParamName, "#4");
+				Assert.AreEqual ("value", ex.ParamName, "#5");
+				Assert.IsNull (ex.InnerException, "#6");
+			}
 		}
 
 		[Test]

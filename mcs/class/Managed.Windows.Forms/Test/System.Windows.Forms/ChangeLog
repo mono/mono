@@ -1,3 +1,7 @@
+2006-12-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Added test for invalid Dock value.
+
 2006-12-11  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControlTest.cs: add tests to check if SelectedIndex is

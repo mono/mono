@@ -56,7 +56,7 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
-        {
+	{
 		#region Local Variables
 
 		// Basic
@@ -332,9 +332,9 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 				
-                                if (Contains (value)) {
+				if (Contains (value)) {
 					owner.PerformLayout();
-                                        return;
+					return;
 				}
 
 				if (value.tab_index == -1) {
@@ -695,8 +695,8 @@ namespace System.Windows.Forms
 		#endregion	// ControlCollection Class
 		
 		#region Public Constructors
-		public Control() {			
-
+		public Control()
+		{
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_created = false;
@@ -709,7 +709,7 @@ namespace System.Windows.Forms
 			is_toplevel = false;
 			causes_validation = true;
 			has_focus = false;
-			layout_suspended = 0;		
+			layout_suspended = 0;
 			mouse_clicks = 1;
 			tab_index = -1;
 			cursor = null;
@@ -743,7 +743,7 @@ namespace System.Windows.Forms
 			parent = null;
 			background_image = null;
 			text = string.Empty;
-			name = string.Empty;			
+			name = string.Empty;
 
 			window = new ControlNativeWindow(this);
 			child_controls = CreateControlsInstance();
@@ -804,7 +804,6 @@ namespace System.Windows.Forms
 					DestroyHandle();
 				}
 
-
 				if (parent != null) {
 					parent.Controls.Remove(this);
 				}
@@ -849,9 +848,7 @@ namespace System.Windows.Forms
 			AsyncMethodData		data;
 
 			if (!disposing) {
-				Control			p;
-
-				p = this;
+				Control p = this;
 				do {
 					if (!p.IsHandleCreated) {
 						throw new InvalidOperationException("Cannot call Invoke or InvokeAsync on a control until the window handle is created");
@@ -1122,7 +1119,7 @@ namespace System.Windows.Forms
 				buttons |= MouseButtons.Middle;
 				
 			if ((param & (int) MsgButtons.MK_RBUTTON) != 0)
-				buttons |= MouseButtons.Right;    	
+				buttons |= MouseButtons.Right;
 				
 			return buttons;
 
@@ -1165,7 +1162,6 @@ namespace System.Windows.Forms
 			} else {
 				index = -1;
 			}
-
 
 			for (int i = 0, pos = -1; i < end; i++) {
 				if (start == container.child_controls[i]) {
@@ -1335,7 +1331,6 @@ namespace System.Windows.Forms
 				binding.Check (binding_context);
 			}
 		}
-
 
 		private void ChangeParent(Control new_parent) {
 			bool		pre_enabled;
@@ -1810,7 +1805,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool ContainsFocus {
 			get {
-				IntPtr	focused_window;
+				IntPtr focused_window;
 
 				focused_window = XplatUI.GetFocus();
 				if (IsHandleCreated) {
@@ -1877,7 +1872,7 @@ namespace System.Windows.Forms
 
 			set {
 				if (cursor != value) {
-					Point	pt;
+					Point pt;
 
 					cursor = value;
 					
@@ -1949,6 +1944,11 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				if (!Enum.IsDefined (typeof (DockStyle), value)) {
+					throw new InvalidEnumArgumentException ("value", (int) value,
+						typeof (DockStyle));
+				}
+
 				dock_style = value;
 
 				if (dock_style == DockStyle.None) {
@@ -1990,12 +1990,12 @@ namespace System.Windows.Forms
 				if (old_value != value && !value && this.has_focus)
 					SelectNextControl(this, true, true, true, true);
 
-				OnEnabledChanged (EventArgs.Empty);				
+				OnEnabledChanged (EventArgs.Empty);
 			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-	        [Browsable(false)]
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual bool Focused {
 			get {
@@ -2004,7 +2004,7 @@ namespace System.Windows.Forms
 		}
 
 		[DispId(-512)]
-	        [AmbientValue(null)]
+		[AmbientValue(null)]
 		[Localizable(true)]
 		[MWFCategory("Appearance")]
 		public virtual Font Font {
@@ -2026,9 +2026,9 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				font = value;	
+				font = value;
 				Invalidate();
-				OnFontChanged (EventArgs.Empty);				
+				OnFontChanged (EventArgs.Empty);
 			}
 		}
 
@@ -2104,10 +2104,10 @@ namespace System.Windows.Forms
 		public ImeMode ImeMode {
 			get {
 				if (ime_mode == ImeMode.Inherit) {
-                                	if (parent != null)
-                                                return parent.ImeMode;
-                                        else
-                                                return ImeMode.NoControl; // default value
+					if (parent != null)
+						return parent.ImeMode;
+					else
+						return ImeMode.NoControl; // default value
 				}
 				return ime_mode;
 			}
@@ -2122,7 +2122,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-	        [Browsable(false)]
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool InvokeRequired {						// ISynchronizeInvoke
 			get {
@@ -2262,13 +2262,13 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string ProductName {
 			get {
-                                Type t = typeof (AssemblyProductAttribute);
-                                Assembly assembly = GetType().Module.Assembly;
-                                object [] attrs = assembly.GetCustomAttributes (t, false);
-                                AssemblyProductAttribute a = null;
-                                // On MS we get a NullRefException if product attribute is not
-                                // set. 
-                              	if (attrs != null && attrs.Length > 0)
+				Type t = typeof (AssemblyProductAttribute);
+				Assembly assembly = GetType().Module.Assembly;
+				object [] attrs = assembly.GetCustomAttributes (t, false);
+				AssemblyProductAttribute a = null;
+				// On MS we get a NullRefException if product attribute is not
+				// set. 
+				if (attrs != null && attrs.Length > 0)
 					a = (AssemblyProductAttribute) attrs [0];
 				return a.Product;
 			}
@@ -2679,7 +2679,7 @@ namespace System.Windows.Forms
 		}
 
 		public static bool IsMnemonic(char charCode, string text) {
-			int amp;			
+			int amp;
 
 			amp = text.IndexOf('&');
 
@@ -3175,7 +3175,7 @@ namespace System.Windows.Forms
 			BackColor = Color.Empty;
 		}
 
-	        [EditorBrowsable(EditorBrowsableState.Never)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void ResetBindings() {
 			data_bindings.Clear();
 		}
@@ -3282,7 +3282,7 @@ namespace System.Windows.Forms
 					c.Select (true, true);
 					return true;
 				}
-			} while (c != ctl);	// If we wrap back to ourselves we stop
+			} while (c != ctl); // If we wrap back to ourselves we stop
 
 			return false;
 		}
@@ -4318,7 +4318,7 @@ namespace System.Windows.Forms
 			}
 
 			default:
-				DefWndProc(ref m);	
+				DefWndProc(ref m);
 				return;
 			}
 		}
@@ -4996,7 +4996,7 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (DockChangedEvent, value); }
 			remove { Events.RemoveHandler (DockChangedEvent, value); }
 		}
-      
+
 		public event EventHandler DoubleClick {
 			add { Events.AddHandler (DoubleClickEvent, value); }
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }
@@ -5021,7 +5021,7 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (DragOverEvent, value); }
 			remove { Events.RemoveHandler (DragOverEvent, value); }
 		}
-	       
+
 		public event EventHandler EnabledChanged {
 			add { Events.AddHandler (EnabledChangedEvent, value); }
 			remove { Events.RemoveHandler (EnabledChangedEvent, value); }
