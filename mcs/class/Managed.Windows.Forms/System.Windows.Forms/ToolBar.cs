@@ -894,7 +894,8 @@ namespace System.Windows.Forms
 			int x = theme.ToolBarGripWidth;
 			int y = theme.ToolBarGripWidth;
 
-			int ht = AdjustedButtonSize.Height + theme.ToolBarGripWidth;
+			Size adjusted_size = AdjustedButtonSize;
+			int ht = adjusted_size.Height + theme.ToolBarGripWidth;
 
 			int separator_index = -1;
 
@@ -904,15 +905,11 @@ namespace System.Windows.Forms
 				if (!button.Visible)
 					continue;
 
-				if (size_specified && (button.Style != ToolBarButtonStyle.Separator)) {
-					if (button.Layout (button_size))
-						changed = true;
-				}
-				else {
-					if (button.Layout ())
-						changed = true;
-				}
-
+				if (size_specified && (button.Style != ToolBarButtonStyle.Separator))
+					changed = button.Layout (adjusted_size);
+				else
+					changed = button.Layout ();
+				
 				bool is_separator = button.Style == ToolBarButtonStyle.Separator;
 
 				if (x + button.Rectangle.Width < Width || is_separator || !Wrappable) {
@@ -922,7 +919,7 @@ namespace System.Windows.Forms
 					x += button.Rectangle.Width;
 					if (is_separator)
 						separator_index = i;
-				} else if (separator_index > 0) { 
+				} else if (separator_index > 0) {
 					i = separator_index;
 					separator_index = -1;
 					x = theme.ToolBarGripWidth;

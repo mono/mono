@@ -1,3 +1,9 @@
+2006-12-11  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Uses maximun width and height of all buttons as 
+	button rectangle when ButtonSize specified, it looks strange but
+	is what happens in Win32. Fixes #80189.
+
 2006-12-11  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Need to track undo levels ourself, since
