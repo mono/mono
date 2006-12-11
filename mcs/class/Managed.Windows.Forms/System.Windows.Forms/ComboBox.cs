@@ -890,6 +890,13 @@ namespace System.Windows.Forms
 				item_heights.Remove (Items [index]);
 		}
 
+#if NET_2_0
+		protected override bool ProcessKeyEventArgs (ref Message m)
+		{
+			return base.ProcessKeyEventArgs (ref m);
+		}
+#endif
+
 		public void Select (int start, int length)
 		{
 			if (start < 0)
