@@ -1,3 +1,10 @@
+2006-12-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemGroup.cs (ctor): Add reference to ImportedProject from
+	which item group is imported.
+
+	* BuildItem.cs, Project.cs: Use new BuildItemGroup.ctor ().
+
 2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildWhen.cs, BuildPropertyGroupCollection.cs,

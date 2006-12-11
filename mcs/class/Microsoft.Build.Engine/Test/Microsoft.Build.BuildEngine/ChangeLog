@@ -1,3 +1,7 @@
+2006-12-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ImportTest.cs: Added test for IsImported on imported BuildItemGroup.
+
 2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ProjectTest.cs: Added more tests.

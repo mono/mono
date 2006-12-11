@@ -530,9 +530,10 @@ namespace Microsoft.Build.BuildEngine {
 						AddImport (xe, ip);
 						break;
 					case "ItemGroup":
-						AddItemGroup (xe);
+						AddItemGroup (xe, ip);
 						break;
 					case "PropertyGroup":
+						// FIXME: pass ip here
 						AddPropertyGroup (xe);
 						break;
 					case  "Choose":
@@ -547,8 +548,8 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Evaluate ()
 		{
-			evaluatedItems = new BuildItemGroup (null, this);
-			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
+			evaluatedItems = new BuildItemGroup (null, this, null);
+			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null);
 			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedProperties = new BuildPropertyGroup ();
@@ -622,11 +623,11 @@ namespace Microsoft.Build.BuildEngine {
 			Imports.Add (import);
 		}
 		
-		private void AddItemGroup (XmlElement xmlElement)
+		private void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
-			BuildItemGroup big = new BuildItemGroup (xmlElement, this);
+			BuildItemGroup big = new BuildItemGroup (xmlElement, this, importedProject);
 			ItemGroups.Add (big);
 		}
 		

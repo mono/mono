@@ -232,7 +232,7 @@ namespace Microsoft.Build.BuildEngine {
 				project.EvaluatedItems.AddItem (bi);
 	
 				if (!project.EvaluatedItemsByName.ContainsKey (bi.name)) {
-					big = new BuildItemGroup (null, project);
+					big = new BuildItemGroup (null, project, null);
 					project.EvaluatedItemsByName.Add (bi.name, big);
 				} else {
 					big = project.EvaluatedItemsByName [bi.name];
@@ -242,7 +242,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			if (!project.EvaluatedItemsByNameIgnoringCondition.ContainsKey (bi.name)) {
-				big = new BuildItemGroup (null, project);
+				big = new BuildItemGroup (null, project, null);
 				project.EvaluatedItemsByNameIgnoringCondition.Add (bi.name, big);
 			} else {
 				big = project.EvaluatedItemsByNameIgnoringCondition [bi.name];

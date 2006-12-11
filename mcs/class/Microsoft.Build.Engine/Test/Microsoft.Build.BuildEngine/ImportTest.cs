@@ -97,5 +97,26 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual (1, project.Imports.Count, "A1");
 		}
+
+		[Test]
+		public void TestItems1 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/Items.csproj'/>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (groups, 0);
+
+			Assert.IsTrue (groups [0].IsImported, "A1");
+			Assert.AreEqual (1, groups [0].Count, "A2");
+		}
 	}
 }

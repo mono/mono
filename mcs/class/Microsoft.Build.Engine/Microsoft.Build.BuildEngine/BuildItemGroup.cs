@@ -42,18 +42,19 @@ namespace Microsoft.Build.BuildEngine {
 		List <BuildItem>	buildItems;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
+		ImportedProject		importedProject;
 		XmlElement		itemGroupElement;
 
 		public BuildItemGroup ()
-			: this (null, null)
+			: this (null, null, null)
 		{
 		}
 		
-		internal BuildItemGroup (XmlElement xmlElement, Project project)
+		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject)
 		{
-			this.itemGroupElement = xmlElement;
 			this.buildItems = new List <BuildItem> ();
-			this.isImported = false;
+			this.importedProject = importedProject;
+			this.itemGroupElement = xmlElement;
 			this.parentProject = project;
 			
 			if (!FromXml)
@@ -188,7 +189,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public bool IsImported {
-			get { return isImported; }
+			get { return importedProject != null; }
 		}
 
 		
