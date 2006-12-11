@@ -1760,7 +1760,7 @@ namespace System.Windows.Forms {
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
-			if (Capture) {
+			if (e.Button == MouseButtons.Left && Capture) {
 				if (!ClientRectangle.Contains (e.X, e.Y)) {
 					if (scroll_timer == null) {
 						scroll_timer = new Timer ();

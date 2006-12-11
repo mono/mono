@@ -2,6 +2,7 @@
 
 	* TextBoxBase.cs: We need to cap this value, since Maximum -
 	ViewPortHeight can be less than zero.
+	- Only do selection with the left mouse button.
 	* TextBox.cs: Don't tell the world that we have a context menu.
 	* Control.cs: New method so that we can control whether or not the
 	context menu is visible outside MWF.
