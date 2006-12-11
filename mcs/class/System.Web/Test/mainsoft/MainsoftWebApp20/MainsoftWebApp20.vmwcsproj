@@ -48,7 +48,7 @@
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
     </AdditionalClassPath>
-    <PreCompile>False</PreCompile>
+    <PreCompile>True</PreCompile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,12 +58,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>false</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
     </AdditionalClassPath>
-    <PreCompile>true</PreCompile>
+    <PreCompile>True</PreCompile>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Bluehills.jpg" />
@@ -214,7 +214,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-j2ee="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jakarta-tomcat\server\lib\catalina.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jakarta-tomcat\common\lib\servlet-api.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-web="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-htmlcompare="..\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar" REFS-JarPath-nunit-framework="..\NunitWeb\NunitWeb\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-nunitweb="..\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar" />
+      <UserProperties REFS-JarPath-nunitweb="..\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar" REFS-JarPath-nunit-framework="..\NunitWeb\NunitWeb\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-htmlcompare="..\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-drawing="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-web="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-j2ee="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jakarta-tomcat\server\lib\catalina.jar;..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jakarta-tomcat\common\lib\servlet-api.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
