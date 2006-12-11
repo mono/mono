@@ -55,6 +55,7 @@ namespace System.Web.UI.WebControls
 
 			object itemCount = ViewState ["_ItemCount"];
 			if (itemCount != null) {
+				RequiresDataBinding = false;
 				object [] data = new object [(int) itemCount];
 				ViewState ["_ItemCount"] = CreateChildControls (data, false);
 			}

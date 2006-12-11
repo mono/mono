@@ -338,6 +338,52 @@ namespace MonoTests.System.Web.UI.WebControls
 				return GetList ().Count;
 			}
 		}
+		
+		public class data
+		{
+			private static ArrayList _data = new ArrayList ();
+
+			static data () {
+				_data.Add (new DataItem (1, "heh1"));
+				_data.Add (new DataItem (2, "heh2"));
+			}
+
+			public data () {
+			}
+
+			public ArrayList GetAllItems () {
+				return _data;
+			}
+
+			public void UpdateItem (int id, string name) {
+				foreach (DataItem i in _data) {
+					if (i.ID == id) {
+						i.Name = name;
+						return;
+					}
+				}
+			}
+		}
+
+		public class DataItem
+		{
+			int _id = 0;
+			string _name = "";
+
+			public DataItem (int id, string name) {
+				_id = id;
+				_name = name;
+			}
+
+			public int ID {
+				get { return _id; }
+			}
+
+			public string Name {
+				get { return _name; }
+				set { _name = value; }
+			}
+		}
 
 		public const string BOOLFIELD = "bool";
 		public const string STRINGFIELD = "str";
@@ -353,6 +399,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
+#else
+			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
+#endif
 		}
 
 		[Test]
@@ -2336,6 +2387,116 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerGridView g = new PokerGridView ();
 			object o = g.SelectedValue;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotDotNet")]
+		public void GridViewUpdate () {
+			WebTest t = new WebTest ("GridViewUpdate.aspx");
+			string pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("GridView1:_ctl2:Name"); // for .NET use "GridView1$ctl02$Name"
+			fr.Controls.Add ("GridView1:_ctl3:Name");
+			fr.Controls ["__EVENTTARGET"].Value = "Button1";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
+			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			#region original
+			string original = @"<div>
+	<table cellspacing=""0"" rules=""all"" border=""1"" id=""GridView1"" style=""border-collapse:collapse;"">
+		<tr>
+			<th scope=""col"">ID</th><th scope=""col"">&nbsp;</th>
+		</tr><tr>
+			<td>1</td><td>
+                        <input name=""GridView1$ctl02$Name"" type=""text"" value=""ABC"" id=""GridView1_ctl02_Name"" />
+                        <input type=""button"" name=""GridView1$ctl02$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl02$b1','')"" id=""GridView1_ctl02_b1"" />
+                    </td>
+		</tr><tr>
+			<td>2</td><td>
+                        <input name=""GridView1$ctl03$Name"" type=""text"" value=""123"" id=""GridView1_ctl03_Name"" />
+                        <input type=""button"" name=""GridView1$ctl03$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl03$b1','')"" id=""GridView1_ctl03_b1"" />
+                    </td>
+		</tr>
+	</table>
+</div>";
+
+			#endregion			
+			HtmlDiff.AssertAreEqual (original, pageHTML, "GridViewUpdate #1");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("GridView1:_ctl2:Name");
+			fr.Controls.Add ("GridView1:_ctl3:Name");
+			fr.Controls ["__EVENTTARGET"].Value = "GridView1:_ctl2:b1";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
+			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			#region original
+			original = @"<div>
+	<table cellspacing=""0"" rules=""all"" border=""1"" id=""GridView1"" style=""border-collapse:collapse;"">
+		<tr>
+			<th scope=""col"">ID</th><th scope=""col"">&nbsp;</th>
+		</tr><tr>
+			<td>1</td><td>
+                        <input name=""GridView1$ctl02$Name"" type=""text"" value=""ABC"" id=""GridView1_ctl02_Name"" />
+                        <input type=""button"" name=""GridView1$ctl02$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl02$b1','')"" id=""GridView1_ctl02_b1"" />
+                    </td>
+		</tr><tr>
+			<td>2</td><td>
+                        <input name=""GridView1$ctl03$Name"" type=""text"" value=""heh2"" id=""GridView1_ctl03_Name"" />
+                        <input type=""button"" name=""GridView1$ctl03$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl03$b1','')"" id=""GridView1_ctl03_b1"" />
+                    </td>
+		</tr>
+	</table>
+</div>";
+
+			#endregion
+			HtmlDiff.AssertAreEqual (original, pageHTML, "GridViewUpdate #2");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("GridView1:_ctl2:Name");
+			fr.Controls.Add ("GridView1:_ctl3:Name");
+			fr.Controls ["__EVENTTARGET"].Value = "GridView1:_ctl3:b1";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
+			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			t.Request = fr;
+			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
+			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			#region original
+			original = @"<div>
+	<table cellspacing=""0"" rules=""all"" border=""1"" id=""GridView1"" style=""border-collapse:collapse;"">
+		<tr>
+			<th scope=""col"">ID</th><th scope=""col"">&nbsp;</th>
+		</tr><tr>
+			<td>1</td><td>
+                        <input name=""GridView1$ctl02$Name"" type=""text"" value=""ABC"" id=""GridView1_ctl02_Name"" />
+                        <input type=""button"" name=""GridView1$ctl02$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl02$b1','')"" id=""GridView1_ctl02_b1"" />
+                    </td>
+		</tr><tr>
+			<td>2</td><td>
+                        <input name=""GridView1$ctl03$Name"" type=""text"" value=""123"" id=""GridView1_ctl03_Name"" />
+                        <input type=""button"" name=""GridView1$ctl03$b1"" value=""upd"" onclick=""javascript:__doPostBack('GridView1$ctl03$b1','')"" id=""GridView1_ctl03_b1"" />
+                    </td>
+		</tr>
+	</table>
+</div>";
+
+			#endregion
+			HtmlDiff.AssertAreEqual (original, pageHTML, "GridViewUpdate #3");
 		}
 
         [TestFixtureTearDown]

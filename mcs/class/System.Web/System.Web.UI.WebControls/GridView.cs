@@ -1376,9 +1376,9 @@ namespace System.Web.UI.WebControls
 				PropertyDescriptorCollection props = TypeDescriptor.GetProperties (row.DataItem);
 				cachedKeyProperties = new PropertyDescriptor [DataKeyNames.Length];
 				for (int n=0; n<DataKeyNames.Length; n++) { 
-					PropertyDescriptor p = props [DataKeyNames[n]];
+					PropertyDescriptor p = props.Find (DataKeyNames [n], true);
 					if (p == null)
-						new InvalidOperationException ("Property '" + DataKeyNames[n] + "' not found in object of type " + row.DataItem.GetType());
+						throw new InvalidOperationException ("Property '" + DataKeyNames [n] + "' not found in object of type " + row.DataItem.GetType ());
 					cachedKeyProperties [n] = p;
 				}
 			}
@@ -1612,7 +1612,8 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.UpdateCommandName:
-				UpdateRow (EditIndex, true);
+				int editIndex = int.Parse (param);
+				UpdateRow (Rows [editIndex], editIndex, true);
 				break;
 					
 			case DataControlCommands.CancelCommandName:
@@ -1696,18 +1697,23 @@ namespace System.Web.UI.WebControls
 		[MonoTODO ("Support two-way binding expressions")]
 		public virtual void UpdateRow (int rowIndex, bool causesValidation)
 		{
+			if (rowIndex != EditIndex) throw new NotSupportedException ();
+			
+			GridViewRow row = Rows [rowIndex];
+			UpdateRow (row, rowIndex, causesValidation);
+		}
+
+		void UpdateRow (GridViewRow row, int rowIndex, bool causesValidation)
+		{
 			if (causesValidation && Page != null)
 				Page.Validate ();
-			
-			if (rowIndex != EditIndex) throw new NotSupportedException ();
 
 			currentEditOldValues = OldEditValues.Values;
 
-			GridViewRow row = Rows [rowIndex];
 			currentEditRowKeys = DataKeys [rowIndex].Values;
 			currentEditNewValues = GetRowValues (row, false, false);
 			
-			GridViewUpdateEventArgs args = new GridViewUpdateEventArgs (EditIndex, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
+			GridViewUpdateEventArgs args = new GridViewUpdateEventArgs (rowIndex, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnRowUpdating (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();

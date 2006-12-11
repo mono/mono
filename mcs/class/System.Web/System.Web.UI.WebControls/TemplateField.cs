@@ -161,8 +161,10 @@ namespace System.Web.UI.WebControls
 				bt = insertItemTemplate as IBindableTemplate; 
 			else if ((rowState & DataControlRowState.Edit) != 0)
 				bt = editItemTemplate as IBindableTemplate;
+			else if (alternatingItemTemplate !=null && (rowState & DataControlRowState.Alternate) != 0)
+				bt = alternatingItemTemplate as IBindableTemplate;
 			else
-				return;
+				bt = itemTemplate as IBindableTemplate;
 			
 			if (bt != null) {
 				IOrderedDictionary values = bt.ExtractValues (cell);
