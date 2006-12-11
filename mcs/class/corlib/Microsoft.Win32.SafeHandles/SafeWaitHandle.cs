@@ -1,7 +1,7 @@
 //
-// Microsoft.Win32.SafeHandles.SafeFileHandle
+// Microsoft.Win32.SafeHandles.SafeWaitHandle
 //
-// Authors:
+// Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //      Miguel de Icaza    <miguel@novell.com>
 //
@@ -31,22 +31,20 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Microsoft.Win32.SafeHandles {
 
-	public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
-		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
+	public sealed class SafeWaitHandle : SafeHandleZeroOrMinusOneIsInvalid {
+		public SafeWaitHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
 			SetHandle (preexistingHandle);
 		}
 
 		protected override bool ReleaseHandle ()
 		{
-			MonoIOError error;
-			
-			MonoIO.Close (DangerousGetHandle (), out error);
-
-			return error == MonoIOError.ERROR_SUCCESS;
+			NativeEventCalls.CloseEvent_internal (DangerousGetHandle ());
+			return true;
 		}
 
 	}

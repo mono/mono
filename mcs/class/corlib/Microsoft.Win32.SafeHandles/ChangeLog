@@ -1,3 +1,7 @@
+2006-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeWaitHandle.cs: Add new.
+
 2006-12-10  Miguel de Icaza  <miguel@novell.com>
 
 	* SafeFileHandle.cs: Implement this one.
