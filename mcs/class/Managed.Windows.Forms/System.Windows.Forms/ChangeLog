@@ -1,3 +1,12 @@
+2006-12-11  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Set visibility on selected or default tab 
+	when tabcontrol handle is created, so that it's contents
+	actually show up (duh). Fixes #80193
+	Don't redraw the control if there is no handle created, as
+	the selected index might be completely invalid. Added some tests
+	to check for this.
+
 2006-12-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Uses maximun width and height of all buttons as 

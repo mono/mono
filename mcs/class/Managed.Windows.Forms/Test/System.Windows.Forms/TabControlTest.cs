@@ -403,10 +403,19 @@ namespace MonoTests.System.Windows.Forms
 		public void NoTabPages ()
 		{
 			Form form = new Form ();
-			TabControl tc = new TabControl ();
-			form.Controls.Add (tc);
+			TabControl tab = new TabControl ();
+			tab.SelectedIndex = 0;
+			Assert.AreEqual (0, tab.SelectedIndex, "#A1");
+
+			form.Controls.Add (tab);
+
+			Assert.AreEqual (0, tab.SelectedIndex, "#A2");
+
 			form.ShowInTaskbar = false;
 			form.Show ();
+
+			Assert.AreEqual (-1, tab.SelectedIndex, "#A3");
+
 			form.Dispose ();
 		}
 

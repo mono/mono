@@ -1,3 +1,9 @@
+2006-12-11  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControlTest.cs: add tests to check if SelectedIndex is
+	properly set if the TabControl has no pages, before and 
+	after the handle is created
+
 2006-12-10  Chris Toshok  <toshok@ximian.com>
 
 	* ColumnClickEventArgsTest.cs: new tests.

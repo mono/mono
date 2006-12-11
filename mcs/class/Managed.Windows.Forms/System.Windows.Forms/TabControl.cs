@@ -441,8 +441,14 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-			if (selected_index >= TabCount)
-				selected_index = 0;
+			selected_index = (selected_index >= TabCount ? (TabCount > 0 ? 0 : -1) : selected_index);
+
+			if (TabCount > 0) {
+				if (selected_index > -1)
+					this.SelectedTab.SetVisible(true);
+				else
+					tab_pages[0].SetVisible(true);
+			}
 			ResizeTabPages ();
 		}
 
@@ -1034,6 +1040,9 @@ namespace System.Windows.Forms {
 
 		internal void Redraw ()
 		{
+			if (!IsHandleCreated)
+				return;
+
 			ResizeTabPages ();
 			Refresh ();
 		}
