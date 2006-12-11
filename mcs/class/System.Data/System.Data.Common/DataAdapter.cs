@@ -223,7 +223,6 @@ namespace System.Data.Common
 
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual int Fill (DataSet dataSet)
 		{
 			throw new NotSupportedException ();
