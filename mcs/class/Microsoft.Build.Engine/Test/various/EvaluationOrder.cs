@@ -237,7 +237,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestImportOrder1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -260,9 +259,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The required attribute \"Project\" is missing from element <Import>.  ")]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestImportOrder2 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -287,7 +284,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestImportOrder3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -312,7 +308,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestImportOrder4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -335,7 +330,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestImportOrder5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -358,7 +352,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestImportOrder6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -381,7 +374,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestImportOrder7 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
