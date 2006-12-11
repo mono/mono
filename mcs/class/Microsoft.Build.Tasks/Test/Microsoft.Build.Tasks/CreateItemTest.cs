@@ -1,5 +1,5 @@
 //
-// MakeDirTest.cs
+// CreateItemTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -37,53 +37,45 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.Tasks {
 
 	[TestFixture]
-	public class MakeDirTest {
-
-		[SetUp]
-		public void CreateDir ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.CreateDirectory (path);
-		}
-
-		[TearDown]
-		public void RemoveDirectories ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.Delete (path, true);
-		}
-
+	public class CreateItemTest {
 		[Test]
 		public void TestAssignment ()
 		{
-			MakeDir md = new MakeDir ();
+			CreateItem ci = new CreateItem ();
 
-			md.Directories = new ITaskItem [2] { new TaskItem ("A"), new TaskItem ("B") };
+			ci.AdditionalMetadata = new string [1] { "a=1" };
+			ci.Include = new ITaskItem [1] { new TaskItem ("1") };
+			ci.Exclude = new ITaskItem [1] { new TaskItem ("2") };
 
-			Assert.AreEqual (2, md.Directories.Length, "A1");
+			Assert.AreEqual ("a=1", ci.AdditionalMetadata [0], "A1");
+			Assert.AreEqual ("1", ci.Include [0].ItemSpec, "A2");
+			Assert.AreEqual ("2", ci.Exclude [0].ItemSpec, "A3");
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestExecution1 ()
 		{
 			Engine engine;
 			Project project;
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
 
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<Dir Include='Test\resources\MakeDir\A' />
-						<Dir Include='Test\resources\MakeDir\B' />
-						<Dir Include='Test\resources\MakeDir\C' />
+						<A Include='1;2;3;4'/>
+						<B Include='1;3' />
 					</ItemGroup>
 					<Target Name='1'>
-						<MakeDir Directories='@(Dir)'>
+						<CreateItem
+							AdditionalMetadata='a=1;b=2'
+							Include='@(A)'
+							Exclude='@(B)'
+						>
 							<Output
-								TaskParameter='DirectoriesCreated'
-								ItemName='Out'
+								TaskParameter='Include'
+								ItemName='Include'
 							/>
-						</MakeDir>
+						</CreateItem>
 					</Target>
 				</Project>
 			";
@@ -91,17 +83,24 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			project.Build ("1");
+			Assert.IsTrue (project.Build ("1"), "A1");
 
-			Assert.AreEqual (3, Directory.GetDirectories (path).Length, "A1");
-			Assert.AreEqual (Path.Combine (path, "A"), Directory.GetDirectories (path) [0], "A2");
-			Assert.AreEqual (Path.Combine (path, "B"), Directory.GetDirectories (path) [1], "A3");
-			Assert.AreEqual (Path.Combine (path, "C"), Directory.GetDirectories (path) [2], "A4");
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("Include");
+			Assert.AreEqual (2, include.Count, "A2");
 
-			BuildItemGroup output = project.GetEvaluatedItemsByName ("Out");
-			Assert.AreEqual (Path.Combine (path, "A"), output [0].FinalItemSpec, "A5");
-			Assert.AreEqual (Path.Combine (path, "B"), output [1].FinalItemSpec, "A6");
-			Assert.AreEqual (Path.Combine (path, "C"), output [2].FinalItemSpec, "A7");
+			Assert.AreEqual ("Include", include [0].Name, "A3");
+			Assert.AreEqual ("1", include [0].GetMetadata ("a"), "A4");
+			Assert.AreEqual ("2", include [0].GetMetadata ("b"), "A5");
+			Assert.AreEqual ("1", include [0].GetEvaluatedMetadata ("a"), "A6");
+			Assert.AreEqual ("2", include [0].GetEvaluatedMetadata ("b"), "A7");
+			Assert.AreEqual ("2", include [0].FinalItemSpec, "A8");
+
+			Assert.AreEqual ("Include", include [0].Name, "A9");
+			Assert.AreEqual ("1", include [1].GetMetadata ("a"), "A10");
+			Assert.AreEqual ("2", include [1].GetMetadata ("b"), "A11");
+			Assert.AreEqual ("1", include [1].GetEvaluatedMetadata ("a"), "A12");
+			Assert.AreEqual ("2", include [1].GetEvaluatedMetadata ("b"), "A13");
+			Assert.AreEqual ("4", include [1].FinalItemSpec, "A14");
 		}
 	}
 }

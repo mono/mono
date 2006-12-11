@@ -1,5 +1,5 @@
 //
-// MakeDirTest.cs
+// GetFrameworkPathTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -37,53 +37,22 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.Tasks {
 
 	[TestFixture]
-	public class MakeDirTest {
-
-		[SetUp]
-		public void CreateDir ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.CreateDirectory (path);
-		}
-
-		[TearDown]
-		public void RemoveDirectories ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.Delete (path, true);
-		}
-
-		[Test]
-		public void TestAssignment ()
-		{
-			MakeDir md = new MakeDir ();
-
-			md.Directories = new ITaskItem [2] { new TaskItem ("A"), new TaskItem ("B") };
-
-			Assert.AreEqual (2, md.Directories.Length, "A1");
-		}
-
+	public class GetFrameworkPathTest {
 		[Test]
 		public void TestExecution1 ()
 		{
 			Engine engine;
 			Project project;
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
 
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<ItemGroup>
-						<Dir Include='Test\resources\MakeDir\A' />
-						<Dir Include='Test\resources\MakeDir\B' />
-						<Dir Include='Test\resources\MakeDir\C' />
-					</ItemGroup>
 					<Target Name='1'>
-						<MakeDir Directories='@(Dir)'>
+						<GetFrameworkPath>
 							<Output
-								TaskParameter='DirectoriesCreated'
-								ItemName='Out'
+								TaskParameter='Path'
+								PropertyName='Path'
 							/>
-						</MakeDir>
+						</GetFrameworkPath>
 					</Target>
 				</Project>
 			";
@@ -91,17 +60,10 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			project.Build ("1");
+			Assert.IsTrue (project.Build ("1"), "A1");
 
-			Assert.AreEqual (3, Directory.GetDirectories (path).Length, "A1");
-			Assert.AreEqual (Path.Combine (path, "A"), Directory.GetDirectories (path) [0], "A2");
-			Assert.AreEqual (Path.Combine (path, "B"), Directory.GetDirectories (path) [1], "A3");
-			Assert.AreEqual (Path.Combine (path, "C"), Directory.GetDirectories (path) [2], "A4");
-
-			BuildItemGroup output = project.GetEvaluatedItemsByName ("Out");
-			Assert.AreEqual (Path.Combine (path, "A"), output [0].FinalItemSpec, "A5");
-			Assert.AreEqual (Path.Combine (path, "B"), output [1].FinalItemSpec, "A6");
-			Assert.AreEqual (Path.Combine (path, "C"), output [2].FinalItemSpec, "A7");
+			Assert.IsNotNull (project.EvaluatedProperties ["Path"], "A2");
+			Assert.IsTrue (String.Empty != project.EvaluatedProperties ["Path"].FinalValue, "A3");
 		}
 	}
 }

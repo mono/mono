@@ -1,5 +1,5 @@
 //
-// MakeDirTest.cs
+// CreatePropertyTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -37,30 +37,16 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.Tasks {
 
 	[TestFixture]
-	public class MakeDirTest {
-
-		[SetUp]
-		public void CreateDir ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.CreateDirectory (path);
-		}
-
-		[TearDown]
-		public void RemoveDirectories ()
-		{
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
-			Directory.Delete (path, true);
-		}
-
+	public class CreatePropertyTest {
 		[Test]
 		public void TestAssignment ()
 		{
-			MakeDir md = new MakeDir ();
+			CreateProperty cp = new CreateProperty ();
 
-			md.Directories = new ITaskItem [2] { new TaskItem ("A"), new TaskItem ("B") };
+			cp.Value = new string [1] { "1" };
 
-			Assert.AreEqual (2, md.Directories.Length, "A1");
+			Assert.AreEqual ("1", cp.Value [0], "A1");
+			Assert.AreEqual ("1", cp.ValueSetByTask [0], "A2");
 		}
 
 		[Test]
@@ -68,22 +54,24 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			Engine engine;
 			Project project;
-			string path = Path.Combine (Path.Combine ("Test", "resources"), "MakeDir");
 
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<ItemGroup>
-						<Dir Include='Test\resources\MakeDir\A' />
-						<Dir Include='Test\resources\MakeDir\B' />
-						<Dir Include='Test\resources\MakeDir\C' />
-					</ItemGroup>
+					<PropertyGroup>
+						<A>1</A>
+						<B>2</B>
+					</PropertyGroup>
 					<Target Name='1'>
-						<MakeDir Directories='@(Dir)'>
+						<CreateProperty Value='$(A)$(B)' >
 							<Output
-								TaskParameter='DirectoriesCreated'
-								ItemName='Out'
+								TaskParameter='Value'
+								PropertyName='Value'
 							/>
-						</MakeDir>
+							<Output
+								TaskParameter='ValueSetByTask'
+								PropertyName='ValueSetByTask'
+							/>
+						</CreateProperty>
 					</Target>
 				</Project>
 			";
@@ -91,17 +79,12 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			project.Build ("1");
+			Assert.IsTrue (project.Build ("1"), "A1");
 
-			Assert.AreEqual (3, Directory.GetDirectories (path).Length, "A1");
-			Assert.AreEqual (Path.Combine (path, "A"), Directory.GetDirectories (path) [0], "A2");
-			Assert.AreEqual (Path.Combine (path, "B"), Directory.GetDirectories (path) [1], "A3");
-			Assert.AreEqual (Path.Combine (path, "C"), Directory.GetDirectories (path) [2], "A4");
-
-			BuildItemGroup output = project.GetEvaluatedItemsByName ("Out");
-			Assert.AreEqual (Path.Combine (path, "A"), output [0].FinalItemSpec, "A5");
-			Assert.AreEqual (Path.Combine (path, "B"), output [1].FinalItemSpec, "A6");
-			Assert.AreEqual (Path.Combine (path, "C"), output [2].FinalItemSpec, "A7");
+			Assert.AreEqual ("12", project.EvaluatedProperties ["Value"].Value, "A2");
+			Assert.AreEqual ("12", project.EvaluatedProperties ["Value"].FinalValue, "A3");
+			Assert.AreEqual ("12", project.EvaluatedProperties ["ValueSetByTask"].Value, "A4");
+			Assert.AreEqual ("12", project.EvaluatedProperties ["ValueSetByTask"].FinalValue, "A5");
 		}
 	}
 }

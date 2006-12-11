@@ -1,3 +1,9 @@
+2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* GetFrameworkSdkPath.cs, GetFrameworkPath.cs, CreateItemTest.cs,
+	CreatePropertyTest.cs, RemoveDirTest.cs: Added.
+	* MakeDirTest.cs: Added check for task's output.
+
 2006-12-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MakeDirTest.cs, CscTest.cs: Added.
