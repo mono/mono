@@ -560,7 +560,7 @@ namespace System.Xml.Schema
 			if (OptimizedParticle != null)
 				return OptimizedParticle;
 			if (RefName != null && RefName != XmlQualifiedName.Empty) {
-				referencedElement = schema.Elements [RefName] as XmlSchemaElement;
+				referencedElement = schema.FindElement (RefName);
 			}
 
 //			if (this.referencedElement != null)
@@ -613,7 +613,7 @@ namespace System.Xml.Schema
 				return;
 
 			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
-				XmlSchemaElement substElem = schema.Elements [SubstitutionGroup] as XmlSchemaElement;
+				XmlSchemaElement substElem = schema.FindElement (SubstitutionGroup);
 				this.substitutionGroupElement = substElem;
 				if (substElem != null)
 					substElem.substitutingElements.Add (this);
@@ -673,7 +673,7 @@ namespace System.Xml.Schema
 			}
 			else if (RefName != XmlQualifiedName.Empty)
 			{
-				XmlSchemaElement refElem = schema.Elements [RefName] as XmlSchemaElement;
+				XmlSchemaElement refElem = schema.FindElement (RefName);
 				// If el is null, then it is missing sub components .
 				if (refElem != null) {
 					this.referencedElement = refElem;
@@ -703,7 +703,7 @@ namespace System.Xml.Schema
 			// {substitution group affiliation}
 			// 3. subsitution group's type derivation check.
 			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
-				XmlSchemaElement substElem = schema.Elements [SubstitutionGroup] as XmlSchemaElement;
+				XmlSchemaElement substElem = schema.FindElement (SubstitutionGroup);
 				// If el is null, then it is missing sub components .
 				if (substElem != null) {
 					XmlSchemaType substSchemaType = substElem.ElementType as XmlSchemaType;

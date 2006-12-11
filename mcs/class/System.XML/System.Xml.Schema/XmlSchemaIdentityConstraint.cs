@@ -101,8 +101,11 @@ namespace System.Xml.Schema
 				error(h,"attribute name must be NCName");
 			else {
 				this.qName = new XmlQualifiedName(Name,schema.TargetNamespace);
-				if (schema.NamedIdentities.Contains (qName))
-					error(h,"There is already same named identity constraint in this namespace.");
+				if (schema.NamedIdentities.Contains (qName)) {
+					XmlSchemaIdentityConstraint existing =
+						schema.NamedIdentities [qName] as XmlSchemaIdentityConstraint;
+					error(h, String.Format ("There is already same named identity constraint in this namespace. Existing item is at {0}({1},{2})", existing.SourceUri, existing.LineNumber, existing.LinePosition));
+				}
 				else
 					schema.NamedIdentities.Add (qName, this);
 			}

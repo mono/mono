@@ -287,15 +287,21 @@ namespace System.Xml.Schema
 			xss.Compile ();
 		}
 
-		// It is used by XmlSchemaCollection.Add(),
-		// XmlSchemaSet.Compile() and XmlSchemaSet.Remove().
+		// It is used by XmlSchemaCollection.Add() and XmlSchemaSet.Remove().
 		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver)
 		{
 			Hashtable handledUris = new Hashtable ();
-			// Add this schema itself.
-			if (SourceUri != null && SourceUri.Length > 0)
-				handledUris.Add (SourceUri, SourceUri);
+			CompileSubset (handler, col, resolver, handledUris);
+		}
 
+		// It is used by XmlSchemaSet.Compile().
+		internal void CompileSubset (ValidationEventHandler handler, XmlSchemaSet col, XmlResolver resolver, Hashtable handledUris)
+		{
+			if (SourceUri != null && SourceUri.Length > 0) {
+				if (handledUris.Contains (SourceUri))
+					return;
+				handledUris.Add (SourceUri, SourceUri);
+			}
 			DoCompile (handler, handledUris, col, resolver);
 		}
 

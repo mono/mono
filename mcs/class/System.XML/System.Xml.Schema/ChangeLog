@@ -1,3 +1,14 @@
+2006-12-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaIdentityConstraint.cs : give conflicting component in
+	  the error message.
+	* XmlSchemaElement.cs : When resolving "ref" and "substitutionGroup",
+	  It should use XmlSchema.FindElement() instead of XmlSchema.Elements
+	  so that it does not miss external components.
+	* XmlSchemaSet.cs, XmlSchema.cs : now in one XmlSchemaSet
+	  compilation, make sure to not handle the same schema twice even
+	  at the schema level.
+
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : it must also be fixed for method signature

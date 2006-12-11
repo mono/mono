@@ -199,9 +199,10 @@ namespace System.Xml.Schema
 			IDCollection.Clear ();
 			NamedIdentities.Clear ();
 
+			Hashtable handledUris = new Hashtable ();
 			foreach (XmlSchema schema in al)
 				if (!schema.IsCompiled)
-					schema.CompileSubset (ValidationEventHandler, this, xmlResolver);
+					schema.CompileSubset (ValidationEventHandler, this, xmlResolver, handledUris);
 			foreach (XmlSchema schema in al)
 				schema.Validate (ValidationEventHandler);
 
