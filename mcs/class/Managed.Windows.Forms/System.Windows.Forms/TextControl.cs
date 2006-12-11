@@ -4657,6 +4657,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		private Document	document;
 		private Stack		undo_actions;
 		private Stack		redo_actions;
+
+		private int undo_levels;
+		private int redo_levels;
 		private int		caret_line;
 		private int		caret_pos;
 		#endregion	// Local Variables
@@ -4670,26 +4673,27 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		#endregion	// Constructors
 
 		#region Properties
-		[MonoTODO("Change this to be configurable")]
 		internal int UndoLevels {
 			get {
-				return undo_actions.Count;
+				return undo_levels;
 			}
 		}
 
-		[MonoTODO("Change this to be configurable")]
 		internal int RedoLevels {
 			get {
-				return redo_actions.Count;
+				return redo_levels;
 			}
 		}
 
-		[MonoTODO("Come up with good naming and localization")]
 		internal string UndoName {
 			get {
 				Action action;
 
 				action = (Action)undo_actions.Peek();
+
+				if (action.type == ActionType.CompoundEnd)
+					return (string) action.data;
+
 				switch(action.type) {
 					case ActionType.InsertChar: {
 						Locale.GetText("Insert character");
@@ -4729,6 +4733,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		internal void Clear() {
 			undo_actions.Clear();
 			redo_actions.Clear();
+			undo_levels = 0;
+			redo_levels = 0;
 		}
 
 		internal void Undo() {
@@ -4755,6 +4761,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 				case ActionType.CompoundBegin:
 					compound_stack--;
+					undo_levels--;
+					redo_levels++;
 					break;
 
 				case ActionType.InsertString:
@@ -4823,6 +4831,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			ce.type = ActionType.CompoundEnd;
 
 			undo_actions.Push (ce);
+			undo_levels++;
 		}
 
 		// pos = 1-based
