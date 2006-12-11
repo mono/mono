@@ -318,6 +318,11 @@ namespace System.Web.UI {
 			string assemblyName = "dll.ghres";
 			
 			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream(assemblyName);
+
+			//flat webapp support
+			if (inputStream == null)
+				contextClassLoader.getResourceAsStream(this.GetType().Assembly.GetName().Name + ".ghres");
+
 			System.IO.Stream strim = null;
 			if (inputStream == null) {
 				string descPath = String.Join("/", new string[]{"assemblies", this.GetType().Assembly.GetName().Name, assemblyName});
