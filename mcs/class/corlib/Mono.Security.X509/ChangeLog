@@ -1,3 +1,13 @@
+2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Synchronize source with Mono.Security.dll
+	* X501Name.cs: Synchronize source with Mono.Security.dll
+	* X509Certificate.cs: Synchronize source with Mono.Security.dll
+	* X509CRL.cs: Synchronize source with Mono.Security.dll
+	* X509Store.cs: Synchronize source with Mono.Security.dll
+	* X509Stores.cs: Synchronize source with Mono.Security.dll
+	* X520Attributes.cs: Synchronize source with Mono.Security.dll
+
 2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Add support for PEM encoded (base64) x.509 

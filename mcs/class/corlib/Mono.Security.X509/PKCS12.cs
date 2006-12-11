@@ -671,13 +671,32 @@ namespace Mono.Security.X509 {
 			return result;
 		}
 
+		private DSAParameters GetExistingParameters (out bool found)
+		{
+			foreach (X509Certificate cert in Certificates) {
+				// FIXME: that won't work if parts of the parameters are missing
+				if (cert.KeyAlgorithmParameters != null) {
+					DSA dsa = cert.DSA;
+					if (dsa != null) {
+						found = true;
+						return dsa.ExportParameters (false);
+					}
+				}
+			}
+			found = false;
+			return new DSAParameters ();
+		}
+
 		private void AddPrivateKey (PKCS8.PrivateKeyInfo pki) 
 		{
 			byte[] privateKey = pki.PrivateKey;
 			switch (privateKey [0]) {
 				case 0x02:
-					DSAParameters p = new DSAParameters (); // FIXME
-					_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeDSA (privateKey, p));
+					bool found;
+					DSAParameters p = GetExistingParameters (out found);
+					if (found) {
+						_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeDSA (privateKey, p));
+					}
 					break;
 				case 0x30:
 					_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeRSA (privateKey));

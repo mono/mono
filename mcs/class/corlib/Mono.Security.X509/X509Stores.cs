@@ -8,8 +8,6 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -129,6 +127,18 @@ namespace Mono.Security.X509 {
 			if (_untrusted != null)
 				_untrusted.Clear ();
 			_untrusted = null;
+		}
+
+		public X509Store Open (string storeName, bool create)
+		{
+			if (storeName == null)
+				throw new ArgumentNullException ("storeName");
+
+			string path = Path.Combine (_storePath, storeName);
+			if (!create && !Directory.Exists (path))
+				return null;
+
+			return new X509Store (path, true);
 		}
 
 		// names

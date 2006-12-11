@@ -67,6 +67,11 @@ namespace Mono.Security.X509 {
 		static byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
 		static byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
 		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
+		static byte[] dnQualifier = { 0x55, 0x04, 0x2E };
+		static byte[] title = { 0x55, 0x04, 0x0C };
+		static byte[] surname = { 0x55, 0x04, 0x04 };
+		static byte[] givenName = { 0x55, 0x04, 0x2A };
+		static byte[] initial = { 0x55, 0x04, 0x2B };
 
 		private X501 () 
 		{
@@ -86,7 +91,6 @@ namespace Mono.Security.X509 {
 			return sb.ToString ();
 		}
 
-#if INSIDE_CORLIB || NET_2_0
 		static public string ToString (ASN1 seq, bool reversed, string separator, bool quotes)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -112,7 +116,6 @@ namespace Mono.Security.X509 {
 			}
 			return sb.ToString ();
 		}
-#endif
 
 		static private void AppendEntry (StringBuilder sb, ASN1 entry, bool quotes)
 		{
@@ -147,6 +150,16 @@ namespace Mono.Security.X509 {
 					sb.Append ("UID=");
 				else if (poid.CompareValue (email))
 					sb.Append ("E=");	// NOTE: Not part of RFC2253
+				else if (poid.CompareValue (dnQualifier))
+					sb.Append ("dnQualifier=");
+				else if (poid.CompareValue (title))
+					sb.Append ("T=");
+				else if (poid.CompareValue (surname))
+					sb.Append ("SN=");
+				else if (poid.CompareValue (givenName))
+					sb.Append ("G=");
+				else if (poid.CompareValue (initial))
+					sb.Append ("I=");
 				else {
 					// unknown OID
 					sb.Append ("OID.");	// NOTE: Not present as RFC2253
@@ -205,8 +218,18 @@ namespace Mono.Security.X509 {
 					return new X520.DomainComponent ();
 				case "UID":	// RFC1274
 					return new X520.UserId ();
+				case "DNQUALIFIER":
+					return new X520.DnQualifier ();
+				case "T":
+					return new X520.Title ();
+				case "SN":
+					return new X520.Surname ();
+				case "G":
+					return new X520.GivenName ();
+				case "I":
+					return new X520.Initial ();
 				default:
-					if (s == "OID.") {
+					if (s.StartsWith ("OID.")) {
 						// MUST support it but it OID may be without it
 						return new X520.Oid (s.Substring (4));
 					} else {

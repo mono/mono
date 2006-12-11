@@ -93,8 +93,8 @@ namespace Mono.Security.X509 {
 		private int version;
 		private byte[] serialnumber;
 
-//		private byte[] issuerUniqueID;
-//		private byte[] subjectUniqueID;
+		private byte[] issuerUniqueID;
+		private byte[] subjectUniqueID;
 		private X509ExtensionCollection extensions;
 
 		private static string encoding_error = Locale.GetText ("Input data cannot be coded as a valid certificate.");
@@ -180,17 +180,17 @@ namespace Mono.Security.X509 {
 					m_signaturealgoparams = null;
 
 				// Certificate / TBSCertificate / issuerUniqueID
-				ASN1 issuerUID = tbsCertificate.Element (tbs, 0xA1);
+				ASN1 issuerUID = tbsCertificate.Element (tbs, 0x81);
 				if (issuerUID != null) {
 					tbs++;
-//					issuerUniqueID = issuerUID.Value;
+					issuerUniqueID = issuerUID.Value;
 				}
 
 				// Certificate / TBSCertificate / subjectUniqueID
-				ASN1 subjectUID = tbsCertificate.Element (tbs, 0xA2);
+				ASN1 subjectUID = tbsCertificate.Element (tbs, 0x82);
 				if (subjectUID != null) {
 					tbs++;
-//					subjectUniqueID = subjectUID.Value;
+					subjectUniqueID = subjectUID.Value;
 				}
 
 				// Certificate / TBSCertificate / Extensions
@@ -244,6 +244,9 @@ namespace Mono.Security.X509 {
 
 		public DSA DSA {
 			get {
+				if (m_keyalgoparams == null)
+					throw new CryptographicException ("Missing key algorithm parameters.");
+
 				if (_dsa == null) {
 					DSAParameters dsaParams = new DSAParameters ();
 					// for DSA m_publickey contains 1 ASN.1 integer - Y
@@ -329,6 +332,7 @@ namespace Mono.Security.X509 {
 					return null;
 				return (byte[]) m_keyalgoparams.Clone (); 
 			}
+			set { m_keyalgoparams = value; }
 		}
 
 		public virtual byte[] PublicKey	{
@@ -406,12 +410,17 @@ namespace Mono.Security.X509 {
 						ASN1 sign = new ASN1 (signature);
 						if ((sign == null) || (sign.Count != 2))
 							return null;
-						// parts may be less than 20 bytes (i.e. first bytes were 0x00)
 						byte[] part1 = sign [0].Value;
 						byte[] part2 = sign [1].Value;
 						byte[] sig = new byte [40];
-						Buffer.BlockCopy (part1, 0, sig, (20 - part1.Length), part1.Length);
-						Buffer.BlockCopy (part2, 0, sig, (40 - part2.Length), part2.Length);
+						// parts may be less than 20 bytes (i.e. first bytes were 0x00)
+						// parts may be more than 20 bytes (i.e. first byte > 0x80, negative)
+						int s1 = System.Math.Max (0, part1.Length - 20);
+						int e1 = System.Math.Max (0, 20 - part1.Length);
+						Buffer.BlockCopy (part1, s1, sig, e1, part1.Length - s1);
+						int s2 = System.Math.Max (0, part2.Length - 20);
+						int e2 = System.Math.Max (20, 40 - part2.Length);
+						Buffer.BlockCopy (part2, s2, sig, e2, part2.Length - s2);
 						return sig;
 
 					default:
@@ -455,6 +464,24 @@ namespace Mono.Security.X509 {
 		public bool WasCurrent (DateTime instant) 
 		{
 			return ((instant > ValidFrom) && (instant <= ValidUntil));
+		}
+
+		// uncommon v2 "extension"
+		public byte[] IssuerUniqueIdentifier {
+			get {
+				if (issuerUniqueID == null)
+					return null;
+				return (byte[]) issuerUniqueID.Clone ();
+			}
+		}
+
+		// uncommon v2 "extension"
+		public byte[] SubjectUniqueIdentifier {
+			get {
+				if (subjectUniqueID == null)
+					return null;
+				return (byte[]) subjectUniqueID.Clone ();
+			}
 		}
 
 		internal bool VerifySignature (DSA dsa) 
