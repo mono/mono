@@ -545,7 +545,7 @@ namespace System.Web.Services.Description {
 			foreach (XmlSchemaObject ob in sc.Includes)
 			{
 				XmlSchemaImport import = ob as XmlSchemaImport;
-				if (import.Namespace == SoapProtocolReflector.EncodingNamespace) return true;
+				if (import != null && import.Namespace == SoapProtocolReflector.EncodingNamespace) return true;
 			}
 			return false;
 		}
