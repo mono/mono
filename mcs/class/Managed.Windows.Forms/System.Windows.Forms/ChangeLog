@@ -1,3 +1,8 @@
+2006-12-11  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: ControlCollection.Remove should return if the arg is
+	null, and ControlCollection.SetChildIndex should raise a ANE.
+
 2006-12-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Control.cs: Verify value set for Dock property. Code formatting

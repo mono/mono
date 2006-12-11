@@ -539,6 +539,9 @@ namespace System.Windows.Forms
 			}
 
 			public virtual void Remove(Control value) {
+				if (value == null)
+					return;
+
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
 
@@ -570,6 +573,9 @@ namespace System.Windows.Forms
 			}
 
 			public void SetChildIndex(Control child, int newIndex) {
+				if (child == null)
+					throw new ArgumentNullException ("child");
+
 				int	old_index;
 
 				old_index=list.IndexOf(child);

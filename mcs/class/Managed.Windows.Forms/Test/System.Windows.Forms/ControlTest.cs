@@ -969,6 +969,47 @@ namespace MonoTests.System.Windows.Forms
 			grandma.Enabled = false;
 			Assert.AreEqual(3, EnabledCalledCount, "Child Enabled Event not properly fired");
 		}
+
+		[Test]
+		public void ControlsRemoveNullTest ()
+		{
+			Control c = new Control ();
+			c.Controls.Remove (null);
+		}
+
+		[Test]
+		public void ControlsAddNullTest ()
+		{
+			Control c = new Control ();
+			c.Controls.Add (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ControlsSetChildIndexNullTest ()
+		{
+			Control c = new Control ();
+			c.Controls.SetChildIndex (null, 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ControlsAddRangeNullTest ()
+		{
+			Control c = new Control ();
+			c.Controls.AddRange (null);
+		}
+
+		[Test]
+		public void ControlsAddRangeNullElementTest ()
+		{
+			Control c = new Control ();
+			Control[] subcontrols = new Control[2];
+			subcontrols[0] = new Control ();
+			subcontrols[1] = null;
+
+			c.Controls.AddRange (subcontrols);
+		}
 	}
 
 	[TestFixture]
