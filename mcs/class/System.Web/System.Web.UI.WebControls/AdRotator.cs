@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls {
 			
 			w.RenderBeginTag (HtmlTextWriterTag.A);
 
-			if (e.NavigateUrl != null && e.NavigateUrl.Length > 0)
+			if (e.ImageUrl != null && e.ImageUrl.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
 
 			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? "" : e.AlternateText);
