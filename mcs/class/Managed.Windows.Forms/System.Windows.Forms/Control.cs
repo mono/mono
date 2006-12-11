@@ -2359,12 +2359,14 @@ namespace System.Windows.Forms
 			set {
 				base.Site = value;
 
-				AmbientProperties ap = (AmbientProperties) value.GetService (typeof (AmbientProperties));
-				if (ap != null) {
-					BackColor = ap.BackColor;
-					ForeColor = ap.ForeColor;
-					Cursor = ap.Cursor;
-					Font = ap.Font;
+				if (value != null) {
+					AmbientProperties ap = (AmbientProperties) value.GetService (typeof (AmbientProperties));
+					if (ap != null) {
+						BackColor = ap.BackColor;
+						ForeColor = ap.ForeColor;
+						Cursor = ap.Cursor;
+						Font = ap.Font;
+					}
 				}
 			}
 		}
