@@ -1,3 +1,8 @@
+2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12Test.cs: Add all failing PKITS PKCS#12 files (all DSA) as unit
+	test cases. Updated syntax to NUnit 2.2.
+
 2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CertificateTest.cs: Add new test cases for [Issuer|Subject]
