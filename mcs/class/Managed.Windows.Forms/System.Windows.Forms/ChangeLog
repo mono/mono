@@ -1,3 +1,7 @@
+2006-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* Application.cs (OpenForms): Add.
+
 2006-12-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Use opacity instead of Opactiy to determine if we need

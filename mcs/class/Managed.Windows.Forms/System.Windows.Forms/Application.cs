@@ -368,6 +368,12 @@ namespace System.Windows.Forms {
 		{
 			use_compatible_text_rendering = defaultValue;
 		}
+
+		public static FormCollection OpenForms {
+			get {
+				return forms;
+			}
+		}
 #endif
 
 		public static void Exit() {
