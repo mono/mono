@@ -921,6 +921,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#8-2", "urn:hoge", xvr.LookupNamespace ("bar"));
 		}
 
+#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (XmlSchemaException))]
 		public void Bug80231 ()
@@ -933,5 +934,6 @@ namespace MonoTests.System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
+#endif
 	}
 }
