@@ -156,6 +156,7 @@ namespace System.Reflection {
 				return (attr & (int)MethodAttributes.SpecialName) != 0;
 			}
 		}
+		[ComVisibleAttribute (true)]
 		public Boolean IsConstructor {
 			get {
 				int attr = (int)Attributes;

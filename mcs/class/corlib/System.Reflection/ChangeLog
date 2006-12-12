@@ -1,4 +1,10 @@
 
+Tue Dec 12 20:35:10 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBase.cs: added missing ComVisible attr.
+	* MethodInfo.cs: added a few missing methods that we implement
+	in derived classes.
+
 Tue Dec 12 19:45:26 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* MonoEvent.cs: correctly obey the nonPublic flag in GetOtherMethods ().

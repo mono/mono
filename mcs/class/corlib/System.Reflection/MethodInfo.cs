@@ -99,6 +99,30 @@ namespace System.Reflection {
 			throw new NotSupportedException (this.GetType().ToString ());
 		}
 
+		// GetGenericArguments, IsGenericMethod, IsGenericMethodDefinition
+		// and ContainsGenericParameters are implemented in the derived classes.
+		public override Type [] GetGenericArguments () {
+			return Type.EmptyTypes;
+		}
+
+		public override bool IsGenericMethod {
+			get {
+				return false;
+			}
+		}
+
+		public override bool IsGenericMethodDefinition {
+			get {
+				return false;
+			}
+		}
+
+		public override bool ContainsGenericParameters {
+			get {
+				return false;
+			}
+		}
+
 		public virtual ParameterInfo ReturnParameter {
 			get {
 				throw new NotSupportedException ();
