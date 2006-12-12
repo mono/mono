@@ -315,13 +315,11 @@ namespace System.Web.UI {
 
 			java.lang.Class c = vmw.common.TypeUtils.ToClass(stringResourcePointer);
 			java.lang.ClassLoader  contextClassLoader = c.getClassLoader();
-			string assemblyName = "dll.ghres";
+
+			//TODO:move this code to page mapper
+			string assemblyName = PageMapper.GetAssemblyResource(this.AppRelativeVirtualPath);
 			
 			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream(assemblyName);
-
-			//flat webapp support
-			if (inputStream == null)
-				contextClassLoader.getResourceAsStream(this.GetType().Assembly.GetName().Name + ".ghres");
 
 			System.IO.Stream strim = null;
 			if (inputStream == null) {
