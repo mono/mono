@@ -70,9 +70,12 @@ namespace System.Runtime.InteropServices
 
 		public void Close ()
 		{
+			if (refcount == 0)
+				throw new ObjectDisposedException (GetType ().FullName);
+
 			lock (handle_lock){
 				refcount--;
-				if (refcount == 0){
+				if (refcount == 0 && owns_handle){
 					ReleaseHandle ();
 					handle = invalid_handle_value;
 				}
@@ -90,6 +93,9 @@ namespace System.Runtime.InteropServices
 		//
 		public void DangerousAddRef (ref bool success)
 		{
+			if (refcount == 0)
+				throw new ObjectDisposedException (GetType ().FullName);
+
 			lock (handle_lock){
 				if (handle == invalid_handle_value || refcount == 0){
 					//
@@ -98,7 +104,7 @@ namespace System.Runtime.InteropServices
 					// am left wondering: when would "success" be
 					// set to false?
 					//
-					throw new ObjectDisposedException ("handle");
+					throw new ObjectDisposedException (GetType ().FullName);
 				}
 				
 				refcount++;
@@ -108,12 +114,18 @@ namespace System.Runtime.InteropServices
 
 		public IntPtr DangerousGetHandle ()
 		{
+			if (refcount == 0){
+				throw new ObjectDisposedException (GetType ().FullName);
+			}
+
 			return handle;
 		}
 
 		public void DangerousRelease ()
 		{
-			Console.WriteLine ("DangerousRelease called");
+			if (refcount == 0)
+				throw new ObjectDisposedException (GetType ().FullName);
+
 			lock (handle_lock){
 				refcount--;
 				if (refcount == 0 && owns_handle){
@@ -148,7 +160,7 @@ namespace System.Runtime.InteropServices
 				// the question is whether:
 				//   * The runtime will ever call Dipose(false) for SafeHandles (special runtime case)
 				//   * Whether we should just call ReleaseHandle regardless?
-				// 
+				//
 			}
 		}
 

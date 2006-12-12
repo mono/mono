@@ -1,6 +1,10 @@
 2006-12-11  Miguel de Icaza  <miguel@novell.com>
 
-	* SafeHandle.cs: Implement finalizer.
+	* SafeHandle.cs: Fix a handful of bugs, and add tests for them.
+	Only release the handle if its owned by us.  Also throw
+	ObjectDisposedException's
+
+	Implement finalizer.
 
 	DangerousAddRef will now throw an exception if the object was
 	disposed.

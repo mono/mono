@@ -130,6 +130,7 @@ System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
 System.Runtime.InteropServices/GCHandleTest.cs
 System.Runtime.InteropServices/MarshalTest.cs
 System.Runtime.InteropServices/RuntimeEnvironmentTest.cs
+System.Runtime.InteropServices/SafeHandleTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
