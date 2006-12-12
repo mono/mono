@@ -1,3 +1,9 @@
+2006-12-11  Chris Toshok  <toshok@ximian.com>
+
+	* DataViewTest.cs: new test for GetItemProperties being called on
+	a DataView without an associated DataTable.  we crash, but should
+	return an empty collection.
+
 2006-12-08  Nagappan A  <anagappan@novell.com>
 
 	* DataTableTest3.cs, DataTableTest4.cs, DataSetTest2.cs: Updated

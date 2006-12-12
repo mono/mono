@@ -225,6 +225,13 @@ namespace MonoTests.System.Data
 			AssertEquals ("Deleted.Value", "1", v);
 		}
 
+		[Test]
+		public void NullTableGetItemPropertiesTest ()
+		{
+			DataView dataview = new DataView ();
+			PropertyDescriptorCollection col = ((ITypedList)dataview).GetItemProperties (null);
+			AssertEquals ("1", 0, col.Count);
+		}
 
 		#region Sort Tests
 		[Test]

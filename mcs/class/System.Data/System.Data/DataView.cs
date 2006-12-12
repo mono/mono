@@ -974,6 +974,9 @@ namespace System.Data
 
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors) 
 		{
+			if (dataTable == null)
+				return new PropertyDescriptorCollection (new PropertyDescriptor[0]);
+
 			// FIXME: use listAccessors somehow
 			PropertyDescriptor [] descriptors = 
 				new PropertyDescriptor [dataTable.Columns.Count + dataTable.ChildRelations.Count];
