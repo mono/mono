@@ -57,11 +57,20 @@ namespace System.Web {
 			if (relativePath == null || relativePath == "")
 				throw new ArgumentNullException ("relativePath");
 
+			if (relativePath.Length == 1 && relativePath [0] == '~')
+				return HttpRuntime.AppDomainAppVirtualPath;
+
+			if (relativePath [0] == '~' && relativePath [1] == '/')
+				return UrlUtils.RemoveDoubleSlashes ((HttpRuntime.AppDomainAppVirtualPath + relativePath.Substring (1)).Replace ('\\', '/'));
+
 			if (basePath [0] != '/')
 				throw new ArgumentException ("basePath is not an absolute path", "basePath");
 
-			if (relativePath [0] != '/')
-				return "/" + relativePath;
+			if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
+				int lastSlash = basePath.LastIndexOf ('/');
+				if (lastSlash >= 0)
+					return UrlUtils.Combine (basePath.Substring (0, lastSlash + 1), relativePath);
+			}
 
 			return UrlUtils.Combine (basePath, relativePath);
 		}
@@ -169,10 +178,10 @@ namespace System.Web {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			if (virtualPath.Length > 1 && virtualPath [0] == '~' && virtualPath [1] == '/') {
+			if (IsAppRelative(virtualPath)) {
 				if (applicationPath [0] != '/')
 					throw new ArgumentException ("appPath is not rooted", "applicationPath");
-				return UrlUtils.RemoveDoubleSlashes ((applicationPath + virtualPath.Substring (1)).Replace ('\\', '/'));
+				return UrlUtils.RemoveDoubleSlashes ((applicationPath + (virtualPath.Length == 1 ? "/" : virtualPath.Substring (1))).Replace ('\\', '/'));
 			}
 
 			if (virtualPath [0] != '/')

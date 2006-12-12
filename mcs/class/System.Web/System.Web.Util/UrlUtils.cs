@@ -170,7 +170,11 @@ namespace System.Web.Util {
 			if (dest == 0)
 				return "/";
 
-			return String.Join ("/", parts, 0, dest);
+			string str = String.Join ("/", parts, 0, dest);
+#if NET_2_0
+			str = RemoveDoubleSlashes (str);
+#endif
+			return str;
 		}
 		
 		internal static string GetDirectory (string url)

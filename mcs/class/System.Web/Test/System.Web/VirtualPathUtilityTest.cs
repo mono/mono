@@ -50,7 +50,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Combine ()
 		{
 			Assert.AreEqual ("/there", VPU.Combine ("/hi", "there"), "A1");
@@ -450,6 +449,7 @@ namespace MonoTests.System.Web {
 		[Test]
 		public void ToAbsolute9 ()
 		{
+			Assert.AreEqual ("/ROOT/", VPU.ToAbsolute ("~", "/ROOT"));
 			Assert.AreEqual ("/ROOT/", VPU.ToAbsolute ("~/", "/ROOT"));
 			Assert.AreEqual ("/ROOT/blah", VPU.ToAbsolute ("~/blah", "/ROOT/"));
 		}
