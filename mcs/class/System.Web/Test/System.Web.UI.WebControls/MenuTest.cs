@@ -46,6 +46,7 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using System.Xml;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -127,13 +128,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#else
 			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
 			WebTest.CopyResource (GetType (), "PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#endif
 		}
 
 		[Test]
@@ -1280,7 +1276,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-	        WebTest.Unload ();
+			WebTest.Unload ();
 		}
 	
 		// A simple Template class to wrap an image.
@@ -1328,7 +1324,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "Menu1";
-			fr.Controls ["__EVENTARGUMENT"].Value = "0_1";
+			fr.Controls["__EVENTARGUMENT"].Value = "root";  // "0_1";
 			t.Request = fr;
 			PageDelegates pd = new PageDelegates ();
 			pd.PreRender = _MenuItemsPost;
@@ -1340,9 +1336,66 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			foreach (Control c in p.Form.Controls) {
 				Menu m = c as Menu;
-				if (m != null)
+				if (m != null) {
 					Assert.AreEqual ("node2", m.SelectedValue, "MenuItemsPostBack");
+				}
 			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // implementation specific
+		public void Menu_PostBackFireEvents_1 ()
+		{
+			WebTest t = new WebTest ("PostBackMenuTest.aspx");
+			string str = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Menu1";
+			fr.Controls["__EVENTARGUMENT"].Value = "root";  // "0_1";
+			t.Request = fr;
+			str = t.Run ();
+			Assert.AreEqual ("MenuItemClick", t.UserData.ToString (), "PostBackEvent");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // implementation specific
+		public void Menu_PostBackFireEvents_2 ()
+		{
+			WebTest t = new WebTest ("PostBackMenuTest.aspx");
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = PostBackFireEvents_Init ;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			Assert.AreEqual ("MenuItemDataBound", t.UserData.ToString (), "MenuItemDataBound");
+		}
+
+		public static void PostBackFireEvents_Init (Page p)
+		{
+			Menu m = new Menu ();
+			m.MenuItemDataBound += new MenuEventHandler (MenuItemDataBound_Event);
+			m.DataSource = LoadXml ();
+			p.Controls.Add (m);
+			m.DataBind ();
+		}
+
+		public static XmlDataSource LoadXml ()
+		{
+			XmlDataSource ds = new XmlDataSource ();
+			#region xml_doc
+			String xml_text = @"<siteMapNode url=""1"" title=""root""  description="""">
+						<siteMapNode url=""~/MyPage.aspx"" title=""node1""  description="""" />
+					    </siteMapNode>";
+			#endregion
+			ds.Data = xml_text;
+			return ds;
+		}
+
+		static void MenuItemDataBound_Event (object sender, MenuEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "MenuItemDataBound"; 
 		}
 	}
 }
