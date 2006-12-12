@@ -2140,7 +2140,9 @@ namespace Mono.CSharp
 				if (ok)
 					return res;
 
-//				Report.Error (267, Location, "The `partial' modifier can be used only immediately before keyword `class', `struct', or `interface'");
+				if (next_token < Token.LAST_KEYWORD)
+					Report.Error (267, Location, "The `partial' modifier can be used only immediately before keyword `class', `struct', or `interface'");
+
 				val = new LocatedToken (Location, "partial");
 				return Token.IDENTIFIER;
 			}

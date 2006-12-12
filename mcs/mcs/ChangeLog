@@ -1,5 +1,10 @@
 2006-12-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #77794
+	* cs-tokenizer.cs (consume_identifier): Check for correct partial context.
+
+2006-12-12  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs (get_cmd_arg): Support CR as the line terminator.
 	Fixes #69299.
 	(pp_expr): Report error for an invalid expression.
