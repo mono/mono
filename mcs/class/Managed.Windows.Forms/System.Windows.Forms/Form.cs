@@ -100,8 +100,10 @@ namespace System.Windows.Forms {
 
 		private void SelectActiveControl ()
 		{
-			if (this.IsMdiContainer)
+			if (this.IsMdiContainer) {
+				SendControlFocus (this.mdi_container);
 				return;
+			}
 				
 			if (this.ActiveControl == null) {
 				bool visible;
@@ -1172,6 +1174,8 @@ namespace System.Windows.Forms {
 			if (IsHandleCreated) {
 				if (IsMdiChild) {
 					MdiParent.ActivateMdiChild (this);
+				} else if (IsMdiContainer) {
+					SendControlFocus (mdi_container);
 				} else {
 					active = ActiveForm;
 					if ((active != null) && (this != active)) {

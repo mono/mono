@@ -1,5 +1,11 @@
 2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Form.cs: Make MdiClient have the focus even if it's
+	not selectable, since it should receive WM_KEY* and WM_MOUSE 
+	messages. Fixes #79907.
+	
+2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Hwnd.cs: Save the CreateParams.ExStyle so that it can be
 	queried after the window is created.
 	
