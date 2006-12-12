@@ -358,6 +358,21 @@ namespace MonoTests.System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlSchemaValidationException))]
+		// make sure that Create(string,XmlReaderSettings) returns
+		// validating XmlReader.
+		public void CreateFromUrlWithValidation ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings();
+			XmlSchema xs = new XmlSchema ();
+			settings.Schemas.Add (xs);
+			settings.ValidationType = ValidationType.Schema;
+			using (XmlReader r = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+				r.Read ();
+			}
+		}
 	}
 }
 #endif

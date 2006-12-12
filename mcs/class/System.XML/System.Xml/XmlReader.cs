@@ -312,8 +312,8 @@ namespace System.Xml
 				context = PopulateParserContext (settings, url);
 			XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, url, GetNodeType (settings), context);
 			XmlReader ret = CreateCustomizedTextReader (xtr, settings);
-			xtr.CloseInput = true;
-			return xtr;
+			xtr.CloseInput = true; // forced. See XmlReaderCommonTests.CreateFromUrlClose().
+			return ret;
 		}
 
 		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)
@@ -386,10 +386,10 @@ namespace System.Xml
 
 			reader = CreateValidatingXmlReader (reader, settings);
 
-			if (reader.Settings != null ||
-				settings.IgnoreComments ||
-				settings.IgnoreProcessingInstructions ||
-				settings.IgnoreWhitespace)
+			if (reader.Settings != null &&
+			    (settings.IgnoreComments ||
+			     settings.IgnoreProcessingInstructions ||
+			     settings.IgnoreWhitespace))
 				return new XmlFilterReader (reader, settings);
 			else {
 				reader.settings = settings;

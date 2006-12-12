@@ -1,5 +1,10 @@
 2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : Create() with string url was not returning validating
+	  XmlReader.
+
+2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs : when an attribute declaration is missing
 	  in the corresponding attlist declaration, it caused NRE.
 	  Fixed bug #80231.

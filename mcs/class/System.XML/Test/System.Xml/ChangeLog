@@ -1,5 +1,10 @@
 2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettingsTests.cs : added test to make sure that Create()
+	  returns a validating XmlReader.
+
+2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReaderTests.cs : added test for bug #80231.
 
 2006-12-11  Atsushi Enomoto <atsushi@ximian.com>
