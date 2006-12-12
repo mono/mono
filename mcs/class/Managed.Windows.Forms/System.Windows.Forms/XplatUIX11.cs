@@ -702,6 +702,49 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
 		}
 
+		// For WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN
+		//     WM_CREATE and WM_DESTROY causes
+		void SendParentNotify(IntPtr child, Msg cause, int x, int y)
+		{	
+			Hwnd hwnd;
+			
+			if (child == IntPtr.Zero) {
+				//Console.WriteLine ("Child is zero");
+				return;
+			}
+			
+			hwnd = Hwnd.GetObjectFromWindow (child);
+			
+			if (hwnd == null) {
+				return;
+			}
+			
+			if (hwnd.Handle == IntPtr.Zero) {
+				//Console.WriteLine ("Child's Handle is zero");
+				return;
+			}
+			
+			if (ExStyleSet ((int) hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY)) {
+				return;
+			}
+			
+			if (hwnd.Parent == null) {
+				return;
+			}
+			
+			if (hwnd.Parent.Handle == IntPtr.Zero) {
+				return;
+			}
+
+			if (cause == Msg.WM_CREATE || cause == Msg.WM_DESTROY) {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), child);
+			} else {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
+			}
+			
+			SendParentNotify (hwnd.Parent.Handle, cause, x, y);
+		}
+		
 		bool StyleSet (int s, WindowStyles ws)
 		{
 			return (s & (int)ws) == (int)ws;
@@ -2292,6 +2335,7 @@ namespace System.Windows.Forms {
 			hwnd.width = Width;
 			hwnd.height = Height;
 			hwnd.parent = Hwnd.ObjectFromHandle(cp.Parent);
+			hwnd.initial_ex_style = (WindowExStyles) cp.ExStyle;
 
 			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
 				hwnd.enabled = false;
@@ -2386,6 +2430,8 @@ namespace System.Windows.Forms {
 
 			// Set caption/window title
 			Text(hwnd.Handle, cp.Caption);
+			
+			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
 
 			return hwnd.Handle;
 		}
@@ -2800,6 +2846,8 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Destroying window {0}", XplatUI.Window(hwnd.client_window));
 			#endif
 
+			SendParentNotify (hwnd.Handle, Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
+				
 			CleanupCachedWindows (hwnd);
 
 			ArrayList windows = new ArrayList ();
@@ -3231,7 +3279,10 @@ namespace System.Windows.Forms {
 						ClickPending.lParam = msg.lParam;
 						ClickPending.Time = (long)xevent.ButtonEvent.time;
 					}
-
+					
+					if (msg.message == Msg.WM_LBUTTONDOWN || msg.message == Msg.WM_MBUTTONDOWN || msg.message == Msg.WM_RBUTTONDOWN)
+						SendParentNotify(msg.hwnd, msg.message, mouse_position.X, mouse_position.Y);
+					
 					break;
 				}
 

@@ -1,5 +1,15 @@
 2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Hwnd.cs: Save the CreateParams.ExStyle so that it can be
+	queried after the window is created.
+	
+	* XplatUIX11.cs: Added SendParentNotify to implement 
+	WM_PARENTNOTIFY logic. Fixes #79965.
+	
+	* Control.cs: Added MakeParam.
+	
+2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MdiClient.cs: Resume Layout before setting window
 	states (fixes #80201).
 

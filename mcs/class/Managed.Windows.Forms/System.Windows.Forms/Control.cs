@@ -983,6 +983,10 @@ namespace System.Windows.Forms
 			// Only here to be overriden by our actual controls; this is needed by the accessibility class
 		}
 
+		internal static IntPtr MakeParam (int low, int high){
+			return new IntPtr (high << 16 | low & 0xffff);
+		}
+
 		internal static int LowOrder (int param) {
 			return ((int)(short)(param & 0xffff));
 		}
