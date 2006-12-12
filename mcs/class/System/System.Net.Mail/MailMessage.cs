@@ -89,7 +89,7 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 
 			this.from = new MailAddress (from);
-			this.to = new MailAddress (to);
+			this.to.Add (new MailAddress (to));
 		}
 
 		public MailMessage (string from, string to, string subject, string body) : this ()
@@ -97,7 +97,7 @@ namespace System.Net.Mail {
 			if (from == null || to == null)
 				throw new ArgumentNullException ();
 			this.from = new MailAddress (from);
-			this.to = new MailAddress (to);
+			this.to.Add (new MailAddress (to));
 			Body = body;
 			Subject = subject;
 		}
