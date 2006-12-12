@@ -68,6 +68,7 @@ namespace System.Web.J2EE
 			return (string)answer[key];
 		}
 
+#if UNUSED
 		// UNUSED METHOD
 		//The method was used by runtime to force file names casesensitivity
 		// problem. The filelist.xml file should contain correct file names,
@@ -111,7 +112,7 @@ namespace System.Web.J2EE
 			}
 
 		}
-
+#endif
 		private static ICachedXmlDoc GetAssembliesCachedDocument()
 		{
 			lock(LOCK_GETASSEMBLIESCACHEDDOCUMENT)
@@ -151,6 +152,15 @@ namespace System.Web.J2EE
 		{
 			return GetCachedAssembly(NormalizeName(url));
 		}
+		public static string GetAssemblyResource(string url)
+		{
+			return GetCachedResource(NormalizeName(url));
+		}
+		private static string GetCachedResource(string url)
+		{
+			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();
+			return doc.GetAssemblyResourceName(url);
+		}
 		private static Assembly GetCachedAssembly(string url)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();
@@ -175,6 +185,7 @@ namespace System.Web.J2EE
 		{
 			Type GetType(string key);
 			Assembly GetAssembly(string key);
+			string GetAssemblyResourceName(string key);
 		}
 		#endregion
 
@@ -198,6 +209,10 @@ namespace System.Web.J2EE
 				this(DEFAULT_PAGES_NUMBER)
 			{}
 
+			string ICachedXmlDoc.GetAssemblyResourceName(string o)
+			{
+				return GetMetaByURL(o).Resource;
+			}
 			Type ICachedXmlDoc.GetType(string o)
 			{
 				return GetMetaByURL(o).Type;
@@ -274,6 +289,7 @@ namespace System.Web.J2EE
 	{
 		Type Type { get;}
 		Assembly Assembly {get;}
+		string Resource { get;}
 	}
 	public class PageCompiler : MetaProvider
 	{
@@ -284,7 +300,9 @@ namespace System.Web.J2EE
 		private static PageCompiler _errorProvider = new PageCompiler();
 
 		private Type _type = null;
+		private string _typeName = null;
 		private Assembly _assembly = null;
+		private string _origAssemblyName = null;
 		private string _xmlDescriptor = null;
 		private string _url = null;
 		private string _session = null;
@@ -330,6 +348,13 @@ namespace System.Web.J2EE
 				return _assembly;
 			}
 		}
+		string MetaProvider.Resource
+		{
+			get
+			{
+				return _origAssemblyName != null ? _origAssemblyName + ".ghres" : "dll.ghres";
+			}
+		}
 		private void LoadTypeAndAssem()
 		{
 			if (_assembly == null)
@@ -340,27 +365,68 @@ namespace System.Web.J2EE
 					if ((_type = Type.GetType(typeName)) != null)
 						_assembly = _type.Assembly;
 					else
-						_assembly = Assembly.Load(typeName);
+						_assembly = Assembly.Load(_origAssemblyName);
 				}
 			}
 		}
-		public string GetCachedTypeName()
+		private void InternalCompile()
 		{
-			
+			string fileName = Path.GetFileName(_url);
+
+			string fullFileName = (fileName.ToLower() == "global.asax") ? _url : HttpContext.Current.Request.MapPath(_url);
+#if DEBUG
+			Console.WriteLine("fullFileName=" + fullFileName);
+#endif
+			//type not found - run aspxparser
+			if (File.Exists(fullFileName) || Directory.Exists(fullFileName))
+			{
+				string[] command = GetParserCmd(fileName.ToLower() == "global.asax");
+				if (J2EEUtils.RunProc(command) != 0)
+					throw GetCompilerError();
+			}
+			else
+			{
+				string message = "The requested resource (" + _url + ") is not available.";
+				throw new HttpException(404, message);
+			}
+		}
+		private string GetDescriptorPath()
+		{
+			return String.Join("/", new string[] { "assemblies", _xmlDescriptor });
+		}
+		private string GetTypeNameFromAppFolder()
+		{
+			try
+			{
+				using (StreamReader sr = new StreamReader(HttpContext.Current.Request.MapPath("/" + GetDescriptorPath())))
+				{
+					return GetTypeFromDescStream(sr.BaseStream);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+				throw ex;
+			}
+		}
+		internal string GetTypeFromResources()
+		{
 			string typeName = null;
-		
+
 			//if the desciptor exists in the war - get the type
-			string descPath = String.Join("/", new string[]{"assemblies", _xmlDescriptor});
+			string descPath = GetDescriptorPath();
 
 			try
 			{
 #if DEBUG
 				Console.WriteLine(descPath);
 #endif
-				Stream fs = (Stream)IOUtils.getStreamRecursive("/" + descPath);
-				if (fs != null)
+				using (Stream fs = (Stream)IOUtils.getStreamRecursive("/" + descPath))
 				{
-					return  GetTypeFromDescStream(fs);
+					if (fs != null)
+					{
+						return GetTypeFromDescStream(fs);
+					}
 				}
 			}
 			catch (Exception ex)
@@ -368,74 +434,50 @@ namespace System.Web.J2EE
 #if DEBUG
 				Console.WriteLine(ex);
 #endif
-				//desc not in the war
-				//typeName = null;
 			}
-
-			//if (typeName != null)
-			//{
-			//    _type = Type.GetType(typeName);
-			//    return _type;
-			//}
-			
-			string fileName = Path.GetFileName(_url);
-            
-			if (fileName.ToLower() != "defaultwsdlhelpgenerator.aspx")
+			return null;
+		}
+		internal string GetCachedTypeName()
+		{			
+			string typeName = GetTypeFromResources();
+			if (typeName == null)
 			{
-                string fullFileName = (fileName.ToLower() == "global.asax") ? _url : HttpContext.Current.Request.MapPath(_url);
-#if DEBUG
-                Console.WriteLine("fullFileName=" + fullFileName);
-#endif                
-				if ( File.Exists(fullFileName) || Directory.Exists(fullFileName)) {
-					//type not found - run aspxparser
-                    string[] command = GetParserCmd(fileName.ToLower() == "global.asax");
-					if (J2EEUtils.RunProc(command) != 0)
-						throw GetCompilerError();
-				}
-				else {
-					string message = "The requested resource (" + _url + ") is not available.";
-					throw new HttpException(404, message);
-				}
-
-				//if the desciptor exists in the real app dir - get the type
+				//spawn dynamic compilation and lookup typename from created folder
+				InternalCompile();
+				typeName = GetTypeNameFromAppFolder();
+			}
+			return typeName;
+		}
+		private string GetTypeName()
+		{
+			return String.Format("{0}, {1}", _typeName, _origAssemblyName); 
+		}
+		private bool LoadMetaFromXmlStream(Stream fs)
+		{
+			if (fs != null)
+			{
 				try
 				{
-					StreamReader sr = new StreamReader(HttpContext.Current.Request.MapPath("/" + descPath));
-					typeName = GetTypeFromDescStream(sr.BaseStream);
-					sr.Close();
-					return typeName;
+					XmlDocument descXml = new XmlDocument();
+					descXml.Load(fs);
+					_origAssemblyName = descXml.SelectSingleNode(PAGE_XPATH).Attributes[ASSEM_ATTRIB_NAME].Value;
+					_typeName = descXml.SelectSingleNode(PAGE_XPATH).Attributes[TYPE_ATTRIB_NAME].Value;
+					return true;
 				}
-				catch (Exception ex)
+				catch
 				{
-					Console.WriteLine(ex);
-					throw ex;
+#if DEBUG
+					Console.WriteLine("Failed to load typename from stream");
+#endif
 				}
 			}
-			else
-				typeName = "ASP.defaultwsdlhelpgenerator_jvm_aspx";
-
-			//if (typeName != null)
-			//{
-			//    _type = Type.GetType(typeName);
-			//    return _type;
-			//}
-
-			return null;
+			return false;
 		}
 
 		private string GetTypeFromDescStream(Stream fs)
 		{
-			if (fs != null)
-			{
-				XmlDocument descXml = new XmlDocument();
-				descXml.Load(fs);
-				string assem = descXml.SelectSingleNode(PAGE_XPATH).Attributes[ASSEM_ATTRIB_NAME].Value;
-				string shortType = descXml.SelectSingleNode(PAGE_XPATH).Attributes[TYPE_ATTRIB_NAME].Value;
-				string typeName = String.Format("{0}, {1}",shortType,assem);
-				fs.Close();
-				return typeName;
-			}
-
+			if (LoadMetaFromXmlStream(fs))
+				return GetTypeName();
 			return null;
 		}
 
