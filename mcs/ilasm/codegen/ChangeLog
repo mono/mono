@@ -1,4 +1,8 @@
 
+Tue Dec 12 19:23:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* PropertyDef.cs: support more than one .other method in properties.
+
 Tue Dec 12 19:19:04 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* EventDef.cs: support more than one .other method in events.

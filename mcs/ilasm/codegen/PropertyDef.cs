@@ -25,7 +25,7 @@ namespace Mono.ILASM {
 
                 private MethodRef _get;
                 private MethodRef _set;
-                private MethodRef other;
+                private ArrayList other_list;
                 private PEAPI.Constant init_value;
 
                 public PropertyDef (FeatureAttr attr, BaseTypeRef type, string name, ArrayList arg_list)
@@ -102,9 +102,11 @@ namespace Mono.ILASM {
                                 prop_def.AddSetter (AsMethodDef (_set.PeapiMethod, "set"));
                         }
 
-                        if (other != null) {
-                                other.Resolve (code_gen);
-                                prop_def.AddOther (AsMethodDef (other.PeapiMethod, "other"));
+                        if (other_list != null) {
+				foreach (MethodRef otherm in other_list) {
+	                                otherm.Resolve (code_gen);
+        	                        prop_def.AddOther (AsMethodDef (otherm.PeapiMethod, "other"));
+				}
                         }
 
                         if (init_value != null)
@@ -123,7 +125,9 @@ namespace Mono.ILASM {
 
                 public void AddOther (MethodRef other)
                 {
-                        this.other = other;
+			if (other_list == null)
+				other_list = new ArrayList ();
+                        other_list.Add (other);
                 }
 
                 public void AddInitValue (PEAPI.Constant init_value)
