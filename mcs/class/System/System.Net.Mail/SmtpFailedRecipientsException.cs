@@ -84,10 +84,12 @@ namespace System.Net.Mail {
 		{
 		}
 
+#if !TARGET_JVM //remove private implementation
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 		}
+#endif
 
 		#endregion // Methods
 	}
