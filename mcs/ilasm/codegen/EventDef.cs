@@ -24,7 +24,7 @@ namespace Mono.ILASM {
 
                 private MethodRef addon;
                 private MethodRef fire;
-                private MethodRef other;
+                private ArrayList other_list;
                 private MethodRef removeon;
 
                 public EventDef (FeatureAttr attr, BaseTypeRef type, string name)
@@ -89,9 +89,11 @@ namespace Mono.ILASM {
                                 event_def.AddFire (AsMethodDef (fire.PeapiMethod, "fire"));
                         }
 
-                        if (other != null) {
-                                other.Resolve (code_gen);
-                                event_def.AddOther (AsMethodDef (other.PeapiMethod, "other"));
+                        if (other_list != null) {
+				foreach (MethodRef otherm in other_list) {
+	                                otherm.Resolve (code_gen);
+        	                        event_def.AddOther (AsMethodDef (otherm.PeapiMethod, "other"));
+				}
                         }
 
                         if (removeon != null) {
@@ -112,7 +114,9 @@ namespace Mono.ILASM {
 
                 public void AddOther (MethodRef method_ref)
                 {
-                        other = method_ref;
+			if (other_list == null)
+				other_list = new ArrayList ();
+                        other_list.Add (method_ref);
                 }
 
                 public void AddRemoveon (MethodRef method_ref)
