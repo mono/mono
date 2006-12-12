@@ -72,9 +72,9 @@ namespace System.Net.Mail {
 			headers.Add ("MIME-Version", "1.0");
 		}
 
-		[MonoTODO ("FormatException")]
-		public MailMessage (MailAddress from, MailAddress to)
-			: this () {
+		// FIXME: should throw a FormatException if the addresses are wrong.
+		public MailMessage (MailAddress from, MailAddress to) : this ()
+		{
 			if (from == null || to == null)
 				throw new ArgumentNullException ();
 
@@ -83,18 +83,21 @@ namespace System.Net.Mail {
 			this.to.Add (to);
 		}
 
-		public MailMessage (string from, string to)
-			: this (new MailAddress (from), new MailAddress (to))
+		public MailMessage (string from, string to) : this ()
 		{
 			if (from == null || to == null)
 				throw new ArgumentNullException ();
+
+			this.from = new MailAddress (from);
+			this.to = new MailAddress (to);
 		}
 
-		public MailMessage (string from, string to, string subject, string body)
-			: this (new MailAddress (from), new MailAddress (to))
+		public MailMessage (string from, string to, string subject, string body) : this ()
 		{
 			if (from == null || to == null)
 				throw new ArgumentNullException ();
+			this.from = new MailAddress (from);
+			this.to = new MailAddress (to);
 			Body = body;
 			Subject = subject;
 		}
