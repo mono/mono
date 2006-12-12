@@ -99,8 +99,8 @@ namespace System.Reflection {
 
 #if NET_2_0
 		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
-			// Shouldn't this be abstract, like the other methods ?
-			throw new NotImplementedException ();
+			// implemented by the derived class
+			return new MethodInfo [0];
 		}
 
 		public MethodInfo[] GetOtherMethods () {

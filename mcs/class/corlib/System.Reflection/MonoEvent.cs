@@ -97,7 +97,22 @@ namespace System.Reflection {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
 
-			return info.other_methods;
+			if (nonPublic)
+				return info.other_methods;
+			int num_public = 0;
+			foreach (MethodInfo m in info.other_methods) {
+				if (m.IsPublic)
+					num_public++;
+			}
+			if (num_public == info.other_methods.Length)
+				return info.other_methods;
+			MethodInfo[] res = new MethodInfo [num_public];
+			num_public = 0;
+			foreach (MethodInfo m in info.other_methods) {
+				if (m.IsPublic)
+					res [num_public++] = m;
+			}
+			return res;
 		}
 #endif
 

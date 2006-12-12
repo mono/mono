@@ -1,3 +1,9 @@
+
+Tue Dec 12 19:45:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* MonoEvent.cs: correctly obey the nonPublic flag in GetOtherMethods ().
+	* EventInfo.cs: remove NotImpl exception from GetOtherMethods ().
+
 2006-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyName.cs: Revert change where filename was not converted to
