@@ -1,3 +1,11 @@
+2006-12-12  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: We were almost always drawing one more line then
+	needed, since the GetLineByPixel will return the last line found
+	at that pixel. In most cases though, we were invalidating up to
+	the junction between two lines.
+	- Improve debug code.
+
 2006-12-12  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUI.cs: add static DrawReversibleFrame, DrawReversibleLine,

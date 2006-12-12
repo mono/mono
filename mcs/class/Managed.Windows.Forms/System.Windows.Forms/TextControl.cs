@@ -1819,9 +1819,13 @@ namespace System.Windows.Forms {
 			Brush		hilight_text;
 
 			// First, figure out from what line to what line we need to draw
-			start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
-			end = GetLineByPixel(clip.Bottom + viewport_y, false).line_no;
-//Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom:{2})", start, end, clip.Bottom);
+			start = GetLineByPixel(clip.Top - viewport_y, false).line_no;
+			end = GetLineByPixel(clip.Bottom - viewport_y, false).line_no;
+
+			/// Make sure that we aren't drawing one more line then we need to
+			line = GetLine (end - 1);
+			if (line != null && clip.Bottom == line.Y + line.height + viewport_y)
+				end--;			
 
 			// Now draw our elements; try to only draw those that are visible
 			line_no = start;
@@ -2935,7 +2939,15 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 
 				#if Debug
-					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3}", l1.line_no, p1, l2.line_no, p2);
+					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3}   {4}",
+							l1.line_no, p1, l2.line_no, p2,
+							new Rectangle(
+								(int)l1.widths[p1] + l1.align_shift - viewport_x, 
+								l1.Y - viewport_y, 
+								(int)l2.widths[p2] - (int)l1.widths[p1] + 1, 
+								l1.height
+								)
+						);
 				#endif
 
 				owner.Invalidate(
