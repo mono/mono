@@ -140,7 +140,9 @@ namespace System.Xml
 				if (FirstChild == null)
 					return String.Empty;
 				if (FirstChild == LastChild)
-					return FirstChild.InnerText;
+					return FirstChild.NodeType != XmlNodeType.Comment ?
+						FirstChild.InnerText :
+						String.Empty;
 
 				StringBuilder builder = null;
 				AppendChildValues (ref builder);

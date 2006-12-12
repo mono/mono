@@ -485,5 +485,13 @@ namespace MonoTests.System.Xml
 			Assert ("#1", n.IsReadOnly);
 			Assert ("#2", !n.CloneNode (true).IsReadOnly);
 		}
+
+		[Test] // bug #80233
+		public void InnerTextComment ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<a><!--xx--></a>");
+			AssertEquals (String.Empty, doc.InnerText);
+		}
 	}
 }

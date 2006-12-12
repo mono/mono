@@ -1,5 +1,10 @@
 2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : InnerText was returning comment text when there was
+	  only a Comment node. Fixed bug #80233.
+
+2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : Create() with string url was not returning validating
 	  XmlReader.
 
