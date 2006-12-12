@@ -203,7 +203,7 @@ namespace System.Web
 					UrlToNode.Remove (node.Url);
 				
 				if (parent != null) {
-					SiteMapNodeCollection siblings = (SiteMapNodeCollection) NodeToChildren [node];
+					SiteMapNodeCollection siblings = (SiteMapNodeCollection) NodeToChildren [parent];
 					if (siblings != null && siblings.Contains (node))
 						siblings.Remove (node);
 				}

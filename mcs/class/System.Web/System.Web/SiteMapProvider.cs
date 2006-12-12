@@ -192,9 +192,15 @@ namespace System.Web {
 			/* 2. */
 			/* XXX */
 
+			string url = node.Url;
+			// TODO check url is located within the current application
+
+			if (VirtualPathUtility.IsAppRelative (url) || !VirtualPathUtility.IsAbsolute (url))
+				url = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (HttpRuntime.AppDomainAppVirtualPath), url);
+
 			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection (
 				"system.web/authorization",
-				node.Url);
+				url);
 			if (config != null)
 				return config.IsValidUser (context.User, context.Request.HttpMethod);
 
