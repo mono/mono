@@ -268,6 +268,7 @@ namespace Mono.CSharp
 			public int col;
 			public int putback_char;
 			public int previous_col;
+			public Stack ifstack;
 #if GMCS_SOURCES
 			public int parsing_generic_less_than;
 #endif			
@@ -278,6 +279,8 @@ namespace Mono.CSharp
 				col = t.col;
 				putback_char = t.putback_char;
 				previous_col = t.previous_col;
+				if (t.ifstack != null && t.ifstack.Count != 0)
+					ifstack = (Stack)t.ifstack.Clone ();
 #if GMCS_SOURCES
 				parsing_generic_less_than = t.parsing_generic_less_than;
 #endif
@@ -298,7 +301,7 @@ namespace Mono.CSharp
 			col = p.col;
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
-
+			ifstack = p.ifstack;
 		}
 
 		// Do not reset the position, ignore it.
@@ -654,15 +657,7 @@ namespace Mono.CSharp
 
 				PushPosition ();
 
-				// Backup preprocessor flow data because we'll restore cursor possition
-				Stack ifstack_backup = null;
-				if (ifstack != null && ifstack.Count != 0)
-					ifstack_backup = (Stack)ifstack.Clone ();
-
 				int new_token = xtoken ();
-
-				if (ifstack_backup != null)
-					ifstack = ifstack_backup;
 
 				PopPosition ();
 
