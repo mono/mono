@@ -49,6 +49,51 @@ namespace System.Web.Security
 
 		static string authConfigPath = "system.web/authentication";
 		static string machineKeyConfigPath = "system.web/machineKey";
+#if TARGET_J2EE
+		const string Forms_initialized = "Forms.initialized";
+		const string Forms_cookieName = "Forms.cookieName";
+		const string Forms_cookiePath = "Forms.cookiePath";
+		const string Forms_timeout = "Forms.timeout";
+		const string Forms_protection = "Forms.protection";
+		const string Forms_init_vector = "Forms.init_vector";
+		static bool initialized
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_initialized);
+				return o != null ? (bool) o : false;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_initialized, value); }
+		}
+		static string cookieName
+		{
+			get { return (string) AppDomain.CurrentDomain.GetData (Forms_cookieName); }
+			set { AppDomain.CurrentDomain.SetData (Forms_cookieName, value); }
+		}
+		static string cookiePath
+		{
+			get { return (string) AppDomain.CurrentDomain.GetData (Forms_cookiePath); }
+			set { AppDomain.CurrentDomain.SetData (Forms_cookiePath, value); }
+		}
+		static int timeout
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_timeout);
+				return o != null ? (int) o : 0;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_timeout, value); }
+		}
+		static FormsProtectionEnum protection
+		{
+			get { return (FormsProtectionEnum) AppDomain.CurrentDomain.GetData (Forms_protection); }
+			set { AppDomain.CurrentDomain.SetData (Forms_protection, value); }
+		}
+		static byte [] init_vector
+		{
+			get { return (byte []) AppDomain.CurrentDomain.GetData (Forms_init_vector); }
+			set { AppDomain.CurrentDomain.SetData (Forms_init_vector, value); }
+		}
+		static object locker = new object ();
+#else
 		static bool initialized;
 		static string cookieName;
 		static string cookiePath;
@@ -56,17 +101,85 @@ namespace System.Web.Security
 		static FormsProtectionEnum protection;
 		static object locker = new object ();
 		static byte [] init_vector; // initialization vector used for 3DES
+#endif
 #if NET_1_1
+#if TARGET_J2EE
+		const string Forms_requireSSL = "Forms.requireSSL";
+		const string Forms_slidingExpiration = "Forms.slidingExpiration";
+
+		static bool requireSSL
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_requireSSL);
+				return o != null ? (bool) o : false;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_requireSSL, value); }
+		}
+		static bool slidingExpiration
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_slidingExpiration);
+				return o != null ? (bool) o : false;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_slidingExpiration, value); }
+		}
+#else
 		static bool requireSSL;
 		static bool slidingExpiration;
 #endif
+#endif
 #if NET_2_0
+#if TARGET_J2EE
+		const string Forms_cookie_domain = "Forms.cookie_domain";
+		const string Forms_cookie_mode = "Forms.cookie_mode";
+		const string Forms_cookies_supported = "Forms.cookies_supported";
+		const string Forms_default_url = "Forms.default_url";
+		const string Forms_enable_crossapp_redirects = "Forms.enable_crossapp_redirects";
+		const string Forms_login_url = "Forms.login_url";
+		static string cookie_domain
+		{
+			get { return (string) AppDomain.CurrentDomain.GetData (Forms_cookie_domain); }
+			set { AppDomain.CurrentDomain.SetData (Forms_cookie_domain, value); }
+		}
+		static HttpCookieMode cookie_mode
+		{
+			get { return (HttpCookieMode) AppDomain.CurrentDomain.GetData (Forms_cookie_mode); }
+			set { AppDomain.CurrentDomain.SetData (Forms_cookie_mode, value); }
+		}
+		static bool cookies_supported
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_cookies_supported);
+				return o != null ? (bool) o : false;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_cookies_supported, value); }
+		}
+		static string default_url
+		{
+			get { return (string) AppDomain.CurrentDomain.GetData (Forms_default_url); }
+			set { AppDomain.CurrentDomain.SetData (Forms_default_url, value); }
+		}
+		static bool enable_crossapp_redirects
+		{
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Forms_enable_crossapp_redirects);
+				return o != null ? (bool) o : false;
+			}
+			set { AppDomain.CurrentDomain.SetData (Forms_enable_crossapp_redirects, value); }
+		}
+		static string login_url
+		{
+			get { return (string) AppDomain.CurrentDomain.GetData (Forms_login_url); }
+			set { AppDomain.CurrentDomain.SetData (Forms_login_url, value); }
+		}
+#else
 		static string cookie_domain;
 		static HttpCookieMode cookie_mode;
 		static bool cookies_supported;
 		static string default_url;
 		static bool enable_crossapp_redirects;
 		static string login_url;
+#endif
 #endif
 		// same names and order used in xsp
 		static string [] indexFiles = { "index.aspx",

@@ -1,3 +1,7 @@
+2006-12-12 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* FormsAuthentication.cs: TARGET_J2EE define for static members
+
 2006-12-06 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* FormsAuthenticationModule.cs: fixed OnAuthenticateRequest, suppress
