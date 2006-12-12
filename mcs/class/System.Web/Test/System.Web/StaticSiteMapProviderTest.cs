@@ -110,6 +110,23 @@ namespace MonoTests.System.Web {
 		
 
 		[Test]
+		[Category ("NunitWeb")]
+		public void AddNode_duplicate_url () {
+			new WebTest (new HandlerInvoker (AddNode_delegate2)).Run ();
+		}
+
+		static public void AddNode_delegate2 () {
+			StaticPoker poker = new StaticPoker ();
+
+			SiteMapNode n1 = new SiteMapNode (poker, "key1", "");
+			SiteMapNode n2 = new SiteMapNode (poker, "key2", "");
+
+			poker.DoAddNode (n1, poker.RootNode);
+			poker.DoAddNode (n2, poker.RootNode);
+			Assert.AreEqual (2, poker.GetChildNodes (poker.RootNode).Count, "A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddNode2_nullNode ()
 		{
