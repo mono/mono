@@ -193,6 +193,8 @@ namespace System.Web {
 			/* XXX */
 
 			string url = node.Url;
+			if(String.IsNullOrEmpty(url))
+				return true;
 			// TODO check url is located within the current application
 
 			if (VirtualPathUtility.IsAppRelative (url) || !VirtualPathUtility.IsAbsolute (url))

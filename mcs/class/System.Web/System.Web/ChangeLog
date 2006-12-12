@@ -1,5 +1,11 @@
 2006-12-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* SiteMapProvider.cs.cs:
+	* XmlSiteMapProvider.cs: fixed: because more then one node with empty url
+	is allowed unique key is generated for each node.		
+
+2006-12-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* SiteMapProvider.cs.cs: fixed: IsAccessibleToUser resolvs relative url.
 	* StaticSiteMapProvider.cs: fixed: RemoveNode	
 

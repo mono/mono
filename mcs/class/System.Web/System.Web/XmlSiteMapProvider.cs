@@ -145,7 +145,8 @@ namespace System.Web
 						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
 				}
 				
-				SiteMapNode node = new SiteMapNode (this, url, url, title, description,
+				string key = Guid.NewGuid ().ToString ();
+				SiteMapNode node = new SiteMapNode (this, key, url, title, description,
 					/*ArrayList.ReadOnly (keywordsList), */ArrayList.ReadOnly (rolesList), null,
 					null, null); // TODO what do they want for attributes
 					
