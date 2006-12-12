@@ -65,6 +65,11 @@ namespace System.IO.Ports
 		{
 		}
 
+		public SerialPort (IContainer container) : this ()
+		{
+			// TODO: What to do here?
+		}
+
 		/*
 		  IContainer is in 2.0?
 		  public SerialPort (IContainer container) {
