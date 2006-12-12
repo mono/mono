@@ -1012,6 +1012,23 @@ namespace MonoTests.System.Windows.Forms
 
 			c.Controls.AddRange (subcontrols);
 		}
+
+		[Test]
+		public void RegionTest () {
+			Form f = new Form();
+			Control c = new Control();
+			f.Controls.Add(c);
+			f.Show();
+
+			try {
+				c.Region = null;
+			}
+			catch(Exception ex) {
+				Assert.IsNotNull(c.Region, "A1");
+			}
+			
+			f.Close();
+		}
 	}
 
 	[TestFixture]

@@ -1,3 +1,7 @@
+2006-12-12  Andreia Gaita  <avidigal@novell.com>
+	
+	* Control.cs: Check if Region setter value is null, and ignore
+
 2006-12-12  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: We were almost always drawing one more line then

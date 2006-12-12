@@ -1,3 +1,7 @@
+2006-12-12  Andreia Gaita  <avidigal@novell.com>
+
+	* ControlTest.cs: Add region tests.
+
 2006-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: add tests for WM_PARENTNOTIFY.
