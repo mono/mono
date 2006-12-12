@@ -1615,6 +1615,164 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotWorking")] // implementation details
+		[Category ("NunitWeb")]
+		public void Wizard_PostBackFireEvents_1 ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreInit = _postbackEvents;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			//Cancel
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$CancelButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Wizard1$StartNavigationTemplateContainerID$CancelButton"].Value = "Cancel";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("CancelButtonClick", t.UserData.ToString (), "Cancel");
+			
+			// Next
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
+
+			// Previous
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton");
+
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton"].Value = "Previous";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("PreviousButtonClick", t.UserData.ToString (), "Previous");
+
+			//SideBarButton
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("SideBarButtonClick", t.UserData.ToString (), "SideBarButton");
+			
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // implementation details
+		public void Wizard_PostBackFireEvents_2 ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreInit = _postbackEvents;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			// Next
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
+
+			// Finish
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishButton"].Value = "Finish";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("FinishButtonClick", t.UserData.ToString (), "Finish");
+
+		}
+
+		public static void _postbackEvents (Page p)
+		{
+			p.EnableEventValidation = false;
+			Wizard w = new Wizard ();
+			w.DisplayCancelButton = true;
+			w.DisplaySideBar = true;
+			
+			w.CancelButtonClick += new EventHandler (w_CancelButtonClick);
+			w.FinishButtonClick += new WizardNavigationEventHandler (w_FinishButtonClick);
+			w.NextButtonClick += new WizardNavigationEventHandler (w_NextButtonClick);
+			w.PreviousButtonClick += new WizardNavigationEventHandler (w_PreviousButtonClick);
+			w.SideBarButtonClick += new WizardNavigationEventHandler (w_SideBarButtonClick);
+			w.ID = "Wizard1";
+
+			WizardStep ws = new WizardStep ();
+			ws.ID = "step";
+			ws.StepType = WizardStepType.Start;
+			ws.Controls.Add (new LiteralControl ("StartType"));
+
+			WizardStep ws2 = new WizardStep ();
+			ws2.ID = "step2";
+			ws2.StepType = WizardStepType.Finish;
+			ws2.Controls.Add (new LiteralControl ("FinishType"));
+
+			WizardStep ws3 = new WizardStep ();
+			ws3.ID = "step3";
+			ws3.StepType = WizardStepType.Complete;
+			ws3.Controls.Add (new LiteralControl ("CompleteType"));
+
+			w.DisplaySideBar = true;
+			w.WizardSteps.Add (ws);
+			w.WizardSteps.Add (ws2);
+			w.WizardSteps.Add (ws3);
+			p.Controls.Add (w);
+		}
+
+		static void w_SideBarButtonClick (object sender, WizardNavigationEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "SideBarButtonClick";
+		}
+
+		static void w_PreviousButtonClick (object sender, WizardNavigationEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "PreviousButtonClick";
+		}
+
+		static void w_NextButtonClick (object sender, WizardNavigationEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "NextButtonClick";
+		}
+
+		static void w_FinishButtonClick (object sender, WizardNavigationEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "FinishButtonClick";
+		}
+
+		static void w_CancelButtonClick (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "CancelButtonClick";
+		}
+
+		[Test]
 		[Category ("NunitWeb")]
 		public void Wizard_PostBack()
 		{
@@ -1685,7 +1843,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Wizard w = new Wizard ();
 			w.ID = "Wizard";
 			
-
 			WizardStep ws = new WizardStep ();
 			ws.ID = "step";
 			ws.StepType = WizardStepType.Start;
