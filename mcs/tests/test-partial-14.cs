@@ -1,3 +1,10 @@
+#if true
+	partial
+#endif
+class T
+{
+}
+
 public partial class partial
 {
 }
