@@ -11,9 +11,8 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
+cs0019-20.cs
 cs0162-7.cs NO ERROR
-cs0267.cs
-cs0267-2.cs
 cs0525.cs
 cs0526.cs
 cs0547.cs
@@ -33,7 +32,7 @@ cs1586.cs
 cs1641.cs
 cs1670-2.cs
 
-# Unary operators
+# Operators
 cs0035.cs
 cs0266-11.cs
 cs0266-9.cs
