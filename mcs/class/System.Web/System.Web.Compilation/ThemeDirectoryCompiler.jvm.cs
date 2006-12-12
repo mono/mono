@@ -44,6 +44,7 @@ namespace System.Web.UI
 	{
 		public static PageTheme GetCompiledInstance (string virtualPath, HttpContext context)
 		{
+			virtualPath = "~/App_Themes/" + virtualPath + "/";
 			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd('/');
 			Type tmpType = PageMapper.GetObjectType (resolvedUrl);
             if (tmpType == null)

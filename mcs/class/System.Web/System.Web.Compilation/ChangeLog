@@ -1,3 +1,7 @@
+2006-12-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ThemeDirectoryCompiler.jvm.cs: fixed virtual path for themes
+
 2006-12-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ThemeDirectoryCompiler.cs: refactoring.
