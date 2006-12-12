@@ -1,3 +1,7 @@
+2006-12-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingsBase.cs: implemented Item property
+
 2006-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSettingsBase.cs: Add special case when dealing with 

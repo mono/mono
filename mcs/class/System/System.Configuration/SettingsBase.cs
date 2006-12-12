@@ -69,8 +69,24 @@ namespace System.Configuration
 		}
 
 		public virtual object this [ string propertyName ] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get
+			{
+				if (sync)
+					lock (this) {
+						return GetPropertyValue (propertyName);
+					}
+				else
+					return GetPropertyValue (propertyName);
+			}
+			set
+			{
+				if (sync)
+					lock (this) {
+						SetPropertyValue (propertyName, value);
+					}
+				else
+					SetPropertyValue (propertyName, value);
+			}
 		}
 
 		public virtual SettingsPropertyCollection Properties {
@@ -109,6 +125,34 @@ namespace System.Configuration
 			get {
 				return providers;
 			}
+		}
+
+		object GetPropertyValue (string propertyName)
+		{
+			SettingsProperty prop = null;
+			if (Properties == null || (prop = Properties [propertyName]) == null)
+				throw new SettingsPropertyNotFoundException (
+					string.Format ("The settings property '{0}' was not found", propertyName));
+
+			return PropertyValues [propertyName].PropertyValue;
+		}
+
+		void SetPropertyValue (string propertyName, object value)
+		{
+			SettingsProperty prop = null;
+			if (Properties == null || (prop = Properties [propertyName]) == null)
+				throw new SettingsPropertyNotFoundException (
+					string.Format ("The settings property '{0}' was not found", propertyName));
+
+			if (prop.IsReadOnly)
+				throw new SettingsPropertyIsReadOnlyException (
+					string.Format ("The settings property '{0}' is read only", propertyName));
+
+			if (prop.PropertyType != value.GetType ())
+				throw new SettingsPropertyWrongTypeException (
+					string.Format ("The value supplied is of a type incompatible with the settings property '{0}'", propertyName));
+
+			PropertyValues [propertyName].PropertyValue = value;
 		}
 
 		bool sync;
