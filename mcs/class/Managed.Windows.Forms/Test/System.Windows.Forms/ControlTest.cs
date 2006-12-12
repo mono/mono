@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections;
 using InvalidEnumArgumentException = System.ComponentModel.InvalidEnumArgumentException;
 using System.Drawing;
 using System.Reflection;
@@ -199,6 +200,7 @@ namespace MonoTests.System.Windows.Forms
 			c.Height = -2;
 			Assert.AreEqual (0, (int) c.Tag, "#1");
 			c.Dispose ();
+			Assert.AreEqual (handle, handle, "Removes warning.");
 		}
 		
 		private void NegativeHeightTest_ResizeHandler (object sender, EventArgs e)
@@ -1077,5 +1079,109 @@ namespace MonoTests.System.Windows.Forms
 			Application.Exit ();
 		}
 		
+	}
+
+	[TestFixture]
+	public class ControlWMTest
+	{
+		[Test]
+		public void WM_PARENTNOTIFY_Test ()
+		{
+			WMTester tester;
+			Control child;
+			int child_handle;
+			
+			tester = new WMTester ();
+			child = new Control ();
+			tester.Controls.Add (child);
+			
+			tester.Visible = true;
+			child.Visible = true;
+
+			child_handle = child.Handle.ToInt32 ();
+
+			ArrayList msgs;
+			Message m1;
+				
+			msgs = tester.Find (WndMsg.WM_PARENTNOTIFY);
+			
+			Assert.AreEqual (1, msgs.Count, "#1");
+			
+			m1 = (Message) msgs [0];
+			Assert.AreEqual (WndMsg.WM_CREATE, ((WndMsg) LowOrder (m1.WParam)),  "#2");
+			//Assert.AreEqual (child.Identifier??, HighOrder (m1.WParam),  "#3");
+			Assert.AreEqual (child_handle, m1.LParam.ToInt32 (),  "#4");
+
+			child.Dispose ();
+
+			msgs = tester.Find (WndMsg.WM_PARENTNOTIFY);
+			Assert.AreEqual (2, msgs.Count, "#5");
+			m1 = (Message) msgs [1];
+
+			Assert.AreEqual (WndMsg.WM_DESTROY, ((WndMsg) LowOrder (m1.WParam)),  "#6");
+			//Assert.AreEqual (child.Identifier??, HighOrder (m1.WParam),  "#7");
+			Assert.AreEqual (child_handle, m1.LParam.ToInt32 (),  "#8");
+
+			tester.Dispose ();
+		}
+
+		internal static int LowOrder (int param) 
+		{
+			return ((int)(short)(param & 0xffff));
+		}
+
+		internal static int HighOrder (int param) 
+		{
+			return ((int)(short)(param >> 16));
+		}
+
+		internal static int LowOrder (IntPtr param) 
+		{
+			return ((int)(short)(param.ToInt32 () & 0xffff));
+		}
+
+		internal static int HighOrder (IntPtr param) 
+		{
+			return ((int)(short)(param.ToInt32 () >> 16));
+		}
+
+		internal class WMTester : Form
+		{
+			internal ArrayList Messages = new ArrayList ();
+			
+			internal bool Contains (WndMsg msg)
+			{
+				return Contains (msg, Messages);
+			}
+
+			internal bool Contains (WndMsg msg, ArrayList list)
+			{
+				foreach (Message m in Messages) 
+				{
+					if (m.Msg == (int) msg)
+						return true;
+				}
+				return false;
+			}
+
+			internal ArrayList Find (WndMsg msg)
+			{
+				ArrayList result = new ArrayList ();
+
+				foreach (Message m in Messages)
+				{
+					if (m.Msg == (int) msg)
+						result.Add (m);
+				}
+				return result;
+			}
+
+			protected override void WndProc(ref Message m)
+			{
+				Console.WriteLine ("WndProc: " + m.ToString ());
+				Messages.Add (m);
+				base.WndProc (ref m);
+			}
+		}
 	}
 }

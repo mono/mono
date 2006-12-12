@@ -1,3 +1,7 @@
+2006-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ControlTest.cs: add tests for WM_PARENTNOTIFY.
+	
 2006-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* ControlTest.cs: add some unit tests for null parameters to some
