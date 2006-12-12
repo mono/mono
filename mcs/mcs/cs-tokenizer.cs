@@ -1507,7 +1507,7 @@ namespace Mono.CSharp
 
 			cmd = static_cmd_arg.ToString ();
 
-			if (c == '\n'){
+			if (c == '\n' || c == '\r'){
 				return;
 			}
 
@@ -1531,7 +1531,7 @@ namespace Mono.CSharp
 				static_cmd_arg.Append ((char) c);
 			}
 
-			arg = static_cmd_arg.ToString ().Trim ();
+			arg = static_cmd_arg.ToString ();
 		}
 
 		//
@@ -1590,7 +1590,7 @@ namespace Mono.CSharp
 
 			char[] whitespace = { ' ', '\t' };
 			if (arg.IndexOfAny (whitespace) != -1){
-				Report.Error (1025, Location, "Single-line comment or end-of-line expected");
+				Error_EndLineExpected ();
 				return;
 			}
 
@@ -1704,7 +1704,7 @@ namespace Mono.CSharp
 				
 				if (c == '('){
 					s = s.Substring (1);
-					bool val = pp_expr (ref s);
+					bool val = pp_expr (ref s, false);
 					if (s.Length > 0 && s [0] == ')'){
 						s = s.Substring (1);
 						return val;
@@ -1807,7 +1807,7 @@ namespace Mono.CSharp
 		//
 		// Evaluates an expression for `#if' or `#elif'
 		//
-		bool pp_expr (ref string s)
+		bool pp_expr (ref string s, bool isTerm)
 		{
 			bool va = pp_and (ref s);
 			s = s.Trim ();
@@ -1818,12 +1818,16 @@ namespace Mono.CSharp
 				if (c == '|'){
 					if (len > 2 && s [1] == '|'){
 						s = s.Substring (2);
-						return va | pp_expr (ref s);
+						return va | pp_expr (ref s, isTerm);
 					} else {
 						Error_InvalidDirective ();
 						return false;
 					}
-				} 
+				}
+				if (isTerm) {
+					Error_EndLineExpected ();
+					return false;
+				}
 			}
 			
 			return va;
@@ -1831,7 +1835,7 @@ namespace Mono.CSharp
 
 		bool eval (string s)
 		{
-			bool v = pp_expr (ref s);
+			bool v = pp_expr (ref s, true);
 			s = s.Trim ();
 			if (s.Length != 0){
 				return false;
@@ -1868,6 +1872,11 @@ namespace Mono.CSharp
 			Report.Error (1040, Location,
 				"Preprocessor directives must appear as the first non-whitespace character on a line");
 		}
+
+		void Error_EndLineExpected ()
+		{
+			Report.Error (1025, Location, "Single-line comment or end-of-line expected");
+		}
 		
 		//
 		// if true, then the code continues processing the code
@@ -1885,7 +1894,7 @@ namespace Mono.CSharp
 			// Eat any trailing whitespaces and single-line comments
 			if (arg.IndexOf ("//") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
-			arg = arg.TrimEnd (' ', '\t');
+			arg = arg.Trim (' ', '\t');
 
 			//
 			// The first group of pre-processing instructions is always processed
@@ -1897,18 +1906,22 @@ namespace Mono.CSharp
 				goto case "if";
 
 			case "endregion":
-				region_directive = true;
-				goto case "endif";
-				
-			case "if":
-				if (arg.Length == 0){
-					Error_InvalidDirective ();
+				if (ifstack == null || ifstack.Count == 0){
+					Error_UnexpectedDirective ("no #region for this #endregion");
 					return true;
 				}
-
-				int flags = region_directive ? REGION : 0;
+				int pop = (int) ifstack.Pop ();
+					
+				if ((pop & REGION) == 0)
+					Report.Error (1027, Location, "Expected `#endif' directive");
+					
+				return caller_is_taking;
+				
+			case "if":
 				if (ifstack == null)
 					ifstack = new Stack (2);
+
+				int flags = region_directive ? REGION : 0;
 				if (ifstack.Count == 0){
 					flags |= PARENT_TAKING;
 				} else {
@@ -1930,27 +1943,20 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
 				} else {
-					int pop = (int) ifstack.Pop ();
+					pop = (int) ifstack.Pop ();
 					
-					if (region_directive && ((pop & REGION) == 0))
-						Report.Error (1027, Location, "Expected `#endif' directive");
-					else if (!region_directive && ((pop & REGION) != 0))
+					if ((pop & REGION) != 0)
 						Report.Error (1038, Location, "#endregion directive expected");
 					
-					if (!region_directive && arg.Length != 0) {
-						Report.Error (1025, Location, "Single-line comment or end-of-line expected");
+					if (arg.Length != 0) {
+						Error_EndLineExpected ();
 					}
 					
 					if (ifstack.Count == 0)
 						return true;
-					else {
-						int state = (int) ifstack.Peek ();
 
-						if ((state & TAKING) != 0)
-							return true;
-						else
-							return false;
-					}
+					int state = (int) ifstack.Peek ();
+					return (state & TAKING) != 0;
 				}
 
 			case "elif":
@@ -1999,6 +2005,11 @@ namespace Mono.CSharp
 					}
 
 					ifstack.Pop ();
+
+					if (arg.Length != 0) {
+						Error_EndLineExpected ();
+						return true;
+					}
 
 					bool ret = false;
 					if ((state & PARENT_TAKING) != 0) {
