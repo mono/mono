@@ -1,4 +1,9 @@
 
+Tue Dec 12 16:28:15 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: enable on OSX, too, the code to return small
+	structures in registers.
+
 Mon Dec 11 19:22:35 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c: remove the use of the dynamic code manager here, too.
