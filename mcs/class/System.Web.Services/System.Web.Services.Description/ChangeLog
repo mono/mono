@@ -1,3 +1,11 @@
+2006-12-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationCollection.cs, OperationMessageCollection.cs:
+	  added internal Find() to find an item by name.
+	* BasicProfileChecker.cs : implemented R2803, R2710, R2711, R2716,
+	  R2717, R2726, R2718, R2720, R2721, R2754 and R2723 (in order in
+	  the WS-BP1.1 spec).
+
 2006-12-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs : more rule review, with Basic Profile TAD.
