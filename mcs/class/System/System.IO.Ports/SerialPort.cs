@@ -70,12 +70,6 @@ namespace System.IO.Ports
 			// TODO: What to do here?
 		}
 
-		/*
-		  IContainer is in 2.0?
-		  public SerialPort (IContainer container) {
-		  }
-		*/
-
 		public SerialPort (string portName) :
 			this (portName, DefaultBaudRate, DefaultParity, DefaultDataBits, DefaultStopBits)
 		{
