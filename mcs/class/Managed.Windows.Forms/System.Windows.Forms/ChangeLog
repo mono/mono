@@ -13,6 +13,10 @@
 
 2006-12-11  Miguel de Icaza  <miguel@novell.com>
 
+	* ProgressBar.cs (MarqueeAnimationSpeed): Add stub.
+
+	* Control.cs (DoubleBuffered): Add implementation.
+
 	* Application.cs (OpenForms): Add.
 
 2006-12-11  Jonathan Pobst  <monkey@jpobst.com>

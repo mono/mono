@@ -1977,6 +1977,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		protected virtual bool DoubleBuffered {
+			get {
+				return (control_style & ControlStyles.DoubleBuffer) != 0;
+			}
+
+			set {
+				SetStyle (ControlStyles.DoubleBuffer, value);
+			}
+		}
+#endif
+		
 		[DispId(-514)]
 		[Localizable(true)]
 		[MWFCategory("Behavior")]

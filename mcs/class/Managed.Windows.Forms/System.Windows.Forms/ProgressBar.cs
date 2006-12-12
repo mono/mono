@@ -321,7 +321,11 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[MonoTODO("Implement")]
+		[MonoTODO("Currently only implements the 1.1 behavior")]
+		//
+		// This means that we must implement Blocks, Continuous and Marquee
+		// rendering modes
+		//
 		public ProgressBarStyle Style {
 			get {
 				return style;
@@ -329,6 +333,18 @@ namespace System.Windows.Forms
 
 			set {
 				style = value;
+			}
+		}
+		
+		int marquee_animation_speed = 350;
+		[MonoTODO("Currently does nothing")]
+		public int MarqueeAnimationSpeed {
+			get {
+				return marquee_animation_speed;
+			}
+
+			set {
+				marquee_animation_speed = value;
 			}
 		}
 #endif
@@ -439,7 +455,7 @@ namespace System.Windows.Forms
 		{
                         ThemeEngine.Current.DrawProgressBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}		
-		
+
 		#endregion
 	}
 }
