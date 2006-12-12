@@ -920,5 +920,18 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#8-1", null, xvr.LookupNamespace (String.Empty));
 			AssertEquals ("#8-2", "urn:hoge", xvr.LookupNamespace ("bar"));
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlSchemaException))]
+		public void Bug80231 ()
+		{
+			string xml = "<!DOCTYPE file [<!ELEMENT file EMPTY><!ATTLIST file name CDATA #REQUIRED>]><file name=\"foo\" bar=\"baz\" />";
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ProhibitDtd = false;
+			settings.ValidationType = ValidationType.DTD;
+			XmlReader r = XmlReader.Create (new StringReader (xml), settings);
+			while (!r.EOF)
+				r.Read ();
+		}
 	}
 }

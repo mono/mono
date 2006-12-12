@@ -1190,7 +1190,7 @@ namespace Mono.Xml
 			valueBuilder.Replace ('\n', ' ');
 			valueBuilder.Replace ('\t', ' ');
 			try {
-				if (def.Datatype.TokenizedType == XmlTokenizedType.CDATA)
+				if (def == null || def.Datatype.TokenizedType == XmlTokenizedType.CDATA)
 					return valueBuilder.ToString ();
 				for (int i=0; i < valueBuilder.Length; i++) {
 					if (valueBuilder [i] != ' ')
