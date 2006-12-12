@@ -201,13 +201,14 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsAppRelative ()
 		{
+			Assert.IsTrue (VPU.IsAppRelative ("~"), "A0");
 			Assert.IsTrue (VPU.IsAppRelative ("~/Stuff"), "A1");
 			Assert.IsFalse (VPU.IsAppRelative ("./Stuff"), "A2");
 			Assert.IsFalse (VPU.IsAppRelative ("/Stuff"), "A3");
 			Assert.IsFalse (VPU.IsAppRelative ("/"), "A4");
+			Assert.IsFalse (VPU.IsAppRelative ("~Stuff"), "A5");
 		}
 
 		[Test]

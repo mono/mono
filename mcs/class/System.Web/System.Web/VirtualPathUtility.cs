@@ -106,14 +106,16 @@ namespace System.Web {
 
 		public static bool IsAppRelative (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "")
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
-			string vpath = HttpRuntime.AppDomainAppVirtualPath;
-			if (vpath == null)
-				return false;
+			if (virtualPath.Length == 1 && virtualPath [0] == '~')
+				return true;
 
-			return virtualPath.StartsWith (AppendTrailingSlash (vpath));
+			if (virtualPath [0] == '~' && virtualPath [1] == '/')
+				return true;
+
+			return false;
 		}
 
 		public static string MakeRelative (string fromPath, string toPath)
