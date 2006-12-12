@@ -200,8 +200,8 @@ namespace System.Windows.Forms {
 				
 			/* Perform click when is not a popup */
 			if (!item.IsPopup) {
-				DeselectItem (item);
-				item.PerformClick ();
+				item.PerformClick( );
+				DeselectItem(item);
 			}
 		}
 
