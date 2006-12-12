@@ -68,8 +68,6 @@ namespace System.Web.Services.Description
 				return;
 			}
 				
-			// FIXME: is R2003 really checked?
-			
 			if (imported.TargetNamespace != value.Namespace)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2005);
 		}
@@ -481,6 +479,8 @@ namespace System.Web.Services.Description
 			CheckSchemaQName (ctx, value, value.RefName);
 			CheckSchemaQName (ctx, value, value.SubstitutionGroup);
 			CheckSchemaQName (ctx, value, value.SchemaTypeName);
+			if (value.Name != null && value.Name.StartsWith ("ArrayOf", StringComparison.Ordinal))
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2112);
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchemaGroupRef value)
@@ -623,7 +623,7 @@ namespace System.Web.Services.Description
 			"To import XML Schema Definitions, a DESCRIPTION MUST use the XML Schema \"import\" statement",
 			"");
 
-		// FIXME: R2003: may depend on ServiceDescription raw XML.
+		// R2003: depends on ServiceDescription raw XML.
 		// R2004, R2009, R2010, R2011: requires schema resolution
 		// which depends on XmlResolver, while 1) XmlUrlResolver
 		// might not always be proper (e.g. network resolution) and
@@ -690,7 +690,6 @@ namespace System.Web.Services.Description
 			"In a DESCRIPTION, array declarations MUST NOT use wsdl:arrayType attribute in the type declaration",
 			"");
 			
-		// FIXME: R2112 - SHOULD it be checked?
 		public static readonly ConformanceRule R2112 = new ConformanceRule (
 			"R2112", 
 			"In a DESCRIPTION, elements SHOULD NOT be named using the convention ArrayOfXXX.",
@@ -872,9 +871,9 @@ namespace System.Web.Services.Description
 		// R2729, R2735: related to ENVELOPE.
 		// R2755: related to MESSAGE.
 		// R2737, R2738, R2739, R2753: related to ENVELOPE.
-
-		// FIXME:
-		// R2751, R2752, R2744, R2745, R2747, R2748
+		// R2751, R2752: related to ENVELOPE.
+		// R2744, R2745: related to MESSAGE.
+		// R2747, R2748: related to CONSUMER.
 
 	// 4.8 Use of XML Schema
 
