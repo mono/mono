@@ -442,6 +442,30 @@ namespace System.Windows.Forms {
 			driver.DrawReversibleRectangle(handle, rect, line_width);
 		}
 
+		internal static void FillReversibleRectangle (Rectangle rectangle, Color backColor)
+		{
+			#if DriverDebug
+				Console.WriteLine("FillReversibleRectangle({0}, {1}): Called", rectangle, backColor);
+			#endif
+			driver.FillReversibleRectangle (rectangle, backColor);
+		}
+
+		internal static void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		{
+			#if DriverDebug
+				Console.WriteLine("DrawReversibleFrame({0}, {1}, {2}): Called", rectangle, backColor, style);
+			#endif
+			driver.DrawReversibleFrame (rectangle, backColor, style);
+		}
+
+		internal static void DrawReversibleLine (Point start, Point end, Color backColor)
+		{
+			#if DriverDebug
+				Console.WriteLine("DrawReversibleLine({0}, {1}, {2}): Called", start, end, backColor);
+			#endif
+			driver.DrawReversibleLine (start, end, backColor);
+		}
+
 		internal static void EnableThemes() {
 			driver.EnableThemes();
 		}

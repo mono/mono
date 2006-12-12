@@ -2344,6 +2344,15 @@ namespace System.Windows.Forms {
 			return Win32DnD.StartDrag(hwnd, data, allowedEffects);
 		}
 
+		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
+		}
+
+		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
+		}
+
+		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) {
+		}
+
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			IntPtr		hdc;
 			IntPtr		pen;

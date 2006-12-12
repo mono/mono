@@ -1828,6 +1828,18 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
+		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
+			throw new NotImplementedException();
+		}
+
+		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) {
+			throw new NotImplementedException();
+		}
+
+		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
+			throw new NotImplementedException();
+		}
+
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			throw new NotImplementedException();
 		}

@@ -432,6 +432,21 @@ namespace System.Windows.Forms.X11Internal {
 			return display.DispatchMessage (ref msg);
 		}
 
+		internal override void DrawReversibleLine (Point start, Point end, Color backColor)
+		{
+			display.DrawReversibleLine (start, end, backColor);
+		}
+
+		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor)
+		{
+			display.FillReversibleRectangle (rectangle, backColor);
+		}
+
+		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		{
+			display.DrawReversibleFrame (rectangle, backColor, style);
+		}
+
 		internal override void DrawReversibleRectangle (IntPtr handle, Rectangle rect, int line_width)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);

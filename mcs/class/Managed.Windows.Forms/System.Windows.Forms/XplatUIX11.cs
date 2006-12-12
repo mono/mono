@@ -2879,12 +2879,36 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
-		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
-			Hwnd		hwnd;
+		IntPtr GetReversibleScreenGC (Color backColor)
+		{
 			XGCValues	gc_values;
 			IntPtr		gc;
+			uint pixel;
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			XColor xcolor = new XColor();
+			xcolor.red = (ushort)(backColor.R * 257);
+			xcolor.green = (ushort)(backColor.G * 257);
+			xcolor.blue = (ushort)(backColor.B * 257);
+			XAllocColor(DisplayHandle, DefaultColormap, ref xcolor);
+			pixel = (uint)xcolor.pixel.ToInt32();
+
+
+			gc_values = new XGCValues();
+
+			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
+			gc_values.foreground = (IntPtr)pixel;
+
+			gc = XCreateGC(DisplayHandle, RootWindow, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCForeground)), ref gc_values);
+			XSetForeground(DisplayHandle, gc, (UIntPtr)pixel);
+			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
+
+			return gc;
+		}
+
+		IntPtr GetReversibleControlGC (Control control, int line_width)
+		{
+			XGCValues	gc_values;
+			IntPtr		gc;
 
 			gc_values = new XGCValues();
 
@@ -2900,12 +2924,9 @@ namespace System.Windows.Forms {
 			//XSetPlaneMask(DisplayHandle,  gc, mask);
 
 
-			gc = XCreateGC(DisplayHandle, hwnd.client_window, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground)), ref gc_values);
+			gc = XCreateGC(DisplayHandle, control.Handle, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground)), ref gc_values);
 			uint foreground;
 			uint background;
-
-			Control control;
-			control = Control.FromHandle(handle);
 
 			XColor xcolor = new XColor();
 
@@ -2928,13 +2949,82 @@ namespace System.Windows.Forms {
 			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
 			XSetPlaneMask(DisplayHandle,  gc, (IntPtr)mask);
 
+			return gc;
+		}
+
+		internal override void DrawReversibleLine(Point start, Point end, Color backColor)
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			XDrawLine (DisplayHandle, RootWindow, gc, start.X, start.Y, end.X, end.Y);
+
+			XFreeGC(DisplayHandle, gc);
+		}
+
+		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			if (rectangle.Width < 0) {
+				rectangle.X += rectangle.Width;
+				rectangle.Width = -rectangle.Width;
+			}
+			if (rectangle.Height < 0) {
+				rectangle.Y += rectangle.Height;
+				rectangle.Height = -rectangle.Height;
+			}
+
+			int line_width = 1;
+			GCLineStyle line_style = GCLineStyle.LineSolid;
+			GCCapStyle cap_style = GCCapStyle.CapButt;
+			GCJoinStyle join_style = GCJoinStyle.JoinMiter;
+
+			switch (style) {
+			case FrameStyle.Dashed:
+				line_style = GCLineStyle.LineOnOffDash;
+				break;
+			case FrameStyle.Thick:
+				line_width = 2;
+				break;
+			}
+
+			XSetLineAttributes (DisplayHandle, gc, line_width, line_style, cap_style, join_style);
+
+			XDrawRectangle(DisplayHandle, RootWindow, gc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
+
+			XFreeGC(DisplayHandle, gc);
+		}
+
+		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) 
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			if (rectangle.Width < 0) {
+				rectangle.X += rectangle.Width;
+				rectangle.Width = -rectangle.Width;
+			}
+			if (rectangle.Height < 0) {
+				rectangle.Y += rectangle.Height;
+				rectangle.Height = -rectangle.Height;
+			}
+			XFillRectangle(DisplayHandle, RootWindow, gc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
+
+			XFreeGC(DisplayHandle, gc);
+		}
+
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
+			IntPtr		gc;
+			Control control = Control.FromHandle(handle);
+
+			gc = GetReversibleControlGC (control, line_width);
+
 			if ((rect.Width > 0) && (rect.Height > 0)) {
-				XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
+				XDrawRectangle(DisplayHandle, control.Handle, gc, rect.Left, rect.Top, rect.Width, rect.Height);
 			} else {
 				if (rect.Width > 0) {
-					XDrawLine(DisplayHandle, hwnd.client_window, gc, rect.X, rect.Y, rect.Right, rect.Y);
+					XDrawLine(DisplayHandle, control.Handle, gc, rect.X, rect.Y, rect.Right, rect.Y);
 				} else {
-					XDrawLine(DisplayHandle, hwnd.client_window, gc, rect.X, rect.Y, rect.X, rect.Bottom);
+					XDrawLine(DisplayHandle, control.Handle, gc, rect.X, rect.Y, rect.X, rect.Bottom);
 				}
 			}
 			XFreeGC(DisplayHandle, gc);
@@ -5274,11 +5364,17 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XSetFunction")]
 		internal extern static int XSetFunction(IntPtr display, IntPtr gc, GXFunction function);
 
+		[DllImport ("libX11", EntryPoint="XSetLineAttributes")]
+		internal extern static int XSetLineAttributes(IntPtr display, IntPtr gc, int line_width, GCLineStyle line_style, GCCapStyle cap_style, GCJoinStyle join_style);
+
 		[DllImport ("libX11", EntryPoint="XDrawLine")]
 		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 
 		[DllImport ("libX11", EntryPoint="XDrawRectangle")]
 		internal extern static int XDrawRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
+
+		[DllImport ("libX11", EntryPoint="XFillRectangle")]
+		internal extern static int XFillRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
 
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, IntPtr background);

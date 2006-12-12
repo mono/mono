@@ -2474,5 +2474,93 @@ namespace System.Windows.Forms.X11Internal {
 			Xlib.XFreeGC (display, gc);
 		}
 
+
+		// reversible screen-level drawing
+		IntPtr GetReversibleScreenGC (Color backColor)
+		{
+			XGCValues	gc_values;
+			IntPtr		gc;
+			uint pixel;
+
+			XColor xcolor = new XColor();
+			xcolor.red = (ushort)(backColor.R * 257);
+			xcolor.green = (ushort)(backColor.G * 257);
+			xcolor.blue = (ushort)(backColor.B * 257);
+			Xlib.XAllocColor (display, DefaultColormap, ref xcolor);
+			pixel = (uint)xcolor.pixel.ToInt32();
+
+
+			gc_values = new XGCValues();
+
+			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
+			gc_values.foreground = (IntPtr)pixel;
+
+			gc = Xlib.XCreateGC (display, RootWindow.Handle, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCForeground)), ref gc_values);
+			Xlib.XSetForeground (display, gc, (UIntPtr)pixel);
+			Xlib.XSetFunction (display,   gc, GXFunction.GXxor);
+
+			return gc;
+		}
+
+		public void DrawReversibleLine (Point start, Point end, Color backColor)
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			Xlib.XDrawLine (display, RootWindow.Handle, gc, start.X, start.Y, end.X, end.Y);
+
+			Xlib.XFreeGC (display, gc);
+		}
+
+		public void FillReversibleRectangle (Rectangle rectangle, Color backColor)
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			if (rectangle.Width < 0) {
+				rectangle.X += rectangle.Width;
+				rectangle.Width = -rectangle.Width;
+			}
+			if (rectangle.Height < 0) {
+				rectangle.Y += rectangle.Height;
+				rectangle.Height = -rectangle.Height;
+			}
+
+			Xlib.XFillRectangle (display, RootWindow.Handle, gc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
+
+			Xlib.XFreeGC (display, gc);
+		}
+
+		public void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		{
+			IntPtr gc = GetReversibleScreenGC (backColor);
+
+			if (rectangle.Width < 0) {
+				rectangle.X += rectangle.Width;
+				rectangle.Width = -rectangle.Width;
+			}
+			if (rectangle.Height < 0) {
+				rectangle.Y += rectangle.Height;
+				rectangle.Height = -rectangle.Height;
+			}
+
+			int line_width = 1;
+			GCLineStyle line_style = GCLineStyle.LineSolid;
+			GCCapStyle cap_style = GCCapStyle.CapButt;
+			GCJoinStyle join_style = GCJoinStyle.JoinMiter;
+
+			switch (style) {
+			case FrameStyle.Dashed:
+				line_style = GCLineStyle.LineOnOffDash;
+				break;
+			case FrameStyle.Thick:
+				line_width = 2;
+				break;
+			}
+
+			Xlib.XSetLineAttributes (display, gc, line_width, line_style, cap_style, join_style);
+
+			Xlib.XDrawRectangle (display, RootWindow.Handle, gc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
+
+			Xlib.XFreeGC (display, gc);
+		}
 	}
 }

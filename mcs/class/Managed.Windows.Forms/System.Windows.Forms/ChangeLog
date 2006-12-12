@@ -1,3 +1,27 @@
+2006-12-12  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUI.cs: add static DrawReversibleFrame, DrawReversibleLine,
+	and FillReversibleRectangle.
+
+	* XplatUIDriver.cs: add abstract DrawReversibleFrame, DrawReversibleLine,
+	and FillReversibleRectangle.
+
+	* XplatUIWin32.cs: add stubs which do nothing for
+	DrawReversibleFrame, DrawReversibleLine, and
+	FillReversibleRectangle.
+
+	* XplatUIOSX.cs: add stubs which raise NIE for
+	DrawReversibleFrame, DrawReversibleLine, and
+	FillReversibleRectangle.
+
+	* XplatUIX11.cs: add working implementation for
+	DrawReversibleFrame, DrawReversibleLine, and
+	FillReversibleRectangle.
+	
+	* ControlPaint.cs: implement DrawReversibleFrame,
+	DrawReversibleLine, and FillReversibleRectangle, by calling into
+	the appropriate XplatUI method.
+
 2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Form.cs: Make MdiClient have the focus even if it's

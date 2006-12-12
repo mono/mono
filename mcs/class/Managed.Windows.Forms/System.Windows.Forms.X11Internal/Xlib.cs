@@ -229,10 +229,16 @@ namespace System.Windows.Forms.X11Internal {
 		public extern static int XSetFunction(IntPtr display, IntPtr gc, GXFunction function);
 
 		[DllImport (libX11)]
+		internal extern static int XSetLineAttributes(IntPtr display, IntPtr gc, int line_width, GCLineStyle line_style, GCCapStyle cap_style, GCJoinStyle join_style);
+
+		[DllImport (libX11)]
 		public extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 
 		[DllImport (libX11)]
 		public extern static int XDrawRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
+
+		[DllImport (libX11)]
+		public extern static int XFillRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
 
 		[DllImport (libX11)]
 		public extern static int XSetWindowBackground(IntPtr display, IntPtr window, IntPtr background);

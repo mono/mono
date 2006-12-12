@@ -401,36 +401,17 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.CPDrawRadioButton (graphics, rectangle, state);
 		}
 
-		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
-		private static bool DRFNotImpl = false;
 		public static void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style) {
-			if (!DRFNotImpl) {
-				DRFNotImpl = true;
-				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
-			}
-			//throw new NotImplementedException();
+			XplatUI.DrawReversibleFrame (rectangle, backColor, style);
 		}
 
-		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
-		private static bool DRLNotImpl = false;
 		public static void DrawReversibleLine(Point start, Point end, Color backColor) {
-			if (!DRLNotImpl) {
-				DRLNotImpl = true;
-				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
-			}
-			//throw new NotImplementedException();
+			XplatUI.DrawReversibleLine (start, end, backColor);
 		}
 
-		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
-		private static bool FRRNotImpl = false;
 		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
-			if (!FRRNotImpl) {
-				FRRNotImpl = true;
-				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
-			}
-			//throw new NotImplementedException();
+			XplatUI.FillReversibleRectangle (rectangle, backColor);
 		}
-
 
 		public static void DrawScrollButton (Graphics graphics, int x, int y, int width, int height, ScrollButton button, ButtonState state) {
 			ThemeEngine.Current.CPDrawScrollButton (graphics, new Rectangle(x, y, width, height), button, state);
