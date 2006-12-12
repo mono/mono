@@ -595,8 +595,8 @@ namespace System.Windows.Forms {
 				XplatUI.SetZOrder (vbar.Handle, IntPtr.Zero, true, false);
 			if (hbar != null && hbar.Visible)
 				XplatUI.SetZOrder (hbar.Handle, IntPtr.Zero, true, false);
+			form.ResumeLayout(false);
 			SetWindowStates ((MdiWindowManager) form.window_manager);
-			form.ResumeLayout (false);
 			if (current != form) {
 				form.has_focus = false;
 				XplatUI.InvalidateNC (current.Handle);

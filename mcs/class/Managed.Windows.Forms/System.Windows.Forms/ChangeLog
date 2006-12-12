@@ -1,5 +1,10 @@
 2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* MdiClient.cs: Resume Layout before setting window
+	states (fixes #80201).
+
+2006-12-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MenuAPI.cs: Deselect a menu item after performing
 	the click (fixes #80197).
 
