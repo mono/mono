@@ -1,3 +1,7 @@
+2006-12-13  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_method_to_ir): Provide useful information on this
+	assert, to prevent others from debugging like I did.
 
 Tue Dec 12 17:01:38 CET 2006 Paolo Molaro <lupus@ximian.com>
 
