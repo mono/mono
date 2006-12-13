@@ -267,7 +267,7 @@ namespace System.Windows.Forms
 				return name;
 			}
 			set {
-				name = value == null ? String.Empty : name;
+				name = value == null ? String.Empty : value;
 			}
 		}
 #endif

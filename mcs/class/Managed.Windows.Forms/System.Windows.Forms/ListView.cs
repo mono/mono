@@ -39,6 +39,9 @@ using System.ComponentModel.Design;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Globalization;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Windows.Forms
 {
@@ -3043,10 +3046,38 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) != -1;
+			}
+#endif
+
 			public void CopyTo (Array dest, int index)
 			{
 				list.CopyTo (dest, index);
 			}
+
+#if NET_2_0
+			public ListViewItem [] Find (string key, bool searchAllSubitems)
+			{
+				if (key == null)
+					return new ListViewItem [0];
+
+				List<ListViewItem> temp_list = new List<ListViewItem> ();
+				
+				for (int i = 0; i < list.Count; i++) {
+					ListViewItem lvi = (ListViewItem) list [i];
+					if (String.Compare (key, lvi.Name, true) == 0)
+						temp_list.Add (lvi);
+				}
+
+				ListViewItem [] retval = new ListViewItem [temp_list.Count];
+				temp_list.CopyTo (retval);
+
+				return retval;
+			}
+#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -3223,7 +3254,13 @@ namespace System.Windows.Forms
 			}
 
 			public bool IsReadOnly {
-				get { return true; }
+				get { 
+#if NET_2_0
+					return false;
+#else
+					return true; 
+#endif
+				}
 			}
 
 			public int this [int index] {
@@ -3244,7 +3281,13 @@ namespace System.Windows.Forms
 			}
 
 			bool IList.IsFixedSize {
-				get { return true; }
+				get { 
+#if NET_2_0
+					return false;
+#else
+					return true;
+#endif
+				}
 			}
 
 			object IList.this [int index] {
