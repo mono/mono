@@ -1,5 +1,9 @@
 2006-12-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TextBoxTest.cs: Added test for bug #80163.
+
+2006-12-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ControlTest.cs: Improved Region test.
 
 2006-12-12  Andreia Gaita  <avidigal@novell.com>

@@ -107,7 +107,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		public void AppendTextTest ()
-		{   
+		{
 			Form f = new Form (); 
 			f.ShowInTaskbar = false;
 			f.Visible = true;
@@ -213,6 +213,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, textBox.CanUndo, "#29b");
 			textBox.ClearUndo ();
 			Assert.AreEqual (false, textBox.CanUndo, "#29c");
+		}
+
+		[Test] // bug #80163
+		public void ContextMenu ()
+		{
+			TextBox textBox = new TextBox ();
+			Assert.IsNull (textBox.ContextMenu);
 		}
 
 		[Test]
