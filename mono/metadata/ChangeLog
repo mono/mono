@@ -1,4 +1,8 @@
 
+Wed Dec 13 19:29:50 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, icall.c: fixed warnings.
+
 Mon Dec 11 11:03:10 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: fixed a couple of leaks and coding style in a few places.
