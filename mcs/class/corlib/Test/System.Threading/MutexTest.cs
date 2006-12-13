@@ -5,16 +5,16 @@
 // (C) Eduardo Garcia Cebollero
 // 
 
-using NUnit.Framework;
 using System;
 using System.Threading;
 
+using NUnit.Framework;
+
 namespace MonoTests.System.Threading
 {
-
-	public class MutexTest : TestCase 
+	[TestFixture]
+	public class MutexTest
 	{
-	
 		//Auxiliary Classes (Future Threads)
 		private class ConcClass
 		{
@@ -75,24 +75,15 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-		protected override void SetUp() {}
-
-		protected override void TearDown() {}
-
+		[Test]
 		public void TestCtor1()
 		{
-			try
-			{
-				Mutex Sem = new Mutex();
-			}
-			catch (Exception e)
-			{
-				Fail("#01 Error Creating The Simple Mutex:" + e.ToString());
-			}
+			Mutex Sem = new Mutex();
 		}
 
 // These tests produce mutex release errors
-/*
+/**
+		[Test]
 		public void TestCtorDefaultValue()
 		{
 			Mutex Sem = new Mutex();
@@ -103,6 +94,7 @@ namespace MonoTests.System.Threading
 			AssertEquals("#02 The default value of The mutex wrong set:",class1.id,class1.marker);
 		}
 
+		[Test]
 		public void TestCtorCtor2()
 		{
 			Mutex Sem = new Mutex(false);
@@ -112,7 +104,8 @@ namespace MonoTests.System.Threading
 			while(thread1.IsAlive);
 			AssertEquals("#03 The value of The mutex wrong set:",class1.id,class1.marker);
 		}
-		
+	
+		[Test]
 		public void TestCtorCtor3()
 		{
 			Mutex Sem = new Mutex(true);
@@ -122,27 +115,27 @@ namespace MonoTests.System.Threading
 			while(thread1.IsAlive);
 			AssertEquals("#04 The default value of The mutex wrong set:",class1.id,class1.marker);
 		}
-
 */
-		
+
 		// Hangs #72534
+		[Test]
 		[Category("NotWorking")]
 		public void TestWaitAndSignal1()
 		{
-			Mutex Sem = new Mutex(false);
-			ConcClassLoop class1 = new ConcClassLoop(1,Sem);
-			Thread thread1 = new Thread(new ThreadStart(class1.Loop));
+			Mutex Sem = new Mutex (false);
+			ConcClassLoop class1 = new ConcClassLoop (1, Sem);
+			Thread thread1 = new Thread (new ThreadStart (class1.Loop));
 			try {
-				thread1.Start();
+				thread1.Start ();
 				TestUtil.WaitForNotAlive (thread1, "");
-				AssertEquals("#41 Mutex Worked InCorrecly:",100,class1.marker);
-			}
-			finally {
+				Assert.AreEqual (100, class1.marker);
+			} finally {
 				thread1.Abort ();
 			}
 		}
 
 		// Hangs
+		[Test]
 		[Category("NotWorking")]
 		[Ignore ("It hangs and breaks the domain which runs nunit-console itself")]
 		public void TestWaitAndFoget1()
@@ -160,24 +153,33 @@ namespace MonoTests.System.Threading
 				thread2.Start();
 				TestUtil.WaitForNotAlive (thread2, "t2");
 			
-				AssertEquals("#51 The Mutex Has been Kept after end of the thread:", class2.id,class2.marker);
-			}
-			finally {
+				Assert.AreEqual (class2.id, class2.marker);
+			} finally {
 				thread1.Abort ();
 				thread2.Abort ();
 			}
 		}
 
+		[Test]
 		public void TestHandle()
 		{
 			Mutex Sem = new Mutex();
-			try
-			{
-				IntPtr Handle = Sem.Handle;
-			}
-			catch (Exception e)
-			{
-				Fail("#61 Unexpected Exception accessing Sem.Handle:" + e.ToString());
+			IntPtr Handle = Sem.Handle;
+		}
+
+		[Test] // bug #79358
+		[Category ("NotWorking")]
+		public void DoubleRelease ()
+		{
+			Mutex mutex = new Mutex ();
+			mutex.WaitOne ();
+			mutex.ReleaseMutex ();
+
+			try {
+				mutex.ReleaseMutex ();
+				Assert.Fail ("#1");
+			} catch (ApplicationException ex) {
+				Assert.AreEqual (typeof (ApplicationException), ex.GetType (), "#2");
 			}
 		}
 	}
