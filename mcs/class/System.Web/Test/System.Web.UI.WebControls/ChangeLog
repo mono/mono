@@ -1,3 +1,7 @@
+2006-12-13  Yoni Klain         <yonik@mainsoft.com>
+
+	* LoginTest.cs:    added tests.
+
 2006-12-12  Yoni Klain         <yonik@mainsoft.com>
 
 	* MenuTest.cs:    added tests.

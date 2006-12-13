@@ -256,6 +256,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return new HtmlTextWriter (sw);
 		}
 
+#if NET_2_0
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+#endif
+
 		[Test]
 		public void ReadOnlyFields ()
 		{
@@ -934,6 +942,162 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsFalse (l.OnAuthenticateCalled, "OnAuthenticate");
 			Assert.IsFalse (l.OnLoginErrorCalled, "OnLoginError");
 			Assert.IsFalse (l.OnLoggedInCalled, "OnLoggedIn");
+		}
+
+		[Test]
+		[Category ("NotWorking")] //Implementation details
+		[Category ("NunitWeb")]
+		public void PostBackFireEvent_1 ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (PostBackFireEvent_Init);
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Login1$UserName");   //%24
+			fr.Controls.Add ("Login1$Password");
+			fr.Controls.Add ("Login1$LoginButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = ""; 
+			fr.Controls["Login1$UserName"].Value = "yonik"; 
+			fr.Controls["Login1$Password"].Value = "123456"; 
+			fr.Controls["Login1$LoginButton"].Value = "Log In"; 
+			t.Request = fr;
+			t.Run ();
+			
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("LoggingIn", eventlist[0], "#1");
+			Assert.AreEqual ("Authenticate", eventlist[1], "#2");
+			Assert.AreEqual ("LoginError",   eventlist[2], "#3");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] //Implementation details
+		public void PostBackFireEvent_2 ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (PostBackFireEvent_Init_2);
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Login1$UserName");   //%24
+			fr.Controls.Add ("Login1$Password");
+			fr.Controls.Add ("Login1$LoginButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Login1$UserName"].Value = "yonik";
+			fr.Controls["Login1$Password"].Value = "123456";
+			fr.Controls["Login1$LoginButton"].Value = "Log In";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("LoggingIn", eventlist[0], "#1");
+			Assert.AreEqual ("LoggedIn", eventlist[1], "#2");
+
+		}
+
+		public static void PostBackFireEvent_Init_2 (Page p)
+		{
+			Login l = new Login ();
+			l.LoggedIn += new EventHandler (l_LoggedIn);
+			l.LoggingIn += new LoginCancelEventHandler (l_LoggingIn);
+			l.ID = "Login1";
+			l.MembershipProvider = "FakeProvider";
+			p.Controls.Add (l);
+			p.Validate ();
+		}
+
+		public static void PostBackFireEvent_Init (Page p)
+		{
+			Login l = new Login ();
+			l.Authenticate+=new AuthenticateEventHandler(Authenticate_Event);
+			l.LoggedIn += new EventHandler (l_LoggedIn);
+			l.LoggingIn += new LoginCancelEventHandler (l_LoggingIn);
+			l.LoginError += new EventHandler (l_LoginError);
+			l.ID = "Login1";
+			l.MembershipProvider = "FakeProvider";
+			p.Controls.Add (l);
+			p.Validate ();
+		}
+
+		static void l_LoginError (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("LoginError");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("LoginError");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void l_LoggingIn (object sender, LoginCancelEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("LoggingIn");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("LoggingIn");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void l_LoggedIn (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("LoggedIn");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("LoggedIn");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		public static void Authenticate_Event (object sender, AuthenticateEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("Authenticate");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("Authenticate");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		[TestFixtureTearDown]
+		public void Teardown ()
+		{
+			WebTest.Unload ();
 		}
 	}
 }
