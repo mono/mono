@@ -306,7 +306,7 @@ namespace System.Net.Mail {
 				from = defaultFrom;
 			
 			// MAIL FROM:
-			status = SendCommand (Command.MailFrom, from.Address);
+			status = SendCommand (Command.MailFrom, '<' + from.Address + '>');
 			if (IsError (status)) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
@@ -315,17 +315,17 @@ namespace System.Net.Mail {
 			List<SmtpFailedRecipientException> sfre = new List<SmtpFailedRecipientException> ();
 
 			for (int i = 0; i < message.To.Count; i ++) {
-				status = SendCommand (Command.RcptTo, message.To [i].Address);
+				status = SendCommand (Command.RcptTo, '<' + message.To [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.To [i].Address));
 			}
 			for (int i = 0; i < message.CC.Count; i ++) {
-				status = SendCommand (Command.RcptTo, message.CC [i].Address);
+				status = SendCommand (Command.RcptTo, '<' + message.CC [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.CC [i].Address));
 			}
 			for (int i = 0; i < message.Bcc.Count; i ++) {
-				status = SendCommand (Command.RcptTo, message.Bcc [i].Address);
+				status = SendCommand (Command.RcptTo, '<' + message.Bcc [i].Address + '>');
 				if (IsError (status)) 
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address));
 			}

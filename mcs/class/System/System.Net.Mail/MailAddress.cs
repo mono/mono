@@ -55,9 +55,7 @@ namespace System.Net.Mail {
 
 		public MailAddress (string address, string name, Encoding displayNameEncoding)
 		{
-			if (!(address [0] == '<' && address [address.Length - 1] == '>'))
-				this.address = "<" + address + ">";
-
+			this.address = address;
 			this.displayName = name;
 			//this.displayNameEncoding = displayNameEncoding;
 		}
@@ -109,7 +107,9 @@ namespace System.Net.Mail {
 				sb.Append (DisplayName);
 				sb.Append ("\"");
 				sb.Append (" ");
+				sb.Append ("<");
 				sb.Append (Address);
+				sb.Append (">");
 			}
 			else {
 				sb.Append (Address);
