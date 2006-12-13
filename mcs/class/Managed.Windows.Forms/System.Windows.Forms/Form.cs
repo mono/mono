@@ -1937,6 +1937,7 @@ namespace System.Windows.Forms {
 					}
 					
 					if (ActiveMaximizedMdiChild != null) {
+						XplatUI.RequestAdditionalWM_NCMessages (Handle, false, true);
 						ActiveMaximizedMdiChild.HandleMenuMouseMove (ActiveMenu,
 								LowOrder ((int)m.LParam.ToInt32 ()),
 								HighOrder ((int)m.LParam.ToInt32 ()));

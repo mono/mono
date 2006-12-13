@@ -42,6 +42,12 @@ namespace System.Windows.Forms {
 		internal TitleButton minimize_button;
 		protected Rectangle icon_rect;
 		
+		private ToolTip.ToolTipWindow tooltip;
+		private Timer tooltip_timer;
+		private TitleButton tooltip_hovered_button;
+		private TitleButton tooltip_hidden_button;
+		private const int tooltip_hide_interval = 3000;
+		private const int tooltip_show_interval = 1000;
 		private TitleButton [] title_buttons = new TitleButton [3];
 		
 		// moving windows
@@ -283,18 +289,7 @@ namespace System.Windows.Forms {
 		{
 			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
 
-			is_mouse_down_menu = false;
-			foreach (TitleButton button in title_buttons) {
-				if (button != null) {
-					if (button.Rectangle.Contains (pt)) {
-						button.State = ButtonState.Pushed;
-						is_mouse_down_menu = true;
-					} else {
-						button.State = ButtonState.Normal;
-					}
-				}
-			}
-			XplatUI.InvalidateNC (menu.GetForm().Handle);
+			HandleTitleBarDown (pt.X, pt.Y);
 			return is_mouse_down_menu;
 		}
 
@@ -302,54 +297,95 @@ namespace System.Windows.Forms {
 		{
 			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
 
-			foreach (TitleButton button in title_buttons) {
-				if (button != null) {
-					if (button.Rectangle.Contains (pt)) {
-						button.Clicked (this, EventArgs.Empty);
-						button.State = ButtonState.Pushed;
-					} else {
-						button.State = ButtonState.Normal;
-					}
-				}
-			}
-			XplatUI.InvalidateNC (menu.GetForm().Handle);
-			is_mouse_down_menu = false;
-			return;
+			HandleTitleBarUp (pt.X, pt.Y);
 		}
 		
 		public void HandleMenuMouseLeave(MainMenu menu, int x, int y)
 		{
-			foreach (TitleButton button in title_buttons) {
-				if (button != null) {
-					button.State = ButtonState.Normal;
-				}
-			}
-			XplatUI.InvalidateNC (menu.GetForm().Handle);
-			return;
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
+			HandleTitleBarLeave (pt.X, pt.Y);
+
 		}
 		
 		public void HandleMenuMouseMove (MainMenu menu, int x, int y)
 		{
 			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
 			
-			if (!is_mouse_down_menu)
+			HandleTitleBarMove (pt.X, pt.Y);
+			
+		}
+		
+		// Called from MouseMove if mouse is over a button
+		private void ToolTipStart (TitleButton button)
+		{
+			tooltip_hovered_button = button;
+			
+			if (tooltip_hovered_button == tooltip_hidden_button)
 				return;
+			tooltip_hidden_button = null;
+			
+			if (tooltip != null && tooltip.Visible)
+				ToolTipShow (true);
 				
-			bool any_change = false;
-			foreach (TitleButton button in title_buttons) {
-				if (button == null) 
-					continue;
-				
-				if (button.Rectangle.Contains(pt)) {
-					any_change |= button.State != ButtonState.Pushed;
-					button.State = ButtonState.Pushed;
-				} else {
-					any_change |= button.State != ButtonState.Normal;
-					button.State = ButtonState.Normal;
-				}
+			if (tooltip_timer == null) {
+					
+				tooltip_timer = new Timer ();
+				tooltip_timer.Tick += new EventHandler (ToolTipTimerTick);
 			}
-			if (any_change)
-				XplatUI.InvalidateNC (menu.GetForm().Handle);
+				
+			tooltip_timer.Interval = tooltip_show_interval;
+			tooltip_timer.Start ();
+			tooltip_hovered_button = button;
+		}
+		
+		private void ToolTipTimerTick (object sender, EventArgs e)
+		{
+			if (tooltip_timer.Interval == tooltip_hide_interval) {
+				tooltip_hidden_button = tooltip_hovered_button;
+				ToolTipHide (false);
+			} else {
+				ToolTipShow (false);
+			}
+		}
+		// Called from timer (with only_refresh = false)
+		// Called from ToolTipStart if tooltip is already shown (with only_refresh = true)
+		private void ToolTipShow (bool only_refresh)
+		{
+			string text = Locale.GetText (tooltip_hovered_button.Caption.ToString ());
+			
+			tooltip_timer.Interval = tooltip_hide_interval;
+			tooltip_timer.Enabled = true;
+			
+			if (only_refresh && (tooltip == null || !tooltip.Visible )) {
+				return;
+			}
+				
+			if (tooltip == null)
+				tooltip = new ToolTip.ToolTipWindow ();
+			else if (tooltip.Text == text && tooltip.Visible)
+				return;
+			else if (tooltip.Visible)
+				tooltip.Visible = false;
+
+			if (form.WindowState == FormWindowState.Maximized)
+				tooltip.Present (form.MdiParent, text);
+			else
+				tooltip.Present (form, text);
+			
+		}
+		
+		// Called from MouseLeave (with reset_hidden_button = true)
+		// Called from MouseDown  (with reset_hidden_button = false)
+		// Called from MouseMove if mouse isn't over any button (with reset_hidden_button = false)
+		// Called from Timer if hiding (with reset_hidden_button = false)
+		private void ToolTipHide (bool reset_hidden_button)
+		{
+			if (tooltip_timer != null)
+				tooltip_timer.Enabled = false;
+			if (tooltip != null && tooltip.Visible)
+				tooltip.Visible = false;
+			if (reset_hidden_button)
+				tooltip_hidden_button = null;
 		}
 		
 		public virtual void SetWindowState (FormWindowState old_state, FormWindowState window_state)
@@ -526,29 +562,48 @@ namespace System.Windows.Forms {
 		
 		protected virtual void HandleTitleBarLeave (int x, int y)
 		{
+			foreach (TitleButton button in title_buttons) {
+				if (button != null) {
+					button.State = ButtonState.Normal;
+				}
+			}
+			ToolTipHide (true);
 			is_mouse_down_menu = false;
+			if (IsMaximized)
+				XplatUI.InvalidateNC (form.MdiParent.Handle);
+			return;
 		}
 		
 		protected virtual void HandleTitleBarMove (int x, int y)
 		{
-			if (!is_mouse_down_menu)
-				return;
-			
 			bool any_change = false;
+			bool any_tooltip = false;
 			foreach (TitleButton button in title_buttons) {
 				if (button == null)
 					continue;
 				
 				if (button.Rectangle.Contains (x, y)) {
-					any_change |= button.State != ButtonState.Pushed;
-					button.State = ButtonState.Pushed;
+					if (is_mouse_down_menu) {
+						any_change |= button.State != ButtonState.Pushed;
+						button.State = ButtonState.Pushed;
+					}
+					ToolTipStart (button);
+					any_tooltip = true;
 				} else {
-					any_change |= button.State != ButtonState.Normal;
-					button.State = ButtonState.Normal;
+					if (is_mouse_down_menu) {
+						any_change |= button.State != ButtonState.Normal;
+						button.State = ButtonState.Normal;
+					}
 				}
 			}
-			if (any_change)
-				XplatUI.InvalidateNC (form.Handle);
+			if (any_change) {
+				if (IsMaximized)
+					XplatUI.InvalidateNC (form.MdiParent.Handle);
+				else
+					XplatUI.InvalidateNC (form.Handle);
+			}
+			if (!any_tooltip)
+				ToolTipHide (false);
 		}
 		
 		protected virtual void HandleTitleBarUp (int x, int y)
@@ -564,25 +619,39 @@ namespace System.Windows.Forms {
 					button.Clicked (this, EventArgs.Empty);
 				} 
 			}
+
+			if (IsMaximized)
+				XplatUI.InvalidateNC (form.MdiParent.Handle);
+			return;
 		}
 		
 		protected virtual void HandleTitleBarDown (int x, int y)
 		{
+			ToolTipHide (false);
+			
+			is_mouse_down_menu = false;
 			foreach (TitleButton button in title_buttons) {
-				if (button != null && button.Rectangle.Contains (x, y)) {
-					button.State = ButtonState.Pushed;
-					XplatUI.InvalidateNC (form.Handle);
-					is_mouse_down_menu = true;
-					return;
+				if (button != null) {
+					if (button.Rectangle.Contains (x, y)) {
+						button.State = ButtonState.Pushed;
+						is_mouse_down_menu = true;
+					} else {
+						button.State = ButtonState.Normal;
+					}
 				}
 			}
+			
+			if (IsMaximized) {
+				XplatUI.InvalidateNC (form.MdiParent.Handle);
+			} else if (!is_mouse_down_menu){
+				state = State.Moving;
+				clicked_point = new Point (x, y);
+				form.Capture = true;
+				XplatUI.InvalidateNC (form.Handle);
+			} else {
+				XplatUI.InvalidateNC (form.Handle);
+			}
 
-			if (IsMaximized)
-				return;
-
-			state = State.Moving;
-			clicked_point = new Point(x, y);
-			form.Capture = true;
 		}
 
 		private bool HandleMouseMove (Form form, ref Message m)
@@ -595,19 +664,6 @@ namespace System.Windows.Forms {
 				HandleSizing (m);
 				return true;
 			}
-
-			/*
-			if (IsSizable) {
-				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-				FormPos pos = FormPosForCoords (x, y);
-				Console.WriteLine ("position:   " + pos);
-				SetCursorForPos (pos);
-
-				ClearVirtualPosition ();
-				state = State.Idle;
-			}
-			*/
 			
 			return false;
 		}

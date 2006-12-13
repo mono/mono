@@ -349,19 +349,6 @@ namespace System.Windows.Forms {
 			mdi_container.CloseChildForm (form);
 		}
 
-		/*
-		public override void UpdateBorderStyle (FormBorderStyle border_style)
-		{
-			base.UpdateBorderStyle (border_style);
-
-			Console.WriteLine ("MDI SETTING BORDER STYLE:   " + border_style);
-			if (border_style != FormBorderStyle.None)
-				XplatUI.SetBorderStyle (form.Handle, (FormBorderStyle) MdiBorderStyle);
-			else
-				XplatUI.SetBorderStyle (form.Handle, FormBorderStyle.None);
-		}
-		*/
-
 		public override void DrawMaximizedButtons (object sender, PaintEventArgs pe)
 		{
 			Size bs = ThemeEngine.Current.ManagedWindowButtonSize (this);
@@ -476,18 +463,7 @@ namespace System.Windows.Forms {
 				}
 
 				return false;
-
-			//case Msg.WM_NCPAINT:
-			//        PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
-
-			//        Rectangle clip;
-			//        clip = new Rectangle (0, 0, form.Width, form.Height);
-
-			//        ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
-			//        XplatUI.PaintEventEnd (form.Handle, false);
-			//        return true;
 			}
-		
 			return base.HandleMessage (ref m);
 		}
 	
