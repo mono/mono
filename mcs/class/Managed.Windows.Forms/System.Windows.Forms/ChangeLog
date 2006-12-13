@@ -1,3 +1,9 @@
+2006-12-12  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: Set cursor to default in popup menus, a XplatUI.SetCursor 
+	was used because we must set cursor without trigger ChangeCursor event
+	and without change Cursor control property. Fixes #79963.
+
 2006-12-12  Andreia Gaita  <avidigal@novell.com>
 	
 	* Control.cs: Check if Region setter value is null, and ignore

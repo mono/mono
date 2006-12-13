@@ -200,8 +200,8 @@ namespace System.Windows.Forms {
 				
 			/* Perform click when is not a popup */
 			if (!item.IsPopup) {
-				item.PerformClick( );
-				DeselectItem(item);
+				DeselectItem (item);
+				item.PerformClick ();
 			}
 		}
 
@@ -212,11 +212,11 @@ namespace System.Windows.Forms {
 			if (menu.MenuItems.Count <= 0)	// No submenus to track
 				return true;				
 
-			menu.Wnd = new PopUpWindow (menu);
 			MenuTracker tracker = new MenuTracker (menu);
 			tracker.active = true;
 			menu.tracker = tracker;
 
+			menu.Wnd = new PopUpWindow (tracker.grab_control, menu);
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
 
 			((PopUpWindow)menu.Wnd).ShowWindow ();
@@ -315,7 +315,7 @@ namespace System.Windows.Forms {
 			}
 
 			popup_active = true;
-			PopUpWindow puw = new PopUpWindow (item);
+			PopUpWindow puw = new PopUpWindow (grab_control, item);
 			
 			Point pnt;
 			if (menu is MainMenu)
@@ -702,10 +702,12 @@ namespace System.Windows.Forms {
 	internal class PopUpWindow : Control
 	{
 		private Menu menu;
+		private Form form;
 
-		public PopUpWindow (Menu menu): base ()
+		public PopUpWindow (Form form, Menu menu): base ()
 		{
 			this.menu = menu;
+			this.form = form;
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 			is_visible = false;
@@ -725,6 +727,10 @@ namespace System.Windows.Forms {
 
 		public void ShowWindow ()
 		{
+			// Set cursor to Default, needed when you popup menu over a window with cursor
+			// diferent than default.
+			if (form.Cursor != Cursors.Default)
+				XplatUI.SetCursor(form.Handle, Cursors.Default.handle);
 			RefreshItems ();
 			Show ();
 		}
@@ -736,8 +742,11 @@ namespace System.Windows.Forms {
 		
 		public void HideWindow ()
 		{
+			// Back cursor to normal when needed
+			if (form.Cursor != Cursors.Default)
+				XplatUI.SetCursor (form.Handle, form.Cursor.handle);
 			MenuTracker.HideSubPopups (menu);
-    			Hide ();
+    		Hide ();
 		}
 
 #if false
