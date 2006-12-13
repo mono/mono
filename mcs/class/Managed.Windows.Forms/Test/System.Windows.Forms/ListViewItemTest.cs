@@ -65,6 +65,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, item.Checked, "DefaultValues#4");
 			Assert.AreEqual (string.Empty, item.Text, "DefaultValues#5");
 			Assert.AreEqual (true, item.UseItemStyleForSubItems, "DefaultValues#6");
+#if NET_2_0
+			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#7");
+#endif
 		}
 
 		[Test]

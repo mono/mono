@@ -222,15 +222,21 @@ namespace MonoTests.System.Windows.Forms
 			ListView listview = new ListView ();
 
 			// Properties
+#if !NET_2_0
 			Assert.AreEqual (true, listview.SelectedIndices.IsReadOnly, "SelectedIndexCollectionTest_PropertiesTest#1");
+			Assert.AreEqual (true, ((IList)listview.SelectedIndices).IsFixedSize, "SelectedIndexCollectionTest_PropertiesTest#4");
+#else
+			Assert.AreEqual (false, listview.SelectedIndices.IsReadOnly, "SelectedIndexCollectionTest_PropertiesTest#1");
+			Assert.AreEqual (false, ((IList)listview.SelectedIndices).IsFixedSize, "SelectedIndexCollectionTest_PropertiesTest#4");
+#endif
 			Assert.AreEqual (false, ((ICollection)listview.SelectedIndices).IsSynchronized, "SelectedIndexCollectionTest_PropertiesTest#2");
 			Assert.AreEqual (listview.SelectedIndices, ((ICollection)listview.SelectedIndices).SyncRoot, "SelectedIndexCollectionTest_PropertiesTest#3");
-			Assert.AreEqual (true, ((IList)listview.SelectedIndices).IsFixedSize, "SelectedIndexCollectionTest_PropertiesTest#4");
 			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_PropertiesTest#5");
 		}
 
 
 		// Exceptions
+#if !NET_2_0
 		[Test, ExpectedException (typeof (NotSupportedException))]
 		public void SelectedIndexCollectionTest_Add_ExceptionTest ()
 		{
@@ -244,6 +250,7 @@ namespace MonoTests.System.Windows.Forms
 			ListView listview = new ListView ();
 			((IList)listview.SelectedIndices).Remove (5);
 		}
+#endif
 
 		[Test, ExpectedException (typeof (NotSupportedException))]
 		public void SelectedIndexCollectionTest_RemoveAt_ExceptionTest ()
@@ -727,5 +734,165 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Dispose ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void ListViewItemCollectionTest_RemoveByKey ()
+		{
+			ListView lvw = new ListView ();
+			ListViewItem lvi1 = new ListViewItem ("A");
+			lvi1.Name = "A name";
+			ListViewItem lvi2 = new ListViewItem ("B");
+			lvi2.Name = "B name";
+			ListViewItem lvi3 = new ListViewItem ("C");
+			lvi3.Name = "Same name";
+			ListViewItem lvi4 = new ListViewItem ("D");
+			lvi4.Name = "Same name";
+			ListViewItem lvi5 = new ListViewItem ("E");
+			lvi5.Name = String.Empty;
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3, lvi4, lvi5 });
+
+			Assert.AreEqual (5, lvw.Items.Count, "#A1");
+
+			lvw.Items.RemoveByKey ("B name");
+			Assert.AreEqual (4, lvw.Items.Count, "#B1");
+			Assert.AreSame (lvi1, lvw.Items [0], "#B2");
+			Assert.AreSame (lvi3, lvw.Items [1], "#B3");
+			Assert.AreSame (lvi4, lvw.Items [2], "#B4");
+			Assert.AreSame (lvi5, lvw.Items [3], "#B5");
+
+			lvw.Items.RemoveByKey ("Same name");
+			Assert.AreEqual (3, lvw.Items.Count, "#C1");
+			Assert.AreSame (lvi1, lvw.Items [0], "#C2");
+			Assert.AreSame (lvi4, lvw.Items [1], "#C3");
+			Assert.AreSame (lvi5, lvw.Items [2], "#C4");
+
+			lvw.Items.RemoveByKey ("a NAME");
+			Assert.AreEqual (2, lvw.Items.Count, "#D1");
+			Assert.AreSame (lvi4, lvw.Items [0], "#D2");
+			Assert.AreSame (lvi5, lvw.Items [1], "#D3");
+
+			lvw.Items.RemoveByKey (String.Empty);
+			Assert.AreEqual (2, lvw.Items.Count, "#E1");
+			Assert.AreSame (lvi4, lvw.Items [0], "#E2");
+			Assert.AreSame (lvi5, lvw.Items [1], "#E3");
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_IndexOfKey ()
+		{
+			ListView lvw = new ListView ();
+			ListViewItem lvi1 = new ListViewItem ("A");
+			lvi1.Name = "A name";
+			ListViewItem lvi2 = new ListViewItem ("B");
+			lvi2.Name = "Same name";
+			ListViewItem lvi3 = new ListViewItem ("C");
+			lvi3.Name = "Same name";
+			ListViewItem lvi4 = new ListViewItem ("D");
+			lvi4.Name = String.Empty;
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3, lvi4 });
+
+			Assert.AreEqual (4, lvw.Items.Count, "#A1");
+			Assert.AreEqual (-1, lvw.Items.IndexOfKey (String.Empty), "#A2");
+			Assert.AreEqual (-1, lvw.Items.IndexOfKey (null), "#A3");
+			Assert.AreEqual (0, lvw.Items.IndexOfKey ("A name"), "#A4");
+			Assert.AreEqual (0, lvw.Items.IndexOfKey ("a NAME"), "#A5");
+			Assert.AreEqual (1, lvw.Items.IndexOfKey ("Same name"), "#A6");
+
+			ListViewItem lvi5 = new ListViewItem ("E");
+			lvw.Items.Add (lvi5);
+			lvi5.Name = "E name";
+
+			Assert.AreEqual (4, lvw.Items.IndexOfKey ("E name"), "#B1");
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_Indexer ()
+		{
+			ListView lvw = new ListView ();
+			ListViewItem lvi1 = new ListViewItem ("A");
+			lvi1.Name = "A name";
+			ListViewItem lvi2 = new ListViewItem ("B");
+			lvi2.Name = "Same name";
+			ListViewItem lvi3 = new ListViewItem ("C");
+			lvi3.Name = "Same name";
+			ListViewItem lvi4 = new ListViewItem ("D");
+			lvi4.Name = String.Empty;
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3, lvi4 });
+
+			Assert.AreEqual (4, lvw.Items.Count, "#A1");
+			Assert.AreEqual (null, lvw.Items [String.Empty], "#A2");
+			Assert.AreEqual (null, lvw.Items [null], "#A3");
+			Assert.AreSame (lvi1, lvw.Items ["A name"], "#A4");
+			Assert.AreSame (lvi1, lvw.Items ["a NAME"], "#A5");
+			Assert.AreSame (lvi2, lvw.Items ["Same name"], "#A6");
+
+			ListViewItem lvi5 = new ListViewItem ("E");
+			lvw.Items.Add (lvi5);
+			lvi5.Name = "E name";
+
+			Assert.AreSame (lvi5, lvw.Items ["E name"], "#B1");
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_ContainsKey ()
+		{
+			ListView lvw = new ListView();
+			ListViewItem lvi1 = new ListViewItem("A");
+			lvi1.Name = "A name";
+			ListViewItem lvi2 = new ListViewItem("B");
+			lvi2.Name = "B name";
+			ListViewItem lvi3 = new ListViewItem("D");
+			lvi3.Name = String.Empty;
+			lvw.Items.AddRange(new ListViewItem[] { lvi1, lvi2, lvi3 });
+
+			Assert.AreEqual(3, lvw.Items.Count, "#A1");
+			Assert.AreEqual(false, lvw.Items.ContainsKey (String.Empty), "#A2");
+			Assert.AreEqual(false, lvw.Items.ContainsKey (null), "#A3");
+			Assert.AreEqual(true, lvw.Items.ContainsKey ("A name"), "#A4");
+			Assert.AreEqual(true, lvw.Items.ContainsKey ("a NAME"), "#A5");
+			Assert.AreEqual(true, lvw.Items.ContainsKey ("B name"), "#A6");
+
+			ListViewItem lvi5 = new ListViewItem("E");
+			lvw.Items.Add(lvi5);
+			lvi5.Name = "E name";
+
+			Assert.AreEqual(true, lvw.Items.ContainsKey ("E name"), "#B1");
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_Find ()
+		{
+			ListView lvw = new ListView ();
+			ListViewItem lvi1 = new ListViewItem ("A");
+			lvi1.Name = "A name";
+			ListViewItem lvi2 = new ListViewItem ("B");
+			lvi2.Name = "a NAME";
+			ListViewItem lvi3 = new ListViewItem ("C");
+			lvi3.Name = "a NAME";
+			ListViewItem lvi4 = new ListViewItem ("D");
+			lvi4.Name = String.Empty;
+			ListViewItem lvi5 = new ListViewItem ("F");
+			lvi5.Name = String.Empty;
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3, lvi4, lvi5 });
+
+			Assert.AreEqual (5, lvw.Items.Count, "#A1");
+
+			ListViewItem [] items = lvw.Items.Find ("A name", false);
+			Assert.AreEqual (3, items.Length, "#B11");
+			Assert.AreSame (lvi1, items [0], "#B2");
+			Assert.AreSame (lvi2, items [1], "#B3");
+			Assert.AreSame (lvi3, items [2], "#B4");
+
+			items = lvw.Items.Find (String.Empty, false);
+			Assert.AreEqual (2, items.Length, "#B1");
+			Assert.AreSame (lvi4, items [0], "#B2");
+			Assert.AreSame (lvi5, items [1], "#B3");
+
+			Assert.AreEqual (0, lvw.Items.Find (null, false).Length, "#C1");
+		}
+
+#endif
+
 	}
 }
