@@ -1212,10 +1212,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void DetailsView_PagingPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PagingPostback_Load);
 			string pageHTML = t.Run ();
 			pageHTML = pageHTML.Substring (pageHTML.IndexOf ("starttest") + 9, pageHTML.IndexOf ("endtest") - pageHTML.IndexOf ("starttest") - 9);
 			string origHtmlValue = @" <div>
@@ -1273,14 +1275,66 @@ namespace MonoTests.System.Web.UI.WebControls
 					</div>";
 			HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "AfterPagingDataPostback");
 
+			// Checking for change index event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("PageIndexChanging", eventlist[0], "#1");
+			Assert.AreEqual ("PageIndexChanged", eventlist[1], "#2");
+
 		}
+
+		#region EventIndexChanged
+		public static void PagingPostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.PageIndexChanged += new EventHandler (d_PageIndexChanged);
+				d.PageIndexChanging += new DetailsViewPageEventHandler (d_PageIndexChanging);
+			}
+		}
+
+		static void d_PageIndexChanging (object sender, DetailsViewPageEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("PageIndexChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("PageIndexChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_PageIndexChanged (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("PageIndexChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("PageIndexChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
 
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotWorking")]
 		public void DetailsView_EditPostback ()
-		{			
+		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (EditPostback_Load);
 			string pageHTML = t.Run ();
 			Assert.AreEqual (true, pageHTML.Contains ("Edit"), "BeforeEditPostback");
 			FormRequest fr = new FormRequest (t.Response, "form1");
@@ -1314,13 +1368,65 @@ namespace MonoTests.System.Web.UI.WebControls
 						</div>     
 						</div>";
 					HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "AfterEditPostback");
+					// Checking for change mode event fired.
+					ArrayList eventlist = t.UserData as ArrayList;
+					if (eventlist == null)
+						Assert.Fail ("User data does not been created fail");
+
+					Assert.AreEqual ("ModeChanging", eventlist[0], "#1");
+					Assert.AreEqual ("ModeChanged", eventlist[1], "#2");
+				}
+
+		#region EditPostbackEvent
+		public static void EditPostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.ModeChanging += new DetailsViewModeEventHandler (d_ModeChanging);
+				d.ModeChanged += new EventHandler (d_ModeChanged);
+			}
 		}
 
+		static void d_ModeChanged (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ModeChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ModeChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ModeChanging (object sender, DetailsViewModeEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ModeChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ModeChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+		
 		[Test]
+		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void DetailsView_DeletePostback ()
-		{			
-			WebTest t = new WebTest ("DetailsViewDataActions.aspx");			
+		{
+			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (DeletePostback_Load);
 			string pageHTML = t.Run ();
 			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeDeletePostback");
 			FormRequest fr = new FormRequest (t.Response, "form1");
@@ -1357,16 +1463,67 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "DeleteDataPostback");
 			Assert.AreEqual (false, pageHTML.Contains ("1001"), "AfterDeletePostback");
+
+			// Checking for delete event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemDeleting", eventlist[0], "#1");
+			Assert.AreEqual ("ItemDeleted", eventlist[1], "#2");
 		}
+
+		#region DeletePostbackEvent
+		public static void DeletePostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.ItemDeleting += new DetailsViewDeleteEventHandler (d_ItemDeleting);
+				d.ItemDeleted += new DetailsViewDeletedEventHandler (d_ItemDeleted);
+			}
+		}
+
+		static void d_ItemDeleted (object sender, DetailsViewDeletedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemDeleted");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemDeleted");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemDeleting (object sender, DetailsViewDeleteEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemDeleting");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemDeleting");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // Implementation details in mono
 		public void DetailsView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (InsertPostback_Load);
 			string pageHTML = t.Run ();
-			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeDeletePostback");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
@@ -1393,8 +1550,225 @@ namespace MonoTests.System.Web.UI.WebControls
 			</div>";    
 
 			HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "InsertDataPostback");
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("DetailsView1$ctl01");
+			fr.Controls.Add ("DetailsView1$ctl02");
+			fr.Controls.Add ("DetailsView1$ctl03");
+
+			fr.Controls["__EVENTTARGET"].Value = "DetailsView1$ctl04";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["DetailsView1$ctl01"].Value = "123";
+			fr.Controls["DetailsView1$ctl02"].Value = "123";
+			fr.Controls["DetailsView1$ctl03"].Value = "123";
+			t.Request = fr;			
+			t.Run ();
+
+			// Checking for insert event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCommand", eventlist[0], "#1");
+			Assert.AreEqual ("ItemCommand", eventlist[1], "#2");
+			Assert.AreEqual ("ItemInserting", eventlist[2], "#3");
+			Assert.AreEqual ("ItemInserted", eventlist[3], "#4");
 		}
 
+		#region InsertEvent
+		public static void InsertPostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.ItemCommand += new DetailsViewCommandEventHandler (d_ItemCommand);
+				d.ItemInserted += new DetailsViewInsertedEventHandler (d_ItemInserted);
+				d.ItemInserting += new DetailsViewInsertEventHandler (d_ItemInserting);
+			}
+		}
+
+		static void d_ItemCommand (object sender, DetailsViewCommandEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemCommand");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemCommand");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemInserting (object sender, DetailsViewInsertEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemInserting");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemInserting");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemInserted (object sender, DetailsViewInsertedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemInserted");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemInserted");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_ItemCreatedPostback ()
+		{
+			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (ItemCreatedPostback_Load);
+			string pageHTML = t.Run ();
+			pageHTML = t.Run ();
+			
+			// Checking for itemcreated event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCreated", eventlist[0], "#1");
+			Assert.AreEqual ("ItemCreated", eventlist[1], "#2");
+		}
+
+		#region ItemCreatedEvent
+		public static void ItemCreatedPostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.ItemCreated += new EventHandler (d_ItemCreated);
+			}
+		}
+
+		static void d_ItemCreated (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details in mono
+		public void DetailsView_UpdatePostback ()
+		{
+			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (UpdatePostback_Load);
+			string pageHTML = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "DetailsView1";
+			fr.Controls["__EVENTARGUMENT"].Value = "Edit$0";
+			t.Request = fr;
+			pageHTML = t.Run ();
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("DetailsView1$ctl01");
+			fr.Controls.Add ("DetailsView1$ctl02");
+			fr.Controls.Add ("DetailsView1$ctl03");
+
+			fr.Controls["__EVENTTARGET"].Value = "DetailsView1$ctl04";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["DetailsView1$ctl01"].Value = "1";
+			fr.Controls["DetailsView1$ctl02"].Value = "2";
+			fr.Controls["DetailsView1$ctl03"].Value = "3";
+			t.Request = fr;
+			t.Run ();
+
+			// Checking for insert event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCommand", eventlist[0], "#1");
+			Assert.AreEqual ("ItemCommand", eventlist[1], "#2");
+			Assert.AreEqual ("ItemUpdating", eventlist[2], "#3");
+			Assert.AreEqual ("ItemUpdated", eventlist[3], "#4");
+		}
+
+		#region UpdatePostbackEvent
+		public static void UpdatePostback_Load (Page p)
+		{
+			DetailsView d = p.FindControl ("DetailsView1") as DetailsView;
+			if (d != null) {
+				d.AutoGenerateDeleteButton = true;
+				d.AutoGenerateEditButton = true;
+				d.AutoGenerateInsertButton = true;
+				d.ItemCommand += new DetailsViewCommandEventHandler (d_ItemCommand);
+				d.ItemUpdated += new DetailsViewUpdatedEventHandler (d_ItemUpdated);
+				d.ItemUpdating += new DetailsViewUpdateEventHandler (d_ItemUpdating);
+			}
+		}
+
+		static void d_ItemUpdating (object sender, DetailsViewUpdateEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemUpdating");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemUpdating");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemUpdated (object sender, DetailsViewUpdatedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemUpdated");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemUpdated");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
 
 		[Test]
 		public void DetailsView_ViewState ()
@@ -1410,6 +1784,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (GridLines.Vertical, copy.GridLines, "ViewStateGridLines");
 			Assert.AreEqual ("style.css", copy.CssClass, "ViewStateCssClass");
 		}
+
 
 		[Test]
 		public void DetailsView_ControlState ()
