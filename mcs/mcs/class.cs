@@ -4414,8 +4414,18 @@ namespace Mono.CSharp {
 						"`{0}': Struct constructors cannot call base constructors", TypeManager.CSharpSignature (caller_builder));
 					return false;
 				}
-			} else
+			} else {
+				//
+				// It is legal to have "this" initializers that take no arguments
+				// in structs, they are just no-ops.
+				//
+				// struct D { public D (int a) : this () {}
+				//
+				if (ec.ContainerType.IsValueType && argument_list == null)
+					return true;
+				
 				t = ec.ContainerType;
+			}
 
 			base_constructor_group = Expression.MemberLookup (
 				ec.ContainerType, t, ".ctor", MemberTypes.Constructor,

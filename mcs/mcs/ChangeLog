@@ -1,3 +1,8 @@
+2006-12-13  Miguel de Icaza  <miguel@novell.com>
+
+	* class.cs (ConstructorInitializer.Resolve): Allow for ":this()"
+	in struct constructors, they are basically no-ops.
+
 2006-12-12  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs (Position): Save preprocessor status too.
