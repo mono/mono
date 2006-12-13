@@ -753,6 +753,24 @@ namespace System.Net.Sockets
 					SocketOptionName.NoDelay, value ? 1 : 0);
 			}
 		}
+
+		[MonoTODO ("Not implemented")]
+		public int ReceiveBufferSize {
+			get {
+				return 8192;
+			}
+			set {
+			}
+		}
+
+		[MonoTODO ("Not implemented")]
+		public int SendBufferSize {
+			get {
+				return 8192;
+			}
+			set {
+			}
+		}
 #endif
 
 		internal static void CheckProtocolSupport()

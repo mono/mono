@@ -1,3 +1,9 @@
+
+Wed Dec 13 12:04:02 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Socket.cs: stub ReceiveBufferSize and SendBufferSize to
+	get ironpython to compile.
+
 2006-11-23  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Only set Connected = true in Poll() and Select() if
