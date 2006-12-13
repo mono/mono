@@ -2333,12 +2333,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
-                if (value != null) {
-                    if (IsHandleCreated) {
-                        XplatUI.SetClipRegion(Handle, value);
-                    }
-                    clip_region = value;
-                }
+				if (value != null && IsHandleCreated) {
+					XplatUI.SetClipRegion(Handle, value);
+				}
+				clip_region = value;
 			}
 		}
 

@@ -1,3 +1,7 @@
+2006-12-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Control.cs: Allow Region to be set to null.
+
 2006-12-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiWindowManager.cs: Remove unused (commented out) code.

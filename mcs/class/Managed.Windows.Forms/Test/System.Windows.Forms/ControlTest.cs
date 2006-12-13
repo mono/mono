@@ -1015,19 +1015,28 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		public void RegionTest () {
-			Form f = new Form();
-			Control c = new Control();
-			f.Controls.Add(c);
-			f.Show();
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			Control c = new Control ();
+			f.Controls.Add (c);
+			Assert.IsNull (c.Region, "#A1");
+			f.Show ();
+			Assert.IsNull (c.Region, "#A2");
+			c.Region = null;
+			Assert.IsNull (c.Region, "#A3");
+			f.Dispose ();
 
-			try {
-				c.Region = null;
-			}
-			catch(Exception ex) {
-				Assert.IsNotNull(c.Region, "A1");
-			}
-			
-			f.Close();
+			Region region = new Region ();
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			c = new Control ();
+			f.Controls.Add (c);
+			c.Region = region;
+			Assert.IsNotNull (c.Region, "#B1");
+			Assert.AreSame (region, c.Region, "#B2");
+			f.Show ();
+			c.Region = null;
+			Assert.IsNull (c.Region, "#B3");
 		}
 	}
 
