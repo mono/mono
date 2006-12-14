@@ -77,15 +77,6 @@ namespace System.Web.Services.Description {
 #endif
 		public int Add (ServiceDescription serviceDescription) 
 		{
-			return Add (serviceDescription, null, null);
-		}
-
-		internal int Add (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
-		{
-#if !TARGET_JVM
-			if (importer != null)
-				importer.OnServiceDescriptionAdded (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
-#endif
 			Insert (Count, serviceDescription);
 			return (Count - 1);
 		}

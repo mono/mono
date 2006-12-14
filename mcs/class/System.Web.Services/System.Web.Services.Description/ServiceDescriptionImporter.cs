@@ -125,11 +125,12 @@ namespace System.Web.Services.Description {
 			if (appSettingUrlKey != null && appSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
 				throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
 
-			serviceDescriptions.Add (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
+			OnServiceDescriptionAdded (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 		}
 
 		internal void OnServiceDescriptionAdded (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
 		{
+			serviceDescriptions.Add (serviceDescription);
 			ImportInfo info = new ImportInfo (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 			importInfo.Add (info);
 			
