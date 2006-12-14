@@ -367,16 +367,6 @@
 
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
-	* ToolTip.cs: use Visible instead of is_visible.
-
-	* TreeView.cs: same.
-
-	* ListBox.cs: same.
-
-	* ListView.cs: same.
-
-2006-12-06  Chris Toshok  <toshok@ximian.com>
-
 	* ListView.cs: the BackgroundImage override is just to set
 	attributes.  chain up to base.BackgroundImage.
 

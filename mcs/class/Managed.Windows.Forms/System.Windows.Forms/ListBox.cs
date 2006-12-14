@@ -1633,12 +1633,12 @@ namespace System.Windows.Forms
 
 		internal void RepositionScrollBars ()
 		{
-			if (vscrollbar.Visible) {
+			if (vscrollbar.is_visible) {
 				vscrollbar.Size = new Size (vscrollbar.Width, items_area.Height);
 				vscrollbar.Location = new Point (items_area.Width, 0);
 			}
 
-			if (hscrollbar.Visible) {
+			if (hscrollbar.is_visible) {
 				hscrollbar.Size = new Size (items_area.Width, hscrollbar.Height);
 				hscrollbar.Location = new Point (0, items_area.Height);
 			}

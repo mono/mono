@@ -135,7 +135,7 @@ namespace System.Windows.Forms {
 			private void ToolTipWindow_VisibleChanged(object sender, EventArgs e) {
 				Control control = (Control)sender;
 
-				if (control.Visible) {
+				if (control.is_visible) {
 					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, true);
 				} else {
 					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, false);
