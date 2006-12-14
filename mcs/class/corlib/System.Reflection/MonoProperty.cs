@@ -46,6 +46,10 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void get_property_info (MonoProperty prop, out MonoPropertyInfo info,
 							       PInfo req_info);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Type[] GetTypeModifiers (MonoProperty prop, bool optional);
+
 	}
 
 	[Flags]
@@ -233,6 +237,24 @@ namespace System.Reflection {
 		public override string ToString () {
 			return PropertyType.ToString () + " " + Name;
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+
+		public override Type[] GetOptionalCustomModifiers () {
+			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, true);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
+		}
+
+		public override Type[] GetRequiredCustomModifiers () {
+			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, false);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
+		}
+#endif
+
 	}
 }
 

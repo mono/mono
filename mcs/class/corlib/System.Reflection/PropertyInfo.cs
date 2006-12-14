@@ -30,6 +30,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
@@ -104,14 +105,13 @@ namespace System.Reflection {
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO("Not implemented")]
+
 		public virtual Type[] GetOptionalCustomModifiers () {
-			throw new NotImplementedException ();
+			return Type.EmptyTypes;
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual Type[] GetRequiredCustomModifiers () {
-			throw new NotImplementedException ();
+			return Type.EmptyTypes;
 		}
 
 		[MonoTODO("Not implemented")]
