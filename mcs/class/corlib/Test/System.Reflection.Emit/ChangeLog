@@ -1,3 +1,8 @@
+2006-12-15  Raja R Harinath  <rharinath@novell.com>
+
+	* TypeBuilderTest.cs (MakeGenericType, Fail_MakeGenericType): New
+	tests inspired by #80253.
+
 2006-09-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DynamicMethodTest.cs: Enabled tests for bug #79367.

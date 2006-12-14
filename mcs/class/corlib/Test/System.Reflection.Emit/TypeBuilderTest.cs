@@ -15,6 +15,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -1857,6 +1858,33 @@ public class TypeBuilderTest : Assertion
 		Assert ("a02", !args [0].IsGenericTypeDefinition);
 		Assert ("a03", args [0].ContainsGenericParameters);
 		Assert ("a04", args [0].IsGenericParameter);
+	}
+
+	[Test]
+	public void MakeGenericType ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		tb.DefineGenericParameters ("T");
+
+		Type t1 = tb.MakeGenericType (typeof (int));
+		Assert ("g11", t1.IsGenericType);
+		Assert ("g12", !t1.IsGenericTypeDefinition);
+		Assert ("g13", !t1.ContainsGenericParameters);
+		Assert ("g14", !t1.IsGenericParameter);
+
+		Type t2 = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
+		Assert ("g21", t2.IsGenericType);
+		Assert ("g22", !t2.IsGenericTypeDefinition);
+		Assert ("g23", t2.ContainsGenericParameters);
+		Assert ("g24", !t2.IsGenericParameter);
+	}
+
+	[Test, ExpectedException (typeof (InvalidOperationException))]
+	public void Fail_MakeGenericType ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+		Type t1 = tb.MakeGenericType (typeof (int));
 	}
 #endif
 }
