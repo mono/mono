@@ -137,12 +137,204 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Controls_Remove_HandleCreated ()
+		{
+			TabControl tab = new TabControl ();
+			tab.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tab);
+			form.Show ();
+
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+
+			Assert.AreEqual (0, tab.SelectedIndex, "#A1");
+			Assert.AreEqual (6, tab.TabPages.Count, "#A2");
+			Assert.AreEqual (0, _selected_index_changed, "#A3");
+
+			// remove selected tab
+			tab.SelectedIndex = 2;
+			Assert.AreEqual (2, tab.SelectedIndex, "#B1");
+			Assert.AreEqual (1, _selected_index_changed, "#B2");
+			tab.Controls.RemoveAt (2);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#B3");
+#else
+			Assert.AreEqual (1, tab.SelectedIndex, "#B3");
+#endif
+			Assert.AreEqual (5, tab.TabPages.Count, "#B4");
+			Assert.AreEqual (2, _selected_index_changed, "#B5");
+
+			// remove not-selected tab
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#C1");
+#else
+			Assert.AreEqual (1, tab.SelectedIndex, "#C1");
+#endif
+			Assert.AreEqual (2, _selected_index_changed, "#C2");
+			tab.Controls.RemoveAt (3);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#C3");
+#else
+			Assert.AreEqual (2, tab.SelectedIndex, "#C3");
+#endif
+			Assert.AreEqual (4, tab.TabPages.Count, "#C4");
+#if NET_2_0
+			Assert.AreEqual (2, _selected_index_changed, "#C5");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#C5");
+#endif
+
+			// remove last tab
+			tab.Controls.RemoveAt (3);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#D1");
+#else
+			Assert.AreEqual (2, tab.SelectedIndex, "#D1");
+#endif
+			Assert.AreEqual (3, tab.TabPages.Count, "#D2");
+#if NET_2_0
+			Assert.AreEqual (2, _selected_index_changed, "#D3");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#D3");
+#endif
+
+			// remove first tab
+			tab.Controls.RemoveAt (0);
+			Assert.AreEqual (0, tab.SelectedIndex, "#E1");
+			Assert.AreEqual (2, tab.TabPages.Count, "#E2");
+#if NET_2_0
+			Assert.AreEqual (3, _selected_index_changed, "#E3");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#E3");
+#endif
+
+			// remove remaining tabs
+			tab.Controls.RemoveAt (1);
+			tab.Controls.RemoveAt (0);
+			Assert.AreEqual (-1, tab.SelectedIndex, "#F1");
+			Assert.AreEqual (0, tab.TabPages.Count, "#F2");
+#if NET_2_0
+			Assert.AreEqual (4, _selected_index_changed, "#F3");
+#else
+			Assert.AreEqual (5, _selected_index_changed, "#F3");
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Controls_Remove_HandleNotCreated ()
+		{
+			TabControl tab = new TabControl ();
+			tab.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
+
+			Assert.AreEqual (-1, tab.SelectedIndex, "#A1");
+			Assert.AreEqual (6, tab.TabPages.Count, "#A2");
+			Assert.AreEqual (0, _selected_index_changed, "#A3");
+
+			// remove selected tab
+			tab.SelectedIndex = 2;
+			Assert.AreEqual (2, tab.SelectedIndex, "#B1");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#B2");
+#else
+			Assert.AreEqual (1, _selected_index_changed, "#B2");
+#endif
+			tab.Controls.RemoveAt (2);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#B3");
+#else
+			Assert.AreEqual (1, tab.SelectedIndex, "#B3");
+#endif
+			Assert.AreEqual (5, tab.TabPages.Count, "#B4");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#B5");
+#else
+			Assert.AreEqual (2, _selected_index_changed, "#B5");
+#endif
+
+			// remove not-selected tab
+			tab.Controls.RemoveAt (3);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#C3");
+#else
+			Assert.AreEqual (2, tab.SelectedIndex, "#C3");
+#endif
+			Assert.AreEqual (4, tab.TabPages.Count, "#C4");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#C5");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#C5");
+#endif
+
+			// remove last tab
+			tab.Controls.RemoveAt (3);
+#if NET_2_0
+			Assert.AreEqual (0, tab.SelectedIndex, "#D1");
+#else
+			Assert.AreEqual (2, tab.SelectedIndex, "#D1");
+#endif
+			Assert.AreEqual (3, tab.TabPages.Count, "#D2");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#D3");
+#else
+			Assert.AreEqual (3, _selected_index_changed, "#D3");
+#endif
+
+			// remove first tab
+			tab.Controls.RemoveAt (0);
+			Assert.AreEqual (0, tab.SelectedIndex, "#E1");
+			Assert.AreEqual (2, tab.TabPages.Count, "#E2");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#E3");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#E3");
+#endif
+
+			// remove remaining tabs
+			tab.Controls.RemoveAt (1);
+			tab.Controls.RemoveAt (0);
+			Assert.AreEqual (0, tab.SelectedIndex, "#F1");
+			Assert.AreEqual (0, tab.TabPages.Count, "#F2");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#F3");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#F3");
+#endif
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tab);
+			form.Show ();
+			Assert.AreEqual (-1, tab.SelectedIndex, "#G1");
+			Assert.AreEqual (0, tab.TabPages.Count, "#G2");
+#if NET_2_0
+			Assert.AreEqual (0, _selected_index_changed, "#G3");
+#else
+			Assert.AreEqual (4, _selected_index_changed, "#G3");
+#endif
+		}
+
+		[Test]
 		public void SelectedIndex ()
 		{
 			TabControl tab = new TabControl ();
-			tab.Controls.Add (new TabPage ());
-			tab.Controls.Add (new TabPage ());
 			tab.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
+			tab.Controls.Add (new TabPage ());
+			tab.Controls.Add (new TabPage ());
 
 			tab.SelectedIndex = 0;
 #if NET_2_0
@@ -192,8 +384,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (4, _selected_index_changed, "#E3");
 #endif
 			Assert.AreEqual (6, tab.SelectedIndex, "#E4");
-
-
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
