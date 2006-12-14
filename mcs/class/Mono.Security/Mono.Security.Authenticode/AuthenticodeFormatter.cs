@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,7 +52,6 @@ namespace Mono.Security.Authenticode {
 		private PKCS7.SignedData pkcs7;
 		private string description;
 		private Uri url;
-		private byte [] entry;
 
 		public AuthenticodeFormatter () : base () 
 		{
@@ -193,7 +192,8 @@ namespace Mono.Security.Authenticode {
 			else
 				opus = Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (opus);
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
+// When using the MS Root Agency (test) we can't include this attribute in the signature or it won't validate!
+//			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 			pkcs7.GetASN1 (); // sign
 			return pkcs7.SignerInfo.Signature;
 		}
@@ -229,76 +229,6 @@ namespace Mono.Security.Authenticode {
 			return wc.UploadData (timestamp.ToString (), tsdata);
 		}
 
-		private byte[] file;
-		private int pe_offset = -1;
-		private int sec_offset = -1;
-		private int sec_size = -1;
-
-		private int PEOffset {
-			get {
-				if (file == null)
-					return -1;
-				if (pe_offset == -1) {
-					int peOffset = BitConverterLE.ToInt32 (file, 60);
-					if (peOffset < file.Length)
-						pe_offset = peOffset;
-				}
-				return pe_offset;
-			}
-		}
-
-		private int SecurityOffset {
-			get {
-				if (file == null)
-					return -1;
-				if (sec_offset == -1) {
-					sec_offset = BitConverterLE.ToInt32 (file, PEOffset + 152);
-				}
-				return sec_offset;
-			}
-		}
-
-		private int SecuritySize {
-			get {
-				if (file == null)
-					return -1;
-				if (sec_size == -1) {
-					sec_size = BitConverterLE.ToInt32 (file, PEOffset + 156);
-				}
-				return sec_size;
-			}
-		}
-
-		private bool Open (string fileName)
-		{
-			using (FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-				file = new byte[fs.Length];
-				fs.Read (file, 0, file.Length);
-				fs.Close ();
-			}
-
-			// MZ - DOS header
-			if (BitConverterLE.ToUInt16 (file, 0) != 0x5A4D)
-				return false;
-
-			// PE Header
-			if (PEOffset == -1)
-				return false;
-
-			// PE - NT header
-			if (BitConverterLE.ToUInt16 (file, PEOffset) != 0x4550)
-				return false;
-
-			// IMAGE_DIRECTORY_ENTRY_SECURITY
-			if (SecuritySize > 8) {
-				entry = new byte[SecuritySize - 8];
-				Buffer.BlockCopy (file, SecurityOffset + 8, entry, 0, entry.Length);
-			} else
-				entry = null;
-
-			return true;
-		}
-
 		private bool Save (string fileName, byte[] asn)
 		{
 #if !DEBUG
@@ -307,36 +237,63 @@ namespace Mono.Security.Authenticode {
 				fs.Close ();
 			}
 #endif
+			byte[] file;
+			using (FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				file = new byte[fs.Length];
+				fs.Read (file, 0, file.Length);
+				fs.Close ();
+			}
+
 			// someday I may be sure enough to move this into DEBUG ;-)
 			File.Copy (fileName, fileName + ".bak", true);
 
 			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
-				int filesize = (SecurityOffset == 0) ? file.Length : SecurityOffset;
+				int filesize;
+				if (SecurityOffset > 0) {
+					// file was already signed, we'll reuse the position for the updated signature
+					filesize = SecurityOffset;
+				} else if (CoffSymbolTableOffset > 0) {
+					// strip (deprecated) COFF symbol table
+					file[PEOffset + 12] = 0;
+					file[PEOffset + 13] = 0;
+					file[PEOffset + 14] = 0;
+					file[PEOffset + 15] = 0;
+					file[PEOffset + 16] = 0;
+					file[PEOffset + 17] = 0;
+					file[PEOffset + 18] = 0;
+					file[PEOffset + 19] = 0;
+					// we'll put the Authenticode signature at this same place (just after the last section)
+					filesize = CoffSymbolTableOffset;
+				} else {
+					// file was never signed, nor does it contains (deprecated) COFF symbols
+					filesize = file.Length;
+				}
+				// must be a multiple of 8 bytes
+				int addsize = (filesize & 7);
+				if (addsize > 0)
+					addsize = 8 - addsize;
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
-				byte[] data = BitConverterLE.GetBytes (filesize);
+				byte[] data = BitConverterLE.GetBytes (filesize + addsize);
 				file[PEOffset + 152] = data[0];
 				file[PEOffset + 153] = data[1];
 				file[PEOffset + 154] = data[2];
 				file[PEOffset + 155] = data[3];
 				int size = asn.Length + 8;
-				// must be a multiple of 8 bytes
-				int addsize = (size % 8);
-				if (addsize > 0)
-					addsize = 8 - addsize;
-				size += addsize;
-				data = BitConverterLE.GetBytes (size);		// header
+				data = BitConverterLE.GetBytes (size);
 				file[PEOffset + 156] = data[0];
 				file[PEOffset + 157] = data[1];
 				file[PEOffset + 158] = data[2];
 				file[PEOffset + 159] = data[3];
 				fs.Write (file, 0, filesize);
+				// align certificate entry to a multiple of 8 bytes
+				if (addsize > 0) {
+					byte[] fillup = new byte[addsize];
+					fs.Write (fillup, 0, fillup.Length);
+				}
 				fs.Write (data, 0, data.Length);		// length (again)
 				data = BitConverterLE.GetBytes (0x00020200);	// magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
-				// fill up
-				byte[] fillup = new byte[addsize];
-				fs.Write (fillup, 0, fillup.Length);
 				fs.Close ();
 			}
 			return true;
@@ -345,25 +302,13 @@ namespace Mono.Security.Authenticode {
 		public bool Sign (string fileName) 
 		{
 			try {
-				if (!Open (fileName))
-					return false;
+				Open (fileName);
 
 				HashAlgorithm hash = HashAlgorithm.Create (Hash);
 				// 0 to 215 (216) then skip 4 (checksum)
-				int pe = PEOffset + 88;
-				hash.TransformBlock (file, 0, pe, file, 0);
-				pe += 4;
-				// 220 to 279 (60) then skip 8 (IMAGE_DIRECTORY_ENTRY_SECURITY)
-				hash.TransformBlock (file, pe, 60, file, pe);
-				pe += 68;
-				// 288 to end of file
-				int n = file.Length - pe;
-				// minus any authenticode signature (with 8 bytes header)
-				if (SecurityOffset != 0)
-					n -= (SecuritySize);
-				hash.TransformFinalBlock (file, pe, n);
 
-				byte[] signature = Header (hash.Hash, Hash);
+				byte[] digest = GetHash (hash);
+				byte[] signature = Header (digest, Hash);
 				if (timestamp != null) {
 					byte[] ts = Timestamp (signature);
 					// add timestamp information inside the current pkcs7 SignedData instance
@@ -374,6 +319,7 @@ namespace Mono.Security.Authenticode {
 				PKCS7.ContentInfo sign = new PKCS7.ContentInfo (signedData);
 				sign.Content.Add (pkcs7.ASN1);
 				authenticode = sign.ASN1;
+				Close ();
 
 				return Save (fileName, authenticode.GetBytes ());
 			}
@@ -389,7 +335,8 @@ namespace Mono.Security.Authenticode {
 			try {
 				AuthenticodeDeformatter def = new AuthenticodeDeformatter (fileName);
 				byte[] signature = def.Signature;
-				if ((signature != null) && Open (fileName)) {
+				if (signature != null) {
+					Open (fileName);
 					PKCS7.ContentInfo ci = new PKCS7.ContentInfo (signature);
 					pkcs7 = new PKCS7.SignedData (ci.Content);
 

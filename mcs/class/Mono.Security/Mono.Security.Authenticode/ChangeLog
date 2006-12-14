@@ -1,3 +1,12 @@
+2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: Support (strip) COFF symbol table when 
+	calculating the hash value of a PE file.
+	* AuthenticodeDeformatter.cs: Adapt to changes in base class.
+	* AuthenticodeFormatter.cs: Reuse more code from base class. Strip
+	COFF symbol table (if present). Fix alignment (on 8 bytes) for the
+	signature location.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Return (find) the SigningCertificate 
