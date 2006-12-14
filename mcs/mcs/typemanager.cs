@@ -389,6 +389,7 @@ public partial class TypeManager {
 #endif
 
 		// to uncover regressions
+		AllClsTopLevelTypes = null;
 		cons_param_array_attribute = null;
 	}
 

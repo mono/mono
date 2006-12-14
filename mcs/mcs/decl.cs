@@ -1311,6 +1311,9 @@ namespace Mono.CSharp {
 			}
 
 			IDictionary cache = TypeManager.AllClsTopLevelTypes;
+			if (cache == null)
+				return true;
+
 			string lcase = Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
 			if (!cache.Contains (lcase)) {
 				cache.Add (lcase, this);
