@@ -1,3 +1,7 @@
+2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* chktrust.cs: Display the error even if the root is trusted.
+
 2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* certmgr.cs: Support adding CRL into certificate stores.

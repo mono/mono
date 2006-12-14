@@ -59,7 +59,7 @@ namespace Mono.Tools {
 				Console.WriteLine ("INFO! {0} was timestamped on {1}", fileName, a.Timestamp);
 			}
 
-			if (!a.IsTrusted ()) {
+			if (a.Reason > 0) {
 				string msg = null;
 				// FAILURES
 				switch (a.Reason) {
