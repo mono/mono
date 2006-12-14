@@ -1,3 +1,7 @@
+2006-12-14  Yoni Klain         <yonik@mainsoft.com>
+
+	* FormViewTest.cs:    added tests.
+
 2006-12-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* LoginTest.cs: fixed controls id 

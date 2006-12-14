@@ -1646,6 +1646,420 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
+		[Category ("NotWorking")] //Implementation specific for mono 
+		[Category ("NunitWeb")]
+		public void FormView_FireEvent_1 ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (EditPostbackFireEvent_Init);
+			t.Run ();
+			//Edit button postback (change to edit mode - buttons "Update" and "Cancel" should appear.
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCommand", eventlist[0], "#1");
+			Assert.AreEqual ("ModeChanging", eventlist[1], "#2");
+			Assert.AreEqual ("ModeChanged", eventlist[2], "#3");
+			t.UserData = null;
+			
+			//Update record postback                
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("FormView1$FNameEdit");
+			fr.Controls.Add ("FormView1$LNameEdit");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:UpdateButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["FormView1$FNameEdit"].Value = "Merav";
+			fr.Controls["FormView1$LNameEdit"].Value = "Test";
+			t.Request = fr;
+			t.Run ();
+
+			eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCommand", eventlist[0], "#1");
+			Assert.AreEqual ("ItemUpdating", eventlist[1], "#2");
+			Assert.AreEqual ("ItemUpdated", eventlist[2], "#3");
+			Assert.AreEqual ("ModeChanging", eventlist[3], "#4");
+			Assert.AreEqual ("ModeChanged", eventlist[4], "#5");
+		}
+
+		#region FireEvents_1
+		public static void EditPostbackFireEvent_Init (Page p)
+		{
+			
+			FormView d = p.FindControl ("FormView1") as FormView;
+			if (d != null) {
+				d.ModeChanged +=new EventHandler(d_ModeChanged);
+				d.ModeChanging+=new FormViewModeEventHandler(d_ModeChanging);
+				d.ItemCommand += new FormViewCommandEventHandler (d_ItemCommand);
+				d.ItemUpdating += new FormViewUpdateEventHandler (d_ItemUpdating);
+				d.ItemUpdated += new FormViewUpdatedEventHandler (d_ItemUpdated);
+			}
+		}
+
+		static void d_ItemUpdated (object sender, FormViewUpdatedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemUpdated");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemUpdated");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemUpdating (object sender, FormViewUpdateEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemUpdating");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemUpdating");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemCommand (object sender, FormViewCommandEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemCommand");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemCommand");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void  d_ModeChanging(object sender, FormViewModeEventArgs e)
+		{
+ 			if (WebTest.CurrentTest.UserData == null) 
+			{
+				ArrayList list = new ArrayList ();
+				list.Add ("ModeChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ModeChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void  d_ModeChanged(object sender, EventArgs e)
+		{
+ 			if (WebTest.CurrentTest.UserData == null) 
+					{
+				ArrayList list = new ArrayList ();
+				list.Add ("ModeChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ModeChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void FormView_FireEvent_2 ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (FireEvent_2_Init);
+			t.Run ();
+
+			// Checking for itemcreated event fired.
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCreated", eventlist[0], "#1");
+		}
+
+		#region FireEvent_2
+		public static void FireEvent_2_Init (Page p)
+		{
+			FormView d = p.FindControl ("FormView1") as FormView;
+			if (d != null) {
+				d.ItemCreated += new EventHandler (d_ItemCreated);
+			}
+		}
+
+		static void d_ItemCreated (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NotWorking")] //Implementation specific for mono 
+		[Category ("NunitWeb")]
+		public void FormView_FireEvent_3 ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (FireEvent_3_Init);
+			t.Run ();
+			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$NewButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			
+			//Insert new record
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("FormView1$IDInsert");
+			fr.Controls.Add ("FormView1$FNameInsert");
+			fr.Controls.Add ("FormView1$LNameInsert");
+			fr.Controls["FormView1$IDInsert"].Value = "33";
+			fr.Controls["FormView1$FNameInsert"].Value = "InsertFirstName";
+			fr.Controls["FormView1$LNameInsert"].Value = "InsertLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$InsertButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemInserting", eventlist[0], "#1");
+			Assert.AreEqual ("ItemInserted", eventlist[1], "#2");
+		}
+
+		#region FireEvent_3
+		public static void FireEvent_3_Init (Page p)
+		{
+			FormView d = p.FindControl ("FormView1") as FormView;
+			if (d != null) {
+				d.ItemInserted += new FormViewInsertedEventHandler (d_ItemInserted);
+				d.ItemInserting += new FormViewInsertEventHandler (d_ItemInserting);
+			}
+		}
+
+		static void d_ItemInserting (object sender, FormViewInsertEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemInserting");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemInserting");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemInserted (object sender, FormViewInsertedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemInserted");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemInserted");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NotWorking")] //Implementation specific for mono 
+		[Category ("NunitWeb")]
+		public void FormView_FireEvent_4 ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (FireEvent_4_Init);
+			t.Run ();
+
+			//Delete Item
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemDeleting", eventlist[0], "#1");
+			Assert.AreEqual ("ItemDeleted", eventlist[1], "#2");
+
+		}
+
+		#region FireEvent_4
+		public static void FireEvent_4_Init (Page p)
+		{
+			FormView d = p.FindControl ("FormView1") as FormView;
+			if (d != null) {
+				d.ItemDeleting += new FormViewDeleteEventHandler (d_ItemDeleting);
+				d.ItemDeleted += new FormViewDeletedEventHandler (d_ItemDeleted);
+			}
+		}
+
+		static void d_ItemDeleted (object sender, FormViewDeletedEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemDeleted");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemDeleted");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_ItemDeleting (object sender, FormViewDeleteEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemDeleting");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemDeleting");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NotWorking")] //Implementation specific for mono 
+		[Category ("NunitWeb")]
+		public void FormView_FireEvent_5 ()
+		{
+			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (FireEvent_5_Init);
+			t.Run ();
+
+			//Delete Item
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1";
+			fr.Controls["__EVENTARGUMENT"].Value = "Page$2";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("PageIndexChanging", eventlist[0], "#1");
+			Assert.AreEqual ("PageIndexChanged", eventlist[1], "#2");
+		}
+
+		#region FireEvent_5
+		public static void FireEvent_5_Init (Page p)
+		{
+			FormView d = p.FindControl ("FormView1") as FormView;
+			if (d != null) {
+				d.PageIndexChanged+=new EventHandler(d_PageIndexChanged);
+				d.PageIndexChanging+=new FormViewPageEventHandler(d_PageIndexChanging);
+			}
+		}
+
+		static void d_PageIndexChanging (object sender, FormViewPageEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("PageIndexChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("PageIndexChanging");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void d_PageIndexChanged (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("PageIndexChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("PageIndexChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
+		[Test]
 		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
 		[Category ("NunitWeb")] 
 		public void FormView_InsertPostback ()
