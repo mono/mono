@@ -1,4 +1,9 @@
 
+Thu Dec 14 17:02:59 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: clear the loader_error () before loading
+	more metadata stuff (bug #80258).
+
 Thu Dec 14 12:49:47 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, icall-defs.h: type modifiers icalls for
