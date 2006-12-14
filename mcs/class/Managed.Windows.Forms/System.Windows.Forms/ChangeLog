@@ -1,5 +1,10 @@
 2006-12-14  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: add text padding to the autocalculation for columns
+	of width -2.  Fixes #80207.
+ 
+2006-12-14  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: add some index guarding for partial row navigation 
 	logic.  Fixes #80250.
 

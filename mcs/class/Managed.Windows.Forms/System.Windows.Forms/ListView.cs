@@ -721,6 +721,8 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
+		const int text_padding = 5;
+
 		internal Size GetChildColumnSize (int index)
 		{
 			Size ret_size = Size.Empty;
@@ -729,6 +731,8 @@ namespace System.Windows.Forms
 			if (col.Width == -2) { // autosize = max(items, columnheader)
 				Size size = Size.Ceiling (this.DeviceContext.MeasureString
 							  (col.Text, this.Font));
+				size.Height += text_padding;
+				size.Width += text_padding;
 				ret_size = BiggestItem (index);
 				if (size.Width > ret_size.Width)
 					ret_size = size;
