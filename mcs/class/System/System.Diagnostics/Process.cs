@@ -1033,7 +1033,11 @@ namespace System.Diagnostics {
 		
 		public bool Start() {
 			bool ret;
-			
+
+			if (process_handle != IntPtr.Zero) {
+				Process_free_internal (process_handle);
+				process_handle = IntPtr.Zero;
+			}
 			ret=Start_common(start_info, this);
 			
 			return(ret);
