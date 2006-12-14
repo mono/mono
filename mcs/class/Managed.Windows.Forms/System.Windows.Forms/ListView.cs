@@ -1185,8 +1185,11 @@ namespace System.Windows.Forms
 			case Keys.Right:
 				if (col == (cols - 1))
 					return -1;
-				while (item_matrix [row, col + 1] == null)
-				       row--;	
+				while (item_matrix [row, col + 1] == null) {
+					row--;	
+					if (row < 0)
+						return -1;
+				}
 				return item_matrix [row, col + 1].Index;
 
 			case Keys.Up:
@@ -1197,8 +1200,11 @@ namespace System.Windows.Forms
 			case Keys.Down:
 				if (row == (rows - 1) || row == Items.Count - 1)
 					return -1;
-				while (item_matrix [row + 1, col] == null)
-				       col--;	
+				while (item_matrix [row + 1, col] == null) {
+					col--;	
+					if (col < 0)
+						return -1;
+				}
 				return item_matrix [row + 1, col].Index;
 
 			default:

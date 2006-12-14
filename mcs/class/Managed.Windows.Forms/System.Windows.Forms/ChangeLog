@@ -1,5 +1,10 @@
 2006-12-14  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: add some index guarding for partial row navigation 
+	logic.  Fixes #80250.
+
+2006-12-14  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: throw ArgumentExceptions when parented ListViewItems
 	are added or inserted to the collection.  Fixes #81099.
 
