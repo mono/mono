@@ -1,14 +1,16 @@
 //
 // MonoTODOAttribute.cs
 //
-// Author:
+// Authors:
 //   Ravi Pratap (ravi@ximian.com)
+//   Eyal Alaluf <eyala@mainsoft.com> 
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Mainsoft, Inc (http://www.mainsoft.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
