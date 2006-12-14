@@ -2947,6 +2947,9 @@ namespace System.Windows.Forms
 					if (list.Contains (value))
 						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
 
+					if (value.ListView != null && value.ListView != owner)
+						throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
+
 					value.Owner = owner;
 					list [displayIndex] = value;
 					OnChange ();
@@ -2996,6 +2999,9 @@ namespace System.Windows.Forms
 			{
 				if (list.Contains (value))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+
+				if (value.ListView != null && value.ListView != owner)
+					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 
 				value.Owner = owner;
 				list.Add (value);
@@ -3093,6 +3099,9 @@ namespace System.Windows.Forms
 					li = (ListViewItem) item;
 					if (list.Contains (li))
 						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
+
+					if (li.ListView != null && li.ListView != owner)
+						throw new ArgumentException ("Cannot add or insert the item '" + li.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
 				}
 				else
 					li = new ListViewItem (item.ToString ());
@@ -3156,6 +3165,9 @@ namespace System.Windows.Forms
 
 				if (list.Contains (item))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
+
+				if (item.ListView != null && item.ListView != owner)
+					throw new ArgumentException ("Cannot add or insert the item '" + item.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
 
 				item.Owner = owner;
 				list.Insert (index, item);

@@ -564,6 +564,16 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))] // An item cannot be added to more than one ListView. To add an item again, you need to clone it
+		public void ListViewItemCollectionTest_Add_OwnedItem ()
+		{
+			ListView lv1 = new ListView ();
+			ListView lv2 = new ListView ();
+			ListViewItem item = lv1.Items.Add ("A");
+			lv2.Items.Add (item);
+		}
+
+		[Test]
 		public void ListViewItemCollectionTest_Insert ()
 		{
 			ListView lvw = new ListView ();
@@ -618,6 +628,16 @@ namespace MonoTests.System.Windows.Forms
 			ListView lvw = new ListView ();
 			ListViewItem itemA = lvw.Items.Add ("A");
 			lvw.Items.Insert (0, itemA);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))] // An item cannot be added to more than one ListView. To add an item again, you need to clone it
+		public void ListViewItemCollectionTest_Insert_OwnedItem ()
+		{
+			ListView lv1 = new ListView ();
+			ListView lv2 = new ListView ();
+			ListViewItem item = lv1.Items.Add ("A");
+			lv2.Items.Insert (0, item);
 		}
 
 		[Test]
