@@ -1,3 +1,11 @@
+2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicProfileChecker.cs : fixed R2305 check, which did wrong check
+	  on Operations.
+	* Operation.cs : ParameterOrder should not contain empty strings.
+	* WebServicesInteroperability.cs : they are all done. All wrong
+	  behaviors should be regarded as bugs.
+
 2006-12-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs :

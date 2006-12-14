@@ -1,3 +1,7 @@
+2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapExtensionTypeElement.cs : another config property fix.
+
 2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebServicesSection.cs : internal Instance -> public Current.

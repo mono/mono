@@ -393,20 +393,23 @@ namespace System.Web.Services.Description
 		void CheckR2305 (ConformanceCheckContext ctx, Operation value)
 		{
 			string [] order = value.ParameterOrder;
-			if (order == null)
+			if (order == null || order.Length == 0)
 				return;
-			foreach (Message msg in value.Messages) {
-				bool omitted = false;
-				foreach (MessagePart p in msg.Parts) {
-					if (Array.IndexOf (order, p.Name) < 0) {
-						if (omitted) {
-							ctx.ReportRuleViolation (value, BasicProfileRules.R2305);
-							return; // one violation report for one wsdl:operation should be enough.
-						}
+			bool omitted = false;
+			bool violation = false;
+			for (int i = 0; i < value.Messages.Count; i++) {
+				OperationMessage msg = value.Messages [i];
+				if (msg.Name == null) {
+					if (omitted)
+						violation = true;
+					else
 						omitted = true;
-					}
 				}
+				else if (order [omitted ? i - 1 : i] != msg.Name)
+					violation = true;
 			}
+			if (violation)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2305);
 		}
 
 		public override void Check (ConformanceCheckContext ctx, OperationMessage value) { }

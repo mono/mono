@@ -82,7 +82,7 @@ namespace System.Web.Services.Configuration {
 			set { base[groupProp] = value; }
 		}
 
-		[IntegerValidator]
+		[IntegerValidator (MaxValue = int.MaxValue)]
 		[ConfigurationProperty ("priority", DefaultValue = 0, Options = ConfigurationPropertyOptions.IsKey)]
 		public int Priority {
 			get { return (int) base [priorityProp];}

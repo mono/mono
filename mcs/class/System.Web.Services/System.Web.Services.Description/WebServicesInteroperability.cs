@@ -41,7 +41,6 @@ namespace System.Web.Services.Description
 		{
 		}
 		
-		[MonoTODO]
 		public static bool CheckConformance (WsiProfiles claims, ServiceDescription service, BasicProfileViolationCollection violations)
 		{
 			ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
@@ -50,14 +49,12 @@ namespace System.Web.Services.Description
 			return Check (claims, ctx, col);
 		}
 
-		[MonoTODO]
 		public static bool CheckConformance (WsiProfiles claims, ServiceDescriptionCollection services, BasicProfileViolationCollection violations)
 		{
 			ConformanceCheckContext ctx = new ConformanceCheckContext (services, violations);
 			return Check (claims, ctx, services);
 		}
 
-		[MonoTODO]
 		public static bool CheckConformance (WsiProfiles claims, WebReference webReference, BasicProfileViolationCollection violations)
 		{
 			ConformanceCheckContext ctx = new ConformanceCheckContext (webReference, violations);
