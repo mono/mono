@@ -1134,6 +1134,8 @@ namespace System {
 
 		public virtual Type MakeGenericType (params Type[] types)
 		{
+			if (!IsGenericTypeDefinition)
+				throw new InvalidOperationException ("not a generic type definition");
 			if (types == null)
 				throw new ArgumentNullException ("types");
 			foreach (Type t in types) {
