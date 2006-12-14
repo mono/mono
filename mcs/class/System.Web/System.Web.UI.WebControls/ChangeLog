@@ -1,3 +1,7 @@
+2006-12-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Login.cs: refactored rendering, fixed OnAuthenticate event
+
 2006-12-11 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: Update works not only for EditRow

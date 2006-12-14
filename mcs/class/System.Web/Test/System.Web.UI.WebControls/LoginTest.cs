@@ -34,6 +34,7 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
 
 using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
@@ -945,7 +946,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")] //Implementation details
 		[Category ("NunitWeb")]
 		public void PostBackFireEvent_1 ()
 		{
@@ -955,29 +955,28 @@ namespace MonoTests.System.Web.UI.WebControls {
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Login1$UserName");   //%24
-			fr.Controls.Add ("Login1$Password");
-			fr.Controls.Add ("Login1$LoginButton");
-			fr.Controls["__EVENTTARGET"].Value = "";
-			fr.Controls["__EVENTARGUMENT"].Value = ""; 
-			fr.Controls["Login1$UserName"].Value = "yonik"; 
-			fr.Controls["Login1$Password"].Value = "123456"; 
-			fr.Controls["Login1$LoginButton"].Value = "Log In"; 
+			fr.Controls.Add (GetDecoratedId (html, "UserName"));   //%24
+			fr.Controls.Add (GetDecoratedId (html, "Password"));
+			fr.Controls.Add (GetDecoratedId (html, "LoginButton"));
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Login1:UserName"].Value = "yonik";
+			fr.Controls ["Login1:Password"].Value = "123456";
+			fr.Controls ["Login1:LoginButton"].Value = "Log In";
 			t.Request = fr;
 			t.Run ();
-			
+
 			ArrayList eventlist = t.UserData as ArrayList;
 			if (eventlist == null)
 				Assert.Fail ("User data does not been created fail");
 
-			Assert.AreEqual ("LoggingIn", eventlist[0], "#1");
-			Assert.AreEqual ("Authenticate", eventlist[1], "#2");
-			Assert.AreEqual ("LoginError",   eventlist[2], "#3");
+			Assert.AreEqual ("LoggingIn", eventlist [0], "#1");
+			Assert.AreEqual ("Authenticate", eventlist [1], "#2");
+			Assert.AreEqual ("LoginError", eventlist [2], "#3");
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] //Implementation details
 		public void PostBackFireEvent_2 ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");
@@ -986,14 +985,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Login1$UserName");   //%24
-			fr.Controls.Add ("Login1$Password");
-			fr.Controls.Add ("Login1$LoginButton");
-			fr.Controls["__EVENTTARGET"].Value = "";
-			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["Login1$UserName"].Value = "yonik";
-			fr.Controls["Login1$Password"].Value = "123456";
-			fr.Controls["Login1$LoginButton"].Value = "Log In";
+			fr.Controls.Add (GetDecoratedId (html, "UserName"));   //%24
+			fr.Controls.Add (GetDecoratedId (html, "Password"));
+			fr.Controls.Add (GetDecoratedId (html, "LoginButton"));
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Login1:UserName"].Value = "yonik";
+			fr.Controls ["Login1:Password"].Value = "123456";
+			fr.Controls ["Login1:LoginButton"].Value = "Log In";
 			t.Request = fr;
 			t.Run ();
 
@@ -1001,9 +1000,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			if (eventlist == null)
 				Assert.Fail ("User data does not been created fail");
 
-			Assert.AreEqual ("LoggingIn", eventlist[0], "#1");
-			Assert.AreEqual ("LoggedIn", eventlist[1], "#2");
-
+			Assert.AreEqual ("LoggingIn", eventlist [0], "#1");
+			Assert.AreEqual ("LoggedIn", eventlist [1], "#2");
 		}
 
 		public static void PostBackFireEvent_Init_2 (Page p)
@@ -1020,7 +1018,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public static void PostBackFireEvent_Init (Page p)
 		{
 			Login l = new Login ();
-			l.Authenticate+=new AuthenticateEventHandler(Authenticate_Event);
+			l.Authenticate += new AuthenticateEventHandler (Authenticate_Event);
 			l.LoggedIn += new EventHandler (l_LoggedIn);
 			l.LoggingIn += new LoginCancelEventHandler (l_LoggingIn);
 			l.LoginError += new EventHandler (l_LoginError);
@@ -1099,6 +1097,19 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
+
+		private string GetDecoratedId (string html, string id)
+		{
+			Regex reg = new Regex ("name=\".*[\\$\\:]" + id + "\"");
+			Match match = reg.Match (html);
+
+			string fixedId = match.Value;
+			if (fixedId.Length > 0)
+				fixedId = fixedId.Substring (fixedId.IndexOf ("\""), fixedId.Length - fixedId.IndexOf ("\"")).Trim ('\"');
+
+			return fixedId;
+		}
+
 	}
 }
 

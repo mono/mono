@@ -47,8 +47,42 @@ namespace System.Web.UI.WebControls {
 	public class Login : CompositeControl {
 
 		#region LoginContainer
-		
-		sealed class LoginContainer : WebControl {
+
+		sealed class LoginContainer : Table
+		{
+			private readonly Login _owner = null;
+			TableCell _containerCell = null;
+
+			public LoginContainer (Login owner)
+			{
+				_owner = owner;
+				InitTable ();
+				ID = _owner.ID;
+			}
+
+			public void InstantiateTemplate (ITemplate template)
+			{
+				template.InstantiateIn (_containerCell);
+			}
+
+			private void InitTable ()
+			{
+				CellSpacing = 0;
+				CellPadding = _owner.BorderPadding;
+
+				_containerCell = new TableCell ();
+
+				TableRow row = new TableRow ();
+				row.Cells.Add (_containerCell);
+				Rows.Add (row);
+			}
+
+			protected internal override void OnPreRender (EventArgs e)
+			{
+				ApplyStyle (_owner.ControlStyle);
+				base.OnPreRender (e);
+			}
+			
 			public Control UserNameTextBox {
 				get {
 					return FindControl("UserName");
@@ -66,349 +100,276 @@ namespace System.Web.UI.WebControls {
 					return FindControl("RememberMe");
 				}
 			}
+
+			public ITextControl FailureTextLiteral
+			{
+				get { 
+					return FindControl ("FailureText") as ITextControl; 
+				}
+			}
 		}
 
 		#endregion
 
 		#region LoginTemplate
 
-		sealed class LoginTemplate : WebControl, ITemplate {
+		sealed class LoginTemplate : WebControl, ITemplate
+		{
 			readonly Login _login;
-
-			private TextBox userNameTextBox;
-			private RequiredFieldValidator userNameRequired;
-			private TextBox passwordTextBox;
-			private RequiredFieldValidator passwordRequired;
-			private CheckBox rememberMeCheckBox;
-			private WebControl loginButton;
 
 			public LoginTemplate (Login login)
 			{
 				_login = login;
 			}
 
-			void ITemplate.InstantiateIn(Control container) {
-				container.Controls.Add (this);
+			void ITemplate.InstantiateIn (Control container)
+			{
+				// 
+				LiteralControl TitleText = new LiteralControl (_login.TitleText);
 
-				userNameTextBox = new TextBox ();
-				userNameTextBox.ID = "UserName";
+				// 
+				LiteralControl InstructionText = new LiteralControl (_login.InstructionText);
 
-				userNameRequired = new RequiredFieldValidator ();
-				userNameRequired.ID = "UserNameRequired";
-				userNameRequired.ControlToValidate = userNameTextBox.ID;
-				userNameRequired.ErrorMessage = "*";
-				userNameRequired.ValidationGroup = this.UniqueID;
+				//
+				TextBox UserName = new TextBox ();
+				UserName.ID = "UserName";
+				UserName.Text = _login.UserName;
+				_login.RegisterApplyStyle (UserName, _login.TextBoxStyle);
 
-				passwordTextBox = new TextBox ();
-				passwordTextBox.ID = "Password";
-				passwordTextBox.TextMode = TextBoxMode.Password;
+				Label UserNameLabel = new Label ();
+				UserNameLabel.ID = "UserNameLabel";
+				UserNameLabel.AssociatedControlID = "UserName";
+				UserNameLabel.Text = _login.UserNameLabelText;
 
-				passwordRequired = new RequiredFieldValidator ();
-				passwordRequired.ID = "PasswordRequired";
-				passwordRequired.ControlToValidate = passwordTextBox.ID;
-				passwordRequired.ErrorMessage = "*";
-				passwordRequired.ValidationGroup = this.UniqueID;
+				RequiredFieldValidator UserNameRequired = new RequiredFieldValidator ();
+				UserNameRequired.ID = "UserNameRequired";
+				UserNameRequired.ControlToValidate = "UserName";
+				UserNameRequired.ErrorMessage = _login.UserNameRequiredErrorMessage;
+				UserNameRequired.ToolTip = _login.UserNameRequiredErrorMessage;
+				UserNameRequired.Text = "*";
+				UserNameRequired.ValidationGroup = _login.ID;
+				_login.RegisterApplyStyle (UserNameRequired, _login.ValidatorTextStyle);
 
-				rememberMeCheckBox = new CheckBox ();
-				rememberMeCheckBox.ID = "RememberMe";
-				rememberMeCheckBox.Checked = _login.RememberMeSet;
+				//
+				TextBox Password = new TextBox ();
+				Password.ID = "Password";
+				Password.TextMode = TextBoxMode.Password;
+				_login.RegisterApplyStyle (Password, _login.TextBoxStyle);
 
+				Label PasswordLabel = new Label ();
+				PasswordLabel.ID = "PasswordLabel";
+				PasswordLabel.AssociatedControlID = "PasswordLabel";
+				PasswordLabel.Text = _login.PasswordLabelText;
+
+				RequiredFieldValidator PasswordRequired = new RequiredFieldValidator ();
+				PasswordRequired.ID = "PasswordRequired";
+				PasswordRequired.ControlToValidate = "Password";
+				PasswordRequired.ErrorMessage = _login.PasswordRequiredErrorMessage;
+				PasswordRequired.ToolTip = _login.PasswordRequiredErrorMessage;
+				PasswordRequired.Text = "*";
+				PasswordRequired.ValidationGroup = _login.ID;
+				_login.RegisterApplyStyle (PasswordRequired, _login.ValidatorTextStyle);
+
+				//
+				CheckBox RememberMe = new CheckBox ();
+				RememberMe.ID = "RememberMe";
+				RememberMe.Checked = _login.RememberMeSet;
+				RememberMe.Text = _login.RememberMeText;
+				_login.RegisterApplyStyle (RememberMe, _login.CheckBoxStyle);
+
+				// TODO: Error text
+				Literal FailureText = new Literal ();
+				FailureText.ID = "FailureText";
+				FailureText.EnableViewState = false;
+
+				//
+				WebControl LoginButton = null;
 				switch (_login.LoginButtonType) {
 					case ButtonType.Button:
-						loginButton = new Button ();
-						loginButton.ID = "LoginButton";
+						LoginButton = new Button ();
+						LoginButton.ID = "LoginButton";
 						break;
 					case ButtonType.Link:
-						loginButton = new LinkButton ();
-						loginButton.ID = "LoginLinkButton";
+						LoginButton = new LinkButton ();
+						LoginButton.ID = "LoginLinkButton";
 						break;
 					case ButtonType.Image:
-						loginButton = new ImageButton ();
-						loginButton.ID = "LoginImageButton";
+						LoginButton = new ImageButton ();
+						LoginButton.ID = "LoginImageButton";
 						break;
 				}
-				IButtonControl control = (loginButton as IButtonControl);
-				control.Text = _login.LoginButtonText;
-				control.CommandName = Login.LoginButtonCommandName;
-				control.Command += new CommandEventHandler (_login.LoginClick);
-				control.ValidationGroup = this.UniqueID;
+				_login.RegisterApplyStyle (LoginButton, _login.LoginButtonStyle);
+				LoginButton.ID = "LoginButton";
+				((IButtonControl) LoginButton).Text = _login.LoginButtonText;
+				((IButtonControl) LoginButton).CommandName = Login.LoginButtonCommandName;
+				((IButtonControl) LoginButton).Command += new CommandEventHandler (_login.LoginClick);
+				((IButtonControl) LoginButton).ValidationGroup = _login.ID;
 
-				// adds them all at the end (after setting their properties)
-				Controls.Add (userNameTextBox);
-				Controls.Add (userNameRequired);
-				Controls.Add (passwordTextBox);
-				Controls.Add (passwordRequired);
-				Controls.Add (rememberMeCheckBox);
-				Controls.Add (loginButton);
+				// Create layout table
+				Table table = new Table ();
+				table.CellPadding = 0;
+
+				// Title row
+				table.Rows.Add (
+					CreateRow (
+					CreateCell (TitleText, null, _login.TitleTextStyle, HorizontalAlign.Center)));
+
+				// Instruction row
+				if (_login.InstructionText.Length > 0) {
+					table.Rows.Add (
+						CreateRow (
+						CreateCell (InstructionText, null, _login.instructionTextStyle, HorizontalAlign.Center)));
+				}
+
+				if (_login.Orientation == Orientation.Horizontal) {
+					// Main row
+					TableRow row1 = new TableRow ();
+					TableRow row2 = new TableRow ();
+					if (_login.TextLayout == LoginTextLayout.TextOnTop)
+						row1.Cells.Add (CreateCell (UserNameLabel, null, _login.LabelStyle));
+					else
+						row2.Cells.Add (CreateCell (UserNameLabel, null, _login.LabelStyle));
+					row2.Cells.Add (CreateCell (UserName, UserNameRequired, null));
+					if (_login.TextLayout == LoginTextLayout.TextOnTop)
+						row1.Cells.Add (CreateCell (PasswordLabel, null, _login.LabelStyle));
+					else
+						row2.Cells.Add (CreateCell (PasswordLabel, null, _login.LabelStyle));
+					row2.Cells.Add (CreateCell (Password, PasswordRequired, null));
+					row2.Cells.Add (CreateCell (RememberMe, null, null));
+					row2.Cells.Add (CreateCell (LoginButton, null, null));
+					if (row1.Cells.Count > 0)
+						table.Rows.Add (row1);
+					table.Rows.Add (row2);
+				}
+				else { // Orientation.Vertical
+					if (_login.TextLayout == LoginTextLayout.TextOnLeft)
+						table.Rows.Add (CreateRow (UserNameLabel, UserName, UserNameRequired, _login.LabelStyle));
+					else {
+						table.Rows.Add (CreateRow (UserNameLabel, null, null, _login.LabelStyle));
+						table.Rows.Add (CreateRow (null, UserName, UserNameRequired, null));
+					}
+					if (_login.TextLayout == LoginTextLayout.TextOnLeft)
+						table.Rows.Add (CreateRow (PasswordLabel, Password, PasswordRequired, _login.LabelStyle));
+					else {
+						table.Rows.Add (CreateRow (PasswordLabel, null, null, _login.LabelStyle));
+						table.Rows.Add (CreateRow (null, Password, PasswordRequired, null));
+					}
+					table.Rows.Add (CreateRow (CreateCell (RememberMe, null, null)));
+					table.Rows.Add (CreateRow (CreateCell (LoginButton, null, null, HorizontalAlign.Right)));
+				}
+
+				// Error message row
+				if (_login.FailureTextStyle.ForeColor.IsEmpty)
+					_login.FailureTextStyle.ForeColor = System.Drawing.Color.Red;
+
+				table.Rows.Add (
+					CreateRow (
+					CreateCell (FailureText, null, _login.FailureTextStyle)));
+
+				// Links row
+				TableCell linksCell = new TableCell ();
+				_login.RegisterApplyStyle (linksCell, _login.HyperLinkStyle);
+
+				if (AddLink (_login.CreateUserUrl, _login.CreateUserText, _login.CreateUserIconUrl, linksCell, _login.HyperLinkStyle))
+					if (_login.Orientation == Orientation.Vertical)
+						linksCell.Controls.Add (new LiteralControl ("<br/>"));
+					else
+						linksCell.Controls.Add (new LiteralControl (" "));
+
+				if (AddLink (_login.PasswordRecoveryUrl, _login.PasswordRecoveryText, _login.PasswordRecoveryIconUrl, linksCell, _login.HyperLinkStyle))
+					if (_login.Orientation == Orientation.Vertical)
+						linksCell.Controls.Add (new LiteralControl ("<br/>"));
+					else
+						linksCell.Controls.Add (new LiteralControl (" "));
+
+				AddLink (_login.HelpPageUrl, _login.HelpPageText, _login.HelpPageIconUrl, linksCell, _login.HyperLinkStyle);
+				table.Rows.Add (CreateRow (linksCell));
+
+				FixTableColumnSpans (table);
+				container.Controls.Add (table);
 			}
 
-			[MonoTODO ("render error messages")]
-			[MonoTODO ("set child control properties in ITemplate.InstantiateIn and let them render themself")]
-			protected internal override void Render(HtmlTextWriter writer) {
-				userNameRequired.ToolTip = _login.UserNameRequiredErrorMessage;
-				passwordRequired.ToolTip = _login.PasswordRequiredErrorMessage;
-
-				bool vertical = (_login.Orientation == Orientation.Vertical);
-				bool textontop = (_login.TextLayout == LoginTextLayout.TextOnTop);
-				string colspan = vertical ? (textontop ? String.Empty : "2") : (textontop ? "4" : "6");
-				string align = (textontop ? "left" : "right");
-
-				// inner table
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, "0");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-				writer.RenderBeginTag (HtmlTextWriterTag.Table);
-
-				// First row - Title
-				// for both Orientation.Vertical and Orientation.Horizontal
-
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-				if (colspan.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				if (!_login.IsEmpty (_login.titleTextStyle))
-					_login.titleTextStyle.AddAttributesToRender (writer);
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				writer.Write (_login.TitleText);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
-
-				// Second row - Instructions (optional)
-				// for both Orientation.Vertical and Orientation.Horizontal
-
-				string instructions = _login.InstructionText;
-				if (instructions.Length > 0) {
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-					if (colspan.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-					if (!_login.IsEmpty (_login.instructionTextStyle))
-						_login.instructionTextStyle.AddAttributesToRender (writer);
-					writer.RenderBeginTag (HtmlTextWriterTag.Td);
-					writer.Write (instructions);
-					writer.RenderEndTag ();
-					writer.RenderEndTag ();
-				}
-
-				// Third Row
-				// - Orientation.Vertical == Username
-				// - Orientation.Horizontal == Username, Password, RememberMe and LogIn button
-
-				if (!vertical && textontop) {
-					RenderUserNameTextBox (writer);
-					RenderPasswordTextBox (writer);
-				}
-
-				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				if (vertical) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
-					RenderUserNameTextBox (writer);
-				} else if (!textontop) {
-					RenderUserNameTextBox (writer);
-				}
-				if (vertical && textontop) {
-					writer.RenderEndTag ();
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				}
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				if (!_login.IsEmpty (_login.textBoxStyle))
-					_login.textBoxStyle.AddAttributesToRender (writer);
-				userNameTextBox.RenderControl (writer);
-				userNameRequired.RenderControl (writer);
-				writer.RenderEndTag ();
-				if (vertical)
-					writer.RenderEndTag ();
-
-				if (vertical) {
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					writer.AddAttribute (HtmlTextWriterAttribute.Align, align);
-					RenderPasswordTextBox (writer);
-				} else if (!textontop) {
-					RenderPasswordTextBox (writer);
-				}
-				if (vertical && textontop) {
-					writer.RenderEndTag ();
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-				}
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				if (!_login.IsEmpty (_login.textBoxStyle))
-					_login.textBoxStyle.AddAttributesToRender (writer);
-				passwordTextBox.RenderControl (writer);
-				passwordRequired.RenderControl (writer);
-				writer.RenderEndTag ();
-				if (vertical)
-					writer.RenderEndTag ();
-
-				if (_login.DisplayRememberMe) {
-					if (vertical) {
-						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-						if (colspan.Length > 0)
-							writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-					}
-					writer.RenderBeginTag (HtmlTextWriterTag.Td);
-					rememberMeCheckBox.RenderControl (writer);
-					writer.AddAttribute (HtmlTextWriterAttribute.For, rememberMeCheckBox.ClientID);
-					writer.RenderBeginTag (HtmlTextWriterTag.Label);
-					writer.Write (_login.RememberMeText);
-					writer.RenderEndTag ();
-					writer.RenderEndTag ();
-					if (vertical)
-						writer.RenderEndTag ();
-				}
-
-				// TODO - detect failure
-				bool failed = false;
-				if (failed) {
-					if (vertical)
-						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					if (colspan.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-					writer.AddAttribute (HtmlTextWriterAttribute.Align, "center");
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Color, "red");
-					if (!_login.IsEmpty (_login.failureTextStyle)) {
-						_login.failureTextStyle.AddAttributesToRender (writer);
-					}
-					writer.Write (_login.FailureText);
-					writer.RenderEndTag ();
-					if (vertical)
-						writer.RenderEndTag ();
-				}
-
-				// LoginButton
-				if (vertical) {
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					writer.AddAttribute (HtmlTextWriterAttribute.Align, "right");
-					if (colspan.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-				}
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				if (!_login.IsEmpty (_login.logonButtonStyle)) {
-					_login.logonButtonStyle.AddAttributesToRender (writer);
-				}
-				if (loginButton is ImageButton) {
-					(loginButton as ImageButton).ImageUrl = _login.LoginButtonImageUrl;
-				}
-				loginButton.RenderControl (writer);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
-
-				bool userText = (_login.CreateUserText.Length > 0);
-				bool userImg = (_login.CreateUserIconUrl.Length > 0);
-				bool passText = (_login.PasswordRecoveryText.Length > 0);
-				bool passImg = (_login.PasswordRecoveryIconUrl.Length > 0);
-				bool helpText = (_login.HelpPageText.Length > 0);
-				bool helpImg = (_login.HelpPageIconUrl.Length > 0);
-				// show row if CreateUserText or CreateUserIconUrl is set
-				// but not if only CreateUserUrl is set
-				if (userText || userImg || passText || passImg || helpText || helpImg) {
-					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-					if (colspan.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Colspan, colspan);
-					writer.RenderBeginTag (HtmlTextWriterTag.Td);
-
-					if (userImg) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.CreateUserIconUrl));
-						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-						if (userText)
-							writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.CreateUserText);
-						writer.RenderBeginTag (HtmlTextWriterTag.Img);
-						writer.RenderEndTag ();
-					}
-
-					if (userText) {
-						string href = _login.CreateUserUrl;
-						if (href.Length > 0)
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-						if (_login.hyperLinkStyle != null)
-							_login.hyperLinkStyle.AddAttributesToRender (writer);
-						writer.RenderBeginTag (HtmlTextWriterTag.A);
-						writer.Write (_login.CreateUserText);
-						writer.RenderEndTag ();
-					}
-
-					if (passText || passImg) {
-						if (userImg || userText) {
-							if (vertical) {
-								writer.Write ("<br />");
-							} else {
-								writer.Write (" ");
-							}
-						}
-
-						if (passImg) {
-							writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.PasswordRecoveryIconUrl));
-							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-							if (passText)
-								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.PasswordRecoveryText);
-							writer.RenderBeginTag (HtmlTextWriterTag.Img);
-							writer.RenderEndTag ();
-						}
-
-						if (passText) {
-							string href = _login.PasswordRecoveryUrl;
-							if (href.Length > 0)
-								writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-							if (_login.hyperLinkStyle != null)
-								_login.hyperLinkStyle.AddAttributesToRender (writer);
-							writer.RenderBeginTag (HtmlTextWriterTag.A);
-							writer.Write (_login.PasswordRecoveryText);
-							writer.RenderEndTag ();
-						}
-					}
-
-					if (helpText || helpImg) {
-						if (userImg || userText || passText || passImg) {
-							if (vertical) {
-								writer.Write ("<br />");
-							} else {
-								writer.Write (" ");
-							}
-						}
-
-						if (helpImg) {
-							writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.HelpPageIconUrl));
-							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-							if (helpText)
-								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.HelpPageText);
-							writer.RenderBeginTag (HtmlTextWriterTag.Img);
-							writer.RenderEndTag ();
-						}
-
-						if (helpText) {
-							string href = _login.HelpPageUrl;
-							if (href.Length > 0)
-								writer.AddAttribute (HtmlTextWriterAttribute.Href, href);
-							if (_login.hyperLinkStyle != null)
-								_login.hyperLinkStyle.AddAttributesToRender (writer);
-							writer.RenderBeginTag (HtmlTextWriterTag.A);
-							writer.Write (_login.HelpPageText);
-							writer.RenderEndTag ();
-						}
-					}
-
-					writer.RenderEndTag ();
-					writer.RenderEndTag ();
-				}
-
-				// inner table (end)
-				writer.RenderEndTag (); // Table
+			private TableRow CreateRow (TableCell cell)
+			{
+				TableRow row = new TableRow ();
+				row.Cells.Add (cell);
+				return row;
 			}
 
-			private void RenderUserNameTextBox (HtmlTextWriter writer) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				writer.AddAttribute (HtmlTextWriterAttribute.For, userNameTextBox.ClientID);
-				writer.RenderBeginTag (HtmlTextWriterTag.Label);
-				writer.Write (_login.UserNameLabelText);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
+			TableRow CreateRow (Control c0, Control c1, Control c2, Style s)
+			{
+				TableRow row = new TableRow ();
+				TableCell cell0 = new TableCell ();
+				TableCell cell1 = new TableCell ();
+
+				if (c0 != null) {
+					cell0.Controls.Add (c0);
+					row.Controls.Add (cell0);
+				}
+
+				if (s != null)
+					cell0.ApplyStyle (s);
+
+				if ((c1 != null) && (c2 != null)) {
+					cell1.Controls.Add (c1);
+					cell1.Controls.Add (c2);
+					cell0.HorizontalAlign = HorizontalAlign.Right;
+					row.Controls.Add (cell1);
+				}
+				return row;
+			}
+			
+			private TableCell CreateCell (Control c0, Control c1, Style s, HorizontalAlign align)
+			{
+				TableCell cell = CreateCell (c0, c1, s);
+				cell.HorizontalAlign = align;
+				return cell;
 			}
 
-			private void RenderPasswordTextBox (HtmlTextWriter writer) {
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				writer.AddAttribute (HtmlTextWriterAttribute.For, passwordTextBox.ClientID);
-				writer.RenderBeginTag (HtmlTextWriterTag.Label);
-				writer.Write (_login.PasswordLabelText);
-				writer.RenderEndTag ();
-				writer.RenderEndTag ();
+			private TableCell CreateCell (Control c0, Control c1, Style s)
+			{
+				TableCell cell = new TableCell ();
+				if (s != null)
+					cell.ApplyStyle (s);
+
+				cell.Controls.Add (c0);
+				if (c1 != null)
+					cell.Controls.Add (c1);
+
+				return cell;
+			}
+
+			bool AddLink (string pageUrl, string linkText, string linkIcon, WebControl container, Style style)
+			{
+				bool added = false;
+				if (linkIcon.Length > 0) {
+					Image img = new Image ();
+					img.ImageUrl = linkIcon;
+					container.Controls.Add (img);
+					added = true;
+				}
+				if (linkText.Length > 0) {
+					HyperLink link = new HyperLink ();
+					link.NavigateUrl = pageUrl;
+					link.Text = linkText;
+					_login.RegisterApplyStyle (link, style);
+					container.Controls.Add (link);
+					added = true;
+				}
+				return added;
+			}
+
+			void FixTableColumnSpans (Table table)
+			{
+				int maxCols = 0;
+				for (int row = 0; row < table.Rows.Count; row++) {
+					if (maxCols < table.Rows [row].Cells.Count)
+						maxCols = table.Rows [row].Cells.Count;
+				}
+				for (int row = 0; row < table.Rows.Count; row++) {
+					if (table.Rows [row].Cells.Count == 1 && maxCols > 1)
+							table.Rows [row].Cells [0].ColumnSpan = maxCols;
+				}
 			}
 		}
 
@@ -430,20 +391,17 @@ namespace System.Web.UI.WebControls {
 		private Style textBoxStyle;
 		private TableItemStyle titleTextStyle;
 		private Style validatorTextStyle;
+		private ArrayList styles = new ArrayList ();
 
 		private ITemplate layoutTemplate;
+		private LoginContainer container;
 
 		private string _password;
 
 
+
 		public Login ()
 		{
-		}
-
-		ITextControl FailureTextLabel {
-			get {
-				return FindControl ("FailureText") as ITextControl;
-			}
 		}
 
 		[DefaultValue (1)]
@@ -1044,6 +1002,15 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		LoginContainer LoginTemplateContainer
+		{
+			get {
+				if (container == null)
+					container = new LoginContainer (this);
+				return container;
+			}
+		}
+
 
 		// methods
 
@@ -1051,29 +1018,15 @@ namespace System.Web.UI.WebControls {
 		{
 			Controls.Clear ();
 
-			Table table = new Table ();
-			table.ID = ClientID;
-			table.CellSpacing = 0;
-			table.CellPadding = BorderPadding;
-
-			TableRow row = new TableRow ();
-			table.Rows.Add (row);
-			TableCell cell = new TableCell ();
-			row.Cells.Add (cell);
-
-			Controls.Add (table);
-
-			LoginContainer container = new LoginContainer ();
-			cell.Controls.Add (container);
-
 			ITemplate template = LayoutTemplate;
 			if (template == null)
 				template = new LoginTemplate (this);
 
-			template.InstantiateIn (container);
+			LoginTemplateContainer.InstantiateTemplate (template);
+
+			Controls.Add (container);
 
 			IEditableTextControl editable;
-
 			editable = container.UserNameTextBox as IEditableTextControl;
 
 			if (editable != null) {
@@ -1125,6 +1078,11 @@ namespace System.Web.UI.WebControls {
 				(ValidatorTextStyle as IStateManager).LoadViewState (state [9]);
 		}
 
+		private bool HasOnAuthenticateHandler ()
+		{
+			return Events [authenticateEvent] != null;
+		}
+
 		protected virtual void OnAuthenticate (AuthenticateEventArgs e)
 		{
 			// this gets called after OnLoggingIn and the authentication so we can change the result
@@ -1139,7 +1097,7 @@ namespace System.Web.UI.WebControls {
 			CommandEventArgs cea = (e as CommandEventArgs);
 			if ((cea != null) && (cea.CommandName == LoginButtonCommandName)) {
 				if (!AuthenticateUser ()) {
-					ITextControl failureText = FailureTextLabel;
+					ITextControl failureText = LoginTemplateContainer.FailureTextLiteral;
 					if (failureText != null)
 						failureText.Text = FailureText;
 				}
@@ -1191,6 +1149,9 @@ namespace System.Web.UI.WebControls {
 			}
 
 			EnsureChildControls ();
+
+			foreach (object [] styleDef in styles)
+				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
 
 			RenderContents(writer);
 		}
@@ -1280,6 +1241,11 @@ namespace System.Web.UI.WebControls {
 
 		// private stuff
 
+		internal void RegisterApplyStyle (WebControl control, Style style)
+		{
+			styles.Add (new object [] { control, style });
+		}
+		
 		private bool AuthenticateUser ()
 		{
 			LoginCancelEventArgs lcea = new LoginCancelEventArgs ();
@@ -1287,19 +1253,23 @@ namespace System.Web.UI.WebControls {
 			if (lcea.Cancel)
 				return true;
 
-			string mp = MembershipProvider;
-			MembershipProvider provider = (mp.Length == 0) ?
-				provider = Membership.Provider : Membership.Providers [mp];
-			if (provider == null) {
-				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
-			}
-
 			AuthenticateEventArgs aea = new AuthenticateEventArgs ();
-			aea.Authenticated = provider.ValidateUser (UserName, Password);
+			
+			if (!HasOnAuthenticateHandler ()) {
+				string mp = MembershipProvider;
+				MembershipProvider provider = (mp.Length == 0) ?
+					provider = Membership.Provider : Membership.Providers [mp];
+				if (provider == null) {
+					throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
+				}
+
+				aea.Authenticated = provider.ValidateUser (UserName, Password);
+			}
 			OnAuthenticate (aea);
 
 			if (aea.Authenticated) {
-				FormsAuthentication.SetAuthCookie (UserName, RememberMeSet);				
+				FormsAuthentication.SetAuthCookie (UserName, RememberMeSet);
+				OnLoggedIn (EventArgs.Empty);
 
 				string url = DestinationPageUrl;
 				if (url.Length == 0 && Page.Request.UrlReferrer != null)
@@ -1311,7 +1281,6 @@ namespace System.Web.UI.WebControls {
 				} else {
 					Redirect (url);
 				}
-				OnLoggedIn (EventArgs.Empty);
 				return true;
 			} else {
 				OnLoginError (EventArgs.Empty);
@@ -1329,13 +1298,6 @@ namespace System.Web.UI.WebControls {
 		private void LoginClick (object sender, CommandEventArgs e)
 		{
 			RaiseBubbleEvent (sender, (EventArgs)e);
-		}
-
-		private bool IsEmpty (Style style)
-		{
-			if (style == null)
-				return true;
-			return style.IsEmpty;
 		}
 
 		private bool IsDefaultLoginPage ()
