@@ -1,3 +1,10 @@
+2006-12-14  Eyal Alaluf <eyala@mainsoft.com>
+
+	* MonoTODOAttribute.cs: Add MonoDocumentationNoteAttribute,
+	  MonoExtensionAttribute, MonoInternalNoteAttribute,
+	  MonoLimitationAttribute and MonoNotSupportedAttribute. These
+	  attribute will be used to describe the status of the Mono APIs.
+
 2006-09-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* Makefile: Removed TestConfiguration.cs.
