@@ -1,4 +1,9 @@
 
+Thu Dec 14 12:49:47 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, icall-defs.h: type modifiers icalls for
+	parameters and properties.
+
 Wed Dec 13 19:29:50 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, icall.c: fixed warnings.
