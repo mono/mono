@@ -1,3 +1,8 @@
+2006-12-13  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: Closes menu when right click out side of popup
+	it fix problem in ContextMenu and MainMenu. Fixes #80252.
+
 2006-12-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Fix dumb error.

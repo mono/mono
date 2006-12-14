@@ -121,15 +121,15 @@ namespace System.Windows.Forms {
 
 		public void OnMouseDown (MouseEventArgs args)
 		{
-			if ((args.Button & MouseButtons.Left) == 0)
-				return;
-
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
 			if (item == null) {
 				Deactivate ();
 				return;
 			}
+
+			if ((args.Button & MouseButtons.Left) == 0)
+				return;
 
 			if (!item.Enabled)
 				return;
