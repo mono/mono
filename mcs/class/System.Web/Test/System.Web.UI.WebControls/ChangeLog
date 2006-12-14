@@ -1,3 +1,7 @@
+2006-12-14  Yoni Klain         <yonik@mainsoft.com>
+
+	* SiteMapPathTest.cs:    added tests.
+
 2006-12-13  Yoni Klain         <yonik@mainsoft.com>
 
 	* DetailsViewTest.cs:    added tests.

@@ -40,6 +40,7 @@ using System.Configuration;
 using MyWebControl = System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using System.Collections;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -91,11 +92,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-#if DOT_NET 
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Web.sitemap","Web.sitemap");
-#else
 			WebTest.CopyResource (GetType (), "Web.sitemap", "Web.sitemap");
-#endif
 		}
 
 		[SetUp]
@@ -475,6 +472,67 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, myCol.Count, "SiteMapChildNode#1");
 		}
 
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void SiteMapPath_FireEvents()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit(FireEvents_Init));
+			t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("ItemCreated", eventlist[0], "#1");
+			Assert.AreEqual ("ItemDataBound", eventlist[1], "#2");
+			Assert.AreEqual ("ItemCreated", eventlist[2], "#3");
+			Assert.AreEqual ("ItemDataBound", eventlist[3], "#4");
+			Assert.AreEqual ("ItemCreated", eventlist[4], "#5");
+			Assert.AreEqual ("ItemDataBound", eventlist[5], "#6");
+		}
+
+		#region FireEvents
+		public static void FireEvents_Init (Page p)
+		{
+			SiteMapPath s = new SiteMapPath ();
+			s.ItemCreated += new SiteMapNodeItemEventHandler (s_ItemCreated);
+			s.ItemDataBound += new SiteMapNodeItemEventHandler (s_ItemDataBound);
+			p.Form.Controls.Add (s);
+		}
+
+		static void s_ItemDataBound (object sender, SiteMapNodeItemEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemDataBound");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemDataBound");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void s_ItemCreated (object sender, SiteMapNodeItemEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("ItemCreated");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+		#endregion
+
 		// Events Stuff
 		private bool DataBinding;
 		private bool ItemDataBounding;
@@ -547,6 +605,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		//    PokerSiteMapPath p = new PokerSiteMapPath ();
 		//    p.DataBind ();
 		//}
+
+
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
