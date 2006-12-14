@@ -1,5 +1,13 @@
 2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapProtocolImporter.cs : if the importer is SOAP12, initialize
+	  SoapVersion in generated code.
+	* ServiceDescriptionImporter.cs,
+	  ProtocolImporter.cs : reduce extra argument.
+	* ServiceDescriptionSerializerBase2.cs : fix warnings.
+
+2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDescription.cs : added soap12 namespace mapping in output.
 	* ServiceDescriptionCollection.cs,
 	  ServiceDescriptionImporter.cs : fixed an issue that two ImportInfos

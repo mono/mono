@@ -142,7 +142,7 @@ namespace System.Web.Services.Description {
 		{
 			ProtocolImporter importer = GetImporter ();
 			
-			if (!importer.Import (this, codeNamespace, codeCompileUnit, importInfo))
+			if (!importer.Import (this, codeNamespace, importInfo))
 				throw new Exception ("None of the supported bindings was found");
 				
 			return importer.Warnings;

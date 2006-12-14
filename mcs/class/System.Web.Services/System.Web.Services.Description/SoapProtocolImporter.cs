@@ -138,6 +138,15 @@ namespace System.Web.Services.Description {
 				CodeConstructor cc = new CodeConstructor ();
 				cc.Attributes = MemberAttributes.Public;
 				GenerateServiceUrl (location, cc.Statements);
+
+#if NET_2_0
+				if (ProtocolName.ToUpper () == "SOAP12") {
+					CodeExpression thisSoapVer = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "SoapVersion");
+					CodeFieldReferenceExpression soap12Enum =
+						new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeof (SoapProtocolVersion)), "Soap12");
+					cc.Statements.Add (new CodeAssignStatement (thisSoapVer, soap12Enum));
+				}
+#endif
 				codeClass.Members.Add (cc);
 			}
 			
