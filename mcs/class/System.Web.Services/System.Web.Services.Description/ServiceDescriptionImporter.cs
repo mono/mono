@@ -152,7 +152,7 @@ namespace System.Web.Services.Description {
 			ArrayList importers = GetSupportedImporters ();
 			if (protocolName == null || protocolName == "") protocolName = "Soap";
 			foreach (ProtocolImporter importer in importers) {
-				if (importer.ProtocolName == protocolName)
+				if (importer.ProtocolName.ToUpper () == protocolName.ToUpper ())
 					return importer;
 			}
 			
@@ -163,6 +163,9 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (new SoapProtocolImporter ());
+#if NET_2_0
+			list.Add (new Soap12ProtocolImporter ());
+#endif
 			list.Add (new HttpGetProtocolImporter ());
 			list.Add (new HttpPostProtocolImporter ());
 			return list;

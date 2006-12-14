@@ -65,6 +65,13 @@ namespace System.Web.Services.Description
 //			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
 #if NET_2_0
+			RegisterExtensionType (typeof (Soap12AddressBinding));
+			RegisterExtensionType (typeof (Soap12Binding));
+			RegisterExtensionType (typeof (Soap12BodyBinding));
+			RegisterExtensionType (typeof (Soap12FaultBinding));
+			RegisterExtensionType (typeof (Soap12HeaderBinding));
+			RegisterExtensionType (typeof (Soap12OperationBinding));
+
 			foreach (TypeElement el in WebServicesSection.Current.ServiceDescriptionFormatExtensionTypes)
 				RegisterExtensionType (el.Type);
 #else

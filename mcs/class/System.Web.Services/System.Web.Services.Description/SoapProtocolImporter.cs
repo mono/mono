@@ -640,4 +640,13 @@ namespace System.Web.Services.Description {
 		
 		#endregion
 	}
+
+#if NET_2_0
+	internal class Soap12ProtocolImporter : SoapProtocolImporter
+	{
+		public override string ProtocolName {
+			get { return "Soap12"; }
+		}
+	}
+#endif
 }
