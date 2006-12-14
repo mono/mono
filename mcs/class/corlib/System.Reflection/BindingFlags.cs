@@ -40,6 +40,7 @@ namespace System.Reflection {
 	/// </summary>
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	[Flags]
 	public enum BindingFlags {

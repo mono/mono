@@ -1,4 +1,8 @@
 
+Thu Dec 14 13:50:48 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* *.cs: added missing Serializable attributes.
+
 Thu Dec 14 12:52:27 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* MonoProperty.cs, ParameterInfo.cs, PropertyInfo.cs:
