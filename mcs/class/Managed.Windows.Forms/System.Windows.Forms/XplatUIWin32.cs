@@ -2376,8 +2376,9 @@ namespace System.Windows.Forms {
 
 			Control c = Control.FromHandle (handle);
 			if (c != null) {
-				Region r = new Region(new Rectangle(c.PointToScreen (c.Location), c.Size));
-
+				RECT window_rect;
+				Win32GetWindowRect (c.Handle, out window_rect);
+				Region r = new Region (new Rectangle(window_rect.left, window_rect.top, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top));
 				Win32ExtSelectClipRgn(hdc, r.GetHrgn (Graphics.FromHdc (hdc)), (int) ClipCombineMode.RGN_AND);
 			}
 

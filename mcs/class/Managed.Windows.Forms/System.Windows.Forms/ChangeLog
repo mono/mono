@@ -1,3 +1,55 @@
+2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Control.cs: 
+	- Added AfterTopMostControl to allow for certain controls 
+	to always stay on top when normal controls are brought to 
+	front.
+	
+	* XplatUIWin32.cs: 
+	- (DrawInversibleRectangle): Get window rectangle from Win32 
+	in stead of from control, since Win32 doesn't calculate
+	screen coords correctly from control's Location if it 
+	have docked siblings.
+	
+	* MdiWindowManager.cs:
+	- Correct the control menu popup location when clicked on
+	the maximized form icon. (fixes #80223.1)
+	- Don't show moving rectangle if mouse hasn't moved from
+	the original clicked point.
+	- Removed FormGotFocus handler (not used).
+	- Calculate the control buttons location from the main
+	window's size and not client size (fixes #79770).
+	- Form is now closed when the form icon is double-clicked
+	(fixes #79775).	
+	- Correct NCCalcSize numbers a little bit (fixes #80223.2)
+	
+	* InternalWindowManager.cs:
+	- Moved some MDI-only methods to MdiWindowManager.
+	- Removed unused properties and methods.
+	- Unified method naming for methods handling wm messages.
+	- Moved all message handling to seperate methods for
+	each message.
+	
+	* ThemeWin32Classic.cs:
+	- DrawManagedWindowDecorations now draws the title bar 
+	with a gradient brush.
+	- Add a CPDrawButtonInternal that allows us to specify
+	light, normal and dark colors for the buttons (control 
+	buttons for MDI children were drawn with the same light
+	color as the background, therefore loosing the 3D effect).
+	
+	* SizeGrip.cs:
+	- Add a CapturedControl property that is used to 
+	determine the control to resize (defaults to parent). 
+	Needed for MdiClient, since its SizeGrip's parent is
+	MdiClient, but the control to resize is the main form.
+	
+	* MdiClient.cs:
+	- Set SizeGrip's CapturedControl to the main form in order
+	to resize the main form and not the MdiClient.
+	- Override AfterTopMostControl to leave the scrollbars 
+	always on top.
+
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
 	* ListView.cs: fixed ListViewItemCollection AddRange and

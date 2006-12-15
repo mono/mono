@@ -50,12 +50,15 @@ namespace System.Windows.Forms {
 
 		internal Rectangle IconicBounds;
 
+		private Point icon_clicked;
+		private DateTime icon_clicked_time;
+		private bool icon_dont_show_popup;
+		
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
 			prev_bounds = form.Bounds;
 			prev_window_state = form.window_state;
-			form.GotFocus += new EventHandler (FormGotFocus);
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
 			form.TextChanged += new EventHandler (FormTextChangedHandler);
@@ -177,10 +180,18 @@ namespace System.Windows.Forms {
 
 		private void ClickIconMenuItem(object sender, EventArgs e)
 		{
-			ShowPopup ();
+			if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500) {
+				form.Close ();
+				return;
+			}
+			icon_clicked_time = DateTime.Now;
+			Point pnt = Point.Empty;
+			pnt = form.MdiParent.PointToScreen (pnt);
+			pnt = form.PointToClient (pnt);
+			ShowPopup (pnt);
 		}
 		
-		private void ShowPopup ()
+		private void ShowPopup (Point pnt)
 		{
 			icon_popup_menu.MenuItems[0].Enabled = form.window_state != FormWindowState.Normal;    // restore
 			icon_popup_menu.MenuItems[1].Enabled = form.window_state != FormWindowState.Maximized; // move
@@ -190,7 +201,7 @@ namespace System.Windows.Forms {
 			icon_popup_menu.MenuItems[5].Enabled = true;  // close
 			icon_popup_menu.MenuItems[6].Enabled = true;  // next
 			
-			icon_popup_menu.Show(form, Point.Empty);
+			icon_popup_menu.Show(form, pnt);
 		}
 		
 		private void RestoreItemHandler (object sender, EventArgs e)
@@ -328,22 +339,6 @@ namespace System.Windows.Forms {
 					pb.Height + TitleBarHeight + bw * 2);
 		}
 
-		protected override void HandleNCLButtonDblClick (ref Message m)
-		{
-			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-
-			form.PointToClient (ref x, ref y);
-			// Need to adjust because we are in NC land
-			y += TitleBarHeight;
-			FormPos pos = FormPosForCoords (x, y);
-
-			if (pos != FormPos.TitleBar && pos != FormPos.Top)
-				return;
-
-			form.WindowState = FormWindowState.Maximized;
-		}
-
 		private void FormClosed (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
@@ -354,8 +349,8 @@ namespace System.Windows.Forms {
 			Size bs = ThemeEngine.Current.ManagedWindowButtonSize (this);
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-
-			close_button.Rectangle = new Rectangle (mdi_container.ParentForm.ClientRectangle.Right - bw - bs.Width - 2,
+			
+			close_button.Rectangle = new Rectangle (mdi_container.ParentForm.Size.Width - 1 - bw - bs.Width - 2,
 					pnt.Y + 2, bs.Width, bs.Height);
 
 			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
@@ -372,35 +367,153 @@ namespace System.Windows.Forms {
 			maximize_button.Rectangle.Y -= pnt.Y;
 			close_button.Rectangle.Y -= pnt.Y;
 		}
-
-		protected override void HandleTitleBarUp (int x, int y)
+		
+		private bool IconRectangleContains (int x, int y)
 		{
-			if (form.Icon != null) {
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-				Rectangle icon = new Rectangle (bw + 3,
-						bw + 2, IconWidth, IconWidth);
-				if (icon.Contains (x, y)) {
-					ShowPopup ();
-					return;
-				}
-			}
+			if (form.Icon == null)
+				return false;
 
-			base.HandleTitleBarUp (x, y);
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			Rectangle icon = new Rectangle (bw + 3, bw + 2, IconWidth, IconWidth);
+			return icon.Contains (x, y);
 		}
 
-		protected override void HandleTitleBarDown (int x, int y)
+		public bool HandleMenuMouseDown (MainMenu menu, int x, int y)
 		{
-			if (form.Icon != null) {
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-				Rectangle icon = new Rectangle (bw + 3,
-						bw + 2, IconWidth, IconWidth);
-				if (icon.Contains (x, y)) {
-					return;
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+
+			HandleTitleBarDown (pt.X, pt.Y);
+			return AnyPushedTitleButtons;
+		}
+
+		public void HandleMenuMouseUp (MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+
+			HandleTitleBarUp (pt.X, pt.Y);
+		}
+
+		public void HandleMenuMouseLeave (MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+			HandleTitleBarLeave (pt.X, pt.Y);
+
+		}
+
+		public void HandleMenuMouseMove (MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+
+			HandleTitleBarMouseMove (pt.X, pt.Y);
+
+		}
+
+		protected override void HandleTitleBarLeave (int x, int y)
+		{
+			base.HandleTitleBarLeave (x, y);
+
+			if (IsMaximized)
+				XplatUI.InvalidateNC (form.MdiParent.Handle);
+		}
+		
+		protected override void HandleTitleBarUp (int x, int y)
+		{			
+			if (IconRectangleContains (x, y)) {
+				if (!icon_dont_show_popup) {
+					if (IsMaximized)
+						ClickIconMenuItem (null, null);
+					else
+						ShowPopup (Point.Empty);
+				} else {
+					icon_dont_show_popup = false;
 				}
+				return;
+			}
+			
+			base.HandleTitleBarUp (x, y);
+
+			if (IsMaximized)
+				XplatUI.InvalidateNC (mdi_container.Parent.Handle);
+		}
+
+		protected override void HandleTitleBarDoubleClick (int x, int y)
+		{
+			if (IconRectangleContains (x, y)) {
+				form.Close ();
+			} else {
+				form.WindowState = FormWindowState.Maximized;
+			}
+			base.HandleTitleBarDoubleClick (x, y);
+		}
+		
+		protected override void HandleTitleBarDown (int x, int y)
+		{			
+			if (IconRectangleContains (x, y)) {
+				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500 && icon_clicked.X == x && icon_clicked.Y == y) {
+					form.Close ();
+				} else {
+					icon_clicked_time = DateTime.Now;
+					icon_clicked.X = x;
+					icon_clicked.Y = y;
+				}
+				
+				return;
 			}
 
 			base.HandleTitleBarDown (x, y);
+			
+			
+			if (IsMaximized) {
+				XplatUI.InvalidateNC (mdi_container.Parent.Handle);
+			}
 		}
+
+		protected override bool HandleLButtonDblClick (ref Message m)
+		{
+
+			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int)m.LParam.ToInt32 ());
+
+			// Correct since we are in NC land.
+			NCClientToNC (ref x, ref y);
+
+			if (IconRectangleContains (x, y)) {
+				icon_popup_menu.Wnd.Hide ();
+				form.Close ();
+				return true;
+			}
+			
+			return base.HandleLButtonDblClick (ref m);
+		}
+
+		protected override bool HandleLButtonDown (ref Message m)
+		{
+
+			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int)m.LParam.ToInt32 ());
+
+			// Correct y since we are in NC land.
+			NCClientToNC(ref x, ref y);
+
+			if (IconRectangleContains (x, y)){
+				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500) {
+					if (icon_popup_menu != null && icon_popup_menu.Wnd != null) {
+						icon_popup_menu.Wnd.Hide ();
+					}
+					form.Close ();
+					return true;
+				} else if (form.Capture) {
+					icon_dont_show_popup = true;
+				}
+			}
+			return base.HandleLButtonDown (ref m);
+		}
+
+		protected override bool HandleNCLButtonDown (ref Message m)
+		{
+			return base.HandleNCLButtonDown (ref m);
+		}
+		
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{
 			return false;
@@ -409,7 +522,10 @@ namespace System.Windows.Forms {
 		protected override void HandleWindowMove (Message m)
 		{
 			Point move = MouseMove (m);
-
+			
+			if (move.X == 0 && move.Y == 0)
+				return;
+			
 			int x = virtual_position.X + move.X;
 			int y = virtual_position.Y + move.Y;
 		
@@ -425,48 +541,45 @@ namespace System.Windows.Forms {
 			start = Cursor.Position;
 		}
 
-		public override bool HandleMessage (ref Message m)
+		protected override bool HandleNCMouseMove (ref Message m)
 		{
-			switch ((Msg)m.Msg) {
-			case Msg.WM_NCMOUSEMOVE:
-				XplatUI.RequestAdditionalWM_NCMessages (form.Handle, true, true);
-				break;
-				
-			case Msg.WM_NCCALCSIZE:
-				XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+			XplatUI.RequestAdditionalWM_NCMessages (form.Handle, true, true);
+			return base.HandleNCMouseMove (ref m);
+		}
 
-				if (m.WParam == (IntPtr)1) {
-					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
-							typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+		protected override void HandleNCCalcSize (ref Message m)
+		{
+			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
 
-					int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-					if (!IsMaximized)
-						bw++;
+			if (m.WParam == (IntPtr)1) {
+				ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
+						typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
 
-					if (HasBorders) {
-						ncp.rgrc1.top += TitleBarHeight + bw;
-						if (!IsMaximized) {
-							ncp.rgrc1.left += bw;
-							ncp.rgrc1.bottom -= bw;
-							ncp.rgrc1.right -= bw;
-						} else {
-							ncp.rgrc1.left += 1;
-							ncp.rgrc1.bottom -= 2; 
-							ncp.rgrc1.right -= 3;
-						}
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+				if (!IsMaximized)
+					bw++;
+
+				if (HasBorders) {
+					ncp.rgrc1.top += TitleBarHeight + bw;
+					if (!IsMaximized) {
+						//ncp.rgrc1.top -= 1;
+						ncp.rgrc1.left += bw - 2;
+						ncp.rgrc1.bottom -= bw - 2;
+						ncp.rgrc1.right -= bw;
+					} else {
+						ncp.rgrc1.left += 1;
+						ncp.rgrc1.bottom -= 2;
+						ncp.rgrc1.right -= 3;
 					}
-					
-					if (ncp.rgrc1.bottom < ncp.rgrc1.top)
-						ncp.rgrc1.bottom = ncp.rgrc1.top + 1;
-						
-					Marshal.StructureToPtr (ncp, m.LParam, true);
 				}
 
-				return false;
+				if (ncp.rgrc1.bottom < ncp.rgrc1.top)
+					ncp.rgrc1.bottom = ncp.rgrc1.top + 1;
+
+				Marshal.StructureToPtr (ncp, m.LParam, true);
 			}
-			return base.HandleMessage (ref m);
 		}
-	
+
 		protected override void DrawVirtualPosition (Rectangle virtual_position)
 		{
 			ClearVirtualPosition ();
@@ -486,8 +599,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnWindowFinishedMoving ()
 		{
-			// 	mdi_container.EnsureScrollBars (form.Right, form.Bottom);
-
 			form.Refresh ();
 		}
 
@@ -503,13 +614,7 @@ namespace System.Windows.Forms {
 				mdi_container.SetWindowStates (this);
 			}
 			base.Activate ();
-		}
-
-		private void FormGotFocus (object sender, EventArgs e)
-		{
-			// Maybe we don't need to do this, maybe we do
-			//	mdi_container.ActivateChild (form);
-		}			
+		}	
 	}
 }
 

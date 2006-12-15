@@ -363,12 +363,14 @@ namespace System.Windows.Forms {
 			if (need_hbar && need_vbar) {
 				if (sizegrip == null) {
 					sizegrip = new SizeGrip ();
+					sizegrip.CapturedControl = this.ParentForm;
 					Controls.AddImplicit (sizegrip);
 				}
 				sizegrip.Location = new Point (hbar.Right, vbar.Bottom);
 				sizegrip.Width = vbar.Width;
 				sizegrip.Height = hbar.Height;
 				sizegrip.Visible = true;
+				XplatUI.SetZOrder (sizegrip.Handle, vbar.Handle, false, false);
 			} else if (sizegrip != null) {
 				sizegrip.Visible = false;
 			}
@@ -511,9 +513,7 @@ namespace System.Windows.Forms {
 				int startx, starty, currentx, currenty;
 				
 				startx = 0;
-				starty = Bottom - yspacing - 1;
-				if (this.hbar != null && this.hbar.Visible)
-					starty -= this.hbar.Height;
+				starty = Bottom - yspacing - bw - 2;
 				currentx = startx;
 				currenty = starty;
 				
@@ -591,10 +591,6 @@ namespace System.Windows.Forms {
 			Form current = (Form) Controls [0];
 			form.SuspendLayout ();
 			form.BringToFront ();
-			if (vbar != null && vbar.Visible)
-				XplatUI.SetZOrder (vbar.Handle, IntPtr.Zero, true, false);
-			if (hbar != null && hbar.Visible)
-				XplatUI.SetZOrder (hbar.Handle, IntPtr.Zero, true, false);
 			form.ResumeLayout(false);
 			SetWindowStates ((MdiWindowManager) form.window_manager);
 			if (current != form) {
@@ -603,6 +599,22 @@ namespace System.Windows.Forms {
 				XplatUI.InvalidateNC (form.Handle);
 			}
 			active_child = (Form) Controls [0];
+		}
+
+		internal override IntPtr AfterTopMostControl ()
+		{
+			// order of scrollbars:
+			// top = vertical
+			//       sizegrid
+			// bottom = horizontal
+			if (hbar != null && hbar.Visible)
+				return hbar.Handle;
+			// no need to check for sizegrip since it will only
+			// be visible if hbar is visible.
+			if (vbar != null && vbar.Visible)
+				return vbar.Handle;
+				
+			return base.AfterTopMostControl ();
 		}
 		
 		internal bool SetWindowStates (MdiWindowManager wm)

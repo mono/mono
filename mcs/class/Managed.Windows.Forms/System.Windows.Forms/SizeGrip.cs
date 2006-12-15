@@ -31,6 +31,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private bool	redraw;
 		private Point	capture_point;
+		private Control captured_control;
 		private int	window_w;
 		private int	window_h;
 		private bool	show_grip;
@@ -48,6 +49,19 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors
 
 		#region Properties
+		
+		public Control CapturedControl {
+			get {
+				if (captured_control != null)
+					return captured_control;
+				else
+					return Parent;
+			}
+			set {
+				captured_control = value;
+			}
+		}
+		
 		public bool ShowGrip {
 			get {
 				return show_grip;
@@ -84,8 +98,8 @@ namespace System.Windows.Forms {
 			
 			capture_point = Control.MousePosition;
 
-			window_w = Parent.Width;
-			window_h = Parent.Height;
+			window_w = CapturedControl.Width;
+			window_h = CapturedControl.Height;
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {
@@ -99,7 +113,7 @@ namespace System.Windows.Forms {
 				delta_x = current_point.X - capture_point.X;
 				delta_y = current_point.Y - capture_point.Y;
 
-				this.Parent.Size = new Size(window_w + delta_x, window_h + delta_y);
+				CapturedControl.Size = new Size(window_w + delta_x, window_h + delta_y);
 				XplatUI.DoEvents();
 			}
 		}

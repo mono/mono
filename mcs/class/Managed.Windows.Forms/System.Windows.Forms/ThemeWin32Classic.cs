@@ -4760,8 +4760,9 @@ namespace System.Windows.Forms
 			Form form = wm.Form;
 			int tbheight = ManagedWindowTitleBarHeight (wm);
 			int bdwidth = ManagedWindowBorderWidth (wm);
-			Color titlebar_color = Color.FromArgb (255, 0, 0, 255);
-			
+			Color titlebar_color = Color.FromArgb (255, 10, 36, 106);
+			Color titlebar_color2 = Color.FromArgb (255, 166, 202, 240);
+
 			if (wm.HasBorders) {
 				Pen pen = new Pen(ColorControl, 1);
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
@@ -4780,9 +4781,11 @@ namespace System.Windows.Forms
 			}
 
 			Color color = ThemeEngine.Current.ColorControlDark;
-
-			if (wm.IsActive () && !wm.IsMaximized)
+			Color color2 = Color.FromArgb (255, 192, 192, 192);
+			if (wm.IsActive () && !wm.IsMaximized) {
 				color = titlebar_color;
+				color2 = titlebar_color2;
+			}
 
 			Rectangle tb = new Rectangle (bdwidth, bdwidth,
 					form.Width - (bdwidth * 2), tbheight);
@@ -4790,8 +4793,13 @@ namespace System.Windows.Forms
 			// HACK: For now always draw the titlebar until we get updates better
 			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
 			//if (vis != Rectangle.Empty)
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
-
+			if (tb.Width > 0 && tb.Height > 0) {
+				using (System.Drawing.Drawing2D.LinearGradientBrush gradient = new LinearGradientBrush (tb, color, color2, LinearGradientMode.Horizontal))
+				{
+					dc.FillRectangle (gradient, tb);
+				}	
+			}
+			
 			dc.DrawLine (new Pen (SystemColors.ControlLight, 1), bdwidth,
 					tbheight + bdwidth, form.Width - (bdwidth * 2),
 					tbheight + bdwidth);
@@ -4969,6 +4977,11 @@ namespace System.Windows.Forms
 
 		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
+			CPDrawButtonInternal (dc, rectangle, state, SystemPens.ControlDarkDark, SystemPens.ControlDark, SystemPens.ControlLight);
+		}
+
+		private void CPDrawButtonInternal (Graphics dc, Rectangle rectangle, ButtonState state, Pen DarkPen, Pen NormalPen, Pen LightPen)
+		{
 			// sadly enough, the rectangle gets always filled with a hatchbrush
 			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50,
 								 Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255),
@@ -4987,41 +5000,41 @@ namespace System.Windows.Forms
 			if ((state & ButtonState.Checked) == ButtonState.Checked) {
 				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControlLight, ColorControl), rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4);
 				
-				Pen pen = SystemPens.ControlDarkDark;
+				Pen pen = DarkPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
 				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y, rectangle.Right - 2, rectangle.Y);
 				
-				pen = SystemPens.ControlDark;
+				pen = NormalPen;
 				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y + 1, rectangle.X + 1, rectangle.Bottom - 3);
 				dc.DrawLine (pen, rectangle.X + 2, rectangle.Y + 1, rectangle.Right - 3, rectangle.Y + 1);
 				
-				pen = SystemPens.ControlLight;
+				pen = LightPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 2, rectangle.Bottom - 1);
 				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1);
 			} else
 			if (((state & ButtonState.Pushed) == ButtonState.Pushed) && ((state & ButtonState.Normal) == ButtonState.Normal)) {
-				Pen pen = SystemPens.ControlDarkDark;
+				Pen pen = DarkPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
 				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y, rectangle.Right - 2, rectangle.Y);
 				
-				pen = SystemPens.ControlDark;
+				pen = NormalPen;
 				dc.DrawLine (pen, rectangle.X + 1, rectangle.Y + 1, rectangle.X + 1, rectangle.Bottom - 3);
 				dc.DrawLine (pen, rectangle.X + 2, rectangle.Y + 1, rectangle.Right - 3, rectangle.Y + 1);
 				
-				pen = SystemPens.ControlLight;
+				pen = LightPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 2, rectangle.Bottom - 1);
 				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1);
 			} else
 			if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Normal) == ButtonState.Normal)) {
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = LightPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.Right - 2, rectangle.Y);
 				dc.DrawLine (pen, rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 2);
 				
-				pen = SystemPens.ControlDark;
+				pen = NormalPen;
 				dc.DrawLine (pen, rectangle.X + 1, rectangle.Bottom - 2, rectangle.Right - 2, rectangle.Bottom - 2);
 				dc.DrawLine (pen, rectangle.Right - 2, rectangle.Y + 1, rectangle.Right - 2, rectangle.Bottom - 3);
 				
-				pen = SystemPens.ControlDarkDark;
+				pen = DarkPen;
 				dc.DrawLine (pen, rectangle.X, rectangle.Bottom - 1, rectangle.Right - 1, rectangle.Bottom - 1);
 				dc.DrawLine (pen, rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 2);
 			}
@@ -5032,7 +5045,7 @@ namespace System.Windows.Forms
 			Rectangle	captionRect;
 			int			lineWidth;
 
-			CPDrawButton(graphics, rectangle, state);
+			CPDrawButtonInternal (graphics, rectangle, state, SystemPens.ControlDarkDark, SystemPens.ControlDark, SystemPens.ControlLightLight);
 
 			if (rectangle.Width<rectangle.Height) {
 				captionRect=new Rectangle(rectangle.X+1, rectangle.Y+rectangle.Height/2-rectangle.Width/2+1, rectangle.Width-4, rectangle.Width-4);

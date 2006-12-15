@@ -3960,9 +3960,21 @@ namespace System.Windows.Forms
 				if (index > 0) {
 					XplatUI.SetZOrder(child.Handle, child_controls[index - 1].Handle, false, false);
 				} else {
-					XplatUI.SetZOrder(child.Handle, IntPtr.Zero, true, false);
+					IntPtr after = AfterTopMostControl ();
+					if (after != IntPtr.Zero)
+						XplatUI.SetZOrder (child.Handle, after, false, false);
+					else
+						XplatUI.SetZOrder (child.Handle, IntPtr.Zero, true, false);
 				}
 			}
+		}
+		
+		// Override this if there is a control that shall always remain on
+		// top of other controls (such as scrollbars). If there are several
+		// of these controls, the bottom-most should be returned.
+		internal virtual IntPtr AfterTopMostControl ()
+		{
+			return IntPtr.Zero;
 		}
 
 		private void UpdateChildrenZOrder() {

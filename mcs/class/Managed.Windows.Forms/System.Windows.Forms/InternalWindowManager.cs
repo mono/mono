@@ -40,7 +40,6 @@ namespace System.Windows.Forms {
 		internal TitleButton close_button;
 		internal TitleButton maximize_button;
 		internal TitleButton minimize_button;
-		protected Rectangle icon_rect;
 		
 		private ToolTip.ToolTipWindow tooltip;
 		private Timer tooltip_timer;
@@ -56,8 +55,6 @@ namespace System.Windows.Forms {
 		protected Point clicked_point;
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
-
-		private bool is_mouse_down_menu;
 		
 		public class TitleButton {
 			public Rectangle Rectangle;
@@ -111,26 +108,14 @@ namespace System.Windows.Forms {
 			get { return form; }
 		}
 
-		public Rectangle CloseButtonRect {
-			get { return close_button.Rectangle; }
-			set { close_button.Rectangle = value; }
+		public bool AnyPushedTitleButtons {
+			get {
+				return minimize_button.State == ButtonState.Pushed ||
+					maximize_button.State == ButtonState.Pushed ||
+					close_button.State == ButtonState.Pushed;
+			}
 		}
-
-		public Rectangle MinimizeButtonRect {
-			get { return minimize_button.Rectangle; }
-			set { minimize_button.Rectangle = value; }
-		}
-
-		public Rectangle MaximizeButtonRect {
-			get { return maximize_button.Rectangle; }
-			set { maximize_button.Rectangle = value; }
-		}
-
-		public Rectangle IconRect {
-			get { return icon_rect; }
-			set { value = icon_rect; }
-		}
-
+		
 		public int IconWidth {
 			get { return TitleBarHeight - 5; }
 		}
@@ -152,59 +137,21 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_RBUTTONDOWN:
+				return HandleRButtonDown (ref m);
+				
 			case Msg.WM_LBUTTONDOWN:
-				return HandleButtonDown (ref m);
+				return HandleLButtonDown (ref m);
+				
+			case Msg.WM_LBUTTONDBLCLK:
+				return HandleLButtonDblClick (ref m);
+				
 			case Msg.WM_PARENTNOTIFY:
 				if (Control.LowOrder(m.WParam.ToInt32()) == (int) Msg.WM_LBUTTONDOWN) 
 					Activate ();
 				break;
-				
-			case Msg.WM_NCHITTEST:
-				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
-				NCPointToClient (ref x, ref y);
-
-				FormPos pos = FormPosForCoords (x, y);
-				
-				if (pos == FormPos.TitleBar) {
-					m.Result = new IntPtr ((int) HitTest.HTCAPTION);
-					return true;
-				}
-
-				if (!IsSizable)
-					return false;
-
-				switch (pos) {
-				case FormPos.Top:
-					m.Result = new IntPtr ((int) HitTest.HTTOP);
-					break;
-				case FormPos.Left:
-					m.Result = new IntPtr ((int) HitTest.HTLEFT);
-					break;
-				case FormPos.Right:
-					m.Result = new IntPtr ((int) HitTest.HTRIGHT);
-					break;
-				case FormPos.Bottom:
-					m.Result = new IntPtr ((int) HitTest.HTBOTTOM);
-					break;
-				case FormPos.TopLeft:
-					m.Result = new IntPtr ((int) HitTest.HTTOPLEFT);
-					break;
-				case FormPos.TopRight:
-					m.Result = new IntPtr ((int) HitTest.HTTOPRIGHT);
-					break;
-				case FormPos.BottomLeft:
-					m.Result = new IntPtr ((int) HitTest.HTBOTTOMLEFT);
-					break;
-				case FormPos.BottomRight:
-					m.Result = new IntPtr ((int) HitTest.HTBOTTOMRIGHT);
-					break;
-				default:
-					// We return false so that DefWndProc handles things
-					return false;
-				}
-				return true;
+			case Msg.WM_NCHITTEST: 
+				return HandleNCHitTest (ref m);
 
 				// Return true from these guys, otherwise win32 will mess up z-order
 			case Msg.WM_NCLBUTTONUP:
@@ -228,49 +175,108 @@ namespace System.Windows.Forms {
 				break;
 			
 			case Msg.WM_MOUSE_LEAVE:
-				FormMouseLeave (ref m);
+				HandleMouseLeave (ref m);
 				break;
 
 			case Msg.WM_NCCALCSIZE:
-				XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
-
-				if (m.WParam == (IntPtr) 1) {
-					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
-							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
-
-					int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-
-					if (HasBorders) {
-						ncp.rgrc1.top += TitleBarHeight + bw;
-						ncp.rgrc1.bottom -= bw;
-						ncp.rgrc1.left += bw;
-						ncp.rgrc1.right -= bw;
-					}
-
-					Marshal.StructureToPtr(ncp, m.LParam, true);
-				}
-
+				HandleNCCalcSize (ref m);
 				break;
 
 			case Msg.WM_NCPAINT:
-				PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
-
-				Rectangle clip;
- 				// clip region is not correct on win32.
-				// if (m.WParam.ToInt32 () > 1) {
-				//	Region r = Region.FromHrgn (m.WParam);
-				//	RectangleF rf = r.GetBounds (pe.Graphics);
-				//	clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
-				//} else {	
-				clip = new Rectangle (0, 0, form.Width, form.Height);
-				//}
-
-				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
-				XplatUI.PaintEventEnd (form.Handle, false);
-				return true;
+				return HandleNCPaint ();
 			}
 
 			return false;
+		}
+
+		protected virtual bool HandleNCPaint ()
+		{
+			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
+
+			Rectangle clip;
+			// clip region is not correct on win32.
+			// if (m.WParam.ToInt32 () > 1) {
+			//	Region r = Region.FromHrgn (m.WParam);
+			//	RectangleF rf = r.GetBounds (pe.Graphics);
+			//	clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
+			//} else {	
+			clip = new Rectangle (0, 0, form.Width, form.Height);
+			//}
+
+			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
+			XplatUI.PaintEventEnd (form.Handle, false);
+			return true;
+		}
+
+		protected virtual void HandleNCCalcSize (ref Message m)
+		{
+			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+
+			if (m.WParam == (IntPtr)1) {
+				ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
+						typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+
+				if (HasBorders) {
+					ncp.rgrc1.top += TitleBarHeight + bw;
+					ncp.rgrc1.bottom -= bw;
+					ncp.rgrc1.left += bw;
+					ncp.rgrc1.right -= bw;
+				}
+
+				Marshal.StructureToPtr (ncp, m.LParam, true);
+			}
+		}
+
+		protected virtual bool HandleNCHitTest (ref Message m)
+		{
+
+			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int)m.LParam.ToInt32 ());
+
+			NCPointToClient (ref x, ref y);
+
+			FormPos pos = FormPosForCoords (x, y);
+
+			if (pos == FormPos.TitleBar) {
+				m.Result = new IntPtr ((int)HitTest.HTCAPTION);
+				return true;
+			}
+
+			if (!IsSizable)
+				return false;
+
+			switch (pos) {
+			case FormPos.Top:
+				m.Result = new IntPtr ((int)HitTest.HTTOP);
+				break;
+			case FormPos.Left:
+				m.Result = new IntPtr ((int)HitTest.HTLEFT);
+				break;
+			case FormPos.Right:
+				m.Result = new IntPtr ((int)HitTest.HTRIGHT);
+				break;
+			case FormPos.Bottom:
+				m.Result = new IntPtr ((int)HitTest.HTBOTTOM);
+				break;
+			case FormPos.TopLeft:
+				m.Result = new IntPtr ((int)HitTest.HTTOPLEFT);
+				break;
+			case FormPos.TopRight:
+				m.Result = new IntPtr ((int)HitTest.HTTOPRIGHT);
+				break;
+			case FormPos.BottomLeft:
+				m.Result = new IntPtr ((int)HitTest.HTBOTTOMLEFT);
+				break;
+			case FormPos.BottomRight:
+				m.Result = new IntPtr ((int)HitTest.HTBOTTOMRIGHT);
+				break;
+			default:
+				// We return false so that DefWndProc handles things
+				return false;
+			}
+			return true;
 		}
 
 		public virtual void UpdateBorderStyle (FormBorderStyle border_style)
@@ -285,36 +291,7 @@ namespace System.Windows.Forms {
 			CreateButtons ();
 		}
 
-		public bool HandleMenuMouseDown (MainMenu menu, int x, int y)
-		{
-			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
-
-			HandleTitleBarDown (pt.X, pt.Y);
-			return is_mouse_down_menu;
-		}
-
-		public void HandleMenuMouseUp (MainMenu menu, int x, int y)
-		{
-			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
-
-			HandleTitleBarUp (pt.X, pt.Y);
-		}
-		
-		public void HandleMenuMouseLeave(MainMenu menu, int x, int y)
-		{
-			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
-			HandleTitleBarLeave (pt.X, pt.Y);
-
-		}
-		
-		public void HandleMenuMouseMove (MainMenu menu, int x, int y)
-		{
-			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
-			
-			HandleTitleBarMove (pt.X, pt.Y);
-			
-		}
-		
+		#region ToolTip helpers
 		// Called from MouseMove if mouse is over a button
 		private void ToolTipStart (TitleButton button)
 		{
@@ -387,6 +364,7 @@ namespace System.Windows.Forms {
 			if (reset_hidden_button)
 				tooltip_hidden_button = null;
 		}
+		#endregion
 		
 		public virtual void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
@@ -426,8 +404,6 @@ namespace System.Windows.Forms {
 
 		protected virtual void Activate ()
 		{
-			// Hack to get a paint
-			//NativeWindow.WndProc (form.Handle, Msg.WM_NCPAINT, IntPtr.Zero, IntPtr.Zero);
 			form.Refresh ();
 		}
 
@@ -440,12 +416,7 @@ namespace System.Windows.Forms {
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
-			Message m = new Message ();
-			m.Msg = (int) Msg.WM_NCPAINT;
-			m.HWnd = form.Handle;
-			m.LParam = IntPtr.Zero;
-			m.WParam = new IntPtr (1);
-			XplatUI.SendMessage (ref m);
+			XplatUI.InvalidateNC (form.Handle);
 		}
 
 		protected void CreateButtons ()
@@ -481,12 +452,23 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
-		protected virtual bool HandleButtonDown (ref Message m)
+		protected virtual bool HandleRButtonDown (ref Message m)
+		{
+			Activate ();
+			return false;
+		}
+		
+		protected virtual bool HandleLButtonDown (ref Message m)
 		{
 			Activate ();
 			return false;
 		}
 
+		protected virtual bool HandleLButtonDblClick(ref Message m)
+		{
+			return false;
+		}
+		
 		protected virtual bool HandleNCMouseLeave (ref Message m)
 		{
 			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
@@ -505,7 +487,6 @@ namespace System.Windows.Forms {
 		
 		protected virtual bool HandleNCMouseMove (ref Message m)
 		{
-
 			int x = Control.LowOrder((int)m.LParam.ToInt32( ));
 			int y = Control.HighOrder((int)m.LParam.ToInt32( ));
 
@@ -513,7 +494,7 @@ namespace System.Windows.Forms {
 			FormPos pos = FormPosForCoords (x, y);
 
 			if (pos == FormPos.TitleBar) {
-				HandleTitleBarMove (x, y);
+				HandleTitleBarMouseMove (x, y);
 				return true;
 			}
 
@@ -527,8 +508,6 @@ namespace System.Windows.Forms {
 
 			start = Cursor.Position;
 			virtual_position = form.Bounds;
-
-			is_mouse_down_menu = false;
 			
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
@@ -558,6 +537,21 @@ namespace System.Windows.Forms {
 
 		protected virtual void HandleNCLButtonDblClick (ref Message m)
 		{
+			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int)m.LParam.ToInt32 ());
+
+			// Need to adjust because we are in NC land
+			NCPointToClient (ref x, ref y);
+
+			FormPos pos = FormPosForCoords (x, y);
+			if (pos == FormPos.TitleBar || pos == FormPos.Top)
+				HandleTitleBarDoubleClick (x, y);
+
+		}
+		
+		protected virtual void HandleTitleBarDoubleClick (int x, int y)
+		{
+		
 		}
 		
 		protected virtual void HandleTitleBarLeave (int x, int y)
@@ -568,36 +562,35 @@ namespace System.Windows.Forms {
 				}
 			}
 			ToolTipHide (true);
-			is_mouse_down_menu = false;
-			if (IsMaximized)
-				XplatUI.InvalidateNC (form.MdiParent.Handle);
 			return;
 		}
 		
-		protected virtual void HandleTitleBarMove (int x, int y)
+		protected virtual void HandleTitleBarMouseMove (int x, int y)
 		{
 			bool any_change = false;
 			bool any_tooltip = false;
+			bool any_pushed_buttons = AnyPushedTitleButtons;
+			
 			foreach (TitleButton button in title_buttons) {
 				if (button == null)
 					continue;
 				
 				if (button.Rectangle.Contains (x, y)) {
-					if (is_mouse_down_menu) {
+					if (any_pushed_buttons) {
 						any_change |= button.State != ButtonState.Pushed;
 						button.State = ButtonState.Pushed;
 					}
 					ToolTipStart (button);
 					any_tooltip = true;
 				} else {
-					if (is_mouse_down_menu) {
+					if (any_pushed_buttons) {
 						any_change |= button.State != ButtonState.Normal;
 						button.State = ButtonState.Normal;
 					}
 				}
 			}
 			if (any_change) {
-				if (IsMaximized)
+				if (IsMaximized && form.IsMdiChild)
 					XplatUI.InvalidateNC (form.MdiParent.Handle);
 				else
 					XplatUI.InvalidateNC (form.Handle);
@@ -608,8 +601,6 @@ namespace System.Windows.Forms {
 		
 		protected virtual void HandleTitleBarUp (int x, int y)
 		{
-			is_mouse_down_menu = false;
-			
 			foreach (TitleButton button in title_buttons) {
 				if (button == null)
 					continue;
@@ -620,8 +611,6 @@ namespace System.Windows.Forms {
 				} 
 			}
 
-			if (IsMaximized)
-				XplatUI.InvalidateNC (form.MdiParent.Handle);
 			return;
 		}
 		
@@ -629,29 +618,23 @@ namespace System.Windows.Forms {
 		{
 			ToolTipHide (false);
 			
-			is_mouse_down_menu = false;
 			foreach (TitleButton button in title_buttons) {
 				if (button != null) {
 					if (button.Rectangle.Contains (x, y)) {
 						button.State = ButtonState.Pushed;
-						is_mouse_down_menu = true;
 					} else {
 						button.State = ButtonState.Normal;
 					}
 				}
 			}
 			
-			if (IsMaximized) {
-				XplatUI.InvalidateNC (form.MdiParent.Handle);
-			} else if (!is_mouse_down_menu){
+			if (!AnyPushedTitleButtons && !IsMaximized){
 				state = State.Moving;
 				clicked_point = new Point (x, y);
 				form.Capture = true;
-				XplatUI.InvalidateNC (form.Handle);
-			} else {
-				XplatUI.InvalidateNC (form.Handle);
 			}
-
+			
+			XplatUI.InvalidateNC (form.Handle);
 		}
 
 		private bool HandleMouseMove (Form form, ref Message m)
@@ -668,7 +651,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		private void FormMouseLeave (ref Message m)
+		private void HandleMouseLeave (ref Message m)
 		{
 			form.ResetCursor ();
 		}
@@ -780,7 +763,7 @@ namespace System.Windows.Forms {
 			DrawVirtualPosition (virtual_position);
 		}
 
-		private void HandleLButtonUp (ref Message m)
+		protected virtual void HandleLButtonUp (ref Message m)
 		{
 			if (state == State.Idle)
 				return;
@@ -879,10 +862,14 @@ namespace System.Windows.Forms {
 
 		protected virtual void NCPointToClient(ref int x, ref int y) {
 			form.PointToClient(ref x, ref y);
+			NCClientToNC (ref x, ref y);
+		}
+
+		protected virtual void NCClientToNC (ref int x, ref int y) {
 			y += TitleBarHeight;
 			y += ThemeEngine.Current.ManagedWindowBorderWidth (this);
 		}
-
+		
 		protected FormPos FormPosForCoords (int x, int y)
 		{
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);

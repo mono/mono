@@ -709,7 +709,6 @@ namespace System.Windows.Forms {
 			Hwnd hwnd;
 			
 			if (child == IntPtr.Zero) {
-				//Console.WriteLine ("Child is zero");
 				return;
 			}
 			
@@ -720,7 +719,6 @@ namespace System.Windows.Forms {
 			}
 			
 			if (hwnd.Handle == IntPtr.Zero) {
-				//Console.WriteLine ("Child's Handle is zero");
 				return;
 			}
 			
