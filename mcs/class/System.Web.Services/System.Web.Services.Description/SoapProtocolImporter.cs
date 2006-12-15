@@ -192,7 +192,12 @@ namespace System.Web.Services.Description {
 
 		protected override bool IsBindingSupported ()
 		{
+#if NET_2_0
+			object o = Binding.Extensions.Find (typeof(SoapBinding));
+			return o != null && !(o is Soap12Binding);
+#else
 			return Binding.Extensions.Find (typeof(SoapBinding)) != null;
+#endif
 		}
 
 		[MonoTODO]
@@ -655,6 +660,11 @@ namespace System.Web.Services.Description {
 	{
 		public override string ProtocolName {
 			get { return "Soap12"; }
+		}
+
+		protected override bool IsBindingSupported ()
+		{
+			return Binding.Extensions.Find (typeof(Soap12Binding)) != null;
 		}
 	}
 #endif

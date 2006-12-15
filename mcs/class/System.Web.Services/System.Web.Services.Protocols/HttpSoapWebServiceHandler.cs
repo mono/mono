@@ -121,7 +121,11 @@ namespace System.Web.Services.Protocols
 				string soapAction = null;
 				string ctype;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
+#if NET_2_0
+				if (ctype != "text/xml" && ctype != "application/soap+xml")
+#else
 				if (ctype != "text/xml")
+#endif
 					throw new WebException ("Content is not XML: " + ctype);
 					
 				object server = CreateServerInstance ();

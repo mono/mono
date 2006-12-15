@@ -284,9 +284,15 @@ namespace System.Web.Services.Protocols
 			//
 			string ctype;
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
-			if (ctype != "text/xml")
+			string expectedCType =
+#if NET_2_0
+				(message.SoapVersion == SoapProtocolVersion.Soap12 ? "application/soap+xml" : "text/xml");
+#else
+				"text/xml";
+#endif
+			if (ctype != expectedCType)
 				WebServiceHelper.InvalidOperation (
-					"Content is not 'text/xml' but '" + response.ContentType + "'",
+					String.Format ("Content is not '{0}' but '{1}'", expectedCType, response.ContentType),
 					response, encoding);
 
 			message.ContentType = ctype;
