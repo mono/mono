@@ -30,9 +30,11 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[ListBindable(false)]
 	public class ListViewGroupCollection : IList, ICollection, IEnumerable
 	{
 		private ArrayList list = null;

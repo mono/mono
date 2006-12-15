@@ -1,5 +1,10 @@
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
+	* ListViewGroup.cs: Added missing attributes.
+	* ListViewGroupCollection.cs: Added missing attributes.
+
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
 	* ListViewItem.cs: fixed ListViewSubItem text property.
 
 2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

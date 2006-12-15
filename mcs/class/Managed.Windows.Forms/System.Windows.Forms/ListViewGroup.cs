@@ -35,6 +35,9 @@ using System.ComponentModel;
 namespace System.Windows.Forms
 {
 	[SerializableAttribute]
+	[ToolboxItem(false)]
+	[DesignTimeVisible(false)]
+	[DefaultProperty("Header")]
 	public sealed class ListViewGroup : ISerializable
 	{
 		private string header = string.Empty;
@@ -123,6 +126,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public ListView.ListViewItemCollection Items {
 			get {
 				if (items == null)
@@ -132,6 +136,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility(0)]
+		[Browsable(false)]
 		public ListView ListView {
 			get { return list_view_owner; }
 		}
@@ -141,15 +147,17 @@ namespace System.Windows.Forms
 			set { list_view_owner = value; }
 		}
 
-		[DefaultValue ("")]
+		[Browsable(true)]
+		[DefaultValue("")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
-		[LocalizableAttribute(false)]
-		[BindableAttribute(true)]
-		[DefaultValue (null)]
+		[TypeConverter(typeof(StringConverter))]
+		[DefaultValue("")]
+		[Localizable(false)]
+		[Bindable(true)]
 		public Object Tag {
 			get { return tag; }
 			set { tag = value; }
