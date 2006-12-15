@@ -3056,17 +3056,25 @@ namespace System.Windows.Forms
 
 			public void AddRange (ListViewItem [] values)
 			{
-				list.Clear ();
+				if (values == null)
+					throw new ArgumentNullException ("Argument cannot be null!", "values");
 
 				foreach (ListViewItem item in values) {
-					item.Owner = owner;
-					list.Add (item);
+					this.Add (item);
 				}
-
-				owner.Sort (false);
-				OnChange ();
-				owner.Redraw (true);
 			}
+
+#if NET_2_0
+			public void AddRange (ListViewItemCollection items)
+			{
+				if (items == null)
+					throw new ArgumentNullException ("Argument cannot be null!", "items");
+
+				ListViewItem[] itemArray = new ListViewItem[items.Count];
+				items.CopyTo (itemArray,0);
+				this.AddRange (itemArray);
+			}
+#endif
 
 			public virtual void Clear ()
 			{

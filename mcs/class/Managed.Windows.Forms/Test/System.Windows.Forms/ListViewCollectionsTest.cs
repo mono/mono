@@ -574,6 +574,74 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ListViewItemCollectionTest_AddRange ()
+		{
+			ListView lv1 = new ListView ();
+			ListViewItem item1 = new ListViewItem ("Item1");
+			ListViewItem item2 = new ListViewItem ("Item2");
+			ListViewItem item3 = new ListViewItem ("Item3");
+
+			lv1.Items.AddRange (new ListViewItem[] { item1, item2, item3 });
+            
+			Assert.AreSame (item1, lv1.Items[0], "#A1");
+			Assert.AreEqual (0, item1.Index, "#A2");
+			Assert.AreSame (lv1, item1.ListView, "#A3");
+
+			Assert.AreSame (item2, lv1.Items[1], "#B1");
+			Assert.AreEqual (1, item2.Index, "#B2");
+			Assert.AreSame (lv1, item2.ListView, "#B3");
+
+			Assert.AreSame (item3, lv1.Items[2], "#C1");
+			Assert.AreEqual (2, item3.Index, "#C2");
+			Assert.AreSame (lv1, item3.ListView, "#C3");
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_AddRange_Count ()
+		{
+			ListView lv1 = new ListView ();
+			ListViewItem item1 = new ListViewItem ("Item1");
+			ListViewItem item2 = new ListViewItem ("Item2");
+			ListViewItem item3 = new ListViewItem ("Item3");
+
+			lv1.Items.Add ("Item4");
+			Assert.AreEqual (1, lv1.Items.Count, "#A1");
+			lv1.Items.AddRange (new ListViewItem[] { item1, item2, item3 });
+			Assert.AreEqual (4, lv1.Items.Count, "#A1");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ListViewItemCollectionTest_AddRange_NullException ()
+		{
+			ListView lv1 = new ListView ();
+			ListViewItem[] value = null;
+			lv1.Items.AddRange (value);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))] // An item cannot be added to more than one ListView. To add an item again, you need to clone it
+		public void ListViewItemCollectionTest_AddRange_OwnedItem ()
+		{
+			//MSDN told us, we can use this method to reuse items from a different ListView control. That is not true.
+			ListView lv1 = new ListView ();
+			ListView lv2 = new ListView ();
+			ListViewItem a = lv1.Items.Add ("Item1");
+			ListViewItem b = lv1.Items.Add ("Item2");
+
+			lv2.Items.AddRange (new ListViewItem[] { a, b });
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))] // An item cannot be added more than once. To add an item again, you need to clone it
+		public void ListViewItemCollectionTest_AddRange_ExistingItem ()
+		{
+			ListView lv1 = new ListView ();
+			ListViewItem item1 = lv1.Items.Add ("Item1");
+			lv1.Items.Add (item1);
+		}
+
+		[Test]
 		public void ListViewItemCollectionTest_Insert ()
 		{
 			ListView lvw = new ListView ();

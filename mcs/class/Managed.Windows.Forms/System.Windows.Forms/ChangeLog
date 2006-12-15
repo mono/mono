@@ -1,5 +1,10 @@
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
+	* ListView.cs: fixed ListViewItemCollection AddRange and
+			implemented ListViewItemCollection AddRange 2.0 support.
+
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
 	* ListViewGroup.cs: Add.
 	* ListViewGroupCollection.cs: Add
 	* ListView.cs: Add ListViewGroup (Group) and ShowGroups 2.0 support.
