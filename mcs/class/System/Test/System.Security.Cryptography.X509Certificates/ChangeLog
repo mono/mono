@@ -1,3 +1,8 @@
+2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedNameTest.cs: Add test case for Teletext/T61String.
+	* X509Certificate2Test.cs: Add test case for Teletext/T61String.
+
 2006-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Pkits_4_01_SignatureVerification.cs: New. PKITS based unit tests.
