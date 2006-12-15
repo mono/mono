@@ -110,9 +110,9 @@ namespace System.Windows.Forms {
 
 		public bool AnyPushedTitleButtons {
 			get {
-				return minimize_button.State == ButtonState.Pushed ||
-					maximize_button.State == ButtonState.Pushed ||
-					close_button.State == ButtonState.Pushed;
+				return (minimize_button != null && minimize_button.State == ButtonState.Pushed) ||
+					(maximize_button != null && maximize_button.State == ButtonState.Pushed) ||
+					(close_button != null && close_button.State == ButtonState.Pushed);
 			}
 		}
 		
