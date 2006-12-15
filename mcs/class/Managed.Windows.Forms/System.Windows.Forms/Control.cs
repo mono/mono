@@ -50,6 +50,10 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[ComVisible(true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
 	[DefaultEvent("Click")]
@@ -286,7 +290,11 @@ namespace System.Windows.Forms
 			#endregion	// ControlAccessibleObject Public Instance Methods
 		}
 
+#if NET_2_0
+		[ComVisible (false)]
+#else
 		[DesignerSerializer("System.Windows.Forms.Design.ControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+#endif
 		[ListBindable(false)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
@@ -392,7 +400,9 @@ namespace System.Windows.Forms
 				owner.PerformLayout (control, "Parent");
 				owner.OnControlAdded (new ControlEventArgs (control));
 			}
-
+#if NET_2_0
+			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 			public virtual void AddRange (Control[] controls)
 			{
 				if (controls == null)
@@ -1453,6 +1463,9 @@ namespace System.Windows.Forms
 		}
 		
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		[MonoTODO]
 		public static bool CheckForIllegalCrossThreadCalls 
 		{
@@ -1570,7 +1583,13 @@ namespace System.Windows.Forms
 #if NET_2_0
 		// XXX: Implement me!
 		bool auto_size;
-
+		
+		[RefreshProperties (RefreshProperties.All)]
+		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (false)]
 		public virtual bool AutoSize {
 			get {
 				//Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
@@ -1581,7 +1600,8 @@ namespace System.Windows.Forms
 				auto_size = value;
 			}
 		}
-
+		
+		[AmbientValue (typeof(Size), "0, 0")]
 		public virtual Size MaximumSize {
 			get {
 				return maximum_size;
@@ -1832,7 +1852,9 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
-
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		[DefaultValue(null)]
 		[MWFCategory("Behavior")]
 		public virtual ContextMenu ContextMenu {
@@ -2198,6 +2220,8 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Layout.LayoutEngine LayoutEngine {
 			get { return new Layout.DefaultLayout (); }
 		} 
@@ -2660,7 +2684,9 @@ namespace System.Windows.Forms
 				;; // Nothing to do
 			}
 		}
-
+#if NET_2_0
+		[Obsolete ()]
+#endif
 		protected bool RenderRightToLeft {
 			get {
 				return (this.right_to_left == RightToLeft.Yes);
@@ -2832,7 +2858,9 @@ namespace System.Windows.Forms
 			}
 			return null;
 		}
-
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public bool Focus() {
 			if (CanFocus && IsHandleCreated && !has_focus && !is_focusing) {
 				is_focusing = true;
@@ -2886,6 +2914,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
 			return preferred_size;
 		}
@@ -3258,16 +3287,24 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Obsolete ()]
+#endif
 		public void Scale(float ratio) {
 			ScaleCore(ratio, ratio);
 		}
-
+		
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Obsolete ()]
+#endif
 		public void Scale(float dx, float dy) {
 			ScaleCore(dx, dy);
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void Scale(SizeF factor) {
 			ScaleCore(factor.Width, factor.Height);
 		}
@@ -5008,21 +5045,31 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
-
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public event EventHandler ContextMenuChanged {
 			add { Events.AddHandler (ContextMenuChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuChangedEvent, value); }
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#if NET_2_0
+		[Browsable(true)]
+#else 
 		[Browsable(false)]
+#endif
 		public event ControlEventHandler ControlAdded {
 			add { Events.AddHandler (ControlAddedEvent, value); }
 			remove { Events.RemoveHandler (ControlAddedEvent, value); }
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#if NET_2_0
+		[Browsable(true)]
+#else 
 		[Browsable(false)]
+#endif
 		public event ControlEventHandler ControlRemoved {
 			add { Events.AddHandler (ControlRemovedEvent, value); }
 			remove { Events.RemoveHandler (ControlRemovedEvent, value); }
@@ -5226,6 +5273,9 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (QueryContinueDragEvent, value); }
 		}
 
+#if NET_2_0	
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public event EventHandler Resize {
 			add { Events.AddHandler (ResizeEvent, value); }
 			remove { Events.RemoveHandler (ResizeEvent, value); }

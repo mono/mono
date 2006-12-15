@@ -4,6 +4,10 @@
 
 2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
+	* Control.cs: Added missing 2.0 attributes
+	
+2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
 	* MdiClient.cs: Added missing 2.0 attribute.
 	* MonthCalendar.cs: Added some missing 2.0 attributes 
 	and properties.
