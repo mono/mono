@@ -99,9 +99,9 @@ namespace Microsoft.Build.BuildEngine {
 			return false;
 		}
 		
-		private static bool NumberCompare (float l,
-						   float r,
-						   RelationOperator op)
+		static bool NumberCompare (float l,
+					   float r,
+					   RelationOperator op)
 		{
 			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			
@@ -123,9 +123,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		private static bool BoolCompare (bool l,
-						 bool r,
-						 RelationOperator op)
+		static bool BoolCompare (bool l,
+					 bool r,
+					 RelationOperator op)
 		{
 			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			
@@ -139,9 +139,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		private static bool StringCompare (string l,
-						   string r,
-						   RelationOperator op)
+		static bool StringCompare (string l,
+					   string r,
+					   RelationOperator op)
 		{
 			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			

@@ -37,30 +37,29 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildPropertyGroup : IEnumerable {
 	
+		ImportedProject		importedProject;
 		XmlElement		propertyGroup;
-		bool			isImported;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
 		List <BuildProperty>	properties;
 		Dictionary <string, BuildProperty>	propertiesByName;
 
 		public BuildPropertyGroup ()
-			: this (null, null)
+			: this (null, null, null)
 		{
 		}
 
-		internal BuildPropertyGroup (XmlElement xmlElement, Project project)
+		internal BuildPropertyGroup (XmlElement xmlElement, Project project, ImportedProject importedProject)
 		{
-			this.isImported = false;
+			this.importedProject = importedProject;
 			this.parentCollection = null;
 			this.parentProject = project;
-			this.isImported = false;
 			this.propertyGroup = xmlElement;
 
 			if (FromXml) {
 				this.properties = new List <BuildProperty> ();
 				foreach (XmlNode xn in propertyGroup.ChildNodes) {
-					if (xn is XmlElement == false)
+					if (!(xn is XmlElement))
 						continue;
 					
 					XmlElement xe = (XmlElement) xn;
@@ -229,7 +228,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public bool IsImported {
 			get {
-				return isImported;
+				return importedProject != null;
 			}
 		}
 
@@ -244,11 +243,10 @@ namespace Microsoft.Build.BuildEngine {
 				if (FromXml)
 					throw new InvalidOperationException ("Properties in persisted property groups cannot be accessed by name.");
 				
-				if (propertiesByName.ContainsKey (propertyName)) {
+				if (propertiesByName.ContainsKey (propertyName))
 					return propertiesByName [propertyName];
-				} else {
+				else
 					return null;
-				}
 			}
 			set {
 				propertiesByName [propertyName] = value;

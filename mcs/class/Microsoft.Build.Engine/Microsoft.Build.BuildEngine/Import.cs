@@ -73,11 +73,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		string EvaluateProjectPath (string file)
 		{
-			OldExpression exp;
+			Expression exp;
 
-			exp = new OldExpression (project);
-			exp.ParseSource (file);
-			return (string) exp.ConvertTo (typeof (string));
+			exp = new Expression ();
+			exp.Parse (file);
+			return (string) exp.ConvertTo (project, typeof (string));
 		}
 
 		string GetFullPath ()

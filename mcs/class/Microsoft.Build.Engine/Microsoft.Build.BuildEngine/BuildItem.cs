@@ -191,16 +191,16 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate (bool evaluatedTo)
 		{
 			DirectoryScanner directoryScanner;
-			OldExpression includeExpr, excludeExpr;
+			Expression includeExpr, excludeExpr;
 			string includes, excludes;
 
-			includeExpr = new OldExpression (parentItemGroup.Project);
-			includeExpr.ParseSource (Include);
-			excludeExpr = new OldExpression (parentItemGroup.Project);
-			excludeExpr.ParseSource (Exclude);
+			includeExpr = new Expression ();
+			includeExpr.Parse (Include);
+			excludeExpr = new Expression ();
+			excludeExpr.Parse (Exclude);
 			
-			includes = (string) includeExpr.ConvertTo (typeof (string));
-			excludes = (string) excludeExpr.ConvertTo (typeof (string));
+			includes = (string) includeExpr.ConvertTo (parentItemGroup.Project, typeof (string));
+			excludes = (string) excludeExpr.ConvertTo (parentItemGroup.Project, typeof (string));
 
 			this.finalItemSpec = includes;
 			
@@ -251,19 +251,19 @@ namespace Microsoft.Build.BuildEngine {
 			big.AddItem (bi);
 		}
 		
-		internal string ConvertToString (OldExpression transform)
+		internal string ConvertToString (Expression transform)
 		{
 			return GetItemSpecFromTransform (transform);
 		}
 		
-		internal ITaskItem ConvertToITaskItem (OldExpression transform)
+		internal ITaskItem ConvertToITaskItem (Expression transform)
 		{
 			TaskItem taskItem;
 			taskItem = new TaskItem (GetItemSpecFromTransform (transform), evaluatedMetadata);
 			return taskItem;
 		}
 
-		private string GetItemSpecFromTransform (OldExpression transform)
+		private string GetItemSpecFromTransform (Expression transform)
 		{
 			StringBuilder sb;
 		
@@ -275,9 +275,9 @@ namespace Microsoft.Build.BuildEngine {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {
-						sb.Append (((PropertyReference)o).ConvertToString ());
+						sb.Append (((PropertyReference)o).ConvertToString (parentItemGroup.Project));
 					} else if (o is ItemReference) {
-						sb.Append (((ItemReference)o).ConvertToString ());
+						sb.Append (((ItemReference)o).ConvertToString (parentItemGroup.Project));
 					} else if (o is MetadataReference) {
 						sb.Append (GetMetadata (((MetadataReference)o).MetadataName));
 					}
@@ -296,6 +296,8 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Condition", value);
+				else
+					throw new InvalidOperationException ("Cannot set a condition on an object not represented by an XML element in the project file.");
 			}
 		}
 
@@ -309,6 +311,8 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Exclude", value);
+				else
+					throw new InvalidOperationException ("Assigning the \"Exclude\" attribute of a virtual item is not allowed.");
 			}
 		}
 

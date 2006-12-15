@@ -36,34 +36,15 @@ namespace Microsoft.Build.BuildEngine {
 	
 		string		itemName;
 		string		metadataName;
+		int start;
+		int length;
 	
-		public MetadataReference ()
-		{
-		}
-
-		public MetadataReference (string itemName, string metadataName)
+		public MetadataReference (string itemName, string metadataName, int start, int length)
 		{
 			this.itemName = itemName;
 			this.metadataName = metadataName;
-		}
-		
-		public void ParseSource (string source)
-		{
-			string sourceWithoutParens;
-			int dot;
-		
-			if (source.Length < 4)
-				throw new ArgumentException ("source is too short.");
-			
-			sourceWithoutParens = source.Substring (2, source.Length - 3);
-			dot = sourceWithoutParens.IndexOf ('.');
-			
-			if (dot != -1) {
-				itemName = sourceWithoutParens.Substring (0, dot);
-				metadataName = sourceWithoutParens.Substring (dot + 1, sourceWithoutParens.Length - dot - 1); 
-			} else {
-				metadataName = sourceWithoutParens;
-			}
+			this.start = start;
+			this.length = length;
 		}
 		
 		public string ItemName {
@@ -76,6 +57,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public bool IsQualified {
 			get { return (itemName == null) ? false : true; }
+		}
+
+		public int Start {
+			get { return start; }
+		}
+
+		public int End {
+			get { return start + length - 1; }
 		}
 	}
 }

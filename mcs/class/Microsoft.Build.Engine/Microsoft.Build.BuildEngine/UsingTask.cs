@@ -62,9 +62,9 @@ namespace Microsoft.Build.BuildEngine {
 			if (AssemblyName != null) {
 				loadInfo = new AssemblyLoadInfo (AssemblyName, TaskName);
 			} else if (AssemblyFile != null) {
-				OldExpression exp = new OldExpression (project);
-				exp.ParseSource (AssemblyFile);
-				string filename = (string) exp.ConvertTo (typeof (string));
+				Expression exp = new Expression ();
+				exp.Parse (AssemblyFile);
+				string filename = (string) exp.ConvertTo (project, typeof (string));
 
 				if (Path.IsPathRooted (filename) == false) {
 					string ffn;

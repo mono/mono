@@ -30,138 +30,65 @@
 using System;
 using System.Collections;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class ItemReference {
 	
-		string			itemName;
-		OldExpression		separator;
-		OldExpression		transform;
-		Project			parentProject;
+		string		itemName;
+		Expression	transform;
+		Expression	separator;
+		int		start;
+		int		length;
 		
-		/*
-		public ItemReference (Project parentProject, string itemName,
-				      LiteralExpression transform,
-				      LiteralExpression separator)
+		public ItemReference (string itemName, string transform, string separator, int start, int length)
 		{
-			this.parentProject = parentProject;
 			this.itemName = itemName;
-			this.transform = transform;
-			this.separator = separator;
-		}
-		*/
-	
-		public ItemReference (Project parentProject)
-		{
-			if (parentProject == null)
-				throw new ArgumentNullException ("Parent Project needed.");
-			this.parentProject = parentProject;
-			this.itemName = null;
-			this.separator = null;
-		}
-		
-		public void ParseSource (string source)
-		{
-			string sourceWithoutParens;
-			string separatorString = null;
-			ApostropheState aState = ApostropheState.Out;
-			ItemParsingState iState = ItemParsingState.Name;
-			int c = -1;
-			int itemNameEnd;
-			int transformEnd = -1;
-			int separatorStart = -1;
-		
-			if (source == null)
-				throw new ArgumentNullException ("source");
-		
-			if (source.Length < 3)
-				throw new ArgumentException ("Invalid item.");
-			
-			sourceWithoutParens = source.Substring (2, source.Length - 3);
-			itemNameEnd = sourceWithoutParens.Length - 1;
-			CharEnumerator it = sourceWithoutParens.GetEnumerator ();
+			this.start = start;
+			this.length = length;
 
-			while (it.MoveNext ()) {
-				c++;
-				if (it.Current == '\'') {
-					if (aState == ApostropheState.In)
-						aState = ApostropheState.Out;
-					else
-						aState = ApostropheState.In;
-				}
-				if (it.Current == '-' && iState == ItemParsingState.Name && aState == ApostropheState.Out) {
-					iState = ItemParsingState.Transform1;
-					itemNameEnd = c - 1;
-				} else if (it.Current == '>' && iState == ItemParsingState.Transform1 && aState == ApostropheState.Out) {
-					iState = ItemParsingState.Transform2;
-				} else if (iState == ItemParsingState.Transform2 && aState == ApostropheState.Out && c == sourceWithoutParens.Length - 1) {
-					transformEnd = c;
-				} else if (iState == ItemParsingState.Transform2 && aState == ApostropheState.Out && it.Current == ',') {
-					transformEnd = c - 1;
-					separatorStart = c + 1;
-					break;
-				} else if (iState == ItemParsingState.Name && aState == ApostropheState.Out && it.Current == ',') {
-					separatorStart = c + 1;
-					itemNameEnd = c - 1;
-					break;
-				}
+			if (transform != null) {
+				this.transform = new Expression ();
+				this.transform.Parse (transform);
 			}
-			itemName = sourceWithoutParens.Substring (0, itemNameEnd + 1);
-			if (transformEnd != -1) {
-				if (separatorStart != -1) {
-					separatorString = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
-						- separatorStart - 2);
-					transform = new OldExpression (parentProject);
-					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
-						transformEnd - itemNameEnd - 4));
-				} else {
-					transform = new OldExpression (parentProject);
-					transform.ParseSource (sourceWithoutParens.Substring (itemNameEnd + 4,
-						sourceWithoutParens.Length - itemNameEnd - 5));
-				}
-			} else {
-				if (separatorStart != -1) {
-					separatorString = sourceWithoutParens.Substring (separatorStart + 1, sourceWithoutParens.Length
-						- separatorStart - 2);
-				}
+
+			if (separator != null) {
+				this.separator = new Expression ();
+				this.separator.Parse (separator);
 			}
+		}
+		
+		public string ConvertToString (Project project)
+		{
+			BuildItemGroup big = project.EvaluatedItemsByName [itemName];
 			
-			if (separatorString != null) {
-				separator = new OldExpression (parentProject);
-				separator.ParseSource (separatorString);
-			}
+			return big.ConvertToString (transform, separator);
 		}
 		
-		public ITaskItem[] ConvertToITaskItemArray ()
+		public ITaskItem [] ConvertToITaskItemArray (Project project)
 		{
-			if (itemName != String.Empty) {
-				BuildItemGroup big;
-				if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
-					big = parentProject.EvaluatedItemsByName [itemName];
-					return big.ConvertToITaskItemArray (transform);
-				} else
-					return null;
-			} else
-				return null;
+			BuildItemGroup big = project.EvaluatedItemsByName [itemName];
+			
+			return big.ConvertToITaskItemArray (transform);
 		}
-		
-		public string ConvertToString ()
-		{
-			if (itemName != String.Empty) {
-				BuildItemGroup big;
-				if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
-					big = parentProject.EvaluatedItemsByName [itemName];
-					
-					return big.ConvertToString (transform, separator);
-				} else
-					return String.Empty;
-			} else
-				return String.Empty;
-		}
-		
+
 		public string ItemName {
 			get { return itemName; }
+		}
+
+		public Expression Transform {
+			get { return transform; }
+		}
+
+		public Expression Separator {
+			get { return separator; }
+		}
+
+		public int Start {
+			get { return start; }
+		}
+
+		public int End {
+			get { return start + length - 1; }
 		}
 	}
 }

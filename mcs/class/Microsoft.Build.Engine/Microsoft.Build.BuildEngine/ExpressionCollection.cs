@@ -65,18 +65,18 @@ namespace Microsoft.Build.BuildEngine {
 			objects.Add (s);
 		}
 		
-		public object ConvertTo (Type type)
+		public object ConvertTo (Project project, Type type)
 		{
 			if (type.IsArray) {
 				if (type == typeof (ITaskItem[]))
-					return ConvertToITaskItemArray ();
+					return ConvertToITaskItemArray (project);
 				else
-					return ConvertToArray (type);
+					return ConvertToArray (project, type);
 			} else {
 				if (type == typeof (ITaskItem))
-					return ConvertToITaskItem ();
+					return ConvertToITaskItem (project);
 				else
-					return ConvertToNonArray (type);
+					return ConvertToNonArray (project, type);
 			}
 		}
 		
@@ -86,14 +86,14 @@ namespace Microsoft.Build.BuildEngine {
 				yield return o;
 		}
 		
-		object ConvertToNonArray (Type type)
+		object ConvertToNonArray (Project project, Type type)
 		{
-			return ConvertToObject (ConvertToString (), type);
+			return ConvertToObject (ConvertToString (project), type);
 		}
 
-		object ConvertToArray (Type type)
+		object ConvertToArray (Project project, Type type)
 		{
-			string[] rawTable = ConvertToString ().Split (';');
+			string[] rawTable = ConvertToString (project).Split (';');
 			int i = 0;
 			
 			if (type == typeof (bool[])) {
@@ -141,7 +141,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception (String.Format ("Unknown type: {0}", type.ToString ()));
 			}
 		}
-		string ConvertToString ()
+		string ConvertToString (Project project)
 		{
 			StringBuilder sb = new StringBuilder ();
 			
@@ -149,9 +149,11 @@ namespace Microsoft.Build.BuildEngine {
 				if (o is string) {
 					sb.Append ((string) o);
 				} else if (o is ItemReference) {
-					sb.Append (((ItemReference)o).ConvertToString ());
+					ItemReference ir = (ItemReference) o;
+					sb.Append (ir.ConvertToString (project));
 				} else if (o is PropertyReference) {
-					sb.Append (((PropertyReference)o).ConvertToString ());
+					PropertyReference pr = (PropertyReference) o;
+					sb.Append (pr.ConvertToString (project));
 				} else if (o is MetadataReference) {
 					// FIXME: we don't handle them yet
 				} else {
@@ -161,7 +163,7 @@ namespace Microsoft.Build.BuildEngine {
 			return sb.ToString ();
 		}
 
-		ITaskItem ConvertToITaskItem ()
+		ITaskItem ConvertToITaskItem (Project project)
 		{
 			ITaskItem item;
 			
@@ -170,19 +172,19 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (objects [0] is ItemReference) {
 				ItemReference ir = (ItemReference) objects [0];
-				ITaskItem[] array = ir.ConvertToITaskItemArray ();
+				ITaskItem[] array = ir.ConvertToITaskItemArray (project);
 				if (array.Length == 1) {
 					return array [0];
 				} else {
 					throw new Exception ("TaskItem array too long");
 				}
 			} else {
-				item = new TaskItem (ConvertToString ());
+				item = new TaskItem (ConvertToString (project));
 				return item;
 			}
 		}
 		
-		ITaskItem[] ConvertToITaskItemArray ()
+		ITaskItem[] ConvertToITaskItemArray (Project project)
 		{
 			List <ITaskItem> finalItems = new List <ITaskItem> ();
 			ArrayList tempItems = new ArrayList ();
@@ -193,7 +195,7 @@ namespace Microsoft.Build.BuildEngine {
 					tempItems.Add (o);
 				} else if (o is PropertyReference) {
 					PropertyReference pr = (PropertyReference) o;
-					tempItems.Add (pr.ConvertToString ());
+					tempItems.Add (pr.ConvertToString (project));
 				} else if (o is MetadataReference) {
 					// FIXME: not handled yet
 				} else if (o is string) {
@@ -205,15 +207,13 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (object o in tempItems) {
 				if (o is ItemReference) {
 					ItemReference ir = (ItemReference) o;
-					array = ir.ConvertToITaskItemArray ();
+					array = ir.ConvertToITaskItemArray (project);
 					if (array != null)
-						foreach (ITaskItem item in array)
-							finalItems.Add (item);
+						finalItems.AddRange (array);
 				} else if (o is string) {
 					string s = (string) o;
-					array = ConvertToITaskItemArrayFromString (s);
-					foreach (ITaskItem item in array)
-						finalItems.Add (item);
+					array = ConvertToITaskItemArrayFromString (project, s);
+					finalItems.AddRange (array);
 				} else {
 					throw new Exception ("Invalid type in tempItems collection.");
 				}
@@ -222,7 +222,7 @@ namespace Microsoft.Build.BuildEngine {
 			return finalItems.ToArray ();
 		}
 		
-		ITaskItem[] ConvertToITaskItemArrayFromString (string source)
+		ITaskItem[] ConvertToITaskItemArrayFromString (Project project, string source)
 		{
 			ArrayList tempItems = new ArrayList ();
 			ITaskItem[] finalArray;

@@ -70,10 +70,9 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotSupportedException ();
 		}
 		
-		// FIXME: check if we really can do it
 		public override bool CanEvaluateToBool (Project context)
 		{
-			return true;
+			return left.CanEvaluateToBool (context) && right.CanEvaluateToBool (context);
 		}
 		
 		public override bool CanEvaluateToNumber (Project context)

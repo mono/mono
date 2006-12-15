@@ -413,6 +413,8 @@ namespace Microsoft.Build.BuildEngine {
 				node.InnerXml = xmlText;
 				
 			}
+
+			isDirty = true;
 		}
 		
 		[MonoTODO]
@@ -533,8 +535,7 @@ namespace Microsoft.Build.BuildEngine {
 						AddItemGroup (xe, ip);
 						break;
 					case "PropertyGroup":
-						// FIXME: pass ip here
-						AddPropertyGroup (xe);
+						AddPropertyGroup (xe, ip);
 						break;
 					case  "Choose":
 						AddChoose (xe);
@@ -631,11 +632,11 @@ namespace Microsoft.Build.BuildEngine {
 			ItemGroups.Add (big);
 		}
 		
-		private void AddPropertyGroup (XmlElement xmlElement)
+		private void AddPropertyGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
-			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this);
+			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this, importedProject);
 			PropertyGroups.Add (bpg);
 		}
 		

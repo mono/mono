@@ -197,9 +197,9 @@ namespace Microsoft.Build.BuildEngine {
 				if (str == String.Empty)
 					return false;
 				else {
-					OldExpression exp = new OldExpression (parentTarget.Project);
-					exp.ParseSource (str);
-					return (bool) exp.ConvertTo (typeof (bool));
+					Expression exp = new Expression ();
+					exp.Parse (str);
+					return (bool) exp.ConvertTo (parentTarget.Project, typeof (bool));
 				}
 			}
 			set {

@@ -120,9 +120,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private static Token EvaluateToken (Token token, Project context)
 		{
-			OldExpression oe = new OldExpression (context);
-			oe.ParseSource (token.Value);
-			return new Token ((string) oe.ConvertTo (typeof (string)), token.Type);
+			Expression oe = new Expression ();
+			oe.Parse (token.Value);
+			return new Token ((string) oe.ConvertTo (context, typeof (string)), token.Type);
 		}
 	}
 }

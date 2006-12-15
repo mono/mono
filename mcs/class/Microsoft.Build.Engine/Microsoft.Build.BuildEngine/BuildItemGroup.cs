@@ -38,7 +38,6 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItemGroup : IEnumerable {
 	
-		bool			isImported;
 		List <BuildItem>	buildItems;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
@@ -70,18 +69,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		internal void Evaluate ()
-		{
-			foreach (BuildItem bi in buildItems) {
-				if (bi.Condition == String.Empty)
-					bi.Evaluate (true);
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (bi.Condition);
-					bi.Evaluate (ce.BoolEvaluate (parentProject));
-				}
-			}
-		}
-
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude)
 		{
@@ -98,18 +85,6 @@ namespace Microsoft.Build.BuildEngine {
 			return bi;
 		}
 		
-		internal void AddItem (BuildItem buildItem)
-		{
-			buildItems.Add (buildItem);
-		}
-		
-		internal void AddItem (string name, ITaskItem taskItem)
-		{
-			BuildItem buildItem;
-			buildItem = new BuildItem (name, taskItem);
-			buildItems.Add (buildItem);
-		}
-
 		public void Clear ()
 		{
 			buildItems = new List <BuildItem> ();
@@ -142,16 +117,28 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			return buildItems.ToArray ();
 		}
-		
-		internal string ConvertToString (OldExpression transform,
-						 OldExpression separator)
+
+		internal void AddItem (BuildItem buildItem)
+		{
+			buildItems.Add (buildItem);
+		}
+
+		internal void AddItem (string name, ITaskItem taskItem)
+		{
+			BuildItem buildItem;
+			buildItem = new BuildItem (name, taskItem);
+			buildItems.Add (buildItem);
+		}
+
+		internal string ConvertToString (Expression transform,
+						 Expression separator)
 		{
 			string separatorString;
 			
 			if (separator == null)
 				separatorString = ";";
 			else
-				separatorString = (string) separator.ConvertTo (typeof (string));
+				separatorString = (string) separator.ConvertTo (parentProject, typeof (string));
 		
 			string[] items = new string [buildItems.Count];
 			int i = 0;
@@ -159,8 +146,8 @@ namespace Microsoft.Build.BuildEngine {
 				items [i++] = bi.ConvertToString (transform);
 			return String.Join (separatorString, items);
 		}
-		
-		internal ITaskItem[] ConvertToITaskItemArray (OldExpression transform)
+
+		internal ITaskItem[] ConvertToITaskItemArray (Expression transform)
 		{
 			ITaskItem[] array = new ITaskItem [buildItems.Count];
 			int i = 0;
@@ -169,6 +156,18 @@ namespace Microsoft.Build.BuildEngine {
 			return array;
 		}
 
+		internal void Evaluate ()
+		{
+			foreach (BuildItem bi in buildItems) {
+				if (bi.Condition == String.Empty)
+					bi.Evaluate (true);
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (bi.Condition);
+					bi.Evaluate (ce.BoolEvaluate (parentProject));
+				}
+			}
+		}		
+		
 		[MonoTODO]
 		// FIXME: whether we can invoke get_Condition on BuildItemGroup not based on XML
 		public string Condition {

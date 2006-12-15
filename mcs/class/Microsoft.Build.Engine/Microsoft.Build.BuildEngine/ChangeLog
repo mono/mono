@@ -1,3 +1,32 @@
+2006-12-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ItemPropertyGroupingBase.cs, TaskEngineAssemblyResolver.cs: Removed
+	classes that were public in Beta 2 and aren't used.
+
+	* Expression.cs: Added replacement for parsing expressions char by
+	char. It uses regexes to find item/property/metadata references in
+	given text.
+
+	* ExpressionCollection.cs, BuildTask.cs, ConditionFactorExpression.cs,
+	Target.cs, TaskEngine.cs, BuildItemGroup.cs, UsingTask.cs, Import.cs,
+	BuildItem.cs, BatchingImpl.cs, BuildProperty.cs: Track API changes.
+
+	* ConditionRelationalExpression.cs: Formatting.
+
+	* OldExpression.cs: Commented everything.
+
+	* MetadataReference.cs, ItemReference.cs, PropertyReference.cs: Moved
+	parsing to Expression.
+
+	* BuildItem.cs: Check if project is from XML in set_Condition and
+	set_Exclude.
+
+	* BuildPropertyGroup.cs, Project.cs: Add ImportedProject to
+	Project.ctor.
+
+	* ConditionNotExpression.cs, ConditionAndExpression.cs: Check if we
+	can evaluate expression in CanEvaluateToBool ().
+
 2006-12-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemGroup.cs (ctor): Add reference to ImportedProject from

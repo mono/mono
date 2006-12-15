@@ -232,16 +232,16 @@ namespace Microsoft.Build.BuildEngine {
 				
 		private object GetObjectFromString (string raw, Type type)
 		{
-			OldExpression e;
+			Expression e;
 			object result;
 			
-			e = new OldExpression (parentProject);
-			e.ParseSource (raw);
+			e = new Expression ();
+			e.Parse (raw);
 			
-			if ((string) e.ConvertTo (typeof (string)) == String.Empty)
+			if ((string) e.ConvertTo (parentProject, typeof (string)) == String.Empty)
 				return null;
 			
-			result = e.ConvertTo (type);
+			result = e.ConvertTo (parentProject, type);
 			
 			return result;
 		}

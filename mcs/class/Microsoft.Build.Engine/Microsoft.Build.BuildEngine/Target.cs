@@ -103,10 +103,10 @@ namespace Microsoft.Build.BuildEngine {
 			buildState = BuildState.Started;
 
 			if (DependsOnTargets != String.Empty) {
-				OldExpression dependencies = new OldExpression (Project);
-				dependencies.ParseSource (DependsOnTargets);
+				Expression dependencies = new Expression ();
+				dependencies.Parse (DependsOnTargets);
 				
-				string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (typeof (string[]));
+				string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (Project, typeof (string[]));
 				foreach (string target in targetsToBuildFirst) {
 					string trimmed = target.Trim ();
 					Target t = (Target) project.Targets [trimmed];

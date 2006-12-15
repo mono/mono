@@ -112,9 +112,9 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			if (FromXml) {
-				OldExpression exp = new OldExpression (parentProject);
-				exp.ParseSource (Value);
-				finalValue = (string) exp.ConvertTo (typeof (string));
+				Expression exp = new Expression ();
+				exp.Parse (Value);
+				finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
 				parentProject.EvaluatedProperties.AddProperty (this);
 			}
 		}

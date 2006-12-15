@@ -35,33 +35,34 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	internal class PropertyReference {
 		
-		Project	parentProject;
 		string	name;
+		int	start;
+		int	length;
 		
-		public PropertyReference (Project parentProject)
+		public PropertyReference (string name, int start, int length)
 		{
-			this.parentProject = parentProject;
+			this.name = name;
+			this.start = start;
+			this.length = length;
 		}
 		
-		public void ParseSource (string source)
+		public string ConvertToString (Project project)
 		{
-			if (source.Length < 3)
-				throw new ArgumentException ("Invalid property");
+			BuildProperty bp = project.EvaluatedProperties [name];
 			
-			name = source.Substring (2, source.Length - 3);
+			return bp != null ? bp.FinalValue : String.Empty;
 		}
 		
-		public string ConvertToString ()
-		{
-			if (name != String.Empty) {
-				BuildProperty bp;
-				bp = parentProject.EvaluatedProperties [name];
-				if (bp != null)
-					return bp.FinalValue;
-				else
-					return String.Empty;
-			} else
-				return String.Empty;
+		public string Name {
+			get { return name; }
+		}
+
+		public int Start {
+			get { return start; }
+		}
+
+		public int End {
+			get { return start + length - 1; }
 		}
 	}
 }

@@ -34,7 +34,7 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.Build.BuildEngine {
+/*namespace Microsoft.Build.BuildEngine {
 	internal class OldExpression {
 	
 		Project	project;
@@ -213,6 +213,6 @@ namespace Microsoft.Build.BuildEngine {
 		Transform2,
 		Separator
 	}
-}
+}*/
 
 #endif
