@@ -5,6 +5,11 @@
 
 2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
+	* MdiChildContext.cs: Removed it, no longer used.
+	* MdiClient.cs: Added missing 2.0 attributes.
+	
+2006-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
 	* InternalWindowManager.cs: Fix a NullRef with previous 
 	changes for toolwindows.
 	

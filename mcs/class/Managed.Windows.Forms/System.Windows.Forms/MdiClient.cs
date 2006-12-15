@@ -32,6 +32,9 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+#endif
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
 	public sealed class MdiClient : Control {
@@ -204,7 +207,9 @@ namespace System.Windows.Forms {
 			SizeScrollBars ();
 			ArrangeWindows ();
 		}
-
+#if NET_2_0
+		[System.ComponentModel.EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		protected override void ScaleCore (float dx, float dy)
 		{
 			base.ScaleCore (dx, dy);
