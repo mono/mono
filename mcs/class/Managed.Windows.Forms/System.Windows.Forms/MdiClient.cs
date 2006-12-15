@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 #if NET_2_0
+	[ComVisible (true)]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 #endif
 	[DesignTimeVisible(false)]

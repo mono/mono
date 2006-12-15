@@ -31,8 +31,14 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	//[DefaultBindingProperty("SelectionRange")]
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+#endif
 	[DefaultProperty("SelectionRange")]
 	[DefaultEvent("DateChanged")]
 	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -296,6 +302,18 @@ namespace System.Windows.Forms {
 				return calendar_dimensions;
 			}
 		}
+		
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+			get {
+				return base.DoubleBuffered;
+			}
+			set {
+				base.DoubleBuffered = value;
+			}
+		}
+#endif
 
 		// the first day of the week to display
 		[Localizable (true)]
@@ -406,6 +424,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public new Padding Padding {
+			get {
+				return base.Padding;
+			}
+			set {
+				base.Padding = value;
+			}
+		}
+		
+		
+#endif
+
 		// the ammount by which to scroll this calendar by
 		[DefaultValue (0)]
 		public int ScrollChange {
@@ -455,7 +489,9 @@ namespace System.Windows.Forms {
 				return SelectionRange.End;
 			}
 		}
-
+#if NET_2_0
+		[Bindable(true)]
+#endif
 		// the range of selected dates
 		public SelectionRange SelectionRange {
 			set {
@@ -615,6 +651,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Localizable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public new Size Size {
+			get {
+				return base.Size;
+			}
+			set {
+				base.Size = value;
+			}
+		}
+#endif
+
 		[Bindable(false)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -720,6 +769,14 @@ namespace System.Windows.Forms {
 				return base.DefaultImeMode;
 			}
 		}
+		
+#if NET_2_0
+		protected override Padding DefaultMargin {
+			get {
+				return new Padding (9);
+			}			
+		}
+#endif
 
 		protected override Size DefaultSize {
 			get {
