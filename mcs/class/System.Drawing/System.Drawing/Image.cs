@@ -774,15 +774,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public object Clone ()
 	{
-		Bitmap b = (this as Bitmap);
-		if (b == null)
-			throw new NotImplementedException ("This Image instance isn't a Bitmap instance."); 
-
 		IntPtr newimage = IntPtr.Zero;
 		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
 		GDIPlus.CheckStatus (status);			
 
-		return new Bitmap (newimage);
+		if (this is Bitmap)
+			return new Bitmap (newimage);
+		else
+			return new Metafile (newimage, true);
 	}
 }
 
