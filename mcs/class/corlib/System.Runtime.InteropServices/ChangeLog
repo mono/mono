@@ -1,3 +1,7 @@
+2006-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	* Marshal.cs: Code formatting changes
+
 2006-12-11  Miguel de Icaza  <miguel@novell.com>
 
 	* SafeHandle.cs: Fix a handful of bugs, and add tests for them.

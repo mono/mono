@@ -66,8 +66,8 @@ namespace System.Runtime.InteropServices
 		private Marshal () {}
 #endif
 
-        [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        public extern static int AddRef (IntPtr pUnk);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int AddRef (IntPtr pUnk);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
@@ -81,17 +81,20 @@ namespace System.Runtime.InteropServices
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
-		public static IntPtr AllocHGlobal (int cb) {
+		public static IntPtr AllocHGlobal (int cb)
+		{
 			return AllocHGlobal ((IntPtr)cb);
 		}
 
 		[MonoTODO]
-		public static object BindToMoniker (string monikerName) {
+		public static object BindToMoniker (string monikerName)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static void ChangeWrapperHandleStrength (object otp, bool fIsWeak) {
+		public static void ChangeWrapperHandleStrength (object otp, bool fIsWeak)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -103,63 +106,78 @@ namespace System.Runtime.InteropServices
 		extern static void copy_from_unmanaged (IntPtr source, int startIndex,
 							Array destination, int length);
 
-		public static void Copy (byte[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (char[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (char[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (short[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (short[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (int[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (int[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (long[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (long[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (float[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (float[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (double[] source, int startIndex, IntPtr destination, int length) {
+		public static void Copy (double[] source, int startIndex, IntPtr destination, int length)
+		{
 			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, byte[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, byte[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, char[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, char[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, short[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, short[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, int[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, int[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, long[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, long[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, float[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, float[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static void Copy (IntPtr source, double[] destination, int startIndex, int length) {
+		public static void Copy (IntPtr source, double[] destination, int startIndex, int length)
+		{
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		public static object CreateWrapperOfType (object o, Type t) {
+		public static object CreateWrapperOfType (object o, Type t)
+		{
 			__ComObject co = o as __ComObject;
 			if (co == null)
 				throw new ArgumentException ("o must derive from __ComObject", "o");
@@ -178,8 +196,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void DestroyStructure (IntPtr ptr, Type structuretype);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void FreeBSTR (IntPtr ptr);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void FreeBSTR (IntPtr ptr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void FreeCoTaskMem (IntPtr ptr);
@@ -223,26 +241,30 @@ namespace System.Runtime.InteropServices
 #endif
 
 		[MonoTODO]
-		public static Guid GenerateGuidForType (Type type) {
+		public static Guid GenerateGuidForType (Type type)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string GenerateProgIdForType (Type type) {
+		public static string GenerateProgIdForType (Type type)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object GetActiveObject (string progID) {
+		public static object GetActiveObject (string progID)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr GetComInterfaceForObject (object o, Type T) {
-            __ComObject co = o as __ComObject;
-            if (co == null)
-			    throw new NotSupportedException ("Only RCWs are currently supported");
-
+		public static IntPtr GetComInterfaceForObject (object o, Type T)
+		{
+			__ComObject co = o as __ComObject;
+			if (co == null)
+				throw new NotSupportedException ("Only RCWs are currently supported");
+			
 			IntPtr pUnk = co.GetInterface (T);
 			AddRef (pUnk);
 			return pUnk;
@@ -250,12 +272,14 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[MonoTODO]
-		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t) {
+		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
 
-		public static object GetComObjectData (object obj, object key) {
+		public static object GetComObjectData (object obj, object key)
+		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (key == null)
@@ -283,38 +307,45 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
-		public static int GetEndComSlot (Type t) {
+		public static int GetEndComSlot (Type t)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static int GetExceptionCode() {
+		public static int GetExceptionCode()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr GetExceptionPointers() {
+		public static IntPtr GetExceptionPointers()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr GetHINSTANCE (Module m) {
+		public static IntPtr GetHINSTANCE (Module m)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("SetErrorInfo")]
-		public static int GetHRForException (Exception e) {
+		public static int GetHRForException (Exception e)
+		{
 			return e.hresult;
 		}
 
 		[MonoTODO]
-		public static int GetHRForLastWin32Error() {
+		public static int GetHRForLastWin32Error()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static IntPtr GetIDispatchForObject (object o)
-		{			// only handle case of RCW objects for now
+		{
+			// only handle case of RCW objects for now
 			__ComObject co = o as __ComObject;
 			if (co != null) {
 				IntPtr pUnk = co.IDispatch;
@@ -326,18 +357,21 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[MonoTODO]
-		public static IntPtr GetIDispatchForObjectInContext (object o) {
+		public static IntPtr GetIDispatchForObjectInContext (object o)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
 
 		[MonoTODO]
-		public static IntPtr GetITypeInfoForType (Type t) {
+		public static IntPtr GetITypeInfoForType (Type t)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr GetIUnknownForObject (object o) {
+		public static IntPtr GetIUnknownForObject (object o)
+		{
 			// only handle case of RCW objects for now
 			__ComObject co = o as __ComObject;
 			if (co != null) {
@@ -350,7 +384,8 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[MonoTODO]
-		public static IntPtr GetIUnknownForObjectInContext (object o) {
+		public static IntPtr GetIUnknownForObjectInContext (object o)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
@@ -362,61 +397,70 @@ namespace System.Runtime.InteropServices
 		public static extern int GetLastWin32Error();
 
 		[MonoTODO]
-		public static IntPtr GetManagedThunkForUnmanagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature) {
+		public static IntPtr GetManagedThunkForUnmanagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static MemberInfo GetMethodInfoForComSlot (Type t, int slot, ref ComMemberType memberType) {
+		public static MemberInfo GetMethodInfoForComSlot (Type t, int slot, ref ComMemberType memberType)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void GetNativeVariantForObject (object obj, IntPtr pDstNativeVariant) {
+		public static void GetNativeVariantForObject (object obj, IntPtr pDstNativeVariant)
+		{
 			Variant vt = new Variant();
 			vt.SetValue(obj);
 			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
-		public static object GetObjectForIUnknown (IntPtr pUnk) {
+		public static object GetObjectForIUnknown (IntPtr pUnk)
+		{
 			ComInteropProxy proxy = ComInteropProxy.GetProxy (pUnk, typeof(__ComObject));
-            return proxy.GetTransparentProxy ();
+			return proxy.GetTransparentProxy ();
 		}
 
-		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant) {
+		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant)
+		{
 			Variant vt = (Variant)Marshal.PtrToStructure(pSrcNativeVariant, typeof(Variant));
 			return vt.GetValue();
 		}
 
 		[MonoTODO]
-		public static object[] GetObjectsForNativeVariants (IntPtr aSrcNativeVariant, int cVars) {
+		public static object[] GetObjectsForNativeVariants (IntPtr aSrcNativeVariant, int cVars)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static int GetStartComSlot (Type t) {
+		public static int GetStartComSlot (Type t)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static Thread GetThreadFromFiberCookie (int cookie) {
+		public static Thread GetThreadFromFiberCookie (int cookie)
+		{
 			throw new NotImplementedException ();
 		}
 
-        public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
-        {
+		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
+		{
 			ComInteropProxy proxy = new ComInteropProxy (pUnk, t);
-            __ComObject co = (__ComObject)proxy.GetTransparentProxy ();
-            foreach (Type itf in t.GetInterfaces ()) {
-                if ((itf.Attributes & TypeAttributes.Import) == TypeAttributes.Import) {
-                    if (co.GetInterface (itf) == IntPtr.Zero)
-                        return null;
-                }
-            }
-            return co;
-        }
+			__ComObject co = (__ComObject)proxy.GetTransparentProxy ();
+			foreach (Type itf in t.GetInterfaces ()) {
+				if ((itf.Attributes & TypeAttributes.Import) == TypeAttributes.Import) {
+					if (co.GetInterface (itf) == IntPtr.Zero)
+						return null;
+				}
+			}
+			return co;
+		}
 
 		[MonoTODO]
-		public static Type GetTypeForITypeInfo (IntPtr piTypeInfo) {
+		public static Type GetTypeForITypeInfo (IntPtr piTypeInfo)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -424,7 +468,8 @@ namespace System.Runtime.InteropServices
 		[Obsolete]
 #endif
 		[MonoTODO]
-		public static string GetTypeInfoName (UCOMITypeInfo pTI) {
+		public static string GetTypeInfoName (UCOMITypeInfo pTI)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -432,42 +477,48 @@ namespace System.Runtime.InteropServices
 		[Obsolete]
 #endif
 		[MonoTODO]
-		public static Guid GetTypeLibGuid (UCOMITypeLib pTLB) {
+		public static Guid GetTypeLibGuid (UCOMITypeLib pTLB)
+		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		public static Guid GetTypeLibGuid (ITypeLib typelib) {
+		public static Guid GetTypeLibGuid (ITypeLib typelib)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
 
 		[MonoTODO]
-		public static Guid GetTypeLibGuidForAssembly (Assembly asm) {
+		public static Guid GetTypeLibGuidForAssembly (Assembly asm)
+		{
 			throw new NotImplementedException ();
 		}
-
-#if NET_2_0
-		[Obsolete]
-#endif
-		[MonoTODO]
-		public static int GetTypeLibLcid (UCOMITypeLib pTLB) {
-			throw new NotImplementedException ();
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		public static int GetTypeLibLcid (ITypeLib typelib) {
-			throw new NotImplementedException ();
-		}
-#endif
 
 #if NET_2_0
 		[Obsolete]
 #endif
 		[MonoTODO]
-		public static string GetTypeLibName (UCOMITypeLib pTLB) {
+		public static int GetTypeLibLcid (UCOMITypeLib pTLB)
+		{
+			throw new NotImplementedException ();
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static int GetTypeLibLcid (ITypeLib typelib)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_2_0
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public static string GetTypeLibName (UCOMITypeLib pTLB)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -479,29 +530,34 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
-		public static void GetTypeLibVersionForAssembly (Assembly inputAssembly, out int majorVersion, out int minorVersion) {
+		public static void GetTypeLibVersionForAssembly (Assembly inputAssembly, out int majorVersion, out int minorVersion)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
 
 		[MonoTODO]
-		public static IntPtr GetUnmanagedThunkForManagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature) {
+		public static IntPtr GetUnmanagedThunkForManagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static bool IsComObject (object o) {
+		public static bool IsComObject (object o)
+		{
 			Type t = o.GetType ();
 			object[] attrs = t.GetCustomAttributes (typeof (ComImportAttribute), true);
 			return (attrs != null && attrs.Length > 0);
 		}
 
 		[MonoTODO]
-		public static bool IsTypeVisibleFromCom (Type t) {
+		public static bool IsTypeVisibleFromCom (Type t)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static int NumParamBytes (MethodInfo m) {
+		public static int NumParamBytes (MethodInfo m)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -547,10 +603,11 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
-        [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        public extern static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
 
-		public static byte ReadByte (IntPtr ptr) {
+		public static byte ReadByte (IntPtr ptr)
+		{
 			return ReadByte (ptr, 0);
 		}
 
@@ -558,11 +615,13 @@ namespace System.Runtime.InteropServices
 		public extern static byte ReadByte (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static byte ReadByte ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
+		public static byte ReadByte ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static short ReadInt16 (IntPtr ptr) {
+		public static short ReadInt16 (IntPtr ptr)
+		{
 			return ReadInt16 (ptr, 0);
 		}
 
@@ -570,14 +629,16 @@ namespace System.Runtime.InteropServices
 		public extern static short ReadInt16 (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static short ReadInt16 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs) {
+		public static short ReadInt16 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs)
+		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static int ReadInt32 (IntPtr ptr) {
+		public static int ReadInt32 (IntPtr ptr)
+		{
 			return ReadInt32 (ptr, 0);
 		}
 
@@ -591,14 +652,16 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
-		public static int ReadInt32 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs) {
+		public static int ReadInt32 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs)
+		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static long ReadInt64 (IntPtr ptr) {
+		public static long ReadInt64 (IntPtr ptr)
+		{
 			return ReadInt64 (ptr, 0);
 		}
 
@@ -612,14 +675,16 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
-		public static long ReadInt64 ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
+		public static long ReadInt64 ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs)
+		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static IntPtr ReadIntPtr (IntPtr ptr) {
+		public static IntPtr ReadIntPtr (IntPtr ptr)
+		{
 			return ReadIntPtr (ptr, 0);
 		}
 		
@@ -633,12 +698,14 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
-		public static IntPtr ReadIntPtr ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
+		public static IntPtr ReadIntPtr ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr ReAllocCoTaskMem (IntPtr pv, int cb) {
+		public static IntPtr ReAllocCoTaskMem (IntPtr pv, int cb)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -648,10 +715,11 @@ namespace System.Runtime.InteropServices
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-        [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        public extern static int Release (IntPtr pUnk);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int Release (IntPtr pUnk);
 
-		public static int ReleaseComObject (object o) {
+		public static int ReleaseComObject (object o)
+		{
 			if (o == null)
 				throw new ArgumentException ("o");
 			__ComObject co = o as __ComObject;
@@ -664,11 +732,13 @@ namespace System.Runtime.InteropServices
 		[Obsolete]
 #endif
 		[MonoTODO]
-		public static void ReleaseThreadCache() {
+		public static void ReleaseThreadCache()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static bool SetComObjectData (object obj, object key, object data) {
+		public static bool SetComObjectData (object obj, object key, object data)
+		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (key == null)
@@ -682,7 +752,8 @@ namespace System.Runtime.InteropServices
 			return true;
 		}
 
-		public static int SizeOf (object structure) {
+		public static int SizeOf (object structure)
+		{
 			return SizeOf (structure.GetType ());
 		}
 
@@ -692,7 +763,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToBSTR (string s);
 
-		public static IntPtr StringToCoTaskMemAnsi (string s) {
+		public static IntPtr StringToCoTaskMemAnsi (string s)
+		{
 			int length = s.Length + 1;
 			IntPtr ctm = AllocCoTaskMem (length);
 
@@ -706,14 +778,16 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
-		public static IntPtr StringToCoTaskMemAuto (string s) {
+		public static IntPtr StringToCoTaskMemAuto (string s)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr StringToCoTaskMemUni (string s) {
+		public static IntPtr StringToCoTaskMemUni (string s)
+		{
 			int length = s.Length + 1;
 			IntPtr ctm = AllocCoTaskMem (length * 2);
-
+			
 			char[] asChars = new char[length];
 			s.CopyTo (0, asChars, 0, s.Length);
 			asChars[s.Length] = '\0';
@@ -782,20 +856,23 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		public static void ThrowExceptionForHR (int errorCode) {
-            if (errorCode < 0)
-			    throw new COMException ("", errorCode);
+		public static void ThrowExceptionForHR (int errorCode)
+		{
+			if (errorCode < 0)
+				throw new COMException ("", errorCode);
 		}
 
 		[MonoTODO]
-		public static void ThrowExceptionForHR (int errorCode, IntPtr errorInfo) {
+		public static void ThrowExceptionForHR (int errorCode, IntPtr errorInfo)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);
 
-		public static void WriteByte (IntPtr ptr, byte val) {
+		public static void WriteByte (IntPtr ptr, byte val)
+		{
 			WriteByte (ptr, 0, val);
 		}
 
@@ -803,11 +880,13 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteByte (IntPtr ptr, int ofs, byte val);
 
 		[MonoTODO]
-		public static void WriteByte ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, byte val) {
+		public static void WriteByte ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, byte val)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt16 (IntPtr ptr, short val) {
+		public static void WriteInt16 (IntPtr ptr, short val)
+		{
 			WriteInt16 (ptr, 0, val);
 		}
 
@@ -815,11 +894,13 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt16 (IntPtr ptr, int ofs, short val);
 
 		[MonoTODO]
-		public static void WriteInt16 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, short val) {
+		public static void WriteInt16 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, short val)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt16 (IntPtr ptr, char val) {
+		public static void WriteInt16 (IntPtr ptr, char val)
+		{
 			WriteInt16 (ptr, 0, val);
 		}
 
@@ -828,11 +909,13 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt16 (IntPtr ptr, int ofs, char val);
 
 		[MonoTODO]
-		public static void WriteInt16([In, Out] object ptr, int ofs, char val) {
+		public static void WriteInt16([In, Out] object ptr, int ofs, char val)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt32 (IntPtr ptr, int val) {
+		public static void WriteInt32 (IntPtr ptr, int val)
+		{
 			WriteInt32 (ptr, 0, val);
 		}
 
@@ -840,11 +923,13 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt32 (IntPtr ptr, int ofs, int val);
 
 		[MonoTODO]
-		public static void WriteInt32([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, int val) {
+		public static void WriteInt32([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, int val)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt64 (IntPtr ptr, long val) {
+		public static void WriteInt64 (IntPtr ptr, long val)
+		{
 			WriteInt64 (ptr, 0, val);
 		}
 
@@ -852,11 +937,13 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt64 (IntPtr ptr, int ofs, long val);
 
 		[MonoTODO]
-		public static void WriteInt64 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, long val) {
+		public static void WriteInt64 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, long val)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteIntPtr (IntPtr ptr, IntPtr val) {
+		public static void WriteIntPtr (IntPtr ptr, IntPtr val)
+		{
 			WriteIntPtr (ptr, 0, val);
 		}
 
@@ -864,30 +951,35 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val);
 
 		[MonoTODO]
-		public static void WriteIntPtr([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, IntPtr val) {
+		public static void WriteIntPtr([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, IntPtr val)
+		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		public static int FinalReleaseComObject (object o) {
+		public static int FinalReleaseComObject (object o)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static Exception GetExceptionForHR (int errorCode) {
+		public static Exception GetExceptionForHR (int errorCode)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
+		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Delegate GetDelegateForFunctionPointerInternal (IntPtr ptr, Type t);
 
-		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t) {
+		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t)
+		{
 			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
 				throw new ArgumentException ("Type is not a delegate", "t");
 			if (ptr == IntPtr.Zero)
@@ -899,7 +991,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
 		
-		public static IntPtr GetFunctionPointerForDelegate (Delegate d) {
+		public static IntPtr GetFunctionPointerForDelegate (Delegate d)
+		{
 			if (d == null)
 				throw new ArgumentNullException ("d");
 			
