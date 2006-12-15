@@ -108,6 +108,31 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestClone1 ()
+		{
+			item = new BuildItem ("name", "1;2;3");
+			item.SetMetadata ("a", "b");
+
+			BuildItem item2 = item.Clone ();
+
+			Assert.AreEqual ("1;2;3", item2.FinalItemSpec, "A1");
+			Assert.AreEqual ("1;2;3", item2.Include, "A2");
+			Assert.AreEqual (String.Empty, item2.Exclude, "A3");
+			Assert.AreEqual (String.Empty, item2.Condition, "A4");
+			Assert.AreEqual (false, item2.IsImported, "A5");
+			Assert.AreEqual ("name", item2.Name, "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		public void TestCondition ()
+		{
+			item = new BuildItem ("name", "1");
+			item.Condition = "true";
+		}
+
+		[Test]
 		public void TestCopyCustomMetadataTo1 ()
 		{
 			BuildItem source, destination;
@@ -137,6 +162,15 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.SetMetadata ("name", "value");
 			
 			item.CopyCustomMetadataTo (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Assigning the \"Exclude\" attribute of a virtual item is not allowed.")]
+		public void TestExclude ()
+		{
+			item = new BuildItem ("name", "1");
+			item.Exclude = "e";
 		}
 
 		[Test]

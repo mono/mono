@@ -122,6 +122,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (String.Empty, big.Condition, "A2");
 			Assert.AreEqual (0, big.Count, "A3");
 			Assert.AreEqual (false, big.IsImported, "A4");
+			Assert.IsTrue (project.IsDirty, "A5");
 		}
 
 		[Test]
@@ -145,6 +146,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (String.Empty, bpg.Condition, "A2");
 			Assert.AreEqual (0, bpg.Count, "A3");
 			Assert.AreEqual (false, bpg.IsImported, "A4");
+			Assert.IsTrue (project.IsDirty, "A5");
 		}
 
 		[Test]
@@ -703,6 +705,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("1", project.GetProjectExtensions ("name"), "A1");
 			project.SetProjectExtensions ("name", "2");
 			Assert.AreEqual ("2", project.GetProjectExtensions ("name"), "A2");
+			Assert.IsTrue (project.IsDirty, "A3");
 		}
 	}
 }
