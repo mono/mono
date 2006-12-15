@@ -176,7 +176,10 @@ namespace Mono.Security.X509 {
 						sb2.Append ((char)s.Value[j]);
 					sValue = sb2.ToString ();
 				} else {
-					sValue = Encoding.UTF8.GetString (s.Value);
+					if (s.Tag == 0x14)
+						sValue = Encoding.UTF7.GetString (s.Value);
+					else
+						sValue = Encoding.UTF8.GetString (s.Value);
 					// in some cases we must quote (") the value
 					// Note: this doesn't seems to conform to RFC2253
 					char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
