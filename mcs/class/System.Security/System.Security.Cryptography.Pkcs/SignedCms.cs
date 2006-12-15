@@ -120,6 +120,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// methods
 
+		[MonoTODO]
 		public void CheckSignature (bool verifySignatureOnly)
 		{
 			foreach (SignerInfo si in _info) {
@@ -127,6 +128,7 @@ namespace System.Security.Cryptography.Pkcs {
 			}
 		}
 
+		[MonoTODO]
 		public void CheckSignature (X509Certificate2Collection extraStore, bool verifySignatureOnly) 
 		{
 			foreach (SignerInfo si in _info) {
@@ -285,9 +287,8 @@ namespace System.Security.Cryptography.Pkcs {
 			return null;
 		}
 
-		// counterSsignerInfo -> counterSignerInfo
 		[MonoTODO]
-		public void RemoveSignature (SignerInfo counterSsignerInfo)
+		public void RemoveSignature (SignerInfo signerInfo)
 		{
 		}
 
