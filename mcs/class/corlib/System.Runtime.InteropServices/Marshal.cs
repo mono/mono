@@ -784,7 +784,8 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr StringToCoTaskMemAuto (string s)
 		{
-			return StringToCoTaskMemAnsi (s);
+			return SystemDefaultCharSize == 2
+				? StringToCoTaskMemUni (s) : StringToCoTaskMemAnsi (s);
 		}
 
 		public static IntPtr StringToCoTaskMemUni (string s)
