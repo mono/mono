@@ -68,3 +68,18 @@ public class FalseTestTask : Task {
 		return false;
 	}
 }
+
+public class StringTestTask : Task {
+	public override bool Execute ()
+	{
+		return true;
+	}
+
+	string property;
+
+	[Output]
+	public string Property {
+		get { return property; }
+		set { property = value; }
+	}
+}
