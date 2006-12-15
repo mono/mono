@@ -15,7 +15,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -24,6 +23,10 @@ using System.Security;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace MonoTests.System.Reflection.Emit
 {
