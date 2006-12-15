@@ -1,3 +1,9 @@
+2006-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PkitsTest.cs: New. Common test code to use the PKITS test data.
+	* Pkits_4_01_SignatureVerification.cs: New. Test signature on S/MIME
+	using the PKITS test data (if available).
+
 2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Pkcs9AttributeTest.cs: Added new tests case for new overriden 
