@@ -779,7 +779,7 @@ namespace System.Windows.Forms
 			private Font font;
 			private Color fore_color;
 			internal ListViewItem owner;
-			private string text;
+			private string text = string.Empty;
 			
 			#region Public Constructors
 			public ListViewSubItem ()
@@ -796,7 +796,7 @@ namespace System.Windows.Forms
 						Color backColor, Font font)
 			{
 				this.owner = owner;
-				this.text = text;
+				Text = text;
 				this.fore_color = foreColor;
 				this.back_color = backColor;
 				this.font = font;
@@ -841,7 +841,14 @@ namespace System.Windows.Forms
 			public string Text {
 				get { return text; }
 				set { 
-				      	text = value; 
+					if(text == value)
+						return;
+
+					if(value == null)
+						text = string.Empty;
+					else
+					      	text = value; 
+
 					Invalidate ();
 				    }
 			}

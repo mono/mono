@@ -1,5 +1,10 @@
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
+	* ListViewCollectionsTest.cs: test works now on the 1.1 profile.
+	* ListViewItemTest.cs: add new ListViewSubItem text property test.
+
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
 	* ListViewCollectionsTest.cs: new not working junk add test for ListViewItemCollection
 
 2006-12-15  Daniel Nauck  <dna@mono-project.de>

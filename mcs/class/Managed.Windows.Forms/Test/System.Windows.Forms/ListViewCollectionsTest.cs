@@ -574,7 +574,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ListViewItemCollectionTest_Add_Junk ()
 		{
 			ListView lv1 = new ListView ();

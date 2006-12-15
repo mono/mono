@@ -88,4 +88,20 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (item2.SubItems[1].Text, "Element2", "Clone#6");
 		}
 	}
+
+	[TestFixture]
+	public class ListViewSubItemTest
+	{
+		[Test]
+		public void ListViewSubItemPropertiesTest ()
+		{
+			ListViewItem.ListViewSubItem subItem1 = new ListViewItem.ListViewSubItem ();
+			Assert.AreEqual (string.Empty, subItem1.Text, "#A1");
+			
+			subItem1.Text = null;
+			Assert.AreEqual (string.Empty, subItem1.Text, "#B1");
+			subItem1.Text = "test";
+			Assert.AreEqual ("test", subItem1.Text, "#B2");
+		}
+	}
 }
