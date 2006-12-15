@@ -574,6 +574,74 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void ListViewItemCollectionTest_Add_Junk ()
+		{
+			ListView lv1 = new ListView ();
+
+			ListViewItem item4 = lv1.Items.Add("Item4", 4);
+			Assert.AreEqual(item4, lv1.Items[0], "#D1");
+#if NET_2_0
+			Assert.AreEqual(string.Empty, lv1.Items[0].Name, "#D2");
+#endif
+			Assert.AreEqual("Item4", lv1.Items[0].Text, "#D3");
+			Assert.AreEqual(4, lv1.Items[0].ImageIndex, "#D4");
+
+			string text = null;
+			ListViewItem item5 = lv1.Items.Add(text);
+			Assert.AreEqual(item5, lv1.Items[1], "#E1");
+#if NET_2_0
+			Assert.AreEqual(string.Empty, lv1.Items[1].Name, "#E2");
+#endif
+			Assert.AreEqual(string.Empty, lv1.Items[1].Text, "#E3");
+
+			ListViewItem item6 = lv1.Items.Add(null, 5);
+			Assert.AreEqual(item6, lv1.Items[2], "#F1");
+#if NET_2_0
+			Assert.AreEqual(string.Empty, lv1.Items[2].Name, "#F2");
+#endif
+			Assert.AreEqual(string.Empty, lv1.Items[2].Text, "#F3");
+			Assert.AreEqual(5, lv1.Items[2].ImageIndex, "#F4");
+#if NET_2_0
+			ListViewItem item1 = lv1.Items.Add("ItemKey1", "Item1", 1);
+			Assert.AreEqual(item1, lv1.Items[3], "#A1");
+			Assert.AreEqual("ItemKey1", lv1.Items[3].Name, "#A2");
+			Assert.AreEqual("Item1", lv1.Items[3].Text, "#A3");
+			Assert.AreEqual(1, lv1.Items[3].ImageIndex, "#A4");
+
+			ListViewItem item2 = lv1.Items.Add("ItemKey2", "Item2", "Image2");
+			Assert.AreEqual(item2, lv1.Items[4], "#B1");
+			Assert.AreEqual("ItemKey2", lv1.Items[4].Name, "#B2");
+			Assert.AreEqual("Item2", lv1.Items[4].Text, "#B3");
+			Assert.AreEqual("Image2", lv1.Items[4].ImageKey, "#B4");
+
+			ListViewItem item3 = lv1.Items.Add("Item3", "Image3");
+			Assert.AreEqual(item3, lv1.Items[5], "#C1");
+			Assert.AreEqual(string.Empty, lv1.Items[5].Name, "#C2");
+			Assert.AreEqual("Item3", lv1.Items[5].Text, "#C3");
+			Assert.AreEqual("Image3", lv1.Items[5].ImageKey, "#C4");
+
+			ListViewItem item7 = lv1.Items.Add(null, "Item6", 6);
+			Assert.AreEqual(item7, lv1.Items[6], "#G1");
+			Assert.AreEqual(string.Empty, lv1.Items[6].Name, "#G2");
+			Assert.AreEqual("Item6", lv1.Items[6].Text, "#G3");
+			Assert.AreEqual(6, lv1.Items[6].ImageIndex, "#G4");
+
+			ListViewItem item8 = lv1.Items.Add("ItemKey7", null, 7);
+			Assert.AreEqual(item8, lv1.Items[7], "#H1");
+			Assert.AreEqual("ItemKey7", lv1.Items[7].Name, "#H2");
+			Assert.AreEqual(string.Empty, lv1.Items[7].Text, "#H3");
+			Assert.AreEqual(7, lv1.Items[7].ImageIndex, "#H4");
+
+			ListViewItem item9 = lv1.Items.Add("ItemKey8", "Item8", null);
+			Assert.AreEqual(item9, lv1.Items[8], "#I1");
+			Assert.AreEqual("ItemKey8", lv1.Items[8].Name, "#I2");
+			Assert.AreEqual("Item8", lv1.Items[8].Text, "#I3");
+			Assert.AreEqual(string.Empty, lv1.Items[8].ImageKey, "#I4");
+#endif
+		}
+
+		[Test]
 		public void ListViewItemCollectionTest_AddRange ()
 		{
 			ListView lv1 = new ListView ();

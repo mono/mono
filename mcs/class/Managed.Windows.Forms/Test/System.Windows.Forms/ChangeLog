@@ -1,5 +1,9 @@
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
+	* ListViewCollectionsTest.cs: new not working junk add test for ListViewItemCollection
+
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
 	* ListViewCollectionsTest.cs: new ListViewItemCollection AddRange tests
 
 2006-12-15  Daniel Nauck  <dna@mono-project.de>

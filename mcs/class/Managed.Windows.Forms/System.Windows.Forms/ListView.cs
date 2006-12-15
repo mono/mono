@@ -3054,6 +3054,28 @@ namespace System.Windows.Forms
 				return this.Add (item);
 			}
 
+#if NET_2_0
+			public virtual ListViewItem Add (string text, string imageKey)
+			{
+				ListViewItem item = new ListViewItem (text, imageKey);
+				return this.Add (item);
+			}
+
+			public virtual ListViewItem Add (string key, string text, int imageIndex)
+			{
+				ListViewItem item = new ListViewItem (text, imageIndex);
+				item.Name = key;
+				return this.Add (item);
+			}
+
+			public virtual ListViewItem Add (string key, string text, string imageKey)
+			{
+				ListViewItem item = new ListViewItem (text, imageKey);
+				item.Name = key;
+				return this.Add (item);
+			}
+#endif
+
 			public void AddRange (ListViewItem [] values)
 			{
 				if (values == null)
