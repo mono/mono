@@ -306,7 +306,14 @@ namespace System.Web.Services.Description {
 			portType.Name = binding.Name;
 
 			BeginClass ();
-			
+#if NET_2_0
+			foreach (SoapExtensionReflector reflector in extensionReflectors)
+			{
+				reflector.ReflectionContext = this;
+				reflector.ReflectDescription ();
+			}
+#endif
+
 			foreach (MethodStubInfo method in typeInfo.Methods)
 			{
 				methodStubInfo = method;

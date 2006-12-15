@@ -56,6 +56,12 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
+#if NET_2_0
+		public virtual void ReflectDescription ()
+		{
+		}
+#endif
+
 		public abstract void ReflectMethod ();
 
 		#endregion

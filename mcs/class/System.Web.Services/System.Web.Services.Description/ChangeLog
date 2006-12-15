@@ -1,5 +1,10 @@
 2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ProtocolReflector.cs, SoapExtensionReflector.cs : added
+	  ReflectDescription() and its use.
+
+2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapProtocolImporter.cs : since Soap12Binding is derived from
 	  SoapBinding, extra care in IsBindingSupported() is needed.
 
