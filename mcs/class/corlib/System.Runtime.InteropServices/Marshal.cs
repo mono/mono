@@ -763,6 +763,11 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToBSTR (string s);
 
+		//
+		// I believe this is wrong, because in Mono and in P/Invoke
+		// we treat "Ansi" conversions as UTF-8 conversions, while
+		// this one does not do this
+		//
 		public static IntPtr StringToCoTaskMemAnsi (string s)
 		{
 			int length = s.Length + 1;
@@ -777,10 +782,9 @@ namespace System.Runtime.InteropServices
 			return ctm;
 		}
 
-		[MonoTODO]
 		public static IntPtr StringToCoTaskMemAuto (string s)
 		{
-			throw new NotImplementedException ();
+			return StringToCoTaskMemAnsi (s);
 		}
 
 		public static IntPtr StringToCoTaskMemUni (string s)
