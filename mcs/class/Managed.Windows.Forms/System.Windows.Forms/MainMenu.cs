@@ -47,6 +47,13 @@ namespace System.Windows.Forms
 			
 		}
 
+#if NET_2_0
+		public MainMenu (IContainer container) : this ()
+		{
+			container.Add (this);
+		}
+#endif
+
 		#region Public Properties
 		[Localizable(true)]
 		public virtual RightToLeft RightToLeft {
