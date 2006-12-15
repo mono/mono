@@ -23,6 +23,7 @@
 //	Ravindra Kumar (rkumar@novell.com)
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Mike Kestner (mkestner@novell.com)
+//	Daniel Nauck (dna(at)mono-project(dot)de)
 //
 // TODO:
 //   - Feedback for item activation, change in cursor types as mouse moves.
@@ -66,6 +67,10 @@ namespace System.Windows.Forms
 		private bool hover_selection = false;
 		private IComparer item_sorter;
 		private readonly ListViewItemCollection items;
+#if NET_2_0
+		private readonly ListViewGroupCollection groups;
+        	private bool show_groups = true;
+#endif
 		private bool label_edit = false;
 		private bool label_wrap = true;
 		private bool multiselect = true;
@@ -167,6 +172,9 @@ namespace System.Windows.Forms
 		{
 			background_color = ThemeEngine.Current.ColorWindow;
 			items = new ListViewItemCollection (this);
+#if NET_2_0
+			groups = new ListViewGroupCollection (this);
+#endif
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
@@ -509,14 +517,22 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[MonoTODO("Implement")]
+        	[DefaultValue(true)]
 		public bool ShowGroups {
-			get {
-				return false;
+			get { return show_groups; }
+			set 
+			{
+                		if (show_groups != value)
+                		{
+					show_groups = value;
+					Redraw(true);
+				}
 			}
+		}
 
-			set {
-			}
+		[LocalizableAttribute(true)]
+		public ListViewGroupCollection Groups {
+			get { return groups;	}
 		}
 #endif
 
@@ -3016,9 +3032,13 @@ namespace System.Windows.Forms
 				value.Owner = owner;
 				list.Add (value);
 
-				owner.Sort (false);
-				OnChange ();
-				owner.Redraw (true);
+				if (this.owner != null)
+				{
+					owner.Sort (false);
+					OnChange ();
+					owner.Redraw (true);
+				}
+
 				return value;
 			}
 

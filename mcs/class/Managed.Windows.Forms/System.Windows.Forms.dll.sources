@@ -410,6 +410,8 @@ System.Windows.Forms/ListControlConvertEventArgs.cs
 System.Windows.Forms/ListControlConvertEventHandler.cs
 System.Windows.Forms/ListView.cs
 System.Windows.Forms/ListViewAlignment.cs
+System.Windows.Forms/ListViewGroup.cs
+System.Windows.Forms/ListViewGroupCollection.cs
 System.Windows.Forms/ListViewHitTestLocations.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs

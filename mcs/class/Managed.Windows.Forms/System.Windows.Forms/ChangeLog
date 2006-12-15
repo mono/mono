@@ -1,3 +1,11 @@
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
+	* ListViewGroup.cs: Add.
+	* ListViewGroupCollection.cs: Add
+	* ListView.cs: Add ListViewGroup (Group) and ShowGroups 2.0 support.
+	* ListViewItem.cs: Add ListViewgroup (Group), ListViewGroups constructors and
+				stub for ImageKey 2.0 support.
+
 2006-12-14  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: add text padding to the autocalculation for columns

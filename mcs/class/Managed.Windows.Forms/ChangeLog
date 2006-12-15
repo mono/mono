@@ -1,3 +1,12 @@
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
+	* System.Windows.Forms.dll.sources: Add
+		ListViewGroup.cs, ListViewGroupCollection.cs
+	* SWF.csproj: Add
+		ListViewGroup.cs, ListViewGroupCollection.cs
+	* System.Windows.Forms_test.dll.sources: Add
+		ListViewGroupTest.cs, ListViewGroupCollectionTest.cs
+
 2006-12-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Added FormCollection.cs.

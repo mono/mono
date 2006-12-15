@@ -22,6 +22,7 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //      Mike Kestner <mkestner@novell.com>
+//      Daniel Nauck (dna(at)mono-project(dot)de)
 
 
 
@@ -51,9 +52,9 @@ namespace System.Windows.Forms
 		private object tag;
 		private bool use_item_style = true;
 #if NET_2_0
+		private ListViewGroup group = null;
 		private string name = String.Empty;
 #endif
-
 		Rectangle bounds;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		Rectangle icon_rect;
@@ -114,6 +115,108 @@ namespace System.Windows.Forms
 			BackColor = backColor;
 			this.font = font;
 		}
+
+#if NET_2_0
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string[] items, string imageKey) : this(items)
+		{
+			this.ImageKey = imageKey;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string text, string imageKey) : this(text)
+		{
+			this.ImageKey = imageKey;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(ListViewSubItem[] subItems, string imageKey) : this()
+		{
+			this.sub_items.AddRange(subItems);
+			this.ImageKey = imageKey;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string[] items, string imageKey, Color foreColor,
+					Color backColor, Font font) : this()
+		{
+			this.sub_items = new ListViewSubItemCollection(this);
+			this.sub_items.AddRange(items);
+			ForeColor = foreColor;
+			BackColor = backColor;
+			this.font = font;
+			this.ImageKey = imageKey;
+		}
+
+		public ListViewItem(ListViewGroup group) : this()
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(string text, ListViewGroup group) : this(text)
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(string[] items, ListViewGroup group) : this(items)
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(ListViewSubItem[] subItems, int imageIndex, ListViewGroup group)
+			: this(subItems, imageIndex)
+		{
+			this.group = group;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(ListViewSubItem[] subItems, string imageKey, ListViewGroup group)
+			: this(subItems, imageKey)
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(string text, int imageIndex, ListViewGroup group)
+			: this(text, imageIndex)
+		{
+			this.group = group;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string text, string imageKey, ListViewGroup group)
+			: this(text, imageKey)
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(string[] items, int imageIndex, ListViewGroup group)
+			: this(items, imageIndex)
+		{
+			this.group = group;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string[] items, string imageKey, ListViewGroup group)
+			: this(items, imageKey)
+		{
+			this.group = group;
+		}
+
+		public ListViewItem(string[] items, int imageIndex, Color foreColor, Color backColor,
+				Font font, ListViewGroup group)
+			: this(items, imageIndex, foreColor, backColor, font)
+		{
+			this.group = group;
+		}
+
+		[MonoTODO("ImageKey is not Implemented")]
+		public ListViewItem(string[] items, string imageKey, Color foreColor, Color backColor,
+				Font font, ListViewGroup group)
+			: this(items, imageKey, foreColor, backColor, font)
+		{
+			this.group = group;
+		}
+#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -331,7 +434,7 @@ namespace System.Windows.Forms
 				if (this.sub_items.Count > 0)
 					return this.sub_items [0].Text;
 				else
-					return "";
+					return string.Empty;
 			}
 			set { 
 				if (sub_items [0].Text == value)
@@ -350,6 +453,43 @@ namespace System.Windows.Forms
 			get { return use_item_style; }
 			set { use_item_style = value; }
 		}
+
+#if NET_2_0
+		[LocalizableAttribute(true)]
+		public ListViewGroup Group {
+			get { return this.group; }
+			set
+			{
+				if (this.group != value)
+				{
+					if (value != null)
+					{
+						value.Items.Add(this);
+
+						if (this.group != null)
+							this.group.Items.Remove(this);
+
+						this.group = value;
+					}
+					else
+					{
+						if(this.group != null)
+						this.group.Items.Remove(this);
+					}
+				}
+			}
+		}
+
+		[LocalizableAttribute(true)]
+		[DefaultValue("")]
+		[MonoTODO("ImageKey is not Implemented")]
+		public string ImageKey {
+			//TODO: how to handle this?
+			get { return ""; }
+			set { }
+		}
+#endif
+
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
