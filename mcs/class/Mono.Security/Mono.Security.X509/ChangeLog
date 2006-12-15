@@ -1,3 +1,9 @@
+2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: Added support for (some cases of) T.61 strings, like
+	the latin-1 encoded accentued characters founds in some DN. Fix bug 
+	#77295.
+
 2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Fix DSA certificates (with parameters) and don't throw
