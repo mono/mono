@@ -101,6 +101,21 @@ namespace System.IO {
 				File.SetAttributes(FullPath, attrs);
 			}
 		}
+
+		void NotSupported ()
+		{
+			throw new NotSupportedException ("Mono does not support this operation");
+		}
+		
+		public void Encrypt ()
+		{
+			NotSupported ();
+		}
+
+		public void Decrypt ()
+		{
+			NotSupported ();
+		}
 #endif
 
 		public long Length {

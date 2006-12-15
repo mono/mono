@@ -1,3 +1,6 @@
+2006-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	* FileInfo.cs: Empty implementations for Encrypt and Decrypt
 
 Mon Dec 11 11:40:06 CET 2006 Paolo Molaro <lupus@ximian.com>
 
