@@ -21,3 +21,12 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml
 
 include ../../build/library.make
+
+# run the PKITS tests only if the data was installed/activated, otherwise ignore them
+ifeq (net_2_0, $(PROFILE))
+pkits_files := $(wildcard ../System/Test/System.Security.Cryptography.X509Certificates/pkits/hint)
+ifndef pkits_files
+TEST_HARNESS_EXCLUDES = /exclude:NotWorking,ValueAdd,CAS,InetAccess,PKITS
+TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:NotDotNet,CAS,PKITS
+endif
+endif

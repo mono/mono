@@ -1,3 +1,10 @@
+2006-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Execute PKITS tests only if the data is installed locally.
+	See System.dll unit tests for details.
+	* System.Security_test.dll.sources: Add some PKITS unit tests to the
+	build.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security_test.dll.sources: Added unit and CAS tests for 
