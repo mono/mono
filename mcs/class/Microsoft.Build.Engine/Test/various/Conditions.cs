@@ -204,6 +204,35 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void TestCondition7 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A>true</A>
+					</PropertyGroup>
+					<ItemGroup>
+						<B Include='true' />
+						<C Include='true;false' />
+					</ItemGroup>
+
+					<Target Name='1'>
+						<Message Text='a' Condition='$(A)' />
+						<Message Text='b' Condition='@(B)' />
+						<Message Text='c' Condition='%(C.Filename)' />
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsTrue (proj.Build ("1"), "A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestIncorrectCondition1 ()
 		{
@@ -215,6 +244,66 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<PropertyGroup>
 						<A Condition='x'>A</A>
 					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"A reference to an item list at position 1 is not allowed in this condition \"@(A)\".  ")]
+		[Category ("NotWorking")]
+		public void TestIncorrectCondition2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition='@(A)'>A</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[Category ("NotWorking")]
+		public void TestIncorrectCondition3 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition='%(A)'>A</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[Category ("NotWorking")]
+		public void TestIncorrectCondition4 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<A Include='a' Condition='%(A)' />
+					</ItemGroup>
 				</Project>
 			";
 

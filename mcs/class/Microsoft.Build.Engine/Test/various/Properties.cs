@@ -34,7 +34,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class Properties {
 		[Test]
-		public void TestProperties ()
+		public void TestProperties1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();

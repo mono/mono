@@ -104,7 +104,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItems3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -155,6 +154,191 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A12");
 			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT6"), "A13");
 
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItems5 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
+
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item2 Include='%(A.B)' />
+						<Item3 Include='$(Z)' />
+						<Item4 Include=""@(Item1, '$(A)')"" />
+						<Item5 Include=""@(Item1, '%(A)')"" />
+						<Item6 Include=""@(Item1, '@(A)')"" />
+						<Item7 Include=""@(Item1-> '%(Filename)')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual ("%(A.B)", GetItems (proj, "Item2"), "A1");
+			Assert.AreEqual (String.Empty, GetItems (proj, "Item3"), "A2");
+			Assert.AreEqual ("AABAC", GetItems (proj, "Item4"), "A3");
+			Assert.AreEqual ("A%(A)B%(A)C", GetItems (proj, "Item5"), "A4");
+			Assert.AreEqual ("A@(A)B@(A)C", GetItems (proj, "Item6"), "A6");
+			Assert.AreEqual ("A;B;C", GetItems (proj, "Item7"), "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"The expression \"@(Item1, '@(A,'')')\" cannot be used in this context. " +
+			"Item lists cannot be concatenated with other strings where an item list is expected. " +
+			"Use a semicolon to separate multiple item lists.  ")]
+		[Category ("NotWorking")]
+		public void TestItems6 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item7 Include=""@(Item1, '@(A,'')')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"The expression \"@(Item1, '@(A->'')')\" cannot be used in this context. " +
+			"Item lists cannot be concatenated with other strings where an item list is expected. " +
+			"Use a semicolon to separate multiple item lists.  ")]
+		[Category ("NotWorking")]
+		public void TestItems7 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item8 Include=""@(Item1, '@(A->'')')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"The expression \"@(Item1, '@(A->'','')')\" cannot be used in this context. " +
+			"Item lists cannot be concatenated with other strings where an item list is expected. " +
+			"Use a semicolon to separate multiple item lists.  ")]
+		[Category ("NotWorking")]
+		public void TestItems8 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item9 Include=""@(Item1, '@(A->'','')')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget1 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+
+					<Target Name='1'>
+						<StringTestTask Property='@(A)@(Z)'>
+							<Output TaskParameter='Property' PropertyName='P1' />
+						</StringTestTask>
+						<StringTestTask Property=""@(A,'')"">
+							<Output TaskParameter='Property' PropertyName='P2' />
+						</StringTestTask>
+						<StringTestTask Property=""@(A,'@(A)')"">
+							<Output TaskParameter='Property' PropertyName='P3' />
+						</StringTestTask>
+						<StringTestTask Property=""@(A,'$(A)')"">
+							<Output TaskParameter='Property' PropertyName='P4' />
+						</StringTestTask>
+						<StringTestTask Property=""@(A,'@(A,'')')"">
+							<Output TaskParameter='Property' PropertyName='P5' />
+						</StringTestTask>
+						<StringTestTask Property=""%(A.Filename)"">
+							<Output TaskParameter='Property' ItemName='I1' />
+						</StringTestTask>
+						<StringTestTask Property=""@(A) %(Filename)"">
+							<Output TaskParameter='Property' ItemName='I2' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			proj.Build ("1");
+
+			Assert.AreEqual ("A;B;C", proj.GetEvaluatedProperty ("P1"), "A1");
+			Assert.AreEqual ("ABC", proj.GetEvaluatedProperty ("P2"), "A2");
+			Assert.AreEqual ("A@(A)B@(A)C", proj.GetEvaluatedProperty ("P3"), "A3");
+			Assert.AreEqual ("AABAC", proj.GetEvaluatedProperty ("P4"), "A4");
+			Assert.AreEqual ("@(A,'ABC')", proj.GetEvaluatedProperty ("P5"), "A5");
+			Assert.AreEqual ("A;B;C", GetItems (proj, "I1"), "A6");
+			Assert.AreEqual ("A A;B B;C C", GetItems (proj, "I2"), "A7");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+
+					<Target Name='1'>
+						<StringTestTask Property=""%(Filename)"">
+							<Output TaskParameter='Property' ItemName='I2' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"), "A1");
 		}
 	}
 }

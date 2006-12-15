@@ -284,6 +284,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
+		[Category ("NotWorking")]
 		public void TestImportOrder3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -308,6 +309,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
+		[Category ("NotWorking")]
 		public void TestImportOrder4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -393,6 +395,30 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			Assert.AreEqual ("AnotherValue", proj.EvaluatedProperties ["ImportedProperty"].FinalValue, "A1");
 			Assert.AreEqual ("Another$(ImportedProperty)", proj.EvaluatedProperties ["ImportedProperty"].Value, "A2");
+		}
+
+		[Test]
+		public void TestUsingTaskOrder1 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<Property>Test\resources\TestTasks.dll</Property>
+					</PropertyGroup>
+
+					<UsingTask AssemblyFile='$(Property)' TaskName='TrueTestTask' />
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			UsingTask [] ut = new UsingTask [1];
+			proj.UsingTasks.CopyTo (ut, 0);
+
+			Assert.AreEqual ("$(Property)", ut [0].AssemblyFile, "A1");
 		}
 	}
 }
