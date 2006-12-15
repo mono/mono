@@ -54,6 +54,9 @@ namespace System.Web.Services.Protocols
 		bool useEncoded;
 
 		TypeStubInfo soapProtocol;
+#if NET_2_0
+		TypeStubInfo soap12Protocol;
+#endif
 		TypeStubInfo httpGetProtocol;
 		TypeStubInfo httpPostProtocol;
 		
@@ -110,6 +113,11 @@ namespace System.Web.Services.Protocols
 					case "Soap": 
 						if (soapProtocol == null) soapProtocol = CreateTypeStubInfo (typeof(SoapTypeStubInfo));
 						return soapProtocol;
+#if NET_2_0
+					case "Soap12": 
+						if (soap12Protocol == null) soap12Protocol = CreateTypeStubInfo (typeof(Soap12TypeStubInfo));
+						return soap12Protocol;
+#endif
 					case "HttpGet":
 						if (httpGetProtocol == null) httpGetProtocol = CreateTypeStubInfo (typeof(HttpGetTypeStubInfo));
 						return httpGetProtocol;

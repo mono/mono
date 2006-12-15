@@ -306,13 +306,12 @@ namespace System.Web.Services.Description {
 			portType.Name = binding.Name;
 
 			BeginClass ();
-#if NET_2_0
+
 			foreach (SoapExtensionReflector reflector in extensionReflectors)
 			{
 				reflector.ReflectionContext = this;
 				reflector.ReflectDescription ();
 			}
-#endif
 
 			foreach (MethodStubInfo method in typeInfo.Methods)
 			{
@@ -324,7 +323,10 @@ namespace System.Web.Services.Description {
 				operation = new Operation ();
 				operation.Name = method.OperationName;
 				operation.Documentation = method.MethodAttribute.Description;
-				
+
+				// FIXME: SOAP 1.1 and SOAP 1.2 should share
+				// the same message definitions.
+
 				inputMessage = new Message ();
 				inputMessage.Name = method.Name + ProtocolName + "In";
 				ServiceDescription.Messages.Add (inputMessage);

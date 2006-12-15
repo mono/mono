@@ -544,4 +544,17 @@ namespace System.Web.Services.Protocols {
 			return (SoapMethodStubInfo) methods_byaction [name.Trim ('"',' ')];
 		}
 	}
+
+	internal class Soap12TypeStubInfo : SoapTypeStubInfo
+	{
+		public Soap12TypeStubInfo (ServerType logicalTypeInfo)
+		: base (logicalTypeInfo)
+		{
+		}
+
+		public override string ProtocolName
+		{
+			get { return "Soap12"; }
+		}
+	}
 }
