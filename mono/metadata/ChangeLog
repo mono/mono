@@ -1,3 +1,62 @@
+2006-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (mono_free_bstr): On Unix, this is g_free.
+	(mono_string_from_bstr, mono_string_to_bstr): Implement bstr
+	conversions (for the tests in corlib to pass).
+
+2006-12-14  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (emit_ptr_to_object_conv): For now, ignore
+	MONO_MARSHAL_CONV_SAFEHANDLE on return values (we need to throw an
+	exception if a ref SafeHandle in a struct has changed).
+	
+	(emit_struct_conv): Do not perform layout checks for classes
+	derived from SafeHandle, as those are specially handled. 
+
+	(emit_object_to_ptr_conv): Add support for
+	MONO_MARSHAL_CONV_SAFEHANDLE conversion. 
+
+	(emit_marshal_safehandle): Implement conversion of return values
+	of safehandles (MARSHAL_ACTION_CONV_RESULT).
+	
+	* threads.c: WaitHandle now is compiled with two different handles
+	"IntPtr os_handle" for 1.x and "SafeWaitHandle safe_wait_handle"
+	for 2.0.
+	
+	(ves_icall_System_Threading_WaitHandle_WaitAll_internal) 
+	(ves_icall_System_Threading_WaitHandle_WaitAny_internal): Adjust
+	these routines to cope with both kinds of fields.
+
+2006-12-12  Miguel de Icaza  <miguel@novell.com>
+
+	* metadata.c (mono_type_to_unmanaged): Handle the case where
+	type->data.klass is a SafeHandle, and in that case, return the
+	size of a pointer (MONO_NATIVE_INT) and set the conversion to be
+	MONO_MARSHAL_CONV_SAFEHANDLE. 
+
+2006-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (emit_marshal): Hook up to the MONO_TYPE_CLASS and
+	MONO_TYPE_OBJECT cases and check for a SafeHandle here before
+	calling emit_marshal_object.
+
+	(emit_marshal_safehandle): Implement marshalling of
+	SafeHandle parameters (no ref support yet).
+
+	(MarshalAction): Document the defines as I implement
+	them for SafeHandle.
+
+	(emit_marshal_object): indentation police.
+
+	* class-internals.h: Define MonoSafeHandle.
+	Add safehandle_class to MonoDefaults type.
+
+	* verify.c: Add System.Runtime.InteropServices.SafeHandle to the
+	list of classes to check for fields. 
+
+	* domain.c (mono_init_internal): Add SafeHandle to the list of
+	mono_defaults loaded.
+
 2006-12-15  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80253
