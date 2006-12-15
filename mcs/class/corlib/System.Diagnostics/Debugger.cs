@@ -65,7 +65,7 @@ namespace System.Diagnostics
 		/// </summary>
 		public static void Break()
 		{
-			// The Mono Debugger will hook into this itself.
+			// The JIT inserts a breakpoint on the caller.
 		}
 		
 		/// <summary>
