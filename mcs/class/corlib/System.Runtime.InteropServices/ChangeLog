@@ -5,7 +5,12 @@
 
 2006-12-15  Miguel de Icaza  <miguel@novell.com>
 
-	* Marshal.cs (StringToCoTaskAuto): return the same as Ansi.  
+	* Marshal.cs (SecureStringToCoTaskMemAnsi, SecureStringToBSTR,
+	SecureStringToCoTaskMemUnicode, ZeroFreeCoTaskMemAnsi,
+	ZeroFreeCoTaskMemUnicode, ZeroFreeGlobalAllocAnsi,
+	ZeroFreeGlobalAllocUnicode): Implement.
+
+	(StringToCoTaskAuto): return the same as Ansi.  
 
 	The ANSI code is out of sync with Mono, which treats ANSI as
 	UTF-8. 

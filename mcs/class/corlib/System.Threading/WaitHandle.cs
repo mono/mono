@@ -34,6 +34,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
 using System.Security.Permissions;
 
+#if NET_2_0
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+#endif
+
 namespace System.Threading
 {
 	public abstract class WaitHandle : MarshalByRefObject, IDisposable
@@ -57,8 +62,13 @@ namespace System.Threading
 				if (w == null)
 					throw new ArgumentNullException ("waitHandles", "null handle");
 
+#if NET_2_0
+				if (w.safe_wait_handle == null)
+					throw new ArgumentException ("null element found", "waitHandle");
+#else
 				if (w.os_handle == InvalidHandle)
 					throw new ArgumentException ("null element found", "waitHandle");
+#endif
 			}
 		}
 
@@ -163,8 +173,130 @@ namespace System.Threading
 			// FIXME
 		}
 
+		public virtual void Close() {
+			Dispose(true);
+			GC.SuppressFinalize (this);
+		}
+
 		public const int WaitTimeout = 258;
 
+#if NET_2_0
+		//
+		// In 2.0 we use SafeWaitHandles instead of IntPtrs
+		//
+		SafeWaitHandle safe_wait_handle;
+
+		[Obsolete ("In the profiles > 2.x, use SafeHandle instead of Handle")]
+		public virtual IntPtr Handle {
+			get {
+				return safe_wait_handle.DangerousGetHandle ();
+			}
+
+			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
+			set {
+				//
+				// Notice, from the 2.x documentation:
+				//    Assigning a new value to the Handle property, will not release
+				//    the previous handle, this could lead to a leak
+				//
+				safe_wait_handle = new SafeWaitHandle (value, false);
+			}
+		}
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
+
+		protected virtual void Dispose (bool explicitDisposing)
+		{
+			if (!disposed){
+				disposed = true;
+
+				//
+				// This is only the case if the handle was never properly initialized
+				// most likely a but in the derived class
+				//
+				if (safe_wait_handle == null)
+					return;
+
+				lock (this){
+					if (safe_wait_handle != null)
+						safe_wait_handle.Dispose ();
+				}
+			}
+		}
+
+		public SafeWaitHandle SafeWaitHandle {
+			get {
+				return safe_wait_handle;
+			}
+
+			set {
+				if (safe_wait_handle != null)
+					safe_wait_handle.Close ();
+				
+				safe_wait_handle = value;
+			}
+		}
+
+		public virtual bool WaitOne()
+		{
+			CheckDisposed ();
+			bool release = false;
+			try {
+				safe_wait_handle.DangerousAddRef (ref release);
+				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), Timeout.Infinite, false));
+			} finally {
+				if (release)
+					safe_wait_handle.DangerousRelease ();
+			}
+		}
+
+		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext)
+		{
+			CheckDisposed ();
+			bool release = false;
+			try {
+				if (exitContext)
+					SynchronizationAttribute.ExitContext ();
+				safe_wait_handle.DangerousAddRef (ref release);
+				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), millisecondsTimeout, exitContext));
+			} finally {
+				if (exitContext)
+					SynchronizationAttribute.EnterContext ();
+				if (release)
+					safe_wait_handle.DangerousRelease ();
+			}
+		}
+
+		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
+		{
+			CheckDisposed ();
+			long ms = (long) timeout.TotalMilliseconds;
+			if (ms < -1 || ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout");
+
+			bool release = false;
+			try {
+				if (exitContext)
+					SynchronizationAttribute.ExitContext ();
+				safe_wait_handle.DangerousAddRef (ref release);
+				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), (int) ms, exitContext));
+			}
+			finally {
+				if (exitContext)
+					SynchronizationAttribute.EnterContext ();
+				if (release)
+					safe_wait_handle.DangerousRelease ();
+			}
+		}
+
+		internal void CheckDisposed ()
+		{
+			if (disposed || safe_wait_handle == null)
+				throw new ObjectDisposedException (GetType ().FullName);
+		}
+#else
 		private IntPtr os_handle = InvalidHandle;
 		
 		public virtual IntPtr Handle {
@@ -179,11 +311,6 @@ namespace System.Threading
 			}
 		}
 
-		public virtual void Close() {
-			Dispose(true);
-			GC.SuppressFinalize (this);
-		}
-
 		internal void CheckDisposed ()
 		{
 			if (disposed || os_handle == InvalidHandle)
@@ -193,6 +320,22 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
 
+		protected virtual void Dispose(bool explicitDisposing) {
+			// Check to see if Dispose has already been called.
+			if (!disposed) {
+				disposed=true;
+				if (os_handle == InvalidHandle)
+					return;
+
+				lock (this) {
+					if (os_handle != InvalidHandle) {
+						NativeEventCalls.CloseEvent_internal (os_handle);
+						os_handle = InvalidHandle;
+					}
+				}
+			}
+		}
+		
 		public virtual bool WaitOne()
 		{
 			CheckDisposed ();
@@ -226,9 +369,9 @@ namespace System.Threading
 				if (exitContext) SynchronizationAttribute.EnterContext ();
 			}
 		}
+#endif
 
 		protected static readonly IntPtr InvalidHandle = IntPtr.Zero;
-
 		bool disposed = false;
 
 		void IDisposable.Dispose() {
@@ -237,22 +380,6 @@ namespace System.Threading
 			GC.SuppressFinalize(this);
 		}
 		
-		protected virtual void Dispose(bool explicitDisposing) {
-			// Check to see if Dispose has already been called.
-			if (!disposed) {
-				disposed=true;
-				if (os_handle == InvalidHandle)
-					return;
-
-				lock (this) {
-					if (os_handle != InvalidHandle) {
-						NativeEventCalls.CloseEvent_internal (os_handle);
-						os_handle = InvalidHandle;
-					}
-				}
-			}
-		}
-
 		~WaitHandle() {
 			Dispose(false);
 		}

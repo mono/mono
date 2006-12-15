@@ -1,7 +1,15 @@
+2006-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* WaitHandle.cs: In 2.0 use SafeWaitHandles and the SafeWaitHandle
+	patterns instead of using directly the IntPtr Handle.
+
+	Refactor the code to reuse as much as possible, and follow the new
+	conventions where appropriate. 
+
 2006-11-07  Robert Jordan  <robertj@gmx.net>
 
-	* WaitHandle.cs: Don't assume Assembly.GetEntryAssembly () != null.
-	Fixes bug #79859.
+	* WaitHandle.cs: Don't assume Assembly.GetEntryAssembly () !=
+	null.  Fixes bug #79859.
 
 2006-11-02  Dick Porter  <dick@ximian.com>
 

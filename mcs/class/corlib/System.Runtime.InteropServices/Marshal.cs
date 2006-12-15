@@ -209,34 +209,55 @@ namespace System.Runtime.InteropServices
 		public extern static void FreeHGlobal (IntPtr hglobal);
 
 #if NET_2_0
-		[MonoTODO]
+
+		static void ClearBSTR (IntPtr ptr)
+		{
+			int len = ReadInt32 (ptr, -4);
+
+			for (int i = 0; i < len; i++)
+				WriteByte (ptr, i, 0);
+		}
+		
 		public static void ZeroFreeBSTR (IntPtr ptr)
 		{
-			throw new NotImplementedException ();
+			ClearBSTR (ptr);
+			FreeBSTR (ptr);
 		}
 
-		[MonoTODO]
+		static void ClearAnsi (IntPtr ptr)
+		{
+			for (int i = 0; ReadByte (ptr, i) != 0; i++)
+				WriteByte (ptr, i, 0);
+		}
+
+		static void ClearUnicode (IntPtr ptr)
+		{
+			for (int i = 0; ReadInt16 (ptr, i) != 0; i += 2)
+				WriteInt16 (ptr, i, 0);
+		}
+		
 		public static void ZeroFreeCoTaskMemAnsi (IntPtr ptr)
 		{
-			throw new NotImplementedException ();
+			ClearAnsi (ptr);
+			FreeCoTaskMem (ptr);
 		}
 
-		[MonoTODO]
 		public static void ZeroFreeCoTaskMemUnicode (IntPtr ptr)
 		{
-			throw new NotImplementedException ();
+			ClearUnicode (ptr);
+			FreeCoTaskMem (ptr);
 		}
 
-		[MonoTODO]
 		public static void ZeroFreeGlobalAllocAnsi (IntPtr hglobal)
 		{
-			throw new NotImplementedException ();
+			ClearAnsi (hglobal);
+			FreeHGlobal (hglobal);
 		}
 
-		[MonoTODO]
 		public static void ZeroFreeGlobalAllocUnicode (IntPtr hglobal)
 		{
-			throw new NotImplementedException ();
+			ClearUnicode (hglobal);
+			FreeHGlobal (hglobal);
 		}
 #endif
 
@@ -814,44 +835,92 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr StringToHGlobalUni (string s);
 
 #if NET_2_0
-		[MonoTODO]
 		public static IntPtr SecureStringToBSTR (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			throw new NotSupportedException ();
+			int len = s.Length;
+			IntPtr ctm = AllocCoTaskMem ((len+1) * 2 + 4);
+			byte [] buffer = null;
+			WriteInt32 (ctm, 0, len);
+			try {
+				buffer = s.GetBuffer ();
+
+				for (int i = 0; i < len; i++)
+					WriteInt16 (ctm, 4 + (i * 2), (short) ((buffer [(i*2)] << 8) | (buffer [i*2+1])));
+				WriteInt16 (ctm, 4 + buffer.Length, 0);
+			} finally {
+				if (buffer != null)
+					for (int i = buffer.Length; i > 0; ){
+						i--;
+						buffer [i] = 0;
+					}
+			}
+			return (IntPtr) ((long)ctm + 4);
 		}
 
-		[MonoTODO]
 		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			throw new NotSupportedException ();
+			int len = s.Length;
+			IntPtr ctm = AllocCoTaskMem (len + 1);
+			byte [] copy = new byte [len+1];
+
+			try {
+				byte [] buffer = s.GetBuffer ();
+				int i = 0, j = 0;
+				for (; i < len; i++, j += 2){
+					copy [i] = buffer [j+1];
+					buffer [j] = 0;
+					buffer [j+1] = 0;
+				}
+				copy [i] = 0;
+				copy_to_unmanaged (copy, 0, ctm, len+1);
+			} finally {
+				// Ensure that we clear the buffer.
+				for (int i = len; i > 0; ){
+					i--;
+					copy [i] = 0;
+				}
+			}
+			return ctm;
 		}
 
-		[MonoTODO]
 		public static IntPtr SecureStringToCoTaskMemUnicode (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			throw new NotSupportedException ();
+			int len = s.Length;
+			IntPtr ctm = AllocCoTaskMem (len * 2 + 2);
+			byte [] buffer = null;
+			try {
+				buffer = s.GetBuffer ();
+				for (int i = 0; i < len; i++)
+					WriteInt16 (ctm, i * 2, (short) ((buffer [(i*2)] << 8) | (buffer [i*2+1])));
+				WriteInt16 (ctm, buffer.Length, 0);
+			} finally {
+				if (buffer != null)
+					for (int i = buffer.Length; i > 0; ){
+						i--;
+						buffer [i] = 0;
+					}
+			}
+			return ctm;
 		}
 
-		[MonoTODO]
 		public static IntPtr SecureStringToGlobalAllocAnsi (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			throw new NotSupportedException ();
+			return SecureStringToCoTaskMemAnsi (s);
 		}
 
-		[MonoTODO]
 		public static IntPtr SecureStringToGlobalAllocUnicode (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
-			throw new NotSupportedException ();
+			return SecureStringToCoTaskMemUnicode (s);
 		}
 #endif
 
