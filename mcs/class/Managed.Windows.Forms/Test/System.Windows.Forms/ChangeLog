@@ -1,5 +1,9 @@
 2006-12-15  Daniel Nauck  <dna@mono-project.de>
 
+	* ListViewCollectionsTest.cs: new ListViewItemCollection indexer test for #80199.
+
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
 	* ListViewGroupTest.cs: new tests for ListViewGroups.
 	* ListViewGroupCollectionTest.cs: new tests for ListViewGroupCollections.
 
