@@ -895,6 +895,31 @@ namespace System.Windows.Forms
 		{
 			return base.ProcessKeyEventArgs (ref m);
 		}
+
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			base.OnKeyDown (e);
+		}
+
+		protected override void OnValidating (CancelEventArgs e)
+		{
+			base.OnValidating (e);
+		}
+
+		protected override void OnTextChanged (EventArgs e)
+		{
+			base.OnTextChanged (e);
+		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+		
+		protected override void OnMouseEnter (EventArgs e)
+		{
+			base.OnMouseEnter (e);
+		}
 #endif
 
 		public void Select (int start, int length)

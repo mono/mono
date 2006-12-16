@@ -1319,6 +1319,12 @@ namespace System.Windows.Forms
 		}
 
 		#endregion //Private Methods
+#if NET_2_0
+		protected override void OnMouseWheel (MouseEventArgs e)
+		{
+			base.OnMouseWheel (e);
+		}
+#endif
 	 }
 }
 

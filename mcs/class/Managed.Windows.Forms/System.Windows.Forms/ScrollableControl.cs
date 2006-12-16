@@ -810,5 +810,25 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Internal & Private Methods
 
+#if NET_2_0
+		static object OnScrollEvent = new object ();
+		
+		protected virtual void OnScroll (ScrollEventArgs se)
+		{
+			EventHandler eh = (EventHandler) (Events [OnScrollEvent]);
+			if (eh != null)
+				eh (this, se);
+		}
+
+		protected override void OnPaintBackground (PaintEventArgs e)
+		{
+			base.OnPaintBackground (e);
+		}
+
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+#endif
 	}
 }

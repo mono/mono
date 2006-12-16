@@ -130,5 +130,21 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }
 		}
 		#endregion	// Events
+#if NET_2_0
+		protected override void OnMouseEnter (EventArgs e)
+		{
+			base.OnMouseEnter (e);
+		}
+		
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+
+		protected override void OnTextChanged (EventArgs e)
+		{
+			base.OnTextChanged (e);
+		}
+#endif
 	}
 }

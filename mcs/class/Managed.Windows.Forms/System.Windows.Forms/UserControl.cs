@@ -113,5 +113,12 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion	// Events
+
+#if NET_2_0
+		protected override void OnResize (EventArgs e)
+		{
+			base.OnResize (e);
+		}
+#endif
 	}
 }

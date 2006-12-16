@@ -1949,5 +1949,12 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		#endregion	// Private Methods
+
+#if NET_2_0
+		protected override void OnTextChanged (EventArgs e)
+		{
+			base.OnTextChanged (e);
+		}
+#endif
 	}
 }

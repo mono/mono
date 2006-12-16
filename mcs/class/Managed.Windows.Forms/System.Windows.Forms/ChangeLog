@@ -1,3 +1,10 @@
+2006-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	* Button.cs, ComboBox.cs, ScrollBar.cs, UserControl.cs,
+	TextBoxBase.cs, ListView.cs, ContainerControl.cs,
+	ScrollableControl.cs: Add a handful of methods that are
+	overwritten in 2.0 
+
 2006-12-15  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIWin32.cs: initial implementation of the Reversible

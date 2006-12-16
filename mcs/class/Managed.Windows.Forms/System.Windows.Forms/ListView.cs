@@ -3609,5 +3609,16 @@ namespace System.Windows.Forms
 		internal delegate void CollectionChangedHandler ();
 
 		#endregion // Subclasses
+#if NET_2_0
+		protected override void OnResize (EventArgs e)
+		{
+			base.OnResize (e);
+		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+#endif
 	}
 }

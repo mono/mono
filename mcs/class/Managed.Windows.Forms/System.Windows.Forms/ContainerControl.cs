@@ -439,5 +439,17 @@ namespace System.Windows.Forms {
 			// do nothing here, only called if it is a Form
 		}
 		#endregion	// Internal Methods
+		
+#if NET_2_0
+		protected override void OnParentChanged (EventArgs e)
+		{
+			base.OnParentChanged (e);
+		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+		}
+#endif
 	}
 }
