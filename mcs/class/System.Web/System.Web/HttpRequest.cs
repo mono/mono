@@ -941,12 +941,11 @@ namespace System.Web {
 					string fp = FilePath;
 					int p = fp.LastIndexOf ('/');
 
-					if (p == -1)
+					if (p < 1)
 						root_virtual_dir = "/";
 					else
 						root_virtual_dir = fp.Substring (0, p);
 				}
-
 				return root_virtual_dir;
 			}
 		}
@@ -1155,14 +1154,15 @@ namespace System.Web {
  			if (virtualPath.StartsWith(vmw.common.IAppDomainConfig.WAR_ROOT_SYMBOL))			
  				return 	virtualPath;			
 #endif 
+			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
 			if (baseVirtualDir == null)
-				baseVirtualDir = RootVirtualDir;
+				baseVirtualDir = appVirtualPath;
 			virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
 
 			if (!allowCrossAppMapping){
-				if (!StrUtils.StartsWith (virtualPath, RootVirtualDir, true))
+				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
 					throw new HttpException ("MapPath: Mapping across applications not allowed");
-				if (RootVirtualDir.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
+				if (appVirtualPath.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
 					throw new HttpException ("MapPath: Mapping across applications not allowed");
 			}
 			return worker_request.MapPath (virtualPath);
