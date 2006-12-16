@@ -17,86 +17,113 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc. (http://www.novell.com)
 //
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
+//	Daniel Nauck    (dna(at)mono-project(dot)de)
 //
-
 
 #if NET_2_0
 
+using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
 
 	[Serializable]
+	//FIXME: implement [TypeConverter(typeof(PaddingConverter))]
 	public struct Padding {
 
-		private int bottom;
-		private int left;
-		private int right;
-		private int top;
-		private bool initialized;
+		//NOTE: "_var" field name is required by serialization.
+		private int _bottom;
+		private int _left;
+		private int _right;
+		private int _top;
+		private bool _all;
 
 		public Padding (int all) {
-			left = all;
-			right = all;
-			top = all;
-			bottom = all;
-			initialized = true;
+			_left = all;
+			_right = all;
+			_top = all;
+			_bottom = all;
+			_all = true;
 		}
 
 		public Padding (int left, int top, int right, int bottom) {
-			this.left = left;
-			this.right = right;
-			this.top = top;
-			this.bottom = bottom;
-			initialized = true;
+			_left = left;
+			_right = right;
+			_top = top;
+			_bottom = bottom;
+			_all = (_left == _top) && (_left == _right) && (_left == _bottom);
 		}
 
-		public static readonly Padding Empty = new Padding();
+		public static readonly Padding Empty = new Padding(0);
 
+		[RefreshProperties(RefreshProperties.All)]
 		public int All {
-			get {
-				if (initialized && left == top && left == right && left == bottom) {
-					return left;
-				}
-				return -1;
+			get { 
+				if(!_all)
+					return -1;
+				else
+					return _top; 
 			}
-			set { Left = Top = Right = Bottom = value; }
+			set { 
+				_all = true;
+				_left = _top = _right = _bottom = value;
+			}
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public int Bottom {
-			get { return bottom; }
-			set { bottom = value; initialized = true; }
+			get { return _bottom; }
+			set { 
+				_bottom = value;
+				_all = false;
+			}
 		}
 
+		[Browsable(false)]
 		public int Horizontal {
-			get { return left + right; }
+			get { return _left + _right; }
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public int Left {
-			get { return left; }
-			set { left = value; initialized = true; }
+			get { return _left; }
+			set { 
+				_left = value;
+				_all = false;
+			}
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public int Right {
-			get { return right; }
-			set { right = value; initialized = true; }
+			get { return _right; }
+			set { 
+				_right = value;
+				_all = false;
+			}
 		}
 
+		[Browsable(false)]
 		public Size Size {
-			get { return new Size(left + right, top + bottom); }
+			get { return new Size(Horizontal, Vertical); }
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public int Top {
-			get { return top; }
-			set { top = value; initialized = true; }
+			get { return _top; }
+			set { 
+				_top = value;
+				_all = false;
+			}
 		}
 
+		[Browsable(false)]
 		public int Vertical {
-			get { return top + bottom; }
+			get { return _top + _bottom; }
 		}
 
 		public static Padding Add (Padding p1, Padding p2) {
@@ -106,17 +133,16 @@ namespace System.Windows.Forms {
 		public override bool Equals (object other) {
 			if (other is Padding) {
 				Padding other_aux = (Padding) other;
-				return this.left == other_aux.left &&
-					this.top == other_aux.top &&
-					this.right == other_aux.right &&
-					this.bottom == other_aux.bottom;
+				return _left == other_aux.Left &&
+					_top == other_aux.Top &&
+					_right == other_aux.Right &&
+					_bottom == other_aux.Bottom;
 			}
 			return false;
 		}
 
 		public override int GetHashCode () {
-			////////////////////////////// COMPROBAR EN Windows /////////////////////////
-			return top ^ bottom ^ left ^ right;
+			return _top ^ _bottom ^ _left ^ _right;
 		}
 
 		public static Padding operator+ (Padding p1, Padding p2) {
@@ -143,7 +169,5 @@ namespace System.Windows.Forms {
 			return "{Left=" + Left + ",Top="+ Top + ",Right=" + Right + ",Bottom=" + Bottom + "}"; 
 		}
 	}
-
 }
-
 #endif
