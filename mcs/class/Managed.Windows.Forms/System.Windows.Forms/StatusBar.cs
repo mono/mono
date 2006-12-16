@@ -48,7 +48,6 @@ namespace System.Windows.Forms {
 		#endregion	// Fields
 
 		#region Public Constructors
-		[MonoTODO("Change cursor when mouse is over grip")]
 		public StatusBar ()
 		{
 			base.Dock = DockStyle.Bottom;
