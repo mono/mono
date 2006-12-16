@@ -4859,48 +4859,50 @@ namespace Mono.CSharp {
 			ParameterData pd = TypeManager.GetParameterData (method);
 			int j;
 			int a_idx = 0;
-			int params_arg_count = 0;
 			Argument a = null;
-			for (j = 0; j < pd.Count & a_idx < arg_count; j++, a_idx++) {
-				a = (Argument) Arguments [a_idx];
+			for (j = 0; j < pd.Count; j++) {
 				Type parameter_type = pd.ParameterType (j);
 				Parameter.Modifier pm = pd.ParameterModifier (j);
 
 				if (pm == Parameter.Modifier.ARGLIST) {
+					a = (Argument) Arguments [a_idx];
 					if (!(a.Expr is Arglist))
 						break;
+					++a_idx;
 					continue;
 				}
 
+				int params_arg_count = 1;
 				if (pm == Parameter.Modifier.PARAMS) {
 					pm = Parameter.Modifier.NONE;
-					params_arg_count = arg_count - pd.Count;
+					params_arg_count = arg_count - pd.Count + 1;
 					if (chose_params_expanded)
 						parameter_type = TypeManager.GetElementType (parameter_type);
 				}
 
-			conversion:
-				if (pm != a.Modifier)
-					break;
-
-				if (!TypeManager.IsEqual (a.Type, parameter_type)) {
-					if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
+				while (params_arg_count > 0) {
+					a = (Argument) Arguments [a_idx];
+					if (pm != a.Modifier)
 						break;
 
-					Expression conv = Convert.ImplicitConversion (ec, a.Expr, parameter_type, loc);
-					if (conv == null)
-						break;
+					if (!TypeManager.IsEqual (a.Type, parameter_type)) {
+						if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
+							break;
 
-					// Update the argument with the implicit conversion
-					if (a.Expr != conv)
-						a.Expr = conv;
-				}
+						Expression conv = Convert.ImplicitConversion (ec, a.Expr, parameter_type, loc);
+						if (conv == null)
+							break;
 
-				if (params_arg_count > 0) {
+						// Update the argument with the implicit conversion
+						if (a.Expr != conv)
+							a.Expr = conv;
+					}
+
 					--params_arg_count;
-					a = (Argument) Arguments [++a_idx];
-					goto conversion;
+					++a_idx;
 				}
+				if (params_arg_count > 0)
+					break;
 
 				if (parameter_type.IsPointer && !ec.InUnsafe) {
 					UnsafeError (loc);
