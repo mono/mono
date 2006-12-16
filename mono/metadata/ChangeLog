@@ -1,3 +1,13 @@
+2006-12-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #80242
+	* icall.c (ves_icall_Type_GetNestedType): If the type is a generic
+	instance, use the generic type definition instead.
+	(ves_icall_Type_GetNestedTypes): Likewise.
+	* class.c (mono_class_create_generic): Always set the
+	nested_classes of a generic instance to NULL, even if the generic
+	type definition has nested types.
+
 2006-12-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c (mono_string_from_bstr): Revert previous Windows change
