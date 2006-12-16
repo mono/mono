@@ -220,7 +220,7 @@ namespace Mono.XBuild.CommandLine {
 			splittedProperties = parameter [1].Split (';');
 			foreach (string st in splittedProperties) {
 				property = st.Split ('=');
-				properties.AddNewProperty (property [0], property [1]);
+				properties.SetProperty (property [0], property [1]);
 			}
 		}
 		
