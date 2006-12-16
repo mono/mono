@@ -690,6 +690,23 @@ PublicKeyToken=b77a5c561934e089"));
 			CheckGenericByRef (typeof (ByRef3<>));
 			CheckGenericByRef (typeof (ByRef4));
 		}
+
+		public class Bug80242<T> {
+			public interface IFoo { }
+			public class Bar : IFoo { }
+			public class Baz : Bar { }
+		}
+
+		[Test]
+		public void TestNestedTypes ()
+		{
+			Type t = typeof (Bug80242<object>);
+			Assert.IsFalse (t.IsGenericTypeDefinition);
+			foreach (Type u in t.GetNestedTypes ()) {
+				Assert.IsTrue (u.IsGenericTypeDefinition, "{0} isn't a generic definition", u);
+				Assert.AreEqual (u, u.GetGenericArguments () [0].DeclaringType);
+			}
+		}
 #endif
 
 		public class NemerleAttribute : Attribute
