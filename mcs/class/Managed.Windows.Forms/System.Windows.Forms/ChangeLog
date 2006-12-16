@@ -1,3 +1,11 @@
+2006-12-15  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIWin32.cs: initial implementation of the Reversible
+	drawing functions.  there are some problems.  DrawReversibleFrame
+	doesn't seem to work at all for Dashed FrameStyle, and in the
+	Thick case there are drawing errors at the corners (we probably
+	need to bind Rectangle instead of doing moveto/lineto's.)
+
 2006-12-16  Andreia Gaita  <avidigal@novell.com>
 	
 	* SendKeys.cs: Implemented. SendKeys uses a new method in XPlatUI, SendInput, 

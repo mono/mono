@@ -621,6 +621,14 @@ namespace System.Windows.Forms {
 			PS_ALTERNATE        		= 8
 		}
 
+		internal enum PatBltRop : int {
+			PATCOPY   = 0xf00021,
+			PATINVERT = 0x5a0049,
+			DSTINVERT = 0x550009,
+			BLACKNESS = 0x000042,
+			WHITENESS = 0xff0062,
+		}
+
 		internal enum StockObject : int {
 			WHITE_BRUSH			= 0,
 			LTGRAY_BRUSH        		= 1,
@@ -2393,13 +2401,115 @@ namespace System.Windows.Forms {
 			return Win32DnD.StartDrag(hwnd, data, allowedEffects);
 		}
 
+		// XXX this doesn't work at all for FrameStyle.Dashed - it draws like Thick, and in the Thick case
+		// the corners are drawn incorrectly.
 		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
+			IntPtr		hdc;
+			IntPtr		pen;
+			IntPtr		oldpen;
+			COLORREF        clrRef = new COLORREF();
+
+			// If we want the standard hatch pattern we would
+			// need to create a brush
+
+			clrRef.R = backColor.R;
+			clrRef.G = backColor.G;
+			clrRef.B = backColor.B;
+
+			// Grab a pen
+			pen = Win32CreatePen (style == FrameStyle.Thick ? PenStyle.PS_SOLID : PenStyle.PS_DASH,
+					      style == FrameStyle.Thick ? 4 : 2, ref clrRef);
+
+			hdc = Win32GetDC(IntPtr.Zero);
+			Win32SetROP2(hdc, ROP2DrawMode.R2_NOT);
+			oldpen = Win32SelectObject(hdc, pen);
+
+			Win32MoveToEx(hdc, rectangle.Left, rectangle.Top, IntPtr.Zero);
+			if ((rectangle.Width > 0) && (rectangle.Height > 0)) {
+				Win32LineTo(hdc, rectangle.Right, rectangle.Top);
+				Win32LineTo(hdc, rectangle.Right, rectangle.Bottom);
+				Win32LineTo(hdc, rectangle.Left, rectangle.Bottom);
+				Win32LineTo(hdc, rectangle.Left, rectangle.Top);
+			} else {
+				if (rectangle.Width > 0) {
+					Win32LineTo(hdc, rectangle.Right, rectangle.Top);
+				} else {
+					Win32LineTo(hdc, rectangle.Left, rectangle.Bottom);
+				}
+			}
+
+			Win32SelectObject(hdc, oldpen);
+			Win32DeleteObject(pen);
+
+			Win32ReleaseDC(IntPtr.Zero, hdc);
 		}
 
 		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
+			IntPtr		hdc;
+			IntPtr		pen;
+			IntPtr		oldpen;
+			POINT		pt;
+			COLORREF        clrRef = new COLORREF();
+
+			pt = new POINT();
+			pt.x = 0;
+			pt.y = 0;
+			Win32ClientToScreen(IntPtr.Zero, ref pt);
+
+			// If we want the standard hatch pattern we would
+			// need to create a brush
+
+			clrRef.R = backColor.R;
+			clrRef.G = backColor.G;
+			clrRef.B = backColor.B;
+
+			// Grab a pen
+			pen = Win32CreatePen(PenStyle.PS_SOLID, 1, ref clrRef);
+
+			hdc = Win32GetDC(IntPtr.Zero);
+			Win32SetROP2(hdc, ROP2DrawMode.R2_NOT);
+			oldpen = Win32SelectObject(hdc, pen);
+
+			Win32MoveToEx(hdc, pt.x + start.X, pt.y + start.Y, IntPtr.Zero);
+			Win32LineTo(hdc, pt.x + end.X, pt.y + end.Y);
+
+			Win32SelectObject(hdc, oldpen);
+			Win32DeleteObject(pen);
+
+			Win32ReleaseDC(IntPtr.Zero, hdc);
 		}
 
-		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) {
+		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor)
+		{
+			RECT	rect;
+
+			rect = new RECT();
+			rect.left = rectangle.Left;
+			rect.top = rectangle.Top;
+			rect.right = rectangle.Right;
+			rect.bottom = rectangle.Bottom;
+
+			IntPtr		hdc;
+			IntPtr		brush;
+			IntPtr		oldbrush;
+			COLORREF        clrRef = new COLORREF();
+
+			clrRef.R = backColor.R;
+			clrRef.G = backColor.G;
+			clrRef.B = backColor.B;
+
+			// Grab a brush
+			brush = Win32CreateSolidBrush (clrRef);
+
+			hdc = Win32GetDC(IntPtr.Zero);
+			oldbrush = Win32SelectObject(hdc, brush);
+
+			Win32PatBlt (hdc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height, PatBltRop.DSTINVERT);
+
+			Win32SelectObject(hdc, oldbrush);
+			Win32DeleteObject(brush);
+
+			Win32ReleaseDC(IntPtr.Zero, hdc);
 		}
 
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
@@ -2663,8 +2773,11 @@ namespace System.Windows.Forms {
 		//[DllImport ("gdi32.dll", EntryPoint="CreateBrushIndirect", CallingConvention=CallingConvention.StdCall)]
 		//private extern static IntPtr Win32CreateBrushIndirect(ref LOGBRUSH lb);
 
-		//[DllImport ("user32.dll", EntryPoint="FillRect", CallingConvention=CallingConvention.StdCall)]
-		//private extern static int Win32FillRect(IntPtr hdc, ref RECT rect, IntPtr hbr);
+		[DllImport ("gdi32.dll", EntryPoint="CreateSolidBrush", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32CreateSolidBrush(COLORREF clrRef);
+
+		[DllImport ("gdi32.dll", EntryPoint="PatBlt", CallingConvention=CallingConvention.StdCall)]
+		private extern static int Win32PatBlt(IntPtr hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, PatBltRop dwRop);
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowLong", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32SetWindowLong(IntPtr hwnd, WindowLong index, uint value);
