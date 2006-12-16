@@ -1,3 +1,15 @@
+2006-12-15  Chris Toshok  <toshok@ximian.com>
+
+	* Makefile: add targets for the 2k5 csproj.
+
+	* build-csproj2k5: new script to build vs2005 specific projects.
+	use SWF2k5.sln instead of SWF.sln and upgrading.  The 2005 project
+	doesn't have the problems with resources that the 2003 project
+	has.  The only remaining stumbling block for use is Consts.cs.
+
+	* SWF2k5.sln, SWF2k5.csproj: visual studio 2005 versions of these
+	files.
+	
 2006-12-16  Daniel Nauck  <dna@mono-project.de>
 
 	* System.Windows.Forms_test.dll.sources: Add

@@ -83,12 +83,15 @@ EXTRA_DISTFILES = \
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
 	-resource:Test/resources/a.cur,a.cur
 
-SWF.csproj: System.Windows.Forms.dll.sources
+SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources
 	./build-csproj
+
+SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources
+	./build-csproj2k5
 
 include ../../build/library.make
 
-$(the_lib): $(RESOURCES) SWF.csproj
+$(the_lib): $(RESOURCES) SWF.csproj SWF2k5.csproj
 
 $(RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
