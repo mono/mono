@@ -155,7 +155,7 @@ namespace System.Windows.Forms
 		}
 
 		[TypeConverter(typeof(StringConverter))]
-		[DefaultValue("")]
+		[DefaultValue(null)]
 		[Localizable(false)]
 		[Bindable(true)]
 		public Object Tag {
