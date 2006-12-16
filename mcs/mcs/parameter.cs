@@ -794,7 +794,11 @@ namespace Mono.CSharp {
 				if (count == 0)
 					return false;
 
-				return FixedParameters [count - 1] is ParamsParameter;
+				for (int i = count; i != 0; --i) {
+					if ((FixedParameters [i - 1].ModFlags & Parameter.Modifier.PARAMS) != 0)
+						return true;
+				}
+				return false;
 			}
 		}
 

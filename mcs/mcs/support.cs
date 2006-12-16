@@ -32,46 +32,60 @@ namespace Mono.CSharp {
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
 		Type [] types;
-		bool last_arg_is_params = false;
-		bool is_varargs = false;
+		int params_idx = -1;
+		bool is_varargs;
 		ParameterData gpd;
 
 		public ReflectionParameters (MethodBase mb)
 		{
-			object [] attrs;
-
 			ParameterInfo [] pi = mb.GetParameters ();
 			is_varargs = (mb.CallingConvention & CallingConventions.VarArgs) != 0;
 
 			this.pi = pi;
-			int count = pi.Length-1;
+			int count = pi.Length;
 
-			if (pi.Length == 0) {
+			if (count == 0) {
 				types = Type.EmptyTypes;
-			} else {
-				types = new Type [pi.Length];
-				for (int i = 0; i < pi.Length; i++)
-					types [i] = pi [i].ParameterType;
+				return;
 			}
 
-			if (count < 0)
-				return;
+			types = new Type [count];
+			for (int i = 0; i < count; i++)
+				types [i] = pi [i].ParameterType;
 
+			// TODO: This (if) should be done one level higher to correctly use
+			// out caching facilities.
 			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
 			if (generic != mb) {
-				gpd = TypeManager.GetParameterData (generic);
-				last_arg_is_params = gpd.HasParams;
-				return;
+			    gpd = TypeManager.GetParameterData (generic);
+			    if (gpd.HasParams) {
+					for (int i = gpd.Count; i != 0; --i) {
+						if ((gpd.ParameterModifier (i)& Parameter.Modifier.PARAMS) != 0) {
+							this.params_idx = i;
+							break;
+						}
+					}
+			    }
+			    return;
 			}
 
-			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
-			if (attrs == null)
-				return;
+			//
+			// So far, the params attribute can be used in C# for the last
+			// and next to last method parameters.
+			// If some other language can place it anywhere we will
+			// have to analyze all parameters and not just last 2.
+			//
+			--count;
+			for (int i = count; i >= 0 && i > count - 2; --i) {
+				if (!pi [i].ParameterType.IsArray)
+					continue;
 
-			if (attrs.Length == 0)
-				return;
-
-			last_arg_is_params = true;
+				object [] attrs = pi [i].GetCustomAttributes (TypeManager.param_array_type, true);
+				if (attrs.Length == 1) {
+					params_idx = i;
+					return;
+				}
+			}
 		}
 
 		public string GetSignatureForError ()
@@ -93,15 +107,10 @@ namespace Mono.CSharp {
 
 		public Type ParameterType (int pos)
 		{
-			if (last_arg_is_params && pos >= pi.Length - 1)
-				return pi [pi.Length - 1].ParameterType;
-			else if (is_varargs && pos >= pi.Length)
+			if (is_varargs && pos >= pi.Length)
 				return TypeManager.runtime_argument_handle_type;
-			else {
-				Type t = pi [pos].ParameterType;
 
-				return t;
-			}
+			return pi [pos].ParameterType;
 		}
 
 		public string ParameterName (int pos)
@@ -109,12 +118,10 @@ namespace Mono.CSharp {
 			if (gpd != null)
 				return gpd.ParameterName (pos);
 
-			if (last_arg_is_params && pos >= pi.Length - 1)
-				return pi [pi.Length - 1].Name;
-			else if (is_varargs && pos >= pi.Length)
+			if (is_varargs && pos >= pi.Length)
 				return "__arglist";
-			else
-				return pi [pos].Name;
+
+			return pi [pos].Name;
 		}
 
 		public string ParameterDesc (int pos)
@@ -136,7 +143,7 @@ namespace Mono.CSharp {
 					sb.Append ("ref ");
 			}
 
-			if (pos >= pi.Length - 1 && last_arg_is_params)
+			if (params_idx == pos)
 				sb.Append ("params ");
 
 			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));
@@ -146,7 +153,7 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (last_arg_is_params && pos >= pi.Length - 1)
+			if (pos == params_idx)
 				return Parameter.Modifier.PARAMS;
 			else if (is_varargs && pos >= pi.Length)
 				return Parameter.Modifier.ARGLIST;
@@ -170,7 +177,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasParams {
-			get { return last_arg_is_params; }
+			get { return params_idx != -1; }
 		}
 
 		public Type[] Types {

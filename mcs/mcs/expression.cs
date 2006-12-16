@@ -4075,19 +4075,21 @@ namespace Mono.CSharp {
 		
 			bool better_at_least_one = false;
 			bool same = true;
-			for (int j = 0; j < argument_count; ++j) {
+			for (int j = 0, c_idx = 0, b_idx = 0; j < argument_count; ++j, ++c_idx, ++b_idx) {
 				Argument a = (Argument) args [j];
 
-				Type ct = TypeManager.TypeToCoreType (candidate_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (best_pd.ParameterType (j));
+				Type ct = TypeManager.TypeToCoreType (candidate_pd.ParameterType (c_idx));
+				Type bt = TypeManager.TypeToCoreType (best_pd.ParameterType (b_idx));
 
-				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (candidate_params)
-						ct = TypeManager.GetElementType (ct);
+				if (candidate_params && candidate_pd.ParameterModifier (c_idx) == Parameter.Modifier.PARAMS) {
+					ct = TypeManager.GetElementType (ct);
+					--c_idx;
+				}
 
-				if (best_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (best_params)
-						bt = TypeManager.GetElementType (bt);
+				if (best_params && best_pd.ParameterModifier (b_idx) == Parameter.Modifier.PARAMS) {
+					bt = TypeManager.GetElementType (bt);
+					--b_idx;
+				}
 
 				if (ct.Equals (bt))
 					continue;
@@ -4317,6 +4319,10 @@ namespace Mono.CSharp {
 					return false;
 				if (pd_count != arg_count)
 					return false;
+
+				if (!(((Argument) arguments [count]).Expr is Arglist))
+					return false;
+				--pd_count;
 			} else {
 				if (!pd.HasParams)
 					return false;
@@ -4333,9 +4339,26 @@ namespace Mono.CSharp {
 			// remains is when the number of parameters is
 			// less than or equal to the argument count.
 			//
-			for (int i = 0; i < count; ++i) {
+			int argument_index = 0;
+			Argument a;
+			for (int i = 0; i < pd_count; ++i) {
 
-				Argument a = (Argument) arguments [i];
+				if ((pd.ParameterModifier (i) & Parameter.Modifier.PARAMS) != 0) {
+					Type element_type = TypeManager.GetElementType (pd.ParameterType (i));
+					int params_args_count = arg_count - pd_count;
+					if (params_args_count < 0)
+						continue;
+
+					do {
+						a = (Argument) arguments [argument_index++];
+
+						if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
+							return false;
+					} while (params_args_count-- > 0);
+					continue;
+				}
+
+				a = (Argument) arguments [argument_index++];
 
 				Parameter.Modifier a_mod = a.Modifier & 
 					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
@@ -4346,9 +4369,9 @@ namespace Mono.CSharp {
 
 					if (a_mod == Parameter.Modifier.NONE)
 						if (!Convert.ImplicitConversionExists (ec,
-                                                                                       a.Expr,
-                                                                                       pd.ParameterType (i)))
-				return false;
+							a.Expr,
+							pd.ParameterType (i)))
+							return false;
 
 					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 						Type pt = pd.ParameterType (i);
@@ -4364,23 +4387,6 @@ namespace Mono.CSharp {
 				
 			}
 
-			if (do_varargs) {
-				Argument a = (Argument) arguments [count];
-				if (!(a.Expr is Arglist))
-					return false;
-
-				return true;
-			}
-
-			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
-
-			for (int i = pd_count - 1; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
-
-				if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
-					return false;
-			}
-			
 			return true;
 		}
 
@@ -4852,12 +4858,13 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd = TypeManager.GetParameterData (method);
 			int j;
-			for (j = 0; j < arg_count; j++) {
-				Argument a = (Argument) Arguments [j];
-				Expression a_expr = a.Expr;
+			int a_idx = 0;
+			int params_arg_count = 0;
+			Argument a = null;
+			for (j = 0; j < pd.Count & a_idx < arg_count; j++, a_idx++) {
+				a = (Argument) Arguments [a_idx];
 				Type parameter_type = pd.ParameterType (j);
 				Parameter.Modifier pm = pd.ParameterModifier (j);
-				Parameter.Modifier am = a.Modifier;
 
 				if (pm == Parameter.Modifier.ARGLIST) {
 					if (!(a.Expr is Arglist))
@@ -4867,24 +4874,32 @@ namespace Mono.CSharp {
 
 				if (pm == Parameter.Modifier.PARAMS) {
 					pm = Parameter.Modifier.NONE;
+					params_arg_count = arg_count - pd.Count;
 					if (chose_params_expanded)
 						parameter_type = TypeManager.GetElementType (parameter_type);
 				}
 
-				if (pm != am)
+			conversion:
+				if (pm != a.Modifier)
 					break;
 
 				if (!TypeManager.IsEqual (a.Type, parameter_type)) {
 					if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
 						break;
 
-					Expression conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
+					Expression conv = Convert.ImplicitConversion (ec, a.Expr, parameter_type, loc);
 					if (conv == null)
 						break;
 
 					// Update the argument with the implicit conversion
-					if (a_expr != conv)
+					if (a.Expr != conv)
 						a.Expr = conv;
+				}
+
+				if (params_arg_count > 0) {
+					--params_arg_count;
+					a = (Argument) Arguments [++a_idx];
+					goto conversion;
 				}
 
 				if (parameter_type.IsPointer && !ec.InUnsafe) {
@@ -4893,11 +4908,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (j == arg_count)
+			if (a_idx == arg_count)
 				return true;
 
 			if (!may_fail)
-				Error_InvalidArguments (loc, j, method, delegate_type, (Argument) Arguments [j], pd);
+				Error_InvalidArguments (loc, a_idx, method, delegate_type, a, pd);
 			return false;
 		}
 
@@ -5037,22 +5052,20 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Emits the list of arguments as an array
 		// </summary>
-		static void EmitParams (EmitContext ec, int idx, ArrayList arguments)
+		static void EmitParams (EmitContext ec, ArrayList arguments, int idx, int count)
 		{
 			ILGenerator ig = ec.ig;
-			int count = arguments.Count - idx;
-			Argument a = (Argument) arguments [idx];
-			Type t = a.Expr.Type;
-
-			IntConstant.EmitInt (ig, count);
-			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
-
-			int top = arguments.Count;
-			for (int j = idx; j < top; j++){
-				a = (Argument) arguments [j];
+			Type t = null;
+			for (int j = 0; j < count; j++){
+				Argument a = (Argument) arguments [j + idx];
+				if (j == 0) {
+					t = a.Expr.Type;
+					IntConstant.EmitInt (ig, count);
+					ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
+				}
 				
 				ig.Emit (OpCodes.Dup);
-				IntConstant.EmitInt (ig, j - idx);
+				IntConstant.EmitInt (ig, j);
 
 				bool is_stobj, has_type_arg;
 				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj, out has_type_arg);
@@ -5085,29 +5098,47 @@ namespace Mono.CSharp {
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments, bool dup_args, LocalTemporary this_arg)
 		{
 			ParameterData pd = mb == null ? null : TypeManager.GetParameterData (mb);
-			int top = arguments == null ? 0 : arguments.Count;
+			int top = pd.Count;
 			LocalTemporary [] temps = null;
 			
 			if (dup_args && top != 0)
 				temps = new LocalTemporary [top];
 
+			int argument_index = 0;
+			Argument a;
 			for (int i = 0; i < top; i++){
-				Argument a = (Argument) arguments [i];
-
 				if (pd != null){
 					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
+						//Type element_type = TypeManager.GetElementType (pd.ParameterType (i));
+						int params_args_count = arguments == null ?
+							0 : arguments.Count - top + 1;
+
+						// Fill not provided argument
+						if (params_args_count <= 0) {
+							ILGenerator ig = ec.ig;
+							IntConstant.EmitInt (ig, 0);
+							ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (i)));
+							continue;
+						}
+
 						//
 						// Special case if we are passing the same data as the
-						// params argument, do not put it in an array.
+						// params argument, we do not need to recreate an array.
 						//
-						if (pd.ParameterType (i) == a.Type)
+						a = (Argument) arguments [argument_index];
+						if (params_args_count == 1 && pd.ParameterType (i) == a.Type) {
+							++argument_index;
 							a.Emit (ec);
-						else
-							EmitParams (ec, i, arguments);
-						return;
+							continue;
+						}
+
+						EmitParams (ec, arguments, i, params_args_count);
+						argument_index += params_args_count;
+						continue;
 					}
 				}
-					    
+
+				a = (Argument) arguments [argument_index++];
 				a.Emit (ec);
 				if (dup_args) {
 					ec.ig.Emit (OpCodes.Dup);
@@ -5123,14 +5154,6 @@ namespace Mono.CSharp {
 					temps [i].Emit (ec);
 					temps [i].Release (ec);
 				}
-			}
-
-			if (pd != null && pd.Count > top &&
-			    pd.ParameterModifier (top) == Parameter.Modifier.PARAMS){
-				ILGenerator ig = ec.ig;
-
-				IntConstant.EmitInt (ig, 0);
-				ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (top)));
 			}
 		}
 
