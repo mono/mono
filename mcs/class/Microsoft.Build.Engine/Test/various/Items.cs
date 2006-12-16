@@ -66,7 +66,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						<Item4 Include='@(Item1);Q' Exclude='@(Item2)' />
 						<Item5 Include='@(Item1)' Exclude='@(Item2)' />
 						<Item6 Include='@(Item2)' Exclude='@(Item1)' />
-
+						<Item7 Include='@(item_that_doesnt_exist)' />
 					</ItemGroup>
 				</Project>
 			";
@@ -77,8 +77,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("A;B;C;A;D", GetItems (proj, "Item2"), "A3");
 			Assert.AreEqual ("B;C;D", GetItems (proj, "Item3"), "A4");
 			Assert.AreEqual ("Q", GetItems (proj, "Item4"), "A5");
-			Assert.AreEqual ("", GetItems (proj, "Item5"), "A6");
+			Assert.AreEqual (String.Empty, GetItems (proj, "Item5"), "A6");
 			Assert.AreEqual ("D", GetItems (proj, "Item6"), "A7");
+			Assert.AreEqual (String.Empty, GetItems (proj, "Item7"), "A8");
 		}
 
 		[Test]
@@ -123,8 +124,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("A-B-C", GetItems (proj, "Item2"), "A1");
 		}
 	
+
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItems4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -140,25 +141,42 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						<ItemT3 Include=""@(Item1->'(-%(Identity)-)')"" />
 						<ItemT4 Include=""@(Item2->'%(Extension)')"" />
 						<ItemT5 Include=""@(Item2->'%(Filename)/%(Extension)')"" />
-						<ItemT6 Include=""@(Item2->'%(RelativeDir)X/%(Filename)')"" />
 					</ItemGroup>
 				</Project>
 			";
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "A8");
-			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A9");
-			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "A10");
-			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "A11");
-			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A12");
-			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT6"), "A13");
+			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "A1");
+			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A2");
+			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "A3");
+			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "A4");
+			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A5");
+		}
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItems5 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
 
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
+						<ItemT Include=""@(Item->'%(RelativeDir)X/%(Filename)')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT"), "A1");
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void TestItems5 ()
+		public void TestItems6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();
@@ -197,7 +215,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			"Item lists cannot be concatenated with other strings where an item list is expected. " +
 			"Use a semicolon to separate multiple item lists.  ")]
 		[Category ("NotWorking")]
-		public void TestItems6 ()
+		public void TestItems7 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();
@@ -220,7 +238,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			"Item lists cannot be concatenated with other strings where an item list is expected. " +
 			"Use a semicolon to separate multiple item lists.  ")]
 		[Category ("NotWorking")]
-		public void TestItems7 ()
+		public void TestItems8 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();
@@ -243,7 +261,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			"Item lists cannot be concatenated with other strings where an item list is expected. " +
 			"Use a semicolon to separate multiple item lists.  ")]
 		[Category ("NotWorking")]
-		public void TestItems8 ()
+		public void TestItems9 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();
