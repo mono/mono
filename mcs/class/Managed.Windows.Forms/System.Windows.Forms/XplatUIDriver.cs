@@ -276,6 +276,7 @@ namespace System.Windows.Forms {
 
 		internal abstract IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 		internal abstract bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+		internal abstract int SendInput(System.Collections.Queue keys);
 
 		internal abstract object StartLoop(Thread thread);
 		internal abstract void EndLoop(Thread thread);

@@ -1516,6 +1516,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
+		internal override int SendInput(Queue keys) {
+			return 0;
+		}
+
+
 		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
 			if (Caret.Hwnd == hwnd) {
 				CGPoint cpt = new CGPoint ();

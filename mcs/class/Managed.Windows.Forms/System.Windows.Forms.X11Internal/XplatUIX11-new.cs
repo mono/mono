@@ -777,6 +777,11 @@ namespace System.Windows.Forms.X11Internal {
 			return display.SendMessage (handle, message, wParam, lParam);
 		}
 
+		internal override int SendInput(Queue keys) {
+			return 0;
+		}
+
+
 		internal override void SetAllowDrop (IntPtr handle, bool value)
 		{
 			// We allow drop on all windows

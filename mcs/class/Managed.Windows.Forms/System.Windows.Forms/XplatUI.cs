@@ -750,6 +750,13 @@ namespace System.Windows.Forms {
 			driver.SendAsyncMethod (data);
 		}
 
+		internal static int SendInput (Queue keys) {
+			#if DriverDebug
+				Console.WriteLine("SendInput({0}): Called", charCode);
+			#endif
+			return driver.SendInput (keys);
+		}
+
 		internal static IntPtr SendMessage (IntPtr handle, Msg message, IntPtr wParam, IntPtr lParam) {
 			#if DriverDebug
 				Console.WriteLine("SendMessage ({0}, {1}, {2:X}, {3:X}): Called", Window(handle), message, wParam.ToInt32(), lParam.ToInt32());

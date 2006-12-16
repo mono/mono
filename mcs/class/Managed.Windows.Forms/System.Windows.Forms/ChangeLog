@@ -1,3 +1,21 @@
+2006-12-16  Andreia Gaita  <avidigal@novell.com>
+	
+	* SendKeys.cs: Implemented. SendKeys uses a new method in XPlatUI, SendInput, 
+	to send blocks of key messages. Send accumulates keys to send with Flush, 
+	while SendWait sends all keys immediately.
+		
+	* XplaUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs, 
+	XplatUIX11.cs,	XplatUIX11-new.cs:
+	- Define SendInput and stubs for OSX and X11, implements Win32 with a call
+	to Win32 SendInput.
+	- Added INPUT support structures to XplatUIWin32 for Win32SendInput
+	
+	Tests: 	It seems ms.net is hooking the keyboard to implement this, so doing unit
+	testing for ms.net on this class is very tricky, as the tests run too fast 
+	to allow the hook to release, essentially freezing the keyboard and the 
+	test. So, barring a win32 miracle, they'll be commited in the ms-notworking	
+	category :p
+
 2006-12-16  Daniel Nauck  <dna@mono-project.de>
 
 	* Padding.cs: fixed serialization compability to MS ("_var" field names),

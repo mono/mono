@@ -21,179 +21,321 @@
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
+//  Andreia Gaita	(avidigal@novell.com)
 //
 //
 
-// NOT COMPLETE
+// NOT COMPLETE (better, but still wobbly)
 
 using System.Collections;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Windows.Forms {
+	
+
 	public class SendKeys {
+		private struct Keyword {
+			public Keyword(string keyword, int vk) {
+				this.keyword = keyword;
+				this.vk = vk;
+			}
+			internal string keyword;
+			internal int vk;
+		}
+
 		#region Local variables
-		private static Queue	keys = new Queue();
+		private static Queue keys = new Queue();
+		private static Hashtable keywords;
+		private static IntPtr hwnd;
 		#endregion
 
+		static SendKeys() {
+			SendKeys.keywords = new Hashtable();
+			
+			keywords.Add("BACKSPACE", (int)Keys.Back);
+			keywords.Add("BS", (int)Keys.Back);
+			keywords.Add("BKSP", (int)Keys.Back);
+			keywords.Add("BREAK", (int)Keys.Cancel);
+			keywords.Add("CAPSLOCK", (int)Keys.CapsLock);
+			keywords.Add("DELETE", (int)Keys.Delete);
+			keywords.Add("DEL", (int)Keys.Delete);
+			keywords.Add("DOWN", (int)Keys.Down);
+			keywords.Add("END", (int)Keys.End);
+			keywords.Add("ENTER", (int)Keys.Enter);
+			keywords.Add("~", (int)Keys.Enter);
+			keywords.Add("ESC", (int)Keys.Escape);
+			keywords.Add("HELP", (int)Keys.Help);
+			keywords.Add("HOME", (int)Keys.Home);
+			keywords.Add("INSERT", (int)Keys.Insert);
+			keywords.Add("INS", (int)Keys.Insert);
+			keywords.Add("LEFT", (int)Keys.Left);
+			keywords.Add("NUMLOCK", (int)Keys.NumLock);
+			keywords.Add("PGDN", (int)Keys.PageDown);
+			keywords.Add("PGUP", (int)Keys.PageUp);
+			keywords.Add("PRTSC", (int)Keys.PrintScreen);
+			keywords.Add("RIGHT", (int)Keys.Right);
+			keywords.Add("SCROLLLOCK", (int)Keys.Scroll);
+			keywords.Add("TAB", (int)Keys.Tab);
+			keywords.Add("UP", (int)Keys.Up);
+			keywords.Add("F1", (int)Keys.F1);
+			keywords.Add("F2", (int)Keys.F2);
+			keywords.Add("F3", (int)Keys.F3);
+			keywords.Add("F4", (int)Keys.F4);
+			keywords.Add("F5", (int)Keys.F5);
+			keywords.Add("F6", (int)Keys.F6);
+			keywords.Add("F7", (int)Keys.F7);
+			keywords.Add("F8", (int)Keys.F8);
+			keywords.Add("F9", (int)Keys.F9);
+			keywords.Add("F10", (int)Keys.F10);
+			keywords.Add("F11", (int)Keys.F11);
+			keywords.Add("F12", (int)Keys.F12);
+			keywords.Add("F13", (int)Keys.F13);
+			keywords.Add("F14", (int)Keys.F14);
+			keywords.Add("F15", (int)Keys.F15);
+			keywords.Add("F16", (int)Keys.F16);
+			keywords.Add("ADD", (int)Keys.Add);
+			keywords.Add("SUBTRACT", (int)Keys.Subtract);
+			keywords.Add("MULTIPLY", (int)Keys.Multiply);
+			keywords.Add("DIVIDE", (int)Keys.Divide);
+			keywords.Add("+", (int)Keys.ShiftKey);
+			keywords.Add("^", (int)Keys.ControlKey);
+			keywords.Add("%", (int)Keys.Menu);
+
+		}
+
 		#region Private methods
+
 		private SendKeys() {
 		}
 
-		private static IntPtr CharToVKey(char key) {
-			// FIXME - build a table to translate between vkeys and chars
-			throw new NotImplementedException();
+
+		private static void AddVKey(IntPtr hwnd, int vk, bool down) 
+		{
+			MSG msg = new MSG();
+			msg.hwnd = hwnd;
+			msg.message = down ? Msg.WM_KEYDOWN : Msg.WM_KEYUP;
+			msg.wParam = new IntPtr(vk);
+			msg.lParam = IntPtr.Zero;
+			keys.Enqueue(msg);
 		}
 
-		private static IntPtr SymbolToVKey(string symbol) {
-			// FIXME - build a table to translate between vkeys and symbols
-			throw new NotImplementedException();
-		}
-
-		private static void SendSymbol(IntPtr hwnd, string symbol, int repeat_count, bool down) {
-			MSG	msg;
-
-			if (down) {
-				for (int i = 0; i < repeat_count; i++ ) {
-					msg = new MSG();
-					msg.hwnd = hwnd;
-					msg.message = Msg.WM_KEYDOWN;
-					msg.wParam = SymbolToVKey(symbol);
-					msg.lParam = IntPtr.Zero;
-
-					keys.Enqueue(msg);
-				}
-			} else {
-				msg = new MSG();
-				msg.hwnd = hwnd;
-				msg.message = Msg.WM_KEYUP;
-				msg.wParam = SymbolToVKey(symbol);
-				msg.lParam = IntPtr.Zero;
-
-				keys.Enqueue(msg);
-			}
-		}
-
-		private static void SendKey(IntPtr hwnd, char key, int repeat_count) {
+		private static void AddVKey(IntPtr hwnd, int vk, int repeat_count) 
+		{
 			MSG	msg;
 
 			for (int i = 0; i < repeat_count; i++ ) {
 				msg = new MSG();
 				msg.hwnd = hwnd;
 				msg.message = Msg.WM_KEYDOWN;
-				msg.wParam = CharToVKey(key);
-				msg.lParam = IntPtr.Zero;
+				msg.wParam = new IntPtr(vk);
+				msg.lParam = (IntPtr)1;
+				keys.Enqueue(msg);
 
+				msg = new MSG();
+				msg.hwnd = hwnd;
+				msg.message = Msg.WM_KEYUP;
+				msg.wParam = new IntPtr(vk);
+				msg.lParam = IntPtr.Zero;
+				keys.Enqueue(msg);
+
+			}
+		}
+
+		private static void AddKey(IntPtr hwnd, char key, int repeat_count) {
+			MSG	msg;
+
+			for (int i = 0; i < repeat_count; i++ ) {
+				msg = new MSG();
+				msg.hwnd = hwnd;
+				msg.message = Msg.WM_KEYDOWN;
+				msg.wParam = new IntPtr(key);
+				msg.lParam = IntPtr.Zero;
+				keys.Enqueue(msg);
+
+				msg = new MSG();
+				msg.hwnd = hwnd;
+				msg.message = Msg.WM_KEYUP;
+				msg.wParam = new IntPtr(key);
+				msg.lParam = IntPtr.Zero;
 				keys.Enqueue(msg);
 			}
+		}
 
-			msg = new MSG();
-			msg.hwnd = hwnd;
-			msg.message = Msg.WM_KEYUP;
-			msg.wParam = CharToVKey(key);
-			msg.lParam = IntPtr.Zero;
+		private static void Parse(string key_string) {
+			bool isBlock = false;
+			bool isVkey = false;
+			bool isKey = false;
+			bool isRepeat = false;
+			bool isShift = false;
+			bool isCtrl = false;
+			bool isAlt = false;
 
-			keys.Enqueue(msg);
+			StringBuilder repeats = new StringBuilder();
+			StringBuilder group_string = new StringBuilder();
+			
+			int key_len = key_string.Length;
+			for (int i = 0; i < key_len; i++) {
+				switch(key_string[i]) {
+					case '{':
+
+						group_string.Remove(0, group_string.Length);
+						repeats.Remove(0, repeats.Length);
+						int start = i+1;
+						for (; start < key_len && key_string[start] != '}'; start++) {
+							if (Char.IsWhiteSpace(key_string[start])) {
+								if (isRepeat)
+									throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
+
+								isRepeat = true;
+								continue;
+							}
+							if (isRepeat) {
+								if (!Char.IsDigit(key_string[start]))
+									throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
+								
+								repeats.Append(key_string[start]);
+
+								continue;
+							}
+
+							group_string.Append(key_string[start]);
+						}
+						if (start == key_len || start == i+1)
+							throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
+
+						if (group_string.Length == 1) {
+							isKey = true;
+						}
+						else if (SendKeys.keywords.Contains(group_string.ToString())) {
+							isVkey = true;
+						}
+						else {
+							throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
+						}
+
+						int repeat = 1;
+						if (repeats.Length > 0)
+							repeat = Int32.Parse(repeats.ToString());
+						if (isVkey)
+							AddVKey(hwnd, (int)keywords[group_string.ToString()], repeats.Length == 0 ? 1 : repeat);
+						else {
+							if (Char.IsUpper(group_string.ToString(), 0)) {
+								AddVKey(hwnd, (int)keywords["+"], true);
+								AddKey(hwnd, Char.Parse(group_string.ToString()), repeats.Length == 0 ? 1 : repeat);
+								AddVKey(hwnd, (int)keywords["+"], false);
+							}
+							else
+								AddKey(hwnd, Char.Parse(group_string.ToString().ToUpper()), repeats.Length == 0 ? 1 : repeat);
+						}
+
+						i = start;
+						isRepeat = isKey = isVkey = false;
+						if (isShift)
+							AddVKey(hwnd, (int)keywords["+"], false);
+						if (isCtrl)
+							AddVKey(hwnd, (int)keywords["^"], false);
+						if (isAlt)
+							AddVKey(hwnd, (int)keywords["%"], false);
+						break;
+					
+					case '+': {
+						AddVKey(hwnd, (int)keywords["+"], true);
+						isShift = true;;
+						break;
+					}
+
+					case '^': {
+						AddVKey(hwnd, (int)keywords["^"], true);
+						isCtrl = true;
+						break;
+					}
+
+					case '%': {
+						AddVKey(hwnd, (int)keywords["%"], true);
+						isAlt = true;
+						break;
+					}
+
+					case '~': {
+						AddVKey(hwnd, (int)keywords["ENTER"], 1);
+						break;
+					}
+
+					case '(':
+						isBlock = true;
+						break;
+
+					case ')': {
+						if (isShift)
+							AddVKey(hwnd, (int)keywords["+"], false);
+						if (isCtrl)
+							AddVKey(hwnd, (int)keywords["^"], false);
+						if (isAlt)
+							AddVKey(hwnd, (int)keywords["%"], false);
+						isShift = isCtrl = isAlt = isBlock = false;
+						break;
+					}
+
+					default: {
+						if (Char.IsUpper(key_string[i])) {
+							AddVKey(hwnd, (int)keywords["+"], true);
+							AddKey(hwnd, key_string[i], 1);
+							AddVKey(hwnd, (int)keywords["+"], false);
+						}
+						else
+							AddKey(hwnd, Char.Parse(key_string[i].ToString().ToUpper()), 1);
+						
+						if (!isBlock) {
+							if (isShift)
+								AddVKey(hwnd, (int)keywords["+"], false);
+							if (isCtrl)
+								AddVKey(hwnd, (int)keywords["^"], false);
+							if (isAlt)
+								AddVKey(hwnd, (int)keywords["%"], false);
+							isShift = isCtrl = isAlt = isBlock = false;
+						}
+						break;
+					}
+				}
+			}
+
+			if (isBlock)
+				throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
+
+			if (isShift)
+				AddVKey(hwnd, (int)keywords["+"], false);
+			if (isCtrl)
+				AddVKey(hwnd, (int)keywords["^"], false);
+			if (isAlt)
+				AddVKey(hwnd, (int)keywords["%"], false);
+
 		}
 
 		#endregion	// Private Methods
 
 		#region Public Static Methods
+		[MonoTODO("Finish")]
 		public static void Flush() {
-			MSG msg;
+			if (XplatUI.GetActive() == IntPtr.Zero)
+				return;
+			
+//			hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
 
-			// FIXME - we only send to our own app, instead of the active app
-			while (keys.Count > 0) {
-				msg = (MSG)keys.Dequeue();
-				XplatUI.TranslateMessage (ref msg);
-				XplatUI.DispatchMessage (ref msg);
-			}
+			XplatUI.SendInput(keys);
 		}
 
 		[MonoTODO("Finish")]
-		public static void Send(string key_string) {
-			IntPtr	hwnd;
-			int	shift_reset;
-			int	control_reset;
-			int	alt_reset;
-
-			hwnd = XplatUI.GetActive();
-
-			shift_reset = 0;
-			control_reset = 0;
-			alt_reset = 0;
-
-			for (int i = 0; i < key_string.Length; i++) {
-				switch(key_string[i]) {
-					case '+': {
-						SendSymbol(hwnd, "SHIFT", 1, true);
-						shift_reset = 2;
-						break;
-					}
-
-					case '^': {
-						SendSymbol(hwnd, "CONTROL", 1, true);
-						control_reset = 2;
-						break;
-					}
-
-					case '%': {
-						SendSymbol(hwnd, "ALT", 1, true);
-						alt_reset = 2;
-						break;
-					}
-
-					case '~': {
-						SendSymbol(hwnd, "ENTER", 1, true);
-						SendSymbol(hwnd, "ENTER", 1, false);
-						break;
-					}
-
-					case '(':
-					case ')': {
-						// FIXME - implement group parser
-						break;
-					}
-
-					case '{':
-					case '}': {
-						// FIXME - implement symbol parser
-						break;
-					}
-
-					default: {
-						SendKey(hwnd, key_string[i], 1);
-						break;
-					}
-				}
-
-				
-
-				if (shift_reset > 0) {
-					shift_reset--;
-					if (shift_reset == 0) {
-						SendSymbol(hwnd, "SHIFT", 1, false);
-					}
-				}
-
-				if (control_reset > 0) {
-					control_reset--;
-					if (control_reset == 0) {
-						SendSymbol(hwnd, "CONTROL", 1, false);
-					}
-				}
-
-				if (alt_reset > 0) {
-					alt_reset--;
-					if (alt_reset == 0) {
-						SendSymbol(hwnd, "ALT", 1, false);
-					}
-				}
-			}
+		public static void Send(string keys) {
+			Parse(keys);
 		}
 
+		[MonoTODO("Finish")]
 		public static void SendWait(string keys) {
-			Send(keys);
+			Parse(keys);
 			Flush();
 		}
-		#endregion	// Public Instance Properties
+
+		#endregion	// Public Static Methods
 	}
 }

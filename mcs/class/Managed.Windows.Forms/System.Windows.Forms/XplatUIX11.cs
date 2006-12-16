@@ -4389,6 +4389,11 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(hwnd, message, wParam, lParam);
 		}
 
+		internal override int SendInput(Queue keys) {
+			return 0;
+		}
+
+
 		internal override void SetAllowDrop (IntPtr handle, bool value)
 		{
 			// We allow drop on all windows

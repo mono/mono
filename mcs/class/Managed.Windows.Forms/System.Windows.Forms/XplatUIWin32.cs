@@ -177,6 +177,55 @@ namespace System.Windows.Forms {
 			internal int		Reserved8;
 		}
 
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct KEYBDINPUT {
+			internal short wVk;
+			internal short wScan;
+			internal Int32 dwFlags;
+			internal Int32 time;
+			internal UIntPtr dwExtraInfo;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct MOUSEINPUT {
+			internal Int32 dx;
+			internal Int32 dy;
+			internal Int32 mouseData;
+			internal Int32 dwFlags;
+			internal Int32 time;
+			internal UIntPtr dwExtraInfo;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct HARDWAREINPUT {
+			internal Int32 uMsg;
+			internal short wParamL;
+			internal short wParamH;
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		internal struct INPUT {
+			[FieldOffset(0)]
+			internal Int32 type;
+
+			[FieldOffset(4)]
+			internal MOUSEINPUT mi;
+
+			[FieldOffset(4)]
+			internal KEYBDINPUT ki;
+
+			[FieldOffset(4)]
+			internal HARDWAREINPUT hi;
+		}
+
+
+		internal enum InputFlags {
+			KEYEVENTF_EXTENDEDKEY	= 0x0001,
+			KEYEVENTF_KEYUP			= 0x0002,
+			KEYEVENTF_SCANCODE		= 0x0003,
+			KEYEVENTF_UNICODE		= 0x0004,
+		}
+
 		internal enum ClassStyle {
 			CS_VREDRAW			= 0x00000001,
 			CS_HREDRAW			= 0x00000002,
@@ -2424,6 +2473,27 @@ namespace System.Windows.Forms {
 			return Win32PostMessage(hwnd, message, wParam, lParam);
 		}
 
+		internal override int SendInput (Queue keys) {
+			INPUT[] inputs = new INPUT[keys.Count];
+			const Int32 INPUT_KEYBOARD = 1;
+			uint returns = 0;
+			int i = 0;
+			while (keys.Count > 0) {
+				MSG msg = (MSG)keys.Dequeue();
+
+				
+				inputs[i].ki.wScan = 0;
+				inputs[i].ki.time = 0;
+				inputs[i].ki.dwFlags = (Int32)(msg.message == Msg.WM_KEYUP ? InputFlags.KEYEVENTF_KEYUP : 0);
+				inputs[i].ki.wVk = (short)msg.wParam.ToInt32();
+				inputs[i].type = INPUT_KEYBOARD;
+				i++;
+			}
+			returns = Win32SendInput((UInt32)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+			return (int) returns;
+		}
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -2707,9 +2777,12 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="PostMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 
+		[DllImport ("user32.dll", EntryPoint="SendInput", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static UInt32 Win32SendInput(UInt32 nInputs, [MarshalAs(UnmanagedType.LPArray)] INPUT[] inputs, Int32 cbSize);
+
 		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref RECT rect, uint fWinIni);
-
+		
 		//[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		//private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref uint value, uint fWinIni);
 
