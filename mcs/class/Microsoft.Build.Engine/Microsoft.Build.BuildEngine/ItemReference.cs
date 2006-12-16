@@ -59,16 +59,18 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string ConvertToString (Project project)
 		{
-			BuildItemGroup big = project.EvaluatedItemsByName [itemName];
-			
-			return big.ConvertToString (transform, separator);
+			if (project.EvaluatedItemsByName.ContainsKey (itemName))
+				return project.EvaluatedItemsByName [itemName].ConvertToString (transform, separator);
+			else
+				return String.Empty;
 		}
 		
 		public ITaskItem [] ConvertToITaskItemArray (Project project)
 		{
-			BuildItemGroup big = project.EvaluatedItemsByName [itemName];
-			
-			return big.ConvertToITaskItemArray (transform);
+			if (project.EvaluatedItemsByName.ContainsKey (itemName))
+				return project.EvaluatedItemsByName [itemName].ConvertToITaskItemArray (transform);
+			else
+				return null;
 		}
 
 		public string ItemName {
