@@ -1,6 +1,10 @@
 2006-12-15  Miguel de Icaza  <miguel@novell.com>
 
-	* marshal.c (mono_free_bstr): On Unix, this is g_free.
+	* marshal.c (mono_string_from_bstr): Jon Chambers pointed out that
+	my arguments were in the wrong order.   I also fixed the Windows
+	version which seems to have had the same issue.
+
+	(mono_free_bstr): On Unix, this is g_free.
 	(mono_string_from_bstr, mono_string_to_bstr): Implement bstr
 	conversions (for the tests in corlib to pass).
 
