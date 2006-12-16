@@ -1,3 +1,17 @@
+2006-12-16  Andreia Gaita  <avidigal@novell.com>
+
+	* SendKeysTest.cs: Test cases for SendKeys
+
+	These tests can only run in ms.net one at a time.
+	Since ms.net apparently hooks the keyboard to 
+	implement this, running two tests in a row
+	makes the second test run before the hook
+	of the first test is released, effectively
+	hanging the keyboard. CTRL-ALT-DEL releases
+	the keyboard, but the test still hangs.
+	Running each test separately works.
+ 
+
 2006-12-16  Daniel Nauck  <dna@mono-project.de>
 
 	* AutoCompleteStringCollectionTest.cs: new tests for AutoCompleteStringCollection.
