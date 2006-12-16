@@ -1,4 +1,5 @@
 System.Windows.Forms/ApplicationTest.cs
+System.Windows.Forms/AutoCompleteStringCollectionTest.cs
 System.Windows.Forms/ApplicationContextTest.cs
 System.Windows.Forms/BindingTest.cs
 System.Windows.Forms/BindingContextTest.cs

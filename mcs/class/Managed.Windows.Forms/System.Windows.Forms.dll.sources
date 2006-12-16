@@ -55,6 +55,7 @@ System.Windows.Forms/AsyncMethodData.cs
 System.Windows.Forms/AsyncMethodResult.cs
 System.Windows.Forms/AutoCompleteMode.cs
 System.Windows.Forms/AutoCompleteSource.cs
+System.Windows.Forms/AutoCompleteStringCollection.cs
 System.Windows.Forms/AutoScaleMode.cs
 System.Windows.Forms/AutoSizeMode.cs
 System.Windows.Forms/AutoValidate.cs

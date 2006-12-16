@@ -1,5 +1,9 @@
 2006-12-16  Daniel Nauck  <dna@mono-project.de>
 
+	* AutoCompleteStringCollectionTest.cs: new tests for AutoCompleteStringCollection.
+
+2006-12-16  Daniel Nauck  <dna@mono-project.de>
+
 	* PaddingTest.cs: new tests for Padding.
 
 2006-12-15  Daniel Nauck  <dna@mono-project.de>

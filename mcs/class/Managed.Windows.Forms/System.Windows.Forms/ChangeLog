@@ -1,3 +1,7 @@
+2006-12-15  Daniel Nauck  <dna@mono-project.de>
+
+	* AutoCompleteStringCollection.cs: add new AutoCompleteStringCollection 2.0 class
+
 2006-12-15  Miguel de Icaza  <miguel@novell.com>
 
 	* Button.cs, ComboBox.cs, ScrollBar.cs, UserControl.cs,

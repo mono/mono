@@ -1,3 +1,10 @@
+2006-12-16  Daniel Nauck  <dna@mono-project.de>
+
+	* System.Windows.Forms.dll.sources: Add
+		AutoCompleteStringCollection.cs
+	* System.Windows.Forms_test.dll.sources: Add
+		AutoCompleteStringCollectionTest.cs
+
 2006-12-16  Chris Toshok  <toshok@ximian.com>
 
 	* SWF.csproj, SWF2k5.csproj: resync these.
