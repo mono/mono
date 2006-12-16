@@ -11,7 +11,7 @@ Resource=System.Windows.Forms.dll.resources
 SWFhead()
 {
     cat <<EOF
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -149,9 +149,10 @@ SWFhead()
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.XML">
-      <Name>System.XML</Name>
+    <Reference Include="System.Xml">
+      <Name>System.Xml</Name>
     </Reference>
+    <Reference Include="Mono.Posix" Condition="'\$(Configuration)' == 'DebugXBuild'"/>
   </ItemGroup>
 EOF
 }
@@ -178,9 +179,7 @@ cat $Source | while read SRC; do
 if [ "x$SRC" != "xAssembly/AssemblyInfo.cs" ] ; then
 SRC=`echo $SRC | tr '/' '\\\\'`
 cat <<EOF
-    <Compile Include="$SRC">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="$SRC" />
 EOF
 fi
 done

@@ -1,3 +1,21 @@
+2006-12-16  Chris Toshok  <toshok@ximian.com>
+
+	* SWF.csproj, SWF2k5.csproj: resync these.
+	
+	* Makefile (EXTRA_DISTFILES): add build-csproj2k5
+	
+	Also, make both SWF.csproj and SWF2k5.csproj depend on the scripts
+	which generate them.  That way if you're hacking on the script you
+	don't have to touch System.Windows.Forms.dll.sources every time
+	you want to update the output.
+
+	* build-csproj2k5: make some changes suggested by Marek:
+
+	- System.XML should be System.Xml.
+	- Change eol-style to native.
+	- remove the SubType's from all the .cs Compile elements.
+	- Add Mono.Posix if the configuration is DebugXBuild (can't test this though..)
+
 2006-12-15  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile: add targets for the 2k5 csproj.

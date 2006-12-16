@@ -76,17 +76,17 @@ TEST_DISTFILES = \
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
-	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj \
+	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj build-csproj2k5 \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
 	-resource:Test/resources/a.cur,a.cur
 
-SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources
+SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj
 	./build-csproj
 
-SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources
+SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj2k5
 	./build-csproj2k5
 
 include ../../build/library.make
