@@ -475,6 +475,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void SiteMapPath_FireEvents()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit(FireEvents_Init));
