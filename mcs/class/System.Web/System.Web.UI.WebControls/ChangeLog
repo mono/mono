@@ -1,4 +1,9 @@
-2006-12-11 Igor Zelmanovich <igorz@mainsoft.com>
+2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs: fixed: FillRowDataKey
+	* DetailsView.cs: fixed: FillRowDataKey
+
+2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs: fixed: ResolveClientUrl used with ImageUrl and NavigateUrl
 

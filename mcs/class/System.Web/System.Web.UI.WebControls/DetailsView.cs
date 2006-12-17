@@ -1208,9 +1208,9 @@ namespace System.Web.UI.WebControls
 				PropertyDescriptorCollection props = TypeDescriptor.GetProperties (dataItem);
 				cachedKeyProperties = new PropertyDescriptor [DataKeyNames.Length];
 				for (int n=0; n<DataKeyNames.Length; n++) { 
-					PropertyDescriptor p = props [DataKeyNames[n]];
+					PropertyDescriptor p = props.Find (DataKeyNames [n], true);
 					if (p == null)
-						new InvalidOperationException ("Property '" + DataKeyNames[n] + "' not found in object of type " + dataItem.GetType());
+						throw new InvalidOperationException ("Property '" + DataKeyNames[n] + "' not found in object of type " + dataItem.GetType());
 					cachedKeyProperties [n] = p;
 				}
 			}
