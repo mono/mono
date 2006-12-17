@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -53,6 +54,146 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (al [0], tv.Nodes [0], "A1");
 			Assert.AreEqual (al [1], tv.Nodes [1], "A2");
 			Assert.AreEqual (al [2], tv.Nodes [2], "A3");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // #B2 fails (and more)
+		public void ExpandAll_Flat_Created ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Size = new Size (300, 100);
+
+			for (int i = 0; i <= 100; i++)
+				tv.Nodes.Add (i.ToString (CultureInfo.InvariantCulture));
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tv);
+			form.Show ();
+
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#A1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#A2");
+
+			Assert.IsTrue (tv.Nodes [0].IsVisible, "#B1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#B2");
+
+			tv.ExpandAll ();
+
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#C1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#C2");
+
+			Assert.IsTrue (tv.Nodes [0].IsVisible, "#D1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#D2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // #B2 fails (and more)
+		public void ExpandAll_Tree_Created ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Size = new Size (300, 100);
+
+			for (int i = 0; i <= 100; i++) {
+				TreeNode node = tv.Nodes.Add (i.ToString (CultureInfo.InvariantCulture));
+				node.Nodes.Add ("child");
+			}
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tv);
+			form.Show ();
+
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#A1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#A2");
+
+			Assert.IsTrue (tv.Nodes [0].IsVisible, "#B1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#B2");
+
+			tv.ExpandAll ();
+
+			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#C1");
+			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#C2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#D1");
+			Assert.IsTrue (tv.Nodes [99].IsVisible, "#D2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // #B1 fails (and more)
+		public void ExpandAll_Flat_NotCreated ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Size = new Size (300, 100);
+
+			for (int i = 0; i <= 100; i++)
+				tv.Nodes.Add (i.ToString (CultureInfo.InvariantCulture));
+
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#A1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#A2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#B1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#B2");
+
+			tv.ExpandAll ();
+
+			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#C1");
+			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#C2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#D1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#D2");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tv);
+			form.Show ();
+
+			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#E1");
+			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#E2");
+
+			Assert.IsTrue (tv.Nodes [0].IsVisible, "#F1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#F2");
+
+			form.Dispose ();
+		}
+
+		[Test] // bug #80284
+		[Category ("NotWorking")]
+		public void ExpandAll_Tree_NotCreated ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Size = new Size (300, 100);
+
+			for (int i = 0; i <= 100; i++) {
+				TreeNode node = tv.Nodes.Add (i.ToString (CultureInfo.InvariantCulture));
+				node.Nodes.Add ("child");
+			}
+
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#A1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#A2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#B1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#B2");
+
+			tv.ExpandAll ();
+
+			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#C1");
+			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#C2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#D1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#D2");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (tv);
+			form.Show ();
+
+			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#E1");
+			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#E2");
+
+			Assert.IsFalse (tv.Nodes [0].IsVisible, "#F1");
+			Assert.IsTrue (tv.Nodes [99].IsVisible, "#F2");
+
+			form.Dispose ();
 		}
 	}
 
