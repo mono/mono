@@ -1,3 +1,10 @@
+2006-12-17  Chris Toshok  <toshok@ximian.com>
+
+	* build-csproj2k5: a couple of changes.  use "exec >" instead of
+	redirecting the output from every function, use multiple patterns
+	in our sed calls instead of including multiple sed invocations,
+	and use sed instead of tr for converting / to \.
+
 2006-12-16  Daniel Nauck  <dna@mono-project.de>
 
 	* System.Windows.Forms.dll.sources: Add

@@ -4,7 +4,8 @@
 #
 #
 
-OutFile=SWF2k5.csproj
+exec > SWF2k5.csproj
+
 Source=System.Windows.Forms.dll.sources
 Resource=System.Windows.Forms.dll.resources
 
@@ -203,11 +204,11 @@ echo "  <ItemGroup>"
 	    INCLUDE=$INCLUDE.prebuilt
 	fi
 
-	# convert all /'s to \\'s
-	INCLUDE=`echo $INCLUDE | tr '/' '\\\\'`
+	# strip off the path from the name of the resource and the .prebuilt if there is one
+	LOGICALNAME=`echo $INCLUDE | sed 's/resources\///;s/.prebuilt//'`
 
-	# strip off the path from the name of the resource
-	LOGICALNAME=`echo $INCLUDE | sed 's/resources\\\\//' | sed 's/.prebuilt//'`
+	# convert all /'s to \\'s
+	INCLUDE=`echo $INCLUDE | sed 's/\//\\\\/'`
 
 	echo "    <EmbeddedResource Include=\"$INCLUDE\">"
 	echo "      <LogicalName>$LOGICALNAME</LogicalName>"
@@ -219,7 +220,7 @@ echo "  <ItemGroup>"
 echo "  </ItemGroup>"
 }
 
-SWFhead > $OutFile
-SWFfilelist >> $OutFile
-SWFresourcelist >> $OutFile
-SWFtail >> $OutFile
+SWFhead
+SWFfilelist
+SWFresourcelist
+SWFtail
