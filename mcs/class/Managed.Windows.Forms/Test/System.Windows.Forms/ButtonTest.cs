@@ -22,7 +22,41 @@ namespace MonoTests.System.Windows.Forms
 			Button B1 = new Button ();
 			Assert.AreEqual (FlatStyle.Standard, B1.FlatStyle, "#1");
 		}
+#if NET_2_0
+		[Test]
+		public void FlatButtonAppearanceTest ()
+		{
+			Button B1 = new Button ();
+			FlatButtonAppearance flatApp = B1.FlatAppearance;
 
+			Assert.AreEqual (Color.Empty, flatApp.BorderColor, "#A1");
+			Assert.AreEqual (1, flatApp.BorderSize, "#A2");
+			Assert.AreEqual (Color.Empty, flatApp.CheckedBackColor, "#A3");
+			Assert.AreEqual (Color.Empty, flatApp.MouseDownBackColor, "#A4");
+			Assert.AreEqual (Color.Empty, flatApp.MouseOverBackColor, "#A5");
+
+			flatApp.BorderColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, flatApp.BorderColor, "#B1");
+			flatApp.BorderSize = 10;
+			Assert.AreEqual (10, flatApp.BorderSize, "#B2");
+			flatApp.CheckedBackColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, flatApp.CheckedBackColor, "#B3");
+			flatApp.MouseDownBackColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, flatApp.MouseDownBackColor, "#B4");
+			flatApp.MouseOverBackColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, flatApp.MouseOverBackColor, "#B5");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void FlatButtonAppearanceExceptionTest ()
+		{
+			Button B1 = new Button ();
+			FlatButtonAppearance flatApp = B1.FlatAppearance;
+
+			flatApp.BorderSize = -1;
+		}
+#endif
 		[Test]
 		public void ImageTest ()
 		{

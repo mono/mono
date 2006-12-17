@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private	bool			use_compatible_text_rendering;
 		private bool			use_visual_style_back_color;
+		private FlatButtonAppearance flat_button_appearance;
 #endif
 		#endregion	// Local Variables
 
@@ -132,6 +133,9 @@ namespace System.Windows.Forms {
 		protected ButtonBase() : base()
 		{
 			flat_style	= FlatStyle.Standard;
+#if NET_2_0
+			flat_button_appearance = new FlatButtonAppearance (this);
+#endif
 			image_index	= -1;
 			image		= null;
 			image_list	= null;
@@ -176,7 +180,15 @@ namespace System.Windows.Forms {
 				Invalidate();
 			}
 		}
-		
+#if NET_2_0
+		[MonoTODO("FlatAppearance is currently ignored on drawing.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Browsable(true)]
+		public FlatButtonAppearance FlatAppearance
+		{
+			get { return flat_button_appearance; }
+		}
+#endif		
 		[Localizable(true)]
 		[MWFDescription("Sets image to be displayed on button face"), MWFCategory("Appearance")]
 		public Image Image {

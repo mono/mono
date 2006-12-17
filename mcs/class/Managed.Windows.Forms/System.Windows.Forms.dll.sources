@@ -278,6 +278,7 @@ System.Windows.Forms/DateTimePicker.cs
 System.Windows.Forms/DateTimePickerFormat.cs
 System.Windows.Forms/Day.cs
 System.Windows.Forms/DialogResult.cs
+System.Windows.Forms/DockingAttribute.cs
 System.Windows.Forms/DockStyle.cs
 System.Windows.Forms/DockingBehavior.cs
 System.Windows.Forms/DomainUpDown.cs
@@ -297,6 +298,7 @@ System.Windows.Forms/FeatureSupport.cs
 System.Windows.Forms/FileDialog.cs
 System.Windows.Forms/FixedPanel.cs
 System.Windows.Forms/FixedSizeTextBox.cs
+System.Windows.Forms/FlatButtonAppearance.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/FlowDirection.cs
 System.Windows.Forms/FlowLayoutPanel.cs

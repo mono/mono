@@ -1,3 +1,7 @@
+2006-12-17  Daniel Nauck  <dna@mono-project.de>
+
+	* ButtonTest.cs: Added tests for FlatButtonAppearance.
+
 2006-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TreeViewTest.cs: Added tests for bug #80284.
