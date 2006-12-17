@@ -342,7 +342,7 @@ namespace System.Windows.Forms {
 				if (!hexadecimal) {
 					dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
 				} else {
-#if NET_1_1
+#if !NET_2_0
 					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 16));
 #else
 					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 10));

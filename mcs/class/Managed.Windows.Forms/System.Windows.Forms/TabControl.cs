@@ -206,20 +206,18 @@ namespace System.Windows.Forms {
 			set {
 
 				if (value < -1) {
-#if NET_1_1
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("SelectedIndex", "Value of '" + value + "' is valid for 'SelectedIndex'. " +
+						"'SelectedIndex' must be greater than or equal to -1.");
+#else
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to -1.");
-#else
-					throw new ArgumentOutOfRangeException ("'" + value + "' is not a valid value for 'value'. " +
-						"'value' must be greater than or equal to -1.");
-
 #endif
 				}
-
 				if (!this.IsHandleCreated) {
 					if (selected_index != value) {
 						selected_index = value;
-#if NET_1_1
+#if !NET_2_0
 						OnSelectedIndexChanged (EventArgs.Empty);
 #endif
 					}
@@ -1120,6 +1118,8 @@ namespace System.Windows.Forms {
 
 				page.SetVisible (false);
 				base.Add (value);
+				if (owner.TabCount == 1 && owner.selected_index < 0)
+					owner.SelectedIndex = 0;
 				owner.Redraw ();
 			}
 

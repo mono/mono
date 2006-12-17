@@ -395,7 +395,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tab.SelectedIndex = 0;
 #if NET_2_0
-			Assert.AreEqual (1, _selected_index_changed, "#F1");
+			Assert.AreEqual (0, _selected_index_changed, "#F1");
 #else
 			Assert.AreEqual (4, _selected_index_changed, "#F1");
 #endif
@@ -403,7 +403,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tab.SelectedIndex = -1;
 #if NET_2_0
-			Assert.AreEqual (2, _selected_index_changed, "#G1");
+			Assert.AreEqual (1, _selected_index_changed, "#G1");
 #else
 			Assert.AreEqual (5, _selected_index_changed, "#G1");
 #endif
@@ -411,7 +411,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tab.SelectedIndex = 1;
 #if NET_2_0
-			Assert.AreEqual (3, _selected_index_changed, "#H1");
+			Assert.AreEqual (2, _selected_index_changed, "#H1");
 #else
 			Assert.AreEqual (6, _selected_index_changed, "#H1");
 #endif
@@ -419,7 +419,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tab.SelectedIndex = 1;
 #if NET_2_0
-			Assert.AreEqual (3, _selected_index_changed, "#I1");
+			Assert.AreEqual (2, _selected_index_changed, "#I1");
 #else
 			Assert.AreEqual (6, _selected_index_changed, "#I1");
 #endif

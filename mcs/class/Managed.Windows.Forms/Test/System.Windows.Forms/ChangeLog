@@ -1,4 +1,9 @@
 2006-12-16  Andreia Gaita  <avidigal@novell.com>
+	
+	* TabControlTest.cs: Fixed SelectedIndex tests
+	for MS.NET 2.0
+
+2006-12-16  Andreia Gaita  <avidigal@novell.com>
 
 	* SendKeysTest.cs: Test cases for SendKeys
 
