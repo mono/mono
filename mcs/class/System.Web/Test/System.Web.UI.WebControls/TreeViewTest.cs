@@ -116,6 +116,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 	[TestFixture]
 	public class TreeViewTest {
 
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
 		[Test]
 		public void Defaults () {
 			TreeViewPoker p = new TreeViewPoker ();
@@ -1816,6 +1822,237 @@ namespace MonoTests.System.Web.UI.WebControls {
 			page.Form.Controls.Add (lce);
 		}
 
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details for mono  
+		public void TreeView_PostBackFireEvents_1 ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PostBackFireEvents_1));
+			String html = t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("Event not fired fail");
+			Assert.AreEqual ("TreeNodeDataBound", t.UserData.ToString (), "PostBackFireEvents_1");
+		}
+
+		#region PostBackFireEvents_1
+		public static void PostBackFireEvents_1 (Page p)
+		{
+			TreeView tv = new TreeView ();
+			tv.TreeNodeDataBound += new TreeNodeEventHandler (tv_TreeNodeDataBound);
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+			XmlDataSource xmlds = new XmlDataSource ();
+			xmlds.EnableCaching = false;
+			xmlds.Data = xmlDataBind;
+			tv.DataSource = xmlds;
+			tv.DataBind ();
+			tv.Nodes[0].Checked = true;
+			tv.Nodes[0].ChildNodes[0].Selected = false;
+			tv.Nodes[0].ChildNodes[0].Expanded = true;
+			tv.Nodes[0].ChildNodes[0].ChildNodes[0].PopulateOnDemand = false;
+			tv.Nodes[0].ChildNodes[0].ChildNodes[1].ShowCheckBox = true;
+			tv.Nodes[0].ChildNodes[1].SelectAction = TreeNodeSelectAction.SelectExpand;
+			p.Form.Controls.Add (tv);
+		}
+
+		public static void tv_TreeNodeDataBound (object sender, TreeNodeEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "TreeNodeDataBound";	
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details for mono  
+		public void TreeView_PostBackFireEvents_2 ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PostBackFireEvents_2);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("treeview1_ExpandState");
+			fr.Controls.Add ("treeview1_SelectedNode");
+			fr.Controls.Add ("treeview1_PopulateLog");
+			fr.Controls.Add ("treeview1n0CheckBox");
+
+			fr.Controls["__EVENTTARGET"].Value = "treeview1";
+			fr.Controls["__EVENTARGUMENT"].Value = "sroot";
+			fr.Controls["treeview1_ExpandState"].Value = "n";
+			fr.Controls["treeview1_SelectedNode"].Value = "treeview1t0";
+			fr.Controls["treeview1_PopulateLog"].Value = "";
+			fr.Controls["treeview1n0CheckBox"].Value = "on";
+
+			t.Request = fr;
+			t.Run ();
+
+			Assert.AreEqual ("TreeNodeCheckChanged", t.UserData.ToString (), "PostBackFireEvents");
+		}
+
+		#region PostBackFireEvents_2
+		public static void PostBackFireEvents_2 (Page p)
+		{
+			TreeView tv = new TreeView ();
+			tv.TreeNodeCheckChanged+=new TreeNodeEventHandler(tv_TreeNodeCheckChanged);
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+			TreeNode root = new TreeNode ("root", "root");
+			root.ShowCheckBox = true;
+			root.Checked = false;
+			tv.Nodes.Add (root);
+			p.Form.Controls.Add (tv);
+		}
+
+		static void tv_TreeNodeCheckChanged (object sender, TreeNodeEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "TreeNodeCheckChanged";
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details for mono  
+		public void TreeView_PostBackFireEvents_3 ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PostBackFireEvents_3));
+			String html = t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("Event not fired fail");
+			Assert.AreEqual ("TreeNodeExpanded", t.UserData.ToString (), "PostBackFireEvents#1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "treeview1";
+			fr.Controls["__EVENTARGUMENT"].Value = "tBook";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("TreeNodeCollapsed", t.UserData.ToString (), "PostBackFireEvents#2");
+
+		}
+
+		#region PostBackFireEvents_3
+		public static void PostBackFireEvents_3 (Page p)
+		{
+			TreeView tv = new TreeView ();
+			tv.TreeNodeCollapsed += new TreeNodeEventHandler (tv_TreeNodeCollapsed);
+			tv.TreeNodeExpanded +=new TreeNodeEventHandler(tv_TreeNodeExpanded);
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+			XmlDataSource xmlds = new XmlDataSource ();
+			xmlds.EnableCaching = false;
+			xmlds.Data = xmlDataBind;
+			tv.DataSource = xmlds;
+			tv.DataBind ();
+			tv.Nodes[0].Checked = true;
+			tv.Nodes[0].ChildNodes[0].Selected = false;
+			tv.Nodes[0].ChildNodes[0].Expanded = true;
+			tv.Nodes[0].ChildNodes[0].ChildNodes[0].PopulateOnDemand = false;
+			tv.Nodes[0].ChildNodes[0].ChildNodes[1].ShowCheckBox = true;
+			tv.Nodes[0].ChildNodes[1].SelectAction = TreeNodeSelectAction.SelectExpand;
+			p.Form.Controls.Add (tv);
+
+			
+		}
+
+		public static void tv_TreeNodeCollapsed (object sender, TreeNodeEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "TreeNodeCollapsed";
+		}
+
+		static void tv_TreeNodeExpanded (object sender, TreeNodeEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "TreeNodeExpanded";
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details for mono  
+		public void TreeView_PostBackFireEvents_4 ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PostBackFireEvents_4));
+		        String html = t.Run ();
+			Assert.AreEqual ("TreeNodePopulate", t.UserData.ToString (), "PostBackFireEvents");
+		}
+
+		#region PostBackFireEvents_4
+		public static void PostBackFireEvents_4 (Page p)
+		{
+			TreeView tv = new TreeView ();
+			tv.TreeNodePopulate += new TreeNodeEventHandler (tv_TreeNodePopulate_1);
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+			TreeNode root = new TreeNode ("Root", "Root");
+			root.PopulateOnDemand = true;
+			root.Expanded = true;
+			tv.Nodes.Add (root);
+			p.Form.Controls.Add (tv);
+		}
+
+		public static void tv_TreeNodePopulate_1 (object sender, TreeNodeEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "TreeNodePopulate";
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")] // Implementation details for mono  
+		public void TreeView_PostBackFireEvents_5 ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PostBackFireEvents_5);
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TreeView2_ExpandState");
+			fr.Controls.Add ("TreeView2_SelectedNode");
+			
+			fr.Controls["__EVENTTARGET"].Value = "treeview1";
+			fr.Controls["__EVENTARGUMENT"].Value = "snode";
+			fr.Controls["TreeView2_ExpandState"].Value = "nn";
+			fr.Controls["TreeView2_SelectedNode"].Value = "treeview1t1";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("SelectedNodeChanged", t.UserData.ToString (), "PostBackFireEvents");
+		}
+
+		#region PostBackFireEvents_5
+		public static void PostBackFireEvents_5 (Page p)
+		{
+			TreeView tv = new TreeView ();
+			tv.SelectedNodeChanged += new EventHandler (tv_SelectedNodeChanged);
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+			TreeNode root = new TreeNode ("root", "root");
+			root.Selected = true;
+			tv.Nodes.Add (root);
+			TreeNode node = new TreeNode ("node", "node");
+			tv.Nodes.Add (node);
+			node.Selected = false;
+			p.Form.Controls.Add (tv);
+		}
+
+		static void tv_SelectedNodeChanged (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "SelectedNodeChanged";
+		}
+		#endregion
+
+		[Test]
+		public void TreeView_NullDS ()
+		{
+			TreeView tv = new TreeView ();
+			tv.DataSource = null;
+			tv.DataBind ();
+			Assert.AreEqual (0, tv.Nodes.Count, "NullDS");
+		}
+
+
 		// Events Stuff
 		private bool eventDone = false;
 		private string treeNodeName = string.Empty;
@@ -1920,10 +2157,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureTearDown]
 		public void TearDown () {
 			WebTest.Unload ();
-		}
-
-		[TestFixtureSetUp]
-		public void CopyTestResources () {
 		}
 	}
 }

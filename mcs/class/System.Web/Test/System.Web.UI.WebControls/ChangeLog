@@ -1,3 +1,7 @@
+2006-12-17  Yoni Klain         <yonik@mainsoft.com>
+
+	* TreeViewTest.cs:    added tests.
+	
 2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SiteMapPathTest.cs: added NotWorking attribute.
