@@ -419,6 +419,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\AutoCompleteStringCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\AutoScaleMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

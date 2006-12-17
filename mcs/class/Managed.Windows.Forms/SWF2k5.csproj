@@ -198,6 +198,7 @@
     <Compile Include="System.Windows.Forms\AsyncMethodResult.cs" />
     <Compile Include="System.Windows.Forms\AutoCompleteMode.cs" />
     <Compile Include="System.Windows.Forms\AutoCompleteSource.cs" />
+    <Compile Include="System.Windows.Forms\AutoCompleteStringCollection.cs" />
     <Compile Include="System.Windows.Forms\AutoScaleMode.cs" />
     <Compile Include="System.Windows.Forms\AutoSizeMode.cs" />
     <Compile Include="System.Windows.Forms\AutoValidate.cs" />
