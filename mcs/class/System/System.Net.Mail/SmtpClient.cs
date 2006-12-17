@@ -632,12 +632,9 @@ namespace System.Net.Mail {
 
 		private bool ChangeToSSLSocket () {
 #if TARGET_JVM
-			java.lang.Class c = vmw.common.TypeUtils.ToClass (stream);
-			java.lang.reflect.Method m = c.getMethod ("ChangeToSSLSocket", null);
-			m.invoke (stream, new object [] { });
+			stream.ChangeToSSLSocket ();
 
 			return true;
-
 #else
 			throw new NotImplementedException ();
 #endif
