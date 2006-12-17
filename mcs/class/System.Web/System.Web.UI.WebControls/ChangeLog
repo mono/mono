@@ -1,5 +1,9 @@
 2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HiddenField.cs: implemented
+
+2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormView.cs: fixed: FillRowDataKey
 	* DetailsView.cs: fixed: FillRowDataKey
 
