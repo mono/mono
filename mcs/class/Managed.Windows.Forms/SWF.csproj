@@ -1534,6 +1534,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DockingAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DockStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1625,6 +1630,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\FixedSizeTextBox.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\FlatButtonAppearance.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

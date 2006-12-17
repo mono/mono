@@ -421,6 +421,7 @@
     <Compile Include="System.Windows.Forms\DateTimePickerFormat.cs" />
     <Compile Include="System.Windows.Forms\Day.cs" />
     <Compile Include="System.Windows.Forms\DialogResult.cs" />
+    <Compile Include="System.Windows.Forms\DockingAttribute.cs" />
     <Compile Include="System.Windows.Forms\DockStyle.cs" />
     <Compile Include="System.Windows.Forms\DockingBehavior.cs" />
     <Compile Include="System.Windows.Forms\DomainUpDown.cs" />
@@ -440,6 +441,7 @@
     <Compile Include="System.Windows.Forms\FileDialog.cs" />
     <Compile Include="System.Windows.Forms\FixedPanel.cs" />
     <Compile Include="System.Windows.Forms\FixedSizeTextBox.cs" />
+    <Compile Include="System.Windows.Forms\FlatButtonAppearance.cs" />
     <Compile Include="System.Windows.Forms\FlatStyle.cs" />
     <Compile Include="System.Windows.Forms\FlowDirection.cs" />
     <Compile Include="System.Windows.Forms\FlowLayoutPanel.cs" />
