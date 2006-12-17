@@ -90,7 +90,27 @@ namespace System.Data.SqlClient
 		{
 		}
 
-		public SqlParameter(
+#if NET_2_0
+		public SqlParameter (
+			string parameterName,
+			SqlDbType dbType,
+			int size,
+			ParameterDirection direction,
+			byte precision,
+			byte scale,
+			string sourceColumn,
+			DataRowVersion sourceVersion,
+			bool sourceColumnNullMapping,
+			Object value,
+			string xmlSchemaCollectionDatabase,
+			string xmlSchemaCollectionOwningSchema,
+			string xmlSchemaCollectionName
+		) : this (parameterName, dbType, size, direction, sourceColumnNullMapping, precision, scale, sourceColumn, sourceVersion, value, true)
+		{
+		}
+#endif
+
+		SqlParameter(
 			String parameterName,
 			SqlDbType dbType,
 			int size,
