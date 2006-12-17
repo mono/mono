@@ -32,7 +32,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			public static string TestControl(Control container, Control start, bool forward) {
-				Control	ctl;
+				Control ctl;
 
 				ctl = container.GetNextControl(start, forward);
 
@@ -90,7 +90,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		public void PubPropTest()
-    		{
+		{
 			Control c = new Control();
 
 			Assert.IsFalse (c.AllowDrop , "A1");
@@ -185,7 +185,6 @@ namespace MonoTests.System.Windows.Forms
 
 		private void SizeChangedTest_ResizeHandler (object sender, EventArgs e)
 		{
-			Console.WriteLine("Resized");
 			((Control) sender).Tag = false;
 		}
 
@@ -827,7 +826,7 @@ namespace MonoTests.System.Windows.Forms
 //					e.Visible = true;
 //					l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
 //					Assert.AreSame (e.Name, l.Name, "Child6");
-//				#endif // NET_2_0                 
+//				#endif // NET_2_0
 			} finally {
 				if (c != null)
 					c.Dispose ();
@@ -1037,6 +1036,41 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			c.Region = null;
 			Assert.IsNull (c.Region, "#B3");
+
+			f.Dispose ();
+		}
+
+		[Test] // bug #80280
+		[Category ("NotWorking")]
+		public void Validated_Multiple_Containers ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			UserControl control1 = new UserControl();
+			UserControl container1 = new UserControl();
+			control1.Tag = true;
+			control1.Validated += new EventHandler (Control_ValidatedHandler);
+			container1.Controls.Add(control1);
+			form.Controls.Add (container1);
+
+			UserControl container2 = new UserControl();
+			UserControl control2 = new UserControl();
+			container2.Controls.Add(control2);
+			form.Controls.Add (container2);
+
+			Assert.IsTrue ((bool) control1.Tag, "#1");
+			control1.Select();
+			Assert.IsTrue ((bool) control1.Tag, "#2");
+			control2.Select();
+			Assert.IsFalse ((bool) control1.Tag, "#3");
+
+			form.Dispose ();
+		}
+
+		private void Control_ValidatedHandler (object sender, EventArgs e)
+		{
+			((Control) sender).Tag = false;
 		}
 	}
 
