@@ -82,5 +82,15 @@ namespace MonoTests.System.Data.OleDb
 			catch(Exception ex){exp = ex;}
 			finally{EndCase(exp); exp = null;}
 		}
+		
+		[Test]
+		public void TestAddCloned()
+		{
+			OleDbCommand c = new OleDbCommand ();
+			OleDbParameter p = c.Parameters.Add ("SDF", OleDbType.BigInt);
+			OleDbCommand c1 = new OleDbCommand ();
+			c1.Parameters.Add ((OleDbParameter) ((ICloneable) p).Clone ());
+			Assert.AreEqual(1, c1.Parameters.Count, "#01");
+		}
 	}
 }

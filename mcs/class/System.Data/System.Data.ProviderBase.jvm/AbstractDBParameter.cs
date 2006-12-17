@@ -264,7 +264,9 @@ namespace System.Data.ProviderBase
 		
 		public virtual object Clone()
 		{
-			return MemberwiseClone();
+			AbstractDbParameter other = (AbstractDbParameter) MemberwiseClone ();
+			other._parent = null;
+			return other;
 		}
 
 		protected internal abstract int JdbcTypeFromProviderType();
