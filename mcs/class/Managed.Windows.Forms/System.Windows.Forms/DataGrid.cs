@@ -1440,7 +1440,6 @@ namespace System.Windows.Forms
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
-					EnsureCellVisibility (new_cell);
 					CurrentCell = new_cell;
 					Edit ();
 				} else {
@@ -2165,12 +2164,14 @@ namespace System.Windows.Forms
 		
 		private void ConnectListManagerEvents ()
 		{
+			list_manager.MetaDataChanged += new EventHandler (OnListManagerMetaDataChanged);
 			list_manager.PositionChanged += new EventHandler (OnListManagerPositionChanged);
 			list_manager.ItemChanged += new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
 		
 		private void DisconnectListManagerEvents ()
 		{
+			list_manager.MetaDataChanged -= new EventHandler (OnListManagerMetaDataChanged);
 			list_manager.PositionChanged -= new EventHandler (OnListManagerPositionChanged);
 			list_manager.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
@@ -2307,23 +2308,7 @@ namespace System.Windows.Forms
 			if (list_manager != null)
 				ConnectListManagerEvents ();
 
-			if (list_manager != null) {
-				string list_name = list_manager.GetListName (null);
-				if (TableStyles[list_name] == null) {
-					current_style.GridColumnStyles.Clear ();			
-					current_style.CreateColumnsForTable (false);
-				}
-				else if (CurrentTableStyle.MappingName != list_name) {
-					// If the style has been defined by the user, use it
-					CurrentTableStyle = styles_collection[list_name];
-					current_style.CreateColumnsForTable (true);
-				}
-				else {
-					current_style.CreateColumnsForTable (true);
-				}
-			}
-			else
-				current_style.CreateColumnsForTable (false);
+			BindColumns ();
 
 			if (old_lm != list_manager) {
 				/* reset first_visiblerow to 0 here before
@@ -2342,13 +2327,6 @@ namespace System.Windows.Forms
 			in_setdatasource = false;
 
 			OnDataSourceChanged (EventArgs.Empty);
-		}
-
-		private void OnListManagerPositionChanged (object sender, EventArgs e)
-		{
-			from_positionchanged_handler = true;
-			CurrentRow = list_manager.Position;
-			from_positionchanged_handler = false;
 		}
 
 		void RecreateDataGridRows (bool recalc)
@@ -2384,6 +2362,39 @@ namespace System.Windows.Forms
 			}
 
 			CalcAreasAndInvalidate ();
+		}
+
+		void BindColumns ()
+		{
+			if (list_manager != null) {
+				string list_name = list_manager.GetListName (null);
+				if (TableStyles[list_name] == null) {
+					current_style.GridColumnStyles.Clear ();			
+					current_style.CreateColumnsForTable (false);
+				}
+				else if (CurrentTableStyle.MappingName != list_name) {
+					// If the style has been defined by the user, use it
+					CurrentTableStyle = styles_collection[list_name];
+					current_style.CreateColumnsForTable (true);
+				}
+				else {
+					current_style.CreateColumnsForTable (true);
+				}
+			}
+			else
+				current_style.CreateColumnsForTable (false);
+		}
+
+		private void OnListManagerMetaDataChanged (object sender, EventArgs e)
+		{
+			BindColumns ();
+		}
+
+		private void OnListManagerPositionChanged (object sender, EventArgs e)
+		{
+			from_positionchanged_handler = true;
+			CurrentRow = list_manager.Position;
+			from_positionchanged_handler = false;
 		}
 
 		private void OnListManagerItemChanged (object sender, ItemChangedEventArgs e)
