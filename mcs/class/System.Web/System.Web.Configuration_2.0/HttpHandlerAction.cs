@@ -60,7 +60,7 @@ namespace System.Web.Configuration
 			verbProp = new ConfigurationProperty ("verb", typeof (string), null,
 							      TypeDescriptor.GetConverter (typeof (string)),
 							      PropertyHelper.NonEmptyStringValidator,
-							      ConfigurationPropertyOptions.IsRequired);
+							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
 			_properties = new ConfigurationPropertyCollection ();
 			_properties.Add (pathProp);
