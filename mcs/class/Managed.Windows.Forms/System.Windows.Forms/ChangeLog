@@ -1,5 +1,9 @@
 2006-12-17  Daniel Nauck  <dna@mono-project.de>
 
+	* ListViewHitTestInfo.cs: add
+
+2006-12-17  Daniel Nauck  <dna@mono-project.de>
+
 	* ButtonBase.cs: Added FlatButtonAppearance 2.0 support.
 	* FlatButtonAppearance.cs: add
 	* DockingAttribute.cs: add
