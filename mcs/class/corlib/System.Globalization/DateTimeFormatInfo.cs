@@ -725,5 +725,36 @@ namespace System.Globalization
 			}
 			return null;
 		}
+
+#if NET_2_0
+		[MonoTODO ("NotImplemented")]
+		public string [] AbbreviatedMonthGenitiveNames {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("NotImplemented")]
+		public string [] MonthGenitiveNames {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("NotImplemented")]
+		public string [] NativeCalendarName {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("NotImplemented")]
+		public string GetShortestDayName (DayOfWeek dayOfWeek)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("NotImplemented")]
+		public void SetAllDateTimePatterns (string [] patterns, char format)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
