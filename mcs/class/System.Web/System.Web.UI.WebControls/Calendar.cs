@@ -171,7 +171,7 @@ namespace System.Web.UI.WebControls {
 
 			set {
 				if (value != DayNameFormat.FirstLetter && value != DayNameFormat.FirstTwoLetters &&
-					value != DayNameFormat.Full && value != DayNameFormat.Short) {
+					value != DayNameFormat.Full && value != DayNameFormat.Short && value != DayNameFormat.Shortest) {
 					throw new ArgumentOutOfRangeException ("The specified day name format is not one of the DayNameFormat values.");
 				}
 
@@ -789,6 +789,7 @@ namespace System.Web.UI.WebControls {
 			Table table = new Table ();
 			table.CellSpacing = CellSpacing;
 			table.CellPadding = CellPadding;
+			table.BorderWidth = 1;
 			if (ControlStyleCreated)
 				table.ControlStyle.CopyFrom (ControlStyle);
 			table.CopyBaseAttributes (this);
@@ -955,6 +956,11 @@ namespace System.Web.UI.WebControls {
 				case DayNameFormat.FirstTwoLetters:
 					dayName = dayName.Substring (0, 2);
 					break;
+#if NET_2_0
+				case DayNameFormat.Shortest:
+					dayName = dateInfo.GetShortestDayName (dayOfWeek);
+					break;
+#endif
 				case DayNameFormat.Full:
 					break;
 				case DayNameFormat.Short:
