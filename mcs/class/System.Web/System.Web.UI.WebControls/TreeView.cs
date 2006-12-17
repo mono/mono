@@ -1373,8 +1373,8 @@ namespace System.Web.UI.WebControls
 			
 			// Node icon
 			
-			string imageUrl = node.ImageUrl;
-			if (imageUrl == "" && imageStyle != null) {
+			string imageUrl = node.ImageUrl.Length > 0 ? ResolveClientUrl (node.ImageUrl) : null;
+			if (String.IsNullOrEmpty (imageUrl) && imageStyle != null) {
 				if (imageStyle.RootIcon != null && node.IsRootNode)
 					imageUrl = GetNodeIconUrl (imageStyle.RootIcon);
 				else if (imageStyle.ParentIcon != null && node.IsParentNode)
@@ -1383,7 +1383,7 @@ namespace System.Web.UI.WebControls
 					imageUrl = GetNodeIconUrl (imageStyle.LeafIcon);
 			}
 			
-			if (imageUrl != "") {
+			if (!String.IsNullOrEmpty (imageUrl)) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 				BeginNodeTag (writer, node, clientExpand);
 				writer.AddAttribute ("src", imageUrl);
@@ -1656,7 +1656,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute ("title", node.ToolTip);
 
 			if (node.NavigateUrl != "") {
-				writer.AddAttribute ("href", node.NavigateUrl);
+				writer.AddAttribute ("href", ResolveClientUrl (node.NavigateUrl));
 				if (node.Target.Length > 0)
 					writer.AddAttribute ("target", node.Target);
 				else if (Target.Length > 0)
