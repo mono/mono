@@ -1,3 +1,9 @@
+2006-12-17  Daniel Nauck  <dna@mono-project.de>
+
+	* ListViewGroup.cs: add internal Location property for layouting.
+	* Theme.cs: add abstract ListViewGroupHeight function.
+	* ThemeWin32Classic.cs: implement ListViewGroupHeight function.
+
 2006-12-16  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControl.cs: Fixed checks for NET_2_0-specific exceptions.

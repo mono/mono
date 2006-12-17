@@ -2031,6 +2031,10 @@ namespace System.Windows.Forms
 		public override Size ListViewDefaultSize {
 			get { return new Size (121, 97); }
 		}
+
+		public override int ListViewGroupHeight { 
+			get { return 20; }
+		}
 		#endregion	// ListView
 		
 		#region Menus

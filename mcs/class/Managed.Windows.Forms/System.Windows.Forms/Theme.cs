@@ -784,6 +784,7 @@ namespace System.Windows.Forms
 		public abstract int ListViewEmptyColumnWidth { get; }
 		public abstract int ListViewHorizontalSpacing { get; }
 		public abstract Size ListViewDefaultSize { get; }
+		public abstract int ListViewGroupHeight { get; }
 		#endregion	// ListView
 		
 		#region Menus

@@ -31,6 +31,7 @@ using System;
 using System.Text;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -46,6 +47,7 @@ namespace System.Windows.Forms
 		private ListView list_view_owner = null;
 		private ListView.ListViewItemCollection items = null;
 		private object tag = null;
+		private Point location = Point.Empty;
 
 		#region ListViewGroup constructors
 
@@ -145,6 +147,11 @@ namespace System.Windows.Forms
 		internal ListView ListViewOwner {
 			get { return list_view_owner; }
 			set { list_view_owner = value; }
+		}
+
+		internal Point Location {
+			get { return location; }
+			set { location = value; }
 		}
 
 		[Browsable(true)]
