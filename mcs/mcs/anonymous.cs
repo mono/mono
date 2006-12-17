@@ -58,7 +58,10 @@ namespace Mono.CSharp {
 				SetParameterInfo (list);
 			}
 
-			parent.AddCompilerGeneratedClass (this);
+			if (parent.PartialContainer != null)
+				parent.PartialContainer.AddCompilerGeneratedClass (this);
+			else
+				parent.AddCompilerGeneratedClass (this);
 		}
 
 		protected override bool DefineNestedTypes ()

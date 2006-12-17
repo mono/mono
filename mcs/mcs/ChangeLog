@@ -1,3 +1,12 @@
+2006-12-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79934
+	* anonymous.cs (CompilerGeneratedClass): Register class in a shared
+	partial container.
+
+	* class.cs (ResolveMembers): Register an iterator in current container and
+	not in shared one.
+
 2006-12-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-543.cs

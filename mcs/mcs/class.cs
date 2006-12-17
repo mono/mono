@@ -3870,7 +3870,7 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
 				iterator = Iterator.CreateIterator (
-					this, Parent.PartialContainer, GenericMethod, ModFlags);
+					this, (TypeContainer)Parent, GenericMethod, ModFlags);
 
 				if (iterator == null)
 					return false;
@@ -6484,11 +6484,9 @@ namespace Mono.CSharp {
 
 			public bool ResolveMembers ()
 			{
-				TypeContainer container = ((TypeContainer) Parent).PartialContainer;
-
 				if (yields) {
 					iterator = Iterator.CreateIterator (
-						this, container, null, ModFlags);
+						this, (TypeContainer)Parent, null, ModFlags);
 
 					if (iterator == null)
 						return false;
