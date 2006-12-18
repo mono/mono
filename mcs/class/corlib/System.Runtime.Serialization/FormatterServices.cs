@@ -116,8 +116,8 @@ namespace System.Runtime.Serialization
 			foreach (FieldInfo field in fs)
 				if (!(field.IsNotSerialized)) {
 					MonoField mf = field as MonoField;
-					if (mf != null) {
-						string fname = (reflectedType != type && !mf.IsPublic) ? type.Name + "+" + mf.Name : mf.Name;
+					if (mf != null && reflectedType != type && !mf.IsPublic) {
+						string fname = type.Name + "+" + mf.Name;
 						fields.Add (mf.Clone (fname));
 					}
 					else
