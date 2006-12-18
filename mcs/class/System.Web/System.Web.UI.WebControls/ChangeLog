@@ -1,3 +1,7 @@
+2006-12-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataGrid.cs, RepeatInfo.cs: fixed accessibility features
+
 2006-12-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Calendar.cs: support DayNameFormat.Shortest

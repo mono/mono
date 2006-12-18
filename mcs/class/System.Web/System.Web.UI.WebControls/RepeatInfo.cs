@@ -84,7 +84,7 @@ namespace System.Web.UI.WebControls {
 			if (! oti)
 				RenderBeginTag (w, controlStyle, baseControl);
 
-			if (UseAccessibleHeader) {
+			if (Caption.Length > 0) {
 				if (CaptionAlign != TableCaptionAlign.NotSet)
 					w.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString());
 
@@ -106,11 +106,18 @@ namespace System.Web.UI.WebControls {
 					if (hdr_span != 1)
 						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
 
+					if (UseAccessibleHeader)
+						w.AddAttribute ("scope", "col", false);
+					
 					Style s = user.GetItemStyle (ListItemType.Header, -1);
 					if (s != null)
 						s.AddAttributesToRender (w);
-					
-					w.RenderBeginTag (HtmlTextWriterTag.Td);
+
+					if (UseAccessibleHeader)
+						w.RenderBeginTag (HtmlTextWriterTag.Th);
+					else
+						w.RenderBeginTag (HtmlTextWriterTag.Td);
+
 					user.RenderItem (ListItemType.Header, -1, this, w);
 					w.RenderEndTag (); // td
 					w.RenderEndTag (); // tr
@@ -251,8 +258,8 @@ namespace System.Web.UI.WebControls {
 #endif
 
 			RenderBeginTag (w, controlStyle, baseControl);
-			
-			if (UseAccessibleHeader) {
+
+			if (Caption.Length > 0) {
 				if (CaptionAlign != TableCaptionAlign.NotSet)
 					w.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString());
 
@@ -272,11 +279,18 @@ namespace System.Web.UI.WebControls {
 					if (hdr_span != 1)
 						w.AddAttribute (HtmlTextWriterAttribute.Colspan, hdr_span.ToString ());
 
+					if (UseAccessibleHeader)
+						w.AddAttribute ("scope", "col", false);
+
 					Style s = user.GetItemStyle (ListItemType.Header, -1);
 					if (s != null)
 						s.AddAttributesToRender (w);
-					
-					w.RenderBeginTag (HtmlTextWriterTag.Td);
+
+					if (UseAccessibleHeader)
+						w.RenderBeginTag (HtmlTextWriterTag.Th);
+					else
+						w.RenderBeginTag (HtmlTextWriterTag.Td);
+
 					user.RenderItem (ListItemType.Header, -1, this, w);
 					w.RenderEndTag (); // td
 					w.RenderEndTag (); // tr

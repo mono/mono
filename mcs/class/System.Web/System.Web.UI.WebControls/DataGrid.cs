@@ -702,7 +702,13 @@ namespace System.Web.UI.WebControls {
 		{
 			bool th = UseAccessibleHeader && item.ItemType == ListItemType.Header;
 			for (int i = 0; i < columns.Length; i++) {
-				TableCell cell = (th) ? new TableHeaderCell () : new TableCell ();
+				TableCell cell = null;
+				if (th) {
+					cell = new TableHeaderCell ();
+					cell.Attributes["scope"] = "col";
+				}
+				else
+					cell = new TableCell ();
 				columns [i].InitializeCell (cell, i, item.ItemType);
 				item.Cells.Add (cell);
 			}
