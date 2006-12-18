@@ -1,6 +1,9 @@
 //
 // AssemblyLoadInfo.cs: Information needed to load logger or task class.
 //
+// NOTE: It's not included in Microsoft.Build.Framework only in
+// Microsoft.Build.Engine and tools/xbuild.
+//
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 // 
