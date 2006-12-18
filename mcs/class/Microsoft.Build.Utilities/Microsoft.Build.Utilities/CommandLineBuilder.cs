@@ -39,6 +39,7 @@ namespace Microsoft.Build.Utilities
 	{
 		StringBuilder commandLine;
 		static Hashtable chars;
+		static Regex embeddedQuotes;
 	
 		static CommandLineBuilder ()
 		{
@@ -51,6 +52,8 @@ namespace Microsoft.Build.Utilities
 			chars.Add ('\u000c', null);
 			chars.Add ('\'', null);
 			chars.Add ('\"', null);
+
+			embeddedQuotes = new Regex ("\"\"");
 		}
 		
 		public CommandLineBuilder ()
@@ -341,10 +344,18 @@ namespace Microsoft.Build.Utilities
 			return false;
 		}
 		
-		[MonoTODO]
 		protected virtual void VerifyThrowNoEmbeddedDoubleQuotes (string switchName,
 									 string parameter)
 		{
+			if (parameter != null) {
+				Match m = embeddedQuotes.Match (parameter);
+
+				if (m.Success)
+					throw new ArgumentException (
+						String.Format ("Illegal quote passed to the command line switch named \"{0}\". The value was [{1}].",
+							switchName, parameter));
+			}
+
 		}
 		
 		public override string ToString ()
