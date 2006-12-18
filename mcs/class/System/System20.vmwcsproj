@@ -722,6 +722,7 @@
     <Compile Include="System.Net\FtpAsyncResult.cs" />
     <Compile Include="System.Net\FtpDataStream.cs" />
     <Compile Include="System.Net\FtpRequestCreator.cs" />
+    <Compile Include="System.Net\FtpStatus.cs" />
     <Compile Include="System.Net\FtpStatusCode.cs" />
     <Compile Include="System.Net\FtpWebRequest.cs" />
     <Compile Include="System.Net\FtpWebResponse.cs" />
