@@ -67,6 +67,7 @@ namespace System.Web {
 		Encoding encoding;
 		string current_exe_path;
 		string physical_path;
+		string unescaped_path;
 		string path_info;
 		WebROCollection all_params;
 		WebROCollection headers;
@@ -889,7 +890,9 @@ namespace System.Web {
 
 		public string Path {
 			get {
-				return UrlComponents.Path;
+				if (unescaped_path == null)
+					unescaped_path = HttpUtility.UrlDecode (UrlComponents.Path);
+				return unescaped_path;
 			}
 		}
 
@@ -1261,6 +1264,7 @@ namespace System.Web {
 			root_virtual_dir = null;
 			base_virtual_dir = null;
 			physical_path = null;
+			unescaped_path = null;
 		}
 
 		internal void SetPathInfo (string pi)
