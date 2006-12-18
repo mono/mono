@@ -1576,7 +1576,7 @@ namespace Mono.CSharp
 		//
 		// Handles #define and #undef
 		//
-		void PreProcessDefinition (bool is_define, string arg)
+		void PreProcessDefinition (bool is_define, string arg, bool caller_is_taking)
 		{
 			if (arg.Length == 0 || arg == "true" || arg == "false"){
 				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
@@ -1598,6 +1598,9 @@ namespace Mono.CSharp
 					return;
 				}
 			}
+
+			if (!caller_is_taking)
+				return;
 
 			if (is_define){
 				if (defines == null)
@@ -2025,7 +2028,7 @@ namespace Mono.CSharp
 						Error_TokensSeen ();
 						return caller_is_taking;
 					}
-					PreProcessDefinition (true, arg);
+					PreProcessDefinition (true, arg, caller_is_taking);
 					return caller_is_taking;
 
 				case "undef":
@@ -2033,7 +2036,7 @@ namespace Mono.CSharp
 						Error_TokensSeen ();
 						return caller_is_taking;
 					}
-					PreProcessDefinition (false, arg);
+					PreProcessDefinition (false, arg, caller_is_taking);
 					return caller_is_taking;
 			}
 

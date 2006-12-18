@@ -1,3 +1,9 @@
+2006-12-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80300
+	* cs-tokenizer.cs (PreProcessDefinition): Do no define/undefine when
+	a caller is not taking.
+
 2006-12-18  Raja R Harinath  <rharinath@novell.com>
 
 	* anonymous.cs: Change several TypeContainer declarations to DeclSpace.
