@@ -42,7 +42,7 @@ namespace Mono.CSharp {
 			return String.Format ("<>c__{0}{1}", prefix, ++next_index);
 		}
 
-		protected CompilerGeneratedClass (TypeContainer parent, GenericMethod generic,
+		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
 						  int mod, Location loc)
 			: base (parent.NamespaceEntry, parent,
 				MakeProxyName (generic, loc), mod, null)
@@ -58,10 +58,7 @@ namespace Mono.CSharp {
 				SetParameterInfo (list);
 			}
 
-			if (parent.PartialContainer != null)
-				parent.PartialContainer.AddCompilerGeneratedClass (this);
-			else
-				parent.AddCompilerGeneratedClass (this);
+			parent.PartialContainer.AddCompilerGeneratedClass (this);
 		}
 
 		protected override bool DefineNestedTypes ()
@@ -164,7 +161,7 @@ namespace Mono.CSharp {
 	public class ScopeInfo : CompilerGeneratedClass
 	{
 		protected readonly RootScopeInfo RootScope;
-		new public readonly TypeContainer Parent;
+		new public readonly DeclSpace Parent;
 		public readonly int ID = ++next_id;
 		public Block ScopeBlock;
 
@@ -204,7 +201,7 @@ namespace Mono.CSharp {
 			return new_scope;
 		}
 
-		protected ScopeInfo (Block block, TypeContainer parent, GenericMethod generic)
+		protected ScopeInfo (Block block, DeclSpace parent, GenericMethod generic)
 			: base (parent, generic, 0, block.StartLocation)
 		{
 			Parent = parent;
@@ -217,7 +214,7 @@ namespace Mono.CSharp {
 			RootScope.AddScope (this);
 		}
 
-		protected ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
+		protected ScopeInfo (ToplevelBlock toplevel, DeclSpace parent,
 				     GenericMethod generic, Location loc)
 			: base (parent, generic, 0, loc)
 		{
@@ -779,7 +776,7 @@ namespace Mono.CSharp {
 
 	public class RootScopeInfo : ScopeInfo
 	{
-		public RootScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
+		public RootScopeInfo (ToplevelBlock toplevel, DeclSpace parent,
 				      GenericMethod generic, Location loc)
 			: base (toplevel, parent, generic, loc)
 		{
@@ -796,7 +793,7 @@ namespace Mono.CSharp {
 		}
 
 		public RootScopeInfo ParentHost {
-			get { return Parent as RootScopeInfo; }
+			get { return Parent.PartialContainer as RootScopeInfo; }
 		}
 
 		public Type ParentType {
@@ -873,7 +870,7 @@ namespace Mono.CSharp {
 				parent_type = new TypeExpression (Parent.TypeBuilder, Location);
 			}
 
-			CompilerGeneratedClass parent = Parent as CompilerGeneratedClass;
+			CompilerGeneratedClass parent = Parent.PartialContainer as CompilerGeneratedClass;
 			if (parent != null)
 				parent_link = new CapturedVariableField (this, "<>parent", parent_type);
 
@@ -1315,7 +1312,7 @@ namespace Mono.CSharp {
 
 		public readonly int ModFlags;
 		public Type ReturnType;
-		public readonly TypeContainer Host;
+		public readonly DeclSpace Host;
 
 		//
 		// The implicit method we create
@@ -1333,7 +1330,7 @@ namespace Mono.CSharp {
 		//
 		public readonly AnonymousContainer ContainerAnonymousMethod;
 
-		protected AnonymousContainer (AnonymousContainer parent, TypeContainer host,
+		protected AnonymousContainer (AnonymousContainer parent, DeclSpace host,
 					      GenericMethod generic, Parameters parameters,
 					      Block container, ToplevelBlock block,
 					      Type return_type, int mod, Location loc)
@@ -1445,7 +1442,7 @@ namespace Mono.CSharp {
 					scope.AddMethod (this);
 				} else {
 					ModFlags |= Modifiers.STATIC;
-					am.Host.AddMethod (this);
+					am.Host.PartialContainer.AddMethod (this);
 				}
 				Block = am.Block;
 			}
@@ -1474,7 +1471,7 @@ namespace Mono.CSharp {
 		ScopeInfo scope;
 
 		public AnonymousMethod (AnonymousMethod parent, RootScopeInfo root_scope,
-					TypeContainer host, GenericMethod generic,
+					DeclSpace host, GenericMethod generic,
 					Parameters parameters, Block container,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)

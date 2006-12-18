@@ -813,7 +813,7 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		public Iterator (IMethodData m_container, TypeContainer host, GenericMethod generic,
+		private Iterator (IMethodData m_container, DeclSpace host, GenericMethod generic,
 				 int modifiers, Type iterator_type, bool is_enumerable)
 			: base (null, host, generic, m_container.ParameterInfo,
 				new ToplevelBlock (m_container.ParameterInfo, m_container.Location),
@@ -980,7 +980,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static Iterator CreateIterator (IMethodData method, TypeContainer parent,
+		public static Iterator CreateIterator (IMethodData method, DeclSpace parent,
 						       GenericMethod generic, int modifiers)
 		{
 			bool is_enumerable;
