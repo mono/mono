@@ -53,7 +53,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		}
 		
 		[Test]
-		[Ignore ("Known bug")]
+		[Category ("NotWorking")]
 		public void TestExtractMessageCode1 ()
 		{
 			tlh = new TaskLoggingHelper (task);
