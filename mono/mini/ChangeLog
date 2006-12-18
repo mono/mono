@@ -1,4 +1,9 @@
 
+Mon Dec 18 19:47:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: align the stack when calling the profiler
+	function instrumenting the prolog (on OSX).
+
 Thu Dec 14 15:22:43 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: emit a break opcode where Debugger.Break () is called.
