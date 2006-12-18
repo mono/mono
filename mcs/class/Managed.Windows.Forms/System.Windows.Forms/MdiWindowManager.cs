@@ -48,11 +48,25 @@ namespace System.Windows.Forms {
 		private Rectangle prev_virtual_position;
 		private Rectangle prev_bounds;
 
-		internal Rectangle IconicBounds;
+		private Rectangle iconic_bounds;
 
 		private Point icon_clicked;
 		private DateTime icon_clicked_time;
 		private bool icon_dont_show_popup;
+		
+		internal Rectangle IconicBounds {
+			get {
+				if (iconic_bounds == Rectangle.Empty)
+					return Rectangle.Empty;
+				Rectangle result = iconic_bounds;
+				result.Y = mdi_container.ClientRectangle.Bottom - iconic_bounds.Y;
+				return result;
+			}
+			set {
+				iconic_bounds = value;
+				iconic_bounds.Y = mdi_container.ClientRectangle.Bottom - iconic_bounds.Y;
+			}
+		}
 		
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
