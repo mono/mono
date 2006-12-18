@@ -93,9 +93,17 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public BuildItemGroup Clone (bool deepClone)
 		{
-			BuildItemGroup big = new BuildItemGroup ();
-			// FIXME: add copying of items
-			return big;
+			if (deepClone) {
+				if (FromXml)
+					throw new NotImplementedException ();
+				else
+					throw new NotImplementedException ();
+			} else {
+				if (FromXml)
+					throw new InvalidOperationException ("A shallow clone of this object cannot be created.");
+				else
+					throw new NotImplementedException ();
+			}
 		}
 
 		public IEnumerator GetEnumerator ()

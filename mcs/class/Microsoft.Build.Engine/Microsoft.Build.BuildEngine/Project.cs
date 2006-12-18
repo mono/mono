@@ -260,8 +260,8 @@ namespace Microsoft.Build.BuildEngine {
 			this.fullFileName = Path.GetFullPath (projectFileName);
 			try {
 				DoLoad (new StreamReader (projectFileName));
-			} catch {
-				Console.WriteLine ("Failure to load: {0}", projectFileName);
+			} catch (Exception e) {
+				throw new InvalidProjectFileException (e.Message, e);
 			}
 		}
 		
