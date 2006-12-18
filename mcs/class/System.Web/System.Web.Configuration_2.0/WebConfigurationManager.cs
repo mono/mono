@@ -243,60 +243,35 @@ namespace System.Web.Configuration {
 
 		public static object GetSection (string sectionName)
 		{
-			_Configuration c;
-			if (HttpContext.Current != null
-			    && HttpContext.Current.Request != null)
-				c = OpenWebConfiguration (HttpContext.Current.Request.Path);
-			else
-				c = OpenWebConfiguration (HttpRuntime.AppDomainAppVirtualPath);
+			string path = (HttpContext.Current != null
+			    && HttpContext.Current.Request != null) ?
+				HttpContext.Current.Request.Path : HttpRuntime.AppDomainAppVirtualPath;
 
-			if (c == null)
-				return null;
-			else
-				return c.GetSection (sectionName);
+			return GetSection (sectionName, path);
 		}
 
 		public static object GetSection (string sectionName, string path)
 		{
-			try {
-				_Configuration c = OpenWebConfiguration (path);
-				return c.GetSection (sectionName);
-			}
-			catch {
+			_Configuration c = OpenWebConfiguration (path);
+			ConfigurationSection section = c.GetSection (sectionName);
+
+			if (section == null)
 				return null;
-			}
+
+			return get_runtime_object.Invoke (section, new object [0]);
 		}
 
-		static _Configuration GetWebApplicationConfiguration ()
-		{
-			_Configuration config;
-
-			if (HttpContext.Current == null
-			    || HttpContext.Current.Request == null
-			    || HttpContext.Current.Request.ApplicationPath == null
-			    || HttpContext.Current.Request.ApplicationPath == "") {
-				config = OpenWebConfiguration ("");
-			}
-			else {
-				config = OpenWebConfiguration (HttpContext.Current.Request.ApplicationPath);
-			}
-
-			return config;
-		}
-
-		static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
+		readonly static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		public static object GetWebApplicationSection (string sectionName)
 		{
-			_Configuration config = GetWebApplicationConfiguration ();
-			if (config == null)
-				return null;
+			string path = (HttpContext.Current == null
+				|| HttpContext.Current.Request == null
+				|| HttpContext.Current.Request.ApplicationPath == null
+				|| HttpContext.Current.Request.ApplicationPath == "") ?
+				String.Empty : HttpContext.Current.Request.ApplicationPath;
 
-			ConfigurationSection section = config.GetSection (sectionName);
-			if (section == null)
-				return null;
-			
-			return get_runtime_object.Invoke (section, new object [0]);
+			return GetSection (sectionName, path);
 		}
 
 		public static NameValueCollection AppSettings {
