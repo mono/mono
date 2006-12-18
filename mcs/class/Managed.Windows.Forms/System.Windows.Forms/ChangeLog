@@ -1,3 +1,8 @@
+2006-12-17  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: When a non-toplevel menuitem is clicked dont
+	fire click event or close menu. Fixes #80271.
+
 2006-12-17  Daniel Nauck  <dna@mono-project.de>
 
 	* ListViewHitTestInfo.cs: add

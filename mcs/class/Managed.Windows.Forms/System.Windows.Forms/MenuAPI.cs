@@ -194,8 +194,8 @@ namespace System.Windows.Forms {
 			if (!item.Enabled)
 				return;
 			
-			/* hide the menu when popdown */
-			if (popdown_menu || !item.IsPopup)
+			/* Deactivate the menu when is topmenu and popdown and */
+			if ((CurrentMenu == TopMenu) && (popdown_menu || !item.IsPopup))
 				Deactivate ();
 				
 			/* Perform click when is not a popup */
