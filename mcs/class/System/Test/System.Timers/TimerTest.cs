@@ -3,6 +3,7 @@
 //
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
+//   Robert Jordan <robertj@gmx.net>
 //
 // Copyright (C) 2005 Kornél Pál
 //
@@ -31,6 +32,7 @@
 using NUnit.Framework;
 using System;
 using System.Timers;
+using ST = System.Threading;
 
 namespace MonoTests.System.Timers
 {
@@ -48,6 +50,7 @@ namespace MonoTests.System.Timers
 		[TearDown]
 		public void TearDown ()
 		{
+			timer.Close ();
 		}
 
 		[Test]
@@ -66,6 +69,73 @@ namespace MonoTests.System.Timers
 			Assert ("#A02 !Enabled after Enabled = true", timer.Enabled);
 			timer.Close();
 			Assert ("#A02 Enabled after Close()", !timer.Enabled);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestRaceCondition ()
+		{
+			Assert ("#B01", new RaceTest (true).Success);
+			Assert ("#B02", new RaceTest (false).Success);
+		}
+	}
+
+	class RaceTest
+	{
+		const int Threads = 2;
+		const int Loops = 100;
+
+		object locker = new object ();
+		Timer timer;
+		int counter;
+
+		public bool Success {
+			get { return counter > Loops * Threads; }
+		}
+
+		public RaceTest (bool autoReset)
+		{
+			timer = new Timer ();
+			timer.AutoReset = autoReset;
+              	        timer.Interval = 100;
+                       	timer.Elapsed += new ElapsedEventHandler (Tick);
+			timer.Start ();
+
+
+			ST.Thread[] tl = new ST.Thread [Threads];
+
+			for (int i = 0; i < Threads; i++) {
+				tl [i] = new ST.Thread (new ST.ThreadStart (Run));
+				tl [i].Start ();
+			}
+
+			for (int i = 0; i < Threads; i++) {
+				tl [i].Join ();
+			}
+
+			ST.Thread.Sleep (1000);
+		}
+
+		void Restart ()
+		{
+			lock (locker) {
+				timer.Stop ();
+				timer.Start ();
+			}
+			ST.Interlocked.Increment (ref counter);
+		}
+
+		void Tick (object sender, ElapsedEventArgs e)
+		{
+			Restart ();
+		}
+
+		void Run ()
+		{
+			for (int i = 0; i < Loops; i++) {
+				ST.Thread.Sleep (0);
+				Restart ();
+			}
 		}
 	}
 }
