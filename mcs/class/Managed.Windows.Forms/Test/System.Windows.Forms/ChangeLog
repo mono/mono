@@ -1,3 +1,7 @@
+2006-12-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MonthCalendarTest.cs: Added test for DefaultMargin.
+
 2006-12-18  Daniel Nauck  <dna@mono-project.de>
 
 	* DataGridViewAdvancedBorderStyleTest.cs,

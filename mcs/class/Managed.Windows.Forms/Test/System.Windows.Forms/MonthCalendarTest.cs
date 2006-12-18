@@ -16,6 +16,22 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
+	public class MonthCalendarPropertiesTest : MonthCalendar
+	{
+		[Test]
+		public void Tester ()
+		{
+		}
+#if NET_2_0
+		[Test]
+		public void DefaultMarginTest ()
+		{
+			Assert.AreEqual (DefaultMargin.All, 9, "#01");
+		}
+#endif
+	}
+
+	[TestFixture]
 	[Ignore ("This test has to be completly reviewed")]	
 	public class MonthCalendarTest
 	{
