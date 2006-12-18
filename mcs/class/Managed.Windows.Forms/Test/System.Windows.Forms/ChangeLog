@@ -1,3 +1,13 @@
+2006-12-18  Daniel Nauck  <dna@mono-project.de>
+
+	* DataGridViewAdvancedBorderStyleTest.cs,
+	DataGridViewRowTest.cs,
+	DataGridViewElementTest.cs,
+	DataGridViewCellTest.cs,
+	DataGridViewCellStyleTest.cs,
+	DataGridViewTest.cs: fixed NUnit obsolete warnings and
+	DataGridView tests against .NET 2.0
+
 2006-12-17  Daniel Nauck  <dna@mono-project.de>
 
 	* ButtonTest.cs: Added tests for FlatButtonAppearance.

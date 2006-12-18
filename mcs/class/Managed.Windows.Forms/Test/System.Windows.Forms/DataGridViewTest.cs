@@ -17,11 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc. (http://www.novell.com)
 //
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
-//
+//	Daniel Nauck    (dna(at)mono-project(dot)de)
 
 
 #if NET_2_0
@@ -36,62 +36,70 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewTest : Assertion {
+	public class DataGridViewTest {
 		
+		private DataGridView grid = null;
+
 		[SetUp]
-		public void GetReady() {}
+		public void GetReady() 
+		{
+			grid = new DataGridView();
+		}
 
 		[TearDown]
-		public void Clean() {}
+		public void Clean()
+		{
+			grid.Dispose ();
+		}
 
 		[Test]
 		public void TestDefaultValues () {
-			DataGridView grid = new DataGridView();
-			AssertEquals("AllowUserToAddRows property", true, grid.AllowUserToAddRows);
-			AssertEquals("AllowUserToDeleteRows property", true, grid.AllowUserToDeleteRows);
-			AssertEquals("AllowUserToOrderColumns property", false, grid.AllowUserToOrderColumns);
-			AssertEquals("AllowUserToResizeColumns property", true, grid.AllowUserToResizeColumns);
-			AssertEquals("AllowUserToResizeRows property", true, grid.AllowUserToResizeRows);
-			AssertEquals("AlternatingRowsDefaultCellStyle property", new DataGridViewCellStyle(), grid.AlternatingRowsDefaultCellStyle);
-			AssertEquals("AutoGenerateColumns property", true, grid.AutoGenerateColumns);
-			AssertEquals("AutoSizeRowsMode property", DataGridViewAutoSizeRowsMode.None, grid.AutoSizeRowsMode);
-			AssertEquals("BackColor property", Control.DefaultBackColor, grid.BackColor);
-			AssertEquals("BackgroundColor property", SystemColors.AppWorkspace, grid.BackgroundColor);
-			AssertEquals("BorderStyle property", BorderStyle.FixedSingle, grid.BorderStyle);
-			AssertEquals("ClipboardCopyMode property", DataGridViewClipboardCopyMode.EnableWithAutoHeaderText, grid.ClipboardCopyMode);
-			AssertEquals("ColumnHeadersDefaultCellStyle.BackColor property", SystemColors.Control, grid.ColumnHeadersDefaultCellStyle.BackColor);
-			AssertEquals("ColumnHeadersDefaultCellStyle.ForeColor property", SystemColors.WindowText,  grid.ColumnHeadersDefaultCellStyle.ForeColor);
-			AssertEquals("ColumnHeadersDefaultCellStyle.SelectionBackColor property", SystemColors.Highlight, grid.ColumnHeadersDefaultCellStyle.SelectionBackColor);
-			AssertEquals("ColumnHeadersDefaultCellStyle.SelectionForeColor property", SystemColors.HighlightText, grid.ColumnHeadersDefaultCellStyle.SelectionForeColor);
-			AssertEquals("ColumnHeadersDefaultCellStyle.Font property", grid.Font, grid.ColumnHeadersDefaultCellStyle.Font);
-			AssertEquals("ColumnHeadersDefaultCellStyle.Alignment property", DataGridViewContentAlignment.MiddleLeft, grid.ColumnHeadersDefaultCellStyle.Alignment);
-			AssertEquals("ColumnHeadersDefaultCellStyle.WrapMode property", DataGridViewTriState.True, grid.ColumnHeadersDefaultCellStyle.WrapMode);
-			AssertEquals("ColumnHeadersHeight property", 23, grid.ColumnHeadersHeight);
-			AssertEquals("ColumnHeadersHeightSizeMode property", DataGridViewColumnHeadersHeightSizeMode.EnableResizing, grid.ColumnHeadersHeightSizeMode);
-			AssertEquals("ColumnHeadersVisible property", true, grid.ColumnHeadersVisible);
-			AssertEquals("DataMember property", String.Empty, grid.DataMember);
-			AssertEquals("DefaultCellStyle.BackColor property", SystemColors.Control, grid.DefaultCellStyle.BackColor);
-			AssertEquals("DefaultCellStyle.ForeColor property", SystemColors.WindowText,  grid.DefaultCellStyle.ForeColor);
-			AssertEquals("DefaultCellStyle.SelectionBackColor property", SystemColors.Highlight, grid.DefaultCellStyle.SelectionBackColor);
-			AssertEquals("DefaultCellStyle.SelectionForeColor property", SystemColors.HighlightText, grid.DefaultCellStyle.SelectionForeColor);
-			AssertEquals("DefaultCellStyle.Font property", grid.Font, grid.DefaultCellStyle.Font);
-			AssertEquals("DefaultCellStyle.Alignment property", DataGridViewContentAlignment.MiddleLeft, grid.DefaultCellStyle.Alignment);
-			AssertEquals("DefaultCellStyle.WrapMode property", DataGridViewTriState.True, grid.DefaultCellStyle.WrapMode);
-			AssertEquals("EditMode property", DataGridViewEditMode.EditOnKeystrokeOrF2, grid.EditMode);
-			AssertEquals("Font property", Control.DefaultFont, grid.Font);
-			AssertEquals("ForeColor property", Control.DefaultForeColor, grid.ForeColor);
-			AssertEquals("GridColor property", Color.FromKnownColor(KnownColor.ControlDarkDark), grid.GridColor);
-			AssertEquals("MultiSelect property", true, grid.MultiSelect);
-			AssertEquals("NewRowIndex property", grid.Rows.Count - 1, grid.NewRowIndex);
-			AssertEquals("Padding property", Padding.Empty, grid.Padding);
-			AssertEquals("ReadOnly property", false, grid.ReadOnly);
-			AssertEquals("RowHeadersVisible property", true, grid.RowHeadersVisible);
-			AssertEquals("RowHeadersWidth property", 43, grid.RowHeadersWidth);
-			AssertEquals("SelectionMode property", DataGridViewSelectionMode.RowHeaderSelect, grid.SelectionMode);
-			AssertEquals("ShowCellErrors property", true, grid.ShowCellErrors);
-			AssertEquals("ShowEditingIcon property", true, grid.ShowEditingIcon);
-			AssertEquals("UserSetCursor property", Cursor.Current, grid.UserSetCursor);
-			AssertEquals("VirtualMode property", false, grid.VirtualMode);
+			DataGridView grid = new DataGridView ();
+			Assert.AreEqual (true, grid.AllowUserToAddRows, "#A1");
+			Assert.AreEqual (true, grid.AllowUserToDeleteRows, "#A2");
+			Assert.AreEqual (false, grid.AllowUserToOrderColumns, "#A3");
+			Assert.AreEqual (true, grid.AllowUserToResizeColumns, "#A4");
+			Assert.AreEqual (true, grid.AllowUserToResizeRows, "#A5");
+			Assert.AreEqual (new DataGridViewCellStyle(), grid.AlternatingRowsDefaultCellStyle, "#A6");
+			Assert.AreEqual (true, grid.AutoGenerateColumns, "#A7");
+			Assert.AreEqual (DataGridViewAutoSizeRowsMode.None, grid.AutoSizeRowsMode, "#A8");
+			Assert.AreEqual (Control.DefaultBackColor, grid.BackColor, "#A9");
+			Assert.AreEqual (SystemColors.AppWorkspace, grid.BackgroundColor, "#A10");
+			Assert.AreEqual (BorderStyle.FixedSingle, grid.BorderStyle, "#A11");
+			Assert.AreEqual (DataGridViewClipboardCopyMode.EnableWithAutoHeaderText, grid.ClipboardCopyMode, "#A12");
+			Assert.AreEqual (SystemColors.Control, grid.ColumnHeadersDefaultCellStyle.BackColor, "#A13");
+			Assert.AreEqual (SystemColors.WindowText,  grid.ColumnHeadersDefaultCellStyle.ForeColor, "#A14");
+			Assert.AreEqual (SystemColors.Highlight, grid.ColumnHeadersDefaultCellStyle.SelectionBackColor, "#A15");
+			Assert.AreEqual (SystemColors.HighlightText, grid.ColumnHeadersDefaultCellStyle.SelectionForeColor, "#A16");
+			Assert.AreEqual (grid.Font, grid.ColumnHeadersDefaultCellStyle.Font, "#A17");
+			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.ColumnHeadersDefaultCellStyle.Alignment, "#A18");
+			Assert.AreEqual (DataGridViewTriState.True, grid.ColumnHeadersDefaultCellStyle.WrapMode, "#A19");
+			Assert.AreEqual (23, grid.ColumnHeadersHeight, "#A20");
+			Assert.AreEqual (DataGridViewColumnHeadersHeightSizeMode.EnableResizing, grid.ColumnHeadersHeightSizeMode, "#A21");
+			Assert.AreEqual (true, grid.ColumnHeadersVisible, "#A22");
+			Assert.AreEqual (String.Empty, grid.DataMember, "#A23");
+			Assert.AreEqual (SystemColors.Window, grid.DefaultCellStyle.BackColor, "#A24");
+			Assert.AreEqual (SystemColors.ControlText,  grid.DefaultCellStyle.ForeColor, "#A25");
+			Assert.AreEqual (SystemColors.Highlight, grid.DefaultCellStyle.SelectionBackColor, "#A26");
+			Assert.AreEqual (SystemColors.HighlightText, grid.DefaultCellStyle.SelectionForeColor, "#A27");
+			Assert.AreEqual (grid.Font, grid.DefaultCellStyle.Font, "#A28");
+			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.DefaultCellStyle.Alignment, "#A29");
+			Assert.AreEqual (DataGridViewTriState.False, grid.DefaultCellStyle.WrapMode, "#A30");
+			Assert.AreEqual (DataGridViewEditMode.EditOnKeystrokeOrF2, grid.EditMode, "#A31");
+			Assert.AreEqual (Control.DefaultFont, grid.Font, "#A32");
+			Assert.AreEqual (Control.DefaultForeColor, grid.ForeColor, "#A33");
+			Assert.AreEqual (Color.FromKnownColor(KnownColor.ControlDark), grid.GridColor, "#A34");
+			Assert.AreEqual (true, grid.MultiSelect, "#A35");
+			Assert.AreEqual (grid.Rows.Count - 1, grid.NewRowIndex, "#A36");
+			Assert.AreEqual (Padding.Empty, grid.Padding, "#A37");
+			Assert.AreEqual (false, grid.ReadOnly, "#A38");
+			Assert.AreEqual (true, grid.RowHeadersVisible, "#A39");
+			Assert.AreEqual (41, grid.RowHeadersWidth, "#A40");
+			Assert.AreEqual (DataGridViewSelectionMode.RowHeaderSelect, grid.SelectionMode, "#A41");
+			Assert.AreEqual (true, grid.ShowCellErrors, "#A42");
+			Assert.AreEqual (true, grid.ShowEditingIcon, "#A43");
+			Assert.AreEqual (Cursors.Default, grid.UserSetCursor, "#A44");
+			Assert.AreEqual (false, grid.VirtualMode, "#A45");
 		}
 
 		#region AutoSizeColumnsModeExceptions
@@ -169,8 +177,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestColumnCountArgumentException () {
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void TestColumnCountArgumentOutOfRangeException () {
 			DataGridView grid = new DataGridView();
 			grid.ColumnCount = -1;
 		}
@@ -184,8 +192,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestColumnHeadersHeightArgumentException () {
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void TestColumnHeadersHeightArgumentOutOfRangeException () {
 			DataGridView grid = new DataGridView();
 			grid.ColumnHeadersHeight = 3;
 		}
@@ -198,15 +206,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestCurrentCellArgumentException () {
-			DataGridView grid = new DataGridView();
-			grid.CurrentCell = new DataGridViewTextBoxCell();
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestRowHeadersWidthArgumentException () {
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void TestRowHeadersWidthArgumentOutOfRangeException () {
 			DataGridView grid = new DataGridView();
 			grid.RowHeadersWidth = 3;
 		}
@@ -261,22 +262,7 @@ namespace MonoTests.System.Windows.Forms {
 			DataGridView grid = new DataGridView();
 			grid.AutoResizeRows(DataGridViewAutoSizeRowsMode.None);
 		}
-
-		/*
-		[Test]
-		[ExpectedException(typeof(Exception))]
-		public void TestException () {
-			ConcreteCollection myCollection;
-			myCollection = new ConcreteCollection();
-			....
-			AssertEquals ("#UniqueID", expected, actual);
-			....
-			Fail ("Message");
-		}
-		*/
-
 	}
-
 }
 
 #endif

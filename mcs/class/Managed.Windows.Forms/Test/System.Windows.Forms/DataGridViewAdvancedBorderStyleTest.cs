@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005,2006 Novell, Inc. (http://www.novell.com)
 //
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
@@ -36,7 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewAdvancedBorderStyleTest : Assertion {
+	public class DataGridViewAdvancedBorderStyleTest {
 
 		private DataGridViewAdvancedBorderStyle style;
 		
@@ -51,15 +51,15 @@ namespace MonoTests.System.Windows.Forms {
 
 		[Test]
 		public void TestDefaultValues () {
-			AssertEquals("All property before any change", DataGridViewAdvancedCellBorderStyle.None, style.All);
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.None, style.All, "#A1");
 			style.Left = DataGridViewAdvancedCellBorderStyle.Single;
-			AssertEquals("All property after changes", DataGridViewAdvancedCellBorderStyle.NotSet, style.All);
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.NotSet, style.All, "#A2");
 			style.All = DataGridViewAdvancedCellBorderStyle.Single;
-			AssertEquals("All property after changes", DataGridViewAdvancedCellBorderStyle.Single, style.All);
-			AssertEquals("Left property after changes", DataGridViewAdvancedCellBorderStyle.Single, style.Left);
-			AssertEquals("Right property after changes", DataGridViewAdvancedCellBorderStyle.Single, style.Right);
-			AssertEquals("Top property after changes", DataGridViewAdvancedCellBorderStyle.Single, style.Top);
-			AssertEquals("Bottom property after changes", DataGridViewAdvancedCellBorderStyle.Single, style.Bottom);
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.Single, style.All, "#A3");
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.Single, style.Left, "#A4");
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.Single, style.Right, "#A5");
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.Single, style.Top, "#A6");
+			Assert.AreEqual (DataGridViewAdvancedCellBorderStyle.Single, style.Bottom, "#A7");
 		}
 
 		[Test]
@@ -141,9 +141,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void TestBottomArgumentException () {
 			style.Bottom = DataGridViewAdvancedCellBorderStyle.NotSet;
 		}
-
 	}
-
 }
 
 #endif

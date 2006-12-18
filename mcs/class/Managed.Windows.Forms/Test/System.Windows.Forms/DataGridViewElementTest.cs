@@ -36,7 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewElementTest : Assertion {
+	public class DataGridViewElementTest {
 		
 		[SetUp]
 		public void GetReady() {}
@@ -47,11 +47,9 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void TestDefaultValues () {
 			DataGridViewElement element = new DataGridViewElement();
-			AssertEquals("DataGridView property", null, element.DataGridView);
+			Assert.AreEqual (null, element.DataGridView, "#A1");
 		}
-
 	}
-
 }
 
 #endif

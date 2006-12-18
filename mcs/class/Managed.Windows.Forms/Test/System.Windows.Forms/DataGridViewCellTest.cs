@@ -36,7 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewCellTest : Assertion {
+	public class DataGridViewCellTest {
 		
 		[SetUp]
 		public void GetReady() {}
@@ -66,9 +66,7 @@ namespace MonoTests.System.Windows.Forms {
 			Fail ("Message");
 		}
 		*/
-
 	}
-
 }
 
 #endif

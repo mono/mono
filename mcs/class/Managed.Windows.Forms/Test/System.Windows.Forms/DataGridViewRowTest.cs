@@ -36,7 +36,7 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewRowTest : Assertion {
+	public class DataGridViewRowTest {
 		
 		[SetUp]
 		public void GetReady() {}
@@ -56,9 +56,6 @@ namespace MonoTests.System.Windows.Forms {
 			grid.Rows.Add(row);
 			row.Visible = false;
 		}
-
 	}
-
 }
-
 #endif

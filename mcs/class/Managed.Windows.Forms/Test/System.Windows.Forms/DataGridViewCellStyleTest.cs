@@ -37,7 +37,7 @@ using System.Globalization;
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
-	public class DataGridViewCellStyleTest : Assertion {
+	public class DataGridViewCellStyleTest {
 
 		DataGridViewCellStyle style;
 		
@@ -53,38 +53,38 @@ namespace MonoTests.System.Windows.Forms {
 
 		[Test]
 		public void TestDefaultValues () {
-			AssertEquals("Alignment property", DataGridViewContentAlignment.NotSet, style.Alignment);
-			AssertEquals("BackColor property", Color.Empty, style.BackColor);
-			AssertEquals("Font property", null, style.Font);
-			AssertEquals("ForeColor property", Color.Empty, style.ForeColor);
-			AssertEquals("Format property", String.Empty, style.Format);
-			AssertEquals("FormatProvider property", CultureInfo.CurrentUICulture, style.FormatProvider);
-			AssertEquals("IsFormatProviderDefault property", true, style.IsFormatProviderDefault);
-			AssertEquals("IsNullValueDefault property", true, style.IsNullValueDefault);
-			AssertEquals("NullValue property", "(null)", style.NullValue);
-			AssertEquals("SelectionBackColor property", Color.Empty, style.SelectionBackColor);
-			AssertEquals("SelectionForeColor property", Color.Empty, style.SelectionForeColor);
-			AssertEquals("Tag property", null, style.Tag);
-			AssertEquals("WrapMode property", DataGridViewTriState.NotSet, style.WrapMode);
+			Assert.AreEqual (DataGridViewContentAlignment.NotSet, style.Alignment, "#A1");
+			Assert.AreEqual (Color.Empty, style.BackColor, "#A2");
+			Assert.AreEqual (null, style.Font, "#A3");
+			Assert.AreEqual (Color.Empty, style.ForeColor, "#A4");
+			Assert.AreEqual (String.Empty, style.Format, "#A5");
+			Assert.AreEqual (CultureInfo.CurrentUICulture, style.FormatProvider, "#A6");
+			Assert.AreEqual (true, style.IsFormatProviderDefault, "#A7");
+			Assert.AreEqual (true, style.IsNullValueDefault, "#A8");
+			Assert.AreEqual (string.Empty, style.NullValue, "#A9");
+			Assert.AreEqual (Color.Empty, style.SelectionBackColor, "#A10");
+			Assert.AreEqual (Color.Empty, style.SelectionForeColor, "#A11");
+			Assert.AreEqual (null, style.Tag, "#A12");
+			Assert.AreEqual (DataGridViewTriState.NotSet, style.WrapMode, "#A13");
 		}
 
 		[Test]
 		public void TestApplyStyle () {
 			DataGridViewCellStyle style_aux = new DataGridViewCellStyle();
 			style.ApplyStyle(style_aux);
-			AssertEquals("ApplyStyle method", style_aux, style);
+			Assert.AreEqual (style_aux, style, "#B1");
 		}
 
 		[Test]
 		public void TestClone () {
 			DataGridViewCellStyle style_aux = (DataGridViewCellStyle) style.Clone();
-			AssertEquals("Clone method", style_aux, style);
+			Assert.AreEqual (style_aux, style, "#C1");
 		}
 
 		[Test]
 		public void TestEquals () {
 			DataGridViewCellStyle style_aux = (DataGridViewCellStyle) style.Clone();
-			AssertEquals("Equals method", true, (style_aux.Equals(style)));
+			Assert.AreEqual (true, (style_aux.Equals(style)), "#D1");
 		}
 
 		[Test]
@@ -94,32 +94,11 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestSelectionBackColorArgumentException () {
-			style.SelectionBackColor = Color.FromArgb(100, Color.Red);
-		}
-
-		[Test]
 		[ExpectedException(typeof(InvalidEnumArgumentException))]
 		public void TestWrapModeInvalidEnumArgumentException () {
 			style.WrapMode = (DataGridViewTriState) 3;
 		}
-
-		/*
-		[Test]
-		[ExpectedException(typeof(Exception))]
-		public void TestException () {
-			ConcreteCollection myCollection;
-			myCollection = new ConcreteCollection();
-			....
-			AssertEquals ("#UniqueID", expected, actual);
-			....
-			Fail ("Message");
-		}
-		*/
-
 	}
-
 }
 
 #endif
