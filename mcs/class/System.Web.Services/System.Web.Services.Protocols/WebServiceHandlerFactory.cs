@@ -101,6 +101,12 @@ namespace System.Web.Services.Protocols
 			Type type = WebServiceParser.GetCompiledType (filePath, context);
 
 			WSProtocol protocol = GuessProtocol (context, verb);
+#if NET_2_0
+			context.Items ["WebServiceSoapVersion"] =
+				protocol == WSProtocol.HttpSoap12 ?
+				SoapProtocolVersion.Soap12 :
+				SoapProtocolVersion.Default;
+#endif
 			bool supported = false;
 			IHttpHandler handler = null;
 

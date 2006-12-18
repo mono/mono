@@ -42,6 +42,9 @@ namespace System.Web.Services.Protocols {
 		object server;
 		string url;
 		object[] parameters;
+#if NET_2_0
+		SoapProtocolVersion soapVersion;
+#endif
 
 		#endregion
 
@@ -103,7 +106,7 @@ namespace System.Web.Services.Protocols {
 		[MonoTODO]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public override SoapProtocolVersion SoapVersion {
-			get { throw new NotImplementedException (); }
+			get { return soapVersion; }
 		}
 #endif
 
@@ -120,6 +123,13 @@ namespace System.Web.Services.Protocols {
 		{
 			EnsureStage (SoapMessageStage.BeforeSerialize);
 		}
+
+#if NET_2_0
+		internal void SetSoapVersion (SoapProtocolVersion value)
+		{
+			soapVersion = value;
+		}
+#endif
 
 		#endregion // Methods
 	}

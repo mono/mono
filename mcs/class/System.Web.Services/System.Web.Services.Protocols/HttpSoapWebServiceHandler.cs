@@ -80,8 +80,14 @@ namespace System.Web.Services.Protocols
 
 			try
 			{
-				if (requestMessage == null)
+				if (requestMessage == null) {
 					requestMessage = DeserializeRequest (context.Request);
+#if NET_2_0
+					object soapVer = context.Items ["WebServiceSoapVersion"];
+					if (soapVer != null)
+						requestMessage.SetSoapVersion ((SoapProtocolVersion) soapVer);
+#endif
+				}
 				
 				if (methodInfo != null && methodInfo.OneWay) {
 					context.Response.BufferOutput = false;
@@ -354,6 +360,11 @@ namespace System.Web.Services.Protocols
 				faultMessage = new SoapServerMessage (context.Request, soex, requestMessage.MethodStubInfo, requestMessage.Server, requestMessage.Stream);
 			else
 				faultMessage = new SoapServerMessage (context.Request, soex, null, null, null);
+#if NET_2_0
+			object soapVer = context.Items ["WebServiceSoapVersion"];
+			if (soapVer != null)
+				faultMessage.SetSoapVersion ((SoapProtocolVersion) soapVer);
+#endif
 
 			SerializeResponse (context.Response, faultMessage);
 			context.Response.End ();
