@@ -141,7 +141,8 @@ namespace System.Windows.Forms {
 				item.Parent.InvalidateItem (item);
 			}
 			
-			SelectItem (item.Parent, item, item.IsPopup);
+			if (CurrentMenu == TopMenu)
+				SelectItem (item.Parent, item, item.IsPopup);
 			grab_control.ActiveTracker = this;
 		}
 
