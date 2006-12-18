@@ -1,3 +1,8 @@
+2006-12-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Add Name and Tag 2.0 properties, as well
+	as IndexOfKey, ContainsKey, RemoveByKey and indexer 2.0.
+
 2006-12-18  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: Fix click when menuitem is not popup,

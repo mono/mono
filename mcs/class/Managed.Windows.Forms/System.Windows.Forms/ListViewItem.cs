@@ -780,6 +780,10 @@ namespace System.Windows.Forms
 			private Color fore_color;
 			internal ListViewItem owner;
 			private string text = string.Empty;
+#if NET_2_0
+			private string name = String.Empty;
+			private object tag;
+#endif
 			
 			#region Public Constructors
 			public ListViewSubItem ()
@@ -836,6 +840,26 @@ namespace System.Windows.Forms
 					Invalidate ();
 				    }
 			}
+
+#if NET_2_0
+			public string Name {
+				get {
+					return name;
+				}
+				set {
+					name = value == null ? String.Empty : value;
+				}
+			}
+
+			public object Tag {
+				get {
+					return tag;
+				}
+				set {
+					tag = value;
+				}
+			}
+#endif
 
 			[Localizable (true)]
 			public string Text {
@@ -911,6 +935,18 @@ namespace System.Windows.Forms
 					list [index] = value;
 				}
 			}
+
+#if NET_2_0
+			public ListViewSubItem this [string key] {
+				get {
+					int idx = IndexOfKey (key);
+					if (idx == -1)
+						return null;
+
+					return (ListViewSubItem) list [idx];
+				}
+			}
+#endif
 
 			bool ICollection.IsSynchronized {
 				get { return list.IsSynchronized; }
@@ -990,6 +1026,13 @@ namespace System.Windows.Forms
 				return list.Contains (item);
 			}
 
+#if NET_2_0
+			public bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) != -1;
+			}
+#endif
+
 			public IEnumerator GetEnumerator ()
 			{
 				return list.GetEnumerator ();
@@ -1052,6 +1095,22 @@ namespace System.Windows.Forms
 				return list.IndexOf (subItem);
 			}
 
+#if NET_2_0
+			public int IndexOfKey (string key)
+			{
+				if (key == null || key.Length == 0)
+					return -1;
+
+				for (int i = 0; i < list.Count; i++) {
+					ListViewSubItem l = (ListViewSubItem) list [i];
+					if (String.Compare (l.Name, key, true) == 0)
+						return i;
+				}
+
+				return -1;
+			}
+#endif
+
 			public void Insert (int index, ListViewSubItem item)
 			{
 				item.owner = this.owner;
@@ -1062,6 +1121,15 @@ namespace System.Windows.Forms
 			{
 				list.Remove (item);
 			}
+
+#if NET_2_0
+			public void RemoveByKey (string key)
+			{
+				int idx = IndexOfKey (key);
+				if (idx != -1)
+					RemoveAt (idx);
+			}
+#endif
 
 			public void RemoveAt (int index)
 			{
