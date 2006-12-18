@@ -1962,7 +1962,7 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
 				} else {
-					int state = (int) ifstack.Peek ();
+					int state = (int) ifstack.Pop ();
 
 					if ((state & REGION) != 0) {
 						Report.Error (1038, Location, "#endregion directive expected");
@@ -1974,15 +1974,18 @@ namespace Mono.CSharp
 						return true;
 					}
 
-					if ((state & TAKING) != 0)
+					if ((state & TAKING) != 0) {
+						ifstack.Push (0);
 						return false;
+					}
 
 					if (eval (arg) && ((state & PARENT_TAKING) != 0)){
-						state = (int) ifstack.Pop ();
 						ifstack.Push (state | TAKING);
 						return true;
-					} else 
-						return false;
+					}
+
+					ifstack.Push (state);
+					return false;
 				}
 
 			case "else":
