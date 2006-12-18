@@ -99,6 +99,12 @@ namespace System.Web.Services.Protocols {
 			Bindings.Add (binfo);
 		}
 		
+#if NET_2_0
+		public virtual WsiProfiles WsiClaims {
+			get { return WsiProfiles.None; }
+		}
+#endif
+		
 		public ServerType LogicalType
 		{
 			get { return logicalType; }

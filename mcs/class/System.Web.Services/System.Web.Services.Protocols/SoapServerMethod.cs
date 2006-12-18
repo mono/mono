@@ -40,6 +40,7 @@ namespace System.Web.Services.Protocols
 	public sealed class SoapServerMethod
 	{
 		SoapMethodStubInfo info;
+		WsiProfiles wsi_claims;
 
 		[MonoTODO] // what to do here?
 		public SoapServerMethod ()
@@ -50,6 +51,7 @@ namespace System.Web.Services.Protocols
 		public SoapServerMethod (Type serverType, LogicalMethodInfo methodInfo)
 		{
 			TypeStubInfo type = TypeStubManager.GetTypeStub (serverType, "Soap");
+			wsi_claims = type.WsiClaims;
 			foreach (SoapMethodStubInfo m in type.Methods) {
 				bool match = false;
 				if (m.MethodInfo.MethodInfo == null)
@@ -113,9 +115,8 @@ namespace System.Web.Services.Protocols
 			get { return info.SoapBindingStyle == SoapBindingStyle.Rpc; }
 		}
 
-		[MonoTODO]
 		public WsiProfiles WsiClaims {
-			get { throw new NotImplementedException (); }
+			get { return wsi_claims; }
 		}
 	}
 }

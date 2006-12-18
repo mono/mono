@@ -1,3 +1,9 @@
+2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeStubManager.cs, Methods.cs, SoapServerMethod.cs :
+	  added WsiClaims property to TypeStubInfo, to implement
+	  SoapServerMethod.WsiClaims.
+
 2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServerType.cs : added SOAP 1.2 protocol as a different one from

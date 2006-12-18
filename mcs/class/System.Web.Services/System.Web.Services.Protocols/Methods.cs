@@ -438,7 +438,9 @@ namespace System.Web.Services.Protocols {
 		Hashtable[] header_serializers = new Hashtable [3];
 		Hashtable[] header_serializers_byname = new Hashtable [3];
 		Hashtable methods_byaction = new Hashtable (); 
-
+#if NET_2_0
+		WsiProfiles wsi_claims = WsiProfiles.None;
+#endif
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
@@ -468,6 +470,11 @@ namespace System.Web.Services.Protocols {
 				// Remove the default binding, it is not needed since there is always
 				// a binding attribute.
 				Bindings.Clear ();
+#if NET_2_0
+				WebServiceBindingAttribute wsba = (WebServiceBindingAttribute) o [0];
+				if (wsba.EmitConformanceClaims)
+					wsi_claims = wsba.ConformsTo;
+#endif
 			}
 				
 			foreach (WebServiceBindingAttribute at in o)
@@ -506,6 +513,12 @@ namespace System.Web.Services.Protocols {
 
 			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
 		}
+
+#if NET_2_0
+		public override WsiProfiles WsiClaims {
+			get { return wsi_claims; }
+		}
+#endif
 
 		public override XmlReflectionImporter XmlImporter 
 		{
