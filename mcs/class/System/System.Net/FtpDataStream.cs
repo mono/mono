@@ -12,6 +12,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
+using System.Net;
 
 #if NET_2_0
 
@@ -41,6 +42,10 @@ namespace System.Net
 			this.contentLength = socket.Available;
 			this.networkStream = new NetworkStream (socket, true);
 			this.isRead = isRead;
+
+			if (request.EnableSsl) {
+				FtpWebRequest.ChangeToSSLSocket (ref networkStream);
+			}
 
 			closewh = new ManualResetEvent (false);
 		}
@@ -87,7 +92,11 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			((IDisposable) this).Dispose ();
+			if (!disposed) {
+				networkStream.Close ();
+				request.SetTransferCompleted ();
+				((IDisposable) this).Dispose ();
+			}
 		}
 
 		public override void Flush ()
@@ -108,18 +117,22 @@ namespace System.Net
 		int ReadInternal (byte [] buffer, int offset, int size)
 		{
 			int nbytes;
+
+			request.CheckIfAborted ();
+
 			try {
 				// Probably it would be better to have the socket here
 				nbytes = networkStream.Read (buffer, offset, size);
-			} catch (IOException exc) {
+			} catch (IOException) {
 				throw new ProtocolViolationException ("Server commited a protocol violation");
 			}
 
 			totalRead += nbytes;
-			if (nbytes == 0)
+			if (nbytes == 0) {
 				contentLength = totalRead;
-			if (totalRead >= contentLength)
 				request.SetTransferCompleted ();
+				networkStream.Close ();
+			}
 			
 			return nbytes;
 		}
@@ -159,6 +172,7 @@ namespace System.Net
 
 		public override int Read (byte [] buffer, int offset, int size)
 		{
+			request.CheckIfAborted ();
 			IAsyncResult ar = BeginRead (buffer, offset, size, null, null);
 			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (request.ReadWriteTimeout, false))
 				throw new WebException ("Read timed out.", WebExceptionStatus.Timeout);
@@ -171,9 +185,11 @@ namespace System.Net
 		
 		void WriteInternal (byte [] buffer, int offset, int size)
 		{
+			request.CheckIfAborted ();
+			
 			try {
 				networkStream.Write (buffer, offset, size);
-			} catch (IOException exc) {
+			} catch (IOException) {
 				throw new ProtocolViolationException ();
 			}
 		}
@@ -212,6 +228,7 @@ namespace System.Net
 
 		public override void Write (byte [] buffer, int offset, int size)
 		{
+			request.CheckIfAborted ();
 			IAsyncResult ar = BeginWrite (buffer, offset, size, null, null);
 			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (request.ReadWriteTimeout, false))
 				throw new WebException ("Read timed out.", WebExceptionStatus.Timeout);

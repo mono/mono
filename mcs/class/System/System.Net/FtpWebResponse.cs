@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Net;
 
 #if NET_2_0
 
@@ -17,7 +18,7 @@ namespace System.Net
 {
 	public class FtpWebResponse : WebResponse
 	{
-		Stream stream = Stream.Null;
+		Stream stream;
 		Uri uri;
 		FtpStatusCode statusCode;
 		DateTime lastModified = DateTime.MinValue;
@@ -36,6 +37,18 @@ namespace System.Net
 			this.method = method;
 			//this.keepAlive = keepAlive;
 		}
+
+		internal FtpWebResponse (Uri uri, string method, FtpStatusCode statusCode, string statusDescription) {
+			this.uri = uri;
+			this.method = method;
+			this.statusCode = statusCode;
+			this.statusDescription = statusDescription;
+		}
+
+		internal FtpWebResponse (Uri uri, string method, FtpStatus status) :
+			this (uri, method, status.StatusCode, status.StatusDescription)
+		{
+		}
 		
 		public override long ContentLength {
 			get {
@@ -45,7 +58,7 @@ namespace System.Net
 
 		public override WebHeaderCollection Headers {
 			get {
-				return new WebHeaderCollection (true);
+				return new WebHeaderCollection ();
 			}
 		}
 
@@ -95,7 +108,7 @@ namespace System.Net
 			get {
 				return statusCode;
 			}
-			internal set {
+			private set {
 				statusCode = value;
 			}
 		}
@@ -104,7 +117,7 @@ namespace System.Net
 			get {
 				return statusDescription;
 			}
-			internal set {
+			private set {
 				statusDescription = value;
 			}
 		}
@@ -115,12 +128,17 @@ namespace System.Net
 				return;
 			
 			disposed = true;
-			stream.Close ();
+			if (stream != null)
+				stream.Close ();
 			stream = null;
 		}
 
 		public override Stream GetResponseStream ()
 		{
+			if (stream == null) {
+				throw new InvalidOperationException ();
+			}
+			
 			if (method != WebRequestMethods.Ftp.DownloadFile &&
 					method != WebRequestMethods.Ftp.ListDirectory)
 				CheckDisposed ();
@@ -132,23 +150,23 @@ namespace System.Net
 			set {
 				stream = value;
 			}
+
+			get { return stream; }
 		}
 
-		internal void UpdateStatus (FtpStatusCode code, string desc)
-		{
-			statusCode = code;
-			statusDescription = desc;
-		}
-
-		~FtpWebResponse ()
-		{
-			((IDisposable) this).Dispose ();
+		internal void UpdateStatus (FtpStatus status) {
+			statusCode = status.StatusCode;
+			statusDescription = status.StatusDescription;
 		}
 
 		void CheckDisposed ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
+		}
+
+		internal bool IsFinal () {
+			return ((int) statusCode >= 200);
 		}
 	}
 }

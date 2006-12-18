@@ -1,3 +1,11 @@
+﻿2006-12-18  David Elkind  <davide@mainsoft.com>
+
+	* FtpAsyncResult.cs : FTP request is now working and covers about 100% of .NET API
+	* FtpDataStream.cs: FTP request is now working and covers about 100% of .NET API
+	* FtpWebRequest.cs: FTP request is now working and covers about 100% of .NET API
+	* FtpWebResponse.cs: FTP request is now working and covers about 100% of .NET API
+	* FtpStatus.cs: added composite status (includes status code and status description)
+
 2006-12-04  Konstantin Triger  <kostat@mainsoft.com>
 
 	* WebRequest.cs, WebResponse.cs: TARGET_JVM limitation workaround.

@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Net;
 
 #if NET_2_0
 
@@ -89,6 +90,8 @@ namespace System.Net
 			get {
 				return stream;
 			}
+
+			set { stream = value; }
 		}
 
 		internal void WaitUntilComplete ()
@@ -117,11 +120,7 @@ namespace System.Net
 				if (waitHandle != null)
 					waitHandle.Set ();
 			}
-		}
-
-		internal void SetCompleted (bool synch)
-		{
-			SetCompleted (synch, null, null);
+			DoCallback ();
 		}
 
 		internal void SetCompleted (bool synch, FtpWebResponse response)
@@ -134,20 +133,14 @@ namespace System.Net
 			SetCompleted (synch, exc, null);
 		}
 
-		internal void SetCompleted (bool synch, Stream stream)
-		{
-			this.synch = synch;
-			this.stream = stream;
-			lock (locker) {
-				completed = true;
-				if (waitHandle != null)
-					waitHandle.Set ();
-			}
-		}
-
 		internal void DoCallback ()
 		{
-			callback (this);
+			if (callback != null)
+				try {
+					callback (this);
+				}
+				catch (Exception) {
+				}
 		}
 
 		// Cleanup resources

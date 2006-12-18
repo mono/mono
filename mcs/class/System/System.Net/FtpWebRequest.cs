@@ -15,6 +15,7 @@ using System.Threading;
 #if NET_2_0
 using System.Net.Cache;
 #endif
+using System.Net;
 
 #if NET_2_0
 
@@ -34,28 +35,21 @@ namespace System.Net
 		IWebProxy proxy;
 		int timeout = 100000;
 		int rwTimeout = 300000;
-		long offset;
+		long offset = 0;
 		bool binary = true;
-		bool enableSsl;
-		bool requestInProgress;
+		bool enableSsl = false;
 		bool usePassive = true;
 		bool keepAlive = true;
-		bool aborted;
-		bool transferCompleted;
-		bool gotRequestStream;
 		string method = WebRequestMethods.Ftp.DownloadFile;
 		string renameTo;
 		object locker = new object ();
-
-		FtpStatusCode statusCode;
-		string statusDescription = String.Empty;
-
-		FtpAsyncResult asyncRead;
-		FtpAsyncResult asyncWrite;
-
+		
+		RequestState requestState = RequestState.Before;
+		FtpAsyncResult asyncResult;
 		FtpWebResponse ftpResponse;
-		Stream requestStream = Stream.Null;
+		Stream requestStream;
 
+		const string ChangeDir = "CWD";
 		const string UserCommand = "USER";
 		const string PasswordCommand = "PASS";
 		const string TypeCommand = "TYPE";
@@ -66,7 +60,21 @@ namespace System.Net
 		const string RestCommand = "REST";
 		const string RenameFromCommand = "RNFR";
 		const string RenameToCommand = "RNTO";
+		const string QuitCommand = "QUIT";
 		const string EOL = "\r\n"; // Special end of line
+
+		enum RequestState
+		{
+			Before,
+			Scheduled,
+			Connecting,
+			Authenticating,
+			OpeningData,
+			TransferInProgress,
+			Finished,
+			Aborted,
+			Error
+		}
 
 		// sorted commands
 		static readonly string [] supportedCommands = new string [] {
@@ -164,7 +172,7 @@ namespace System.Net
 			set {
 				CheckRequestStarted ();
 				if (value == null)
-					throw new ArgumentNullException ("method");
+					throw new ArgumentNullException ("Method string cannot be null");
 
 				if (value.Length == 0 || Array.BinarySearch (supportedCommands, value) < 0)
 					throw new ArgumentException ("Method not supported", "value");
@@ -273,6 +281,140 @@ namespace System.Net
 			}
 		}
 
+		RequestState State {
+			get {
+				lock (locker) {
+					return requestState;
+				}
+			}
+
+			set {
+				lock (locker) {
+					CheckIfAborted ();
+					CheckFinalState ();
+					requestState = value;
+				}
+			}
+		}
+
+		public override void Abort () {
+			lock (locker) {
+				if (State == RequestState.TransferInProgress) {
+					FtpStatus status = SendCommand (false, AbortCommand);
+				}
+
+				if (!InFinalState ()) {
+					State = RequestState.Aborted;
+					ftpResponse = new FtpWebResponse (requestUri, method, FtpStatusCode.FileActionAborted, "Aborted by request");
+				}
+			}
+		}
+
+		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state) {
+			if (asyncResult != null && !asyncResult.IsCompleted) {
+				throw new InvalidOperationException ("Cannot re-call BeginGetRequestStream/BeginGetResponse while a previous call is still in progress");
+			}
+
+			CheckIfAborted ();
+			
+			asyncResult = new FtpAsyncResult (callback, state);
+
+			lock (locker) {
+				if (InFinalState ())
+					asyncResult.SetCompleted (true, ftpResponse);
+				else {
+					if (State == RequestState.Before)
+						State = RequestState.Scheduled;
+
+					Thread thread = new Thread (ProcessRequest);
+					thread.Start ();
+				}
+			}
+
+			return asyncResult;
+		}
+
+		public override WebResponse EndGetResponse (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("AsyncResult cannot be null!");
+
+			if (!(asyncResult is FtpAsyncResult) || asyncResult != this.asyncResult)
+				throw new ArgumentException ("AsyncResult is from another request!");
+
+			FtpAsyncResult asyncFtpResult = (FtpAsyncResult) asyncResult;
+			if (!asyncFtpResult.WaitUntilComplete (timeout, false)) {
+				Abort ();
+				throw new WebException ("Transfer timed out.", WebExceptionStatus.Timeout);
+			}
+
+			CheckIfAborted ();
+
+			asyncResult = null;
+
+			if (asyncFtpResult.GotException)
+				throw asyncFtpResult.Exception;
+
+			return asyncFtpResult.Response;
+		}
+
+		public override WebResponse GetResponse () {
+			IAsyncResult asyncResult = BeginGetResponse (null, null);
+			return EndGetResponse (asyncResult);
+		}
+
+		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) {
+			if (method != WebRequestMethods.Ftp.UploadFile && method != WebRequestMethods.Ftp.UploadFileWithUniqueName &&
+					method != WebRequestMethods.Ftp.AppendFile)
+				throw new ProtocolViolationException ();
+
+			lock (locker) {
+				CheckIfAborted ();
+
+				if (State != RequestState.Before)
+					throw new InvalidOperationException ("Cannot re-call BeginGetRequestStream/BeginGetResponse while a previous call is still in progress");
+
+				State = RequestState.Scheduled;
+			}
+
+			asyncResult = new FtpAsyncResult (callback, state);
+			Thread thread = new Thread (ProcessRequest);
+			thread.Start ();
+
+			return asyncResult;
+		}
+
+		public override Stream EndGetRequestStream (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			if (!(asyncResult is FtpAsyncResult))
+				throw new ArgumentException ("asyncResult");
+
+			if (State == RequestState.Aborted) {
+				throw new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
+			}
+			
+			if (asyncResult != this.asyncResult)
+				throw new ArgumentException ("AsyncResult is from another request!");
+
+			FtpAsyncResult res = (FtpAsyncResult) asyncResult;
+
+			if (!res.WaitUntilComplete (timeout, false)) {
+				Abort ();
+				throw new WebException ("Request timed out");
+			}
+
+			if (res.GotException)
+				throw res.Exception;
+
+			return res.Stream;
+		}
+
+		public override Stream GetRequestStream () {
+			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
+			return EndGetRequestStream (asyncResult);
+		}
+		
 		ServicePoint GetServicePoint ()
 		{
 			if (servicePoint == null)
@@ -282,293 +424,208 @@ namespace System.Net
 		}
 
 		// Probably move some code of command connection here
-		bool ResolveHost ()
+		void ResolveHost ()
 		{
+			CheckIfAborted ();
 			hostEntry = GetServicePoint ().HostEntry;
-			if (hostEntry == null)
-				return false;
-			
-			return true;
-		}
 
-		public override void Abort ()
-		{
-			FtpStatusCode status = SendCommand (AbortCommand);
-			if (status != FtpStatusCode.ClosingData)
-				throw CreateExceptionFromResponse (); // Probably ignore it by now
-
-			aborted = true;
-			if (asyncRead != null) {
-				FtpAsyncResult r = asyncRead;
-				WebException wexc = new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
-				r.SetCompleted (false, wexc);
-				r.DoCallback ();
-				asyncRead = null;
-			}
-			if (asyncWrite != null) {
-				FtpAsyncResult r = asyncWrite;
-				WebException wexc = new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
-				r.SetCompleted (false, wexc);
-				r.DoCallback ();
-				asyncWrite = null;
+			if (hostEntry == null) {
+				ftpResponse.UpdateStatus (new FtpStatus(FtpStatusCode.ActionAbortedLocalProcessingError, "Cannot resolve server name"));
+				throw new WebException ("The remote server name could not be resolved: " + requestUri,
+					null, WebExceptionStatus.NameResolutionFailure, ftpResponse);
 			}
 		}
 
-		void ProcessRequest ()
-		{
-			ftpResponse = new FtpWebResponse (requestUri, method, keepAlive);
+		void ProcessRequest () {
 
-			if (!ResolveHost ()) {
-				SetResponseError (new WebException ("The remote server name could not be resolved: " + requestUri,
-						null, WebExceptionStatus.NameResolutionFailure, ftpResponse));
-				return;
+			if (State == RequestState.Scheduled) {
+				ftpResponse = new FtpWebResponse (requestUri, method, keepAlive);
+
+				try {
+					ProcessMethod ();
+					//State = RequestState.Finished;
+					//finalResponse = ftpResponse;
+					asyncResult.SetCompleted (false, ftpResponse);
+				}
+				catch (Exception e) {
+					State = RequestState.Error;
+					SetCompleteWithError (e);
+				}
 			}
-			
-			if (!OpenControlConnection ())
-				return;
+			else {
+				if (InProgress ()) {
+					FtpStatus status = GetResponseStatus ();
+
+					ftpResponse.UpdateStatus (status);
+
+					if (ftpResponse.IsFinal ()) {
+						State = RequestState.Finished;
+					}
+				}
+
+				asyncResult.SetCompleted (false, ftpResponse);
+			}
+		}
+		
+		void ProcessMethod ()
+		{
+			State = RequestState.Connecting;
+
+			ResolveHost ();
+
+			OpenControlConnection ();
 
 			switch (method) {
-				// Open data connection and receive data
-				case WebRequestMethods.Ftp.DownloadFile:
-				case WebRequestMethods.Ftp.ListDirectory:
-				case WebRequestMethods.Ftp.ListDirectoryDetails:
-					DownloadData ();
-					break;
-				// Open data connection and send data
-				case WebRequestMethods.Ftp.AppendFile:
-				case WebRequestMethods.Ftp.UploadFile:
-				case WebRequestMethods.Ftp.UploadFileWithUniqueName:
-					UploadData ();
-					break;
-				// Get info from control connection
-				case WebRequestMethods.Ftp.GetFileSize:
-				case WebRequestMethods.Ftp.GetDateTimestamp:
-					GetInfoFromControl ();
-					break;
-				case WebRequestMethods.Ftp.Rename:
-					RenameFile ();
-					break;
-				case WebRequestMethods.Ftp.MakeDirectory:
-					ProcessSimpleRequest ();
-					break;
-				default: // What to do here?
-					throw new Exception ("Support for command not implemented yet");
+			// Open data connection and receive data
+			case WebRequestMethods.Ftp.DownloadFile:
+			case WebRequestMethods.Ftp.ListDirectory:
+			case WebRequestMethods.Ftp.ListDirectoryDetails:
+				DownloadData ();
+				break;
+			// Open data connection and send data
+			case WebRequestMethods.Ftp.AppendFile:
+			case WebRequestMethods.Ftp.UploadFile:
+			case WebRequestMethods.Ftp.UploadFileWithUniqueName:
+				UploadData ();
+				break;
+			// Get info from control connection
+			case WebRequestMethods.Ftp.GetFileSize:
+			case WebRequestMethods.Ftp.GetDateTimestamp:
+			case WebRequestMethods.Ftp.PrintWorkingDirectory:
+			case WebRequestMethods.Ftp.MakeDirectory:
+			case WebRequestMethods.Ftp.Rename:
+				ProcessSimpleMethod ();
+				break;
+			default: // What to do here?
+				throw new Exception (String.Format ("Support for command {0} not implemented yet", method));
 			}
+
+			CheckIfAborted ();
 		}
 
-		// Currently I use this only for MKD 
-		// (Commands that don't need any parsing in command connection
-		// for open data connection)
-		void ProcessSimpleRequest ()
-		{
-			if (SendCommand (method, requestUri.LocalPath) != FtpStatusCode.PathnameCreated) {
-				asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
-				return;
-			}
-
-			asyncRead.SetCompleted (true, ftpResponse);
+		private void CloseControlConnection () {
+			SendCommand (QuitCommand);
+			controlStream.Close ();
 		}
 
-		// It would be good to have a SetCompleted method for
-		// settting asyncRead as completed (some code is here and there, repeated)
-		void GetInfoFromControl ()
+		private void CloseDataConnection () {
+			if(dataSocket != null)
+				dataSocket.Close ();
+		}
+
+		private void CloseConnection () {
+			CloseControlConnection ();
+			CloseDataConnection ();
+		}
+		
+		void ProcessSimpleMethod ()
 		{
-			FtpStatusCode status = SendCommand (method, requestUri.LocalPath);
-			if (status != FtpStatusCode.FileStatus) {
-				asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
-				return;
-			}
-
-			string desc = statusDescription;
-			Console.WriteLine ("Desc = " + desc);
-			if (method == WebRequestMethods.Ftp.GetFileSize) {
-				int i, len;
-				long size;
-				for (i = 4, len = 0; i < desc.Length && Char.IsDigit (desc [i]); i++, len++)
-					;
-
-				if (len == 0) {
-					asyncRead.SetCompleted (true, new WebException ("Bad format for server response in " + method));
-					return;
-				}
-
-				if (!Int64.TryParse (desc.Substring (4, len), out size)) {
-					asyncRead.SetCompleted (true, new WebException ("Bad format for server response in " + method));
-					return;
-				}
-
-				ftpResponse.contentLength = size;
-				asyncRead.SetCompleted (true, ftpResponse);
-				return;
-			}
+			State = RequestState.TransferInProgress;
 			
-			if (method == WebRequestMethods.Ftp.GetDateTimestamp) {
-				// Here parse the format the date time (different formats)
-				asyncRead.SetCompleted (true, ftpResponse);
-				return;
-			}
+			FtpStatus status;
+			
+			if (method == WebRequestMethods.Ftp.PrintWorkingDirectory)
+				method = ChangeDir;
 
-			throw new Exception ("You shouldn't reach this point");
-		}
+			if (method == WebRequestMethods.Ftp.Rename)
+				method = RenameFromCommand;
+			
+			status = SendCommand (method, requestUri.LocalPath);
 
-		void RenameFile ()
-		{
-			FtpStatusCode status = SendCommand (RenameFromCommand, requestUri.LocalPath);
-			if (status == FtpStatusCode.FileCommandPending) {
+			ftpResponse.Stream = new EmptyStream ();
+			
+			string desc = status.StatusDescription;
+
+			switch (method) {
+			case WebRequestMethods.Ftp.GetFileSize: {
+					if (status.StatusCode != FtpStatusCode.FileStatus)
+						throw CreateExceptionFromResponse (status);
+
+					int i, len;
+					long size;
+					for (i = 4, len = 0; i < desc.Length && Char.IsDigit (desc [i]); i++, len++)
+						;
+
+					if (len == 0)
+						throw new WebException ("Bad format for server response in " + method);
+
+					if (!Int64.TryParse (desc.Substring (4, len), out size))
+						throw new WebException ("Bad format for server response in " + method);
+
+					ftpResponse.contentLength = size;
+				}
+				break;
+			case WebRequestMethods.Ftp.GetDateTimestamp:
+				if (status.StatusCode != FtpStatusCode.FileStatus)
+					throw CreateExceptionFromResponse (status);
+				ftpResponse.LastModified = DateTime.ParseExact (desc.Substring (4), "yyyyMMddHHmmss", null);
+				break;
+			case WebRequestMethods.Ftp.MakeDirectory:
+				if (status.StatusCode != FtpStatusCode.PathnameCreated)
+					throw CreateExceptionFromResponse (status);
+				break;
+			case ChangeDir:
+				method = WebRequestMethods.Ftp.PrintWorkingDirectory;
+
+				if (status.StatusCode != FtpStatusCode.FileActionOK)
+					throw CreateExceptionFromResponse (status);
+
+				status = SendCommand (method);
+
+				if (status.StatusCode != FtpStatusCode.PathnameCreated)
+					throw CreateExceptionFromResponse (status);
+				break;
+			case RenameFromCommand:
+				method = WebRequestMethods.Ftp.Rename;
+				if (status.StatusCode != FtpStatusCode.FileCommandPending) 
+					throw CreateExceptionFromResponse (status);
 				// Pass an empty string if RenameTo wasn't specified
 				status = SendCommand (RenameToCommand, renameTo != null ? renameTo : String.Empty);
-				
-				if (status == FtpStatusCode.FileActionOK) {
-					ftpResponse.UpdateStatus (statusCode, statusDescription);
-					asyncRead.SetCompleted (true, ftpResponse);
-					return;
-				}
+				if (status.StatusCode != FtpStatusCode.FileActionOK)
+					throw CreateExceptionFromResponse (status);
+				break;
 			}
 
-			ftpResponse.UpdateStatus (statusCode, statusDescription);
-			asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
+			ftpResponse.UpdateStatus (status);
+			State = RequestState.Finished;
 		}
 
 		void UploadData ()
 		{
-			if (gotRequestStream) {
-				if (GetResponseCode () != FtpStatusCode.ClosingData)
-					asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
-				
-				return;
-			}
-			
-			if (!OpenDataConnection ())
-				return;
+			State = RequestState.OpeningData;
 
-			gotRequestStream = true;
+			OpenDataConnection ();
+
+			State = RequestState.TransferInProgress;
 			requestStream = new FtpDataStream (this, dataSocket, false);
-			asyncWrite.SetCompleted (true, requestStream);
+			asyncResult.Stream = requestStream;
 		}
 
 		void DownloadData ()
 		{
-			FtpStatusCode status;
+			State = RequestState.OpeningData;
 
 			// Handle content offset
 			if (offset > 0) {
-				status = SendCommand (RestCommand, offset.ToString ());
-				if (status != FtpStatusCode.FileCommandPending) {
-					asyncRead.SetCompleted (true, CreateExceptionFromResponse ());
-					return;
-				}
+				FtpStatus status = SendCommand (RestCommand, offset.ToString ());
+
+				if (status.StatusCode != FtpStatusCode.FileCommandPending)
+					throw CreateExceptionFromResponse (status);
 			}
 
-			if (!OpenDataConnection ())
-				return;
+			OpenDataConnection ();
 
+			State = RequestState.TransferInProgress;
 			ftpResponse.Stream = new FtpDataStream (this, dataSocket, true);
-			ftpResponse.StatusDescription = statusDescription;
-			ftpResponse.StatusCode = statusCode;
-			asyncRead.SetCompleted (true, ftpResponse);
-		}
-
-		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
-		{
-			if (aborted)
-				throw new WebException ("Request was previously aborted.");
-			
-			Monitor.Enter (this);
-			if (asyncRead != null) {
-				Monitor.Exit (this);
-				throw new InvalidOperationException ();
-			}
-
-			requestInProgress = true;
-			asyncRead = new FtpAsyncResult (callback, state);
-			Thread thread = new Thread (ProcessRequest);
-			thread.Start ();
-
-			Monitor.Exit (this);
-			return asyncRead;
-		}
-
-		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
-		{
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			if (!(asyncResult is FtpAsyncResult) || asyncResult != asyncRead)
-				throw new ArgumentException ("asyncResult");
-
-			FtpAsyncResult asyncFtpResult = (FtpAsyncResult) asyncResult;
-			if (!asyncFtpResult.WaitUntilComplete (timeout, false)) {
-				Abort ();
-				throw new WebException ("Transfer timed out.", WebExceptionStatus.Timeout);
-			}
-
-			if (asyncFtpResult.GotException)
-				throw asyncFtpResult.Exception;
-
-			return asyncFtpResult.Response;
-		}
-
-		public override WebResponse GetResponse ()
-		{
-			IAsyncResult asyncResult = BeginGetResponse (null, null);
-			return EndGetResponse (asyncResult);
-		}
-
-		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
-		{
-			if (aborted)
-				throw new WebException ("Request was previously aborted.");
-			
-			if (method != WebRequestMethods.Ftp.UploadFile && method != WebRequestMethods.Ftp.UploadFileWithUniqueName &&
-					method != WebRequestMethods.Ftp.AppendFile)
-				throw new ProtocolViolationException ();
-
-			lock (locker) {
-				if (asyncWrite != null || asyncRead != null)
-					throw new InvalidOperationException ();
-				
-				requestInProgress = true;
-				asyncWrite = new FtpAsyncResult (callback, state);
-				Thread thread = new Thread (ProcessRequest);
-				thread.Start ();
-
-				return asyncWrite;
-			}
-		}
-
-		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
-		{
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			if (!(asyncResult is FtpAsyncResult))
-				throw new ArgumentException ("asyncResult");
-
-			FtpAsyncResult res = (FtpAsyncResult) asyncResult;
-			if (!res.WaitUntilComplete (timeout, false)) {
-				Abort ();
-				throw new WebException ("Request timeod out");
-			}
-
-			if (res.GotException)
-				throw res.Exception;
-
-			return res.Stream;
-		}
-
-		public override Stream GetRequestStream ()
-		{
-			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
-			return EndGetRequestStream (asyncResult);
 		}
 
 		void CheckRequestStarted ()
 		{
-			if (requestInProgress)
-				throw new InvalidOperationException ("request in progress");
+			if (State != RequestState.Before)
+				throw new InvalidOperationException ("There is a request currently in progress");
 		}
 
-		bool OpenControlConnection ()
+		void OpenControlConnection ()
 		{
 			Socket sock = null;
 			foreach (IPAddress address in hostEntry.AddressList) {
@@ -577,56 +634,51 @@ namespace System.Net
 					sock.Connect (new IPEndPoint (address, requestUri.Port));
 					localEndPoint = (IPEndPoint) sock.LocalEndPoint;
 					break;
-				} catch (SocketException e) {
+				} catch (SocketException) {
 					sock.Close ();
 					sock = null;
 				}
 			}
 
 			// Couldn't connect to any address
-			if (sock == null) {
-				SetResponseError (new WebException ("Unable to connect to remote server", null, 
-						WebExceptionStatus.UnknownError, ftpResponse));
-				return false;
-			}
+			if (sock == null)
+				throw new WebException ("Unable to connect to remote server", null,
+						WebExceptionStatus.UnknownError, ftpResponse);
 
 			controlStream = new NetworkStream (sock);
 			controlReader = new StreamReader (controlStream, Encoding.ASCII);
 
-			if (!Authenticate ()) {
-				SetResponseError (CreateExceptionFromResponse ());
-				return false;
-			}
+			State = RequestState.Authenticating;
 
-			return true;
+			Authenticate ();
 		}
 
 		// Probably we could do better having here a regex
-		Socket SetupPassiveConnection ()
+		Socket SetupPassiveConnection (string statusDescription)
 		{
 			// Current response string
 			string response = statusDescription;
 			if (response.Length < 4)
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 			
 			// Look for first digit after code
 			int i;
 			for (i = 3; i < response.Length && !Char.IsDigit (response [i]); i++)
 				;
 			if (i >= response.Length)
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 
 			// Get six elements
 			string [] digits = response.Substring (i).Split (new char [] {','}, 6);
 			if (digits.Length != 6)
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 
 			// Clean non-digits at the end of last element
 			int j;
 			for (j = digits [5].Length - 1; j >= 0 && !Char.IsDigit (digits [5][j]); j--)
 				;
 			if (j < 0)
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 			
 			digits [5] = digits [5].Substring (0, j + 1);
 
@@ -634,77 +686,73 @@ namespace System.Net
 			try {
 				ip = IPAddress.Parse (String.Join (".", digits, 0, 4));
 			} catch (FormatException) {
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 			}
 
 			// Get the port
 			int p1, p2, port;
 			if (!Int32.TryParse (digits [4], out p1) || !Int32.TryParse (digits [5], out p2))
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 
 			port = (p1 << 8) + p2; // p1 * 256 + p2
 			//port = p1 * 256 + p2;
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 
 			IPEndPoint ep = new IPEndPoint (ip, port);
 			Socket sock = new Socket (ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			try {
 				sock.Connect (ep);
-			} catch (SocketException exc) {
+			} catch (SocketException) {
 				sock.Close ();
-				return null;
+				throw new WebException ("Cannot open passive data connection");
 			}
 
 			return sock;
 		}
 
-		Exception CreateExceptionFromResponse ()
+		Exception CreateExceptionFromResponse (FtpStatus status)
 		{
-			WebException exc = new WebException ("Server returned an error: " + statusDescription, null, 
-					WebExceptionStatus.ProtocolError, ftpResponse);
+			FtpWebResponse ftpResponse = new FtpWebResponse (requestUri, method, status);
+			
+			WebException exc = new WebException ("Server returned an error: " + status.StatusDescription, 
+				null, WebExceptionStatus.ProtocolError, ftpResponse);
 			return exc;
 		}
 		
 		// Here we could also get a server error, so be cautious
 		internal void SetTransferCompleted ()
 		{
-			if (transferCompleted)
+			if (InFinalState ())
 				return;
+
+			State = RequestState.Finished;
+			FtpStatus status = GetResponseStatus ();
+
+			ftpResponse.UpdateStatus (status);
 			
-			transferCompleted = true;
-			
-			FtpStatusCode status = GetResponseCode ();
-			ftpResponse.StatusCode = status;
-			ftpResponse.StatusDescription = statusDescription;
+			if(!keepAlive)
+				CloseConnection ();
 		}
 
-		internal void SetResponseError (Exception exc)
+		void SetCompleteWithError (Exception exc)
 		{
-			FtpAsyncResult ar = asyncRead;
-			if (ar == null)
-				ar = asyncWrite;
-
-			ar.SetCompleted (true, exc);
-			ar.DoCallback ();
+			if (asyncResult != null) {
+				asyncResult.SetCompleted (false, exc);
+			}
 		}
 
 		Socket InitDataConnection ()
 		{
-			FtpStatusCode status;
+			FtpStatus status;
 			
 			if (usePassive) {
 				status = SendCommand (PassiveCommand);
-				if (status != FtpStatusCode.EnteringPassive) {
-					SetResponseError (CreateExceptionFromResponse ());
-					return null;
+				if (status.StatusCode != FtpStatusCode.EnteringPassive) {
+					throw CreateExceptionFromResponse (status);
 				}
 				
-				Socket retval = SetupPassiveConnection ();
-				if (retval == null)
-					SetResponseError (new WebException ("Couldn't setup passive connection"));
-					
-				return retval;
+				return SetupPassiveConnection (status.StatusDescription);
 			}
 
 			// Open a socket to listen the server's connection
@@ -716,8 +764,7 @@ namespace System.Net
 			} catch (SocketException e) {
 				sock.Close ();
 
-				SetResponseError (new WebException ("Couldn't open listening socket on client", e));
-				return null;
+				throw new WebException ("Couldn't open listening socket on client", e);
 			}
 
 			IPEndPoint ep = (IPEndPoint) sock.LocalEndPoint;
@@ -727,104 +774,120 @@ namespace System.Net
 
 			string portParam = ipString + "," + h1 + "," + h2;
 			status = SendCommand (PortCommand, portParam);
-			if (status != FtpStatusCode.CommandOK) {
+			
+			if (status.StatusCode != FtpStatusCode.CommandOK) {
 				sock.Close ();
-				
-				SetResponseError (CreateExceptionFromResponse ());
-				return null;
+				throw (CreateExceptionFromResponse (status));
 			}
 
 			return sock;
 		}
 
-		bool OpenDataConnection ()
+		void OpenDataConnection ()
 		{
-			FtpStatusCode status;
+			FtpStatus status;
+			
 			Socket s = InitDataConnection ();
-			if (s == null)
-				return false;
 
 			// TODO - Check that this command is only used for data connection based commands
 			if (method != WebRequestMethods.Ftp.ListDirectory && method != WebRequestMethods.Ftp.ListDirectoryDetails) {
 				status = SendCommand (TypeCommand, DataType);
 				
-				if (status != FtpStatusCode.CommandOK) {
-					SetResponseError (CreateExceptionFromResponse ());
-					return false;
-				}
+				if (status.StatusCode != FtpStatusCode.CommandOK)
+					throw CreateExceptionFromResponse (status);
 			}
 
-			status = SendCommand (method, requestUri.LocalPath);
-			if (status != FtpStatusCode.OpeningData) {
-				SetResponseError (CreateExceptionFromResponse ());
-				return false;
-			}
-			
+			if(method != WebRequestMethods.Ftp.UploadFileWithUniqueName)
+				status = SendCommand (method, requestUri.LocalPath);
+			else
+				status = SendCommand (method);
+
+			if (status.StatusCode != FtpStatusCode.OpeningData && status.StatusCode != FtpStatusCode.DataAlreadyOpen)
+				throw CreateExceptionFromResponse (status);
+
 			if (usePassive) {
 				dataSocket = s;
-				return true;
+			}
+			else {
+
+				// Active connection (use Socket.Blocking to true)
+				Socket incoming = null;
+				try {
+					incoming = s.Accept ();
+				}
+				catch (SocketException) {
+					s.Close ();
+					if (incoming != null)
+						incoming.Close ();
+
+					throw new ProtocolViolationException ("Server commited a protocol violation.");
+				}
+
+				s.Close ();
+				dataSocket = incoming;
 			}
 
-			// Active connection (use Socket.Blocking to true)
-			Socket incoming = null;
-			try {
-				incoming = s.Accept ();
-			} catch (SocketException e) {
-				s.Close ();
-				if (incoming != null)
-					incoming.Close ();
-				
-				SetResponseError (new ProtocolViolationException ("Server commited a protocol violation."));
-				return false;
-			} 
+			if (EnableSsl) {
+				InitiateSecureConnection (ref controlStream);
+				controlReader = new StreamReader (controlStream, Encoding.ASCII);
+			}
 
-			s.Close ();
-			dataSocket = incoming;
-			return true;
+			ftpResponse.UpdateStatus (status);
 		}
 
-		// Take in count 'account' case
-		bool Authenticate ()
-		{
+		void Authenticate () {
 			string username = null;
 			string password = null;
-			
+			string domain = null;
+
 			if (credentials != null) {
 				username = credentials.UserName;
 				password = credentials.Password;
-				// account = credentials.Domain;
+				domain = credentials.Domain;
 			}
 
 			if (username == null)
 				username = "anonymous";
 			if (password == null)
 				password = "@anonymous";
+			if (!string.IsNullOrEmpty (domain))
+				username = domain + '\\' + username;
 
 			// Connect to server and get banner message
-			FtpStatusCode status = GetResponseCode ();
-			ftpResponse.BannerMessage = statusDescription;
-			if (status != FtpStatusCode.SendUserCommand)
-				return false;
+			FtpStatus status = GetResponseStatus ();
+			ftpResponse.BannerMessage = status.StatusDescription;
+
+			if (EnableSsl) {
+				InitiateSecureConnection (ref controlStream);
+				controlReader = new StreamReader (controlStream, Encoding.ASCII);
+			}
+			
+			if (status.StatusCode != FtpStatusCode.SendUserCommand)
+				throw CreateExceptionFromResponse (status);
 
 			status = SendCommand (UserCommand, username);
-			if (status == FtpStatusCode.LoggedInProceed) {
-				ftpResponse.WelcomeMessage = statusDescription;
-				return true;
-			}
-			if (status == FtpStatusCode.SendPasswordCommand) {
+
+			switch (status.StatusCode) {
+			case FtpStatusCode.SendPasswordCommand:
 				status = SendCommand (PasswordCommand, password);
-				if (status == FtpStatusCode.LoggedInProceed) {
-					ftpResponse.WelcomeMessage = statusDescription;
-					return true;
-				}
-
-				return false;
+				if (status.StatusCode != FtpStatusCode.LoggedInProceed)
+					throw CreateExceptionFromResponse (status);
+				break;
+			case FtpStatusCode.LoggedInProceed:
+				break;
+			default:
+				throw CreateExceptionFromResponse (status);
 			}
 
-			return false;
+			ftpResponse.WelcomeMessage = status.StatusDescription;
+			ftpResponse.UpdateStatus (status);
 		}
 
-		FtpStatusCode SendCommand (string command, params string [] parameters)
+		FtpStatus SendCommand (string command, params string [] parameters) {
+			return SendCommand (true, command, parameters);
+		}
+
+		FtpStatus SendCommand (bool waitResponse, string command, params string [] parameters)
 		{
 			byte [] cmd;
 			string commandString = command;
@@ -837,33 +900,84 @@ namespace System.Net
 				controlStream.Write (cmd, 0, cmd.Length);
 			} catch (IOException) {
 				//controlStream.Close ();
-				return FtpStatusCode.ServiceNotAvailable;
+				return new FtpStatus(FtpStatusCode.ServiceNotAvailable, "Write failed");
 			}
 
-			return GetResponseCode ();
+			if(!waitResponse)
+				return null;
+			
+			return GetResponseStatus ();
 		}
 
-		internal FtpStatusCode GetResponseCode ()
+		internal FtpStatus GetResponseStatus ()
 		{
-			string responseString = null;
-			try {
-				responseString = controlReader.ReadLine ();
-			} catch (IOException exc) {
-				// controlReader.Close ();
+			while (true) {
+				string responseString = null;
+
+				try {
+					responseString = controlReader.ReadLine ();
+				}
+				catch (IOException) {
+					// controlReader.Close ();
+				}
+
+				if (responseString == null || responseString.Length < 3)
+					return new FtpStatus(FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
+
+				string codeString = responseString.Substring (0, 3);
+
+				int code;
+				if (!Int32.TryParse (codeString, out code))
+					return new FtpStatus (FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
+
+				if (responseString.Length < 4 || responseString [3] != '-')
+					return new FtpStatus ((FtpStatusCode) code, responseString);
 			}
-
-			if (responseString == null || responseString.Length < 3)
-				return FtpStatusCode.ServiceNotAvailable;
-
-			string codeString = responseString.Substring (0, 3);
-			int code;
-			if (!Int32.TryParse (codeString, out code))
-				return FtpStatusCode.ServiceNotAvailable;
-
-			statusDescription = responseString;
-			return statusCode = (FtpStatusCode) code;
 		}
 
+		private void InitiateSecureConnection (ref NetworkStream stream) {
+			FtpStatus status = SendCommand (AuthCommand, "TLS");
+
+			if (status.StatusCode != FtpStatusCode.ServerWantsSecureSession) {
+				throw CreateExceptionFromResponse (status);
+			}
+
+			ChangeToSSLSocket (ref stream);
+		}
+
+		internal static bool ChangeToSSLSocket (ref NetworkStream stream) {
+#if TARGET_JVM
+			stream.ChangeToSSLSocket ();
+			return true;
+#else
+			throw new NotImplementedException ();
+#endif
+		}
+		
+		bool InFinalState () {
+			return (State == RequestState.Aborted || State == RequestState.Error || State == RequestState.Finished);
+		}
+
+		bool InProgress () {
+			return (State != RequestState.Before && !InFinalState ());
+		}
+
+		internal void CheckIfAborted () {
+			if (State == RequestState.Aborted)
+				throw new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
+		}
+
+		void CheckFinalState () {
+			if (InFinalState ())
+				throw new InvalidOperationException ("Cannot change final state");
+		}
+
+		class EmptyStream : MemoryStream
+		{
+			internal EmptyStream ()
+				: base (new byte [0], false) {
+			}
+		}
 	}
 }
 
