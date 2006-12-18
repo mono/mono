@@ -1,4 +1,14 @@
 
+Mon Dec 18 19:14:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: updated to use the mono-dl API instead of
+	gmodule.
+
+Mon Dec 18 19:02:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: updated to use the mono-dl dynamic loading
+	API instead of gmodule.
+
 Mon Dec 18 18:16:22 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: use readlink, older versions of glib don't have
