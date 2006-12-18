@@ -73,6 +73,27 @@ namespace System.Web.Services.Description {
 		protected override bool ReflectMethod ()
 		{
 			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
+			bool existing = false;
+#if NET_2_0
+			if (Parent != null) {
+				if (Parent.MappedMessagesIn.ContainsKey (method.MethodInfo))
+					existing = true;
+				else {
+					Parent.MappedMessagesIn [method.MethodInfo] = InputMessage;
+					Parent.MappedMessagesOut [method.MethodInfo] = OutputMessage;
+				}
+			}
+#endif
+			if (!existing)
+				ImportMessageParts ();
+			ExtensionReflector.ReflectMethod ();
+
+			return !existing;
+		}
+		
+		void ImportMessageParts ()
+		{
+			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
 			ImportMessage (method.InputMembersMapping, InputMessage);
 			ImportMessage (method.OutputMembersMapping, OutputMessage);
 				
@@ -113,10 +134,6 @@ namespace System.Web.Services.Description {
 					SoapSchemaExporter.ExportTypeMapping (mapping);
 				}
 			}
-			
-			ExtensionReflector.ReflectMethod ();
-
-			return true;
 		}
 		
 		void ImportMessage (XmlMembersMapping members, Message msg)

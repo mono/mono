@@ -82,6 +82,10 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		internal ServiceDescriptionReflector Parent {
+			get { return serviceReflector; }
+		}
+
 		public Binding Binding {
 			get { return binding; }
 		}
@@ -199,7 +203,6 @@ namespace System.Web.Services.Description {
 		internal TypeStubInfo TypeInfo {
 			get { return typeInfo; }
 		}
-
 
 		#endregion // Properties
 
@@ -348,8 +351,21 @@ namespace System.Web.Services.Description {
 				portType.Operations.Add (operation);
 				ImportOperationBinding ();
 				
-				ReflectMethod ();
-				
+				if (!ReflectMethod ()) {
+#if NET_2_0
+					// (It is somewhat hacky) If we don't
+					// add input/output Messages, update
+					// portType/input/@message and
+					// porttype/output/@message.
+					Message dupIn = Parent.MappedMessagesIn [method.MethodInfo];
+					ServiceDescription.Messages.Remove (inputMessage);
+					inOp.Message = new XmlQualifiedName (dupIn.Name, ServiceDescription.TargetNamespace);
+					Message dupOut = Parent.MappedMessagesOut [method.MethodInfo];
+					ServiceDescription.Messages.Remove (outputMessage);
+					outOp.Message = new XmlQualifiedName (dupOut.Name, ServiceDescription.TargetNamespace);
+#endif
+				}
+
 				foreach (SoapExtensionReflector reflector in extensionReflectors)
 				{
 					reflector.ReflectionContext = this;

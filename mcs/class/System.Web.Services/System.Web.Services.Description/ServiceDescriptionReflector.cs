@@ -36,6 +36,7 @@ using System.Xml.Schema;
 using System.Web.Services.Protocols;
 using System.Web.Services.Configuration;
 #if NET_2_0
+using System.Collections.Generic;
 using WSConfig = System.Web.Services.Configuration.WebServicesSection;
 using WSProtocol = System.Web.Services.Configuration.WebServiceProtocols;
 #endif
@@ -55,6 +56,13 @@ namespace System.Web.Services.Description {
 		}
 		
 		#endregion // Constructors
+
+#if NET_2_0
+		internal Dictionary<LogicalMethodInfo,Message> MappedMessagesIn =
+			new Dictionary<LogicalMethodInfo,Message> ();
+		internal Dictionary<LogicalMethodInfo,Message> MappedMessagesOut =
+			new Dictionary<LogicalMethodInfo,Message> ();
+#endif
 
 		#region Properties
 

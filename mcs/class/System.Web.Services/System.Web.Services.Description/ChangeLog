@@ -1,3 +1,11 @@
+2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProtocolReflector.cs, SoapProtocolReflector.cs,
+	  ServiceDescriptionReflector.cs :
+	  When both SOAP 1.1 and 1.2 bindings are to be imported, it should
+	  not emit identical Messages and schema types twice. Hence SOAP
+	  reflector now skips duplicates.
+
 2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapExtensionReflector.cs, SoapProtocolReflector.cs :
