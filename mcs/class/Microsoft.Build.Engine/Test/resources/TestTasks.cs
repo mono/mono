@@ -76,10 +76,17 @@ public class StringTestTask : Task {
 	}
 
 	string property;
+	string[] array;
 
 	[Output]
 	public string Property {
 		get { return property; }
 		set { property = value; }
 	}
+
+	[Output]
+	public string[] Array {
+		get { return array; }
+		set { array = value; }
+	}	
 }

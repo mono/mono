@@ -358,5 +358,143 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 			Assert.IsFalse (proj.Build ("1"), "A1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget3 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>A;B</B>
+						<C>A;</C>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+
+					<Target Name='1'>
+						<StringTestTask Array='$(A)$(A)'>
+							<Output TaskParameter='Array' ItemName='I0' />
+						</StringTestTask>
+						<StringTestTask Array='$(B)$(B)'>
+							<Output TaskParameter='Array' ItemName='I1' />
+						</StringTestTask>
+						<StringTestTask Array='$(C)'>
+							<Output TaskParameter='Array' ItemName='I2' />
+						</StringTestTask>
+						<StringTestTask Array='$(C)$(C)'>
+							<Output TaskParameter='Array' ItemName='I3' />
+						</StringTestTask>
+
+						<StringTestTask Array='@(A);$(C)'>
+							<Output TaskParameter='Array' ItemName='I4' />
+						</StringTestTask>
+						<StringTestTask Array='@(A);A;B;C'>
+							<Output TaskParameter='Array' ItemName='I5' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			proj.Build ("1");
+
+			Assert.AreEqual ("AA", GetItems (proj, "I0"), "A1");
+			Assert.AreEqual ("A;BA;B", GetItems (proj, "I1"), "A2");
+			Assert.AreEqual (3, proj.GetEvaluatedItemsByName ("I1").Count, "A3");
+			Assert.AreEqual ("A", GetItems (proj, "I2"), "A4");
+			Assert.AreEqual (1, proj.GetEvaluatedItemsByName ("I2").Count, "A5");
+			Assert.AreEqual ("A;A", GetItems (proj, "I3"), "A6");
+			Assert.AreEqual (2, proj.GetEvaluatedItemsByName ("I3").Count, "A7");
+
+			Assert.AreEqual ("A;B;C;A", GetItems (proj, "I4"), "A8");
+			Assert.AreEqual (4, proj.GetEvaluatedItemsByName ("I4").Count, "A9");
+			Assert.AreEqual ("A;B;C;A;B;C", GetItems (proj, "I5"), "A10");
+			Assert.AreEqual (6, proj.GetEvaluatedItemsByName ("I5").Count, "A11");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget4 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+					<Target Name='1'>
+						<StringTestTask Array='@(A)@(A)'>
+							<Output TaskParameter='Array' ItemName='I1' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget5 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+					<Target Name='1'>
+						<StringTestTask Array='@(A)AAA'>
+							<Output TaskParameter='Array' ItemName='I1' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestItemsInTarget6 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<ItemGroup>
+						<A Include='A;B;C' />
+					</ItemGroup>
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
+					<Target Name='1'>
+						<StringTestTask Array='@(A)$(A)'>
+							<Output TaskParameter='Array' ItemName='I1' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"));
+		}
 	}
 }
