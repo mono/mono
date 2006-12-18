@@ -241,7 +241,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException),
 			"A shallow clone of this object cannot be created.")]
-		[Category ("NotWorking")]
 		public void TestClone5 ()
 		{
 			Engine engine;
