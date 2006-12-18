@@ -1,3 +1,7 @@
+2006-12-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiClient.cs: Added missing 2.0 attribute
+
 2006-12-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Add Name and Tag 2.0 properties, as well

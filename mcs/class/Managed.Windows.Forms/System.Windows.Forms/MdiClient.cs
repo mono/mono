@@ -58,6 +58,9 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Public Classes
+#if NET_2_0
+		[ComVisible (false)]
+#endif
 		public new class ControlCollection : Control.ControlCollection {
 
 			private MdiClient owner;
