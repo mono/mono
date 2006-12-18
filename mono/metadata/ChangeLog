@@ -1,4 +1,9 @@
 
+Mon Dec 18 18:16:22 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: use readlink, older versions of glib don't have
+	g_file_read_link ().
+
 Mon Dec 18 16:40:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: try to detect the path to mono if libc fails to provide
