@@ -1,4 +1,9 @@
 
+Mon Dec 18 18:59:08 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-dl.h, mono-dl.c, Makefile.am: implementation
+	of dynamic loading API.
+
 Wed Dec 13 17:21:40 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-mmap.c, mono-mmap.h: use guint64 instead of off_t.
