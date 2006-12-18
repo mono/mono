@@ -48,10 +48,10 @@ namespace System.Text
 
 		public abstract bool MovePrevious ();
 
-		[MonoTODO]
 		public virtual void Reset ()
 		{
-			throw new NotImplementedException ();
+			while (GetNextChar () != '\0')
+				;
 		}
 	}
 }
