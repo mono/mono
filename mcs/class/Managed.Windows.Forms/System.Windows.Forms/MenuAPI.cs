@@ -141,8 +141,9 @@ namespace System.Windows.Forms {
 				item.Parent.InvalidateItem (item);
 			}
 			
-			if (CurrentMenu == TopMenu)
+			if ((CurrentMenu == TopMenu) && !popdown_menu)
 				SelectItem (item.Parent, item, item.IsPopup);
+			
 			grab_control.ActiveTracker = this;
 		}
 
@@ -273,7 +274,8 @@ namespace System.Windows.Forms {
 				CurrentMenu = menu;
 			item.Selected = true;
 			menu.InvalidateItem (item);
-			if (popup_active)
+			
+			if (((CurrentMenu == TopMenu) && execute) || ((CurrentMenu != TopMenu) && popup_active))
 				item.PerformSelect ();
 
 			if ((execute) && ((prev_item == null) || (item != prev_item.Parent)))
