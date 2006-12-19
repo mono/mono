@@ -201,7 +201,13 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public bool Enabled {
 			get { return enabled; }
-			set { enabled = value; }
+			set {
+				if (enabled == value)
+					return;
+					
+				enabled = value;
+				Invalidate ();
+			}
 		}
 
 		[Browsable(false)]
@@ -234,7 +240,6 @@ namespace System.Windows.Forms
 					MenuItems.Remove (item);
 				mdilist_items.Clear ();
 				mdilist_items = null;
-				
 			}
 		}
 

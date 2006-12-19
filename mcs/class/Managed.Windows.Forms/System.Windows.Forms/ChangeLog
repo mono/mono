@@ -1,5 +1,10 @@
 2006-12-18  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuItem.cs: Invalidate menu item rectangle after change Enable
+	property. Fixes #80268.
+	
+2006-12-18  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs: Dont trigger select event when closes top menu
 	item. Fixes #80270.
 
