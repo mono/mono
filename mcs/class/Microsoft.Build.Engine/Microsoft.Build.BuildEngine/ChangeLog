@@ -1,5 +1,15 @@
 2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* Target.cs (ctor): Added ImportedProject argument and removed
+	set_IsImported.
+	(AddNewTask): Implemented.
+
+	* TargetCollection.cs (AddNewTarget): Implemented.
+
+	* Project.cs: Track API changes.
+
+2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Target.cs (Build): Don't throw anything in case of error, just
 	return false.
 

@@ -39,14 +39,14 @@ namespace Microsoft.Build.BuildEngine {
 		BatchingImpl	batchingImpl;
 		BuildState	buildState;
 		Engine		engine;
-		bool		isImported;
+		ImportedProject	importedProject;
 		string		name;
 		Project		project;
 		XmlElement	targetElement;
 		List <XmlElement>	onErrorElements;
 		List <BuildTask>	buildTasks;
 		
-		internal Target (XmlElement targetElement, Project project)
+		internal Target (XmlElement targetElement, Project project, ImportedProject importedProject)
 		{
 			if (project == null)
 				throw new ArgumentNullException ("project");
@@ -58,7 +58,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			this.project = project;
 			this.engine = project.ParentEngine;
-			this.isImported = false;;
+			this.importedProject = importedProject;
 
 			this.onErrorElements  = new List <XmlElement> ();
 			this.buildState = BuildState.NotStarted;
@@ -80,7 +80,15 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public BuildTask AddNewTask (string taskName)
 		{
-			throw new NotImplementedException ();
+			if (taskName == null)
+				throw new ArgumentNullException ("taskName");
+		
+			XmlElement task = project.XmlDocument.CreateElement (taskName, Project.XmlNamespace);
+			targetElement.AppendChild (task);
+			BuildTask bt = new BuildTask (task, this);
+			buildTasks.Add (bt);
+			
+			return bt;
 		}
 
 		public IEnumerator GetEnumerator ()
@@ -89,6 +97,7 @@ namespace Microsoft.Build.BuildEngine {
 				yield return bt;
 		}
 
+		// FIXME: shouldn't we remove it from XML?
 		public void RemoveTask (BuildTask buildTask)
 		{
 			if (buildTask == null)
@@ -212,8 +221,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public bool IsImported {
-			get { return isImported; }
-			internal set { isImported = value; }
+			get { return importedProject != null; }
 		}
 
 		public string Name {

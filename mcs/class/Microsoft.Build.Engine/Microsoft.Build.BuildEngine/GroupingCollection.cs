@@ -142,6 +142,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		// FIXME: check conditions on groups/imports
+		// check what happens with order: import -> 1 2 (probably is entered in wrong order)
 		void Evaluate (EvaluationType type)
 		{
 			BuildItemGroup big;

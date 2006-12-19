@@ -590,33 +590,24 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (bp);
 		}
 		
-		private void AddProjectExtensions (XmlElement xmlElement)
+		void AddProjectExtensions (XmlElement xmlElement)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
 		}
 		
-		private void AddMessage (XmlElement xmlElement)
+		void AddMessage (XmlElement xmlElement)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
 		}
 		
-		private void AddTarget (XmlElement xmlElement, ImportedProject importedProject)
+		void AddTarget (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
-			Target target = new Target (xmlElement, this);
+			Target target = new Target (xmlElement, this, importedProject);
 			targets.AddTarget (target);
-			if (importedProject == null) {
-				target.IsImported = false;
-				if (firstTargetName == null)
-					firstTargetName = target.Name;
-			} else
-				target.IsImported = true;
+			
+			if (firstTargetName == null)
+				firstTargetName = target.Name;
 		}
 		
-		private void AddUsingTask (XmlElement xmlElement, ImportedProject importedProject)
+		void AddUsingTask (XmlElement xmlElement, ImportedProject importedProject)
 		{
 			UsingTask usingTask;
 
@@ -624,7 +615,7 @@ namespace Microsoft.Build.BuildEngine {
 			UsingTasks.Add (usingTask);
 		}
 		
-		private void AddImport (XmlElement xmlElement, ImportedProject importingProject)
+		void AddImport (XmlElement xmlElement, ImportedProject importingProject)
 		{
 			Import import;
 			
@@ -632,33 +623,26 @@ namespace Microsoft.Build.BuildEngine {
 			Imports.Add (import);
 		}
 		
-		private void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
+		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
 			BuildItemGroup big = new BuildItemGroup (xmlElement, this, importedProject);
 			ItemGroups.Add (big);
 		}
 		
-		private void AddPropertyGroup (XmlElement xmlElement, ImportedProject importedProject)
+		void AddPropertyGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
 			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this, importedProject);
 			PropertyGroups.Add (bpg);
 		}
 		
-		private void AddChoose (XmlElement xmlElement)
+		void AddChoose (XmlElement xmlElement)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
-				
 			BuildChoose bc = new BuildChoose (xmlElement, this);
 			groupingCollection.Add (bc);
 			
 		}
 		
-		private static void ValidationCallBack (object sender, ValidationEventArgs e)
+		static void ValidationCallBack (object sender, ValidationEventArgs e)
 		{
 			Console.WriteLine ("Validation Error: {0}", e.Message);
 		}

@@ -31,24 +31,40 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 	public class TargetCollection : ICollection, IEnumerable {
 		
 		Dictionary <string, Target>	targetsByName;
-		//Project				parentProject;
+		Project				parentProject;
 	
 		internal TargetCollection (Project project)
 		{
 			this.targetsByName = new Dictionary <string, Target> (StringComparer.InvariantCultureIgnoreCase);
-			//this.parentProject = project;
+			this.parentProject = project;
 		}
 
-		// This must create a new xml element and stuff.
 		[MonoTODO]
 		public Target AddNewTarget (string targetName)
 		{
-			throw new NotImplementedException ();
+			if (targetName == null)
+				throw new InvalidProjectFileException (
+					"The required attribute \"Name\" is missing from element <Target>.");
+		
+			// FIXME: test it
+			if (targetsByName.ContainsKey (targetName))
+				throw new Exception ("target already exists");
+				
+			XmlElement targetElement = parentProject.XmlDocument.CreateElement ("Target", Project.XmlNamespace);
+			parentProject.XmlDocument.DocumentElement.AppendChild (targetElement);
+			targetElement.SetAttribute ("Name", targetName);
+			
+			Target t = new Target (targetElement, parentProject, null);
+			
+			AddTarget (t);
+			
+			return t;
 		}
 
 		internal void AddTarget (Target target)
