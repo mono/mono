@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 		public ListViewItem ()
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.Add ("");			
+			this.sub_items.Add ("");
 		}
 
 		public ListViewItem (string text) : this (text, -1)
@@ -566,7 +566,7 @@ namespace System.Windows.Forms
 				rect = bounds;
 				rect.X -= owner.h_marker;
 				rect.Y -= owner.v_marker;
-				return rect;				
+				return rect;
 
 			default:
 				throw new ArgumentException ("Invalid value for portion.");
@@ -1001,21 +1001,39 @@ namespace System.Windows.Forms
 
 			public void AddRange (ListViewSubItem [] items)
 			{
-				foreach (ListViewSubItem item in items)
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
+				foreach (ListViewSubItem item in items) {
+					if (item == null)
+						continue;
 					this.Add (item);
+				}
 			}
 
 			public void AddRange (string [] items)
 			{
-				foreach (string item in items)
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
+				foreach (string item in items) {
+					if (item == null)
+						continue;
 					this.Add (item);
+				}
 			}
 
 			public void AddRange (string [] items, Color foreColor,
 					      Color backColor, Font font)
 			{
-				foreach (string item in items)
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
+				foreach (string item in items) {
+					if (item == null)
+						continue;
 					this.Add (item, foreColor, backColor, font);
+				}
 			}
 
 			public void Clear ()

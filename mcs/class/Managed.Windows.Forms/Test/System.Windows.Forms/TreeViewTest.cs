@@ -147,8 +147,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Controls.Add (tv);
 			form.Show ();
 
-			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#E1");
-			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#E2");
+			Assert.IsFalse (tv.Nodes [0].IsExpanded, "#E1");
+			Assert.IsFalse (tv.Nodes [99].IsExpanded, "#E2");
 
 			Assert.IsTrue (tv.Nodes [0].IsVisible, "#F1");
 			Assert.IsFalse (tv.Nodes [99].IsVisible, "#F2");
@@ -190,8 +190,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#E1");
 			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#E2");
 
+#if NET_2_0
+			Assert.IsTrue (tv.Nodes [0].IsVisible, "#F1");
+			Assert.IsFalse (tv.Nodes [99].IsVisible, "#F2");
+#else
 			Assert.IsFalse (tv.Nodes [0].IsVisible, "#F1");
 			Assert.IsTrue (tv.Nodes [99].IsVisible, "#F2");
+#endif
 
 			form.Dispose ();
 		}

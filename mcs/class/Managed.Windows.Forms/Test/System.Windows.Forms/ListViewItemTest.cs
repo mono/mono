@@ -104,4 +104,149 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("test", subItem1.Text, "#B2");
 		}
 	}
+
+	[TestFixture]
+	public class ListViewSubItemCollectionTest
+	{
+		[Test]
+		public void AddRange1 ()
+		{
+			ListViewItem item = new ListViewItem ();
+			ListViewItem.ListViewSubItem subItemA = item.SubItems.Add ("A");
+
+			Assert.AreEqual (2, item.SubItems.Count, "#A1");
+			Assert.IsNotNull (item.SubItems [0], "#A2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#A3");
+
+			ListViewItem.ListViewSubItem subItemB = new ListViewItem.ListViewSubItem ();
+			subItemB.Text = "B";
+			ListViewItem.ListViewSubItem subItemC = new ListViewItem.ListViewSubItem ();
+			subItemB.Text = "C";
+
+			item.SubItems.AddRange (new ListViewItem.ListViewSubItem [] {
+				subItemB, null, subItemC });
+			Assert.AreEqual (4, item.SubItems.Count, "#B1");
+			Assert.IsNotNull (item.SubItems [0], "#B2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#B3");
+			Assert.IsNotNull (item.SubItems [1], "#B3");
+			Assert.AreSame (subItemA, item.SubItems [1], "#B4");
+			Assert.IsNotNull (item.SubItems [2], "#B5");
+			Assert.AreSame (subItemB, item.SubItems [2], "#B6");
+			Assert.IsNotNull (item.SubItems [3], "#B7");
+			Assert.AreSame (subItemC, item.SubItems [3], "#B8");
+		}
+
+		[Test]
+		public void AddRange1_Null ()
+		{
+			ListViewItem item = new ListViewItem ();
+			try {
+				item.SubItems.AddRange ((ListViewItem.ListViewSubItem []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNotNull (ex.ParamName, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+				Assert.IsNull (ex.InnerException, "#6");
+			}
+		}
+
+		[Test]
+		public void AddRange2 ()
+		{
+			string subItemAText = "A";
+			string subItemBText = "B";
+			string subItemCText = "B";
+
+			ListViewItem item = new ListViewItem ();
+			item.SubItems.Add (subItemAText);
+
+			Assert.AreEqual (2, item.SubItems.Count, "#A1");
+			Assert.IsNotNull (item.SubItems [0], "#A2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#A3");
+			Assert.IsNotNull (item.SubItems [1], "#A4");
+			Assert.AreEqual (subItemAText, item.SubItems [1].Text, "#A5");
+
+			item.SubItems.AddRange (new string [] { subItemBText, null, subItemCText });
+			Assert.AreEqual (4, item.SubItems.Count, "#B1");
+			Assert.IsNotNull (item.SubItems [0], "#B2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#B3");
+			Assert.IsNotNull (item.SubItems [1], "#B4");
+			Assert.AreSame (subItemAText, item.SubItems [1].Text, "#B5");
+			Assert.IsNotNull (item.SubItems [2], "#B6");
+			Assert.AreSame (subItemBText, item.SubItems [2].Text, "#B7");
+			Assert.IsNotNull (item.SubItems [3], "#B8");
+			Assert.AreSame (subItemCText, item.SubItems [3].Text, "#B9");
+		}
+
+		[Test]
+		public void AddRange2_Null ()
+		{
+			ListViewItem item = new ListViewItem ();
+			try {
+				item.SubItems.AddRange ((string []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNotNull (ex.ParamName, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+				Assert.IsNull (ex.InnerException, "#6");
+			}
+		}
+
+		[Test]
+		public void AddRange3 ()
+		{
+			string subItemAText = "A";
+			string subItemBText = "B";
+			string subItemCText = "B";
+			Font font = new Font ("Arial", 14);
+
+			ListViewItem item = new ListViewItem ();
+			item.SubItems.Add (subItemAText);
+
+			Assert.AreEqual (2, item.SubItems.Count, "#A1");
+			Assert.IsNotNull (item.SubItems [0], "#A2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#A3");
+			Assert.IsNotNull (item.SubItems [1], "#A4");
+			Assert.AreEqual (subItemAText, item.SubItems [1].Text, "#A5");
+
+			item.SubItems.AddRange (new string [] { subItemBText, null, subItemCText },
+				Color.Blue, Color.Red, font);
+			Assert.AreEqual (4, item.SubItems.Count, "#B1");
+			Assert.IsNotNull (item.SubItems [0], "#B2");
+			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#B3");
+			Assert.IsNotNull (item.SubItems [1], "#C1");
+			Assert.AreSame (subItemAText, item.SubItems [1].Text, "#C2");
+			Assert.IsNotNull (item.SubItems [2], "#D1");
+			Assert.AreSame (subItemBText, item.SubItems [2].Text, "#D2");
+			Assert.AreEqual (Color.Blue, item.SubItems [2].ForeColor, "#D3");
+			Assert.AreEqual (Color.Red, item.SubItems [2].BackColor, "#D4");
+			Assert.AreSame (font, item.SubItems [2].Font, "#D5");
+			Assert.IsNotNull (item.SubItems [3], "#E1");
+			Assert.AreSame (subItemCText, item.SubItems [3].Text, "#E2");
+			Assert.AreEqual (Color.Blue, item.SubItems [3].ForeColor, "#E3");
+			Assert.AreEqual (Color.Red, item.SubItems [3].BackColor, "#E4");
+			Assert.AreSame (font, item.SubItems [3].Font, "#E6");
+		}
+
+		[Test]
+		public void AddRange3_Items_Null ()
+		{
+			ListViewItem item = new ListViewItem ();
+			try {
+				item.SubItems.AddRange ((string []) null, Color.Blue, Color.Red,
+					new Font ("Arial", 14));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNotNull (ex.ParamName, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+				Assert.IsNull (ex.InnerException, "#6");
+			}
+		}
+	}
 }
