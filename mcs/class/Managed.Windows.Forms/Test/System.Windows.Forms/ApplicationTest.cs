@@ -39,12 +39,13 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsNull (ctx.MainForm, "2");
 		}
-
+#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void RestartNotSupportedExceptionTest ()
 		{
 			Application.Restart ();
 		}
+#endif
 	}
 }
