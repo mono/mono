@@ -18,6 +18,9 @@
 	* BuildItemGroupCollection.cs (CopyTo): Changed ArgumentException to
 	IndexOutOfRangeException.
 
+	* Project.cs (DoLoad, Load): Move try/catch to DoLoad ().
+	(MarkProjectAsDirty): Set time.
+
 2006-12-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemGroup.cs (Clone): Throw exception.
