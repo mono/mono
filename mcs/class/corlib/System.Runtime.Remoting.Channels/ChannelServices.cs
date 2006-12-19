@@ -280,9 +280,6 @@ namespace System.Runtime.Remoting.Channels
 				
 				if (pos != -1) registeredChannels.Insert (pos, chnl);
 				else registeredChannels.Add (chnl);
-				
-				IChannelReceiver receiver = chnl as IChannelReceiver;
-				if (receiver != null) receiver.StartListening (null);
 			}
 		}
 
