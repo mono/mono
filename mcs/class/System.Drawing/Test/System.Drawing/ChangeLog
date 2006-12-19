@@ -1,3 +1,7 @@
+2006-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestIcon.cs: Add test cases for 2.0 ExtractAssociatedIcon method.
+
 2006-12-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SystemIconsTest.cs: New. Unit tests for SystemIcons. Note that the

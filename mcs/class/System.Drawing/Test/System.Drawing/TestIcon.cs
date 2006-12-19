@@ -1,13 +1,11 @@
 //
 // Icon class testing unit
 //
-// Author:
+// Authors:
+// 	Sanjay Gupta <gsanjay@novell.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// 	 Sanjay Gupta <gsanjay@novell.com>
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,20 +29,29 @@
 
 using System;
 using System.Drawing;
-using NUnit.Framework;
 using System.IO;
+using System.Reflection;
 using System.Security.Permissions;
+using NUnit.Framework;
 
-namespace MonoTests.System.Drawing{
+namespace MonoTests.System.Drawing {
 
 	[TestFixture]	
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class TestIcon {
+	public class IconTest {
 		
 		Icon icon;
 		Icon newIcon;
 		FileStream fs;
 		FileStream fs1;
+
+		static string filename_dll;
+
+		// static ctor are executed outside the Deny
+		static IconTest ()
+		{
+			filename_dll = Assembly.GetExecutingAssembly ().Location;
+		}
 		
 		[SetUp]
 		public void SetUp ()		
@@ -53,6 +60,18 @@ namespace MonoTests.System.Drawing{
 			icon = new Icon (path);			
 			fs1 = new FileStream (path, FileMode.Open);
 		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (fs != null)
+				fs.Close ();
+			if (fs1 != null)
+				fs1.Close ();
+			if (File.Exists ("newIcon.ico"))
+				File.Delete ("newIcon.ico");
+		}
+
 
 		[Test]
 #if TARGET_JVM
@@ -106,16 +125,39 @@ namespace MonoTests.System.Drawing{
 			
 			Assert.AreEqual (fs1.Length, fs.Length, "M#3");			
 		}
-
-		[TearDown]
-		public void TearDown () 
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ExtractAssociatedIcon_Null ()
 		{
-			if (fs != null)
-				fs.Close();
-			if (fs1 != null)
-				fs1.Close();
-			if (File.Exists ("newIcon.ico"))
-				File.Delete("newIcon.ico");
+			Icon.ExtractAssociatedIcon (null);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ExtractAssociatedIcon_Empty ()
+		{
+			Icon.ExtractAssociatedIcon (String.Empty);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void ExtractAssociatedIcon_DoesNotExists ()
+		{
+			Icon.ExtractAssociatedIcon ("does-not-exists.png");
+		}
+#endif
+	}
+
+	[TestFixture]	
+	public class IconFullTrustTest {
+#if NET_2_0
+		[Test]
+		public void ExtractAssociatedIcon ()
+		{
+			string filename_dll = Assembly.GetExecutingAssembly ().Location;
+			Assert.IsNotNull (Icon.ExtractAssociatedIcon (filename_dll), "dll");
+		}
+#endif
 	}
 }
