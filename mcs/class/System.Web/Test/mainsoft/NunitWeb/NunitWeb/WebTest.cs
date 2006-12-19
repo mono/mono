@@ -188,8 +188,9 @@ namespace MonoTests.SystemWeb.Framework
 		/// <summary>
 		/// Unload the web appdomain and delete the temporary application root
 		/// directory.
+		/// Is never called.
 		/// </summary>
-		public static void Unload ()
+		static void RealUnload ()
 		{
 #if !TARGET_JVM
 			if (host != null) {
@@ -210,6 +211,8 @@ namespace MonoTests.SystemWeb.Framework
 			}
 #endif
 		}
+
+		public static void Unload () {}
 
 		/// <summary>
 		/// Default constructor. Initializes <see cref="Invoker"/> with a new
@@ -280,15 +283,39 @@ namespace MonoTests.SystemWeb.Framework
 		{
 #if !TARGET_JVM
 			EnsureWorkingDirectories ();
-			CheckDomainIsDown ();
 			EnsureDirectoryExists (Path.Combine (baseDir,
 				Path.GetDirectoryName (targetUrl)));
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
 					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
+				byte[] array = new byte[source.Length];
+				source.Read (array, 0, array.Length);
+
+				if (File.Exists(Path.Combine (baseDir, targetUrl))) {
+					using (FileStream existing = File.OpenRead(Path.Combine (baseDir, targetUrl))) {
+						bool equal = false;
+						if (array.Length == existing.Length) {
+							byte[] existingArray = new byte[array.Length];
+							existing.Read (existingArray, 0, existingArray.Length);
+							
+							equal = true;
+							for (int i = 0; i < array.Length; i ++) {
+								if (array[i] != existingArray[i]) {
+									equal = false;
+									break;
+								}
+							}
+						}
+						
+						if (equal)
+							return;
+						
+					}
+					
+					CheckDomainIsDown ();
+				}
+
 				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.Create)) {
-					byte[] array = new byte[source.Length];
-					source.Read (array, 0, array.Length);
 					target.Write (array, 0, array.Length);
 				}
 			}
