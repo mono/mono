@@ -1,3 +1,10 @@
+2006-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewCollectionsTest.cs: Added tests for the new 2.0
+	methods and properties (SelectedIndexCollection,
+	SelectedItemCollection, and ListViewSubItemCollection).
+	* ListViewItemTest.cs: Added test for ImageKey 2.0 property.
+
 2006-12-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewItemTest.cs: Added tests for ListViewSubItemCollection's

@@ -65,8 +65,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, item.Checked, "DefaultValues#4");
 			Assert.AreEqual (string.Empty, item.Text, "DefaultValues#5");
 			Assert.AreEqual (true, item.UseItemStyleForSubItems, "DefaultValues#6");
+			Assert.AreEqual (-1, item.ImageIndex, "DefaultValues#7");
 #if NET_2_0
-			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#7");
+			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#8");
+			Assert.AreEqual(String.Empty, item.ImageKey, "DefaultValues#9");
 #endif
 		}
 
@@ -87,6 +89,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, item2.SubItems.Count, "Clone#5");
 			Assert.AreEqual (item2.SubItems[1].Text, "Element2", "Clone#6");
 		}
+
+#if NET_2_0
+		[Test]
+		public void ListViewItemTestImageIndex()
+		{
+			ListViewItem item1 = new ListViewItem();
+
+			item1.ImageKey = "Key1";
+			item1.ImageIndex = 0;
+			Assert.AreEqual(String.Empty, item1.ImageKey, "ImageIndex#1");
+
+			item1.ImageIndex = 0;
+			item1.ImageKey = "Key1";
+			Assert.AreEqual (-1, item1.ImageIndex, "ImageIndex#2");
+
+			item1.ImageKey = "Key1";
+			item1.ImageIndex = -1;
+			Assert.AreEqual (String.Empty, item1.ImageKey, "ImageIndex#3");
+
+			item1.ImageIndex = 0;
+			item1.ImageKey = String.Empty;
+			Assert.AreEqual (-1, item1.ImageIndex, "ImageIndex#4");
+		}
+#endif
 	}
 
 	[TestFixture]
