@@ -89,6 +89,7 @@ namespace System.Timers
 
 				enabled = value;
 				if (value) {
+					exiting = false;
 					wait = new ManualResetEvent (false);
 					thread = new Thread (new ThreadStart (StartTimer));
 					thread.IsBackground = true;

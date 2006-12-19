@@ -1,8 +1,12 @@
+2006-12-19  Robert Jordan  <robertj@gmx.net>
+
+	* Timer.cs: Apply the latest patch at attached to bug #77847.
+
 2006-12-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: Fixes race condition (bug #77847). Patch from Robert Jordan.
 
-2006-03-19  Robert Jordan  <robertj@gmx.net>
+2006-12-11  Robert Jordan  <robertj@gmx.net>
 
 	* Timer.cs: Fix race condition of the wait handle object.
 	Fixes bug #77847.
