@@ -119,7 +119,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 		}
 
 		[Test]
@@ -2044,6 +2048,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		#endregion
 
 		[Test]
+		[Category("NotWorking")]
 		public void TreeView_NullDS ()
 		{
 			TreeView tv = new TreeView ();
@@ -2147,11 +2152,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tv.OnTreeNodePopulateBase (new TreeNodeEventArgs (new TreeNode (methodName)));
 			Assert.AreEqual (true, eventDone, "After1 " + methodName);
 			Assert.AreEqual (methodName, treeNodeName, "After2 " + methodName);
-		}
-
-		[SetUp]
-		public void SetUpTest () {
-			Thread.Sleep (100);
 		}
 
 		[TestFixtureTearDown]

@@ -91,7 +91,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 		}
 
 		[Test]
@@ -162,7 +166,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
-			t.Run ();
+			string html = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			if (html.IndexOf ("href") == -1)
+				Assert.Fail ("Link button not created");
+			if (html.IndexOf ("MyValidationGroup") == -1)
+				Assert.Fail ("Validation group not set: " + html);
 		}
 
 		public static void ValidationGroup_Load (Page p)
@@ -177,12 +185,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			v.ValidationGroup = "MyValidationGroup";
 			p.Controls.Add (tb);
 			p.Controls.Add (v);
+			p.Controls.Add (new LiteralControl (HtmlDiff.BEGIN_TAG));
 			p.Controls.Add (b);
-			string html = b.Render ();
-			if (html.IndexOf ("href") == -1)
-				Assert.Fail ("Link button not created");
-			if (html.IndexOf ("MyValidationGroup") == -1)
-				Assert.Fail ("Validation group not set");
+			p.Controls.Add (new LiteralControl (HtmlDiff.END_TAG));
 		}
 
 		[Test]

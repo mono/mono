@@ -39,6 +39,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -206,7 +207,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 </select>";
 #endif
-			Assert.AreEqual (exp, l.Render ());
+			HtmlDiff.AssertAreEqual (exp, l.Render (), "Render1");
 		}
 
 		DataSet GetExampleData ()
@@ -245,7 +246,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 </select>";
 #endif
-			Assert.AreEqual (exp, l.Render ());
+			HtmlDiff.AssertAreEqual (exp, l.Render (), "DoubleDataBind");
 		}
 
 		class MyNC : Control, INamingContainer {
