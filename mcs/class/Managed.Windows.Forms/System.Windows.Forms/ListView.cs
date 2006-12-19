@@ -3369,6 +3369,24 @@ namespace System.Windows.Forms
 			#endregion	// Public Properties
 
 			#region Public Methods
+#if NET_2_0
+			public int Add (int itemIndex)
+			{
+				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
+					throw new ArgumentOutOfRangeException ("index");
+
+				owner.Items [itemIndex].Selected = true;
+				if (!owner.IsHandleCreated)
+					return 0;
+
+				return owner.SelectedItems.Count;
+			}
+
+			public void Clear ()
+			{
+				owner.SelectedItems.Clear ();
+			}
+#endif
 			public bool Contains (int selectedIndex)
 			{
 				int [] indices = GetIndices ();
@@ -3439,6 +3457,16 @@ namespace System.Windows.Forms
 				}
 				return -1;
 			}
+
+#if NET_2_0
+			public void Remove (int itemIndex)
+			{
+				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
+					throw new ArgumentOutOfRangeException ("itemIndex");
+
+				owner.Items [itemIndex].Selected = false;
+			}
+#endif
 			#endregion	// Public Methods
 
 			private int [] GetIndices ()
@@ -3490,6 +3518,18 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public ListViewItem this [string key] {
+				get {
+					int idx = IndexOfKey (key);
+					if (idx == -1)
+						return null;
+
+					return (ListViewItem) List [idx];
+				}
+			}
+#endif
+
 			bool ICollection.IsSynchronized {
 				get { return false; }
 			}
@@ -3524,6 +3564,13 @@ namespace System.Windows.Forms
 					return false;
 				return List.Contains (item);
 			}
+
+#if NET_2_0
+			public bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) != -1;
+			}
+#endif
 
 			public void CopyTo (Array dest, int index)
 			{
@@ -3579,6 +3626,23 @@ namespace System.Windows.Forms
 					return -1;
 				return List.IndexOf (item);
 			}
+
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (!owner.IsHandleCreated || key == null || key.Length == 0)
+					return -1;
+
+				ArrayList selected_items = List;
+				for (int i = 0; i < selected_items.Count; i++) {
+					ListViewItem item = (ListViewItem) selected_items [i];
+					if (String.Compare (item.Name, key, true) == 0)
+						return i;
+				}
+
+				return -1;
+			}
+#endif
 			#endregion	// Public Methods
 
 			internal ArrayList List {

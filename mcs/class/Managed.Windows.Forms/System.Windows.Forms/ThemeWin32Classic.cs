@@ -1856,14 +1856,20 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (control.View == View.LargeIcon) {
-				if (item.ImageIndex > -1 && control.LargeImageList != null &&
-				    item.ImageIndex < control.LargeImageList.Images.Count)
-					control.LargeImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
-			} else {
-				if (item.ImageIndex > -1 && control.SmallImageList != null &&
-				    item.ImageIndex < control.SmallImageList.Images.Count)
-					control.SmallImageList.Draw (dc, icon_rect.Location, item.ImageIndex);
+			ImageList image_list = control.View == View.LargeIcon ? control.LargeImageList : 
+				control.SmallImageList;
+			if (image_list != null) {
+				int idx;
+
+#if NET_2_0
+				if (item.ImageKey != String.Empty)
+					idx = image_list.Images.IndexOfKey (item.ImageKey);
+				else
+#endif
+					idx = item.ImageIndex;
+
+				if (idx > -1 && idx < image_list.Images.Count)
+					image_list.Draw (dc, icon_rect.Location, idx);
 			}
 
 			// draw the item text			

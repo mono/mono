@@ -54,6 +54,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		private ListViewGroup group = null;
 		private string name = String.Empty;
+		private string image_key = String.Empty;
 #endif
 		Rectangle bounds;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
@@ -117,26 +118,22 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string[] items, string imageKey) : this(items)
 		{
 			this.ImageKey = imageKey;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string text, string imageKey) : this(text)
 		{
 			this.ImageKey = imageKey;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(ListViewSubItem[] subItems, string imageKey) : this()
 		{
 			this.sub_items.AddRange(subItems);
 			this.ImageKey = imageKey;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string[] items, string imageKey, Color foreColor,
 					Color backColor, Font font) : this()
 		{
@@ -169,7 +166,6 @@ namespace System.Windows.Forms
 			this.group = group;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(ListViewSubItem[] subItems, string imageKey, ListViewGroup group)
 			: this(subItems, imageKey)
 		{
@@ -182,7 +178,6 @@ namespace System.Windows.Forms
 			this.group = group;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string text, string imageKey, ListViewGroup group)
 			: this(text, imageKey)
 		{
@@ -195,7 +190,6 @@ namespace System.Windows.Forms
 			this.group = group;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string[] items, string imageKey, ListViewGroup group)
 			: this(items, imageKey)
 		{
@@ -209,7 +203,6 @@ namespace System.Windows.Forms
 			this.group = group;
 		}
 
-		[MonoTODO("ImageKey is not Implemented")]
 		public ListViewItem(string[] items, string imageKey, Color foreColor, Color backColor,
 				Font font, ListViewGroup group)
 			: this(items, imageKey, foreColor, backColor, font)
@@ -328,12 +321,33 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("Invalid ImageIndex. It must be greater than or equal to -1.");
 				
 				image_index = value;
+#if NET_2_0
+				image_key = String.Empty;
+#endif
 
 				if (owner != null)
 					Layout ();
 				Invalidate ();
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue ("")]
+		[LocalizableAttribute (true)]
+		public string ImageKey {
+			get {
+				return image_key;
+			}
+			set {
+				image_key = value == null ? String.Empty : value;
+				image_index = -1;
+
+				if (owner != null)
+					Layout ();
+				Invalidate ();
+			}
+		}
+#endif
 
 		[Browsable (false)]
 		public ImageList ImageList {
@@ -478,15 +492,6 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-		}
-
-		[LocalizableAttribute(true)]
-		[DefaultValue("")]
-		[MonoTODO("ImageKey is not Implemented")]
-		public string ImageKey {
-			//TODO: how to handle this?
-			get { return ""; }
-			set { }
 		}
 #endif
 
@@ -996,14 +1001,12 @@ namespace System.Windows.Forms
 
 			public void AddRange (ListViewSubItem [] items)
 			{
-				list.Clear ();
 				foreach (ListViewSubItem item in items)
 					this.Add (item);
 			}
 
 			public void AddRange (string [] items)
 			{
-				list.Clear ();
 				foreach (string item in items)
 					this.Add (item);
 			}
@@ -1011,7 +1014,6 @@ namespace System.Windows.Forms
 			public void AddRange (string [] items, Color foreColor,
 					      Color backColor, Font font)
 			{
-				list.Clear ();
 				foreach (string item in items)
 					this.Add (item, foreColor, backColor, font);
 			}

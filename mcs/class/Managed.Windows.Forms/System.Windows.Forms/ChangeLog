@@ -1,3 +1,13 @@
+2006-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add support for SelectedIndexCollection
+	and SelectedItemCollection 2.0 methods. Implement support
+	for ImageKey too.
+	* ListViewItem.cs: Add support for ListViewSubItemCollection
+	2.0 methods. Also, fix an incorrect behavior of AddRange method
+	(it shouldn't call Clear).
+	* ThemeWin32Classic.cs: Support for ListView.ImageKey 2.0 property.
+
 2006-12-19  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: 
