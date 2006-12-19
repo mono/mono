@@ -1,4 +1,9 @@
 
+Tue Dec 19 16:18:16 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-mlist.h, mono-mlist.c, Makefile.am: linked list
+	implementation for managed objects.
+
 Tue Dec 19 14:28:03 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: implemented code to be used for checking
