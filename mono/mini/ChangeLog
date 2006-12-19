@@ -1,3 +1,8 @@
+2006-12-19  Robert Jordan  <robertj@gmx.net>
+
+	* mini-x86: enable the code to return small structures in
+	registers for FreeBSD as well. Fixes bug #80278.
+	* aot-runtime.c: Include sys/wait.h for WEXITSTATUS/WIFEXITED.
 
 Mon Dec 18 19:47:17 CET 2006 Paolo Molaro <lupus@ximian.com>
 
