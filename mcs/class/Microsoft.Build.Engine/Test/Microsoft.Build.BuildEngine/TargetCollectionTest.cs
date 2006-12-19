@@ -58,7 +58,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewTarget1 ()
 		{
                         string documentString = @"
@@ -81,9 +80,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The required attribute \"Name\" is missing from element <Target>.  ")]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAddNewTarget2 ()
 		{
                         string documentString = @"

@@ -92,7 +92,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewTask1 ()
 		{
                         string documentString = @"
@@ -117,7 +116,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotWorking")]
 		public void TestAddNewTask2 ()
 		{
                         string documentString = @"

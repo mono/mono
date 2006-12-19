@@ -1,5 +1,9 @@
 2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* TargetTest.cs, TargetCollectionTest.cs: Enabled all tests.
+
+2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildItemTest.cs, BuildPropertyGroupTest.cs,
 	UsingTaskCollectionTest.cs, TargetTest.cs, BuildItemGroupTest.cs,
 	BuildPropertyGroupCollectionTest.cs, TargetCollectionTest.cs,
