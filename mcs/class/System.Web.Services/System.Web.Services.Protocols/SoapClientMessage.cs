@@ -59,8 +59,10 @@ namespace System.Web.Services.Protocols {
 			this.client = client;
 			this.url = url;
 			Parameters = parameters;
+#if NET_2_0
 			if (SoapVersion == SoapProtocolVersion.Soap12)
 				ContentType = "application/soap+xml";
+#endif
 		}
 
 		#endregion 
