@@ -2779,6 +2779,18 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public virtual ColumnHeader this [string key] {
+				get {
+					int idx = IndexOfKey (key);
+					if (idx == -1)
+						return null;
+
+					return (ColumnHeader) list [idx];
+				}
+			}
+#endif
+
 			bool ICollection.IsSynchronized {
 				get { return true; }
 			}
@@ -2816,6 +2828,48 @@ namespace System.Windows.Forms
 				return colHeader;
 			}
 
+#if NET_2_0
+			public virtual ColumnHeader Add (string text)
+			{
+				return Add (String.Empty, text);
+			}
+
+			public virtual ColumnHeader Add (string text, int iwidth)
+			{
+				return Add (String.Empty, text, iwidth);
+			}
+
+			public virtual ColumnHeader Add (string key, string text)
+			{
+				ColumnHeader colHeader = new ColumnHeader ();
+				colHeader.Name = key;
+				colHeader.Text = text;
+				Add (colHeader);
+				return colHeader;
+			}
+
+			public virtual ColumnHeader Add (string key, string text, int iwidth)
+			{
+				return Add (key, text, iwidth, HorizontalAlignment.Left, -1);
+			}
+
+			public virtual ColumnHeader Add (string key, string text, int iwidth, HorizontalAlignment textAlign, int imageIndex)
+			{
+				ColumnHeader colHeader = new ColumnHeader (key, text, iwidth, textAlign);
+				colHeader.ImageIndex = imageIndex;
+				Add (colHeader);
+				return colHeader;
+			}
+
+			public virtual ColumnHeader Add (string key, string text, int iwidth, HorizontalAlignment textAlign, string imageKey)
+			{
+				ColumnHeader colHeader = new ColumnHeader (key, text, iwidth, textAlign);
+				colHeader.ImageKey = imageKey;
+				Add (colHeader);
+				return colHeader;
+			}
+#endif
+
 			public virtual void AddRange (ColumnHeader [] values)
 			{
 				foreach (ColumnHeader colHeader in values) {
@@ -2836,6 +2890,13 @@ namespace System.Windows.Forms
 			{
 				return list.Contains (value);
 			}
+
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) != -1;
+			}
+#endif
 
 			public IEnumerator GetEnumerator ()
 			{
@@ -2897,6 +2958,22 @@ namespace System.Windows.Forms
 				return list.IndexOf (value);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (key == null || key.Length == 0)
+					return -1;
+
+				for (int i = 0; i < list.Count; i++) {
+					ColumnHeader col = (ColumnHeader) list [i];
+					if (String.Compare (key, col.Name, true) == 0)
+						return i;
+				}
+
+				return -1;
+			}
+#endif
+
 			public void Insert (int index, ColumnHeader value)
 			{
 				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
@@ -2908,6 +2985,46 @@ namespace System.Windows.Forms
 				list.Insert (index, value);
 				owner.Redraw (true);
 			}
+
+#if NET_2_0
+			public void Insert (int index, string text)
+			{
+				Insert (index, String.Empty, text);
+			}
+
+			public void Insert (int index, string text, int width)
+			{
+				Insert (index, String.Empty, text, width);
+			}
+
+			public void Insert (int index, string key, string text)
+			{
+				ColumnHeader colHeader = new ColumnHeader ();
+				colHeader.Name = key;
+				colHeader.Text = text;
+				Insert (index, colHeader);
+			}
+
+			public void Insert (int index, string key, string text, int width)
+			{
+				ColumnHeader colHeader = new ColumnHeader (key, text, width, HorizontalAlignment.Left);
+				Insert (index, colHeader);
+			}
+
+			public void Insert (int index, string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
+			{
+				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				colHeader.ImageIndex = imageIndex;
+				Insert (index, colHeader);
+			}
+
+			public void Insert (int index, string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
+			{
+				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				colHeader.ImageKey = imageKey;
+				Insert (index, colHeader);
+			}
+#endif
 
 			public void Insert (int index, string str, int width, HorizontalAlignment textAlign)
 			{
@@ -2921,6 +3038,15 @@ namespace System.Windows.Forms
 				list.Remove (column);
 				owner.Redraw (true);
 			}
+
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				int idx = IndexOfKey (key);
+				if (idx != -1)
+					RemoveAt (idx);
+			}
+#endif
 
 			public virtual void RemoveAt (int index)
 			{

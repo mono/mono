@@ -42,6 +42,12 @@ namespace System.Windows.Forms
 		private string text = "ColumnHeader";
 		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
 		private int width = ThemeEngine.Current.ListViewDefaultColumnWidth;
+#if NET_2_0
+		private int image_index = -1;
+		private string image_key = String.Empty;
+		private string name = String.Empty;
+		private object tag;
+#endif
 
 		// internal variables
 		internal Rectangle column_rect = Rectangle.Empty;
@@ -59,10 +65,33 @@ namespace System.Windows.Forms
 			this.text_alignment = alignment;
 			CalcColumnHeader ();
 		}
+
+#if NET_2_0
+		internal ColumnHeader (string key, string text, int width, HorizontalAlignment textAlign)
+		{
+			Name = key;
+			Text = text;
+			this.width = width;
+			this.text_alignment = textAlign;
+			CalcColumnHeader ();
+		}
+#endif
 		#endregion	// Internal Constructor
 
 		#region Public Constructors
 		public ColumnHeader () { }
+
+#if NET_2_0
+		public ColumnHeader (int imageIndex)
+		{
+			ImageIndex = imageIndex;
+		}
+
+		public ColumnHeader (string imageKey)
+		{
+			ImageKey = imageKey;
+		}
+#endif
 		#endregion	// Public Constructors
 
 		#region Private Internal Methods Properties
@@ -129,6 +158,40 @@ namespace System.Windows.Forms
 		#endregion	// Private Internal Methods Properties
 
 		#region Public Instance Properties
+#if NET_2_0
+		public int ImageIndex {
+			get {
+				return image_index;
+			}
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value");
+
+				image_index = value;
+				image_key = String.Empty;
+			}
+		}
+
+		public string ImageKey {
+			get {
+				return image_key;
+			}
+			set {
+				image_key = value == null ? String.Empty : value;
+				image_index = -1;
+			}
+		}
+
+		public ImageList ImageList {
+			get {
+				if (owner == null)
+					return null;
+
+				return owner.SmallImageList;
+			}
+		}
+#endif
+
 		[Browsable (false)]
 		public int Index {
 			get {
@@ -144,6 +207,28 @@ namespace System.Windows.Forms
 		public ListView ListView {
 			get { return owner; }
 		}
+
+#if NET_2_0
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value == null ? String.Empty : value;
+			}
+		}
+
+		[LocalizableAttribute (false)]
+		[BindableAttribute (true)]
+		public object Tag {
+			get {
+				return tag;
+			}
+			set {
+				tag = value;
+			}
+		}
+#endif
 
 		[Localizable (true)]
 		public string Text {

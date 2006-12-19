@@ -1,3 +1,10 @@
+2006-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ColumnHeader.cs: Add Tag, Name, ImageKey, ImageIndex,
+	and Image List 2.0 members for ColummnHeader.
+	* ListView.cs: Add key-related 2.0 methods for
+	ColumnHeaderCollection.
+
 2006-12-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewItem.cs: Changed AddRange overloads to match MS: throw
