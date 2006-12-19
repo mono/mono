@@ -179,6 +179,7 @@ System/MissingMemberException.cs
 System/MissingMethodException.cs
 System/MonoAsyncCall.cs
 System/MonoCustomAttrs.cs
+System/MonoListItem.cs
 System/MonoType.cs
 System/MTAThreadAttribute.cs
 System/MulticastDelegate.cs
