@@ -28,7 +28,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Systme.Windows.Forms.Design {
+namespace System.Windows.Forms.Design {
 
 	// XXX this is just a stub class to keep things from crashing when a property grid is used on a control.
 	internal class DataSourceConverter : TypeConverter {
