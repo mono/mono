@@ -1,3 +1,8 @@
+2006-12-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : ReadChars() does not have to store characters,
+	  so avoid extra storing. Patch by Csaba Halasz, fixed bug #80306.
+
 2006-12-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : InnerText was returning comment text when there was

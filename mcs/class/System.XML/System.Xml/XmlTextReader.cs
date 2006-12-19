@@ -669,6 +669,8 @@ namespace System.Xml
 			if (NodeType != XmlNodeType.Element)
 				return 0;
 
+			preserveCurrentTag = false;
+
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
