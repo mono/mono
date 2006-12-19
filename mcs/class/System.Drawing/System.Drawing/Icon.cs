@@ -240,10 +240,15 @@ namespace System.Drawing
 		{
 		}
 
-		[MonoTODO ("Method isn't implemented.")]
+		[MonoLimitation ("The same icon, SystemIcons.WinLogo, is returned for all file types.")]
 		public static Icon ExtractAssociatedIcon (string filePath)
 		{
-			throw new NotImplementedException ();
+			if ((filePath == null) || (filePath.Length == 0))
+				throw new ArgumentException (Locale.GetText ("Null or empty path."), "filePath");
+			if (!File.Exists (filePath))
+				throw new FileNotFoundException (Locale.GetText ("Couldn't find specified file."), filePath);
+
+			return SystemIcons.WinLogo;
 		}	
 #endif
 
