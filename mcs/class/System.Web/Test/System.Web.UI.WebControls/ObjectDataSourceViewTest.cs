@@ -145,10 +145,11 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class ObjectDataSourceViewTest
 	{
-		[SetUp]
-		public void SetupTestCase ()
+
+		[TestFixtureTearDown]
+		public void TearDown ()
 		{
-			Thread.Sleep (100);
+			WebTest.Unload ();
 		}
 
 		[Test]
@@ -394,7 +395,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (delete));
 			string html = t.Run ();
 			Assert.AreEqual (-1, html.IndexOf("Yonik"), "ObjectDataSourceViewDelete");
-			WebTest.Unload ();
 		}
 
 		public static void delete (Page p)
@@ -481,7 +481,6 @@ namespace MonoTests.System.Web.UI.WebControls
 						</table>
 					</div>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewSelect");
-			WebTest.Unload ();
 		}
 
 		public static void select (Page p)
@@ -554,7 +553,6 @@ namespace MonoTests.System.Web.UI.WebControls
 						</table>
 					</div>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewSelectCount");
-			WebTest.Unload ();
 		}
 
 		public static void selectcount (Page p)
@@ -606,11 +604,12 @@ namespace MonoTests.System.Web.UI.WebControls
 						</table>
 					</div>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewInsert");
-			WebTest.Unload ();
 		}
 
 		public static void insert (Page p)
 		{
+			DataSourceObject.InitDS ();
+
 			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
 			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 			ObjectDataSourceView view;
@@ -684,7 +683,6 @@ namespace MonoTests.System.Web.UI.WebControls
 						</table>
 					</div>";
 			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewUpdate");
-			WebTest.Unload ();
 		}
 
 		public static void update (Page p)

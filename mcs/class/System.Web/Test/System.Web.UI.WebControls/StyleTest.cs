@@ -136,6 +136,13 @@ namespace MonoTests.System.Web.UI.WebControls
 
 	[TestFixture]	
 	public class StyleTest {
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+
 		private static HtmlTextWriter GetWriter () {
 			StringWriter sw = new StringWriter ();
 			sw.NewLine = "\n";

@@ -333,6 +333,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 #if NET_2_0
 		[Test]
+		[Category ("NunitWeb")]
 		public void RenderInAspxPage ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RenderInAspxPage_OnLoad));

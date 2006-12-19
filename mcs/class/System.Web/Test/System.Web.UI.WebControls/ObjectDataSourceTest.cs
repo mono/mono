@@ -100,13 +100,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class ObjectDataSourceTest
 	{
 
-		
-		[TestFixtureSetUp]
-		public void setup ()
-		{ 
-			Thread.Sleep (100); 
-		}
-
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
