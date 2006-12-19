@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
@@ -43,6 +44,31 @@ namespace MonoTests.Microsoft.Build.Utilities {
 						string parameter)
 		{
 			base.VerifyThrowNoEmbeddedDoubleQuotes (switchName, parameter);
+		}
+
+		public new void AppendFileNameWithQuoting (string filename)
+		{
+			base.AppendFileNameWithQuoting (filename);
+		}
+
+		public new void AppendSpaceIfNotEmpty ()
+		{
+			base.AppendSpaceIfNotEmpty ();
+		}
+
+		public new void AppendTextUnquoted (string textToAppend)
+		{
+			base.AppendTextUnquoted (textToAppend);
+		}
+
+		public new void AppendTextWithQuoting (string textToAppend)
+		{
+			base.AppendTextWithQuoting (textToAppend);
+		}
+
+		public new StringBuilder CommandLine
+		{
+			get { return base.CommandLine; }
 		}
 	}
 
@@ -87,6 +113,26 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendFileNameIfNotNull (filename);
 			
 			Assert.AreEqual (filename, clb.ToString (), "A1");
+		}
+
+		[Test]
+		public void TestAppendFileNameIfNotNull3 ()
+		{
+			clb = new CommandLineBuilder ();
+
+			clb.AppendFileNameIfNotNull ((string) null);
+
+			Assert.AreEqual (String.Empty, clb.ToString (), "A1");
+		}
+
+		[Test]
+		public void TestAppendFileNameIfNotNull4 ()
+		{
+			clb = new CommandLineBuilder ();
+
+			clb.AppendFileNameIfNotNull ((ITaskItem) null);
+
+			Assert.AreEqual (String.Empty, clb.ToString (), "A1");
 		}
 		
 		[Test]
@@ -139,6 +185,41 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendFileNamesIfNotNull ((ITaskItem[]) null, "sep");
 			
 			Assert.AreEqual ("ab", clb.ToString (), "A2");
+		}
+
+		[Test]
+		public void TestAppendFileNameWithQuoting1 ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.AppendFileNameWithQuoting (null);
+
+			Assert.AreEqual (String.Empty, clbt.ToString (), "A1");
+
+			clbt.AppendFileNameWithQuoting ("abc abc");
+
+			Assert.AreEqual ("\"abc abc\"", clbt.ToString (), "A2");
+
+			clbt = new CLBTester ();
+
+			clbt.AppendFileNameWithQuoting ("abc");
+
+			Assert.AreEqual ("abc", clbt.ToString (), "A3");
+		}
+
+		[Test]
+		public void TestAppendSpaceIfNotEmpty ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.AppendSpaceIfNotEmpty ();
+
+			Assert.AreEqual (String.Empty, clbt.ToString (), "A1");
+
+			clbt.AppendFileNameIfNotNull ("a");
+			clbt.AppendFileNameIfNotNull ("b");
+
+			Assert.AreEqual ("a b", clbt.ToString (), "A2");
 		}
 		
 		[Test]
@@ -385,6 +466,35 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			
 			clb.AppendSwitchUnquotedIfNotNull ("/switch", items, null);
 		}
+
+		[Test]
+		public void TestAppendTextUnquoted ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.AppendTextUnquoted (null);
+			
+			clbt.AppendTextUnquoted ("a b");
+
+			Assert.AreEqual ("a b", clbt.ToString (), "A1");
+		}
+
+		[Test]
+		public void TestAppendTextWithQuoting ()
+		{
+			CLBTester clbt = new CLBTester ();
+
+			clbt.AppendTextWithQuoting (null);
+
+			clbt.AppendTextUnquoted ("a b");
+
+			Assert.AreEqual ("a b", clbt.ToString (), "A1");
+
+			clbt = new CLBTester ();
+			clbt.AppendTextWithQuoting ("a");
+
+			Assert.AreEqual ("a", clbt.ToString (), "A2");
+		}
 		
 		[Test]
 		public void TestAppendUnquotedSwitchIfNotNull10 ()
@@ -398,6 +508,14 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendSwitchUnquotedIfNotNull ("/switch:", items, ";");
 			
 			Assert.AreEqual ("/switch:a;b", clb.ToString (), "A2");
+		}
+
+		[Test]
+		public void TestCommandLine ()
+		{
+			CLBTester clbt = new CLBTester ();
+			clbt.AppendFileNameIfNotNull ("a");
+			Assert.AreEqual (clbt.ToString (), clbt.CommandLine.ToString (), "A1");
 		}
 
 		[Test]
