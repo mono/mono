@@ -3268,6 +3268,8 @@ namespace System.Windows.Forms {
 
 			undo.BeginCompoundAction ();
 
+			InvalidateSelectionArea ();
+
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
