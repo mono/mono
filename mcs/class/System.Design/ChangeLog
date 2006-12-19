@@ -1,3 +1,7 @@
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
+	* System.Design.dll.sources: add DataSourceConverter.cs
+
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* System.Design.dll.sources: add
