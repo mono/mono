@@ -1,3 +1,7 @@
+2006-12-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonthCalendar.cs: Fixed InvalidCastException.
+
 2006-12-19  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Don't increment the position here.

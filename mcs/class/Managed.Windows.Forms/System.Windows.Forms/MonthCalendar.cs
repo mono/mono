@@ -977,14 +977,14 @@ namespace System.Windows.Forms {
 
 		// raises the date changed event
 		protected virtual void OnDateChanged (DateRangeEventArgs drevent) {
-			EventHandler eh = (EventHandler)(Events [DateChangedEvent]);
+			DateRangeEventHandler eh = (DateRangeEventHandler) (Events [DateChangedEvent]);
 			if (eh != null)
 				eh (this, drevent);
 		}
 
 		// raises the DateSelected event
 		protected virtual void OnDateSelected (DateRangeEventArgs drevent) {
-			EventHandler eh = (EventHandler)(Events [DateSelectedEvent]);
+			DateRangeEventHandler eh = (DateRangeEventHandler) (Events [DateSelectedEvent]);
 			if (eh != null)
 				eh (this, drevent);
 		}
