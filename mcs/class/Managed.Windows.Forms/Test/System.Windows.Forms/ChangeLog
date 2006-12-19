@@ -1,3 +1,7 @@
+2006-12-19  Daniel Nauck  <dna@mono-project.de>
+
+	* ApplicationTest.cs: Added test for Restart ().
+
 2006-12-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MonthCalendarTest.cs: Added test for DefaultMargin.
