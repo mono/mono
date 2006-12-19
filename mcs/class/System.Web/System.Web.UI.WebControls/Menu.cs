@@ -1535,12 +1535,12 @@ namespace System.Web.UI.WebControls
 			// Top separator image
 
 			if (isDynamicItem && DynamicTopSeparatorImageUrl != "") {
-				writer.AddAttribute ("src", DynamicTopSeparatorImageUrl);
+				writer.AddAttribute ("src", ResolveClientUrl (DynamicTopSeparatorImageUrl));
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
 			}
 			else if (!isDynamicItem && StaticTopSeparatorImageUrl != "") {
-				writer.AddAttribute ("src", StaticTopSeparatorImageUrl);
+				writer.AddAttribute ("src", ResolveClientUrl (StaticTopSeparatorImageUrl));
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
 			}
@@ -1615,7 +1615,7 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				RenderItemHref (writer, item);
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
-				writer.AddAttribute ("src", item.ImageUrl);
+				writer.AddAttribute ("src", ResolveClientUrl (item.ImageUrl));
 				writer.AddAttribute ("border", "0");
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
@@ -1712,7 +1712,7 @@ namespace System.Web.UI.WebControls
 				string popOutImage = GetPopOutImage (item, isDynamicItem);
 				if (popOutImage != null) {
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
-					writer.AddAttribute ("src", popOutImage);
+					writer.AddAttribute ("src", ResolveClientUrl (popOutImage));
 					writer.AddAttribute ("border", "0");
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
 					writer.RenderEndTag ();	// IMG
@@ -1733,7 +1733,7 @@ namespace System.Web.UI.WebControls
 					separatorImg = StaticBottomSeparatorImageUrl;
 			}
 			if (separatorImg.Length > 0) {
-				writer.AddAttribute ("src", separatorImg);
+				writer.AddAttribute ("src", ResolveClientUrl (separatorImg));
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
 			}
@@ -1844,7 +1844,7 @@ namespace System.Web.UI.WebControls
 				writer.AddStyleAttribute ("cursor", "text");
 			}
 			else if (item.NavigateUrl != "") {
-				writer.AddAttribute ("href", item.NavigateUrl);
+				writer.AddAttribute ("href", ResolveClientUrl (item.NavigateUrl));
 				if (item.Target != "")
 					writer.AddAttribute ("target", item.Target);
 				else if (Target != "")

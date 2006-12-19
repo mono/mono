@@ -1,5 +1,9 @@
 2006-12-19 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Menu.cs: fixed: ResolveClientUrl used with src and href attributes
+
+2006-12-19 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs:
 	* TreeNode.cs:
 	TreeNodeCollapsed is not raised for leaf node.		
