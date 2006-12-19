@@ -1,5 +1,7 @@
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
+	* DataMemberFieldConverter.cs: another empty stub class.
+
 	* DataSourceConverter.cs: new empty stub class to keep
 	ControlInspector from crashing.
 
