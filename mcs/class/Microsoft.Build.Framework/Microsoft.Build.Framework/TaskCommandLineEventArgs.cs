@@ -43,7 +43,7 @@ namespace Microsoft.Build.Framework {
 		public TaskCommandLineEventArgs (string commandLine,
 						 string taskName,
 						 MessageImportance importance)
-			: base (null, null, null, importance)
+			: base (commandLine, null, null, importance)
 		{
 			this.taskName = taskName;
 			this.commandLine = commandLine;

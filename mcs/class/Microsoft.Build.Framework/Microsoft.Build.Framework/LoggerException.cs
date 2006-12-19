@@ -67,8 +67,8 @@ namespace Microsoft.Build.Framework {
 					   StreamingContext context)
 			: base (info, context)
 		{
-			errorCode = info.GetString ("ErrorCode");
-			helpKeyword = info.GetString ("HelpKeyword");
+			errorCode = info.GetString ("errorCode");
+			helpKeyword = info.GetString ("helpKeyword");
 		}
 		
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -80,8 +80,8 @@ namespace Microsoft.Build.Framework {
 		
 			base.GetObjectData (info, context);
 			
-			info.AddValue ("ErrorCode", errorCode);
-			info.AddValue ("HelpKeyword", helpKeyword);
+			info.AddValue ("errorCode", errorCode);
+			info.AddValue ("helpKeyword", helpKeyword);
 		}
 
 		public string ErrorCode {
