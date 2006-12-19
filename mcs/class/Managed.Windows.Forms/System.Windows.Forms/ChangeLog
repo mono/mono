@@ -9,7 +9,11 @@
 	FormatSpecified param, basically this works in the same way as
 	BoundsSpecified in Control.
 	- Set the caret properties when the caret is positioned.
-	- 
+	- When wrapping text make sure that we calculate the width of the
+	last character
+	- when calculating alignments we might have wrapped down to the
+	next line, so don't search for an individual tag, search for the
+	end of the line
 	
 2006-12-19  Daniel Nauck  <dna@mono-project.de>
 
