@@ -90,9 +90,7 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			IMethodCallMessage mcm = (IMethodCallMessage) msg;
 			
-			MethodInfo mi = (MethodInfo) mcm.MethodBase;
-
-			ParameterInfo[] parameters = mi.GetParameters();
+			ParameterInfo[] parameters = mcm.MethodBase.GetParameters();
 			int narg = 0;
 
 			foreach (ParameterInfo pi in parameters)
