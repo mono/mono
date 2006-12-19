@@ -1,3 +1,16 @@
+2006-12-19  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: 
+	* TextBoxBase.cs: New args for FormatText
+	* TextControl.cs: Rewrote the main drawing method, this version
+	feels a little easier to understand and debug to me.  Hopefully it
+	does to others also
+	- Fix FormatText to OR in the new formating values.  Added
+	FormatSpecified param, basically this works in the same way as
+	BoundsSpecified in Control.
+	- Set the caret properties when the caret is positioned.
+	- 
+	
 2006-12-19  Daniel Nauck  <dna@mono-project.de>
 
 	* Application.cs: add Restart () 2.0 support

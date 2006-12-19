@@ -193,7 +193,7 @@ namespace System.Windows.Forms {
 					// Font changes always set the whole doc to that font
 					start = document.GetLine(1);
 					end = document.GetLine(document.Lines);
-					document.FormatText(start, 1, end, end.text.Length + 1, base.Font, new SolidBrush(this.ForeColor));
+					document.FormatText(start, 1, end, end.text.Length + 1, base.Font, null, null, FormatSpecified.Font);
 				}
 			}
 		}
@@ -1455,7 +1455,7 @@ namespace System.Windows.Forms {
 				line = document.GetLine(rtf_cursor_y);
 				if (rtf_line.Length > 0) {
 					document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
-					document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color); // FormatText is 1-based
+					document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color, null, FormatSpecified.Font | FormatSpecified.Color); // FormatText is 1-based
 				}
 				if (newline) {
 					document.Split(line, rtf_cursor_x + length);

@@ -344,7 +344,7 @@ namespace System.Windows.Forms {
 			set {
 				int	i;
 				int	l;
-				Brush	brush;
+				SolidBrush brush;
 
 				document.Empty();
 
@@ -1793,7 +1793,9 @@ namespace System.Windows.Forms {
 				// Font changes apply to the whole document
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
-					LineTag.FormatText(line, 1, line.text.Length, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+					LineTag.FormatText(line, 1, line.text.Length, Font,
+							ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor),
+							null, FormatSpecified.Font | FormatSpecified.Color);
 					document.UpdateView(line, 0);
 				}
 				// Make sure the caret height is matching the new font height

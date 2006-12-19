@@ -70,12 +70,15 @@ namespace System.Windows.Forms {
 		internal FontStyle	remove_style;
 		internal Color		color;
 		internal Font		font_obj;
+	}
 
-		internal FontDefinition() {
-			face = null;
-			size = 0;
-			color = Color.Empty;
-		}
+	[Flags]
+	internal enum FormatSpecified {
+		None,
+
+		BackColor = 2,
+		Font = 4,
+		Color = 8,
 	}
 
 	internal enum CaretDirection {
@@ -148,7 +151,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal Line(int LineNo, string Text, Font font, Brush color) : this() {
+		internal Line(int LineNo, string Text, Font font, SolidBrush color) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -160,7 +163,7 @@ namespace System.Windows.Forms {
 			tags.color = color;
 		}
 
-		internal Line(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) : this() {
+		internal Line(int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -381,7 +384,6 @@ namespace System.Windows.Forms {
 			tag = this.tags;
 			ascent = 0;
 			tag.shift = 0;
-			tag.width = 0;
 
 			this.recalc = false;
 			widths[0] = indent;
@@ -402,7 +404,6 @@ namespace System.Windows.Forms {
 			this.ascent = tag.ascent;
 
 			while (pos < len) {
-				tag.width += w;
 				pos++;
 				widths[pos] = widths[pos-1] + w;
 			}
@@ -434,7 +435,6 @@ namespace System.Windows.Forms {
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.shift = 0;
-			tag.width = 0;
 
 			if (this.soft_break) {
 				widths[0] = hanging_indent;
@@ -453,7 +453,6 @@ namespace System.Windows.Forms {
 				size = g.MeasureString(this.text.ToString(pos, 1), tag.font, 10000, string_format);
 
 				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
-					tag.width = 0;
 					tag.ascent = 0;
 					if (tag.previous != null) {
 						tag.X = tag.previous.X;
@@ -461,7 +460,6 @@ namespace System.Windows.Forms {
 						tag.X = (int)widths[pos];
 					}
 					tag = tag.next;
-					tag.width = 0;
 					tag.shift = 0;
 				}
 
@@ -474,16 +472,23 @@ namespace System.Windows.Forms {
 
 				if (doc.wrap) {
 					if ((wrap_pos > 0) && (wrap_pos != len) && (widths[pos] + w) + 5 > (doc.viewport_width - this.right_indent)) {
+						// Make sure to set the last width of the line before wrapping
+						pos++;
+						widths[pos] = widths[pos-1] + w;
+
 						pos = wrap_pos;
-						tag.width = wrap_width;
 						doc.Split(this, tag, pos, this.soft_break);
 						this.soft_break = true;
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
-					} else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
+					}  else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
 						// No suitable wrap position was found so break right in the middle of a word
-						tag.width = tag.width + w;
+
+						// Make sure to set the last width of the line before wrapping
+						pos++;
+						widths[pos] = widths[pos-1] + w;
+
 						doc.Split(this, tag, pos, this.soft_break);
 						this.soft_break = true;
 						len = this.text.Length;
@@ -494,8 +499,6 @@ namespace System.Windows.Forms {
 
 				// Contract all soft lines that follow back into our line
 				if (!wrapped) {
-					tag.width += w;
-
 					pos++;
 
 					widths[pos] = widths[pos-1] + w;
@@ -530,9 +533,8 @@ namespace System.Windows.Forms {
 						LineTag		t;
 
 						// We have a tag that has a taller ascent than the line;
-
 						t = tags;
-						while (t != tag) {
+						while (t != null && t != tag) {
 							t.shift = tag.ascent - t.ascent;
 							t = t.next;
 						}
@@ -552,7 +554,6 @@ namespace System.Windows.Forms {
 
 					tag = tag.next;
 					if (tag != null) {
-						tag.width = 0;
 						tag.shift = 0;
 						wrap_pos = pos;
 						wrap_width = tag.width;
@@ -1048,7 +1049,8 @@ namespace System.Windows.Forms {
 				length = 0;
 				Console.Write("   Tags: ");
 				while (tag != null) {
-					Console.Write("{0} <{1}>-<{2}> ", count++, tag.start, tag.length);
+					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.start + tag.length
+							/*line.text.ToString (tag.start - 1, tag.length)*/);
 					length += tag.length;
 
 					if (tag.line != line) {
@@ -1427,6 +1429,7 @@ namespace System.Windows.Forms {
 
 			if (owner.IsHandleCreated) {
 				if (owner.Focused) {
+					XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
 				}
 
@@ -1448,6 +1451,7 @@ namespace System.Windows.Forms {
 			caret.height = caret.tag.height;
 
 			if (owner.Focused) {
+				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
 			}
 
@@ -1806,49 +1810,45 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// Draw the document
-		internal void Draw(Graphics g, Rectangle clip) {
-			Line		line;		// Current line being drawn
-			LineTag		tag;		// Current tag being drawn
-			int		start;		// First line to draw
-			int		end;		// Last line to draw
-			StringBuilder	text;		// String representing the current line
-			int		line_no;	//
-			Brush		disabled;
-			Brush		hilight;
-			Brush		hilight_text;
+		internal void Draw (Graphics g, Rectangle clip)
+		{
+			Line line;		// Current line being drawn
+			LineTag	tag;		// Current tag being drawn
+			int start;		// First line to draw
+			int end;		// Last line to draw
+			StringBuilder text;	// String representing the current line
+			int line_no;
+			Brush tag_brush;
+			Brush current_brush;
+			Brush disabled_brush;
+			Brush hilight;
+			Brush hilight_text;
 
 			// First, figure out from what line to what line we need to draw
-			start = GetLineByPixel(clip.Top - viewport_y, false).line_no;
-			end = GetLineByPixel(clip.Bottom - viewport_y, false).line_no;
+			start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
+			end = GetLineByPixel(clip.Bottom + viewport_y, false).line_no;
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
 			if (line != null && clip.Bottom == line.Y + line.height + viewport_y)
 				end--;			
 
-			// Now draw our elements; try to only draw those that are visible
 			line_no = start;
 
 			#if Debug
 				DateTime	n = DateTime.Now;
-				Console.WriteLine("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
+				Console.WriteLine ("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
+				Console.WriteLine ("CLIP:  {0}", clip);
+				Console.WriteLine ("S: {0}", GetLine (start).text);
+				Console.WriteLine ("E: {0}", GetLine (end).text);
 			#endif
 
-			disabled = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorGrayText);
+			disabled_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorGrayText);
 			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
 			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlightText);
 
 			while (line_no <= end) {
-				line = GetLine(line_no);
-#if not
-if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
-	g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), new Rectangle(clip.Left, line.Y - viewport_y, clip.Width, line.Y - viewport_y + line.Height));
-} else {
-	g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorControl), new Rectangle(clip.Left, line.Y - viewport_y, clip.Width, line.Y - viewport_y + line.Height));
-}
-#endif
-
+				line = GetLine (line_no);
 
 				tag = line.tags;
 				if (!calc_pass) {
@@ -1857,225 +1857,98 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					// This fails if there's a password > 1024 chars...
 					text = this.password_cache;
 				}
+
+				int line_selection_start = text.Length + 1;
+				int line_selection_end = text.Length + 1;
+				if (selection_visible && owner.ShowSelection &&
+						(line_no >= selection_start.line.line_no) &&
+						(line_no <= selection_end.line.line_no)) {
+
+					if (line_no == selection_start.line.line_no)
+						line_selection_start = selection_start.pos + 1;
+					else
+						line_selection_start = 1;
+
+					if (line_no == selection_end.line.line_no)
+						line_selection_end = selection_end.pos + 1;
+					else
+						line_selection_end = text.Length + 1;
+
+					if (line_selection_end == line_selection_start) {
+						// There isn't really selection
+						line_selection_start = text.Length + 1;
+						line_selection_end = line_selection_start;
+					} else {
+						// lets draw some selection baby!!
+
+						g.FillRectangle (hilight,
+								line.widths [line_selection_start - 1] + line.align_shift - viewport_x, 
+								line.Y - viewport_y, 
+								line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
+								line.height);
+					}
+				}
+
+				current_brush = line.tags.color;
 				while (tag != null) {
+					
+
+					// Skip empty tags
 					if (tag.length == 0) {
 						tag = tag.next;
 						continue;
 					}
 
-					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
-						// Check for selection
-						if ((!selection_visible) || (!owner.ShowSelection) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
-							// regular drawing, no selection to deal with
-							//g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-							if (owner.is_enabled) {
-								g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-							} else {
-								Color a;
-								Color b;
+					if (((tag.X + tag.width) < (clip.Left - viewport_x)) || (tag.X > (clip.Right - viewport_x))) {
+						tag = tag.next;
+						continue;
+					}
 
-								a = ((SolidBrush)tag.color).Color;
-								b = ThemeEngine.Current.ColorWindowText;
+					if (tag.back_color != null) {
+						g.FillRectangle (tag.back_color, tag.X + line.align_shift - viewport_x,
+								line.Y + tag.shift - viewport_y, tag.width, line.height);
+					}
 
-								if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
-									g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, disabled, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-								} else {
-									g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
-								}
-							}
-						} else {
-							// we might have to draw our selection
-							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
-								// Special case, whole line is selected, draw this tag selected
-								g.FillRectangle(
-									hilight,					// Brush 
-									tag.X + line.align_shift - viewport_x,		// X
-									line.Y + tag.shift - viewport_y,		// Y
-									line.widths[tag.start + tag.length - 1],	// width
-									tag.height					// Height
-								);
+					tag_brush = tag.color;
+					current_brush = tag_brush;
+					
+					if (!owner.is_enabled) {
+						Color a = ((SolidBrush) tag.color).Color;
+						Color b = ThemeEngine.Current.ColorWindowText;
 
-								g.DrawString(
-									//s.Substring(tag.start-1, tag.length),		// String
-									text.ToString(tag.start-1, tag.length),	// String
-									tag.font,					// Font
-									hilight_text,					// Brush
-									tag.X + line.align_shift - viewport_x,		// X
-									line.Y + tag.shift  - viewport_y,		// Y
-									StringFormat.GenericTypographic);
-							} else {
-								bool	highlight;
-								bool	partial;
-
-								highlight = false;
-								partial = false;
-
-								// One or more, but not all tags on the line are selected
-								if ((selection_start.tag == tag) && (selection_end.tag == tag)) {
-									// Single tag selected, draw "normalSELECTEDnormal"
-									partial = true;
-									// First, the regular part
-									g.DrawString(
-										//s.Substring(tag.start - 1, selection_start.pos - tag.start + 1),	// String
-										text.ToString(tag.start - 1, selection_start.pos - tag.start + 1),	// String
-										tag.font,								// Font
-										tag.color,								// Brush
-										tag.X + line.align_shift - viewport_x,					// X
-										line.Y + tag.shift  - viewport_y,					// Y
-										StringFormat.GenericTypographic);
-
-									// Now the highlight
-									g.FillRectangle(
-										hilight,								// Brush
-										line.widths[selection_start.pos] + line.align_shift - viewport_x,			// X
-										line.Y + tag.shift - viewport_y,					// Y
-										line.widths[selection_end.pos] - line.widths[selection_start.pos],	// Width
-										tag.height);								// Height
-
-									g.DrawString(
-										//s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), // String
-										text.ToString(selection_start.pos, selection_end.pos - selection_start.pos), // String
-										tag.font,								// Font
-										hilight_text,								// Brush
-										line.widths[selection_start.pos] + line.align_shift - viewport_x,	// X
-										line.Y + tag.shift - viewport_y,					// Y
-										StringFormat.GenericTypographic);
-
-									// And back to the regular
-									g.DrawString(
-										//s.Substring(selection_end.pos, tag.start + tag.length - selection_end.pos - 1), 	// String
-										text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1), 	// String
-										tag.font,								// Font
-										tag.color,								// Brush
-										line.widths[selection_end.pos] + line.align_shift - viewport_x, 	// X
-										line.Y + tag.shift - viewport_y,					// Y
-										StringFormat.GenericTypographic);
-
-								} else if (selection_start.tag == tag) {
-									partial = true;
-
-									// The highlighted part
-									g.FillRectangle(
-										hilight, 
-										line.widths[selection_start.pos] + line.align_shift - viewport_x, 
-										line.Y + tag.shift - viewport_y, 
-										line.widths[tag.start + tag.length - 1] - line.widths[selection_start.pos], 
-										tag.height);
-
-									g.DrawString(
-										//s.Substring(selection_start.pos, tag.start + tag.length - selection_start.pos - 1), 	// String
-										text.ToString(selection_start.pos, tag.start + tag.length - selection_start.pos - 1), 	// String
-										tag.font,							    	// Font
-										hilight_text,							    	// Brush
-										line.widths[selection_start.pos] + line.align_shift - viewport_x,    	// X
-										line.Y + tag.shift - viewport_y,				    	// Y
-										StringFormat.GenericTypographic);
-
-									// The regular part
-									g.DrawString(
-										//s.Substring(tag.start - 1, selection_start.pos - tag.start + 1),  	// String
-										text.ToString(tag.start - 1, selection_start.pos - tag.start + 1), // String
-										tag.font,							  	// Font
-										tag.color,							  	// Brush
-										tag.X + line.align_shift - viewport_x,				  	// X
-										line.Y + tag.shift  - viewport_y,				  	// Y
-										StringFormat.GenericTypographic);
-								} else if (selection_end.tag == tag) {
-									partial = true;
-
-									// The highlighted part
-									g.FillRectangle(
-										hilight, 
-										tag.X + line.align_shift - viewport_x, 
-										line.Y + tag.shift - viewport_y, 
-										line.widths[selection_end.pos] - line.widths[tag.start - 1], 
-										tag.height);
-
-									g.DrawString(
-										//s.Substring(tag.start - 1, selection_end.pos - tag.start + 1),	 // String
-										text.ToString(tag.start - 1, selection_end.pos - tag.start + 1),	 // String
-										tag.font,							 	// Font
-										hilight_text,							 	// Brush
-										tag.X + line.align_shift - viewport_x,				 	// X
-										line.Y + tag.shift  - viewport_y,				 	// Y
-										StringFormat.GenericTypographic);
-
-									// The regular part
-									g.DrawString(
-										//s.Substring(selection_end.pos, tag.start + tag.length - selection_end.pos - 1),	  	// String
-										text.ToString(selection_end.pos, tag.start + tag.length - selection_end.pos - 1),	  	// String
-										tag.font,							  	// Font
-										tag.color,							  	// Brush
-										line.widths[selection_end.pos] + line.align_shift - viewport_x,	  	// X
-										line.Y + tag.shift - viewport_y,				  	// Y
-										StringFormat.GenericTypographic);
-								} else {
-									// no partially selected tags here, simple checks...
-									if (selection_start.line == line) {
-										int begin;
-										int stop;
-
-										begin = tag.start - 1;
-										stop = tag.start + tag.length - 1;
-										if (selection_end.line == line) {
-											if ((begin >= selection_start.pos) && (stop < selection_end.pos)) {
-												highlight = true;
-											}
-										} else {
-											if (stop > selection_start.pos) {
-												highlight = true;
-											}
-										}
-									} else if (selection_end.line == line) {
-										if ((tag.start - 1) < selection_end.pos) {
-											highlight = true;
-										}
-									}
-								}
-
-								if (!partial) {
-									if (highlight) {
-										g.FillRectangle(
-											hilight, 
-											tag.X + line.align_shift - viewport_x, 
-											line.Y + tag.shift  - viewport_y, 
-											line.widths[tag.start + tag.length - 1] - line.widths[tag.start - 1],
-											tag.height);
-
-										g.DrawString(
-											//s.Substring(tag.start-1, tag.length),		  	// String
-											text.ToString(tag.start-1, tag.length),		// String
-											tag.font,					  	// Font
-											hilight_text,					  	// Brush
-											tag.X + line.align_shift - viewport_x,		  	// X
-											line.Y + tag.shift  - viewport_y,			// Y
-											StringFormat.GenericTypographic);
-									} else {
-										g.DrawString(
-											//s.Substring(tag.start-1, tag.length),		       	// String
-											text.ToString(tag.start-1, tag.length),		// String
-											tag.font,					       	// Font
-											tag.color,					       	// Brush
-											tag.X + line.align_shift - viewport_x,		       	// X
-											line.Y + tag.shift  - viewport_y,			// Y
-											StringFormat.GenericTypographic);
-									}
-								}
-							}
-
+						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
+							tag_brush = disabled_brush;
 						}
 					}
 
+					int tag_pos = tag.start;
+					current_brush = tag_brush;
+					while (tag_pos < tag.start + tag.length) {
+						int old_tag_pos = tag_pos;
+
+						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
+							current_brush = hilight_text;
+							tag_pos = Math.Min (tag.start + tag.length, line_selection_end);
+						} else if (tag_pos < line_selection_start) {
+							current_brush = tag.color;
+							tag_pos = Math.Min (tag.start + tag.length, line_selection_start);
+						} else {
+							current_brush = tag.color;
+							tag_pos = tag.start + tag.length;
+						}
+
+						
+						g.DrawString (text.ToString (old_tag_pos - 1,
+									      Math.Min (tag.length, tag_pos - old_tag_pos)),
+								tag.font, current_brush,
+								line.widths [old_tag_pos - 1] + line.align_shift - viewport_x,
+								line.Y + tag.shift  - viewport_y,
+								StringFormat.GenericTypographic);
+					}
 					tag = tag.next;
 				}
-
 				line_no++;
 			}
-			#if Debug
-				n = DateTime.Now;
-				Console.WriteLine("Finished drawing: {0}s {1}ms", n.Second, n.Millisecond);
-			#endif
-
 		}
 
 		private void InsertLineString (Line line, int pos, string s)
@@ -2657,8 +2530,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				// We can simply break the chain and move the tag into the next line
 				if (tag == line.tags) {
 					new_tag = new LineTag(line, 1, 0);
-					new_tag.font = tag.font;
-					new_tag.color = tag.color;
+					new_tag.CopyFormattingFrom (tag);
 					line.tags = new_tag;
 				}
 
@@ -2683,8 +2555,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 				new_tag = new LineTag(new_line, 1, tag.start - 1 + tag.length - pos);
 				new_tag.next = tag.next;
-				new_tag.font = tag.font;
-				new_tag.color = tag.color;
+				new_tag.CopyFormattingFrom (tag);
 				new_line.tags = new_tag;
 				if (new_tag.next != null) {
 					new_tag.next.previous = new_tag;
@@ -2729,11 +2600,11 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
-		internal void Add(int LineNo, string Text, Font font, Brush color) {
+		internal void Add(int LineNo, string Text, Font font, SolidBrush color) {
 			Add(LineNo, Text, HorizontalAlignment.Left, font, color);
 		}
 
-		internal void Add(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) {
+		internal void Add(int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color) {
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -2963,23 +2834,26 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			#if Debug
 				Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Start  => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, (int)l1.widths[p1] + l1.align_shift - viewport_x, l1.Y - viewport_y, viewport_width, l1.height);
+				Console.WriteLine ("invalidate start line:  {0}  position:  {1}", l1.text, p1);
 			#endif
 
 			// Three invalidates:
 			// First line from start
 			owner.Invalidate(new Rectangle((int)l1.widths[p1] + l1.align_shift - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
 
+			
 			// lines inbetween
 			if ((l1.line_no + 1) < l2.line_no) {
 				int	y;
 
 				y = GetLine(l1.line_no + 1).Y;
-				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - y - viewport_y));
+				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, l2.Y - y));
 
 				#if Debug
-					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Middle => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, 0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - y - viewport_y);
+					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Middle => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, 0, y - viewport_y, viewport_width, l2.Y - y);
 				#endif
 			}
+			
 
 			// Last line to end
 			owner.Invalidate(new Rectangle((int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height));
@@ -3761,25 +3635,27 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		/// <summary>Format area of document in specified font and color</summary>
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
-		internal void FormatText(Line start_line, int start_pos, Line end_line, int end_pos, Font font, Brush color) {
+		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
+				SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+		{
 			Line    l;
 
 			// First, format the first line
 			if (start_line != end_line) {
 				// First line
-				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color);
+				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color, back_color, specified);
 
 				// Format last line
-				LineTag.FormatText(end_line, 1, end_pos, font, color);
+				LineTag.FormatText(end_line, 1, end_pos, font, color, back_color, specified);
 
 				// Now all the lines inbetween
 				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
 					l = GetLine(i);
-					LineTag.FormatText(l, 1, l.text.Length, font, color);
+					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, specified);
 				}
 			} else {
 				// Special case, single line
-				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color);
+				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color, specified);
 			}
 		}
 
@@ -4296,7 +4172,11 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		#region	Local Variables;
 		// Payload; formatting
 		internal Font		font;		// System.Drawing.Font object for this tag
-		internal Brush		color;		// System.Drawing.Brush object
+		internal SolidBrush	color;		// The font color for this tag
+
+		// In 2.0 tags can have background colours.  I'm not going to #ifdef
+		// at this level though since I want to reduce code paths
+		internal SolidBrush back_color;  
 
 		// Payload; text
 		internal int		start;		// start, in chars; index into Line.text
@@ -4306,7 +4186,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		// Drawing support
 		internal int		height;		// Height in pixels of the text this tag describes
 		internal int		X;		// X location of the text this tag describes
-		internal float		width;		// Width in pixels of the text this tag describes
+		//	internal float		width;		// Width in pixels of the text this tag describes
 		internal int		ascent;		// Ascent of the font for this tag
 		internal int		shift;		// Shift down for this tag, to stay on baseline
 
@@ -4322,13 +4202,25 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			this.start = start;
 			this.length = length;
 			this.X = 0;
-			this.width = 0;
 		}
 		#endregion	// Constructors
 
 		#region Internal Methods
+
+		public int End {
+			get { return start + length; }
+		}
+
+		public float width {
+			get {
+				if (length == 0)
+					return 0;
+				return line.widths [start + length - 1];
+			}
+		}
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
 		internal LineTag Break(int pos) {
+
 			LineTag	new_tag;
 
 			// Sanity
@@ -4339,8 +4231,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 
 			new_tag = new LineTag(line, pos, start + length - pos);
-			new_tag.color = color;
-			new_tag.font = font;
+			new_tag.CopyFormattingFrom (this);
 			this.length -= new_tag.length;
 			new_tag.next = this.next;
 			this.next = new_tag;
@@ -4352,8 +4243,16 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			return new_tag;
 		}
 
+		public void CopyFormattingFrom (LineTag other)
+		{
+			height = other.height;
+			font = other.font;
+			color = other.color;
+			back_color = other.back_color;
+		}
+
 		///<summary>Create new font and brush from existing font and given new attributes. Returns true if fontheight changes</summary>
-		internal static bool GenerateTextFormat(Font font_from, Brush color_from, FontDefinition attributes, out Font new_font, out Brush new_color) {
+		internal static bool GenerateTextFormat(Font font_from, SolidBrush color_from, FontDefinition attributes, out Font new_font, out SolidBrush new_color) {
 			float		size;
 			string		face;
 			FontStyle	style;
@@ -4399,7 +4298,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText(Line line, int start, int length, Font font, Brush color) {
+		internal static bool FormatText(Line line, int start, int length, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+		{
 			LineTag	tag;
 			LineTag	start_tag;
 			LineTag end_tag;
@@ -4407,7 +4307,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			bool	retval = false;		// Assume line-height doesn't change
 
 			// Too simple?
-			if (font.Height != line.height) {
+			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height) {
 				retval = true;
 			}
 			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
@@ -4423,60 +4323,41 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			// Common special case
 			if ((start == 1) && (length == tag.length)) {
 				tag.ascent = 0;
-				tag.font = font;
-				tag.color = color;
+				SetFormat (tag, font, color, back_color, specified);
 				return retval;
 			}
 
-			//Console.WriteLine("Finding tag for {0} {1}", line, start);
-			start_tag = FindTag(line, start);
-			end_tag = FindTag (line, end);
+			start_tag = FindTag (line, start);
 
-			if (start_tag == null) {	// FIXME - is there a better way to handle this, or do we even need it?
-				throw new Exception(String.Format("Could not find start_tag in document at line {0} position {1}", line.line_no, start));
-			}
+			tag = start_tag.Break (start);
 
-			tag = new LineTag(line, start, length);
-			tag.font = font;
-			tag.color = color;
-
-			if (start == 1) {
-				line.tags = tag;
-			}
-			//Console.WriteLine("Start tag: '{0}'", start_tag!=null ? start_tag.ToString() : "NULL");
-			if (start_tag.start == start) {
-				tag.next = start_tag;
-				tag.previous = start_tag.previous;
-				if (start_tag.previous != null) {
-					start_tag.previous.next = tag;
-				}
-				start_tag.previous = tag;
-			} else {
-				tag.next = end_tag;
-
-				if (end_tag != null) {
-					// Shorten up the end tag
-					end_tag.previous = tag;
-					end_tag.length = end - start_tag.start + start_tag.length;
-					end_tag.start = end;
-				}
-			}
-
-			// Elimination loop
-			tag = tag.next;
-			while (tag != end_tag) {
-				if ((tag.start + tag.length) <= end) {
-					// remove the tag
-					tag.previous.next = tag.next;
-					if (tag.next != null) {
-						tag.next.previous = tag.previous;
-					}
-					tag = tag.previous;
-				}
+			while (tag != null && tag.End < end) {
+				SetFormat (tag, font, color, back_color, specified);
 				tag = tag.next;
 			}
 
+			if (end != line.text.Length) {
+				/// Now do the last tag
+				end_tag = FindTag (line, end);
+
+				if (end_tag != null) {
+					end_tag.Break (end);
+					SetFormat (end_tag, font, color, back_color, specified);
+				}
+			}
+
 			return retval;
+		}
+
+		private static void SetFormat (LineTag tag, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+		{
+			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
+				tag.font = font;
+			if ((FormatSpecified.Color & specified) == FormatSpecified.Color)
+				tag.color = color;
+			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
+				tag.back_color = back_color;
+			}
 		}
 
 		/// <summary>Applies font attributes specified to characters starting at 'start' for 'length' chars; 
@@ -4512,8 +4393,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					// We are 'starting' after all valid tags; create a new tag with the right attributes
 					start_tag = FindTag(line, line.text.Length - 1);
 					start_tag.next = new LineTag(line, line.text.Length + 1, 0);
-					start_tag.next.font = start_tag.font;
-					start_tag.next.color = start_tag.color;
+					start_tag.next.CopyFormattingFrom (start_tag);
 					start_tag.next.previous = start_tag;
 					start_tag = start_tag.next;
 				} else {
@@ -4579,7 +4459,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				return false;
 			}
 
-			this.width += other.width;
 			this.length += other.length;
 			this.next = other.next;
 			if (this.next != null) {
@@ -4598,13 +4477,11 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 			if (this.start != 1) {
 				this.previous.length += this.length;
-				this.previous.width = -1;
 				this.previous.next = this.next;
 				this.next.previous = this.previous;
 			} else {
 				this.next.start = 1;
 				this.next.length += this.length;
-				this.next.width = -1;
 				this.line.tags = this.next;
 				this.next.previous = null;
 			}
@@ -4643,7 +4520,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 		public override string ToString() {
 			if (length > 0)
-				return "Tag starts at index " + this.start + "length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
+				return "Tag starts at index " + this.start + " length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
 			return "Zero Lengthed tag at index " + this.start;
 		}
 
@@ -4961,8 +4838,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 						tag_length = current_tag.start + current_tag.length - tag_start;
 					}
 					tag = new LineTag(line, tag_start - start + 1, tag_length);
-					tag.color = current_tag.color;
-					tag.font = current_tag.font;
+					tag.CopyFormattingFrom (current_tag);
 
 					current_tag = current_tag.next;
 
