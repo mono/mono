@@ -1,3 +1,12 @@
+2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectStartedEventArgsTest.cs: Added check for Properties and
+	Items.
+	
+	* TaskCommandLineEventArgsTest.cs: Added.
+
+	* LoggerExceptionTest.cs: Check for serialization names.
+
 2006-09-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildEventArgsTest.cs: Small fix for TimeStamp check.

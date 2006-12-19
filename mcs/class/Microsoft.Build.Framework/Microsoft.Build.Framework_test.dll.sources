@@ -11,5 +11,6 @@ Microsoft.Build.Framework/ProjectFinishedEventArgsTest.cs
 Microsoft.Build.Framework/ProjectStartedEventArgsTest.cs
 Microsoft.Build.Framework/TargetFinishedEventArgsTest.cs
 Microsoft.Build.Framework/TargetStartedEventArgsTest.cs
+Microsoft.Build.Framework/TaskCommandLineEventArgsTest.cs
 Microsoft.Build.Framework/TaskFinishedEventArgsTest.cs
 Microsoft.Build.Framework/TaskStartedEventArgsTest.cs

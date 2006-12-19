@@ -1,5 +1,5 @@
 //
-// ProjectStartedEventArgsTest.cs:
+// TaskCommandLineEventArgsTest.cs:
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -25,33 +25,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Framework {
 	[TestFixture]
-	public class ProjectStartedEventArgsTest {
+	public class TaskCommandLineEventArgsTest {
 		[Test]
-		public void AssignmentTest ()
+		public void TestAssignment ()
 		{
-			ProjectStartedEventArgs psea;
-			string message = "message";
-			string helpKeyword = "helpKeyword";
-			string projectFile = "projectFile";
-			string targetNames = "targetNames";
-			string [] properties = new string [2] { "a", "b" };
-			string [] items = new string [2] { "c", "d" };
+			string commandLine = "commandLine";
+			string taskName = "taskName";
+			MessageImportance importance = MessageImportance.High;
 
-			
-			psea = new ProjectStartedEventArgs (message, helpKeyword, projectFile, targetNames, properties, items);
-			
-			Assert.AreEqual (message, psea.Message, "A1");
-			Assert.AreEqual (helpKeyword, psea.HelpKeyword, "A2");
-			Assert.AreEqual (projectFile, psea.ProjectFile, "A3");
-			Assert.AreEqual (targetNames, psea.TargetNames, "A4");
-			Assert.AreEqual (properties, psea.Properties, "A5");
-			Assert.AreEqual (items, psea.Items, "A6");
+			TaskCommandLineEventArgs tcle = new TaskCommandLineEventArgs (commandLine, taskName, importance);
+
+			Assert.AreEqual (commandLine, tcle.CommandLine, "A1");
+			Assert.AreEqual (taskName, tcle.TaskName, "A2");
+			Assert.AreEqual (commandLine, tcle.Message, "A3");
 		}
 	}
 }
