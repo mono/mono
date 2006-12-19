@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Text;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Utilities
@@ -59,20 +60,49 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		[MonoTODO]
 		public virtual string FormatErrorEvent (BuildErrorEventArgs args)
 		{
-			return String.Format ("{0}({1},{2},{3},{4}): {5} error {6}: {7}",
-				args.File, args.LineNumber, args.ColumnNumber, args.EndLineNumber, args.EndColumnNumber,
-				args.Subcategory, args.Code, args.Message);
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append (args.File);
+			AppendLineNumbers (sb, args.LineNumber, args.ColumnNumber, args.EndLineNumber, args.EndColumnNumber);
+			sb.Append (": ");
+			sb.Append (args.Subcategory);
+			sb.Append (" error ");
+			sb.Append (args.Code);
+			sb.Append (": ");
+			sb.Append (args.Message);
+
+			return sb.ToString ();
 		}
 
-		[MonoTODO]
 		public virtual string FormatWarningEvent (BuildWarningEventArgs args)
 		{
-			return String.Format ("{0}({1},{2},{3},{4}): {5} warning {6}: {7}",
-				args.File, args.LineNumber, args.ColumnNumber, args.EndLineNumber, args.EndColumnNumber,
-				args.Subcategory, args.Code, args.Message);
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append (args.File);
+			AppendLineNumbers (sb, args.LineNumber, args.ColumnNumber, args.EndLineNumber, args.EndColumnNumber);
+			sb.Append (": ");
+			sb.Append (args.Subcategory);
+			sb.Append (" warning ");
+			sb.Append (args.Code);
+			sb.Append (": ");
+			sb.Append (args.Message);
+
+			return sb.ToString ();
+		}
+
+		void AppendLineNumbers (StringBuilder sb, int line, int column, int endLine, int endColumn)
+		{
+			if (line != 0 && column != 0 && endLine != 0 && endColumn != 0) {
+				sb.AppendFormat ("({0},{1},{2},{3})", line, column, endLine, endColumn);
+			} else if (line != 0 && column != 0) {
+				sb.AppendFormat ("({0},{1})", line, column);
+			} else if (line != 0) {
+				sb.AppendFormat ("({0})", line);
+			} else {
+				sb.Append (" ");
+			}
 		}
 
 		public abstract void Initialize (IEventSource eventSource);

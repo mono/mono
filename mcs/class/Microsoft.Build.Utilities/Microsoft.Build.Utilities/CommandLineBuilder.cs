@@ -129,6 +129,9 @@ namespace Microsoft.Build.Utilities
 		
 		protected void AppendFileNameWithQuoting (string fileName)
 		{
+			if (fileName == null)
+				return;
+
 			if (IsQuotingRequired (fileName))
 				commandLine.AppendFormat ("\"{0}\"",fileName);
 			else
@@ -327,6 +330,9 @@ namespace Microsoft.Build.Utilities
 		
 		protected void AppendTextWithQuoting (string textToAppend)
 		{
+			if (textToAppend == null)
+				return;
+
 			if (IsQuotingRequired (textToAppend))
 				commandLine.AppendFormat ("\"{0}\"",textToAppend);
 			else
