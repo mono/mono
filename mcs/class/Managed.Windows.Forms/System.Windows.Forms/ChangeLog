@@ -1,3 +1,14 @@
+2006-12-19  Miguel de Icaza  <miguel@novell.com>
+
+	* TableLayoutSettings.cs: Finish the public API (still needs all
+	the logic to update on changes). 
+
+	* TableLayoutPanelCellPosition.cs: new file.
+	
+	* TableLayoutRowStyleCollection.cs,
+	TableLayoutColumnStyleCollection, TableLayoutStyle.cs,
+	TableLayoutSettings.cs: Track the final 2.0 table api.
+
 2006-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ColumnHeader.cs: Add Tag, Name, ImageKey, ImageIndex,

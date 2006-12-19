@@ -594,6 +594,7 @@ System.Windows.Forms/TableLayoutCellPaintEventHandler.cs
 System.Windows.Forms/TableLayoutColumnStyleCollection.cs
 System.Windows.Forms/TableLayoutPanel.cs
 System.Windows.Forms/TableLayoutPanelCellBorderStyle.cs
+System.Windows.Forms/TableLayoutPanelCellPosition.cs
 System.Windows.Forms/TableLayoutPanelGrowStyle.cs
 System.Windows.Forms/TableLayoutRowStyleCollection.cs
 System.Windows.Forms/TableLayoutSettings.cs

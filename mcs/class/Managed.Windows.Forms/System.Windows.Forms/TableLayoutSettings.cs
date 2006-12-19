@@ -42,6 +42,8 @@ namespace System.Windows.Forms {
 		int column_count;
 		int row_count;
 
+		Hashtable control_positions, column_spans, row_spans;
+		
 		internal TableLayoutSettings (TableLayoutPanel panel)
 		{
 			//this.panel = panel;
@@ -52,6 +54,9 @@ namespace System.Windows.Forms {
 			row_styles = new TableLayoutRowStyleCollection (panel);
 			
 			layout_engine = new TableLayout ();
+			control_positions = new Hashtable ();
+			column_spans = new Hashtable ();
+			row_spans = new Hashtable ();
 		}
 
 		[DefaultValue (0)]
@@ -104,6 +109,70 @@ namespace System.Windows.Forms {
 				return row_styles;
 			}
 		}
+
+		public void SetCellPosition (object control, TableLayoutPanelCellPosition cellPosition)
+		{
+			control_positions [control] = cellPosition;
+		}
+
+		public int GetColumn (object control)
+		{
+			object pos = control_positions [control];
+			if (pos == null)
+				return -1;
+			return ((TableLayoutPanelCellPosition) pos).Column;
+		}
+		
+		public void SetColumn (object control, int column)
+		{
+			object pos = control_positions [control];
+			control_positions [control] = new TableLayoutPanelCellPosition (
+				column,
+				pos == null ? -1 : ((TableLayoutPanelCellPosition) pos).Row);
+		}
+
+		public int GetColumnSpan (object control)
+		{
+			object pos = column_spans [control];
+			if (pos == null)
+				return 1;
+			return (int) pos;
+		}
+			
+		public void SetColumnSpan (object control, int value)
+		{
+			column_spans [control] = value;
+		}
+			
+		public int GetRow (object control)
+		{
+			object pos = control_positions [control];
+			if (pos == null)
+				return -1;
+			return ((TableLayoutPanelCellPosition) pos).Row;
+		}
+		
+		public void SetRow (object control, int row)
+		{
+			object pos = control_positions [control];
+			control_positions [control] = new TableLayoutPanelCellPosition (
+				pos == null ? -1 : ((TableLayoutPanelCellPosition) pos).Column,
+				row);
+		}
+		
+		public int GetRowSpan (object control)
+		{
+			object pos = row_spans [control];
+			if (pos == null)
+				return 1;
+			return (int) pos;
+		}
+			
+		public void SetRowSpan (object control, int value)
+		{
+			row_spans [control] = value;
+		}
+			
 	}
 }
 #endif

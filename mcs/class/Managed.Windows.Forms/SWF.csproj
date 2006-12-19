@@ -3114,6 +3114,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\TableLayoutPanelCellPosition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TableLayoutPanelGrowStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
