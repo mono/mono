@@ -18,6 +18,7 @@ Microsoft.Build.BuildEngine/TargetTest.cs
 Microsoft.Build.BuildEngine/UsingTaskTest.cs
 Microsoft.Build.BuildEngine/UsingTaskCollectionTest.cs
 Microsoft.Build.BuildEngine/UtilitiesTest.cs
+various/Build.cs
 various/Conditions.cs
 various/DefaultTasks.cs
 various/EvaluationOrder.cs

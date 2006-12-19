@@ -1,10 +1,10 @@
 //
-// ProjectElement.cs
+// Build.cs: Various build tests.
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //
-// (C) 2006 Marek Sieradzki
+// (C) 2005 Marek Sieradzki
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,61 +26,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
-	public class ProjectElement {
-		// Clones a project by reloading from original.Xml
-		private Project CloneProject (Project original)
-		{
-			Project clone;
-			
-			clone = original.ParentEngine.CreateNewProject ();
-			clone.LoadXml (original.Xml);
-
-			return clone;
-		}
-
+	public class Build {
 		[Test]
-		public void TestDefaultTargetsAttribute ()
+		public void TestBuild1 ()
 		{
 			Engine engine;
-			Project proj;
-			Project cproj;
-			string documentString = @"
-			<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" DefaultTargets=""Build;Compile"">
-			</Project>
-			";
-			
-			engine = new Engine (Consts.BinPath);
-			proj = engine.CreateNewProject ();
-			Assert.AreEqual (String.Empty, proj.FullFileName, "A1");
+			Project project;
 
-			proj.LoadXml (documentString);
-			Assert.AreEqual (String.Empty, proj.FullFileName, "A2");
-			proj.DefaultTargets = "Build";
-			Assert.AreEqual ("Build", proj.DefaultTargets, "A3");
-			cproj = CloneProject (proj);
-			Assert.AreEqual (proj.DefaultTargets, cproj.DefaultTargets, "A4");
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException))]
-		public void TestRootElement ()
-		{
-			Engine engine;
-			Project proj;
 			string documentString = @"
-			<something>
-			</something>
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='1' DependsOnTargets='2'>
+					</Target>
+					<Target Name='2' DependsOnTargets='1'>
+					</Target>
+				</Project>
 			";
 
 			engine = new Engine (Consts.BinPath);
-			proj = engine.CreateNewProject ();
-			proj.LoadXml (documentString);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Build ("1"));
+		}
+
+		[Test]
+		public void TestBuild2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='1' DependsOnTargets='2'>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Build ("1"));
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Build.cs: Added.
+
+	* Condition.cs, ProjectElement.cs: More tests.
+
 2006-12-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Items.cs: More tests.

@@ -233,6 +233,32 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		public void TestCondition8 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition='true == true'></A>
+						<B Condition='true != true'></B>
+						<C Condition='false == false'></C>
+						<D Condition='false != false'></D>
+						<E Condition='true != false'></E>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.IsNotNull (proj.EvaluatedProperties ["A"], "A1");
+			Assert.IsNull (proj.EvaluatedProperties ["B"], "A2");
+			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A3");
+			Assert.IsNull (proj.EvaluatedProperties ["D"], "A4");
+			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
+		}
+		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestIncorrectCondition1 ()
 		{
