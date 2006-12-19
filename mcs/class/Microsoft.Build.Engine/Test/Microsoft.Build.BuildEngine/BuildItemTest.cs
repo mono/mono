@@ -258,6 +258,15 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException),
+			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		public void TestRemoveMetadata4 ()
+		{
+			item = new BuildItem ("name", "value");
+			item.RemoveMetadata ("Filename");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestSetMetadata1 ()
 		{
@@ -287,6 +296,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("$(A)", item.GetMetadata ("a"), "A4");
 			Assert.AreEqual (Utilities.Escape ("$(A)"), item.GetMetadata ("b"), "A5");
 			Assert.AreEqual ("$(A)", item.GetMetadata ("c"), "A6");
+		}
+		[Test]
+		[ExpectedException (typeof (ArgumentException),
+			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		public void TestSetMetadata4 ()
+		{
+			item = new BuildItem ("name", "include");
+			item.SetMetadata ("Filename", "something");
 		}
 	}
 }

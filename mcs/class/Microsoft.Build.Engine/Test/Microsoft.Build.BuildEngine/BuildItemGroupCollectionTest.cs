@@ -60,8 +60,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo2 ()
 		{
 			string documentString = @"
@@ -102,8 +101,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo4 ()
 		{
 			string documentString = @"
@@ -123,8 +121,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo5 ()
 		{
 			string documentString = @"
@@ -143,5 +140,25 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.ItemGroups.CopyTo (new BuildItemGroup [1], 1);
 		}
 
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void TestCopyTo6 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+					</ItemGroup>
+					<ItemGroup>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.ItemGroups.CopyTo (new BuildItemGroup [1], 0);
+		}
 	}
 }

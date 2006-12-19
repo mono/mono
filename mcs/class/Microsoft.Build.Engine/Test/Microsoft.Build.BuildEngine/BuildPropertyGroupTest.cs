@@ -87,7 +87,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void TestClear ()
+		public void TestClear1 ()
 		{
 			bpg = new BuildPropertyGroup ();
 			
@@ -95,6 +95,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (1, bpg.Count, "A1");
 			bpg.Clear ();
 			Assert.AreEqual (0, bpg.Count, "A2");
+		}
+
+		[Test]
+		public void TestClear2 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<Name>Value</Name>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			BuildPropertyGroup [] array = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (array, 0);
+
+			array [0].Clear ();
+
+			Assert.AreEqual (0, array [0].Count, "A1");
 		}
 
 		[Test]
@@ -118,7 +140,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void TestGetEnumerator ()
+		public void TestGetEnumerator1 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();
 			bpg.SetProperty ("a", "c");
@@ -134,7 +156,73 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("d", ((BuildProperty) e.Current).Value, "A5");
 			Assert.AreEqual ("d", ((BuildProperty) e.Current).FinalValue, "A6");
 
-			Assert.IsFalse (e.MoveNext ());
+			Assert.IsFalse (e.MoveNext (), "A7");
+		}
+
+		[Test]
+		public void TestGetEnumerator2 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<P1>1</P1>
+                                		<P2>2</P2>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			BuildPropertyGroup [] array = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (array, 0);
+
+			IEnumerator e = array [0].GetEnumerator ();
+			e.MoveNext ();
+			Assert.AreEqual ("P1", ((BuildProperty) e.Current).Name, "A1");
+			Assert.AreEqual ("1", ((BuildProperty) e.Current).Value, "A2");
+			Assert.AreEqual ("1", ((BuildProperty) e.Current).FinalValue, "A3");
+			e.MoveNext ();
+			Assert.AreEqual ("P2", ((BuildProperty) e.Current).Name, "A4");
+			Assert.AreEqual ("2", ((BuildProperty) e.Current).Value, "A5");
+			Assert.AreEqual ("2", ((BuildProperty) e.Current).FinalValue, "A6");
+
+			Assert.IsFalse (e.MoveNext (), "A7");
+		}
+
+		[Test]
+		public void TestIndexer1 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("a", "1");
+			bpg.SetProperty ("b", "2");
+
+			Assert.AreEqual ("a", bpg ["a"].Name, "A1");
+			Assert.AreEqual ("b", bpg ["b"].Name, "A2");
+			Assert.IsNull (bpg ["something_that_doesnt_exist"], "A3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Properties in persisted property groups cannot be accessed by name.")]
+		public void TestIndexer2 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<a>1</a>
+                                		<b>2</b>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			BuildPropertyGroup [] array = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (array, 0);
+
+			Assert.AreEqual ("a", array [0] ["a"].Name, "A1");
 		}
 
 		[Test]

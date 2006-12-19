@@ -83,6 +83,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual ("false", t [0].Condition, "A1");
 			Assert.AreEqual ("X", t [0].DependsOnTargets, "A2");
+
+			t [0].Condition = "true";
+			t [0].DependsOnTargets = "A;B";
+
+			Assert.AreEqual ("true", t [0].Condition, "A3");
+			Assert.AreEqual ("A;B", t [0].DependsOnTargets, "A4");
 		}
 
 		[Test]

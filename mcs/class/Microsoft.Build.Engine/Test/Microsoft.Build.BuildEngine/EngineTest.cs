@@ -27,13 +27,50 @@
 
 using System;
 using Microsoft.Build.BuildEngine;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
+
+	class CheckUnregisterLogger : Logger {
+		bool anything = false;
+
+		public override void Initialize (IEventSource eventSource)
+		{
+			eventSource.AnyEventRaised += delegate { anything = true; };
+			eventSource.BuildFinished += delegate { anything = true; };
+			eventSource.BuildStarted += delegate { anything = true; };
+			eventSource.CustomEventRaised += delegate { anything = true; };
+			eventSource.ErrorRaised += delegate { anything = true; };
+			eventSource.MessageRaised += delegate { anything = true; };
+			eventSource.ProjectFinished += delegate { anything = true; };
+			eventSource.ProjectStarted += delegate { anything = true; };
+			eventSource.StatusEventRaised += delegate { anything = true; };
+			eventSource.TargetFinished += delegate { anything = true; };
+			eventSource.TargetStarted += delegate { anything = true; };
+			eventSource.TaskFinished += delegate { anything = true; };
+			eventSource.TaskStarted += delegate { anything = true; };
+			eventSource.WarningRaised += delegate { anything = true; };
+		}
+
+		public bool Anything { get { return anything; } }
+	}
+
 	[TestFixture]
 	public class EngineTest {
 
 		Engine engine;
+
+		static string GetPropValue (BuildPropertyGroup bpg, string name)
+		{
+			foreach (BuildProperty bp in bpg) {
+				if (bp.Name == name) {
+					return bp.FinalValue;
+				}
+			}
+			return String.Empty;
+		}
 
 		[Test]
 		public void TestCtor ()
@@ -74,16 +111,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine (Consts.BinPath);
 
 			Assert.AreEqual (false, engine.OnlyLogCriticalEvents, "A1");
-		}
-
-		private static string GetPropValue (BuildPropertyGroup bpg, string name)
-		{
-			foreach (BuildProperty bp in bpg) {
-				if (bp.Name == name) {
-					return bp.FinalValue;
-				}
-			}
-			return String.Empty;
 		}
 
 		[Test]
@@ -132,6 +159,61 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsNotNull (Engine.GlobalEngine, "2");
 			engine = Engine.GlobalEngine;
 			Assert.AreSame (engine, Engine.GlobalEngine, "3");
+		}
+
+		[Test]
+		[Ignore ("NRE on .NET 2.0")]
+		public void TestRegisterLogger ()
+		{
+			engine = new Engine (Consts.BinPath);
+			engine.RegisterLogger (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"The \"Project\" object specified does not belong to the correct \"Engine\" object.")]
+		public void TestUnloadProject1 ()
+		{
+			Engine a = new Engine (Consts.BinPath);
+			Engine b = new Engine (Consts.BinPath);
+
+			Project p = a.CreateNewProject ();
+
+			b.UnloadProject (p);
+		}
+
+		[Test]
+		[Ignore ("NRE on .NET 2.0")]
+		public void TestUnloadProject2 ()
+		{
+			Engine a = new Engine (Consts.BinPath);
+
+			a.UnloadProject (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"This project object has been unloaded from the MSBuild engine and is no longer valid.")]
+		public void TestUnloadProject3 ()
+		{
+			Engine a = new Engine (Consts.BinPath);
+			Project p = a.CreateNewProject ();
+
+			a.UnloadProject (p);
+			a.UnloadProject (p);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestUnregisterAllLoggers ()
+		{
+			engine = new Engine (Consts.BinPath);
+			CheckUnregisterLogger cul = new CheckUnregisterLogger ();
+			engine.RegisterLogger (cul);
+
+			engine.UnregisterAllLoggers ();
+
+			Assert.IsFalse (cul.Anything, "A1");
 		}
 	}
 }

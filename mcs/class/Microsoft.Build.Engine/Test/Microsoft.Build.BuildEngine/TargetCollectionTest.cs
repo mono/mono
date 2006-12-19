@@ -293,5 +293,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			project.Targets.RemoveTarget (null);
 		}
+
+		[Test]
+		public void TestIndexer1 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Target Name='first' />
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target t1 = project.Targets ["first"];
+
+			Assert.AreEqual ("first", t1.Name, "A1");
+
+			Target t2 = project.Targets ["target_that_doesnt_exist"];
+
+			Assert.IsNull (t2, "A2");
+		}
 	}
 }

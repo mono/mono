@@ -222,6 +222,27 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual ("TrueTestTask", array [0].TaskName, "A1");
 		}
+
+		[Test]
+		public void TestCopyTo7 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='TrueTestTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			UsingTask [] array = new UsingTask [1];
+			project.UsingTasks.CopyTo ((Array) array, 0);
+		}
 	}
 }
 

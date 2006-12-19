@@ -223,13 +223,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			b.Value = "AnotherValue";
 			Assert.AreEqual ("Value", a.Value, "A2");
 		}
-		
+
 		[Test]
-		public void TestOpExplicit ()
+		public void TestCondition1 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<Name>Value</Name>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildProperty a = project.EvaluatedProperties ["Name"];
+
+			a.Condition = "true";
+			Assert.AreEqual ("true", a.Condition, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		public void TestCondition2 ()
+		{
+			BuildProperty a = new BuildProperty ("name", "value");
+			a.Condition = "true";
+		}
+
+		[Test]
+		public void TestOpExplicit1 ()
 		{
 			bp = new BuildProperty ("name", "value");
 			
 			Assert.AreEqual ("value", (string) bp, "A1");
+		}
+
+		[Test]
+		public void TestOpExplicit2 ()
+		{
+			BuildProperty bp = null;
+			
+			Assert.AreEqual (String.Empty, (string) bp, "A1");
 		}
 		
 		[Test]
@@ -237,6 +275,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			bp = new BuildProperty ("name", "a;b");
 			Assert.AreEqual ("a;b", bp.ToString ());
+		}
+
+		public void TestValue ()
+		{
+			BuildProperty a;
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<Name>Value</Name>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			a = project.EvaluatedProperties ["Name"];
+			a.Value = "$(something)";
+			Assert.AreEqual ("$(something)", a.Value, "A1");
 		}
 	}
 }

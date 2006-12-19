@@ -433,7 +433,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void TestCondition ()
+		public void TestCondition1 ()
 		{
 			Engine engine;
 			Project project;
@@ -455,6 +455,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			Assert.AreEqual ("true", groups [0].Condition, "A1");
 			Assert.IsFalse (groups [0].IsImported, "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		public void TestCondition2 ()
+		{
+			BuildItemGroup big = new BuildItemGroup ();
+
+			big.Condition = "true";
 		}
 	}
 }

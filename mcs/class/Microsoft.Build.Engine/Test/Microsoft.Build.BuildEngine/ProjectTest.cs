@@ -79,7 +79,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		" If the project is authored in the MSBuild 2003 format, please add " +
 		"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
 		"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
-		public void TestAssignment ()
+		public void TestAssignment1 ()
 		{
 			Engine engine;
 			Project project;
@@ -95,6 +95,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
 			Assert.AreEqual (String.Empty, project.FullFileName, "A3");
 			Assert.AreEqual (false, project.IsDirty, "A4");
+			Assert.AreEqual (false, project.IsValidated, "A5");
+			Assert.AreEqual (engine, project.ParentEngine, "A6");
+			Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
+			Assert.IsTrue (String.Empty != project.Xml, "A8");
+		}
+
+		[Test]
+		public void TestAssignment2 ()
+		{
+			Engine engine;
+			Project project;
+			string documentString =
+				"<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"></Project>";
+			
+			engine = new Engine (Consts.BinPath);
+			DateTime time = DateTime.Now;
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (true, project.BuildEnabled, "A1");
+			Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
+			Assert.AreEqual (String.Empty, project.FullFileName, "A3");
+			Assert.AreEqual (true, project.IsDirty, "A4");
 			Assert.AreEqual (false, project.IsValidated, "A5");
 			Assert.AreEqual (engine, project.ParentEngine, "A6");
 			Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
@@ -610,6 +633,36 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestLoad1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestLoad2 ()
+		{
+			Engine engine;
+			Project project;
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml ("project_file_that_doesnt_exist");
+		}
+
+		[Test]
 		public void TestParentEngine ()
 		{
 			Engine engine;
@@ -706,6 +759,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.SetProjectExtensions ("name", "2");
 			Assert.AreEqual ("2", project.GetProjectExtensions ("name"), "A2");
 			Assert.IsTrue (project.IsDirty, "A3");
+		}
+
+		[Test]
+		public void TestSetProjectExtensions3 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ProjectExtensions>
+					</ProjectExtensions>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.SetProjectExtensions ("name", "1");
+			Assert.AreEqual ("1", project.GetProjectExtensions ("name"), "A1");
+			Assert.IsTrue (project.IsDirty, "A2");
 		}
 	}
 }

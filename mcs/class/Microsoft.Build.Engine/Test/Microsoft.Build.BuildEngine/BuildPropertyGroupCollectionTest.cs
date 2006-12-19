@@ -143,5 +143,25 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], 1);
 		}
 
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void TestCopyTo6 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+					</PropertyGroup>
+					<PropertyGroup>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], 0);
+		}
 	}
 }
