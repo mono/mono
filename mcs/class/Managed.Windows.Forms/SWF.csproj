@@ -2219,6 +2219,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ListViewHitTestInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ListViewHitTestLocations.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3110,6 +3115,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TableLayoutSettings.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayoutStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

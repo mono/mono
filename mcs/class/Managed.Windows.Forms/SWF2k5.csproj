@@ -558,6 +558,7 @@
     <Compile Include="System.Windows.Forms\ListViewAlignment.cs" />
     <Compile Include="System.Windows.Forms\ListViewGroup.cs" />
     <Compile Include="System.Windows.Forms\ListViewGroupCollection.cs" />
+    <Compile Include="System.Windows.Forms\ListViewHitTestInfo.cs" />
     <Compile Include="System.Windows.Forms\ListViewHitTestLocations.cs" />
     <Compile Include="System.Windows.Forms\ListViewItem.cs" />
     <Compile Include="System.Windows.Forms\ListViewItemConverter.cs" />
@@ -737,6 +738,7 @@
     <Compile Include="System.Windows.Forms\TableLayoutPanelCellBorderStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanelGrowStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
+    <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
     <Compile Include="System.Windows.Forms\TextBox.cs" />
     <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
     <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />

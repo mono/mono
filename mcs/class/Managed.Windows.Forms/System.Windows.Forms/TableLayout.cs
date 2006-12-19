@@ -30,7 +30,7 @@ using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms {
 
-	public class TableLayout : LayoutEngine {
+	internal class TableLayout : LayoutEngine {
 
 		public override void InitLayout (object child, BoundsSpecified specified)
 		{

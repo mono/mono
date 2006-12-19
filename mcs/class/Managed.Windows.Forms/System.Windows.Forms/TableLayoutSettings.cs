@@ -37,12 +37,10 @@ namespace System.Windows.Forms {
 		//TableLayoutPanel panel;
 		ColumnStyleCollection column_style;
 		TableLayoutPanelGrowStyle grow_style;
+		LayoutEngine layout_engine;
 		int column_count;
 		int row_count;
 
-		// Statics
-		static LayoutEngine layout_engine = new TableLayout ();
-		
 		internal TableLayoutSettings (TableLayoutPanel panel)
 		{
 			//this.panel = panel;
@@ -50,6 +48,7 @@ namespace System.Windows.Forms {
 			row_count = 0;
 			grow_style = TableLayoutPanelGrowStyle.AddRows;
 			column_style = new ColumnStyleCollection (panel);
+			layout_engine = new TableLayout ();
 		}
 
 		public int ColumnCount {
@@ -84,7 +83,7 @@ namespace System.Windows.Forms {
 			}
 		}
 				
-		public TableLayoutSettings.ColumnStyleCollection ColumnStyle {
+		public TableLayoutSettings.ColumnStyleCollection ColumnStyles {
 			get {
 				return column_style;
 			}

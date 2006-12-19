@@ -21,16 +21,19 @@
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
 //
-// (C) 2004 Novell, Inc.
+// (C) 2004, 2006 Novell, Inc.
 //
 #if NET_2_0
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
+	[ComVisible(true)]
 	public class TableLayoutPanel : Panel, IExtenderProvider {
 		TableLayoutSettings settings;
+		TableLayoutPanelCellBorderStyle cell_border_style;
 		
 		public TableLayoutPanel ()
 		{
@@ -52,6 +55,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public TableLayoutPanelCellBorderStyle CellBorderStyle {
+			get {
+				return cell_border_style;
+			}
+
+			set {
+				cell_border_style = value;
+			}
+		}
+		
 		public int ColumnCount {
 			get {
 				return settings.ColumnCount;

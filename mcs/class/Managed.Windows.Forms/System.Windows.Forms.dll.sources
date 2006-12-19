@@ -588,12 +588,14 @@ System.Windows.Forms/TabDrawMode.cs
 System.Windows.Forms/TabPage.cs
 System.Windows.Forms/TabRenderer.cs
 System.Windows.Forms/TabSizeMode.cs
+System.Windows.Forms/TableLayout.cs
 System.Windows.Forms/TableLayoutCellPaintEventArgs.cs
 System.Windows.Forms/TableLayoutCellPaintEventHandler.cs
 System.Windows.Forms/TableLayoutPanel.cs
 System.Windows.Forms/TableLayoutPanelCellBorderStyle.cs
 System.Windows.Forms/TableLayoutPanelGrowStyle.cs
 System.Windows.Forms/TableLayoutSettings.cs
+System.Windows.Forms/TableLayoutStyle.cs
 System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextBoxRenderer.cs
