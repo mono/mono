@@ -69,14 +69,14 @@ namespace Mono.XBuild.CommandLine {
 			try {
 				parameters.ParseArguments (args);
 				
-				if (parameters.DisplayVersion == true)
+				if (parameters.DisplayVersion)
 					ErrorUtilities.ShowVersion (false);
 				
 				engine  = new Engine (binPath);
 				
 				engine.GlobalProperties = this.parameters.Properties;
 				
-				if (parameters.NoConsoleLogger == false ) {
+				if (!parameters.NoConsoleLogger) {
 					ConsoleLogger cl = new ConsoleLogger ();
 					cl.Parameters = parameters.ConsoleLoggerParameters;
 					cl.Verbosity = parameters.LoggerVerbosity; 
@@ -96,7 +96,7 @@ namespace Mono.XBuild.CommandLine {
 				
 				project = engine.CreateNewProject ();
 				
-				if (parameters.Validate == true) {
+				if (parameters.Validate) {
 					if (parameters.ValidationSchema == null)
 						project.SchemaFile = defaultSchema;
 					else
@@ -105,9 +105,17 @@ namespace Mono.XBuild.CommandLine {
 
 				project.Load (parameters.ProjectFile);
 				
-				result = engine.BuildProject (project, parameters.Targets, new Hashtable ());
+				result = engine.BuildProject (project, parameters.Targets, null);
 			}
 			
+			catch (InvalidProjectFileException ipfe) {
+				ErrorUtilities.ReportError (0, ipfe.Message);
+			}
+
+			catch (InternalLoggerException ile) {
+				ErrorUtilities.ReportError (0, ile.Message);
+			}
+
 			catch (Exception) {
 				throw;
 			}
