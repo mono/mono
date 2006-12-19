@@ -172,9 +172,9 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM //BUG #6500
+//#if TARGET_JVM //BUG #6500
 		[Category ("NotWorking")]
-#endif
+//#endif
 		public void Test_MapPath ()
 		{
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
