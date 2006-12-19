@@ -1233,5 +1233,25 @@ namespace MonoTests.System.Xml
 			while (!xtr.EOF)
 				xtr.Read ();
 		}
+
+		[Test] // bug #80308
+		public void ReadCharsNested ()
+		{
+			char[] buf = new char [4];
+
+			string xml = "<root><text>AAAA</text></root>";
+			string [] strings = new string [] {
+				"<tex", "t>AA", "AA</", "text", ">"};
+			XmlTextReader r = new XmlTextReader (
+				xml, XmlNodeType.Document, null);
+			int c, n = 0;
+			while (r.Read ())
+				if (r.NodeType == XmlNodeType.Element)
+					while ((c = r.ReadChars (buf, 0, buf.Length)) > 0)
+						AssertEquals ("at " + n,
+							strings [n++],
+							new string (buf, 0, c));
+			AssertEquals ("total lines", 5, n);
+		}
 	}
 }

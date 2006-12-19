@@ -561,6 +561,7 @@ namespace System.Xml
 		{
 			curNodePeekIndex = peekCharsIndex;
 			preserveCurrentTag = true;
+			nestLevel = 0;
 
 			if (startNodeType == XmlNodeType.Attribute) {
 				if (currentAttribute == 0)
@@ -597,8 +598,8 @@ namespace System.Xml
 				depthUp = false;
 			}
 
-			if (shouldSkipUntilEndTag) {
-				shouldSkipUntilEndTag = false;
+			if (readCharsInProgress) {
+				readCharsInProgress = false;
 				return ReadUntilEndTag ();
 			}
 
@@ -666,10 +667,12 @@ namespace System.Xml
 				return 0;
 			}
 
-			if (NodeType != XmlNodeType.Element)
+			if (!readCharsInProgress && NodeType != XmlNodeType.Element)
 				return 0;
 
 			preserveCurrentTag = false;
+			readCharsInProgress = true;
+			useProceedingLineInfo = true;
 
 			return ReadCharsInternal (buffer, offset, length);
 		}
@@ -921,7 +924,8 @@ namespace System.Xml
 		private XmlNodeType currentState;
 
 		// For ReadChars()/ReadBase64()/ReadBinHex()
-		private bool shouldSkipUntilEndTag;
+		private int nestLevel;
+		private bool readCharsInProgress;
 		XmlReaderBinarySupport.CharGetter binaryCharGetter;
 
 		// These values are never re-initialized.
@@ -988,7 +992,7 @@ namespace System.Xml
 
 			currentState = XmlNodeType.None;
 
-			shouldSkipUntilEndTag = false;
+			readCharsInProgress = false;
 			binaryCharGetter = new XmlReaderBinarySupport.CharGetter (ReadChars);
 
 			checkCharacters = true;
@@ -2858,8 +2862,6 @@ namespace System.Xml
 		// Returns -1 if it should throw an error.
 		private int ReadCharsInternal (char [] buffer, int offset, int length)
 		{
-			shouldSkipUntilEndTag = true;
-
 			int bufIndex = offset;
 			for (int i = 0; i < length; i++) {
 				int c = PeekChar ();
@@ -2867,8 +2869,18 @@ namespace System.Xml
 				case -1:
 					throw NotWFError ("Unexpected end of xml.");
 				case '<':
+					if (i + 1 == length)
+						// if it does not end here,
+						// it cannot store another
+						// character, so stop here.
+						return i;
 					Advance (c);
 					if (PeekChar () != '/') {
+						nestLevel++;
+						buffer [bufIndex++] = '<';
+						continue;
+					}
+					else if (nestLevel-- > 0) {
 						buffer [bufIndex++] = '<';
 						continue;
 					}
@@ -2879,7 +2891,7 @@ namespace System.Xml
 						depthUp = false;
 					}
 					ReadEndTag ();
-					shouldSkipUntilEndTag = false;
+					readCharsInProgress = false;
 					Read (); // move to the next node
 					return i;
 				default:
@@ -2907,7 +2919,11 @@ namespace System.Xml
 				case -1:
 					throw NotWFError ("Unexpected end of xml.");
 				case '<':
-					if (PeekChar () != '/')
+					if (PeekChar () != '/') {
+						nestLevel++;
+						continue;
+					}
+					else if (--nestLevel > 0)
 						continue;
 					ReadChar ();
 					string name = ReadName ();
