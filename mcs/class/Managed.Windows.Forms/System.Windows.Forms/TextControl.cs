@@ -3353,7 +3353,7 @@ namespace System.Windows.Forms {
 				line = GetLine(i);
 
 				start = chars;
-				chars += line.text.Length + crlf_size;
+				chars += line.text.Length + (line.soft_break ? 0 : crlf_size);
 
 				if (index <= chars) {
 					// we found the line
