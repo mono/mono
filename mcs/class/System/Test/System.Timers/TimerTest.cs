@@ -72,7 +72,6 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestRaceCondition ()
 		{
 			Assert ("#B01", new RaceTest (true).Success);
