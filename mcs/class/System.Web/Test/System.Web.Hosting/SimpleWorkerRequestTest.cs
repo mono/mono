@@ -48,13 +48,8 @@ namespace MonoTests.System.Web.Hosting {
 			cwd = Environment.CurrentDirectory;
 			bindir = Path.Combine (cwd, "bin");
 
-			int p = (int) Environment.OSVersion.Platform;
-			int x = 8;
-			
-			if ((p == 4) || (p == 128)) 
-				x = 7;
-				
-			assembly = typeof (SimpleWorkerRequestTest).Assembly.CodeBase.Substring (x);
+			Uri u = new Uri (typeof (SimpleWorkerRequestTest).Assembly.CodeBase);
+			assembly = u.LocalPath;
 
 			if (!Directory.Exists (bindir))
 				Directory.CreateDirectory (bindir);

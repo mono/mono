@@ -172,7 +172,7 @@ namespace System.Web.Hosting {
 			else
 				local_page = page;
 			
-			string path = UrlUtils.Combine (app_physical_dir, local_page);
+			string path = Path.Combine (app_physical_dir, local_page);
 			if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand (); 
 			}
