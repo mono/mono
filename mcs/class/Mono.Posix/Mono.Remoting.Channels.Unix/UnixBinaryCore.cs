@@ -131,6 +131,7 @@ namespace Mono.Remoting.Channels.Unix
 				try
 				{
 					asm = Assembly.Load (assemblyName);
+					if (asm == null) return null;
 					Type t = asm.GetType (typeName);
 					if (t != null) return t;
 				}
@@ -139,6 +140,7 @@ namespace Mono.Remoting.Channels.Unix
 			
 			// Try using the simple name
 			asm = Assembly.LoadWithPartialName (assemblyName);
+			if (asm == null) return null;
 			return asm.GetType (typeName, true);
 		}
 	}

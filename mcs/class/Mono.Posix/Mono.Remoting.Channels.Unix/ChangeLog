@@ -1,3 +1,9 @@
+2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* UnixBinaryCore.cs: Added some null checks.
+	* UnixServerChannel.cs: Remoting does not call StartListening anymore
+	  (for MS.NET compatibility), so it has to be explicitely called here.
+
 2006-09-15  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* UnixServerTransportSink.cs, UnixServerChannel.cs: 

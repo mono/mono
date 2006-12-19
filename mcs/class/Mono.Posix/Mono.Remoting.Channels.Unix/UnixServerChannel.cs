@@ -78,6 +78,8 @@ namespace Mono.Remoting.Channels.Unix
 
             IServerChannelSink next_sink = ChannelServices.CreateServerChannelSinkChain (serverSinkProvider, this);
             sink = new UnixServerTransportSink (next_sink);
+            
+            StartListening (null);
         }
         
         public UnixServerChannel (string path)
