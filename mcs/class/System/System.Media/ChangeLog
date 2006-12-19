@@ -1,0 +1,6 @@
+
+Tue Dec 19 19:17:06 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* SoundPlayer.cs, SystemSound.cs, SystemSounds.cs: first stubs
+	and partial implementation.
+
