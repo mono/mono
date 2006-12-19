@@ -87,13 +87,13 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public bool BuildProject (Project project, string targetName)
 		{
-			return BuildProject (project, new string[] { targetName}, new Hashtable (), BuildSettings.None);
+			return BuildProject (project, new string[] { targetName}, null, BuildSettings.None);
 		}
 		
 		[MonoTODO]
 		public bool BuildProject (Project project, string[] targetNames)
 		{
-			return BuildProject (project, targetNames, new Hashtable (), BuildSettings.None);
+			return BuildProject (project, targetNames, null, BuildSettings.None);
 		}
 
 		[MonoTODO]
@@ -146,7 +146,7 @@ namespace Microsoft.Build.BuildEngine {
 					      string[] targetNames,
 					      BuildPropertyGroup globalProperties)
 		{
-			return BuildProjectFile (projectFile, targetNames, globalProperties, new Hashtable (), BuildSettings.None);
+			return BuildProjectFile (projectFile, targetNames, globalProperties, null, BuildSettings.None);
 		}
 		
 		[MonoTODO]
@@ -225,7 +225,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void UnloadProject (Project project)
 		{
 			if (project.ParentEngine != this)
-				throw new InvalidOperationException ("This project is not loaded in this engine");
+				throw new InvalidOperationException ("The \"Project\" object specified does not belong to the correct \"Engine\" object.");
 			
 			project.CheckUnloaded ();
 			

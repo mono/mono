@@ -135,7 +135,8 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("metadataName");
 			
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				throw new ArgumentException ("Can't remove reserved metadata.");
+				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
+					metadataName));
 			
 			if (evaluatedMetadata.Contains (metadataName))
 				evaluatedMetadata.Remove (metadataName);
@@ -161,7 +162,8 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("metadataValue");
 			
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				throw new ArgumentException ("Can't modify reserved metadata.");
+				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
+					metadataName));
 			
 			RemoveMetadata (metadataName);
 			

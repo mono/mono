@@ -97,8 +97,9 @@ namespace Microsoft.Build.BuildEngine {
 		public static explicit operator string (BuildProperty propertyToCast)
 		{
 			if (propertyToCast == null)
-				throw new ArgumentNullException ("propertyToCast");
-			return propertyToCast.ToString ();
+				return String.Empty;
+			else
+				return propertyToCast.ToString ();
 		}
 
 		public override string ToString ()
@@ -135,6 +136,8 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					propertyElement.SetAttribute ("Condition", value);
+				else
+					throw new InvalidOperationException ("Cannot set a condition on an object not represented by an XML element in the project file.");
 			}
 		}
 

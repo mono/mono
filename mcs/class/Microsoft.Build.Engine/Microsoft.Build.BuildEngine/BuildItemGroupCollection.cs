@@ -57,7 +57,7 @@ namespace Microsoft.Build.BuildEngine {
 			if ((array.Length > 0) && (index >= array.Length))
 				throw new IndexOutOfRangeException ("Index was outside the bounds of the array.");
 			if (index + this.Count > array.Length)
-				throw new ArgumentException ("Not enough room from index to end of array for this BuildItemGroupCollection");
+				throw new IndexOutOfRangeException ("Not enough room from index to end of array for this BuildItemGroupCollection");
 		
 			IEnumerator it = GetEnumerator ();
 			int i = index;

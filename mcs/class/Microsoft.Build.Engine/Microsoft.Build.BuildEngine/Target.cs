@@ -96,32 +96,43 @@ namespace Microsoft.Build.BuildEngine {
 			buildTasks.Remove (buildTask);
 		}
 		
+		// FIXME: log errors instead of throwing exceptions
 		internal bool Build ()
 		{
-			bool result;
+			bool result = true;
 		
-			buildState = BuildState.Started;
+			try {
+				buildState = BuildState.Started;
 
-			if (DependsOnTargets != String.Empty) {
-				Expression dependencies = new Expression ();
-				dependencies.Parse (DependsOnTargets);
-				
-				string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (Project, typeof (string[]));
-				foreach (string target in targetsToBuildFirst) {
-					string trimmed = target.Trim ();
-					Target t = (Target) project.Targets [trimmed];
-					if (t == null)
-						throw new InvalidProjectFileException (String.Format ("Target {0} not found.", trimmed));
-					if (t.BuildState == BuildState.NotStarted) {
-						t.Build ();
+				if (DependsOnTargets != String.Empty) {
+					Expression dependencies = new Expression ();
+					dependencies.Parse (DependsOnTargets);
+					
+					string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (Project, typeof (string[]));
+					foreach (string target in targetsToBuildFirst) {
+						string trimmed = target.Trim ();
+						Target t = (Target) project.Targets [trimmed];
+						if (t == null)
+							throw new InvalidProjectFileException (String.Format ("Target {0} not found.", trimmed));
+						if (t.BuildState == BuildState.NotStarted) {
+							if (!t.Build ()) {
+								result = false;
+								break;
+							}
+
+						}
+						if (t.BuildState == BuildState.Started)
+							throw new InvalidProjectFileException ("Cycle in target dependencies detected.");
 					}
-					if (t.BuildState == BuildState.Started)
-						throw new InvalidProjectFileException ("Cycle in target dependencies detected.");
 				}
-			}
 			
-			result = RealBuild ();
-			buildState = BuildState.Finished;
+				if (result)
+					result = RealBuild ();
+			} catch (Exception) {
+				return false;
+			} finally {
+				buildState = BuildState.Finished;
+			}
 			
 			return result;
 		}

@@ -79,6 +79,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project (Engine engine)
 		{
+			buildEnabled = engine.BuildEnabled;
 			parentEngine  = engine;
 			xmlDocument = new XmlDocument ();
 			groupingCollection = new GroupingCollection (this);
@@ -258,11 +259,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void Load (string projectFileName)
 		{
 			this.fullFileName = Path.GetFullPath (projectFileName);
-			try {
-				DoLoad (new StreamReader (projectFileName));
-			} catch (Exception e) {
-				throw new InvalidProjectFileException (e.Message, e);
-			}
+			DoLoad (new StreamReader (projectFileName));
 		}
 		
 		[MonoTODO]
@@ -276,12 +273,14 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			fullFileName = String.Empty;
 			DoLoad (new StringReader (projectXml));
+			MarkProjectAsDirty ();
 		}
 
 
 		public void MarkProjectAsDirty ()
 		{
 			isDirty = true;
+			timeOfLastDirty = DateTime.Now;
 		}
 
 		[MonoTODO]
@@ -414,7 +413,7 @@ namespace Microsoft.Build.BuildEngine {
 				
 			}
 
-			isDirty = true;
+			MarkProjectAsDirty ();
 		}
 		
 		[MonoTODO]
@@ -462,37 +461,46 @@ namespace Microsoft.Build.BuildEngine {
 		internal void CheckUnloaded ()
 		{
 			if (unloaded)
-				throw new InvalidOperationException ("This project object is no longer valid.");
+				throw new InvalidOperationException ("This project object has been unloaded from the MSBuild engine and is no longer valid.");
 		}
 				
 		// Does the actual loading.
-		private void DoLoad (TextReader textReader)
+		void DoLoad (TextReader textReader)
 		{
-			ParentEngine.RemoveLoadedProject (this);
+			try {
+				ParentEngine.RemoveLoadedProject (this);
+	
+				XmlReaderSettings settings = new XmlReaderSettings ();
+	
+				if (SchemaFile != null) {
+					settings.Schemas.Add (null, SchemaFile);
+					settings.ValidationType = ValidationType.Schema;
+					settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
+				}
+	
+				XmlReader xmlReader = XmlReader.Create (textReader, settings);
+				xmlDocument.Load (xmlReader);
 
-			XmlReaderSettings settings = new XmlReaderSettings ();
-
-			if (SchemaFile != null) {
-				settings.Schemas.Add (null, SchemaFile);
-				settings.ValidationType = ValidationType.Schema;
-				settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
+				if (xmlDocument.DocumentElement.Name != "Project") {
+					throw new InvalidProjectFileException (String.Format (
+						"The element <{0}> is unrecognized, or not supported in this context.", xmlDocument.DocumentElement.Name));
+				}
+	
+				if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != ns) {
+					throw new InvalidProjectFileException (
+						@"The default XML namespace of the project must be the MSBuild XML namespace." + 
+						" If the project is authored in the MSBuild 2003 format, please add " +
+						"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
+						"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ");
+				}
+				ProcessXml ();
+				ParentEngine.AddLoadedProject (this);
+			} catch (Exception e) {
+				throw new InvalidProjectFileException (e.Message, e);
 			}
-
-			XmlReader xmlReader = XmlReader.Create (textReader, settings);
-			xmlDocument.Load (xmlReader);
-
-			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != ns) {
-				throw new InvalidProjectFileException (
-					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
-					" If the project is authored in the MSBuild 2003 format, please add " +
-					"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-					"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ");
-			}
-			ProcessXml ();
-			ParentEngine.AddLoadedProject (this);
 		}
 
-		private void ProcessXml ()
+		void ProcessXml ()
 		{
 			XmlElement xmlElement = xmlDocument.DocumentElement;
 			if (xmlElement.Name != "Project")

@@ -188,6 +188,8 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemGroupElement.SetAttribute ("Condition", value);
+				else
+					throw new InvalidOperationException ("Cannot set a condition on an object not represented by an XML element in the project file.");
 			}
 		}
 

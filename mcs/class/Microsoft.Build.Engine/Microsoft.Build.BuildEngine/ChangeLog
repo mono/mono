@@ -1,3 +1,23 @@
+2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs (Build): Don't throw anything in case of error, just
+	return false.
+
+	* BuildItemGroup.cs (set_Condition): Throw an exception if group is
+	not from XML.
+
+	* BuildItem.cs: More meaningfull messages in RemoveMetadata () and
+	SetMetadata ().
+
+	* BuildProperty.cs (ToString): Throw an exception if property is not
+	from XML.
+	(op_Explicit): Added a null check.
+
+	* Engine.cs: Better error message.
+
+	* BuildItemGroupCollection.cs (CopyTo): Changed ArgumentException to
+	IndexOutOfRangeException.
+
 2006-12-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemGroup.cs (Clone): Throw exception.
