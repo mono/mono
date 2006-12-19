@@ -473,8 +473,7 @@ namespace System.Windows.Forms {
 				if (doc.wrap) {
 					if ((wrap_pos > 0) && (wrap_pos != len) && (widths[pos] + w) + 5 > (doc.viewport_width - this.right_indent)) {
 						// Make sure to set the last width of the line before wrapping
-						pos++;
-						widths[pos] = widths[pos-1] + w;
+						widths [pos + 1] = widths [pos] + w;
 
 						pos = wrap_pos;
 						doc.Split(this, tag, pos, this.soft_break);
@@ -486,8 +485,7 @@ namespace System.Windows.Forms {
 						// No suitable wrap position was found so break right in the middle of a word
 
 						// Make sure to set the last width of the line before wrapping
-						pos++;
-						widths[pos] = widths[pos-1] + w;
+						widths [pos + 1] = widths [pos] + w;
 
 						doc.Split(this, tag, pos, this.soft_break);
 						this.soft_break = true;

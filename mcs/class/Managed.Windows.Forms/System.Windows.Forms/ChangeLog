@@ -1,3 +1,7 @@
+2006-12-19  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Don't increment the position here.
+
 2006-12-19  Andreia Gaita  <avidigal@novell.org>
 
 	* SendKeys.cs: Changed some things to match ms.net behaviour
