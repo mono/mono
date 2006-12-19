@@ -200,6 +200,9 @@ namespace System.Web.UI.WebControls
 				return (bool?)o;
 			}
 			set {
+				bool? current = (bool?) ViewState ["Expanded"];
+				if (current == value)
+					return;
 				ViewState ["Expanded"] = value;
 				if (tree != null)
 					tree.NotifyExpandedChanged (this);

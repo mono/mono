@@ -775,7 +775,7 @@ namespace System.Web.UI.WebControls
 		{
 			if (node.Expanded.HasValue && node.Expanded.Value)
 				OnTreeNodeExpanded (new TreeNodeEventArgs (node));
-			else
+			else if (node.Expanded.HasValue && node.IsParentNode)
 				OnTreeNodeCollapsed (new TreeNodeEventArgs (node));
 		}
 
