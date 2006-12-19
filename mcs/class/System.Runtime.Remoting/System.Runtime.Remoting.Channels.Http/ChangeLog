@@ -1,3 +1,8 @@
+2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpServerChannel.cs: The remoting infrastructure does not call
+	  StartListening() anymore, so it has to be called by the channel.
+
 2006-03-05  Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpClientChannel.cs, HttpServerChannel.cs: exceptions propagating

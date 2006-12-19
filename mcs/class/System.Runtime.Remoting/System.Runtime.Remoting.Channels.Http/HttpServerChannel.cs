@@ -181,6 +181,8 @@ namespace System.Runtime.Remoting.Channels.Http
 
 			_transportSink = new HttpServerTransportSink (snk, properties);
 			SinksWithProperties = _transportSink;
+			
+			StartListening (null);
 		}
 
 		internal void Listen()
