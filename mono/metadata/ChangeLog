@@ -1,4 +1,9 @@
 
+Tue Dec 19 14:28:03 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: implemented code to be used for checking
+	that no reference field overlaps with non-references.
+
 Tue Dec 19 14:10:37 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* threadpool.c: fix queue code to be compatible with the
