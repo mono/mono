@@ -41,6 +41,7 @@ namespace System.Timers
 	{
 		bool autoReset;
 		bool enabled;
+		bool exiting;
 		double interval;
 		ISynchronizeInvoke so;
 		ManualResetEvent wait;
@@ -79,7 +80,9 @@ namespace System.Timers
 		[TimersDescription("Indicates whether the timer is enabled to fire events at a defined interval.")]
 		public bool Enabled
 		{
-			get { return enabled; }
+			get {
+				return enabled && !exiting;
+			}
 			set {
 				if (enabled == value)
 					return;
@@ -179,17 +182,18 @@ namespace System.Timers
 		void StartTimer ()
 		{
 			WaitCallback wc = new WaitCallback (Callback);
-			while (enabled && wait.WaitOne ((int) interval, false) == false) {
-				if (autoReset == false)
-					enabled = false;
+
+			while (wait.WaitOne ((int) interval, false) == false) {
+				exiting = !autoReset;
 
 				ThreadPool.QueueUserWorkItem (wc, this);
+
+				if (exiting)
+					break;
 			}
 
-			wc = null;
-
 			lock (locker) {
-				((IDisposable) wait).Dispose ();
+				wait.Close ();
 				wait = null;
 			}
 		}
