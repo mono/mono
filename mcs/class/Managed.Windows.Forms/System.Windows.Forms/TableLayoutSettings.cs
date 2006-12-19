@@ -35,7 +35,8 @@ namespace System.Windows.Forms {
 	[Serializable]
 	public sealed class TableLayoutSettings : LayoutSettings {
 		//TableLayoutPanel panel;
-		ColumnStyleCollection column_style;
+		TableLayoutColumnStyleCollection column_styles;
+		TableLayoutRowStyleCollection row_styles;
 		TableLayoutPanelGrowStyle grow_style;
 		LayoutEngine layout_engine;
 		int column_count;
@@ -47,10 +48,13 @@ namespace System.Windows.Forms {
 			column_count = 0;
 			row_count = 0;
 			grow_style = TableLayoutPanelGrowStyle.AddRows;
-			column_style = new ColumnStyleCollection (panel);
+			column_styles = new TableLayoutColumnStyleCollection (panel);
+			row_styles = new TableLayoutRowStyleCollection (panel);
+			
 			layout_engine = new TableLayout ();
 		}
 
+		[DefaultValue (0)]
 		public int ColumnCount {
 			get {
 				return column_count;
@@ -61,6 +65,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (0)]
 		public int RowCount {
 			get {
 				return row_count;
@@ -71,9 +76,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(TableLayoutPanelGrowStyle.AddRows)]
 		public TableLayoutPanelGrowStyle GrowStyle {
 			get {
 				return grow_style;
+			}
+
+			set {
+				grow_style = value;
 			}
 		}
 
@@ -83,127 +93,17 @@ namespace System.Windows.Forms {
 			}
 		}
 				
-		public TableLayoutSettings.ColumnStyleCollection ColumnStyles {
+		public TableLayoutColumnStyleCollection ColumnStyles {
 			get {
-				return column_style;
+				return column_styles;
 			}
 		}
 
-		public abstract class StyleCollection {
-			ArrayList al = new ArrayList ();
-			TableLayoutPanel table;
-			
-			internal StyleCollection (TableLayoutPanel table)
-			{
-				this.table = table;
-			}
-			
-			public int Add (TableLayoutSettings.Style style)
-			{
-				return al.Add (style);
-			}
-
-			// FIXME; later this should be an override.
-			public void Clear ()
-			{
-				al.Clear ();
-
-				// FIXME: Need to investigate what happens when the style is gone.
-				table.Relayout ();
-			}
-
-#region IList methods
-			//
-			// The IList methods will later be implemeneted, this is to get us started
-			//
-			internal bool Contains (Style style)
-			{
-				return al.Contains (style);
-			}
-
-			internal int IndexOf (Style style)
-			{
-				return al.IndexOf (style);
-			}
-
-			internal void Insert (int index, Style style)
-			{
-				al.Insert (index, style);
-			}
-
-			internal void Remove (Style style)
-			{
-				al.Remove (style);
-			}
-
-#endregion
-			public Style this [int idx] {
-				get {
-					return (Style) al [idx];
-				}
-
-				set {
-					al [idx] = value;
-				}
-			}
-		}
-		
-		public class ColumnStyleCollection : StyleCollection {
-
-			internal ColumnStyleCollection (TableLayoutPanel panel) : base (panel)
-			{
-			}
-			
-			public void Add (ColumnStyle style)
-			{
-				base.Add (style);
-			}
-
-			public bool Contains (ColumnStyle style)
-			{
-				return base.Contains (style);
-			}
-
-			public int IndexOf (ColumnStyle style)
-			{
-				return base.IndexOf (style);
-			}
-
-			public void Insert (int index, ColumnStyle style)
-			{
-				base.Insert (index, style);
-			}
-
-			public void Remove (ColumnStyle style)
-			{
-				base.Remove (style);
-			}
-
-			public new ColumnStyle this [int index] {
-				get {
-					return (ColumnStyle) base [index];
-				}
-
-				set {
-					base [index] = value;
-				}
-			}
-		}
-
-		public class Style {
-			internal SizeType size_type;
-			
-			public SizeType SizeType {
-				get {
-					return size_type;
-				}
-
-				set {
-					size_type = value;
-				}
+		public TableLayoutRowStyleCollection RowStyle {
+			get {
+				return row_styles;
 			}
 		}
 	}
-
 }
 #endif

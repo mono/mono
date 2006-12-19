@@ -27,7 +27,7 @@
 #if NET_2_0
 namespace System.Windows.Forms {
 
-	public class ColumnStyle : TableLayoutSettings.Style {
+	public class ColumnStyle : TableLayoutStyle {
 		float width;
 		
 		public ColumnStyle ()

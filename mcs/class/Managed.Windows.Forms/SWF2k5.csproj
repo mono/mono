@@ -734,11 +734,14 @@
     <Compile Include="System.Windows.Forms\TableLayout.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\TableLayoutColumnStyleCollection.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanel.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanelCellBorderStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanelGrowStyle.cs" />
+    <Compile Include="System.Windows.Forms\TableLayoutRowStyleCollection.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
+    <Compile Include="System.Windows.Forms\TableLayoutStyleCollection.cs" />
     <Compile Include="System.Windows.Forms\TextBox.cs" />
     <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
     <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />

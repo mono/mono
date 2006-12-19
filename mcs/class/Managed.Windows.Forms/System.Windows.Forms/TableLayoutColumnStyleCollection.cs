@@ -21,38 +21,57 @@
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
 //
-// (C) 2004 Novell, Inc.
+// Copyright 2004-2006 Novell, Inc.
 //
+
 #if NET_2_0
+using System;
+using System.ComponentModel;
+using System.Collections;
+using System.Windows.Forms.Layout;
+
 namespace System.Windows.Forms {
 
-	public class RowStyle : TableLayoutStyle {
-		float height;
+	public class TableLayoutColumnStyleCollection : TableLayoutStyleCollection {
 		
-		public RowStyle ()
+		internal TableLayoutColumnStyleCollection (TableLayoutPanel panel) : base (panel)
 		{
 		}
-
-		public RowStyle (SizeType st) 
+		
+		public void Add (ColumnStyle style)
 		{
-			size_type = st;
+			base.Add (style);
 		}
-
-		public RowStyle (SizeType st, float height)
+		
+		public bool Contains (ColumnStyle style)
 		{
-			size_type = st;
-			this.height = height;
+			return ((IList)this).Contains (style);
 		}
-
-		public float Height {
+		
+		public int IndexOf (ColumnStyle style)
+		{
+			return ((IList)this).IndexOf (style);
+		}
+		
+		public void Insert (int index, ColumnStyle style)
+		{
+			((IList)this).Insert (index, style);
+		}
+		
+		public void Remove (ColumnStyle style)
+		{
+			((IList)this).Remove (style);
+		}
+		
+		public new ColumnStyle this [int index] {
 			get {
-				return height;
+				return (ColumnStyle) base [index];
 			}
-
+			
 			set {
-				height = value;
+				base [index] = value;
 			}
 		}
 	}
-}
-#endif
+}	
+#endif 

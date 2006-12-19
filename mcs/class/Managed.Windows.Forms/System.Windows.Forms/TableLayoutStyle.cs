@@ -21,38 +21,34 @@
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
 //
-// (C) 2004 Novell, Inc.
+// (C) 2006 Novell, Inc.
 //
+
 #if NET_2_0
+using System;
+using System.ComponentModel;
+using System.Collections;
+using System.Windows.Forms.Layout;
+
 namespace System.Windows.Forms {
 
-	public class RowStyle : TableLayoutStyle {
-		float height;
+	public abstract class TableLayoutStyle {
+		protected SizeType size_type = SizeType.Absolute;
 		
-		public RowStyle ()
+		protected TableLayoutStyle ()
 		{
 		}
 
-		public RowStyle (SizeType st) 
-		{
-			size_type = st;
-		}
-
-		public RowStyle (SizeType st, float height)
-		{
-			size_type = st;
-			this.height = height;
-		}
-
-		public float Height {
+		public SizeType SizeType {
 			get {
-				return height;
+				return size_type;
 			}
 
 			set {
-				height = value;
+				size_type = value;
 			}
 		}
 	}
+
 }
 #endif
