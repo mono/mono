@@ -67,11 +67,16 @@ namespace System.ComponentModel
 						converter = TypeDescriptor.GetConverter (PropertyType);
 					else {
 						Type t = Type.GetType (at.ConverterTypeName);
-						ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
-						if (ci != null)
-							converter = (TypeConverter) ci.Invoke (new object[] { PropertyType });
-						else
-							converter = (TypeConverter) Activator.CreateInstance (t);
+						if (t == null) {
+							converter = TypeDescriptor.GetConverter (PropertyType);
+						}
+						else {
+							ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
+							if (ci != null)
+								converter = (TypeConverter) ci.Invoke (new object[] { PropertyType });
+							else
+								converter = (TypeConverter) Activator.CreateInstance (t);
+						}
 					}
 				}
 				return converter;

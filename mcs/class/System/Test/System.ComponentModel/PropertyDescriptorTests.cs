@@ -19,6 +19,26 @@ namespace MonoTests.System.ComponentModel
 	[TestFixture]
 	public class PropertyDescriptorTests
 	{
+		class MissingConverterType_test
+		{
+			class NestedClass { }
+
+			[TypeConverter ("missing-type-name")]
+			public NestedClass Prop {
+				get { return null; }
+			}
+
+			[TypeConverter ("missing-type-name")]
+			public int IntProp {
+				get { return 5; }
+			}
+
+			[TypeConverter ("missing-type-name")]
+			public string StringProp {
+				get { return ""; }
+			}
+		}
+
 		class ReadOnlyProperty_test
 		{
 			public int Prop {
@@ -156,6 +176,18 @@ namespace MonoTests.System.ComponentModel
 			{
 				prop = 10;
 			}
+		}
+
+		[Test]
+		public void MissingTypeConverter ()
+		{
+			PropertyDescriptor p1 = TypeDescriptor.GetProperties (typeof (MissingConverterType_test))["Prop"];
+			PropertyDescriptor p2 = TypeDescriptor.GetProperties (typeof (MissingConverterType_test))["IntProp"];
+			PropertyDescriptor p3 = TypeDescriptor.GetProperties (typeof (MissingConverterType_test))["StringProp"];
+
+			Assert.AreEqual (typeof (TypeConverter), p1.Converter.GetType (), "1");
+			Assert.AreEqual (typeof (Int32Converter), p2.Converter.GetType (), "2");
+			Assert.AreEqual (typeof (StringConverter), p3.Converter.GetType (), "3");
 		}
 
 		[Test]

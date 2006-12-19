@@ -1,3 +1,9 @@
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyDescriptorTests.cs: add some tests here because we were
+	generating an NRE for a missing type converter type.  MS doesn't -
+	it instead falls back to the converter for the property type.
+
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyDescriptorTests.cs: add a test to see if
