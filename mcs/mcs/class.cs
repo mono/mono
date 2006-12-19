@@ -1096,7 +1096,7 @@ namespace Mono.CSharp {
 				if (!iface.IsInterface) {
 					if (Kind != Kind.Class) {
 						// TODO: location of symbol related ....
-						Error_TypeInListIsNotInterface (Location, iface.FullName);
+						Error_TypeInListIsNotInterface (Location, iface.GetSignatureForError ());
 					}
 					else if (base_class != null)
 						Report.Error (1721, Location, "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')",

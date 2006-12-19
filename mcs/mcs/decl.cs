@@ -853,11 +853,6 @@ namespace Mono.CSharp {
 				//        May also be null when resolving top-level attributes.
 				return true;
 
-			if (TypeManager.IsGenericParameter (check_type))
-				return true; // FIXME
-			
-			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
-
 			//
 			// Broken Microsoft runtime, return public for arrays, no matter what 
 			// the accessibility is for their underlying class, and they return 
@@ -865,6 +860,11 @@ namespace Mono.CSharp {
 			//
 			if (check_type.IsArray || check_type.IsPointer)
 				return CheckAccessLevel (TypeManager.GetElementType (check_type));
+
+			if (TypeManager.IsGenericParameter(check_type))
+				return true; // FIXME
+
+			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
 
 			switch (check_attr){
 			case TypeAttributes.Public:
@@ -1002,9 +1002,6 @@ namespace Mono.CSharp {
 		//
 		public bool AsAccessible (Type p, int flags)
 		{
-			if (TypeManager.IsGenericParameter (p))
-				return true; // FIXME
-
 			//
 			// 1) if M is private, its accessability is the same as this declspace.
 			// we already know that P is accessible to T before this method, so we
@@ -1016,7 +1013,10 @@ namespace Mono.CSharp {
 			
 			while (p.IsArray || p.IsPointer || p.IsByRef)
 				p = TypeManager.GetElementType (p);
-			
+
+			if (TypeManager.IsGenericParameter(p))
+				return true; // FIXME
+
 			AccessLevel pAccess = TypeEffectiveAccessLevel (p);
 			AccessLevel mAccess = this.EffectiveAccessLevel &
 				GetAccessLevelFromModifiers (flags);

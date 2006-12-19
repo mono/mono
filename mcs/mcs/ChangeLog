@@ -1,3 +1,10 @@
+2006-12-19  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs (GetClassBases): Write 5 times every day, will never use
+	FullName for error reporting.
+
+	* decl.cs (AsAccessible, CheckAccessLevel): Always unpack arrays first.
+
 2006-12-19  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (LocalInfo.EmitSymbolInfo): New public method; emit
