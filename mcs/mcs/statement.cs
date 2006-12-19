@@ -1024,6 +1024,7 @@ namespace Mono.CSharp {
 
 		Flags flags;
 		ReadOnlyContext ro_context;
+		LocalBuilder builder;
 		
 		public LocalInfo (Expression type, string name, Block block, Location l)
 		{
@@ -1047,7 +1048,6 @@ namespace Mono.CSharp {
 				var = theblock.ScopeInfo.GetCapturedVariable (this);
 
 			if (var == null) {
-				LocalBuilder builder;
 				if (Pinned)
 					//
 					// This is needed to compile on both .NET 1.x and .NET 2.x
@@ -1059,6 +1059,12 @@ namespace Mono.CSharp {
 
 				var = new LocalVariable (this, builder);
 			}
+		}
+
+		public void EmitSymbolInfo (EmitContext ec, string name)
+		{
+			if (builder != null)
+				ec.DefineLocalVariable (name, builder);
 		}
 
 		public bool IsThisAssigned (EmitContext ec, Location loc)
@@ -2231,8 +2237,19 @@ namespace Mono.CSharp {
 			DoEmit (ec);
 			ec.Mark (EndLocation, true); 
 
-			if (emit_debug_info && is_lexical_block)
-				ec.EndScope ();
+			if (emit_debug_info) {
+				if (is_lexical_block)
+					ec.EndScope ();
+
+				if (variables != null) {
+					foreach (DictionaryEntry de in variables) {
+						string name = (string) de.Key;
+						LocalInfo vi = (LocalInfo) de.Value;
+
+						vi.EmitSymbolInfo (ec, name);
+					}
+				}
+			}
 
 			ec.CurrentBlock = prev_block;
 		}
