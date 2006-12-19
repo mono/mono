@@ -143,7 +143,12 @@ namespace System.Web.Services.Protocols
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
 
+#if NET_2_0
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction &&
+					message.SoapVersion != SoapProtocolVersion.Soap12)
+#else
 				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction)
+#endif
 				{
 					soapAction = request.Headers ["SOAPAction"];
 					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
@@ -163,7 +168,12 @@ namespace System.Web.Services.Protocols
 				// If the routing style is RequestElement, try to get the method name from the
 				// stream processed by the high priority extensions
 
+#if NET_2_0
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement ||
+				     message.SoapVersion == SoapProtocolVersion.Soap12)
+#else
 				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement)
+#endif
 				{
 					MemoryStream mstream;
 					byte[] buffer = null;
@@ -272,7 +282,13 @@ namespace System.Web.Services.Protocols
 			if ((message.ContentEncoding != null) && (message.ContentEncoding.Length > 0))
 				response.AppendHeader("Content-Encoding", message.ContentEncoding);
 
+#if NET_2_0
+			response.ContentType = message.SoapVersion == SoapProtocolVersion.Soap12 ?
+				"application/soap+xml; charset=utf-8" :
+				"text/xml; charset=utf-8";
+#else
 			response.ContentType = "text/xml; charset=utf-8";
+#endif
 			if (message.Exception != null) response.StatusCode = 500;
 
 			Stream responseStream = response.OutputStream;

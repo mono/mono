@@ -1,3 +1,16 @@
+2006-12-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs :
+	  Don't use HTTP header when SoapVersion is Soap12.
+	* HttpSoapWebServiceHandler.cs :
+	  With SOAP 1.2 message we can only use Body content.
+	  Set correct Content-Type for SOAP 1.2 message.
+	* Fault12.cs : added null check.
+	* SoapClientMessage.cs :
+	  Set correct Content-Type for SOAP 1.2 message.
+	* WebServiceHandlerFactory.cs :
+	  don't reject SOAP 1.2 protocol here.
+
 2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebServiceHandlerFactory.cs,

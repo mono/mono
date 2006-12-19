@@ -75,7 +75,8 @@ namespace System.Web.Services.Protocols
 		{
 			Code = new Soap12FaultCode ();
 			Code.Value = ex.Code;
-			Code.Subcode = CreateFaultCode (ex.SubCode);
+			if (ex.SubCode != null)
+				Code.Subcode = CreateFaultCode (ex.SubCode);
 			Node = ex.Node;
 			Role = ex.Role;
 			Reason = new Soap12FaultReason ();
@@ -99,6 +100,8 @@ namespace System.Web.Services.Protocols
 
 		static Soap12FaultCode CreateFaultCode (SoapFaultSubCode code)
 		{
+			if (code == null)
+				throw new ArgumentNullException ("code");
 			Soap12FaultCode ret = new Soap12FaultCode ();
 			ret.Value = code.Code;
 			if (code.SubCode != null)
