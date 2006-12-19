@@ -227,7 +227,20 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		private int ToUnicode (int vkey, int scan, out string buffer)
+		public int ToKeycode(int key) 
+		{
+			int keycode = 0;
+			
+			if (nonchar_vkey_key[key] > 0)
+				keycode = XKeysymToKeycode (display, nonchar_vkey_key[key]);
+			
+			if (keycode == 0)
+				keycode = XKeysymToKeycode (display, key);
+
+			return keycode;		
+		}
+
+		public int ToUnicode (int vkey, int scan, out string buffer)
 		{
 			if ((scan & 0x8000) != 0) {
 				buffer = String.Empty;
@@ -845,6 +858,59 @@ namespace System.Windows.Forms {
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,		     /* FFF0 */
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x153		     /* FFF8 */
 		};
+
+		private readonly static int [] nonchar_vkey_key = new int []
+		{
+			0, 0, 0, 0, 0,		/* 00-04 */ 
+			0, 0, 0, (int)XKeySym.XK_BackSpace, (int)XKeySym.XK_Tab,		/* 05-09 */
+			0, 0, (int)XKeySym.XK_Clear, (int)XKeySym.XK_Return,	0, 0,	/* 0A-0F */
+			(int)XKeySym.XK_Shift_L, (int)XKeySym.XK_Control_L, (int)XKeySym.XK_Menu, 0, (int)XKeySym.XK_Caps_Lock,		/* 10-14 */ 
+			0, 0, 0, 0, 0,		/* 15-19 */
+			0, 0, 0, 0,	0, 0,	/* 1A-1F */
+			0, 0, 0, (int)XKeySym.XK_End, (int)XKeySym.XK_Home,		/* 20-24 */ 
+			(int)XKeySym.XK_Left, (int)XKeySym.XK_Up, (int)XKeySym.XK_Right, (int)XKeySym.XK_Down, 0,		/* 25-29 */
+			0, 0, 0, 0,	0, 0,	/* 2A-2F */
+			0, 0, 0, 0, 0,		/* 30-34 */ 
+			0, 0, 0, 0, 0,		/* 35-39 */
+			0, 0, 0, 0,	0, 0,	/* 3A-3F */
+			0, 0, 0, 0, 0,		/* 40-44 */ 
+			0, 0, 0, 0, 0,		/* 45-49 */
+			0, 0, 0, 0,	0, 0,	/* 4A-4F */
+			0, 0, 0, 0, 0,		/* 50-54 */ 
+			0, 0, 0, 0, 0,		/* 55-59 */
+			0, (int)XKeySym.XK_Meta_L, (int)XKeySym.XK_Meta_R, 0,	0, 0,	/* 5A-5F */
+			0, 0, 0, 0, 0,		/* 60-64 */ 
+			0, 0, 0, 0, 0,		/* 65-69 */
+			0, 0, 0, 0,	0, 0,	/* 6A-6F */
+			0, 0, 0, 0, 0,		/* 70-74 */ 
+			0, 0, 0, 0, 0,		/* 75-79 */
+			0, 0, 0, 0,	0, 0,	/* 7A-7F */
+			0, 0, 0, 0, 0,		/* 80-84 */ 
+			0, 0, 0, 0, 0,		/* 85-89 */
+			0, 0, 0, 0,	0, 0,	/* 8A-8F */
+			0, 0, 0, 0, 0,		/* 90-94 */ 
+			0, 0, 0, 0, 0,		/* 95-99 */
+			0, 0, 0, 0,	0, 0,	/* 9A-9F */
+			(int)XKeySym.XK_Shift_L, (int)XKeySym.XK_Shift_R, (int)XKeySym.XK_Control_L, (int)XKeySym.XK_Control_R, (int)XKeySym.XK_Alt_L,		/* A0-A4 */ 
+			(int)XKeySym.XK_Alt_R, 0, 0, 0, 0,		/* A5-A9 */
+			0, 0, 0, 0,	0, 0,	/* AA-AF */
+			0, 0, 0, 0, 0,		/* B0-B4 */ 
+			0, 0, 0, 0, 0,		/* B5-B9 */
+			0, 0, 0, 0,	0, 0,	/* BA-BF */
+			0, 0, 0, 0, 0,		/* C0-C4 */ 
+			0, 0, 0, 0, 0,		/* C5-C9 */
+			0, 0, 0, 0,	0, 0,	/* CA-CF */
+			0, 0, 0, 0, 0,		/* D0-D4 */ 
+			0, 0, 0, 0, 0,		/* D5-D9 */
+			0, 0, 0, 0,	0, 0,	/* DA-DF */
+			0, 0, 0, 0, 0,		/* E0-E4 */ 
+			0, 0, 0, 0, 0,		/* E5-E9 */
+			0, 0, 0, 0,	0, 0,	/* EA-EF */
+			0, 0, 0, 0, 0,		/* F0-F4 */ 
+			0, 0, 0, 0, 0,		/* F5-F9 */
+			0, 0, 0, 0,	0, 0	/* FA-FF */
+		};
+		
 	}
 
 }

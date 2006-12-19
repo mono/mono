@@ -4389,8 +4389,30 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(hwnd, message, wParam, lParam);
 		}
 
-		internal override int SendInput(Queue keys) {
-			return 0;
+		internal override int SendInput(IntPtr handle, Queue keys) { 
+			int count = keys.Count;
+
+			while (keys.Count > 0) {
+			
+				MSG msg = (MSG)keys.Dequeue();
+
+				XEvent xevent = new XEvent ();
+				Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+
+				xevent.type = (msg.message == Msg.WM_KEYUP ? XEventName.KeyRelease : XEventName.KeyPress);
+				xevent.KeyEvent.display = DisplayHandle;
+
+				if (hwnd != null) {
+					xevent.KeyEvent.window = hwnd.whole_window;
+				} else {
+					xevent.KeyEvent.window = IntPtr.Zero;
+				}
+
+				xevent.KeyEvent.keycode = Keyboard.ToKeycode((int)msg.wParam);
+
+				hwnd.Queue.EnqueueLocked (xevent);
+			}
+			return count;
 		}
 
 

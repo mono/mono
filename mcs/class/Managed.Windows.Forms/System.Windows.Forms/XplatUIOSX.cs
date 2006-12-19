@@ -1516,7 +1516,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		internal override int SendInput(Queue keys) {
+		internal override int SendInput(IntPtr hwnd, Queue keys) {
 			return 0;
 		}
 

@@ -220,10 +220,12 @@ namespace System.Windows.Forms {
 						if (isVkey)
 							AddVKey(hwnd, (int)keywords[group_string.ToString()], repeats.Length == 0 ? 1 : repeat);
 						else {
-							if (Char.IsUpper(group_string.ToString(), 0)) {
-								AddVKey(hwnd, (int)keywords["+"], true);
-								AddKey(hwnd, Char.Parse(group_string.ToString()), repeats.Length == 0 ? 1 : repeat);
-								AddVKey(hwnd, (int)keywords["+"], false);
+							if (Char.IsUpper(Char.Parse(group_string.ToString()))) {
+								if (!isShift)
+									AddVKey(hwnd, (int)keywords["+"], true);
+								AddKey(hwnd, Char.Parse(group_string.ToString()), 1);
+								if (!isShift)
+									AddVKey(hwnd, (int)keywords["+"], false);
 							}
 							else
 								AddKey(hwnd, Char.Parse(group_string.ToString().ToUpper()), repeats.Length == 0 ? 1 : repeat);
@@ -237,6 +239,7 @@ namespace System.Windows.Forms {
 							AddVKey(hwnd, (int)keywords["^"], false);
 						if (isAlt)
 							AddVKey(hwnd, (int)keywords["%"], false);
+						isShift = isCtrl = isAlt = false;
 						break;
 					
 					case '+': {
@@ -279,9 +282,11 @@ namespace System.Windows.Forms {
 
 					default: {
 						if (Char.IsUpper(key_string[i])) {
-							AddVKey(hwnd, (int)keywords["+"], true);
+							if (!isShift)
+								AddVKey(hwnd, (int)keywords["+"], true);
 							AddKey(hwnd, key_string[i], 1);
-							AddVKey(hwnd, (int)keywords["+"], false);
+							if (!isShift)
+								AddVKey(hwnd, (int)keywords["+"], false);
 						}
 						else
 							AddKey(hwnd, Char.Parse(key_string[i].ToString().ToUpper()), 1);
@@ -320,9 +325,9 @@ namespace System.Windows.Forms {
 			if (XplatUI.GetActive() == IntPtr.Zero)
 				return;
 			
-//			hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
+			hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
 
-			XplatUI.SendInput(keys);
+			XplatUI.SendInput(hwnd, keys);
 		}
 
 		[MonoTODO("Finish")]

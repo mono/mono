@@ -555,6 +555,32 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
+		public int SendInput (IntPtr handle, Queue keys) {
+			int count = keys.Count;
+
+			while (keys.Count > 0) {
+			
+				MSG msg = (MSG)keys.Dequeue();
+
+				XEvent xevent = new XEvent ();
+				Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+
+				xevent.type = (msg.message == Msg.WM_KEYUP ? XEventName.KeyRelease : XEventName.KeyPress);
+				xevent.KeyEvent.display = display;
+
+				if (hwnd != null) {
+					xevent.KeyEvent.window = hwnd.whole_window;
+				} else {
+					xevent.KeyEvent.window = IntPtr.Zero;
+				}
+
+				xevent.KeyEvent.keycode = Keyboard.ToKeycode((int)msg.wParam);
+
+				hwnd.Queue.EnqueueLocked (xevent);
+			}
+			return count;
+		}
+
 		// FIXME - I think this should just enqueue directly
 		public bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
 		{

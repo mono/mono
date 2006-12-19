@@ -777,8 +777,8 @@ namespace System.Windows.Forms.X11Internal {
 			return display.SendMessage (handle, message, wParam, lParam);
 		}
 
-		internal override int SendInput(Queue keys) {
-			return 0;
+		internal override int SendInput(IntPtr handle, Queue keys) { 
+			return display.SendInput(handle, keys);
 		}
 
 

@@ -2583,7 +2583,7 @@ namespace System.Windows.Forms {
 			return Win32PostMessage(hwnd, message, wParam, lParam);
 		}
 
-		internal override int SendInput (Queue keys) {
+		internal override int SendInput (IntPtr hwnd, Queue keys) {
 			INPUT[] inputs = new INPUT[keys.Count];
 			const Int32 INPUT_KEYBOARD = 1;
 			uint returns = 0;

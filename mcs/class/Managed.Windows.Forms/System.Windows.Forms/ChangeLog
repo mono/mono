@@ -1,3 +1,21 @@
+2006-12-19  Andreia Gaita  <avidigal@novell.org>
+
+	* SendKeys.cs: Changed some things to match ms.net behaviour
+	when parsing shifted capital letters.
+	
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32, XplatUIOSX: 
+	Add window handle as parameter to SendInput. X11 needs the 
+	window handle, and the handle being passed	to it in the keys 
+	queue is the active control handle (which windows needs), not 
+	the window handle.
+	
+	XplatUIX11.cs, XplaUIX11-new.cs, X11Display: Implement SendInput 
+	to support SendKeys on X.	
+	
+	* X11Keyboard: Implement helper method to lookup a linux keycode
+	given the virtual keycode. Added table of keycode-2-virtualkey
+	values to support this.
+
 2006-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add support for SelectedIndexCollection
