@@ -42,7 +42,7 @@ namespace System.Web.J2EE
 		public static string GetApplicationRealPath(ServletConfig config) 
 		{
 			string realFs = config.getInitParameter(J2EEConsts.FILESYSTEM_ACCESS);
-			if(realFs != null && realFs == J2EEConsts.ACCESS_FULL)
+			if(realFs == null || realFs == J2EEConsts.ACCESS_FULL)
 			{
 				try 
 				{
