@@ -493,5 +493,49 @@ namespace MonoTests.System.Xml
 			doc.LoadXml ("<a><!--xx--></a>");
 			AssertEquals (String.Empty, doc.InnerText);
 		}
+
+		[Test] // part of bug #80331
+		public void AppendReferenceChildAsNewChild ()
+		{
+			XmlDocument d = new XmlDocument ();
+			XmlElement r = d.CreateElement ("Docs");
+			d.AppendChild (r);
+
+			XmlElement s = Create (d, "param", "pattern");
+			s.AppendChild (Create (d, "para", "insert text here"));
+
+			r.AppendChild (s);
+
+			r.AppendChild (Create (d, "param", "pattern"));
+			r.AppendChild (Create (d, "param", "pattern"));
+
+			r.InsertBefore (s, r.FirstChild);
+		}
+
+		XmlElement Create (XmlDocument d, string name, string param)
+		{
+			XmlElement e = d.CreateElement (name);
+			e.SetAttribute ("name", param);
+			return e;
+		}
+
+		[Test] // bug #80331
+		public void PrependChild2 ()
+		{
+			XmlDocument d = new XmlDocument ();
+			XmlElement r = d.CreateElement ("Docs");
+			d.AppendChild (r);
+
+			XmlElement s = Create (d, "param", "pattern");
+			s.AppendChild (Create (d, "para", "insert text here"));
+
+			r.AppendChild (s);
+
+			r.AppendChild (Create (d, "param", "pattern"));
+			r.AppendChild (Create (d, "param", "pattern"));
+
+			r.PrependChild (s);
+		}
+
 	}
 }

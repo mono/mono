@@ -521,6 +521,9 @@ namespace System.Xml
 			if (checkNodeType)
 				CheckNodeInsertion (newChild, refChild);
 
+			if (newChild == refChild)
+				return newChild;
+
 			IHasXmlChildNode l = (IHasXmlChildNode) this;
 
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument) this : OwnerDocument;
