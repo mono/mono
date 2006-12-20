@@ -10,6 +10,7 @@ System.Windows.Forms/CheckBoxTest.cs
 System.Windows.Forms/CheckedListBoxEventTest.cs
 System.Windows.Forms/CheckedListBoxTest.cs
 System.Windows.Forms/ColumnClickEventArgsTest.cs
+System.Windows.Forms/ColumnStyleTest.cs
 System.Windows.Forms/ComboBoxTest.cs
 System.Windows.Forms/ComboBoxTests.cs
 System.Windows.Forms/Common.cs
@@ -65,6 +66,7 @@ System.Windows.Forms/ProgressBarTest.cs
 System.Windows.Forms/PropertyGridTest.cs
 System.Windows.Forms/PropertyManagerTest.cs
 System.Windows.Forms/RadioButtonTest.cs
+System.Windows.Forms/RowStyleTest.cs
 System.Windows.Forms/RichTextBoxTest.cs
 System.Windows.Forms/ScrollBarTest.cs
 System.Windows.Forms/SendKeysTest.cs
