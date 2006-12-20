@@ -1,9 +1,8 @@
 thisdir=class/System.Data/Test/ProviderTests
 
-
 include ../../../../build/rules.make
 
-LIB_MCS_FLAGS = /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml,nunit.framework,Mono.Data,Mono.Data.SybaseClient
+LIB_MCS_FLAGS += /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml,nunit.framework,Mono.Data,Mono.Data.SybaseClient
 
 DATABASE=sql92
 
@@ -13,7 +12,8 @@ NO_SIGN_ASSEMBLY=yes
 
 
 ${LIBRARY}:
-	$(MCS) $(LIB_MCS_FLAGS) /target:library /out:$@ /debug @$(LIBRARY).sources
+	$(CSCOMPILE) $(LIB_MCS_FLAGS) /target:library /out:$@ /debug @$(LIBRARY).sources
+
 
 run-test-local: run-test-db
 run-test-db: ${LIBRARY} 
