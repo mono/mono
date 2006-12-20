@@ -2,8 +2,8 @@
 
 	* XplatUIX11.cs: We need to hide the caret when deleting it,
 	otherwise you get carets left lying around everywhere.
-	TODO: There are still some issues with caret tracers when the
-	window scrolls.
+	* TextBoxBase.cs: Kill then redraw the caret when scrolling.  This
+	prevents getting some weird half drawn caret tracers when scrolling.
 
 2006-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
 

@@ -1725,12 +1725,22 @@ namespace System.Windows.Forms {
 			old_viewport_x = document.ViewPortX;
 			document.ViewPortX = this.hscroll.Value;
 
+			//
+			// Before scrolling we want to destroy the caret, then draw a new one after the scroll
+			// the reason for this is that scrolling changes the coordinates of the caret, and we
+			// will get tracers if we don't 
+			//
+			if (Focused)
+				document.CaretLostFocus ();
+
 			if (vscroll.Visible) {
 				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), old_viewport_x - this.hscroll.Value, 0, false);
 			} else {
 				XplatUI.ScrollWindow(this.Handle, ClientRectangle, old_viewport_x - this.hscroll.Value, 0, false);
 			}
-			document.UpdateCaret();
+
+			if (Focused)
+				document.CaretHasFocus ();
 
 			EventHandler eh = (EventHandler)(Events [HScrolledEvent]);
 			if (eh != null)
@@ -1743,12 +1753,22 @@ namespace System.Windows.Forms {
 			old_viewport_y = document.ViewPortY;
 			document.ViewPortY = this.vscroll.Value;
 
+			//
+			// Before scrolling we want to destroy the caret, then draw a new one after the scroll
+			// the reason for this is that scrolling changes the coordinates of the caret, and we
+			// will get tracers if we don't 
+			//
+			if (Focused)
+				document.CaretLostFocus ();
+
 			if (hscroll.Visible) {
 				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height - hscroll.Height), 0, old_viewport_y - this.vscroll.Value, false);
 			} else {
 				XplatUI.ScrollWindow(this.Handle, ClientRectangle, 0, old_viewport_y - this.vscroll.Value, false);
 			}
-			document.UpdateCaret();
+
+			if (Focused)
+				document.CaretHasFocus ();
 
 			EventHandler eh = (EventHandler)(Events [VScrolledEvent]);
 			if (eh != null)
