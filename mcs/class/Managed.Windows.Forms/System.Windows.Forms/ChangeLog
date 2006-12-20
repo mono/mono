@@ -4,6 +4,9 @@
 	can't recalculate after changing each line, since that will cahnge
 	the line count.
 	- PreferredHeight is a little different than i thought.
+	- When backspacing, move the caret before we do the actual char
+	delete, because when that delete crosses a wrap boundary the
+	positional information will change.
 
 2006-12-19  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 

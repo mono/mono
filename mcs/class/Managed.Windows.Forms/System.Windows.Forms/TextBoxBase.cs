@@ -1177,8 +1177,14 @@ namespace System.Windows.Forms {
 				}
 			} else {
 				if (!control || document.CaretPosition == 0) {
-					document.DeleteChar(document.CaretTag, document.CaretPosition, false);
-					document.MoveCaret(CaretDirection.CharBack);
+
+					// Move before we delete because the delete will change positions around
+					// if we cross a wrap border
+					LineTag tag = document.CaretTag;
+					int pos = document.CaretPosition;
+					document.MoveCaret (CaretDirection.CharBack);
+					document.DeleteChar (tag, pos, false);
+
 				} else {
 					int start_pos;
 
