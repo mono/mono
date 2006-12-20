@@ -122,10 +122,9 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public DbCommand GetDeleteCommand ()
 		{
-			return (DbCommand) _dbDataAdapter._deleteCommand;
+			return (DbCommand) _dbDataAdapter.DeleteCommand;
 		}
 
 		[MonoTODO]
@@ -134,10 +133,9 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public DbCommand GetInsertCommand ()
 		{
-			return (DbCommand) _dbDataAdapter._insertCommand;
+			return (DbCommand) _dbDataAdapter.InsertCommand;
 		}
 
 		[MonoTODO]
@@ -150,10 +148,9 @@ namespace System.Data.Common {
 		protected abstract string GetParameterName (String parameterName);
 		protected abstract string GetParameterPlaceholder (int parameterOrdinal);
 
-		[MonoTODO]
 		public DbCommand GetUpdateCommand ()
 		{
-			return (DbCommand) _dbDataAdapter._updateCommand;
+			return (DbCommand) _dbDataAdapter.UpdateCommand;
 		}
 
 		[MonoTODO]

@@ -55,7 +55,6 @@ namespace System.Data.Common {
 
 		#region Constructors
 
-		[MonoTODO]
 #if NET_2_0
 		public
 #else

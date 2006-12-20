@@ -99,11 +99,16 @@ namespace System.Data.Common {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static DataColumn GetDataColumnBySchemaAction (string sourceColumn, string dataSetColumn, DataTable dataTable, Type dataType, MissingSchemaAction schemaAction)
 		{
-			throw new NotImplementedException ();
+			if (dataTable.Columns.Contains (dataSetColumn))
+				return dataTable.Columns [dataSetColumn];
+			if (schemaAction == MissingSchemaAction.Ignore)
+				return null;
+			if (schemaAction == MissingSchemaAction.Error)
+				throw new InvalidOperationException (String.Format ("Missing the DataColumn '{0}' in the DataTable '{1}' for the SourceColumn '{2}'", dataSetColumn, dataTable.TableName, sourceColumn));
+			return new DataColumn (dataSetColumn, dataType);
 		}
 #endif
 

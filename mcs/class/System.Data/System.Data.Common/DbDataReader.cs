@@ -58,7 +58,6 @@ namespace System.Data.Common {
 		public abstract int RecordsAffected { get; }
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual int VisibleFieldCount {
 			get { return FieldCount; }
 		}
@@ -112,21 +111,18 @@ namespace System.Data.Common {
 		public abstract int GetOrdinal (string name);
 
 #if NET_2_0
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual Type GetProviderSpecificFieldType (int i)
 		{
 			return GetFieldType (i);
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual object GetProviderSpecificValue (int i)
 		{
 			return GetValue (i);
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual int GetProviderSpecificValues (object[] values)
 		{
