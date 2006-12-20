@@ -1,3 +1,10 @@
+2006-12-20  Marek Habersack  <grendello@gmail.com>
+
+	* HttpContext.cs: add internal setter for the Profile property.
+
+	* HttpApplicationFactory.cs: Added a shortcut version of
+	InvokeSessionEnd for use from the 2.0 SessionState code.
+
 2006-12-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed Path property, returns unescaped url
