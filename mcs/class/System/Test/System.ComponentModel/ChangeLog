@@ -1,5 +1,10 @@
 2006-12-20  Chris Toshok  <toshok@ximian.com>
 
+	* ComplexBindingPropertiesAttributeTest.cs: add test for Default
+	field.
+
+2006-12-20  Chris Toshok  <toshok@ximian.com>
+
 	* ComplexBindingPropertiesAttributeTest.cs: new tests.
 
 2006-12-19  Chris Toshok  <toshok@ximian.com>

@@ -77,6 +77,12 @@ namespace MonoTests.System.ComponentModel {
 			a = new ComplexBindingPropertiesAttribute ();
 			Assert.IsFalse (0 == a.GetHashCode (), "3");
 		}
+
+		[Test]
+		public void DefaultTest ()
+		{
+			Assert.AreEqual (ComplexBindingPropertiesAttribute.Default, new ComplexBindingPropertiesAttribute (), "1");
+		}
 	}
 
 }

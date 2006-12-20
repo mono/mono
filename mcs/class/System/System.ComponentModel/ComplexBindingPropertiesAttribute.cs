@@ -33,6 +33,8 @@ namespace System.ComponentModel
 		string data_source;
 		string data_member;
 
+		public static readonly ComplexBindingPropertiesAttribute Default = new ComplexBindingPropertiesAttribute ();
+
 		public ComplexBindingPropertiesAttribute (string dataSource, string dataMember)
 		{
 			data_source = dataSource;
