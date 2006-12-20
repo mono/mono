@@ -28,12 +28,14 @@
 using System;
 using System.ComponentModel;
 using System.Collections;
+using System.Runtime.Serialization;
 using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms {
 
 	[Serializable]
-	public sealed class TableLayoutSettings : LayoutSettings {
+	// XXX [TypeConverter (typeof (TableLayoutSettingsTypeConvert))]
+	public sealed class TableLayoutSettings : LayoutSettings /* XXX , ISerializable */ {
 		//TableLayoutPanel panel;
 		TableLayoutColumnStyleCollection column_styles;
 		TableLayoutRowStyleCollection row_styles;
@@ -97,24 +99,28 @@ namespace System.Windows.Forms {
 				return layout_engine;
 			}
 		}
-				
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public TableLayoutColumnStyleCollection ColumnStyles {
 			get {
 				return column_styles;
 			}
 		}
 
-		public TableLayoutRowStyleCollection RowStyle {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public TableLayoutRowStyleCollection RowStyles {
 			get {
 				return row_styles;
 			}
 		}
 
+		[DefaultValue (-1)]
 		public void SetCellPosition (object control, TableLayoutPanelCellPosition cellPosition)
 		{
 			control_positions [control] = cellPosition;
 		}
 
+		[DefaultValue (-1)]
 		public int GetColumn (object control)
 		{
 			object pos = control_positions [control];
@@ -143,7 +149,8 @@ namespace System.Windows.Forms {
 		{
 			column_spans [control] = value;
 		}
-			
+
+		[DefaultValue (-1)]
 		public int GetRow (object control)
 		{
 			object pos = control_positions [control];

@@ -1,3 +1,13 @@
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
+	* TableLayoutRowStyleCollection.cs: corcompare work.
+	
+	* TableLayoutSettings.cs: same.
+
+	* TableLayoutStyle.cs: same.
+
+	* TableLayoutColumnStyleCollection.cs: same.
+
 2006-12-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ColumnStyle.cs, RowStyle.cs, TableLayoutStyle.cs: Plumbing for

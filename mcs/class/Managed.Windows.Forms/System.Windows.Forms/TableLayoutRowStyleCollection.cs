@@ -38,9 +38,9 @@ namespace System.Windows.Forms {
 		{
 		}
 		
-		public void Add (RowStyle style)
+		public int Add (RowStyle style)
 		{
-			base.Add (style);
+			return base.Add (style);
 		}
 		
 		public bool Contains (RowStyle style)
