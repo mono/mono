@@ -2809,7 +2809,8 @@ namespace System.Windows.Forms {
 
 		internal override void DestroyCaret(IntPtr handle) {
 			if (Caret.Hwnd == handle) {
-				if (Caret.Visible == true) {
+				if (Caret.Visible) {
+					HideCaret ();
 					Caret.Timer.Stop();
 				}
 				if (Caret.gc != IntPtr.Zero) {
