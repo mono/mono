@@ -177,7 +177,6 @@ namespace System.Windows.Forms {
 		
 		#region public properties
 		
-		// no reason why this is overridden
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color BackColor {
@@ -189,7 +188,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		// no reason why this is overridden
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
@@ -973,7 +971,7 @@ namespace System.Windows.Forms {
 			}
 
 			// since the parent of the month calendar is the form, adjust accordingly.
-			month_calendar.PointToClient(this.PointToScreen(screen_location));
+			screen_location = month_calendar.Parent.PointToClient(screen_location);
 
 			return screen_location;
 		}
@@ -994,13 +992,13 @@ namespace System.Windows.Forms {
 			Rectangle align_area = this.date_area_rect;
 			align_area.Y = this.ClientRectangle.Y;
 			align_area.Height = this.ClientRectangle.Height;
-			
+
+			month_calendar.Parent = this.FindForm ();
 			// establish the month calendar's location
 			month_calendar.Location = CalculateDropDownLocation (
 				align_area,
 				month_calendar.Size,
 				(this.DropDownAlign == LeftRightAlignment.Left));
-			month_calendar.Parent = this.FindForm ();
 			month_calendar.Show ();
 			month_calendar.Focus ();
 

@@ -60,6 +60,9 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
+#if NET_2_0
+		, IBindableComponent, IDropTarget
+#endif
 	{
 		#region Local Variables
 
@@ -133,6 +136,7 @@ namespace System.Windows.Forms
 		internal bool use_compatible_text_rendering;
 		static bool verify_thread_handle;
 		Padding padding;
+		ImageLayout backgroundimage_layout;
 		Size maximum_size;
 		Size minimum_size;
 		Size preferred_size;
@@ -740,6 +744,7 @@ namespace System.Windows.Forms
 			ime_mode = ImeMode.Inherit;
 
 #if NET_2_0
+			backgroundimage_layout = ImageLayout.Tile;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
 			padding = new Padding(0);
 			maximum_size = new Size();
@@ -859,6 +864,29 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
+		
+#if NET_2_0
+		void IDropTarget.OnDragDrop (DragEventArgs e)
+		{
+			OnDragDrop (e);
+		}
+		
+		void IDropTarget.OnDragEnter (DragEventArgs e)
+		{
+			OnDragEnter (e);
+		}
+		
+		void IDropTarget.OnDragLeave (EventArgs e)
+		{
+			OnDragLeave (e);
+		}
+
+		void IDropTarget.OnDragOver (DragEventArgs e)
+		{
+			OnDragOver (e);
+		}
+#endif
+
 		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args, bool disposing) {
 			AsyncMethodResult	result;
 			AsyncMethodData		data;
@@ -1079,9 +1107,49 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g)
 		{
+#if NET_2_0
+			Rectangle drawing_rectangle = new Rectangle ();
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
+				
+			switch (backgroundimage_layout)
+			{
+			case ImageLayout.Tile:
+				using (TextureBrush b = new TextureBrush (background_image, WrapMode.Tile)) {
+					g.FillRectangle (b, ClientRectangle);
+				}
+				return;
+			case ImageLayout.Center:
+				drawing_rectangle.Location = new Point (ClientSize.Width / 2 - background_image.Width / 2, ClientSize.Height / 2 - background_image.Height / 2);
+				drawing_rectangle.Size = background_image.Size;
+				break;
+			case ImageLayout.None:
+				drawing_rectangle.Location = Point.Empty;
+				drawing_rectangle.Size = background_image.Size;
+				break;
+			case ImageLayout.Stretch:
+				drawing_rectangle = ClientRectangle;
+				break;
+			case ImageLayout.Zoom:
+				drawing_rectangle = ClientRectangle;
+				if ((float)background_image.Width / (float)background_image.Height < (float)drawing_rectangle.Width / (float) drawing_rectangle.Height) {
+					drawing_rectangle.Width = (int) (background_image.Width * ((float)drawing_rectangle.Height / (float)background_image.Height));
+					drawing_rectangle.X = (ClientRectangle.Width - drawing_rectangle.Width) / 2;
+				} else {
+					drawing_rectangle.Height = (int) (background_image.Height * ((float)drawing_rectangle.Width / (float)background_image.Width));
+					drawing_rectangle.Y = (ClientRectangle.Height - drawing_rectangle.Height) / 2;
+				}
+				break;
+			default:
+				return;
+			}
+
+			g.DrawImage (background_image, drawing_rectangle);
+
+#else
 			using (TextureBrush b = new TextureBrush (background_image, WrapMode.Tile)) {
 				g.FillRectangle (b, ClientRectangle);
 			}
+#endif
 		}
 
 		internal virtual void DndEnter (DragEventArgs e)
@@ -1667,6 +1735,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (1)]
+		[Localizable (true)]
+		public virtual ImageLayout BackgroundImageLayout {
+			get {
+				return backgroundimage_layout;
+			}
+			set {
+				if (Array.IndexOf (Enum.GetValues (typeof (ImageLayout)), value) == -1)
+					throw new InvalidEnumArgumentException ("value", (int) value, typeof(ImageLayout));
+
+				if (value != backgroundimage_layout) {
+					backgroundimage_layout = value;
+					Invalidate ();
+				}
+				
+			}
+		} 
+#endif
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2280,6 +2367,7 @@ namespace System.Windows.Forms
 
 			set {
 				padding = value;
+				OnPaddingChanged (EventArgs.Empty);
 			}
 		}
 #endif
@@ -4750,6 +4838,14 @@ namespace System.Windows.Forms
 			// Override me!
 		}
 
+#if NET_2_0
+		protected virtual void OnPaddingChanged (EventArgs e) {
+			EventHandler eh = (EventHandler) (Events [PaddingChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
 			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
@@ -4960,6 +5056,9 @@ namespace System.Windows.Forms
 		#region Events
 		static object BackColorChangedEvent = new object ();
 		static object BackgroundImageChangedEvent = new object ();
+#if NET_2_0
+		static object BackgroundImageLayoutChangedEvent = new object ();
+#endif
 		static object BindingContextChangedEvent = new object ();
 		static object CausesValidationChangedEvent = new object ();
 		static object ChangeUICuesEvent = new object ();
@@ -4992,6 +5091,10 @@ namespace System.Windows.Forms
 		static object LeaveEvent = new object ();
 		static object LocationChangedEvent = new object ();
 		static object LostFocusEvent = new object ();
+#if NET_2_0
+		static object MouseClickEvent = new object ();
+		static object MouseDoubleClickEvent = new object ();
+#endif
 		static object MouseDownEvent = new object ();
 		static object MouseEnterEvent = new object ();
 		static object MouseHoverEvent = new object ();
@@ -5000,6 +5103,9 @@ namespace System.Windows.Forms
 		static object MouseUpEvent = new object ();
 		static object MouseWheelEvent = new object ();
 		static object MoveEvent = new object ();
+#if NET_2_0
+		static object PaddingChangedEvent = new object ();
+#endif
 		static object PaintEvent = new object ();
 		static object ParentChangedEvent = new object ();
 		static object QueryAccessibilityHelpEvent = new object ();
@@ -5025,6 +5131,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (BackgroundImageChangedEvent, value); }
 			remove { Events.RemoveHandler (BackgroundImageChangedEvent, value); }
 		}
+
+#if NET_2_0	
+		public event EventHandler BackgroundImageLayoutChanged {
+			add {Events.AddHandler (BackgroundImageLayoutChangedEvent, value);}
+			remove {Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value);}
+		}
+#endif
 
 		public event EventHandler BindingContextChanged {
 			add { Events.AddHandler (BindingContextChangedEvent, value); }
@@ -5211,6 +5324,18 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (LostFocusEvent, value); }
 		}
 
+#if NET_2_0
+		public event MouseEventHandler MouseClick
+		{
+			add { Events.AddHandler (MouseClickEvent, value); }
+			remove { Events.RemoveHandler (MouseClickEvent, value); }
+		}
+		public event MouseEventHandler MouseDoubleClick
+		{
+			add { Events.AddHandler (MouseDoubleClickEvent, value); }
+			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
+		}
+#endif
 		public event MouseEventHandler MouseDown {
 			add { Events.AddHandler (MouseDownEvent, value); }
 			remove { Events.RemoveHandler (MouseDownEvent, value); }
@@ -5252,7 +5377,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MoveEvent, value); }
 			remove { Events.RemoveHandler (MoveEvent, value); }
 		}
-
+#if NET_2_0
+		public event EventHandler PaddingChanged
+		{
+			add { Events.AddHandler (PaddingChangedEvent, value); }
+			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
+		}
+#endif
 		public event PaintEventHandler Paint {
 			add { Events.AddHandler (PaintEvent, value); }
 			remove { Events.RemoveHandler (PaintEvent, value); }

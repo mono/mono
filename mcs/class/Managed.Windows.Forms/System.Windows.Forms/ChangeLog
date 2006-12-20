@@ -1,3 +1,24 @@
+2006-12-19  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Control.cs: Added some missing 2.0 bits: 
+	BackgroundImageLayout, BackgroundImageLayoutChanged, 
+	OnPaddingChanged, MouseClick, MouseDoubleClick, PaddingChanged and 
+	add IBindableComponent and IDropTarget implementation.
+	
+	* MonthCalendar.cs: 
+	- Added all missing 2.0 features:
+	BackgroundImageLayout, RightToLeftLayout, 
+	OnHandleDestroyed, RightToLeftLayoutChanged, 
+	BackgroundImageLayoutChanged, MouseClick, MouseDoubleClick,
+	PaddingChanged.
+	- Rewrote all the BoldDate code, it was completely broken.
+	- Fixed all the tests (the tests can now be re-enabled, the
+	problems were not with the tests, but with the control, it was
+	mostly broken).
+	
+	* DateTimePicker.cs: Changed the location where the 
+	MonthCalendar is shown.
+	
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridView.cs: add IDropTarget implementation.

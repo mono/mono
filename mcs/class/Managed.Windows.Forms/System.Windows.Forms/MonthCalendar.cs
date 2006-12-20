@@ -44,16 +44,14 @@ namespace System.Windows.Forms {
 	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class MonthCalendar : Control {
 		#region Local variables
-		DateTime []		annually_bolded_dates;
-		Color 			back_color;
-		DateTime []		bolded_dates;
+		ArrayList		annually_bolded_dates;
+		ArrayList		monthly_bolded_dates;
+		ArrayList		bolded_dates;
 		Size 			calendar_dimensions;
 		Day 			first_day_of_week;
-		Color 			fore_color;
 		DateTime 		max_date;
 		int 			max_selection_count;
 		DateTime 		min_date;
-		DateTime []		monthly_bolded_dates;
 		int 			scroll_change;
 		SelectionRange 		selection_range;
 		bool 			show_today;
@@ -70,6 +68,7 @@ namespace System.Windows.Forms {
 		Timer			updown_timer;
 		bool			showing_context_menu;
 		bool			updown_has_focus;
+		bool			right_to_left_layout;
 
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
@@ -99,13 +98,6 @@ namespace System.Windows.Forms {
 		//	2: next clicked
 		private bool[]			click_state;	
 		
-		// arraylists used to store new dates
-		ArrayList 				added_bolded_dates;
-		ArrayList 				removed_bolded_dates;
-		ArrayList 				added_annually_bolded_dates;
-		ArrayList 				removed_annually_bolded_dates;
-		ArrayList 				added_monthly_bolded_dates;
-		ArrayList 				removed_monthly_bolded_dates;
 		
 		
 		#endregion	// Local variables
@@ -129,14 +121,12 @@ namespace System.Windows.Forms {
 
 			// iniatialise local members
 			annually_bolded_dates = null;
-			back_color = ThemeEngine.Current.ColorWindow;
 			bolded_dates = null;
 			calendar_dimensions = new Size (1,1);
 			first_day_of_week = Day.Default;
-			fore_color = SystemColors.ControlText;
 			max_date = new DateTime (9998, 12, 31);
 			max_selection_count = 7;
-			min_date = new DateTime (1953, 1, 1);
+			min_date = new DateTime (1753, 1, 1);
 			monthly_bolded_dates = null;
 			scroll_change = 0;
 			show_today = true;
@@ -145,19 +135,15 @@ namespace System.Windows.Forms {
 			title_back_color = ThemeEngine.Current.ColorActiveCaption;
 			title_fore_color = ThemeEngine.Current.ColorActiveCaptionText;
 			today_date_set = false;
-			trailing_fore_color = Color.Gray;
+			trailing_fore_color = SystemColors.GrayText;
 			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
 			centered_format = new StringFormat ();
 			centered_format.LineAlignment = StringAlignment.Center;
 			centered_format.Alignment = StringAlignment.Center;
 			
-			// initialise the arraylest for bolded dates
-			added_bolded_dates = new ArrayList ();
-			removed_bolded_dates = new ArrayList ();
-			added_annually_bolded_dates = new ArrayList ();
-			removed_annually_bolded_dates = new ArrayList ();
-			added_monthly_bolded_dates = new ArrayList ();
-			removed_monthly_bolded_dates = new ArrayList ();
+			// Set default values
+			ForeColor = SystemColors.WindowText;
+			BackColor = ThemeEngine.Current.ColorWindow;
 		
 			// intiailise internal variables used
 			button_x_offset = 5;
@@ -208,16 +194,22 @@ namespace System.Windows.Forms {
 
 		// dates to make bold on calendar annually (recurring)
 		[Localizable (true)]
-		public DateTime[] AnnuallyBoldedDates {
+		public DateTime [] AnnuallyBoldedDates {
 			set {
-				if (annually_bolded_dates == null || annually_bolded_dates != value) {
-					annually_bolded_dates = value;
-					this.UpdateBoldedDates ();
-					this.Invalidate ();
+				if (annually_bolded_dates == null)
+					annually_bolded_dates = new ArrayList (value);
+				else {
+					annually_bolded_dates.Clear ();
+					annually_bolded_dates.AddRange (value);
 				}
 			}
 			get {
-					return annually_bolded_dates;
+				if (annually_bolded_dates == null || annually_bolded_dates.Count == 0) {
+					return new DateTime [0];
+				}
+				DateTime [] result = new DateTime [annually_bolded_dates.Count];
+				annually_bolded_dates.CopyTo (result);
+				return result;
 			}
 		}
 
@@ -232,18 +224,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		public override ImageLayout BackgroundImageLayout {
+			get {
+				return base.BackgroundImageLayout;
+			}
+			set {
+				base.BackgroundImageLayout = value;
+			}
+		}
+#endif
 
 		// the back color for the main part of the calendar
 		public override Color BackColor {
 			set {
-				if (back_color != value) {
-					back_color = value;
-					this.OnBackColorChanged (EventArgs.Empty);
-					this.Invalidate ();
-				}
+				base.BackColor = value;
 			}
 			get {
-				return back_color;
+				return base.BackColor;
 			}
 		}
 
@@ -251,14 +251,20 @@ namespace System.Windows.Forms {
 		[Localizable (true)]
 		public DateTime[] BoldedDates {
 			set {
-				if (bolded_dates == null || bolded_dates != value) {
-					bolded_dates = value;
-					this.UpdateBoldedDates ();
-					this.Invalidate ();
+				if (bolded_dates == null) {
+					bolded_dates = new ArrayList (value);
+				} else {
+					bolded_dates.Clear ();
+					bolded_dates.AddRange (value);
 				}
 			}
 			get {
-					return bolded_dates;
+				if (bolded_dates == null || bolded_dates.Count == 0) 
+					return new DateTime [0];
+				
+				DateTime [] result = new DateTime [bolded_dates.Count];
+				bolded_dates.CopyTo (result);
+				return result;
 			}
 		}
 
@@ -333,14 +339,10 @@ namespace System.Windows.Forms {
 		// the fore color for the main part of the calendar
 		public override Color ForeColor {
 			set {
-				if (fore_color != value) {
-					fore_color = value;
-					this.OnForeColorChanged (EventArgs.Empty);
-					this.Invalidate ();
-				}
+				base.ForeColor = value;
 			}
 			get {
-				return fore_color;
+				return base.ForeColor;
 			}
 		}
 
@@ -371,7 +373,7 @@ namespace System.Windows.Forms {
 		[DefaultValue (7)]
 		public int MaxSelectionCount {
 			set {
-				if (value < 0) {
+				if (value < 1) {
 					throw new ArgumentException();
 				}
 		
@@ -392,7 +394,7 @@ namespace System.Windows.Forms {
 		// the minimum date allowed to be selected on this month calendar
 		public DateTime MinDate {
 			set {
-				if (value < new DateTime (1953, 1, 1)) {
+				if (value < new DateTime (1753, 1, 1)) {
 					throw new ArgumentException();
 				}
 
@@ -413,14 +415,20 @@ namespace System.Windows.Forms {
 		[Localizable (true)]
 		public DateTime[] MonthlyBoldedDates {
 			set {
-				if (monthly_bolded_dates == null || monthly_bolded_dates != value) {
-					monthly_bolded_dates = value;
-					this.UpdateBoldedDates ();
-					this.Invalidate ();
+				if (monthly_bolded_dates == null) {
+					monthly_bolded_dates = new ArrayList (value);
+				} else {
+					monthly_bolded_dates.Clear ();
+					monthly_bolded_dates.AddRange (value);
 				}
 			}
 			get {
-					return monthly_bolded_dates;
+				if (monthly_bolded_dates == null || monthly_bolded_dates.Count == 0) 
+					return new DateTime [0];
+				
+				DateTime [] result = new DateTime [monthly_bolded_dates.Count];
+				monthly_bolded_dates.CopyTo (result);
+				return result;
 			}
 		}
 
@@ -428,6 +436,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+		// Padding should not have any effect on the appearance of MonthCalendar.
 		public new Padding Padding {
 			get {
 				return base.Padding;
@@ -437,7 +446,16 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		
+		[DefaultValue (false)]
+		[Localizable (true)]
+		public virtual bool RightToLeftLayout {
+			get {
+				return right_to_left_layout;
+			}
+			set {
+				right_to_left_layout = value;
+			}
+		}
 #endif
 
 		// the ammount by which to scroll this calendar by
@@ -453,10 +471,6 @@ namespace System.Windows.Forms {
 				}
 			}
 			get {
-				// if zero it to the default -> the total number of months currently visible
-				if (scroll_change == 0) {
-					return CalendarDimensions.Width * CalendarDimensions.Height;
-				}
 				return scroll_change;
 			}
 		}
@@ -496,6 +510,11 @@ namespace System.Windows.Forms {
 		public SelectionRange SelectionRange {
 			set {
 				if (selection_range != value) {
+					if (value.Start < MinDate)
+						throw new ArgumentException ("SelectionStart cannot be less than MinDate");
+					else if (value.End > MaxDate)
+						throw new ArgumentException ("SelectionEnd cannot be greated than MaxDate");
+					
 					SelectionRange old_range = selection_range;
 
 					// make sure the end obeys the max selection range count
@@ -814,17 +833,26 @@ namespace System.Windows.Forms {
 
 		// add a date to the anually bolded date arraylist
 		public void AddAnnuallyBoldedDate (DateTime date) {
-			added_annually_bolded_dates.Add (date.Date);
+			if (annually_bolded_dates == null)
+				annually_bolded_dates = new ArrayList ();
+			if (!annually_bolded_dates.Contains (date))
+				annually_bolded_dates.Add (date);
 		}
 
 		// add a date to the normal bolded date arraylist
 		public void AddBoldedDate (DateTime date) {
-			added_bolded_dates.Add (date.Date);
+			if (bolded_dates == null)
+				bolded_dates = new ArrayList ();
+			if (!bolded_dates.Contains (date))
+				bolded_dates.Add (date);
 		}
 
 		// add a date to the anually monthly date arraylist
 		public void AddMonthlyBoldedDate (DateTime date) {
-			added_monthly_bolded_dates.Add (date.Date);
+			if (monthly_bolded_dates == null)
+				monthly_bolded_dates = new ArrayList ();
+			if (!monthly_bolded_dates.Contains (date))
+				monthly_bolded_dates.Add (date);
 		}
 
 		// if visible = true, return only the dates of full months, else return all dates visible
@@ -856,46 +884,64 @@ namespace System.Windows.Forms {
 
 		// clears all the annually bolded dates
 		public void RemoveAllAnnuallyBoldedDates () {
-			annually_bolded_dates = null;
-			added_annually_bolded_dates.Clear ();
-			removed_annually_bolded_dates.Clear ();
+			if (annually_bolded_dates != null)
+				annually_bolded_dates.Clear ();
 		}
 
 		// clears all the normal bolded dates
 		public void RemoveAllBoldedDates () {
-			bolded_dates = null;
-			added_bolded_dates.Clear ();
-			removed_bolded_dates.Clear ();
+			if (bolded_dates != null)
+				bolded_dates.Clear ();
 		}
 
 		// clears all the monthly bolded dates
 		public void RemoveAllMonthlyBoldedDates () {
-			monthly_bolded_dates = null;
-			added_monthly_bolded_dates.Clear ();
-			removed_monthly_bolded_dates.Clear ();
+			if (monthly_bolded_dates != null)
+				monthly_bolded_dates.Clear ();
 		}
 
 		// clears the specified annually bolded date (only compares day and month)
 		// only removes the first instance of the match
 		public void RemoveAnnuallyBoldedDate (DateTime date) {
-			if (!removed_annually_bolded_dates.Contains (date.Date)) {
-				removed_annually_bolded_dates.Add (date.Date);
+			if (annually_bolded_dates == null)
+				return;
+				
+			for (int i = 0; i < annually_bolded_dates.Count; i++) {
+				DateTime dt = (DateTime) annually_bolded_dates [i];
+				if (dt.Day == date.Day && dt.Month == date.Month) {
+					annually_bolded_dates.RemoveAt (i);
+					return;
+				}
 			}
 		}
 
 		// clears all the normal bolded date
 		// only removes the first instance of the match
 		public void RemoveBoldedDate (DateTime date) {
-			if (!removed_bolded_dates.Contains (date.Date)) {
-				removed_bolded_dates.Add (date.Date);
+			if (bolded_dates == null)
+				return;
+
+			for (int i = 0; i < bolded_dates.Count; i++) {
+				DateTime dt = (DateTime) bolded_dates [i];
+				if (dt.Year == date.Year && dt.Month == date.Month && dt.Day == date.Day) {
+					bolded_dates.RemoveAt (i);
+					return;
+				}
 			}
 		}
 
 		// clears the specified monthly bolded date (only compares day and month)
 		// only removes the first instance of the match
 		public void RemoveMonthlyBoldedDate (DateTime date) {
-			if (!removed_monthly_bolded_dates.Contains (date.Date)) {
-				removed_monthly_bolded_dates.Add (date.Date);
+			if (monthly_bolded_dates == null)
+				return;
+
+			for (int i = 0; i < monthly_bolded_dates.Count; i++) {
+				DateTime dt = (DateTime) monthly_bolded_dates [i];
+				if (dt.Day == date.Day && dt.Month == date.Month) {
+					monthly_bolded_dates.RemoveAt (i);
+					return;
+				}
 			}
 		}
 
@@ -921,9 +967,7 @@ namespace System.Windows.Forms {
 		// usually called after an AddBoldedDate method is called
 		// formats monthly and daily bolded dates according to the current calendar year
 		public void UpdateBoldedDates () {
-			UpdateDateArray (ref bolded_dates, added_bolded_dates, removed_bolded_dates);
-			UpdateDateArray (ref monthly_bolded_dates, added_monthly_bolded_dates, removed_monthly_bolded_dates);
-			UpdateDateArray (ref annually_bolded_dates, added_annually_bolded_dates, removed_annually_bolded_dates);
+			Invalidate ();
 		}
 
 		#endregion	// Public Instance Methods
@@ -991,8 +1035,8 @@ namespace System.Windows.Forms {
 
 		protected override void OnFontChanged (EventArgs e) {
 			// Update size based on new font's space requirements
-                        Size = new Size (CalendarDimensions.Width * SingleMonthSize.Width,
-                                        CalendarDimensions.Height * SingleMonthSize.Height);
+			Size = new Size (CalendarDimensions.Width * SingleMonthSize.Width,
+					CalendarDimensions.Height * SingleMonthSize.Height);
 			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
 			base.OnFontChanged (e);
 		}
@@ -1006,6 +1050,19 @@ namespace System.Windows.Forms {
 			CreateYearUpDown ();
 		}
 
+#if NET_2_0
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e) {
+			EventHandler eh = (EventHandler) (Events [RightToLeftLayoutChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		
 		// i think this is overriden to not allow the control to be changed to an arbitrary size
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) {
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height ||
@@ -1043,6 +1100,9 @@ namespace System.Windows.Forms {
 		#region public events
 		static object DateChangedEvent = new object ();
 		static object DateSelectedEvent = new object ();
+#if NET_2_0
+		static object RightToLeftLayoutChangedEvent = new object ();
+#endif
 
 		// fired when the date is changed (either explicitely or implicitely)
 		// when navigating the month selector
@@ -1064,6 +1124,15 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged
+		{
+			add { base.BackgroundImageLayoutChanged += value;}
+			remove { base.BackgroundImageLayoutChanged += value;}
+		}
+#endif
 		// this event is overridden to supress it from being fired
 		// XXX check this out
 		[Browsable(false)]
@@ -1083,11 +1152,39 @@ namespace System.Windows.Forms {
 			remove { base.ImeModeChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseClick {
+			add { base.MouseClick += value;}
+			remove { base.MouseClick -= value;}
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add {base.PaddingChanged += value;}
+			remove {base.PaddingChanged -= value;}
+		}
+#endif
 		// XXX check this out
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
 
+#if NET_2_0
+		public event EventHandler RightToLeftLayoutChanged {
+			add {Events.AddHandler (RightToLeftLayoutChangedEvent, value);}
+			remove {Events.RemoveHandler (RightToLeftLayoutChangedEvent, value);}
+		}
+#endif
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {
@@ -1174,7 +1271,7 @@ namespace System.Windows.Forms {
 								new Point (calendars[i].X + button_x_offset, (title_size.Height - button_size.Height)/2),
 								button_size);
 							if (button_rect.Contains (point)) {
-								return new HitTestInfo(HitArea.PrevMonthButton, point, DateTime.Now);
+								return new HitTestInfo (HitArea.PrevMonthButton, point, new DateTime (1, 1, 1));
 							}
 						}
 						// make sure it's not the next button
@@ -1183,7 +1280,7 @@ namespace System.Windows.Forms {
 								new Point (calendars[i].Right - button_x_offset - button_size.Width, (title_size.Height - button_size.Height)/2),
 								button_size);
 							if (button_rect.Contains (point)) {
-								return new HitTestInfo(HitArea.NextMonthButton, point, DateTime.Now);
+								return new HitTestInfo (HitArea.NextMonthButton, point, new DateTime (1, 1, 1));
 							}
 						}
 
@@ -1193,14 +1290,14 @@ namespace System.Windows.Forms {
 
 						// make sure it's not the month or the year of the calendar
 						if (GetMonthNameRectangle (title_rect, i).Contains (point)) {
-							return new HitTestInfo(HitArea.TitleMonth, point, DateTime.Now);
+							return new HitTestInfo (HitArea.TitleMonth, point, new DateTime (1, 1, 1));
 						}
 						if (GetYearNameRectangle (title_rect, i).Contains (point)) {
-							return new HitTestInfo(HitArea.TitleYear, point, DateTime.Now);
+							return new HitTestInfo (HitArea.TitleYear, point, new DateTime (1, 1, 1));
 						}
 
 						// return the hit test in the title background
-						return new HitTestInfo(HitArea.TitleBackground, point, DateTime.Now);
+						return new HitTestInfo (HitArea.TitleBackground, point, new DateTime (1, 1, 1));
 					}
 
 					Point date_grid_location = new Point (calendars[i].X, title_rect.Bottom);
@@ -1223,7 +1320,7 @@ namespace System.Windows.Forms {
 						date_grid_location,
 						new Size (Math.Max (calendars[i].Right - date_grid_location.X, 0), date_cell_size.Height));
 					if (day_rect.Contains (point)) {
-						return new HitTestInfo(HitArea.DayOfWeek, point, DateTime.Now);
+						return new HitTestInfo (HitArea.DayOfWeek, point, new DateTime (1, 1, 1));
 					}
 						
 					// finally see if it was a date that was clicked
@@ -1243,11 +1340,11 @@ namespace System.Windows.Forms {
 						// establish which date was clicked
 						if (time.Year != calendar_month.Year || time.Month != calendar_month.Month) {
 							if (time < calendar_month && i == 0) {
-								return new HitTestInfo(HitArea.PrevMonthDate, point, time);
+								return new HitTestInfo (HitArea.PrevMonthDate, point, new DateTime (1, 1, 1));
 							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
-								return new HitTestInfo(HitArea.NextMonthDate, point, time);
+								return new HitTestInfo (HitArea.NextMonthDate, point, new DateTime (1, 1, 1));
 							}							
-							return new HitTestInfo(HitArea.Nowhere, point, time);
+							return new HitTestInfo (HitArea.Nowhere, point, new DateTime (1, 1, 1));
 						}
 						return new HitTestInfo(HitArea.Date, point, time);
 					}
@@ -1281,7 +1378,7 @@ namespace System.Windows.Forms {
 		
 		internal bool IsBoldedDate (DateTime date) {
 			// check bolded dates
-			if (bolded_dates != null && bolded_dates.Length > 0) {
+			if (bolded_dates != null && bolded_dates.Count > 0) {
 				foreach (DateTime bolded_date in bolded_dates) {
 					if (bolded_date.Date == date.Date) {
 						return true;
@@ -1289,7 +1386,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			// check monthly dates
-			if (monthly_bolded_dates != null && monthly_bolded_dates.Length > 0) {
+			if (monthly_bolded_dates != null && monthly_bolded_dates.Count > 0) {
 				foreach (DateTime bolded_date in monthly_bolded_dates) {
 					if (bolded_date.Day == date.Day) {
 						return true;
@@ -1297,7 +1394,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			// check yearly dates
-			if (annually_bolded_dates != null && annually_bolded_dates.Length > 0) {
+			if (annually_bolded_dates != null && annually_bolded_dates.Count > 0) {
 				foreach (DateTime bolded_date in annually_bolded_dates) {
 					if (bolded_date.Month == date.Month && bolded_date.Day == date.Day) {
 						return true;
@@ -1308,41 +1405,6 @@ namespace System.Windows.Forms {
 			return false;  // no match
 		}
 		
-		// updates the specified bolded dates array with ones to add and ones to remove
-		private void UpdateDateArray (ref DateTime [] dates, ArrayList to_add, ArrayList to_remove) {
-			ArrayList list = new ArrayList ();
-			
-			// update normal bolded dates
-			if (dates != null) {
-				foreach (DateTime date in dates) {
-					list.Add (date.Date);
-				}
-			}
-			
-			// add new ones
-			foreach (DateTime date in to_add) {
-				if (!list.Contains (date.Date)) {
-					list.Add (date.Date);
-				}
-			}
-			to_add.Clear ();
-			
-			// remove ones to remove
-			foreach (DateTime date in to_remove) {
-				if (list.Contains (date.Date)) {
-					list.Remove (date.Date);
-				}
-			}
-			to_remove.Clear ();
-			// set up the array now 
-			if (list.Count > 0) {
-				dates = (DateTime []) list.ToArray (typeof (DateTime));
-				Array.Sort (dates);
-				list.Clear ();
-			} else {
-				dates = null;
-			}
-		}
 
 		// initialise the context menu
 		private void SetUpContextMenu () {
@@ -1632,7 +1694,8 @@ namespace System.Windows.Forms {
 						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
 						button_size.Width,
 						button_size.Height));
-				this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange*-1);
+				int scroll = (scroll_change == 0 ? CalendarDimensions.Width * CalendarDimensions.Height : scroll_change);
+				this.CurrentMonth = this.CurrentMonth.AddMonths (scroll);
 			} else {
 				// invalidate the next monthbutton
 				this.Invalidate(
@@ -1641,7 +1704,8 @@ namespace System.Windows.Forms {
 						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
 						button_size.Width,
 						button_size.Height));					
-				this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange);
+				int scroll = (scroll_change == 0 ? CalendarDimensions.Width * CalendarDimensions.Height : scroll_change);
+				this.CurrentMonth = this.CurrentMonth.AddMonths (scroll);
 			}
 		}
 		
@@ -1740,6 +1804,9 @@ namespace System.Windows.Forms {
 					return; 
 				if (showing_context_menu)  
 					return; 
+				if (updown_timer != null) {
+					updown_timer.Enabled = false;
+				}
 
 				this.owner.HideMonthCalendar ();
 			}
