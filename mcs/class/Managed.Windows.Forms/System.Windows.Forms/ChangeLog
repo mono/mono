@@ -1,3 +1,9 @@
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridView.cs: add IDropTarget implementation.
+
+	* ToolStripPanel.cs: add IDropTarget implementation.
+
 2006-12-19  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: soft now means something different than what it

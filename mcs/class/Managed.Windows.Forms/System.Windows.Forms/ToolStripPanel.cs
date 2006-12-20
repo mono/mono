@@ -308,6 +308,26 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
+		void IDropTarget.OnDragDrop (DragEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void IDropTarget.OnDragEnter (DragEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void IDropTarget.OnDragLeave (EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void IDropTarget.OnDragOver (DragEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
 		private void AddControlToRows (Control control)
 		{
 			if (this.rows.Count > 0)
