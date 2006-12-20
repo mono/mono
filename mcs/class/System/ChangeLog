@@ -1,3 +1,9 @@
+
+Wed Dec 20 19:30:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile, resources/*.wav, System.dll.sources: added sound
+	samples provided by Hanclinto. Enabled System.Media namespace.
+
 2006-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Detect PKITS data and, if available, include the unit 

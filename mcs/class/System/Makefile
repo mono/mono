@@ -6,6 +6,13 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/lib/$(PROFILE)
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
+RESOURCE_FILES = \
+	resources/Asterisk.wav	\
+	resources/Beep.wav	\
+	resources/Exclamation.wav	\
+	resources/Hand.wav	\
+	resources/Question.wav
+
 # Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
 # 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
 # 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll or System.Configuration.dll references
@@ -31,7 +38,7 @@ CONFIGURATION_DEP := System.Configuration.dll
 CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
 CYCLIC_DEPS += $(SECURITY_DEP) $(CONFIGURATION_DEP)
 CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE) $(CONFIGURATION_DEP_FILE)
-LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe
+LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 endif
 
@@ -39,6 +46,7 @@ EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file				\
+	$(RESOURCE_FILES)				\
 	$(TEST_RESOURCES)
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)

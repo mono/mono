@@ -540,6 +540,11 @@ System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 System.IO/WindowsWatcher.cs
 System/LdapStyleUriParser.cs
+System.Media/AudioData.cs
+System.Media/AudioDevice.cs
+System.Media/SoundPlayer.cs
+System.Media/SystemSound.cs
+System.Media/SystemSounds.cs
 System.Net/AuthenticationManager.cs
 System.Net/AuthenticationSchemes.cs
 System.Net/AuthenticationSchemeSelector.cs
