@@ -36,6 +36,7 @@ using System.IO;
 using javax.servlet;
 using javax.servlet.http;
 using vmw.common;
+using java.util;
 
 namespace System.Web.J2EE
 {
@@ -187,14 +188,34 @@ namespace System.Web.J2EE
 				servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
 
 				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
-				string realPath = config.getServletContext ().getRealPath ("/");
-				if (realPath == null)
-					realPath = String.Empty;
-				string dataDirectory = Path.Combine (realPath, "App_Data");
-				dataDirectory = dataDirectory.Replace ('\\', '/');
+				string dataDirectory = config.getServletContext().getInitParameter ("DataDirectory");
+				if (dataDirectory == null)
+					dataDirectory = "APP_DATA";
 
-				if (dataDirectory [dataDirectory.Length - 1] != '/')
-					dataDirectory += "/";
+				if (!Path.IsPathRooted (dataDirectory)) {
+					java.io.InputStream inputStream = config.getServletContext ().getResourceAsStream ("/WEB-INF/classes/appData.properties");
+					string root;
+					if (inputStream != null) {
+						try {
+							Properties props = new Properties ();
+							props.load (inputStream);
+							root = props.getProperty ("root.folder");
+						}
+						finally {
+							inputStream.close ();
+						}
+					}
+					else
+						root = config.getServletContext ().getRealPath ("/");
+
+					if (root == null)
+						root = String.Empty;
+
+					dataDirectory = Path.Combine (root, dataDirectory);
+				}
+
+				if (dataDirectory [dataDirectory.Length - 1] != Path.DirectorySeparatorChar)
+					dataDirectory += Path.DirectorySeparatorChar;
 
 				servletDomain.SetData ("DataDirectory", dataDirectory);
 
