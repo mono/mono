@@ -1,5 +1,12 @@
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
+	* ToolStripItem.cs: add the implementation of the 4 IDropTarget
+	methods (which all do nothing).
+
+	* IDropTarget.cs: add the 4 missing methods.
+
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
 	* TableLayoutRowStyleCollection.cs: corcompare work.
 	
 	* TableLayoutSettings.cs: same.

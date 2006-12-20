@@ -632,6 +632,26 @@ namespace System.Windows.Forms
 				owner.Invalidate (r);
 		}
 
+		public void OnDragDrop (DragEventArgs e)
+		{
+			// XXX
+		}
+
+		public void OnDragEnter (DragEventArgs e)
+		{
+			// XXX
+		}
+
+		public void OnDragLeave (EventArgs e)
+		{
+			// XXX
+		}
+
+		public void OnDragOver (DragEventArgs e)
+		{
+			// XXX
+		}
+
 		public void PerformClick ()
 		{ 
 			this.OnClick (EventArgs.Empty); 
