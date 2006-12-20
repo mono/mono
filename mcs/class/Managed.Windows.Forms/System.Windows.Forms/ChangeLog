@@ -1,3 +1,10 @@
+2006-12-19  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: soft now means something different than what it
+	used to mean, we want to move the caret regardless of whether or
+	not this break was soft (would we really have wanted the caret
+	to not move with the break in the old context?)
+
 2006-12-19  Andreia Gaita  <avidigal@novell.org>
 
 	* SendKeys.cs: Fix Send() behaviour, clear keys after sending,

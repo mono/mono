@@ -2465,7 +2465,7 @@ namespace System.Windows.Forms {
 			move_sel_end = false;
 
 			// Adjust selection and cursors
-			if (soft && (caret.line == line) && (caret.pos >= pos)) {
+			if (caret.line == line && caret.pos >= pos) {
 				move_caret = true;
 			}
 			if (selection_start.line == line && selection_start.pos > pos) {
@@ -2484,16 +2484,12 @@ namespace System.Windows.Forms {
 
 				line.carriage_return = false;
 				new_line.carriage_return = line.carriage_return;
+				new_line.soft_break = soft;
 				
-				if (soft) {
-					if (move_caret) {
-						caret.line = new_line;
-						caret.line.soft_break = true;
-						caret.tag = new_line.tags;
-						caret.pos = 0;
-					} else {
-						new_line.soft_break = true;
-					}
+				if (move_caret) {
+					caret.line = new_line;
+					caret.tag = new_line.tags;
+					caret.pos = 0;
 				}
 
 				if (move_sel_start) {
@@ -2518,6 +2514,7 @@ namespace System.Windows.Forms {
 
 			line.carriage_return = false;
 			new_line.carriage_return = line.carriage_return;
+			new_line.soft_break = soft;
 
 			line.recalc = true;
 			new_line.recalc = true;
@@ -2571,13 +2568,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (soft) {
-				if (move_caret) {
-					caret.line = new_line;
-					caret.pos = caret.pos - pos;
-					caret.tag = caret.line.FindTag(caret.pos);
-				}
-				new_line.soft_break = true;
+			if (move_caret) {
+				caret.line = new_line;
+				caret.pos = caret.pos - pos;
+				caret.tag = caret.line.FindTag(caret.pos);
 			}
 
 			if (move_sel_start) {
