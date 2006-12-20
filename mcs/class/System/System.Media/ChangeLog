@@ -1,4 +1,10 @@
 
+Wed Dec 20 18:26:36 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* AudioData.cs, AudioDevice.cs: small (alsa) audio device and
+	Wav file parsing implementation.
+	* SoundPlayer.cs, SystemSound.cs: implemented most of the methods.
+
 Tue Dec 19 19:17:06 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* SoundPlayer.cs, SystemSound.cs, SystemSounds.cs: first stubs

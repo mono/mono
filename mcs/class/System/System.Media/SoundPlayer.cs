@@ -28,8 +28,10 @@
 #if NET_2_0
 using System;
 using System.IO;
+using System.Threading;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using Mono.Audio;
 
 namespace System.Media {
 
@@ -39,35 +41,77 @@ namespace System.Media {
 		string sound_location;
 		Stream audiostream;
 		object tag = String.Empty;
+		MemoryStream mstream;
+		AudioDevice adev;
+		AudioData adata;
 		bool load_completed;
+		bool stopped;
 		int load_timeout = 10000;
 
 		public SoundPlayer ()
 		{
+			sound_location = String.Empty;
 		}
 
-		public SoundPlayer (Stream stream)
+		public SoundPlayer (Stream stream): this ()
 		{
-			sound_location = String.Empty;
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
 			audiostream = stream;
 		}
 
-		public SoundPlayer (string soundLocation)
+		public SoundPlayer (string soundLocation): this ()
 		{
+			if (soundLocation == null)
+				throw new ArgumentNullException ("soundLocation");
 			sound_location = soundLocation;
 		}
 
-		protected SoundPlayer (SerializationInfo serializationInfo, StreamingContext context)
+		protected SoundPlayer (SerializationInfo serializationInfo, StreamingContext context): this ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		void LoadFromStream (Stream s)
+		{
+			mstream = new MemoryStream ();
+			byte[] buf = new byte [4096];
+			int count;
+			while ((count = s.Read (buf, 0, 4096)) > 0) {
+				mstream.Write (buf, 0, count);
+			}
+			mstream.Position = 0;
+		}
+
 		public void Load ()
 		{
+			// can this be reused to load the same file again without re-setting the location?
+			if (load_completed)
+				return;
+			if (audiostream != null) {
+				LoadFromStream (audiostream);
+			} else {
+				throw new NotImplementedException ("from uri");
+			}
+			load_completed = true;
+			AsyncCompletedEventArgs e = new AsyncCompletedEventArgs (null, false, this);
+			OnLoadCompleted (e);
+			if (LoadCompleted != null)
+				LoadCompleted (this, e);
+		}
+
+		void AsyncFinished (IAsyncResult ar)
+		{
+			ThreadStart async = ar.AsyncState as ThreadStart;
+			async.EndInvoke (ar);
 		}
 
 		public void LoadAsync ()
 		{
+			if (load_completed)
+				return;
+			ThreadStart async = new ThreadStart (Load);
+			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
 		}
 
 		protected virtual void OnLoadCompleted (AsyncCompletedEventArgs e)
@@ -82,20 +126,54 @@ namespace System.Media {
 		{
 		}
 
-		public void Play ()
+		void Start ()
 		{
+			stopped = false;
+			if (adata != null)
+				adata.IsStopped = false;
+			if (!load_completed)
+				Load ();
 		}
 
+		public void Play ()
+		{
+			ThreadStart async = new ThreadStart (PlaySync);
+			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
+		}
+
+		public void PlayLoop ()
+		{
+			Start ();
+			while (!stopped) {
+				PlaySync ();
+			}
+		}
 		public void PlayLooping ()
 		{
+			ThreadStart async = new ThreadStart (PlayLoop);
+			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
 		}
 
 		public void PlaySync ()
 		{
+			Start ();
+			try {
+				adata = new WavData (mstream);
+				if (adev == null)
+					adev = AudioDevice.CreateDevice (null);
+				if (adata != null) {
+					adata.Setup (adev);
+					adata.Play (adev);
+				}
+			} catch {
+			}
 		}
 
 		public void Stop ()
 		{
+			stopped = true;
+			if (adata != null)
+				adata.IsStopped = true;
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -113,6 +191,8 @@ namespace System.Media {
 				return load_timeout;
 			}
 			set {
+				if (value < 0)
+					throw new ArgumentException ("timeout must be >= 0");
 				load_timeout = value;
 			}
 		}
@@ -122,7 +202,13 @@ namespace System.Media {
 				return sound_location;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
 				sound_location = value;
+				load_completed = false;
+				OnSoundLocationChanged (EventArgs.Empty);
+				if (SoundLocationChanged != null)
+					SoundLocationChanged (this, EventArgs.Empty);
 			}
 		}
 
@@ -131,7 +217,13 @@ namespace System.Media {
 				return audiostream;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
 				audiostream = value;
+				load_completed = false;
+				OnStreamChanged (EventArgs.Empty);
+				if (StreamChanged != null)
+					StreamChanged (this, EventArgs.Empty);
 			}
 		}
 

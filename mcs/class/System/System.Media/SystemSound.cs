@@ -33,14 +33,18 @@ namespace System.Media {
 
 	public class SystemSound {
 
+		Stream resource;
+
 		internal SystemSound (string tag)
 		{
+			resource = typeof (SystemSound).Assembly.GetManifestResourceStream (tag + ".wav");
 		}
 
 		// plays async
 		public void Play ()
 		{
-			throw new NotImplementedException ();
+			SoundPlayer sp = new SoundPlayer (resource);
+			sp.Play ();
 		}
 	}
 }
