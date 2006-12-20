@@ -1,3 +1,8 @@
+2006-12-20  Chris Toshok  <toshok@ximian.com>
+
+	* System_test.dll.sources: add ComplexBindingPropertiesAttributeTest.cs
+
+	* System.dll.sources: add ComplexBindingPropertiesAttribute.cs
 
 Wed Dec 20 19:30:27 CET 2006 Paolo Molaro <lupus@ximian.com>
 

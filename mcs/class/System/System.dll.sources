@@ -179,6 +179,7 @@ System.ComponentModel/CollectionChangeAction.cs
 System.ComponentModel/CollectionChangeEventArgs.cs
 System.ComponentModel/CollectionChangeEventHandler.cs
 System.ComponentModel/CollectionConverter.cs
+System.ComponentModel/ComplexBindingPropertiesAttribute.cs
 System.ComponentModel/ComponentCollection.cs
 System.ComponentModel/ComponentConverter.cs
 System.ComponentModel/Component.cs

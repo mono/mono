@@ -108,6 +108,7 @@ System.Collections.Specialized/StringDictionaryTest.cs
 System.ComponentModel/ArrayConverterTests.cs
 System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/CollectionConverterTest.cs
+System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs
 System.ComponentModel/ContainerTest.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DecimalConverterTests.cs
