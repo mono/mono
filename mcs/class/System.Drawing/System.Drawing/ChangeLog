@@ -1,5 +1,6 @@
-2006-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+2006-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* FontFamily.cs: More accurate Mono* attributes to avoid confusion.
 	* Icon.cs: Dummy implementation of ExtractAssociatedIcon to always 
 	return SystemIcons.WinLogo (which is better than throwing an NIE).
 	Updated MonoTODO, to a MonoLimitation, to reflect the change.
