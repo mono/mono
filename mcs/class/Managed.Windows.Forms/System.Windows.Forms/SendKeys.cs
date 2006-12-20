@@ -25,7 +25,7 @@
 //
 //
 
-// NOT COMPLETE (better, but still wobbly)
+// COMPLETE
 
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -101,7 +101,6 @@ namespace System.Windows.Forms {
 			keywords.Add("+", (int)Keys.ShiftKey);
 			keywords.Add("^", (int)Keys.ControlKey);
 			keywords.Add("%", (int)Keys.Menu);
-
 		}
 
 		#region Private methods
@@ -171,6 +170,7 @@ namespace System.Windows.Forms {
 			bool isCtrl = false;
 			bool isAlt = false;
 
+			hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
 			StringBuilder repeats = new StringBuilder();
 			StringBuilder group_string = new StringBuilder();
 			
@@ -207,7 +207,7 @@ namespace System.Windows.Forms {
 						if (group_string.Length == 1) {
 							isKey = true;
 						}
-						else if (SendKeys.keywords.Contains(group_string.ToString())) {
+						else if (SendKeys.keywords.Contains(group_string.ToString().ToUpper())) {
 							isVkey = true;
 						}
 						else {
@@ -218,7 +218,7 @@ namespace System.Windows.Forms {
 						if (repeats.Length > 0)
 							repeat = Int32.Parse(repeats.ToString());
 						if (isVkey)
-							AddVKey(hwnd, (int)keywords[group_string.ToString()], repeats.Length == 0 ? 1 : repeat);
+							AddVKey(hwnd, (int)keywords[group_string.ToString().ToUpper()], repeats.Length == 0 ? 1 : repeat);
 						else {
 							if (Char.IsUpper(Char.Parse(group_string.ToString()))) {
 								if (!isShift)
@@ -320,22 +320,16 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Static Methods
-		[MonoTODO("Finish")]
 		public static void Flush() {
-			if (XplatUI.GetActive() == IntPtr.Zero)
-				return;
-			
-			hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
-
 			XplatUI.SendInput(hwnd, keys);
+			keys.Clear();
 		}
 
-		[MonoTODO("Finish")]
 		public static void Send(string keys) {
 			Parse(keys);
+			Flush();
 		}
 
-		[MonoTODO("Finish")]
 		public static void SendWait(string keys) {
 			Parse(keys);
 			Flush();
