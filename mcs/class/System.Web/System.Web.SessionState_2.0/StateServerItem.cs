@@ -3,6 +3,7 @@
 //
 // Author(s):
 //  Jackson Harper (jackson@ximian.com)
+//  Marek Habersack (grendello@gmail.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
@@ -27,35 +28,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !NET_2_0
+#if NET_2_0
 using System;
 
 namespace System.Web.SessionState {
-
 	[Serializable]
-	class StateServerItem {
+	internal class StateServerItem {
+		public byte [] CollectionData;
+		public byte [] StaticObjectsData;
+		DateTime last_access;
+		public int Timeout;
+		public Int32 LockId;
+		public bool Locked;
+		public DateTime LockedTime;
+		public SessionStateActions Action;
 
-		private byte [] dict_data;
-		private byte [] sobjs_data;
-		private DateTime last_access;
-		private int timeout;
-
-		public StateServerItem (byte [] dict_data, byte [] sobjs_data, int timeout)
+		public StateServerItem (int timeout) : this (null, null, timeout)
 		{
-			this.dict_data = dict_data;
-			this.sobjs_data = sobjs_data;
-			this.timeout = timeout;
+		}
+		
+		public StateServerItem (byte [] collection_data, byte [] sobjs_data, int timeout)
+		{
+			this.CollectionData = collection_data;
+			this.StaticObjectsData = sobjs_data;
+			this.Timeout = timeout;
 			this.last_access = DateTime.UtcNow;
-		}
-
-		public byte [] DictionaryData {
-			get { return dict_data; }
-			set { dict_data = value; }
-		}
-
-		public byte [] StaticObjectsData {
-			get { return sobjs_data; }
-			set { sobjs_data = value; }
+			this.Locked = false;
+			this.LockId = Int32.MinValue;
+			this.LockedTime = DateTime.MinValue;
+			this.Action = SessionStateActions.None;
 		}
 		
 		public void Touch ()
@@ -64,13 +65,9 @@ namespace System.Web.SessionState {
 		}
 
 		public bool IsAbandoned () {
-			if (last_access.AddMinutes (timeout) < DateTime.UtcNow)
+			if (last_access.AddMinutes (Timeout) < DateTime.UtcNow)
 				return true;
 			return false;
-		}
-
-		public int Timeout {
-			get { return timeout; }
 		}
 	}
 }

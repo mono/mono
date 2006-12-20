@@ -29,7 +29,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.IO;
 using System.Collections;
@@ -40,22 +40,13 @@ namespace System.Web.SessionState
 {
 	class SessionInProcHandler : ISessionHandler
 	{
-#if NET_2_0
-		SessionStateSection config;
-#else
 		SessionConfig config;
-#endif
 		CacheItemRemovedCallback removedCB;
 		
 		public void Dispose () { }
 
 		public void Init (SessionStateModule module, HttpApplication context,
-#if NET_2_0
-				  SessionStateSection config
-#else
-				  SessionConfig config
-#endif
-				  )
+				  SessionConfig config)
 		{
 			removedCB = new CacheItemRemovedCallback (module.OnSessionRemoved);
 			this.config = config;
@@ -87,25 +78,17 @@ namespace System.Web.SessionState
 			}
 
 			// Create a new session.
-			string sessionID = SessionId.Create (module.Rng);
+			string sessionID = SessionId.Create ();
 			state = new HttpSessionState (sessionID, // unique identifier
 						new SessionDictionary(), // dictionary
 						HttpApplicationFactory.ApplicationState.SessionObjects,
-#if NET_2_0
-						(int)config.Timeout.TotalMinutes, // XXX is this right?  we lose some precision here, but since the timeout is in minutes *anyway*...
-#else
 						config.Timeout, //lifetime before death.
-#endif
 						true, //new session
 						false, // is cookieless
 						SessionStateMode.InProc,
 						read_only); //readonly
 
-#if NET_2_0
-			TimeSpan timeout = TimeSpan.FromMinutes ((int)config.Timeout.TotalMinutes);
-#else
 			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);
-#endif
 			cache.InsertPrivate ("@@@InProc@" + sessionID, state, null, Cache.NoAbsoluteExpiration,
 					timeout, CacheItemPriority.AboveNormal, removedCB);
 
@@ -115,3 +98,4 @@ namespace System.Web.SessionState
 	}
 }
 
+#endif

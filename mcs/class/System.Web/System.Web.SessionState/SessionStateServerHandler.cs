@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+#if !NET_2_0
 using System;
 using System.IO;
 using System.Reflection;
@@ -116,7 +116,7 @@ namespace System.Web.SessionState {
 				}
 			}
 			
-			id = SessionId.Create (module.Rng);
+			id = SessionId.Create ();
 			dict = new SessionDictionary ();
 			sobjs = HttpApplicationFactory.ApplicationState.SessionObjects;
 			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (),
@@ -168,4 +168,4 @@ namespace System.Web.SessionState {
 		}
 	} 
 }
-
+#endif

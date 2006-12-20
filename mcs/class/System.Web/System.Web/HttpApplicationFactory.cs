@@ -299,6 +299,11 @@ namespace System.Web {
 
 		internal static void InvokeSessionEnd (object state)
 		{
+			InvokeSessionEnd (state, null, EventArgs.Empty);
+		}
+		
+		internal static void InvokeSessionEnd (object state, object source, EventArgs e)
+		{
 			HttpApplicationFactory factory = theFactory;
 			MethodInfo method = null;
 			HttpApplication app = null;
@@ -312,7 +317,7 @@ namespace System.Web {
 
 			app.SetSession ((HttpSessionState) state);
 			try {
-				method.Invoke (app, new object [] {app, EventArgs.Empty});
+				method.Invoke (app, new object [] {(source == null ? app : source), e});
 			} catch (Exception) {
 				// Ignore
 			}

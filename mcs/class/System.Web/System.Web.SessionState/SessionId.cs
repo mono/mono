@@ -39,12 +39,10 @@ namespace System.Web.SessionState {
 
 		internal const int IdLength = 24;
 		private const int half_len = IdLength / 2;
+		static RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 		
-		internal static string Create (RandomNumberGenerator rng)
+		internal static string Create ()
 		{
-			if (rng == null)
-				throw new ArgumentNullException ("rng");
-			
 			byte[] key = new byte [half_len];
 
 			lock (rng) {

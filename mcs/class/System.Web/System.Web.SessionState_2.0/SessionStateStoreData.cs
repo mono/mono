@@ -1,10 +1,12 @@
 //
-// System.Web.SessionState.SessionStateActions.cs
+// System.Web.SessionState.SessionStateStoreData.cs
 //
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004 Novell, Inc (http://www.novell.com)
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,10 +29,38 @@
 //
 
 #if NET_2_0
-namespace System.Web.SessionState {
-	public enum SessionStateActions {
-		InitializeItem	= 1
-	}
-}
-#endif
 
+using System.Web;
+
+namespace System.Web.SessionState {
+	public class SessionStateStoreData 
+	{
+		ISessionStateItemCollection sessionItems;
+		HttpStaticObjectsCollection staticObjects;
+		int timeout;
+
+		internal SessionStateStoreData (ISessionStateItemCollection items,
+						HttpStaticObjectsCollection objects,
+						int timeout)
+		{
+			sessionItems = items;
+			staticObjects = objects;
+			this.timeout = timeout;
+		}
+
+		public virtual ISessionStateItemCollection Items { 
+			get { return sessionItems ; }
+		}
+
+		public virtual HttpStaticObjectsCollection StaticObjects { 
+			get { return staticObjects; }
+		}
+
+		public virtual int Timeout { 
+			get { return timeout; }
+			set { timeout = value; }
+		}
+	}		
+}
+
+#endif

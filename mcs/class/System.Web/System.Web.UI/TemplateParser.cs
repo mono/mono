@@ -124,6 +124,9 @@ namespace System.Web.UI {
 		
 		internal void AddApplicationAssembly ()
 		{
+			if (Context.ApplicationInstance == null)
+                                return; // this may happen if we have Global.asax and have
+                                        // controls registered from Web.Config
 			string location = Context.ApplicationInstance.AssemblyLocation;
 			if (location != typeof (TemplateParser).Assembly.Location) {
 				appAssemblyIndex = assemblies.Add (location);

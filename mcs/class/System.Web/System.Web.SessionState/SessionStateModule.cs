@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+#if !NET_2_0
 using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
@@ -47,30 +47,7 @@ namespace System.Web.SessionState
 		static object locker = new object ();
 		
 #if TARGET_J2EE		
-#if NET_2_0
-		static private SessionStateSection config {
-			get
-			{
-				return (SessionStateSection) AppDomain.CurrentDomain.GetData ("SessionStateModule.config");
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData ("SessionStateModule.config", value);
-			}
-		}
-		static private Type handlerType
-		{
-			get
-			{
-				return (Type) AppDomain.CurrentDomain.GetData ("SessionStateModule.handlerType");
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData ("SessionStateModule.handlerType", value);
-			}
-		}
-#else
-		static private SessionConfig config {
+static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
 			}
@@ -86,13 +63,8 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
 			}
 		}
-#endif
-#else
-#if NET_2_0
-		static SessionStateSection config;
 #else
 		static SessionConfig config;
-#endif
 		static Type handlerType;
 #endif		
 		ISessionHandler handler;
@@ -115,23 +87,15 @@ namespace System.Web.SessionState
 			handler.Dispose();
 		}
 
-#if NET_2_0
-		SessionStateSection GetConfig ()
-#else
 		SessionConfig GetConfig ()
-#endif
 		{
 			lock (locker) {
 				if (config != null)
 					return config;
 
-#if NET_2_0
-				config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
-#else
 				config = (SessionConfig) HttpContext.GetAppConfig ("system.web/sessionState");
 				if (config ==  null)
 					config = new SessionConfig (null);
-#endif
 
 #if TARGET_J2EE
 				if (config.Mode == SessionStateMode.SQLServer || config.Mode == SessionStateMode.StateServer)
@@ -154,11 +118,7 @@ namespace System.Web.SessionState
 		public void Init (HttpApplication app)
 		{
 			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
-#if NET_2_0
-			SessionStateSection cfg = GetConfig ();
-#else
 			SessionConfig cfg = GetConfig ();
-#endif
 			if (handlerType == null)
 				return;
 
@@ -263,11 +223,7 @@ namespace System.Web.SessionState
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
-#if NET_2_0
-			SessionStateSection cfg = GetConfig ();
-#else
 			SessionConfig cfg = GetConfig ();
-#endif
 
 			// Only invoked for InProc (see msdn2 docs on SessionStateModule.End)
 			if (cfg.Mode == SessionStateMode.InProc)
@@ -281,3 +237,4 @@ namespace System.Web.SessionState
 	}
 }
 
+#endif

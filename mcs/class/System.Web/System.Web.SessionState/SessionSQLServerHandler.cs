@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.IO;
 using System.Data;
@@ -42,11 +42,7 @@ namespace System.Web.SessionState {
 	{
 		private static Type cncType = null;
 		private IDbConnection cnc = null;
-#if NET_2_0
-		private SessionStateSection config;
-#else
 		private SessionConfig config;
-#endif
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
@@ -64,12 +60,7 @@ namespace System.Web.SessionState {
 		}
 
 		public void Init (SessionStateModule module, HttpApplication context,
-#if NET_2_0
-				  SessionStateSection config
-#else
-				  SessionConfig config
-#endif
-				  )
+				  SessionConfig config)
 		{
 			string connectionTypeName;
 			string providerAssemblyName;
@@ -139,23 +130,13 @@ namespace System.Web.SessionState {
 					return session;
 			}
 
-			id = SessionId.Create (module.Rng);
+			id = SessionId.Create ();
 			session = new HttpSessionState (id, new SessionDictionary (),
 					HttpApplicationFactory.ApplicationState.SessionObjects,
-#if NET_2_0
-					(int)config.Timeout.TotalMinutes,
-#else
 					config.Timeout,
-#endif
 					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
-			InsertSessionWithRetry (session,
-#if NET_2_0
-				       (int)config.Timeout.TotalMinutes
-#else
-				       config.Timeout
-#endif
-				       );
+			InsertSessionWithRetry (session, config.Timeout);
 			isNew = true;
 			return session;
 		}
@@ -359,4 +340,4 @@ namespace System.Web.SessionState {
 		}
 	}
 }
-
+#endif
