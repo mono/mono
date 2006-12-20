@@ -35,6 +35,11 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	//[DefaultBindingProperty ("Value")]
+	[ComVisible (true)]
+#endif
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
 	[Designer("System.Windows.Forms.Design.DateTimePickerDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -43,7 +48,15 @@ namespace System.Windows.Forms {
 		#region Public variables
 		
 		// this class has to have the specified hour, minute and second, as it says in msdn
-		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 23, 59, 59);
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+#endif
+		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 0, 0, 0);
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+#endif
 		public static readonly DateTime MinDateTime = new DateTime (1753, 1, 1);
 
 		internal const int check_box_size = 13;
@@ -56,7 +69,7 @@ namespace System.Windows.Forms {
 		protected static readonly Color DefaultMonthBackColor = ThemeEngine.Current.ColorWindow;
 		protected static readonly Color DefaultTitleBackColor = ThemeEngine.Current.ColorActiveCaption;
 		protected static readonly Color DefaultTitleForeColor = ThemeEngine.Current.ColorActiveCaptionText;
-		protected static readonly Color DefaultTrailingForeColor = Color.Gray;
+		protected static readonly Color DefaultTrailingForeColor = SystemColors.GrayText;
 		
 		internal MonthCalendar			month_calendar;
 		bool							is_checked;
@@ -68,7 +81,9 @@ namespace System.Windows.Forms {
 		bool							show_check_box;
 		bool							show_up_down;
 		DateTime						date_value;
-		
+#if NET_2_0
+		bool							right_to_left_layout;
+#endif
 		// variables used for drawing and such
 		internal const int					up_down_width = check_box_size;
 		internal bool 					is_drop_down_visible;
@@ -98,6 +113,19 @@ namespace System.Windows.Forms {
 			#endregion	// DateTimePickerAccessibleObject Constructors
 
 			#region DateTimePickerAccessibleObject Properties
+#if NET_2_0
+			public override string KeyboardShortcut {
+				get {
+					return base.KeyboardShortcut;
+				}
+			}
+
+			public override AccessibleRole Role {
+				get {
+					return base.Role;
+				}
+			}
+#endif
 			public override AccessibleStates State {
 				get {
 					AccessibleStates	retval;
@@ -143,7 +171,7 @@ namespace System.Windows.Forms {
 			
 			// initialise other variables
 			is_checked = true;
-			custom_format = string.Empty;
+			custom_format = null;
 			drop_down_align = LeftRightAlignment.Left;
 			format = DateTimePickerFormat.Long;
 			max_date = MaxDateTime;
@@ -153,6 +181,8 @@ namespace System.Windows.Forms {
 			date_value = DateTime.Now;
 						
 			is_drop_down_visible = false;
+			BackColor = SystemColors.Window;
+			ForeColor = SystemColors.WindowText;
 			
 			month_calendar.DateChanged += new DateRangeEventHandler (MonthCalendarDateChangedHandler);
 			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
@@ -198,6 +228,19 @@ namespace System.Windows.Forms {
 				return base.BackgroundImage;
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get{
+				return base.BackgroundImageLayout;
+			}
+			set {
+				base.BackgroundImageLayout = value;
+			}
+		}
+#endif
 
 		[AmbientValue(null)]
 		[Localizable(true)]
@@ -276,6 +319,9 @@ namespace System.Windows.Forms {
 		}
 		
 		// the custom format string to format this control with
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public string CustomFormat {
@@ -292,6 +338,18 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+			get {
+				return base.DoubleBuffered;
+			}
+			set {
+				base.DoubleBuffered = value;
+			}
+		}
+#endif
+
 		// which side the drop down is to be aligned on
 		[DefaultValue(LeftRightAlignment.Left)]
 		[Localizable(true)]
@@ -358,6 +416,14 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+#if NET_2_0
+		public static DateTime MaximumDateTime {
+			get {
+				return MaxDateTime;
+			}
+		}
+#endif
+		
 		public DateTime MinDate {
 			set {
 				if (value < min_date) {
@@ -381,7 +447,27 @@ namespace System.Windows.Forms {
 				return min_date;
 			}
 		}
-		
+#if NET_2_0
+		public static DateTime MinimumDateTime {
+			get {
+				return MinDateTime;
+			}
+		}
+#endif
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public Padding Padding {
+			get {
+				return base.Padding;
+			}
+			set {
+				base.Padding = value;
+			}
+		}
+#endif
+
 		// the prefered height to draw this control using current font
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -391,7 +477,21 @@ namespace System.Windows.Forms {
 				return (int) Math.Ceiling (Font.Height * 1.5);
 			}
 		}
-		
+
+#if NET_2_0
+		public bool RightToLeftLayout {
+			get {
+				return right_to_left_layout;
+			}
+			set {
+				if (right_to_left_layout != value) {
+					right_to_left_layout = value;
+					OnRightToLeftLayoutChanged (EventArgs.Empty);
+				}
+			}
+		}
+#endif
+
 		// whether or not the check box is shown
 		[DefaultValue(false)]
 		public bool ShowCheckBox {
@@ -443,6 +543,9 @@ namespace System.Windows.Forms {
 				}
 			}
 			get {
+				if (!IsHandleCreated)
+					return "";
+				
 				if (format == DateTimePickerFormat.Custom) {
 					System.Text.StringBuilder result = new System.Text.StringBuilder ();
 					for (int i = 0; i < part_data.Length; i++) { 
@@ -486,6 +589,9 @@ namespace System.Windows.Forms {
 		static object DropDownEvent = new object ();
 		static object FormatChangedEvent = new object ();
 		static object ValueChangedEvent = new object ();
+#if NET_2_0
+		static object RightToLeftLayoutChangedEvent = new object ();
+#endif
 
 		// raised when the monthcalendar is closed
 		public event EventHandler CloseUp {
@@ -534,6 +640,43 @@ namespace System.Windows.Forms {
 				base.BackgroundImageChanged -= value;
 			}
 		}
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add
+			{
+				base.BackgroundImageLayoutChanged += value;
+			}
+
+			remove
+			{
+				base.BackgroundImageLayoutChanged -= value;
+			}
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Click {
+			add {
+				base.Click += value;
+			}
+			remove {
+				base.Click -= value;
+			}
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DoubleClick {
+			add {
+				base.DoubleClick += value;
+			}
+			remove {
+				base.DoubleClick -= value;
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -546,6 +689,42 @@ namespace System.Windows.Forms {
 				base.ForeColorChanged -= value;
 			}
 		}
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseClick {
+			add {
+				base.MouseClick += value;
+			}
+			remove {
+				base.MouseClick -= value;
+			}
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseDoubleClick {
+			add {
+				base.MouseDoubleClick += value;
+			}
+			remove {
+				base.MouseDoubleClick -= value;
+			}
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add
+			{
+				base.PaddingChanged += value;
+			}
+			remove
+			{
+				base.PaddingChanged -= value;
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -558,6 +737,16 @@ namespace System.Windows.Forms {
 				base.Paint -= value;
 			}
 		}
+#if NET_2_0
+		public event EventHandler RightToLeftLayoutChanged {
+			add {
+				Events.AddHandler (RightToLeftLayoutChangedEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (RightToLeftLayoutChangedEvent, value);
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -607,13 +796,15 @@ namespace System.Windows.Forms {
 		protected override void DestroyHandle () {
 			base.DestroyHandle ();
 		}
-		
+
+#if !NET_2_0
 		// not sure why we're overriding this one
 		protected override void Dispose (bool disposing) {
 			updown_timer.Dispose ();
 			base.Dispose (disposing);
 		}
-		
+#endif
+
 		// find out if this key is an input key for us, depends on which date part is focused
 		protected override bool IsInputKey (Keys keyData) {
 			switch (keyData)
@@ -655,7 +846,20 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
+#if NET_2_0
+		protected override void  OnHandleCreated (EventArgs e) {
+			 base.OnHandleCreated(e);
+		}
+		protected override void  OnHandleDestroyed (EventArgs e) {
+ 			 base.OnHandleDestroyed(e);
+		}
 		
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e) {
+			EventHandler eh = (EventHandler) Events [RightToLeftLayoutChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		// not sure why we're overriding this one 
 		protected override void OnSystemColorsChanged (EventArgs e) {
 			base.OnSystemColorsChanged (e);
