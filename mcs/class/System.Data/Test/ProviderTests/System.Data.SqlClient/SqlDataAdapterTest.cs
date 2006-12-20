@@ -45,7 +45,7 @@ namespace MonoTests.System.Data.SqlClient
 	[Category ("sqlserver")]
 	public class SqlDataAdapterTest
 	{
-		SqlDataAdapter adapter =null; 
+		SqlDataAdapter adapter = null; 
 		DataSet data = null ;
 		string  connectionString = ConnectionManager.Singleton.ConnectionString;
 		SqlConnection conn = null; 
@@ -54,15 +54,16 @@ namespace MonoTests.System.Data.SqlClient
 		/**
 		   The below test will not run everytime, since the region id column is unique
 		   so change the regionid if you want the test to pass.
-		**/	
+		**/
+		[Category ("NotWorking")]
 		public void UpdateTest () {
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
 				DataTable dt = new DataTable();
 				SqlDataAdapter da = null;
-				da = new SqlDataAdapter("Select * from employee;", conn);
-				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				da = new SqlDataAdapter("Select * from employee", conn);
+				//SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				da.Fill(dt);
 				DataRow dr = dt.NewRow();
 				dr ["id"] = 6002;
@@ -72,6 +73,50 @@ namespace MonoTests.System.Data.SqlClient
 				dt.Rows.Add(dr);
 
 				da.Update(dt);
+			} finally {
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		private static void OnRowUpdatedTest (object sender, SqlRowUpdatedEventArgs e)
+		{
+			rowUpdated = true;
+		}
+
+		private static void OnRowUpdatingTest (object sender, SqlRowUpdatingEventArgs e)
+		{
+			rowUpdating = true;
+		}
+
+		private static bool rowUpdated = false;
+		private static bool rowUpdating = false;
+		[Test]
+		[Category ("NotWorking")]
+		public void RowUpdatedTest () {
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				DataTable dt = null;
+				DataSet ds = new DataSet ();
+				SqlDataAdapter da = null;
+				da = new SqlDataAdapter("Select * from employee", conn);
+				//SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				rowUpdated = false;
+				rowUpdating = false;
+				da.RowUpdated += new SqlRowUpdatedEventHandler (OnRowUpdatedTest);
+				da.RowUpdating += new SqlRowUpdatingEventHandler (OnRowUpdatingTest);
+				da.Fill (ds);
+				dt = ds.Tables [0];
+				dt.Rows[0][0] = 200;
+				da.UpdateCommand = new SqlCommand ("Update employee set id = @id");
+				da.Update (dt);
+				dt.Rows[0][0] = 1;
+				da.Update (dt);
+				da.RowUpdated -= new SqlRowUpdatedEventHandler (OnRowUpdatedTest);
+				da.RowUpdating -= new SqlRowUpdatingEventHandler (OnRowUpdatingTest);
+				Assert.AreEqual (true, rowUpdated, "RowUpdated");
+				Assert.AreEqual (true, rowUpdating, "RowUpdating");
 			} finally {
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
 				ConnectionManager.Singleton.CloseConnection ();
@@ -194,7 +239,7 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = "select id1 from numeric_family";
 			try {
 				adapter.Fill (data);
-			}catch (Exception e) {
+			} catch {
 				if (cmd.Connection.State == ConnectionState.Open) {
 					cmd.Connection.Close ();
 					Assert.Fail ("# Connection Shud be Closed");
@@ -379,7 +424,7 @@ namespace MonoTests.System.Data.SqlClient
 			adapter.SelectCommand.Connection.Close (); 
 
 			adapter.SelectCommand.Connection = null; 
-			try { 
+			try {
 				adapter.Fill (data);
 				Assert.Fail ("#9 Exception shud be thrown : Invalid Connection");
 			}catch (AssertionException e){
@@ -408,7 +453,8 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				count = adapter.Fill (ds, "numeric_family");
 				Assert.Fail ("#1 Overflow exception must be thrown");
-			}catch (OverflowException e) {
+			}catch (Exception e) {
+				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#1a Expected exception is OverflowException");
 			}
 			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#2");
 			Assert.AreEqual (0, count, "#3");
@@ -834,4 +880,32 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 	}
+
+#if NET_2_0
+	[TestFixture]
+	[Category ("sqlserver")]
+	public class SqlDataAdapterInheritTest : DbDataAdapter
+	{
+		SqlConnection conn = null; 
+
+		[Test]
+		public void FillDataAdapterTest () {
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				DataTable dt = new DataTable();
+				SqlCommand command = new SqlCommand ();
+				command.CommandText = "Select * from employee;";
+				command.Connection = conn;
+				SelectCommand = command;
+				Fill (dt, command.ExecuteReader ());
+				Assert.AreEqual (4, dt.Rows.Count, "#1");
+				Assert.AreEqual (6, dt.Columns.Count, "#1");
+			} finally {
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+	}
+#endif
 }

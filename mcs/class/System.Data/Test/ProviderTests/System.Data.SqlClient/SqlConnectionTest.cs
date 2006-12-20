@@ -571,7 +571,7 @@ namespace MonoTests.System.Data
 			disposedEventCount++; 
 		}
 	}
-  #if NET_2_0
+#if NET_2_0
 	[TestFixture]
 	[Category ("sqlserver")]
 	public class GetSchemaTest
@@ -1137,5 +1137,5 @@ namespace MonoTests.System.Data
 			DataTable tab1 = conn.GetSchema("Mono", restrictions);
 		}
 	}
-  #endif
+#endif
 }
