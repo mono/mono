@@ -31,12 +31,15 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Profile;
 using System.Web.Util;
 
 namespace System.Web.Compilation
@@ -44,10 +47,19 @@ namespace System.Web.Compilation
 	internal class AppCodeAssembly
 	{
 		private List<string> files;
-
+		private List<CodeCompileUnit> units;
+		
 		private string name;
 		private string path;
 		private bool validAssembly;
+		private string outputAssemblyName;
+
+		public string OutputAssemblyName
+		{
+			get {
+				return outputAssemblyName;
+			}
+		}
 		
 		public bool IsValid
 		{
@@ -73,7 +85,8 @@ namespace System.Web.Compilation
 		
 		public AppCodeAssembly (string name, string path)
 		{
-			this.files = new List<string>();
+			this.files = new List<string> ();
+			this.units = new List<CodeCompileUnit> ();
 			this.validAssembly = true;
 			this.name = name;
 			this.path = path;
@@ -84,6 +97,11 @@ namespace System.Web.Compilation
 			files.Add (path);
 		}
 
+		public void AddUnit (CodeCompileUnit unit)
+		{
+			units.Add (unit);
+		}
+		
 		object OnCreateTemporaryAssemblyFile (string path)
 		{
 			FileStream f = new FileStream (path, FileMode.CreateNew);
@@ -157,6 +175,8 @@ namespace System.Web.Compilation
 			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
 			foreach (string file in knownfiles)
 				abuilder.AddCodeFile (file);
+			foreach (CodeCompileUnit unit in units)
+				abuilder.AddCodeCompileUnit (unit);
 			
 			BuildProvider bprovider;
 			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
@@ -165,9 +185,18 @@ namespace System.Web.Compilation
 				parameters.ReferencedAssemblies.AddRange (binAssemblies);
 			
 			if (compilationSection != null) {
+				AssemblyName asmName;
 				foreach (AssemblyInfo ai in compilationSection.Assemblies)
-					if (ai.Assembly != "*")
-						parameters.ReferencedAssemblies.Add (ai.Assembly);
+					if (ai.Assembly != "*") {
+						try {
+							asmName = new AssemblyName (ai.Assembly);
+							parameters.ReferencedAssemblies.Add (asmName.Name);
+						} catch (Exception ex) {
+							throw new HttpException (
+								String.Format ("Could not find assembly {0}.", ai.Assembly),
+								ex);
+						}
+					}
 				
 				BuildProviderCollection buildProviders = compilationSection.BuildProviders;
 				
@@ -179,10 +208,10 @@ namespace System.Web.Compilation
 				}
 			}
 			
-			string assemblyName = (string)FileUtils.CreateTemporaryFile (
+			outputAssemblyName = (string)FileUtils.CreateTemporaryFile (
 				AppDomain.CurrentDomain.SetupInformation.DynamicBase,
 				name, "dll", OnCreateTemporaryAssemblyFile);
-			parameters.OutputAssembly = assemblyName;
+			parameters.OutputAssembly = outputAssemblyName;
 			CompilerResults results = abuilder.BuildAssembly (parameters);
 			if (results.Errors.Count == 0) {
 				BuildManager.CodeAssemblies.Add (results.PathToAssembly);
@@ -241,6 +270,9 @@ namespace System.Web.Compilation
 	
 	internal class AppCodeCompiler
 	{
+		static private bool _alreadyCompiled;
+		internal static string DefaultAppCodeAssemblyName;
+		
 		// A dictionary that contains an entry per an assembly that will
 		// be produced by compiling App_Code. There's one main assembly
 		// and an optional number of assemblies as defined by the
@@ -264,18 +296,15 @@ namespace System.Web.Compilation
 		// unambiguous language assigned to them (e.g. .wsdl files), are
 		// built using the default website compiler.
 		private List<AppCodeAssembly> assemblies;
+		string _bindir;
 		
 		public AppCodeCompiler ()
 		{
 			assemblies = new List<AppCodeAssembly>();
 		}
 
-		public void Compile ()
+		bool ProcessAppCodeDir (string appCode, AppCodeAssembly defasm)
 		{
-			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
-			if (!Directory.Exists (appCode))
-				return;
-			
 			// First process the codeSubDirectories
 			CompilationSection cs = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			
@@ -288,18 +317,269 @@ namespace System.Web.Compilation
 								Path.Combine (appCode, cs.CodeSubDirectories[i].DirectoryName)));
 				}
 			}
-			AppCodeAssembly defasm = new AppCodeAssembly ("App_Code", appCode);
-			assemblies.Add (defasm);
-			if (!CollectFiles (appCode, defasm))
+			
+			return CollectFiles (appCode, defasm);
+		}
+
+		CodeTypeReference GetProfilePropertyType (string type)
+		{
+			if (String.IsNullOrEmpty (type))
+				throw new ArgumentException ("String size cannot be 0", "type");
+			return new CodeTypeReference (type);
+		}
+
+		Type GetTypeFromBin (string typeName)
+		{
+			string bindir = BinDir;
+			if (!Directory.Exists (bindir))
+				return null;
+			
+			string [] binDlls = Directory.GetFiles (bindir, "*.dll");
+			Type ret = null;
+			foreach (string dll in binDlls) {
+				try {
+					Assembly asm = Assembly.LoadFrom (dll);
+					ret = asm.GetType (typeName, false);
+					if (ret != null)
+						break;
+				} catch (Exception) {
+					continue;
+				}
+			}
+
+			return ret;
+		}
+
+		string FindProviderTypeName (ProfileSection ps, string providerName)
+		{
+			if (ps.Providers == null || ps.Providers.Count == 0)
+				return null;
+			
+			ProviderSettings pset = ps.Providers [providerName];
+			if (pset == null)
+				return null;
+			return pset.Type;
+		}
+		
+		void GetProfileProviderAttribute (ProfileSection ps, CodeAttributeDeclarationCollection collection,
+						  string providerName)
+		{
+			string providerTypeName;
+
+			if (String.IsNullOrEmpty (providerName))
+				providerTypeName = FindProviderTypeName (ps, ps.DefaultProvider);
+			else
+				providerTypeName = FindProviderTypeName (ps, providerName);
+			if (providerTypeName == null)
+				throw new HttpException (String.Format ("Profile provider type not found: {0}",
+									providerTypeName));
+			
+			Type type = Type.GetType (providerTypeName, false);
+			if (type == null) {
+				type = GetTypeFromBin (providerTypeName);
+				if (type == null)
+					throw new HttpException (String.Format ("Profile provider type not found: {0}",
+										providerTypeName));
+			}
+			
+			collection.Add (
+				new CodeAttributeDeclaration (
+					"ProfileProvider",
+					new CodeAttributeArgument (
+						new CodePrimitiveExpression (providerTypeName)
+					)
+				)
+			);
+		}
+
+		void GetProfileSettingsSerializeAsAttribute (ProfileSection ps, CodeAttributeDeclarationCollection collection,
+							     SerializationMode mode)
+		{
+			string parameter = String.Format ("SettingsSerializeAs.{0}", mode.ToString ());
+			collection.Add (
+				new CodeAttributeDeclaration (
+					"SettingsSerializeAs",
+					new CodeAttributeArgument (
+						new CodeSnippetExpression (parameter)
+					)
+				)
+			);
+					
+		}
+		
+		void AddProfileClassProperty (ProfileSection ps, CodeTypeDeclaration profileClass, ProfilePropertySettings pset)
+		{
+			string name = pset.Name;
+			if (String.IsNullOrEmpty (name))
+				throw new HttpException ("Profile property 'Name' attribute cannot be null.");
+			CodeMemberProperty property = new CodeMemberProperty ();
+			string typeName = pset.Type;
+			if (typeName == "string")
+				typeName = "System.String";
+			property.Name = name;
+			property.Type = GetProfilePropertyType (typeName);
+			property.Attributes = MemberAttributes.Public;
+			
+			CodeAttributeDeclarationCollection collection = new CodeAttributeDeclarationCollection();
+			GetProfileProviderAttribute (ps, collection, pset.Provider);
+			GetProfileSettingsSerializeAsAttribute (ps, collection, pset.SerializeAs);
+
+			property.CustomAttributes = collection;
+			CodeMethodReturnStatement ret = new CodeMethodReturnStatement ();
+			CodeCastExpression cast = new CodeCastExpression ();
+			ret.Expression = cast;
+
+			CodeMethodReferenceExpression mref = new CodeMethodReferenceExpression (
+				new CodeThisReferenceExpression (),
+				"GetPropertyValue");
+			CodeMethodInvokeExpression minvoke = new CodeMethodInvokeExpression (
+				mref,
+				new CodeExpression[] { new CodePrimitiveExpression (name) }
+			);
+			cast.TargetType = new CodeTypeReference (typeName);
+			cast.Expression = minvoke;
+			property.GetStatements.Add (ret);
+
+			if (!pset.ReadOnly) {
+				mref = new CodeMethodReferenceExpression (
+					new CodeThisReferenceExpression (),
+					"SetPropertyValue");
+				minvoke = new CodeMethodInvokeExpression (
+					mref,
+					new CodeExpression[] { new CodePrimitiveExpression (name), new CodeSnippetExpression ("value") }
+				);
+				property.SetStatements.Add (minvoke);
+			}
+			
+			
+			profileClass.Members.Add (property);
+		}
+
+		void AddProfileClassGroupProperty (string groupName, string memberName, CodeTypeDeclaration profileClass)
+		{			
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = memberName;
+			property.Type = new CodeTypeReference (groupName);
+			property.Attributes = MemberAttributes.Public;
+
+			CodeMethodReturnStatement ret = new CodeMethodReturnStatement ();
+			CodeCastExpression cast = new CodeCastExpression ();
+			ret.Expression = cast;
+
+			CodeMethodReferenceExpression mref = new CodeMethodReferenceExpression (
+				new CodeThisReferenceExpression (),
+				"GetProfileGroup");
+			CodeMethodInvokeExpression minvoke = new CodeMethodInvokeExpression (
+				mref,
+				new CodeExpression[] { new CodePrimitiveExpression (memberName) }
+			);
+			cast.TargetType = new CodeTypeReference (groupName);
+			cast.Expression = minvoke;
+			property.GetStatements.Add (ret);
+			
+			profileClass.Members.Add (property);
+		}
+		
+		void BuildProfileClass (ProfileSection ps, string className, ProfilePropertySettingsCollection psc,
+					CodeNamespace ns, string baseClass, SortedList <string, string> groupProperties)
+		{
+			CodeTypeDeclaration profileClass = new CodeTypeDeclaration (className);
+			profileClass.BaseTypes.Add (new CodeTypeReference (baseClass));
+			profileClass.TypeAttributes = TypeAttributes.Public;
+			ns.Types.Add (profileClass);
+			
+			foreach (ProfilePropertySettings pset in psc)
+				AddProfileClassProperty (ps, profileClass, pset);
+			if (groupProperties != null && groupProperties.Count > 0)
+				foreach (KeyValuePair <string, string> group in groupProperties)
+					AddProfileClassGroupProperty (group.Key, group.Value, profileClass);
+		}
+
+		string MakeGroupName (string name)
+		{
+			return String.Format ("ProfileGroup{0}", name);
+		}
+		
+		// FIXME: there should be some validation of syntactic correctness of the member/class name
+		// for the groups/properties. For now it's left to the compiler to report errors.
+		//
+		// CodeGenerator.IsValidLanguageIndependentIdentifier (id) - use that
+		//
+		bool ProcessCustomProfile (ProfileSection ps, AppCodeAssembly defasm)
+		{
+			CodeCompileUnit unit = new CodeCompileUnit ();
+			CodeNamespace ns = new CodeNamespace (null);
+			unit.Namespaces.Add (ns);
+			defasm.AddUnit (unit);
+			
+			ns.Imports.Add (new CodeNamespaceImport ("System"));
+			ns.Imports.Add (new CodeNamespaceImport ("System.Configuration"));
+			ns.Imports.Add (new CodeNamespaceImport ("System.Web"));
+			ns.Imports.Add (new CodeNamespaceImport ("System.Web.Profile"));
+			
+			RootProfilePropertySettingsCollection props = ps.PropertySettings;
+			if (props == null || props.Count == 0)
+				return true;
+
+			SortedList<string, string> groupProperties = new SortedList<string, string> ();
+			string groupName;
+			foreach (ProfileGroupSettings pgs in props.GroupSettings) {
+				groupName = MakeGroupName (pgs.Name);
+				groupProperties.Add (groupName, pgs.Name);
+				BuildProfileClass (ps, groupName, pgs.PropertySettings, ns,
+						   "System.Web.Profile.ProfileGroupBase", null);
+			}
+			
+			string baseType = ps.Inherits;
+			if (String.IsNullOrEmpty (baseType))
+				baseType = "System.Web.Profile.ProfileBase";
+			BuildProfileClass (ps, "ProfileCommon", props, ns, baseType, groupProperties);
+			return true;
+		}
+
+		void PutCustomProfileInContext (HttpContext context, string assemblyName)
+		{
+			Type type = Type.GetType (String.Format ("ProfileCommon, {0}",
+								 Path.GetFileNameWithoutExtension (assemblyName)));
+			ProfileBase pb = Activator.CreateInstance (type) as ProfileBase;
+			if (pb != null)
+				context.Profile = pb;
+		}
+		
+		public void Compile ()
+		{
+			if (_alreadyCompiled)
+				return;
+			_alreadyCompiled = false;
+			
+			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
+			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
+			bool haveAppCodeDir = Directory.Exists (appCode);
+			bool haveCustomProfile = ps != null ? ps.PropertySettings.Count > 0 : false;
+			
+			if (!haveAppCodeDir && !haveCustomProfile)
 				return;
 
-			AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-			string bindir = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+			AppCodeAssembly defasm = new AppCodeAssembly ("App_Code", appCode);
+			assemblies.Add (defasm);
+
+			bool haveCode = false;
+			if (haveAppCodeDir)
+				haveCode = ProcessAppCodeDir (appCode, defasm);
+			if (haveCustomProfile)
+				if (ProcessCustomProfile (ps, defasm))
+					haveCode = true;
+
+			if (!haveCode)
+				return;
+			
+			string bindir = BinDir;
 			string[] binAssemblies = null;
 			if (Directory.Exists (bindir))
 				binAssemblies = Directory.GetFiles (bindir, "*.dll");
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build (binAssemblies);
+			DefaultAppCodeAssemblyName = Path.GetFileNameWithoutExtension (defasm.OutputAssemblyName);
 		}
 
 		private bool CollectFiles (string dir, AppCodeAssembly aca)
@@ -322,6 +602,16 @@ namespace System.Web.Compilation
 				curaca = aca;
 			}
 			return haveFiles;
+		}
+
+		private string BinDir {
+			get {
+				if (_bindir != null)
+					return _bindir;
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				_bindir = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+				return _bindir;
+			}
 		}
 	}
 }

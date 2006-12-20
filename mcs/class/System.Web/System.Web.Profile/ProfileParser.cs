@@ -44,7 +44,13 @@ namespace System.Web.Profile
 
 		public static Type GetProfileCommonType (HttpContext context)
 		{
-			Type profileBaseType = Type.GetType ("ProfileCommon");
+			string typeName;
+			if (AppCodeCompiler.DefaultAppCodeAssemblyName != null)
+				typeName = String.Format ("ProfileCommon, {0}", AppCodeCompiler.DefaultAppCodeAssemblyName);
+			else
+				typeName = "ProfileCommon";
+			
+			Type profileBaseType = Type.GetType (typeName);
 			if (profileBaseType == null) {
 				//Compiler call
 			}
@@ -53,7 +59,15 @@ namespace System.Web.Profile
 
 		public static Type GetProfileGroupType (HttpContext context, string groupName)
 		{
-			Type profileGroupType = Type.GetType ("ProfileGroup" + groupName);
+			string typeName;
+			if (AppCodeCompiler.DefaultAppCodeAssemblyName != null)
+				typeName = String.Format ("ProfileCommon{0}, {1}",
+							  groupName,
+							  AppCodeCompiler.DefaultAppCodeAssemblyName);
+			else
+				typeName = String.Format ("ProfileCommon{0}", groupName);
+			
+			Type profileGroupType = Type.GetType (typeName);
 			if (profileGroupType == null) {
 				//Compiler call
 			}

@@ -42,9 +42,14 @@ namespace System.Web.Configuration
 		{
 			base.Validate (value);
 
-			/* XXX this should really do additional
-			 * checking.  MS doesn't, but it makes almost
-			 * no sense */
+			string val = value as string;
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			val = val.Trim ();
+			if (String.IsNullOrEmpty (val))
+				throw new ArgumentException ("name cannot be empty.");
+			if (val.Contains ("."))
+				throw new ArgumentException ("name cannot contain period");
 		}
 	}
 }

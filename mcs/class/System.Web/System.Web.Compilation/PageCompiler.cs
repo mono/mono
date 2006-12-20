@@ -32,9 +32,13 @@ using System.CodeDom;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Util;
+#if NET_2_0
+using System.Web.Profile;
+#endif
 
 namespace System.Web.Compilation
 {
@@ -84,6 +88,41 @@ namespace System.Web.Compilation
 			method.Statements.Add (new CodeMethodReturnStatement (new CodePrimitiveExpression (rnd.Next ())));
 			mainClass.Members.Add (method);
 		}
+
+		void InternalCreatePageProperty (string retType, string name, string contextProperty)
+		{
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = name;
+			property.Type = new CodeTypeReference (retType);
+			property.Attributes = MemberAttributes.Family | MemberAttributes.Final;
+
+			CodeMethodReturnStatement ret = new CodeMethodReturnStatement ();
+			CodeCastExpression cast = new CodeCastExpression ();
+			ret.Expression = cast;
+			
+			CodePropertyReferenceExpression refexp = new CodePropertyReferenceExpression ();
+			refexp.TargetObject = new CodePropertyReferenceExpression (new CodeThisReferenceExpression (), "Context");
+			refexp.PropertyName = contextProperty;
+			
+			cast.TargetType = new CodeTypeReference (retType);
+			cast.Expression = refexp;
+			
+			property.GetStatements.Add (ret);
+			mainClass.Members.Add (property);
+		}
+		
+#if NET_2_0
+		void CreateProfileProperty ()
+		{
+			string retType;
+			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
+			if (ps != null && ps.PropertySettings.Count > 0)
+				retType = "ProfileCommon";
+			else
+				retType = "System.Web.Profile.DefaultProfile";
+			InternalCreatePageProperty (retType, "Profile", "Profile");
+		}
+#endif
 
 		static CodeAssignStatement CreatePropertyAssign (CodeExpression expr, string name, object value)
 		{
@@ -226,6 +265,7 @@ namespace System.Web.Compilation
 			base.CreateMethods ();
 
 #if NET_2_0
+			CreateProfileProperty ();
 			if (pageParser.MasterType != null) {
 				CodeMemberProperty mprop = new CodeMemberProperty ();
 				mprop.Name = "Master";

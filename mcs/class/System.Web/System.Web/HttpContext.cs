@@ -324,8 +324,7 @@ namespace System.Web {
 		}
 
 		public ProfileBase Profile {
-			get 
-			{
+			get {
 				if (profile == null) {
 					if (Request.IsAuthenticated)
 						profile = ProfileBase.Create (User.Identity.Name);
@@ -333,6 +332,10 @@ namespace System.Web {
 						profile = ProfileBase.Create (Request.AnonymousID, false);
 				}
 				return profile;
+			}
+
+			internal set {
+				profile = value;
 			}
 		}
 #endif

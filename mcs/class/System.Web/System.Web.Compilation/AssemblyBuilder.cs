@@ -109,10 +109,17 @@ namespace System.Web.Compilation {
 		{
 			if (a == null)
 				throw new ArgumentNullException ("a");
-			
+
 			referenced_assemblies.Add (a.Location);
 		}
 
+		internal void AddCodeCompileUnit (CodeCompileUnit compileUnit)
+		{
+			if (compileUnit == null)
+				throw new ArgumentNullException ("compileUnit");
+			units.Add (compileUnit);
+		}
+		
 		public void AddCodeCompileUnit (BuildProvider buildProvider, CodeCompileUnit compileUnit)
 		{
 			if (buildProvider == null)
@@ -216,7 +223,6 @@ namespace System.Web.Compilation {
 					}
 				}
 			}
-
 			Dictionary <string, string> resources = ResourceFiles;
 			foreach (KeyValuePair <string, string> de in resources)
 				options.EmbeddedResources.Add (de.Value);
@@ -228,7 +234,7 @@ namespace System.Web.Compilation {
 			// FIXME: generate the code and display it
 			if (results.NativeCompilerReturnValue != 0)
 				throw new CompilationException (virtualPath, results.Errors, "");
-
+			
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
 				if (!File.Exists (options.OutputAssembly)) {
