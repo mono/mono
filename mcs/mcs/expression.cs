@@ -2090,9 +2090,16 @@ namespace Mono.CSharp {
 					return this;
 				}
 
-				if (l != r) {
-					Error_OperatorCannotBeApplied ();
-					return null;
+				left_operators = l == TypeManager.bool_type ?
+					left : Convert.ImplicitUserConversion (ec, left, TypeManager.bool_type, loc);
+				right_operators = r == TypeManager.bool_type ?
+					right : Convert.ImplicitUserConversion (ec, right, TypeManager.bool_type, loc);
+
+				if (left_operators != null && right_operators != null) {
+					left = left_operators;
+					right = right_operators;
+					type = TypeManager.bool_type;
+					return this;
 				}
 
 				Expression e = new ConditionalLogicalOperator (
@@ -2485,8 +2492,15 @@ namespace Mono.CSharp {
 					right.EmitBranchable (ec, target, true);
 					ig.MarkLabel (tests_end);					
 				} else {
-					left.EmitBranchable (ec, target, false);
-					right.EmitBranchable (ec, target, false);
+					//
+					// This optimizes code like this 
+					// if (true && i > 4)
+					//
+					if (!(left is Constant))
+						left.EmitBranchable (ec, target, false);
+
+					if (!(right is Constant)) 
+						right.EmitBranchable (ec, target, false);
 				}
 				
 				return;
@@ -3033,7 +3047,7 @@ namespace Mono.CSharp {
 
 			left_temp = new LocalTemporary (type);
 
-			ArrayList arguments = new ArrayList ();
+			ArrayList arguments = new ArrayList (2);
 			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
 			method = Invocation.OverloadResolve (
