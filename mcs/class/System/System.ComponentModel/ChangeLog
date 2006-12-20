@@ -1,5 +1,9 @@
 2006-12-20  Chris Toshok  <toshok@ximian.com>
 
+	* AttributeProviderAttribute.cs: new class.
+
+2006-12-20  Chris Toshok  <toshok@ximian.com>
+
 	* ComplexBindingPropertiesAttribute.cs: add Default field.
 
 2006-12-20  Chris Toshok  <toshok@ximian.com>

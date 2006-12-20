@@ -162,6 +162,7 @@ System.ComponentModel/AsyncCompletedEventArgs.cs
 System.ComponentModel/AsyncCompletedEventHandler.cs
 System.ComponentModel/AsyncOperation.cs
 System.ComponentModel/AsyncOperationManager.cs
+System.ComponentModel/AttributeProviderAttribute.cs
 System.ComponentModel/AttributeCollection.cs
 System.ComponentModel/BackgroundWorker.cs
 System.ComponentModel/BaseNumberConverter.cs
