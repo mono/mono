@@ -68,7 +68,9 @@ namespace System.Windows.Forms {
 		Timer			updown_timer;
 		bool			showing_context_menu;
 		bool			updown_has_focus;
+#if NET_2_0
 		bool			right_to_left_layout;
+#endif
 
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
@@ -96,7 +98,7 @@ namespace System.Windows.Forms {
 		//	0: date clicked
 		//	1: previous clicked
 		//	2: next clicked
-		private bool[]			click_state;	
+		private bool[]			click_state;
 		
 		
 		
@@ -177,7 +179,7 @@ namespace System.Windows.Forms {
 			MouseUp += new MouseEventHandler (MouseUpHandler);
 			KeyUp += new KeyEventHandler (KeyUpHandler);
 			
-			// this replaces paint so call the control version			
+			// this replaces paint so call the control version
 			base.Paint += new PaintEventHandler (PaintHandler);
 		}
 		
@@ -658,7 +660,7 @@ namespace System.Windows.Forms {
 				// multiplier is sucked out from the font size
 				int multiplier = this.Font.Height;
 
-				// establis how many columns and rows we have					
+				// establis how many columns and rows we have
 				int column_count = (ShowWeekNumbers) ? 8 : 7;
 				int row_count = 7;		// not including the today date
 
@@ -770,9 +772,9 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				if (this.owner == null) {
-					return base.CreateParams;					
+					return base.CreateParams;
 				} else {
-					CreateParams cp = base.CreateParams;					
+					CreateParams cp = base.CreateParams;
 					cp.Style ^= (int) WindowStyles.WS_CHILD;
 					cp.Style |= (int) WindowStyles.WS_POPUP;
 					cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);
@@ -1259,7 +1261,7 @@ namespace System.Windows.Forms {
 			
 			// through each trying to find a match
 			for (int i = 0; i < calendars.Length ; i++) {
-				if (calendars[i].Contains (point)) {					
+				if (calendars[i].Contains (point)) {
 					// check the title section
 					Rectangle title_rect = new Rectangle (
 						calendars[i].Location,
@@ -1343,12 +1345,12 @@ namespace System.Windows.Forms {
 								return new HitTestInfo (HitArea.PrevMonthDate, point, new DateTime (1, 1, 1));
 							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
 								return new HitTestInfo (HitArea.NextMonthDate, point, new DateTime (1, 1, 1));
-							}							
+							}
 							return new HitTestInfo (HitArea.Nowhere, point, new DateTime (1, 1, 1));
 						}
 						return new HitTestInfo(HitArea.Date, point, time);
 					}
-				}				
+				}
 			}
 
 			return new HitTestInfo ();
@@ -1360,7 +1362,7 @@ namespace System.Windows.Forms {
 			DayOfWeek first_day = GetDayOfWeek (first_day_of_week);
 			// find the first day of the month
 			DateTime first_date_of_month = new DateTime (month.Year, month.Month, 1);
-			DayOfWeek first_day_of_month = first_date_of_month.DayOfWeek;			
+			DayOfWeek first_day_of_month = first_date_of_month.DayOfWeek;
 			// adjust for the starting day of the week
 			int offset = first_day_of_month - first_day;
 			if (offset < 0) {
@@ -1432,7 +1434,7 @@ namespace System.Windows.Forms {
 			year_updown.Width += (int) (this.Font.Size * 4);
 			// set year - only do this if this isn't being called because of a year up down click
 			if(year_updown.Bounds != old_location) {
-				year_updown.Value = current_month.AddMonths(last_clicked_calendar_index).Year;			
+				year_updown.Value = current_month.AddMonths(last_clicked_calendar_index).Year;
 			}
 
 			if(!year_updown.Visible) {
@@ -1571,7 +1573,7 @@ namespace System.Windows.Forms {
 				return (tocheck.Year == date.Year && tocheck.Month == date.Month) ;
 			}
 
-			return false;			
+			return false;
 		}
 
 		// set one item clicked and all others off
@@ -1695,7 +1697,7 @@ namespace System.Windows.Forms {
 						button_size.Width,
 						button_size.Height));
 				int scroll = (scroll_change == 0 ? CalendarDimensions.Width * CalendarDimensions.Height : scroll_change);
-				this.CurrentMonth = this.CurrentMonth.AddMonths (scroll);
+				this.CurrentMonth = this.CurrentMonth.AddMonths (-scroll);
 			} else {
 				// invalidate the next monthbutton
 				this.Invalidate(
@@ -1703,7 +1705,7 @@ namespace System.Windows.Forms {
 						this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
 						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
 						button_size.Width,
-						button_size.Height));					
+						button_size.Height));
 				int scroll = (scroll_change == 0 ? CalendarDimensions.Width * CalendarDimensions.Height : scroll_change);
 				this.CurrentMonth = this.CurrentMonth.AddMonths (scroll);
 			}
@@ -1747,7 +1749,7 @@ namespace System.Windows.Forms {
 			}
 			if (this.is_date_clicked) {
 				// invalidate the area under the cursor, to remove focus rect
-				this.InvalidateDateRange (new SelectionRange (clicked_date, clicked_date));				
+				this.InvalidateDateRange (new SelectionRange (clicked_date, clicked_date));
 			}
 			this.is_previous_clicked = false;
 			this.is_next_clicked = false;
@@ -1800,9 +1802,9 @@ namespace System.Windows.Forms {
 		private void HideMonthCalendarIfWindowed()
 		{
 			if (this.owner != null && this.Visible) {
-				if (updown_has_focus)  
+				if (updown_has_focus)
 					return; 
-				if (showing_context_menu)  
+				if (showing_context_menu)
 					return; 
 				if (updown_timer != null) {
 					updown_timer.Enabled = false;
@@ -1861,7 +1863,7 @@ namespace System.Windows.Forms {
 			if (this.owner != null) {
 				if (!this.ClientRectangle.Contains (point)) {
 					this.owner.HideMonthCalendar ();
-					return;					
+					return;
 				}
 			}
 
@@ -1877,7 +1879,7 @@ namespace System.Windows.Forms {
 				case HitArea.NextMonthButton:
 					DoButtonMouseDown (hti);
 					click_state [1] = (hti.HitArea == HitArea.PrevMonthDate);
-					click_state [2] = !click_state [1];					
+					click_state [2] = !click_state [1];
 					timer.Interval = 750;
 					timer.Start ();
 					break;
@@ -1897,7 +1899,7 @@ namespace System.Windows.Forms {
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
 					showing_context_menu = true;
-					menu.Show (this, hti.Point);		
+					menu.Show (this, hti.Point);
 					showing_context_menu = false;
 					break;
 				case HitArea.TitleYear:
@@ -1911,7 +1913,7 @@ namespace System.Windows.Forms {
 				default:
 					this.is_previous_clicked = false;
 					this.is_next_clicked = false;
-					this.is_date_clicked = false;				
+					this.is_date_clicked = false;
 					break;
 			}
 		}
@@ -1988,7 +1990,7 @@ namespace System.Windows.Forms {
 					case Keys.Up:
 						// set the back 1 week
 						if (is_shift_pressed) {
-							this.AddTimeToSelection (-7, true);						
+							this.AddTimeToSelection (-7, true);
 						} else {
 							DateTime date = this.SelectionStart.AddDays (-7);
 							this.SetSelectionRange (date, date);
@@ -2003,7 +2005,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (7);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));					
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.Left:
 						// move one left
@@ -2133,7 +2135,7 @@ namespace System.Windows.Forms {
 						this.ClientRectangle.Y + 1 + (month_size.Height * (i/CalendarDimensions.Width)) + (this.calendar_spacing.Height * (i/CalendarDimensions.Width)),
 						month_size.Width,
 						month_size.Height);
-						break;		
+						break;
 				}
 			}
 			// now find out where in the month the supplied date is
