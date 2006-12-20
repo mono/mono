@@ -65,7 +65,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewItem2 ()
 		{
 			Engine engine;

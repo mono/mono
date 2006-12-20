@@ -97,7 +97,7 @@ namespace Microsoft.Build.BuildEngine {
 			for (int i = 0; i < lists.Count; i++) {
 				foreach (object o in lists [i]) {
 					if (o is string)
-						expressionCollection.Add ((string) o);
+						expressionCollection.Add (Utilities.Unescape ((string) o));
 					else if (o is ItemReference)
 						expressionCollection.Add ((ItemReference) o);
 					else if (o is PropertyReference)

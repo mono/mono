@@ -64,6 +64,19 @@ namespace Microsoft.Build.BuildEngine {
 			
 			return sb.ToString ();
 		}
+		
+		// FIXME: add tests for this
+		internal static string Unescape (string escapedExpression)
+		{
+			StringBuilder sb = new StringBuilder ();
+			
+			int i = 0;
+			while (i < escapedExpression.Length) {
+				sb.Append (Uri.HexUnescape (escapedExpression, ref i));
+			}
+			
+			return sb.ToString ();
+		}
 	}
 }
 

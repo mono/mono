@@ -72,6 +72,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			this.name = itemName;
 			this.finalItemSpec = itemInclude;
+			this.itemInclude = itemInclude;
 			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
@@ -85,7 +86,7 @@ namespace Microsoft.Build.BuildEngine {
 			BindToXml (itemElement);
 		}
 		
-		private BuildItem (BuildItem parent)
+		BuildItem (BuildItem parent)
 		{
 			this.isImported = parent.isImported;
 			this.name = parent.name;
@@ -175,7 +176,7 @@ namespace Microsoft.Build.BuildEngine {
 				unevaluatedMetadata.Add (metadataName, metadataValue);
 		}
 		
-		private void BindToXml (XmlElement xmlElement)
+		void BindToXml (XmlElement xmlElement)
 		{
 			if (xmlElement == null)
 				throw new ArgumentNullException ("xmlElement");
@@ -190,8 +191,14 @@ namespace Microsoft.Build.BuildEngine {
 				this.SetMetadata (xe.Name, xe.InnerText);
 		}
 
-		internal void Evaluate (bool evaluatedTo)
+		internal void Evaluate (Project project, bool evaluatedTo)
 		{
+			// FIXME: maybe make Expression.ConvertTo (null, ...) work as Utilities.Unescape ()?
+			if (project == null) {
+				this.finalItemSpec = Utilities.Unescape (itemInclude);
+				return;
+			}
+
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
 			string includes, excludes;
@@ -201,8 +208,8 @@ namespace Microsoft.Build.BuildEngine {
 			excludeExpr = new Expression ();
 			excludeExpr.Parse (Exclude);
 			
-			includes = (string) includeExpr.ConvertTo (parentItemGroup.Project, typeof (string));
-			excludes = (string) excludeExpr.ConvertTo (parentItemGroup.Project, typeof (string));
+			includes = (string) includeExpr.ConvertTo (project, typeof (string));
+			excludes = (string) excludeExpr.ConvertTo (project, typeof (string));
 
 			this.finalItemSpec = includes;
 			
@@ -210,22 +217,20 @@ namespace Microsoft.Build.BuildEngine {
 			
 			directoryScanner.Includes = includes;
 			directoryScanner.Excludes = excludes;
-			if (parentItemGroup.Project.FullFileName != String.Empty) {
-				directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (parentItemGroup.Project.FullFileName));
-			} else {
+
+			if (project.FullFileName != String.Empty)
+				directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (project.FullFileName));
+			else
 				directoryScanner.BaseDirectory = new DirectoryInfo (Directory.GetCurrentDirectory ());
-			}
 			
 			directoryScanner.Scan ();
 			
-			foreach (string matchedFile in directoryScanner.MatchedFilenames) {
-				AddEvaluatedItem (evaluatedTo, matchedFile);
-			}
+			foreach (string matchedFile in directoryScanner.MatchedFilenames)
+				AddEvaluatedItem (project, evaluatedTo, matchedFile);
 		}
 		
-		private void AddEvaluatedItem (bool evaluatedTo, string itemSpec)
+		void AddEvaluatedItem (Project project, bool evaluatedTo, string itemSpec)
 		{
-			Project project = this.parentItemGroup.Project;
 			BuildItemGroup big;			
 			BuildItem bi = new BuildItem (this);
 			bi.finalItemSpec = itemSpec;
@@ -265,7 +270,7 @@ namespace Microsoft.Build.BuildEngine {
 			return taskItem;
 		}
 
-		private string GetItemSpecFromTransform (Expression transform)
+		string GetItemSpecFromTransform (Expression transform)
 		{
 			StringBuilder sb;
 		

@@ -80,8 +80,15 @@ namespace Microsoft.Build.BuildEngine {
 					     string itemInclude,
 					     bool treatItemIncludeAsLiteral)
 		{
+			if (treatItemIncludeAsLiteral)
+				itemInclude = Utilities.Escape (itemInclude);
+
 			BuildItem bi = new BuildItem (itemName, itemInclude);
+
+			bi.Evaluate (null, true);
+
 			buildItems.Add (bi);
+
 			return bi;
 		}
 		
@@ -168,10 +175,10 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			foreach (BuildItem bi in buildItems) {
 				if (bi.Condition == String.Empty)
-					bi.Evaluate (true);
+					bi.Evaluate (parentProject, true);
 				else {
 					ConditionExpression ce = ConditionParser.ParseCondition (bi.Condition);
-					bi.Evaluate (ce.BoolEvaluate (parentProject));
+					bi.Evaluate (parentProject, ce.BoolEvaluate (parentProject));
 				}
 			}
 		}		
