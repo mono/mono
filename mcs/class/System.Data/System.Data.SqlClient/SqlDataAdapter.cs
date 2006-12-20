@@ -147,7 +147,7 @@ namespace System.Data.SqlClient {
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set { 
+			set {
 				if (!(value is SqlCommand)) 
 					throw new ArgumentException ();
 				SelectCommand = (SqlCommand)value;

@@ -578,7 +578,7 @@ namespace System.Data.SqlClient {
 			} catch (Exception e) {
 				args.Errors = e;
 				args.Status = UpdateStatus.ErrorsOccurred;
-			}		
+			}
 		}
 
 #if NET_2_0
