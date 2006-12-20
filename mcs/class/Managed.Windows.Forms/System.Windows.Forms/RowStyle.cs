@@ -1,3 +1,6 @@
+//
+// RowStyle.cs
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -24,35 +27,41 @@
 // (C) 2004 Novell, Inc.
 //
 #if NET_2_0
-namespace System.Windows.Forms {
-
-	public class RowStyle : TableLayoutStyle {
+namespace System.Windows.Forms 
+{
+	public class RowStyle : TableLayoutStyle 
+	{
 		float height;
 		
 		public RowStyle ()
 		{
+			this.height = 0;
 		}
 
-		public RowStyle (SizeType st) 
+		public RowStyle (SizeType sizeType) 
 		{
-			size_type = st;
+			this.height = 0;
+			base.SizeType = sizeType;
 		}
 
-		public RowStyle (SizeType st, float height)
+		public RowStyle (SizeType sizeType, float height)
 		{
-			size_type = st;
+			if (height < 0)
+				throw new ArgumentOutOfRangeException("height");
+
+			base.SizeType = sizeType;
 			this.height = height;
 		}
 
 		public float Height {
-			get {
-				return height;
+			get { return this.height; }
+			set {	
+				if (value < 0)
+					throw new ArgumentOutOfRangeException();
+				
+				this.height = value; 
 			}
-
-			set {
-				height = value;
-			}
-		}
+		}		
 	}
 }
 #endif

@@ -1,3 +1,6 @@
+//
+// TableLayoutStyle.cs
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -17,38 +20,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (c) 2006 Jonathan Pobst
 //
-// Author:
-//   Miguel de Icaza (miguel@gnome.org)
+// Authors:
+//	Jonathan Pobst (monkey@jpobst.com)
 //
-// (C) 2006 Novell, Inc.
-//
-
 #if NET_2_0
 using System;
 using System.ComponentModel;
-using System.Collections;
-using System.Windows.Forms.Layout;
 
-namespace System.Windows.Forms {
-
-	public abstract class TableLayoutStyle {
-		protected SizeType size_type = SizeType.Absolute;
+namespace System.Windows.Forms
+{
+	public abstract class TableLayoutStyle
+	{
+		private SizeType size_type;
 		
 		protected TableLayoutStyle ()
 		{
+			size_type = SizeType.AutoSize;
 		}
-
+		
+		[DefaultValue (SizeType.AutoSize)]
 		public SizeType SizeType {
-			get {
-				return size_type;
-			}
-
-			set {
-				size_type = value;
-			}
-		}
+			get { return this.size_type; }
+			set { this.size_type = value; }
+		}	
 	}
-
 }
 #endif

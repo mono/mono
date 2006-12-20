@@ -1,3 +1,6 @@
+//
+// ColumnStyle.cs
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -23,35 +26,40 @@
 //
 // (C) 2004 Novell, Inc.
 //
-
 #if NET_2_0
-namespace System.Windows.Forms {
-
-	public class ColumnStyle : TableLayoutStyle {
+namespace System.Windows.Forms 
+{
+	public class ColumnStyle : TableLayoutStyle 
+	{
 		float width;
 		
 		public ColumnStyle ()
 		{
+			this.width = 0;
 		}
 
-		public ColumnStyle (SizeType st) 
+		public ColumnStyle (SizeType sizeType) 
 		{
-			size_type = st;
+			this.width = 0;
+			base.SizeType = sizeType;
 		}
 
-		public ColumnStyle (SizeType st, float width)
+		public ColumnStyle (SizeType sizeType, float width)
 		{
-			size_type = st;
+			if (width < 0)
+				throw new ArgumentOutOfRangeException ("height");
+
+			base.SizeType = sizeType;
 			this.width = width;
 		}
 
 		public float Width {
-			get {
-				return width;
-			}
-
-			set {
-				width = value;
+			get { return this.width; }
+			set { 
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ();
+				
+				width = value; 
 			}
 		}
 	}

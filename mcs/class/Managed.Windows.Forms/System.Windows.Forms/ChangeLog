@@ -1,3 +1,8 @@
+2006-12-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ColumnStyle.cs, RowStyle.cs, TableLayoutStyle.cs: Plumbing for
+	TableLayoutPanel I've had in my local tree for way too long.
+
 2006-12-19  Miguel de Icaza  <miguel@novell.com>
 
 	* TableLayoutSettings.cs: Finish the public API (still needs all
