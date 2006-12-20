@@ -1373,7 +1373,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (horz) {
-				hbar.SetValues (width + 1, ClientRectangle.Width);
+				hbar.SetValues (width + 1, ClientRectangle.Width - (vert ? SystemInformation.VerticalScrollBarWidth : 0));
 				/*
 				hbar.LargeChange = ClientRectangle.Width;
 				hbar.Maximum = width + 1;
