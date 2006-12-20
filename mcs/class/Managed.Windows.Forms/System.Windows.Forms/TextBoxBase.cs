@@ -460,7 +460,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return (BorderStyle == BorderStyle.None ? 0 : Font.Height + 7);
+				return Font.Height + BorderStyle == BorderStyle.None ? 0 : 7;
 			}
 		}
 
