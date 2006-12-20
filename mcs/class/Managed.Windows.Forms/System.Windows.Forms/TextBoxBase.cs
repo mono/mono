@@ -497,7 +497,7 @@ namespace System.Windows.Forms {
 
 			set {
 				document.ReplaceSelection(CaseAdjust(value), false);
-					
+
 				ScrollToCaret();
 				OnTextChanged(EventArgs.Empty);
 			}
@@ -1790,14 +1790,16 @@ namespace System.Windows.Forms {
 			if (!richtext) {
 				Line	line;
 
+				document.NoRecalc = true;
 				// Font changes apply to the whole document
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
 					LineTag.FormatText(line, 1, line.text.Length, Font,
 							ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor),
 							null, FormatSpecified.Font | FormatSpecified.Color);
-					document.UpdateView(line, 0);
 				}
+				document.UpdateView (document.GetLine (1), 0);
+				document.NoRecalc = false;
 				// Make sure the caret height is matching the new font height
 				document.AlignCaret();
 			}
