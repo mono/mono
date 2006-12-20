@@ -1,3 +1,17 @@
+2006-12-20  Nagappan A  <anagappan@novell.com>
+
+	* Mono.Data.SybaseClient/SybaseRowUpdatedEventArgs.cs
+	(SybaseRowUpdatedEventArgs): Implemeneted constructor.
+	(Command): Implemented property.
+
+	* Mono.Data.SybaseClient/SybaseCommandBuilder.cs
+	(SybaseCommandBuilder): Implemented constructor.
+	(DataAdapter): Implemented property.
+	(RowUpdatingHandler): Implemented private event handler method.
+
+	* Mono.Data.SybaseClient/SybaseRowUpdatingEventArgs.cs (Command):
+	Implemented property
+
 2005-12-07  Senganal T  <tsenganal@novell.com>
 
 	* Mono.Data.SybaseClient/SybaseConnection.cs 

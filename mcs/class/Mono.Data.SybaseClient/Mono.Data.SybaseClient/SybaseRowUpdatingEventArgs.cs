@@ -37,21 +37,18 @@ namespace Mono.Data.SybaseClient {
 	{
 		#region Constructors
 
-		[MonoTODO]
 		public SybaseRowUpdatingEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (row, command, statementType, tableMapping)
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public new SybaseCommand Command {
-			get { throw new NotImplementedException (); } 
-			set { throw new NotImplementedException (); }
+			get { return (SybaseCommand) base.Command; }
+			set { base.Command = value; }
 		}
 
 		#endregion // Properties

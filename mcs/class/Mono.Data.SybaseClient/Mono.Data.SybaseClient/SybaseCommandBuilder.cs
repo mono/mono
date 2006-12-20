@@ -36,25 +36,33 @@ namespace Mono.Data.SybaseClient {
 	public sealed class SybaseCommandBuilder : Component 
 	{
 		#region Constructors
+		SybaseDataAdapter adapter;
 
-		[MonoTODO]
-		public SybaseCommandBuilder() 
+		public SybaseCommandBuilder () 
 		{
+			adapter = null;
 		}
 
-		[MonoTODO]
-		public SybaseCommandBuilder(SybaseDataAdapter adapter) 
+		public SybaseCommandBuilder (SybaseDataAdapter adapter) : this ()
 		{
+			DataAdapter = adapter;
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public SybaseDataAdapter DataAdapter {
-			get { throw new NotImplementedException (); }
-			set{ throw new NotImplementedException (); }
+			get { return adapter; }
+			set { 
+				if (adapter != null)
+					adapter.RowUpdating -= new SybaseRowUpdatingEventHandler (RowUpdatingHandler);
+
+				adapter = value; 
+
+				if (adapter != null)
+					adapter.RowUpdating += new SybaseRowUpdatingEventHandler (RowUpdatingHandler);
+			}
 		}
 
 		[MonoTODO]
@@ -110,6 +118,32 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		#endregion // Methods
+
+		#region Event Handlers
+
+		private void RowUpdatingHandler (object sender, SybaseRowUpdatingEventArgs args)
+		{
+			if (args.Command != null)
+				return;
+			try {
+				switch (args.StatementType) {
+				case StatementType.Insert:
+					args.Command = GetInsertCommand ();
+					break;
+				case StatementType.Update:
+					args.Command = GetUpdateCommand ();
+					break;
+				case StatementType.Delete:
+					args.Command = GetDeleteCommand ();
+					break;
+				}
+			} catch (Exception e) {
+				args.Errors = e;
+				args.Status = UpdateStatus.ErrorsOccurred;
+			}
+
+		#endregion // Event Handlers
+		}
 	}
 }
 
