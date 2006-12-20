@@ -92,10 +92,18 @@ namespace Mainsoft.Web.Administration
 		{
 			String user_name = (string) ViewState["User_name"];
 			if (((CheckBox) sender).Checked) {
-				Roles.AddUserToRole (user_name, ((CheckBox) sender).Text);
+				try {
+					Roles.AddUserToRole (user_name, ((CheckBox) sender).Text);
+				}
+				catch {
+				}
 			}
 			else {
-				Roles.RemoveUserFromRole (user_name, ((CheckBox) sender).Text);
+				try {
+					Roles.RemoveUserFromRole (user_name, ((CheckBox) sender).Text);
+				}
+				catch {
+				}
 			}
 		}
 		

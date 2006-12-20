@@ -54,10 +54,18 @@ namespace Mainsoft.Web.Administration
 		{
 			string user = ((GridCheckBox) sender).User;
 			if (((GridCheckBox) sender).Checked) {
-				Roles.AddUserToRole (user, role);
+				try {
+					Roles.AddUserToRole (user, role);
+				}
+				catch { 
+				}
 			}
 			else {
-				Roles.RemoveUserFromRole (user, role);
+				try {
+					Roles.RemoveUserFromRole (user, role);
+				}
+				catch {
+				}
 			}
 		}
 	}

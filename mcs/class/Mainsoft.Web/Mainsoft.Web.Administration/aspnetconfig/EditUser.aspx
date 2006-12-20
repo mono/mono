@@ -61,7 +61,6 @@
                             </td>
                             <td>
                                 <asp:TextBox ID="email_txb" runat="server"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="email_txb" runat="server" ErrorMessage="*" />
                             </td>
                             <td>
                                 <asp:CheckBox ID="active_chb" runat="server" /> Active user
@@ -86,7 +85,8 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    (<span style="font-size: 20px; color: red">*</span>)Required field  
+                    (<span style="font-size: 20px; color: red">*</span>)Required field <br /><br />
+                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" ControlToValidate="email_txb" ValidationExpression="\S+@\S+\.\S+" runat="server" ErrorMessage="Email format is invalid"></asp:RegularExpressionValidator>
                 </td>
             </tr>
         </table>

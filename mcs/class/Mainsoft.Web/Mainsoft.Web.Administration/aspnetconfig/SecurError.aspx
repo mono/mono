@@ -33,7 +33,7 @@
 <body>
     <form id="form1" runat="server">
     <div style="font-weight: bold; font-size: 20pt; color: red">
-        Error occured on this request! <br />
+        Error occurred on this request! <br />
         This tool cannot be remotely accessed!
     </div>
     <div>
