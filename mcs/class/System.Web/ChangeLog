@@ -3,59 +3,6 @@
 	* System.Web.dll.sources: adjustments for the 2.0 SessionState
 	changes.
 
-	* System.Web.SessionState_2.0/SessionStateServerHandler.cs:
-	implemented for the 2.0 model.
-
-	* System.Web.SessionState_2.0/SessionStateUtility.cs:
-	implemented.
-
-	* System.Web.SessionState_2.0/SessionStateStoreProviderBase.cs:
-	implemented.
-
-	* System.Web.SessionState_2.0/SessionInProcHandler.cs:
-	reimplemented for the 2.0 model.
-
-	* System.Web.SessionState_2.0/SessionIDManager.cs: implemented.
-
-	* System.Web.SessionState_2.0/SessionStateModule.cs: copied the
-	file to new location and implemented the 2.0 model.
-
-	* System.Web.SessionState_2.0/SessionSQLServerHandler.cs:
-	created. Implementation not done yet.
-
-	* System.Web.SessionState_2.0/HttpSessionStateContainer.cs: copied
-	the file to new location and implemented the 2.0 model.
-
-	* System.Web.SessionState_2.0/StateServerItem.cs: implementation
-	for the 2.0 model.
-
-	* System.Web.SessionState_2.0/HttpSessionState.cs: reimplemented
-	for the 2.0 model.
-
-	* System.Web.SessionState_2.0/RemoteStateServer.cs: copied the
-	file to new location and added new code for the 2.0 model.
-
-	* System.Web.SessionState_2.0/SessionStateItemCollection.cs:
-	implemented.
-
-	* System.Web.SessionState_2.0/SessionStateActions.cs: moved the
-	file to new location and added the None member.
-
-	* System.Web.SessionState_2.0/ISessionIDManager.cs: moved the file
-	to new location.
-
-	* System.Web.SessionState_2.0/SessionStateItemExpireCallback.cs:
-	moved the file to new location.
-
-	* System.Web.SessionState_2.0/IHttpSessionState.cs: moved the file
-	to new location.
-
-	* System.Web.SessionState_2.0/SessionStateStoreData.cs: moved the
-	file to new location and modified for the 2.0 model.
-
-	* System.Web.SessionState_2.0/ISessionStateItemCollection.cs:
-	moved the file to new location.
-
 2006-12-09  Marek Habersack  <grendello@gmail.com>
 
 	* System.Web.dll.sources: Add the HiddenFieldPageStatePersister.cs

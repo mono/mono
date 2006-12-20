@@ -1,0 +1,53 @@
+2006-12-20  Marek Habersack  <grendello@gmail.com>
+	* SessionStateServerHandler.cs:
+	implemented for the 2.0 model.
+
+	* SessionStateUtility.cs:
+	implemented.
+
+	* SessionStateStoreProviderBase.cs:
+	implemented.
+
+	* SessionInProcHandler.cs:
+	reimplemented for the 2.0 model.
+
+	* SessionIDManager.cs: implemented.
+
+	* SessionStateModule.cs: copied the
+	file to new location and implemented the 2.0 model.
+
+	* SessionSQLServerHandler.cs:
+	created. Implementation not done yet.
+
+	* HttpSessionStateContainer.cs: copied
+	the file to new location and implemented the 2.0 model.
+
+	* StateServerItem.cs: implementation
+	for the 2.0 model.
+
+	* HttpSessionState.cs: reimplemented
+	for the 2.0 model.
+
+	* RemoteStateServer.cs: copied the
+	file to new location and added new code for the 2.0 model.
+
+	* SessionStateItemCollection.cs:
+	implemented.
+
+	* SessionStateActions.cs: moved the
+	file to new location and added the None member.
+
+	* ISessionIDManager.cs: moved the file
+	to new location.
+
+	* SessionStateItemExpireCallback.cs:
+	moved the file to new location.
+
+	* IHttpSessionState.cs: moved the file
+	to new location.
+
+	* SessionStateStoreData.cs: moved the
+	file to new location and modified for the 2.0 model.
+
+	* ISessionStateItemCollection.cs:
+	moved the file to new location.
