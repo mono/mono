@@ -148,22 +148,22 @@ namespace MonoTests.System.Data
 		public void DefaultPropertiesTest ()
 		{
 			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
-#if NET_1_1 || NET_1_0 || ONLY_1_1
+#if NET_1_0
 			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
-#endif // NET_1_1 || NET_1_0 || ONLY_1_1
+#endif
 			Assert.AreEqual ("", cb.QuotePrefix, "#5");
 			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
 #if NET_2_0				
 			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-			Assert.AreEqual ("", cb.DecimalSeparator, "#3");
+			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
 			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
 			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				conn.Open ();
 				cb = new OdbcCommandBuilder ();
-				Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest", (OdbcConnection) conn), "#7");
-				Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\"", (OdbcConnection) conn), "#8");
+				Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
+				Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
 				conn.Close ();
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
