@@ -99,6 +99,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Control", c.BackColor.Name , "B1");
 			Assert.IsNull (c.BackgroundImage, "B2");
 			Assert.IsNull (c.BindingContext, "B3");
+#if NET_2_0
+			Assert.AreEqual (ImageLayout.Tile, c.BackgroundImageLayout, "B4");
+#endif
 
 			Assert.IsFalse (c.CanFocus, "C1");
 			Assert.IsTrue (c.CanSelect, "C2");

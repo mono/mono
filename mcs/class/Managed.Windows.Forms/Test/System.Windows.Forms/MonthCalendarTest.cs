@@ -32,22 +32,24 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]	
 	public class MonthCalendarTest
 	{
+
 		[Test]
 		public void MonthCalendarPropertyTest ()
 		{
 			Form myfrm = new Form ();
 			myfrm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
-			MonthCalendar myMonthCal2 = new MonthCalendar ();
+			//MonthCalendar myMonthCal2 = new MonthCalendar ();
 			myMonthCal1.Name = "MonthCendar";
 			myMonthCal1.TabIndex = 1;
-			DateTime myDateTime = new DateTime ();
+			//DateTime myDateTime = new DateTime ();
 			
 			// A
+			Assert.IsNotNull (myMonthCal1.AnnuallyBoldedDates, "#A-1");
 			myMonthCal1.AddAnnuallyBoldedDate (new DateTime (2005, 09, 01));
+			Assert.IsNotNull (myMonthCal1.AnnuallyBoldedDates, "#A0");
 			Assert.AreEqual (new DateTime (2005, 09, 01), myMonthCal1.AnnuallyBoldedDates.GetValue (0), "#A1");
                      
 			// B 
@@ -83,8 +85,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, myMonthCal1.ShowToday, "#S5");
 			Assert.AreEqual (true, myMonthCal1.ShowTodayCircle, "#S6");
 			Assert.AreEqual (false, myMonthCal1.ShowWeekNumbers, "#S7");
-			Assert.AreEqual (153, myMonthCal1.SingleMonthSize.Height, "#S8a");
-			Assert.AreEqual (176, myMonthCal1.SingleMonthSize.Width, "#S8b");
+			// Font dependent. // Assert.AreEqual (153, myMonthCal1.SingleMonthSize.Height, "#S8a");
+			// Font dependent. // Assert.AreEqual (176, myMonthCal1.SingleMonthSize.Width, "#S8b");
 			Assert.AreEqual (null, myMonthCal1.Site, "#S9");
 			// T
 			Assert.AreEqual ("ActiveCaption", myMonthCal1.TitleBackColor.Name, "#T1");
@@ -127,9 +129,17 @@ namespace MonoTests.System.Windows.Forms
 		{
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
 			myMonthCal1.SelectionRange = new SelectionRange (new DateTime (1752, 01, 01), new DateTime (1752, 01, 02));
+		}
+
+		[Test]		
+		[ExpectedException (typeof (ArgumentException))]
+		public void MonthCalSelectRangeException2 ()
+		{
+			MonthCalendar myMonthCal1 = new MonthCalendar ();
 			myMonthCal1.SelectionRange = new SelectionRange (new DateTime (9999, 12, 30), new DateTime (9999, 12, 31));
 		}
 		
+
 		[Test]
 		public void AddAnnuallyBoldedDateTest ()
 		{
@@ -139,7 +149,134 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal.AddAnnuallyBoldedDate (new DateTime (2005, 09, 01));
 			myForm.Controls.Add (myMonthCal);
 			Assert.AreEqual (new DateTime (2005, 09, 01), myMonthCal.AnnuallyBoldedDates.GetValue (0), "#add1");
+
+			DateTime dt = new DateTime (2006, 02, 03, 04, 05, 06, 07);
+			DateTime dt2 = new DateTime (2006, 02, 03);
+
+			myMonthCal.RemoveAllAnnuallyBoldedDates ();
+			myMonthCal.AddAnnuallyBoldedDate (dt);
+			Assert.AreEqual (dt, myMonthCal.AnnuallyBoldedDates [0], "#add2");
+
+			myMonthCal.AddAnnuallyBoldedDate (dt2);
+			Assert.AreEqual (dt2, myMonthCal.AnnuallyBoldedDates [1], "#add3");
+
 			myForm.Dispose ();
+		}
+
+	
+		[Test]
+		public void RemoveAnnuallyBoldedDateTest ()
+		{
+			MonthCalendar myMonthCal = new MonthCalendar ();
+
+			DateTime[] dts = new DateTime [10];
+			dts[0] = new DateTime (2001, 02, 03, 04, 05, 06, 07); // base datetime
+ 			dts[1] = new DateTime (2001, 02, 03); // only date 
+			dts[2] = new DateTime (2002, 03, 04); // only date, different
+			dts[3] = new DateTime (2002, 02, 03, 04, 05, 06, 07); // different year
+			dts[4] = new DateTime (2001, 03, 03, 04, 05, 06, 07); // different month
+			dts[5] = new DateTime (2001, 02, 04, 04, 05, 06, 07); // etc...
+			dts[6] = new DateTime (2001, 02, 03, 05, 05, 06, 07);
+			dts[7] = new DateTime (2001, 02, 03, 04, 06, 06, 07);
+			dts[8] = new DateTime (2001, 02, 03, 04, 05, 07, 07);
+			dts[9] = new DateTime (2001, 02, 03, 04, 05, 06, 08);
+
+			for (int i = 0; i < dts.Length; i++) {
+				for (int j = 0; j < dts.Length; j++) {
+					myMonthCal.RemoveAllAnnuallyBoldedDates ();
+					myMonthCal.AddAnnuallyBoldedDate (dts [j]);
+					myMonthCal.RemoveAnnuallyBoldedDate (dts [i]);
+					if (dts [j].Month == dts [i].Month && dts [j].Day == dts [i].Day)
+						Assert.AreEqual (0, myMonthCal.AnnuallyBoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+					else
+						Assert.AreEqual (1, myMonthCal.AnnuallyBoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+				}
+			}
+			
+			for (int i = 0; i < dts.Length; i++) 
+			{
+				myMonthCal.AnnuallyBoldedDates = dts;
+				myMonthCal.RemoveAnnuallyBoldedDate (dts [i]);
+				Assert.AreEqual (9, myMonthCal.AnnuallyBoldedDates.Length, "#remove1" + i.ToString ());
+			}
+		}
+
+		[Test]
+		public void RemoveMonthlyBoldedDateTest ()
+		{
+			MonthCalendar myMonthCal = new MonthCalendar ();
+
+			DateTime[] dts = new DateTime [10];
+			dts[0] = new DateTime (2001, 02, 03, 04, 05, 06, 07); // base datetime
+			dts[1] = new DateTime (2001, 02, 03); // only date 
+			dts[2] = new DateTime (2002, 03, 04); // only date, different
+			dts[3] = new DateTime (2002, 02, 03, 04, 05, 06, 07); // different year
+			dts[4] = new DateTime (2001, 03, 03, 04, 05, 06, 07); // different month
+			dts[5] = new DateTime (2001, 02, 04, 04, 05, 06, 07); // etc...
+			dts[6] = new DateTime (2001, 02, 03, 05, 05, 06, 07);
+			dts[7] = new DateTime (2001, 02, 03, 04, 06, 06, 07);
+			dts[8] = new DateTime (2001, 02, 03, 04, 05, 07, 07);
+			dts[9] = new DateTime (2001, 02, 03, 04, 05, 06, 08);
+
+			for (int i = 0; i < dts.Length; i++) 
+			{
+				for (int j = 0; j < dts.Length; j++) 
+				{
+					myMonthCal.RemoveAllMonthlyBoldedDates ();
+					myMonthCal.AddMonthlyBoldedDate (dts [j]);
+					myMonthCal.RemoveMonthlyBoldedDate (dts [i]);
+					if (dts [j].Month == dts [i].Month && dts [j].Day == dts [i].Day)
+						Assert.AreEqual (0, myMonthCal.MonthlyBoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+					else
+						Assert.AreEqual (1, myMonthCal.MonthlyBoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+				}
+			}
+			
+			for (int i = 0; i < dts.Length; i++) 
+			{
+				myMonthCal.MonthlyBoldedDates = dts;
+				myMonthCal.RemoveMonthlyBoldedDate (dts [i]);
+				Assert.AreEqual (9, myMonthCal.MonthlyBoldedDates.Length, "#remove1" + i.ToString ());
+			}
+		}
+
+		[Test]
+		public void RemoveBoldedDateTest ()
+		{
+			MonthCalendar myMonthCal = new MonthCalendar ();
+
+			DateTime[] dts = new DateTime [10];
+			dts[0] = new DateTime (2001, 02, 03, 04, 05, 06, 07); // base datetime
+			dts[1] = new DateTime (2001, 02, 03); // only date 
+			dts[2] = new DateTime (2002, 03, 04); // only date, different
+			dts[3] = new DateTime (2002, 02, 03, 04, 05, 06, 07); // different year
+			dts[4] = new DateTime (2001, 03, 03, 04, 05, 06, 07); // different month
+			dts[5] = new DateTime (2001, 02, 04, 04, 05, 06, 07); // etc...
+			dts[6] = new DateTime (2001, 02, 03, 05, 05, 06, 07);
+			dts[7] = new DateTime (2001, 02, 03, 04, 06, 06, 07);
+			dts[8] = new DateTime (2001, 02, 03, 04, 05, 07, 07);
+			dts[9] = new DateTime (2001, 02, 03, 04, 05, 06, 08);
+
+			for (int i = 0; i < dts.Length; i++) 
+			{
+				for (int j = 0; j < dts.Length; j++) 
+				{
+					myMonthCal.RemoveAllBoldedDates ();
+					myMonthCal.AddBoldedDate (dts [j]);
+					myMonthCal.RemoveBoldedDate (dts [i]);
+					if (dts [j].Month == dts [i].Month && dts [j].Day == dts [i].Day && dts[j].Year == dts[i].Year)
+						Assert.AreEqual (0, myMonthCal.BoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+					else
+						Assert.AreEqual (1, myMonthCal.BoldedDates.Length, "#remove0" + i.ToString () + ", " + j.ToString ());
+				}
+			}
+			
+			for (int i = 0; i < dts.Length; i++) 
+			{
+				myMonthCal.BoldedDates = dts;
+				myMonthCal.RemoveBoldedDate (dts [i]);
+				Assert.AreEqual (9, myMonthCal.BoldedDates.Length, "#remove1" + i.ToString ());
+			}
 		}
 
 		[Test]
@@ -167,15 +304,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		public void GetDispalyRangeTest ()
+		public void GetDisplayRangeTest ()
 		{
 			Form myForm = new Form ();
 			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myForm.Controls.Add (myMonthCal);
 			SelectionRange mySelRange = new SelectionRange ();
-			mySelRange.Start = new DateTime (2005, 09, 01); 
-			mySelRange.End = new DateTime (2005, 09, 30);
+			mySelRange.Start = new DateTime (DateTime.Now.Year, DateTime.Now.Month, 1);
+			mySelRange.End = mySelRange.Start.AddMonths (1).AddDays (-1);
 			Assert.AreEqual (mySelRange.Start, myMonthCal.GetDisplayRange (true).Start, "#Get1");
 			Assert.AreEqual (mySelRange.End, myMonthCal.GetDisplayRange (true).End, "#Get22");
 			myForm.Dispose ();
@@ -188,7 +325,26 @@ namespace MonoTests.System.Windows.Forms
 			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myForm.Controls.Add (myMonthCal);
-			Assert.AreEqual (new DateTime (01, 01, 01), myMonthCal.HitTest(10, 10).Time, "#Hit1");
+			MonthCalendar.HitTestInfo hitTest = myMonthCal.HitTest (10, 10);
+			Assert.AreEqual (MonthCalendar.HitArea.PrevMonthButton, hitTest.HitArea, "#Hit1");
+			Assert.AreEqual (new DateTime (01, 01, 01), hitTest.Time, "#Hit2");
+		}
+
+		[Test]
+		public void DateChangedEventTest ()
+		{
+			MonthCalendar myCalendar = new MonthCalendar ();
+			
+			myCalendar.Tag = false;
+			myCalendar.DateChanged += new DateRangeEventHandler (DateChangedEventHandler);
+			myCalendar.SetDate (DateTime.Today.AddDays (72));
+			Assert.AreEqual (true, (bool) myCalendar.Tag, "#01");
+
+		}
+
+		void DateChangedEventHandler (object sender, DateRangeEventArgs e)
+		{
+			((Control) sender).Tag = true;
 		}
 	}
 }
