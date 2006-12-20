@@ -1423,17 +1423,20 @@ namespace System.Windows.Forms {
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
 			caret.pos = pos;
-			caret.height = caret.tag.height;
 
 			if (owner.IsHandleCreated) {
 				if (owner.Focused) {
-					XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
+					if (caret.height != caret.tag.height)
+						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 			}
 
+			// We set this at the end because we use the heights to determine whether or
+			// not we need to recreate the caret
+			caret.height = caret.tag.height;
 
 		}
 
