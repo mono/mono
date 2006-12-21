@@ -147,6 +147,16 @@ namespace System.Web.Services.Protocols {
 		}
 #endif
 
+		internal bool IsSoap12 {
+			get {
+#if NET_2_0
+				return SoapVersion == SoapProtocolVersion.Soap12;
+#else
+				return false;
+#endif
+			}
+		}
+
 #if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		[DefaultValue (SoapProtocolVersion.Default)]

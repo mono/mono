@@ -145,14 +145,14 @@ namespace System.Web.Services.Protocols
 			xtw.Flush ();
 		}
 
-		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapMethodStubInfo method, SoapHeaderDirection dir, out object body, out SoapHeaderCollection headers)
+		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapMethodStubInfo method, SoapHeaderDirection dir, bool soap12, out object body, out SoapHeaderCollection headers)
 		{
 			XmlSerializer bodySerializer = method.GetBodySerializer (dir, false);// no need to worry about soap12 arg since no call for Fault anyways here.
 			XmlSerializer headerSerializer = method.GetHeaderSerializer (dir);
-			ReadSoapMessage (xmlReader, bodySerializer, headerSerializer, out body, out headers);
+			ReadSoapMessage (xmlReader, bodySerializer, headerSerializer, soap12, out body, out headers);
 		}
 		
-		public static void ReadSoapMessage (XmlTextReader xmlReader, XmlSerializer bodySerializer, XmlSerializer headerSerializer, out object body, out SoapHeaderCollection headers)
+		public static void ReadSoapMessage (XmlTextReader xmlReader, XmlSerializer bodySerializer, XmlSerializer headerSerializer, bool soap12, out object body, out SoapHeaderCollection headers)
 		{
 			xmlReader.MoveToContent ();
 			string ns = xmlReader.NamespaceURI;
@@ -163,7 +163,7 @@ namespace System.Web.Services.Protocols
 			case WebServiceHelper.SoapEnvelopeNamespace:
 				break;
 			default:
-				throw new SoapException (String.Format ("SOAP version mismatch. Namespace '{0}' is not supported in this runtime profile.", ns), SoapException.VersionMismatchFaultCode);
+				throw new SoapException (String.Format ("SOAP version mismatch. Namespace '{0}' is not supported in this runtime profile.", ns), VersionMismatchFaultCode (soap12));
 			}
 			xmlReader.ReadStartElement ("Envelope", ns);
 
@@ -236,6 +236,66 @@ namespace System.Web.Services.Protocols
 			{
 				headers.Add (new SoapUnknownHeader (e.Element));
 			}
+		}
+
+#if NET_2_0
+		public static SoapException Soap12FaultToSoapException (Soap12Fault fault)
+		{
+			Soap12FaultReasonText text =
+				fault.Reason != null &&
+				fault.Reason.Texts != null &&
+				fault.Reason.Texts.Length > 0 ?
+				fault.Reason.Texts [fault.Reason.Texts.Length - 1] : null;
+			XmlNode detail = (fault.Detail == null) ? null :
+				(fault.Detail.Children != null &&
+				fault.Detail.Children.Length > 0) ?
+				(XmlNode) fault.Detail.Children [0] :
+				(fault.Detail.Attributes != null &&
+				fault.Detail.Attributes.Length > 0) ?
+				fault.Detail.Attributes [0] : null;
+			SoapFaultSubCode subcode = Soap12Fault.GetSoapFaultSubCode (fault.Code.Subcode);
+			return new SoapException (
+				text != null ? text.Value : null,
+				fault.Code.Value, null, fault.Role,
+				text != null ? text.XmlLang : null,
+				detail, subcode, null);
+		}
+#endif
+
+		public static XmlQualifiedName ClientFaultCode (bool soap12)
+		{
+#if NET_2_0
+			return soap12 ? Soap12FaultCodes.SenderFaultCode : SoapException.ClientFaultCode;
+#else
+			return SoapException.ClientFaultCode;
+#endif
+		}
+
+		public static XmlQualifiedName ServerFaultCode (bool soap12)
+		{
+#if NET_2_0
+			return soap12 ? Soap12FaultCodes.ReceiverFaultCode : SoapException.ServerFaultCode;
+#else
+			return SoapException.ServerFaultCode;
+#endif
+		}
+
+		public static XmlQualifiedName MustUnderstandFaultCode (bool soap12)
+		{
+#if NET_2_0
+			return soap12 ? Soap12FaultCodes.ReceiverFaultCode : SoapException.MustUnderstandFaultCode;
+#else
+			return SoapException.MustUnderstandFaultCode;
+#endif
+		}
+
+		public static XmlQualifiedName VersionMismatchFaultCode (bool soap12)
+		{
+#if NET_2_0
+			return soap12 ? Soap12FaultCodes.VersionMismatchFaultCode : SoapException.VersionMismatchFaultCode;
+#else
+			return SoapException.VersionMismatchFaultCode;
+#endif
 		}
 
 		public static void InvalidOperation (string message, WebResponse response, Encoding enc)

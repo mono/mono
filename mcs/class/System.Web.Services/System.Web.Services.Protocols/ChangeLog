@@ -1,5 +1,18 @@
 2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebServiceHelper.cs :
+	  added Soap12FaultToSoapException conversion method (copied from
+	  SoapHttpClientProtocol.cs).
+	  Added couple of switching fault code getter (by soap12 flag).
+	* SoapMessage.cs: added IsSoap12 property to simplify SOAP 1.2
+	  conditional code.
+	* HttpSimpleServerProtocolFactory.cs, WebServiceHelper.cs,
+	  HttpSoapWebServiceHandler.cs, SoapHttpClientProtocol.cs :
+	  reflected all changes above. Switch 1.2 fault and 1.1 fault, and
+	  simplify 1.2 switch.
+
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapHttpClientProtocol.cs : SOAP 1.2 client should allow text/xml
 	  content type. Now bug #79985 is fixed here.
 

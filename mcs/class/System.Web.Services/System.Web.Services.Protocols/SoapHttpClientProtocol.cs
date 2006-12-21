@@ -202,12 +202,8 @@ namespace System.Web.Services.Protocols
 			WebRequest request = GetWebRequest (uri);
 			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
-#if NET_2_0
-			if (message.SoapVersion != SoapProtocolVersion.Soap12)
+			if (!message.IsSoap12)
 				headers.Add ("SOAPAction", "\"" + message.Action + "\"");
-#else
-			headers.Add ("SOAPAction", "\"" + message.Action + "\"");
-#endif
 			request.ContentType = message.ContentType + "; charset=utf-8";
 			return request;
 		}
@@ -243,12 +239,7 @@ namespace System.Web.Services.Protocols
 				}
 
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
-#if NET_2_0
-				bool soap12 = message.SoapVersion == SoapProtocolVersion.Soap12;
-#else
-				bool soap12 = false;
-#endif
-				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers, soap12);
+				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers, message.IsSoap12);
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);
@@ -269,7 +260,7 @@ namespace System.Web.Services.Protocols
 		{
 			SoapMethodStubInfo msi = message.MethodStubInfo;
 			HttpWebResponse http_response = response as HttpWebResponse;
-			
+
 			if (http_response != null)
 			{
 				HttpStatusCode code = http_response.StatusCode;
@@ -290,7 +281,7 @@ namespace System.Web.Services.Protocols
 			string ctype;
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
 #if NET_2_0
-			if ((message.SoapVersion != SoapProtocolVersion.Soap12 || ctype != "application/soap+xml") && ctype != "text/xml")
+			if ((!message.IsSoap12 || ctype != "application/soap+xml") && ctype != "text/xml")
 #else
 			if (ctype != "text/xml")
 #endif
@@ -317,31 +308,13 @@ namespace System.Web.Services.Protocols
 			using (StreamReader reader = new StreamReader (stream, encoding, false)) {
 				XmlTextReader xml_reader = new XmlTextReader (reader);
 
-				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, out content, out headers);
+				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, message.IsSoap12, out content, out headers);
 			}
 
 #if NET_2_0
 			if (content is Soap12Fault)
 			{
-				Soap12Fault fault = (Soap12Fault) content;
-				Soap12FaultReasonText text =
-					fault.Reason != null &&
-					fault.Reason.Texts != null &&
-					fault.Reason.Texts.Length > 0 ?
-					fault.Reason.Texts [fault.Reason.Texts.Length - 1] : null;
-				XmlNode detail = (fault.Detail == null) ? null :
-					(fault.Detail.Children != null &&
-					fault.Detail.Children.Length > 0) ?
-					(XmlNode) fault.Detail.Children [0] :
-					(fault.Detail.Attributes != null &&
-					fault.Detail.Attributes.Length > 0) ?
-					fault.Detail.Attributes [0] : null;
-				SoapFaultSubCode subcode = Soap12Fault.GetSoapFaultSubCode (fault.Code.Subcode);
-				SoapException ex = new SoapException (
-					text != null ? text.Value : null,
-					fault.Code.Value, null, fault.Role,
-					text != null ? text.XmlLang : null,
-					detail, subcode, null);
+				SoapException ex = WebServiceHelper.Soap12FaultToSoapException ((Soap12Fault) content);
 				message.SetException (ex);
 			}
 			else
