@@ -22,6 +22,7 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Mike Kestner  <mkestner@novell.com>
+//	Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 // NOT COMPLETE
 
@@ -37,10 +38,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode = DrawMode.Normal;
@@ -67,6 +70,11 @@ namespace System.Windows.Forms
 		private Rectangle button_area;
 		private Rectangle listbox_area;
 		private const int button_width = 16;
+#if NET_2_0
+		private AutoCompleteStringCollection auto_complete_custom_source = null;
+		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
+		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
+#endif
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
@@ -155,6 +163,68 @@ namespace System.Windows.Forms
 		#endregion Events
 
 		#region Public Properties
+#if NET_2_0
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[Localizable (true)]
+		public AutoCompleteStringCollection AutoCompleteCustomSource { 
+			get {
+				if(auto_complete_custom_source == null) {
+					auto_complete_custom_source = new AutoCompleteStringCollection ();
+					auto_complete_custom_source.CollectionChanged += new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+				}
+				return auto_complete_custom_source;
+			}
+			set {
+				if(auto_complete_custom_source == value)
+					return;
+
+				if(auto_complete_custom_source != null) //remove eventhandler from old collection
+					auto_complete_custom_source.CollectionChanged -= new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+
+				auto_complete_custom_source = value;
+
+				if(auto_complete_custom_source != null)
+					auto_complete_custom_source.CollectionChanged += new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+			}
+		}
+
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (AutoCompleteMode.None)]
+		public AutoCompleteMode AutoCompleteMode {
+			get { return auto_complete_mode; }
+			set {
+				if(auto_complete_mode == value)
+					return;
+
+				if((value < AutoCompleteMode.None) || (value > AutoCompleteMode.SuggestAppend))
+					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteMode", value));
+
+				auto_complete_mode = value;
+			}
+		}
+
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (AutoCompleteSource.None)]
+		public AutoCompleteSource AutoCompleteSource {
+			get { return auto_complete_source; }
+			set {
+				if(auto_complete_source == value)
+					return;
+
+				if(!Enum.IsDefined (typeof (AutoCompleteSource), value))
+					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteSource", value));
+
+				auto_complete_source = value;
+			}
+		}
+#endif
 		public override Color BackColor {
 			get { return base.BackColor; }
 			set {
@@ -1020,6 +1090,13 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
+#if NET_2_0
+		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
+			if(auto_complete_source == AutoCompleteSource.CustomSource) {
+				//FIXME: handle add, remove and refresh events in AutoComplete algorithm.
+			}
+		}
+#endif
 
 		internal override bool InternalCapture {
 			get { return Capture; }

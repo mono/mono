@@ -87,6 +87,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ScrollBars.None, textBox.ScrollBars, "#24");
 			Assert.AreEqual (-1, textBox.SelectionLength, "#25");
 			Assert.AreEqual (HorizontalAlignment.Left , textBox.TextAlign, "#26");
+#if NET_2_0
+			Assert.AreEqual (true, textBox.AutoCompleteCustomSource != null, "#27");
+			Assert.AreEqual (AutoCompleteMode.None, textBox.AutoCompleteMode, "#28");
+			Assert.AreEqual (AutoCompleteSource.None, textBox.AutoCompleteSource, "#29");
+
+			textBox.AutoCompleteCustomSource = null;
+			Assert.AreEqual (true, textBox.AutoCompleteCustomSource != null, "#30");
+#endif
 		}
 
 #if NET_2_0

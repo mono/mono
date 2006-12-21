@@ -54,7 +54,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (8, mycmbbox.MaxDropDownItems, "#8");
 			Assert.AreEqual (0, mycmbbox.MaxLength, "#9");
 			//Assert.AreEqual (20, mycmbbox.PreferredHeight, "#10");
-// Note: Item height depends on the current font.
+			// Note: Item height depends on the current font.
 			Assert.AreEqual (-1, mycmbbox.SelectedIndex, "#11");
 			Assert.AreEqual (null, mycmbbox.SelectedItem, "#12");
 			Assert.AreEqual ("", mycmbbox.SelectedText, "#13");
@@ -62,6 +62,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, mycmbbox.SelectionStart, "#15");
 			Assert.AreEqual (false, mycmbbox.Sorted, "#16");
 			Assert.AreEqual ("", mycmbbox.Text, "#17");
+#if NET_2_0
+			Assert.AreEqual (true, mycmbbox.AutoCompleteCustomSource != null, "#18");
+			Assert.AreEqual (AutoCompleteMode.None, mycmbbox.AutoCompleteMode, "#19");
+			Assert.AreEqual (AutoCompleteSource.None, mycmbbox.AutoCompleteSource, "#20");
+
+			mycmbbox.AutoCompleteCustomSource = null;
+			Assert.AreEqual (true, mycmbbox.AutoCompleteCustomSource != null, "#21");
+#endif
 		}
 
 		[Test]

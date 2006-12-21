@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
+//     Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 
 // NOT COMPLETE
@@ -30,8 +30,15 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Windows.Forms {
+
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public class TextBox : TextBoxBase {
 		#region Variables
 		private ContextMenu	menu;
@@ -41,6 +48,12 @@ namespace System.Windows.Forms {
 		private MenuItem	paste;
 		private MenuItem	delete;
 		private MenuItem	select_all;
+#if NET_2_0
+		private bool use_system_password_char = false;
+		private AutoCompleteStringCollection auto_complete_custom_source = null;
+		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
+		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
+#endif
 		#endregion	// Variables
 
 		#region Public Constructors
@@ -80,11 +93,77 @@ namespace System.Windows.Forms {
 		private void TextBox_LostFocus(object sender, EventArgs e) {
 			Invalidate();
 		}
+#if NET_2_0
+		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
+			if(auto_complete_source == AutoCompleteSource.CustomSource) {
+				//FIXME: handle add, remove and refresh events in AutoComplete algorithm.
+			}
+		}
+#endif
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
 #if NET_2_0
-		private bool use_system_password_char = false;
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[Localizable (true)]
+		public AutoCompleteStringCollection AutoCompleteCustomSource { 
+			get {
+				if(auto_complete_custom_source == null) {
+					auto_complete_custom_source = new AutoCompleteStringCollection ();
+					auto_complete_custom_source.CollectionChanged += new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+				}
+				return auto_complete_custom_source;
+			}
+			set {
+				if(auto_complete_custom_source == value)
+					return;
+
+				if(auto_complete_custom_source != null) //remove eventhandler from old collection
+					auto_complete_custom_source.CollectionChanged -= new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+
+				auto_complete_custom_source = value;
+
+				if(auto_complete_custom_source != null)
+					auto_complete_custom_source.CollectionChanged += new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+			}
+		}
+
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (AutoCompleteMode.None)]
+		public AutoCompleteMode AutoCompleteMode {
+			get { return auto_complete_mode; }
+			set {
+				if(auto_complete_mode == value)
+					return;
+
+				if((value < AutoCompleteMode.None) || (value > AutoCompleteMode.SuggestAppend))
+					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteMode", value));
+
+				auto_complete_mode = value;
+			}
+		}
+
+		[MonoTODO("AutoCompletion algorithm is currently not implemented.")]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (AutoCompleteSource.None)]
+		public AutoCompleteSource AutoCompleteSource {
+			get { return auto_complete_source; }
+			set {
+				if(auto_complete_source == value)
+					return;
+
+				if(!Enum.IsDefined (typeof (AutoCompleteSource), value))
+					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteSource", value));
+
+				auto_complete_source = value;
+			}
+		}
 
 		[DefaultValue(false)]
 		public bool UseSystemPasswordChar {

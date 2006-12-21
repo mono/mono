@@ -67,6 +67,11 @@ namespace System.Windows.Forms {
 			return msg;
 		}
 
+		public static string GetText (string msg, params object [] args)
+		{
+			return String.Format (GetText (msg), args);
+		}
+
 		public static object GetResource(string name) {
 			return rm.GetObject(name);
 		}
