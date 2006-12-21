@@ -1,3 +1,15 @@
+2006-12-21  Raja R Harinath  <rharinath@novell.com>
+
+	Fix WaitHandle usage in delegates.
+	* object-internals.h (mono_wait_handle_get_HANDLE): Declare.
+	* object.c (mono_wait_handle_new): Use the property set method to
+	initialize the handle.
+	(mono_wait_handle_get_handle): New.
+	* threadpool.c (mono_async_invoke): Use it.
+	* threads.c (ves_icall_System_Threading_WaitHandle_WaitAll_internal):
+	Likewise.
+	(ves_icall_System_Threading_WaitHandle_WaitAny_internal): Likewise.
+
 2006-12-21  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c (emit_marshal): Call emit_marshal_variant and
