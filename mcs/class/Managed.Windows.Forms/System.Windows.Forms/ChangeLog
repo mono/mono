@@ -1,3 +1,17 @@
+2006-12-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XplatUIWin32.cs: 
+	- GrabWindow now confines the mouse pointer to the confine window.
+	- Added Win32ClipCursor and Win32GetClipCursor.
+
+	* Control.cs: 
+	- Added CaptureWithConfine to be able to capture and confine 
+	mouse pointer.
+	
+	* InternalWindowManager.cs: 
+	- Call CaptureWithConfine instead of Capture if we're an
+	MdiChild (fixes #79982).
+
 2006-12-21  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: guard against the initial state of selection, where

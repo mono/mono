@@ -631,7 +631,11 @@ namespace System.Windows.Forms {
 			if (!AnyPushedTitleButtons && !IsMaximized){
 				state = State.Moving;
 				clicked_point = new Point (x, y);
-				form.Capture = true;
+				if (form.IsMdiChild) {
+					form.CaptureWithConfine (form.Parent);
+				} else {
+					form.Capture = true;
+				}
 			}
 			
 			XplatUI.InvalidateNC (form.Handle);

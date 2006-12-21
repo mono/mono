@@ -62,6 +62,7 @@ namespace System.Windows.Forms {
 		private static int		scroll_width;
 		private static int		scroll_height;
 		private static Hashtable	wm_nc_registered;
+		private static RECT		clipped_cursor_rect;
 
 		#endregion	// Local Variables
 
@@ -1743,6 +1744,13 @@ namespace System.Windows.Forms {
 		internal override void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd) {
 			grab_hwnd = hWnd;
 			Win32SetCapture(hWnd);
+			
+			if (ConfineToHwnd != IntPtr.Zero) {
+				RECT window_rect;
+				Win32GetWindowRect (ConfineToHwnd, out window_rect);
+				Win32GetClipCursor (out clipped_cursor_rect);
+				Win32ClipCursor (ref window_rect);
+			}
 		}
 
 		internal override void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea) {
@@ -1752,6 +1760,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void UngrabWindow(IntPtr hWnd) {
+			if (!(clipped_cursor_rect.top == 0 && clipped_cursor_rect.bottom == 0 && clipped_cursor_rect.left == 0 && clipped_cursor_rect.right == 0)) {
+				Win32ClipCursor (ref clipped_cursor_rect);
+				clipped_cursor_rect = new RECT ();
+			}
+			
 			Win32ReleaseCapture();
 			grab_hwnd = IntPtr.Zero;
 		}
@@ -2982,6 +2995,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowRgn", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
 		internal extern static IntPtr Win32GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
+
+		[DllImport ("user32.dll", EntryPoint="ClipCursor", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32ClipCursor (ref RECT lpRect);
+
+		[DllImport ("user32.dll", EntryPoint="GetClipCursor", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32GetClipCursor (out RECT lpRect);
 		#endregion
 	}
 }

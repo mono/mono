@@ -1408,6 +1408,14 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+		
+		internal void CaptureWithConfine (Control ConfineWindow)
+		{
+			if (this.IsHandleCreated && !is_captured) {
+				is_captured = true;
+				XplatUI.GrabWindow (this.window.Handle, ConfineWindow.Handle);
+			}
+		}
 
 		private void CheckDataBindings ()
 		{
