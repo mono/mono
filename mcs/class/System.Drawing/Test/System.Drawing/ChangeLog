@@ -1,3 +1,10 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBrushes.cs: Ensure that the unit tests are destructive on the 
+	brushes (since you can change their color and dispose them). Now only
+	Brushes.YellowGreen is "destroyed" in the (new) Dispose test. This fix
+	any other unit test that use Brushes.* executed after this one.
+
 2006-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestIcon.cs: Add test cases for 2.0 ExtractAssociatedIcon method.
