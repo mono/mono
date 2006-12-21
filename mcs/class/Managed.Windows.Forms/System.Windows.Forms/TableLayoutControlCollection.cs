@@ -1,3 +1,6 @@
+//
+// TableLayoutControlCollection.cs
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -17,29 +20,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (c) 2006 Jonathan Pobst
 //
-// Author:
-//   Miguel de Icaza (miguel@gnome.org)
+// Authors:
+//	Jonathan Pobst (monkey@jpobst.com)
 //
-// (C) 2004 Novell, Inc.
-//
+
 #if NET_2_0
 using System;
-using System.ComponentModel;
-using System.Windows.Forms.Layout;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
+	public class TableLayoutControlCollection : Control.ControlCollection
+	{
+		private TableLayoutPanel panel;
 
-	internal class TableLayout : LayoutEngine {
-
-		public override void InitLayout (object child, BoundsSpecified specified)
+		#region Public Constructor
+		public TableLayoutControlCollection (TableLayoutPanel container) : base (container)
 		{
+			this.panel = container;
 		}
+		#endregion
 
-		public override bool Layout (object container, LayoutEventArgs args)
+		#region Public Property
+		public TableLayoutPanel Container { get { return this.panel; } }
+		#endregion
+
+		#region Public Method
+		public virtual void Add (Control control, int column, int row)
 		{
-			return false;
+			if (column < -1)
+				throw new ArgumentException ("column");
+			if (row < -1)
+				throw new ArgumentException ("row");
+			
+			base.Add (control);
+			
+			panel.SetCellPosition (control, new TableLayoutPanelCellPosition (column, row));
 		}
+		#endregion	
 	}
 }
 #endif

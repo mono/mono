@@ -1,3 +1,8 @@
+2006-12-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add TableLayoutControlCollection.cs,
+	move TableLayout to /Layout.
+
 2006-12-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* build-csproj2k5: set WarningLevel to 3 and

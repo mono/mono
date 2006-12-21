@@ -33,7 +33,7 @@ namespace System.Windows.Forms
 	public struct TableLayoutPanelCellPosition {
 		int column, row;
 
-		internal TableLayoutPanelCellPosition (int column, int row)
+		public TableLayoutPanelCellPosition (int column, int row)
 		{
 			this.column = column;
 			this.row = row;

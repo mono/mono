@@ -52,7 +52,16 @@ namespace System.Windows.Forms {
 			al.Clear ();
 			
 			// FIXME: Need to investigate what happens when the style is gone.
-			table.Relayout ();
+			table.PerformLayout ();
+		}
+		
+		public int Count {
+			get { return al.Count; }
+		}
+		
+		public void RemoveAt (int index)
+		{
+			al.RemoveAt (index);
 		}
 		
 #region IList methods

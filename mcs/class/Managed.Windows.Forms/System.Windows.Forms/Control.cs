@@ -749,7 +749,7 @@ namespace System.Windows.Forms
 			padding = new Padding(0);
 			maximum_size = new Size();
 			minimum_size = new Size();
-			preferred_size = new Size();
+			preferred_size = this.DefaultSize;
 			margin = this.DefaultMargin;
 			layout_engine = this.LayoutEngine;
 #endif
@@ -3121,7 +3121,8 @@ namespace System.Windows.Forms
 			try {
 
 #if NET_2_0
-			this.layout_engine.Layout(this, levent);
+			if (this.layout_engine != null)
+				this.layout_engine.Layout(this, levent);
 #else		
 				// This has been moved to Layout/DefaultLayout.cs for 2.0, please duplicate any changes/fixes there.
 				Control		child;

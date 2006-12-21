@@ -588,10 +588,10 @@ System.Windows.Forms/TabDrawMode.cs
 System.Windows.Forms/TabPage.cs
 System.Windows.Forms/TabRenderer.cs
 System.Windows.Forms/TabSizeMode.cs
-System.Windows.Forms/TableLayout.cs
 System.Windows.Forms/TableLayoutCellPaintEventArgs.cs
 System.Windows.Forms/TableLayoutCellPaintEventHandler.cs
 System.Windows.Forms/TableLayoutColumnStyleCollection.cs
+System.Windows.Forms/TableLayoutControlCollection.cs
 System.Windows.Forms/TableLayoutPanel.cs
 System.Windows.Forms/TableLayoutPanelCellBorderStyle.cs
 System.Windows.Forms/TableLayoutPanelCellPosition.cs
@@ -750,6 +750,7 @@ System.Windows.Forms/XplatUIX11.cs
 System.Windows.Forms.Layout/ArrangedElementCollection.cs
 System.Windows.Forms.Layout/DefaultLayout.cs
 System.Windows.Forms.Layout/FlowLayout.cs
+System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs
