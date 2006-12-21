@@ -74,15 +74,15 @@ namespace MonoTests.System.Drawing.Imaging {
 			clr_src = Color.FromArgb (255, 100, 20, 50);
 			clr_rslt = ProcessColorMatrix (clr_src, cm);
 
-			Assert.AreEqual (clr_rslt, Color.FromArgb (255, 251, 20, 50));
+			Assert.AreEqual (Color.FromArgb (255, 251, 20, 50), clr_rslt, "Color");
 		}
-			
+
 		[Test]
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
 		public void ColorMatrix2 ()
-		{			
+		{
 			Color clr_src, clr_rslt;
 
 			ColorMatrix cm = new ColorMatrix (new float[][] {
@@ -95,7 +95,60 @@ namespace MonoTests.System.Drawing.Imaging {
 
 			clr_src = Color.FromArgb (255, 100, 40, 25);
 			clr_rslt = ProcessColorMatrix (clr_src, cm);
-			Assert.AreEqual (clr_rslt, Color.FromArgb (255, 100, 40, 165));			 
+			Assert.AreEqual (Color.FromArgb (255, 100, 40, 165), clr_rslt, "Color");
+		}
+
+		private void Bug80323 (Color c)
+		{
+			// test case from bug #80323
+			ColorMatrix cm = new ColorMatrix (new float[][] {
+				new float[] 	{1,	0,	0, 	0, 	0}, //R
+				new float[] 	{0,	1,	0, 	0, 	0}, //G
+				new float[] 	{0,	0,	1, 	0, 	0}, //B
+				new float[] 	{0,	0,	0, 	0.5f, 	0}, //A
+				new float[] 	{0,	0,	0, 	0, 	1}, //Translation
+			  });
+
+			using (SolidBrush sb = new SolidBrush (c)) {
+				using (Bitmap bmp = new Bitmap (100, 100)) {
+					using (Graphics gr = Graphics.FromImage (bmp)) {
+						gr.FillRectangle (Brushes.White, 0, 0, 100, 100);
+						gr.FillEllipse (sb, 0, 0, 100, 100);
+					}
+					using (Bitmap b = new Bitmap (200, 100)) {
+						using (Graphics g = Graphics.FromImage (b)) {
+							g.FillRectangle (Brushes.White, 0, 0, 200, 100);
+
+							ImageAttributes ia = new ImageAttributes ();
+							ia.SetColorMatrix (cm);
+							g.DrawImage (bmp, new Rectangle (0, 0, 100, 100), 0, 0, 100, 100, GraphicsUnit.Pixel, null);
+							g.DrawImage (bmp, new Rectangle (100, 0, 100, 100), 0, 0, 100, 100, GraphicsUnit.Pixel, ia);
+						}
+						b.Save (String.Format ("80323-{0}.png", c.ToArgb ().ToString ("X")));
+						Assert.AreEqual (Color.FromArgb (255, 255, 155, 155), b.GetPixel (50, 50), "50,50");
+						Assert.AreEqual (Color.FromArgb (255, 255, 205, 205), b.GetPixel (150, 50), "150,50");
+					}
+				}
+			}
+		}
+	
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void ColorMatrix_80323_UsingAlpha ()
+		{
+			Bug80323 (Color.FromArgb (100, 255, 0, 0));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void ColorMatrix_80323_WithoutAlpha ()
+		{
+			// this color is identical, once drawn over the bitmap, to Color.FromArgb (100, 255, 0, 0)
+			Bug80323 (Color.FromArgb (255, 255, 155, 155));
 		}
 	}
 }
