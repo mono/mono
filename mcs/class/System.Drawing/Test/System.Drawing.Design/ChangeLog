@@ -1,3 +1,7 @@
+2006-12-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestToolboxItem.cs: More test cases (mostly 2.0 stuff).
+
 2006-11-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UITypeEditorCas.cs: Reuse new unit test cases in CAS tests.
