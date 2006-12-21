@@ -33,6 +33,7 @@ using System.CodeDom;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
+using System.Web.Configuration;
 
 namespace System.Web.UI {
 
@@ -298,6 +299,33 @@ namespace System.Web.UI {
 		{
 		}
 
+#if NET_2_0
+		static Type MapTagType (Type tagType)
+		{
+			if (tagType == null)
+				return null;
+			
+			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			if (ps == null)
+				return tagType;
+
+			TagMapCollection tags = ps.TagMapping;
+			if (tags == null || tags.Count == 0)
+				return tagType;
+			string tagTypeName = tagType.ToString ();
+			foreach (TagMapInfo tmi in tags)
+				if (tmi.TagType == tagTypeName) {
+					try {
+						return Type.GetType (tmi.MappedTagType, true);
+					} catch (Exception ex) {
+						throw new HttpException (String.Format ("Unable to map tag type {0}", tagTypeName),
+									 ex);
+					}
+				}
+			return tagType;
+		}
+#endif
+
 		public static ControlBuilder CreateBuilderFromType (TemplateParser parser,
 								    ControlBuilder parentBuilder,
 								    Type type,
@@ -307,8 +335,15 @@ namespace System.Web.UI {
 								    int line,
 								    string sourceFileName)
 		{
+
+			Type tagType;
+#if NET_2_0
+			tagType = MapTagType (type);
+#else
+			tagType = type;
+#endif
 			ControlBuilder  builder;
-			object [] atts = type.GetCustomAttributes (typeof (ControlBuilderAttribute), true);
+			object [] atts = tagType.GetCustomAttributes (typeof (ControlBuilderAttribute), true);
 			if (atts != null && atts.Length > 0) {
 				ControlBuilderAttribute att = (ControlBuilderAttribute) atts [0];
 				builder = (ControlBuilder) Activator.CreateInstance (att.BuilderType);
@@ -316,7 +351,7 @@ namespace System.Web.UI {
 				builder = new ControlBuilder ();
 			}
 
-			builder.Init (parser, parentBuilder, type, tagName, id, attribs);
+			builder.Init (parser, parentBuilder, tagType, tagName, id, attribs);
 			builder.line = line;
 			builder.fileName = sourceFileName;
 			return builder;

@@ -62,7 +62,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new TagMapInfo ("", "");
+			return new TagMapInfo ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

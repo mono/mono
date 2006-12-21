@@ -1,3 +1,12 @@
+2006-12-21  Marek Habersack  <grendello@gmail.com>
+
+	* TagMapInfo.cs: Add an internal default constructor for use from
+	TagMapCollection.
+
+	* TagMapCollection.cs: Don't call the string,string constructor of
+	TagMapInfo - the class disallows empty strings as values of its
+	properties.
+
 2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* RoleManagerSection.cs: refactored using attributes

@@ -60,6 +60,10 @@ namespace System.Web.Configuration
 			properties.Add (tagTypeProp);
 		}
 
+		internal TagMapInfo ()
+		{
+		}
+		
 		public TagMapInfo (string tagTypeName, string mappedTagTypeName)
 		{
 			this.TagType = tagTypeName;
