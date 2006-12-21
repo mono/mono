@@ -1484,7 +1484,7 @@ namespace System.Windows.Forms
 		}
 
 		private void UpdateDistances() {
-			if ((parent != null) && (parent.layout_suspended == 0)) {
+			if (parent != null) {
 				dist_left = bounds.X;
 				dist_top = bounds.Y;
 				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
@@ -3366,10 +3366,6 @@ namespace System.Windows.Forms
 
 			if (layout_suspended == 0) {
 				Control [] controls = child_controls.GetAllControls ();
-				for (int i=0; i<controls.Length; i++) {
-					controls [i].UpdateDistances ();
-				}
-
 				if (performLayout && layout_pending) {
 					PerformLayout();
 				}
