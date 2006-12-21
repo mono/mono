@@ -373,8 +373,13 @@ namespace System.Web.UI.WebControls
 
 		public override bool DisplaySideBar
 		{
-			get { return base.DisplaySideBar; }
-			set { base.DisplaySideBar = value; }
+			get {
+				return ViewState.GetBool ("DisplaySideBar", false);
+			}
+			set {
+				ViewState ["DisplaySideBar"] = value;
+				ChildControlsCreated = false;
+			}
 		}
 
 		[LocalizableAttribute (true)]
@@ -1128,9 +1133,50 @@ namespace System.Web.UI.WebControls
 
 		internal override void InstantiateTemplateStep (TemplatedWizardStep step)
 		{
-			base.InstantiateTemplateStep (step);
+			if (step is CreateUserWizardStep) {
+				InstantiateCreateUserWizardStep ((CreateUserWizardStep) step);
+			}
+			else if (step is CompleteWizardStep) {
+				InstantiateCompleteWizardStep ((CompleteWizardStep) step);
+			}
+			else {
+				base.InstantiateTemplateStep (step);
+			}
 		}
 
+		private void InstantiateCompleteWizardStep (CompleteWizardStep step)
+		{
+			BaseWizardContainer contentTemplateContainer = new BaseWizardContainer ();
+			contentTemplateContainer.InstatiateTemplate (step.ContentTemplate != null ? step.ContentTemplate : new CompleteStepTemplate (this));
+
+			step.ContentTemplateContainer = contentTemplateContainer;
+			step.Controls.Clear ();
+			step.Controls.Add (contentTemplateContainer);
+
+			BaseWizardNavigationContainer customNavigationTemplateContainer = new BaseWizardNavigationContainer ();
+			if (step.CustomNavigationTemplate != null) {
+				step.CustomNavigationTemplate.InstantiateIn (customNavigationTemplateContainer);
+				RegisterCustomNavigation (step, customNavigationTemplateContainer);
+			}
+			step.CustomNavigationTemplateContainer = customNavigationTemplateContainer;
+		}
+
+		void InstantiateCreateUserWizardStep (CreateUserWizardStep step)
+		{
+			BaseWizardContainer contentTemplateContainer = new CreateUserStepContainer ();
+			contentTemplateContainer.InstatiateTemplate (step.ContentTemplate != null ? step.ContentTemplate : new CreateUserStepTemplate (this));
+
+			step.ContentTemplateContainer = contentTemplateContainer;
+			step.Controls.Clear ();
+			step.Controls.Add (contentTemplateContainer);
+
+			BaseWizardNavigationContainer customNavigationTemplateContainer = new BaseWizardNavigationContainer ();
+			(step.CustomNavigationTemplate != null ? step.CustomNavigationTemplate : new CreateUserStepNavigationTemplate (this)).InstantiateIn (customNavigationTemplateContainer);
+			RegisterCustomNavigation (step, customNavigationTemplateContainer);
+
+			step.CustomNavigationTemplateContainer = customNavigationTemplateContainer;
+		}
+		
 		internal override ITemplate SideBarItemTemplate
 		{
 			get { return new SideBarLabelTemplate (this); }
@@ -1142,9 +1188,6 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void CreateChildControls ()
 		{
-			base.FinishCompleteButtonText = ContinueButtonText;
-			base.StartNextButtonText = CreateUserButtonText;
-
 			CreateUserWizardStep c = CreateUserStep;
 
 			base.CreateChildControls ();
@@ -1208,8 +1251,6 @@ namespace System.Web.UI.WebControls
 		{
 			base.OnInit (e);
 
-			DisplaySideBar = false;
-
 			if (CreateUserStep == null)
 				WizardSteps.AddAt (0, new CreateUserWizardStep ());
 
@@ -1272,13 +1313,14 @@ namespace System.Web.UI.WebControls
 
 		protected override void OnNextButtonClick (WizardNavigationEventArgs e)
 		{
-			bool userCreated = CreateUser ();
-			if (!userCreated)
-				e.Cancel = true;
-			else
-				if (LoginCreatedUser)
-					Login ();
-
+			if (ActiveStep == CreateUserStep) {
+				bool userCreated = CreateUser ();
+				if (!userCreated)
+					e.Cancel = true;
+				else
+					if (LoginCreatedUser)
+						Login ();
+			}
 			base.OnNextButtonClick (e);
 		}
 
@@ -1504,7 +1546,7 @@ namespace System.Web.UI.WebControls
 			public void InstantiateIn (Control control)
 			{
 				Label b = new Label ();
-				wizard.RegisterApplyStyle (b, wizard.SideBarButtonStyle);
+				wizard.RegisterApplyStyle (b, wizard.SideBarButtonStyle, false);
 				control.Controls.Add (b);
 				control.DataBinding += Bound;
 			}

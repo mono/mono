@@ -41,11 +41,15 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[MonoTODO ("Always false?")]
+		[DefaultValueAttribute (false)]
 		public override bool AllowReturn
 		{
-			get { return false; }
-			set { throw new InvalidOperationException ("AllowReturn cannot be set."); }
+			get {
+				return ViewState.GetBool ("AllowReturn", false);
+			}
+			set {
+				ViewState ["AllowReturn"] = value;
+			}
 		}
 
 		[LocalizableAttribute (true)]
@@ -72,16 +76,6 @@ namespace System.Web.UI.WebControls
 		{
 			get { return WizardStepType.Auto; }
 			set { throw new InvalidOperationException (); }
-		}
-
-		internal override ITemplate DefaultContentTemplate
-		{
-			get { return new CreateUserStepTemplate ((CreateUserWizard) Wizard); }
-		}
-
-		internal override BaseWizardContainer DefaultContentContainer
-		{
-			get { return new CreateUserStepContainer (); }
 		}
 	}
 
@@ -160,7 +154,7 @@ namespace System.Web.UI.WebControls
 		}
 	}
 
-	sealed class CreateUserStepTemplate : WebControl, ITemplate
+	sealed class CreateUserStepTemplate : ITemplate
 	{
 		readonly CreateUserWizard _createUserWizard;
 
@@ -439,6 +433,53 @@ namespace System.Web.UI.WebControls
 
 			//
 			container.Controls.Add (table);
+		}
+
+		#endregion
+	}
+	
+	sealed class CreateUserStepNavigationTemplate : ITemplate
+	{
+		readonly CreateUserWizard _createUserWizard;
+
+		public CreateUserStepNavigationTemplate (CreateUserWizard createUserWizard)
+		{
+			_createUserWizard = createUserWizard;
+		}
+
+		#region ITemplate Members
+
+		public void InstantiateIn (Control container)
+		{
+			Table t = new Table ();
+			t.CellPadding = 5;
+			t.CellSpacing = 5;
+			t.Width = Unit.Percentage (100);
+			t.Height = Unit.Percentage (100);
+			TableRow row = new TableRow ();
+			
+			int index = _createUserWizard.WizardSteps.IndexOf (_createUserWizard.CreateUserStep);
+			if (index > 0 && _createUserWizard.WizardSteps [index - 1].AllowReturn) {
+				Control b = _createUserWizard.CreateButton ("StepPreviousButtonButton", Wizard.MovePreviousCommandName, _createUserWizard.StepPreviousButtonType, _createUserWizard.StepPreviousButtonText, _createUserWizard.StepPreviousButtonImageUrl, _createUserWizard.StepPreviousButtonStyle, true);
+				((IButtonControl) b).CausesValidation = false;
+				AddButtonCell (row, b);
+			}
+			AddButtonCell (row, _createUserWizard.CreateButton ("StepNextButtonButton", Wizard.MoveNextCommandName, _createUserWizard.CreateUserButtonType, _createUserWizard.CreateUserButtonText, _createUserWizard.CreateUserButtonImageUrl, _createUserWizard.CreateUserButtonStyle, true));
+			if (_createUserWizard.DisplayCancelButton) {
+				Control b = _createUserWizard.CreateButton ("CancelButtonButton", Wizard.CancelCommandName, _createUserWizard.CancelButtonType, _createUserWizard.CancelButtonText, _createUserWizard.CancelButtonImageUrl, _createUserWizard.CancelButtonStyle, true);
+				((IButtonControl) b).CausesValidation = false;
+				AddButtonCell (row, b);
+			}
+			t.Rows.Add (row);
+			container.Controls.Add (t);
+		}
+		
+		void AddButtonCell (TableRow row, Control control)
+		{
+			TableCell cell = new TableCell ();
+			cell.HorizontalAlign = HorizontalAlign.Right;
+			cell.Controls.Add (control);
+			row.Cells.Add (cell);
 		}
 
 		#endregion

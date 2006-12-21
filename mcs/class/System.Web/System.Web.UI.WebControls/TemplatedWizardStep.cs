@@ -35,6 +35,8 @@ namespace System.Web.UI.WebControls
 {
 	[ThemeableAttribute (true)]
 	[BindableAttribute (false)]
+	[PersistChildren (false)]
+	[ParseChildren (true)]
 	public class TemplatedWizardStep : WizardStepBase
 	{
 		private ITemplate _contentTemplate = null;
@@ -75,53 +77,13 @@ namespace System.Web.UI.WebControls
 			get { return base.SkinID; }
 			set { base.SkinID = value; }
 		}
-
-		internal virtual ITemplate DefaultContentTemplate
-		{
-			get { return new DefaultTemplate (); }
-		}
-
-		internal virtual BaseWizardContainer DefaultContentContainer
-		{
-			get { return new BaseWizardContainer (); }
-		}
-
-		internal virtual void InstantiateInContainer ()
-		{
-			if (ContentTemplate == null)
-				ContentTemplate = DefaultContentTemplate;
-
-			if (ContentTemplateContainer == null)
-				ContentTemplateContainer = DefaultContentContainer;
-
-			if (ContentTemplateContainer is BaseWizardContainer)
-				((BaseWizardContainer) ContentTemplateContainer).InstatiateTemplate (ContentTemplate);
-			else
-				ContentTemplate.InstantiateIn (ContentTemplateContainer);
-
-			Controls.Clear ();
-			Controls.Add (ContentTemplateContainer);
-
-			if (CustomNavigationTemplate != null) {
-				if (CustomNavigationTemplateContainer == null)
-					CustomNavigationTemplateContainer = new Control ();
-
-				CustomNavigationTemplate.InstantiateIn (CustomNavigationTemplateContainer);
-			}
-		}
-	}
-
-	sealed class DefaultTemplate : ITemplate
-	{
-		public void InstantiateIn (Control container)
-		{
-		}
 	}
 
 	internal class BaseWizardContainer : Table, INamingContainer
 	{
 		internal BaseWizardContainer ()
 		{
+			SetBindingContainer (false);
 			InitTable ();
 		}
 
@@ -147,6 +109,14 @@ namespace System.Web.UI.WebControls
 			this.CellSpacing = 0;
 
 			this.Rows.Add (row);
+		}
+	}
+
+	internal class BaseWizardNavigationContainer : Control, INamingContainer
+	{
+		internal BaseWizardNavigationContainer ()
+		{
+			SetBindingContainer (false);
 		}
 	}
 }

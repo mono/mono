@@ -95,7 +95,9 @@ namespace System.Web.UI.WebControls
 		MultiView multiView;
 		DataList stepDatalist;
 		ArrayList styles = new ArrayList ();
+		ArrayList persistStyles = new ArrayList ();
 		SideBarButtonTemplate sideBarItemTemplate;
+		Hashtable customNavigation;
 		
 		private static readonly object ActiveStepChangedEvent = new object();
 		private static readonly object CancelButtonClickEvent = new object();
@@ -884,6 +886,8 @@ namespace System.Web.UI.WebControls
 
 			if (multiView == null)
 			{
+				persistStyles.Clear ();
+				customNavigation = null;
 				multiView = new MultiView();
 				foreach (View v in WizardSteps) {
 					if (v is TemplatedWizardStep) 
@@ -907,9 +911,11 @@ namespace System.Web.UI.WebControls
 				TableRow buttonRow = new TableRow ();
 				TableCell buttonCell = new TableCell ();
 				buttonCell.HorizontalAlign = HorizontalAlign.Right;
-				CreateButtonBar (buttonCell);
-				buttonRow.Cells.Add (buttonCell);
-				wizardTable.Rows.Add (buttonRow);
+				RegisterApplyStyle (buttonCell, NavigationStyle);
+				if (CreateButtonBar (buttonCell)) {
+					buttonRow.Cells.Add (buttonCell);
+					wizardTable.Rows.Add (buttonRow);
+				}
 
 				if (DisplaySideBar && ActiveStep.StepType != WizardStepType.Complete) {
 					Table contentTable = wizardTable;
@@ -942,40 +948,50 @@ namespace System.Web.UI.WebControls
 
 		internal virtual void InstantiateTemplateStep(TemplatedWizardStep step)
 		{
-			step.InstantiateInContainer ();
+			BaseWizardContainer contentTemplateContainer = new BaseWizardContainer ();
+
+			if (step.ContentTemplate != null)
+				contentTemplateContainer.InstatiateTemplate (step.ContentTemplate);
+
+			step.ContentTemplateContainer = contentTemplateContainer;
+			step.Controls.Clear ();
+			step.Controls.Add (contentTemplateContainer);
+
+			BaseWizardNavigationContainer customNavigationTemplateContainer = new BaseWizardNavigationContainer ();
 
 			if (step.CustomNavigationTemplate != null) {
-				WizardStepType stepType = GetStepType (step, ActiveStepIndex);
-				switch (stepType) {
-				case WizardStepType.Start:
-					startNavigationTemplate = step.CustomNavigationTemplate;
-					break;
-
-				case WizardStepType.Step:
-					stepNavigationTemplate = step.CustomNavigationTemplate;
-					break;
-
-				case WizardStepType.Finish:
-					finishNavigationTemplate = step.CustomNavigationTemplate;
-					break;
-				}
+				step.CustomNavigationTemplate.InstantiateIn (customNavigationTemplateContainer);
+				RegisterCustomNavigation (step, customNavigationTemplateContainer);
 			}
+			step.CustomNavigationTemplateContainer = customNavigationTemplateContainer;
+		}
+
+		internal void RegisterCustomNavigation (TemplatedWizardStep step, BaseWizardNavigationContainer customNavigationTemplateContainer) {
+			if (customNavigation == null)
+				customNavigation = new Hashtable ();
+			customNavigation [step] = customNavigationTemplateContainer;
 		}
 		
-		void CreateButtonBar (TableCell buttonBarCell)
+		bool CreateButtonBar (TableCell buttonBarCell)
 		{
+			if(customNavigation!=null && customNavigation [ActiveStep]!=null) {
+				Control customNavigationTemplateContainer = (Control) customNavigation [ActiveStep];
+				customNavigationTemplateContainer.ID = "CustomNavContainer";
+				buttonBarCell.Controls.Add (customNavigationTemplateContainer);
+				return true;
+			}
+			
 			Table t = new Table ();
 			t.CellPadding = 5;
 			t.CellSpacing = 5;
 			TableRow row = new TableRow ();
-			RegisterApplyStyle (buttonBarCell, NavigationStyle);
 			
 			WizardStepType stepType = GetStepType (ActiveStep, ActiveStepIndex);
 			switch (stepType) {
 				case WizardStepType.Start:
 					if (startNavigationTemplate != null) {
 						AddTemplateButtonBar (buttonBarCell, startNavigationTemplate, StartNextButtonID, CancelButtonID);
-						return;
+						return true;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex + 1))
 							AddButtonCell (row, CreateButton (StartNextButtonID, MoveNextCommandName, StartNextButtonType, StartNextButtonText, StartNextButtonImageUrl, StartNextButtonStyle));
@@ -986,7 +1002,7 @@ namespace System.Web.UI.WebControls
 				case WizardStepType.Step:
 					if (stepNavigationTemplate != null) {
 						AddTemplateButtonBar (buttonBarCell, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
-						return;
+						return true;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (StepPreviousButtonID, MovePreviousCommandName, StepPreviousButtonType, StepPreviousButtonText, StepPreviousButtonImageUrl, StepPreviousButtonStyle));
@@ -999,7 +1015,7 @@ namespace System.Web.UI.WebControls
 				case WizardStepType.Finish:
 					if (finishNavigationTemplate != null) {
 						AddTemplateButtonBar (buttonBarCell, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
-						return;
+						return true;
 					} else {
 						if (AllowNavigationToStep (ActiveStepIndex - 1))
 							AddButtonCell (row, CreateButton (FinishPreviousButtonID, MovePreviousCommandName, FinishPreviousButtonType, FinishPreviousButtonText, FinishPreviousButtonImageUrl, FinishPreviousButtonStyle));
@@ -1009,11 +1025,22 @@ namespace System.Web.UI.WebControls
 					}
 					break;
 			}
+			
+			if (row.Cells.Count == 0) 
+				return false;
+			
 			t.Rows.Add (row);
 			buttonBarCell.Controls.Add (t);
+			
+			return true;
 		}
-		
-		internal Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
+
+		Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
+		{
+			return CreateButton (id, command, type, text, image, style, false);
+		}
+
+		internal Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style, bool persistStyle)
 		{
 			WebControl b;
 			switch (type) {
@@ -1035,9 +1062,9 @@ namespace System.Web.UI.WebControls
 			((IButtonControl) b).CommandName = command;
 			((IButtonControl) b).Text = text;
 			((IButtonControl) b).ValidationGroup = ID;
-			
-			RegisterApplyStyle (b, NavigationButtonStyle);
-			RegisterApplyStyle (b, style);
+
+			RegisterApplyStyle (b, NavigationButtonStyle, persistStyle);
+			RegisterApplyStyle (b, style, persistStyle);
 			return b;
 		}
 
@@ -1059,10 +1086,13 @@ namespace System.Web.UI.WebControls
 
 		void AddTemplateButtonBar (TableCell cell, ITemplate template, params string[] buttonIds)
 		{
-			template.InstantiateIn (cell);
+			BaseWizardNavigationContainer container = new BaseWizardNavigationContainer ();
+			container.ID = "WizardNavContainer";
+			cell.Controls.Add (container);
+			template.InstantiateIn (container);
 			
 			foreach (string id in buttonIds) {
-				IButtonControl b = cell.FindControl (id) as IButtonControl;
+				IButtonControl b = container.FindControl (id) as IButtonControl;
 				if (b != null) RegisterCommandEvents (b);
 			}
 		}
@@ -1147,10 +1177,18 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (row);
 			}
 		}
-		
-		internal void RegisterApplyStyle (WebControl control, Style style)
+
+		void RegisterApplyStyle (WebControl control, Style style)
 		{
-			styles.Add (new object[] { control, style });
+			RegisterApplyStyle (control, style, false);
+		}
+
+		internal void RegisterApplyStyle (WebControl control, Style style, bool persistStyle)
+		{
+			if (persistStyle)
+				persistStyles.Add (new object [] { control, style });
+			else
+				styles.Add (new object [] { control, style });
 		}
 		
 		protected override Style CreateControlStyle ()
@@ -1337,8 +1375,11 @@ namespace System.Web.UI.WebControls
 					if (ActiveStepIndex > 0) {
 						WizardNavigationEventArgs args = new WizardNavigationEventArgs (ActiveStepIndex, ActiveStepIndex - 1);
 						OnPreviousButtonClick (args);
-						if (!args.Cancel)
+						if (!args.Cancel) {
+							if (history != null)
+								history.Remove (ActiveStepIndex);
 							ActiveStepIndex--;
+						}
 					}
 					break;
 					
@@ -1362,13 +1403,13 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (multiView.ActiveViewIndex != ActiveStepIndex)
-				CreateControlHierarchy ();
-
 			wizardTable.ApplyStyle (ControlStyle);
 
 			foreach (object[] styleDef in styles)
 				((WebControl)styleDef[0]).ApplyStyle ((Style)styleDef[1]);
+			
+			foreach (object [] styleDef in persistStyles)
+				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
 			
 			wizardTable.Render (writer);
 		}

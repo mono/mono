@@ -66,11 +66,6 @@ namespace System.Web.UI.WebControls
 					ViewState ["TitleText"] = value;
 			}
 		}
-
-		internal override ITemplate DefaultContentTemplate
-		{
-			get { return new CompleteStepTemplate ((CreateUserWizard) Wizard); }
-		}
 	}
 
 	sealed class CompleteStepTemplate : ITemplate
@@ -94,7 +89,8 @@ namespace System.Web.UI.WebControls
 
 			cell00.HorizontalAlign = HorizontalAlign.Center;
 			cell00.ColumnSpan = 2;
-			cell00.Controls.Add (new LiteralControl ("Complete"));
+			cell00.ControlStyle.CopyFrom (_createUserWizard.TitleTextStyle);
+			cell00.Controls.Add (new LiteralControl (_createUserWizard.CompleteStep.Title));
 			row0.Cells.Add (cell00);
 
 			// Row #1
@@ -114,7 +110,7 @@ namespace System.Web.UI.WebControls
 			cell20.ColumnSpan = 2;
 			row2.Cells.Add (cell20);
 
-			Control b = _createUserWizard.CreateButton ("ContinueButtonButton", CreateUserWizard.ContinueButtonCommandName, _createUserWizard.ContinueButtonType, _createUserWizard.ContinueButtonText, _createUserWizard.ContinueButtonImageUrl, _createUserWizard.ContinueButtonStyle);
+			Control b = _createUserWizard.CreateButton ("ContinueButtonButton", CreateUserWizard.ContinueButtonCommandName, _createUserWizard.ContinueButtonType, _createUserWizard.ContinueButtonText, _createUserWizard.ContinueButtonImageUrl, _createUserWizard.ContinueButtonStyle, true);
 			cell20.Controls.Add (b);
 			
 			// table

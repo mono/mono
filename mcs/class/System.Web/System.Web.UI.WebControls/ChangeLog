@@ -1,3 +1,14 @@
+2006-12-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CompleteWizardStep.cs:
+	* CreateUserWizard.cs:
+	* CreateUserWizardStep.cs:
+	* TemplatedWizardStep.cs:
+	* Wizard.cs:
+	fixed: 	CreateUserWizard works properly in advanced scenarios 
+	such being used with additional steps or/and with custom templates.
+	Styles are aplied  properly.
+
 2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlDataSourceView.cs: fixed InitializeParameters, parameters order
