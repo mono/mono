@@ -8,9 +8,10 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -67,7 +68,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, rTBox.RightMargin, "#R2");
 			
 			// [MonoTODO ("Assert.AreEqual (false, rTBox.Rtf, "#R3");") ]
-						
+
 			// S
 	
 			// [MonoTODO ("Assert.AreEqual (ScrollBars.Both, rTBox.ScrollBars, "#S1");")]
@@ -98,7 +99,6 @@ namespace MonoTests.System.Windows.Forms
 
 			// XYZ
 			Assert.AreEqual (1, rTBox.ZoomFactor, "#Z1");
-
 		}
 
 		[Test]
@@ -106,7 +106,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			RichTextBox rTextBox = new RichTextBox ();
 			Bitmap myBitmap = new Bitmap ("M.gif");
-            		Clipboard.SetDataObject (myBitmap);
+			Clipboard.SetDataObject (myBitmap);
 			DataFormats.Format myFormat = DataFormats.GetFormat (DataFormats.Bitmap);
 			Assert.AreEqual (true, rTextBox.CanPaste (myFormat), "#Mtd1");
 		}
@@ -173,6 +173,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord | RichTextBoxFinds.Reverse), 0, "Find24");	// First word in document, searched in reverse
 		}
 
-		//[MonoTODO("Add test for method Paste (Visual Test)")]
+		[Test] // bug #80301
+		public void PreferredHeight ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			rtb.Font = new Font ("Arial", 14);
+			Assert.AreEqual (29, rtb.PreferredHeight, "#1");
+			rtb.Font = new Font ("Arial", 16);
+			Assert.AreEqual (32, rtb.PreferredHeight, "#2");
+			rtb.Font = new Font ("Arial", 17);
+			Assert.AreEqual (34, rtb.PreferredHeight, "#3");
+		}
 	}
 }

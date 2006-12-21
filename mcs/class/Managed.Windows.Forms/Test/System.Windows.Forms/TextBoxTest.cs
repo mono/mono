@@ -6,9 +6,10 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -257,6 +258,17 @@ namespace MonoTests.System.Windows.Forms
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
 			textBox.Paste ();
 			Assert.AreEqual ("ABCDABCD", textBox.Text, "#32");
+		}
+
+		[Test] // bug #80301
+		public void PreferredHeight ()
+		{
+			textBox.Font = new Font ("Arial", 14);
+			Assert.AreEqual (29, textBox.PreferredHeight, "#1");
+			textBox.Font = new Font ("Arial", 16);
+			Assert.AreEqual (32, textBox.PreferredHeight, "#2");
+			textBox.Font = new Font ("Arial", 17);
+			Assert.AreEqual (34, textBox.PreferredHeight, "#3");
 		}
 
 		[Test]
