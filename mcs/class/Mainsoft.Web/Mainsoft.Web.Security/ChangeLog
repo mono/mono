@@ -1,3 +1,7 @@
+2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyMembershipProvider.cs: fixed provider key to be Guid
+
 2006-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyDBSchema.cs: Added derby db unload functionality

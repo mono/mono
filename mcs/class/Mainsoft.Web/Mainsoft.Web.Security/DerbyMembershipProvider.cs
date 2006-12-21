@@ -179,7 +179,7 @@ namespace Mainsoft.Web.Security {
 				status = MembershipCreateStatus.InvalidAnswer;
 				return null;
 			}
-			if (providerUserKey != null && !(providerUserKey is string)) {
+			if (providerUserKey != null && !(providerUserKey is Guid)) {
 				status = MembershipCreateStatus.InvalidProviderUserKey;
 				return null;
 			}
@@ -214,12 +214,13 @@ namespace Mainsoft.Web.Security {
 
 			using (DbConnection connection = CreateConnection ()) {
 				try {
-					
 
+					object helperUserKey = providerUserKey != null ? providerUserKey.ToString () : null;
 					DateTime Now = DateTime.UtcNow;
 					int st = DerbyMembershipHelper.Membership_CreateUser (connection, ApplicationName, username, password, passwordSalt, email,
-						pwdQuestion, pwdAnswer, isApproved, Now, Now, RequiresUniqueEmail, (int)PasswordFormat, ref providerUserKey);
+						pwdQuestion, pwdAnswer, isApproved, Now, Now, RequiresUniqueEmail, (int) PasswordFormat, ref helperUserKey);
 
+					providerUserKey = new Guid ((string) helperUserKey);
 					if (st == 0)
 						return GetUser (providerUserKey, false);
 					else if (st == 2)
@@ -428,7 +429,7 @@ namespace Mainsoft.Web.Security {
 			return new MembershipUser (
 				this.Name,                                          /* XXX is this right?  */
 				reader.GetString (0),                               /* name */
-				reader.GetString (1),                               /* providerUserKey */
+				new Guid (reader.GetString (1)),                    /* providerUserKey */
 				reader.IsDBNull (2) ? null : reader.GetString (2),  /* email */
 				reader.IsDBNull (3) ? null : reader.GetString (3),  /* passwordQuestion */
 				reader.IsDBNull (4) ? null : reader.GetString (4),  /* comment */
@@ -466,12 +467,12 @@ namespace Mainsoft.Web.Security {
 			if (providerUserKey == null)
 				throw new ArgumentNullException ("providerUserKey");
 
-			if (!(providerUserKey is string))
-				throw new ArgumentException ("providerUserKey is not of type string");
+			if (!(providerUserKey is Guid))
+				throw new ArgumentException ("providerUserKey is not of type Guid", "providerUserKey");
 
 			using (DbConnection connection = CreateConnection ()) {
 				DbDataReader reader = null;
-				int st = DerbyMembershipHelper.Membership_GetUserByUserId (connection, providerUserKey, userIsOnline, DateTime.UtcNow, out reader);
+				int st = DerbyMembershipHelper.Membership_GetUserByUserId (connection, providerUserKey.ToString (), userIsOnline, DateTime.UtcNow, out reader);
 				using (reader) {
 					if (st == 0 && reader != null) {
 						MembershipUser u = GetUserFromReader (reader);
