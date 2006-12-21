@@ -1,3 +1,10 @@
+2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlDataSourceView.cs: fixed InitializeParameters, parameters order
+	parameters case insensetive search
+	* ObjectDataSourceView.cs: fixed MergeParameterValues, parameters
+	case insensetive search
+
 2006-12-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed: ResolveClientUrl used with src and href attributes

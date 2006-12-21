@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 			else
 				oldDataValues = keys;
 			
-			InitializeParameters (command, DeleteParameters, null, oldDataValues, null, false);
+			InitializeParameters (command, DeleteParameters, null, oldDataValues, false);
 
 			OnDeleting (new SqlDataSourceCommandEventArgs (command));
 
@@ -141,7 +141,7 @@ namespace System.Web.UI.WebControls {
 			else
 				command.CommandType = CommandType.StoredProcedure;
 
-			InitializeParameters (command, InsertParameters, values, null, null, true);
+			InitializeParameters (command, InsertParameters, values, null, true);
 
 			OnInserting (new SqlDataSourceCommandEventArgs (command));
 
@@ -200,7 +200,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (SelectParameters.Count > 0)
-				InitializeParameters (command, SelectParameters, null, null, null, false);
+				InitializeParameters (command, SelectParameters, null, null, true);
 
 			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
@@ -314,7 +314,7 @@ namespace System.Web.UI.WebControls {
 				dataValues = values;
 			}
 
-			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, null, false);
+			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, false);
 
 			OnUpdating (new SqlDataSourceCommandEventArgs (command));
 
@@ -348,35 +348,43 @@ namespace System.Web.UI.WebControls {
 			else
 				return name;
 		}
-		
-		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, IDictionary exclusionList, bool allwaysAddNewValues)
+
+		object FindValueByName (Parameter p, IDictionary values, bool format)
+		{
+			if (values == null)
+				return null;
+
+			foreach (DictionaryEntry de in values) {
+				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
+				if (p.Name == valueName)
+					return values [de.Key];
+			}
+			foreach (DictionaryEntry de in values) {
+				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
+				valueName = valueName.ToLower ();
+				if (p.Name.ToLower () == valueName)
+					return values [de.Key];
+			}
+			return null;
+		}
+
+		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, bool allwaysAddNewValues)
 		{
 			foreach (Parameter p in parameters) {
-				bool oldAdded = false;
-				if (oldValues != null && oldValues.Contains (p.Name)) {
-					object val = Convert.ChangeType (oldValues [p.Name], p.Type);
-					command.Parameters.Add (CreateDbParameter (FormatOldParameter (p.Name), val, p.Direction, p.Size));
-					oldAdded = true;
-				}
-				else if (oldValues != null) {
-					string ufName = p.Name.Replace (FormatOldParameter (string.Empty), string.Empty);
-					if (oldValues != null && oldValues.Contains (ufName) && !command.Parameters.Contains (p.Name)) {
-						object val = Convert.ChangeType (oldValues [ufName], p.Type);
-						command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
-						oldAdded = true;
-					}
-				}
+				object value = FindValueByName (p, values, false);
+				if (value == null)
+					value = FindValueByName (p, oldValues, true);
 
-				if (values != null && values.Contains (p.Name)) {
-					object val = Convert.ChangeType (values [p.Name], p.Type);
-					command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
+				if (value != null) {
+					object dbValue = Convert.ChangeType (value, p.Type);
+					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
-				else if (!oldAdded || allwaysAddNewValues) {
-					object val = p.GetValue (context, owner);
-					if (!command.Parameters.Contains (p.Name))
-						command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
+				else if (allwaysAddNewValues) {
+					object dbValue = p.GetValue (context, owner);
+					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
 			}
+
 			if (values != null) {
 				foreach (DictionaryEntry de in values)
 					if (!command.Parameters.Contains ((string) de.Key))

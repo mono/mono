@@ -946,7 +946,26 @@ namespace System.Web.UI.WebControls
 				if (disp != null) disp.Dispose ();
 			}
 		}
-		
+
+		object FindValueByName (string name, IDictionary values, bool format)
+		{
+			if (values == null)
+				return null;
+
+			foreach (DictionaryEntry de in values) {
+				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
+				if (name == valueName)
+					return values [de.Key];
+			}
+			foreach (DictionaryEntry de in values) {
+				string valueName = format == true ? FormatOldParameter (de.Key.ToString ()) : de.Key.ToString ();
+				valueName = valueName.ToLower ();
+				if (name.ToLower () == valueName)
+					return values [de.Key];
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Merge the current data item fields with view parameter default values
 		/// </summary>
@@ -961,33 +980,42 @@ namespace System.Web.UI.WebControls
 			OrderedDictionary mergedValues = new OrderedDictionary ();
 			foreach (Parameter p in viewParams) {
 				bool oldAdded = false;
-				if (oldValues != null && oldValues.Contains (p.Name)) {
-					object val = Convert.ChangeType (oldValues [p.Name], p.Type);
-					mergedValues [FormatOldParameter (p.Name)] = val;
-					oldAdded = true;
+				if (oldValues != null) {
+					object value = FindValueByName (p.Name, oldValues, true);
+					if (value != null) {
+						object dataValue = Convert.ChangeType (value, p.Type);
+						mergedValues [FormatOldParameter (p.Name)] = dataValue;
+						oldAdded = true;
+					}
 				}
-				
-				if (values != null && values.Contains (p.Name)) {
-					object val = Convert.ChangeType (values [p.Name], p.Type);
-					mergedValues [p.Name] = val;
-				} else if (!oldAdded || allwaysAddNewValues) {
+
+				bool newAdded = false;
+				if (values != null) {
+					object value = FindValueByName (p.Name, values, false);
+					if (value != null) {
+						object dataValue = Convert.ChangeType (value, p.Type);
+						mergedValues [p.Name] = dataValue;
+						newAdded = true;
+					}
+				}
+				if ((!newAdded && !oldAdded) || allwaysAddNewValues) {
 					object val = p.GetValue (context, owner);
 					mergedValues [p.Name] = val;
 				}
 			}
-			
+
 			if (values != null) {
 				foreach (DictionaryEntry de in values)
-					if (!mergedValues.Contains (de.Key))
+					if (FindValueByName ((string) de.Key, mergedValues, false) == null)
 						mergedValues [de.Key] = de.Value;
 			}
-			
+
 			if (oldValues != null) {
 				foreach (DictionaryEntry de in oldValues)
-					if (!mergedValues.Contains (FormatOldParameter ((string)de.Key)))
-						mergedValues [FormatOldParameter ((string)de.Key)] = de.Value;
+					if (FindValueByName ((string) de.Key, mergedValues, true) == null)
+						mergedValues [FormatOldParameter ((string) de.Key)] = de.Value;
 			}
-			
+
 			return mergedValues;
 		}
 		
