@@ -137,12 +137,6 @@ namespace System.Windows.Forms {
 		protected override void OnMouseClick (DataGridViewCellMouseEventArgs e) {
 		}
 
-		protected override void OnMouseEnter (int rowIndex) {
-		}
-
-		protected override void OnMouseLeave (int rowIndex) {
-		}
-
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
 			//////////////////
 			/*
@@ -163,10 +157,6 @@ namespace System.Windows.Forms {
 				graphics.DrawString((string) formattedValue, cellStyle.Font, new SolidBrush(cellStyle.ForeColor), cellBounds, StringFormat.GenericDefault);
 			}
 			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
-		}
-
-		protected override void OnDataGridViewChanged () {
-			editingControl.EditingControlDataGridView = DataGridView;
 		}
 
 	}

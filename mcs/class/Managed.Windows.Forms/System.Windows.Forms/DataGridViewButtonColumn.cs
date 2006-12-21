@@ -26,6 +26,8 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	public class DataGridViewButtonColumn : DataGridViewColumn {
@@ -39,26 +41,32 @@ namespace System.Windows.Forms {
 			text = String.Empty;
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
 			set { base.CellTemplate = value as DataGridViewButtonCell; }
 		}
 
+		[Browsable (true)]
 		public override DataGridViewCellStyle DefaultCellStyle {
 			get { return base.DefaultCellStyle; }
 			set { base.DefaultCellStyle = value; }
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set { flatStyle = value; }
 		}
 
+		[DefaultValue (null)]
 		public string Text {
 			get { return text; }
 			set { text = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool UseColumnTextForButtonValue {
 			get {
 				if (base.CellTemplate == null) {

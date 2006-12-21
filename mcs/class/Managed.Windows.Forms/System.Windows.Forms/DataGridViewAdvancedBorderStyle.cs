@@ -38,7 +38,8 @@ namespace System.Windows.Forms {
 		private DataGridViewAdvancedCellBorderStyle right;
 		private DataGridViewAdvancedCellBorderStyle top;
 
-		public DataGridViewAdvancedBorderStyle () {
+		public DataGridViewAdvancedBorderStyle ()
+		{
 			All = DataGridViewAdvancedCellBorderStyle.None;
 		}
 
@@ -119,7 +120,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override bool Equals (object other) {
+		public override bool Equals (object other)
+		{
 			if (other is DataGridViewAdvancedBorderStyle) {
 				DataGridViewAdvancedBorderStyle otherAux = (DataGridViewAdvancedBorderStyle) other;
 				return bottom == otherAux.bottom &&
@@ -130,15 +132,18 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public override int GetHashCode () {
+		public override int GetHashCode ()
+		{
 			return base.GetHashCode();
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return String.Format("DataGridViewAdvancedBorderStyle { All={0}, Left={1}, Right={2}, Top={3}, Bottom={4} }", All, Left, Right, Top, Bottom);
 		}
 
-		public object Clone () {
+		object ICloneable.Clone ()
+		{
 			DataGridViewAdvancedBorderStyle result = new DataGridViewAdvancedBorderStyle();
 			result.bottom = this.bottom;
 			result.left = this.left;

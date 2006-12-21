@@ -74,10 +74,10 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		/*
-		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex) {
+		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
+		{
+			throw new NotImplementedException();
 		}
-		*/
 
 		public override DataGridViewElementStates GetInheritedState (int rowIndex) {
 			throw new NotImplementedException();

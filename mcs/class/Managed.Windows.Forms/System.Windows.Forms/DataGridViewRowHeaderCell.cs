@@ -32,61 +32,67 @@ namespace System.Windows.Forms {
 
 	public class DataGridViewRowHeaderCell : DataGridViewHeaderCell {
 
-		public DataGridViewRowHeaderCell () {
+		public DataGridViewRowHeaderCell ()
+		{
 		}
 
-		public override object Clone () {
+		public override object Clone ()
+		{
 			return MemberwiseClone();
 		}
 
-		/*
-		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex) {
-		}
-		*/
-
-		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors) {
+		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		public override string ToString () {
+		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string ToString ()
+		{
 			return base.ToString();
 		}
 
-		protected override AccessibleObject CreateAccessibilityInstance () {
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
 			return new DataGridViewRowHeaderCellAccessibleObject(this);
 		}
 
-		protected override object GetClipboardContent (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format) {
+		protected override object GetClipboardContent (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
+		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected internal override string GetErrorText (int rowIndex) {
+		protected internal override string GetErrorText (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override object GetValue (int rowIndex) {
+		protected override object GetValue (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseEnter (int rowIndex) {
-		}
-
-		protected override void OnMouseLeave (int rowIndex) {
-		}
-
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
 			graphics.FillRectangle(new SolidBrush(cellStyle.BackColor), cellBounds);
 			if ((cellState & DataGridViewElementStates.Selected) != 0) {
 				graphics.DrawString("*", cellStyle.Font, new SolidBrush(cellStyle.ForeColor), cellBounds, StringFormat.GenericDefault);
@@ -94,13 +100,15 @@ namespace System.Windows.Forms {
 			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
 		}
 
-		protected override bool SetValue (int rowIndex, object value) {
+		protected override bool SetValue (int rowIndex, object value)
+		{
 			throw new NotImplementedException();
 		}
 
 		protected class DataGridViewRowHeaderCellAccessibleObject : DataGridViewCellAccessibleObject {
 
-			public DataGridViewRowHeaderCellAccessibleObject (DataGridViewRowHeaderCell owner) : base(owner) {
+			public DataGridViewRowHeaderCellAccessibleObject (DataGridViewRowHeaderCell owner) : base(owner)
+			{
 			}
 
 			public override Rectangle Bounds {
@@ -127,11 +135,13 @@ namespace System.Windows.Forms {
 				get { return base.Value; }
 			}
 
-			public override void DoDefaultAction () {
+			public override void DoDefaultAction ()
+			{
 				base.DoDefaultAction();
 			}
 
-			public override AccessibleObject Navigate (AccessibleNavigation navigationDirection) {
+			public override AccessibleObject Navigate (AccessibleNavigation navigationDirection)
+			{
 				return base.Navigate(navigationDirection);
 			}
 

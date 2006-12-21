@@ -1414,11 +1414,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\DataGridViewRowsDeletedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\DataGridViewRowsRemovedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -26,11 +26,13 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	public class DataGridViewBand : DataGridViewElement, ICloneable, IDisposable {
 
-		// private ContextMenuStrip contextMenuStrip = null;
+		private ContextMenuStrip contextMenuStrip = null;
 		private DataGridViewCellStyle defaultCellStyle;
 		private Type defaultHeaderCellType;
 		private bool displayed;
@@ -45,14 +47,22 @@ namespace System.Windows.Forms {
 		private bool isRow;
 		private DataGridViewCellStyle inheritedStyle = null;
 
-		~DataGridViewBand () {
+		internal DataGridViewBand ()
+		{
+		}
+
+		~DataGridViewBand ()
+		{
 			Dispose();
 		}
 
-		/*
-		public virtual ContextMenuStrip ContextMenuStrip {get; set;}
-		*/
+		[DefaultValue (null)]
+		public virtual ContextMenuStrip ContextMenuStrip {
+			get { return contextMenuStrip; }
+			set { contextMenuStrip = value; }
+		}
 
+		[Browsable (false)]
 		public virtual DataGridViewCellStyle DefaultCellStyle {
 			get {
 				if (defaultCellStyle == null) {
@@ -63,6 +73,7 @@ namespace System.Windows.Forms {
 			set { defaultCellStyle = value; }
 		}
 
+		[Browsable (false)]
 		public Type DefaultHeaderCellType {
 			get { return defaultHeaderCellType; }
 			set {
@@ -73,37 +84,47 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Displayed {
 			get { return displayed; }
 		}
 
+		[DefaultValue (false)]
 		public virtual bool Frozen {
 			get { return frozen; }
 			set { frozen = value; }
 		}
 
+		[Browsable (false)]
 		public bool HasDefaultCellStyle {
 			get { return (defaultCellStyle != null); }
 		}
 
+		[Browsable (false)]
 		public int Index {
 			get { return index; }
 		}
 
+		[Browsable (false)]
 		public virtual DataGridViewCellStyle InheritedStyle {
 			get { return inheritedStyle; }
 		}
 
+		[DefaultValue (false)]
 		public virtual bool ReadOnly {
 			get { return readOnly; }
 			set { readOnly = value; }
 		}
 
+		[Browsable (true)]
 		public virtual DataGridViewTriState Resizable {
 			get { return resizable; }
 			set { resizable = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected {
 			get { return selected; }
 			set {
@@ -114,30 +135,38 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object Tag {
 			get { return tag; }
 			set { tag = value; }
 		}
 
+		[DefaultValue (true)]
 		public virtual bool Visible {
 			get { return visible; }
 			set { visible = value; }
 		}
 
-		public virtual object Clone () {
+		public virtual object Clone ()
+		{
 			DataGridViewBand result = new DataGridViewBand();
 			//////////////////////////////
 			return result;
 		}
 
 		//public sealed void Dispose () {
-		public void Dispose () {
+		public void Dispose ()
+		{
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return this.GetType().Name + ": " + index.ToString() + ".";
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected DataGridViewHeaderCell HeaderCellCore {
 			get { return headerCellCore; }
 			set { headerCellCore = value; }
@@ -147,13 +176,16 @@ namespace System.Windows.Forms {
 			get { return isRow; }
 		}
 
-		protected virtual void Dispose (bool disposing) {
+		protected virtual void Dispose (bool disposing)
+		{
 		}
 
-		protected override void OnDataGridViewChanged () {
+		protected override void OnDataGridViewChanged ()
+		{
 		}
 
-		internal virtual void SetIndex (int index) {
+		internal virtual void SetIndex (int index)
+		{
 			this.index = index;
 		}
 

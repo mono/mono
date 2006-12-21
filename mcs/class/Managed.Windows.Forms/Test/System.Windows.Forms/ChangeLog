@@ -12,6 +12,12 @@
 	
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridViewBandTest.cs: nuke this file, as there's no way to
+	construct a DataGridViewBand in isolation (exception through
+	reflection).
+
+2006-12-19  Chris Toshok  <toshok@ximian.com>
+
 	* RowStyleTest.cs: unit tests for RowStyle.
 
 	* ColumnStyleTest.cs: unit tests for ColumnStyle.

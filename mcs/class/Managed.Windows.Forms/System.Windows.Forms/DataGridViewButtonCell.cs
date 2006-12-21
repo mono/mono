@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 			get { return null; }
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set {
@@ -59,6 +60,7 @@ namespace System.Windows.Forms {
 			get { return base.FormattedValueType; }
 		}
 
+		[DefaultValue (false)]
 		public bool UseColumnTextForButtonValue {
 			get { return useColumnTextForButtonValue; }
 			set { useColumnTextForButtonValue = value; }
@@ -145,10 +147,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
 			// if activated by depresing the left mouse button, this method updates the cell's user interface
-			throw new NotImplementedException();
-		}
-
-		protected override void OnMouseEnter (int rowIndex) {
 			throw new NotImplementedException();
 		}
 

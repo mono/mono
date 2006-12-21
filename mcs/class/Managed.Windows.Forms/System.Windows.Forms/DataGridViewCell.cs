@@ -33,14 +33,15 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	public abstract class DataGridViewCell : DataGridViewElement, ICloneable, IDisposable {
-
+	// XXX [TypeConverter (typeof (DataGridViewCellConverter))]
+	public abstract class DataGridViewCell : DataGridViewElement, ICloneable, IDisposable
+	{
 		private DataGridView dataGridViewOwner;
 
 		private AccessibleObject accessibilityObject;
 		private int columnIndex;
 		private Rectangle contentBounds;
-		// private ContextMenuStrip contextMenuStrip;
+		private ContextMenuStrip contextMenuStrip;
 		private object defaultNewRowValue;
 		private bool displayed;
 		private object editedFormattedValue;
@@ -65,14 +66,17 @@ namespace System.Windows.Forms {
 		private Type valueType;
 		private bool visible;
 
-		protected DataGridViewCell () {
+		protected DataGridViewCell ()
+		{
 			columnIndex = -1;
 		}
 
-		~DataGridViewCell () {
+		~DataGridViewCell ()
+		{
 			Dispose(false);
 		}
 
+		[Browsable (false)]
 		public AccessibleObject AccessibilityObject {
 			get {
 				if (accessibilityObject == null) {
@@ -86,37 +90,46 @@ namespace System.Windows.Forms {
 			get { return columnIndex; }
 		}
 
+		[Browsable (false)]
 		public Rectangle ContentBounds {
 			get { return contentBounds; }
 		}
 
-		/*
+		[DefaultValue (null)]
 		public virtual ContextMenuStrip ContextMenuStrip {
 			get { return contextMenuStrip; }
 			set { contextMenuStrip = value; }
 		}
-		*/
 
+		[Browsable (false)]
 		public virtual object DefaultNewRowValue {
 			get { return defaultNewRowValue; }
 		}
 
+		[Browsable (false)]
 		public virtual bool Displayed {
 			get { return displayed; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object EditedFormattedValue {
 			get { return editedFormattedValue; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Type EditType {
 			get { return editType; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Rectangle ErrorIconBounds {
 			get { return errorIconBounds; }
 		}
 
+		[Browsable (false)]
 		public string ErrorText {
 			get { return errorText; }
 			set {
@@ -127,6 +140,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public object FormattedValue {
 			get {
 				DataGridViewCellStyle style = InheritedStyle;
@@ -137,22 +151,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public virtual Type FormattedValueType {
 			get { return formattedValueType; }
 		}
 
+		[Browsable (false)]
 		public virtual bool Frozen {
 			get { return frozen; }
 		}
 
+		[Browsable (false)]
 		public bool HasStyle {
 			get { return style != null; }
 		}
 
+		[Browsable (false)]
 		public DataGridViewElementStates InheritedState {
 			get { return inheritedState; }
 		}
 
+		[Browsable (false)]
 		public DataGridViewCellStyle InheritedStyle {
 			get {
 				DataGridViewCellStyle result = new DataGridViewCellStyle();
@@ -400,31 +419,41 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsInEditMode {
 			get { return isInEditMode; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataGridViewColumn OwningColumn {
 			get { return owningColumn; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataGridViewRow OwningRow {
 			get { return owningRow; }
 		}
 
+		[Browsable (false)]
 		public Size PreferredSize {
 			get { return preferredSize; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool ReadOnly {
 			get { return readOnly; }
 			set { readOnly = value; }
 		}
 
+		[Browsable (false)]
 		public virtual bool Resizable {
 			get { return resizable; }
 		}
 
+		[Browsable (false)]
 		public int RowIndex {
 			get {
 				if (owningRow == null) {
@@ -434,6 +463,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected {
 			get { return selected; }
 			set {
@@ -444,10 +475,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public Size Size {
 			get { return size; }
 		}
 
+		[Browsable (true)]
 		public DataGridViewCellStyle Style {
 			get {
 				if (style != null) {
@@ -459,16 +492,23 @@ namespace System.Windows.Forms {
 			set { style = value; }
 		}
 
+		[Bindable (true, BindingDirection.OneWay)]
+		[DefaultValue (null)]
+		[Localizable (false)]
+		[TypeConverter ("System.ComponentModel.StringConverter, " + Consts.AssemblySystem)]
 		public object Tag {
 			get { return tag; }
 			set { tag = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string ToolTipText {
 			get { return toolTipText; }
 			set { toolTipText = value; }
 		}
 
+		[Browsable (false)]
 		public object Value {
 			get { return valuex; }
 			set {
@@ -479,15 +519,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public virtual Type ValueType {
 			get { return valueType; }
 			set { valueType = value; }
 		}
 
+		[Browsable (false)]
 		public virtual bool Visible {
 			get { return visible; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual DataGridViewAdvancedBorderStyle AdjustCellBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput,	DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow) {
 			return dataGridViewAdvancedBorderStyleInput;
 		}
@@ -529,6 +572,7 @@ namespace System.Windows.Forms {
 			*/
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void DetachEditingControl () {
 		}
 
@@ -544,10 +588,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		/*
-		public virtual ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex) {
+		public virtual ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
+		{
+			throw new NotImplementedException();
 		}
-		*/
 
 		public virtual DataGridViewElementStates GetInheritedState (int rowIndex) {
 			throw new NotImplementedException();
@@ -561,6 +605,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void InitializeEditingControl (int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle) {
 			if (DataGridView == null || DataGridView.EditingControl == null) {
 				throw new InvalidOperationException("No editing control defined");
@@ -571,6 +616,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags) {
 			if (graphics == null) {
 				throw new ArgumentNullException("Graphics argument null");
@@ -585,10 +631,12 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags, out bool widthTruncated) {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Size MeasureTextPreferredSize (Graphics graphics, string text, Font font, float maxRatio, TextFormatFlags flags) {
 			if (graphics == null) {
 				throw new ArgumentNullException("Graphics argument null");
@@ -602,11 +650,13 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Size MeasureTextSize (Graphics graphics, string text, Font font, TextFormatFlags flags) {
 			/////////////////////////// ¿flags?
 			return graphics.MeasureString(text, font).ToSize();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static int MeasureTextWidth (Graphics graphics, string text, Font font, int maxHeight, TextFormatFlags flags) {
 			if (graphics == null) {
 				throw new ArgumentNullException("Graphics argument null");
@@ -635,10 +685,12 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow) {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Rectangle PositionEditingPanel (Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow) {
 			throw new NotImplementedException();
 		}
@@ -674,7 +726,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected virtual bool EnterUnsharesRow (int rowIndex) {
+		protected virtual bool EnterUnsharesRow (int rowIndex, bool throughMouseClick) {
 			throw new NotImplementedException();
 		}
 
@@ -722,7 +774,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected virtual bool LeaveUnsharesRow ( int rowIndex) {
+		protected virtual bool LeaveUnsharesRow (int rowIndex, bool throughMouseClick) {
 			throw new NotImplementedException();
 		}
 

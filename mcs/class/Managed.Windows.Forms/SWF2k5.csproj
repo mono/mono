@@ -397,7 +397,6 @@
     <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\DataGridViewRowsDeletedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewSelectedCellCollection.cs" />

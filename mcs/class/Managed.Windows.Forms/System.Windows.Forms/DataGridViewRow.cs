@@ -26,16 +26,18 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
+	// XXX [TypeConverter (typeof (DataGridRowConverter))]
 	public class DataGridViewRow : DataGridViewBand {
 
 		private AccessibleObject accessibilityObject;
 		private DataGridViewCellCollection cells;
-		//private ContextMenuStrip contextMenuStrip;
+		private ContextMenuStrip contextMenuStrip;
 		private object dataBoundItem;
 		private int dividerHeight;
 		private string errorText;
@@ -43,22 +45,26 @@ namespace System.Windows.Forms {
 		private int height;
 		private int minimumHeight;
 
-		public DataGridViewRow () {
+		public DataGridViewRow ()
+		{
 			cells = new DataGridViewCellCollection(this);
 			minimumHeight = 3;
 			height = -1;
 			headerCell = new DataGridViewRowHeaderCell();
 		}
 
+		[Browsable (false)]
 		public AccessibleObject AccessibilityObject {
 			get { return accessibilityObject; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataGridViewCellCollection Cells {
 			get { return cells; }
 		}
 
-		/*
+		[DefaultValue (null)]
 		public override ContextMenuStrip ContextMenuStrip {
 			get { return contextMenuStrip; }
 			set {
@@ -70,12 +76,16 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-		*/
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object DataBoundItem {
 			get { return dataBoundItem; }
 		}
 
+		[Browsable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty (true)]
 		public override DataGridViewCellStyle DefaultCellStyle {
 			get { return base.DefaultCellStyle; }
 			set {
@@ -88,15 +98,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public override bool Displayed {
 			get { return base.Displayed; }
 		}
 
+		[DefaultValue (0)]
+		[NotifyParentProperty (true)]
 		public int DividerHeight {
 			get { return dividerHeight; }
 			set { dividerHeight = value; }
 		}
 
+		[DefaultValue ("")]
+		[NotifyParentProperty (true)]
 		public string ErrorText {
 			get { return errorText; }
 			set {
@@ -109,11 +124,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
 		public override bool Frozen {
 			get { return base.Frozen; }
 			set { base.Frozen = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewRowHeaderCell HeaderCell {
 			get { return headerCell; }
 			set {
@@ -126,6 +144,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (22)]
+		[NotifyParentProperty (true)]
 		public int Height {
 			get {
 				if (height < 0) {
@@ -170,6 +190,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool IsNewRow {
 			get {
 				if (DataGridView != null && DataGridView.Rows[DataGridView.Rows.Count - 1] == this) {
@@ -179,6 +201,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int MinimumHeight {
 			get { return minimumHeight; }
 			set {
@@ -194,11 +218,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (true)]
+		[DefaultValue (false)]
+		[NotifyParentProperty (true)]
 		public override bool ReadOnly {
 			get { return base.ReadOnly; }
 			set { base.ReadOnly = value; }
 		}
 
+		[NotifyParentProperty (true)]
 		public override DataGridViewTriState Resizable {
 			get { return base.Resizable; }
 			set { base.Resizable = value; }
@@ -232,6 +260,7 @@ namespace System.Windows.Forms {
 			get { return base.State; }
 		}
 
+		[Browsable (false)]
 		public override bool Visible {
 			get { return base.Visible; }
 			set {
@@ -242,11 +271,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public virtual DataGridViewAdvancedBorderStyle AdjustRowHeaderBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput, DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedRow, bool isLastVisibleRow) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public virtual DataGridViewAdvancedBorderStyle AdjustRowHeaderBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput, DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedRow, bool isLastVisibleRow)
+		{
 			throw new NotImplementedException();
 		}
 
-		public override object Clone () {
+		public override object Clone ()
+		{
 			DataGridViewRow row = (DataGridViewRow) MemberwiseClone();
 			row.cells = new DataGridViewCellCollection(row);
 			foreach (DataGridViewCell cell in cells) {
@@ -255,7 +287,8 @@ namespace System.Windows.Forms {
 			return row;
 		}
 
-		public void CreateCells (DataGridView dataGridView) {
+		public void CreateCells (DataGridView dataGridView)
+		{
 			if (dataGridView == null) {
 				throw new ArgumentNullException("DataGridView is null.");
 			}
@@ -272,7 +305,8 @@ namespace System.Windows.Forms {
 			cells = newCellCollection;
 		}
 
-		public void CreateCells (DataGridView dataGridView, params object[] values) {
+		public void CreateCells (DataGridView dataGridView, params object[] values)
+		{
 			if (values == null) {
 				throw new ArgumentNullException("values is null");
 			}
@@ -282,30 +316,36 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/*
-		public ContextMenuStrip GetContextMenuStrip (int rowIndex) {
+		public ContextMenuStrip GetContextMenuStrip (int rowIndex)
+		{
 			if (rowIndex == -1) {
 				throw new InvalidOperationException("rowIndex is -1");
 			}
-			if (rowIndex < 0 || rowIndex >= dataGridView.Rows.Count) {
+			if (rowIndex < 0 || rowIndex >= DataGridView.Rows.Count) {
 				throw new ArgumentOutOfRangeException("rowIndex is out of range");
 			}
-		}
-		*/
 
-		public string GetErrorText (int rowIndex) {
+			return null; // XXX
+		}
+
+		public string GetErrorText (int rowIndex)
+		{
 			return "";
 		}
 
-		public virtual int GetPreferredHeight (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth) {
+		public virtual int GetPreferredHeight (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth)
+		{
 			throw new NotImplementedException();
 		}
 
-		public virtual DataGridViewElementStates GetState (int rowIndex) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public virtual DataGridViewElementStates GetState (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void SetValues (params object[] values) {
+		public void SetValues (params object[] values)
+		{
 			if (values == null) {
 				throw new ArgumentNullException("vues is null");
 			}
@@ -320,37 +360,50 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return this.GetType().Name + ", Band Index: " + base.Index.ToString();
 		}
 
-		protected virtual AccessibleObject CreateAccessibilityInstance () {
+		protected virtual AccessibleObject CreateAccessibilityInstance ()
+		{
 			return new DataGridViewRowAccessibleObject(this);
 		}
 
-		protected virtual DataGridViewCellCollection CreateCellsInstance () {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual DataGridViewCellCollection CreateCellsInstance ()
+		{
 			cells = new DataGridViewCellCollection(this);
 			return cells;
 		}
 
-		protected internal virtual void DrawFocus (Graphics graphics, Rectangle clipBounds, Rectangle bounds, int rowIndex, DataGridViewElementStates rowState, DataGridViewCellStyle cellStyle, bool cellsPaintSelectionBackground) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected internal virtual void DrawFocus (Graphics graphics, Rectangle clipBounds, Rectangle bounds, int rowIndex, DataGridViewElementStates rowState, DataGridViewCellStyle cellStyle, bool cellsPaintSelectionBackground)
+		{
 		}
 
-		protected internal virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow) {
+		protected internal virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow)
+		{
 		}
 
-		protected internal virtual void PaintCells (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected internal virtual void PaintCells (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts)
+		{
 		}
 
-		protected internal virtual void PaintHeader (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected internal virtual void PaintHeader (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts)
+		{
 		}
 
-		internal override void SetDataGridView (DataGridView dataGridView) {
+		internal override void SetDataGridView (DataGridView dataGridView)
+		{
 			base.SetDataGridView(dataGridView);
 			headerCell.SetDataGridView(dataGridView);
 		}
 
-		internal override void SetState (DataGridViewElementStates state) {
+		internal override void SetState (DataGridViewElementStates state)
+		{
 			if (State != state) {
 				base.SetState(state);
 				if (DataGridView != null) {
@@ -364,10 +417,12 @@ namespace System.Windows.Forms {
 
 			private DataGridViewRow dataGridViewRow;
 
-			public DataGridViewRowAccessibleObject () {
+			public DataGridViewRowAccessibleObject ()
+			{
 			}
 
-			public DataGridViewRowAccessibleObject (DataGridViewRow row) {
+			public DataGridViewRowAccessibleObject (DataGridViewRow row)
+			{
 				this.dataGridViewRow = row;
 			}
 

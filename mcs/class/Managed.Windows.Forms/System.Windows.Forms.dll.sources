@@ -254,7 +254,6 @@ System.Windows.Forms/DataGridViewRowStateChangedEventArgs.cs
 System.Windows.Forms/DataGridViewRowStateChangedEventHandler.cs
 System.Windows.Forms/DataGridViewRowsAddedEventArgs.cs
 System.Windows.Forms/DataGridViewRowsAddedEventHandler.cs
-System.Windows.Forms/DataGridViewRowsDeletedEventArgs.cs
 System.Windows.Forms/DataGridViewRowsRemovedEventArgs.cs
 System.Windows.Forms/DataGridViewRowsRemovedEventHandler.cs
 System.Windows.Forms/DataGridViewSelectedCellCollection.cs

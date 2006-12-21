@@ -31,7 +31,7 @@ using System.Collections;
 
 namespace System.Windows.Forms {
 
-
+	[ListBindable (false)]
 	public class DataGridViewCellCollection : BaseCollection, IList, ICollection, IEnumerable {
 
 		private DataGridViewRow dataGridViewRow;
@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 			this.dataGridViewRow = dataGridViewRow;
 		}
 
-		public bool IsFixedSize {
+		bool IList.IsFixedSize {
 			get { return base.List.IsFixedSize; }
 		}
 
@@ -90,6 +90,7 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual void AddRange (params DataGridViewCell[] dataGridViewCells) {
 			foreach (DataGridViewCell cell in dataGridViewCells) {
 				this.Add(cell);

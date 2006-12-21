@@ -39,9 +39,9 @@ namespace System.Windows.Forms {
 	[ClassInterfaceAttribute(ClassInterfaceType.AutoDispatch)]
 	[Designer("System.Windows.Forms.Design.DataGridViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[Editor("System.Windows.Forms.Design.DataGridViewComponentEditor, " + Consts.AssemblySystem_Design, typeof (System.ComponentModel.ComponentEditor))]
-	// XXX System.ComponentModel.ComplexBindingPropertiesAttribute
+	[ComplexBindingProperties ("DataSource", "DataMember")]
 	[DefaultEvent ("CellContentClick")]
-	// XXX [Docking (DockingBehavior.Ask)]
+	[Docking (DockingBehavior.Ask)]
 	public class DataGridView : Control, ISupportInitialize, IBindableComponent, IDropTarget
 	{
 
@@ -570,6 +570,7 @@ namespace System.Windows.Forms {
 
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[DefaultValue (null)]
+		[AttributeProvider (typeof (IListSource))]
 		// XXX AttributeProviderAtribute
 		public object DataSource {
 			get { return dataSource; }
@@ -1888,7 +1889,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual DataGridViewAdvancedBorderStyle AdjustColumnHeaderBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput, DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool isFirstDisplayedColumn, bool isLastVisibleColumn) {
-			return (DataGridViewAdvancedBorderStyle) dataGridViewAdvancedBorderStyleInput.Clone();
+			return (DataGridViewAdvancedBorderStyle) ((ICloneable)dataGridViewAdvancedBorderStyleInput).Clone();
 		}
 
 		public bool AreAllCellsSelected (bool includeInvisibleCells) {
@@ -2973,7 +2974,7 @@ namespace System.Windows.Forms {
 					headerBounds.Width = col.Width;
 					DataGridViewCell cell = col.HeaderCell;
 					DataGridViewCellStyle style = columnHeadersDefaultCellStyle;
-					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) this.AdvancedColumnHeadersBorderStyle.Clone();;
+					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedColumnHeadersBorderStyle).Clone();
 					DataGridViewAdvancedBorderStyle borderStyle = AdjustColumnHeaderBorderStyle(this.AdvancedColumnHeadersBorderStyle, intermediateBorderStyle, j == 0, j == columns.Count - 1);
 					cell.InternalPaint(e.Graphics, e.ClipRectangle, headerBounds, cell.RowIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
 					headerBounds.X += col.Width;
@@ -2990,7 +2991,7 @@ namespace System.Windows.Forms {
 					rowHeaderBounds.Width = rowHeadersWidth;
 					DataGridViewCell cell = row.HeaderCell;
 					DataGridViewCellStyle style = rowHeadersDefaultCellStyle;
-					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) this.AdvancedRowHeadersBorderStyle.Clone();;
+					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedRowHeadersBorderStyle).Clone();
 					DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle(this.AdvancedRowHeadersBorderStyle, intermediateBorderStyle, true, true, false, cell.RowIndex == 0);
 					cell.InternalPaint(e.Graphics, e.ClipRectangle, rowHeaderBounds, cell.RowIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
 					//e.Graphics.FillRectangle(new SolidBrush(rowHeadersDefaultCellStyle.BackColor), rowHeadersBounds);
@@ -3009,7 +3010,7 @@ namespace System.Windows.Forms {
 								cell.PositionEditingControl(true, true, bounds, e.ClipRectangle, style, false, false, (columns[currentCell.ColumnIndex].DisplayIndex == 0), (currentCell.RowIndex == 0));
 							}
 							else {
-								DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) this.AdvancedCellBorderStyle.Clone();;
+								DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedCellBorderStyle).Clone();
 								DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle(this.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, j == 0, cell.RowIndex == 0);
 								OnCellFormatting(new DataGridViewCellFormattingEventArgs(cell.ColumnIndex, cell.RowIndex, cell.Value, cell.FormattedValueType, style));
 								DataGridViewCellPaintingEventArgs args = new DataGridViewCellPaintingEventArgs (this, e.Graphics, e.ClipRectangle, bounds, cell.RowIndex, cell.ColumnIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
