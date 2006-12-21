@@ -493,7 +493,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object BackgroundImageLayoutChangedEvent = new object ();
 		static object ClosedEvent = new object ();
 		static object ClosingEvent = new object ();
 		static object ContextMenuStripChangedEvent = new object ();
@@ -507,9 +506,9 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		public event EventHandler BackgroundImageLayoutChanged {
-			add { Events.AddHandler (BackgroundImageLayoutChangedEvent, value); }
-			remove { Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value); }
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
 
 		public new event EventHandler BindingContextChanged {

@@ -196,7 +196,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object BackgroundImageLayoutChangedEvent = new object ();
 		static object ContextMenuStripChangedEvent = new object ();
 
 		[Browsable (false)]
@@ -212,9 +211,9 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public event EventHandler BackgroundImageLayoutChanged {
-			add { Events.AddHandler (BackgroundImageLayoutChangedEvent, value); }
-			remove { Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value); }
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
 
 		[Browsable (false)]

@@ -1,5 +1,11 @@
 2006-12-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripContainer.cs, ToolStripDropDown.cs, StatusStrip.cs:
+	Clean up warnings for BackgroundImageChanged and PaddingChanged
+	events now that they are implemented in Control.cs.
+
+2006-12-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Make sure layout_engine isn't null before using it (2.0).
 	
 	* TableLayoutControlCollection.cs, TableLayoutPanel.cs, TableLayoutCellPosition.cs,

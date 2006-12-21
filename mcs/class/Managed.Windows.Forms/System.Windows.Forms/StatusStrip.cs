@@ -146,11 +146,9 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object PaddingChangedEvent = new object ();
-
-		public event EventHandler PaddingChanged {
-			add { Events.AddHandler (PaddingChangedEvent, value); }
-			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
 		}
 		#endregion
 	}
