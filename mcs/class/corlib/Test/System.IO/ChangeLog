@@ -1,3 +1,7 @@
+2006-12-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MemoryStreamTest.cs: Added (de)serialization tests for bug #80205.
+
 2006-11-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Use Assert.Ignore instead of silently ignoring
