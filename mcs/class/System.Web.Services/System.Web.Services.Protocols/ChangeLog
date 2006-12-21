@@ -1,3 +1,10 @@
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs : read xml with correct
+	  SOAP 1.2 Envelope namespace. To determine the message
+	  version, it must check SOAP version in
+	  DeserializeRequest().
+
 2006-12-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapClientMessage.cs : oops, SoapVersion is only 2.0.

@@ -63,7 +63,7 @@ namespace System.Web.Services.Protocols
 		{
 			try
 			{
-				requestMessage = DeserializeRequest (context.Request);
+				requestMessage = DeserializeRequest (context);
 				return methodInfo;
 			}
 			catch (Exception ex)
@@ -81,12 +81,7 @@ namespace System.Web.Services.Protocols
 			try
 			{
 				if (requestMessage == null) {
-					requestMessage = DeserializeRequest (context.Request);
-#if NET_2_0
-					object soapVer = context.Items ["WebServiceSoapVersion"];
-					if (soapVer != null)
-						requestMessage.SetSoapVersion ((SoapProtocolVersion) soapVer);
-#endif
+					requestMessage = DeserializeRequest (context);
 				}
 				
 				if (methodInfo != null && methodInfo.OneWay) {
@@ -118,8 +113,9 @@ namespace System.Web.Services.Protocols
 			}
 		}
 
-		SoapServerMessage DeserializeRequest (HttpRequest request)
+		SoapServerMessage DeserializeRequest (HttpContext context)
 		{
+			HttpRequest request = context.Request;
 			Stream stream = request.InputStream;
 
 			//using (stream)
@@ -139,16 +135,20 @@ namespace System.Web.Services.Protocols
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
 				message.ContentType = ctype;
+#if NET_2_0
+				object soapVer = context.Items ["WebServiceSoapVersion"];
+				if (soapVer != null)
+					message.SetSoapVersion ((SoapProtocolVersion) soapVer);
+
+				bool soap12 = message.SoapVersion == SoapProtocolVersion.Soap12;
+#else
+				bool soap12 = false;
+#endif
 
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
 
-#if NET_2_0
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction &&
-					message.SoapVersion != SoapProtocolVersion.Soap12)
-#else
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction)
-#endif
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction && !soap12)
 				{
 					soapAction = request.Headers ["SOAPAction"];
 					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
@@ -168,12 +168,7 @@ namespace System.Web.Services.Protocols
 				// If the routing style is RequestElement, try to get the method name from the
 				// stream processed by the high priority extensions
 
-#if NET_2_0
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement ||
-				     message.SoapVersion == SoapProtocolVersion.Soap12)
-#else
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement)
-#endif
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement || soap12)
 				{
 					MemoryStream mstream;
 					byte[] buffer = null;
@@ -197,7 +192,11 @@ namespace System.Web.Services.Protocols
 						buffer = mstream.ToArray ();
 					}
 
-					soapAction = ReadActionFromRequestElement (new MemoryStream (buffer), encoding);
+					soapAction = ReadActionFromRequestElement (new MemoryStream (buffer), encoding,
+#if NET_2_0
+						soap12 ? WebServiceHelper.Soap12EnvelopeNamespace :
+#endif
+						WebServiceHelper.SoapEnvelopeNamespace);
 
 					stream = mstream;
 					methodInfo = (SoapMethodStubInfo) _typeStubInfo.GetMethod (soapAction);
@@ -246,7 +245,7 @@ namespace System.Web.Services.Protocols
 			//}
 		}
 
-		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
+		string ReadActionFromRequestElement (Stream stream, Encoding encoding, string envNS)
 		{
 			try
 			{
@@ -254,12 +253,12 @@ namespace System.Web.Services.Protocols
 				XmlTextReader xmlReader = new XmlTextReader (reader);
 
 				xmlReader.MoveToContent ();
-				xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
+				xmlReader.ReadStartElement ("Envelope", envNS);
 
-				while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
+				while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == envNS))
 					xmlReader.Skip ();
 
-				xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
+				xmlReader.ReadStartElement ("Body", envNS);
 				xmlReader.MoveToContent ();
 
 				return xmlReader.LocalName;
