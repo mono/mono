@@ -283,12 +283,16 @@ namespace System.Web.SessionState
 
 		void OnAcquireRequestState (object o, EventArgs args)
 		{
+#if TRACE
 			Console.WriteLine ("SessionStateModule.OnAcquireRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
+#endif
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
 			if (!(context.Handler is IRequiresSessionState)) {
+#if TRACE
 				Console.WriteLine ("Handler ({0}) does not require session state", context.Handler);
+#endif
 				return;
 			}
 			isReadOnly = (context.Handler is IReadOnlySessionState);			
@@ -305,7 +309,9 @@ namespace System.Web.SessionState
 				if (storeData == null && !storeLocked) {
 					isNew = true;
 					sessionId = idManager.CreateSessionID (context);
+#if TRACE
 					Console.WriteLine ("New session ID allocated: {0}", sessionId);
+#endif
 					bool redirected = false;
 					bool cookieAdded = false;
 					idManager.SaveSessionID (context, sessionId, out redirected, out cookieAdded);
@@ -331,8 +337,10 @@ namespace System.Web.SessionState
 		
 		void OnReleaseRequestState (object o, EventArgs args)
 		{
+#if TRACE
 			Console.WriteLine ("SessionStateModule.OnReleaseRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
 			Console.WriteLine ("\tsessionId == {0}", sessionId);
+#endif
 			if (handler == null)
 				return;
 
@@ -340,16 +348,24 @@ namespace System.Web.SessionState
 			HttpContext context = application.Context;
 			if (!(context.Handler is IRequiresSessionState))
 				return;
+#if TRACE
 			Console.WriteLine ("\trequest path == {0}", context.Request.FilePath);
 			Console.WriteLine ("\tHandler ({0}) requires session state", context.Handler);
+#endif
 			
 			if (!container.IsAbandoned) {
+#if TRACE
 				Console.WriteLine ("\tnot abandoned");
+#endif
 				if (!isReadOnly) {
+#if TRACE
 					Console.WriteLine ("\tnot read only, storing and releasing");
+#endif
 					handler.SetAndReleaseItemExclusive (context, sessionId, storeData, storeLockId, false);
 				} else {
+#if TRACE
 					Console.WriteLine ("\tread only, releasing");
+#endif
 					handler.ReleaseItemExclusive (context, sessionId, storeLockId);
 				}
 				handler.ResetItemTimeout (context, sessionId);
