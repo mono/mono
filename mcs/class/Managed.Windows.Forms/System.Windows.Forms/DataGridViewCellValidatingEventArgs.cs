@@ -36,7 +36,8 @@ namespace System.Windows.Forms {
 		private object formattedValue;
 		private int rowIndex;
 
-		public DataGridViewCellValidatingEventArgs (int columnIndex, int rowIndex, object formattedValue) {
+		internal DataGridViewCellValidatingEventArgs (int columnIndex, int rowIndex, object formattedValue)
+		{
 			this.columnIndex = columnIndex;
 			this.rowIndex = rowIndex;
 		}

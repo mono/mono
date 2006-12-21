@@ -26,6 +26,8 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	public class DataGridViewCheckBoxColumn : DataGridViewColumn {
@@ -38,16 +40,21 @@ namespace System.Windows.Forms {
 		public DataGridViewCheckBoxColumn () : this (false) {
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
 			set { base.CellTemplate = value as DataGridViewCheckBoxCell; }
 		}
 
+		[Browsable (true)]
 		public override DataGridViewCellStyle DefaultCellStyle {
 			get { return base.DefaultCellStyle; }
 			set { base.DefaultCellStyle = value; }
 		}
 
+		[DefaultValue (null)]
+		[TypeConverter (typeof (StringConverter))]
 		public object FalseValue {
 			get {
 				if (base.CellTemplate == null) {
@@ -63,6 +70,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get {
 				if (base.CellTemplate == null) {
@@ -78,6 +86,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (null)]
+		[TypeConverter (typeof (StringConverter))]
 		public object IndeterminateValue {
 			get {
 				if (base.CellTemplate == null) {
@@ -93,6 +103,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ThreeState {
 			get {
 				if (base.CellTemplate == null) {
@@ -108,6 +119,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (null)]
+		[TypeConverter (typeof (StringConverter))]
 		public object TrueValue {
 			get {
 				if (base.CellTemplate == null) {

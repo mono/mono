@@ -17,43 +17,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
 //
-// Author:
-//	Pedro Martínez Juliá <pedromj@gmail.com>
-//
-
 
 #if NET_2_0
 
 namespace System.Windows.Forms {
 
-	public class DataGridViewRowHeightInfoNeededEventArgs : EventArgs {
-
-		private int height;
-		private int minimumHeight;
-		private int rowIndex;
-
-		internal DataGridViewRowHeightInfoNeededEventArgs (int rowIndex, int height, int minimumHeight) {
-			this.rowIndex = rowIndex;
-			this.height = height;
-			this.minimumHeight = minimumHeight;
-		}
-
-		public int Height {
-			get { return height; }
-			set { height = value; }
-		}
-
-		public int MinimumHeight {
-			get { return minimumHeight; }
-			set { minimumHeight = value; }
-		}
-
-		public int RowIndex {
-			get { return rowIndex; }
-		}
-
+	interface ICurrencyManagerProvider {
+		CurrencyManager CurrencyMnaager { get; }
 	}
 
 }

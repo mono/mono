@@ -28,9 +28,13 @@
 
 using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.Windows.Forms {
 
+	[DesignerSerializerAttribute ("System.Windows.Forms.Design.DataGridViewRowCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design,
+				      "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+	[ListBindable (false)]
 	public class DataGridViewRowCollection : IList, ICollection, IEnumerable {
 
 		private ArrayList list;
@@ -38,7 +42,8 @@ namespace System.Windows.Forms {
 
 		private bool raiseEvent = true;
 
-		public DataGridViewRowCollection (DataGridView dataGridView) {
+		public DataGridViewRowCollection (DataGridView dataGridView)
+		{
 			if (dataGridView == null) {
 				throw new ArgumentException("DataGridView is null.");
 			}
@@ -50,15 +55,15 @@ namespace System.Windows.Forms {
 			get { return list.Count; }
 		}
 
-		public bool IsFixedSize {
+		bool IList.IsFixedSize {
 			get { return list.IsFixedSize; }
 		}
 
-		public bool IsReadOnly {
+		bool IList.IsReadOnly {
 			get { return list.IsReadOnly; }
 		}
 
-		public bool IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
 
@@ -77,21 +82,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public object SyncRoot {
+		object ICollection.SyncRoot {
 			get { return list.SyncRoot; }
 		}
 
-		public event CollectionChangeEventHandler CollectionChange;
+		public event CollectionChangeEventHandler CollectionChanged;
 
-		public virtual int Add () {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual int Add ()
+		{
 			return Add(dataGridView.RowTemplate.Clone() as DataGridViewRow);
 		}
 
-		int IList.Add(object o) {
+		int IList.Add(object o)
+		{
 			return Add(o as DataGridViewRow);
 		}
 
-		public virtual int Add (DataGridViewRow dataGridViewRow) {
+		public virtual int Add (DataGridViewRow dataGridViewRow)
+		{
 			if (dataGridView.DataSource != null) {
 				throw new InvalidOperationException("DataSource of DataGridView is not null.");
 			}
@@ -101,14 +110,16 @@ namespace System.Windows.Forms {
 			dataGridViewRow.SetIndex(list.Count);
 			dataGridViewRow.SetDataGridView(dataGridView);
 			int result = list.Add(dataGridViewRow);
-			OnCollectionChange(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewRow));
+			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent) {
 				DataGridView.OnRowsAdded(new DataGridViewRowsAddedEventArgs(result, 1));
 			}
 			return result;
 		}
 
-		public virtual int Add (int count) {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual int Add (int count)
+		{
 			if (count <= 0) {
 				throw new ArgumentOutOfRangeException("Count is less than or equeal to 0.");
 			}
@@ -128,7 +139,9 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public virtual int Add (params object[] values) {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual int Add (params object[] values)
+		{
 			if (values == null) {
 				throw new ArgumentNullException("values is null.");
 			}
@@ -141,7 +154,8 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public virtual int AddCopies (int indexSource, int count) {
+		public virtual int AddCopies (int indexSource, int count)
+		{
 			raiseEvent = false;
 			int lastIndex = 0;
 			for (int i = 0; i < count; i++) {
@@ -152,11 +166,14 @@ namespace System.Windows.Forms {
 			return lastIndex;
 		}
 
-		public virtual int AddCopy (int indexSource) {
+		public virtual int AddCopy (int indexSource)
+		{
 			return Add((list[indexSource] as DataGridViewRow).Clone() as DataGridViewRow);
 		}
 
-		public virtual void AddRange (params DataGridViewRow[] dataGridViewRows) {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual void AddRange (params DataGridViewRow[] dataGridViewRows)
+		{
 			raiseEvent = false;
 			int count = 0;
 			int lastIndex = -1;
@@ -168,31 +185,38 @@ namespace System.Windows.Forms {
 			raiseEvent = true;
 		}
 
-		public virtual void Clear () {
+		public virtual void Clear ()
+		{
 			list.Clear();
 		}
 
-		bool IList.Contains (object o) {
+		bool IList.Contains (object o)
+		{
 			return Contains(o as DataGridViewRow);
 		}
 
-		public virtual bool Contains (DataGridViewRow dataGridViewRow) {
+		public virtual bool Contains (DataGridViewRow dataGridViewRow)
+		{
 			return list.Contains(dataGridViewRow);
 		}
 
-		public void CopyTo (Array array, int index) {
+		void ICollection.CopyTo (Array array, int index)
+		{
 			list.CopyTo(array, index);
 		}
 
-		public void CopyTo (DataGridViewRow[] array, int index) {
+		public void CopyTo (DataGridViewRow[] array, int index)
+		{
 			list.CopyTo(array, index);
 		}
 
-		public IEnumerator GetEnumerator () {
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
 			return list.GetEnumerator();
 		}
 
-		public int GetFirstRow (DataGridViewElementStates includeFilter) {
+		public int GetFirstRow (DataGridViewElementStates includeFilter)
+		{
 			for (int i = 0; i < list.Count; i++) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if ((row.State & includeFilter) != 0) {
@@ -202,7 +226,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetFirstRow (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public int GetFirstRow (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			for (int i = 0; i < list.Count; i++) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if (((row.State & includeFilter) != 0) && ((row.State & excludeFilter) == 0)) {
@@ -212,7 +237,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetLastRow (DataGridViewElementStates includeFilter) {
+		public int GetLastRow (DataGridViewElementStates includeFilter)
+		{
 			for (int i = list.Count - 1; i >= 0; i--) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if ((row.State & includeFilter) != 0) {
@@ -222,7 +248,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetNextRow (int indexStart, DataGridViewElementStates includeFilter) {
+		public int GetNextRow (int indexStart, DataGridViewElementStates includeFilter)
+		{
 			for (int i = indexStart + 1; i < list.Count; i++) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if ((row.State & includeFilter) != 0) {
@@ -232,7 +259,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetNextRow (int indexStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public int GetNextRow (int indexStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			for (int i = indexStart + 1; i < list.Count; i++) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if (((row.State & includeFilter) != 0) && ((row.State & excludeFilter) == 0)) {
@@ -242,7 +270,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetPreviousRow (int indexStart, DataGridViewElementStates includeFilter) {
+		public int GetPreviousRow (int indexStart, DataGridViewElementStates includeFilter)
+		{
 			for (int i = indexStart - 1; i >= 0; i--) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if ((row.State & includeFilter) != 0) {
@@ -252,7 +281,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetPreviousRow (int indexStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public int GetPreviousRow (int indexStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			for (int i = indexStart - 1; i >= 0; i--) {
 				DataGridViewRow row = (DataGridViewRow) list[i];
 				if (((row.State & includeFilter) != 0) && ((row.State & excludeFilter) == 0)) {
@@ -262,7 +292,8 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		public int GetRowCount (DataGridViewElementStates includeFilter) {
+		public int GetRowCount (DataGridViewElementStates includeFilter)
+		{
 			int result = 0;
 			foreach (DataGridViewRow row in list) {
 				if ((row.State & includeFilter) != 0) {
@@ -272,7 +303,8 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public int GetRowsHeight (DataGridViewElementStates includeFilter) {
+		public int GetRowsHeight (DataGridViewElementStates includeFilter)
+		{
 			int result = 0;
 			foreach (DataGridViewRow row in list) {
 				if ((row.State & includeFilter) != 0) {
@@ -282,33 +314,39 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public virtual DataGridViewElementStates GetRowState (int rowIndex) {
+		public virtual DataGridViewElementStates GetRowState (int rowIndex)
+		{
 			return (list[rowIndex] as DataGridViewRow).State;
 		}
 
-		int IList.IndexOf (object o) {
+		int IList.IndexOf (object o)
+		{
 			return IndexOf(o as DataGridViewRow);
 		}
 
-		public int IndexOf (DataGridViewRow dataGridViewRow) {
+		public int IndexOf (DataGridViewRow dataGridViewRow)
+		{
 			return list.IndexOf(dataGridViewRow);
 		}
 
-		void IList.Insert (int rowIndex, object o) {
+		void IList.Insert (int rowIndex, object o)
+		{
 			Insert(rowIndex, o as DataGridViewRow);
 		}
 
-		public virtual void Insert (int rowIndex, DataGridViewRow dataGridViewRow) {
+		public virtual void Insert (int rowIndex, DataGridViewRow dataGridViewRow)
+		{
 			dataGridViewRow.SetIndex(rowIndex);
 			dataGridViewRow.SetDataGridView(dataGridView);
 			list[rowIndex] = dataGridViewRow;
-			OnCollectionChange(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewRow));
+			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent) {
 				DataGridView.OnRowsAdded(new DataGridViewRowsAddedEventArgs(rowIndex, 1));
 			}
 		}
 
-		public virtual void Insert (int rowIndex, int count) {
+		public virtual void Insert (int rowIndex, int count)
+		{
 			int index = rowIndex;
 			raiseEvent = false;
 			for (int i = 0; i < count; i++) {
@@ -318,7 +356,8 @@ namespace System.Windows.Forms {
 			raiseEvent = true;
 		}
 
-		public virtual void Insert (int rowIndex, params object[] values) {
+		public virtual void Insert (int rowIndex, params object[] values)
+		{
 			if (values == null) {
 				throw new ArgumentNullException("Values is null.");
 			}
@@ -330,7 +369,8 @@ namespace System.Windows.Forms {
 			Insert(rowIndex, row);
 		}
 
-		public virtual void InsertCopies (int indexSource, int indexDestination, int count) {
+		public virtual void InsertCopies (int indexSource, int indexDestination, int count)
+		{
 			raiseEvent = false;
 			int index = indexDestination;
 			for (int i = 0; i < count; i++) {
@@ -340,11 +380,13 @@ namespace System.Windows.Forms {
 			raiseEvent = true;
 		}
 
-		public virtual void InsertCopy (int indexSource, int indexDestination) {
+		public virtual void InsertCopy (int indexSource, int indexDestination)
+		{
 			Insert(indexDestination, (list[indexSource] as DataGridViewRow).Clone());
 		}
 
-		public virtual void InsertRange (int rowIndex, params DataGridViewRow[] dataGridViewRows) {
+		public virtual void InsertRange (int rowIndex, params DataGridViewRow[] dataGridViewRows)
+		{
 			raiseEvent = false;
 			int index = rowIndex;
 			int count = 0;
@@ -356,24 +398,28 @@ namespace System.Windows.Forms {
 			raiseEvent = true;
 		}
 
-		void IList.Remove (object o) {
+		void IList.Remove (object o)
+		{
 			Remove(o as DataGridViewRow);
 		}
 
-		public virtual void Remove (DataGridViewRow dataGridViewRow) {
+		public virtual void Remove (DataGridViewRow dataGridViewRow)
+		{
 			list.Remove(dataGridViewRow);
-			OnCollectionChange(new CollectionChangeEventArgs(CollectionChangeAction.Remove, dataGridViewRow));
+			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Remove, dataGridViewRow));
 			DataGridView.OnRowsRemoved(new DataGridViewRowsRemovedEventArgs(dataGridViewRow.Index, 1));
 		}
 
-		public virtual void RemoveAt (int index) {
+		public virtual void RemoveAt (int index)
+		{
 			DataGridViewRow row = this[index];
 			list.RemoveAt(index);
-			OnCollectionChange(new CollectionChangeEventArgs(CollectionChangeAction.Remove, row));
+			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Remove, row));
 			DataGridView.OnRowsRemoved(new DataGridViewRowsRemovedEventArgs(index, 1));
 		}
 
-		public DataGridViewRow SharedRow (int rowIndex) {
+		public DataGridViewRow SharedRow (int rowIndex)
+		{
 			return (DataGridViewRow) list[rowIndex];
 		}
 
@@ -385,15 +431,17 @@ namespace System.Windows.Forms {
 			get { return list; }
 		}
 
-		protected virtual void OnCollectionChange (CollectionChangeEventArgs e) {
-			if (CollectionChange != null) {
-				CollectionChange(this, e);
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs e)
+		{
+			if (CollectionChanged != null) {
+				CollectionChanged (this, e);
 			}
 		}
 
 		/************************/
 
-		internal void InternalAdd (DataGridViewRow dataGridViewRow) {
+		internal void InternalAdd (DataGridViewRow dataGridViewRow)
+		{
 			dataGridViewRow.SetIndex(list.Count);
 			dataGridViewRow.SetDataGridView(dataGridView);
 			list.Add(dataGridViewRow);

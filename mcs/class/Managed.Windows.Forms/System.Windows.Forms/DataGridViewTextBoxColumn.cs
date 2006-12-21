@@ -26,6 +26,9 @@
 
 #if NET_2_0
 
+using System.Drawing;
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	public class DataGridViewTextBoxColumn : DataGridViewColumn {
@@ -33,17 +36,21 @@ namespace System.Windows.Forms {
 		private int maxInputLength;
 		private DataGridViewColumnSortMode sortMode;
 
-		public DataGridViewTextBoxColumn () {
+		public DataGridViewTextBoxColumn ()
+		{
 			base.CellTemplate = new DataGridViewTextBoxCell();
 			maxInputLength = 32767;
 			sortMode = DataGridViewColumnSortMode.Automatic;
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
 			set { base.CellTemplate = value as DataGridViewTextBoxCell; }
 		}
 
+		[DefaultValue (32767)]
 		public int MaxInputLength {
 			get { return maxInputLength; }
 			set {
@@ -54,6 +61,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (DataGridViewColumnSortMode.Automatic)]
 		public new DataGridViewColumnSortMode SortMode {
 			get { return sortMode; }
 			set {
@@ -64,7 +72,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return GetType().Name;
 		}
 

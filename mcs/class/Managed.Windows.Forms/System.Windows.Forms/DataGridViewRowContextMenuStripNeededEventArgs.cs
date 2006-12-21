@@ -31,18 +31,16 @@ namespace System.Windows.Forms {
 	public class DataGridViewRowContextMenuStripNeededEventArgs : EventArgs {
 
 		private int rowIndex;
-		//private ContextMenuStrip contextMenuStrip;
+		private ContextMenuStrip contextMenuStrip;
 
 		public DataGridViewRowContextMenuStripNeededEventArgs (int rowIndex) {
 			this.rowIndex = rowIndex;
 		}
 
-		/*
 		public ContextMenuStrip ContextMenuStrip {
 			get { return contextMenuStrip; }
 			set { contextMenuStrip = value; }
 		}
-		*/
 
 		public int RowIndex {
 			get { return rowIndex; }

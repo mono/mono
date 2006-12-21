@@ -484,6 +484,7 @@
     <Compile Include="System.Windows.Forms\ICommandExecutor.cs" />
     <Compile Include="System.Windows.Forms\IComponentEditorPageSite.cs" />
     <Compile Include="System.Windows.Forms\IContainerControl.cs" />
+    <Compile Include="System.Windows.Forms\ICurrencyManagerProvider.cs" />
     <Compile Include="System.Windows.Forms\IDataGridColumnStyleEditingNotificationService.cs" />
     <Compile Include="System.Windows.Forms\IDataGridEditingService.cs" />
     <Compile Include="System.Windows.Forms\IDataGridViewEditingCell.cs" />

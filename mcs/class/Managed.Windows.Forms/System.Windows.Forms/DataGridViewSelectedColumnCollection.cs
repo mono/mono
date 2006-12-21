@@ -27,12 +27,18 @@
 #if NET_2_0
 
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[ListBindable (false)]
 	public class DataGridViewSelectedColumnCollection : BaseCollection, IList, ICollection, IEnumerable {
 
-		public bool IsFixedSize {
+		internal DataGridViewSelectedColumnCollection ()
+		{
+		}
+
+		bool IList.IsFixedSize {
 			get { return base.List.IsFixedSize; }
 		}
 
@@ -45,43 +51,55 @@ namespace System.Windows.Forms {
 			get { return (DataGridViewColumn) base.List[index]; }
 		}
 
-		public int Add (object o) {
+		int IList.Add (object o)
+		{
 			throw new NotSupportedException("Can't add elements to this collection.");
 		}
 		
-		public void Clear () {
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Clear ()
+		{
 			throw new NotSupportedException("This collection cannot be cleared.");
 		}
 
-		public bool Contains (object o) {
+		bool IList.Contains (object o)
+		{
 			return Contains(o as DataGridViewColumn);
 		}
 
-		public bool Contains (DataGridViewColumn dataGridViewColumn) {
+		public bool Contains (DataGridViewColumn dataGridViewColumn)
+		{
 			return base.List.Contains(dataGridViewColumn);
 		}
 
-		public void CopyTo (DataGridViewColumn[] array, int index) {
+		public void CopyTo (DataGridViewColumn[] array, int index)
+		{
 			base.List.CopyTo(array, index);
 		}
 
-		public int IndexOf (object o) {
+		int IList.IndexOf (object o)
+		{
 			return base.List.IndexOf(o);
 		}
 
-		public void Insert (int index, object o) {
+		void IList.Insert (int index, object o)
+		{
 			Insert(index, o as DataGridViewColumn);
 		}
 
-		public void Insert (int index, DataGridViewColumn dataGridViewColumn) {
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Insert (int index, DataGridViewColumn dataGridViewColumn)
+		{
 			throw new NotSupportedException("Insert is not allowed.");
 		}
 
-		public void Remove (object o) {
+		void IList.Remove (object o)
+		{
 			throw new NotSupportedException("Can't remove elements of this collection.");
 		}
 
-		public void RemoveAt (int index) {
+		void IList.RemoveAt (int index)
+		{
 			throw new NotSupportedException("Can't remove elements of this collection.");
 		}
 

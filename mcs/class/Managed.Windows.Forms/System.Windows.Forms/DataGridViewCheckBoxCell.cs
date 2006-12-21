@@ -75,11 +75,13 @@ namespace System.Windows.Forms {
 			get { return null; }
 		}
 
+		[DefaultValue (null)]
 		public object FalseValue {
 			get { return falseValue; }
 			set { falseValue = value; }
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set {
@@ -101,16 +103,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (null)]
 		public object IndeterminateValue {
 			get { return indeterminateValue; }
 			set { indeterminateValue = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool ThreeState {
 			get { return threeState; }
 			set { threeState = value; }
 		}
 
+		[DefaultValue (null)]
 		public object TrueValue {
 			get { return trueValue; }
 			set { trueValue = value; }
@@ -181,8 +186,8 @@ namespace System.Windows.Forms {
 			return this.IsInEditMode;
 		}
 
-		//protected override bool ContentDoubleClickUnsaresRow (DataGridViewCellEventArgs e) {
-		protected bool ContentDoubleClickUnsaresRow (DataGridViewCellEventArgs e) {
+		//protected override bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
 			return this.IsInEditMode;
 		}
 
@@ -198,8 +203,8 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		//protected override object GetFormttedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
-		protected object GetFormttedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
+		//protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
+		protected object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
 			if (DataGridView == null) {
 				return null;
 			}
@@ -207,10 +212,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
-		}
-
-		protected override object GetValue (int rowIndex) {
 			throw new NotImplementedException();
 		}
 
@@ -268,10 +269,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
 			// if activated by depresing the left mouse button, this method updates the cell's user interface
-			throw new NotImplementedException();
-		}
-
-		protected override void OnMouseEnter (int rowIndex) {
 			throw new NotImplementedException();
 		}
 

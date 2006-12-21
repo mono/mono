@@ -341,6 +341,7 @@ System.Windows.Forms/IBindableComponent.cs
 System.Windows.Forms/ICommandExecutor.cs
 System.Windows.Forms/IComponentEditorPageSite.cs
 System.Windows.Forms/IContainerControl.cs
+System.Windows.Forms/ICurrencyManagerProvider.cs
 System.Windows.Forms/IDataGridColumnStyleEditingNotificationService.cs
 System.Windows.Forms/IDataGridEditingService.cs
 System.Windows.Forms/IDataGridViewEditingCell.cs

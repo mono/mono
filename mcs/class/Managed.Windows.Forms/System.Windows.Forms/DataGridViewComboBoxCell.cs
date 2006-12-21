@@ -58,6 +58,7 @@ namespace System.Windows.Forms {
 			sorted = false;
 		}
 
+		[DefaultValue (true)]
 		public virtual bool AutoComplete {
 			get { return autoComplete; }
 			set { autoComplete = value; }
@@ -74,21 +75,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue ("")]
 		public virtual string DisplayMember {
 			get { return displayMember; }
 			set { displayMember = value; }
 		}
 
+		[DefaultValue (DataGridViewComboBoxDisplayStyle.DropDownButton)]
 		public DataGridViewComboBoxDisplayStyle DisplayStyle {
 			get { return displayStyle; }
 			set { displayStyle = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool DisplayStyleForCurrentCellOnly {
 			get { return displayStyleForCurrentCellOnly; }
 			set { displayStyleForCurrentCellOnly = value; }
 		}
 
+		[DefaultValue (1)]
 		public virtual int DropDownWidth {
 			get { return dropDownWidth; }
 			set {
@@ -103,6 +108,7 @@ namespace System.Windows.Forms {
 			get { return typeof(DataGridViewComboBoxEditingControl); }
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set {
@@ -117,10 +123,12 @@ namespace System.Windows.Forms {
 			get { return typeof(string); }
 		}
 
+		[Browsable (false)]
 		public virtual ObjectCollection Items {
 			get { return items; }
 		}
 
+		[DefaultValue (8)]
 		public virtual int MaxDropDownItems {
 			get { return maxDropDownItems; }
 			set {
@@ -131,6 +139,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public virtual bool Sorted {
 			get { return sorted; }
 			set {
@@ -143,6 +152,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue ("")]
 		public virtual string ValueMember {
 			get { return valueMember; }
 			set { valueMember = value; }
@@ -234,6 +244,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable {
 
 			private ArrayList list;
@@ -245,23 +256,23 @@ namespace System.Windows.Forms {
 				list = new ArrayList();
 			}
 
-			public virtual int Count {
+			public int Count {
 				get { return list.Count; }
 			}
 
-			public virtual bool IsFixedSize {
+			bool IList.IsFixedSize {
 				get { return list.IsFixedSize; }
 			}
 
-			public virtual bool IsReadOnly {
+			public bool IsReadOnly {
 				get { return list.IsReadOnly; }
 			}
 
-			public virtual bool IsSynchronized {
+			bool ICollection.IsSynchronized {
 				get { return list.IsSynchronized; }
 			}
 
-			public virtual object SyncRoot {
+			object ICollection.SyncRoot {
 				get { return list.SyncRoot; }
 			}
 
@@ -282,41 +293,39 @@ namespace System.Windows.Forms {
 				list.AddRange(items);
 			}
 
-			//public sealed void Clear () {
 			public void Clear () {
 				list.Clear();
 			}
 
-			//public sealed bool Contains (object value) {
 			public bool Contains (object value) {
 				return list.Contains(value);
 			}
 
-			public void CopyTo (Array destination, int arrayIndex) {
+			void ICollection.CopyTo (Array destination, int arrayIndex)
+			{
+				CopyTo ((object[])destination, arrayIndex);
+			}
+
+			public void CopyTo (object[] destination, int arrayIndex) {
 				list.CopyTo(destination, arrayIndex);
 			}
 
-			//public sealed IEnumerator GetEnumerator () {
 			public IEnumerator GetEnumerator () {
 				return list.GetEnumerator();
 			}
 
-			//public sealed int IndexOf (object value) {
 			public int IndexOf (object value) {
 				return list.IndexOf(value);
 			}
 
-			//public sealed void Insert (int index, object item) {
 			public void Insert (int index, object item) {
 				list.Insert(index, item);
 			}
 
-			//public sealed void Remove (object value) {
 			public void Remove (object value) {
 				list.Remove(value);
 			}
 
-			//public sealed void RemoveAt (int index) {
 			public void RemoveAt (int index) {
 				list.RemoveAt(index);
 			}

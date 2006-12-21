@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
@@ -38,6 +39,7 @@ namespace System.Windows.Forms {
 		public DataGridViewColumnHeaderCell () {
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SortOrder SortGlyphDirection {
 			get { return sortGlyphDirection; }
 			set { sortGlyphDirection = value; }
@@ -47,7 +49,6 @@ namespace System.Windows.Forms {
 			return MemberwiseClone();
 		}
 
-		/*
 		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex) {
 			if (rowIndex != -1) {
 				throw new ArgumentOutOfRangeException("RowIndex is not -1");
@@ -57,7 +58,6 @@ namespace System.Windows.Forms {
 			}
 			return base.GetInheritedContextMenuStrip(rowIndex); //////////////////////////////
 		}
-		*/
 
 		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors) {
 			throw new NotImplementedException();

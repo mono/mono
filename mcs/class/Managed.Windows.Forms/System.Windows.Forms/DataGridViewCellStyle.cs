@@ -31,6 +31,9 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[Editor ("System.Windows.Forms.Design.DataGridViewCellStyleEditor, " + Consts.AssemblySystem_Design,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+	[TypeConverter (typeof (DataGridViewCellStyleConverter))]
 	public class DataGridViewCellStyle : ICloneable {
 
 		private DataGridViewContentAlignment alignment;
@@ -47,7 +50,8 @@ namespace System.Windows.Forms {
 		private object tag;
 		private DataGridViewTriState wrapMode;
 
-		public DataGridViewCellStyle () {
+		public DataGridViewCellStyle ()
+		{
 			alignment = DataGridViewContentAlignment.NotSet;
 			backColor = Color.Empty;
 			font = null;
@@ -62,10 +66,12 @@ namespace System.Windows.Forms {
 			wrapMode = DataGridViewTriState.NotSet;
 		}
 
-		public DataGridViewCellStyle (DataGridViewCellStyle dataGridViewCellStyle) {
+		public DataGridViewCellStyle (DataGridViewCellStyle dataGridViewCellStyle)
+		{
 			ApplyStyle(dataGridViewCellStyle);
 		}
 
+		[DefaultValue (DataGridViewContentAlignment.NotSet)]
 		public DataGridViewContentAlignment Alignment {
 			get { return alignment; }
 			set {
@@ -89,6 +95,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object DataSourceNullValue {
 			get { return dataSourceNullValue; }
 			set {
@@ -119,6 +128,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.FormatStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public string Format {
 			get { return format; }
 			set {
@@ -129,6 +142,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IFormatProvider FormatProvider {
 			get { return formatProvider; }
 			set {
@@ -139,14 +154,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool IsDataSourceNullValueDefault {
 			get { return dataSourceNullValue != null; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool IsFormatProviderDefault {
-			get { return formatProvider ==  System.Globalization.CultureInfo.CurrentUICulture; }
+			get { return formatProvider == System.Globalization.CultureInfo.CurrentUICulture; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool IsNullValueDefault {
 			get {
 				if (nullValue is string) {
@@ -156,6 +177,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter (typeof (StringConverter))]
 		public object NullValue {
 			get { return nullValue; }
 			set {
@@ -199,6 +222,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object Tag {
 			get { return tag; }
 			set {
@@ -209,6 +234,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (DataGridViewTriState.NotSet)]
 		public DataGridViewTriState WrapMode {
 			get { return wrapMode; }
 			set {
@@ -222,7 +248,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public virtual void ApplyStyle (DataGridViewCellStyle dataGridViewCellStyle) {
+		public virtual void ApplyStyle (DataGridViewCellStyle dataGridViewCellStyle)
+		{
 			this.alignment = dataGridViewCellStyle.alignment;
 			this.backColor = dataGridViewCellStyle.backColor;
 			this.dataSourceNullValue = dataGridViewCellStyle.dataSourceNullValue;
@@ -238,11 +265,18 @@ namespace System.Windows.Forms {
 			this.wrapMode = dataGridViewCellStyle.wrapMode;
 		}
 
-		public virtual object Clone () {
+		object ICloneable.Clone ()
+		{
+			return Clone ();
+		}
+
+		public virtual DataGridViewCellStyle Clone ()
+		{
 			return new DataGridViewCellStyle(this);
 		}
 
-		public override bool Equals (object o) {
+		public override bool Equals (object o)
+		{
 			if (o is DataGridViewCellStyle) {
 				DataGridViewCellStyle o_aux = (DataGridViewCellStyle) o;
 				return this.alignment == o_aux.alignment &&
@@ -262,18 +296,21 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public override int GetHashCode () {
+		public override int GetHashCode ()
+		{
 			return base.GetHashCode();
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			/////////////////////////////////////// COMPROBAR EN Windows ////////////////////////////////
 			return "";
 		}
 
 		internal event EventHandler StyleChanged;
 
-		internal void OnStyleChanged () {
+		internal void OnStyleChanged ()
+		{
 			if (StyleChanged != null) {
 				StyleChanged(this, EventArgs.Empty);
 			}

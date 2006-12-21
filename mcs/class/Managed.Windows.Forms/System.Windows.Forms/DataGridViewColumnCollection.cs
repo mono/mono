@@ -31,6 +31,7 @@ using System.Collections;
 
 namespace System.Windows.Forms {
 
+	[ListBindable (false)]
 	public class DataGridViewColumnCollection : BaseCollection, IList, ICollection, IEnumerable {
 
 		private DataGridView dataGridView;
@@ -39,7 +40,7 @@ namespace System.Windows.Forms {
 			this.dataGridView = dataGridView;
 		}
 
-		public bool IsFixedSize {
+		bool IList.IsFixedSize {
 			get { return base.List.IsFixedSize; }
 		}
 
@@ -77,6 +78,7 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual int Add (string columnName, string headerText) {
 			DataGridViewColumn col = new DataGridViewColumn();
 			col.Name = columnName;

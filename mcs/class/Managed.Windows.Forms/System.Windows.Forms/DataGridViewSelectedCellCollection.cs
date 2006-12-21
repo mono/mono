@@ -28,15 +28,18 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[ListBindable (false)]
 	public class DataGridViewSelectedCellCollection : BaseCollection, IList, ICollection, IEnumerable {
 
-		public DataGridViewSelectedCellCollection () {
+		internal DataGridViewSelectedCellCollection ()
+		{
 		}
 
-		public bool IsFixedSize {
+		bool IList.IsFixedSize {
 			get { return base.List.IsFixedSize; }
 		}
 
@@ -49,23 +52,33 @@ namespace System.Windows.Forms {
 			get { return (DataGridViewCell) base.List[index]; }
 		}
 
-		public int Add (object o) {
+		protected override ArrayList List {
+			get { return base.List; }
+		}
+
+		int IList.Add (object o)
+		{
 			throw new NotSupportedException();
 		}
 
-		public void Clear () {
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Clear ()
+		{
 			throw new NotSupportedException("Cannot clear this base.List");
 		}
 
-		public bool Contains (object o) {
+		bool IList.Contains (object o)
+		{
 			return Contains(o as DataGridViewCell);
 		}
 
-		public bool Contains (DataGridViewCell dataGridViewCell) {
+		public bool Contains (DataGridViewCell dataGridViewCell)
+		{
 			return base.List.Contains(dataGridViewCell);
 		}
 
-		public void CopyTo (DataGridViewCell[] array, int index) {
+		public void CopyTo (DataGridViewCell[] array, int index)
+		{
 			base.List.CopyTo(array, index);
 			/*
 			if (array == null) {
@@ -83,31 +96,39 @@ namespace System.Windows.Forms {
 			*/
 		}
 
-		public int IndexOf (object o) {
+		int IList.IndexOf (object o)
+		{
 			return base.List.IndexOf(o as DataGridViewCell);
 		}
 
-		public void Insert (int index, object o) {
+		void IList.Insert (int index, object o)
+		{
 			Insert(index, o as DataGridViewCell);
 		}
 
-		public void Insert (int index, DataGridViewCell dataGridViewCell) {
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Insert (int index, DataGridViewCell dataGridViewCell)
+		{
 			throw new NotSupportedException("Can't insert to selected cell base.List");
 		}
 
-		public void Remove (object o) {
+		void IList.Remove (object o)
+		{
 			throw new NotSupportedException("Can't remove elements of selected cell base.List.");
 		}
 
-		public void RemoveAt (int index) {
+		void IList.RemoveAt (int index)
+		{
 			throw new NotSupportedException("Can't remove elements of selected cell base.List.");
 		}
 
-		internal void InternalAdd (DataGridViewCell dataGridViewCell) {
+		internal void InternalAdd (DataGridViewCell dataGridViewCell)
+		{
 			base.List.Add(dataGridViewCell);
 		}
 
-		internal void InternalRemove (DataGridViewCell dataGridViewCell) {
+		internal void InternalRemove (DataGridViewCell dataGridViewCell)
+		{
 			base.List.Remove(dataGridViewCell);
 		}
 

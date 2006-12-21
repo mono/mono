@@ -40,52 +40,57 @@ namespace System.Windows.Forms {
 		private Cursor editingPanelCursor;
 		private bool repositionEditingControlOnValueChange;
 
-		public DataGridViewTextBoxEditingControl () {
+		public DataGridViewTextBoxEditingControl ()
+		{
 		}
 
-		public DataGridView EditingControlDataGridView {
+		public virtual DataGridView EditingControlDataGridView {
 			get { return editingControlDataGridView; }
 			set { editingControlDataGridView = value; }
 		}
 
-		public object EditingControlFormattedValue {
+		public virtual object EditingControlFormattedValue {
 			get { return base.Text; }
 			set { base.Text = (string) value; }
 		}
 
-		public int EditingControlRowIndex {
+		public virtual int EditingControlRowIndex {
 			get { return rowIndex; }
 			set { rowIndex = value; }
 		}
 
-		public bool EditingControlValueChanged {
+		public virtual bool EditingControlValueChanged {
 			get { return editingControlValueChanged; }
 			set { editingControlValueChanged = value; }
 		}
 
-		public Cursor EditingPanelCursor {
+		public virtual Cursor EditingPanelCursor {
 			get { return editingPanelCursor; }
 		}
 
-		public bool RepositionEditingControlOnValueChange {
+		public virtual bool RepositionEditingControlOnValueChange {
 			get { return repositionEditingControlOnValueChange; }
 		}
 
-		public void ApplyCellStyleToEditingControl (DataGridViewCellStyle dataGridViewCellStyle) {
+		public virtual void ApplyCellStyleToEditingControl (DataGridViewCellStyle dataGridViewCellStyle)
+		{
 			Font = dataGridViewCellStyle.Font;
 			BackColor = dataGridViewCellStyle.BackColor;
 			ForeColor = dataGridViewCellStyle.ForeColor;
 		}
 
-		public bool EditingControlWantsInputKey (Keys keyData, bool dataGridViewWantsInputKey) {
+		public virtual bool EditingControlWantsInputKey (Keys keyData, bool dataGridViewWantsInputKey)
+		{
 			return true;
 		}
 
-		public object GetEditingControlFormattedValue (DataGridViewDataErrorContexts context) {
+		public virtual object GetEditingControlFormattedValue (DataGridViewDataErrorContexts context)
+		{
 			return EditingControlFormattedValue;
 		}
 
-		public void PrepareEditingControlForEdit (bool selectAll) {
+		public virtual void PrepareEditingControlForEdit (bool selectAll)
+		{
 			Focus();
 			if (selectAll) {
 				SelectAll();
@@ -93,11 +98,13 @@ namespace System.Windows.Forms {
 			editingControlValueChanged = false;
 		}
 
-		protected override void OnMouseWheel (MouseEventArgs e) {
+		protected override void OnMouseWheel (MouseEventArgs e)
+		{
 			base.OnMouseWheel(e);
 		}
 
-		protected override void OnTextChanged (EventArgs e) {
+		protected override void OnTextChanged (EventArgs e)
+		{
 			base.OnTextChanged(e);
 			editingControlValueChanged = true;
 			Console.WriteLine("OnTextChanged: {0};", Text);
@@ -106,7 +113,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override bool ProcessKeyEventArgs (ref Message m) {
+		protected override bool ProcessKeyEventArgs (ref Message m)
+		{
 			return base.ProcessKeyEventArgs(ref m);
 		}
 

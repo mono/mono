@@ -28,6 +28,7 @@
 
 namespace System.Windows.Forms {
 
+	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class DataGridViewColumnDesignTimeVisibleAttribute : Attribute {
 
 		public static readonly DataGridViewColumnDesignTimeVisibleAttribute Default = new DataGridViewColumnDesignTimeVisibleAttribute(true);
@@ -47,7 +48,6 @@ namespace System.Windows.Forms {
 
 		public bool Visible {
 			get { return visible; }
-			set { visible = value; }
 		}
 
 		public override bool Equals (object o) {

@@ -31,11 +31,16 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[Designer ("System.Windows.Forms.Design.DataGridViewColumnDesigner, " + Consts.AssemblySystem_Design,
+		   "System.ComponentModel.Design.IDesigner")]
+	// XXX [TypeConverter (typeof (DataGridViewColumnConverter))]
+	[ToolboxItem ("")]
+	[DesignTimeVisible (false)]
 	public class DataGridViewColumn : DataGridViewBand, IComponent, IDisposable {
 
 		private DataGridViewAutoSizeColumnMode autoSizeMode;
 		private DataGridViewCell cellTemplate;
-		//private ContextMenuStrip contextMenuStrip;
+		private ContextMenuStrip contextMenuStrip;
 		private string dataPropertyName;
 		private int displayIndex;
 		private int dividerWidth;
@@ -69,11 +74,16 @@ namespace System.Windows.Forms {
 			this.cellTemplate = (DataGridViewCell) cellTemplate.Clone();
 		}
 
+		[DefaultValue (DataGridViewAutoSizeColumnMode.NotSet)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public DataGridViewAutoSizeColumnMode AutoSizeMode {
 			get { return autoSizeMode; }
 			set { autoSizeMode = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataGridViewCell CellTemplate {
 			get { return cellTemplate; }
 			set {
@@ -84,6 +94,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Type CellType {
 			get {
 				if (cellTemplate == null) {
@@ -93,7 +105,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/*
+		[DefaultValue (null)]
 		public override ContextMenuStrip ContextMenuStrip {
 			get { return contextMenuStrip; }
 			set {
@@ -105,8 +117,12 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-		*/
 
+		[Browsable (true)]
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.DataGridViewColumnDataPropertyNameEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
+		[TypeConverter ("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
 		public string DataPropertyName {
 			get { return dataPropertyName; }
 			set {
@@ -119,6 +135,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (true)]
 		public override DataGridViewCellStyle DefaultCellStyle {
 			get {
 				return base.DefaultCellStyle;
@@ -133,6 +150,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int DisplayIndex {
 			get {
 				if (displayIndex < 0) {
@@ -153,6 +172,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (0)]
 		public int DividerWidth {
 			get { return dividerWidth; }
 			set {
@@ -165,6 +185,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (100)]
 		public float FillWeight {
 			get { return fillWeight; }
 			set {
@@ -176,6 +197,8 @@ The maximum sum of System.Windows.Forms.DataGridViewColumn.FillWeight values for
 			}
 		}
 
+		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.All)]
 		public override bool Frozen {
 			get { return frozen; }
 			set { frozen = value; }
@@ -183,6 +206,8 @@ The maximum sum of System.Windows.Forms.DataGridViewColumn.FillWeight values for
 		/* When a column is frozen, all the columns to its left (or to its right in right-to-left languages) are frozen as well. The frozen and unfrozen columns form two groups. If column repositioning is enabled by setting the System.Windows.Forms.DataGridView.AllowUserToOrderColumns property to true, the user cannot drag a column from one group to the other.
 Example */
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewColumnHeaderCell HeaderCell {
 			get { return headerCell; }
 			set {
@@ -195,15 +220,20 @@ Example */
 			}
 		}
 
+		[Localizable (true)]
 		public string HeaderText {
 			get { return headerText; }
 			set { headerText = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewAutoSizeColumnMode InheritedAutoSizeMode {
 			get { return inheritedAutoSizeMode; }
 		}
 
+		[Browsable (false)]
 		public override DataGridViewCellStyle InheritedStyle {
 			get {
 				if (DataGridView == null) {
@@ -222,10 +252,15 @@ Example */
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool IsDataBound {
 			get { return isDataBound; }
 		}
 
+		[DefaultValue (5)]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[Localizable (true)]
 		public int MinimumWidth {
 			get { return minimumWidth; }
 			set {
@@ -241,6 +276,7 @@ Example */
 			}
 		}
 
+		[Browsable (false)]
 		public string Name {
 			get { return name; }
 			set {
@@ -264,11 +300,14 @@ Example */
 			set { resizable = value; }
 		}
 
-		public virtual ISite Site {
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public ISite Site {
 			get { return site; }
 			set { site = value; }
 		}
 
+		[DefaultValue (DataGridViewColumnSortMode.NotSortable)]
 		public DataGridViewColumnSortMode SortMode {
 			get { return sortMode; }
 			set {
@@ -282,6 +321,8 @@ Example */
 			}
 		}
 
+		[DefaultValue ("")]
+		[Localizable (true)]
 		public string ToolTipText {
 			get { return toolTipText; }
 			set {
@@ -294,16 +335,23 @@ Example */
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Type ValueType {
 			get { return valueType; }
 			set { valueType = value; }
 		}
 
+		[DefaultValue (true)]
+		[Localizable (true)]
 		public override bool Visible {
 			get { return visible; }
 			set { visible = value; }
 		}
 
+		[Localizable (true)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Width {
 			get { return width; }
 			set {
@@ -320,7 +368,9 @@ Example */
 			}
 		}
 
-		//public sealed event EventHandler Disposed;
+		// XXX should we do something like Component.Events?
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler Disposed;
 
 		public override object Clone () {
@@ -331,15 +381,12 @@ Example */
 			*/
 		}
 
-		//public sealed void Dispose () {
-		//}
-
 		public virtual int GetPreferredWidth (DataGridViewAutoSizeColumnMode autoSizeColumnMode, bool fixedHeight) {
 			switch (autoSizeColumnMode) {
-				case DataGridViewAutoSizeColumnMode.NotSet:
-				case DataGridViewAutoSizeColumnMode.None:
-				case DataGridViewAutoSizeColumnMode.Fill:
-					throw new ArgumentException("AutoSizeColumnMode is invalid");
+			case DataGridViewAutoSizeColumnMode.NotSet:
+			case DataGridViewAutoSizeColumnMode.None:
+			case DataGridViewAutoSizeColumnMode.Fill:
+				throw new ArgumentException("AutoSizeColumnMode is invalid");
 			}
 			if (fixedHeight) {
 				return 0;

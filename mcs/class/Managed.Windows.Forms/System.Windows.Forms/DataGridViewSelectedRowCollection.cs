@@ -27,12 +27,18 @@
 #if NET_2_0
 
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[ListBindable (false)]
 	public class DataGridViewSelectedRowCollection : BaseCollection, IList, ICollection, IEnumerable {
 
-		public bool IsFixedSize {
+		internal DataGridViewSelectedRowCollection ()
+		{
+		}
+
+		bool IList.IsFixedSize {
 			get { return base.List.IsFixedSize; }
 		}
 
@@ -45,43 +51,55 @@ namespace System.Windows.Forms {
 			get { return (DataGridViewRow) base.List[index]; }
 		}
 
-		public int Add (object o) {
+		int IList.Add (object o)
+		{
 			throw new NotSupportedException("Can't add elements to this collection.");
 		}
-		
-		public void Clear () {
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Clear ()
+		{
 			throw new NotSupportedException("This collection cannot be cleared.");
 		}
 
-		public bool Contains (object o) {
+		bool IList.Contains (object o)
+		{
 			return Contains(o as DataGridViewRow);
 		}
 
-		public bool Contains (DataGridViewRow dataGridViewRow) {
+		public bool Contains (DataGridViewRow dataGridViewRow)
+		{
 			return base.List.Contains(dataGridViewRow);
 		}
 
-		public void CopyTo (DataGridViewRow[] array, int index) {
+		public void CopyTo (DataGridViewRow[] array, int index)
+		{
 			base.List.CopyTo(array, index);
 		}
 
-		public int IndexOf (object o) {
+		int IList.IndexOf (object o)
+		{
 			return base.List.IndexOf(o);
 		}
 
-		public void Insert (int index, object o) {
+		void IList.Insert (int index, object o)
+		{
 			Insert(index, o as DataGridViewRow);
 		}
 
-		public void Insert (int index, DataGridViewRow dataGridViewRow) {
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Insert (int index, DataGridViewRow dataGridViewRow)
+		{
 			throw new NotSupportedException("Insert is not allowed.");
 		}
 
-		public void Remove (object o) {
+		void IList.Remove (object o)
+		{
 			throw new NotSupportedException("Can't remove elements of this collection.");
 		}
 
-		public void RemoveAt (int index) {
+		void IList.RemoveAt (int index)
+		{
 			throw new NotSupportedException("Can't remove elements of this collection.");
 		}
 
@@ -89,11 +107,13 @@ namespace System.Windows.Forms {
 			get { return base.List; }
 		}
 
-		internal void InternalAdd (DataGridViewRow dataGridViewRow) {
+		internal void InternalAdd (DataGridViewRow dataGridViewRow)
+		{
 			base.List.Add(dataGridViewRow);
 		}
 
-		internal void InternalRemove (DataGridViewRow dataGridViewRow) {
+		internal void InternalRemove (DataGridViewRow dataGridViewRow)
+		{
 			base.List.Remove(dataGridViewRow);
 		}
 

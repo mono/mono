@@ -1849,6 +1849,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ICurrencyManagerProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\IDataGridColumnStyleEditingNotificationService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

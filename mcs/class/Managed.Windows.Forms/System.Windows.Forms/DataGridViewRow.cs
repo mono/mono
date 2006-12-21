@@ -344,7 +344,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public void SetValues (params object[] values)
+		public bool SetValues (params object[] values)
 		{
 			if (values == null) {
 				throw new ArgumentNullException("vues is null");
@@ -358,6 +358,9 @@ namespace System.Windows.Forms {
 				cell.Value = values[i];
 				cells.Add(cell);
 			}
+			
+			// XXX
+			return true;
 		}
 
 		public override string ToString ()
