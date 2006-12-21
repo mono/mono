@@ -1,3 +1,7 @@
+2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToolboxItem.cs: Implemented some 2.0 stuff.
+
 2006-11-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UITypeEditor.cs: Remove MonoTODO (this always returns false).

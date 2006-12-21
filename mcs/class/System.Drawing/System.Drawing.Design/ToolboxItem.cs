@@ -5,6 +5,7 @@
 //   Alejandro Sánchez Acosta
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Jordi Mas i Hernandez, jordimash@gmail.com
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
@@ -42,86 +43,61 @@ namespace System.Drawing.Design
 	[Serializable]
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	public class ToolboxItem : ISerializable
-	{		
+	[MonoTODO ("Implementation is incomplete.")]
+	public class ToolboxItem : ISerializable {
+
 		private bool locked = false;
-		private ICollection filter = new ToolboxItemFilterAttribute[0];
 		private Hashtable properties = new Hashtable ();
 		
-		public ToolboxItem() {
+		public ToolboxItem ()
+		{
 		}
 
-		public ToolboxItem (Type toolType) {
+		public ToolboxItem (Type toolType)
+		{
 			Initialize (toolType);
 		}
 
 		public AssemblyName AssemblyName {
-			get {
-				return (AssemblyName) properties["AssemblyName"];
-			}
-
-			set {
-				CheckUnlocked ();
-				properties["AssemblyName"] = value;
-			}
+			get { return (AssemblyName) properties["AssemblyName"]; }
+			set { SetValue ("AssemblyName", value); }
 		}
 
 		public Bitmap Bitmap {
-			get {
-				return (Bitmap) properties["Bitmap"];
-			}
-			
-			set {
-				CheckUnlocked ();
-				properties["Bitmap"] = value;
-			}
+			get { return (Bitmap) properties["Bitmap"]; }
+			set { SetValue ("Bitmap", value); }
 		}
 
 		public string DisplayName {
-			get {
-				return (string) properties["DisplayName"];
-			}
-			
-			set {
-				CheckUnlocked ();
-				properties["DisplayName"] = value;
-			}
+			get { return GetValue ("DisplayName"); }
+			set { SetValue ("DisplayName", value); }
 		}
 
 		public ICollection Filter {
 			get {
+				ICollection filter = (ICollection) properties["Filter"];
+				if (filter == null)
+					filter = new ToolboxItemFilterAttribute[0];
 				return filter;
 			}
-			
-			set {
-				CheckUnlocked ();
-				filter = value;
-			}
+			set { SetValue ("Filter", value); }
 		}
 #if NET_2_0
 		public virtual bool Locked {
 #else		
 		protected bool Locked {
 #endif		
-			get {
-				return locked;
-			}
+			get { return locked; }
 		}
 
 		public string TypeName {
-			get {
-				return (string) properties["TypeName"];
-			}
-
-			set {
-				CheckUnlocked ();
-				properties["TypeName"] = value;
-			}
+			get { return GetValue ("TypeName"); }
+			set { SetValue ("TypeName", value); }
 		}
 #if NET_2_0
 		public string Company {
 			get { return (string) properties["Company"]; }
-			set { properties["Company"] = value; }
+			set { SetValue ("Company", value); }
 		}
 
 		public virtual string ComponentType {
@@ -130,17 +106,25 @@ namespace System.Drawing.Design
 
 		public AssemblyName[] DependentAssemblies {
 			get { return (AssemblyName[]) properties["DependentAssemblies"]; }
-			set { properties["DependentAssemblies"] = value; }
+			set {
+				AssemblyName[] names = new AssemblyName [value.Length];
+				for (int i=0; i < names.Length; i++)
+					names [i] = value [i];
+				SetValue ("DependentAssemblies", names);
+			}
 		}
 
 		public string Description {
 			get { return (string) properties["Description"]; }
-			set { properties["Description"] = value; }
+			set { SetValue ("Description", value); }
 		}
 
 		public bool IsTransient {			
-			get { return (bool) properties["IsTransient"]; }
-			set { properties["IsTransient"] = value; }
+			get {
+				object o = properties ["IsTransient"];
+				return (o == null) ? false : (bool) o;
+			}
+			set { SetValue ("IsTransient", value); }
 		}
 
 		public IDictionary Properties {
@@ -171,7 +155,7 @@ namespace System.Drawing.Design
 			return Comp;
 		}
 
-		[MonoTODO ("get error handling logic correct")] 
+		// FIXME - get error handling logic correct
 		protected virtual IComponent[] CreateComponentsCore (IDesignerHost host)
 		{
 			if (host == null)
@@ -206,13 +190,24 @@ namespace System.Drawing.Design
 		[MonoTODO] 
 		public Type GetType (IDesignerHost host)
 		{
+			if (host == null)
+				return null;
       			throw new NotImplementedException ();
 		}
 
-		[MonoTODO] 
-		protected virtual object FilterPropertyValue(string propertyName, object value)
+		protected virtual object FilterPropertyValue (string propertyName, object value)
 		{
-			throw new NotImplementedException ();
+			switch (propertyName) {
+			case "AssemblyName":
+				return (value == null) ? null : (value as ICloneable).Clone ();
+			case "DisplayName":
+			case "TypeName":
+				return (value == null) ? String.Empty : value;
+			case "Filter":
+				return (value == null) ? new ToolboxItemFilterAttribute [0] : value;
+			default:
+				return value;
+			}
 		}
 #endif
 
@@ -220,24 +215,25 @@ namespace System.Drawing.Design
 		{			
 			AssemblyName = (AssemblyName)info.GetValue ("AssemblyName", typeof (AssemblyName));
 			Bitmap = (Bitmap)info.GetValue ("Bitmap", typeof (Bitmap));
-			filter = (ICollection)info.GetValue ("Filter", typeof (ICollection));
+			Filter = (ICollection)info.GetValue ("Filter", typeof (ICollection));
 			DisplayName = info.GetString ("DisplayName");
 			locked = info.GetBoolean ("Locked");
 			TypeName = info.GetString ("TypeName");
 		}
 
+		// FIXME: too harsh??
 		public override bool Equals (object obj)
 		{
-			// FIXME: too harsh??
-			if (!(obj is ToolboxItem))
+			ToolboxItem ti = (obj as ToolboxItem);
+			if (ti == null)
 				return false;
 			if (obj == this)
 				return true;
-			return ((ToolboxItem) obj).AssemblyName.Equals (AssemblyName) &&
-				((ToolboxItem) obj).Locked.Equals (locked) &&
-				((ToolboxItem) obj).TypeName.Equals (TypeName) &&
-				((ToolboxItem) obj).DisplayName.Equals (DisplayName) &&
-				((ToolboxItem) obj).Bitmap.Equals (Bitmap);
+			return (ti.AssemblyName.Equals (AssemblyName) &&
+				ti.Locked.Equals (locked) &&
+				ti.TypeName.Equals (TypeName) &&
+				ti.DisplayName.Equals (DisplayName) &&
+				ti.Bitmap.Equals (Bitmap));
 		}
 		
 		public override int GetHashCode ()
@@ -246,11 +242,13 @@ namespace System.Drawing.Design
 			return string.Concat (TypeName, DisplayName).GetHashCode ();
 		}
 
-		[MonoTODO]
 		protected virtual Type GetType (IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)
 		{
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
 			if (host == null)
-				throw new ArgumentNullException("host");
+				return null;
 
 			//get ITypeResolutionService from host, as we have no other IServiceProvider here
 			ITypeResolutionService typeRes = host.GetService(typeof(ITypeResolutionService)) as ITypeResolutionService;
@@ -264,9 +262,13 @@ namespace System.Drawing.Design
 			return typeRes.GetType(typeName, true);
 		}
 
-		[MonoTODO ("Should we be returning empty bitmap, or null?")]
+		// FIXME - Should we be returning empty bitmap, or null?
 		public virtual void Initialize (Type type) 
 		{
+			CheckUnlocked ();
+			if (type == null)
+				return;
+
 			AssemblyName = type.Assembly.GetName();
 			DisplayName = type.Name;
 			TypeName = type.FullName;
@@ -291,7 +293,7 @@ namespace System.Drawing.Design
 					Bitmap = new Bitmap (image);
 			}
 
-			filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
+			Filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
 		}
 			
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -324,7 +326,7 @@ namespace System.Drawing.Design
 		{
 			info.AddValue ("AssemblyName", AssemblyName);
 			info.AddValue ("Bitmap", Bitmap);
-			info.AddValue ("Filter", filter);
+			info.AddValue ("Filter", Filter);
 			info.AddValue ("DisplayName", DisplayName);
 			info.AddValue ("Locked", locked);
 			info.AddValue ("TypeName", TypeName);
@@ -338,14 +340,67 @@ namespace System.Drawing.Design
 #if NET_2_0
 		protected void ValidatePropertyType (string propertyName, object value, Type expectedType, bool allowNull)
 		{
-			throw new NotImplementedException ();
+			if (!allowNull && (value == null))
+				throw new ArgumentNullException ("value");
+
+			if ((value != null) && !expectedType.Equals (value.GetType ())) {
+				string msg = Locale.GetText ("Type mismatch between value ({0}) and expected type ({1}).",
+					value.GetType (), expectedType);
+				throw new ArgumentException (msg, "value");
+			}
 		}
 
 		protected virtual object ValidatePropertyValue (string propertyName, object value)
 		{
-			throw new NotImplementedException ();
-		} 
+			switch (propertyName) {
+			case "AssemblyName":
+				ValidatePropertyType (propertyName, value, typeof (AssemblyName), true);
+				break;
+			case "Bitmap":
+				ValidatePropertyType (propertyName, value, typeof (Bitmap), true);
+				break;
+			case "Company":
+			case "Description":
+			case "DisplayName":
+			case "TypeName":
+				ValidatePropertyType (propertyName, value, typeof (string), true);
+				if (value == null)
+					value = String.Empty;
+				break;
+			case "IsTransient":
+				ValidatePropertyType (propertyName, value, typeof (bool), false);
+				break;
+			case "Filter":
+				ValidatePropertyType (propertyName, value, typeof (ToolboxItemFilterAttribute[]), true);
+				if (value == null)
+					value = new ToolboxItemFilterAttribute [0];
+				break;
+			case "DependentAssemblies":
+				ValidatePropertyType (propertyName, value, typeof (AssemblyName[]), true);
+				break;
+			default:
+				break;
+			}
+			return value;
+		}
+
+		private void SetValue (string propertyName, object value)
+		{
+			CheckUnlocked ();
+			properties [propertyName] = ValidatePropertyValue (propertyName, value);
+		}
+#else
+		private void SetValue (string propertyName, object value)
+		{
+			CheckUnlocked ();
+			properties [propertyName] = value;
+		}
 #endif
+		private string GetValue (string propertyName)
+		{
+			string s = (string) properties [propertyName];
+			return (s == null) ? String.Empty : s;
+		}
 
 		public event ToolboxComponentsCreatedEventHandler ComponentsCreated;
 
