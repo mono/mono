@@ -1,3 +1,8 @@
+2006-12-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyDescriptorTests.cs: Added test for bug #80292. Fixed
+	accessibility of NestedClass, not caugh due to bug #80338.
+
 2006-12-20  Chris Toshok  <toshok@ximian.com>
 
 	* AttributeProviderAttributeTest.cs: new tests.

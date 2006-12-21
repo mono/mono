@@ -21,7 +21,7 @@ namespace MonoTests.System.ComponentModel
 	{
 		class MissingConverterType_test
 		{
-			class NestedClass { }
+			public class NestedClass { }
 
 			[TypeConverter ("missing-type-name")]
 			public NestedClass Prop {
@@ -178,6 +178,20 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		class DisplayName_test
+		{
+#if NET_2_0
+			[DisplayName ("An explicit displayname")]
+#endif
+			public bool Explicit {
+				get { return false; }
+			}
+
+			public bool Implicit {
+				get { return false; }
+			}
+		}
+
 		[Test]
 		public void MissingTypeConverter ()
 		{
@@ -308,6 +322,20 @@ namespace MonoTests.System.ComponentModel
 		{
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (typeof (ConflictingReadOnly_test));
 			Assert.IsTrue (col["Prop"].IsReadOnly, "1");
+		}
+
+		[Test] // bug #80292
+		public void DisplayNameTest ()
+		{
+			PropertyDescriptor p1 = TypeDescriptor.GetProperties (typeof (DisplayName_test)) ["Explicit"];
+			PropertyDescriptor p2 = TypeDescriptor.GetProperties (typeof (DisplayName_test)) ["Implicit"];
+
+#if NET_2_0
+			Assert.AreEqual ("An explicit displayname", p1.DisplayName, "#1");
+#else
+			Assert.AreEqual ("Explicit", p1.DisplayName, "#1");
+#endif
+			Assert.AreEqual ("Implicit", p2.DisplayName, "#2");
 		}
 	}
 }

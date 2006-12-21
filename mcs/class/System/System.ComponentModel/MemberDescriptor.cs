@@ -159,7 +159,13 @@ namespace System.ComponentModel
         {
             get
             {
-                return name;
+#if NET_2_0
+				foreach (Attribute attr in AttributeArray) {
+					if (attr is DisplayNameAttribute)
+						return ((DisplayNameAttribute) attr).DisplayName;
+				}
+#endif
+				return name;
             }
         }
 
