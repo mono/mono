@@ -1,4 +1,10 @@
+2006-12-21  Jonathan Chambers  <joncham@gmail.com>
 
+	* marshal.c (emit_marshal): Call emit_marshal_variant and
+	emit_marshal_com_interface when applicable.
+	(emit_marshal_variant, emit_marshal_com_interface): Add
+	methods for this case and remove if's from emit_marshal_object.
+	
 Wed Dec 20 11:03:56 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* filewatcher.c: updated to use the mono-dl API instead of gmodule.
