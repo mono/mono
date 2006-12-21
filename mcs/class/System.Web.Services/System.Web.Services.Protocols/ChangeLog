@@ -1,5 +1,10 @@
 2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapHttpClientProtocol.cs : SOAP 1.2 client should allow text/xml
+	  content type. Now bug #79985 is fixed here.
+
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpSoapWebServiceHandler.cs : read xml with correct
 	  SOAP 1.2 Envelope namespace. To determine the message
 	  version, it must check SOAP version in
