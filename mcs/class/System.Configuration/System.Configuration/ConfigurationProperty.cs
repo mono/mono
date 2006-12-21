@@ -92,9 +92,13 @@ namespace System.Configuration
 					}
 				}
 				else
-				if (!type.IsAssignableFrom(default_value.GetType()))
-					throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
-												   name));
+					if (!type.IsAssignableFrom (default_value.GetType ())) {
+						if (!this.converter.CanConvertFrom (default_value.GetType ()))
+							throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
+													   name));
+
+						default_value = this.converter.ConvertFrom (default_value);
+					}
 			}
 			this.default_value = default_value;
 			this.flags = flags;
