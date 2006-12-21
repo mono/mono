@@ -2507,6 +2507,8 @@ namespace System.Windows.Forms
 				end = selection_start;
 			}
 
+			if (start == -1) start = 0;
+
 			for (int idx = start; idx <= end; idx ++) {
 				Select (idx);
 			}
