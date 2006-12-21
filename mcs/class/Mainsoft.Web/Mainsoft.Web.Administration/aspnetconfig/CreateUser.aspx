@@ -34,7 +34,7 @@
         <tr>
             <td width= "60%" valign="top">
                     <asp:CreateUserWizard ID="CreateUserWizard1" runat="server" BackColor="#F7F6F3"
-                    BorderColor="#E6E2D8" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana"
+                    BorderColor="#E6E2D8" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana" LoginCreatedUser="false"
                     Font-Size="0.8em" Width="353px" ContinueDestinationPageUrl="CreateUser.aspx" FinishDestinationPageUrl="CreateUser.aspx" EmailRegularExpression="\S+@\S+\.\S+" >
                     <WizardSteps>
                         <asp:CreateUserWizardStep ID="CreateUserWizardStep1" runat="server">
