@@ -264,11 +264,19 @@ namespace MonoTests.System.Windows.Forms
 		public void PreferredHeight ()
 		{
 			textBox.Font = new Font ("Arial", 14);
-			Assert.AreEqual (29, textBox.PreferredHeight, "#1");
+			Assert.AreEqual (29, textBox.PreferredHeight, "#A1");
 			textBox.Font = new Font ("Arial", 16);
-			Assert.AreEqual (32, textBox.PreferredHeight, "#2");
+			Assert.AreEqual (32, textBox.PreferredHeight, "#A2");
 			textBox.Font = new Font ("Arial", 17);
-			Assert.AreEqual (34, textBox.PreferredHeight, "#3");
+			Assert.AreEqual (34, textBox.PreferredHeight, "#A3");
+
+			textBox.BorderStyle = BorderStyle.None;
+
+			Assert.AreEqual (27, textBox.PreferredHeight, "#B1");
+			textBox.Font = new Font ("Arial", 14);
+			Assert.AreEqual (22, textBox.PreferredHeight, "#B2");
+			textBox.Font = new Font ("Arial", 16);
+			Assert.AreEqual (25, textBox.PreferredHeight, "#B3");
 		}
 
 		[Test]

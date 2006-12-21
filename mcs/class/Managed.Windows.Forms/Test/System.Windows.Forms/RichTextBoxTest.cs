@@ -178,11 +178,19 @@ namespace MonoTests.System.Windows.Forms
 		{
 			RichTextBox rtb = new RichTextBox ();
 			rtb.Font = new Font ("Arial", 14);
-			Assert.AreEqual (29, rtb.PreferredHeight, "#1");
+			Assert.AreEqual (29, rtb.PreferredHeight, "#A1");
 			rtb.Font = new Font ("Arial", 16);
-			Assert.AreEqual (32, rtb.PreferredHeight, "#2");
+			Assert.AreEqual (32, rtb.PreferredHeight, "#A2");
 			rtb.Font = new Font ("Arial", 17);
-			Assert.AreEqual (34, rtb.PreferredHeight, "#3");
+			Assert.AreEqual (34, rtb.PreferredHeight, "#A3");
+
+			rtb.BorderStyle = BorderStyle.None;
+
+			Assert.AreEqual (27, rtb.PreferredHeight, "#B1");
+			rtb.Font = new Font ("Arial", 14);
+			Assert.AreEqual (22, rtb.PreferredHeight, "#B2");
+			rtb.Font = new Font ("Arial", 16);
+			Assert.AreEqual (25, rtb.PreferredHeight, "#B3");
 		}
 	}
 }
