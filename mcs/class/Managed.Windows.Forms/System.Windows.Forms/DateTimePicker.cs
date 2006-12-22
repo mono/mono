@@ -37,7 +37,7 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-	//[DefaultBindingProperty ("Value")]
+	[DefaultBindingProperty ("Value")]
 	[ComVisible (true)]
 #endif
 	[DefaultEvent("ValueChanged")]
@@ -479,7 +479,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public bool RightToLeftLayout {
+		[DefaultValue (false)]
+		[Localizable (true)]
+		public virtual bool RightToLeftLayout {
 			get {
 				return right_to_left_layout;
 			}
@@ -854,6 +856,7 @@ namespace System.Windows.Forms {
  			 base.OnHandleDestroyed(e);
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftLayoutChanged (EventArgs e) {
 			EventHandler eh = (EventHandler) Events [RightToLeftLayoutChangedEvent];
 			if (eh != null)

@@ -1744,7 +1744,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[DefaultValue (1)]
+		[DefaultValue (ImageLayout.Tile)]
 		[Localizable (true)]
 		public virtual ImageLayout BackgroundImageLayout {
 			get {
@@ -2811,7 +2811,12 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		protected internal virtual bool ShowKeyboardCues {
+#else
 		protected bool ShowKeyboardCues {
+#endif
+
 			get {
 				return true;
 			}
@@ -3865,7 +3870,11 @@ namespace System.Windows.Forms
 			return RtlTranslateAlignment(align);
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#else
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		protected virtual void ScaleCore(float dx, float dy) {
 			Point	location;
 			Size	size;
@@ -5059,6 +5068,9 @@ namespace System.Windows.Forms
 		#endregion	// OnXXX methods
 
 		#region Events
+#if NET_2_0
+		static object AutoSizeChangedEvent = new object ();
+#endif
 		static object BackColorChangedEvent = new object ();
 		static object BackgroundImageChangedEvent = new object ();
 #if NET_2_0
@@ -5068,7 +5080,13 @@ namespace System.Windows.Forms
 		static object CausesValidationChangedEvent = new object ();
 		static object ChangeUICuesEvent = new object ();
 		static object ClickEvent = new object ();
+#if NET_2_0
+		static object ClientSizeChangedEvent = new object ();
+#endif
 		static object ContextMenuChangedEvent = new object ();
+#if NET_2_0
+		static object ContextMenuStripChangedEvent = new object ();
+#endif
 		static object ControlAddedEvent = new object ();
 		static object ControlRemovedEvent = new object ();
 		static object CursorChangedEvent = new object ();
@@ -5097,6 +5115,8 @@ namespace System.Windows.Forms
 		static object LocationChangedEvent = new object ();
 		static object LostFocusEvent = new object ();
 #if NET_2_0
+		static object MarginChangedEvent = new object ();
+		static object MouseCaptureChangedEvent = new object ();
 		static object MouseClickEvent = new object ();
 		static object MouseDoubleClickEvent = new object ();
 #endif
@@ -5113,8 +5133,14 @@ namespace System.Windows.Forms
 #endif
 		static object PaintEvent = new object ();
 		static object ParentChangedEvent = new object ();
+#if NET_2_0
+		static object PreviewKeyDownEvent = new object ();
+#endif
 		static object QueryAccessibilityHelpEvent = new object ();
 		static object QueryContinueDragEvent = new object ();
+#if NET_2_0
+		static object RegionChangedEvent = new object ();
+#endif
 		static object ResizeEvent = new object ();
 		static object RightToLeftChangedEvent = new object ();
 		static object SizeChangedEvent = new object ();
@@ -5127,6 +5153,12 @@ namespace System.Windows.Forms
 		static object ValidatingEvent = new object ();
 		static object VisibleChangedEvent = new object ();
 
+#if NET_2_0
+		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value);}
+			remove {Events.RemoveHandler (AutoSizeChangedEvent, value);}
+		}
+#endif
 		public event EventHandler BackColorChanged {
 			add { Events.AddHandler (BackColorChangedEvent, value); }
 			remove { Events.RemoveHandler (BackColorChangedEvent, value); }
@@ -5163,6 +5195,14 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
+		
+#if NET_2_0
+		public event EventHandler ClientSizeChanged {
+			add {Events.AddHandler (ClientSizeChangedEvent, value);}
+			remove {Events.RemoveHandler (ClientSizeChangedEvent, value);}
+		}
+#endif
+
 #if NET_2_0
 		[Browsable (false)]
 #endif
@@ -5170,6 +5210,14 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ContextMenuChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuChangedEvent, value); }
 		}
+
+#if NET_2_0
+		public event EventHandler ContextMenuStripChanged {
+			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value);}
+		}
+#endif
+
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 #if NET_2_0
@@ -5330,6 +5378,16 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		public event EventHandler MarginChanged {
+			add { Events.AddHandler (MarginChangedEvent, value); }
+			remove {Events.RemoveHandler (MarginChangedEvent, value); }
+		}
+		
+		public event EventHandler MouseCaptureChanged {
+			add { Events.AddHandler (MouseCaptureChangedEvent, value); }
+			remove { Events.RemoveHandler (MouseCaptureChangedEvent, value); }
+		}
+		
 		public event MouseEventHandler MouseClick
 		{
 			add { Events.AddHandler (MouseClickEvent, value); }
@@ -5399,6 +5457,13 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ParentChangedEvent, value); }
 		}
 
+#if NET_2_0
+		public event EventHandler PreviewKeyDown {
+			add { Events.AddHandler (PreviewKeyDownEvent, value); }
+			remove { Events.RemoveHandler (PreviewKeyDownEvent, value); }
+		}
+#endif
+
 		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
 			add { Events.AddHandler (QueryAccessibilityHelpEvent, value); }
 			remove { Events.RemoveHandler (QueryAccessibilityHelpEvent, value); }
@@ -5408,6 +5473,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (QueryContinueDragEvent, value); }
 			remove { Events.RemoveHandler (QueryContinueDragEvent, value); }
 		}
+
+#if NET_2_0
+		public event EventHandler RegionChanged {
+			add { Events.AddHandler (RegionChangedEvent, value); }
+			remove { Events.RemoveHandler (RegionChangedEvent, value); }
+		}
+#endif
 
 #if NET_2_0	
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

@@ -235,6 +235,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		public override ImageLayout BackgroundImageLayout {
+			get {
+				return base.BackgroundImageLayout;
+			}
+			set {
+				base.BackgroundImageLayout = value;
+			}
+		}
+#endif
+
 		public Form [] MdiChildren {
 			get {
 				if (mdi_child_list == null)

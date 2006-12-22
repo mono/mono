@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 #if NET_2_0
-	//[DefaultBindingProperty("SelectionRange")]
+	[DefaultBindingProperty("SelectionRange")]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
 #endif
