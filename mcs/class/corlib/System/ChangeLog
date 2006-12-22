@@ -1,3 +1,7 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Version.cs: Add missing Major|MinorRevision properties for 2.0.
+
 2006-12-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Type.cs (MakeGenericType): Can only be called on a generic type

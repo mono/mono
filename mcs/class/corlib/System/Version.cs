@@ -5,10 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,15 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System
-{
-	[Serializable]
-	public sealed class Version : ICloneable, IComparable
-#if NET_2_0
-		, IComparable<Version>, IEquatable <Version>
-#endif
-	{
+using System.Runtime.InteropServices;
 
+namespace System {
+
+	[Serializable]
+#if NET_2_0
+	[ComVisible (false)]
+	public sealed class Version : ICloneable, IComparable, IComparable<Version>, IEquatable<Version> {
+#else
+	public sealed class Version : ICloneable, IComparable {
+#endif
 		int _Major, _Minor, _Build, _Revision;
 
 		private const int UNDEFINED = -1;
@@ -152,7 +151,19 @@ namespace System
 				return _Revision;
 			}
 		}
+#if NET_2_0
+		public short MajorRevision {
+			get {
+				return (short)(_Revision >> 16);
+			}
+		}
 
+		public short MinorRevision {
+			get {
+				return (short)_Revision;
+			}
+		}
+#endif
 		public object Clone ()
 		{
 			if (_Build == -1)
