@@ -7,7 +7,7 @@
 //   Atsushi Enomoto (atsushi@ximian.com)
 //
 //   (C) 2001 Marcel Narings
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -623,6 +623,30 @@ namespace System
 		public bool Equals (DateTime value)
 		{
 			return value.ticks == ticks;
+		}
+
+		public long ToBinary ()
+		{
+			switch (kind) {
+			case DateTimeKind.Utc:
+				return Ticks | 0x4000000000000000;
+			case DateTimeKind.Local:
+				return (long) ((ulong)Ticks | 0x8000000000000000);
+			default:
+				return Ticks;
+			}
+		}
+
+		public static DateTime FromBinary (long dateData)
+		{
+			switch ((ulong)dateData >> 62) {
+			case 1:
+				return new DateTime (dateData ^ 0x4000000000000000, DateTimeKind.Utc);
+			case 0:
+				return new DateTime (dateData, DateTimeKind.Unspecified);
+			default:
+				return new DateTime (((dateData << 2) >> 2), DateTimeKind.Local);
+			}
 		}
 
 		public static DateTime SpecifyKind (DateTime value, DateTimeKind kind)

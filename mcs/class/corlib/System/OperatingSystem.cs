@@ -5,10 +5,7 @@
 //   Jim Richardson (develop@wtfo-guru.com)
 //
 // (C) 2001 Moonlight Enterprises, All Rights Reserved
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +27,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System
-{
-	/// <summary>
-	/// Class representing a specific operating system version for a specific platform
-	/// </summary>
+using System.Runtime.InteropServices;
+
+namespace System {
+
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public sealed class OperatingSystem : ICloneable
 	{
@@ -62,6 +61,16 @@ namespace System
 				return _version;
 			}
 		}
+
+#if NET_2_0
+		public string ServicePack {
+			get { return String.Empty; }
+		}
+
+		public string VersionString {
+			get { return ToString (); }
+		}
+#endif
 
 		public object Clone ()
 		{

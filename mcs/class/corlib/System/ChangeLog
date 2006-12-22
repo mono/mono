@@ -1,5 +1,8 @@
-2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* DateTime.cs: Implement missing [To|From]Binary methods for 2.0.
+	* OperatingSystem.cs: Implement missing ServicePack and VersionString
+	properties (2.0).
 	* Version.cs: Add missing Major|MinorRevision properties for 2.0.
 
 2006-12-14  Raja R Harinath  <rharinath@novell.com>
