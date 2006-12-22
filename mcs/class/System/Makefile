@@ -46,6 +46,10 @@ EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file				\
+	Test/System.Security.Cryptography.X509Certificates/pkits/ChangeLog	\
+	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
+	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
+	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
 	$(RESOURCE_FILES)				\
 	$(TEST_RESOURCES)
 

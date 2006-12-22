@@ -1,3 +1,7 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add some extra (PKITS related) files to dist tarball
+
 2006-12-20  Chris Toshok  <toshok@ximian.com>
 
 	* System_test.dll.sources: add AttributeProviderAttributeTest.cs
