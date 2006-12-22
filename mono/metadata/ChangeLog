@@ -1,4 +1,9 @@
 
+Fri Dec 22 20:04:57 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: patch from Rolf Bjarne Kvinge to fix
+	getting a token for an EnumBuilder.
+
 Fri Dec 22 19:49:07 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: be more careful in case resource generation
