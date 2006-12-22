@@ -1,3 +1,11 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* File.cs: Add stubs for Encrypt and Decrypt that throws 
+	NotSupportedException just like non-NTFS file systems would with MS.
+	Remove nested #if NET_2_0.
+	* FileInfo.cs: Add stubs for Encrypt and Decrypt that throws 
+	NotSupportedException just like non-NTFS file systems would with MS.
+
 2006-12-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Directory.cs : non NET_2_0 build fix.

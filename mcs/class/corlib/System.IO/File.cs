@@ -10,10 +10,7 @@
 //
 // Copyright 2002 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -474,7 +471,6 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0
 		public static string [] ReadAllLines (string path)
 		{
 			using (StreamReader reader = File.OpenText (path)) {
@@ -496,7 +492,6 @@ namespace System.IO
 				list.Add (reader.ReadLine ());
 			return list.ToArray ();
 		}
-#endif
 
 		public static string ReadAllText (string path)
 		{
@@ -510,7 +505,6 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0
 		public static void WriteAllBytes (string path, byte [] data)
 		{
 			using (Stream stream = File.Create (path)) {
@@ -537,7 +531,6 @@ namespace System.IO
 			foreach (string line in lines)
 				writer.WriteLine (line);
 		}
-#endif
 
 		public static void WriteAllText (string path, string contents)
 		{
@@ -552,6 +545,26 @@ namespace System.IO
 		}
 
 		private static readonly DateTime _defaultLocalFileTime;
+
+		[MonoLimitation ("File encryption isn't supported (even on NTFS).")]
+		public static void Encrypt (string path)
+		{
+			// MS.NET support this only on NTFS file systems, i.e. it's a file-system (not a framework) feature.
+			// otherwise it throws a NotSupportedException (or a PlatformNotSupportedException on older OS).
+			// we throw the same (instead of a NotImplementedException) because most code should already be
+			// handling this exception to work properly.
+			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
+		}
+
+		[MonoLimitation ("File encryption isn't supported (even on NTFS).")]
+		public static void Decrypt (string path)
+		{
+			// MS.NET support this only on NTFS file systems, i.e. it's a file-system (not a framework) feature.
+			// otherwise it throws a NotSupportedException (or a PlatformNotSupportedException on older OS).
+			// we throw the same (instead of a NotImplementedException) because most code should already be
+			// handling this exception to work properly.
+			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
+		}
 #endif
 	}
 }

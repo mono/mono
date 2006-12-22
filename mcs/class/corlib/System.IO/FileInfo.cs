@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,11 +33,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class FileInfo : FileSystemInfo {
 	
 
@@ -102,19 +105,26 @@ namespace System.IO {
 			}
 		}
 
-		void NotSupported ()
-		{
-			throw new NotSupportedException ("Mono does not support this operation");
-		}
-		
+		[MonoLimitation ("File encryption isn't supported (even on NTFS).")]
+		[ComVisible (false)]
 		public void Encrypt ()
 		{
-			NotSupported ();
+			// MS.NET support this only on NTFS file systems, i.e. it's a file-system (not a framework) feature.
+			// otherwise it throws a NotSupportedException (or a PlatformNotSupportedException on older OS).
+			// we throw the same (instead of a NotImplementedException) because most code should already be
+			// handling this exception to work properly.
+			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
+		[MonoLimitation ("File encryption isn't supported (even on NTFS).")]
+		[ComVisible (false)]
 		public void Decrypt ()
 		{
-			NotSupported ();
+			// MS.NET support this only on NTFS file systems, i.e. it's a file-system (not a framework) feature.
+			// otherwise it throws a NotSupportedException (or a PlatformNotSupportedException on older OS).
+			// we throw the same (instead of a NotImplementedException) because most code should already be
+			// handling this exception to work properly.
+			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 #endif
 
