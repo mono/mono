@@ -45,6 +45,7 @@ scripts_1_0_umask = \
 
 scripts_2_0 = \
 	gmcs			\
+	httpcfg			\
 	ilasm2			\
 	mkbundle2		\
 	monop2 			\
