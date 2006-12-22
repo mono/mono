@@ -1,3 +1,8 @@
+
+Fri Dec 22 18:15:33 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: some fixes needed in the generics code for the moving GC.
+
 2006-12-22  Robert Jordan  <robertj@gmx.net>
 
 	* icall.c (ves_icall_System_Array_SetValueImpl): Take enums into
