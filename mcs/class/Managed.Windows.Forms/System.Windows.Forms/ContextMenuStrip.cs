@@ -33,6 +33,7 @@ namespace System.Windows.Forms
 {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[DefaultEvent ("Opening")]
 	public class ContextMenuStrip : ToolStripDropDownMenu
 	{
 		private Control source_control;
@@ -48,6 +49,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control SourceControl {
 			get { return this.source_control; }
 		}

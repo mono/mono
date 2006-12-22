@@ -36,7 +36,8 @@ namespace System.Windows.Forms
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	[ProvideProperty ("FlowBreak", typeof (Control))]
-	[DefaultEvent ("Paint")]
+	[DefaultProperty ("FlowDirection")]
+	[Docking (DockingBehavior.Never)]
 	public class FlowLayoutPanel : Panel, IExtenderProvider
 	{
 		private FlowLayoutSettings settings;
@@ -73,12 +74,13 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 		[DefaultValue (false)]
-		//[DisplayName ("FlowBreak")]
+		[DisplayName ("FlowBreak")]
 		public bool GetFlowBreak (Control control)
 		{
 			return settings.GetFlowBreak (control);
 		}
 
+		[DisplayName ("FlowBreak")]
 		public void SetFlowBreak (Control control, bool value)
 		{
 			settings.SetFlowBreak (control, value);
@@ -87,7 +89,7 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region IExtenderProvider Members
-		public bool CanExtend (object extendee)
+		bool IExtenderProvider.CanExtend (object extendee)
 		{
 			if (extendee is Control)
 				if ((extendee as Control).Parent == this)

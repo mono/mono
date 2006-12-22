@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 {
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+	[Docking (DockingBehavior.AutoDock)]
 	public sealed class SplitterPanel : Panel
 	{
 		//private SplitContainer owner;
@@ -50,6 +51,7 @@ namespace System.Windows.Forms
 		// All of these are overriden just to hide them from the IDE  :/
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
@@ -57,6 +59,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public bool AutoSize {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
@@ -73,6 +76,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public BorderStyle BorderStyle {
 			get { return base.BorderStyle; }
 			set { base.BorderStyle = value; }
@@ -80,6 +84,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
@@ -87,12 +92,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public DockPaddingEdges DockPadding {
 			get { return base.DockPadding; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public int Height {
 			get { return this.Visible ? base.Height : 0; }
 			set { throw new NotSupportedException ("The height cannot be set"); }
@@ -100,6 +107,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
@@ -107,6 +115,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Size MaximumSize {
 			get { return base.MaximumSize; }
 			set { base.MaximumSize = value; }
@@ -114,6 +123,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Size MinimumSize {
 			get { return base.MinimumSize; }
 			set { base.MinimumSize = value; }
@@ -121,6 +131,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public string Name {
 			get { return base.Name; }
 			set { base.Name = value; }
@@ -128,6 +139,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Control Parent {
 			get { return base.Parent; }
 			set { throw new NotSupportedException ("The parent cannot be set"); }
@@ -135,6 +147,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Size Size {
 			get { return base.Size; }
 			set { base.Size = value; }
@@ -142,6 +155,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
@@ -149,6 +163,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
@@ -156,22 +171,67 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public bool Visible {
 			get { return base.Visible; }
 			set { base.Visible = value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public int Width {
 			get { return this.Visible ? base.Width : 0; }
 			set { throw new NotSupportedException ("The width cannot be set"); }
 		}
 		#endregion
 
+		#region Public Events
+		//[Browsable (false)]
+		//[EditorBrowsable (EditorBrowsableState.Never)]
+		//public new event EventHandler AutoSizeChanged {
+		//        add { base.AutoSizeChanged += value; }
+		//        remove { base.AutoSizeChanged -= value; }
+		//}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DockChanged {
+			add { base.DockChanged += value; }
+			remove { base.DockChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler LocationChanged {
+			add { base.LocationChanged += value; }
+			remove { base.LocationChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler VisibleChanged {
+			add { base.VisibleChanged += value; }
+			remove { base.VisibleChanged -= value; }
+		}
+		#endregion
+		
 		#region Internal Properties
 		internal int InternalHeight { set { base.Height = value; } }
-
 		internal int InternalWidth { set { base.Width = value; } }
 		#endregion
 	}

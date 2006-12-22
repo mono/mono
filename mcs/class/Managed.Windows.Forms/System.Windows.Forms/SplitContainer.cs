@@ -37,6 +37,8 @@ namespace System.Windows.Forms
 {
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+	[DefaultEvent ("SplitterMoved")]
+	[Docking (DockingBehavior.AutoDock)]
 	public class SplitContainer : ContainerControl
 	{
 		#region Local Variables
@@ -59,13 +61,48 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		new public event EventHandler AutoSizeChanged;
-
 		static object SplitterMovedEvent = new object ();
 		static object SplitterMovingEvent = new object ();
 
+		//[Browsable (false)]
+		//[EditorBrowsable (EditorBrowsableState.Never)]
+		//new public event EventHandler AutoSizeChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event ControlEventHandler ControlAdded {
+			add { base.ControlAdded += value; }
+			remove { base.ControlAdded -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event ControlEventHandler ControlRemoved {
+			add { base.ControlRemoved += value; }
+			remove { base.ControlRemoved -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+		
 		public event SplitterEventHandler SplitterMoved {
 			add { Events.AddHandler (SplitterMovedEvent, value); }
 			remove { Events.RemoveHandler (SplitterMovedEvent, value); }
@@ -74,6 +111,13 @@ namespace System.Windows.Forms
 		public event SplitterCancelEventHandler SplitterMoving {
 			add { Events.AddHandler (SplitterMovingEvent, value); }
 			remove { Events.RemoveHandler (SplitterMovingEvent, value); }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
 		}
 		#endregion
 
@@ -116,13 +160,15 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Localizable (true)]
+		[DefaultValue (false)]
 		public override bool AutoScroll {
 			get { return base.AutoScroll; }
-			set { }
+			set { base.AutoScroll = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
@@ -130,6 +176,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
@@ -145,6 +192,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Point AutoScrollPosition {
 			get { return base.AutoScrollPosition; }
 			set { base.AutoScrollPosition = value; }
@@ -152,14 +200,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
-			set {
-				base.AutoSize = value;
-				if (AutoSizeChanged != null) AutoSizeChanged (this, new EventArgs ());
-			}
+			set { base.AutoSize = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
@@ -168,16 +216,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		//Uncomment once this has been implemented in Control.cs
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//public override ImageLayout BackgroundImageLayout {
-		//        get { return base.BackgroundImageLayout; }
-		//        set { base.BackgroundImageLayout = value; }
-		//}
-
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+		        get { return base.BackgroundImageLayout; }
+		        set { base.BackgroundImageLayout = value; }
+		}
+
+		[Browsable (false)]
 		public override BindingContext BindingContext {
 			get { return binding_context_set ? base.BindingContext : null; }
 			set {
@@ -200,8 +246,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		new public ControlCollection Controls { get { return base.Controls; } }
 
 		new public DockStyle Dock {
@@ -267,12 +313,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public Padding Padding {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
 
 		[Localizable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SplitterPanel Panel1 { get { return this.panel1; } }
 
 		[DefaultValue (false)]
@@ -287,6 +335,7 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[DefaultValue (25)]
+		[RefreshProperties (RefreshProperties.All)]
 		public int Panel1MinSize {
 			get { return this.panel1_min_size; }
 			set { 
@@ -296,6 +345,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SplitterPanel Panel2 { get { return this.panel2; } }
 
 		[DefaultValue (false)]
@@ -310,6 +360,7 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[DefaultValue (25)]
+		[RefreshProperties (RefreshProperties.All)]
 		public int Panel2MinSize {
 			get { return this.panel2_min_size; }
 			set { this.panel2_min_size = value; this.splitter.MinExtra = value; }
@@ -318,6 +369,7 @@ namespace System.Windows.Forms
 		// MSDN says the default is 40, MS's implementation defaults to 50.
 		[Localizable (true)]
 		[DefaultValue (50)]
+		[SettingsBindable (true)]
 		public int SplitterDistance {
 			get { return this.splitter_distance; }
 			set {
@@ -420,6 +472,92 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Protected Methods
+		protected override ControlCollection CreateControlsInstance ()
+		{
+			return new SplitContainerTypedControlCollection (this);
+		}
+
+		[MonoTODO ("Special focus semantics not implemented")]
+		protected override void OnGotFocus (EventArgs e)
+		{
+			base.OnGotFocus (e);
+		}
+
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			base.OnKeyDown (e);
+		}
+
+		protected override void OnKeyUp (KeyEventArgs e)
+		{
+			base.OnKeyUp (e);
+		}
+
+		protected override void OnLayout (LayoutEventArgs levent)
+		{
+			base.OnLayout (levent);
+		}
+
+		protected override void OnMouseDown (MouseEventArgs e)
+		{
+			base.OnMouseDown (e);
+		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			base.OnMouseMove (e);
+		}
+
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
+			base.OnMouseUp (e);
+		}
+		
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			base.OnPaint (e);
+		}
+
+		protected override void OnRightToLeftChanged (EventArgs e)
+		{
+			base.OnRightToLeftChanged (e);
+		}
+
+		[MonoTODO ("Special focus semantics not implemented")]
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
+			return base.ProcessDialogKey (keyData);
+		}
+
+		[MonoTODO ("Special focus semantics not implemented")]
+		protected override bool ProcessTabKey (bool forward)
+		{
+			return base.ProcessTabKey (forward);
+		}
+
+		[MonoTODO ("Special focus semantics not implemented")]
+		protected override void Select (bool directed, bool forward)
+		{
+			base.Select (directed, forward);
+		}
+
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
+
+		protected override void WndProc (ref Message m)
+		{
+			base.WndProc (ref m);
+		}
+		#endregion
+		
 		#region Private Methods
 		private void splitter_SplitterMoving (object sender, SplitterEventArgs e)
 		{
@@ -443,6 +581,15 @@ namespace System.Windows.Forms
 			}
 			else
 				splitter.BackgroundImage = this.BackgroundImage;
+		}
+		#endregion
+
+		#region Internal Classes
+		internal class SplitContainerTypedControlCollection : ControlCollection
+		{
+			public SplitContainerTypedControlCollection (Control owner) : base (owner)
+			{
+			}
 		}
 		#endregion
 	}
