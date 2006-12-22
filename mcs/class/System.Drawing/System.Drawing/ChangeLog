@@ -1,3 +1,9 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Splitted CopyFromScreen into platform specific methods
+	and added MonoLimitations to all overloads. This should get better 
+	results from MoMA.
+
 2006-12-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FontFamily.cs: More accurate Mono* attributes to avoid confusion.
