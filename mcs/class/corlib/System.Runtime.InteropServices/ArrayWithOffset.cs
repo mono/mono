@@ -54,6 +54,11 @@ namespace System.Runtime.InteropServices {
 			return (other.array == array && other.offset == offset);
 		}
 
+		public bool Equals (ArrayWithOffset obj)
+		{
+			return obj.array == array && obj.offset == offset;
+		}
+
 		public override int GetHashCode ()
 		{
 			return offset;

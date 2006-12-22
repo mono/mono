@@ -33,7 +33,9 @@
 namespace System.Runtime.InteropServices
 {
 	[Flags]
-	[Serializable]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public enum AssemblyRegistrationFlags {
 		None = 0,
 		SetCodeBase,

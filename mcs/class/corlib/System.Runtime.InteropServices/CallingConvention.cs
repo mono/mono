@@ -31,34 +31,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+using System;
 
 namespace System.Runtime.InteropServices {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif
 	public enum CallingConvention {
-
-		/// <summary>
-		/// </summary>
 		Winapi = 1,
-
-		/// <summary>
-		/// </summary>
 		Cdecl = 2,
-
-		/// <summary>
-		/// </summary>
 		StdCall = 3,
-
-		/// <summary>
-		/// </summary>
 		ThisCall = 4,
-
-		/// <summary>
-		/// </summary>
 		FastCall = 5,
-	} // CallingConvention
+	} 
 
 } // System.Runtime.InteropServices

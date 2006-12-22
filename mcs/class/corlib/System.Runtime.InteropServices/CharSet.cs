@@ -31,28 +31,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+using System;
 
 namespace System.Runtime.InteropServices {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif
 	public enum CharSet {
-
 		None = 1,
-
-		/// <summary>
-		/// </summary>
 		Ansi = 2,
-
-		/// <summary>
-		/// </summary>
 		Unicode = 3,
-
-		/// <summary>
-		/// </summary>
 		Auto = 4,
-	} // CharSet
+	} 
 
 } // System.Runtime.InteropServices

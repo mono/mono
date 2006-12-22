@@ -26,17 +26,22 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		~CriticalHandle ()
 		{
-			Dispose ();
+			Dispose (false);
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
-			Dispose ();
+			Dispose (true);
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		public void Dispose (bool disposing)
 		{
 			if (_disposed)
 				return;
@@ -45,10 +50,12 @@ namespace System.Runtime.InteropServices
 			if (IsInvalid)
 				return;
 
-			if (ReleaseHandle ()) {
-				GC.SuppressFinalize (this);
-			} else {
-				// Failed in release...
+			if (disposing == true){
+				if (ReleaseHandle ()) {
+					GC.SuppressFinalize (this);
+				} else {
+					// Failed in release...
+				}
 			}
 		}
 
