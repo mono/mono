@@ -1,4 +1,9 @@
 
+Fri Dec 22 19:49:07 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: be more careful in case resource generation
+	fails to create the data array.
+
 Fri Dec 22 18:17:40 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: write barrier for clone and fix unregister handles.
