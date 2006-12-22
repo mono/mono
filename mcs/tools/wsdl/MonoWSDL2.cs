@@ -185,7 +185,7 @@ namespace Mono.WebServices
 				WebReference wr  = references [n];
 				
 				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
-				if (!WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, wr, violations)) {
+				if (String.Compare (protocol, "SOAP", StringComparison.OrdinalIgnoreCase) == 0 && !WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, wr, violations)) {
 					wr.Warnings |= ServiceDescriptionImportWarnings.WsiConformance;
 				}
 				
