@@ -116,6 +116,7 @@ class UTF7Encoding : Encoding
 		return allowOptionals ? -basis : basis;
 	}
 
+	[ComVisible(true)]
 	public override bool Equals (object other)
 	{
 		UTF7Encoding e = other as UTF7Encoding;
@@ -676,39 +677,46 @@ class UTF7Encoding : Encoding
 	// a bunch of practically missing implementations (but should just work)
 
 	[CLSCompliantAttribute (false)]
+	[ComVisible(true)]
 	public override unsafe int GetByteCount (char *chars, int count)
 	{
 		return base.GetByteCount (chars, count);
 	}
 
+	[ComVisible(true)]
 	public override int GetByteCount (string s)
 	{
 		return base.GetByteCount (s);
 	}
 
+	[ComVisible(true)]
 	[CLSCompliantAttribute (false)]
 	public override unsafe int GetBytes (char *chars, int charCount, byte* bytes, int byteCount)
 	{
 		return base.GetBytes (chars, charCount, bytes, byteCount);
 	}
 
+	[ComVisible(true)]
 	public override int GetBytes (string s, int charIndex, int charCount, byte [] bytes, int byteIndex)
 	{
 		return base.GetBytes (s, charIndex, charCount, bytes, byteIndex);
 	}
 
+	[ComVisible(true)]
 	[CLSCompliantAttribute (false)]
 	public override unsafe int GetCharCount (byte *bytes, int count)
 	{
 		return base.GetCharCount (bytes, count);
 	}
 
+	[ComVisible(true)]
 	[CLSCompliantAttribute (false)]
 	public override unsafe int GetChars (byte* bytes, int byteCount, char* chars, int charCount)
 	{
 		return base.GetChars (bytes, byteCount, chars, charCount);
 	}
 
+	[ComVisible(true)]
 	public override string GetString (byte [] bytes, int index, int count)
 	{
 		return base.GetString (bytes, index, count);

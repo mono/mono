@@ -42,6 +42,7 @@ using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Security.AccessControl;
 
 namespace System.IO
 {
@@ -506,6 +507,20 @@ namespace System.IO
 
 			return result;
 		}
+
+#if NET_2_0
+		[MonoLimitation ("Mono always throws PlatformNotSupported regardless of the platfor")]
+		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		[MonoLimitation ("Mono always throws PlatformNotSupported regardless of the platfor")]
+		public static DirectorySecurity GetAccessControl (string path)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+#endif
 	}
 }
 
