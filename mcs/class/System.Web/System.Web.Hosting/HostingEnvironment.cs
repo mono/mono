@@ -32,8 +32,10 @@
 #if NET_2_0
 
 using System;
+using System.Globalization;
 using System.Security.Permissions;
 using System.Threading;
+using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
 
@@ -168,16 +170,20 @@ namespace System.Web.Hosting {
 			vpath_provider = virtualPathProvider;
 		}
 		
-		[MonoTODO ("Not implemented")]
 		public static IDisposable SetCultures (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization", virtualPath) as GlobalizationSection;
+			IDisposable ret = Thread.CurrentThread.CurrentCulture as IDisposable;
+			string culture = gs.Culture;
+			if (String.IsNullOrEmpty (culture))
+				return ret;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo (culture);
+			return ret;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static IDisposable SetCultures ()
 		{
-			throw new NotImplementedException ();
+			return SetCultures ("~/");
 		}
 
 		public static void UnregisterObject (IRegisteredObject obj)
