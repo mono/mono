@@ -1553,6 +1553,41 @@ public class DateTimeTest : Assertion
 		AssertEquals ("#9", now, nowtoloc);
 		AssertEquals ("#10", now, utctoloc);
 	}
+
+	[Test]
+	public void FromBinary ()
+	{
+		DateTime dt_utc = DateTime.FromBinary (0x4000000000000001);
+		AssertEquals ("Utc", DateTimeKind.Utc, dt_utc.Kind);
+		AssertEquals ("Utc/Ticks", 1, dt_utc.Ticks);
+
+		DateTime dt_local = DateTime.FromBinary (unchecked ((long) 0x8000000000000001));
+		AssertEquals ("Local", DateTimeKind.Local, dt_local.Kind);
+
+		DateTime dt_unspecified = DateTime.FromBinary (0x0000000000000001);
+		AssertEquals ("Unspecified", DateTimeKind.Unspecified, dt_unspecified.Kind);
+		AssertEquals ("Unspecified/Ticks", 1, dt_unspecified.Ticks);
+
+		DateTime dt_local2 = DateTime.FromBinary (unchecked ((long) 0xC000000000000001));
+		AssertEquals ("Local2", DateTimeKind.Local, dt_local2.Kind);
+		AssertEquals ("Local/Ticks", dt_local.Ticks, dt_local2.Ticks);
+	}
+
+	[Test]
+	public void ToBinary ()
+	{
+		DateTime dt_local = new DateTime (1, DateTimeKind.Local);
+		AssertEquals ("Local.ToBinary", 1, (ulong) dt_local.ToBinary () >> 63);
+		AssertEquals ("Local.Ticks", 1, dt_local.Ticks);
+
+		DateTime dt_utc = new DateTime (1, DateTimeKind.Utc);
+		AssertEquals ("Utc.ToBinary", 0x4000000000000001, dt_utc.ToBinary ());
+		AssertEquals ("Utc.Ticks", 1, dt_utc.Ticks);
+
+		DateTime dt_unspecified = new DateTime (1, DateTimeKind.Unspecified);
+		AssertEquals ("Unspecified.ToBinary", 1, dt_unspecified.ToBinary ());
+		AssertEquals ("Unspecified.Ticks", 1, dt_unspecified.Ticks);
+	}
 #endif
 }
 
