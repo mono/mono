@@ -1,3 +1,9 @@
+
+Fri Dec 22 19:42:56 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs: associate a resource writer with its
+	actual resource (bug #80339).
+
 2006-10-06  Miguel de Icaza  <miguel@novell.com>
 
 	* AssemblyBuilder.cs: Am doing a try/catch for pulling the LCID

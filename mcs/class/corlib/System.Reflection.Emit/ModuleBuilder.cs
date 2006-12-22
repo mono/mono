@@ -48,7 +48,7 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
-		#region Sync with reflection.h
+		#region Sync with object-internals.h
 		private IntPtr dynamic_image;
 		private int num_types;
 		private TypeBuilder[] types;
@@ -68,7 +68,7 @@ namespace System.Reflection.Emit {
 		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
-		ArrayList resource_writers = null;
+		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -465,8 +465,8 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("The assembly is transient");
 			ResourceWriter writer = new ResourceWriter (new MemoryStream ());
 			if (resource_writers == null)
-				resource_writers = new ArrayList ();
-			resource_writers.Add (writer);
+				resource_writers = new Hashtable ();
+			resource_writers [name] = writer;
 
 			// The data is filled out later
 			if (resources != null) {
@@ -678,19 +678,18 @@ namespace System.Reflection.Emit {
 			if ((global_type != null) && (global_type_created == null))
 				global_type_created = global_type.CreateType ();
 
-			if (resource_writers != null) {
-				for (int i = 0; i < resource_writers.Count; ++i) {
-					ResourceWriter writer = (ResourceWriter)resource_writers [i];
-					writer.Generate ();
-					MemoryStream stream = (MemoryStream)writer.Stream;
-					resources [i].data = new byte [stream.Length];
-					stream.Seek (0, SeekOrigin.Begin);
-					stream.Read (resources [i].data, 0, (int)stream.Length);
-				}					
-			}
-
 			if (resources != null) {
 				for (int i = 0; i < resources.Length; ++i) {
+					IResourceWriter rwriter;
+					if (resource_writers != null && (rwriter = resource_writers [resources [i].name] as IResourceWriter) != null) {
+						ResourceWriter writer = (ResourceWriter)rwriter;
+						writer.Generate ();
+						MemoryStream mstream = (MemoryStream)writer.Stream;
+						resources [i].data = new byte [mstream.Length];
+						mstream.Seek (0, SeekOrigin.Begin);
+						mstream.Read (resources [i].data, 0, (int)mstream.Length);
+						continue;
+					}
 					Stream stream = resources [i].stream;
 
 					// According to MSDN docs, the stream is read during assembly save, not earlier
