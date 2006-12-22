@@ -1,3 +1,8 @@
+2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NTAccount.cs: Implement == and != operators (MoMA reports).
+	* SecurityIdentifier.cs: Implement == and != operators (MoMA reports).
+
 2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericIdentity.cs: Rename fields to match MS for serialization

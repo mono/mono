@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -97,6 +97,24 @@ namespace System.Security.Principal {
 			if (targetType == typeof (NTAccount))
 				return this; // ? copy
 			return null;
+		}
+
+		public static bool operator == (NTAccount left, NTAccount right)
+		{
+			if (left == null)
+				return (right == null);
+			if (right == null)
+				return false;
+			return (left.Value == right.Value);
+		}
+
+		public static bool operator != (NTAccount left, NTAccount right)
+		{
+			if (left == null)
+				return (right != null);
+			if (right == null)
+				return true;
+			return (left.Value != right.Value);
 		}
 	}
 }
