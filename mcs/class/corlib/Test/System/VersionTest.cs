@@ -1,10 +1,12 @@
 //
 // VersionTest.cs - NUnit Test Cases for the System.Version class
 //
-// author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+// Authors:
+//	Duco Fijma (duco@lorentz.xs4all.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 //   (C) 2002 Duco Fijma
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -200,5 +202,51 @@ namespace MonoTests.System
 			} catch (ArgumentException) {
 			}
 		}
+
+		[Test]
+		public void HashCode ()
+		{
+			Version v1 = new Version ("1.2.3.4");
+			Version v2 = new Version (1, 2, 3, 4);
+			Assert.AreEqual (v1.GetHashCode (), v2.GetHashCode (), "HashCode");
+		}
+#if NET_2_0
+		[Test]
+		public void MajorMinorRevisions ()
+		{
+			Version v = new Version ();
+			Assert.AreEqual (-1, v.MajorRevision, "MajorRevision/Empty");
+			Assert.AreEqual (-1, v.MinorRevision, "MinorRevision/Empty");
+			v = new Version ("1.2.3.4");
+			Assert.AreEqual (0, v.MajorRevision, "MajorRevision/string");
+			Assert.AreEqual (4, v.MinorRevision, "MinorRevision/string");
+			v = new Version (1, 2);
+			Assert.AreEqual (-1, v.MajorRevision, "MajorRevision/int,int");
+			Assert.AreEqual (-1, v.MinorRevision, "MinorRevision/int,int");
+			v = new Version (10, 20, 30);
+			Assert.AreEqual (-1, v.MajorRevision, "MajorRevision/int,int,int");
+			Assert.AreEqual (-1, v.MinorRevision, "MinorRevision/int,int,int");
+			v = new Version (100, 200, 300, 400);
+			Assert.AreEqual (0, v.MajorRevision, "MajorRevision/int,int,int,int");
+			Assert.AreEqual (400, v.MinorRevision, "MinorRevision/int,int,int,int");
+			v = new Version (100, 200, 300, (256 << 16) | 384);
+			Assert.AreEqual (256, v.MajorRevision, "MajorRevision/int,int,int,bint");
+			Assert.AreEqual (384, v.MinorRevision, "MinorRevision/int,int,int,bint");
+		}
+
+		[Test]
+		public void CompareTo ()
+		{
+			Version v1234 = new Version (1, 2, 3, 4);
+			Version vnull = null;
+			Assert.AreEqual (1, v1234.CompareTo (vnull), "1234-null");
+			Version v2234 = new Version (2, 2, 3, 4);
+			Assert.AreEqual (1, v2234.CompareTo (v1234), "2234-1234");
+			Version v1224 = new Version (1, 2, 2, 4);
+			Assert.AreEqual (-1, v1224.CompareTo (v1234), "1224-1234");
+			Version v1235 = new Version (1, 2, 3, 5);
+			Assert.AreEqual (1, v1235.CompareTo (v1234), "1235-1234");
+		}
+#endif
 	}
 }
