@@ -42,7 +42,9 @@ using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+#if NET_2_0
 using System.Security.AccessControl;
+#endif
 
 namespace System.IO
 {
