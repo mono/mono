@@ -1,3 +1,7 @@
+2006-12-22  Robert Jordan <robertj@gmx.net>
+
+	* ArrayTest.cs: Add tests for bug #80299.
+
 2006-12-16  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeTest.cs (TestNestedTypes): New test inspired by #80242.

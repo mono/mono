@@ -2784,6 +2784,46 @@ public class ArrayTest : Assertion
 
 	}
 #endif
+
+	#region Bug 80299
+
+	enum ByteEnum : byte {}
+	enum IntEnum : int {}
+
+	[Test]
+	public void TestByteEnumArrayToByteArray ()
+	{
+		ByteEnum[] a = new ByteEnum[] {(ByteEnum) 1, (ByteEnum) 2};
+		byte[] b = new byte[a.Length];
+		a.CopyTo (b, 0);
+	}
+
+	[Test]
+	public void TestByteEnumArrayToIntArray ()
+	{
+		ByteEnum[] a = new ByteEnum[] {(ByteEnum) 1, (ByteEnum) 2};
+		int[] b = new int[a.Length];
+		a.CopyTo (b, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArrayTypeMismatchException))]
+	public void TestIntEnumArrayToByteArray ()
+	{
+		IntEnum[] a = new IntEnum[] {(IntEnum) 1, (IntEnum) 2};
+		byte[] b = new byte[a.Length];
+		a.CopyTo (b, 0);
+	}
+
+	[Test]
+	public void TestIntEnumArrayToIntArray ()
+	{
+		IntEnum[] a = new IntEnum[] {(IntEnum) 1, (IntEnum) 2};
+		int[] b = new int[a.Length];
+		a.CopyTo (b, 0);
+	}
+
+	#endregion
 }
 
 }
