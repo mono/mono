@@ -3,10 +3,17 @@ SUBDIRS =
 DIST_ONLY_SUBDIRS = certview
 include ../../build/rules.make
 
+ifeq (net_2_0, $(PROFILE))
+HTTPCFG = httpcfg.exe
+else
+HTTPCFG =
+endif
+
 LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib/$(PROFILE) -r:Mono.Security.dll
 
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe makecert.exe chktrust.exe \
-	signcode.exe setreg.exe certmgr.exe caspol.exe permview.exe mozroots.exe
+	signcode.exe setreg.exe certmgr.exe caspol.exe permview.exe mozroots.exe $(HTTPCFG)
+
 SECURITY_SOURCES = AssemblyInfo.cs $(topdir)/build/common/Consts.cs StrongNameManager.cs $(SECURITY_PROGRAMS:.exe=.cs)
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
