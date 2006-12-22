@@ -36,6 +36,7 @@ using Mono.Audio;
 namespace System.Media {
 
 	[Serializable]
+	[ToolboxItem (false)]
 	public class SoundPlayer: Component, ISerializable {
 
 		string sound_location;
@@ -141,13 +142,14 @@ namespace System.Media {
 			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
 		}
 
-		public void PlayLoop ()
+		private void PlayLoop ()
 		{
 			Start ();
 			while (!stopped) {
 				PlaySync ();
 			}
 		}
+
 		public void PlayLooping ()
 		{
 			ThreadStart async = new ThreadStart (PlayLoop);
