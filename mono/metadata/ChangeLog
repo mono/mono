@@ -1,4 +1,8 @@
 
+Fri Dec 22 18:17:40 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: write barrier for clone and fix unregister handles.
+
 Fri Dec 22 18:15:33 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: some fixes needed in the generics code for the moving GC.
