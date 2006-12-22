@@ -47,7 +47,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -70,7 +70,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -93,7 +93,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -116,7 +116,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -731,10 +731,10 @@
     <Compile Include="System.Windows.Forms\TabPage.cs" />
     <Compile Include="System.Windows.Forms\TabRenderer.cs" />
     <Compile Include="System.Windows.Forms\TabSizeMode.cs" />
-    <Compile Include="System.Windows.Forms\TableLayout.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventHandler.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutColumnStyleCollection.cs" />
+    <Compile Include="System.Windows.Forms\TableLayoutControlCollection.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanel.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanelCellBorderStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutPanelCellPosition.cs" />
@@ -893,6 +893,7 @@
     <Compile Include="System.Windows.Forms.Layout\ArrangedElementCollection.cs" />
     <Compile Include="System.Windows.Forms.Layout\DefaultLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\FlowLayout.cs" />
+    <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />
@@ -1099,6 +1100,12 @@
     <EmbeddedResource Include="resources\6-up.png">
       <LogicalName>6-up.png</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="System.Windows.Forms\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ChangeLog" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -3084,11 +3084,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\TableLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\TableLayoutCellPaintEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3100,6 +3095,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TableLayoutColumnStyleCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TableLayoutControlCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3890,6 +3890,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Layout\FlowLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Layout\TableLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
