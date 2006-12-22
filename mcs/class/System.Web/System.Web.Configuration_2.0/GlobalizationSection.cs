@@ -245,13 +245,14 @@ namespace System.Web.Configuration {
 
 		Encoding GetEncoding (ConfigurationProperty prop, ref string cached_encoding_name)
 		{
+			string enc = (string) base [prop];
 			if (cached_encoding_name == null)
-				cached_encoding_name = "utf-8";
+				cached_encoding_name = ((enc == null) ? "utf-8" : enc);
 
 			Encoding encoding = (Encoding)encodingHash [prop];
 			if (encoding == null || encoding.EncodingName != cached_encoding_name) {
 				try {
-					switch (cached_encoding_name.ToLower ()) {
+					switch (cached_encoding_name.ToLower (CultureInfo.InvariantCulture)) {
 					case "utf-16le":
 					case "utf-16":
 					case "ucs-2":
