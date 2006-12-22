@@ -1,3 +1,8 @@
+2006-12-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : disable t13 and t14 tests (they are based on old API
+	  or whatever - now broken).
+
 2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* t37.cs, t37.exe.config, t37.exe.expected: added some tests
