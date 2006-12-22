@@ -1,3 +1,7 @@
+2006-12-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* DefaultBindingPropertyAttributeTest.cs: new tests.
+
 2006-12-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyDescriptorTests.cs: Added test for bug #80292. Fixed

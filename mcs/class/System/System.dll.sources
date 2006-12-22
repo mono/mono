@@ -190,6 +190,7 @@ System.ComponentModel/Container.cs
 System.ComponentModel/CultureInfoConverter.cs
 System.ComponentModel/DateTimeConverter.cs
 System.ComponentModel/DecimalConverter.cs
+System.ComponentModel/DefaultBindingPropertyAttribute.cs
 System.ComponentModel/DefaultEventAttribute.cs
 System.ComponentModel/DefaultPropertyAttribute.cs
 System.ComponentModel/DefaultValueAttribute.cs

@@ -112,6 +112,7 @@ System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs
 System.ComponentModel/ContainerTest.cs
 System.ComponentModel/DateTimeConverterTests.cs
+System.ComponentModel/DefaultBindingPropertyAttributeTest.cs
 System.ComponentModel/DecimalConverterTests.cs
 System.ComponentModel/DisplayNameAttributeTests.cs
 System.ComponentModel/DoubleConverterTests.cs
