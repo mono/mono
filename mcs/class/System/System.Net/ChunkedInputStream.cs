@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #if NET_2_0
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 namespace System.Net {
@@ -51,9 +52,9 @@ namespace System.Net {
 			}
 		}
 
-		public ChunkedInputStream (HttpListenerContext context, Socket sock,
+		public ChunkedInputStream (HttpListenerContext context, Stream stream,
 						byte [] buffer, int offset, int length)
-					: base (sock, buffer, offset, length)
+					: base (stream, buffer, offset, length)
 		{
 			this.context = context;
 			WebHeaderCollection coll = (WebHeaderCollection) context.Request.Headers;

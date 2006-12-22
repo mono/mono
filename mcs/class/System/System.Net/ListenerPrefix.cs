@@ -90,7 +90,6 @@ namespace System.Net {
 			if (default_port == -1) {
 				default_port = (uri.StartsWith ("https://")) ? 443 : -1;
 				secure = true;
-				throw new NotSupportedException ("We don't support https yet.");
 			}
 
 			int length = uri.Length;

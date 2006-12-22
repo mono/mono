@@ -28,18 +28,22 @@
 #if NET_2_0
 using System.IO;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Mono.Security.Protocol.Tls;
+
 namespace System.Net {
 	sealed class HttpConnection
 	{
 		const int BufferSize = 8192;
 		Socket sock;
-		NetworkStream stream;
+		Stream stream;
 		EndPointListener epl;
 		MemoryStream ms;
 		byte [] buffer;
 		HttpListenerContext context;
-		bool secure;
 		StringBuilder current_line;
 		ListenerPrefix prefix;
 		RequestStream i_stream;
@@ -47,15 +51,32 @@ namespace System.Net {
 		bool chunked;
 		int chunked_uses;
 		bool context_bound;
+		bool secure;
+		X509Certificate2 cert;
+		AsymmetricAlgorithm key;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure)
+		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
 		{
 			this.sock = sock;
-			stream = new NetworkStream (sock, false);
 			this.epl = epl;
 			this.secure = secure;
+			this.cert = cert;
+			this.key = key;
+			if (secure == false) {
+				stream = new NetworkStream (sock, false);
+			} else {
+				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false);
+				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
+				stream = ssl_stream;
+			}
 			Init ();
 		}
+
+		AsymmetricAlgorithm OnPVKSelection (X509Certificate certificate, string targetHost)
+		{
+			return key;
+		}
+
 
 		void Init ()
 		{
@@ -108,9 +129,9 @@ namespace System.Net {
 				if (chunked) {
 					this.chunked = true;
 					context.Response.SendChunked = true;
-					i_stream = new ChunkedInputStream (context, sock, buffer, position, length - position);
+					i_stream = new ChunkedInputStream (context, stream, buffer, position, length - position);
 				} else {
-					i_stream = new RequestStream (sock, buffer, position, length - position, contentlength);
+					i_stream = new RequestStream (stream, buffer, position, length - position, contentlength);
 				}
 			}
 			return i_stream;
@@ -122,7 +143,7 @@ namespace System.Net {
 			if (o_stream == null) {
 				HttpListener listener = context.Listener;
 				bool ign = (listener == null) ? true : listener.IgnoreWriteExceptions;
-				o_stream = new ResponseStream (sock, context.Response, ign);
+				o_stream = new ResponseStream (stream, context.Response, ign);
 			}
 			return o_stream;
 		}
@@ -135,7 +156,8 @@ namespace System.Net {
 			try {
 				nread = stream.EndRead (ares);
 				ms.Write (buffer, 0, nread);
-			} catch {
+			} catch (Exception e) {
+				Console.WriteLine (e);
 				if (ms.Length > 0)
 					SendError ();
 				sock.Close ();

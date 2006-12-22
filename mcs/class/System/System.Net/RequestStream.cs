@@ -30,25 +30,25 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 namespace System.Net {
-	class RequestStream : NetworkStream
+	class RequestStream : Stream
 	{
 		byte [] buffer;
 		int offset;
 		int length;
 		long remaining_body;
 		bool disposed;
+		Stream stream;
 
-		internal RequestStream (Socket sock, byte [] buffer, int offset, int length) :
-					base (sock, false)
+		internal RequestStream (Stream stream, byte [] buffer, int offset, int length)
 		{
+			this.stream = stream;
 			this.buffer = buffer;
 			this.offset = offset;
 			this.length = length;
 			this.remaining_body = -1;
 		}
 
-		internal RequestStream (Socket sock, byte [] buffer, int offset, int length, long contentlength) :
-					base (sock, false)
+		internal RequestStream (Stream stream, byte [] buffer, int offset, int length, long contentlength)
 		{
 			this.buffer = buffer;
 			this.offset = offset;
@@ -142,7 +142,7 @@ namespace System.Net {
 				return nread;
 			}
 
-			nread = base.Read (buffer, offset, count);
+			nread = stream.Read (buffer, offset, count);
 			if (nread > 0 && remaining_body > 0)
 				remaining_body -= nread;
 			return nread;
@@ -171,7 +171,7 @@ namespace System.Net {
 			// for HTTP pipelining
 			if (remaining_body >= 0 && count > remaining_body)
 				count = (int) Math.Min (Int32.MaxValue, remaining_body);
-			return base.BeginRead (buffer, offset, count, cback, state);
+			return stream.BeginRead (buffer, offset, count, cback, state);
 		}
 
 		public override int EndRead (IAsyncResult ares)
@@ -190,7 +190,7 @@ namespace System.Net {
 			}
 
 			// Close on exception?
-			int nread = base.EndRead (ares);
+			int nread = stream.EndRead (ares);
 			if (remaining_body > 0 && nread > 0)
 				remaining_body -= nread;
 			return nread;

@@ -1,4 +1,13 @@
-﻿2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+﻿2006-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EndPointListener.cs:
+	* ListenerPrefix.cs:
+	* ResponseStream.cs:
+	* ChunkedInputStream.cs:
+	* HttpConnection.cs:
+	* RequestStream.cs: add initial support for HTTPS.
+
+2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FtpStatus.cs : The build gets broken when only-2.0 classes/members
 	  are not excluded in 1.x build.

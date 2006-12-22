@@ -29,6 +29,10 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Mono.Security.Authenticode;
+
 namespace System.Net {
 	sealed class EndPointListener
 	{
@@ -37,17 +41,39 @@ namespace System.Net {
 		Dictionary<ListenerPrefix, HttpListener> prefixes;
 		List<ListenerPrefix> unhandled; // host = '*'
 		List<ListenerPrefix> all; // host = '+'
-		bool secure; // Can a port have listeners for secure and not secure at the same time? No!
+		X509Certificate2 cert;
+		AsymmetricAlgorithm key;
+		bool secure;
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
+			if (secure) {
+				this.secure = secure;
+				LoadCertificateAndKey (addr, port);
+			}
+
 			endpoint = new IPEndPoint (addr, port);
 			sock = new Socket (addr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			sock.Bind (endpoint);
 			sock.Listen (500);
 			sock.BeginAccept (OnAccept, this);
 			prefixes = new Dictionary<ListenerPrefix, HttpListener> ();
-			this.secure = secure;
+		}
+
+		void LoadCertificateAndKey (IPAddress addr, int port)
+		{
+			// Actually load the certificate
+			try {
+				string dirname = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
+				string path = Path.Combine (dirname, ".mono");
+				path = Path.Combine (path, "httplistener");
+				string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
+				string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
+				cert = new X509Certificate2 (cert_file);
+				key = PrivateKey.CreateFromFile (pvk_file).RSA;
+			} catch {
+				// ignore errors
+			}
 		}
 
 		static void OnAccept (IAsyncResult ares)
@@ -73,7 +99,12 @@ namespace System.Net {
 
 			if (accepted == null)
 				return;
-			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure);
+
+			if (epl.secure && (epl.cert == null || epl.key == null)) {
+				accepted.Close ();
+				return;
+			}
+			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
 			conn.BeginReadRequest ();
 		}
 

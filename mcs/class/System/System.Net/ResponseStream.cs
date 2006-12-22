@@ -34,18 +34,19 @@ namespace System.Net {
 	// FIXME: Does this buffer the response until Close?
 	// What happens when we set content-length to X and write X-1 bytes then close?
 	// what if we don't set content-length at all?
-	class ResponseStream : NetworkStream
+	class ResponseStream : Stream
 	{
 		HttpListenerResponse response;
 		bool ignore_errors;
 		bool disposed;
 		bool trailer_sent;
+		Stream stream;
 
-		internal ResponseStream (Socket sock, HttpListenerResponse response, bool ignore_errors) :
-					base (sock, false)
+		internal ResponseStream (Stream stream, HttpListenerResponse response, bool ignore_errors)
 		{
 			this.response = response;
 			this.ignore_errors = ignore_errors;
+			this.stream = stream;
 		}
 
 		public override bool CanRead {
@@ -94,17 +95,17 @@ namespace System.Net {
 		{
 			string str = String.Format ("{0:x}\r\n{1}", size, final ? "\r\n" : "");
 			byte [] b = Encoding.ASCII.GetBytes (str);
-			base.Write (b, 0, b.Length);
+			stream.Write (b, 0, b.Length);
 		}
 
 		internal void InternalWrite (byte [] buffer, int offset, int count)
 		{
 			if (ignore_errors) {
 				try {
-					base.Write (buffer, offset, count);
+					stream.Write (buffer, offset, count);
 				} catch { }
 			} else {
-				base.Write (buffer, offset, count);
+				stream.Write (buffer, offset, count);
 			}
 		}
 
@@ -124,7 +125,7 @@ namespace System.Net {
 			InternalWrite (buffer, offset, count);
 			try {
 				if (chunked)
-					base.Write (crlf, 0, 2);
+					stream.Write (crlf, 0, 2);
 			} catch { }
 		}
 
@@ -141,7 +142,7 @@ namespace System.Net {
 				if (response.SendChunked)
 					WriteChunkSize (count, false);
 			} catch { }
-			return base.BeginWrite (buffer, offset, count, cback, state);
+			return stream.BeginWrite (buffer, offset, count, cback, state);
 		}
 
 		public override void EndWrite (IAsyncResult ares)
@@ -151,14 +152,14 @@ namespace System.Net {
 
 			if (ignore_errors) {
 				try {
-					base.EndWrite (ares);
+					stream.EndWrite (ares);
 					if (response.SendChunked)
-						base.Write (crlf, 0, 2);
+						stream.Write (crlf, 0, 2);
 				} catch { }
 			} else {
-				base.EndWrite (ares);
+				stream.EndWrite (ares);
 				if (response.SendChunked)
-					base.Write (crlf, 0, 2);
+					stream.Write (crlf, 0, 2);
 			}
 		}
 
