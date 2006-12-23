@@ -116,9 +116,12 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		[MonoTODO]
+		[MonoTODO("Client certificates are not supported")]
 		public X509CertificateCollection ClientCertificates {
-			get { throw new NotImplementedException ("Client certificates are not supported"); return clientCertificates; }
+			get {
+				throw new NotImplementedException ("Client certificates are not supported");
+				return clientCertificates;
+			}
 		}
 
 		public ICredentialsByHost Credentials {
@@ -163,7 +166,6 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO]
 		public ServicePoint ServicePoint {
 			get { throw new NotImplementedException (); }
 		}
@@ -178,7 +180,6 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO]
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
 			set { throw new NotImplementedException ("Default credentials are not supported"); }
@@ -403,7 +404,6 @@ namespace System.Net.Mail {
 			writer.Flush ();
 		}
 
-		[MonoTODO]
 		public void SendAsync (MailMessage message, object userToken)
 		{
 			Send (message);
@@ -415,7 +415,6 @@ namespace System.Net.Mail {
 			SendAsync (new MailMessage (from, to, subject, body), userToken);
 		}
 
-		[MonoTODO]
 		public void SendAsyncCancel ()
 		{
 			throw new NotImplementedException ();
