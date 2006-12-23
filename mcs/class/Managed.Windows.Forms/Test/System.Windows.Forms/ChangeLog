@@ -1,6 +1,7 @@
 2006-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DateTimePickerTest.cs: Fixed line endings.	
+	* upDownTest.cs: Added tests for BeginInit, EndInit, UpButton, Value.
 
 2006-12-23  Daniel Nauck  <dna@mono-project.de>
 

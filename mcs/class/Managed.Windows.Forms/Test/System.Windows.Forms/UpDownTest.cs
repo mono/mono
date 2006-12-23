@@ -375,7 +375,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			try {
-				nud.Value = -1000;
+				nud.Value = 1000;
 				Assert.Fail ("#B1");
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
@@ -384,15 +384,34 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.InnerException, "#B5");
 			}
 
+			try {
+				nud.Value = -1000;
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsNull (ex.ParamName, "#C4");
+				Assert.IsNull (ex.InnerException, "#C5");
+			}
+
 			nud.BeginInit ();
 
 			nud.Value = 1000;
-			Assert.AreEqual (1000, nud.Value, "#C1");
+			Assert.AreEqual (1000, nud.Value, "#D1");
+			nud.Value = 1000;
+			Assert.AreEqual (1000, nud.Value, "#D2");
 			nud.Value = -1000;
-			Assert.AreEqual (-1000, nud.Value, "#C2");
+			Assert.AreEqual (-1000, nud.Value, "#D3");
 			nud.EndInit ();
-			nud.Value = -1000;
-			Assert.AreEqual (-1000, nud.Value, "#C3");
+			try {
+				nud.Value = -1000;
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsNull (ex.ParamName, "#E4");
+				Assert.IsNull (ex.InnerException, "#E5");
+			}
 		}
 
 		void NumericUpDown_TextChanged (object sender, EventArgs e)
