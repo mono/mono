@@ -119,6 +119,22 @@ namespace System.Windows.Forms {
 		{
 			base.OnResize (e);
 		}
+
+		BorderStyle border_style = BorderStyle.None;
+
+		[MonoTODO("Do something with the border style")]
+		public BorderStyle BorderStyle {
+			get {
+				return border_style;
+			}
+
+			set {
+				if (!Enum.IsDefined (typeof (BorderStyle), value))
+					throw new InvalidEnumArgumentException ("value");
+				
+				border_style = value;
+			}
+		}
 #endif
 	}
 }
