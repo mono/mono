@@ -1044,7 +1044,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80280
-		[Category ("NotWorking")]
 		public void Validated_Multiple_Containers ()
 		{
 			Form form = new Form ();
