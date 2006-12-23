@@ -334,6 +334,7 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ("control");
 				
 			this.Location = control.PointToScreen (position);
+			Show ();
 		}
 		
 		public void Show (int x, int y)

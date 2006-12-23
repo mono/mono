@@ -144,6 +144,7 @@ namespace System.Windows.Forms
 		Size preferred_size;
 		Padding margin;
 		Layout.LayoutEngine layout_engine;
+		private ContextMenuStrip context_menu_strip;
 #endif
 
 		#endregion	// Local Variables
@@ -1976,6 +1977,18 @@ namespace System.Windows.Forms
 		{
 			return context_menu;
 		}
+
+#if NET_2_0
+		public virtual ContextMenuStrip ContextMenuStrip {
+			get { return this.context_menu_strip; }
+			set { 
+				if (this.context_menu_strip != value) {
+					this.context_menu_strip = value;
+					OnContextMenuStripChanged (EventArgs.Empty);
+				}
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -4387,10 +4400,34 @@ namespace System.Windows.Forms
 					Point	pt;
 
 					pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
-					context_menu.Show(this, PointToClient(pt));
+
+					if (pt.X == -1 || pt.Y == -1) {
+						pt.X = (this.Width / 2) + this.Left;
+						pt.Y = (this.Height / 2) + this.Top;
+						pt = this.PointToScreen (pt);
+					}
+					
+					context_menu.Show (this, PointToClient (pt));
 					return;
 				}
 
+#if NET_2_0
+				// If there isn't a regular context menu, show the Strip version
+				if (context_menu == null && context_menu_strip != null) {
+					Point pt;
+
+					pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
+					
+					if (pt.X == -1 || pt.Y == -1) { 
+						pt.X = (this.Width / 2) + this.Left; 
+						pt.Y = (this.Height /2) + this.Top; 
+						pt = this.PointToScreen (pt);
+					}
+					
+					context_menu_strip.Show (this, PointToClient (pt));
+					return;
+				}
+#endif
 				DefWndProc(ref m);
 				return;
 			}
@@ -4575,6 +4612,15 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnContextMenuStripChanged (EventArgs e) {
+			EventHandler eh = (EventHandler)(Events [ContextMenuStripChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlAdded(ControlEventArgs e) {
