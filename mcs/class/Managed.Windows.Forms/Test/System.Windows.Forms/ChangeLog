@@ -1,3 +1,7 @@
+2006-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimePickerTest.cs: Fixed line endings.	
+
 2006-12-23  Daniel Nauck  <dna@mono-project.de>
 
 	* UserControlTest.cs: Add.
