@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Drawing;
 
@@ -36,7 +35,6 @@ namespace System.Windows.Forms.Layout
 	{
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
-			// Copied from 1.1's Control.PerformLayout
 			Control parent = container as Control;
 
 			Control child;
@@ -50,41 +48,35 @@ namespace System.Windows.Forms.Layout
 			for (int i = controls.Length - 1; i >= 0; i--) {
 				child = controls[i];
 
-				if (!child.Visible) {
+				if (!child.Visible)
 					continue;
-				}
 
 				switch (child.Dock) {
-					case DockStyle.None: {
-							// Do nothing
-							break;
-						}
+				case DockStyle.None:
+					// Do nothing
+					break;
 
-					case DockStyle.Left: {
-							child.SetBounds (space.Left, space.Y, child.Width, space.Height);
-							space.X += child.Width;
-							space.Width -= child.Width;
-							break;
-						}
+				case DockStyle.Left:
+					child.SetImplicitBounds (space.Left, space.Y, child.Width, space.Height);
+					space.X += child.Width;
+					space.Width -= child.Width;
+					break;
 
-					case DockStyle.Top: {
-							child.SetBounds (space.Left, space.Y, space.Width, child.Height);
-							space.Y += child.Height;
-							space.Height -= child.Height;
-							break;
-						}
+				case DockStyle.Top:
+					child.SetImplicitBounds (space.Left, space.Y, space.Width, child.Height);
+					space.Y += child.Height;
+					space.Height -= child.Height;
+					break;
 
-					case DockStyle.Right: {
-							child.SetBounds (space.Right - child.Width, space.Y, child.Width, space.Height);
-							space.Width -= child.Width;
-							break;
-						}
+				case DockStyle.Right:
+					child.SetImplicitBounds (space.Right - child.Width, space.Y, child.Width, space.Height);
+					space.Width -= child.Width;
+					break;
 
-					case DockStyle.Bottom: {
-							child.SetBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height);
-							space.Height -= child.Height;
-							break;
-						}
+				case DockStyle.Bottom:
+					child.SetImplicitBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height);
+					space.Height -= child.Height;
+					break;
 				}
 			}
 
@@ -168,4 +160,3 @@ namespace System.Windows.Forms.Layout
 		}
 	}
 }
-#endif

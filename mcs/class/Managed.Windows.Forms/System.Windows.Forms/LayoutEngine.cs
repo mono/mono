@@ -23,13 +23,18 @@
 //
 // (C) 2004 Novell, Inc.
 //
-#if NET_2_0
+
 using System;
 using System.ComponentModel;
 
 namespace System.Windows.Forms.Layout {
 
-	public abstract class LayoutEngine {
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	abstract class LayoutEngine {
 		
 		public virtual void InitLayout (object child, BoundsSpecified specified)
 		{
@@ -41,5 +46,3 @@ namespace System.Windows.Forms.Layout {
 		}
 	}
 }
-
-#endif

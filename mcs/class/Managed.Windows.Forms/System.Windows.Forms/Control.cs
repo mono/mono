@@ -109,6 +109,7 @@ namespace System.Windows.Forms
 		internal                BorderStyle		border_style;		// Border style of control
 
 		// Layout
+		Layout.LayoutEngine layout_engine;
 		int                     layout_suspended;
 		internal AnchorStyles	anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
@@ -143,7 +144,6 @@ namespace System.Windows.Forms
 		Size minimum_size;
 		Size preferred_size;
 		Padding margin;
-		Layout.LayoutEngine layout_engine;
 		private ContextMenuStrip context_menu_strip;
 #endif
 
@@ -746,6 +746,9 @@ namespace System.Windows.Forms
 			tab_stop = true;
 			ime_mode = ImeMode.Inherit;
 
+			layout_engine = this.LayoutEngine;
+			if (layout_engine == null)
+				layout_engine = new Layout.DefaultLayout ();
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
@@ -754,7 +757,6 @@ namespace System.Windows.Forms
 			minimum_size = new Size();
 			preferred_size = this.DefaultSize;
 			margin = this.DefaultMargin;
-			layout_engine = this.LayoutEngine;
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -2334,13 +2336,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual Layout.LayoutEngine LayoutEngine {
+#if NET_2_0
+		public virtual
+#endif
+		Layout.LayoutEngine LayoutEngine {
 			get { return new Layout.DefaultLayout (); }
 		} 
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(false)]
@@ -3119,14 +3122,12 @@ namespace System.Windows.Forms
 			PerformLayout(null, null);
 		}
 
-#if !NET_2_0
-		private void SetImplicitBounds (int x, int y, int width, int height)
+		internal void SetImplicitBounds (int x, int y, int width, int height)
 		{
 			Rectangle saved_bounds = explicit_bounds;
 			SetBounds (x, y, width, height);
 			explicit_bounds = saved_bounds;
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
@@ -3144,132 +3145,7 @@ namespace System.Windows.Forms
 
 			// Perform all Dock and Anchor calculations
 			try {
-
-#if NET_2_0
-			if (this.layout_engine != null)
-				this.layout_engine.Layout(this, levent);
-#else		
-				// This has been moved to Layout/DefaultLayout.cs for 2.0, please duplicate any changes/fixes there.
-				Control		child;
-				AnchorStyles	anchor;
-				Rectangle	space;
-
-				space = DisplayRectangle;
-
-				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
-				Control [] controls = child_controls.GetAllControls ();
-				for (int i = controls.Length - 1; i >= 0; i--) {
-					child = controls [i];
-
-					if (!child.Visible) {
-						continue;
-					}
-
-					switch (child.Dock) {
-						case DockStyle.None: {
-							// Do nothing
-							break;
-						}
-
-						case DockStyle.Left: {
-							child.SetImplicitBounds(space.Left, space.Y, child.Width, space.Height);
-							space.X+=child.Width;
-							space.Width-=child.Width;
-							break;
-						}
-
-						case DockStyle.Top: {
-							child.SetImplicitBounds(space.Left, space.Y, space.Width, child.Height);
-							space.Y+=child.Height;
-							space.Height-=child.Height;
-							break;
-						}
-					
-						case DockStyle.Right: {
-							child.SetImplicitBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
-							space.Width-=child.Width;
-							break;
-						}
-
-						case DockStyle.Bottom: {
-							child.SetImplicitBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
-							space.Height-=child.Height;
-							break;
-						}
-					}
-				}
-
-				for (int i = controls.Length - 1; i >= 0; i--) {
-					child=controls[i];
-
-					//if (child.Visible && (child.Dock == DockStyle.Fill)) {
-					if (child.Dock == DockStyle.Fill) {
-						child.SetImplicitBounds(space.Left, space.Top, space.Width, space.Height);
-					}
-				}
-
-				space = DisplayRectangle;
-
-				for (int i=0; i < controls.Length; i++) {
-					int left;
-					int top;
-					int width;
-					int height;
-
-					child = controls[i];
-
-					// If the control is docked we don't need to do anything
-					if (child.Dock != DockStyle.None) {
-						continue;
-					}
-
-					anchor = child.Anchor;
-
-					left = child.Left;
-					top = child.Top;
-					width = child.Width;
-					height = child.Height;
-
-					if ((anchor & AnchorStyles.Left) !=0 ) {
-						if ((anchor & AnchorStyles.Right) != 0) {
-							width = space.Width - child.dist_right - left;
-						} else {
-							; // Left anchored only, nothing to be done
-						}
-					} else if ((anchor & AnchorStyles.Right) != 0) {
-						left = space.Width - child.dist_right - width;
-					} else {
-						// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
-						// This calculates from scratch every time:
-						left = child.dist_left + (space.Width - (child.dist_left + width + child.dist_right)) / 2;
-					}
-
-					if ((anchor & AnchorStyles.Top) !=0 ) {
-						if ((anchor & AnchorStyles.Bottom) != 0) {
-							height = space.Height - child.dist_bottom - top;
-						} else {
-							; // Top anchored only, nothing to be done
-						}
-					} else if ((anchor & AnchorStyles.Bottom) != 0) {
-						top = space.Height - child.dist_bottom - height;
-					} else {
-						// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
-						// This calculates from scratch every time:
-						top = child.dist_top + (space.Height - (child.dist_top + height + child.dist_bottom)) / 2;
-					}
-					
-					// Sanity
-					if (width < 0) {
-						width=0;
-					}
-
-					if (height < 0) {
-						height=0;
-					}
-
-					child.SetImplicitBounds(left, top, width, height);
-				}
-#endif
+				layout_engine.Layout(this, levent);
 
 				// Let everyone know
 				OnLayout(levent);
