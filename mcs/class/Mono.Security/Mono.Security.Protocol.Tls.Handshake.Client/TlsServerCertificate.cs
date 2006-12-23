@@ -290,7 +290,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			{
 				throw new TlsException(
 					description,
-					"Invalid certificate received form server.");
+					"Invalid certificate received from server.");
 			}
 		}
 
