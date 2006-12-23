@@ -1,5 +1,9 @@
 2006-12-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Add MainMenuStrip property.
+
+2006-12-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Add ContextMenuStrip property and implementation.
 	Fix ContextMenu implementation to show menu centered on control when
 	activated using the keyboard instead of showing at screen (0,0).

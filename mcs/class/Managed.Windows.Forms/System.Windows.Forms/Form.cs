@@ -82,6 +82,9 @@ namespace System.Windows.Forms {
 		internal bool			is_changing_visible_state;
 		internal bool			has_been_visible;
 
+#if NET_2_0
+		private MenuStrip		main_menu_strip;
+#endif
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
@@ -498,6 +501,13 @@ namespace System.Windows.Forms {
 				key_preview = value;
 			}
 		}
+
+#if NET_2_0
+		public MenuStrip MainMenuStrip {
+			get { return this.main_menu_strip; }
+			set { this.main_menu_strip = value; }
+		}
+#endif
 
 		[DefaultValue(true)]
 		[MWFCategory("Window Style")]
