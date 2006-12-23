@@ -252,8 +252,15 @@ namespace System.Windows.Forms {
 			
 			item.Selected = false;
 
-			if (item.IsPopup)
+			/* When popup item then close all sub popups and unselect all sub items */
+			if (item.IsPopup) {
 				HideSubPopups (item);
+				
+				/* Unselect all selected sub itens */
+				foreach (MenuItem subitem in item.MenuItems)
+					if (subitem.Selected)
+						DeselectItem (subitem);
+			}
 
 			Menu menu = item.Parent;
 			menu.InvalidateItem (item);
