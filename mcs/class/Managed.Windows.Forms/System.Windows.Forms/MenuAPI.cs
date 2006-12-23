@@ -246,7 +246,7 @@ namespace System.Windows.Forms {
 		}
 	
 		void DeselectItem (MenuItem item)
-		{			
+		{
 			if (item == null)
 				return;				
 			
@@ -343,6 +343,7 @@ namespace System.Windows.Forms {
 
 			PopUpWindow puw = menu.Wnd as PopUpWindow;
 			puw.Hide ();
+			menu.Wnd = null;
 		}
 
 		MenuItem FindSubItemByCoord (Menu menu, Point pnt)
@@ -355,7 +356,7 @@ namespace System.Windows.Forms {
 						return result;
 				}
 					
-				if (menu.Wnd == null)
+				if (menu.Wnd == null || !menu.Wnd.Visible)
 					continue;
 
 				Rectangle rect = item.bounds;

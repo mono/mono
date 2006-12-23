@@ -1,3 +1,10 @@
+2006-12-23  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: When hides menu set Wnd to null, it prevents
+	FindSubItemByCoord to found itens that is not active, also an
+	cheking added to FindSubItemByCoord to search for items only 
+	in visible popup windows. Fixes #80274.
+
 2006-12-22  Everaldo Canuto  <everaldo@simios.org>
 
 	* UserControl.cs: Remove MonoTodo and use InternalBorderStyle,
