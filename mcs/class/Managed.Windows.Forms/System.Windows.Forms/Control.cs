@@ -68,67 +68,69 @@ namespace System.Windows.Forms
 
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
-		Rectangle explicit_bounds; // explicitly set bounds
+		Rectangle               explicit_bounds; // explicitly set bounds
 		internal object			creator_thread;		// thread that created the control
-		internal ControlNativeWindow	window;			// object for native window handle
-		string name; // for object naming
+		internal                ControlNativeWindow	window;			// object for native window handle
+		string                  name; // for object naming
 
 		// State
-		bool is_created; // true if OnCreateControl has been sent
+		bool                    is_created; // true if OnCreateControl has been sent
 		internal bool			has_focus;		// true if control has focus
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
-		bool is_accessible; // true if the control is visible to accessibility applications
-		bool is_captured; // tracks if the control has captured the mouse
+		bool                    is_accessible; // true if the control is visible to accessibility applications
+		bool                    is_captured; // tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
-		bool is_recreating; // tracks if the handle for the control is being recreated
-		bool causes_validation; // tracks if validation is executed on changes
-		bool is_focusing; // tracks if Focus has been called on the control and has not yet finished
-		int tab_index; // position in tab order of siblings
-		bool tab_stop; // is the control a tab stop?
-		bool is_disposed; // has the window already been disposed?
-		Size client_size; // size of the client area (window excluding decorations)
-		Rectangle client_rect; // rectangle with the client area (window excluding decorations)
-		ControlStyles control_style; // rather win32-specific, style bits for control
-		ImeMode ime_mode;
-		bool layout_pending; // true if our parent needs to re-layout us
-		object control_tag; // object that contains data about our control
+		bool                    is_recreating; // tracks if the handle for the control is being recreated
+		bool                    causes_validation; // tracks if validation is executed on changes
+		bool                    is_focusing; // tracks if Focus has been called on the control and has not yet finished
+        bool                    container_selected; // true if Select() or Focus() is called on a container, to prevent child controls from raising their GotFocus event
+        int                     tab_index; // position in tab order of siblings
+		bool                    tab_stop; // is the control a tab stop?
+		bool                    is_disposed; // has the window already been disposed?
+		Size                    client_size; // size of the client area (window excluding decorations)
+		Rectangle               client_rect; // rectangle with the client area (window excluding decorations)
+		ControlStyles           control_style; // rather win32-specific, style bits for control
+		ImeMode                 ime_mode;
+		bool                    layout_pending; // true if our parent needs to re-layout us
+		object                  control_tag; // object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
-		Cursor cursor; // Cursor for the window
+		Cursor                  cursor; // Cursor for the window
 		internal bool			allow_drop;		// true if the control accepts droping objects on it   
-		Region clip_region; // User-specified clip region for the window
+		Region                  clip_region; // User-specified clip region for the window
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
 		internal Color			background_color;	// background color for control
-		Image background_image; // background image for control
+		Image                   background_image; // background image for control
 		internal Font			font;			// font for control
-		string text; // window/title text for control
-		internal BorderStyle		border_style;		// Border style of control
+		string                  text; // window/title text for control
+		internal                BorderStyle		border_style;		// Border style of control
 
 		// Layout
-		int layout_suspended;
-		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
+		int                     layout_suspended;
+		internal AnchorStyles	anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
-		// Please leave the next 4 as internal until DefaultLayout (2.0) is rewritten
+		
+        // Please leave the next 4 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_left;		// distance to the left border of the parent
 		internal int			dist_top; // distance to the top border of the parent
 		internal int			dist_right; // distance to the right border of the parent
 		internal int			dist_bottom; // distance to the bottom border of the parent
 
 		// to be categorized...
-		ControlCollection child_controls; // our children
-		Control parent; // our parent control
-		AccessibleObject accessibility_object; // object that contains accessibility information about our control
-		BindingContext binding_context;
-		RightToLeft right_to_left; // drawing direction for control
-		ContextMenu context_menu; // Context menu associated with the control
+		ControlCollection       child_controls; // our children
+		Control                 parent; // our parent control
+		AccessibleObject        accessibility_object; // object that contains accessibility information about our control
+		BindingContext          binding_context;
+		RightToLeft             right_to_left; // drawing direction for control
+		ContextMenu             context_menu; // Context menu associated with the control
 
 		// double buffering
-		Graphics backbuffer_dc;
-		object backbuffer;
-		Region invalid_region;
+		Graphics                backbuffer_dc;
+		object                  backbuffer;
+		Region                  invalid_region;
 
 		ControlBindingsCollection data_bindings;
 
@@ -1925,6 +1927,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+        internal bool ContainerSelected {
+            get { return container_selected; }
+            set { container_selected = value; }
+        }
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -3409,8 +3416,17 @@ namespace System.Windows.Forms
 #endif
 
 		public void Select() {
-			Select(false, false);
-		}
+            if (this is ContainerControl)
+                ContainerSelected = true;
+            else {
+                Control c = this.Parent;
+                while (c != null) {
+                    c.ContainerSelected = false;
+                    c = c.Parent;
+                }
+            }
+			Select(false, false);	
+        }
 
 #if DebugFocus
 		private void printTree(Control c, string t) {
@@ -4474,7 +4490,9 @@ namespace System.Windows.Forms
 			case Msg.WM_SETFOCUS: {
 				if (!has_focus) {
 					this.has_focus = true;
-					OnGotFocusInternal (EventArgs.Empty);
+                    if (this.Parent != null && this.Parent.ContainerSelected)
+                        return;
+				    OnGotFocusInternal (EventArgs.Empty);
 				}
 				return;
 			}

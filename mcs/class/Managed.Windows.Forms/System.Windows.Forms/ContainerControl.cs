@@ -100,6 +100,13 @@ namespace System.Windows.Forms {
 						walk = (Control) chain [i];
 						walk.FireEnter ();
 					}
+
+					walk = this.Parent;
+					while (walk != null) {
+						if (walk is ContainerControl)
+							((ContainerControl)walk).active_control = this;
+						walk = walk.Parent;
+					}
 				}
 
 				active_control = value;
@@ -117,6 +124,10 @@ namespace System.Windows.Forms {
 
 		private bool ValidateControl (Control c)
 		{
+			if (c is ContainerControl && ((ContainerControl)c).ActiveControl != null && !c.ContainerSelected)
+				if (!((ContainerControl)c).ValidateControl(((ContainerControl)c).ActiveControl))
+					return false;
+
 			CancelEventArgs e = new CancelEventArgs ();
 
 			c.FireValidating (e);
