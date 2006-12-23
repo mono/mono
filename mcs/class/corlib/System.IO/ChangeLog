@@ -1,3 +1,7 @@
+2006-12-23  Alp Toker  <alp@atoker.com>
+
+	* Directory.cs: "platfor" typofix
+
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* File.cs: Add stubs for Encrypt and Decrypt that throws 
