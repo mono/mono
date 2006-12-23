@@ -1,4 +1,11 @@
-﻿2006-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+﻿2006-12-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* HttpWebRequest.cs:
+	* WebConnectionStream.cs: detect errors writing headers earlier and
+	avoid race that showed up with SSL. Fixes bug #80234.
+
+2006-12-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* EndPointListener.cs:
 	* ListenerPrefix.cs:

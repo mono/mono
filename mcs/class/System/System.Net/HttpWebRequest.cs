@@ -675,18 +675,19 @@ namespace System.Net
 
 			CheckIfForceWrite ();
 			asyncRead = new WebAsyncResult (this, callback, state);
+			WebAsyncResult aread = asyncRead;
 			initialMethod = method;
 			if (haveResponse) {
 				if (webResponse != null) {
 					Exception saved = saved_exc;
 					Monitor.Exit (this);
 					if (saved == null) {
-						asyncRead.SetCompleted (true, webResponse);
+						aread.SetCompleted (true, webResponse);
 					} else {
-						asyncRead.SetCompleted (true, saved);
+						aread.SetCompleted (true, saved);
 					}
-					asyncRead.DoCallback ();
-					return asyncRead;
+					aread.DoCallback ();
+					return aread;
 				}
 			}
 			
@@ -698,7 +699,7 @@ namespace System.Net
 			}
 
 			Monitor.Exit (this);
-			return asyncRead;
+			return aread;
 		}
 		
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
@@ -968,7 +969,13 @@ namespace System.Net
 			req.Append (GetHeaders ());
 			string reqstr = req.ToString ();
 			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);
-			writeStream.SetHeaders (bytes, 0, bytes.Length);
+			try {
+				writeStream.SetHeaders (bytes, 0, bytes.Length);
+			} catch (WebException wexc) {
+				SetWriteStreamError (wexc.Status);
+			} catch (Exception e) {
+				SetWriteStreamError (WebExceptionStatus.SendFailure);
+			}
 		}
 
 		internal void SetWriteStream (WebConnectionStream stream)

@@ -850,10 +850,10 @@ namespace System.Net
 			return result;
 		}
 
-		internal void Write (byte [] buffer, int offset, int size)
+		internal bool Write (byte [] buffer, int offset, int size)
 		{
 			if (nstream == null)
-				return;
+				return false;
 
 			try {
 				nstream.Write (buffer, offset, size);
@@ -865,7 +865,7 @@ namespace System.Net
 				string msg = "Write";
 				if (e is WebException) {
 					HandleError (wes, e, msg);
-					return;
+					return false;
 				}
 
 				// if SSL is in use then check for TrustFailure
@@ -875,7 +875,9 @@ namespace System.Net
 				}
 
 				HandleError (wes, e, msg);
+				return false;
 			}
+			return true;
 		}
 
 		internal void Close (bool sendNext)

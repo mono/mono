@@ -492,7 +492,10 @@ namespace System.Net
 				if (!cnc.Connected)
 					throw new WebException ("Not connected", null, WebExceptionStatus.SendFailure, null);
 
-				cnc.Write (buffer, offset, size);
+				
+				if (!cnc.Write (buffer, offset, size))
+					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
+
 				if (!initRead) {
 					initRead = true;
 					WebConnection.InitRead (cnc);
@@ -531,8 +534,7 @@ namespace System.Net
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
 			requestWritten = true;
-			cnc.Write (headers, 0, headers.Length);
-			if (!cnc.Connected)
+			if (cnc.Write (headers, 0, headers.Length))
 				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 
 			headersSent = true;
