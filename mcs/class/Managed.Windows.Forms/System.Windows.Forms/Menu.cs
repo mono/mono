@@ -201,6 +201,11 @@ namespace System.Windows.Forms
 
 		// From Microsoft documentation is impossible to guess that 
 		// this method is supossed to do
+		//
+		// update: according to MS documentation, first parameter is on of this
+		// constant values FindHandle or FindShortcut, value depends from what
+		// you what to search, by shortcut or handle. FindHandle and FindShortcut
+		// is a constant fields and was defined for this class.  
 		public MenuItem FindMenuItem (int type, IntPtr value)
 		{
 			return null;

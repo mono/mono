@@ -1,5 +1,10 @@
 2006-12-23  Everaldo Canuto  <everaldo@simios.org>
 
+	* Menu.cs: Update information about FindMenuItem, method to be
+	implemented soon.
+
+2006-12-23  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs: When deselect items deselect also selected subitems.
 	
 2006-12-23  Everaldo Canuto  <everaldo@simios.org>
