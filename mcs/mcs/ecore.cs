@@ -2793,7 +2793,10 @@ namespace Mono.CSharp {
 			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
 			eclass = ExprClass.MethodGroup;
-			type = TypeManager.object_type;
+
+			// Set the type to something that will never be useful, which will
+			// trigger the proper conversions.
+			type = typeof (MethodGroupExpr);
 			loc = l;
 		}
 
