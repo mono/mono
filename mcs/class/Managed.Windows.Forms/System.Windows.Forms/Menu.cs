@@ -23,8 +23,8 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //	TODO:
-//		- MDI integration
-//		- ShortCut navigation
+//		- FindMenuItem
+//		- MdiListItem
 //
 // NOT COMPLETE
 
@@ -49,7 +49,8 @@ namespace System.Windows.Forms
 		internal MenuTracker tracker;
 
 #if NET_2_0
-		object control_tag;
+		private string control_name;
+		private object control_tag;
 #endif
 
 		public const int FindHandle = 0;
@@ -63,8 +64,8 @@ namespace System.Windows.Forms
 				menu_items.AddRange (items);
 		}
 
-
 		#region Public Properties
+		
 		[BrowsableAttribute(false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
@@ -106,19 +107,22 @@ namespace System.Windows.Forms
 		}
 		
 #if NET_2_0
+
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		public string Name { 
+			get { return control_name; } 
+			set { control_name = value; }
+		}
+
 		[Localizable(false)]
 		[Bindable(true)]
 		[TypeConverter(typeof(StringConverter))]
 		[DefaultValue(null)]
 		[MWFCategory("Data")]
 		public object Tag {
-			get {
-				return control_tag;
-			}
-
-			set {
-				control_tag = value;
-			}
+			get { return control_tag; }
+			set { control_tag = value; }
 		}
 #endif
 
@@ -127,9 +131,7 @@ namespace System.Windows.Forms
 		#region Private Properties
 
 		internal System.Drawing.Rectangle Rect {
-			get {
-				return rect;
-			}
+			get { return rect; }
 		}
 
 		internal MenuItem SelectedItem  {
