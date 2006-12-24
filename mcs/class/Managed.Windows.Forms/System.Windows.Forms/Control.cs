@@ -1671,13 +1671,13 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DefaultValue (false)]
+		[MonoTODO("This method currently does nothing")]
 		public virtual bool AutoSize {
 			get {
 				//Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
 				return auto_size;
 			}
 			set {
-				Console.Error.WriteLine("Unimplemented: Control::set_AutoSize(bool)");
 				auto_size = value;
 			}
 		}

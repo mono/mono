@@ -11,6 +11,11 @@
 
 2006-12-24  Miguel de Icaza  <miguel@novell.com>
 
+	* Control.cs: Switched the error message on the console for a
+	todo.  A review of the code will have to cope with this anyways
+	(since its a large feature, it is in our radar) and it was
+	producing too much output when running PDN.
+
 	* ToolStripComboBox.cs: Set the text when the SelectedIndex
 	changes.  Applications depend on this (PDN 2.72)
 
