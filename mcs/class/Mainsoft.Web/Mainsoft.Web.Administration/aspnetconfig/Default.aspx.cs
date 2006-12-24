@@ -55,9 +55,19 @@ namespace Mainsoft.Web.Administration
 		{
 			get
 			{
-				string[] list = Roles.GetAllRoles ();
-				return list.Length.ToString ();
+				if (Roles.Enabled) {
+					string[] list = Roles.GetAllRoles ();
+					return list.Length.ToString ();
+				}
+				else
+					return "Roles not enabled";
 			}
+		}
+
+		protected void HyperLink1_Load (object sender, EventArgs e)
+		{
+			if (!Roles.Enabled)
+				((HyperLink) sender).Enabled = false;
 		}
 	}
 }

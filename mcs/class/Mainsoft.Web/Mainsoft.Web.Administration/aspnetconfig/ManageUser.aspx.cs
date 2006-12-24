@@ -124,5 +124,12 @@ namespace Mainsoft.Web.Administration
 			User_name = ((GridButton) sender).User;
 			mv.ActiveViewIndex = 1;
 		}
+
+		protected void gridbtn_load (object sender, EventArgs e)
+		{
+			if (!Roles.Enabled) {
+				((GridButton)sender).Enabled = false;
+			}
+		}
 	}
 }

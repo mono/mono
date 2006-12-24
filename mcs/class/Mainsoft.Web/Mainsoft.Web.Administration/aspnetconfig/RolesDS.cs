@@ -79,14 +79,15 @@ namespace Mainsoft.Web.Administration
             dtCol1.Unique = false;
             aTable.Columns.Add(dtCol1);
 
-            // Create rows to the table
-            foreach (String role in Roles.GetAllRoles())
-            {
-                dtRow = aTable.NewRow();
-                dtRow["Role"] = role;
-                dtRow["IsInRole"] = Roles.IsUserInRole(user, role);
-                aTable.Rows.Add(dtRow);
-            }
+	    if (Roles.Enabled) {
+		    // Create rows to the table
+		    foreach (String role in Roles.GetAllRoles ()) {
+			    dtRow = aTable.NewRow ();
+			    dtRow["Role"] = role;
+			    dtRow["IsInRole"] = Roles.IsUserInRole (user, role);
+			    aTable.Rows.Add (dtRow);
+		    }
+	    }
             aTable.PrimaryKey = new DataColumn[] { aTable.Columns["Role"] };
             return aTable;
         }
@@ -214,13 +215,14 @@ namespace Mainsoft.Web.Administration
             dtCol.Unique = false;
             aTable.Columns.Add(dtCol);
 
-            // Create rows to the table
-            foreach (string str in Roles.GetAllRoles())
-            {
-                dtRow = aTable.NewRow();
-                dtRow["Role"] = str;
-                aTable.Rows.Add(dtRow);
-            }
+	    if (Roles.Enabled) {
+		    // Create rows to the table
+		    foreach (string str in Roles.GetAllRoles ()) {
+			    dtRow = aTable.NewRow ();
+			    dtRow["Role"] = str;
+			    aTable.Rows.Add (dtRow);
+		    }
+	    }
 
             aTable.PrimaryKey = new DataColumn[] { aTable.Columns["Role"] };
             return aTable;
@@ -266,7 +268,12 @@ namespace Mainsoft.Web.Administration
                 {
                     dtRow = aTable.NewRow();
                     dtRow["User"] = user.UserName;
-                    dtRow["InRole"] = Roles.IsUserInRole(user.UserName, role);
+		    if (Roles.Enabled) {
+			    dtRow["InRole"] = Roles.IsUserInRole (user.UserName, role);
+		    }
+		    else {
+			    dtRow["InRole"] = false;
+		    }
                     aTable.Rows.Add(dtRow);
                 }
             }
@@ -276,7 +283,12 @@ namespace Mainsoft.Web.Administration
                 {
                     dtRow = aTable.NewRow();
                     dtRow["User"] = user.UserName;
-                    dtRow["InRole"] = Roles.IsUserInRole(user.UserName, role);
+		    if (Roles.Enabled) {
+			    dtRow["InRole"] = Roles.IsUserInRole (user.UserName, role);
+		    }
+		    else {
+			    dtRow["InRole"] = false;
+		    }
                     aTable.Rows.Add(dtRow);
                 }
             }

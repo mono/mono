@@ -79,8 +79,8 @@
                         </tr>
                     </table>
                 </td>
-                <td width="30%" class="innertable" >
-                    <custom:searcher ID="srch" runat="server" />
+                <td class="innertable" valign="top" style="width: 82%" >
+                   <custom:searcher ID="srch" runat="server" />
                 </td>
             </tr>
             <tr>

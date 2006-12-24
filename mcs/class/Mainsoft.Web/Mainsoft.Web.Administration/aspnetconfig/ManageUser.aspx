@@ -81,7 +81,7 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <custom:GridButton ID="grid_btn" runat="server" User='<%# Bind("User") %>' OnClick="gridbtn_click"  >Edit roles</custom:GridButton>
+                                            <custom:GridButton ID="grid_btn" runat="server" User='<%# Bind("User") %>' OnClick="gridbtn_click" OnLoad="gridbtn_load">Edit roles</custom:GridButton>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                 </Columns>

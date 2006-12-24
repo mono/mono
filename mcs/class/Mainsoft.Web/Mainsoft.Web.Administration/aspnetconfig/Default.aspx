@@ -74,7 +74,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink3" runat="server" NavigateUrl="CreateRole.aspx">Create or manage roles</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink3" runat="server" NavigateUrl="CreateRole.aspx" OnLoad="HyperLink1_Load" >Create or manage roles</asp:HyperLink>
                         </td>
                     </tr>
                 </table>
