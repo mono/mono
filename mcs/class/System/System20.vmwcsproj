@@ -302,6 +302,8 @@
     <Compile Include="System.ComponentModel.Design\StandardCommands.cs" />
     <Compile Include="System.ComponentModel.Design\StandardToolWindows.cs" />
     <Compile Include="System.ComponentModel.Design\ViewTechnology.cs" />
+    <Compile Include="System.ComponentModel\AddingNewEventArgs.cs" />
+    <Compile Include="System.ComponentModel\AddingNewEventHandler.cs" />
     <Compile Include="System.ComponentModel\AmbientValueAttribute.cs" />
     <Compile Include="System.ComponentModel\ArrayConverter.cs" />
     <Compile Include="System.ComponentModel\AsyncCompletedEventArgs.cs" />
@@ -309,6 +311,7 @@
     <Compile Include="System.ComponentModel\AsyncOperation.cs" />
     <Compile Include="System.ComponentModel\AsyncOperationManager.cs" />
     <Compile Include="System.ComponentModel\AttributeCollection.cs" />
+    <Compile Include="System.ComponentModel\AttributeProviderAttribute.cs" />
     <Compile Include="System.ComponentModel\BackgroundWorker.cs" />
     <Compile Include="System.ComponentModel\BaseNumberConverter.cs" />
     <Compile Include="System.ComponentModel\BindableAttribute.cs" />
@@ -325,6 +328,7 @@
     <Compile Include="System.ComponentModel\CollectionChangeEventArgs.cs" />
     <Compile Include="System.ComponentModel\CollectionChangeEventHandler.cs" />
     <Compile Include="System.ComponentModel\CollectionConverter.cs" />
+    <Compile Include="System.ComponentModel\ComplexBindingPropertiesAttribute.cs" />
     <Compile Include="System.ComponentModel\Component.cs" />
     <Compile Include="System.ComponentModel\ComponentCollection.cs" />
     <Compile Include="System.ComponentModel\ComponentConverter.cs" />
@@ -332,8 +336,11 @@
     <Compile Include="System.ComponentModel\ComponentResourceManager.cs" />
     <Compile Include="System.ComponentModel\Container.cs" />
     <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
+    <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
+    <Compile Include="System.ComponentModel\DataObjectMethodType.cs" />
     <Compile Include="System.ComponentModel\DateTimeConverter.cs" />
     <Compile Include="System.ComponentModel\DecimalConverter.cs" />
+    <Compile Include="System.ComponentModel\DefaultBindingPropertyAttribute.cs" />
     <Compile Include="System.ComponentModel\DefaultEventAttribute.cs" />
     <Compile Include="System.ComponentModel\DefaultPropertyAttribute.cs" />
     <Compile Include="System.ComponentModel\DefaultValueAttribute.cs" />

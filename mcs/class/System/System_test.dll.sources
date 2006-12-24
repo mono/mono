@@ -111,6 +111,7 @@ System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs
 System.ComponentModel/ContainerTest.cs
+System.ComponentModel/DataObjectMethodAttributeTests.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DefaultBindingPropertyAttributeTest.cs
 System.ComponentModel/DecimalConverterTests.cs

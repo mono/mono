@@ -188,6 +188,8 @@ System.ComponentModel/ComponentEditor.cs
 System.ComponentModel/ComponentResourceManager.cs
 System.ComponentModel/Container.cs
 System.ComponentModel/CultureInfoConverter.cs
+System.ComponentModel/DataObjectMethodAttribute.cs
+System.ComponentModel/DataObjectMethodType.cs
 System.ComponentModel/DateTimeConverter.cs
 System.ComponentModel/DecimalConverter.cs
 System.ComponentModel/DefaultBindingPropertyAttribute.cs
