@@ -458,13 +458,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		public Padding Padding {
-			get {
-				return base.Padding;
-			}
-			set {
-				base.Padding = value;
-			}
+		public new Padding Padding {
+			get { return base.Padding; }
+			set { base.Padding = value; }
 		}
 #endif
 

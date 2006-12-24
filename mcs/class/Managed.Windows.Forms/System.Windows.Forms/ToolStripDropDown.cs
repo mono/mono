@@ -496,10 +496,8 @@ namespace System.Windows.Forms
 		#region Public Events
 		static object ClosedEvent = new object ();
 		static object ClosingEvent = new object ();
-		static object ContextMenuStripChangedEvent = new object ();
 		static object OpenedEvent = new object ();
 		static object OpeningEvent = new object ();
-		static object RegionChangedEvent = new object ();
 		static object ScrollEvent = new object ();
 
 		public new event EventHandler BackgroundImageChanged {
@@ -540,9 +538,9 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler ContextMenuStripChanged {
-			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
-			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value); }
+		public override event EventHandler ContextMenuStripChanged {
+			add { base.ContextMenuStripChanged += value; }
+			remove { base.ContextMenuStripChanged -= value; }
 		}
 
 		[Browsable (false)]
@@ -614,9 +612,9 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (OpeningEvent, value); }
 		}
 
-		public event EventHandler RegionChanged {
-			add { Events.AddHandler (RegionChangedEvent, value); }
-			remove { Events.RemoveHandler (RegionChangedEvent, value); }
+		public override event EventHandler RegionChanged {
+			add { base.RegionChanged += value; }
+			remove { base.RegionChanged -= value; }
 		}
 
 		[Browsable (false)]

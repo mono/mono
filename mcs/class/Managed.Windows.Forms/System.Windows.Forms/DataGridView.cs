@@ -1650,9 +1650,9 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public event EventHandler PaddingChanged {
-			add { Events.AddHandler (PaddingChangedEvent, value); }
-			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
+		public override event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
 		}
 
 		public event EventHandler GridColorChanged {

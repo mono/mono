@@ -1,5 +1,29 @@
 2006-12-24  Chris Toshok  <toshok@ximian.com>
 
+	* GridTablesFactory.cs: 2.0 corcompare work.
+
+	* ToolStripContainer.cs: add "override" to
+	ContextMenuStripChanged, and remove the local event object.
+
+	* ToolStripDropDown.cs: same with a couple properties.
+
+	* ToolStripPanel.cs: same with AutoSizeChanged event.
+
+	* TextBoxBase.cs: add "override" to AutoSizeChanged.
+
+	* Form.cs: add the remaining 2.0 events, and do some corcompare
+	attribute work.
+
+	* DateTimePicker.cs: add "new" to padding.
+
+	* ButtonBase.cs: use Control's use_compatible_text_rendering.
+
+	* ToolStripContentPanel.cs: use base.AutoSizeChanged.
+
+	* DataGridView.cs: PaddingChanged is overridden.
+
+2006-12-24  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: corecompare work here too.
 
 	* DataGridViewElement.cs, DataGridView.cs,

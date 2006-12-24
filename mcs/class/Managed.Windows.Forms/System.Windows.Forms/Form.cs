@@ -39,6 +39,11 @@ namespace System.Windows.Forms {
 	[DesignTimeVisible(false)]
 	[Designer("System.Windows.Forms.Design.FormDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
 	[DefaultEvent("Load")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[InitializationEvent ("Load")]
+	[ComVisible (true)]
+#endif
 	[ToolboxItem(false)]
 	public class Form : ContainerControl {
 		#region Local Variables
@@ -258,6 +263,10 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Obsolete ("This property has been deprecated in favor of AutoScaleMode.")]
 #else
 		[DefaultValue(true)]
 #endif
@@ -272,9 +281,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+#else
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		[Localizable(true)]
 		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual Size AutoScaleBaseSize {
 			get {
 				return autoscale_base_size;
@@ -503,6 +517,8 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue (null)]
+		[TypeConverter (typeof (ReferenceConverter))]
 		public MenuStrip MainMenuStrip {
 			get { return this.main_menu_strip; }
 			set { this.main_menu_strip = value; }
@@ -616,6 +632,10 @@ namespace System.Windows.Forms {
 			get { return window_manager; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[TypeConverter (typeof (ReferenceConverter))]
+#endif
 		[DefaultValue(null)]
 		[MWFCategory("Window Style")]
 		public MainMenu Menu {
@@ -1150,7 +1170,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Obsolete ("This method has been deprecated.  Use AutoScaleDimensions instead")]
+#else
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		public static SizeF GetAutoScaleSize (Font font)
 		{
 			return XplatUI.GetAutoScaleSize(font);
@@ -1327,7 +1352,12 @@ namespace System.Windows.Forms {
 			base.AdjustFormScrollbars (displayScrollbars);
 		}
 
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Obsolete ("This method has been deprecated")] // XXX what to use instead?
+#else
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		protected void ApplyAutoScaling()
 		{
 			SizeF current_size_f = GetAutoScaleSize (DeviceContext, Font);
@@ -1713,7 +1743,11 @@ namespace System.Windows.Forms {
 			return SelectNextControl(ActiveControl, forward, true, true, true);
 		}
 
+#if NET_2_0
+		[EditorBrowsable(EditorBrowsableState.Never)]
+#else
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#endif
 		protected override void ScaleCore(float dx, float dy) {
 			try {
 				SuspendLayout();
@@ -2157,11 +2191,19 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (ActivatedEvent, value); }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public event EventHandler Closed {
 			add { Events.AddHandler (ClosedEvent, value); }
 			remove { Events.RemoveHandler (ClosedEvent, value); }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public event CancelEventHandler Closing {
 			add { Events.AddHandler (ClosingEvent, value); }
 			remove { Events.RemoveHandler (ClosingEvent, value); }
@@ -2202,11 +2244,17 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (MdiChildActivateEvent, value); }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public event EventHandler MenuComplete {
 			add { Events.AddHandler (MenuCompleteEvent, value); }
 			remove { Events.RemoveHandler (MenuCompleteEvent, value); }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public event EventHandler MenuStart {
 			add { Events.AddHandler (MenuStartEvent, value); }
 			remove { Events.RemoveHandler (MenuStartEvent, value); }
@@ -2227,6 +2275,7 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 #if NET_2_0
+		[SettingsBindable (true)]
 		public override string Text {
 			get {
 				return base.Text;
@@ -2237,6 +2286,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[SettingsBindable (true)]
 		public new Point Location {
 			get {
 				return base.Location;
@@ -2247,11 +2297,29 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static object AutoValidateChangedEvent = new object ();
 		static object FormClosingEvent = new object ();
 		static object FormClosedEvent = new object ();
+		static object HelpButtonClickedEvent = new object ();
 		static object ResizeEndEvent = new object ();
 		static object ResizeBeginEvent = new object ();
-		
+		static object RightToLeftLayoutChangedEvent = new object ();
+		static object ShownEvent = new object ();
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public event EventHandler AutoValidateChanged {
+			add { Events.AddHandler (AutoValidateChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoValidateChangedEvent, value); }
+		}
+
 		public event FormClosingEventHandler FormClosing {
 			add { Events.AddHandler (FormClosingEvent, value); }
 			remove { Events.RemoveHandler (FormClosingEvent, value); }
@@ -2261,23 +2329,29 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (FormClosedEvent, value); }
 			remove { Events.RemoveHandler (FormClosedEvent, value); }
 		}
-		
-		protected virtual void OnFormClosing (FormClosingEventArgs e)
-		{
-			FormClosingEventHandler eh = (FormClosingEventHandler)(Events [FormClosingEvent]);
-			if (eh != null)
-				eh (this, e);
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public event CancelEventHandler HelpButtonClicked {
+			add { Events.AddHandler (HelpButtonClickedEvent, value); }
+			remove { Events.RemoveHandler (HelpButtonClickedEvent, value); }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override event EventHandler MarginChanged {
+			add { base.MarginChanged += value; }
+			remove { base.MarginChanged -= value; }
+		}
+
+		public event EventHandler RightToLeftLayoutChanged {
+			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}
 
 		public event EventHandler ResizeBegin {
 			add { Events.AddHandler (ResizeBeginEvent, value); }
 			remove { Events.RemoveHandler (ResizeBeginEvent, value); }
-		}
-		protected virtual void OnResizeBegin (EventArgs e)
-		{
-			EventHandler eh = (EventHandler) (Events [ResizeBeginEvent]);
-			if (eh != null)
-				eh (this, e);
 		}
 
 		public event EventHandler ResizeEnd {
@@ -2285,6 +2359,35 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (ResizeEndEvent, value); }
 		}
 
+		public event EventHandler Shown {
+			add { Events.AddHandler (ShownEvent, value); }
+			remove { Events.RemoveHandler (ShownEvent, value); }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnFormClosing (FormClosingEventArgs e)
+		{
+			FormClosingEventHandler eh = (FormClosingEventHandler)(Events [FormClosingEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnResizeBegin (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [ResizeBeginEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnResizeEnd (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [ResizeEndEvent]);

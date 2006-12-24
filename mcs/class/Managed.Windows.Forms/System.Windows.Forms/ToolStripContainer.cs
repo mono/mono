@@ -196,8 +196,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object ContextMenuStripChangedEvent = new object ();
-
 		[Browsable (false)]
 		public new event EventHandler BackColorChanged {
 			add { base.BackColorChanged += value; }
@@ -223,9 +221,9 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public event EventHandler ContextMenuStripChanged {
-			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
-			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value); }
+		public override event EventHandler ContextMenuStripChanged {
+			add { base.ContextMenuStripChanged += value; }
+			remove { base.ContextMenuStripChanged -= value; }
 		}
 
 		[Browsable (false)]

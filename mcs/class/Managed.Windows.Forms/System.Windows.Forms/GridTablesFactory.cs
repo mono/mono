@@ -32,20 +32,20 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	sealed
+#endif
 	public class GridTablesFactory
 	{
-
 		#region Constructors
 		internal GridTablesFactory ()
 		{
-
 		}
 		#endregion
 
 
 		#region Public Instance Properties
-		[MonoTODO]
-		public static DataGridTableStyle[] CreateGridTables (DataGridTableStyle gridTable, object dataSource,   string dataMember, BindingContext bindingManager)
+		public static DataGridTableStyle[] CreateGridTables (DataGridTableStyle gridTable, object dataSource, string dataMember, BindingContext bindingManager)
 		{
 			throw new NotImplementedException ();
 		}

@@ -195,14 +195,13 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object AutoSizeChangedEvent = new object ();
 		static object LoadEvent = new object ();
 		static object RendererChangedEvent = new object ();
 
 		[Browsable (false)]
-		public event EventHandler AutoSizeChanged {
-			add { Events.AddHandler (AutoSizeChangedEvent, value); }
-			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		public override event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
 		}
 
 		[Browsable (false)]

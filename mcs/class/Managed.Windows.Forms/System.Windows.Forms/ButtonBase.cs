@@ -46,7 +46,6 @@ namespace System.Windows.Forms {
 		internal StringFormat		text_format;
 		internal bool 			paint_as_acceptbutton;
 #if NET_2_0
-		private	bool			use_compatible_text_rendering;
 		private bool			use_visual_style_back_color;
 		private FlatButtonAppearance flat_button_appearance;
 #endif

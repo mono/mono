@@ -734,7 +734,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		static object AutoSizeChangedEvent = new object ();
 		static object ItemAddedEvent = new object ();
 		static object ItemClickedEvent = new object ();
 		static object ItemRemovedEvent = new object ();
@@ -745,9 +744,9 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler AutoSizeChanged {
-			add { Events.AddHandler (AutoSizeChangedEvent, value); }
-			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		public override event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
 		}
 
 		public new event EventHandler CausesValidationChanged {
