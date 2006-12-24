@@ -3899,6 +3899,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.VisualStyles\BackgroundType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

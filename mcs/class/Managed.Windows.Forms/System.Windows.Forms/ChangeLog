@@ -1,5 +1,10 @@
 2006-12-23  Chris Toshok  <toshok@ximian.com>
 
+	* TableLayoutSettings.cs: finish up the corcompare work for this
+	class.
+
+2006-12-23  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: make SetImplicitBounds internal, do some futzing
 	with LayoutEngine so that it's available in 1.1, and remove the
 	entire duplicated code mess from PerformLayout.  Use

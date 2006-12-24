@@ -894,6 +894,7 @@
     <Compile Include="System.Windows.Forms.Layout\DefaultLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\FlowLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
+    <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />

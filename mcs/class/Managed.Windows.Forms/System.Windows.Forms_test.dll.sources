@@ -86,6 +86,7 @@ System.Windows.Forms/TreeNodeTest.cs
 System.Windows.Forms/TreeViewTest.cs
 System.Windows.Forms/UpDownTest.cs
 System.Windows.Forms/UserControlTest.cs
+System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
 System.Resources/WriterTest.cs

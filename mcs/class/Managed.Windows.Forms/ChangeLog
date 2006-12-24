@@ -1,3 +1,13 @@
+2006-12-23  Chris Toshok  <toshok@ximian.com>
+
+	* System.Windows.Forms_test.dll.sources: add
+	System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs.
+
+	* System.Windows.Forms.dll.sources: add
+	System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs.
+
+	* *.csproj: sync with new file.
+	
 2006-12-23  Daniel Nauck  <dna@mono-project.de>
 
 	* System.Windows.Forms_test.dll.sources: Add

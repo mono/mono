@@ -36,6 +36,7 @@ using System.Runtime.Serialization;
 namespace System.Windows.Forms 
 {
 	[Serializable]
+	[TypeConverter (typeof (TableLayoutSettingsTypeConverter))]
 	public sealed class TableLayoutSettings : LayoutSettings, ISerializable 
 	{
 		private TableLayoutColumnStyleCollection column_styles;
@@ -77,10 +78,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public TableLayoutColumnStyleCollection ColumnStyles {
 			get { return this.column_styles; }
 		}
 
+		[DefaultValue (TableLayoutPanelGrowStyle.AddRows)]
 		public TableLayoutPanelGrowStyle GrowStyle {
 			get { return this.grow_style; }
 			set {
@@ -105,12 +108,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public TableLayoutRowStyleCollection RowStyles {
 			get { return row_styles; }
 		}
 		#endregion
 
 		#region Public Methods
+		[DefaultValue (-1)]
 		public TableLayoutPanelCellPosition GetCellPosition (Object control)
 		{
 			if (control == null)
@@ -127,6 +132,7 @@ namespace System.Windows.Forms
 			return new TableLayoutPanelCellPosition (column, row);
 		}
 
+		[DefaultValue (-1)]
 		public int GetColumn (Object control)
 		{
 			if (control == null)
@@ -153,6 +159,7 @@ namespace System.Windows.Forms
 			return 1;
 		}
 
+		[DefaultValue (-1)]
 		public int GetRow (Object control)
 		{
 			if (control == null)
@@ -179,6 +186,7 @@ namespace System.Windows.Forms
 			return 1;
 		}
 
+		[DefaultValue (-1)]
 		public void SetCellPosition (Object control, TableLayoutPanelCellPosition cellPosition)
 		{
 			if (control == null)
@@ -230,9 +238,9 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region ISerializable Members
-		[MonoTODO ("Not Implemented")]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			throw new NotImplementedException ();
 		}
 		#endregion
 	}
