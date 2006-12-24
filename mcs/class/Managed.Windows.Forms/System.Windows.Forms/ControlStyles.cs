@@ -50,8 +50,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		DoubleBuffer		= 0x00010000,
 #endif
+		DoubleBuffer		= 0x00010000,
 
 #if NET_2_0
 		OptimizedDoubleBuffer	= 0x00020000,
