@@ -319,13 +319,19 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region	ControlCollection Public Instance Properties
-			public int Count {
+			public int Count
+			{
 				get {
 					return list.Count;
 				}
 			}
 
-			public bool IsReadOnly {
+#if NET_2_0
+			bool IList.IsReadOnly
+#else
+			public bool IsReadOnly
+#endif
+			{
 				get {
 					return list.IsReadOnly;
 				}

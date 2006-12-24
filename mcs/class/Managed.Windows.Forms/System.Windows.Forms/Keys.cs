@@ -33,6 +33,10 @@ namespace System.Windows.Forms {
 	[Flags]
 	[ComVisible(true)]
 	[TypeConverter(typeof(KeysConverter))]
+#if NET_2_0
+	[Editor ("System.Windows.Forms.Design.ShortcutKeysEditor, " + Consts.AssemblySystem_Design,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#endif
 	public enum Keys {
 		None		= 0x00000000,
 		LButton		= 0x00000001,

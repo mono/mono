@@ -117,7 +117,9 @@ namespace System.Windows.Forms
 	public class DataGrid : Control, ISupportInitialize, IDataGridEditingService
 	{
 		[Flags]
+#if !NET_2_0
 		[Serializable]
+#endif
 		public enum HitTestType
 		{
 			None		= 0,
@@ -583,7 +585,9 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+#if !NET_2_0
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
+#endif
 		public object DataSource {
 			get { return datasource; }
 			set {
@@ -700,7 +704,9 @@ namespace System.Windows.Forms
 			get { return new Font (Font, FontStyle.Underline); }
 		}
 
+#if !NET_2_0
 		[ComVisible(false)]
+#endif
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color LinkHoverColor {

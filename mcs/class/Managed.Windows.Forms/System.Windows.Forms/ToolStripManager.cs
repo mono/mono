@@ -46,6 +46,10 @@ namespace System.Windows.Forms
 			ToolStripManager.render_mode = ToolStripManagerRenderMode.Professional;
 			ToolStripManager.visual_styles_enabled = Application.RenderWithVisualStyles;
 		}
+
+		private ToolStripManager ()
+		{
+		}
 		#endregion
 
 		#region Public Properties

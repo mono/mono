@@ -29,11 +29,14 @@
 
 #if NET_2_0
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
 	[Flags]
 	[ComVisible(true)]
+	[Editor ("System.Windows.Forms.Design.BorderSidesEditor, " + Consts.AssemblySystem_Design,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	public enum ToolStripStatusLabelBorderSides
 	{
 		None = 0,

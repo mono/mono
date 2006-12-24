@@ -38,7 +38,11 @@ namespace System.Windows.Forms {
 	[DefaultEvent("SplitterMoved")]
 	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Dock")]
-	public class Splitter : Control, IMessageFilter {
+	public class Splitter : Control
+#if !NET_2_0
+	, IMessageFilter
+#endif
+	{
 		#region Enums
 		private enum DrawType {
 			Initial,
@@ -342,9 +346,11 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
+#if !NET_2_0
 		public bool PreFilterMessage(ref Message m) {
 			return false;
 		}
+#endif
 
 		public override string ToString() {
 			return base.ToString () + String.Format(", MinExtra: {0}, MinSize: {1}", min_extra, min_size);

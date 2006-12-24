@@ -27,6 +27,8 @@
 
 // COMPLETE
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	[Flags]
@@ -45,7 +47,12 @@ namespace System.Windows.Forms {
 		AllPaintingInWmPaint	= 0x00002000,
 		CacheText		= 0x00004000,
 		EnableNotifyMessage	= 0x00008000,
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		DoubleBuffer		= 0x00010000,
+#endif
+
 #if NET_2_0
 		OptimizedDoubleBuffer	= 0x00020000,
 		UseTextForAccessibility	= 0x00040000

@@ -58,7 +58,6 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
 		public bool AllowTransparency {
 			get { return allow_transparency; }
 			set {
@@ -77,14 +76,12 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (true)]
 		public bool AutoClose
 		{
 			get { return this.auto_close; }
@@ -138,7 +135,6 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ToolStripGripDisplayStyle GripDisplayStyle {
 			get { return ToolStripGripDisplayStyle.Vertical; }
-			set { }
 		}
 
 		[Browsable (false)]
@@ -152,7 +148,6 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new Rectangle GripRectangle {
 			get { return Rectangle.Empty; }
-			set { }
 		}
 
 		[Browsable (false)]

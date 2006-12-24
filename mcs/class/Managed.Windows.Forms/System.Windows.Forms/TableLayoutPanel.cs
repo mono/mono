@@ -41,7 +41,6 @@ namespace System.Windows.Forms
 	[ProvideProperty ("ColumnSpan", typeof (Control))]
 	[ProvideProperty ("Row", typeof (Control))]
 	[ProvideProperty ("RowSpan", typeof (Control))]
-	[DefaultEvent ("Paint")]
 	[DefaultProperty ("ColumnCount")]
 	public class TableLayoutPanel : Panel, IExtenderProvider
 	{

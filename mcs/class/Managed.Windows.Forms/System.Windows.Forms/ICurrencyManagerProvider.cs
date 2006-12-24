@@ -24,8 +24,10 @@
 
 namespace System.Windows.Forms {
 
-	interface ICurrencyManagerProvider {
-		CurrencyManager CurrencyMnaager { get; }
+	public interface ICurrencyManagerProvider {
+		CurrencyManager CurrencyManager { get; }
+
+		CurrencyManager GetRelatedCurrencyManager (string dataMember);
 	}
 
 }

@@ -111,7 +111,6 @@ namespace System.Windows.Forms
 			get { return base.Selected; }
 		}
 		
-		[DefaultValue (11)]
 		public int DropDownButtonWidth {
 			get { return this.drop_down_button_width; }
 			set { 

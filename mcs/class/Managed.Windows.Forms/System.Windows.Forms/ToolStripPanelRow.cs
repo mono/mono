@@ -55,7 +55,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public Rectangle Bounds {
+		public virtual Rectangle Bounds {
 			get { return this.bounds; }
 		}
 

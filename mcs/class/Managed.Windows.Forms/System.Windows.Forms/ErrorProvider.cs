@@ -341,7 +341,9 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		[DefaultValue(null)]
+#if !NET_2_0
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
+#endif
 		public object DataSource {
 			get {
 				return datasource;
