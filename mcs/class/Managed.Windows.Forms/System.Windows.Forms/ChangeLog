@@ -1,5 +1,7 @@
 2006-12-24  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: corecompare work here too.
+
 	* DataGridViewElement.cs, DataGridView.cs,
 	DataGridViewButtonCell.cs, DataGridViewRowCollection.cs,
 	DataGridViewImageColumn.cs, DataGridViewComboBoxColumn.cs,

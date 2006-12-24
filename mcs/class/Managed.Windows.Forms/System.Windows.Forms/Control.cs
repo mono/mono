@@ -2835,11 +2835,9 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
-		protected internal virtual bool ShowKeyboardCues {
-#else
-		protected bool ShowKeyboardCues {
+		internal virtual
 #endif
-
+		protected bool ShowKeyboardCues {
 			get {
 				return true;
 			}
@@ -3487,6 +3485,13 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+#if NET_2_0
+		protected virtual AccessibleObject GetAccessibilityObjectById (int objectId)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		protected internal bool GetStyle(ControlStyles flag) {
 			return (control_style & flag) != 0;
@@ -4730,6 +4735,32 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnMouseCaptureChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [MouseCaptureChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnMouseClick (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnMouseDoubleClick (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseDoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseDown(MouseEventArgs e) {
