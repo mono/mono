@@ -108,7 +108,10 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public int SelectedIndex {
 			get { return this.ComboBox.SelectedIndex; }
-			set { this.ComboBox.SelectedIndex = value; }
+			set {
+				this.ComboBox.SelectedIndex = value;
+				Text = Items [value].ToString ();
+			}
 		}
 
 		[Bindable (true)]

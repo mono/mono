@@ -2249,7 +2249,9 @@ namespace System.Windows.Forms {
 
 		static object FormClosingEvent = new object ();
 		static object FormClosedEvent = new object ();
-
+		static object ResizeEndEvent = new object ();
+		static object ResizeBeginEvent = new object ();
+		
 		public event FormClosingEventHandler FormClosing {
 			add { Events.AddHandler (FormClosingEvent, value); }
 			remove { Events.RemoveHandler (FormClosingEvent, value); }
@@ -2263,6 +2265,29 @@ namespace System.Windows.Forms {
 		protected virtual void OnFormClosing (FormClosingEventArgs e)
 		{
 			FormClosingEventHandler eh = (FormClosingEventHandler)(Events [FormClosingEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		public event EventHandler ResizeBegin {
+			add { Events.AddHandler (ResizeBeginEvent, value); }
+			remove { Events.RemoveHandler (ResizeBeginEvent, value); }
+		}
+		protected virtual void OnResizeBegin (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [ResizeBeginEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		public event EventHandler ResizeEnd {
+			add { Events.AddHandler (ResizeEndEvent, value); }
+			remove { Events.RemoveHandler (ResizeEndEvent, value); }
+		}
+
+		protected virtual void OnResizeEnd (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [ResizeEndEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
