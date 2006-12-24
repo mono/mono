@@ -62,7 +62,6 @@ namespace System.Windows.Forms {
 		private Color backColor;
 		private Color backgroundColor;
 		private Image backgroundImage;
-		private ImageLayout backgroundImageLayout;
 		private BorderStyle borderStyle;
 		private DataGridViewCellBorderStyle cellBorderStyle;
 		private DataGridViewClipboardCopyMode clipboardCopyMode;
@@ -393,14 +392,9 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public /* XXX override */ ImageLayout BackgroundImageLayout {
-			get { return backgroundImageLayout; }
-			set {
-				if (backgroundImageLayout != value) {
-					backgroundImageLayout = value;
-					//OnBackgroundImageLayoutChanged(EventArg.Empty);
-				}
-			}
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
 		}
 
 		[DefaultValue (BorderStyle.FixedSingle)]
@@ -2163,11 +2157,18 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public void UpdateCellErrorText (int columnIndex, int rowIndex) {
+		public void UpdateCellErrorText (int columnIndex, int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void UpdateRowErrorText (int rowIndex) {
+		public void UpdateCellValue (int columnIndex, int rowIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void UpdateRowErrorText (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
@@ -2189,6 +2190,11 @@ namespace System.Windows.Forms {
 
 		protected ScrollBar VerticalScrollBar {
 			get { return verticalScrollBar; }
+		}
+
+		protected virtual void AccessibilityNotifyCurrentCellChanged (Point cellAddress)
+		{
+			throw new NotImplementedException ();
 		}
 
 		protected void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode, bool fixedHeight) {
@@ -2303,8 +2309,8 @@ namespace System.Windows.Forms {
 		protected override void Dispose (bool disposing) {
 		}
 
-		//protected override AccessibleObject GetAccessibilityObjectById (int objectId) {
-		protected AccessibleObject GetAccessibilityObjectById (int objectId) {
+		protected override AccessibleObject GetAccessibilityObjectById (int objectId)
+		{
 			throw new NotImplementedException();
 		}
 
@@ -2739,6 +2745,11 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
+		protected override void OnCursorChanged (EventArgs e)
+		{
+			base.OnCursorChanged (e);
+		}
+
 		protected virtual void OnDataBindingComplete (DataGridViewBindingCompleteEventArgs e)
 		{
 			DataGridViewBindingCompleteEventHandler eh = (DataGridViewBindingCompleteEventHandler)(Events [DataBindingCompleteEvent]);
@@ -2801,6 +2812,11 @@ namespace System.Windows.Forms {
 			base.OnEnter(e);
 		}
 
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus (e);
+		}
+
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged(e);
@@ -2820,6 +2836,11 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated(e);
+		}
+
+		protected override void OnHandleDestroyed(EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -2850,17 +2871,20 @@ namespace System.Windows.Forms {
 			base.OnLeave(e);
 		}
 
-		//protected override void OnMouseClick (MouseEventArgs e)
-		protected void OnMouseClick (MouseEventArgs e)
+		protected override void OnLostFocus(EventArgs e)
 		{
-			//base.OnMouseClick(e);
+			base.OnLostFocus (e);
+		}
+
+		protected override void OnMouseClick (MouseEventArgs e)
+		{
+			base.OnMouseClick(e);
 			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
 		}
 
-		//protected override void OnMouseDoubleClick (MouseEventArgs e)
-		protected void OnMouseDoubleClick (MouseEventArgs e)
+		protected override void OnMouseDoubleClick (MouseEventArgs e)
 		{
-			//base.OnMouseDoubleClick(e);
+			base.OnMouseDoubleClick(e);
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -3344,19 +3368,23 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		protected bool ProcessAKey (Keys keyData) {
+		protected bool ProcessAKey (Keys keyData)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected bool ProcessDataGridViewKey (KeyEventArgs e) {
+		protected virtual bool ProcessDataGridViewKey (KeyEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected bool ProcessDeleteKey (Keys keyData) {
+		protected bool ProcessDeleteKey (Keys keyData)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override bool ProcessDialogKey (Keys keyData) {
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
 			return base.ProcessDialogKey(keyData);
 			//throw new NotImplementedException();
 		}

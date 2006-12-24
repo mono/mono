@@ -116,46 +116,60 @@ namespace System.Windows.Forms {
 			return (e.Button == MouseButtons.Left);
 		}
 
-		protected override bool MouseEnterUnsharesRow (int rowIndex) {
+		protected override bool MouseEnterUnsharesRow (int rowIndex)
+		{
 			// true if the cell was the last cell receiving a mouse click; otherwise, false.
 			throw new NotImplementedException();
 		}
 
-		protected override bool MouseLeaveUnsharesRow (int rowIndex) {
+		protected override bool MouseLeaveUnsharesRow (int rowIndex)
+		{
 			// true if the button displayed by the cell is in the pressed state; otherwise, false.
 			throw new NotImplementedException();
 		}
 
-		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e) {
+		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
 			// true if the mouse up was caused by the release of the left mouse button; otherwise false.
 			throw new NotImplementedException();
 		}
 
-		protected override void OnKeyDown (KeyEventArgs e, int rowIndex) {
+		protected override void OnKeyDown (KeyEventArgs e, int rowIndex)
+		{
 			// when activated by the SPACE key, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnKeyUp (KeyEventArgs e, int rowIndex) {
+		protected override void OnKeyUp (KeyEventArgs e, int rowIndex)
+		{
 			// when activated by the SPACE key, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnLeave (int rowIndex, bool throughMouseClick) {
+		protected override void OnLeave (int rowIndex, bool throughMouseClick)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
+		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
+		{
 			// if activated by depresing the left mouse button, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseLeave (int rowIndex) {
+		protected override void OnMouseLeave (int rowIndex)
+		{
 			// if the cell's button is not in its normal state, this method causes the cell's user interface to be updated.
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e) {
+		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
+		{
 			// if activated by the left mouse button, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}

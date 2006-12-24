@@ -43,7 +43,8 @@ namespace System.Windows.Forms {
 		private object trueValue;
 		private Type valueType;
 
-		public DataGridViewCheckBoxCell () {
+		public DataGridViewCheckBoxCell ()
+		{
 			editingCellValueChanged = false;
 			falseValue = null;
 			flatStyle = FlatStyle.Standard;
@@ -53,7 +54,8 @@ namespace System.Windows.Forms {
 			valueType = null;
 		}
 
-		public DataGridViewCheckBoxCell (bool threeState) : this() {
+		public DataGridViewCheckBoxCell (bool threeState) : this()
+		{
 		}
 
 		public virtual object EditingCellFormattedValue {
@@ -137,7 +139,8 @@ namespace System.Windows.Forms {
 			set { valueType = value; }
 		}
 
-		public override object Clone () {
+		public override object Clone ()
+		{
 			DataGridViewCheckBoxCell cell = (DataGridViewCheckBoxCell) base.Clone();
 			cell.editingCellValueChanged = this.editingCellValueChanged;
 			cell.falseValue = this.falseValue;
@@ -149,7 +152,8 @@ namespace System.Windows.Forms {
 			return cell;
 		}
 
-		public virtual object GetEditingCellFormattedValue (DataGridViewDataErrorContexts context) {
+		public virtual object GetEditingCellFormattedValue (DataGridViewDataErrorContexts context)
+		{
 			if (FormattedValueType == null) {
 				throw new InvalidOperationException("FormattedValueType is null.");
 			}
@@ -162,7 +166,8 @@ namespace System.Windows.Forms {
 			return (Boolean) Value;
 		}
 
-		public override object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter) {
+		public override object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter)
+		{
 			if (cellStyle == null) {
 				throw new ArgumentNullException("CellStyle is null");
 			}
@@ -175,120 +180,148 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public virtual void PrepareEditingCellForEdit (bool selectAll) {
+		public virtual void PrepareEditingCellForEdit (bool selectAll)
+		{
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return GetType().Name + ": RowIndex: " + RowIndex.ToString() + "; ColumnIndex: " + ColumnIndex.ToString() + ";";
 		}
 
-		protected override bool ContentClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected override bool ContentClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
 			return this.IsInEditMode;
 		}
 
-		//protected override bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
-		protected bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected override bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
 			return this.IsInEditMode;
 		}
 
-		protected override AccessibleObject CreateAccessibilityInstance () {
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
 			return new DataGridViewCheckBoxCellAccessibleObject(this);
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
+		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
-		//protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
-		protected object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
+		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+		{
 			if (DataGridView == null) {
 				return null;
 			}
 			throw new NotImplementedException();
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex) {
+		protected override bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
 			// true if the user pressed the SPACE key without modifier keys; otherwise, false
 			throw new NotImplementedException();
 		}
 
-		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex) {
+		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
 			// true if the user released the SPACE key; otherwise false
 			throw new NotImplementedException();
 
 		}
 
-		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e) {
+		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
 			return (e.Button == MouseButtons.Left);
 		}
 
-		protected override bool MouseEnterUnsharesRow (int rowIndex) {
+		protected override bool MouseEnterUnsharesRow (int rowIndex)
+		{
 			// true if the cell was the last cell receiving a mouse click; otherwise, false.
 			throw new NotImplementedException();
 		}
 
-		protected override bool MouseLeaveUnsharesRow (int rowIndex) {
+		protected override bool MouseLeaveUnsharesRow (int rowIndex)
+		{
 			// true if the button displayed by the cell is in the pressed state; otherwise, false.
 			throw new NotImplementedException();
 		}
 
-		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e) {
+		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
 			// true if the mouse up was caused by the release of the left mouse button; otherwise false.
 			throw new NotImplementedException();
 		}
 
-		protected override void OnContentClick (DataGridViewCellEventArgs e) {
+		protected override void OnContentClick (DataGridViewCellEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void OnContentDoubleClick (DataGridViewCellEventArgs e) {
+		protected override void OnContentDoubleClick (DataGridViewCellEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void OnKeyDown (KeyEventArgs e, int rowIndex) {
+		protected override void OnKeyDown (KeyEventArgs e, int rowIndex)
+		{
 			// when activated by the SPACE key, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnKeyUp (KeyEventArgs e, int rowIndex) {
+		protected override void OnKeyUp (KeyEventArgs e, int rowIndex)
+		{
 			// when activated by the SPACE key, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnLeave (int rowIndex, bool throughMouseClick) {
+		protected override void OnLeave (int rowIndex, bool throughMouseClick)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
+		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
+		{
 			// if activated by depresing the left mouse button, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseLeave (int rowIndex) {
+		protected override void OnMouseLeave (int rowIndex)
+		{
 			// if the cell's button is not in its normal state, this method causes the cell's user interface to be updated.
 			throw new NotImplementedException();
 		}
 
-		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e) {
+		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
+		{
 			// if activated by the left mouse button, this method updates the cell's user interface
 			throw new NotImplementedException();
 		}
 
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
 			throw new NotImplementedException();
 		}
 
 		protected class DataGridViewCheckBoxCellAccessibleObject : DataGridViewCellAccessibleObject {
 
-			public DataGridViewCheckBoxCellAccessibleObject (DataGridViewCell owner) : base(owner) {
+			public DataGridViewCheckBoxCellAccessibleObject (DataGridViewCell owner) : base(owner)
+			{
 			}
 
 			public override string DefaultAction {
@@ -302,11 +335,13 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public override void DoDefaultAction () {
+			public override void DoDefaultAction ()
+			{
 				// change the state of the check box
 			}
 
-			public override int GetChildCount () {
+			public override int GetChildCount ()
+			{
 				return -1;
 			}
 

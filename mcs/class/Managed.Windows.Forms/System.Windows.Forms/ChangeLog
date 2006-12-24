@@ -1,3 +1,12 @@
+2006-12-24  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridViewElement.cs, DataGridView.cs,
+	DataGridViewButtonCell.cs, DataGridViewRowCollection.cs,
+	DataGridViewImageColumn.cs, DataGridViewComboBoxColumn.cs,
+	DataGridViewImageCell.cs, DataGridViewCheckBoxCell.cs,
+	DataGridViewHeaderCell.cs, DataGridViewCell.cs: more corcompare
+	work.
+
 2006-12-24  Miguel de Icaza  <miguel@novell.com>
 
 	* ToolStripComboBox.cs: Set the text when the SelectedIndex

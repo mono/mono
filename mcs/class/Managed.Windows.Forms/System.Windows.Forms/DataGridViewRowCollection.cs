@@ -69,7 +69,6 @@ namespace System.Windows.Forms {
 
 		object IList.this [int index] {
 			get {
-				Console.WriteLine("acceso");
 				return this[index];
 			}
 			set { list[index] = value as DataGridViewRow; }

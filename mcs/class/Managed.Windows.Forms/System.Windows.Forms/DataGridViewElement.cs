@@ -27,6 +27,7 @@
 #if NET_2_0
 
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
@@ -40,10 +41,14 @@ namespace System.Windows.Forms {
 			state = DataGridViewElementStates.None;
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridView DataGridView {
 			get { return dataGridView; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual DataGridViewElementStates State {
 			get { return state; }
 		}

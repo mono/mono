@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 			get { return defaultNewRowValue; }
 		}
 
+		[DefaultValue ("")]
 		public string Description {
 			get { return description; }
 			set { description = value; }
@@ -63,6 +64,7 @@ namespace System.Windows.Forms {
 			get { return (valueIsIcon)? typeof(Icon) : typeof(Image); }
 		}
 
+		[DefaultValue (DataGridViewImageCellLayout.NotSet)]
 		public DataGridViewImageCellLayout ImageLayout {
 			get { return imageLayout; }
 			set {
@@ -73,6 +75,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ValueIsIcon {
 			get { return valueIsIcon; }
 			set { valueIsIcon = value; }
@@ -129,14 +132,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override object GetValue (int rowIndex) {
-			throw new NotImplementedException();
-		}
-
-		protected override void OnMouseEnter (int rowIndex) {
-			throw new NotImplementedException();
-		}
-
-		protected override void OnMouseLeave (int rowIndex) {
 			throw new NotImplementedException();
 		}
 

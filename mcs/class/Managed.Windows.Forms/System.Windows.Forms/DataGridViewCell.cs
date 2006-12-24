@@ -699,19 +699,23 @@ namespace System.Windows.Forms {
 			return String.Format("{0} {RowIndex = {1}, ColumnIndex = {2}}", this.GetType().FullName, RowIndex, columnIndex);
 		}
 
-		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle) {
+		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected virtual bool ClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected virtual bool ClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected virtual bool ContentClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected virtual bool ContentClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected virtual bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
+		protected virtual bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
 			throw new NotImplementedException();
 		}
 
@@ -746,7 +750,8 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected virtual object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
+		protected virtual object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+		{
 			throw new NotImplementedException();
 		}
 

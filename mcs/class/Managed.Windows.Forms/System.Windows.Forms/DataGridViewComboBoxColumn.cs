@@ -26,33 +26,46 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+using System.Drawing.Design;
+
 namespace System.Windows.Forms {
 
-	public class DataGridViewComboBoxColumn : DataGridViewColumn {
-
+	[Designer ("System.Windows.Forms.Design.DataGridViewComboBoxColumnDesigner, " + Consts.AssemblySystem_Design,
+		   "System.ComponentModel.Design.IDesigner")]
+	public class DataGridViewComboBoxColumn : DataGridViewColumn
+	{
 		private bool autoComplete;
 		private DataGridViewComboBoxDisplayStyle displayStyle;
-		private bool displayStyleForCurrentCellsOnly;
+		private bool displayStyleForCurrentCellOnly;
 		private FlatStyle flatStyle;
 
-		public DataGridViewComboBoxColumn () {
+		public DataGridViewComboBoxColumn ()
+		{
 			CellTemplate = new DataGridViewComboBoxCell();
 			SortMode = DataGridViewColumnSortMode.NotSortable;
 			autoComplete = true;
 			displayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton;
-			displayStyleForCurrentCellsOnly = false;
+			displayStyleForCurrentCellOnly = false;
 		}
 
+		[Browsable (true)]
+		[DefaultValue (true)]
 		public bool AutoComplete {
 			get { return autoComplete; }
 			set { autoComplete = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
 			set { base.CellTemplate = value as DataGridViewComboBoxCell; }
 		}
 
+		[AttributeProvider (typeof (IListSource))]
+		[DefaultValue (null)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public object DataSource {
 			get {
 				if (base.CellTemplate == null) {
@@ -67,6 +80,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Editor ("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValue ("")]
+		[TypeConverter ("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
 		public string DisplayMember {
 			get {
 				if (base.CellTemplate == null) {
@@ -82,16 +99,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (DataGridViewComboBoxDisplayStyle.DropDownButton)]
 		public DataGridViewComboBoxDisplayStyle DisplayStyle {
 			get { return displayStyle; }
 			set { displayStyle = value; }
 		}
 
-		public bool DisplayStyleForCurrentCellsOnly {
-			get { return displayStyleForCurrentCellsOnly; }
-			set { displayStyleForCurrentCellsOnly = value; }
+		[DefaultValue (false)]
+		public bool DisplayStyleForCurrentCellOnly {
+			get { return displayStyleForCurrentCellOnly; }
+			set { displayStyleForCurrentCellOnly = value; }
 		}
 
+		[DefaultValue (1)]
 		public int DropDownWidth {
 			get {
 				if (base.CellTemplate == null) {
@@ -110,11 +130,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
 			set { flatStyle = value; }
 		}
 
+		[Editor ("System.Windows.Forms.Design.StringCollectionEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataGridViewComboBoxCell.ObjectCollection Items {
 			get {
 				if (base.CellTemplate == null) {
@@ -124,6 +148,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (8)]
 		public int MaxDropDownItems {
 			get {
 				if (base.CellTemplate == null) {
@@ -139,6 +164,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool Sorted {
 			get {
 				if (base.CellTemplate == null) {
@@ -154,6 +180,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue ("")]
+		[Editor ("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[TypeConverter ("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
 		public string ValueMember {
 			get {
 				if (base.CellTemplate == null) {
@@ -169,17 +199,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override object Clone () {
+		public override object Clone ()
+		{
 			DataGridViewComboBoxColumn col = (DataGridViewComboBoxColumn) base.Clone();
 			col.autoComplete = this.autoComplete;
 			col.displayStyle = this.displayStyle;
-			col.displayStyleForCurrentCellsOnly = this.displayStyleForCurrentCellsOnly;
+			col.displayStyleForCurrentCellOnly = this.displayStyleForCurrentCellOnly;
 			col.flatStyle = this.flatStyle;
 			col.CellTemplate = (DataGridViewComboBoxCell) this.CellTemplate.Clone();
 			return col;
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return GetType().Name;
 		}
 

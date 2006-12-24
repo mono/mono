@@ -26,14 +26,19 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+using System.Drawing;
+
 namespace System.Windows.Forms {
 	public class DataGridViewHeaderCell : DataGridViewCell {
 
 		private ButtonState buttonState;
 
-		public DataGridViewHeaderCell () {
+		public DataGridViewHeaderCell ()
+		{
 		}
 
+		[Browsable (false)]
 		public override bool Displayed {
 			get { return base.Displayed; }
 		}
@@ -42,19 +47,25 @@ namespace System.Windows.Forms {
 			get { return typeof(string); } //base.FormattedValueType; }
 		}
 
+		[Browsable (false)]
 		public override bool Frozen {
 			get { return base.Frozen; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool ReadOnly {
 			get { return base.ReadOnly; }
 			set { base.ReadOnly = value; }
 		}
 
+		[Browsable (false)]
 		public override bool Resizable {
 			get { return base.Resizable; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool Selected {
 			get { return base.Selected; }
 			set { base.Selected = value; }
@@ -65,13 +76,19 @@ namespace System.Windows.Forms {
 			set { base.ValueType = value; }
 		}
 
+		[Browsable (false)]
 		public override bool Visible {
 			get { return base.Visible; }
 		}
 
-		public override object Clone () {
+		public override object Clone ()
+		{
 			DataGridViewHeaderCell result = new DataGridViewHeaderCell();
 			return result;
+		}
+
+		protected override void Dispose (bool disposing)
+		{
 		}
 
 		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
@@ -79,12 +96,68 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public override DataGridViewElementStates GetInheritedState (int rowIndex) {
+		public override DataGridViewElementStates GetInheritedState (int rowIndex)
+		{
 			throw new NotImplementedException();
 		}
 
 		public override string ToString () {
 			return "";
+		}
+
+		protected override Size GetSize (int rowIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override object GetValue (int rowIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool MouseEnterUnsharesRow (int rowIndex)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool MouseLeaveUnsharesRow (int rowIndex)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
+		{
+			base.OnMouseDown (e);
+		}
+
+		protected override void OnMouseEnter (int rowIndex)
+		{
+			base.OnMouseEnter (rowIndex);
+		}
+
+		protected override void OnMouseLeave (int rowIndex)
+		{
+			base.OnMouseLeave (rowIndex);
+		}
+
+		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
+		{
+			base.OnMouseUp (e);
+		}
+
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected ButtonState ButtonState {
