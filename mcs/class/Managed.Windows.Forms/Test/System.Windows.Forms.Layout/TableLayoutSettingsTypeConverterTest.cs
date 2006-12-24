@@ -58,7 +58,7 @@ namespace MonoTests.System.Windows.Forms.Layout {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void Roundtrip ()
 		{
 			TableLayoutSettingsTypeConverter c = new TableLayoutSettingsTypeConverter ();
