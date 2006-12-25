@@ -1,3 +1,9 @@
+2006-12-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : added IndexOf() implementation for Ordinal
+	  and OrdinalIgnoreCase, though Ordinal version is not used (since
+	  it is slower than icall).
+
 2006-05-30  Miguel de Icaza  <miguel@novell.com>
 
 	* MSCompatUnicodeTable.cs: Remove the fixed loading and compute it

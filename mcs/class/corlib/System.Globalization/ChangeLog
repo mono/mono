@@ -1,3 +1,9 @@
+2006-12-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : for OrdinalIgnoreCase, IndexOf() and LastIndexOf()
+	  will use managed version (icalls for them are case sensitive).
+	  Removed MonoTODOs.
+
 2006-12-17  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DateTimeFormatInfo.cs : added missing properties and methods.

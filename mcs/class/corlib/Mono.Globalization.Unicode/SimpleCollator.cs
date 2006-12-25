@@ -1390,6 +1390,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		#region IndexOf() / LastIndexOf()
 
+		// string
+
 		public int IndexOf (string s, string target, CompareOptions opt)
 		{
 			return IndexOf (s, target, 0, s.Length, opt);
@@ -1440,6 +1442,12 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		public unsafe int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
+			if (opt == CompareOptions.Ordinal)
+				return IndexOfOrdinal (s, target, start, length);
+#if NET_2_0
+			if (opt == CompareOptions.OrdinalIgnoreCase)
+				return IndexOfOrdinalIgnoreCase (s, target, start, length);
+#endif
 			if (opt == CompareOptions.None) {
 				bool testWasUnable;
 				int ret = QuickIndexOf (s, target, start, length, out testWasUnable);
@@ -1463,6 +1471,57 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				targetSortKey, ref ctx);
 		}
 
+		// note that it wouldn't be used since ordinal IndexOf()
+		// should be directed to icall.
+		int IndexOfOrdinal (string s, string target, int start, int length)
+		{
+			if (target.Length == 0)
+				return 0;
+			else if (target.Length > length)
+				return -1;
+
+			int end = start + length - target.Length + 1;
+			for (int i = start; i < end; i++) {
+				bool no = false;
+				for (int j = 0; j < target.Length; j++) {
+					if (s [i + j] != target [j]) {
+						no = true;
+						break;
+					}
+				}
+				if (no)
+					continue;
+				return i;
+			}
+			return -1;
+		}
+
+		int IndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
+		{
+			if (target.Length == 0)
+				return 0;
+			else if (target.Length > length)
+				return -1;
+
+			int end = start + length - target.Length + 1;
+			for (int i = start; i < end; i++) {
+				bool no = false;
+				for (int j = 0; j < target.Length; j++) {
+					// I think almost all text has more lower letters than upper ones. Thus with this invariant comparison ToLower() should be faster since it costs less operations.
+					if (textInfo.ToLower (s [i + j]) != textInfo.ToLower (target [j])) {
+						no = true;
+						break;
+					}
+				}
+				if (no)
+					continue;
+				return i;
+			}
+			return -1;
+		}
+
+		// char
+
 		public int IndexOf (string s, char target, CompareOptions opt)
 		{
 			return IndexOf (s, target, 0, s.Length, opt);
@@ -1470,6 +1529,12 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		public unsafe int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
+			if (opt == CompareOptions.Ordinal)
+				return IndexOfOrdinal (s, target, start, length);
+#if NET_2_0
+			if (opt == CompareOptions.OrdinalIgnoreCase)
+				return IndexOfOrdinalIgnoreCase (s, target, start, length);
+#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1505,6 +1570,27 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					targetSortKey, target, ti,
 					!Uni.HasSpecialWeight ((char) ti), ref ctx);
 			}
+		}
+
+		// note that it wouldn't be used since ordinal IndexOf()
+		// should be directed to icall.
+		int IndexOfOrdinal (string s, char target, int start, int length)
+		{
+			int end = start + length;
+			for (int i = start; i < end; i++)
+				if (s [i] == target)
+					return i;
+			return -1;
+		}
+
+		int IndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
+		{
+			int end = start + length;
+			target = textInfo.ToLower (target);
+			for (int i = start; i < end; i++)
+				if (textInfo.ToLower (s [i]) == target)
+					return i;
+			return -1;
 		}
 
 		// Searches target byte[] keydata
@@ -1586,9 +1672,12 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		}
 
 		//
-		// There are the same number of IndexOf() related methods,
-		// with the same functionalities for each.
+		// There are the same number of LastIndexOf() methods as
+		// IndexOf() related methods, with the same functionalities
+		// for each.
 		//
+
+		// string
 
 		public int LastIndexOf (string s, string target, CompareOptions opt)
 		{
@@ -1597,6 +1686,12 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		public unsafe int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
+			if (opt == CompareOptions.Ordinal)
+				return LastIndexOfOrdinal (s, target, start, length);
+#if NET_2_0
+			if (opt == CompareOptions.OrdinalIgnoreCase)
+				return LastIndexOfOrdinalIgnoreCase (s, target, start, length);
+#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1613,6 +1708,64 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				targetSortKey, ref ctx);
 		}
 
+		int LastIndexOfOrdinal (string s, string target, int start, int length)
+		{
+			if (target.Length == 0)
+				return 0;
+			if (s.Length < target.Length || target.Length > length)
+				return -1;
+			int end = start - length + target.Length -1;
+			char tail = target [target.Length - 1];
+			for (int i = start; i > end;) {
+				if (s [i] != tail) {
+					i--;
+					continue;
+				}
+				int x = i - target.Length + 1;
+				i--;
+				bool mismatch = false;
+				for (int j = target.Length - 2; j >= 0; j--)
+					if (s [x + j] != target [j]) {
+						mismatch = true;
+						break;
+					}
+				if (mismatch)
+					continue;
+				return x;
+			}
+			return -1;
+		}
+
+		int LastIndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
+		{
+			if (target.Length == 0)
+				return 0;
+			if (s.Length < length || target.Length > length)
+				return -1;
+			int end = start - length + target.Length - 1;
+			char tail = textInfo.ToLower (target [target.Length - 1]);
+			for (int i = start; i > end;) {
+				if (textInfo.ToLower (s [i]) != tail) {
+					i--;
+					continue;
+				}
+				int x = i - target.Length + 1;
+				i--;
+				bool mismatch = false;
+				for (int j = target.Length - 2; j >= 0; j--)
+					if (textInfo.ToLower (s [x + j]) != textInfo.ToLower (target [j])) {
+						mismatch = true;
+						break;
+					}
+				if (mismatch)
+					continue;
+				return x;
+			}
+			return -1;
+		}
+
+		// char
+
 		public int LastIndexOf (string s, char target, CompareOptions opt)
 		{
 			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
@@ -1620,6 +1773,12 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		public unsafe int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
+			if (opt == CompareOptions.Ordinal)
+				return LastIndexOfOrdinal (s, target, start, length);
+#if NET_2_0
+			if (opt == CompareOptions.OrdinalIgnoreCase)
+				return LastIndexOfOrdinalIgnoreCase (s, target, start, length);
+#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1660,6 +1819,29 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					ti, !Uni.HasSpecialWeight ((char) ti),
 					ref ctx);
 			}
+		}
+
+		int LastIndexOfOrdinal (string s, char target, int start, int length)
+		{
+			if (s.Length == 0)
+				return -1;
+			int end = start - length;
+			for (int i = start; i > end; i--)
+				if (s [i] == target)
+					return i;
+			return -1;
+		}
+
+		int LastIndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
+		{
+			if (s.Length == 0)
+				return -1;
+			int end = start - length;
+			char c = textInfo.ToUpper (target);
+			for (int i = start; i > end; i--)
+				if (textInfo.ToUpper (s [i]) == c)
+					return i;
+			return -1;
 		}
 
 		// Searches target byte[] keydata

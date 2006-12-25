@@ -1080,6 +1080,21 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	public void LastIndexOfOrdinalString ()
+	{
+		if (!doTest)
+			return;
+
+		AssertLastIndexOf ("#1", -1, "ABC", "1", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#2", 5, "ABCABC", "C", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#3", -1, "ABCABC", "\uFF22", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#4", 4, "ABCABC", "BC", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#5", 4, "BBCBBC", "BC", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#6", 1, "original", "rig", CompareOptions.Ordinal);
+		AssertLastIndexOf ("#7", 0, "\\b\\a a", "\\b\\a a", CompareOptions.Ordinal);
+	}
+
+	[Test]
 	// for bug #76702
 	public void NullCharacter ()
 	{
@@ -1126,6 +1141,40 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#12", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#13", 0, "ae", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#14", 0, "ola", "OLA", CompareOptions.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	public void OrdinalIgnoreCaseIndexOf ()
+	{
+		AssertIndexOf ("#1-1", 0, "ABC", "abc", CompareOptions.OrdinalIgnoreCase);
+		AssertIndexOf ("#1-2", -1, "AEBECE", "\u00E6", CompareOptions.OrdinalIgnoreCase);
+		AssertIndexOf ("#1-3", -1, "@_@", "`_`", CompareOptions.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	public void OrdinalIgnoreCaseIndexOfChar ()
+	{
+		AssertIndexOf ("#2-1", 0, "ABC", 'a', CompareOptions.OrdinalIgnoreCase);
+		AssertIndexOf ("#2-2", -1, "AEBECE", '\u00C0', CompareOptions.OrdinalIgnoreCase);
+		AssertIndexOf ("#2-3", -1, "@_@", '`', CompareOptions.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	public void OrdinalIgnoreCaseLastIndexOf ()
+	{
+		AssertLastIndexOf ("#1-1", 0, "ABC", "abc", CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#1-2", -1, "AEBECE", "\u00E6", CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#1-3", -1, "@_@", "`_`", CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#1-4", 1, "ABCDE", "bc", CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#1-5", -1, "BBBBB", "ab", CompareOptions.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	public void OrdinalIgnoreCaseLastIndexOfChar ()
+	{
+		AssertLastIndexOf ("#2-1", 0, "ABC", 'a', CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#2-2", -1, "AEBECE", '\u00C0', CompareOptions.OrdinalIgnoreCase);
+		AssertLastIndexOf ("#2-3", -1, "@_@", '`', CompareOptions.OrdinalIgnoreCase);
 	}
 #endif
 }

@@ -241,7 +241,6 @@ namespace System.Globalization
 						 CompareOptions.None));
 		}
 
-		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int Compare (string string1, int offset1,
 					    int length1, string string2,
 					    int offset2, int length2,
@@ -465,18 +464,15 @@ namespace System.Globalization
 			int count, char c, CompareOptions opt,
 			bool first)
 		{
-			return UseManagedCollation &&
-#if NET_2_0
-				((CompareOptions.Ordinal & opt) == 0 &&
-				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
-#else
-				(CompareOptions.Ordinal & opt) == 0 ?
-#endif
+			// - forward IndexOf() icall is much faster than
+			//   manged version, so always use icall. However,
+			//   it does not work for OrdinalIgnoreCase, so
+			//   do not avoid managed collator for that option.
+			return UseManagedCollation && ! (first && opt == CompareOptions.Ordinal) ?
 				internal_index_managed (s, sindex, count, c, opt, first) :
 				internal_index (s, sindex, count, c, opt, first);
 		}
 
-		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int IndexOf (string source, char value,
 					    int startIndex, int count,
 					    CompareOptions options)
@@ -533,18 +529,15 @@ namespace System.Globalization
 			int count, string s2, CompareOptions opt,
 			bool first)
 		{
-			return UseManagedCollation &&
-#if NET_2_0
-				((CompareOptions.Ordinal & opt) == 0 ||
-				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
-#else
-				(CompareOptions.Ordinal & opt) == 0 ?
-#endif
+			// - forward IndexOf() icall is much faster than
+			//   manged version, so always use icall. However,
+			//   it does not work for OrdinalIgnoreCase, so
+			//   do not avoid managed collator for that option.
+			return UseManagedCollation && ! (first && opt == CompareOptions.Ordinal) ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, opt, first);
 		}
 
-		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int IndexOf (string source, string value,
 					    int startIndex, int count,
 					    CompareOptions options)
@@ -698,7 +691,6 @@ namespace System.Globalization
 					    CompareOptions.None));
 		}
 
-		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int LastIndexOf(string source, char value,
 					       int startIndex, int count,
 					       CompareOptions options)
