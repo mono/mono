@@ -534,7 +534,7 @@ namespace System.Net
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
 			requestWritten = true;
-			if (cnc.Write (headers, 0, headers.Length))
+			if (!cnc.Write (headers, 0, headers.Length))
 				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 
 			headersSent = true;

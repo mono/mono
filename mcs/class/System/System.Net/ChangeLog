@@ -1,4 +1,9 @@
-﻿2006-12-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+﻿2006-12-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: fix error in my last patch. Thanks to Felipe
+	Almeida.
+
+2006-12-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
 	* HttpWebRequest.cs:
