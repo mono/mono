@@ -24,7 +24,7 @@
 		<DebugType>pdbonly</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<SkipValidation>false</SkipValidation>
+		<SkipValidation>True</SkipValidation>
 		<KeepIntermediate>false</KeepIntermediate>
 		<GHProjectType>1</GHProjectType>
 		<PreCompile>false</PreCompile>
