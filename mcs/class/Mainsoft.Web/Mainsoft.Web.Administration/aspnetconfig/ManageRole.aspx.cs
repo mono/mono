@@ -42,6 +42,10 @@ namespace Mainsoft.Web.Administration
 				Server.Transfer ("Error.aspx");
 			}
 			role_lbl.Text = role;
+			Button bt = Master.FindControl ("Back") as Button;
+			if (bt != null) {
+				bt.PostBackUrl = "CreateRole.aspx";
+			}
 		}
 
 		protected override void OnPreRender (EventArgs e)

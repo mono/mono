@@ -52,6 +52,10 @@ namespace Mainsoft.Web.Administration
 			}
 			CreateUserWizard1.CreatingUser += new LoginCancelEventHandler (CreateUserWizard1_CreatingUser);
 			CreateUserWizard1.CreatedUser += new EventHandler (CreateUserWizard1_CreatedUser);
+			Button bt = Master.FindControl ("Back") as Button;
+			if (bt != null) {
+				bt.PostBackUrl = "Default.aspx";
+			}
 		}
 
 		public void CreateUserWizard1_CreatedUser (object sender, EventArgs e)

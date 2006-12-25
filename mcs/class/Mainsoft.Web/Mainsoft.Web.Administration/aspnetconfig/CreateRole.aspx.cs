@@ -63,7 +63,10 @@ namespace Mainsoft.Web.Administration
 
 		protected void Page_Load (object sender, EventArgs e)
 		{
-
+			Button bt = Master.FindControl ("Back") as Button;
+			if (bt != null) {
+				bt.PostBackUrl = "Default.aspx";
+			}
 		}
 
 		protected void gridbtn_click (object sender, EventArgs e)

@@ -44,23 +44,6 @@ namespace Mainsoft.Web.Administration
 
 		protected void Page_Load (object sender, EventArgs e)
 		{
-			if (!IsPostBack) {
-				if (HttpContext.Current.Request.UrlReferrer != null) {
-					Backurl = HttpContext.Current.Request.UrlReferrer.ToString ();
-				}
-			}
-
-			if (HttpContext.Current.Request.Url.ToString ().IndexOf ("Default.aspx") == -1) {
-				Back.Enabled = true;
-			}
-
-			Img.ImageUrl = this.Page.ClientScript.GetWebResourceUrl (typeof(Util), "Mainsoft.Web.Administration.resources.mainsoft.jpg");
-
-		}
-
-		protected void Button1_Click (object sender, EventArgs e)
-		{
-			Response.Redirect (Backurl);
 		}
 	}
 }

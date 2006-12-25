@@ -108,7 +108,7 @@
             </tr>
             <tr>
                 <td width="100%" align="right">
-                    <asp:Button ID="success_btn" runat="server" Width="50px" Text="OK" OnClick="success_btn_Click" />
+                    <asp:Button ID="success_btn" runat="server" Text="OK" OnClick="success_btn_Click" />
                 </td>
             </tr>
             </table>

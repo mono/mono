@@ -39,12 +39,12 @@
     <table width="100%">
     <tr>
         <td>
-            <asp:Image runat="server" ID="Img" />
+            &nbsp;&nbsp;
         </td>
     </tr>
     <tr>
         <td class="h1">
-            Welcome to the Web Site Administration Tool 
+            Web Site Administration Tool
         </td>
     </tr>
     <tr>
@@ -69,7 +69,8 @@
             </tr>
             <tr>
                 <td align="right">
-                    <asp:Button ID="Back" runat="server" Text="Back" style="padding-right: 1px; padding-left: 1px; font-weight: bold; padding-bottom: 1px; margin: 1px; color: yellow; padding-top: 1px; background-color: #6699ff" Enabled="false" OnClick="Button1_Click" />
+                    <asp:Button ID="Back" runat="server" Text="Back" />
+                    <%--style="padding-right: 1px; padding-left: 1px; font-weight: bold; padding-bottom: 1px; margin: 1px; color: yellow; padding-top: 1px; background-color: #6699ff"--%>
                 </td>
             </tr>
         </table>    

@@ -42,6 +42,24 @@ namespace Mainsoft.Web.Administration
 				FillUserData (user_name);
 				name_lbl.Text = user_name;
 			}
+
+			Button bt = Master.FindControl ("Back") as Button;
+			if (bt != null) {
+				bt.PostBackUrl = "ManageUser.aspx";
+			}
+		}
+
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (IsPostBack) {
+				if (MultiView1.ActiveViewIndex == 1) {
+					((Button) Master.FindControl ("Back")).Visible = false;
+				}
+				else {
+					((Button) Master.FindControl ("Back")).Visible = true;
+				}
+			}
+			base.OnPreRender (e);
 		}
 
 		void FillUserData (string user_name)
@@ -74,6 +92,5 @@ namespace Mainsoft.Web.Administration
 		{
 			Server.Transfer ("ManageUser.aspx");
 		}
-
 	}
 }
