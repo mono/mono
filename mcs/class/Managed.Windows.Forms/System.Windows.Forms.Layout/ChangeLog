@@ -1,5 +1,10 @@
 2006-12-25  Chris Toshok  <toshok@ximian.com>
 
+	* DefaultLayout.cs: invert the tests for anchoring to make the
+	code a little more compact.
+
+2006-12-25  Chris Toshok  <toshok@ximian.com>
+
 	* DefaultLayout.cs: remove references to dist_left and dist_top.
 	just use left and top instead.
 

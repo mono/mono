@@ -1,5 +1,11 @@
 2006-12-25  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: only update dist_right/dist_bottom if the
+	width/height is > 0.  this fixes anchored controls being resized
+	smaller until they disappear and then resized larger again.
+
+2006-12-25  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: a couple of changes.  Remove dist_left and dist_top,
 	since they're nothing more than X/Left and Y/Top, respectively.
 

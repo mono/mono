@@ -110,48 +110,36 @@ namespace System.Windows.Forms.Layout
 				width = child.Width;
 				height = child.Height;
 
-				if ((anchor & AnchorStyles.Left) != 0) {
-					if ((anchor & AnchorStyles.Right) != 0) {
+				if ((anchor & AnchorStyles.Right) != 0) {
+					if ((anchor & AnchorStyles.Left) != 0)
 						width = space.Width - child.dist_right - left;
-					}
-					else {
-						; // Left anchored only, nothing to be done
-					}
+					else
+						left = space.Width - child.dist_right - width;
 				}
-				else if ((anchor & AnchorStyles.Right) != 0) {
-					left = space.Width - child.dist_right - width;
-				}
-				else {
+				else if ((anchor & AnchorStyles.Left) == 0) {
 					// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
 					// This calculates from scratch every time:
 					left = left + (space.Width - (left + width + child.dist_right)) / 2;
 				}
 
-				if ((anchor & AnchorStyles.Top) != 0) {
-					if ((anchor & AnchorStyles.Bottom) != 0) {
+				if ((anchor & AnchorStyles.Bottom) != 0) {
+					if ((anchor & AnchorStyles.Top) != 0)
 						height = space.Height - child.dist_bottom - top;
-					}
-					else {
-						; // Top anchored only, nothing to be done
-					}
+					else
+						top = space.Height - child.dist_bottom - height;
 				}
-				else if ((anchor & AnchorStyles.Bottom) != 0) {
-					top = space.Height - child.dist_bottom - height;
-				}
-				else {
+				else if ((anchor & AnchorStyles.Top) == 0) {
 					// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
 					// This calculates from scratch every time:
 					top = top + (space.Height - (top + height + child.dist_bottom)) / 2;
 				}
 
 				// Sanity
-				if (width < 0) {
+				if (width < 0)
 					width = 0;
-				}
 
-				if (height < 0) {
+				if (height < 0)
 					height = 0;
-				}
 
 				child.SetBounds (left, top, width, height);
 			}
