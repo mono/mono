@@ -2335,14 +2335,28 @@ namespace System.Windows.Forms
 				}
 			}
 
+			void StopResize ()
+			{
+				column_resize_active = false;
+				resize_column = null;
+				Capture = false;
+				Cursor = Cursors.Default;
+			}
+			
 			private void HeaderMouseMove (object sender, MouseEventArgs me)
 			{
 				Point pt = new Point (me.X + owner.h_marker, me.Y);
 
 				if (column_resize_active)  {
-					resize_column.Width = pt.X - resize_column.X;
-					if (resize_column.Width < 0)
-						resize_column.Width = 0;
+					int width = pt.X - resize_column.X;
+					if (width < 0)
+						width = 0;
+
+					if (!owner.CanProceedWithResize (resize_column, width)){
+						StopResize ();
+						return;
+					}
+					resize_column.Width = width;
 					return;
 				}
 
@@ -2401,9 +2415,9 @@ namespace System.Windows.Forms
 				Capture = false;
 
 				if (column_resize_active) {
-					column_resize_active = false;
-					resize_column = null;
-					Cursor = Cursors.Default;
+					int column_idx = resize_column.Index;
+					StopResize ();
+					owner.RaiseColumnWidthChanged (column_idx);
 					return;
 				}
 
@@ -3838,6 +3852,71 @@ namespace System.Windows.Forms
 
 			if (creh != null)
 				creh (this, e);
+		}
+
+		//
+		// ColumnWidthChanged
+		//
+		static object ColumnWidthChangedEvent = new object ();
+		public event ColumnWidthChangedEventHandler ColumnWidthChanged {
+			add { Events.AddHandler (ColumnWidthChangedEvent, value); }
+			remove { Events.RemoveHandler (ColumnWidthChangedEvent, value); }
+		}
+
+		protected virtual void OnColumnWidthChanged (ColumnWidthChangedEventArgs e)
+		{
+			ColumnWidthChangedEventHandler eh = (ColumnWidthChangedEventHandler) (Events[ColumnWidthChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		void RaiseColumnWidthChanged (int resize_column)
+		{
+			ColumnWidthChangedEventArgs n = new ColumnWidthChangedEventArgs (resize_column);
+
+			OnColumnWidthChanged (n);
+		}
+		
+		//
+		// ColumnWidthChanging
+		//
+		static object ColumnWidthChangingEvent = new object ();
+		public event ColumnWidthChangingEventHandler ColumnWidthChanging {
+			add { Events.AddHandler (ColumnWidthChangingEvent, value); }
+			remove { Events.RemoveHandler (ColumnWidthChangingEvent, value); }
+		}
+
+		protected virtual void OnColumnWidthChanging (ColumnWidthChangingEventArgs e)
+		{
+			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler) (Events[ColumnWidthChangingEvent]);
+			if (cwceh != null)
+				cwceh (this, e);
+		}
+		
+		//
+		// 2.0 profile based implementation
+		//
+		bool CanProceedWithResize (ColumnHeader col, int width)
+		{
+			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler) (Events[ColumnWidthChangingEvent]);
+			if (cwceh == null)
+				return true;
+			
+			ColumnWidthChangingEventArgs changing = new ColumnWidthChangingEventArgs (col.Index, width);
+			cwceh (this, changing);
+			return !changing.Cancel;
+		}
+#else
+		//
+		// 1.0 profile based implementation
+		//
+		bool CanProceedWithResize (ColumnHeader col, int width)
+		{
+			return true;
+		}
+
+		void RaiseColumnWidthChanged (int resize_column)
+		{
 		}
 #endif
 	}
