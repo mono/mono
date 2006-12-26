@@ -371,9 +371,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-#if TARGET_JVM //probably dependant on BUG #6489
-		[Category ("NotWorking")]
-#endif
 		public void DetailsView_DefaultProperties ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -429,9 +426,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //probably dependant on BUG #6489
-		[Category ("NotWorking")]
-#endif
 		public void DetailsView_AssignToDefaultProperties ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
