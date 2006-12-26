@@ -694,6 +694,14 @@ namespace System.Windows.Forms {
 
 		public static event EventHandler	ThreadExit;
 		public static event ThreadExceptionEventHandler	ThreadException;
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static event EventHandler EnterThreadModal;
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static event EventHandler LeaveThreadModal;
+#endif
 		#endregion	// Events
 
 		#region Internal Methods
