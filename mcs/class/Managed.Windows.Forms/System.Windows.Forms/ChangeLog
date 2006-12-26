@@ -10,6 +10,14 @@
 
 2006-12-25  Miguel de Icaza  <miguel@novell.com>
 
+	* MessageBox.cs: Implemented overload that takes a new "bool
+	displayHelpButton" by adding a new internal field "show_help".
+	When clicked this will raise the HelpRequested on the owner or the
+	main form. 
+
+	From: 007dbe3ff0ca4729a4f5fcd1d8ab2a2e.txt
+	From: c935e12b95fe4dc1ae670e7f4dc5fd68.txt
+
 	* ListView.cs: Add support ColumnWidthChanged and
 	ColumnWidthChanging. 
 

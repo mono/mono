@@ -4663,6 +4663,11 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		internal void RaiseHelpRequested (HelpEventArgs hevent)
+		{
+			OnHelpRequested (hevent);
+		}
+		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHelpRequested(HelpEventArgs hevent) {
 			HelpEventHandler eh = (HelpEventHandler)(Events [HelpRequestedEvent]);

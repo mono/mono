@@ -59,8 +59,9 @@ namespace System.Windows.Forms
 			bool			buttons_placed	= false;
 			int			button_left;
 			Button[]		buttons = new Button[3];
+			internal bool           show_help;
 			#endregion	// MessageBoxFrom Local Variables
-
+			
 			#region MessageBoxForm Constructors
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
 					MessageBoxButtons buttons, MessageBoxIcon icon) 
@@ -307,6 +308,16 @@ namespace System.Windows.Forms
 							break;
 						}
 					}
+#if NET_2_0
+					int pos = 0;
+					for (int i = 0; i < 3; i++){
+						pos += 110;
+						if (buttons [i] == null){
+							AddHelpButton (pos + button_left);
+							break;
+						}
+					}
+#endif
 					buttons_placed = true;
 				}
 			}
@@ -414,6 +425,26 @@ namespace System.Windows.Forms
 
 				return bno;
 			}
+
+#if NET_2_0
+			private Button AddHelpButton (int left)
+			{
+				Button bhelp = new Button ();
+				bhelp.Text = Locale.GetText("Help");
+				bhelp.Width = 100;
+				bhelp.Height = 30;
+				bhelp.Top = this.ClientSize.Height - 35 - space_border;
+				bhelp.Left = left;
+				bhelp.Click += delegate {
+					Owner.RaiseHelpRequested (new HelpEventArgs (Owner.Location));
+				};
+
+				
+				this.Controls.Add (bhelp);
+
+				return bhelp;
+			}
+#endif
 			#endregion
 
 			#region Button click handlers
@@ -568,6 +599,18 @@ namespace System.Windows.Forms
 			return form.RunDialog ();
 		}
 		#endregion	// Public Static Methods
+
+#if NET_2_0
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
+						 bool displayHelpButton)
+		{
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, options);
+			form.show_help = true;
+			
+			return form.RunDialog ();
+		}
+#endif
 	}
 }
 
