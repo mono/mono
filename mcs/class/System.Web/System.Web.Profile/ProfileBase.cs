@@ -31,6 +31,7 @@
 using System;
 using System.Configuration;
 using System.Configuration.Provider;
+using System.Web.Security;
 using System.Web.Configuration;
 
 namespace System.Web.Profile
@@ -43,9 +44,9 @@ namespace System.Web.Profile
 		DateTime _lastUpdatedDate = DateTime.MinValue;
 		SettingsContext _settingsContext = null;
 		SettingsPropertyValueCollection _propertiyValues = null;
+		const string Profiles_SettingsPropertyCollection = "Profiles.SettingsPropertyCollection";
 
 #if TARGET_J2EE
-		const string Profiles_SettingsPropertyCollection = "Profiles.SettingsPropertyCollection";
 		static SettingsPropertyCollection _properties
 		{
 			get
@@ -64,7 +65,7 @@ namespace System.Web.Profile
 
 		static void InitProperties ()
 		{
-			_properties = new SettingsPropertyCollection ();
+			SettingsPropertyCollection properties = new SettingsPropertyCollection ();
 
 			ProfileSection config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
 			RootProfilePropertySettingsCollection ps = config.PropertySettings;
@@ -74,14 +75,23 @@ namespace System.Web.Profile
 				ProfilePropertySettingsCollection ppsc = pgs.PropertySettings;
 
 				for (int s = 0; s < ppsc.Count; s++) {
-					_properties.Add (CreateSettingsPropery (pgs, ppsc [s]));
+					SettingsProperty settingsProperty = CreateSettingsPropery (pgs, ppsc [s]);
+					ValidateProperty (settingsProperty, ppsc [i].ElementInformation);
+					properties.Add (settingsProperty);
 				}
 			}
 
-			for (int s = 0; s < ps.Count; s++)
-				_properties.Add (CreateSettingsPropery (null, ps [s]));
-			
-			_properties.SetReadOnly ();
+			for (int s = 0; s < ps.Count; s++) {
+				SettingsProperty settingsProperty = CreateSettingsPropery (null, ps [s]);
+				ValidateProperty (settingsProperty, ps [s].ElementInformation);
+				properties.Add (settingsProperty);
+			}
+
+			properties.SetReadOnly ();
+			lock (Profiles_SettingsPropertyCollection) {
+				if (_properties == null)
+					_properties = properties;
+			}
 		}
 		
 		public ProfileBase ()
@@ -109,11 +119,11 @@ namespace System.Web.Profile
 		public ProfileGroupBase GetProfileGroup (string groupName)
 		{
 			ProfileGroupBase group = null;
-			Type groupType = ProfileParser.GetProfileGroupType (HttpContext.Current, "ProfileGroup" + groupName);
+			Type groupType = ProfileParser.GetProfileGroupType (HttpContext.Current, groupName);
 			if (groupType != null)
 				group = (ProfileGroupBase) Activator.CreateInstance (groupType);
 			else
-				throw new ProviderException ("Group " + groupName + " not found");
+				throw new ProviderException ("Group '" + groupName + "' not found");
 
 			group.Init (this, groupName);
 			return group;
@@ -163,6 +173,49 @@ namespace System.Web.Profile
 			}
 		}
 
+		static Type GetPropertyType (ProfileGroupSettings pgs, ProfilePropertySettings pps)
+		{
+			Type type = Type.GetType (pps.Type);
+			if (type != null)
+				return type;
+
+			Type profileType = null;
+			if (pgs == null)
+				profileType = ProfileParser.GetProfileCommonType (HttpContext.Current);
+			else
+				profileType = ProfileParser.GetProfileGroupType (HttpContext.Current, pgs.Name);
+
+			if (profileType == null)
+				return null;
+
+			System.Reflection.PropertyInfo pi = profileType.GetProperty (pps.Name);
+			if (pi != null)
+				return pi.PropertyType;
+
+			return null;
+		}
+
+		static void ValidateProperty (SettingsProperty settingsProperty, ElementInformation elementInfo)
+		{
+			string exceptionMessage = string.Empty;
+			if (!AnonymousIdentificationModule.Enabled && 
+				(bool) settingsProperty.Attributes ["AllowAnonymous"])
+				exceptionMessage = "Profile property '{0}' allows anonymous users to store data. " +
+					"This requires that the AnonymousIdentification feature be enabled.";
+
+			if (settingsProperty.PropertyType == null)
+				exceptionMessage = "The type specified for a profile property '{0}' could not be found.";
+
+			if (settingsProperty.SerializeAs == SettingsSerializeAs.Binary &&
+				!settingsProperty.PropertyType.IsSerializable)
+				exceptionMessage = "The type for the property '{0}' cannot be serialized " +
+					"using the binary serializer, since the type is not marked as serializable.";
+
+			if (exceptionMessage.Length > 0)
+				throw new ConfigurationErrorsException (string.Format (exceptionMessage, settingsProperty.Name),
+					elementInfo.Source, elementInfo.LineNumber);
+		}
+
 		static SettingsProperty CreateSettingsPropery (ProfileGroupSettings pgs, ProfilePropertySettings pps)
 		{
 			string name = ((pgs == null) ? "" : pgs.Name + ".") + pps.Name;
@@ -178,7 +231,7 @@ namespace System.Web.Profile
 			if (pps.Type.Length == 0 || pps.Type == "string")
 				sp.PropertyType = typeof (string);
 			else
-				sp.PropertyType = Type.GetType (pps.Type);
+				sp.PropertyType = GetPropertyType (pgs, pps);
 
 			switch (pps.SerializeAs) {
 				case SerializationMode.Binary:

@@ -48,6 +48,9 @@ namespace System.Web.Profile
 			Type profileBaseType = Type.GetType ("ProfileCommon");
 			if (profileBaseType == null) {
 				//PageMapper call
+				string virtualPath = "~/App_Code/ProfileCommon";
+				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
+				profileBaseType = PageMapper.GetObjectType (resolvedUrl);
 			}
 			return profileBaseType;
 		}
@@ -57,6 +60,9 @@ namespace System.Web.Profile
 			Type profileGroupType = Type.GetType ("ProfileGroup" + groupName);
 			if (profileGroupType == null) {
 				//PageMapper call
+				string virtualPath = "~/App_Code/ProfileGroup" + groupName;
+				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
+				profileGroupType = PageMapper.GetObjectType (resolvedUrl);
 			}
 			return profileGroupType;
 		}
