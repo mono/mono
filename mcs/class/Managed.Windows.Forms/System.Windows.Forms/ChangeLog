@@ -1,5 +1,11 @@
 2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataGridView.cs: Fixed several NullReferenceException in On* methods.
+	Fixed code formatting. Removed debug code.
+	* DataGridViewTextBoxEditingControl.cs: Removed debug code.
+
+2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataGridView.cs: Fixed GridColor, DefaultSize, DefaultCellStyle,
 	RowHeadersDefaultStyle, RowHeadersWidth to match MS. Throw
 	ArgumentOutOfRangeException if ColumnCount is negative. In 
