@@ -199,7 +199,7 @@ namespace System.Windows.Forms
 		static object RendererChangedEvent = new object ();
 
 		[Browsable (false)]
-		public override event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}

@@ -533,7 +533,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override event EventHandler ContextMenuStripChanged {
+		public new event EventHandler ContextMenuStripChanged {
 			add { base.ContextMenuStripChanged += value; }
 			remove { base.ContextMenuStripChanged -= value; }
 		}
@@ -607,7 +607,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (OpeningEvent, value); }
 		}
 
-		public override event EventHandler RegionChanged {
+		public new event EventHandler RegionChanged {
 			add { base.RegionChanged += value; }
 			remove { base.RegionChanged -= value; }
 		}

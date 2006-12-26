@@ -278,7 +278,7 @@ namespace System.Windows.Forms
 		#region Public Events
 		static object RendererChangedEvent = new object ();
 
-		public override event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}

@@ -2308,7 +2308,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-		public override event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
@@ -2339,7 +2339,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override event EventHandler MarginChanged {
+		public new event EventHandler MarginChanged {
 			add { base.MarginChanged += value; }
 			remove { base.MarginChanged -= value; }
 		}
@@ -2366,7 +2366,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override event EventHandler TabStopChanged {
+		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}

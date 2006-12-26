@@ -221,7 +221,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public override event EventHandler ContextMenuStripChanged {
+		public new event EventHandler ContextMenuStripChanged {
 			add { base.ContextMenuStripChanged += value; }
 			remove { base.ContextMenuStripChanged -= value; }
 		}

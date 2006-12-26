@@ -1304,7 +1304,7 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (AcceptsTabChangedEvent, value); }
 		}
 
-		public override event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}

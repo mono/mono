@@ -58,7 +58,7 @@ namespace System.Windows.Forms
 		static object AutoSizeChangedEvent = new object ();
 		static object TextAlignChangedEvent = new object ();
 
-    		public event EventHandler AutoSizeChanged {
+    		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}
