@@ -78,6 +78,43 @@ namespace MonoTests.System.Web.UI.WebControls
 			return matches == a1.Length;
 		}
 
+		public class CustomControl : WebControl
+		{
+			public virtual string CustomProperty {
+				get {
+					return (string) ViewState ["CustomProperty"];
+				}
+				set {
+					ViewState ["CustomProperty"] = value;
+				}
+			}
+
+			protected override Style CreateControlStyle () {
+				return new Style ();
+			}
+
+			public void DoTrackViewState () {
+				TrackViewState ();
+			}
+
+			public object DoSaveViewState () {
+				return SaveViewState ();
+			}
+
+			public void DoLoadViewState (object state) {
+				LoadViewState (state);
+			}
+		}
+		
+		public class CustomControl2 : CustomControl
+		{
+			protected override Style CreateControlStyle () {
+				Style style = new Style (ViewState);
+				style.BackColor = Color.Blue;
+				return style;
+			}
+		}
+
 		public class NamingContainer : WebControl, INamingContainer {
 
 		}
@@ -453,6 +490,42 @@ namespace MonoTests.System.Web.UI.WebControls
 				</xml>
 			*/
 			HtmlDiff.AssertAreEqual (w.Render(), w_copy.Render(), "VS1");
+		}
+
+		[Test]
+		public void ViewState2 () {
+			CustomControl c = new CustomControl ();
+			CustomControl copy = new CustomControl ();
+			object state;
+
+			c.DoTrackViewState ();
+			c.CustomProperty = "CustomProperty";
+			c.ControlStyle.BackColor = Color.Red;
+			c.ControlStyle.BorderColor = Color.Green;
+			c.ControlStyle.BorderStyle = BorderStyle.Dotted;
+
+			state = c.DoSaveViewState ();
+
+			copy.DoLoadViewState (state);
+
+			Assert.IsFalse (copy.ControlStyleCreated, "copy.ControlStyleCreated");
+		}
+		
+		[Test]
+		public void ViewState3 () {
+			CustomControl2 c = new CustomControl2 ();
+			CustomControl2 copy = new CustomControl2 ();
+			object state;
+
+			c.DoTrackViewState ();
+			c.ControlStyle.BackColor = Color.Red;
+
+			state = c.DoSaveViewState ();
+
+			copy.DoLoadViewState (state);
+
+			Assert.AreEqual (Color.Blue, copy.ControlStyle.BackColor, "copy.BackColor");
+
 		}
 
 		[Test]

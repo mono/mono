@@ -35,28 +35,16 @@ namespace System.Web.UI.WebControls {
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public sealed class FontInfo 
 	{
-		[Flags]
-		internal enum FontStyles 
-		{
-			None		= 0,
-			Bold		= 0x0001,
-			Italic		= 0x0002,
-			Names		= 0x0004,
-			Overline	= 0x0008,
-			Size		= 0x0010,
-			Strikeout	= 0x0020,
-			Underline	= 0x0040
-		}
-
 		#region Fields
 		private static string[]	empty_names = new string[0];
-		private FontStyles	fontstyles;
 		private StateBag	bag;
+		Style _owner;
 		#endregion	// Fields
 
 		#region Constructors
 		internal FontInfo(Style owner) 
 		{
+			_owner = owner;
 			this.bag = owner.ViewState;
 		}
 		#endregion	// Constructors
@@ -73,7 +61,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Bold) == 0) 
+				if (!_owner.CheckBit((int)Style.Styles.FontBold)) 
 				{
 					return false;
 				}
@@ -83,8 +71,8 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Bold;
 				bag["Font_Bold"] = value;
+				_owner.SetBit ((int) Style.Styles.FontBold);
 			}
 		}
 
@@ -99,7 +87,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Italic) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontItalic))
 				{
 					return false;
 				}
@@ -109,8 +97,8 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Italic;
 				bag["Font_Italic"] = value;
+				_owner.SetBit ((int) Style.Styles.FontItalic);
 			}
 		}
 
@@ -168,7 +156,7 @@ namespace System.Web.UI.WebControls {
 			{
 				string[] ret;
 
-				if ((fontstyles & FontStyles.Names) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontNames)) 
 				{
 					return FontInfo.empty_names;
 				}
@@ -184,12 +172,12 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				if (value == null) {
-					fontstyles &= ~FontStyles.Names;
 					bag.Remove ("Font_Names");
+					_owner.RemoveBit ((int) Style.Styles.FontNames);
 				}
 				else {
-					fontstyles |= FontStyles.Names;
 					bag ["Font_Names"] = value;
+					_owner.SetBit ((int) Style.Styles.FontNames);
 				}
 			}
 		}
@@ -205,7 +193,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Overline) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontOverline)) 
 				{
 					return false;
 				}
@@ -215,8 +203,8 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Overline;
 				bag["Font_Overline"] = value;
+				_owner.SetBit ((int) Style.Styles.FontOverline);
 			}
 		}
 
@@ -233,7 +221,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Size) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontSize)) 
 				{
 					return FontUnit.Empty;
 				}
@@ -247,8 +235,8 @@ namespace System.Web.UI.WebControls {
 				{
 					throw new ArgumentOutOfRangeException("Value", value.Unit.Value, "Font size cannot be negative");
 				}
-				fontstyles |= FontStyles.Size;
 				bag["Font_Size"] = value;
+				_owner.SetBit ((int) Style.Styles.FontSize);
 			}
 		}
 
@@ -263,7 +251,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Strikeout) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontStrikeout)) 
 				{
 					return false;
 				}
@@ -273,8 +261,8 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Strikeout;
 				bag["Font_Strikeout"] = value;
+				_owner.SetBit ((int) Style.Styles.FontStrikeout);
 			}
 		}
 
@@ -289,7 +277,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((fontstyles & FontStyles.Underline) == 0) 
+				if (!_owner.CheckBit ((int) Style.Styles.FontUnderline)) 
 				{
 					return false;
 				}
@@ -299,8 +287,8 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Underline;
 				bag["Font_Underline"] = value;
+				_owner.SetBit ((int) Style.Styles.FontUnderline);
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -317,40 +305,40 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 			// MS stores the property in the bag if it's value is false
-			if ((f.fontstyles & FontStyles.Bold) != 0) {
+			if (f._owner.CheckBit((int) Style.Styles.FontBold)) {
 				this.Bold = f.Bold;
 			}
 
-			if ((f.fontstyles & FontStyles.Italic) != 0) {
+			if (f._owner.CheckBit ((int) Style.Styles.FontItalic)) {
 				this.Italic = f.Italic;
 			}
 
 			// MS seems to have some weird behaviour, even if f's Name has been set to String.Empty we still get an empty array
 			this.Names = f.Names;
 
-			if ((f.fontstyles & FontStyles.Overline) != 0) {
+			if (f._owner.CheckBit ((int) Style.Styles.FontOverline)) {
 				this.Overline = f.Overline;
 			}
 
-			if ((f.fontstyles & FontStyles.Size) != 0) {
+			if (f._owner.CheckBit ((int) Style.Styles.FontSize)) {
 				this.Size = f.Size;
 			}
 
-			if ((f.fontstyles & FontStyles.Strikeout) != 0) {
+			if (f._owner.CheckBit ((int) Style.Styles.FontStrikeout)) {
 				this.Strikeout = f.Strikeout;
 			}
 
-			if ((f.fontstyles & FontStyles.Underline) != 0) {
+			if (f._owner.CheckBit ((int) Style.Styles.FontUnderline)) {
 				this.Underline = f.Underline;
 			}
 #else
 			// MS does not store the property in the bag if it's value is false
-			if (((f.fontstyles & FontStyles.Bold) != 0) && f.Bold) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontBold)) && f.Bold) 
 			{
 				this.Bold = true;
 			}
 
-			if (((f.fontstyles & FontStyles.Italic) != 0) && f.Italic) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontItalic)) && f.Italic) 
 			{
 				this.Italic = true;
 			}
@@ -358,22 +346,22 @@ namespace System.Web.UI.WebControls {
 			// MS seems to have some weird behaviour, even if f's Name has been set to String.Empty we still get an empty array
 			this.Names = f.Names;
 
-			if (((f.fontstyles & FontStyles.Overline) != 0) && f.Overline) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontOverline)) && f.Overline) 
 			{
 				this.Overline = true;
 			}
 
-			if (((f.fontstyles & FontStyles.Size) != 0) && (f.Size != FontUnit.Empty)) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontSize)) && (f.Size != FontUnit.Empty)) 
 			{
 				this.Size = f.Size;
 			}
 
-			if (((f.fontstyles & FontStyles.Strikeout) != 0) && f.Strikeout) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontStrikeout)) && f.Strikeout) 
 			{
 				this.Strikeout = true;
 			}
 
-			if (((f.fontstyles & FontStyles.Underline) != 0) && f.Underline) 
+			if ((f._owner.CheckBit ((int) Style.Styles.FontUnderline)) && f.Underline) 
 			{
 				this.Underline = true;
 			}
@@ -384,65 +372,65 @@ namespace System.Web.UI.WebControls {
 		{
 			//Methods CopyFrom and MergeWith behave differently between 1.1 and 2.0
 #if NET_2_0
-			if (((fontstyles & FontStyles.Bold) == 0) && ((f.fontstyles & FontStyles.Bold) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontBold) && f._owner.CheckBit ((int) Style.Styles.FontBold)) {
 				this.Bold = f.Bold;
 			}
 
-			if (((fontstyles & FontStyles.Italic) == 0) && ((f.fontstyles & FontStyles.Italic) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontItalic) && f._owner.CheckBit ((int) Style.Styles.FontItalic)) {
 				this.Italic = f.Italic;
 			}
 
-			if (((fontstyles & FontStyles.Names) == 0) && ((f.fontstyles & FontStyles.Names) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontNames) && f._owner.CheckBit ((int) Style.Styles.FontNames)) {
 				this.Names = f.Names;
 			}
 
-			if (((fontstyles & FontStyles.Overline) == 0) && ((f.fontstyles & FontStyles.Overline) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontOverline) && f._owner.CheckBit ((int) Style.Styles.FontOverline)) {
 				this.Overline = f.Overline;
 			}
 
-			if (((fontstyles & FontStyles.Size) == 0) && ((f.fontstyles & FontStyles.Size) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontSize) && f._owner.CheckBit ((int) Style.Styles.FontSize)) {
 				this.Size = f.Size;
 			}
 
-			if (((fontstyles & FontStyles.Strikeout) == 0) && ((f.fontstyles & FontStyles.Strikeout) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontStrikeout) && f._owner.CheckBit ((int) Style.Styles.FontStrikeout)) {
 				this.Strikeout = f.Strikeout;
 			}
 
-			if (((fontstyles & FontStyles.Underline) == 0) && ((f.fontstyles & FontStyles.Underline) != 0)) {
+			if (!_owner.CheckBit ((int) Style.Styles.FontUnderline) && f._owner.CheckBit ((int) Style.Styles.FontUnderline)) {
 				this.Underline = f.Underline;
 			}
 #else
-			if (((fontstyles & FontStyles.Bold) == 0) && ((f.fontstyles & FontStyles.Bold) != 0) && f.Bold) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontBold) && f._owner.CheckBit ((int) Style.Styles.FontBold) && f.Bold) 
 			{
 				this.Bold = true;
 			}
 
-			if (((fontstyles & FontStyles.Italic) == 0) && ((f.fontstyles & FontStyles.Italic) != 0) && f.Italic) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontItalic) && f._owner.CheckBit ((int) Style.Styles.FontItalic) && f.Italic) 
 			{
 				this.Italic = true;
 			}
 
-			if (((fontstyles & FontStyles.Names) == 0) && ((f.fontstyles & FontStyles.Names) != 0)) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontNames) && f._owner.CheckBit ((int) Style.Styles.FontNames)) 
 			{
 				this.Names = f.Names;
 			}
 
-			if (((fontstyles & FontStyles.Overline) == 0) && ((f.fontstyles & FontStyles.Overline) != 0) && f.Overline) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontOverline) && f._owner.CheckBit ((int) Style.Styles.FontOverline) && f.Overline) 
 			{
 				this.Overline = true;
 			}
 
-			if (((fontstyles & FontStyles.Size) == 0) && ((f.fontstyles & FontStyles.Size) != 0) && (f.Size != FontUnit.Empty)) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontSize) && f._owner.CheckBit ((int) Style.Styles.FontSize)) 
 			{
 				this.Size = f.Size;
 			}
 
-			if (((fontstyles & FontStyles.Strikeout) == 0) && ((f.fontstyles & FontStyles.Strikeout) != 0) && f.Strikeout) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontStrikeout) && f._owner.CheckBit ((int) Style.Styles.FontStrikeout)) 
 			{
 				this.Strikeout = true;
 			}
 
-			if (((fontstyles & FontStyles.Underline) == 0) && ((f.fontstyles & FontStyles.Underline) != 0) && f.Underline) 
+			if (!_owner.CheckBit ((int) Style.Styles.FontUnderline) && f._owner.CheckBit ((int) Style.Styles.FontUnderline) && f.Underline) 
 			{
 				this.Underline = true;
 			}
@@ -482,40 +470,7 @@ namespace System.Web.UI.WebControls {
 			bag.Remove("Font_Size");
 			bag.Remove("Font_Strikeout");
 			bag.Remove("Font_Underline");
-			fontstyles = FontStyles.None;
-		}
-
-		internal void LoadViewState() {
-			fontstyles = FontStyles.None;
-
-			if (bag["Font_Bold"] != null)
-			{
-				fontstyles |= FontStyles.Bold;
-			}
-			if (bag["Font_Italic"] != null)
-			{
-				fontstyles |= FontStyles.Italic;
-			}
-			if (bag["Font_Names"] != null)
-			{
-				fontstyles |= FontStyles.Names;
-			}
-			if (bag["Font_Overline"] != null)
-			{
-				fontstyles |= FontStyles.Overline;
-			}
-			if (bag["Font_Size"] != null)
-			{
-				fontstyles |= FontStyles.Size;
-			}
-			if (bag["Font_Strikeout"] != null)
-			{
-				fontstyles |= FontStyles.Strikeout;
-			}
-			if (bag["Font_Underline"] != null)
-			{
-				fontstyles |= FontStyles.Underline;
-			}
+			_owner.RemoveBit ((int) Style.Styles.FontAll);
 		}
 
 #if NET_2_0
@@ -533,11 +488,11 @@ namespace System.Web.UI.WebControls {
 				attributes.Add (HtmlTextWriterStyle.FontFamily, s);
 			}
 
-			if ((fontstyles & FontStyles.Bold) != 0) {
+			if (_owner.CheckBit ((int) Style.Styles.FontBold)) {
 				attributes.Add (HtmlTextWriterStyle.FontWeight, Bold ? "bold" : "normal");
 			}
 
-			if ((fontstyles & FontStyles.Italic) != 0) {
+			if (_owner.CheckBit ((int) Style.Styles.FontItalic)) {
 				attributes.Add (HtmlTextWriterStyle.FontStyle, Italic ? "italic" : "normal");
 			}
 
@@ -549,19 +504,19 @@ namespace System.Web.UI.WebControls {
 			s = string.Empty;
 			bool hasTextDecoration = false;
 
-			if ((fontstyles & FontStyles.Overline) != 0) {
+			if (_owner.CheckBit ((int) Style.Styles.FontOverline)) {
 				if (Overline)
 					s += "overline ";
 				hasTextDecoration = true;
 			}
 
-			if ((fontstyles & FontStyles.Strikeout) != 0) {
+			if (_owner.CheckBit ((int) Style.Styles.FontStrikeout)) {
 				if (Strikeout)
 					s += "line-through ";
 				hasTextDecoration = true;
 			}
 
-			if ((fontstyles & FontStyles.Underline) != 0) {
+			if (_owner.CheckBit ((int) Style.Styles.FontUnderline)) {
 				if (Underline)
 					s += "underline ";
 				hasTextDecoration = true;
@@ -575,9 +530,9 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Private Methods
 
 
-		internal bool IsEmpty {
+		bool IsEmpty {
 			get {
-				return fontstyles == FontStyles.None;
+				return !_owner.CheckBit ((int) Style.Styles.FontAll);
 			}
 		}
 	}

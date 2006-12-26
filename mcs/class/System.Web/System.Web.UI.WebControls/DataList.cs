@@ -600,12 +600,12 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			// not kept (directly) in the DataList ViewState
-			return new TableStyle ();
+			TableStyle tableStyle = new TableStyle ();
 #else
 			TableStyle tableStyle = new TableStyle (ViewState);
+#endif
 			tableStyle.CellSpacing = 0;
 			return tableStyle;
-#endif
 		}
 
 		protected virtual DataListItem CreateItem (int itemIndex, ListItemType itemType)
@@ -650,11 +650,7 @@ namespace System.Web.UI.WebControls {
 		protected override void LoadViewState (object savedState)
 		{
 			object[] state = (object[]) savedState;
-#if NET_2_0
-			base.LoadViewState (state [8]);
-#else
 			base.LoadViewState (state [0]);
-#endif
 			if (state [1] != null)
 				ItemStyle.LoadViewState (state [1]);
 			if (state [2] != null)
@@ -669,6 +665,10 @@ namespace System.Web.UI.WebControls {
 				HeaderStyle.LoadViewState (state [6]);
 			if (state [7] != null)
 				FooterStyle.LoadViewState (state [7]);
+#if NET_2_0
+			if (state [8] != null)
+				ControlStyle.LoadViewState (state [8]);
+#endif
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
@@ -904,12 +904,10 @@ for (int i=0; i < Items.Count; i++) {
 		{
 #if NET_2_0
 			object[] state = new object [9];
-			// FIXME: what's new in slot #0 ?
-			state[8] = base.SaveViewState ();
 #else
 			object[] state = new object [8];
-			state[0] = base.SaveViewState ();
 #endif
+			state[0] = base.SaveViewState ();
 			if (itemStyle != null)
 				state [1] = itemStyle.SaveViewState ();
 			if (selectedItemStyle != null)
@@ -924,6 +922,10 @@ for (int i=0; i < Items.Count; i++) {
 				state [6] = headerStyle.SaveViewState ();
 			if (footerStyle != null)
 				state [7] = footerStyle.SaveViewState ();
+#if NET_2_0
+			if (ControlStyleCreated)
+				state [8] = ControlStyle.SaveViewState ();
+#endif
 			return state;
 		}
 
@@ -944,6 +946,10 @@ for (int i=0; i < Items.Count; i++) {
 				selectedItemStyle.TrackViewState ();
 			if (separatorStyle != null)
 				separatorStyle.TrackViewState ();
+#if NET_2_0
+			if (ControlStyleCreated)
+				ControlStyle.TrackViewState ();
+#endif
 		}
 
 

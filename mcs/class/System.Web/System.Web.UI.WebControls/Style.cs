@@ -43,8 +43,10 @@ namespace System.Web.UI.WebControls {
 	[ToolboxItem("")]
 	public class Style : System.ComponentModel.Component, System.Web.UI.IStateManager 
 	{
+		internal const string BitStateKey = "_!SB";
+
 		[Flags]
-		enum Styles 
+		public enum Styles 
 		{
 			BackColor	= 0x00000008,
 			BorderColor	= 0x00000010,
@@ -55,31 +57,41 @@ namespace System.Web.UI.WebControls {
 			ForeColor	= 0x00000004,
 			Height		= 0x00000080,
 			Width		= 0x00000100,
+
+			FontAll = 0xFE00,
+			FontBold = 0x800,
+			FontItalic = 0x1000,
+			FontNames = 0x200,
+			FontOverline = 0x4000,
+			FontSize = 0x400,
+			FontStrikeout = 0x8000,
+			FontUnderline = 0x2000
 		}
 
 		#region Fields
 		private int styles;
+		private int stylesTraked;
 		internal StateBag	viewstate;
 		private FontInfo	fontinfo;
 		private bool		tracking;
+		bool _isSharedViewState;
 #if NET_2_0
 		private string		registered_class;
 #endif
 		#endregion	// Fields
 
 		#region Public Constructors
-		public Style() : this(new StateBag()) 
+		public Style()
 		{
+			viewstate = new StateBag ();
 		}
 
 		public Style(System.Web.UI.StateBag bag) 
 		{
-			if (bag != null) {
-				viewstate = bag;
-			} else {
-				viewstate = new StateBag();
-			}
-			tracking = false;
+			viewstate = bag;
+			if (viewstate == null)
+				viewstate = new StateBag ();
+			_isSharedViewState = true;
 		}
 		#endregion	// Public Constructors
 
@@ -336,9 +348,9 @@ namespace System.Web.UI.WebControls {
 			get 
 			{
 #if NET_2_0
-				return (styles == 0 && (fontinfo == null || fontinfo.IsEmpty) && RegisteredCssClass.Length == 0);
+				return (styles == 0 && RegisteredCssClass.Length == 0);
 #else
-				return (styles == 0 && (fontinfo == null || fontinfo.IsEmpty));
+				return (styles == 0);
 #endif
 			}
 		}
@@ -469,7 +481,7 @@ namespace System.Web.UI.WebControls {
 					writer.AddStyleAttribute (HtmlTextWriterStyle.Width, u.ToString());
 			}
 
-			if (!Font.IsEmpty) {
+			if (CheckBit ((int) Style.Styles.FontAll)) {
 				// Fonts are a bit weird
 				if (fontinfo.Name != string.Empty) {
 					s = fontinfo.Names[0];
@@ -694,6 +706,8 @@ namespace System.Web.UI.WebControls {
 				fontinfo.Reset();
 			}
 			styles = 0;
+			viewstate.Remove (BitStateKey);
+			stylesTraked = 0;
 		}
 #if ONLY_1_1
 		public override string ToString() 
@@ -708,63 +722,49 @@ namespace System.Web.UI.WebControls {
 		{
 			viewstate.LoadViewState(state);
 
-			// Update our style
-			this.styles = 0;
-
-			if (viewstate["BackColor"] != null) 
-			{
-				styles |= (int) Styles.BackColor;
-			}
-			if (viewstate["BorderColor"] != null) 
-			{
-				styles |= (int) Styles.BorderColor;
-			}
-			if (viewstate["BorderStyle"] != null) 
-			{
-				styles |= (int) Styles.BorderStyle;
-			}
-			if (viewstate["BorderWidth"] != null) 
-			{
-				styles |= (int) Styles.BorderWidth;
-			}
-			if (viewstate["CssClass"] != null) 
-			{
-				styles |= (int) Styles.CssClass;
-			}
-			if (viewstate["ForeColor"] != null) 
-			{
-				styles |= (int) Styles.ForeColor;
-			}
-			if (viewstate["Height"] != null) 
-			{
-				styles |= (int) Styles.Height;
-			}
-			if (viewstate["Width"] != null) 
-			{
-				styles |= (int) Styles.Width;
-			}
-			Font.LoadViewState();
-
-			LoadViewStateInternal();
-		}
-
-		internal virtual void LoadViewStateInternal()
-		{
-			// Override me
+			LoadBitState ();
 		}
 
 		protected internal virtual object SaveViewState () 
 		{
-			if (styles != 0 || !Font.IsEmpty) 
-			{
-				return viewstate.SaveViewState();
-			}
-			return null;
+			SaveBitState ();
+			
+			if (_isSharedViewState)
+				return null;
+
+			return viewstate.SaveViewState ();
+			
+		}
+
+		internal void SaveBitState ()
+		{
+			if (stylesTraked != 0)
+				viewstate [BitStateKey] = stylesTraked;
+		}
+
+		internal void LoadBitState () {
+			if (viewstate [BitStateKey] == null)
+				return;
+
+			int bit = (int) viewstate [BitStateKey];
+			styles |= bit;
+			stylesTraked |= bit;
 		}
 
 		protected internal virtual void SetBit( int bit ) 
 		{
 			styles |= bit;
+			if (tracking)
+				stylesTraked |= bit;
+		}
+
+		internal void RemoveBit (int bit) {
+			styles &= ~bit;
+			if (tracking) {
+				stylesTraked &= ~bit;
+				if (stylesTraked == 0)
+					viewstate.Remove (BitStateKey);
+			}
 		}
 
 		internal bool CheckBit (int bit) {
@@ -837,7 +837,7 @@ namespace System.Web.UI.WebControls {
 			if (source.CheckBit ((int) Styles.ForeColor)) {
 				ForeColor = source.ForeColor;
 			}
-			if (!source.Font.IsEmpty) {
+			if (source.CheckBit((int) Styles.FontAll)) {
 				Font.CopyFrom (source.Font);
 			}
 		}
@@ -860,6 +860,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (viewstate != null)
 				viewstate.SetDirty (true);
+			stylesTraked = styles;
 		}
 #endif
 	}

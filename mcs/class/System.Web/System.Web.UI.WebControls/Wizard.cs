@@ -1246,11 +1246,13 @@ namespace System.Web.UI.WebControls
 			if (states[10] != null) ((IStateManager)StepNextButtonStyle).LoadViewState (states[10]);
 			if (states[11] != null) ((IStateManager)StepPreviousButtonStyle).LoadViewState (states[11]);
 			if (states[12] != null) ((IStateManager)NavigationButtonStyle).LoadViewState (states[12]);
+			if (states [13] != null)
+				ControlStyle.LoadViewState (states [13]);
 		}
 		
 		protected override object SaveViewState ()
 		{
-			object [] state = new object [13];
+			object [] state = new object [14];
 			state [0] = base.SaveViewState ();
 			
 			if (stepStyle != null) state [1] = ((IStateManager)stepStyle).SaveViewState ();
@@ -1265,7 +1267,9 @@ namespace System.Web.UI.WebControls
 			if (stepNextButtonStyle != null) state [10] = ((IStateManager)stepNextButtonStyle).SaveViewState ();
 			if (stepPreviousButtonStyle != null) state [11] = ((IStateManager)stepPreviousButtonStyle).SaveViewState ();
 			if (navigationButtonStyle != null) state [12] = ((IStateManager)navigationButtonStyle).SaveViewState ();
-			
+			if (ControlStyleCreated)
+				state [13] = ControlStyle.SaveViewState ();
+	
 			for (int n=0; n<state.Length; n++)
 				if (state [n] != null) return state;
 			return null;
@@ -1286,6 +1290,8 @@ namespace System.Web.UI.WebControls
 			if (stepNextButtonStyle != null) ((IStateManager)stepNextButtonStyle).TrackViewState();
 			if (stepPreviousButtonStyle != null) ((IStateManager)stepPreviousButtonStyle).TrackViewState();
 			if (navigationButtonStyle != null) ((IStateManager)navigationButtonStyle).TrackViewState();
+			if (ControlStyleCreated)
+				ControlStyle.TrackViewState ();
 		}
 		
 		protected internal void RegisterCommandEvents (IButtonControl button)

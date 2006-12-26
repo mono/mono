@@ -270,30 +270,6 @@ namespace System.Web.UI.WebControls {
 
 			base.Reset ();
 		}
-
-		internal override void LoadViewStateInternal()
-		{
-			if (viewstate["Mode"] != null) {
-				SetBit ((int) DataGridPagerStyles.Mode);
-			}
-			if (viewstate["NextPageText"] != null) {
-				SetBit ((int) DataGridPagerStyles.NextPageText);
-			}
-			if (viewstate["PageButtonCount"] != null) {
-				SetBit ((int) DataGridPagerStyles.PageButtonCount);
-			}
-			if (viewstate["Position"] != null) {
-				SetBit ((int) DataGridPagerStyles.Position);
-			}
-			if (viewstate["PrevPageText"] != null) {
-				SetBit ((int) DataGridPagerStyles.PrevPageText);
-			}
-			if (viewstate["Visible"] != null) {
-				SetBit ((int) DataGridPagerStyles.Visible);
-			}
-
-			base.LoadViewStateInternal();
-		}
 		#endregion	// Public Instance Methods
 	}
 }

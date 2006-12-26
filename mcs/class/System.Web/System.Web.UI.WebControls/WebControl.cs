@@ -516,25 +516,20 @@ namespace System.Web.UI.WebControls {
 				return;
 			}
 
-			Triplet triplet = (Triplet) savedState;
+			Pair pair = (Pair) savedState;
 
-			base.LoadViewState (triplet.First);
-			
-			if (triplet.Second != null) {
+			base.LoadViewState (pair.First);
+			if (ViewState [System.Web.UI.WebControls.Style.BitStateKey] != null)
+				ControlStyle.LoadBitState ();
+
+			if (pair.Second != null) {
 				if (attribute_state == null) {
 					attribute_state = new StateBag ();
 					if (IsTrackingViewState) 
 						attribute_state.TrackViewState ();
 				}
-				attribute_state.LoadViewState (triplet.Second);
+				attribute_state.LoadViewState (pair.Second);
 				attributes = new AttributeCollection(attribute_state);
-			}
-
-			if (triplet.Third != null) {
-				if (style == null)
-					style = CreateControlStyle ();
-
-				style.LoadViewState (triplet.Third);
 			}
 
 			enabled = ViewState.GetBool("Enabled", true);
@@ -566,20 +561,18 @@ namespace System.Web.UI.WebControls {
 		{
 			object view_state;
 			object attr_view_state = null;
-			object style_view_state = null;
 
+			if (style != null)
+				style.SaveBitState ();
 			view_state = base.SaveViewState ();
 
 			if (attribute_state != null)
 				attr_view_state = attribute_state.SaveViewState ();
 		
-			if (style != null)
-				style_view_state = style.SaveViewState ();
-			
-			if (view_state == null && attr_view_state == null && style_view_state == null)
+			if (view_state == null && attr_view_state == null)
 				return null;
-			
-			return new Triplet (view_state, attr_view_state, style_view_state);
+
+			return new Pair (view_state, attr_view_state);
 		}
 
 		protected override void TrackViewState() 

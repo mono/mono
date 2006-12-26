@@ -1018,7 +1018,7 @@ namespace System.Web.UI.WebControls
 
 		protected override Style CreateControlStyle ()
 		{
-			TableStyle style = new TableStyle (ViewState);
+			TableStyle style = new TableStyle ();
 			style.GridLines = GridLines.Both;
 			style.CellSpacing = 0;
 			return style;
@@ -1665,11 +1665,13 @@ namespace System.Web.UI.WebControls
 				foreach (IStateManager sm in autoFieldProperties)
 					sm.TrackViewState ();
 			}
+			if (ControlStyleCreated)
+				ControlStyle.TrackViewState ();
 		}
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [12];
+			object[] states = new object [13];
 			states[0] = base.SaveViewState();
 			states[1] = (columns == null ? null : ((IStateManager)columns).SaveViewState());
 			states[2] = (pagerSettings == null ? null : ((IStateManager)pagerSettings).SaveViewState());
@@ -1691,6 +1693,8 @@ namespace System.Web.UI.WebControls
 				}
 				if (!allNull) states [11] = data;
 			}
+			if (ControlStyleCreated)
+				states [12] = ControlStyle.SaveViewState ();
 
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -1732,6 +1736,8 @@ namespace System.Web.UI.WebControls
 			if (states[8] != null) ((IStateManager)InsertRowStyle).LoadViewState (states[8]);
 			if (states[9] != null) ((IStateManager)EditRowStyle).LoadViewState (states[9]);
 			if (states[10] != null) ((IStateManager)EmptyDataRowStyle).LoadViewState (states[10]);
+			if (states [12] != null)
+				ControlStyle.LoadViewState (states [12]);
 		}
 		
 		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)

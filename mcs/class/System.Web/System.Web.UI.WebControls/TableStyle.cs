@@ -327,25 +327,5 @@ namespace System.Web.UI.WebControls {
 		}
 #endif
 
-		internal override void LoadViewStateInternal()
-		{
-			if (viewstate["BackImageUrl"] != null) {
-				SetBit ((int) TableStyles.BackImageUrl);
-			}
-			if (viewstate["CellPadding"] != null) {
-				SetBit ((int) TableStyles.CellPadding);
-			}
-			if (viewstate["CellSpacing"] != null) {
-				SetBit ((int) TableStyles.CellSpacing);
-			}
-			if (viewstate["GridLines"] != null) {
-				SetBit ((int) TableStyles.GridLines);
-			}
-			if (viewstate["HorizontalAlign"] != null) {
-				SetBit ((int) TableStyles.HorizontalAlign);
-			}
-
-			base.LoadViewStateInternal();
-		}
 	}
 }

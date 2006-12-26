@@ -127,27 +127,6 @@ namespace System.Web.UI.WebControls
 				SetBit ((int) TreeNodeStyles.NodeSpacing);
 			}
 		}
-
-		internal override void LoadViewStateInternal () {
-			
-			if (viewstate [CHILD_PADD] != null) {
-				SetBit ((int) TreeNodeStyles.ChildNodesPadding);
-			}
-			if (viewstate [HORZ_PADD] != null) {
-				SetBit ((int) TreeNodeStyles.HorizontalPadding);
-			}
-			if (viewstate [IMG_URL] != null) {
-				SetBit ((int) TreeNodeStyles.ImageUrl);
-			}
-			if (viewstate [SPACING] != null) {
-				SetBit ((int) TreeNodeStyles.NodeSpacing);
-			}
-			if (viewstate [VERT_PADD] != null) {
-				SetBit ((int) TreeNodeStyles.VerticalPadding);
-			}
-			
-			base.LoadViewStateInternal ();
-		}
 		
 		public override void CopyFrom (Style s)
 		{

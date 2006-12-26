@@ -1,3 +1,19 @@
+2006-12-26 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataGridPagerStyle.cs:
+	* DataList.cs:
+	* DetailsView.cs:
+	* FontInfo.cs:
+	* Style.cs:
+	* TableItemStyle.cs:
+	* TableStyle.cs:
+	* TreeNodeStyle.cs:
+	* WebControl.cs:
+	* Wizard.cs:				
+	fixed: Load/Save viewstate of WebControl does not call Load/Save viewstate 
+	for it's ControlStyle, but the shared ViewState is used to manage style's 
+	viewstate instead.
+
 2006-12-21 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CompleteWizardStep.cs:

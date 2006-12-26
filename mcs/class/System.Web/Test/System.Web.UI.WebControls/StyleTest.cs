@@ -222,6 +222,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (s.Width, Unit.Empty, "Default8");
 		}
 
+		[Test]
+		public void Style_ViewState () {
+			Style s = new Style ();
+			((IStateManager) s).TrackViewState ();
+			SetSomeValues (s);
+			object state = ((IStateManager) s).SaveViewState ();
+
+			Style copy = new Style ();
+			((IStateManager) copy).LoadViewState (state);
+
+			Assert.AreEqual (Color.Red, copy.BackColor, "ViewState1");
+			Assert.AreEqual (Color.Green, copy.ForeColor, "ViewState2");
+			Assert.AreEqual (new Unit (10), copy.Width, "ViewState3");
+			Assert.AreEqual (true, copy.Font.Bold, "ViewState4");
+		}
+
+		[Test]
+		public void Style_ViewState2 () {
+			Style s = new Style (null);
+			((IStateManager) s).TrackViewState ();
+			SetSomeValues (s);
+			object state = ((IStateManager) s).SaveViewState ();
+
+			Assert.AreEqual (null, state, "ViewState2");
+		}
+
+		[Test]
+		public void Style_ViewState3 () {
+			Style s = new Style (new StateBag());
+			((IStateManager) s).TrackViewState ();
+			SetSomeValues (s);
+			object state = ((IStateManager) s).SaveViewState ();
+
+			Assert.AreEqual (null, state, "ViewState3");
+		}
 
 		[Test]
 		public void Style_State () {
@@ -647,6 +682,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.Width = 1;
 			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Width");
 			Assert.AreEqual (0x100, s.SetBitCalledValue, "SetBit() was called with wrong argument : Width");
+			
+			s.SetBitCalledFlag = false;
+			s.Font.Bold = true;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Bold");
+			Assert.AreEqual (0x800, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Bold");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Italic = true;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Italic");
+			Assert.AreEqual (0x1000, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Italic");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Overline = true;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Overline");
+			Assert.AreEqual (0x4000, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Overline");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Underline = true;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Underline");
+			Assert.AreEqual (0x2000, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Underline");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Strikeout = true;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Strikeout");
+			Assert.AreEqual (0x8000, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Strikeout");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Names = new string [] { "Arial" };
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Names");
+			Assert.AreEqual (0x200, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Strikeout");
+
+			s.SetBitCalledFlag = false;
+			s.Font.Size = new FontUnit (10);
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Font.Size");
+			Assert.AreEqual (0x400, s.SetBitCalledValue, "SetBit() was called with wrong argument : Font.Size");
 		}
 
 		public void Render ()

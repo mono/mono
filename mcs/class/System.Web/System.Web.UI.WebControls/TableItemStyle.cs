@@ -224,20 +224,5 @@ namespace System.Web.UI.WebControls {
 			// call base at the end because "styles" will reset there
 			base.Reset ();
 		}
-
-		internal override void LoadViewStateInternal()
-		{
-			if (viewstate ["HorizontalAlign"] != null) {
-				SetBit ((int) TableItemStyles.HorizontalAlign);
-			}
-			if (viewstate ["VerticalAlign"] != null) {
-				SetBit ((int) TableItemStyles.VerticalAlign);
-			}
-			if (viewstate["Wrap"] != null) {
-				SetBit ((int) TableItemStyles.Wrap);
-			}
-
-			base.LoadViewStateInternal();
-		}
 	}
 }
