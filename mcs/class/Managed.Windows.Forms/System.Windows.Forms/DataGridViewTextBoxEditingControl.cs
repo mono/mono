@@ -107,7 +107,6 @@ namespace System.Windows.Forms {
 		{
 			base.OnTextChanged(e);
 			editingControlValueChanged = true;
-			Console.WriteLine("OnTextChanged: {0};", Text);
 			if (editingControlDataGridView != null) {
 				editingControlDataGridView.CurrentCell.Value = Text;
 			}

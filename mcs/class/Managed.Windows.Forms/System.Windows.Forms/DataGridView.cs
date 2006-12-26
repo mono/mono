@@ -2305,21 +2305,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override AccessibleObject CreateAccessibilityInstance () {
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
 			return new DataGridViewAccessibleObject(this);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected virtual DataGridViewColumnCollection CreateColumnsInstance () {
+		protected virtual DataGridViewColumnCollection CreateColumnsInstance ()
+		{
 			return new DataGridViewColumnCollection(this);
 		}
 
-		protected override Control.ControlCollection CreateControlsInstance () {
+		protected override Control.ControlCollection CreateControlsInstance ()
+		{
 			return base.CreateControlsInstance(); //new Control.ControlCollection(this);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected virtual DataGridViewRowCollection CreateRowsInstance () {
+		protected virtual DataGridViewRowCollection CreateRowsInstance ()
+		{
 			return new DataGridViewRowCollection(this);
 		}
 
@@ -2331,295 +2335,337 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected override bool IsInputChar (char charCode) {
+		protected override bool IsInputChar (char charCode)
+		{
 			return base.IsInputChar(charCode);
-			//throw new NotImplementedException();
 		}
 
-		protected override bool IsInputKey (Keys keyData) {
+		protected override bool IsInputKey (Keys keyData)
+		{
 			return base.IsInputKey(keyData);
-			//throw new NotImplementedException();
 		}
 
 		protected virtual void OnAllowUserToAddRowsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AllowUserToAddRowsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAllowUserToDeleteRowsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AllowUserToDeleteRowsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAllowUserToOrderColumnsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AllowUserToOrderColumnsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAllowUserToResizeColumnsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AllowUserToResizeColumnsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAllowUserToResizeRowsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AllowUserToResizeRowsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAlternatingRowsDefaultCellStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AlternatingRowsDefaultCellStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAutoGenerateColumnsChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AutoGenerateColumnsChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAutoSizeColumnModeChanged (DataGridViewAutoSizeColumnModeEventArgs e)
 		{
 			DataGridViewAutoSizeColumnModeEventHandler eh = (DataGridViewAutoSizeColumnModeEventHandler)(Events [AutoSizeColumnModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAutoSizeColumnsModeChanged (DataGridViewAutoSizeColumnsModeEventArgs e)
 		{
 			DataGridViewAutoSizeColumnsModeEventHandler eh = (DataGridViewAutoSizeColumnsModeEventHandler)(Events [AutoSizeColumnsModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAutoSizeRowsModeChanged (DataGridViewAutoSizeModeEventArgs e)
 		{
 			DataGridViewAutoSizeModeEventHandler eh = (DataGridViewAutoSizeModeEventHandler)(Events [AutoSizeRowsModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBackgroundColorChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [BackgroundColorChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
-		protected override void OnBindingContextChanged (EventArgs e) {
+		protected override void OnBindingContextChanged (EventArgs e)
+		{
 			base.OnBindingContextChanged(e);
 		}
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [BorderStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCancelRowEdit (QuestionEventArgs e) {
 			QuestionEventHandler eh = (QuestionEventHandler)(Events [CancelRowEditEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellBeginEdit (DataGridViewCellCancelEventArgs e)
 		{
 			DataGridViewCellCancelEventHandler eh = (DataGridViewCellCancelEventHandler)(Events [CellBeginEditEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellBorderStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [CellBorderStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellClick (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellContentClick (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellContentClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellContentDoubleClick (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellContentDoubleClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellContextMenuStripChanged (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellContextMenuStripChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellContextMenuStripNeeded (DataGridViewCellContextMenuStripNeededEventArgs e)
 		{
 			DataGridViewCellContextMenuStripNeededEventHandler eh = (DataGridViewCellContextMenuStripNeededEventHandler)(Events [CellContextMenuStripNeededEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellDoubleClick (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellDoubleClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellEndEdit (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellEndEditEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellEnter (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellEnterEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnCellErrorTextChanged (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellErrorTextChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellErrorTextNeeded (DataGridViewCellErrorTextNeededEventArgs e)
 		{
 			DataGridViewCellErrorTextNeededEventHandler eh = (DataGridViewCellErrorTextNeededEventHandler)(Events [CellErrorTextNeededEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellFormatting (DataGridViewCellFormattingEventArgs e)
 		{
 			DataGridViewCellFormattingEventHandler eh = (DataGridViewCellFormattingEventHandler)(Events [CellFormattingEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellLeave (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellLeaveEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseClick (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseDoubleClick (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseDoubleClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseDown (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseDownEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseEnter (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellMouseEnterEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseLeave (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellMouseLeaveEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseMove (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseMoveEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellMouseUp (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [CellMouseUpEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellPainting (DataGridViewCellPaintingEventArgs e)
 		{
 			DataGridViewCellPaintingEventHandler eh = (DataGridViewCellPaintingEventHandler)(Events [CellPaintingEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnCellParsing (DataGridViewCellParsingEventArgs e)
 		{
 			DataGridViewCellParsingEventHandler eh = (DataGridViewCellParsingEventHandler)(Events [CellParsingEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellStateChanged (DataGridViewCellStateChangedEventArgs e)
 		{
 			DataGridViewCellStateChangedEventHandler eh = (DataGridViewCellStateChangedEventHandler)(Events [CellStateChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellStyleChanged (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellStyleContentChanged (DataGridViewCellStyleContentChangedEventArgs e) {
 			DataGridViewCellStyleContentChangedEventHandler eh = (DataGridViewCellStyleContentChangedEventHandler)(Events [CellStyleContentChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellToolTipTextChanged (DataGridViewCellEventArgs e) {
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellToolTipTextChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
 				eh (this, e);
 		}
 
 		protected virtual void OnCellToolTipTextNeeded (DataGridViewCellToolTipTextNeededEventArgs e)
 		{
 			DataGridViewCellToolTipTextNeededEventHandler eh = (DataGridViewCellToolTipTextNeededEventHandler)(Events [CellToolTipTextNeededEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellValidated (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellValidatedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
 				eh (this, e);
 		}
 
 		protected virtual void OnCellValidating (DataGridViewCellValidatingEventArgs e)
 		{
 			DataGridViewCellValidatingEventHandler eh = (DataGridViewCellValidatingEventHandler)(Events [CellValidatingEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCellValueChanged (DataGridViewCellEventArgs e)
 		{
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellValueChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
 				eh (this, e);
 		}
 
 		protected virtual void OnCellValueNeeded (DataGridViewCellValueEventArgs e)
 		{
 			DataGridViewCellValueEventHandler eh = (DataGridViewCellValueEventHandler)(Events [CellValueNeededEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
 				eh (this, e);
 		}
 
 		protected virtual void OnCellValuePushed (DataGridViewCellValueEventArgs e)
 		{
 			DataGridViewCellValueEventHandler eh = (DataGridViewCellValueEventHandler)(Events [CellValuePushedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
 				eh (this, e);
 		}
 
@@ -2633,133 +2679,155 @@ namespace System.Windows.Forms {
 		protected internal virtual void OnColumnContextMenuStripChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnContextMenuStripChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnDataPropertyNameChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnDataPropertyNameChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnDefaultCellStyleChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnDefaultCellStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnDisplayIndexChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnDisplayIndexChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnDividerDoubleClick (DataGridViewColumnDividerDoubleClickEventArgs e)
 		{
 			DataGridViewColumnDividerDoubleClickEventHandler eh = (DataGridViewColumnDividerDoubleClickEventHandler)(Events [ColumnDividerDoubleClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnDividerWidthChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnDividerWidthChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnHeaderCellChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnHeaderCellChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeaderMouseClick (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [ColumnHeaderMouseClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeaderMouseDoubleClick (DataGridViewCellMouseEventArgs e)
 		{
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [ColumnHeaderMouseDoubleClickEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeadersBorderStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ColumnHeadersBorderStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeadersDefaultCellStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ColumnHeadersDefaultCellStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeadersHeightChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ColumnHeadersHeightChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeadersHeightSizeModeChanged (DataGridViewAutoSizeModeEventArgs e)
 		{
 			DataGridViewAutoSizeModeEventHandler eh = (DataGridViewAutoSizeModeEventHandler)(Events [ColumnHeadersHeightSizeModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnMinimumWidthChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnMinimumWidthChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnNameChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnNameChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnRemoved (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnRemovedEvent]);
-			if (eh != null)	eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnSortModeChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnSortModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnStateChanged (DataGridViewColumnStateChangedEventArgs e)
 		{
 			DataGridViewColumnStateChangedEventHandler eh = (DataGridViewColumnStateChangedEventHandler)(Events [ColumnStateChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnToolTipTextChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnToolTipTextChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnColumnWidthChanged (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnWidthChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCurrentCellChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [CurrentCellChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCurrentCellDirtyStateChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [CurrentCellDirtyStateChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnCursorChanged (EventArgs e)
@@ -2770,7 +2838,8 @@ namespace System.Windows.Forms {
 		protected virtual void OnDataBindingComplete (DataGridViewBindingCompleteEventArgs e)
 		{
 			DataGridViewBindingCompleteEventHandler eh = (DataGridViewBindingCompleteEventHandler)(Events [DataBindingCompleteEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDataError (bool displayErrorDialogIfNoHandler, DataGridViewDataErrorEventArgs e) {
@@ -2786,22 +2855,26 @@ namespace System.Windows.Forms {
 		}
 		protected virtual void OnDataMemberChanged (EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [DataMemberChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDataSourceChanged (EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [DataSourceChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDefaultCellStyleChanged (EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [DefaultCellStyleChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDefaultValuesNeeded (DataGridViewRowEventArgs e) {
 			DataGridViewRowEventHandler eh = (DataGridViewRowEventHandler)(Events [DefaultValuesNeededEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnDoubleClick (EventArgs e) {
@@ -2810,13 +2883,15 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnEditingControlShowing (DataGridViewEditingControlShowingEventArgs e) {
 			DataGridViewEditingControlShowingEventHandler eh = (DataGridViewEditingControlShowingEventHandler)(Events [EditingControlShowingEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnEditModeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [EditModeChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnEnabledChanged (EventArgs e)
@@ -2847,7 +2922,8 @@ namespace System.Windows.Forms {
 		protected virtual void OnGridColorChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [GridColorChangedEvent]);
-			if (eh != null) eh (this, e);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -2991,7 +3067,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs e) {
 			base.OnPaint(e);
-			Console.WriteLine(e.ClipRectangle);
+			//Console.WriteLine(e.ClipRectangle);
 			Rectangle bounds = ClientRectangle; //e.ClipRectangle;
 			e.Graphics.FillRectangle(new SolidBrush(backgroundColor), bounds);
 			Pen pen = new Pen(gridColor);
