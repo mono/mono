@@ -124,7 +124,7 @@ namespace System.Windows.Forms.Layout
 				else {
 					// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
 					// This calculates from scratch every time:
-					left = child.dist_left + (space.Width - (child.dist_left + width + child.dist_right)) / 2;
+					left = left + (space.Width - (left + width + child.dist_right)) / 2;
 				}
 
 				if ((anchor & AnchorStyles.Top) != 0) {
@@ -141,7 +141,7 @@ namespace System.Windows.Forms.Layout
 				else {
 					// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
 					// This calculates from scratch every time:
-					top = child.dist_top + (space.Height - (child.dist_top + height + child.dist_bottom)) / 2;
+					top = top + (space.Height - (top + height + child.dist_bottom)) / 2;
 				}
 
 				// Sanity

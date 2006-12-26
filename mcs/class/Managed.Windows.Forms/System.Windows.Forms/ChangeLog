@@ -1,3 +1,13 @@
+2006-12-25  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: a couple of changes.  Remove dist_left and dist_top,
+	since they're nothing more than X/Left and Y/Top, respectively.
+
+	Also, move back to a per-control Bitmap/Graphics for
+	DeviceContext, since using the static Hwnd.bmp/bmp_g is bad in the
+	MT case.  Go with a tiny bitmap though, 1x1, instead of Width x
+	Height.
+
 2006-12-25  Miguel de Icaza  <miguel@novell.com>
 
 	* ListView.cs: Add support ColumnWidthChanged and

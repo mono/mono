@@ -75,18 +75,18 @@ namespace System.Windows.Forms
 
 		// State
 		bool                    is_created; // true if OnCreateControl has been sent
-		internal bool			has_focus;		// true if control has focus
-		internal bool			is_visible;		// true if control is visible
-		internal bool			is_entered;		// is the mouse inside the control?
-		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
+		internal bool		has_focus;		// true if control has focus
+		internal bool		is_visible;		// true if control is visible
+		internal bool		is_entered;		// is the mouse inside the control?
+		internal bool		is_enabled;		// true if control is enabled (usable/not grayed out)
 		bool                    is_accessible; // true if the control is visible to accessibility applications
 		bool                    is_captured; // tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		bool                    is_recreating; // tracks if the handle for the control is being recreated
 		bool                    causes_validation; // tracks if validation is executed on changes
 		bool                    is_focusing; // tracks if Focus has been called on the control and has not yet finished
-        bool                    container_selected; // true if Select() or Focus() is called on a container, to prevent child controls from raising their GotFocus event
-        int                     tab_index; // position in tab order of siblings
+		bool                    container_selected; // true if Select() or Focus() is called on a container, to prevent child controls from raising their GotFocus event
+		int                     tab_index; // position in tab order of siblings
 		bool                    tab_stop; // is the control a tab stop?
 		bool                    is_disposed; // has the window already been disposed?
 		Size                    client_size; // size of the client area (window excluding decorations)
@@ -114,9 +114,7 @@ namespace System.Windows.Forms
 		internal AnchorStyles	anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
 		
-        // Please leave the next 4 as internal until DefaultLayout (2.0) is rewritten
-		internal int			dist_left;		// distance to the left border of the parent
-		internal int			dist_top; // distance to the top border of the parent
+		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
 		internal int			dist_bottom; // distance to the bottom border of the parent
 
@@ -132,6 +130,10 @@ namespace System.Windows.Forms
 		Graphics                backbuffer_dc;
 		object                  backbuffer;
 		Region                  invalid_region;
+
+		// to implement DeviceContext without depending on double buffering
+		Bitmap bmp;
+		Graphics bmp_g;
 
 		ControlBindingsCollection data_bindings;
 
@@ -745,9 +747,7 @@ namespace System.Windows.Forms
 			right_to_left = RightToLeft.Inherit;
 			border_style = BorderStyle.None;
 			background_color = Color.Empty;
-			dist_left = 0;
 			dist_right = 0;
-			dist_top = 0;
 			dist_bottom = 0;
 			tab_stop = true;
 			ime_mode = ImeMode.Inherit;
@@ -824,6 +824,15 @@ namespace System.Windows.Forms
 
 				DisposeBackBuffer ();
 
+				if (bmp != null) {
+					bmp.Dispose ();
+					bmp = null;
+				}
+				if (bmp_g != null) {
+					bmp_g.Dispose ();
+					bmp_g = null;
+				}
+				
 				if (invalid_region!=null) {
 					invalid_region.Dispose();
 					invalid_region=null;
@@ -954,7 +963,13 @@ namespace System.Windows.Forms
 		}
 
 		internal Graphics DeviceContext {
-			get { return Hwnd.bmp_g; }
+			get {
+				if (bmp_g == null) {
+					bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+					bmp_g = Graphics.FromImage (bmp);
+				}
+				return bmp_g;
+			}
 		}
 
 		private void InvalidateBackBuffer ()
@@ -1504,8 +1519,6 @@ namespace System.Windows.Forms
 
 		private void UpdateDistances() {
 			if (parent != null) {
-				dist_left = bounds.X;
-				dist_top = bounds.Y;
 				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
 				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
