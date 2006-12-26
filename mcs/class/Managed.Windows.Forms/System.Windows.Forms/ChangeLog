@@ -1,3 +1,15 @@
+2006-12-25  Miguel de Icaza  <miguel@novell.com>
+
+	* ListView.cs: Add support for ColumnReordered event. 
+	(ReorderColumn): Add NET_2_0 specific support for cancelling the
+	reorder.   
+
+	Very nice codebase!
+
+	* TextBoxBase.cs (GetLineFromCharIndex): Implement this method.
+
+	This is used by report f4ae0a88a0a244558aaadf017c9b9efe.
+
 2006-12-24  Chris Toshok  <toshok@ximian.com>
 
 	* GridTablesFactory.cs: 2.0 corcompare work.

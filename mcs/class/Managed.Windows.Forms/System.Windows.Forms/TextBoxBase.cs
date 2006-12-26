@@ -1976,6 +1976,17 @@ namespace System.Windows.Forms {
 		{
 			base.OnTextChanged (e);
 		}
+
+		public virtual int GetLineFromCharIndex (int index)
+		{
+			Line line_out;
+			LineTag tag_out;
+			int pos;
+			
+			document.CharIndexToLineTag (index, out line_out, out tag_out, out pos);
+
+			return line_out.LineNo;
+		}
 #endif
 	}
 }

@@ -962,6 +962,19 @@ namespace System.Windows.Forms
 
 		void ReorderColumn (ColumnHeader col, int index)
 		{
+#if NET_2_0
+			ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
+			if (eh != null){
+				ColumnReorderedEventArgs args = new ColumnReorderedEventArgs (col.Index, index, col);
+
+				eh (this, args);
+				if (args.Cancel){
+					header_control.Invalidate ();
+					item_control.Invalidate ();
+					return;
+				}
+			}
+#endif
 			if (reordered_column_indices == null) {
 				reordered_column_indices = new int [Columns.Count];
 				for (int i = 0; i < Columns.Count; i++)
@@ -3808,6 +3821,23 @@ namespace System.Windows.Forms
 		protected override void OnMouseLeave (EventArgs e)
 		{
 			base.OnMouseLeave (e);
+		}
+
+		//
+		// ColumnReorder event
+		//
+		static object ColumnReorderedEvent = new object ();
+		public event ColumnReorderedEventHandler ColumnReordered {
+			add { Events.AddHandler (ColumnReorderedEvent, value); }
+			remove { Events.RemoveHandler (ColumnReorderedEvent, value); }
+		}
+
+		protected virtual void OnColumnReordered (ColumnReorderedEventArgs e)
+		{
+			ColumnReorderedEventHandler creh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
+
+			if (creh != null)
+				creh (this, e);
 		}
 #endif
 	}
