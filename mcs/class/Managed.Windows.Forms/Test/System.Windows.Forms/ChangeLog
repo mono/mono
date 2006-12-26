@@ -1,3 +1,10 @@
+2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridViewCellStyleTest.cs: Added tests for FormatProvider,
+	IsFormatProviderDefault.
+	* DataGridViewTest.cs: Reworked ColumnCount, ColumnHeadersHeight,
+	RowHeaderWidth tests. Added DefaultSize, *DefaultCellStyle tests.
+
 2006-12-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DateTimePickerTest.cs: Fixed line endings.	

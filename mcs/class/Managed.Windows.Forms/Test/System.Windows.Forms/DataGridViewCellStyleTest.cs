@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System.Windows.Forms {
 
@@ -46,11 +47,6 @@ namespace MonoTests.System.Windows.Forms {
 			style = new DataGridViewCellStyle();
 		}
 
-		[TearDown]
-		public void Clean() {
-			style = new DataGridViewCellStyle();
-		}
-
 		[Test]
 		public void TestDefaultValues () {
 			Assert.AreEqual (DataGridViewContentAlignment.NotSet, style.Alignment, "#A1");
@@ -58,8 +54,6 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (null, style.Font, "#A3");
 			Assert.AreEqual (Color.Empty, style.ForeColor, "#A4");
 			Assert.AreEqual (String.Empty, style.Format, "#A5");
-			Assert.AreEqual (CultureInfo.CurrentUICulture, style.FormatProvider, "#A6");
-			Assert.AreEqual (true, style.IsFormatProviderDefault, "#A7");
 			Assert.AreEqual (true, style.IsNullValueDefault, "#A8");
 			Assert.AreEqual (string.Empty, style.NullValue, "#A9");
 			Assert.AreEqual (Color.Empty, style.SelectionBackColor, "#A10");
@@ -97,6 +91,52 @@ namespace MonoTests.System.Windows.Forms {
 		[ExpectedException(typeof(InvalidEnumArgumentException))]
 		public void TestWrapModeInvalidEnumArgumentException () {
 			style.WrapMode = (DataGridViewTriState) 3;
+		}
+
+		[Test]
+		public void FormatProvider ()
+		{
+			CultureInfo orignalCulture = CultureInfo.CurrentCulture;
+			CultureInfo orignalUICulture = CultureInfo.CurrentUICulture;
+
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("ja-JP");
+				Assert.AreSame (CultureInfo.CurrentCulture, style.FormatProvider, "#1");
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("fr-FR");
+				Assert.AreSame (CultureInfo.CurrentCulture, style.FormatProvider, "#2");
+				style.FormatProvider = CultureInfo.CurrentCulture;
+				Assert.AreSame (CultureInfo.CurrentCulture, style.FormatProvider, "#3");
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+				Assert.AreEqual (new CultureInfo ("fr-FR"), style.FormatProvider, "#4");
+				style.FormatProvider = null;
+				Assert.AreSame (CultureInfo.CurrentCulture, style.FormatProvider, "#5");
+			} finally {
+				Thread.CurrentThread.CurrentCulture = orignalCulture;
+				Thread.CurrentThread.CurrentUICulture = orignalUICulture;
+			}
+		}
+
+		[Test]
+		public void IsFormatProviderDefault ()
+		{
+			CultureInfo orignalCulture = CultureInfo.CurrentCulture;
+
+			try {
+				Assert.IsTrue (style.IsFormatProviderDefault, "#1");
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+				Assert.IsTrue (style.IsFormatProviderDefault, "#2");
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("fr-FR");
+				Assert.IsTrue (style.IsFormatProviderDefault, "#3");
+				style.FormatProvider = CultureInfo.CurrentCulture;
+				Assert.IsFalse (style.IsFormatProviderDefault, "#4");
+				style.FormatProvider = new CultureInfo ("en-US");
+				Assert.IsFalse (style.IsFormatProviderDefault, "#5");
+				style.FormatProvider = null;
+				Assert.IsTrue (style.IsFormatProviderDefault, "#6");
+			} finally {
+				Thread.CurrentThread.CurrentCulture = orignalCulture;
+			}
 		}
 	}
 }

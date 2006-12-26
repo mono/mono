@@ -84,7 +84,7 @@ namespace System.Windows.Forms {
 		private int firstDisplayedScrollingColumnHiddenWidth;
 		private int firstDisplayedScrollingColumnIndex;
 		private int firstDisplayedScrollingRowIndex;
-		private Color gridColor = Color.FromKnownColor(KnownColor.ControlDarkDark);
+		private Color gridColor = Color.FromKnownColor(KnownColor.ControlDark);
 		private int horizontalScrollingOffset;
 		private bool isCurrentCellDirty;
 		//private bool isCurrentRowDirty;
@@ -111,7 +111,6 @@ namespace System.Windows.Forms {
 		private Cursor userSetCursor;
 		private int verticalScrollingOffset;
 		private bool virtualMode;
-		private Size defaultSize;
 		private HScrollBar horizontalScrollBar;
 		private VScrollBar verticalScrollBar;
 
@@ -156,14 +155,21 @@ namespace System.Windows.Forms {
 			columns = CreateColumnsInstance();
 			columns.CollectionChanged += OnColumnCollectionChanged;
 			dataMember = String.Empty;
-			defaultCellStyle = (DataGridViewCellStyle) columnHeadersDefaultCellStyle.Clone();
+			defaultCellStyle = new DataGridViewCellStyle();
+			defaultCellStyle.BackColor = SystemColors.Window;
+			defaultCellStyle.ForeColor = SystemColors.ControlText;
+			defaultCellStyle.SelectionBackColor = SystemColors.Highlight;
+			defaultCellStyle.SelectionForeColor = SystemColors.HighlightText;
+			defaultCellStyle.Font = this.Font;
+			defaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+			defaultCellStyle.WrapMode = DataGridViewTriState.False;
 			editMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
 			multiSelect = true;
 			readOnly = false;
 			rowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-			rowHeadersDefaultCellStyle = (DataGridViewCellStyle) defaultCellStyle.Clone();
+			rowHeadersDefaultCellStyle = (DataGridViewCellStyle) columnHeadersDefaultCellStyle.Clone ();
 			rowHeadersVisible = true;
-			rowHeadersWidth = 43;
+			rowHeadersWidth = 41;
 			rowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing;
 			rows = CreateRowsInstance();
 			rowsDefaultCellStyle = new DataGridViewCellStyle();
@@ -438,7 +444,8 @@ namespace System.Windows.Forms {
 			get { return columns.Count; }
 			set {
 				if (value < 0) {
-					throw new ArgumentException("ColumnCount must be >= 0.");
+					throw new ArgumentOutOfRangeException("ColumnCount", 
+						"ColumnCount must be >= 0.");
 				}
 				if (dataSource != null) {
 					throw new InvalidOperationException("Cant change column count if DataSource is set.");
@@ -486,7 +493,12 @@ namespace System.Windows.Forms {
 			set {
 				if (columnHeadersHeight != value) {
 					if (value < 4) {
-						throw new ArgumentException("Column headers height cant be less than 4.");
+						throw new ArgumentOutOfRangeException("ColumnHeadersHeight", 
+							"Column headers height cant be less than 4.");
+					}
+					if (value > 32768 ) {
+						throw new ArgumentOutOfRangeException("ColumnHeadersHeight", 
+							"Column headers height cannot be more than 32768.");
 					}
 					columnHeadersHeight = value;
 					OnColumnHeadersHeightChanged(EventArgs.Empty);
@@ -891,7 +903,12 @@ namespace System.Windows.Forms {
 			set {
 				if (rowHeadersWidth != value) {
 					if (value < 4) {
-						throw new ArgumentException("RowHeadersWidth cant be less than 4.");
+						throw new ArgumentOutOfRangeException("RowHeadersWidth", 
+							"Row headers width cant be less than 4.");
+					}
+					if (value > 32768 ) {
+						throw new ArgumentOutOfRangeException("RowHeadersWidth", 
+							"Row headers width cannot be more than 32768.");
 					}
 					rowHeadersWidth = value;
 					OnRowHeadersWidthChanged(EventArgs.Empty);
@@ -2181,7 +2198,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override Size DefaultSize {
-			get { return defaultSize; }
+			get { return new Size (240, 150); }
 		}
 
 		protected ScrollBar HorizontalScrollBar {

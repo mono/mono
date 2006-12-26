@@ -28,6 +28,7 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Windows.Forms {
 
@@ -57,8 +58,7 @@ namespace System.Windows.Forms {
 			font = null;
 			foreColor = Color.Empty;
 			format = String.Empty;
-			formatProvider =  System.Globalization.CultureInfo.CurrentUICulture;
-			nullValue = "(null)";
+			nullValue = string.Empty;
 			padding = Padding.Empty;
 			selectionBackColor = Color.Empty;
 			selectionForeColor = Color.Empty;
@@ -145,7 +145,11 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IFormatProvider FormatProvider {
-			get { return formatProvider; }
+			get {
+				if (formatProvider == null)
+					return CultureInfo.CurrentCulture;
+				return formatProvider;
+			}
 			set {
 				if (formatProvider != value) {
 					formatProvider = value;
@@ -163,7 +167,7 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool IsFormatProviderDefault {
-			get { return formatProvider == System.Globalization.CultureInfo.CurrentUICulture; }
+			get { return formatProvider == null; }
 		}
 
 		[Browsable (false)]
@@ -171,7 +175,7 @@ namespace System.Windows.Forms {
 		public bool IsNullValueDefault {
 			get {
 				if (nullValue is string) {
-					return (string) nullValue == "(null)";
+					return (string) nullValue == string.Empty;
 				}
 				return false;
 			}

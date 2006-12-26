@@ -1,3 +1,15 @@
+2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridView.cs: Fixed GridColor, DefaultSize, DefaultCellStyle,
+	RowHeadersDefaultStyle, RowHeadersWidth to match MS. Throw
+	ArgumentOutOfRangeException if ColumnCount is negative. In 
+	ColumnHeadersHeight, throw ArgumentOutOfRangeException if height is
+	less than 4 or higher than 32768.
+	* DataGridViewCellStyle.cs: Fixed default value for NullValue.
+	Fixed FormatProvider to return CurrentCulture unless explicitly set.
+	Fixed IsFormatProviderDefault to return true if FormatProvider has
+	not been explicitly set.
+
 2006-12-25  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: add a couple of 2.0 events.

@@ -67,24 +67,9 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (SystemColors.AppWorkspace, grid.BackgroundColor, "#A10");
 			Assert.AreEqual (BorderStyle.FixedSingle, grid.BorderStyle, "#A11");
 			Assert.AreEqual (DataGridViewClipboardCopyMode.EnableWithAutoHeaderText, grid.ClipboardCopyMode, "#A12");
-			Assert.AreEqual (SystemColors.Control, grid.ColumnHeadersDefaultCellStyle.BackColor, "#A13");
-			Assert.AreEqual (SystemColors.WindowText,  grid.ColumnHeadersDefaultCellStyle.ForeColor, "#A14");
-			Assert.AreEqual (SystemColors.Highlight, grid.ColumnHeadersDefaultCellStyle.SelectionBackColor, "#A15");
-			Assert.AreEqual (SystemColors.HighlightText, grid.ColumnHeadersDefaultCellStyle.SelectionForeColor, "#A16");
-			Assert.AreEqual (grid.Font, grid.ColumnHeadersDefaultCellStyle.Font, "#A17");
-			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.ColumnHeadersDefaultCellStyle.Alignment, "#A18");
-			Assert.AreEqual (DataGridViewTriState.True, grid.ColumnHeadersDefaultCellStyle.WrapMode, "#A19");
-			Assert.AreEqual (23, grid.ColumnHeadersHeight, "#A20");
 			Assert.AreEqual (DataGridViewColumnHeadersHeightSizeMode.EnableResizing, grid.ColumnHeadersHeightSizeMode, "#A21");
 			Assert.AreEqual (true, grid.ColumnHeadersVisible, "#A22");
 			Assert.AreEqual (String.Empty, grid.DataMember, "#A23");
-			Assert.AreEqual (SystemColors.Window, grid.DefaultCellStyle.BackColor, "#A24");
-			Assert.AreEqual (SystemColors.ControlText,  grid.DefaultCellStyle.ForeColor, "#A25");
-			Assert.AreEqual (SystemColors.Highlight, grid.DefaultCellStyle.SelectionBackColor, "#A26");
-			Assert.AreEqual (SystemColors.HighlightText, grid.DefaultCellStyle.SelectionForeColor, "#A27");
-			Assert.AreEqual (grid.Font, grid.DefaultCellStyle.Font, "#A28");
-			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.DefaultCellStyle.Alignment, "#A29");
-			Assert.AreEqual (DataGridViewTriState.False, grid.DefaultCellStyle.WrapMode, "#A30");
 			Assert.AreEqual (DataGridViewEditMode.EditOnKeystrokeOrF2, grid.EditMode, "#A31");
 			Assert.AreEqual (Control.DefaultFont, grid.Font, "#A32");
 			Assert.AreEqual (Control.DefaultForeColor, grid.ForeColor, "#A33");
@@ -177,10 +162,20 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void TestColumnCountArgumentOutOfRangeException () {
+		public void ColumnCount () {
 			DataGridView grid = new DataGridView();
-			grid.ColumnCount = -1;
+			Assert.AreEqual (0, grid.ColumnCount, "#A1");
+
+			try {
+				grid.ColumnCount = -1;
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("ColumnCount", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
 		}
 
 		[Test]
@@ -192,10 +187,35 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void TestColumnHeadersHeightArgumentOutOfRangeException () {
+		public void ColumnHeadersHeight () {
 			DataGridView grid = new DataGridView();
-			grid.ColumnHeadersHeight = 3;
+			Assert.AreEqual (23, grid.ColumnHeadersHeight, "#A1");
+			grid.ColumnHeadersHeight = 4;
+			Assert.AreEqual (4, grid.ColumnHeadersHeight, "#A2");
+			grid.ColumnHeadersHeight = 32768;
+			Assert.AreEqual (32768, grid.ColumnHeadersHeight, "#A3");
+
+			try {
+				grid.ColumnHeadersHeight = 3;
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("ColumnHeadersHeight", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+
+			try {
+				grid.ColumnHeadersHeight = 32769;
+				Assert.Fail ("#C1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsNotNull (ex.ParamName, "#C4");
+				Assert.AreEqual ("ColumnHeadersHeight", ex.ParamName, "#C5");
+				Assert.IsNull (ex.InnerException, "#C6");
+			}
 		}
 
 		[Test]
@@ -206,10 +226,35 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void TestRowHeadersWidthArgumentOutOfRangeException () {
+		public void RowHeadersWidth () {
 			DataGridView grid = new DataGridView();
-			grid.RowHeadersWidth = 3;
+			Assert.AreEqual (41, grid.RowHeadersWidth, "#A1");
+			grid.RowHeadersWidth = 4;
+			Assert.AreEqual (4, grid.RowHeadersWidth, "#A2");
+			grid.RowHeadersWidth = 32768;
+			Assert.AreEqual (32768, grid.RowHeadersWidth, "#A3");
+
+			try {
+				grid.RowHeadersWidth = 3;
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("RowHeadersWidth", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+
+			try {
+				grid.RowHeadersWidth = 32769;
+				Assert.Fail ("#C1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsNotNull (ex.ParamName, "#C4");
+				Assert.AreEqual ("RowHeadersWidth", ex.ParamName, "#C5");
+				Assert.IsNull (ex.InnerException, "#C6");
+			}
 		}
 
 		[Test]
@@ -261,6 +306,73 @@ namespace MonoTests.System.Windows.Forms {
 		public void TestAutoResizeRowsArgumentException () {
 			DataGridView grid = new DataGridView();
 			grid.AutoResizeRows(DataGridViewAutoSizeRowsMode.None);
+		}
+
+		[Test]
+		public void DefaultSize ()
+		{
+			MockDataGridView grid = new MockDataGridView ();
+			Assert.AreEqual (new Size (240, 150), grid.default_size, "#1");
+			Assert.AreEqual (new Size (240, 150), grid.Size, "#2");
+		}
+
+		[Test]
+		public void ColumnHeadersDefaultCellStyle ()
+		{
+			DataGridView grid = new DataGridView();
+			Assert.AreEqual (SystemColors.Control, grid.ColumnHeadersDefaultCellStyle.BackColor, "#A1");
+			Assert.AreEqual (SystemColors.WindowText,  grid.ColumnHeadersDefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.Highlight, grid.ColumnHeadersDefaultCellStyle.SelectionBackColor, "#A3");
+			Assert.AreEqual (SystemColors.HighlightText, grid.ColumnHeadersDefaultCellStyle.SelectionForeColor, "#A4");
+			Assert.AreSame (grid.Font, grid.ColumnHeadersDefaultCellStyle.Font, "#A5");
+			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.ColumnHeadersDefaultCellStyle.Alignment, "#A6");
+			Assert.AreEqual (DataGridViewTriState.True, grid.ColumnHeadersDefaultCellStyle.WrapMode, "#A7");
+		}
+
+		[Test]
+		public void DefaultCellStyle ()
+		{
+			DataGridView grid = new DataGridView();
+			Assert.AreEqual (SystemColors.Window, grid.DefaultCellStyle.BackColor, "#A1");
+			Assert.AreEqual (SystemColors.ControlText,  grid.DefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.Highlight, grid.DefaultCellStyle.SelectionBackColor, "#A3");
+			Assert.AreEqual (SystemColors.HighlightText, grid.DefaultCellStyle.SelectionForeColor, "#A4");
+			Assert.AreSame (grid.Font, grid.DefaultCellStyle.Font, "#A5");
+			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.DefaultCellStyle.Alignment, "#A6");
+			Assert.AreEqual (DataGridViewTriState.False, grid.DefaultCellStyle.WrapMode, "#A7");
+		}
+
+		[Test]
+		public void RowsDefaultCellStyle ()
+		{
+			DataGridView grid = new DataGridView();
+			Assert.AreEqual (Color.Empty, grid.RowsDefaultCellStyle.BackColor, "#A1");
+			Assert.AreEqual (Color.Empty, grid.RowsDefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (Color.Empty, grid.RowsDefaultCellStyle.SelectionBackColor, "#A3");
+			Assert.AreEqual (Color.Empty, grid.RowsDefaultCellStyle.SelectionForeColor, "#A4");
+			Assert.IsNull(grid.RowsDefaultCellStyle.Font, "#A5");
+			Assert.AreEqual (DataGridViewContentAlignment.NotSet, grid.RowsDefaultCellStyle.Alignment, "#A6");
+			Assert.AreEqual (DataGridViewTriState.NotSet, grid.RowsDefaultCellStyle.WrapMode, "#A7");
+		}
+
+		[Test]
+		public void RowHeadersDefaultCellStyle ()
+		{
+			DataGridView grid = new DataGridView();
+			Assert.AreEqual (SystemColors.Control, grid.RowHeadersDefaultCellStyle.BackColor, "#A1");
+			Assert.AreEqual (SystemColors.WindowText, grid.RowHeadersDefaultCellStyle.ForeColor, "#A2");
+			Assert.AreEqual (SystemColors.Highlight, grid.RowHeadersDefaultCellStyle.SelectionBackColor, "#A3");
+			Assert.AreEqual (SystemColors.HighlightText, grid.RowHeadersDefaultCellStyle.SelectionForeColor, "#A4");
+			Assert.AreSame (grid.Font, grid.RowHeadersDefaultCellStyle.Font, "#A5");
+			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.RowHeadersDefaultCellStyle.Alignment, "#A6");
+			Assert.AreEqual (DataGridViewTriState.True, grid.RowHeadersDefaultCellStyle.WrapMode, "#A7");
+		}
+
+		private class MockDataGridView : DataGridView
+		{
+			public Size default_size {
+				get { return base.DefaultSize; }
+			}
 		}
 	}
 }
