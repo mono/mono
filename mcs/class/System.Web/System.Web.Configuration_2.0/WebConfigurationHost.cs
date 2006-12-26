@@ -153,7 +153,7 @@ namespace System.Web.Configuration
 
 				if (map == null)
 #if TARGET_JVM
-					return "/web.config";
+					return null;
 #else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
 #endif
