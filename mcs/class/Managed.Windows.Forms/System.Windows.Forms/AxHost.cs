@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -39,156 +37,196 @@ namespace System.Windows.Forms {
 	[Designer("System.Windows.Forms.Design.AxHostDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor {
 		#region AxHost Subclasses
-			#region AxHost.ActiveXInvokeKind Enum
-			public enum ActiveXInvokeKind {
-				MethodInvoke	= 0,
-				PropertyGet	= 1,
-				PropertySet	= 2
+		#region AxHost.ActiveXInvokeKind Enum
+		public enum ActiveXInvokeKind {
+			MethodInvoke	= 0,
+			PropertyGet	= 1,
+			PropertySet	= 2
+		}
+		#endregion	// AxHost.ActiveXInvokeKind Enum
+
+		#region AxHost.AxComponentEditor Class
+#if NET_2_0
+		[ComVisible (false)]
+#endif
+		public class AxComponentEditor : System.Windows.Forms.Design.WindowsFormsComponentEditor {
+			public AxComponentEditor ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-			#endregion	// AxHost.ActiveXInvokeKind Enum
 
-			#region AxHost.AxComponentEditor Class
-			public class AxComponentEditor : System.Windows.Forms.Design.WindowsFormsComponentEditor {
-				public AxComponentEditor() {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public override bool EditComponent(ITypeDescriptorContext context, object obj, IWin32Window parent) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+			public override bool EditComponent (ITypeDescriptorContext context, object obj, IWin32Window parent)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-			#endregion	// AxHost.AxComponentEditor Class
+		}
+		#endregion	// AxHost.AxComponentEditor Class
 
-			#region AxHost.ClsidAttribute
-			[AttributeUsage(AttributeTargets.Class,Inherited=false)]
-			public sealed class ClsidAttribute : Attribute {
-				string clsid;
+		#region AxHost.ClsidAttribute
+		[AttributeUsage(AttributeTargets.Class,Inherited=false)]
+		public sealed class ClsidAttribute : Attribute {
+			string clsid;
 
-				public ClsidAttribute (string clsid) {
-					this.clsid = clsid;
-				}
-
-				public string Value {
-					get {
-						return clsid;
-					}
-				}
+			public ClsidAttribute (string clsid)
+			{
+				this.clsid = clsid;
 			}
-			#endregion AxHost.ClsidAttribute
 
-			#region AxHost.ConnectionPointCookie
-			[ComVisible(false)]
-			public class ConnectionPointCookie {
-				public ConnectionPointCookie(object source, object sink, Type eventInterface) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public void Disconnect() {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				~ConnectionPointCookie() {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+			public string Value {
+				get { return clsid; }
 			}
-			#endregion	// AxHost.ConnectionPointCookie
+		}
+		#endregion AxHost.ClsidAttribute
 		
-			#region AxHost.InvalidActiveXStateException  Class
-			public class InvalidActiveXStateException : Exception {
-				public InvalidActiveXStateException(string name, ActiveXInvokeKind kind) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public override string ToString() {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+		#region AxHost.ConnectionPointCookie
+#if !NET_2_0
+		[ComVisible(false)]
+#endif
+		public class ConnectionPointCookie {
+			public ConnectionPointCookie (object source, object sink, Type eventInterface)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-			#endregion	// AxHost.InvalidActiveXStateException  Class
+
+			public void Disconnect ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			~ConnectionPointCookie ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+		#endregion	// AxHost.ConnectionPointCookie
+		
+		#region AxHost.InvalidActiveXStateException  Class
+		public class InvalidActiveXStateException : Exception {
+#if NET_2_0
+			public InvalidActiveXStateException ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+#endif
+
+			public InvalidActiveXStateException (string name, ActiveXInvokeKind kind)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			public override string ToString ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+		#endregion	// AxHost.InvalidActiveXStateException  Class
 			
-			#region AxHost.State Class
-			[Serializable]
-			[TypeConverter("System.ComponentModel.TypeConverter, " + Consts.AssemblySystem)]
-			public class State : ISerializable {
-				public State(Stream ms, int storageType, bool manualUpdate, string licKey) {
-					//throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				private State(SerializationInfo info, StreamingContext context) {
-				}
-
-				void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
-					//throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+		#region AxHost.State Class
+		[Serializable]
+		[TypeConverter("System.ComponentModel.TypeConverter, " + Consts.AssemblySystem)]
+		public class State : ISerializable {
+			public State (Stream ms, int storageType, bool manualUpdate, string licKey)
+			{
+				//throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-			#endregion	// AxHost.State Class
 
-			#region AxHost.TypeLibraryTimeStampAttribute Class
-			[AttributeUsage(AttributeTargets.Assembly, Inherited=false)]
-			public sealed class TypeLibraryTimeStampAttribute : Attribute {
-				public TypeLibraryTimeStampAttribute(string timestamp) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public DateTime Value {
-					get {
-						throw new NotImplementedException("COM/ActiveX support is not implemented");
-					}
-				}
+#if NET_2_0
+			protected
+#else
+			private
+#endif
+			State (SerializationInfo info, StreamingContext context)
+			{
 			}
-			#endregion	// AxHost.TypeLibraryTimeStampAttribute Class
 
-			#region AxHost.StateConverter Class
-			public class StateConverter : System.ComponentModel.TypeConverter {
-				public StateConverter() {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+			void ISerializable.GetObjectData (SerializationInfo si,StreamingContext context)
+			{
+				//throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+		#endregion	// AxHost.State Class
 
-				public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
+		#region AxHost.TypeLibraryTimeStampAttribute Class
+		[AttributeUsage(AttributeTargets.Assembly, Inherited=false)]
+		public sealed class TypeLibraryTimeStampAttribute : Attribute {
+			public TypeLibraryTimeStampAttribute (string timestamp)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
 
-				public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
-					throw new NotImplementedException("COM/ActiveX support is not implemented");
-				}
-
-				public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
+			public DateTime Value {
+				get {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 			}
-			#endregion	// AxHost.StateConverter Class
+		}
+		#endregion	// AxHost.TypeLibraryTimeStampAttribute Class
+
+		#region AxHost.StateConverter Class
+		public class StateConverter : System.ComponentModel.TypeConverter {
+			public StateConverter ()
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			public override object ConvertFrom (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+			{
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+		#endregion	// AxHost.StateConverter Class
 		#endregion	// AxHost Subclasses
 
 		#region Protected Constructors
-		protected AxHost(string clsid) {
+		protected AxHost (string clsid)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		protected AxHost(string clsid, int flags) {
+		protected AxHost (string clsid, int flags)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Properties
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BackColor {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
-
 			set {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public override Image BackgroundImage {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -198,9 +236,27 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get {
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+
+			set {
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+#endif
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public ContainerControl ContainingControl {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -211,8 +267,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ContextMenu ContextMenu {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -223,8 +279,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Cursor Cursor {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -235,17 +291,17 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool EditMode {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
 
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new virtual bool Enabled {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -256,8 +312,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -268,8 +324,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			get { 
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -280,19 +336,33 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool HasAboutBox {
 			get { 
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new ImeMode ImeMode {
+			get { 
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+			set { 
+				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			}
+		}
+#endif
 		
-		[Browsable(false)]
-		[DefaultValue(null)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[RefreshProperties(RefreshProperties.All)]
+		[Browsable (false)]
+		[DefaultValue (null)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[RefreshProperties (RefreshProperties.All)]
 		public AxHost.State OcxState {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -303,9 +373,9 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Localizable(true)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Localizable (true)]
 		public new virtual bool RightToLeft {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -322,9 +392,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// new property so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
@@ -347,550 +416,610 @@ namespace System.Windows.Forms {
 
 		#region Protected Static Methods
 		[CLSCompliant(false)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static Color GetColorFromOleColor(uint color){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static Color GetColorFromOleColor (uint color)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static Font GetFontFromIFont(object font){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static Font GetFontFromIFont (object font)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static Font GetFontFromIFontDisp(object font){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static Font GetFontFromIFontDisp (object font)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static object GetIFontDispFromFont(Font font){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static object GetIFontDispFromFont (Font font)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static object GetIFontFromFont(Font font){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static object GetIFontFromFont (Font font)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static object GetIPictureDispFromPicture(Image image){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static object GetIPictureDispFromPicture (Image image)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static object GetIPictureFromCursor(Cursor cursor){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static object GetIPictureFromCursor (Cursor cursor)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static object GetIPictureFromPicture(Image image){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static object GetIPictureFromPicture (Image image)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static double GetOADateFromTime(DateTime time){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static double GetOADateFromTime (DateTime time)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
 		[CLSCompliant(false)]
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static uint GetOleColorFromColor(Color color){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static uint GetOleColorFromColor (Color color)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static Image GetPictureFromIPicture(object picture){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static Image GetPictureFromIPicture (object picture)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static Image GetPictureFromIPictureDisp(object picture){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static Image GetPictureFromIPictureDisp (object picture)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected static DateTime GetTimeFromOADate(double date){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected static DateTime GetTimeFromOADate (double date)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 		#endregion	// Protected Static Methods
 
 		#region Public Instance Methods
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void BeginInit() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void BeginInit ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		public void DoVerb(int verb){
+		public void DoVerb (int verb)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void EndInit() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void EndInit ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public object GetOcx() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public object GetOcx ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		public bool HasPropertyPages() {
+		public bool HasPropertyPages ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void InvokeEditMode(){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void InvokeEditMode ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void MakeDirty(){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void MakeDirty ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		public override bool PreProcessMessage(ref Message msg) {
+		public override bool PreProcessMessage (ref Message msg)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		public void ShowAboutBox() {
+		public void ShowAboutBox ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		public void ShowPropertyPages() {
+		public void ShowPropertyPages ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		public void ShowPropertyPages(Control control) {
+		public void ShowPropertyPages (Control control)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected virtual void AttachInterfaces() {
+		protected virtual void AttachInterfaces ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		protected override void CreateHandle() {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void CreateSink(){
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override void DestroyHandle() {
+		protected override void CreateHandle ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void DetachSink(){
+#if NET_2_0
+		protected virtual object CreateInstanceCore (Guid clsid)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+#endif
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void CreateSink ()
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override void DestroyHandle ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		protected override void Dispose(bool disposing) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override bool IsInputChar(char charCode) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override void OnBackColorChanged(EventArgs e) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override void OnFontChanged(EventArgs e) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override void OnForeColorChanged(EventArgs e) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override void OnHandleCreated(EventArgs e) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void DetachSink ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		protected virtual void OnInPlaceActive() {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected override void OnLostFocus(EventArgs e) {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		
-		protected override bool ProcessDialogKey(Keys keyData) {
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		protected override bool ProcessMnemonic(char charCode) {
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected bool PropsValid(){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+#endif
+
+		protected override bool IsInputChar (char charCode)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override void OnBackColorChanged (EventArgs e)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override void OnFontChanged (EventArgs e)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override void OnForeColorChanged (EventArgs e)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+
+		protected virtual void OnInPlaceActive ()
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnLostFocus (EventArgs e)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+		
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+
+		protected override bool ProcessMnemonic (char charCode)
+		{
+			throw new NotImplementedException("COM/ActiveX support is not implemented");
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected bool PropsValid ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseDown(short button, short shift, int x, int y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseDown (short button, short shift, int x, int y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseDown(short button, short shift, float x, float y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseDown (short button, short shift, float x, float y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseDown(object o1, object o2, object o3, object o4){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseDown (object o1, object o2, object o3, object o4)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseMove(short button, short shift, int x, int y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseMove (short button, short shift, int x, int y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseMove(short button, short shift, float x, float y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseMove (short button, short shift, float x, float y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseMove(object o1, object o2, object o3, object o4){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseMove (object o1, object o2, object o3, object o4)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseUp(short button, short shift, int x, int y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseUp (short button, short shift, int x, int y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseUp(short button, short shift, float x, float y){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseUp (short button, short shift, float x, float y)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void RaiseOnMouseUp(object o1, object o2, object o3, object o4){
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected void RaiseOnMouseUp (object o1, object o2, object o3, object o4)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) {
+		protected void SetAboutBoxDelegate (AxHost.AboutBoxDelegate d)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		protected override void SetVisibleCore(bool value) {
+		protected override void SetVisibleCore (bool value)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc (ref Message m)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged {
 			add { base.BackColorChanged += value; }
 			remove { base.BackColorChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BindingContextChanged {
 			add { base.BindingContextChanged += value; }
 			remove { base.BindingContextChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event UICuesEventHandler ChangeUICues {
 			add { base.ChangeUICues += value; }
 			remove { base.ChangeUICues -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ContextMenuChanged {
 			add { base.ContextMenuChanged += value; }
 			remove { base.ContextMenuChanged -= value; }
 		}
 	
-
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler CursorChanged {
 			add { base.CursorChanged += value; }
 			remove { base.CursorChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick {
 			add { base.DoubleClick += value; }
 			remove { base.DoubleClick -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event DragEventHandler DragDrop {
 			add { base.DragDrop += value; }
 			remove { base.DragDrop -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event DragEventHandler DragEnter {
 			add { base.DragEnter += value; }
 			remove { base.DragEnter -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DragLeave {
 			add { base.DragLeave += value; }
 			remove { base.DragLeave -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event DragEventHandler DragOver {
 			add { base.DragOver += value; }
 			remove { base.DragOver -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler EnabledChanged {
 			add { base.EnabledChanged += value; }
 			remove { base.EnabledChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler FontChanged {
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event GiveFeedbackEventHandler GiveFeedback {
 			add { base.GiveFeedback += value; }
 			remove { base.GiveFeedback -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event HelpEventHandler HelpRequested {
 			add { base.HelpRequested += value; }
 			remove { base.HelpRequested -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown {
 			add { base.KeyDown += value; }
 			remove { base.KeyDown -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress {
 			add { base.KeyPress += value; }
 			remove { base.KeyPress -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp {
 			add { base.KeyUp += value; }
 			remove { base.KeyUp -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event LayoutEventHandler Layout {
 			add { base.Layout += value; }
 			remove { base.Layout -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseDown {
 			add { base.MouseDown += value; }
 			remove { base.MouseDown -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler MouseEnter {
 			add { base.MouseEnter += value; }
 			remove { base.MouseEnter -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler MouseHover {
 			add { base.MouseHover += value; }
 			remove { base.MouseHover -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler MouseLeave {
 			add { base.MouseLeave += value; }
 			remove { base.MouseLeave -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseMove {
 			add { base.MouseMove += value; }
 			remove { base.MouseMove -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseUp {
 			add { base.MouseUp += value; }
 			remove { base.MouseUp -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event MouseEventHandler MouseWheel {
 			add { base.MouseWheel += value; }
 			remove { base.MouseWheel -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint {
 			add { base.Paint += value; }
 			remove { base.Paint -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
 			add { base.QueryAccessibilityHelp += value; }
 			remove { base.QueryAccessibilityHelp -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event QueryContinueDragEventHandler QueryContinueDrag {
 			add { base.QueryContinueDrag += value; }
 			remove { base.QueryContinueDrag -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler RightToLeftChanged {
 			add { base.RightToLeftChanged += value; }
 			remove { base.RightToLeftChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler StyleChanged {
 			add { base.StyleChanged += value; }
 			remove { base.StyleChanged -= value; }
 		}
 
-#if !NET_2_0
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
+		static object MouseClickEvent = new object ();
+		static object MouseDoubleClickEvent = new object ();
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseClick {
+			add { Events.AddHandler (MouseClickEvent, value); }
+			remove { Events.RemoveHandler (MouseClickEvent, value); }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseDoubleClick {
+			add { Events.AddHandler (MouseDoubleClickEvent, value); }
+			remove { Events.RemoveHandler (MouseDoubleClickEvent, value); }
+		}
+#else
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabIndexChanged {
 			add { base.TabIndexChanged += value; }
 			remove { base.TabIndexChanged -= value; }
 		}
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}
 #endif
 
-		// new event so we can set Browsable/EditorBrowsable
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
@@ -899,67 +1028,79 @@ namespace System.Windows.Forms {
 
 		#region Delegates
 		[Serializable]
-		protected delegate void AboutBoxDelegate();
+		protected delegate void AboutBoxDelegate ();
 		#endregion	// Delegates
 
 		#region	Interfaces
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		AttributeCollection ICustomTypeDescriptor.GetAttributes() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		string ICustomTypeDescriptor.GetClassName() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		string ICustomTypeDescriptor.GetClassName ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		string ICustomTypeDescriptor.GetComponentName() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		string ICustomTypeDescriptor.GetComponentName ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		TypeConverter ICustomTypeDescriptor.GetConverter() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		TypeConverter ICustomTypeDescriptor.GetConverter ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute[] attributes)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute[] attributes)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) {
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
+		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Interfaces

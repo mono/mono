@@ -3294,7 +3294,6 @@ namespace System.Windows.Forms
 			}
 
 			if (layout_suspended == 0) {
-				Control [] controls = child_controls.GetAllControls ();
 				if (performLayout && layout_pending) {
 					PerformLayout();
 				}
