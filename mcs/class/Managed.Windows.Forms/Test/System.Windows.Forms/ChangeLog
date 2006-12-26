@@ -1,3 +1,7 @@
+2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBoxTest.cs: Improved tests for DropDownWidth and ItemHeight.
+
 2006-12-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: Added NotWorking test for DoubleBuffered.

@@ -46,7 +46,6 @@ namespace MonoTests.System.Windows.Forms
 			ComboBox mycmbbox = new ComboBox ();
 			Assert.AreEqual (DrawMode.Normal, mycmbbox.DrawMode, "#1");
 			Assert.AreEqual (ComboBoxStyle.DropDown, mycmbbox.DropDownStyle, "#2");
-			Assert.AreEqual (121, mycmbbox.DropDownWidth, "#3");
 			Assert.AreEqual (false, mycmbbox.DroppedDown, "#4");
 			Assert.AreEqual (true, mycmbbox.IntegralHeight, "#5");
 			Assert.AreEqual (0, mycmbbox.Items.Count, "#6");
@@ -158,27 +157,61 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
-		public void DropDownWidthException ()
+		public void DropDownWidth ()
 		{
 			ComboBox cmbbox = new ComboBox ();
-			cmbbox.DropDownWidth = 0;
+			Assert.AreEqual (121, cmbbox.DropDownWidth, "#A1");
+			cmbbox.DropDownWidth = 1;
+			Assert.AreEqual (1, cmbbox.DropDownWidth, "#A2");
+
+			try {
+				cmbbox.DropDownWidth = 0;
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("DropDownWidth", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNull (ex.ParamName, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+			}
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
-		public void ItemHeightException ()
+		public void ItemHeight ()
 		{
 			ComboBox cmbbox = new ComboBox ();
-			cmbbox.ItemHeight = -1;
+			Assert.IsTrue (cmbbox.ItemHeight >= 1, "#A1");
+			cmbbox.ItemHeight = 1;
+			Assert.AreEqual (1, cmbbox.ItemHeight, "#A2");
+
+			try {
+				cmbbox.ItemHeight = 0;
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("ItemHeight", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNull (ex.ParamName, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+			}
+#endif
 		}
 
 		[Test]

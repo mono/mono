@@ -358,17 +358,22 @@ namespace System.Windows.Forms
 					return;
 					
 				if (value < 1)
-					throw new ArgumentException ("The DropDownWidth value is less than one");
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("DropDownWidth",
+						"The DropDownWidth value is less than one.");
+#else
+					throw new ArgumentException ("The DropDownWidth value is less than one.");
+#endif
 
-    				dropdown_width = value;				
+				dropdown_width = value;
 			}
 		}
 		
 		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool DroppedDown {
 			get { 
-				if (dropdown_style == ComboBoxStyle.Simple) 				
+				if (dropdown_style == ComboBoxStyle.Simple)
 					return true;
 				
 				return dropped_down;
@@ -423,8 +428,13 @@ namespace System.Windows.Forms
 				return item_height;
 			}
 			set {
-				if (value < 0)
-					throw new ArgumentException ("The item height value is less than zero");
+				if (value < 1)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("ItemHeight",
+						"The item height value is less than one.");
+#else
+					throw new ArgumentException ("The item height value is less than one.");
+#endif
 
 				item_height_specified = true;
 				item_height = value;
