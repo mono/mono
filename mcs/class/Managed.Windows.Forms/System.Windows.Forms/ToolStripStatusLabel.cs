@@ -31,13 +31,16 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.StatusStrip)]
 	public class ToolStripStatusLabel : ToolStripLabel
 	{
 		private ToolStripStatusLabelBorderSides border_sides;
 		private Border3DStyle border_style;
+		private bool spring;
 		
 		#region Public Constructors
 		public ToolStripStatusLabel ()
@@ -73,19 +76,30 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ToolStripItemAlignment Alignment {
 			get { return base.Alignment; }
 			set { base.Alignment = value; }
 		}
 		
+		[DefaultValue (ToolStripStatusLabelBorderSides.None)]
 		public ToolStripStatusLabelBorderSides BorderSides {
 			get { return this.border_sides; }
 			set { this.border_sides = value; }
 		}
 		
+		[DefaultValue (Border3DStyle.Flat)]
 		public Border3DStyle BorderStyle {
 			get { return this.border_style; }
 			set { this.border_style = value; }
+		}
+		
+		[MonoTODO ("Stub, doesn't affect sizing yet")]
+		[DefaultValue (false)]
+		public bool Spring {
+			get { return this.spring; }
+			set { this.spring = value; }
 		}
 		#endregion
 

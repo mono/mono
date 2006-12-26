@@ -37,7 +37,9 @@ namespace System.Windows.Forms
 	{
 		private CheckState checked_state;
 		private bool check_on_click;
+		private string shortcut_display_string;
 		private Keys shortcut_keys = Keys.None;
+		private bool show_shortcut_keys = true;
 
 		#region Public Constructors
 		public ToolStripMenuItem ()
@@ -132,6 +134,20 @@ namespace System.Windows.Forms
 		public override bool Enabled {
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
+		}
+
+		[MonoTODO ("Renderer doesn't support shortcut keys yet, they will never show.")]
+		[Localizable (true)]
+		public bool ShowShortcutKeys {
+			get { return this.show_shortcut_keys; }
+			set { this.show_shortcut_keys = value; }
+		}
+		
+		[MonoTODO ("Keyboard navigation not implemented.")]
+		[Localizable (true)]
+		public string ShortcutKeyDisplayString {
+			get { return this.shortcut_display_string; }
+			set { this.shortcut_display_string = value; }
 		}
 		
 		[MonoTODO ("Keyboard navigation not implemented.")]
