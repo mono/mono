@@ -1806,597 +1806,558 @@ namespace System.Windows.Forms.X11Internal {
 			X11ThreadQueue queue = (X11ThreadQueue)queue_id;
 			XEvent xevent;
 			bool client;
-			bool got_xevent;
+			bool got_xevent = false;
+
 			X11Hwnd hwnd;
 
+		ProcessNextMessage:
 			do {
-			ProcessNextMessage:
 				got_xevent = queue.Dequeue (out xevent);
 
-				if (got_xevent) {
-					hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
-
-					// Handle messages for windows that are already or are about to be destroyed.
-
-					// we need a special block for this because unless we remove the hwnd from the paint
-					// queue it will always stay there (since we don't handle the expose), and we'll
-					// effectively loop infinitely trying to repaint a non-existant window.
-					if (hwnd != null && hwnd.zombie && xevent.type == XEventName.Expose) {
-						hwnd.PendingExpose = hwnd.PendingNCExpose = false;
-						goto ProcessNextMessage;
-					}
-
-					// We need to make sure we only allow DestroyNotify events through for zombie
-					// hwnds, since much of the event handling code makes requests using the hwnd's
-					// ClientWindow, and that'll result in BadWindow errors if there's some lag
-					// between the XDestroyWindow call and the DestroyNotify event.
-					if (hwnd == null || hwnd.zombie) {
-						#if DriverDebug || DriverDebugDestroy
-						Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}",
-								  xevent.type, xevent.AnyEvent.window.ToInt32());
-						#endif
-						goto ProcessNextMessage;
-					}
-
-					client = hwnd.ClientWindow == xevent.AnyEvent.window;
-
-					msg.hwnd = hwnd.Handle;
-
-					switch (xevent.type) {
-					case XEventName.KeyPress:
-						Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
-						return true;
-
-					case XEventName.KeyRelease:
-						Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
-						return true;
-
-					case XEventName.ButtonPress: {
-						switch(xevent.ButtonEvent.button) {
-						case 1:
-							MouseState |= MouseButtons.Left;
-							if (client) {
-								msg.message = Msg.WM_LBUTTONDOWN;
-							} else {
-								msg.message = Msg.WM_NCLBUTTONDOWN;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 2:
-							MouseState |= MouseButtons.Middle;
-							if (client) {
-								msg.message = Msg.WM_MBUTTONDOWN;
-							} else {
-								msg.message = Msg.WM_NCMBUTTONDOWN;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 3:
-							MouseState |= MouseButtons.Right;
-							if (client) {
-								msg.message = Msg.WM_RBUTTONDOWN;
-							} else {
-								msg.message = Msg.WM_NCRBUTTONDOWN;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 4:
-							msg.hwnd = FocusWindow.Handle;
-							msg.message=Msg.WM_MOUSEWHEEL;
-							msg.wParam=GetMousewParam(120);
-							break;
-
-						case 5:
-							msg.hwnd = FocusWindow.Handle;
-							msg.message=Msg.WM_MOUSEWHEEL;
-							msg.wParam=GetMousewParam(-120);
-							break;
-						}
-
-						msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
-						MousePosition.X = xevent.ButtonEvent.x;
-						MousePosition.Y = xevent.ButtonEvent.y;
-
-						if (!hwnd.Enabled) {
-							RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
-										      ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-						}
-
-						if (Grab.Hwnd != IntPtr.Zero)
-							msg.hwnd = Grab.Hwnd;
-
-						if (ClickPending.Pending &&
-						    ((((long)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) &&
-						     (msg.wParam == ClickPending.wParam) &&
-						     (msg.lParam == ClickPending.lParam) &&
-						     (msg.message == ClickPending.Message))) {
-							// Looks like a genuine double click, clicked twice on the same spot with the same keys
-							switch(xevent.ButtonEvent.button) {
-							case 1:
-								msg.message = client ? Msg.WM_LBUTTONDBLCLK : Msg.WM_NCLBUTTONDBLCLK;
-								break;
-
-							case 2:
-								msg.message = client ? Msg.WM_MBUTTONDBLCLK : Msg.WM_NCMBUTTONDBLCLK;
-								break;
-
-							case 3:
-								msg.message = client ? Msg.WM_RBUTTONDBLCLK : Msg.WM_NCRBUTTONDBLCLK;
-								break;
-							}
-
-							ClickPending.Pending = false;
-
-						}
-						else {
-							ClickPending.Pending = true;
-							ClickPending.Hwnd = msg.hwnd;
-							ClickPending.Message = msg.message;
-							ClickPending.wParam = msg.wParam;
-							ClickPending.lParam = msg.lParam;
-							ClickPending.Time = (long)xevent.ButtonEvent.time;
-						}
-
-						return true;
-					}
-
-					case XEventName.ButtonRelease:
-						if (Dnd.InDrag()) {
-							Dnd.HandleButtonRelease (ref xevent);
-							return true;
-						}
-
-						switch(xevent.ButtonEvent.button) {
-						case 1:
-							if (client) {
-								msg.message = Msg.WM_LBUTTONUP;
-							} else {
-								msg.message = Msg.WM_NCLBUTTONUP;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							MouseState &= ~MouseButtons.Left;
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 2:
-							if (client) {
-								msg.message = Msg.WM_MBUTTONUP;
-							} else {
-								msg.message = Msg.WM_NCMBUTTONUP;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							MouseState &= ~MouseButtons.Middle;
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 3:
-							if (client) {
-								msg.message = Msg.WM_RBUTTONUP;
-							} else {
-								msg.message = Msg.WM_NCRBUTTONUP;
-								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-							}
-							MouseState &= ~MouseButtons.Right;
-							msg.wParam=GetMousewParam(0);
-							break;
-
-						case 4:
-							goto ProcessNextMessage;
-
-						case 5:
-							goto ProcessNextMessage;
-						}
-
-						if (!hwnd.Enabled) {
-							RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
-										      ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
-						}
-
-						if (Grab.Hwnd != IntPtr.Zero)
-							msg.hwnd = Grab.Hwnd;
-
-						msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
-						MousePosition.X = xevent.ButtonEvent.x;
-						MousePosition.Y = xevent.ButtonEvent.y;
-						return true;
-
-					case XEventName.MotionNotify:
-						/* XXX move the compression stuff here */
-
-						if (client) {
-							#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}",
-									  client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(),
-									  xevent.MotionEvent.x, xevent.MotionEvent.y);
-							#endif
-
-							if (Dnd.HandleMotionNotify (ref xevent))
-								goto ProcessNextMessage;
-
-							if (Grab.Hwnd != IntPtr.Zero)
-								msg.hwnd = Grab.Hwnd;
-							else
-								NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
-
-							msg.message = Msg.WM_MOUSEMOVE;
-							msg.wParam = GetMousewParam(0);
-							msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
-
-							if (!hwnd.Enabled) {
-								RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
-											      ref xevent.MotionEvent.x, ref xevent.MotionEvent.y);
-							}
-
-							MousePosition.X = xevent.MotionEvent.x;
-							MousePosition.Y = xevent.MotionEvent.y;
-
-							if ((HoverState.Timer.Enabled) &&
-							    (((MousePosition.X + HoverState.Size.Width) < HoverState.X) ||
-							     ((MousePosition.X - HoverState.Size.Width) > HoverState.X) ||
-							     ((MousePosition.Y + HoverState.Size.Height) < HoverState.Y) ||
-							     ((MousePosition.Y - HoverState.Size.Height) > HoverState.Y))) {
-
-								HoverState.Timer.Stop();
-								HoverState.Timer.Start();
-								HoverState.X = MousePosition.X;
-								HoverState.Y = MousePosition.Y;
-							}
-						}
-						else {
-							HitTest	ht;
-							IntPtr dummy;
-							int screen_x;
-							int screen_y;
-
-							#if DriverDebugExtra
-							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}",
-									  client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(),
-									  xevent.MotionEvent.x, xevent.MotionEvent.y);
-							#endif
-							msg.message = Msg.WM_NCMOUSEMOVE;
-
-							if (!hwnd.Enabled) {
-								RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
-											      ref xevent.MotionEvent.x, ref xevent.MotionEvent.y);
-							}
-
-							// The hit test is sent in screen coordinates
-							Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, RootWindow.Handle,
-										    xevent.MotionEvent.x, xevent.MotionEvent.y,
-										    out screen_x, out screen_y, out dummy);
-
-							msg.lParam = (IntPtr) (screen_y << 16 | screen_x & 0xFFFF);
-							ht = (HitTest)NativeWindow.WndProc (hwnd.ClientWindow, Msg.WM_NCHITTEST,
-											    IntPtr.Zero, msg.lParam).ToInt32 ();
-							NativeWindow.WndProc(hwnd.ClientWindow, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
-
-							MousePosition.X = xevent.MotionEvent.x;
-							MousePosition.Y = xevent.MotionEvent.y;
-						}
-
-						return true;
-
-					case XEventName.EnterNotify:
-						if (!hwnd.Enabled)
-							goto ProcessNextMessage;
-
-						if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal)
-							goto ProcessNextMessage;
-
-						msg.message = Msg.WM_MOUSE_ENTER;
-						HoverState.X = xevent.CrossingEvent.x;
-						HoverState.Y = xevent.CrossingEvent.y;
-						HoverState.Timer.Enabled = true;
-						HoverState.Window = xevent.CrossingEvent.window;
-
-						return true;
-
-					case XEventName.LeaveNotify:
-						if (!hwnd.Enabled)
-							goto ProcessNextMessage;
-
-						if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) ||
-						    (xevent.CrossingEvent.window != hwnd.ClientWindow))
-							goto ProcessNextMessage;
-
-						msg.message=Msg.WM_MOUSE_LEAVE;
-						HoverState.Timer.Enabled = false;
-						HoverState.Window = IntPtr.Zero;
-
-						return true;
-
-					case XEventName.ReparentNotify:
-						if (hwnd.parent == null) {	// Toplevel
-							if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.WholeWindow)) {
-								// We need to adjust x/y
-								// This sucks ass, part 2
-								// Every WM does the reparenting of toplevel windows different, so there's
-								// no standard way of getting our adjustment considering frames/decorations
-								// The code below is needed for metacity. KDE doesn't works just fine without this
-								int	dummy_int;
-								IntPtr	dummy_ptr;
-								int	new_x;
-								int	new_y;
-								int	frame_left;
-								int	frame_top;
-
-								hwnd.Reparented = true;
-
-								Xlib.XGetGeometry(display, XGetParent(hwnd.WholeWindow),
-										  out dummy_ptr, out new_x, out new_y,
-										  out dummy_int, out dummy_int, out dummy_int, out dummy_int);
-								hwnd.FrameExtents(out frame_left, out frame_top);
-								if ((frame_left != 0) && (frame_top != 0) && (new_x != frame_left) && (new_y != frame_top)) {
-									hwnd.x = new_x;
-									hwnd.y = new_y;
-									hwnd.whacky_wm = true;
-								}
-
-								if (hwnd.opacity != 0xffffffff) {
-									IntPtr opacity;
-
-									opacity = (IntPtr)(Int32)hwnd.opacity;
-									Xlib.XChangeProperty (display, XGetParent(hwnd.WholeWindow),
-											      Atoms._NET_WM_WINDOW_OPACITY, Atoms.XA_CARDINAL, 32,
-											      PropertyMode.Replace, ref opacity, 1);
-								}
-								SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
-								goto ProcessNextMessage;
-							} else {
-								hwnd.Reparented = false;
-								goto ProcessNextMessage;
-							}
-						}
-						goto ProcessNextMessage;
-
-					case XEventName.ConfigureNotify:
-						hwnd.AddConfigureNotify (xevent);
-						goto ProcessNextMessage;
-
-					case XEventName.FocusIn:
-						// We received focus. We use X11 focus only to know if the app window does or does not have focus
-						// We do not track the actual focussed window via it. Instead, this is done via FocusWindow internally
-						// Receiving focus means we've gotten activated and therefore we need to let the actual FocusWindow know 
-						// about it having focus again
-						if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
-							goto ProcessNextMessage;
-
-						if (FocusWindow == null) {
-							Control c = Control.FromHandle (hwnd.ClientWindow);
-							if (c == null)
-								goto ProcessNextMessage;
-							Form form = c.FindForm ();
-							if (form == null)
-								goto ProcessNextMessage;
-							ActiveWindow = (X11Hwnd)Hwnd.ObjectFromHandle (form.Handle);
-							SendMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-							goto ProcessNextMessage;
-						}
-						Keyboard.FocusIn(FocusWindow.Handle);
-						SendMessage(FocusWindow.Handle, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
-						goto ProcessNextMessage;
-
-					case XEventName.FocusOut:
-						// Se the comment for our FocusIn handler
-						if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
-							goto ProcessNextMessage;
-
-						if (FocusWindow == null)
-							goto ProcessNextMessage;
-
-						Keyboard.FocusOut(FocusWindow.Handle);
-
-						while (Keyboard.ResetKeyState(FocusWindow.Handle, ref msg))
-							SendMessage(FocusWindow.Handle, msg.message, msg.wParam, msg.lParam);
-
-						SendMessage(FocusWindow.Handle, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
-						goto ProcessNextMessage;
-
-					case XEventName.Expose:
-						hwnd.AddExpose (client,
-								xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-								xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						goto ProcessNextMessage;
-						
-					case XEventName.DestroyNotify:
-
-						// This is a bit tricky, we don't receive our own DestroyNotify, we only get those for our children
-						hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
-
-						// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
-						if ((hwnd != null) && (hwnd.ClientWindow == xevent.DestroyWindowEvent.window)) {
-							CleanupCachedWindows (hwnd);
-
-							#if DriverDebugDestroy
-							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.ClientWindow));
-							#endif
-
-							msg.hwnd = hwnd.ClientWindow;
-							msg.message=Msg.WM_DESTROY;
-							hwnd.Dispose();
-						}
-						else
-							goto ProcessNextMessage;
-
-						return true;
-
-					case XEventName.ClientMessage:
-						if (Dnd.HandleClientMessage (ref xevent))
-							goto ProcessNextMessage;
-
-						if (xevent.ClientMessageEvent.message_type == Atoms.AsyncAtom) {
-							XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
-							goto ProcessNextMessage;
-						}
-
-						if (xevent.ClientMessageEvent.message_type == HoverState.Atom) {
-							msg.message = Msg.WM_MOUSEHOVER;
-							msg.wParam = GetMousewParam(0);
-							msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
-							return true;
-						}
-
-						if (xevent.ClientMessageEvent.message_type == Atoms.PostAtom) {
-							msg.hwnd = xevent.ClientMessageEvent.ptr1;
-							msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
-							msg.wParam = xevent.ClientMessageEvent.ptr3;
-							msg.lParam = xevent.ClientMessageEvent.ptr4;
-							return true;
-						}
-
-						if (xevent.ClientMessageEvent.message_type == Atoms._XEMBED) {
-							#if DriverDebugXEmbed
-							Console.WriteLine("GOT EMBED MESSAGE {0:X}, detail {1:X}",
-									  xevent.ClientMessageEvent.ptr2.ToInt32(), xevent.ClientMessageEvent.ptr3.ToInt32());
-							#endif
-
-							if (xevent.ClientMessageEvent.ptr2.ToInt32() == (int)XEmbedMessage.EmbeddedNotify) {
-								XSizeHints hints = new XSizeHints();
-								IntPtr dummy;
-
-								Xlib.XGetWMNormalHints (display, hwnd.WholeWindow, ref hints, out dummy);
-
-								hwnd.width = hints.max_width;
-								hwnd.height = hints.max_height;
-								hwnd.ClientRect = Rectangle.Empty;
-								SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-							}
-						}
-
-						if (xevent.ClientMessageEvent.message_type == Atoms.WM_PROTOCOLS) {
-							if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_DELETE_WINDOW) {
-								msg.message = Msg.WM_CLOSE;
-								return true;
-							}
-
-							// We should not get this, but I'll leave the code in case we need it in the future
-							if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_TAKE_FOCUS) {
-								goto ProcessNextMessage;
-							}
-						}
-						goto ProcessNextMessage;
-
-					case XEventName.PropertyNotify:
-						// The Hwnd's themselves handle this
-						hwnd.PropertyChanged (xevent);
-						goto ProcessNextMessage;
-					}
+				if (!got_xevent) {
+					Console.WriteLine (">");
+					Console.Out.Flush ();
+					break;
 				}
 
-			} while (got_xevent);
-
-			queue.CheckTimers ();
-
-			while (queue.Configure.Count > 0) {
-				xevent = queue.Configure.Dequeue ();
+				Console.Write ("-");
+				Console.Out.Flush ();
 
 				hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
-				if (hwnd == null || hwnd.zombie)
-					continue;
 
-				hwnd.HandleConfigureNotify (xevent);
-			}
+				// Handle messages for windows that are already or are about to be destroyed.
 
-			/* now that we've handled X events, handle any pending paint and configure events */
-			
-			while (queue.Paint.Count > 0) {
-				xevent = queue.Paint.Dequeue ();
+				// we need a special block for this because unless we remove the hwnd from the paint
+				// queue it will always stay there (since we don't handle the expose), and we'll
+				// effectively loop infinitely trying to repaint a non-existant window.
+				if (hwnd != null && hwnd.zombie && xevent.type == XEventName.Expose) {
+					hwnd.PendingExpose = hwnd.PendingNCExpose = false;
+					goto ProcessNextMessage;
+				}
 
-				hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
-				if (hwnd == null || hwnd.zombie)
-					continue;
+				// We need to make sure we only allow DestroyNotify events through for zombie
+				// hwnds, since much of the event handling code makes requests using the hwnd's
+				// ClientWindow, and that'll result in BadWindow errors if there's some lag
+				// between the XDestroyWindow call and the DestroyNotify event.
+				if (hwnd == null || hwnd.zombie) {
+#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}",
+							  xevent.type, xevent.AnyEvent.window.ToInt32());
+#endif
+					goto ProcessNextMessage;
+				}
 
 				client = hwnd.ClientWindow == xevent.AnyEvent.window;
 
-				if (queue.PostQuitState || !hwnd.Mapped) {
-					try {
-						hwnd.Queue.Lock ();
+				msg.hwnd = hwnd.Handle;
+
+				switch (xevent.type) {
+				case XEventName.KeyPress:
+					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
+					return true;
+
+				case XEventName.KeyRelease:
+					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
+					return true;
+
+				case XEventName.ButtonPress: {
+					switch(xevent.ButtonEvent.button) {
+					case 1:
+						MouseState |= MouseButtons.Left;
+						if (client) {
+							msg.message = Msg.WM_LBUTTONDOWN;
+						} else {
+							msg.message = Msg.WM_NCLBUTTONDOWN;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 2:
+						MouseState |= MouseButtons.Middle;
+						if (client) {
+							msg.message = Msg.WM_MBUTTONDOWN;
+						} else {
+							msg.message = Msg.WM_NCMBUTTONDOWN;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 3:
+						MouseState |= MouseButtons.Right;
+						if (client) {
+							msg.message = Msg.WM_RBUTTONDOWN;
+						} else {
+							msg.message = Msg.WM_NCRBUTTONDOWN;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 4:
+						msg.hwnd = FocusWindow.Handle;
+						msg.message=Msg.WM_MOUSEWHEEL;
+						msg.wParam=GetMousewParam(120);
+						break;
+
+					case 5:
+						msg.hwnd = FocusWindow.Handle;
+						msg.message=Msg.WM_MOUSEWHEEL;
+						msg.wParam=GetMousewParam(-120);
+						break;
+					}
+
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					MousePosition.X = xevent.ButtonEvent.x;
+					MousePosition.Y = xevent.ButtonEvent.y;
+
+					if (!hwnd.Enabled) {
+						RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
+									      ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+					}
+
+					if (Grab.Hwnd != IntPtr.Zero)
+						msg.hwnd = Grab.Hwnd;
+
+					if (ClickPending.Pending &&
+					    ((((long)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) &&
+					     (msg.wParam == ClickPending.wParam) &&
+					     (msg.lParam == ClickPending.lParam) &&
+					     (msg.message == ClickPending.Message))) {
+						// Looks like a genuine double click, clicked twice on the same spot with the same keys
+						switch(xevent.ButtonEvent.button) {
+						case 1:
+							msg.message = client ? Msg.WM_LBUTTONDBLCLK : Msg.WM_NCLBUTTONDBLCLK;
+							break;
+
+						case 2:
+							msg.message = client ? Msg.WM_MBUTTONDBLCLK : Msg.WM_NCMBUTTONDBLCLK;
+							break;
+
+						case 3:
+							msg.message = client ? Msg.WM_RBUTTONDBLCLK : Msg.WM_NCRBUTTONDBLCLK;
+							break;
+						}
+
+						ClickPending.Pending = false;
+
+					}
+					else {
+						ClickPending.Pending = true;
+						ClickPending.Hwnd = msg.hwnd;
+						ClickPending.Message = msg.message;
+						ClickPending.wParam = msg.wParam;
+						ClickPending.lParam = msg.lParam;
+						ClickPending.Time = (long)xevent.ButtonEvent.time;
+					}
+
+					return true;
+				}
+
+				case XEventName.ButtonRelease:
+					if (Dnd.InDrag()) {
+						Dnd.HandleButtonRelease (ref xevent);
+						return true;
+					}
+
+					switch(xevent.ButtonEvent.button) {
+					case 1:
+						if (client) {
+							msg.message = Msg.WM_LBUTTONUP;
+						} else {
+							msg.message = Msg.WM_NCLBUTTONUP;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						MouseState &= ~MouseButtons.Left;
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 2:
+						if (client) {
+							msg.message = Msg.WM_MBUTTONUP;
+						} else {
+							msg.message = Msg.WM_NCMBUTTONUP;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						MouseState &= ~MouseButtons.Middle;
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 3:
+						if (client) {
+							msg.message = Msg.WM_RBUTTONUP;
+						} else {
+							msg.message = Msg.WM_NCRBUTTONUP;
+							hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+						}
+						MouseState &= ~MouseButtons.Right;
+						msg.wParam=GetMousewParam(0);
+						break;
+
+					case 4:
+						goto ProcessNextMessage;
+
+					case 5:
+						goto ProcessNextMessage;
+					}
+
+					if (!hwnd.Enabled) {
+						RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
+									      ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+					}
+
+					if (Grab.Hwnd != IntPtr.Zero)
+						msg.hwnd = Grab.Hwnd;
+
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					MousePosition.X = xevent.ButtonEvent.x;
+					MousePosition.Y = xevent.ButtonEvent.y;
+					return true;
+
+				case XEventName.MotionNotify:
+					/* XXX move the compression stuff here */
+
+					if (client) {
+#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}",
+								  client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(),
+								  xevent.MotionEvent.x, xevent.MotionEvent.y);
+#endif
+
+						if (Dnd.HandleMotionNotify (ref xevent))
+							goto ProcessNextMessage;
+
+						if (Grab.Hwnd != IntPtr.Zero)
+							msg.hwnd = Grab.Hwnd;
+						else
+							NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+
+						msg.message = Msg.WM_MOUSEMOVE;
+						msg.wParam = GetMousewParam(0);
+						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
+
+						if (!hwnd.Enabled) {
+							RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
+										      ref xevent.MotionEvent.x, ref xevent.MotionEvent.y);
+						}
+
+						MousePosition.X = xevent.MotionEvent.x;
+						MousePosition.Y = xevent.MotionEvent.y;
+
+						if ((HoverState.Timer.Enabled) &&
+						    (((MousePosition.X + HoverState.Size.Width) < HoverState.X) ||
+						     ((MousePosition.X - HoverState.Size.Width) > HoverState.X) ||
+						     ((MousePosition.Y + HoverState.Size.Height) < HoverState.Y) ||
+						     ((MousePosition.Y - HoverState.Size.Height) > HoverState.Y))) {
+
+							HoverState.Timer.Stop();
+							HoverState.Timer.Start();
+							HoverState.X = MousePosition.X;
+							HoverState.Y = MousePosition.Y;
+						}
+					}
+					else {
+						HitTest	ht;
+						IntPtr dummy;
+						int screen_x;
+						int screen_y;
+
+						#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}",
+								  client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(),
+								  xevent.MotionEvent.x, xevent.MotionEvent.y);
+						#endif
+						msg.message = Msg.WM_NCMOUSEMOVE;
+
+						if (!hwnd.Enabled) {
+							RedirectMsgToEnabledAncestor (hwnd, msg, xevent.AnyEvent.window,
+										      ref xevent.MotionEvent.x, ref xevent.MotionEvent.y);
+						}
+
+						// The hit test is sent in screen coordinates
+						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, RootWindow.Handle,
+									    xevent.MotionEvent.x, xevent.MotionEvent.y,
+									    out screen_x, out screen_y, out dummy);
+
+						msg.lParam = (IntPtr) (screen_y << 16 | screen_x & 0xFFFF);
+						ht = (HitTest)NativeWindow.WndProc (hwnd.ClientWindow, Msg.WM_NCHITTEST,
+										    IntPtr.Zero, msg.lParam).ToInt32 ();
+						NativeWindow.WndProc(hwnd.ClientWindow, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
+
+						MousePosition.X = xevent.MotionEvent.x;
+						MousePosition.Y = xevent.MotionEvent.y;
+					}
+
+					return true;
+
+				case XEventName.EnterNotify:
+					if (!hwnd.Enabled)
+						goto ProcessNextMessage;
+
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal)
+						goto ProcessNextMessage;
+
+					msg.message = Msg.WM_MOUSE_ENTER;
+					HoverState.X = xevent.CrossingEvent.x;
+					HoverState.Y = xevent.CrossingEvent.y;
+					HoverState.Timer.Enabled = true;
+					HoverState.Window = xevent.CrossingEvent.window;
+
+					return true;
+
+				case XEventName.LeaveNotify:
+					if (!hwnd.Enabled)
+						goto ProcessNextMessage;
+
+					if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) ||
+					    (xevent.CrossingEvent.window != hwnd.ClientWindow))
+						goto ProcessNextMessage;
+
+					msg.message=Msg.WM_MOUSE_LEAVE;
+					HoverState.Timer.Enabled = false;
+					HoverState.Window = IntPtr.Zero;
+
+					return true;
+
+				case XEventName.ReparentNotify:
+					if (hwnd.parent == null) {	// Toplevel
+						if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.WholeWindow)) {
+							// We need to adjust x/y
+							// This sucks ass, part 2
+							// Every WM does the reparenting of toplevel windows different, so there's
+							// no standard way of getting our adjustment considering frames/decorations
+							// The code below is needed for metacity. KDE doesn't works just fine without this
+							int	dummy_int;
+							IntPtr	dummy_ptr;
+							int	new_x;
+							int	new_y;
+							int	frame_left;
+							int	frame_top;
+
+							hwnd.Reparented = true;
+
+							Xlib.XGetGeometry(display, XGetParent(hwnd.WholeWindow),
+									  out dummy_ptr, out new_x, out new_y,
+									  out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+							hwnd.FrameExtents(out frame_left, out frame_top);
+							if ((frame_left != 0) && (frame_top != 0) && (new_x != frame_left) && (new_y != frame_top)) {
+								hwnd.x = new_x;
+								hwnd.y = new_y;
+								hwnd.whacky_wm = true;
+							}
+
+							if (hwnd.opacity != 0xffffffff) {
+								IntPtr opacity;
+
+								opacity = (IntPtr)(Int32)hwnd.opacity;
+								Xlib.XChangeProperty (display, XGetParent(hwnd.WholeWindow),
+										      Atoms._NET_WM_WINDOW_OPACITY, Atoms.XA_CARDINAL, 32,
+										      PropertyMode.Replace, ref opacity, 1);
+							}
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
+							goto ProcessNextMessage;
+						} else {
+							hwnd.Reparented = false;
+							goto ProcessNextMessage;
+						}
+					}
+					goto ProcessNextMessage;
+
+				case XEventName.ConfigureNotify:
+					hwnd.HandleConfigureNotify (xevent);
+					goto ProcessNextMessage;
+
+				case XEventName.FocusIn:
+					// We received focus. We use X11 focus only to know if the app window does or does not have focus
+					// We do not track the actual focussed window via it. Instead, this is done via FocusWindow internally
+					// Receiving focus means we've gotten activated and therefore we need to let the actual FocusWindow know 
+					// about it having focus again
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
+						goto ProcessNextMessage;
+
+					if (FocusWindow == null) {
+						Control c = Control.FromHandle (hwnd.ClientWindow);
+						if (c == null)
+							goto ProcessNextMessage;
+						Form form = c.FindForm ();
+						if (form == null)
+							goto ProcessNextMessage;
+						ActiveWindow = (X11Hwnd)Hwnd.ObjectFromHandle (form.Handle);
+						SendMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						goto ProcessNextMessage;
+					}
+					Keyboard.FocusIn(FocusWindow.Handle);
+					SendMessage(FocusWindow.Handle, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
+
+				case XEventName.FocusOut:
+					// Se the comment for our FocusIn handler
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
+						goto ProcessNextMessage;
+
+					if (FocusWindow == null)
+						goto ProcessNextMessage;
+
+					Keyboard.FocusOut(FocusWindow.Handle);
+
+					while (Keyboard.ResetKeyState(FocusWindow.Handle, ref msg))
+						SendMessage(FocusWindow.Handle, msg.message, msg.wParam, msg.lParam);
+
+					SendMessage(FocusWindow.Handle, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
+
+				case XEventName.Expose:
+					if (queue.PostQuitState || !hwnd.Mapped) {
 						hwnd.PendingExpose = hwnd.PendingNCExpose = false;
 						continue;
 					}
-					finally {
-						hwnd.Queue.Unlock ();
-					}
-				}
 
-				// XXX these should really be error conditions.  if we
-				// have an expose event in the queue, there should be
-				// one pending.
-				try {
-					hwnd.Queue.Lock ();
-					if (client && !hwnd.PendingExpose) {
-						Console.WriteLine ("client expose but no expose pending");
-						continue;
-					}
-					else if (!client && !hwnd.PendingNCExpose) {
-						Console.WriteLine ("non-client expose but no expose pending");
-						continue;
-					}
-				}
-				finally {
-					hwnd.Queue.Unlock ();
-				}
+					msg.hwnd = hwnd.Handle;
 
-				msg.hwnd = hwnd.Handle;
-
-				if (client) {
+					if (client) {
 #if DriverDebugExtra
-					Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}",
-							  hwnd.client_window.ToInt32(),
-							  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}",
+								  hwnd.client_window.ToInt32(),
+								  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+								  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 #endif
-					msg.message = Msg.WM_PAINT;
-				}
-				else {
-					Graphics g;
-
-					switch (hwnd.border_style) {
-					case FormBorderStyle.Fixed3D:
-						g = Graphics.FromHwnd(hwnd.WholeWindow);
-						ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
-									  Border3DStyle.Sunken);
-						g.Dispose();
-						break;
-
-					case FormBorderStyle.FixedSingle:
-						g = Graphics.FromHwnd(hwnd.WholeWindow);
-						ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
-									Color.Black, ButtonBorderStyle.Solid);
-						g.Dispose();
-						break;
+						msg.message = Msg.WM_PAINT;
 					}
-					#if DriverDebugExtra
-					Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
-							  hwnd.ClientWindow.ToInt32(),
-							  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-					#endif
+					else {
+						Graphics g;
 
-					Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+						switch (hwnd.border_style) {
+						case FormBorderStyle.Fixed3D:
+							g = Graphics.FromHwnd(hwnd.WholeWindow);
+							ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
+										  Border3DStyle.Sunken);
+							g.Dispose();
+							break;
+
+						case FormBorderStyle.FixedSingle:
+							g = Graphics.FromHwnd(hwnd.WholeWindow);
+							ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
+										Color.Black, ButtonBorderStyle.Solid);
+							g.Dispose();
+						break;
+						}
+#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
+								  hwnd.ClientWindow.ToInt32(),
+								  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+								  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+#endif
+
+						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 										xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-					Region region = new Region (rect);
-					IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
-					msg.message = Msg.WM_NCPAINT;
-					msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
-					msg.refobject = region;
+						Region region = new Region (rect);
+						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
+						msg.message = Msg.WM_NCPAINT;
+						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+						msg.refobject = region;
+					}
+
+					return true;
+						
+				case XEventName.DestroyNotify:
+
+					// This is a bit tricky, we don't receive our own DestroyNotify, we only get those for our children
+					hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
+
+					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
+					if ((hwnd != null) && (hwnd.ClientWindow == xevent.DestroyWindowEvent.window)) {
+						CleanupCachedWindows (hwnd);
+
+						#if DriverDebugDestroy
+						Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.ClientWindow));
+						#endif
+
+						msg.hwnd = hwnd.ClientWindow;
+						msg.message=Msg.WM_DESTROY;
+						hwnd.Dispose();
+					}
+					else
+						goto ProcessNextMessage;
+
+					return true;
+
+				case XEventName.ClientMessage:
+					if (Dnd.HandleClientMessage (ref xevent))
+						goto ProcessNextMessage;
+
+					if (xevent.ClientMessageEvent.message_type == Atoms.AsyncAtom) {
+						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
+						goto ProcessNextMessage;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == HoverState.Atom) {
+						msg.message = Msg.WM_MOUSEHOVER;
+						msg.wParam = GetMousewParam(0);
+						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
+						return true;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == Atoms.PostAtom) {
+						msg.hwnd = xevent.ClientMessageEvent.ptr1;
+						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
+						msg.wParam = xevent.ClientMessageEvent.ptr3;
+						msg.lParam = xevent.ClientMessageEvent.ptr4;
+						return true;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == Atoms._XEMBED) {
+#if DriverDebugXEmbed
+						Console.WriteLine("GOT EMBED MESSAGE {0:X}, detail {1:X}",
+								  xevent.ClientMessageEvent.ptr2.ToInt32(), xevent.ClientMessageEvent.ptr3.ToInt32());
+#endif
+
+						if (xevent.ClientMessageEvent.ptr2.ToInt32() == (int)XEmbedMessage.EmbeddedNotify) {
+							XSizeHints hints = new XSizeHints();
+							IntPtr dummy;
+
+							Xlib.XGetWMNormalHints (display, hwnd.WholeWindow, ref hints, out dummy);
+
+							hwnd.width = hints.max_width;
+							hwnd.height = hints.max_height;
+							hwnd.ClientRect = Rectangle.Empty;
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+						}
+					}
+
+					if (xevent.ClientMessageEvent.message_type == Atoms.WM_PROTOCOLS) {
+						if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_DELETE_WINDOW) {
+							msg.message = Msg.WM_CLOSE;
+							return true;
+						}
+
+						// We should not get this, but I'll leave the code in case we need it in the future
+						if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_TAKE_FOCUS) {
+							goto ProcessNextMessage;
+						}
+					}
+					goto ProcessNextMessage;
+
+				case XEventName.PropertyNotify:
+					// The Hwnd's themselves handle this
+					hwnd.PropertyChanged (xevent);
+					goto ProcessNextMessage;
 				}
+			} while (true);
 
-				return true;
-			}
-
+#if notyet
+			// XXX need to figure out how to post
+			// WM_ENTERIDLE only in specific conditions
+			// (we've handled some input events)
 			if (!queue.PostQuitState) {
 				msg.hwnd= IntPtr.Zero;
 				msg.message = Msg.WM_ENTERIDLE;
 				return true;
 			}
+#else
+			goto ProcessNextMessage;
+#endif
 
 			// We reset ourselves so GetMessage can be called again
 			queue.PostQuitState = false;

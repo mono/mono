@@ -98,42 +98,78 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public bool DequeueUnlocked (out XEvent xevent)
+		public bool Dequeue (out XEvent xevent)
 		{
-		try_again:
-			if (xqueue.Count > 0) {
-				xevent = xqueue.Dequeue ();
-				return true;
+		StartOver:
+			bool got_xevent = false;
+
+			lock (lockobj) {
+				if (xqueue.Count > 0) {
+					got_xevent = true;
+					xevent = xqueue.Dequeue ();
+				}
+				else
+					xevent = new XEvent (); /* not strictly needed, but mcs complains */
 			}
 
-			if (paint_queue.Count > 0 || configure_queue.Count > 0) {
-				xevent = new XEvent ();
-				return false;
+			if (got_xevent) {
+				if (xevent.AnyEvent.type == XEventName.Expose) {
+					Console.Write ("E");
+					Console.Out.Flush ();
+					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
+					hwnd.AddExpose (xevent.AnyEvent.window == hwnd.ClientWindow,
+							xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					goto StartOver;
+				}
+				else if (xevent.AnyEvent.type == XEventName.ConfigureNotify) {
+					Console.Write ("C");
+					Console.Out.Flush ();
+					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
+					hwnd.AddConfigureNotify (xevent);
+					goto StartOver;
+				}
+				else {
+					Console.Write ("X");
+					Console.Out.Flush ();
+					/* it was an event we can deal with directly, return it */
+					return true;
+				}
 			}
-
-			// both queues are empty.  go to sleep until NextTimeout
-			// (or until there's an event to handle).
+			else {
+				if (paint_queue.Count > 0) {
+					xevent = paint_queue.Dequeue ();
+					Console.Write ("e");
+					Console.Out.Flush ();
+					return true;
+				}
+				else if (configure_queue.Count > 0) {
+					xevent = configure_queue.Dequeue ();
+					Console.Write ("c");
+					Console.Out.Flush ();
+					return true;
+				}
+			}
 
 			if (dispatch_idle && need_dispatch_idle) {
 				OnIdle (EventArgs.Empty);
 				need_dispatch_idle = false;
 			}
 
-			if (Monitor.Wait (lockobj, NextTimeout (), true)) {
-				/* the lock was reaquired before timeout.
-				   i.e. we have an event now */
-				goto try_again;
-			}
-			else {
-				xevent = new XEvent ();
-				return false;
-			}
-		}
-
-		public bool Dequeue (out XEvent xevent)
-		{
 			lock (lockobj) {
-				return DequeueUnlocked (out xevent);
+				if (CountUnlocked > 0)
+					goto StartOver;
+
+				if (Monitor.Wait (lockobj, NextTimeout (), true)) {
+					// the lock was reaquired before the
+					// timeout.  meaning an event was
+					// enqueued by X11Display.XEventThread.
+					goto StartOver;
+				}
+				else {
+					CheckTimers ();
+					return false;
+				}
 			}
 		}
 
@@ -308,20 +344,12 @@ namespace System.Windows.Forms.X11Internal {
 
 			protected abstract XEvent Peek ();
 
-			public XEvent Dequeue ()
+			public virtual XEvent Dequeue ()
 			{
 				if (hwnds.Count == 0)
 					throw new Exception ("Attempt to dequeue empty queue.");
 
-				// populate the xevent
-				XEvent xevent = Peek ();
-
-				hwnds.RemoveAt(0);
-#if DebugHwndEventQueue
-				stacks.RemoveAt(0);
-#endif
-
-				return xevent;
+				return Peek ();
 			}
 		}
 
@@ -346,6 +374,19 @@ namespace System.Windows.Forms.X11Internal {
 				xevent.ConfigureEvent.height = hwnd.Height;
 				
 				return xevent;
+			}
+
+			public override XEvent Dequeue ()
+			{
+				XEvent xev = base.Dequeue ();
+
+
+				hwnds.RemoveAt(0);
+#if DebugHwndEventQueue
+				stacks.RemoveAt(0);
+#endif
+
+				return xev;
 			}
 		}
 
@@ -375,6 +416,8 @@ namespace System.Windows.Forms.X11Internal {
 
 				return xevent;
 			}
+
+			// don't override Dequeue like ConfigureQueue does.
 		}
 
 		/* a circular queue for holding X events for processing by GetMessage */
