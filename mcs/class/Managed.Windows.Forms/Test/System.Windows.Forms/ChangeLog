@@ -1,3 +1,7 @@
+2006-12-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ControlTest.cs: Added NotWorking test for DoubleBuffered.
+
 2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewCellStyleTest.cs: Added tests for FormatProvider,

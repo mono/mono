@@ -21,6 +21,50 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
+#if NET_2_0
+		public class DoubleBufferedForm : Form
+		{
+			public bool painted;
+			public bool failed;
+			public DoubleBufferedForm ()
+			{
+				this.DoubleBuffered = true;
+			}
+
+			protected override void OnPaint (PaintEventArgs e)
+			{
+				if (failed || painted)
+					return;
+				painted = true;
+				Height = Height + 1;
+				try {
+					e.Graphics.DrawString (Size.ToString (), Font, Brushes.AliceBlue, new Point (2, 2));
+				} catch (Exception exception) {
+					Console.WriteLine (exception.StackTrace);
+					failed = true;
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DoubleBufferTest ()
+		{
+			DoubleBufferedForm f = new DoubleBufferedForm ();
+			f.Show ();
+
+			// to make the control do a paint event.
+			for (int i = 0; i < 100; i++) {
+				if (f.failed)
+					break;
+				Application.DoEvents ();
+			}
+
+			Assert.IsFalse (f.failed, "#01");
+			Assert.IsTrue (f.painted, "The control was never painted, so please check the test");
+		}
+#endif
+
 		class Helper {
 			public static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role)
 			{
