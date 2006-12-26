@@ -139,9 +139,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-#if TARGET_JVM //BUG #6489
-		[Category ("NotWorking")]
-#endif
 		public void SiteMapDataSource_GetView ()
 		{
 			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();

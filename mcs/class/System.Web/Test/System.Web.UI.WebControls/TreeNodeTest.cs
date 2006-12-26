@@ -141,9 +141,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-#if TARGET_JVM //probably dependant on BUG #6489
-		[Category ("NotWorking")]
-#endif
 		public void TreeNode_Method_Clone () {
 			PokerTreeNode tn1 = new PokerTreeNode ();
 			TreeNode tn2 = new TreeNode ();
