@@ -36,8 +36,6 @@ namespace System.Windows.Forms
 	public class ToolStripSplitButton : ToolStripDropDownItem
 	{
 		private bool button_pressed;
-		private bool button_selected;
-		private ToolStripItem default_item;
 		private bool drop_down_button_selected;
 		private int drop_down_button_width;
 		
@@ -142,7 +140,10 @@ namespace System.Windows.Forms
 			// base should calculate the button part for us, add the splitter
 			// and drop down arrow part to that
 			Size s = base.GetPreferredSize (constrainingSize);
-			
+
+			if (s.Width < 23)
+				s.Width = 23;
+
 			s.Width += (this.drop_down_button_width - 2);
 			
 			return s;
@@ -208,7 +209,6 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseLeave (EventArgs e)
 		{
-			this.button_selected = false;
 			this.drop_down_button_selected = false;
 			this.button_pressed = false;
 			

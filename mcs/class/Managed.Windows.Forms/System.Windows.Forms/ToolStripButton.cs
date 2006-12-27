@@ -137,7 +137,12 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return base.GetPreferredSize (constrainingSize);
+			Size retval = base.GetPreferredSize (constrainingSize);
+			
+			if (retval.Width < 23)
+				retval.Width = 23;
+				
+			return retval;
 		}
 		#endregion
 

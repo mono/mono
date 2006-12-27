@@ -28,10 +28,12 @@
 #if NET_2_0
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Items")]
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
 	public class ToolStripComboBox : ToolStripControlHost
 	{
 		#region Public Constructors
@@ -39,6 +41,7 @@ namespace System.Windows.Forms
 		{
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public ToolStripComboBox (Control c) : base (c)
 		{
 			throw new NotSupportedException ();
@@ -46,23 +49,44 @@ namespace System.Windows.Forms
 
 		public ToolStripComboBox (string name) : this ()
 		{
-			base.Control.Name = name;
+			base.Name = name;
 		}
 		#endregion
 
 		#region Public Properties
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ComboBox ComboBox {
 			get { return (ComboBox)base.Control; }
 		}
 
 		[MonoTODO ("Stub, will not actually affect anything.")]
+		[Browsable (false)]
+		[DefaultValue (106)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int DropDownHeight {
-			get { return 50; }
+			get { return 106; }
 			set { }
 		}
 		
 		[DefaultValue (ComboBoxStyle.DropDown)]
+		[RefreshProperties (RefreshProperties.All)]
 		public ComboBoxStyle DropDownStyle {
 			get { return this.ComboBox.DropDownStyle; }
 			set { this.ComboBox.DropDownStyle = value; }
@@ -74,6 +98,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool DroppedDown {
 			get { return this.ComboBox.DroppedDown; }
 			set { this.ComboBox.DroppedDown = value; }
@@ -87,6 +112,8 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public ComboBox.ObjectCollection Items {
 			get { return this.ComboBox.Items; }
 		}
@@ -106,6 +133,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectedIndex {
 			get { return this.ComboBox.SelectedIndex; }
 			set {
@@ -116,24 +144,28 @@ namespace System.Windows.Forms
 
 		[Bindable (true)]
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object SelectedItem {
 			get { return this.ComboBox.SelectedItem; }
 			set { this.ComboBox.SelectedItem = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedText {
 			get { return this.ComboBox.SelectedText; }
 			set { this.ComboBox.SelectedText = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength {
 			get { return this.ComboBox.SelectionLength; }
 			set { this.ComboBox.SelectionLength = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart {
 			get { return this.ComboBox.SelectionStart; }
 			set { this.ComboBox.SelectionStart = value; }
@@ -147,7 +179,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Properties
-		protected internal override Padding DefaultMargin { get { return new Padding (2); } }
+		protected internal override Padding DefaultMargin { get { return new Padding (1, 0, 1, 0); } }
 		protected override Size DefaultSize { get { return new Size (100, 22); } }
 		#endregion
 
@@ -312,7 +344,7 @@ namespace System.Windows.Forms
 
 		private void HandleDropDownStyleChanged (object sender, EventArgs e)
 		{
-			OnDisplayStyleChanged (e);
+			OnDropDownStyleChanged (e);
 		}
 
 		private void HandleSelectedIndexChanged (object sender, EventArgs e)

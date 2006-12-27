@@ -1,3 +1,9 @@
+2006-12-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButton.cs, ToolStripComboBox.cs, ToolStripControlHost.cs,
+	ToolStripItem.cs, ToolStripProgressBar.cs, ToolStripSplitButton.cs,
+	ToolStripTextBox.cs: Fixes to events and corcompare.
+
 2006-12-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* ListView.cs: Call owner.OnMousexx event to propagate events from

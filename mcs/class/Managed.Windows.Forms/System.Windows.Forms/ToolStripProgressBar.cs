@@ -41,24 +41,43 @@ namespace System.Windows.Forms
 
 		public ToolStripProgressBar (string name) : this ()
 		{
-			this.Control.Name = name;
+			this.Name = name;
 		}
 		#endregion
 
 		#region Public Properties
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+		
 		[DefaultValue (100)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Maximum {
 			get { return this.ProgressBar.Maximum; }
 			set { this.ProgressBar.Maximum = value; }
 		}
 
 		[DefaultValue (0)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int Minimum {
 			get { return this.ProgressBar.Minimum; }
 			set { this.ProgressBar.Minimum = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ProgressBar ProgressBar {
 			get { return (ProgressBar)base.Control; }
 		}
@@ -77,6 +96,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }

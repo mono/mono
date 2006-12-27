@@ -28,9 +28,12 @@
 #if NET_2_0
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
 	public class ToolStripTextBox : ToolStripControlHost
 	{
 		private BorderStyle border_style;
@@ -42,13 +45,15 @@ namespace System.Windows.Forms
 			this.border_style = BorderStyle.Fixed3D;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public ToolStripTextBox (Control c) : base (c)
 		{
+			throw new NotSupportedException ("This construtor cannot be used.");
 		}
 
 		public ToolStripTextBox (string name) : this ()
 		{
-			base.Control.Name = name;
+			base.Name = name;
 		}
 		#endregion
 
@@ -64,14 +69,37 @@ namespace System.Windows.Forms
 			get { return this.TextBox.AcceptsTab; }
 			set { this.TextBox.AcceptsTab = value; }
 		}
-
-		[DefaultValue (BorderStyle.Fixed3D)]
-		public BorderStyle BorderStyle {
-			get { return this.border_style; }
-			set { this.border_style = value; }
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+
+		[DefaultValue (BorderStyle.Fixed3D)]
+		[DispId (-504)]
+		public BorderStyle BorderStyle {
+			get { return this.border_style; }
+			set { 
+				if (this.border_style != value) {
+					this.border_style = value;
+					this.OnBorderStyleChanged (EventArgs.Empty);
+				}
+			}
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool CanUndo {
 			get { return this.TextBox.CanUndo; }
 		}
@@ -89,6 +117,8 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string[] Lines {
 			get { return this.TextBox.Lines; }
 			set { this.TextBox.Lines = value; }
@@ -102,6 +132,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Modified {
 			get { return this.TextBox.Modified; }
 			set { this.TextBox.Modified = value; }
@@ -111,6 +142,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool Multiline {
 			get { return this.TextBox.Multiline; }
 			set { this.TextBox.Multiline = value; }
@@ -123,24 +155,28 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedText {
 			get { return this.TextBox.SelectedText; }
 			set { this.TextBox.SelectedText = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength {
-			get { return this.TextBox.SelectionLength; }
+			get { return this.TextBox.SelectionLength == -1 ? 0 : this.TextBox.SelectionLength; }
 			set { this.TextBox.SelectionLength = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart {
 			get { return this.TextBox.SelectionStart; }
 			set { this.TextBox.SelectionStart = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TextBox TextBox {
 			get { return (TextBox)base.Control; }
 		}
@@ -277,7 +313,6 @@ namespace System.Windows.Forms
 			base.OnSubscribeControlEvents (control);
 
 			this.TextBox.AcceptsTabChanged += new EventHandler (HandleAcceptsTabChanged);
-			this.TextBox.BorderStyleChanged += new EventHandler (HandleBorderStyleChanged);
 			this.TextBox.HideSelectionChanged += new EventHandler (HandleHideSelectionChanged);
 			this.TextBox.ModifiedChanged += new EventHandler (HandleModifiedChanged);
 			this.TextBox.MultilineChanged += new EventHandler (HandleMultilineChanged);
@@ -358,11 +393,6 @@ namespace System.Windows.Forms
 		private void HandleHideSelectionChanged (object sender, EventArgs e)
 		{
 			OnHideSelectionChanged (e);
-		}
-
-		private void HandleBorderStyleChanged (object sender, EventArgs e)
-		{
-			OnBorderStyleChanged (e);
 		}
 
 		private void HandleAcceptsTabChanged (object sender, EventArgs e)

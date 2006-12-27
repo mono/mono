@@ -36,11 +36,6 @@ namespace System.Windows.Forms
 		private Control control;
 		private ContentAlignment control_align;
 		private bool double_click_enabled;
-		private ContentAlignment image_align;
-		private ToolStripItemImageScaling image_scaling;
-		private Color image_transparent_color;
-		private ContentAlignment text_align;
-		private TextImageRelation text_image_relation;
 
 		#region Public Constructors
 		public ToolStripControlHost (Control c) : base ()
@@ -55,24 +50,40 @@ namespace System.Windows.Forms
 
 		public ToolStripControlHost (Control c, string name) : this (c)
 		{
-			this.control.Name = name;
+			base.Name = name;
 		}
 		#endregion
 
 		#region Public Properties
 		public override Color BackColor {
-			get { return base.BackColor; }
-			set { 
-				base.BackColor = value;
-				control.BackColor = value;
+			get { return control.BackColor; }
+			set { control.BackColor = value;
 			}
 		}
 
+		[Localizable (true)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
+		}
+
+		[Localizable (true)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+		
 		public override bool CanSelect {
 			get { return control.CanSelect; }
 		}
 
+		public new bool CausesValidation {
+			get { return control.CausesValidation; }
+			set { control.CausesValidation = value; }
+		}
+		
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control Control {
 			get { return this.control; }
 		}
@@ -91,6 +102,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ToolStripItemDisplayStyle DisplayStyle {
 			get { return base.DisplayStyle; }
 			set { base.DisplayStyle = value; }
@@ -104,8 +116,6 @@ namespace System.Windows.Forms
 			set { this.double_click_enabled = value; }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Enabled {
 			get { return base.Enabled; }
 			set {
@@ -114,28 +124,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual bool Focused {
 			get { return control.Focused; }
 		}
 
 		public override Font Font {
-			get { return base.Font; }
-			set {
-				base.Font = value;
-				control.Font = value;
-			}
+			get { return control.Font; }
+			set { control.Font = value; }
 		}
 
 		public override Color ForeColor {
-			get { return base.ForeColor; }
-			set { 
-				base.ForeColor = value;
-				control.ForeColor = value;
-			}
+			get { return control.ForeColor; }
+			set { control.ForeColor = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Image Image {
 			get { return base.Image; }
 			set { base.Image = value; }
@@ -143,23 +150,26 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ContentAlignment ImageAlign {
-			get { return this.image_align; }
-			set { this.image_align = value; }
+			get { return base.ImageAlign; }
+			set { base.ImageAlign = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ToolStripItemImageScaling ImageScaling {
-			get { return this.image_scaling; }
-			set { this.image_scaling = value; }
+			get { return base.ImageScaling; }
+			set { base.ImageScaling = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Color ImageTransparentColor {
-			get { return this.image_transparent_color; }
-			set { this.image_transparent_color = value; }
+			get { return base.ImageTransparentColor; }
+			set { base.ImageTransparentColor = value; }
 		}
 
 		public override bool Selected {
@@ -168,13 +178,17 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override ISite Site {
-			get { return base.Site; }
-			set { 
-				base.Site = value;
-				control.Site = value;
+			get { return control.Site; }
+			set { control.Site = value;
 			}
 		}
 
+		public override Size Size
+		{
+			get { return control.Size; }
+			set { control.Size = value; base.Size = value;  if (this.Owner != null) this.Owner.PerformLayout (); }
+		}
+		
 		[DefaultValue ("")]
 		public override string Text {
 			get { return base.Text; }
@@ -187,15 +201,15 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ContentAlignment TextAlign {
-			get { return this.text_align; }
-			set { this.text_align = value; }
+			get { return base.TextAlign; }
+			set { base.TextAlign = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new TextImageRelation TextImageRelation {
-			get { return this.text_image_relation; }
-			set { this.text_image_relation = value; }
+			get { return base.TextImageRelation; }
+			set { base.TextImageRelation = value; }
 		}
 		#endregion
 
@@ -211,6 +225,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void Focus ()
 		{
 			control.Focus ();
@@ -218,7 +233,7 @@ namespace System.Windows.Forms
 
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return this.Size;
+			return control.Size;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -235,9 +250,10 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			return this.Control.AccessibilityObject;
+			return control.AccessibilityObject;
 		}
 
 		protected override void Dispose (bool disposing)
@@ -252,8 +268,8 @@ namespace System.Windows.Forms
 		{
 			base.OnBoundsChanged ();
 
+			control.Size = this.Size;
 			if (this.Parent != null) {
-				control.Size = this.Size;
 				OnLayout (new LayoutEventArgs (null, string.Empty));
 			}
 		}
