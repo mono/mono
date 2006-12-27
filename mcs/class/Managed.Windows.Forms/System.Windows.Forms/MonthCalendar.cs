@@ -30,6 +30,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
@@ -364,7 +365,16 @@ namespace System.Windows.Forms {
 		public DateTime MaxDate {
 			set {
 				if (value < MinDate) {
-					throw new ArgumentException();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"Value of '{0}' is not valid for 'MaxDate'. 'MaxDate' " +
+						"must be greater than or equal to MinDate.",
+						value.ToString ("d", CultureInfo.CurrentCulture));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MaxDate",
+						msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 
 				if (max_date != value) {
@@ -381,7 +391,16 @@ namespace System.Windows.Forms {
 		public int MaxSelectionCount {
 			set {
 				if (value < 1) {
-					throw new ArgumentException();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"Value of '{0}' is not valid for 'MaxSelectionCount'. " +
+						"'MaxSelectionCount' must be greater than or equal to {1}.",
+						value, 1);
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MaxSelectionCount",
+						msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 		
 				// can't set selectioncount less than already selected dates
@@ -401,12 +420,33 @@ namespace System.Windows.Forms {
 		// the minimum date allowed to be selected on this month calendar
 		public DateTime MinDate {
 			set {
-				if (value < new DateTime (1753, 1, 1)) {
-					throw new ArgumentException();
+				DateTime absoluteMinDate = new DateTime (1753, 1, 1);
+
+				if (value < absoluteMinDate) {
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"Value of '{0}' is not valid for 'MinDate'. 'MinDate' " +
+						"must be greater than or equal to {1}.",
+						value.ToString ("d", CultureInfo.CurrentCulture),
+						absoluteMinDate.ToString ("d", CultureInfo.CurrentCulture));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MinDate",
+						msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 
 				if (value > MaxDate) {
-					throw new ArgumentException();
+					string msg = string.Format (CultureInfo.CurrentCulture,
+						"Value of '{0}' is not valid for 'MinDate'. 'MinDate' " +
+						"must be less than MaxDate.",
+						value.ToString ("d", CultureInfo.CurrentCulture));
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("MinDate",
+						msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 
 				if (max_date != value) {

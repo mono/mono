@@ -1,3 +1,8 @@
+2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonthCalendarTest.cs: Fixed exception tests for MaxSelectionCount,
+	MaxDate and MinDate on 2.0 profile. Removed extra tabs.
+
 2006-12-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripButtonTest.cs, ToolStripComboBoxTest.cs, ToolStripControlHostTest.cs,

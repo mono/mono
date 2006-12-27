@@ -8,9 +8,10 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -20,7 +21,14 @@ namespace MonoTests.System.Windows.Forms
 	{
 		private bool clickRaised;
 		private bool doubleClickRaised;
-		
+
+		[SetUp]
+		public void SetUp ()
+		{
+			clickRaised = false;
+			doubleClickRaised = false;
+		}
+
 		[Test]
 		public void ClickEventTest ()
 		{
@@ -55,7 +63,6 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class MonthCalendarTest
 	{
-
 		[Test]
 		public void MonthCalendarPropertyTest ()
 		{
@@ -119,32 +126,105 @@ namespace MonoTests.System.Windows.Forms
 			myfrm.Dispose ();
 		}
 	
-		[Test]		
-		[ExpectedException (typeof (ArgumentException))]
+		[Test]
 		public void MonthCalMaxSelectionCountException ()
 		{
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
-			myMonthCal1.MaxSelectionCount = 0 ; // value is less than 1
+
+			try {
+				myMonthCal1.MaxSelectionCount = 0; // value is less than 1
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("MaxSelectionCount", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNull (ex.ParamName, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+#endif
 		}
 
-		[Test]		
-		[ExpectedException (typeof (ArgumentException))]
+		[Test]
 		public void MonthCalMaxDateException ()
 		{
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
-			myMonthCal1.MaxDate = new DateTime (1752, 1, 1, 0, 0, 0, 0); // value is less than min date (01/01/1753)
+
+			try {
+				myMonthCal1.MaxDate = new DateTime (1752, 1, 1, 0, 0, 0, 0); // value is less than min date (01/01/1753)
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("MaxDate", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNull (ex.ParamName, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+#endif
 		}
 
-		[Test]		
-		[ExpectedException (typeof (ArgumentException))]
+		[Test]
 		public void MonthCalMinDateException ()
 		{
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
-			myMonthCal1.MinDate = new DateTime(1752, 1, 1, 0, 0, 0, 0); // Date earlier than 01/01/1753
-			myMonthCal1.MinDate = new DateTime(9999, 12, 31, 0, 0, 0, 0); // Date greater than max date (01/01/1753)
+
+			try {
+				myMonthCal1.MinDate = new DateTime (1752, 1, 1, 0, 0, 0, 0); // Date earlier than 01/01/1753
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("MinDate", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNull (ex.ParamName, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+#endif
+
+			try {
+				myMonthCal1.MinDate = new DateTime (9999, 12, 31, 0, 0, 0, 0); // Date greater than max date
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("MinDate", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNull (ex.ParamName, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+			}
+#endif
 		}
 
-		[Test]		
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MonthCalSelectRangeException ()
 		{
@@ -152,14 +232,13 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal1.SelectionRange = new SelectionRange (new DateTime (1752, 01, 01), new DateTime (1752, 01, 02));
 		}
 
-		[Test]		
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MonthCalSelectRangeException2 ()
 		{
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
 			myMonthCal1.SelectionRange = new SelectionRange (new DateTime (9999, 12, 30), new DateTime (9999, 12, 31));
 		}
-		
 
 		[Test]
 		public void AddAnnuallyBoldedDateTest ()
@@ -183,7 +262,6 @@ namespace MonoTests.System.Windows.Forms
 
 			myForm.Dispose ();
 		}
-
 	
 		[Test]
 		public void RemoveAnnuallyBoldedDateTest ()
@@ -360,7 +438,6 @@ namespace MonoTests.System.Windows.Forms
 			myCalendar.DateChanged += new DateRangeEventHandler (DateChangedEventHandler);
 			myCalendar.SetDate (DateTime.Today.AddDays (72));
 			Assert.AreEqual (true, (bool) myCalendar.Tag, "#01");
-
 		}
 
 		void DateChangedEventHandler (object sender, DateRangeEventArgs e)
