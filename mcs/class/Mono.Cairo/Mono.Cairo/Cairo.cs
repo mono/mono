@@ -4,10 +4,12 @@
 // Authors: Duncan Mak (duncan@ximian.com)
 //          Hisham Mardam Bey (hisham.mardambey@gmail.com)
 //          John Luke (john.luke@gmail.com)
+//          Alp Toker (alp@atoker.com)
 //
 // (C) Ximian, Inc. 2003
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 John Luke
+// Copyright (C) 2006 Alp Toker
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
