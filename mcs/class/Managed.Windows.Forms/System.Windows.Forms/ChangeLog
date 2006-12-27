@@ -1,3 +1,15 @@
+2006-12-26  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs, PropertyManager.cs, BindingManagerBase.cs:
+	more corcompare work.
+
+	* DataGridView.cs: fix compiler warning.
+
+	* ColumnHeader.cs: some corcompare work, and also take the
+	opportunity to make the internal fields private.
+
+	* ListView.cs: fix the fallout from the above field change.
+
 2006-12-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripButton.cs, ToolStripComboBox.cs, ToolStripControlHost.cs,

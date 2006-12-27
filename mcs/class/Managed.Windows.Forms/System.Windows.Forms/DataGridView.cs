@@ -1188,7 +1188,6 @@ namespace System.Windows.Forms {
 		static object DefaultValuesNeededEvent = new object ();
 		static object EditingControlShowingEvent = new object ();
 		static object EditModeChangedEvent = new object ();
-		static object PaddingChangedEvent = new object ();
 		static object GridColorChangedEvent = new object ();
 		static object MultiSelectChangedEvent = new object ();
 		static object NewRowNeededEvent = new object ();

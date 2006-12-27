@@ -35,6 +35,9 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Text")]
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
+#if NET_2_0
+	// XXX [TypeConverter (typeof (ColumnHeaderConverter))]
+#endif
 	public class ColumnHeader : Component, ICloneable
 	{
 		#region Instance Variables
@@ -50,9 +53,9 @@ namespace System.Windows.Forms
 #endif
 
 		// internal variables
-		internal Rectangle column_rect = Rectangle.Empty;
-		internal bool pressed = false;
-		internal ListView owner;
+		Rectangle column_rect = Rectangle.Empty;
+		bool pressed = false;
+		ListView owner;
 		#endregion	// Instance Variables
 
 		#region Internal Constructor
@@ -95,39 +98,38 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 
 		#region Private Internal Methods Properties
-		// Since this class inherits from MarshalByRef,
-		// we can't do ColumnHeader.column_rect.XXX. Hence,
-		// we have some of the following properties to work around CS0197.
 		internal bool Pressed {
-			get { return this.pressed; }
+			get { return pressed; }
+			set { pressed = value; }
 		}
 
 		internal int X {
-			get { return this.column_rect.X; }
-			set { this.column_rect.X = value; }
+			get { return column_rect.X; }
+			set { column_rect.X = value; }
 		}
 
 		internal int Y {
-			get { return this.column_rect.Y; }
-			set { this.column_rect.Y = value; }
+			get { return column_rect.Y; }
+			set { column_rect.Y = value; }
 		}
 
 		internal int Wd {
-			get { return this.column_rect.Width; }
-			set { this.column_rect.Width = value; }
+			get { return column_rect.Width; }
+			set { column_rect.Width = value; }
 		}
 
 		internal int Ht {
-			get { return this.column_rect.Height; }
-			set { this.column_rect.Height = value; }
+			get { return column_rect.Height; }
+			set { column_rect.Height = value; }
 		}
 
 		internal Rectangle Rect {
-			get { return this.column_rect; }
+			get { return column_rect; }
+			set { column_rect = value; }
 		}
 
 		internal StringFormat Format {
-			get { return this.format; }
+			get { return format; }
 		}
 
 		internal void CalcColumnHeader ()
@@ -144,21 +146,40 @@ namespace System.Windows.Forms
 			format.FormatFlags = StringFormatFlags.NoWrap;
 
 			if (width >= 0) {
-				this.column_rect.Width = width;
+				column_rect.Width = width;
 				if (owner != null)
-					this.column_rect.Height = owner.Font.Height + 5 ;
+					column_rect.Height = owner.Font.Height + 5 ;
 				else
-					this.column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 5;
+					column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 5;
 			}
-			else if (this.Index != -1)
-				this.column_rect.Size = owner.GetChildColumnSize (this.Index);
+			else if (Index != -1)
+				column_rect.Size = owner.GetChildColumnSize (Index);
 			else
-				this.column_rect.Size = Size.Empty;
+				column_rect.Size = Size.Empty;
 		}
+
+		internal void SetListView (ListView list_view)
+		{
+			owner = list_view;
+		}
+
 		#endregion	// Private Internal Methods Properties
 
 		#region Public Instance Properties
 #if NET_2_0
+		[Localizable (true)]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		public int DisplayIndex {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[DefaultValue (-1)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
 			get {
 				return image_index;
@@ -172,6 +193,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue ("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		// XXX [TypeConverter (typeof (ImageKeyConverter))]
 		public string ImageKey {
 			get {
 				return image_key;
@@ -182,6 +209,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public ImageList ImageList {
 			get {
 				if (owner == null)
@@ -209,6 +237,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Browsable (false)]
 		public string Name {
 			get {
 				return name;
@@ -218,8 +247,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[LocalizableAttribute (false)]
+		[DefaultValue (null)]
 		[BindableAttribute (true)]
+		[LocalizableAttribute (false)]
+		[TypeConverter (typeof (StringConverter))]
 		public object Tag {
 			get {
 				return tag;

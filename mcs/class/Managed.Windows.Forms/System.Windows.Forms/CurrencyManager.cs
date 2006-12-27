@@ -252,6 +252,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		protected override void OnCurrentItemChanged (EventArgs e)
+		{
+		}
+#endif
+
 		protected virtual void OnItemChanged (ItemChangedEventArgs e)
 		{
 			if (ItemChanged != null)
@@ -313,7 +319,12 @@ namespace System.Windows.Forms {
 			return TypeDescriptor.GetProperties (t, att);
 		}
 
-		private void OnMetaDataChanged (EventArgs args)
+#if NET_2_0
+		protected
+#else
+		private
+#endif
+		void OnMetaDataChanged (EventArgs args)
 		{
 			if (MetaDataChanged != null)
 				MetaDataChanged (this, args);
@@ -358,6 +369,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public event ListChangedEventHandler ListChanged;
+#endif
 		public event ItemChangedEventHandler ItemChanged;
 		public event EventHandler MetaDataChanged;
 	}

@@ -2332,10 +2332,10 @@ namespace System.Windows.Forms
 					if (owner.AllowColumnReorder) {
 						drag_x = me.X;
 						drag_column = (ColumnHeader) (clicked_column as ICloneable).Clone ();
-						drag_column.column_rect = clicked_column.Rect;
+						drag_column.Rect = clicked_column.Rect;
 						drag_to_index = GetReorderedIndex (clicked_column);
 					}
-					clicked_column.pressed = true;
+					clicked_column.Pressed = true;
 					Rectangle bounds = clicked_column.Rect;
 					bounds.X -= owner.h_marker;
 					Invalidate (bounds);
@@ -2374,9 +2374,9 @@ namespace System.Windows.Forms
 					if (owner.AllowColumnReorder) {
 						Rectangle r;
 
-						r = drag_column.column_rect;
+						r = drag_column.Rect;
 						r.X = clicked_column.Rect.X + me.X - drag_x;
-						drag_column.column_rect = r;
+						drag_column.Rect = r;
 
 						int x = me.X + owner.h_marker;
 						ColumnHeader over = ColumnAtX (x);
@@ -2389,9 +2389,9 @@ namespace System.Windows.Forms
 						Invalidate ();
 					} else {
 						ColumnHeader over = ColumnAtX (me.X + owner.h_marker);
-						bool pressed = clicked_column.pressed;
-						clicked_column.pressed = over == clicked_column;
-						if (clicked_column.pressed ^ pressed) {
+						bool pressed = clicked_column.Pressed;
+						clicked_column.Pressed = over == clicked_column;
+						if (clicked_column.Pressed ^ pressed) {
 							Rectangle bounds = clicked_column.Rect;
 							bounds.X -= owner.h_marker;
 							Invalidate (bounds);
@@ -2429,8 +2429,8 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				if (clicked_column != null && clicked_column.pressed) {
-					clicked_column.pressed = false;
+				if (clicked_column != null && clicked_column.Pressed) {
+					clicked_column.Pressed = false;
 					Rectangle bounds = clicked_column.Rect;
 					bounds.X -= owner.h_marker;
 					Invalidate (bounds);
@@ -2848,7 +2848,7 @@ namespace System.Windows.Forms
 			public virtual int Add (ColumnHeader value)
 			{
 				int idx;
-				value.owner = this.owner;
+				value.SetListView (this.owner);
 				idx = list.Add (value);
 				if (owner.IsHandleCreated) {
 					owner.Redraw (true); 
@@ -2908,7 +2908,7 @@ namespace System.Windows.Forms
 			public virtual void AddRange (ColumnHeader [] values)
 			{
 				foreach (ColumnHeader colHeader in values) {
-					colHeader.owner = this.owner;
+					colHeader.SetListView (this.owner);
 					Add (colHeader);
 				}
 				
@@ -3016,7 +3016,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				value.owner = this.owner;
+				value.SetListView (owner);
 				list.Insert (index, value);
 				owner.Redraw (true);
 			}

@@ -155,6 +155,13 @@ namespace System.Windows.Forms {
 				onCurrentChangedHandler (this, e);
 			}
 		}
+
+#if NET_2_0
+		protected override void OnCurrentItemChanged (EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 

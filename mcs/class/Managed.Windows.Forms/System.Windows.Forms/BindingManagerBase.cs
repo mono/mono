@@ -35,8 +35,9 @@ namespace System.Windows.Forms {
 		private BindingsCollection	bindings;
 		private bool pulling_data;
 
-#region Public Constructors
-		public BindingManagerBase() {
+		#region Public Constructors
+		public BindingManagerBase()
+		{
 		}
 		#endregion	// Public Constructors
 
@@ -75,7 +76,14 @@ namespace System.Windows.Forms {
 
 		public abstract void EndCurrentEdit();
 
+#if NET_2_0
+		public virtual PropertyDescriptorCollection GetItemProperties()
+		{
+			throw new NotImplementedException ();
+		}
+#else
 		public abstract PropertyDescriptorCollection GetItemProperties();
+#endif
 
 		public abstract void RemoveAt(int index);
 
@@ -90,12 +98,14 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		[MonoTODO]
-		protected internal virtual PropertyDescriptorCollection GetItemProperties(ArrayList dataSources, ArrayList listAccessors) {
+		protected internal virtual PropertyDescriptorCollection GetItemProperties(ArrayList dataSources, ArrayList listAccessors)
+		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual PropertyDescriptorCollection GetItemProperties(Type lisType, int offset, ArrayList dataSources, ArrayList listAccessors) {
+		protected virtual PropertyDescriptorCollection GetItemProperties(Type lisType, int offset, ArrayList dataSources, ArrayList listAccessors)
+		{
 			throw new NotImplementedException();
 		}
 
@@ -125,6 +135,23 @@ namespace System.Windows.Forms {
 				binding.PushData ();
 		}
 
+
+#if NET_2_0
+		protected void OnBindingComplete (BindingCompleteEventArgs e)
+		{
+			if (BindingComplete != null)
+				BindingComplete (this, e);
+		}
+
+		protected abstract void OnCurrentItemChanged (EventArgs e);
+
+		protected void OnDataError (Exception e)
+		{
+			if (DataError != null)
+				DataError (this, new BindingManagerDataErrorEventArgs (e));
+		}
+#endif	       
+
 		protected abstract void UpdateIsBinding();
 		#endregion	// Protected Instance Methods
 
@@ -145,6 +172,12 @@ namespace System.Windows.Forms {
 			add { onPositionChangedHandler += value; }
 			remove { onPositionChangedHandler -= value; }
 		}
+
+#if NET_2_0
+		public event BindingCompleteEventHandler BindingComplete;
+		public event EventHandler CurrentItemChanged;
+		public event BindingManagerDataErrorEventHandler DataError;
+#endif
 		#endregion	// Events
 	}
 }
