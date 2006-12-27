@@ -1522,6 +1522,8 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
+				owner.OnMouseDown(me);
+				
 				if (owner.items.Count == 0)
 					return;
 
@@ -1591,6 +1593,8 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseMove (object sender, MouseEventArgs me)
 			{
+				owner.OnMouseMove(me);
+				
 				if (PerformBoxSelection (new Point (me.X, me.Y)))
 					return;
 
@@ -1609,6 +1613,8 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
+				owner.OnMouseHover(e);
+				
 				if (Capture || !owner.HoverSelection)
 					return;
 
@@ -1625,6 +1631,8 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
 			{
+				owner.OnMouseUp(me);
+				
 				Capture = false;
 				if (owner.Items.Count == 0)
 					return;

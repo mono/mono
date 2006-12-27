@@ -1,3 +1,8 @@
+2006-12-26  Everaldo Canuto  <everaldo@simios.org>
+
+	* ListView.cs: Call owner.OnMousexx event to propagate events from
+	item to ListView. Fixes #80367.
+
 2006-12-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBox.cs: On 2.0, DropDownWidth throws ArgumentOutOfRangeException
