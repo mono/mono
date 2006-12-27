@@ -16,6 +16,7 @@
 ./Mono.Cairo/FontWeight.cs
 ./Mono.Cairo/Format.cs
 ./Mono.Cairo/Glyph.cs
+./Mono.Cairo/GlitzSurface.cs
 ./Mono.Cairo/Gradient.cs
 ./Mono.Cairo/HintMetrics.cs
 ./Mono.Cairo/HintStyle.cs
