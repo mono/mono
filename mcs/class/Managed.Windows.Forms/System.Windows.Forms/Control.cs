@@ -326,7 +326,7 @@ namespace System.Windows.Forms
 			}
 
 
-			internal int Count {
+			public int Count {
 				get { return list.Count; }
 			}
 

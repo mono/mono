@@ -1,5 +1,14 @@
 2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Control.cs: ControlCollection.Count must be public. Fixed build of
+	unit tests.
+
+2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListView.cs: Redraw when FullRowSelect is changed. Fixes bug #80379.
+
+2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ComboBox.cs: Mergable=>MergableProperty. Fixes build.
 
 2006-12-26  Everaldo Canuto  <everaldo@simios.org>
