@@ -1,3 +1,10 @@
+2006-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationElementCollection.cs : fixed BaseAdd() with
+	  throwIfExists to not raise an error for identical element
+	  but for different element which shares the same key. Fix by
+	  Konstantin Triger.
+
 2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationProperty.cs: fixed DefaultValue of type Enum

@@ -149,12 +149,16 @@ namespace System.Configuration
 
 		protected void BaseAdd (ConfigurationElement element, bool throwIfExists)
 		{
-			if (throwIfExists && BaseIndexOf (element) != -1)
-				throw new ConfigurationException ("Duplicate element in collection");
 			if (IsReadOnly ())
 				throw new ConfigurationErrorsException ("Collection is read only.");
 			
 			int old_index = IndexOfKey (GetElementKey (element));
+			if (old_index >= 0) {
+				if (element.Equals (list [old_index]))
+					return;
+				if (throwIfExists)
+					throw new ConfigurationException ("Duplicate element in collection");
+			}
 			if (IsAlternate) {
 				list.Insert (inheritedLimitIndex, element);
 				inheritedLimitIndex++;
