@@ -72,11 +72,13 @@ namespace System.Web.Util {
 			if (i == -1) {
 				w.Write (15); // types.Count
 #if TARGET_J2EE
-				((System.Web.J2EE.ObjectOutputStream)w.BaseStream).NativeStream.writeObject(value);
-#else
+				if (w.BaseStream is java.io.ObjectOutput) {
+					((java.io.ObjectOutput) w.BaseStream).writeObject (value);
+					return;
+				}
+#endif
 				BinaryFormatter bf = new BinaryFormatter ();
 				bf.Serialize (w.BaseStream, value);
-#endif
 				return;
 			}
 			
@@ -131,11 +133,11 @@ namespace System.Web.Util {
 		{
 			if (index == 15){
 #if TARGET_J2EE
-				return ((System.Web.J2EE.ObjectInputStream)r.BaseStream).NativeStream.readObject();
-#else
+				if (r.BaseStream is java.io.ObjectInput)
+					return ((java.io.ObjectInput) r.BaseStream).readObject ();
+#endif
 				BinaryFormatter bf = new BinaryFormatter ();
 				return bf.Deserialize (r.BaseStream);
-#endif
 			}
 			
 			object value = null;

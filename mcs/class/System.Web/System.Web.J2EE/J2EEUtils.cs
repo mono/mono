@@ -29,70 +29,12 @@ using System.IO;
 using vmw.@internal.io;
 using vmw.common;
 
-using javax.servlet;
-
 namespace System.Web.J2EE
 {
-	public class J2EEUtils
+	internal sealed class J2EEUtils
 	{
 		public J2EEUtils()
 		{
-		}
-
-		public static string GetApplicationRealPath(ServletConfig config) 
-		{
-			string realFs = config.getInitParameter(J2EEConsts.FILESYSTEM_ACCESS);
-			if(realFs == null || realFs == J2EEConsts.ACCESS_FULL)
-			{
-				try 
-				{
-					if(Path.IsPathRooted(config.getServletContext().getRealPath("")))
-						return config.getServletContext().getRealPath("").Replace("\\","/").TrimEnd('/');
-				}
-				catch (ArgumentException e)
-				{
-					Console.WriteLine(e.Message);
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message);
-				}
-			}
-			return IAppDomainConfig.WAR_ROOT_SYMBOL;
-		}
-
-		public static string GetApplicationPhysicalPath(ServletConfig config) {
-			string path = "";
-			ServletContext context = config.getServletContext();
-			string appDir = config.getInitParameter(IAppDomainConfig.APP_DIR_NAME);
-//			Console.WriteLine("appdir = {0}", appDir);
-			if (appDir != null)
-			{
-				try
-				{
-					java.io.File f = new java.io.File(appDir);
-					if(f.exists())
-					{
-//						Console.WriteLine("Physical path= {0}", appDir);
-						path = appDir;
-					}
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e.Message + appDir + "is invalid or unaccessible." +
-						" If " + appDir + " really exists, check your security permissions"); 
-				};
-			}			
-			if (path == "")
-			{
-				path = GetApplicationRealPath(config);
-			}
-
-			if (!path.EndsWith ("/") && !path.EndsWith ("\\"))
-				path += "/";
-
-//			Console.WriteLine("Physical path= {0}", path); 
-			return path;
 		}
 
 		public static int RunProc(string[] cmd)

@@ -37,9 +37,6 @@ public enum SessionStateMode
 #if NET_2_0
 	Custom = 4,
 #endif
-#if TARGET_J2EE
-	J2ee = 1024
-#endif
 }
 
 }

@@ -274,14 +274,9 @@
 		<Compile Include="System.Web.Hosting\VirtualFile.cs"/>
 		<Compile Include="System.Web.Hosting\VirtualFileBase.cs"/>
 		<Compile Include="System.Web.Hosting\VirtualPathProvider.cs"/>
-		<Compile Include="System.Web.J2EE\BaseHttpServlet.cs"/>
-		<Compile Include="System.Web.J2EE\BaseStaticHttpServlet.cs"/>
 		<Compile Include="System.Web.J2EE\J2EEConsts.cs"/>
 		<Compile Include="System.Web.J2EE\J2EEUtils.cs"/>
-		<Compile Include="System.Web.J2EE\ObjectInputStream.cs"/>
-		<Compile Include="System.Web.J2EE\ObjectOutputStream.cs"/>
 		<Compile Include="System.Web.J2EE\PageMapper.cs"/>
-		<Compile Include="System.Web.J2EE\SessionListener.cs"/>
 		<Compile Include="System.Web.Mail\Base64AttachmentEncoder.cs"/>
 		<Compile Include="System.Web.Mail\IAttachmentEncoder.cs"/>
 		<Compile Include="System.Web.Mail\MailAddress.cs"/>
@@ -375,27 +370,35 @@
 		<Compile Include="System.Web.Security\SqlRoleProvider.cs"/>
 		<Compile Include="System.Web.Security\UrlAuthorizationModule.cs"/>
 		<Compile Include="System.Web.Security\ValidatePasswordEventArgs.cs"/>
-		<Compile Include="System.Web.SessionState\IHttpSessionState.cs"/>
-		<Compile Include="System.Web.SessionState\IReadOnlySessionState.cs"/>
-		<Compile Include="System.Web.SessionState\IRequiresSessionState.cs"/>
-		<Compile Include="System.Web.SessionState\ISessionHandler.cs"/>
-		<Compile Include="System.Web.SessionState\ISessionIDManager.cs"/>
-		<Compile Include="System.Web.SessionState\ISessionStateItemCollection.cs"/>
-		<Compile Include="System.Web.SessionState\IStateRuntime.cs"/>
-		<Compile Include="System.Web.SessionState\RemoteStateServer.cs"/>
-		<Compile Include="System.Web.SessionState\SessionConfig.cs"/>
-		<Compile Include="System.Web.SessionState\SessionDictionary.cs"/>
-		<Compile Include="System.Web.SessionState\SessionId.cs"/>
-		<Compile Include="System.Web.SessionState\SessionSQLServerHandler.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateActions.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateItemExpireCallback.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateMode.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateModule.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateSectionHandler.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateServerHandler.cs"/>
-		<Compile Include="System.Web.SessionState\SessionStateStoreData.cs"/>
-		<Compile Include="System.Web.SessionState\StateRuntime.cs"/>
-		<Compile Include="System.Web.SessionState\StateServerItem.cs"/>
+		<Compile Include="System.Web.SessionState\IReadOnlySessionState.cs" />
+		<Compile Include="System.Web.SessionState\IRequiresSessionState.cs" />
+		<Compile Include="System.Web.SessionState\IStateRuntime.cs" />
+		<Compile Include="System.Web.SessionState\RemoteStateServer.cs" />
+		<Compile Include="System.Web.SessionState\SessionConfig.cs" />
+		<Compile Include="System.Web.SessionState\SessionDictionary.cs" />
+		<Compile Include="System.Web.SessionState\SessionId.cs" />
+		<Compile Include="System.Web.SessionState\SessionSQLServerHandler.cs" />
+		<Compile Include="System.Web.SessionState\SessionStateMode.cs" />
+		<Compile Include="System.Web.SessionState\StateRuntime.cs" />
+		<Compile Include="System.Web.SessionState\StateServerItem.cs" />
+		<Compile Include="System.Web.SessionState_2.0\HttpSessionState.cs" />
+		<Compile Include="System.Web.SessionState_2.0\HttpSessionStateContainer.cs" />
+		<Compile Include="System.Web.SessionState_2.0\IHttpSessionState.cs" />
+		<Compile Include="System.Web.SessionState_2.0\ISessionIDManager.cs" />
+		<Compile Include="System.Web.SessionState_2.0\ISessionStateItemCollection.cs" />
+		<Compile Include="System.Web.SessionState_2.0\RemoteStateServer.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionIDManager.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionInProcHandler.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionSQLServerHandler.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateActions.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateItemCollection.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateItemExpireCallback.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateModule.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateServerHandler.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateStoreData.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateStoreProviderBase.cs" />
+		<Compile Include="System.Web.SessionState_2.0\SessionStateUtility.cs" />
+		<Compile Include="System.Web.SessionState_2.0\StateServerItem.cs" />
 		<Compile Include="System.Web.UI.Adapters\ControlAdapter.cs"/>
 		<Compile Include="System.Web.UI.Adapters\PageAdapter.cs"/>
 		<Compile Include="System.Web.UI.Adapters\WmlPostFieldType.cs"/>
@@ -1116,9 +1119,6 @@
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Include="System.Web.Compilation\ThemeDirectoryCompiler.jvm.cs"/>
-		<Compile Include="System.Web.Hosting\ServletWorkerRequest.jvm.cs"/>
-		<Compile Include="System.Web.SessionState\HttpSessionState.jvm.cs"/>
-		<Compile Include="System.Web.SessionState\SessionInProcHandler.jvm.cs"/>
 		<Compile Include="System.Web.UI.HtmlControls\HtmlEmptyTagControlBuilder.cs">
 			<SubType>Code</SubType>
 		</Compile>
@@ -1321,14 +1321,6 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="j2ee">
-			<Private>False</Private>
-			<HintPath>..\lib\j2ee.dll</HintPath>
-		</Reference>
-		<Reference Include="J2EE.Helpers">
-			<Private>False</Private>
-			<HintPath>..\lib\J2EE.Helpers.dll</HintPath>
-		</Reference>
 		<Reference Include="J2SE.Helpers">
 			<Private>False</Private>
 			<HintPath>..\lib\J2SE.Helpers.dll</HintPath>
@@ -1362,7 +1354,7 @@
   -->
 	<ProjectExtensions>
 		<VisualStudio>
-			<UserProperties REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar"/>
+			<UserProperties REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar"/>
 		</VisualStudio>
 	</ProjectExtensions>
 </Project>
