@@ -766,6 +766,63 @@ namespace System.Windows.Forms
 				total = Rectangle.Union (item_rect, checkbox_rect);
 				bounds.Size = total.Size;
 				break;
+#if NET_2_0
+			case View.Tile:
+				label_rect = icon_rect = Rectangle.Empty;
+
+				if (owner.LargeImageList != null) {
+					icon_rect.Width = owner.LargeImageList.ImageSize.Width;
+					icon_rect.Height = owner.LargeImageList.ImageSize.Height;
+				}
+
+				int separation = 2;
+				SizeF tsize = owner.DeviceContext.MeasureString (Text, Font);
+
+				// Set initial values for subitem's layout
+				int total_height = (int)Math.Ceiling (tsize.Height);
+				int max_subitem_width = (int)Math.Ceiling (tsize.Width);
+				SubItems [0].bounds.Height = total_height;
+			
+				int count = Math.Min (owner.Columns.Count, SubItems.Count);
+				for (int i = 1; i < count; i++) { // Ignore first column and first subitem
+					ListViewSubItem sub_item = SubItems [i];
+					if (sub_item.Text == null || sub_item.Text.Length == 0)
+						continue;
+
+					tsize = owner.DeviceContext.MeasureString (sub_item.Text, sub_item.Font);
+				
+					int width = (int)Math.Ceiling (tsize.Width);
+				
+					if (width > max_subitem_width)
+						max_subitem_width = width;
+				
+					int height = (int)Math.Ceiling (tsize.Height);
+					total_height += height + separation;
+				
+					sub_item.bounds.Height = height;
+			
+				}
+
+				label_rect.X = icon_rect.Right + 4;
+				label_rect.Y = owner.TileSize.Height / 2 - total_height / 2;
+				label_rect.Width = max_subitem_width;
+				label_rect.Height = total_height;
+			
+				// Second pass for assigning bounds. This time take first subitem into account.
+				int current_y = label_rect.Y;
+				for (int j = 0; j < count; j++) {
+					ListViewSubItem sub_item = SubItems [j];
+					if (sub_item.Text == null || sub_item.Text.Length == 0)
+						continue;
+
+					sub_item.SetBounds (label_rect.X, current_y, max_subitem_width, sub_item.bounds.Height);
+					current_y += sub_item.Bounds.Height + separation;
+				}
+				
+				item_rect = Rectangle.Union (icon_rect, label_rect);
+				bounds.Size = item_rect.Size;
+				break;
+#endif
 			}
 			
 		}
@@ -788,6 +845,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 			private string name = String.Empty;
 			private object tag;
+			internal Rectangle bounds;
 #endif
 			
 			#region Public Constructors
@@ -820,6 +878,20 @@ namespace System.Windows.Forms
 					Invalidate ();
 				    }
 			}
+
+#if NET_2_0
+			public Rectangle Bounds {
+				get {
+					Rectangle retval = bounds;
+					if (owner != null) {
+						retval.X += owner.Bounds.X;
+						retval.Y += owner.Bounds.Y;
+					}
+
+					return retval;
+				}
+			}
+#endif
 
 			[Localizable (true)]
 			public Font Font {
@@ -907,6 +979,13 @@ namespace System.Windows.Forms
 
 				owner.owner.Invalidate ();
 			}
+
+#if NET_2_0
+			internal void SetBounds (int x, int y, int width, int height)
+			{
+				bounds = new Rectangle (x, y, width, height);
+			}
+#endif
 			#endregion // Private Methods
 		}
 

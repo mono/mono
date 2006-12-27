@@ -94,6 +94,9 @@ namespace System.Windows.Forms
 		private string keysearch_text;
 		static private readonly int keysearch_keydelay = 1000;
 		private int[] reordered_column_indices;
+#if NET_2_0
+		private Size tile_size;
+#endif
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -616,6 +619,21 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public Size TileSize {
+			get {
+				return tile_size;
+			}
+			set {
+				if (value.Width <= 0 || value.Height <= 0)
+					throw new ArgumentOutOfRangeException ("value");
+
+				tile_size = value;
+				Redraw (true);
+			}
+		}
+#endif
+
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem TopItem {
@@ -1023,11 +1041,31 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		Size TileItemSize {
+			get {
+				// Calculate tile size if needed
+				// It appears that using Font.Size instead of a SizeF value can give us
+				// a slightly better approach to the proportions defined in .Net
+				if (tile_size == Size.Empty) {
+					int image_w = LargeImageList == null ? 0 : LargeImageList.ImageSize.Width;
+					int image_h = LargeImageList == null ? 0 : LargeImageList.ImageSize.Height;
+					int w = (int)Font.Size * ThemeEngine.Current.ListViewTileWidthFactor + image_w + 4;
+					int h = Math.Max ((int)Font.Size * ThemeEngine.Current.ListViewTileHeightFactor, image_h);
+
+					tile_size = new Size (w, h);
+				}
+
+				return tile_size;
+			}
+		}
+#endif
+
 		int rows;
 		int cols;
 		ListViewItem[,] item_matrix;
 
-		void LayoutIcons (bool large_icons, bool left_aligned, int x_spacing, int y_spacing)
+		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			header_control.Visible = false;
 			header_control.Size = Size.Empty;
@@ -1037,8 +1075,7 @@ namespace System.Windows.Forms
 			if (items.Count == 0)
 				return;
 
-			Size sz = large_icons ? LargeIconItemSize : SmallIconItemSize;
-
+			Size sz = item_size;
 			Rectangle area = ClientRectangle;
 
 			if (left_aligned) {
@@ -1146,18 +1183,25 @@ namespace System.Windows.Forms
 				break;
 
 			case View.SmallIcon:
-				LayoutIcons (false, alignment == ListViewAlignment.Left, 4, 2);
+				LayoutIcons (SmallIconItemSize, alignment == ListViewAlignment.Left, 4, 2);
 				break;
 
 			case View.LargeIcon:
-				LayoutIcons (true, alignment == ListViewAlignment.Left,
+				LayoutIcons (LargeIconItemSize, alignment == ListViewAlignment.Left,
 					     ThemeEngine.Current.ListViewHorizontalSpacing,
 					     ThemeEngine.Current.ListViewVerticalSpacing);
 				break;
 
 			case View.List:
-				LayoutIcons (false, true, 4, 2);
+				LayoutIcons (SmallIconItemSize, true, 4, 2);
 				break;
+#if NET_2_0
+			case View.Tile:
+				LayoutIcons (TileItemSize, alignment == ListViewAlignment.Left, 
+						ThemeEngine.Current.ListViewHorizontalSpacing,
+						ThemeEngine.Current.ListViewVerticalSpacing);
+				break;
+#endif
 			}
 
                         CalculateScrollBars ();

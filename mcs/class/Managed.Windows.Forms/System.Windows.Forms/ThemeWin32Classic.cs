@@ -1722,7 +1722,7 @@ namespace System.Windows.Forms
 			}			
 			
 			// Draw corner between the two scrollbars
-			if (control.h_scroll.Visible == true && control.h_scroll.Visible == true) {
+			if (control.h_scroll.Visible == true && control.v_scroll.Visible == true) {
 				Rectangle rect = new Rectangle ();
 				rect.X = control.h_scroll.Location.X + control.h_scroll.Width;
 				rect.Width = control.v_scroll.Width;
@@ -1811,7 +1811,12 @@ namespace System.Windows.Forms
 			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
 			text_rect.X += col_offset;
 
+#if NET_2_0
+			// Tile view doesn't support CheckBoxes
+			if (control.CheckBoxes && control.View != View.Tile) {
+#else
 			if (control.CheckBoxes) {
+#endif
 				if (control.StateImageList == null) {
 					// Make sure we've got at least a line width of 1
 					int check_wd = Math.Max (3, rect_checkrect.Width / 6);
@@ -1857,8 +1862,11 @@ namespace System.Windows.Forms
 				}
 			}
 
-			ImageList image_list = control.View == View.LargeIcon ? control.LargeImageList : 
-				control.SmallImageList;
+			ImageList image_list = control.View == View.LargeIcon 
+#if NET_2_0
+				|| control.View == View.Tile
+#endif
+				? control.LargeImageList : control.SmallImageList;
 			if (image_list != null) {
 				int idx;
 
@@ -1908,6 +1916,25 @@ namespace System.Windows.Forms
 				(item.Selected && control.Focused) ? SystemBrushes.HighlightText :
 				this.ResPool.GetSolidBrush (item.ForeColor);
 
+#if NET_2_0
+			// Tile view renders its Text in a different fashion
+			if (control.View == View.Tile) {
+				// Item.Text is drawn using its first subitem's bounds
+				dc.DrawString (item.Text, item.Font, textBrush, item.SubItems [0].Bounds, format);
+
+				int count = Math.Min (control.Columns.Count, item.SubItems.Count);
+				for (int i = 1; i < count; i++) {
+					ListViewItem.ListViewSubItem sub_item = item.SubItems [i];
+					if (sub_item.Text == null || sub_item.Text.Length == 0)
+						continue;
+
+					Brush itemBrush = item.Selected && control.Focused ? 
+						SystemBrushes.HighlightText : GetControlForeBrush (sub_item.ForeColor);
+					dc.DrawString (sub_item.Text, sub_item.Font, itemBrush, sub_item.Bounds, format);
+				}
+			} else
+#endif
+			
 			if (item.Text != null && item.Text.Length > 0) {
 				if (item.Selected && control.Focused)
 					dc.DrawString (item.Text, item.Font, textBrush, highlight_rect, format);
@@ -1992,7 +2019,7 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
+
 			if (item.Focused && control.Focused) {				
 				Rectangle focus_rect = highlight_rect;
 				if (control.FullRowSelect && control.View == View.Details) {
@@ -2041,6 +2068,14 @@ namespace System.Windows.Forms
 
 		public override int ListViewGroupHeight { 
 			get { return 20; }
+		}
+
+		public override int ListViewTileWidthFactor {
+			get { return 22; }
+		}
+
+		public override int ListViewTileHeightFactor {
+			get { return 3; }
 		}
 		#endregion	// ListView
 		
