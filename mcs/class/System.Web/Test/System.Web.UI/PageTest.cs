@@ -1082,8 +1082,67 @@ namespace MonoTests.System.Web.UI {
 
 			#endregion
 		}
-#endif
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void RegisterRequiresPostBack ()  //Just flow and not implementation detail
+		{
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Init = RegisterRequiresPostBack_Init;
+			delegates.Load = RegisterRequiresPostBack_Load;
+			WebTest t = new WebTest (new PageInvoker (delegates));
+			string html = t.Run ();
+			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "__Page";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			html = t.Run ();
+
+			Assert.AreEqual ("CustomPostBackDataHandler2_LoadPostData", t.UserData, "RegisterRequiresPostBack#1");
+			t.UserData = null;
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "__Page";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			html = t.Run ();
+
+			Assert.AreEqual (null, t.UserData, "RegisterRequiresPostBack#2");
+		}
+
+		public static void RegisterRequiresPostBack_Init (Page p)
+		{
+			CustomPostBackDataHandler2 c = new CustomPostBackDataHandler2 ();
+			c.ID = "CustomPostBackDataHandler2";
+			p.Form.Controls.Add (c);
+		}
+
+		public static void RegisterRequiresPostBack_Load (Page p)
+		{
+			if (!p.IsPostBack)
+				p.RegisterRequiresPostBack (p.Form.FindControl ("CustomPostBackDataHandler2"));
+		}
+
+		class CustomPostBackDataHandler2 : WebControl, IPostBackDataHandler
+		{
+			#region IPostBackDataHandler Members
+
+			public bool LoadPostData (string postDataKey, global::System.Collections.Specialized.NameValueCollection postCollection) {
+				WebTest.CurrentTest.UserData = "CustomPostBackDataHandler2_LoadPostData";
+				return false;
+			}
+
+			public void RaisePostDataChangedEvent () {
+			}
+
+			#endregion
+		}
+#endif
 
 		[TestFixtureTearDown]
 		public void TearDown ()

@@ -1012,9 +1012,6 @@ public class Page : TemplateControl, IHttpHandler
 
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
-		if (!second)
-			_requiresPostBackCopy = (_requiresPostBack == null) ? null : (ArrayList) _requiresPostBack.Clone ();
-
 		if (data != null) {
 
 		Hashtable used = new Hashtable ();
@@ -1047,9 +1044,11 @@ public class Page : TemplateControl, IHttpHandler
 					if (requiresPostDataChanged == null)
 						requiresPostDataChanged = new ArrayList ();
 					requiresPostDataChanged.Add (pbdh);
-					if (_requiresPostBackCopy != null)
-						_requiresPostBackCopy.Remove (ctrl.UniqueID);
 				}
+				
+				if (_requiresPostBackCopy != null)
+					_requiresPostBackCopy.Remove (real_id);
+
 			} else if (!second) {
 				if (secondPostData == null)
 					secondPostData = new NameValueCollection ();
@@ -1502,7 +1501,7 @@ public class Page : TemplateControl, IHttpHandler
 				Pair vsr = sState.First as Pair;
 				if (vsr != null) {
 					LoadViewStateRecursive (vsr.First);
-					_requiresPostBack = vsr.Second as ArrayList;
+					_requiresPostBackCopy = vsr.Second as ArrayList;
 				}
 			}
 		}
