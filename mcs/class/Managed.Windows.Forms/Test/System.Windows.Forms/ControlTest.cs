@@ -46,6 +46,25 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		public class DoubleBufferControl : Control
+		{
+			public bool IsDoubleBuffered
+			{
+				get { return base.DoubleBuffered; }
+				set { base.DoubleBuffered = value; }
+			}
+
+			public bool GetControlStyle (ControlStyles style)
+			{
+				return base.GetStyle (style);
+			}
+
+			public void SetControlStyle (ControlStyles style, bool value)
+			{
+				base.SetStyle (style, value);
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void DoubleBufferTest ()
@@ -62,6 +81,53 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsFalse (f.failed, "#01");
 			Assert.IsTrue (f.painted, "The control was never painted, so please check the test");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DoubleBufferedTest ()
+		{
+			DoubleBufferControl c = new DoubleBufferControl ();
+			Assert.IsFalse (c.IsDoubleBuffered, "#A1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#A2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#A3");
+
+			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
+			Assert.IsTrue (c.IsDoubleBuffered, "#B1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#B2");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#B3");
+
+			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, false);
+			Assert.IsFalse (c.IsDoubleBuffered, "#C1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#C2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#C3");
+
+			c.SetControlStyle (ControlStyles.DoubleBuffer, true);
+			Assert.IsFalse (c.IsDoubleBuffered, "#D1");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#D2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#D3");
+
+			c.SetControlStyle (ControlStyles.DoubleBuffer, false);
+			Assert.IsFalse (c.IsDoubleBuffered, "#E1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#E2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#E3");
+
+			c.IsDoubleBuffered = true;
+			Assert.IsTrue (c.IsDoubleBuffered, "#F1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#F2");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#F3");
+
+			c.IsDoubleBuffered = false;
+			Assert.IsFalse (c.IsDoubleBuffered, "#G1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#G2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#G3");
+
+			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
+			c.SetControlStyle (ControlStyles.DoubleBuffer, true);
+			c.IsDoubleBuffered = false;
+			Assert.IsFalse (c.IsDoubleBuffered, "#H1");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#H2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#H3");
 		}
 #endif
 
@@ -564,7 +630,6 @@ namespace MonoTests.System.Windows.Forms
 			Rectangle M = new Rectangle(10, 20, 30 ,40);
 			r1.RectangleToScreen(M) ;
 			Assert.AreEqual( null , r1.Region , "#86");
-
 		}
 
 		[Test]
@@ -676,7 +741,7 @@ namespace MonoTests.System.Windows.Forms
 			c.Top = 5;
 			Assert.IsFalse (c.IsHandleCreated, "6");
 
-			c.Location = new Point (1,1);
+			c.Location = new Point (1, 1);
 			Assert.IsFalse (c.IsHandleCreated, "7");
 
 			c.Region = new Region ();
@@ -690,6 +755,25 @@ namespace MonoTests.System.Windows.Forms
 
 			c.Visible = !c.Visible;
 			Assert.IsFalse (c.IsHandleCreated, "11");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void IsHandleCreated_NotVisible ()
+		{
+			Control c = new Control ();
+			c.Visible = false;
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (c);
+			form.Show ();
+
+			Assert.IsFalse (c.IsHandleCreated, "#1");
+			c.Visible = true;
+			Assert.IsTrue (c.IsHandleCreated, "#2");
+			c.Visible = false;
+			Assert.IsTrue (c.IsHandleCreated, "#3");
 		}
 
 		[Test]
