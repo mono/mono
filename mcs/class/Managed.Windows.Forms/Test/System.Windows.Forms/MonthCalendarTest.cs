@@ -18,10 +18,31 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class MonthCalendarPropertiesTest : MonthCalendar
 	{
+		private bool clickRaised;
+		private bool doubleClickRaised;
+		
 		[Test]
-		public void Tester ()
+		public void ClickEventTest ()
 		{
+			Click += new EventHandler (OnClickHandler);
+			DoubleClick += new EventHandler (OnDoubleClickHandler);
+			OnClick (EventArgs.Empty);
+			OnDoubleClick (EventArgs.Empty);
+			
+			Assert.IsTrue (clickRaised, "Click event not raised");
+			Assert.IsTrue (doubleClickRaised, "DoubleClick event not raised");
 		}
+
+		void OnDoubleClickHandler (object sender, EventArgs e)
+		{
+			doubleClickRaised = true;
+		}
+
+		void OnClickHandler (object sender, EventArgs e)
+		{
+			clickRaised = true;
+		}
+		
 #if NET_2_0
 		[Test]
 		public void DefaultMarginTest ()
@@ -51,7 +72,7 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal1.AddAnnuallyBoldedDate (new DateTime (2005, 09, 01));
 			Assert.IsNotNull (myMonthCal1.AnnuallyBoldedDates, "#A0");
 			Assert.AreEqual (new DateTime (2005, 09, 01), myMonthCal1.AnnuallyBoldedDates.GetValue (0), "#A1");
-                     
+		
 			// B 
 			Assert.AreEqual ("Window", myMonthCal1.BackColor.Name, "#B1");
 			myMonthCal1.AddBoldedDate (new DateTime (2005, 09, 01));

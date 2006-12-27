@@ -1,3 +1,7 @@
+2006-12-27  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MonthCalendarTest.cs: Added test for Click and DoubleClick events.
+	
 2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ScrollableControlTest.cs: Added tests for AutoScroll and
