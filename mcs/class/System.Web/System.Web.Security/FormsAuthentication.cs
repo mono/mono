@@ -423,6 +423,11 @@ namespace System.Web.Security
 			return cookie;
 		}
 
+		internal static string ReturnUrl
+		{
+			get { return HttpContext.Current.Request ["RETURNURL"]; }
+		}
+
 		public static string GetRedirectUrl (string userName, bool createPersistentCookie)
 		{
 			if (userName == null)
@@ -430,7 +435,7 @@ namespace System.Web.Security
 
 			Initialize ();
 			HttpRequest request = HttpContext.Current.Request;
-			string returnUrl = request ["RETURNURL"];
+			string returnUrl = ReturnUrl;
 			if (returnUrl != null)
 				return returnUrl;
 

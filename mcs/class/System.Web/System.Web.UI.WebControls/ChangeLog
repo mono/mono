@@ -1,5 +1,9 @@
 2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Login.cs: fixed AuthenticateUser, should redirect to ReturnUrl when
+
+2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Parameter.cs: fixed ConvertValue to coorect handle TypeCode.Empty
 	* ObjectDataSourceView.cs: fixed MergeParameterValues,
 	call Parameter.ConvertValue

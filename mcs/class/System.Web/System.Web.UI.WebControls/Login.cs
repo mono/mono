@@ -1272,8 +1272,10 @@ namespace System.Web.UI.WebControls {
 				OnLoggedIn (EventArgs.Empty);
 
 				string url = DestinationPageUrl;
-				if (url.Length == 0 && Page.Request.UrlReferrer != null)
-					url = Page.Request.UrlReferrer.ToString();
+				if (Page.Request.Path.ToLower ().StartsWith (FormsAuthentication.LoginUrl.ToLower ()) &&
+					FormsAuthentication.ReturnUrl != null && 
+					FormsAuthentication.ReturnUrl.Length > 0)
+					Redirect (FormsAuthentication.ReturnUrl);
 				if (url.Length == 0 && FormsAuthentication.DefaultUrl != null)
 					url = FormsAuthentication.DefaultUrl;
 				if (url.Length == 0) {
