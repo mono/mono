@@ -1,3 +1,7 @@
+2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBox.cs: Mergable=>MergableProperty. Fixes build.
+
 2006-12-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* Control.cs: Invalidates control including when Width and Height is 

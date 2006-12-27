@@ -451,7 +451,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #if NET_2_0
-		[Mergable (false)]
+		[MergableProperty (false)]
 #endif
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
