@@ -67,7 +67,7 @@ namespace System.Web.SessionState {
 			}
 			return new String (res);
 		}
-
+#if !NET_2_0
 		internal static string Lookup (HttpRequest request, bool cookieless)
 		{
 			if (cookieless)
@@ -79,6 +79,7 @@ namespace System.Web.SessionState {
 
 			return cookie.Value;
 		}
+#endif
 	}
 
 }
