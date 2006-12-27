@@ -24,8 +24,6 @@
 //
 //
 
-// COMPLETE
-
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -36,10 +34,14 @@ namespace System.Windows.Forms {
 	[ProvideProperty("IconAlignment", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	[ProvideProperty("Error", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
-	public class ErrorProvider : Component, IExtenderProvider {
+#if NET_2_0
+	[ComplexBindingProperties ("DataSource", "DataMember")]
+#endif
+	public class ErrorProvider : Component, IExtenderProvider
+	{
 
-		private class ErrorWindow : UserControl {
-
+		private class ErrorWindow : UserControl
+		{
 			public ErrorWindow ()
 			{
 				SetStyle (ControlStyles.Selectable, false);
@@ -275,7 +277,8 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Public Constructors
-		public ErrorProvider() {
+		public ErrorProvider()
+		{
 			controls = new Hashtable();
 
 			blinkrate = 250;
@@ -285,7 +288,8 @@ namespace System.Windows.Forms {
 			tooltip = new ToolTip.ToolTipWindow();
 		}
 
-		public ErrorProvider(ContainerControl parentControl) : this() {
+		public ErrorProvider(ContainerControl parentControl) : this()
+		{
 			container = parentControl;
 		}
 		#endregion	// Public Constructors
@@ -341,7 +345,9 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		[DefaultValue(null)]
-#if !NET_2_0
+#if NET_2_0
+		[AttributeProvider (typeof (IListSource))]
+#else
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 #endif
 		public object DataSource {

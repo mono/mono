@@ -26,8 +26,6 @@
 //	Peter Bartok		<pbartok@novell.com>
 //
 
-// COMPLETE
-
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -37,6 +35,10 @@ using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	[Designer("System.Windows.Forms.Design.UpDownBaseDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class UpDownBase : System.Windows.Forms.ContainerControl {
 		#region UpDownSpinner Sub-class

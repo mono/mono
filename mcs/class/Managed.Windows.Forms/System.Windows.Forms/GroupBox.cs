@@ -29,17 +29,20 @@
 //
 //
 
-// COMPLETE
-
 using System.Drawing;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Text")]
 	[DefaultEvent("Enter")]
 	[Designer ("System.Windows.Forms.Design.GroupBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class GroupBox : Control
 	{
 		private FlatStyle flat_style;
@@ -232,7 +235,7 @@ namespace System.Windows.Forms
 				
 		#endregion Public Methods
 #if NET_2_0
-
+		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;

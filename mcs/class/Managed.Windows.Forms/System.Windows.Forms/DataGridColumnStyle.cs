@@ -231,6 +231,9 @@ namespace System.Windows.Forms
 
 		[Editor("System.Windows.Forms.Design.DataGridColumnStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
+#if NET_2_0
+		[DefaultValue ("")]
+#endif
 		public string MappingName {
 			get {
 				return mapping_name;

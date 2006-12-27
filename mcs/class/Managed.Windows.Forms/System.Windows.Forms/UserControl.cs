@@ -22,21 +22,22 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-//
-
-
-// COMPLETE
 
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultEvent("Load")]
 	[DesignerCategory("UserControl")]
 	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[Designer("System.Windows.Forms.Design.UserControlDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class UserControl : ContainerControl {
 		#region Public Constructors
 		public UserControl() {
@@ -120,10 +121,13 @@ namespace System.Windows.Forms {
 			base.OnResize (e);
 		}
 
-    	public virtual BorderStyle BorderStyle {
-    		get { return InternalBorderStyle; }
-    		set { InternalBorderStyle = value; }
-    	}
+		[Browsable (true)]
+		[DefaultValue (BorderStyle.None)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public BorderStyle BorderStyle {
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
+		}
 #endif
 	}
 }

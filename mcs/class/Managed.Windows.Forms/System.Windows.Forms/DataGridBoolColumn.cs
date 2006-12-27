@@ -92,6 +92,9 @@ namespace System.Windows.Forms
 		}
 
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
+#if NET_2_0
+		[DefaultValue (false)]
+#endif
 		public object FalseValue {
 			get {
 				return falsevalue;
@@ -122,6 +125,9 @@ namespace System.Windows.Forms
 		}
 
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
+#if NET_2_0
+		[DefaultValue (true)]
+#endif
 		public object TrueValue {
 			get {
 				return truevalue;

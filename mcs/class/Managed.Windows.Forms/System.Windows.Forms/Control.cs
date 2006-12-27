@@ -321,11 +321,13 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region	ControlCollection Public Instance Properties
-			public int Count
-			{
-				get {
-					return list.Count;
-				}
+			int ICollection.Count {
+				get { return Count; }
+			}
+
+
+			internal int Count {
+				get { return list.Count; }
 			}
 
 #if NET_2_0
@@ -500,24 +502,37 @@ namespace System.Windows.Forms
 				return Contains (value) || ImplicitContains (value);
 			}
 
-			public void CopyTo (Array array, int index)
+			void ICollection.CopyTo (Array array, int index)
+			{
+				CopyTo (array, index);
+			}
+
+			internal void CopyTo (Array array, int index)
 			{
 				list.CopyTo(array, index);
 			}
 
-			public override bool Equals(object other) {
+#if !NET_2_0
+			public override bool Equals (object other)
+			{
 				if (other is ControlCollection && (((ControlCollection)other).owner==this.owner)) {
 					return(true);
 				} else {
 					return(false);
 				}
 			}
+#endif
 
 			public int GetChildIndex(Control child) {
 				return GetChildIndex(child, false);
 			}
 
-			public int GetChildIndex(Control child, bool throwException) {
+#if NET_2_0
+			public virtual int
+#else
+			public int
+#endif
+			GetChildIndex(Control child, bool throwException) {
 				int index;
 
 				index=list.IndexOf(child);
@@ -528,7 +543,13 @@ namespace System.Windows.Forms
 				return index;
 			}
 
-			public IEnumerator GetEnumerator() {
+#if NET_2_0
+			public virtual IEnumerator
+#else
+			public IEnumerator
+#endif
+			GetEnumerator ()
+			{
 				return list.GetEnumerator();
 			}
 
@@ -555,15 +576,20 @@ namespace System.Windows.Forms
 				return all_controls;
 			}
 
-			public override int GetHashCode() {
+#if !NET_2_0
+			public override int GetHashCode()
+			{
 				return base.GetHashCode();
 			}
+#endif
 
-			public int IndexOf(Control control) {
+			public int IndexOf(Control control)
+			{
 				return list.IndexOf(control);
 			}
 
-			public virtual void Remove(Control value) {
+			public virtual void Remove(Control value)
+			{
 				if (value == null)
 					return;
 
@@ -590,14 +616,21 @@ namespace System.Windows.Forms
 				owner.UpdateChildrenZOrder ();
 			}
 
-			public void RemoveAt(int index) {
+			public void RemoveAt(int index)
+			{
 				if (index < 0 || index >= list.Count) {
 					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 				}
 				Remove ((Control)list[index]);
 			}
 
-			public void SetChildIndex(Control child, int newIndex) {
+#if NET_2_0
+			public virtual void
+#else
+			public void
+#endif
+			SetChildIndex(Control child, int newIndex)
+			{
 				if (child == null)
 					throw new ArgumentNullException ("child");
 
@@ -1703,7 +1736,11 @@ namespace System.Windows.Forms
 			}
 		}
 		
+#if NET_2_0
+		[AmbientValue ("{Width=0, Height=0}")]
+#else
 		[AmbientValue (typeof(Size), "0, 0")]
+#endif
 		public virtual Size MaximumSize {
 			get {
 				return maximum_size;
@@ -2002,6 +2039,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DefaultValue (null)]
 		public virtual ContextMenuStrip ContextMenuStrip {
 			get { return this.context_menu_strip; }
 			set { 
@@ -3234,7 +3272,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void Refresh() {			
-			if (IsHandleCreated == true) {
+			if (IsHandleCreated) {
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
 
@@ -5151,6 +5189,8 @@ namespace System.Windows.Forms
 		static object VisibleChangedEvent = new object ();
 
 #if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value);}
 			remove {Events.RemoveHandler (AutoSizeChangedEvent, value);}
@@ -5455,7 +5495,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		public event EventHandler PreviewKeyDown {
+		public event PreviewKeyDownEventHandler PreviewKeyDown {
 			add { Events.AddHandler (PreviewKeyDownEvent, value); }
 			remove { Events.RemoveHandler (PreviewKeyDownEvent, value); }
 		}

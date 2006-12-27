@@ -448,7 +448,10 @@ namespace System.Windows.Forms
 				fontMustExist = value;
 			}
 		}
-		
+
+#if NET_2_0
+		[DefaultValue ("Color [Black]")]
+#endif
 		public Color Color
 		{
 			set {

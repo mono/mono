@@ -25,14 +25,17 @@
 //
 
 
-// NOT COMPLETE
-
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control		active_control;
 		private Control		unvalidated_control;
@@ -168,6 +171,10 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[Localizable (true)]
 		public SizeF AutoScaleDimensions {
 			get {
 				return auto_scale_dimensions;
@@ -178,7 +185,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public SizeF AutoScaleFactor {
+		protected SizeF AutoScaleFactor {
 			get {
 				if (auto_scale_dimensions.IsEmpty) {
 					return new SizeF(1f, 1f);
@@ -190,7 +197,10 @@ namespace System.Windows.Forms {
 
 
 		[MonoTODO("Call scaling method")]
-		public virtual AutoScaleMode AutoScaleMode {
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public AutoScaleMode AutoScaleMode {
 			get {
 				return auto_scale_mode;
 			}
@@ -220,6 +230,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[MonoTODO("Revisit when System.Drawing.GDI.WindowsGraphics.GetTextMetrics is done or come up with other cross-plat avg. font width calc method")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public SizeF CurrentAutoScaleDimensions {
 			get {
 				switch(auto_scale_mode) {
@@ -457,6 +469,7 @@ namespace System.Windows.Forms {
 			base.OnParentChanged (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);

@@ -26,8 +26,6 @@
 //	Peter Bartok		<pbartok@novell.com>
 //
 
-// COMPLETE
-
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -40,6 +38,11 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedItemChanged")]
+#if NET_2_0
+	[DefaultBindingProperty ("SelectedItem")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class DomainUpDown : UpDownBase {
 		#region Local Variables
 		private DomainUpDownItemCollection	items;

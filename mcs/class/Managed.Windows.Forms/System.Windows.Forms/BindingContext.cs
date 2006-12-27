@@ -204,6 +204,10 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public event CollectionChangeEventHandler CollectionChanged {
 			add { throw new NotImplementedException (); }
 			remove { /* nothing to do here.. */ }

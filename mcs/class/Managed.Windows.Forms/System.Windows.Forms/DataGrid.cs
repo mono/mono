@@ -114,6 +114,11 @@ namespace System.Windows.Forms
 	[DefaultEvent("Navigate")]
 	[DefaultProperty("DataSource")]
 	[Designer("System.Windows.Forms.Design.DataGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ComplexBindingProperties ("DataSource", "DataMember")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class DataGrid : Control, ISupportInitialize, IDataGridEditingService
 	{
 		[Flags]
@@ -585,7 +590,9 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
-#if !NET_2_0
+#if NET_2_0
+		[AttributeProvider (typeof (IListSource))]
+#else
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 #endif
 		public object DataSource {

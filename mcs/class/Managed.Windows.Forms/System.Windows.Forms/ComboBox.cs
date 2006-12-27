@@ -23,8 +23,6 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Mike Kestner  <mkestner@novell.com>
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
-//
-// NOT COMPLETE
 
 using System;
 using System.Drawing;
@@ -42,6 +40,8 @@ namespace System.Windows.Forms
 	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0
+	[DefaultBindingProperty ("Text")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
 #endif
 	public class ComboBox : ListControl
@@ -169,6 +169,8 @@ namespace System.Windows.Forms
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public AutoCompleteStringCollection AutoCompleteCustomSource { 
 			get {
 				if(auto_complete_custom_source == null) {
@@ -447,7 +449,10 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
-		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]		
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#if NET_2_0
+		[Mergable (false)]
+#endif
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
 		}
@@ -649,6 +654,9 @@ namespace System.Windows.Forms
 		#endregion Public Properties
 
 		#region Public Methods
+#if NET_2_0
+		[Obsolete ("This method has been deprecated")]
+#endif
 		protected virtual void AddItemsCore (object[] value)
 		{
 			
@@ -976,16 +984,19 @@ namespace System.Windows.Forms
 			return base.ProcessKeyEventArgs (ref m);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
 			base.OnKeyDown (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnValidating (CancelEventArgs e)
 		{
 			base.OnValidating (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);

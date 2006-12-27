@@ -23,8 +23,6 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-// COMPLETE
-
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
@@ -32,7 +30,14 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-	public abstract class ButtonBase : Control {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[Designer ("System.Windows.Forms.Design.ButtonBaseDesigner, " + Consts.AssemblySystem_Design,
+		   "System.ComponentModel.Design.IDesigner")]
+#endif
+	public abstract class ButtonBase : Control
+	{
 		#region Local Variables
 		FlatStyle flat_style;
 		internal int			image_index;
@@ -220,6 +225,9 @@ namespace System.Windows.Forms {
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter(typeof(ImageIndexConverter))]
 		[MWFDescription("Index of image to display, if ImageList is used for button face images"), MWFCategory("Appearance")]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		public int ImageIndex {
 			get {
 				if (image_list==null) {
@@ -236,6 +244,9 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(null)]
 		[MWFDescription("ImageList used for ImageIndex"), MWFCategory("Appearance")]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		public ImageList ImageList {
 			get {
 				return image_list;
@@ -544,6 +555,7 @@ namespace System.Windows.Forms {
 			set { use_visual_style_back_color = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;
@@ -554,6 +566,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[SettingsBindable (true)]
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public override string Text {
 			get {
 				return base.Text;

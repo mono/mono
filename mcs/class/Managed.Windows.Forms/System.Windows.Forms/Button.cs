@@ -24,13 +24,18 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-// COMPLETE
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[Designer ("System.Windows.Forms.Design.ButtonBaseDesigner, " + Consts.AssemblySystem_Design,
+		   "System.ComponentModel.Design.IDesigner")]
+#endif
 	public class Button : ButtonBase, IButtonControl {
 		#region Local variables
 		DialogResult	dialog_result;
