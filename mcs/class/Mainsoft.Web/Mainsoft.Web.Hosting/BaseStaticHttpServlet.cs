@@ -57,20 +57,15 @@ namespace System.Web.J2EE
 		{
 			String pathInfo = req.getRequestURI();
 			String contextPath = req.getContextPath();
-			if (pathInfo.Equals(contextPath) ||
-				((pathInfo.Length - contextPath.Length) == 1) && pathInfo[pathInfo.Length-1] == '/' && pathInfo.StartsWith(contextPath))
-				pathInfo = contextPath + req.getServletPath();
+
+			pathInfo = getServletContext().getRealPath(req.getServletPath());
 			resp.setHeader("X-Powered-By", "ASP.NET");
 			resp.setHeader("X-AspNet-Version", "1.1.4322");
 
 			ServletOutputStream hos = resp.getOutputStream();
-			String filename = "";
+			String filename = pathInfo;
 			try 
 			{
-				pathInfo = pathInfo.Substring(contextPath.Length);
-				if (pathInfo.StartsWith("/") || pathInfo.StartsWith("\\"))
-					pathInfo = pathInfo.Substring(1);
-				filename = AppDir + pathInfo;
 				resp.setContentType(this.getServletContext().getMimeType(filename));
 				FileStream fis = null;
 				try {
