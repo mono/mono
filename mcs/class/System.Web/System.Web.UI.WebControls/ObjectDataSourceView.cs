@@ -983,7 +983,7 @@ namespace System.Web.UI.WebControls
 				if (oldValues != null) {
 					object value = FindValueByName (p.Name, oldValues, true);
 					if (value != null) {
-						object dataValue = Convert.ChangeType (value, p.Type);
+						object dataValue = p.ConvertValue (value);
 						mergedValues [FormatOldParameter (p.Name)] = dataValue;
 						oldAdded = true;
 					}
@@ -993,7 +993,7 @@ namespace System.Web.UI.WebControls
 				if (values != null) {
 					object value = FindValueByName (p.Name, values, false);
 					if (value != null) {
-						object dataValue = Convert.ChangeType (value, p.Type);
+						object dataValue = p.ConvertValue (value);
 						mergedValues [p.Name] = dataValue;
 						newAdded = true;
 					}
@@ -1052,7 +1052,7 @@ namespace System.Web.UI.WebControls
 				else if (ConvertNullToDBNull)
 					return DBNull.Value;
 			}
-			if (targetType == TypeCode.Object)
+			if (targetType == TypeCode.Object || targetType == TypeCode.Empty)
 				return value;
 			else
 				return Convert.ChangeType (value, targetType);

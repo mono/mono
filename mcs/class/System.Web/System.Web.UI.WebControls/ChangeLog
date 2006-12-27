@@ -1,3 +1,14 @@
+2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Parameter.cs: fixed ConvertValue to coorect handle TypeCode.Empty
+	* ObjectDataSourceView.cs: fixed MergeParameterValues,
+	call Parameter.ConvertValue
+	fixed ConvertParameter to hanlde TypeCode.Empty
+	* SqlDataSourceView.cs: fixed InitializeParameters,
+	call Parameter.ConvertValue
+	fixed ParameterPrefix property
+	fixed CreateDbParameter, added usege of ParameterPrefix
+
 2006-12-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ListControl.cs: fixed: when is used with DataSourceID data bind is not 

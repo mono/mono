@@ -263,12 +263,12 @@ namespace System.Web.UI.WebControls {
 			return newValue;
 		}
 		
-		object ConvertValue (object val)
+		internal object ConvertValue (object val)
 		{
 			if (val == null) return null;
 			if (ConvertEmptyStringToNull && val.Equals (string.Empty))
 				return null;
-			return Convert.ChangeType (val, Type);
+			return Type != TypeCode.Empty ? Convert.ChangeType (val, Type) : val;
 		}
 		
 		protected internal virtual void SetDirty()

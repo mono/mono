@@ -376,7 +376,7 @@ namespace System.Web.UI.WebControls {
 					value = FindValueByName (p, oldValues, true);
 
 				if (value != null) {
-					object dbValue = Convert.ChangeType (value, p.Type);
+					object dbValue = p.ConvertValue (value);
 					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
 				else if (allwaysAddNewValues) {
@@ -406,7 +406,7 @@ namespace System.Web.UI.WebControls {
 		private DbParameter CreateDbParameter (string name, object value, ParameterDirection dir, int size)
 		{
 			DbParameter dbp = factory.CreateParameter ();
-			dbp.ParameterName = name;
+			dbp.ParameterName = ParameterPrefix + name;
 			dbp.Value = value;
 			dbp.Direction = dir;
 			if (size != -1)
@@ -632,7 +632,14 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		protected virtual string ParameterPrefix {
-			get { return "@"; }
+			get {
+				switch (owner.ProviderName) {
+					case "":
+					case "System.Data.SqlClient": return "@";
+					case "System.Data.OracleClient": return ":";
+				}
+				return "";
+			}
 		}
 
 		StateBag viewState;
