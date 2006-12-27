@@ -46,7 +46,13 @@ namespace Mainsoft.Web.SessionState
 			actions = SessionStateActions.None;
 			if (id == null)
 				return null;
-			return (SessionStateStoreData) GetWorkerRequest (context).ServletRequest.getSession (false).getAttribute (J2EEConsts.SESSION_STATE);
+			ServletSessionStateItemCollection sessionState = (ServletSessionStateItemCollection) GetWorkerRequest (context).ServletRequest.getSession (false).getAttribute (J2EEConsts.SESSION_STATE);
+			if (sessionState == null)
+				return null;
+			return new SessionStateStoreData (
+				sessionState,
+				sessionState.StaticObjects,
+				10);
 		}
 
 		public override SessionStateStoreData GetItemExclusive (HttpContext context, string id, out bool locked, out TimeSpan lockAge, out object lockId, out SessionStateActions actions) {
@@ -72,7 +78,8 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override bool SetItemExpireCallback (SessionStateItemExpireCallback expireCallback) {
-			throw new Exception ();
+			return true;
+			//throw new Exception ();
 		}
 	}
 }
