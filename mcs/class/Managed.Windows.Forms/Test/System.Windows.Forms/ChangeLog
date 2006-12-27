@@ -1,3 +1,9 @@
+2006-12-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButtonTest.cs, ToolStripComboBoxTest.cs, ToolStripControlHostTest.cs,
+	ToolStripItemTest.cs, ToolStripLabelTest.cs, ToolStripProgressBarTest.cs,
+	ToolStripSeparatorTest.cs, ToolStripTest.cs, ToolStripTextBoxTest.cs: Added.
+
 2006-12-27  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MonthCalendarTest.cs: Added test for Click and DoubleClick events.

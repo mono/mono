@@ -80,6 +80,15 @@ System.Windows.Forms/TestImageIndexConverter.cs
 System.Windows.Forms/TextBoxTest.cs
 System.Windows.Forms/ToolBarTest.cs
 System.Windows.Forms/ToolBarButtonTest.cs
+System.Windows.Forms/ToolStripButtonTest.cs
+System.Windows.Forms/ToolStripComboBoxTest.cs
+System.Windows.Forms/ToolStripControlHostTest.cs
+System.Windows.Forms/ToolStripItemTest.cs
+System.Windows.Forms/ToolStripLabelTest.cs
+System.Windows.Forms/ToolStripProgressBarTest.cs
+System.Windows.Forms/ToolStripSeparatorTest.cs
+System.Windows.Forms/ToolStripTest.cs
+System.Windows.Forms/ToolStripTextBoxTest.cs
 System.Windows.Forms/ToolTipTest.cs
 System.Windows.Forms/TrackBarTest.cs
 System.Windows.Forms/TreeNodeCollectionTest.cs
