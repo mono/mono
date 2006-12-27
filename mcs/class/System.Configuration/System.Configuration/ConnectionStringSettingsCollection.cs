@@ -49,7 +49,8 @@ namespace System.Configuration
                                 foreach (ConfigurationElement c in this) {
                                         if (!(c is ConnectionStringSettings))
                                                 continue;
-                                        if (((ConnectionStringSettings) c).Name.Equals (Name))
+                                        if (string.Compare(((ConnectionStringSettings) c).Name, Name, true, 
+                                                System.Globalization.CultureInfo.InvariantCulture) == 0)
                                                 return c as ConnectionStringSettings;
 
                                 }
