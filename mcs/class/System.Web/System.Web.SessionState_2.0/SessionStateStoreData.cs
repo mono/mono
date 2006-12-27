@@ -39,7 +39,7 @@ namespace System.Web.SessionState {
 		HttpStaticObjectsCollection staticObjects;
 		int timeout;
 
-		internal SessionStateStoreData (ISessionStateItemCollection items,
+		public SessionStateStoreData (ISessionStateItemCollection items,
 						HttpStaticObjectsCollection objects,
 						int timeout)
 		{

@@ -1,3 +1,11 @@
+2006-12-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* SessionIDManager.cs: Pass config to SessionStateModule.IsCookieLess.
+	* SessionStateStoreData.cs: fix constructor signature.
+	* SessionInProcHandler.cs, SessionStateServerHandler.cs: ensure has a default
+		constructor to make instantiating same as for custom provider.
+	* SessionStateModule.cs: support custom providers.
+
 2006-12-20  Marek Habersack  <grendello@gmail.com>
 	* SessionStateServerHandler.cs:
 	implemented for the 2.0 model.

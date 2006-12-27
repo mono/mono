@@ -38,235 +38,131 @@ using System.Web.Util;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Threading;
+using System.Configuration;
 
 namespace System.Web.SessionState
-{
-	class CallbackState
-	{
-		public HttpContext Context;
-		public AutoResetEvent AutoEvent;
-
-		public CallbackState (HttpContext context, AutoResetEvent e)
-		{
-			this.Context = context;
-			this.AutoEvent = e;
-		}
-	}
-	
+{	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class SessionStateModule : IHttpModule
 	{
+		class CallbackState
+		{
+			public readonly HttpContext Context;
+			public readonly AutoResetEvent AutoEvent;
+			public readonly string SessionId;
+			public readonly bool IsReadOnly;
+
+			public CallbackState (HttpContext context, AutoResetEvent e, string sessionId, bool isReadOnly) {
+				this.Context = context;
+				this.AutoEvent = e;
+				this.SessionId = sessionId;
+				this.IsReadOnly = isReadOnly;
+			}
+		}
+
 		internal const string HeaderName = "AspFilterSessionId";
 		internal const string CookielessFlagName = "_SessionIDManager_IsCookieLess";
-		
-		static object locker = new object ();
-		
-		internal static string CookieName {
-			get {
-				config = GetConfig ();
-				if (config == null)
-					return null;
-				return config.CookieName;
-			}
-		}
-				
-#if TARGET_J2EE		
-		static private SessionStateSection config {
-			get {
-				return (SessionStateSection) AppDomain.CurrentDomain.GetData ("SessionStateModule.config");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData ("SessionStateModule.config", value);
-			}
-		}
-		
-		static private Type handlerType
-		{
-			get {
-				return (Type) AppDomain.CurrentDomain.GetData ("SessionStateModule.handlerType");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData ("SessionStateModule.handlerType", value);
-			}
-		}
-		
-		static private Type idManagerType
-		{
-			get {
-				return (Type) AppDomain.CurrentDomain.GetData ("SessionStateModule.idManagerType");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData ("SessionStateModule.idManagerType", value);
-			}
-		}
-#else
-		static SessionStateSection config;
-		static Type handlerType;
-		static Type idManagerType;
-#endif		
+
+		SessionStateSection config;
+
 		SessionStateStoreProviderBase handler;
 		ISessionIDManager idManager;
+		bool supportsExpiration;
+
 		HttpApplication app;
-		
+
 		// Store state
 		bool storeLocked;
 		TimeSpan storeLockAge;
-		object storeLockId = new object();
+		object storeLockId;
 		SessionStateActions storeSessionAction;
-		SessionStateStoreData storeData;
 
 		// Session state
-		bool isReadOnly;
-		bool isNew;
-		bool supportSessionIDReissue;
-		bool supportsExpiration;
-		string sessionId;
+		SessionStateStoreData storeData;
 		HttpSessionStateContainer container;
-		
+
 		// config
-		static TimeSpan executionTimeout;
-		static int executionTimeoutMS;
+		TimeSpan executionTimeout;
+		int executionTimeoutMS;
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		public SessionStateModule ()
-		{
+		public SessionStateModule () {
 		}
 
-		public void Dispose ()
-		{
-		    if (handler!=null)
-			handler.Dispose();
+		public void Dispose () {
+			handler.Dispose ();
 		}
 
-		static SessionStateSection GetConfig ()
-		{
-			lock (locker) {
-				if (config != null)
-					return config;
-
-				config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
-				SessionStateMode handlerMode = config.Mode;
-				
-#if TARGET_J2EE
-				if (handlerMode == SessionStateMode.SQLServer || handlerMode == SessionStateMode.StateServer)
-					throw new NotImplementedException("You must use web.xml to specify session state handling");
-#endif
-				InitTypesFromConfig (config, handlerMode);
-				HttpRuntimeSection runtime = WebConfigurationManager.GetSection ("system.web/httpruntime") as HttpRuntimeSection;
-				if (runtime != null) {
-					executionTimeout = runtime.ExecutionTimeout;
-					executionTimeoutMS = executionTimeout.Milliseconds;
-				}
-				
-				return config;
-			}
-		}
-
-		static void InitTypesFromConfig (SessionStateSection config, SessionStateMode handlerMode)
-		{
- 			if (handlerMode == SessionStateMode.StateServer)
- 				handlerType = typeof (SessionStateServerHandler);
-
-// 			if (handlerMode == SessionStateMode.SQLServer)
-// 				handlerType = typeof (SessionSQLServerHandler);
-			
-			if (handlerMode == SessionStateMode.InProc)
-				handlerType = typeof (SessionInProcHandler);
-
-			if (handlerMode == SessionStateMode.Custom)
-				handlerType = GetCustomHandlerType (config);
-			
-			try {
-				idManagerType = Type.GetType (config.SessionIDManagerType, true);
-			} catch {
-				idManagerType = typeof (SessionIDManager);
-			} 
-		}
-
-		static Type GetCustomHandlerType (SessionStateSection config)
-		{
-			return null;
-		}
-		
 		[EnvironmentPermission (SecurityAction.Assert, Read = "MONO_XSP_STATIC_SESSION")]
-		public void Init (HttpApplication app)
-		{
-			SessionStateSection cfg = GetConfig ();
+		public void Init (HttpApplication app) {
+
+			config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
+
+			ProviderSettings settings;
+			switch (config.Mode) {
+			case SessionStateMode.Custom:
+				settings = config.Providers [config.CustomProvider];
+				if (settings == null)
+					throw new HttpException (String.Format ("Cannot find '{0}' provider.", config.CustomProvider));
+				break;
+			case SessionStateMode.InProc:
+				settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
+				break;
+			case SessionStateMode.Off:
+				return;
+			case SessionStateMode.SQLServer:
+			//settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
+			//break;
+			default:
+				throw new NotImplementedException (String.Format ("The mode '{0}' is not implemented.", config.Mode));
+			case SessionStateMode.StateServer:
+				settings = new ProviderSettings (null, typeof (SessionStateServerHandler).AssemblyQualifiedName);
+				break;
+			}
+
+			handler = (SessionStateStoreProviderBase) ProvidersHelper.InstantiateProvider (settings, typeof (SessionStateStoreProviderBase));
+
+			try {
+				Type idManagerType;
+				try {
+					idManagerType = Type.GetType (config.SessionIDManagerType, true);
+				}
+				catch {
+					idManagerType = typeof (SessionIDManager);
+				}
+				idManager = Activator.CreateInstance (idManagerType) as ISessionIDManager;
+				idManager.Initialize ();
+			}
+			catch (Exception ex) {
+				throw new HttpException ("Failed to initialize session ID manager.", ex);
+			}
+
+			supportsExpiration = handler.SetItemExpireCallback (OnSessionExpired);
+			HttpRuntimeSection runtime = WebConfigurationManager.GetSection ("system.web/httpruntime") as HttpRuntimeSection;
+			executionTimeout = runtime.ExecutionTimeout;
+			executionTimeoutMS = executionTimeout.Milliseconds;
+
 			this.app = app;
-			if (handlerType == null || idManagerType == null)
-				throw new HttpException ("Cannot initialize the session state module. Missing handler or ID manager types.");
+
 			app.BeginRequest += new EventHandler (OnBeginRequest);
 			app.AcquireRequestState += new EventHandler (OnAcquireRequestState);
 			app.ReleaseRequestState += new EventHandler (OnReleaseRequestState);
 			app.EndRequest += new EventHandler (OnEndRequest);
-
-			if (handler == null) {
-				try {
-					handler = Activator.CreateInstance (handlerType, new object [] {cfg}) as SessionStateStoreProviderBase;
-					handler.Initialize (GetHandlerName (), GetHandlerConfig ());
-				} catch (Exception ex) {
-					throw new HttpException ("Failed to initialize session storage provider.", ex);
-				}
-			}
-
-			if (idManager == null) {
-				try {
-					idManager = Activator.CreateInstance (idManagerType) as ISessionIDManager;
-					idManager.Initialize ();
-				} catch (Exception ex) {
-					throw new HttpException ("Failed to initialize session ID manager.", ex);
-				}
-			}
 		}
 
-		string GetHandlerName ()
-		{
-			switch (config.Mode) {
-				case SessionStateMode.InProc:
-				case SessionStateMode.StateServer:
-				case SessionStateMode.SQLServer:
-					return null; // set by the handler
-
-				case SessionStateMode.Custom:
-					return "Custom Session State Handler";
-
-				default:
-					throw new HttpException ("Unknown session handler mode.");
-			}
-		}
-
-		NameValueCollection GetHandlerConfig ()
-		{
-			switch (config.Mode) {
-				case SessionStateMode.InProc:
-				case SessionStateMode.StateServer:
-				case SessionStateMode.SQLServer:
-					return new NameValueCollection ();
-
-				// TODO: implement
-				case SessionStateMode.Custom:
-					return new NameValueCollection ();
-
-				default:
-					throw new HttpException ("Unknown session handler mode.");
-			}
-		}
-
-		internal static bool IsCookieLess (HttpContext context)
-                {
-                        if (config.Cookieless == HttpCookieMode.UseCookies)
-                                return false;
+		internal static bool IsCookieLess (HttpContext context, SessionStateSection config) {
+			if (config.Cookieless == HttpCookieMode.UseCookies)
+				return false;
 			if (config.Cookieless == HttpCookieMode.UseUri)
 				return true;
-                        object cookieless = context.Items [CookielessFlagName];
-                        if (cookieless == null)
-                                return false;
-                        return (bool)cookieless;
-                }
-		
-		void OnBeginRequest (object o, EventArgs args)
-		{
+			object cookieless = context.Items [CookielessFlagName];
+			if (cookieless == null)
+				return false;
+			return (bool) cookieless;
+		}
+
+		void OnBeginRequest (object o, EventArgs args) {
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 			string base_path = context.Request.BaseVirtualDir;
@@ -274,15 +170,14 @@ namespace System.Web.SessionState
 
 			if (id == null)
 				return;
-			
+
 			string new_path = UrlUtils.RemoveSessionId (base_path, context.Request.FilePath);
 			context.Request.SetFilePath (new_path);
 			context.Request.SetHeader (HeaderName, id);
 			context.Response.SetAppPathModifier (String.Concat ("(", id, ")"));
 		}
 
-		void OnAcquireRequestState (object o, EventArgs args)
-		{
+		void OnAcquireRequestState (object o, EventArgs args) {
 #if TRACE
 			Console.WriteLine ("SessionStateModule.OnAcquireRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
 #endif
@@ -295,94 +190,103 @@ namespace System.Web.SessionState
 #endif
 				return;
 			}
-			isReadOnly = (context.Handler is IReadOnlySessionState);			
-			
-			if (idManager != null) {
-				if (idManager.InitializeRequest (context, false, out supportSessionIDReissue))
-					return; // Redirected, will come back here in a while
-				sessionId = idManager.GetSessionID (context);
-			}
-			
- 			if (handler != null) {
-				handler.InitializeRequest (context);
-				GetStoreData (context);
-				if (storeData == null && !storeLocked) {
-					isNew = true;
-					sessionId = idManager.CreateSessionID (context);
+			bool isReadOnly = (context.Handler is IReadOnlySessionState);
+
+			bool supportSessionIDReissue;
+			if (idManager.InitializeRequest (context, false, out supportSessionIDReissue))
+				return; // Redirected, will come back here in a while
+			string sessionId = idManager.GetSessionID (context);
+
+
+			handler.InitializeRequest (context);
+
+			GetStoreData (context, sessionId, isReadOnly);
+
+			bool isNew = false;
+			if (storeData == null && !storeLocked) {
+				isNew = true;
+				sessionId = idManager.CreateSessionID (context);
 #if TRACE
-					Console.WriteLine ("New session ID allocated: {0}", sessionId);
+				Console.WriteLine ("New session ID allocated: {0}", sessionId);
 #endif
-					bool redirected = false;
-					bool cookieAdded = false;
-					idManager.SaveSessionID (context, sessionId, out redirected, out cookieAdded);
-					if (redirected) {
-						if (supportSessionIDReissue)
-							handler.CreateUninitializedItem (context, sessionId, config.Timeout.Minutes);
-						context.Response.End();
-						return;
-					} else
-						storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
-				} else if (storeData == null && storeLocked) {
-					WaitForStoreUnlock (context);
-				} else if (storeData != null &&
-					   !storeLocked &&
-					   storeSessionAction == SessionStateActions.InitializeItem &&
-					   IsCookieLess (context)) {
-					storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
+				bool redirected;
+				bool cookieAdded;
+				idManager.SaveSessionID (context, sessionId, out redirected, out cookieAdded);
+				if (redirected) {
+					if (supportSessionIDReissue)
+						handler.CreateUninitializedItem (context, sessionId, config.Timeout.Minutes);
+					context.Response.End ();
+					return;
 				}
-				
-				SessionSetup (context, isNew);
+				else
+					storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
 			}
+			else if (storeData == null && storeLocked) {
+				WaitForStoreUnlock (context, sessionId, isReadOnly);
+			}
+			else if (storeData != null &&
+				 !storeLocked &&
+				 storeSessionAction == SessionStateActions.InitializeItem &&
+				 IsCookieLess (context, config)) {
+				storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
+			}
+
+			SessionSetup (sessionId, isNew, isReadOnly);
 		}
-		
-		void OnReleaseRequestState (object o, EventArgs args)
-		{
+
+		void OnReleaseRequestState (object o, EventArgs args) {
+
 #if TRACE
 			Console.WriteLine ("SessionStateModule.OnReleaseRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
-			Console.WriteLine ("\tsessionId == {0}", sessionId);
 #endif
-			if (handler == null)
-				return;
 
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 			if (!(context.Handler is IRequiresSessionState))
 				return;
+
 #if TRACE
+			Console.WriteLine ("\tsessionId == {0}", container.SessionID);
 			Console.WriteLine ("\trequest path == {0}", context.Request.FilePath);
 			Console.WriteLine ("\tHandler ({0}) requires session state", context.Handler);
 #endif
-			
-			if (!container.IsAbandoned) {
+			try {
+				if (!container.IsAbandoned) {
 #if TRACE
-				Console.WriteLine ("\tnot abandoned");
+					Console.WriteLine ("\tnot abandoned");
 #endif
-				if (!isReadOnly) {
+					if (!container.IsReadOnly) {
 #if TRACE
-					Console.WriteLine ("\tnot read only, storing and releasing");
+						Console.WriteLine ("\tnot read only, storing and releasing");
 #endif
-					handler.SetAndReleaseItemExclusive (context, sessionId, storeData, storeLockId, false);
-				} else {
+						handler.SetAndReleaseItemExclusive (context, container.SessionID, storeData, storeLockId, false);
+					}
+					else {
 #if TRACE
-					Console.WriteLine ("\tread only, releasing");
+						Console.WriteLine ("\tread only, releasing");
 #endif
-					handler.ReleaseItemExclusive (context, sessionId, storeLockId);
+						handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
+					}
+					handler.ResetItemTimeout (context, container.SessionID);
 				}
-				handler.ResetItemTimeout (context, sessionId);
-			} else {
-				handler.ReleaseItemExclusive (context, sessionId, storeLockId);
-				handler.RemoveItem (context, sessionId, storeLockId, storeData);
+				else {
+					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
+					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
+				}
+				SessionStateUtility.RemoveHttpSessionStateFromContext (context);
+				if (supportsExpiration)
+					SessionStateUtility.RaiseSessionEnd (container, o, args);
 			}
-			SessionStateUtility.RemoveHttpSessionStateFromContext (context);
-			if (supportsExpiration)
-				SessionStateUtility.RaiseSessionEnd (container, o, args);
+			finally {
+				container = null;
+				storeData = null;
+			}
 		}
 
-		void OnEndRequest (object o, EventArgs args)
-		{
+		void OnEndRequest (object o, EventArgs args) {
 			if (handler == null)
 				return;
-			
+
 			HttpApplication application = o as HttpApplication;
 			if (application == null)
 				return;
@@ -390,82 +294,73 @@ namespace System.Web.SessionState
 				handler.EndRequest (application.Context);
 		}
 
-		void GetStoreData (HttpContext context)
-		{
-			if (sessionId == null)
-				return;
-			
-			if (isReadOnly)
-				storeData = handler.GetItem (context,
-							     sessionId,
-							     out storeLocked,
-							     out storeLockAge,
-							     out storeLockId,
-							     out storeSessionAction);
-			else
-				storeData = handler.GetItemExclusive (context,
-								      sessionId,
-								      out storeLocked,
-								      out storeLockAge,
-								      out storeLockId,
-								      out storeSessionAction);
+		void GetStoreData (HttpContext context, string sessionId, bool isReadOnly) {
+			storeData = (isReadOnly) ?
+				handler.GetItem (context,
+								 sessionId,
+								 out storeLocked,
+								 out storeLockAge,
+								 out storeLockId,
+								 out storeSessionAction)
+								 :
+				handler.GetItemExclusive (context,
+									  sessionId,
+									  out storeLocked,
+									  out storeLockAge,
+									  out storeLockId,
+									  out storeSessionAction);
 		}
-		
-		void WaitForStoreUnlock (HttpContext context)
-		{
+
+		void WaitForStoreUnlock (HttpContext context, string sessionId, bool isReadonly) {
 			AutoResetEvent are = new AutoResetEvent (false);
-			TimerCallback tc = new TimerCallback (this.StoreUnlockWaitCallback);
-			CallbackState cs = new CallbackState (context, are);
+			TimerCallback tc = new TimerCallback (StoreUnlockWaitCallback);
+			CallbackState cs = new CallbackState (context, are, sessionId, isReadonly);
 			using (Timer timer = new Timer (tc, cs, 500, 500)) {
 				try {
 					are.WaitOne (executionTimeout, false);
-				} catch {
+				}
+				catch {
 					storeData = null;
 				}
 			}
 		}
 
-		void StoreUnlockWaitCallback (object s)
-		{
-			CallbackState state = s as CallbackState;
-			GetStoreData (state.Context);
+		void StoreUnlockWaitCallback (object s) {
+			CallbackState state = (CallbackState) s;
+
+			GetStoreData (state.Context, state.SessionId, state.IsReadOnly);
+
 			if (storeData == null && storeLocked && (storeLockAge > executionTimeout)) {
-				handler.ReleaseItemExclusive (state.Context, sessionId, storeLockId);
+				handler.ReleaseItemExclusive (state.Context, state.SessionId, storeLockId);
 				state.AutoEvent.Set ();
-			} else if (storeData != null && !storeLocked)
-				state.AutoEvent.Set ();
-		}
-		
-		void SessionSetup (HttpContext context, bool isNew)
-		{
-			if (storeData != null && sessionId != null) {
-				container = new HttpSessionStateContainer (
-					sessionId,
-					storeData.Items,
-					storeData.StaticObjects,
-					storeData.Timeout,
-					isNew,
-					config.Cookieless,
-					config.Mode,
-					isReadOnly);
-				SessionStateUtility.AddHttpSessionStateToContext (context, container);
-				if (isNew) {
-					supportsExpiration = handler.SetItemExpireCallback (OnSessionExpired);
-					OnSessionStart ();
-				}
 			}
+			else if (storeData != null && !storeLocked)
+				state.AutoEvent.Set ();
 		}
 
-		void OnSessionExpired (string id, SessionStateStoreData item)
-		{
+		void SessionSetup (string sessionId, bool isNew, bool isReadOnly) {
+			container = new HttpSessionStateContainer (
+				sessionId,
+				storeData.Items,
+				storeData.StaticObjects,
+				storeData.Timeout,
+				isNew,
+				config.Cookieless,
+				config.Mode,
+				isReadOnly);
+			SessionStateUtility.AddHttpSessionStateToContext (app.Context, container);
+			if (isNew)
+				OnSessionStart ();
 		}
-		
-		void OnSessionStart ()
-		{
+
+		void OnSessionExpired (string id, SessionStateStoreData item) {
+		}
+
+		void OnSessionStart () {
 			if (Start != null)
 				Start (this, EventArgs.Empty);
 		}
-		
+
 		public event EventHandler Start;
 
 		// This event is public, but only Session_[On]End in global.asax will be invoked if present.

@@ -43,11 +43,6 @@ namespace System.Web.SessionState
 		SessionStateSection config;
 		NameValueCollection privateConfig;
 		RemoteStateServer stateServer;
-		
-		public SessionStateServerHandler (SessionStateSection config)
-		{
-			this.config = config;
-		}
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
 		{
@@ -164,6 +159,7 @@ namespace System.Web.SessionState
                         GetConData (out proto, out server, out port);
                         cons = String.Format ("{0}://{1}:{2}/StateServer", proto, server, port);
                         stateServer = Activator.GetObject (typeof (RemoteStateServer), cons) as RemoteStateServer;
+			this.config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 			base.Initialize (name, config);
 		}
 		

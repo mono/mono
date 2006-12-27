@@ -37,7 +37,7 @@ namespace System.Web.SessionState
 {
 	public class SessionIDManager : ISessionIDManager
 	{
-		static SessionStateSection config;
+		SessionStateSection config;
 		
 		public SessionIDManager ()
 		{
@@ -67,12 +67,12 @@ namespace System.Web.SessionState
 		{
 			string ret = null;
 
-			if (SessionStateModule.IsCookieLess (context)) {
+			if (SessionStateModule.IsCookieLess (context, config)) {
 				string tmp = context.Request.Headers [SessionStateModule.HeaderName];
 				if (tmp != null)
 					ret = Decode (tmp);
 			} else {
-				HttpCookie cookie = context.Request.Cookies [SessionStateModule.CookieName];
+				HttpCookie cookie = context.Request.Cookies [config.CookieName];
 				if (cookie != null)
 					ret = Decode (cookie.Value);
 			}
@@ -113,7 +113,7 @@ namespace System.Web.SessionState
 			if (!Validate (id))
 				throw new HttpException ("Invalid session ID");
 			
-			if (!SessionStateModule.IsCookieLess (context)) {
+			if (!SessionStateModule.IsCookieLess (context, config)) {
 				HttpCookie cookie = new HttpCookie (config.CookieName, id);
 				cookie.Path = context.Request.ApplicationPath;
 				context.Response.AppendCookie (cookie);

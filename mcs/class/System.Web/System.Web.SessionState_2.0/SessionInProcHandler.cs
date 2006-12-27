@@ -69,14 +69,8 @@ namespace System.Web.SessionState
 		private const Int32 lockAcquireTimeout = 30000;
 		
 		CacheItemRemovedCallback removedCB;
-		SessionStateSection config;
 		NameValueCollection privateConfig;
 		SessionStateItemExpireCallback expireCallback;
-			
-		public SessionInProcHandler (SessionStateSection config)
-		{
-			this.config = config;
-		}
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
 		{
