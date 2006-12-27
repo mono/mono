@@ -281,16 +281,20 @@ namespace System.Web.UI.WebControls {
 			if (cellType == DataControlCellType.DataCell)
 			{
 				if ((rowState & DataControlRowState.Edit) != 0) {
-					cell.Controls.Add (CreateButton (UpdateText, UpdateImageUrl, DataControlCommands.UpdateCommandName, index));
-					if (ShowCancelButton) {
-						AddSeparator (cell);
-						cell.Controls.Add (CreateButton (CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index));
+					if (ShowEditButton) {
+						cell.Controls.Add (CreateButton (UpdateText, UpdateImageUrl, DataControlCommands.UpdateCommandName, index));
+						if (ShowCancelButton) {
+							AddSeparator (cell);
+							cell.Controls.Add (CreateButton (CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index));
+						}
 					}
 				} else if ((rowState & DataControlRowState.Insert) != 0) {
-					cell.Controls.Add (CreateButton (InsertText, InsertImageUrl, DataControlCommands.InsertCommandName, index));
-					if (ShowCancelButton) {
-						AddSeparator (cell);
-						cell.Controls.Add (CreateButton (CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index));
+					if (ShowInsertButton) {
+						cell.Controls.Add (CreateButton (InsertText, InsertImageUrl, DataControlCommands.InsertCommandName, index));
+						if (ShowCancelButton) {
+							AddSeparator (cell);
+							cell.Controls.Add (CreateButton (CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index));
+						}
 					}
 				} else {
 					if (ShowEditButton) {

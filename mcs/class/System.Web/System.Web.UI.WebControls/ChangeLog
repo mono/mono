@@ -1,3 +1,9 @@
+2006-12-27 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CommandField.cs: fixed: 
+	when ShowEditButton=false Update/Cancel button doesn't appear.	 
+	when ShowInsertButton=false Insert/Cancel button doesn't appear.	 
+
 2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Login.cs: fixed AuthenticateUser, should redirect to ReturnUrl when
