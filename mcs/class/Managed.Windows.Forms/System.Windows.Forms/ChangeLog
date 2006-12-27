@@ -1,5 +1,13 @@
 2006-12-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Add key-related 2.0 methods for CheckedItemCollection.
+	Also make virtual all the key-related methods.
+
+	* ListViewItem.cs: Make virtual the key related methods for
+	ListViewSubItemCollection.
+
+2006-12-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs:
 	* ListViewItem.cs:
 	* ThemeWin32Classic.cs:

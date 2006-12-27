@@ -1021,7 +1021,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public ListViewSubItem this [string key] {
+			public virtual ListViewSubItem this [string key] {
 				get {
 					int idx = IndexOfKey (key);
 					if (idx == -1)
@@ -1126,7 +1126,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public bool ContainsKey (string key)
+			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) != -1;
 			}
@@ -1195,7 +1195,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public int IndexOfKey (string key)
+			public virtual int IndexOfKey (string key)
 			{
 				if (key == null || key.Length == 0)
 					return -1;

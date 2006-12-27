@@ -2715,6 +2715,15 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public virtual ListViewItem this [string key] {
+				get {
+					int idx = IndexOfKey (key);
+					return idx == -1 ? null : (ListViewItem) List [idx];
+				}
+			}
+#endif
+
 			bool ICollection.IsSynchronized {
 				get { return false; }
 			}
@@ -2740,6 +2749,13 @@ namespace System.Windows.Forms
 					return false;
 				return List.Contains (item);
 			}
+
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) != -1;
+			}
+#endif
 
 			public void CopyTo (Array dest, int index)
 			{
@@ -2800,6 +2816,23 @@ namespace System.Windows.Forms
 					return -1;
 				return List.IndexOf (item);
 			}
+
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (key == null || key.Length == 0)
+					return -1;
+
+				ArrayList checked_items = List;
+				for (int i = 0; i < checked_items.Count; i++) {
+					ListViewItem item = (ListViewItem) checked_items [i];
+					if (String.Compare (key, item.Name, true) == 0)
+						return i;
+				}
+
+				return -1;
+			}
+#endif
 			#endregion	// Public Methods
 
 			internal ArrayList List {
@@ -3408,7 +3441,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public int IndexOfKey (string key)
+			public virtual int IndexOfKey (string key)
 			{
 				if (key == null || key.Length == 0)
 					return -1;
@@ -3486,7 +3519,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public void RemoveByKey (string key)
+			public virtual void RemoveByKey (string key)
 			{
 				int idx = IndexOfKey (key);
 				if (idx != -1)
@@ -3724,7 +3757,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public ListViewItem this [string key] {
+			public virtual ListViewItem this [string key] {
 				get {
 					int idx = IndexOfKey (key);
 					if (idx == -1)
@@ -3771,7 +3804,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public bool ContainsKey (string key)
+			public virtual bool ContainsKey (string key)
 			{
 				return IndexOfKey (key) != -1;
 			}
