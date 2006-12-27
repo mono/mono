@@ -5,6 +5,7 @@
 //   Duncan Mak (duncan@ximian.com)
 //   Miguel de Icaza (miguel@novell.com)
 //   Hisham Mardam Bey (hisham.mardambey@gmail.com)
+//   Alp Toker (alp@atoker.com)
 //
 // (C) Ximian Inc, 2003.
 // (C) Novell Inc, 2003.
@@ -586,6 +587,8 @@ namespace Cairo {
 						return new XlibSurface (surface, true);
 					case SurfaceType.Xcb:
 						return new XcbSurface (surface, true);
+					case SurfaceType.Glitz:
+						return new GlitzSurface (surface, true);
 					case SurfaceType.Win32:
 						return new Win32Surface (surface, true);
 #if CAIRO_1_2

@@ -1,5 +1,11 @@
 2006-12-27  Alp Toker  <alp@atoker.com>
 
+	* Mono.Cairo.dll.sources:
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/GlitzSurface.cs: Add new surface.
+
+2006-12-27  Alp Toker  <alp@atoker.com>
+
 	* Mono.Cairo/Cairo.cs:
 	* Mono.Cairo/Status.cs: Add new API for 1.4
 
