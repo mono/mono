@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -99,7 +99,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-derby="..\lib\derby.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" />
+      <UserProperties REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -107,14 +107,20 @@
       <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="j2ee">
+      <HintPath>..\lib\j2ee.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="J2EE.Helpers">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="J2SE.Helpers">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +130,9 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
+    <Compile Include="Mainsoft.Web.Hosting\BaseHttpServlet.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\BaseStaticHttpServlet.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyApplicationsHelper.cs" />
@@ -132,6 +141,14 @@
     <Compile Include="Mainsoft.Web.Security\DerbyRoleProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyRolesHelper.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyDBSchema.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\ServletSessionStateItemCollection.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\ObjectInputStream.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\ObjectOutputStream.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\ServletSessionIDManager.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\ServletSessionStateStoreProvider.cs" />
+    <Compile Include="Mainsoft.Web.SessionState\SessionListener.cs" />
+    <Compile Include="Mainsoft.Web\J2EEConsts.cs" />
+    <Compile Include="Mainsoft.Web\J2EEUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 </Project>
