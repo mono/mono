@@ -420,10 +420,10 @@ namespace System.Web.UI.WebControls {
 			DoDataBinding (dataSource);
 		}
 
-		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
 			base.PerformSelect ();
+			ViewState ["_DataBound"] = true;
 		}
 
 		protected internal override void RenderContents (HtmlTextWriter writer)
@@ -510,6 +510,11 @@ namespace System.Web.UI.WebControls {
 				foreach (int index in indices)
 					Items [index].Selected = true;
 			}
+
+#if NET_2_0
+			if (ViewState ["_DataBound"] != null)
+				RequiresDataBinding = !(bool) ViewState ["_DataBound"];
+#endif
 		}
 
 #if NET_2_0
