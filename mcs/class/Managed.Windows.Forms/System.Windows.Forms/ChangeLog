@@ -1,5 +1,10 @@
 2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ScrollableControl.cs: In AutoScrollMinSize, only set AutoScroll to
+	true if new value differs from current value.
+
+2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Control.cs: ControlCollection.Count must be public. Fixed build of
 	unit tests.
 

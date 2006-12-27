@@ -323,8 +323,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				auto_scroll_min_size = value;
-				AutoScroll = true;
+				if (value != auto_scroll_min_size) {
+					auto_scroll_min_size = value;
+					AutoScroll = true;
+				}
 			}
 		}
 
