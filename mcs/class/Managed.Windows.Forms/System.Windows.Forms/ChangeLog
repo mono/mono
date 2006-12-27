@@ -1,3 +1,19 @@
+2006-12-27  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TrackBar.cs: Remove a warning.
+	* MonthCalendar.cs: Moved back to using Capture to hide the calendar
+	when used by DateTimePicker, fixes #80287. This also requires that 
+	MonthCalendar implements it's own drawing for the yearly updown control,
+	otherwise the Capture tracking would be too complicated. Removed the Click 
+	and DoubleClick events (according to comments they were hiding the base class
+	event to prevent them from beeing fired - MSDN only says MonthCalendar doesn't
+	raise these events, not that they cannot be raised. It is possible to raise 
+	them by calling OnClick and OnDoubleClick). Added two internal fields in 
+	HitTestInfo in order to track give more tracking info needed by MonthCalendar.
+	* ThemeWin32Classic.cs: Implement drawing of MonthCalendar's updown part.
+	* DateTimePicker.cs: Removed handling of MonthCalendar's LostFocus
+	event, no longer needed.
+	
 2006-12-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ScrollableControl.cs: In AutoScrollMinSize, only set AutoScroll to

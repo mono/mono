@@ -72,8 +72,10 @@ namespace System.Windows.Forms
 		private bool is_moving_right; // which way the thumb should move when mouse is down (right=up, left=down) 
 		internal int mouse_down_x_offset; // how far from left side of thumb was the mouse clicked.
 		internal bool mouse_moved; // has the mouse moved since it was clicked?
-		private bool right_to_left_layout;
 		private const int size_of_autosize = 45;
+#if NET_2_0
+		private bool right_to_left_layout;
+#endif
 	
 		#region events
 #if NET_2_0

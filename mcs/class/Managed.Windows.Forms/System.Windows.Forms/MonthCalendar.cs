@@ -63,18 +63,22 @@ namespace System.Windows.Forms {
 		bool 			today_date_set;
 		Color 			trailing_fore_color;
 		ContextMenu		menu;
-		NumericUpDown	year_updown;
-		Timer		 	timer;
+		Timer			timer;
 		Timer			updown_timer;
-		bool			showing_context_menu;
-		bool			updown_has_focus;
+		const int		initial_delay = 500;
+		const int		subsequent_delay = 100;
+		private bool		is_year_going_up;
+		private bool		is_year_going_down;
+		private bool		is_mouse_moving_year;
+		private int		year_moving_count;
 #if NET_2_0
 		bool			right_to_left_layout;
 #endif
 
 		// internal variables used
+		internal bool			show_year_updown;
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
-		internal DateTimePicker	owner;					// used if this control is popped up
+		internal DateTimePicker		owner;				// used if this control is popped up
 		internal int 			button_x_offset;
 		internal Size 			button_size;
 		internal Size			title_size;
@@ -139,7 +143,9 @@ namespace System.Windows.Forms {
 			today_date_set = false;
 			trailing_fore_color = SystemColors.GrayText;
 			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
-			centered_format = new StringFormat ();
+			centered_format = new StringFormat (StringFormat.GenericTypographic);
+			centered_format.FormatFlags = centered_format.FormatFlags | StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoWrap | StringFormatFlags.FitBlackBox;
+			centered_format.FormatFlags &= ~StringFormatFlags.NoClip;
 			centered_format.LineAlignment = StringAlignment.Center;
 			centered_format.Alignment = StringAlignment.Center;
 			
@@ -171,7 +177,6 @@ namespace System.Windows.Forms {
 
 			
 			// event handlers
-			LostFocus += new EventHandler (LostFocusHandler);
 			timer.Tick += new EventHandler (TimerHandler);
 			MouseMove += new MouseEventHandler (MouseMoveHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
@@ -981,20 +986,6 @@ namespace System.Windows.Forms {
 			base.CreateHandle ();
 		}
 
-		private void CreateYearUpDown ()
-		{
-			year_updown = new NumericUpDown ();
-			year_updown.Font = this.Font;
-			year_updown.Minimum = MinDate.Year;
-			year_updown.Maximum = MaxDate.Year;
-			year_updown.ReadOnly = true;
-			year_updown.Visible = false;
-			this.Controls.AddImplicit (year_updown);
-			year_updown.ValueChanged += new EventHandler(UpDownYearChangedHandler);
-			year_updown.GotFocus += new EventHandler(UpDownYearGotFocusHandler);
-			year_updown.LostFocus += new EventHandler(UpDownYearLostFocusHandler);
-		}
-
 		// not sure why this needs to be overriden
 		protected override void Dispose (bool disposing) {
 			base.Dispose (disposing);
@@ -1049,7 +1040,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
-			CreateYearUpDown ();
 		}
 
 #if NET_2_0
@@ -1135,17 +1125,6 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageLayoutChanged += value;}
 		}
 #endif
-		// this event is overridden to supress it from being fired
-		// XXX check this out
-		[Browsable(false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Click;
-
-		// this event is overridden to supress it from being fired
-		// XXX check this out
-		[Browsable(false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick;
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1197,9 +1176,94 @@ namespace System.Windows.Forms {
 
 		#region internal properties
 
+		private void AddYears (int years, bool fast)
+		{
+			DateTime newDate;
+			if (fast) {
+				if (!(CurrentMonth.Year + years * 5 > MaxDate.Year)) {
+					newDate = CurrentMonth.AddYears (years * 5);
+					if (MaxDate >= newDate && MinDate <= newDate) {
+						CurrentMonth = newDate;
+						return;
+					}
+				}
+			}
+			if (!(CurrentMonth.Year + years > MaxDate.Year)) {
+				newDate = CurrentMonth.AddYears (years);
+				if (MaxDate >= newDate && MinDate <= newDate) {
+					CurrentMonth = newDate;
+				}
+			}
+		}
+		
+		internal bool IsYearGoingUp {
+			get {
+				return is_year_going_up;
+			}
+			set {
+				if (value) {
+					is_year_going_down = false;
+					year_moving_count = (is_year_going_up ? year_moving_count + 1 : 1);
+					if (is_year_going_up)
+						year_moving_count++;
+					else {
+						year_moving_count = 1;
+					}
+					AddYears (1, year_moving_count > 10);
+					if (is_mouse_moving_year)
+						StartHideTimer ();
+				} else {
+					year_moving_count = 0;
+				}
+				is_year_going_up = value;
+				Invalidate ();
+			}
+		}
+		
+		internal bool IsYearGoingDown {
+			get {
+				return is_year_going_down;
+			}
+			set
+			{
+				if (value) {
+					is_year_going_up = false;
+					year_moving_count = (is_year_going_down ? year_moving_count + 1 : 1);
+					if (is_year_going_down)
+						year_moving_count++;
+					else {
+						year_moving_count = 1;
+					}
+					AddYears (-1, year_moving_count > 10);
+					if (is_mouse_moving_year)
+						StartHideTimer ();
+				} else {
+					year_moving_count = 0;
+				}
+				is_year_going_down = value;
+				Invalidate ();
+			}
+		}
+
+		internal bool ShowYearUpDown {
+			get {
+				return show_year_updown;
+			} 
+			set {
+				if (show_year_updown != value) {
+					show_year_updown = value;
+					Invalidate ();
+				}
+			}
+		}
+
 		internal DateTime CurrentMonth {
 			set {
-				// only interested in if the month (not actual date) has changed
+				// only interested in if the month (not actual date) has change
+				if (value < MinDate || value > MaxDate) {
+					return;
+				}
+				
 				if (value.Month != current_month.Month ||
 					value.Year != current_month.Year) {
 					this.SelectionRange = new SelectionRange(
@@ -1294,8 +1358,14 @@ namespace System.Windows.Forms {
 						if (GetMonthNameRectangle (title_rect, i).Contains (point)) {
 							return new HitTestInfo (HitArea.TitleMonth, point, new DateTime (1, 1, 1));
 						}
-						if (GetYearNameRectangle (title_rect, i).Contains (point)) {
-							return new HitTestInfo (HitArea.TitleYear, point, new DateTime (1, 1, 1));
+						Rectangle year, up, down;
+						GetYearNameRectangles (title_rect, i, out year, out up, out down);
+						if (year.Contains (point)) {
+							return new HitTestInfo (HitArea.TitleYear, point, new DateTime (1, 1, 1), HitAreaExtra.YearRectangle);
+						} else if (up.Contains (point)) {
+							return new HitTestInfo (HitArea.TitleYear, point, new DateTime (1, 1, 1), HitAreaExtra.UpButton);
+						} else if (down.Contains (point)) {
+							return new HitTestInfo (HitArea.TitleYear, point, new DateTime (1, 1, 1), HitAreaExtra.DownButton);
 						}
 
 						// return the hit test in the title background
@@ -1342,9 +1412,9 @@ namespace System.Windows.Forms {
 						// establish which date was clicked
 						if (time.Year != calendar_month.Year || time.Month != calendar_month.Month) {
 							if (time < calendar_month && i == 0) {
-								return new HitTestInfo (HitArea.PrevMonthDate, point, new DateTime (1, 1, 1));
+								return new HitTestInfo (HitArea.PrevMonthDate, point, new DateTime (1, 1, 1), time);
 							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
-								return new HitTestInfo (HitArea.NextMonthDate, point, new DateTime (1, 1, 1));
+								return new HitTestInfo (HitArea.NextMonthDate, point, new DateTime (1, 1, 1), time);
 							}
 							return new HitTestInfo (HitArea.Nowhere, point, new DateTime (1, 1, 1));
 						}
@@ -1418,29 +1488,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// initialises text value and show's year up down in correct position
-		private void PrepareYearUpDown (Point p) {
-			Rectangle old_location = year_updown.Bounds;
-
-			// set position
-			Rectangle title_rect = new Rectangle(
-				last_clicked_calendar_rect.Location,
-				title_size);
-
-			year_updown.Bounds = GetYearNameRectangle(
-				title_rect, 
-				last_clicked_calendar_index);
-			year_updown.Top -= 4;
-			year_updown.Width += (int) (this.Font.Size * 4);
-			// set year - only do this if this isn't being called because of a year up down click
-			if(year_updown.Bounds != old_location) {
-				year_updown.Value = current_month.AddMonths(last_clicked_calendar_index).Year;
-			}
-
-			if(!year_updown.Visible) {
-				year_updown.Visible = true;
-			}
-		}
 
 		// returns the first date of the month
 		private DateTime GetFirstDateInMonth (DateTime date) {
@@ -1499,8 +1546,10 @@ namespace System.Windows.Forms {
 				}
 				SelectionRange = range;
 			} else {
-				SelectionRange = new SelectionRange (date, date);
-				first_select_start_date = date;
+				if (date >= MinDate && date <= MaxDate) {
+					SelectionRange = new SelectionRange (date, date);
+					first_select_start_date = date;
+				}
 			}
 		}
 
@@ -1539,24 +1588,39 @@ namespace System.Windows.Forms {
 				month_size);
 		}
 
-		// returns the rectangle for the year in the title
-		internal Rectangle GetYearNameRectangle (Rectangle title_rect, int calendar_index) {			
+		internal void GetYearNameRectangles (Rectangle title_rect, int calendar_index, out Rectangle year_rect, out Rectangle up_rect, out Rectangle down_rect)
+		{
 			Graphics g = this.DeviceContext;
 			DateTime this_month = this.current_month.AddMonths (calendar_index);
-			Size title_text_size = g.MeasureString (this_month.ToString ("MMMM yyyy"), this.Font).ToSize ();
-			Size year_size = g.MeasureString (this_month.ToString ("yyyy"), this.Font).ToSize ();
+			SizeF title_text_size = g.MeasureString (this_month.ToString ("MMMM yyyy"), this.bold_font, int.MaxValue, centered_format);
+			SizeF year_size = g.MeasureString (this_month.ToString ("yyyy"), this.bold_font, int.MaxValue, centered_format);
 			// find out how much space the title took
-			Rectangle text_rect =  new Rectangle (
-				new Point (
-					title_rect.X + ((title_rect.Width - title_text_size.Width)/2),
-					title_rect.Y + ((title_rect.Height - title_text_size.Height)/2)),
+			RectangleF text_rect = new RectangleF (
+				new PointF (
+					title_rect.X + ((title_rect.Width - title_text_size.Width) / 2),
+					title_rect.Y + ((title_rect.Height - title_text_size.Height) / 2)),
 				title_text_size);
 			// return only the rect of the year
-			return new Rectangle (
+			year_rect = new Rectangle (
 				new Point (
-					text_rect.Right - year_size.Width,
-					text_rect.Y),
-				year_size);
+					((int)(text_rect.Right - year_size.Width + 1)),
+					(int)text_rect.Y),
+				new Size ((int)(year_size.Width + 1), (int)(year_size.Height + 1)));
+			
+			year_rect.Inflate (0, 1);
+			up_rect = new Rectangle ();
+			up_rect.Location = new Point (year_rect.X + year_rect.Width + 2, year_rect.Y);
+			up_rect.Size = new Size (16, year_rect.Height / 2);
+			down_rect = new Rectangle ();
+			down_rect.Location = new Point (up_rect.X, up_rect.Y + up_rect.Height + 1);
+			down_rect.Size = up_rect.Size;
+		}
+
+		// returns the rectangle for the year in the title
+		internal Rectangle GetYearNameRectangle (Rectangle title_rect, int calendar_index) {
+			Rectangle result, discard;
+			GetYearNameRectangles (title_rect, calendar_index, out result, out discard, out discard);
+			return result;		
 		}
 
 		// determine if date is allowed to be drawn in month
@@ -1593,7 +1657,7 @@ namespace System.Windows.Forms {
 				case HitArea.PrevMonthDate:
 				case HitArea.NextMonthDate:
 				case HitArea.Date:
-					this.clicked_date = hti.Time;
+					this.clicked_date = hti.hit_time;
 					this.is_previous_clicked = false;
 					this.is_next_clicked = false;
 					this.is_date_clicked = true;
@@ -1606,12 +1670,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// called when the year is changed
-		private void UpDownYearChangedHandler (object sender, EventArgs e) {
-			int initial_year_value = this.CurrentMonth.AddMonths(last_clicked_calendar_index).Year;
-			int diff = (int) year_updown.Value - initial_year_value;
-			this.CurrentMonth = this.CurrentMonth.AddYears(diff);
-		}
 
 		// called when context menu is clicked
 		private void MenuItemClickHandler (object sender, EventArgs e) {
@@ -1719,6 +1777,10 @@ namespace System.Windows.Forms {
 		// event run on the mouse up event
 		private void DoMouseUp () {
 
+			IsYearGoingDown = false;
+			IsYearGoingUp = false;
+			is_mouse_moving_year = false;
+			
 			HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
 			switch (hti.HitArea) {
 			case HitArea.PrevMonthDate:
@@ -1756,63 +1818,35 @@ namespace System.Windows.Forms {
 			this.is_date_clicked = false;
 		}
 
-		// need when in windowed mode
-		private void LostFocusHandler(object sender, EventArgs e)
-		{
-			StartHideTimer ();
-		}
-
 		// needed when in windowed mode to close the calendar if no 
 		// part of it has focus.
 		private void UpDownTimerTick(object sender, EventArgs e)
 		{
-			HideMonthCalendarIfWindowed ();
-			if (updown_timer != null)
-			{
-				updown_timer.Dispose();
-				updown_timer = null;
+			if (IsYearGoingUp) {
+				IsYearGoingUp = true;
+			} 
+			if (IsYearGoingDown) {
+				IsYearGoingDown = true;
+			}
+			
+			if (!IsYearGoingDown && !IsYearGoingUp) {
+				updown_timer.Enabled = false;
+			} else if (IsYearGoingDown || IsYearGoingUp) {
+				updown_timer.Interval = subsequent_delay;
 			}
 		}
 
 		// Needed when in windowed mode.
-		private void UpDownYearLostFocusHandler(object sender, EventArgs e)
-		{
-			updown_has_focus = false;
-			StartHideTimer ();
-		}
-
-		// Needed when in windowed mode.
-		private void UpDownYearGotFocusHandler(object sender, EventArgs e)
-		{
-			updown_has_focus = true;
-		}
-
-		// Needed when in windowed mode.
-		private void StartHideTimer()
+		private void StartHideTimer ()
 		{
 			if (updown_timer == null) {
 				updown_timer = new Timer ();
-				updown_timer.Interval = 50;
 				updown_timer.Tick += new EventHandler (UpDownTimerTick);
-				updown_timer.Enabled = true;
 			}
+			updown_timer.Interval = initial_delay;
+			updown_timer.Enabled = true;
 		}
 
-		// needed when in windowed mode.
-		private void HideMonthCalendarIfWindowed()
-		{
-			if (this.owner != null && this.Visible) {
-				if (updown_has_focus)
-					return; 
-				if (showing_context_menu)
-					return; 
-				if (updown_timer != null) {
-					updown_timer.Enabled = false;
-				}
-
-				this.owner.HideMonthCalendar ();
-			}
-		}
 
 		// occurs when mouse moves around control, used for selection
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
@@ -1870,9 +1904,8 @@ namespace System.Windows.Forms {
 			//establish where was hit
 			HitTestInfo hti = this.HitTest(point);
 			// hide the year numeric up down if it was clicked
-			if (year_updown != null && year_updown.Visible && hti.HitArea != HitArea.TitleYear)
-			{
-				year_updown.Visible = false;
+			if (ShowYearUpDown && hti.HitArea != HitArea.TitleYear) {
+				ShowYearUpDown = false;
 			}
 			switch (hti.HitArea) {
 				case HitArea.PrevMonthButton:
@@ -1898,13 +1931,26 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
-					showing_context_menu = true;
 					menu.Show (this, hti.Point);
-					showing_context_menu = false;
+					if (this.Capture && owner != null) {
+						Capture = false;
+						Capture = true;
+					}
 					break;
 				case HitArea.TitleYear:
 					// place the numeric up down
-					PrepareYearUpDown(hti.Point);
+					if (ShowYearUpDown) {
+						if (hti.hit_area_extra == HitAreaExtra.UpButton) {
+							is_mouse_moving_year = true;
+							IsYearGoingUp = true;
+						} else if (hti.hit_area_extra == HitAreaExtra.DownButton) {
+							is_mouse_moving_year = true;
+							IsYearGoingDown = true; 
+						}
+						return;
+					} else {
+						ShowYearUpDown = true;
+					}
 					break;
 				case HitArea.TodayLink:
 					this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
@@ -1921,17 +1967,21 @@ namespace System.Windows.Forms {
 		// raised by any key down events
 		private void KeyDownHandler (object sender, KeyEventArgs e) {
 			// send keys to the year_updown control, let it handle it
-			if(year_updown.Visible) {
+			if(ShowYearUpDown) {
 				switch (e.KeyCode) {
 					case Keys.Enter:
-						year_updown.Visible = false;
+						ShowYearUpDown = false;
+						IsYearGoingDown = false;
+						IsYearGoingUp = false;
 						break;
-					case Keys.Up:
-						year_updown.Value = year_updown.Value + 1;
+					case Keys.Up: {
+						IsYearGoingUp = true;
 						break;
-					case Keys.Down:
-						year_updown.Value = year_updown.Value - 1;
+					}
+					case Keys.Down: {
+						IsYearGoingDown = true;
 						break;
+					}
 				}
 			} else {
 				if (!is_shift_pressed && e.Shift) {
@@ -2052,6 +2102,8 @@ namespace System.Windows.Forms {
 		private void KeyUpHandler (object sender, KeyEventArgs e) {
 			is_shift_pressed = e.Shift ;
 			e.Handled = true;
+			IsYearGoingUp = false;
+			IsYearGoingDown = false;
 		}
 
 		// paint this control now
@@ -2172,6 +2224,18 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.DrawMonthCalendar (dc, clip_rect, this);
 		}
 
+		internal override bool InternalCapture {
+			get {
+				return base.InternalCapture;
+			}
+			set {
+				// Don't allow internal capture when DateTimePicker is using us
+				// Control sets this on MouseDown 
+				if (owner == null)
+					base.InternalCapture = value;
+			}
+		}
+
 		#endregion 	//internal methods
 
 		#region internal drawing methods
@@ -2198,6 +2262,12 @@ namespace System.Windows.Forms {
 			TodayLink
 		}
 		
+		internal enum HitAreaExtra {
+			YearRectangle,
+			UpButton,
+			DownButton
+		}
+		
 		// info regarding to a hit test on this calendar
 		public sealed class HitTestInfo {
 
@@ -2205,6 +2275,9 @@ namespace System.Windows.Forms {
 			private Point point;
 			private DateTime time;
 
+			internal HitAreaExtra hit_area_extra;
+			internal DateTime hit_time;
+			
 			// default constructor
 			internal HitTestInfo () {
 				hit_area = HitArea.Nowhere;
@@ -2215,6 +2288,24 @@ namespace System.Windows.Forms {
 			// overload receives all properties
 			internal HitTestInfo (HitArea hit_area, Point point, DateTime time) {
 				this.hit_area = hit_area;
+				this.point = point;
+				this.time = time;
+				this.hit_time = time;
+			}
+			
+			// overload receives all properties
+			internal HitTestInfo (HitArea hit_area, Point point, DateTime time, DateTime hit_time)
+			{
+				this.hit_area = hit_area;
+				this.point = point;
+				this.time = time;
+				this.hit_time = hit_time;
+			}
+			
+			internal HitTestInfo (HitArea hit_area, Point point, DateTime time, HitAreaExtra hit_area_extra)
+			{
+				this.hit_area = hit_area;
+				this.hit_area_extra = hit_area_extra;
 				this.point = point;
 				this.time = time;
 			}

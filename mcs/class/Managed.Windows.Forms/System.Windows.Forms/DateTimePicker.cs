@@ -187,7 +187,6 @@ namespace System.Windows.Forms {
 			month_calendar.DateChanged += new DateRangeEventHandler (MonthCalendarDateChangedHandler);
 			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
 			month_calendar.LostFocus += new EventHandler (MonthCalendarLostFocusHandler);
-			month_calendar.MouseDown += new MouseEventHandler (MonthCalendarMouseDownHandler);
 			updown_timer.Tick += new EventHandler (UpDownTimerTick);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
@@ -960,14 +959,6 @@ namespace System.Windows.Forms {
 		
 		#region internal / private methods
 
-		// if the user clicks outside of the monthcalendar, hide it.
-		private void MonthCalendarMouseDownHandler (object sender, MouseEventArgs e)
-		{
-			if (!month_calendar.ClientRectangle.Contains (e.X, e.Y)) {
-				DropDownMonthCalendar ();
-			}
-		}
-
 		private void ResizeHandler (object sender, EventArgs e)
 		{
 			Invalidate ();
@@ -1204,6 +1195,7 @@ namespace System.Windows.Forms {
 				(this.DropDownAlign == LeftRightAlignment.Left));
 			month_calendar.Show ();
 			month_calendar.Focus ();
+			month_calendar.Capture = true;
 
 			// fire any registered events
 			// XXX should this just call OnDropDown?
@@ -1216,12 +1208,12 @@ namespace System.Windows.Forms {
 		internal void HideMonthCalendar () 
 		{
 			this.is_drop_down_visible = false;
-    			Invalidate (drop_down_arrow_rect);
-    			month_calendar.Capture = false;
+			Invalidate (drop_down_arrow_rect);
+			month_calendar.Capture = false;
 			if (month_calendar.Visible) {
 				month_calendar.Hide ();
 			}
-    	}
+	}
 
 		private int GetSelectedPartIndex()
 		{

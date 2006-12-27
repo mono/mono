@@ -1410,6 +1410,7 @@ namespace System.Windows.Forms
 				button_bounds.Inflate (-2,-2);
 				if (!dtp.ShowUpDown) {
 					ButtonState state = dtp.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
+					dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), dtp.drop_down_arrow_rect);
 					this.CPDrawComboButton ( 
 					  dc, 
 					  dtp.drop_down_arrow_rect, 
@@ -2533,6 +2534,22 @@ namespace System.Windows.Forms
 				// draw the title				
 				string title_text = this_month.ToString ("MMMM yyyy");
 				dc.DrawString (title_text, mc.bold_font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, mc.centered_format);
+
+				if (mc.ShowYearUpDown) {
+					Rectangle year_rect;
+					Rectangle upRect, downRect;
+					ButtonState upState, downState;
+					
+					mc.GetYearNameRectangles (title_rect, row * mc.CalendarDimensions.Width + col, out year_rect, out upRect, out downRect);
+					dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control), year_rect);
+					dc.DrawString (this_month.ToString ("yyyy"), mc.bold_font, ResPool.GetSolidBrush (Color.Black), year_rect, mc.centered_format);
+					
+					upState = mc.IsYearGoingUp ? ButtonState.Pushed : ButtonState.Normal;
+					downState = mc.IsYearGoingDown ? ButtonState.Pushed : ButtonState.Normal;
+
+					ControlPaint.DrawScrollButton (dc, upRect, ScrollButton.Up, upState);
+					ControlPaint.DrawScrollButton (dc, downRect, ScrollButton.Down, downState);
+				}
 
 				// draw previous and next buttons if it's time
 				if (row == 0 && col == 0) 
