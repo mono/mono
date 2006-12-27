@@ -1,5 +1,10 @@
 2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* ConfigurationElementCollection.cs: fixed BaseAdd, looking for
+	identical element when collection type is not alternate
+
+2006-12-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* ConnectionStringSettingsCollection.cs: made connection string key
 	case insensitive
 
