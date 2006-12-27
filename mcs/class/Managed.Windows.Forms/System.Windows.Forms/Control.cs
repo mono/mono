@@ -3080,9 +3080,10 @@ namespace System.Windows.Forms
 		}
 
 		public void Invalidate(System.Drawing.Rectangle rc, bool invalidateChildren) {
-			if (!IsHandleCreated || !Visible || rc.Width == 0 || rc.Height == 0) {
+			// Win32 invalidates control including when Width and Height is equal 0
+			// or is not visible, only Paint event must be care about this.
+			if (!IsHandleCreated)
 				return;
-			}
 
 			NotifyInvalidate(rc);
 
