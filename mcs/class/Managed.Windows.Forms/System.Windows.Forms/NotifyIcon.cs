@@ -33,7 +33,11 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Text")]
+#if NET_2_0
+	[DefaultEvent("MouseDoubleClick")]
+#else
 	[DefaultEvent("MouseDown")]
+#endif
 	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class NotifyIcon : Component {
@@ -304,6 +308,9 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 		[DefaultValue(null)]
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public ContextMenu ContextMenu {
 			get {
 				return context_menu;
@@ -337,7 +344,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
 		[Localizable(true)]
+		[DefaultValue ("")]
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 		public string Text {
 			get {
 				return text;
@@ -403,13 +415,21 @@ namespace System.Windows.Forms {
 		static object MouseMoveEvent = new object ();
 		static object MouseUpEvent = new object ();
 
+#if NET_2_0
+		[MWFCategory("Action")]
+#else
 		[Category("Action")]
+#endif
 		public event EventHandler Click {
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
 
+#if NET_2_0
+		[MWFCategory("Action")]
+#else
 		[Category("Action")]
+#endif
 		public event EventHandler DoubleClick {
 			add { Events.AddHandler (DoubleClickEvent, value); }
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }

@@ -56,6 +56,9 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Localizable(true)]
+#if NET_2_0
+		[AmbientValue (RightToLeft.Inherit)]
+#endif
 		public virtual RightToLeft RightToLeft {
 			get { return right_to_left;}
 			set { right_to_left = value; }

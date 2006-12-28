@@ -26,8 +26,6 @@
 //	Peter Bartok		<pbartok@novell.com>
 //
 
-// COMPLETE
-
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -40,6 +38,11 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
+#if NET_2_0
+	[DefaultBindingProperty ("Value")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class NumericUpDown : UpDownBase, ISupportInitialize {
 		#region Local Variables
 		private int	suppress_validation;

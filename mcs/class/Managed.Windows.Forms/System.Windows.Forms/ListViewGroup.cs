@@ -179,7 +179,7 @@ namespace System.Windows.Forms
 
 		#region ISerializable Members
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Header", header);
 			info.AddValue("Name", name);

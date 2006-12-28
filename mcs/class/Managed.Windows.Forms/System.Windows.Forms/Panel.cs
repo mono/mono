@@ -35,6 +35,11 @@ namespace System.Windows.Forms {
 	[DefaultProperty("BorderStyle")]
 	[DefaultEvent("Paint")]
 	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[Docking (DockingBehavior.Ask)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class Panel : ScrollableControl {
 		#region	Constructors & Destructors
 		public Panel () {

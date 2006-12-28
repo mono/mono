@@ -49,6 +49,7 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[DefaultValue (false)]
+		[Browsable (false)]
 		public bool CanOverflow {
 			get { return this.can_overflow; }
 			set { this.can_overflow = value; }

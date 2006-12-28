@@ -40,6 +40,11 @@ namespace System.Windows.Forms
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[DefaultBindingProperty ("SelectedValue")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class ListBox : ListControl
 	{
 		public const int DefaultItemHeight = 13;
@@ -140,8 +145,13 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#else
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
@@ -344,6 +354,9 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#if NET_2_0
+		[MergableProperty (false)]
+#endif
 		public ObjectCollection Items {
 			get { return items; }
 		}
@@ -602,6 +615,9 @@ namespace System.Windows.Forms
 		#endregion Private Properties
 
 		#region Public Methods
+#if NET_2_0
+		[Obsolete ("this method has been deprecated")]
+#endif
 		protected virtual void AddItemsCore (object[] value)
 		{
 			Items.AddRange (value);

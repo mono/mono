@@ -28,17 +28,19 @@
 //	Jaak Simm (jaaksimm@firm.ee) (stubbed out)
 //
 
-// COMPLETE
-
-
 using System.ComponentModel;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
 	[DefaultEvent("LinkClicked")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class LinkLabel : Label, IButtonControl
 	{
 		/* Encapsulates a piece of text (regular or link)*/
@@ -154,6 +156,9 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.LinkAreaEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]				
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		public LinkArea LinkArea {
 			get { return link_area;}
 			set {
@@ -187,7 +192,9 @@ namespace System.Windows.Forms
 		}
 	
 		[Browsable (false)]
+#if !NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LinkLabel.LinkCollection Links {
 			get {
@@ -686,6 +693,9 @@ namespace System.Windows.Forms
 		//
 		// System.Windows.Forms.LinkLabel.Link
 		//
+#if NET_2_0
+		// XXX [TypeConverter (typeof (LinkConverter))]
+#endif
 		public class Link
 		{
 			private bool enabled;
@@ -710,6 +720,9 @@ namespace System.Windows.Forms
 				pieces = new ArrayList ();
 			}
 
+#if NET_2_0
+			[DefaultValue (true)]
+#endif
 			public bool Enabled {
 				get { return enabled; }
 				set {
@@ -738,6 +751,9 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			[DefaultValue (null)]
+#endif
 			public object LinkData {
 				get { return linkData; }
 				set { linkData = value; }
@@ -756,6 +772,9 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			[DefaultValue (false)]
+#endif
 			public bool Visited {
 				get { return visited; }
 				set {
@@ -990,6 +1009,7 @@ namespace System.Windows.Forms
 		}
 #if NET_2_0
 
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public new bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;

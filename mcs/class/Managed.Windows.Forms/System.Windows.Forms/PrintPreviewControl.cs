@@ -32,9 +32,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultPropertyAttribute("Document")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class PrintPreviewControl : Control {
 		#region Local variables
 		bool autozoom;
@@ -159,6 +164,9 @@ namespace System.Windows.Forms {
 			set { controller.UseAntiAlias = value; }
 		}
 
+#if NET_2_0
+		[DefaultValue (0.3)]
+#endif
 		public double Zoom {
 			get { return zoom; }
 			set {

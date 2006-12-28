@@ -35,6 +35,12 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Image")]
 	[Designer("System.Windows.Forms.Design.PictureBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[Docking (DockingBehavior.Ask)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[DefaultBindingProperty ("Image")]
+#endif
 	public class PictureBox : Control 
 #if NET_2_0
 					, ISupportInitialize
@@ -88,7 +94,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[Bindable (true)]
+#else
 		[DefaultValue(null)]
+#endif
 		[Localizable(true)]
 		public Image Image {
 			get { return image; }
@@ -126,7 +136,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[DefaultValue(null)]
+		[RefreshProperties (RefreshProperties.All)]
 		[Localizable(true)]
 		public Image InitialImage {
 			get { return initial_image; }

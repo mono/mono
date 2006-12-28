@@ -49,6 +49,11 @@ namespace System.Windows.Forms
 	[DefaultEvent ("SelectedIndexChanged")]
 	[DefaultProperty ("Items")]
 	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[Docking (DockingBehavior.Ask)]
+#endif
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;

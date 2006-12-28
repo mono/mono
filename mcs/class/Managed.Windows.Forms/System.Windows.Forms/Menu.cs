@@ -26,7 +26,6 @@
 //		- FindMenuItem
 //		- MdiListItem
 //
-// NOT COMPLETE
 
 using System.Collections;
 using System.ComponentModel;
@@ -36,7 +35,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+#if !NET_2_0
 	[Designer ("Microsoft.VisualStudio.Windows.Forms.MenuDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IDesigner")]
+#endif
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	[ListBindable(false)]
 	public abstract class Menu : Component

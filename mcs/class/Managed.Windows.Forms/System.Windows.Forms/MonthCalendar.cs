@@ -1088,6 +1088,7 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftLayoutChanged (EventArgs e) {
 			EventHandler eh = (EventHandler) (Events [RightToLeftLayoutChangedEvent]);
 			if (eh != null)

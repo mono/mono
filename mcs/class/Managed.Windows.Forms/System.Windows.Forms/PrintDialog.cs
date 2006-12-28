@@ -37,6 +37,10 @@ using System.Reflection;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[Designer ("System.Windows.Forms.Design.PrintDialogDesigner, " + Consts.AssemblySystem_Design,
+		   "System.ComponentModel.Design.IDesigner")]
+#endif
 	[DefaultProperty("Document")]
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
@@ -94,6 +98,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DefaultValue (false)]
 		public bool AllowCurrentPage {
 			get {
 				return allow_current_page;

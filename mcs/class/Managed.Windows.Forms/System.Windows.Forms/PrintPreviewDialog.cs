@@ -33,12 +33,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Document")]
 	[Designer("System.ComponentModel.Design.ComponentDesigner, " + Consts.AssemblySystem_Design)]
 	[DesignTimeVisible(true)]
 	[ToolboxItem(true)]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[ToolboxItemFilter ("System.Windows.Forms.Control.TopLevel", ToolboxItemFilterType.Allow)]
+#endif
 	public class PrintPreviewDialog : Form {
 		PrintPreviewControl print_preview;
 		MenuItem previous_checked_menu_item;
@@ -346,6 +352,9 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#if NET_2_0
+		[Obsolete ("This property has been deprecated.  Use AutoScaleDimensions instead.")]
+#endif
 		public override Size AutoScaleBaseSize {
 			get {
 				return base.AutoScaleBaseSize;
@@ -574,6 +583,9 @@ namespace System.Windows.Forms {
 		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public new Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
@@ -629,7 +641,9 @@ namespace System.Windows.Forms {
 		}
  
 		[Browsable(false)]
+#if !NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 		public PrintPreviewControl PrintPreviewControl {
 			get { return print_preview; }
 		}

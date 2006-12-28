@@ -36,8 +36,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty("Text")]
+	[DefaultProperty ("Text")]
 	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[ToolboxItem (true)]
+	[DefaultBindingProperty ("Text")]
+#endif
 	public class Label : Control
     	{
     		private bool autosize;
@@ -58,6 +64,11 @@ namespace System.Windows.Forms
 		static object AutoSizeChangedEvent = new object ();
 		static object TextAlignChangedEvent = new object ();
 
+#if NET_2_0
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#endif
     		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
@@ -150,6 +161,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.All)]
+#if NET_2_0
+		[Browsable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#endif
     		public new virtual bool AutoSize {
     			get { return autosize; }
     			set {
@@ -257,6 +273,9 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		public int ImageIndex {
     			get { 
     				if (ImageList == null) {
@@ -287,6 +306,9 @@ namespace System.Windows.Forms
     		}
 
 		[DefaultValue(null)]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
     		public ImageList ImageList {
     			get { return image_list;}
     			set {
@@ -323,6 +345,9 @@ namespace System.Windows.Forms
     			get {return preferred_width; }
     		}
 
+#if NET_2_0
+		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
+#endif
     		protected virtual bool RenderTransparent {
 			get { return render_transparent; }
 			set { render_transparent = value;}
@@ -635,7 +660,7 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 #if NET_2_0
-
+		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;
@@ -646,6 +671,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[SettingsBindable (true)]
+		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
 		public override string Text {
 			get {
 				return base.Text;

@@ -31,9 +31,14 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public abstract class ListControl : Control
 	{
 		private object data_source;
@@ -87,6 +92,7 @@ namespace System.Windows.Forms
 
 		#region .NET 2.0 Public Properties
 #if NET_2_0
+		[DefaultValue (false)]
 		public bool FormattingEnabled {
 			get { return formatting_enabled; }
 			set { formatting_enabled = value; }
@@ -98,7 +104,11 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+#if NET_2_0
+		[AttributeProvider (typeof (IListSource))]
+#else
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
+#endif
 		public object DataSource {
 			get { return data_source; }
 			set {

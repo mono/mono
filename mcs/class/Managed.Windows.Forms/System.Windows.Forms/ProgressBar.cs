@@ -30,10 +30,16 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Value")]
+#if NET_2_0
+	[DefaultBindingProperty ("Value")]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public
 #if !NET_2_0
 	sealed
@@ -326,6 +332,9 @@ namespace System.Windows.Forms
 		// This means that we must implement Blocks, Continuous and Marquee
 		// rendering modes
 		//
+		[Browsable (true)]
+		[DefaultValue (ProgressBarStyle.Blocks)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public ProgressBarStyle Style {
 			get {
 				return style;
@@ -338,6 +347,7 @@ namespace System.Windows.Forms
 		
 		int marquee_animation_speed = 350;
 		[MonoTODO("Currently does nothing")]
+		[DefaultValue (100)]
 		public int MarqueeAnimationSpeed {
 			get {
 				return marquee_animation_speed;

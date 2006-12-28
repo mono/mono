@@ -32,7 +32,9 @@ using System.Drawing;
 using System.IO;
 
 namespace System.Windows.Forms {
+#if !NET_2_0
 	[Designer ("System.Windows.Forms.Design.OpenFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#endif
 	public sealed class OpenFileDialog : FileDialog {
 		#region Public Constructors
 		public OpenFileDialog ()

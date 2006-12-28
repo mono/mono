@@ -26,9 +26,6 @@
 
 
 
-// NOT COMPLETE
-
-
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -313,7 +310,12 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+		// [TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+#else
 		[TypeConverter (typeof (ImageIndexConverter))]
+#endif
 		public int ImageIndex {
 			get { return image_index; }
 			set {
@@ -334,6 +336,11 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[DefaultValue ("")]
 		[LocalizableAttribute (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		// XXX [TypeConverter (typeof (ImageKeyConverter))
 		public string ImageKey {
 			get {
 				return image_key;
@@ -379,6 +386,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[Browsable (false)]
 		[Localizable (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Name {
 			get {
 				return name;
@@ -416,7 +424,13 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+		// XXX [RelatedImageListAttribute ("ListView.StateImageList")]
+		// XXX [TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+#else
 		[TypeConverter (typeof (ImageIndexConverter))]
+#endif
 		public int StateImageIndex {
 			get { return state_image_index; }
 			set {
@@ -428,6 +442,10 @@ namespace System.Windows.Forms
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[Editor ("System.Windows.Forms.Design.ListViewSubItemCollectionEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 		public ListViewSubItemCollection SubItems {
 			get { return sub_items; }
 		}
@@ -470,6 +488,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[LocalizableAttribute(true)]
+		[DefaultValue (null)]
 		public ListViewGroup Group {
 			get { return this.group; }
 			set
@@ -919,6 +938,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			[Localizable (true)]
 			public string Name {
 				get {
 					return name;
@@ -928,6 +948,10 @@ namespace System.Windows.Forms
 				}
 			}
 
+			[TypeConverter (typeof (StringConverter))]
+			[BindableAttribute (true)]
+			[DefaultValue (null)]
+			[Localizable (false)]
 			public object Tag {
 				get {
 					return tag;
@@ -1222,7 +1246,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public void RemoveByKey (string key)
+			public virtual void RemoveByKey (string key)
 			{
 				int idx = IndexOfKey (key);
 				if (idx != -1)
