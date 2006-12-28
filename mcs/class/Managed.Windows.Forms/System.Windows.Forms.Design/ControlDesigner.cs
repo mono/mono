@@ -25,6 +25,7 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms.Design {
 	
