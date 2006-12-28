@@ -672,6 +672,7 @@ namespace System.DirectoryServices
 						// in case of this return codes exception should not be thrown
 						case LdapException.SIZE_LIMIT_EXCEEDED:
 						case LdapException.TIME_LIMIT_EXCEEDED:
+						case LdapException.REFERRAL:
 							continue;
 						default :
 							throw e;
