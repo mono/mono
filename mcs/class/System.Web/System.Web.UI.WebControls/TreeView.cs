@@ -112,11 +112,11 @@ namespace System.Web.UI.WebControls
 			imageStyles [TreeViewImageSet.BulletedList3] = new ImageStyle (null, null, null, "star_full", "star_empty", "star_full");
 			imageStyles [TreeViewImageSet.BulletedList4] = new ImageStyle (null, null, null, "star_full", "star_empty", "dots");
 			imageStyles [TreeViewImageSet.Contacts] = new ImageStyle ("TreeView_plus", "TreeView_minus", "contact", null, null, null);
-			imageStyles [TreeViewImageSet.Events] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, "warning", null);
-			imageStyles [TreeViewImageSet.Inbox] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", "inbox", "inbox", "inbox");
+			imageStyles [TreeViewImageSet.Events] = new ImageStyle (null, null, null, "warning", "warning", "warning");
+			imageStyles [TreeViewImageSet.Inbox] = new ImageStyle (null, null, null, "inbox", "inbox", "inbox");
 			imageStyles [TreeViewImageSet.Msdn] = new ImageStyle ("box_plus", "box_minus", "box_noexpand", null, null, null);
-			imageStyles [TreeViewImageSet.Simple] = new ImageStyle ("TreeView_plus", "TreeView_minus", "box_full", null, null, null);
-			imageStyles [TreeViewImageSet.Simple2] = new ImageStyle ("TreeView_plus", "TreeView_minus", "box_empty", null, null, null);
+			imageStyles [TreeViewImageSet.Simple] = new ImageStyle (null, null, "box_full", null, null, null);
+			imageStyles [TreeViewImageSet.Simple2] = new ImageStyle (null, null, "box_empty", null, null, null);
 
 			// TODO
 			imageStyles [TreeViewImageSet.News] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
@@ -1700,27 +1700,39 @@ namespace System.Web.UI.WebControls
 		string GetNodeImageUrl (string shape, ImageStyle imageStyle)
 		{
 			if (ShowLines) {
-				if (LineImagesFolder != "")
-					return LineImagesFolder + "/" + shape + ".gif";
+				if (!String.IsNullOrEmpty (LineImagesFolder))
+					return ResolveClientUrl (LineImagesFolder + "/" + shape + ".gif");
 			} else {
-				if (shape == "plus") {
-					if (ExpandImageUrl != "")
-						return ExpandImageUrl;
-					if (imageStyle != null && imageStyle.Expand != null)
-						return imageStyle.Expand;
+				if (imageStyle != null) {
+					if (shape == "plus") {
+						if (!String.IsNullOrEmpty (imageStyle.Expand))
+							return GetNodeIconUrl (imageStyle.Expand);
+					}
+					else if (shape == "minus") {
+						if (!String.IsNullOrEmpty (imageStyle.Collapse))
+							return GetNodeIconUrl (imageStyle.Collapse);
+					}
+					else if (shape == "noexpand") {
+						if (!String.IsNullOrEmpty (imageStyle.NoExpand))
+							return GetNodeIconUrl (imageStyle.NoExpand);
+					}
 				}
-				else if (shape == "minus") {
-					if (CollapseImageUrl != "")
-						return CollapseImageUrl;
-					if (imageStyle != null && imageStyle.Collapse != null)
-						return imageStyle.Collapse;
+				else {
+					if (shape == "plus") {
+						if (!String.IsNullOrEmpty (ExpandImageUrl))
+							return ResolveClientUrl (ExpandImageUrl);
+					}
+					else if (shape == "minus") {
+						if (!String.IsNullOrEmpty (CollapseImageUrl))
+							return ResolveClientUrl (CollapseImageUrl);
+					}
+					else if (shape == "noexpand") {
+						if (!String.IsNullOrEmpty (NoExpandImageUrl))
+							return ResolveClientUrl (NoExpandImageUrl);
+					}
 				}
-				else if (shape == "noexpand") {
-					if (NoExpandImageUrl != "")
-						return NoExpandImageUrl;
-					if (imageStyle != null && imageStyle.NoExpand != null)
-						return imageStyle.NoExpand;
-				}
+				if (!String.IsNullOrEmpty (LineImagesFolder))
+					return ResolveClientUrl (LineImagesFolder + "/" + shape + ".gif");
 			}
 			return AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_" + shape + ".gif");
 		}
