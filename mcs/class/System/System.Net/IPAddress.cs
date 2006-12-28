@@ -52,12 +52,9 @@ namespace System.Net {
 		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
 		public static readonly IPAddress Loopback = IPAddress.Parse ("127.0.0.1");
 		public static readonly IPAddress None = IPAddress.Parse ("255.255.255.255");
-
-#if NET_1_1
 		public static readonly IPAddress IPv6Any = IPAddress.ParseIPV6 ("::");
 		public static readonly IPAddress IPv6Loopback = IPAddress.ParseIPV6 ("::1");
 		public static readonly IPAddress IPv6None = IPAddress.ParseIPV6 ("::");
-#endif
 
 		private static short SwapShort (short number)
 		{
@@ -137,17 +134,13 @@ namespace System.Net {
 			m_Address = addr;
 		}
 
-#if NET_1_1
 		public IPAddress (byte[] address)
 		{
 			int len = address.Length;
-#if NET_2_0
+
 			if (len != 16 && len != 4)
 				throw new ArgumentException ("address");
-#else
-			if (len != 16)
-				throw new ArgumentException ("address");
-#endif
+
 			if (len == 16) {
 				Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
 				m_Family = AddressFamily.InterNetworkV6;
@@ -178,7 +171,6 @@ namespace System.Net {
 			m_Family = AddressFamily.InterNetworkV6;
 			m_ScopeId = scopeId;
 		}
-#endif
 
 		public static IPAddress Parse (string ip)
 		{
@@ -196,14 +188,9 @@ namespace System.Net {
 			if (ip == null)
 				throw new ArgumentNullException ("Value cannot be null.");
 				
-#if NET_1_1
 			if( (address = ParseIPV4(ip)) == null)
 				if( (address = ParseIPV6(ip)) == null)
 					return false;
-#else
-			if( (address = ParseIPV4(ip)) == null)
-					return false;
-#endif
 			return true;
 		}
 
@@ -254,7 +241,6 @@ namespace System.Net {
 			}
 		}
 		
-#if NET_1_1
 		private static IPAddress ParseIPV6 (string ip)
 		{
 			try 
@@ -268,7 +254,6 @@ namespace System.Net {
 		}
 
 		[Obsolete("This property is obsolete. Use GetAddressBytes.")]
-#endif
 		public long Address 
 		{
 			get {
@@ -322,7 +307,6 @@ namespace System.Net {
 		}
 #endif
 
-#if NET_1_1
 		public long ScopeId {
 			get {
 				if(m_Family != AddressFamily.InterNetworkV6)
@@ -351,7 +335,7 @@ namespace System.Net {
 						     (byte)(m_Address >> 24) }; 
 			}
 		}
-#endif
+
 		public AddressFamily AddressFamily 
 		{
 			get {

@@ -1,3 +1,15 @@
+2006-12-28  Miguel de Icaza  <miguel@novell.com>
+
+	* IPAddress.cs: The condition in 1.1 was broken, it only allowed
+	16-byte addresses, and never 4-byte addresses (only 2.0 had
+	them).  
+
+	Keep a single code path.
+
+	Also, remove all the NET_1_1 defines, we realistically only
+	distinguish between 1.1 and 2.0, we wont likely support 1.0, 1.1
+	and 2.0, so remove the 1.0 vs 1.1 conditionals.
+
 ﻿2006-12-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: fix error in my last patch. Thanks to Felipe
