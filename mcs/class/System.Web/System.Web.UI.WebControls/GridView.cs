@@ -195,16 +195,26 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				GridViewPageEventHandler eh = (GridViewPageEventHandler) Events [PageIndexChangingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event PageIndexChanging which wasn't handled.", ID));
 		}
 		
 		protected virtual void OnRowCancelingEdit (GridViewCancelEditEventArgs e)
 		{
 			if (Events != null) {
 				GridViewCancelEditEventHandler eh = (GridViewCancelEditEventHandler) Events [RowCancelingEditEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event RowCancelingEdit which wasn't handled.", ID));
 		}
 		
 		protected virtual void OnRowCommand (GridViewCommandEventArgs e)
@@ -243,16 +253,26 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				GridViewDeleteEventHandler eh = (GridViewDeleteEventHandler) Events [RowDeletingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event RowDeleting which wasn't handled.", ID));
 		}
 		
 		protected virtual void OnRowEditing (GridViewEditEventArgs e)
 		{
 			if (Events != null) {
 				GridViewEditEventHandler eh = (GridViewEditEventHandler) Events [RowEditingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event RowEditing which wasn't handled.", ID));
 		}
 		
 		protected virtual void OnRowUpdated (GridViewUpdatedEventArgs e)
@@ -267,8 +287,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				GridViewUpdateEventHandler eh = (GridViewUpdateEventHandler) Events [RowUpdatingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event RowUpdating which wasn't handled.", ID));
 		}
 		
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
@@ -299,8 +324,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				GridViewSortEventHandler eh = (GridViewSortEventHandler) Events [SortingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format ("The GridView '{0}' fired event Sorting which wasn't handled.", ID));
 		}
 		
 		
@@ -1669,29 +1699,35 @@ namespace System.Web.UI.WebControls
 		{
 			GridViewPageEventArgs args = new GridViewPageEventArgs (newIndex);
 			OnPageIndexChanging (args);
-			if (!args.Cancel) {
-				EndRowEdit ();
-				PageIndex = args.NewPageIndex;
-				OnPageIndexChanged (EventArgs.Empty);
-			}
+			
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			EndRowEdit ();
+			PageIndex = args.NewPageIndex;
+			OnPageIndexChanged (EventArgs.Empty);
 		}
 		
 		void EditRow (int index)
 		{
 			GridViewEditEventArgs args = new GridViewEditEventArgs (index);
 			OnRowEditing (args);
-			if (!args.Cancel) {
-				EditIndex = args.NewEditIndex;
-			}
+			
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			EditIndex = args.NewEditIndex;
 		}
 		
 		void CancelEdit ()
 		{
 			GridViewCancelEditEventArgs args = new GridViewCancelEditEventArgs (EditIndex);
 			OnRowCancelingEdit (args);
-			if (!args.Cancel) {
-				EndRowEdit ();
-			}
+			
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			EndRowEdit ();
 		}
 
 		[MonoTODO ("Support two-way binding expressions")]
@@ -1715,14 +1751,14 @@ namespace System.Web.UI.WebControls
 			
 			GridViewUpdateEventArgs args = new GridViewUpdateEventArgs (rowIndex, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnRowUpdating (args);
-			if (!args.Cancel) {
-				DataSourceView view = GetData ();
-				if (view == null)
-					throw new HttpException ("The DataSourceView associated to data bound control was null");
-				if(view.CanUpdate)
-					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
-			} else
-				EndRowEdit ();
+			
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			DataSourceView view = GetData ();
+			if (view == null)
+				throw new HttpException ("The DataSourceView associated to data bound control was null");
+			view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
 		}
 
 		bool UpdateCallback (int recordsAffected, Exception exception)
@@ -1745,15 +1781,16 @@ namespace System.Web.UI.WebControls
 			GridViewDeleteEventArgs args = new GridViewDeleteEventArgs (rowIndex, currentEditRowKeys, currentEditNewValues);
 			OnRowDeleting (args);
 
-			if (!args.Cancel) {
-				RequireBinding ();
-				DataSourceView view = GetData ();
-				if (view != null && view.CanDelete)
-					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
-				else {
-					GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
-					OnRowDeleted (dargs);
-				}
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			RequireBinding ();
+			DataSourceView view = GetData ();
+			if (view != null)
+				view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
+			else {
+				GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
+				OnRowDeleted (dargs);
 			}
 		}
 

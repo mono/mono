@@ -1206,7 +1206,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void DetailsView_PagingPostback ()
 		{
@@ -1415,7 +1414,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 		
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void DetailsView_DeletePostback ()
 		{

@@ -71,6 +71,7 @@ namespace System.Web.UI.WebControls
 		
 		PropertyDescriptor[] cachedKeyProperties;
 		readonly string[] emptyKeys = new string[0];
+		readonly string unhandledEventExceptionMessage = "The FormView '{0}' fired event {1} which wasn't handled.";
 		
 		// View state
 		PagerSettings pagerSettings;
@@ -178,8 +179,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				FormViewPageEventHandler eh = (FormViewPageEventHandler) Events [PageIndexChangingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "PageIndexChanging"));
 		}
 		
 		protected virtual void OnItemCommand (FormViewCommandEventArgs e)
@@ -218,16 +224,26 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				FormViewInsertEventHandler eh = (FormViewInsertEventHandler) Events [ItemInsertingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemInserting"));
 		}
 		
 		protected virtual void OnItemDeleting (FormViewDeleteEventArgs e)
 		{
 			if (Events != null) {
 				FormViewDeleteEventHandler eh = (FormViewDeleteEventHandler) Events [ItemDeletingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemDeleting"));
 		}
 		
 		protected virtual void OnModeChanged (EventArgs e)
@@ -242,8 +258,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				FormViewModeEventHandler eh = (FormViewModeEventHandler) Events [ModeChangingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ModeChanging"));
 		}
 		
 		protected virtual void OnItemUpdated (FormViewUpdatedEventArgs e)
@@ -258,8 +279,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				FormViewUpdateEventHandler eh = (FormViewUpdateEventHandler) Events [ItemUpdatingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemUpdating"));
 		}
 		
 		
@@ -1199,11 +1225,11 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.EditCommandName:
-				ChangeMode (FormViewMode.Edit);
+				ProcessChangeMode (FormViewMode.Edit);
 				break;
 					
 			case DataControlCommands.NewCommandName:
-				ChangeMode (FormViewMode.Insert);
+				ProcessChangeMode (FormViewMode.Insert);
 				break;
 					
 			case DataControlCommands.UpdateCommandName:
@@ -1228,34 +1254,46 @@ namespace System.Web.UI.WebControls
 		{
 			FormViewPageEventArgs args = new FormViewPageEventArgs (index);
 			OnPageIndexChanging (args);
-			if (!args.Cancel) {
-				int newIndex = args.NewPageIndex;
-				if (newIndex < 0 || newIndex >= PageCount)
-					return;
-				EndRowEdit (false);
-				PageIndex = newIndex;
-				OnPageIndexChanged (EventArgs.Empty);
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			int newIndex = args.NewPageIndex;
+			if (newIndex < 0 || newIndex >= PageCount)
+				return;
+			EndRowEdit (false);
+			PageIndex = newIndex;
+			OnPageIndexChanged (EventArgs.Empty);
 		}
 		
 		public void ChangeMode (FormViewMode newMode)
 		{
+			CurrentMode = newMode;
+			RequireBinding ();
+		}
+
+		void ProcessChangeMode (FormViewMode newMode)
+		{
 			FormViewModeEventArgs args = new FormViewModeEventArgs (newMode, false);
 			OnModeChanging (args);
-			if (!args.Cancel) {
-				CurrentMode = args.NewMode;
-				OnModeChanged (EventArgs.Empty);
-				RequireBinding ();
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			ChangeMode (args.NewMode);
+
+			OnModeChanged (EventArgs.Empty);
 		}
 		
 		void CancelEdit ()
 		{
 			FormViewModeEventArgs args = new FormViewModeEventArgs (FormViewMode.ReadOnly, true);
 			OnModeChanging (args);
-			if (!args.Cancel) {
-				EndRowEdit ();
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			EndRowEdit ();
 		}
 
 		public virtual void UpdateItem (bool causesValidation)
@@ -1276,15 +1314,14 @@ namespace System.Web.UI.WebControls
 			
 			FormViewUpdateEventArgs args = new FormViewUpdateEventArgs (param, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnItemUpdating (args);
-			if (!args.Cancel) {
-				DataSourceView view = GetData ();
-				if (view == null)
-					throw new HttpException ("The DataSourceView associated to data bound control was null");
-				if (view.CanUpdate)
-					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
-			}
-			else
-				EndRowEdit ();
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			DataSourceView view = GetData ();
+			if (view == null)
+				throw new HttpException ("The DataSourceView associated to data bound control was null");
+			view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
 		}
 
 		bool UpdateCallback (int recordsAffected, Exception exception)
@@ -1313,15 +1350,14 @@ namespace System.Web.UI.WebControls
 			currentEditNewValues = GetRowValues (true);
 			FormViewInsertEventArgs args = new FormViewInsertEventArgs (param, currentEditNewValues);
 			OnItemInserting (args);
-			if (!args.Cancel) {
-				DataSourceView view = GetData ();
-				if (view == null)
-					throw new HttpException ("The DataSourceView associated to data bound control was null");
-				if (view.CanInsert)
-					view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
-			}
-			else
-				EndRowEdit ();
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			DataSourceView view = GetData ();
+			if (view == null)
+				throw new HttpException ("The DataSourceView associated to data bound control was null");
+			view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
 		}
 		
 		bool InsertCallback (int recordsAffected, Exception exception)
@@ -1343,21 +1379,22 @@ namespace System.Web.UI.WebControls
 			FormViewDeleteEventArgs args = new FormViewDeleteEventArgs (PageIndex, currentEditRowKeys, currentEditNewValues);
 			OnItemDeleting (args);
 
-			if (!args.Cancel) {
-				if (PageIndex > 0 && PageIndex == PageCount - 1)
-					PageIndex--;
-					
-				RequireBinding ();
-					
-				DataSourceView view = GetData ();
-				if (view != null && view.CanDelete)
-					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
-				else {
-					FormViewDeletedEventArgs dargs = new FormViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
-					OnItemDeleted (dargs);
-				}
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			if (PageIndex > 0 && PageIndex == PageCount - 1)
+				PageIndex--;
+				
+			RequireBinding ();
+				
+			DataSourceView view = GetData ();
+			if (view != null)
+				view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
+			else {
+				FormViewDeletedEventArgs dargs = new FormViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
+				OnItemDeleted (dargs);
 			}
-		}
+		}	
 
 		bool DeleteCallback (int recordsAffected, Exception exception)
 		{

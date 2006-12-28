@@ -69,6 +69,7 @@ namespace System.Web.UI.WebControls
 		
 		PropertyDescriptor[] cachedKeyProperties;
 		readonly string[] emptyKeys = new string[0];
+		readonly string unhandledEventExceptionMessage = "The DetailsView '{0}' fired event {1} which wasn't handled.";
 		
 		// View state
 		DataControlFieldCollection columns;
@@ -186,8 +187,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				DetailsViewPageEventHandler eh = (DetailsViewPageEventHandler) Events [PageIndexChangingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "PageIndexChanging"));
 		}
 		
 		protected virtual void OnItemCommand (DetailsViewCommandEventArgs e)
@@ -226,16 +232,26 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				DetailsViewInsertEventHandler eh = (DetailsViewInsertEventHandler) Events [ItemInsertingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemInserting"));
 		}
 		
 		protected virtual void OnItemDeleting (DetailsViewDeleteEventArgs e)
 		{
 			if (Events != null) {
 				DetailsViewDeleteEventHandler eh = (DetailsViewDeleteEventHandler) Events [ItemDeletingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemDeleting"));
 		}
 		
 		protected virtual void OnModeChanged (EventArgs e)
@@ -250,8 +266,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				DetailsViewModeEventHandler eh = (DetailsViewModeEventHandler) Events [ModeChangingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ModeChanging"));
 		}
 		
 		protected virtual void OnItemUpdated (DetailsViewUpdatedEventArgs e)
@@ -266,8 +287,13 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				DetailsViewUpdateEventHandler eh = (DetailsViewUpdateEventHandler) Events [ItemUpdatingEvent];
-				if (eh != null) eh (this, e);
+				if (eh != null) {
+					eh (this, e);
+					return;
+				}
 			}
+			if (!IsBoundUsingDataSourceID)
+				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemUpdating"));
 		}
 		
 		
@@ -1309,17 +1335,25 @@ namespace System.Web.UI.WebControls
 						row.ControlStyle.CopyFrom (rowStyle);
 					if ((row.RowState & DataControlRowState.Alternate) != 0 && alternatingRowStyle != null && !alternatingRowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (alternatingRowStyle);
-					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (editRowStyle);
-					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null && !insertRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (insertRowStyle);
 					break;
 				default:
 					break;
 				}
 
-				if ((row.ContainingField is CommandField) && commandRowStyle != null && !commandRowStyle.IsEmpty)
-					row.ControlStyle.CopyFrom (commandRowStyle);
+				if (row.ContainingField is CommandField) {
+					if (commandRowStyle != null && !commandRowStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (commandRowStyle);
+				}
+				else {
+					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (editRowStyle);
+					if ((row.RowState & DataControlRowState.Insert) != 0) {
+						if (insertRowStyle != null && !insertRowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (insertRowStyle);
+						else if (editRowStyle != null && !editRowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (editRowStyle);
+					}
+				}
 
 				for (int n = 0; n < row.Cells.Count; n++) {
 					DataControlFieldCell fcell = row.Cells [n] as DataControlFieldCell;
@@ -1436,11 +1470,11 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.EditCommandName:
-				ChangeMode (DetailsViewMode.Edit);
+				ProcessChangeMode (DetailsViewMode.Edit);
 				break;
 					
 			case DataControlCommands.NewCommandName:
-				ChangeMode (DetailsViewMode.Insert);
+				ProcessChangeMode (DetailsViewMode.Insert);
 				break;
 					
 			case DataControlCommands.UpdateCommandName:
@@ -1465,33 +1499,45 @@ namespace System.Web.UI.WebControls
 		{
 			DetailsViewPageEventArgs args = new DetailsViewPageEventArgs (newIndex);
 			OnPageIndexChanging (args);
-			if (!args.Cancel) {
-				if (args.NewPageIndex < 0 || args.NewPageIndex >= PageCount)
-					return;
-				EndRowEdit (false);
-				PageIndex = args.NewPageIndex;
-				OnPageIndexChanged (EventArgs.Empty);
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			if (args.NewPageIndex < 0 || args.NewPageIndex >= PageCount)
+				return;
+			EndRowEdit (false);
+			PageIndex = args.NewPageIndex;
+			OnPageIndexChanged (EventArgs.Empty);
 		}
 		
 		public void ChangeMode (DetailsViewMode newMode)
 		{
+			CurrentMode = newMode;
+			RequireBinding ();
+		}
+
+		void ProcessChangeMode (DetailsViewMode newMode)
+		{
 			DetailsViewModeEventArgs args = new DetailsViewModeEventArgs (newMode, false);
 			OnModeChanging (args);
-			if (!args.Cancel) {
-				CurrentMode = args.NewMode;
-				OnModeChanged (EventArgs.Empty);
-				RequireBinding ();
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			ChangeMode (args.NewMode);
+
+			OnModeChanged (EventArgs.Empty);
 		}
-		
+
 		void CancelEdit ()
 		{
 			DetailsViewModeEventArgs args = new DetailsViewModeEventArgs (DetailsViewMode.ReadOnly, true);
 			OnModeChanging (args);
-			if (!args.Cancel) {
-				EndRowEdit ();
-			}
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			EndRowEdit ();
 		}
 
 		public virtual void UpdateItem (bool causesValidation)
@@ -1513,15 +1559,14 @@ namespace System.Web.UI.WebControls
 			
 			DetailsViewUpdateEventArgs args = new DetailsViewUpdateEventArgs (param, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnItemUpdating (args);
-			if (!args.Cancel) {
-				DataSourceView view = GetData ();
-				if (view == null)
-					throw new HttpException ("The DataSourceView associated to data bound control was null");
-				if (view.CanUpdate)
-					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
-			}
-			else
-				EndRowEdit ();
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+			
+			DataSourceView view = GetData ();
+			if (view == null)
+				throw new HttpException ("The DataSourceView associated to data bound control was null");
+			view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
 		}
 
 		bool UpdateCallback (int recordsAffected, Exception exception)
@@ -1550,15 +1595,14 @@ namespace System.Web.UI.WebControls
 			currentEditNewValues = GetRowValues (false, true);
 			DetailsViewInsertEventArgs args = new DetailsViewInsertEventArgs (param, currentEditNewValues);
 			OnItemInserting (args);
-			if (!args.Cancel) {
-				DataSourceView view = GetData ();
-				if (view == null)
-					throw new HttpException ("The DataSourceView associated to data bound control was null");
-				if (view.CanInsert)
-					view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
-			}
-			else
-				EndRowEdit ();
+
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			DataSourceView view = GetData ();
+			if (view == null)
+				throw new HttpException ("The DataSourceView associated to data bound control was null");
+			view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
 		}
 		
 		bool InsertCallback (int recordsAffected, Exception exception)
@@ -1580,18 +1624,19 @@ namespace System.Web.UI.WebControls
 			DetailsViewDeleteEventArgs args = new DetailsViewDeleteEventArgs (PageIndex, currentEditRowKeys, currentEditNewValues);
 			OnItemDeleting (args);
 
-			if (!args.Cancel) {
-				if (PageIndex == PageCount - 1)
-					PageIndex --;
-				RequireBinding ();
-				DataSourceView view = GetData ();
-				if (view != null && view.CanDelete)
-					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
-				else {
-					DetailsViewDeletedEventArgs dargs = new DetailsViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
-					OnItemDeleted (dargs);
-				}
+			if (args.Cancel || !IsBoundUsingDataSourceID)
+				return;
+
+			DataSourceView view = GetData ();
+			if (view != null)
+				view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
+			else {
+				DetailsViewDeletedEventArgs dargs = new DetailsViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
+				OnItemDeleted (dargs);
 			}
+			if (PageIndex == PageCount - 1)
+				PageIndex --;
+			RequireBinding ();
 		}
 
 		bool DeleteCallback (int recordsAffected, Exception exception)
