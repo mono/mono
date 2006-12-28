@@ -265,8 +265,10 @@ namespace System.Web.UI.HtmlControls
 			}
 
 			string submit = Page.GetSubmitStatements ();
-			if (submit != null && submit != "")
+			if (submit != null && submit != "") {
+				Attributes.Remove ("onsubmit");
 				w.WriteAttribute ("onsubmit", submit);
+			}
 			
 			/* enctype and target should not be written if
 			 * they are empty
