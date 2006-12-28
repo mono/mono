@@ -130,7 +130,21 @@ namespace System.Web.UI.WebControls {
 		{
 			return View.Update (null, null, null);
 		}
-			
+
+		protected internal override void OnInit (EventArgs e)
+		{
+			Page.LoadComplete += OnPageLoadComplete;
+		}
+
+		void OnPageLoadComplete (object sender, EventArgs e)
+		{
+			DeleteParameters.UpdateValues (Context, this);
+			FilterParameters.UpdateValues (Context, this);
+			InsertParameters.UpdateValues (Context, this);
+			SelectParameters.UpdateValues (Context, this);
+			UpdateParameters.UpdateValues (Context, this);
+		}
+
 		protected override void LoadViewState (object savedState)
 		{
 			Pair p = savedState as Pair;

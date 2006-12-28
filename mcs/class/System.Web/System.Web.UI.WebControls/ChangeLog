@@ -1,5 +1,9 @@
 2006-12-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* SqlDataSource.cs: Added parameters update on OnInit
+
+2006-12-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* LoginView.cs: fixed rendering LoggedInTemplate even after user
 	logged out
 
