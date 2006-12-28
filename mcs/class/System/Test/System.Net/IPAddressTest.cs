@@ -324,36 +324,57 @@ public class IPAddressTest
 		Assertion.AssertEquals ("#03", true, new Uri("http://[0:0:0:0::0.0.0.1]/").IsLoopback);
 	}
 
+	[Test] // bug #76792
+	public void Constructor0_Address_4Byte ()
+	{
+		byte[] bytes = new byte[4] { 192, 202, 112, 37 };
 #if NET_2_0
-	[Test]
-	public void FromBytes3 ()
-	{
-		// This one works in 2.0
-		new IPAddress (new byte [4]);
-	}
-	
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void FromBytes4 ()
-	{
-		new IPAddress (new byte [4], 0);
-	}
+		IPAddress i = new IPAddress (bytes);
+		Assert.AreEqual (bytes, i.GetAddressBytes (), "#1");
+		Assert.AreEqual ("192.202.112.37", i.ToString (), "#2");
 #else
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void FromBytes1 ()
-	{
-		new IPAddress (new byte [4]);
-	}
-	
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void FromBytes2 ()
-	{
-		new IPAddress (new byte [4], 0);
-	}
+		try {
+			new IPAddress (bytes);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNotNull (ex.Message, "#3");
+			Assert.AreEqual ("address", ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+			Assert.IsNull (ex.InnerException, "#6");
+		}
 #endif
+	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Constructor0_Address_Null ()
+	{
+		new IPAddress ((byte []) null);
+	}
+
+	[Test]
+	public void Constructor1_Address_4Byte ()
+	{
+		byte [] bytes = new byte [4] { 192, 202, 112, 37 };
+		try {
+			new IPAddress (bytes, 0);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNotNull (ex.Message, "#3");
+			Assert.AreEqual ("address", ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+			Assert.IsNull (ex.InnerException, "#6");
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Constructor1_Address_Null ()
+	{
+		new IPAddress ((byte []) null, 5);
+	}
 
 #if NET_2_0
 	[Test]

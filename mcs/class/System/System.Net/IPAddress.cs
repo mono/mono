@@ -136,10 +136,18 @@ namespace System.Net {
 
 		public IPAddress (byte[] address)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
 			int len = address.Length;
 
+#if NET_2_0
 			if (len != 16 && len != 4)
 				throw new ArgumentException ("address");
+#else
+			if (len != 16)
+				throw new ArgumentException ("address");
+#endif
 
 			if (len == 16) {
 				Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
@@ -153,6 +161,9 @@ namespace System.Net {
 
 		public IPAddress(byte[] address, long scopeId)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
 			if (address.Length != 16)
 				throw new ArgumentException("address");
 
@@ -201,7 +212,7 @@ namespace System.Net {
 				
 			int pos = ip.IndexOf (' ');
 			if (pos != -1)
-				ip = ip.Substring (0, pos);				
+				ip = ip.Substring (0, pos);
 
 			if (ip.Length == 0 || ip [ip.Length - 1] == '.')
 				return null;
