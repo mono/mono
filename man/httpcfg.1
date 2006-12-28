@@ -19,7 +19,7 @@ You must select one of the possible actions: add, delete or list.
 .PP
 When adding a certificate (-add), you must provide the following
 information: a certificate (with the -cert flag) a Private Key file
-(with the -pvk argument, the filename is typically "pvk") and a port
+(with the -pvk argument, the filename is typically "key") and a port
 number (with the -port flag).
 .PP
 When deleting a certificate (-del or -delete) you need to provide the
@@ -42,7 +42,7 @@ Specifies the port to add certificates to, or remove certificates
 from. 
 .TP
 .I "-pvk FILE"
-Specifies the Private Key file.
+Specifies the Private Key file.  
 .TP
 .I "-cert CERT"
 Specifies the certificate file to use.
@@ -51,6 +51,10 @@ Specifies the certificate file to use.
 httpcfg -add -port 8081 -pvk myfile.pvk -cert MyCert
 .fi
 .PP
+For more details on creating the certificate file and the private key,
+see the following web page:
+.PP
+http://www.mono-project.com/UsingClientCertificatesWithXSP
 .SH FILES
 The certificates are stored in the ~/.mono/httplistener directory
 .SH AUTHOR
