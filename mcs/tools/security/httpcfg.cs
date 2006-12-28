@@ -38,7 +38,10 @@ namespace Mono.Tools {
 
 		static void Help (bool exit)
 		{
-			Console.WriteLine ();
+			Console.WriteLine ("Usage is:\n" + 
+					   "\thttpcfg -add -port NN -cert CERT -pvk PVK\n" +
+					   "\thttpcfg -del -port NN\n" +
+					   "\thttpcfg -list");
 			if (exit)
 				Environment.Exit (1);
 		}
@@ -50,7 +53,7 @@ namespace Mono.Tools {
 				switch (arg){
 				case "-add":
 					if (action != Action.None) {
-						Console.Error.WriteLine ("Conflicting options.");
+						Console.Error.WriteLine ("error: conflicting options.");
 						Help (true);
 					}
 					action = Action.Add;
@@ -58,43 +61,43 @@ namespace Mono.Tools {
 				case "-del":
 				case "-delete":
 					if (action != Action.None) {
-						Console.Error.WriteLine ("Conflicting options.");
+						Console.Error.WriteLine ("error: conflicting options.");
 						Help (true);
 					}
 					action = Action.Delete;
 					break;
 				case "-list":
 					if (action != Action.None) {
-						Console.Error.WriteLine ("Conflicting options.");
+						Console.Error.WriteLine ("error: conflicting options.");
 						Help (true);
 					}
 					action = Action.List;
 					break;
 				case "-port":
 					if (port != 0) {
-						Console.Error.WriteLine ("-Error: more than one port name specified.");
+						Console.Error.WriteLine ("error: more than one port specified.");
 						Help (true);
 					}
 
 					try {
 						port = Convert.ToUInt16 (args [++i]);
 					} catch (IndexOutOfRangeException) {
-						Console.WriteLine ("-Error: no port specified.");
+						Console.Error.WriteLine ("Error: no port specified.");
 						Help (true);
 					} catch {
-						Console.WriteLine ("-Error: invalid port.");
+						Console.Error.WriteLine ("Error: invalid port.");
 						Help (true);
 					}
 					break;
 				/*
 				case "-p12":
 					if (p12file != null) {
-						Console.Error.WriteLine ("-Error: more than one p12 file specified.");
+						Console.Error.WriteLine ("error: more than one p12 file specified.");
 						Help (true);
 					}
 
 					if (pvkfile != null || certfile != null) {
-						Console.Error.WriteLine ("-Error: use either -p12 or -pvk and -cert.");
+						Console.Error.WriteLine ("error: use either -p12 or -pvk and -cert.");
 						Help (true);
 					}
 					p12file = args [++i];
@@ -102,13 +105,13 @@ namespace Mono.Tools {
 				*/
 				case "-pvk":
 					if (pvkfile != null) {
-						Console.Error.WriteLine ("-Error: more than one PVK file specified.");
+						Console.Error.WriteLine ("error: more than one PVK file specified.");
 						Help (true);
 					}
 
 					/*
 					if (p12file != null) {
-						Console.Error.WriteLine ("-Error: use either -p12 or -pvk and -cert.");
+						Console.Error.WriteLine ("error: use either -p12 or -pvk and -cert.");
 						Help (true);
 					}
 					*/
@@ -116,13 +119,13 @@ namespace Mono.Tools {
 					break;
 				case "-cert":
 					if (certfile != null) {
-						Console.Error.WriteLine ("-Error: more than one CER file specified.");
+						Console.Error.WriteLine ("error: more than one CER file specified.");
 						Help (true);
 					}
 
 					/*
 					if (p12file != null) {
-						Console.Error.WriteLine ("-Error: use either -p12 or -pvk and -cert.");
+						Console.Error.WriteLine ("error: use either -p12 or -pvk and -cert.");
 						Help (true);
 					}
 					*/
@@ -131,37 +134,37 @@ namespace Mono.Tools {
 				/*
 				case "-passwd":
 					if (passwd != null) {
-						Console.Error.WriteLine ("-Error: more than one password specified.");
+						Console.Error.WriteLine ("error: more than one password specified.");
 						Help (true);
 					}
 					passwd = args [++i];
 					break;
 				*/
 				default:
-					Console.Error.WriteLine ("-Error: Unknown argument: {0}", arg);
+					Console.Error.WriteLine ("error: Unknown argument: {0}", arg);
 					Help (true);
 					break;
 				}
 			}
 
 			if (action == Action.None) {
-				Console.Error.WriteLine ("-Error: no action specified.");
+				Console.Error.WriteLine ("error: no action specified.");
 				Help (true);
 			}
 
 			if ((pvkfile != null && certfile == null) || (pvkfile == null && certfile != null)) {
-				Console.Error.WriteLine ("-Error: -cert and -pvk must be used.");
+				Console.Error.WriteLine ("error: -cert and -pvk must be used.");
 				Help (true);
 			}
 
 			if (action != Action.List && port == 0) {
-				Console.Error.WriteLine ("-Error: -port is missing or bogus.");
+				Console.Error.WriteLine ("error: -port is missing or bogus.");
 				Help (true);
 			}
 
 			//if (action == Action.Delete && (pvkfile != null || certfile != null || p12file != null)) {
 			if (action == Action.Delete && (pvkfile != null || certfile != null)) {
-				Console.Error.WriteLine ("-Error: -delete only expects a -port option.");
+				Console.Error.WriteLine ("error: -delete only expects a -port option.");
 				Help (true);
 			}
 		}
@@ -173,18 +176,18 @@ namespace Mono.Tools {
 			try {
 				x509 = new X509Certificate2 (filename, password);
 			} catch (Exception e) {
-				Console.Error.WriteLine ("-Error loading certificate [{0}]", e.Message);
+				Console.Error.WriteLine ("error loading certificate [{0}]", e.Message);
 				Help (true);
 			}
 
 			string target_cert = Path.Combine (path, String.Format ("{0}.cer", port));
 			if (File.Exists (target_cert)) {
-				Console.Error.WriteLine ("-Error: there is already a certificate for that port.");
+				Console.Error.WriteLine ("error: there is already a certificate for that port.");
 				Help (true);
 			}
 			string target_pvk = Path.Combine (path, String.Format ("{0}.pvk", port));
 			if (File.Exists (target_pvk)) {
-				Console.Error.WriteLine ("-Error: there is already a certificate for that port.");
+				Console.Error.WriteLine ("error: there is already a certificate for that port.");
 				Help (true);
 			}
 
@@ -203,18 +206,18 @@ namespace Mono.Tools {
 				X509Certificate2 x509 = new X509Certificate2 (cert);
 				x509.PrivateKey = PrivateKey.CreateFromFile (pvk).RSA;
 			} catch (Exception e) {
-				Console.Error.WriteLine ("-Error loading certificate or private key [{0}]", e.Message);
+				Console.Error.WriteLine ("error loading certificate or private key [{0}]", e.Message);
 				Help (true);
 			}
 
 			string target_cert = Path.Combine (path, String.Format ("{0}.cer", port));
 			if (File.Exists (target_cert)) {
-				Console.Error.WriteLine ("-Error: there is already a certificate for that port.");
+				Console.Error.WriteLine ("error: there is already a certificate for that port.");
 				Help (true);
 			}
 			string target_pvk = Path.Combine (path, String.Format ("{0}.pvk", port));
 			if (File.Exists (target_pvk)) {
-				Console.Error.WriteLine ("-Error: there is already a certificate for that port.");
+				Console.Error.WriteLine ("error: there is already a certificate for that port.");
 				Help (true);
 			}
 			File.Copy (cert, target_cert);
@@ -229,7 +232,7 @@ namespace Mono.Tools {
 				try {
 					File.Delete (f);
 				} catch (Exception e) {
-					Console.Error.WriteLine ("-Error removing file {0} [{1}].", f, e.Message);
+					Console.Error.WriteLine ("error removing file {0} [{1}].", f, e.Message);
 				}
 			}
 		}
@@ -250,7 +253,7 @@ namespace Mono.Tools {
 			try {
 				ProcessArguments (args);
 			} catch (IndexOutOfRangeException) {
-				Console.Error.WriteLine ("-Error: missing argument.");
+				Console.Error.WriteLine ("error: missing argument.");
 				Help (true);
 			}
 
@@ -265,7 +268,7 @@ namespace Mono.Tools {
 				try {
 					Directory.CreateDirectory (path);
 				} catch (Exception e) {
-					Console.Error.WriteLine ("-Error creating directory {0} [{1}]", path, e.Message);
+					Console.Error.WriteLine ("error: creating directory {0} [{1}]", path, e.Message);
 					return 1;
 				}
 			}
