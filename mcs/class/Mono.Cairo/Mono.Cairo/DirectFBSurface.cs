@@ -37,9 +37,9 @@ namespace Cairo {
 		{
 		}
 
-		public DirectFBSurface (IntPtr dfb, IntPtr surface)
+		public DirectFBSurface (IntPtr dfb, IntPtr dfb_surface)
 		{
-			surface = CairoAPI.cairo_directfb_surface_create (dfb, surface);
+			surface = CairoAPI.cairo_directfb_surface_create (dfb, dfb_surface);
 			lock (surfaces.SyncRoot) {
 				surfaces [surface] = this;
 			}
