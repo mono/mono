@@ -1,0 +1,277 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FCE3E281-0E07-43EE-8611-18C14A180B85}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Mscorlib.Test20</AssemblyName>
+    <JDKName>1.5.0_05</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <Version>2.0</Version>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <RootNamespace>Mscorlib.Test20</RootNamespace>
+    <jarserver>ipa</jarserver>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug_Java\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;JAVA;NET_2_0;NET_1_1;TARGET_JVM</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>False</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release_Java\</OutputPath>
+    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\AFile.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\Empty.resources" />
+    <EmbeddedResource Include="resources\MyResources.de.resources" />
+    <EmbeddedResource Include="resources\MyResources.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="System\ActivatorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\AppDomainCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\AppDomainSetupTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\AppDomainTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ApplicationIdentityTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ApplicationIdTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ArraySegmentTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ArrayTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\AttributeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\BadImageFormatExceptionCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\BadImageFormatExceptionTest.cs" />
+    <Compile Include="System\BitConverterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\BooleanTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\BufferTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ByteTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\CharCategoryTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\CharEnumeratorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\CharTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ConsoleCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ConsoleTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ConvertTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DateTimeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DecimalFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DecimalTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DecimalTest2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DelegateTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DoubleFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\DoubleTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\EnumTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\EnvironmentCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\EnvironmentTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ExceptionCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ExceptionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\FloatingPointFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\GuidTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Int16Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Int32Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Int64Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\IntegerFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\IntPtrTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\MarshalByRefObjectCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\MathTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ModuleHandleTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\MulticastDelegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\NumberFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ObjectTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\RandomTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ResolveEventArgsTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\RuntimeMethodHandleCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\SByteTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\SingleFormatterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\SingleTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\StringTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\TimeSpanTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\TimeZoneTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\TypedReferenceCas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\TypeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\UInt16Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\UInt32Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\UInt64Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\UIntPtrTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\ValueTypeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\VersionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="System\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
+  <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -21,6 +21,7 @@ namespace MonoTests.System
 [TestFixture]
 public class StringTest : Assertion
 {
+#if !TARGET_JVM
 	[Test]
 	public unsafe void CharArrayConstructor ()
 	{
@@ -28,7 +29,7 @@ public class StringTest : Assertion
 		AssertEquals (String.Empty, new String (new Char [0]));
 		AssertEquals ("A", new String (new Char [1] {'A'}));
 	}
-
+#endif
 	[Test]
 	public void CharArrayIntIntConstructor ()
 	{
@@ -80,7 +81,7 @@ public class StringTest : Assertion
 	{
 		new String ('A', -1);
 	}
-
+#if !TARGET_JVM
 	[Test]
 	public unsafe void CharPtrConstructor ()
 	{
@@ -302,7 +303,7 @@ public class StringTest : Assertion
 	{
 		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1, Encoding.Default));
 	}
-
+#endif
 	public void TestLength ()
 	{
 		string str = "test string";
