@@ -7,7 +7,6 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Drawing.dll /r:Accessibility.dll \
 	/r:System.Data.dll /r:Mono.Posix.dll \
-	/r:System.Design.dll	\
 	@System.Windows.Forms.dll.resources \
 	-debug
 

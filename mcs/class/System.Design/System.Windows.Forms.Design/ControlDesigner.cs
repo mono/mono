@@ -1,9 +1,12 @@
 //
 // System.Windows.Forms.Design.ComponentEditorForm.cs
 //
-// Author:
-//   Dennis Hayes (dennish@raytek.com)
+// Authors:
+//    Dennis Hayes (dennish@raytek.com)
+//    Miguel de Icaza (miguel@novell.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (c) 2006 Novell, Inc.
 //
 
 //
@@ -35,23 +38,22 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.Design {
+
 	public class ControlDesigner : ComponentDesigner
 	{
 		#region Public Instance Constructors
 
-		[MonoTODO]
-		public ControlDesigner()
+		public ControlDesigner () : base ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion Public Instance Constructors
 
 		#region Static Constructor
 
-		static ControlDesigner()
+		static ControlDesigner ()
 		{
-			ControlDesigner.InvalidPoint = new Point(int.MinValue, int.MinValue);
+			ControlDesigner.InvalidPoint = new Point (int.MinValue, int.MinValue);
 		}
 
 		#endregion Static Constructor
@@ -59,13 +61,13 @@ namespace System.Windows.Forms.Design {
 		#region Public Instance Methods
 
 		[MonoTODO]
-		public virtual bool CanBeParentedTo(IDesigner parentDesigner)
+		public virtual bool CanBeParentedTo (IDesigner parentDesigner)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void OnSetComponentDefaults()
+		public override void OnSetComponentDefaults ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -75,25 +77,25 @@ namespace System.Windows.Forms.Design {
 		#region Protected Instance Methods
 
 		[MonoTODO]
-		protected void BaseWndProc(ref Message m)
+		protected void BaseWndProc (ref Message m)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void DefWndProc(ref Message m)
+		protected void DefWndProc (ref Message m)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void DisplayError(Exception e)
+		protected void DisplayError (Exception e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void EnableDragDrop(bool value)
+		protected void EnableDragDrop (bool value)
 		{
 			throw new NotImplementedException ();
 		}
@@ -141,7 +143,7 @@ namespace System.Windows.Forms.Design {
 		}
 
 		[MonoTODO]
-		protected virtual void OnDragOver(DragEventArgs de)
+		protected virtual void OnDragOver (DragEventArgs de)
 		{
 			throw new NotImplementedException ();
 		}
@@ -222,10 +224,15 @@ namespace System.Windows.Forms.Design {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Initialize (IComponent component)
 		{
-			throw new NotImplementedException ();
+			if (component == null)
+				throw new ArgumentNullException ("component");
+
+			designed_control = component as Control;
+			
+			if (designed_control == null)
+				throw new ArgumentException ("component", "Must derive from Control class");
 		}
 
 		[MonoTODO]
@@ -241,12 +248,8 @@ namespace System.Windows.Forms.Design {
 		}
 
 		[MonoTODO]
-		public override ICollection AssociatedComponents
-		{
-			get
-			{
-				throw new NotImplementedException ();
-			}
+		public override ICollection AssociatedComponents {
+			get { throw new NotImplementedException (); }
 		}
 
 		#endregion Override implementation of ComponentDesigner
@@ -264,21 +267,12 @@ namespace System.Windows.Forms.Design {
 		}
 
 		[MonoTODO]
-		public virtual SelectionRules SelectionRules 
-		{
-			get
-			{
-				throw new NotImplementedException ();
-			}
+		public virtual SelectionRules SelectionRules {
+			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public virtual Control Control
-		{
-			get
-			{
-				throw new NotImplementedException ();
-			}
+		public virtual Control Control {
+			get { return designed_control; }
 		}
 
 		#endregion Public Instance Properties
@@ -286,12 +280,8 @@ namespace System.Windows.Forms.Design {
 		#region Protected Instance Properties
 
 		[MonoTODO]
-		protected virtual bool EnableDragRect
-		{
-			get
-			{
-				throw new NotImplementedException ();
-			}
+		protected virtual bool EnableDragRect {
+			get { throw new NotImplementedException (); }
 		}
 
 		#endregion Protected Instance Properties
@@ -302,6 +292,12 @@ namespace System.Windows.Forms.Design {
 		protected AccessibleObject accessibilityObj;
 
 		#endregion Protected Static Fields
+
+		#region Private Instance Fields
+
+		Control designed_control;
+
+		#endregion Private Instance Fields
 
 		[ComVisibleAttribute(true)]
 		public class ControlDesignerAccessibleObject : AccessibleObject
@@ -345,75 +341,43 @@ namespace System.Windows.Forms.Design {
 			}
 
 			[MonoTODO]
-			public override Rectangle Bounds 
-			{ 
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override Rectangle Bounds { 
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override string DefaultAction
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override string DefaultAction {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override string Description
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override string Description {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override string Name
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override string Name {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override AccessibleObject Parent
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override AccessibleObject Parent {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override AccessibleRole Role
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override AccessibleRole Role {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override AccessibleStates State
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override AccessibleStates State {
+				get { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
-			public override string Value
-			{
-				get
-				{
-					throw new NotImplementedException ();
-				}
+			public override string Value {
+				get { throw new NotImplementedException (); }
 			}
 
 			#endregion Override implementation of AccessibleObject

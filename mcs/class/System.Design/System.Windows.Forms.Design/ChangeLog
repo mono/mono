@@ -1,3 +1,7 @@
+2006-12-28  Raja R Harinath  <harinath@gmail.com>
+
+	* ControlDesigner.cs: Merge with Miguel's version.
+
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
 	* DataMemberFieldConverter.cs: another empty stub class.
@@ -12,21 +16,21 @@
 
 2005-06-29  Jonathan Chambers <jonathan.chambers@ansys.com>
 
-	* ControlBindingsConverter.cs: Fix namespace 
+	* ControlBindingsConverter.cs: Fix namespace
 
 2006-04-28  Peter Dennis Bartok  <pbartok@novell.com>
 
-	* ControlBindingsConverter.cs: Added 
+	* ControlBindingsConverter.cs: Added
 
 2006-04-25  Miguel de Icaza  <miguel@novell.com>
 
-	* AnchorEditor.cs: Implement the anchor editor.   
+	* AnchorEditor.cs: Implement the anchor editor.
 
 	Two thoughts: I love the "Walkthrough" to implement UI editors
 	from the documentation.
 
 	And Visual Studio 2005 was really nice to use to write this code.
-	
+
 2005-06-21  Jonathan Chambers <jonathan.chambers@ansys.com>
 	* DockEditor.cs: Use context information 
 
