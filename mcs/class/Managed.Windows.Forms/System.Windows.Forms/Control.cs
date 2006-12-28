@@ -4782,7 +4782,7 @@ namespace System.Windows.Forms
 					if (e.InvalidRect == ClientRectangle) {
 						InvalidateBackBuffer ();
 					}
-					else {
+					else if (backbuffer != null){
 						// we need this Inflate call here so
 						// that the border of the rectangle is
 						// considered Visible (the

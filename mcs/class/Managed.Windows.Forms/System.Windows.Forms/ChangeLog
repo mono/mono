@@ -1,4 +1,8 @@
 2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* Control.cs: Fixed a NRE.
+
+2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* TrackBar.cs: Fix SmallChange and LargeChange exceptions
 	for 2.0.
