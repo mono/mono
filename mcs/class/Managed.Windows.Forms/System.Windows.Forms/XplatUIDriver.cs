@@ -293,22 +293,24 @@ namespace System.Windows.Forms {
 		// Double buffering
 		internal virtual void CreateOffscreenDrawable (IntPtr handle,
 							       int width, int height,
-							       out object offscreen_drawable,
-							       out Graphics offscreen_dc)
+							       out object offscreen_drawable)
 		{
 			Bitmap bmp = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 			offscreen_drawable = bmp;
-			offscreen_dc = Graphics.FromImage (bmp);
 		}
 
-		internal virtual void DestroyOffscreenDrawable (object offscreen_drawable,
-								Graphics offscreen_dc)
+		internal virtual void DestroyOffscreenDrawable (object offscreen_drawable)
 		{
 			Bitmap bmp = (Bitmap)offscreen_drawable;
 
 			bmp.Dispose ();
-			offscreen_dc.Dispose ();
+		}
+		
+		internal virtual Graphics GetOffscreenGraphics (object offscreen_drawable)
+		{
+			Bitmap bmp = (Bitmap)offscreen_drawable;
+			return Graphics.FromImage (bmp);
 		}
 
 		internal virtual void BlitFromOffscreen (IntPtr dest_handle,

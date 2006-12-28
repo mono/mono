@@ -1000,24 +1000,29 @@ namespace System.Windows.Forms {
 		// double buffering
 		internal static void CreateOffscreenDrawable (IntPtr handle,
 							    int width, int height,
-							    out object offscreen_drawable,
-							    out Graphics offscreen_dc)
+							    out object offscreen_drawable)
 		{
 #if DriverDebug
 			Console.WriteLine("CreateOffscreenDrawable({2}, {0},{1}): Called", width, height, Window(handle));
 #endif
 			driver.CreateOffscreenDrawable (handle, width, height,
-							out offscreen_drawable,
-							out offscreen_dc);
+							out offscreen_drawable);
 		}
 
-		internal static void DestroyOffscreenDrawable (object offscreen_drawable,
-							     Graphics offscreen_dc)
+		internal static void DestroyOffscreenDrawable (object offscreen_drawable)
 		{
 #if DriverDebug
 			Console.WriteLine("DestroyOffscreenDrawable(): Called");
 #endif
-			driver.DestroyOffscreenDrawable (offscreen_drawable, offscreen_dc);
+			driver.DestroyOffscreenDrawable (offscreen_drawable);
+		}
+
+		internal static Graphics GetOffscreenGraphics (object offscreen_drawable)
+		{
+#if DriverDebug
+			Console.WriteLine("GetOffscreenGraphics(): Called");
+#endif
+			return driver.GetOffscreenGraphics (offscreen_drawable);
 		}
 
 		internal static void BlitFromOffscreen (IntPtr dest_handle,

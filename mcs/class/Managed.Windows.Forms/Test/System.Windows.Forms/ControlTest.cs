@@ -21,6 +21,101 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
+		public class OnPaintTester : Form
+		{
+			int counter;
+			int total;
+			ArrayList list = new ArrayList ();
+			public bool Recursive;
+			public bool TestRefresh;
+			public bool TestInvalidate;
+			public bool TestUpdate;
+#if NET_2_0
+			public new bool DoubleBuffered {
+				get {
+					return base.DoubleBuffered;
+				}
+				set {
+					base.DoubleBuffered = value;
+				}
+			}
+#endif
+			protected override void OnPaint (PaintEventArgs pevent)
+			{
+				Assert.IsFalse (list.Contains (pevent.Graphics), "OnPaintTester.OnPaint: Got the same Graphics twice");
+				list.Add (pevent.Graphics);
+				
+				if (total > 10)
+					return;
+				Recursive = counter > 0 || Recursive;
+				counter++;
+				if (counter < 2) {
+					if (TestRefresh)
+						Refresh ();
+					else if (TestInvalidate)
+						Invalidate ();
+					else {
+						Update ();
+					}
+				}
+				base.OnPaint (pevent);
+				counter--;
+				total++;
+			}
+			public new void Show ()
+			{
+				base.Show ();
+				Application.DoEvents ();
+			}
+		}
+		
+		[Test]
+		public void OnPaintTest ()
+		{
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.TestRefresh = true;
+				t.Show ();
+				Assert.IsTrue (t.Recursive, "#1");
+			}
+
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.TestUpdate = true;
+				t.Show ();
+				Assert.IsFalse (t.Recursive, "#2");
+			}
+
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.TestInvalidate = true;
+				t.Show ();
+				Assert.IsFalse (t.Recursive, "#3");
+			}
+		}
+#if NET_2_0
+		[Test]
+		public void OnPaintDoubleBufferedTest ()
+		{
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.DoubleBuffered = true;
+				t.TestRefresh = true;
+				t.Show ();
+				Assert.IsTrue (t.Recursive, "#1");
+			}
+
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.DoubleBuffered = true;
+				t.TestUpdate = true;
+				t.Show ();
+				Assert.IsFalse (t.Recursive, "#2");
+			}
+
+			using (OnPaintTester t = new OnPaintTester ()) {
+				t.DoubleBuffered = true;
+				t.TestInvalidate = true;
+				t.Show ();
+				Assert.IsFalse (t.Recursive, "#3");
+			}
+		}
+#endif
 #if NET_2_0
 		public class DoubleBufferedForm : Form
 		{
@@ -66,19 +161,12 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DoubleBufferTest ()
 		{
 			DoubleBufferedForm f = new DoubleBufferedForm ();
 			f.Show ();
-
-			// to make the control do a paint event.
-			for (int i = 0; i < 100; i++) {
-				if (f.failed)
-					break;
-				Application.DoEvents ();
-			}
-
+			f.Refresh ();
+			
 			Assert.IsFalse (f.failed, "#01");
 			Assert.IsTrue (f.painted, "The control was never painted, so please check the test");
 		}

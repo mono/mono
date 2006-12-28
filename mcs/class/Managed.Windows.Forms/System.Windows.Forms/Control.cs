@@ -127,10 +127,8 @@ namespace System.Windows.Forms
 		ContextMenu             context_menu; // Context menu associated with the control
 
 		// double buffering
-		Graphics                backbuffer_dc;
-		object                  backbuffer;
-		Region                  invalid_region;
-
+		DoubleBuffer            backbuffer;
+		
 		// to implement DeviceContext without depending on double buffering
 		Bitmap bmp;
 		Graphics bmp_g;
@@ -299,6 +297,91 @@ namespace System.Windows.Forms
 			#endregion	// ControlAccessibleObject Public Instance Methods
 		}
 
+		private class DoubleBuffer : IDisposable
+		{
+			public Region InvalidRegion;
+			private Stack real_graphics;
+			private object back_buffer;
+			private Control parent;
+			private bool pending_disposal;
+			
+			public DoubleBuffer (Control parent)
+			{
+				this.parent = parent;
+				real_graphics = new Stack ();
+				int width = parent.Width;
+				int height = parent.Height;
+
+				if (width < 1) width = 1;
+				if (height < 1) height = 1;
+
+				XplatUI.CreateOffscreenDrawable (parent.Handle, width, height, out back_buffer);
+				Invalidate ();
+			}
+			
+			public void Blit (PaintEventArgs pe)
+			{
+				Graphics buffered_graphics;
+				buffered_graphics = XplatUI.GetOffscreenGraphics (back_buffer);
+				XplatUI.BlitFromOffscreen (parent.Handle, pe.Graphics, back_buffer, buffered_graphics, pe.ClipRectangle);
+				buffered_graphics.Dispose ();
+			}
+			
+			public void Start (PaintEventArgs pe)
+			{				
+				// We need to get the graphics for every paint.
+				real_graphics.Push(pe.SetGraphics (XplatUI.GetOffscreenGraphics (back_buffer)));
+			}
+
+			public void End (PaintEventArgs pe)
+			{
+				Graphics buffered_graphics;
+				buffered_graphics = pe.SetGraphics ((Graphics) real_graphics.Pop ());
+
+				if (pending_disposal) 
+					Dispose ();
+				else {
+					XplatUI.BlitFromOffscreen (parent.Handle, pe.Graphics, back_buffer, buffered_graphics, pe.ClipRectangle);
+					InvalidRegion.Exclude (pe.ClipRectangle);
+				}
+				buffered_graphics.Dispose ();
+			}
+			
+			public void Invalidate ()
+			{
+				if (InvalidRegion != null)
+					InvalidRegion.Dispose ();
+				InvalidRegion = new Region (parent.ClientRectangle);
+			}
+			
+			public void Dispose ()
+			{
+				if (real_graphics.Count > 0) {
+					pending_disposal = true;
+					return;
+				}
+				
+				XplatUI.DestroyOffscreenDrawable (back_buffer);
+
+				if (InvalidRegion != null)
+					InvalidRegion.Dispose ();
+				InvalidRegion = null;
+				back_buffer = null;
+				GC.SuppressFinalize (this);
+			}
+
+			#region IDisposable Members
+			void IDisposable.Dispose ()
+			{
+				Dispose ();
+			}
+			#endregion
+			
+			~DoubleBuffer ()
+			{
+				Dispose ();
+			}
+		}
 #if NET_2_0
 		[ComVisible (false)]
 #else
@@ -866,10 +949,6 @@ namespace System.Windows.Forms
 					bmp_g = null;
 				}
 				
-				if (invalid_region!=null) {
-					invalid_region.Dispose();
-					invalid_region=null;
-				}
 				if (this.InvokeRequired) {
 					if (Application.MessageLoop) {
 						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
@@ -1007,39 +1086,23 @@ namespace System.Windows.Forms
 
 		private void InvalidateBackBuffer ()
 		{
-			if (invalid_region != null)
-				invalid_region.Dispose();
-			invalid_region = new Region (ClientRectangle);
+			if (backbuffer != null)
+				backbuffer.Invalidate ();
 		}
 
-		private void CreateBackBuffer ()
+		private DoubleBuffer GetBackBuffer ()
 		{
-			if (backbuffer != null)
-				return;
-
-			int width = Width;
-			int height = Height;
-
-			if (width < 1) width = 1;
-			if (height < 1) height = 1;
-
-			XplatUI.CreateOffscreenDrawable (Handle, width, height, out backbuffer, out backbuffer_dc);
-			InvalidateBackBuffer ();
+			if (backbuffer == null)
+				backbuffer = new DoubleBuffer (this);
+			return backbuffer;
 		}
 
 		private void DisposeBackBuffer ()
 		{
-			if (backbuffer == null)
-				return;
-
-			XplatUI.DestroyOffscreenDrawable (backbuffer, backbuffer_dc);
-			backbuffer = null;
-			backbuffer_dc = null;
-
-
-			if (invalid_region != null)
-				invalid_region.Dispose ();
-			invalid_region = null;
+			if (backbuffer != null) {
+				backbuffer.Dispose ();
+				backbuffer = null;
+			}
 		}
 
 		internal static void SetChildColor(Control parent) {
@@ -4157,27 +4220,20 @@ namespace System.Windows.Forms
 				if (paint_event == null) {
 					return;
 				}
-
-				if (invalid_region != null && !invalid_region.IsVisible (paint_event.ClipRectangle)) {
-
-					// Just blit the previous image
-					XplatUI.BlitFromOffscreen (Handle, paint_event.Graphics, backbuffer, backbuffer_dc, paint_event.ClipRectangle);
-					XplatUI.PaintEventEnd (Handle, true);
-					return;
-				}
-
-				Graphics dc = null;
-				Graphics back_dc = null;
-				object back = null;
+				DoubleBuffer current_buffer = null;
 				if (ThemeEngine.Current.DoubleBufferingSupported) {
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						CreateBackBuffer ();
-						back = backbuffer;
-						back_dc = backbuffer_dc;
-						dc = paint_event.SetGraphics (back_dc);
+						current_buffer = GetBackBuffer ();
+						if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
+							// Just blit the previous image
+							current_buffer.Blit (paint_event);
+							XplatUI.PaintEventEnd (Handle, true);
+							return;
+						}
+						current_buffer.Start (paint_event);
 					}
 				}
-
+				
 				if (!GetStyle(ControlStyles.Opaque)) {
 					OnPaintBackground(paint_event);
 				}
@@ -4190,15 +4246,10 @@ namespace System.Windows.Forms
 					OnPaint(paint_event);
 				}
 
-				if (ThemeEngine.Current.DoubleBufferingSupported)
-					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						XplatUI.BlitFromOffscreen (Handle, dc, back, back_dc, paint_event.ClipRectangle);
-						paint_event.SetGraphics (dc);
-						invalid_region.Exclude (paint_event.ClipRectangle);
+				if (current_buffer != null) {
+					current_buffer.End (paint_event);
+				}
 
-						if (back != backbuffer)
-							XplatUI.DestroyOffscreenDrawable (back, back_dc);
-					}
 
 				XplatUI.PaintEventEnd(Handle, true);
 
@@ -4738,10 +4789,7 @@ namespace System.Windows.Forms
 						// invalid_region.IsVisible call) in
 						// the WM_PAINT handling below.
 						Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
-						if (invalid_region == null)
-							invalid_region = new Region (r);
-						else
-							invalid_region.Union (r);
+						backbuffer.InvalidRegion.Union (r);
 					}
 				}
 

@@ -5154,8 +5154,7 @@ namespace System.Windows.Forms {
 
 		internal override void CreateOffscreenDrawable (IntPtr handle,
 								int width, int height,
-								out object offscreen_drawable,
-								out Graphics offscreen_dc)
+								out object offscreen_drawable)
 		{
 			IntPtr root_out;
 			int x_out, y_out, width_out, height_out, border_width_out, depth_out;
@@ -5170,16 +5169,18 @@ namespace System.Windows.Forms {
 
 			offscreen_drawable = pixmap;
 
-			offscreen_dc = Graphics.FromHwnd (pixmap);
 		}
 
-		internal override void DestroyOffscreenDrawable (object offscreen_drawable,
-								 Graphics offscreen_dc)
+		internal override void DestroyOffscreenDrawable (object offscreen_drawable)
 		{
 			XFreePixmap (DisplayHandle, (IntPtr)offscreen_drawable);
-			offscreen_dc.Dispose ();
 		}
 
+		internal override Graphics GetOffscreenGraphics (object offscreen_drawable)
+		{
+			return Graphics.FromHwnd ((IntPtr) offscreen_drawable);
+		}
+		
 		internal override void BlitFromOffscreen (IntPtr dest_handle,
 							  Graphics dest_dc,
 							  object offscreen_drawable,

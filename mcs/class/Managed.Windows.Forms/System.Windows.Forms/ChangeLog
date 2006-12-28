@@ -1,3 +1,21 @@
+2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Control.cs: Rewrote double buffering, now a seperate
+	class handles all the buffering, no Graphics is disposed of
+	until the painting is finished (earlier implementation 
+	would crash if the control was resized in the OnPaint, 
+	since it would cause the double buffer to be recreated
+	and the old one disposed), a separate Graphics is 
+	created for every paint (MS behaviour and anyways the state
+	of the Graphics would have to be saved and restored otherwise)
+	
+	* XplatUIDriver.cs: 
+	* XplatUIX11.cs:
+	* XplatUI.cs: Added and implemented GetOffscreenGraphics 
+	so that we can get the graphics for the back buffer without
+	having to create a new one and remove the offscreen_dc parameter
+	from CreateOffscreenDrawable and DestroyOffscreenDrawable.
+	
 2006-12-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add key-related 2.0 methods for CheckedItemCollection.

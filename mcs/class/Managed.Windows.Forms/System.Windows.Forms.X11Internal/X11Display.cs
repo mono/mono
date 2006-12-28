@@ -2416,8 +2416,7 @@ namespace System.Windows.Forms.X11Internal {
 		// double buffering support
 		public void CreateOffscreenDrawable (IntPtr handle,
 						     int width, int height,
-						     out object offscreen_drawable,
-						     out Graphics offscreen_dc)
+						     out object offscreen_drawable)
 		{
 			IntPtr root_out;
 			int x_out, y_out, width_out, height_out, border_width_out, depth_out;
@@ -2431,15 +2430,16 @@ namespace System.Windows.Forms.X11Internal {
 			IntPtr pixmap = Xlib.XCreatePixmap (display, handle, width, height, depth_out);
 
 			offscreen_drawable = pixmap;
-
-			offscreen_dc = Graphics.FromHwnd (pixmap);
 		}
 
-		public void DestroyOffscreenDrawable (object offscreen_drawable,
-						      Graphics offscreen_dc)
+		public void DestroyOffscreenDrawable (object offscreen_drawable)
 		{
 			Xlib.XFreePixmap (display, (IntPtr)offscreen_drawable);
-			offscreen_dc.Dispose ();
+		}
+
+		public Graphics GetOffscreenGraphics (object offscreen_drawable)
+		{
+			return Graphics.FromHwnd ((IntPtr) offscreen_drawable);
 		}
 
 		public void BlitFromOffscreen (IntPtr dest_handle,

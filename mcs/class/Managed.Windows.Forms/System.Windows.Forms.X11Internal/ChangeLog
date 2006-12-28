@@ -1,3 +1,10 @@
+2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* X11Display.cs:
+	* XplatUIX11-new.cs: Implemented GetOffscreenGraphics and 
+	change CreateOffscreenDrawable and DestroyOffscreenDrawable to
+	have the new correct signature.
+	
 2006-12-25  Chris Toshok  <toshok@ximian.com>
 
 	* X11Display.cs: simplify GetMessage a lot.  remove the
