@@ -342,8 +342,13 @@ namespace System.Windows.Forms
 		{
 			get { return largeChange; }
 			set {
+#if NET_2_0
 				if (value < 0)
+					throw new ArgumentOutOfRangeException (string.Format ("Value '{0}' must be greater than or equal to 0.", value));
+#else
+				if ( value < 0 )
 					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+#endif
 				
 				largeChange = value;				
 			}
@@ -434,9 +439,13 @@ namespace System.Windows.Forms
 		public int SmallChange {
 			get { return smallChange;}
 			set {
+#if NET_2_0
+				if (value < 0)
+					throw new ArgumentOutOfRangeException (string.Format ("Value '{0}' must be greater than or equal to 0.", value));
+#else
 				if ( value < 0 )
 					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-
+#endif
 				if (smallChange != value) {
 					smallChange = value;					
 				}
