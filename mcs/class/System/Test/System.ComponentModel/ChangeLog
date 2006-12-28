@@ -1,3 +1,7 @@
+2006-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ContainerTest.cs: Fixed compiler warning.
+
 2006-12-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* DefaultBindingPropertyAttributeTest.cs: new tests.

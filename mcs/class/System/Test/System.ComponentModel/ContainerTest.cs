@@ -82,11 +82,10 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void AddRemove ()
 		{
-			bool found = false;		   
 			TestComponent component = new TestComponent ();
 			
 			_container.Add (component);
-			Assert.IsNotNull (component.Site, "#1");			
+			Assert.IsNotNull (component.Site, "#1");
 			Assert.IsTrue (_container.Contains (component), "#2");
 			
 			_container.Remove (component);
@@ -101,7 +100,6 @@ namespace MonoTests.System.ComponentModel
 #endif
 		}
 
-		
 		[Test]
 		public void GetService1 ()
 		{
@@ -109,4 +107,3 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
-
