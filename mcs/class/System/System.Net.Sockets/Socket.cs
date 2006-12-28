@@ -644,11 +644,10 @@ namespace System.Net.Sockets
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
-				} else if (sa.Family==AddressFamily.Unix &&
-					   unixendpoint!=null) {
+				} else if (sa.Family==AddressFamily.Unix && unixendpoint!=null) {
 					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
 				} else {
-					throw new NotImplementedException();
+					throw new NotImplementedException(Locale.GetText ("No support for the {0} AddressFamily", sa.Family));
 				}
 			}
 		}
@@ -688,7 +687,7 @@ namespace System.Net.Sockets
 					   unixendpoint!=null) {
 					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
 				} else {
-					throw new NotImplementedException();
+					throw new NotSupportedException(Locale.GetText ("the {0} address family is not supported in Mono", sa.Family));
 				}
 			}
 		}

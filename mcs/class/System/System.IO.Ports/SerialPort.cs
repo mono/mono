@@ -451,6 +451,11 @@ namespace System.IO.Ports
 			stream.DiscardOutBuffer ();
 		}
 
+		static Exception GetNotImplemented ()
+		{
+			return new NotImplementedException ("Detection of ports is not implemented for this platform yet.");
+		}
+
 		public static string [] GetPortNames ()
 		{
 			int p = (int) Environment.OSVersion.Platform;
@@ -467,7 +472,7 @@ namespace System.IO.Ports
 				}
 				return serial_ports.ToArray ();
 			}
-			throw new NotImplementedException ("Detection of ports is not implemented for this platform yet.");
+			throw GetNotImplemented ();
 		}
 
 		static bool IsWindows {
