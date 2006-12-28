@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls {
 
 		bool IsAuthenticated {
 			get {
-				if (Page != null && !Page.IsPostBack)
+				if (Page != null)
 					isAuthenticated = Page.Request.IsAuthenticated;
 
 				return isAuthenticated;
