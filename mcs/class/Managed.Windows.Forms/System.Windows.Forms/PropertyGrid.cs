@@ -32,11 +32,16 @@ using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.Design;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms.Design;
 using System.Windows.Forms.PropertyGridInternal;
 
 namespace System.Windows.Forms {
 	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser {
 		#region Private Members
 		
@@ -282,7 +287,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[BrowsableAttribute(false)]
+		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		public virtual bool CommandsVisible {
 			get {
@@ -290,7 +295,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue(false)]
+#if NET_2_0
+		[DefaultValue (true)]
+#else
+		[DefaultValue (false)]
+#endif
 		public virtual bool CommandsVisibleIfAvailable {
 			get {
 				return commands_visible_if_available;
@@ -333,6 +342,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [Control]")]
+#endif
 		public Color HelpBackColor {
 			get {
 				return help_panel.BackColor;
@@ -346,6 +358,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [ControlText]")]
+#endif
 		public Color HelpForeColor {
 			get {
 				return help_panel.ForeColor;
@@ -376,6 +391,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (false)]
+#endif
 		public bool LargeButtons {
 			get {
 				return large_buttons;
@@ -390,6 +408,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [InactiveBorder]")]
+#endif
 		public Color LineColor {
 			get {
 				return line_color;
@@ -571,6 +592,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [Window]")]
+#endif
 		public Color ViewBackColor {
 			get {
 				return property_grid_view.BackColor;
@@ -585,6 +609,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("Color [WindowText]")]
+#endif
 		public Color ViewForeColor {
 			get {
 				return property_grid_view.ForeColor;
@@ -788,6 +815,7 @@ namespace System.Windows.Forms {
 			return base.ProcessDialogKey (keyData);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void ScaleCore (float dx, float dy) {
 			base.ScaleCore (dx, dy);
 		}
@@ -1138,6 +1166,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 
+		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;
