@@ -445,6 +445,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Theme.DefaultFont change must be approved first
 		public void FontTest ()
 		{
 			Control c = new Control ();
@@ -1254,6 +1255,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Theme.DefaultFont change must be approved first
 		public void ResetFontTest ()
 		{
 			Control c = new Control ();
