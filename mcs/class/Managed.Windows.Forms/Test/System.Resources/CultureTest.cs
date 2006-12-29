@@ -12,41 +12,53 @@ using System.Drawing;
 using System.IO;
 using System.Resources;
 using System.Threading;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Resources
 {
-        [TestFixture]
-        public class CultureTest
-        {
-                string fileName = Path.GetTempFileName ();
+	[TestFixture]
+	public class CultureTest
+	{
+		string fileName = null;
 
-                [Test]
-                public void Test ()
-                {
-                        Thread.CurrentThread.CurrentCulture =
-                                Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de-DE");
+		[SetUp]
+		public void SetUp ()
+		{
+			fileName = Path.GetTempFileName ();
+		}
 
-                        ResXResourceWriter w = new ResXResourceWriter (fileName);
-                        w.AddResource ("point", new Point (42, 43));
-                        w.Generate ();
-                        w.Close ();
+		[TearDown]
+		public void TearDown ()
+		{
+			File.Delete (fileName);
+		}
 
-                        int count = 0;
-                        ResXResourceReader r = new ResXResourceReader (fileName);
-                        IDictionaryEnumerator e = r.GetEnumerator ();
-                        while (e.MoveNext ()) {
-                                if ((string)e.Key == "point") {
-                                        Assert.AreEqual (typeof (Point), e.Value.GetType (), "#1");
-                                        Point p = (Point) e.Value;
-                                        Assert.AreEqual (42, p.X, "#2");
-                                        Assert.AreEqual (43, p.Y, "#3");
-                                        count++;
-                                }
-                        }
-                        r.Close ();
-                        File.Delete (fileName);
-                        Assert.AreEqual (1, count, "#100");
-                }
-        }
+		[Test]
+		public void Test ()
+		{
+			Thread.CurrentThread.CurrentCulture =
+					Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de-DE");
+
+			ResXResourceWriter w = new ResXResourceWriter (fileName);
+			w.AddResource ("point", new Point (42, 43));
+			w.Generate ();
+			w.Close ();
+
+			int count = 0;
+			ResXResourceReader r = new ResXResourceReader (fileName);
+			IDictionaryEnumerator e = r.GetEnumerator ();
+			while (e.MoveNext ()) {
+				if ((string) e.Key == "point") {
+					Assert.AreEqual (typeof (Point), e.Value.GetType (), "#1");
+					Point p = (Point) e.Value;
+					Assert.AreEqual (42, p.X, "#2");
+					Assert.AreEqual (43, p.Y, "#3");
+					count++;
+				}
+			}
+			r.Close ();
+			Assert.AreEqual (1, count, "#100");
+		}
+	}
 }
