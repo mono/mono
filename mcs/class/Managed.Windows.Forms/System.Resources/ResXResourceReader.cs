@@ -240,7 +240,11 @@ namespace System.Resources
 					}
 				} else {
 					// invalid mime type
+#if NET_2_0
 					obj = null;
+#else
+					obj = value;
+#endif
 				}
 			} else {
 				obj = value;
