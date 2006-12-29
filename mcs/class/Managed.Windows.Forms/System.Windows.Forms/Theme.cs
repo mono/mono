@@ -187,15 +187,24 @@ namespace System.Windows.Forms
 	}
 
 	internal abstract class Theme
-	{		
+	{
 		protected Array syscolors;
-		protected Font default_font;
-        protected Font window_border_font;
+		private readonly Font default_font;
+		protected Font window_border_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
 		protected bool always_draw_hotkeys = true;
 		internal SystemResPool ResPool = new SystemResPool ();
 		private Type system_colors = Type.GetType("System.Drawing.SystemColors, System.Drawing");
+
+		protected Theme ()
+		{
+#if NET_2_0
+			default_font = SystemFonts.DefaultFont;
+#else
+			default_font = new Font (FontFamily.GenericSansSerif, 8.25f);
+#endif
+		}
 
 		private void SetSystemColors(string name, Color value) {
 			if (system_colors != null) {

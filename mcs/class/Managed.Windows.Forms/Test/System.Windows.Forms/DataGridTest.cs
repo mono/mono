@@ -163,7 +163,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (dg.CaptionFont.FontFamily, dg.Font.FontFamily, "#A2");
 			Assert.AreEqual (dg.CaptionFont.Height, dg.Font.Height, "#A3");
 #if NET_2_0
-			Assert.AreEqual (dg.CaptionFont.IsSystemFont, dg.Font.IsSystemFont, "#A4");
+			Assert.IsFalse(dg.CaptionFont.IsSystemFont, "#A4");
 #endif
 			Assert.AreEqual (dg.CaptionFont.Italic, dg.Font.Italic, "#A5");
 			Assert.AreEqual (dg.CaptionFont.Name, dg.Font.Name, "#A6");

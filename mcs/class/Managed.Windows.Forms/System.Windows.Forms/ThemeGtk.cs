@@ -383,7 +383,6 @@ namespace System.Windows.Forms
 		{
 			Console.WriteLine ("ThemeGtk constructor");
 			InitGtk ();
-			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 			
 			LoadSysDefaultColors ();	
 

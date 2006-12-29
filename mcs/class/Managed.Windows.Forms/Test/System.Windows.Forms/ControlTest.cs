@@ -445,6 +445,47 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void FontTest ()
+		{
+			Control c = new Control ();
+			Assert.IsFalse (c.Font.Bold, "#A1");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.FontFamily.Name, "#A2");
+			Assert.IsFalse (c.Font.Italic, "#A3");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.Name, "#A4");
+			Assert.AreEqual (8.25, c.Font.Size, "#A5");
+			Assert.AreEqual (8.25, c.Font.SizeInPoints, "#A6");
+			Assert.IsFalse (c.Font.Strikeout, "#A7");
+			Assert.IsFalse (c.Font.Underline, "#A8");
+			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#A9");
+#if NET_2_0
+			Assert.IsTrue (c.Font.IsSystemFont, "#A10");
+#endif
+
+			c.Font = new Font (c.Font.FontFamily, 3, FontStyle.Italic);
+			Assert.IsFalse (c.Font.Bold, "#B1");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.FontFamily.Name, "#B2");
+			Assert.IsTrue (c.Font.Italic, "#B3");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.Name, "#B4");
+			Assert.AreEqual (3, c.Font.Size, "#B5");
+			Assert.AreEqual (3, c.Font.SizeInPoints, "#B6");
+			Assert.IsFalse (c.Font.Strikeout, "#B7");
+			Assert.IsFalse (c.Font.Underline, "#B8");
+			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#B9");
+#if NET_2_0
+			Assert.AreEqual (false, c.Font.IsSystemFont, "#B10");
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")] // on Unix mapping is done to Bitstream Vera Sans
+		public void FontTest_Names ()
+		{
+			Control c = new Control ();
+			Assert.AreEqual ("Microsoft Sans Serif", c.Font.FontFamily.Name, "#1");
+			Assert.AreEqual ("Microsoft Sans Serif", c.Font.Name, "#2");
+		}
+
+		[Test]
 		public void PubPropTest()
 		{
 			Control c = new Control();
@@ -1212,7 +1253,27 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-		
+		[Test]
+		public void ResetFontTest ()
+		{
+			Control c = new Control ();
+			c.Font = new Font (c.Font.FontFamily, 3, FontStyle.Italic);
+			c.ResetFont ();
+
+			Assert.IsFalse (c.Font.Bold, "#1");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.FontFamily.Name, "#2");
+			Assert.IsFalse (c.Font.Italic, "#3");
+			//Assert.AreEqual ("Microsoft Sans Serif", c.Font.Name, "#4");
+			Assert.AreEqual (8.25, c.Font.Size, "#5");
+			Assert.AreEqual (8.25, c.Font.SizeInPoints, "#6");
+			Assert.IsFalse (c.Font.Strikeout, "#7");
+			Assert.IsFalse (c.Font.Underline, "#8");
+			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#9");
+#if NET_2_0
+			Assert.AreEqual (true, c.Font.IsSystemFont, "#10");
+#endif
+		}
+
 		public class LayoutTestControl : Control {
 			public int LayoutCount;
 
