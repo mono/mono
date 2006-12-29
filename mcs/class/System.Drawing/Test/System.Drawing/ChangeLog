@@ -1,5 +1,10 @@
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SystemFontsTest.cs: Split DefaultFont test into two parts, since
+	on Linux MS Sans Sarif is mapped to other available font.
+
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SystemFontsTest.cs: Added test for DefaultFont.
 
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
