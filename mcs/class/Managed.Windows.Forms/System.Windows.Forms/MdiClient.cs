@@ -277,11 +277,14 @@ namespace System.Windows.Forms {
 			}
 
 			switch (value) {
-			case MdiLayout.Cascade:
+			case MdiLayout.Cascade: {
 				int i = 0;
 				for (int c = Controls.Count - 1; c >= 0; c--) {
 					Form form = (Form) Controls [c];
 
+					if (form.WindowState == FormWindowState.Minimized)
+						continue;
+		
 					int l = 22 * i;
 					int t = 22 * i;
 
@@ -297,6 +300,64 @@ namespace System.Windows.Forms {
 					i++;
 				}
 				break;
+				}
+			case MdiLayout.ArrangeIcons:
+				ArrangeIconicWindows (true);
+				break;
+			case MdiLayout.TileHorizontal:
+			case MdiLayout.TileVertical: {
+				// First count number of windows to tile
+				int total = 0;
+				for (int i = 0; i < Controls.Count; i++) {
+					Form form = Controls [i] as Form;
+					
+					if (form == null)
+						continue;
+					
+					if (!form.Visible)
+						continue;
+					
+					if (form.WindowState == FormWindowState.Minimized)
+						continue;
+						
+					total++;
+				}
+				if (total <= 0)
+					return;
+
+				// Calculate desired height and width
+				Size newSize;
+				Size offset;
+				if (value == MdiLayout.TileHorizontal) {
+					newSize = new Size (ClientSize.Width, ClientSize.Height / total);
+					offset = new Size (0, newSize.Height);
+				} else {
+					newSize = new Size (ClientSize.Width / total, ClientSize.Height);
+					offset = new Size (newSize.Width, 0);
+				}
+				
+				// Loop again and set the size and location.
+				Point nextLocation = Point.Empty;
+				
+				for (int i = 0; i < Controls.Count; i++) {
+					Form form = Controls [i] as Form;
+
+					if (form == null)
+						continue;
+
+					if (!form.Visible)
+						continue;
+
+					if (form.WindowState == FormWindowState.Minimized)
+						continue;
+
+					form.Size = newSize;
+					form.Location = nextLocation;
+					nextLocation += offset;
+				}
+				
+				break;
+				}
 			default:
 				throw new NotImplementedException();
 			}
@@ -503,7 +564,7 @@ namespace System.Windows.Forms {
 			prev_bottom = Bottom;
 		}
 
-		internal void ArrangeIconicWindows ()
+		internal void ArrangeIconicWindows (bool rearrange_all)
 		{
 			int xspacing = 160;
 			int yspacing = 25;
@@ -517,7 +578,7 @@ namespace System.Windows.Forms {
 
 				MdiWindowManager wm = (MdiWindowManager) form.WindowManager;
 				
-				if (wm.IconicBounds != Rectangle.Empty) {
+				if (wm.IconicBounds != Rectangle.Empty && !rearrange_all) {
 					if (form.Bounds != wm.IconicBounds)
 						form.Bounds = wm.IconicBounds;
 					continue;

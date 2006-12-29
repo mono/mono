@@ -313,7 +313,7 @@ namespace System.Windows.Forms {
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
 				prev_window_state = FormWindowState.Minimized;
-				mdi_container.ArrangeIconicWindows ();
+				mdi_container.ArrangeIconicWindows (false);
 				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			case FormWindowState.Maximized:
