@@ -289,45 +289,64 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DoubleBufferControl c = new DoubleBufferControl ();
 			Assert.IsFalse (c.IsDoubleBuffered, "#A1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#A2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#A3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#A2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#A3");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#A4");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.UserPaint), "#A5");
 
 			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			Assert.IsTrue (c.IsDoubleBuffered, "#B1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#B2");
-			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#B3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#B2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#B3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#B4");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.UserPaint), "#A5");
+
+			c.SetControlStyle (ControlStyles.AllPaintingInWmPaint, false);
+			c.SetControlStyle (ControlStyles.UserPaint, false);
+			Assert.IsTrue (c.IsDoubleBuffered, "#C1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#C2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#C3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#C4");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.UserPaint), "#C5");
 
 			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, false);
-			Assert.IsFalse (c.IsDoubleBuffered, "#C1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#C2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#C3");
+			Assert.IsFalse (c.IsDoubleBuffered, "#D1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#D2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#D3");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#D4");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.UserPaint), "#D5");
 
 			c.SetControlStyle (ControlStyles.DoubleBuffer, true);
-			Assert.IsFalse (c.IsDoubleBuffered, "#D1");
-			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#D2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#D3");
+			Assert.IsFalse (c.IsDoubleBuffered, "#E1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#E2");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#E3");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#E4");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.UserPaint), "#E5");
 
 			c.SetControlStyle (ControlStyles.DoubleBuffer, false);
-			Assert.IsFalse (c.IsDoubleBuffered, "#E1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#E2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#E3");
+			Assert.IsFalse (c.IsDoubleBuffered, "#F1");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#F2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#F3");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#F4");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.UserPaint), "#F5");
 
 			c.IsDoubleBuffered = true;
-			Assert.IsTrue (c.IsDoubleBuffered, "#F1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#F2");
-			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#F3");
+			Assert.IsTrue (c.IsDoubleBuffered, "#G1");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#G2");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#G3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#G4");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.UserPaint), "#G5");
 
-			c.IsDoubleBuffered = false;
-			Assert.IsFalse (c.IsDoubleBuffered, "#G1");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.DoubleBuffer), "#G2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#G3");
-
+			c.SetControlStyle (ControlStyles.AllPaintingInWmPaint, true);
 			c.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			c.SetControlStyle (ControlStyles.DoubleBuffer, true);
+			c.SetControlStyle (ControlStyles.UserPaint, true);
 			c.IsDoubleBuffered = false;
 			Assert.IsFalse (c.IsDoubleBuffered, "#H1");
-			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#H2");
-			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#H3");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.AllPaintingInWmPaint), "#H2");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#H3");
+			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#H4");
+			Assert.IsTrue (c.GetControlStyle (ControlStyles.UserPaint), "#H5");
 		}
 
 		[Test]
