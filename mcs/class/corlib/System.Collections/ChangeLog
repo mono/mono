@@ -1,3 +1,7 @@
+2006-12-29  Marek Safar  <marek.safar@gmail.com>
+
+	* BitArray.cs: Performance improvements.
+
 2006-11-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Hashtable.cs: Serialize EqualityComparer.

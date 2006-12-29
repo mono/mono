@@ -3,6 +3,7 @@
 //
 // Authors:
 // Ben Maurer (bmaurer@users.sourceforge.net)
+// Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2003 Ben Maurer
 //
@@ -51,8 +52,10 @@ namespace System.Collections {
 
 			m_length = bits.m_length;
 			m_array = new int [(m_length + 31) / 32];
-
-			Array.Copy(bits.m_array, m_array, m_array.Length);
+			if (m_array.Length == 1)
+				m_array [0] = bits.m_array [0];
+			else
+				Array.Copy(bits.m_array, m_array, m_array.Length);
 		}
 
 		public BitArray (bool [] values)
@@ -167,21 +170,32 @@ namespace System.Collections {
 		public int Length {
 			get { return m_length; }
 			set {
+				if (m_length == value)
+					return;
+				
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 				
-				int newLen = value;
-				if (m_length != newLen) {
-					int numints = (newLen + 31) / 32;
-					int [] newArr = new int [numints];
-					int copylen = (numints > m_array.Length) ? m_array.Length : numints;
-					Array.Copy (m_array, newArr, copylen);
-					
-					// set the internal state
-					m_array = newArr;
-					m_length = newLen;
-					_version++;
+				// Currently we never shrink the array
+				if (value > m_length) {
+					int numints = (value + 31) / 32;
+					int old_numints = (m_length + 31) / 32;
+					if (numints > m_array.Length) {
+						int [] newArr = new int [numints];
+						Array.Copy (m_array, newArr, m_array.Length);
+						m_array = newArr;
+					} else {
+						Array.Clear(m_array, old_numints, numints - old_numints);
+					}
+
+					int mask = m_length % 32;
+					if (mask > 0)
+						m_array [old_numints - 1] &= (1 << mask) - 1;
 				}
+					
+				// set the internal state
+				m_length = value;
+				_version++;
 			}
 		}
 		
