@@ -199,11 +199,14 @@ namespace System.Windows.Forms
 
 		protected Theme ()
 		{
+/*
 #if NET_2_0
 			default_font = SystemFonts.DefaultFont;
 #else
 			default_font = new Font (FontFamily.GenericSansSerif, 8.25f);
 #endif
+*/
+			default_font = new Font (FontFamily.GenericSansSerif, 8f);
 		}
 
 		private void SetSystemColors(string name, Color value) {

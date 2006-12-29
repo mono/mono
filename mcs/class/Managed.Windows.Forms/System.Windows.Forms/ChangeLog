@@ -1,3 +1,7 @@
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Theme.cs: For now, revert back to 8pt font.
+
 2006-12-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: Set popup as active when open a ContextMenu. 
