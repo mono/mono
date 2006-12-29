@@ -17,11 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006 Alexander Olk
 //
 // Authors:
 //
-//  Alexander Olk	xenomorph2@onlinehome.de
+//  Alexander Olk	alex.olk@googlemail.com
 //
 
 // NOT COMPLETE - work in progress
