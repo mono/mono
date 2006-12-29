@@ -1618,7 +1618,7 @@ namespace System.Windows.Forms
 				OnRightToLeftChanged(EventArgs.Empty);
 			}
 
-			if ((new_parent != null) && new_parent.Created && !Created) {
+			if ((new_parent != null) && new_parent.Created && is_visible && !Created) {
 				CreateControl();
 			}
 
@@ -3081,7 +3081,8 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		public void CreateControl() {
+		public void CreateControl ()
+		{
 			if (is_disposed) {
 				throw new ObjectDisposedException(GetType().FullName.ToString());
 			}
@@ -3099,7 +3100,8 @@ namespace System.Windows.Forms
 
 			Control [] controls = child_controls.GetAllControls ();
 			for (int i=0; i<controls.Length; i++) {
-				controls [i].CreateControl ();
+				if (controls [i].is_visible)
+					controls [i].CreateControl ();
 			}
 
 			UpdateChildrenZOrder();
@@ -3372,7 +3374,7 @@ namespace System.Windows.Forms
 			return new Rectangle(PointToScreen(r.Location), r.Size);
 		}
 
-		public virtual void Refresh() {			
+		public virtual void Refresh() {
 			if (IsHandleCreated) {
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
@@ -3547,7 +3549,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public void Show() {
+		public void Show ()
+		{
 			if (!is_created) {
 				this.CreateControl();
 			}
@@ -4049,7 +4052,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
-				if (value && (window.Handle == IntPtr.Zero) || !is_created) {
+				if (value && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 				}
 
