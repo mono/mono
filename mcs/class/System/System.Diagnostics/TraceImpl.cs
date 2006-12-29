@@ -158,7 +158,7 @@ namespace System.Diagnostics {
 		public static void Assert (bool condition)
 		{
 			if (!condition)
-				Fail (new StackTrace().ToString());
+				Fail (new StackTrace(true).ToString());
 		}
 
 		// FIXME: According to MSDN, this method should display a dialog box
