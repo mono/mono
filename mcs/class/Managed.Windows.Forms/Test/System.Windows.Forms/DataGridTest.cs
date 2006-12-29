@@ -383,7 +383,6 @@ namespace MonoTests.System.Windows.Forms
 			DataGrid dg = new DataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.SetDataBinding (ds, "DataTable");
@@ -436,7 +435,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataSource = ds;
@@ -460,7 +458,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataSource = ds;
@@ -484,7 +481,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataSource = ds;
@@ -510,7 +506,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataSource = ds;
@@ -536,7 +531,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataSource = ds;
@@ -564,7 +558,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			dg.DataMember = "DataTable";
@@ -592,7 +585,6 @@ namespace MonoTests.System.Windows.Forms
 			dg = new TestDataGrid ();
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("DataTable");
-			DataColumn dc = new DataColumn ("C");
 			ds.Tables.Add (dt);
 
 			/* cause the control to create its handle and

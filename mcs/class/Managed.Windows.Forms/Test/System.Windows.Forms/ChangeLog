@@ -1,5 +1,9 @@
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataGridTest.cs: Fixed compiler warnings.
+
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ControlTest.cs: Marked FontTest and ResetFontTest as NotWorking
 	until Theme.DefaultFont change is approved.
 
