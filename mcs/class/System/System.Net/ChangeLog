@@ -1,5 +1,13 @@
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* HttpWebRequest.jvm.cs: Fixed line endings.
+	* HttpWebResponse.jvm.cs: Same.
+	* WebException.cs: Same.
+	* FtpWebRequest.cs: Same.
+	* VMWHttpProvider.jvm.cs: Same.
+
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
         * DnsPermissionAttribute.cs: Fixed line endings.
         * HttpVersion.cs: Same.
         * FtpWebResponse.cs: Same.

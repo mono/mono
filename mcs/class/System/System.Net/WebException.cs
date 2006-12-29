@@ -67,7 +67,7 @@ namespace System.Net
 				    Exception innerException,
 		   		    WebExceptionStatus status, 
 		   		    WebResponse response)
-			: base (message, innerException)		   		    
+			: base (message, innerException)
 		{
 			this.status = status;
 			this.response = response;
@@ -91,4 +91,3 @@ namespace System.Net
 		}
 	}
 }
-	

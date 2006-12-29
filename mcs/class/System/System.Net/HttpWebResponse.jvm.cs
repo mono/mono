@@ -8,7 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net
 {
-	
 	[Serializable]
 	public class HttpWebResponse : WebResponse,  IDisposable
 	{
@@ -507,9 +506,5 @@ namespace System.Net
 				SetCookie (cookie_str);
 		}
 		#endregion
-
 	}
-
 }
-
-

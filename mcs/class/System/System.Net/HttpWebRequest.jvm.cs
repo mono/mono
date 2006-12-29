@@ -15,8 +15,6 @@ using System.Text;
 using System.Threading;
 using System.Net;
 
-
-
 namespace System.Net
 {
 	[Serializable]
