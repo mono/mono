@@ -1,3 +1,15 @@
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Brush.cs: Fixed line endings.
+	* BufferedGraphicsContext.cs: Fixed line endings.
+	* CharacterRange.cs: Fixed line endings.
+	* Graphics.cs: Fixed line endings.
+	* IDeviceContext.cs: Fixed line endings.
+	* SizeFConverter.cs: Fixed line endings.
+	* SystemBrushes.cs: Fixed line endings.
+	* SystemFonts.cs: Fixed line endings.
+	* SystemPens.cs: Fixed line endings.
+
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Splitted CopyFromScreen into platform specific methods
