@@ -260,7 +260,31 @@ namespace MonoTests.System.Windows.Forms
 			c.Visible = true;
 			c.Height = 100;
 			Assert.AreEqual (true, eventhandled, "#D1");
+		}
 
+		int event_count;
+		int resized_event;
+		int layout_event;
+
+		void resized (object sender, EventArgs e)
+		{
+			resized_event = ++event_count;
+		}
+
+		void layout (object sender, LayoutEventArgs le)
+		{
+			layout_event = ++event_count;
+		}
+
+		[Test]
+		public void LayoutResizeTest ()
+		{
+			Control c = new Control ();
+			c.Layout += new LayoutEventHandler (layout);
+			c.Resize += new EventHandler (resized);
+			c.Size = new Size (100, 100);
+			Assert.AreEqual (1, layout_event, "1");
+			Assert.AreEqual (2, resized_event, "2");
 		}
 	}
 

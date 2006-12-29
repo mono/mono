@@ -5088,11 +5088,11 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
+			PerformLayout(this, "Bounds");
+
 			EventHandler eh = (EventHandler)(Events [ResizeEvent]);
 			if (eh != null)
 				eh (this, e);
-
-			PerformLayout(this, "Bounds");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
