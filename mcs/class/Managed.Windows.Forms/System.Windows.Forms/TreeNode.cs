@@ -285,7 +285,11 @@ namespace System.Windows.Forms {
 		public string FullPath {
 			get {
 				if (TreeView == null)
+#if NET_2_0
+					throw new InvalidOperationException ("No TreeView associated");
+#else
 					throw new Exception ("No TreeView associated");
+#endif
 
 				StringBuilder builder = new StringBuilder ();
 				BuildFullPath (builder);

@@ -100,13 +100,29 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsNull (tn_1.PrevNode, "#7");
 		}
 
-		[Test, ExpectedException (typeof (Exception))]
+		[Test]
 		public void FullPathException ()
 		{
-			string s = new TreeNode ("").FullPath;
-			// Prevent CS0219, will never write anything
-			// due to previous statement throwing Exception
-			Console.WriteLine(s);
+			try {
+				string s = new TreeNode ("").FullPath;
+				Assert.Fail ("#1");
+				// Prevent CS0219, will never write anything
+				// due to previous statement throwing an
+				// exception
+				Console.WriteLine (s);
+#if NET_2_0
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+			}
+#else
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+			}
+#endif
 		}
 
 		[Test]
