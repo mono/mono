@@ -301,7 +301,7 @@ namespace System.Resources
 					return new TimeSpan(reader.ReadInt64());
 
 				case PredefinedResourceType.ByteArray:
-					throw new NotImplementedException (PredefinedResourceType.ByteArray.ToString ());
+					return reader.ReadBytes (reader.ReadInt32 ());
 
 				case PredefinedResourceType.Stream:
 					throw new NotImplementedException (PredefinedResourceType.Stream.ToString ());

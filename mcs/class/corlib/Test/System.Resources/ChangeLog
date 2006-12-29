@@ -1,7 +1,12 @@
+2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceReaderTest.cs: Added test for reading byte array.
+	No longer derive from Assertion class.
+
 2006-10-09  Chris Toshok  <toshok@ximian.com>
 
 	* ResourceManagerTest.cs: add some (NotWorking) tests for
-	ResurceManager.
+	ResourceManager.
 
 2006-03-14  Robert Jordan  <robertj@gmx.net>
 
