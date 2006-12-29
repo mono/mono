@@ -1,3 +1,8 @@
+2006-12-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ToolTask.cs (LogEventsFromTextOutput): This method is actually
+	protected so we can't remove second parameter.
+
 2006-12-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Logger.cs (FormatErrorEvent, FormatWarningEvent): Write only (a) or

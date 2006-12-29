@@ -156,7 +156,7 @@ namespace Microsoft.Build.Utilities
 			exitCode = process.ExitCode;
 			
 			while ((line = process.StandardError.ReadLine ()) != null) {
-				LogEventsFromTextOutput (line);
+				LogEventsFromTextOutput (line, MessageImportance.Low);
 			}
 			
 			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", filename));
@@ -166,7 +166,7 @@ namespace Microsoft.Build.Utilities
 		
 		
 		[MonoTODO]
-		protected virtual void LogEventsFromTextOutput (string singleLine)
+		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
 			string filename, origin, category, code, subcategory, text;
 			int lineNumber, columnNumber, endLineNumber, endColumnNumber;
