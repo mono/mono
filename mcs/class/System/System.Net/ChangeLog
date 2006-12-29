@@ -1,3 +1,24 @@
+2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+        * DnsPermissionAttribute.cs: Fixed line endings.
+        * HttpVersion.cs: Same.
+        * FtpWebResponse.cs: Same.
+        * HttpContinueDelegate.cs: Same.
+        * FtpAsyncResult.cs: Same.
+        * EndpointPermission.cs: Same.
+        * IPv6Address.cs: Same.
+        * FtpDataStream.cs: Same.
+        * SocketPermission.cs: Same.
+        * FileWebRequest.cs: Same.
+	* FileWebResponse.cs: Same.
+        * DnsPermission.cs: Same.
+        * ProtocolViolationException.cs: Same.
+        * MonoHttpDate.cs: Same.
+        * SocketPermissionAttribute.cs: Same.
+        * CookieException.cs: Same.
+	* WebResponse.cs: Same.
+	* DefaultCertificatePolicy.cs: Same.
+
 2006-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddress.cs: On 1.1, 4-byte addresses are not supported in the 
