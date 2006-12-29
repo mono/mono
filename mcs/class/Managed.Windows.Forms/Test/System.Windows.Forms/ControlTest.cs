@@ -1432,6 +1432,52 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
+	public class ControlResizeLayoutTest
+	{
+		class ControlPoker : Control {
+			public void DoOnResize ()
+			{
+				OnResize (EventArgs.Empty);
+			}
+		}
+
+		int child_event;
+		string child_affected_property;
+		void ChildLayoutEvent (object sender, LayoutEventArgs e)
+		{
+			child_event ++;
+			child_affected_property = e.AffectedProperty;
+		}
+
+		int parent_event;
+		string parent_affected_property;
+		void ParentLayoutEvent (object sender, LayoutEventArgs e)
+		{
+			parent_event ++;
+			parent_affected_property = e.AffectedProperty;
+		}
+
+		[Test]
+		public void Test ()
+		{
+			Panel p = new Panel ();
+			ControlPoker c = new ControlPoker();
+
+			p.Controls.Add (c);
+
+			p.Layout += new LayoutEventHandler (ParentLayoutEvent);
+			c.Layout += new LayoutEventHandler (ChildLayoutEvent);
+
+			c.DoOnResize ();
+
+			Assert.AreEqual (1, child_event, "1");
+			Assert.AreEqual ("Bounds", child_affected_property, "2");
+
+			Assert.AreEqual (0, parent_event, "3");
+		}
+	}
+
+	[TestFixture]
 	public class ControlInvokeTest {
 		public delegate void TestDelegate ();
 

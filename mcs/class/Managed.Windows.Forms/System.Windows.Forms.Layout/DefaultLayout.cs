@@ -33,22 +33,16 @@ namespace System.Windows.Forms.Layout
 {
 	class DefaultLayout : LayoutEngine
 	{
-		public override bool Layout (object container, LayoutEventArgs args)
+		void LayoutDockedChildren (Control parent, Control[] controls)
 		{
-			Control parent = container as Control;
-
-			Control child;
-			AnchorStyles anchor;
-			Rectangle space;
-
-			space = parent.DisplayRectangle;
+			Rectangle space = parent.DisplayRectangle;
 
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
-			Control[] controls = parent.Controls.GetAllControls ();
 			for (int i = controls.Length - 1; i >= 0; i--) {
-				child = controls[i];
+				Control child = controls[i];
 
-				if (!child.Visible)
+				if (!child.VisibleInternal
+				    || child.ControlLayoutType == Control.LayoutType.Anchor)
 					continue;
 
 				switch (child.Dock) {
@@ -81,14 +75,18 @@ namespace System.Windows.Forms.Layout
 			}
 
 			for (int i = controls.Length - 1; i >= 0; i--) {
-				child = controls[i];
+				Control child = controls[i];
 
-				if (child.Visible && (child.Dock == DockStyle.Fill)) {
+				if (child.VisibleInternal
+				    && (child.ControlLayoutType == Control.LayoutType.Dock)
+				    && (child.Dock == DockStyle.Fill))
 					child.SetBounds (space.Left, space.Top, space.Width, space.Height);
-				}
 			}
+		}
 
-			space = parent.DisplayRectangle;
+		void LayoutAnchoredChildren (Control parent, Control[] controls)
+		{
+			Rectangle space = parent.DisplayRectangle;
 
 			for (int i = 0; i < controls.Length; i++) {
 				int left;
@@ -96,14 +94,13 @@ namespace System.Windows.Forms.Layout
 				int width;
 				int height;
 
-				child = controls[i];
+				Control child = controls[i];
 
-				// If the control is docked we don't need to do anything
-				if (child.Dock != DockStyle.None) {
+				if (!child.VisibleInternal
+				    || child.ControlLayoutType == Control.LayoutType.Dock)
 					continue;
-				}
 
-				anchor = child.Anchor;
+				AnchorStyles anchor = child.Anchor;
 
 				left = child.Left;
 				top = child.Top;
@@ -143,6 +140,16 @@ namespace System.Windows.Forms.Layout
 
 				child.SetBounds (left, top, width, height);
 			}
+		}
+
+		public override bool Layout (object container, LayoutEventArgs args)
+		{
+			Control parent = container as Control;
+
+			Control[] controls = parent.Controls.GetAllControls ();
+
+			LayoutDockedChildren (parent, controls);
+			LayoutAnchoredChildren (parent, controls);
 
 			return false;
 		}

@@ -1,3 +1,12 @@
+2006-12-28  Chris Toshok  <toshok@ximian.com>
+
+	* ControlTest.cs: add a test to check whether parent.PerformLayout
+	is called from OnResized (it isn't).
+
+	* DefaultLayoutTest.cs: new file, add a bunch of anchor tests,
+	including the (not working) test case in bug #80336.  Move the
+	docking/undocking tests here.
+
 2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: More tests for double buffers.

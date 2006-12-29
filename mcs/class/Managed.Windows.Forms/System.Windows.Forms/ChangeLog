@@ -1,3 +1,15 @@
+2006-12-28  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: contrary to what the comment said, Control.Dock does
+	not supercede Control.Anchor - the last one you assign to decides
+	the layout behavior.  so we need to keep track of which was the
+	last set.  Also, fix some of the affected property arguments in
+	PerformLayout calls, and remove an redundant parent.PerformLayout
+	call in OnResized.
+
+	Add a VisibleInternal property, which returns is_visible.  We
+	can/should get rid of all the usage of this field elsewhere.
+
 2006-12-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
 	* Control.cs: DoubleBuffered property reflects the OptimizedDoubleBuffer

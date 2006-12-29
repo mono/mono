@@ -93,7 +93,6 @@ namespace System.Windows.Forms
 		Rectangle               client_rect; // rectangle with the client area (window excluding decorations)
 		ControlStyles           control_style; // rather win32-specific, style bits for control
 		ImeMode                 ime_mode;
-		bool                    layout_pending; // true if our parent needs to re-layout us
 		object                  control_tag; // object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		Cursor                  cursor; // Cursor for the window
@@ -109,11 +108,17 @@ namespace System.Windows.Forms
 		internal                BorderStyle		border_style;		// Border style of control
 
 		// Layout
+		internal enum LayoutType {
+			Anchor,
+			Dock
+		}
 		Layout.LayoutEngine layout_engine;
-		int                     layout_suspended;
-		internal AnchorStyles	anchor_style;		// anchoring requirements for our control
-		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
-		
+		int layout_suspended;
+		bool layout_pending; // true if our parent needs to re-layout us
+		internal AnchorStyles anchor_style; // anchoring requirements for our control
+		internal DockStyle dock_style; // docking requirements for our control
+		LayoutType layout_type;
+
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
 		internal int			dist_bottom; // distance to the bottom border of the parent
@@ -844,6 +849,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public Control()
 		{
+			layout_type = LayoutType.Anchor;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_created = false;
@@ -974,6 +980,14 @@ namespace System.Windows.Forms
 		#endregion 	// Public Constructors
 
 		#region Internal Properties
+		internal bool VisibleInternal {
+			get { return is_visible; }
+		}
+
+		internal LayoutType ControlLayoutType {
+			get { return layout_type; }
+		}
+
 		internal BorderStyle InternalBorderStyle {
 			get {
 				return border_style;
@@ -1783,10 +1797,12 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				layout_type = LayoutType.Anchor;
+
 				anchor_style=value;
 
 				if (parent != null) {
-					parent.PerformLayout(this, "Parent");
+					parent.PerformLayout(this, "Anchor");
 				}
 			}
 		}
@@ -2229,6 +2245,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				layout_type = LayoutType.Dock;
+
 				if (dock_style == value) {
 					return;
 				}
@@ -2248,7 +2266,7 @@ namespace System.Windows.Forms
 				}
 
 				if (parent != null) {
-					parent.PerformLayout(this, "Parent");
+					parent.PerformLayout(this, "Dock");
 				}
 
 				OnDockChanged(EventArgs.Empty);
@@ -3445,17 +3463,17 @@ namespace System.Windows.Forms
 #endif
 
 		public void Select() {
-            if (this is ContainerControl)
-                ContainerSelected = true;
-            else {
-                Control c = this.Parent;
-                while (c != null) {
-                    c.ContainerSelected = false;
-                    c = c.Parent;
-                }
-            }
+			if (this is ContainerControl)
+				ContainerSelected = true;
+			else {
+				Control c = this.Parent;
+				while (c != null) {
+					c.ContainerSelected = false;
+					c = c.Parent;
+				}
+			}
 			Select(false, false);	
-        }
+		}
 
 #if DebugFocus
 		private void printTree(Control c, string t) {
@@ -5071,11 +5089,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 
-			PerformLayout(this, "bounds");
-
-			if (parent != null) {
-				parent.PerformLayout();
-			}
+			PerformLayout(this, "Bounds");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
