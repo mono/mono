@@ -358,8 +358,6 @@ namespace System.Windows.Forms {
 				
 				break;
 				}
-			default:
-				throw new NotImplementedException();
 			}
 		}
 		#endregion	// Public Instance Methods
