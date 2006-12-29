@@ -116,6 +116,119 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 #endif
+		public class PaintEventForm : Form
+		{
+			public ArrayList overrides = new ArrayList ();
+			public ArrayList events = new ArrayList ();
+
+			public PaintEventForm ()
+			{
+				Paint += new PaintEventHandler (DoubleBufferEventForm_Paint);
+			}
+			public bool GetControlStyle (ControlStyles style)
+			{
+				return base.GetStyle (style);
+			}
+
+			public void SetControlStyle (ControlStyles style, bool value)
+			{
+				base.SetStyle (style, value);
+			}
+			
+			void DoubleBufferEventForm_Paint (object sender, PaintEventArgs e)
+			{
+				events.Add("Paint");
+			}
+			
+			protected override void OnPaintBackground (PaintEventArgs e)
+			{
+				base.OnPaintBackground (e);
+				overrides.Add("OnPaintBackground");
+			}
+
+			protected override void OnPaint (PaintEventArgs pevent)
+			{
+				base.OnPaint (pevent);
+				overrides.Add("OnPaint");
+			}
+		}
+		
+		[Test]
+		public void EventStyleTest ()
+		{
+#if NET_2_0
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#A1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#A2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#A3");
+			}
+#endif
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.DoubleBuffer, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#B1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#B2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#B3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.AllPaintingInWmPaint, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#C1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#C2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#C3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.UserPaint, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#D1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#D2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#D3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#E1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#E2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#E3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#F1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#F2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#F3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#G1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#G2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#G3");
+			}
+
+			using (PaintEventForm f = new PaintEventForm ()) {
+				f.Show ();
+				f.SetControlStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer, true);
+				f.Refresh ();
+				Assert.IsTrue (f.overrides.Contains ("OnPaintBackground"), "#H1");
+				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#H2");
+				Assert.IsTrue (f.events.Contains ("Paint"), "#H3");
+			}
+		}
 #if NET_2_0
 		public class DoubleBufferedForm : Form
 		{
@@ -172,7 +285,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DoubleBufferedTest ()
 		{
 			DoubleBufferControl c = new DoubleBufferControl ();
@@ -216,6 +328,33 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsDoubleBuffered, "#H1");
 			Assert.IsTrue (c.GetControlStyle (ControlStyles.DoubleBuffer), "#H2");
 			Assert.IsFalse (c.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#H3");
+		}
+
+		[Test]
+		public void DoubleBufferedStyleTest ()
+		{
+			DoubleBufferControl c = new DoubleBufferControl ();
+			TestControlStyle.CheckStyles (c, "#A1", ControlStyles.UserPaint, ControlStyles.StandardClick, ControlStyles.Selectable, ControlStyles.StandardDoubleClick, ControlStyles.AllPaintingInWmPaint, ControlStyles.UseTextForAccessibility);
+
+			c.IsDoubleBuffered = true;
+			TestControlStyle.CheckStyles (c, "#A2", ControlStyles.UserPaint, ControlStyles.StandardClick, ControlStyles.Selectable, ControlStyles.StandardDoubleClick, ControlStyles.AllPaintingInWmPaint, ControlStyles.UseTextForAccessibility, ControlStyles.OptimizedDoubleBuffer);
+
+			c.IsDoubleBuffered = false;
+			TestControlStyle.CheckStyles (c, "#A3", ControlStyles.UserPaint, ControlStyles.StandardClick, ControlStyles.Selectable, ControlStyles.StandardDoubleClick, ControlStyles.AllPaintingInWmPaint, ControlStyles.UseTextForAccessibility);
+
+			c = new DoubleBufferControl ();
+			foreach (ControlStyles style in Enum.GetValues (typeof(ControlStyles))) {
+				c.SetControlStyle (style, false);
+			}
+
+			TestControlStyle.CheckStyles (c, "#B1");
+
+			c.IsDoubleBuffered = true;
+			TestControlStyle.CheckStyles (c, "#B2", ControlStyles.OptimizedDoubleBuffer, ControlStyles.AllPaintingInWmPaint);
+
+			c.IsDoubleBuffered = false;
+			TestControlStyle.CheckStyles (c, "#B3", ControlStyles.AllPaintingInWmPaint);
+
 		}
 #endif
 

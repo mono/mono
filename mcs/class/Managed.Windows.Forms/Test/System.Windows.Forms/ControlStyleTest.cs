@@ -30,6 +30,30 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual(want, got, name);
 		}
 
+		public static void CheckStyles (Control ctrl, string msg, params ControlStyles [] ExpectedStyles)
+		{
+			MethodInfo method = ctrl.GetType ().GetMethod ("GetStyle", BindingFlags.ExactBinding | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type [] {typeof(ControlStyles)}, null);
+			Assert.IsNotNull (method, "Cannot complete test, didn't find GetStyle method on Control");
+			
+			string failed = "";
+			
+			if (ExpectedStyles == null)
+				ExpectedStyles = new ControlStyles [0];
+			foreach (ControlStyles style in Enum.GetValues (typeof(ControlStyles))) {
+				bool result = (bool) method.Invoke (ctrl, new object [] {style});
+				if (Array.IndexOf (ExpectedStyles, style) >= 0) {
+					if (!result) 
+						failed += "\t" + "ControlStyles." + style.ToString () + " was expected, but is not set." + Environment.NewLine;
+				} else {
+					if (result)
+						failed += "\t" + "ControlStyles." + style.ToString () + " is set, but was not expected." + Environment.NewLine;
+				}
+			}
+			if (failed != String.Empty) {
+				Assert.Fail (msg + Environment.NewLine + failed);
+			}
+		}
+
 		public static string[] GetStyles(Control control) {
 			string[] result;
 

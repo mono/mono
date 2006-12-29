@@ -1621,6 +1621,19 @@ namespace System.Windows.Forms
 					dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
 		}
+		
+		private bool UseDoubleBuffering {
+			get {
+				if (!ThemeEngine.Current.DoubleBufferingSupported)
+					return false;
+
+#if NET_2_0
+				if (DoubleBuffered)
+					return true;
+#endif
+				return (control_style & ControlStyles.DoubleBuffer) != 0;
+			}
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -2245,11 +2258,18 @@ namespace System.Windows.Forms
 #if NET_2_0
 		protected virtual bool DoubleBuffered {
 			get {
-				return (control_style & ControlStyles.DoubleBuffer) != 0;
+				return (control_style & ControlStyles.OptimizedDoubleBuffer) != 0;
 			}
 
 			set {
-				SetStyle (ControlStyles.DoubleBuffer, value);
+				if (value == DoubleBuffered)
+					return;
+				if (value) {
+					SetStyle (ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+				} else {
+					SetStyle (ControlStyles.OptimizedDoubleBuffer, false);
+				}
+				
 			}
 		}
 #endif
@@ -4221,17 +4241,15 @@ namespace System.Windows.Forms
 					return;
 				}
 				DoubleBuffer current_buffer = null;
-				if (ThemeEngine.Current.DoubleBufferingSupported) {
-					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						current_buffer = GetBackBuffer ();
-						if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
-							// Just blit the previous image
-							current_buffer.Blit (paint_event);
-							XplatUI.PaintEventEnd (Handle, true);
-							return;
-						}
-						current_buffer.Start (paint_event);
+				if (UseDoubleBuffering) {
+					current_buffer = GetBackBuffer ();
+					if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
+						// Just blit the previous image
+						current_buffer.Blit (paint_event);
+						XplatUI.PaintEventEnd (Handle, true);
+						return;
 					}
+					current_buffer.Start (paint_event);
 				}
 				
 				if (!GetStyle(ControlStyles.Opaque)) {
@@ -4774,24 +4792,22 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
-			if (ThemeEngine.Current.DoubleBufferingSupported)
-				if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-					// should this block be here?  seems like it
-					// would be more at home in
-					// NotifyInvalidated..
-					if (e.InvalidRect == ClientRectangle) {
-						InvalidateBackBuffer ();
-					}
-					else if (backbuffer != null){
-						// we need this Inflate call here so
-						// that the border of the rectangle is
-						// considered Visible (the
-						// invalid_region.IsVisible call) in
-						// the WM_PAINT handling below.
-						Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
-						backbuffer.InvalidRegion.Union (r);
-					}
+			if (UseDoubleBuffering) {
+				// should this block be here?  seems like it
+				// would be more at home in
+				// NotifyInvalidated..
+				if (e.InvalidRect == ClientRectangle) {
+					InvalidateBackBuffer ();
+				} else if (backbuffer != null){
+					// we need this Inflate call here so
+					// that the border of the rectangle is
+					// considered Visible (the
+					// invalid_region.IsVisible call) in
+					// the WM_PAINT handling below.
+					Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
+					backbuffer.InvalidRegion.Union (r);
 				}
+			}
 
 			InvalidateEventHandler eh = (InvalidateEventHandler)(Events [InvalidatedEvent]);
 			if (eh != null)
