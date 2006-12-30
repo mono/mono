@@ -18,9 +18,11 @@ System.Management/ManagementEventArgs.cs
 System.Management/ManagementNamedValueCollection.cs
 System.Management/ManagementObject.cs
 System.Management/ManagementObjectCollection.cs
+System.Management/ManagementObjectSearcher.cs
 System.Management/ManagementOperationObserver.cs
 System.Management/ManagementOptions.cs
 System.Management/ManagementPath.cs
+System.Management/ManagementQuery.cs
 System.Management/ManagementScope.cs
 System.Management/ManagementStatus.cs
 System.Management/MethodData.cs
@@ -28,6 +30,7 @@ System.Management/MethodDataCollection.cs
 System.Management/ObjectGetOptions.cs
 System.Management/ObjectPutEventArgs.cs
 System.Management/ObjectPutEventHandler.cs
+System.Management/ObjectQuery.cs
 System.Management/ObjectReadyEventArgs.cs
 System.Management/ObjectReadyEventHandler.cs
 System.Management/ProgressEventArgs.cs
