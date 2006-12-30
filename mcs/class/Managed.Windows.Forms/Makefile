@@ -83,8 +83,6 @@ EXTRA_DISTFILES = \
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
 	-resource:Test/resources/a.cur,a.cur
 
-TEST_HARNESS_LOCAL_EXCLUDES=Interactive
-
 SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj
 	./build-csproj
 
@@ -92,6 +90,9 @@ SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resourc
 	./build-csproj2k5
 
 include ../../build/library.make
+
+TEST_HARNESS_EXCLUDES = /exclude:Interactive,NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:Interactive,NotDotNet,CAS
 
 $(the_lib): $(RESOURCES) SWF.csproj SWF2k5.csproj
 
