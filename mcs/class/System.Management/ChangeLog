@@ -1,3 +1,8 @@
+2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Management.dll.sources: Added CodeLanguage.cs,
+	ManagementClass.cs, MethodData.cs, MethodDataCollection.cs.
+
 2004-04-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Management.dll.sources: Sorted, added assemblyinfos

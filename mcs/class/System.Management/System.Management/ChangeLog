@@ -1,3 +1,10 @@
+2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeLanguage.cs: Stubbed out.
+	* ManagementClass.cs: Stubbed out.
+	* MethodData.cs: Stubbed out.
+	* MethodDataCollection.cs: Stubbed out.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthenticationLevel.cs:
