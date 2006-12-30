@@ -1,4 +1,4 @@
-// cs0619-42.cs: `Error.member' is obsolete: `Obsolete member'
+// CS0619: `Error.Filename' is obsolete: `NOT'
 // Line: 8
 // Compiler options: -reference:CS0619-42-lib.dll
 

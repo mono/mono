@@ -1,4 +1,4 @@
-// cs1501.cs : No overload for method `MyDelegate' takes `0' arguments
+// CS1501: No overload for method `Blah.MyDelegate' takes `0' arguments
 // Line : 17
 
 public class Blah {

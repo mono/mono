@@ -1,5 +1,6 @@
-//cs1518.cs: namespace can only contain class, interface, enum, struct or delegate
-// Line: 5
+// CS1518: Expected `class', `delegate', `enum', `interface', or `struct'
+// Line: 6
+
 namespace X {
 
 	sealed fe {}
