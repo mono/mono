@@ -48,7 +48,6 @@ namespace System.Resources
 
 		protected IResourceReader Reader;
 		protected Hashtable Table;
-		internal bool isDisposed = false;
 
 		// Constructors
 		protected ResourceSet () {}
@@ -103,8 +102,6 @@ namespace System.Resources
 
 			Reader = null;
 			Table = null;
-			
-			isDisposed = true;
 		}
 
 		public virtual Type GetDefaultReader ()

@@ -4,6 +4,7 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 //	Dick Porter (dick@ximian.com)
+// 	Alexander Olk (alex.olk@googlemail.com)
 //
 // (C) 2001, 2002 Ximian, Inc. http://www.ximian.com
 //
@@ -58,7 +59,6 @@ namespace System.Resources
 		
 		// constructors
 		protected ResourceManager () {
-			ResourceSets=new Hashtable();
 			ignoreCase=false;
 			resourceSetType=typeof(ResourceSet);
 			resourceDir=null;
@@ -70,6 +70,7 @@ namespace System.Resources
 			if (resourceSource == null)
 				throw new ArgumentNullException ("resourceSource is null.");
 			
+			ResourceSets = new Hashtable();
 			BaseNameField = resourceSource.FullName;
 			MainAssembly = resourceSource.Assembly;
 
@@ -85,6 +86,7 @@ namespace System.Resources
 			if(assembly == null)
 				throw new ArgumentNullException ("assembly is null.");
 			
+			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
 			neutral_culture = GetNeutralResourcesLanguage(MainAssembly);
@@ -109,6 +111,7 @@ namespace System.Resources
 			if(assembly == null)
 				throw new ArgumentNullException ("assembly is null.");
 			
+			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
 			resourceSetType = CheckResourceSetType(usingResourceSet);
@@ -128,6 +131,7 @@ namespace System.Resources
 				throw new ArgumentNullException("The resourceDir is null");
 			}
 
+			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = null;
 			resourceSetType = CheckResourceSetType(usingResourceSet);
@@ -289,13 +293,9 @@ namespace System.Resources
 				throw new MissingManifestResourceException (msg);
 			}
 			/* if we already have this resource set, return it */
-			set=(ResourceSet)ResourceSets[culture];
-			if(set!=null && !set.isDisposed) {
-				return(set);
-			} else if (set!=null && set.isDisposed) {
-				ResourceSets.Remove (set);
-				set = null;
-			}
+			set = (ResourceSet)ResourceSets [culture];
+			if (set != null)
+				return set;
 
 			if(MainAssembly != null) {
 				/* Assembly resources */
@@ -340,9 +340,15 @@ namespace System.Resources
 							    
 					throw new MissingManifestResourceException (msg);
 				}
-			} else if(resourceDir != null) {
+			} else if (resourceDir != null || BaseNameField != null) {
 				/* File resources */
-				string filename=Path.Combine(resourceDir, this.GetResourceFileName(culture));
+				string filename;
+				
+				if(resourceDir != null)
+					filename = Path.Combine (resourceDir, GetResourceFileName (culture));
+				else
+					filename = GetResourceFileName(culture);
+				
 				if(File.Exists(filename) &&
 				   Createifnotexists==true) {
 					object[] args=new Object[1];
