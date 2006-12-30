@@ -1376,12 +1376,36 @@ namespace Mono.CSharp
 			return typeOutput;
 		}
 
+		static bool is_identifier_start_character (char c)
+                {
+                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '@' || Char.IsLetter (c);
+                }
+
+                static bool is_identifier_part_character (char c)
+                {
+                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c)
+;
+                }
+		
 		protected override bool IsValidIdentifier (string identifier)
 		{
+			if (identifier == null || identifier.Length == 0)
+				return false;
+			
 			if (keywordsTable == null)
 				FillKeywordTable ();
 
-			return !keywordsTable.Contains (identifier);
+			if (keywordsTable.Contains (identifier))
+				return false;
+
+			if (!is_identifier_start_character (identifier [0]))
+                                return false;
+                        
+                        for (int i = 1; i < identifier.Length; i ++)
+                                if (! is_identifier_part_character (identifier [i]))
+                                        return false;
+                        
+                        return true;
 		}
 
 		protected override bool Supports (GeneratorSupport supports)
