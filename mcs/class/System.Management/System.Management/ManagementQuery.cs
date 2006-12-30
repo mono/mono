@@ -44,27 +44,22 @@ namespace System.Management
 
 		public virtual string QueryLanguage {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public virtual string QueryString {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public abstract object Clone ();
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
-		}
 	}
 }

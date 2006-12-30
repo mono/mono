@@ -34,27 +34,22 @@ namespace System.Management
 	{
 		public ObjectQuery ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ObjectQuery (string query)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ObjectQuery (string language, string query)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public override object Clone ()
 		{
-			throw CreateNotImplementedException ();
-		}
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
+			throw new NotImplementedException ();
 		}
 	}
 }

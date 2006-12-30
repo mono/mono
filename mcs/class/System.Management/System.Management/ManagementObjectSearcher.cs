@@ -37,79 +37,74 @@ namespace System.Management
 	{
 		public ManagementObjectSearcher ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (ObjectQuery query)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (string queryString)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (ManagementScope scope, ObjectQuery query)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (string scope, string queryString)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (ManagementScope scope, ObjectQuery query, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectSearcher (string scope, string queryString, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public EnumerationOptions Options {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public ObjectQuery Query {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public ManagementScope Scope {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public ManagementObjectCollection Get ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void Get (ManagementOperationObserver watcher)
 		{
-			throw CreateNotImplementedException ();
-		}
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
+			throw new NotImplementedException ();
 		}
 	}
 }

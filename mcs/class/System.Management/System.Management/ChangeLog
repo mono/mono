@@ -1,5 +1,15 @@
 2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* MethodDataCollection.cs: Throw NotImplementedException in methods
+	and properties itself to improve Moma reports.
+	* ManagementClass.cs: Same.
+	* MethodData.cs: Same.
+	* ManagementObjectSearcher.cs: Same.
+	* ObjectQuery.cs: Same.
+	* ManagementQuery.cs: Same.
+
+2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ManagementObjectSearcher.cs: Stubbed out.
 	* ManagementQuery.cs: Stubbed out.
 	* ObjectQuery.cs: Stubbed out.

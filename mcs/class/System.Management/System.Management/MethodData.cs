@@ -35,37 +35,32 @@ namespace System.Management
 	{
 		public ManagementBaseObject InParameters {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public string Name {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public string Origin {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public ManagementBaseObject OutParameters {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public QualifierDataCollection Qualifiers {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
-		}
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
 		}
 	}
 }

@@ -39,189 +39,183 @@ namespace System.Management
 	{
 		public ManagementClass ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (ManagementPath path)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (string path)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (ManagementPath path, ObjectGetOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (string path, ObjectGetOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (ManagementScope scope, ManagementPath path, ObjectGetOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass (string scope, string path, ObjectGetOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public StringCollection Derivation {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public MethodDataCollection Methods {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public override ManagementPath Path {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public override object Clone ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObject CreateInstance ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementClass Derive (string newClassName)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetInstances ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetInstances (EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetInstances (ManagementOperationObserver watcher)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetInstances (ManagementOperationObserver watcher, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelatedClasses ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelatedClasses (ManagementOperationObserver watcher)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelatedClasses (string relatedClass)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelatedClasses (ManagementOperationObserver watcher, string relatedClass)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelatedClasses (string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelatedClasses (ManagementOperationObserver watcher, string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelationshipClasses ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelationshipClasses (ManagementOperationObserver watcher)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelationshipClasses (string relationshipClass)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelationshipClasses (ManagementOperationObserver watcher, string relationshipClass)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetRelationshipClasses (string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetRelationshipClasses (ManagementOperationObserver watcher, string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public CodeTypeDeclaration GetStronglyTypedClassCode (bool includeSystemClassInClassDef, bool systemPropertyClass)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public bool GetStronglyTypedClassCode (CodeLanguage lang, string filePath, string classNamespace)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetSubclasses ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public ManagementObjectCollection GetSubclasses (EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetSubclasses (ManagementOperationObserver watcher)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void GetSubclasses (ManagementOperationObserver watcher, EnumerationOptions options)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
-		}
-
 	}
 }

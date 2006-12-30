@@ -37,56 +37,56 @@ namespace System.Management
 	{
 		public int Count {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsSynchronized {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public virtual MethodData this [string methodName] {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public object SyncRoot {
 			get {
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public virtual void Add (string methodName)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public virtual void Add (string methodName, ManagementBaseObject inParams, ManagementBaseObject outParams)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void CopyTo (MethodData [] methodArray, int index)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public MethodDataEnumerator GetEnumerator ()
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public virtual void Remove (string methodName)
 		{
-			throw CreateNotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -98,17 +98,17 @@ namespace System.Management
 		{
 			public bool MoveNext ()
 			{
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			public void Reset ()
 			{
-				throw CreateNotImplementedException ();
+				throw new NotImplementedException ();
 			}
 
 			public MethodData Current {
 				get {
-					throw CreateNotImplementedException ();
+					throw new NotImplementedException ();
 				}
 			}
 
@@ -117,11 +117,6 @@ namespace System.Management
 					return Current;
 				}
 			}
-		}
-
-		private static NotImplementedException CreateNotImplementedException ()
-		{
-			return new NotImplementedException ("System.Management is not implemented.");
 		}
 	}
 }
