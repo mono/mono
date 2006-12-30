@@ -1,5 +1,35 @@
 2006-12-30  Marek Safar  <marek.safar@gmail.com>
 
+	* attribute.cs (GetMethodObsoleteAttribute): Uses new
+	GetPropertyFromAccessor and GetEventFromAccessor.
+	
+	* class.cs (MethodCore.CheckBase): A new warning when obsolete member
+	overrides non-obsolete one.
+	(Indexer.Define): Error message has been moved to the parser.
+
+	* cs-parser.jay: Better syntax errors handling.
+
+	* delegate.cs (NewDelegate.DoResolve): Issue less confusing error message
+	when an invocation has no arguments.
+
+	* ecore.cs: Removed not used caching.
+
+	* expression.cs (IsSpecialMethodInvocation): Reuses TypeManager
+	implementation.
+
+	* report.cs: Add a new warning.
+
+	* support.cs (ReflectionParameters): Implements Equals, GetHashCode.
+
+	* typemanager.cs (enumeration_type): Removed.
+	(CSharpSignature): Reuses IsSpecialMethod.
+	(IsEqual): Hack for MS BCL.
+	(GetPropertyFromAccessor): New method.
+	(GetEventFromAccessor): New method.
+	(IsSpecialMethod): Fixed to handle more cases.
+
+2006-12-30  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs (PreProcessDefinition, handle_preprocessing_directive):
 	Made white spaces array static.
 

@@ -31,7 +31,10 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-public partial class TypeManager {
+#if GMCS_SOURCE
+	partial
+#endif
+	class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
 	//
@@ -57,7 +60,6 @@ public partial class TypeManager {
 	static public Type multicast_delegate_type;
 	static public Type void_type;
 	static public Type null_type;
-	static public Type enumeration_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
 	static public Type icloneable_type;
@@ -438,11 +440,6 @@ public partial class TypeManager {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
-#if GMCS_SOURCE && MS_COMPATIBLE
-        if (t.IsGenericType && !t.IsGenericTypeDefinition)
-            t = t.GetGenericTypeDefinition ();
-#endif
-
 		if (t is TypeBuilder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
 			if (container != null)
@@ -773,8 +770,7 @@ public partial class TypeManager {
 		string parameters = iparams.GetSignatureForError ();
 		string accessor = "";
 
-		// Is property
-		if (mb.IsSpecialName) {
+		if (!mb.IsConstructor && TypeManager.IsSpecialMethod (mb)) {
 			Operator.OpType ot = Operator.GetOperatorType (mb.Name);
 			if (ot != Operator.OpType.TOP) {
 				sig.Append ("operator ");
@@ -783,25 +779,19 @@ public partial class TypeManager {
 				return sig.ToString ();
 			}
 
-			if (mb.Name.StartsWith ("get_") || mb.Name.StartsWith ("set_")) {
+			bool is_getter = mb.Name.StartsWith ("get_");
+			bool is_setter = mb.Name.StartsWith ("set_");
+			if (is_getter || is_setter) {
 				accessor = mb.Name.Substring (0, 3);
 			}
-		}
 
-		// Is indexer
-		if (mb.IsSpecialName && !mb.IsConstructor) {
-			if (iparams.Count > (mb.Name.StartsWith ("get_") ? 0 : 1)) {
+			// Is indexer
+			if (iparams.Count > (is_getter ? 0 : 1)) {
 				sig.Append ("this[");
-				if (show_accessor) {
+				if (is_getter)
 					sig.Append (parameters.Substring (1, parameters.Length - 2));
-				}
-				else {
-					int before_ret_val = parameters.LastIndexOf (',');
-					if (before_ret_val < 0)
-						sig.Append (parameters.Substring (1, parameters.Length - 2));
-					else
-						sig.Append (parameters.Substring (1, before_ret_val - 1));
-				}
+				else
+					sig.Append (parameters.Substring (1, parameters.LastIndexOf (',') - 1));
 				sig.Append (']');
 			} else {
 				sig.Append (mb.Name.Substring (4));
@@ -851,7 +841,7 @@ public partial class TypeManager {
 
 	static public string CSharpSignature (EventInfo ei)
 	{
-		return CSharpName (ei.DeclaringType) + '.' + ei.Name;
+		return CSharpName (ei.DeclaringType) + "." + ei.Name;
 	}
 
 	/// <summary>
@@ -1346,7 +1336,7 @@ public partial class TypeManager {
 					      MemberFilter filter, object criteria)
 	{
 #if MS_COMPATIBLE && GMCS_SOURCE
-		if (t.IsGenericType && !t.IsGenericTypeDefinition)
+		if (t.IsGenericType)
 			t = t.GetGenericTypeDefinition ();
 #endif
 
@@ -2731,8 +2721,13 @@ public partial class TypeManager {
 
 	public static bool IsEqual (Type a, Type b)
 	{
-		if (a.Equals (b))
+		if (a.Equals (b)) {
+			// MS BCL returns true even if enum types are different
+			if (a.BaseType == TypeManager.enum_type || b.BaseType == TypeManager.enum_type)
+				return a.FullName == b.FullName;
+
 			return true;
+		}
 
 #if GMCS_SOURCE
 		if (a.IsGenericParameter && b.IsGenericParameter) {
@@ -2802,7 +2797,7 @@ public partial class TypeManager {
 			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 #if MS_COMPATIBLE
-        return m;
+		return m;
 #endif
 
 		if (m is ConstructorInfo) {
@@ -3317,19 +3312,79 @@ public partial class TypeManager {
 		return null;
 	}
 
+	const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic |
+									BindingFlags.Static | BindingFlags.Instance | 
+									BindingFlags.DeclaredOnly;
+
+	// Currently is designed to work with external types only
+	public static PropertyInfo GetPropertyFromAccessor (MethodBase mb)
+	{
+		if (!mb.IsSpecialName)
+			return null;
+
+		string name = mb.Name;
+		if (name.Length < 5)
+			return null;
+
+		if (name [3] != '_')
+			return null;
+
+		if (name.StartsWith ("get") || name.StartsWith ("set")) {
+			MemberInfo[] pi = mb.DeclaringType.FindMembers (MemberTypes.Property, AllMembers,
+				Type.FilterName, name.Substring (4));
+
+			if (pi == null)
+				return null;
+
+			// This can happen when property is indexer (it can have same name but different parameters)
+			foreach (PropertyInfo p in pi) {
+				foreach (MethodInfo p_mi in p.GetAccessors (true)) {
+					if (p_mi == mb || TypeManager.GetParameterData (p_mi).Equals (TypeManager.GetParameterData (mb)))
+						return p;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	// Currently is designed to work with external types only
+	public static MemberInfo GetEventFromAccessor (MethodBase mb)
+	{
+		if (!mb.IsSpecialName)
+			return null;
+
+		string name = mb.Name;
+		if (name.Length < 5)
+			return null;
+
+		if (name.StartsWith ("add_"))
+			return mb.DeclaringType.GetEvent (name.Substring (4), AllMembers);
+
+		if (name.StartsWith ("remove_"))
+			return mb.DeclaringType.GetEvent (name.Substring (7), AllMembers);
+
+		return null;
+	}
+
 	// Tests whether external method is really special
 	public static bool IsSpecialMethod (MethodBase mb)
 	{
-		string name = mb.Name;
-		if (name.StartsWith ("get_") || name.StartsWith ("set_"))
-			return mb.DeclaringType.GetProperty (name.Substring (4)) != null;
+		if (!mb.IsSpecialName)
+			return false;
+
+		IMethodData md = TypeManager.GetMethod (mb);
+		if (md != null) 
+			return (md is AbstractPropertyEventMethod || md is Operator);
+
+		PropertyInfo pi = GetPropertyFromAccessor (mb);
+		if (pi != null)
+			return IsValidProperty (pi);
 				
-		if (name.StartsWith ("add_"))
-			return mb.DeclaringType.GetEvent (name.Substring (4)) != null;
+		if (GetEventFromAccessor (mb) != null)
+			return true;
 
-		if (name.StartsWith ("remove_"))
-			return mb.DeclaringType.GetEvent (name.Substring (7)) != null;
-
+		string name = mb.Name;
 		if (name.StartsWith ("op_")){
 			foreach (string oname in Unary.oper_names) {
 				if (oname == name)
@@ -3342,6 +3397,22 @@ public partial class TypeManager {
 			}
 		}
 		return false;
+	}
+
+	// Tests whether imported property is valid C# property.
+	// TODO: It seems to me that we should do a lot of sanity tests before
+	// we accept property as C# property
+	static bool IsValidProperty (PropertyInfo pi)
+	{
+		MethodInfo get_method = pi.GetGetMethod (true);
+		MethodInfo set_method = pi.GetSetMethod (true);
+		if (get_method != null && set_method != null) {
+			int g_count = get_method.GetParameters ().Length;
+			int s_count = set_method.GetParameters ().Length;
+			if (g_count + 1 != s_count)
+				return false;
+		}
+		return true;
 	}
 
 #endregion

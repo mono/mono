@@ -3514,8 +3514,6 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 		bool prepared;
 
-		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
-
 		public PropertyExpr (Type containerType, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
@@ -3595,7 +3593,7 @@ namespace Mono.CSharp {
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
 		//
-		// TODO: can use TypeManager.GetProperty to boost performance
+		// TODO: Refactor to use some kind of cache together with GetPropertyFromAccessor
 		void ResolveAccessors (Type containerType)
 		{
 			FindAccessors (containerType);
@@ -3606,7 +3604,6 @@ namespace Mono.CSharp {
 				if (md != null)
 					md.SetMemberIsUsed ();
 
-				AccessorTable [getter] = PropertyInfo;
 				is_static = getter.IsStatic;
 			}
 
@@ -3616,7 +3613,6 @@ namespace Mono.CSharp {
 				if (md != null)
 					md.SetMemberIsUsed ();
 
-				AccessorTable [setter] = PropertyInfo;
 				is_static = setter.IsStatic;
 			}
 		}
@@ -3888,8 +3884,6 @@ namespace Mono.CSharp {
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
 
-		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
-		
 		public EventExpr (EventInfo ei, Location loc)
 		{
 			EventInfo = ei;
@@ -3898,11 +3892,6 @@ namespace Mono.CSharp {
 
 			add_accessor = TypeManager.GetAddMethod (ei);
 			remove_accessor = TypeManager.GetRemoveMethod (ei);
-			if (add_accessor != null)
-				AccessorTable [add_accessor] = ei;
-			if (remove_accessor != null)
-				AccessorTable [remove_accessor] = ei;
-			
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
 				is_static = true;
 

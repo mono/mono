@@ -88,6 +88,27 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool Equals (object obj)
+		{
+			ReflectionParameters rp = obj as ReflectionParameters;
+			if (rp == null)
+				return false;
+
+			if (Count != rp.Count)
+				return false;
+
+			for (int i = 0; i < Count; ++i) {
+			if (!types [i].Equals (rp.types [i]))
+				return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
+		}
+
 		public string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder ("(");

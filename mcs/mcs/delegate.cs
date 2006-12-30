@@ -825,9 +825,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Arguments == null || Arguments.Count != 1) {
-				Report.Error (149, loc,
-					      "Method name expected");
+			if (Arguments == null) {
+				Invocation.Error_WrongNumArguments (loc, GetSignatureForError (), 0);
 				return null;
 			}
 

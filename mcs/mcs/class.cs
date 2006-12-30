@@ -3372,8 +3372,13 @@ namespace Mono.CSharp {
 					if (oa != null) {
 						if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
-							Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
-								GetSignatureForError (), TypeManager.CSharpSignature (base_method) );
+								Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
+									GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+						}
+					} else {
+						if (OptAttributes != null && OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+							Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
+								GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 						}
 					}
 				}
@@ -7593,7 +7598,7 @@ namespace Mono.CSharp {
 			if (p != null) {
 				// TODO: should be done in parser and it needs to do cycle
 				if ((p [0].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
-					Report.Error (631, Location, "ref and out are not valid in this context");
+					CSharpParser.Error_ParameterModifierNotValid (Location);
 					return false;
 				}
 			}

@@ -5027,7 +5027,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((method.Attributes & MethodAttributes.SpecialName) != 0 && IsSpecialMethodInvocation (method)) {
+			if (IsSpecialMethodInvocation (method)) {
 				return null;
 			}
 			
@@ -5041,22 +5041,8 @@ namespace Mono.CSharp {
 
 		bool IsSpecialMethodInvocation (MethodBase method)
 		{
-			IMethodData md = TypeManager.GetMethod (method);
-			if (md != null) {
-				if (!(md is AbstractPropertyEventMethod) && !(md is Operator))
-					return false;
-			} else {
-				if (!TypeManager.IsSpecialMethod (method))
-					return false;
-
-				int args = TypeManager.GetParameterData (method).Count;
-				if (method.Name.StartsWith ("get_") && args > 0)
-					return false;
-				else if (method.Name.StartsWith ("set_") && args > 2)
-					return false;
-
-				// TODO: check operators and events as well ?
-			}
+			if (!TypeManager.IsSpecialMethod (method))
+				return false;
 
 			Report.SymbolRelatedToPreviousError (method);
 			Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",

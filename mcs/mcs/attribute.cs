@@ -1791,23 +1791,13 @@ namespace Mono.CSharp {
 			if (mb.DeclaringType is TypeBuilder)
 				return null;
 
-			if (mb.IsSpecialName) {
-				PropertyInfo pi = PropertyExpr.AccessorTable [mb] as PropertyInfo;
-				if (pi != null) {
-					if (TypeManager.LookupDeclSpace (pi.DeclaringType) == null)
-						return GetMemberObsoleteAttribute (pi);
+			MemberInfo mi = TypeManager.GetPropertyFromAccessor (mb);
+			if (mi != null)
+				return GetMemberObsoleteAttribute (mi);
 
-					return null;
-				}
-
-				EventInfo ei = EventExpr.AccessorTable [mb] as EventInfo;
-				if (ei != null) {
-					if (TypeManager.LookupDeclSpace (ei.DeclaringType) == null)
-						return GetMemberObsoleteAttribute (ei);
-
-					return null;
-				}
-			}
+			mi = TypeManager.GetEventFromAccessor (mb);
+			if (mi != null)
+				return GetMemberObsoleteAttribute (mi);
 
 			return GetMemberObsoleteAttribute (mb);
 		}
