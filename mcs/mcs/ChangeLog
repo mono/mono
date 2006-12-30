@@ -1,3 +1,14 @@
+2006-12-30  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs (PreProcessDefinition, handle_preprocessing_directive):
+	Made white spaces array static.
+
+	* ecore.cs (RemoveGenericArity): Optimized.
+
+	* flowanalysis.cs (MyBitVector.Or, MyBitVector.And): Optimized (up to
+	10 times faster).
+	(MyBitVector.initialize_vector): Simplified.
+
 2006-12-22  Miguel de Icaza  <miguel@novell.com>
 
 	* ecore.cs: Am not entirely happy with this hack, but it seems to

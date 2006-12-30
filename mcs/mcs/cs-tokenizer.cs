@@ -73,6 +73,7 @@ namespace Mono.CSharp
 		bool any_token_seen = false;
 
 		static Hashtable tokenValues;
+		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
 
 		private static Hashtable TokenValueName
 		{
@@ -1583,8 +1584,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			char[] whitespace = { ' ', '\t' };
-			if (arg.IndexOfAny (whitespace) != -1){
+			if (arg.IndexOfAny (simple_whitespaces) != -1){
 				Error_EndLineExpected ();
 				return;
 			}
@@ -1892,7 +1892,7 @@ namespace Mono.CSharp
 			// Eat any trailing whitespaces and single-line comments
 			if (arg.IndexOf ("//") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
-			arg = arg.Trim (' ', '\t');
+			arg = arg.Trim (simple_whitespaces);
 
 			//
 			// The first group of pre-processing instructions is always processed

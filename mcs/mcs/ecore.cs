@@ -1921,14 +1921,19 @@ namespace Mono.CSharp {
 		public static string RemoveGenericArity (string name)
 		{
 			int start = 0;
-			StringBuilder sb = new StringBuilder ();
-			while (start < name.Length) {
+			StringBuilder sb = null;
+			do {
 				int pos = name.IndexOf ('`', start);
 				if (pos < 0) {
+					if (start == 0)
+						return name;
+
 					sb.Append (name.Substring (start));
 					break;
 				}
 
+				if (sb == null)
+					sb = new StringBuilder ();
 				sb.Append (name.Substring (start, pos-start));
 
 				pos++;
@@ -1936,7 +1941,7 @@ namespace Mono.CSharp {
 					pos++;
 
 				start = pos;
-			}
+			} while (start < name.Length);
 
 			return sb.ToString ();
 		}

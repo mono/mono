@@ -1765,18 +1765,18 @@ namespace Mono.CSharp
 
 		MyBitVector ()
 		{
-			vector = null;
 			shared = new BitArray (0, false);
-			Count = 0;
 		}
 
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
-			vector = null;
-			shared = InheritsFrom == null ? null : InheritsFrom.Shared;
+			if (InheritsFrom != null)
+				shared = InheritsFrom.Shared;
+
 			this.Count = Count;
 		}
 
+		//FIXME: This property is `dirty', reading changes internal status
 		BitArray Shared {
 			get {
 				if (shared == null) {
@@ -1820,28 +1820,83 @@ namespace Mono.CSharp
 		// </summary>
 		private MyBitVector Or (MyBitVector new_vector)
 		{
+			if (Count == 0 || new_vector.Count == 0)
+				return this;
+
+			// Try to avoid using the indexer as it is very slow way
+			if (new_vector.vector != null) {
+				// TODO: Implement this correctly
+				//if (vector == null) {
+				//	vector = new BitArray (new_vector.vector);
+				//	vector.Length = Count;
+				//	return this;
+				//}
+
+				if (vector != null && vector.Count == new_vector.vector.Count) {
+					vector.Or (new_vector.vector);
+					return this;
+				}
+			} else if (new_vector.shared != null) {
+				if (shared == null)
+					return this;
+
+				if (shared.Count == new_vector.shared.Count) {
+					shared.Or (new_vector.shared);
+					return this;
+				}
+			}
+
 			int min = new_vector.Count;
 			if (Count < min)
 				min = Count;
 
-			for (int i = 0; i < min; i++)
-				this [i] |= new_vector [i];
+			for (int i = 0; i < min; i++) {
+				bool b = new_vector [i];
+				if (b)
+					this [i] |= b;
+			}
 
 			return this;
 		}
 
 		// <summary>
-		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
+		//   Performs an `and' operation on the bit vector.  The `new_vector' may have
 		//   a different size than the current one.
 		// </summary>
 		private MyBitVector And (MyBitVector new_vector)
 		{
+			// Try to avoid using the indexer as it is very slow
+			if (new_vector.vector != null) {
+				if (vector == null)
+					return this;
+
+				if (vector.Count == new_vector.vector.Count) {
+					vector.And (new_vector.vector);
+					return this;
+				}
+			}
+			else if (new_vector.shared != null) {
+				if (shared == null)
+					return this;
+
+				if (shared.Count == new_vector.shared.Count) {
+					vector = new BitArray (shared).And (new_vector.shared);
+					if (Count != vector.Count)
+						vector.Length = Count;
+					shared = null;
+					return this;
+				}
+			}
+
 			int min = new_vector.Count;
 			if (Count < min)
 				min = Count;
 
-			for (int i = 0; i < min; i++)
-				this [i] &= new_vector [i];
+			for (int i = 0; i < min; i++) {
+				bool b = new_vector [i];
+				if (!b)
+					this [i] &= b;
+			}
 
 			for (int i = min; i < Count; i++)
 				this [i] = false;
@@ -1851,8 +1906,8 @@ namespace Mono.CSharp
 
 		public static MyBitVector operator & (MyBitVector a, MyBitVector b)
 		{
-			if (a == null && b == null)
-				return null;
+			if (a == b)
+				return a;
 			if (a == null)
 				return b.Clone ();
 			if (b == null)
@@ -1865,8 +1920,8 @@ namespace Mono.CSharp
 
 		public static MyBitVector operator | (MyBitVector a, MyBitVector b)
 		{
-			if (a == null && b == null)
-				return null;
+			if (a == b)
+				return a;
 			if (a == null)
 				return new MyBitVector (null, b.Count);
 			if (b == null)
@@ -1898,15 +1953,9 @@ namespace Mono.CSharp
 				return;
 			}
 
-			vector = new BitArray (Count, false);
-
-			int min = shared.Count;
-			if (min > Count)
-				min = Count;
-
-			for (int i = 0; i < min; i++)
-				vector [i] = shared [i];
-
+			vector = new BitArray (shared);
+			if (Count != vector.Count)
+				vector.Length = Count;
 			shared = null;
 		}
 
