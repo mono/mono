@@ -29,6 +29,7 @@ namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]	
 	[Category("NotDotNet")]
+	[Category("NotWithXvfb")]
 	public class SendKeysTest {
 
 		static Queue keys = new Queue();

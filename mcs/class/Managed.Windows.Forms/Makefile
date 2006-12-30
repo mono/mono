@@ -83,6 +83,8 @@ EXTRA_DISTFILES = \
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
 	-resource:Test/resources/a.cur,a.cur
 
+TEST_HARNESS_LOCAL_EXCLUDES=Interactive
+
 SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj
 	./build-csproj
 
