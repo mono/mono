@@ -682,6 +682,11 @@ namespace System
         {
             return Equals(value, this);
         }
+
+        public static Decimal Ceiling(Decimal d)
+        {
+            return Math.Ceiling (d);
+        }
 #endif
 
         public static Decimal Parse(string s) 

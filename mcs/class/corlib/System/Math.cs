@@ -92,6 +92,17 @@ namespace System
 			return (short)((value < 0)? -value: value);
 		}
 
+#if NET_2_0
+		public static decimal Ceiling (decimal d)
+		{
+			decimal result = Floor(d);
+			if (result != d) {
+				result++;
+			}
+			return result;
+		}
+#endif
+
 		public static double Ceiling (double a)
 		{
 			double result = Floor(a);

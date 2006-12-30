@@ -1,3 +1,9 @@
+2006-12-30  Alp Toker  <alp@atoker.com>
+
+	* Decimal.cs:
+	* Math.cs: Implement missing Decimal.Ceiling methods for 2.0.
+	Closes #80384.
+
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DateTime.cs: Implement missing [To|From]Binary methods for 2.0.
