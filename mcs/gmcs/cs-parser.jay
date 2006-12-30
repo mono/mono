@@ -446,10 +446,26 @@ namespace_body
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
-	  opt_extern_alias_directives
+	  namespace_body_body
+	;
+	
+namespace_body_body
+	: opt_extern_alias_directives
 	  opt_using_directives
 	  opt_namespace_member_declarations
 	  CLOSE_BRACE
+	| error
+	  {
+		Report.Error (1518, lexer.Location, "Expected `class', `delegate', `enum', `interface', or `struct'");
+	  }
+	  CLOSE_BRACE
+	| opt_extern_alias_directives
+	  opt_using_directives
+	  opt_namespace_member_declarations
+	  EOF
+	  {
+		Report.Error (1513, lexer.Location, "} expected");
+	  }
 	;
 
 opt_using_directives
@@ -971,6 +987,14 @@ field_declaration
 				current_container.AddField (field);
 				$$ = field; // FIXME: might be better if it points to the top item
 			}
+	  }
+	| opt_attributes
+	  opt_modifiers
+	  FIXED
+	  type 
+	  error
+	  {
+		Report.Error (1641, GetLocation ($4), "A fixed size buffer field must have the array size specifier after the field name");
 	  }
 	| opt_attributes
 	  opt_modifiers
@@ -1979,9 +2003,13 @@ operator_body
 	; 
 operator_declarator
 	: type OPERATOR overloadable_operator 
-	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
+	  OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
-		LocatedToken lt = (LocatedToken) $6;
+		// TODO: wrong location
+		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
+			Error_ParameterModifierNotValid ((Location) $2);
+	  
+		LocatedToken lt = (LocatedToken) $7;
 		Operator.OpType op = (Operator.OpType) $3;
 		CheckUnaryOperator (op, lt.Location);
 
@@ -1992,7 +2020,7 @@ operator_declarator
 			op = Operator.OpType.UnaryNegation;
 
 		Parameter [] pars = new Parameter [1];
-		Expression type = (Expression) $5;
+		Expression type = (Expression) $6;
 
 		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
@@ -2008,18 +2036,22 @@ operator_declarator
 	  }
 	| type OPERATOR overloadable_operator
 	  OPEN_PARENS 
-		type IDENTIFIER COMMA
-	  	type IDENTIFIER 
+		opt_parameter_modifier type IDENTIFIER COMMA
+	  	opt_parameter_modifier type IDENTIFIER 
 	  CLOSE_PARENS
           {
-		LocatedToken ltParam1 = (LocatedToken) $6;
-		LocatedToken ltParam2 = (LocatedToken) $9;
+   		// TODO: wrong location
+		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE || (Parameter.Modifier)$9 != Parameter.Modifier.NONE)
+			Error_ParameterModifierNotValid ((Location) $2);
+
+		LocatedToken ltParam1 = (LocatedToken) $7;
+		LocatedToken ltParam2 = (LocatedToken) $11;
 		CheckBinaryOperator ((Operator.OpType) $3, (Location) $2);
 
 		Parameter [] pars = new Parameter [2];
 
-		Expression typeL = (Expression) $5;
-		Expression typeR = (Expression) $8;
+		Expression typeL = (Expression) $6;
+		Expression typeR = (Expression) $10;
 
 	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, null, ltParam1.Location);
 	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, null, ltParam2.Location);
@@ -2038,9 +2070,9 @@ operator_declarator
 	| conversion_operator_declarator
 	| type OPERATOR overloadable_operator
 	  OPEN_PARENS 
-		type IDENTIFIER COMMA
-	  	type IDENTIFIER COMMA
-		type IDENTIFIER
+		opt_parameter_modifier type IDENTIFIER COMMA
+	  	opt_parameter_modifier type IDENTIFIER COMMA
+		opt_parameter_modifier type IDENTIFIER
 	  CLOSE_PARENS
 	  {
 		Report.Error (1534, (Location) $2, "Overloaded binary operator `{0}' takes two parameters",
@@ -2085,12 +2117,16 @@ overloadable_operator
 	;
 
 conversion_operator_declarator
-	: IMPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
+	: IMPLICIT OPERATOR type OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
-		LocatedToken lt = (LocatedToken) $6;
+  		// TODO: wrong location
+		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
+			Error_ParameterModifierNotValid (GetLocation ($4));
+
+		LocatedToken lt = (LocatedToken) $7;
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+		pars [0] = new Parameter ((Expression) $6, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
 		current_local_parameters = new Parameters (pars);  
 		  
@@ -2099,15 +2135,19 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $5, lt.Value,
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $6, lt.Value,
 					      null, null, (Location) $2);
 	  }
-	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
+	| EXPLICIT OPERATOR type OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
-		LocatedToken lt = (LocatedToken) $6;
+  		// TODO: wrong location
+		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
+			Error_ParameterModifierNotValid (GetLocation ($4));
+	  
+		LocatedToken lt = (LocatedToken) $7;
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+		pars [0] = new Parameter ((Expression) $6, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
 		current_local_parameters = new Parameters (pars);  
 		  
@@ -2116,7 +2156,7 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $5, lt.Value,
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $6, lt.Value,
 					      null, null, (Location) $2);
 	  }
 	| IMPLICIT error 
@@ -2515,7 +2555,6 @@ indexer_declarator
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
-	  opt_partial
 	  ENUM IDENTIFIER 
 	  opt_enum_base {
 		if (RootContext.Documentation != null)
@@ -2524,16 +2563,11 @@ enum_declaration
 	  enum_body
 	  opt_semicolon
 	  {
-		LocatedToken lt = (LocatedToken) $5;
+		LocatedToken lt = (LocatedToken) $4;
 		Location enum_location = lt.Location;
 
-		if ($3 != null) {
-			Report.Error (267, lt.Location, "The partial modifier can only appear immediately before `class', `struct' or `interface'");
-			break;	// assumes that the parser put us in a switch
-		}
-
 		MemberName name = MakeName (new MemberName (lt.Value, enum_location));
-		Enum e = new Enum (current_namespace, current_class, (Expression) $6, (int) $2,
+		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
 				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
@@ -2541,7 +2575,7 @@ enum_declaration
 
 
 		EnumMember em = null;
-		foreach (VariableDeclaration ev in (ArrayList) $8) {
+		foreach (VariableDeclaration ev in (ArrayList) $7) {
 			em = new EnumMember (e, em, (Expression) ev.expression_or_array_initializer,
 				new MemberName (ev.identifier, ev.Location), ev.OptAttributes);
 
@@ -3045,7 +3079,7 @@ opt_argument_list
 	;
 
 argument_list
-	: argument		
+	: argument
 	  { 
 		ArrayList list = new ArrayList (4);
 		list.Add ($1);
@@ -5095,6 +5129,11 @@ void Error_ExpectingTypeName (Expression expr)
 	} else {
 		Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
 	}
+}
+
+public static void Error_ParameterModifierNotValid (Location loc)
+{
+	Report.Error (631, loc, "The modifiers `ref' and `out' are not valid in this context");
 }
 
 void push_current_class (TypeContainer tc, bool is_interface, object partial_token)
