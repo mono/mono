@@ -227,7 +227,6 @@ namespace MonoTests.System.Windows.Forms
 
 		// Unit test version of the test case in bug #80336
 		[Test]
-		[Category ("NotWorking")]
 		public void AnchorSuspendLayoutTest ()
 		{
 			Form f = new Form ();
@@ -253,6 +252,69 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, b.Left, "4");
 
 			f.ResumeLayout();
+
+			Assert.AreEqual (100, b.Top, "5");
+			Assert.AreEqual (100, b.Left, "6");
+			
+			f.Dispose ();
+		}
+
+		// another variant of AnchorSuspendLayoutTest1, with
+		// the SuspendLayout moved after the Anchor
+		// assignment.
+		[Test]
+		public void AnchorSuspendLayoutTest2 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+
+			f.Controls.Add (b);
+
+			f.Size = new Size (200, 200);
+
+			b.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+			Assert.AreEqual (0, b.Top, "1");
+			Assert.AreEqual (0, b.Left, "2");
+
+			f.SuspendLayout ();
+
+			f.Size = new Size (300, 300);
+
+			Assert.AreEqual (0, b.Top, "3");
+			Assert.AreEqual (0, b.Left, "4");
+
+			f.ResumeLayout();
+
+			Assert.AreEqual (100, b.Top, "5");
+			Assert.AreEqual (100, b.Left, "6");
+			
+			f.Dispose ();
+		}
+
+		// yet another variant, this time with no Suspend/Resume.
+		[Test]
+		public void AnchorSuspendLayoutTest3 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+
+			f.Controls.Add (b);
+
+			f.Size = new Size (200, 200);
+
+			b.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+			Assert.AreEqual (0, b.Top, "1");
+			Assert.AreEqual (0, b.Left, "2");
+
+			f.Size = new Size (300, 300);
 
 			Assert.AreEqual (100, b.Top, "5");
 			Assert.AreEqual (100, b.Left, "6");

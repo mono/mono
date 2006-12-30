@@ -1,7 +1,10 @@
 2006-12-30  Chris Toshok  <toshok@ximian.com>
 
-	* SendKeysTest.cs: mark these tests as Interactive since they
-	can't be run against Xvfb.
+	* DefaultLayoutTest.cs: add some more variants for the test for
+	80336, and remove the NotWorking from the 80336 test.
+
+	* SendKeysTest.cs: mark these tests as not working with Xvfb so I
+	can exclude them.
 
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 

@@ -30,8 +30,6 @@
 //	John Sohn		jsohn@columbus.rr.com
 //
 
-// COMPLETE 
-
 #undef DebugRecreate
 #undef DebugFocus
 
@@ -1801,9 +1799,10 @@ namespace System.Windows.Forms
 
 				anchor_style=value;
 
-				if (parent != null) {
+				UpdateDistances ();
+
+				if (parent != null)
 					parent.PerformLayout(this, "Anchor");
-				}
 			}
 		}
 
@@ -4033,7 +4032,7 @@ namespace System.Windows.Forms
 
 		protected void SetTopLevel(bool value) {
 			if ((GetTopLevel() != value) && (parent != null)) {
-				throw new Exception();
+				throw new ArgumentException ("Cannot change toplevel style of a parented control.");
 			}
 
 			if (this is Form) {
@@ -4043,7 +4042,7 @@ namespace System.Windows.Forms
 					}
 				} else {
 					if (Visible) {
-						Visible = false;
+                                               Visible = false;
 					}
 				}
 			}
