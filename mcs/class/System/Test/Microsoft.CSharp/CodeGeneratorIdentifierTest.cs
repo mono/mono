@@ -72,5 +72,26 @@ namespace MonoTests.Microsoft.CSharp
 			AssertEquals ("++", gen.CreateEscapedIdentifier ("++"));
 			AssertEquals ("\u3042", gen.CreateEscapedIdentifier ("\u3042"));
 		}
+
+		[Test]
+		public void TestIsValidIdentifier ()
+		{
+			AssertEquals (true, gen.IsValidIdentifier ("_a"));
+			AssertEquals (true, gen.IsValidIdentifier ("_"));
+			AssertEquals (true, gen.IsValidIdentifier ("@return"));
+			AssertEquals (true, gen.IsValidIdentifier ("d1"));
+			AssertEquals (true, gen.IsValidIdentifier ("_1"));
+			AssertEquals (true, gen.IsValidIdentifier ("_a_1"));
+			AssertEquals (true, gen.IsValidIdentifier ("@a"));
+			AssertEquals (false, gen.IsValidIdentifier ("1"));
+			AssertEquals (false, gen.IsValidIdentifier (" "));
+			AssertEquals (false, gen.IsValidIdentifier ("?"));
+			AssertEquals (false, gen.IsValidIdentifier (":_:"));
+			AssertEquals (false, gen.IsValidIdentifier ("_ "));
+			AssertEquals (false, gen.IsValidIdentifier ("@ "));
+			AssertEquals (false, gen.IsValidIdentifier ("1*2"));
+			AssertEquals (false, gen.IsValidIdentifier ("1_2"));
+			AssertEquals (false, gen.IsValidIdentifier ("a,b"));
+		}
 	}
 }
