@@ -65,6 +65,8 @@ namespace System.Reflection {
 	internal class MonoProperty : PropertyInfo {
 		internal IntPtr klass;
 		internal IntPtr prop;
+		MonoPropertyInfo info;
+		PInfo cached;
 		
 		public override PropertyAttributes Attributes {
 			get {
@@ -92,13 +94,15 @@ namespace System.Reflection {
 
 		public override Type PropertyType {
 			get {
-				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
-				
+				if ((cached & (PInfo.GetMethod | PInfo.SetMethod)) != (PInfo.GetMethod | PInfo.SetMethod)) {
+					MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
+					cached |= (PInfo.GetMethod | PInfo.SetMethod);
+				}
+
 				if (info.get_method != null) {
 					return info.get_method.ReturnType;
 				} else {
-					ParameterInfo[] parameters = info.set_method.GetParameters();
+					ParameterInfo[] parameters = info.set_method.GetParameters ();
 					
 					return parameters [parameters.Length - 1].ParameterType;
 				}
@@ -115,16 +119,20 @@ namespace System.Reflection {
 		
 		public override Type DeclaringType {
 			get {
-				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info, PInfo.DeclaringType);
+				if ((cached & PInfo.DeclaringType) == 0) {
+					MonoPropertyInfo.get_property_info (this, out info, PInfo.DeclaringType);
+					cached |= PInfo.DeclaringType;
+				}
 				return info.parent;
 			}
 		}
 		
 		public override string Name {
 			get {
-				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info, PInfo.Name);
+				if ((cached & PInfo.Name) == 0) {
+					MonoPropertyInfo.get_property_info (this, out info, PInfo.Name);
+					cached |= PInfo.Name;
+				}
 				return info.name;
 			}
 		}
@@ -152,8 +160,10 @@ namespace System.Reflection {
 
 		public override MethodInfo GetGetMethod (bool nonPublic)
 		{
-			MonoPropertyInfo info;
-			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
+			if ((cached & PInfo.GetMethod) == 0) {
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
+				cached |= PInfo.GetMethod;
+			}
 			if (info.get_method != null && (nonPublic || info.get_method.IsPublic))
 				return info.get_method;
 			else
@@ -171,8 +181,10 @@ namespace System.Reflection {
 		
 		public override MethodInfo GetSetMethod (bool nonPublic)
 		{
-			MonoPropertyInfo info;
-			MonoPropertyInfo.get_property_info (this, out info, PInfo.SetMethod);
+			if ((cached & PInfo.SetMethod) == 0) {
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.SetMethod);
+				cached |= PInfo.SetMethod;
+			}
 			if (info.set_method != null && (nonPublic || info.set_method.IsPublic))
 				return info.set_method;
 			else
