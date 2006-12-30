@@ -375,7 +375,7 @@ namespace System.Resources
 		{
 			lock(this) 
 			{
-				foreach (ResourceSet r in ResourceSets)
+				foreach (ResourceSet r in ResourceSets.Values)
 					r.Close();
 				ResourceSets.Clear();
 			}
