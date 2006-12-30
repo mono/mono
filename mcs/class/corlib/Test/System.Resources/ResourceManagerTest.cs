@@ -85,7 +85,6 @@ namespace MonoTests.System.Resources
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-		[Category("NotWorking")]
 		public void TestResourceManagerGetResourceSetEmpty ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -96,7 +95,6 @@ namespace MonoTests.System.Resources
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-		[Category("NotWorking")]
 		public void TestResourceManagerReleaseAllResourcesEmpty ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -114,7 +112,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void TestResourceManagerResourceSets ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -130,6 +127,29 @@ namespace MonoTests.System.Resources
 			rs.Close ();
 
 			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#02");
+			
+			rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
+						true, true);
+			
+			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#03");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestResourceManagerResourceSetClosedException ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManagerPoker rm = new ResourceManagerPoker ();
+			
+			rm.InitResourceSets ();
+			
+			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
+							    true, true);
+			rs.Close ();
+			rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
+						true, true);
+			
+			rm.GetString ("HelloWorld");
 		}
 	}
 }
