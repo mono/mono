@@ -319,6 +319,27 @@ public class MathTest : Assertion {
 		}
 	}
 
+#if NET_2_0
+	public void TestDecimalCeiling() {
+		int iTest = 1;
+		try {
+			decimal a = Math.Ceiling(1.5M);
+			decimal b = 2M;
+
+			iTest++;
+			Assert(a == b);
+
+			iTest++;
+			Assert(Decimal.MaxValue == Math.Ceiling(Decimal.MaxValue));
+
+			iTest++;
+			Assert(Decimal.MinValue == Math.Ceiling(Decimal.MinValue));
+		} catch (Exception e) {
+			Fail("Unexpected Exception at iTest=" + iTest + ": " + e);
+		}
+	}
+#endif
+
 	public void TestFloor() {
 		try {
 			double a = Math.Floor(1.5);
