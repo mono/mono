@@ -1620,9 +1620,13 @@ namespace System.Drawing
 			private byte[]	start_buf;
 			private int	start_buf_pos;
 			private int	start_buf_len;
+			private byte[]  managedBuf;
+			private const int default_bufsize = 4096;
 			
 			public GdiPlusStreamHelper (Stream s) 
 			{ 
+				managedBuf = new byte [default_bufsize];
+				
 				stream = s;
 				if (stream != null && stream.CanSeek) {
 					stream.Seek (0, SeekOrigin.Begin);
@@ -1668,7 +1672,8 @@ namespace System.Drawing
 					return -1;
 				}
 
-				byte[] managedBuf = new byte[bufsz];
+				if (bufsz > managedBuf.Length)
+					managedBuf = new byte[bufsz];
 				int bytesRead = 0;
 				long streamPosition = 0;
 
@@ -1776,7 +1781,8 @@ namespace System.Drawing
 
 			public int StreamPutBytesImpl (IntPtr buf, int bufsz) 
 			{
-				byte[] managedBuf = new byte[bufsz];
+				if (bufsz > managedBuf.Length)
+					managedBuf = new byte[bufsz];
 				Marshal.Copy (buf, managedBuf, 0, bufsz);
 				stream.Write (managedBuf, 0, bufsz);
 				return bufsz;

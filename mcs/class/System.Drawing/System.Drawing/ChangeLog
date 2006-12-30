@@ -1,3 +1,10 @@
+2006-12-30  Alexander Olk  <alex.olk@googlemail.com>
+
+	* gdipFunctions.cs: Don't create "millions" of byte arrays in
+	GdiPlusStreamHelper. Just create a default size array and resize it
+	only when needed. (as an example: the FileDialog sample created more
+	than 1700 new byte arrays on my system before the patch, now only 74)
+
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Brush.cs: Fixed line endings.
