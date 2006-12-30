@@ -1,3 +1,8 @@
+2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NewMonoXSD.cs : Silently ignore /nologo switch for compatibility
+	with MS. 
+
 2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NewMonoXSD.cs : and for Read() as well ;-)

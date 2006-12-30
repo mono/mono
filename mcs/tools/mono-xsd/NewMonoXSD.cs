@@ -210,6 +210,10 @@ namespace Mono.Util {
 					Console.WriteLine (helpString);
 					return;
 				}
+				else if (option == "nologo")
+				{
+					// ignore, since we do not output a logo anyway
+				}
 				else
 					Error (unknownOption, option);
 			}
