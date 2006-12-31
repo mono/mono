@@ -1,5 +1,11 @@
 2006-12-30  Chris Toshok  <toshok@ximian.com>
 
+	* ContainerControl.cs: make sure we throw the exception if the
+	container control doesn't contain the control we're setting
+	ActiveControl to.
+
+2006-12-30  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (SetTopLevel): fix the exception raised by
 	SetTopLevel for child controls.
 	(set_Anchor): call UpdateDistances when setting the anchor type.
