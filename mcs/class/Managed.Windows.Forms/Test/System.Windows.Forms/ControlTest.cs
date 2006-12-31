@@ -659,8 +659,26 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void AnchorDockTest ()
+		{
+			Control c = new Control ();
+
+			Assert.AreEqual (DockStyle.None, c.Dock, "1");
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, c.Anchor, "2");
+
+			c.Dock = DockStyle.Top;
+			Assert.AreEqual (DockStyle.Top, c.Dock, "3");
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, c.Anchor, "4");
+
+			c.Anchor = AnchorStyles.Top;
+			Assert.AreEqual (DockStyle.Top, c.Dock, "5");
+			Assert.AreEqual (AnchorStyles.Top, c.Anchor, "6");
+		}
+
+		[Test]
 		[Category ("NotWorking")]
-		public void TabOrder() {
+		public void TabOrder()
+		{
 			Form		form;
 			Control		active;
 
@@ -1510,6 +1528,51 @@ namespace MonoTests.System.Windows.Forms
 		private void Control_ValidatedHandler (object sender, EventArgs e)
 		{
 			((Control) sender).Tag = false;
+		}
+	}
+
+	[TestFixture]
+	public class ControlSetTopLevelTest
+	{
+		class ControlPoker : Control {
+			public void DoSetTopLevel ()
+			{
+				SetTopLevel (true);
+			}
+			public bool DoGetTopLevel ()
+			{
+				return GetTopLevel ();
+			}
+		}
+
+		[Test]
+		public void TestControl ()
+		{
+			ControlPoker c = new ControlPoker ();
+			c.Visible = false;
+			c.DoSetTopLevel ();
+			Assert.IsTrue (c.DoGetTopLevel (), "1");
+			Assert.IsFalse (c.Visible, "2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestChildControl ()
+		{
+			Control c1 = new Control();
+			ControlPoker c2 = new ControlPoker ();
+
+			c1.Controls.Add (c2);
+			c2.DoSetTopLevel ();
+		}
+
+		[Test]
+		public void TestForm ()
+		{
+			Form f = new Form ();
+			Assert.IsFalse (f.Visible, "3");
+			f.TopLevel = true;
+			Assert.IsTrue (f.Visible, "4");
 		}
 	}
 

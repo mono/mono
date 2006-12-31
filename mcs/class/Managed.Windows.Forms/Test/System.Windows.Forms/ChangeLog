@@ -1,3 +1,8 @@
+2006-12-31  Chris Toshok  <toshok@ximian.com>
+
+	* ControlTest.cs: new test for Anchor/Dock interactions.  Also add
+	tests for Control.SetTopLevel.
+
 2006-12-31  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControlTest.cs / FocusTest.cs: Moved Gert's 
