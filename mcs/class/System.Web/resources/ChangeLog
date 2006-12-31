@@ -1,5 +1,10 @@
 2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* webform.js: WebForm_AutoFocus support for not focusable elements 
+	by setting focus on first focusable child.
+
+2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* callback.js: fixed: support IE7, encodeURIComponent is used to 
 	encode form.
 

@@ -33,9 +33,53 @@ function WebForm_AutoFocus (id)
 	var x = document.getElementById ? document.getElementById (id) :
 					  ((document.all) ? document.all [id] : null);
 
-	if (typeof (x) != 'undefined') {
-		x.focus();
+	if (x && (!WebForm_CanFocus(x))) {
+		x = WebForm_FindFirstFocusableChild(x);
 	}
+	if (x) { x.focus(); }
+}
+
+function WebForm_CanFocus(element) {
+	if (!element || !(element.tagName) || element.disabled) {
+		return false;
+	}
+	if (element.type && element.type.toLowerCase() == "hidden") {
+		return false;
+	}
+	var tagName = element.tagName.toLowerCase();
+	return (tagName == "input" ||
+			tagName == "textarea" ||
+			tagName == "select" ||
+			tagName == "button" ||
+			tagName == "a");
+}
+
+function WebForm_FindFirstFocusableChild(element) {
+	if (!element || !(element.tagName)) {
+		return null;
+	}
+	var tagName = element.tagName.toLowerCase();
+	if (tagName == "undefined") {
+		return null;
+	}
+	var children = element.childNodes;
+	if (children) {
+		for (var i = 0; i < children.length; i++) {
+			try {
+				if (WebForm_CanFocus(children[i])) {
+					return children[i];
+				}
+				else {
+					var focused = WebForm_FindFirstFocusableChild(children[i]);
+					if (WebForm_CanFocus(focused)) {
+						return focused;
+					}
+				}
+			} catch (e) {
+			}
+		}
+	}
+	return null;
 }
 
 function wasControlEnabled (id)
