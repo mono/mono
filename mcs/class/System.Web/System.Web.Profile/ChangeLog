@@ -1,5 +1,9 @@
 2006-12-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* ProfileGroupBase.cs: fixed property name while getting from parent
+
+2006-12-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* ProfileParser.jvm.cs: implemented PageMapper call
 	* ProfileBase.cs: fixed SettingsProperty type resolving, 
 	added SettingsProperty validation

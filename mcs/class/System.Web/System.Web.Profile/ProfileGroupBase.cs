@@ -50,12 +50,12 @@ namespace System.Web.Profile
 		
 		public object GetPropertyValue (string propertyName)
 		{
-			return _parent.GetPropertyValue (propertyName);
+			return _parent.GetPropertyValue (_name + "." + propertyName);
 		}
 
 		public void SetPropertyValue (string propertyName, object propertyValue)
 		{
-			_parent.SetPropertyValue (propertyName, propertyValue);
+			_parent.SetPropertyValue (_name + "." + propertyName, propertyValue);
 		}
 
 		public object this [string propertyName] {
