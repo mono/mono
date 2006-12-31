@@ -197,9 +197,9 @@ namespace System.Windows.Forms {
 				return;
 			
 			/* Deactivate the menu when is topmenu and popdown and */
-			if (((CurrentMenu == TopMenu) && (popdown_menu)) || !item.IsPopup)
+			if (((CurrentMenu == TopMenu) && !(CurrentMenu is ContextMenu) && popdown_menu) || !item.IsPopup)
 				Deactivate ();
-				
+			
 			/* Perform click when is not a popup */
 			if (!item.IsPopup) {
 				DeselectItem (item);
