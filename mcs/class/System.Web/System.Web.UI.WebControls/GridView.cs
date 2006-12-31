@@ -2049,7 +2049,7 @@ namespace System.Web.UI.WebControls
 			PrepareControlHierarchy ();
 
 			if (EnableSortingAndPagingCallbacks)
-				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID + "_div");
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			RenderGrid (writer);

@@ -45,6 +45,7 @@ namespace System.Web.UI.WebControls
 		protected override void AddAttributesToRender (HtmlTextWriter writer) {
 
 			ControlStyle.CopyFrom (_container.ControlStyle);
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, _container.ClientID);
 
 			base.AddAttributesToRender (writer);
 		}

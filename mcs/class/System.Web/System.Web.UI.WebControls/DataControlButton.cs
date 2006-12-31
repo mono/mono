@@ -115,7 +115,7 @@ namespace System.Web.UI.WebControls
 				else
 					ops = GetPostBackOptions ();
 
-				postScript = Page.ClientScript.GetPostBackEventReference (ops, true);
+				postScript = Page.ClientScript.GetPostBackEventReference (ops, !Page.IsCallback);
 				
 				if (AllowCallback) {
 					ICallbackContainer ccner = container as ICallbackContainer;

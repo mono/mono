@@ -1867,18 +1867,14 @@ namespace System.Web.UI.WebControls
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy ();
-			
+
 			if (EnablePagingCallbacks)
-				base.RenderBeginTag (writer);
-			else
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID + "_div");
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			RenderGrid (writer);
-			
-			if (EnablePagingCallbacks)
-				base.RenderEndTag (writer);
-			else
-				writer.RenderEndTag ();
+
+			writer.RenderEndTag ();
 		}
 		
 		void RenderGrid (HtmlTextWriter writer)

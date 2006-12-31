@@ -8,7 +8,7 @@ function GridView_ClientEvent (ctrlId, evnt)
 function GridView_ClientRender (data, ctx)
 {
 	var gridData = eval (ctx + "_data");
-	var grid = document.getElementById (ctx);
+	var grid = document.getElementById (ctx + "_div");
 	var i = data.indexOf ("|");
 	var j = data.indexOf ("|", i+1);
 	var k = data.indexOf ("|", j+1);

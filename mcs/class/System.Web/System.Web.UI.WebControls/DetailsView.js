@@ -8,7 +8,7 @@ function DetailsView_ClientEvent (ctrlId, evnt)
 function DetailsView_ClientRender (data, ctx)
 {
 	var gridData = eval (ctx + "_data");
-	var grid = document.getElementById (ctx);
+	var grid = document.getElementById (ctx + "_div");
 	var i = data.indexOf ("|");
 	gridData.pageIndex = parseInt (data.substring (0, i));
 	grid.innerHTML = data.substr (i+1);
