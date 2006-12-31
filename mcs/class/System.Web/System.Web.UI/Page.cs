@@ -1827,8 +1827,6 @@ return true;
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
 
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
-		if (CheckForValidationSupport (targetControl))
-			scriptManager.ValidateEvent (targetControl.UniqueID, callbackArgument);
 		target.RaiseCallbackEvent (callbackArgument);
 		return target.GetCallbackResult ();
 	}

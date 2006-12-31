@@ -1,3 +1,7 @@
+2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: EventValidation is not performed for CallBack request.
+
 2006-12-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: RegisterRequiresPostBack feature.
