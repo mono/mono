@@ -82,7 +82,13 @@ namespace System.Configuration
 				if (needPropertyValue) {
 					propertyValue = GetDeserializedValue ();
 					if (propertyValue == null) {
-						propertyValue = property.DefaultValue;
+						if (!property.PropertyType.IsAssignableFrom (property.DefaultValue.GetType ())) {
+							TypeConverter converter = TypeDescriptor.GetConverter (property.PropertyType);
+							propertyValue = converter.ConvertFrom (property.DefaultValue);
+						}
+						else {
+							propertyValue = property.DefaultValue;
+						}
 						defaulted = true;
 					}
 					needPropertyValue = false;
