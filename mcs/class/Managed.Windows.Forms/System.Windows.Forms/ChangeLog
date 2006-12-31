@@ -1,3 +1,18 @@
+2006-12-31  Andreia Gaita  <avidigal@novell.com>
+
+	* ContainerControl.cs: Use ContainerSelected flag to check if 
+	a Container is directly selected, or if Select is called on a 
+	non-container. If a container is directly selected, focus events 
+	should not be raised.
+	Apply #80411 patch to throw exception on set_ActiveControl if 
+	control is the same as the current one.
+	
+	* Control.cs: Use ContainerSelected flag (see above).
+	Add invalidation check to raise event but not invalidate if 
+	dimensions are 0.	
+	Apply #80411 patch.
+	
+
 2006-12-31  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: After click, dont close popup menu when menu is

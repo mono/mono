@@ -1136,7 +1136,7 @@ namespace System.Windows.Forms
 			}
 
 			container = GetContainerControl();
-			if (container != null) {
+			if (container != null && (Control)container != control) {
 				container.ActiveControl = control;
 			}
 			if (control.IsHandleCreated) {
@@ -2079,10 +2079,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-        internal bool ContainerSelected {
-            get { return container_selected; }
-            set { container_selected = value; }
-        }
+		internal bool ContainerSelected {
+			get { return container_selected; }
+			set { container_selected = value; }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
@@ -3225,14 +3225,17 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated)
 				return;
 
-			NotifyInvalidate(rc);
+			if  (rc.Width > 0 && rc.Height > 0) {
 
-			XplatUI.Invalidate(Handle, rc, false);
+				NotifyInvalidate(rc);
 
-			if (invalidateChildren) {
-				Control [] controls = child_controls.GetAllControls ();
-				for (int i=0; i<controls.Length; i++)
-					controls [i].Invalidate ();
+				XplatUI.Invalidate(Handle, rc, false);
+
+				if (invalidateChildren) {
+					Control [] controls = child_controls.GetAllControls ();
+					for (int i=0; i<controls.Length; i++)
+						controls [i].Invalidate ();
+				}
 			}
 			OnInvalidated(new InvalidateEventArgs(rc));
 		}
@@ -3979,8 +3982,9 @@ namespace System.Windows.Forms
 			IContainerControl	container;
 			
 			container = GetContainerControl();
-			if (container != null)
-				container.ActiveControl = this;
+			if (container != null && (Control)container != this)
+                if (!this.Parent.ContainerSelected)
+				    container.ActiveControl = this;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4554,11 +4558,11 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_SETFOCUS: {
-				if (!has_focus) {
-					this.has_focus = true;
+				if (!has_focus) {                
                     if (this.Parent != null && this.Parent.ContainerSelected)
                         return;
-				    OnGotFocusInternal (EventArgs.Empty);
+                    this.has_focus = true;
+                    OnGotFocusInternal (EventArgs.Empty);
 				}
 				return;
 			}

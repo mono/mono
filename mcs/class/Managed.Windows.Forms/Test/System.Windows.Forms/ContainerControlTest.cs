@@ -27,8 +27,10 @@
 //
 
 using System;
+using C=System.ComponentModel;
 using System.Security.Permissions;
 using System.Windows.Forms;
+using System.Collections;
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms {
@@ -43,6 +45,105 @@ namespace MonoTests.System.Windows.Forms {
 		public Control  ActiveControl {
 			get { return null; }
 			set { ; }
+		}
+	}
+
+	public class FormCustom: Form {
+		public bool record;
+		public Queue events;
+
+		public FormCustom(string name, bool record, Queue events) {
+			base.Name = name;
+			this.record = record;
+			this.events = events;
+		}
+
+		protected override void OnValidating(C.CancelEventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidating", this, this.Name));
+			base.OnValidating (e);
+		}
+
+		protected override void OnValidated(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidated", this, this.Name));
+			base.OnValidated (e);
+		}
+
+		protected override void OnGotFocus(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnGotFocus", this, this.Name));
+			base.OnGotFocus (e);
+		}
+
+	}
+
+	public class ContainerControlCustom: ContainerControl {
+		public bool record;
+		public Queue events;
+
+		public ContainerControlCustom(string name, bool record, Queue events) {
+			base.Name = name;
+			this.record = record;
+			this.events = events;
+		}
+
+		protected override void OnValidating(C.CancelEventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidating", this, this.Name));
+			base.OnValidating (e);
+		}
+
+		protected override void OnValidated(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidated", this, this.Name));
+			base.OnValidated (e);
+		}
+		
+		protected override void OnGotFocus(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnGotFocus", this, this.Name));
+			base.OnGotFocus (e);
+		}
+
+		protected override void Select(bool directed, bool forward) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:Select", this, this.Name));
+			base.Select (directed, forward);
+		}
+	}
+
+	public class UserControlCustom: UserControl {
+		public bool record;
+		public Queue events;
+
+		public UserControlCustom(string name, bool record, Queue events) {
+			base.Name = name;
+			this.record = record;
+			this.events = events;
+		}
+		protected override void OnValidating(C.CancelEventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidating", this, this.Name));
+			base.OnValidating (e);
+		}
+
+		protected override void OnValidated(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnValidated", this, this.Name));
+			base.OnValidated (e);
+		}
+
+		protected override void OnGotFocus(EventArgs e) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:OnGotFocus", this, this.Name));
+			base.OnGotFocus (e);
+		}
+
+		protected override void Select(bool directed, bool forward) {
+			if (this.record)
+				events.Enqueue(String.Format("{0}:{1}:Select", this, this.Name));
+			base.Select (directed, forward);
 		}
 	}
 
@@ -74,193 +175,64 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void ActiveControl ()
-		{
-			ContainerControl cc = new ContainerControl ();
-			Control c1 = new Control ();
-			cc.Controls.Add (c1);
-			Control c2 = new Control ();
-			cc.Controls.Add (c2);
-			Control c3 = new Control ();
-			cc.Controls.Add (c3);
-			Assert.IsFalse (c1.Focused, "#A1");
-			Assert.IsFalse (c2.Focused, "#A2");
-			Assert.IsFalse (c3.Focused, "#A3");
-			Assert.IsNull (cc.ActiveControl);
+		public void Validation() {
+			Queue events = new Queue();
 
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#B1");
-			Assert.IsFalse (c2.Focused, "#B2");
-			Assert.IsFalse (c3.Focused, "#B3");
-			Assert.AreSame (c1, cc.ActiveControl, "#B4");
+			FormCustom form = new FormCustom("form1", true, events);
+			ContainerControlCustom container1 = new ContainerControlCustom("container1", true, events);
+			ContainerControlCustom container2 = new ContainerControlCustom("container2", true, events);
+			ContainerControlCustom container3 = new ContainerControlCustom("container3", true, events);
+			UserControlCustom userctl1 = new UserControlCustom("userctl1", true, events);
+			UserControlCustom userctl2 = new UserControlCustom("userctl2", true, events);
+			UserControlCustom userctl3 = new UserControlCustom("userctl3", true, events);
 
-			cc.ActiveControl = c2;
-			Assert.IsFalse (c1.Focused, "#C1");
-			Assert.IsFalse (c2.Focused, "#C2");
-			Assert.IsFalse (c3.Focused, "#C3");
-			Assert.AreSame (c2, cc.ActiveControl, "#C4");
+			container2.Controls.Add(userctl2);
+			container2.Controls.Add(userctl3);
+			container1.Controls.Add(userctl1);
+			form.Controls.Add(container1);
+			form.Controls.Add(container2);
+			form.Controls.Add(container3);
 
-			c1.Focus ();
-			Assert.IsFalse (c1.Focused, "#D1");
-			Assert.IsFalse (c2.Focused, "#D2");
-			Assert.IsFalse (c3.Focused, "#D3");
-			Assert.AreSame (c2, cc.ActiveControl, "#D4");
+			form.Show();
 
-			cc.ActiveControl = c2;
-			Assert.IsFalse (c1.Focused, "#E1");
-			Assert.IsFalse (c2.Focused, "#E2");
-			Assert.IsFalse (c3.Focused, "#E3");
-			Assert.AreSame (c2, cc.ActiveControl, "#E4");
+			object s;
 
-			cc.Controls.Remove (c2);
-			Assert.IsFalse (c1.Focused, "#F1");
-			Assert.IsFalse (c2.Focused, "#F2");
-			Assert.IsFalse (c3.Focused, "#F3");
-			Assert.AreSame (c1, cc.ActiveControl, "#F3");
+			events.Enqueue("START");
+			container3.Select();
+			events.Enqueue("END");
+			events.Enqueue("START");
+			container1.Select();
+			events.Enqueue("END");
+			events.Enqueue("START");
+			container2.Select();
+			events.Enqueue("END");
+			events.Enqueue("START");
+			userctl1.Select();
+			events.Enqueue("END");
+			events.Enqueue("START");
+			userctl2.Select();
+			events.Enqueue("END");
+			events.Enqueue("START");
+			userctl2.Select();
+			events.Enqueue("END");
 
-			cc.ActiveControl = c3;
-			Assert.IsFalse (c1.Focused, "#G1");
-			Assert.IsFalse (c2.Focused, "#G2");
-			Assert.IsFalse (c3.Focused, "#G3");
-			Assert.AreSame (c3, cc.ActiveControl, "#G4");
 
-			Form form = new Form ();
-			form.ShowInTaskbar = false;
-			form.Controls.Add (cc);
-			form.Show ();
-
-			Assert.IsTrue (c1.Focused, "#H1");
-			Assert.IsFalse (c2.Focused, "#H2");
-			Assert.IsFalse (c3.Focused, "#H3");
-			Assert.AreSame (c1, cc.ActiveControl, "#H4");
-
-			cc.ActiveControl = c3;
-			Assert.IsFalse (c1.Focused, "#I1");
-			Assert.IsFalse (c2.Focused, "#I2");
-			Assert.IsTrue (c3.Focused, "#I3");
-			Assert.AreSame (c3, cc.ActiveControl, "#I4");
-
-			c1.Focus ();
-			Assert.IsTrue (c1.Focused, "#J1");
-			Assert.IsFalse (c2.Focused, "#J2");
-			Assert.IsFalse (c3.Focused, "#J3");
-			Assert.AreSame (c1, cc.ActiveControl, "#J4");
-		}
-
-		[Test] // bug #80411
-		[Category ("NotWorking")]
-		public void ActiveControl_NoChild ()
-		{
-			ContainerControl cc = new ContainerControl ();
-			try {
-				cc.ActiveControl = new Control ();
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.ParamName, "#4");
-				Assert.IsNull (ex.InnerException, "#5");
+			while (events.Count > 0) {
+				s = events.Dequeue();
+				Console.WriteLine(s.ToString());
 			}
+
+			events.Clear();
+
+			form.Close();
+			userctl1.Dispose();
+			userctl2.Dispose();
+			userctl3.Dispose();
+			container1.Dispose();
+			container1.Dispose();
+			form.Dispose();
+
 		}
 
-		[Test]
-		[Category ("NotWorking")]
-		public void ActiveControl_Invisible ()
-		{
-			ContainerControl cc = new ContainerControl ();
-			Control c1 = new Control ();
-			c1.Visible = false;
-			cc.Controls.Add (c1);
-			Control c2 = new Control ();
-			cc.Controls.Add (c2);
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#A1");
-			Assert.IsFalse (c2.Focused, "#A2");
-			Assert.AreSame (c1, cc.ActiveControl, "#A3");
-
-			Form form = new Form ();
-			form.ShowInTaskbar = false;
-			form.Controls.Add (cc);
-			form.Show ();
-
-			Assert.IsFalse (c1.Focused, "#B1");
-			Assert.IsTrue (c2.Focused, "#B2");
-			Assert.AreSame (c2, cc.ActiveControl, "#B3");
-
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#C1");
-			Assert.IsFalse (c2.Focused, "#C2");
-			Assert.AreSame (c1, cc.ActiveControl, "#C3");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void ActiveControl_Disabled ()
-		{
-			ContainerControl cc = new ContainerControl ();
-			Control c1 = new Control ();
-			c1.Enabled = false;
-			cc.Controls.Add (c1);
-			Control c2 = new Control ();
-			cc.Controls.Add (c2);
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#A1");
-			Assert.IsFalse (c2.Focused, "#A2");
-			Assert.AreSame (c1, cc.ActiveControl, "#A3");
-
-			Form form = new Form ();
-			form.ShowInTaskbar = false;
-			form.Controls.Add (cc);
-			form.Show ();
-
-			Assert.IsFalse (c1.Focused, "#B1");
-			Assert.IsTrue (c2.Focused, "#B2");
-			Assert.AreSame (c2, cc.ActiveControl, "#B3");
-
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#C1");
-			Assert.IsTrue (c2.Focused, "#C2");
-			Assert.AreSame (c1, cc.ActiveControl, "#C3");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void ActiveControl_Null ()
-		{
-			ContainerControl cc = new ContainerControl ();
-			Control c1 = new Control ();
-			cc.Controls.Add (c1);
-			Control c2 = new Control ();
-			cc.Controls.Add (c2);
-			cc.ActiveControl = c1;
-			Assert.IsFalse (c1.Focused, "#A1");
-			Assert.IsFalse (c2.Focused, "#A2");
-			Assert.AreSame (c1, cc.ActiveControl, "#A3");
-
-			cc.ActiveControl = null;
-			Assert.IsFalse (c1.Focused, "#B1");
-			Assert.IsFalse (c2.Focused, "#B2");
-			Assert.IsNull (cc.ActiveControl, "#B3");
-
-			Form form = new Form ();
-			form.ShowInTaskbar = false;
-			form.Controls.Add (cc);
-			form.Show ();
-
-			Assert.IsTrue (c1.Focused, "#C1");
-			Assert.IsFalse (c2.Focused, "#C2");
-			Assert.AreSame (c1, cc.ActiveControl, "#C3");
-
-			cc.ActiveControl = c2;
-			Assert.IsFalse (c1.Focused, "#D1");
-			Assert.IsTrue (c2.Focused, "#D2");
-			Assert.AreSame (c2, cc.ActiveControl, "#D3");
-
-			cc.ActiveControl = null;
-			Assert.IsFalse (c1.Focused, "#E1");
-			Assert.IsFalse (c2.Focused, "#E2");
-			Assert.IsNull (cc.ActiveControl, "#E3");
-		}
 	}
 }

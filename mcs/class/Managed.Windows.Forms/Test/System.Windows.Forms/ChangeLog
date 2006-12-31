@@ -1,3 +1,9 @@
+2006-12-31  Andreia Gaita  <avidigal@novell.com>
+
+	* ContainerControlTest.cs / FocusTest.cs: Moved Gert's 
+	ActiveControl tests to FocusTest, for easier management.
+	Add Validation tests.
+
 2006-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UpDownTest.cs: Added tests for DomainUpDown and NumericUpDown.

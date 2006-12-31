@@ -69,12 +69,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value==null || (active_control == value && active_control.has_focus) || !Contains(value)) {
+				if (value==null || (active_control == value && active_control.has_focus)) {
 					return;
 				}
 
-				if (!Contains(value) && this != value) {
-					throw new ArgumentException("Not a child control");
+				if (!Contains(value)) {
+					throw new ArgumentException("Cannot activate invisible or disabled control.");
 				}
 
 				// Fire the enter and leave events if possible
@@ -422,7 +422,10 @@ namespace System.Windows.Forms {
 			if (Parent != null) {
 				IContainerControl parent = Parent.GetContainerControl ();
 				if (parent != null) {
-					parent.ActiveControl = this;
+					if (!(directed && auto_select_child))
+						ContainerSelected = true;
+					if (!(this.Parent.ContainerSelected))
+						parent.ActiveControl = this;
 				}
 			}
 
@@ -438,21 +441,24 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
-			case Msg.WM_LBUTTONDOWN:
-				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-				        mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
-					HighOrder ((int) m.LParam.ToInt32 ()), 0));
-				return;
-			case Msg.WM_SETFOCUS:
-				if (active_control != null)
-					Select (active_control);
-				else
-					SelectNextControl (null, true, true, true, false);
+		        
+				case Msg.WM_LBUTTONDOWN:
+					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
+						HighOrder ((int) m.LParam.ToInt32 ()), 0));
 				break;
-			case Msg.WM_KILLFOCUS:
+		        
+				case Msg.WM_SETFOCUS:
+					if (active_control != null)
+						Select (active_control);
+					else
+						SelectNextControl (null, true, true, true, false);
 				break;
+
+				default:
+					base.WndProc(ref m);
+					break;
 			}
-			base.WndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods
 
