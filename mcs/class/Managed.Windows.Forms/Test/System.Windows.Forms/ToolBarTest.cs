@@ -128,7 +128,21 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tbb.Rectangle.IsEmpty, "#T3");
 		}
 
-      	}
+		[Test] // bug #80416
+		[Category ("NotWorking")]
+		public void DockDefault ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ToolBar toolBar = new ToolBar ();
+			form.Controls.Add (toolBar);
+			form.Show ();
+			Assert.AreEqual (DockStyle.Top, toolBar.Dock, "#1");
+			Assert.AreEqual (form.ClientSize.Width, toolBar.Width, "#2");
+		}
+	}
+
 	// [MonoTODO ("Add test for ButtonClickEvent (Visual Test)"]
 	// [MonoTODO ("Add test for ButtonDropDownEvent (Visual Test)"]
 }

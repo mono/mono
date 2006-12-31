@@ -1,3 +1,7 @@
+2006-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ToolBarTest.cs: Added test for bug #80416.
+
 2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ContainerControlTest.cs: Added tests for ActiveControl.
