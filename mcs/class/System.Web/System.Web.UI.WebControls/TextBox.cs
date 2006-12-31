@@ -61,6 +61,9 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 
 			base.AddAttributesToRender (w);
+
+			if (ToolTip.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
 			
 			switch (TextMode) {
 			case TextBoxMode.MultiLine:

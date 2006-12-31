@@ -1,5 +1,9 @@
 2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TextBox.cs: consider ToolTip property
+
+2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ContainedTable.cs:
 	* DataControlButton.cs:
 	* DetailsView.cs: fixed EnablePagingCallbacks
