@@ -24,7 +24,7 @@ function WebForm_getFormData ()
 	for (n=0; n<len; n++) {
 		var elem = theForm.elements [n];
 		if (qs.length > 0) qs += "&";
-		qs += elem.name + "=" + escape (elem.value);
+		qs += elem.name + "=" + encodeURIComponent (elem.value);
 	}
 	return qs;
 }
@@ -36,7 +36,6 @@ function WebForm_httpPost (url, data, callback)
 	
 	if (typeof XMLHttpRequest != "undefined") {
 		httpPost = new XMLHttpRequest ();
-		httpPost.addEventListener ("load", function () { callback (httpPost);}, false );
 	} else {
 		if (axName != null)
 			httpPost = new ActiveXObject (axName);
@@ -51,8 +50,8 @@ function WebForm_httpPost (url, data, callback)
 			if (httpPost == null)
 				throw new Error ("XMLHTTP object could not be created.");
 		}
-		httpPost.onreadystatechange = function () { if (httpPost.readyState == 4) callback (httpPost); };
 	}
+	httpPost.onreadystatechange = function () { if (httpPost.readyState == 4) callback (httpPost); };
 	
 	httpPost.open ("POST", url, true);	// async
 	httpPost.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
