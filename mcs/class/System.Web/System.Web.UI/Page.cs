@@ -955,6 +955,7 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\tvar theForm;\n\tif (document.getElementById) {{ theForm = document.getElementById ('{0}'); }}", formUniqueID);
 		writer.WriteLine ("\telse {{ theForm = document.{0}; }}", formUniqueID);
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
+		writer.WriteLine ("\t\tif(!ValidatorOnSubmit()) return;");
 		writer.WriteLine ("\t\ttheForm.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\ttheForm.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\t\ttheForm.submit();");

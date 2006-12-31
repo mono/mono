@@ -1,3 +1,8 @@
+2006-12-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: show the validation summary when client validation and
+	linkbuttons are used. Patch by Juraj Skripsky.
+
 2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: EventValidation is not performed for CallBack request.
