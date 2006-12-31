@@ -3,6 +3,7 @@
 //
 // Authors:
 //      Alexander Olk (alex.olk@googlemail.com)
+//      Gert Driesen (drieseng@users.sourceforge.net)
 //
 
 using System;
@@ -21,6 +22,12 @@ namespace MonoTests.System.Windows.Forms
 		[SetUp]
 		public void SetUp ()
 		{
+			Reset ();
+		}
+
+		private void Reset ()
+		{
+			selected_item_changed = 0;
 			text_changed = 0;
 			value_changed = 0;
 		}
@@ -367,32 +374,62 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				nud.Value = 1000;
 				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("Value", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
 				Assert.IsNull (ex.ParamName, "#A4");
 				Assert.IsNull (ex.InnerException, "#A5");
 			}
+#endif
 
 			try {
 				nud.Value = 1000;
 				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNotNull (ex.ParamName, "#B4");
+				Assert.AreEqual ("Value", ex.ParamName, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			}
+#else
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
 				Assert.IsNull (ex.ParamName, "#B4");
 				Assert.IsNull (ex.InnerException, "#B5");
 			}
+#endif
 
 			try {
 				nud.Value = -1000;
 				Assert.Fail ("#C1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsNotNull (ex.ParamName, "#C4");
+				Assert.AreEqual ("Value", ex.ParamName, "#C5");
+				Assert.IsNull (ex.InnerException, "#C6");
+			}
+#else
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
 				Assert.IsNotNull (ex.Message, "#C3");
 				Assert.IsNull (ex.ParamName, "#C4");
 				Assert.IsNull (ex.InnerException, "#C5");
 			}
+#endif
 
 			nud.BeginInit ();
 
@@ -406,12 +443,22 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				nud.Value = -1000;
 				Assert.Fail ("#E1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsNotNull (ex.ParamName, "#E4");
+				Assert.AreEqual ("Value", ex.ParamName, "#E5");
+				Assert.IsNull (ex.InnerException, "#E6");
+			}
+#else
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
 				Assert.IsNotNull (ex.Message, "#E3");
 				Assert.IsNull (ex.ParamName, "#E4");
 				Assert.IsNull (ex.InnerException, "#E5");
 			}
+#endif
 		}
 
 		void NumericUpDown_TextChanged (object sender, EventArgs e)
@@ -504,7 +551,7 @@ namespace MonoTests.System.Windows.Forms
 			d1.Items.Add ("item2");
 			d1.Items.Add ("item3");
 			d1.Items.Add ("item4");
-			
+				
 			d1.SelectedIndex = 3;
 			Assert.AreEqual (3, d1.SelectedIndex, "#30");
 			
@@ -564,7 +611,415 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, d1.SelectedItem, "#47");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void DomainUpDown_SelectedIndex ()
+		{
+			MockDomainUpDown dud = new MockDomainUpDown ();
+			dud.SelectedItemChanged += new EventHandler (DomainUpDown_SelectedItemChanged);
+			dud.TextChanged += new EventHandler (DomainUpDown_TextChanged);
+			Assert.AreEqual (1, dud.CallStack.Count, "#A1");
+			Assert.AreEqual ("set_Text: (0)", dud.CallStack [0], "#A2");
+			Assert.AreEqual (0, selected_item_changed, "#A3");
+			Assert.AreEqual (0, text_changed, "#A4");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#A5");
+
+			string itemA = "itemA";
+			dud.Items.Add (itemA);
+			Assert.AreEqual (1, dud.CallStack.Count, "#B1");
+			Assert.AreEqual (0, selected_item_changed, "#B2");
+			Assert.AreEqual (0, text_changed, "#B3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#B4");
+
+			dud.SelectedIndex = 0;
+			Assert.AreEqual (4, dud.CallStack.Count, "#C1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [1], "#C2");
+			Assert.AreEqual ("set_Text:itemA (5)", dud.CallStack [2], "#C3");
+			Assert.AreEqual ("OnChanged", dud.CallStack [3], "#C4");
+			Assert.AreEqual (1, selected_item_changed, "#C5");
+			Assert.AreEqual (1, text_changed, "#C6");
+			Assert.AreEqual (0, dud.SelectedIndex, "#C7");
+
+			dud.SelectedIndex = 0;
+			Assert.AreEqual (4, dud.CallStack.Count, "#D1");
+			Assert.AreEqual (1, selected_item_changed, "#D2");
+			Assert.AreEqual (1, text_changed, "#D3");
+			Assert.AreEqual (0, dud.SelectedIndex, "#D4");
+
+			dud.SelectedIndex = -1;
+			Assert.AreEqual (4, dud.CallStack.Count, "#E1");
+			Assert.AreEqual (1, selected_item_changed, "#E2");
+			Assert.AreEqual (1, text_changed, "#E3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#E4");
+
+			dud.SelectedIndex = 0;
+			Assert.AreEqual (6, dud.CallStack.Count, "#F1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [4], "#F2");
+			Assert.AreEqual ("set_Text:itemA (5)", dud.CallStack [5], "#F3");
+			Assert.AreEqual (1, selected_item_changed, "#F4");
+			Assert.AreEqual (1, text_changed, "#F5");
+			Assert.AreEqual (0, dud.SelectedIndex, "#F6");
+
+			string itemAbis = "itemA";
+			dud.Items.Add (itemAbis);
+			Assert.AreEqual (6, dud.CallStack.Count, "#G1");
+			Assert.AreEqual (1, selected_item_changed, "#G2");
+			Assert.AreEqual (1, text_changed, "#G3");
+			Assert.AreEqual (0, dud.SelectedIndex, "#G4");
+
+			dud.SelectedIndex = 1;
+			Assert.AreEqual (8, dud.CallStack.Count, "#H1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [6], "#H2");
+			Assert.AreEqual ("set_Text:itemA (5)", dud.CallStack [7], "#H3");
+			Assert.AreEqual (1, selected_item_changed, "#H4");
+			Assert.AreEqual (1, text_changed, "#H5");
+			Assert.AreEqual (1, dud.SelectedIndex, "#H6");
+
+			string itemB = "itemB";
+			dud.Items.Add (itemB);
+			Assert.AreEqual (8, dud.CallStack.Count, "#I1");
+			Assert.AreEqual (1, selected_item_changed, "#I2");
+			Assert.AreEqual (1, text_changed, "#I3");
+			Assert.AreEqual (1, dud.SelectedIndex, "#I4");
+
+			dud.SelectedIndex = 2;
+			Assert.AreEqual (11, dud.CallStack.Count, "#J1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [8], "#J2");
+			Assert.AreEqual ("set_Text:itemB (5)", dud.CallStack [9], "#J3");
+			Assert.AreEqual ("OnChanged", dud.CallStack [10], "#J4");
+			Assert.AreEqual (2, selected_item_changed, "#J5");
+			Assert.AreEqual (2, text_changed, "#J6");
+			Assert.AreEqual (2, dud.SelectedIndex, "#J7");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DomainUpDown_Items_Add ()
+		{
+			MockItem itemA = new MockItem ("itemA");
+			MockItem itemB = new MockItem ("itemB");
+			MockItem itemC = new MockItem ("itemC");
+
+			MockDomainUpDown dud = new MockDomainUpDown ();
+			dud.SelectedItemChanged += new EventHandler (DomainUpDown_SelectedItemChanged);
+			dud.TextChanged += new EventHandler (DomainUpDown_TextChanged);
+			dud.Reset ();
+
+			dud.Items.Add (itemA);
+			Assert.AreEqual (0, dud.CallStack.Count, "#A1");
+			Assert.AreEqual (0, selected_item_changed, "#A2");
+			Assert.AreEqual (0, text_changed, "#A3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#A4");
+			Assert.AreEqual (string.Empty, dud.Text, "#A5");
+			Assert.AreEqual (1, dud.Items.Count, "#A6");
+			Assert.AreSame (itemA, dud.Items [0], "#A7");
+
+			dud.Items.Add (itemC);
+			Assert.AreEqual (0, dud.CallStack.Count, "#B1");
+			Assert.AreEqual (0, selected_item_changed, "#B2");
+			Assert.AreEqual (0, text_changed, "#B3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#B4");
+			Assert.AreEqual (string.Empty, dud.Text, "#B5");
+			Assert.AreEqual (2, dud.Items.Count, "#B6");
+			Assert.AreSame (itemC, dud.Items [1], "#B7");
+
+			dud.Items.Add (itemA);
+			Assert.AreEqual (0, dud.CallStack.Count, "#C1");
+			Assert.AreEqual (0, selected_item_changed, "#C2");
+			Assert.AreEqual (0, text_changed, "#C3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#C4");
+			Assert.AreEqual (string.Empty, dud.Text, "#C5");
+			Assert.AreEqual (3, dud.Items.Count, "#C6");
+			Assert.AreSame (itemA, dud.Items [2], "#C7");
+
+			dud.Sorted = true;
+			Assert.AreEqual (3, dud.Items.Count, "#D1");
+			Assert.AreSame (itemA, dud.Items [0], "#D2");
+			Assert.AreSame (itemA, dud.Items [1], "#D3");
+			Assert.AreSame (itemC, dud.Items [2], "#D4");
+
+			// adding item causes re-sort
+			dud.Items.Add (itemB);
+			Assert.AreEqual (0, dud.CallStack.Count, "#E1");
+			Assert.AreEqual (0, selected_item_changed, "#E2");
+			Assert.AreEqual (0, text_changed, "#E3");
+			Assert.AreEqual (-1, dud.SelectedIndex, "#E4");
+			Assert.AreEqual (string.Empty, dud.Text, "#E5");
+			Assert.AreEqual (4, dud.Items.Count, "#E6");
+			Assert.AreSame (itemA, dud.Items [0], "#E7");
+			Assert.AreSame (itemA, dud.Items [1], "#E8");
+			Assert.AreSame (itemB, dud.Items [2], "#E9");
+			Assert.AreSame (itemC, dud.Items [3], "#E10");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DomainUpDown_Items_Indexer ()
+		{
+			MockItem itemA = new MockItem ("itemA");
+			MockItem itemAbis = new MockItem ("itemA");
+			MockItem itemB = new MockItem ("itemB");
+			MockItem itemC = new MockItem ("itemC");
+			MockItem itemD = new MockItem ("itemD");
+			MockItem itemE = new MockItem ("itemE");
+
+			MockDomainUpDown dud = new MockDomainUpDown ();
+			dud.SelectedItemChanged += new EventHandler (DomainUpDown_SelectedItemChanged);
+			dud.TextChanged += new EventHandler (DomainUpDown_TextChanged);
+			dud.Items.Add (itemC);
+			dud.Items.Add (itemA);
+			dud.Items.Add (itemB);
+			dud.Items.Add (itemA);
+			dud.SelectedIndex = 1;
+			dud.Reset ();
+			Reset ();
+
+			Assert.AreSame (itemC, dud.Items [0], "#A1");
+			Assert.AreSame (itemA, dud.Items [1], "#A2");
+			Assert.AreSame (itemB, dud.Items [2], "#A3");
+			Assert.AreSame (itemA, dud.Items [3], "#A4");
+			Assert.AreEqual (itemA.Text, dud.Text, "#A5");
+
+			dud.Items [3] = itemD;
+			Assert.AreEqual (0, dud.CallStack.Count, "#B1");
+			Assert.AreEqual (0, selected_item_changed, "#B2");
+			Assert.AreEqual (0, text_changed, "#B3");
+			Assert.AreEqual (1, dud.SelectedIndex, "#B4");
+			Assert.AreEqual (itemA.Text, dud.Text, "#B5");
+
+			dud.Items [1] = itemE;
+			Assert.AreEqual (3, dud.CallStack.Count, "#C1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [0], "#C2");
+			Assert.AreEqual ("set_Text:itemE (5)", dud.CallStack [1], "#C3");
+			Assert.AreEqual ("OnChanged", dud.CallStack [2], "#C4");
+			Assert.AreEqual (1, selected_item_changed, "#C5");
+			Assert.AreEqual (1, text_changed, "#C6");
+			Assert.AreEqual (1, dud.SelectedIndex, "#C7");
+			Assert.AreEqual (itemE.Text, dud.Text, "#C8");
+
+			dud.Sorted = true;
+			Assert.AreEqual (8, dud.CallStack.Count, "#D1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [3], "#D2");
+			Assert.AreEqual ("set_Text:itemC (5)", dud.CallStack [4], "#D3");
+			Assert.AreEqual ("OnChanged", dud.CallStack [5], "#D4");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [6], "#D5");
+			Assert.AreEqual ("set_Text:itemC (5)", dud.CallStack [7], "#D6");
+			Assert.AreEqual (2, selected_item_changed, "#D7");
+			Assert.AreEqual (2, text_changed, "#D8");
+			Assert.AreEqual (1, dud.SelectedIndex, "#D9");
+			Assert.AreEqual (itemC.Text, dud.Text, "#D10");
+			Assert.AreSame (itemB, dud.Items [0], "#D11");
+			Assert.AreSame (itemC, dud.Items [1], "#D12");
+			Assert.AreSame (itemD, dud.Items [2], "#D13");
+			Assert.AreSame (itemE, dud.Items [3], "#D14");
+
+			dud.Items [3] = itemA;
+			Assert.AreEqual (13, dud.CallStack.Count, "#E1");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [8], "#E2");
+			Assert.AreEqual ("set_Text:itemB (5)", dud.CallStack [9], "#E3");
+			Assert.AreEqual ("OnChanged", dud.CallStack [10], "#E4");
+			Assert.AreEqual ("UpdateEditText", dud.CallStack [11], "#E5");
+			Assert.AreEqual ("set_Text:itemB (5)", dud.CallStack [12], "#E6");
+			Assert.AreEqual (3, selected_item_changed, "#E7");
+			Assert.AreEqual (3, text_changed, "#E8");
+			Assert.AreEqual (1, dud.SelectedIndex, "#E9");
+			Assert.AreEqual (itemB.Text, dud.Text, "#E10");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DomainUpDown_Items_Indexer_Null ()
+		{
+			MockDomainUpDown dud = new MockDomainUpDown ();
+			dud.Items.Add ("itemA");
+			dud.Items.Add ("itemB");
+			dud.Items.Add ("itemC");
+			dud.SelectedIndex = 0;
+
+			// TODO: report as MS bug
+			dud.Items [2] = null;
+			dud.Items [1] = null;
+			try {
+				dud.Items [0] = null;
+				Assert.Fail ();
+			} catch (NullReferenceException ex) {
+			}
+		}
+
+		[Test]
+		public void DomainUpDown_Items_Insert ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void DomainUpDown_Items_Remove ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void DomainUpDown_Items_RemoveAt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DomainUpDown_SelectedIndex_Invalid ()
+		{
+			DomainUpDown dud = new DomainUpDown ();
+			dud.Items.Add ("item1");
+
+			try {
+				dud.SelectedIndex = -2;
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNull (ex.ParamName, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+#endif
+
+			try {
+				dud.SelectedIndex = 1;
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNotNull (ex.ParamName, "#A4");
+				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#A5");
+				Assert.IsNull (ex.InnerException, "#A6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNull (ex.ParamName, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+			}
+#endif
+		}
+
+		[Test]
+		public void DomainUpDown_SelectedItem_Null ()
+		{
+			DomainUpDown dud = new DomainUpDown ();
+			dud.Items.Add ("item1");
+			dud.SelectedIndex = 0;
+			Assert.AreEqual (0, dud.SelectedIndex, "#A1");
+			Assert.IsNotNull (dud.SelectedItem, "#A2");
+
+			dud.SelectedItem = null;
+			Assert.AreEqual (-1, dud.SelectedIndex, "#B1");
+			Assert.IsNull (dud.SelectedItem, "#B2");
+		}
+
+		void DomainUpDown_TextChanged (object sender, EventArgs e)
+		{
+			text_changed++;
+		}
+
+		void DomainUpDown_SelectedItemChanged (object sender, EventArgs e)
+		{
+			selected_item_changed++;
+		}
+
+		public class MockDomainUpDown : DomainUpDown
+		{
+			private ArrayList _callStack = new ArrayList ();
+
+			public ArrayList CallStack {
+				get { return _callStack; }
+			}
+
+			public bool user_edit {
+				get {
+					return UserEdit;
+				}
+				set {
+					UserEdit = value;
+				}
+			}
+
+			public bool changing_text {
+				get {
+					return ChangingText;
+				}
+				set {
+					ChangingText = value;
+				}
+			}
+
+			public void Reset ()
+			{
+				_callStack.Clear ();
+			}
+
+			public override string Text {
+				get {
+					return base.Text;
+				}
+				set {
+					if (value == null)
+						_callStack.Add ("set_Text:null");
+					else
+						_callStack.Add ("set_Text:" + value + " (" + value.Length + ")");
+					base.Text = value;
+				}
+			}
+
+			protected override void OnChanged (object source, EventArgs e)
+			{
+				_callStack.Add ("OnChanged");
+				base.OnChanged (source, e);
+			}
+
+			protected override void UpdateEditText ()
+			{
+				_callStack.Add ("UpdateEditText");
+				base.UpdateEditText ();
+			}
+
+			protected override void ValidateEditText ()
+			{
+				_callStack.Add ("ValidateEditText");
+				base.ValidateEditText ();
+			}
+		}
+
+		private int selected_item_changed = 0;
 		private int text_changed = 0;
 		private int value_changed = 0;
+	}
+
+	public class MockItem
+	{
+		public MockItem (string text)
+		{
+			_text = text;
+		}
+
+		public string Text {
+			get { return _text; }
+		}
+
+		public override string ToString ()
+		{
+			return _text;
+		}
+
+		private readonly string _text;
 	}
 }
