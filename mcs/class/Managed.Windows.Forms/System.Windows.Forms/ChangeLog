@@ -1,3 +1,11 @@
+2006-12-31  Chris Toshok  <toshok@ximian.com>
+
+	* ToolBar.cs: don't assign to dock_style in the .ctor.  it doesn't
+	override the layout style (anchor/dock) of the control.  assign to
+	Dock instead.  Fixes bug #80416.
+
+	* ToolStrip.cs: same.
+
 2006-12-31  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControl.cs: Use ContainerSelected flag to check if 

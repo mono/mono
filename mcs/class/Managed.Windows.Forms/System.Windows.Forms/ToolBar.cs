@@ -121,7 +121,7 @@ namespace System.Windows.Forms
 			background_color = ThemeEngine.Current.DefaultControlBackColor;
 			foreground_color = ThemeEngine.Current.DefaultControlForeColor;
 			buttons = new ToolBarButtonCollection (this);
-			dock_style = DockStyle.Top;
+			Dock = DockStyle.Top;
 			
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);

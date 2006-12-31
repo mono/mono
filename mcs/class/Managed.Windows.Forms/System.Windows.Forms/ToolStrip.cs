@@ -80,7 +80,7 @@ namespace System.Windows.Forms
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			base.CausesValidation = false;
-			this.dock_style = this.DefaultDock;
+			this.Dock = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
 			this.grip_display_style = ToolStripGripDisplayStyle.Vertical;
