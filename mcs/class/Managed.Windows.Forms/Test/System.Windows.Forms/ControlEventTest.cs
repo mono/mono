@@ -263,12 +263,13 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		int event_count;
-		int resized_event;
+		int resize_event;
+		int size_changed_event;
 		int layout_event;
 
-		void resized (object sender, EventArgs e)
+		void resize (object sender, EventArgs e)
 		{
-			resized_event = ++event_count;
+			resize_event = ++event_count;
 		}
 
 		void layout (object sender, LayoutEventArgs le)
@@ -276,15 +277,22 @@ namespace MonoTests.System.Windows.Forms
 			layout_event = ++event_count;
 		}
 
+		void size_changed (object sender, EventArgs e)
+		{
+			size_changed_event = ++event_count;
+		}
+
 		[Test]
 		public void LayoutResizeTest ()
 		{
 			Control c = new Control ();
 			c.Layout += new LayoutEventHandler (layout);
-			c.Resize += new EventHandler (resized);
+			c.Resize += new EventHandler (resize);
+			c.SizeChanged += new EventHandler (size_changed);
 			c.Size = new Size (100, 100);
 			Assert.AreEqual (1, layout_event, "1");
-			Assert.AreEqual (2, resized_event, "2");
+			Assert.AreEqual (2, resize_event, "2");
+			Assert.AreEqual (3, size_changed_event, "3");
 		}
 	}
 

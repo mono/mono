@@ -1,5 +1,10 @@
 2006-12-31  Chris Toshok  <toshok@ximian.com>
 
+	* ControlEventTest.cs: add SizeChanged to the resize/layout event
+	test.
+
+2006-12-31  Chris Toshok  <toshok@ximian.com>
+
 	* ControlTest.cs: new test for Anchor/Dock interactions.  Also add
 	tests for Control.SetTopLevel.
 
