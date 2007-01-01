@@ -313,7 +313,7 @@ namespace Mono.CSharp {
 			Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
 		}
 
-		public virtual void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		public virtual void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
 			if (Type.FullName == target.FullName){
 				Report.ExtraInformation (loc,
@@ -332,9 +332,13 @@ namespace Mono.CSharp {
 			Expression e = (this is EnumConstant) ? ((EnumConstant)this).Child : this;
 			bool b = Convert.ExplicitNumericConversion (e, target) != null;
 
-			if (b || Convert.ExplicitReferenceConversionExists (Type, target) ||
-				Convert.ExplicitUnsafe (e, target) != null || Convert.UserDefinedConversion (null, this, target, Location.Null, true) != null) {
-				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists (are you missing a cast?)",
+			if (b ||
+			    Convert.ExplicitReferenceConversionExists (Type, target) ||
+			    Convert.ExplicitUnsafe (e, target) != null ||
+			    (ec != null && Convert.UserDefinedConversion (ec, this, target, Location.Null, true) != null))
+			{
+				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. " +
+					      "An explicit conversion exists (are you missing a cast?)",
 					TypeManager.CSharpName (Type), TypeManager.CSharpName (target));
 				return;
 			}
@@ -887,7 +891,7 @@ namespace Mono.CSharp {
 			//
 			converted = Expression.GetOperatorTrue (ec, e, loc);
 			if (converted == null){
-				e.Error_ValueCannotBeConverted (loc, TypeManager.bool_type, false);
+				e.Error_ValueCannotBeConverted (ec, loc, TypeManager.bool_type, false);
 				return null;
 			}
 			return converted;
@@ -1106,7 +1110,7 @@ namespace Mono.CSharp {
 					target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
 
 				if (target == null) {
-					source.Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
+					source.Error_ValueCannotBeConverted (ec, loc, TypeManager.int32_type, false);
 					return null;
 				}
 			}

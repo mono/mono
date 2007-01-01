@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 
 					source = Convert.ExplicitConversion (ec, source, target_type, loc);
 					if (source == null){
-						a.original_source.Error_ValueCannotBeConverted (loc, target_type, true);
+						a.original_source.Error_ValueCannotBeConverted (ec, loc, target_type, true);
 						return null;
 					}
 
@@ -473,7 +473,7 @@ namespace Mono.CSharp {
 					    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
 						return this;
 
-					a.original_source.Error_ValueCannotBeConverted (loc, target_type, false);
+					a.original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 					return null;
 				}
 			}

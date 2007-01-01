@@ -121,9 +121,9 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
-			base.Error_ValueCannotBeConverted(loc, target, expl);
+			base.Error_ValueCannotBeConverted (ec, loc, target, expl);
 		}
 	}
 
@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type t, bool expl)
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type t, bool expl)
 		{
 			if (TypeManager.IsGenericParameter (t)) {
 				Report.Error(403, loc,
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 				if (gc != null && gc.IsReferenceType)
 					return new EmptyConstantCast (this, targetType);
 
-				Error_ValueCannotBeConverted (loc, targetType, false);
+				Error_ValueCannotBeConverted (null, loc, targetType, false);
 				return null;
 			}
 
@@ -318,7 +318,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
 			if (target == TypeManager.float_type) {
 				Error_664 (loc, "float", "f");
@@ -330,7 +330,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.Error_ValueCannotBeConverted (loc, target, expl);
+			base.Error_ValueCannotBeConverted (ec, loc, target, expl);
 		}
 
 		static void Error_664 (Location loc, string type, string suffix)

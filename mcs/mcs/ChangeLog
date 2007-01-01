@@ -1,3 +1,19 @@
+2007-01-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Everywhere that called Error_ValueCannotBeConverted: pass a new
+	EmitContext.
+
+	Exceptions: Null.ConvertImplicitly,
+	Constant.ImplicitConversionRequired as there are too many call
+	sites for passing the ec. 
+
+	* ecore.cs (Expression.Error_ValueCannotBeConverted): Take an
+	EmitContext, if the value is null, then we do not try to provide
+	the extra information from the error (If a userdefined conversion
+	exists, as UserDefinedConversion requires a non null-EmitContext).
+
+	Fixes: #80347
+
 2006-12-30  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (MyBitVector): Document some invariants.

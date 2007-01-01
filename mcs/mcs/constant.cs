@@ -74,7 +74,7 @@ namespace Mono.CSharp {
 		{
 			Constant c = ConvertImplicitly (type);
 			if (c == null)
-				Error_ValueCannotBeConverted (loc, type, false);
+				Error_ValueCannotBeConverted (null, loc, type, false);
 			return c;
 		}
 
@@ -265,11 +265,11 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
 			try {
 				ConvertExplicitly (true, target);
-				base.Error_ValueCannotBeConverted (loc, target, expl);
+				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
 			}
 			catch
 			{

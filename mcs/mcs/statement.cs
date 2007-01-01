@@ -3788,7 +3788,7 @@ namespace Mono.CSharp {
 						return false;
 
 					if (!Convert.ImplicitConversionExists (ec, e, expr_type)) {
-						e.Error_ValueCannotBeConverted (e.Location, expr_type, false);
+						e.Error_ValueCannotBeConverted (ec, e.Location, expr_type, false);
 						return false;
 					}
 

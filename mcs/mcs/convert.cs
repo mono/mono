@@ -1431,7 +1431,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			source.Error_ValueCannotBeConverted (loc, target_type, false);
+			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;
 		}
 
@@ -2068,7 +2068,7 @@ namespace Mono.CSharp {
 			if (ec.InUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
 				return new EmptyCast (expr, target_type);
 
-			expr.Error_ValueCannotBeConverted (l, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
 			return null;
 		}
 
@@ -2110,7 +2110,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			expr.Error_ValueCannotBeConverted (loc, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, loc, target_type, true);
 			return null;
 		}
 	}
