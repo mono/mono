@@ -1,3 +1,8 @@
+2007-01-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseDataBoundControl.cs:
+	* CompositeDataBoundControl.cs: fixed DataBinding flow.
+
 2006-12-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LinkButton.cs: show the validation summary when client validation

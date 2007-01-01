@@ -128,7 +128,8 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void OnDataPropertyChanged ()
 		{
-			RequiresDataBinding = true;
+			if (Initialized)
+				RequiresDataBinding = true;
 		}
 		
 		protected internal override void OnInit (EventArgs e)
