@@ -41,7 +41,7 @@ using java.sql;
 using java.lang;
 
 namespace System.Data.OracleClient {
-	public sealed class OracleParameter : AbstractDbParameter, IDbDataParameter, ICloneable {
+	public sealed class OracleParameter : AbstractDbParameter, ICloneable {
 
 		#region Fields
 
