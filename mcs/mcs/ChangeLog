@@ -1,5 +1,21 @@
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs (Invocation.DoResolve): Moved the check for the
+	use of `this' for doing method calls to the Invocation resolution
+	step, after overload resolution has taken place instead of doing
+	the check at the low-level `This.DoResolve' level.
+
+	The `This.DoResolve' happens before overload resolution, so it has
+	no way of knowing if the method that will be called will be
+	instace or static, triggering an erroneous report for cs0188 (Bug
+	78113).
+
+	We now do the check for instance method invocations after we know
+	what method will be called.
+
+	(This.CheckThisUsage): Move the actual use of this structure
+	checking into its own method and expose it. 
+
 	* Everywhere that called Error_ValueCannotBeConverted: pass a new
 	EmitContext.
 
