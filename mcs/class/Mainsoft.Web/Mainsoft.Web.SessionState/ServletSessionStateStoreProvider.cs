@@ -46,13 +46,16 @@ namespace Mainsoft.Web.SessionState
 			actions = SessionStateActions.None;
 			if (id == null)
 				return null;
-			ServletSessionStateItemCollection sessionState = (ServletSessionStateItemCollection) GetWorkerRequest (context).ServletRequest.getSession (false).getAttribute (J2EEConsts.SESSION_STATE);
+			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (false);
+			if (session == null)
+				return null;
+			ServletSessionStateItemCollection sessionState = (ServletSessionStateItemCollection) session.getAttribute (J2EEConsts.SESSION_STATE);
 			if (sessionState == null)
 				return null;
 			return new SessionStateStoreData (
 				sessionState,
 				sessionState.StaticObjects,
-				10);
+				session.getMaxInactiveInterval()/60);
 		}
 
 		public override SessionStateStoreData GetItemExclusive (HttpContext context, string id, out bool locked, out TimeSpan lockAge, out object lockId, out SessionStateActions actions) {
@@ -74,7 +77,15 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override void SetAndReleaseItemExclusive (HttpContext context, string id, SessionStateStoreData item, object lockId, bool newItem) {
-			GetWorkerRequest (context).ServletRequest.getSession (false).setAttribute (J2EEConsts.SESSION_STATE, item.Items);
+			if (id == null)
+				return;
+			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (false);
+			if (newItem)
+				session.setMaxInactiveInterval (item.Timeout * 60);
+			if (item.Items.Dirty)
+				session.setAttribute (J2EEConsts.SESSION_STATE, item.Items);
+
+			ReleaseItemExclusive (context, id, lockId);
 		}
 
 		public override bool SetItemExpireCallback (SessionStateItemExpireCallback expireCallback) {
