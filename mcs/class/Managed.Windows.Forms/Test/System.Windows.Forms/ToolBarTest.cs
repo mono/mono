@@ -129,7 +129,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80416
-		[Category ("NotWorking")]
 		public void DockDefault ()
 		{
 			Form form = new Form ();
