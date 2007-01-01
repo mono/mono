@@ -1,3 +1,9 @@
+2006-12-31  Miguel de Icaza  <miguel@novell.com>
+ 
+	* io-portability.c (find_file): Do not abort if an empty filename
+	has been passed.  This fixes the case where MONO_IOMAP=all would
+	assert if Directory.Exists ("") was called.
+ 
 Mon Nov 27 13:12:17 GMT 2006 Paolo Molaro <lupus@ximian.com>
 
 	* atomic.h: fix arm compare and exchange (bug #78500).
