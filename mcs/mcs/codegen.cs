@@ -8,9 +8,14 @@
 // (C) 2004 Novell, Inc.
 //
 
-#if !DEBUG
-	#define PRODUCTION
-#endif
+//
+// Please leave this defined on SVN: The idea is that when we ship the
+// compiler to end users, if the compiler crashes, they have a chance
+// to narrow down the problem.   
+//
+// Only remove it if you need to debug locally on your tree.
+//
+#define PRODUCTION
 
 using System;
 using System.IO;
