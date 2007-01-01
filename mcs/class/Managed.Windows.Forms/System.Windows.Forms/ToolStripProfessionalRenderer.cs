@@ -342,16 +342,17 @@ namespace System.Windows.Forms
 					e.Graphics.FillRectangle (b, side_gradient);
 				return;
 			}
-			
-			if (e.ToolStrip is MenuStrip)
-			{
+
+			if (e.ToolStrip is MenuStrip || e.ToolStrip is StatusStrip) {
 				using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.MenuStripGradientBegin, this.ColorTable.MenuStripGradientEnd, e.ToolStrip.Orientation == Orientation.Horizontal ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
 					e.Graphics.FillRectangle (b, e.AffectedBounds);
-			
 			}
 			else
 				using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, e.ToolStrip.Orientation == Orientation.Vertical ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
 					e.Graphics.FillRectangle (b, e.AffectedBounds);
+					
+			if (e.ToolStrip is StatusStrip)
+				e.Graphics.DrawLine (Pens.White, e.AffectedBounds.Left, e.AffectedBounds.Top, e.AffectedBounds.Right, e.AffectedBounds.Top);
 		}
 
 		protected override void OnRenderToolStripBorder (ToolStripRenderEventArgs e)
@@ -363,7 +364,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			if (e.ToolStrip is MenuStrip)
+			if (e.ToolStrip is MenuStrip || e.ToolStrip is StatusStrip)
 				return;
 				
 			using (Pen p = new Pen (this.ColorTable.ToolStripBorder)) {

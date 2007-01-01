@@ -244,6 +244,11 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderStatusStripSizingGrip (ToolStripRenderEventArgs e)
 		{
+			StatusStrip ss = (StatusStrip)e.ToolStrip;
+			
+			if (ss.SizingGrip == true)
+				DrawSizingGrip (e.Graphics, ss.SizeGripBounds);
+			
 			ToolStripRenderEventHandler eh = (ToolStripRenderEventHandler)Events [RenderStatusStripSizingGripEvent];
 			if (eh != null)
 				eh (this, e);
@@ -443,6 +448,22 @@ namespace System.Windows.Forms
 					}
 					break;
 			}
+		}
+
+		private void DrawSizingGrip (Graphics g, Rectangle rect)
+		{
+			DrawGripBox (g, rect.Right - 5, rect.Bottom - 5);
+			DrawGripBox (g, rect.Right - 9, rect.Bottom - 5);
+			DrawGripBox (g, rect.Right - 5, rect.Bottom - 9);
+			DrawGripBox (g, rect.Right - 13, rect.Bottom - 5);
+			DrawGripBox (g, rect.Right - 5, rect.Bottom - 13);
+			DrawGripBox (g, rect.Right - 9, rect.Bottom - 9);
+		}
+		
+		private void DrawGripBox (Graphics g, int x, int y)
+		{
+			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.White), x + 1, y + 1, 1, 1);
+			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.FromArgb (172, 168, 153)), x, y, 1, 1);
 		}
 		#endregion
 	}

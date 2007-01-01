@@ -45,21 +45,14 @@ namespace System.Windows.Forms
 		{
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.layout_style = ToolStripLayoutStyle.Table;
-			this.sizing_grip = false;
+			this.sizing_grip = true;
 			base.Stretch = true;
 		}
 
 		#region Public Properties
-		public override DockStyle Dock
-		{
-			get
-			{
-				return base.Dock;
-			}
-			set
-			{
-				base.Dock = value;
-			}
+		public override DockStyle Dock {
+			get { return base.Dock; }
+			set { base.Dock = value; }
 		}
 		
 		public new ToolStripGripStyle GripStyle {
@@ -83,7 +76,7 @@ namespace System.Windows.Forms
 		}
 		
 		public Rectangle SizeGripBounds {
-			get { return Rectangle.Empty; }
+			get { return new Rectangle (this.Width - 12, this.Top, 12, this.Height); }
 		}
 		
 		public bool SizingGrip {
@@ -137,10 +130,42 @@ namespace System.Windows.Forms
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
+			
+			if (this.sizing_grip)
+				this.Renderer.DrawStatusStripSizingGrip (new ToolStripRenderEventArgs (pevent.Graphics, this));
 		}
 
 		protected override void WndProc (ref Message m)
 		{
+			switch ((Msg)m.Msg) {
+				// If the mouse is over the size grip, change the cursor
+				case Msg.WM_MOUSEMOVE: {
+					if (FromParamToMouseButtons ((int) m.WParam.ToInt32()) == MouseButtons.None) {	
+						Point p = new Point (LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
+						
+						if (this.SizingGrip && this.SizeGripBounds.Contains (p)) {
+							this.Cursor = Cursors.SizeNESW;
+							return;
+						} else
+							this.Cursor = Cursors.Default;
+					}
+
+					break;
+				}
+				// If the left mouse button is pushed over the size grip,
+				// send the WM a message to begin a window resize operation
+				case Msg.WM_LBUTTONDOWN: {
+					Point p = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
+
+					if (this.SizingGrip && this.SizeGripBounds.Contains (p)) {
+						XplatUI.SendMessage (this.FindForm().Handle, Msg.WM_NCLBUTTONDOWN, (IntPtr) HitTest.HTBOTTOMRIGHT, IntPtr.Zero);
+						return;
+					}
+					
+					break;
+				}
+			}
+
 			base.WndProc (ref m);
 		}
 		#endregion

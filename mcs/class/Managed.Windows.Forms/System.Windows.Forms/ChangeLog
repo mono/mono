@@ -1,3 +1,10 @@
+2007-01-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStrip.cs: Add implementation of the sizing grip.
+
+	* ToolStripRenderer.cs, ToolStripProfessionalRenderer.cs: Add
+	StatusStrip rendering.
+
 2006-12-31  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBar.cs: don't assign to dock_style in the .ctor.  it doesn't
