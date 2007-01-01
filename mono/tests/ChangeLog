@@ -1,3 +1,7 @@
+2006-12-31  Miguel de Icaza  <miguel@novell.com>
+
+	* exists.cs: Add new test case for MONO_IOMAP bug. 
+
 2006-11-02  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile.am: Fix path to mkbundle so test passes
