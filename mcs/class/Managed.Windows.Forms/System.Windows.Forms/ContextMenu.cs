@@ -22,10 +22,6 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
-//
-
-
-// COMPLETE
 
 using System;
 using System.ComponentModel;
@@ -41,11 +37,14 @@ namespace System.Windows.Forms
 		private Control	src_control;
 
 		#region Events
+		
 		static object PopupEvent = new object ();
+		
 		public event EventHandler Popup {
 			add { Events.AddHandler (PopupEvent, value); }
 			remove { Events.RemoveHandler (PopupEvent, value); }
 		}
+		
 		#endregion Events
 
 		public ContextMenu () : base (null)
@@ -59,6 +58,7 @@ namespace System.Windows.Forms
 		}
 		 
 		#region Public Properties
+		
 		[Localizable(true)]
 #if NET_2_0
 		[DefaultValue (RightToLeft.No)]
@@ -80,7 +80,7 @@ namespace System.Windows.Forms
 				
 		protected internal virtual void OnPopup (EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [PopupEvent]);
+			EventHandler eh = (EventHandler) (Events [PopupEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
@@ -98,9 +98,5 @@ namespace System.Windows.Forms
 		}
 
 		#endregion Public Methods
-
-
 	}
 }
-
-

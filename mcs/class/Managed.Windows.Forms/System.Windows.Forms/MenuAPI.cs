@@ -217,6 +217,7 @@ namespace System.Windows.Forms {
 			MenuTracker tracker = new MenuTracker (menu);
 			tracker.active = true;
 			tracker.popup_active = true;
+			tracker.grab_control.ActiveTracker = tracker;
 			menu.tracker = tracker;
 
 			menu.Wnd = new PopUpWindow (tracker.grab_control, menu);
