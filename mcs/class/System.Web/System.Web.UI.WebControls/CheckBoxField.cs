@@ -99,9 +99,9 @@ namespace System.Web.UI.WebControls {
 		
 		protected override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
+			bool editable = IsEditable (rowState);
 			CheckBox box = new CheckBox ();
-			box.Enabled = editable && !ReadOnly;
+			box.Enabled = editable;
 			if (editable)
 				box.ToolTip = HeaderText;
 			box.Text = Text;
@@ -111,8 +111,11 @@ namespace System.Web.UI.WebControls {
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
-			CheckBox box = (CheckBox) cell.Controls [0];
-			dictionary [DataField] = box.Checked;
+			bool editable = IsEditable (rowState);
+			if (editable || includeReadOnly) {
+				CheckBox box = (CheckBox) cell.Controls [0];
+				dictionary [DataField] = box.Checked;
+			}
 		}
 		
 		protected override void OnDataBindField (object sender, EventArgs e)

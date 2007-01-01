@@ -11,7 +11,7 @@
 
     protected void Page_Load (object sender, EventArgs e)
     {
-        DetailsView1.DataKeyNames = new string[] { "ID", "FName", "LName" };
+        DetailsView1.DataKeyNames = new string[] { "ID" };
         MonoTests.System.Web.UI.WebControls.TableObject.ds = MonoTests.System.Web.UI.WebControls.TableObject.CreateDataTable();
         
         

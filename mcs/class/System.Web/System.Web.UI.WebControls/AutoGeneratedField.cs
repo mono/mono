@@ -87,8 +87,11 @@ namespace System.Web.UI.WebControls {
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
 			if (dataType == typeof(bool)) {
-				CheckBox box = (CheckBox) cell.Controls [0];
-				dictionary [DataField] = box.Checked;
+				bool editable = IsEditable (rowState);
+				if (editable || includeReadOnly) {
+					CheckBox box = (CheckBox) cell.Controls [0];
+					dictionary [DataField] = box.Checked;
+				}
 			} else
 				base.ExtractValuesFromCell (dictionary, cell, rowState, includeReadOnly);
 		}
@@ -97,11 +100,10 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("Support other data types")]
 		protected override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
-			
 			if (dataType == typeof(bool)) {
+				bool editable = IsEditable (rowState);
 				CheckBox box = new CheckBox ();
-				box.Enabled = editable && !ReadOnly;
+				box.Enabled = editable;
 				box.ToolTip = HeaderText;
 				cell.Controls.Add (box);
 			} else

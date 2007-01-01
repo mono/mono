@@ -1100,8 +1100,8 @@ namespace System.Web.UI.WebControls
 				dataItem = null;
 			
 			// Creates the set of fields to show
-			
-			ICollection fieldCollection = CreateFieldSet (dataItem, dataBinding);
+
+			ICollection fieldCollection = CreateFieldSet (dataItem, dataBinding && dataItem != null);
 			DataControlField[] fields = new DataControlField [fieldCollection.Count];
 			fieldCollection.CopyTo (fields, 0);
 
@@ -1279,6 +1279,7 @@ namespace System.Web.UI.WebControls
 			if (CurrentMode == DetailsViewMode.Insert) {
 				RequiresDataBinding = false;
 				PerformDataBinding (new object [] { null });
+				MarkAsDataBound ();
 				return;
 			}
 			
@@ -1401,11 +1402,15 @@ namespace System.Web.UI.WebControls
 		{
 			DetailsViewCommandEventArgs args = e as DetailsViewCommandEventArgs;
 			if (args != null) {
-				OnItemCommand (args);
-				ProcessEvent (args.CommandName, args.CommandArgument as string);
+				ProcessCommand (args);
 				return true;
 			}
 			return base.OnBubbleEvent (source, e);
+		}
+
+		void ProcessCommand (DetailsViewCommandEventArgs args) {
+			OnItemCommand (args);
+			ProcessEvent (args.CommandName, args.CommandArgument as string);
 		}
 
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
@@ -1417,10 +1422,12 @@ namespace System.Web.UI.WebControls
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			int i = eventArgument.IndexOf ('$');
+			CommandEventArgs arg;
 			if (i != -1)
-				ProcessEvent (eventArgument.Substring (0, i), eventArgument.Substring (i + 1));
+				arg = new CommandEventArgs (eventArgument.Substring (0, i), eventArgument.Substring (i + 1));
 			else
-				ProcessEvent (eventArgument, null);
+				arg = new CommandEventArgs (eventArgument, null);
+			ProcessCommand (new DetailsViewCommandEventArgs (this, arg));
 		}
 		
 		void ProcessEvent (string eventName, string param)

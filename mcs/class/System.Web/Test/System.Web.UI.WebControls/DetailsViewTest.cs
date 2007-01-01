@@ -1323,7 +1323,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void DetailsView_EditPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
@@ -1338,28 +1337,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;			
 			pageHTML = t.Run ();
 			pageHTML = pageHTML.Substring (pageHTML.IndexOf ("starttest") + 9, pageHTML.IndexOf ("endtest") - pageHTML.IndexOf ("starttest") - 9);
-			string origHtmlValue = @" <div>
-						&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
-						<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""DetailsView1"" style=""height:50px;width:125px;border-collapse:collapse;"">
-						<tr>
-						<td>ID</td><td>1001</td>
-						</tr><tr>
-						<td>FName</td><td>Mahesh</td>
-						</tr><tr>
-						<td>LName</td><td>Chand</td>
-						</tr><tr>
-						<td colspan=""2""><a href=""javascript:__doPostBack('DetailsView1$ctl01','')"">Update</a>&nbsp;<a href=""javascript:__doPostBack('DetailsView1','Cancel$0')"">Cancel</a></td>
-						</tr><tr>
-						<td colspan=""2""><table border=""0"">
-						<tr>
-						<td><span>1</span></td><td><a href=""javascript:__doPostBack('DetailsView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('DetailsView1','Page$3')"">3</a></td>
-						</tr>
-						</table></td>
-						</tr>
-						</table>
-						</div>     
-						</div>";
+			string origHtmlValue = @"<div>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+        <div>
+	<table cellspacing=""0"" rules=""all"" border=""1"" id=""DetailsView1"" style=""height:50px;width:125px;border-collapse:collapse;"">
+		<tr>
+			<td>ID</td><td>1001</td>
+		</tr><tr>
+			<td>FName</td><td><input name=""DetailsView1$ctl01"" type=""text"" value=""Mahesh"" title=""FName"" /></td>
+		</tr><tr>
+			<td>LName</td><td><input name=""DetailsView1$ctl02"" type=""text"" value=""Chand"" title=""LName"" /></td>
+		</tr><tr>
+			<td colspan=""2""><a href=""javascript:__doPostBack('DetailsView1$ctl03','')"">Update</a>&nbsp;<a href=""javascript:__doPostBack('DetailsView1','Cancel$0')"">Cancel</a></td>
+		</tr><tr>
+			<td colspan=""2""><table border=""0"">
+				<tr>
+					<td><span>1</span></td><td><a href=""javascript:__doPostBack('DetailsView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('DetailsView1','Page$3')"">3</a></td>
+				</tr>
+			</table></td>
+		</tr>
+	</table>
+</div>
+        
+    
+    </div>";
 					HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "AfterEditPostback");
 					// Checking for change mode event fired.
 					ArrayList eventlist = t.UserData as ArrayList;
@@ -1510,7 +1511,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // Implementation details in mono
+		[Category ("NotDotNet")] // Implementation details in mono
 		public void DetailsView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
@@ -1544,6 +1545,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (origHtmlValue, pageHTML, "InsertDataPostback");
 			
 			fr = new FormRequest (t.Response, "form1");
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("DetailsView1$ctl01");
@@ -1555,6 +1557,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["DetailsView1$ctl01"].Value = "123";
 			fr.Controls["DetailsView1$ctl02"].Value = "123";
 			fr.Controls["DetailsView1$ctl03"].Value = "123";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("DetailsView1:_ctl1c");
+			fr.Controls.Add ("DetailsView1:_ctl2c");
+			fr.Controls.Add ("DetailsView1:_ctl3c");
+
+			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1:_ctl4c";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["DetailsView1:_ctl1c"].Value = "123";
+			fr.Controls ["DetailsView1:_ctl2c"].Value = "123";
+			fr.Controls ["DetailsView1:_ctl3c"].Value = "123";
+#endif
 			t.Request = fr;			
 			t.Run ();
 
@@ -1675,7 +1690,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // Implementation details in mono
+		[Category ("NotDotNet")] // Implementation details in mono
 		public void DetailsView_UpdatePostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
@@ -1690,17 +1705,27 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHTML = t.Run ();
 			
 			fr = new FormRequest (t.Response, "form1");
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("DetailsView1$ctl01");
 			fr.Controls.Add ("DetailsView1$ctl02");
-			fr.Controls.Add ("DetailsView1$ctl03");
 
-			fr.Controls["__EVENTTARGET"].Value = "DetailsView1$ctl04";
+			fr.Controls["__EVENTTARGET"].Value = "DetailsView1$ctl03";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["DetailsView1$ctl01"].Value = "1";
 			fr.Controls["DetailsView1$ctl02"].Value = "2";
-			fr.Controls["DetailsView1$ctl03"].Value = "3";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("DetailsView1:_ctl1c");
+			fr.Controls.Add ("DetailsView1:_ctl2c");
+
+			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1:_ctl3c";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["DetailsView1:_ctl1c"].Value = "1";
+			fr.Controls ["DetailsView1:_ctl2c"].Value = "2";
+#endif
 			t.Request = fr;
 			t.Run ();
 
@@ -2530,6 +2555,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 

@@ -138,8 +138,8 @@ namespace System.Web.UI.WebControls {
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
-			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
-			if (editable && !ReadOnly) {
+			bool editable = IsEditable (rowState);
+			if (editable) {
 				if (cell.Controls.Count > 0) {
 					TextBox box = (TextBox) cell.Controls [0];
 					dictionary [DataField] = box.Text;
@@ -168,14 +168,20 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
-			if (editable && !ReadOnly) {
+			bool editable = IsEditable (rowState);
+			if (editable) {
 				TextBox box = new TextBox ();
 				box.ID = cell.ClientID;
 				cell.Controls.Add (box);
+				box.ToolTip = HeaderText;
 			}
 		}
-		
+
+		internal bool IsEditable (DataControlRowState rowState)
+		{
+			return ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) || ((rowState & DataControlRowState.Insert) != 0 && InsertVisible);
+		}
+
 		protected virtual bool SupportsHtmlEncode {
 			get { return true; }
 		}
