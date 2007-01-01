@@ -47,11 +47,11 @@ namespace MonoTests.System.ComponentModel
 			DataObjectMethodAttribute a1 = new DataObjectMethodAttribute (DataObjectMethodType.Fill);
 			DataObjectMethodAttribute a2 = new DataObjectMethodAttribute (DataObjectMethodType.Delete, true);
 
-			Assert.IsTrue (a1.Match (a2), "#1");
+			Assert.IsFalse (a1.Match (a2), "#1");
 
 			DataObjectMethodAttribute a3 = new DataObjectMethodAttribute (DataObjectMethodType.Delete);
 
-			Assert.IsFalse (a1.Match (a3), "#2");
+			Assert.IsTrue (a2.Match (a3), "#2");
 		}
 
 		[Test]
