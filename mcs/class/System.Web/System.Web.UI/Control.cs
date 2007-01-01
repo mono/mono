@@ -1147,23 +1147,12 @@ namespace System.Web.UI
 #endif
 		string ResolveClientUrl (string relativeUrl)
 		{
-			if (relativeUrl == null)
-				throw new ArgumentNullException ("relativeUrl");
-
-			if (relativeUrl == "")
-				return "";
-
-			if (relativeUrl [0] == '#')
-				return relativeUrl;
-			
-			string ts = TemplateSourceDirectory;
-			if (ts == "" || !UrlUtils.IsRelativeUrl (relativeUrl))
-				return relativeUrl;
-
-			HttpResponse resp = Context.Response;
-			string absoluteUrl = resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
-			if (absoluteUrl.StartsWith (ts + "/"))
-				return absoluteUrl.Substring (ts.Length + 1);
+			string absoluteUrl = ResolveUrl (relativeUrl);
+			if (Context != null && Context.Request != null) {
+				string baseUrl = Context.Request.BaseVirtualDir;
+				if (absoluteUrl.StartsWith (baseUrl + "/"))
+					return absoluteUrl.Substring (baseUrl.Length + 1);
+			}
 			return absoluteUrl;
 		}
 		

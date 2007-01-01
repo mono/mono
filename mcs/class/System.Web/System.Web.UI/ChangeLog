@@ -1,3 +1,8 @@
+2007-01-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Control.cs: fixed ResolveClientUrl, wrong when control that calls
+	this method and the page are in different folders
+
 2006-12-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: show the validation summary when client validation and
