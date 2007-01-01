@@ -498,7 +498,8 @@ namespace Mono.CSharp
 
 		static bool is_identifier_part_character (char c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') ||
+				Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
 		}
 
 		public static bool IsKeyword (string s)

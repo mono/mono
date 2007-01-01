@@ -1,5 +1,8 @@
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-tokenizer.cs: Accept Pc class characters (Connector
+	Punctuation) as valid identifiers.  Fixes #78259
+
 	* expression.cs (Invocation.DoResolve): Moved the check for the
 	use of `this' for doing method calls to the Invocation resolution
 	step, after overload resolution has taken place instead of doing
