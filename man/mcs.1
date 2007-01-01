@@ -19,12 +19,12 @@ C# 1.0 and 2.0 with the exception of generics and nullable types.  The
 compiler is used to compile against the 2.x profile and implements
 the complete C# 2.0 specification including generics.
 .PP
-The Mono C# compiler accepts the same options than the Microsoft C#
-compiler does.  Those options can start with a slash or a dash
-(/checked is the same as -checked).  Additionally to this, the
-GNU-like options are supported, those begin with "--".  All
-MCS-specific flags which are not available in the Microsoft C#
-compiler are available only with the GNU-style options. 
+The Mono C# compiler accepts the same command line options that the
+Microsoft C# compiler does.  Those options can start with a slash or a
+dash (/checked is the same as -checked).  Additionally some GNU-like
+options are supported, those begin with "--".  All MCS-specific flags
+which are not available in the Microsoft C# compiler are available
+only with the GNU-style options.
 .PP
 C# source files must end with a ".cs" extension.  Compilation of C#
 source code requires all the files that make up a library, module or
@@ -75,7 +75,7 @@ of using the cryptic 65001 and "reset" restores the automatic handling of
 code pages.  These shorthands are not available on the Microsoft compiler.
 .TP
 .I \-define:SYMLIST, -d:SYMLIST
-Defines the symbol listed by the semi-colon separeted list SYMLIST
+Defines the symbol listed by the semi-colon separated list SYMLIST
 SYMBOL.  This can be tested in the source code by the pre-processor,
 or can be used by methods that have been tagged with the Conditional
 attribute. 
@@ -171,7 +171,7 @@ Disables the default compiler configuration to be loaded.  The
 compiler by default has references to the system assemblies. 
 .TP
 .I \-nowarn:WARNLIST
-Makes the compiler ignore warnings specified in the comma-separeted
+Makes the compiler ignore warnings specified in the comma-separated
 list WARNLIST>
 .TP
 .I -optimize, -optimize+, -optimize-
@@ -199,7 +199,7 @@ This is typically used with third party components, like this:
 .I \-pkg:dotnet
 This will instruct the compiler to reference the System.* libraries
 available on a typical dotnet framework installation, notice that this
-does not include all of the Mono libraies, only the System.* ones.  This
+does not include all of the Mono libraries, only the System.* ones.  This
 is a convenient shortcut for those porting code.
 .TP
 .I -resource:RESOURCE[,ID]
@@ -222,7 +222,7 @@ comma.
 .TP
 .I \-recurse:PATTERN, --recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
-shell will perform globbing, so you migth want to use it like this:
+shell will perform globbing, so you might want to use it like this:
 .PP
 .nf
 		$ mcs -recurse:'*.cs' 
@@ -309,27 +309,28 @@ compiler specific code.   Please note that this symbol is only to test
 for the compiler, and is not useful to distinguish compilation or
 deployment platforms.
 .SH AUTHORS
-The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap and
-Martin Baulig at Ximian.
+The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap,
+Martin Baulig, Marek Safar and Raja Harinath.  The development was
+funded by Ximian, Novell and Marek Safar.
 .PP
 .SH LICENSE
 The Mono Compiler Suite is released under the terms of the GNU GPL.
 Please read the accompanying `COPYING' file for details.  Alternative
-licenses are available from Ximian.
+licensing for the compiler is available from Novell.
 .PP
 .SH SEE ALSO
 mono(1), mint(1), sn(1)
 .PP
 .SH BUGS
-To report bugs in the compiler, you can use `bug-buddy', or you can
-file bug reports in our bug tracking system:
-http://bugzilla.ximian.com.
+To report bugs in the compiler, you must file them on our bug tracking
+system, at:
+http://www.mono-project.com/Bugs 
 .SH MAILING LIST
-The Mono Mailing List is available at: mono-list-request@ximian.com
+The Mono Mailing lists are listed at http://www.mono-project.com/Mailing_Lists
 .SH MORE INFORMATION
-The Mono C# compiler is developed by Ximian, Inc
-(http://www.ximian.com) (http://www.ximian.com) and is based on the
+The Mono C# compiler was developed by Novell, Inc
+(http://www.novell.com, http) and is based on the
 ECMA C# language standard available here:
 http://www.ecma.ch/ecma1/STAND/ecma-334.htm
-
-
+.PP
+The home page for the Mono C# compiler is at http://www.mono-project.com/CSharp_Compiler
