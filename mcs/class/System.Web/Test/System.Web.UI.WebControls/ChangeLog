@@ -1,3 +1,7 @@
+2007-01-02 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs: new tests, removed NotWorking attribute.
+
 2007-01-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsViewTest.cs: fixed tests, removed NotWorking attribute.
