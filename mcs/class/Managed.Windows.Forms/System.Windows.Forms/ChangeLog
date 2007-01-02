@@ -1,3 +1,8 @@
+2007-01-02  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: one more try with help from georgegiolfan@yahoo.com 
+	to fix all hdr height padding codepaths.  Fixes #80207.
+
 2007-01-02  Chris Toshok  <toshok@ximian.com>
 
 	* StatusBar.cs (.ctor): remove the Anchor setting, as it's just
