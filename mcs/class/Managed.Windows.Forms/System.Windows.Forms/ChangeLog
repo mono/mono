@@ -1,5 +1,11 @@
 2007-01-02  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuAPI.cs:
+	- Down submenu positin in three pixels.
+	- Closes sub menu when mouse leaves from menu. Fixes #80402.
+
+2007-01-02  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs:
 	- Fix popup menu size adding one pixel on the top.
 	- Down menu item border from two to one to mimic Win32.

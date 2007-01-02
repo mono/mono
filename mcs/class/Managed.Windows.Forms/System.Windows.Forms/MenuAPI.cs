@@ -159,10 +159,15 @@ namespace System.Windows.Forms {
 			if (item == null) {
 				MenuItem old_item = CurrentMenu.SelectedItem;
 				
-				if  ((active && old_item.IsPopup && old_item.VisibleItems) || (keynav_state == KeyNavState.Navigating))
+				// Return when is a popup with visible subitems for MainMenu 
+				if  ((active && old_item.VisibleItems && old_item.IsPopup && (CurrentMenu is MainMenu)))
 					return;
 
-				/* Select parent menu when move outside of menu item */
+				// Also returns when keyboard navigating
+				if (keynav_state == KeyNavState.Navigating)
+					return;
+				
+				// Select parent menu when move outside of menu item
 				if (old_item.Parent is MenuItem) {
 					MenuItem new_item = (old_item.Parent as MenuItem);
 					if (new_item.IsPopup) {
@@ -280,6 +285,7 @@ namespace System.Windows.Forms {
 
 			if (CurrentMenu != menu)
 				CurrentMenu = menu;
+			
 			item.Selected = true;
 			menu.InvalidateItem (item);
 			
@@ -289,7 +295,6 @@ namespace System.Windows.Forms {
 			if ((execute) && ((prev_item == null) || (item != prev_item.Parent)))
 				ExecFocusedItem (menu, item);
 		}
-
 
 		//	Used when the user executes the action of an item (press enter, shortcut)
 		//	or a sub-popup menu has to be shown
@@ -332,7 +337,7 @@ namespace System.Windows.Forms {
 			if (menu is MainMenu)
 				pnt = new Point (item.X, item.Y + item.Height - 2 - menu.Height);
 			else
-				pnt = new Point (item.X + item.Width, item.Y + 1);
+				pnt = new Point (item.X + item.Width - 3, item.Y - 3);
 			pnt = menu.Wnd.PointToScreen (pnt);
 			puw.Location = pnt;
 			item.Wnd = puw;
