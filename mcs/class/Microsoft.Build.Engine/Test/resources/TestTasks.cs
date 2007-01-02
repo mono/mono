@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -89,4 +90,51 @@ public class StringTestTask : Task {
 		get { return array; }
 		set { array = value; }
 	}	
+}
+
+public class PublishTestTask : Task {
+	public override bool Execute ()
+	{
+		return true;
+	}
+
+	[Output]
+	public bool True {
+		get { return true; }
+	}
+
+	[Output]
+	public bool False {
+		get { return false; }
+	}
+
+	[Output]
+	public char Char {
+		get { return 'A'; }
+	}
+
+	[Output]
+	public int Int {
+		get { return -100; }
+	}
+
+	[Output]
+	public uint Uint {
+		get { return 100; }
+	}
+
+	[Output]
+	public float Float {
+		get { return 0.5f; }
+	}
+
+	[Output]
+	public double Double {
+		get { return 0.5; }
+	}
+
+	[Output]
+	public DateTime DateTimeNow {
+		get { return DateTime.Now; }
+	}
 }
