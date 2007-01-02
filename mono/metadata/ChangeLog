@@ -1,3 +1,14 @@
+2007-01-01  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType):
+	Clear the error before returning to unmanaged code to prevent the
+	runtime from being confused later on (fixes  80420).
+	(ves_icall_type_from_name): Always call mono_loader_clear_error
+	after parsing a type that could have failed.
+	(ves_icall_System_Reflection_Assembly_GetTypes): ditto.
+
+	* loader.c (mono_loader_clear_error): Fix indentation.
+
 2006-12-28  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 58.
