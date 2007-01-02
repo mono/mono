@@ -336,6 +336,7 @@
     <Compile Include="System.ComponentModel\ComponentResourceManager.cs" />
     <Compile Include="System.ComponentModel\Container.cs" />
     <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
+    <Compile Include="System.ComponentModel\DataObjectAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectMethodType.cs" />
     <Compile Include="System.ComponentModel\DateTimeConverter.cs" />
