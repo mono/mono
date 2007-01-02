@@ -50,8 +50,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public StatusBar ()
 		{
-			base.Dock = DockStyle.Bottom;
-			Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			Dock = DockStyle.Bottom;
 			this.TabStop = false;
 			this.SetStyle(ControlStyles.UserPaint | ControlStyles.Selectable, false);
 		}
@@ -76,12 +75,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(DockStyle.Bottom)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
-			set {
-				if (value == Dock)
-					return;
-				base.Dock = value;
-				UpdateStatusBar ();
-			}
+			set { base.Dock = value; }
 		}
 
 		[Localizable(true)]

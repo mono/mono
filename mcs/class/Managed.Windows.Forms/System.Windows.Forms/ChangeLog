@@ -1,3 +1,12 @@
+2007-01-02  Chris Toshok  <toshok@ximian.com>
+
+	* StatusBar.cs (.ctor): remove the Anchor setting, as it's just
+	setting it to the Control defaults anyway, and it being after the
+	Dock set was screwing up layout.
+	(set_Dock): don't short circuit out of setting base.Dock.  Also,
+	no need to call UpdateStatusBar here, as it'll be re-layed out if
+	it needs to be.
+
 2007-01-02  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: patch from georgegiolfan@yahoo.com to add padding
