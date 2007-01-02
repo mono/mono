@@ -121,6 +121,21 @@ namespace MonoTests.System.ComponentModel
 			list.Dispose ();
 		}
 		
+		[Test]
+		public void NullKey ()
+		{
+			EventHandlerList list = new EventHandlerList ();
+			EventHandler one = new EventHandler (Deleg1);
+			
+			list.AddHandler (null, one);
+			EventHandler d = list [null] as EventHandler;
+			Assertion.Assert ("NullKey #01", d != null);
+			
+			list.RemoveHandler (null, one);
+			d = list [null] as EventHandler;
+			Assertion.Assert ("NullKey #02", d == null);
+		}
+		
 #if !NUNIT
 		void Assert (string msg, bool result)
 		{

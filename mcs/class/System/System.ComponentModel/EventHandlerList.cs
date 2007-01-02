@@ -83,9 +83,6 @@ namespace System.ComponentModel {
 		}
 		private ListNode FindEntry (object key)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key", "Attempted lookup for a null key.");
-
 			for (ListNode entry = head; entry != null; entry = entry.next)
 				if (key == entry.key)
 					return entry;

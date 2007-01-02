@@ -1,3 +1,7 @@
+2007-01-02  Konstantin Triger  <kostat@mainsoft.com>
+
+	* EventHandlerList.cs: Do not reject null key.
+
 2006-12-25  Raja R Harinath  <harinath@gmail.com>
 
 	* InitializationEventAttribute.cs: New.
