@@ -1,5 +1,9 @@
 2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ControlTest.cs: Added FontHeight test.
+
+2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ListControlTest.cs: Added test for AllowSelection.
 	* UpDownTest.cs: MockItem is now nested class.
 	* ListBoxTest.cs: Added test for AllowSelection.

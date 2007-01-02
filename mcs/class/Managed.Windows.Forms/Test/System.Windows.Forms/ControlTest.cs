@@ -445,7 +445,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Theme.DefaultFont change must be approved first
+		[Category ("NotWorking")]
+		public void FontHeightTest ()
+		{
+			MockControl c = new MockControl ();
+			Assert.AreEqual (13, c.font_height);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void FontTest ()
 		{
 			Control c = new Control ();
@@ -1273,7 +1281,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Theme.DefaultFont change must be approved first
+		[Category ("NotWorking")]
 		public void ResetFontTest ()
 		{
 			Control c = new Control ();
@@ -1528,6 +1536,14 @@ namespace MonoTests.System.Windows.Forms
 		private void Control_ValidatedHandler (object sender, EventArgs e)
 		{
 			((Control) sender).Tag = false;
+		}
+
+		public class MockControl : Control
+		{
+			public int font_height {
+				get { return base.FontHeight; }
+				set { base.FontHeight = value; }
+			}
 		}
 	}
 
