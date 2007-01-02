@@ -51,6 +51,15 @@ namespace MonoTests.System.Windows.Forms
 			ListControlChild lc = new ListControlChild ();
 			lc.DataSource = new object ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void AllowSelection ()
+		{
+			ListControlChild lc = new ListControlChild ();
+			Assert.IsTrue (lc.allow_selection);
+		}
+#endif
 	}
 
 	public class ListControlChild : ListControl
@@ -62,6 +71,12 @@ namespace MonoTests.System.Windows.Forms
 			set {
 			}
 		}
+
+#if NET_2_0
+		public bool allow_selection {
+			get { return base.AllowSelection; }
+		}
+#endif
 
 		protected override void RefreshItem (int index)
 		{

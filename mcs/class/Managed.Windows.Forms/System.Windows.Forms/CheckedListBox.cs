@@ -167,8 +167,11 @@ namespace System.Windows.Forms
 		public override SelectionMode SelectionMode {
 			get { return base.SelectionMode; }
 			set {
+				if (!Enum.IsDefined (typeof (SelectionMode), value))
+					throw new InvalidEnumArgumentException ("value", (int) value, typeof (SelectionMode));
+
 				if (value == SelectionMode.MultiSimple || value == SelectionMode.MultiExtended)
-					throw new InvalidEnumArgumentException ("Multi selection modes not supported");
+					throw new ArgumentException ("Multi selection not supported on CheckedListBox");
 
 				base.SelectionMode = value;
 			}

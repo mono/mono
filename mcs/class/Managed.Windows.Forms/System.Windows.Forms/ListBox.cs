@@ -596,6 +596,14 @@ namespace System.Windows.Forms
     			}
 		}
 
+#if NET_2_0
+		protected override bool AllowSelection {
+			get {
+				return SelectionMode != SelectionMode.None;
+			}
+		}
+#endif
+
 		#endregion Public Properties
 
 		#region Private Properties

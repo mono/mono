@@ -195,6 +195,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, x, "#203");
 		}
 
+#if NET_2_0
+		[Test]
+		public void AllowSelection ()
+		{
+			MockListBox lb = new MockListBox ();
+			lb.SelectionMode = SelectionMode.None;
+			Assert.IsFalse (lb.allow_selection, "#1");
+			lb.SelectionMode = SelectionMode.One;
+			Assert.IsTrue (lb.allow_selection, "#2");
+		}
+#endif
+
 		//
 		// Exceptions
 		//
@@ -304,7 +316,14 @@ namespace MonoTests.System.Windows.Forms
 			eventFired = true;
 		}
 
-
+		public class MockListBox : ListBox
+		{
+#if NET_2_0
+			public bool allow_selection {
+				get { return base.AllowSelection; }
+			}
+#endif
+		}
 	}
 
 	[TestFixture]
@@ -395,7 +414,5 @@ namespace MonoTests.System.Windows.Forms
 		{
 			col.Add (null);
 		}
-
-
 	}
 }

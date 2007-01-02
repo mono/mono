@@ -1,3 +1,10 @@
+2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CheckedListBox.cs: Fixed SelectionMode to match MS.
+	* ListControl.cs: Implemented AllowSelection property. Removed extra
+	tabs.
+	* ListBox.cs: Implemented AllowSelection property.
+
 2007-01-02  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuItem.cs: In MdiWindowClickHandler uses sender instead of

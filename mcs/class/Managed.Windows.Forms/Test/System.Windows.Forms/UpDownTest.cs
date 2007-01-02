@@ -1002,24 +1002,24 @@ namespace MonoTests.System.Windows.Forms
 		private int selected_item_changed = 0;
 		private int text_changed = 0;
 		private int value_changed = 0;
-	}
 
-	public class MockItem
-	{
-		public MockItem (string text)
+		public class MockItem
 		{
-			_text = text;
-		}
+			public MockItem (string text)
+			{
+				_text = text;
+			}
 
-		public string Text {
-			get { return _text; }
-		}
+			public string Text {
+				get { return _text; }
+			}
 
-		public override string ToString ()
-		{
-			return _text;
-		}
+			public override string ToString ()
+			{
+				return _text;
+			}
 
-		private readonly string _text;
+			private readonly string _text;
+		}
 	}
 }

@@ -132,7 +132,7 @@ namespace System.Windows.Forms
 		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
 		public string DisplayMember {
 			get { 
-				return display_member;				
+				return display_member;
 			}
 			set {
 				if (value == null)
@@ -143,7 +143,7 @@ namespace System.Windows.Forms
 				}
 
 				display_member = value;
-				ConnectToDataSource ();				
+				ConnectToDataSource ();
 				OnDisplayMemberChanged (EventArgs.Empty);
 			}
 		}
@@ -207,12 +207,19 @@ namespace System.Windows.Forms
 				value_member = new_value;
 				
 				if (display_member == string.Empty) {
-					DisplayMember = value_member.BindingMember;					
+					DisplayMember = value_member.BindingMember;
 				}
 				
 				ConnectToDataSource ();
 				OnValueMemberChanged (EventArgs.Empty);
 			}
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		bool AllowSelection {
+			get { return true; }
 		}
 
 		#endregion Public Properties
@@ -236,7 +243,7 @@ namespace System.Windows.Forms
 
 			if (data_manager != null) {
 				PropertyDescriptorCollection col = data_manager.GetItemProperties ();
-				prop = col.Find (field, true);				
+				prop = col.Find (field, true);
 			}
 			
 			if (prop == null)
@@ -254,7 +261,7 @@ namespace System.Windows.Forms
 				}
 			}
 								
-			return item.ToString ();			
+			return item.ToString ();
 		}
 
 		protected CurrencyManager DataManager {
@@ -290,7 +297,8 @@ namespace System.Windows.Forms
 
 			if (DataManager != null) {
 				SetItemsCore (DataManager.List);
-				SelectedIndex = DataManager.Position;
+				if (AllowSelection)
+					SelectedIndex = DataManager.Position;
 			}
 		}
 
@@ -377,11 +385,12 @@ namespace System.Windows.Forms
 		}
 
 		private void OnPositionChanged (object sender, EventArgs e)
-		{			
-			SelectedIndex = data_manager.Position;
+		{
+			if (AllowSelection)
+				SelectedIndex = data_manager.Position;
 		}
 
-		#endregion Private Methods	
+		#endregion Private Methods
 	}
 
 }
