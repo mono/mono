@@ -1,3 +1,8 @@
+2007-01-01  Miguel de Icaza  <miguel@novell.com>
+
+	* libtest.c, marshal5.cs: Add tests for ByValTStr marshalling when
+	the charset is Unicode (see bugs 79944 and 78722).
+
 2006-12-31  Miguel de Icaza  <miguel@novell.com>
 
 	* exists.cs: Add new test case for MONO_IOMAP bug. 
