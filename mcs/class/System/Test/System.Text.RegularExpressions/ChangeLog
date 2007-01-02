@@ -1,3 +1,7 @@
+2007-01-02  Raja R Harinath  <rharinath@novell.com>
+
+	* RegexBugs.cs (GroupNumbers): New test based on #79472.
+
 2006-05-08  Raja R Harinath  <rharinath@novell.com>
 
 	* RegexBugs.cs (Kill65535_1, Kill65535_2, No65535Limit): New tests

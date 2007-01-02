@@ -418,6 +418,33 @@ namespace MonoTests.System.Text.RegularExpressions
 			Kill65535_2 (65531);
 			Kill65535_2 (131066);
 			Kill65535_2 (131067);
-		} 
+		}
+
+		void GroupNumbers_1 (string s, int n)
+		{
+			Regex r = new Regex (s);
+			int [] grps = r.GetGroupNumbers ();
+			AssertEquals (r+" #01", n, grps.Length);
+
+			int sum = 0;
+			for (int i = 0; i < grps.Length; ++i) {
+				sum += grps [i];
+				// group numbers are unique
+				for (int j = 0; j < i; ++j)
+					Assert (r+" #02 ("+i+","+j+")", grps [i] != grps [j]);
+			}
+			// no gaps in group numbering
+			AssertEquals (r+" #03", (n*(n-1))/2, sum);
+		}
+
+		[Test]
+		public void GroupNumbers ()
+		{
+			GroupNumbers_1 ("a", 1);
+			GroupNumbers_1 ("(a)", 2);
+			GroupNumbers_1 ("(a)(b)", 3);
+			GroupNumbers_1 ("(a)|(b)", 3);
+			GroupNumbers_1 ("((a)(b))(c)", 5);
+		}
 	}
 }
