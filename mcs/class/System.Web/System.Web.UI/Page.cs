@@ -1815,6 +1815,13 @@ return true;
 	public bool IsCrossPagePostBack {
 		get { return isCrossPagePostBack; }
 	}
+
+	public new virtual char IdSeparator {
+		get {
+			//TODO: why override?
+			return base.IdSeparator;
+		}
+	}
 	
 	string ProcessCallbackData ()
 	{
