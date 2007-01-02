@@ -47,37 +47,9 @@ namespace Mono.XBuild.Framework {
 		
 		public AssemblyLoadInfo (string assemblyName, string className)
 		{
-			string name, version, culture, publicKeyToken;
-			string[] whole, versionArr, cultureArr, publicKeyTokenArr;
-			name = null;
-			version = null;
-			culture = null;
-			publicKeyToken = null;
-		
-			whole = assemblyName.Split (',');
-			
-			if (whole.Length < 4)
-				throw new ArgumentException ("Invalid assembly name string.");
-			
-			name = whole [0].Trim ();
-			
-			versionArr = (whole [1].Trim ()).Split ('=');
-			if (versionArr.Length != 2)
-				throw new ArgumentException ("Invalid version.");
-			version = versionArr [1];
-
-			cultureArr = (whole [2].Trim ()).Split ('=');
-			if (cultureArr.Length != 2)
-				throw new ArgumentException ("Invalid culture.");
-			culture = cultureArr [1];
-
-			publicKeyTokenArr = (whole [1].Trim ()).Split ('=');
-			if (publicKeyTokenArr.Length != 2)
-				throw new ArgumentException ("Invalid public key token.");
-			publicKeyToken = publicKeyTokenArr [1];
-			
-			
-			SetAssemblyName (LoadInfoType.AssemblyName, null, name, version, culture, publicKeyToken, className);
+			this.assemblyName = new AssemblyName (assemblyName);
+			this.className = className;
+			infoType = LoadInfoType.AssemblyName;
 		}
 		
 		public AssemblyLoadInfo (LoadInfoType loadInfoType, string filename, string name,
