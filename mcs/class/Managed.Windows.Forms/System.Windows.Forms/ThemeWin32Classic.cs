@@ -2374,38 +2374,19 @@ namespace System.Windows.Forms
 			
 		public override void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect)
 		{
-
+			// Fill rectangle area
 			dc.FillRectangle (SystemBrushes.Menu, cliparea);
 			
-			Pen pen_cht = SystemPens.HighlightText;
-			Pen pen_ccd = SystemPens.ControlDark;
-			Pen pen_ccdd = SystemPens.ControlDarkDark;
-
-			/* Draw menu borders */
-			dc.DrawLine (pen_cht,
-				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
-
-			dc.DrawLine (pen_cht,
-				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
-
-			dc.DrawLine (pen_ccd,
-				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			dc.DrawLine (pen_ccdd,
-				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
-
-			dc.DrawLine (pen_ccd,
-				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
-
-			dc.DrawLine (pen_ccdd,
-				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			for (int i = 0; i < menu.MenuItems.Count; i++)
+			// Draw menu borders
+			CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
+			
+			// Draw menu items
+			for (int i = 0; i < menu.MenuItems.Count; i++) {
 				if (cliparea.IntersectsWith (menu.MenuItems [i].bounds)) {
 					MenuItem item = menu.MenuItems [i];
 					item.MenuHeight = menu.Height;
-					item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont,
-						item.bounds, i, item.Status));
+					item.PerformDrawItem (new DrawItemEventArgs (dc, MenuFont, item.bounds, i, item.Status));
+				}
 			}
 		}
 		

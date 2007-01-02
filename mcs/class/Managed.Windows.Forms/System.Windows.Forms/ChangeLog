@@ -1,3 +1,9 @@
+2006-12-31  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Uses CPDrawBorder3D to draw menu borders
+	instead of line, it simplify draw operation and fix it using 3D
+	borders to mimic Win32.
+
 2007-01-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* StatusStrip.cs: Add implementation of the sizing grip.
