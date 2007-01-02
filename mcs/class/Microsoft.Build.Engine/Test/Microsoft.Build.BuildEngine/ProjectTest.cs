@@ -297,6 +297,73 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestEvaluatedItems1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a' />
+						<B Include='b' Condition='false' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (1, project.EvaluatedItems.Count, "A1");
+
+			BuildItem bi = project.EvaluatedItems [0];
+
+			bi.Name = "C";
+			bi.Include = "c";
+
+			BuildItemGroup [] big = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (big, 0);
+			Assert.AreEqual ("C", big [0] [0].Name, "A2");
+			Assert.AreEqual ("c", big [0] [0].Include, "A3");
+		}
+
+		[Test]
+		public void TestEvaluatedItems2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a;b;c' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] big = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (big, 0);
+
+			Assert.AreEqual (3, project.EvaluatedItems.Count, "A1");
+			Assert.AreEqual ("a;b;c", big [0] [0].Include, "A2");
+			Assert.AreEqual (1, big [0].Count, "A3");
+
+			BuildItem bi = project.EvaluatedItems [0];
+
+			bi.Include = "d";
+
+			Assert.AreEqual (3, big [0].Count, "A4");
+			Assert.AreEqual ("d", big [0] [0].Include, "A5");
+			Assert.AreEqual ("b", big [0] [1].Include, "A6");
+			Assert.AreEqual ("c", big [0] [2].Include, "A7");
+		}
+
+		[Test]
 		[Category ("NotWorking")]
 		public void TestGetConditionedPropertyValues ()
 		{

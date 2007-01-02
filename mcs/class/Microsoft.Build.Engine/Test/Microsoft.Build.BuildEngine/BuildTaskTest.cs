@@ -398,7 +398,39 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			BuildTask [] bt;
 			project.Targets.CopyTo (t, 0);
 			bt = GetTasks (t [0]);
+			bt [0].AddOutputProperty ("Property", "PropertyName");
+			project.Build ("T");
 
+			Assert.AreEqual ("some_text", project.EvaluatedProperties ["PropertyName"].Value, "A1");
+			Assert.AreEqual ("some_text", project.EvaluatedProperties ["PropertyName"].FinalValue, "A1");
+		}
+
+		// FIXME: edit
+		public void TestPublish1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<UsingTask
+						AssemblyFile='Test\resources\TestTasks.dll'
+						TaskName='OutputTestTask'
+					/>
+					<Target Name='T'>
+						<OutputTestTask />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target [] t = new Target [1];
+			BuildTask [] bt;
+			project.Targets.CopyTo (t, 0);
+			bt = GetTasks (t [0]);
 			bt [0].AddOutputProperty ("Property", "PropertyName");
 			project.Build ("T");
 

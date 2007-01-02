@@ -104,6 +104,89 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestAddNewItem3 ()
+		{
+			Engine engine;
+			Project project;
+			string name = "name";
+			string include = "$(Property)";
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Property>a</Property>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItem bi = project.EvaluatedItems.AddNewItem (name, include, true);
+
+			Assert.AreEqual (String.Empty, bi.Condition, "A1");
+			Assert.AreEqual (String.Empty, bi.Exclude, "A2");
+			Assert.AreEqual (include, bi.FinalItemSpec, "A3");
+			Assert.AreEqual (Utilities.Escape (include), bi.Include, "A4");
+			Assert.IsFalse (bi.IsImported, "A5");
+			Assert.AreEqual (name, bi.Name, "A6");
+
+			bi = project.EvaluatedItems.AddNewItem (name, include, false);
+
+			Assert.AreEqual (String.Empty, bi.Condition, "A7");
+			Assert.AreEqual (String.Empty, bi.Exclude, "A8");
+			Assert.AreEqual (include, bi.FinalItemSpec, "A9");
+			Assert.AreEqual (include, bi.Include, "A10");
+			Assert.IsFalse (bi.IsImported, "A11");
+			Assert.AreEqual (name, bi.Name, "A12");
+
+			Assert.AreEqual (0, project.EvaluatedItems.Count, "A13");
+
+			project.GlobalProperties.SetProperty ("a", "b");
+
+			Assert.AreEqual (0, project.EvaluatedItems.Count, "A14");
+		}
+
+		[Test]
+		public void TestAddNewItem4 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.EvaluatedItems.AddNewItem ("I1", "Value");
+
+			BuildItem bi = project.EvaluatedItems.AddNewItem ("I2", "@(I1)");
+
+			Assert.AreEqual ("@(I1)", bi.FinalItemSpec, "A1");
+			Assert.AreEqual ("@(I1)", bi.Include, "A2");
+			Assert.AreEqual (0, project.EvaluatedItems.Count, "A3");
+		}
+
+		[Test]
+		public void TestAddNewItem5 ()
+		{
+			BuildItemGroup big = new BuildItemGroup ();
+
+			big.AddNewItem ("I1", "Value");
+
+			BuildItem bi = big.AddNewItem ("I2", "@(I1)");
+
+			Assert.AreEqual ("@(I1)", bi.FinalItemSpec, "A1");
+			Assert.AreEqual ("@(I1)", bi.Include, "A2");
+			Assert.AreEqual (2, big.Count, "A3");
+		}
+
+		[Test]
 		public void TestClear ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();

@@ -324,5 +324,75 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			bpg.SetProperty ("1", "$(A)");
 		}
+
+		[Test]
+		public void TestSetProperty6 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Property Condition=""'$(P)' != ''"">a</Property>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.GlobalProperties.SetProperty ("P", "V");
+
+			Assert.IsNotNull (project.EvaluatedProperties ["Property"], "A1");
+		}
+
+		[Test]
+		public void TestSetProperty7 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Property Condition=""'$(P)' != ''"">a</Property>
+						<A>A</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildProperty p1 = project.EvaluatedProperties ["A"];
+			p1.Value = "B";
+
+			project.GlobalProperties.SetProperty ("P", "V");
+
+			Assert.AreEqual ("A", project.EvaluatedProperties ["A"].Value, "A1");
+		}
+
+		[Test]
+		public void TestSetProperty8 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.EvaluatedProperties.SetProperty ("A", "B");
+
+			Assert.IsNull (project.EvaluatedProperties ["A"], "A1");
+		}
 	}
 }

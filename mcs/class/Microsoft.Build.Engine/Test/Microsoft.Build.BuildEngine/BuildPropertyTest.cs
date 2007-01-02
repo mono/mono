@@ -225,6 +225,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestCondition1 ()
 		{
 			string documentString = @"
