@@ -1,5 +1,13 @@
 2007-01-02  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs (VerifyMembers): Fixed an crash reported on mono mailing list
+	where field type is struct from current assembly.
+	
+	* ecore.cs (EnumConstant.AsString): Report an enum member name whenever
+	it is possible.
+
+2007-01-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #80381
 	* attribute.cs (AttributeTester.RegisterNonObsoleteType): Registers
 	the core types.

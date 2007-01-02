@@ -2253,8 +2253,9 @@ namespace Mono.CSharp {
 						if ((f.caching_flags & Flags.IsAssigned) != 0)
 							continue;
 						
+						Constant c = New.Constantify (f.Type.Type);
 						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
-							f.GetSignatureForError (), f.Type.Type.IsValueType ? Activator.CreateInstance (f.Type.Type).ToString() : "null");
+							f.GetSignatureForError (), c == null ? "null" : c.AsString ());
 					}
 				}
 			}
