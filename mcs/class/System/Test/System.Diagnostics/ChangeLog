@@ -1,3 +1,7 @@
+2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ProcessTest.cs: Added null check tests.
+
 2006-08-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventLogTest.cs: Added tests for log name validation in 

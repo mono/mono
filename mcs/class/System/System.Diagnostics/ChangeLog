@@ -1,3 +1,8 @@
+2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Process.cs: Allow GetProcesses and GetProcessById overloads with 
+	machine name to work for local machine.
+
 2006-12-29  Robert Jordan  <robertj@gmx.net>
 
 	* TraceImpl.cs (Assert): Include line numbers in the stack trace

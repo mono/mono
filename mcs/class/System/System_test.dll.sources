@@ -151,6 +151,7 @@ System.Diagnostics/EventLogPermissionTest.cs
 System.Diagnostics/EventSourceCreationDataTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
+System.Diagnostics/ProcessTest.cs
 System.IO/FileSystemWatcherTest.cs
 System.IO.Compression/DeflateStreamTest.cs
 System.IO.Compression/GzipStreamTest.cs

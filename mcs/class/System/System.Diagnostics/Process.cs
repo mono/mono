@@ -776,9 +776,15 @@ namespace System.Diagnostics {
 			return (new Process (proc, processId));
 		}
 
-		[MonoTODO]
+		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
 		public static Process GetProcessById(int processId, string machineName) {
-			throw new NotImplementedException();
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
+			return GetProcessById (processId);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -806,7 +812,13 @@ namespace System.Diagnostics {
 
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
 		public static Process[] GetProcesses(string machineName) {
-			throw new NotImplementedException();
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
+			return GetProcesses ();
 		}
 
 		public static Process[] GetProcessesByName(string processName)
@@ -1126,6 +1138,13 @@ namespace System.Diagnostics {
 			return(false);
 		}
 
+		private static bool IsLocalMachine (string machineName)
+		{
+			if (machineName == "." || machineName.Length == 0)
+				return true;
+
+			return (string.Compare (machineName, Environment.MachineName, true) == 0);
+		}
 
 #if NET_2_0
 		public event DataReceivedEventHandler OutputDataReceived;
