@@ -618,7 +618,7 @@ namespace System.Web.UI.WebControls
 			MethodInfo method;
 			
 			if (DataObjectTypeName.Length == 0) {
-				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, false);
+				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, true);
 				method = GetObjectMethod (DeleteMethod, paramValues);
 			} else {
 				method = ResolveDataObjectMethod (DeleteMethod, oldDataValues, null, out paramValues);

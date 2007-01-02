@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 			else
 				oldDataValues = keys;
 			
-			InitializeParameters (command, DeleteParameters, null, oldDataValues, false);
+			InitializeParameters (command, DeleteParameters, null, oldDataValues, true);
 
 			OnDeleting (new SqlDataSourceCommandEventArgs (command));
 
