@@ -35,9 +35,9 @@ namespace Microsoft.Build.BuildEngine {
 			
 		GroupingCollection	groupingCollection;
 		
-		private BuildItemGroupCollection ()
+		BuildItemGroupCollection ()
 		{
-			groupingCollection = new GroupingCollection (null);
+			groupingCollection = new GroupingCollection ();
 		}
 
 		internal BuildItemGroupCollection (GroupingCollection groupingCollection)

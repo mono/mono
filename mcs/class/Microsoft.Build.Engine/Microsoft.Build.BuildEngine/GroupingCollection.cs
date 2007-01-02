@@ -41,11 +41,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		LinkedList <object>	list;
 		LinkedListNode <object>	iterator;
-		Project	project;
 	
-		public GroupingCollection (Project project)
+		public GroupingCollection ()
 		{
-			this.project = project;
 			list = new LinkedList <object> ();
 			iterator = null;
 		}

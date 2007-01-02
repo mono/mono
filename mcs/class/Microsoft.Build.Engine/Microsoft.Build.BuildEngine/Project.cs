@@ -79,30 +79,20 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project (Engine engine)
 		{
-			buildEnabled = engine.BuildEnabled;
 			parentEngine  = engine;
+
+			buildEnabled = ParentEngine.BuildEnabled;
 			xmlDocument = new XmlDocument ();
-			groupingCollection = new GroupingCollection (this);
-			imports = new ImportCollection (groupingCollection);
-			usingTasks = new UsingTaskCollection (this);
-			itemGroups = new BuildItemGroupCollection (groupingCollection);
-			propertyGroups = new BuildPropertyGroupCollection (groupingCollection);
-			targets = new TargetCollection (this);
+			xmlDocument.AppendChild (xmlDocument.CreateElement ("Project", XmlNamespace));
+			xmlDocument.DocumentElement.SetAttribute ("xmlns", ns);
 			
-			taskDatabase = new TaskDatabase ();
-			if (engine.DefaultTasksRegistered) {
-				taskDatabase.CopyTasks (engine.DefaultTasks);
-			}
-			
-			globalProperties = new BuildPropertyGroup ();
 			fullFileName = String.Empty;
 
-			foreach (BuildProperty bp in parentEngine.GlobalProperties) {
+			globalProperties = new BuildPropertyGroup (null, this, null, false);
+			foreach (BuildProperty bp in parentEngine.GlobalProperties)
 				GlobalProperties.AddProperty (bp.Clone (true));
-			}
-
-			// You can evaluate an empty project.
-			Evaluate ();
+			
+			ProcessXml ();
 		}
 
 		[MonoTODO]
@@ -500,17 +490,25 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		void ProcessXml ()
+		internal void ProcessXml ()
 		{
-			XmlElement xmlElement = xmlDocument.DocumentElement;
-			if (xmlElement.Name != "Project")
-				throw new InvalidProjectFileException ("Invalid root element.");
-			if (xmlElement.GetAttributeNode ("DefaultTargets") != null)
-				defaultTargets = xmlElement.GetAttribute ("DefaultTargets").Split (';');
+			groupingCollection = new GroupingCollection ();
+			imports = new ImportCollection (groupingCollection);
+			usingTasks = new UsingTaskCollection (this);
+			itemGroups = new BuildItemGroupCollection (groupingCollection);
+			propertyGroups = new BuildPropertyGroupCollection (groupingCollection);
+			targets = new TargetCollection (this);
+			
+			taskDatabase = new TaskDatabase ();
+			if (ParentEngine.DefaultTasksRegistered)
+				taskDatabase.CopyTasks (ParentEngine.DefaultTasks);	
+
+			if (xmlDocument.DocumentElement.GetAttributeNode ("DefaultTargets") != null)
+				defaultTargets = xmlDocument.DocumentElement.GetAttribute ("DefaultTargets").Split (';');
 			else
 				defaultTargets = new string [0];
 			
-			ProcessElements (xmlElement, null);
+			ProcessElements (xmlDocument.DocumentElement, null);
 			
 			isDirty = false;
 			Evaluate ();
@@ -557,11 +555,11 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Evaluate ()
 		{
-			evaluatedItems = new BuildItemGroup (null, this, null);
-			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null);
+			evaluatedItems = new BuildItemGroup (null, this, null, true);
+			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedProperties = new BuildPropertyGroup ();
+			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
 
 			InitializeProperties ();
 
@@ -572,7 +570,7 @@ namespace Microsoft.Build.BuildEngine {
 				usingTask.Evaluate ();
 		}
 
-		private void InitializeProperties ()
+		void InitializeProperties ()
 		{
 			BuildProperty bp;
 
@@ -625,13 +623,13 @@ namespace Microsoft.Build.BuildEngine {
 		
 		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			BuildItemGroup big = new BuildItemGroup (xmlElement, this, importedProject);
+			BuildItemGroup big = new BuildItemGroup (xmlElement, this, importedProject, false);
 			ItemGroups.Add (big);
 		}
 		
 		void AddPropertyGroup (XmlElement xmlElement, ImportedProject importedProject)
 		{
-			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this, importedProject);
+			BuildPropertyGroup bpg = new BuildPropertyGroup (xmlElement, this, importedProject, false);
 			PropertyGroups.Add (bpg);
 		}
 		
@@ -698,12 +696,12 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildPropertyGroup GlobalProperties {
 			get { return globalProperties; }
 			set {
-				if (value == null) {
+				if (value == null)
 					throw new ArgumentNullException ("value");
-				}
-				if (value.FromXml) {
+				
+				if (value.FromXml)
 					throw new InvalidOperationException ("Can't do that.");
-				}
+				
 				globalProperties = value;
 			}
 		}

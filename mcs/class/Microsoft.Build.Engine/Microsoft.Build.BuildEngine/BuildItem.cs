@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -40,17 +41,19 @@ using Mono.XBuild.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItem {
 
+		BuildItemGroup	child_items;
 		XmlElement	itemElement;
 		string		finalItemSpec;
 		bool		isImported;
 		string		itemInclude;
 		string		name;
 		BuildItemGroup	parentItemGroup;
+		BuildItem	parent_item;
 		//string		recursiveDir;
 		IDictionary	evaluatedMetadata;
 		IDictionary	unevaluatedMetadata;
 
-		private BuildItem ()
+		BuildItem ()
 		{
 		}
 		
@@ -70,35 +73,42 @@ namespace Microsoft.Build.BuildEngine {
 			if (itemInclude == String.Empty)
 				throw new ArgumentException ("Parameter \"itemInclude\" cannot have zero length.");
 
-			this.name = itemName;
-			this.finalItemSpec = itemInclude;
+			name = itemName;
+			finalItemSpec = itemInclude;
 			this.itemInclude = itemInclude;
-			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 		
 		internal BuildItem (XmlElement itemElement, BuildItemGroup parentItemGroup)
 		{
-			this.isImported = false;
-			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			child_items = new BuildItemGroup ();
+			isImported = parentItemGroup.IsImported;
+			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			this.parentItemGroup = parentItemGroup;
-			BindToXml (itemElement);
+			
+			this.itemElement = itemElement;
+			
+			if (Include == String.Empty)
+				throw new InvalidProjectFileException ("Item must have Include attribute.");
 		}
 		
 		BuildItem (BuildItem parent)
 		{
-			this.isImported = parent.isImported;
-			this.name = parent.name;
-			this.parentItemGroup = parent.parentItemGroup;
-			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.unevaluatedMetadata);
-			this.evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.evaluatedMetadata);
+			isImported = parent.isImported;
+			name = parent.Name;
+			parent_item = parent;
+			parent_item.child_items.AddItem (this);
+			parentItemGroup = parent.parentItemGroup;
+			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.unevaluatedMetadata);
+			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.evaluatedMetadata);
 		}
 		
 		public void CopyCustomMetadataTo (BuildItem destinationItem)
 		{
 			foreach (DictionaryEntry de in unevaluatedMetadata)
-				destinationItem.SetMetadata ((string) de.Key, (string) de.Value);
+				destinationItem.AddMetadata ((string) de.Key, (string) de.Value, false);
 		}
 		
 		[MonoTODO]
@@ -117,9 +127,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string GetMetadata (string metadataName)
 		{
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName);
-			else if (unevaluatedMetadata.Contains (metadataName))
+			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
+				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName);
+				return (metadataName.ToLower () == "fullpath") ? Utilities.Escape (metadata) : metadata;
+			} else if (unevaluatedMetadata.Contains (metadataName))
 				return (string) unevaluatedMetadata [metadataName];
 			else
 				return String.Empty;
@@ -127,7 +138,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public bool HasMetadata (string metadataName)
 		{
-			return evaluatedMetadata.Contains (metadataName);
+			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+				return true;
+			else
+				return evaluatedMetadata.Contains (metadataName);
 		}
 
 		public void RemoveMetadata (string metadataName)
@@ -139,11 +153,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
 					metadataName));
 			
-			if (evaluatedMetadata.Contains (metadataName))
-				evaluatedMetadata.Remove (metadataName);
-			
-			if (unevaluatedMetadata.Contains (metadataName))
-				unevaluatedMetadata.Remove (metadataName);
+			DeleteMetadata (metadataName);
 		}
 
 		public void SetMetadata (string metadataName,
@@ -165,30 +175,51 @@ namespace Microsoft.Build.BuildEngine {
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
 				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
 					metadataName));
+
+			if (FromXml) {
+				XmlElement element = itemElement [metadataName];
+				if (element == null) {
+					element = itemElement.OwnerDocument.CreateElement (metadataName, Project.XmlNamespace);
+					// FIXME treat as literal
+					element.InnerText = metadataValue;
+					itemElement.AppendChild (element);
+				} else
+					element.InnerText = metadataValue;
+			} else if (HasParent) {
+				if (parent_item.child_items.Count == 1)
+					parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
+				else {
+					SplitParentItem ();
+					parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
+				}
+			}
 			
-			RemoveMetadata (metadataName);
-			
-			evaluatedMetadata.Add (metadataName, metadataValue);
-				
-			if (treatMetadataValueAsLiteral) {	
-				unevaluatedMetadata.Add (metadataName, Utilities.Escape (metadataValue));
-			} else
-				unevaluatedMetadata.Add (metadataName, metadataValue);
+			DeleteMetadata (metadataName);
+			AddMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
 		}
-		
-		void BindToXml (XmlElement xmlElement)
+
+		void AddMetadata (string name, string value, bool literal)
 		{
-			if (xmlElement == null)
-				throw new ArgumentNullException ("xmlElement");
+			if (parentItemGroup != null) {
+				Expression e = new Expression ();
+				e.Parse (value);
+				evaluatedMetadata.Add (name, (string) e.ConvertTo (parentItemGroup.Project, typeof (string)));
+			} else
+				evaluatedMetadata.Add (name, Utilities.Unescape (value));
+				
+			if (literal)
+				unevaluatedMetadata.Add (name, Utilities.Escape (value));
+			else
+				unevaluatedMetadata.Add (name, value);
+		}
+
+		void DeleteMetadata (string name)
+		{
+			if (evaluatedMetadata.Contains (name))
+				evaluatedMetadata.Remove (name);
 			
-			this.itemElement = xmlElement;
-			this.name = xmlElement.Name;
-			
-			if (Include == String.Empty)
-				throw new InvalidProjectFileException ("Item must have Include attribute.");
-			
-			foreach (XmlElement xe in xmlElement.ChildNodes)
-				this.SetMetadata (xe.Name, xe.InnerText);
+			if (unevaluatedMetadata.Contains (name))
+				unevaluatedMetadata.Remove (name);
 		}
 
 		internal void Evaluate (Project project, bool evaluatedTo)
@@ -198,6 +229,9 @@ namespace Microsoft.Build.BuildEngine {
 				this.finalItemSpec = Utilities.Unescape (itemInclude);
 				return;
 			}
+			
+			foreach (XmlElement xe in itemElement.ChildNodes)
+				AddMetadata (xe.Name, xe.InnerText, false);
 
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
@@ -238,21 +272,21 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedTo) {
 				project.EvaluatedItems.AddItem (bi);
 	
-				if (!project.EvaluatedItemsByName.ContainsKey (bi.name)) {
-					big = new BuildItemGroup (null, project, null);
-					project.EvaluatedItemsByName.Add (bi.name, big);
+				if (!project.EvaluatedItemsByName.ContainsKey (bi.Name)) {
+					big = new BuildItemGroup (null, project, null, true);
+					project.EvaluatedItemsByName.Add (bi.Name, big);
 				} else {
-					big = project.EvaluatedItemsByName [bi.name];
+					big = project.EvaluatedItemsByName [bi.Name];
 				}
 
 				big.AddItem (bi);
 			}
 
-			if (!project.EvaluatedItemsByNameIgnoringCondition.ContainsKey (bi.name)) {
-				big = new BuildItemGroup (null, project, null);
-				project.EvaluatedItemsByNameIgnoringCondition.Add (bi.name, big);
+			if (!project.EvaluatedItemsByNameIgnoringCondition.ContainsKey (bi.Name)) {
+				big = new BuildItemGroup (null, project, null, true);
+				project.EvaluatedItemsByNameIgnoringCondition.Add (bi.Name, big);
 			} else {
-				big = project.EvaluatedItemsByNameIgnoringCondition [bi.name];
+				big = project.EvaluatedItemsByNameIgnoringCondition [bi.Name];
 			}
 
 			big.AddItem (bi);
@@ -293,6 +327,40 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		void SplitParentItem ()
+		{
+			BuildItem parent = parent_item;
+			List <BuildItem> list = new List <BuildItem> ();
+			XmlElement insertAfter = parent.itemElement;
+			foreach (BuildItem bi in parent.child_items) {
+				BuildItem added = InsertElementAfter (parent, bi, insertAfter);
+				insertAfter = added.itemElement;
+				list.Add (added);
+			}
+			parent.parentItemGroup.ReplaceWith (parent, list);
+			parent.itemElement.ParentNode.RemoveChild (parent.itemElement);			
+		}
+
+		static BuildItem InsertElementAfter (BuildItem parent, BuildItem child, XmlElement insertAfter)
+		{
+			BuildItem newParent;
+
+			XmlDocument doc = parent.itemElement.OwnerDocument;
+			XmlElement newElement = doc.CreateElement (child.Name, Project.XmlNamespace);
+			newElement.SetAttribute ("Include", child.FinalItemSpec);
+			if (parent.itemElement.HasAttribute ("Condition"))
+				newElement.SetAttribute ("Condition", parent.itemElement.GetAttribute ("Condition"));
+			foreach (XmlElement xe in parent.itemElement)
+				newElement.AppendChild (xe.Clone ());
+			parent.itemElement.ParentNode.InsertAfter (newElement, insertAfter);
+
+			newParent = new BuildItem (newElement, parent.parentItemGroup);
+			newParent.child_items.AddItem (child);
+			child.parent_item = newParent;
+
+			return newParent;
+		}
+
 		public string Condition {
 			get {
 				if (FromXml)
@@ -303,7 +371,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Condition", value);
-				else
+				else if (!HasParent)
 					throw new InvalidOperationException ("Cannot set a condition on an object not represented by an XML element in the project file.");
 			}
 		}
@@ -331,14 +399,24 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				if (FromXml)
 					return itemElement.GetAttribute ("Include");
-				else if (itemInclude != null)
-					return itemInclude;
+				else if (HasParent)
+					return parent_item.Include;
 				else
-					return finalItemSpec;
+					return itemInclude;
 			}
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Include", value);
+				else if (HasParent) {
+					if (parent_item.child_items.Count == 1)
+						parent_item.Include = value;
+					else {
+						SplitParentItem ();
+						
+						parent_item.Include = value;
+					}
+				} else
+					itemInclude = value;
 			}
 		}
 
@@ -347,13 +425,44 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string Name {
-			get { return name; }
-			set { name = value; }
+			get {
+				if (FromXml)
+					return itemElement.Name;
+				else if (HasParent)
+					return parent_item.Name;
+				else
+					return name;
+			}
+			set {
+				if (FromXml) {
+					XmlElement newElement = itemElement.OwnerDocument.CreateElement (value, Project.XmlNamespace);
+					newElement.SetAttribute ("Include", itemElement.GetAttribute ("Include"));
+					newElement.SetAttribute ("Condition", itemElement.GetAttribute ("Condition"));
+					foreach (XmlElement xe in itemElement)
+						newElement.AppendChild (xe.Clone ());
+					itemElement.ParentNode.ReplaceChild (newElement, itemElement);
+					itemElement = newElement;
+				} else if (HasParent)
+					if (parent_item.child_items.Count == 1)
+						parent_item.Name = value;
+					else {
+						SplitParentItem ();
+						parent_item.Name = value;
+					}
+				else
+					name = value;
+			}
 		}
 		
-		internal bool FromXml {
+		bool FromXml {
 			get {
 				return itemElement != null;
+			}
+		}
+		
+		bool HasParent {
+			get {
+				return parent_item != null;
 			}
 		}
 	}

@@ -39,22 +39,24 @@ namespace Microsoft.Build.BuildEngine {
 	public class BuildItemGroup : IEnumerable {
 	
 		List <BuildItem>	buildItems;
-		GroupingCollection	parentCollection;
-		Project			parentProject;
 		ImportedProject		importedProject;
 		XmlElement		itemGroupElement;
+		GroupingCollection	parentCollection;
+		Project			parentProject;
+		bool			read_only;
 
 		public BuildItemGroup ()
-			: this (null, null, null)
+			: this (null, null, null, false)
 		{
 		}
 		
-		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject)
+		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly)
 		{
 			this.buildItems = new List <BuildItem> ();
 			this.importedProject = importedProject;
 			this.itemGroupElement = xmlElement;
 			this.parentProject = project;
+			this.read_only = readOnly;
 			
 			if (!FromXml)
 				return;
@@ -87,11 +89,13 @@ namespace Microsoft.Build.BuildEngine {
 
 			bi.Evaluate (null, true);
 
-			buildItems.Add (bi);
+			if (!read_only)
+				buildItems.Add (bi);
 
 			return bi;
 		}
 		
+		[MonoTODO ("what about groups from xml?")]
 		public void Clear ()
 		{
 			buildItems = new List <BuildItem> ();
@@ -182,6 +186,13 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 		}		
+
+		internal void ReplaceWith (BuildItem item, List <BuildItem> list)
+		{
+			int index = buildItems.IndexOf (item);
+			buildItems.RemoveAt (index);
+			buildItems.InsertRange (index, list);
+		}
 		
 		[MonoTODO]
 		// FIXME: whether we can invoke get_Condition on BuildItemGroup not based on XML

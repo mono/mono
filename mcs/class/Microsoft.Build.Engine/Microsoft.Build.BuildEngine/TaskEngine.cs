@@ -126,7 +126,7 @@ namespace Microsoft.Build.BuildEngine {
 				propertyInfo = taskType.GetProperty (taskParameter);
 				if (propertyInfo == null)
 					throw new Exception ("Could not get property info.");
-				if (propertyInfo.IsDefined (outputAttribute, false) == false)
+				if (!propertyInfo.IsDefined (outputAttribute, false))
 					throw new Exception ("This is not output property.");
 				
 				o = propertyInfo.GetValue (task, null);
@@ -141,12 +141,12 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		private void InitializeParameter (PropertyInfo propertyInfo, object value)
+		void InitializeParameter (PropertyInfo propertyInfo, object value)
 		{
 			propertyInfo.SetValue (task, value, null);
 		}
 
-		private void PublishItemGroup (PropertyInfo propertyInfo,
+		void PublishItemGroup (PropertyInfo propertyInfo,
 					       object o,
 					       string itemName)
 		{
@@ -164,7 +164,7 @@ namespace Microsoft.Build.BuildEngine {
 				parentProject.EvaluatedItems.AddItem (bi);
 		}
 		
-		private void PublishProperty (PropertyInfo propertyInfo,
+		void PublishProperty (PropertyInfo propertyInfo,
 					      object o,
 					      string propertyName)
 		{
@@ -172,7 +172,7 @@ namespace Microsoft.Build.BuildEngine {
 			parentProject.EvaluatedProperties.AddProperty (bp);
 		}
 		
-		private BuildProperty CollectProperty (PropertyInfo propertyInfo, object o, string name)
+		BuildProperty CollectProperty (PropertyInfo propertyInfo, object o, string name)
 		{
 			string output = null;
 			BuildProperty bp;
@@ -201,7 +201,7 @@ namespace Microsoft.Build.BuildEngine {
 			return bp;
 		}
 		
-		private BuildItemGroup CollectItemGroup (PropertyInfo propertyInfo, object o, string name)
+		BuildItemGroup CollectItemGroup (PropertyInfo propertyInfo, object o, string name)
 		{
 			BuildItemGroup big;
 			string temp;
@@ -230,7 +230,7 @@ namespace Microsoft.Build.BuildEngine {
 			return big;	
 		}
 				
-		private object GetObjectFromString (string raw, Type type)
+		object GetObjectFromString (string raw, Type type)
 		{
 			Expression e;
 			object result;

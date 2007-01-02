@@ -37,7 +37,7 @@ namespace Microsoft.Build.BuildEngine {
 	
 		private BuildPropertyGroupCollection ()
 		{
-			groupingCollection = new GroupingCollection (null);
+			groupingCollection = new GroupingCollection ();
 		}
 
 		internal BuildPropertyGroupCollection (GroupingCollection groupingCollection)

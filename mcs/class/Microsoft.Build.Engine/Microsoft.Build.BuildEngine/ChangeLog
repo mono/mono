@@ -1,3 +1,30 @@
+2007-01-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildWhen.cs, BuildPropertyGroupCollection.cs,
+	BuildItemGroupCollection.cs, Project.cs, GroupingCollection.cs:
+	GroupingCollection doesn't need Project reference.
+
+	* BuildTask.cs, Target.cs, TaskEngine.cs, BatchingImpl.cs: Formatting
+
+	* BuildItemGroup.cs: Added new readOnly parameter to ctor.
+	(Project.EvaluatedItems is a read only item group.)
+	(ReplaceWith): Added.
+
+	* BuildPropertyGroup.cs (IsGlobal): Added. Setting a property in
+	global property group causes reevaluation of its project.
+
+	* Project.cs: ProcessXml () is internal and can be "safely" invoked by
+	other classes.
+
+	* OldExpression.cs: Removed.
+
+	* BuildProperty.cs (Evaluate): Simplified.
+
+	* ChangeType.cs (TemporaryTransform): Simplified.
+
+	* BuildItem.cs: There are now 3 types of build items: from XML, having
+	parent from XML, virtual. Added SplitParentItem ().
+
 2006-12-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Utilities.cs: Added Unescape ().

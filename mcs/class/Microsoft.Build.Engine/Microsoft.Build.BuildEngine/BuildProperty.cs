@@ -42,7 +42,7 @@ namespace Microsoft.Build.BuildEngine {
 		Project		parentProject;
 		PropertyType	propertyType;
 
-		private BuildProperty ()
+		BuildProperty ()
 		{
 		}
 
@@ -112,15 +112,16 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Evaluate ()
 		{
-			if (FromXml) {
-				Expression exp = new Expression ();
-				exp.Parse (Value);
-				finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
-				parentProject.EvaluatedProperties.AddProperty (this);
-			}
+			BuildProperty evaluated = new BuildProperty (Name, Value);
+
+			Expression exp = new Expression ();
+			exp.Parse (Value);
+			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
+
+			parentProject.EvaluatedProperties.AddProperty (evaluated);
 		}
 
-		private bool FromXml {
+		bool FromXml {
 			get {
 				return propertyElement != null;
 			}

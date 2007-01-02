@@ -143,21 +143,21 @@ namespace Microsoft.Build.BuildEngine {
 				taskElement.SetAttribute (parameterName, parameterValue);
 		}
 		
-		private void LogTaskStarted ()
+		void LogTaskStarted ()
 		{
 			TaskStartedEventArgs tsea = new TaskStartedEventArgs ("Task started.", null, parentTarget.Project.FullFileName,
 				parentTarget.Project.FullFileName, taskElement.Name);
 			parentTarget.Project.ParentEngine.EventSource.FireTaskStarted (this, tsea);
 		}
 		
-		private void LogTaskFinished (bool succeeded)
+		void LogTaskFinished (bool succeeded)
 		{
 			TaskFinishedEventArgs tfea = new TaskFinishedEventArgs ("Task finished.", null, parentTarget.Project.FullFileName,
 				parentTarget.Project.FullFileName, taskElement.Name, succeeded);
 			parentTarget.Project.ParentEngine.EventSource.FireTaskFinished (this, tfea);
 		}
 		
-		private ITask InitializeTask ()
+		ITask InitializeTask ()
 		{
 			ITask task;
 			
@@ -168,7 +168,7 @@ namespace Microsoft.Build.BuildEngine {
 			return task;
 		}
 		
-		private IDictionary <string, string> GetParameters ()
+		IDictionary <string, string> GetParameters ()
 		{
 			Dictionary <string, string> parameters = new Dictionary <string, string> ();
 			

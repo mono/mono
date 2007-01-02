@@ -41,7 +41,7 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildWhen (Project parentProject)
 		{
 		//	this.parentProject = parentProject;
-			this.groupingCollection = new GroupingCollection (parentProject);
+			this.groupingCollection = new GroupingCollection ();
 		}
 		
 		public void BindToXml (XmlElement whenElement)

@@ -37,6 +37,7 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildPropertyGroup : IEnumerable {
 	
+		bool			read_only;
 		ImportedProject		importedProject;
 		XmlElement		propertyGroup;
 		GroupingCollection	parentCollection;
@@ -45,16 +46,17 @@ namespace Microsoft.Build.BuildEngine {
 		Dictionary <string, BuildProperty>	propertiesByName;
 
 		public BuildPropertyGroup ()
-			: this (null, null, null)
+			: this (null, null, null, false)
 		{
 		}
 
-		internal BuildPropertyGroup (XmlElement xmlElement, Project project, ImportedProject importedProject)
+		internal BuildPropertyGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly)
 		{
 			this.importedProject = importedProject;
 			this.parentCollection = null;
 			this.parentProject = project;
 			this.propertyGroup = xmlElement;
+			this.read_only = readOnly;
 
 			if (FromXml) {
 				this.properties = new List <BuildProperty> ();
@@ -172,19 +174,27 @@ namespace Microsoft.Build.BuildEngine {
 			SetProperty (propertyName, propertyValue, false);
 		}
 		
+		// FIXME: add a test for SetProperty on property from xml
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 bool treatPropertyValueAsLiteral)
 		{
-			if (!propertiesByName.ContainsKey (propertyName)) {
-				BuildProperty bp = new BuildProperty (propertyName, propertyValue);
-				AddProperty (bp);
-			}
+			if (read_only)
+				return;
+			
+			if (propertiesByName.ContainsKey (propertyName))
+				propertiesByName.Remove (propertyName);
 
+			BuildProperty bp;
 			if (treatPropertyValueAsLiteral)
-				propertiesByName [propertyName].Value = Utilities.Escape (propertyValue);
+				bp = new BuildProperty (propertyName, Utilities.Escape (propertyValue));
 			else
-				propertiesByName [propertyName].Value = propertyValue;
+				bp = new BuildProperty (propertyName, propertyValue);
+
+			AddProperty (bp);
+
+			if (IsGlobal)
+				parentProject.ProcessXml ();
 		}
 		
 		internal void Evaluate ()
@@ -235,6 +245,12 @@ namespace Microsoft.Build.BuildEngine {
 		internal bool FromXml {
 			get {
 				return propertyGroup != null;
+			}
+		}
+
+		bool IsGlobal {
+			get {
+				return parentProject != null && propertyGroup == null;
 			}
 		}
 

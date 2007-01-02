@@ -136,7 +136,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			
 				if (result)
-					result = RealBuild ();
+					result = DoBuild ();
 			} catch (Exception) {
 				return false;
 			} finally {
@@ -146,7 +146,7 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 		
-		private bool RealBuild ()
+		bool DoBuild ()
 		{
 			bool executeOnErrors = false;
 			bool result = true;
@@ -174,7 +174,7 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 		
-		private void ExecuteOnErrors ()
+		void ExecuteOnErrors ()
 		{
 			foreach (XmlElement onError in onErrorElements) {
 				// FIXME: add condition
@@ -186,7 +186,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		private void LogTargetSkipped ()
+		void LogTargetSkipped ()
 		{
 			BuildMessageEventArgs bmea;
 			bmea = new BuildMessageEventArgs (String.Format ("Skipping target \"{0}\" because its outputs are up-to-date.",
@@ -194,7 +194,7 @@ namespace Microsoft.Build.BuildEngine {
 			engine.EventSource.FireMessageRaised (this, bmea);
 		}
 		
-		private void LogTargetStarted ()
+		void LogTargetStarted ()
 		{
 			TargetStartedEventArgs tsea;
 			string projectFile = project.FullFileName;
@@ -202,7 +202,7 @@ namespace Microsoft.Build.BuildEngine {
 			engine.EventSource.FireTargetStarted (this, tsea);
 		}
 		
-		private void LogTargetFinished (bool succeeded)
+		void LogTargetFinished (bool succeeded)
 		{
 			TargetFinishedEventArgs tfea;
 			string projectFile = project.FullFileName;

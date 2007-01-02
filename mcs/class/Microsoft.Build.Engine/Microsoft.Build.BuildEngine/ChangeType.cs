@@ -37,10 +37,22 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	internal class ChangeType {
 	
-		private static string TemporaryTransform (object o, Type type)
+		static string TemporaryTransform (object o, Type type)
 		{
-			string output = String.Empty;
-			if (type == typeof (bool)) {
+			string output = null;
+
+			if (type == typeof (string))
+				output = (string) o;
+			else if (type == typeof (bool) ||
+				 type == typeof (int) ||
+				 type == typeof (uint) ||
+				 type == typeof (float) ||
+				 type == typeof (double) ||
+				 type == typeof (DateTime)) {
+				output = o.ToString ();
+
+			}
+			/*if (type == typeof (bool)) {
 				bool t = (bool) o;
 				output =  t.ToString (); 
 			} else if (type == typeof (string)) {
@@ -55,8 +67,7 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (type == typeof (uint)) {
 				uint t = (uint) o;
 				output =  t.ToString ();
-			} else {
-			}
+			}*/
 			return output;
 		}
 		
@@ -133,7 +144,7 @@ namespace Microsoft.Build.BuildEngine {
 			return big;
 		}
 		
-		private static string TransformToString (ITaskItem[] items)
+		static string TransformToString (ITaskItem [] items)
 		{
 			string[] text = new string [items.Length];
 			int i = 0;
@@ -142,7 +153,7 @@ namespace Microsoft.Build.BuildEngine {
 			return String.Join (";", text);
 		}
 		
-		private static string TransformToString (ITaskItem item)
+		static string TransformToString (ITaskItem item)
 		{
 			return item.ItemSpec;
 		}

@@ -59,12 +59,12 @@ namespace Microsoft.Build.BuildEngine {
 			string[] inputFiles, outputFiles;
 			DateTime oldestInput, youngestOutput;
 		
-			if (inputs == String.Empty) {
+			if (inputs == String.Empty)
 				return true;
-			}
-			if (outputs == String.Empty) {
+			
+			if (outputs == String.Empty)
 				return true;
-			}
+			
 			
 			inputExpr = new Expression ();
 			inputExpr.Parse (inputs);
@@ -74,29 +74,29 @@ namespace Microsoft.Build.BuildEngine {
 			inputFiles = (string[]) inputExpr.ConvertTo (project, typeof (string[]));
 			outputFiles = (string[]) outputExpr.ConvertTo (project, typeof (string[]));
 			
-			if (inputFiles == null) {
+			if (inputFiles == null)
 				return true;
-			}
-			if (outputFiles == null) {
-				return true;
-			}
-			if (inputFiles.Length == 0) {
-				return true;
-			}
-			if (outputFiles.Length == 0) {
-				return true;
-			}
 			
-			if (File.Exists (inputFiles [0])) {
+			if (outputFiles == null)
+				return true;
+			
+			if (inputFiles.Length == 0)
+				return true;
+			
+			if (outputFiles.Length == 0)
+				return true;
+			
+			
+			if (File.Exists (inputFiles [0])) 
 				oldestInput = File.GetLastWriteTime (inputFiles [0]);
-			} else {
+			else 
 				return true;
-			}
-			if (File.Exists (outputFiles [0])) {
+			
+			if (File.Exists (outputFiles [0]))
 				youngestOutput = File.GetLastWriteTime (outputFiles [0]);
-			} else {
+			else
 				return true;
-			}
+			
 				
 			foreach (string file in inputFiles) {
 				if (file.Trim () == String.Empty)
@@ -116,17 +116,14 @@ namespace Microsoft.Build.BuildEngine {
 				if (File.Exists (file.Trim ())) {
 					if (File.GetLastWriteTime (file.Trim ()) < youngestOutput)
 						youngestOutput = File.GetLastWriteTime (file.Trim ());
-				} else {
+				} else
 					return true;
-				}
 			}
 			
-			if (oldestInput > youngestOutput) {
+			if (oldestInput > youngestOutput)
 				return true;
-			}
-			else {
+			else
 				return false;
-			}
 		}
 		
 		// FIXME: should do everything from task batching specification, not just run task once
