@@ -17,6 +17,8 @@
     <Version>2.0</Version>
     <JDKName>1.5.0_05</JDKName>
     <TargetPlatform>0</TargetPlatform>
+    <CompressionLevel>1</CompressionLevel>
+    <DeploymentMethod>1</DeploymentMethod>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
@@ -94,7 +96,7 @@
     </Reference>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\NunitWeb\NunitWeb\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
@@ -208,7 +210,7 @@
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>0</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <DevelopmentServerVPath>/MainsoftWebApp20</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
