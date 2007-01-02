@@ -1415,6 +1415,12 @@ namespace System.Windows.Forms
 			ke.Handled = KeySearchString (ke);
 		}
 
+		private MouseEventArgs TranslateMouseEventArgs (MouseEventArgs args)
+		{
+			Point loc = PointToClient (Control.MousePosition);
+			return new MouseEventArgs (args.Button, args.Clicks, loc.X, loc.Y, args.Delta);
+		}
+
 		internal class ItemControl : Control {
 
 			ListView owner;
@@ -1571,18 +1577,17 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
 			{
-				owner.OnMouseDown(me);
-				
-				if (owner.items.Count == 0)
+				if (owner.items.Count == 0) {
+					owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 					return;
+				}
 
 				Point pt = new Point (me.X, me.Y);
 				foreach (ListViewItem item in owner.items) {
 					if (me.Clicks == 1 && item.CheckRectReal.Contains (pt)) {
 						checking = true;
-						if (me.Clicks > 1)
-							return;
 						ToggleCheckState (item);
+						owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 						return;
 					}
 
@@ -1638,32 +1643,32 @@ namespace System.Windows.Forms
 						owner.OnSelectedIndexChanged (EventArgs.Empty);
 					}
 				}
+
+				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 			}
 
 			private void ItemsMouseMove (object sender, MouseEventArgs me)
 			{
-				owner.OnMouseMove(me);
-				
-				if (PerformBoxSelection (new Point (me.X, me.Y)))
-					return;
+				bool done = PerformBoxSelection (new Point (me.X, me.Y));
 
-				if (owner.HoverSelection && hover_processed) {
+				if (!done && owner.HoverSelection && hover_processed) {
 
 					Point pt = PointToClient (Control.MousePosition);
 					ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
-					if (item == null || item.Selected)
-				       		return;
-
-					hover_processed = false;
-					XplatUI.ResetMouseHover (Handle);
+					if (item != null && !item.Selected) {
+						hover_processed = false;
+						XplatUI.ResetMouseHover (Handle);
+					}
 				}
+
+				owner.OnMouseMove (owner.TranslateMouseEventArgs (me));
 			}
 
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
 				owner.OnMouseHover(e);
-				
+
 				if (Capture || !owner.HoverSelection)
 					return;
 
@@ -1680,11 +1685,11 @@ namespace System.Windows.Forms
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
 			{
-				owner.OnMouseUp(me);
-				
 				Capture = false;
-				if (owner.Items.Count == 0)
+				if (owner.Items.Count == 0) {
+					owner.OnMouseUp (owner.TranslateMouseEventArgs (me));
 					return;
+				}
 
 				Point pt = new Point (me.X, me.Y);
 
@@ -1725,6 +1730,7 @@ namespace System.Windows.Forms
 				prev_selection = null;
 				box_select_mode = BoxSelect.None;
 				checking = false;
+				owner.OnMouseUp (owner.TranslateMouseEventArgs (me));
 			}
 			
 			internal void LabelEditFinished (object sender, EventArgs e)

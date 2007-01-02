@@ -1,3 +1,13 @@
+2007-01-02  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: rework the mouse event forwarding everaldo added
+	to translate the coordinates to the parent control not
+	raise the parent events until after we've done our work. Hover
+	needs more work, in the case where HoverSelection is on, because
+	the item control receives more than one MouseHover per Enter
+	event, so we need to ensure only the "first" hover gets forwarded.
+	Opening a minor bug for that.
+
 2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CheckedListBox.cs: Fixed SelectionMode to match MS.
