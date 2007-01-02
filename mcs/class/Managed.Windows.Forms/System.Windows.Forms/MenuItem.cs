@@ -790,7 +790,7 @@ namespace System.Windows.Forms
 
 		private void MdiWindowClickHandler (object sender, EventArgs e)
 		{
-			Form mdichild = (Form) mdilist_items [SelectedItem];
+			Form mdichild = (Form) mdilist_items [sender];
 
 			// people could add weird items to the Window menu
 			// so we can't assume its just us

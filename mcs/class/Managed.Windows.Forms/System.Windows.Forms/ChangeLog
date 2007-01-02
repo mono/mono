@@ -1,5 +1,11 @@
 2007-01-02  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuItem.cs: In MdiWindowClickHandler uses sender instead of
+	SelectedItem, it prevent for errors when you must disable item
+	before perform click. Fixes #80409.
+
+2007-01-02  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs: Prevent second level and beyond submenus to close
 	until first level when move out side of popup.
 	
