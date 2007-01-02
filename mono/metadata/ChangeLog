@@ -1,3 +1,11 @@
+2007-01-02  Jb Evain  <jbevain@gmail.com>
+
+	* blob.h: add a MONO_TYPE_ENUM definition
+	* reflection.c (load_cattr_value, create_custom_attr, create_custom_attr_data):
+	fix the encoding of arrays of enums in custom attributes.
+
+	Fixes #79666.
+
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
 	* marshal.c (mono_string_to_byvalwstr): Fix this routine.   The
