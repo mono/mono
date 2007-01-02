@@ -1,3 +1,10 @@
+2007-01-02  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs:
+	- Fix popup menu size adding one pixel on the top.
+	- Down menu item border from two to one to mimic Win32.
+	- Some source identation fixes. 
+
 2007-01-01  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Use float numbers to calculate size and

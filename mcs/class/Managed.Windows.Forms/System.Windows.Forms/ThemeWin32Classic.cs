@@ -59,8 +59,8 @@ namespace System.Windows.Forms
 		const int SEPARATOR_MIN_WIDTH = 20;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;		
-    		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
-    		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
+		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
+		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
@@ -2164,7 +2164,7 @@ namespace System.Windows.Forms
 			menu.Height = 0;
 
 			while (start < menu.MenuItems.Count) {
-				y = 2;
+				y = 3;
 				max = 0;
 				for (i = start; i < menu.MenuItems.Count; i++) {
 					MenuItem item = menu.MenuItems [i];
@@ -2196,7 +2196,7 @@ namespace System.Windows.Forms
 			menu.Height += 2;
 
 			menu.Width += SM_CXBORDER;
-    			menu.Height += SM_CYBORDER;
+    		menu.Height += SM_CYBORDER;
 		}
 		
 		// Draws a menu bar in a window
@@ -2230,6 +2230,7 @@ namespace System.Windows.Forms
 				bg_color = Color.White;
 			else
 				bg_color = Color.Black;
+			
 			Bitmap	bmp = new Bitmap (size.Width, size.Height);
 			Graphics gr = Graphics.FromImage (bmp);
 			Rectangle rect = new Rectangle (Point.Empty, size);
@@ -2237,6 +2238,7 @@ namespace System.Windows.Forms
 			CPDrawMenuGlyph (gr, rect, glyph, color);
 			bmp.MakeTransparent (bg_color);
 			gr.Dispose ();
+			
 			return bmp;
 		}
 
@@ -2271,8 +2273,8 @@ namespace System.Windows.Forms
 			if (item.BarBreak) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
 				rect.Y++;
-	        		rect.Width = 3;
-	        		rect.Height = item.MenuHeight - 6;
+				rect.Width = 3;
+				rect.Height = item.MenuHeight - 6;
 
 				e.Graphics.DrawLine (SystemPens.ControlDark,
 					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
@@ -2299,11 +2301,8 @@ namespace System.Windows.Forms
 			}
 
 			/* Draw background */
-			Rectangle rect_back = e.Bounds;
-			rect_back.X++;
-			rect_back.Width -=2;
 			if (!item.MenuBar)
-				e.Graphics.FillRectangle (brush_back, rect_back);
+				e.Graphics.FillRectangle (brush_back, e.Bounds);
 			
 			if (item.Enabled) {
 				e.Graphics.DrawString (item.Text, e.Font,
@@ -2328,7 +2327,7 @@ namespace System.Windows.Forms
 						border_style = Border3DStyle.SunkenOuter;
 					
 					if (border_style != Border3DStyle.Adjust)
-						CPDrawBorder3D(e.Graphics, rect_back, border_style,  Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorMenu);
+						CPDrawBorder3D(e.Graphics, e.Bounds, border_style,  Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, ColorMenu);
 				}
 			} else {
 				if ((item.Status & DrawItemState.Selected) != DrawItemState.Selected) {
