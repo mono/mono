@@ -1,3 +1,23 @@
+2007-01-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80381
+	* attribute.cs (AttributeTester.RegisterNonObsoleteType): Registers
+	the core types.
+
+	* namespace.cs (GlobalRootNamespace.LookupTypeReflection): Better error
+	messages.
+	(Namespace.LookupType): Always use core types from corlib when speficied.
+
+	* report.cs: A new warning.
+
+	* rootcontext.cs (BootstrapCorlib_ResolveInterface,
+	BootstrapCorlib_ResolveClass): Register type as non-obsolete type.
+	(ResolveCore): Add missing System.Runtime.InteropServices._Attribute.
+
+	* typemanager.cs (CoreLookupType): Register type as non-obsolete type.
+	(InitCoreTypes): Set expression type of object_type and value_type
+	immediately after lookup.
+
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-tokenizer.cs: Accept Pc class characters (Connector

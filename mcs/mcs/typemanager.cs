@@ -853,8 +853,12 @@ namespace Mono.CSharp {
 		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
 		FullNamedExpression fne = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
 		Type t = fne == null ? null : fne.Type;
-		if (t == null)
+		if (t == null) {
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
+			return null;
+		}
+
+		AttributeTester.RegisterNonObsoleteType (t);
 		return t;
 	}
 
@@ -983,7 +987,9 @@ namespace Mono.CSharp {
 	public static void InitCoreTypes ()
 	{
 		object_type   = CoreLookupType ("System", "Object");
+		system_object_expr.Type = object_type;
 		value_type    = CoreLookupType ("System", "ValueType");
+		system_valuetype_expr.Type = value_type;
 
 		InitEnumUnderlyingTypes ();
 
@@ -1134,7 +1140,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		system_object_expr.Type = object_type;
 		system_string_expr.Type = string_type;
 		system_boolean_expr.Type = bool_type;
 		system_decimal_expr.Type = decimal_type;
@@ -1152,7 +1157,6 @@ namespace Mono.CSharp {
 		system_void_expr.Type = void_type;
 		system_asynccallback_expr.Type = asynccallback_type;
 		system_iasyncresult_expr.Type = iasyncresult_type;
-		system_valuetype_expr.Type = value_type;
 
 		//
 		// These are only used for compare purposes

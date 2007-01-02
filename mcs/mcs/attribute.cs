@@ -1741,6 +1741,13 @@ namespace Mono.CSharp {
 			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
 		}
 
+		// Registers the core type as we assume that they will never be obsolete which
+		// makes things easier for bootstrap and faster (we don't need to query Obsolete attribute).
+		public static void RegisterNonObsoleteType (Type type)
+		{
+			analyzed_types_obsolete [type] = FALSE;
+		}
+
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute when type is obsolete
 		/// </summary>
@@ -1754,7 +1761,7 @@ namespace Mono.CSharp {
 				return (ObsoleteAttribute)type_obsolete;
 
 			ObsoleteAttribute result = null;
-			if (type.IsByRef || type.IsArray || type.IsPointer) {
+			if (TypeManager.HasElementType (type)) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
 			} else if (TypeManager.IsGenericParameter (type) || TypeManager.IsGenericType (type))
 				return null;
@@ -1767,9 +1774,7 @@ namespace Mono.CSharp {
 					if (attribute.Length == 1)
 						result = (ObsoleteAttribute)attribute [0];
 				} else {
-					// Is null during corlib bootstrap
-					if (TypeManager.obsolete_attribute_type != null)
-						result = type_ds.GetObsoleteAttribute ();
+					result = type_ds.GetObsoleteAttribute ();
 				}
 			}
 

@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 		//
 		// Resolves a single class during the corlib bootstrap process
 		//
-		static TypeBuilder BootstrapCorlib_ResolveClass (TypeContainer root, string name)
+		static Type BootstrapCorlib_ResolveClass (TypeContainer root, string name)
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
@@ -210,7 +210,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return ((DeclSpace) o).DefineType ();
+			Type t = ((DeclSpace) o).DefineType ();
+			if (t != null)
+				AttributeTester.RegisterNonObsoleteType (t);
+			return t;
 		}
 
 		//
@@ -260,7 +263,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((DeclSpace) o).DefineType ();
+			Type t = ((DeclSpace) o).DefineType ();
+			if (t != null)
+				AttributeTester.RegisterNonObsoleteType (t);
 		}
 
 		//
@@ -292,7 +297,13 @@ namespace Mono.CSharp {
 			TypeManager.system_object_expr.Type = TypeManager.object_type;
 			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
 			TypeManager.system_valuetype_expr.Type = TypeManager.value_type;
+
+			//
+			// The core attributes
+			//
+			BootstrapCorlib_ResolveInterface (root, "System.Runtime.InteropServices._Attribute");
 			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
+			TypeManager.obsolete_attribute_type = BootstrapCorlib_ResolveClass (root, "System.ObsoleteAttribute");
 			TypeManager.indexer_name_type = BootstrapCorlib_ResolveClass (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
 			
 			string [] interfaces_first_stage = {
@@ -390,7 +401,6 @@ namespace Mono.CSharp {
 				"System.Runtime.CompilerServices.FixedBufferAttribute",
 #endif
 				"System.Diagnostics.ConditionalAttribute",
-				"System.ObsoleteAttribute",
 				"System.ParamArrayAttribute",
 				"System.CLSCompliantAttribute",
 				"System.Security.UnverifiableCodeAttribute",

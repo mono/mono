@@ -224,11 +224,17 @@ namespace Mono.CSharp {
 						found_type = t;
 						continue;
 					}
-					
-					Report.SymbolRelatedToPreviousError (t);
+
 					Report.SymbolRelatedToPreviousError (found_type);
-					Report.Warning (436, 2, loc, "Ignoring imported type `{0}' since the current assembly already has a declaration with the same name",
-						TypeManager.CSharpName (t));
+					if (loc.IsNull) {
+						DeclSpace ds = TypeManager.LookupDeclSpace (t);
+						Report.Warning (1685, 1, ds.Location, "The type `{0}' conflicts with the predefined type `{1}' and will be ignored",
+							ds.GetSignatureForError (), TypeManager.CSharpName (found_type));
+						return found_type;
+					}
+					Report.SymbolRelatedToPreviousError (t);
+					Report.Warning (436, 2, loc, "The type `{0}' conflicts with the imported type `{1}'. Ignoring the imported type definition",
+						TypeManager.CSharpName (t), TypeManager.CSharpName (found_type));
 					return t;
 				}
 			}
@@ -398,7 +404,9 @@ namespace Mono.CSharp {
 			}
 			string lookup = t != null ? t.FullName : (fullname.Length == 0 ? name : fullname + "." + name);
 			Type rt = root.LookupTypeReflection (lookup, loc);
-			if (t == null)
+
+			// HACK: loc.IsNull when the type is core type
+			if (t == null || (rt != null && loc.IsNull))
 				t = rt;
 
 			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
