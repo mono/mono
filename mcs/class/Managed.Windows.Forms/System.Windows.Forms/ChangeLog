@@ -1,5 +1,10 @@
 2007-01-01  Everaldo Canuto  <everaldo@simios.org>
 
+	* ThemeWin32Classic.cs: Use float numbers to calculate size and
+	position of menu arrows, it fix wrong arrow size.
+
+2007-01-01  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: Uses CPDrawBorder3D to draw menu borders
 	instead of line, it simplify draw operation and fix it using 3D
 	borders to mimic Win32.

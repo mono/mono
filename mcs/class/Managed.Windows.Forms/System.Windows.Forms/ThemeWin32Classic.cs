@@ -5512,31 +5512,20 @@ namespace System.Windows.Forms
 
 			switch(glyph) {
 			case MenuGlyph.Arrow: {
-				Point[]			arrow = new Point[3];
-				Point				P1;
-				Point				P2;
-				Point				P3;
-				int				centerX;
-				int				centerY;
-				int				shiftX;
+				float height = rectangle.Height * 0.7f;
+				float width  = height / 2.0f;
+				
+				PointF ddCenter = new PointF (rectangle.X + ((rectangle.Width-width) / 2.0f), rectangle.Y + (rectangle.Height / 2.0f));
 
-				rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
-				centerX=rect.Left+rect.Width/2;
-				centerY=rect.Top+rect.Height/2;
-				shiftX=Math.Max(1, rect.Width/8);
-
-				rect.X-=shiftX;
-				centerX-=shiftX;
-
-				P1=new Point(centerX, rect.Top);
-				P2=new Point(centerX, rect.Bottom);
-				P3=new Point(rect.Right, centerY);
-
-				arrow[0]=P1;
-				arrow[1]=P2;
-				arrow[2]=P3;
-
-				graphics.FillPolygon(brush, arrow, FillMode.Winding);
+				PointF [] vertices = new PointF [3];
+				vertices [0].X = ddCenter.X;
+				vertices [0].Y = ddCenter.Y - (height / 2.0f);
+				vertices [1].X = ddCenter.X;
+				vertices [1].Y = ddCenter.Y + (height / 2.0f);
+				vertices [2].X = ddCenter.X + width + 0.1f;
+				vertices [2].Y = ddCenter.Y;
+				
+				graphics.FillPolygon (brush, vertices);
 
 				return;
 			}
