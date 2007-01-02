@@ -1,4 +1,4 @@
-// cs0436.cs: Ignoring imported type `System.Console' since the current assembly already has a declaration with the same name
+// CS0436: The type `System.Console' conflicts with the imported type `System.Console'. Ignoring the imported type definition
 // Line: 16
 // Compiler options: -warn:2 -warnaserror
 
