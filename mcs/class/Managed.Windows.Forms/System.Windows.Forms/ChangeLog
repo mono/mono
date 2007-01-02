@@ -1,5 +1,10 @@
 2007-01-02  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: patch from georgegiolfan@yahoo.com to add padding
+	to header height for width == -1. Fixes the rest of #80207.
+
+2007-01-02  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: rework the mouse event forwarding everaldo added
 	to translate the coordinates to the parent control not
 	raise the parent events until after we've done our work. Hover

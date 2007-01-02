@@ -786,6 +786,8 @@ namespace System.Windows.Forms
 										(col.Text, this.Font)).Height;
 					else
 						ret_size.Height = this.Font.Height;
+
+					ret_size.Height += text_padding;
 				}
 			}
 
