@@ -1,5 +1,10 @@
 2007-01-02  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuAPI.cs: Prevent second level and beyond submenus to close
+	until first level when move out side of popup.
+	
+2007-01-02  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs:
 	- Down submenu positin in three pixels.
 	- Closes sub menu when mouse leaves from menu. Fixes #80402.
