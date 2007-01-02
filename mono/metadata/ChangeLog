@@ -1,5 +1,18 @@
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
+	* marshal.c (mono_string_to_byvalwstr): Fix this routine.   The
+	string is null terminated, but only cut the string short if it
+	overflows the buffer.   
+	
+	(mono_string_to_byvalstr): Also fix this routine.   The code here
+	was not properly terminating a string (it was only terminated
+	because of the previous catch-all memset). 
+
+	I left the memset, because I do not know if applications expect
+	the runtime to clear this region. 
+
+	Fixes #79944.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType):
 	Clear the error before returning to unmanaged code to prevent the
 	runtime from being confused later on (fixes  80420).
