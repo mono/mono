@@ -33,6 +33,7 @@ using System.Configuration;
 using System.Configuration.Provider;
 using System.Web.Security;
 using System.Web.Configuration;
+using System.Reflection;
 
 namespace System.Web.Profile
 {
@@ -85,6 +86,25 @@ namespace System.Web.Profile
 				SettingsProperty settingsProperty = CreateSettingsPropery (null, ps [s]);
 				ValidateProperty (settingsProperty, ps [s].ElementInformation);
 				properties.Add (settingsProperty);
+			}
+
+			if (config.Inherits.Length > 0) {
+				Type profileType = ProfileParser.GetProfileCommonType (HttpContext.Current);
+				if (profileType != null) {
+					Type properiesType = profileType.BaseType;
+					for (; ; ) {
+						PropertyInfo [] pi = properiesType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+						if (pi.Length > 0)
+							for (int i = 0; i < pi.Length; i++)
+								properties.Add (CreateSettingsPropery (pi [i]));
+
+						if (properiesType.BaseType == null || 
+							properiesType.BaseType == typeof (ProfileBase))
+							break;
+
+						properiesType = properiesType.BaseType;
+					}
+				}
 			}
 
 			properties.SetReadOnly ();
@@ -188,7 +208,7 @@ namespace System.Web.Profile
 			if (profileType == null)
 				return null;
 
-			System.Reflection.PropertyInfo pi = profileType.GetProperty (pps.Name);
+			PropertyInfo pi = profileType.GetProperty (pps.Name);
 			if (pi != null)
 				return pi.PropertyType;
 
@@ -216,6 +236,48 @@ namespace System.Web.Profile
 					elementInfo.Source, elementInfo.LineNumber);
 		}
 
+		static SettingsProperty CreateSettingsPropery (PropertyInfo property)
+		{
+			SettingsProperty sp = new SettingsProperty (property.Name);
+
+			Attribute [] attributes = (Attribute [])property.GetCustomAttributes (typeof (SettingsSerializeAsAttribute), false);
+			SettingsAttributeDictionary attDict = new SettingsAttributeDictionary();
+			sp.SerializeAs = SettingsSerializeAs.ProviderSpecific;
+			sp.PropertyType = property.PropertyType;
+			sp.IsReadOnly = false;
+			sp.ThrowOnErrorDeserializing = false;
+			sp.ThrowOnErrorSerializing = true;
+
+			for (int i = 0; i < attributes.Length; i++) {
+				if (attributes [i] is DefaultSettingValueAttribute)
+					sp.DefaultValue = ((DefaultSettingValueAttribute) attributes [i]).Value;
+
+				else if (attributes [i] is SettingsProviderAttribute) {
+					Type providerType = Type.GetType (((SettingsProviderAttribute) attributes [i]).ProviderTypeName);
+					sp.Provider = (SettingsProvider) Activator.CreateInstance (providerType);
+					sp.Provider.Initialize (null, null);
+				}
+
+				else if (attributes [i] is SettingsSerializeAsAttribute)
+					sp.SerializeAs = ((SettingsSerializeAsAttribute) attributes [i]).SerializeAs;
+
+				else if (
+					attributes [i] is SettingsAllowAnonymousAttribute ||
+					attributes [i] is ApplicationScopedSettingAttribute ||
+					attributes [i] is UserScopedSettingAttribute ||
+					attributes [i] is SettingsDescriptionAttribute  ||
+					attributes [i] is SettingAttribute)
+					attDict.Add (attributes [i].GetType (), attributes [i]);
+			}
+
+			if (sp.Provider == null)
+				sp.Provider = ProfileManager.Provider;
+
+			if (sp.Attributes ["AllowAnonymous"] == null)
+				sp.Attributes ["AllowAnonymous"] = false;
+
+			return sp;
+		}
 		static SettingsProperty CreateSettingsPropery (ProfileGroupSettings pgs, ProfilePropertySettings pps)
 		{
 			string name = ((pgs == null) ? "" : pgs.Name + ".") + pps.Name;
@@ -257,6 +319,9 @@ namespace System.Web.Profile
 			_settingsContext = new SettingsContext ();
 			_settingsContext.Add ("UserName", username);
 			_settingsContext.Add ("IsAuthenticated", isAuthenticated);
+			SettingsProviderCollection spc = new SettingsProviderCollection();
+			spc.Add (ProfileManager.Provider);
+			base.Initialize (Context, ProfileBase.Properties, spc);
 		}
 
 		public override void Save ()
