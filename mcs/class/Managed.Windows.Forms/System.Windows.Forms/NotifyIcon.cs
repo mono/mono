@@ -345,11 +345,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[Localizable(true)]
 		[DefaultValue ("")]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 #endif
+		[Localizable (true)]
 		public string Text {
 			get {
 				return text;

@@ -1,5 +1,10 @@
 2007-01-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Control.cs:
+	* NotifyIcon.cs: corcompare work, no more X's in 1.1 class status.
+	
+2007-01-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MonthCalendar.cs: Added Click and DoubleClick events again,
 	but this time they only hide Control's Click and DoubleClick.
 	

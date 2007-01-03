@@ -593,7 +593,7 @@ namespace System.Windows.Forms
 				CopyTo (array, index);
 			}
 
-			internal void CopyTo (Array array, int index)
+			public void CopyTo (Array array, int index)
 			{
 				list.CopyTo(array, index);
 			}
