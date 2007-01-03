@@ -1,3 +1,9 @@
+2007-01-02  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: We move the caret with the split now, so we
+	don't need to explicitly move the caret after splitting.  This
+	fixes the caret bumping down an extra line on Enter.
+
 2007-01-02  Miguel de Icaza  <miguel@novell.com>
 
 	* ContainerControl.cs: Add AutoValidateChanged event (for PDN

@@ -1025,11 +1025,10 @@ namespace System.Windows.Forms {
 
 						line = document.CaretLine;
 
-						document.Split(document.CaretLine, document.CaretTag, document.CaretPosition, false);
+						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition, false);
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
-						document.MoveCaret(CaretDirection.CharForward);
-						document.SetSelectionToCaret(true);
+
 						CaretMoved(this, null);
 						return true;
 					}
