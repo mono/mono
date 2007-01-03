@@ -192,6 +192,10 @@
     <Content Include="UrlProperty.ascx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Themes\Theme2\Theme2.skin" />
+    <Content Include="GridViewUpdate.aspx" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
