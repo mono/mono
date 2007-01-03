@@ -60,9 +60,14 @@ namespace System.Web.UI.WebControls {
 #endif
 
 		private ListItemCollection items;
+#if NET_2_0
+		int _selectedIndex = -2;
+		string _selectedValue;
+#else		
 		int saved_selected_index = -2;
 		string saved_selected_value;
-		
+#endif
+
 		public ListControl () : base (HtmlTextWriterTag.Select)
 		{
 		}
@@ -193,19 +198,30 @@ namespace System.Web.UI.WebControls {
 				return -1;
 			}
 			set {
+#if NET_2_0
+				_selectedIndex = value;
+
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value");
+
+				if (value >= Items.Count) 
+					return;
+
+				ClearSelection ();
+				if (value == -1)
+					return;
+
+				items [value].Selected = true;
+
+				/* you'd think this would be called, but noooo */
+				//OnSelectedIndexChanged (EventArgs.Empty);
+#else
 				if (items == null || items.Count == 0) {
 					// This will happen when assigning this property
 					// before DataBind () is called on the control.
 					saved_selected_index = value;
 					return;
 				}
-
-#if NET_2_0
-				if (value >= Items.Count) {
-					ClearSelection ();
-					return;
-				}
-#endif
 
 				if (value < -1 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("value");
@@ -218,6 +234,7 @@ namespace System.Web.UI.WebControls {
 
 				/* you'd think this would be called, but noooo */
 				//OnSelectedIndexChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -254,6 +271,10 @@ namespace System.Web.UI.WebControls {
 				return Items [si].Value;
 			}
 			set {
+#if NET_2_0
+				_selectedValue = value;
+				SetSelectedValue (value);
+#else
 				ClearSelection ();
 				if (items == null || items.Count == 0) {
 					// This will happen when assigning this property
@@ -272,7 +293,6 @@ namespace System.Web.UI.WebControls {
 					}
 				}
 
-#if !NET_2_0
 				if (thr) {
 					string msg = String.Format ("Argument value is out of range: {0}", value);
 					throw new ArgumentOutOfRangeException (msg);
@@ -282,6 +302,22 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		bool SetSelectedValue (string value)
+		{
+			if (items != null && items.Count > 0) {
+				int count = items.Count;
+				ListItemCollection coll = Items;
+				for (int i = 0; i < count; i++) {
+					if (coll [i].Value == value) {
+						ClearSelection ();
+						coll [i].Selected = true;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		[Themeable (false)]
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -334,10 +370,7 @@ namespace System.Web.UI.WebControls {
 
 #if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-			if (list == null)
-				return;
-
-			DoDataBinding (list);
+			PerformDataBinding (list);
 #endif
 		}
 
@@ -351,47 +384,72 @@ namespace System.Web.UI.WebControls {
 			base.OnPreRender (e);
 		}
 
-		void DoDataBinding (IEnumerable dataSource)
-		{
-			if (dataSource != null) {
 #if NET_2_0
-				if (!AppendDataBoundItems)
+		protected virtual void OnTextChanged (EventArgs e)
+		{
+			EventHandler handler = (EventHandler) Events [TextChangedEvent];
+			if (handler != null)
+				handler (this, e);
+		}
+#endif		
+
+#if NET_2_0
+		protected internal override
 #endif
-					Items.Clear ();
+		void PerformDataBinding (IEnumerable dataSource)
+		{
+			if (dataSource == null)
+				return;
+#if NET_2_0
+			if (!AppendDataBoundItems)
+#endif
+				Items.Clear ();
 
-				string format = DataTextFormatString;
-				if (format == "")
-					format = null;
+			string format = DataTextFormatString;
+			if (format == "")
+				format = null;
 
-				string text_field = DataTextField;
-				string value_field = DataValueField;
-				ListItemCollection coll = Items;
-				foreach (object container in dataSource) {
-					string text;
-					string val;
+			string text_field = DataTextField;
+			string value_field = DataValueField;
+			ListItemCollection coll = Items;
+			foreach (object container in dataSource) {
+				string text;
+				string val;
 
-					text = val = null;
-					if (text_field != "") {
-						text = DataBinder.GetPropertyValue (container, text_field, format);
-					}
-
-					if (value_field != "") {
-						val = DataBinder.GetPropertyValue (container, value_field).ToString ();
-					} else if (text_field == "") {
-						text = val = container.ToString ();
-						if (format != null)
-							text = String.Format (format, container);
-					} else if (text != null) {
-						val = text;
-					}
-
-					if (text == null)
-						text = val;
-
-					coll.Add (new ListItem (text, val));
+				text = val = null;
+				if (text_field != "") {
+					text = DataBinder.GetPropertyValue (container, text_field, format);
 				}
+
+				if (value_field != "") {
+					val = DataBinder.GetPropertyValue (container, value_field).ToString ();
+				}
+				else if (text_field == "") {
+					text = val = container.ToString ();
+					if (format != null)
+						text = String.Format (format, container);
+				}
+				else if (text != null) {
+					val = text;
+				}
+
+				if (text == null)
+					text = val;
+
+				coll.Add (new ListItem (text, val));
 			}
-			
+
+#if NET_2_0
+			if (!String.IsNullOrEmpty (_selectedValue)) {
+				if (!SetSelectedValue (_selectedValue))
+					throw new ArgumentOutOfRangeException ("value", String.Format ("'{0}' has a SelectedValue which is invalid because it does not exist in the list of items.", ID));
+				if (_selectedIndex >= 0 && _selectedIndex != SelectedIndex)
+					throw new ArgumentException ("SelectedIndex and SelectedValue are mutually exclusive.");
+			}
+			else if (_selectedIndex >= 0) {
+				SelectedIndex = _selectedIndex;
+			}
+#else
 			if (saved_selected_value != null) {
 				SelectedValue = saved_selected_value;
 				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
@@ -401,25 +459,10 @@ namespace System.Web.UI.WebControls {
 				SelectedIndex = saved_selected_index;
 				// No need to check saved_selected_value here, as it's done before.
 			}
+#endif
 		}
 
 #if NET_2_0
-		protected virtual void OnTextChanged (EventArgs e)
-		{
-			EventHandler handler = (EventHandler) Events [TextChangedEvent];
-			if (handler != null)
-				handler (this, e);
-		}
-
-		protected internal override void PerformDataBinding (IEnumerable dataSource)
-		{
-			base.PerformDataBinding (dataSource);
-
-			if (dataSource == null)
-				return;
-			DoDataBinding (dataSource);
-		}
-
 		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
@@ -591,6 +634,7 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 
 
 

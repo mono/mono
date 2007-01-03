@@ -36,10 +36,13 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+#if NET_2_0
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
+#endif
 
-namespace MonoTests.System.Web.UI.WebControls {
+namespace MonoTests.System.Web.UI.WebControls 
+{
 
 	public class ListControlPoker : ListControl {
 
@@ -182,7 +185,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ListControlPage.aspx", "ListControlPage.aspx");
 #else
 			WebTest.CopyResource (GetType (), "ListControlPage.aspx", "ListControlPage.aspx");
@@ -681,8 +684,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			list.Add (3);
 			p.DataSource = list;
 			p.SelectedIndex = 2;
+			Assert.AreEqual (-1, p.SelectedIndex, "#01");
 			p.DataBind ();
-			Assert.AreEqual (3.ToString (), p.SelectedValue, "#01");
+			Assert.AreEqual (2, p.SelectedIndex, "#02");
+			Assert.AreEqual (3.ToString (), p.SelectedValue, "#03");
 		}
 
 		[Test]
@@ -713,8 +718,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// the same thing.
 			p.SelectedIndex = 2;
 			p.SelectedValue = "3";
+			Assert.AreEqual ("", p.SelectedValue, "#01");
 			p.DataBind ();
-			Assert.AreEqual ("3", p.SelectedValue, "#01");
+			Assert.AreEqual ("3", p.SelectedValue, "#02");
 		}
 
 		[Test]
@@ -745,7 +751,138 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (3, p.Items.Count, "#01");
 		}
 
-		class Data {
+#if NET_2_0
+		[Test]
+		public void DataBinding7 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataBind ();
+
+			p.SelectedValue = "3";
+			Assert.AreEqual (2, p.SelectedIndex, "#01");
+			
+			p.DataBind ();
+			Assert.AreEqual ("3", p.SelectedValue, "#02");
+			Assert.AreEqual (2, p.SelectedIndex, "#03");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DataBinding8 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataBind ();
+
+			p.SelectedValue = "3";
+			Assert.AreEqual (2, p.SelectedIndex, "#01");
+
+			list = new ArrayList ();
+			list.Add (4);
+			list.Add (5);
+			list.Add (6);
+			p.DataSource = list;
+			p.DataBind ();
+			Assert.AreEqual ("3", p.SelectedValue, "#01");
+			Assert.AreEqual (2, p.SelectedIndex, "#01");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DataBinding9 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.SelectedValue = "5";
+			p.DataBind ();
+		}
+
+		[Test]
+		public void DataBinding1a () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.SelectedIndex = 4;
+			Assert.AreEqual (-1, p.SelectedIndex, "#01");
+			p.DataBind ();
+			Assert.AreEqual (-1, p.SelectedIndex, "#02");
+			Assert.AreEqual ("", p.SelectedValue, "#03");
+		}
+		
+		[Test]
+		public void DataBinding10 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataBind ();
+
+			p.SelectedValue = "5";
+			Assert.AreEqual ("", p.SelectedValue, "#01");
+			
+			p.SelectedIndex = 4;
+			Assert.AreEqual (-1, p.SelectedIndex, "#02");
+		}
+
+		[Test]
+		public void DataBinding11 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.SelectedValue = "3";
+			p.DataBind ();
+
+			p.SelectedValue = "5";
+			Assert.AreEqual ("3", p.SelectedValue, "#01");
+
+			p.SelectedIndex = 4;
+			Assert.AreEqual (2, p.SelectedIndex, "#02");
+
+			p.Items.Clear ();
+			Assert.AreEqual ("", p.SelectedValue, "#03");
+			Assert.AreEqual (-1, p.SelectedIndex, "#04");
+
+			p.Items.Add (new ListItem ("1"));
+			p.Items.Add (new ListItem ("2"));
+			p.Items.Add (new ListItem ("3"));
+			p.Items.Add (new ListItem ("4"));
+			p.Items.Add (new ListItem ("5"));
+			Assert.AreEqual ("", p.SelectedValue, "#05");
+			Assert.AreEqual (-1, p.SelectedIndex, "#06");
+			
+			list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			list.Add (4);
+			list.Add (5);
+			p.DataSource = list;
+			p.DataBind ();
+			Assert.AreEqual ("5", p.SelectedValue, "#07");
+			Assert.AreEqual (4, p.SelectedIndex, "#08");
+		}
+#endif
+
+		class Data 
+		{
 			string name;
 			object val;
 
@@ -894,6 +1031,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 	}
 }
+
 
 
 
