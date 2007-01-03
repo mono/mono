@@ -22,8 +22,11 @@ exec_prefix=$d/..
 libdir=$prefix/@reloc_libdir@
 bindir=$d
 
-[ -x $bindir/monodis ] || exit 0;
-[ -f $libdir/libmono.so ] || exit 0;
+# Bail out if monodis or libmono is missing
+if [ ! -x $bindir/monodis ] || [ ! -f $libdir/libmono.so ] ; then
+	echo "monodis missing or unusable, exiting..."
+	exit 1
+fi
 
 
 # set LD_LIBRARY_PATH to ensure that libmono.so is found
