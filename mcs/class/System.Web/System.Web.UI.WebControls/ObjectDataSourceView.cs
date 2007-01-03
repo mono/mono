@@ -36,6 +36,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Data;
+using System.Web.Compilation;
 
 namespace System.Web.UI.WebControls
 {
@@ -504,6 +505,17 @@ namespace System.Web.UI.WebControls
 			if (type != null)
 				return type;
 
+			IList tla;
+			if ((tla = BuildManager.TopLevelAssemblies) != null) {
+				foreach (Assembly asm in tla) {
+					if (asm == null)
+						continue;
+					type = asm.GetType (typeName);
+					if (type != null)
+						return type;
+				}
+			}
+			
 			if (!Directory.Exists (PrivateBinPath))
 				return null;
 

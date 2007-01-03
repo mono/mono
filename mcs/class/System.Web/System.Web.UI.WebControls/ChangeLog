@@ -1,3 +1,7 @@
+2007-01-03  Marek Habersack  <grendello@gmail.com>
+
+	* ObjectDataSourceView.cs: Look for unqualified type also in the top-level assemblies.
+
 2006-01-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed PageIndex property.
