@@ -41,11 +41,13 @@
 //     find out whether the runtime performs the P/Invoke if the
 //     handle has been disposed already.
 //
+//
 
 #if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
+using System.Threading;
 
 namespace System.Runtime.InteropServices
 {
@@ -56,7 +58,6 @@ namespace System.Runtime.InteropServices
 		// MonoSafeHandle
 		//
 		protected IntPtr handle;
-		object handle_lock = new object ();
 		IntPtr invalid_handle_value;
 		int refcount = 0;
 		bool owns_handle;
@@ -73,12 +74,15 @@ namespace System.Runtime.InteropServices
 			if (refcount == 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			lock (handle_lock){
-				refcount--;
-				if (refcount == 0 && owns_handle){
-					ReleaseHandle ();
-					handle = invalid_handle_value;
-				}
+			int newcount, current;
+			do {
+				current = refcount;
+				newcount = current-1;
+			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
+
+			if (newcount == 0 && owns_handle){
+				ReleaseHandle ();
+				handle = invalid_handle_value;
 			}
 		}
 
@@ -96,8 +100,12 @@ namespace System.Runtime.InteropServices
 			if (refcount == 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			lock (handle_lock){
-				if (handle == invalid_handle_value || refcount == 0){
+			int newcount, current;
+			do {
+				current = refcount;
+				newcount = current + 1;
+				
+				if (handle == invalid_handle_value || current == 0){
 					//
 					// In MS, calling sf.Close () followed by a call
 					// to P/Invoke with SafeHandles throws this, but
@@ -106,10 +114,8 @@ namespace System.Runtime.InteropServices
 					//
 					throw new ObjectDisposedException (GetType ().FullName);
 				}
-				
-				refcount++;
-				success = true;
-			}
+			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
+			success = true;
 		}
 
 		public IntPtr DangerousGetHandle ()
@@ -126,12 +132,15 @@ namespace System.Runtime.InteropServices
 			if (refcount == 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
-			lock (handle_lock){
-				refcount--;
-				if (refcount == 0 && owns_handle){
-					ReleaseHandle ();
-					handle = invalid_handle_value;
-				}
+			int newcount, current;
+			do {
+				current = refcount;
+				newcount = current-1;
+			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
+
+			if (newcount == 0 && owns_handle){
+				ReleaseHandle ();
+				handle = invalid_handle_value;
 			}
 		}
 

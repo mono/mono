@@ -1,3 +1,18 @@
+2007-01-03  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeHandle.cs: Do not use locks in SafeHandle to protect the
+	access to the refcount, use Interlocked.CompareExchange.  The
+	locks were the source of problems with domain finalization when
+	this code was enabled.
+
+	This should fix Matt Hargett's bug report with a full `make check'
+	that reported variations of:
+
+	** (../../class/lib/net_2_0/nunit-console.exe:29644): WARNING **:
+	Finalization of domain <domainname> timed out.
+
+	Also, it is a lot lighther.
+
 2006-12-21  Miguel de Icaza  <miguel@novell.com>
 
 	* CriticalHandle.cs: Add Dispose(bool disposing) method, and
