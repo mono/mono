@@ -926,7 +926,11 @@ namespace System.Web.UI.WebControls
 	
 		int IDataItemContainer.DisplayIndex {
 			get { return PageIndex; }
-		}		
+		}
+
+		int IDataItemContainer.DataItemIndex {
+			get { return DataItemIndex; }
+		}
 	
 		public virtual bool IsBindableType (Type type)
 		{
