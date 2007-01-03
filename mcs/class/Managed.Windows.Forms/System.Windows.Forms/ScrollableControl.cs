@@ -831,6 +831,11 @@ namespace System.Windows.Forms {
 		{
 			base.OnRightToLeftChanged (e);
 		}
+
+		public event ScrollEventHandler Scroll {
+			add { Events.AddHandler (OnScrollEvent, value); }
+			remove { Events.RemoveHandler (OnScrollEvent, value); }
+		}
 #endif
 	}
 }

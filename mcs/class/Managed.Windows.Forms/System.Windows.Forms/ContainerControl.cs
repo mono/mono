@@ -480,6 +480,35 @@ namespace System.Windows.Forms {
 		{
 			base.OnFontChanged (e);
 		}
+
+		AutoValidate auto_validate = AutoValidate.Inherit;
+		public virtual AutoValidate AutoValidate {
+			get {
+				return auto_validate;
+			}
+
+			[MonoTODO("Currently does nothing with the setting")]
+			set {
+				if (auto_validate != value){
+					auto_validate = value;
+					OnAutoValidateChanged (new EventArgs ());
+				}
+			}
+		}
+
+		static object OnValidateChanged = new object ();
+
+		protected virtual void OnAutoValidateChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [OnValidateChanged]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		public event EventHandler AutoValidateChanged {
+			add { Events.AddHandler (OnValidateChanged, value); }
+			remove { Events.RemoveHandler (OnValidateChanged, value); }
+		}
 #endif
 	}
 }

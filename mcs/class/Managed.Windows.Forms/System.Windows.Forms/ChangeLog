@@ -1,3 +1,10 @@
+2007-01-02  Miguel de Icaza  <miguel@novell.com>
+
+	* ContainerControl.cs: Add AutoValidateChanged event (for PDN
+	2.72). 
+
+	* ScrollableControl.cs: Add Scroll event.
+
 2007-01-02  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: one more try with help from georgegiolfan@yahoo.com 
