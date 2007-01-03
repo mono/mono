@@ -568,6 +568,10 @@ namespace System.Web.UI.WebControls
 				
 			return nod;
 		}
+
+		object ICloneable.Clone () {
+			return Clone ();
+		}
 		
 		internal void Bind (IHierarchyData hierarchyData)
 		{
