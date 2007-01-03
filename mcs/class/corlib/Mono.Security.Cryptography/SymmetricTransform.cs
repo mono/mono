@@ -242,8 +242,8 @@ namespace Mono.Security.Cryptography {
 			if (outputOffset < 0)
 				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
 			// ordered to avoid possible integer overflow
-			if (outputOffset > outputBuffer.Length - inputCount)
-				throw new ArgumentException ("outputBuffer", Locale.GetText ("Overflow"));
+			if (outputOffset > outputBuffer.Length - inputCount) 
+				inputCount = outputBuffer.Length - outputOffset;
 
 			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 		}

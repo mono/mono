@@ -1,3 +1,8 @@
+2007-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Reduce inputCount if larger than the output
+	data can hold. Fix bug #80439.
+
 2006-12-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS8.cs: Synchronize source with Mono.Security.dll
