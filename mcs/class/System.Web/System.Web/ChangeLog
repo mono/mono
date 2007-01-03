@@ -1,3 +1,7 @@
+2007-01-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SiteMap.cs, SiteMapNodeCollection.cs: TARGET_JVM of static members
+
 2006-12-20  Marek Habersack  <grendello@gmail.com>
 
 	* HttpContext.cs: add internal setter for the Profile property.
