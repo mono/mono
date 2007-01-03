@@ -174,6 +174,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80301
+		[Ignore ("Depends on specific DPI")]
 		public void PreferredHeight ()
 		{
 			RichTextBox rtb = new RichTextBox ();

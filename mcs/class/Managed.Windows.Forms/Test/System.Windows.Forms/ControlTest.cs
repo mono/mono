@@ -445,7 +445,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("Depends on specific DPI")]
 		public void FontHeightTest ()
 		{
 			MockControl c = new MockControl ();
@@ -453,7 +453,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FontTest ()
 		{
 			Control c = new Control ();
@@ -1281,7 +1280,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ResetFontTest ()
 		{
 			Control c = new Control ();

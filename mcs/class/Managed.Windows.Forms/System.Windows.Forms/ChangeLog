@@ -1,3 +1,8 @@
+2007-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Theme.cs: Re-enabled DefaultFont change. Use const to refer to
+	System.Drawing assembly. Spaces to tabs. Removed extra tabs.
+
 2007-01-02  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: We move the caret with the split now, so we

@@ -24,7 +24,6 @@
 //	Peter Dennis Bartok, pbartok@novell.com
 //
 
-
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -56,7 +55,7 @@ namespace System.Windows.Forms
 		internal static CPColor Empty;
 	}
 	
-	// Implements a pool of system resources	
+	// Implements a pool of system resources
 	internal class SystemResPool
 	{
 		private Hashtable pens = new Hashtable ();
@@ -71,7 +70,7 @@ namespace System.Windows.Forms
 		
 		public Pen GetPen (Color color)
 		{
-			int hash = color.ToArgb ();			
+			int hash = color.ToArgb ();
 
 			lock (pens) {
 				Pen res = pens [hash] as Pen;
@@ -132,11 +131,11 @@ namespace System.Windows.Forms
 		
 		public HatchBrush GetHatchBrush (HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
-			string hash = hatchStyle.ToString () + foreColor.ToString () + backColor.ToString ();			
+			string hash = hatchStyle.ToString () + foreColor.ToString () + backColor.ToString ();
 
 			lock (hatchbrushes) {
 				if (hatchbrushes.Contains (hash))
-					return (HatchBrush) hatchbrushes[hash];							
+					return (HatchBrush) hatchbrushes[hash];
 
 				HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
 				hatchbrushes.Add (hash, brush);
@@ -192,21 +191,18 @@ namespace System.Windows.Forms
 		private readonly Font default_font;
 		protected Font window_border_font;
 		protected Color defaultWindowBackColor;
-		protected Color defaultWindowForeColor;		
+		protected Color defaultWindowForeColor;
 		protected bool always_draw_hotkeys = true;
 		internal SystemResPool ResPool = new SystemResPool ();
-		private Type system_colors = Type.GetType("System.Drawing.SystemColors, System.Drawing");
+		private Type system_colors = Type.GetType ("System.Drawing.SystemColors, " + Consts.AssemblySystem_Drawing);
 
 		protected Theme ()
 		{
-/*
 #if NET_2_0
 			default_font = SystemFonts.DefaultFont;
 #else
 			default_font = new Font (FontFamily.GenericSansSerif, 8.25f);
 #endif
-*/
-			default_font = new Font (FontFamily.GenericSansSerif, 8f);
 		}
 
 		private void SetSystemColors(string name, Color value) {
@@ -227,7 +223,7 @@ namespace System.Windows.Forms
 			get;
 		}
 
-		/* Default properties */		
+		/* Default properties */
 		public virtual Color ColorScrollBar {
 			get { return SystemColors.ScrollBar;}
 			set { SetSystemColors("scroll_bar", value); }
@@ -373,7 +369,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Color DefaultWindowBackColor {
-			get { return defaultWindowBackColor; }			
+			get { return defaultWindowBackColor; }
 		}
 
 		public virtual Color DefaultWindowForeColor {
@@ -541,11 +537,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-        public virtual Font WindowBorderFont {
-            get {
-                return window_border_font;
-            }
-        }
+		public virtual Font WindowBorderFont {
+			get {
+				return window_border_font;
+			}
+		}
 
 		public int Clamp (int value, int lower, int upper)
 		{
@@ -700,7 +696,7 @@ namespace System.Windows.Forms
 		#endregion	// CheckBox
 		
 		#region CheckedListBox
-		// Drawing		
+		// Drawing
 		public abstract void DrawCheckedListBoxItem (CheckedListBox ctrl, DrawItemEventArgs e);
 		#endregion // CheckedListBox
 		
@@ -718,11 +714,11 @@ namespace System.Windows.Forms
 		public abstract int DataGridMinimumColumnCheckBoxWidth { get; }
 		
 		// Default colours
-		public abstract Color DataGridAlternatingBackColor { get; }		
-		public abstract Color DataGridBackColor { get; }		
+		public abstract Color DataGridAlternatingBackColor { get; }
+		public abstract Color DataGridBackColor { get; }
 		public abstract Color DataGridBackgroundColor { get; }
 		public abstract Color DataGridCaptionBackColor { get; }
-		public abstract Color DataGridCaptionForeColor { get; }		
+		public abstract Color DataGridCaptionForeColor { get; }
 		public abstract Color DataGridGridLineColor { get; }
 		public abstract Color DataGridHeaderBackColor { get; }
 		public abstract Color DataGridHeaderForeColor { get; }
@@ -779,8 +775,8 @@ namespace System.Windows.Forms
 		
 		#region ListBox
 		// Drawing
-		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);		
-		#endregion	// ListBox		
+		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);
+		#endregion	// ListBox
 		
 		#region ListView
 		// Drawing
@@ -807,7 +803,7 @@ namespace System.Windows.Forms
 		public abstract int CalcMenuBarSize (Graphics dc, Menu menu, int width);
 		public abstract void DrawMenuBar (Graphics dc, Menu menu, Rectangle rect);
 		public abstract void DrawMenuItem (MenuItem item, DrawItemEventArgs e);
-		public abstract void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect);		
+		public abstract void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect);
 		#endregion 	// Menus
 
 		#region MonthCalendar
@@ -898,7 +894,7 @@ namespace System.Windows.Forms
 		#region ToolTip
 		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control);
 		public abstract Size ToolTipSize(ToolTip.ToolTipWindow tt, string text);
-		#endregion	// ToolTip		
+		#endregion	// ToolTip
 		
 
 		#region TrackBar
