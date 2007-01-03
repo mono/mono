@@ -1,3 +1,10 @@
+2007-01-03  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Need to prevent wrap calculations when replacing
+	text (this was there before i removed it accidently).
+	- Don't update the cursor during the positioning, just set it to
+	selection_start at the end of the operaion.
+
 2007-01-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Control.cs:

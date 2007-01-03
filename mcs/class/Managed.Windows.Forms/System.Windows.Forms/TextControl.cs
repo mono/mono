@@ -3266,6 +3266,8 @@ namespace System.Windows.Forms {
 			InvalidateSelectionArea ();
 
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
+			NoRecalc = true;
+
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (!multiline || (selection_start.line == selection_end.line)) {
@@ -3305,9 +3307,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			Insert(selection_start.line, selection_start.pos, true, s);
+
+			Insert(selection_start.line, selection_start.pos, false, s);
+			NoRecalc = false;
+
 			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
-			
+
 			if (!select_new) {
 				CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
 						out selection_start.tag, out selection_start.pos);
@@ -3333,6 +3338,8 @@ namespace System.Windows.Forms {
 
 				SetSelectionVisible (true);
 			}
+
+			PositionCaret (selection_start.line, selection_start.pos);
 
 			undo.EndCompoundAction ();
 		}
