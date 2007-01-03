@@ -1,3 +1,8 @@
+2007-01-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProviderTest.cs: Add tests for bug #80439 where 
+	inputCount is reduced to fit into the output buffer (for any mode).
+
 2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Added test case for X509Chain.

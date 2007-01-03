@@ -249,5 +249,38 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = des.BlockSize; // 8 times too big
 			CreateDecryptor_IV (size);
 		}
+
+		public void Bug80439 (CipherMode mode)
+		{
+			des.Mode = mode;
+			ICryptoTransform enc = des.CreateEncryptor ();
+			byte[] plaintext = new byte[56];
+			byte[] encdata = new byte[64];
+			enc.TransformBlock (plaintext, 0, plaintext.Length, encdata, 0);
+
+			ICryptoTransform dec = des.CreateDecryptor ();
+			byte[] decdata = new byte[56];
+			dec.TransformBlock (encdata, 0, encdata.Length, decdata, 0);
+
+			Assert.AreEqual (plaintext, decdata, mode.ToString ());
+		}
+
+		[Test]
+		public void PartialDecrypt_CBC ()
+		{
+			Bug80439 (CipherMode.CBC);
+		}
+
+		[Test]
+		public void PartialDecrypt_CFB ()
+		{
+			Bug80439 (CipherMode.CFB);
+		}
+
+		[Test]
+		public void PartialDecrypt_ECB ()
+		{
+			Bug80439 (CipherMode.ECB);
+		}
 	}
 }
