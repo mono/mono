@@ -580,9 +580,6 @@ namespace System.Web {
 			//
 			int content_length = ContentLength;
 
-			if (content_length == 0 && HttpMethod == "POST")
-				throw new HttpException (411, "Length expected");
-			
 #if NET_2_0
 			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
 #else
