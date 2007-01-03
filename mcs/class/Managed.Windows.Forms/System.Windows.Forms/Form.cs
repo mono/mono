@@ -521,7 +521,12 @@ namespace System.Windows.Forms {
 		[TypeConverter (typeof (ReferenceConverter))]
 		public MenuStrip MainMenuStrip {
 			get { return this.main_menu_strip; }
-			set { this.main_menu_strip = value; }
+			set { 
+				if (this.main_menu_strip != value) {
+					this.main_menu_strip = value;
+					this.main_menu_strip.RefreshMdiItems ();
+				}
+			}
 		}
 #endif
 

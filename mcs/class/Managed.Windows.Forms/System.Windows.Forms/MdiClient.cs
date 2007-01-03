@@ -753,6 +753,11 @@ namespace System.Windows.Forms {
 
 			setting_windowstates = false;
 
+#if NET_2_0
+			if (form.MdiParent.MainMenuStrip != null)
+				form.MdiParent.MainMenuStrip.RefreshMdiItems ();
+#endif
+
 			return maximize_this;
 		}
 

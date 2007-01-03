@@ -40,6 +40,7 @@ namespace System.Windows.Forms
 		private string shortcut_display_string;
 		private Keys shortcut_keys = Keys.None;
 		private bool show_shortcut_keys = true;
+		private Form mdi_client_form;
 
 		#region Public Constructors
 		public ToolStripMenuItem ()
@@ -136,6 +137,10 @@ namespace System.Windows.Forms
 			set { base.Enabled = value; }
 		}
 
+		public bool IsMdiWindowListEntry {
+			get { return this.mdi_client_form != null; }
+		}
+		
 		[MonoTODO ("Renderer doesn't support shortcut keys yet, they will never show.")]
 		[Localizable (true)]
 		public bool ShowShortcutKeys {
@@ -228,6 +233,11 @@ namespace System.Windows.Forms
 				}
 			}
 
+			if (this.IsMdiWindowListEntry) {
+				this.mdi_client_form.MdiParent.MdiContainer.ActivateChild (this.mdi_client_form);
+				return;
+			}
+			
 			if (this.check_on_click)
 				this.Checked = !this.Checked;
 
@@ -332,6 +342,13 @@ namespace System.Windows.Forms
 		public event EventHandler CheckStateChanged {
 			add { Events.AddHandler (CheckStateChangedEvent, value); }
 			remove {Events.RemoveHandler (CheckStateChangedEvent, value); }
+		}
+		#endregion
+
+		#region Internal Properties
+		internal Form MdiClientForm {
+			get { return this.mdi_client_form; }
+			set { this.mdi_client_form = value; }
 		}
 		#endregion
 	}

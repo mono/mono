@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	public class MenuStrip : ToolStrip
 	{
 		private bool can_overflow;
+		private ToolStripMenuItem mdi_window_list_item;
 
 		public MenuStrip () : base ()
 		{
@@ -61,6 +62,16 @@ namespace System.Windows.Forms
 			set { base.GripStyle = value; }
 		}
 
+		public ToolStripMenuItem MdiWindowListItem {
+			get { return this.mdi_window_list_item; }
+			set { 
+				if (this.mdi_window_list_item != value) {
+					this.mdi_window_list_item = value;
+					this.RefreshMdiItems ();
+				}
+			}
+		}
+		
 		[DefaultValue (false)]
 		public new bool ShowItemToolTips {
 			get { return base.ShowItemToolTips; }
@@ -154,6 +165,114 @@ namespace System.Windows.Forms
 		private void ToolStripMenuTracker_AppClicked (object sender, EventArgs e)
 		{
 			this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+		}
+		
+		internal void RefreshMdiItems ()
+		{
+			if (this.mdi_window_list_item == null)
+				return;
+			
+			Form parent_form = this.FindForm ();
+			
+			if (parent_form == null || parent_form.MainMenuStrip != this)
+				return;
+				
+			MdiClient mdi = parent_form.MdiContainer;
+			
+			// Make a copy so we can delete from the real one
+			ToolStripItem[] loopitems = new ToolStripItem[this.mdi_window_list_item.DropDownItems.Count];
+			this.mdi_window_list_item.DropDownItems.CopyTo (loopitems, 0);
+
+			// If the mdi child has been removed, remove our menu item
+			foreach (ToolStripItem tsi in loopitems)
+				if (tsi is ToolStripMenuItem && (tsi as ToolStripMenuItem).IsMdiWindowListEntry)
+					if (!mdi.mdi_child_list.Contains ((tsi as ToolStripMenuItem).MdiClientForm) || !(tsi as ToolStripMenuItem).MdiClientForm.Visible)
+						this.mdi_window_list_item.DropDownItems.Remove (tsi);
+
+			// Add the new forms and update state
+			for (int i = 0; i < mdi.mdi_child_list.Count; i++) {
+				Form mdichild = (Form)mdi.mdi_child_list[i];
+				ToolStripMenuItem tsi;
+				
+				if (!mdichild.Visible)
+					continue;
+					
+				if ((tsi = FindMdiMenuItemOfForm (mdichild)) == null) {
+					if (CountMdiMenuItems () == 0 && this.mdi_window_list_item.DropDownItems.Count > 0)
+						this.mdi_window_list_item.DropDownItems.Add (new ToolStripSeparator ());
+						
+					tsi = new ToolStripMenuItem ();
+					tsi.MdiClientForm = mdichild;
+					this.mdi_window_list_item.DropDownItems.Add (tsi);
+				}
+				
+				tsi.Text = string.Format ("&{0} {1}", i + 1, mdichild.Text);
+				tsi.Checked = parent_form.ActiveMdiChild == mdichild;
+			}
+			
+			// Check that everything is in the correct order
+			if (NeedToReorderMdi ())
+				ReorderMdiMenu ();
+		}
+		
+		private ToolStripMenuItem FindMdiMenuItemOfForm (Form f)
+		{
+			// Not terribly efficient, but Mdi window lists shouldn't get too big
+			foreach (ToolStripItem tsi in this.mdi_window_list_item.DropDownItems)
+				if (tsi is ToolStripMenuItem && (tsi as ToolStripMenuItem).MdiClientForm == f)
+					return (ToolStripMenuItem)tsi;
+					
+			return null;
+		}
+
+		private int CountMdiMenuItems ()
+		{
+			int count = 0;
+			
+			foreach (ToolStripItem tsi in this.mdi_window_list_item.DropDownItems)
+				if (tsi is ToolStripMenuItem && (tsi as ToolStripMenuItem).IsMdiWindowListEntry)
+					count++;
+					
+			return count;
+		}
+		
+		private bool NeedToReorderMdi ()
+		{
+			// Mdi menus must be: User Items, Separator, Mdi Items
+			bool seenMdi = false;
+			
+			foreach (ToolStripItem tsi in this.mdi_window_list_item.DropDownItems) {
+				if (tsi is ToolStripMenuItem) {
+					if (!(tsi as ToolStripMenuItem).IsMdiWindowListEntry) {
+						if (seenMdi)
+							return true;
+					} else 
+						seenMdi = true;
+				}
+			}
+			
+			return false;
+		}
+		
+		private void ReorderMdiMenu ()
+		{
+			ToolStripItem[] loopitems = new ToolStripItem[this.mdi_window_list_item.DropDownItems.Count];
+			this.mdi_window_list_item.DropDownItems.CopyTo (loopitems, 0);
+
+			this.mdi_window_list_item.DropDownItems.Clear ();
+
+			foreach (ToolStripItem tsi in loopitems)
+				if (tsi is ToolStripSeparator || !(tsi as ToolStripMenuItem).IsMdiWindowListEntry)
+					this.mdi_window_list_item.DropDownItems.Add (tsi);
+	
+			int count = this.mdi_window_list_item.DropDownItems.Count;
+			
+			if (count > 0 && !(this.mdi_window_list_item.DropDownItems[count - 1] is ToolStripSeparator))
+				this.mdi_window_list_item.DropDownItems.Add (new ToolStripSeparator ());
+
+			foreach (ToolStripItem tsi in loopitems)
+				if (tsi is ToolStripMenuItem && (tsi as ToolStripMenuItem).IsMdiWindowListEntry)
+					this.mdi_window_list_item.DropDownItems.Add (tsi);
 		}
 		#endregion
 	}

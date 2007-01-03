@@ -387,15 +387,21 @@ namespace System.Windows.Forms
 			// Find the widest menu item
 			int widest = 0;
 
-			foreach (ToolStripItem tsi in this.Items)
+			foreach (ToolStripItem tsi in this.Items) {
+				if (!tsi.Visible) 
+					continue;
 				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
 					widest = tsi.GetPreferredSize (Size.Empty).Width;
-
+			}
+			
 			int x = this.Padding.Left;
 			widest += 68 - this.Padding.Horizontal;
 			int y = this.Padding.Top;
 
 			foreach (ToolStripItem tsi in this.Items) {
+				if (!tsi.Visible)
+					continue;
+
 				y += tsi.Margin.Top;
 
 				int height = 0;
@@ -614,7 +620,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event ScrollEventHandler Scroll {
+		public new event ScrollEventHandler Scroll {
 			add { Events.AddHandler (ScrollEvent, value); }
 			remove { Events.RemoveHandler (ScrollEvent, value); }
 		}

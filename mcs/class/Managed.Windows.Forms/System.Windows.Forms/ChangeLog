@@ -1,3 +1,14 @@
+2007-01-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MenuStrip.cs, ToolStripMenuItem.cs: Add MdiWindowListItem
+	property and implementation.
+
+	* Form.cs, MdiClient.cs, MdiWindowManager.cs: Add needed hooks
+	for MdiWindowListItem property.
+
+	* ToolStripDropDown.cs: Don't consider hidden menu items while
+	laying out the menu.
+
 2007-01-03  Andreia Gaita  <avidigal@novell.com>
 
 	* SendKeys.cs: window handle is not needed in win32, so just
