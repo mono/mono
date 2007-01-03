@@ -317,6 +317,13 @@ namespace MonoTests.System.Web.UI.WebControls
 				OnPageIndexChangedCalled = true;
 				base.OnPageIndexChanged (e);
 			}
+
+			public bool GetRequiresDataBinding () {
+				return RequiresDataBinding;
+			}
+			public bool GetInitialized () {
+				return Initialized;
+			}
 		}
 		
 		class Template : ITemplate
@@ -498,6 +505,71 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (customTemplate, p.PagerTemplate, "A81");
 			p.RowStyle.ForeColor = Color.Plum;
 			Assert.AreEqual (Color.Plum, p.RowStyle.ForeColor, "A82");
+		}
+
+		[Test]
+		public void FormView_PageIndex ()
+		{
+			Poker p = new Poker ();
+			Assert.AreEqual (0, p.PageIndex, "#00");
+			Assert.AreEqual (false, p.GetInitialized (), "#01");
+			Assert.AreEqual (false, p.GetRequiresDataBinding(), "#02");
+			p.PageIndex = 2;
+			Assert.AreEqual (2, p.PageIndex, "#03");
+			Assert.AreEqual (false, p.GetRequiresDataBinding (), "#04");
+			p.PageIndex = -1;
+			Assert.AreEqual (2, p.PageIndex, "#05");
+			Assert.AreEqual (false, p.GetRequiresDataBinding (), "#06");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void FormView_PageIndex2 ()
+		{
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = FormView_PageIndex2_load;
+			delegates.LoadComplete = FormView_PageIndex2_loadComplete;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest test = new WebTest (invoker);
+			test.Run ();
+		}
+		
+		public static void FormView_PageIndex2_load (Page p)
+		{
+			Poker fv = new Poker ();
+			p.Form.Controls.Add (fv);
+			Assert.AreEqual (0, fv.PageIndex, "#00");
+			Assert.AreEqual (false, fv.GetInitialized (), "#01");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#02");
+			fv.PageIndex = 2;
+			Assert.AreEqual (2, fv.PageIndex, "#03");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#04");
+			fv.PageIndex = -1;
+			Assert.AreEqual (2, fv.PageIndex, "#05");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#06");
+		}
+		
+		public static void FormView_PageIndex2_loadComplete (Page p)
+		{
+			Poker fv = new Poker ();
+			p.Form.Controls.Add (fv);
+			Assert.AreEqual (0, fv.PageIndex, "#100");
+			Assert.AreEqual (true, fv.GetInitialized (), "#101");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#102");
+			fv.PageIndex = 2;
+			Assert.AreEqual (2, fv.PageIndex, "#103");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#104");
+			fv.PageIndex = -1;
+			Assert.AreEqual (2, fv.PageIndex, "#105");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#106");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void FormView_PageIndex_Ex ()
+		{
+			Poker p = new Poker ();
+			p.PageIndex = -2;
 		}
 
 		[Test]

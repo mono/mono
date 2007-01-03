@@ -1,4 +1,8 @@
-2006-01-02 Igor Zelmanovich <igorz@mainsoft.com>
+2006-01-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs: fixed PageIndex property.
+
+2006-01-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ListControl.cs: fixed SelectedValue and SelectedIndex properties.
 	set accessor works differently in 2.0.		 

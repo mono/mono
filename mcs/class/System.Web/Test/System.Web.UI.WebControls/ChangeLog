@@ -1,5 +1,9 @@
 2007-01-03 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormViewTest.cs: new tests were added.
+
+2007-01-03 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControlTest.cs: new tests were added.
 
 2007-01-02 Igor Zelmanovich <igorz@mainsoft.com>

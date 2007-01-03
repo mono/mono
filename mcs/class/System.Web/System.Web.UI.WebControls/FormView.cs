@@ -697,9 +697,9 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
-				if (value < 0)
+				if (value < -1)
 					throw new ArgumentOutOfRangeException ("PageIndex must be non-negative");
-				if (pageIndex == value)
+				if (pageIndex == value || value == -1)
 					return;
 				pageIndex = value;
 				RequireBinding ();
