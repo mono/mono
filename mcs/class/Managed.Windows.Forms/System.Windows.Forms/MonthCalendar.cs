@@ -1167,6 +1167,20 @@ namespace System.Windows.Forms {
 		}
 #endif
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Click {
+			add {base.Click += value; }
+			remove {base.Click -= value;}
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DoubleClick {
+			add {base.DoubleClick += value; }
+			remove {base.DoubleClick -= value; }
+		}
+		
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {

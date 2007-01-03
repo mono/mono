@@ -1,3 +1,8 @@
+2007-01-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MonthCalendar.cs: Added Click and DoubleClick events again,
+	but this time they only hide Control's Click and DoubleClick.
+	
 2007-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Theme.cs: Re-enabled DefaultFont change. Use const to refer to
