@@ -1,3 +1,8 @@
+2007-01-03  Marek Habersack  <grendello@gmail.com>
+
+	* Page.cs: Make sure the ValidatorOnSubmit function is defined for the
+	document before attempting to use it.
+
 2007-01-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: fixed ResolveClientUrl, wrong when control that calls
