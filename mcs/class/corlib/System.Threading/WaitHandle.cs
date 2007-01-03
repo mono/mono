@@ -55,9 +55,17 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
+#if false
+			//
+			// Although we should thrown an exception if this is an STA thread,
+			// Mono does not know anything about STA threads, and just makes
+			// things like Paint.NET not even possible to work.
+			//
+			// See bug #78455 for the bug this is supposed to fix. 
+			// 
 			if (waitAll && length > 1 && IsSTAThread)
 				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
-			
+#endif
 			foreach (WaitHandle w in handles) {
 				if (w == null)
 					throw new ArgumentNullException ("waitHandles", "null handle");
