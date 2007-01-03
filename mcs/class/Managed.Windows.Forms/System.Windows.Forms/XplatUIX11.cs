@@ -4391,14 +4391,17 @@ namespace System.Windows.Forms {
 		}
 
 		internal override int SendInput(IntPtr handle, Queue keys) { 
+			if (handle == IntPtr.Zero)
+				return 0;
+
 			int count = keys.Count;
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			while (keys.Count > 0) {
 			
 				MSG msg = (MSG)keys.Dequeue();
 
 				XEvent xevent = new XEvent ();
-				Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 				xevent.type = (msg.message == Msg.WM_KEYUP ? XEventName.KeyRelease : XEventName.KeyPress);
 				xevent.KeyEvent.display = DisplayHandle;

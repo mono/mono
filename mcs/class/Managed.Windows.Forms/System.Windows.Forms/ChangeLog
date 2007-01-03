@@ -1,3 +1,16 @@
+2007-01-03  Andreia Gaita  <avidigal@novell.com>
+
+	* SendKeys.cs: window handle is not needed in win32, so just
+	get the active window for X after parsing keys and don't use
+	it when building the message; it is passed by parameter to the 
+	Xplat method and used there to build the message instead. Also,
+	wait for events to be processed on SendWait, as opposed to Send,
+	which doesn't wait :) Playing with threads and Send() completely 
+	hangs on ms.net, only SendWait() works.
+	
+	XplatUIX11.cs
+	X11Display.cs: Check for valid window handle.
+
 2007-01-03  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Need to prevent wrap calculations when replacing
