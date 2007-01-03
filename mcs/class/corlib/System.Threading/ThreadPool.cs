@@ -33,6 +33,7 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Threading {
@@ -47,10 +48,24 @@ namespace System.Threading {
 			/* nothing to do */
 		}
 #endif
+
+#if NET_2_0
+		[Obsolete("This method is obsolete, use BindHandle(SafeHandle) instead")]
+#endif
 		public static bool BindHandle (IntPtr osHandle)
 		{
 			return true;
 		}
+
+#if NET_2_0
+		public static bool BindHandle (SafeHandle osHandle)
+		{
+			if (osHandle == null)
+				throw new ArgumentNullException ("osHandle");
+			
+			return true;
+		}
+#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetAvailableThreads (out int workerThreads, out int completionPortThreads);

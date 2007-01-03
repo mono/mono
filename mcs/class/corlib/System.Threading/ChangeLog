@@ -1,3 +1,7 @@
+2006-12-31  Miguel de Icaza  <miguel@novell.com>
+
+	* ThreadPool.cs: Stub a method.
+
 2006-12-11  Miguel de Icaza  <miguel@novell.com>
 
 	* WaitHandle.cs: In 2.0 use SafeWaitHandles and the SafeWaitHandle
