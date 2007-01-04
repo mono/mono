@@ -1,3 +1,9 @@
+2007-01-03  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c: If nothing fail, do not use the string "failed",
+	because it makes it very annoying to view test result logs on the
+	web. 
+
 2006-12-30  Miguel de Icaza  <miguel@novell.com>
 
 	* debug-debugger.c (mono_debugger_main): Rename "main" to
