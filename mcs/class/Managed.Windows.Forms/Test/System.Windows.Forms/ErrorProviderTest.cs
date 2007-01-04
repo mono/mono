@@ -100,5 +100,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, myErrorProvider.GetIconPadding (myForm), "#getset3");
 			myForm.Dispose ();
 		}
+
+#if NET_2_0
+		[Test]
+		public void ErrorProviderPropertyTag ()
+		{
+			ErrorProvider md = new ErrorProvider ();
+			object s = "MyString";
+
+			Assert.AreEqual (null, md.Tag, "A1");
+
+			md.Tag = s;
+			Assert.AreSame (s, md.Tag, "A2");
+		}
+#endif
 	}
 }

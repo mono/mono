@@ -1,3 +1,10 @@
+2007-01-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CommonDialogTest.cs, CursorTest.cs, ErrorProviderTest.cs,
+	HelpProviderTest.cs: Add tests for Tag properties.
+
+	* LinkAreaTest.cs: Add test for ToString.
+
 2007-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ControlTest.cs: Enabled tests after DefaultFont change. Ignore test

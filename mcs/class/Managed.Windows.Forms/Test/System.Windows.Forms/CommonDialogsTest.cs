@@ -270,6 +270,33 @@ namespace MonoTests.System.Windows.Forms
 			
 			fbd.RootFolder = (Environment.SpecialFolder)12;
 		}
+
+#if NET_2_0
+		[Test]
+		public void CommonDialogPropertyTag ()
+		{
+			MyDialog md = new MyDialog ();
+			object s = "MyString";
+			
+			Assert.AreEqual (null, md.Tag, "A1");
+			
+			md.Tag = s;
+			Assert.AreSame (s, md.Tag, "A2");
+		}
+		
+		private class MyDialog : CommonDialog
+		{
+			public override void Reset ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			protected override bool RunDialog (IntPtr hwndOwner)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+		}
+#endif
 	}
 }
 

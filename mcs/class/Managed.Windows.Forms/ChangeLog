@@ -1,3 +1,7 @@
+2007-01-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll: Add LinkAreaTest.cs and HelpProviderTest.cs.
+
 2006-12-30  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile (TEST_HARNESS_LOCAL_EXCLUDES): exclude Interactive

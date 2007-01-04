@@ -25,5 +25,19 @@ namespace MonoTests.System.Windows.Forms
 
 			new Cursor (typeof (CursorTest).Assembly.GetManifestResourceStream ("a.cur"));
 		}
+
+#if NET_2_0
+		[Test]
+		public void CursorPropertyTag ()
+		{
+			Cursor md = Cursor.Current;
+			object s = "MyString";
+
+			Assert.AreEqual (null, md.Tag, "A1");
+
+			md.Tag = s;
+			Assert.AreSame (s, md.Tag, "A2");
+		}
+#endif
 	}
 }
