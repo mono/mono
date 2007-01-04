@@ -1,3 +1,49 @@
+2007-01-03  Tor Lillqvist  <tml@novell.com>
+
+	Fix #80305: In a bundled executable, look in the bundled exe
+	assembly to determine the runtime version. Add the possibility to
+	bundle also the machine.config file.
+	
+	* assembly.c (mono_assembly_open_from_bundle): Make
+	non-static. Allow being called even if we have no bundled
+	assemblies, and return NULL right away in that case.
+
+	* domain-internals.h: Declare mono_assembly_open_from_bundle()
+	here.
+
+	* domain.c (app_config_parse): Take an assembly exe file name as
+	parameter instead of a config file name. Check for a bundled
+	config file for that assembly by calling
+	mono_config_string_for_assembly_file() (see below) before looking
+	for one in the file system.
+	(get_runtimes_from_exe): Corrsponding change to call of
+	app_config_parse().
+	(get_runtimes_from_exe): Check for bundled assembly exe file first
+	by calling mono_assembly_open_from_bundle(). If no bundled
+	assembly exe file is found, call mono_image_open() as before to
+	look it up in the file system.
+
+	* mono-config.c: Add variable bundled_machinec_onfig.
+	(mono_config_string_for_assembly_file): New function.
+	(mono_config_for_assembly): Move code snippet that looks for a
+	bundled assembly .config file into the above new function. Call
+	it.
+	(mono_register_machine_config, mono_get_machine_config): New
+	functions to set and retrieve
+
+	* assembly.h: Declare mono_register_machine_config().
+
+	* mono-config.h: Declare mono_get_machine_config() and
+	mono_config_string_for_assembly_file().
+
+	* icall.c: No declaration of environ necessary on Win32. It is
+	declared (as a macro expanding to a function call) in stdlib.h.
+	(ves_icall_System_Configuration_DefaultConfig_get_bundled_machine_config):
+	New internal mono function. Returns the value of
+	mono_get_machine_config() as a Mono string.
+
+	* icall-def.h: Add get_bundled_machine_config().
+
 2007-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	Remove redundant field
