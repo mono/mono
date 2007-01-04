@@ -1,5 +1,10 @@
 2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* HttpRequest.cs: fixed Path property, add call of
+	Uri.UnescapeDataString in net_2_0
+
+2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* HttpApplication.cs: fixed PreStart, should not set thread culture
 	to invariant
 

@@ -888,7 +888,11 @@ namespace System.Web {
 		public string Path {
 			get {
 				if (unescaped_path == null)
+#if NET_2_0
+					unescaped_path = Uri.UnescapeDataString (UrlComponents.Path);
+#else
 					unescaped_path = HttpUtility.UrlDecode (UrlComponents.Path);
+#endif
 				return unescaped_path;
 			}
 		}
