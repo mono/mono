@@ -419,8 +419,13 @@ namespace NUnit.Console
 
 			public void PrintSummary (TestResult suiteResult)
 			{
-				Console.WriteLine("Tests run: {0}, Failures: {1}, Not run: {2}, Time: {3} seconds",
-						  testRunCount, failureCount, testIgnoreCount, suiteResult.Time);
+				if (failureCount > 0){
+					Console.WriteLine("Tests run: {0}, Failures: {1}, Not run: {2}, Time: {3} seconds",
+							  testRunCount, failureCount, testIgnoreCount, suiteResult.Time);
+				} else {
+					Console.WriteLine("Tests run: {0} (all pass), Not run: {1}, Time: {2} seconds",
+							  testRunCount, testIgnoreCount, suiteResult.Time);
+				}
 			}
 
 			public void UnhandledException( Exception exception )

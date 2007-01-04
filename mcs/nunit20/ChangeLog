@@ -1,3 +1,8 @@
+2007-01-04  Miguel de Icaza  <miguel@novell.com>
+
+	* nunit-console/ConsoleUi.cs: Do not use the word "failure" if
+	there are no failues, simplifies reading the logs.
+
 2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added NET_2_0 solution files for VS2005
