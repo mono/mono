@@ -383,9 +383,7 @@ namespace System.Web {
 					app_file = Path.Combine (physical_app_path, "global.asax");
 
 			
-#if NET_2_0
-				WebConfigurationManager.Init ();
-#else
+#if !NET_2_0
 				WebConfigurationSettings.Init (context);
 #endif
 		

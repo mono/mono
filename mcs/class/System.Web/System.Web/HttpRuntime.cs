@@ -68,6 +68,7 @@ namespace System.Web {
 
 		public HttpRuntime ()
 		{
+			WebConfigurationManager.Init ();
 			_queue_manager = new QueueManager ();
 			_trace_manager = new TraceManager ();
 			_cache = new Cache ();
@@ -96,6 +97,7 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
+			WebConfigurationManager.Init ();
 			queue_manager = new QueueManager ();
 			trace_manager = new TraceManager ();
 			timeout_manager = new TimeoutManager ();
