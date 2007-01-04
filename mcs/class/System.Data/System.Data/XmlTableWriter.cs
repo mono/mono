@@ -56,9 +56,13 @@ internal class XmlTableWriter {
 			DataSet.WriteStartElement(writer, mode, tables[0].Namespace, tables[0].Prefix, XmlHelper.Encode(dataSetName));
 
 			if (mode == XmlWriteMode.WriteSchema) {
+				DataTable [] _tables = new DataTable[tables.Count];
+				tables.CopyTo(_tables);
+				DataRelation[] _relations = new DataRelation[relations.Count];
+				relations.CopyTo(_relations);
 				new XmlSchemaWriter(writer,
-					tables.ToArray(),
-					relations.ToArray(),
+					_tables,
+					_relations,
 					mainDataTable,
 					dataSetName
 				).WriteSchema();
