@@ -439,7 +439,10 @@ namespace MonoTests.System.Data
 		public void CollectionChanged()
 		{
 		}
-
+#if false
+		//
+		// If this fails on MS.NET and its supposed to fail, why do we have this as Ignore?
+		//
 		[Test]
 		[Ignore ("MS.NET fails this test (and it should fail)")]
 		public void RemoveAt()
@@ -451,8 +454,9 @@ namespace MonoTests.System.Data
                          _table.Constraints.AddRange (constraints);
 
 		}
+#endif
 
-		[Test]
+		//[Test]
 		[Ignore ("MS.NET fails this test (and it should fail)")]
 		public void Remove()
 		{
