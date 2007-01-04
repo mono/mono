@@ -27,6 +27,7 @@ class MakeBundle {
 	static bool compile_only = false;
 	static bool static_link = false;
 	static string config_file = null;
+	static string machine_config_file = null;
 	static string config_dir = null;
 	static string style = "linux";
 	static bool compress;
@@ -101,6 +102,16 @@ class MakeBundle {
 				}
 
 				config_file = args [++i];
+				break;
+			case "--machine-config":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+
+				machine_config_file = args [++i];
+
+				Console.WriteLine ("WARNING:\n  Check that the machine.config file you are bundling\n  doesn't contain sensitive information specific to this machine.");
 				break;
 			case "--config-dir":
 				if (i+1 == top) {
@@ -293,6 +304,29 @@ class MakeBundle {
 				ts.Write ("\t.byte 0\n");
 				ts.WriteLine ();
 			}
+
+			if (machine_config_file != null){
+				FileStream conf;
+				try {
+					conf = File.OpenRead (machine_config_file);
+				} catch {
+					Error (String.Format ("Failure to open {0}", machine_config_file));
+					return;
+				}
+				Console.WriteLine ("Machine config from: " + machine_config_file);
+				tc.WriteLine ("extern const unsigned char machine_config;");
+				WriteSymbol (ts, "machine_config", machine_config_file.Length);
+
+				int n;
+				while ((n = conf.Read (buffer, 0, 8192)) != 0){
+					for (int i = 0; i < n; i++){
+						ts.Write ("\t.byte {0}\n", buffer [i]);
+					}
+				}
+				// null terminator
+				ts.Write ("\t.byte 0\n");
+				ts.WriteLine ();
+			}
 			ts.Close ();
 			
 			Console.WriteLine ("Compiling:");
@@ -320,6 +354,8 @@ class MakeBundle {
 			}
 			if (config_file != null)
 				tc.WriteLine ("\tmono_config_parse_memory (&system_config);\n");
+			if (machine_config_file != null)
+				tc.WriteLine ("\tmono_register_machine_config (&machine_config);\n");
 			tc.WriteLine ("}\n");
 
 			if (config_dir != null)

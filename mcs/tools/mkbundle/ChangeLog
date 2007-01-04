@@ -1,3 +1,16 @@
+2007-01-03  Tor Lillqvist  <tml@novell.com>
+
+	Add the possibility to bundle also the machine.config file, from
+	#80305.
+
+	* mkbundle.cs: Add option --machine-config. Warn the user that a
+	bundled machine.config file should be checked that it doesn't
+	contain sensitive data like private machine keys.
+
+	If that option was used, write the contents of the machine.config
+	file to the asm output file, and write code to call
+	mono_register_machine_config() with the data to the C output file.
+
 2006-11-29  Joshua Tauberer  <jit@occams.info>
 
 	* mkbundle.cs: Added --nomain option to create the host.c file

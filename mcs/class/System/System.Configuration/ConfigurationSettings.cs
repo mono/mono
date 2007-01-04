@@ -167,9 +167,13 @@ namespace System.Configuration
 					return;
 
 				ConfigurationData data = new ConfigurationData ();
-				if (!data.Load (GetMachineConfigPath ()))
-					throw new ConfigurationException ("Cannot find " + GetMachineConfigPath ());
+				if (data.LoadString (GetBundledMachineConfig ())) {
+					// do nothing
+				} else {
+					if (!data.Load (GetMachineConfigPath ()))
+						throw new ConfigurationException ("Cannot find " + GetMachineConfigPath ());
 
+				}
 				string appfile = GetAppConfigPath ();
 				if (appfile == null) {
 					config = data;
@@ -182,6 +186,13 @@ namespace System.Configuration
 				else
 					config = data;
 			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_bundled_machine_config ();
+		internal static string GetBundledMachineConfig ()
+		{
+			return get_bundled_machine_config ();
 		}
 #if TARGET_JVM
 		internal static string GetMachineConfigPath ()
@@ -196,7 +207,6 @@ namespace System.Configuration
 			return get_machine_config_path ();
 		}
 #endif
-
 		private static string GetAppConfigPath ()
 		{
 			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
@@ -302,6 +312,30 @@ namespace System.Configuration
 				}
 #endif
 				reader = new XmlTextReader (fs);
+				if (InitRead (reader))
+					ReadConfigFile (reader);
+			} catch (ConfigurationException) {
+				throw;
+			} catch (Exception e) {
+				throw new ConfigurationException ("Error reading " + fileName, e);
+			} finally {
+				if (reader != null)
+					reader.Close();
+			}
+#endif
+			return true;
+		}
+		
+		public bool LoadString (string data)
+		{
+			if (data == null)
+				return false;
+#if (XML_DEP)
+			XmlTextReader reader = null;
+
+			try {
+				TextReader tr = new StringReader (data);
+				reader = new XmlTextReader (tr);
 				if (InitRead (reader))
 					ReadConfigFile (reader);
 			} catch (ConfigurationException) {

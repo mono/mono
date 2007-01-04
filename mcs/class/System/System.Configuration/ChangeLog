@@ -1,3 +1,9 @@
+2007-01-03  Tor Lillqvist  <tml@novell.com>
+
+	* ConfigurationSettings.cs: First try loading a bundled
+	machine.config file, then try loading one from the file
+	system. From #80305.
+
 2006-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingsPropertyValue.cs: fixed PropertyValue property, added
