@@ -26,13 +26,18 @@ namespace MonoTests.SystemWeb.Framework
 		private const string CURRENT_WEBTEST = "NunitWebCurrentTest";
 		public AppDomain AppDomain
 		{ get { return AppDomain.CurrentDomain; } }
-		
-		public static string Serialize (object o)
+
+		public static string Serialize (object o) {
+			return Serialize (o, new SoapFormatter ());
+		}
+		public static string SerializeBinary (object o) {
+			return Serialize (o, new SoapFormatter ());
+		}
+		public static string Serialize (object o, IFormatter f)
 		{
 			if (o == null)
 				return string.Empty;
 			using (MemoryStream ms = new MemoryStream ()) {
-				SoapFormatter f = new SoapFormatter ();
 				try {
 					f.Serialize (ms, o);
 				}
@@ -43,11 +48,17 @@ namespace MonoTests.SystemWeb.Framework
 					else
 						throw;
 				}
-				return HttpUtility.UrlEncode (ms.ToArray());
+				return HttpUtility.UrlEncode (ms.ToArray ());
 			}
 		}
 
-		public static object Deserialize (string s)
+		public static object Deserialize (string s) {
+			return Deserialize (s, new SoapFormatter ());
+		}
+		public static object DeserializeBinary (string s) {
+			return Deserialize (s, new SoapFormatter ());
+		}
+		public static object Deserialize (string s, IFormatter b)
 		{
 			if (s == null || s == string.Empty)
 				return null;
@@ -55,7 +66,6 @@ namespace MonoTests.SystemWeb.Framework
 				byte [] ba = HttpUtility.UrlDecodeToBytes (s);
 				ms.Write (ba, 0, ba.Length);
 				ms.Position = 0;
-				SoapFormatter b = new SoapFormatter ();
 				try {
 					return b.Deserialize (ms);
 				}
@@ -81,25 +91,36 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 
 			WebResponse response = null;
 			try {
-				try {
-					response = wr.GetResponse ();
-				}
-				catch (WebException we) {
-					//StreamReader sr = new StreamReader (we.Response.GetResponseStream ());
-					//throw new WebException (we.Message + Environment.NewLine
-					//        + "Response:" + Environment.NewLine + sr.ReadToEnd (), we);
-					response = we.Response;
-					if (((HttpWebResponse) response).StatusCode == HttpStatusCode.OK)
-						throw;//so we don't have a false positive test
+				
+				response = wr.GetResponse ();
+				HttpStatusCode status = ((HttpWebResponse) response).StatusCode;
+				if (status != HttpStatusCode.OK && status != HttpStatusCode.Found)
+					throw new WebException (((HttpWebResponse) response).StatusCode.ToString ());
+
+				t.Response = t.Request.ExtractResponse (response);
+				string etype = response.Headers [EXCEPTION_HEADER];
+
+				if (!String.IsNullOrEmpty (etype)) {
+					Exception e;
+					string data = t.Response.Body;
+					int start = data.IndexOf (EXCEPTION_HEADER);
+					if (start >= 0) {
+						start += EXCEPTION_HEADER.Length;
+						int end = data.IndexOf (EXCEPTION_HEADER, start);
+						int length = int.Parse(data.Substring(start, end - start));
+
+						string serialized = data.Substring (end + EXCEPTION_HEADER.Length, length);
+						e = (Exception) DeserializeBinary (serialized);
+					}
+					else
+						e = (Exception) Activator.CreateInstance (Type.GetType(etype));
+
+					if (e != null)
+						RethrowException (e);
 				}
 
-				Exception e = (Exception) Deserialize (
-					response.Headers[EXCEPTION_HEADER]);
-				if (e != null)
-					RethrowException (e);
 
-				t.UserData = Deserialize (response.Headers[USER_HEADER]);
-					t.Response = t.Request.ExtractResponse (response);
+				t.UserData = Deserialize (response.Headers [USER_HEADER]);
 			}
 			finally {
 				if (response != null)
@@ -116,15 +137,7 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 
 		private static void RethrowException (Exception inner)
 		{
-			Exception outer;
-			try { //Try create a similar exception and keep the inner intact
-				outer = (Exception) Activator.CreateInstance (inner.GetType (),
-					new object []{inner.ToString (), inner});
-			}
-			catch { //Failed to create a similar, fallback to the inner, ruining the call stack
-				throw inner;
-			}
-			throw outer;
+			throw inner;
 		}
 
 		public static WebTest GetCurrentTest ()
@@ -147,10 +160,18 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 		{
 			if (ex == null)
 				return;
+			//bug #6946
+			if (ex is TargetInvocationException)
+				ex = ex.InnerException;
 			if (HttpContext.Current.Items[EXCEPTION_HEADER] != null)
 				return; //register only the first exception
 			HttpContext.Current.Response.AddHeader (EXCEPTION_HEADER,
-				Serialize (ex));
+				ex.GetType().FullName);
+			HttpContext.Current.Response.Write (EXCEPTION_HEADER);
+			string serialized = SerializeBinary (ex);
+			HttpContext.Current.Response.Write (serialized.Length);
+			HttpContext.Current.Response.Write (EXCEPTION_HEADER);
+			HttpContext.Current.Response.Write (serialized);
 			HttpContext.Current.Items[EXCEPTION_HEADER] = ex;
 		}
 	}
