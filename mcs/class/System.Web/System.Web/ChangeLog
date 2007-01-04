@@ -1,3 +1,8 @@
+2007-01-04  Andreia Gaita  <avidigal@novell.com>
+
+	* HttpRuntime.cs: Add check for NET_2_0 when initializing
+	WebConfigurationManager, build failing on 1.1 profile
+	
 2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpApplicationFactory.cs, HttpRuntime.cs: WebConfigurationManager

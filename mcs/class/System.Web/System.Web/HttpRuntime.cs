@@ -97,7 +97,9 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
+#if NET_2_0
 			WebConfigurationManager.Init ();
+#endif
 			queue_manager = new QueueManager ();
 			trace_manager = new TraceManager ();
 			timeout_manager = new TimeoutManager ();
