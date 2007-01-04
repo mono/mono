@@ -37,81 +37,44 @@ namespace System.Web.Configuration
 {
 	public sealed class ProfileSection: ConfigurationSection
 	{
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty autoSaveEnabledProp;
-		static ConfigurationProperty defaultProviderProp;
-		static ConfigurationProperty enabledProp;
-		static ConfigurationProperty inheritsProp;
-		static ConfigurationProperty propertySettingsProp;
-		static ConfigurationProperty providersProp;
-
-		static ProfileSection ()
-		{
-			autoSaveEnabledProp = new ConfigurationProperty ("automaticSaveEnabled", typeof (bool), true);
-			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlProfileProvider");
-			inheritsProp = new ConfigurationProperty ("inherits", typeof (string), "");
-			propertySettingsProp = new ConfigurationProperty ("properties", typeof (RootProfilePropertySettingsCollection), null);
-			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null);
-			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
-
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (autoSaveEnabledProp);
-			properties.Add (defaultProviderProp);
-			properties.Add (inheritsProp);
-			properties.Add (propertySettingsProp);
-			properties.Add (providersProp);
-			properties.Add (enabledProp);
-		}
-
-		public ProfileSection ()
-		{
-		}
-
 		[ConfigurationProperty ("automaticSaveEnabled", DefaultValue = true)]
 		public bool AutomaticSaveEnabled {
-			get { return (bool) base [autoSaveEnabledProp]; }
-			set { base [autoSaveEnabledProp] = value; }
+			get { return (bool) base ["automaticSaveEnabled"]; }
+			set { base ["automaticSaveEnabled"] = value; }
 		}
 
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetSqlProfileProvider")]
 		[StringValidator (MinLength = 1)]
 		public string DefaultProvider {
-			get { return (string) base [defaultProviderProp]; }
-			set { base [defaultProviderProp] = value; }
+			get { return (string) base ["defaultProvider"]; }
+			set { base ["defaultProvider"] = value; }
 		}
 
 		[ConfigurationProperty ("enabled", DefaultValue = true)]
 		public bool Enabled {
-			get { return (bool) base [enabledProp]; }
-			set { base [enabledProp] = value; }
+			get { return (bool) base ["enabled"]; }
+			set { base ["enabled"] = value; }
 		}
 
 		[ConfigurationProperty ("inherits", DefaultValue = "")]
 		public string Inherits {
-			get { return (string) base [inheritsProp]; }
-			set { base [inheritsProp] = value; }
+			get { return (string) base ["inherits"]; }
+			set { base ["inherits"] = value; }
 		}
 
 		[ConfigurationProperty ("properties")]
 		public RootProfilePropertySettingsCollection PropertySettings {
 			get {
-				return (RootProfilePropertySettingsCollection) base[propertySettingsProp];
+				return (RootProfilePropertySettingsCollection) base ["properties"];
 			}
 		}
 
 		[ConfigurationProperty ("providers")]
 		public ProviderSettingsCollection Providers {
 			get {
-				return (ProviderSettingsCollection) base[providersProp];
+				return (ProviderSettingsCollection) base ["providers"];
 			}
 		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
-		}
-
 	}
 }
 
