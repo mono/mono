@@ -33,7 +33,7 @@ function ValidatorOnLoad ()
 	if (typeof (Page_ValidationSummaries) != 'undefined' && Page_ValidationSummaries != null)
 		have_validation_summaries = true;
 
-	for (var v in Page_Validators) {
+	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
 		var funcname = vo.getAttribute ("evaluationfunction");
 
@@ -95,7 +95,7 @@ function ValidatorCommonOnSubmit ()
 
 				html += header;
 				html += list_pre;
-				for (var v in Page_Validators) {
+				for (var v = 0; v < Page_Validators.length; v++) {
 					var vo = Page_Validators [v];
 
 					if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
@@ -115,7 +115,7 @@ function ValidatorCommonOnSubmit ()
 			if (attr != null && attr.toLowerCase() == "true") {
 				var v_contents = "";
 
-				for (var v in Page_Validators) {
+				for (var v = 0; v < Page_Validators.length; v++) {
 					var vo = Page_Validators [v];
 
 					if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
@@ -177,7 +177,7 @@ function Page_ClientValidate()
 		}
 	}
 
-	for (var v in Page_Validators) {
+	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
 		var evalfunc = vo["evaluationfunction"];
 		var result = false;

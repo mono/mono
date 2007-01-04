@@ -32,14 +32,14 @@ function ValidatorOnLoad ()
 {
 	if (typeof (Page_ValidationSummaries) != 'undefined' && Page_ValidationSummaries != null) {
 		have_validation_summaries = true;
-	    for (var v in Page_ValidationSummaries) {
+		  for (var v = 0; v < Page_ValidationSummaries.length; v++) {
 		    var vs = Page_ValidationSummaries [v];
 		    if (vs.getAttribute ("validationgroup") == null)
 			    vs.setAttribute ("validationgroup", "");
 	    }
 	}
 
-	for (var v in Page_Validators) {
+	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
 		var funcname = vo.getAttribute ("evaluationfunction");
 
@@ -69,7 +69,7 @@ function ValidationSummaryOnSubmit (group)
 	/* handle validation summaries here */
 	if (validation_result == false && have_validation_summaries) {
 
-		for (var vi in Page_ValidationSummaries)  {
+	  for (var vi = 0; vi < Page_ValidationSummaries.length; vi++) {
 			var vs = Page_ValidationSummaries[vi];
 		    
 		    if(IsValidationGroupMatch(vs, group)) {
@@ -106,8 +106,8 @@ function ValidationSummaryOnSubmit (group)
 
 				    html += header;
 				    html += list_pre;
-				    for (var v in Page_Validators) {
-					    var vo = Page_Validators [v];
+						for (var v = 0; v < Page_Validators.length; v++) {
+				      var vo = Page_Validators [v];
 
 					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
 						    var text = ValidatorGetErrorMessage (vo);
@@ -126,8 +126,8 @@ function ValidationSummaryOnSubmit (group)
 			    if (attr != null && attr.toLowerCase() == "true") {
 				    var v_contents = "";
 
-				    for (var v in Page_Validators) {
-					    var vo = Page_Validators [v];
+						for (var v = 0; v < Page_Validators.length; v++) {
+				      var vo = Page_Validators [v];
 
 					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
 						    var text = ValidatorGetErrorMessage (vo);
@@ -185,14 +185,14 @@ function Page_ClientValidate(group)
 
 	/* clear out the existing text from all our summaries */
 	if (have_validation_summaries) {
-		for (var vi in Page_ValidationSummaries) {
+	  for (var vi = 0; vi < Page_ValidationSummaries.length; vi++) {
 			var vs = Page_ValidationSummaries[vi];
 			vs.style.display = "none";
 			vs.innerHTML = "";
 		}
 	}
 
-	for (var v in Page_Validators) {
+	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
 		var evalfunc = vo["evaluationfunction"];
 		var result = false;
