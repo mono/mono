@@ -1,3 +1,8 @@
+2007-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProviderTest.cs: Update and add new test cases for
+	bug #80439.
+
 2007-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESCryptoServiceProviderTest.cs: Add tests for bug #80439 where 
