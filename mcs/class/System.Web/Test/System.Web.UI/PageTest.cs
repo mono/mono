@@ -115,7 +115,7 @@ namespace MonoTests.System.Web.UI {
 		[TestFixtureSetUp]
 		public void SetUpTest ()
 		{
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageCultureTest.aspx", "PageCultureTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
@@ -856,7 +856,7 @@ namespace MonoTests.System.Web.UI {
 			if (eventlist == null)
 				Assert.Fail ("User data does not been created fail");
 
-			Assert.AreEqual ("InitializeCulture", eventlist[0], "Live Cycle Flow #0");
+			Assert.AreEqual ("InitializeCulture:0", eventlist[0], "Live Cycle Flow #0");
 			Assert.AreEqual ("OnPreInit", eventlist[1], "Live Cycle Flow #1");
 			Assert.AreEqual ("OnInit", eventlist[2], "Live Cycle Flow #2");
 			Assert.AreEqual ("OnInitComplete", eventlist[3], "Live Cycle Flow #3");

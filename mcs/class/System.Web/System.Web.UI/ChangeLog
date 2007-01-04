@@ -1,3 +1,8 @@
+2007-01-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: InitializeCulture should be called 
+	before creating controls.
+
 2007-01-03  Marek Habersack  <grendello@gmail.com>
 
 	* Page.cs: Make sure the ValidatorOnSubmit function is defined for the

@@ -141,6 +141,9 @@ namespace System.Web.Compilation
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
 #if NET_2_0
+			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
+			method.Statements.Add (new CodeExpressionStatement (expr));
+
 			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
 			if (pageParser.Title != null)
 				method.Statements.Add (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title));
@@ -288,4 +291,5 @@ namespace System.Web.Compilation
 		}
 	}
 }
+
 

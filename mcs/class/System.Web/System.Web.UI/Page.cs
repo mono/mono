@@ -1166,7 +1166,6 @@ public class Page : TemplateControl, IHttpHandler
 		previousPage = _context.LastPage;
 		_context.LastPage = this;
 
-		InitializeCulture ();
 		_lifeCycle = PageLifeCycle.PreInit;
 		OnPreInit (EventArgs.Empty);
 

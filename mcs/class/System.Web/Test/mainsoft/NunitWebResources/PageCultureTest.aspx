@@ -28,14 +28,14 @@
         {
             if (WebTest.CurrentTest.UserData == null) {
                 ArrayList list = new ArrayList ();
-                list.Add ("InitializeCulture");
+				list.Add ("InitializeCulture:" + this.Controls.Count);
                 WebTest.CurrentTest.UserData = list;
             }
             else {
                 ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
                 if (list == null)
                     throw new NullReferenceException ();
-                list.Add ("InitializeCulture");
+				list.Add ("InitializeCulture:" + this.Controls.Count);
                 WebTest.CurrentTest.UserData = list;
             }
             base.InitializeCulture ();
