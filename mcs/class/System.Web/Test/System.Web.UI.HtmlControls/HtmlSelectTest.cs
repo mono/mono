@@ -34,6 +34,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Data;
 using NUnit.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
 
@@ -417,7 +418,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	<option value=""MSFT"">MSFT</option>
 	<option value=""GOOG"">GOOG</option>
 </select>";
-			Assert.AreEqual (exp, s.Render ());
+			HtmlDiff.AssertAreEqual (exp, s.Render (), "DataBind1");
 		}
 
 		DataSet GetExampleDataWithEmpty ()
@@ -446,7 +447,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	<option value=""MSFT""></option>
 	<option value=""GOOG"">Google</option>
 </select>";
-			Assert.AreEqual (exp, s.Render ());
+			HtmlDiff.AssertAreEqual (exp, s.Render (), "DataBind2");
 		}
 
 		[Test]
@@ -460,7 +461,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	<option value=""B"">B</option>
 	<option value=""C"">C</option>
 </select>";
-			Assert.AreEqual (exp, s.Render ());
+			HtmlDiff.AssertAreEqual (exp, s.Render (), "DataBind3");
 		}
 
 		[Test]
@@ -475,7 +476,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	<option value=""B"">B</option>
 	<option value=""C"">C</option>
 </select>";
-			Assert.AreEqual (exp, s.Render ());
+			HtmlDiff.AssertAreEqual (exp, s.Render (), "DataBindDoubleCall");
 		}
 		
 	}
