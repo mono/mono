@@ -128,15 +128,10 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Themeable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Not implemented")]
 		public virtual new bool GenerateEmptyAlternateText
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
+			set { throw new NotSupportedException (); }
 		}
 
 		[DefaultValue ("")]

@@ -172,30 +172,44 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		public void PostBackUrl ()
 		{
-			Page p = new Page ();
-			PokerImageButton b = new PokerImageButton ();
-			p.Controls.Add (b);
-			p.EnableEventValidation = false;
-			b.PostBackUrl = "~/MyURL.aspx";
-			string html = b.Render ();
+			WebTest test = new WebTest (PageInvoker.CreateOnLoad (PostBackUrl_load));
+			string html = HtmlDiff.GetControlFromPageHtml (test.Run ());
 			if (html.IndexOf ("onclick") == -1)
 				Assert.Fail ("PostBack script not created");
-			if (html.IndexOf ("~/MyURL.aspx") == -1)
+			if (html.IndexOf ("MyURL.aspx") == -1)
 				Assert.Fail ("PostBack page URL not set");
+			if (html.IndexOf ("~/MyURL.aspx") != -1)
+				Assert.Fail ("PostBack page URL is not resolved");
+		}
+		
+		public static void PostBackUrl_load (Page p)
+		{
+			PokerImageButton b = new PokerImageButton ();
+			p.Form.Controls.Add (new LiteralControl(HtmlDiff.BEGIN_TAG));
+			p.Form.Controls.Add (b);
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.END_TAG));
+			b.PostBackUrl = "~/MyURL.aspx";
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ValidationGroup ()
 		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
-			t.Run ();
+			string html = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			if (html.IndexOf ("onclick") == -1)
+				Assert.Fail ("Validation script not created");
+			if (html.IndexOf ("MyValidationGroup") == -1)
+				Assert.Fail ("Validation group not set fail");
 		}
 
 		public static void ValidationGroup_Load(Page p)
@@ -208,15 +222,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			RequiredFieldValidator v = new RequiredFieldValidator ();
 			v.ControlToValidate = "tb";
 			v.ValidationGroup = "MyValidationGroup";
-			p.Controls.Add (tb);
-			p.Controls.Add (v);
-			p.Controls.Add (b);
-			string html = b.Render ();
-			if (html.IndexOf ("onclick") == -1)
-				Assert.Fail ("Validation script not created");
-			if (html.IndexOf ("MyValidationGroup") == -1)
-				Assert.Fail ("Validation group not set fail");
-
+			p.Form.Controls.Add (tb);
+			p.Form.Controls.Add (v);
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.BEGIN_TAG));
+			p.Form.Controls.Add (b);
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.END_TAG));
 		}
 
 		[Test]
@@ -229,11 +239,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category("NunitWeb")]
 		public void RaisePostBackEvent ()
 		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (RaisePostBackEvent_Load);
 			t.Run ();
@@ -347,7 +360,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")] // Not implemented
 		[ExpectedException (typeof (NotSupportedException))]
 		public void GenerateEmptyAlternateText_Exception ()
 		{
