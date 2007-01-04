@@ -1,6 +1,6 @@
-// 
-// OciRowIdDescriptor.cs 
-//  
+//
+// OciRowIdDescriptor.cs
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,12 +8,12 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Author: 
+//
+// Author:
 //     Tim Coleman <tim@timcoleman.com>
-//         
+//
 // Copyright (C) Tim Coleman, 2003
-// 
+//
 
 using System;
 using System.Data.OracleClient;
@@ -39,15 +39,15 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		
+
 		//FIXME: This method only exists in Oracle 9i
 /*
-		[DllImport ("oci")] 
+		[DllImport ("oci")]
 		static extern int OCIRowidToChar (IntPtr rowidDesc,
 						IntPtr outbfp,
 						ref int outbflp,
 						IntPtr errhp);
-*/		
+*/
 
 		protected override void Dispose (bool disposing)
 		{
@@ -61,9 +61,9 @@ namespace System.Data.OracleClient.Oci {
 		public string GetRowId (OciErrorHandle errorHandle)
 		{
 			string output = String.Empty;
-/*			
+/*
 			int len = 10;
-			IntPtr outputPtr = Marshal.AllocHGlobal (len); // FIXME: how big should this be?
+			IntPtr outputPtr = OciCalls.AllocateClear (len); // FIXME: how big should this be?
 
 			int status = 0;
 
@@ -82,11 +82,11 @@ namespace System.Data.OracleClient.Oci {
 				if (str != null)
 					output = String.Copy ((string) str);
 			}
-*/			
+*/
 			output = "NOT YET SUPPORTED.";
 
 			return output;
-		} 
+		}
 
 		#endregion // Methods
 	}

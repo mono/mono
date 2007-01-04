@@ -1,4 +1,4 @@
-// 
+//
 // OracleParameter.cs
 //
 // Part of the Mono class libraries at
@@ -7,7 +7,7 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Authors: 
+// Authors:
 //    Tim Coleman <tim@timcoleman.com>
 //    Daniel Moragn <danielmorgan@verizon.net>
 //    Hubert FONGARNAND <informatique.internet@fiducial.fr>
@@ -181,7 +181,7 @@ namespace System.Data.OracleClient {
 			get { return oracleType; }
 			set { SetOracleType (value); }
 		}
-		
+
 		[DefaultValue ("")]
 		public string ParameterName {
 			get { return name; }
@@ -203,9 +203,9 @@ namespace System.Data.OracleClient {
 		[DefaultValue (0)]
 		public int Size {
 			get { return size; }
-			set { 
+			set {
 				sizeSet = true;
-				size = value; 
+				size = value;
 			}
 		}
 
@@ -306,20 +306,20 @@ namespace System.Data.OracleClient {
 					case OciDataType.OciString:
 						bindType = OciDataType.Char;
 						bindSize = size * 2;
-						bindOutValue = Marshal.AllocHGlobal (bindSize);
+						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindValue = bindOutValue;
 						break;
 					case OciDataType.RowIdDescriptor:
 						size = 10;
 						bindType = OciDataType.Char;
 						bindSize = size * 2;
-						bindOutValue = Marshal.AllocHGlobal (bindSize);
+						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindValue = bindOutValue;
 						break;
 					case OciDataType.Date:
 						bindSize = 7;
 						bindType = OciDataType.Date;
-						bindOutValue = Marshal.AllocHGlobal (bindSize);
+						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindValue = bindOutValue;
 						break;
 					case OciDataType.TimeStamp:
@@ -338,7 +338,7 @@ namespace System.Data.OracleClient {
 					case OciDataType.Number:
 						bindSize = 22;
 						bindType = OciDataType.Char;
-						bindOutValue = Marshal.AllocHGlobal (bindSize);
+						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindValue = bindOutValue;
 						break;
 					case OciDataType.Long:
@@ -347,7 +347,7 @@ namespace System.Data.OracleClient {
 						// therefore, you must allocate an insane size
 						// see OciDefineHandle
 						bindSize = OciDefineHandle.LongVarCharMaxValue;
-						bindOutValue = Marshal.AllocHGlobal (bindSize);
+						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindType = OciDataType.LongVarChar;
 						bindValue = bindOutValue;
 						break;
@@ -364,7 +364,7 @@ namespace System.Data.OracleClient {
 						lobLocator.ErrorHandle = connection.ErrorHandle;
 						lobLocator.Service = statement.Service;
 						useRef = true;
-						break;					
+						break;
 					case OciDataType.RSet: // REF CURSOR
 						cursor = IntPtr.Zero;
 						OciCalls.OCIHandleAlloc (connection.Environment,
@@ -372,10 +372,10 @@ namespace System.Data.OracleClient {
 							OciHandleType.Statement,
 							0,
 							IntPtr.Zero);
-							
+
 						bindSize = 0;
 						bindType = OciDataType.RSet;
-						break;					
+						break;
 					default:
 						// define other types
 						throw new NotImplementedException ();
@@ -413,7 +413,7 @@ namespace System.Data.OracleClient {
 					}
 					else
 						throw new NotImplementedException (); // ?
-					
+
 					short year = (short) dt.Year;
 					byte month = (byte) dt.Month;
 					byte day = (byte) dt.Day;
@@ -429,7 +429,7 @@ namespace System.Data.OracleClient {
 					}
 					dateTimeDesc.ErrorHandle = connection.ErrorHandle;
 					dateTimeDesc.SetDateTime (connection.Session,
-						connection.ErrorHandle, 
+						connection.ErrorHandle,
 						year, month, day, hour, min, sec, fsec,
 						timezone);
 					useRef = true;
@@ -466,10 +466,10 @@ namespace System.Data.OracleClient {
 				else if (oracleType == OracleType.Clob) {
 					string sv = v.ToString();
 					rsize = 0;
-			
+
 					// Get size of buffer
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, sv, out rsize);
-			
+
 					// Fill buffer
 					bytes = new byte[rsize];
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, sv, out rsize);
@@ -479,7 +479,7 @@ namespace System.Data.OracleClient {
 				}
 				else if (oracleType == OracleType.Raw) {
 					byte[] val = v as byte[];
-					bindValue = Marshal.AllocHGlobal (val.Length);
+					bindValue = OciCalls.AllocateClear (val.Length);
 					Marshal.Copy (val, 0, bindValue, val.Length);
 					bindSize = val.Length;
 				}
@@ -495,10 +495,10 @@ namespace System.Data.OracleClient {
                                         else
                                                 svalue = v.ToString();
 					rsize = 0;
-			
+
 					// Get size of buffer
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
-			
+
 					// Fill buffer
 					bytes = new byte[rsize];
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
@@ -509,10 +509,10 @@ namespace System.Data.OracleClient {
 				else {
 					string svalue = v.ToString () + '\0';
 					rsize = 0;
-			
+
 					// Get size of buffer
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
-			
+
 					// Fill buffer
 					bytes = new byte[rsize];
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
@@ -573,7 +573,7 @@ namespace System.Data.OracleClient {
 					IntPtr.Zero,
 					0,
 					IntPtr.Zero,
-					0);					
+					0);
 			}
 			else if (bytes != null) {
 				status = OciCalls.OCIBindByNameBytes (statement,
@@ -596,7 +596,7 @@ namespace System.Data.OracleClient {
 					out tmpHandle,
 					connection.ErrorHandle,
 					ParameterName,
-					ParameterName.Length,
+					ParameterName.Length, // FIXME: this should be in bytes!
 					bindValue,
 					bindSize,
 					bindType,
@@ -669,7 +669,7 @@ namespace System.Data.OracleClient {
 		private int InferSize ()
 		{
 			int newSize = 0;
-			
+
 			switch (ociType) {
 			case OciDataType.VarChar2:
 			case OciDataType.String:
@@ -697,12 +697,12 @@ namespace System.Data.OracleClient {
 				break;
 			case OciDataType.TimeStamp:
 				newSize = 11;
- 				break;		
+ 				break;
 			case OciDataType.Blob:
 			case OciDataType.Clob:
 			case OciDataType.RSet: // REF CURSOR
 				newSize = -1;
-				break;					
+				break;
 			default:
 				if (value == null || value == DBNull.Value)
 					newSize = 0;
@@ -890,7 +890,7 @@ namespace System.Data.OracleClient {
 			return ParameterName;
 		}
 
-		private void GetOutValue (OracleCommand cmd) 
+		private void GetOutValue (OracleCommand cmd)
 		{
 			// used to update the parameter value
 			// for Output, the output of InputOutput, and Return parameters
@@ -911,16 +911,16 @@ namespace System.Data.OracleClient {
 			case OciDataType.RowIdDescriptor:
 				buffer = new byte [Size];
 				Marshal.Copy (bindOutValue, buffer, 0, Size);
-				
+
 				// Get length of returned string
 				int 	rsize = 0;
 				IntPtr	env = cmd.Connection.Environment;
 				OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
-			
+
 				// Get string
 				StringBuilder ret = new StringBuilder(rsize);
 				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
-	
+
 				value = ret.ToString ();
 				break;
 			case OciDataType.Integer:
@@ -935,7 +935,7 @@ namespace System.Data.OracleClient {
 				break;
 			case OciDataType.Date:
 				value = UnpackDate (bindOutValue);
-				break;	
+				break;
 			case OciDataType.Blob:
 			case OciDataType.Clob:
 				OracleLob lob = new OracleLob (lobLocator, ociType);
@@ -958,11 +958,11 @@ namespace System.Data.OracleClient {
 			buffer = null;
 		}
 
-		internal void Update (OracleCommand cmd) 
+		internal void Update (OracleCommand cmd)
 		{
 			if (Direction != ParameterDirection.Input)
 				GetOutValue (cmd);
-			
+
 			FreeHandle ();
 		}
 
@@ -981,7 +981,7 @@ namespace System.Data.OracleClient {
                         default:
                                 Marshal.FreeHGlobal (bindOutValue);
                                 break;
-			} 
+			}
 
 			bindOutValue = IntPtr.Zero;
 			bindValue = IntPtr.Zero;
@@ -1012,7 +1012,7 @@ namespace System.Data.OracleClient {
 
 		}
 
-		internal byte[] PackDate (DateTime dateValue) 
+		internal byte[] PackDate (DateTime dateValue)
 		{
 			byte[] buffer = new byte[7];
 

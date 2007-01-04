@@ -1,6 +1,6 @@
-// 
-// OciDefineHandle.cs 
-//  
+//
+// OciDefineHandle.cs
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,21 +8,21 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Authors: 
+//
+// Authors:
 //     Tim Coleman <tim@timcoleman.com>
 //     Daniel Morgan <danielmorgan@verizon.net>
-//         
+//
 // Copyright (C) Tim Coleman, 2003
 // Copyright (C) Daniel Morgan, 2004
-// 
+//
 
 using System;
 using System.Data.OracleClient;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Data.OracleClient.Oci 
+namespace System.Data.OracleClient.Oci
 {
 	internal sealed class OciDefineHandle : OciHandle, IDisposable
 	{
@@ -55,7 +55,7 @@ namespace System.Data.OracleClient.Oci
 		OciLobLocator lobLocator;
 		OciDateTimeDescriptor dateTimeDesc;
 		byte[] date;
-	
+
 		#endregion // Fields
 
 		#region Constructors
@@ -68,7 +68,7 @@ namespace System.Data.OracleClient.Oci
 		public void DefineByPosition (int position)
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
-			
+
 			name = parameter.GetName ();
 			definedType = parameter.GetDataType ();
 			definedSize = parameter.GetDataSize ();
@@ -125,7 +125,7 @@ namespace System.Data.OracleClient.Oci
 		{
 			switch (definedType) {
 			case OciDataType.Date:
-				DefineDate (position); 
+				DefineDate (position);
 				return;
 			case OciDataType.TimeStamp:
 				DefineTimeStamp (position);
@@ -156,12 +156,12 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineTimeStamp (int position) 
+		void DefineTimeStamp (int position)
 		{
 			definedSize = -1;
 			ociType = OciDataType.TimeStamp;
 			fieldType = typeof(System.DateTime);
-		
+
 			dateTimeDesc = (OciDateTimeDescriptor) Parent.Parent.Allocate (OciHandleType.TimeStamp);
 			if (dateTimeDesc == null) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -170,7 +170,7 @@ namespace System.Data.OracleClient.Oci
 
 			value = dateTimeDesc.Handle;
 			dateTimeDesc.ErrorHandle = ErrorHandle;
-			
+
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPosPtr (Parent,
@@ -186,7 +186,7 @@ namespace System.Data.OracleClient.Oci
 				0);
 
 			definedSize = 11;
-		
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -199,7 +199,7 @@ namespace System.Data.OracleClient.Oci
 			ociType = OciDataType.Date;
 			fieldType = typeof(System.DateTime);
 
-			value = Marshal.AllocHGlobal (definedSize);
+			value = OciCalls.AllocateClear (definedSize);
 
 			int status = 0;
 
@@ -221,7 +221,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineLong (int position) 
+		void DefineLong (int position)
 		{
 			fieldType = typeof (System.String);
 
@@ -235,8 +235,8 @@ namespace System.Data.OracleClient.Oci
 			// If you specify a definedSize less then the length of the column value,
 			// then you will get an OCI_ERROR ORA-01406: fetched column value was truncated
 			definedSize = LongVarCharMaxValue;
-			
-			value = Marshal.AllocHGlobal (definedSize);
+
+			value = OciCalls.AllocateClear (definedSize);
 			ociType = OciDataType.LongVarChar;
 
 			int status = 0;
@@ -264,12 +264,12 @@ namespace System.Data.OracleClient.Oci
 			fieldType = typeof (System.String);
 
 			int maxByteCount = Encoding.UTF8.GetMaxByteCount (definedSize);
-			value = Marshal.AllocHGlobal (maxByteCount);
+			value = OciCalls.AllocateClear (maxByteCount);
 
 			ociType = OciDataType.Char;
 
 			int status = 0;
-			
+
 			status = OciCalls.OCIDefineByPos (Parent,
 						out handle,
 						ErrorHandle,
@@ -288,15 +288,15 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineNumber (int position) 
+		void DefineNumber (int position)
 		{
 			fieldType = typeof (System.Decimal);
-			value = Marshal.AllocHGlobal (definedSize);
+			value = OciCalls.AllocateClear (definedSize);
 
 			ociType = OciDataType.Char;
 
 			int status = 0;
-			
+
 			status = OciCalls.OCIDefineByPos (Parent,
 				out handle,
 				ErrorHandle,
@@ -364,7 +364,7 @@ namespace System.Data.OracleClient.Oci
 			ociType = OciDataType.Raw;
 			fieldType = Type.GetType("System.Byte[]");
 
-			value = Marshal.AllocHGlobal (definedSize);
+			value = OciCalls.AllocateClear (definedSize);
 
 			int status = 0;
 
@@ -385,7 +385,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				try {
@@ -427,22 +427,22 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.RowIdDescriptor:
 				buffer = new byte [Size];
 				Marshal.Copy (Value, buffer, 0, Size);
-				
+
 				// Get length of returned string
 				int 	rsize = 0;
 				IntPtr	env = Parent.Parent;	// Parent is statement, grandparent is environment
 				OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
-			
+
 				// Get string
 				StringBuilder ret = new StringBuilder(rsize);
 				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
-	
+
 				return ret.ToString ();
 			case OciDataType.LongVarChar:
 			case OciDataType.Long:
 				buffer = new byte [LongVarCharMaxValue];
 				Marshal.Copy (Value, buffer, 0, buffer.Length);
-				
+
 				int longSize = 0;
 				if (BitConverter.IsLittleEndian)
 					longSize = BitConverter.ToInt32 (new byte[]{buffer[0], buffer[1], buffer[2], buffer[3]}, 0);
@@ -519,11 +519,11 @@ namespace System.Data.OracleClient.Oci
 			byte minute = Marshal.ReadByte (value, 5);
 			byte second = Marshal.ReadByte (value, 6);
 
-			if (hour == 0) 
+			if (hour == 0)
 				hour ++;
-			if (minute == 0) 
+			if (minute == 0)
 				minute ++;
-			if (second == 0) 
+			if (second == 0)
 				second ++;
 
 			return new DateTime ((century - 100) * 100 + (year - 100),

@@ -1,3 +1,7 @@
+2007-01-04 Leszek Ciesielski <skolima@gmail.com>
+	* OracleParameter.cs:  padding the allocated memory  with 0's (this is what OCI
+	expects)
+
 2006-10-19  Leszek Ciesielski <skolima@gmail.com>
 	* OracleConnection.cs: moved setting SessionFormatProvider from Open() into first access to it.
 	* OracleParameter.cs: made exception in InferOracleType a bit more verbose.

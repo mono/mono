@@ -1,6 +1,6 @@
-// 
-// OciErrorHandle.cs 
-//  
+//
+// OciErrorHandle.cs
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,12 +8,12 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Author: 
+//
+// Author:
 //     Tim Coleman <tim@timcoleman.com>
-//         
+//
 // Copyright (C) Tim Coleman, 2003
-// 
+//
 
 using System;
 using System.Runtime.InteropServices;
@@ -47,16 +47,16 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public static OciErrorInfo HandleError (OciHandle hand) 
+		public static OciErrorInfo HandleError (OciHandle hand)
 		{
 			OciErrorInfo info;
 			info.ErrorCode = 0;
 			info.ErrorMessage = String.Empty;
 
 			int errbufSize = 4096;
-			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
+			IntPtr errbuf = OciCalls.AllocateClear (errbufSize);
 
-			OciCalls.OCIErrorGet (hand, 
+			OciCalls.OCIErrorGet (hand,
 				1,
 				IntPtr.Zero,
 				out info.ErrorCode,
@@ -67,7 +67,7 @@ namespace System.Data.OracleClient.Oci {
 			byte[] bytea = new byte[errbufSize];
 			Marshal.Copy (errbuf, bytea, 0, errbufSize);
 			errbufSize = 0;
-			
+
 			OciHandle h = hand.Parent;
 			if (h == null)
 				h = hand;
@@ -75,21 +75,21 @@ namespace System.Data.OracleClient.Oci {
 			// first call to OCICharSetToUnicode gets the size
 			OciCalls.OCICharSetToUnicode (h, null, bytea, out errbufSize);
 			StringBuilder str = new StringBuilder (errbufSize);
-			
+
 			// second call to OCICharSetToUnicode gets the string
 			OciCalls.OCICharSetToUnicode (h, str, bytea, out errbufSize);
-			
+
 			string errmsg = String.Empty;
 			if (errbufSize > 0)
 				errmsg = str.ToString ();
-			
+
 			info.ErrorMessage = String.Copy (errmsg);
 			Marshal.FreeHGlobal (errbuf);
 
 			return info;
 		}
 
-		public OciErrorInfo HandleError () 
+		public OciErrorInfo HandleError ()
 		{
 			return HandleError (this);
 		}

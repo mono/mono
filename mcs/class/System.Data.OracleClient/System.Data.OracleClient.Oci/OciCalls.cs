@@ -1,5 +1,5 @@
 //
-// OciCalls.cs 
+// OciCalls.cs
 //
 // Part of the Mono class libraries at
 // mcs/class/System.Data.OracleClient/System.Data.OracleClient.Oci
@@ -350,10 +350,10 @@ namespace System.Data.OracleClient.Oci
 				byte csfrm);
 
 			[DllImport ("oci")]
-			internal static extern int OCINlsGetInfo (IntPtr hndl, 
+			internal static extern int OCINlsGetInfo (IntPtr hndl,
 				IntPtr errhp,
 				[In][Out] byte[] bufp,
-				uint buflen, 
+				uint buflen,
 				ushort item);
 
 			[DllImport ("oci")]
@@ -411,7 +411,7 @@ namespace System.Data.OracleClient.Oci
 				uint nrows,
 				ushort orientation,
 				uint mode);
-							
+
 
 			[DllImport ("oci")]
 			internal static extern int OCIStmtPrepare (IntPtr stmthp,
@@ -440,18 +440,18 @@ namespace System.Data.OracleClient.Oci
 			[DllImport ("oci")]
 			internal static extern int OCICharSetToUnicode (
 				IntPtr svchp,
-				[MarshalAs (UnmanagedType.LPWStr)] StringBuilder dst, 
-				[MarshalAs (UnmanagedType.U4)] int dstlen, 
+				[MarshalAs (UnmanagedType.LPWStr)] StringBuilder dst,
+				[MarshalAs (UnmanagedType.U4)] int dstlen,
 				byte [] src,
 				[MarshalAs (UnmanagedType.U4)] int srclen,
 				[MarshalAs (UnmanagedType.U4)] out int rsize);
-			
+
 			[DllImport ("oci")]
 			internal static extern int OCIUnicodeToCharSet (
 				IntPtr svchp,
 				byte [] dst,
-				[MarshalAs (UnmanagedType.U4)] int dstlen, 
-				[MarshalAs (UnmanagedType.LPWStr)] string src, 
+				[MarshalAs (UnmanagedType.U4)] int dstlen,
+				[MarshalAs (UnmanagedType.LPWStr)] string src,
 				[MarshalAs (UnmanagedType.U4)] int srclen,
 				[MarshalAs (UnmanagedType.U4)] out int rsize);
 		}
@@ -510,7 +510,7 @@ namespace System.Data.OracleClient.Oci
 			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
-			return OciNativeCalls.OCIBindByName (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
+			return OciNativeCalls.OCIBindByName (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -527,10 +527,10 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) 
+			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
-			return OciNativeCalls.OCIBindByNameRef (stmtp, out bindpp, errhp, placeholder, placeh_len, ref valuep, 
+			return OciNativeCalls.OCIBindByNameRef (stmtp, out bindpp, errhp, placeholder, placeh_len, ref valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -547,10 +547,10 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) 
+			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
-			return OciNativeCalls.OCIBindByNameBytes (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
+			return OciNativeCalls.OCIBindByNameBytes (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -566,10 +566,10 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) 
+			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
-			return OciNativeCalls.OCIBindByPos (stmtp, out bindpp, errhp, position, valuep, 
+			return OciNativeCalls.OCIBindByPos (stmtp, out bindpp, errhp, position, valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -585,10 +585,10 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) 
+			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
-			return OciNativeCalls.OCIBindByPosRef (stmtp, out bindpp, errhp, position, ref valuep, 
+			return OciNativeCalls.OCIBindByPosRef (stmtp, out bindpp, errhp, position, ref valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -604,10 +604,10 @@ namespace System.Data.OracleClient.Oci
 			IntPtr rcodep,
 			uint maxarr_len,
 			IntPtr curelp,
-			uint mode) 
+			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByPos", "OCI");
-			return OciNativeCalls.OCIBindByPosBytes (stmtp, out bindpp, errhp, position, valuep, 
+			return OciNativeCalls.OCIBindByPosBytes (stmtp, out bindpp, errhp, position, valuep,
 				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
 
@@ -655,7 +655,7 @@ namespace System.Data.OracleClient.Oci
 			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIDefineByPos", "OCI");
-			return OciNativeCalls.OCIDefineByPos (stmtp, out defnpp, errhp, position, valuep, 
+			return OciNativeCalls.OCIDefineByPos (stmtp, out defnpp, errhp, position, valuep,
 				value_sz, dty, ref indp, ref rlenp, rcodep, mode);
 		}
 
@@ -672,7 +672,7 @@ namespace System.Data.OracleClient.Oci
 			uint mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIDefineByPosPtr", "OCI");
-			return OciNativeCalls.OCIDefineByPosPtr (stmtp, out defnpp, errhp, position, ref valuep, 
+			return OciNativeCalls.OCIDefineByPosPtr (stmtp, out defnpp, errhp, position, ref valuep,
 				value_sz, dty, ref indp, ref rlenp, rcodep, mode);
 		}
 
@@ -860,7 +860,7 @@ namespace System.Data.OracleClient.Oci
 			byte csfrm)
 		{
 			Trace.WriteLineIf(traceOci, "OCILobRead", "OCI");
-			return OciNativeCalls.OCILobRead (svchp, errhp, locp, ref amtp, offset, bufp, bufl, 
+			return OciNativeCalls.OCILobRead (svchp, errhp, locp, ref amtp, offset, bufp, bufl,
 				ctxp, cbfp, csid, csfrm);
 		}
 
@@ -891,11 +891,11 @@ namespace System.Data.OracleClient.Oci
 				piece, ctxp, cbfp, csid, csfrm);
 		}
 
-		internal static int OCINlsGetInfo (IntPtr hndl, 
+		internal static int OCINlsGetInfo (IntPtr hndl,
 			IntPtr errhp,
 			ref byte[] bufp,
-			uint buflen, 
-			ushort item) 
+			uint buflen,
+			ushort item)
 		{
 			Trace.WriteLineIf(traceOci, "OCINlsGetInfo", "OCI");
 			return OciNativeCalls.OCINlsGetInfo (hndl, errhp, bufp, buflen, item);
@@ -923,7 +923,7 @@ namespace System.Data.OracleClient.Oci
 			IntPtr errhp,
 			ref byte[] bufp,
 			uint bufsz,
-			OciHandleType hndltype) 
+			OciHandleType hndltype)
 		{
 			Trace.WriteLineIf(traceOci, "OCIServerVersion", "OCI");
 			return OciNativeCalls.OCIServerVersion (hndlp,
@@ -972,11 +972,11 @@ namespace System.Data.OracleClient.Oci
 			OciExecuteMode mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIStmtExecute", "OCI");
-			
+
 			uint it = 0;
 			if (iters == true)
 				it = 1;
-			
+
 			return OciNativeCalls.OCIStmtExecute (svchp, stmthp, errhp, it, rowoff,
 				snap_in, snap_out, mode);
 		}
@@ -990,7 +990,7 @@ namespace System.Data.OracleClient.Oci
 			Trace.WriteLineIf(traceOci, "OCIStmtFetch", "OCI");
 			return OciNativeCalls.OCIStmtFetch (stmtp, errhp, nrows, orientation, mode);
 		}
-							
+
 
 		internal static int OCIStmtPrepare (IntPtr stmthp,
 			IntPtr errhp,
@@ -1000,7 +1000,7 @@ namespace System.Data.OracleClient.Oci
 			OciStatementMode mode)
 		{
 			Trace.WriteLineIf(traceOci, string.Format("OCIStmtPrepare ({0})", System.Text.Encoding.UTF8.GetString(stmt)), "OCI");
-			
+
 			return OciNativeCalls.OCIStmtPrepare (stmthp, errhp, stmt, stmt_length, language, mode);
 		}
 
@@ -1031,23 +1031,23 @@ namespace System.Data.OracleClient.Oci
 
 		internal static int OCICharSetToUnicode (
 			IntPtr svchp,
-			StringBuilder dst, 
+			StringBuilder dst,
 			byte [] src,
 			out int rsize)
 		{
 			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
-			
+
 			return OciNativeCalls.OCICharSetToUnicode (svchp, dst, dst!=null ? dst.Capacity : 0, src, src.Length, out rsize);
 		}
 
 		internal static int OCIUnicodeToCharSet (
 			IntPtr svchp,
 			byte [] dst,
-			[MarshalAs (UnmanagedType.LPWStr)] string src, 
+			[MarshalAs (UnmanagedType.LPWStr)] string src,
 			[MarshalAs (UnmanagedType.U4)] out int rsize)
 		{
 			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
-			
+
 			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);
 		}
 
@@ -1056,6 +1056,15 @@ namespace System.Data.OracleClient.Oci
 			IntPtr err, IntPtr date, out uint valid);
 
 		#endregion
+
+		//http://download-uk.oracle.com/docs/cd/B14117_01/appdev.101/b10779/oci05bnd.htm#423147
+		internal static IntPtr AllocateClear (int cb)
+		{
+			IntPtr result = Marshal.AllocHGlobal ( cb);
+			for (int cleaner = 0; cleaner < cb; cleaner ++)
+				Marshal.WriteByte (result, cleaner, 0);
+			return result;
+		}
 	}
 }
 
