@@ -6,7 +6,13 @@
  *
  * (C) 2004 Novell, Inc.
  */
+#include <config.h>
+#if defined (HAVE_ZLIB)
+#include <zlib.h>
+#else
 #include "zlib.h"
+#endif
+
 #include <stdlib.h>
 
 z_stream *

@@ -56,7 +56,7 @@ MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
 MPH_LIBS   = $(GLIB_LIBS)
 endif
 
-zlib_sources = \
+ZLIB_SOURCES = \
 	adler32.c	\
 	compress.c	\
 	crc32.c		\
@@ -80,7 +80,13 @@ zlib_sources = \
 	zlib.h  	\
 	zutil.h
 
-Z_SOURCE = zlib_macros.c $(zlib_sources)
+if HAVE_ZLIB
+Z_SOURCE = zlib_macros.c 
+Z_LIBS= -lz
+else
+Z_SOURCE = zlib_macros.c $(ZLIB_SOURCES)
+Z_LIBS=
+endif
 
 libMonoPosixHelper_la_SOURCES =			\
 	$(MPH_SOURCE)				\
