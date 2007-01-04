@@ -1186,7 +1186,7 @@ namespace System.Windows.Forms {
 					if (text_rect == Rectangle.Empty)
 						text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
 					
-					gr.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor), text_rect, text_format);
+					gr.DrawString (Text, Font, Brushes.White, text_rect, text_format);
 				}
 				
 				switch (popupButtonState) {
@@ -1257,7 +1257,7 @@ namespace System.Windows.Forms {
 		{
 			SuspendLayout ();
 			
-			//BackColor = Color.FromArgb (128, 128, 128);
+			BackColor = Color.FromArgb (128, 128, 128);
 			Size = new Size (85, 336);
 			
 			recentlyusedButton = new PopupButton ();
