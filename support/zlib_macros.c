@@ -6,7 +6,7 @@
  *
  * (C) 2004 Novell, Inc.
  */
-#include <zlib.h>
+#include "zlib.h"
 #include <stdlib.h>
 
 z_stream *
