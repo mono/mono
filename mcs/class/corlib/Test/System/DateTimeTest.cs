@@ -1322,7 +1322,7 @@ public class DateTimeTest : Assertion
 #if NET_2_0
 	[ExpectedException (typeof (FormatException))]
 #else
-	[Ignore ("Works only under MS 1.x (i.e. Mono and MS 2.0 fails).")]
+	[Ignore ("Works only under MS 1.x (not Mono or MS 2.0).")]
 #endif
 	public void ParseNotExact ()
 	{
