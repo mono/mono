@@ -757,9 +757,8 @@ namespace Cairo {
 			return dest;
 		}
 
-
-                public void ShowGlyphs (Matrix matrix, Glyph[] glyphs)
-                {
+                public void ShowGlyphs (Glyph[] glyphs)
+		{
                         IntPtr ptr;
 
                         ptr = FromGlyphToUnManagedMemory (glyphs);
@@ -767,12 +766,22 @@ namespace Cairo {
                         CairoAPI.cairo_show_glyphs (state, ptr, glyphs.Length);
 
                         Marshal.FreeHGlobal (ptr);		
-                     
+		}
+
+		[Obsolete("The matrix argument was never used, use ShowGlyphs(Glyphs []) instead")]
+                public void ShowGlyphs (Matrix matrix, Glyph[] glyphs)
+                {
+			ShowGlyphs (glyphs);
                 }
 
+		[Obsolete("The matrix argument was never used, use GlyphPath(Glyphs []) instead")]
                 public void GlyphPath (Matrix matrix, Glyph[] glyphs)
                 {
+			GlyphPath (glyphs);
+		}
 
+		public void GlyphPath (Glyph[] glyphs)
+		{
                         IntPtr ptr;
 
                         ptr = FromGlyphToUnManagedMemory (glyphs);
