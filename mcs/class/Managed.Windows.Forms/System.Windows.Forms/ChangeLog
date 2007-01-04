@@ -1,3 +1,10 @@
+2007-01-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CommonDialog.cs, Cursor.cs, ErrorProvider.cs, HelpProvider.cs:
+	Add 2.0 Tag properties.
+
+	* LinkArea.cs: Add 2.0 ToString method.
+
 2007-01-03  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: the Alt+0 handling was wrong, it should have been

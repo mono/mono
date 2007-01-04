@@ -79,6 +79,9 @@ namespace System.Windows.Forms {
 
 		#region Local Variables
 		internal DialogForm	form;
+#if NET_2_0
+		private object tag;
+#endif
 		#endregion Local Variables
 
 		#region Public Constructors
@@ -86,6 +89,20 @@ namespace System.Windows.Forms {
 			form = new DialogForm(this);
 		}
 		#endregion Public Constructors
+
+		#region Public Properties
+#if NET_2_0
+		[Localizable (false)]
+		[Bindable (true)]
+		[TypeConverter (typeof (StringConverter))]
+		[DefaultValue (null)]
+		[MWFCategory ("Data")]
+		public object Tag {
+			get { return this.tag; }
+			set { this.tag = value; }
+		}
+#endif
+		#endregion
 
 		#region Internal Methods
 		internal virtual void InitFormsSize(Form form) {

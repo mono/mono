@@ -274,6 +274,10 @@ namespace System.Windows.Forms {
 		private Icon			icon;
 		private Hashtable		controls;
 		private ToolTip.ToolTipWindow	tooltip;
+
+#if NET_2_0
+		private object tag;
+#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -377,6 +381,18 @@ namespace System.Windows.Forms {
 				base.Site = value;
 			}
 		}
+
+#if NET_2_0
+		[Localizable (false)]
+		[Bindable (true)]
+		[TypeConverter (typeof (StringConverter))]
+		[DefaultValue (null)]
+		[MWFCategory ("Data")]
+		public object Tag {
+			get { return this.tag; }
+			set { this.tag = value; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods

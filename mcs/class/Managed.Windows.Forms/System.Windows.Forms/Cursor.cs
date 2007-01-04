@@ -98,6 +98,10 @@ namespace System.Windows.Forms {
 		private Bitmap		mask;
 		private Bitmap		cursor;
 		internal string		name;
+
+#if NET_2_0
+		private object tag;
+#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -232,6 +236,18 @@ namespace System.Windows.Forms {
 				return size;
 			}
 		}
+		
+#if NET_2_0
+		[Localizable (false)]
+		[Bindable (true)]
+		[TypeConverter (typeof (StringConverter))]
+		[DefaultValue (null)]
+		[MWFCategory ("Data")]
+		public object Tag {
+			get { return this.tag; }
+			set { this.tag = value; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Static Methods
