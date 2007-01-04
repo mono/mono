@@ -1,4 +1,4 @@
-// 
+﻿//
 // OracleCommand.cs
 //
 // Part of the Mono class libraries at
@@ -7,7 +7,7 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Authors: 
+// Authors:
 //    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
 //
@@ -41,7 +41,7 @@ namespace System.Data.OracleClient {
 		UpdateRowSource updatedRowSource;
 
 		private OciStatementHandle preparedStatement;
-		OciStatementType statementType;
+		//OciStatementType statementType;
 
 		#endregion // Fields
 
@@ -91,10 +91,10 @@ namespace System.Data.OracleClient {
 		[DefaultValue (CommandType.Text)]
 		public CommandType CommandType {
 			get { return commandType; }
-			set { 
+			set {
 				if (value == CommandType.TableDirect)
 					throw new ArgumentException ("OracleClient provider does not support TableDirect CommandType.");
-				commandType = value; 
+				commandType = value;
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace System.Data.OracleClient {
 			get { return Transaction; }
 			set {
                                 // InvalidCastException is expected when types do not match
-				Transaction = (OracleTransaction) value; 
+				Transaction = (OracleTransaction) value;
 			}
 		}
 
@@ -210,9 +210,9 @@ namespace System.Data.OracleClient {
 		public object Clone ()
 		{
 			// create a new OracleCommand object with the same properties
-			
+
 			OracleCommand cmd = new OracleCommand ();
-			
+
 			cmd.CommandText = this.CommandText;
 			cmd.CommandType = this.CommandType;
 
@@ -220,7 +220,7 @@ namespace System.Data.OracleClient {
 			// or get a clone of these too
 			cmd.Connection = this.Connection;
 			cmd.Transaction = this.Transaction;
-			
+
 			foreach (OracleParameter parm in this.Parameters) {
 
 				OracleParameter newParm = cmd.CreateParameter ();
@@ -249,7 +249,7 @@ namespace System.Data.OracleClient {
 			return cmd;
 		}
 
-		internal void UpdateParameterValues () 
+		internal void UpdateParameterValues ()
 		{
 			if (Parameters.Count > 0) {
 				foreach (OracleParameter parm in Parameters)
@@ -260,7 +260,7 @@ namespace System.Data.OracleClient {
 		internal void CloseDataReader ()
 		{
 			UpdateParameterValues ();
-		
+
 			Connection.DataReader = null;
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
 				Connection.Close ();
@@ -271,7 +271,7 @@ namespace System.Data.OracleClient {
 			return new OracleParameter ();
 		}
 
-		internal void DeriveParameters () 
+		internal void DeriveParameters ()
 		{
 			if (commandType != CommandType.StoredProcedure)
 				throw new InvalidOperationException (String.Format ("OracleCommandBuilder DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
@@ -297,16 +297,16 @@ namespace System.Data.OracleClient {
 			UpdateParameterValues ();
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
-		
+
 			return rowsAffected;
 		}
 
-		public int ExecuteNonQuery () 
+		public int ExecuteNonQuery ()
 		{
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
-			bool useAutoCommit = false; 
+			bool useAutoCommit = false;
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
@@ -327,7 +327,7 @@ namespace System.Data.OracleClient {
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
-			bool useAutoCommit = false; 
+			bool useAutoCommit = false;
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
@@ -398,7 +398,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		private bool IsNonQuery (OciStatementHandle statementHandle) 
+		private bool IsNonQuery (OciStatementHandle statementHandle)
 		{
 			// assumes Prepare() has been called prior to calling this function
 
@@ -423,10 +423,10 @@ namespace System.Data.OracleClient {
 			bool hasRows = false;
 
                         this.behavior = behavior;
-				
-			if (Transaction != null) 
+
+			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
-			
+
 			OciStatementHandle statement = GetStatementHandle ();
 			OracleDataReader rd = null;
 
@@ -517,9 +517,9 @@ namespace System.Data.OracleClient {
 		private OciStatementHandle GetStatementHandle ()
 		{
 			AssertConnectionIsOpen ();
-			if (preparedStatement != null) 
+			if (preparedStatement != null)
 				return preparedStatement;
-			
+
 			OciStatementHandle h = (OciStatementHandle) Connection.Environment.Allocate (OciHandleType.Statement);
 			h.ErrorHandle = Connection.ErrorHandle;
 			h.Service = Connection.ServiceContext;
@@ -529,7 +529,7 @@ namespace System.Data.OracleClient {
 
 		private void SafeDisposeHandle (OciStatementHandle h)
 		{
-			if (h != null && h != preparedStatement) 
+			if (h != null && h != preparedStatement)
 				h.Dispose();
 		}
 
@@ -548,7 +548,7 @@ namespace System.Data.OracleClient {
 			return ExecuteReader (behavior);
 		}
 
-		void PrepareStatement (OciStatementHandle statement) 
+		void PrepareStatement (OciStatementHandle statement)
 		{
 			if (commandType == CommandType.StoredProcedure) {
 				StringBuilder sb = new StringBuilder ();

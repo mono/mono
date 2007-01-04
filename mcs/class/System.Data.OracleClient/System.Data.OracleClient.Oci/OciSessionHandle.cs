@@ -1,6 +1,6 @@
-// 
-// OciSessionHandle.cs 
-//  
+﻿//
+// OciSessionHandle.cs
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,12 +8,12 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Author: 
+//
+// Author:
 //     Tim Coleman <tim@timcoleman.com>
-//         
+//
 // Copyright (C) Tim Coleman, 2003
-// 
+//
 
 using System;
 using System.Runtime.InteropServices;
@@ -29,7 +29,7 @@ namespace System.Data.OracleClient.Oci {
 		bool disposed = false;
 		string username;
 		string password;
-		OciCredentialType credentialType;
+		//OciCredentialType credentialType;
 
 		#endregion // Fields
 
@@ -77,7 +77,7 @@ namespace System.Data.OracleClient.Oci {
 					OciAttributeType.Username,
 					errorHandle);
 
-				if (status != 0) 
+				if (status != 0)
 					return false;
 
 				status = OciCalls.OCIAttrSetString (this,
@@ -87,7 +87,7 @@ namespace System.Data.OracleClient.Oci {
 					OciAttributeType.Password,
 					errorHandle);
 
-				if (status != 0) 
+				if (status != 0)
 					return false;
 			}
 
@@ -97,11 +97,11 @@ namespace System.Data.OracleClient.Oci {
 						credentialType,
 						mode);
 
-			if (status != 0) 
+			if (status != 0)
 				return false;
 
 			begun = true;
-			
+
 			return true;
 		}
 

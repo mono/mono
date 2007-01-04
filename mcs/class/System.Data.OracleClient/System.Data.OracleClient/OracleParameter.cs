@@ -1,4 +1,4 @@
-//
+﻿//
 // OracleParameter.cs
 //
 // Part of the Mono class libraries at
@@ -56,7 +56,7 @@ namespace System.Data.OracleClient {
 
 		OracleParameterCollection container = null;
 		OciBindHandle bindHandle;
-		OciErrorHandle errorHandle;
+		//OciErrorHandle errorHandle;
 		OracleConnection connection;
 		byte[] bytes = null;
 		IntPtr bindValue = IntPtr.Zero;
@@ -65,7 +65,7 @@ namespace System.Data.OracleClient {
 
 		short indicator = 0; // TODO: handle indicator to indicate NULL value for OUT parameters
 		int bindSize = 0;
-		uint position = 0;
+		//uint position = 0;
 
 		#endregion // Fields
 
@@ -103,22 +103,22 @@ namespace System.Data.OracleClient {
 			InferOracleType (value);
 		}
 
-		public OracleParameter (string name, OracleType dataType)
-			: this (name, dataType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
+		public OracleParameter (string name, OracleType oracleType)
+			: this (name, oracleType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
-		public OracleParameter (string name, OracleType dataType, int size)
-			: this (name, dataType, size, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
+		public OracleParameter (string name, OracleType oracleType, int size)
+			: this (name, oracleType, size, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
-		public OracleParameter (string name, OracleType dataType, int size, string srcColumn)
-			: this (name, dataType, size, ParameterDirection.Input, false, 0, 0, srcColumn, DataRowVersion.Current, null)
+		public OracleParameter (string name, OracleType oracleType, int size, string srcColumn)
+			: this (name, oracleType, size, ParameterDirection.Input, false, 0, 0, srcColumn, DataRowVersion.Current, null)
 		{
 		}
 
-		public OracleParameter (string name, OracleType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
+		public OracleParameter (string name, OracleType oracleType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 		{
 			this.name = name;
 			if(size < 0)
@@ -129,7 +129,7 @@ namespace System.Data.OracleClient {
 			this.precision = precision;
 			this.scale = scale;
 
-			OracleType = dataType;
+			OracleType = oracleType;
 			Direction = direction;
 			SourceColumn = srcColumn;
 			SourceVersion = srcVersion;
@@ -258,14 +258,14 @@ namespace System.Data.OracleClient {
 		{
 			connection = con;
 
-			errorHandle = connection.ErrorHandle;
+			//errorHandle = connection.ErrorHandle;
 
 			if (bindHandle == null)
 				bindHandle = new OciBindHandle ((OciHandle) statement);
 
 			IntPtr tmpHandle = bindHandle.Handle;
 
-			position = pos;
+			//position = pos;
 
 			if (Direction != ParameterDirection.Input)
 				AssertSizeIsSet ();
@@ -987,7 +987,7 @@ namespace System.Data.OracleClient {
 			bindValue = IntPtr.Zero;
 
 			bindHandle = null;
-			errorHandle = null;
+			//errorHandle = null;
 			connection = null;
 		}
 

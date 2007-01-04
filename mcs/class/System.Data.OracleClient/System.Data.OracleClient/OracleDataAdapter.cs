@@ -1,4 +1,4 @@
-//
+﻿//
 // OracleDataAdapter.cs
 //
 // Part of the Mono class libraries at
@@ -31,11 +31,11 @@ namespace System.Data.OracleClient {
 	[DefaultEvent ("RowUpdated")]
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
-	public sealed class OracleDataAdapter : DbDataAdapter, IDbDataAdapter 
+	public sealed class OracleDataAdapter : DbDataAdapter, IDbDataAdapter
 	{
 		#region Fields
 
-		bool disposed = false;	
+		//bool disposed = false;
 		OracleCommand deleteCommand;
 		OracleCommand insertCommand;
 		OracleCommand selectCommand;
@@ -44,13 +44,13 @@ namespace System.Data.OracleClient {
 		#endregion
 
 		#region Constructors
-		
-		public OracleDataAdapter () 	
+
+		public OracleDataAdapter ()
 			: this (new OracleCommand ())
 		{
 		}
 
-		public OracleDataAdapter (OracleCommand selectCommand) 
+		public OracleDataAdapter (OracleCommand selectCommand)
 		{
 			DeleteCommand = null;
 			InsertCommand = null;
@@ -58,9 +58,9 @@ namespace System.Data.OracleClient {
 			UpdateCommand = null;
 		}
 
-		public OracleDataAdapter (string selectCommandText, OracleConnection selectConnection) 
+		public OracleDataAdapter (string selectCommandText, OracleConnection selectConnection)
 			: this (new OracleCommand (selectCommandText, selectConnection))
-		{ 
+		{
 		}
 
 		public OracleDataAdapter (string selectCommandText, string selectConnectionString)
@@ -102,8 +102,8 @@ namespace System.Data.OracleClient {
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
-			set { 
-				if (value != null && !(value is OracleCommand)) 
+			set {
+				if (value != null && !(value is OracleCommand))
 					throw new ArgumentException ();
 				DeleteCommand = (OracleCommand) value;
 			}
@@ -111,8 +111,8 @@ namespace System.Data.OracleClient {
 
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
-			set { 
-				if (value != null && !(value is OracleCommand)) 
+			set {
+				if (value != null && !(value is OracleCommand))
 					throw new ArgumentException ();
 				InsertCommand = (OracleCommand) value;
 			}
@@ -120,8 +120,8 @@ namespace System.Data.OracleClient {
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set { 
-				if (value != null && !(value is OracleCommand)) 
+			set {
+				if (value != null && !(value is OracleCommand))
 					throw new ArgumentException ();
 				SelectCommand = (OracleCommand) value;
 			}
@@ -129,8 +129,8 @@ namespace System.Data.OracleClient {
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set { 
-				if (value != null && !(value is OracleCommand)) 
+			set {
+				if (value != null && !(value is OracleCommand))
 					throw new ArgumentException ();
 				UpdateCommand = (OracleCommand) value;
 			}
@@ -145,24 +145,24 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
 			return new OracleRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
 
-		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
 			return new OracleRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
-		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
+		protected override void OnRowUpdated (RowUpdatedEventArgs value)
 		{
 			if (RowUpdated != null)
 				RowUpdated (this, (OracleRowUpdatedEventArgs) value);
 		}
 
-		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
+		protected override void OnRowUpdating (RowUpdatingEventArgs value)
 		{
 			if (RowUpdating != null)
 				RowUpdating (this, (OracleRowUpdatingEventArgs) value);

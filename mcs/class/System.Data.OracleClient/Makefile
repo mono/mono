@@ -18,8 +18,7 @@ else
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll \
 	/r:System.Xml.dll /r:System.Data.dll \
 	/r:System.EnterpriseServices.dll \
-	/r:System.Drawing.dll \
-	/nowarn:649 /nowarn:169
+	/r:System.Drawing.dll
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618

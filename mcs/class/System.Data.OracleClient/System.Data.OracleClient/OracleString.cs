@@ -65,16 +65,16 @@ namespace System.Data.OracleClient
 
 		#region Methods
 
-		public int CompareTo (object value)
+		public int CompareTo (object obj)
 		{
-			if (value == null)
+			if (obj == null)
 				return 1;
-			else if (!(value is OracleString))
+			else if (!(obj is OracleString))
 				throw new ArgumentException ("Value is not a System.Data.OracleClient.OracleString");
-			else if (((OracleString) value).IsNull)
+			else if (((OracleString) obj).IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((OracleString) value).Value);
+				return value.CompareTo (((OracleString) obj).Value);
 		}
 
 		[MonoTODO]
@@ -110,12 +110,12 @@ namespace System.Data.OracleClient
 			return notNull ? value.GetHashCode () : 0;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object value)
 		{
-			if (o is OracleString) {
-				OracleString s = (OracleString) o;
+			if (value is OracleString) {
+				OracleString s = (OracleString) value;
 				if (notNull && s.notNull)
-					return value == s.value;
+					return this.value == s.value;
 				else
 					throw new InvalidOperationException ("the value is Null.");
 			}

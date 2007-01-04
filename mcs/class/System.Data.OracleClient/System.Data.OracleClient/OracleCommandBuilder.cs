@@ -1,4 +1,4 @@
-//
+﻿//
 // System.Data.OracleClient.OracleCommandBuilder.cs
 //
 // based on the SqlCommandBuilder in mcs/class/System.Data/System.Data.SqlClient
@@ -19,10 +19,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -54,9 +54,9 @@ namespace System.Data.OracleClient {
 		OracleDataAdapter adapter;
 		string quotePrefix;
 		string quoteSuffix;
-		string[] columnNames;
+		//string[] columnNames;
 		string tableName;
-	
+
 		OracleCommand deleteCommand;
 		OracleCommand insertCommand;
 		OracleCommand updateCommand;
@@ -89,11 +89,11 @@ namespace System.Data.OracleClient {
 		[DefaultValue (null)]
 		public new OracleDataAdapter DataAdapter {
 			get { return adapter; }
-			set { 
+			set {
 				if (adapter != null)
 					adapter.RowUpdating -= new OracleRowUpdatingEventHandler (RowUpdatingHandler);
 
-				adapter = value; 
+				adapter = value;
 
 				if (adapter != null)
 					adapter.RowUpdating += new OracleRowUpdatingEventHandler (RowUpdatingHandler);
@@ -107,23 +107,23 @@ namespace System.Data.OracleClient {
 		[Browsable (false)]
 		//[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
 			string QuotePrefix {
 			get { return quotePrefix; }
-			set { 
+			set {
 				if (dbSchemaTable != null)
 					throw new InvalidOperationException ("The QuotePrefix and QuoteSuffix properties cannot be changed once an Insert, Update, or Delete command has been generated.");
-				quotePrefix = value; 
+				quotePrefix = value;
 			}
 		}
 
 		[Browsable (false)]
 		//[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -132,7 +132,7 @@ namespace System.Data.OracleClient {
 			set {
 				if (dbSchemaTable != null)
 					throw new InvalidOperationException ("The QuotePrefix and QuoteSuffix properties cannot be changed once an Insert, Update, or Delete command has been generated.");
-				quoteSuffix = value; 
+				quoteSuffix = value;
 			}
 		}
 
@@ -148,7 +148,7 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		private void BuildCache (bool closeConnection) 
+		private void BuildCache (bool closeConnection)
 		{
 			OracleCommand sourceCommand = SourceCommand;
 			if (sourceCommand == null)
@@ -156,27 +156,27 @@ namespace System.Data.OracleClient {
 			OracleConnection connection = sourceCommand.Connection;
 			if (connection == null)
 				throw new InvalidOperationException ("The DataAdapter.SelectCommand.Connection property needs to be initialized.");
-				
+
 			if (dbSchemaTable == null) {
 				if (connection.State == ConnectionState.Open)
-					closeConnection = false;	
+					closeConnection = false;
 				else
 					connection.Open ();
-	
+
 				OracleDataReader reader = sourceCommand.ExecuteReader (CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
 				dbSchemaTable = reader.GetSchemaTable ();
 				reader.Close ();
 				if (closeConnection)
-					connection.Close ();	
+					connection.Close ();
 				BuildInformation (dbSchemaTable);
 			}
 		}
-		
-		private void BuildInformation (DataTable schemaTable) 
+
+		private void BuildInformation (DataTable schemaTable)
 		{
 			tableName = String.Empty;
 			foreach (DataRow schemaRow in schemaTable.Rows) {
-				if (tableName == String.Empty) 
+				if (tableName == String.Empty)
 					tableName = schemaRow.IsNull ("BaseTableName") ? null : (string) schemaRow ["BaseTableName"];
 				else if (schemaRow.IsNull ("BaseTableName")) {
 					if (tableName != null)
@@ -187,7 +187,7 @@ namespace System.Data.OracleClient {
 			dbSchemaTable = schemaTable;
 		}
 
-		private OracleCommand CreateDeleteCommand (DataRow row, DataTableMapping tableMapping) 
+		private OracleCommand CreateDeleteCommand (DataRow row, DataTableMapping tableMapping)
 		{
 			// If no table was found, then we can't do an delete
 			if (QuotedTableName == String.Empty)
@@ -203,10 +203,10 @@ namespace System.Data.OracleClient {
 			int parmIndex = 1;
 
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
-				if (!IncludedInWhereClause (schemaRow)) 
+				if (!IncludedInWhereClause (schemaRow))
 					continue;
 
-				if (whereClause.Length > 0) 
+				if (whereClause.Length > 0)
 					whereClause.Append (" AND ");
 
 				bool isKey = (bool) schemaRow ["IsKey"];
@@ -217,10 +217,10 @@ namespace System.Data.OracleClient {
 					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
-					if (tableMapping != null 
+					if (tableMapping != null
 						&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
-				
+
 					if (row != null)
 						parameter.Value = row [dsColumnName, DataRowVersion.Original];
 					whereClause.Append ("(");
@@ -229,12 +229,12 @@ namespace System.Data.OracleClient {
 				}
 				else
 					keyFound = true;
-					
+
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
+				if (tableMapping != null
 					&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
@@ -255,7 +255,7 @@ namespace System.Data.OracleClient {
 			return deleteCommand;
 		}
 
-		private OracleCommand CreateInsertCommand (DataRow row, DataTableMapping tableMapping) 
+		private OracleCommand CreateInsertCommand (DataRow row, DataTableMapping tableMapping)
 		{
 			if (QuotedTableName == String.Empty)
 				return null;
@@ -282,7 +282,7 @@ namespace System.Data.OracleClient {
 				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
+				if (tableMapping != null
 					&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
@@ -308,7 +308,7 @@ namespace System.Data.OracleClient {
 			command.UpdatedRowSource = UpdateRowSource.None;
 		}
 
-		private OracleCommand CreateUpdateCommand (DataRow row, DataTableMapping tableMapping) 
+		private OracleCommand CreateUpdateCommand (DataRow row, DataTableMapping tableMapping)
 		{
 			// If no table was found, then we can't do an update
 			if (QuotedTableName == String.Empty)
@@ -325,14 +325,14 @@ namespace System.Data.OracleClient {
 
 			// First, create the X=Y list for UPDATE
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
-				if (columns.Length > 0) 
+				if (columns.Length > 0)
 					columns.Append (" , ");
 
 				OracleParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
+				if (tableMapping != null
 					&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
@@ -345,10 +345,10 @@ namespace System.Data.OracleClient {
 			// Now, create the WHERE clause.  This may be optimizable, but it would be ugly to incorporate
 			// into the loop above.  "Premature optimization is the root of all evil." -- Knuth
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
-				if (!IncludedInWhereClause (schemaRow)) 
+				if (!IncludedInWhereClause (schemaRow))
 					continue;
 
-				if (whereClause.Length > 0) 
+				if (whereClause.Length > 0)
 					whereClause.Append (" AND ");
 
 				bool isKey = (bool) schemaRow ["IsKey"];
@@ -359,7 +359,7 @@ namespace System.Data.OracleClient {
 					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
-					if (tableMapping != null 
+					if (tableMapping != null
 						&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
@@ -372,12 +372,12 @@ namespace System.Data.OracleClient {
 				}
 				else
 					keyFound = true;
-					
+
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
-				if (tableMapping != null 
+				if (tableMapping != null
 					&& tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
@@ -398,7 +398,7 @@ namespace System.Data.OracleClient {
 			return updateCommand;
 		}
 
-		private OracleParameter CreateParameter (int parmIndex, DataRow schemaRow) 
+		private OracleParameter CreateParameter (int parmIndex, DataRow schemaRow)
 		{
 			string name = String.Format ("p{0}", parmIndex);
 
@@ -410,12 +410,12 @@ namespace System.Data.OracleClient {
 			return new OracleParameter (name, providerDbType, size, sourceColumn);
 		}
 
-		public static void DeriveParameters (OracleCommand command) 
+		public static void DeriveParameters (OracleCommand command)
 		{
 			command.DeriveParameters ();
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -432,27 +432,27 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		public 
+		public
 #if NET_2_0
 		new
 #endif // NET_2_0
-			OracleCommand GetDeleteCommand () 
+			OracleCommand GetDeleteCommand ()
 		{
 			BuildCache (true);
 			return CreateDeleteCommand (null, null);
 		}
 
-		public 
+		public
 #if NET_2_0
 		new
 #endif // NET_2_0
-			OracleCommand GetInsertCommand () 
+			OracleCommand GetInsertCommand ()
 		{
 			BuildCache (true);
 			return CreateInsertCommand (null, null);
 		}
 
-		private string GetQuotedString (string value) 
+		private string GetQuotedString (string value)
 		{
 			if (value == String.Empty || value == null)
 				return value;
@@ -461,17 +461,17 @@ namespace System.Data.OracleClient {
 			return String.Format ("{0}{1}{2}", quotePrefix, value, quoteSuffix);
 		}
 
-		public 
+		public
 #if NET_2_0
 		new
 #endif // NET_2_0
-			OracleCommand GetUpdateCommand () 
+			OracleCommand GetUpdateCommand ()
 		{
 			BuildCache (true);
 			return CreateUpdateCommand (null, null);
 		}
 
-		private bool IncludedInInsert (DataRow schemaRow) 
+		private bool IncludedInInsert (DataRow schemaRow)
 		{
 			// If the parameter has one of these properties, then we don't include it in the insert:
 			if (!schemaRow.IsNull ("IsExpression") && (bool) schemaRow ["IsExpression"])
@@ -479,12 +479,12 @@ namespace System.Data.OracleClient {
 			return true;
 		}
 
-		private bool IncludedInUpdate (DataRow schemaRow) {
+		/*private bool IncludedInUpdate (DataRow schemaRow) {
 			// If the parameter has one of these properties, then we don't include it in the insert:
 			// AutoIncrement, Hidden, RowVersion
 
 			return true;
-		}
+		}*/
 
 		private bool IncludedInWhereClause (DataRow schemaRow) {
 			if ((bool) schemaRow ["IsLong"])
@@ -493,11 +493,11 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO ("Figure out what else needs to be cleaned up when we refresh.")]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-			void RefreshSchema () 
+			void RefreshSchema ()
 		{
 			tableName = String.Empty;
 			dbSchemaTable = null;
@@ -516,27 +516,27 @@ namespace System.Data.OracleClient {
                 [MonoTODO]
                 protected override string GetParameterName (int position)
                 {
-                        throw new NotImplementedException ();                        
+                        throw new NotImplementedException ();
                 }
-                
+
                 [MonoTODO]
                 protected override string GetParameterName (string parameterName)
                 {
-                        throw new NotImplementedException ();                        
+                        throw new NotImplementedException ();
                 }
 
                 [MonoTODO]
                 protected override string GetParameterPlaceholder (int position)
                 {
-                        throw new NotImplementedException ();                        
+                        throw new NotImplementedException ();
                 }
-                
+
 #endif // NET_2_0
 		#endregion // Methods
 
 		#region Event Handlers
 
-		private void RowUpdatingHandler (object sender, OracleRowUpdatingEventArgs args) 
+		private void RowUpdatingHandler (object sender, OracleRowUpdatingEventArgs args)
 		{
 			if (args.Command != null)
 				return;

@@ -1,4 +1,4 @@
-//
+﻿//
 // OciDefineHandle.cs
 //
 // Part of managed C#/.NET library System.Data.OracleClient.dll
@@ -30,18 +30,18 @@ namespace System.Data.OracleClient.Oci
 
 		bool disposed = false;
 
-		IntPtr handle;
+		IntPtr handle = IntPtr.Zero;
 		IntPtr value;
 		short indicator;
-		OracleType type;
+		//OracleType type;
 		OciDataType ociType;
 		OciDataType definedType;
 		int definedSize;
 		short rlenp = 0;
-		short precision;
+		//short precision;
 		short scale;
 		Type fieldType;
-		string name;
+		//string name;
 
 		// Oracle defines the LONG VARCHAR have a size of 2 to the 31 power - 5
 		// maybe this should settable via a config file for System.Data.OracleClient.dll
@@ -54,7 +54,7 @@ namespace System.Data.OracleClient.Oci
 
 		OciLobLocator lobLocator;
 		OciDateTimeDescriptor dateTimeDesc;
-		byte[] date;
+		//byte[] date;
 
 		#endregion // Fields
 
@@ -69,10 +69,10 @@ namespace System.Data.OracleClient.Oci
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
 
-			name = parameter.GetName ();
+			//name = parameter.GetName ();
 			definedType = parameter.GetDataType ();
 			definedSize = parameter.GetDataSize ();
-			precision = parameter.GetPrecision ();
+			//precision = parameter.GetPrecision ();
 			scale = parameter.GetScale ();
 
 			Define (position);
@@ -204,7 +204,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-						out handle,
+						ref handle,
 						ErrorHandle,
 						position + 1,
 						value,
@@ -241,7 +241,7 @@ namespace System.Data.OracleClient.Oci
 
 			int status = 0;
 			status = OciCalls.OCIDefineByPos (Parent,
-				out handle,
+				ref handle,
 				ErrorHandle,
 				position + 1,
 				value,
@@ -271,7 +271,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-						out handle,
+						ref handle,
 						ErrorHandle,
 						position + 1,
 						value,
@@ -298,7 +298,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-				out handle,
+				ref handle,
 				ErrorHandle,
 				position + 1,
 				value,
@@ -369,7 +369,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-							out handle,
+							ref handle,
 							ErrorHandle,
 							position + 1,
 							value,

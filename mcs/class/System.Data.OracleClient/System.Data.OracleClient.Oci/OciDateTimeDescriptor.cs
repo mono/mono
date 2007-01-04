@@ -1,6 +1,6 @@
-// 
+﻿//
 // OciDateTimeDescriptor.cs - used for an Oracle TIMESTAMP
-//  
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,12 +8,12 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Author: 
+//
+// Author:
 //     Daniel Morgan <danielmorgan@verizon.net>
-//         
+//
 // Copyright (C) Daniel Morgan, 2005
-// 
+//
 
 using System;
 using System.Data;
@@ -26,7 +26,7 @@ namespace System.Data.OracleClient.Oci {
 		#region Fields
 
 		OciErrorHandle errorHandle;
-		OciServiceHandle service;
+		//OciServiceHandle service;
 		bool disposed = false;
 
 		#endregion // Fields
@@ -46,7 +46,7 @@ namespace System.Data.OracleClient.Oci {
 			get { return errorHandle; }
 			set { errorHandle = value; }
 		}
-		
+
 		#endregion // Properties
 
 		#region Methods
@@ -66,7 +66,7 @@ namespace System.Data.OracleClient.Oci {
 			// Get size of buffer
 			int rsize = 0;
 			OciCalls.OCIUnicodeToCharSet (handle, null, timezone, out rsize);
-			
+
 			// Fill buffer
 			byte[] bytes = new byte[rsize];
 			OciCalls.OCIUnicodeToCharSet (handle, bytes, timezone, out rsize);
@@ -77,7 +77,7 @@ namespace System.Data.OracleClient.Oci {
 			uint timezoneSize = (uint) bytes.Length;
 			OciCalls.OCIDateTimeConstruct (handle,
 				errorHandle, this.Handle,
-				year, month, day, 
+				year, month, day,
 				hour, min, sec, fsec,
 				bytes, timezoneSize);
 
@@ -99,7 +99,7 @@ namespace System.Data.OracleClient.Oci {
 
 			OciCalls.OCIDateTimeGetDate (handle, errorHandle, this.Handle,
 				out year, out month, out day);
-			OciCalls.OCIDateTimeGetTime (handle, errorHandle, this.Handle, 
+			OciCalls.OCIDateTimeGetTime (handle, errorHandle, this.Handle,
 				out hour, out min, out sec, out fsec);
 
 			// a TIMESTAMP can have up to 9 digits of millisecond but DateTime only

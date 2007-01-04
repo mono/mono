@@ -17,7 +17,9 @@
 using System;
 
 namespace System.Data.OracleClient {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum OracleLobOpenMode
 	{
 		ReadOnly = 0x01,

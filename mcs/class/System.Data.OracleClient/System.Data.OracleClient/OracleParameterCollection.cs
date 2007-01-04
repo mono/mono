@@ -1,4 +1,4 @@
-// 
+﻿//
 // OracleParameterCollection.cs
 //
 // Part of the Mono class libraries at
@@ -7,7 +7,7 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Authors: 
+// Authors:
 //    Tim Coleman <tim@timcoleman.com>
 //
 // Copyright (C) Tim Coleman , 2003
@@ -30,7 +30,7 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		OracleCommand command;
+		//OracleCommand command;
 		ArrayList list;
 
 		#endregion // Fields
@@ -40,7 +40,7 @@ namespace System.Data.OracleClient {
 		internal OracleParameterCollection (OracleCommand command)
 			: this ()
 		{
-			this.command = command;
+			//this.command = command;
 		}
 
 		public OracleParameterCollection ()

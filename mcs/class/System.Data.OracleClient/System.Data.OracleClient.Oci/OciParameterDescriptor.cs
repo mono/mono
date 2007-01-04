@@ -1,6 +1,6 @@
-// 
-// OciParameterDescriptor.cs 
-//  
+﻿//
+// OciParameterDescriptor.cs
+//
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //
 // Part of the Mono class libraries at
@@ -8,14 +8,14 @@
 //
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
-// 
-// Author: 
+//
+// Author:
 //     Tim Coleman <tim@timcoleman.com>
 //     Daniel Morgan <danielmorgan@verizon.net>
-//         
+//
 // Copyright (C) Tim Coleman, 2003
 // Copyright (C) Daniel Morgan, 2005
-// 
+//
 
 using System;
 using System.Data.OracleClient;
@@ -27,8 +27,8 @@ namespace System.Data.OracleClient.Oci {
 		#region Fields
 
 		OciErrorHandle errorHandle;
-		OciServiceHandle service;
-		OciDataType type;
+		//OciServiceHandle service;
+		//OciDataType type;
 
 		#endregion // Fields
 
@@ -41,7 +41,7 @@ namespace System.Data.OracleClient.Oci {
 
 		#endregion // Constructors
 
-		#region Properties 
+		#region Properties
 
 		public OciErrorHandle ErrorHandle {
 			get { return errorHandle; }
@@ -67,7 +67,7 @@ namespace System.Data.OracleClient.Oci {
 			return (OciDataType) GetAttributeUInt16 (OciAttributeType.DataType, ErrorHandle);
 		}
 
-		public static OracleType OciDataTypeToOracleType (OciDataType ociType) 
+		public static OracleType OciDataTypeToOracleType (OciDataType ociType)
 		{
 			switch (ociType) {
 			case OciDataType.VarChar2:
@@ -129,7 +129,7 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public Type GetFieldType (string sDataTypeName) 
+		public Type GetFieldType (string sDataTypeName)
 		{
 			switch (sDataTypeName) {
 			case "VarChar2":
