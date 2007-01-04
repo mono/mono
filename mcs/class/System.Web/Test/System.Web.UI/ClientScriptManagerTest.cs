@@ -172,7 +172,7 @@ namespace MonoTests.System.Web.UI
 		{
 			ClientScriptManager cs = p.ClientScript;
 			String cbReference = cs.GetWebResourceUrl (typeof (MonoTests.System.Web.UI.ClientScriptManagerTest), "ClientScript.js");
-			if (cbReference.IndexOf("/NunitWeb/WebResource.axd?")<0)
+			if (cbReference.IndexOf("/WebResource.axd?")<0)
 				Assert.Fail ("GetWebResourceUrlFail");
 		}
 
