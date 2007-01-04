@@ -1,3 +1,13 @@
+2007-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	Remove redundant field
+	* class-internals.h (_MonoGenericContext.container): Remove field.
+	* loader.c (mono_method_get_signature_full): Don't parse a
+	"container" for a signature parse when the signature is inflated
+	immediately.
+	(method_from_methodspec): Likewise, for a generic_inst.
+	* class.c, metadata.c, reflection.c: Update to changes.
+
 2006-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	* class-internals.h (_MonoGenericClass): Rename 'context' field to
