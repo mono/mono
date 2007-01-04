@@ -1828,7 +1828,7 @@ namespace System.Windows.Forms
 				return false;
 
 			bool ctrl_pressed = ((ke.Modifiers & Keys.Control) != 0);
-			bool alt_pressed = ((ke.Modifiers & Keys.Alt) != 0);
+			//bool alt_pressed = ((ke.Modifiers & Keys.Alt) != 0);
 			bool shift_pressed = ((ke.Modifiers & Keys.Shift) != 0);
 
 			switch (ke.KeyCode) {
@@ -1841,7 +1841,7 @@ namespace System.Windows.Forms
 				return true;
 				
 			case Keys.D0:
-				if (alt_pressed) {
+				if (ctrl_pressed) {
 					if (is_editing)
 						CurrentTableStyle.GridColumnStyles[CurrentColumn].EnterNullValue ();
 					return true;
@@ -1969,11 +1969,15 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.Delete:
-				foreach (int row in selected_rows.Keys) {
-					ListManager.RemoveAt (row);						
+				if (is_editing)
+					return false;
+				else if (selected_rows.Keys.Count > 0) {
+					foreach (int row in selected_rows.Keys) {
+						ListManager.RemoveAt (row);						
+					}
+					selected_rows.Clear ();
+					CalcAreasAndInvalidate ();
 				}
-				selected_rows.Clear ();
-				CalcAreasAndInvalidate ();
 
 				return true;
 			}

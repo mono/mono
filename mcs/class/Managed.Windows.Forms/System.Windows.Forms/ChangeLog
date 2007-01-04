@@ -1,5 +1,11 @@
 2007-01-03  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: the Alt+0 handling was wrong, it should have been
+	Ctrl+0.  Fixes bug #80367.  Also, don't eat the Delete keypress
+	when we're editing, which fixes #80047.
+
+2007-01-03  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs: apply patch contributed by Dominik Seichter.  fixes
 	#80404.
 
