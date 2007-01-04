@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -242,9 +242,13 @@ namespace Mono.Security.Cryptography {
 			if (outputOffset < 0)
 				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
 			// ordered to avoid possible integer overflow
-			if (outputOffset > outputBuffer.Length - inputCount) 
-				inputCount = outputBuffer.Length - outputOffset;
-
+			if (outputOffset > outputBuffer.Length - inputCount) {
+				// there's a special case if this is the end of the decryption process
+				if (inputBuffer.Length - inputOffset - outputBuffer.Length == BlockSizeByte)
+					inputCount = inputCount = outputBuffer.Length - outputOffset;
+				else
+					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+			}
 			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 		}
 
