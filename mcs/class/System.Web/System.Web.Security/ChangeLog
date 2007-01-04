@@ -1,3 +1,8 @@
+2007-01-04 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* AnonymousIdentificationModule.cs: fixed OnEnter, fixed failure on
+	incorrect cookie value that browser may hold
+
 2006-12-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* FormsAuthentication.cs: added internal ReturnUrl property,

@@ -72,7 +72,14 @@ namespace System.Web.Security {
 			string anonymousID = null;
 
 			HttpCookie cookie = app.Request.Cookies [Config.CookieName];
-			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now)) {
+			if (cookie != null && (cookie.Expires == DateTime.MinValue || cookie.Expires > DateTime.Now)) {
+				try {
+					anonymousID = Encoding.Unicode.GetString (Convert.FromBase64String (cookie.Value));
+				}
+				catch { }
+			}
+
+			if (anonymousID == null) {
 				if (Creating != null) {
 					AnonymousIdentificationEventArgs e = new AnonymousIdentificationEventArgs (HttpContext.Current);
 					Creating (this, e);
@@ -83,17 +90,13 @@ namespace System.Web.Security {
 				if (anonymousID == null)
 					anonymousID = Guid.NewGuid ().ToString ();
 
-				app.Request.AnonymousID = anonymousID;
-
 				HttpCookie newCookie = new HttpCookie (Config.CookieName);
 				newCookie.Path = app.Request.ApplicationPath;
 				newCookie.Expires = DateTime.Now + Config.CookieTimeout;
 				newCookie.Value = Convert.ToBase64String (Encoding.Unicode.GetBytes (anonymousID));
 				app.Response.AppendCookie (newCookie);
 			}
-			else {
-				app.Request.AnonymousID = Encoding.Unicode.GetString (Convert.FromBase64String (cookie.Value));
-			}
+			app.Request.AnonymousID = anonymousID;
 		}
 
 		public static bool Enabled {
