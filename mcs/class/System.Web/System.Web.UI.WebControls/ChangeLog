@@ -1,3 +1,7 @@
+2006-01-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControl.cs: fixed Init flow.	 
+
 2007-01-4   Adar Wesley <adarw@mainsoft.com>
 
 	* RadioButtonList.cs: Implemented properties of IRepeatInfoUser as public virtual

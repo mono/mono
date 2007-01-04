@@ -1,3 +1,7 @@
+2007-01-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControlTest.cs: new tests were added.
+
 2007-01-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormViewTest.cs: new tests were added.

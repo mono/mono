@@ -60,6 +60,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return Initialized;
 			}
+
+			public bool GetRequiresDataBinding ()
+			{
+				return RequiresDataBinding;
+			}
+			
+			public void SetRequiresDataBinding (bool value)
+			{
+				RequiresDataBinding = value;
+			}
 		}
 
 		class MyDataBoundControl : DataBoundControl
@@ -231,12 +241,47 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Clear ();
 			p.Form.Controls.Add (c);
 			Assert.IsFalse (c.GetInitialized (), "Initialized_Load");
+			Assert.IsFalse (c.GetRequiresDataBinding (), "RequiresDataBinding_Load");
 		}
 
 		public static void Initialized_PreRender (Page p)
 		{
 			Poker c = (Poker) p.Form.Controls [0];
 			Assert.IsTrue (c.GetInitialized (), "Initialized_PreRender");
+			Assert.IsTrue (c.GetRequiresDataBinding (), "RequiresDataBinding_PreRender");
+		}
+		
+		[Test]
+		[Category ("NunitWeb")]
+		public void Initialized2 () {
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = Initialized2_Init;
+			pd.Load = Initialized2_Load;
+			pd.PreRenderComplete = Initialized2_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+		}
+
+		public static void Initialized2_Init (Page p) {
+			Poker c = new Poker ();
+			p.Form.Controls.Clear ();
+			p.Form.Controls.Add (c);
+			Assert.IsFalse (c.GetInitialized (), "Initialized_Init");
+			Assert.IsFalse (c.GetRequiresDataBinding (), "RequiresDataBinding_Init");
+		}
+
+		public static void Initialized2_Load (Page p) {
+			Poker c = (Poker) p.Form.Controls [0];
+			Assert.IsTrue (c.GetInitialized (), "Initialized_Load");
+			Assert.IsTrue (c.GetRequiresDataBinding (), "RequiresDataBinding_Load");
+			c.SetRequiresDataBinding (false);
+		}
+
+		public static void Initialized2_PreRender (Page p) {
+			Poker c = (Poker) p.Form.Controls [0];
+			Assert.IsTrue (c.GetInitialized (), "Initialized_PreRender");
+			Assert.IsFalse (c.GetRequiresDataBinding (), "RequiresDataBinding_PreRender");
 		}
 	}
 }

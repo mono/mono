@@ -121,9 +121,22 @@ namespace System.Web.UI.WebControls {
 			RequiresDataBinding = true;
 		}
 		
+		// MSDN: The OnPagePreLoad method is overridden by the DataBoundControl class 
+		// to set the BaseDataBoundControl.RequiresDataBinding property to true in 
+		// cases where the HTTP request is a postback and view state is enabled but 
+		// the data-bound control has not yet been bound. 
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
+
+			Initialize ();
+		}
+
+		private void Initialize ()
+		{
+			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
+				RequiresDataBinding = true;
+
 			UpdateViewData ();
 		}
 		
@@ -143,13 +156,14 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
-				RequiresDataBinding = true;
+			if (!Initialized) {
+				
+				Initialize ();
 
-			// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
-			// control. The method is called by the DataBoundControl class in its OnLoad method.
-			ConfirmInitState ();
-
+				// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
+				// control. The method is called by the DataBoundControl class in its OnLoad method.
+				ConfirmInitState ();
+			}
 			base.OnLoad(e);
 		}
 		
