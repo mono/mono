@@ -197,6 +197,7 @@ namespace System.Web.UI
 				if (client != null)
 					client = client.Replace (':', ClientIDSeparator);
 				
+				stateMask |= ID_SET;
 				return client;
 			}
 		}
