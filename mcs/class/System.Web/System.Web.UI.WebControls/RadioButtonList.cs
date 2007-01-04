@@ -173,53 +173,47 @@ namespace System.Web.UI.WebControls {
 		// Interface properties
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
-		protected virtual bool HasFooter
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO ("Not implemented")]
-		protected virtual bool HasHeader 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected virtual bool HasSeparators
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO ("Not implemented")]
-		protected virtual int RepeatedItemCount
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		protected virtual
 #endif
+		bool HasFooter {
+			get { return false; }
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		bool HasHeader {
+			get { return false; }
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		bool HasSeparators {
+			get { return false; }
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		int RepeatedItemCount {
+			get { return Items.Count; }
+		}
 		
 		bool IRepeatInfoUser.HasFooter {
-			get { return false; }
+			get { return HasFooter; }
 		}
 
 		bool IRepeatInfoUser.HasHeader {
-			get { return false; }
+			get { return HasHeader; }
 		}
 
 		bool IRepeatInfoUser.HasSeparators {
-			get { return false; }
+			get { return HasSeparators; }
 		}
 
 		int IRepeatInfoUser.RepeatedItemCount {
-			get { return Items.Count; }
+			get { return RepeatedItemCount; }
 		}
 
 		protected override Style CreateControlStyle ()
@@ -228,10 +222,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
+		// MSDN: Searches the current naming container for a server control 
+		// with the specified ID and path offset. The FindControl method 
+		// always returns the RadioButtonList object. 
 		protected override Control FindControl (string id, int pathOffset)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 #endif
 
@@ -360,5 +356,6 @@ namespace System.Web.UI.WebControls {
 	}
 
 }
+
 
 

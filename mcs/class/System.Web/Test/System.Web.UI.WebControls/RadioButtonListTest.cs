@@ -319,8 +319,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
-		public void Defaults_NotWorking ()
+		public void Defaults ()
 		{
 			PokerRadioButtonList r = new PokerRadioButtonList ();
 			Assert.AreEqual (0, r.RepeatedItemCount, "RepeatedItemCount");
@@ -371,7 +370,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void RaisePostDataChangedEvent_PostBack ()
 		{
@@ -446,7 +444,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void LoadPostData ()  //Just flow and not implementation detail
 		{
@@ -496,7 +493,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")] //Not implemented 
 		public void RepeatedItemCount ()
 		{
 			PokerRadioButtonList r = new PokerRadioButtonList ();
