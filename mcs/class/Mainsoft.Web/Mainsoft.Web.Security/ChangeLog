@@ -1,3 +1,7 @@
+2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyMembershipProvider.cs: fixed encoding of password
+
 2006-12-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyMembershipProvider.cs: fixed provider key to be Guid

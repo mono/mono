@@ -96,7 +96,7 @@ namespace Mainsoft.Web.Security {
 					EmitValidatingPassword (username, newPwd, false);
 					string db_password = EncodePassword (newPwd, pi.PasswordFormat, pi.PasswordSalt);
 
-					int st = DerbyMembershipHelper.Membership_SetPassword (connection, ApplicationName, username, newPwd, (int) pi.PasswordFormat, pi.PasswordSalt, DateTime.UtcNow);
+					int st = DerbyMembershipHelper.Membership_SetPassword (connection, ApplicationName, username, db_password, (int) pi.PasswordFormat, pi.PasswordSalt, DateTime.UtcNow);
 
 					if (st == 0)
 						return true;
@@ -123,7 +123,7 @@ namespace Mainsoft.Web.Security {
 				if (pi != null) {
 					string db_passwordAnswer = EncodePassword (newPwdAnswer, pi.PasswordFormat, pi.PasswordSalt);
 
-					int st = DerbyMembershipHelper.Membership_ChangePasswordQuestionAndAnswer (connection, ApplicationName, username, newPwdQuestion, newPwdAnswer);
+					int st = DerbyMembershipHelper.Membership_ChangePasswordQuestionAndAnswer (connection, ApplicationName, username, newPwdQuestion, db_passwordAnswer);
 
 					if (st == 0)
 						return true;
@@ -409,7 +409,7 @@ namespace Mainsoft.Web.Security {
 			string password = null;
 
 			using (DbConnection connection = CreateConnection ()) {
-				int st = DerbyMembershipHelper.Membership_GetPassword (connection, ApplicationName, username, answer, MaxInvalidPasswordAttempts, PasswordAttemptWindow, DateTime.UtcNow, out password);
+				int st = DerbyMembershipHelper.Membership_GetPassword (connection, ApplicationName, username, user_answer, MaxInvalidPasswordAttempts, PasswordAttemptWindow, DateTime.UtcNow, out password);
 
 				if (st == 1)
 					throw new ProviderException ("User specified by username is not found in the membership database");
