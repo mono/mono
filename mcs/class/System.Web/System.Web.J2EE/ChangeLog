@@ -1,3 +1,8 @@
+2007-01-04  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PageMapper.cs: refactoring: 
+	GetCachedType, GetObjectType - added overloads
+
 2006-08-20  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* BaseHttpServlet.cs: merged TLS fixes, workaround for thread problem

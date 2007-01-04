@@ -145,7 +145,11 @@ namespace System.Web.J2EE
 
 		public static Type GetObjectType(string url)
 		{
-			return GetCachedType(NormalizeName(url));
+			return GetCachedType(NormalizeName(url), true);
+		}
+
+		public static Type GetObjectType (string url, bool throwException) {
+			return GetCachedType (NormalizeName (url), throwException);
 		}
 
 		public static Assembly GetObjectAssembly(string url)
@@ -170,11 +174,14 @@ namespace System.Web.J2EE
 
 			return t;
 		}
-		private static Type GetCachedType(string url)
+		private static Type GetCachedType (string url) {
+			return GetCachedType (url, true);
+		}
+		private static Type GetCachedType (string url, bool throwException)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();						
 			Type t = doc.GetType(url);
-			if (t == null)
+			if (t == null && throwException)
 				throw new HttpException(404,"The requested resource (" + url + ") is not available.");
 
 			return t;
