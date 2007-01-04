@@ -1,3 +1,8 @@
+2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpApplication.cs: fixed PreStart, should not set thread culture
+	to invariant
+
 2007-01-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed jvm version of MakeInputStream, should not

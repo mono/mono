@@ -1047,12 +1047,16 @@ namespace System.Web {
 			Thread th = Thread.CurrentThread;
 			if (app_culture != null) {
 				prev_app_culture = th.CurrentCulture;
-				th.CurrentCulture = GetThreadCulture (Request, app_culture, autoCulture);
+				CultureInfo new_app_culture = GetThreadCulture (Request, app_culture, autoCulture);
+				if (!new_app_culture.Equals (CultureInfo.InvariantCulture))
+					th.CurrentCulture = new_app_culture;
 			}
 
 			if (appui_culture != null) {
 				prev_appui_culture = th.CurrentUICulture;
-				th.CurrentUICulture = GetThreadCulture (Request, appui_culture, autoUICulture);
+				CultureInfo new_app_culture = GetThreadCulture (Request, appui_culture, autoUICulture);
+				if (!new_app_culture.Equals (CultureInfo.InvariantCulture))
+					th.CurrentUICulture = new_app_culture;
 			}
 
 #if !TARGET_JVM
