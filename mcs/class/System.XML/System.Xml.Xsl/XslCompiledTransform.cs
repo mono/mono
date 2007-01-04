@@ -48,7 +48,9 @@ namespace System.Xml.Xsl
 	{
 		bool enable_debug;
 		CompiledStylesheet s;
+#if !TARGET_JVM
 		TempFileCollection temporary_files;
+#endif
 		XmlWriterSettings output_settings = new XmlWriterSettings ();
 
 		public XslCompiledTransform ()
@@ -66,10 +68,12 @@ namespace System.Xml.Xsl
 			get { return output_settings; }
 		}
 
+#if !TARGET_JVM
 		[MonoTODO]
 		public TempFileCollection TemporaryFiles {
 			get { return temporary_files; }
 		}
+#endif
 
 		#region Transform
 
