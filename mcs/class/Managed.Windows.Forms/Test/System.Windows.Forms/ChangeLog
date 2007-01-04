@@ -1,3 +1,10 @@
+2007-01-04  Chris Toshok  <toshok@ximian.com>
+
+	* CommonDialogsTest.cs: disable FolderBrowserDialogTest (and add a
+	stack trace in a comment).
+	
+	* RichTextBoxTest.cs: disable FindTest.
+	
 2007-01-04  Andreia Gaita  <avidigal@novell.com>
 
 	* FormTest.cs: disabled ActivateTest
