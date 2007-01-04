@@ -1,3 +1,8 @@
+2007-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fix previous fix (for #80439) as we were now
+	too permissive.
+
 2007-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Reduce inputCount if larger than the output
