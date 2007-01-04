@@ -426,6 +426,9 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[ExpectedException (typeof (HttpException))]
+#if TARGET_JVM
+		[Ignore ("TD #6964")]
+#endif
 		public void ToAbsolute6 ()
 		{
 			VPU.ToAbsolute ("~/");
@@ -433,6 +436,9 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[ExpectedException (typeof (HttpException))]
+#if TARGET_JVM
+		[Ignore ("TD #6964")]
+#endif
 		public void ToAbsolute7 ()
 		{
 			Assert.AreEqual ("/", VPU.ToAbsolute ("/"));

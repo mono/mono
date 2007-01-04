@@ -173,6 +173,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category ("NunitWeb")]
+#if TARGET_JVM
+		[Ignore ("TD #6665")]
+#endif
 		public void DataBoundControl_DataBindFlow2 () {
 			new WebTest (PageInvoker.CreateOnLoad (DataBoundControl_DataBindFlow2_Load)).Run ();
 		}
