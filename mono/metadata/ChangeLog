@@ -1,3 +1,14 @@
+2006-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (_MonoGenericClass): Rename 'context' field to
+	'cached_context', and change semantics -- it starts off NULL, and
+	is initialized on demand.
+	* class.c (mono_generic_class_get_context): New accessor to
+	replace 'context' field accesses.
+	(mono_class_get_context): New helper.
+	(*): Update to changes.
+	* icall.c, loader.c, metadata.c, reflection.c: Update to changes.
+
 2007-01-03  Miguel de Icaza  <miguel@novell.com>
 
 	* marshal.c (mono_string_to_byvalstr): Fix thinko, shorten len
