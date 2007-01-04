@@ -1,3 +1,8 @@
+2007-01-03  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (mono_string_to_byvalstr): Fix thinko, shorten len
+	before the memcpy.   Fixes Marshal2 regression.
+
 2007-01-02  Jb Evain  <jbevain@gmail.com>
 
 	* blob.h: add a MONO_TYPE_ENUM definition
