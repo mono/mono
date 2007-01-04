@@ -170,8 +170,20 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public int DisplayIndex {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				if (owner == null)
+					return -1;
+					
+				return owner.GetReorderedColumnIndex (this);
+		       	}
+			set {
+				if (owner == null)
+					return;
+				if (value < 0 || value >= owner.Columns.Count)
+					throw new ArgumentOutOfRangeException ("value");
+
+				owner.ReorderColumn (this, value);
+			}
 		}
 
 		[DefaultValue (-1)]

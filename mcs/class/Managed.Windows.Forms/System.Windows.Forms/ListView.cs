@@ -975,6 +975,20 @@ namespace System.Windows.Forms
 				item_control.Width -= v_scroll.Width;
 			}
 		}
+
+#if NET_2_0
+		internal int GetReorderedColumnIndex (ColumnHeader column)
+		{
+			if (reordered_column_indices == null)
+				return column.Index;
+
+			for (int i = 0; i < Columns.Count; i++)
+				if (reordered_column_indices [i] == column.Index)
+					return i;
+
+			return -1;
+		}
+#endif
 		
 		ColumnHeader GetReorderedColumn (int index)
 		{
@@ -984,7 +998,7 @@ namespace System.Windows.Forms
 				return Columns [reordered_column_indices [index]];
 		}
 
-		void ReorderColumn (ColumnHeader col, int index)
+		internal void ReorderColumn (ColumnHeader col, int index)
 		{
 #if NET_2_0
 			ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
