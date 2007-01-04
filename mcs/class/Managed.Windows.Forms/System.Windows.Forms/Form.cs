@@ -1207,7 +1207,8 @@ namespace System.Windows.Forms {
 			return new SizeF (width, font.Height);
 		}
 						 
-		public void Activate() {
+		public void Activate ()
+		{
 			Form	active;
 
 			// The docs say activate only activates if our app is already active
@@ -1884,14 +1885,18 @@ namespace System.Windows.Forms {
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
 							closing = true;
+							Dispose ();
 						}
-						Dispose ();
+						else {
+							closing = false;
+						}
 					} else {
 						OnClosing (args);
 						if (args.Cancel) {
 							DialogResult = DialogResult.None;
 							closing = false;
-						} else {
+						}
+						else {
 							OnClosed (EventArgs.Empty);
 							closing = true;
 							Hide ();

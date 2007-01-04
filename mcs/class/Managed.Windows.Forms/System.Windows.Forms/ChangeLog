@@ -1,3 +1,8 @@
+2007-01-03  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs: apply patch contributed by Dominik Seichter.  fixes
+	#80404.
+
 2007-01-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuStrip.cs, ToolStripMenuItem.cs: Add MdiWindowListItem
