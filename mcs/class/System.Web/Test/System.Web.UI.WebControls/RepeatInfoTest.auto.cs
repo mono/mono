@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
+using MonoTests.stand_alone.WebHarness;
 namespace MonoTests.System.Web.UI.WebControls {
 [TestFixture]
 public class RepeatInfo_Autogen {
@@ -130,7 +131,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#0");
+		HtmlDiff.AssertAreEqual (exp, v, "#0");
 	}
 
 
@@ -157,7 +158,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#1");
+		HtmlDiff.AssertAreEqual (exp, v, "#1");
 	}
 
 
@@ -184,7 +185,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#2");
+		HtmlDiff.AssertAreEqual (exp, v, "#2");
 	}
 
 
@@ -211,7 +212,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""10"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#3");
+		HtmlDiff.AssertAreEqual (exp, v, "#3");
 	}
 
 
@@ -236,7 +237,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#4");
+		HtmlDiff.AssertAreEqual (exp, v, "#4");
 	}
 
 
@@ -271,7 +272,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#5");
+		HtmlDiff.AssertAreEqual (exp, v, "#5");
 	}
 
 
@@ -300,7 +301,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#6");
+		HtmlDiff.AssertAreEqual (exp, v, "#6");
 	}
 
 
@@ -333,7 +334,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#7");
+		HtmlDiff.AssertAreEqual (exp, v, "#7");
 	}
 
 
@@ -364,7 +365,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(18,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#8");
+		HtmlDiff.AssertAreEqual (exp, v, "#8");
 	}
 
 
@@ -395,7 +396,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#9");
+		HtmlDiff.AssertAreEqual (exp, v, "#9");
 	}
 
 
@@ -604,7 +605,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#20");
+		HtmlDiff.AssertAreEqual (exp, v, "#20");
 	}
 
 
@@ -623,7 +624,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#21");
+		HtmlDiff.AssertAreEqual (exp, v, "#21");
 	}
 
 
@@ -642,7 +643,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#22");
+		HtmlDiff.AssertAreEqual (exp, v, "#22");
 	}
 
 
@@ -661,7 +662,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)(9,Item,4)(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#23");
+		HtmlDiff.AssertAreEqual (exp, v, "#23");
 	}
 
 
@@ -680,7 +681,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#24");
+		HtmlDiff.AssertAreEqual (exp, v, "#24");
 	}
 
 
@@ -699,7 +700,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)<br>(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)<br>(9,Item,4)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#25");
+		HtmlDiff.AssertAreEqual (exp, v, "#25");
 	}
 
 
@@ -718,7 +719,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#26");
+		HtmlDiff.AssertAreEqual (exp, v, "#26");
 	}
 
 
@@ -737,7 +738,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)<br>(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#27");
+		HtmlDiff.AssertAreEqual (exp, v, "#27");
 	}
 
 
@@ -756,7 +757,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)(14,Separator,6)(15,Item,7)(16,Separator,7)(17,Item,8)<br>(18,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#28");
+		HtmlDiff.AssertAreEqual (exp, v, "#28");
 	}
 
 
@@ -775,7 +776,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#29");
+		HtmlDiff.AssertAreEqual (exp, v, "#29");
 	}
 
 
@@ -990,7 +991,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#40");
+		HtmlDiff.AssertAreEqual (exp, v, "#40");
 	}
 
 
@@ -1017,7 +1018,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#41");
+		HtmlDiff.AssertAreEqual (exp, v, "#41");
 	}
 
 
@@ -1044,7 +1045,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#42");
+		HtmlDiff.AssertAreEqual (exp, v, "#42");
 	}
 
 
@@ -1071,7 +1072,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""10"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#43");
+		HtmlDiff.AssertAreEqual (exp, v, "#43");
 	}
 
 
@@ -1096,7 +1097,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#44");
+		HtmlDiff.AssertAreEqual (exp, v, "#44");
 	}
 
 
@@ -1131,7 +1132,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#45");
+		HtmlDiff.AssertAreEqual (exp, v, "#45");
 	}
 
 
@@ -1160,7 +1161,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#46");
+		HtmlDiff.AssertAreEqual (exp, v, "#46");
 	}
 
 
@@ -1193,7 +1194,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#47");
+		HtmlDiff.AssertAreEqual (exp, v, "#47");
 	}
 
 
@@ -1224,7 +1225,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(18,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#48");
+		HtmlDiff.AssertAreEqual (exp, v, "#48");
 	}
 
 
@@ -1255,7 +1256,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#49");
+		HtmlDiff.AssertAreEqual (exp, v, "#49");
 	}
 
 
@@ -1280,7 +1281,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#50");
+		HtmlDiff.AssertAreEqual (exp, v, "#50");
 	}
 
 
@@ -1307,7 +1308,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#51");
+		HtmlDiff.AssertAreEqual (exp, v, "#51");
 	}
 
 
@@ -1338,7 +1339,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#52");
+		HtmlDiff.AssertAreEqual (exp, v, "#52");
 	}
 
 
@@ -1381,7 +1382,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#53");
+		HtmlDiff.AssertAreEqual (exp, v, "#53");
 	}
 
 
@@ -1406,7 +1407,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#54");
+		HtmlDiff.AssertAreEqual (exp, v, "#54");
 	}
 
 
@@ -1449,7 +1450,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#55");
+		HtmlDiff.AssertAreEqual (exp, v, "#55");
 	}
 
 
@@ -1478,7 +1479,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#56");
+		HtmlDiff.AssertAreEqual (exp, v, "#56");
 	}
 
 
@@ -1511,7 +1512,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#57");
+		HtmlDiff.AssertAreEqual (exp, v, "#57");
 	}
 
 
@@ -1542,7 +1543,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(18,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#58");
+		HtmlDiff.AssertAreEqual (exp, v, "#58");
 	}
 
 
@@ -1573,7 +1574,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(14,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#59");
+		HtmlDiff.AssertAreEqual (exp, v, "#59");
 	}
 
 
@@ -1592,7 +1593,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#60");
+		HtmlDiff.AssertAreEqual (exp, v, "#60");
 	}
 
 
@@ -1611,7 +1612,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#61");
+		HtmlDiff.AssertAreEqual (exp, v, "#61");
 	}
 
 
@@ -1630,7 +1631,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#62");
+		HtmlDiff.AssertAreEqual (exp, v, "#62");
 	}
 
 
@@ -1649,7 +1650,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)(9,Item,4)(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#63");
+		HtmlDiff.AssertAreEqual (exp, v, "#63");
 	}
 
 
@@ -1668,7 +1669,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#64");
+		HtmlDiff.AssertAreEqual (exp, v, "#64");
 	}
 
 
@@ -1687,7 +1688,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)<br>(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)<br>(9,Item,4)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#65");
+		HtmlDiff.AssertAreEqual (exp, v, "#65");
 	}
 
 
@@ -1706,7 +1707,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#66");
+		HtmlDiff.AssertAreEqual (exp, v, "#66");
 	}
 
 
@@ -1725,7 +1726,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)<br>(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#67");
+		HtmlDiff.AssertAreEqual (exp, v, "#67");
 	}
 
 
@@ -1744,7 +1745,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)(14,Separator,6)(15,Item,7)(16,Separator,7)(17,Item,8)<br>(18,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#68");
+		HtmlDiff.AssertAreEqual (exp, v, "#68");
 	}
 
 
@@ -1763,7 +1764,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#69");
+		HtmlDiff.AssertAreEqual (exp, v, "#69");
 	}
 
 
@@ -1782,7 +1783,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#70");
+		HtmlDiff.AssertAreEqual (exp, v, "#70");
 	}
 
 
@@ -1801,7 +1802,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#71");
+		HtmlDiff.AssertAreEqual (exp, v, "#71");
 	}
 
 
@@ -1820,7 +1821,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)<br>(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#72");
+		HtmlDiff.AssertAreEqual (exp, v, "#72");
 	}
 
 
@@ -1839,7 +1840,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)<br>(4,Separator,1)<br>(5,Item,2)<br>(6,Separator,2)<br>(7,Item,3)<br>(8,Separator,3)<br>(9,Item,4)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#73");
+		HtmlDiff.AssertAreEqual (exp, v, "#73");
 	}
 
 
@@ -1858,7 +1859,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#74");
+		HtmlDiff.AssertAreEqual (exp, v, "#74");
 	}
 
 
@@ -1877,7 +1878,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)<br>(4,Separator,1)<br>(5,Item,2)<br>(6,Separator,2)<br>(7,Item,3)<br>(8,Separator,3)<br>(9,Item,4)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#75");
+		HtmlDiff.AssertAreEqual (exp, v, "#75");
 	}
 
 
@@ -1896,7 +1897,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,2)(4,Separator,2)<br>(5,Item,1)(6,Separator,1)(7,Item,3)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#76");
+		HtmlDiff.AssertAreEqual (exp, v, "#76");
 	}
 
 
@@ -1915,7 +1916,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,4)(4,Separator,4)<br>(5,Item,1)(6,Separator,1)(7,Item,5)(8,Separator,5)<br>(9,Item,2)(10,Separator,2)(11,Item,6)<br>(12,Item,3)(13,Separator,3)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#77");
+		HtmlDiff.AssertAreEqual (exp, v, "#77");
 	}
 
 
@@ -1934,7 +1935,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,3)(4,Separator,3)(5,Item,6)(6,Separator,6)<br>(7,Item,1)(8,Separator,1)(9,Item,4)(10,Separator,4)(11,Item,7)(12,Separator,7)<br>(13,Item,2)(14,Separator,2)(15,Item,5)(16,Separator,5)(17,Item,8)<br>(18,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#78");
+		HtmlDiff.AssertAreEqual (exp, v, "#78");
 	}
 
 
@@ -1953,7 +1954,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,3)(4,Separator,3)(5,Item,5)(6,Separator,5)<br>(7,Item,1)(8,Separator,1)(9,Item,4)(10,Separator,4)(11,Item,6)<br>(12,Item,2)(13,Separator,2)<br>(14,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#79");
+		HtmlDiff.AssertAreEqual (exp, v, "#79");
 	}
 
 
@@ -1976,7 +1977,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#80");
+		HtmlDiff.AssertAreEqual (exp, v, "#80");
 	}
 
 
@@ -2001,7 +2002,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#81");
+		HtmlDiff.AssertAreEqual (exp, v, "#81");
 	}
 
 
@@ -2026,7 +2027,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#82");
+		HtmlDiff.AssertAreEqual (exp, v, "#82");
 	}
 
 
@@ -2051,7 +2052,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""10"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#83");
+		HtmlDiff.AssertAreEqual (exp, v, "#83");
 	}
 
 
@@ -2074,7 +2075,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#84");
+		HtmlDiff.AssertAreEqual (exp, v, "#84");
 	}
 
 
@@ -2107,7 +2108,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#85");
+		HtmlDiff.AssertAreEqual (exp, v, "#85");
 	}
 
 
@@ -2134,7 +2135,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#86");
+		HtmlDiff.AssertAreEqual (exp, v, "#86");
 	}
 
 
@@ -2165,7 +2166,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#87");
+		HtmlDiff.AssertAreEqual (exp, v, "#87");
 	}
 
 
@@ -2194,7 +2195,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(17,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#88");
+		HtmlDiff.AssertAreEqual (exp, v, "#88");
 	}
 
 
@@ -2223,7 +2224,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#89");
+		HtmlDiff.AssertAreEqual (exp, v, "#89");
 	}
 
 
@@ -2432,7 +2433,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#100");
+		HtmlDiff.AssertAreEqual (exp, v, "#100");
 	}
 
 
@@ -2451,7 +2452,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#101");
+		HtmlDiff.AssertAreEqual (exp, v, "#101");
 	}
 
 
@@ -2470,7 +2471,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#102");
+		HtmlDiff.AssertAreEqual (exp, v, "#102");
 	}
 
 
@@ -2489,7 +2490,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)(8,Item,4)(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#103");
+		HtmlDiff.AssertAreEqual (exp, v, "#103");
 	}
 
 
@@ -2508,7 +2509,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#104");
+		HtmlDiff.AssertAreEqual (exp, v, "#104");
 	}
 
 
@@ -2527,7 +2528,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)<br>(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)<br>(8,Item,4)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#105");
+		HtmlDiff.AssertAreEqual (exp, v, "#105");
 	}
 
 
@@ -2546,7 +2547,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#106");
+		HtmlDiff.AssertAreEqual (exp, v, "#106");
 	}
 
 
@@ -2565,7 +2566,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)<br>(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#107");
+		HtmlDiff.AssertAreEqual (exp, v, "#107");
 	}
 
 
@@ -2584,7 +2585,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)(13,Separator,6)(14,Item,7)(15,Separator,7)(16,Item,8)<br>(17,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#108");
+		HtmlDiff.AssertAreEqual (exp, v, "#108");
 	}
 
 
@@ -2603,7 +2604,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#109");
+		HtmlDiff.AssertAreEqual (exp, v, "#109");
 	}
 
 
@@ -2816,7 +2817,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#120");
+		HtmlDiff.AssertAreEqual (exp, v, "#120");
 	}
 
 
@@ -2841,7 +2842,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#121");
+		HtmlDiff.AssertAreEqual (exp, v, "#121");
 	}
 
 
@@ -2866,7 +2867,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#122");
+		HtmlDiff.AssertAreEqual (exp, v, "#122");
 	}
 
 
@@ -2891,7 +2892,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""10"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#123");
+		HtmlDiff.AssertAreEqual (exp, v, "#123");
 	}
 
 
@@ -2914,7 +2915,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#124");
+		HtmlDiff.AssertAreEqual (exp, v, "#124");
 	}
 
 
@@ -2947,7 +2948,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#125");
+		HtmlDiff.AssertAreEqual (exp, v, "#125");
 	}
 
 
@@ -2974,7 +2975,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#126");
+		HtmlDiff.AssertAreEqual (exp, v, "#126");
 	}
 
 
@@ -3005,7 +3006,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#127");
+		HtmlDiff.AssertAreEqual (exp, v, "#127");
 	}
 
 
@@ -3034,7 +3035,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(17,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#128");
+		HtmlDiff.AssertAreEqual (exp, v, "#128");
 	}
 
 
@@ -3063,7 +3064,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#129");
+		HtmlDiff.AssertAreEqual (exp, v, "#129");
 	}
 
 
@@ -3086,7 +3087,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#130");
+		HtmlDiff.AssertAreEqual (exp, v, "#130");
 	}
 
 
@@ -3111,7 +3112,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#131");
+		HtmlDiff.AssertAreEqual (exp, v, "#131");
 	}
 
 
@@ -3140,7 +3141,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#132");
+		HtmlDiff.AssertAreEqual (exp, v, "#132");
 	}
 
 
@@ -3181,7 +3182,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#133");
+		HtmlDiff.AssertAreEqual (exp, v, "#133");
 	}
 
 
@@ -3204,7 +3205,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#134");
+		HtmlDiff.AssertAreEqual (exp, v, "#134");
 	}
 
 
@@ -3245,7 +3246,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#135");
+		HtmlDiff.AssertAreEqual (exp, v, "#135");
 	}
 
 
@@ -3272,7 +3273,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#136");
+		HtmlDiff.AssertAreEqual (exp, v, "#136");
 	}
 
 
@@ -3303,7 +3304,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""4"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#137");
+		HtmlDiff.AssertAreEqual (exp, v, "#137");
 	}
 
 
@@ -3332,7 +3333,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(17,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#138");
+		HtmlDiff.AssertAreEqual (exp, v, "#138");
 	}
 
 
@@ -3361,7 +3362,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""6"" class=""Footer-1"">(13,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#139");
+		HtmlDiff.AssertAreEqual (exp, v, "#139");
 	}
 
 
@@ -3380,7 +3381,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#140");
+		HtmlDiff.AssertAreEqual (exp, v, "#140");
 	}
 
 
@@ -3399,7 +3400,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#141");
+		HtmlDiff.AssertAreEqual (exp, v, "#141");
 	}
 
 
@@ -3418,7 +3419,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#142");
+		HtmlDiff.AssertAreEqual (exp, v, "#142");
 	}
 
 
@@ -3437,7 +3438,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)(8,Item,4)(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#143");
+		HtmlDiff.AssertAreEqual (exp, v, "#143");
 	}
 
 
@@ -3456,7 +3457,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#144");
+		HtmlDiff.AssertAreEqual (exp, v, "#144");
 	}
 
 
@@ -3475,7 +3476,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)<br>(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)<br>(8,Item,4)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#145");
+		HtmlDiff.AssertAreEqual (exp, v, "#145");
 	}
 
 
@@ -3494,7 +3495,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#146");
+		HtmlDiff.AssertAreEqual (exp, v, "#146");
 	}
 
 
@@ -3513,7 +3514,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)<br>(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#147");
+		HtmlDiff.AssertAreEqual (exp, v, "#147");
 	}
 
 
@@ -3532,7 +3533,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)(13,Separator,6)(14,Item,7)(15,Separator,7)(16,Item,8)<br>(17,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#148");
+		HtmlDiff.AssertAreEqual (exp, v, "#148");
 	}
 
 
@@ -3551,7 +3552,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#149");
+		HtmlDiff.AssertAreEqual (exp, v, "#149");
 	}
 
 
@@ -3570,7 +3571,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#150");
+		HtmlDiff.AssertAreEqual (exp, v, "#150");
 	}
 
 
@@ -3589,7 +3590,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#151");
+		HtmlDiff.AssertAreEqual (exp, v, "#151");
 	}
 
 
@@ -3608,7 +3609,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)<br>(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#152");
+		HtmlDiff.AssertAreEqual (exp, v, "#152");
 	}
 
 
@@ -3627,7 +3628,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)<br>(3,Separator,1)<br>(4,Item,2)<br>(5,Separator,2)<br>(6,Item,3)<br>(7,Separator,3)<br>(8,Item,4)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#153");
+		HtmlDiff.AssertAreEqual (exp, v, "#153");
 	}
 
 
@@ -3646,7 +3647,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#154");
+		HtmlDiff.AssertAreEqual (exp, v, "#154");
 	}
 
 
@@ -3665,7 +3666,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)<br>(3,Separator,1)<br>(4,Item,2)<br>(5,Separator,2)<br>(6,Item,3)<br>(7,Separator,3)<br>(8,Item,4)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#155");
+		HtmlDiff.AssertAreEqual (exp, v, "#155");
 	}
 
 
@@ -3684,7 +3685,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,2)(3,Separator,2)<br>(4,Item,1)(5,Separator,1)(6,Item,3)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#156");
+		HtmlDiff.AssertAreEqual (exp, v, "#156");
 	}
 
 
@@ -3703,7 +3704,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,4)(3,Separator,4)<br>(4,Item,1)(5,Separator,1)(6,Item,5)(7,Separator,5)<br>(8,Item,2)(9,Separator,2)(10,Item,6)<br>(11,Item,3)(12,Separator,3)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#157");
+		HtmlDiff.AssertAreEqual (exp, v, "#157");
 	}
 
 
@@ -3722,7 +3723,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,3)(3,Separator,3)(4,Item,6)(5,Separator,6)<br>(6,Item,1)(7,Separator,1)(8,Item,4)(9,Separator,4)(10,Item,7)(11,Separator,7)<br>(12,Item,2)(13,Separator,2)(14,Item,5)(15,Separator,5)(16,Item,8)<br>(17,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#158");
+		HtmlDiff.AssertAreEqual (exp, v, "#158");
 	}
 
 
@@ -3741,7 +3742,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,3)(3,Separator,3)(4,Item,5)(5,Separator,5)<br>(6,Item,1)(7,Separator,1)(8,Item,4)(9,Separator,4)(10,Item,6)<br>(11,Item,2)(12,Separator,2)<br>(13,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#159");
+		HtmlDiff.AssertAreEqual (exp, v, "#159");
 	}
 
 
@@ -3764,7 +3765,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#160");
+		HtmlDiff.AssertAreEqual (exp, v, "#160");
 	}
 
 
@@ -3789,7 +3790,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#161");
+		HtmlDiff.AssertAreEqual (exp, v, "#161");
 	}
 
 
@@ -3814,7 +3815,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Separator0"">(2,Separator,0)</td><td class=""Item1"">(3,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#162");
+		HtmlDiff.AssertAreEqual (exp, v, "#162");
 	}
 
 
@@ -3839,7 +3840,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Separator0"">(2,Separator,0)</td><td class=""Item1"">(3,Item,1)</td><td class=""Separator1"">(4,Separator,1)</td><td class=""Item2"">(5,Item,2)</td><td class=""Separator2"">(6,Separator,2)</td><td class=""Item3"">(7,Item,3)</td><td class=""Separator3"">(8,Separator,3)</td><td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#163");
+		HtmlDiff.AssertAreEqual (exp, v, "#163");
 	}
 
 
@@ -3862,7 +3863,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#164");
+		HtmlDiff.AssertAreEqual (exp, v, "#164");
 	}
 
 
@@ -3895,7 +3896,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#165");
+		HtmlDiff.AssertAreEqual (exp, v, "#165");
 	}
 
 
@@ -3922,7 +3923,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(5,Item,2)</td><td class=""Separator2"">(6,Separator,2)</td><td class=""Item3"">(7,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#166");
+		HtmlDiff.AssertAreEqual (exp, v, "#166");
 	}
 
 
@@ -3953,7 +3954,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#167");
+		HtmlDiff.AssertAreEqual (exp, v, "#167");
 	}
 
 
@@ -3982,7 +3983,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td><td class=""Separator6"">(14,Separator,6)</td><td class=""Item7"">(15,Item,7)</td><td class=""Separator7"">(16,Separator,7)</td><td class=""Item8"">(17,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#168");
+		HtmlDiff.AssertAreEqual (exp, v, "#168");
 	}
 
 
@@ -4011,7 +4012,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#169");
+		HtmlDiff.AssertAreEqual (exp, v, "#169");
 	}
 
 
@@ -4220,7 +4221,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#180");
+		HtmlDiff.AssertAreEqual (exp, v, "#180");
 	}
 
 
@@ -4239,7 +4240,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#181");
+		HtmlDiff.AssertAreEqual (exp, v, "#181");
 	}
 
 
@@ -4258,7 +4259,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#182");
+		HtmlDiff.AssertAreEqual (exp, v, "#182");
 	}
 
 
@@ -4277,7 +4278,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)(9,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#183");
+		HtmlDiff.AssertAreEqual (exp, v, "#183");
 	}
 
 
@@ -4296,7 +4297,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#184");
+		HtmlDiff.AssertAreEqual (exp, v, "#184");
 	}
 
 
@@ -4315,7 +4316,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)<br>(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)<br>(9,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#185");
+		HtmlDiff.AssertAreEqual (exp, v, "#185");
 	}
 
 
@@ -4334,7 +4335,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#186");
+		HtmlDiff.AssertAreEqual (exp, v, "#186");
 	}
 
 
@@ -4353,7 +4354,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)<br>(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#187");
+		HtmlDiff.AssertAreEqual (exp, v, "#187");
 	}
 
 
@@ -4372,7 +4373,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)(14,Separator,6)(15,Item,7)(16,Separator,7)(17,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#188");
+		HtmlDiff.AssertAreEqual (exp, v, "#188");
 	}
 
 
@@ -4391,7 +4392,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#189");
+		HtmlDiff.AssertAreEqual (exp, v, "#189");
 	}
 
 
@@ -4604,7 +4605,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#200");
+		HtmlDiff.AssertAreEqual (exp, v, "#200");
 	}
 
 
@@ -4629,7 +4630,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#201");
+		HtmlDiff.AssertAreEqual (exp, v, "#201");
 	}
 
 
@@ -4654,7 +4655,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Separator0"">(2,Separator,0)</td><td class=""Item1"">(3,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#202");
+		HtmlDiff.AssertAreEqual (exp, v, "#202");
 	}
 
 
@@ -4679,7 +4680,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Separator0"">(2,Separator,0)</td><td class=""Item1"">(3,Item,1)</td><td class=""Separator1"">(4,Separator,1)</td><td class=""Item2"">(5,Item,2)</td><td class=""Separator2"">(6,Separator,2)</td><td class=""Item3"">(7,Item,3)</td><td class=""Separator3"">(8,Separator,3)</td><td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#203");
+		HtmlDiff.AssertAreEqual (exp, v, "#203");
 	}
 
 
@@ -4702,7 +4703,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#204");
+		HtmlDiff.AssertAreEqual (exp, v, "#204");
 	}
 
 
@@ -4735,7 +4736,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#205");
+		HtmlDiff.AssertAreEqual (exp, v, "#205");
 	}
 
 
@@ -4762,7 +4763,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(5,Item,2)</td><td class=""Separator2"">(6,Separator,2)</td><td class=""Item3"">(7,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#206");
+		HtmlDiff.AssertAreEqual (exp, v, "#206");
 	}
 
 
@@ -4793,7 +4794,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#207");
+		HtmlDiff.AssertAreEqual (exp, v, "#207");
 	}
 
 
@@ -4822,7 +4823,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td><td class=""Separator6"">(14,Separator,6)</td><td class=""Item7"">(15,Item,7)</td><td class=""Separator7"">(16,Separator,7)</td><td class=""Item8"">(17,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#208");
+		HtmlDiff.AssertAreEqual (exp, v, "#208");
 	}
 
 
@@ -4851,7 +4852,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(13,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#209");
+		HtmlDiff.AssertAreEqual (exp, v, "#209");
 	}
 
 
@@ -4874,7 +4875,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#210");
+		HtmlDiff.AssertAreEqual (exp, v, "#210");
 	}
 
 
@@ -4899,7 +4900,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#211");
+		HtmlDiff.AssertAreEqual (exp, v, "#211");
 	}
 
 
@@ -4928,7 +4929,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(3,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#212");
+		HtmlDiff.AssertAreEqual (exp, v, "#212");
 	}
 
 
@@ -4969,7 +4970,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#213");
+		HtmlDiff.AssertAreEqual (exp, v, "#213");
 	}
 
 
@@ -4992,7 +4993,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#214");
+		HtmlDiff.AssertAreEqual (exp, v, "#214");
 	}
 
 
@@ -5033,7 +5034,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(9,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#215");
+		HtmlDiff.AssertAreEqual (exp, v, "#215");
 	}
 
 
@@ -5060,7 +5061,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(5,Item,1)</td><td class=""Separator1"">(6,Separator,1)</td><td class=""Item3"">(7,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#216");
+		HtmlDiff.AssertAreEqual (exp, v, "#216");
 	}
 
 
@@ -5091,7 +5092,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item3"">(12,Item,3)</td><td class=""Separator3"">(13,Separator,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#217");
+		HtmlDiff.AssertAreEqual (exp, v, "#217");
 	}
 
 
@@ -5120,7 +5121,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(13,Item,2)</td><td class=""Separator2"">(14,Separator,2)</td><td class=""Item5"">(15,Item,5)</td><td class=""Separator5"">(16,Separator,5)</td><td class=""Item8"">(17,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#218");
+		HtmlDiff.AssertAreEqual (exp, v, "#218");
 	}
 
 
@@ -5149,7 +5150,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(12,Item,2)</td><td class=""Separator2"">(13,Separator,2)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#219");
+		HtmlDiff.AssertAreEqual (exp, v, "#219");
 	}
 
 
@@ -5168,7 +5169,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#220");
+		HtmlDiff.AssertAreEqual (exp, v, "#220");
 	}
 
 
@@ -5187,7 +5188,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#221");
+		HtmlDiff.AssertAreEqual (exp, v, "#221");
 	}
 
 
@@ -5206,7 +5207,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#222");
+		HtmlDiff.AssertAreEqual (exp, v, "#222");
 	}
 
 
@@ -5225,7 +5226,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)(9,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#223");
+		HtmlDiff.AssertAreEqual (exp, v, "#223");
 	}
 
 
@@ -5244,7 +5245,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#224");
+		HtmlDiff.AssertAreEqual (exp, v, "#224");
 	}
 
 
@@ -5263,7 +5264,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)<br>(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)<br>(9,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#225");
+		HtmlDiff.AssertAreEqual (exp, v, "#225");
 	}
 
 
@@ -5282,7 +5283,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#226");
+		HtmlDiff.AssertAreEqual (exp, v, "#226");
 	}
 
 
@@ -5301,7 +5302,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)<br>(5,Item,2)(6,Separator,2)(7,Item,3)(8,Separator,3)<br>(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#227");
+		HtmlDiff.AssertAreEqual (exp, v, "#227");
 	}
 
 
@@ -5320,7 +5321,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)(14,Separator,6)(15,Item,7)(16,Separator,7)(17,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#228");
+		HtmlDiff.AssertAreEqual (exp, v, "#228");
 	}
 
 
@@ -5339,7 +5340,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,1)(4,Separator,1)(5,Item,2)(6,Separator,2)<br>(7,Item,3)(8,Separator,3)(9,Item,4)(10,Separator,4)(11,Item,5)(12,Separator,5)<br>(13,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#229");
+		HtmlDiff.AssertAreEqual (exp, v, "#229");
 	}
 
 
@@ -5358,7 +5359,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br></span>";
-		Assert.AreEqual (exp, v, "#230");
+		HtmlDiff.AssertAreEqual (exp, v, "#230");
 	}
 
 
@@ -5377,7 +5378,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#231");
+		HtmlDiff.AssertAreEqual (exp, v, "#231");
 	}
 
 
@@ -5396,7 +5397,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#232");
+		HtmlDiff.AssertAreEqual (exp, v, "#232");
 	}
 
 
@@ -5415,7 +5416,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)<br>(4,Separator,1)<br>(5,Item,2)<br>(6,Separator,2)<br>(7,Item,3)<br>(8,Separator,3)<br>(9,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#233");
+		HtmlDiff.AssertAreEqual (exp, v, "#233");
 	}
 
 
@@ -5434,7 +5435,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br></span>";
-		Assert.AreEqual (exp, v, "#234");
+		HtmlDiff.AssertAreEqual (exp, v, "#234");
 	}
 
 
@@ -5453,7 +5454,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Separator,0)<br>(3,Item,1)<br>(4,Separator,1)<br>(5,Item,2)<br>(6,Separator,2)<br>(7,Item,3)<br>(8,Separator,3)<br>(9,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#235");
+		HtmlDiff.AssertAreEqual (exp, v, "#235");
 	}
 
 
@@ -5472,7 +5473,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,2)(4,Separator,2)<br>(5,Item,1)(6,Separator,1)(7,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#236");
+		HtmlDiff.AssertAreEqual (exp, v, "#236");
 	}
 
 
@@ -5491,7 +5492,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,4)(4,Separator,4)<br>(5,Item,1)(6,Separator,1)(7,Item,5)(8,Separator,5)<br>(9,Item,2)(10,Separator,2)(11,Item,6)<br>(12,Item,3)(13,Separator,3)</span>";
-		Assert.AreEqual (exp, v, "#237");
+		HtmlDiff.AssertAreEqual (exp, v, "#237");
 	}
 
 
@@ -5510,7 +5511,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,3)(4,Separator,3)(5,Item,6)(6,Separator,6)<br>(7,Item,1)(8,Separator,1)(9,Item,4)(10,Separator,4)(11,Item,7)(12,Separator,7)<br>(13,Item,2)(14,Separator,2)(15,Item,5)(16,Separator,5)(17,Item,8)</span>";
-		Assert.AreEqual (exp, v, "#238");
+		HtmlDiff.AssertAreEqual (exp, v, "#238");
 	}
 
 
@@ -5529,7 +5530,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, true);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Separator,0)(3,Item,3)(4,Separator,3)(5,Item,5)(6,Separator,5)<br>(7,Item,1)(8,Separator,1)(9,Item,4)(10,Separator,4)(11,Item,6)<br>(12,Item,2)(13,Separator,2)</span>";
-		Assert.AreEqual (exp, v, "#239");
+		HtmlDiff.AssertAreEqual (exp, v, "#239");
 	}
 
 
@@ -5550,7 +5551,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#240");
+		HtmlDiff.AssertAreEqual (exp, v, "#240");
 	}
 
 
@@ -5573,7 +5574,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#241");
+		HtmlDiff.AssertAreEqual (exp, v, "#241");
 	}
 
 
@@ -5596,7 +5597,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Separator0"">(1,Separator,0)</td><td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#242");
+		HtmlDiff.AssertAreEqual (exp, v, "#242");
 	}
 
 
@@ -5619,7 +5620,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Separator0"">(1,Separator,0)</td><td class=""Item1"">(2,Item,1)</td><td class=""Separator1"">(3,Separator,1)</td><td class=""Item2"">(4,Item,2)</td><td class=""Separator2"">(5,Separator,2)</td><td class=""Item3"">(6,Item,3)</td><td class=""Separator3"">(7,Separator,3)</td><td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#243");
+		HtmlDiff.AssertAreEqual (exp, v, "#243");
 	}
 
 
@@ -5640,7 +5641,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#244");
+		HtmlDiff.AssertAreEqual (exp, v, "#244");
 	}
 
 
@@ -5671,7 +5672,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#245");
+		HtmlDiff.AssertAreEqual (exp, v, "#245");
 	}
 
 
@@ -5696,7 +5697,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(4,Item,2)</td><td class=""Separator2"">(5,Separator,2)</td><td class=""Item3"">(6,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#246");
+		HtmlDiff.AssertAreEqual (exp, v, "#246");
 	}
 
 
@@ -5725,7 +5726,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#247");
+		HtmlDiff.AssertAreEqual (exp, v, "#247");
 	}
 
 
@@ -5752,7 +5753,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td><td class=""Separator6"">(13,Separator,6)</td><td class=""Item7"">(14,Item,7)</td><td class=""Separator7"">(15,Separator,7)</td><td class=""Item8"">(16,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#248");
+		HtmlDiff.AssertAreEqual (exp, v, "#248");
 	}
 
 
@@ -5779,7 +5780,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#249");
+		HtmlDiff.AssertAreEqual (exp, v, "#249");
 	}
 
 
@@ -5988,7 +5989,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#260");
+		HtmlDiff.AssertAreEqual (exp, v, "#260");
 	}
 
 
@@ -6007,7 +6008,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#261");
+		HtmlDiff.AssertAreEqual (exp, v, "#261");
 	}
 
 
@@ -6026,7 +6027,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#262");
+		HtmlDiff.AssertAreEqual (exp, v, "#262");
 	}
 
 
@@ -6045,7 +6046,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)(8,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#263");
+		HtmlDiff.AssertAreEqual (exp, v, "#263");
 	}
 
 
@@ -6064,7 +6065,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#264");
+		HtmlDiff.AssertAreEqual (exp, v, "#264");
 	}
 
 
@@ -6083,7 +6084,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)<br>(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)<br>(8,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#265");
+		HtmlDiff.AssertAreEqual (exp, v, "#265");
 	}
 
 
@@ -6102,7 +6103,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#266");
+		HtmlDiff.AssertAreEqual (exp, v, "#266");
 	}
 
 
@@ -6121,7 +6122,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)<br>(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#267");
+		HtmlDiff.AssertAreEqual (exp, v, "#267");
 	}
 
 
@@ -6140,7 +6141,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)(13,Separator,6)(14,Item,7)(15,Separator,7)(16,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#268");
+		HtmlDiff.AssertAreEqual (exp, v, "#268");
 	}
 
 
@@ -6159,7 +6160,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#269");
+		HtmlDiff.AssertAreEqual (exp, v, "#269");
 	}
 
 
@@ -6370,7 +6371,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#280");
+		HtmlDiff.AssertAreEqual (exp, v, "#280");
 	}
 
 
@@ -6393,7 +6394,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#281");
+		HtmlDiff.AssertAreEqual (exp, v, "#281");
 	}
 
 
@@ -6416,7 +6417,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Separator0"">(1,Separator,0)</td><td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#282");
+		HtmlDiff.AssertAreEqual (exp, v, "#282");
 	}
 
 
@@ -6439,7 +6440,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Separator0"">(1,Separator,0)</td><td class=""Item1"">(2,Item,1)</td><td class=""Separator1"">(3,Separator,1)</td><td class=""Item2"">(4,Item,2)</td><td class=""Separator2"">(5,Separator,2)</td><td class=""Item3"">(6,Item,3)</td><td class=""Separator3"">(7,Separator,3)</td><td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#283");
+		HtmlDiff.AssertAreEqual (exp, v, "#283");
 	}
 
 
@@ -6460,7 +6461,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#284");
+		HtmlDiff.AssertAreEqual (exp, v, "#284");
 	}
 
 
@@ -6491,7 +6492,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#285");
+		HtmlDiff.AssertAreEqual (exp, v, "#285");
 	}
 
 
@@ -6516,7 +6517,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(4,Item,2)</td><td class=""Separator2"">(5,Separator,2)</td><td class=""Item3"">(6,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#286");
+		HtmlDiff.AssertAreEqual (exp, v, "#286");
 	}
 
 
@@ -6545,7 +6546,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#287");
+		HtmlDiff.AssertAreEqual (exp, v, "#287");
 	}
 
 
@@ -6572,7 +6573,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td><td class=""Separator6"">(13,Separator,6)</td><td class=""Item7"">(14,Item,7)</td><td class=""Separator7"">(15,Separator,7)</td><td class=""Item8"">(16,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#288");
+		HtmlDiff.AssertAreEqual (exp, v, "#288");
 	}
 
 
@@ -6599,7 +6600,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(12,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#289");
+		HtmlDiff.AssertAreEqual (exp, v, "#289");
 	}
 
 
@@ -6620,7 +6621,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#290");
+		HtmlDiff.AssertAreEqual (exp, v, "#290");
 	}
 
 
@@ -6643,7 +6644,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#291");
+		HtmlDiff.AssertAreEqual (exp, v, "#291");
 	}
 
 
@@ -6670,7 +6671,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#292");
+		HtmlDiff.AssertAreEqual (exp, v, "#292");
 	}
 
 
@@ -6709,7 +6710,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#293");
+		HtmlDiff.AssertAreEqual (exp, v, "#293");
 	}
 
 
@@ -6730,7 +6731,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#294");
+		HtmlDiff.AssertAreEqual (exp, v, "#294");
 	}
 
 
@@ -6769,7 +6770,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(8,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#295");
+		HtmlDiff.AssertAreEqual (exp, v, "#295");
 	}
 
 
@@ -6794,7 +6795,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(4,Item,1)</td><td class=""Separator1"">(5,Separator,1)</td><td class=""Item3"">(6,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#296");
+		HtmlDiff.AssertAreEqual (exp, v, "#296");
 	}
 
 
@@ -6823,7 +6824,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item3"">(11,Item,3)</td><td class=""Separator3"">(12,Separator,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#297");
+		HtmlDiff.AssertAreEqual (exp, v, "#297");
 	}
 
 
@@ -6850,7 +6851,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(12,Item,2)</td><td class=""Separator2"">(13,Separator,2)</td><td class=""Item5"">(14,Item,5)</td><td class=""Separator5"">(15,Separator,5)</td><td class=""Item8"">(16,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#298");
+		HtmlDiff.AssertAreEqual (exp, v, "#298");
 	}
 
 
@@ -6877,7 +6878,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(11,Item,2)</td><td class=""Separator2"">(12,Separator,2)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#299");
+		HtmlDiff.AssertAreEqual (exp, v, "#299");
 	}
 
 
@@ -6896,7 +6897,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#300");
+		HtmlDiff.AssertAreEqual (exp, v, "#300");
 	}
 
 
@@ -6915,7 +6916,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#301");
+		HtmlDiff.AssertAreEqual (exp, v, "#301");
 	}
 
 
@@ -6934,7 +6935,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#302");
+		HtmlDiff.AssertAreEqual (exp, v, "#302");
 	}
 
 
@@ -6953,7 +6954,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)(8,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#303");
+		HtmlDiff.AssertAreEqual (exp, v, "#303");
 	}
 
 
@@ -6972,7 +6973,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#304");
+		HtmlDiff.AssertAreEqual (exp, v, "#304");
 	}
 
 
@@ -6991,7 +6992,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)<br>(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)<br>(8,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#305");
+		HtmlDiff.AssertAreEqual (exp, v, "#305");
 	}
 
 
@@ -7010,7 +7011,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#306");
+		HtmlDiff.AssertAreEqual (exp, v, "#306");
 	}
 
 
@@ -7029,7 +7030,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)<br>(4,Item,2)(5,Separator,2)(6,Item,3)(7,Separator,3)<br>(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#307");
+		HtmlDiff.AssertAreEqual (exp, v, "#307");
 	}
 
 
@@ -7048,7 +7049,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)(13,Separator,6)(14,Item,7)(15,Separator,7)(16,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#308");
+		HtmlDiff.AssertAreEqual (exp, v, "#308");
 	}
 
 
@@ -7067,7 +7068,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,1)(3,Separator,1)(4,Item,2)(5,Separator,2)<br>(6,Item,3)(7,Separator,3)(8,Item,4)(9,Separator,4)(10,Item,5)(11,Separator,5)<br>(12,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#309");
+		HtmlDiff.AssertAreEqual (exp, v, "#309");
 	}
 
 
@@ -7086,7 +7087,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#310");
+		HtmlDiff.AssertAreEqual (exp, v, "#310");
 	}
 
 
@@ -7105,7 +7106,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#311");
+		HtmlDiff.AssertAreEqual (exp, v, "#311");
 	}
 
 
@@ -7124,7 +7125,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#312");
+		HtmlDiff.AssertAreEqual (exp, v, "#312");
 	}
 
 
@@ -7143,7 +7144,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)<br>(3,Separator,1)<br>(4,Item,2)<br>(5,Separator,2)<br>(6,Item,3)<br>(7,Separator,3)<br>(8,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#313");
+		HtmlDiff.AssertAreEqual (exp, v, "#313");
 	}
 
 
@@ -7162,7 +7163,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#314");
+		HtmlDiff.AssertAreEqual (exp, v, "#314");
 	}
 
 
@@ -7181,7 +7182,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Separator,0)<br>(2,Item,1)<br>(3,Separator,1)<br>(4,Item,2)<br>(5,Separator,2)<br>(6,Item,3)<br>(7,Separator,3)<br>(8,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#315");
+		HtmlDiff.AssertAreEqual (exp, v, "#315");
 	}
 
 
@@ -7200,7 +7201,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,2)(3,Separator,2)<br>(4,Item,1)(5,Separator,1)(6,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#316");
+		HtmlDiff.AssertAreEqual (exp, v, "#316");
 	}
 
 
@@ -7219,7 +7220,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Separator,0)(2,Item,4)(3,Separator,4)<br>(4,Item,1)(5,Separator,1)(6,Item,5)(7,Separator,5)<br>(8,Item,2)(9,Separator,2)(10,Item,6)<br>(11,Item,3)(12,Separator,3)</span>";
-		Assert.AreEqual (exp, v, "#317");
+		HtmlDiff.AssertAreEqual (exp, v, "#317");
 	}
 
 
@@ -7238,7 +7239,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,3)(3,Separator,3)(4,Item,6)(5,Separator,6)<br>(6,Item,1)(7,Separator,1)(8,Item,4)(9,Separator,4)(10,Item,7)(11,Separator,7)<br>(12,Item,2)(13,Separator,2)(14,Item,5)(15,Separator,5)(16,Item,8)</span>";
-		Assert.AreEqual (exp, v, "#318");
+		HtmlDiff.AssertAreEqual (exp, v, "#318");
 	}
 
 
@@ -7257,7 +7258,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, true);
 		string exp = @"<span>(0,Item,0)(1,Separator,0)(2,Item,3)(3,Separator,3)(4,Item,5)(5,Separator,5)<br>(6,Item,1)(7,Separator,1)(8,Item,4)(9,Separator,4)(10,Item,6)<br>(11,Item,2)(12,Separator,2)</span>";
-		Assert.AreEqual (exp, v, "#319");
+		HtmlDiff.AssertAreEqual (exp, v, "#319");
 	}
 
 
@@ -7282,7 +7283,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#320");
+		HtmlDiff.AssertAreEqual (exp, v, "#320");
 	}
 
 
@@ -7309,7 +7310,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#321");
+		HtmlDiff.AssertAreEqual (exp, v, "#321");
 	}
 
 
@@ -7336,7 +7337,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#322");
+		HtmlDiff.AssertAreEqual (exp, v, "#322");
 	}
 
 
@@ -7363,7 +7364,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""5"" class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#323");
+		HtmlDiff.AssertAreEqual (exp, v, "#323");
 	}
 
 
@@ -7388,7 +7389,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#324");
+		HtmlDiff.AssertAreEqual (exp, v, "#324");
 	}
 
 
@@ -7423,7 +7424,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#325");
+		HtmlDiff.AssertAreEqual (exp, v, "#325");
 	}
 
 
@@ -7452,7 +7453,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#326");
+		HtmlDiff.AssertAreEqual (exp, v, "#326");
 	}
 
 
@@ -7485,7 +7486,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#327");
+		HtmlDiff.AssertAreEqual (exp, v, "#327");
 	}
 
 
@@ -7516,7 +7517,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#328");
+		HtmlDiff.AssertAreEqual (exp, v, "#328");
 	}
 
 
@@ -7547,7 +7548,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#329");
+		HtmlDiff.AssertAreEqual (exp, v, "#329");
 	}
 
 
@@ -7756,7 +7757,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#340");
+		HtmlDiff.AssertAreEqual (exp, v, "#340");
 	}
 
 
@@ -7775,7 +7776,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#341");
+		HtmlDiff.AssertAreEqual (exp, v, "#341");
 	}
 
 
@@ -7794,7 +7795,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#342");
+		HtmlDiff.AssertAreEqual (exp, v, "#342");
 	}
 
 
@@ -7813,7 +7814,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Item,2)(4,Item,3)(5,Item,4)(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#343");
+		HtmlDiff.AssertAreEqual (exp, v, "#343");
 	}
 
 
@@ -7832,7 +7833,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#344");
+		HtmlDiff.AssertAreEqual (exp, v, "#344");
 	}
 
 
@@ -7851,7 +7852,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br>(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#345");
+		HtmlDiff.AssertAreEqual (exp, v, "#345");
 	}
 
 
@@ -7870,7 +7871,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#346");
+		HtmlDiff.AssertAreEqual (exp, v, "#346");
 	}
 
 
@@ -7889,7 +7890,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Item,4)(6,Item,5)<br>(7,Item,6)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#347");
+		HtmlDiff.AssertAreEqual (exp, v, "#347");
 	}
 
 
@@ -7908,7 +7909,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)(8,Item,7)(9,Item,8)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#348");
+		HtmlDiff.AssertAreEqual (exp, v, "#348");
 	}
 
 
@@ -7927,7 +7928,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#349");
+		HtmlDiff.AssertAreEqual (exp, v, "#349");
 	}
 
 
@@ -8142,7 +8143,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#360");
+		HtmlDiff.AssertAreEqual (exp, v, "#360");
 	}
 
 
@@ -8169,7 +8170,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#361");
+		HtmlDiff.AssertAreEqual (exp, v, "#361");
 	}
 
 
@@ -8196,7 +8197,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#362");
+		HtmlDiff.AssertAreEqual (exp, v, "#362");
 	}
 
 
@@ -8223,7 +8224,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""5"" class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#363");
+		HtmlDiff.AssertAreEqual (exp, v, "#363");
 	}
 
 
@@ -8248,7 +8249,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#364");
+		HtmlDiff.AssertAreEqual (exp, v, "#364");
 	}
 
 
@@ -8283,7 +8284,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#365");
+		HtmlDiff.AssertAreEqual (exp, v, "#365");
 	}
 
 
@@ -8312,7 +8313,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#366");
+		HtmlDiff.AssertAreEqual (exp, v, "#366");
 	}
 
 
@@ -8345,7 +8346,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#367");
+		HtmlDiff.AssertAreEqual (exp, v, "#367");
 	}
 
 
@@ -8376,7 +8377,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#368");
+		HtmlDiff.AssertAreEqual (exp, v, "#368");
 	}
 
 
@@ -8407,7 +8408,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#369");
+		HtmlDiff.AssertAreEqual (exp, v, "#369");
 	}
 
 
@@ -8432,7 +8433,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#370");
+		HtmlDiff.AssertAreEqual (exp, v, "#370");
 	}
 
 
@@ -8459,7 +8460,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#371");
+		HtmlDiff.AssertAreEqual (exp, v, "#371");
 	}
 
 
@@ -8488,7 +8489,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(3,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#372");
+		HtmlDiff.AssertAreEqual (exp, v, "#372");
 	}
 
 
@@ -8523,7 +8524,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#373");
+		HtmlDiff.AssertAreEqual (exp, v, "#373");
 	}
 
 
@@ -8548,7 +8549,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#374");
+		HtmlDiff.AssertAreEqual (exp, v, "#374");
 	}
 
 
@@ -8583,7 +8584,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(6,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#375");
+		HtmlDiff.AssertAreEqual (exp, v, "#375");
 	}
 
 
@@ -8612,7 +8613,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#376");
+		HtmlDiff.AssertAreEqual (exp, v, "#376");
 	}
 
 
@@ -8645,7 +8646,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#377");
+		HtmlDiff.AssertAreEqual (exp, v, "#377");
 	}
 
 
@@ -8676,7 +8677,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(10,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#378");
+		HtmlDiff.AssertAreEqual (exp, v, "#378");
 	}
 
 
@@ -8707,7 +8708,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(8,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#379");
+		HtmlDiff.AssertAreEqual (exp, v, "#379");
 	}
 
 
@@ -8726,7 +8727,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#380");
+		HtmlDiff.AssertAreEqual (exp, v, "#380");
 	}
 
 
@@ -8745,7 +8746,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#381");
+		HtmlDiff.AssertAreEqual (exp, v, "#381");
 	}
 
 
@@ -8764,7 +8765,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#382");
+		HtmlDiff.AssertAreEqual (exp, v, "#382");
 	}
 
 
@@ -8783,7 +8784,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Item,2)(4,Item,3)(5,Item,4)(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#383");
+		HtmlDiff.AssertAreEqual (exp, v, "#383");
 	}
 
 
@@ -8802,7 +8803,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#384");
+		HtmlDiff.AssertAreEqual (exp, v, "#384");
 	}
 
 
@@ -8821,7 +8822,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br>(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#385");
+		HtmlDiff.AssertAreEqual (exp, v, "#385");
 	}
 
 
@@ -8840,7 +8841,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#386");
+		HtmlDiff.AssertAreEqual (exp, v, "#386");
 	}
 
 
@@ -8859,7 +8860,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Item,4)(6,Item,5)<br>(7,Item,6)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#387");
+		HtmlDiff.AssertAreEqual (exp, v, "#387");
 	}
 
 
@@ -8878,7 +8879,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)(8,Item,7)(9,Item,8)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#388");
+		HtmlDiff.AssertAreEqual (exp, v, "#388");
 	}
 
 
@@ -8897,7 +8898,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#389");
+		HtmlDiff.AssertAreEqual (exp, v, "#389");
 	}
 
 
@@ -8916,7 +8917,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#390");
+		HtmlDiff.AssertAreEqual (exp, v, "#390");
 	}
 
 
@@ -8935,7 +8936,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#391");
+		HtmlDiff.AssertAreEqual (exp, v, "#391");
 	}
 
 
@@ -8954,7 +8955,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#392");
+		HtmlDiff.AssertAreEqual (exp, v, "#392");
 	}
 
 
@@ -8973,7 +8974,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br>(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#393");
+		HtmlDiff.AssertAreEqual (exp, v, "#393");
 	}
 
 
@@ -8992,7 +8993,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#394");
+		HtmlDiff.AssertAreEqual (exp, v, "#394");
 	}
 
 
@@ -9011,7 +9012,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br>(6,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#395");
+		HtmlDiff.AssertAreEqual (exp, v, "#395");
 	}
 
 
@@ -9030,7 +9031,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,2)<br>(3,Item,1)(4,Item,3)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#396");
+		HtmlDiff.AssertAreEqual (exp, v, "#396");
 	}
 
 
@@ -9049,7 +9050,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,4)<br>(3,Item,1)(4,Item,5)<br>(5,Item,2)(6,Item,6)<br>(7,Item,3)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#397");
+		HtmlDiff.AssertAreEqual (exp, v, "#397");
 	}
 
 
@@ -9068,7 +9069,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,3)(3,Item,6)<br>(4,Item,1)(5,Item,4)(6,Item,7)<br>(7,Item,2)(8,Item,5)(9,Item,8)<br>(10,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#398");
+		HtmlDiff.AssertAreEqual (exp, v, "#398");
 	}
 
 
@@ -9087,7 +9088,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, true, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,3)(3,Item,5)<br>(4,Item,1)(5,Item,4)(6,Item,6)<br>(7,Item,2)<br>(8,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#399");
+		HtmlDiff.AssertAreEqual (exp, v, "#399");
 	}
 
 
@@ -9110,7 +9111,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#400");
+		HtmlDiff.AssertAreEqual (exp, v, "#400");
 	}
 
 
@@ -9135,7 +9136,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#401");
+		HtmlDiff.AssertAreEqual (exp, v, "#401");
 	}
 
 
@@ -9160,7 +9161,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#402");
+		HtmlDiff.AssertAreEqual (exp, v, "#402");
 	}
 
 
@@ -9185,7 +9186,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""5"" class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#403");
+		HtmlDiff.AssertAreEqual (exp, v, "#403");
 	}
 
 
@@ -9208,7 +9209,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#404");
+		HtmlDiff.AssertAreEqual (exp, v, "#404");
 	}
 
 
@@ -9241,7 +9242,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#405");
+		HtmlDiff.AssertAreEqual (exp, v, "#405");
 	}
 
 
@@ -9268,7 +9269,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#406");
+		HtmlDiff.AssertAreEqual (exp, v, "#406");
 	}
 
 
@@ -9299,7 +9300,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#407");
+		HtmlDiff.AssertAreEqual (exp, v, "#407");
 	}
 
 
@@ -9328,7 +9329,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#408");
+		HtmlDiff.AssertAreEqual (exp, v, "#408");
 	}
 
 
@@ -9357,7 +9358,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#409");
+		HtmlDiff.AssertAreEqual (exp, v, "#409");
 	}
 
 
@@ -9566,7 +9567,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#420");
+		HtmlDiff.AssertAreEqual (exp, v, "#420");
 	}
 
 
@@ -9585,7 +9586,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#421");
+		HtmlDiff.AssertAreEqual (exp, v, "#421");
 	}
 
 
@@ -9604,7 +9605,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#422");
+		HtmlDiff.AssertAreEqual (exp, v, "#422");
 	}
 
 
@@ -9623,7 +9624,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Item,2)(3,Item,3)(4,Item,4)(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#423");
+		HtmlDiff.AssertAreEqual (exp, v, "#423");
 	}
 
 
@@ -9642,7 +9643,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#424");
+		HtmlDiff.AssertAreEqual (exp, v, "#424");
 	}
 
 
@@ -9661,7 +9662,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#425");
+		HtmlDiff.AssertAreEqual (exp, v, "#425");
 	}
 
 
@@ -9680,7 +9681,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#426");
+		HtmlDiff.AssertAreEqual (exp, v, "#426");
 	}
 
 
@@ -9699,7 +9700,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Item,4)(5,Item,5)<br>(6,Item,6)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#427");
+		HtmlDiff.AssertAreEqual (exp, v, "#427");
 	}
 
 
@@ -9718,7 +9719,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)(7,Item,7)(8,Item,8)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#428");
+		HtmlDiff.AssertAreEqual (exp, v, "#428");
 	}
 
 
@@ -9737,7 +9738,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#429");
+		HtmlDiff.AssertAreEqual (exp, v, "#429");
 	}
 
 
@@ -9950,7 +9951,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#440");
+		HtmlDiff.AssertAreEqual (exp, v, "#440");
 	}
 
 
@@ -9975,7 +9976,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#441");
+		HtmlDiff.AssertAreEqual (exp, v, "#441");
 	}
 
 
@@ -10000,7 +10001,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#442");
+		HtmlDiff.AssertAreEqual (exp, v, "#442");
 	}
 
 
@@ -10025,7 +10026,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""5"" class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#443");
+		HtmlDiff.AssertAreEqual (exp, v, "#443");
 	}
 
 
@@ -10048,7 +10049,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#444");
+		HtmlDiff.AssertAreEqual (exp, v, "#444");
 	}
 
 
@@ -10081,7 +10082,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#445");
+		HtmlDiff.AssertAreEqual (exp, v, "#445");
 	}
 
 
@@ -10108,7 +10109,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#446");
+		HtmlDiff.AssertAreEqual (exp, v, "#446");
 	}
 
 
@@ -10139,7 +10140,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#447");
+		HtmlDiff.AssertAreEqual (exp, v, "#447");
 	}
 
 
@@ -10168,7 +10169,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#448");
+		HtmlDiff.AssertAreEqual (exp, v, "#448");
 	}
 
 
@@ -10197,7 +10198,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#449");
+		HtmlDiff.AssertAreEqual (exp, v, "#449");
 	}
 
 
@@ -10220,7 +10221,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#450");
+		HtmlDiff.AssertAreEqual (exp, v, "#450");
 	}
 
 
@@ -10245,7 +10246,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(1,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#451");
+		HtmlDiff.AssertAreEqual (exp, v, "#451");
 	}
 
 
@@ -10272,7 +10273,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(2,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#452");
+		HtmlDiff.AssertAreEqual (exp, v, "#452");
 	}
 
 
@@ -10305,7 +10306,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#453");
+		HtmlDiff.AssertAreEqual (exp, v, "#453");
 	}
 
 
@@ -10328,7 +10329,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(0,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#454");
+		HtmlDiff.AssertAreEqual (exp, v, "#454");
 	}
 
 
@@ -10361,7 +10362,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Footer-1"">(5,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#455");
+		HtmlDiff.AssertAreEqual (exp, v, "#455");
 	}
 
 
@@ -10388,7 +10389,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(4,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#456");
+		HtmlDiff.AssertAreEqual (exp, v, "#456");
 	}
 
 
@@ -10419,7 +10420,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""2"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#457");
+		HtmlDiff.AssertAreEqual (exp, v, "#457");
 	}
 
 
@@ -10448,7 +10449,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(9,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#458");
+		HtmlDiff.AssertAreEqual (exp, v, "#458");
 	}
 
 
@@ -10477,7 +10478,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""3"" class=""Footer-1"">(7,Footer,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#459");
+		HtmlDiff.AssertAreEqual (exp, v, "#459");
 	}
 
 
@@ -10496,7 +10497,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#460");
+		HtmlDiff.AssertAreEqual (exp, v, "#460");
 	}
 
 
@@ -10515,7 +10516,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#461");
+		HtmlDiff.AssertAreEqual (exp, v, "#461");
 	}
 
 
@@ -10534,7 +10535,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#462");
+		HtmlDiff.AssertAreEqual (exp, v, "#462");
 	}
 
 
@@ -10553,7 +10554,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Item,2)(3,Item,3)(4,Item,4)(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#463");
+		HtmlDiff.AssertAreEqual (exp, v, "#463");
 	}
 
 
@@ -10572,7 +10573,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#464");
+		HtmlDiff.AssertAreEqual (exp, v, "#464");
 	}
 
 
@@ -10591,7 +10592,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#465");
+		HtmlDiff.AssertAreEqual (exp, v, "#465");
 	}
 
 
@@ -10610,7 +10611,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#466");
+		HtmlDiff.AssertAreEqual (exp, v, "#466");
 	}
 
 
@@ -10629,7 +10630,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Item,4)(5,Item,5)<br>(6,Item,6)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#467");
+		HtmlDiff.AssertAreEqual (exp, v, "#467");
 	}
 
 
@@ -10648,7 +10649,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)(7,Item,7)(8,Item,8)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#468");
+		HtmlDiff.AssertAreEqual (exp, v, "#468");
 	}
 
 
@@ -10667,7 +10668,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#469");
+		HtmlDiff.AssertAreEqual (exp, v, "#469");
 	}
 
 
@@ -10686,7 +10687,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#470");
+		HtmlDiff.AssertAreEqual (exp, v, "#470");
 	}
 
 
@@ -10705,7 +10706,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#471");
+		HtmlDiff.AssertAreEqual (exp, v, "#471");
 	}
 
 
@@ -10724,7 +10725,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#472");
+		HtmlDiff.AssertAreEqual (exp, v, "#472");
 	}
 
 
@@ -10743,7 +10744,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#473");
+		HtmlDiff.AssertAreEqual (exp, v, "#473");
 	}
 
 
@@ -10762,7 +10763,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#474");
+		HtmlDiff.AssertAreEqual (exp, v, "#474");
 	}
 
 
@@ -10781,7 +10782,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br>(5,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#475");
+		HtmlDiff.AssertAreEqual (exp, v, "#475");
 	}
 
 
@@ -10800,7 +10801,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,2)<br>(2,Item,1)(3,Item,3)<br>(4,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#476");
+		HtmlDiff.AssertAreEqual (exp, v, "#476");
 	}
 
 
@@ -10819,7 +10820,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,4)<br>(2,Item,1)(3,Item,5)<br>(4,Item,2)(5,Item,6)<br>(6,Item,3)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#477");
+		HtmlDiff.AssertAreEqual (exp, v, "#477");
 	}
 
 
@@ -10838,7 +10839,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,3)(2,Item,6)<br>(3,Item,1)(4,Item,4)(5,Item,7)<br>(6,Item,2)(7,Item,5)(8,Item,8)<br>(9,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#478");
+		HtmlDiff.AssertAreEqual (exp, v, "#478");
 	}
 
 
@@ -10857,7 +10858,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, true, false);
 		string exp = @"<span>(0,Item,0)(1,Item,3)(2,Item,5)<br>(3,Item,1)(4,Item,4)(5,Item,6)<br>(6,Item,2)<br>(7,Footer,-1)</span>";
-		Assert.AreEqual (exp, v, "#479");
+		HtmlDiff.AssertAreEqual (exp, v, "#479");
 	}
 
 
@@ -10880,7 +10881,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#480");
+		HtmlDiff.AssertAreEqual (exp, v, "#480");
 	}
 
 
@@ -10905,7 +10906,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#481");
+		HtmlDiff.AssertAreEqual (exp, v, "#481");
 	}
 
 
@@ -10930,7 +10931,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#482");
+		HtmlDiff.AssertAreEqual (exp, v, "#482");
 	}
 
 
@@ -10955,7 +10956,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Item1"">(2,Item,1)</td><td class=""Item2"">(3,Item,2)</td><td class=""Item3"">(4,Item,3)</td><td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#483");
+		HtmlDiff.AssertAreEqual (exp, v, "#483");
 	}
 
 
@@ -10978,7 +10979,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#484");
+		HtmlDiff.AssertAreEqual (exp, v, "#484");
 	}
 
 
@@ -11011,7 +11012,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#485");
+		HtmlDiff.AssertAreEqual (exp, v, "#485");
 	}
 
 
@@ -11038,7 +11039,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(3,Item,2)</td><td class=""Item3"">(4,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#486");
+		HtmlDiff.AssertAreEqual (exp, v, "#486");
 	}
 
 
@@ -11069,7 +11070,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#487");
+		HtmlDiff.AssertAreEqual (exp, v, "#487");
 	}
 
 
@@ -11098,7 +11099,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td><td class=""Item7"">(8,Item,7)</td><td class=""Item8"">(9,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#488");
+		HtmlDiff.AssertAreEqual (exp, v, "#488");
 	}
 
 
@@ -11127,7 +11128,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#489");
+		HtmlDiff.AssertAreEqual (exp, v, "#489");
 	}
 
 
@@ -11336,7 +11337,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#500");
+		HtmlDiff.AssertAreEqual (exp, v, "#500");
 	}
 
 
@@ -11355,7 +11356,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#501");
+		HtmlDiff.AssertAreEqual (exp, v, "#501");
 	}
 
 
@@ -11374,7 +11375,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#502");
+		HtmlDiff.AssertAreEqual (exp, v, "#502");
 	}
 
 
@@ -11393,7 +11394,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Item,2)(4,Item,3)(5,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#503");
+		HtmlDiff.AssertAreEqual (exp, v, "#503");
 	}
 
 
@@ -11412,7 +11413,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#504");
+		HtmlDiff.AssertAreEqual (exp, v, "#504");
 	}
 
 
@@ -11431,7 +11432,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#505");
+		HtmlDiff.AssertAreEqual (exp, v, "#505");
 	}
 
 
@@ -11450,7 +11451,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#506");
+		HtmlDiff.AssertAreEqual (exp, v, "#506");
 	}
 
 
@@ -11469,7 +11470,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Item,4)(6,Item,5)<br>(7,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#507");
+		HtmlDiff.AssertAreEqual (exp, v, "#507");
 	}
 
 
@@ -11488,7 +11489,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)(8,Item,7)(9,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#508");
+		HtmlDiff.AssertAreEqual (exp, v, "#508");
 	}
 
 
@@ -11507,7 +11508,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#509");
+		HtmlDiff.AssertAreEqual (exp, v, "#509");
 	}
 
 
@@ -11720,7 +11721,7 @@ public class RepeatInfo_Autogen {
 		<td colspan=""0"" class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#520");
+		HtmlDiff.AssertAreEqual (exp, v, "#520");
 	}
 
 
@@ -11745,7 +11746,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#521");
+		HtmlDiff.AssertAreEqual (exp, v, "#521");
 	}
 
 
@@ -11770,7 +11771,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#522");
+		HtmlDiff.AssertAreEqual (exp, v, "#522");
 	}
 
 
@@ -11795,7 +11796,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td><td class=""Item1"">(2,Item,1)</td><td class=""Item2"">(3,Item,2)</td><td class=""Item3"">(4,Item,3)</td><td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#523");
+		HtmlDiff.AssertAreEqual (exp, v, "#523");
 	}
 
 
@@ -11818,7 +11819,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#524");
+		HtmlDiff.AssertAreEqual (exp, v, "#524");
 	}
 
 
@@ -11851,7 +11852,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#525");
+		HtmlDiff.AssertAreEqual (exp, v, "#525");
 	}
 
 
@@ -11878,7 +11879,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(3,Item,2)</td><td class=""Item3"">(4,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#526");
+		HtmlDiff.AssertAreEqual (exp, v, "#526");
 	}
 
 
@@ -11909,7 +11910,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#527");
+		HtmlDiff.AssertAreEqual (exp, v, "#527");
 	}
 
 
@@ -11938,7 +11939,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td><td class=""Item7"">(8,Item,7)</td><td class=""Item8"">(9,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#528");
+		HtmlDiff.AssertAreEqual (exp, v, "#528");
 	}
 
 
@@ -11967,7 +11968,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(7,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#529");
+		HtmlDiff.AssertAreEqual (exp, v, "#529");
 	}
 
 
@@ -11990,7 +11991,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#530");
+		HtmlDiff.AssertAreEqual (exp, v, "#530");
 	}
 
 
@@ -12015,7 +12016,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(1,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#531");
+		HtmlDiff.AssertAreEqual (exp, v, "#531");
 	}
 
 
@@ -12042,7 +12043,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(2,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#532");
+		HtmlDiff.AssertAreEqual (exp, v, "#532");
 	}
 
 
@@ -12075,7 +12076,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#533");
+		HtmlDiff.AssertAreEqual (exp, v, "#533");
 	}
 
 
@@ -12098,7 +12099,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Header-1"">(0,Header,-1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#534");
+		HtmlDiff.AssertAreEqual (exp, v, "#534");
 	}
 
 
@@ -12131,7 +12132,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(5,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#535");
+		HtmlDiff.AssertAreEqual (exp, v, "#535");
 	}
 
 
@@ -12158,7 +12159,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(3,Item,1)</td><td class=""Item3"">(4,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#536");
+		HtmlDiff.AssertAreEqual (exp, v, "#536");
 	}
 
 
@@ -12189,7 +12190,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item3"">(7,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#537");
+		HtmlDiff.AssertAreEqual (exp, v, "#537");
 	}
 
 
@@ -12218,7 +12219,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(7,Item,2)</td><td class=""Item5"">(8,Item,5)</td><td class=""Item8"">(9,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#538");
+		HtmlDiff.AssertAreEqual (exp, v, "#538");
 	}
 
 
@@ -12247,7 +12248,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(7,Item,2)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#539");
+		HtmlDiff.AssertAreEqual (exp, v, "#539");
 	}
 
 
@@ -12266,7 +12267,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#540");
+		HtmlDiff.AssertAreEqual (exp, v, "#540");
 	}
 
 
@@ -12285,7 +12286,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#541");
+		HtmlDiff.AssertAreEqual (exp, v, "#541");
 	}
 
 
@@ -12304,7 +12305,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#542");
+		HtmlDiff.AssertAreEqual (exp, v, "#542");
 	}
 
 
@@ -12323,7 +12324,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)(1,Item,0)(2,Item,1)(3,Item,2)(4,Item,3)(5,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#543");
+		HtmlDiff.AssertAreEqual (exp, v, "#543");
 	}
 
 
@@ -12342,7 +12343,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)</span>";
-		Assert.AreEqual (exp, v, "#544");
+		HtmlDiff.AssertAreEqual (exp, v, "#544");
 	}
 
 
@@ -12361,7 +12362,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#545");
+		HtmlDiff.AssertAreEqual (exp, v, "#545");
 	}
 
 
@@ -12380,7 +12381,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#546");
+		HtmlDiff.AssertAreEqual (exp, v, "#546");
 	}
 
 
@@ -12399,7 +12400,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,1)<br>(3,Item,2)(4,Item,3)<br>(5,Item,4)(6,Item,5)<br>(7,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#547");
+		HtmlDiff.AssertAreEqual (exp, v, "#547");
 	}
 
 
@@ -12418,7 +12419,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)(8,Item,7)(9,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#548");
+		HtmlDiff.AssertAreEqual (exp, v, "#548");
 	}
 
 
@@ -12437,7 +12438,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,1)(3,Item,2)<br>(4,Item,3)(5,Item,4)(6,Item,5)<br>(7,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#549");
+		HtmlDiff.AssertAreEqual (exp, v, "#549");
 	}
 
 
@@ -12456,7 +12457,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br></span>";
-		Assert.AreEqual (exp, v, "#550");
+		HtmlDiff.AssertAreEqual (exp, v, "#550");
 	}
 
 
@@ -12475,7 +12476,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#551");
+		HtmlDiff.AssertAreEqual (exp, v, "#551");
 	}
 
 
@@ -12494,7 +12495,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#552");
+		HtmlDiff.AssertAreEqual (exp, v, "#552");
 	}
 
 
@@ -12513,7 +12514,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#553");
+		HtmlDiff.AssertAreEqual (exp, v, "#553");
 	}
 
 
@@ -12532,7 +12533,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br></span>";
-		Assert.AreEqual (exp, v, "#554");
+		HtmlDiff.AssertAreEqual (exp, v, "#554");
 	}
 
 
@@ -12551,7 +12552,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)<br>(2,Item,1)<br>(3,Item,2)<br>(4,Item,3)<br>(5,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#555");
+		HtmlDiff.AssertAreEqual (exp, v, "#555");
 	}
 
 
@@ -12570,7 +12571,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,2)<br>(3,Item,1)(4,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#556");
+		HtmlDiff.AssertAreEqual (exp, v, "#556");
 	}
 
 
@@ -12589,7 +12590,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Header,-1)<br>(1,Item,0)(2,Item,4)<br>(3,Item,1)(4,Item,5)<br>(5,Item,2)(6,Item,6)<br>(7,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#557");
+		HtmlDiff.AssertAreEqual (exp, v, "#557");
 	}
 
 
@@ -12608,7 +12609,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,3)(3,Item,6)<br>(4,Item,1)(5,Item,4)(6,Item,7)<br>(7,Item,2)(8,Item,5)(9,Item,8)</span>";
-		Assert.AreEqual (exp, v, "#558");
+		HtmlDiff.AssertAreEqual (exp, v, "#558");
 	}
 
 
@@ -12627,7 +12628,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, true, false, false);
 		string exp = @"<span>(0,Header,-1)<br>(1,Item,0)(2,Item,3)(3,Item,5)<br>(4,Item,1)(5,Item,4)(6,Item,6)<br>(7,Item,2)</span>";
-		Assert.AreEqual (exp, v, "#559");
+		HtmlDiff.AssertAreEqual (exp, v, "#559");
 	}
 
 
@@ -12648,7 +12649,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#560");
+		HtmlDiff.AssertAreEqual (exp, v, "#560");
 	}
 
 
@@ -12671,7 +12672,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#561");
+		HtmlDiff.AssertAreEqual (exp, v, "#561");
 	}
 
 
@@ -12694,7 +12695,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Item1"">(1,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#562");
+		HtmlDiff.AssertAreEqual (exp, v, "#562");
 	}
 
 
@@ -12717,7 +12718,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Item1"">(1,Item,1)</td><td class=""Item2"">(2,Item,2)</td><td class=""Item3"">(3,Item,3)</td><td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#563");
+		HtmlDiff.AssertAreEqual (exp, v, "#563");
 	}
 
 
@@ -12738,7 +12739,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#564");
+		HtmlDiff.AssertAreEqual (exp, v, "#564");
 	}
 
 
@@ -12769,7 +12770,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#565");
+		HtmlDiff.AssertAreEqual (exp, v, "#565");
 	}
 
 
@@ -12794,7 +12795,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(2,Item,2)</td><td class=""Item3"">(3,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#566");
+		HtmlDiff.AssertAreEqual (exp, v, "#566");
 	}
 
 
@@ -12823,7 +12824,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#567");
+		HtmlDiff.AssertAreEqual (exp, v, "#567");
 	}
 
 
@@ -12850,7 +12851,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td><td class=""Item7"">(7,Item,7)</td><td class=""Item8"">(8,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#568");
+		HtmlDiff.AssertAreEqual (exp, v, "#568");
 	}
 
 
@@ -12877,7 +12878,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#569");
+		HtmlDiff.AssertAreEqual (exp, v, "#569");
 	}
 
 
@@ -13086,7 +13087,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#580");
+		HtmlDiff.AssertAreEqual (exp, v, "#580");
 	}
 
 
@@ -13105,7 +13106,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#581");
+		HtmlDiff.AssertAreEqual (exp, v, "#581");
 	}
 
 
@@ -13124,7 +13125,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#582");
+		HtmlDiff.AssertAreEqual (exp, v, "#582");
 	}
 
 
@@ -13143,7 +13144,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Item,2)(3,Item,3)(4,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#583");
+		HtmlDiff.AssertAreEqual (exp, v, "#583");
 	}
 
 
@@ -13162,7 +13163,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#584");
+		HtmlDiff.AssertAreEqual (exp, v, "#584");
 	}
 
 
@@ -13181,7 +13182,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#585");
+		HtmlDiff.AssertAreEqual (exp, v, "#585");
 	}
 
 
@@ -13200,7 +13201,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#586");
+		HtmlDiff.AssertAreEqual (exp, v, "#586");
 	}
 
 
@@ -13219,7 +13220,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Item,4)(5,Item,5)<br>(6,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#587");
+		HtmlDiff.AssertAreEqual (exp, v, "#587");
 	}
 
 
@@ -13238,7 +13239,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)(7,Item,7)(8,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#588");
+		HtmlDiff.AssertAreEqual (exp, v, "#588");
 	}
 
 
@@ -13257,7 +13258,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, true, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#589");
+		HtmlDiff.AssertAreEqual (exp, v, "#589");
 	}
 
 
@@ -13468,7 +13469,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#600");
+		HtmlDiff.AssertAreEqual (exp, v, "#600");
 	}
 
 
@@ -13491,7 +13492,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#601");
+		HtmlDiff.AssertAreEqual (exp, v, "#601");
 	}
 
 
@@ -13514,7 +13515,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Item1"">(1,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#602");
+		HtmlDiff.AssertAreEqual (exp, v, "#602");
 	}
 
 
@@ -13537,7 +13538,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td><td class=""Item1"">(1,Item,1)</td><td class=""Item2"">(2,Item,2)</td><td class=""Item3"">(3,Item,3)</td><td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#603");
+		HtmlDiff.AssertAreEqual (exp, v, "#603");
 	}
 
 
@@ -13558,7 +13559,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#604");
+		HtmlDiff.AssertAreEqual (exp, v, "#604");
 	}
 
 
@@ -13589,7 +13590,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#605");
+		HtmlDiff.AssertAreEqual (exp, v, "#605");
 	}
 
 
@@ -13614,7 +13615,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(2,Item,2)</td><td class=""Item3"">(3,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#606");
+		HtmlDiff.AssertAreEqual (exp, v, "#606");
 	}
 
 
@@ -13643,7 +13644,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#607");
+		HtmlDiff.AssertAreEqual (exp, v, "#607");
 	}
 
 
@@ -13670,7 +13671,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td><td class=""Item7"">(7,Item,7)</td><td class=""Item8"">(8,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#608");
+		HtmlDiff.AssertAreEqual (exp, v, "#608");
 	}
 
 
@@ -13697,7 +13698,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item6"">(6,Item,6)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#609");
+		HtmlDiff.AssertAreEqual (exp, v, "#609");
 	}
 
 
@@ -13718,7 +13719,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#610");
+		HtmlDiff.AssertAreEqual (exp, v, "#610");
 	}
 
 
@@ -13741,7 +13742,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item0"">(0,Item,0)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#611");
+		HtmlDiff.AssertAreEqual (exp, v, "#611");
 	}
 
 
@@ -13766,7 +13767,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(1,Item,1)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#612");
+		HtmlDiff.AssertAreEqual (exp, v, "#612");
 	}
 
 
@@ -13797,7 +13798,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#613");
+		HtmlDiff.AssertAreEqual (exp, v, "#613");
 	}
 
 
@@ -13818,7 +13819,7 @@ public class RepeatInfo_Autogen {
 		string exp = @"<table class=""mainstyle"" border=""0"">
 
 </table>";
-		Assert.AreEqual (exp, v, "#614");
+		HtmlDiff.AssertAreEqual (exp, v, "#614");
 	}
 
 
@@ -13849,7 +13850,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item4"">(4,Item,4)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#615");
+		HtmlDiff.AssertAreEqual (exp, v, "#615");
 	}
 
 
@@ -13874,7 +13875,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item1"">(2,Item,1)</td><td class=""Item3"">(3,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#616");
+		HtmlDiff.AssertAreEqual (exp, v, "#616");
 	}
 
 
@@ -13903,7 +13904,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item3"">(6,Item,3)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#617");
+		HtmlDiff.AssertAreEqual (exp, v, "#617");
 	}
 
 
@@ -13930,7 +13931,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(6,Item,2)</td><td class=""Item5"">(7,Item,5)</td><td class=""Item8"">(8,Item,8)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#618");
+		HtmlDiff.AssertAreEqual (exp, v, "#618");
 	}
 
 
@@ -13957,7 +13958,7 @@ public class RepeatInfo_Autogen {
 		<td class=""Item2"">(6,Item,2)</td>
 	</tr>
 </table>";
-		Assert.AreEqual (exp, v, "#619");
+		HtmlDiff.AssertAreEqual (exp, v, "#619");
 	}
 
 
@@ -13976,7 +13977,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#620");
+		HtmlDiff.AssertAreEqual (exp, v, "#620");
 	}
 
 
@@ -13995,7 +13996,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#621");
+		HtmlDiff.AssertAreEqual (exp, v, "#621");
 	}
 
 
@@ -14014,7 +14015,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#622");
+		HtmlDiff.AssertAreEqual (exp, v, "#622");
 	}
 
 
@@ -14033,7 +14034,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)(2,Item,2)(3,Item,3)(4,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#623");
+		HtmlDiff.AssertAreEqual (exp, v, "#623");
 	}
 
 
@@ -14052,7 +14053,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#624");
+		HtmlDiff.AssertAreEqual (exp, v, "#624");
 	}
 
 
@@ -14071,7 +14072,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)<br></span>";
-		Assert.AreEqual (exp, v, "#625");
+		HtmlDiff.AssertAreEqual (exp, v, "#625");
 	}
 
 
@@ -14090,7 +14091,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br></span>";
-		Assert.AreEqual (exp, v, "#626");
+		HtmlDiff.AssertAreEqual (exp, v, "#626");
 	}
 
 
@@ -14109,7 +14110,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,1)<br>(2,Item,2)(3,Item,3)<br>(4,Item,4)(5,Item,5)<br>(6,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#627");
+		HtmlDiff.AssertAreEqual (exp, v, "#627");
 	}
 
 
@@ -14128,7 +14129,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)(7,Item,7)(8,Item,8)<br></span>";
-		Assert.AreEqual (exp, v, "#628");
+		HtmlDiff.AssertAreEqual (exp, v, "#628");
 	}
 
 
@@ -14147,7 +14148,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Horizontal, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,1)(2,Item,2)<br>(3,Item,3)(4,Item,4)(5,Item,5)<br>(6,Item,6)<br></span>";
-		Assert.AreEqual (exp, v, "#629");
+		HtmlDiff.AssertAreEqual (exp, v, "#629");
 	}
 
 
@@ -14166,7 +14167,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#630");
+		HtmlDiff.AssertAreEqual (exp, v, "#630");
 	}
 
 
@@ -14185,7 +14186,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 1, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)</span>";
-		Assert.AreEqual (exp, v, "#631");
+		HtmlDiff.AssertAreEqual (exp, v, "#631");
 	}
 
 
@@ -14204,7 +14205,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 2, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)</span>";
-		Assert.AreEqual (exp, v, "#632");
+		HtmlDiff.AssertAreEqual (exp, v, "#632");
 	}
 
 
@@ -14223,7 +14224,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (0, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#633");
+		HtmlDiff.AssertAreEqual (exp, v, "#633");
 	}
 
 
@@ -14242,7 +14243,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 0, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle""></span>";
-		Assert.AreEqual (exp, v, "#634");
+		HtmlDiff.AssertAreEqual (exp, v, "#634");
 	}
 
 
@@ -14261,7 +14262,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (1, 5, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)<br>(1,Item,1)<br>(2,Item,2)<br>(3,Item,3)<br>(4,Item,4)</span>";
-		Assert.AreEqual (exp, v, "#635");
+		HtmlDiff.AssertAreEqual (exp, v, "#635");
 	}
 
 
@@ -14280,7 +14281,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 4, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,2)<br>(2,Item,1)(3,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#636");
+		HtmlDiff.AssertAreEqual (exp, v, "#636");
 	}
 
 
@@ -14299,7 +14300,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (2, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span class=""mainstyle"">(0,Item,0)(1,Item,4)<br>(2,Item,1)(3,Item,5)<br>(4,Item,2)(5,Item,6)<br>(6,Item,3)</span>";
-		Assert.AreEqual (exp, v, "#637");
+		HtmlDiff.AssertAreEqual (exp, v, "#637");
 	}
 
 
@@ -14318,7 +14319,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 9, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,3)(2,Item,6)<br>(3,Item,1)(4,Item,4)(5,Item,7)<br>(6,Item,2)(7,Item,5)(8,Item,8)</span>";
-		Assert.AreEqual (exp, v, "#638");
+		HtmlDiff.AssertAreEqual (exp, v, "#638");
 	}
 
 
@@ -14337,7 +14338,7 @@ public class RepeatInfo_Autogen {
 
 		string v = RepeatInfoUser.DoTest (3, 7, RepeatDirection.Vertical, RepeatLayout.Flow, false, false, false, false);
 		string exp = @"<span>(0,Item,0)(1,Item,3)(2,Item,5)<br>(3,Item,1)(4,Item,4)(5,Item,6)<br>(6,Item,2)</span>";
-		Assert.AreEqual (exp, v, "#639");
+		HtmlDiff.AssertAreEqual (exp, v, "#639");
 	}
 
 

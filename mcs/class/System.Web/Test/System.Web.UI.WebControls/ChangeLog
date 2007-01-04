@@ -1,3 +1,7 @@
+2007-01-04 Adar Wesley <adarw@mainsoft.com>
+
+	* RepeatInfoTest.auto.cs: Fixed tests to compare HTML with HtmlDiff
+
 2007-01-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControlTest.cs: new tests were added.
