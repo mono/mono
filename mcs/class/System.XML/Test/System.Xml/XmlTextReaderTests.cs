@@ -678,7 +678,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Ignore ("MS.NET 1.0 fails this test. The related spec is XML rec. 4.1")]
+		[Ignore ("MS.NET 1.0 does not pass this test. The related spec is XML rec. 4.1")]
 		public void UndeclaredEntityInIntSubsetOnlyXml ()
 		{
 			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
@@ -692,7 +692,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Ignore ("MS.NET 1.0 fails this test. The related spec is XML rec. 4.1")]
+		[Ignore ("MS.NET 1.0 does not pass this test. The related spec is XML rec. 4.1")]
 		public void UndeclaredEntityInStandaloneXml ()
 		{
 			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
