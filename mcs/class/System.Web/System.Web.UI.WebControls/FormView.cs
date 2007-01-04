@@ -791,7 +791,6 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual object DataItem {
 			get {
-				EnsureDataBound ();
 				return dataItem;
 			}
 		}
@@ -859,7 +858,17 @@ namespace System.Web.UI.WebControls
 
 		protected override void EnsureDataBound ()
 		{
-			base.EnsureDataBound ();
+			if (CurrentMode == FormViewMode.Insert) {
+				if (RequiresDataBinding) {
+					RequiresDataBinding = false;
+					OnDataBinding (EventArgs.Empty);
+					PerformDataBinding (new object [] { null });
+					MarkAsDataBound ();
+					OnDataBound (EventArgs.Empty);
+				}
+			}
+			else
+				base.EnsureDataBound ();
 		}
 	
 		protected override Style CreateControlStyle ()
@@ -1085,12 +1094,6 @@ namespace System.Web.UI.WebControls
 		
 		public sealed override void DataBind ()
 		{
-			if (CurrentMode == FormViewMode.Insert) {
-				RequiresDataBinding = false;
-				PerformDataBinding (new object [] { null });
-				return;
-			}
-
 			cachedKeyProperties = null;
 			base.DataBind ();
 			
@@ -1268,6 +1271,8 @@ namespace System.Web.UI.WebControls
 		
 		public void ChangeMode (FormViewMode newMode)
 		{
+			if (CurrentMode == newMode)
+				return;
 			CurrentMode = newMode;
 			RequireBinding ();
 		}

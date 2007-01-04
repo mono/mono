@@ -1,4 +1,8 @@
-2006-01-04 Igor Zelmanovich <igorz@mainsoft.com>
+2007-01-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs: fixed data binding flow considers Insert mode.	 
+
+2007-01-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControl.cs: fixed Init flow.	 
 
