@@ -740,7 +740,7 @@ namespace Cairo {
 			IntPtr dest = Marshal.AllocHGlobal (native_glyph_size * glyphs.Length);
 			int pos = dest.ToInt32();
 
-			if (c_compiler_long_size == 4){
+			if (c_compiler_long_size == 8){
 				foreach (Glyph g in glyphs){
 					Marshal.StructureToPtr (g, (IntPtr)pos, false);
 					pos += native_glyph_size;
