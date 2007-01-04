@@ -949,6 +949,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ActiveControl_Disabled () {
 			ContainerControl cc = new ContainerControl ();
 			Control c1 = new Control ();

@@ -77,6 +77,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void ActivateTest ()
 		{
 			Form myform = new Form ();
