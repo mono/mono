@@ -1,3 +1,13 @@
+2007-01-04  Miguel de Icaza  <miguel@novell.com>
+
+	* Mono.Cairo/Context.cs (FromGlyphToUnManagedMemory): Deal with
+	an API limitation, the Glyph structure in Cairo is defined as
+	taking a `long' which would be 4 or 8 bytes depending on the
+	operating system.
+
+	We now cope with this by using the proper structure to the
+	unmanaged code. 
+
 2006-12-30  Alp Toker  <alp@atoker.com>
 
 	* Makefile: Enable CAIRO_1_2.

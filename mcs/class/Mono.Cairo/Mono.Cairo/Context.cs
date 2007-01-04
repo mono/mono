@@ -148,6 +148,36 @@ namespace Cairo {
         public class Context : IDisposable 
         {
                 internal IntPtr state = IntPtr.Zero;
+
+		static int native_glyph_size, c_compiler_long_size;
+		
+		static Context ()
+		{
+			//
+			// This is used to determine what kind of structure
+			// we should use to marshal Glyphs, as the public
+			// definition in Cairo uses `long', which can be
+			// 32 bits or 64 bits depending on the platform.
+			//
+			// We assume that sizeof(long) == sizeof(void*)
+			// except in the case of Win64 where sizeof(long)
+			// is 32 bits
+			//
+			int ptr_size = Marshal.SizeOf (typeof (IntPtr));
+			
+			PlatformID platform = Environment.OSVersion.Platform;
+			if (platform == PlatformID.Win32NT ||
+			    platform == PlatformID.Win32S ||
+			    platform == PlatformID.Win32Windows ||
+			    platform == PlatformID.WinCE ||
+			    ptr_size == 4){
+				c_compiler_long_size = 4;
+				native_glyph_size = Marshal.SizeOf (typeof (NativeGlyph_4byte_longs));
+			} else {
+				c_compiler_long_size = 8;
+				native_glyph_size = Marshal.SizeOf (typeof (Glyph));
+			}
+		}
 		
                 public Context (Surface surface)
                 {
@@ -691,14 +721,38 @@ namespace Cairo {
 			set { CairoAPI.cairo_set_font_options (state, value.Handle); }
 		}
 
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct NativeGlyph_4byte_longs {
+			public int index;
+			public double x;
+			public double y;
+
+			public NativeGlyph_4byte_longs (Glyph source)
+			{
+				index = (int) source.index;
+				x = source.x;
+				y = source.y;
+			}
+		}
+
 		static internal IntPtr FromGlyphToUnManagedMemory(Glyph [] glyphs)
 		{
-			int size =  Marshal.SizeOf (glyphs[0]);
-			IntPtr dest = Marshal.AllocHGlobal (size * glyphs.Length);
+			IntPtr dest = Marshal.AllocHGlobal (native_glyph_size * glyphs.Length);
 			int pos = dest.ToInt32();
 
-			for (int i=0; i < glyphs.Length; i++, pos += size)
-				Marshal.StructureToPtr (glyphs[i], (IntPtr)pos, false);
+			if (c_compiler_long_size == 4){
+				foreach (Glyph g in glyphs){
+					Marshal.StructureToPtr (g, (IntPtr)pos, false);
+					pos += native_glyph_size;
+				}
+			} else {
+				foreach (Glyph g in glyphs){
+					NativeGlyph_4byte_longs n = new NativeGlyph_4byte_longs (g);
+					
+					Marshal.StructureToPtr (n, (IntPtr)pos, false);
+					pos += native_glyph_size;
+				}
+			}
 
 			return dest;
 		}
@@ -706,7 +760,6 @@ namespace Cairo {
 
                 public void ShowGlyphs (Matrix matrix, Glyph[] glyphs)
                 {
-
                         IntPtr ptr;
 
                         ptr = FromGlyphToUnManagedMemory (glyphs);

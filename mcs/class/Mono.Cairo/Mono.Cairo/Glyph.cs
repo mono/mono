@@ -35,9 +35,9 @@ namespace Cairo
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Glyph
 	{
-		long index;
-		double x;
-		double y;
+		internal long index;
+		internal double x;
+		internal double y;
 		
 		public Glyph (long index, double x, double y)
 		{
