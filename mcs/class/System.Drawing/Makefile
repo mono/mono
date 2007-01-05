@@ -47,4 +47,4 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Assembly/Warning.ico		\
 	Assembly/WinLogo.ico		\
 	Assembly/Mono.ico		\
-	nunit-host-ignore
+	nunit-host-ignore-list
