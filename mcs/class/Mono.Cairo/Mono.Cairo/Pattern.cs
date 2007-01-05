@@ -44,6 +44,7 @@ namespace Cairo {
 			pattern = ptr;
 		}		
 		
+                [Obsolete ("Use the SurfacePattern constructor")]
                 public Pattern (Surface surface)
                 {
                         pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Handle);

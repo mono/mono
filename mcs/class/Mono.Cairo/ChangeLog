@@ -1,5 +1,10 @@
 2007-01-05  Alp Toker  <alp@atoker.com>
 
+	* Mono.Cairo/Pattern.cs: Obsolete Pattern(Surface) ctor in favour of
+	SurfacePattern(Surface).
+
+2007-01-05  Alp Toker  <alp@atoker.com>
+
 	* Mono.Cairo/Context.cs:
 	* Mono.Cairo/Surface.cs: Generalize to Surface.LookupSurface()
 	This method will be useful elsewhere.
