@@ -609,31 +609,7 @@ namespace Cairo {
 		public Surface GroupTarget {
 			get {
 				IntPtr surface = CairoAPI.cairo_get_group_target (state);
-				SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
-				switch (st) {
-					case SurfaceType.Image:
-						return new ImageSurface (surface, true);
-					case SurfaceType.XLib:
-						return new XlibSurface (surface, true);
-					case SurfaceType.Xcb:
-						return new XcbSurface (surface, true);
-					case SurfaceType.Glitz:
-						return new GlitzSurface (surface, true);
-					case SurfaceType.Win32:
-						return new Win32Surface (surface, true);
-#if CAIRO_1_2
-					case SurfaceType.Pdf:
-						return new PdfSurface (surface, true);
-					case SurfaceType.PS:
-						return new PSSurface (surface, true);
-					case SurfaceType.DirectFB:
-						return new DirectFBSurface (surface, true);
-					case SurfaceType.Svg:
-						return new SvgSurface (surface, true);
-#endif
-					default:
-						return Surface.LookupExternalSurface (surface);
-				}
+				return Surface.LookupSurface (surface);
 			}
 		}
 #endif

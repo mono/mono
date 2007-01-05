@@ -1,3 +1,9 @@
+2007-01-05  Alp Toker  <alp@atoker.com>
+
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/Surface.cs: Generalize to Surface.LookupSurface()
+	This method will be useful elsewhere.
+
 2007-01-04  Miguel de Icaza  <miguel@novell.com>
 
 	* Mono.Cairo/Context.cs (FromGlyphToUnManagedMemory): Deal with
