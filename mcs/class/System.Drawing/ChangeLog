@@ -1,3 +1,9 @@
+2007-01-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Add new file nunit-host-ignore to the dist
+	* System.Drawing_test.dll.sources: Add HostIgnoreList to the build.
+	* nunit-host-ignore-list: New. Hosts specific ignore list for nunit
+
 2006-12-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Switch to icons available in Assembly/

@@ -1,6 +1,7 @@
 ../System.Drawing/gdipEnums.cs    
 ../System.Drawing/gdipFunctions.cs
 ../System.Drawing/gdipStructs.cs
+HostIgnoreList.cs
 System.Drawing/ColorTranslator.cs
 System.Drawing/ColorConverter.cs
 System.Drawing/FontFamilyTest.cs
