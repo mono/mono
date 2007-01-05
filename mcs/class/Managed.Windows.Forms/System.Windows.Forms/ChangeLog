@@ -3,6 +3,11 @@
 	* DataGrid.cs: don't forceably rebind columns in SetDataSource
 	unless our list manager has changed (i.e. unless we have reason to
 	believe our columns have changed).  Fixes #80422.
+	
+	also, disable the call do BindColumns in
+	OnListManagerMetaDataChanged.  this breaks this test in 2.0 (in
+	1.1 the event isn't raised in response to a column addition on a
+	table.)
 
 2007-01-05  Jonathan Pobst  <monkey@jpobst.com>
 

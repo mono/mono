@@ -2404,7 +2404,12 @@ namespace System.Windows.Forms
 
 		private void OnListManagerMetaDataChanged (object sender, EventArgs e)
 		{
-			BindColumns ();
+			// XXX
+
+			//we need to rethink this, as in 2.0 we get this event when a column is added to a table.
+			// forcing a rebind of columns means that we fail bug #80422.  disable this for now.
+			//
+			// BindColumns ();
 		}
 
 		private void OnListManagerPositionChanged (object sender, EventArgs e)
