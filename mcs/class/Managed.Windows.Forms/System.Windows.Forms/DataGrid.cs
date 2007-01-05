@@ -2325,9 +2325,9 @@ namespace System.Windows.Forms
 			if (list_manager != null)
 				ConnectListManagerEvents ();
 
-			BindColumns ();
-
 			if (old_lm != list_manager) {
+				BindColumns ();
+
 				/* reset first_visiblerow to 0 here before
 				 * doing anything that'll requires us to
 				 * figure out if we need a scrollbar. */
