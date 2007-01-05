@@ -1,3 +1,10 @@
+2007-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostIgnoreList.cs: New class to ignore some tests on specific hosts.
+	Useful for monobuild where old versions of libraries (e.g. fontconfig)
+	are failing some unit tests (that we don't want to ignore for all 
+	platforms/distros).
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* Test20.J2EE.vmwcsproj : fixed reference path.
