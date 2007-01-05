@@ -417,7 +417,17 @@ namespace MonoTests.System.ComponentModel
 			Assert ("t14", col[typeof(DescriptionAttribute)] != null);
 			DesignerAttribute attribute = col[typeof(DesignerAttribute)] as DesignerAttribute;
 			Assert ("t15", attribute != null);
-			AssertEquals ("t16", attribute.DesignerTypeName, typeof(MyOtherDesigner).AssemblyQualifiedName);
+			// there are multiple DesignerAttribute present and their order in the collection isn't deterministic
+			bool found = false;
+			for (int i = 0; i < col.Count; i++) {
+				attribute = (col [i] as DesignerAttribute);
+				if (attribute != null) {
+					found = typeof(MyOtherDesigner).AssemblyQualifiedName == attribute.DesignerTypeName;
+					if (found)
+						break;
+				}
+			}
+			Assert ("t16", found);
 		}
 		
 		[Test]
