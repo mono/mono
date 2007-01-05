@@ -429,16 +429,7 @@ namespace System.Windows.Forms {
 		}
 
 		static bool UseYardPound {
-			get {
-				switch (CultureInfo.CurrentUICulture.Name) {
-				case "en-US":
-				case "en-GB":
-					return true;
-				default:
-					return false;
-				}
-			}
-		}
+			get { return !RegionInfo.CurrentRegion.IsMetric; }			}
 
 		// .Net uses PrinterSettings property if it is not null.
 		// Otherwise, it uses PageSettings.PrinterSettings to set values.
