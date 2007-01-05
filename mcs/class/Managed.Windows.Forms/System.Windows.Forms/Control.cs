@@ -872,9 +872,6 @@ namespace System.Windows.Forms
 			tab_stop = true;
 			ime_mode = ImeMode.Inherit;
 
-			layout_engine = this.LayoutEngine;
-			if (layout_engine == null)
-				layout_engine = new Layout.DefaultLayout ();
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
@@ -2510,8 +2507,12 @@ namespace System.Windows.Forms
 		public virtual
 #endif
 		Layout.LayoutEngine LayoutEngine {
-			get { return new Layout.DefaultLayout (); }
-		} 
+			get {
+				if (layout_engine == null)
+					layout_engine = new Layout.DefaultLayout ();
+				return layout_engine;
+			}
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(false)]
@@ -4927,7 +4928,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, levent);
 
-			layout_engine.Layout (this, levent);
+			LayoutEngine.Layout (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

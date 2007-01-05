@@ -13,6 +13,9 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Threading;
 using System.Windows.Forms;
+#if NET_2_0
+using System.Windows.Forms.Layout;
+#endif
 
 using NUnit.Framework;
 
@@ -1806,4 +1809,94 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 	}
+
+#if NET_2_0
+	[TestFixture]
+	public class ControlLayoutTest
+	{
+		[Test]
+		public void SetUp ()
+		{
+			_layoutCount = 0;
+		}
+
+		[Test] // bug #80456
+		public void LayoutTest ()
+		{
+			MockLayoutEngine layoutEngine = new MockLayoutEngine ();
+			MockControl c = new MockControl (layoutEngine);
+			c.Layout += new LayoutEventHandler (LayoutEvent);
+			Assert.IsFalse (layoutEngine.LayoutInvoked, "#A1");
+			Assert.AreEqual (0, _layoutCount, "#A2");
+			c.PerformLayout ();
+			Assert.IsTrue (layoutEngine.LayoutInvoked, "#A3");
+			Assert.AreEqual (1, _layoutCount, "#A4");
+
+			layoutEngine.Reset ();
+			c.OverrideOnLayout = true;
+			Assert.IsFalse (layoutEngine.LayoutInvoked, "#B1");
+			c.PerformLayout ();
+			Assert.IsFalse (layoutEngine.LayoutInvoked, "#B2");
+			Assert.AreEqual (1, _layoutCount, "#B3");
+		}
+
+		void LayoutEvent (object sender, LayoutEventArgs e)
+		{
+			_layoutCount++;
+		}
+
+		private int _layoutCount;
+
+		class MockControl : Control
+		{
+			public MockControl (LayoutEngine layoutEngine)
+			{
+				_layoutEngine = layoutEngine;
+			}
+
+			public bool OverrideOnLayout
+			{
+				get { return _overrideOnLayout; }
+				set { _overrideOnLayout = value; }
+			}
+
+			protected override void OnLayout (LayoutEventArgs levent)
+			{
+				if (!OverrideOnLayout)
+					base.OnLayout (levent);
+			}
+
+			public override LayoutEngine LayoutEngine {
+				get {
+					if (_layoutEngine == null)
+						return base.LayoutEngine;
+					return _layoutEngine;
+				}
+			}
+
+			private bool _overrideOnLayout;
+			private LayoutEngine _layoutEngine;
+		}
+
+		class MockLayoutEngine : LayoutEngine
+		{
+			public bool LayoutInvoked {
+				get { return _layoutInvoked; }
+			}
+
+			public void Reset ()
+			{
+				_layoutInvoked = false;
+			}
+
+			public override bool Layout (object container, LayoutEventArgs args)
+			{
+				_layoutInvoked = true;
+				return true;
+			}
+
+			private bool _layoutInvoked;
+		}
+	}
+#endif
 }

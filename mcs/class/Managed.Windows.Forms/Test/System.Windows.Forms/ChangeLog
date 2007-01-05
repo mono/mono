@@ -1,3 +1,7 @@
+2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Added test for bug #80456.
+
 2007-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ControlPropertyEventsTest.cs: Added.  These test property getters and

@@ -1,3 +1,8 @@
+2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Control.cs: Lazy init layout engine. Do not directly use 
+	layout_engine since LayoutEngine may be overridden (on 2.0 profile).
+
 2007-01-05  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: don't forceably rebind columns in SetDataSource
