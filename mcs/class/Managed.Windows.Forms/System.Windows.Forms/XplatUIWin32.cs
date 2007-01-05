@@ -1526,6 +1526,7 @@ namespace System.Windows.Forms {
 		private bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, bool blocking) {
 			bool		result;
 
+			msg.refobject = 0;
 			if (RetrieveMessage(ref msg)) {
 				return true;
 			}
