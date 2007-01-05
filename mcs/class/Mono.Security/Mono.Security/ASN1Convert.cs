@@ -7,7 +7,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 IT+ A/S (http://www.itplus.dk)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -59,6 +59,9 @@ namespace Mono.Security {
 		// CAs conforming to this profile MUST always encode certificate
 		// validity dates through the year 2049 as UTCTime; certificate validity
 		// dates in 2050 or later MUST be encoded as GeneralizedTime.
+
+		// Under 1.x this API requires a Local datetime to be provided
+		// Under 2.0 it will also accept a Utc datetime
 		static public ASN1 FromDateTime (DateTime dt) 
 		{
 			if (dt.Year < 2050) {
@@ -199,7 +202,11 @@ namespace Mono.Security {
 					mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
 					break;
 			}
+#if NET_2_0
+			return DateTime.ParseExact (t, mask, null, DateTimeStyles.AdjustToUniversal);
+#else
 			return DateTime.ParseExact (t, mask, null);
+#endif
 		}
 	}
 }
