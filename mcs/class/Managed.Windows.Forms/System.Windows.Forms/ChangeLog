@@ -1,3 +1,9 @@
+2007-01-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: implement PgUp/PgDn for Details view.  Also
+	fixes First/LastVisibleIndex to use the item_control.ClientRect 
+	instead of the parent control.  Fixes #80378.
+
 2006-01-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PageSetupDialog.cs : cosmetic refactoring; use RegionInfo to

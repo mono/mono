@@ -722,10 +722,10 @@ namespace System.Windows.Forms
 			get {							
 				for (int i = FirstVisibleIndex; i < Items.Count; i++) {
 					if (View == View.List || Alignment == ListViewAlignment.Left) {
-						if (Items[i].Bounds.X > ClientRectangle.Right)
+						if (Items[i].Bounds.X > item_control.ClientRectangle.Right)
 							return i - 1;					
 					} else {
-						if (Items[i].Bounds.Y > ClientRectangle.Bottom)
+						if (Items[i].Bounds.Y > item_control.ClientRectangle.Bottom)
 							return i - 1;					
 					}
 				}
@@ -1260,12 +1260,43 @@ namespace System.Windows.Forms
 			int result = -1;
 
 			if (View == View.Details) {
-				if (key == Keys.Up)
+				switch (key) {
+				case Keys.Up:
 					result = FocusedItem.Index - 1;
-				else if (key == Keys.Down) {
+					break;
+				case Keys.Down:
 					result = FocusedItem.Index + 1;
 					if (result == items.Count)
 						result = -1;
+					break;
+				case Keys.PageDown:
+					int last_index = LastVisibleIndex;
+					if (Items [last_index].Bounds.Bottom > item_control.ClientRectangle.Bottom)
+						last_index--;
+					if (FocusedItem.Index == last_index) {
+						if (FocusedItem.Index < Items.Count - 1) {
+							int page_size = item_control.Height / items [0].Bounds.Height - 1;
+							result = FocusedItem.Index + page_size - 1;
+							if (result >= Items.Count)
+								result = Items.Count - 1;
+						}
+					} else
+						result = last_index;
+					break;
+				case Keys.PageUp:
+					int first_index = FirstVisibleIndex;
+					if (Items [first_index].Bounds.Y < 0)
+						first_index++;
+					if (FocusedItem.Index == first_index) {
+						if (first_index > 0) {
+							int page_size = item_control.Height / items [0].Bounds.Height - 1;
+							result = first_index - page_size + 1;
+							if (result < 0)
+								result = 0;
+						}
+					} else
+						result = first_index;
+					break;
 				}
 				return result;
 			}
@@ -1396,6 +1427,8 @@ namespace System.Windows.Forms
 			case Keys.Right:
 			case Keys.Up:				
 			case Keys.Down:
+			case Keys.PageUp:
+			case Keys.PageDown:
 				SelectIndex (GetAdjustedIndex (key_data));
 				break;
 
@@ -2273,10 +2306,12 @@ namespace System.Windows.Forms
 			if (view_rect.Contains (bounds))
 				return;
 
-			if (bounds.Left < 0)
-				h_scroll.Value += bounds.Left;
-			else if (bounds.Right > view_rect.Right)
-				h_scroll.Value += (bounds.Right - view_rect.Right);
+			if (View != View.Details) {
+				if (bounds.Left < 0)
+					h_scroll.Value += bounds.Left;
+				else if (bounds.Right > view_rect.Right)
+					h_scroll.Value += (bounds.Right - view_rect.Right);
+			}
 
 			if (bounds.Top < 0)
 				v_scroll.Value += bounds.Top;
