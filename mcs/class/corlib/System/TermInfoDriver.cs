@@ -876,6 +876,7 @@ namespace System {
 			bool prevEcho = Echo;
 			if (prevEcho == false)
 				Echo  = true;
+
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
 			CStreamWriter writer = Console.stdout as CStreamWriter;
@@ -885,8 +886,12 @@ namespace System {
 				ConsoleKeyInfo key = ReadKeyInternal ();
 				char c = key.KeyChar;
 				exit = (c == '\n');
-				if (!exit)
-					builder.Append (c);
+				if (!exit) {
+					if (key.Key != ConsoleKey.Backspace)
+						builder.Append (c);
+					else if (builder.Length > 0)
+						builder.Length--;
+				}
 				if (writer != null)
 					writer.WriteKey (key);
 				else
