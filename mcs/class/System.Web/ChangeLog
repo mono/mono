@@ -1,3 +1,7 @@
+2007-01-05  Marek Habersack  <grendello@gmail.com>
+
+	* System.Web.dll.sources: Add new app resources compiler files.
+
 2006-12-20  Marek Habersack  <grendello@gmail.com>
 
 	* System.Web.dll.sources: adjustments for the 2.0 SessionState

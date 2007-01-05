@@ -43,8 +43,10 @@ using System.Web.UI;
 using System.Web.Util;
 #if NET_2_0
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Web.Compilation;
 using System.Web.Profile;
 using CustomErrorMode = System.Web.Configuration.CustomErrorsMode;
 #endif
@@ -71,6 +73,7 @@ namespace System.Web {
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
 #if NET_2_0
+		internal static Assembly AppGlobalResourcesAssembly;
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
 #endif
@@ -280,7 +283,7 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0		
 		internal void PushHandler (IHttpHandler handler)
 		{
 			if (handler == null)
@@ -390,79 +393,48 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		internal static Type GetGLResourceType (string typeName)
+		static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
 		{
-			Type type = null;
-			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-
-			foreach (Assembly ass in assemblies) {
-				type = ass.GetType (typeName);
-				if (type == null)
-					continue;
-
-				return type;
-			}
-
-			throw new MissingManifestResourceException (String.Format ("Missing resource class {0}", typeName));
-		}
-
-		internal static object GetGLResourceObject (Type type, string resourceKey)
-		{
-			object ret = null;
+			ResourceManager rm;
 			try {
-				PropertyInfo pi = type.GetProperty (resourceKey,
-								    BindingFlags.GetProperty |
-								    BindingFlags.Public |
-								    BindingFlags.Static);
-				if (pi == null)
-					return null;
-				ret = pi.GetValue (null, null);
-			} catch {
-			}
-			
-			return ret;
-		}
-
-		internal static void SetGLResourceObjectCulture (Type type, CultureInfo ci)
-		{
-			try {
-				PropertyInfo pi = type.GetProperty ("Culture",
-								    BindingFlags.SetProperty |
-								    BindingFlags.Public |
-								    BindingFlags.Static);
-				if (pi == null)
-					return; // internal error actually...
-				pi.SetValue (null, ci, null);
-			} catch {
+				rm = new ResourceManager (classKey, assembly);
+				return rm.GetObject (resourceKey, culture);
+			} catch (MissingManifestResourceException) {
+				throw;
+			} catch (Exception ex) {
+				throw new HttpException ("Failed to retrieve the specified global resource object.", ex);
 			}
 		}
 		
 		public static object GetGlobalResourceObject (string classKey, string resourceKey)
 		{
-			string className = String.Format ("System.Resources.{0}", classKey);
-			Type type = GetGLResourceType (className);
-			SetGLResourceObjectCulture (type, null);
-			return GetGLResourceObject (type, resourceKey);
+			return GetGlobalResourceObject (classKey, resourceKey, Thread.CurrentThread.CurrentUICulture);
 		}
 
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			string className = String.Format ("System.Resources.{0}", classKey);
-			Type type = GetGLResourceType (className);
-			SetGLResourceObjectCulture (type, culture);
-			return GetGLResourceObject (type, resourceKey);
+			HttpContext context = HttpContext.Current;
+			if (AppGlobalResourcesAssembly == null)
+				throw new MissingManifestResourceException ();
+			return GetResourceObject (classKey, resourceKey, culture, AppGlobalResourcesAssembly);
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey)
 		{
-			throw new NotImplementedException ();
+			return GetLocalResourceObject (virtualPath, resourceKey, Thread.CurrentThread.CurrentUICulture);
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			if (!VirtualPathUtility.IsAbsolute (virtualPath))
+				throw new ArgumentException ("The specified virtualPath was not rooted.");
+			
+			string path = Path.GetDirectoryName (virtualPath);
+			Assembly asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
+			if (asm == null)
+				throw new MissingManifestResourceException ("A resource object was not found at the specified virtualPath.");
+			path = Path.GetFileName (virtualPath);
+			return GetResourceObject (path, resourceKey, culture, asm);
 		}
 
 		public object GetSection (string name)

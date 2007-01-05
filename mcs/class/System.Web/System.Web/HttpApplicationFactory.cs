@@ -388,8 +388,8 @@ namespace System.Web {
 #endif
 		
 #if NET_2_0 && !TARGET_J2EE
-				AppGlobalResourcesCompiler agrc = new AppGlobalResourcesCompiler();
-				agrc.Compile();
+				AppResourcesCompiler ac = new AppResourcesCompiler (context, true);
+				ac.Compile ();
 				
 				// Todo: Process App_WebResources here
 				

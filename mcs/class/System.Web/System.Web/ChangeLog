@@ -1,5 +1,12 @@
 2007-01-05  Marek Habersack  <grendello@gmail.com>
 
+	* HttpApplicationFactory.cs: Use the new app resources compiler.
+
+	* HttpRuntime.cs: Use the new app resources compiler.
+
+	* HttpContext.cs: Reimplement the GetGlobalResourceObject
+	methods, implement the GetLocalResourceObject methods.
+
 	* HttpResponse.cs: Implement the HeaderEncoding property.
 
 2007-01-04  Andreia Gaita  <avidigal@novell.com>

@@ -268,8 +268,8 @@ namespace System.Web {
 				//
 				// Compile the local resources, if any
 				//
-				AppLocalResourcesCompiler alrc = new AppLocalResourcesCompiler();
-				alrc.Compile();
+				AppResourcesCompiler ac = new AppResourcesCompiler (context, false);
+				ac.Compile ();
 #endif
 				
 				//

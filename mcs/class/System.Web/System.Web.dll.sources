@@ -18,8 +18,9 @@ System.Web/BrowserCapabilities.cs
 System.Web.Compilation/AppSettingsExpressionBuilder.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AppCodeCompiler.cs
+System.Web.Compilation/AppResourceFileInfo.cs
+System.Web.Compilation/AppResourceFilesCollection.cs
 System.Web.Compilation/AppResourcesCompiler.cs
-System.Web.Compilation/AppResourceFilesCompiler.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs
 System.Web.Compilation/AspTokenizer.cs
