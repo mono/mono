@@ -1,8 +1,8 @@
 // 
-// SoapServerType.cs
+// BasicProfileViolationEnumerator.cs
 //
 // Author:
-//   Atsushi Enomoto  <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2006 Novell, Inc.
 //
@@ -30,43 +30,52 @@
 
 #if NET_2_0
 
-using System.Web.Services.Configuration;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace System.Web.Services.Protocols
+namespace System.Web.Services.Description
 {
-	public sealed class SoapServerType : ServerType
+	public class BasicProfileViolationEnumerator : IEnumerator<BasicProfileViolation>, IDisposable
 	{
-		[MonoTODO]
-		public SoapServerType (Type type, WebServiceProtocols protocolsSupported)
-			: base (type)
+		BasicProfileViolationCollection collection;
+		int current = -1;
+		int generation;
+
+		public BasicProfileViolationEnumerator (BasicProfileViolationCollection collection)
 		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+			this.collection = collection;
+			generation = collection.Generation;
 		}
 
-		[MonoTODO]
-		public SoapServerMethod GetDuplicateMethod (object key)
+		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			collection = null;
 		}
 
-		[MonoTODO]
-		public SoapServerMethod GetMethod (object key)
+		public bool MoveNext ()
 		{
-			throw new NotImplementedException ();
+			if (generation != collection.Generation)
+				throw new InvalidOperationException ("Collection has changed during the enumeration.");
+			if (current + 1 == collection.Count)
+				return false;
+			current++;
+			return true;
 		}
 
-		public bool ServiceDefaultIsEncoded {
-			get { return UseEncoded; }
+		public BasicProfileViolation Current {
+			get { return current < 0 ? null : collection [current]; }
 		}
 
-		public string ServiceNamespace {
-			get { return WebServiceNamespace; }
+		object IEnumerator.Current {
+			get { return current < 0 ? null : collection [current]; }
 		}
 
-		[MonoTODO]
-		public bool ServiceRoutingOnSoapAction {
-			get { throw new NotImplementedException (); }
+		void IEnumerator.Reset ()
+		{
+			current = -1;
 		}
 	}
 }
-
 #endif

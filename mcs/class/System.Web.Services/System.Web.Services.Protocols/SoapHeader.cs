@@ -61,9 +61,14 @@ namespace System.Web.Services.Protocols {
 
 		internal SoapHeader (XmlElement elem)
 		{
-			actor = elem.GetAttribute ("actor", "http://schemas.xmlsoap.org/soap/envelope/");
-			string me = elem.GetAttribute ("mustUnderstand", "http://schemas.xmlsoap.org/soap/envelope/");
+			actor = elem.GetAttribute ("actor", WebServiceHelper.SoapEnvelopeNamespace);
+			string me = elem.GetAttribute ("mustUnderstand", WebServiceHelper.SoapEnvelopeNamespace);
 			if (me != "") EncodedMustUnderstand = me;
+#if NET_2_0
+			role = elem.GetAttribute ("role", WebServiceHelper.Soap12EnvelopeNamespace);
+			me = elem.GetAttribute ("mustUnderstand", WebServiceHelper.Soap12EnvelopeNamespace);
+			if (me != "") EncodedMustUnderstand12 = me;
+#endif
 		}
 
 		#endregion // Constructors

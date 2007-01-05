@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using HeaderInfo = System.Web.Services.Protocols.SoapHeaderMapping;
+
 using System.Reflection;
 using System.Collections;
 using System.Xml;
@@ -223,7 +225,7 @@ namespace System.Web.Services.Protocols {
 				
 				HeaderInfo header = new HeaderInfo (mems[0], att);
 				allHeaderList.Add (header);
-				if (!header.IsUnknownHeader) {
+				if (!header.Custom) {
 					if ((header.Direction & SoapHeaderDirection.In) != 0)
 						inHeaderList.Add (header);
 					if ((header.Direction & SoapHeaderDirection.Out) != 0)
@@ -379,12 +381,12 @@ namespace System.Web.Services.Protocols {
 			return null;
 		}
 		
-		public XmlSerializer GetBodySerializer (SoapHeaderDirection dir)
+		public XmlSerializer GetBodySerializer (SoapHeaderDirection dir, bool soap12)
 		{
 			switch (dir) {
 				case SoapHeaderDirection.In: return RequestSerializer;
 				case SoapHeaderDirection.Out: return ResponseSerializer;
-				case SoapHeaderDirection.Fault: return Fault.Serializer;
+				case SoapHeaderDirection.Fault: return soap12 ? Soap12Fault.Serializer : Fault.Serializer;
 				default: return null;
 			}
 		}
@@ -427,64 +429,6 @@ namespace System.Web.Services.Protocols {
 		}
 	}
 
-	internal class HeaderInfo
-	{
-		internal MemberInfo Member;
-		internal SoapHeaderAttribute AttributeInfo;
-		internal Type HeaderType;
-		internal bool IsUnknownHeader;
-
-		public HeaderInfo (MemberInfo member, SoapHeaderAttribute attributeInfo)
-		{
-			Member = member;
-			AttributeInfo = attributeInfo;
-			if (Member is PropertyInfo) HeaderType = ((PropertyInfo)Member).PropertyType;
-			else HeaderType = ((FieldInfo)Member).FieldType;
-			
-			if (HeaderType == typeof(SoapHeader) || HeaderType == typeof(SoapUnknownHeader) ||
-				HeaderType == typeof(SoapHeader[]) || HeaderType == typeof(SoapUnknownHeader[]))
-			{
-				IsUnknownHeader = true;
-			}
-			else if (!typeof(SoapHeader).IsAssignableFrom (HeaderType))
-				throw new InvalidOperationException (string.Format ("Header members type must be a SoapHeader subclass"));
-		}
-		
-		public object GetHeaderValue (object ob)
-		{
-			if (Member is PropertyInfo) return ((PropertyInfo)Member).GetValue (ob, null);
-			else return ((FieldInfo)Member).GetValue (ob);
-		}
-
-		public void SetHeaderValue (object ob, SoapHeader header)
-		{
-			object value = header;
-			if (IsUnknownHeader && HeaderType.IsArray)
-			{
-				SoapUnknownHeader uheader = header as SoapUnknownHeader;
-				SoapUnknownHeader[] array = (SoapUnknownHeader[]) GetHeaderValue (ob);
-				if (array == null || array.Length == 0) {
-					value = new SoapUnknownHeader[] { uheader };
-				}
-				else {
-					SoapUnknownHeader[] newArray = new SoapUnknownHeader [array.Length+1];
-					Array.Copy (array, newArray, array.Length);
-					newArray [array.Length] = uheader;
-					value = newArray;
-				}
-			}
-			
-			if (Member is PropertyInfo) ((PropertyInfo)Member).SetValue (ob, value, null);
-			else ((FieldInfo)Member).SetValue (ob, value);
-		}
-		
-		public SoapHeaderDirection Direction
-		{
-			get { return AttributeInfo.Direction; }
-		}
-	}
-
-
 	//
 	// Holds the metadata loaded from the type stub, as well as
 	// the metadata for all the methods in the type
@@ -494,7 +438,9 @@ namespace System.Web.Services.Protocols {
 		Hashtable[] header_serializers = new Hashtable [3];
 		Hashtable[] header_serializers_byname = new Hashtable [3];
 		Hashtable methods_byaction = new Hashtable (); 
-
+#if NET_2_0
+		WsiProfiles wsi_claims = WsiProfiles.None;
+#endif
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
@@ -504,7 +450,7 @@ namespace System.Web.Services.Protocols {
 		internal XmlReflectionImporter 	xmlImporter;
 		internal SoapReflectionImporter soapImporter;
 
-		public SoapTypeStubInfo (LogicalTypeInfo logicalTypeInfo)
+		public SoapTypeStubInfo (ServerType logicalTypeInfo)
 		: base (logicalTypeInfo)
 		{
 			xmlImporter = new XmlReflectionImporter ();
@@ -524,6 +470,11 @@ namespace System.Web.Services.Protocols {
 				// Remove the default binding, it is not needed since there is always
 				// a binding attribute.
 				Bindings.Clear ();
+#if NET_2_0
+				WebServiceBindingAttribute wsba = (WebServiceBindingAttribute) o [0];
+				if (wsba.EmitConformanceClaims)
+					wsi_claims = wsba.ConformsTo;
+#endif
 			}
 				
 			foreach (WebServiceBindingAttribute at in o)
@@ -563,6 +514,12 @@ namespace System.Web.Services.Protocols {
 			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
 		}
 
+#if NET_2_0
+		public override WsiProfiles WsiClaims {
+			get { return wsi_claims; }
+		}
+#endif
+
 		public override XmlReflectionImporter XmlImporter 
 		{
 			get { return xmlImporter; }
@@ -598,6 +555,19 @@ namespace System.Web.Services.Protocols {
 		public SoapMethodStubInfo GetMethodForSoapAction (string name)
 		{
 			return (SoapMethodStubInfo) methods_byaction [name.Trim ('"',' ')];
+		}
+	}
+
+	internal class Soap12TypeStubInfo : SoapTypeStubInfo
+	{
+		public Soap12TypeStubInfo (ServerType logicalTypeInfo)
+		: base (logicalTypeInfo)
+		{
+		}
+
+		public override string ProtocolName
+		{
+			get { return "Soap12"; }
 		}
 	}
 }

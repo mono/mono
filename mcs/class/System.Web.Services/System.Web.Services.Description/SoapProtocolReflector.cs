@@ -37,11 +37,10 @@ using System.Xml;
 
 namespace System.Web.Services.Description {
 
-	internal class SoapProtocolReflector : ProtocolReflector 
+	internal abstract class SoapProtocolReflector : ProtocolReflector 
 	{
 		#region Fields
 
-		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 		SoapBinding soapBinding;
 
 		#endregion // Fields
@@ -56,24 +55,15 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		public override string ProtocolName {
-			get { return "Soap"; }
-		}
+		public abstract SoapExtensionReflector ExtensionReflector { get; }
 
-		#endregion // Properties
+		#endregion
 
 		#region Methods
 
 		protected override void BeginClass ()
 		{
-			SoapBinding sb = new SoapBinding ();
-			sb.Transport = SoapBinding.HttpTransport;
-			sb.Style = ((SoapTypeStubInfo)TypeInfo).SoapBindingStyle;
-			Binding.Extensions.Add (sb);
-
-			SoapAddressBinding abind = new SoapAddressBinding ();
-			abind.Location = ServiceUrl;
-			Port.Extensions.Add (abind);
+			ExtensionReflector.ReflectDescription ();
 		}
 
 		protected override void EndClass ()
@@ -82,22 +72,35 @@ namespace System.Web.Services.Description {
 
 		protected override bool ReflectMethod ()
 		{
-			SoapOperationBinding sob = new SoapOperationBinding();
 			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
-			
-			sob.SoapAction = method.Action;
-			sob.Style = method.SoapBindingStyle;
-			OperationBinding.Extensions.Add (sob);
-			
+			bool existing = false;
+#if NET_2_0
+			if (Parent != null) {
+				if (Parent.MappedMessagesIn.ContainsKey (method.MethodInfo))
+					existing = true;
+				else {
+					Parent.MappedMessagesIn [method.MethodInfo] = InputMessage;
+					Parent.MappedMessagesOut [method.MethodInfo] = OutputMessage;
+				}
+			}
+#endif
+			if (!existing)
+				ImportMessageParts ();
+			ExtensionReflector.ReflectMethod ();
+
+			return !existing;
+		}
+		
+		void ImportMessageParts ()
+		{
+			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
 			ImportMessage (method.InputMembersMapping, InputMessage);
 			ImportMessage (method.OutputMembersMapping, OutputMessage);
 				
-			AddOperationMsgBindings (method, OperationBinding.Input);
-			AddOperationMsgBindings (method, OperationBinding.Output);
 
-			foreach (HeaderInfo hf in method.Headers)
+			foreach (SoapHeaderMapping hf in method.Headers)
 			{
-				if (hf.IsUnknownHeader) continue;
+				if (hf.Custom) continue;
 				
 				Message msg = new Message ();
 				msg.Name = Operation.Name + hf.HeaderType.Name;
@@ -106,11 +109,6 @@ namespace System.Web.Services.Description {
 				msg.Parts.Add (part);
 				ServiceDescription.Messages.Add (msg);
 
-				SoapHeaderBinding hb = new SoapHeaderBinding ();
-				hb.Message = new XmlQualifiedName (msg.Name, ServiceDescription.TargetNamespace);
-				hb.Part = part.Name;
-				hb.Use = method.Use;
-				
 				if (method.Use == SoapBindingUse.Literal)
 				{
 					// MS.NET reflects header classes in a weird way. The root element
@@ -134,27 +132,7 @@ namespace System.Web.Services.Description {
 					XmlTypeMapping mapping = SoapReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.GetWebServiceEncodedNamespace (ServiceDescription.TargetNamespace));
 					part.Type = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
 					SoapSchemaExporter.ExportTypeMapping (mapping);
-					hb.Encoding = EncodingNamespace;
 				}
-
-				if ((hf.Direction & SoapHeaderDirection.Out) != 0)
-					OperationBinding.Output.Extensions.Add (hb);
-				if ((hf.Direction & SoapHeaderDirection.In) != 0)
-					OperationBinding.Input.Extensions.Add (hb);
-			}
-			
-			return true;
-		}
-
-		void AddOperationMsgBindings (SoapMethodStubInfo method, MessageBinding msg)
-		{
-			SoapBodyBinding sbbo = new SoapBodyBinding();
-			msg.Extensions.Add (sbbo);
-			sbbo.Use = method.Use;
-			if (method.Use == SoapBindingUse.Encoded)
-			{
-				sbbo.Namespace = ServiceDescription.TargetNamespace;
-				sbbo.Encoding = EncodingNamespace;
 			}
 		}
 		
@@ -210,4 +188,44 @@ namespace System.Web.Services.Description {
 
 		#endregion
 	}
+
+	internal class Soap11ProtocolReflector : SoapProtocolReflector
+	{
+		SoapExtensionReflector reflector;
+		
+		public Soap11ProtocolReflector ()
+		{
+			reflector = new Soap11BindingExtensionReflector ();
+			reflector.ReflectionContext = this;
+		}
+
+		public override string ProtocolName {
+			get { return "Soap"; }
+		}
+
+		public override SoapExtensionReflector ExtensionReflector {
+			get { return reflector; }
+		}
+	}
+
+#if NET_2_0
+	internal class Soap12ProtocolReflector : SoapProtocolReflector
+	{
+		SoapExtensionReflector reflector;
+		
+		public Soap12ProtocolReflector ()
+		{
+			reflector = new Soap12BindingExtensionReflector ();
+			reflector.ReflectionContext = this;
+		}
+
+		public override string ProtocolName {
+			get { return "Soap12"; }
+		}
+
+		public override SoapExtensionReflector ExtensionReflector {
+			get { return reflector; }
+		}
+	}
+#endif
 }

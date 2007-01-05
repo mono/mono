@@ -49,7 +49,6 @@ namespace System.Web.Services.Description {
 		string className;
 		CodeIdentifiers classNames;
 		CodeNamespace codeNamespace;
-		CodeCompileUnit codeCompileUnit;
 		CodeTypeDeclaration codeTypeDeclaration;
 		Message inputMessage;
 		string methodName;
@@ -58,7 +57,6 @@ namespace System.Web.Services.Description {
 		Message outputMessage;		
 		Port port;
 		PortType portType;
-		string protocolName;
 		Service service;
 		ServiceDescriptionImportWarnings warnings = (ServiceDescriptionImportWarnings)0;	
 		ServiceDescriptionImporter descriptionImporter;
@@ -198,12 +196,11 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 		
-		internal bool Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ArrayList importInfo)
+		internal bool Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, ArrayList importInfo)
 		{
 			this.descriptionImporter = descriptionImporter;
 			this.classNames = new CodeIdentifiers();;
 			this.codeNamespace = codeNamespace;
-			this.codeCompileUnit = codeCompileUnit;
 
 			warnings = (ServiceDescriptionImportWarnings) 0;
 			
@@ -545,7 +542,15 @@ namespace System.Web.Services.Description {
 			foreach (XmlSchemaObject ob in sc.Includes)
 			{
 				XmlSchemaImport import = ob as XmlSchemaImport;
-				if (import.Namespace == SoapProtocolReflector.EncodingNamespace) return true;
+				if (import == null)
+					continue;
+#if NET_2_0
+				if (import.Namespace == Soap11BindingExtensionReflector.EncodingNamespace
+				    || import.Namespace == Soap12BindingExtensionReflector.EncodingNamespace)
+#else
+				if (import.Namespace == Soap11BindingExtensionReflector.EncodingNamespace)
+#endif
+					return true;
 			}
 			return false;
 		}

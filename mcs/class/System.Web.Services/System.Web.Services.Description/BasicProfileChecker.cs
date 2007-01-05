@@ -53,6 +53,9 @@ namespace System.Web.Services.Description
 				return;
 			}
 			
+			if (!new Uri (value.Namespace, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2803);
+			
 			object doc = ctx.GetDocument (value.Location);
 			if (doc == null) ctx.ReportError (value, "Document '" + value.Location + "' not found");
 			
@@ -65,21 +68,37 @@ namespace System.Web.Services.Description
 				return;
 			}
 				
-			// TODO: rule R2003
-			
 			if (imported.TargetNamespace != value.Namespace)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2005);
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, ServiceDescription value)
 		{
-			// R4005
+			// R4005 (and R1034, which turned out to be redundant)
 			if (value.Namespaces != null)
 				foreach (XmlQualifiedName qname in value.Namespaces.ToArray ())
 					if (qname.Namespace == "http://www.w3.org/XML/1998/namespace")
 						ctx.ReportRuleViolation (value, BasicProfileRules.R4005);
+
+			CheckDuplicateSoapAddressBinding (ctx, value);
 		}
 		
+		void CheckDuplicateSoapAddressBinding (ConformanceCheckContext ctx, ServiceDescription value)
+		{
+			ArrayList locations = new ArrayList ();
+			foreach (PortType p in value.PortTypes) {
+				SoapAddressBinding b = (SoapAddressBinding) p.Extensions.Find (typeof (SoapAddressBinding));
+				if (b == null || b.Location == null || b.Location.Length == 0)
+					continue;
+				if (locations.Contains (b.Location)) {
+					ctx.ReportRuleViolation (value, BasicProfileRules.R2711);
+					// One report for one ServiceDescription should be enough.
+					return;
+				}
+				locations.Add (b.Location);
+			}
+		}
+
 		public override void Check (ConformanceCheckContext ctx, ServiceDescriptionFormatExtension value)
 		{
 			if (value.Required)
@@ -93,6 +112,10 @@ namespace System.Web.Services.Description
 			
 			if (value.DefinedByElement && value.Element.Namespace == XmlSchema.Namespace)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2206);
+
+			if (value.Type != null && value.Type != XmlQualifiedName.Empty &&
+			    value.Element != null && value.Element != XmlQualifiedName.Empty)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2306);
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, Types value)
@@ -145,10 +168,130 @@ namespace System.Web.Services.Description
 			
 			if (parts.Count > 0)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2209);
+
+			// check existence of corresponding operation in portType for each binding operation
+			if (CheckCorrespondingOperationsForBinding (ctx, value, port))
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2718);
+
+			// check duplicate operation signature.
+			ArrayList sigs = new ArrayList ();
+			foreach (OperationBinding ob in value.Operations) {
+				if (sigs.Contains (ob.Name))
+					ctx.ReportRuleViolation (value, BasicProfileRules.R2710);
+				sigs.Add (ob.Name);
+			}
+
+			// check namespace declarations.
+			switch (type) {
+			case LiteralType.Document:
+			case LiteralType.Rpc:
+				CheckSoapBindingExtensions (ctx, value, type);
+				break;
+			}
 		}
 		
-		public override void Check (ConformanceCheckContext ctx, OperationBinding ob) 
+		bool CheckCorrespondingOperationsForBinding (ConformanceCheckContext ctx, Binding value, PortType port)
 		{
+			if (value.Operations.Count != port.Operations.Count)
+				return true;
+			foreach (OperationBinding b in value.Operations) {
+				Operation op = port.Operations.Find (b.Name);
+				if (op == null)
+					return true;
+
+				bool msg, bind;
+				// input
+				msg = op.Messages.Input != null;
+				bind = b.Input != null;
+				if (msg != bind)
+					return true;
+				// output
+				msg = op.Messages.Output != null;
+				bind = b.Output != null;
+				if (msg != bind)
+					return true;
+				// faults
+				foreach (FaultBinding fb in b.Faults)
+					if (op.Messages.Find (fb.Name) == null)
+						return true;
+			}
+			return false;
+		}
+		
+		void CheckSoapBindingExtensions (ConformanceCheckContext ctx, Binding value, LiteralType type)
+		{
+			bool violationNS = false;
+			bool violation2717 = false;
+			bool violation2720 = false;
+			bool violation2721 = false;
+
+			foreach (OperationBinding op in value.Operations) {
+				SoapBodyBinding sbb = op.Extensions.Find (typeof (SoapBodyBinding)) as SoapBodyBinding;
+				if (sbb != null) {
+					if (type == LiteralType.Document && sbb.Namespace != null)
+						violationNS = true;
+					if (type == LiteralType.Rpc && sbb.Namespace == null)
+						violation2717 = true;
+				}
+
+				SoapHeaderBinding shb = op.Extensions.Find (typeof (SoapHeaderBinding)) as SoapHeaderBinding;
+				if (shb != null) {
+					violationNS |= shb.Namespace != null;
+					violation2720 |= !IsValidPart (shb.Part);
+				}
+
+				SoapHeaderFaultBinding sfhb = op.Extensions.Find (typeof (SoapHeaderFaultBinding)) as SoapHeaderFaultBinding;
+				if (sfhb != null) {
+					violationNS |= sfhb.Namespace != null;
+					violation2720 |= !IsValidPart (sfhb.Part);
+				}
+
+				SoapFaultBinding sfb = op.Extensions.Find (typeof (SoapFaultBinding)) as SoapFaultBinding;
+				if (sfb != null) {
+					violation2721 |= sfb.Name == null;
+					violationNS |= sfb.Namespace != null;
+				}
+			}
+			if (violationNS)
+				ctx.ReportRuleViolation (value,
+					type == LiteralType.Document ?
+					BasicProfileRules.R2716 :
+					BasicProfileRules.R2726);
+			if (violation2717)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2717);
+			if (violation2720)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2720);
+			if (violation2721)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2721);
+		}
+		
+		bool IsValidPart (string part)
+		{
+			if (part == null)
+				return false;
+			try {
+				XmlConvert.VerifyNMTOKEN (part);
+				return true;
+			} catch (XmlException) {
+				return false;
+			}
+		}
+		
+		public override void Check (ConformanceCheckContext ctx, OperationBinding value) 
+		{
+			bool r2754 = false;
+			bool r2723 = false;
+			foreach (FaultBinding fb in value.Faults) {
+				SoapFaultBinding sfb = (SoapFaultBinding) value.Extensions.Find (typeof (SoapFaultBinding));
+				if (sfb == null)
+					continue;
+				r2754 |= sfb.Name != fb.Name;
+				r2723 |= sfb.Use == SoapBindingUse.Encoded;
+			}
+			if (r2754)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2754);
+			if (r2723)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2723);
 		}
 		
 		void CheckMessageBinding (ConformanceCheckContext ctx, Hashtable portParts, MessageBinding value)
@@ -235,10 +378,54 @@ namespace System.Web.Services.Description
 			return null;
 		}
 		
-		public override void Check (ConformanceCheckContext ctx, Operation value) { }
+		public override void Check (ConformanceCheckContext ctx, Operation value)
+		{
+			switch (value.Messages.Flow) {
+			case OperationFlow.SolicitResponse:
+			case OperationFlow.Notification:
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2303);
+				break;
+			}
+
+			CheckR2305 (ctx, value);
+		}
+
+		void CheckR2305 (ConformanceCheckContext ctx, Operation value)
+		{
+			string [] order = value.ParameterOrder;
+			if (order == null || order.Length == 0)
+				return;
+			bool omitted = false;
+			bool violation = false;
+			for (int i = 0; i < value.Messages.Count; i++) {
+				OperationMessage msg = value.Messages [i];
+				if (msg.Name == null) {
+					if (omitted)
+						violation = true;
+					else
+						omitted = true;
+				}
+				else if (order [omitted ? i - 1 : i] != msg.Name)
+					violation = true;
+			}
+			if (violation)
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2305);
+		}
+
 		public override void Check (ConformanceCheckContext ctx, OperationMessage value) { }
 		public override void Check (ConformanceCheckContext ctx, Port value) { }
-		public override void Check (ConformanceCheckContext ctx, PortType value) { }
+
+		public override void Check (ConformanceCheckContext ctx, PortType value)
+		{
+			ArrayList names = new ArrayList ();
+			foreach (Operation o in value.Operations) {
+				if (names.Contains (o.Name))
+					ctx.ReportRuleViolation (value, BasicProfileRules.R2304);
+				else
+					names.Add (o.Name);
+			}
+		}
+
 		public override void Check (ConformanceCheckContext ctx, Service value) { }
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchema s)
@@ -295,6 +482,8 @@ namespace System.Web.Services.Description
 			CheckSchemaQName (ctx, value, value.RefName);
 			CheckSchemaQName (ctx, value, value.SubstitutionGroup);
 			CheckSchemaQName (ctx, value, value.SchemaTypeName);
+			if (value.Name != null && value.Name.StartsWith ("ArrayOf", StringComparison.Ordinal))
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2112);
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchemaGroupRef value)
@@ -413,6 +602,8 @@ namespace System.Web.Services.Description
 	{
 		#region "Basic Profile 1.1 Section 4 (Service Description)"
 
+		// (BTW R1034 turned out to be a spec bug.)
+
 	// 4.1 Required Description
 		// Can't check: R0001
 
@@ -425,7 +616,10 @@ namespace System.Web.Services.Description
 			"A DESCRIPTION MUST only use the WSDL \"import\" statement to import another WSDL description",
 			"");
 
-		// FIXME: R2803
+		public static readonly ConformanceRule R2803 = new ConformanceRule (
+			"R2803", 
+			"In a DESCRIPTION, the namespace attribute of the wsdl:import MUST NOT be a relative URI.",
+			"");
 
 		public static readonly ConformanceRule R2002 = new ConformanceRule (
 			"R2002", 
@@ -434,6 +628,9 @@ namespace System.Web.Services.Description
 
 		// R2003: depends on ServiceDescription raw XML.
 		// R2004, R2009, R2010, R2011: requires schema resolution
+		// which depends on XmlResolver, while 1) XmlUrlResolver
+		// might not always be proper (e.g. network resolution) and
+		// 2) custom XmlResolver might resolve non-XML.
 
 		public static readonly ConformanceRule R2007 = new ConformanceRule (
 			"R2007", 
@@ -442,7 +639,9 @@ namespace System.Web.Services.Description
 
 		// R2008: denotes a possibility that cannot be verified.
 
-		// R2022, R2023, R4004: depends on underlying XML
+		// R2022, R2023, R4004: depends on underlying XML, which 
+		// is impossible when ServiceDescription is already read
+		// (WebServiceInteroperability.CheckConformance() is the case).
 
 		public static readonly ConformanceRule R4005 = new ConformanceRule (
 			"R4005",
@@ -494,7 +693,10 @@ namespace System.Web.Services.Description
 			"In a DESCRIPTION, array declarations MUST NOT use wsdl:arrayType attribute in the type declaration",
 			"");
 			
-		// FIXME: R2112
+		public static readonly ConformanceRule R2112 = new ConformanceRule (
+			"R2112", 
+			"In a DESCRIPTION, elements SHOULD NOT be named using the convention ArrayOfXXX.",
+			"");
 
 		// R2113: is about ENVELOPE.
 
@@ -524,16 +726,16 @@ namespace System.Web.Services.Description
 			"An rpc-literal binding in a DESCRIPTION MUST refer, in its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the type attribute",
 			"");
 
-		// R2211: Related to message structure
-		// R2207: Optional
+		// R2211: Related to ENVELOPE
+		// R2207: is about allowed condition (MAY).
 
 		public static readonly ConformanceRule R2204 = new ConformanceRule (
 			"R2204", 
 			"A document-literal binding in a DESCRIPTION MUST refer, in each of its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the element attribute",
 			"");
 
-		// R2208: Optional
-		// FIXME: R2212, R2213, R2214
+		// R2208: is about allowed condition (MAY).
+		// R2212, R2213, R2214: related to ENVELOPE
 
 		public static readonly ConformanceRule R2205 = new ConformanceRule (
 			"R2205", 
@@ -547,7 +749,29 @@ namespace System.Web.Services.Description
 
 	// 4.5 Port Types
 
-		// FIXME: R2301, R2302, R2303, R2304, R2305, R2306
+		// R2301: Related to ENVELOPE.
+		// R2302: Optional
+
+		// btw it's not on Basic Profile TAD
+		public static readonly ConformanceRule R2303 = new ConformanceRule (
+			"R2303", 
+			"A DESCRIPTION MUST NOT use Solicit-Response and Notification type operations in a wsdl:portType definition.",
+			"");
+
+		public static readonly ConformanceRule R2304 = new ConformanceRule (
+			"R2304", 
+			"A wsdl:portType in a DESCRIPTION MUST have operations with distinct values for their name attributes.",
+			"");
+
+		public static readonly ConformanceRule R2305 = new ConformanceRule (
+			"R2305", 
+			"A wsdl:operation element child of a wsdl:portType element in a DESCRIPTION MUST be constructed so that the parameterOrder attribute, if present, omits at most 1 wsdl:part from the output message.",
+			"");
+
+		public static readonly ConformanceRule R2306 = new ConformanceRule (
+			"R2306", 
+			"A wsdl:message in a DESCRIPTION MUST NOT specify both type and element attributes on the same wsdl:part.",
+			"");
 
 	// 4.6 Bindings
 
@@ -580,12 +804,79 @@ namespace System.Web.Services.Description
 			
 		// R2709: Suggestion.
 
-		// FIXME: R2710, R2711, R2712, R2714, R2750, R2727,
-		// R2716, R2717, R2726, R2718, R2719, R2740, R2741,
-		// R2742, R2743, R2720, R2749, R2721, R2754, R2722,
-		// R2723, R2707, R2724, R2725, R2729, R2735, R2755,
-		// R2737, R2738, R2739, R2753, R2751, R2752, R2744,
-		// R2745, R2747, R2748
+		public static readonly ConformanceRule R2710 = new ConformanceRule (
+			"R2710", 
+			"The operations in a wsdl:binding in a DESCRIPTION MUST result in operation signatures that are different from one another.",
+			"");
+			
+		public static readonly ConformanceRule R2711 = new ConformanceRule (
+			"R2711", 
+			"A DESCRIPTION SHOULD NOT have more than one wsdl:port with the same value for the location attribute of the soapbind:address element.",
+			"");
+			
+		// R2712: related to ENVELOPE.
+		// R2714: related to INSTANCE.
+		// R2750, R2727: related to CONSUMER.
+
+		public static readonly ConformanceRule R2716 = new ConformanceRule (
+			"R2716", 
+			"A document-literal binding in a DESCRIPTION MUST NOT have the namespace attribute specified on contained soapbind:body, soapbind:header, soapbind:headerfault and soapbind:fault elements.",
+			"");
+			
+		public static readonly ConformanceRule R2717 = new ConformanceRule (
+			"R2717", 
+			"An rpc-literal binding in a DESCRIPTION MUST have the namespace attribute specified, the value of which MUST be an absolute URI, on contained  soapbind:body elements.",
+			"");
+			
+		public static readonly ConformanceRule R2726 = new ConformanceRule (
+			"R2726", 
+			"An rpc-literal binding in a DESCRIPTION MUST NOT have the namespace attribute specified on contained soapbind:header,  soapbind:headerfault and soapbind:fault elements.",
+			"");
+			
+
+		public static readonly ConformanceRule R2718 = new ConformanceRule (
+			"R2718", 
+			"A wsdl:binding in a DESCRIPTION MUST have the same set of wsdl:operations as the wsdl:portType to which it refers.",
+			"");
+			
+
+		// R2719: is about allowed condition (MAY).
+		// R2740, R2741: no way to detect known faults here.
+		// R2742, R2743: related to ENVELOPE.
+
+		public static readonly ConformanceRule R2720 = new ConformanceRule (
+			"R2720", 
+			"A wsdl:binding in a DESCRIPTION MUST use the part attribute with a schema type of \"NMTOKEN\" on all contained soapbind:header and soapbind:headerfault elements.",
+			"");
+			
+
+		// R2749: is satisfied by API nature.
+
+		public static readonly ConformanceRule R2721 = new ConformanceRule (
+			"R2721", 
+			"A wsdl:binding in a DESCRIPTION MUST have the name  attribute specified on all contained soapbind:fault elements.",
+			"");
+
+		public static readonly ConformanceRule R2754 = new ConformanceRule (
+			"R2754", 
+			"In a DESCRIPTION, the value of the name attribute on a soapbind:fault element MUST match the value of the name attribute on its parent wsdl:fault element.",
+			"");
+
+		// R2722: is about allowed condition (MAY).
+
+		public static readonly ConformanceRule R2723 = new ConformanceRule (
+			"R2723", 
+			"f in a wsdl:binding in a DESCRIPTION the use attribute on a contained soapbind:fault element is present, its value MUST be \"literal\".",
+			"");
+
+		// R2707: is satisfied by our implementation.
+		// R2724, R2725: related to INSTANCE.
+		// R2729, R2735: related to ENVELOPE.
+		// R2755: related to MESSAGE.
+		// R2737, R2738, R2739, R2753: related to ENVELOPE.
+		// R2751, R2752: related to ENVELOPE.
+		// R2744, R2745: related to MESSAGE.
+		// R2747, R2748: related to CONSUMER.
 
 	// 4.8 Use of XML Schema
 
@@ -593,6 +884,50 @@ namespace System.Web.Services.Description
 		// R2801: ditto.
 
 		#endregion
+
+		/*
+
+		Below are the combination of these documents:
+		http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html
+		http://www.ws-i.org/Testing/Tools/2005/01/BP11_TAD_1-1.htm
+
+		TAD No.	component	recomm.	WS-I Req.
+		BP2010	portType		R2304	
+		BP2011	types			R2011	
+		BP2012	binding			R2204	
+		BP2013	binding			R2203	
+		BP2014	operation		R2305	
+		BP2017	binding			R2705,R2706
+		BP2018	definitions		R2023,R2030
+		BP2019	binding			R2716	
+		BP2020	binding			R2717	
+		BP2021	binding			R2720,R2749
+		BP2022	binding			R2721	
+		BP2032	binding			R2754	
+		BP2034	definitions	rec.	R1034,R4005
+		BP2098	import			R2007	
+		BP2101	definitions		R2001	
+		BP2103	definitions		R2003	
+		BP2104	definitions		R2005	
+		BP2105	definitions		R2022,R2030
+		BP2107	types			R2105	
+		BP2108	types			R2110,R2111
+		BP2110	types		rec.	R2112	
+		BP2111	binding			R2201	
+		BP2112	binding			R2207	
+		BP2113	binding			R2205	
+		BP2114	binding		rec.	R2209	
+		BP2115	message			R2206	
+		BP2116	message			R2306	
+		BP2117	binding			R2726	
+		BP2118	binding			R2718	
+		BP2119	binding			R2210	
+		BP2120	binding			R2710	
+		BP2122	types			R2801	
+		BP2123	definitions	rec.	R2026	
+		BP2803	import			R2803	
+
+		*/
 	}
 }
 

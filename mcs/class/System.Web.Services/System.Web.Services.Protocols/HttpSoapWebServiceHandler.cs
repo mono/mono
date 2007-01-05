@@ -63,7 +63,7 @@ namespace System.Web.Services.Protocols
 		{
 			try
 			{
-				requestMessage = DeserializeRequest (context.Request);
+				requestMessage = DeserializeRequest (context);
 				return methodInfo;
 			}
 			catch (Exception ex)
@@ -80,8 +80,9 @@ namespace System.Web.Services.Protocols
 
 			try
 			{
-				if (requestMessage == null)
-					requestMessage = DeserializeRequest (context.Request);
+				if (requestMessage == null) {
+					requestMessage = DeserializeRequest (context);
+				}
 				
 				if (methodInfo != null && methodInfo.OneWay) {
 					context.Response.BufferOutput = false;
@@ -112,8 +113,9 @@ namespace System.Web.Services.Protocols
 			}
 		}
 
-		SoapServerMessage DeserializeRequest (HttpRequest request)
+		SoapServerMessage DeserializeRequest (HttpContext context)
 		{
+			HttpRequest request = context.Request;
 			Stream stream = request.InputStream;
 
 			//using (stream)
@@ -121,7 +123,11 @@ namespace System.Web.Services.Protocols
 				string soapAction = null;
 				string ctype;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
+#if NET_2_0
+				if (ctype != "text/xml" && ctype != "application/soap+xml")
+#else
 				if (ctype != "text/xml")
+#endif
 					throw new WebException ("Content is not XML: " + ctype);
 					
 				object server = CreateServerInstance ();
@@ -129,16 +135,21 @@ namespace System.Web.Services.Protocols
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
 				message.ContentType = ctype;
+#if NET_2_0
+				object soapVer = context.Items ["WebServiceSoapVersion"];
+				if (soapVer != null)
+					message.SetSoapVersion ((SoapProtocolVersion) soapVer);
+#endif
 
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
 
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction)
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction && !message.IsSoap12)
 				{
 					soapAction = request.Headers ["SOAPAction"];
-					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
+					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", WebServiceHelper.ClientFaultCode (message.IsSoap12));
 					methodInfo = _typeStubInfo.GetMethodForSoapAction (soapAction);
-					if (methodInfo == null) throw new SoapException ("Server did not recognize the value of HTTP header SOAPAction: " + soapAction, SoapException.ClientFaultCode);
+					if (methodInfo == null) throw new SoapException ("Server did not recognize the value of HTTP header SOAPAction: " + soapAction, WebServiceHelper.ClientFaultCode (message.IsSoap12));
 					message.MethodStubInfo = methodInfo;
 				}
 
@@ -153,7 +164,7 @@ namespace System.Web.Services.Protocols
 				// If the routing style is RequestElement, try to get the method name from the
 				// stream processed by the high priority extensions
 
-				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement)
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement || message.IsSoap12)
 				{
 					MemoryStream mstream;
 					byte[] buffer = null;
@@ -177,7 +188,7 @@ namespace System.Web.Services.Protocols
 						buffer = mstream.ToArray ();
 					}
 
-					soapAction = ReadActionFromRequestElement (new MemoryStream (buffer), encoding);
+					soapAction = ReadActionFromRequestElement (new MemoryStream (buffer), encoding, message.IsSoap12);
 
 					stream = mstream;
 					methodInfo = (SoapMethodStubInfo) _typeStubInfo.GetMethod (soapAction);
@@ -187,7 +198,7 @@ namespace System.Web.Services.Protocols
 				// Whatever routing style we used, we should now have the method information.
 				// We can now notify the remaining extensions
 
-				if (methodInfo == null) throw new SoapException ("Method '" + soapAction + "' not defined in the web service '" + _typeStubInfo.LogicalType.WebServiceName + "'", SoapException.ClientFaultCode);
+				if (methodInfo == null) throw new SoapException ("Method '" + soapAction + "' not defined in the web service '" + _typeStubInfo.LogicalType.WebServiceName + "'", WebServiceHelper.ClientFaultCode (message.IsSoap12));
 
 				_extensionChainMedPrio = SoapExtension.CreateExtensionChain (methodInfo.SoapExtensions);
 				_extensionChainLowPrio = SoapExtension.CreateExtensionChain (_typeStubInfo.SoapExtensions[1]);
@@ -206,13 +217,13 @@ namespace System.Web.Services.Protocols
 				{
 					object content;
 					SoapHeaderCollection headers;
-					WebServiceHelper.ReadSoapMessage (xmlReader, methodInfo, SoapHeaderDirection.In, out content, out headers);
+					WebServiceHelper.ReadSoapMessage (xmlReader, methodInfo, SoapHeaderDirection.In, message.IsSoap12, out content, out headers);
 					message.InParameters = (object []) content;
 					message.SetHeaders (headers);
 				}
 				catch (Exception ex)
 				{
-					throw new SoapException ("Could not deserialize Soap message", SoapException.ClientFaultCode, ex);
+					throw new SoapException ("Could not deserialize Soap message", WebServiceHelper.ClientFaultCode (message.IsSoap12), ex);
 				}
 
 				// Notify the extensions after deserialization
@@ -226,20 +237,23 @@ namespace System.Web.Services.Protocols
 			//}
 		}
 
-		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
+		string ReadActionFromRequestElement (Stream stream, Encoding encoding, bool soap12)
 		{
+			string envNS = soap12 ?
+				WebServiceHelper.Soap12EnvelopeNamespace :
+				WebServiceHelper.SoapEnvelopeNamespace;
 			try
 			{
 				StreamReader reader = new StreamReader (stream, encoding, false);
 				XmlTextReader xmlReader = new XmlTextReader (reader);
 
 				xmlReader.MoveToContent ();
-				xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
+				xmlReader.ReadStartElement ("Envelope", envNS);
 
-				while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
+				while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == envNS))
 					xmlReader.Skip ();
 
-				xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
+				xmlReader.ReadStartElement ("Body", envNS);
 				xmlReader.MoveToContent ();
 
 				return xmlReader.LocalName;
@@ -251,7 +265,7 @@ namespace System.Web.Services.Protocols
 				errmsg += "via an attribute on the method cannot modify the request stream before it is read. ";
 				errmsg += "The extension must be configured via the SoapExtensionTypes element in web.config ";
 				errmsg += "or the request must arrive at the server as clear text.";
-				throw new SoapException (errmsg, SoapException.ServerFaultCode, ex);
+				throw new SoapException (errmsg, WebServiceHelper.ServerFaultCode (soap12), ex);
 			}
 		}
 
@@ -262,7 +276,9 @@ namespace System.Web.Services.Protocols
 			if ((message.ContentEncoding != null) && (message.ContentEncoding.Length > 0))
 				response.AppendHeader("Content-Encoding", message.ContentEncoding);
 
-			response.ContentType = "text/xml; charset=utf-8";
+			response.ContentType = message.IsSoap12 ?
+				"application/soap+xml; charset=utf-8" :
+				"text/xml; charset=utf-8";
 			if (message.Exception != null) response.StatusCode = 500;
 
 			Stream responseStream = response.OutputStream;
@@ -287,13 +303,30 @@ namespace System.Web.Services.Protocols
 				}
 				
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (outStream);
-				
+
+
 				if (message.Exception == null)
-					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers);
-				else if (methodInfo != null)
-					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers);
-				else
-					WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers, message.IsSoap12);
+				else if (methodInfo != null) {
+#if NET_2_0
+					if (message.IsSoap12)
+						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Soap12Fault (message.Exception), message.Headers, message.IsSoap12);
+					else
+#endif
+					{
+						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers, message.IsSoap12);
+					}
+				}
+				else {
+#if NET_2_0
+					if (message.IsSoap12)
+						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Soap12Fault.Serializer, null, new Soap12Fault (message.Exception), null, message.IsSoap12);
+					else
+#endif
+					{
+						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null, message.IsSoap12);
+					}
+				}
 
 				if (bufferResponse)
 				{
@@ -321,13 +354,18 @@ namespace System.Web.Services.Protocols
 		void SerializeFault (HttpContext context, SoapServerMessage requestMessage, Exception ex)
 		{
 			SoapException soex = ex as SoapException;
-			if (soex == null) soex = new SoapException (ex.Message, SoapException.ServerFaultCode, ex);
+			if (soex == null) soex = new SoapException (ex.Message, WebServiceHelper.ServerFaultCode (requestMessage != null && requestMessage.IsSoap12), ex);
 
 			SoapServerMessage faultMessage;
 			if (requestMessage != null)
 				faultMessage = new SoapServerMessage (context.Request, soex, requestMessage.MethodStubInfo, requestMessage.Server, requestMessage.Stream);
 			else
 				faultMessage = new SoapServerMessage (context.Request, soex, null, null, null);
+#if NET_2_0
+			object soapVer = context.Items ["WebServiceSoapVersion"];
+			if (soapVer != null)
+				faultMessage.SetSoapVersion ((SoapProtocolVersion) soapVer);
+#endif
 
 			SerializeResponse (context.Response, faultMessage);
 			context.Response.End ();
@@ -366,7 +404,7 @@ namespace System.Web.Services.Protocols
 			foreach (SoapHeader header in requestMessage.Headers)
 			{
 				if (header.MustUnderstand && !header.DidUnderstand)
-					throw new SoapHeaderException ("Header not understood: " + header.GetType(), SoapException.MustUnderstandFaultCode);
+					throw new SoapHeaderException ("Header not understood: " + header.GetType(), WebServiceHelper.MustUnderstandFaultCode (requestMessage.IsSoap12));
 			}
 
 			// Collect headers that must be sent to the client

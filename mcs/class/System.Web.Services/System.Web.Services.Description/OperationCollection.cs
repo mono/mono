@@ -71,6 +71,14 @@ namespace System.Web.Services.Description {
 			List.CopyTo (array, index);
 		}
 
+		internal Operation Find (string name)
+		{
+			foreach (Operation op in List)
+				if (op.Name == name)
+					return op;
+			return null;
+		}
+
 		public int IndexOf (Operation operation)
 		{
 			return List.IndexOf (operation);

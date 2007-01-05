@@ -114,6 +114,14 @@ namespace System.Web.Services.Description {
 			List.CopyTo (array, index);
 		}
 
+		internal OperationMessage Find (string name)
+		{
+			foreach (OperationMessage m in List)
+				if (m.Name == name)
+					return m;
+			return null;
+		}
+
 		public int IndexOf (OperationMessage operationMessage)
 		{
 			return List.IndexOf (operationMessage);

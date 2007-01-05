@@ -27,17 +27,140 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
+using System.Reflection;
+using System.Web.Services;
+using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols
 {
-	public class ServerType
+	//
+	// This class has information abou a web service. Through providess
+	// access to the TypeStubInfo instances for each protocol.
+	//
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	class ServerType // It was LogicalTypeInfo until Mono 1.2.
 	{
-		public ServerType (Type type)
+		LogicalMethodInfo[] logicalMethods;
+
+		internal string WebServiceName;
+		internal string WebServiceNamespace;
+		internal string WebServiceAbstractNamespace;
+		internal string Description;
+		internal Type Type;
+		bool useEncoded;
+
+		TypeStubInfo soapProtocol;
+#if NET_2_0
+		TypeStubInfo soap12Protocol;
+#endif
+		TypeStubInfo httpGetProtocol;
+		TypeStubInfo httpPostProtocol;
+		
+		public ServerType (Type t)
 		{
+			this.Type = t;
+
+			object [] o = Type.GetCustomAttributes (typeof (WebServiceAttribute), false);
+			if (o.Length == 1){
+				WebServiceAttribute a = (WebServiceAttribute) o [0];
+				WebServiceName = (a.Name != string.Empty) ? a.Name : Type.Name;
+				WebServiceNamespace = (a.Namespace != string.Empty) ? a.Namespace : WebServiceAttribute.DefaultNamespace;
+				Description = a.Description;
+			} else {
+				WebServiceName = Type.Name;
+				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;
+			}
+			
+			// Determine the namespaces for literal and encoded schema types
+			
+			useEncoded = false;
+			
+			o = t.GetCustomAttributes (typeof(SoapDocumentServiceAttribute), true);
+			if (o.Length > 0) {
+				SoapDocumentServiceAttribute at = (SoapDocumentServiceAttribute) o[0];
+				useEncoded = (at.Use == SoapBindingUse.Encoded);
+			}
+			else if (t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true).Length > 0)
+				useEncoded = true;
+			
+			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
+
+			WebServiceAbstractNamespace = WebServiceNamespace + sep + "AbstractTypes";
+
+			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
+			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 		}
+
+		internal bool UseEncoded {
+			get { return useEncoded; }
+		}
+
+		internal LogicalMethodInfo[] LogicalMethods
+		{
+			get { return logicalMethods; }
+		}
+		
+		internal TypeStubInfo GetTypeStub (string protocolName)
+		{
+			lock (this)
+			{
+				switch (protocolName)
+				{
+					case "Soap": 
+						if (soapProtocol == null) soapProtocol = CreateTypeStubInfo (typeof(SoapTypeStubInfo));
+						return soapProtocol;
+#if NET_2_0
+					case "Soap12": 
+						if (soap12Protocol == null) soap12Protocol = CreateTypeStubInfo (typeof(Soap12TypeStubInfo));
+						return soap12Protocol;
+#endif
+					case "HttpGet":
+						if (httpGetProtocol == null) httpGetProtocol = CreateTypeStubInfo (typeof(HttpGetTypeStubInfo));
+						return httpGetProtocol;
+					case "HttpPost":
+						if (httpPostProtocol == null) httpPostProtocol = CreateTypeStubInfo (typeof(HttpPostTypeStubInfo));
+						return httpPostProtocol;
+				}
+			}
+			throw new InvalidOperationException ("Protocol " + protocolName + " not supported");
+		}
+		
+		TypeStubInfo CreateTypeStubInfo (Type type)
+		{
+			TypeStubInfo tsi = (TypeStubInfo) Activator.CreateInstance (type, new object[] {this});
+			tsi.Initialize ();
+			return tsi;
+		}
+		
+		internal string GetWebServiceLiteralNamespace (string baseNamespace)
+		{
+			if (useEncoded) {
+				string sep = baseNamespace.EndsWith ("/") ? "" : "/";
+				return baseNamespace + sep + "literalTypes";
+			}
+			else
+				return baseNamespace;
+		}
+
+		internal string GetWebServiceEncodedNamespace (string baseNamespace)
+		{
+			if (useEncoded)
+				return baseNamespace;
+			else {
+				string sep = baseNamespace.EndsWith ("/") ? "" : "/";
+				return baseNamespace + sep + "encodedTypes";
+			}
+		}
+
+		internal string GetWebServiceNamespace (string baseNamespace, SoapBindingUse use)
+		{
+			if (use == SoapBindingUse.Literal) return GetWebServiceLiteralNamespace (baseNamespace);
+			else return GetWebServiceEncodedNamespace (baseNamespace);
+		}
+		
 	}
 }
-
-#endif

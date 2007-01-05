@@ -125,11 +125,12 @@ namespace System.Web.Services.Description {
 			if (appSettingUrlKey != null && appSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
 				throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
 
-			serviceDescriptions.Add (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
+			OnServiceDescriptionAdded (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 		}
 
 		internal void OnServiceDescriptionAdded (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
 		{
+			serviceDescriptions.Add (serviceDescription);
 			ImportInfo info = new ImportInfo (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 			importInfo.Add (info);
 			
@@ -141,7 +142,7 @@ namespace System.Web.Services.Description {
 		{
 			ProtocolImporter importer = GetImporter ();
 			
-			if (!importer.Import (this, codeNamespace, codeCompileUnit, importInfo))
+			if (!importer.Import (this, codeNamespace, importInfo))
 				throw new Exception ("None of the supported bindings was found");
 				
 			return importer.Warnings;
@@ -152,7 +153,7 @@ namespace System.Web.Services.Description {
 			ArrayList importers = GetSupportedImporters ();
 			if (protocolName == null || protocolName == "") protocolName = "Soap";
 			foreach (ProtocolImporter importer in importers) {
-				if (importer.ProtocolName == protocolName)
+				if (importer.ProtocolName.ToUpper () == protocolName.ToUpper ())
 					return importer;
 			}
 			
@@ -163,6 +164,9 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (new SoapProtocolImporter ());
+#if NET_2_0
+			list.Add (new Soap12ProtocolImporter ());
+#endif
 			list.Add (new HttpGetProtocolImporter ());
 			list.Add (new HttpPostProtocolImporter ());
 			return list;

@@ -138,6 +138,15 @@ namespace System.Web.Services.Description {
 				CodeConstructor cc = new CodeConstructor ();
 				cc.Attributes = MemberAttributes.Public;
 				GenerateServiceUrl (location, cc.Statements);
+
+#if NET_2_0
+				if (ProtocolName.ToUpper () == "SOAP12") {
+					CodeExpression thisSoapVer = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "SoapVersion");
+					CodeFieldReferenceExpression soap12Enum =
+						new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeof (SoapProtocolVersion)), "Soap12");
+					cc.Statements.Add (new CodeAssignStatement (thisSoapVer, soap12Enum));
+				}
+#endif
 				codeClass.Members.Add (cc);
 			}
 			
@@ -183,7 +192,12 @@ namespace System.Web.Services.Description {
 
 		protected override bool IsBindingSupported ()
 		{
+#if NET_2_0
+			object o = Binding.Extensions.Find (typeof(SoapBinding));
+			return o != null && !(o is Soap12Binding);
+#else
 			return Binding.Extensions.Find (typeof(SoapBinding)) != null;
+#endif
 		}
 
 		[MonoTODO]
@@ -192,10 +206,14 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		static readonly char [] whitespaces = new char [] {' ', '\t', '\n', '\r'};
+
 		protected virtual bool IsSoapEncodingPresent (string uriList)
 		{
-			throw new NotImplementedException ();
+			foreach (string s in uriList.Split (whitespaces))
+				if (s == "http://schemas.xmlsoap.org/soap/encoding/")
+					return true;
+			return false;
 		}
 
 		protected override CodeMemberMethod GenerateMethod ()
@@ -636,4 +654,18 @@ namespace System.Web.Services.Description {
 		
 		#endregion
 	}
+
+#if NET_2_0
+	internal class Soap12ProtocolImporter : SoapProtocolImporter
+	{
+		public override string ProtocolName {
+			get { return "Soap12"; }
+		}
+
+		protected override bool IsBindingSupported ()
+		{
+			return Binding.Extensions.Find (typeof(Soap12Binding)) != null;
+		}
+	}
+#endif
 }

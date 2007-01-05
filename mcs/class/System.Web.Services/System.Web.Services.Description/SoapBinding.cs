@@ -30,6 +30,7 @@
 
 using System.ComponentModel;
 using System.Web.Services.Configuration;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
@@ -46,6 +47,10 @@ namespace System.Web.Services.Description {
 		SoapBindingStyle style;
 		string transport;
 
+#if NET_2_0
+		static XmlSchema schema;
+#endif
+
 		#endregion // Fields
 
 		#region Constructors
@@ -60,10 +65,21 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+#if NET_2_0
+		public static XmlSchema Schema {
+			get {
+				if (schema == null) {
+					schema = XmlSchema.Read (typeof (SoapBinding).Assembly.GetManifestResourceStream ("wsdl-1.1-soap.xsd"), null);
+				}
+				return schema;
+			}
+		}
+#endif
+
 		// LAMESPEC: .NET says that the default value is SoapBindingStyle.Document but
 		// reflection shows this attribute is SoapBindingStyle.Default
 
-		[DefaultValue (SoapBindingStyle.Default)]
+		[DefaultValue (SoapBindingStyle.Document)]
 		[XmlAttribute ("style")]
 		public SoapBindingStyle Style {
 			get { return style; }

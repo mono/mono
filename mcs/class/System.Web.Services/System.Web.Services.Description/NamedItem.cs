@@ -40,7 +40,7 @@ namespace System.Web.Services.Description
 		{
 		}
 
-		[System.Xml.Serialization.XmlAttribute ("name", DataType = "NCName")]	
+		[System.Xml.Serialization.XmlAttribute ("name")]
 		public string Name {
 			get { return name; }
 			set { name = value; }

@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
@@ -105,7 +106,10 @@ namespace System.Web.Services.Description
 			set { parameterOrder = value; }
 		}
 
+		static readonly char [] wsChars = new char [] {' ', '\r', '\n', '\t'};
+
 		[DefaultValue ("")]
+		// LAMESPEC: it could simply use xs:NMTOKENS
 		[XmlAttribute ("parameterOrder")]
 		public string ParameterOrderString {
 			get { 
@@ -113,7 +117,15 @@ namespace System.Web.Services.Description
 					return String.Empty;
 				return String.Join (" ", parameterOrder); 
 			}
-			set { ParameterOrder = value.Split (' '); }
+			set {
+				ArrayList al = new ArrayList ();
+				foreach (string s in value.Split (' ')) {
+					value = s.Trim (wsChars);
+					if (value.Length > 0)
+						al.Add (value);
+				}
+				ParameterOrder = (string []) al.ToArray (typeof (string));
+			}
 		}
 
 //		[XmlIgnore]

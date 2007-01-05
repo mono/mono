@@ -39,79 +39,84 @@ namespace System.Web.Services.Protocols
 {
 	public sealed class SoapServerMethod
 	{
-		public SoapServerMethod ()
-		{
-		}
+		SoapMethodStubInfo info;
+		WsiProfiles wsi_claims;
 
-		[MonoTODO]
-		public SoapServerMethod (Type serverType, LogicalMethodInfo methodInfo)
+		[MonoTODO] // what to do here?
+		public SoapServerMethod ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		public SoapServerMethod (Type serverType, LogicalMethodInfo methodInfo)
+		{
+			TypeStubInfo type = TypeStubManager.GetTypeStub (serverType, "Soap");
+			wsi_claims = type.WsiClaims;
+			foreach (SoapMethodStubInfo m in type.Methods) {
+				bool match = false;
+				if (m.MethodInfo.MethodInfo == null)
+					match = m.MethodInfo.EndMethodInfo == methodInfo.EndMethodInfo;
+				else 
+					match = m.MethodInfo.MethodInfo == methodInfo.MethodInfo;
+				if (!match)
+					continue;
+				info = m;
+				break;
+			}
+			if (info == null)
+				throw new InvalidOperationException ("Argument methodInfo does not seem to be a member of the server type.");
+		}
+
 		public string Action {
-			get { throw new NotImplementedException (); }
+			get { return info.Action; }
 		}
 
-		[MonoTODO]
 		public SoapBindingUse BindingUse { 
-			get { throw new NotImplementedException (); }
+			get { return info.Use; }
 		}
 
-		[MonoTODO]
 		public SoapHeaderMapping [] InHeaderMappings {
-			get { throw new NotImplementedException (); }
+			get { return info.InHeaders; }
 		}
 
-		[MonoTODO]
 		public XmlSerializer InHeaderSerializer {
-			get { throw new NotImplementedException (); }
+			get { return info.RequestHeadersSerializer; }
 		}
 
-		[MonoTODO]
 		public LogicalMethodInfo MethodInfo {
-			get { throw new NotImplementedException (); }
+			get { return info.MethodInfo; }
 		}
 
-		[MonoTODO]
 		public bool OneWay {
-			get { throw new NotImplementedException (); }
+			get { return info.OneWay; }
 		}
 
-		[MonoTODO]
 		public SoapHeaderMapping [] OutHeaderMappings {
-			get { throw new NotImplementedException (); }
+			get { return info.OutHeaders; }
 		}
 
-		[MonoTODO]
 		public XmlSerializer OutHeaderSerializer {
-			get { throw new NotImplementedException (); }
+			get { return info.ResponseHeadersSerializer; }
 		}
 
-		[MonoTODO]
 		public XmlSerializer ParameterSerializer {
-			get { throw new NotImplementedException (); }
+			get { return info.RequestSerializer; }
 		}
 
-		[MonoTODO]
 		public SoapParameterStyle ParameterStyle {
-			get { throw new NotImplementedException (); }
+			get { return info.ParameterStyle; }
 		}
 
-		[MonoTODO]
 		public XmlSerializer ReturnSerializer {
-			get { throw new NotImplementedException (); }
+			get { return info.ResponseSerializer; }
 		}
 
-		[MonoTODO]
 		public bool Rpc {
-			get { throw new NotImplementedException (); }
+			get { return info.SoapBindingStyle == SoapBindingStyle.Rpc; }
 		}
 
-		[MonoTODO]
 		public WsiProfiles WsiClaims {
-			get { throw new NotImplementedException (); }
+			get { return wsi_claims; }
 		}
 	}
 }

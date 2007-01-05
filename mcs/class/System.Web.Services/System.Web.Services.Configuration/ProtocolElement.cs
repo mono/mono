@@ -59,7 +59,7 @@ namespace System.Web.Services.Configuration {
 			this.Name = protocol;
 		}
 
-		[ConfigurationProperty ("name", DefaultValue = "Unknown", Options = ConfigurationPropertyOptions.IsKey)]
+		[ConfigurationProperty ("name", DefaultValue = WebServiceProtocols.Unknown, Options = ConfigurationPropertyOptions.IsKey)]
 		public WebServiceProtocols Name {
 			get { return (WebServiceProtocols) base [nameProp];}
 			set { base[nameProp] = value; }

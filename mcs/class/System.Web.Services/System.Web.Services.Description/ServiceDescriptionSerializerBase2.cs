@@ -2480,19 +2480,19 @@ namespace System.Web.Services.Description
 		System.Collections.Hashtable writeMethods = null;
 		System.Collections.Hashtable typedSerializers = null;
 
-		public System.Xml.Serialization.XmlSerializationReader Reader {
+		public override System.Xml.Serialization.XmlSerializationReader Reader {
 			get {
 				return new ServiceDescriptionReaderBase();
 			}
 		}
 
-		public System.Xml.Serialization.XmlSerializationWriter Writer {
+		public override System.Xml.Serialization.XmlSerializationWriter Writer {
 			get {
 				return new ServiceDescriptionWriterBase();
 			}
 		}
 
-		public System.Collections.Hashtable ReadMethods {
+		public override System.Collections.Hashtable ReadMethods {
 			get {
 				lock (this) {
 					if (readMethods == null) {
@@ -2504,7 +2504,7 @@ namespace System.Web.Services.Description
 			}
 		}
 
-		public System.Collections.Hashtable WriteMethods {
+		public override System.Collections.Hashtable WriteMethods {
 			get {
 				lock (this) {
 					if (writeMethods == null) {
@@ -2516,7 +2516,7 @@ namespace System.Web.Services.Description
 			}
 		}
 
-		public System.Collections.Hashtable TypedSerializers {
+		public override System.Collections.Hashtable TypedSerializers {
 			get {
 				lock (this) {
 					if (typedSerializers == null) {
@@ -2527,7 +2527,7 @@ namespace System.Web.Services.Description
 				}
 			}
 		}
-		public bool CanSerialize (System.Type type) {
+		public override bool CanSerialize (System.Type type) {
 			if (type == typeof(System.Web.Services.Description.ServiceDescription)) return true;
 			return false;
 		}

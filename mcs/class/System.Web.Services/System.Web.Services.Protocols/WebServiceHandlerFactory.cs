@@ -101,12 +101,19 @@ namespace System.Web.Services.Protocols
 			Type type = WebServiceParser.GetCompiledType (filePath, context);
 
 			WSProtocol protocol = GuessProtocol (context, verb);
+#if NET_2_0
+			context.Items ["WebServiceSoapVersion"] =
+				protocol == WSProtocol.HttpSoap12 ?
+				SoapProtocolVersion.Soap12 :
+				SoapProtocolVersion.Default;
+#endif
 			bool supported = false;
 			IHttpHandler handler = null;
 
 			supported = WSConfig.IsSupported (protocol);
 			if (!supported) {
 				switch (protocol) {
+					case WSProtocol.HttpSoap12:
 					case WSProtocol.HttpSoap:
 						supported = WSConfig.IsSupported (WSProtocol.HttpSoap12);
 						break;
@@ -125,6 +132,7 @@ namespace System.Web.Services.Protocols
 				throw new InvalidOperationException ("Unsupported request format.");
 
 			switch (protocol) {
+			case WSProtocol.HttpSoap12:
 			case WSProtocol.HttpSoap:
 				handler = GetTypeHandler (context, new HttpSoapWebServiceHandler (type));
 				break;
@@ -167,7 +175,12 @@ namespace System.Web.Services.Protocols
 				if (context.Request.RequestType == "GET")
 					return WSProtocol.Documentation;
 				else
+#if NET_2_0
+					return context.Request.Headers ["SOAPAction"] != null ?
+						WSProtocol.HttpSoap : WSProtocol.HttpSoap12;
+#else
 					return WSProtocol.HttpSoap;
+#endif
 			}
 			else
 			{

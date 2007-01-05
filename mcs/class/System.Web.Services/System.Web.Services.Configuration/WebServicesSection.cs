@@ -91,9 +91,9 @@ namespace System.Web.Services.Configuration
 
                 }
 
-                public WebServicesSection GetSection (System.Configuration.Configuration config)
+                public static WebServicesSection GetSection (System.Configuration.Configuration config)
                 {
-			return (WebServicesSection)config.GetSection ("webServices");
+			return (WebServicesSection) config.GetSection ("webServices");
                 }
 
 		protected override void InitializeDefault ()
@@ -108,11 +108,6 @@ namespace System.Web.Services.Configuration
                 [ConfigurationProperty ("conformanceWarnings")]
                 public WsiProfilesElementCollection ConformanceWarnings {
                         get { return (WsiProfilesElementCollection) base [conformanceWarningsProp];}
-                }
-
-		[MonoTODO]
-                public WebServicesSection Current {
-                        get { throw new NotImplementedException (); }
                 }
 
                 public DiagnosticsElement Diagnostics {
@@ -183,13 +178,13 @@ namespace System.Web.Services.Configuration
                         get { return properties; }
                 }
 
-		internal static WebServicesSection Instance {
-			get { return (WebServicesSection)WebConfigurationManager.GetWebApplicationSection ("system.web/webServices"); }
+		public static WebServicesSection Current {
+			get { return (WebServicesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/webServices"); }
 		}
 
 		internal static bool IsSupported (WebServiceProtocols proto)
 		{
-			return ((Instance.EnabledProtocols & proto) == proto && (proto != WebServiceProtocols.Unknown));
+			return ((Current.EnabledProtocols & proto) == proto && (proto != WebServiceProtocols.Unknown));
 		}
         }
 

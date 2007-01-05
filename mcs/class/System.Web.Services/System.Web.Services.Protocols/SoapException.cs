@@ -129,12 +129,8 @@ namespace System.Web.Services.Protocols
 		}
 		
 		public SoapException (string message, XmlQualifiedName code, string actor, string role, string lang, XmlNode detail, SoapFaultSubCode subcode, Exception innerException)
+			: this (message, code, actor, role, detail, subcode, innerException)
 		{
-			this.code = code;
-			this.subcode = subcode;
-			this.detail = detail;
-			this.actor = actor;
-			this.role = role;
 			this.lang = lang;
 		}
 

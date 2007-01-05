@@ -76,14 +76,14 @@ namespace System.Web.Services.Configuration {
 		{
 		}
    
-		[ConfigurationProperty ("group", DefaultValue = "Low", Options = ConfigurationPropertyOptions.IsKey)]
+		[ConfigurationProperty ("group", DefaultValue = PriorityGroup.Low, Options = ConfigurationPropertyOptions.IsKey)]
 		public PriorityGroup Group {
 			get { return (PriorityGroup) base [groupProp];}
 			set { base[groupProp] = value; }
 		}
 
-		[IntegerValidator]
-		[ConfigurationProperty ("priority", DefaultValue = "0", Options = ConfigurationPropertyOptions.IsKey)]
+		[IntegerValidator (MaxValue = int.MaxValue)]
+		[ConfigurationProperty ("priority", DefaultValue = 0, Options = ConfigurationPropertyOptions.IsKey)]
 		public int Priority {
 			get { return (int) base [priorityProp];}
 			set { base[priorityProp] = value; }

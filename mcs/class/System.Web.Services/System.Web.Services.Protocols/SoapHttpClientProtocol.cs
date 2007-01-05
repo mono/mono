@@ -202,11 +202,32 @@ namespace System.Web.Services.Protocols
 			WebRequest request = GetWebRequest (uri);
 			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
-			headers.Add ("SOAPAction", "\"" + message.Action + "\"");
+			if (!message.IsSoap12)
+				headers.Add ("SOAPAction", "\"" + message.Action + "\"");
 			request.ContentType = message.ContentType + "; charset=utf-8";
 			return request;
 		}
-		
+
+#if NET_2_0
+		[MonoTODO]
+		protected virtual
+#endif
+		XmlReader GetReaderForMessage (
+			SoapClientMessage message, int bufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected virtual
+#endif
+		XmlWriter GetWriterForMessage (
+			SoapClientMessage message, int bufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+
 		void SendRequest (Stream s, SoapClientMessage message, SoapExtension[] extensions)
 		{
 			using (s) {
@@ -218,8 +239,7 @@ namespace System.Web.Services.Protocols
 				}
 
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
-				
-				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers);
+				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers, message.IsSoap12);
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);
@@ -240,7 +260,7 @@ namespace System.Web.Services.Protocols
 		{
 			SoapMethodStubInfo msi = message.MethodStubInfo;
 			HttpWebResponse http_response = response as HttpWebResponse;
-			
+
 			if (http_response != null)
 			{
 				HttpStatusCode code = http_response.StatusCode;
@@ -260,9 +280,13 @@ namespace System.Web.Services.Protocols
 			//
 			string ctype;
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
+#if NET_2_0
+			if ((!message.IsSoap12 || ctype != "application/soap+xml") && ctype != "text/xml")
+#else
 			if (ctype != "text/xml")
+#endif
 				WebServiceHelper.InvalidOperation (
-					"Content is not 'text/xml' but '" + response.ContentType + "'",
+					String.Format ("Not supported Content-Type in the response: '{0}'", response.ContentType),
 					response, encoding);
 
 			message.ContentType = ctype;
@@ -284,10 +308,17 @@ namespace System.Web.Services.Protocols
 			using (StreamReader reader = new StreamReader (stream, encoding, false)) {
 				XmlTextReader xml_reader = new XmlTextReader (reader);
 
-				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, out content, out headers);
+				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, message.IsSoap12, out content, out headers);
 			}
 
-			
+#if NET_2_0
+			if (content is Soap12Fault)
+			{
+				SoapException ex = WebServiceHelper.Soap12FaultToSoapException ((Soap12Fault) content);
+				message.SetException (ex);
+			}
+			else
+#endif
 			if (content is Fault)
 			{
 				Fault fault = (Fault) content;

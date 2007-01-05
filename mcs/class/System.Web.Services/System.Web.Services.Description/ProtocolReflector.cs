@@ -82,6 +82,10 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		internal ServiceDescriptionReflector Parent {
+			get { return serviceReflector; }
+		}
+
 		public Binding Binding {
 			get { return binding; }
 		}
@@ -200,7 +204,6 @@ namespace System.Web.Services.Description {
 			get { return typeInfo; }
 		}
 
-
 		#endregion // Properties
 
 		#region Methods
@@ -306,7 +309,13 @@ namespace System.Web.Services.Description {
 			portType.Name = binding.Name;
 
 			BeginClass ();
-			
+
+			foreach (SoapExtensionReflector reflector in extensionReflectors)
+			{
+				reflector.ReflectionContext = this;
+				reflector.ReflectDescription ();
+			}
+
 			foreach (MethodStubInfo method in typeInfo.Methods)
 			{
 				methodStubInfo = method;
@@ -317,7 +326,10 @@ namespace System.Web.Services.Description {
 				operation = new Operation ();
 				operation.Name = method.OperationName;
 				operation.Documentation = method.MethodAttribute.Description;
-				
+
+				// FIXME: SOAP 1.1 and SOAP 1.2 should share
+				// the same message definitions.
+
 				inputMessage = new Message ();
 				inputMessage.Name = method.Name + ProtocolName + "In";
 				ServiceDescription.Messages.Add (inputMessage);
@@ -339,8 +351,21 @@ namespace System.Web.Services.Description {
 				portType.Operations.Add (operation);
 				ImportOperationBinding ();
 				
-				ReflectMethod ();
-				
+				if (!ReflectMethod ()) {
+#if NET_2_0
+					// (It is somewhat hacky) If we don't
+					// add input/output Messages, update
+					// portType/input/@message and
+					// porttype/output/@message.
+					Message dupIn = Parent.MappedMessagesIn [method.MethodInfo];
+					ServiceDescription.Messages.Remove (inputMessage);
+					inOp.Message = new XmlQualifiedName (dupIn.Name, ServiceDescription.TargetNamespace);
+					Message dupOut = Parent.MappedMessagesOut [method.MethodInfo];
+					ServiceDescription.Messages.Remove (outputMessage);
+					outOp.Message = new XmlQualifiedName (dupOut.Name, ServiceDescription.TargetNamespace);
+#endif
+				}
+
 				foreach (SoapExtensionReflector reflector in extensionReflectors)
 				{
 					reflector.ReflectionContext = this;

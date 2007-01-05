@@ -306,6 +306,9 @@ namespace System.Web.Services.Description
 			XmlSerializerNamespaces ns;
 			ns = new XmlSerializerNamespaces ();
 			ns.Add ("soap", SoapBinding.Namespace);
+#if NET_2_0
+			ns.Add ("soap12", Soap12Binding.Namespace);
+#endif
 			ns.Add ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/");
 			ns.Add ("s", XmlSchema.Namespace);
 			ns.Add ("http", HttpBinding.Namespace);

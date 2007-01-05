@@ -70,14 +70,14 @@ namespace System.Web.Services.Configuration {
 		{
 		}
 
-		[ConfigurationProperty ("strict", DefaultValue = "False")]
+		[ConfigurationProperty ("strict", DefaultValue = false)]
 		public bool IsStrict {
 			get { return (bool) base [strictProp];}
 			set { base[strictProp] = value; }
 		}
 
 		[TypeConverter (typeof (InfiniteIntConverter))]
-		[ConfigurationProperty ("readTimeout", DefaultValue = "2147483647")]
+		[ConfigurationProperty ("readTimeout", DefaultValue = int.MaxValue)]
 		public int ReadTimeout {
 			get { return (int) base [readTimeoutProp];}
 			set { base[readTimeoutProp] = value; }

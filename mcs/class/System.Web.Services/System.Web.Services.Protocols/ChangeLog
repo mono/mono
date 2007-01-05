@@ -1,3 +1,140 @@
+2006-12-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs : (SerializeFault) requestMessage
+	  could be null.
+
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServiceHelper.cs :
+	  added Soap12FaultToSoapException conversion method (copied from
+	  SoapHttpClientProtocol.cs).
+	  Added couple of switching fault code getter (by soap12 flag).
+	* SoapMessage.cs: added IsSoap12 property to simplify SOAP 1.2
+	  conditional code.
+	* HttpSimpleServerProtocolFactory.cs, WebServiceHelper.cs,
+	  HttpSoapWebServiceHandler.cs, SoapHttpClientProtocol.cs :
+	  reflected all changes above. Switch 1.2 fault and 1.1 fault, and
+	  simplify 1.2 switch.
+
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs : SOAP 1.2 client should allow text/xml
+	  content type. Now bug #79985 is fixed here.
+
+2006-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs : read xml with correct
+	  SOAP 1.2 Envelope namespace. To determine the message
+	  version, it must check SOAP version in
+	  DeserializeRequest().
+
+2006-12-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapClientMessage.cs : oops, SoapVersion is only 2.0.
+
+2006-12-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs :
+	  Don't use HTTP header when SoapVersion is Soap12.
+	* HttpSoapWebServiceHandler.cs :
+	  With SOAP 1.2 message we can only use Body content.
+	  Set correct Content-Type for SOAP 1.2 message.
+	* Fault12.cs : added null check.
+	* SoapClientMessage.cs :
+	  Set correct Content-Type for SOAP 1.2 message.
+	* WebServiceHandlerFactory.cs :
+	  don't reject SOAP 1.2 protocol here.
+
+2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServiceHandlerFactory.cs,
+	  SoapServerMessage.cs,
+	  HttpSoapWebServiceHandler.cs :
+	  set guessed protocol to SoapServerMessage.
+
+2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeStubManager.cs, Methods.cs, SoapServerMethod.cs :
+	  added WsiClaims property to TypeStubInfo, to implement
+	  SoapServerMethod.WsiClaims.
+
+2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServerType.cs : added SOAP 1.2 protocol as a different one from
+	  SOAP 1.1.
+	* Methods.cs : added Soap12TypeStubInfo.
+
+2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs,
+	  SoapHttpClientProtocol.cs : support application/soap+xml.
+
+2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AnyReturnReader.cs : not sure why, but the build must have been
+	  broken, and now it is exposed.
+	* SoapHttpClientProtocol.cs : added missing members, left as MonoTODO.
+
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AnyReturnReader.cs : implemented, it does almost nothing.
+
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapServerMethod.cs : implemented based on SoapMethodStubInfo.
+	* ServerType.cs : added UseEncoded, used in SoapServerType.
+	* SoapServerType.cs : ServiceDefaultIsEncoded is base.UseEncoded,
+	  and ServiceNamespace is base.WebServiceNamespace.
+	* SoapHeaderMapping.cs : origin info.
+
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapDocumentationHandler.cs, SoapExtension.cs :
+	  WebServicesSection.Instance -> .Current.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHeaderMapping.cs : Now HeaderInfo became this type to implement
+	  this class. Remapped some members (e.g. IsUnknownHeader -> Custom).
+	* Methods.cs : so, split HeaderInfo from here.
+	* SoapMessage.cs : Added alias HeaderInfo to SoapHeaderMapping.
+	  Renamed some properties.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServerType.cs : Now LogicalTypeInfo became this type to implement
+	  this class (and SoapTypeStubInfo to SoapServerType later).
+	* TypeStubManager.cs : so, split LogicalTypeInfo from here.
+	* XmlReturnReader.cs, XmlReturnWriter.cs, Methods.cs,
+	  HttpSimpleTypeStubInfo.cs, HttpGetTypeStubInfo.cs,
+	  HttpPostTypeStubInfo.cs : LogicalTypeInfo -> ServerType.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs : looks like (only) the last Text is used
+	  instead of the first one in .net.
+
+2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Fault12.cs : they should be all internal.
+
+2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Fault12.cs, fault-12.genxs, Fault12Serializer.cs :
+	  SOAP 1.2 Fault serializer and its generation sources.
+	* SoapException.cs :
+	  Fixed .ctor() whose initialization was incorrect.
+	* WebServiceHelper.cs, Methods.cs, HttpSoapWebServiceHandler.cs,
+	  SoapHttpClientProtocol.cs :
+	  handle SOAP 1.2 Fault.
+
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHeader.cs WebServiceHelper.cs SoapClientMessage.cs
+	  HttpSoapWebServiceHandler.cs SoapHttpClientProtocol.cs:
+	  SOAP 1.2 Envelope support has started. Though I will have to
+	  change its internals significantly, so it is in my branch.
+
 2006-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebClientProtocol.cs HttpWebClientProtocol.cs SoapException.cs
