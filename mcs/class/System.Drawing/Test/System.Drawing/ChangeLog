@@ -1,3 +1,11 @@
+2007-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Mark MeasureString_StringFontInt_LongString and
+	MeasureString_Wrapping_Dots as a possible, host specific, ignored test
+	cases.
+	* FontFamilyTest.cs: Mark FontFamily_String as a possible, host
+	specific, ignored test case.
+
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SystemFontsTest.cs: Split DefaultFont test into two parts, since

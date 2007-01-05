@@ -85,6 +85,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void FontFamily_String ()
 		{
+			HostIgnoreList.CheckTest ("MonoTests.System.Drawing.FontFamilyTest.FontFamily_String");
 			FontFamily ff = new FontFamily (name);
 			CheckMono (ff);
 			FontStyle style = FontStyle.Bold;

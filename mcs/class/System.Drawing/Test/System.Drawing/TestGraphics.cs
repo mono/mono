@@ -1398,6 +1398,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_StringFontInt_LongString ()
 		{
+			HostIgnoreList.CheckTest ("MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString");
 			MeasureString_StringFontInt ("A very long string..."); // see bug #79643
 		}
 
@@ -1922,6 +1923,8 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_Wrapping_Dots ()
 		{
+			HostIgnoreList.CheckTest ("MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots");
+
 			if (font == null)
 				Assert.Ignore ("Couldn't create required font");
 
