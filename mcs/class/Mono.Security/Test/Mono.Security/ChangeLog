@@ -1,3 +1,9 @@
+2007-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1ConvertTest.cs: Update unit test syntax to NUnit 2.2. Change
+	DateTime.UtcNow to Now as the API requires, under 1.x, a local date 
+	time. Disregard buggy ConvertOID_LargeX under MS 2.0.
+
 2006-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1ConvertTest.cs: Adjusted big integer convertion test cases for
