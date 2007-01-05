@@ -1,3 +1,8 @@
+2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorTests.cs : added test for text() and whitespace/
+	  significantwhitespace node.
+
 2006-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReaderTests.cs : added test for MoveToAttribute(int).

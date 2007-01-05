@@ -1560,9 +1560,14 @@ namespace System.Xml.XPath
 					return true;
 				
 				case XPathNodeType.Text:
-					if (nodeType == XPathNodeType.SignificantWhitespace)
+					switch (nodeType) {
+					case XPathNodeType.Text:
+					case XPathNodeType.Whitespace:
+					case XPathNodeType.SignificantWhitespace:
 						return true;
-					goto default;
+					default:
+						return false;
+					}
 				default:
 					return type == nodeType;
 			}

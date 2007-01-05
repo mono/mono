@@ -409,6 +409,24 @@ namespace MonoTests.System.Xml
 			}
 		}
 
+		[Test]
+		public void TextMatchesWhitespace ()
+		{
+			string xml = "<root><ws>   </ws><sws xml:space='preserve'> </sws></root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToFirstChild (); // root
+			nav.MoveToFirstChild (); // ws
+			nav.MoveToFirstChild (); // '   '
+			AssertEquals ("#1", true, nav.Matches ("text()"));
+			nav.MoveToParent ();
+			nav.MoveToNext (); // sws
+			nav.MoveToFirstChild (); // ' '
+			AssertEquals ("#2", true, nav.Matches ("text()"));
+		}
+
 #if NET_2_0
 		[Test]
 		public void ValueAsBoolean ()
