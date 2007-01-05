@@ -3339,9 +3339,6 @@ namespace System.Windows.Forms
 
 			// Perform all Dock and Anchor calculations
 			try {
-				layout_engine.Layout(this, levent);
-
-				// Let everyone know
 				OnLayout(levent);
 			}
 
@@ -4929,6 +4926,8 @@ namespace System.Windows.Forms
 			LayoutEventHandler eh = (LayoutEventHandler)(Events [LayoutEvent]);
 			if (eh != null)
 				eh (this, levent);
+
+			layout_engine.Layout (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

@@ -1,3 +1,8 @@
+2007-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Move LayoutEngine.Layout to the OnLayout method, so
+	that inheritors can not call it if they choose.  Fixes bug #80456.
+
 2007-01-05  Andreia Gaita  <avidigal@novell.com>
 
 	* XplatUIWin32.cs: Initialize MSG.refobject at 0 so it 
