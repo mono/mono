@@ -67,13 +67,12 @@ namespace MonoTests {
 		{
 			if (ignore_list == null)
 				return;
-Console.WriteLine ("checking for {0} in {1} items", testname, IgnoreList.Count);
+
 			if (IgnoreList.Contains (testname)) {
 				string msg = String.Format ("Test '{0}' was ignore because it's defined in the '{1}' ignore list.", 
 					testname, IgnoreListName);
 				Assert.Ignore (msg);
 			}
-else Console.WriteLine ("\t{0} not found", testname);
 		}
 	}
 }
