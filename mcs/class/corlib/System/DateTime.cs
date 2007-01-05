@@ -1435,8 +1435,8 @@ namespace System
 				if (tzoffset == -1)
 					tzoffset = 0;
 				if (tzsign == 1)
-					tzoffset = -tzoffset
-;
+					tzoffset = -tzoffset;
+
 				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
 			}
 
@@ -1445,6 +1445,10 @@ namespace System
 			result = new DateTime (false, new TimeSpan (newticks));
 			if (use_localtime)
 				result = result.ToLocalTime ();
+#if NET_2_0
+			else
+				result.kind = DateTimeKind.Utc;
+#endif
 
 			return true;
 		}
