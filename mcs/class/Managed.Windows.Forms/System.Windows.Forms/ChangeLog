@@ -1,3 +1,8 @@
+2007-01-05  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: hack to eliminate Lost/Got focus notifications on
+	cycles between the ItemControl and parent.  Fixes #80388.
+
 2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Control.cs: Lazy init layout engine. Do not directly use 

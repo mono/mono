@@ -1871,7 +1871,12 @@ namespace System.Windows.Forms
 
 			internal override void OnGotFocusInternal (EventArgs e)
 			{
-				owner.Focus ();
+				owner.Select (false, true);
+			}
+
+			internal override void OnLostFocusInternal (EventArgs e)
+			{
+				owner.Select (false, true);
 			}
 		}
 		
@@ -2252,8 +2257,29 @@ namespace System.Windows.Forms
 			// FIXME: TODO
 		}
 
+		bool refocusing = false;
+
 		protected override void WndProc (ref Message m)
 		{
+			switch ((Msg)m.Msg) {
+			case Msg.WM_KILLFOCUS:
+				Control receiver = Control.FromHandle (m.WParam);
+				if (receiver == item_control) {
+					has_focus = false;
+					refocusing = true;
+					return;
+				}
+				break;
+			case Msg.WM_SETFOCUS:
+				if (refocusing) {
+					has_focus = true;
+					refocusing = false;
+					return;
+				}
+				break;
+			default:
+				break;
+			}
 			base.WndProc (ref m);
 		}
 		#endregion // Protected Methods
