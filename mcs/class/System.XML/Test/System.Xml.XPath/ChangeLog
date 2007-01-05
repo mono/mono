@@ -1,5 +1,10 @@
 2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorCommonTests.cs : added test for incorrect namespace
+	  node links.
+
+2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorTests.cs : added test for text() and whitespace/
 	  significantwhitespace node.
 

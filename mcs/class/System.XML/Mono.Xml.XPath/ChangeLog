@@ -1,3 +1,8 @@
+2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : fixed incorrect namespace node links
+	  which happened to following siblings of a node with namespaces.
+
 2006-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : those writers should lookup prefix when

@@ -41,6 +41,13 @@ namespace MonoTests.System.Xml
 			return xpathDocument.CreateNavigator ();
 		}
 
+		private XPathNavigator GetXPathDocumentNavigator (XmlNode node, XmlSpace space)
+		{
+			XmlNodeReader xr = new XmlNodeReader (node);
+			xpathDocument = new XPathDocument (xr, space);
+			return xpathDocument.CreateNavigator ();
+		}
+
 		private void AssertNavigator (string label, XPathNavigator nav, XPathNodeType type, string prefix, string localName, string ns, string name, string value, bool hasAttributes, bool hasChildren, bool isEmptyElement)
 		{
 			label += nav.GetType ();
@@ -445,5 +452,28 @@ namespace MonoTests.System.Xml
 			AssertEquals (ret, nav.OuterXml.Replace ("\r\n", "\n"));
 		}
 #endif
+
+		[Test]
+		public void GetNamespaceConsistentTree ()
+		{
+			document.PreserveWhitespace = true;
+
+			string xml = "<x:root xmlns:x='urn:x'>  <x:foo xmlns='ns1'> <x:bar /> </x:foo>  <x:foo xmlns:y='ns2'> <x:bar /> </x:foo></x:root>";
+			nav = GetXmlDocumentNavigator (xml);
+			GetNamespaceConsistentTree (nav);
+			nav = GetXPathDocumentNavigator (document, XmlSpace.Preserve);
+			GetNamespaceConsistentTree (nav);
+		}
+
+		private void GetNamespaceConsistentTree (XPathNavigator nav)
+		{
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			nav.MoveToNext ();
+			AssertEquals ("#1." + nav.GetType (), "ns1", nav.GetNamespace (""));
+			nav.MoveToNext ();
+			nav.MoveToNext ();
+			AssertEquals ("#2." + nav.GetType (), "", nav.GetNamespace (""));
+		}
 	}
 }

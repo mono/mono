@@ -235,6 +235,8 @@ namespace Mono.Xml.XPath
 				else
 					goto default;
 			case XmlNodeType.EndElement:
+				int endedNode = parentStack [parentStackIndex];
+				AdjustLastNsInScope (endedNode);
 				parentStackIndex--;
 				return;
 			default:
@@ -341,8 +343,12 @@ namespace Mono.Xml.XPath
 			hasLocalNs = false;
 			attrIndexAtStart = attributeIndex;
 			nsIndexAtStart = nsIndex;
+			AdjustLastNsInScope (previousSibling);
+		}
 
-			while (namespaces [lastNsInScope].DeclaredElement == previousSibling) {
+		private void AdjustLastNsInScope (int target)
+		{
+			while (namespaces [lastNsInScope].DeclaredElement == target) {
 				lastNsInScope = namespaces [lastNsInScope].NextNamespace;
 			}
 		}
