@@ -1,3 +1,9 @@
+2007-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Implement several 2.0 protected properties and methods.
+	Ensure that all necessary events are being called when properties
+	are set.
+
 2007-01-05  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: implement PgUp/PgDn for Details view.  Also

@@ -1,3 +1,9 @@
+2007-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlPropertyEventsTest.cs: Added.  These test property getters and
+	setters and ensure that all relevant events are called on setters for
+	Control.
+
 2007-01-04  Chris Toshok  <toshok@ximian.com>
 
 	* CommonDialogsTest.cs: disable FolderBrowserDialogTest (and add a

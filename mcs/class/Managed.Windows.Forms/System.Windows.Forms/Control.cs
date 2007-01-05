@@ -1818,12 +1818,12 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		[MonoTODO("This method currently does nothing")]
 		public virtual bool AutoSize {
-			get {
-				//Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
-				return auto_size;
-			}
+			get { return auto_size; }
 			set {
-				auto_size = value;
+				if (this.auto_size != value) {
+					auto_size = value;
+					OnAutoSizeChanged (EventArgs.Empty);
+				}
 			}
 		}
 		
@@ -1846,7 +1846,10 @@ namespace System.Windows.Forms
 				return minimum_size;
 			}
 			set {
-				minimum_size = value;
+				if (minimum_size != value) {
+					minimum_size = value;
+					PerformLayout ();
+				}
 			}
 		}
 #endif // NET_2_0
@@ -1911,6 +1914,7 @@ namespace System.Windows.Forms
 				if (value != backgroundimage_layout) {
 					backgroundimage_layout = value;
 					Invalidate ();
+					OnBackgroundImageLayoutChanged (EventArgs.Empty);
 				}
 				
 			}
@@ -2066,6 +2070,9 @@ namespace System.Windows.Forms
 
 			set {
 				this.SetClientSizeCore(value.Width, value.Height);
+#if NET_2_0
+				this.OnClientSizeChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -2308,14 +2315,15 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (this.is_enabled != value) {
+					bool old_value = is_enabled;
 
-				bool old_value = is_enabled;
+					is_enabled = value;
+					if (old_value != value && !value && this.has_focus)
+						SelectNextControl(this, true, true, true, true);
 
-				is_enabled = value;
-				if (old_value != value && !value && this.has_focus)
-					SelectNextControl(this, true, true, true, true);
-
-				OnEnabledChanged (EventArgs.Empty);
+					OnEnabledChanged (EventArgs.Empty);
+				}
 			}
 		}
 
@@ -2354,6 +2362,7 @@ namespace System.Windows.Forms
 				font = value;
 				Invalidate();
 				OnFontChanged (EventArgs.Empty);
+				PerformLayout ();
 			}
 		}
 
@@ -2533,7 +2542,12 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public Padding Margin {
 			get { return this.margin; }
-			set { this.margin = value; }
+			set { 
+				if (this.margin != value) {
+					this.margin = value; 
+					OnMarginChanged (EventArgs.Empty);
+				}
+			}
 		}
 #endif
 
@@ -2556,8 +2570,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				padding = value;
-				OnPaddingChanged (EventArgs.Empty);
+				if (padding != value) {
+					padding = value;
+					OnPaddingChanged (EventArgs.Empty);
+					PerformLayout ();
+				}
 			}
 		}
 #endif
@@ -2635,10 +2652,15 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (value != null && IsHandleCreated) {
-					XplatUI.SetClipRegion(Handle, value);
+				if (clip_region != value) {
+					if (value != null && IsHandleCreated)
+						XplatUI.SetClipRegion(Handle, value);
+
+					clip_region = value;
+#if NET_2_0
+					OnRegionChanged (EventArgs.Empty);
+#endif
 				}
-				clip_region = value;
 			}
 		}
 
@@ -2669,6 +2691,7 @@ namespace System.Windows.Forms
 				if (value != right_to_left) {
 					right_to_left = value;
 					OnRightToLeftChanged(EventArgs.Empty);
+					PerformLayout ();
 				}
 			}
 		}
@@ -2935,6 +2958,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		protected virtual Cursor DefaultCursor { get { return Cursors.Default; } }
+#endif
+
 		protected virtual ImeMode DefaultImeMode {
 			get {
 				return ImeMode.Inherit;
@@ -2945,6 +2972,10 @@ namespace System.Windows.Forms
 		protected virtual Padding DefaultMargin {
 			get { return new Padding (3); }
 		}
+		
+		protected virtual Size DefaultMaximumSize { get { return new Size (); } }
+		protected virtual Size DefaultMinimumSize { get { return new Size (); } }
+		protected virtual Padding DefaultPadding { get { return new Padding (); } }
 #endif
 
 		protected virtual Size DefaultSize {
@@ -4085,7 +4116,8 @@ namespace System.Windows.Forms
 				if (parent != null) {
 					parent.PerformLayout(this, "visible");
 				} else {
-					PerformLayout(this, "visible");
+					if (is_visible)
+						PerformLayout(this, "visible");
 				}
 			}
 		}
@@ -4153,6 +4185,9 @@ namespace System.Windows.Forms
 
 			if (resized) {
 				OnSizeChanged(EventArgs.Empty);
+#if NET_2_0
+				OnClientSizeChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -4593,7 +4628,17 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region OnXXX methods
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnAutoSizeChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[AutoSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnBackColorChanged(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [BackColorChangedEvent]);
 			if (eh != null)
@@ -4608,6 +4653,16 @@ namespace System.Windows.Forms
 				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackgroundImageChanged(e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnBackgroundImageLayoutChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[BackgroundImageLayoutChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBindingContextChanged(EventArgs e) {
@@ -4638,6 +4693,16 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnClientSizeChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[ClientSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnContextMenuChanged(EventArgs e) {
@@ -4890,6 +4955,14 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnMarginChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[MarginChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseCaptureChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [MouseCaptureChangedEvent]);
@@ -5088,6 +5161,16 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnRegionChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[RegionChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
