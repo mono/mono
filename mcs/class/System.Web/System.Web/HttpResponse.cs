@@ -36,6 +36,7 @@ using System.IO;
 using System.Web.Caching;
 using System.Threading;
 using System.Web.Util;
+using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
 
@@ -99,6 +100,7 @@ namespace System.Web {
 
 #if NET_2_0
 		bool is_request_being_redirected;
+		Encoding headerEncoding;
 #endif
 		
 		internal HttpResponse ()
@@ -249,13 +251,29 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public Encoding HeaderEncoding {
-			get { throw new NotImplementedException (); }
+			get {
+				if (headerEncoding == null) {
+					GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization")
+						as GlobalizationSection;
+					if (gs == null)
+						headerEncoding = Encoding.UTF8;
+					else {
+						headerEncoding = gs.ResponseHeaderEncoding;
+						if (headerEncoding == Encoding.Unicode)
+							throw new HttpException ("HeaderEncoding must not be Unicode");
+					}
+				}
+				return headerEncoding;
+			}
 			set {
+				if (headers_sent)
+					throw new HttpException ("headers have already been sent");
 				if (value == null)
 					throw new ArgumentNullException ("HeaderEncoding");
-				throw new NotImplementedException ();
+				if (value == Encoding.Unicode)
+					throw new HttpException ("HeaderEncoding must not be Unicode");
+				headerEncoding = value;
 			}
 		}
 #endif
