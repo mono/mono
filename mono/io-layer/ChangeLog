@@ -1,3 +1,8 @@
+2007-01-04  Miguel de Icaza  <miguel@novell.com>
+
+	* io-portability.c (find_file): Fix a coverity warning (scanning
+	being unassigned).   
+
 2006-12-31  Miguel de Icaza  <miguel@novell.com>
 
 	* io-portability.c (find_file): Do not abort if an empty filename
