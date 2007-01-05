@@ -1,3 +1,7 @@
+2007-01-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.c : skip io-layer under PLATFORM_WIN32.
+
 2007-01-03  Tor Lillqvist  <tml@novell.com>
 
 	Fix #80305: In a bundled executable, look in the bundled exe
