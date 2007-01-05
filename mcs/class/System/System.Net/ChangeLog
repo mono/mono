@@ -1,3 +1,8 @@
+2007-01-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RequestStream.cs: initialize the stream in both ctors. Fixes a couple
+	of unit tests.
+
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequest.jvm.cs: Fixed line endings.

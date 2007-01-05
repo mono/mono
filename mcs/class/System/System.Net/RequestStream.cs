@@ -40,16 +40,13 @@ namespace System.Net {
 		Stream stream;
 
 		internal RequestStream (Stream stream, byte [] buffer, int offset, int length)
+			: this (stream, buffer, offset, length, -1)
 		{
-			this.stream = stream;
-			this.buffer = buffer;
-			this.offset = offset;
-			this.length = length;
-			this.remaining_body = -1;
 		}
 
 		internal RequestStream (Stream stream, byte [] buffer, int offset, int length, long contentlength)
 		{
+			this.stream = stream;
 			this.buffer = buffer;
 			this.offset = offset;
 			this.length = length;
