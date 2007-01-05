@@ -264,7 +264,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 
-			return x509.ValidFrom.ToString ();
+			return x509.ValidFrom.ToLocalTime ().ToString ();
 #else
 			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
 			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
@@ -281,7 +281,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 
-			return x509.ValidUntil.ToString ();
+			return x509.ValidUntil.ToLocalTime ().ToString ();
 #else
 			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
 			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
