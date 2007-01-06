@@ -50,18 +50,14 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		[MonoTODO]
-		public override bool Execute ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
+		[Required]
 		public string BuildAssemblyName {
 			get { return buildAssemblyName; }
 			set { buildAssemblyName = value; }
 		}
 
 		[MonoTODO]
+		[Required]
 		public string BuildAssemblyPath {
 			get { return buildAssemblyPath; }
 			set { buildAssemblyPath = value; }
@@ -92,6 +88,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		[MonoTODO]
+		[Output]
 		public ITaskItem [] SerializationAssembly {
 			get { return serializationAssembly; }
 			set { serializationAssembly = value; }
@@ -100,16 +97,17 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		public string SerializationAssemblyName {
 			get { return serializationAssemblyName; }
-			set { serializationAssemblyName = value; }
 		}
 
 		[MonoTODO]
+		[Required]
 		public bool ShouldGenerateSerializer {
 			get { return shouldGenerateSerializer; }
 			set { shouldGenerateSerializer = value; }
 		}
 
 		[MonoTODO]
+		[Required]
 		public bool UseProxyTypes {
 			get { return useProxyTypes; }
 			set { useProxyTypes = value; }

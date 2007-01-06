@@ -74,6 +74,7 @@ Microsoft.Build.Tasks/GenerateDeploymentManifest.cs
 Microsoft.Build.Tasks/GenerateManifestBase.cs
 Microsoft.Build.Tasks/GenerateResource.cs
 Microsoft.Build.Tasks/GenerateTrustInfo.cs
+Microsoft.Build.Tasks/GetAssemblyIdentity.cs
 Microsoft.Build.Tasks/GetFrameworkPath.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPath.cs
 Microsoft.Build.Tasks.Hosting/ICscHostObject.cs
@@ -85,11 +86,14 @@ Microsoft.Build.Tasks/MSBuild.cs
 Microsoft.Build.Tasks/ReadLinesFromFile.cs
 Microsoft.Build.Tasks/RegisterAssembly.cs
 Microsoft.Build.Tasks/RemoveDir.cs
+Microsoft.Build.Tasks/RemoveDuplicates.cs
 Microsoft.Build.Tasks/ResolveAssemblyReference.cs
+Microsoft.Build.Tasks/ResolveManifestFiles.cs
 Microsoft.Build.Tasks/ResolveProjectBase.cs
 Microsoft.Build.Tasks/SGen.cs
 Microsoft.Build.Tasks/SignFile.cs
 Microsoft.Build.Tasks/TaskExtension.cs
+Microsoft.Build.Tasks/TaskLoggingHelperExtension.cs
 Microsoft.Build.Tasks/ToolTaskExtension.cs
 Microsoft.Build.Tasks/Touch.cs
 Microsoft.Build.Tasks/UnregisterAssembly.cs

@@ -1,3 +1,12 @@
+2007-01-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* GetAssemblyIdentity.cs
+	* ResolveManifestFiles.cs
+	* RemoveDuplicates.cs
+	* TaskLoggingHelperExtensios.cs: Added
+
+	* SGen.cs: Added missing [Required] and [Output].
+
 2006-12-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* RemoveDir.cs (Execute): Don't remove recursively.
