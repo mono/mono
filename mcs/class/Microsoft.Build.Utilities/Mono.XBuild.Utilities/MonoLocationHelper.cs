@@ -36,7 +36,7 @@ namespace Mono.XBuild.Utilities {
 		static string binDir;
 		static string libDir;
 		static string assembliesDir;
-		static string xbuildDir;
+		//static string xbuildDir;
 	
 		static MonoLocationHelper ()
 		{
@@ -50,7 +50,7 @@ namespace Mono.XBuild.Utilities {
 			// /usr/local/lib/mono
 			t2 = t1.Parent;
 			// /usr/local/lib/mono/xbuild
-			xbuildDir = Path.Combine (t2.FullName, "xbuild");
+			//xbuildDir = Path.Combine (t2.FullName, "xbuild");
 			// /usr/local/lib
 			t3 = t2.Parent;
 			// /usr/local
@@ -72,11 +72,6 @@ namespace Mono.XBuild.Utilities {
 		public static string GetAssembliesDir ()
 		{
 			return assembliesDir;
-		}
-		
-		public static string GetXBuildDir ()
-		{
-			return xbuildDir;
 		}
 	}
 }
