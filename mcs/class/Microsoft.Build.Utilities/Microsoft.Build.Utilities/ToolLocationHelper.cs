@@ -34,6 +34,27 @@ namespace Microsoft.Build.Utilities
 {
 	public static class ToolLocationHelper
 	{
+		static string lib_mono_dir;
+		static string mono_1_0_dir;
+		static string mono_2_0_dir;
+
+		static ToolLocationHelper ()
+		{
+			string assemblyLocation;
+			DirectoryInfo t1, t2;
+
+			// /usr/local/lib/mono/1.0
+			assemblyLocation = Path.GetDirectoryName (typeof (object).Assembly.Location);
+			t1 = new DirectoryInfo (assemblyLocation);
+
+			// usr/local/lib/mono
+			t2 = t1.Parent;
+
+			lib_mono_dir = t2.FullName;
+			mono_1_0_dir = Path.Combine (lib_mono_dir, "1.0");
+			mono_2_0_dir = Path.Combine (lib_mono_dir, "2.0");
+		}
+
 		[MonoTODO]
 		public static string GetDotNetFrameworkRootRegistryKey (TargetDotNetFrameworkVersion version)
 		{
@@ -52,10 +73,14 @@ namespace Microsoft.Build.Utilities
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string GetPathToDotNetFramework (TargetDotNetFrameworkVersion version)
 		{
-			throw new NotImplementedException ();
+			if (version == TargetDotNetFrameworkVersion.Version11)
+				return mono_1_0_dir;
+			else if (version == TargetDotNetFrameworkVersion.Version20)
+				return mono_2_0_dir;
+			else
+				throw new ArgumentException ("version");
 		}
 
 		[MonoTODO]
@@ -65,10 +90,9 @@ namespace Microsoft.Build.Utilities
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string GetPathToDotNetFrameworkSdk (TargetDotNetFrameworkVersion version)
 		{
-			throw new NotImplementedException ();
+			return GetPathToDotNetFramework (version);
 		}
 
 		[MonoTODO]
