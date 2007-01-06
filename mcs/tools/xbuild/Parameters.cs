@@ -115,7 +115,7 @@ namespace Mono.XBuild.CommandLine {
 			}
 		}
 		
-		private void LoadResponseFile (string filename)
+		void LoadResponseFile (string filename)
 		{
 			StreamReader sr = null;
 			string line;

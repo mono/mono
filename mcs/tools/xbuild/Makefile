@@ -9,7 +9,7 @@ include ../../build/executable.make
 
 install-local:	install-extras
 
-EXTRAS_DIR = $(mono_libdir)/mono/xbuild
+EXTRAS_DIR = $(mono_libdir)/mono/2.0
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)

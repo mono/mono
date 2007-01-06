@@ -57,7 +57,7 @@ namespace Mono.XBuild.CommandLine {
 		
 		public MainClass ()
 		{
-			binPath = MonoLocationHelper.GetXBuildDir ();
+			binPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
 			defaultSchema = Path.Combine (binPath, "Microsoft.Build.xsd");
 			parameters = new Parameters (binPath);
 		}
