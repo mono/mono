@@ -669,7 +669,7 @@ namespace System.Windows.Forms.X11Internal {
 			   stupid me, of course. */
 			IntPtr c;
 
-			Xlib.XGrabServer (display);
+			//			Xlib.XGrabServer (display);
 
 			Xlib.XQueryPointer (display, w, out root, out c,
 					    out root_x, out root_y, out child_x, out child_y,
@@ -686,7 +686,7 @@ namespace System.Windows.Forms.X11Internal {
 						    out mask);
 			}
 
-			Xlib.XUngrabServer (display);
+			//			Xlib.XUngrabServer (display);
 
 			child = child_last;
 		}
@@ -1818,13 +1818,17 @@ namespace System.Windows.Forms.X11Internal {
 				got_xevent = queue.Dequeue (out xevent);
 
 				if (!got_xevent) {
+#if spew
 					Console.WriteLine (">");
 					Console.Out.Flush ();
+#endif
 					break;
 				}
 
+#if spew
 				Console.Write ("-");
 				Console.Out.Flush ();
+#endif
 
 				hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
 

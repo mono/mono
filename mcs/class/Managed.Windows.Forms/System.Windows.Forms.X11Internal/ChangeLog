@@ -1,3 +1,11 @@
+2007-01-05  Chris Toshok  <toshok@ximian.com>
+
+	* X11ThreadQueue.cs: #ifdef out some spew.
+
+	* X11Display.cs: #ifdef out some spew, and comment out the calls
+	to XGrabServer in QueryPointer().  it's not good to need to do
+	this, but without it we seem to deadlock.
+
 2007-01-03  Andreia Gaita  <avidigal@novell.com>
 	
 	XplatUIX11.cs (see main changelog)

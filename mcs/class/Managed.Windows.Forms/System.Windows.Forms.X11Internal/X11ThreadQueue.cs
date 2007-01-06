@@ -114,8 +114,10 @@ namespace System.Windows.Forms.X11Internal {
 
 			if (got_xevent) {
 				if (xevent.AnyEvent.type == XEventName.Expose) {
+#if spew
 					Console.Write ("E");
 					Console.Out.Flush ();
+#endif
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
 					hwnd.AddExpose (xevent.AnyEvent.window == hwnd.ClientWindow,
 							xevent.ExposeEvent.x, xevent.ExposeEvent.y,
@@ -123,15 +125,19 @@ namespace System.Windows.Forms.X11Internal {
 					goto StartOver;
 				}
 				else if (xevent.AnyEvent.type == XEventName.ConfigureNotify) {
+#if spew
 					Console.Write ("C");
 					Console.Out.Flush ();
+#endif
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow (xevent.AnyEvent.window);
 					hwnd.AddConfigureNotify (xevent);
 					goto StartOver;
 				}
 				else {
+#if spew
 					Console.Write ("X");
 					Console.Out.Flush ();
+#endif
 					/* it was an event we can deal with directly, return it */
 					return true;
 				}
@@ -139,14 +145,18 @@ namespace System.Windows.Forms.X11Internal {
 			else {
 				if (paint_queue.Count > 0) {
 					xevent = paint_queue.Dequeue ();
+#if spew
 					Console.Write ("e");
 					Console.Out.Flush ();
+#endif
 					return true;
 				}
 				else if (configure_queue.Count > 0) {
 					xevent = configure_queue.Dequeue ();
+#if spew
 					Console.Write ("c");
 					Console.Out.Flush ();
+#endif
 					return true;
 				}
 			}
