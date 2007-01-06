@@ -1,3 +1,16 @@
+2007-01-05  Everaldo Canuto  <everaldo@simios.org>
+
+	* Control.cs: Under InternalBorderStyle call RecreateHangle to 
+	mimic same behavior than win32 that set border only in CreateParams,
+	it fix problems under CreateParams overrides. Fix #79442 and partial
+	fix #79537.
+	
+	* XplatUIX11.cs: Dont set hwnd.border_style in SetBorderStyle instead
+	of thi control you must call recreate handle. 
+	
+	* XplatUIWin32.cs: Remove all SetBorderStyle code, for win32 we dont
+	need to do anything as RecreateHangle will take care about borders.
+
 2007-01-05  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: hack to eliminate Lost/Got focus notifications on

@@ -2165,45 +2165,13 @@ namespace System.Windows.Forms {
 
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
-			uint	style;
-			uint	exstyle;
-
-			style = Win32GetWindowLong(handle, WindowLong.GWL_STYLE);
-			exstyle = Win32GetWindowLong(handle, WindowLong.GWL_EXSTYLE);
-
-
-			switch (border_style) {
-				case FormBorderStyle.None: {
-					style &= ~(uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
-					break;
-				}
-
-				case FormBorderStyle.FixedSingle: {
-					style |= (uint)WindowStyles.WS_BORDER;
-					exstyle &= ~(uint)WindowExStyles.WS_EX_CLIENTEDGE;
-					break;
-				}
-
-				case FormBorderStyle.Fixed3D: {
-					style &= ~(uint)WindowStyles.WS_BORDER;
-					exstyle |= (uint)WindowExStyles.WS_EX_CLIENTEDGE;
-					break;
-				}
-			}
-
-			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, style);
-			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, exstyle);
-			
-			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, 
-				SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOZORDER);
+			// Nothing to do on Win32
 		}
 
 		internal override void SetMenu(IntPtr handle, Menu menu) {
 			// Trigger WM_NCCALC
 			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
 		}
-
 
 		internal override Point GetMenuOrigin(IntPtr handle) {
 			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);

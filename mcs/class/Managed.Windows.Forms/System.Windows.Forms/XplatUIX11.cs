@@ -4447,7 +4447,6 @@ namespace System.Windows.Forms {
 				form.window_manager = new InternalWindowManager (form);
 			}
 			
-			hwnd.border_style = border_style;
 			RequestNCRecalc(handle);
 		}
 
