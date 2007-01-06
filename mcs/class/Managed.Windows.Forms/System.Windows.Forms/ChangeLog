@@ -1,5 +1,9 @@
 2007-01-05  Everaldo Canuto  <everaldo@simios.org>
 
+	* XplatUIX11.cs: Removed unused hwnd var in SetBorderStyle.
+
+2007-01-05  Everaldo Canuto  <everaldo@simios.org>
+
 	* Control.cs: Under InternalBorderStyle call RecreateHangle to 
 	mimic same behavior than win32 that set border only in CreateParams,
 	it fix problems under CreateParams overrides. Fix #79442 and partial
