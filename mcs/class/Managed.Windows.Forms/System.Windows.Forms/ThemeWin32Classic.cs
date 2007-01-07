@@ -4986,6 +4986,8 @@ namespace System.Windows.Forms
 				break;
 			}
 			
+			bool inner = ((style != Border3DStyle.RaisedOuter) && (style != Border3DStyle.SunkenOuter));
+			
 			if ((sides & Border3DSide.Middle) != 0) {
 				Brush brush = is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (control_color);
 				graphics.FillRectangle (brush, rect);
@@ -4993,25 +4995,25 @@ namespace System.Windows.Forms
 			
 			if ((sides & Border3DSide.Left) != 0) {
 				graphics.DrawLine (penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top);
-				if (rect.Width > 2)
+				if ((rect.Width > 2) && inner)
 					graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top);
 			}
 			
 			if ((sides & Border3DSide.Top) != 0) {
 				graphics.DrawLine (penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top);
-				if (rect.Height > 2)
+				if ((rect.Height > 2) && inner)
 					graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1);
 			}
 			
 			if ((sides & Border3DSide.Right) != 0) {
 				graphics.DrawLine (penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1);
-				if (rect.Width > 3)
+				if ((rect.Width > 3) && inner)
 					graphics.DrawLine (penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2);
 			}
 			
 			if ((sides & Border3DSide.Bottom) != 0) {
 				graphics.DrawLine (penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
-				if (rect.Height > 3)
+				if ((rect.Height > 3) && inner)
 					graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
 			}
 		}

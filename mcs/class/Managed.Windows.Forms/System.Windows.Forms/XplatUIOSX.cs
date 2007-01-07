@@ -1639,7 +1639,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu,
+			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.border_static, hwnd.menu,
 					hwnd.title_style, SystemInformation.CaptionHeight,
 					SystemInformation.ToolWindowCaptionHeight, width, height);
 

@@ -1,3 +1,15 @@
+2007-01-07  Everaldo Canuto  <everaldo@simios.org>
+
+	* Hwnd.cs: On GetClientRectangle add a new parameter border_static,
+	use Theme.BorderSize to calculate area instead of static value 1, 
+	by the way use new BorderStaticSize instead	Border3DSize when 
+	border_static is true. Fixes #79537.
+	
+	* XplatUIOSX.cs: Fix call to GetClientRectangle. 
+	
+	* ThemeWin32Classic.cs: On CPDrawBorder3D dont draw inner border when
+	it is not needed.
+
 2007-01-06  Everaldo Canuto  <everaldo@simios.org>
 
 	* Hwnd.cs: Gives more code legibility to GetWindowRectangle.

@@ -211,7 +211,7 @@ namespace System.Windows.Forms {
 			return rect;
 		}
 
-		public static Rectangle GetClientRectangle(FormBorderStyle border_style, Menu menu, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
+		public static Rectangle GetClientRectangle(FormBorderStyle border_style, bool border_static, Menu menu, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
 			Rectangle rect;
 
 			rect = new Rectangle(0, 0, width, height);
@@ -222,20 +222,25 @@ namespace System.Windows.Forms {
 				rect.Height -= menu_height;
 			}
 
-			if (border_style == FormBorderStyle.Fixed3D) {
-				Size border_3D_size = ThemeEngine.Current.Border3DSize;
+			Size border_size = new Size (0, 0);
+			
+			if (border_static)
+				border_size = ThemeEngine.Current.BorderStaticSize;
+			else if (border_style == FormBorderStyle.FixedSingle)
+				border_size = ThemeEngine.Current.BorderSize;
+			else if (border_style == FormBorderStyle.Fixed3D)
+				border_size = ThemeEngine.Current.Border3DSize;
 
-				rect.X += border_3D_size.Width;
-				rect.Y += border_3D_size.Height;
-				rect.Width -= border_3D_size.Width * 2;
-				rect.Height -= border_3D_size.Height * 2;
-			} else if (border_style == FormBorderStyle.FixedSingle) {
-				rect.X += 1;
-				rect.Y += 1;
-				rect.Width -= 2;
-				rect.Height -= 2;
+			if (border_size.Width != 0) {
+				rect.X += border_size.Width;
+				rect.Width -= border_size.Width * 2;
 			}
 
+			if (border_size.Height != 0) {
+				rect.Y += border_size.Height;
+				rect.Height -= border_size.Height * 2;
+			}
+			
 			return rect;
 		}
 		#endregion	// Static Methods
@@ -299,7 +304,7 @@ namespace System.Windows.Forms {
 			get {
 				// We pass a Zero for the menu handle so the menu size is
 				// not computed this is done via an WM_NCCALC
-				return GetClientRectangle (border_style, null, title_style,
+				return GetClientRectangle (border_style, border_static, null, title_style,
 						caption_height, tool_caption_height, width, height);
 			}
 		}
