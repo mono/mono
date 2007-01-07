@@ -283,7 +283,10 @@ namespace Mono.Data.SqliteClient
 					}
 				} catch (DllNotFoundException dll) {
 					db_version = 3;
+				} catch (EntryPointNotFoundException ep){
+					db_version = 3;
 				}
+				
 				if (busy_timeout != 0)
 					Sqlite.sqlite_busy_timeout (sqlite_handle, busy_timeout);
 			}
