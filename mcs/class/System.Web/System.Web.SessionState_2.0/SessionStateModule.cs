@@ -91,6 +91,10 @@ namespace System.Web.SessionState
 		}
 
 		public void Dispose () {
+			app.BeginRequest -= new EventHandler (OnBeginRequest);
+			app.AcquireRequestState -= new EventHandler (OnAcquireRequestState);
+			app.ReleaseRequestState -= new EventHandler (OnReleaseRequestState);
+			app.EndRequest -= new EventHandler (OnEndRequest);
 			handler.Dispose ();
 		}
 
@@ -231,7 +235,10 @@ namespace System.Web.SessionState
 				storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
 			}
 
-			SessionSetup (sessionId, isNew, isReadOnly);
+			container = CreateContainer (sessionId, storeData, isNew, isReadOnly);
+			SessionStateUtility.AddHttpSessionStateToContext (app.Context, container);
+			if (isNew)
+				OnSessionStart ();
 		}
 
 		void OnReleaseRequestState (object o, EventArgs args) {
@@ -272,10 +279,10 @@ namespace System.Web.SessionState
 				else {
 					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
+					if (supportsExpiration)
+						SessionStateUtility.RaiseSessionEnd (container, this, args);
 				}
 				SessionStateUtility.RemoveHttpSessionStateFromContext (context);
-				if (supportsExpiration)
-					SessionStateUtility.RaiseSessionEnd (container, o, args);
 			}
 			finally {
 				container = null;
@@ -338,22 +345,22 @@ namespace System.Web.SessionState
 				state.AutoEvent.Set ();
 		}
 
-		void SessionSetup (string sessionId, bool isNew, bool isReadOnly) {
-			container = new HttpSessionStateContainer (
+		HttpSessionStateContainer CreateContainer (string sessionId, SessionStateStoreData data, bool isNew, bool isReadOnly) {
+			return new HttpSessionStateContainer (
 				sessionId,
-				storeData.Items,
-				storeData.StaticObjects,
-				storeData.Timeout,
+				data.Items,
+				data.StaticObjects,
+				data.Timeout,
 				isNew,
 				config.Cookieless,
 				config.Mode,
 				isReadOnly);
-			SessionStateUtility.AddHttpSessionStateToContext (app.Context, container);
-			if (isNew)
-				OnSessionStart ();
 		}
 
 		void OnSessionExpired (string id, SessionStateStoreData item) {
+			SessionStateUtility.RaiseSessionEnd (
+				CreateContainer (id, item, false, true),
+				this, EventArgs.Empty);
 		}
 
 		void OnSessionStart () {

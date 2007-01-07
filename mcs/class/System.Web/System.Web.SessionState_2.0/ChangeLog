@@ -1,3 +1,8 @@
+2007-01-07  Konstantin Triger <kostat@mainsoft.com>
+
+	* SessionStateModule.cs: Implemented raising of Session_OnEnd event,
+		refactoring.
+
 2006-12-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* SessionIDManager.cs: Pass config to SessionStateModule.IsCookieLess.
