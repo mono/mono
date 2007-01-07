@@ -971,15 +971,15 @@ public class Page : TemplateControl, IHttpHandler
 
 		renderingForm = true;
 		writer.WriteLine ();
+
+		if (handleViewState)
+			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
+
 		scriptManager.WriteHiddenFields (writer);
 		if (requiresPostBackScript) {
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
-
-		if (handleViewState)
-			writer.WriteLine ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"{0}\" />", _savedViewState);
-
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
