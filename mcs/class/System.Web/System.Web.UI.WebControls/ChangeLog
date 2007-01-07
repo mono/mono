@@ -1,3 +1,7 @@
+2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Label.cs: fixed: according MSDN OnPreRender is not overridden.	 
+
 2007-01-04 Adar Wesley <adarw@mainsoft.com>
 
 	* ImageButton.cs: implemented GenerateEmptyAlternateText
