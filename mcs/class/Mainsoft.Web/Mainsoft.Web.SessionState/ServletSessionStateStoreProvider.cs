@@ -1,3 +1,29 @@
+//
+// (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
+// Author: Konstantin Triger <kostat@mainsoft.com>
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,24 +38,20 @@ namespace Mainsoft.Web.SessionState
 {
 	public sealed partial class ServletSessionStateStoreProvider : SessionStateStoreProviderBase
 	{
+		#region Public Interface
+
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout) {
+
+			//must set now as this can be a last chance for ro item
+			GetSession (context, false).setMaxInactiveInterval (timeout * 60);
 			ServletSessionStateItemCollection sessionState = new ServletSessionStateItemCollection (context);
 			return new SessionStateStoreData (
 				sessionState,
 				sessionState.StaticObjects,
 				timeout);
-			//return new SessionStateStoreData (new SessionStateItemCollection (),
-			//                  SessionStateUtility.GetSessionStaticObjects (context),
-			//                  timeout);
-		}
-
-		static internal ServletWorkerRequest GetWorkerRequest (HttpContext context) {
-			IServiceProvider sp = (IServiceProvider) context;
-			return (ServletWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
 		}
 
 		public override void CreateUninitializedItem (HttpContext context, string id, int timeout) {
-			//HttpSession session = GetWorker(context).ServletRequest.getSession (false); //.setMaxInactiveInterval (timeout * 60);
 		}
 
 		public override void Dispose () {
@@ -46,16 +68,16 @@ namespace Mainsoft.Web.SessionState
 			actions = SessionStateActions.None;
 			if (id == null)
 				return null;
-			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (false);
+			HttpSession session = GetSession (context, false, false);
 			if (session == null)
 				return null;
 			ServletSessionStateItemCollection sessionState = (ServletSessionStateItemCollection) session.getAttribute (J2EEConsts.SESSION_STATE);
-			if (sessionState == null)
-				return null;
+			if (sessionState == null) //was not set
+				sessionState = new ServletSessionStateItemCollection (context);
 			return new SessionStateStoreData (
 				sessionState,
 				sessionState.StaticObjects,
-				session.getMaxInactiveInterval()/60);
+				session.getMaxInactiveInterval () / 60);
 		}
 
 		public override SessionStateStoreData GetItemExclusive (HttpContext context, string id, out bool locked, out TimeSpan lockAge, out object lockId, out SessionStateActions actions) {
@@ -69,7 +91,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override void RemoveItem (HttpContext context, string id, object lockId, SessionStateStoreData item) {
-			GetWorkerRequest (context).ServletRequest.getSession (false).setAttribute (J2EEConsts.SESSION_STATE, null);
+			GetSession (context, false).setAttribute (J2EEConsts.SESSION_STATE, null);
 		}
 
 		public override void ResetItemTimeout (HttpContext context, string id) {
@@ -79,18 +101,51 @@ namespace Mainsoft.Web.SessionState
 		public override void SetAndReleaseItemExclusive (HttpContext context, string id, SessionStateStoreData item, object lockId, bool newItem) {
 			if (id == null)
 				return;
-			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (false);
-			if (newItem)
-				session.setMaxInactiveInterval (item.Timeout * 60);
+
 			if (item.Items.Dirty)
-				session.setAttribute (J2EEConsts.SESSION_STATE, item.Items);
+				GetSession(context, false).setAttribute (J2EEConsts.SESSION_STATE, item.Items);
 
 			ReleaseItemExclusive (context, id, lockId);
 		}
 
 		public override bool SetItemExpireCallback (SessionStateItemExpireCallback expireCallback) {
 			return true;
-			//throw new Exception ();
 		}
+
+		#endregion
+
+		#region helpers
+
+		static internal ServletWorkerRequest GetWorkerRequest (HttpContext context) {
+			IServiceProvider sp = (IServiceProvider) context;
+			return (ServletWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
+		}
+
+		internal static HttpSessionStateContainer CreateContainer (HttpSession session) {
+			ServletSessionStateItemCollection sessionState = session.getAttribute (J2EEConsts.SESSION_STATE) as ServletSessionStateItemCollection;
+			if (sessionState == null) //was not set
+				sessionState = new ServletSessionStateItemCollection (null);
+
+			return new HttpSessionStateContainer (session.getId (),
+				sessionState, sessionState.StaticObjects,
+				session.getMaxInactiveInterval () / 60,
+				session.isNew (),
+				HttpCookieMode.AutoDetect, SessionStateMode.Custom,
+				true);
+		}
+
+		internal static HttpSession GetSession (HttpContext context, bool create) {
+			return GetSession (context, create, true);
+		}
+
+		internal static HttpSession GetSession (HttpContext context, bool create, bool throwOnError) {
+			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (create);
+			if (session == null && throwOnError)
+				throw new HttpException ("Session is not established");
+
+			return session;
+		}
+
+		#endregion
 	}
 }

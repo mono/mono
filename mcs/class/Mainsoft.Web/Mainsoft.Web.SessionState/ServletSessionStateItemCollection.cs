@@ -1,3 +1,29 @@
+//
+// (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
+// Author: Konstantin Triger <kostat@mainsoft.com>
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,27 +41,33 @@ namespace Mainsoft.Web.SessionState
 	{
 		sealed class ServletSessionStateItemCollection : ISessionStateItemCollection, java.io.Externalizable
 		{
-			readonly ReaderWriterLock _rwLock;
 			SessionStateItemCollection _items;
 			HttpStaticObjectsCollection _staticObjects;
 			bool _needSessionPersistence;
 
-			public ServletSessionStateItemCollection () { _rwLock = new ReaderWriterLock (); } //for deserialization
+			public ServletSessionStateItemCollection () { } //for deserialization
 
-			public ServletSessionStateItemCollection(HttpContext context) : this() {
-				
+			public ServletSessionStateItemCollection (HttpContext context)
+				: this () {
+
 				_items = new SessionStateItemCollection ();
 				_staticObjects = new HttpStaticObjectsCollection ();
 
-				ServletConfig config = ServletSessionStateStoreProvider.GetWorkerRequest (context).Servlet.getServletConfig ();
-				string sessionPersistance = config.getInitParameter (J2EEConsts.Enable_Session_Persistency);
-				if (sessionPersistance != null) {
-					try {
-						_needSessionPersistence = Boolean.Parse (sessionPersistance);
-					}
-					catch (Exception) {
-						_needSessionPersistence = false;
-						Console.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
+				if (context != null) {
+					ServletConfig config = ServletSessionStateStoreProvider.GetWorkerRequest (context).Servlet.getServletConfig ();
+					string sessionPersistance = config.getInitParameter (J2EEConsts.Enable_Session_Persistency);
+					if (sessionPersistance == null)
+						sessionPersistance = config.getServletContext().getInitParameter (J2EEConsts.Enable_Session_Persistency);
+					if (sessionPersistance != null) {
+						try {
+							_needSessionPersistence = Boolean.Parse (sessionPersistance);
+						}
+						catch (Exception) {
+							_needSessionPersistence = false;
+#if DEBUG
+							Console.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
+#endif
+						}
 					}
 				}
 			}

@@ -28,44 +28,34 @@ using System.Web.SessionState;
 using System.Reflection;
 using javax.servlet.http;
 
-namespace Mainsoft.Web.Hosting
+namespace Mainsoft.Web.SessionState
 {
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class SessionListener: javax.servlet.http.HttpSessionListener
+	public class SessionListener : javax.servlet.http.HttpSessionListener
 	{
-		private MethodInfo method;
-		private bool firstTime = true;
-		public SessionListener()
-		{
+
+		public void sessionCreated (HttpSessionEvent se) {
 		}
 
-		public void sessionCreated(HttpSessionEvent se)
-		{
-		}
+		public void sessionDestroyed (HttpSessionEvent se) {
+			AppDomain servletDomain = (AppDomain) se.getSession ().getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
+			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
+			try {
+				HttpSessionStateContainer container =
+					ServletSessionStateStoreProvider.CreateContainer (se.getSession ());
 
-		public void sessionDestroyed(HttpSessionEvent se) 
-		{
-			object o  = se.getSession().getAttribute(J2EEConsts.SESSION_STATE);
-			if (o == null)
-				return;
-			AppDomain servletDomain = (AppDomain)se.getSession().getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
-			vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
-			try
-			{
-				//HttpApplicationFactory.InvokeSessionEnd(o);
+				SessionStateUtility.RaiseSessionEnd (container, this, EventArgs.Empty);
 			}
 #if DEBUG
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.StackTrace);
+			catch (Exception e) {
+				Console.WriteLine (e.Message);
+				Console.WriteLine (e.StackTrace);
 			}
 #endif
-			finally
-			{
-				vmw.@internal.EnvironmentUtils.clearAppDomain();
+			finally {
+				vmw.@internal.EnvironmentUtils.clearAppDomain ();
 			}
 		}
 	}
@@ -76,7 +66,7 @@ namespace System.Web.GH
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class SessionListener : Mainsoft.Web.Hosting.SessionListener
+	public class SessionListener : Mainsoft.Web.SessionState.SessionListener
 	{
 	}
 }
@@ -86,7 +76,7 @@ namespace System.Web.J2EE
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class SessionListener : Mainsoft.Web.Hosting.SessionListener
+	public class SessionListener : Mainsoft.Web.SessionState.SessionListener
 	{
 	}
 }
