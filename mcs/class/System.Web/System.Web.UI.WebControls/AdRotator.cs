@@ -128,7 +128,11 @@ namespace System.Web.UI.WebControls {
 		{
 			string path = url;
 			
-			if (AdvertisementFile != null && AdvertisementFile.Length > 0 && path [0] != '/' && path [0] != '~')
+			if (AdvertisementFile != null && AdvertisementFile.Length > 0 && path [0] != '/' && path [0] != '~' 
+#if NET_2_0
+				&& !Uri.IsWellFormedUriString (path, UriKind.Absolute)
+#endif
+				)
 				return UrlUtils.Combine (UrlUtils.GetDirectory (ResolveUrl (AdvertisementFile)), path);
 			
 			return ResolveUrl (path);
