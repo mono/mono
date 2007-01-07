@@ -898,7 +898,8 @@ namespace System.Windows.Forms
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
-			XplatUI.CalculateWindowRect(ref client_rect, CreateParams.Style, CreateParams.ExStyle, null, out bounds);
+			bounds.Size = SizeFromClientSize (client_size);
+			
 			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
 				bounds.X=-1;
 				bounds.Y=-1;
@@ -4040,19 +4041,10 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetClientSizeCore(int x, int y) {
-			// Calculate the actual window size from the client size (it usually stays the same or grows)
-			Rectangle	ClientRect;
-			Rectangle	WindowRect;
-			CreateParams	cp;
-
-			ClientRect = new Rectangle(0, 0, x, y);
-			cp = this.CreateParams;
-
-			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect)==false) {
-				return;
-			}
-
-			SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+			Size NewSize = SizeFromClientSize (new Size (x, y));
+			
+			if (NewSize != Size.Empty)
+				SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.Size);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4120,7 +4112,27 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-	
+
+#if NET_2_0
+		protected 
+#else
+		internal
+#endif
+		virtual Size SizeFromClientSize (Size clientSize)
+		{
+			Rectangle ClientRect;
+			Rectangle WindowRect;
+			CreateParams cp;
+
+			ClientRect = new Rectangle (0, 0, clientSize.Width, clientSize.Height);
+			cp = this.CreateParams;
+
+			if (XplatUI.CalculateWindowRect (ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect))
+				return new Size (WindowRect.Width, WindowRect.Height);
+				
+			return Size.Empty;
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateBounds() {
 			int	x;
@@ -4628,7 +4640,6 @@ namespace System.Windows.Forms
 
 		#region OnXXX methods
 #if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[AutoSizeChangedEvent]);
@@ -4955,7 +4966,6 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnMarginChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[MarginChangedEvent]);
