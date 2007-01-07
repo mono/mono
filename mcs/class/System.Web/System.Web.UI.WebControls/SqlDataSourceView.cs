@@ -114,6 +114,8 @@ namespace System.Web.UI.WebControls {
 			if (closed)
 				connection.Close ();
 
+			OnDataSourceViewChanged (EventArgs.Empty);
+
 			OnDeleted (new SqlDataSourceStatusEventArgs (command, result, exception));
 
 			if (exception != null)
@@ -159,6 +161,8 @@ namespace System.Web.UI.WebControls {
 
 			if (closed)
 				connection.Close ();
+
+			OnDataSourceViewChanged (EventArgs.Empty);
 
 			OnInserted (new SqlDataSourceStatusEventArgs (command, result, exception));
 
@@ -332,6 +336,8 @@ namespace System.Web.UI.WebControls {
 
 			if (closed)
 				connection.Close ();
+
+			OnDataSourceViewChanged (EventArgs.Empty);
 
 			OnUpdated (new SqlDataSourceStatusEventArgs (command, result, exception));
 

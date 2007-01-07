@@ -1,5 +1,10 @@
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* SqlDataSourceView.cs: fixed insert, delete, update methods, added
+	calls to OnDataSourceViewChanged
+
+2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* added ProfileParameter.cs
 
 2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
