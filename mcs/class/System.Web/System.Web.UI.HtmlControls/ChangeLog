@@ -1,5 +1,9 @@
 2007-01-07  Igor Zelmanovich  <igorz@mainsoft.com>
 
+	* HtmlInputRadioButton.cs: fixed: LoadPostData.		  
+
+2007-01-07  Igor Zelmanovich  <igorz@mainsoft.com>
+
 	* HtmlImputImage.cs: fixed: OnServerClick.		  
 
 2006-12-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>

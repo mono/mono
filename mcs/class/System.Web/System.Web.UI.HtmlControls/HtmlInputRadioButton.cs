@@ -128,43 +128,34 @@ namespace System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 		}
 #if NET_2_0
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected virtual 
+#endif
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			return DefaultLoadPostData (postDataKey, postCollection);
+			bool checkedOnClient = postCollection [Name] == Value;
+			if (Checked == checkedOnClient)
+				return false;
+
+			Checked = checkedOnClient;
+			return checkedOnClient;
 		}
 
-		protected virtual void RaisePostDataChangedEvent ()
+#if NET_2_0
+		protected virtual 
+#endif
+		void RaisePostDataChangedEvent ()
 		{
 			OnServerChange (EventArgs.Empty);
-		}
-#endif
-
-		internal bool DefaultLoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			string s = postCollection [postDataKey];
-			if ((s != null) && (Attributes ["value"] != postDataKey)) {
-				Attributes ["value"] = postDataKey;
-				// this doesn't seems to trigger a change
-			}
-			return false;
 		}
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			return LoadPostData (postDataKey, postCollection);
-#else
-			return DefaultLoadPostData (postDataKey, postCollection);
-#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			RaisePostDataChangedEvent ();
-#else
-			OnServerChange (EventArgs.Empty);
-#endif
 		}
 
 
