@@ -191,21 +191,19 @@ namespace System.Windows.Forms {
 			// Adjust rect for borders
 			Size border_size = new Size (0, 0);
 			
-			if (border_style == FormBorderStyle.FixedSingle) {
+			if (border_static)
+				border_size = ThemeEngine.Current.BorderStaticSize;
+			else if (border_style == FormBorderStyle.FixedSingle)
 				border_size = ThemeEngine.Current.BorderSize;
-			} else if (border_style == FormBorderStyle.Fixed3D) {
-				if (border_static)
-					border_size = ThemeEngine.Current.BorderStaticSize;
-				else
-					border_size = ThemeEngine.Current.Border3DSize;
-			}		
+			else if (border_style == FormBorderStyle.Fixed3D)
+				border_size = ThemeEngine.Current.Border3DSize;
 			
-			if (border_size.Height != 0) {
+			if (border_size.Width != 0) {
 				rect.X -= border_size.Width;
 				rect.Width += border_size.Width * 2;
 			}
 
-			if (border_size.Width != 0) {
+			if (border_size.Height != 0) {
 				rect.Y -= border_size.Height;
 				rect.Height += border_size.Height * 2;
 			}

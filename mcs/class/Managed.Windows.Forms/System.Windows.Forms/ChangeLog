@@ -1,5 +1,9 @@
 2007-01-06  Everaldo Canuto  <everaldo@simios.org>
 
+	* Hwnd.cs: Gives more code legibility to GetWindowRectangle.
+
+2007-01-06  Everaldo Canuto  <everaldo@simios.org>
+
 	* Label.cs: Override CreateParams to use WS_EX_STATICEDGE instead of
 	WS_EX_CLIENTEDGE in ExStyles when BorderStyle is Fixed3D, it is
 	
