@@ -1,6 +1,7 @@
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web20.vmwcsproj: added ProfileParameter.cs
+	* System.Web.dll.sources: added ProfileParameter.cs
 
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 

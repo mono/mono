@@ -932,6 +932,7 @@ System.Web.UI.WebControls/PathDirection.cs
 System.Web.UI.WebControls/PlaceHolderControlBuilder.cs
 System.Web.UI.WebControls/PlaceHolder.cs
 System.Web.UI.WebControls/PolygonHotSpot.cs
+System.Web.UI.WebControls/ProfileParameter.cs
 System.Web.UI.WebControls/QueryStringParameter.cs
 System.Web.UI.WebControls/RadioButton.cs
 System.Web.UI.WebControls/RadioButtonList.cs
