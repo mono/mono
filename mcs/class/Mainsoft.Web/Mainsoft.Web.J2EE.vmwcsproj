@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -135,8 +135,11 @@
     <Compile Include="Mainsoft.Web.Hosting\BaseHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseStaticHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
+    <Compile Include="Mainsoft.Web.Profile\CloudscapeProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileProvider.cs" />
+    <Compile Include="Mainsoft.Web.Security\CloudscapeMembershipProvider.cs" />
+    <Compile Include="Mainsoft.Web.Security\CloudscapeRoleProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyApplicationsHelper.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyMembershipHelper.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyMembershipProvider.cs" />
