@@ -238,7 +238,7 @@ namespace System.Web.UI.HtmlControls {
 
 		protected virtual void OnServerClick (ImageClickEventArgs e)
 		{
-			EventHandler handler = Events [ServerClickEvent] as EventHandler;
+			ImageClickEventHandler handler = Events [ServerClickEvent] as ImageClickEventHandler;
 			if (handler != null)
 				handler (this, e);
 		}

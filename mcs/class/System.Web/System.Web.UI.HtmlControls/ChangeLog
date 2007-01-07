@@ -1,3 +1,7 @@
+2007-01-07  Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlImputImage.cs: fixed: OnServerClick.		  
+
 2006-12-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: ignore user provided 'onsubmit' for HtmlForm. See
