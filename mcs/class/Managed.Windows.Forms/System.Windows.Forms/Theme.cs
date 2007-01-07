@@ -405,6 +405,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual Size BorderStaticSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
 		public virtual Size BorderSize {
 			get {
 				return new Size(1, 1);

@@ -1,3 +1,13 @@
+2007-01-06  Everaldo Canuto  <everaldo@simios.org>
+
+	* X11Hwnd.cs, XplatUIX11-new.cs: 
+	- border_static field added, it will used to define when a
+	control theres 3D border but it must be static (thin).
+	- In GetWindowRectangle use Theme.BorderSize to calculate area 
+	instead of static value 1, by the way use BorderSize instead
+	Border3DSize when border_static is true.
+	- When WS_EX_STATICEDGE ExStyle is set define border_static as true.
+
 2007-01-05  Chris Toshok  <toshok@ximian.com>
 
 	* X11ThreadQueue.cs: #ifdef out some spew.

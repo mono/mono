@@ -794,6 +794,7 @@ namespace System.Windows.Forms {
 		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
+			bool border_static = false;
 
 			title_style = TitleStyle.None;
 			if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
@@ -823,7 +824,7 @@ namespace System.Windows.Forms {
 				border_style = FormBorderStyle.Fixed3D;
 			}
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
+			WindowRect = Hwnd.GetWindowRectangle(border_style, border_static, menu, title_style,
 					SystemInformation.CaptionHeight,
 					SystemInformation.ToolWindowCaptionHeight, ClientRect);
 

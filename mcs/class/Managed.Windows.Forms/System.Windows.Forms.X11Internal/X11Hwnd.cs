@@ -815,17 +815,21 @@ namespace System.Windows.Forms.X11Internal {
 		}
 
 		// XXX this should be a static method on Hwnd so other backends can use it
-		public static void DeriveStyles(int Style, int ExStyle,
-						out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height)
+		public static void DeriveStyles(int Style, int ExStyle,	out FormBorderStyle border_style, out bool border_static, 
+				out TitleStyle title_style, out int caption_height, out int tool_caption_height)
 		{
 
 			// Only MDI windows get caption_heights
 			caption_height = 0;
 			tool_caption_height = 19;
+			border_static = false;
 
 			if (StyleSet (Style, WindowStyles.WS_CHILD)) {
 				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
 					border_style = FormBorderStyle.Fixed3D;
+				} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+					border_style = FormBorderStyle.Fixed3D;
+					border_static = true;
 				} else if (!StyleSet (Style, WindowStyles.WS_BORDER)) {
 					border_style = FormBorderStyle.None;
 				} else {
@@ -870,7 +874,10 @@ namespace System.Windows.Forms.X11Internal {
 					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
 						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
 							border_style = FormBorderStyle.Fixed3D;
-						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
+						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+							border_style = FormBorderStyle.Fixed3D;
+							border_static = true;
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
 							border_style = FormBorderStyle.FixedDialog;
 						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 							border_style = FormBorderStyle.FixedToolWindow;
@@ -884,7 +891,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void SetHwndStyles (CreateParams cp)
 		{
-			DeriveStyles(cp.Style, cp.ExStyle, out this.border_style, out this.title_style, out this.caption_height, out this.tool_caption_height);
+			DeriveStyles(cp.Style, cp.ExStyle, out this.border_style, out this.border_static, out this.title_style, out this.caption_height, out this.tool_caption_height);
 		}
 
 		public void SetWMStyles (CreateParams cp)

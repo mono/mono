@@ -294,14 +294,15 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
+			bool border_static;
 			int caption_height;
 			int tool_caption_height;
 
 			// XXX this method should be static on Hwnd, not X11Hwnd
-			X11Hwnd.DeriveStyles (Style, ExStyle, out border_style, out title_style,
+			X11Hwnd.DeriveStyles (Style, ExStyle, out border_style, out border_static, out title_style,
 					      out caption_height, out tool_caption_height);
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
+			WindowRect = Hwnd.GetWindowRectangle(border_style, border_static, menu, title_style,
 							     caption_height, tool_caption_height,
 							     ClientRect);
 			return true;

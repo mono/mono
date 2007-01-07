@@ -1,3 +1,20 @@
+2007-01-06  Everaldo Canuto  <everaldo@simios.org>
+
+	* Label.cs: Override CreateParams to use WS_EX_STATICEDGE instead of
+	WS_EX_CLIENTEDGE in ExStyles when BorderStyle is Fixed3D, it is
+	
+	* Hwnd.cs: 
+	- border_static field added, it will used to define when a control 
+	theres 3D border but it must be static (thin).
+	- In GetWindowRectangle use Theme.BorderSize to calculate area 
+	instead of static value 1, by the way use new BorderStaticSize instead
+	Border3DSize when border_static is true.
+
+	* XplatUIX11.cs, XplatUIOSX.cs: 
+	- When WS_EX_STATICEDGE ExStyle is set define border_static as true.
+	
+	* Theme.cs: BorderStaticSize field added.
+
 2007-01-05  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11.cs: Removed unused hwnd var in SetBorderStyle.

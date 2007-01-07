@@ -753,15 +753,19 @@ namespace System.Windows.Forms {
 			return (ex & (int)exws) == (int)exws;
 		}
 
-		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
+		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
 			// Only MDI windows get caption_heights
 			caption_height = 0;
 			tool_caption_height = 19;
+			border_static = false;
 
 			if (StyleSet (Style, WindowStyles.WS_CHILD)) {
 				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
 					border_style = FormBorderStyle.Fixed3D;
+				} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+					border_style = FormBorderStyle.Fixed3D;
+					border_static = true;
 				} else if (!StyleSet (Style, WindowStyles.WS_BORDER)) {
 					border_style = FormBorderStyle.None;
 				} else {
@@ -810,6 +814,9 @@ namespace System.Windows.Forms {
 					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
 						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
 							border_style = FormBorderStyle.Fixed3D;
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+							border_style = FormBorderStyle.Fixed3D;
+							border_static = true;
 						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
 							border_style = FormBorderStyle.FixedDialog;
 						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
@@ -827,7 +834,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
+			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.border_static, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 
 		private void SetWMStyles(Hwnd hwnd, CreateParams cp) {
@@ -2116,13 +2123,14 @@ namespace System.Windows.Forms {
 		internal override bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
+			bool border_static;
 			int caption_height;
 			int tool_caption_height;
 
-			DeriveStyles(Style, ExStyle, out border_style, out title_style,
+			DeriveStyles(Style, ExStyle, out border_style, out border_static, out title_style,
 				out caption_height, out tool_caption_height);
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
+			WindowRect = Hwnd.GetWindowRectangle(border_style, border_static, menu, title_style,
 					caption_height, tool_caption_height,
 					ClientRect);
 			return true;
@@ -3685,7 +3693,10 @@ namespace System.Windows.Forms {
 								Graphics g;
 
 								g = Graphics.FromHwnd(hwnd.whole_window);
-								ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
+								if (hwnd.border_static)
+									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.SunkenOuter);
+								else
+									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
 								g.Dispose();
 								break;
 							}

@@ -200,9 +200,19 @@ namespace System.Windows.Forms
     			set { InternalBorderStyle = value; }
     		}
 
-    		protected override CreateParams CreateParams {
-    			get { return base.CreateParams;}
-    		}
+			protected override CreateParams CreateParams {
+				get { 
+					CreateParams create_params = base.CreateParams;
+					
+					if (BorderStyle != BorderStyle.Fixed3D)
+						return create_params;
+					
+					create_params.ExStyle &= ~(int) WindowExStyles.WS_EX_CLIENTEDGE;
+					create_params.ExStyle |= (int)WindowExStyles.WS_EX_STATICEDGE;
+					
+					return create_params;
+				}
+			}
 
     		protected override ImeMode DefaultImeMode {
     			get { return ImeMode.Disable;}

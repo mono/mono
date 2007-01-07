@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 		internal Menu		menu;
 		internal TitleStyle	title_style;
 		internal FormBorderStyle	border_style;
+		internal bool		border_static;
 		internal int		x;
 		internal int		y;
 		internal int		width;
@@ -170,7 +171,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Rectangle GetWindowRectangle(FormBorderStyle border_style,
+		public static Rectangle GetWindowRectangle(FormBorderStyle border_style, bool border_static,
 				Menu menu, TitleStyle title_style, int caption_height,
 				int tool_caption_height, Rectangle client_rect)
 		{
@@ -187,18 +188,26 @@ namespace System.Windows.Forms {
 				rect.Height += menu_height;
 			}
 
-			if (border_style == FormBorderStyle.Fixed3D) {
-				Size border_3D_size = ThemeEngine.Current.Border3DSize;
+			// Adjust rect for borders
+			Size border_size = new Size (0, 0);
+			
+			if (border_style == FormBorderStyle.FixedSingle) {
+				border_size = ThemeEngine.Current.BorderSize;
+			} else if (border_style == FormBorderStyle.Fixed3D) {
+				if (border_static)
+					border_size = ThemeEngine.Current.BorderStaticSize;
+				else
+					border_size = ThemeEngine.Current.Border3DSize;
+			}		
+			
+			if (border_size.Height != 0) {
+				rect.X -= border_size.Width;
+				rect.Width += border_size.Width * 2;
+			}
 
-				rect.X -= border_3D_size.Width;
-				rect.Y -= border_3D_size.Height;
-				rect.Width += border_3D_size.Width * 2;
-				rect.Height += border_3D_size.Height * 2;
-			} else if (border_style == FormBorderStyle.FixedSingle) {
-				rect.X -= 1;
-				rect.Y -= 1;
-				rect.Width += 2;
-				rect.Height += 2;
+			if (border_size.Width != 0) {
+				rect.Y -= border_size.Height;
+				rect.Height += border_size.Height * 2;
 			}
 
 			return rect;
