@@ -452,6 +452,18 @@ namespace System.Web.UI {
 	{
 		return XPathBinder.Select (Page.GetDataItem (), xpathexpression);
 	}
+
+	protected Object GetLocalResourceObject (string resourceKey)
+	{
+		return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
+	}
+
+	protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)
+	{
+		// FIXME: not sure how to implement that one yet
+		throw new NotSupportedException ();
+	}
+
 #endif
 
 	}

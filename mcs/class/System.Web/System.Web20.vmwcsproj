@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -1099,6 +1099,7 @@
 		</Compile>
 		<Compile Include="Assembly\AssemblyInfo.cs" />
 		<Compile Include="System.Web.Compilation\ConnectionStringsExpressionBuilder.cs" />
+		<Compile Include="System.Web.Compilation\AppResourcesCompiler.jvm.cs" />
 		<Compile Include="System.Web.Compilation\ExpressionBuilder.cs" />
 		<Compile Include="System.Web.Compilation\ExpressionBuilderContext.cs" />
 		<Compile Include="System.Web.Compilation\ExpressionEditorAttribute.cs" />
