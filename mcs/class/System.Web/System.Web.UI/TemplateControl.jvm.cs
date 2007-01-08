@@ -453,11 +453,24 @@ namespace System.Web.UI {
 		return XPathBinder.Select (Page.GetDataItem (), xpathexpression);
 	}
 
+	protected object GetGlobalResourceObject (string className, string resourceKey)
+	{
+		return HttpContext.GetGlobalResourceObject (className, resourceKey);
+	}
+
+	[MonoTODO ("Not implemented")]
+	protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
+	{
+		// FIXME: not sure how to implement that one yet
+		throw new NotSupportedException ();
+	}
+
 	protected Object GetLocalResourceObject (string resourceKey)
 	{
 		return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
 	}
 
+	[MonoTODO ("Not implemented")]
 	protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)
 	{
 		// FIXME: not sure how to implement that one yet
