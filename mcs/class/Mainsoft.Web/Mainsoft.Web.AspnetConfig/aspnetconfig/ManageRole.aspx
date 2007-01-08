@@ -1,9 +1,9 @@
 <%--
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // Authors:
 //  Klain Yoni <yonik@mainsoft.com>
 //
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,8 +23,8 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.Administration.MenageRole" %>
-<%@ Register tagprefix="custom" namespace="Mainsoft.Web.Administration" Assembly="Mainsoft.Web.Administration"  %>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.MenageRole" %>
+<%@ Register tagprefix="custom" namespace="Mainsoft.Web.AspnetConfig" Assembly="Mainsoft.Web.AspnetConfig"  %>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table class="maintable">
         <tr>
@@ -77,7 +77,7 @@
                                 <AlternatingRowStyle BackColor="White" />
                             </asp:GridView>
                             <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" DeleteMethod="Delete"
-                                SelectMethod="CreateManageRoleTable" TypeName="Mainsoft.Web.Administration.RolesDS">
+                                SelectMethod="CreateManageRoleTable" TypeName="Mainsoft.Web.AspnetConfig.RolesDS">
                                 <DeleteParameters>
                                     <asp:Parameter Name="Role" Type="String" />
                                 </DeleteParameters>

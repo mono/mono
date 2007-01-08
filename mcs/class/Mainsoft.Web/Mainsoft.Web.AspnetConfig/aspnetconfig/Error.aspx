@@ -1,9 +1,9 @@
 <%--
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // Authors:
 //  Klain Yoni <yonik@mainsoft.com>
 //
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,7 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Error.aspx.cs" Inherits="Mainsoft.Web.Administration.Error" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Error.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.Error" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >

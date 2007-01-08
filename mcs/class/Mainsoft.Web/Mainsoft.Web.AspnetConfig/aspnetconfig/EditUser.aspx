@@ -1,9 +1,9 @@
 <%--
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // Authors:
 //  Klain Yoni <yonik@mainsoft.com>
 //
-// Mainsoft.Web.Administration - Site administration utility
+// Mainsoft.Web.AspnetConfig - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="EditUser.aspx.cs" Inherits="Mainsoft.Web.Administration.EditUser" %>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="EditUser.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.EditUser" %>
 <%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <asp:MultiView ID="MultiView1" runat="server" ActiveViewIndex="0">
