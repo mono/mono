@@ -116,8 +116,8 @@ namespace System.Data
 				if (column.Table != childTable)
 					throw new InvalidConstraintException ();
 
-			for (int i=0; i<ChildColumns.Length; i++)
-				if (!parentColumns[i].DataTypeMatches (childColumns[i]))
+			for (int i = 0; i < ChildColumns.Length; i++)
+				if (!parentColumns[i].DataTypeMatches (childColumns [i]))
 					throw new InvalidConstraintException("Parent Columns and Child Columns don't have " + 
 							"matching column types");
 		}
@@ -217,7 +217,7 @@ namespace System.Data
 			}
 		}
 
-		internal void SetChildKeyConstraint(ForeignKeyConstraint foreignKeyConstraint) {
+		internal void SetChildKeyConstraint (ForeignKeyConstraint foreignKeyConstraint) {
 			childKeyConstraint = foreignKeyConstraint;
 		}
 
@@ -231,7 +231,7 @@ namespace System.Data
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataSet DataSet {
 			get {
-				return childColumns[0].Table.DataSet;
+				return childColumns [0].Table.DataSet;
 			}
 		}
 
@@ -279,17 +279,17 @@ namespace System.Data
 			}
 		}
 
-		internal void SetParentKeyConstraint(UniqueConstraint uniqueConstraint) {
+		internal void SetParentKeyConstraint (UniqueConstraint uniqueConstraint) {
 			parentKeyConstraint = uniqueConstraint;
 		}
 
-		internal void SetDataSet(DataSet ds) {
+		internal void SetDataSet (DataSet ds) {
 			dataSet = ds;
 		}
 
 		public virtual DataTable ParentTable {
 			get {
-				return parentColumns[0].Table;
+				return parentColumns [0].Table;
 			}
 		}
 
