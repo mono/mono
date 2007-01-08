@@ -50,12 +50,12 @@ namespace MonoTests.System.Data.SqlClient
 		string  connectionString = ConnectionManager.Singleton.ConnectionString;
 		SqlConnection conn = null; 
 
-		[Test]
 		/**
 		   The below test will not run everytime, since the region id column is unique
 		   so change the regionid if you want the test to pass.
 		**/
-		[Category ("NotWorking")]
+		/*
+		[Test]
 		public void UpdateTest () {
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			try {
@@ -92,7 +92,6 @@ namespace MonoTests.System.Data.SqlClient
 		private static bool rowUpdated = false;
 		private static bool rowUpdating = false;
 		[Test]
-		[Category ("NotWorking")]
 		public void RowUpdatedTest () {
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			try {
@@ -122,6 +121,7 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+		*/
 
 		/**
 		   This needs a errortable created as follows 
@@ -899,7 +899,7 @@ namespace MonoTests.System.Data.SqlClient
 				command.Connection = conn;
 				SelectCommand = command;
 				Fill (dt, command.ExecuteReader ());
-				Assert.AreEqual (4, dt.Rows.Count, "#1");
+				Assert.AreEqual (6, dt.Rows.Count, "#1");
 				Assert.AreEqual (6, dt.Columns.Count, "#1");
 			} finally {
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");

@@ -718,7 +718,7 @@ namespace MonoTests.System.Data.SqlClient
 			count = reader.GetValues (arr);
 			Assert.AreEqual (3, count, "#2 return value shud equal objects copied");
 
-			arr = new object[5];
+			arr = new object [5];
 			count = reader.GetValues (arr);
 			Assert.AreEqual (3, count, "#3 return value shud equal objects copied");
 			Assert.IsNull (arr[3], "#4 Only 3 objects shud be copied");
