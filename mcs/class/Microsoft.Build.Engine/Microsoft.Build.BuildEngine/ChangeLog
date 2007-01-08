@@ -1,3 +1,18 @@
+2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildWhen.cs, BuildPropertyGroupCollection.cs,
+	BuildItemGroupCollection.cs, Project.cs: Track API changes.
+
+	* GroupingCollection.cs: Now it needs Project reference so added it.
+
+	* BuildTask.cs: Formatting.
+
+	* InvalidProjectFileException.cs: Use MS' names in GetObjectData ().
+
+	* ConditionParser.cs (ParseAndEvaluate): Added.
+
+	* BuildItem.cs: Changed exception message.
+
 2007-01-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildWhen.cs, BuildPropertyGroupCollection.cs,

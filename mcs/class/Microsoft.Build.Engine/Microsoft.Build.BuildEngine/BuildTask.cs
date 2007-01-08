@@ -107,9 +107,7 @@ namespace Microsoft.Build.BuildEngine {
 			List <string> tempNames = new List <string> ();
 			
 			foreach (XmlAttribute xmlAttribute in taskElement.Attributes) {
-				if (xmlAttribute.Name == "Condition")
-					continue;
-				if (xmlAttribute.Name == "ContinueOnError")
+				if (xmlAttribute.Name == "Condition" || xmlAttribute.Name == "ContinueOnError")
 					continue;
 				tempNames.Add (xmlAttribute.Name);
 			}
@@ -174,9 +172,8 @@ namespace Microsoft.Build.BuildEngine {
 			
 			string[] parameterNames = GetParameterNames ();
 			
-			foreach (string s in parameterNames) {
+			foreach (string s in parameterNames)
 				parameters.Add (s, GetParameterValue (s));
-			}
 			
 			return parameters;
 		}

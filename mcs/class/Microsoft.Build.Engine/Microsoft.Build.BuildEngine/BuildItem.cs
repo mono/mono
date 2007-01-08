@@ -91,7 +91,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.itemElement = itemElement;
 			
 			if (Include == String.Empty)
-				throw new InvalidProjectFileException ("Item must have Include attribute.");
+				throw new InvalidProjectFileException (String.Format ("The required attribute \"Include\" is missing from element <{0}>.", Name));
 		}
 		
 		BuildItem (BuildItem parent)

@@ -100,14 +100,14 @@ namespace Microsoft.Build.BuildEngine {
 		private InvalidProjectFileException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			this.columnNumber = info.GetInt32 ("ColumnNumber");
-			this.endColumnNumber = info.GetInt32 ("EndColumnNumber");
-			this.errorCode = info.GetString ("ErrorCode");
-			this.errorSubcategory = info.GetString ("ErrorSubcategory");
-			this.helpKeyword = info.GetString ("HelpKeyword");
-			this.lineNumber = info.GetInt32 ("LineNumber");
-			this.endLineNumber = info.GetInt32 ("EndLineNumber");
-			this.projectFile = info.GetString ("ProjectFile");
+			this.columnNumber = info.GetInt32 ("columnNumber");
+			this.endColumnNumber = info.GetInt32 ("endColumnNumber");
+			this.errorCode = info.GetString ("errorCode");
+			this.errorSubcategory = info.GetString ("errorSubcategory");
+			this.helpKeyword = info.GetString ("helpKeyword");
+			this.lineNumber = info.GetInt32 ("lineNumber");
+			this.endLineNumber = info.GetInt32 ("endLineNumber");
+			this.projectFile = info.GetString ("projectFile");
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -115,14 +115,14 @@ namespace Microsoft.Build.BuildEngine {
 						    StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("ColumnNumber", columnNumber);
-			info.AddValue ("EndColumnNumber", endColumnNumber);
-			info.AddValue ("ErrorCode", errorCode);
-			info.AddValue ("ErrorSubcategory", errorSubcategory);
-			info.AddValue ("HelpKeyword", helpKeyword);
-			info.AddValue ("LineNumber", lineNumber);
-			info.AddValue ("EndLineNumber", endLineNumber);
-			info.AddValue ("ProjectFile", projectFile);
+			info.AddValue ("columnNumber", columnNumber);
+			info.AddValue ("endColumnNumber", endColumnNumber);
+			info.AddValue ("errorCode", errorCode);
+			info.AddValue ("errorSubcategory", errorSubcategory);
+			info.AddValue ("helpKeyword", helpKeyword);
+			info.AddValue ("lineNumber", lineNumber);
+			info.AddValue ("endLineNumber", endLineNumber);
+			info.AddValue ("projectFile", projectFile);
 		}
 
 		public string BaseMessage {

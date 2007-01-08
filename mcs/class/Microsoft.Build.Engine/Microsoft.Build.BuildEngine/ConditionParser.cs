@@ -54,6 +54,19 @@ namespace Microsoft.Build.BuildEngine {
 			
 			return e;
 		}
+
+		public static bool ParseAndEvaluate (string condition, Project context)
+		{
+			if (String.IsNullOrEmpty (condition))
+				return true;
+
+			ConditionExpression ce = ParseCondition (condition);
+
+			if (!ce.CanEvaluateToBool (context))
+				return false;
+
+			return ce.BoolEvaluate (context);
+		}
 		
 		private ConditionExpression ParseExpression ()
 		{

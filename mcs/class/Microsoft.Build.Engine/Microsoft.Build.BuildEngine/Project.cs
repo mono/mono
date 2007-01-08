@@ -492,7 +492,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void ProcessXml ()
 		{
-			groupingCollection = new GroupingCollection ();
+			groupingCollection = new GroupingCollection (this);
 			imports = new ImportCollection (groupingCollection);
 			usingTasks = new UsingTaskCollection (this);
 			itemGroups = new BuildItemGroupCollection (groupingCollection);

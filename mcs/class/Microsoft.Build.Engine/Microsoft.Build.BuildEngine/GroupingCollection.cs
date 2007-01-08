@@ -36,16 +36,18 @@ namespace Microsoft.Build.BuildEngine {
 		
 		int	imports;
 		int	itemGroups;
+		Project	project;
 		int	propertyGroups;
 		int	chooses;
 
 		LinkedList <object>	list;
 		LinkedListNode <object>	iterator;
 	
-		public GroupingCollection ()
+		public GroupingCollection (Project project)
 		{
 			list = new LinkedList <object> ();
 			iterator = null;
+			this.project = project;
 		}
 
 		public IEnumerator GetChooseEnumerator ()
@@ -139,7 +141,6 @@ namespace Microsoft.Build.BuildEngine {
 			Evaluate (EvaluationType.Item);
 		}
 
-		// FIXME: check conditions on groups/imports
 		// check what happens with order: import -> 1 2 (probably is entered in wrong order)
 		void Evaluate (EvaluationType type)
 		{
@@ -153,10 +154,12 @@ namespace Microsoft.Build.BuildEngine {
 				while (iterator != null) {
 					if (iterator.Value is BuildPropertyGroup) {
 						bpg = (BuildPropertyGroup) iterator.Value;
-						bpg.Evaluate ();
+						if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
+							bpg.Evaluate ();
 					} else if (iterator.Value is Import) {
 						import = (Import) iterator.Value;
-						import.Evaluate ();
+						if (ConditionParser.ParseAndEvaluate (import.Condition, project))
+							import.Evaluate ();
 					}
 
 					iterator = iterator.Next;
@@ -167,8 +170,8 @@ namespace Microsoft.Build.BuildEngine {
 				while (iterator != null) {
 					if (iterator.Value is BuildItemGroup) {
 						big = (BuildItemGroup) iterator.Value;
-
-						big.Evaluate ();
+						if (ConditionParser.ParseAndEvaluate (big.Condition, project))
+							big.Evaluate ();
 					}
 
 					iterator = iterator.Next;

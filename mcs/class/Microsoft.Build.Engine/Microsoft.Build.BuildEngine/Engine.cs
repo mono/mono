@@ -197,7 +197,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (defaultTasksRegistered)
 				CheckBinPath ();
-			// FIXME: I don't really know if it should be here
+			// FIXME: It should be called after first Build() call
 			LogBuildStarted ();
 			return new Project (this);
 		}
@@ -207,6 +207,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (projectFullFileName == null)
 				throw new ArgumentNullException ("projectFullFileName");
 			
+			// FIXME: test it
 			return projects [projectFullFileName];
 		}
 
