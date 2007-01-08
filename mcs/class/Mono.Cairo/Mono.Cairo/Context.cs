@@ -252,6 +252,7 @@ namespace Cairo {
                         }
                 }
                 
+                //FIXME: obsolete this property
                 public Cairo.Color Color {
 			set { 
 				CairoAPI.cairo_set_source_rgba (state, value.R, 
@@ -380,7 +381,13 @@ namespace Cairo {
 			Color = new Color (r, g, b, a);
 		}
 
+				[Obsolete ("Use SetSource method (with double parameters)")]
 				public void SetSourceSurface (Surface source, int x, int y)
+				{
+					CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
+				}
+
+				public void SetSource (Surface source, double x, double y)
 				{
 					CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
 				}
@@ -635,6 +642,7 @@ namespace Cairo {
 		}
                 	
 
+		//FIXME: obsolete these methods
 		public void TransformPoint (ref double x, ref double y)
 		{
                 	CairoAPI.cairo_user_to_device (state, ref x, ref y);

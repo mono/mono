@@ -4,6 +4,7 @@
 // Authors:
 //    Duncan Mak
 //    Miguel de Icaza.
+//    Alp Toker
 //
 // (C) Ximian Inc, 2003.
 // (C) Novell, Inc. 2003.
@@ -131,6 +132,7 @@ namespace Cairo {
 			Dispose (false);
 		}
 
+		[Obsolete ("Use Context.SetSource() followed by Context.Paint()")]
 		public void Show (Context gr, double x, double y) 
 		{
 			CairoAPI.cairo_set_source_surface (gr.Handle, surface, x, y);
