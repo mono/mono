@@ -1,3 +1,7 @@
+2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageCodecInfo.cs: Remove MonoTODO on SignaturePatterns.
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttributes.cs: Better MonoTODO description.
