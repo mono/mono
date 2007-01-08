@@ -1288,9 +1288,6 @@ namespace System.Web.UI.WebControls
 						oldEditValues = new DataKey (GetRowValues (row, true, true));
 					DataKeyArrayList.Add (new DataKey (CreateRowDataKey (row), DataKeyNames));
 				} 
-
-				if (list.Count >= PageSize)
-					break;
 			}
 
 			if (list.Count == 0) {

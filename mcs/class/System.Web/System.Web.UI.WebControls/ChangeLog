@@ -1,5 +1,9 @@
 2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: show all rows when AllowPaging=false
+
+2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* SqlDataSourceView.cs: fixed CreateDbParameter, used DBNull for value=null.
 
 2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
