@@ -187,19 +187,22 @@ namespace System.Configuration
 					config = data;
 			}
 		}
-
+#if TARGET_JVM
+		internal static string GetBundledMachineConfig ()
+		{
+			return null;
+		}
+		internal static string GetMachineConfigPath ()
+		{
+			return "/machine.config";
+		}
+#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_bundled_machine_config ();
 		internal static string GetBundledMachineConfig ()
 		{
 			return get_bundled_machine_config ();
 		}
-#if TARGET_JVM
-		internal static string GetMachineConfigPath ()
-		{
-			return "/machine.config";
-		}
-#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_machine_config_path ();
 		internal static string GetMachineConfigPath ()
