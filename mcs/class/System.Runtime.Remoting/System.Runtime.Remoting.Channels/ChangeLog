@@ -1,3 +1,9 @@
+2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SoapMessageFormatter.cs: FieldSetter and FieldGetter methods need
+	  to be handled in a special way, since they are the only private
+	  methods which can be called from a subclass.
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapCore.cs: Set eol-style to native.

@@ -243,7 +243,10 @@ namespace System.Runtime.Remoting.Channels {
 			if (signature == null)
 				_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName, bflags); 
 			else
-				_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName, bflags, null, signature, null); 
+				_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName, bflags, null, signature, null);
+				
+			if (_methodCallInfo == null && (soapMessage.MethodName == "FieldSetter" || soapMessage.MethodName == "FieldGetter"))
+				_methodCallInfo = typeof(object).GetMethod (soapMessage.MethodName, bflags);
 
 			// the *out* parameters aren't serialized
 			// have to add them here
@@ -377,17 +380,9 @@ namespace System.Runtime.Remoting.Channels {
 			return sf;
 		}
 
-		internal void GetInfoFromMethodCallMessage(IMethodCallMessage mcm) {
+		internal void GetInfoFromMethodCallMessage (IMethodMessage mcm) {
 			_serverType = Type.GetType(mcm.TypeName, true);
-			
-			if (mcm.MethodSignature != null) 
-				_methodCallInfo = _serverType.GetMethod(mcm.MethodName, 
-														BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, 
-														null, (Type []) mcm.MethodSignature, null);
-			else
-				_methodCallInfo = _serverType.GetMethod(mcm.MethodName, 
-														BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
+			_methodCallInfo = RemotingServices.GetMethodBaseFromMethodMessage (mcm) as MethodInfo;
 			_methodCallParameters = _methodCallInfo.GetParameters();
 		}	
 		
