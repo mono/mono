@@ -13,7 +13,6 @@
 ./Mono.Cairo/FontOptions.cs
 ./Mono.Cairo/FontSlant.cs
 ./Mono.Cairo/FontType.cs
-./Mono.Cairo/FontFace.cs
 ./Mono.Cairo/FontWeight.cs
 ./Mono.Cairo/Format.cs
 ./Mono.Cairo/Glyph.cs
