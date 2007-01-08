@@ -169,7 +169,7 @@ namespace System.Data.OleDb
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OleDbConnection Connection { 
+		public new OleDbConnection Connection { 
 			get {
 				return connection;
 			}
@@ -199,7 +199,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("The parameters collection.")]
 #endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-		public OleDbParameterCollection Parameters {
+		public new OleDbParameterCollection Parameters {
 			get {
 				return parameters;
 			}
@@ -210,7 +210,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("The transaction used by the command.")]
 #endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public OleDbTransaction Transaction {
+		public new OleDbTransaction Transaction {
 			get {
 				return transaction;
 			}
@@ -277,7 +277,7 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		public OleDbParameter CreateParameter ()
+		public new OleDbParameter CreateParameter ()
 		{
 			return new OleDbParameter ();
 		}
@@ -340,9 +340,9 @@ namespace System.Data.OleDb
 									gdaParameterList);
 		}
 
-		public OleDbDataReader ExecuteReader ()
+		public new OleDbDataReader ExecuteReader ()
 		{
-			return ExecuteReader (CommandBehavior.Default);
+			return ExecuteReader (behavior);
 		}
 
 		IDataReader IDbCommand.ExecuteReader ()
@@ -350,7 +350,7 @@ namespace System.Data.OleDb
 			return ExecuteReader ();
 		}
 
-		public OleDbDataReader ExecuteReader (CommandBehavior behavior)
+		public new OleDbDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ArrayList results = new ArrayList ();
 			IntPtr rs_list;

@@ -1,3 +1,9 @@
+2007-01-08  Nagappan A  <anagappan@novell.com>
+
+	* OleDbCommand.cs: Fixed compilation warning.
+
+	* OleDbDataAdapter.cs: Fixed compilation warning.
+
 2006-07-13  Senganal T  <tsenganal@novell.com>
 	
 	* OleDbCommand : 2.0 Api fixes

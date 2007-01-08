@@ -90,7 +90,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OleDbCommand DeleteCommand {
+		public new OleDbCommand DeleteCommand {
 			get {
 				return deleteCommand;
 			}
@@ -105,7 +105,7 @@ namespace System.Data.OleDb
                 [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet.")]
 #endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OleDbCommand InsertCommand {
+		public new OleDbCommand InsertCommand {
 			get {
 				return insertCommand;
 			}
@@ -120,7 +120,7 @@ namespace System.Data.OleDb
                 [DataSysDescriptionAttribute ("Used during Fill/FillSchema.")]
 #endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OleDbCommand SelectCommand {
+		public new OleDbCommand SelectCommand {
 			get {
 				return selectCommand;
 			}
@@ -135,7 +135,7 @@ namespace System.Data.OleDb
                 [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet.")]
 #endif
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OleDbCommand UpdateCommand {
+		public new OleDbCommand UpdateCommand {
 			get {
 				return updateCommand;
 			}
