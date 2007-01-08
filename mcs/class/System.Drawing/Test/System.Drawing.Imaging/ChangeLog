@@ -1,3 +1,9 @@
+2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IconCodecTest.cs: Remove [Ignore] and replace with NotWorking.
+	* TestImageCodecInfo.cs: Add test for new encoders/decoders and 
+	signature masks and patterns.
+
 2006-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageAttributes.cs: Added test cases for #80323 for ColorMatrix

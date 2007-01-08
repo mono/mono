@@ -41,13 +41,6 @@ namespace MonoTests.System.Drawing.Imaging {
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class IconCodecTest {
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			if (Type.GetType ("Mono.Runtime", false) != null)
-				Assert.Ignore ("ICON support is missing");
-		}
-
 		/* Get suffix to add to the filename */
 		internal string getOutSufix ()
 		{
@@ -80,6 +73,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		/* Checks bitmap features on a know 1bbp bitmap */
 		[Test]
+		[Category ("NotWorking")]
 		public void Bitmap16Features ()
 		{
 			string sInFile = getInFile ("bitmaps/smiley.ico");
@@ -87,6 +81,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
 
+				Assert.IsTrue (bmp.RawFormat.Equals (ImageFormat.Icon), "Icon");
 				// ??? why is it a 4bbp ?
 				Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
 				Assert.AreEqual (16, bmp.Width, "bmp.Width");
@@ -103,6 +98,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Bitmap16Pixels ()
 		{
 			string sInFile = getInFile ("bitmaps/smiley.ico");
@@ -226,6 +222,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		/* Checks bitmap features on a know 1bbp bitmap */
 		[Test]
+		[Category ("NotWorking")]
 		public void Bitmap32Features ()
 		{
 			string sInFile = getInFile ("bitmaps/VisualPng.ico");
@@ -233,6 +230,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
 
+				Assert.IsTrue (bmp.RawFormat.Equals (ImageFormat.Icon), "Icon");
 				// ??? why is it a 4bbp ?
 				Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
 				Assert.AreEqual (32, bmp.Width, "bmp.Width");
@@ -249,6 +247,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Bitmap32Pixels ()
 		{
 			string sInFile = getInFile ("bitmaps/smiley.ico");
@@ -367,7 +366,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck)
 		{
-			string sOutFile = String.Format ("linerect{0}-{1}.ico", getOutSufix (), expected.ToString ());
+			string sOutFile = "linerect" + getOutSufix () + ".ico";
 
 			// Save		
 			Bitmap bmp = new Bitmap (100, 100, original);
@@ -379,10 +378,13 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 
 			try {
+				// there's no encoder, so we're not saving a ICO but the alpha 
+				// bit get sets so it's not like saving a bitmap either
 				bmp.Save (sOutFile, ImageFormat.Icon);
 
 				// Load
 				using (Bitmap bmpLoad = new Bitmap (sOutFile)) {
+					Assert.AreEqual (ImageFormat.Png, bmpLoad.RawFormat, "Png");
 					Assert.AreEqual (expected, bmpLoad.PixelFormat, "PixelFormat");
 					if (colorCheck) {
 						Color color = bmpLoad.GetPixel (10, 10);
