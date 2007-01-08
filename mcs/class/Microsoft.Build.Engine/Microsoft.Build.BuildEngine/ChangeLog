@@ -1,5 +1,11 @@
 2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* GroupingCollection.cs: Use 2 iterators: add_iterator that is used by
+	Add () calls when processing a project from Import and
+	evaluate_iterator for evaluation.
+
+2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Import.cs (GetFullPath): Avoid exceptions from Path.GetDirectoryName
 	and prepend relative directory of importing project to full path of
 	imported project.

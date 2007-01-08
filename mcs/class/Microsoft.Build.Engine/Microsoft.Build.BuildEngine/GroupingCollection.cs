@@ -41,12 +41,12 @@ namespace Microsoft.Build.BuildEngine {
 		int	chooses;
 
 		LinkedList <object>	list;
-		LinkedListNode <object>	iterator;
+		LinkedListNode <object>	add_iterator;
 	
 		public GroupingCollection (Project project)
 		{
 			list = new LinkedList <object> ();
-			iterator = null;
+			add_iterator = null;
 			this.project = project;
 		}
 
@@ -101,37 +101,45 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			bpg.GroupingCollection = this;
 			propertyGroups++;
-			if (iterator == null)
+			if (add_iterator == null)
 				list.AddLast (bpg);
-			else
-				list.AddAfter (iterator, bpg);
+			else {
+				list.AddAfter (add_iterator, bpg);
+				add_iterator = add_iterator.Next;
+			}
 		}
 		
 		internal void Add (BuildItemGroup big)
 		{
 			itemGroups++;
-			if (iterator == null)
+			if (add_iterator == null)
 				list.AddLast (big);
-			else
-				list.AddAfter (iterator, big);
+			else {
+				list.AddAfter (add_iterator, big);
+				add_iterator = add_iterator.Next;
+			}
 		}
 		
 		internal void Add (BuildChoose bc)
 		{
 			chooses++;
-			if (iterator == null)
+			if (add_iterator == null)
 				list.AddLast (bc);
-			else
-				list.AddAfter (iterator, bc);
+			else {
+				list.AddAfter (add_iterator, bc);
+				add_iterator = add_iterator.Next;
+			}
 		}
 
 		internal void Add (Import import)
 		{
 			imports++;
-			if (iterator == null)
+			if (add_iterator == null)
 				list.AddLast (import);
-			else
-				list.AddAfter (iterator, import);
+			else {
+				list.AddAfter (add_iterator, import);
+				add_iterator = add_iterator.Next;
+			}
 		}
 
 		internal void Evaluate ()
@@ -147,34 +155,41 @@ namespace Microsoft.Build.BuildEngine {
 			BuildItemGroup big;
 			BuildPropertyGroup bpg;
 			Import import;
+			LinkedListNode <object> evaluate_iterator;
 
 			if (type == EvaluationType.Property) {
-				iterator = list.First;
+				evaluate_iterator = list.First;
+				add_iterator = list.First;
 
-				while (iterator != null) {
-					if (iterator.Value is BuildPropertyGroup) {
-						bpg = (BuildPropertyGroup) iterator.Value;
+				while (evaluate_iterator != null) {
+					if (evaluate_iterator.Value is BuildPropertyGroup) {
+						bpg = (BuildPropertyGroup) evaluate_iterator.Value;
 						if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
 							bpg.Evaluate ();
-					} else if (iterator.Value is Import) {
-						import = (Import) iterator.Value;
+					} else if (evaluate_iterator.Value is Import) {
+						import = (Import) evaluate_iterator.Value;
 						if (ConditionParser.ParseAndEvaluate (import.Condition, project))
 							import.Evaluate ();
 					}
 
-					iterator = iterator.Next;
+					// if it wasn't moved by adding anything because of evaluating a Import shift it
+					if (add_iterator == evaluate_iterator)
+						add_iterator = add_iterator.Next;
+
+					evaluate_iterator = evaluate_iterator.Next;
 				}
 			} else {
-				iterator = list.First;
+				evaluate_iterator = list.First;
+				add_iterator = list.First;
 
-				while (iterator != null) {
-					if (iterator.Value is BuildItemGroup) {
-						big = (BuildItemGroup) iterator.Value;
+				while (evaluate_iterator != null) {
+					if (evaluate_iterator.Value is BuildItemGroup) {
+						big = (BuildItemGroup) evaluate_iterator.Value;
 						if (ConditionParser.ParseAndEvaluate (big.Condition, project))
 							big.Evaluate ();
 					}
 
-					iterator = iterator.Next;
+					evaluate_iterator = evaluate_iterator.Next;
 				}
 			}
 		}
