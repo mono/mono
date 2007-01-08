@@ -586,7 +586,7 @@ namespace MonoTests.System.Data
 			DataView TestView = new DataView (dataTable);
 			TestView.Delete (0);
 			DataRow r = TestView.Table.Rows [0];
-			Assertion.Assert ("Dv #1", !(r ["itemId"] == "item 1"));
+			Assertion.Assert ("Dv #1", !((string)r ["itemId"] == "item 1"));
 		}
 
 		[Test]

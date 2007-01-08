@@ -146,6 +146,7 @@ namespace MonoTests.System.Data
 </set>";
 		// simple nest
 		string xml22 = "<set><table><col><descendant/></col></table><table2><col2>v2</col2></table2></set>";
+	  /*
 		// simple diffgram
 		string xml23 = @"<set>
   <xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
@@ -167,7 +168,7 @@ namespace MonoTests.System.Data
 </set>";
 		// just deep table
 		string xml24 = "<p1><p2><p3><p4><p5><p6/></p5></p4></p3></p2></p1>";
-
+	  */
 
 		private DataSet GetDataSet (string xml, string [] nss)
 		{

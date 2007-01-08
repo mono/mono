@@ -43,12 +43,12 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataColumnCollectionTest
 	{
-		private DataTable _tbl;
+		//private DataTable _tbl;
 
 		[SetUp]
 		public void GetReady () 
 		{
-			_tbl = new DataTable();
+			//_tbl = new DataTable();
 		}
 
 		//TODO

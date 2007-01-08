@@ -42,14 +42,11 @@ namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataRowTest : Assertion {
-	
-		private DataTable _tbl;	
 	        private DataTable table;                                                
                 private DataRow row;    
 
 		[SetUp]
 		public void GetReady() {
-			_tbl = new DataTable();
 			table = MakeTable ();                                           
                         row = table.NewRow ();                                          
                         row ["FName"] = "Hello";                                        

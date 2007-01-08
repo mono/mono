@@ -182,9 +182,15 @@ namespace MonoTests.System.Data.SqlClient
                 
 
 				// current - deleted; result - added a new row
+				ResetEventFlags ();
 				dt.AcceptChanges ();
 				dt.Rows [4].Delete ();
-				ResetEventFlags ();
+				Assert.IsTrue (rowDeleting, "#ev57 row deleting");
+				Assert.IsTrue (rowDeleted, "#ev58 row deleted");
+				Assert.AreEqual (rowInAction_Deleting, dt.Rows[4], "#ev59 rowInAction_Deleting");
+				Assert.AreEqual (rowInAction_Deleted, dt.Rows[4], "#ev59 rowInAction_Deleted");
+				Assert.AreEqual (rowAction_Deleting, DataRowAction.Delete, "#ev60 rowInAction_Deleting");
+				Assert.AreEqual (rowAction_Deleted, DataRowAction.Delete, "#ev61 rowInAction_Deleted");
 				dt.LoadDataRow (new object [] { 5, "mono 5" }, LoadOption.Upsert);
 				Assert.AreEqual (6, dt.Rows.Count, "#c14 should not add a row");
 				Assert.AreEqual ("mono 5", dt.Rows [5] [1], "#c15 should change the current");
@@ -302,9 +308,15 @@ namespace MonoTests.System.Data.SqlClient
 
 
 				// current - deleted; result - added a new row
+				ResetEventFlags ();
 				dt.AcceptChanges ();
 				dt.Rows [4].Delete ();
-				ResetEventFlags ();
+				Assert.IsTrue (rowDeleting, "#ltoc57 row deleting");
+				Assert.IsTrue (rowDeleted, "#ltoc58 row deleted");
+				Assert.AreEqual (rowInAction_Deleting, dt.Rows[4], "#ltoc59 rowInAction_Deleting");
+				Assert.AreEqual (rowInAction_Deleted, dt.Rows[4], "#ltoc60 rowInAction_Deleted");
+				Assert.AreEqual (rowAction_Deleting, DataRowAction.Delete, "#ltoc60 rowInAction_Deleting");
+				Assert.AreEqual (rowAction_Deleted, DataRowAction.Delete, "#ltoc61 rowInAction_Deleted");
 				dt.LoadDataRow (new object [] { 5, "mono 51" }, LoadOption.OverwriteChanges);
 				Assert.AreEqual (5, dt.Rows.Count, "#c14 should not add a row");
 				Assert.AreEqual ("mono 51", dt.Rows [4] [1], "#c15 should change the current");
@@ -388,8 +400,14 @@ namespace MonoTests.System.Data.SqlClient
 				dt.RejectChanges ();
 
 				// current - deleted ; new - deleted ChangeOriginal
-				dt.Rows [1].Delete ();
 				ResetEventFlags ();
+				dt.Rows [1].Delete ();
+				Assert.IsTrue (rowDeleting, "#ltpc37 row deleting");
+				Assert.IsTrue (rowDeleted, "#ltpc38 row deleted");
+				Assert.AreEqual (rowInAction_Deleting, dt.Rows[1], "#ltpc39 rowInAction_Deleting");
+				Assert.AreEqual (rowInAction_Deleted, dt.Rows[1], "#ltpc40 rowInAction_Deleted");
+				Assert.AreEqual (rowAction_Deleting, DataRowAction.Delete, "#ltpc60 rowInAction_Deleting");
+				Assert.AreEqual (rowAction_Deleted, DataRowAction.Delete, "#ltpc61 rowInAction_Deleted");
 				dt.LoadDataRow (new object [] { 2, "mono deleted" }, LoadOption.PreserveChanges);
 				Assert.AreEqual (5, dt.Rows.Count, "#13 should not add a new row");
 				Assert.AreEqual ("mono deleted", dt.Rows [1] [1, DataRowVersion.Original], "#14 should change the original");

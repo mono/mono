@@ -1,3 +1,17 @@
+2007-01-08  Nagappan A  <anagappan@novell.com>
+
+	* DataViewTest.cs: Fixed compilation warning.
+
+	* DataRowTest.cs: Fixed compilation warning.
+
+	* DataTableLoadRowTest.cs (LoadRowTestUpsert)
+	(LoadRowTestOverwriteChanges, LoadRowTestPreserveChanges): Added
+	more test conditions and also fixed compilation warnings.
+
+	* DataColumnCollectionTest.cs: Fixed compilation warning.
+
+	* DataSetInferXmlSchemaTest.cs: Fixed compilation warning.
+
 2006-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* DataViewTest.cs: new test for GetItemProperties being called on
