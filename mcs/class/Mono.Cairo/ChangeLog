@@ -1,5 +1,10 @@
 2007-01-08  Alp Toker  <alp@atoker.com>
 
+	* Mono.Cairo/Context.cs: Implement Context.GlyphExtents().
+	* Mono.Cairo/Cairo.cs: Change other TextExtents refs to outs.
+
+2007-01-08  Alp Toker  <alp@atoker.com>
+
 	* Mono.Cairo/Context.cs: Restore Obsolete markings for old glyph
 	methods. It is fair to assume nobody was able to use these broken
 	methods, and Obsolete is important for the ongoing API review process.

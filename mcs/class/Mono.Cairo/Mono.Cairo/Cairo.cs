@@ -248,7 +248,7 @@ namespace Cairo
 		internal static extern IntPtr cairo_glitz_surface_create (IntPtr surface);
 
 		[DllImport (cairo)]
-		internal static extern void cairo_glyph_extents (IntPtr cr, IntPtr glyphs, int num_glyphs, TextExtents extents);
+		internal static extern void cairo_glyph_extents (IntPtr cr, IntPtr glyphs, int num_glyphs, out TextExtents extents);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_glyph_path (IntPtr cr, IntPtr glyphs, int num_glyphs);
@@ -518,7 +518,7 @@ namespace Cairo
 		internal static extern IntPtr cairo_scaled_font_destroy (IntPtr scaled_font);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_scaled_font_extents (IntPtr scaled_font, TextExtents extents);
+		internal static extern void cairo_scaled_font_extents (IntPtr scaled_font, out TextExtents extents);
 
 #if CAIRO_1_2		
 		[DllImport (cairo)]
@@ -538,7 +538,7 @@ namespace Cairo
 #endif
 
 		[DllImport (cairo)]
-		internal static extern void cairo_scaled_font_glyph_extents (IntPtr scaled_font, IntPtr glyphs, int num_glyphs, TextExtents extents);
+		internal static extern void cairo_scaled_font_glyph_extents (IntPtr scaled_font, IntPtr glyphs, int num_glyphs, out TextExtents extents);
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_scaled_font_reference (IntPtr scaled_font);
@@ -548,7 +548,7 @@ namespace Cairo
 
 #if CAIRO_1_2		
 		[DllImport (cairo)]
-		internal static extern void cairo_scaled_font_text_extents (IntPtr scaled_font, string utf8, ref TextExtents extents);
+		internal static extern void cairo_scaled_font_text_extents (IntPtr scaled_font, string utf8, out TextExtents extents);
 #endif
 		
 		[DllImport (cairo)]
@@ -711,7 +711,7 @@ namespace Cairo
 #endif
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_text_extents (IntPtr cr, string utf8, ref TextExtents extents);
+		internal static extern void cairo_text_extents (IntPtr cr, string utf8, out TextExtents extents);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_text_path (IntPtr ct, string utf8);

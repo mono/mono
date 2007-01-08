@@ -818,8 +818,21 @@ namespace Cairo {
 
 		public TextExtents TextExtents (string utf8)
 		{
-			TextExtents extents = new TextExtents ();
-			CairoAPI.cairo_text_extents (state, utf8, ref extents);
+			TextExtents extents;
+			CairoAPI.cairo_text_extents (state, utf8, out extents);
+			return extents;
+		}
+
+		public TextExtents GlyphExtents (Glyph[] glyphs)
+		{
+			IntPtr ptr = FromGlyphToUnManagedMemory (glyphs);
+
+			TextExtents extents;
+
+			CairoAPI.cairo_glyph_extents (state, ptr, glyphs.Length, out extents);
+
+			Marshal.FreeHGlobal (ptr);
+
 			return extents;
 		}
         }
