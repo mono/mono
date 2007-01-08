@@ -58,7 +58,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		bool disposed = false;
+		//bool disposed = false;
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -573,32 +573,27 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                [MonoTODO]
                 protected override DbParameter CreateDbParameter ()
                 {
                         return (DbParameter) CreateParameter ();
                 }
 
-                [MonoTODO]
                 protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
                 {
                         return (DbDataReader) ExecuteReader (behavior);
                 }
 
-                [MonoTODO]                
                 protected override DbConnection DbConnection 
                 {
                         get { return (DbConnection) Connection;  }
                         set { Connection = (SqlConnection) value; }
                 }
                 
-                [MonoTODO]
                 protected override DbParameterCollection DbParameterCollection
                 {
                         get { return (DbParameterCollection) Parameters; }
                 }
 
-                [MonoTODO]
                 protected override DbTransaction DbTransaction 
                 {
                         get { return (DbTransaction) Transaction; }

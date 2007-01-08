@@ -1,3 +1,25 @@
+2007-01-08  Nagappan A  <anagappan@novell.com>
+
+	* SqlTransaction.cs (Dispose): Fixed compliation warning.
+
+	* SqlDataReader.cs (GetValues): Length of elements to be copied was
+	decided based on the argument array passed, which caused a bug, if
+	the length of given array is more than actual column values.
+
+	* SqlCommandBuilder.cs (CatalogSeparator, SchemaSeparator)
+	(CatalogLocation): Implemented missing properties.
+	(CreateDeleteCommand, CreateInsertCommand, CreateUpdateCommand):
+	Modified private methods to take bool flag. If true, add actual
+	parameter name instead of p1, p2 etc.
+	(CreateParameter): Added overloaded private method to create
+	parameter with the actual column name.
+	(GetUpdateCommand, GetDeleteCommand, GetInsertCommand):
+	Implemented missing overloaded methods.
+	(SetRowUpdatingHandler): Implemented missing protected method.
+
+	* SqlCommand.cs: Fixed compilation warning. Removed bogus
+	MonoTODO's.
+
 2006-12-05  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs (Execute): If sql2 length is greater than 0, then

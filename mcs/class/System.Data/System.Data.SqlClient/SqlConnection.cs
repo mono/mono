@@ -896,7 +896,7 @@ namespace System.Data.SqlClient {
 				InfoMessage (this, value);
 		}
 
-		private void OnStateChange (StateChangeEventArgs value)
+		private new void OnStateChange (StateChangeEventArgs value)
 		{
 			if (StateChange != null)
 				StateChange (this, value);
@@ -906,7 +906,7 @@ namespace System.Data.SqlClient {
 		{
 			// UDP port that the SQL Monitor listens
 			private static readonly int SqlMonitorUdpPort = 1434;
-			private static readonly string SqlServerNotExist = "SQL Server does not exist or access denied";
+			//private static readonly string SqlServerNotExist = "SQL Server does not exist or access denied";
 
 			private string server;
 			private string instance;

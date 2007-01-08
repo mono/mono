@@ -119,8 +119,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if !NET_2_0
-		public 
+		public
+#if NET_2_0
+		new
 #endif
 		void Dispose ()
 		{

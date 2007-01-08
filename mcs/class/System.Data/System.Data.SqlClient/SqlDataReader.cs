@@ -999,7 +999,8 @@ namespace System.Data.SqlClient {
 			if (bigDecimalIndex >= 0 && bigDecimalIndex < len)
 				throw new OverflowException ();
 
-			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
+			command.Tds.ColumnValues.CopyTo (0, values, 0,
+							 len > command.Tds.ColumnValues.Count ? command.Tds.ColumnValues.Count : len);
 			return (len < FieldCount ? len : FieldCount);
 		}
 

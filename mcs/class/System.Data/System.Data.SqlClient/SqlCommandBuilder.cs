@@ -54,6 +54,11 @@ namespace System.Data.SqlClient {
 		string quoteSuffix;
 		string[] columnNames;
 		string tableName;
+#if NET_2_0
+		string _catalogSeperator = ".";
+		string _schemaSeperator = ".";
+		CatalogLocation _catalogLocation = CatalogLocation.Start;
+#endif
 	
 		SqlCommand deleteCommand;
 		SqlCommand insertCommand;
@@ -62,6 +67,8 @@ namespace System.Data.SqlClient {
 		// Used to construct WHERE clauses
 		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
 		static readonly string clause2 = "({0} = {1})";
+
+		private SqlRowUpdatingEventHandler rowUpdatingHandler;
 
 		#endregion // Fields
 
@@ -101,7 +108,6 @@ namespace System.Data.SqlClient {
 					adapter.RowUpdating -= new SqlRowUpdatingEventHandler (RowUpdatingHandler);
 
 				adapter = value; 
-
 				if (adapter != null)
 					adapter.RowUpdating += new SqlRowUpdatingEventHandler (RowUpdatingHandler);
 			}
@@ -122,7 +128,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 string QuotePrefix {
 			get { return quotePrefix; }
-			set { 
+			set {
 				if (dbSchemaTable != null)
 					throw new InvalidOperationException ("The QuotePrefix and QuoteSuffix properties cannot be changed once an Insert, Update, or Delete command has been generated.");
 				quotePrefix = value; 
@@ -146,6 +152,27 @@ namespace System.Data.SqlClient {
 				quoteSuffix = value; 
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (".")]
+		public override string CatalogSeparator {
+			get { return _catalogSeperator; }
+			set { if (value != null) _catalogSeperator = value; }
+		}
+
+		[DefaultValue (".")]
+		public override string SchemaSeparator {
+			get { return _schemaSeperator; }
+			set {  if (value != null) _schemaSeperator = value; }
+		}
+
+		[DefaultValue (CatalogLocation.Start)]
+		public override CatalogLocation CatalogLocation {
+			get { return _catalogLocation; }
+			set { _catalogLocation = value; }
+		}
+
+#endif // NET_2_0
 
 		private SqlCommand SourceCommand {
 			get {
@@ -188,7 +215,7 @@ namespace System.Data.SqlClient {
 			tableName = String.Empty;
 			foreach (DataRow schemaRow in schemaTable.Rows) {
 				if (schemaRow.IsNull ("BaseTableName") ||
-				    schemaRow ["BaseTableName"] == String.Empty)
+				    (string) schemaRow ["BaseTableName"] == String.Empty)
 					continue;
 
 				if (tableName == String.Empty) 
@@ -201,7 +228,7 @@ namespace System.Data.SqlClient {
 			dbSchemaTable = schemaTable;
 		}
 
-		private SqlCommand CreateDeleteCommand ()
+		private SqlCommand CreateDeleteCommand (bool option)
 		{
 			// If no table was found, then we can't do an delete
 			if (QuotedTableName == String.Empty)
@@ -236,8 +263,14 @@ namespace System.Data.SqlClient {
 				//following the 2.0 approach
 				bool allowNull = (bool) schemaRow ["AllowDBNull"];
 				if (!isKey && allowNull) {
-					parameter = deleteCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
-										SqlDbType.Int);
+					if (option) {
+						parameter = deleteCommand.Parameters.Add (String.Format ("@{0}",
+													 schemaRow ["BaseColumnName"]),
+											  SqlDbType.Int);
+					} else {
+						parameter = deleteCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
+											  SqlDbType.Int);
+					}
 					String sourceColumnName = (string) schemaRow ["BaseColumnName"];
 					parameter.Value = 1;
 
@@ -247,7 +280,11 @@ namespace System.Data.SqlClient {
 					whereClause.Append (" OR ");
 				}
 
-				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				if (option) {
+					parameter = deleteCommand.Parameters.Add (CreateParameter (schemaRow));
+				} else {
+					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				}
 				parameter.SourceVersion = DataRowVersion.Original;
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
@@ -264,7 +301,7 @@ namespace System.Data.SqlClient {
 			return deleteCommand;
 		}
 
-		private SqlCommand CreateInsertCommand ()
+		private SqlCommand CreateInsertCommand (bool option)
 		{
 			if (QuotedTableName == String.Empty)
 				return null;
@@ -287,7 +324,12 @@ namespace System.Data.SqlClient {
 					values.Append (", ");
 				}
 
-				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				SqlParameter parameter = null;
+				if (option) {
+					parameter = insertCommand.Parameters.Add (CreateParameter (schemaRow));
+				} else {
+					parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				}
 				parameter.SourceVersion = DataRowVersion.Current;
 
 				columns.Append (GetQuotedString (parameter.SourceColumn));
@@ -312,7 +354,7 @@ namespace System.Data.SqlClient {
 			command.Parameters.Clear ();
 		}
 
-		private SqlCommand CreateUpdateCommand ()
+		private SqlCommand CreateUpdateCommand (bool option)
 		{
 			// If no table was found, then we can't do an update
 			if (QuotedTableName == String.Empty)
@@ -334,7 +376,12 @@ namespace System.Data.SqlClient {
 				if (columns.Length > 0) 
 					columns.Append (", ");
 
-				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				SqlParameter parameter = null;
+				if (option) {
+					parameter = updateCommand.Parameters.Add (CreateParameter (schemaRow));
+				} else {
+					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				}
 				parameter.SourceVersion = DataRowVersion.Current;
 
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
@@ -364,16 +411,26 @@ namespace System.Data.SqlClient {
 				//following the 2.0 approach
 				bool allowNull = (bool) schemaRow ["AllowDBNull"];
 				if (!isKey && allowNull) {
-					parameter = updateCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
-										SqlDbType.Int);
+					if (option) {
+						parameter = updateCommand.Parameters.Add (String.Format ("@{0}",
+													 schemaRow ["BaseColumnName"]),
+											  SqlDbType.Int);
+					} else {
+						parameter = updateCommand.Parameters.Add (String.Format ("@p{0}", parmIndex++),
+											  SqlDbType.Int);
+					}
 					parameter.Value = 1;
 					whereClause.Append ("(");
 					whereClause.Append (String.Format (clause1, parameter.ParameterName,
 									GetQuotedString ((string) schemaRow ["BaseColumnName"])));
 					whereClause.Append (" OR ");
 				}
-					
-				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+				if (option) {
+					parameter = updateCommand.Parameters.Add (CreateParameter (schemaRow));
+				} else {
+					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				}
 				parameter.SourceVersion = DataRowVersion.Original;
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
@@ -388,6 +445,16 @@ namespace System.Data.SqlClient {
 			string sql = String.Format ("{0}{1} WHERE ({2})", command, columns.ToString (), whereClause.ToString ());
 			updateCommand.CommandText = sql;
 			return updateCommand;
+		}
+
+		private SqlParameter CreateParameter (DataRow schemaRow)
+		{
+			string sourceColumn = (string) schemaRow ["BaseColumnName"];
+			string name = String.Format ("@{0}", sourceColumn);
+			SqlDbType sqlDbType = (SqlDbType) schemaRow ["ProviderType"];
+			int size = (int) schemaRow ["ColumnSize"];
+
+			return new SqlParameter (name, sqlDbType, size, sourceColumn);
 		}
 
 		private SqlParameter CreateParameter (int parmIndex, DataRow schemaRow)
@@ -430,11 +497,11 @@ namespace System.Data.SqlClient {
 		{
 			BuildCache (true);
 			if (deleteCommand == null)
-				return CreateDeleteCommand ();
+				return CreateDeleteCommand (false);
 			return deleteCommand;
 		}
 
-		public 
+		public
 #if NET_2_0
 		new
 #endif // NET_2_0
@@ -442,7 +509,7 @@ namespace System.Data.SqlClient {
 		{
 			BuildCache (true);
 			if (insertCommand == null)
-				return CreateInsertCommand ();
+				return CreateInsertCommand (false);
 			return insertCommand;
 		}
 
@@ -463,9 +530,35 @@ namespace System.Data.SqlClient {
 		{
 			BuildCache (true);
 			if (updateCommand == null)
-				return CreateUpdateCommand ();
+				return CreateUpdateCommand (false);
 			return updateCommand;
 		}
+
+#if NET_2_0
+		public new SqlCommand GetUpdateCommand (bool option)
+		{
+			BuildCache (true);
+			if (updateCommand == null)
+				return CreateUpdateCommand (option);
+			return updateCommand;
+		}
+
+		public new SqlCommand GetDeleteCommand (bool option)
+		{
+			BuildCache (true);
+			if (deleteCommand == null)
+				return CreateDeleteCommand (option);
+			return deleteCommand;
+		}
+
+		public new SqlCommand GetInsertCommand (bool option)
+		{
+			BuildCache (true);
+			if (insertCommand == null)
+				return CreateInsertCommand (option);
+			return insertCommand;
+		}
+#endif // NET_2_0
 
 		private bool IncludedInInsert (DataRow schemaRow)
 		{
@@ -511,13 +604,13 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
-		[MonoTODO ("Figure out what else needs to be cleaned up when we refresh.")]
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
                 void RefreshSchema () 
 		{
+			// FIXME: "Figure out what else needs to be cleaned up when we refresh."
 			tableName = String.Empty;
 			dbSchemaTable = null;
 			CreateNewCommand (ref deleteCommand);
@@ -582,10 +675,13 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                [MonoTODO]
                 protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
                 {
-                        throw new NotImplementedException ();
+			if (!(adapter is SqlDataAdapter)) {
+				throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
+			}
+			rowUpdatingHandler = new SqlRowUpdatingEventHandler (RowUpdatingHandler);
+			((SqlDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
                 }
 #endif // NET_2_0
 
