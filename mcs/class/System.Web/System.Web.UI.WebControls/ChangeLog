@@ -1,3 +1,8 @@
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlDataSourceView.cs: fixed InitializeParameters, added
+	ParameterPrefix when check that param is already in collection
+
 2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AdRotator.cs: fixed: considers absolute uri such html://......	 
