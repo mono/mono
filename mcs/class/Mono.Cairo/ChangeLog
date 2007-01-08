@@ -1,5 +1,19 @@
 2007-01-08  Alp Toker  <alp@atoker.com>
 
+	* Mono.Cairo/Context.cs: Restore Obsolete markings for old glyph
+	methods. It is fair to assume nobody was able to use these broken
+	methods, and Obsolete is important for the ongoing API review process.
+
+2007-01-08  Alp Toker  <alp@atoker.com>
+
+	* Mono.Cairo/Context.cs:
+	* Mono.Cairo/Surface.cs:
+	Introduce Context.SetSource(). The old method also oddly took ints
+	instead of doubles. Obsolete Context.SetSourceSurface() and
+	Surface.Show().
+
+2007-01-08  Alp Toker  <alp@atoker.com>
+
 	* Mono.Cairo/Format.cs: Obsolete Format.ARGB32/RGB24 in favour of
 	lower caps enum members.
 
