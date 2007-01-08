@@ -84,13 +84,17 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			string file = EvaluatedProjectPath;
 
-			if (!Path.IsPathRooted (EvaluatedProjectPath) && project.FullFileName != String.Empty) {
-				string dir;
-				if (originalProject == null)
-					dir = Path.GetDirectoryName (project.FullFileName);
-				else
-					dir = Path.GetDirectoryName (originalProject.FullFileName);
-				file = Path.Combine (dir, EvaluatedProjectPath);
+			if (!Path.IsPathRooted (EvaluatedProjectPath)) {
+				string dir = null;
+				if (originalProject == null) {
+					if (project.FullFileName != String.Empty) // Path.GetDirectoryName throws exception on String.Empty
+						dir = Path.GetDirectoryName (project.FullFileName);
+				} else {
+					if (originalProject.FullFileName != String.Empty)
+						dir = Path.GetDirectoryName (originalProject.FullFileName);
+				}
+				if (dir != null)
+					file = Path.Combine (dir, EvaluatedProjectPath);
 			}
 			
 			return file;

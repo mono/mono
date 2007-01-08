@@ -99,6 +99,23 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestRelativeImport1 ()
+		{
+                        string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/RelativeImport1.csproj'/>
+                                </Project>
+                        ";
+
+                        engine = new Engine (Consts.BinPath);
+
+                        project = engine.CreateNewProject ();
+                        project.LoadXml (documentString);
+
+			Assert.AreEqual ("B", project.EvaluatedProperties ["A"].FinalValue, "A1");
+		}
+
+		[Test]
 		public void TestItems1 ()
 		{
 			string documentString = @"

@@ -1,5 +1,11 @@
 2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* Import.cs (GetFullPath): Avoid exceptions from Path.GetDirectoryName
+	and prepend relative directory of importing project to full path of
+	imported project.
+
+2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildWhen.cs, BuildPropertyGroupCollection.cs,
 	BuildItemGroupCollection.cs, Project.cs: Track API changes.
 
