@@ -34,14 +34,17 @@ namespace Cairo
 	[Serializable]
 	public enum Format
 	{
-		ARGB32	= 0,
-		RGB24	= 1,
-		A8	= 2,
-		A1	= 3,
 		Argb32	= 0,
 		Rgb24	= 1,
+		A8	= 2,
+		A1	= 3,
 #if CAIRO_1_2
 		Rgb16565 = 4,
 #endif
+
+		[Obsolete ("Use Argb32")]
+		ARGB32 = Argb32,
+		[Obsolete ("Use Rgb32")]
+		RGB24	= Rgb24,
 	}
 }

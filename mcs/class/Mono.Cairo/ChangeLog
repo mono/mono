@@ -1,3 +1,8 @@
+2007-01-08  Alp Toker  <alp@atoker.com>
+
+	* Mono.Cairo/Format.cs: Obsolete Format.ARGB32/RGB24 in favour of
+	lower caps enum members.
+
 2007-01-05  Alp Toker  <alp@atoker.com>
 
 	* Mono.Cairo/Pattern.cs: Obsolete Pattern(Surface) ctor in favour of
