@@ -1,3 +1,18 @@
+2007-01-08  Nagappan A  <anagappan@novell.com>
+
+	* OdbcFactory.cs: Fixed compilation warning.
+
+	* OdbcCategoryAttribute.cs (Category): Implemented missing
+	property.
+
+	* OdbcParameterCollection.cs: Fixed compilation warning.
+
+	* OdbcCommandBuilder.cs (GetInsertCommand, GetUpdateCommand)
+	(GetDeleteCommand): Implemented overloaded method.
+
+	* OdbcTransaction.cs: Modified partial content of DOS format file
+	to UNIX format.
+
 2006-07-13  Senganal T  <tsenganal@novell.com>
 
 	* OdbcTransaction.cs OdbcCommand.cs OdbcConnectionFactory.cs 

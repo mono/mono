@@ -75,14 +75,14 @@ namespace System.Data.Odbc
 
                 [Browsable (false)]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public OdbcParameter this[int index] {
+		public new OdbcParameter this [int index] {
 			get { return (OdbcParameter) list[index]; }
 			set { list[index] = value; }
 		}
 
                 [Browsable (false)]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public OdbcParameter this[string parameterName] {
+		public new OdbcParameter this [string parameterName] {
 			get {
                                 foreach (OdbcParameter p in list)
                                         if (p.ParameterName.Equals (parameterName))

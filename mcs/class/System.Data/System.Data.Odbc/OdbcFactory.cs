@@ -42,7 +42,7 @@ namespace System.Data.Odbc
         {
                 #region Fields
                 public static readonly OdbcFactory Instance;
-		static readonly object lockobj = new object ();
+		static readonly object lockStatic = new object ();
                 #endregion //Fields
 
                 #region Constructors
@@ -60,8 +60,11 @@ namespace System.Data.Odbc
 		/// </remarks>
 		static OdbcFactory() 
 		{
-			if (Instance == null)
-				Instance = new OdbcFactory ();                       
+                        lock (lockStatic) 
+                        {
+				if (Instance == null)
+					Instance = new OdbcFactory ();
+			}
 		}
                 
                 private OdbcFactory()

@@ -52,6 +52,14 @@ namespace System.Data.Odbc {
 
 		#endregion // Constructors
 
+		#region Properties
+
+		public new string Category {
+			get { return category; }
+		}
+
+		#endregion
+
 		#region Methods
 
 		[MonoTODO]

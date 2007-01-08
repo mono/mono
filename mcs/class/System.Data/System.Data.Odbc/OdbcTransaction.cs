@@ -102,7 +102,7 @@ namespace System.Data.Odbc
 #if !NET_2_0
 		public
 #endif
-		void Dispose() {
+		new void Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}

@@ -332,6 +332,25 @@ namespace System.Data.Odbc
 			return _insertCommand;
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public new OdbcCommand GetInsertCommand (bool option)
+		{
+			// FIXME: check validity of adapter
+			if (_insertCommand != null)
+				return _insertCommand;
+
+			if (_schema == null)
+				RefreshSchema ();
+
+			if (option == false) {
+				return GetInsertCommand ();
+			} else {
+				throw new NotImplementedException ();
+			}
+		}
+#endif // NET_2_0
+			
 		public
 #if NET_2_0
                 new
@@ -387,6 +406,25 @@ namespace System.Data.Odbc
 			return _updateCommand;
 		}
 
+#if NET_2_0
+		[MonoTODO]
+                public new OdbcCommand GetUpdateCommand (bool option)
+		{
+			// FIXME: check validity of adapter
+			if (_updateCommand != null)
+				return _updateCommand;
+
+			if (_schema == null)
+				RefreshSchema ();
+
+			if (option == false) {
+				return GetUpdateCommand ();
+			} else {
+				throw new NotImplementedException ();
+			}
+		}
+#endif // NET_2_0
+			
 		public
 #if NET_2_0
                 new
@@ -413,6 +451,25 @@ namespace System.Data.Odbc
 			_deleteCommand.CommandText = query;
 			return _deleteCommand;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+                public new OdbcCommand GetDeleteCommand (bool option)
+		{
+			// FIXME: check validity of adapter
+			if (_deleteCommand != null)
+				return _deleteCommand;
+
+			if (_schema == null)
+				RefreshSchema ();
+
+			if (option == false) {
+				return GetDeleteCommand ();
+			} else {
+				throw new NotImplementedException ();
+			}
+		}
+#endif // NET_2_0
 
 		public
 #if NET_2_0

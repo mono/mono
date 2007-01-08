@@ -66,14 +66,14 @@ namespace System.Data.Odbc
 		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior)
 		{
 			this.command = command;
-			this.CommandBehavior=behavior;
+			this.CommandBehavior = behavior;
 			open = true;
 			currentRow = -1;
-			hstmt=command.hStmt;
+			hstmt = command.hStmt;
 			// Init columns array;
-			short colcount=0;
-			libodbc.SQLNumResultCols(hstmt, ref colcount);
-			cols=new OdbcColumn[colcount];
+			short colcount = 0;
+			libodbc.SQLNumResultCols (hstmt, ref colcount);
+			cols = new OdbcColumn [colcount];
 			GetSchemaTable ();
 		}
 
@@ -235,8 +235,8 @@ namespace System.Data.Odbc
 
 			this.command.FreeIfNotPrepared ();
 
-			if ((this.CommandBehavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection) {
-				this.command.Connection.Close();
+			if ((this.CommandBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection) {
+				this.command.Connection.Close ();
 			}
 		}
 
