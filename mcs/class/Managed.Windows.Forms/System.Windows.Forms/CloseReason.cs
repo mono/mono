@@ -27,10 +27,12 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public enum CloseReason
+#if NET_2_0
+	public 
+#endif
+	enum CloseReason
 	{
 		None = 0,
 		WindowsShutDown = 1,
@@ -41,4 +43,3 @@ namespace System.Windows.Forms
 		ApplicationExitCall = 6
 	}
 }
-#endif

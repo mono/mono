@@ -472,5 +472,39 @@ namespace MonoTests.System.Windows.Forms
 				base.WndProc (ref msg);
 			}
 		}
+		
+#if NET_2_0
+		[Test]
+		public void FormClosingEvents ()
+		{
+			// Standard Close
+			Form f = new Form ();
+			string events = string.Empty;
+
+			f.Closing += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { events += ("Closing;"); });
+			f.FormClosing += new FormClosingEventHandler (delegate (Object obj, FormClosingEventArgs e) { events += string.Format ("FormClosing [Reason:{0} - Cancel:{1}]", e.CloseReason, e.Cancel); });
+	
+			f.Show ();
+			f.Close ();
+			
+			Assert.AreEqual ("Closing;FormClosing [Reason:UserClosing - Cancel:False]", events, "A1");			
+		}
+
+		[Test]
+		public void FormClosingEventsCancel ()
+		{
+			// Shows that setting Cancel in Closing flows through to FormClosing
+			Form f = new Form ();
+			string events = string.Empty;
+
+			f.Closing += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { events += ("Closing;"); e.Cancel = true; });
+			f.FormClosing += new FormClosingEventHandler (delegate (Object obj, FormClosingEventArgs e) { events += string.Format("FormClosing [Reason:{0} - Cancel:{1}]", e.CloseReason, e.Cancel); e.Cancel = false; });
+
+			f.Show ();
+			f.Close ();
+
+			Assert.AreEqual ("Closing;FormClosing [Reason:UserClosing - Cancel:True]", events, "A1");
+		}
+#endif
 	}
 }

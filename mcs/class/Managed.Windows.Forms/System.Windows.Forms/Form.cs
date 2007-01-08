@@ -106,6 +106,23 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// Convenience method for fire BOTH OnClosing and OnFormClosing events
+		// Returns the value of Cancel, so true means the Close was cancelled,
+		// and you shouldn't close the form.
+		internal bool FireClosingEvents (CloseReason reason)
+		{
+			CancelEventArgs cea = new CancelEventArgs ();
+			this.OnClosing (cea);
+			
+#if NET_2_0
+			FormClosingEventArgs fcea = new FormClosingEventArgs (reason, cea.Cancel);
+			this.OnFormClosing (fcea);
+			return fcea.Cancel;
+#else
+			return cea.Cancel;
+#endif
+		}
+		
 		private void SelectActiveControl ()
 		{
 			if (this.IsMdiContainer) {
@@ -1240,12 +1257,6 @@ namespace System.Windows.Forms {
 			if (!is_visible)
 				return;
 
-#if NET_2_0
-			FormClosingEventArgs ce = new FormClosingEventArgs (CloseReason.FormOwnerClosing, false);
-		        OnFormClosing (ce);
-			if (ce.Cancel)
-				return;
-#endif
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 		}
 
@@ -1524,7 +1535,8 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		// Consider calling FireClosingEvents instead of calling this directly.
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnClosing(System.ComponentModel.CancelEventArgs e) {
 			CancelEventHandler eh = (CancelEventHandler)(Events [ClosingEvent]);
 			if (eh != null)
@@ -1872,17 +1884,14 @@ namespace System.Windows.Forms {
 						return;
 					}
 
-					CancelEventArgs args = new CancelEventArgs ();
-
 					if (mdi_container != null) {
 						foreach (Form mdi_child in mdi_container.MdiChildren) {
-							mdi_child.OnClosing (args);
+							mdi_child.FireClosingEvents (CloseReason.MdiFormClosing);
 						}
 					}
 
 					if (!is_modal) {
-						OnClosing (args);
-						if (!args.Cancel) {
+						if (!FireClosingEvents (CloseReason.UserClosing)) {
 							OnClosed (EventArgs.Empty);
 							closing = true;
 							Dispose ();
@@ -1891,8 +1900,7 @@ namespace System.Windows.Forms {
 							closing = false;
 						}
 					} else {
-						OnClosing (args);
-						if (args.Cancel) {
+						if (!FireClosingEvents (CloseReason.UserClosing)) {
 							DialogResult = DialogResult.None;
 							closing = false;
 						}
@@ -2381,6 +2389,7 @@ namespace System.Windows.Forms {
 			remove { base.TabStopChanged -= value; }
 		}
 
+		// Consider calling FireClosingEvents instead of calling this directly.
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnFormClosing (FormClosingEventArgs e)
 		{

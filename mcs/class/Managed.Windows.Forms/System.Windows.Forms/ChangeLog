@@ -1,4 +1,10 @@
 2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
+	
+	* Form.cs: Make sure that both OnClosing and OnFormClosing are
+	called for 2.0 profile.
+	* CloseReason.cs: Make class internal for 1.1.
+
+2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripManager.cs: Implement FindToolStrip functionality.
 	* ToolStrip.cs: Register and unregister with ToolStripManager.

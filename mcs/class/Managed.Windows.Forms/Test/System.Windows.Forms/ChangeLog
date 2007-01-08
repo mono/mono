@@ -1,5 +1,9 @@
 2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Added tests for ensuring Form.OnFormClosing is called.
+
+2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ControlTest.cs: Added tests for 2.0 ControlCollection methods.
 
 2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
