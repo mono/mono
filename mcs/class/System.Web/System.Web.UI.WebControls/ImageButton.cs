@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Themeable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public virtual new bool GenerateEmptyAlternateText
+		public override bool GenerateEmptyAlternateText
 		{
 			get { return false; }
 			set { throw new NotSupportedException (); }
