@@ -1,3 +1,10 @@
+2007-01-08  Raja R Harinath  <rharinath@novell.com>
+
+	Simplify invariant for MonoGenericClass::klass field.
+	* class.c (mono_class_create_generic): Verify 'klass' is null.
+	* metadata.c (do_mono_metadata_parse_generic_class): Don't
+	initialize 'klass' field.
+
 2007-01-05  Raja R Harinath  <rharinath@novell.com>
 
 	Ongoing work to avoid redundant data and simplify invariants.
