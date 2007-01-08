@@ -1,3 +1,9 @@
+2007-01-08  Raja R Harinath  <rharinath@novell.com>
+
+	* ISupportInitializeNotification.cs: Add implemented interface.
+	* ICancelAddNew.cs, IIntellisenseBuilder.cs: New.
+	* INestedContainer.cs, INestedSite.cs: New.
+
 2007-01-02  Konstantin Triger  <kostat@mainsoft.com>
 
 	* DataObjectAttribute.cs: Implemented.

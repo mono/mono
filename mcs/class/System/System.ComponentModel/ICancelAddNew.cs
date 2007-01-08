@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.ISupportInitializeNotification.cs
+// System.ComponentModel.ICancelAddNew.cs
 //
-// Author:
-//   Nagappan A (anagappan@novell.com.com)
+// Authors:
+//   Raja R Harinath <rharinath@novell.com>
 //
-// (C) Novell, Inc
+// (C) 2007 Novell, Inc.
 //
 
 //
@@ -27,18 +27,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
 
 namespace System.ComponentModel
 {
-	/// <summary>
-	/// Specifies that this object supports a simple, transacted notification for batch initialization.
-	/// </summary>
-	public interface ISupportInitializeNotification : ISupportInitialize
+	public interface ICancelAddNew
 	{
-		bool IsInitialized { get; }
-
-		event EventHandler Initialized;
+		void CancelNew (int itemIndex);
+		void EndNew (int itemIndex);
 	}
 }
+
 #endif
