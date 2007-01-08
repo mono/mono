@@ -1,3 +1,8 @@
+2007-01-08  Raja R Harinath  <rharinath@novell.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Avoid aliasing
+	between type->data.klass and type->data.generic_class.
+
 2007-01-08  Lluis Sanchez  <lluis@ximian.com>
 
 	* marshal.c: In MS.NET, StringBuilder objects are not copied by
