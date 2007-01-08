@@ -4,7 +4,6 @@
 	<dllmap dll="intl" target="@INTL@" os="!windows"/>
 	<dllmap dll="libintl" target="@INTL@" os="!windows"/>
 	<dllmap dll="libxslt.dll" target="libxslt@libsuffix@" os="!windows"/>
-	<dllmap dll="libmySQL.dll" target="libmysqlclient@libsuffix@" os="!windows" />
 	<dllmap dll="odbc32.dll" target="libodbc@libsuffix@" os="!windows"/>
 	<dllmap os="osx" dll="odbc32.dll" target="libiodbc.dylib" />
 	<dllmap dll="oci" target="libclntsh@libsuffix@" os="!windows"/>
