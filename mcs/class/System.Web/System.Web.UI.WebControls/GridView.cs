@@ -1156,7 +1156,12 @@ namespace System.Web.UI.WebControls
 						((IStateManager)field).TrackViewState();
 						field.Name = current.Name;
 						field.DataField = current.Name;
-						field.IsReadOnly = current.IsReadOnly;
+						for (int i = 0; i < DataKeyNames.Length; i++) {
+							if (string.Compare (DataKeyNames [i], current.Name, StringComparison.InvariantCultureIgnoreCase) == 0) {
+								field.IsReadOnly = true;
+								break;
+							}
+						}
 						field.Type = current.PropertyType;
 						retVal.Add (field);
 					}
@@ -1280,7 +1285,7 @@ namespace System.Web.UI.WebControls
 					row.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (row));
 					if (EditIndex == row.RowIndex)
-						oldEditValues = new DataKey (GetRowValues (row, false, true));
+						oldEditValues = new DataKey (GetRowValues (row, true, true));
 					DataKeyArrayList.Add (new DataKey (CreateRowDataKey (row), DataKeyNames));
 				} 
 
@@ -1559,6 +1564,12 @@ namespace System.Web.UI.WebControls
 		{
 			GridViewCommandEventArgs args = e as GridViewCommandEventArgs;
 			if (args != null) {
+				bool causesValidation = false;
+				IButtonControl button = args.CommandSource as IButtonControl;
+				if (button != null && button.CausesValidation) {
+					Page.Validate (button.ValidationGroup);
+					causesValidation = true;
+				}
 				OnRowCommand (args);
 				string param = args.CommandArgument as string;
 				if (param == null || param.Length == 0) {
@@ -1566,7 +1577,7 @@ namespace System.Web.UI.WebControls
 					if (row != null)
 						param = row.RowIndex.ToString();
 				}
-				ProcessEvent (args.CommandName, param);
+				ProcessEvent (args.CommandName, param, causesValidation);
 				return true;
 			}
 			return base.OnBubbleEvent (source, e);
@@ -1582,12 +1593,12 @@ namespace System.Web.UI.WebControls
 		{
 			int i = eventArgument.IndexOf ('$');
 			if (i != -1)
-				ProcessEvent (eventArgument.Substring (0, i), eventArgument.Substring (i + 1));
+				ProcessEvent (eventArgument.Substring (0, i), eventArgument.Substring (i + 1), false);
 			else
-				ProcessEvent (eventArgument, null);
+				ProcessEvent (eventArgument, null, false);
 		}
-		
-		void ProcessEvent (string eventName, string param)
+
+		void ProcessEvent (string eventName, string param, bool causesValidation)
 		{
 			switch (eventName)
 			{
@@ -1643,7 +1654,7 @@ namespace System.Web.UI.WebControls
 					
 			case DataControlCommands.UpdateCommandName:
 				int editIndex = int.Parse (param);
-				UpdateRow (Rows [editIndex], editIndex, true);
+				UpdateRow (Rows [editIndex], editIndex, causesValidation);
 				break;
 					
 			case DataControlCommands.CancelCommandName:
@@ -1741,8 +1752,8 @@ namespace System.Web.UI.WebControls
 
 		void UpdateRow (GridViewRow row, int rowIndex, bool causesValidation)
 		{
-			if (causesValidation && Page != null)
-				Page.Validate ();
+			if (causesValidation && Page != null && !Page.IsValid)
+				return;
 
 			currentEditOldValues = OldEditValues.Values;
 
