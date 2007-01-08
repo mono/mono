@@ -132,7 +132,7 @@ namespace Cairo {
 			Dispose (false);
 		}
 
-		[Obsolete ("Use Context.SetSource() followed by Context.Paint()")]
+		//[Obsolete ("Use Context.SetSource() followed by Context.Paint()")]
 		public void Show (Context gr, double x, double y) 
 		{
 			CairoAPI.cairo_set_source_surface (gr.Handle, surface, x, y);

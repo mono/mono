@@ -381,16 +381,16 @@ namespace Cairo {
 			Color = new Color (r, g, b, a);
 		}
 
-				[Obsolete ("Use SetSource method (with double parameters)")]
-				public void SetSourceSurface (Surface source, int x, int y)
-				{
-					CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
-				}
+		//[Obsolete ("Use SetSource method (with double parameters)")]
+		public void SetSourceSurface (Surface source, int x, int y)
+		{
+			CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
+		}
 
-				public void SetSource (Surface source, double x, double y)
-				{
-					CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
-				}
+		public void SetSource (Surface source, double x, double y)
+		{
+			CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
+		}
 
 #region Path methods
                 
