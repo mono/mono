@@ -199,7 +199,7 @@ namespace System.Data.Common
 
 		#region Methods
 
-#if NET_1_1
+#if !NET_1_0
                 [Obsolete ("Use the protected constructor instead", false)]
 #endif
                 [MonoTODO]
@@ -436,13 +436,13 @@ namespace System.Data.Common
 
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
 			
-			int[] sortedMapping = new int[mapping.Length];
+			int [] sortedMapping = new int [mapping.Length];
 			int length = sortedMapping.Length;
-			for(int i=0; i < sortedMapping.Length; i++) {
-				if (mapping[i] >= 0)
-					sortedMapping[mapping[i]] = i;
+			for (int i = 0; i < sortedMapping.Length; i++) {
+				if (mapping [i] >= 0)
+					sortedMapping [mapping [i]] = i;
 				else
-					sortedMapping[--length] = i;
+					sortedMapping [--length] = i;
 			}
 
 			for (int i = 0; i < startRecord; i++) {
@@ -456,14 +456,14 @@ namespace System.Data.Common
 					counter++;
 				}
 				catch (Exception e) {
-					object[] readerArray = new object[dataReader.FieldCount];
-					object[] tableArray = new object[mapping.Length];
+					object[] readerArray = new object [dataReader.FieldCount];
+					object[] tableArray = new object [mapping.Length];
 					// we get the values from the datareader
 					dataReader.GetValues (readerArray);
 					// copy from datareader columns to table columns according to given mapping
 					for (int i = 0; i < mapping.Length; i++) {
-						if (mapping[i] >= 0) {
-							tableArray[i] = readerArray[mapping[i]];
+						if (mapping [i] >= 0) {
+							tableArray [i] = readerArray [mapping [i]];
 						}
 					}
 					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
@@ -571,10 +571,30 @@ namespace System.Data.Common
 			return FillInternal (dataTable, dataReader);
 		}
 
-		[MonoTODO]
 		protected virtual int Fill (DataTable[] dataTables, IDataReader dataReader, int startRecord, int maxRecords)
 		{
-			throw new NotImplementedException ();
+			int count = 0;
+			if (dataReader.IsClosed)
+				return 0;
+
+			if (startRecord < 0)
+				throw new ArgumentException ("The startRecord parameter was less than 0.");
+			if (maxRecords < 0)
+				throw new ArgumentException ("The maxRecords parameter was less than 0.");
+
+			try {
+				foreach (DataTable dataTable in dataTables) {
+					string tableName = SetupSchema (SchemaType.Mapped, dataTable.TableName);
+					if (tableName != null) {
+						dataTable.TableName = tableName;
+						FillTable (dataTable, dataReader, 0, 0, ref count);
+					}
+				}
+			} finally {
+				dataReader.Close ();
+			}
+
+			return count;
 		}
 
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords)

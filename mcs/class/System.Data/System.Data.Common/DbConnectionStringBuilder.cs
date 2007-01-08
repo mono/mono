@@ -180,10 +180,14 @@ namespace System.Data.Common
                 }
 
 		[MonoTODO]
-		public static void AppendKeyValuePair(StringBuilder builder, string keyword, string value,
-						      bool useOdbcRules)
+		public static void AppendKeyValuePair (StringBuilder builder, string keyword, string value,
+						       bool useOdbcRules)
 		{
-			throw new NotImplementedException ();
+			if (useOdbcRules == false) {
+				AppendKeyValuePair (builder, keyword, value);
+			} else {
+				throw new NotImplementedException ();
+			}
 		}
 
                 public static void AppendKeyValuePair (StringBuilder builder, string keyword, string value)
@@ -229,11 +233,12 @@ namespace System.Data.Common
                 }
 
 		[MonoTODO]
-		protected virtual void GetProperties(Hashtable propertyDescriptors)
+		protected virtual void GetProperties (Hashtable propertyDescriptors)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected internal void ClearPropertyDescriptors ()
 		{
 			throw new NotImplementedException ();

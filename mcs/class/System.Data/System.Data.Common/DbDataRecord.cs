@@ -229,7 +229,7 @@ namespace System.Data.Common {
 		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
-			return new AttributeCollection(null);
+			return new AttributeCollection (null);
 		}
 
 		[MonoTODO]

@@ -1,3 +1,37 @@
+2007-01-08  Nagappan A  <anagappan@novell.com>
+
+	* DataTableMappingCollection.cs (AddRange):  Implemented missing
+	NET 2.0 API.
+
+	* DbConnection.cs (GetSchema): Implemented missing NET 2.0 API,
+	based on SqlClient implementation.
+
+	* DbConnectionStringBuilder.cs (AppendKeyValuePair): Implemented
+	missing API.
+
+	* DbDataReader.cs (GetData): Implemented missing API.
+	(GetDbDataReader): Implemented missing API.
+
+	* DbCommandBuilder.cs (BuildCache, BuildInformation)
+	(IncludedInInsert, IncludedInUpdate, IncludedInWhereClause)
+	(CreateDeleteCommand, CreateInsertCommand, CreateNewCommand)
+	(CreateUpdateCommand, CreateParameter): Added private methods.
+	(QuotedTableName, GetQuotedString, CatalogLocation)
+	(CatalogSeparator, ConflictOption, DataAdapter, QuotePrefix)
+	(QuoteSuffix, SchemaSeparator): Implemented public properties.
+	(SourceCommand): Implemented private property.
+	(Dispose, RowUpdatingHandler): Implemented protected methods.
+	(GetDeleteCommand, GetInsertCommand, GetUpdateCommand)
+	(QuoteIdentifier, UnquoteIdentifier, RefreshSchema): Implemented
+	public methods.
+
+	* DbProviderFactory.cs: Removed MonoTODO's as the derived class
+	has to implement all the methods in this class.
+
+	* DataAdapter.cs (Fill): Implemented missing method.
+
+	* DbDataAdapter.cs (FillCommandBehavior): Implemented property.
+
 2006-12-20  Nagappan A  <anagappan@novell.com>
 
 	* DataColumnMapping.cs (GetDataColumnBySchemaAction): Implemented

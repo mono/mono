@@ -53,13 +53,11 @@ namespace System.Data.Common {
 		{
 		}
 
-		[MonoTODO]
 		protected internal DbConnectionOptions (DbConnectionOptions connectionOptions)
 		{
 			options = connectionOptions.options;
 		}
 
-		[MonoTODO]
 		public DbConnectionOptions (string connectionString)
 		{
 			options = new NameValueCollection ();

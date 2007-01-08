@@ -48,13 +48,11 @@ namespace System.Data.Common {
 
 		#region Constructors
 
-		[MonoTODO]
 		protected internal DbConnectionString (DbConnectionString constr)
 		{
 			options = constr.options;
 		}
 
-		[MonoTODO]
 		public DbConnectionString (string connectionString)
 			: base (connectionString)
 		{

@@ -49,7 +49,6 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		[MonoTODO]
 		public virtual bool CanCreateDataSourceEnumerator { 
 			get {throw new NotImplementedException ();}
 		}
@@ -57,54 +56,45 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual DbCommand CreateCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DbCommandBuilder CreateCommandBuilder ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DbConnection CreateConnection ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DbDataAdapter CreateDataAdapter ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DbDataSourceEnumerator CreateDataSourceEnumerator ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual DbParameter CreateParameter ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual CodeAccessPermission CreatePermission (PermissionState state)
 		{
 			throw new NotImplementedException ();
 		}
-#if NET_2_0 
-		[MonoTODO]
+
 		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		#endregion // Methods
 	}
 }

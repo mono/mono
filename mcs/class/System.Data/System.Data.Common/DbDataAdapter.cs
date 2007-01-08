@@ -51,6 +51,7 @@ namespace System.Data.Common {
 
 		public const string DefaultSourceTableName = "Table";
 		const string DefaultSourceColumnName = "Column";
+		CommandBehavior _behavior = CommandBehavior.Default;
 
 #if NET_2_0
 		IDbCommand _selectCommand;
@@ -67,7 +68,7 @@ namespace System.Data.Common {
 		{
 		}
 
-		protected DbDataAdapter(DbDataAdapter adapter) : base(adapter)
+		protected DbDataAdapter (DbDataAdapter adapter) : base (adapter)
 		{
 		}
 
@@ -77,8 +78,8 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _behavior; }
+			set { _behavior = value; }
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
@@ -242,7 +243,7 @@ namespace System.Data.Common {
 
 		public override int Fill (DataSet dataSet)
 		{
-			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
 		public int Fill (DataTable dataTable) 
@@ -250,12 +251,12 @@ namespace System.Data.Common {
 			if (dataTable == null)
 				throw new ArgumentNullException ("DataTable");
 
-			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
+			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
 		public int Fill (DataSet dataSet, string srcTable) 
 		{
-			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
+			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
 #if !NET_2_0
@@ -280,7 +281,7 @@ namespace System.Data.Common {
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
-			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
+			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
 #if NET_2_0
@@ -401,17 +402,17 @@ namespace System.Data.Common {
 
 		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
 		{
-			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, DefaultSourceTableName, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, DefaultSourceTableName, _behavior);
 		}
 
 		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType) 
 		{
-			return FillSchema (dataTable, schemaType, ((IDbDataAdapter) this).SelectCommand, CommandBehavior.Default);
+			return FillSchema (dataTable, schemaType, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
 		public DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable) 
 		{
-			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, CommandBehavior.Default);
+			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, _behavior);
 		}
 
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
@@ -501,20 +502,6 @@ namespace System.Data.Common {
 			}
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		protected override DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDataReader dataReader)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable, IDataReader dataReader)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override IDataParameter[] GetFillParameters () 

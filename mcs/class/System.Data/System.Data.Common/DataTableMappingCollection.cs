@@ -152,10 +152,10 @@ namespace System.Data.Common {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			for (int i = 0; i < values.Length; ++i)
+				Add (values.GetValue (i));
 		}
 #endif
 

@@ -41,7 +41,6 @@ namespace System.Data.Common {
 	{
 		#region Constructors
 
-		[MonoTODO]
 		protected DbParameterCollection ()
 		{
 		}
