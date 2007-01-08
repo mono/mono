@@ -136,6 +136,11 @@ namespace System.Web.UI.WebControls {
 					btn.ButtonType = ButtonType;
 					if (ButtonType == ButtonType.Image) btn.ImageUrl = ImageUrl;
 				}
+				if (CausesValidation) {
+					btn.Container = null;
+					btn.CausesValidation = true;
+					btn.ValidationGroup = ValidationGroup;
+				}
 				cell.Controls.Add (btn);
 			}
 			else
