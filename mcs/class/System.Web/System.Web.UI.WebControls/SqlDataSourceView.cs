@@ -413,7 +413,10 @@ namespace System.Web.UI.WebControls {
 		{
 			DbParameter dbp = factory.CreateParameter ();
 			dbp.ParameterName = ParameterPrefix + name;
-			dbp.Value = value;
+			if (value == null)
+				dbp.Value = DBNull.Value;
+			else
+				dbp.Value = value;
 			dbp.Direction = dir;
 			if (size != -1)
 				dbp.Size = size;
