@@ -1,5 +1,11 @@
 2007-01-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: This was messy.  2.0 moves much of ControlCollection
+	to ArrangedElementCollection.  Implemented this with as few #if's as 
+	possible (which is still too many).
+
+2007-01-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Implement SizeFromClientSize() [2.0].
 
 2007-01-07  Everaldo Canuto  <everaldo@simios.org>

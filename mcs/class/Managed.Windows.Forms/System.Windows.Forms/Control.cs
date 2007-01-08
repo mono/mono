@@ -385,15 +385,19 @@ namespace System.Windows.Forms
 				Dispose ();
 			}
 		}
+
+		[ListBindable (false)]
 #if NET_2_0
 		[ComVisible (false)]
+		public class ControlCollection : Layout.ArrangedElementCollection, IList, ICollection, ICloneable, IEnumerable {
 #else
 		[DesignerSerializer("System.Windows.Forms.Design.ControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-#endif
-		[ListBindable(false)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
+#endif
 			#region	ControlCollection Local Variables
+#if !NET_2_0
 			ArrayList list;
+#endif
 			ArrayList impl_list;
 			Control[] all_controls;
 			Control owner;
@@ -402,7 +406,9 @@ namespace System.Windows.Forms
 			#region ControlCollection Public Constructor
 			public ControlCollection(Control owner) {
 				this.owner=owner;
+#if !NET_2_0
 				this.list=new ArrayList();
+#endif
 			}
 			#endregion
 
@@ -412,9 +418,11 @@ namespace System.Windows.Forms
 			}
 
 
+#if !NET_2_0
 			public int Count {
 				get { return list.Count; }
 			}
+#endif
 
 #if NET_2_0
 			bool IList.IsReadOnly
@@ -427,6 +435,22 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			public Control Owner { get { return this.owner; } }
+			
+			public virtual Control this[string key] {
+				get { 
+					int index = IndexOfKey (key);
+					
+					if (index >= 0)
+						return this[index];
+						
+					return null;
+				}
+			}
+			
+			new
+#endif
 			public virtual Control this[int index] {
 				get {
 					if (index < 0 || index >= list.Count) {
@@ -434,10 +458,12 @@ namespace System.Windows.Forms
 					}
 					return (Control)list[index];
 				}
+				
+				
 			}
 			#endregion // ControlCollection Public Instance Properties
 			
-			#region	ControlCollection Private Instance Methods
+			#region	ControlCollection Instance Methods
 			public virtual void Add (Control value)
 			{
 				if (value == null)
@@ -536,6 +562,9 @@ namespace System.Windows.Forms
 				}
 			}
 
+#if NET_2_0
+			new
+#endif
 			public virtual void Clear ()
 			{
 				all_controls = null;
@@ -588,17 +617,24 @@ namespace System.Windows.Forms
 				return Contains (value) || ImplicitContains (value);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				return IndexOfKey (key) >= 0;
+			}
+#endif
+
 			void ICollection.CopyTo (Array array, int index)
 			{
 				CopyTo (array, index);
 			}
 
+#if !NET_2_0
 			public void CopyTo (Array array, int index)
 			{
 				list.CopyTo(array, index);
 			}
 
-#if !NET_2_0
 			public override bool Equals (object other)
 			{
 				if (other is ControlCollection && (((ControlCollection)other).owner==this.owner)) {
@@ -606,6 +642,27 @@ namespace System.Windows.Forms
 				} else {
 					return(false);
 				}
+			}
+#endif
+
+#if NET_2_0
+			// LAMESPEC: MSDN says AE, MS implementation throws ANE
+			public Control[] Find (string key, bool searchAllChildren)
+			{
+				if (string.IsNullOrEmpty (key))
+					throw new ArgumentNullException ("key");
+					
+				ArrayList al = new ArrayList ();
+				
+				foreach (Control c in list) {
+					if (c.Name.Equals (key, StringComparison.CurrentCultureIgnoreCase))
+						al.Add (c);
+						
+					if (searchAllChildren)
+						al.AddRange (c.Controls.Find (key, true));
+				}
+				
+				return (Control[])al.ToArray (typeof (Control));
 			}
 #endif
 
@@ -630,7 +687,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public virtual IEnumerator
+			public override IEnumerator
 #else
 			public IEnumerator
 #endif
@@ -674,6 +731,20 @@ namespace System.Windows.Forms
 				return list.IndexOf(control);
 			}
 
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (string.IsNullOrEmpty (key))
+					return -1;
+					
+				for (int i = 0; i < list.Count; i++)
+					if (((Control)list[i]).Name.Equals (key, StringComparison.CurrentCultureIgnoreCase))
+						return i;
+						
+				return -1;
+			}
+#endif
+
 			public virtual void Remove(Control value)
 			{
 				if (value == null)
@@ -702,6 +773,9 @@ namespace System.Windows.Forms
 				owner.UpdateChildrenZOrder ();
 			}
 
+#if NET_2_0
+			new
+#endif
 			public void RemoveAt(int index)
 			{
 				if (index < 0 || index >= list.Count) {
@@ -711,6 +785,14 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				int index = IndexOfKey (key);
+				
+				if (index >= 0)
+					RemoveAt (index);
+			}	
+		
 			public virtual void
 #else
 			public void

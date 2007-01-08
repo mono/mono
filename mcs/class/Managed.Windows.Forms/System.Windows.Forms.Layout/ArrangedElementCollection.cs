@@ -33,7 +33,7 @@ namespace System.Windows.Forms.Layout
 {
 	public class ArrangedElementCollection : IList, ICollection, IEnumerable
 	{
-		private ArrayList list;
+		internal ArrayList list;
 
 		internal ArrangedElementCollection ()
 		{
