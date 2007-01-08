@@ -312,7 +312,7 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (11, ((Complex)list[0]).Id, "list[0].Id");
 			Assert.AreEqual ("first", ((Complex)list[0]).Name, "list[0].Name");
 			
-			Assert.AreEqual ("hello from client and from server", sb.ToString (), "sb");
+			Assert.AreEqual ("hello from client", sb.ToString (), "sb");
 			for (int n=0; n<100; n++) 
 				Assert.AreEqual (n+1, bytes[n], "bytes["+n+"]");
 		}
@@ -322,10 +322,13 @@ namespace MonoTests.Remoting
 			CallContext.FreeNamedDataSlot ("clientData");
 			CallContext.FreeNamedDataSlot ("serverData");
 			CallContext.FreeNamedDataSlot ("mustNotPass");
+			
+			// First step
 
 			ContextData cdata = new ContextData ();
 			cdata.data = "hi from client";
 			cdata.id = 1123;
+			cdata.testStep = 1;
 			CallContext.SetData ("clientData", cdata);
 			CallContext.SetData ("mustNotPass", "more data");
 			
@@ -342,6 +345,36 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (3211, cdata.id, "serverData.id");
 			
 			string mdata = CallContext.GetData ("mustNotPass") as string;
+			Assert.IsNotNull (mdata, "mustNotPass is null");
+			Assert.AreEqual ("more data", mdata, "mustNotPass");
+			
+			// Second step. Test that exceptions return the call context.
+			
+			CallContext.FreeNamedDataSlot ("clientData");
+			CallContext.FreeNamedDataSlot ("serverData");
+			
+			cdata = new ContextData ();
+			cdata.data = "hi from client";
+			cdata.id = 1123;
+			cdata.testStep = 2;
+			CallContext.SetData ("clientData", cdata);
+			
+			try {
+				testerSurrogate.ProcessContextData ();
+				Assert.IsTrue (false, "Exception not thrown");
+			} catch (Exception ex) {
+				if (ex.InnerException != null)
+					ex = ex.InnerException;
+				if (ex.Message != "exception from server")
+					throw;
+			}
+			
+			cdata = CallContext.GetData ("clientData") as ContextData;
+			Assert.IsNotNull (cdata, "clientData is null (2)");
+			Assert.AreEqual ("hi from client", cdata.data, "clientData.data (2)");
+			Assert.AreEqual (1123, cdata.id, "clientData.id (2)");
+			
+			mdata = CallContext.GetData ("mustNotPass") as string;
 			Assert.IsNotNull (mdata, "mustNotPass is null");
 			Assert.AreEqual ("more data", mdata, "mustNotPass");
 		}
@@ -394,6 +427,7 @@ namespace MonoTests.Remoting
 	{
 		public string data;
 		public int id;
+		public int testStep;
 	}
 
 	[Serializable]
@@ -516,19 +550,26 @@ namespace MonoTests.Remoting
 
 		public override void ProcessContextData ()
 		{
+			string mdata = CallContext.GetData ("mustNotPass") as string;
+			if (mdata != null)
+				throw new Exception ("mustNotPass is not null");
+			
 			ContextData cdata = CallContext.GetData ("clientData") as ContextData;
 			if (cdata == null) 
 				throw new Exception ("server: clientData is null");
 			if (cdata.data != "hi from client" || cdata.id != 1123)
 				throw new Exception ("server: clientData is not valid");
 			
+			if (cdata.testStep == 2)
+				throw new Exception ("exception from server");
+
+			if (cdata.testStep != 1)
+				throw new Exception ("invalid test step");
+				
 			cdata = new ContextData ();
 			cdata.data = "hi from server";
 			cdata.id = 3211;
 			CallContext.SetData ("serverData", cdata);
-			
-			string mdata = CallContext.GetData ("mustNotPass") as string;
-			if (mdata != null) throw new Exception ("mustNotPass is not null");
 		}
 	}
 

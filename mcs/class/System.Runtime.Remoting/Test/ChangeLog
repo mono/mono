@@ -1,3 +1,7 @@
+2006-12-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BaseCalls.cs: Added some tests for exceptions.
+
 2005-12-02  Robert Jordan  <robertj@gmx.net>
 
 	* RemotingServicesTest.cs: Added test for bug #76809.
