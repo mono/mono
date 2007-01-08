@@ -861,12 +861,8 @@
 					<TD>Element code</TD>
 				</TR>
 				<TR>
-					<TD width="142"><EM><A href="#method-call-flags">method-call-flags</A></EM></TD>
+					<TD width="142"><EM><A href="#method-call-flags">method-call-flags (int32)</A></EM></TD>
 					<TD>Describes wich information includes the method call</TD>
-				</TR>
-				<TR>
-					<TD width="142">(byte) 0, 0, 0</TD>
-					<TD>???</TD>
 				</TR>
 				<TR>
 					<TD width="142"><EM><EM><A href="#type-spec">type-spec</A><BR>
@@ -901,6 +897,7 @@
 					<TD>
 						<P>Array with the following values:</P>
 						<UL>
+						    <li>Generic arguments if the method is generic and method-call-flags has the flag GenericArguments (NET_2_0).</li>
 							<LI>
 							Method signature, only if method-call-flags has the flag IncludesSignature. It 
 							is an array of Type.
@@ -940,6 +937,7 @@
 					<TD>
 						<P>Array with the following values:</P>
 						<UL>
+						    <li>Generic arguments if the method is generic and method-call-flags has the flag GenericArguments (NET_2_0).</li>
 							<LI>
 							Method signature, only if method-call-flags has the flag IncludesSignature. It 
 							is an array of Type.
@@ -994,6 +992,7 @@
 						<UL>
 							<LI>
 							Array of parameters.
+						    <li>Generic arguments if the method is generic and method-call-flags has the flag GenericArguments (NET_2_0).</li>
 							<LI>
 							Method signature, only if method-call-flags has the flag IncludesSignature. It 
 							is an array of Type.
@@ -1385,6 +1384,12 @@
 					<TD>IncludesSignature</TD>
 					<TD>Signature is included in the message. It is only included when calling an 
 						overloaded method.</TD>
+				</TR>
+				
+				<TR>
+					<TD>32768 (0x8000)</TD>
+					<TD>GenericArguments</TD>
+					<TD>Generic arguments are included in the message (NET_2_0).</TD>
 				</TR>
 			</TABLE>
 		</P>

@@ -71,6 +71,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				infoArraySize++;
 			}
 
+#if NET_2_0
+			if (call.MethodBase.IsGenericMethod) {
+				infoArraySize++;
+				methodFlags |= MethodFlags.GenericArguments;
+			}
+#endif
 			if (call.ArgCount == 0)
 				methodFlags |= MethodFlags.NoArguments;
 			else {
@@ -86,12 +92,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				}
 			}
 
-			writer.Write ((byte) (methodFlags));
-
-			// FIXME: what are the following 3 bytes for?
-			writer.Write ((byte) 0);
-			writer.Write ((byte) 0);
-			writer.Write ((byte) 0);
+			writer.Write ((int) methodFlags);
 
 			// Method name
 			writer.Write ((byte) BinaryTypeCode.String);
@@ -123,6 +124,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				object[] ainfo = new object[infoArraySize];
 				int n=0;
 				if ((methodFlags & MethodFlags.ArgumentsInMultiArray) > 0) ainfo[n++] = call.Args;
+
+#if NET_2_0
+				if ((methodFlags & MethodFlags.GenericArguments) > 0) ainfo[n++] = call.MethodBase.GetGenericArguments ();
+#endif
+
 				if ((methodFlags & MethodFlags.IncludesSignature) > 0) ainfo[n++] = call.MethodSignature;
 				if ((methodFlags & MethodFlags.IncludesLogicalCallContext) > 0) ainfo[n++] = call.LogicalCallContext;
 				if (extraProperties != null) ainfo[n++] = extraProperties;
@@ -274,12 +280,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			BinaryElement elem = (BinaryElement)reader.ReadByte();	// The element code
 			if (elem != BinaryElement.MethodCall) throw new SerializationException("Invalid format. Expected BinaryElement.MethodCall, found " +  elem);
 
-			MethodFlags flags = (MethodFlags) reader.ReadByte();
-
-			// FIXME: find a meaning for those 3 bytes
-			reader.ReadByte();
-			reader.ReadByte();
-			reader.ReadByte();
+			MethodFlags flags = (MethodFlags) reader.ReadInt32();
 
 			if (((BinaryTypeCode)reader.ReadByte()) != BinaryTypeCode.String) throw new SerializationException ("Invalid format");
 			string methodName = reader.ReadString();
@@ -294,6 +295,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			object callContext = null;
 			object[] extraProperties = null;
 			Header[] headers = null;
+#if NET_2_0
+			Type[] genericArguments = null;
+#endif
 
 			if ((flags & MethodFlags.PrimitiveArguments) > 0)
 			{
@@ -325,6 +329,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						else arguments = new object[0];
 					}
 
+#if NET_2_0
+					if ((flags & MethodFlags.GenericArguments) > 0)
+						genericArguments = (Type[]) msgInfo[n++];
+#endif
+
 					if ((flags & MethodFlags.IncludesSignature) > 0)
 						methodSignature = msgInfo[n++];
 
@@ -345,13 +354,20 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (headerHandler != null)
 				uri = headerHandler(headers) as string;
 
+#if NET_2_0
+			Header[] methodInfo = new Header[7];
+#else
 			Header[] methodInfo = new Header[6];
+#endif
 			methodInfo[0] = new Header("__MethodName", methodName);
 			methodInfo[1] = new Header("__MethodSignature", methodSignature);
 			methodInfo[2] = new Header("__TypeName", className);
 			methodInfo[3] = new Header("__Args", arguments);
 			methodInfo[4] = new Header("__CallContext", callContext);
 			methodInfo[5] = new Header("__Uri", uri);
+#if NET_2_0
+			methodInfo[6] = new Header("__GenericArguments", genericArguments);
+#endif
 
 			MethodCall call = new MethodCall (methodInfo);
 

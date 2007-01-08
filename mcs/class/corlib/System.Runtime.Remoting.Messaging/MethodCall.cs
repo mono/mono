@@ -49,6 +49,9 @@ namespace System.Runtime.Remoting.Messaging {
 		LogicalCallContext _callContext;
 		ArgInfo _inArgInfo;
 		Identity _targetIdentity;
+#if NET_2_0
+		Type[] _genericArguments;
+#endif
 
 		protected IDictionary ExternalProperties;
 		protected IDictionary InternalProperties;
@@ -129,7 +132,6 @@ namespace System.Runtime.Remoting.Messaging {
 			_methodSignature = (Type[]) call.MethodSignature;
 			_methodBase = call.MethodBase;
 			_callContext = call.LogicalCallContext;
-
 			Init();
 		}
 		
@@ -143,6 +145,9 @@ namespace System.Runtime.Remoting.Messaging {
 				case "__Args" : _args = (object[]) value; return;
 				case "__CallContext" : _callContext = (LogicalCallContext) value; return;
 				case "__Uri" : _uri = (string) value; return;
+#if NET_2_0
+				case "__GenericArguments" : _genericArguments = (Type[]) value; return;
+#endif
 				default: Properties[key] = value; return;
 			}
 		}
@@ -155,6 +160,9 @@ namespace System.Runtime.Remoting.Messaging {
 			info.AddValue ("__Args", _args);
 			info.AddValue ("__CallContext", _callContext);
 			info.AddValue ("__Uri", _uri);
+#if NET_2_0
+			info.AddValue ("__GenericArguments", _genericArguments);
+#endif
 
 			if (InternalProperties != null) {
 				foreach (DictionaryEntry entry in InternalProperties)
@@ -306,29 +314,37 @@ namespace System.Runtime.Remoting.Messaging {
 				if (CastTo (_typeName, type) != null) {
 					_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, _methodSignature);
 					if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + type);
-					return;
 				}
 				else
 					throw new RemotingException ("Cannot cast from client type '" + _typeName + "' to server type '" + type.FullName + "'");
+			} else {
+				_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+				if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + TypeName);
 			}
-			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
-			if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + TypeName);
+
+
+#if NET_2_0
+			if (_methodBase.IsGenericMethod && _methodBase.ContainsGenericParameters) {
+				if (GenericArguments == null)
+					throw new RemotingException ("The remoting infrastructure does not support open generic methods.");
+				_methodBase = ((MethodInfo) _methodBase).MakeGenericMethod (GenericArguments);
+			}
+#endif
+
 		}
 
 		Type CastTo (string clientType, Type serverType)
 		{
-			int i = clientType.IndexOf(',');
-			if (i != -1) clientType = clientType.Substring (0,i).Trim();
-
+			clientType = GetTypeNameFromAssemblyQualifiedName (clientType);
 			if (clientType == serverType.FullName) return serverType;
 
  			// base class hierarchy
 
  			Type baseType = serverType.BaseType;
  			while (baseType != null) {
-    			if (clientType == baseType.FullName) return baseType;
-       			baseType = baseType.BaseType;
-    		}
+				if (clientType == baseType.FullName) return baseType;
+				baseType = baseType.BaseType;
+			}
 
  			// Implemented interfaces
 
@@ -336,7 +352,19 @@ namespace System.Runtime.Remoting.Messaging {
  			foreach (Type itype in interfaces)
  				if (clientType == itype.FullName) return itype;
      
-     		return null;
+			return null;
+		}
+
+		static string GetTypeNameFromAssemblyQualifiedName (string aqname)
+		{
+#if NET_2_0
+			int p = aqname.IndexOf ("]]");
+			int i = aqname.IndexOf(',', p == -1 ? 0 : p + 2);
+#else
+			int i = aqname.IndexOf(',');
+#endif
+			if (i != -1) aqname = aqname.Substring (0, i).Trim ();
+			return aqname;
 		}
 		
 		[MonoTODO]
@@ -368,5 +396,16 @@ namespace System.Runtime.Remoting.Messaging {
 			s += ")";
 			return s;
 		}
+
+#if NET_2_0
+		Type[] GenericArguments {
+			get {
+				if (_genericArguments != null)
+					return _genericArguments;
+
+				return _genericArguments = MethodBase.GetGenericArguments ();
+			}
+		}
+#endif
 	}
 }

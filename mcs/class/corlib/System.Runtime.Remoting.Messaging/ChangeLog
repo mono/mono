@@ -1,3 +1,10 @@
+2006-12-25  Robert Jordan  <robertj@gmx.net>
+
+	* MethodCall.cs: Add support for generic methods.
+	* MethodCall.cs (GetTypeNameFromAssemblyQualifiedName):
+	Add support for generic types.
+	* ReturnMessage.cs: Fix bug #80371.
+
 2006-12-18  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* StackBuilderSink.cs: Avoid unneeded cast that was causing some

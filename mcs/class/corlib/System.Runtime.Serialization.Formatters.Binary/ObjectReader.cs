@@ -830,6 +830,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				case TypeTag.RuntimeType:
 				{
 					string name = reader.ReadString ();
+#if NET_2_0
+					// map MS.NET's System.RuntimeType to System.MonoType
+					if (_context.State == StreamingContextStates.Remoting)
+						if (name == "System.RuntimeType")
+							name = "System.MonoType";
+#endif
 					return Type.GetType (name, true);
 				}
 

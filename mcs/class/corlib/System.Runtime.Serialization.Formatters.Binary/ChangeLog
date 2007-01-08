@@ -1,3 +1,11 @@
+2006-12-25  Robert Jordan  <robertj@gmx.net>
+
+	* binary_serialization_format.htm: Update the NET_2_0 format.
+	* BinaryCommon.cs: MethodFlags is actually an int32. Add NET_2_0 flags.
+	* MessageFormatter.cs: Add support for generic method arguments.
+	* ObjectWriter.cs, ObjectReader.cs: Map between System.MonoType and
+	MS.NET's System.RuntimeType.
+
 2006-12-01  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* MessageFormatter.cs: Include the logical context in the message when

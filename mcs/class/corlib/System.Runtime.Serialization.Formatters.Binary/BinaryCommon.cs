@@ -188,7 +188,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		MultiDimensional = 2
 	}
 
-	internal enum MethodFlags : byte
+	internal enum MethodFlags
 	{
 		NoArguments = 1,
 		PrimitiveArguments = 2,
@@ -199,7 +199,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		IncludesSignature = 128,
 
 		FormatMask = 15,
-		NeedsInfoArrayMask = 4 + 8 + 64 + 128
+
+#if NET_2_0
+		GenericArguments = 0x8000,
+		NeedsInfoArrayMask = 4 + 8 + 64 + 128 + 0x8000,
+#else
+		NeedsInfoArrayMask = 4 + 8 + 64 + 128,
+#endif
 	}
 
 	internal enum ReturnTypeTag : byte

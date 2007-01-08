@@ -948,7 +948,18 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeTag.RuntimeType:
-					writer.Write (type.FullName);
+					string fullName = type.FullName;
+#if NET_2_0
+					// Map System.MonoType to MS.NET's System.RuntimeType,
+					// when called in remoting context.
+					// Note that this code does not need to be in sync with
+					// EmitWriteTypeSpec because serializing a MethodCall
+					// won't trigger the CodeGenerator.
+					if (_context.State == StreamingContextStates.Remoting)
+						if (type == typeof (System.MonoType))
+							fullName =  "System.RuntimeType";
+#endif
+					writer.Write (fullName);
 					break;
 
 				case TypeTag.GenericType:
