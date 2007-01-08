@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 		public ToolStrip (params ToolStripItem[] items) : base ()
 		{
 			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
+			//SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 
@@ -98,6 +98,9 @@ namespace System.Windows.Forms
 			base.TabStop = false;
 			this.ResumeLayout ();
 			DoAutoSize ();
+			
+			// Register with the ToolStripManager
+			ToolStripManager.AddToolStrip (this);
 		}
 		#endregion
 
@@ -174,12 +177,7 @@ namespace System.Windows.Forms
 
 		public override Font Font {
 			get { return base.Font; }
-			set { 
-				if (base.Font != value) {
-					base.Font = value; 
-					this.PerformLayout (); 
-				}
-			}
+			set { base.Font = value; }
 		}
 		
 		[Browsable (false)]
@@ -246,6 +244,11 @@ namespace System.Windows.Forms
 			set { this.image_scaling_size = value; }
 		}
 
+		[MonoTODO ("Always returns false, dragging not implemented yet.")]
+		public bool IsCurrentlyDragging {
+			get { return false; }
+		}
+		
 		[Browsable (false)]
 		public bool IsDropDown {
 			get {
@@ -348,7 +351,7 @@ namespace System.Windows.Forms
 		protected virtual Padding DefaultGripMargin { get { return new Padding (2); } }
 		protected override Padding DefaultMargin { get { return Padding.Empty; } }
 		[MonoTODO ("This should override Control.DefaultPadding once it exists.")]
-		protected virtual Padding DefaultPadding { get { return new Padding (0, 0, 1, 0); } }
+		protected override Padding DefaultPadding { get { return new Padding (0, 0, 1, 0); } }
 		protected virtual bool DefaultShowItemToolTips { get { return true; } }
 		protected override Size DefaultSize { get { return new Size (100, 25); } }
 		#endregion
@@ -425,6 +428,13 @@ namespace System.Windows.Forms
 			return new ToolStripButton (text, image, onClick);
 		}
 
+		protected override void Dispose (bool disposing)
+		{
+			ToolStripManager.RemoveToolStrip (this);
+			
+			base.Dispose (disposing);
+		}
+		
 		protected override void OnDockChanged (EventArgs e)
 		{
 			base.OnDockChanged (e);

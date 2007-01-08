@@ -1,3 +1,8 @@
+2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripManager.cs: Implement FindToolStrip functionality.
+	* ToolStrip.cs: Register and unregister with ToolStripManager.
+
 2007-01-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: This was messy.  2.0 moves much of ControlCollection

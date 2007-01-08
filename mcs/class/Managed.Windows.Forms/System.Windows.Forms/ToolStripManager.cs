@@ -30,6 +30,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -38,10 +39,12 @@ namespace System.Windows.Forms
 		private static ToolStripRenderer renderer;
 		private static ToolStripManagerRenderMode render_mode;
 		private static bool visual_styles_enabled;
-
-		#region Static Cnstructor
+		private static List<ToolStrip> toolstrips;
+		
+		#region Static Constructor
 		static ToolStripManager ()
 		{
+			toolstrips = new List<ToolStrip> ();
 			ToolStripManager.renderer = new ToolStripProfessionalRenderer ();
 			ToolStripManager.render_mode = ToolStripManagerRenderMode.Professional;
 			ToolStripManager.visual_styles_enabled = Application.RenderWithVisualStyles;
@@ -101,11 +104,35 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Public Methods
+		public static ToolStrip FindToolStrip (string toolStripName)
+		{
+			lock (toolstrips)
+				foreach (ToolStrip ts in toolstrips)
+					if (ts.Name == toolStripName)
+						return ts;
+						
+			return null;
+		}
+		#endregion
+		
 		#region Public Events
 		public static event EventHandler RendererChanged;
 		#endregion
 
 		#region Private/Internal Methods
+		internal static void AddToolStrip (ToolStrip ts)
+		{
+			lock (toolstrips)
+				toolstrips.Add (ts);
+		}
+
+		internal static void RemoveToolStrip (ToolStrip ts)
+		{
+			lock (toolstrips)
+				toolstrips.Remove (ts);
+		}
+	
 		internal static void FireAppClicked ()
 		{
 			if (AppClicked != null) AppClicked (null, EventArgs.Empty);
