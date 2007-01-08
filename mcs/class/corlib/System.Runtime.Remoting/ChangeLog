@@ -1,3 +1,11 @@
+2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: FieldSetter and FieldGetter methods need
+	  to be handled in a special way, since they are the only private
+	  methods which can be called from a subclass.
+	  In UpdateOutArgObject, removed support for StringBuilder objects,
+	  now supporting only arrays, like MS.NET.
+
 2006-11-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: Avoid generating urls with negative numbers.

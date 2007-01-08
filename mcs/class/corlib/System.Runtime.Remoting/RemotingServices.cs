@@ -65,6 +65,8 @@ namespace System.Runtime.Remoting
 		internal static string app_id;
 		static int next_id = 1;
 		static readonly BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+		static readonly MethodInfo FieldSetterMethod;
+		static readonly MethodInfo FieldGetterMethod;
 		
 		// Holds information in xdomain calls. Names are short to minimize serialized size.
 		[Serializable]
@@ -87,6 +89,9 @@ namespace System.Runtime.Remoting
 			RegisterInternalChannels ();
 			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
+			
+			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
+			FieldGetterMethod = typeof(object).GetMethod ("FieldGetter", BindingFlags.NonPublic|BindingFlags.Instance);
 		}
 	
 		private RemotingServices () {}
@@ -108,7 +113,10 @@ namespace System.Runtime.Remoting
 			
 			Type tt = target.GetType ();
 			MethodBase method;
-			if (reqMsg.MethodBase.DeclaringType == tt /*|| reqMsg.MethodBase.DeclaringType.IsInterface*/)
+			if (reqMsg.MethodBase.DeclaringType == tt ||
+				reqMsg.MethodBase == FieldSetterMethod || 
+				reqMsg.MethodBase == FieldGetterMethod 
+				/*|| reqMsg.MethodBase.DeclaringType.IsInterface*/)
 				method = reqMsg.MethodBase;
 			else
 				method = tt.GetMethod (reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
@@ -359,8 +367,11 @@ namespace System.Runtime.Remoting
 				else
 					method = type.GetMethod (methodName, methodBindings, null, (Type[]) signature, null);
 				
-				if (method != null) 
+				if (method != null)
 					return method;
+					
+				if (methodName == "FieldSetter" || methodName == "FieldGetter")
+					return typeof(object).GetMethod (methodName, methodBindings);
 				
 				if (signature == null)
 					return type.GetConstructor (methodBindings, null, Type.EmptyTypes, null);
@@ -863,14 +874,7 @@ namespace System.Runtime.Remoting
 		
 		internal static bool UpdateOutArgObject (ParameterInfo pi, object local, object remote)
 		{
-			if (local is StringBuilder) 
-			{
-				StringBuilder sb = local as StringBuilder;
-				sb.Remove (0, sb.Length);
-				sb.Append (remote.ToString());
-				return true;
-			}
-			else if (pi.ParameterType.IsArray && ((Array)local).Rank == 1)
+			if (pi.ParameterType.IsArray && ((Array)local).Rank == 1)
 			{
 				Array alocal = (Array) local;
 				if (alocal.Rank == 1)
