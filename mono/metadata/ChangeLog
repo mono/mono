@@ -1,3 +1,8 @@
+2007-01-08  Lluis Sanchez  <lluis@ximian.com>
+
+	* marshal.c: In MS.NET, StringBuilder objects are not copied by
+	value in out parameters.
+
 2007-01-08  Raja R Harinath  <rharinath@novell.com>
 
 	Simplify invariant for MonoGenericClass::klass field.
