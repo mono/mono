@@ -133,6 +133,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Ignore ("weird test need to check how project.Xml looks")]
 		public void TestCondition2 ()
 		{
 			Engine engine;
@@ -151,9 +152,36 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 
-			project.EvaluatedItems [0].Condition = "something";
+			project.EvaluatedItems [0].Condition = "true";
 			project.ItemGroups.CopyTo (groups, 0);
 			Assert.AreEqual (String.Empty, groups [0] [0].Condition, "A1");
+			Assert.AreEqual ("true", project.EvaluatedItems [0].Condition, "A2");
+		}
+
+		[Test]
+		[Ignore ("weird test need to check how project.Xml looks")]
+		public void TestCondition3 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a;b' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.ItemGroups.CopyTo (groups, 0);
+			groups [0] [0].Condition = "true";
+			Assert.AreEqual ("true", groups [0] [0].Condition, "A1");
+			Assert.AreEqual ("true", project.EvaluatedItems [0].Condition, "A2");
 		}
 
 		[Test]
@@ -223,80 +251,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual ("b", groups [0] [0].Exclude, "A2");
 			Assert.AreEqual ("a;b", groups [0] [0].Include, "A3");
-		}
-
-		[Test]
-		public void TestHasMetadata1 ()
-		{
-			string itemName = "a";
-			string itemInclude = "a";
-			string metadataName = "name";
-
-			item = new BuildItem (itemName, itemInclude);
-
-			Assert.AreEqual (false, item.HasMetadata (metadataName), "A1");
-            
-			item.SetMetadata (metadataName, "value");
-
-			Assert.AreEqual (true, item.HasMetadata (metadataName), "A2");
-			Assert.IsTrue (item.HasMetadata ("FullPath"), "A3");
-			Assert.IsTrue (item.HasMetadata ("RootDir"), "A4");
-			Assert.IsTrue (item.HasMetadata ("Filename"), "A5");
-			Assert.IsTrue (item.HasMetadata ("Extension"), "A6");
-			Assert.IsTrue (item.HasMetadata ("RelativeDir"), "A7");
-			Assert.IsTrue (item.HasMetadata ("Directory"), "A8");
-			Assert.IsTrue (item.HasMetadata ("RecursiveDir"), "A9");
-			Assert.IsTrue (item.HasMetadata ("Identity"), "A10");
-			Assert.IsTrue (item.HasMetadata ("ModifiedTime"), "A11");
-			Assert.IsTrue (item.HasMetadata ("CreatedTime"), "A12");
-			Assert.IsTrue (item.HasMetadata ("AccessedTime"), "A13");
-		}
-
-		[Test]
-		public void TestHasMetadata2 ()
-		{
-			Engine engine;
-			Project project;
-			BuildItemGroup [] groups = new BuildItemGroup [1];
-
-			string documentString = @"
-				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<ItemGroup>
-						<A Include='a;b'>
-							<Meta>Value</Meta>
-						</A>
-					</ItemGroup>
-				</Project>
-			";
-
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-			project.ItemGroups.CopyTo (groups, 0);
-
-			BuildItem item = groups [0] [0];
-
-			Assert.IsFalse (item.HasMetadata ("Other"), "A1");
-			Assert.IsTrue (item.HasMetadata ("Meta"), "A2");
-			Assert.IsTrue (item.HasMetadata ("FullPath"), "A3");
-			Assert.IsTrue (item.HasMetadata ("RootDir"), "A4");
-			Assert.IsTrue (item.HasMetadata ("Filename"), "A5");
-			Assert.IsTrue (item.HasMetadata ("Extension"), "A6");
-			Assert.IsTrue (item.HasMetadata ("RelativeDir"), "A7");
-			Assert.IsTrue (item.HasMetadata ("Directory"), "A8");
-			Assert.IsTrue (item.HasMetadata ("RecursiveDir"), "A9");
-			Assert.IsTrue (item.HasMetadata ("Identity"), "A10");
-			Assert.IsTrue (item.HasMetadata ("ModifiedTime"), "A11");
-			Assert.IsTrue (item.HasMetadata ("CreatedTime"), "A12");
-			Assert.IsTrue (item.HasMetadata ("AccessedTime"), "A13");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void TestHasMetadata3 ()
-		{
-			item = new BuildItem ("name", "spec");
-			item.HasMetadata (null);
 		}
 
 		[Test]
@@ -409,6 +363,168 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (String.Empty, groups [0] [0].GetEvaluatedMetadata ("Other"), "A2");
 			Assert.AreEqual ("A", groups [0] [0].GetEvaluatedMetadata ("Meta2"), "A3");
 		}
+
+		[Test]
+		public void TestHasMetadata1 ()
+		{
+			string itemName = "a";
+			string itemInclude = "a";
+			string metadataName = "name";
+
+			item = new BuildItem (itemName, itemInclude);
+
+			Assert.AreEqual (false, item.HasMetadata (metadataName), "A1");
+
+			item.SetMetadata (metadataName, "value");
+
+			Assert.AreEqual (true, item.HasMetadata (metadataName), "A2");
+			Assert.IsTrue (item.HasMetadata ("FullPath"), "A3");
+			Assert.IsTrue (item.HasMetadata ("RootDir"), "A4");
+			Assert.IsTrue (item.HasMetadata ("Filename"), "A5");
+			Assert.IsTrue (item.HasMetadata ("Extension"), "A6");
+			Assert.IsTrue (item.HasMetadata ("RelativeDir"), "A7");
+			Assert.IsTrue (item.HasMetadata ("Directory"), "A8");
+			Assert.IsTrue (item.HasMetadata ("RecursiveDir"), "A9");
+			Assert.IsTrue (item.HasMetadata ("Identity"), "A10");
+			Assert.IsTrue (item.HasMetadata ("ModifiedTime"), "A11");
+			Assert.IsTrue (item.HasMetadata ("CreatedTime"), "A12");
+			Assert.IsTrue (item.HasMetadata ("AccessedTime"), "A13");
+		}
+
+		[Test]
+		public void TestHasMetadata2 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a;b'>
+							<Meta>Value</Meta>
+						</A>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			project.ItemGroups.CopyTo (groups, 0);
+
+			BuildItem item = groups [0] [0];
+
+			Assert.IsFalse (item.HasMetadata ("Other"), "A1");
+			Assert.IsTrue (item.HasMetadata ("Meta"), "A2");
+			Assert.IsTrue (item.HasMetadata ("FullPath"), "A3");
+			Assert.IsTrue (item.HasMetadata ("RootDir"), "A4");
+			Assert.IsTrue (item.HasMetadata ("Filename"), "A5");
+			Assert.IsTrue (item.HasMetadata ("Extension"), "A6");
+			Assert.IsTrue (item.HasMetadata ("RelativeDir"), "A7");
+			Assert.IsTrue (item.HasMetadata ("Directory"), "A8");
+			Assert.IsTrue (item.HasMetadata ("RecursiveDir"), "A9");
+			Assert.IsTrue (item.HasMetadata ("Identity"), "A10");
+			Assert.IsTrue (item.HasMetadata ("ModifiedTime"), "A11");
+			Assert.IsTrue (item.HasMetadata ("CreatedTime"), "A12");
+			Assert.IsTrue (item.HasMetadata ("AccessedTime"), "A13");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestHasMetadata3 ()
+		{
+			item = new BuildItem ("name", "spec");
+			item.HasMetadata (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestInclude1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+		}
+
+		[Test]
+		public void TestInclude2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual ("a", project.EvaluatedItems [0].Include, "A1");
+		}
+
+		[Test]
+		public void TestInclude3 ()
+		{
+			BuildItem item = new BuildItem ("name", "a");
+			item.Include = "b";
+			Assert.AreEqual ("b", item.Include, "A1");
+		}
+
+		[Test]
+		public void TestName1 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a;b' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.EvaluatedItems [0].Name = "C";
+
+			Assert.AreEqual (2, project.EvaluatedItems.Count, "A1");
+			Assert.AreEqual ("C", project.EvaluatedItems [0].Name, "A2");
+			Assert.AreEqual ("A", project.EvaluatedItems [1].Name, "A3");
+			project.ItemGroups.CopyTo (groups, 0);
+			Assert.AreEqual (2, groups [0].Count, "A4");
+			Assert.AreEqual ("C", groups [0] [0].Name, "A5");
+			Assert.AreEqual ("A", groups [0] [1].Name, "A6");
+		}
+
+		[Test]
+		public void TestName2 ()
+		{
+			BuildItem item = new BuildItem ("A", "V");
+			item.Name = "B";
+			Assert.AreEqual ("B", item.Name, "A1");
+		}
+
 		[Test]
 		public void TestRemoveMetadata1 ()
 		{
@@ -571,6 +687,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
 					<ItemGroup>
 						<A Include='a;b'/>
 					</ItemGroup>
@@ -583,13 +702,15 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			project.ItemGroups.CopyTo (groups, 0);
 
-			groups [0] [0].SetMetadata ("Meta", "Value");
-			// FIXME: add check for project.EvaluatedItems.Count
+			groups [0] [0].SetMetadata ("Meta", "$(A)");
+			Assert.AreEqual (2, project.EvaluatedItems.Count, "A0");
 
 			Assert.AreEqual (1, groups [0].Count, "A1");
-			Assert.AreEqual ("Value", groups [0] [0].GetMetadata ("Meta"), "A2");
-			Assert.AreEqual ("Value", project.EvaluatedItems [0].GetMetadata ("Meta"), "A3");
-			Assert.AreEqual ("Value", project.EvaluatedItems [1].GetMetadata ("Meta"), "A4");
+			Assert.AreEqual ("$(A)", groups [0] [0].GetMetadata ("Meta"), "A2");
+			Assert.AreEqual ("$(A)", project.EvaluatedItems [0].GetMetadata ("Meta"), "A3");
+			Assert.AreEqual ("$(A)", project.EvaluatedItems [1].GetMetadata ("Meta"), "A4");
+			Assert.AreEqual ("A", project.EvaluatedItems [0].GetEvaluatedMetadata ("Meta"), "A5");
+			Assert.AreEqual ("A", project.EvaluatedItems [1].GetEvaluatedMetadata ("Meta"), "A6");
 		}
 
 		[Test]
@@ -624,6 +745,60 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("Value", project.EvaluatedItems [0].GetMetadata ("Meta"), "A6");
 			Assert.AreEqual (String.Empty, project.EvaluatedItems [1].GetMetadata ("Meta"), "A7");
 			Assert.AreEqual (String.Empty, project.EvaluatedItems [1].GetMetadata ("Meta"), "A8");
+		}
+
+		[Test]
+		public void TestSetMetadata7 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a;b;c'>
+							<Meta>Value2</Meta>
+						</A>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.ItemGroups.CopyTo (groups, 0);
+			groups [0][0].SetMetadata ("Meta", "Value");
+			Assert.AreEqual ("Value", groups [0] [0].GetEvaluatedMetadata ("Meta"), "A1");
+			Assert.AreEqual ("Value", groups [0] [0].GetMetadata ("Meta"), "A2");
+		}
+
+		[Test]
+		public void TestSetMetadata8 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.EvaluatedItems [0].SetMetadata ("Meta", "Value");
+
+			Assert.AreEqual (1, project.EvaluatedItems.Count, "A1");
+			Assert.AreEqual ("Value", project.EvaluatedItems [0].GetMetadata ("Meta"), "A2");
+			project.ItemGroups.CopyTo (groups, 0);
+			Assert.AreEqual (1, groups [0].Count, "A3");
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemTest.cs: More tests.
+	* InvalidProjectFileExceptionTest.cs: Added GetObjectData () tests.
+
 2007-01-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemTest.cs: Tests for items from XML.
