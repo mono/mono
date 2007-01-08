@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Web;
 using System.IO;
 using System.Web.J2EE;
+using System.Xml;
 using vmw.common;
 using System.Web.Util;
 
@@ -51,58 +52,60 @@ namespace System.Web.UI {
 						 "Page_CommitTransaction" };
 
 		const BindingFlags bflags = BindingFlags.Public |
-					    BindingFlags.NonPublic |
-					    BindingFlags.Instance;
+						BindingFlags.NonPublic |
+						BindingFlags.Instance;
 
 		private string _templateSourceDir;
 		private static string hashTableMutex = "lock"; //used to sync access ResourceHash property
-		private byte[] GetResourceBytes(Type type) {
-			Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("TemplateControl.RES_BYTES");
+		private byte [] GetResourceBytes (Type type)
+		{
+			Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_BYTES");
 			if (table == null) {
 				return null;
 			}
-			return (byte[])table[type];
+			return (byte []) table [type];
 		}
-		private void SetResourceBytes(Type type, byte[] bytes) {
-			Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("TemplateControl.RES_BYTES");
+		private void SetResourceBytes (Type type, byte [] bytes)
+		{
+			Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_BYTES");
 			if (table == null) {
-				table = new Hashtable();
-				AppDomain.CurrentDomain.SetData("TemplateControl.RES_BYTES" , table);
+				table = new Hashtable ();
+				AppDomain.CurrentDomain.SetData ("TemplateControl.RES_BYTES", table);
 			}
-			table[type] = bytes;
+			table [type] = bytes;
 			return;
 		}
 
-		private Hashtable ResourceHash {
-			get {
-				Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("TemplateControl.RES_STRING");
+		private Hashtable ResourceHash
+		{
+			get
+			{
+				Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_STRING");
 				if (table == null) {
-					table = new Hashtable();
-					AppDomain.CurrentDomain.SetData("TemplateControl.RES_STRING" , table);
+					table = new Hashtable ();
+					AppDomain.CurrentDomain.SetData ("TemplateControl.RES_STRING", table);
 				}
 				return table;
 			}
 		}
 
-		private string CachedString(string filename , int offset, int size)
+		private string CachedString (string filename, int offset, int size)
 		{
 			string key = filename + offset + size;
-			lock (hashTableMutex)
-			{
-				string strObj = (string)ResourceHash[key];
-				if (strObj == null) 
-				{
-					
-					char[] tmp = System.Text.Encoding.UTF8.GetChars(GetResourceBytes(this.GetType()) , offset , size);
-					strObj = new string(tmp);
-					ResourceHash.Add(key, strObj);
+			lock (hashTableMutex) {
+				string strObj = (string) ResourceHash [key];
+				if (strObj == null) {
+
+					char [] tmp = System.Text.Encoding.UTF8.GetChars (GetResourceBytes (this.GetType ()), offset, size);
+					strObj = new string (tmp);
+					ResourceHash.Add (key, strObj);
 				}
-			
+
 				return strObj;
 			}
-			
+
 		}
-		public virtual string TemplateSourceDirectory_Private 
+		public virtual string TemplateSourceDirectory_Private
 		{
 			get { return null; }
 		}
@@ -110,9 +113,10 @@ namespace System.Web.UI {
 		[MonoTODO]
 		// This shouldnt be there, Page.TemplateSourceDirectory must know to get 
 		// the right directory of the control.
-		public override string TemplateSourceDirectory 
+		public override string TemplateSourceDirectory
 		{
-			get {
+			get
+			{
 #if NET_2_0
 				if (this is MasterPage)
 					// because MasterPage also has implementation of this property,
@@ -121,30 +125,28 @@ namespace System.Web.UI {
 					return base.TemplateSourceDirectory;
 #endif
 				int location = 0;
-				if (_templateSourceDir == null)
-				{
+				if (_templateSourceDir == null) {
 					string tempSrcDir = AppRelativeTemplateSourceDirectory;
 					if (tempSrcDir == null && Parent != null)
 						tempSrcDir = Parent.TemplateSourceDirectory;
-					if (tempSrcDir != null && tempSrcDir.Length > 1)
-					{
-						location = tempSrcDir.IndexOf('/',1);
-						if (location!= -1)
-							tempSrcDir = tempSrcDir.Substring(location+1);
+					if (tempSrcDir != null && tempSrcDir.Length > 1) {
+						location = tempSrcDir.IndexOf ('/', 1);
+						if (location != -1)
+							tempSrcDir = tempSrcDir.Substring (location + 1);
 						else
 							tempSrcDir = string.Empty;
 					}
-					string answer =  HttpRuntime.AppDomainAppVirtualPath;
-					if(tempSrcDir == null)
+					string answer = HttpRuntime.AppDomainAppVirtualPath;
+					if (tempSrcDir == null)
 						tempSrcDir = "";
-					
+
 					if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
 						tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
 
-					if (tempSrcDir.StartsWith("/") || tempSrcDir.Length == 0)
-						_templateSourceDir =  answer + tempSrcDir;
+					if (tempSrcDir.StartsWith ("/") || tempSrcDir.Length == 0)
+						_templateSourceDir = answer + tempSrcDir;
 					else
-						_templateSourceDir = answer + "/"+ tempSrcDir;
+						_templateSourceDir = answer + "/" + tempSrcDir;
 				}
 				return _templateSourceDir;
 			}
@@ -161,13 +163,15 @@ namespace System.Web.UI {
 
 		#region Properties
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		protected virtual int AutoHandlers {
+		protected virtual int AutoHandlers
+		{
 			get { return 0; }
 			set { }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		protected virtual bool SupportAutoEvents {
+		protected virtual bool SupportAutoEvents
+		{
 			get { return true; }
 		}
 
@@ -181,11 +185,11 @@ namespace System.Web.UI {
 
 		[MonoTODO]
 		protected LiteralControl CreateResourceBasedLiteralControl (int offset,
-										    int size,
-										    bool fAsciiOnly)
+											int size,
+											bool fAsciiOnly)
 		{
-			string str = CachedString(this.GetType().FullName, offset, size);
-			return new LiteralControl(str);
+			string str = CachedString (this.GetType ().FullName, offset, size);
+			return new LiteralControl (str);
 		}
 
 		internal void WireupAutomaticEvents ()
@@ -214,8 +218,8 @@ namespace System.Web.UI {
 				int length = parms.Length;
 				bool noParams = (length == 0);
 				if (!noParams && (length != 2 ||
-				    parms [0].ParameterType != typeof (object) ||
-				    parms [1].ParameterType != typeof (EventArgs)))
+					parms [0].ParameterType != typeof (object) ||
+					parms [1].ParameterType != typeof (EventArgs)))
 					continue;
 
 				int pos = methodName.IndexOf ("_");
@@ -229,7 +233,8 @@ namespace System.Web.UI {
 				if (noParams) {
 					NoParamsInvoker npi = new NoParamsInvoker (this, methodName);
 					evt.AddEventHandler (this, npi.FakeDelegate);
-				} else {
+				}
+				else {
 					evt.AddEventHandler (this, Delegate.CreateDelegate (
 							typeof (EventHandler), this, methodName));
 				}
@@ -247,7 +252,7 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("virtualPath");
 
 			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
-			return PageMapper.GetObjectType(vpath);
+			return PageMapper.GetObjectType (vpath);
 		}
 
 		public Control LoadControl (string virtualPath)
@@ -302,7 +307,7 @@ namespace System.Web.UI {
 		[MonoTODO ("is this correct?")]
 		public Object ReadStringResource ()
 		{
-			return this.GetType();
+			return this.GetType ();
 		}
 #endif
 		[MonoTODO]
@@ -310,51 +315,46 @@ namespace System.Web.UI {
 		protected void SetStringResourcePointer (object stringResourcePointer,
 							 int maxResourceOffset)
 		{
-			if ( GetResourceBytes(this.GetType()) != null)
+			if (GetResourceBytes (this.GetType ()) != null)
 				return;
 
-			java.lang.Class c = vmw.common.TypeUtils.ToClass(stringResourcePointer);
-			java.lang.ClassLoader  contextClassLoader = c.getClassLoader();
+			java.lang.Class c = vmw.common.TypeUtils.ToClass (stringResourcePointer);
+			java.lang.ClassLoader contextClassLoader = c.getClassLoader ();
 
 			//TODO:move this code to page mapper
-			string assemblyName = PageMapper.GetAssemblyResource(this.AppRelativeVirtualPath);
-			
-			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream(assemblyName);
+			string assemblyName = PageMapper.GetAssemblyResource (this.AppRelativeVirtualPath);
+
+			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream (assemblyName);
 
 			System.IO.Stream strim = null;
 			if (inputStream == null) {
-				string descPath = String.Join("/", new string[]{"assemblies", this.GetType().Assembly.GetName().Name, assemblyName});
-				try 
-				{
-					strim = new StreamReader(HttpContext.Current.Request.MapPath("/" + descPath)).BaseStream;
+				string descPath = String.Join ("/", new string [] { "assemblies", this.GetType ().Assembly.GetName ().Name, assemblyName });
+				try {
+					strim = new StreamReader (HttpContext.Current.Request.MapPath ("/" + descPath)).BaseStream;
 				}
-				catch (Exception ex)
-				{
-					throw new System.IO.IOException("couldn't open resource file:" + assemblyName, ex);
+				catch (Exception ex) {
+					throw new System.IO.IOException ("couldn't open resource file:" + assemblyName, ex);
 				}
 				if (strim == null)
-					throw new System.IO.IOException("couldn't open resource file:" + assemblyName);
+					throw new System.IO.IOException ("couldn't open resource file:" + assemblyName);
 			}
 
-			try
-			{
+			try {
 				if (strim == null)
-					strim = (System.IO.Stream)vmw.common.IOUtils.getStream(inputStream);
-				int capacity = (int)strim.Length;
-				byte[] resourceBytes = new byte[capacity];
-				strim.Read(resourceBytes,0,capacity);
-				SetResourceBytes(this.GetType(), resourceBytes);
+					strim = (System.IO.Stream) vmw.common.IOUtils.getStream (inputStream);
+				int capacity = (int) strim.Length;
+				byte [] resourceBytes = new byte [capacity];
+				strim.Read (resourceBytes, 0, capacity);
+				SetResourceBytes (this.GetType (), resourceBytes);
 			}
-			catch(Exception e)
-			{
-				throw new HttpException("problem with dll.ghres file", e);
+			catch (Exception e) {
+				throw new HttpException ("problem with dll.ghres file", e);
 			}
-			finally
-			{
-				if(strim != null)
-					strim.Close();
-				if (inputStream != null )
-					inputStream.close();
+			finally {
+				if (strim != null)
+					strim.Close ();
+				if (inputStream != null)
+					inputStream.close ();
 			}
 		}
 
@@ -363,8 +363,8 @@ namespace System.Web.UI {
 		protected void WriteUTF8ResourceString (HtmlTextWriter output, int offset,
 							int size, bool fAsciiOnly)
 		{
-			string str = CachedString(this.GetType().FullName, offset, size);
-			output.Write(str);
+			string str = CachedString (this.GetType ().FullName, offset, size);
+			output.Write (str);
 		}
 
 		#endregion
@@ -372,19 +372,22 @@ namespace System.Web.UI {
 		#region Events
 
 		[WebSysDescription ("Raised when the user aborts a transaction.")]
-		public event EventHandler AbortTransaction {
+		public event EventHandler AbortTransaction
+		{
 			add { Events.AddHandler (abortTransaction, value); }
 			remove { Events.RemoveHandler (abortTransaction, value); }
 		}
 
 		[WebSysDescription ("Raised when the user initiates a transaction.")]
-		public event EventHandler CommitTransaction {
+		public event EventHandler CommitTransaction
+		{
 			add { Events.AddHandler (commitTransaction, value); }
 			remove { Events.RemoveHandler (commitTransaction, value); }
 		}
 
 		[WebSysDescription ("Raised when an exception occurs that cannot be handled.")]
-		public event EventHandler Error {
+		public event EventHandler Error
+		{
 			add { Events.AddHandler (error, value); }
 			remove { Events.RemoveHandler (error, value); }
 		}
@@ -410,72 +413,87 @@ namespace System.Web.UI {
 
 #if NET_2_0
 
-	string _appRelativeVirtualPath = null;
+		string _appRelativeVirtualPath = null;
 
-	public string AppRelativeVirtualPath
-	{
-		get { return _appRelativeVirtualPath; }
-		set
+		public string AppRelativeVirtualPath
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
-			if (!UrlUtils.IsRooted (value) && !(value.Length > 0 && value[0] == '~'))
-				throw new ArgumentException ("The path that is set is not rooted");
-			_appRelativeVirtualPath = value;
+			get { return _appRelativeVirtualPath; }
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				if (!UrlUtils.IsRooted (value) && !(value.Length > 0 && value [0] == '~'))
+					throw new ArgumentException ("The path that is set is not rooted");
+				_appRelativeVirtualPath = value;
 
-			int lastSlash = _appRelativeVirtualPath.LastIndexOf ('/');
-			AppRelativeTemplateSourceDirectory = (lastSlash > 0) ? _appRelativeVirtualPath.Substring (0, lastSlash + 1) : "~/";
+				int lastSlash = _appRelativeVirtualPath.LastIndexOf ('/');
+				AppRelativeTemplateSourceDirectory = (lastSlash > 0) ? _appRelativeVirtualPath.Substring (0, lastSlash + 1) : "~/";
+			}
 		}
-	}
 
-	protected object Eval (string expression)
-	{
-		return DataBinder.Eval (Page.GetDataItem (), expression);
-	}
+		protected internal object Eval (string expression)
+		{
+			return DataBinder.Eval (Page.GetDataItem (), expression);
+		}
 
-	protected string Eval (string expression, string format)
-	{
-		return DataBinder.Eval (Page.GetDataItem (), expression, format);
-	}
+		protected internal string Eval (string expression, string format)
+		{
+			return DataBinder.Eval (Page.GetDataItem (), expression, format);
+		}
 
-	protected object XPath (string xpathexpression)
-	{
-		return XPathBinder.Eval (Page.GetDataItem (), xpathexpression);
-	}
+		protected internal object XPath (string xpathexpression)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression);
+		}
 
-	protected string XPath (string xpathexpression, string format)
-	{
-		return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, format);
-	}
+		protected internal object XPath (string xpathexpression, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, null, resolver);
+		}
 
-	protected IEnumerable XPathSelect (string xpathexpression)
-	{
-		return XPathBinder.Select (Page.GetDataItem (), xpathexpression);
-	}
+		protected internal string XPath (string xpathexpression, string format)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, format);
+		}
 
-	protected object GetGlobalResourceObject (string className, string resourceKey)
-	{
-		return HttpContext.GetGlobalResourceObject (className, resourceKey);
-	}
+		protected internal string XPath (string xpathexpression, string format, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, format, resolver);
+		}
 
-	[MonoTODO ("Not implemented")]
-	protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
-	{
-		// FIXME: not sure how to implement that one yet
-		throw new NotSupportedException ();
-	}
+		protected internal IEnumerable XPathSelect (string xpathexpression)
+		{
+			return XPathBinder.Select (Page.GetDataItem (), xpathexpression);
+		}
 
-	protected Object GetLocalResourceObject (string resourceKey)
-	{
-		return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
-	}
+		protected internal IEnumerable XPathSelect (string xpathexpression, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Select (Page.GetDataItem (), xpathexpression, resolver);
+		}
 
-	[MonoTODO ("Not implemented")]
-	protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)
-	{
-		// FIXME: not sure how to implement that one yet
-		throw new NotSupportedException ();
-	}
+		protected object GetGlobalResourceObject (string className, string resourceKey)
+		{
+			return HttpContext.GetGlobalResourceObject (className, resourceKey);
+		}
+
+		[MonoTODO ("Not implemented")]
+		protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
+		{
+			// FIXME: not sure how to implement that one yet
+			throw new NotSupportedException ();
+		}
+
+		protected Object GetLocalResourceObject (string resourceKey)
+		{
+			return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
+		}
+
+		[MonoTODO ("Not implemented")]
+		protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)
+		{
+			// FIXME: not sure how to implement that one yet
+			throw new NotSupportedException ();
+		}
 
 #endif
 

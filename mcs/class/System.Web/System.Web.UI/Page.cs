@@ -555,6 +555,7 @@ public class Page : TemplateControl, IHttpHandler
 		}
 		if (_theme != null && _theme != "") {
 			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, _context);
+			_pageTheme.SetPage (this);
 		}
 	}
 

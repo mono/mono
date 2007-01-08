@@ -38,6 +38,8 @@ namespace System.Web.UI {
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public abstract class PageTheme
 	{
+		Page _page = null;
+
 		protected PageTheme ()
 		{
 		}
@@ -47,16 +49,14 @@ namespace System.Web.UI {
 			return String.Format ("{0}:{1}", skinID, controlType);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected object Eval (string expression)
 		{
-			throw new NotImplementedException ();
+			return Page.Eval (expression);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected string Eval (string expression, string format)
 		{
-			throw new NotImplementedException ();
+			return Page.Eval (expression, format);
 		}
 
 		[MonoTODO("Not implemented")]
@@ -65,49 +65,47 @@ namespace System.Web.UI {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected object XPath (string xPathExpression)
 		{
-			throw new NotImplementedException ();
+			return Page.XPath (xPathExpression);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected object XPath (string xPathExpression, IXmlNamespaceResolver resolver)
 		{
-			throw new NotImplementedException ();
+			return Page.XPath (xPathExpression, resolver);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected string XPath (string xPathExpression, string format)
 		{
-			throw new NotImplementedException ();
+			return Page.XPath (xPathExpression, format);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected string XPath (string xPathExpression, string format, IXmlNamespaceResolver resolver)
 		{
-			throw new NotImplementedException ();
+			return Page.XPath (xPathExpression, format, resolver);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected IEnumerable XPathSelect (string xPathExpression)
 		{
-			throw new NotImplementedException ();
+			return Page.XPathSelect (xPathExpression);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected IEnumerable XPathSelect (string xPathExpression, IXmlNamespaceResolver resolver)
 		{
-			throw new NotImplementedException ();
+			return Page.XPathSelect (xPathExpression, resolver);
 		}
 
 		protected abstract string AppRelativeTemplateSourceDirectory { get; }
 		protected abstract IDictionary ControlSkins { get; }
 		protected abstract string[] LinkedStyleSheets { get; }
 
-		[MonoTODO("Not implemented")]
 		protected Page Page {
-			get { throw new NotImplementedException (); }
+			get { return _page; }
+		}
+
+		internal void SetPage (Page page)
+		{
+			_page = page;
 		}
 
 		internal ControlSkin GetControlSkin (Type controlType, string skinID)

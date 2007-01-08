@@ -40,43 +40,52 @@ namespace System.Web.UI {
 		private XPathBinder ()
 		{
 		}
-		
+
 		public static object Eval (object container, string xpath)
+		{
+			return Eval (container, xpath, null);
+		}
+
+		public static string Eval (object container, string xpath, string format)
+		{
+			return Eval (container, xpath, format, null);
+		}
+
+		public static string Eval (object container, string xpath, string format, IXmlNamespaceResolver resolver)
 		{
 			if (xpath == null || xpath.Length == 0)
 				throw new ArgumentNullException ("xpath");
-			
+
 			IXPathNavigable factory = container as IXPathNavigable;
-			
+
 			if (factory == null)
 				throw new ArgumentException ("container");
-			
-			object result = factory.CreateNavigator ().Evaluate (xpath);
-			
+
+			object result = factory.CreateNavigator ().Evaluate (xpath, resolver);
+
 			XPathNodeIterator itr = result as XPathNodeIterator;
 			if (itr != null) {
-				if (itr.MoveNext())
+				if (itr.MoveNext ())
 					return itr.Current.Value;
 				else
 					return null;
 			}
-			return result;
-		}
-		
-		public static string Eval (object container, string xpath, string format)
-		{
-			object result = Eval (container, xpath);
-			
+
 			if (result == null)
 				return String.Empty;
 			if (format == null || format.Length == 0)
 				return result.ToString ();
-			
+
 			return String.Format (format, result);
 		}
 
 		public static IEnumerable Select (object container, string xpath)
 		{
+			return Select (container, xpath, null);
+		}
+
+		public static IEnumerable Select (object container, string xpath, IXmlNamespaceResolver resolver)
+		{
 			if (xpath == null || xpath.Length == 0)
 				throw new ArgumentNullException ("xpath");
 			
@@ -85,7 +94,7 @@ namespace System.Web.UI {
 			if (factory == null)
 				throw new ArgumentException ("container");
 			
-			XPathNodeIterator itr = factory.CreateNavigator ().Select (xpath);
+			XPathNodeIterator itr = factory.CreateNavigator ().Select (xpath, resolver);
 			ArrayList ret = new ArrayList ();
 			
 			while (itr.MoveNext ()) {

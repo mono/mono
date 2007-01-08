@@ -1,5 +1,15 @@
 2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* PageTheme.cs: implemented
+	* Page.cs: fixed InitializeTheme, added PageTheme page initialization
+	* TemplateControl.cs, 
+	* TemplateControl.jvm.cs: added XPath, XPathSelect overloads with
+	IXmlNamespaceResolver parameter
+	* XPathBinder.cs: added Eval, Select overloads with
+	IXmlNamespaceResolver parameter, refactored
+
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* TemplateControl.jvm.cs: added GetGlobalResourceObject
 
 2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>

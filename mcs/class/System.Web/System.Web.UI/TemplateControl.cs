@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Util;
+using System.Xml;
 
 namespace System.Web.UI {
 
@@ -338,29 +339,44 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		protected object Eval (string expression)
+		protected internal object Eval (string expression)
 		{
 			return DataBinder.Eval (Page.GetDataItem(), expression);
 		}
 	
-		protected string Eval (string expression, string format)
+		protected internal string Eval (string expression, string format)
 		{
 			return DataBinder.Eval (Page.GetDataItem(), expression, format);
 		}
 	
-		protected object XPath (string xpathexpression)
+		protected internal object XPath (string xpathexpression)
 		{
 			return XPathBinder.Eval (Page.GetDataItem(), xpathexpression);
 		}
 	
-		protected string XPath (string xpathexpression, string format)
+		protected internal object XPath (string xpathexpression, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, null, resolver);
+		}
+
+		protected internal string XPath (string xpathexpression, string format)
 		{
 			return XPathBinder.Eval (Page.GetDataItem(), xpathexpression, format);
 		}
 	
-		protected IEnumerable XPathSelect (string xpathexpression)
+		protected internal string XPath (string xpathexpression, string format, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, format, resolver);
+		}
+
+		protected internal IEnumerable XPathSelect (string xpathexpression)
 		{
 			return XPathBinder.Select (Page.GetDataItem(), xpathexpression);
+		}
+
+		protected internal IEnumerable XPathSelect (string xpathexpression, IXmlNamespaceResolver resolver)
+		{
+			return XPathBinder.Select (Page.GetDataItem (), xpathexpression, resolver);
 		}
 
 		// IFilterResolutionService
