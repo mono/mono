@@ -42,9 +42,9 @@ namespace Cairo
 		Rgb16565 = 4,
 #endif
 
-		[Obsolete ("Use Argb32")]
+		//[Obsolete ("Use Argb32")]
 		ARGB32 = Argb32,
-		[Obsolete ("Use Rgb32")]
+		//[Obsolete ("Use Rgb32")]
 		RGB24	= Rgb24,
 	}
 }
