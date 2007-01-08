@@ -265,8 +265,86 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual (10, v.PropertyValue, "A4");
 #endif
 		}
-	}
 
+		[Test]
+		public void DefaultValueType ()
+		{
+			SettingsProperty p1 = new SettingsProperty ("property",
+								   typeof (int),
+								   null,
+								   true,
+								   (int) 10,
+								   SettingsSerializeAs.String,
+								   null,
+								   true,
+								   false);
+			SettingsPropertyValue v1 = new SettingsPropertyValue (p1);
+			Assert.AreEqual (typeof (int), v1.PropertyValue.GetType (), "A1");
+			Assert.AreEqual (10, v1.PropertyValue, "A2");
+
+			SettingsProperty p2 = new SettingsProperty ("property",
+					   typeof (int),
+					   null,
+					   true,
+					   "10",
+					   SettingsSerializeAs.String,
+					   null,
+					   true,
+					   false);
+			SettingsPropertyValue v2 = new SettingsPropertyValue (p2);
+			Assert.AreEqual (typeof (int), v2.PropertyValue.GetType (), "A3");
+			Assert.AreEqual (10, v2.PropertyValue, "A4");
+		}
+
+		[Serializable]
+		public class MyData
+		{
+			private int intProp = 777;
+			public int IntProp
+			{
+				get { return intProp; }
+				set { intProp = value; }
+			}
+		}
+
+		[Test]
+		public void DefaultValueCompexTypeEmpty ()
+		{
+			SettingsProperty p1 = new SettingsProperty ("property",
+								   typeof (MyData),
+								   null,
+								   true,
+								   "",
+								   SettingsSerializeAs.String,
+								   null,
+								   true,
+								   false);
+			SettingsPropertyValue v1 = new SettingsPropertyValue (p1);
+			Assert.IsNotNull (v1.PropertyValue, "A1");
+			Assert.AreEqual (typeof (MyData), v1.PropertyValue.GetType (), "A2");
+			MyData h = (MyData) v1.PropertyValue;
+			Assert.AreEqual (777, h.IntProp, "A3");
+		}
+
+		[Test]
+		public void DefaultValueCompexType ()
+		{
+			SettingsProperty p2 = new SettingsProperty ("property",
+								   typeof (MyData),
+								   null,
+								   true,
+								   @"<?xml version=""1.0"" encoding=""utf-16""?><MyData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><IntProp>5</IntProp></MyData>",
+								   SettingsSerializeAs.Xml,
+								   null,
+								   true,
+								   false);
+			SettingsPropertyValue v2 = new SettingsPropertyValue (p2);
+			Assert.IsNotNull (v2.PropertyValue, "A1");
+			Assert.AreEqual (typeof (MyData), v2.PropertyValue.GetType (), "A2");
+			MyData h = (MyData) v2.PropertyValue;
+			Assert.AreEqual (5, h.IntProp, "A3");
+		}
+	}
 }
 
 #endif

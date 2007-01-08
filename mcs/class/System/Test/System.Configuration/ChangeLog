@@ -1,3 +1,8 @@
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingsPropertyValueTest.cs: added tests of default value
+	deserealization
+
 2006-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSettingsBaseTest.cs: Added test case for StringCollection
