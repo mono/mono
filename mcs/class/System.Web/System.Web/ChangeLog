@@ -1,3 +1,7 @@
+2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.cs: fixed IsLocal, should check all ip addresses of host
+
 2007-01-05  Marek Habersack  <grendello@gmail.com>
 
 	* HttpApplicationFactory.cs: Use the new app resources compiler.

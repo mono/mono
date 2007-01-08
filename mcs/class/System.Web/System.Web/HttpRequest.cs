@@ -88,10 +88,17 @@ namespace System.Web {
 		string [] user_languages;
 		Uri cached_url;
 		TempFileStream request_file;
+
+		readonly static System.Net.IPAddress [] host_addresses;
 		
 		// Validations
 		bool validate_cookies, validate_query_string, validate_form;
 		bool checked_cookies, checked_query_string, checked_form;
+
+		static HttpRequest ()
+		{
+			host_addresses = GetLocalHostAddresses ();
+		}
 		
 		public HttpRequest (string filename, string url, string queryString)
 		{
@@ -1245,7 +1252,15 @@ namespace System.Web {
 			get {
 				string address = worker_request.GetRemoteAddress ();
 
-				return (address == "127.0.0.1");
+				if (address == "127.0.0.1")
+					return true;
+
+				System.Net.IPAddress remoteAddr = System.Net.IPAddress.Parse (address);
+				for (int i = 0; i < host_addresses.Length; i++)
+					if (remoteAddr.Equals (host_addresses [i]))
+						return true;
+
+				return false;
 			}
 		}
 
@@ -1378,6 +1393,22 @@ namespace System.Web {
 			return false;
 		}
 
+		static System.Net.IPAddress [] GetLocalHostAddresses ()
+		{
+			try {
+				string hostName = System.Net.Dns.GetHostName ();
+#if NET_2_0
+				System.Net.IPAddress [] ipaddr = System.Net.Dns.GetHostAddresses (hostName);
+#else
+				System.Net.IPAddress [] ipaddr = System.Net.Dns.GetHostByName (hostName).AddressList;
+#endif
+				return ipaddr;
+			}
+			catch
+			{
+				return new System.Net.IPAddress[0];
+			}
+		}
 	}
 #endregion
 
