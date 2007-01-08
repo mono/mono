@@ -1,3 +1,8 @@
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingsPropertyValue.cs: fixed PropertyValue, default value of
+	SettingsProperty should be desirialized or created
+
 2007-01-03  Tor Lillqvist  <tml@novell.com>
 
 	* ConfigurationSettings.cs: First try loading a bundled

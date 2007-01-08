@@ -80,15 +80,9 @@ namespace System.Configuration
 		public object PropertyValue {
 			get {
 				if (needPropertyValue) {
-					propertyValue = GetDeserializedValue ();
+					propertyValue = GetDeserializedValue (serializedValue);
 					if (propertyValue == null) {
-						if (!property.PropertyType.IsAssignableFrom (property.DefaultValue.GetType ())) {
-							TypeConverter converter = TypeDescriptor.GetConverter (property.PropertyType);
-							propertyValue = converter.ConvertFrom (property.DefaultValue);
-						}
-						else {
-							propertyValue = property.DefaultValue;
-						}
+						propertyValue = GetDeserializedDefaultValue ();
 						defaulted = true;
 					}
 					needPropertyValue = false;
@@ -163,7 +157,23 @@ namespace System.Configuration
 			}
 		}
 
-		private object GetDeserializedValue ()
+		private object GetDeserializedDefaultValue ()
+		{
+			if (property.DefaultValue == null ||
+				(property.DefaultValue is string && ((string) property.DefaultValue).Length == 0))
+				return Activator.CreateInstance (property.PropertyType);
+
+			if (property.DefaultValue is string && ((string) property.DefaultValue).Length > 0)
+				return GetDeserializedValue (property.DefaultValue);
+
+			if (!property.PropertyType.IsAssignableFrom (property.DefaultValue.GetType ())) {
+				TypeConverter converter = TypeDescriptor.GetConverter (property.PropertyType);
+				return converter.ConvertFrom (property.DefaultValue);
+			}
+			return property.DefaultValue;
+		}
+
+		private object GetDeserializedValue (object serializedValue)
 		{
 			if (serializedValue == null)
 				return null;
@@ -173,7 +183,7 @@ namespace System.Configuration
 			try {
 				switch (property.SerializeAs) {
 					case SettingsSerializeAs.String:
-						if (((string) serializedValue).Length > 0)
+						if (serializedValue is string && ((string) serializedValue).Length > 0)
 							deserializedObject = TypeDescriptor.GetConverter (property.PropertyType).ConvertFromString ((string) serializedValue);
 						break;
 #if (XML_DEP)
@@ -198,7 +208,7 @@ namespace System.Configuration
 			return deserializedObject;
 		}
 
-		SettingsProperty property;
+		readonly SettingsProperty property;
 		object propertyValue;
 		object serializedValue;
 		bool needSerializedValue;
