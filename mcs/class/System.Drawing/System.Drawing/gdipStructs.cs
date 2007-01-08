@@ -5,9 +5,7 @@
 // Alexandre Pigolkine (pigolkine@gmx.de)
 // Jordi Mas (jordi@ximian.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -132,7 +130,19 @@ namespace System.Drawing
 			codec.Clsid = gdipcodec.Clsid;
 			codec.FormatID = gdipcodec.FormatID;			
 			codec.Flags = gdipcodec.Flags;
-			codec.Version  = gdipcodec.Version;					
+			codec.Version = gdipcodec.Version;
+			codec.SignatureMasks = new byte [gdipcodec.SigCount][];
+			codec.SignaturePatterns = new byte [gdipcodec.SigCount][];
+			IntPtr p = gdipcodec.SigPattern;
+			IntPtr m = gdipcodec.SigMask;
+			for (int i=0; i < gdipcodec.SigCount; i++) {
+				codec.SignatureMasks[i] = new byte [gdipcodec.SigSize];
+				Marshal.Copy (m, codec.SignatureMasks[i], 0, gdipcodec.SigSize);
+				m = new IntPtr (m.ToInt64 () + gdipcodec.SigSize);
+				codec.SignaturePatterns[i] = new byte [gdipcodec.SigSize];
+				Marshal.Copy (p, codec.SignaturePatterns[i], 0, gdipcodec.SigSize);
+				p = new IntPtr (p.ToInt64 () + gdipcodec.SigSize);
+			}
 		}
 	}
 

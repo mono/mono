@@ -1,3 +1,8 @@
+2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipStructs.cs: Add support for SignaturePatterns and 
+	SiggnatureMasks values.
+
 2006-12-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* gdipFunctions.cs: Don't create "millions" of byte arrays in
