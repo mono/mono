@@ -95,6 +95,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 			IServerChannelSink next_sink = ChannelServices.CreateServerChannelSinkChain (serverSinkProvider, this);
 			sink = new TcpServerTransportSink (next_sink);
+
+			StartListening (null);
 		}
 		
 		public TcpServerChannel (int port)

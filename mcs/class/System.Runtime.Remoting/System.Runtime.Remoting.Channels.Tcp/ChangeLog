@@ -1,3 +1,8 @@
+2007-01-08  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TcpChannel.cs, TcpServerChannel.cs: Moved StartListening call to
+	  the constructor of TcpServerChannel.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TcpChannel.cs: The remoting infrastructure does not call

@@ -65,8 +65,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			
 			val = properties ["priority"];
 			if (val != null) _priority = Convert.ToInt32 (val);
-
-			StartListening (null);
 		}
 
 
