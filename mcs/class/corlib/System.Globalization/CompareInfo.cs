@@ -360,6 +360,13 @@ namespace System.Globalization
 		public virtual SortKey GetSortKey(string source,
 						  CompareOptions options)
 		{
+#if NET_2_0
+			switch (options) {
+			case CompareOptions.Ordinal:
+			case CompareOptions.OrdinalIgnoreCase:
+				throw new ArgumentException ("Now allowed CompareOptions.");
+			}
+#endif
 			if (UseManagedCollation)
 				return collator.GetSortKey (source, options);
 			SortKey key=new SortKey (culture, source, options);

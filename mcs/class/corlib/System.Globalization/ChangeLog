@@ -1,3 +1,8 @@
+2007-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : GetSortKey() does not allow Ordinal and 
+	  OrdinalIgnoreCase in 2.0 (shuold be also prohibited in 1.x BTW).
+
 2006-12-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : for OrdinalIgnoreCase, IndexOf() and LastIndexOf()
