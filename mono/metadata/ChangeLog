@@ -1,5 +1,7 @@
 2007-01-09  Raja R Harinath  <rharinath@novell.com>
 
+	* class-internals.h (_MonoInflatedGenericClass.is_initialized): Remove.
+
 	* object.c (set_value): Avoid aliasing between type->data.klass
 	and type->data.generic_class.
 
