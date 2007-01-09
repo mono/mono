@@ -1,3 +1,7 @@
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* System.Runtime.Remoting_test.dll.sources: add GenericTest.cs.
+
 2005-11-16  Vladislav Spivak  <spivak@mainsoft.com>
 	* Added net_1_1_java source includes and excludes
 

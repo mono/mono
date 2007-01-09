@@ -1,3 +1,8 @@
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs: Added test for generics in remoting interfaces.
+	See bug #80383.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BaseCalls.cs: Added some tests for exceptions.

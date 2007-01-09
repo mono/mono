@@ -13,3 +13,4 @@ HttpCalls.cs
 ActivationTests.cs
 RemotingServicesTest.cs
 IpcCalls.cs
+GenericTest.cs
