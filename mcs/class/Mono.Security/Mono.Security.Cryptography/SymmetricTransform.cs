@@ -214,7 +214,7 @@ namespace Mono.Security.Cryptography {
 		// Cipher Text Stealing (CTS)
 		protected virtual void CTS (byte[] input, byte[] output) 
 		{
-			throw new CryptographicException ("CTS  isn't supported by the framework");
+			throw new CryptographicException ("CTS isn't supported by the framework");
 		}
 
 		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -241,13 +241,22 @@ namespace Mono.Security.Cryptography {
 				throw new ArgumentNullException ("outputBuffer");
 			if (outputOffset < 0)
 				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
+
 			// ordered to avoid possible integer overflow
-			if (outputOffset > outputBuffer.Length - inputCount) {
-				// there's a special case if this is the end of the decryption process
-				if (inputBuffer.Length - inputOffset - outputBuffer.Length == BlockSizeByte)
-					inputCount = inputCount = outputBuffer.Length - outputOffset;
-				else
+			int len = outputBuffer.Length - inputCount - outputOffset;
+			if (!encrypt && (0 > len) && ((algo.Padding == PaddingMode.None) || (algo.Padding == PaddingMode.Zeros))) {
+				throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+			} else 	if (KeepLastBlock) {
+				if (0 > len + BlockSizeByte)
 					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+			} else {
+				if (0 > len) {
+					// there's a special case if this is the end of the decryption process
+					if (inputBuffer.Length - inputOffset - outputBuffer.Length == BlockSizeByte)
+						inputCount = inputCount = outputBuffer.Length - outputOffset;
+					else
+						throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+				}
 			}
 			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 		}
