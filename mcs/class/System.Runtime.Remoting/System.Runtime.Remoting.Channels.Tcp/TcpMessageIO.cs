@@ -97,15 +97,27 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public static void SendMessageStream (Stream networkStream, Stream data, ITransportHeaders requestHeaders, byte[] buffer)
 		{
+			SendMessageStream (networkStream, data, requestHeaders, buffer, false);
+		}
+
+		public static void SendMessageStream (Stream networkStream, Stream data, ITransportHeaders requestHeaders, byte[] buffer, bool isOneWay)
+		{
 			if (buffer == null) buffer = new byte[DefaultStreamBufferSize];
 
 			// Writes the message start header
 			byte[] dotnetHeader = _msgHeaders[(int) MessageStatus.MethodMessage];
 			networkStream.Write(dotnetHeader, 0, dotnetHeader.Length);
 
-			// Writes header tag (0x0000 if request stream, 0x0002 if response stream)
-			if(requestHeaders[CommonTransportKeys.RequestUri]!=null) buffer [0] = (byte) 0;
-			else buffer[0] = (byte) 2;
+			// Writes the header tag
+			// 0x0000 - request stream
+			// 0x0001 - OneWay request stream
+			// 0x0002 - response stream
+			if(requestHeaders[CommonTransportKeys.RequestUri]!=null) {
+				buffer [0] = isOneWay ? (byte) 1 : (byte) 0;
+			}
+			else {
+				buffer[0] = (byte) 2;
+			}
 			buffer [1] = (byte) 0 ;
 
 			// Writes ID

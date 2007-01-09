@@ -1,3 +1,14 @@
+2006-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* TcpServerChannel.cs (ProcessMessages): Flush the stream only when
+	necessary (TcpServerTransportSink.InternalProcessMessage does it anyway),
+	otherwise pending OneWay & async messages are lost.
+	* TcpMessageIO.cs (SendMessageStream): Mark OneWay messages as such.
+	Fixes MS.NET interoperability.
+	* TcpClientTransportSink.cs (AsyncProcessRequest):
+	Use the new TcpMessageIO.SendMessageStream overload to mark OneWay
+	requests. Fixes bug #80406.
+
 2007-01-08  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TcpChannel.cs, TcpServerChannel.cs: Moved StartListening call to

@@ -324,10 +324,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 						case MessageStatus.Unknown:
 						case MessageStatus.CancelSignal:
+							_stream.Flush ();
 							end = true;
 							break;
 					}
-					_stream.Flush ();
 				}
 			}
 			catch (Exception ex)
