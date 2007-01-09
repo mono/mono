@@ -1,5 +1,8 @@
 2007-01-09  Raja R Harinath  <rharinath@novell.com>
 
+	* object.c (set_value): Avoid aliasing between type->data.klass
+	and type->data.generic_class.
+
 	* class.c (mono_class_create_generic): Don't use 'is_initialized' field.
 
 2007-01-08  Raja R Harinath  <rharinath@novell.com>
