@@ -44,14 +44,18 @@ namespace System.Web.UI.WebControls
 		readonly string cacheKeyDependency;
 		readonly string controlID;
 		readonly DataSourceCacheExpiry cacheExpirationPolicy;
+		readonly Control owner;
+		readonly HttpContext context;
 
 		internal DataSourceCacheManager (int cacheDuration, string cacheKeyDependency,
-			DataSourceCacheExpiry cacheExpirationPolicy, string controlID)
+			DataSourceCacheExpiry cacheExpirationPolicy, Control owner, HttpContext context)
 		{
 			this.cacheDuration = cacheDuration;
 			this.cacheKeyDependency = cacheKeyDependency;
 			this.cacheExpirationPolicy = cacheExpirationPolicy;
-			this.controlID = controlID;
+			this.controlID = owner.UniqueID;
+			this.owner = owner;
+			this.context = context;
 
 			if (DataCache [controlID] == null)
 				DataCache [controlID] = new object ();
@@ -109,13 +113,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		static string GetKeyFromParameters (string methodName, ParameterCollection parameters)
+		string GetKeyFromParameters (string methodName, ParameterCollection parameters)
 		{
 			StringBuilder sb = new StringBuilder (methodName);
 
 			for (int i = 0; i < parameters.Count; i++) {
 				sb.Append (parameters [i].Name);
-				sb.Append (parameters [i].DefaultValue);
+				sb.Append (parameters [i].GetValue (context, owner));
 			}
 
 			return sb.ToString ();

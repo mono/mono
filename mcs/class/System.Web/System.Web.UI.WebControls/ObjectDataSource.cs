@@ -349,7 +349,7 @@ namespace System.Web.UI.WebControls
 		internal DataSourceCacheManager Cache {
 			get {
 				if (cache == null)
-					cache = new DataSourceCacheManager (CacheDuration, CacheKeyDependency, CacheExpirationPolicy, UniqueID);
+					cache = new DataSourceCacheManager (CacheDuration, CacheKeyDependency, CacheExpirationPolicy, this, Context);
 				return cache;
 			}
 		}
@@ -431,4 +431,5 @@ namespace System.Web.UI.WebControls
 	}
 }
 #endif
+
 

@@ -1,3 +1,10 @@
+2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataSourceCacheManager.cs:
+	* ObjectDataSource.cs:
+	* SqlDataSource.cs:
+	fixed: cache considers parameters values changes.				
+
 2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DetailsView.cs: fixed DeleteItem, excluded keys for new values
