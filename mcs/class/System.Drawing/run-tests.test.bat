@@ -131,7 +131,7 @@ REM ********************************************************
 REM ********************************************************
 
 REM ********************************************************
-@echo Running fixture "%RUNNING_FIXTURE%"
+@echo Running fixture "%RUNNING_FIXTURE%" (in .NET)
 REM ********************************************************
 
 if "%RUNNING_DIR%" NEQ "" (
@@ -150,8 +150,9 @@ copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit-console.e
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.util.dll" .
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.core.dll" .
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.framework.dll" .
-%NUNIT_CONSOLE_PATH%\nunit-console.exe /fixture:%RUNNING_FIXTURE% %TEST_NET_ASSEMBLY% %NUNIT_OPTIONS% /xml=%NET_OUTPUT_XML% >>%RUN_LOG% 2<&1
-
+echo "==== .NET reference ==="  >> %RUN_LOG%
+nunit-console.exe /fixture:%RUNNING_FIXTURE% %TEST_NET_ASSEMBLY% %NUNIT_OPTIONS% /xml=%NET_OUTPUT_XML% >>%RUN_LOG% 2<&1
+echo "==== End .NET reference ==="  >> %RUN_LOG%
 
 REM ********************************************************
 @echo Running GH tests...
