@@ -1,3 +1,7 @@
+2007-01-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.Common.targets: Added $(ProjectDir).
+
 2007-01-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile, Main.cs: Moved XBuild files to lib/mono/2.0 from
