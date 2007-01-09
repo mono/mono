@@ -1,3 +1,9 @@
+2007-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslMessage.cs : added MONO_XSLT_MESSAGE_OUTPUT environment
+	  variable support to switch xsl:message output ('none' and 'stderr',
+	  or stdout by default).
+
 2005-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslForEach.cs : push current node context after iterating "selected"

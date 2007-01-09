@@ -32,12 +32,32 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
-namespace Mono.Xml.Xsl.Operations {
-	internal class XslMessage : XslCompiledElement {
+namespace Mono.Xml.Xsl.Operations 
+{
+	internal class XslMessage : XslCompiledElement 
+	{
+		static TextWriter output;
+
+		static XslMessage ()
+		{
+			switch (Environment.GetEnvironmentVariable ("MONO_XSLT_MESSAGE_OUTPUT")) {
+			case "none":
+				output = TextWriter.Null;
+				break;
+			case "stderr":
+				output = Console.Error;
+				break;
+			default:
+				output = Console.Out;
+				break;
+			}
+		}
+
 		bool terminate;
 		XslOperation children;
 		
@@ -55,7 +75,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			if (children != null)
-				Console.Write (children.EvaluateAsString (p));
+				output.Write (children.EvaluateAsString (p));
 			if (terminate)
 				throw new XsltException ("Transformation terminated.", null, p.CurrentNode);
 		}
