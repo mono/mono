@@ -1,3 +1,8 @@
+2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fix #80439 again. This time we have tests for
+	all ciphers, modes and padding.
+
 2007-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fix previous fix (for #80439) as we were now
