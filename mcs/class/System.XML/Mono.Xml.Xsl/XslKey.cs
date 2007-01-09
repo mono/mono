@@ -100,7 +100,6 @@ namespace Mono.Xml.Xsl
 	{
 		XsltCompiledContext ctx;
 		XslKey key;
-		Hashtable map;
 		Hashtable mappedDocuments;
 
 		public KeyIndexTable (XsltCompiledContext ctx, XslKey key)
@@ -113,7 +112,7 @@ namespace Mono.Xml.Xsl
 			get { return key; }
 		}
 
-		private void CollectTable (XPathNavigator doc, XsltContext ctx)
+		private void CollectTable (XPathNavigator doc, XsltContext ctx, Hashtable map)
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
@@ -130,7 +129,7 @@ namespace Mono.Xml.Xsl
 			do {
 				if (key.Match.Matches (nav, ctx)) {
 					tmp.MoveTo (nav);
-					CollectIndex (nav, tmp);
+					CollectIndex (nav, tmp, map);
 				}
 			} while (MoveNavigatorToNext (nav, matchesAttributes));
 			if (map != null)
@@ -159,33 +158,33 @@ namespace Mono.Xml.Xsl
 			return false;
 		}
 
-		private void CollectIndex (XPathNavigator nav, XPathNavigator target)
+		private void CollectIndex (XPathNavigator nav, XPathNavigator target, Hashtable map)
 		{
 			XPathNodeIterator iter;
 			switch (key.Use.ReturnType) {
 			case XPathResultType.NodeSet:
 				iter = nav.Select (key.Use);
 				while (iter.MoveNext ())
-					AddIndex (iter.Current.Value, target);
+					AddIndex (iter.Current.Value, target, map);
 				break;
 			case XPathResultType.Any:
 				object o = nav.Evaluate (key.Use);
 				iter = o as XPathNodeIterator;
 				if (iter != null) {
 					while (iter.MoveNext ())
-						AddIndex (iter.Current.Value, target);
+						AddIndex (iter.Current.Value, target, map);
 				}
 				else
-					AddIndex (XPathFunctions.ToString (o), target);
+					AddIndex (XPathFunctions.ToString (o), target, map);
 				break;
 			default:
 				string keyValue = nav.EvaluateString (key.Use, null, null);
-				AddIndex (keyValue, target);
+				AddIndex (keyValue, target, map);
 				break;
 			}
 		}
 
-		private void AddIndex (string key, XPathNavigator target)
+		private void AddIndex (string key, XPathNavigator target, Hashtable map)
 		{
 			ArrayList al = map [key] as ArrayList;
 			if (al == null) {
@@ -200,13 +199,13 @@ namespace Mono.Xml.Xsl
 
 		private ArrayList GetNodesByValue (XPathNavigator nav, string value, XsltContext ctx)
 		{
-			if (map == null) {
+			if (mappedDocuments == null)
 				mappedDocuments = new Hashtable ();
+			Hashtable map = (Hashtable) mappedDocuments [nav.BaseURI];
+			if (map == null) {
 				map = new Hashtable ();
-			}
-			if (!mappedDocuments.ContainsKey (nav.BaseURI)) {
-				mappedDocuments.Add (nav.BaseURI, nav.BaseURI);
-				CollectTable (nav, ctx);
+				mappedDocuments.Add (nav.BaseURI, map);
+				CollectTable (nav, ctx, map);
 			}
 			
 			return map [value] as ArrayList;

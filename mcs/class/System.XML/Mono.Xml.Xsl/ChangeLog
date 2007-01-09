@@ -1,3 +1,8 @@
+2007-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslKey.cs : keep keytables per instance document and do not share
+	  them among all.
+
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslStylesheet.cs, XslTemplate.cs : added XSLT stack frame debug
