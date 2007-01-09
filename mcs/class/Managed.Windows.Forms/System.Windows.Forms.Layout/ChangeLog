@@ -1,3 +1,8 @@
+2007-01-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Use PreferredSize for non-Anchor/Dock controls. (2.0)
+	Change a SetBounds to SetImplicitBounds.
+
 2007-01-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ArrangedElementCollection.cs: Make list internal.

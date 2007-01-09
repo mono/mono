@@ -145,7 +145,6 @@ namespace System.Windows.Forms
 		ImageLayout backgroundimage_layout;
 		Size maximum_size;
 		Size minimum_size;
-		Size preferred_size;
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
 #endif
@@ -960,7 +959,6 @@ namespace System.Windows.Forms
 			padding = new Padding(0);
 			maximum_size = new Size();
 			minimum_size = new Size();
-			preferred_size = this.DefaultSize;
 			margin = this.DefaultMargin;
 #endif
 
@@ -981,11 +979,11 @@ namespace System.Windows.Forms
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			bounds.Size = SizeFromClientSize (client_size);
-			
 			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
 				bounds.X=-1;
 				bounds.Y=-1;
 			}
+			explicit_bounds = bounds;
 		}
 
 		public Control(Control parent, string text) : this() {
@@ -1918,7 +1916,10 @@ namespace System.Windows.Forms
 				return maximum_size;
 			}
 			set {
-				maximum_size = value;
+				if (maximum_size != value) {
+					maximum_size = value;
+					if (parent != null) parent.PerformLayout ();
+				}
 			}
 		}
 
@@ -1929,7 +1930,7 @@ namespace System.Windows.Forms
 			set {
 				if (minimum_size != value) {
 					minimum_size = value;
-					PerformLayout ();
+					if (parent != null) parent.PerformLayout ();
 				}
 			}
 		}
@@ -2688,6 +2689,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public Size PreferredSize {
+			get { return this.GetPreferredSize (Size.Empty); }
+		}
+#endif
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -3315,7 +3322,21 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
-			return preferred_size;
+			Size retsize = this.explicit_bounds.Size;
+			
+			// If we're bigger than the MaximumSize, fix that
+			if (this.maximum_size.Width != 0 && retsize.Width > this.maximum_size.Width)
+				retsize.Width = this.maximum_size.Width;
+			if (this.maximum_size.Height != 0 && retsize.Height > this.maximum_size.Height)
+				retsize.Height = this.maximum_size.Height;
+				
+			// If we're smaller than the MinimumSize, fix that
+			if (this.minimum_size.Width != 0 && retsize.Width < this.minimum_size.Width)
+				retsize.Width = this.minimum_size.Width;
+			if (this.minimum_size.Height != 0 && retsize.Height < this.minimum_size.Height)
+				retsize.Height = this.minimum_size.Height;
+				
+			return retsize;
 		}
 #endif
 
@@ -4195,6 +4216,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #if NET_2_0
 		protected 
 #else

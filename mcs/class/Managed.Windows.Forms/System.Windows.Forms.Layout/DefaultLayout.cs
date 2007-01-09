@@ -80,7 +80,7 @@ namespace System.Windows.Forms.Layout
 				if (child.VisibleInternal
 				    && (child.ControlLayoutType == Control.LayoutType.Dock)
 				    && (child.Dock == DockStyle.Fill))
-					child.SetBounds (space.Left, space.Top, space.Width, space.Height);
+					child.SetImplicitBounds (space.Left, space.Top, space.Width, space.Height);
 			}
 		}
 
@@ -104,8 +104,15 @@ namespace System.Windows.Forms.Layout
 
 				left = child.Left;
 				top = child.Top;
+				
+#if NET_2_0
+				Size preferredsize = child.PreferredSize;
+				width = preferredsize.Width;
+				height = preferredsize.Height;
+#else
 				width = child.Width;
 				height = child.Height;
+#endif
 
 				if ((anchor & AnchorStyles.Right) != 0) {
 					if ((anchor & AnchorStyles.Left) != 0)
