@@ -1,3 +1,15 @@
+2007-01-10  Ankit Jain  <jankit@novell.com>
+
+	* BaseClassRef.cs (Clone): Move to ..
+	* BaseTypeRef.cs (Clone): .. here.
+	* Sentinel.cs: Implement abstract Clone method.
+	* MethodPointerTypeRef.cs: Likewise.
+	* PrimitiveTypeRef.cs: Likewise.
+	* ModifiableType (MakeCustomModified): Add to SigMod.
+	* GenericTypeInst.cs:
+	* GenericParamRef.cs:
+	* TypeRef.cs:
+	* ExternTypeRef.cs: Update.
 
 Tue Dec 12 19:23:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 

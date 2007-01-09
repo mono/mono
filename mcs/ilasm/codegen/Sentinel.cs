@@ -8,14 +8,25 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Mono.ILASM {
 
         public class SentinelTypeRef : BaseTypeRef {
 
                 public SentinelTypeRef ()
-			: base ("...")
+			: this (null, null)
                 {
+                }
+
+                public SentinelTypeRef (ArrayList conv_list, string sig_mod)
+                        : base ("...", conv_list, sig_mod)
+                {
+                }
+
+                public override BaseTypeRef Clone ()
+                {
+                        return new SentinelTypeRef ((ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
                 public override void Resolve (CodeGen code_gen)

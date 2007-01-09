@@ -48,7 +48,7 @@ namespace Mono.ILASM {
                         throw new InternalErrorException ("Not supported");
                 }
 
-                public override BaseClassRef Clone ()
+                public override BaseTypeRef Clone ()
                 {
                         return new GenericParamRef (param, full_name, (ArrayList) ConversionList.Clone ());
                 }

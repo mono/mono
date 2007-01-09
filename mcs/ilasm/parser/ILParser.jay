@@ -129,9 +129,8 @@ namespace Mono.ILASM {
 
                 private BaseTypeRef GetTypeRef (BaseTypeRef b)
                 {
-                        if (b is BaseClassRef)
-                                return ((BaseClassRef) b).Clone ();
-                        return b;
+                        //FIXME: Caching required.. 
+                        return b.Clone ();
                 }
 
 %}

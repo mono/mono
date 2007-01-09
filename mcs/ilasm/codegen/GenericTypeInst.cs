@@ -48,7 +48,7 @@ namespace Mono.ILASM {
                         get { return class_ref.FullName + gen_args.ToString () + SigMod; }
                 }
 
-                public override BaseClassRef Clone ()
+                public override BaseTypeRef Clone ()
                 {
                         //Clone'd instance shares the class_ref and gen_args,
                         //as its basically used to create modified types (arrays etc)

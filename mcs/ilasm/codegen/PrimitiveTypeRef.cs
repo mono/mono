@@ -21,10 +21,22 @@ namespace Mono.ILASM {
                 private static Hashtable s_method_table = new Hashtable ();
 
                 public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
-                        : base (full_name)
+                        : this (type, full_name, null, String.Empty)
+                {
+                }
+
+                public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name, ArrayList conv_list, string sig_mod)
+                        : base (full_name, conv_list, sig_mod)
                 {
                         this.type = type;
-                        SigMod = String.Empty;
+                        if (SigMod == null)
+                                SigMod = String.Empty;
+                }
+
+                public override BaseTypeRef Clone ()
+                {
+                        return new PrimitiveTypeRef ((PEAPI.PrimitiveType) type, full_name,
+                                (ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
 		public string Name {

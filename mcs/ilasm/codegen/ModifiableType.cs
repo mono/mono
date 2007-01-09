@@ -110,6 +110,11 @@ namespace Mono.ILASM {
                         conversion_list.Add (ConversionMethod.MakeCustomModified);
                         conversion_list.Add (modifier);
                         conversion_list.Add (klass);
+
+                        if (modifier == PEAPI.CustomModifier.modreq)
+                                SigMod += ("modreq (" + klass.FullName + ")");
+                        else if (modifier == PEAPI.CustomModifier.modopt)
+                                SigMod += ("modopt (" + klass.FullName + ")");
                 }
 
                 public void MakePinned ()

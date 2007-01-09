@@ -53,6 +53,8 @@ namespace Mono.ILASM {
 
                 public abstract void Resolve (CodeGen code_gen);
 
+                public abstract BaseTypeRef Clone ();
+
                 protected abstract BaseMethodRef CreateMethodRef (BaseTypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, BaseTypeRef[] param, int gen_param_count);
 

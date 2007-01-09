@@ -32,7 +32,7 @@ namespace Mono.ILASM {
                         this.location = location;
                 }
                 
-                public override BaseClassRef Clone ()
+                public override BaseTypeRef Clone ()
                 {
                         return new TypeRef (full_name, is_valuetype, location, (ArrayList) ConversionList.Clone (), sig_mod);
                 }

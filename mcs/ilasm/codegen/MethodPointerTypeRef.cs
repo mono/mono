@@ -20,7 +20,12 @@ namespace Mono.ILASM {
                 private ArrayList param_list;
 
                 public MethodPointerTypeRef (PEAPI.CallConv callconv, BaseTypeRef ret, ArrayList param_list)
-			: base (String.Empty)
+                        : this (callconv, ret, param_list, null, String.Empty)
+                {
+                }
+
+                public MethodPointerTypeRef (PEAPI.CallConv callconv, BaseTypeRef ret, ArrayList param_list, ArrayList conv_list, string sig_mod)
+                        : base (String.Empty, conv_list, sig_mod)
                 {
                         this.callconv = callconv;
                         this.ret = ret;
@@ -28,7 +33,13 @@ namespace Mono.ILASM {
 
                         // We just need these to not break the interface
                         //full_name = String.Empty;
-                        sig_mod = String.Empty;
+                        //sig_mod = String.Empty;
+                }
+
+                public override BaseTypeRef Clone ()
+                {
+                        return new MethodPointerTypeRef (callconv, ret, (ArrayList) param_list.Clone (),
+                                        (ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
                 public override void Resolve (CodeGen code_gen)

@@ -37,7 +37,7 @@ namespace Mono.ILASM {
                         nestedtypes_table = new Hashtable ();
                 }
                 
-                public override BaseClassRef Clone ()
+                public override BaseTypeRef Clone ()
                 {
                         return new ExternTypeRef (extern_ref, full_name, is_valuetype, 
                                         (ArrayList) ConversionList.Clone (), sig_mod);
