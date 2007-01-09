@@ -925,6 +925,7 @@ System.Web.UI.WebControls/PagerMode.cs
 System.Web.UI.WebControls/PagerPosition.cs
 System.Web.UI.WebControls/PagerSettings.cs
 System.Web.UI.WebControls/Panel.cs
+System.Web.UI.WebControls/PanelStyle.cs
 System.Web.UI.WebControls/ParameterCollection.cs
 System.Web.UI.WebControls/Parameter.cs
 System.Web.UI.WebControls/PasswordRecovery.cs

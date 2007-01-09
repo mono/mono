@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -699,6 +699,7 @@
     <Compile Include="System.Web.UI.WebControls\PagerPosition.cs" />
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
     <Compile Include="System.Web.UI.WebControls\Panel.cs" />
+    <Compile Include="System.Web.UI.WebControls\PanelStyle.cs" />
     <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
     <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\PasswordRecovery.cs" />

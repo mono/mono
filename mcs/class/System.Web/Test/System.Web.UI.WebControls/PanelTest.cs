@@ -135,22 +135,22 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 		}
 #endif
 		[Test]
-		[Category("NotWorking")]
 		public void Defaults ()
 		{
 			Poker p = new Poker ();
 #if NET_2_0
-#if false	
 			Assert.AreEqual (ContentDirection.NotSet, p.Direction, "Direction"); 
 			Assert.AreEqual (string.Empty, p.GroupingText, "GroupingText");
 			Assert.AreEqual (ScrollBars.None, p.ScrollBars, "ScrollBars"); 
 			Assert.AreEqual (string.Empty, p.DefaultButton, "DefaultButton");
-#endif
-			//Note: "Panel does not have definition to: ScrollBars;DefaultButton;Direction;GroupingText";
 #endif
 		}
 		
@@ -182,22 +182,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		[Category ("NunitWeb")]
 		public void DefaultButton ()
 		{
-#if false
-			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnInit (DefaultButton__Init);
 			t.Run ();
-#endif
-			// Note : "Panel have no definition to DefaultButton");
 		}
 
 		public static void DefaultButton__Init (Page p)
 		{
-#if false
 			Poker pl = new Poker ();
 			pl.DefaultButton = "MyButton";
 			Button b = new Button ();
@@ -209,65 +203,44 @@ namespace MonoTests.System.Web.UI.WebControls {
 				Assert.Fail ("Default button script not created #1");
 			if (html.IndexOf ("MyButton") == -1)
 				Assert.Fail ("Default button script not created #2");
-#endif
-			// Note :"Panel have no definition to DefaultButton");
-
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		[Category("NunitWeb")]
-#if false
 		[ExpectedException(typeof(InvalidOperationException))]
-#endif
 		public void DefaultButton_Exception ()
 		{
-#if false
-			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnInit (DefaultButton_Init);
 			t.Run ();
-#endif
-			// Note :"Panel have no definition to DefaultButton");
 
 		}
 
 		public static void DefaultButton_Init (Page p)
 		{
-#if false
 			Poker pl = new Poker ();
 			pl.DefaultButton = "test";
 			p.Form.Controls.Add (pl);
 			pl.Render ();
-#endif
-			// Note: "Panel have no definition to DefaultButton");
 
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void Direction ()
 		{
 			Poker p = new Poker ();
-#if false
 			p.Direction = ContentDirection.LeftToRight;
 			string html = p.Render();
 			HtmlDiff.AssertAreEqual ("<div dir=\"ltr\"></div>", html, "Direction");
-#endif
-			//Note:"Panel have no definition to Direction");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GroupingText ()
 		{
 			Poker p = new Poker ();
-#if false
 			p.GroupingText = "MyNameText";
 			string html = p.Render ();
 			HtmlDiff.AssertAreEqual ("<div><fieldset><legend>MyNameText</legend></fieldset></div>", html, "GroupingText");
-#endif
-			//Note : "Panel have no definition to GroupingText");
 
 		}
 
@@ -296,11 +269,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void Scroll_Bars ()
 		{
 			Poker p = new Poker ();
-#if false
 			p.ScrollBars = ScrollBars.Horizontal;
 			string html = p.Render ();
 			HtmlDiff.AssertAreEqual ("<div style=\"overflow-x:scroll;\"></div>", html, "ScrollBars.Horizontal");
@@ -309,9 +280,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			HtmlDiff.AssertAreEqual ("<div style=\"overflow-y:scroll;\"></div>", html, "ScrollBars.Vertical");
 			p.ScrollBars = ScrollBars.Both;
 			html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div style=\"overflow-scroll;\"></div>", html, "ScrollBars.Both");
-#endif
-			// Note : "Panel does not have definition to ScrollBars");
+			HtmlDiff.AssertAreEqual ("<div style=\"overflow:scroll;\"></div>", html, "ScrollBars.Both");
 		}
 
 		[TestFixtureTearDown]

@@ -58,6 +58,37 @@ namespace System.Web.UI.WebControls {
 				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, image);
 			}
 
+#if NET_2_0
+			if (!String.IsNullOrEmpty (DefaultButton) && Page != null) {
+				Control button = FindControl (DefaultButton);
+				if (button == null || !(button is IButtonControl))
+					throw new InvalidOperationException (String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.", ID));
+
+				Page.ClientScript.RegisterWebFormClientScript ();
+				w.AddAttribute ("onkeypress", String.Format ("javascript:return WebForm_FireDefaultButton(event, '{0}')", button.ClientID));
+			}
+
+			if (Direction != ContentDirection.NotSet) {
+				w.AddAttribute (HtmlTextWriterAttribute.Dir, Direction == ContentDirection.RightToLeft ? "rtl" : "ltr");
+			}
+
+			switch (ScrollBars) {
+			case ScrollBars.Auto:
+				w.AddStyleAttribute (HtmlTextWriterStyle.Overflow, "auto");
+				break;
+			case ScrollBars.Both:
+				w.AddStyleAttribute (HtmlTextWriterStyle.Overflow, "scroll");
+				break;
+			case ScrollBars.Horizontal:
+				w.AddStyleAttribute (HtmlTextWriterStyle.OverflowX, "scroll");
+				break;
+			case ScrollBars.Vertical:
+				w.AddStyleAttribute (HtmlTextWriterStyle.OverflowY, "scroll");
+				break;
+			}
+
+#endif
+
 			if (!Wrap) {
 #if NET_2_0
 				w.AddStyleAttribute (HtmlTextWriterStyle.WhiteSpace, "nowrap");
@@ -79,6 +110,7 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Align, align);
 		}
 		
+#if !NET_2_0
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
@@ -119,5 +151,159 @@ namespace System.Web.UI.WebControls {
 				ViewState ["Wrap"] = value;
 			}
 		}
+#endif
+
+#if NET_2_0
+		PanelStyle PanelStyle {
+			get { return (ControlStyle as PanelStyle); }
+		}
+		
+		[Bindable (true)]
+		[DefaultValue ("")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
+		public virtual string BackImageUrl {
+			get {
+				if (ControlStyleCreated) {
+					if (PanelStyle != null)
+						return PanelStyle.BackImageUrl;
+					else
+						return ViewState.GetString ("BackImageUrl", String.Empty);
+				}
+				return String.Empty;
+			}
+			set {
+				if(PanelStyle!=null)
+					PanelStyle.BackImageUrl = value;
+				else
+					ViewState ["BackImageUrl"] = value;
+			}
+		}
+
+		[Bindable (true)]
+		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
+		public virtual HorizontalAlign HorizontalAlign {
+			get {
+				if (ControlStyleCreated) {
+					if (PanelStyle != null)
+						return PanelStyle.HorizontalAlign;
+					else
+						return ViewState ["HorizontalAlign"] != null ? (HorizontalAlign) ViewState ["HorizontalAlign"] : HorizontalAlign.NotSet;
+				}
+				return HorizontalAlign.NotSet;
+			}
+			set {
+				if (PanelStyle != null)
+					PanelStyle.HorizontalAlign = value;
+				else
+					ViewState ["HorizontalAlign"] = value;
+			}
+		}
+
+		[Bindable (true)]
+		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
+		public virtual bool Wrap {
+			get {
+				if (ControlStyleCreated) {
+					if (PanelStyle != null)
+						return PanelStyle.Wrap;
+					else
+						return ViewState.GetBool ("Wrap", true);
+				}
+				return true;
+			}
+			set {
+				if (PanelStyle != null)
+					PanelStyle.Wrap = value;
+				else
+					ViewState ["Wrap"] = value;
+			}
+		}
+		
+		[ThemeableAttribute (false)]
+		public virtual string DefaultButton {
+			get {
+				return ViewState.GetString ("DefaultButton", String.Empty);
+			}
+			set {
+				ViewState ["DefaultButton"] = value;
+			}
+		}
+
+		public virtual ContentDirection Direction {
+			get {
+				if (ControlStyleCreated) {
+					if (PanelStyle != null)
+						return PanelStyle.Direction;
+					else
+						return ViewState ["Direction"] != null ? (ContentDirection) ViewState ["Direction"] : ContentDirection.NotSet;
+				}
+				return ContentDirection.NotSet;
+			}
+			set {
+				if (PanelStyle != null)
+					PanelStyle.Direction = value;
+				else
+					ViewState ["Direction"] = value;
+			}
+		}
+
+		[LocalizableAttribute (true)]
+		public virtual string GroupingText {
+			get {
+				return ViewState.GetString ("GroupingText", String.Empty);
+			}
+			set {
+				ViewState ["GroupingText"] = value;
+			}
+		}
+
+		public virtual ScrollBars ScrollBars {
+			get {
+				if (ControlStyleCreated) {
+					if (PanelStyle != null)
+						return PanelStyle.ScrollBars;
+					else
+						return ViewState ["ScrollBars"] != null ? (ScrollBars) ViewState ["Direction"] : ScrollBars.None;
+				}
+				return ScrollBars.None;
+			}
+			set {
+				if (PanelStyle != null)
+					PanelStyle.ScrollBars = value;
+				else
+					ViewState ["ScrollBars"] = value;
+			}
+		}
+
+		protected override Style CreateControlStyle ()
+		{
+			return new PanelStyle (ViewState);
+		}
+
+		public override void RenderBeginTag (HtmlTextWriter writer)
+		{
+			base.RenderBeginTag (writer);
+			if (!String.IsNullOrEmpty (GroupingText)) {
+				writer.RenderBeginTag (HtmlTextWriterTag.Fieldset);
+				writer.RenderBeginTag (HtmlTextWriterTag.Legend);
+				writer.Write (GroupingText);
+				writer.RenderEndTag ();
+			}
+		}
+
+		public override void RenderEndTag (HtmlTextWriter writer)
+		{
+			if (!String.IsNullOrEmpty (GroupingText)) {
+				writer.RenderEndTag (); // Fieldset
+			}
+			base.RenderEndTag (writer);
+		}
+#endif
 	}
 }

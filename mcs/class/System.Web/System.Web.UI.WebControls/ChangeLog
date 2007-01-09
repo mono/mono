@@ -1,3 +1,9 @@
+2007-01-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Panel.cs:
+	* PanelStyle.cs:
+	implemented 2.0 features.	
+
 2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlDataSourceView.cs: fixed parameters init for ExecuteUpdate

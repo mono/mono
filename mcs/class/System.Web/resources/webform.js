@@ -119,3 +119,21 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 		__doPostBack (ctrl, par);
 }
 
+function WebForm_FireDefaultButton(event, target)
+{
+	if (event.keyCode != 13) {
+		return true;
+	}
+	if(event.srcElement && (event.srcElement.tagName.toLowerCase() == "textarea")) {
+		return true;
+	}
+	var defaultButton = document.getElementById(target);
+	if (defaultButton && typeof(defaultButton.click) != "undefined") {
+		defaultButton.click();
+		event.cancelBubble = true;
+		return false;
+	}
+	return true;
+}
+
+
