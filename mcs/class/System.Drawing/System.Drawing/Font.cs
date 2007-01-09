@@ -196,7 +196,6 @@ namespace System.Drawing
 
 		public static Font FromHfont (IntPtr Hfont)
 		{
-			OperatingSystem	osInfo = Environment.OSVersion;
 			IntPtr			newObject;
 			IntPtr			hdc;			
 			FontStyle		newStyle = FontStyle.Regular;
@@ -209,7 +208,7 @@ namespace System.Drawing
 				return(result);
 			}
 
-			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
+			if (GDIPlus.RunningOnUnix ()) {
 				// If we're on Unix we use our private gdiplus API to avoid Wine 
 				// dependencies in S.D
 				Status s = GDIPlus.GdipCreateFontFromHfont (Hfont, out newObject, ref lf);
@@ -258,17 +257,14 @@ namespace System.Drawing
 			if (fontObject == IntPtr.Zero)
 				throw new ArgumentException (Locale.GetText ("Object has been disposed."));
 
-			IntPtr Hfont;
-			OperatingSystem	osInfo = Environment.OSVersion;
-			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
+			if (GDIPlus.RunningOnUnix ())
 				return fontObject;
-			} else {
-				object olf = new LOGFONT ();
-				ToLogFont(olf);
-				LOGFONT lf = (LOGFONT)olf;
-				Hfont = GDIPlus.CreateFontIndirect (ref lf);
-			}
-			return Hfont;
+
+			// win32 specific code			
+			object olf = new LOGFONT ();
+			ToLogFont(olf);
+			LOGFONT lf = (LOGFONT)olf;
+			return GDIPlus.CreateFontIndirect (ref lf);
 		}
 
 		internal Font (IntPtr newFontObject, string familyName, FontStyle style, float size)
@@ -559,75 +555,53 @@ namespace System.Drawing
 
 		public static Font FromLogFont (object lf)
 		{
-			if ((int) Environment.OSVersion.Platform == 128 || (int) Environment.OSVersion.Platform == 4) {
+			if (GDIPlus.RunningOnUnix ())
 				return FromLogFont(lf, IntPtr.Zero);
-			} else {
-				IntPtr	hDC;
 
-				hDC = IntPtr.Zero;
-
-				try {
-					hDC = GDIPlus.GetDC(IntPtr.Zero);
-					return FromLogFont (lf, hDC);
-				}
-
-				finally {
-					GDIPlus.ReleaseDC(hDC);
-				}
+			// win32 specific code
+			IntPtr hDC = IntPtr.Zero;
+			try {
+				hDC = GDIPlus.GetDC(IntPtr.Zero);
+				return FromLogFont (lf, hDC);
 			}
-
+			finally {
+				GDIPlus.ReleaseDC(hDC);
+			}
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont)
 		{
-			Graphics g;
+			Graphics g = null;
 
-			g = null;
-
-			if ((int) Environment.OSVersion.Platform == 128 || (int) Environment.OSVersion.Platform == 4) {
+			if (GDIPlus.RunningOnUnix ()) {
 				// Unix
-				Bitmap	img;
-
-				img = null;
-
+				Bitmap img = null;
 				try {
 					// We don't have a window we could associate the DC with
 					// so we use an image instead
-					img = new Bitmap(1, 1, Imaging.PixelFormat.Format32bppArgb);
-					g = Graphics.FromImage(img);
-					ToLogFont(logFont, g);
+					img = new Bitmap (1, 1, Imaging.PixelFormat.Format32bppArgb);
+					g = Graphics.FromImage (img);
+					ToLogFont (logFont, g);
 				}
-
 				finally {
-					if (g != null) {
-						g.Dispose();
-					}
-
-					if (img != null) {
-						img.Dispose();
-					}
+					if (g != null)
+						g.Dispose ();
+					if (img != null)
+						img.Dispose ();
 				}
 			} else {
 				// Windows
-				IntPtr	hDC;
-
-				hDC = IntPtr.Zero;
-
+				IntPtr hDC = IntPtr.Zero;
 				try {
-
-					hDC = GDIPlus.GetDC(IntPtr.Zero);
-					g = Graphics.FromHdc(hDC);
-
+					hDC = GDIPlus.GetDC (IntPtr.Zero);
+					g = Graphics.FromHdc (hDC);
 					ToLogFont (logFont, g);
 				}
-
 				finally {
-					if (g != null) {
-						g.Dispose();
-					}
-
-					GDIPlus.ReleaseDC(hDC);
+					if (g != null)
+						g.Dispose ();
+					GDIPlus.ReleaseDC (hDC);
 				}
 			}
 		}

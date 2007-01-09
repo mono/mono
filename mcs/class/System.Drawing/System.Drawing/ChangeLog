@@ -1,3 +1,11 @@
+2007-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Unify platform detection code.
+	* gdipFunctions.cs: Unify platform detection code.
+	* Graphics.cs: Unify platform detection code.
+	* Image.cs: Unify platform detection code.
+	* SystemColors.cs: Unify platform detection code.
+
 2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipStructs.cs: Add support for SignaturePatterns and 

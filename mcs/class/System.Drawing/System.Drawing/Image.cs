@@ -245,10 +245,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			stream = new MemoryStream(buffer, 0, index);
 		}
 
-		// check for Unix platforms - see FAQ for more details
-		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-		int platform = (int) Environment.OSVersion.Platform;
-		if ((platform == 4) || (platform == 128)) {
+		if (GDIPlus.RunningOnUnix ()) {
 			// Unix, with libgdiplus
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
@@ -447,16 +444,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			nativeEncoderParams = encoderParams.ToNativePtr ();
 
 		try {
-			// check for Unix platforms - see FAQ for more details
-			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 128)) {
+			if (GDIPlus.RunningOnUnix ()) {
 				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
 				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
 					sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, ref guid, nativeEncoderParams);
+			} else {
+				st = GDIPlus.GdipSaveImageToStream (new HandleRef (this, nativeObject), 
+					new ComIStreamWrapper (stream), ref guid, new HandleRef (encoderParams, nativeEncoderParams));
 			}
-			else
-				st = GDIPlus.GdipSaveImageToStream(new HandleRef(this, nativeObject), new ComIStreamWrapper(stream), ref guid, new HandleRef(encoderParams, nativeEncoderParams));
 		}
 		finally {
 			if (nativeEncoderParams != IntPtr.Zero)

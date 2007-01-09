@@ -223,36 +223,42 @@ namespace System.Drawing {
 			window_text = Color.UpdateKnownColor (window_text.A, window_text.R, window_text.G, window_text.B, "WindowText", KnownColor.WindowText);
 		}
 
-		static SystemColors () {
-			// If we're on a Win32 platform we should behave like MS and pull the colors
-			if (((int)Environment.OSVersion.Platform != 4) && ((int)Environment.OSVersion.Platform != 128)) {
-				active_border = GetSysColor(GetSysColorIndex.COLOR_ACTIVEBORDER, "ActiveBorder", KnownColor.ActiveBorder);
-				active_caption = GetSysColor(GetSysColorIndex.COLOR_ACTIVECAPTION, "ActiveCaption", KnownColor.ActiveCaption);
-				active_caption_text = GetSysColor(GetSysColorIndex.COLOR_CAPTIONTEXT, "ActiveCaptionText", KnownColor.ActiveCaptionText);
-				app_workspace = GetSysColor(GetSysColorIndex.COLOR_APPWORKSPACE, "AppWorkspace", KnownColor.AppWorkspace);
-				control = GetSysColor(GetSysColorIndex.COLOR_BTNFACE, "Control", KnownColor.Control);
-				control_dark = GetSysColor(GetSysColorIndex.COLOR_BTNSHADOW, "ControlDark", KnownColor.ControlDark);
-				control_dark_dark = GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW, "ControlDarkDark", KnownColor.ControlDarkDark);
-				control_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT, "ControlLight", KnownColor.ControlLight);
-				control_light_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
-				control_text = GetSysColor(GetSysColorIndex.COLOR_BTNTEXT, "ControlText", KnownColor.ControlText);
-				desktop = GetSysColor(GetSysColorIndex.COLOR_DESKTOP, "Desktop", KnownColor.Desktop);
-				gray_text = GetSysColor(GetSysColorIndex.COLOR_GRAYTEXT, "GrayText", KnownColor.GrayText);
-				highlight = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHT, "Highlight", KnownColor.Highlight);
-				highlight_text = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHTTEXT, "HighlightText", KnownColor.HighlightText);
-				hot_track = GetSysColor(GetSysColorIndex.COLOR_HOTLIGHT, "HotTrack", KnownColor.HotTrack);
-				inactive_border = GetSysColor(GetSysColorIndex.COLOR_INACTIVEBORDER, "InactiveBorder", KnownColor.InactiveBorder);
-				inactive_caption = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTION, "InactiveCaption", KnownColor.InactiveCaption);
-				inactive_caption_text = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT, "InactiveCaptionText", KnownColor.InactiveCaptionText);
-				info = GetSysColor(GetSysColorIndex.COLOR_INFOBK, "Info", KnownColor.Info);
-				info_text = GetSysColor(GetSysColorIndex.COLOR_INFOTEXT, "InfoText", KnownColor.InfoText);
-				menu = GetSysColor(GetSysColorIndex.COLOR_MENU, "Menu", KnownColor.Menu);
-				menu_text = GetSysColor(GetSysColorIndex.COLOR_MENUTEXT, "MenuText", KnownColor.MenuText);
-				scroll_bar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR, "ScrollBar", KnownColor.ScrollBar);
-				window = GetSysColor(GetSysColorIndex.COLOR_WINDOW, "Window", KnownColor.Window);
-				window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME, "WindowFrame", KnownColor.WindowFrame);
-				window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT, "WindowText", KnownColor.WindowText);
+		static SystemColors ()
+		{
+			if (GDIPlus.RunningOnWindows ()) {
+				// If we're on Windows we should behave like MS and pull the colors
+				InitOnWindows ();
 			}
+		}
+
+		static void InitOnWindows ()
+		{
+			active_border = GetSysColor(GetSysColorIndex.COLOR_ACTIVEBORDER, "ActiveBorder", KnownColor.ActiveBorder);
+			active_caption = GetSysColor(GetSysColorIndex.COLOR_ACTIVECAPTION, "ActiveCaption", KnownColor.ActiveCaption);
+			active_caption_text = GetSysColor(GetSysColorIndex.COLOR_CAPTIONTEXT, "ActiveCaptionText", KnownColor.ActiveCaptionText);
+			app_workspace = GetSysColor(GetSysColorIndex.COLOR_APPWORKSPACE, "AppWorkspace", KnownColor.AppWorkspace);
+			control = GetSysColor(GetSysColorIndex.COLOR_BTNFACE, "Control", KnownColor.Control);
+			control_dark = GetSysColor(GetSysColorIndex.COLOR_BTNSHADOW, "ControlDark", KnownColor.ControlDark);
+			control_dark_dark = GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW, "ControlDarkDark", KnownColor.ControlDarkDark);
+			control_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT, "ControlLight", KnownColor.ControlLight);
+			control_light_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
+			control_text = GetSysColor(GetSysColorIndex.COLOR_BTNTEXT, "ControlText", KnownColor.ControlText);
+			desktop = GetSysColor(GetSysColorIndex.COLOR_DESKTOP, "Desktop", KnownColor.Desktop);
+			gray_text = GetSysColor(GetSysColorIndex.COLOR_GRAYTEXT, "GrayText", KnownColor.GrayText);
+			highlight = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHT, "Highlight", KnownColor.Highlight);
+			highlight_text = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHTTEXT, "HighlightText", KnownColor.HighlightText);
+			hot_track = GetSysColor(GetSysColorIndex.COLOR_HOTLIGHT, "HotTrack", KnownColor.HotTrack);
+			inactive_border = GetSysColor(GetSysColorIndex.COLOR_INACTIVEBORDER, "InactiveBorder", KnownColor.InactiveBorder);
+			inactive_caption = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTION, "InactiveCaption", KnownColor.InactiveCaption);
+			inactive_caption_text = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT, "InactiveCaptionText", KnownColor.InactiveCaptionText);
+			info = GetSysColor(GetSysColorIndex.COLOR_INFOBK, "Info", KnownColor.Info);
+			info_text = GetSysColor(GetSysColorIndex.COLOR_INFOTEXT, "InfoText", KnownColor.InfoText);
+			menu = GetSysColor(GetSysColorIndex.COLOR_MENU, "Menu", KnownColor.Menu);
+			menu_text = GetSysColor(GetSysColorIndex.COLOR_MENUTEXT, "MenuText", KnownColor.MenuText);
+			scroll_bar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR, "ScrollBar", KnownColor.ScrollBar);
+			window = GetSysColor(GetSysColorIndex.COLOR_WINDOW, "Window", KnownColor.Window);
+			window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME, "WindowFrame", KnownColor.WindowFrame);
+			window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT, "WindowText", KnownColor.WindowText);
 		}
 
 
