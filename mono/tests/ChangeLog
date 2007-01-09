@@ -1,3 +1,9 @@
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* cross-domain.cs: Reflect marshal.c changes: after r70643
+	StringBuilders are not ReferenceEquals () anymore, because
+	they are marshaled by value.
+
 2007-01-01  Miguel de Icaza  <miguel@novell.com>
 
 	* libtest.c, marshal5.cs: Add tests for ByValTStr marshalling when
