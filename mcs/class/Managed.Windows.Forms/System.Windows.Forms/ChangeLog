@@ -1,3 +1,8 @@
+2007-01-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Remove one character (!) to make my previous OnClosing
+	stuff work for modal windows like MessageBox.
+
 2007-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:

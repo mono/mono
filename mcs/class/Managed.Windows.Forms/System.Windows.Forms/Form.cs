@@ -1900,7 +1900,7 @@ namespace System.Windows.Forms {
 							closing = false;
 						}
 					} else {
-						if (!FireClosingEvents (CloseReason.UserClosing)) {
+						if (FireClosingEvents (CloseReason.UserClosing)) {
 							DialogResult = DialogResult.None;
 							closing = false;
 						}
