@@ -1,3 +1,7 @@
+2007-01-08  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Just add a tiny bit of infrastructure.
+
 2007-01-02  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs (VerifyMembers): Fixed an crash reported on mono mailing list
