@@ -307,6 +307,25 @@ namespace System.Windows.Forms
 		#endregion // Public Instance Properties
 
 		#region Public Methods
+#if NET_2_0
+		public void AutoResize (ColumnHeaderAutoResizeStyle headerAutoResize)
+		{
+			switch (headerAutoResize) {
+				case ColumnHeaderAutoResizeStyle.None:
+					break;
+				case ColumnHeaderAutoResizeStyle.ColumnContent:
+					Width = -1;
+					break;
+				case ColumnHeaderAutoResizeStyle.HeaderSize:
+					Width = -2;
+					break;
+				default:
+					throw new InvalidEnumArgumentException ("headerAutoResize", (int) headerAutoResize,
+							typeof (ColumnHeaderAutoResizeStyle));
+			}
+		}
+#endif
+
 		public object Clone ()
 		{
 			ColumnHeader columnHeader = new ColumnHeader ();

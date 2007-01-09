@@ -2300,6 +2300,24 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public void AutoResizeColumn (int columnIndex, ColumnHeaderAutoResizeStyle headerAutoResize)
+		{
+			if (columnIndex < 0 || columnIndex >= columns.Count)
+				throw new ArgumentOutOfRangeException ("columnIndex");
+
+			columns [columnIndex].AutoResize (headerAutoResize);
+		}
+
+		public void AutoResizeColumns (ColumnHeaderAutoResizeStyle headerAutoResize)
+		{
+			BeginUpdate ();
+			foreach (ColumnHeader col in columns) 
+				col.AutoResize (headerAutoResize);
+			EndUpdate ();
+		}
+#endif
+
 		public void BeginUpdate ()
 		{
 			// flag to avoid painting
