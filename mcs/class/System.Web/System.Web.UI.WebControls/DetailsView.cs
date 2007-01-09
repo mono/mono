@@ -1645,7 +1645,7 @@ namespace System.Web.UI.WebControls
 		public virtual void DeleteItem ()
 		{
 			currentEditRowKeys = DataKey.Values;
-			currentEditNewValues = GetRowValues (true, true);
+			currentEditNewValues = GetRowValues (true, false);
 			
 			DetailsViewDeleteEventArgs args = new DetailsViewDeleteEventArgs (PageIndex, currentEditRowKeys, currentEditNewValues);
 			OnItemDeleting (args);

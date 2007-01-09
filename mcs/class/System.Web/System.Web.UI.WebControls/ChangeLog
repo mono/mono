@@ -1,3 +1,9 @@
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DetailsView.cs: fixed DeleteItem, excluded keys for new values
+	* SqlDataSourceView.cs: fixed ExecuteDelete, check cancel in
+	OnDeleting event
+
 2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: show all rows when AllowPaging=false

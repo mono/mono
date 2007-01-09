@@ -97,7 +97,10 @@ namespace System.Web.UI.WebControls {
 			
 			InitializeParameters (command, DeleteParameters, null, oldDataValues, true);
 
-			OnDeleting (new SqlDataSourceCommandEventArgs (command));
+			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
+			OnDeleting (args);
+			if (args.Cancel)
+				return -1; 
 
 			bool closed = connection.State == ConnectionState.Closed;
 
