@@ -71,9 +71,7 @@ namespace System.Drawing.Printing
 
 		static SysPrn ()
 		{
-			int platform = (int) Environment.OSVersion.Platform;
-			
-			if (platform == 4 || platform == 128) {
+			if (GDIPlus.RunningOnUnix ()) {
 				service = new  PrintingServicesUnix ();
 			} else {
 				service = new PrintingServicesWin32 ();
