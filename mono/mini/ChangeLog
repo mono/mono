@@ -1,3 +1,9 @@
+
+Tue Jan 9 12:36:11 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-exceptions.c: enabled running fault handlers
+	(bug #80469).
+
 2007-01-03  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c: If nothing fail, do not use the string "failed",
