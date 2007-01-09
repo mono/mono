@@ -584,8 +584,16 @@ namespace Microsoft.Build.BuildEngine {
 				EvaluatedProperties.AddProperty (bp);
 			}
 
-			bp = new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved);
-			EvaluatedProperties.AddProperty (bp);
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
+
+			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
+			string projectDir;
+			if (FullFileName == String.Empty)
+				projectDir = Environment.CurrentDirectory;
+			else
+				projectDir = Path.GetDirectoryName (FullFileName);
+
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
 		}
 		
 		void AddProjectExtensions (XmlElement xmlElement)

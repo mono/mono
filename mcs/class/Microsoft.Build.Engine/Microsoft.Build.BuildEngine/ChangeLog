@@ -1,3 +1,8 @@
+2007-01-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Project.cs (InitializeProperties): Added $(MSBuildProjectDirectory)
+	reserved property.
+
 2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* GroupingCollection.cs: Use 2 iterators: add_iterator that is used by
