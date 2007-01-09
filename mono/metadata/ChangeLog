@@ -1,3 +1,7 @@
+2007-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	* class.c (mono_class_create_generic): Don't use 'is_initialized' field.
+
 2007-01-08  Raja R Harinath  <rharinath@novell.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Avoid aliasing
