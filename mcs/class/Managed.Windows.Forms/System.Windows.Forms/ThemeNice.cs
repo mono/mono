@@ -950,10 +950,6 @@ namespace System.Windows.Forms
 		}
 		
 		#region ToolBar
-		public override bool ToolBarInvalidateEntireButton {
-			get { return true; }
-		}
-
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) 
 		{
 			StringFormat format = new StringFormat ();

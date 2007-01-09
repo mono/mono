@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 					return;
 
 				hilight = value;
-				InvalidateBorder ();
+				Invalidate ();
 			}
 		}
 
@@ -387,31 +387,6 @@ namespace System.Windows.Forms
 			size.Width += theme.ToolBarGripWidth;
 			size.Height += theme.ToolBarGripWidth;
 			return size;
-		}
-
-		internal void InvalidateBorder ()
-		{
-			if (ThemeEngine.Current.ToolBarInvalidateEntireButton) {
-				Invalidate ();
-			}
-			else {
-				if (Rectangle == Rectangle.Empty)
-					return;
-
-				/* invalidate the four sides of our border */
-				Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y - 2,
-								  Rectangle.Width + 4, 4));
-				Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y - 2,
-								  4, Rectangle.Height + 4));
-				Parent.Invalidate (new Rectangle (Rectangle.X - 2, Rectangle.Y + Rectangle.Height - 2,
-								  Rectangle.Width + 4, 4));
-				Parent.Invalidate (new Rectangle (Rectangle.X + Rectangle.Width - 2, Rectangle.Y - 2,
-								  4, Rectangle.Height + 4));
-				
-				if ((Style == ToolBarButtonStyle.DropDownButton) && Parent.DropDownArrows)
-					Parent.Invalidate (new Rectangle (Rectangle.X + (Rectangle.Width - ThemeEngine.Current.ToolBarDropDownWidth - 1),
-							    Rectangle.Y, 2, Rectangle.Height));
-			}
 		}
 
 		internal void Invalidate ()

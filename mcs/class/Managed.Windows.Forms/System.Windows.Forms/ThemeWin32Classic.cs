@@ -4243,10 +4243,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public override bool ToolBarInvalidateEntireButton {
-			get { return false; }
-		}
-
 		#endregion	// ToolBar
 
 		#region ToolTip

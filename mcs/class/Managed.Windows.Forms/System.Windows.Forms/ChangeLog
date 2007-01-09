@@ -1,3 +1,14 @@
+007-01-08  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBarButton.cs: Remove InvalidateBorder and use Invalidate instead,
+	we dont need to invalidate only borders because when we invalidate four
+	border lines the invalidate's generates a complete redraw of button, 
+	because it now invalidate a complete rect some other redraws operations
+	are fixed. Fixes #80196.
+	
+	* Theme.cs, ThemeNice.cs, ThemeClearLooks.cs, ThemeWin32Classic.cs:
+	Remove ToolBarInvalidateEntireButton as it is not used.
+
 2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
 	
 	* Form.cs: Make sure that both OnClosing and OnFormClosing are

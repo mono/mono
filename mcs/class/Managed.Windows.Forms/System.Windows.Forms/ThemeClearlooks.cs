@@ -1794,9 +1794,7 @@ namespace System.Windows.Forms {
 		}
 		
 		#region ToolBar
-		public override bool ToolBarInvalidateEntireButton {
-			get { return true; }
-		}
+
 		#endregion // ToolBar
 
 		#region GroupBox
