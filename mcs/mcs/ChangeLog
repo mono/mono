@@ -1,3 +1,9 @@
+2007-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #80446
+	* support.cs (ReflectionParameter): Don't use an invalid index on
+	the generic parameter data.
+
 2007-01-08  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Just add a tiny bit of infrastructure.

@@ -57,16 +57,16 @@ namespace Mono.CSharp {
 			// out caching facilities.
 			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
 			if (generic != mb) {
-			    gpd = TypeManager.GetParameterData (generic);
-			    if (gpd.HasParams) {
+				gpd = TypeManager.GetParameterData (generic);
+				if (gpd.HasParams) {
 					for (int i = gpd.Count; i != 0; --i) {
-						if ((gpd.ParameterModifier (i)& Parameter.Modifier.PARAMS) != 0) {
-							this.params_idx = i;
+						if ((gpd.ParameterModifier (i-1) & Parameter.Modifier.PARAMS) != 0) {
+							this.params_idx = i-1;
 							break;
 						}
 					}
-			    }
-			    return;
+				}
+				return;
 			}
 
 			//
@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}

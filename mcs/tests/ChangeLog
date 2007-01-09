@@ -1,3 +1,7 @@
+2007-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-301.cs, gtest-301-lib.cs: New tests from #80446.
+
 2006-12-08  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-299.cs: New test based on #80060.
