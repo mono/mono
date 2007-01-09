@@ -45,22 +45,22 @@ namespace System.Windows.Forms
 	[DefaultBindingProperty ("Text")]
 #endif
 	public class Label : Control
-    	{
-    		private bool autosize;
-    		private Image image;
-    		private bool render_transparent;
-    		private FlatStyle flat_style;
-    		private int preferred_height;
-    		private int preferred_width;
-    		private bool use_mnemonic;
-    		private int image_index = -1;
-    		private ImageList image_list;
+	{
+		private bool autosize;
+		private Image image;
+		private bool render_transparent;
+		private FlatStyle flat_style;
+		private int preferred_height;
+		private int preferred_width;
+		private bool use_mnemonic;
+		private int image_index = -1;
+		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
-    		internal ContentAlignment text_align;
-    		static SizeF req_witdthsize = new SizeF (0,0);
+		internal ContentAlignment text_align;
+		static SizeF req_witdthsize = new SizeF (0,0);
 
-    		#region Events
+		#region Events
 		static object AutoSizeChangedEvent = new object ();
 		static object TextAlignChangedEvent = new object ();
 
@@ -69,7 +69,7 @@ namespace System.Windows.Forms
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 #endif
-    		public new event EventHandler AutoSizeChanged {
+		public new event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}
@@ -95,7 +95,6 @@ namespace System.Windows.Forms
 			remove { base.KeyDown -= value; }
 		}
 
-
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress {
@@ -103,14 +102,12 @@ namespace System.Windows.Forms
 			remove { base.KeyPress -= value; }
 		}
 
-
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp {
 			add { base.KeyUp += value; }
 			remove { base.KeyUp -= value; }
 		}
-
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -125,7 +122,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
-    		public Label ()
+		public Label ()
     		{
 			// Defaults in the Spec
 			autosize = false;
@@ -166,118 +163,112 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 #endif
-    		public new virtual bool AutoSize {
-    			get { return autosize; }
-    			set {
-    				if (autosize == value)
-    					return;
+		public new virtual bool AutoSize {
+			get { return autosize; }
+			set {
+				if (autosize == value)
+					return;
 
-    				autosize = value;
-    				CalcAutoSize ();
+				autosize = value;
+				CalcAutoSize ();
 				Refresh ();
 
 				OnAutoSizeChanged (EventArgs.Empty);    				
-    			}
-    		}
+			}
+		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
-    			get {
-    				return base.BackgroundImage;
-    			}
-    			set {
+			get { return base.BackgroundImage; }
+    		set {
 				base.BackgroundImage = value;
 				Refresh ();
-    			}
-    		}
+			}
+		}
 
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
-    		public virtual BorderStyle BorderStyle {
-    			get { return InternalBorderStyle; }
-    			set { InternalBorderStyle = value; }
-    		}
+		public virtual BorderStyle BorderStyle {
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
+		}
 
-			protected override CreateParams CreateParams {
-				get { 
-					CreateParams create_params = base.CreateParams;
+		protected override CreateParams CreateParams {
+			get { 
+				CreateParams create_params = base.CreateParams;
 					
-					if (BorderStyle != BorderStyle.Fixed3D)
-						return create_params;
-					
-					create_params.ExStyle &= ~(int) WindowExStyles.WS_EX_CLIENTEDGE;
-					create_params.ExStyle |= (int)WindowExStyles.WS_EX_STATICEDGE;
-					
+				if (BorderStyle != BorderStyle.Fixed3D)
 					return create_params;
-				}
+					
+				create_params.ExStyle &= ~(int) WindowExStyles.WS_EX_CLIENTEDGE;
+				create_params.ExStyle |= (int)WindowExStyles.WS_EX_STATICEDGE;
+					
+				return create_params;
 			}
+		}
 
-    		protected override ImeMode DefaultImeMode {
-    			get { return ImeMode.Disable;}
-    		}
+		protected override ImeMode DefaultImeMode {
+			get { return ImeMode.Disable;}
+		}
 
-    		protected override Size DefaultSize {
-    			get {return ThemeEngine.Current.LabelDefaultSize;}
-    		}
+		protected override Size DefaultSize {
+			get {return ThemeEngine.Current.LabelDefaultSize;}
+		}
 
 		[DefaultValue(FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
-    			get {
-    				return flat_style;
-    			}
-    			set {
+			get { return flat_style; }
+			set {
 				if (!Enum.IsDefined (typeof (FlatStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for FlatStyle", value));
 
-    				if (flat_style == value)
+				if (flat_style == value)
 					return;
 
-    				flat_style = value;
+				flat_style = value;
 				Refresh ();
-    			}
-    		}
+			}
+		}
 
 		[Localizable(true)]
-    		public Image Image {
-    			get {
-    				if (image != null) {
-    					return image;
-    				}
+		public Image Image {
+			get {
+				if (image != null) {
+					return image;
+				}
     				
-    				if (image_list != null && ImageIndex >= 0) {
-    					return image_list.Images[ImageIndex];
-    				}
+				if (image_list != null && ImageIndex >= 0) {
+					return image_list.Images[ImageIndex];
+				}
     				
-    				return null;
-    			}
-    			set {
-    				if (image == value)
+				return null;
+			}
+			set {
+				if (image == value)
 					return;
 
-    				image = value;
+				image = value;
 				Refresh ();
-    			}
-    		}
+			}
+		}
 
 		[DefaultValue(ContentAlignment.MiddleCenter)]
 		[Localizable(true)]
-    		public ContentAlignment ImageAlign {
-    			get {
-    				return image_align;
-    			}
-    			set {
+		public ContentAlignment ImageAlign {
+			get { return image_align; }
+			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
-    				if (image_align == value)
-    					return;
+				if (image_align == value)
+					return;
 
-    				image_align = value;
-    				Refresh ();
-    			}
-    		}
+				image_align = value;
+				Refresh ();
+			}
+		}
 
 		[DefaultValue (-1)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -287,23 +278,23 @@ namespace System.Windows.Forms
 		[RefreshProperties (RefreshProperties.Repaint)]
 #endif
 		public int ImageIndex {
-    			get { 
-    				if (ImageList == null) {
-    					return -1;
-    				}
+   			get { 
+   				if (ImageList == null) {
+   					return -1;
+   				}
     				
-    				if (image_index >= image_list.Images.Count) {
-    					return image_list.Images.Count - 1;
-    				}
+   				if (image_index >= image_list.Images.Count) {
+   					return image_list.Images.Count - 1;
+   				}
     				
-    				return image_index;
-    			}
-    			set {
+   				return image_index;
+   			}
+   			set {
 
 				if (value < -1)
 					throw new ArgumentException ();
 
-    				if (image_index == value)
+   				if (image_index == value)
 					return;
 
 				image_index = value;
@@ -311,18 +302,18 @@ namespace System.Windows.Forms
 				if (ImageList != null && image_index !=-1)
 					Image = null;
 
-    				Refresh ();
+   				Refresh ();
 			}
-    		}
+   		}
 
 		[DefaultValue(null)]
 #if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
 #endif
-    		public ImageList ImageList {
-    			get { return image_list;}
-    			set {
-    				if (image_list == value)
+   		public ImageList ImageList {
+   			get { return image_list;}
+   			set {
+   				if (image_list == value)
 					return;
 					
 				image_list = value;
@@ -330,13 +321,13 @@ namespace System.Windows.Forms
 				if (image_list != null && image_index !=-1)
 					Image = null;
 
-    				Refresh ();
+   				Refresh ();
 			}
-    		}
+   		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-    		public new ImeMode ImeMode {
+   		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set { base.ImeMode = value; }
 		}
@@ -345,20 +336,20 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-    			get { return preferred_height; }
-    		}
+   			get { return preferred_height; }
+   		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-    			get {return preferred_width; }
-    		}
+   			get {return preferred_width; }
+   		}
 
 #if NET_2_0
 		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
 #endif
-    		protected virtual bool RenderTransparent {
+   		protected virtual bool RenderTransparent {
 			get { return render_transparent; }
 			set { render_transparent = value;}
 		}
@@ -367,16 +358,16 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop  {
-    			get { return base.TabStop; }
-    			set { base.TabStop = value; }
-    		}
+   			get { return base.TabStop; }
+   			set { base.TabStop = value; }
+   		}
 
 		[DefaultValue(ContentAlignment.TopLeft)]
 		[Localizable(true)]
 		public virtual ContentAlignment TextAlign {
-    			get { return text_align; }
+   			get { return text_align; }
 
-    			set {
+   			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
@@ -430,27 +421,26 @@ namespace System.Windows.Forms
     					Refresh();
 				}
 			}
-    		}
+   		}
 
 		[DefaultValue(true)]
 		public bool UseMnemonic {
-    			get { return use_mnemonic; }
+   			get { return use_mnemonic; }
    			set {
-    				if (use_mnemonic != value) {
+   				if (use_mnemonic != value) {
 					use_mnemonic = value;
 					SetUseMnemonic (use_mnemonic);
-	    				Refresh ();
-    				}
-    			}
-    		}
+	   				Refresh ();
+   				}
+   			}
+   		}
 
-    		#endregion
-
+		#endregion
 
 		#region Public Methods
 
-    		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
-    		{
+		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
+		{
     			Rectangle rcImageClip = area;
 			rcImageClip.Inflate (-2,-2);
 
@@ -485,15 +475,14 @@ namespace System.Windows.Forms
 			rcImageClip.Height = image.Height;
 
 			return rcImageClip;
-    		}
+		}
 
-    		
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			return base.CreateAccessibilityInstance ();
 		}
 
-    		protected override void Dispose(bool disposing)
+   		protected override void Dispose(bool disposing)
 		{
 			base.Dispose (disposing);
 
@@ -501,8 +490,8 @@ namespace System.Windows.Forms
 				string_format.Dispose ();
 		}
 
-    		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
-    		{
+   		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
+   		{
  			if (image == null || g == null)
 				return;
 
@@ -514,20 +503,20 @@ namespace System.Windows.Forms
 				ControlPaint.DrawImageDisabled (g, image, rcImageClip.X, rcImageClip.Y, BackColor);
 		}
 
-    		protected virtual void OnAutoSizeChanged (EventArgs e)
+   		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
-    		}
+   		}
 
-    		protected override void OnEnabledChanged (EventArgs e)
-    		{
+   		protected override void OnEnabledChanged (EventArgs e)
+   		{
 			base.OnEnabledChanged (e);
-    		}
+   		}
 
-    		protected override void OnFontChanged (EventArgs e)
-    		{
+   		protected override void OnFontChanged (EventArgs e)
+   		{
 			base.OnFontChanged (e);
 			if (autosize) {
 				CalcAutoSize();
@@ -535,29 +524,29 @@ namespace System.Windows.Forms
 				CalcPreferredHeight ();
 			}
 			Refresh ();
-    		}
+   		}
 
-    		protected override void OnPaint (PaintEventArgs pevent)
+   		protected override void OnPaint (PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
 			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 			base.OnPaint(pevent);
 		}
 
-    		protected override void OnParentChanged (EventArgs e)
-    		{
+   		protected override void OnParentChanged (EventArgs e)
+   		{
     			base.OnParentChanged (e);
-    		}
+   		}
 
-    		protected virtual void OnTextAlignChanged (EventArgs e)
-    		{
+   		protected virtual void OnTextAlignChanged (EventArgs e)
+   		{
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
 			if (eh != null)
 				eh (this, e);
-    		}
+   		}
 
-    		protected override void OnTextChanged (EventArgs e)
-    		{
+   		protected override void OnTextChanged (EventArgs e)
+   		{
 			base.OnTextChanged (e);			
 			if (autosize) {
 				CalcAutoSize ();
@@ -565,15 +554,15 @@ namespace System.Windows.Forms
 				CalcPreferredWidth ();
 			}
 			Refresh ();
-    		}
+   		}
 
-    		protected override void OnVisibleChanged (EventArgs e)
-    		{
-    			base.OnVisibleChanged (e);
-    		}
+   		protected override void OnVisibleChanged (EventArgs e)
+   		{
+   			base.OnVisibleChanged (e);
+   		}
 
-    		protected override bool ProcessMnemonic (char charCode)
-    		{
+   		protected override bool ProcessMnemonic (char charCode)
+   		{
 			if (IsMnemonic(charCode, Text) == true) {
 				// Select item next in line in tab order
 				if (this.Parent != null) {
@@ -583,20 +572,20 @@ namespace System.Windows.Forms
 			}
 			
 			return base.ProcessMnemonic (charCode);
-    		}
+   		}
 
-    		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-    		{
-    			base.SetBoundsCore (x, y, width, height, specified);
-    		}
+   		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+   		{
+   			base.SetBoundsCore (x, y, width, height, specified);
+   		}
 
-    		public override string ToString()
-    		{
-    			return base.ToString () + ", Text: " + Text;
-    		}
+   		public override string ToString()
+   		{
+   			return base.ToString () + ", Text: " + Text;
+   		}
 
-    		protected override void WndProc (ref Message m)
-    		{
+   		protected override void WndProc (ref Message m)
+   		{
 			switch ((Msg) m.Msg) {
 				case Msg.WM_DRAWITEM: {
 					m.Result = (IntPtr)1;
@@ -606,25 +595,25 @@ namespace System.Windows.Forms
 					base.WndProc (ref m);
 					break;
 			}
-    		}
+   		}
 
-    		#endregion Public Methods
+		#endregion Public Methods
 
-    		#region Private Methods
+		#region Private Methods
 
 		private void CalcAutoSize ()
-    		{
-    			if (IsHandleCreated == false || AutoSize == false)
-    				return;
+   		{
+   			if (IsHandleCreated == false || AutoSize == false)
+   				return;
 
-    			CalcPreferredWidth ();
-    			CalcPreferredHeight ();
+   			CalcPreferredWidth ();
+   			CalcPreferredHeight ();
 
-    		 	Width =  PreferredWidth;
-    		 	Height =  PreferredHeight;    		 	
-    		}
+   		 	Width =  PreferredWidth;
+   		 	Height =  PreferredHeight;    		 	
+   		}
 
-    		private void CalcPreferredHeight ()
+		private void CalcPreferredHeight ()
 		{
 			preferred_height = Font.Height;
 
@@ -639,10 +628,9 @@ namespace System.Windows.Forms
 			default:
 				break;
 			}
-
 		}
 
-    		private void CalcPreferredWidth ()
+		private void CalcPreferredWidth ()
 		{
 			if (Text == string.Empty) {
 				preferred_width = 0;
@@ -654,44 +642,34 @@ namespace System.Windows.Forms
 			}
 		}
 
-    		private void OnHandleCreatedLB (Object o, EventArgs e)
+		private void OnHandleCreatedLB (Object o, EventArgs e)
 		{
 			if (autosize)
 				CalcAutoSize ();
 		}
 
 		private void SetUseMnemonic (bool use)
-    		{
+		{
 			if (use)
 				string_format.HotkeyPrefix = HotkeyPrefix.Show;
 			else
 				string_format.HotkeyPrefix = HotkeyPrefix.None;
-    		}
+		}
 
 		#endregion Private Methods
 #if NET_2_0
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
-			get {
-				return use_compatible_text_rendering;
-			}
-
-			set {
-				use_compatible_text_rendering = value;
-			}
+			get { return use_compatible_text_rendering; }
+			set { use_compatible_text_rendering = value; }
 		}
 
 		[SettingsBindable (true)]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		public override string Text {
-			get {
-				return base.Text;
-			}
-
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 
 		protected override void OnMouseEnter (EventArgs e)

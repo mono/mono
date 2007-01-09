@@ -1,4 +1,8 @@
-007-01-08  Everaldo Canuto  <everaldo@simios.org>
+2007-01-09  Everaldo Canuto  <everaldo@simios.org>
+
+	* Label.cs, LinkLabel.cs: Source code identation fixes.
+
+2007-01-08  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBarButton.cs: Remove InvalidateBorder and use Invalidate instead,
 	we dont need to invalidate only borders because when we invalidate four
