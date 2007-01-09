@@ -1,3 +1,8 @@
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.c (mono_delegate_end_invoke): Add check for unpaired asyc
+	result arguments (someDelegate.EndInvoke (unrelatedAres)).
+
 2007-01-09  Raja R Harinath  <rharinath@novell.com>
 
 	* class-internals.h (_MonoInflatedGenericClass.is_initialized): Remove.
