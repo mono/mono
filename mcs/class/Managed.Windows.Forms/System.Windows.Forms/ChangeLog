@@ -1,3 +1,9 @@
+2007-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs:
+	* ThemeWin32Classic.cs: Use ListView.GetReorderedColumn instead of
+	ListView.Columns to get the last displayed column. Fixes #80452.
+
 2007-01-09  Everaldo Canuto  <everaldo@simios.org>
 
 	* Label.cs, LinkLabel.cs: Source code identation fixes.

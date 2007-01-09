@@ -990,7 +990,7 @@ namespace System.Windows.Forms
 		}
 #endif
 		
-		ColumnHeader GetReorderedColumn (int index)
+		internal ColumnHeader GetReorderedColumn (int index)
 		{
 			if (reordered_column_indices == null)
 				return Columns [index];

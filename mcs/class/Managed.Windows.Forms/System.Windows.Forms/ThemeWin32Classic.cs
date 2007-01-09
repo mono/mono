@@ -1762,7 +1762,7 @@ namespace System.Windows.Forms
 							       SystemBrushes.ControlText,
 							       rect, col.Format);
 					}
-					int right = control.Columns [control.Columns.Count - 1].Rect.Right - control.h_marker;
+					int right = control.GetReorderedColumn (control.Columns.Count - 1).Rect.Right - control.h_marker;
 					if (right < control.Right) {
 						Rectangle rect = control.Columns [0].Rect;
 						rect.X = right;
