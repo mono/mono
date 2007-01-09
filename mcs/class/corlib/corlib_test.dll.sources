@@ -200,6 +200,7 @@ System.Security.Cryptography/SHA512Test.cs
 System.Security.Cryptography/SignatureDescriptionTest.cs
 System.Security.Cryptography/SymmetricAlgorithmTest.cs
 System.Security.Cryptography/SymmetricAlgorithm2Test.cs
+System.Security.Cryptography/SymmetricAlgorithmTransformTest.cs
 System.Security.Cryptography/ToBase64TransformTest.cs
 System.Security.Cryptography/TripleDESCryptoServiceProviderTest.cs
 System.Security.Cryptography/TripleDESTest.cs
