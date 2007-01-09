@@ -1,3 +1,7 @@
+2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlDataSourceView.cs: fixed parameters init for ExecuteUpdate
+
 2007-01-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataSourceCacheManager.cs:

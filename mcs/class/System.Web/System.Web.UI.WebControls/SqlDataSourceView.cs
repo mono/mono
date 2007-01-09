@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 			else
 				oldDataValues = keys;
 			
-			InitializeParameters (command, DeleteParameters, null, oldDataValues, true);
+			InitializeParameters (command, DeleteParameters, null, oldDataValues);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnDeleting (args);
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
 			else
 				command.CommandType = CommandType.StoredProcedure;
 
-			InitializeParameters (command, InsertParameters, values, null, true);
+			InitializeParameters (command, InsertParameters, values, null);
 
 			OnInserting (new SqlDataSourceCommandEventArgs (command));
 
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (SelectParameters.Count > 0)
-				InitializeParameters (command, SelectParameters, null, null, true);
+				InitializeParameters (command, SelectParameters, null, null);
 
 			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
@@ -321,7 +321,7 @@ namespace System.Web.UI.WebControls {
 				dataValues = values;
 			}
 
-			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, false);
+			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues);
 
 			OnUpdating (new SqlDataSourceCommandEventArgs (command));
 
@@ -377,7 +377,7 @@ namespace System.Web.UI.WebControls {
 			return null;
 		}
 
-		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, bool allwaysAddNewValues)
+		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues)
 		{
 			foreach (Parameter p in parameters) {
 				object value = FindValueByName (p, values, false);
@@ -388,7 +388,7 @@ namespace System.Web.UI.WebControls {
 					object dbValue = p.ConvertValue (value);
 					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
-				else if (allwaysAddNewValues) {
+				else {
 					object dbValue = p.GetValue (context, owner);
 					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
 				}
