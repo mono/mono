@@ -1,3 +1,11 @@
+2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProviderTest.cs: Remove test cases for bug #80439
+	as they are more general than DES and the default padding.
+	* SymmetricAlgorithmTransformTest.cs: New. Extensive test cases for
+	bug #80439, all symmtric ciphers (all block size), all mode of 
+	operations and all supported padding modes.
+
 2007-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESCryptoServiceProviderTest.cs: Update and add new test cases for
