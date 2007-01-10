@@ -1,3 +1,30 @@
+2007-01-10  Andy Hume <andyhume32@yahoo.co.uk>
+
+	* Fixes to a number of exception classes.
+	
+	A project of mine uses #ctor(String,Exception) on 
+	ObjectDisposedException, so I looked at adding that, and any 
+	other similar constructors missing as per the class status report.
+	
+	I also spotted inconsistent setting of HResult, and fixed 
+	those too.  For instance, ArgumentNullException sets HResult 
+	only in three out of the four constuctors; not setting it in 
+	the v2 (String,Exception) one -- and correctly not in the 
+	Serialization constructor.
+	
+	
+	So, I fixed the remaining missing (String,Exception) 
+	constructors in corlib (2 of), and fixed the Hresult setting 
+	in all exceptions there (4 of).
+	
+	The remaining Exception constructor omission listed was 
+	InvalidCastException.ctor(System.String, System.Int32).  MSDN	says:
+	"This constructor supplies an HRESULT value that is 
+	accessible to inheritors of the InvalidCastException class, 
+	via the protected HResult property of the Exception class."
+	I added that method too, setting the HResult property from 
+	the Int32 argument.
+
 2007-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs, StringComparer.cs : avoid extra string creation in

@@ -79,6 +79,7 @@ namespace System
 		public ArgumentOutOfRangeException (string message, Exception innerException)
 		: base (message, innerException)
 		{
+			HResult = Result;
 		}
 #endif
 

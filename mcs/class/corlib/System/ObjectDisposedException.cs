@@ -58,6 +58,13 @@ namespace System
 			msg = message;
 		}
 
+#if NET_2_0
+		public ObjectDisposedException (string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+#endif
+
 		protected ObjectDisposedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

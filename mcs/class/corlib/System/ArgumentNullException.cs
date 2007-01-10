@@ -63,6 +63,7 @@ namespace System
 		public ArgumentNullException (string message, Exception innerException)
 		: base (message, innerException)
 		{
+			HResult = Result;
 		}
 #endif
 

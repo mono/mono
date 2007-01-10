@@ -60,6 +60,14 @@ namespace System
 			HResult = Result;
 		}
 
+#if NET_2_0
+		public InvalidCastException(string message, int errorCode)
+			: base(message)
+		{
+			HResult = errorCode;
+		}
+#endif
+
 		protected InvalidCastException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

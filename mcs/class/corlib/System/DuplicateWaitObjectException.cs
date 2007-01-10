@@ -60,6 +60,14 @@ namespace System
 			HResult = Result;
 		}
 
+#if NET_2_0
+		public DuplicateWaitObjectException (string message, Exception innerException)
+			: base(message, innerException)
+		{
+			HResult = Result;
+		}
+#endif
+
 		protected DuplicateWaitObjectException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

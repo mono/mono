@@ -47,6 +47,7 @@ namespace System
 		public NotFiniteNumberException ()
 			: base (Locale.GetText ("The number encountered was not a finite quantity."))
 		{
+			HResult = Result;
 		}
 
 		public NotFiniteNumberException (double offendingNumber)
@@ -83,8 +84,9 @@ namespace System
 
 #if NET_2_0
 		public NotFiniteNumberException (string message, Exception innerException)
-		: base (message, innerException)
+			: base (message, innerException)
 		{
+			HResult = Result;
 		}
 #endif
 
