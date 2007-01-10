@@ -1,5 +1,9 @@
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
+	* Application.cs: fix compilation errors when debug is enabled.
+
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
 	* ContainerControl.cs (set_ActiveControl): rework this a bit (and
 	add some nice ascii art pictures and explanation of the process).
 	(GetMostDeeplyNestedActiveControl): new utility function we need

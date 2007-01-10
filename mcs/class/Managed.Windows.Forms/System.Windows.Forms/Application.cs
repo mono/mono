@@ -179,7 +179,7 @@ namespace System.Windows.Forms {
 							XplatUI.PostMessage(f.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
 						}
 						#if DebugRunLoop
-							Console.WriteLine("      Closing form {0}", c);
+							Console.WriteLine("      Closing form {0}", f);
 						#endif
 					}
 				}
@@ -554,7 +554,7 @@ namespace System.Windows.Forms {
 						if (f != context.MainForm) {
 							if (f.IsHandleCreated && XplatUI.IsEnabled(f.Handle)) {
 								#if DebugRunLoop
-									Console.WriteLine("      Disabling form {0}", c);
+									Console.WriteLine("      Disabling form {0}", f);
 								#endif
 								XplatUI.EnableWindow(f.Handle, false);
 								toplevels.Enqueue(f);
