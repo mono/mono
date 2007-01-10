@@ -163,12 +163,16 @@ namespace System.Web.UI.WebControls {
 
 			// we create controls for all possibilities
 			logoutLinkButton = new LinkButton ();
+			logoutLinkButton.CausesValidation = false;
 			logoutLinkButton.Command += new CommandEventHandler (LogoutClick);
 			logoutImageButton = new ImageButton ();
+			logoutImageButton.CausesValidation = false;
 			logoutImageButton.Command += new CommandEventHandler (LogoutClick);
 			loginLinkButton = new LinkButton ();
+			loginLinkButton.CausesValidation = false;
 			loginLinkButton.Command += new CommandEventHandler (LoginClick);
 			loginImageButton = new ImageButton ();
+			loginImageButton.CausesValidation = false;
 			loginImageButton.Command += new CommandEventHandler (LoginClick);
 
 			// adds controls at the end (after setting their properties)

@@ -1,5 +1,9 @@
 2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* LoginStatus.cs: fixed: not causes page validation.
+
+2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CreateUserWizard.cs: fixed: resolves ErrorMessage control correct.
 	* CreateUserWizardStep.cs:
 
