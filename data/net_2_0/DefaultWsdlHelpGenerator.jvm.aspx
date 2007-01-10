@@ -1551,8 +1551,10 @@ function clearForm ()
 <a class="method" href='<%=PageName%>'>Overview</a><br>
 <div class="smallSeparator"></div>
 <a class="method" href='<%=PageName + "?" + GetPageContext("wsdl")%>'>Service Description</a>
+<!--
 <div class="smallSeparator"></div>
 <a class="method" href='<%=PageName + "?" + GetPageContext("proxy")%>'>Client proxy</a>
+-->
 <br><br>
 	<asp:repeater id="BindingsRepeater" runat=server>
 		<itemtemplate>
