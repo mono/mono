@@ -1,3 +1,8 @@
+2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* GridView.cs: fixed: header and footer does not appear in no items.
+	* CompositeDataBoundControl.cs:
+
 2007-01-09 Konstantin Triger <kostat@mainsoft.com>
 
 	* AdRotator.cs: Backport the fix for AdRotator AbsoluteUri to 1.1.
