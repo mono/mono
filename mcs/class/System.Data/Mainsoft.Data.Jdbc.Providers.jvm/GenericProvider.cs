@@ -165,8 +165,16 @@ namespace Mainsoft.Data.Jdbc.Providers
 								break;
 							}
 						}
-						if (!contains)
+						if (!contains) {
+							if (_provider._unsupportedKeys != null)
+								for (int i = 0; i < _provider._unsupportedKeys.Length; i++)
+									if (String.Compare ((string) _provider._unsupportedKeys [i], key,
+										true, CultureInfo.InvariantCulture) == 0)
+										throw new NotSupportedException (
+											String.Format ("The parameter '{0}' is not supported.", key));
+
 							properties.put (key, value);
+						}
 					}
 
 					Driver d = ActivateJdbcDriver ();
@@ -273,6 +281,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		private readonly IDictionary _providerInfo;
 		private readonly NameValueCollection _keyMapping;
 		private readonly string[] _excludedKeys;
+		private readonly string[] _unsupportedKeys;
 
 		#endregion // Fields
 
@@ -303,6 +312,13 @@ namespace Mainsoft.Data.Jdbc.Providers
 				_excludedKeys = keyMappingExcludesStr.Split (ConfigurationConsts.CommaArr);
 				for (int i = 0; i < _excludedKeys.Length; i++)
 					_excludedKeys[i] = _excludedKeys[i].Trim();
+			}
+
+			string keyMappingUnsupportedStr = (string) _providerInfo [ConfigurationConsts.KeyMappingUnsupported];
+			if (keyMappingUnsupportedStr != null) {
+				_unsupportedKeys = keyMappingUnsupportedStr.Split (ConfigurationConsts.CommaArr);
+				for (int i = 0; i < _unsupportedKeys.Length; i++)
+					_unsupportedKeys [i] = _unsupportedKeys [i].Trim ();
 			}
 		}
 

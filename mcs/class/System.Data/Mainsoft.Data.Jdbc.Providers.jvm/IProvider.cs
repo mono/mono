@@ -51,6 +51,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		public const string Name = "id";
 		public const string KeyMapping = "keyMapping";
 		public const string KeyMappingExcludes = "keyExclude";
+		public const string KeyMappingUnsupported = "keyUnsupported";
 		public const string JdbcUrlPattern = "url";
 		public const string JdbcDriverClassName = "driverClassName";
 		public const string ProviderType = "type";
