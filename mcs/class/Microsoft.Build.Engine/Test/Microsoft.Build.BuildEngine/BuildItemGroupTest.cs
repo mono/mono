@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Xml;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -35,7 +36,6 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class BuildItemGroupTest {
-
 		[Test]
 		public void TestCtor ()
 		{
@@ -187,7 +187,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void TestClear ()
+		public void TestClear1 ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();
 			big.AddNewItem ("a", "a");
@@ -200,6 +200,40 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, big.Count, "A2");
 		}
 
+		[Test]
+		public void TestClear2 ()
+		{
+			Engine engine;
+			Project project;
+			XmlDocument xd;
+			XmlNode node;
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item Include='a' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("tns:Project/tns:ItemGroup/*", TestNamespaceManager.NamespaceManager);
+			Assert.IsNotNull (node, "A1");
+
+			BuildItemGroup [] big = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (big, 0);
+			big [0].Clear ();
+
+			Assert.AreEqual (0, big [0].Count, "A2");
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("tns:Project/tns:ItemGroup/*", TestNamespaceManager.NamespaceManager);
+			Assert.IsNull (node, "A3");
+		}
 		[Test]
 		[Category ("NotWorking")]
 		public void TestClone1 ()
@@ -382,6 +416,67 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestCondition1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup Condition='true' >
+						<Item Include='a' />
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (groups, 0);
+
+			Assert.AreEqual ("true", groups [0].Condition, "A1");
+			Assert.IsFalse (groups [0].IsImported, "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		public void TestCondition2 ()
+		{
+			BuildItemGroup big = new BuildItemGroup ();
+
+			big.Condition = "true";
+		}
+
+		[Test]
+		public void TestCondition3 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup Condition='true' >
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (groups, 0);
+
+			Assert.AreEqual ("true", groups [0].Condition, "A1");
+			groups [0].Condition = "false";
+
+			Assert.AreEqual ("false", groups [0].Condition, "A2");
+		}
+
+		[Test]
 		public void TestGetEnumerator ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();
@@ -512,41 +607,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			BuildItemGroup big = new BuildItemGroup ();
 			Assert.IsNotNull (big [-1], "A1");
-		}
-
-		[Test]
-		public void TestCondition1 ()
-		{
-			Engine engine;
-			Project project;
-			
-			string documentString = @"
-				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<ItemGroup Condition='true' >
-						<Item Include='a' />
-					</ItemGroup>
-				</Project>
-			";
-
-			engine = new Engine (Consts.BinPath);
-			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
-
-			BuildItemGroup[] groups = new BuildItemGroup [1];
-		       	project.ItemGroups.CopyTo (groups, 0);
-			
-			Assert.AreEqual ("true", groups [0].Condition, "A1");
-			Assert.IsFalse (groups [0].IsImported, "A2");
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
-		public void TestCondition2 ()
-		{
-			BuildItemGroup big = new BuildItemGroup ();
-
-			big.Condition = "true";
 		}
 	}
 }

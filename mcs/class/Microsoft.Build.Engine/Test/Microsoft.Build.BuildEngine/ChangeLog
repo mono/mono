@@ -1,3 +1,9 @@
+2007-01-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyGroupTest.cs, BuildItemGroupTest.cs: Check if XML has
+	changed.
+	* TestNamespaceManager.cs: Added.
+
 2007-01-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ImportTest.cs: Added test for project importing another project

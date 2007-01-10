@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Xml;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -60,6 +61,52 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			bpg = new BuildPropertyGroup ();
 
 			bpg.AddNewProperty (name, value);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"This method is only valid for persisted <System.Object[]> elements.")]
+		public void TestAddNewProperty2 ()
+		{
+			Engine engine;
+			Project project;
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			project.EvaluatedProperties.AddNewProperty ("a", "b");
+		}
+
+		[Test]
+		public void TestAddNewProperty3 ()
+		{
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] groups = new BuildPropertyGroup [1];
+			XmlDocument xd;
+			XmlNode node;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.PropertyGroups.CopyTo (groups, 0);
+			groups [0].AddNewProperty ("a", "b");
+
+			Assert.AreEqual (1, groups [0].Count, "A1");
+			Assert.AreEqual ("b", project.EvaluatedProperties ["a"].FinalValue, "A2");
+
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("/tns:Project/tns:PropertyGroup/tns:a", TestNamespaceManager.NamespaceManager);
+			Assert.IsNotNull (node, "A3");
 		}
 
 		[Test]
