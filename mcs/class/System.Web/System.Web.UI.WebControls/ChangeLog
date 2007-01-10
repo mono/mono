@@ -1,3 +1,7 @@
+2007-01-09 Konstantin Triger <kostat@mainsoft.com>
+
+	* AdRotator.cs: Backport the fix for AdRotator AbsoluteUri to 1.1.
+
 2007-01-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: SelectedDataKey.
