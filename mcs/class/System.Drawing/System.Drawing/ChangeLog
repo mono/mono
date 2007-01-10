@@ -1,3 +1,9 @@
+2007-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Fix Palette to call into GDI+ even for non-indexed images.
+	This case can occurs with the ICOn codec where the returned image is a
+	32bpp ARGB bitmap *with* a palette.
+
 2007-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Unify platform detection code.

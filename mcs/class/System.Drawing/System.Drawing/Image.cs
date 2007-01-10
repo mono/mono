@@ -565,14 +565,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal ColorPalette retrieveGDIPalette()
 	{
-		ColorPalette ret = new ColorPalette();
-		if (!IsIndexedPixelFormat (PixelFormat)) {
-			return ret;
-		}
-		Status st;
 		int bytes;
+		ColorPalette ret = new ColorPalette ();
 
-		st = GDIPlus.GdipGetImagePaletteSize (nativeObject, out bytes);
+		Status st = GDIPlus.GdipGetImagePaletteSize (nativeObject, out bytes);
 		GDIPlus.CheckStatus (st);
 		IntPtr palette_data = Marshal.AllocHGlobal (bytes);
 		try {
