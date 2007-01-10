@@ -69,7 +69,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value==null || (active_control == value && active_control.has_focus)) {
+				if (value==null || (active_control == value)) {
 					return;
 				}
 
@@ -80,34 +80,83 @@ namespace System.Windows.Forms {
 				// Fire the enter and leave events if possible
 				Form form = FindForm ();
 				if (form != null) {
-					Control active = form.ActiveControl;
-					Control common_container = GetCommonContainer (form.ActiveControl, value);
+					Control active = GetMostDeeplyNestedActiveControl (form);
+					Control common_container = GetCommonContainer (active, value);
 					ArrayList chain = new ArrayList ();
+					ArrayList validation_chain = new ArrayList ();
 					Control walk = active;
 
-					// Generate the leave messages	
+					// we split this up into three steps:
+					//    1. walk up the tree (if we need to) to our root, firing leave events.
+					//    2. validate.
+					//    3. walk down the tree (if we need to), firing enter events.
+
+					// "our root" is either the common container of the current active
+					// control and the new active control, or the current active control,
+					// or the new active control.  That is, it's either one of these three
+					// configurations:
+
+					//  (1)     root	    (2)  new   	      (3)  current
+					//          /  \	       	/   \		    /  	\
+					//	  ...  	...	      ...   ...		  ...  	...
+					//     	  /      \	      /	       			  \
+					//     current 	 new   	   current   			  new
+
+
+					// note (3) doesn't require any upward walking, and no leave events are generated.
+					//      (2) doesn't require any downward walking, and no enter events are generated.
+
+					// as we walk up the tree, we generate a list of all controls which cause
+					// validation.  After firing the leave events, we invoke (in order starting from
+					// the most deeply nested) their Validating event.  If one sets CancelEventArgs.Cancel
+					// to true, we ignore the control the user wanted to set ActiveControl to, and use
+					// the Validating control instead.
+
+					bool fire_enter = true;
+					Control root = common_container;
+
+					// Generate the leave messages
 					while (walk != common_container) {
+						if (walk == value) {
+							root = value;
+							fire_enter = false;
+							break;
+						}
 						walk.FireLeave ();
-						if (walk.CausesValidation && !ValidateControl (walk))
-							return;
-						walk = walk.Parent;
-					}
-
-					walk = value;
-					while (walk != common_container) {
-						chain.Add (walk);
-						walk = walk.Parent;
-					}
-
-					for (int i = chain.Count - 1; i >= 0; i--) {
-						walk = (Control) chain [i];
-						walk.FireEnter ();
-					}
-
-					walk = this.Parent;
-					while (walk != null) {
+						/* clear our idea of the active control as we go back up */
 						if (walk is ContainerControl)
-							((ContainerControl)walk).active_control = this;
+							((ContainerControl)walk).active_control = null;
+
+						if (walk.CausesValidation)
+							validation_chain.Add (walk);
+
+						walk = walk.Parent;
+					}
+
+					for (int i = 0; i < validation_chain.Count; i ++) {
+						if (!ValidateControl ((Control)validation_chain[i])) {
+							value = (Control)validation_chain[i];
+							fire_enter = true;
+						}
+					}
+
+					if (fire_enter) {
+						walk = value;
+						while (walk != root) {
+							chain.Add (walk);
+							walk = walk.Parent;
+						}
+
+						for (int i = chain.Count - 1; i >= 0; i--) {
+							walk = (Control) chain [i];
+							walk.FireEnter ();
+						}
+					}
+
+					walk = this;
+					while (walk != null) {
+						if (walk.Parent is ContainerControl)
+							((ContainerControl)walk.Parent).active_control = walk;
 						walk = walk.Parent;
 					}
 				}
@@ -127,10 +176,6 @@ namespace System.Windows.Forms {
 
 		private bool ValidateControl (Control c)
 		{
-			if (c is ContainerControl && ((ContainerControl)c).ActiveControl != null && !c.ContainerSelected)
-				if (!((ContainerControl)c).ValidateControl(((ContainerControl)c).ActiveControl))
-					return false;
-
 			CancelEventArgs e = new CancelEventArgs ();
 
 			c.FireValidating (e);
@@ -140,6 +185,17 @@ namespace System.Windows.Forms {
 
 			c.FireValidated ();
 			return true;
+		}
+
+		private Control GetMostDeeplyNestedActiveControl (ContainerControl container)
+		{
+			Control active = container.ActiveControl;
+			while (active is ContainerControl) {
+				if (((ContainerControl)active).ActiveControl == null)
+					break;
+				active = ((ContainerControl)active).ActiveControl;
+			}
+			return active;
 		}
 
 		// Just in a separate method to make debugging a little easier,
@@ -190,7 +246,7 @@ namespace System.Windows.Forms {
 				if (auto_scale_dimensions.IsEmpty) {
 					return new SizeF(1f, 1f);
 				}
-				return new SizeF(CurrentAutoScaleDimensions.Width / auto_scale_dimensions.Width, 
+				return new SizeF(CurrentAutoScaleDimensions.Width / auto_scale_dimensions.Width,
 					CurrentAutoScaleDimensions.Height / auto_scale_dimensions.Height);
 			}
 		}
@@ -315,7 +371,7 @@ namespace System.Windows.Forms {
 			base.Dispose(disposing);
 		}
 
-		// LAMESPEC This used to be documented, but it's not in code 
+		// LAMESPEC This used to be documented, but it's not in code
 		// and no longer listed in MSDN2
 		// [EditorBrowsable (EditorBrowsableState.Advanced)]
 		// protected override void OnControlRemoved(ControlEventArgs e) {
@@ -380,7 +436,7 @@ namespace System.Windows.Forms {
 						return true;
 					}
 					break;
-				} 
+				}
 
 
 			}
@@ -409,7 +465,7 @@ namespace System.Windows.Forms {
 					wrapped = true;
 				}
 			} while (c != active_control);
-			
+
 			return false;
 		}
 
@@ -441,18 +497,22 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
-		        
+
 				case Msg.WM_LBUTTONDOWN:
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()),
 						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
 						HighOrder ((int) m.LParam.ToInt32 ()), 0));
 				break;
-		        
+
 				case Msg.WM_SETFOCUS:
 					if (active_control != null)
 						Select (active_control);
 					else
+						base.WndProc (ref m);
+#if false
+					else
 						SelectNextControl (null, true, true, true, false);
+#endif
 				break;
 
 				default:
@@ -468,7 +528,7 @@ namespace System.Windows.Forms {
 			// do nothing here, only called if it is a Form
 		}
 		#endregion	// Internal Methods
-		
+
 #if NET_2_0
 		protected override void OnParentChanged (EventArgs e)
 		{

@@ -1520,9 +1520,6 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnActivated(EventArgs e)
 		{
-			if (is_loaded)
-				SelectActiveControl ();
-
 			EventHandler eh = (EventHandler)(Events [ActivatedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -1553,8 +1550,6 @@ namespace System.Windows.Forms {
 
 			OnLoad(EventArgs.Empty);
 			
-			SelectActiveControl ();
-
 			// Send initial location
 			OnLocationChanged(EventArgs.Empty);
 
@@ -1934,6 +1929,9 @@ namespace System.Windows.Forms {
 	
 				case Msg.WM_ACTIVATE: {
 					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
+						if (is_loaded)
+							SelectActiveControl ();
+
 						OnActivated(EventArgs.Empty);
 					} else {
 						OnDeactivate(EventArgs.Empty);

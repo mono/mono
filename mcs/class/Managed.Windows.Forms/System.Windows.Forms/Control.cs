@@ -1218,7 +1218,7 @@ namespace System.Windows.Forms
 			if (container != null && (Control)container != control) {
 				container.ActiveControl = control;
 			}
-			if (control.IsHandleCreated) {
+			else if (control.IsHandleCreated) {
 				XplatUI.SetFocus(control.window.Handle);
 			}
 			return true;
@@ -4117,8 +4117,8 @@ namespace System.Windows.Forms
 			
 			container = GetContainerControl();
 			if (container != null && (Control)container != this)
-                if (!this.Parent.ContainerSelected)
-				    container.ActiveControl = this;
+				if (!this.Parent.ContainerSelected)
+					container.ActiveControl = this;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

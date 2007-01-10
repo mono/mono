@@ -1,3 +1,25 @@
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* ContainerControl.cs (set_ActiveControl): rework this a bit (and
+	add some nice ascii art pictures and explanation of the process).
+	(GetMostDeeplyNestedActiveControl): new utility function we need
+	because our ActiveControl can refer to a child container with its
+	own ActiveControl.
+
+	* Form.cs (OnActivated): remove the call to SelectActiveControl
+	from here, since you can override this method and not chain up,
+	and winforms still sets the active control.
+	(OnCreateControl): also remove the unnecessary SelectActiveControl
+	call from here.
+	(WndProc): it's actually called from the WM_ACTIVATE block, just
+	before calling OnActivated.
+
+	* Control.cs (Select (Control)): move the call to XplatUI.SetFocus
+	inside the else.  the ActiveControl setter will end up setting
+	focus on @control.  This keeps us from setting it again (and
+	generating an extra LostFocus/GotFocus pair).
+	(Select (bool, bool)): reindent.
+
 2007-01-10  Jonathan Pobst  <jpobst@novell.com>
 
 	* FlowLayoutPanel.cs, MenuStrip.cs, SplitContainer.cs, SplitterPanel.cs,
