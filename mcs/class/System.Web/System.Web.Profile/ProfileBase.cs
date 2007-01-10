@@ -167,6 +167,10 @@ namespace System.Web.Profile
 			if (_propertiyValues [propertyName] == null)
 				throw new SettingsPropertyNotFoundException ("The settings property '" + propertyName + "' was not found.");
 
+			if (!(bool)((SettingsPropertyValue) 
+				_propertiyValues [propertyName]).Property.Attributes["AllowAnonymous"] && IsAnonymous)
+				throw new ProviderException ("This property cannot be set for anonymous users.");
+
 			((SettingsPropertyValue) _propertiyValues [propertyName]).PropertyValue = propertyValue;
 			_dirty = true;
 			_lastActivityDate = DateTime.UtcNow;
