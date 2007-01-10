@@ -58,16 +58,19 @@ namespace System.Windows.Forms
 			get { return base.LayoutEngine; }
 		}
 		
+		[DefaultValue (ToolStripLayoutStyle.Flow)]
 		public new ToolStripLayoutStyle LayoutStyle {
 			get { return this.layout_style; }
 			set { this.layout_style = value; }
 		}
 		
+		[DefaultValue (false)]
 		public bool ShowCheckMargin {
 			get { return this.show_check_margin; }
 			set { this.show_check_margin = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool ShowImageMargin {
 			get { return this.show_image_margin; }
 			set { this.show_image_margin = value; }
@@ -84,6 +87,16 @@ namespace System.Windows.Forms
 		protected internal override ToolStripItem CreateDefaultItem (string text, Image image, EventHandler onClick)
 		{
 			return base.CreateDefaultItem (text, image, onClick);
+		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+		}
+
+		protected override void OnPaintBackground (PaintEventArgs pevent)
+		{
+			base.OnPaintBackground (pevent);
 		}
 		#endregion
 	}

@@ -42,6 +42,7 @@ namespace System.Windows.Forms
 	[ProvideProperty ("Row", typeof (Control))]
 	[ProvideProperty ("RowSpan", typeof (Control))]
 	[DefaultProperty ("ColumnCount")]
+	[Docking (DockingBehavior.Ask)]
 	public class TableLayoutPanel : Panel, IExtenderProvider
 	{
 		private TableLayoutSettings settings;
@@ -66,7 +67,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		[Localizable (true)]
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		new public BorderStyle BorderStyle {
 			get { return base.BorderStyle; }
 			set { base.BorderStyle = value; }
@@ -86,12 +87,15 @@ namespace System.Windows.Forms
 			set { settings.ColumnCount = value; }
 		}
 
+		[Browsable (false)]
 		[DisplayName ("Columns")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public TableLayoutColumnStyleCollection ColumnStyles {
 			get { return settings.ColumnStyles; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public TableLayoutControlCollection Controls {
 			get { return (TableLayoutControlCollection) base.Controls; }
 		}
@@ -108,6 +112,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TableLayoutSettings LayoutSettings {
 			get { return this.settings; }
 			set { throw new NotSupportedException (); }
@@ -120,7 +125,8 @@ namespace System.Windows.Forms
 			set { this.settings.RowCount = value; }
 		}
 
-		[DisplayName("Rows")]
+		[Browsable (false)]
+		[DisplayName ("Rows")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public TableLayoutRowStyleCollection RowStyles {
 			get { return settings.RowStyles; }
@@ -128,7 +134,9 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[DefaultValue (-1)]
 		[DisplayName ("Cell")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TableLayoutPanelCellPosition GetCellPosition (Control control)
 		{
 			return settings.GetCellPosition (control);
@@ -136,6 +144,7 @@ namespace System.Windows.Forms
 
 		[DisplayName ("Column")]
 		[DefaultValue (-1)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int GetColumn (Control control)
 		{
 			return settings.GetColumn (control);
@@ -148,6 +157,8 @@ namespace System.Windows.Forms
 			return settings.GetColumnSpan (control);
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int[] GetColumnWidths ()
 		{
 			return this.column_widths;
@@ -179,11 +190,14 @@ namespace System.Windows.Forms
 
 		[DisplayName ("Row")]
 		[DefaultValue ("-1")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int GetRow (Control control)
 		{
 			return settings.GetRow (control);
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int[] GetRowHeights ()
 		{
 			return this.row_heights;
@@ -228,6 +242,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return new TableLayoutControlCollection (this);
@@ -240,6 +255,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			base.OnLayout (levent);

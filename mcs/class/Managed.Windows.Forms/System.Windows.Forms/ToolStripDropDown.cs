@@ -58,6 +58,7 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool AllowTransparency {
 			get { return allow_transparency; }
 			set {
@@ -101,15 +102,21 @@ namespace System.Windows.Forms
 			set { }
 		}
 
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//public ContextMenuStrip ContextMenuStrip {
-		//        get { return null; }
-		//        set { }
-		//}
-
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		public ContextMenuStrip ContextMenuStrip {
+			get { return null; }
+			set { }
+		}
+
+		public override ToolStripDropDownDirection DefaultDropDownDirection {
+			get { return base.DefaultDropDownDirection; }
+			set { base.DefaultDropDownDirection = value; }
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (DockStyle.None)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
@@ -139,6 +146,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Padding GripMargin {
 			get { return Padding.Empty; }
 			set { }
@@ -152,6 +160,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (ToolStripGripStyle.Hidden)]
 		public new ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
@@ -159,11 +168,16 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
 		}
 
+		[DefaultValue (1D)]
+		[TypeConverter (typeof (OpacityConverter))]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public double Opacity {
 			get { return this.opacity; }
 			set {
@@ -178,6 +192,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
 		public ToolStripItem OwnerItem {
 			get { return this.owner_item; }
 			set { this.owner_item = value; 
@@ -187,13 +203,16 @@ namespace System.Windows.Forms
 						this.Renderer = this.owner_item.Owner.Renderer;
 			}
 		}
-		
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new Region Region {
 			get { return base.Region; }
 			set { base.Region = value; }
 		}
 
 		[Localizable (true)]
+		[AmbientValue (RightToLeft.Inherit)]
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set { base.RightToLeft = value; }
@@ -208,17 +227,24 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new int TabIndex {
 			get { return 0; }
 			set { }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool TopLevel {
-			get { return this.TopMost; }
-			set { }
+			get { return GetTopLevel (); }
+			set { SetTopLevel (value); }
 		}
 		
 		[Localizable (true)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool Visible {
 			get { return base.Visible; }
 			set { base.Visible = value; }
@@ -285,6 +311,9 @@ namespace System.Windows.Forms
 			ToolStripManager.AppClicked -= new EventHandler (ToolStripMenuTracker_AppClicked); ;
 			ToolStripManager.AppFocusChange -= new EventHandler (ToolStripMenuTracker_AppFocusChange);
 
+			// Hide this dropdown
+			this.Hide ();
+
 			// Owner MenuItem needs to be told to redraw (it's no longer selected)
 			if (owner_item != null)
 				owner_item.Invalidate ();
@@ -293,13 +322,12 @@ namespace System.Windows.Forms
 			foreach (ToolStripItem tsi in this.Items)
 				if (tsi is ToolStripMenuItem)
 					(tsi as ToolStripMenuItem).HideDropDown (reason);
-
-			// Hide this dropdown
-			this.Hide ();
 			
 			this.OnClosed (new ToolStripDropDownClosedEventArgs (reason));
 		}
 
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new void Show ()
 		{
 			CancelEventArgs e = new CancelEventArgs ();
@@ -338,10 +366,50 @@ namespace System.Windows.Forms
 			Show ();
 		}
 		
+		public void Show (Point position, ToolStripDropDownDirection direction)
+		{
+			this.PerformLayout ();
+			
+			Point show_point = position;
+
+			switch (direction) {
+				case ToolStripDropDownDirection.AboveLeft:
+					show_point.Y -= this.Height;
+					show_point.X -= this.Width;
+					break;
+				case ToolStripDropDownDirection.AboveRight:
+					show_point.Y -= this.Height;
+					break;
+				case ToolStripDropDownDirection.BelowLeft:
+					show_point.X -= this.Width;
+					break;
+				case ToolStripDropDownDirection.Left:
+					show_point.X -= this.Width;
+					break;
+				case ToolStripDropDownDirection.Right:
+					break;
+			}
+			
+			if (this.Location != show_point)
+				this.Location = show_point;
+				
+			Show ();
+		}
+		
 		public void Show (Control control, int x, int y)
 		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
 			Show (control, new Point (x, y));
-			
+		}
+		
+		public void Show (Control control, Point position, ToolStripDropDownDirection direction)
+		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			Show (control.PointToScreen (position), direction);
 		}
 		#endregion
 
@@ -388,7 +456,7 @@ namespace System.Windows.Forms
 			int widest = 0;
 
 			foreach (ToolStripItem tsi in this.Items) {
-				if (!tsi.Visible) 
+				if (!tsi.Available) 
 					continue;
 				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
 					widest = tsi.GetPreferredSize (Size.Empty).Width;
@@ -399,7 +467,7 @@ namespace System.Windows.Forms
 			int y = this.Padding.Top;
 
 			foreach (ToolStripItem tsi in this.Items) {
-				if (!tsi.Visible)
+				if (!tsi.Available)
 					continue;
 
 				y += tsi.Margin.Top;
@@ -450,6 +518,7 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override bool ProcessDialogChar (char charCode)
 		{
 			return base.ProcessDialogChar (charCode);
@@ -465,6 +534,7 @@ namespace System.Windows.Forms
 			return base.ProcessMnemonic (charCode);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void ScaleCore (float dx, float dy)
 		{
 			base.ScaleCore (dx, dy);
@@ -501,20 +571,26 @@ namespace System.Windows.Forms
 		static object OpeningEvent = new object ();
 		static object ScrollEvent = new object ();
 
+		[Browsable (false)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+		[Browsable (false)]
 		public new event EventHandler BackgroundImageLayoutChanged {
 			add { base.BackgroundImageLayoutChanged += value; }
 			remove { base.BackgroundImageLayoutChanged -= value; }
 		}
 
+		[Browsable (false)]
 		public new event EventHandler BindingContextChanged {
 			add { base.BindingContextChanged += value; }
 			remove { base.BindingContextChanged -= value; }
 		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event UICuesEventHandler ChangeUICues {
 			add { base.ChangeUICues += value; }
 			remove { base.ChangeUICues -= value; }
@@ -538,29 +614,35 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler ContextMenuStripChanged {
 			add { base.ContextMenuStripChanged += value; }
 			remove { base.ContextMenuStripChanged -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler DockChanged {
 			add { base.DockChanged += value; }
 			remove { base.DockChanged -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler Enter {
 			add { base.Enter += value; }
 			remove { base.Enter -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler FontChanged {
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
@@ -573,31 +655,43 @@ namespace System.Windows.Forms
 			remove { base.GiveFeedback -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event HelpEventHandler HelpRequested {
 			add { base.HelpRequested += value; }
 			remove { base.HelpRequested -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown {
 			add { base.KeyDown += value; }
 			remove { base.KeyDown -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress {
 			add { base.KeyPress += value; }
 			remove { base.KeyPress -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp {
 			add { base.KeyUp += value; }
 			remove { base.KeyUp -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Leave {
 			add { base.Leave += value; }
 			remove { base.Leave -= value; }
@@ -613,6 +707,8 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (OpeningEvent, value); }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler RegionChanged {
 			add { base.RegionChanged += value; }
 			remove { base.RegionChanged -= value; }
@@ -625,6 +721,8 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ScrollEvent, value); }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler StyleChanged {
 			add { base.StyleChanged += value; }
 			remove { base.StyleChanged -= value; }

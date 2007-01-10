@@ -77,7 +77,7 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public new ToolStripItemAlignment Alignment {
 			get { return base.Alignment; }
 			set { base.Alignment = value; }

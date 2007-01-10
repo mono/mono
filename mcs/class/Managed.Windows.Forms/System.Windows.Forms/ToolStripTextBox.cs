@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip | ToolStripItemDesignerAvailability.MenuStrip | ToolStripItemDesignerAvailability.ContextMenuStrip)]
 	public class ToolStripTextBox : ToolStripControlHost
 	{
 		private BorderStyle border_style;

@@ -62,12 +62,14 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (null)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue (ImageLayout.Tile)]
 		public override ImageLayout BackgroundImageLayout {
 			get { return base.BackgroundImageLayout; }
 			set { base.BackgroundImageLayout = value; }
@@ -125,7 +127,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public virtual bool Focused {
 			get { return control.Focused; }
 		}

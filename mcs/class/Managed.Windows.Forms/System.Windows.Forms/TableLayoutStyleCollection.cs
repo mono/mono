@@ -46,7 +46,6 @@ namespace System.Windows.Forms {
 			return al.Add (style);
 		}
 		
-		// FIXME; later this should be an override.
 		public void Clear ()
 		{
 			al.Clear ();

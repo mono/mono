@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	[ProvideProperty ("FlowBreak", typeof (Control))]
 	[DefaultProperty ("FlowDirection")]
-	[Docking (DockingBehavior.Never)]
+	[Docking (DockingBehavior.Ask)]
 	public class FlowLayoutPanel : Panel, IExtenderProvider
 	{
 		private FlowLayoutSettings settings;
@@ -66,9 +66,12 @@ namespace System.Windows.Forms
 		}
 
 		internal FlowLayoutSettings LayoutSettings {
-			get { if (this.settings == null)
-				this.settings = new FlowLayoutSettings ();
-			return this.settings; }
+			get { 
+				if (this.settings == null)
+					this.settings = new FlowLayoutSettings ();
+					
+				return this.settings;
+			}
 		}
 		#endregion
 
@@ -77,13 +80,13 @@ namespace System.Windows.Forms
 		[DisplayName ("FlowBreak")]
 		public bool GetFlowBreak (Control control)
 		{
-			return settings.GetFlowBreak (control);
+			return LayoutSettings.GetFlowBreak (control);
 		}
 
 		[DisplayName ("FlowBreak")]
 		public void SetFlowBreak (Control control, bool value)
 		{
-			settings.SetFlowBreak (control, value);
+			LayoutSettings.SetFlowBreak (control, value);
 			this.PerformLayout (control, "FlowBreak");
 		}		
 		#endregion

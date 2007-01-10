@@ -125,7 +125,8 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public AccessibleObject AccessibilityObject {
 			get { 
 				if (this.accessibility_object == null)
@@ -136,7 +137,8 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string AccessibleDefaultActionDescription {
 			get {
 				if (this.accessibility_object == null)
@@ -197,6 +199,8 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[DefaultValue (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoSize {
 			get { return this.auto_size; }
 			set { 
@@ -213,6 +217,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Available {
 			get { return this.visible; }
 			set {
@@ -240,6 +245,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (null)]
 		public virtual Image BackgroundImage {
 			get { return this.background_image; }
 			set { 
@@ -251,6 +257,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (ImageLayout.Tile)]
 		public virtual ImageLayout BackgroundImageLayout {
 			get { return this.background_image_layout; }
 			set { 
@@ -357,16 +364,19 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Height {
 			get { return this.Size.Height; }
 			set { 
 				this.bounds.Height = value; 
 				this.explicit_size.Height = value;
+				
 				if (this.visible) {
-				this.CalculateAutoSize ();
-				this.OnBoundsChanged ();
-				this.Invalidate (); } 
+					this.CalculateAutoSize ();
+					this.OnBoundsChanged ();
+					this.Invalidate (); 
+				} 
 			}
 		}
 
@@ -395,6 +405,9 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[Browsable (false)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[TypeConverter (typeof (ImageIndexConverter))]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public int ImageIndex {
 			get { return this.image_index; }
 			set {
@@ -576,15 +589,19 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Width {
 			get { return this.Size.Width; }
 			set { 
 				this.bounds.Width = value; 
 				this.explicit_size.Width = value;
+				
 				if (this.visible) {
-				this.CalculateAutoSize (); 
-				this.OnBoundsChanged(); }
+					this.CalculateAutoSize ();
+					this.OnBoundsChanged ();
+					this.Invalidate ();
+				}
 			}
 		}
 		#endregion
@@ -630,26 +647,6 @@ namespace System.Windows.Forms
 		{
 			if (owner != null)
 				owner.Invalidate (r);
-		}
-
-		public void OnDragDrop (DragEventArgs e)
-		{
-			// XXX
-		}
-
-		public void OnDragEnter (DragEventArgs e)
-		{
-			// XXX
-		}
-
-		public void OnDragLeave (EventArgs e)
-		{
-			// XXX
-		}
-
-		public void OnDragOver (DragEventArgs e)
-		{
-			// XXX
 		}
 
 		public void PerformClick ()
@@ -747,6 +744,26 @@ namespace System.Windows.Forms
 
 			if (!double_click_enabled)
 				OnClick (e);
+		}
+
+		void IDropTarget.OnDragDrop (DragEventArgs e)
+		{
+			// XXX
+		}
+
+		void IDropTarget.OnDragEnter (DragEventArgs e)
+		{
+			// XXX
+		}
+
+		void IDropTarget.OnDragLeave (EventArgs e)
+		{
+			// XXX
+		}
+
+		void IDropTarget.OnDragOver (DragEventArgs e)
+		{
+			// XXX
 		}
 
 		protected virtual void OnEnabledChanged (EventArgs e)

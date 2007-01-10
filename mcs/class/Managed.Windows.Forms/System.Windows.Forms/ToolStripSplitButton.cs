@@ -30,9 +30,12 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[DefaultEvent ("ButtonClick")]
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip | ToolStripItemDesignerAvailability.StatusStrip)]
 	public class ToolStripSplitButton : ToolStripDropDownItem
 	{
 		private bool button_pressed;
@@ -79,32 +82,38 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public new bool AutoToolTip
-		{
+		[DefaultValue (true)]
+		public new bool AutoToolTip {
 			get { return base.AutoToolTip; }
 			set { base.AutoToolTip = value; }
 		}
 
+		[Browsable (false)]
 		public Rectangle ButtonBounds {
 			get { return new Rectangle (this.Bounds.Left, this.Bounds.Top, this.Bounds.Width - this.drop_down_button_width - 1, this.Height); }
 		}
-		
+
+		[Browsable (false)]
 		public bool ButtonPressed {
 			get { return this.button_pressed; }
 		}
-		
+
+		[Browsable (false)]
 		public bool ButtonSelected {
 			get { return base.Selected; }
 		}
-		
+
+		[Browsable (false)]
 		public Rectangle DropDownButtonBounds {
 			get { return new Rectangle (this.Bounds.Right - this.drop_down_button_width, this.Bounds.Top, this.drop_down_button_width, this.Bounds.Height); }
 		}
-		
+
+		[Browsable (false)]
 		public bool DropDownButtonPressed {
 			get { return this.drop_down_button_selected || this.DropDown.Visible; }
 		}
-		
+
+		[Browsable (false)]
 		public bool DropDownButtonSelected {
 			get { return base.Selected; }
 		}
@@ -118,7 +127,8 @@ namespace System.Windows.Forms
 				this.drop_down_button_width = value;
 			}
 		}
-		
+
+		[Browsable (false)]
 		public Rectangle SplitterBounds {
 			get { return new Rectangle (this.Bounds.Width - this.drop_down_button_width - 1, this.Bounds.Top, 1, this.Height); }
 		}
@@ -162,6 +172,7 @@ namespace System.Windows.Forms
 				this.OnButtonClick (EventArgs.Empty);
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void ResetDropDownButtonWidth ()
 		{
 			this.DropDownButtonWidth = 11;

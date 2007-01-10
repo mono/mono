@@ -34,6 +34,7 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Click")]
 	public abstract class ToolStripDropDownItem : ToolStripItem
 	{
 		private ToolStripDropDown drop_down;
@@ -68,6 +69,7 @@ namespace System.Windows.Forms
 			set { this.drop_down = value; }
 		}
 
+		[Browsable (false)]
 		public ToolStripDropDownDirection DropDownDirection {
 			get { return this.drop_down_direction; }
 			set {
@@ -78,14 +80,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripItemCollection DropDownItems {
 			get { return this.drop_down.Items; }
 		}
 
+		[Browsable (false)]
 		public virtual bool HasDropDownItems {
 			get { return this.drop_down.Items.Count != 0; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool Pressed {
 			get { return base.Pressed || this.DropDown.Visible; }
 		}

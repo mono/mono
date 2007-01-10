@@ -35,9 +35,10 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
+	[ToolboxItem (false)]
 	[ComVisibleAttribute (true)]
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
-	[Docking (DockingBehavior.AutoDock)]
+	[Docking (DockingBehavior.Never)]
 	public sealed class SplitterPanel : Panel
 	{
 		//private SplitContainer owner;
@@ -187,15 +188,17 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//public new event EventHandler AutoSizeChanged {
-		//        add { base.AutoSizeChanged += value; }
-		//        remove { base.AutoSizeChanged -= value; }
-		//}
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler DockChanged {
 			add { base.DockChanged += value; }
 			remove { base.DockChanged -= value; }
@@ -203,6 +206,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler LocationChanged {
 			add { base.LocationChanged += value; }
 			remove { base.LocationChanged -= value; }
@@ -210,6 +214,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler TabIndexChanged {
 			add { base.TabIndexChanged += value; }
 			remove { base.TabIndexChanged -= value; }
@@ -217,6 +222,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
@@ -224,10 +230,15 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler VisibleChanged {
 			add { base.VisibleChanged += value; }
 			remove { base.VisibleChanged -= value; }
 		}
+		#endregion
+
+		#region Protected Properties
+		protected override Padding DefaultMargin { get { return new Padding (0); } }
 		#endregion
 		
 		#region Internal Properties

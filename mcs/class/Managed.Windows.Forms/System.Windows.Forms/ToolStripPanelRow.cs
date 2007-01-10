@@ -35,6 +35,7 @@ using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
+	[ToolboxItem (false)]
 	public class ToolStripPanelRow : Component, IComponent, IDisposable
 	{
 		private Rectangle bounds;
@@ -55,10 +56,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public virtual Rectangle Bounds {
+		public Rectangle Bounds {
 			get { return this.bounds; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control[] Controls {
 			get { return this.controls.ToArray (); }
 		}

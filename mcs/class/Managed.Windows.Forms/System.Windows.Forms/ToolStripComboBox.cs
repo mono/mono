@@ -33,7 +33,7 @@ using System.Windows.Forms.Design;
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Items")]
-	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip | ToolStripItemDesignerAvailability.MenuStrip | ToolStripItemDesignerAvailability.ContextMenuStrip)]
 	public class ToolStripComboBox : ToolStripControlHost
 	{
 		#region Public Constructors
@@ -77,16 +77,16 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Stub, will not actually affect anything.")]
-		[Browsable (false)]
+		[Browsable (true)]
 		[DefaultValue (106)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public int DropDownHeight {
 			get { return 106; }
 			set { }
 		}
 		
 		[DefaultValue (ComboBoxStyle.DropDown)]
-		[RefreshProperties (RefreshProperties.All)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public ComboBoxStyle DropDownStyle {
 			get { return this.ComboBox.DropDownStyle; }
 			set { this.ComboBox.DropDownStyle = value; }
@@ -138,7 +138,9 @@ namespace System.Windows.Forms
 			get { return this.ComboBox.SelectedIndex; }
 			set {
 				this.ComboBox.SelectedIndex = value;
-				Text = Items [value].ToString ();
+				
+				if (this.ComboBox.SelectedIndex >= 0)
+					Text = Items [value].ToString ();
 			}
 		}
 

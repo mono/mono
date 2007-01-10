@@ -58,24 +58,32 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool AllowDrop {
 			get { return base.AllowDrop; }
 			set { base.AllowDrop = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool AutoScroll {
 			get { return base.AutoScroll; }
 			set { base.AutoScroll = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
@@ -97,6 +105,9 @@ namespace System.Windows.Forms
 			get { return new Layout.FlowLayout (); }
 		}
 
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Locked {
 			get { return this.locked; }
 			set { this.locked = value; }
@@ -108,6 +119,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripRenderer Renderer {
 			get {
 				if (this.render_mode == ToolStripRenderMode.ManagerRenderMode)
@@ -137,7 +149,9 @@ namespace System.Windows.Forms
 			get { return this.row_margin; }
 			set { this.row_margin = value; }
 		}
-		
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripPanelRow[] Rows {
 			get { 
 				ToolStripPanelRow[] retval = new ToolStripPanelRow [this.rows.Count];
@@ -147,18 +161,24 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
-		
+
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
@@ -167,6 +187,10 @@ namespace System.Windows.Forms
 
 		#region Protected Properties
 		protected override Padding DefaultMargin {
+			get { return new Padding (0); }
+		}
+
+		protected override Padding DefaultPadding {
 			get { return new Padding (0); }
 		}
 		#endregion
@@ -255,6 +279,7 @@ namespace System.Windows.Forms
 			this.Invalidate (FindBackgroundRegion ());
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
@@ -278,6 +303,8 @@ namespace System.Windows.Forms
 		#region Public Events
 		static object RendererChangedEvent = new object ();
 
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
@@ -289,18 +316,21 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabIndexChanged {
 			add { base.TabIndexChanged += value; }
 			remove { base.TabIndexChanged -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }

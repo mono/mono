@@ -64,12 +64,15 @@ namespace System.Windows.Forms
 		static object SplitterMovedEvent = new object ();
 		static object SplitterMovingEvent = new object ();
 
-		//[Browsable (false)]
-		//[EditorBrowsable (EditorBrowsableState.Never)]
-		//new public event EventHandler AutoSizeChanged;
-
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
@@ -206,8 +209,8 @@ namespace System.Windows.Forms
 			set { base.AutoSize = value; }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
@@ -234,8 +237,8 @@ namespace System.Windows.Forms
 
 		// MSDN says default is Fixed3D, creating a new SplitContainer says otherwise.
 		[DefaultValue (BorderStyle.None)]
-		public BorderStyle BorderStyle
-		{
+		[DispId (-504)]
+		public BorderStyle BorderStyle {
 			get { return panel1.BorderStyle; }
 			set {
 				if (!Enum.IsDefined (typeof (BorderStyle), value))
@@ -247,7 +250,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		new public ControlCollection Controls { get { return base.Controls; } }
 
 		new public DockStyle Dock {
@@ -320,7 +323,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SplitterPanel Panel1 { get { return this.panel1; } }
 
 		[DefaultValue (false)]
@@ -345,7 +348,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SplitterPanel Panel2 { get { return this.panel2; } }
 
 		[DefaultValue (false)]
@@ -432,6 +435,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId (-516)]
 		[DefaultValue (true)]
 		new public bool TabStop {
 			get { return splitter.TabStop; }
@@ -473,6 +477,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return new SplitContainerTypedControlCollection (this);
@@ -499,6 +504,16 @@ namespace System.Windows.Forms
 			base.OnLayout (levent);
 		}
 
+		protected override void OnLostFocus (EventArgs e)
+		{
+			base.OnLostFocus (e);
+		}
+
+		protected override void OnMouseCaptureChanged (EventArgs e)
+		{
+			base.OnMouseCaptureChanged (e);
+		}
+		
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 			base.OnMouseDown (e);
@@ -509,6 +524,7 @@ namespace System.Windows.Forms
 			base.OnMouseLeave (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 			base.OnMouseMove (e);
@@ -524,6 +540,7 @@ namespace System.Windows.Forms
 			base.OnPaint (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);

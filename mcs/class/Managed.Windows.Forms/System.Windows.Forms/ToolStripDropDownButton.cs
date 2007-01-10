@@ -29,9 +29,12 @@
 #if NET_2_0
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Design;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip | ToolStripItemDesignerAvailability.StatusStrip)]
 	public class ToolStripDropDownButton : ToolStripDropDownItem
 	{
 		private bool show_drop_down_arrow = true;
@@ -74,11 +77,13 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (true)]
 		public new bool AutoToolTip {
 			get { return base.AutoToolTip; }
 			set { base.AutoToolTip = value; }
 		}
 		
+		[DefaultValue (true)]
 		public bool ShowDropDownArrow {
 			get { return this.show_drop_down_arrow; }
 			set { this.show_drop_down_arrow = value; }

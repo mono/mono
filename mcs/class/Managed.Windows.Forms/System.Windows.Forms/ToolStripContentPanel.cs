@@ -36,6 +36,10 @@ namespace System.Windows.Forms
 {
 	[ComVisible(true)]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[DefaultEvent ("Load")]
+	[ToolboxItem (false)]
+	[Docking (DockingBehavior.AutoDock)]
+	[InitializationEvent ("Load")]
 	public class ToolStripContentPanel : Panel
 	{
 		private ToolStripRenderMode render_mode;
@@ -51,30 +55,39 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool AutoScroll {
 			get { return base.AutoScroll; }
 			set { base.AutoScroll = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
@@ -90,42 +103,55 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool CausesValidation {
 			get { return base.CausesValidation; }
 			set { base.CausesValidation = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Size MaximumSize {
 			get { return base.MaximumSize; }
 			set { base.MaximumSize = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Size MinimumSize {
 			get { return base.MinimumSize; }
 			set { base.MinimumSize = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new string Name {
 			get { return base.Name; }
 			set { base.Name = value; }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripRenderer Renderer {
 			get {
 				if (this.render_mode == ToolStripRenderMode.ManagerRenderMode)
@@ -139,7 +165,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (ToolStripRenderMode.ManagerRenderMode)]
 		public ToolStripRenderMode RenderMode {
 			get { return this.render_mode; }
 			set {
@@ -156,12 +181,16 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
 		
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
@@ -173,7 +202,8 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		protected virtual void OnLoad (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [LoadEvent]);
@@ -181,6 +211,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
@@ -199,18 +230,23 @@ namespace System.Windows.Forms
 		static object RendererChangedEvent = new object ();
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler CausesValidationChanged {
 			add { base.CausesValidationChanged += value; }
 			remove { base.CausesValidationChanged -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler DockChanged {
 			add { base.DockChanged += value; }
 			remove { base.DockChanged -= value; }
@@ -222,6 +258,8 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler LocationChanged {
 			add { base.LocationChanged += value; }
 			remove { base.LocationChanged -= value; }
@@ -233,12 +271,14 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabIndexChanged {
 			add { base.TabIndexChanged += value; }
 			remove { base.TabIndexChanged -= value; }
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }

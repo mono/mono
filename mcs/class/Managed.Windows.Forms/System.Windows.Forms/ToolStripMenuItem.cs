@@ -30,9 +30,11 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.MenuStrip | ToolStripItemDesignerAvailability.ContextMenuStrip)]
 	public class ToolStripMenuItem : ToolStripDropDownItem
 	{
 		private CheckState checked_state;
@@ -90,6 +92,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		[Bindable (true)]
 		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool Checked {
 			get {
 				switch (this.checked_state) {
@@ -118,8 +121,8 @@ namespace System.Windows.Forms
 
 		[Bindable (true)]
 		[DefaultValue (CheckState.Unchecked)]
-		public CheckState CheckState
-		{
+		[RefreshProperties (RefreshProperties.Repaint)]
+		public CheckState CheckState {
 			get { return this.checked_state; }
 			set
 			{
@@ -137,6 +140,7 @@ namespace System.Windows.Forms
 			set { base.Enabled = value; }
 		}
 
+		[Browsable (false)]
 		public bool IsMdiWindowListEntry {
 			get { return this.mdi_client_form != null; }
 		}
@@ -327,6 +331,11 @@ namespace System.Windows.Forms
 					this.Owner.Renderer.DrawArrow (new ToolStripArrowRenderEventArgs (e.Graphics, this, new Rectangle (this.Bounds.Width - 17, 2, 10, 20), Color.Black, ArrowDirection.Right));
 				return;
 			}
+		}
+
+		protected internal override void SetBounds (Rectangle bounds)
+		{
+			base.SetBounds (bounds);
 		}
 		#endregion
 

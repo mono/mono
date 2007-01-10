@@ -62,6 +62,7 @@ namespace System.Windows.Forms
 			set { base.GripStyle = value; }
 		}
 
+		[DefaultValue (null)]
 		public ToolStripMenuItem MdiWindowListItem {
 			get { return this.mdi_window_list_item; }
 			set { 

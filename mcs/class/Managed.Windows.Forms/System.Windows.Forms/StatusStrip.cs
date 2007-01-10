@@ -50,40 +50,48 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Properties
+		[DefaultValue (DockStyle.Bottom)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
 		}
 		
+		[DefaultValue (ToolStripGripStyle.Hidden)]
 		public new ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
 		}
 		
+		[DefaultValue (ToolStripLayoutStyle.Table)]
 		public new ToolStripLayoutStyle LayoutStyle {	
 			get { return this.layout_style; }
 			set { this.layout_style = value; }
 		}
 		
+		[Browsable (false)]
 		public new Padding Padding {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
 		
+		[DefaultValue (false)]
 		public new bool ShowItemToolTips {
 			get { return base.ShowItemToolTips; }
 			set { base.ShowItemToolTips = value; }
 		}
 		
+		[Browsable (false)]
 		public Rectangle SizeGripBounds {
 			get { return new Rectangle (this.Width - 12, this.Top, 12, this.Height); }
 		}
 		
+		[DefaultValue (true)]
 		public bool SizingGrip {
 			get { return this.sizing_grip; }
 			set { this.sizing_grip = value; }
 		}
 		
+		[DefaultValue (true)]
 		public new bool Stretch {
 			get { return this.Stretch; }
 			set { this.Stretch = value; }
@@ -171,6 +179,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		[Browsable (false)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }

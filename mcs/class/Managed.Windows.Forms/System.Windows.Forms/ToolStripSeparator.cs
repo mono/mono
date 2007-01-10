@@ -118,6 +118,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[RefreshProperties (RefreshProperties.Repaint)]
 		public new int ImageIndex {
 			get { return base.ImageIndex; }
 			set { base.ImageIndex = value; }

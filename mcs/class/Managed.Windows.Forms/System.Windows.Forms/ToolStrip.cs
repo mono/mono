@@ -43,6 +43,7 @@ namespace System.Windows.Forms
 	{
 		#region Private Variables
 		private Color back_color;
+		private ToolStripDropDownDirection default_drop_down_direction;
 		private Color fore_color;
 		private ToolStripGripDisplayStyle grip_display_style;
 		private Padding grip_margin;
@@ -80,6 +81,7 @@ namespace System.Windows.Forms
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			base.CausesValidation = false;
+			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
 			this.Dock = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
@@ -113,6 +115,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		[DefaultValue (true)]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
@@ -123,16 +129,34 @@ namespace System.Windows.Forms
 			set { this.back_color = value; }
 		}
 
+		[Browsable (false)]
+		[DefaultValue (false)]
 		public new bool CausesValidation {
 			get { return base.CausesValidation; }
 			set { base.CausesValidation = value; }
 		}
 		
+		public new ControlCollection Controls {
+			get { return base.Controls; }
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Cursor Cursor {
 			get { return base.Cursor; }
 			set { base.Cursor = value; }
 		}
 		
+		public virtual ToolStripDropDownDirection DefaultDropDownDirection {
+			get { return this.default_drop_down_direction; }
+			set { 
+				if (!Enum.IsDefined (typeof (ToolStripDropDownDirection), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripDropDownDirection", value));
+					
+				this.default_drop_down_direction = value;
+			}
+		}
+
 		public override Rectangle DisplayRectangle {
 			get {
 				if (this.orientation == Orientation.Horizontal)
@@ -233,18 +257,27 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new bool HasChildren {
+			get { return base.HasChildren; }
+		}
+		
+		[Browsable (false)]
 		[DefaultValue (null)]
 		public ImageList ImageList {
 			get { return this.image_list; }
 			set { this.image_list = value; }
 		}
-		
+
+		[DefaultValue ("{Width=16, Height=16}")]
 		public Size ImageScalingSize {
 			get { return this.image_scaling_size; }
 			set { this.image_scaling_size = value; }
 		}
 
 		[MonoTODO ("Always returns false, dragging not implemented yet.")]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public bool IsCurrentlyDragging {
 			get { return false; }
 		}
@@ -259,10 +292,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual ToolStripItemCollection Items {
 			get { return this.items; }
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override LayoutEngine LayoutEngine {
 			get { return new ToolStripSplitStackLayout(); }
 		}
@@ -294,6 +329,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripRenderer Renderer {
 			get { 
 				if (this.render_mode == ToolStripRenderMode.ManagerRenderMode)
@@ -334,12 +370,13 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (false)]
-		public virtual bool Stretch {
+		public bool Stretch {
 			get { return this.stretch; }
 			set { this.stretch = value; }
 		}
 		
 		[DefaultValue (false)]
+		[DispId(-516)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
@@ -752,18 +789,20 @@ namespace System.Windows.Forms
 		static object PaintGripEvent = new object ();
 		static object RendererChangedEvent = new object ();
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
 		}
 
+		[Browsable (false)]
 		public new event EventHandler CausesValidationChanged {
 			add { base.CausesValidationChanged += value; }
 			remove { base.CausesValidationChanged -= value; }
 		}
 
+		[Browsable (false)]
 		public new event EventHandler CursorChanged {
 			add { base.CursorChanged += value; }
 			remove { base.CursorChanged -= value; }
