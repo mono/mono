@@ -127,7 +127,7 @@ namespace System.Web.UI.WebControls
 				if (SelectedFlag) {
 					if (value != null)
 						value.SetSelectedNode (this, false);
-					else if (tree != null)
+					if (tree != null)
 						tree.SetSelectedNode (null, false);
 				}
 				tree = value;
@@ -345,14 +345,14 @@ namespace System.Web.UI.WebControls
 				return SelectedFlag;
 			}
 			set {
+				SelectedFlag = value;
+				
 				if (tree != null) {
 					if (!value && tree.SelectedNode == this)
 						tree.SetSelectedNode (null, false);
 					else if (value)
 						tree.SetSelectedNode (this, false);
 				}
-				else
-					SelectedFlag = value;
 			}
 		}
 		

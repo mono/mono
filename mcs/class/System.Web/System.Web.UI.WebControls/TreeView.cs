@@ -675,7 +675,7 @@ namespace System.Web.UI.WebControls
 		void FindCheckedNodes (TreeNodeCollection nodeList, TreeNodeCollection result)
 		{
 			foreach (TreeNode node in nodeList) {
-				if (node.Checked) result.Add (node);
+				if (node.Checked) result.Add (node, false);
 				FindCheckedNodes (node.ChildNodes, result);
 			}
 		}
@@ -761,7 +761,6 @@ namespace System.Web.UI.WebControls
 			if (selectedNode != null)
 				selectedNode.SelectedFlag = false;
 			selectedNode = node;
-			selectedNode.SelectedFlag = true;
 			if (!loading)
 				OnSelectedNodeChanged (new TreeNodeEventArgs (selectedNode));
 		}

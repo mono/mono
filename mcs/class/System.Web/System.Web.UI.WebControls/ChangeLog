@@ -1,5 +1,11 @@
 2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: fixed: SelectedNode, CheckedNodes.
+	* TreeNode.cs:
+	* TreeNodeCollection.cs:		
+
+2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: header and footer does not appear in no items.
 	* CompositeDataBoundControl.cs:
 

@@ -72,7 +72,17 @@ namespace System.Web.UI.WebControls
 		
 		public void Add (TreeNode child)
 		{
-			child.Index = items.Add (child);
+			Add (child, true);
+		}
+		
+		internal void Add (TreeNode child, bool updateParent)
+		{
+			int index = items.Add (child);
+			
+			if (!updateParent)
+				return;
+
+			child.Index = index;
 			child.SetParent (parent);
 			child.Tree = tree;
 			if (marked) {
