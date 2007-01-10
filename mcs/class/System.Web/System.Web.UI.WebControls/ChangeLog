@@ -1,5 +1,10 @@
 2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CreateUserWizard.cs: fixed: resolves ErrorMessage control correct.
+	* CreateUserWizardStep.cs:
+
+2007-01-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: fixed: SelectedNode, CheckedNodes.
 	* TreeNode.cs:
 	* TreeNodeCollection.cs:		

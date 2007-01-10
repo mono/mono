@@ -148,9 +148,9 @@ namespace System.Web.UI.WebControls
 				return c;
 			}
 		}
-		public Label ErrorMessageLabel
+		public ITextControl ErrorMessageLabel
 		{
-			get { return FindControl ("ErrorMessage") as Label; }
+			get { return FindControl ("ErrorMessage") as ITextControl; }
 		}
 	}
 

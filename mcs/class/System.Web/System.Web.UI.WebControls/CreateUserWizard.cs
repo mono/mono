@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls
 		private string _password = "";
 		private string _confirmPassword = "";
 		private MembershipProvider _provider = null;
-		private Label _errorMessageLabel = null;
+		private ITextControl _errorMessageLabel = null;
 
 		private Style _textBoxStyle = null;
 		private Style _validatorTextStyle = null;
