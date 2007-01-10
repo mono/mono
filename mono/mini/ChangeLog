@@ -1,4 +1,9 @@
 
+Wed Jan 10 19:49:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.h: handle bug #80489 here, by excluding ecx
+	directly.
+
 Wed Jan 10 19:08:05 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-x86.md: back out for now as this triggers other regressions.
