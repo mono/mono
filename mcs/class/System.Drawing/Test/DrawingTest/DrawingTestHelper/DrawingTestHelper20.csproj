@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="nunit.framework">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
