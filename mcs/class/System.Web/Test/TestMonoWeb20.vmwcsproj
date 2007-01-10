@@ -102,7 +102,7 @@
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">
