@@ -1,3 +1,8 @@
+2007-01-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyProfileProvider.cs: fixed ReadProfileInfo, removed unneeded
+	catch
+
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added CloudscapeProfileProvider.cs

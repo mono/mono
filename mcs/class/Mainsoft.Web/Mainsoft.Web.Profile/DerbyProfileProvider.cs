@@ -334,20 +334,13 @@ namespace Mainsoft.Web.Profile
 
 		private ProfileInfo ReadProfileInfo (DbDataReader reader)
 		{
-			ProfileInfo pi = null;
-			try {
-				string username = reader.GetString (0);
-				bool anonymous = reader.GetInt32 (1) > 0;
-				DateTime lastUpdate = reader.GetDateTime (2);
-				DateTime lastActivity = reader.GetDateTime (3);
-				int size = reader.GetInt32 (4);
+			string username = reader.GetString (0);
+			bool anonymous = reader.GetInt32 (1) > 0;
+			DateTime lastUpdate = reader.GetDateTime (2);
+			DateTime lastActivity = reader.GetDateTime (3);
+			int size = reader.GetInt32 (4);
 
-				pi = new ProfileInfo (username, anonymous, lastActivity, lastUpdate, size);
-			}
-			catch {
-			}
-
-			return pi;
+			return new ProfileInfo (username, anonymous, lastActivity, lastUpdate, size);
 		}
 
 		// Helper methods
