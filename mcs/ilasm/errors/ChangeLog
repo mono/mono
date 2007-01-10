@@ -1,3 +1,7 @@
+2007-01-11  Ankit Jain  <jankit@novell.com>
+
+	* err-custom-mod-1.il: New. Test for custom mods.
+
 2006-07-20  Ankit Jain  <jankit@novell.com>
 
 	* abs_method4.il:
