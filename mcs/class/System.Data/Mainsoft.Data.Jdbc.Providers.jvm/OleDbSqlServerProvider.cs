@@ -377,7 +377,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 			if (dataSource != null && dataSource.StartsWith ("(") && dataSource.EndsWith (")"))					
 				dataSource = dataSource.Substring (1,dataSource.Length - 2);
 
-			if (String.Empty.Equals (dataSource) || (String.Compare ("local",dataSource,true) == 0)) 
+			if (String.Empty.Equals (dataSource) || (String.Compare ("local",dataSource,true) == 0) || (String.CompareOrdinal(".", dataSource) == 0)) 
 				dataSource = "localhost";
 
 			return dataSource;
