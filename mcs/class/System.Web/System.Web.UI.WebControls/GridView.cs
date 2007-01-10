@@ -890,8 +890,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKey SelectedDataKey {
 			get {
-				if (keys == null)
-					throw new InvalidOperationException ("DataKeys");
+				if (DataKeyNames.Length == 0)
+					throw new InvalidOperationException (String.Format ("Data keys must be specified on GridView '{0}' before the selected data keys can be retrieved.  Use the DataKeyNames property to specify data keys.", ID));
 
 				if (selectedIndex >= 0 && selectedIndex < DataKeys.Count) {
 					return DataKeys [selectedIndex];

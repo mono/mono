@@ -1,5 +1,9 @@
 2007-01-09 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: SelectedDataKey.
+
+2007-01-09 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Panel.cs:
 	* PanelStyle.cs:
 	implemented 2.0 features.	
