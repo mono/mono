@@ -358,7 +358,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 			string dataSource = (string) keyMapper [ServerName];
 			string instanceName = String.Empty;
 			int instanceIdx;
-			if ((instanceIdx = dataSource.IndexOf ("\\")) == -1) 
+			if (dataSource == null || (instanceIdx = dataSource.IndexOf ("\\")) == -1) 
 				// no named instance specified - use a default name
 				return defaultInstanceName;
 			else 
@@ -370,7 +370,7 @@ namespace Mainsoft.Data.Jdbc.Providers
 		{
 			string dataSource = (string) keyMapper [ServerName];
 			int instanceIdx;
-			if ((instanceIdx = dataSource.IndexOf ("\\")) != -1)
+			if (dataSource != null && (instanceIdx = dataSource.IndexOf ("\\")) != -1)
 				// throw out named instance name
 				dataSource = dataSource.Substring (0,instanceIdx);
 
