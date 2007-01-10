@@ -111,6 +111,8 @@ namespace Microsoft.Build.BuildEngine {
 					  BuildSettings buildFlags)
 		{
 			bool result;
+
+			StartBuild ();
 			
 			LogProjectStarted (project, targetNames);
 				
@@ -167,6 +169,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			bool result;
 			Project project;
+
+			StartBuild ();
 			
 			if (projects.ContainsKey (projectFile)) {
 				project = (Project) projects [projectFile];
@@ -184,7 +188,7 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
-		private void CheckBinPath ()
+		void CheckBinPath ()
 		{
 			if (BinPath == null) {
 				throw new InvalidOperationException ("Before a project can be instantiated, " +
@@ -197,8 +201,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (defaultTasksRegistered)
 				CheckBinPath ();
-			// FIXME: It should be called after first Build() call
-			LogBuildStarted ();
 			return new Project (this);
 		}
 
@@ -262,8 +264,16 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			loggers.Clear ();
 		}
+
+		internal void StartBuild ()
+		{
+			if (!buildStarted) {
+				LogBuildStarted ();
+				buildStarted = true;
+			}
+		}
 		
-		private void LogProjectStarted (Project project, string[] targetNames)
+		void LogProjectStarted (Project project, string [] targetNames)
 		{
 			ProjectStartedEventArgs psea;
 			if (targetNames.Length == 0) {
@@ -278,28 +288,28 @@ namespace Microsoft.Build.BuildEngine {
 			eventSource.FireProjectStarted (this, psea);
 		}
 		
-		private void LogProjectFinished (Project project, bool succeeded)
+		void LogProjectFinished (Project project, bool succeeded)
 		{
 			ProjectFinishedEventArgs pfea;
 			pfea = new ProjectFinishedEventArgs ("Project started.", null, project.FullFileName, succeeded);
 			eventSource.FireProjectFinished (this, pfea);
 		}
 		
-		private void LogBuildStarted ()
+		void LogBuildStarted ()
 		{
 			BuildStartedEventArgs bsea;
 			bsea = new BuildStartedEventArgs ("Build started.", null);
 			eventSource.FireBuildStarted (this, bsea);
 		}
 		
-		private void LogBuildFinished (bool succeeded)
+		void LogBuildFinished (bool succeeded)
 		{
 			BuildFinishedEventArgs bfea;
 			bfea = new BuildFinishedEventArgs ("Build finished.", null, succeeded);
 			eventSource.FireBuildFinished (this, bfea);
 		}
 		
-		private void RegisterDefaultTasks ()
+		void RegisterDefaultTasks ()
 		{
 			this.defaultTasksRegistered = false;
 			
@@ -309,12 +319,10 @@ namespace Microsoft.Build.BuildEngine {
 				if (File.Exists (Path.Combine (binPath, defaultTasksProjectName))) {
 					defaultTasksProject.Load (Path.Combine (binPath, defaultTasksProjectName));
 					defaultTasks = defaultTasksProject.TaskDatabase;
-				} else {
+				} else
 					defaultTasks = new TaskDatabase ();
-				}
-			} else {
+			} else
 				defaultTasks = new TaskDatabase ();
-			}
 			
 			this.defaultTasksRegistered = true;
 		}

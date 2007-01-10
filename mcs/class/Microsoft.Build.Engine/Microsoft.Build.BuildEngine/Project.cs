@@ -95,14 +95,24 @@ namespace Microsoft.Build.BuildEngine {
 			ProcessXml ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void AddNewImport (string importLocation,
 					  string importCondition)
 		{
-			throw new NotImplementedException ();
+			if (importLocation == null)
+				throw new ArgumentNullException ("importLocation");
+
+			XmlElement importElement = xmlDocument.CreateElement ("Import", XmlNamespace);
+			xmlDocument.DocumentElement.AppendChild (importElement);
+			importElement.SetAttribute ("Project", importLocation);
+			if (!String.IsNullOrEmpty (importCondition))
+				importElement.SetAttribute ("Condition", importCondition);
+
+			Import import = new Import (importElement, this, null);
+			imports.Add (import);
+			MarkProjectAsDirty ();
 		}
 
-		[MonoTODO]
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude)
 		{
@@ -117,64 +127,103 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public BuildItemGroup AddNewItemGroup ()
 		{
-			throw new NotImplementedException ();
+			XmlElement element = xmlDocument.CreateElement ("ItemGroup", XmlNamespace);
+			xmlDocument.DocumentElement.AppendChild (element);
+
+			BuildItemGroup big = new BuildItemGroup (element, this, null, false);
+			itemGroups.Add (big);
+			MarkProjectAsDirty ();
+
+			return big;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Ignores insertAtEndOfProject")]
 		public BuildPropertyGroup AddNewPropertyGroup (bool insertAtEndOfProject)
 		{
-			throw new NotImplementedException ();
+			XmlElement element = xmlDocument.CreateElement ("PropertyGroup", XmlNamespace);
+			xmlDocument.DocumentElement.AppendChild (element);
+
+			BuildPropertyGroup bpg = new BuildPropertyGroup (element, this, null, false);
+			propertyGroups.Add (bpg);
+			MarkProjectAsDirty ();
+
+			return bpg;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested, isn't added to TaskDatabase (no reevaluation)")]
 		public void AddNewUsingTaskFromAssemblyFile (string taskName,
 							     string assemblyFile)
 		{
-			throw new NotImplementedException ();
+			if (taskName == null)
+				throw new ArgumentNullException ("taskName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
+
+			XmlElement element = xmlDocument.CreateElement ("UsingTask", XmlNamespace);
+			xmlDocument.DocumentElement.AppendChild (element);
+			element.SetAttribute ("TaskName", taskName);
+			element.SetAttribute ("AssemblyFile", assemblyFile);
+
+			UsingTask ut = new UsingTask (element, this, null);
+			usingTasks.Add (ut);
+			MarkProjectAsDirty ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested, isn't added to TaskDatabase (no reevaluation)")]
 		public void AddNewUsingTaskFromAssemblyName (string taskName,
 							     string assemblyName)
 		{
-			throw new NotImplementedException ();
+			if (taskName == null)
+				throw new ArgumentNullException ("taskName");
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			XmlElement element = xmlDocument.CreateElement ("UsingTask", XmlNamespace);
+			xmlDocument.DocumentElement.AppendChild (element);
+			element.SetAttribute ("TaskName", taskName);
+			element.SetAttribute ("AssemblyName", assemblyName);
+
+			UsingTask ut = new UsingTask (element, this, null);
+			usingTasks.Add (ut);
+			MarkProjectAsDirty ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Does nothing")]
 		public bool Build ()
 		{
 			return true;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public bool Build (string targetName)
 		{
 			return Build (new string [1] { targetName });
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public bool Build (string[] targetNames)
 		{
 			return Build (targetNames, null);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public bool Build (string[] targetNames,
 				   IDictionary targetOutputs)
 		{
 			return Build (targetNames, targetOutputs, BuildSettings.None);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public bool Build (string[] targetNames,
 				   IDictionary targetOutputs,
 				   BuildSettings buildFlags)
 		
 		{
 			CheckUnloaded ();
+			ParentEngine.StartBuild ();
 			
 			if (targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0)
@@ -232,6 +281,7 @@ namespace Microsoft.Build.BuildEngine {
 			return bp == null ? null : (string) bp;
 		}
 
+		[MonoTODO ("We should remember that node and not use XPath to get it")]
 		public string GetProjectExtensions (string id)
 		{
 			if (id == null || id == String.Empty)
@@ -252,7 +302,7 @@ namespace Microsoft.Build.BuildEngine {
 			DoLoad (new StreamReader (projectFileName));
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void Load (TextReader textReader)
 		{
 			fullFileName = String.Empty;
@@ -291,10 +341,14 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void RemoveItemGroup (BuildItemGroup itemGroupToRemove)
 		{
-			throw new NotImplementedException ();
+			if (itemGroupToRemove == null)
+				throw new ArgumentNullException ("itemGroupToRemove");
+
+			groupingCollection.Remove (itemGroupToRemove);
+			MarkProjectAsDirty ();
 		}
 		
 		[MonoTODO]
@@ -307,13 +361,20 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void RemoveItemsByName (string itemName)
 		{
+			if (itemName == null)
+				throw new ArgumentNullException ("itemName");
+
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void RemovePropertyGroup (BuildPropertyGroup propertyGroupToRemove)
 		{
-			throw new NotImplementedException ();
+			if (propertyGroupToRemove == null)
+				throw new ArgumentNullException ("propertyGroupToRemove");
+
+			groupingCollection.Remove (propertyGroupToRemove);
+			MarkProjectAsDirty ();
 		}
 		
 		[MonoTODO]
@@ -406,7 +467,6 @@ namespace Microsoft.Build.BuildEngine {
 			MarkProjectAsDirty ();
 		}
 		
-		[MonoTODO]
 		public void SetProperty (string propertyName,
 					 string propertyValue)
 		{
@@ -414,7 +474,6 @@ namespace Microsoft.Build.BuildEngine {
 				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup, false);
 		}
 
-		[MonoTODO]
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 string condition)
@@ -423,7 +482,6 @@ namespace Microsoft.Build.BuildEngine {
 				PropertyPosition.UseExistingOrCreateAfterLastPropertyGroup);
 		}
 
-		[MonoTODO]
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 string condition,
@@ -645,7 +703,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildChoose bc = new BuildChoose (xmlElement, this);
 			groupingCollection.Add (bc);
-			
 		}
 		
 		static void ValidationCallBack (object sender, ValidationEventArgs e)

@@ -142,6 +142,18 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		internal void Remove (BuildItemGroup big)
+		{
+			big.XmlElement.ParentNode.RemoveChild (big.XmlElement);
+			list.Remove (big);
+		}
+
+		internal void Remove (BuildPropertyGroup bpg)
+		{
+			bpg.XmlElement.ParentNode.RemoveChild (bpg.XmlElement);
+			list.Remove (bpg);
+		}
+
 		internal void Evaluate ()
 		{
 			Evaluate (EvaluationType.Property);
@@ -191,6 +203,8 @@ namespace Microsoft.Build.BuildEngine {
 					evaluate_iterator = evaluate_iterator.Next;
 				}
 			}
+
+			add_iterator = null;
 		}
 
 		internal int Imports {

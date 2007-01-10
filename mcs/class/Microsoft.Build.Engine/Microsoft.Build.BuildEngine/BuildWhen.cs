@@ -33,19 +33,15 @@ using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class BuildWhen {
-		XmlAttribute		condition;
 		//Project			parentProject;
 		GroupingCollection	groupingCollection;
 		XmlElement		whenElement;
 	
-		public BuildWhen (Project parentProject)
+		public BuildWhen (XmlElement whenElement, Project parentProject)
 		{
-		//	this.parentProject = parentProject;
+		/*
+			this.parentProject = parentProject;
 			this.groupingCollection = new GroupingCollection (null);
-		}
-		
-		public void BindToXml (XmlElement whenElement)
-		{
 			if (whenElement == null)
 				throw new ArgumentNullException ("whenElement");
 			this.whenElement = whenElement;
@@ -64,11 +60,12 @@ namespace Microsoft.Build.BuildEngine {
 				} else
 					throw new InvalidProjectFileException ("Invalid element in When.");
 			}
+		*/
 		}
 		
 		public string Condition {
-			get { return condition.Value; }
-			set { condition.Value = value; }
+			get { return whenElement.GetAttribute ("Condition"); }
+			set { whenElement.SetAttribute ("Condition", value); }
 		}
 		
 		public GroupingCollection GroupingCollection {

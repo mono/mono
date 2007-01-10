@@ -275,6 +275,10 @@ namespace Microsoft.Build.BuildEngine {
 			get { return parentCollection; }
 			set { parentCollection = value; }
 		}
+
+		internal XmlElement XmlElement {
+			get { return propertyGroup; }
+		}
 	}
 }
 

@@ -1,5 +1,25 @@
 2007-01-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildWhen.cs: Moved BindToXml () code to ctor.
+
+	* BuildItemGroup.cs, BuildPropertyGroup.cs: Added XmlElement internal
+	property needed for removing groups.
+
+	* Engine.cs: Added StartBuild () that logs build start when Build ()
+	was first called.
+
+	* GroupingCollection.cs: Added Remove () for item and property groups.
+
+	* Project.cs (AddNewImport): Implemented.
+	(AddNewItemGroup): Implemented.
+	(AddNewPropertyGroup): Implemented.
+	(AddNewUsingTaskFromAssemblyFile): Implemented.
+	(AddNewUsingTaskFromAssemblyName): Implemented.
+	(RemoveItemGroup): Implemented.
+	(RemovePropertyGroup): Implemented.
+
+2007-01-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildItemGroup.cs (Clear): Remove from XML.
 
 	* BuildPropertyGroup.cs (AddNewProperty): Use right namespace and add

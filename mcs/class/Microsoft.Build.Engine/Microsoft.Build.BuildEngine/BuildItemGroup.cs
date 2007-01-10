@@ -243,6 +243,12 @@ namespace Microsoft.Build.BuildEngine {
 				return itemGroupElement != null;
 			}
 		}
+
+		internal XmlElement XmlElement {
+			get {
+				return itemGroupElement;
+			}	
+		}
 	}
 }
 
