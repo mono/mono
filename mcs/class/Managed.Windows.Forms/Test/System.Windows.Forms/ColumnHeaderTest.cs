@@ -78,6 +78,25 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, col.DisplayIndex, "3");
 		}
 #endif
+
+		[Test]
+		public void WidthTest ()
+		{
+			ColumnHeader col = new ColumnHeader ();
+			col.Text = "Column text";
+
+			ListView lv = new ListView ();
+			lv.Items.Add ("Item text");
+			lv.View = View.Details;
+			lv.Columns.Add (col);
+			lv.CreateControl ();
+
+			col.Width = -1;
+			Assert.IsTrue (col.Width > 0, "1");
+
+			col.Width = -2;
+			Assert.IsTrue (col.Width > 0, "2");
+		}
 	}
 }
 

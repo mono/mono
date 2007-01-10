@@ -1,3 +1,8 @@
+2007-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ColumnHeaderTest.cs: Add a test for settings Width to -1 and
+	-2 values (auto resizing).
+
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
 	* ContainerControlTest.cs: add a test for setting ActiveControl to
