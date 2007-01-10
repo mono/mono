@@ -149,7 +149,6 @@ namespace Microsoft.Build.BuildEngine {
 			Evaluate (EvaluationType.Item);
 		}
 
-		// check what happens with order: import -> 1 2 (probably is entered in wrong order)
 		void Evaluate (EvaluationType type)
 		{
 			BuildItemGroup big;

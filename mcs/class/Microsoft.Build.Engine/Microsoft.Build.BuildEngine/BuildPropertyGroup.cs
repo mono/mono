@@ -87,7 +87,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (FromXml) {
 				XmlElement xe;
 				
-				xe = propertyGroup.OwnerDocument.CreateElement (propertyName);
+				xe = propertyGroup.OwnerDocument.CreateElement (propertyName, Project.XmlNamespace);
 				propertyGroup.AppendChild (xe);
 				
 				if (treatPropertyValueAsLiteral)
@@ -97,6 +97,7 @@ namespace Microsoft.Build.BuildEngine {
 				
 				prop = new BuildProperty (parentProject, xe);
 				AddProperty (prop);
+				parentProject.EvaluatedProperties.AddProperty (prop);
 				return prop;
 			} else
 				throw new InvalidOperationException ("This method is only valid for persisted <System.Object[]> elements.");
@@ -121,9 +122,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void Clear ()
 		{
-			if (FromXml)
+			if (FromXml) {
+				propertyGroup.RemoveAll ();
 				properties = new List <BuildProperty> ();
-			else
+			} else
 				propertiesByName = new Dictionary <string, BuildProperty> ();
 		}
 

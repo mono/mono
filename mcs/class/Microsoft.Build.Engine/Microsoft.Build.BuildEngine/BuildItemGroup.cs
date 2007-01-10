@@ -95,9 +95,11 @@ namespace Microsoft.Build.BuildEngine {
 			return bi;
 		}
 		
-		[MonoTODO ("what about groups from xml?")]
 		public void Clear ()
 		{
+			if (FromXml)
+				itemGroupElement.RemoveAll ();
+			
 			buildItems = new List <BuildItem> ();
 		}
 

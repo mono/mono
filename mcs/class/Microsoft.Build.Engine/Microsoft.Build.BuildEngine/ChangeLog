@@ -1,3 +1,11 @@
+2007-01-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemGroup.cs (Clear): Remove from XML.
+
+	* BuildPropertyGroup.cs (AddNewProperty): Use right namespace and add
+	to Project.EvaluatedProperties.
+	(Clear): Remove from XML.
+
 2007-01-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Project.cs (InitializeProperties): Added $(MSBuildProjectDirectory)
