@@ -1,4 +1,8 @@
 
+Wed Jan 10 19:08:05 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-x86.md: back out for now as this triggers other regressions.
+
 Wed Jan 10 18:33:16 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-x86.md: force src1 and dest regpair for long shift instructions
