@@ -1754,10 +1754,11 @@ namespace System.Windows.Forms
 						else
 							state = ButtonState.Flat;
 						this.CPDrawButton (dc, rect, state);
-						rect.X += 3;
-						rect.Width -= 8;
+						rect.X += 8;
+						rect.Width -= 13;
 						if (rect.Width <= 0)
 							continue;
+
 						dc.DrawString (col.Text, DefaultFont,
 							       SystemBrushes.ControlText,
 							       rect, col.Format);

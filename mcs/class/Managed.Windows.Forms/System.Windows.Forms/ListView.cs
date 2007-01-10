@@ -760,7 +760,7 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
-		const int text_padding = 5;
+		const int text_padding = 15;
 
 		internal Size GetChildColumnSize (int index)
 		{

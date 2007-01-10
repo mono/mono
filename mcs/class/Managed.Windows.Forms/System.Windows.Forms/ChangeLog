@@ -1,3 +1,15 @@
+2007-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add more text padding space when using
+	auto resize for columns (the previous value didn't work fine).
+
+	* ThemeWin32Classic.cs: Update text position inside columns,
+	to match the appeareance of .Net.
+
+	* ColumnHeader.cs: When using auto resize, only the Width should
+	depend on the sub items, not the Height. Also, set width after
+	auto resizing (the value of Width should never remain as -1 or -2).
+
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: fix compilation errors when debug is enabled.

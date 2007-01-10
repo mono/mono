@@ -145,17 +145,18 @@ namespace System.Windows.Forms
 			// text is wrappable only in LargeIcon and SmallIcon views
 			format.FormatFlags = StringFormatFlags.NoWrap;
 
-			if (width >= 0) {
-				column_rect.Width = width;
-				if (owner != null)
-					column_rect.Height = owner.Font.Height + 5 ;
-				else
-					column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 5;
-			}
-			else if (Index != -1)
-				column_rect.Size = owner.GetChildColumnSize (Index);
+			if (owner != null)
+				column_rect.Height = owner.Font.Height + 8;
 			else
-				column_rect.Size = Size.Empty;
+				column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 8;
+
+			if (width >= 0)
+				column_rect.Width = width;
+			else if (Index != -1) {
+				column_rect.Width = owner.GetChildColumnSize (Index).Width;
+				width = column_rect.Width;
+			} else
+				column_rect.Width = 0;
 		}
 
 		internal void SetListView (ListView list_view)
