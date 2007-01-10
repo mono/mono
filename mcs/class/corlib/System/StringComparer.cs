@@ -130,7 +130,7 @@ namespace System
 
 			public override int GetHashCode (string s)
 			{
-				return s.ToUpperInvariant ().GetHashCode ();
+				return s.GetCaseInsensitiveHashCode ();
 			}
 		}
 

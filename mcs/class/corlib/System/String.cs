@@ -2043,6 +2043,7 @@ namespace System
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
+		// When modifying it, GetCaseInsensitiveHashCode() should be modified as well.
 		public unsafe override int GetHashCode ()
 		{
 			fixed (char * c = this) {
@@ -2056,6 +2057,24 @@ namespace System
 				++end;
 				if (cc < end)
 					h = (h << 5) - h + *cc;
+				return h;
+			}
+		}
+
+		internal unsafe int GetCaseInsensitiveHashCode ()
+		{
+			TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
+			fixed (char * c = this) {
+				char * cc = c;
+				char * end = cc + length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + ti.ToUpper (*cc);
+					h = (h << 5) - h + ti.ToUpper (cc [1]);
+				}
+				++end;
+				if (cc < end)
+					h = (h << 5) - h + ti.ToUpper (*cc);
 				return h;
 			}
 		}

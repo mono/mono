@@ -1,3 +1,8 @@
+2007-01-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs, StringComparer.cs : avoid extra string creation in
+	  StringComparer.OrdinalIgnoreCase.
+
 2007-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTime.cs: Under 2.0 fix ParseExact to set DateTimeKind.Utc when
