@@ -1,4 +1,9 @@
 
+Wed Jan 10 18:33:16 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-x86.md: force src1 and dest regpair for long shift instructions
+	to eax:edx, so ecx can't get allocated to them (bug #80489).
+
 Tue Jan 9 12:36:11 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini-exceptions.c: enabled running fault handlers
