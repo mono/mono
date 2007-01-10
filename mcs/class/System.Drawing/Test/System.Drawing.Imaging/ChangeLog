@@ -1,3 +1,9 @@
+2007-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IconCodecTest.cs: Add test cases for 48x48, 64x64 and 96x96 icons.
+	Fix test cases for 16x16 and 32x32 icons. Add test cases for 256 
+	colors and monochrome icons. Remove NotWorking from most tests.
+
 2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IconCodecTest.cs: Remove [Ignore] and replace with NotWorking.
