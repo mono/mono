@@ -1,3 +1,12 @@
+2007-01-11  Raja R Harinath  <harinath@gmail.com>
+
+	* class-internals.h (mono_get_inflated_generic_class): Remove.
+	* class.c (mono_get_inflated_generic_class): Remove.
+	(mono_generic_class_get_class): Rename from
+	mono_class_create_generic.
+	(mono_class_from_mono_type) [GENERICINST]: Use it.
+	* reflection.c, metadata.c: Update to changes.  Use
+	'mono_class_from_mono_type'.
 
 Wed Jan 10 16:19:54 CET 2007 Paolo Molaro <lupus@ximian.com>
 
