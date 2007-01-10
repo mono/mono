@@ -175,6 +175,14 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ActiveControlNotChildTest ()
+		{
+			ContainerControl c = new ContainerControl ();
+			c.ActiveControl = new Control ();
+		}
+
+		[Test]
 		public void Validation() {
 			Queue events = new Queue();
 
@@ -233,6 +241,5 @@ namespace MonoTests.System.Windows.Forms {
 			form.Dispose();
 
 		}
-
 	}
 }

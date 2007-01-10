@@ -1,3 +1,8 @@
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* ContainerControlTest.cs: add a test for setting ActiveControl to
+	a non-child control.
+
 2007-01-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Added tests for ensuring Form.OnFormClosing is called.
