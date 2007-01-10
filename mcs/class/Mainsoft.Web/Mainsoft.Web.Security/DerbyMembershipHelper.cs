@@ -128,8 +128,8 @@ namespace Mainsoft.Web.Security
 
 				string queryInsertMbr = "INSERT INTO aspnet_Membership (ApplicationId, UserId, Password, PasswordFormat, PasswordSalt, Email, " +
 					"LoweredEmail, PasswordQuestion, PasswordAnswer, IsApproved, IsLockedOut, CreateDate, LastLoginDate, " +
-					"LastPasswordChangedDate, LastLockoutDate, FailedPasswordAttemptCount, FailedPasswordAttemptWindowStart, " +
-					"FailedPasswordAnswerAttemptCount, FailedPasswordAnswerAttemptWindowStart) " +
+					"LastPasswordChangedDate, LastLockoutDate, FailedPasswordAttemptCount, FailedPwdAttemptWindowStart, " +
+					"FailedPwdAnswerAttemptCount, FailedPwdAnswerAttWindowStart) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				OleDbCommand cmdInsertMbr = new OleDbCommand (queryInsertMbr, (OleDbConnection) connection);
 				cmdInsertMbr.Transaction = trans;
@@ -149,9 +149,9 @@ namespace Mainsoft.Web.Security
 				AddParameter (cmdInsertMbr, "LastPasswordChangedDate", createDate);
 				AddParameter (cmdInsertMbr, "LastLockoutDate", DefaultDateTime);
 				AddParameter (cmdInsertMbr, "FailedPasswordAttemptCount", 0);
-				AddParameter (cmdInsertMbr, "FailedPasswordAttemptWindowStart", DefaultDateTime);
-				AddParameter (cmdInsertMbr, "FailedPasswordAnswerAttemptCount", 0);
-				AddParameter (cmdInsertMbr, "FailedPasswordAnswerAttemptWindowStart", DefaultDateTime);
+				AddParameter (cmdInsertMbr, "FailedPwdAttemptWindowStart", DefaultDateTime);
+				AddParameter (cmdInsertMbr, "FailedPwdAnswerAttemptCount", 0);
+				AddParameter (cmdInsertMbr, "FailedPwdAnswerAttWindowStart", DefaultDateTime);
 				cmdInsertMbr.ExecuteNonQuery ();
 
 				trans.Commit ();
@@ -219,7 +219,7 @@ namespace Mainsoft.Web.Security
 		public static int Membership_GetPassword (DbConnection connection, string applicationName, string username, string passwordAnswer, int maxInvalidPasswordAttempts, int passwordAttemptWindow, DateTime currentTimeUtc, out string password)
 		{
 			string querySelect = "SELECT usr.UserId, mbr.Password, mbr.PasswordAnswer, mbr.IsLockedOut, " +
-				"mbr.LastLockoutDate, mbr.FailedPasswordAnswerAttemptCount, mbr.FailedPasswordAnswerAttemptWindowStart " +
+				"mbr.LastLockoutDate, mbr.FailedPwdAnswerAttemptCount, mbr.FailedPwdAnswerAttWindowStart " +
 				"FROM aspnet_Applications app, aspnet_Users usr, aspnet_Membership mbr " +
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
@@ -277,13 +277,13 @@ namespace Mainsoft.Web.Security
 			}
 
 			string queryUpdate = "UPDATE aspnet_Membership SET IsLockedOut = ?, LastLockoutDate = ?, " +
-				"FailedPasswordAnswerAttemptCount = ?, FailedPasswordAnswerAttemptWindowStart = ? " +
+				"FailedPwdAnswerAttemptCount = ?, FailedPwdAnswerAttWindowStart = ? " +
 				"WHERE UserId = ?";
 			OleDbCommand cmdUpdate = new OleDbCommand (queryUpdate, (OleDbConnection) connection);
 			AddParameter (cmdUpdate, "IsLockedOut", dbLockedOut);
 			AddParameter (cmdUpdate, "LastLockoutDate", dbLastLockoutDate);
-			AddParameter (cmdUpdate, "FailedPasswordAnswerAttemptCount", dbFailedPasswordAnswerAttemptCount);
-			AddParameter (cmdUpdate, "FailedPasswordAnswerAttemptWindowStart", dbFailedPasswordAnswerAttemptWindowStart);
+			AddParameter (cmdUpdate, "FailedPwdAnswerAttemptCount", dbFailedPasswordAnswerAttemptCount);
+			AddParameter (cmdUpdate, "FailedPwdAnswerAttWindowStart", dbFailedPasswordAnswerAttemptWindowStart);
 			AddParameter (cmdUpdate, "UserId", dbUserId);
 			cmdUpdate.ExecuteNonQuery ();
 			
@@ -293,7 +293,7 @@ namespace Mainsoft.Web.Security
 		public static int Membership_GetPasswordWithFormat (DbConnection connection, string applicationName, string username, bool updateLastActivity, DateTime currentTimeUtc, out DbDataReader reader)
 		{
 			string querySelect = "SELECT usr.UserId, mbr.IsLockedOut, mbr.IsApproved, mbr.Password, mbr.PasswordFormat, mbr.PasswordSalt, " +
-				"mbr.FailedPasswordAttemptCount, mbr.FailedPasswordAnswerAttemptCount, mbr.LastLoginDate, usr.LastActivityDate " +
+				"mbr.FailedPasswordAttemptCount, mbr.FailedPwdAnswerAttemptCount, mbr.LastLoginDate, usr.LastActivityDate " +
 				"FROM aspnet_Applications app, aspnet_Users usr, aspnet_Membership mbr " +
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
@@ -374,7 +374,7 @@ namespace Mainsoft.Web.Security
 		public static int Membership_ResetPassword (DbConnection connection, string applicationName, string username, string newPassword, string passwordAnswer, int passwordFormat, string passwordSalt, int maxInvalidPasswordAttempts, int passwordAttemptWindow, DateTime currentTimeUtc)
 		{
 			string querySelect = "SELECT usr.UserId, mbr.Password, mbr.PasswordAnswer, mbr.IsLockedOut, " +
-				"mbr.LastLockoutDate, mbr.FailedPasswordAnswerAttemptCount, mbr.FailedPasswordAnswerAttemptWindowStart " +
+				"mbr.LastLockoutDate, mbr.FailedPwdAnswerAttemptCount, mbr.FailedPwdAnswerAttWindowStart " +
 				"FROM aspnet_Applications app, aspnet_Users usr, aspnet_Membership mbr " +
 				"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 				"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
@@ -463,12 +463,12 @@ namespace Mainsoft.Web.Security
 				return 1; // user not found
 
 			string queryUnlock = "UPDATE aspnet_Membership SET IsLockedOut = 0, " +
-				"FailedPasswordAttemptCount = 0, FailedPasswordAttemptWindowStart = ?, " +
-				"FailedPasswordAnswerAttemptCount = 0, FailedPasswordAnswerAttemptWindowStart = ?, " +
+				"FailedPasswordAttemptCount = 0, FailedPwdAttemptWindowStart = ?, " +
+				"FailedPwdAnswerAttemptCount = 0, FailedPwdAnswerAttWindowStart = ?, " +
 				"LastLockoutDate = ? WHERE UserId = ?";
 			OleDbCommand cmdUnlock = new OleDbCommand (queryUnlock, (OleDbConnection) connection);
-			AddParameter (cmdUnlock, "FailedPasswordAttemptWindowStart", DefaultDateTime);
-			AddParameter (cmdUnlock, "FailedPasswordAnswerAttemptWindowStart", DefaultDateTime);
+			AddParameter (cmdUnlock, "FailedPwdAttemptWindowStart", DefaultDateTime);
+			AddParameter (cmdUnlock, "FailedPwdAnswerAttWindowStart", DefaultDateTime);
 			AddParameter (cmdUnlock, "LastLockoutDate", DefaultDateTime);
 			AddParameter (cmdUnlock, "UserId", userId);
 
@@ -516,7 +516,7 @@ namespace Mainsoft.Web.Security
 		public static int Membership_UpdateUserInfo (DbConnection connection, string applicationName, string username, bool isPasswordCorrect, bool updateLastLoginActivityDate, int maxInvalidPasswordAttempts, int passwordAttemptWindow, DateTime currentTimeUtc, DateTime lastLoginDate, DateTime lastActivityDate)
 		{
 			string querySelect = "SELECT usr.UserId, mbr.IsApproved, mbr.IsLockedOut, mbr.LastLockoutDate, " +
-							"mbr.FailedPasswordAttemptCount, mbr.FailedPasswordAttemptWindowStart " +
+							"mbr.FailedPasswordAttemptCount, mbr.FailedPwdAttemptWindowStart " +
 							"FROM aspnet_Applications app, aspnet_Users usr, aspnet_Membership mbr " +
 							"WHERE app.LoweredApplicationName = ? AND usr.ApplicationId = app.ApplicationId " +
 							"AND usr.UserId = mbr.UserId AND usr.LoweredUserName = ?";
@@ -583,13 +583,13 @@ namespace Mainsoft.Web.Security
 			}
 
 			string queryUpdate = "UPDATE aspnet_Membership SET IsLockedOut = ?, LastLockoutDate = ?, " +
-				"FailedPasswordAttemptCount = ?, FailedPasswordAttemptWindowStart = ? " +
+				"FailedPasswordAttemptCount = ?, FailedPwdAttemptWindowStart = ? " +
 				"WHERE UserId = ?";
 			OleDbCommand cmdUpdate = new OleDbCommand (queryUpdate, (OleDbConnection) connection);
 			AddParameter (cmdUpdate, "IsLockedOut", dbLockedOut);
 			AddParameter (cmdUpdate, "LastLockoutDate", dbLastLockoutDate);
 			AddParameter (cmdUpdate, "FailedPasswordAttemptCount", dbFailedPasswordAttemptCount);
-			AddParameter (cmdUpdate, "FailedPasswordAttemptWindowStart", dbFailedPasswordAttemptWindowStart);
+			AddParameter (cmdUpdate, "FailedPwdAttemptWindowStart", dbFailedPasswordAttemptWindowStart);
 			AddParameter (cmdUpdate, "UserId", dbUserId);
 			cmdUpdate.ExecuteNonQuery ();
 			return 0;

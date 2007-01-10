@@ -42,12 +42,12 @@ namespace Mainsoft.Web.Security
 		static string [] schemaElements = new string [] {
 			// Applications table
 			@"CREATE TABLE aspnet_Applications (
-				ApplicationId                           char(36)            PRIMARY KEY,
+				ApplicationId                           char(36)            NOT NULL PRIMARY KEY,
 				ApplicationName                         varchar(256)        NOT NULL UNIQUE,
 				LoweredApplicationName                  varchar(256)        NOT NULL UNIQUE,
 				Description                             varchar(256)
 			)",
-			@"CREATE INDEX aspnet_Applications_Index ON aspnet_Applications(LoweredApplicationName)",
+			@"CREATE INDEX aspnet_App_Idx ON aspnet_Applications(LoweredApplicationName)",
 
 			// Users table
 			@"CREATE TABLE aspnet_Users (
@@ -59,10 +59,10 @@ namespace Mainsoft.Web.Security
 				IsAnonymous                             int                 NOT NULL DEFAULT 0,
 				LastActivityDate                        timestamp           NOT NULL,
 
-				CONSTRAINT Users_ApplicationId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
+				CONSTRAINT Users_AppId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
 			)",
-			@"CREATE UNIQUE INDEX aspnet_Users_Index ON aspnet_Users(ApplicationId, LoweredUserName)",
-			@"CREATE INDEX aspnet_Users_Index2 ON aspnet_Users(ApplicationId, LastActivityDate)",
+			@"CREATE UNIQUE INDEX aspnet_Usr_Idx ON aspnet_Users(ApplicationId, LoweredUserName)",
+			@"CREATE INDEX aspnet_Usr_Idx2 ON aspnet_Users(ApplicationId, LastActivityDate)",
 
 			// Membership table
 			@"CREATE TABLE aspnet_Membership (
@@ -83,15 +83,15 @@ namespace Mainsoft.Web.Security
 				LastPasswordChangedDate                 timestamp           NOT NULL,
 				LastLockoutDate                         timestamp           NOT NULL,
 				FailedPasswordAttemptCount              int                 NOT NULL,
-				FailedPasswordAttemptWindowStart        timestamp           NOT NULL,
-				FailedPasswordAnswerAttemptCount        int                 NOT NULL,
-				FailedPasswordAnswerAttemptWindowStart  timestamp           NOT NULL,
+				FailedPwdAttemptWindowStart             timestamp           NOT NULL,
+				FailedPwdAnswerAttemptCount             int                 NOT NULL,
+				FailedPwdAnswerAttWindowStart           timestamp           NOT NULL,
 				Comment                                 varchar(256), 
 
-				CONSTRAINT Member_ApplicationId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId),
+				CONSTRAINT Member_AppId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId),
 				CONSTRAINT UserId_PK FOREIGN KEY (UserId) REFERENCES aspnet_Users(UserId)
 			)",
-			@"CREATE INDEX aspnet_Membership_index ON aspnet_Membership(ApplicationId, LoweredEmail)",
+			@"CREATE INDEX aspnet_Mbr_idx ON aspnet_Membership(ApplicationId, LoweredEmail)",
 
 			// Roles table
 			@"CREATE TABLE aspnet_Roles (
@@ -101,9 +101,9 @@ namespace Mainsoft.Web.Security
 				LoweredRoleName                         varchar(256)        NOT NULL,
 				Description                             varchar(256),
 
-				CONSTRAINT Roles_ApplicationId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
+				CONSTRAINT Roles_AppId_PK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
 			)",
-			@"CREATE UNIQUE INDEX aspnet_Roles_index ON aspnet_Roles(ApplicationId, LoweredRoleName)",
+			@"CREATE UNIQUE INDEX aspnet_Rls_idx ON aspnet_Roles(ApplicationId, LoweredRoleName)",
 
 			// UsersInRoles table
 			@"CREATE TABLE aspnet_UsersInRoles (
@@ -114,7 +114,7 @@ namespace Mainsoft.Web.Security
 				CONSTRAINT UserId_RoleId_PK FOREIGN KEY (RoleId) REFERENCES aspnet_Roles (RoleId)
 			)",
 			@"ALTER TABLE aspnet_UsersInRoles ADD PRIMARY KEY (UserId, RoleId)",
-			@"CREATE INDEX aspnet_UsersInRoles_index ON aspnet_UsersInRoles(RoleId)",
+			@"CREATE INDEX aspnet_UsrRls_idx ON aspnet_UsersInRoles(RoleId)",
 
 			// Profile table
 			@"CREATE TABLE aspnet_Profile (
@@ -128,36 +128,36 @@ namespace Mainsoft.Web.Security
 			)",
 
 			// Pathes table
-			@"CREATE TABLE aspnet_Paths (
-				ApplicationId                           char(36)            NOT NULL,
-				PathId                                  char(36)            NOT NULL PRIMARY KEY,
-				Path                                    varchar(256)        NOT NULL,
-				LoweredPath                             varchar(256)        NOT NULL,
-
-				CONSTRAINT Paths_ApplicationId_FK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
-			)",
-			@"CREATE UNIQUE INDEX aspnet_Paths_index ON aspnet_Paths(ApplicationId, LoweredPath)",
+			//@"CREATE TABLE aspnet_Paths (
+			//	ApplicationId                           char(36)            NOT NULL,
+			//	PathId                                  char(36)            NOT NULL PRIMARY KEY,
+			//	Path                                    varchar(256)        NOT NULL,
+			//	LoweredPath                             varchar(256)        NOT NULL,
+			//
+			//	CONSTRAINT Paths_AppId_FK FOREIGN KEY (ApplicationId) REFERENCES aspnet_Applications(ApplicationId)
+			//)",
+			//@"CREATE UNIQUE INDEX aspnet_Pth_idx ON aspnet_Paths(ApplicationId, LoweredPath)",
 
 			// Personalization tables
-			@"CREATE TABLE aspnet_PersonalizationAllUsers (
-				PathId                                  char(36)            NOT NULL PRIMARY KEY,
-				PageSettings                            blob                NOT NULL,
-				LastUpdatedDate                         timestamp           NOT NULL,
-
-				CONSTRAINT PersnlUsers_PathId_PK FOREIGN KEY (PathId) REFERENCES aspnet_Paths (PathId)
-			)",
-			@"CREATE TABLE aspnet_PersonalizationPerUser (
-				Id                                      char(36)            NOT NULL PRIMARY KEY,
-				PathId                                  char(36)            NOT NULL,
-				UserId                                  char(36)            NOT NULL,
-				PageSettings                            blob                NOT NULL,
-				LastUpdatedDate                         timestamp           NOT NULL,
-
-				CONSTRAINT PersnlPerUser_PathId_FK FOREIGN KEY (PathId) REFERENCES aspnet_Paths (PathId),
-				CONSTRAINT PersnlPerUser_UserId_FK FOREIGN KEY (UserId) REFERENCES aspnet_Users (UserId)
-			)",
-			@"CREATE UNIQUE INDEX aspnet_PersonalizationPerUser_index1 ON aspnet_PersonalizationPerUser(PathId,UserId)",
-			@"CREATE UNIQUE INDEX aspnet_PersonalizationPerUser_ncindex2 ON aspnet_PersonalizationPerUser(UserId,PathId)"
+			//@"CREATE TABLE aspnet_PersonalizationAllUsers (
+			//	PathId                                  char(36)            NOT NULL PRIMARY KEY,
+			//	PageSettings                            blob                NOT NULL,
+			//	LastUpdatedDate                         timestamp           NOT NULL,
+			//
+			//	CONSTRAINT PrsUsr_PathId_PK FOREIGN KEY (PathId) REFERENCES aspnet_Paths (PathId)
+			//)",
+			//@"CREATE TABLE aspnet_PersonalizationPerUser (
+			//	Id                                      char(36)            NOT NULL PRIMARY KEY,
+			//	PathId                                  char(36)            NOT NULL,
+			//	UserId                                  char(36)            NOT NULL,
+			//	PageSettings                            blob                NOT NULL,
+			//	LastUpdatedDate                         timestamp           NOT NULL,
+			//
+			//	CONSTRAINT PrsPUser_PathId_FK FOREIGN KEY (PathId) REFERENCES aspnet_Paths (PathId),
+			//	CONSTRAINT PrsPUser_UserId_FK FOREIGN KEY (UserId) REFERENCES aspnet_Users (UserId)
+			//)",
+			//@"CREATE UNIQUE INDEX PrsPUser_idx1 ON aspnet_PersonalizationPerUser(PathId,UserId)",
+			//@"CREATE UNIQUE INDEX PrsPUser_idx2 ON aspnet_PersonalizationPerUser(UserId,PathId)"
 		};
 		#endregion
 
@@ -182,12 +182,8 @@ namespace Mainsoft.Web.Security
 
 			using (connection) {
 				for (int i = 0; i < schemaElements.Length; i++) {
-					try {
-						OleDbCommand cmd = new OleDbCommand (schemaElements [i], connection);
-						cmd.ExecuteNonQuery ();
-					}
-					catch (Exception) {
-					}
+					OleDbCommand cmd = new OleDbCommand (schemaElements [i], connection);
+					cmd.ExecuteNonQuery ();
 				}
 			}
 		}

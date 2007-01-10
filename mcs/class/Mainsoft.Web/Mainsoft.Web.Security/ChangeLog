@@ -1,3 +1,8 @@
+2007-01-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyDBSchema.cs: fixed schema to work with cloudscape
+	* DerbyMembershipHelper.cs: fixed table fields to work with cloudscape
+
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added CloudscapeMembershipProvider.cs, CloudscapeRoleProvider.cs
