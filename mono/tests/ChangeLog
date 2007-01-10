@@ -1,3 +1,7 @@
+2007-01-10  Robert Jordan  <robertj@gmx.net>
+
+	* bug-80392.2.cs: Add more tests.
+
 2007-01-09  Robert Jordan  <robertj@gmx.net>
 
 	* bug-80392.2.cs: Add test for bug #80392.
