@@ -1,3 +1,8 @@
+2007-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Add new test icons (48x48x1, 64x64x256 and 96x96x256) to 
+	distribution files.
+
 2007-01-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add new file nunit-host-ignore to the dist
