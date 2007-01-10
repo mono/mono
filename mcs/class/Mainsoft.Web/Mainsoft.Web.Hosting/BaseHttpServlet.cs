@@ -164,6 +164,7 @@ namespace Mainsoft.Web.Hosting
 					name = "GH Application";
 				domainSetup.ApplicationName = name;
 				domainSetup.ConfigurationFile = rootPath + "/Web.config";
+				domainSetup.PrivateBinPath = Path.Combine (rootPath, "WEB-INF/lib");
 
 				AppDomain servletDomain = AppDomain.CreateDomain(name, null, domainSetup);
 
