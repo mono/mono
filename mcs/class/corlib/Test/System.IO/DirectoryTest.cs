@@ -137,6 +137,9 @@ public class DirectoryTest
 #if NET_2_0
 			Assert.Fail ("#1");
 		} catch (IOException ex) {
+			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+			Assert.IsNotNull (ex.Message, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
 #else
 			Assert.IsFalse (dinfo.Exists, "#2");
 			Assert.IsTrue (dinfo.FullName.EndsWith ("DirectoryTest.Test.ExistsAsFile"), "#3");

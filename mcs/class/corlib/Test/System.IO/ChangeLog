@@ -1,3 +1,7 @@
+2007-01-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Fixed compiler warning by improving test.
+
 2006-12-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MemoryStreamTest.cs: Added (de)serialization tests for bug #80205.
