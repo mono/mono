@@ -148,7 +148,10 @@ namespace System.Web.UI.WebControls {
 
 			InitializeParameters (command, InsertParameters, values, null);
 
-			OnInserting (new SqlDataSourceCommandEventArgs (command));
+			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
+			OnInserting (args);
+			if (args.Cancel)
+				return -1;
 
 			bool closed = connection.State == ConnectionState.Closed;
 			if (closed)
@@ -323,7 +326,10 @@ namespace System.Web.UI.WebControls {
 
 			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues);
 
-			OnUpdating (new SqlDataSourceCommandEventArgs (command));
+			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
+			OnUpdating (args);
+			if (args.Cancel)
+				return -1;
 
 			bool closed = connection.State == ConnectionState.Closed;
 			if (closed)
