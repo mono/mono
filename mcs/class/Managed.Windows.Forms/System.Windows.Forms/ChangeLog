@@ -1,5 +1,11 @@
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
+	* Splitter.cs: clearing some outstanding changes from my tree.
+	Replace all accesses (not writes) to the internal dock_style field
+	with the Dock property.
+
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: make FireEnter, FireLeave, FireValidating, and
 	FireValidated virtual.
 

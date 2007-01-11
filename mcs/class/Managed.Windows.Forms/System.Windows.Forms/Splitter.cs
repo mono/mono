@@ -387,7 +387,7 @@ namespace System.Windows.Forms {
 			// Calculate limits
 			if (filler != null) {
 				if (horizontal) {
-					if (dock_style == DockStyle.Top) {
+					if (Dock == DockStyle.Top) {
 						limit_min = affected.Bounds.Top + min_size;
 						limit_max = filler.Bounds.Bottom - min_extra + this.bounds.Top - filler.Bounds.Top;
 					} else {
@@ -395,7 +395,7 @@ namespace System.Windows.Forms {
 						limit_max = affected.Bounds.Bottom - min_size - this.Height;
 					}
 				} else {
-					if (dock_style == DockStyle.Left) {
+					if (Dock == DockStyle.Left) {
 						limit_min = affected.Bounds.Left + min_size;
 						limit_max = filler.Bounds.Right - min_extra + this.bounds.Left - filler.Bounds.Left;
 					} else {
@@ -420,14 +420,14 @@ namespace System.Windows.Forms {
 
 			if (horizontal) {
 				split_position = pt.Y;
-				if (dock_style == DockStyle.Top) {
+				if (Dock == DockStyle.Top) {
 					click_offset = e.Y;
 				} else {
 					click_offset = -e.Y;
 				}
 			} else {
 				split_position = pt.X;
-				if (dock_style == DockStyle.Left) {
+				if (Dock == DockStyle.Left) {
 					click_offset = e.X;
 				} else {
 					click_offset = -e.X;
@@ -582,7 +582,7 @@ namespace System.Windows.Forms {
 
 				// Doc says the first control preceeding us in the zorder 
 				for (int i = Parent.Controls.GetChildIndex(this) + 1; i < Parent.Controls.Count; i++) {
-					switch(this.Dock) {
+					switch (Dock) {
 						case DockStyle.Top: {
 							if (Top == Parent.Controls[i].Bottom) {
 								return Parent.Controls[i];
@@ -634,13 +634,13 @@ namespace System.Windows.Forms {
 
 		private int CalculateSplitPosition() {
 			if (horizontal) {
-				if (dock_style == DockStyle.Top) {
+				if (Dock == DockStyle.Top) {
 					return split_position - affected.Top;
 				} else {
 					return affected.Bottom - split_position - splitter_size;
 				}
 			} else {
-				if (dock_style == DockStyle.Left) {
+				if (Dock == DockStyle.Left) {
 					return split_position - affected.Left;
 				} else {
 					return affected.Right - split_position - splitter_size;
