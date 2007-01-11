@@ -1932,6 +1932,9 @@ namespace System.Windows.Forms {
 						if (is_loaded)
 							SelectActiveControl ();
 
+						if (ActiveControl != null && !ActiveControl.Focused)
+							SendControlFocus (ActiveControl);
+
 						OnActivated(EventArgs.Empty);
 					} else {
 						OnDeactivate(EventArgs.Empty);

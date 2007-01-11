@@ -4709,10 +4709,10 @@ namespace System.Windows.Forms
 
 			case Msg.WM_SETFOCUS: {
 				if (!has_focus) {                
-                    if (this.Parent != null && this.Parent.ContainerSelected)
-                        return;
-                    this.has_focus = true;
-                    OnGotFocusInternal (EventArgs.Empty);
+					if (this.Parent != null && this.Parent.ContainerSelected)
+						return;
+					this.has_focus = true;
+					OnGotFocusInternal (EventArgs.Empty);
 				}
 				return;
 			}

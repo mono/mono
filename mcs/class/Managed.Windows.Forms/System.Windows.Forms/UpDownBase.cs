@@ -40,7 +40,7 @@ namespace System.Windows.Forms
 	[ComVisible (true)]
 #endif
 	[Designer("System.Windows.Forms.Design.UpDownBaseDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public abstract class UpDownBase : System.Windows.Forms.ContainerControl {
+	public abstract class UpDownBase : ContainerControl {
 		#region UpDownSpinner Sub-class
 		internal sealed class UpDownSpinner : Control {
 			#region	Local Variables
@@ -294,8 +294,6 @@ namespace System.Windows.Forms
 			Controls.Add (spnSpinner);
 			Controls.Add (txtView);
 			ResumeLayout ();
-
-			this.ActiveControl = txtView;
 
 			Height = PreferredHeight;
 			base.BackColor = txtView.BackColor;

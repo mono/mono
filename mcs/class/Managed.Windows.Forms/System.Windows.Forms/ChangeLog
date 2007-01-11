@@ -1,5 +1,18 @@
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
+	* UpDownBase.cs (.ctor): remove the ActiveControl assignment here.
+	It breaks in the face of the new ActiveControl stuff, and should
+	be unnecessary.
+
+	* Form.cs (WndProc): in the WM_ACTIVATE case, we need to set the
+	activecontrol's focus if it's not already set, after we set
+	ActiveControl, but before we call OnActivated.  Re-fixes #79667
+	after the previous focus/active control fixes regressed it.
+
+	* Control.cs: reindent some code.
+	
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
 	* Splitter.cs: clearing some outstanding changes from my tree.
 	Replace all accesses (not writes) to the internal dock_style field
 	with the Dock property.
