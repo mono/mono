@@ -1,3 +1,8 @@
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* libtest.c, cominterop.cs: Tests for unmanaged->managed
+	VARIANT marshalling.
+
 2007-01-10  Robert Jordan  <robertj@gmx.net>
 
 	* bug-80392.2.cs: Add more tests.

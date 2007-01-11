@@ -1,5 +1,12 @@
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 
+	* marshal.c (emit_marshal_variant): Handle unmanaged->managed
+	marshalling.
+	(mono_marshal_emit_managed_wrapper): Convert byref arguments of type
+	MONO_TYPE_OBJECT back for VARIANT support.
+
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
 	* marshal.c, marshal.h, icall-def.h: Implement 
 	Marshal.ReAllocCoTaskMem.
 
