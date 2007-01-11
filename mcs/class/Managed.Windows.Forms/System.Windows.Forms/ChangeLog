@@ -1,3 +1,8 @@
+2007-01-11  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs: turns out that LinkLabels are only Selectable if
+	they have 1 or more links.  this fixes the crash gert reported.
+
 2007-01-11  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControl.cs: Remove ContainerSelected flag, not needed

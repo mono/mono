@@ -543,7 +543,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			SetStyle (ControlStyles.Selectable, true);
+			SetStyle (ControlStyles.Selectable, Links.Count > 0);
 
 			/* don't bother doing the rest if our handle hasn't been created */
 			if (!IsHandleCreated)
