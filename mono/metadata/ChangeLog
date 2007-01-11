@@ -1,5 +1,10 @@
 2007-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	Fix IronPython regression mentioned in #80249
+	* metadata.c (do_mono_metadata_parse_generic_class): Clear
+	'cached_context' field, since it may have been initialized as a
+	side-effect of metadata parsing.
+
 	* class-internals.h (_MonoGenericClass.is_inflated): Remove.
 	(_MonoGenericClass.cached_class): Move here and rename from lone
 	remaining field of ...
