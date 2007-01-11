@@ -467,6 +467,7 @@ namespace System.Windows.Forms
 						if (sorted_links[n].Enabled) {
 							sorted_links[n].Focused = true;
 							focused_index = n;
+							base.Select (directed, forward);
 							return;
 						}
 					}
@@ -479,6 +480,7 @@ namespace System.Windows.Forms
 						if (sorted_links[n].Enabled) {
 							sorted_links[n].Focused = true;
 							focused_index = n;
+							base.Select (directed, forward);
 							return;
 						}
 					}

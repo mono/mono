@@ -1,5 +1,12 @@
 2007-01-11  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs: make sure to call base.Select in our Select method
+	if it turns out we're going to be selected (i.e. if we have a link
+	that is going to receive focus).  That way our container's
+	ActiveControl is updated properly.
+
+2007-01-11  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs: turns out that LinkLabels are only Selectable if
 	they have 1 or more links.  this fixes the crash gert reported.
 
