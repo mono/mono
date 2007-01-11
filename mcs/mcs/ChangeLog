@@ -1,3 +1,9 @@
+2007-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #80249
+	* statement.cs (CollectionForeach.TryType): Prefer generic
+	GetEnumerator over non-generic variant.  Fix code to follow comments.
+
 2007-01-09  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80446

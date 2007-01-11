@@ -4917,7 +4917,7 @@ namespace Mono.CSharp {
 							if (!TypeManager.IsGenericType (mi.ReturnType))
 								continue;
 
-							Report.SymbolRelatedToPreviousError(t);
+							Report.SymbolRelatedToPreviousError (t);
 							Report.Error(1640, loc, "foreach statement cannot operate on variables of type `{0}' " +
 								"because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
 								TypeManager.CSharpName (t), TypeManager.CSharpSignature (mi));
@@ -4925,13 +4925,13 @@ namespace Mono.CSharp {
 						}
 
 						// Always prefer generics enumerators
-						if (TypeManager.IsGenericType(mi.ReturnType))
-							continue;
-
-						Report.SymbolRelatedToPreviousError (result);
-						Report.SymbolRelatedToPreviousError (mi);
-						Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
-							TypeManager.CSharpName (t), "enumerable", TypeManager.CSharpSignature (result), TypeManager.CSharpSignature (mi));
+						if (!TypeManager.IsGenericType (mi.ReturnType)) {
+							Report.SymbolRelatedToPreviousError (result);
+							Report.SymbolRelatedToPreviousError (mi);
+							Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
+									TypeManager.CSharpName (t), "enumerable", TypeManager.CSharpSignature (result), TypeManager.CSharpSignature (mi));
+							return false;
+						}
 					}
 					result = mi;
 					tmp_move_next = move_next;
