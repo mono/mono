@@ -1,3 +1,8 @@
+
+Thu Jan 11 18:53:19 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mempool.c: added code to help debug mempool allocations.
+
 2007-01-11  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (convert_sockopt_level_and_name): Add DontFragment
