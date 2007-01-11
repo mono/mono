@@ -1,3 +1,18 @@
+2007-01-11  Andreia Gaita  <avidigal@novell.com>
+
+	* ContainerControl.cs: Remove ContainerSelected flag, not needed
+	anymore.
+
+	* Control.cs (Controls.Add): Check if control to be added to the collection
+	is a top level control, and throw an ArgumentException if it is.
+	Remove ContainerSelectedFlag, not needed anymore.
+
+	* XplaUIWin32.cs (SetTopMost): Add flag SWP_NOACTIVATE so that setting the
+	top most control doesn't activate the form. This fixes a problem in the
+	MessageBox, where the default button wouldn't get focus because the form
+	was activated before being Loaded - when the Owner is set, SetTopMost is
+	called, and it would activate it.
+
 2007-01-11  Jonathan Pobst  <jpobst@novell.com>
 
 	* Button.cs: When clicked and setting the parent form's DialogResult,

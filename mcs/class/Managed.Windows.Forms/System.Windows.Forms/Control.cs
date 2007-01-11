@@ -881,6 +881,10 @@ namespace System.Windows.Forms
 					throw new ArgumentException("Object of type Control required", "value");
 				}
 
+				if (((Control)value).GetTopLevel()) {
+					throw new ArgumentException("Cannot add a top level control to a control.", "value");
+				}
+
 				return list.Add(value);
 			}
 
@@ -2166,11 +2170,6 @@ namespace System.Windows.Forms
 			get {
 				return "Mono Project, Novell, Inc.";
 			}
-		}
-
-		internal bool ContainerSelected {
-			get { return container_selected; }
-			set { container_selected = value; }
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3601,15 +3600,6 @@ namespace System.Windows.Forms
 #endif
 
 		public void Select() {
-			if (this is ContainerControl)
-				ContainerSelected = true;
-			else {
-				Control c = this.Parent;
-				while (c != null) {
-					c.ContainerSelected = false;
-					c = c.Parent;
-				}
-			}
 			Select(false, false);	
 		}
 
@@ -4117,8 +4107,7 @@ namespace System.Windows.Forms
 			
 			container = GetContainerControl();
 			if (container != null && (Control)container != this)
-				if (!this.Parent.ContainerSelected)
-					container.ActiveControl = this;
+			    container.ActiveControl = this;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4709,8 +4698,6 @@ namespace System.Windows.Forms
 
 			case Msg.WM_SETFOCUS: {
 				if (!has_focus) {                
-					if (this.Parent != null && this.Parent.ContainerSelected)
-						return;
 					this.has_focus = true;
 					OnGotFocusInternal (EventArgs.Empty);
 				}

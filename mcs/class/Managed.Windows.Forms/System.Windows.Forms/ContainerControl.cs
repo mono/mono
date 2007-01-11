@@ -478,10 +478,7 @@ namespace System.Windows.Forms {
 			if (Parent != null) {
 				IContainerControl parent = Parent.GetContainerControl ();
 				if (parent != null) {
-					if (!(directed && auto_select_child))
-						ContainerSelected = true;
-					if (!(this.Parent.ContainerSelected))
-						parent.ActiveControl = this;
+					parent.ActiveControl = this;
 				}
 			}
 
