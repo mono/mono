@@ -1,3 +1,22 @@
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* FocusTest.cs: Disable a couple of tests that rely on the
+	focus/active control state being available directly after
+	form.Show() - doesn't work on X11, since form.Show shows the
+	window asynchronously.  Also, add a large focus/enter/leave event
+	handling test andreia and I were using to correct problems in
+	ContainerControl.set_ActiveControl.
+	
+	* FormTest.cs: add a test to show that even if OnActivate is
+	overriden and not chained up to the base class, ActiveControl is
+	still set.  Unfortunately it doesn't work on the X11 backend
+	because Form.Show is necessarily an async operation.
+
+	* ApplicationTest.cs: don't show forms in the taskbar, and dispose
+	of them.
+
+	* ApplicationContextTest.cs: same.
+
 2007-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ColumnHeaderTest.cs: Add a test for settings Width to -1 and

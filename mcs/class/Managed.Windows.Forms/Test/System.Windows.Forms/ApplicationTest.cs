@@ -31,6 +31,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ContextMainFormTest ()
 		{
 			Form f1 = new Form ();
+			f1.ShowInTaskbar = false;
 			ctx = new ApplicationContext (f1);
 
 			f1.VisibleChanged += new EventHandler (form_visible_changed);
@@ -38,6 +39,7 @@ namespace MonoTests.System.Windows.Forms
 			Application.Run (ctx);
 
 			Assert.IsNull (ctx.MainForm, "2");
+			f1.Dispose ();
 		}
 #if NET_2_0
 		[Test]

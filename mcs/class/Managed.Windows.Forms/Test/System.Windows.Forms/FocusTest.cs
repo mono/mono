@@ -6,7 +6,11 @@
 //
 
 using System;
+using System.Text;
 using System.Windows.Forms;
+
+using CancelEventArgs = System.ComponentModel.CancelEventArgs;
+using CancelEventHandler = System.ComponentModel.CancelEventHandler;
 
 using NUnit.Framework;
 
@@ -93,6 +97,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")] // this relies on the fact that form.Show synchronously generated WM_ACTIVATE on ms .net
 		public void ControlSelectNextFlatTest ()
 		{
 			Form form = new Form ();
@@ -259,8 +264,8 @@ namespace MonoTests.System.Windows.Forms {
 
 			cp.Controls.AddRange (flat_controls);
 
-            Assert.IsFalse (flat_controls [0].Focused, "A0");
-            cp._Select (false, true);
+			Assert.IsFalse (flat_controls [0].Focused, "A0");
+			cp._Select (false, true);
 			Assert.IsFalse (flat_controls [0].Focused, "A1");
 			Assert.IsFalse (flat_controls [1].Focused, "A2");
 			Assert.IsFalse (flat_controls [2].Focused, "A3");
@@ -814,6 +819,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")] // relies on form.Show() synchronously generating WM_ACTIVATE
 		public void ActiveControl ()
 		{
 			Form form = new Form ();
@@ -903,6 +909,8 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (c2.Focused, "#J2");
 			Assert.IsFalse (c3.Focused, "#J3");
 			Assert.AreSame (c1, cc.ActiveControl, "#J4");
+
+			form.Dispose ();
 		}
 
 		[Test] // bug #80411
@@ -917,6 +925,161 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.IsNull (ex.ParamName, "#4");
 				Assert.IsNull (ex.InnerException, "#5");
 			}
+		}
+
+
+		StringBuilder sb;
+		void enter(object sender, EventArgs e) {
+			sb.Append(String.Format("OnEnter: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void leave(object sender, EventArgs e) {
+			sb.Append(String.Format("OnLeave: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void gotfocus(object sender, EventArgs e) {
+			sb.Append(String.Format("OnGotFocus: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void lostfocus(object sender, EventArgs e) {
+			sb.Append(String.Format("OnLostFocus: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void validating(object sender, CancelEventArgs e) {
+			sb.Append(String.Format("OnValidating: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void validated(object sender, EventArgs e) {
+			sb.Append(String.Format("OnValidated: {0} {1}", ((Control)sender).Name, sender));
+			sb.Append("\n");
+		}
+
+		void connect(Control c) {
+			c.Enter += new EventHandler(enter);
+			c.Leave += new EventHandler(leave);
+			c.GotFocus += new EventHandler(gotfocus);
+			c.LostFocus += new EventHandler(lostfocus);
+			c.Validating += new CancelEventHandler(validating);
+			c.Validated += new EventHandler(validated);
+		}
+
+		[Test]
+		public void EnterLeaveFocusEventTest ()
+		{
+			Form f = new Form();
+			f.ShowInTaskbar = false;
+
+			f.Name = "Form1";
+			ContainerControl cc0 = new ContainerControl();
+			cc0.Name = "ContainerControl 0";
+			ContainerControl cc1 = new ContainerControl();
+			cc1.Name = "ContainerControl 1";
+			ContainerControl cc2 = new ContainerControl();
+			cc2.Name = "ContainerControl 2";
+			Control c1 = new Control();
+			c1.Name = "Control 1";
+			Control c2 = new Control();
+			c2.Name = "Control 2";
+
+			connect(f);
+			connect(cc0);
+			connect(cc1);
+			connect(cc2);
+			connect(c1);
+			connect(c2);
+
+			cc0.Controls.Add(cc1);
+			cc0.Controls.Add(cc2);
+			cc1.Controls.Add(c1);
+			cc2.Controls.Add(c2);
+
+			f.Controls.Add(cc0);
+
+			sb = new StringBuilder ();
+			f.Show ();
+			c1.Select();
+
+			Assert.AreEqual (@"OnEnter: ContainerControl 0 System.Windows.Forms.ContainerControl
+OnEnter: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnEnter: Control 1 System.Windows.Forms.Control
+OnGotFocus: Control 1 System.Windows.Forms.Control
+",
+					 sb.ToString (), "1");
+
+			sb.Length = 0;
+			c2.Select();
+			Assert.AreEqual (@"OnLeave: Control 1 System.Windows.Forms.Control
+OnLeave: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnValidating: Control 1 System.Windows.Forms.Control
+OnValidated: Control 1 System.Windows.Forms.Control
+OnValidating: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnValidated: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnEnter: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnEnter: Control 2 System.Windows.Forms.Control
+OnLostFocus: Control 1 System.Windows.Forms.Control
+OnGotFocus: Control 2 System.Windows.Forms.Control
+",
+					 sb.ToString (), "2");
+
+			sb.Length = 0;
+			cc1.Select();
+			Assert.AreEqual (@"OnLeave: Control 2 System.Windows.Forms.Control
+OnLeave: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnValidating: Control 2 System.Windows.Forms.Control
+OnValidated: Control 2 System.Windows.Forms.Control
+OnValidating: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnValidated: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnEnter: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnLostFocus: Control 2 System.Windows.Forms.Control
+OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
+",
+					 sb.ToString (), "3");
+
+			sb.Length = 0;
+			cc2.Select();
+			Assert.AreEqual (@"OnLeave: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnValidating: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnValidated: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnEnter: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnLostFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnGotFocus: ContainerControl 2 System.Windows.Forms.ContainerControl
+",
+					 sb.ToString (), "4");
+
+			Assert.IsNull (cc2.ActiveControl, "5");
+
+			sb.Length = 0;
+			c2.Select();
+			Assert.AreEqual (@"OnEnter: Control 2 System.Windows.Forms.Control
+OnLostFocus: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnGotFocus: Control 2 System.Windows.Forms.Control
+",
+					 sb.ToString (), "6");
+
+			sb.Length = 0;
+			cc1.Select();
+			Assert.AreEqual (@"OnLeave: Control 2 System.Windows.Forms.Control
+OnLeave: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnValidating: Control 2 System.Windows.Forms.Control
+OnValidated: Control 2 System.Windows.Forms.Control
+OnValidating: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnValidated: ContainerControl 2 System.Windows.Forms.ContainerControl
+OnEnter: ContainerControl 1 System.Windows.Forms.ContainerControl
+OnLostFocus: Control 2 System.Windows.Forms.Control
+OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
+",
+					 sb.ToString (), "7");
+
+			sb.Length = 0;
+			f.Select();
+			Assert.AreEqual ("", sb.ToString (), "8");
+
+			f.Dispose ();
 		}
 
 		[Test]
@@ -946,6 +1109,8 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (c1.Focused, "#C1");
 			Assert.IsFalse (c2.Focused, "#C2");
 			Assert.AreSame (c1, cc.ActiveControl, "#C3");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -975,6 +1140,8 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (c1.Focused, "#C1");
 			Assert.IsTrue (c2.Focused, "#C2");
 			Assert.AreSame (c1, cc.ActiveControl, "#C3");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -1013,8 +1180,9 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (c1.Focused, "#E1");
 			Assert.IsFalse (c2.Focused, "#E2");
 			Assert.IsNull (cc.ActiveControl, "#E3");
-		}
 
+			form.Dispose ();
+		}
 	}
 
 }

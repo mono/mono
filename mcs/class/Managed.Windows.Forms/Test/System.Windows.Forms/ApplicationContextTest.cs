@@ -58,6 +58,7 @@ namespace MonoTests.System.Windows.Forms
 			reached_form_handle_destroyed = false;
 
 			MyForm f1 = new MyForm ();
+			f1.ShowInTaskbar = false;
 			f1.HandleDestroyed += new EventHandler (form_handle_destroyed);
 
 			ctx = new ApplicationContext (f1);
@@ -77,6 +78,7 @@ namespace MonoTests.System.Windows.Forms
 			reached_form_handle_destroyed = false;
 
 			MyForm f1 = new MyForm ();
+			f1.ShowInTaskbar = false;
 
 			ctx = new ApplicationContext (f1);
 			ctx.ThreadExit += new EventHandler (thread_exit);
@@ -95,6 +97,7 @@ namespace MonoTests.System.Windows.Forms
 			thread_exit_count = 0;
 
 			MyForm f1 = new MyForm ();
+			f1.ShowInTaskbar = false;
 			ctx = new ApplicationContext (f1);
 			ctx.ThreadExit += new EventHandler (thread_exit);
 

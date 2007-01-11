@@ -472,6 +472,45 @@ namespace MonoTests.System.Windows.Forms
 				base.WndProc (ref msg);
 			}
 		}
+
+		class SwallowOnActivated : Form {
+			protected override void OnActivated (EventArgs e)
+			{
+				// do nothing
+			}
+
+			protected override void OnCreateControl () {
+				base.OnCreateControl ();
+			}
+		}
+
+		class EnterTest : Button {
+			protected override void OnEnter (EventArgs e)
+			{
+				on_enter = true;
+				base.OnEnter (e);
+			}
+
+			public bool on_enter;
+		}
+
+		[Test]
+		[NUnit.Framework.CategoryAttribute ("NotWorking")] // works on windows but not mono+linux, since f.Show() is async there.
+		public void OnActivateEventHandlingTest1 ()
+		{
+			SwallowOnActivated f = new SwallowOnActivated ();
+
+			f.ShowInTaskbar = false;
+
+			EnterTest c = new EnterTest ();
+			f.Controls.Add (c);
+
+			f.Show ();
+
+			Assert.IsTrue (c.on_enter, "1");
+
+			f.Dispose ();
+		}
 		
 #if NET_2_0
 		[Test]
