@@ -1,5 +1,10 @@
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: move the call to SendControlFocus into the same
+	is_loaded check.
+
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
 	* UpDownBase.cs (.ctor): remove the ActiveControl assignment here.
 	It breaks in the face of the new ActiveControl stuff, and should
 	be unnecessary.

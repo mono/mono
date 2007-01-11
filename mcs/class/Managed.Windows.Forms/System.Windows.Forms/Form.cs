@@ -1929,11 +1929,12 @@ namespace System.Windows.Forms {
 	
 				case Msg.WM_ACTIVATE: {
 					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
-						if (is_loaded)
+						if (is_loaded) {
 							SelectActiveControl ();
 
-						if (ActiveControl != null && !ActiveControl.Focused)
-							SendControlFocus (ActiveControl);
+							if (ActiveControl != null && !ActiveControl.Focused)
+								SendControlFocus (ActiveControl);
+						}
 
 						OnActivated(EventArgs.Empty);
 					} else {
