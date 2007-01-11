@@ -1,3 +1,7 @@
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c, marshal.h, icall-def.h: Implement 
+	Marshal.ReAllocCoTaskMem.
 
 Thu Jan 11 19:00:03 CET 2007 Paolo Molaro <lupus@ximian.com>
 
