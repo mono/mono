@@ -1,4 +1,8 @@
 
+Thu Jan 11 11:16:42 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: distribute the mips sources.
+
 Wed Jan 10 19:49:33 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-codegen.h: handle bug #80489 here, by excluding ecx
