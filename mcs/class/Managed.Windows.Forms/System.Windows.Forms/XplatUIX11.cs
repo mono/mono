@@ -3645,8 +3645,10 @@ namespace System.Windows.Forms {
 						Form form = c.FindForm ();
 						if (form == null)
 							goto ProcessNextMessage;
-						ActiveWindow = form.Handle;
-						SendMessage (ActiveWindow, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						if (ActiveWindow != form.Handle) {
+							ActiveWindow = form.Handle;
+							SendMessage (ActiveWindow, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						}
 						goto ProcessNextMessage;
 					}
 					Keyboard.FocusIn(FocusWindow);

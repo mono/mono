@@ -2191,8 +2191,11 @@ namespace System.Windows.Forms.X11Internal {
 						Form form = c.FindForm ();
 						if (form == null)
 							goto ProcessNextMessage;
-						ActiveWindow = (X11Hwnd)Hwnd.ObjectFromHandle (form.Handle);
-						SendMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						X11Hwnd new_active = (X11Hwnd)Hwnd.ObjectFromHandle (form.Handle);
+						if (ActiveWindow != new_active) {
+							ActiveWindow = new_active;
+							SendMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						}
 						goto ProcessNextMessage;
 					}
 					Keyboard.FocusIn(FocusWindow.Handle);

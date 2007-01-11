@@ -1,5 +1,10 @@
 2007-01-11  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: don't send duplicate WM_ACTIVATE messages to the
+	initial form.
+
+2007-01-11  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs: make sure to call base.Select in our Select method
 	if it turns out we're going to be selected (i.e. if we have a link
 	that is going to receive focus).  That way our container's
