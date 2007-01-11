@@ -1,3 +1,11 @@
+2007-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyDBSchema.cs: added version table, refactored schema
+	initialization
+	* DerbyMembershipProvider.cs,
+	* DerbyRoleProvider.cs: added schema version or existence checking on
+	creating connection
+
 2007-01-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyDBSchema.cs: fixed schema to work with cloudscape

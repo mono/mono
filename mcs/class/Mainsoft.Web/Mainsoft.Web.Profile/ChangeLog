@@ -1,3 +1,8 @@
+2007-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyProfileProvider.cs: added schema version or existence checking
+	on creating connection
+
 2007-01-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyProfileProvider.cs: fixed ReadProfileInfo, removed unneeded

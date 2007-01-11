@@ -50,6 +50,8 @@ namespace Mainsoft.Web.Security
 
 		DbConnection CreateConnection ()
 		{
+			DerbyDBSchema.CheckSchema (connectionString.ConnectionString);
+
 			OleDbConnection connection = new OleDbConnection (connectionString.ConnectionString);
 			connection.Open ();
 			return connection;
@@ -265,7 +267,7 @@ namespace Mainsoft.Web.Security
 			if (connectionString == null)
 				throw new ProviderException (String.Format("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", connectionStringName));
 
-			DerbyDBSchema.InitializeSchema (connectionString.ConnectionString);
+			DerbyDBSchema.RegisterUnloadHandler (connectionString.ConnectionString);
 		}
 
 		public override bool IsUserInRole (string username, string rolename)

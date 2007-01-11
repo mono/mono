@@ -61,6 +61,8 @@ namespace Mainsoft.Web.Profile
 
 		DbConnection CreateConnection ()
 		{
+			DerbyDBSchema.CheckSchema (_connectionString.ConnectionString);
+
 			OleDbConnection connection = new OleDbConnection (_connectionString.ConnectionString);
 			connection.Open ();
 			return connection;
@@ -307,8 +309,8 @@ namespace Mainsoft.Web.Profile
 			ProfileSection profileSection = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
 			string connectionStringName = config ["connectionStringName"];
 			_connectionString = WebConfigurationManager.ConnectionStrings [connectionStringName];
-			
-			DerbyDBSchema.InitializeSchema (_connectionString.ConnectionString);
+
+			DerbyDBSchema.RegisterUnloadHandler (_connectionString.ConnectionString);
 		}
 
 		private ProfileInfoCollection BuildProfileInfoCollection (DbDataReader reader, int pageIndex, int pageSize, out int totalRecords)

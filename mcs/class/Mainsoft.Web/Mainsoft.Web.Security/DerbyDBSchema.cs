@@ -38,6 +38,9 @@ namespace Mainsoft.Web.Security
 {
 	internal class DerbyDBSchema
 	{
+		const string _currentSchemaVersion = "1.0";
+		static object _lock = "DerbyDBSchema";
+
 		#region schema string array
 		static string [] schemaElements = new string [] {
 			// Applications table
@@ -158,16 +161,53 @@ namespace Mainsoft.Web.Security
 			//)",
 			//@"CREATE UNIQUE INDEX PrsPUser_idx1 ON aspnet_PersonalizationPerUser(PathId,UserId)",
 			//@"CREATE UNIQUE INDEX PrsPUser_idx2 ON aspnet_PersonalizationPerUser(UserId,PathId)"
+
+			// Version table
+			@"CREATE TABLE aspnet_Version (
+				SchemaVersion                           varchar(10)             NOT NULL
+			)",
+			@"CREATE INDEX aspnet_Version_Idx ON aspnet_Version(SchemaVersion)",
+			@"INSERT INTO aspnet_Version VALUES ('1.0')"
 		};
 		#endregion
 
-		public static void InitializeSchema (string connectionString)
+		public static void CheckSchema (string connectionString)
 		{
-			RegisterUnloadHandler (connectionString);
+			string schemaVersion = GetSchemaVersion (connectionString);
+			if (schemaVersion != null)
+				if (string.CompareOrdinal (schemaVersion, _currentSchemaVersion) == 0)
+					return;
+				else
+					throw new Exception ("Incorrect aspnetdb schema version.");
 
-			if (IsSchemaExists (connectionString))
-				return;
+			lock (_lock) {
+				if (GetSchemaVersion (connectionString) != _currentSchemaVersion) {
+					InitializeSchema (connectionString);
+				}
+			}
+		}
 
+		static string GetSchemaVersion (string connectionString)
+		{
+			OleDbConnection connection = new OleDbConnection ();
+			connection.ConnectionString = connectionString;
+			connection.Open ();
+
+			using (connection) {
+				OleDbCommand cmd = new OleDbCommand ("SELECT SchemaVersion FROM aspnet_Version", connection);
+				try {
+					using (OleDbDataReader reader = cmd.ExecuteReader ()) {
+						if (reader.Read ())
+							return reader.GetString (0);
+					}
+				}
+				catch (Exception) { }
+				return null;
+			}
+		}
+
+		static void InitializeSchema (string connectionString)
+		{
 			if (connectionString.ToLower ().IndexOf ("create=true") < 0) {
 				if (!connectionString.Trim ().EndsWith (";"))
 					connectionString += ";";
@@ -188,34 +228,7 @@ namespace Mainsoft.Web.Security
 			}
 		}
 
-		public static bool IsSchemaExists (string connectionString)
-		{
-			OleDbConnection connection = new OleDbConnection (connectionString);
-
-			try {
-				connection.Open ();
-			}
-			catch (Exception) {
-				return false;
-			}
-
-			using (connection) {
-				OleDbCommand cmd = new OleDbCommand ("SELECT COUNT(*) FROM aspnet_Applications", connection);
-				try {
-					using (OleDbDataReader reader = cmd.ExecuteReader ()) {
-						if (reader.Read ())
-							return true;
-					}
-				}
-				catch (Exception) {
-					return false;
-				}
-			}
-
-			return false;
-		}
-
-		static void RegisterUnloadHandler (string connectionString)
+		public static void RegisterUnloadHandler (string connectionString)
 		{
 			DerbyUnloadManager derbyMan = new DerbyUnloadManager (connectionString);
 			derbyMan.RegisterUnloadHandler ();

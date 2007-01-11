@@ -66,6 +66,8 @@ namespace Mainsoft.Web.Security {
 
 		DbConnection CreateConnection ()
 		{
+			DerbyDBSchema.CheckSchema (connectionString.ConnectionString);
+
 			OleDbConnection connection = new OleDbConnection (connectionString.ConnectionString);
 			connection.Open ();
 			return connection;
@@ -600,7 +602,7 @@ namespace Mainsoft.Web.Security {
 
 			connectionString = WebConfigurationManager.ConnectionStrings [connectionStringName];
 
-			DerbyDBSchema.InitializeSchema (connectionString.ConnectionString);
+			DerbyDBSchema.RegisterUnloadHandler (connectionString.ConnectionString);
 		}
 
 		public override string ResetPassword (string username, string answer)
