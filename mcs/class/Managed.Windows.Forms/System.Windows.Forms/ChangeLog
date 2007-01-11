@@ -1,3 +1,11 @@
+2007-01-10  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: make FireEnter, FireLeave, FireValidating, and
+	FireValidated virtual.
+
+	* Form.cs: override and don't chain up calls to FireEnter and
+	FireLeave.
+
 2007-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add more text padding space when using

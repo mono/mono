@@ -2163,6 +2163,16 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 
+		internal override void FireEnter ()
+		{
+			// do nothing - forms don't generate OnEnter
+		}
+
+		internal override void FireLeave ()
+		{
+			// do nothing - forms don't generate OnLeave
+		}
+
 		internal void RemoveWindowManager ()
 		{
 			window_manager = null;

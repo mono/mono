@@ -1426,22 +1426,22 @@ namespace System.Windows.Forms
 
 		}
 
-		internal void FireEnter ()
+		internal virtual void FireEnter ()
 		{
 			OnEnter (EventArgs.Empty);
 		}
 
-		internal void FireLeave ()
+		internal virtual void FireLeave ()
 		{
 			OnLeave (EventArgs.Empty);
 		}
 
-		internal void FireValidating (CancelEventArgs ce)
+		internal virtual void FireValidating (CancelEventArgs ce)
 		{
 			OnValidating (ce);
 		}
 
-		internal void FireValidated ()
+		internal virtual void FireValidated ()
 		{
 			OnValidated (EventArgs.Empty);
 		}
