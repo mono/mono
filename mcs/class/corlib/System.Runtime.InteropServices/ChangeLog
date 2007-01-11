@@ -1,3 +1,7 @@
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* Marshal.cs: Implement Marshal.ReAllocCoTaskMem.
+	
 2007-01-03  Miguel de Icaza  <miguel@novell.com>
 
 	* SafeHandle.cs: Do not use locks in SafeHandle to protect the
