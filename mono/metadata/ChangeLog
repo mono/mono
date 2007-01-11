@@ -1,4 +1,9 @@
 
+Thu Jan 11 19:00:03 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: memory retention fixes: use the proper
+	image cache for runtime_invoke method lookups.
+
 Thu Jan 11 18:53:19 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mempool.c: added code to help debug mempool allocations.
