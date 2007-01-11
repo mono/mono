@@ -585,7 +585,7 @@ namespace System.Web.UI.WebControls
 			
 			if (DataObjectTypeName.Length == 0) {
 				paramValues = MergeParameterValues (InsertParameters, values, null, true);
-				method = GetObjectMethod (InsertMethod, paramValues);
+				method = GetObjectMethod (InsertMethod, paramValues, DataObjectMethodType.Insert);
 			} else {
 				method = ResolveDataObjectMethod (InsertMethod, values, null, out paramValues);
 			}
@@ -632,7 +632,7 @@ namespace System.Web.UI.WebControls
 			
 			if (DataObjectTypeName.Length == 0) {
 				paramValues = MergeParameterValues (DeleteParameters, null, oldDataValues, true);
-				method = GetObjectMethod (DeleteMethod, paramValues);
+				method = GetObjectMethod (DeleteMethod, paramValues, DataObjectMethodType.Delete);
 			} else {
 				method = ResolveDataObjectMethod (DeleteMethod, oldDataValues, null, out paramValues);
 			}
@@ -678,7 +678,7 @@ namespace System.Web.UI.WebControls
 					dataValues = values;
 				}
 				paramValues = MergeParameterValues (UpdateParameters, dataValues, oldDataValues, false);
-				method = GetObjectMethod (UpdateMethod, paramValues);
+				method = GetObjectMethod (UpdateMethod, paramValues, DataObjectMethodType.Update);
 			}
 			else
 			{
@@ -814,7 +814,7 @@ namespace System.Web.UI.WebControls
 		
 		object InvokeSelect (string methodName, IOrderedDictionary paramValues)
 		{
-			MethodInfo method = GetObjectMethod (methodName, paramValues);
+			MethodInfo method = GetObjectMethod (methodName, paramValues, DataObjectMethodType.Select);
 			ObjectDataSourceStatusEventArgs rargs = InvokeMethod (method, paramValues);
 			OnSelected (rargs);
 			
@@ -860,20 +860,69 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		MethodInfo GetObjectMethod (string methodName, IOrderedDictionary parameters)
+		MethodInfo GetObjectMethod (string methodName, IOrderedDictionary parameters, DataObjectMethodType methodType)
 		{
-			MemberInfo[] methods = ObjectType.GetMember (methodName, BindingFlags.Instance | 
+			MemberInfo[] methods = ObjectType.GetMember (methodName, MemberTypes.Method, BindingFlags.Instance | 
 										 BindingFlags.Static | 
 										 BindingFlags.Public | 
 										 BindingFlags.FlattenHierarchy);
 			if (methods.Length > 1) {
 				// MSDN: The ObjectDataSource resolves method overloads by method name and number
 				// of parameters; the names and types of the parameters are not considered.
-				foreach (MemberInfo mi in methods) {
-					MethodInfo me = mi as MethodInfo;
-					if (me != null && me.GetParameters().Length == parameters.Count)
-						return me;
+				// LAMESPEC: the tests show otherwise
+				DataObjectMethodAttribute methodAttribute = null;
+				MethodInfo methodInfo = null;
+				bool hasConflict = false;
+				foreach (MethodInfo me in methods) { // we look for methods only
+					ParameterInfo [] pinfos = me.GetParameters ();
+					if (pinfos.Length == parameters.Count) {
+						object [] attrs = me.GetCustomAttributes (typeof (DataObjectMethodAttribute), true);
+						DataObjectMethodAttribute domAttr = (attrs != null && attrs.Length > 0) ? (DataObjectMethodAttribute) attrs [0] : null;
+						if (domAttr != null && domAttr.MethodType != methodType)
+							continue;
+
+						bool paramsMatch = true;
+						foreach (ParameterInfo pinfo in pinfos) {
+							if (!parameters.Contains (pinfo.Name)) {
+								paramsMatch = false;
+								break;
+							}
+						}
+
+						if (!paramsMatch)
+							continue;
+
+						if (domAttr != null) {
+							if (methodAttribute != null) {
+								if (methodAttribute.IsDefault) {
+									if (domAttr.IsDefault) {
+										methodInfo = null;
+										break; //fail due to a conflict
+									}
+									else
+										continue; //existing matches better
+								}
+								else {
+									methodInfo = null; //we override
+									hasConflict = !domAttr.IsDefault;
+								}
+							}
+							else
+								methodInfo = null; //we override
+						}
+
+						if (methodInfo == null) {
+							methodAttribute = domAttr;
+							methodInfo = me;
+							continue;
+						}
+
+						hasConflict = true;
+					}
 				}
+
+				if (!hasConflict && methodInfo != null)
+					return methodInfo;
 			}
 			else if (methods.Length == 1) {
 				MethodInfo me = methods[0] as MethodInfo;

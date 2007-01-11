@@ -37,6 +37,7 @@
 
 using NUnit.Framework;
 using System;
+using Sys = System;
 using System.Configuration;
 using System.Data.Common;
 using System.IO;
@@ -883,6 +884,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			return ds;
 		}
+		
+		[Sys.ComponentModel.DataObjectMethod(Sys.ComponentModel.DataObjectMethodType.Select, false)]
+		public static DataTable Select (int maximumRows, short startRowIndex) {
+			Assert.Fail ("Should not be called since not default Select DataObjectMethod");
+			return null;
+		}
+
+		[Sys.ComponentModel.DataObjectMethod(Sys.ComponentModel.DataObjectMethodType.Select, true)]
 		public static DataTable Select (int maximumRows, int startRowIndex)
 		{
 			DataSourceObject.maximumRows = maximumRows;
