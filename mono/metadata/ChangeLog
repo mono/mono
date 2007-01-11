@@ -1,3 +1,10 @@
+2007-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix mcs/tests/test-128.cs regression.
+	* reflection.c (encode_cattr_value) [MONO_TYPE_SZARRAY]: Revert
+	2007-01-10 change below.
+	[MONO_TYPE_OBJECT]: Recurse into array case.
+
 2007-01-11  Raja R Harinath  <harinath@gmail.com>
 
 	* class-internals.h (mono_get_inflated_generic_class): Remove.
