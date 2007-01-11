@@ -1,3 +1,9 @@
+2007-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IconCodecTest.cs: New test case to check loading from an Icon then
+	create a Bitmap from the Image. Some properties are changed in the
+	process (e.g. palette, flags).
+
 2007-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IconCodecTest.cs: Add test cases for 48x48, 64x64 and 96x96 icons.

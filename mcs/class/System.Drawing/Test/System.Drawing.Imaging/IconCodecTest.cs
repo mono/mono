@@ -71,6 +71,26 @@ namespace MonoTests.System.Drawing.Imaging {
 			return sRslt;
 		}
 
+		[Test]
+		public void Image16 ()
+		{
+			string sInFile = getInFile ("bitmaps/16x16x16.ico");
+			using (Image image = Image.FromFile (sInFile)) {
+				Assert.IsTrue (image.RawFormat.Equals (ImageFormat.Icon), "Icon");
+				// note that image is "promoted" to 32bits
+				Assert.AreEqual (PixelFormat.Format32bppArgb, image.PixelFormat);
+				Assert.AreEqual (73746, image.Flags, "bmp.Flags");
+				Assert.AreEqual (16, image.Palette.Entries.Length, "Palette");
+
+				using (Bitmap bmp = new Bitmap (image)) {
+					Assert.IsTrue (bmp.RawFormat.Equals (ImageFormat.MemoryBmp), "Icon");
+					Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+					Assert.AreEqual (2, bmp.Flags, "bmp.Flags");
+					Assert.AreEqual (0, bmp.Palette.Entries.Length, "Palette");
+				}
+			}
+		}
+
 		// simley.ico has 48x48, 32x32 and 16x16 images (in that order)
 		[Test]
 		public void Bitmap16Features ()
