@@ -5,7 +5,7 @@
 // 	Sanjay Gupta <gsanjay@novell.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
@@ -42,6 +43,7 @@ namespace MonoTests.System.Drawing {
 		
 		Icon icon;
 		Icon newIcon;
+		Icon icon16, icon32, icon48, icon64, icon96;
 		FileStream fs;
 		FileStream fs1;
 
@@ -59,6 +61,12 @@ namespace MonoTests.System.Drawing {
 			String path = TestBitmap.getInFile ("bitmaps/smiley.ico");
 			icon = new Icon (path);			
 			fs1 = new FileStream (path, FileMode.Open);
+
+			icon16 = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"));
+			icon32 = new Icon (TestBitmap.getInFile ("bitmaps/32x32x16.ico"));
+			icon48 = new Icon (TestBitmap.getInFile ("bitmaps/48x48x1.ico"));
+			icon64 = new Icon (TestBitmap.getInFile ("bitmaps/64x64x256.ico"));
+			icon96 = new Icon (TestBitmap.getInFile ("bitmaps/96x96x256.ico"));
 		}
 
 		[TearDown]
@@ -72,13 +80,15 @@ namespace MonoTests.System.Drawing {
 				File.Delete ("newIcon.ico");
 		}
 
-
 		[Test]
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
 		public void TestConstructors ()
 		{
+			Assert.AreEqual (32, icon.Height, "C#0a");
+			Assert.AreEqual (32, icon.Width, "C#0b");
+
 			newIcon = new Icon (fs1, 48, 48);
 			Assert.AreEqual (48, newIcon.Height, "C#1a"); 			
 			Assert.AreEqual (48, newIcon.Width, "C#1b");
@@ -98,7 +108,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, icon.Width, "P#2");
 			Assert.AreEqual (32, icon.Size.Width, "P#3");
 			Assert.AreEqual (32, icon.Size.Height, "P#4");
-
 		}
 
 		[Test]
@@ -125,6 +134,77 @@ namespace MonoTests.System.Drawing {
 			
 			Assert.AreEqual (fs1.Length, fs.Length, "M#3");			
 		}
+
+		[Test]
+		public void Icon16ToBitmap ()
+		{
+			using (Bitmap b = icon16.ToBitmap ()) {
+				Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, "PixelFormat");
+				// unlike the GDI+ icon decoder the palette isn't kept
+				Assert.AreEqual (0, b.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (icon16.Height, b.Height, "Height");
+				Assert.AreEqual (icon16.Width, b.Width, "Width");
+				Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "RawFormat");
+				Assert.AreEqual (2, b.Flags, "Flags");
+			}
+		}
+
+		[Test]
+		public void Icon32ToBitmap ()
+		{
+			using (Bitmap b = icon32.ToBitmap ()) {
+				Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, "PixelFormat");
+				// unlike the GDI+ icon decoder the palette isn't kept
+				Assert.AreEqual (0, b.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (icon32.Height, b.Height, "Height");
+				Assert.AreEqual (icon32.Width, b.Width, "Width");
+				Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "RawFormat");
+				Assert.AreEqual (2, b.Flags, "Flags");
+			}
+		}
+
+		[Test]
+		public void Icon48ToBitmap ()
+		{
+			using (Bitmap b = icon48.ToBitmap ()) {
+				Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, "PixelFormat");
+				// unlike the GDI+ icon decoder the palette isn't kept
+				Assert.AreEqual (0, b.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (icon48.Height, b.Height, "Height");
+				Assert.AreEqual (icon48.Width, b.Width, "Width");
+				Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "RawFormat");
+				Assert.AreEqual (2, b.Flags, "Flags");
+			}
+		}
+
+		[Test]
+		public void Icon64ToBitmap ()
+		{
+			using (Bitmap b = icon64.ToBitmap ()) {
+				Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, "PixelFormat");
+				// unlike the GDI+ icon decoder the palette isn't kept
+				Assert.AreEqual (0, b.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (icon64.Height, b.Height, "Height");
+				Assert.AreEqual (icon64.Width, b.Width, "Width");
+				Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "RawFormat");
+				Assert.AreEqual (2, b.Flags, "Flags");
+			}
+		}
+
+		[Test]
+		public void Icon96ToBitmap ()
+		{
+			using (Bitmap b = icon96.ToBitmap ()) {
+				Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, "PixelFormat");
+				// unlike the GDI+ icon decoder the palette isn't kept
+				Assert.AreEqual (0, b.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (icon96.Height, b.Height, "Height");
+				Assert.AreEqual (icon96.Width, b.Width, "Width");
+				Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "RawFormat");
+				Assert.AreEqual (2, b.Flags, "Flags");
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

@@ -4,7 +4,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -638,6 +638,56 @@ namespace MonoTests.System.Drawing {
 			}
 			finally {
 				GDIPlus.GdipDisposeImage (image);
+			}
+		}
+
+		[Test]
+		public void Icon ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/64x64x256.ico");
+			IntPtr bitmap;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateBitmapFromFile (filename, out bitmap), "GdipCreateBitmapFromFile");
+			try {
+				int size;
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePaletteSize (bitmap, out size), "GdipGetImagePaletteSize");
+				Assert.AreEqual (1032, size, "size");
+
+				IntPtr clone;
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneImage (bitmap, out clone), "GdipCloneImage");
+				try {
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePaletteSize (clone, out size), "GdipGetImagePaletteSize/Clone");
+					Assert.AreEqual (1032, size, "size/clone");
+				}
+				finally {
+					GDIPlus.GdipDisposeImage (clone);
+				}
+
+				IntPtr palette = Marshal.AllocHGlobal (size);
+				try {
+
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetImagePalette (IntPtr.Zero, palette, size), "GdipGetImagePalette(null,palette,size)");
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetImagePalette (bitmap, IntPtr.Zero, size), "GdipGetImagePalette(bitmap,null,size)");
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetImagePalette (bitmap, palette, 0), "GdipGetImagePalette(bitmap,palette,0)");
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePalette (bitmap, palette, size), "GdipGetImagePalette");
+
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImagePalette (IntPtr.Zero, palette), "GdipSetImagePalette(null,palette)");
+					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImagePalette (bitmap, IntPtr.Zero), "GdipSetImagePalette(bitmap,null)");
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImagePalette (bitmap, palette), "GdipSetImagePalette");
+
+					// change palette to 0 entries
+					int flags = Marshal.ReadInt32 (palette);
+					Marshal.WriteInt64 (palette, flags << 32);
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImagePalette (bitmap, palette), "GdipSetImagePalette/Empty");
+
+					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePaletteSize (bitmap, out size), "GdipGetImagePaletteSize/Empty");
+					Assert.AreEqual (8, size, "size");
+				}
+				finally {
+					Marshal.FreeHGlobal (palette);
+				}
+			}
+			finally {
+				GDIPlus.GdipDisposeImage (bitmap);
 			}
 		}
 
