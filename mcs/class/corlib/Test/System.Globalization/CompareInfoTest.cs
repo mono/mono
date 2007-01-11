@@ -512,6 +512,34 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	[Category ("NotWorking")]
+	public void GetSortKey_Options ()
+	{
+		Array values = Enum.GetValues (typeof (CompareOptions));
+		foreach (int i in values) {
+			CompareOptions option = (CompareOptions) i;
+#if NET_2_0
+			if (option == CompareOptions.OrdinalIgnoreCase || option == CompareOptions.Ordinal) {
+				try {
+					french.GetSortKey ("foo", option);
+					Fail ("#1: " + option.ToString ());
+				} catch (ArgumentException ex) {
+					AssertEquals ("#2: " + option.ToString (), typeof (ArgumentException), ex.GetType ());
+					AssertNotNull ("#2: " + option.ToString (), ex.Message);
+					AssertNotNull ("#3: " + option.ToString (), ex.ParamName);
+					AssertEquals ("#4: " + option.ToString (), "options", ex.ParamName);
+					AssertNull ("#5: " + option.ToString (), ex.InnerException);
+				}
+			} else {
+				french.GetSortKey ("foo", option);
+			}
+#else
+			french.GetSortKey ("foo", option);
+#endif
+		}
+	}
+
+	[Test]
 #if NET_2_0
 	[Category ("NotDotNet")]
 #endif

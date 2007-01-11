@@ -1,3 +1,8 @@
+2007-01-11 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CompareInfoTest.cs: Added test for checking valid CompareOptions for
+	GetSortKey.
+
 2006-12-25 Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : added tests for OrdinalIgnoreCase versions
