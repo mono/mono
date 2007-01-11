@@ -1,3 +1,7 @@
+2007-01-11  Dick Porter  <dick@ximian.com>
+
+	* System.dll.sources: Add System.Net.Sockets/{IOControlCode,SocketInformation,SocketInformationOptions,TransmitFileOptions}.cs
+
 2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ProcessTest.cs.

@@ -752,6 +752,7 @@ System.Net/SocketAddress.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
 System.Net.Sockets/AddressFamily.cs
+System.Net.Sockets/IOControlCode.cs
 System.Net.Sockets/IPv6MulticastOption.cs
 System.Net.Sockets/LingerOption.cs
 System.Net.Sockets/MulticastOption.cs
@@ -763,12 +764,15 @@ System.Net.Sockets/Socket.cs
 System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs
+System.Net.Sockets/SocketInformation.cs
+System.Net.Sockets/SocketInformationOptions.cs
 System.Net.Sockets/SocketOptionLevel.cs
 System.Net.Sockets/SocketOptionName.cs
 System.Net.Sockets/SocketShutdown.cs
 System.Net.Sockets/SocketType.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
+System.Net.Sockets/TransmitFileOptions.cs
 System.Net.Sockets/UdpClient.cs
 System/NetTcpStyleUriParser.cs
 System.Net/TransportType.cs

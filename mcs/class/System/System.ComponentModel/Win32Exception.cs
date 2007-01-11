@@ -111,6 +111,9 @@ namespace System.ComponentModel
 			case 3:
 				message = Locale.GetText ("Cannot find the specified file");
 				break;
+			case 50:
+				message = Locale.GetText ("Operation not supported");
+				break;
 			case 267:
 				message = Locale.GetText ("Is a directory");
 				break;

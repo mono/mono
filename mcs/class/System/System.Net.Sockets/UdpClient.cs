@@ -3,6 +3,7 @@
 //
 // Author:
 //    Gonzalo Paniagua Javier <gonzalo@ximian.com>
+//    Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //
 // Copyright (C) Ximian, Inc. http://www.ximian.com
 //
@@ -39,7 +40,10 @@ namespace System.Net.Sockets
 		private bool active = false;
 		private Socket socket;
 		private AddressFamily family = AddressFamily.InterNetwork;
-		
+#if NET_2_0
+		private byte[] recvbuffer;
+#endif
+	
 #region Constructors
 		public UdpClient () : this(AddressFamily.InterNetwork)
 		{
@@ -118,7 +122,6 @@ namespace System.Net.Sockets
 
 			socket = new Socket (family, SocketType.Dgram, ProtocolType.Udp);
 
-			socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
 			if (localEP != null)
 				socket.Bind (localEP);
 		}
@@ -132,13 +135,32 @@ namespace System.Net.Sockets
 		}
 #endregion
 #region Connect
+
+		void DoConnect (IPEndPoint endPoint)
+		{
+			/* Catch EACCES and turn on SO_BROADCAST then,
+			 * as UDP sockets don't have it set by default
+			 */
+			try {
+				socket.Connect (endPoint);
+			} catch (SocketException ex) {
+				if (ex.ErrorCode == (int)SocketError.AccessDenied) {
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+					
+					socket.Connect (endPoint);
+				} else {
+					throw;
+				}
+			}
+		}
+		
 		public void Connect (IPEndPoint endPoint)
 		{
 			CheckDisposed ();
 			if (endPoint == null)
 				throw new ArgumentNullException ("endPoint");
 
-			socket.Connect (endPoint);
+			DoConnect (endPoint);
 			active = true;
 		}
 
@@ -149,6 +171,7 @@ namespace System.Net.Sockets
 
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
 				throw new ArgumentOutOfRangeException ("port");
+
 
 			Connect (new IPEndPoint (addr, port));
 		}
@@ -170,7 +193,6 @@ namespace System.Net.Sockets
 							socket.Close();
 							socket = null;
 						}
-
 						/// This is the last entry, re-throw the exception
 						throw e;
 					}
@@ -266,6 +288,23 @@ namespace System.Net.Sockets
 					timeToLive);
 #endif
 		}
+
+#if NET_2_0
+		public void JoinMulticastGroup (IPAddress multicastAddr,
+						IPAddress localAddress)
+		{
+			CheckDisposed ();
+
+			JoinMulticastGroup (multicastAddr);
+			
+			if (family == AddressFamily.InterNetwork) {
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption (multicastAddr, localAddress));
+			} else if (family == AddressFamily.InterNetworkV6) {
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new MulticastOption (multicastAddr, localAddress));
+			}
+		}
+#endif
+		
 		#endregion
 #region Data I/O
 		public byte [] Receive (ref IPEndPoint remoteEP)
@@ -291,6 +330,34 @@ namespace System.Net.Sockets
 			return recBuffer;
 		}
 
+		int DoSend (byte[] dgram, int bytes, IPEndPoint endPoint)
+		{
+			/* Catch EACCES and turn on SO_BROADCAST then,
+			 * as UDP sockets don't have it set by default
+			 */
+			try {
+				if (endPoint == null) {
+					return(socket.Send (dgram, 0, bytes,
+							    SocketFlags.None));
+				} else {
+					return(socket.SendTo (dgram, 0, bytes,
+							      SocketFlags.None,
+							      endPoint));
+				}
+			} catch (SocketException ex) {
+				if (ex.ErrorCode == (int)SocketError.AccessDenied) {
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+					if (endPoint == null) {
+						return(socket.Send (dgram, 0, bytes, SocketFlags.None));
+					} else {
+						return(socket.SendTo (dgram, 0, bytes, SocketFlags.None, endPoint));
+					}
+				} else {
+					throw;
+				}
+			}
+		}
+		
 		public int Send (byte [] dgram, int bytes)
 		{
 			CheckDisposed ();
@@ -301,7 +368,7 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ("Operation not allowed on " + 
 								     "non-connected sockets.");
 
-			return socket.Send (dgram, 0, bytes, SocketFlags.None);
+			return(DoSend (dgram, bytes, null));
 		}
 
 		public int Send (byte [] dgram, int bytes, IPEndPoint endPoint)
@@ -315,10 +382,10 @@ namespace System.Net.Sockets
 					throw new InvalidOperationException ("Cannot send packets to an " +
 									     "arbitrary host while connected.");
 
-				return socket.Send (dgram, 0, bytes, SocketFlags.None);
+				return(DoSend (dgram, bytes, null));
 			}
-			
-			return socket.SendTo (dgram, 0, bytes, SocketFlags.None, endPoint);
+
+			return(DoSend (dgram, bytes, endPoint));
 		}
 
 		public int Send (byte [] dgram, int bytes, string hostname, int port)
@@ -335,16 +402,206 @@ namespace System.Net.Sockets
 			return newArray;
 		}
 #endregion
+
+#if NET_2_0
+		IAsyncResult DoBeginSend (byte[] datagram, int bytes,
+					  IPEndPoint endPoint,
+					  AsyncCallback requestCallback,
+					  object state)
+		{
+			/* Catch EACCES and turn on SO_BROADCAST then,
+			 * as UDP sockets don't have it set by default
+			 */
+			try {
+				if (endPoint == null) {
+					return(socket.BeginSend (datagram, 0, bytes, SocketFlags.None, requestCallback, state));
+				} else {
+					return(socket.BeginSendTo (datagram, 0, bytes, SocketFlags.None, endPoint, requestCallback, state));
+				}
+			} catch (SocketException ex) {
+				if (ex.ErrorCode == (int)SocketError.AccessDenied) {
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
+					if (endPoint == null) {
+						return(socket.BeginSend (datagram, 0, bytes, SocketFlags.None, requestCallback, state));
+					} else {
+						return(socket.BeginSendTo (datagram, 0, bytes, SocketFlags.None, endPoint, requestCallback, state));
+					}
+				} else {
+					throw;
+				}
+			}
+		}
+		
+		public IAsyncResult BeginSend (byte[] datagram, int bytes,
+					       AsyncCallback requestCallback,
+					       object state)
+		{
+			return(BeginSend (datagram, bytes, null,
+					  requestCallback, state));
+		}
+		
+		public IAsyncResult BeginSend (byte[] datagram, int bytes,
+					       IPEndPoint endPoint,
+					       AsyncCallback requestCallback,
+					       object state)
+		{
+			CheckDisposed ();
+
+			if (datagram == null) {
+				throw new ArgumentNullException ("datagram");
+			}
+			
+			return(DoBeginSend (datagram, bytes, endPoint,
+					    requestCallback, state));
+		}
+		
+		public IAsyncResult BeginSend (byte[] datagram, int bytes,
+					       string hostname, int port,
+					       AsyncCallback requestCallback,
+					       object state)
+		{
+			return(BeginSend (datagram, bytes, new IPEndPoint (Dns.Resolve (hostname).AddressList[0], port), requestCallback, state));
+		}
+		
+		public int EndSend (IAsyncResult asyncResult)
+		{
+			CheckDisposed ();
+			
+			if (asyncResult == null) {
+				throw new ArgumentNullException ("asyncResult is a null reference");
+			}
+			
+			return(socket.EndSend (asyncResult));
+		}
+		
+		public IAsyncResult BeginReceive (AsyncCallback callback,
+						  object state)
+		{
+			CheckDisposed ();
+
+			recvbuffer = new byte[8192];
+			
+			EndPoint ep;
+			
+			if (family == AddressFamily.InterNetwork) {
+				ep = new IPEndPoint (IPAddress.Any, 0);
+			} else {
+				ep = new IPEndPoint (IPAddress.IPv6Any, 0);
+			}
+			
+			return(socket.BeginReceiveFrom (recvbuffer, 0, 8192,
+							SocketFlags.None,
+							ref ep,
+							callback, state));
+		}
+		
+		public byte[] EndReceive (IAsyncResult asyncResult,
+					  ref IPEndPoint remoteEP)
+		{
+			CheckDisposed ();
+			
+			if (asyncResult == null) {
+				throw new ArgumentNullException ("asyncResult is a null reference");
+			}
+			
+			EndPoint ep;
+			
+			if (family == AddressFamily.InterNetwork) {
+				ep = new IPEndPoint (IPAddress.Any, 0);
+			} else {
+				ep = new IPEndPoint (IPAddress.IPv6Any, 0);
+			}
+			
+			int bytes = socket.EndReceiveFrom (asyncResult,
+							   ref ep);
+			remoteEP = (IPEndPoint)ep;
+
+			/* Need to copy into a new array here, because
+			 * otherwise the returned array length is not
+			 * 'bytes'
+			 */
+			byte[] buf = new byte[bytes];
+			Array.Copy (recvbuffer, buf, bytes);
+			
+			return(buf);
+		}
+#endif
+				
 #region Properties
 		protected bool Active {
 			get { return active; }
 			set { active = value; }
 		}
 
-		protected Socket Client {
+#if NET_2_0
+		public
+#else
+		protected
+#endif
+		Socket Client {
 			get { return socket; }
 			set { socket = value; }
 		}
+
+#if NET_2_0
+		public int Available
+		{
+			get {
+				return(socket.Available);
+			}
+		}
+		
+		public bool DontFragment
+		{
+			get {
+				return(socket.DontFragment);
+			}
+			set {
+				socket.DontFragment = value;
+			}
+		}
+
+		public bool EnableBroadcast
+		{
+			get {
+				return(socket.EnableBroadcast);
+			}
+			set {
+				socket.EnableBroadcast = value;
+			}
+		}
+		
+		public bool ExclusiveAddressUse
+		{
+			get {
+				return(socket.ExclusiveAddressUse);
+			}
+			set {
+				socket.ExclusiveAddressUse = value;
+			}
+		}
+		
+		public bool MulticastLoopback
+		{
+			get {
+				return(socket.MulticastLoopback);
+			}
+			set {
+				socket.MulticastLoopback = value;
+			}
+		}
+		
+		public short Ttl
+		{
+			get {
+				return(socket.Ttl);
+			}
+			set {
+				socket.Ttl = value;
+			}
+		}
+#endif
+
 #endregion
 #region Disposing
 		void IDisposable.Dispose ()
