@@ -1,3 +1,8 @@
+2007-01-11  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: 
+	* UdpClientTest.cs: Test 2.0 additions
+
 2006-11-24  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: Add a test for async non blocking connects that
