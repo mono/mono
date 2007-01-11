@@ -112,7 +112,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			switch (action) {		
 				
 			case "insert":	p1 = new Parameter ("ID", TypeCode.String, "1004");
-					p2 = new Parameter ("FName", TypeCode.String, "David");
+					p2 = new Parameter ("fname", TypeCode.String, "David");
 					p3 = new Parameter ("LName", TypeCode.String, "Eli");
 					break;
 				

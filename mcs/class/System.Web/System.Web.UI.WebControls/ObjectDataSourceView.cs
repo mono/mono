@@ -894,8 +894,8 @@ namespace System.Web.UI.WebControls
 			
 			if (method == null)
 				throw new InvalidOperationException ("ObjectDataSource " + owner.ID + " could not find a method named '" + methodName + "' with parameters of type '" + DataObjectType + "' in '" + ObjectType + "'.");
-			
-			paramValues = new OrderedDictionary ();
+
+			paramValues = new OrderedDictionary (StringComparer.InvariantCultureIgnoreCase);
 			ParameterInfo[] ps = method.GetParameters ();
 			
 			if (oldValues != null) {
@@ -990,7 +990,7 @@ namespace System.Web.UI.WebControls
 		/// <returns>merged values</returns>
 		IOrderedDictionary MergeParameterValues (ParameterCollection viewParams, IDictionary values, IDictionary oldValues, bool allwaysAddNewValues)
 		{
-			OrderedDictionary mergedValues = new OrderedDictionary ();
+			OrderedDictionary mergedValues = new OrderedDictionary (StringComparer.InvariantCultureIgnoreCase);
 			foreach (Parameter p in viewParams) {
 				bool oldAdded = false;
 				if (oldValues != null) {
