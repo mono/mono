@@ -1,3 +1,34 @@
+2007-01-11  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_connect): Don't do the SO_BROADCAST setting
+	here, do it in managed code instead.
+	(_wapi_getsockopt): SO_RCVTIMEO and SO_SNDTIMEO use struct
+	timeval, which has a microsecond field, not milliseconds.
+	(_wapi_setsockopt): ditto.
+	(_wapi_setsockopt): Halve the SO_SNDBUF and SO_RCVBUF values on
+	Linux, as the kernel doubles whatever we set.
+	(_wapi_socket): Save socket domain, type and protocol so it can be
+	duplicated later.
+	(socket_disconnect): Implement socket disconnect (closing the
+	socket, but keeping the file descriptor.)
+	(wapi_disconnectex): A basic implementation of DisconnectEx().
+	(wapi_transmitfile): A very basic implementation of
+	TransmitFile().
+	(WSAIoctl): Implement the SIO_GET_EXTENSION_FUNCTION_POINTER
+	ioctl.
+
+	* socket-private.h (struct _WapiHandle_socket): Record socket
+	domain, type and protocol info so it can be duplicated later.
+
+	* sockets.h (WSAID_DISCONNECTEX,WSAID_TRANSMITFILE): Structures
+	and defines needed to look up the DisconnectEx() and
+	TransmitFile() functions by GUID.
+
+	* error.c (errno_to_WSA): Change ETIMEDOUT mapping to
+	WSAETIMEDOUT; add EDESTADDRREQ.
+
+	* io-layer.h: Need mswsock.h on windows now.
+
 2007-01-04  Miguel de Icaza  <miguel@novell.com>
 
 	* io-portability.c (find_file): Fix a coverity warning (scanning

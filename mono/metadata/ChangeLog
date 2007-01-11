@@ -1,3 +1,16 @@
+2007-01-11  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (convert_sockopt_level_and_name): Add DontFragment
+	support (experimenting with faking it with IP_MTU_DISCOVER for
+	systems that don't have IP_DONTFRAGMENT.)
+	(ves_icall_System_Net_Sockets_Socket_Disconnect_internal): New
+	icall.
+
+	* icall-def.h: new System.Net.Sockets.Disconnect icall.
+
+	* socket-io.h: Add new fields to MonoSocketAsyncResult
+	corresponding to the new ones in Socket.cs.
+
 2007-01-11  Raja R Harinath  <rharinath@novell.com>
 
 	Fix IronPython regression mentioned in #80249
