@@ -1,3 +1,9 @@
+2007-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Fix .ctor(string) to load, when available, the 32x32 icon.
+	Remove TARGET_JVM from file (Mainsoft now use Icon2.jvm.cs). Use GDI+
+	to implement ToBitmap method (previous results were wrong).
+
 2007-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Image.cs: Fix Palette to call into GDI+ even for non-indexed images.

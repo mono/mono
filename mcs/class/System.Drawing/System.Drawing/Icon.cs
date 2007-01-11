@@ -6,9 +6,10 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sanjay Gupta (gsanjay@novell.com)
 //   Peter Dennis Bartok (pbartok@novell.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
@@ -101,7 +101,7 @@ namespace System.Drawing
 		private Icon ()
 		{
 		}
-#if INTPTR_SUPPORTED
+
 		// FIXME - Implement fully (well implement inside libgdiplus as unmanaged code)
 		private Icon (IntPtr handle)
 		{
@@ -119,7 +119,7 @@ namespace System.Drawing
 
 			this.destroyIcon = false;
 		}
-#endif
+
 		public Icon (Icon original, int width, int height) : this (original, new Size(width, height))
 		{			
 		}
@@ -168,7 +168,8 @@ namespace System.Drawing
 			InitFromStreamWithSize (stream, width, height);
 		}
 
-		public Icon (string fileName) : this (new FileStream (fileName, FileMode.Open))
+		public Icon (string fileName)
+			: this (new FileStream (fileName, FileMode.Open), 32, 32)
 		{			
 		}
 
@@ -254,14 +255,12 @@ namespace System.Drawing
 
 		public void Dispose ()
 		{
-#if !TARGET_JVM
 			if (!undisposable) {
 				DisposeIcon ();
 				GC.SuppressFinalize(this);
 			}
-#endif
 		}
-#if !TARGET_JVM
+
 		void DisposeIcon ()
 		{
 			if (winHandle ==IntPtr.Zero)
@@ -272,13 +271,12 @@ namespace System.Drawing
 				winHandle = IntPtr.Zero;
 			}
 		}
-#endif
 
 		public object Clone ()
 		{
 			return new Icon (this, this.Width, this.Height);
 		}
-#if INTPTR_SUPPORTED
+
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)
@@ -286,12 +284,7 @@ namespace System.Drawing
 
 			return new Icon (handle);
 		}
-#else
-		public static Icon FromHandle (IntPtr handle)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
+
 		public void Save (Stream outputStream)
 		{
 			if (iconDir.idEntries!=null){
@@ -345,98 +338,20 @@ namespace System.Drawing
 			}
 		}
 
+		// note: all bitmaps are 32bits ARGB - no matter what the icon format (bitcount) was
 		public Bitmap ToBitmap ()
 		{
-			IconImage		ii;
-			BitmapInfoHeader	bih;
-			int			ncolors;
-			Bitmap			bmp;
-			BitmapData		bits;
-			ColorPalette		pal;
-			int			biHeight;
-			int			bytesPerLine;
-
 			if (winHandle == IntPtr.Zero)
 				throw new ObjectDisposedException ("handle");
 
-			if (imageData == null) {
-				return new Bitmap(32, 32);
+			MemoryStream ms = new MemoryStream ();
+			Save (ms);
+			// libgdiplus can now decode icons
+			using (Image img = Image.FromStream (ms)) {
+				return new Bitmap (img);
 			}
-
-			ii = imageData[this.id];
-			bih = ii.iconHeader;
-			biHeight = bih.biHeight / 2;
-
-			ncolors = (int)bih.biClrUsed;
-			if (ncolors == 0) {
-				if (bih.biBitCount < 24) {
-					ncolors = (int)(1 << bih.biBitCount);
-				}
-			}
-
-			switch(bih.biBitCount) {
-				case 1: {	// Monochrome
-					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
-					break;
-				}
-
-				case 4: {	// 4bpp
-					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
-					break;
-				}
-
-				case 8: {	// 8bpp
-					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
-					break;
-				}
-
-				case 24: {
-					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format24bppRgb);
-					break;
-				}
-				case 32: {	// 32bpp
-					bmp = new Bitmap(bih.biWidth, biHeight, PixelFormat.Format32bppArgb);
-					break;
-				}
-
-				default: {
-					throw new Exception("Unexpected number of bits:" + bih.biBitCount.ToString());
-				}
-			}
-
-			if (bih.biBitCount < 24) {
-				pal = bmp.Palette;				// Managed palette
-
-				for (int i = 0; i < ii.iconColors.Length; i++) {
-					pal.Entries[i] = Color.FromArgb((int)ii.iconColors[i] | unchecked((int)0xff000000));
-				}
-				bmp.Palette = pal;
-			}
-
-			bytesPerLine = (int)((((bih.biWidth * bih.biBitCount) + 31) & ~31) >> 3);
-			bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
-
-			for (int y = 0; y < biHeight; y++) {
-				Marshal.Copy(ii.iconXOR, bytesPerLine * y, (IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
-			}
-			
-			bmp.UnlockBits(bits);
-
-			bmp = new Bitmap (bmp);// This makes a 32bpp image out of an indexed one
-
-			// Apply the mask to make properly transparent
-			bytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
-			for (int y = 0; y < biHeight; y++) {
-				for (int x = 0; x < bih.biWidth / 8; x++) {
-					for (int bit = 7; bit >= 0; bit--) {
-						if (((ii.iconAND[y * bytesPerLine +x] >> bit) & 1) != 0) {
-							bmp.SetPixel(x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
-						}
-					}
-				}
-			}
-
-			return bmp;
+			// note: we can't return the original image 'img' otherwise the palette, flags won't match MS results
+			// see MonoTests.System.Drawing.Imaging.IconCodecTest.Image16 to see the changes
 		}
 
 		public override string ToString ()
@@ -472,12 +387,10 @@ namespace System.Drawing
 			}
 		}
 
-#if !TARGET_JVM
 		~Icon ()
 		{
 			DisposeIcon ();
 		}
-#endif
 			
 		private void InitFromStreamWithSize (Stream stream, int width, int height)
 		{
