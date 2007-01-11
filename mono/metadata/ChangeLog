@@ -1,5 +1,10 @@
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 
+	* marshal.c (emit_marshal_variant): Fix conv_arg
+	type in last commit, based on whether parameter is byref.
+	
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
 	* marshal.c (emit_marshal_variant): Handle unmanaged->managed
 	marshalling.
 	(mono_marshal_emit_managed_wrapper): Convert byref arguments of type
