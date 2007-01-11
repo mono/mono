@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 	[ToolboxBitmap ("bitmap file goes here")]
 	public class ObjectDataSource : DataSourceControl
 	{
-		static readonly string defaultViewName = "DefaultView";
+		static readonly string [] emptyNames = new string [] { "DefaultView" };
 		ObjectDataSourceView defaultView;
 		
 		int cacheDuration = 0;
@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls
 		ObjectDataSourceView DefaultView {
 			get {
 				if (defaultView == null)
-					defaultView = new ObjectDataSourceView (this, defaultViewName, Context);
+					defaultView = new ObjectDataSourceView (this, emptyNames [0], Context);
 				return defaultView;
 			}
 		}
@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls
 		
 		protected override ICollection GetViewNames ()
 		{
-			return new string [] { defaultViewName };
+			return emptyNames;
 		}
 		
 		public IEnumerable Select ()

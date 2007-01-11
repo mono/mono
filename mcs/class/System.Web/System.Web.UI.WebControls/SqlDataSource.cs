@@ -50,6 +50,8 @@ namespace System.Web.UI.WebControls {
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEventAttribute ("Selecting")]
 	public class SqlDataSource : DataSourceControl {
+
+		static readonly string [] emptyNames = new string [] { "DefaultView" };
 		
 		public SqlDataSource ()
 		{
@@ -70,7 +72,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override DataSourceView GetView (string viewName)
 		{
-			if (viewName == "" || viewName == null)
+			if (String.IsNullOrEmpty (viewName) || (String.Compare (viewName, emptyNames [0], StringComparison.InvariantCultureIgnoreCase) == 0))
 				return View;
 			else
 				throw new ArgumentException ("viewName");
@@ -108,7 +110,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override ICollection GetViewNames ()
 		{
-			return new string [] { "DefaultView" };
+			return emptyNames;
 		}
 			
 		public int Insert ()

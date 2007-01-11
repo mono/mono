@@ -65,6 +65,7 @@ namespace System.Web.UI.WebControls {
 		private bool _enableCaching = true;
 		private int _cacheDuration = 0;
 		private DataSourceCacheExpiry _cacheExpirationPolicy = DataSourceCacheExpiry.Absolute;
+		static readonly string [] emptyNames = new string [] { "DefaultView" };
 		
 		event EventHandler IDataSource.DataSourceChanged {
 			add { ((IHierarchicalDataSource)this).DataSourceChanged += value; }
@@ -235,7 +236,7 @@ namespace System.Web.UI.WebControls {
 		
 		ICollection IDataSource.GetViewNames ()
 		{
-			return new string [] { "DefaultView" };
+			return emptyNames;
 		}
 		
 		[DefaultValue (0)]

@@ -1,5 +1,12 @@
 2007-01-10 Konstantin Triger <kostat@mainsoft.com>
 
+	* XmlDataSource.cs: refactored to use cached collection.
+	* SqlDataSource.cs: refactored to use cached collection;
+		don't throw exception on 'DefaultView'.
+	* ObjectDataSource.cs: refactored to use cached collection.
+
+2007-01-10 Konstantin Triger <kostat@mainsoft.com>
+
         * ObjectDataSourceView.cs: consider parameter names and
 			DataObjectMethodAttribute during method resolution.
 
