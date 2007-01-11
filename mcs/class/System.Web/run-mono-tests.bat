@@ -98,6 +98,8 @@ rmdir XXX
 popd
 
 msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+echo msbuild %DEPLOY_PROJECT% /t:Deploy /p:Configuration=%PROJECT_CONFIGURATION% /p:Platform=AnyCPU >>%BUILD_LOG% 
 msbuild %DEPLOY_PROJECT% /t:Deploy /p:Configuration=%PROJECT_CONFIGURATION% /p:Platform=AnyCPU >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
