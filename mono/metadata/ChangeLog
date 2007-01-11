@@ -1,5 +1,12 @@
 2007-01-11  Raja R Harinath  <rharinath@novell.com>
 
+	* class-internals.h (_MonoGenericClass.is_inflated): Remove.
+	(_MonoGenericClass.cached_class): Move here and rename from lone
+	remaining field of ...
+	(_MonoInflatedGenericClass): ... this.  Remove.
+	* metadata.h, class.c, reflection.c, metadata.c, icall.c: Update
+	to changes.
+
 	Fix mcs/tests/test-128.cs regression.
 	* reflection.c (encode_cattr_value) [MONO_TYPE_SZARRAY]: Revert
 	2007-01-10 change below.
