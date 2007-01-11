@@ -81,12 +81,9 @@ namespace System.Web.Hosting {
 			if (physicalDir == null)
 				throw new NullReferenceException ();
 
-#if NET_2_0
+			// Make sure physicalDir has file system semantics
+			// and not uri semantics ( '\' and not '/' ).
 			physicalDir = Path.GetFullPath (physicalDir);
-#endif
-			// This might throw
-			Uri u = new Uri (physicalDir);
-			physicalDir = HttpUtility.UrlDecode (u.AbsolutePath);
 
 			if (hostType == null)
 				throw new NullReferenceException ();

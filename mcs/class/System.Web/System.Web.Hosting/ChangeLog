@@ -1,3 +1,8 @@
+2007-01-11  Adar Wesley <adarw@mainsoft.com>
+
+	* ApplicationHost.cs: fixed AppDomain initialization of physical
+	path to be in file system semantics
+
 2006-12-22  Marek Habersack  <grendello@gmail.com>
 
 	* HostingEnvironment.cs: implemented the SetCultures methods.
