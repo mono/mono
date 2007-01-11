@@ -1,3 +1,9 @@
+2007-01-11  Jonathan Pobst  <jpobst@novell.com>
+
+	* Button.cs: When clicked and setting the parent form's DialogResult,
+	use FindForm instead of Parent, since parent could be a container
+	control and not the Form.  Fixes bug #80495.
+
 2007-01-10  Chris Toshok  <toshok@ximian.com>
 
 	* Form.cs: move the call to SendControlFocus into the same

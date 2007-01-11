@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 		#region	Protected Instance Methods
 		protected override void OnClick(EventArgs e) {
 			if (dialog_result != DialogResult.None) {
-				Form p = Parent as Form;
+				Form p = FindForm ();
 
 				if (p != null) {
 					p.DialogResult = dialog_result;
