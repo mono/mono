@@ -1,3 +1,7 @@
+2007-01-11 Adar Wesley <adarw@mainsoft.com>
+
+	* MembershipProvider.cs: fixed EncryptPassword to use password buffer length
+
 2007-01-04 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* AnonymousIdentificationModule.cs: fixed OnEnter, fixed failure on

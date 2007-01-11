@@ -33,8 +33,11 @@ using System;
 using System.Configuration.Provider;
 using System.Security.Principal;
 using System.Web.Security;
+using System.Text;
 
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using System.Web.UI;
 
 namespace MonoTests.System.Web.Security {
 
@@ -192,12 +195,21 @@ namespace MonoTests.System.Web.Security {
 	public class MembershipProviderTest {
 
 		[Test]
-        [Category ("NotWorking")] // Not implemented
 		[ExpectedException (typeof (ProviderException))]
 		public void EncryptPassword ()
 		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (EncryptOnLoad));
+			t.Run ();
+		}
+
+		public static void EncryptOnLoad (Page p) 
+		{
 			TestMembershipProvider mp = new TestMembershipProvider ();
-			mp.Encrypt (null);
+			string password = "";
+
+			byte [] buffer = ASCIIEncoding.Default.GetBytes (password);
+
+			mp.Encrypt (buffer);
 		}
 	}
 }
