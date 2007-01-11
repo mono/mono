@@ -1,3 +1,7 @@
+2007-01-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Add new test icons 16x16x16 and 32x32x16 to dist.
+
 2007-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add new test icons (48x48x1, 64x64x256 and 96x96x256) to 
