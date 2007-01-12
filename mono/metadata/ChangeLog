@@ -1,5 +1,10 @@
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
+	Prepare to simplify GenericMethod handling.
+	* class-internals.h (mono_method_get_context): New accessor function.
+	* class.c, icall.c, loader.c, reflection.c, verify.c: Use accessor
+	rather than directly accessing '->context' field.
+
 	* class-internals.h (_MonoGenericParam.method): Move ...
 	(_MonoGenericContainer): ... here.  Add into union with klass field.
 	* class.c, icall.c, loader.c, metadata.c, reflection.c:
