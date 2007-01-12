@@ -161,7 +161,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewItemGroup ()
 		{
 			Engine engine;
@@ -185,7 +184,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewPropertyGroup ()
 		{
 			Engine engine;
@@ -712,7 +710,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("It should throw an exception under MS NET 2.0")]
 		public void TestGlobalProperties5 ()
 		{
 			Engine engine;

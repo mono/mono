@@ -1,5 +1,9 @@
 2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* ProjectTest.cs, BuildPropertyGroupTest.cs: Enable more tests.
+
+2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildItemTest.cs, BuildPropertyGroupTest.cs, TargetTest.cs,
 	TargetCollectionTest.cs, ProjectTest.cs: More tests.
 

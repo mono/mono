@@ -87,7 +87,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAddNewProperty3 ()
 		{
 			Engine engine;
@@ -538,7 +537,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		[ExpectedException (typeof (ArgumentException),
 			"The name \"1\" contains an invalid character \"1\".")]
-		[Category ("NotWorking")]
 		public void TestSetProperty5 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();
