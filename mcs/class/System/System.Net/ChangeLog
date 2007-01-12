@@ -1,3 +1,10 @@
+2007-01-11  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpListenerRequest.cs: Allow any verbs to go through, not only
+	the white list of verbs.
+
+	Fixes: 80504
+
 2007-01-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RequestStream.cs: initialize the stream in both ctors. Fixes a couple
@@ -49,6 +56,8 @@
 	distinguish between 1.1 and 2.0, we wont likely support 1.0, 1.1
 	and 2.0, so remove the 1.0 vs 1.1 conditionals.
 
+	Fixes 76792
+	
 ﻿2006-12-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: fix error in my last patch. Thanks to Felipe

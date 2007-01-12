@@ -67,9 +67,11 @@ namespace System.Net {
 		}
 
 		static char [] separators = new char [] { ' ' };
-		// From WebRequestMethods.Http
+
+#if false
 		static readonly string [] methods = new string [] { "GET", "POST", "HEAD",
 								"PUT", "CONNECT", "MKCOL" };
+#endif
 		internal void SetRequestLine (string req)
 		{
 			string [] parts = req.Split (separators, 3);
@@ -79,10 +81,17 @@ namespace System.Net {
 			}
 
 			method = parts [0];
+			
+#if false
+			//
+			// According to bug #80504 we should allow any verbs to go
+			// through.
+			//
 			if (Array.IndexOf (methods, method) == -1) {
 				context.ErrorMessage = "Invalid request line (verb).";
 				return;
 			}
+#endif
 
 			raw_url = parts [1];
 			if (parts [2].Length != 8 || !parts [2].StartsWith ("HTTP/")) {
