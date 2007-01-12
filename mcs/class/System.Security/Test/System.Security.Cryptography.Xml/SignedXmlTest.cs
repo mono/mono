@@ -481,6 +481,26 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert (!sx.CheckSignature ());
 		}
 
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (CryptographicException))] // correct
+#else
+		[ExpectedException (typeof (ArgumentNullException))] // silly
+#endif
+		public void ComputeSignatureNoSigningKey ()
+		{
+			SignedXml signedXml = new SignedXml (new XmlDocument ());
+
+			Reference reference = new Reference ();
+			reference.Uri = "";
+
+			XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform ();
+			reference.AddTransform (env);
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+		}
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // bug #79483

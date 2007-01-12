@@ -648,6 +648,12 @@ namespace System.Security.Cryptography.Xml {
 					m_signature.SignatureValue = signer.CreateSignature (digest);
 				}
 			}
+			else
+#if NET_2_0 // correct
+				throw new CryptographicException ("signing key is not specified");
+#else // silly
+				throw new ArgumentNullException ("signing key is not specified");
+#endif
 		}
 
 		public void ComputeSignature (KeyedHashAlgorithm macAlg) 

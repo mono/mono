@@ -1,3 +1,7 @@
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXmlTest.cs : added ComputeSignatureNoSigningKey().
+
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedXmlTest.cs : added Ignore for failing wrong test by design.

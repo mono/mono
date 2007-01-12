@@ -1,3 +1,7 @@
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXml.cs : ComputeSignature() should check empty key.
+
 2006-10-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedXml.cs : when SigningMethod does not match the algorithm that
