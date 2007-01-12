@@ -783,5 +783,131 @@ namespace MonoTests.System.Drawing{
 			}
 		}
 	}
+
+	[TestFixture]
+	public class BitmapFullTrustTest {
+
+		// BitmapFromHicon## is *almost* the same as IconTest.Icon##ToBitmap except
+		// for the Flags property
+
+		private void HiconTest (string msg, Bitmap b, int size)
+		{
+			Assert.AreEqual (PixelFormat.Format32bppArgb, b.PixelFormat, msg + ".PixelFormat");
+			// unlike the GDI+ icon decoder the palette isn't kept
+			Assert.AreEqual (0, b.Palette.Entries.Length, msg + ".Palette");
+			Assert.AreEqual (size, b.Height, msg + ".Height");
+			Assert.AreEqual (size, b.Width, msg + ".Width");
+			Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), msg + ".RawFormat");
+			Assert.AreEqual (335888, b.Flags, msg + ".Flags");
+		}
+
+		[Test]
+		public void Hicon16 ()
+		{
+			IntPtr hicon;
+			int size;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+				size = icon.Width;
+				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
+					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
+					hicon = bitmap.GetHicon ();
+				}
+			}
+			using (Bitmap bitmap2 = Bitmap.FromHicon (hicon)) {
+				// hicon survives bitmap and icon disposal
+				HiconTest ("GetHicon/FromHicon", bitmap2, size);
+			}
+		}
+
+		[Test]
+		public void Hicon32 ()
+		{
+			IntPtr hicon;
+			int size;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/32x32x16.ico"))) {
+				size = icon.Width;
+				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
+					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
+					hicon = bitmap.GetHicon ();
+				}
+			}
+			using (Bitmap bitmap2 = Bitmap.FromHicon (hicon)) {
+				// hicon survives bitmap and icon disposal
+				HiconTest ("GetHicon/FromHicon", bitmap2, size);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")] // libgdiplus has lost track of the original 1bpp state
+		public void Hicon48 ()
+		{
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/48x48x1.ico"))) {
+				// looks like 1bbp icons aren't welcome as bitmaps ;-)
+				Bitmap.FromHicon (icon.Handle);
+			}
+		}
+
+		[Test]
+		public void Hicon64 ()
+		{
+			IntPtr hicon;
+			int size;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/64x64x256.ico"))) {
+				size = icon.Width;
+				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
+					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
+					hicon = bitmap.GetHicon ();
+				}
+			}
+			using (Bitmap bitmap2 = Bitmap.FromHicon (hicon)) {
+				// hicon survives bitmap and icon disposal
+				HiconTest ("GetHicon/FromHicon", bitmap2, size);
+			}
+		}
+
+		[Test]
+		public void Hicon96 ()
+		{
+			IntPtr hicon;
+			int size;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/96x96x256.ico"))) {
+				size = icon.Width;
+				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
+					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
+					hicon = bitmap.GetHicon ();
+				}
+			}
+			using (Bitmap bitmap2 = Bitmap.FromHicon (hicon)) {
+				// hicon survives bitmap and icon disposal
+				HiconTest ("GetHicon/FromHicon", bitmap2, size);
+			}
+		}
+
+		[Test]
+		public void HBitmap ()
+		{
+			IntPtr hbitmap;
+			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver24bits.bmp");
+			using (Bitmap bitmap = new Bitmap (sInFile)) {
+				Assert.AreEqual (PixelFormat.Format24bppRgb, bitmap.PixelFormat, "Original.PixelFormat");
+				Assert.AreEqual (0, bitmap.Palette.Entries.Length, "Original.Palette");
+				Assert.AreEqual (183, bitmap.Height, "Original.Height");
+				Assert.AreEqual (173, bitmap.Width, "Original.Width");
+				Assert.AreEqual (73744, bitmap.Flags, "Original.Flags");
+				Assert.IsTrue (bitmap.RawFormat.Equals (ImageFormat.Bmp), "Original.RawFormat");
+				hbitmap = bitmap.GetHbitmap ();
+			}
+			// hbitmap survives original bitmap disposal
+			using (Image image = Image.FromHbitmap (hbitmap)) {
+				//Assert.AreEqual (PixelFormat.Format32bppRgb, image.PixelFormat, "FromHbitmap.PixelFormat");
+				Assert.AreEqual (0, image.Palette.Entries.Length, "FromHbitmap.Palette");
+				Assert.AreEqual (183, image.Height, "FromHbitmap.Height");
+				Assert.AreEqual (173, image.Width, "FromHbitmap.Width");
+				Assert.AreEqual (335888, image.Flags, "FromHbitmap.Flags");
+				Assert.IsTrue (image.RawFormat.Equals (ImageFormat.MemoryBmp), "FromHbitmap.RawFormat");
+			}
+		}
+	}
 }
 

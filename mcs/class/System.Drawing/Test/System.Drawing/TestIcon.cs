@@ -42,9 +42,7 @@ namespace MonoTests.System.Drawing {
 	public class IconTest {
 		
 		Icon icon;
-		Icon newIcon;
 		Icon icon16, icon32, icon48, icon64, icon96;
-		FileStream fs;
 		FileStream fs1;
 
 		static string filename_dll;
@@ -72,8 +70,6 @@ namespace MonoTests.System.Drawing {
 		[TearDown]
 		public void TearDown ()
 		{
-			if (fs != null)
-				fs.Close ();
 			if (fs1 != null)
 				fs1.Close ();
 			if (File.Exists ("newIcon.ico"))
@@ -89,14 +85,109 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, icon.Height, "C#0a");
 			Assert.AreEqual (32, icon.Width, "C#0b");
 
-			newIcon = new Icon (fs1, 48, 48);
+			Icon newIcon = new Icon (fs1, 48, 48);
 			Assert.AreEqual (48, newIcon.Height, "C#1a"); 			
 			Assert.AreEqual (48, newIcon.Width, "C#1b");
 
 			newIcon = new Icon (icon, 16, 16);
 			Assert.AreEqual (16, newIcon.Height, "C#2a"); 			
 			Assert.AreEqual (16, newIcon.Width, "C#2b");
-		}				
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_IconNull_Int_Int ()
+		{
+			new Icon ((Icon)null, 32, 32);
+		}
+
+		[Test]
+		public void Constructor_Icon_IntNegative_Int ()
+		{
+			Icon neg = new Icon (icon, -32, 32);
+			Assert.AreEqual (32, neg.Height, "Height");
+			Assert.AreEqual (32, neg.Width, "Width");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_IconNull_Size ()
+		{
+			new Icon ((Icon) null, new Size (32, 32));
+		}
+
+		[Test]
+		public void Constructor_Icon_Size_Negative ()
+		{
+			Icon neg = new Icon (icon, new Size (-32, -32));
+			Assert.AreEqual (16, neg.Height, "Height");
+			Assert.AreEqual (16, neg.Width, "Width");
+		}
+
+		[Test]
+		public void Constructor_Icon_Int_Int_NonSquare ()
+		{
+			Icon non_square = new Icon (icon, 32, 16);
+			Assert.AreEqual (32, non_square.Height, "Height");
+			Assert.AreEqual (32, non_square.Width, "Width");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_StreamNull ()
+		{
+			new Icon ((Stream) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_StreamNull_Int_Int ()
+		{
+			new Icon ((Stream) null, 32, 32);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_StringNull ()
+		{
+			new Icon ((string) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor_TypeNull_String ()
+		{
+			new Icon ((Type) null, "mono.ico");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_Type_StringNull ()
+		{
+			new Icon (typeof (Icon), null);
+		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_StreamNull_Size ()
+		{
+			new Icon ((Stream) null, new Size (32, 32));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_StringNull_Size ()
+		{
+			new Icon ((string) null, new Size (32, 32));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_StringNull_Int_Int ()
+		{
+			new Icon ((string) null, 32, 32);
+		}
+#endif
 
 		[Test]
 #if TARGET_JVM
@@ -114,25 +205,39 @@ namespace MonoTests.System.Drawing {
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void TestMethods ()
+		public void Clone ()
 		{
-			/*
-			
-			TODO: This does not work on Win32
-			
-			newIcon = (Icon) icon.Clone ();
-			Assert.AreEqual (32, newIcon.Height, "M#1a");
-			Assert.AreEqual (32, newIcon.Width, "M#1b");
-			
-			Bitmap bmp = icon.ToBitmap();
-			Assert.AreEqual (32, bmp.Height, "M#2a");
-			Assert.AreEqual (32, bmp.Width, "M#2b");
-			*/
-			
-			fs = new FileStream ("newIcon.ico", FileMode.Create);
-			icon.Save (fs);
-			
-			Assert.AreEqual (fs1.Length, fs.Length, "M#3");			
+			Icon clone = (Icon) icon.Clone ();
+			Assert.AreEqual (32, clone.Height, "Height");
+			Assert.AreEqual (32, clone.Width, "Width");
+			Assert.AreEqual (32, clone.Size.Width, "Size.Width");
+			Assert.AreEqual (32, clone.Size.Height, "Size.Height");
+		}
+
+		internal static void SaveAndCompare (string msg, Icon icon)
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				icon.Save (ms);
+				ms.Position = 0;
+
+				using (Icon loaded = new Icon (ms)) {
+					Assert.AreEqual (icon.Height, loaded.Height, msg + ".Loaded.Height");
+					Assert.AreEqual (icon.Width, loaded.Width, msg + ".Loaded.Width");
+				}
+			}
+		}
+
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void Save ()
+		{
+			SaveAndCompare ("16", icon16);
+			SaveAndCompare ("32", icon32);
+			SaveAndCompare ("48", icon48);
+			SaveAndCompare ("64", icon64);
+			SaveAndCompare ("96", icon96);
 		}
 
 		[Test]
@@ -239,5 +344,49 @@ namespace MonoTests.System.Drawing {
 			Assert.IsNotNull (Icon.ExtractAssociatedIcon (filename_dll), "dll");
 		}
 #endif
+
+		[Test]
+		public void HandleRoundtrip ()
+		{
+			IntPtr handle;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+				Assert.AreEqual (16, icon.Height, "Original.Height");
+				Assert.AreEqual (16, icon.Width, "Original.Width");
+				handle = icon.Handle;
+				using (Icon icon2 = Icon.FromHandle (handle)) {
+					Assert.AreEqual (16, icon2.Height, "FromHandle.Height");
+					Assert.AreEqual (16, icon2.Width, "FromHandle.Width");
+					Assert.AreEqual (handle, icon2.Handle, "FromHandle.Handle");
+// enable when Save is enabled for re-constructed icons
+//					IconTest.SaveAndCompare ("Handle", icon2);
+				}
+			}
+			// unlike other cases (HICON, HBITMAP) handle DOESN'T survives original icon disposal
+			// commented / using freed memory is risky ;-)
+			/*using (Icon icon3 = Icon.FromHandle (handle)) {
+				Assert.AreEqual (0, icon3.Height, "Survivor.Height");
+				Assert.AreEqual (0, icon3.Width, "Survivor.Width");
+				Assert.AreEqual (handle, icon3.Handle, "Survivor.Handle");
+			}*/
+		}
+
+		[Test]
+		public void HiconRoundtrip ()
+		{
+			IntPtr handle;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+				Assert.AreEqual (16, icon.Height, "Original.Height");
+				Assert.AreEqual (16, icon.Width, "Original.Width");
+				handle = icon.ToBitmap ().GetHicon ();
+			}
+			// HICON survives
+			using (Icon icon2 = Icon.FromHandle (handle)) {
+				Assert.AreEqual (16, icon2.Height, "Survivor.Height");
+				Assert.AreEqual (16, icon2.Width, "Survivor.Width");
+				Assert.AreEqual (handle, icon2.Handle, "Survivor.Handle");
+// enable when Save is enabled for re-constructed icons
+//				IconTest.SaveAndCompare ("HICON", icon2);
+			}
+		}
 	}
 }

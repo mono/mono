@@ -1,3 +1,11 @@
+2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Add test cases for FromHicon and roundtripping using
+	GetHbitmap and FromHbitmap.
+	* TestIcon.cs: Add test cases for all constructors. Add test cases for
+	saving icons (all sizes). Add test cases for roundtripping icons using
+	Handle and HICON.
+
 2007-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test case for loading an icon and playing with
