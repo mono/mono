@@ -1,5 +1,10 @@
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SignedXmlTest.cs : fixed ComputeSignatureNoSigningKey() to not
+	  expect silly exception. Added test for malformed reference.
+
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignedXmlTest.cs : added ComputeSignatureNoSigningKey().
 
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>

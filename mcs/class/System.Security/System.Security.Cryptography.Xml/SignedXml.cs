@@ -314,14 +314,18 @@ namespace System.Security.Cryptography.Xml {
 					}
 				}
 				if (objectName != null) {
+					bool found = false;
 					foreach (DataObject obj in m_signature.ObjectList) {
 						if (obj.Id == objectName) {
 							XmlElement xel = obj.GetXml ();
 							doc.LoadXml (xel.OuterXml);
 							FixupNamespaceNodes (xel, doc.DocumentElement);
+							found = true;
 							break;
 						}
 					}
+					if (!found)
+						throw new CryptographicException (String.Format ("Malformed reference object: {0}", objectName));
 				}
 			}
 
@@ -649,11 +653,7 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			else
-#if NET_2_0 // correct
 				throw new CryptographicException ("signing key is not specified");
-#else // silly
-				throw new ArgumentNullException ("signing key is not specified");
-#endif
 		}
 
 		public void ComputeSignature (KeyedHashAlgorithm macAlg) 

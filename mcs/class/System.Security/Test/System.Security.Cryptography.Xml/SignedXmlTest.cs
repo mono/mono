@@ -482,17 +482,35 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (CryptographicException))] // correct
-#else
-		[ExpectedException (typeof (ArgumentNullException))] // silly
-#endif
+		[ExpectedException (typeof (CryptographicException))]
 		public void ComputeSignatureNoSigningKey ()
 		{
-			SignedXml signedXml = new SignedXml (new XmlDocument ());
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo/>");
+			SignedXml signedXml = new SignedXml (doc);
 
 			Reference reference = new Reference ();
 			reference.Uri = "";
+
+			XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform ();
+			reference.AddTransform (env);
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void ComputeSignatureMissingReferencedObject ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo/>");
+			SignedXml signedXml = new SignedXml (doc);
+			DSA key = DSA.Create ();
+			signedXml.SigningKey = key;
+
+			Reference reference = new Reference ();
+			reference.Uri = "#bleh";
 
 			XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform ();
 			reference.AddTransform (env);
