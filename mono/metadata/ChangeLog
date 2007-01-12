@@ -1,3 +1,8 @@
+2007-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (inflate_mono_method): Reuse method instantiation
+	from the generic method, if available.
+
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c (emit_marshal_variant): Fix conv_arg
