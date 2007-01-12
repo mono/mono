@@ -147,9 +147,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveProperty (BuildProperty propertyToRemove)
 		{
-			if (FromXml)
+			if (FromXml) {
+				if (!propertyToRemove.FromXml)
+					throw new InvalidOperationException ("The specified property does not belong to the current property group.");
+
+				propertyToRemove.XmlElement.ParentNode.RemoveChild (propertyToRemove.XmlElement);
 				properties.Remove (propertyToRemove);
-			else {
+			} else {
 				foreach (KeyValuePair <string, BuildProperty> kvp in propertiesByName)
 					if (kvp.Value == propertyToRemove) {
 						propertiesByName.Remove (kvp.Key);
@@ -163,7 +167,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (FromXml) {
 				foreach (BuildProperty bp in properties)
 					if (bp.Name == propertyName) {
-						properties.Remove (bp);
+						RemoveProperty (bp);
 						break;
 					}
 			} else

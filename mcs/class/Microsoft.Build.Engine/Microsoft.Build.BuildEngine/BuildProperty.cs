@@ -121,7 +121,7 @@ namespace Microsoft.Build.BuildEngine {
 			parentProject.EvaluatedProperties.AddProperty (evaluated);
 		}
 
-		bool FromXml {
+		internal bool FromXml {
 			get {
 				return propertyElement != null;
 			}
@@ -177,6 +177,10 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				return propertyType;
 			}
+		}
+
+		internal XmlElement XmlElement {
+			get { return propertyElement; }
 		}
 	}
 

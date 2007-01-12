@@ -52,10 +52,6 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidProjectFileException (
 					"The required attribute \"Name\" is missing from element <Target>.");
 		
-			// FIXME: test it
-			if (targetsByName.ContainsKey (targetName))
-				throw new Exception ("target already exists");
-				
 			XmlElement targetElement = parentProject.XmlDocument.CreateElement ("Target", Project.XmlNamespace);
 			parentProject.XmlDocument.DocumentElement.AppendChild (targetElement);
 			targetElement.SetAttribute ("Name", targetName);
@@ -69,6 +65,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void AddTarget (Target target)
 		{
+			if (targetsByName.ContainsKey (target.Name))
+				targetsByName.Remove (target.Name);
 			targetsByName.Add (target.Name, target);
 		}
 

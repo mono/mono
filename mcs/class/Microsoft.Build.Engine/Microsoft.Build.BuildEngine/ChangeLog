@@ -1,4 +1,16 @@
-2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>\
+2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs: Throw an exception when <OnError> is not last element in
+	target.
+
+	* BuildPropertyGroup.cs (RemoveProperty): Remove from XML.
+
+	* TargetCollection.cs: If a target is already there replace it with
+	new target.
+
+	* BuildProperty.cs: Added XmlElement property.
+
+2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ImportCollection.cs: Don't add imports that are already added.
 

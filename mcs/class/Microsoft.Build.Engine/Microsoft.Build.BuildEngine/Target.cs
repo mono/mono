@@ -65,14 +65,18 @@ namespace Microsoft.Build.BuildEngine {
 			this.buildTasks = new List <BuildTask> ();
 			this.batchingImpl = new BatchingImpl (project, this.targetElement);
 
+			bool onErrorFound = false;
 			foreach (XmlNode xn in targetElement.ChildNodes) {
 				if (xn is XmlElement) {
 					XmlElement xe = (XmlElement) xn;
 					if (xe.Name == "OnError") {
 						onErrorElements.Add (xe);
-						continue;
-					}
-					buildTasks.Add (new BuildTask (xe, this));
+						onErrorFound = true;
+					} else if (onErrorFound)
+						throw new InvalidProjectFileException (
+							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
+					else
+						buildTasks.Add (new BuildTask (xe, this));
 				}
 			}
 		}
