@@ -1,5 +1,10 @@
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataObjectTest.cs : test to make sure to not clear attributes or
+	  children unnecessarily.
+
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignedXmlTest.cs : fixed ComputeSignatureNoSigningKey() to not
 	  expect silly exception. Added test for malformed reference.
 

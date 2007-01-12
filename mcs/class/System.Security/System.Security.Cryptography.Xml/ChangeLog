@@ -1,5 +1,9 @@
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataObject.cs : don't clear attributes or children unnecessarily.
+
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignedXml.cs : actually ComputeSignature() itself does not raise
 	  silly exception. It always use CryptographicException.
 	  Added another check; malformed reference object.

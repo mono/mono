@@ -169,5 +169,24 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertEquals (String.Empty, el1.OwnerDocument.OuterXml);
 			*/
 		}
+
+		[Test]
+		public void SetDataAfterId ()
+		{
+			DataObject d = new DataObject ();
+			XmlElement el = new XmlDocument ().CreateElement ("foo");
+			d.Id = "id:1";
+			d.Data = el.SelectNodes (".");
+			AssertEquals ("id:1", d.Id);
+		}
+
+		[Test]
+		public void SetMimeTypeAfterId ()
+		{
+			XmlElement el = new XmlDocument ().CreateElement ("foo");
+			DataObject d = new DataObject ("id:1", null, null, el);
+			d.MimeType = "text/html";
+			AssertEquals ("id:1", d.Id);
+		}
 	}
 }

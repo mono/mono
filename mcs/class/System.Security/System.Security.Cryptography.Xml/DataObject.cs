@@ -88,7 +88,8 @@ namespace System.Security.Cryptography.Xml {
 				XmlDocument doc = new XmlDocument ();
 				XmlElement el = (XmlElement) doc.ImportNode (element, true);
 				doc.AppendChild (el); // FIXME: it should not be appended
-				el.RemoveAll ();
+				while (el.LastChild != null)
+					el.RemoveChild (el.LastChild);
 				foreach (XmlNode n in value)
 					el.AppendChild (doc.ImportNode (n, true));
 				element = el;
@@ -131,7 +132,6 @@ namespace System.Security.Cryptography.Xml {
 			else {
 				XmlDocument document = new XmlDocument ();
 				XmlElement el = document.ImportNode (element, true) as XmlElement;
-				el.Attributes.RemoveAll ();
 				document.AppendChild (el); // FIXME: it should not be appended
 				el.SetAttribute (attribute, value);
 				element = el;
