@@ -278,23 +278,23 @@ namespace System.Windows.Forms
 		[RefreshProperties (RefreshProperties.Repaint)]
 #endif
 		public int ImageIndex {
-   			get { 
-   				if (ImageList == null) {
-   					return -1;
-   				}
+			get { 
+				if (ImageList == null) {
+					return -1;
+				}
 					
-   				if (image_index >= image_list.Images.Count) {
-   					return image_list.Images.Count - 1;
-   				}
+				if (image_index >= image_list.Images.Count) {
+					return image_list.Images.Count - 1;
+				}
 					
-   				return image_index;
-   			}
-   			set {
+				return image_index;
+			}
+			set {
 
 				if (value < -1)
 					throw new ArgumentException ();
 
-   				if (image_index == value)
+				if (image_index == value)
 					return;
 
 				image_index = value;
@@ -302,18 +302,18 @@ namespace System.Windows.Forms
 				if (ImageList != null && image_index !=-1)
 					Image = null;
 
-   				Refresh ();
+				Refresh ();
 			}
-   		}
+		}
 
 		[DefaultValue(null)]
 #if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
 #endif
-   		public ImageList ImageList {
-   			get { return image_list;}
-   			set {
-   				if (image_list == value)
+		public ImageList ImageList {
+			get { return image_list;}
+			set {
+				if (image_list == value)
 					return;
 					
 				image_list = value;
@@ -321,13 +321,13 @@ namespace System.Windows.Forms
 				if (image_list != null && image_index !=-1)
 					Image = null;
 
-   				Refresh ();
+				Refresh ();
 			}
-   		}
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-   		public new ImeMode ImeMode {
+		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set { base.ImeMode = value; }
 		}
@@ -336,20 +336,20 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-   			get { return preferred_height; }
-   		}
+			get { return preferred_height; }
+		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-   			get {return preferred_width; }
-   		}
+			get {return preferred_width; }
+		}
 
 #if NET_2_0
 		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
 #endif
-   		protected virtual bool RenderTransparent {
+		protected virtual bool RenderTransparent {
 			get { return render_transparent; }
 			set { render_transparent = value;}
 		}
@@ -358,16 +358,16 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop  {
-   			get { return base.TabStop; }
-   			set { base.TabStop = value; }
-   		}
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
 
 		[DefaultValue(ContentAlignment.TopLeft)]
 		[Localizable(true)]
 		public virtual ContentAlignment TextAlign {
-   			get { return text_align; }
+			get { return text_align; }
 
-   			set {
+			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
@@ -421,19 +421,19 @@ namespace System.Windows.Forms
 						Refresh();
 				}
 			}
-   		}
+		}
 
 		[DefaultValue(true)]
 		public bool UseMnemonic {
-   			get { return use_mnemonic; }
-   			set {
-   				if (use_mnemonic != value) {
+			get { return use_mnemonic; }
+			set {
+				if (use_mnemonic != value) {
 					use_mnemonic = value;
 					SetUseMnemonic (use_mnemonic);
-	   				Refresh ();
-   				}
-   			}
-   		}
+					Refresh ();
+				}
+			}
+		}
 
 		#endregion
 
@@ -482,7 +482,7 @@ namespace System.Windows.Forms
 			return base.CreateAccessibilityInstance ();
 		}
 
-   		protected override void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			base.Dispose (disposing);
 
@@ -490,8 +490,8 @@ namespace System.Windows.Forms
 				string_format.Dispose ();
 		}
 
-   		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
-   		{
+		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
+		{
  			if (image == null || g == null)
 				return;
 
@@ -503,20 +503,20 @@ namespace System.Windows.Forms
 				ControlPaint.DrawImageDisabled (g, image, rcImageClip.X, rcImageClip.Y, BackColor);
 		}
 
-   		protected virtual void OnAutoSizeChanged (EventArgs e)
+		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
-   		}
+		}
 
-   		protected override void OnEnabledChanged (EventArgs e)
-   		{
+		protected override void OnEnabledChanged (EventArgs e)
+		{
 			base.OnEnabledChanged (e);
-   		}
+		}
 
-   		protected override void OnFontChanged (EventArgs e)
-   		{
+		protected override void OnFontChanged (EventArgs e)
+		{
 			base.OnFontChanged (e);
 			if (autosize) {
 				CalcAutoSize();
@@ -524,29 +524,29 @@ namespace System.Windows.Forms
 				CalcPreferredHeight ();
 			}
 			Refresh ();
-   		}
+		}
 
-   		protected override void OnPaint (PaintEventArgs pevent)
+		protected override void OnPaint (PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
 			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 			base.OnPaint(pevent);
 		}
 
-   		protected override void OnParentChanged (EventArgs e)
-   		{
+		protected override void OnParentChanged (EventArgs e)
+		{
 				base.OnParentChanged (e);
-   		}
+		}
 
-   		protected virtual void OnTextAlignChanged (EventArgs e)
-   		{
+		protected virtual void OnTextAlignChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
 			if (eh != null)
 				eh (this, e);
-   		}
+		}
 
-   		protected override void OnTextChanged (EventArgs e)
-   		{
+		protected override void OnTextChanged (EventArgs e)
+		{
 			base.OnTextChanged (e);			
 			if (autosize) {
 				CalcAutoSize ();
@@ -554,15 +554,15 @@ namespace System.Windows.Forms
 				CalcPreferredWidth ();
 			}
 			Refresh ();
-   		}
+		}
 
-   		protected override void OnVisibleChanged (EventArgs e)
-   		{
-   			base.OnVisibleChanged (e);
-   		}
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			base.OnVisibleChanged (e);
+		}
 
-   		protected override bool ProcessMnemonic (char charCode)
-   		{
+		protected override bool ProcessMnemonic (char charCode)
+		{
 			if (IsMnemonic(charCode, Text) == true) {
 				// Select item next in line in tab order
 				if (this.Parent != null) {
@@ -572,20 +572,20 @@ namespace System.Windows.Forms
 			}
 			
 			return base.ProcessMnemonic (charCode);
-   		}
+		}
 
-   		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-   		{
-   			base.SetBoundsCore (x, y, width, height, specified);
-   		}
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
 
-   		public override string ToString()
-   		{
-   			return base.ToString () + ", Text: " + Text;
-   		}
+		public override string ToString()
+		{
+			return base.ToString () + ", Text: " + Text;
+		}
 
-   		protected override void WndProc (ref Message m)
-   		{
+		protected override void WndProc (ref Message m)
+		{
 			switch ((Msg) m.Msg) {
 				case Msg.WM_DRAWITEM: {
 					m.Result = (IntPtr)1;
@@ -595,23 +595,23 @@ namespace System.Windows.Forms
 					base.WndProc (ref m);
 					break;
 			}
-   		}
+		}
 
 		#endregion Public Methods
 
 		#region Private Methods
 
 		private void CalcAutoSize ()
-   		{
-   			if (IsHandleCreated == false || AutoSize == false)
-   				return;
+		{
+			if (IsHandleCreated == false || AutoSize == false)
+				return;
 
-   			CalcPreferredWidth ();
-   			CalcPreferredHeight ();
+			CalcPreferredWidth ();
+			CalcPreferredHeight ();
 
-   		 	Width =  PreferredWidth;
-   		 	Height =  PreferredHeight;			 	
-   		}
+		 	Width =  PreferredWidth;
+		 	Height =  PreferredHeight;			 	
+		}
 
 		private void CalcPreferredHeight ()
 		{
