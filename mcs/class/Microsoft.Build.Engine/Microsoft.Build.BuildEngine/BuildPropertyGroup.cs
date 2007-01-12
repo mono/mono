@@ -97,7 +97,8 @@ namespace Microsoft.Build.BuildEngine {
 				
 				prop = new BuildProperty (parentProject, xe);
 				AddProperty (prop);
-				parentProject.EvaluatedProperties.AddProperty (prop);
+				parentProject.NeedToReevaluate ();
+
 				return prop;
 			} else
 				throw new InvalidOperationException ("This method is only valid for persisted <System.Object[]> elements.");
@@ -187,7 +188,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (read_only)
 				return;
-			
+
 			if (propertiesByName.ContainsKey (propertyName))
 				propertiesByName.Remove (propertyName);
 
@@ -196,11 +197,14 @@ namespace Microsoft.Build.BuildEngine {
 				bp = new BuildProperty (propertyName, Utilities.Escape (propertyValue));
 			else
 				bp = new BuildProperty (propertyName, propertyValue);
+			
+			if (Char.IsDigit (propertyName [0]))
+				throw new ArgumentException (String.Format ("The name \"{0}\" contains an invalid character \"{1}\".", propertyName, propertyName [0]));
 
 			AddProperty (bp);
 
 			if (IsGlobal)
-				parentProject.ProcessXml ();
+				parentProject.NeedToReevaluate ();
 		}
 		
 		internal void Evaluate ()

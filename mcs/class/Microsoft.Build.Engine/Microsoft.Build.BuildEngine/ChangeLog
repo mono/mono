@@ -1,5 +1,13 @@
 2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildPropertyGroup.cs: Don't trigger reevaluation just after a
+	change but just mark that it needs it.
+
+	* Project.cs: Reevaluate when it needs reevaluation and one of
+	Evaluated* properties is used.
+
+2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Target.cs: Throw an exception when <OnError> is not last element in
 	target.
 

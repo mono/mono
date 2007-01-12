@@ -59,6 +59,7 @@ namespace Microsoft.Build.BuildEngine {
 		BuildItemGroupCollection	itemGroups;
 		ImportCollection		imports;
 		string				initialTargets;
+		bool				needToReevaluate;
 		Engine				parentEngine;
 		BuildPropertyGroupCollection	propertyGroups;
 		string				schemaFile;
@@ -111,6 +112,7 @@ namespace Microsoft.Build.BuildEngine {
 			Import import = new Import (importElement, this, null);
 			imports.Add (import);
 			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 		}
 
 		public BuildItem AddNewItem (string itemName,
@@ -136,6 +138,7 @@ namespace Microsoft.Build.BuildEngine {
 			BuildItemGroup big = new BuildItemGroup (element, this, null, false);
 			itemGroups.Add (big);
 			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 
 			return big;
 		}
@@ -149,6 +152,7 @@ namespace Microsoft.Build.BuildEngine {
 			BuildPropertyGroup bpg = new BuildPropertyGroup (element, this, null, false);
 			propertyGroups.Add (bpg);
 			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 
 			return bpg;
 		}
@@ -224,6 +228,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			CheckUnloaded ();
 			ParentEngine.StartBuild ();
+			NeedToReevaluate ();
 			
 			if (targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0)
@@ -393,16 +398,19 @@ namespace Microsoft.Build.BuildEngine {
 		public void Save (string projectFileName)
 		{
 			Save (projectFileName, Encoding.Default);
+			isDirty = false;
 		}
 
 		public void Save (string projectFileName, Encoding encoding)
 		{
 			xmlDocument.Save (projectFileName);
+			isDirty = false;
 		}
 
 		public void Save (TextWriter outTextWriter)
 		{
 			xmlDocument.Save (outTextWriter);
+			isDirty = false;
 		}
 
 		public void SetImportedProperty (string propertyName,
@@ -511,6 +519,11 @@ namespace Microsoft.Build.BuildEngine {
 			if (unloaded)
 				throw new InvalidOperationException ("This project object has been unloaded from the MSBuild engine and is no longer valid.");
 		}
+
+		internal void NeedToReevaluate ()
+		{
+			needToReevaluate = true;
+		}
 				
 		// Does the actual loading.
 		void DoLoad (TextReader textReader)
@@ -548,7 +561,12 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		internal void ProcessXml ()
+		void Reevaluate ()
+		{
+			ProcessXml ();
+		}
+
+		void ProcessXml ()
 		{
 			groupingCollection = new GroupingCollection (this);
 			imports = new ImportCollection (groupingCollection);
@@ -611,7 +629,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		internal void Evaluate ()
+		void Evaluate ()
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
@@ -734,23 +752,55 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public BuildItemGroup EvaluatedItems {
-			get { return evaluatedItems; }
+			get {
+				if (needToReevaluate) {
+					needToReevaluate = false;
+					Reevaluate ();
+				}
+				return evaluatedItems;
+			}
 		}
 
 		public BuildItemGroup EvaluatedItemsIgnoringCondition {
-			get { return evaluatedItemsIgnoringCondition; }
+			get {
+				if (needToReevaluate) {
+					needToReevaluate = false;
+					Reevaluate ();
+				}
+				return evaluatedItemsIgnoringCondition;
+			}
 		}
 		
 		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByName {
-			get { return evaluatedItemsByName; }
+			get {
+				// FIXME: do we need to do this here?
+				if (needToReevaluate) {
+					needToReevaluate = false;
+					Reevaluate ();
+				}
+				return evaluatedItemsByName;
+			}
 		}
 		
 		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByNameIgnoringCondition {
-			get { return evaluatedItemsByNameIgnoringCondition; }
+			get {
+				// FIXME: do we need to do this here?
+				if (needToReevaluate) {
+					needToReevaluate = false;
+					Reevaluate ();
+				}
+				return evaluatedItemsByNameIgnoringCondition;
+			}
 		}
 
 		public BuildPropertyGroup EvaluatedProperties {
-			get { return evaluatedProperties; }
+			get {
+				if (needToReevaluate) {
+					needToReevaluate = false;
+					Reevaluate ();
+				}
+				return evaluatedProperties;
+			}
 		}
 
 		public string FullFileName {
@@ -768,6 +818,7 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidOperationException ("Can't do that.");
 				
 				globalProperties = value;
+				NeedToReevaluate ();
 			}
 		}
 
