@@ -1,3 +1,13 @@
+2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Change DrawIcon* methods to use the internal bitmap
+	we keep for the Icon. This is required to let HICON support work with 
+	libgdiplus (and should be faster than creating a new bitmap each time)
+	* Icon.cs: Fix ctor exceptions. Select the correct icon when multiple
+	size are available (and do not match the requested size). Fix handle
+	support for work under UNIX (Win32 support still missing). Keep an
+	internal bitmap for the Icon to use for HICON support.
+
 2007-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Fix .ctor(string) to load, when available, the 32x32 icon.

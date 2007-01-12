@@ -579,23 +579,26 @@ namespace System.Drawing
 
 		public void DrawIcon (Icon icon, Rectangle targetRect)
 		{
-			using (Image img = icon.ToBitmap ()) {
-				DrawImage (img, targetRect);
-			}
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			DrawImage (icon.GetInternalBitmap (), targetRect);
 		}
 
 		public void DrawIcon (Icon icon, int x, int y)
 		{
-			using (Image img = icon.ToBitmap ()) {
-				DrawImage (img, x, y);
-			}
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			DrawImage (icon.GetInternalBitmap (), x, y);
 		}
 
 		public void DrawIconUnstretched (Icon icon, Rectangle targetRect)
 		{
-			using (Image img = icon.ToBitmap ()) {
-				DrawImageUnscaled (img, targetRect);
-			}
+			if (icon == null)
+				throw new ArgumentNullException ("icon");
+
+			DrawImageUnscaled (icon.GetInternalBitmap (), targetRect);
 		}
 		
 		public void DrawImage (Image image, RectangleF rect)

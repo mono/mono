@@ -31,11 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -91,72 +92,85 @@ namespace System.Drawing
 		};	
 
 		private Size iconSize;
-		private IntPtr winHandle = IntPtr.Zero;
+		private IntPtr handle = IntPtr.Zero;
 		private IconDir	iconDir;
 		private ushort id;
 		private IconImage [] imageData;
-		bool destroyIcon = true;
-		bool undisposable;
-			
+		private bool undisposable;
+		private bool disposed;
+		private Bitmap bitmap;
+
 		private Icon ()
 		{
 		}
 
-		// FIXME - Implement fully (well implement inside libgdiplus as unmanaged code)
 		private Icon (IntPtr handle)
 		{
-			this.winHandle = handle;
+			this.handle = handle;
+			if (GDIPlus.RunningOnUnix ()) {
+				bitmap = Bitmap.FromHicon (handle);
+				iconSize = new Size (bitmap.Width, bitmap.Height);
+				// FIXME: we need to convert the bitmap into an icon
+			} else {
+				IconInfo ii;
+				GDIPlus.GetIconInfo (handle, out ii);
+				if (!ii.IsIcon)
+					throw new NotImplementedException (Locale.GetText ("Handle doesn't represent an ICON."));
 
-			IconInfo ii;
-			GDIPlus.GetIconInfo (winHandle, out ii);
-			if (ii.IsIcon) {
 				// If this structure defines an icon, the hot spot is always in the center of the icon
 				iconSize = new Size (ii.xHotspot * 2, ii.yHotspot * 2);
-			}
-			else {
-				throw new NotImplementedException ();
-			}
 
-			this.destroyIcon = false;
+				// FIXME: we need to convert the bitmap(s) into an icon
+			}
+			undisposable = true;
 		}
 
-		public Icon (Icon original, int width, int height) : this (original, new Size(width, height))
-		{			
+		public Icon (Icon original, int width, int height)
+			: this (original, new Size (width, height))
+		{
 		}
 
 		public Icon (Icon original, Size size)
 		{
-			this.iconSize = size;
-			this.winHandle = original.winHandle;
-			this.iconDir = original.iconDir;
-			this.imageData = original.imageData;
+			if (original == null)
+				throw new ArgumentException ("original");
+
+			iconSize = size;
+			iconDir = original.iconDir;
+			imageData = original.imageData;
 			
+			id = UInt16.MaxValue;
 			int count = iconDir.idCount;
-			bool sizeObtained = false;
-			for (int i=0; i<count; i++){
+			for (ushort i=0; i < count; i++) {
 				IconDirEntry ide = iconDir.idEntries [i];
-				if (!sizeObtained)   
-					if (ide.height==size.Height && ide.width==size.Width) {
-						this.id = (ushort) i;
-						sizeObtained = true;
-						this.iconSize.Height = ide.height;
-						this.iconSize.Width = ide.width;
-						break;
-					}
+				if ((ide.height == size.Height) || (ide.width == size.Width)) {
+					id = i;
+					break;
+				}
 			}
 
-			if (!sizeObtained){
-				uint largestSize = 0;
-				for (int j=0; j<count; j++){
-					if (iconDir.idEntries [j].bytesInRes >= largestSize){
-						largestSize = iconDir.idEntries [j].bytesInRes;
-						this.id = (ushort) j;
-						this.iconSize.Height = iconDir.idEntries [j].height;
-						this.iconSize.Width = iconDir.idEntries [j].width;
+			// if a perfect match isn't found we look for the biggest icon *smaller* than specified
+			if (id == UInt16.MaxValue) {
+				int requested = Math.Min (size.Height, size.Width);
+				IconDirEntry best = iconDir.idEntries [0];
+				for (ushort i=1; i < count; i++) {
+					IconDirEntry ide = iconDir.idEntries [i];
+					if ((ide.height < requested) || (ide.width < requested)) {
+						if ((ide.height > best.height) || (ide.width > best.width))
+							id = i;
 					}
 				}
 			}
-			winHandle = (IntPtr) 1; // fake handle
+
+			// last one, if nothing better can be found
+			if (id == UInt16.MaxValue)
+				id = (ushort) (count - 1);
+
+			iconSize.Height = iconDir.idEntries [id].height;
+			iconSize.Width = iconDir.idEntries [id].width;
+
+			if (original.bitmap != null)
+				bitmap = (Bitmap)original.bitmap.Clone ();
 		}
 
 		public Icon (Stream stream) : this (stream, 32, 32) 
@@ -175,6 +189,9 @@ namespace System.Drawing
 
 		public Icon (Type type, string resource)
 		{
+			if (resource == null)
+				throw new ArgumentException ("resource");
+
 			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
 				if (s == null) {
 					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
@@ -255,21 +272,18 @@ namespace System.Drawing
 
 		public void Dispose ()
 		{
-			if (!undisposable) {
-				DisposeIcon ();
-				GC.SuppressFinalize(this);
-			}
-		}
-
-		void DisposeIcon ()
-		{
-			if (winHandle ==IntPtr.Zero)
+			// SystemIcons requires this
+			if (undisposable)
 				return;
 
-			if (destroyIcon) {
-				//TODO: will have to call some win32 icon stuff
-				winHandle = IntPtr.Zero;
+			if (!disposed) {
+				if (bitmap != null) {
+					bitmap.Dispose ();
+					bitmap = null;
+				}
+				GC.SuppressFinalize (this);
 			}
+			disposed = true;
 		}
 
 		public object Clone ()
@@ -277,6 +291,7 @@ namespace System.Drawing
 			return new Icon (this, this.Width, this.Height);
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Icon FromHandle (IntPtr handle)
 		{
 			if (handle == IntPtr.Zero)
@@ -338,20 +353,30 @@ namespace System.Drawing
 			}
 		}
 
+		internal Bitmap GetInternalBitmap ()
+		{
+			if (bitmap == null) {
+				using (MemoryStream ms = new MemoryStream ()) {
+					Save (ms);
+					// libgdiplus can now decode icons
+					bitmap = (Bitmap) Image.FromStream (ms);
+				}
+			}
+
+			return bitmap;
+		}
+
 		// note: all bitmaps are 32bits ARGB - no matter what the icon format (bitcount) was
 		public Bitmap ToBitmap ()
 		{
-			if (winHandle == IntPtr.Zero)
-				throw new ObjectDisposedException ("handle");
+			if (disposed)
+				throw new ObjectDisposedException (Locale.GetText ("Icon instance was disposed."));
 
-			MemoryStream ms = new MemoryStream ();
-			Save (ms);
-			// libgdiplus can now decode icons
-			using (Image img = Image.FromStream (ms)) {
-				return new Bitmap (img);
-			}
-			// note: we can't return the original image 'img' otherwise the palette, flags won't match MS results
-			// see MonoTests.System.Drawing.Imaging.IconCodecTest.Image16 to see the changes
+			// note: we can't return the original image because
+			// (a) we have no control over the bitmap instance we return (i.e. it could be disposed)
+			// (b) the palette, flags won't match MS results. See MonoTests.System.Drawing.Imaging.IconCodecTest.
+			//     Image16 for the differences
+			return new Bitmap (GetInternalBitmap ());
 		}
 
 		public override string ToString ()
@@ -362,8 +387,16 @@ namespace System.Drawing
 
 		[Browsable (false)]
 		public IntPtr Handle {
-			get { 
-				return winHandle;
+			get {
+				// note: this handle doesn't survive the lifespan of the icon instance
+				if (!disposed && (handle == IntPtr.Zero)) {
+					if (GDIPlus.RunningOnUnix ()) {
+						handle = GetInternalBitmap ().NativeObject;
+					} else {
+						// FIXME - construct a real (win32) icon and return it's handle
+					}
+				}
+				return handle;
 			}
 		}
 
@@ -389,7 +422,7 @@ namespace System.Drawing
 
 		~Icon ()
 		{
-			DisposeIcon ();
+			Dispose ();
 		}
 			
 		private void InitFromStreamWithSize (Stream stream, int width, int height)
@@ -519,7 +552,6 @@ namespace System.Drawing
 			}			
 
 			reader.Close();
-			winHandle = (IntPtr) 1; // fake handle
 		}
 	}
 }
