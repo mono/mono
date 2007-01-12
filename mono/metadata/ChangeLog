@@ -1,3 +1,9 @@
+2007-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (_MonoGenericParam.method): Move ...
+	(_MonoGenericContainer): ... here.  Add into union with klass field.
+	* class.c, icall.c, loader.c, metadata.c, reflection.c:
+	Update to changes.
 
 Fri Jan 12 11:58:52 CET 2007 Paolo Molaro <lupus@ximian.com>
 
