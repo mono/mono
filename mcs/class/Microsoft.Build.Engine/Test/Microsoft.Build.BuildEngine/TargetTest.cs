@@ -165,6 +165,27 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestOnError1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='A'>
+						<OnError ExecuteTargets='B' />
+						<Error Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+		}
+
+		[Test]
 		public void TestRemoveTask1 ()
 		{
                         string documentString = @"

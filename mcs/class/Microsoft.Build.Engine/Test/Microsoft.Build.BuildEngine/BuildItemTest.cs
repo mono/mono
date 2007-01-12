@@ -603,6 +603,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestRemoveMetadata6 ()
 		{
 			Engine engine;
@@ -679,6 +680,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestSetMetadata5 ()
 		{
 			Engine engine;

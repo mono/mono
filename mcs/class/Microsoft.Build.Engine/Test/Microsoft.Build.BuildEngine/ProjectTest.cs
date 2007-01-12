@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
@@ -72,6 +73,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 	[TestFixture]
 	public class ProjectTest {
+
+		/*
+		Import [] GetImports (ImportCollection ic)
+		{
+			List<Import> list = new List<Import> ();
+			foreach (Import i in ic)
+				list.Add (i);
+			return list.ToArray ();
+		}
+		*/
 
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException),
@@ -122,6 +133,31 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (engine, project.ParentEngine, "A6");
 			Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
 			Assert.IsTrue (String.Empty != project.Xml, "A8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestAddNewImport1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup />
+					<ItemGroup />
+					<Target Name='a' />
+					<Import Project='Test/resources/Import.csproj' />
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.AddNewImport ("a", "true");
+			// reevaluation wasn't caused by anything so it has only old import
+			Assert.AreEqual (1, project.Imports.Count, "A1");
 		}
 
 		[Test]

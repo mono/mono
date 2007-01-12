@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
@@ -40,6 +41,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		BuildPropertyGroup	bpg;
 		Engine			engine;
 		Project			project;
+
+		BuildProperty [] GetProperties (BuildPropertyGroup bpg)
+		{
+			List<BuildProperty> list = new List<BuildProperty> ();
+			foreach (BuildProperty bp in bpg)
+				list.Add (bp);
+			return list.ToArray ();
+		}
 		
 		[Test]
 		public void TestAssignment ()
@@ -78,17 +87,21 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestAddNewProperty3 ()
 		{
 			Engine engine;
 			Project project;
-			BuildPropertyGroup [] groups = new BuildPropertyGroup [1];
+			BuildPropertyGroup [] groups = new BuildPropertyGroup [2];
 			XmlDocument xd;
 			XmlNode node;
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<PropertyGroup>
+					</PropertyGroup>
+					<PropertyGroup>
+						<B>$(A)</B>
 					</PropertyGroup>
 				</Project>
 			";
@@ -98,17 +111,20 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.LoadXml (documentString);
 
 			project.PropertyGroups.CopyTo (groups, 0);
-			groups [0].AddNewProperty ("a", "b");
+			Assert.AreEqual ("", project.EvaluatedProperties ["B"].FinalValue, "A0");
+			groups [0].AddNewProperty ("A", "A");
 
 			Assert.AreEqual (1, groups [0].Count, "A1");
-			Assert.AreEqual ("b", project.EvaluatedProperties ["a"].FinalValue, "A2");
+			Assert.AreEqual ("A", project.EvaluatedProperties ["A"].FinalValue, "A2");
+			Assert.AreEqual ("A", project.EvaluatedProperties ["B"].FinalValue, "A3");
 
 			xd = new XmlDocument ();
 			xd.LoadXml (project.Xml);
-			node = xd.SelectSingleNode ("/tns:Project/tns:PropertyGroup/tns:a", TestNamespaceManager.NamespaceManager);
-			Assert.IsNotNull (node, "A3");
+			node = xd.SelectSingleNode ("/tns:Project/tns:PropertyGroup/tns:A", TestNamespaceManager.NamespaceManager);
+			Assert.IsNotNull (node, "A4");
 		}
 
+		// FIXME: what was that supposed to test?
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException),
 			"Properties in persisted property groups cannot be accessed by name.")]
@@ -187,6 +203,26 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestCondition3 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			BuildPropertyGroup [] array = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (array, 0);
+
+			array [0].Condition = "true";
+			Assert.AreEqual ("true", array [0].Condition, "A1");
+		}
+
+		[Test]
 		public void TestGetEnumerator1 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();
@@ -247,6 +283,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("a", bpg ["a"].Name, "A1");
 			Assert.AreEqual ("b", bpg ["b"].Name, "A2");
 			Assert.IsNull (bpg ["something_that_doesnt_exist"], "A3");
+			bpg ["a"].Value = "3";
+			Assert.AreEqual ("3", bpg ["a"].Value, "A4");
 		}
 
 		[Test]
@@ -270,6 +308,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (array, 0);
 
 			Assert.AreEqual ("a", array [0] ["a"].Name, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"Properties in persisted property groups cannot be accessed by name.")]
+		public void TestIndexer3 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<a>1</a>
+                                		<b>2</b>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			BuildPropertyGroup [] array = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (array, 0);
+
+			array [0] ["a"].Value = "3";
 		}
 
 		[Test]
@@ -299,16 +360,129 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			bpg.SetProperty ("c", "d");
 
 			bpg.RemoveProperty ("value_not_in_group");
+			bpg.RemoveProperty (new BuildProperty ("name", "value"));
+
+			BuildProperty bp = bpg ["a"];
+
+			bpg.RemoveProperty (bp);
 		}
 
 		[Test]
 		public void TestRemoveProperty4 ()
 		{
-			BuildPropertyGroup bpg = new BuildPropertyGroup ();
-			bpg.SetProperty ("a", "b");
-			bpg.SetProperty ("c", "d");
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] bpg = new BuildPropertyGroup [1];
+			XmlDocument xd;
+			XmlNode node;
 
-			bpg.RemoveProperty (new BuildProperty ("name", "value"));
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			project.PropertyGroups.CopyTo (bpg, 0);
+
+			bpg [0].RemoveProperty ("A");
+			Assert.AreEqual (0, bpg [0].Count, "A1");
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("/tns:Project/tns:PropertyGroup/tns:A", TestNamespaceManager.NamespaceManager);
+			Assert.IsNull (node, "A3");
+
+			bpg [0].RemoveProperty ("B");
+		}
+
+		[Test]
+		public void TestRemoveProperty5 ()
+		{
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] bpg = new BuildPropertyGroup [1];
+			XmlDocument xd;
+			XmlNode node;
+			BuildProperty [] properties;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A>A</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			project.PropertyGroups.CopyTo (bpg, 0);
+
+			properties = GetProperties (bpg [0]);
+
+			bpg [0].RemoveProperty (properties [0]);
+			Assert.AreEqual (0, bpg [0].Count, "A1");
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("/tns:Project/tns:PropertyGroup/tns:A", TestNamespaceManager.NamespaceManager);
+			Assert.IsNull (node, "A3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"The specified property does not belong to the current property group.")]
+		public void TestRemoveProperty6 ()
+		{
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] bpg = new BuildPropertyGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			project.PropertyGroups.CopyTo (bpg, 0);
+
+			bpg [0].RemoveProperty (new BuildProperty ("A", "b"));
+		}
+
+		[Test]
+		[Ignore ("It doesn't throw an exception on MS .NET 2.0")]
+		public void TestRemoveProperty7 ()
+		{
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] bpg = new BuildPropertyGroup [2];
+			BuildProperty [] properties;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A></A>
+					</PropertyGroup>
+					<PropertyGroup>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			project.PropertyGroups.CopyTo (bpg, 0);
+
+			properties = GetProperties (bpg [0]);
+			bpg [1].RemoveProperty (properties [0]);
+			Assert.AreEqual (1, bpg [0].Count, "A1");
 		}
 
 		[Test]

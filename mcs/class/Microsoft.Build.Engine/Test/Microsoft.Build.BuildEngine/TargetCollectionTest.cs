@@ -97,6 +97,35 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestAddNewTarget3 ()
+		{
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+
+			project.Targets.AddNewTarget ("Name");
+			project.Targets.AddNewTarget ("Name");
+			Assert.AreEqual (1, project.Targets.Count, "A1");
+		}
+
+		[Test]
+		public void TestAddNewTarget4 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Target Name='A' />
+					<Target Name='A' />
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			Assert.AreEqual (1, project.Targets.Count, "A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCopyTo1 ()
 		{
