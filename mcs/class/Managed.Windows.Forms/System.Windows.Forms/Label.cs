@@ -123,7 +123,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		public Label ()
-    		{
+		{
 			// Defaults in the Spec
 			autosize = false;
 			TabStop = false;
@@ -173,7 +173,7 @@ namespace System.Windows.Forms
 				CalcAutoSize ();
 				Refresh ();
 
-				OnAutoSizeChanged (EventArgs.Empty);    				
+				OnAutoSizeChanged (EventArgs.Empty);					
 			}
 		}
 
@@ -182,7 +182,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
-    		set {
+			set {
 				base.BackgroundImage = value;
 				Refresh ();
 			}
@@ -238,11 +238,11 @@ namespace System.Windows.Forms
 				if (image != null) {
 					return image;
 				}
-    				
+					
 				if (image_list != null && ImageIndex >= 0) {
 					return image_list.Images[ImageIndex];
 				}
-    				
+					
 				return null;
 			}
 			set {
@@ -282,11 +282,11 @@ namespace System.Windows.Forms
    				if (ImageList == null) {
    					return -1;
    				}
-    				
+					
    				if (image_index >= image_list.Images.Count) {
    					return image_list.Images.Count - 1;
    				}
-    				
+					
    				return image_index;
    			}
    			set {
@@ -353,7 +353,7 @@ namespace System.Windows.Forms
 			get { return render_transparent; }
 			set { render_transparent = value;}
 		}
-    		
+			
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -371,22 +371,22 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
-    				if (text_align != value) {
+					if (text_align != value) {
 
-	    				text_align = value;
+						text_align = value;
 
-	    				switch (value) {
+						switch (value) {
 
-	    				case ContentAlignment.BottomLeft:
-	    					string_format.LineAlignment = StringAlignment.Far;
-	    					string_format.Alignment = StringAlignment.Near;
-	    					break;
-	    				case ContentAlignment.BottomCenter:
-	    					string_format.LineAlignment = StringAlignment.Far;
-	    					string_format.Alignment = StringAlignment.Center;
-	    					break;
-	    				case ContentAlignment.BottomRight:
-	    					string_format.LineAlignment = StringAlignment.Far;
+						case ContentAlignment.BottomLeft:
+							string_format.LineAlignment = StringAlignment.Far;
+							string_format.Alignment = StringAlignment.Near;
+							break;
+						case ContentAlignment.BottomCenter:
+							string_format.LineAlignment = StringAlignment.Far;
+							string_format.Alignment = StringAlignment.Center;
+							break;
+						case ContentAlignment.BottomRight:
+							string_format.LineAlignment = StringAlignment.Far;
 						string_format.Alignment = StringAlignment.Far;
 						break;
 					case ContentAlignment.TopLeft:
@@ -405,20 +405,20 @@ namespace System.Windows.Forms
 						string_format.LineAlignment = StringAlignment.Center;
 						string_format.Alignment = StringAlignment.Near;
 						break;
-	    				case ContentAlignment.MiddleRight:
-	    					string_format.LineAlignment = StringAlignment.Center;
-	    					string_format.Alignment = StringAlignment.Far;
-	    					break;
-	    				case ContentAlignment.MiddleCenter:
-	    					string_format.LineAlignment = StringAlignment.Center;
-	    					string_format.Alignment = StringAlignment.Center;
+						case ContentAlignment.MiddleRight:
+							string_format.LineAlignment = StringAlignment.Center;
+							string_format.Alignment = StringAlignment.Far;
+							break;
+						case ContentAlignment.MiddleCenter:
+							string_format.LineAlignment = StringAlignment.Center;
+							string_format.Alignment = StringAlignment.Center;
 						break;
 					default:
 						break;
 					}
 
 					OnTextAlignChanged (EventArgs.Empty);
-    					Refresh();
+						Refresh();
 				}
 			}
    		}
@@ -441,7 +441,7 @@ namespace System.Windows.Forms
 
 		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
 		{
-    			Rectangle rcImageClip = area;
+				Rectangle rcImageClip = area;
 			rcImageClip.Inflate (-2,-2);
 
 			int X = area.X;
@@ -535,7 +535,7 @@ namespace System.Windows.Forms
 
    		protected override void OnParentChanged (EventArgs e)
    		{
-    			base.OnParentChanged (e);
+				base.OnParentChanged (e);
    		}
 
    		protected virtual void OnTextAlignChanged (EventArgs e)
@@ -610,7 +610,7 @@ namespace System.Windows.Forms
    			CalcPreferredHeight ();
 
    		 	Width =  PreferredWidth;
-   		 	Height =  PreferredHeight;    		 	
+   		 	Height =  PreferredHeight;			 	
    		}
 
 		private void CalcPreferredHeight ()
