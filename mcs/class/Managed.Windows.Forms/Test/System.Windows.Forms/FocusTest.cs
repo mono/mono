@@ -97,9 +97,12 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // this relies on the fact that form.Show synchronously generated WM_ACTIVATE on ms .net
 		public void ControlSelectNextFlatTest ()
 		{
+			if (RunningOnUnix) {
+				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+			}
+
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
 
@@ -819,9 +822,12 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // relies on form.Show() synchronously generating WM_ACTIVATE
 		public void ActiveControl ()
 		{
+			if (RunningOnUnix) {
+				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+			}
+
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
 
@@ -1183,7 +1189,14 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 
 			form.Dispose ();
 		}
+
+		private bool RunningOnUnix {
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
+		}
 	}
-
 }
-

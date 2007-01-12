@@ -495,9 +495,12 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.CategoryAttribute ("NotWorking")] // works on windows but not mono+linux, since f.Show() is async there.
 		public void OnActivateEventHandlingTest1 ()
 		{
+			if (RunningOnUnix) {
+				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+			}
+
 			SwallowOnActivated f = new SwallowOnActivated ();
 
 			f.ShowInTaskbar = false;
@@ -545,5 +548,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Closing;FormClosing [Reason:UserClosing - Cancel:True]", events, "A1");
 		}
 #endif
+
+		private bool RunningOnUnix {
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
+		}
 	}
 }
