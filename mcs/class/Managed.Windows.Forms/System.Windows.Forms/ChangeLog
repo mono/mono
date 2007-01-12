@@ -1,5 +1,10 @@
 2007-01-11  Everaldo Canuto  <everaldo@simios.org>
 
+	* Form.cs: When process WM_NCCALCSIZE message use ClienSize.Width
+	to calculate menu bar size. Fixes #80290.
+
+2007-01-11  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: Fix position of menuitem check mark.
 
 2007-01-11  Chris Toshok  <toshok@ximian.com>

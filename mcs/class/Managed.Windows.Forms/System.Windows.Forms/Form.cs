@@ -2046,7 +2046,7 @@ namespace System.Windows.Forms {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
 						// Adjust for menu
-						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, ActiveMenu, ncp.rgrc1.right - ncp.rgrc1.left);
+						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, ActiveMenu, ClientSize.Width);
 						Marshal.StructureToPtr(ncp, m.LParam, true);
 					}
 					DefWndProc(ref m);
