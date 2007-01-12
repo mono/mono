@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -272,6 +272,7 @@ namespace Mono.Security.Authenticode {
 				int addsize = (filesize & 7);
 				if (addsize > 0)
 					addsize = 8 - addsize;
+
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
 				byte[] data = BitConverterLE.GetBytes (filesize + addsize);
 				file[PEOffset + 152] = data[0];
@@ -279,7 +280,10 @@ namespace Mono.Security.Authenticode {
 				file[PEOffset + 154] = data[2];
 				file[PEOffset + 155] = data[3];
 				int size = asn.Length + 8;
-				data = BitConverterLE.GetBytes (size);
+				int addsize_signature = (size & 7);
+				if (addsize_signature > 0)
+					addsize_signature = 8 - addsize_signature;
+				data = BitConverterLE.GetBytes (size + addsize_signature);
 				file[PEOffset + 156] = data[0];
 				file[PEOffset + 157] = data[1];
 				file[PEOffset + 158] = data[2];
@@ -294,6 +298,10 @@ namespace Mono.Security.Authenticode {
 				data = BitConverterLE.GetBytes (0x00020200);	// magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
+				if (addsize_signature > 0) {
+					byte[] fillup = new byte[addsize_signature];
+					fs.Write (fillup, 0, fillup.Length);
+				}
 				fs.Close ();
 			}
 			return true;

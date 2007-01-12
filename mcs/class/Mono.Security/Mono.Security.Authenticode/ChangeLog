@@ -1,3 +1,9 @@
+2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: The ASN.1 structure must be padded to a
+	multiple of 8 bytes, else the signature is invalid - even if the hash 
+	is correct!
+
 2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: Support (strip) COFF symbol table when 
