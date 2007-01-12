@@ -5539,17 +5539,17 @@ namespace System.Windows.Forms
 			}
 
 			case MenuGlyph.Checkmark: {
-				int			Scale;
+				
 				Pen pen = ResPool.GetPen (color);
+				lineWidth = Math.Max (2, rectangle.Width / 6);
+				rect = new Rectangle(rectangle.X + lineWidth, rectangle.Y + lineWidth, rectangle.Width - lineWidth * 2, rectangle.Height- lineWidth * 2);
 
-				lineWidth=Math.Max(2, rectangle.Width/6);
-				Scale=Math.Max(1, rectangle.Width/12);
-
-				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+				int Scale = Math.Max (1, rectangle.Width / 12);
+				int top = (rect.Y + lineWidth + ((rect.Height - ((2 * Scale) + lineWidth)) / 2));
 
 				for (int i=0; i<lineWidth; i++) {
-					graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
-					graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+					graphics.DrawLine (pen, rect.Left+lineWidth/2, top+i, rect.Left+lineWidth/2+2*Scale, top+2*Scale+i);
+					graphics.DrawLine (pen, rect.Left+lineWidth/2+2*Scale, top+2*Scale+i, rect.Left+lineWidth/2+6*Scale, top-2*Scale+i);
 				}
 				return;
 			}
