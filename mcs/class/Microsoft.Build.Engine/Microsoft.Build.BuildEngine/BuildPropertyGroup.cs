@@ -201,18 +201,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Evaluate ()
 		{
-			if (!FromXml) {
-				throw new InvalidOperationException ();
-			}
-			foreach (BuildProperty bp in properties) {
-				if (bp.Condition == String.Empty)
+			foreach (BuildProperty bp in properties)
+				if (ConditionParser.ParseAndEvaluate (bp.Condition, parentProject))
 					bp.Evaluate ();
-				else {
-					ConditionExpression ce = ConditionParser.ParseCondition (bp.Condition);
-					if (ce.BoolEvaluate (parentProject))
-						bp.Evaluate ();
-				}
-			}
 		}
 		
 		public string Condition {

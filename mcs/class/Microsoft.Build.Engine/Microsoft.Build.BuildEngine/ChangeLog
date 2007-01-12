@@ -1,3 +1,14 @@
+2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>\
+
+	* ImportCollection.cs: Don't add imports that are already added.
+
+	* BuildItemGroup.cs: MonoTODOs.
+
+	* ConditionParser.cs (ParseAndEvaluate): Throw an exception when
+	condition can't be evaluated to bool.
+
+	* BuildPropertyGroup.cs (Evaluate): Simplify.
+
 2007-01-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildWhen.cs: Moved BindToXml () code to ctor.

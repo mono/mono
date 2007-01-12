@@ -37,15 +37,20 @@ namespace Microsoft.Build.BuildEngine {
 	public class ImportCollection : ICollection, IEnumerable {
 		
 		GroupingCollection groupingCollection;
+		Dictionary <string, object> filenames;
 		
 		internal ImportCollection (GroupingCollection groupingCollection)
 		{
 			this.groupingCollection = groupingCollection;
+			filenames = new Dictionary <string, object> ();
 		}
 		
 		internal void Add (Import import)
 		{
-			groupingCollection.Add (import);
+			if (!filenames.ContainsKey (import.ProjectPath)) {
+				groupingCollection.Add (import);
+				filenames.Add (import.ProjectPath, null);
+			}
 		}
 		
 		public void CopyTo (Array array, int index)

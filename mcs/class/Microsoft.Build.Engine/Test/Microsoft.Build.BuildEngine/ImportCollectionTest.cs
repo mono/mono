@@ -56,7 +56,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAdd2 ()
 		{
                         string documentString = @"

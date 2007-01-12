@@ -124,11 +124,13 @@ namespace Microsoft.Build.BuildEngine {
 			return buildItems.GetEnumerator ();
 		}
 
+		[MonoTODO ("Doesn't remove item from XML")]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
 			buildItems.Remove (itemToRemove);
 		}
 
+		[MonoTODO ("Doesn't remove item from XML")]
 		public void RemoveItemAt (int index)
 		{
 			buildItems.RemoveAt (index);

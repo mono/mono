@@ -39,11 +39,24 @@ namespace Microsoft.Build.BuildEngine {
 	
 		ConditionTokenizer tokenizer = new ConditionTokenizer ();
 		
-		private ConditionParser (string condition)
+		ConditionParser (string condition)
 		{
 			tokenizer.Tokenize (condition);
 		}
 		
+		public static bool ParseAndEvaluate (string condition, Project context)
+		{
+			if (String.IsNullOrEmpty (condition))
+				return true;
+
+			ConditionExpression ce = ParseCondition (condition);
+
+			if (!ce.CanEvaluateToBool (context))
+				throw new InvalidProjectFileException (String.Format ("Can not evaluate \"{0}\" to bool.", condition));
+
+			return ce.BoolEvaluate (context);
+		}
+
 		public static ConditionExpression ParseCondition (string condition)
 		{
 			ConditionParser parser = new ConditionParser (condition);
@@ -54,31 +67,18 @@ namespace Microsoft.Build.BuildEngine {
 			
 			return e;
 		}
-
-		public static bool ParseAndEvaluate (string condition, Project context)
-		{
-			if (String.IsNullOrEmpty (condition))
-				return true;
-
-			ConditionExpression ce = ParseCondition (condition);
-
-			if (!ce.CanEvaluateToBool (context))
-				return false;
-
-			return ce.BoolEvaluate (context);
-		}
 		
-		private ConditionExpression ParseExpression ()
+		ConditionExpression ParseExpression ()
 		{
 			return ParseBooleanExpression ();
 		}
 		
-		private ConditionExpression ParseBooleanExpression ()
+		ConditionExpression ParseBooleanExpression ()
 		{
 			return ParseBooleanAnd ();
 		}
 		
-		private ConditionExpression ParseBooleanAnd ()
+		ConditionExpression ParseBooleanAnd ()
 		{
 			ConditionExpression e = ParseBooleanOr ();
 			
@@ -90,7 +90,7 @@ namespace Microsoft.Build.BuildEngine {
 			return e;
 		}
 		
-		private ConditionExpression ParseBooleanOr ()
+		ConditionExpression ParseBooleanOr ()
 		{
 			ConditionExpression e = ParseRelationalExpression ();
 			
@@ -102,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 			return e;
 		}
 		
-		private ConditionExpression ParseRelationalExpression ()
+		ConditionExpression ParseRelationalExpression ()
 		{
 			ConditionExpression e = ParseFactorExpression ();
 			Token opToken;
@@ -148,7 +148,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		// FIXME: parse sub expression in parens, parse TokenType.Not, parse functions
-		private ConditionExpression ParseFactorExpression ()
+		ConditionExpression ParseFactorExpression ()
 		{
 			Token token = tokenizer.Token;
 			tokenizer.GetNextToken ();

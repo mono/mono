@@ -258,6 +258,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNull (proj.EvaluatedProperties ["D"], "A4");
 			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
 		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestIncorrectCondition1 ()
