@@ -350,14 +350,19 @@ namespace MonoTests.System.Windows.Forms {
 #endif
 			};
 
-			Assert.AreEqual(LinkLabel_want, GetStyles(new LinkLabel()), "LinkLabelStyles");
+			LinkLabel link = new LinkLabel ();
+
+			// Test LinkLabel without text and without links
+			Assert.AreEqual(LinkLabel_want, GetStyles(link), "#1");
+
+			// Test LinkLabel with only text
+			link.Text = "Users need not fear making the switch to Linux";
+			link.Links.Clear ();
+			Assert.AreEqual (LinkLabel_want, GetStyles (link), "#2");
 
 			// Test LinkLabel with a link
-			LinkLabel link = new LinkLabel();
-			link.Text = "Users need not fear making the switch to Linux";
-                        link.Links.Add (6,9, "http://link1");
-			Assert.AreEqual(LinkLabel_link_want, GetStyles(link), "LinkLabelStyles2");
-
+			link.Links.Add (6, 9, "http://link1");
+			Assert.AreEqual(LinkLabel_link_want, GetStyles(link), "#3");
 		}
 
 		[Test]
