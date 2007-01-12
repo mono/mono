@@ -519,6 +519,25 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			signedXml.ComputeSignature ();
 		}
 
+		[Test]
+		public void DataReferenceToNonDataObject ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo Id='id:1'/>");
+			SignedXml signedXml = new SignedXml (doc);
+			DSA key = DSA.Create ();
+			signedXml.SigningKey = key;
+
+			Reference reference = new Reference ();
+			reference.Uri = "#id:1";
+
+			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
+			reference.AddTransform (t);
+			signedXml.AddReference (reference);
+
+			signedXml.ComputeSignature ();
+		}
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // bug #79483

@@ -146,6 +146,8 @@ public class MyClass {
 			SignedXml s = null;
 			if (filename.IndexOf ("enveloped") >= 0)
 				s = new SignedXml (doc);
+			else if (filename.IndexOf ("signature-big") >= 0)
+				s = new SignedXml (doc);
 			else
 				s = new SignedXml ();
 

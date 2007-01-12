@@ -1,3 +1,7 @@
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmldsig.cs : signature-big.xml also depends on the input document.
+
 2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : Fixed reference to Mono.Security.dll. Added decent-reader

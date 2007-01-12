@@ -314,17 +314,25 @@ namespace System.Security.Cryptography.Xml {
 					}
 				}
 				if (objectName != null) {
-					bool found = false;
+					XmlElement found = null;
 					foreach (DataObject obj in m_signature.ObjectList) {
 						if (obj.Id == objectName) {
-							XmlElement xel = obj.GetXml ();
-							doc.LoadXml (xel.OuterXml);
-							FixupNamespaceNodes (xel, doc.DocumentElement);
-							found = true;
+							found = obj.GetXml ();
 							break;
 						}
 					}
-					if (!found)
+					if (found == null && envdoc != null) {
+						foreach (XmlElement el in envdoc.SelectNodes ("//*[@Id]"))
+							if (el.GetAttribute ("Id") == objectName) {
+								found = el;
+								break;
+							}
+					}
+					if (found != null) {
+						doc.LoadXml (found.OuterXml);
+						FixupNamespaceNodes (found, doc.DocumentElement);
+					}
+					else
 						throw new CryptographicException (String.Format ("Malformed reference object: {0}", objectName));
 				}
 			}

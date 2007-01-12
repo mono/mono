@@ -1,5 +1,11 @@
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SignedXml.cs : when there is an envelope document and no referenced
+	  DataObject was found, then look for the target element from the
+	  envelope.
+
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataObject.cs : don't clear attributes or children unnecessarily.
 
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>

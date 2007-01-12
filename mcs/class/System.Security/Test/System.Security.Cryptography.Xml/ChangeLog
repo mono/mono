@@ -1,5 +1,9 @@
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SignedXmlTest.cs : added DataReferenceToNonDataObject().
+
+2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataObjectTest.cs : test to make sure to not clear attributes or
 	  children unnecessarily.
 
