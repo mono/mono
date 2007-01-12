@@ -1,3 +1,9 @@
+
+Fri Jan 12 11:58:52 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, class-internals.h, debug-helpers.c: consolidate
+	the wrapper type enum and reduce relocations.
+
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (inflate_mono_method): Reuse method instantiation
