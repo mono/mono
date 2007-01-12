@@ -175,29 +175,13 @@ namespace System.Drawing.Imaging {
 
 		public void SetColorMatrix (ColorMatrix colorMatrix) 
 		{
-			IntPtr cm = ColorMatrix.Alloc (colorMatrix);
-			try {
-				Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr, 
-					ColorAdjustType.Default, true, cm, IntPtr.Zero, ColorMatrixFlag.Default);
-				GDIPlus.CheckStatus (status);
-			}
-			finally {
-				ColorMatrix.Free (cm);
-			}
+			SetColorMatrix (colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Default);
 		}
 
 		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]
 		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) 
 		{
-			IntPtr cm = ColorMatrix.Alloc (colorMatrix);
-			try {
-				Status status = GDIPlus.GdipSetImageAttributesColorMatrix (nativeImageAttr,
-					ColorAdjustType.Default, true, cm, IntPtr.Zero, colorMatrixFlag);
-				GDIPlus.CheckStatus (status);
-			}
-			finally {
-				ColorMatrix.Free (cm);
-			}
+			SetColorMatrix (colorMatrix, colorMatrixFlag, ColorAdjustType.Default);
 		}
 
 		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]

@@ -1,3 +1,7 @@
+2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttribute.cs: Reuse code in SetColorMatrix overloads.
+
 2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageCodecInfo.cs: Remove MonoTODO on SignaturePatterns.
