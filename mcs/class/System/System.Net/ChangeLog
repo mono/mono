@@ -1,6 +1,9 @@
 2007-01-11  Miguel de Icaza  <miguel@novell.com>
 
-	* HttpListenerRequest.cs: Allow any verbs to go through, not only
+	* HttpListenerRequest.cs (SetRequestLine): Add validation for the
+	verbs. 
+
+	Allow any verbs to go through, not only
 	the white list of verbs.
 
 	Fixes: 80504

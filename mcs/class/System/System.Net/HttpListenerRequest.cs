@@ -81,6 +81,20 @@ namespace System.Net {
 			}
 
 			method = parts [0];
+			foreach (char c in method){
+				int ic = (int) c;
+
+				if ((ic >= 'A' && ic <= 'Z') ||
+				    (ic >= 'a' && ic <= 'z') ||
+				    (ic > 32 && c < 127 && c != '(' && c != ')' && c != '<' &&
+				     c != '<' && c != '>' && c != '@' && c != ',' && c != ';' &&
+				     c != ':' && c != '\\' && c != '"' && c != '/' && c != '[' &&
+				     c != ']' && c != '?' && c != '=' && c != '{' && c != '}'))
+					continue;
+
+				context.ErrorMessage = "(Invalid verb)";
+				return;
+			}
 			
 #if false
 			//

@@ -128,13 +128,40 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Test3 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test3/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "MET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"); // bad method
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 400"));
+			StringBuilder bad = new StringBuilder ();
+			for (int i = 0; i < 33; i++){
+				if (i != 13)
+					bad.Append ((char) i);
+			}
+			bad.Append ('(');
+			bad.Append (')');
+			bad.Append ('[');
+			bad.Append (']');
+			bad.Append ('<');
+			bad.Append ('>');
+			bad.Append ('@');
+			bad.Append (',');
+			bad.Append (';');
+			bad.Append (':');
+			bad.Append ('\\');
+			bad.Append ('"');
+			bad.Append ('/');
+			bad.Append ('?');
+			bad.Append ('=');
+			bad.Append ('{');
+			bad.Append ('}');
+
+			foreach (char b in bad.ToString ()){
+				HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test3/");
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, String.Format ("MA{0} / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n", b)); // bad method
+				
+				string response = Receive (ns, 512);
+				ns.Close ();
+				listener.Close ();
+				Console.WriteLine ("Response is: {0}", response);
+				Assert.AreEqual (true, response.StartsWith ("HTTP/1.1 400"), String.Format ("Failed on {0}", (int) b));
+			}
 		}
 
 		[Test]
@@ -354,6 +381,21 @@ namespace MonoTests.System.Net {
 			Assert.IsTrue (eights == read_to_end, "Wrong data");
 			c.Response.Close ();
 			ns.Close ();
+		}
+
+		[Test]
+		public void Test17 ()
+		{
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test17/");
+			NetworkStream ns = CreateNS (9000);
+			Send (ns, "RANDOM /test17/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			HttpListenerContext ctx = listener.GetContext ();
+			Send (ctx.Response.OutputStream, "%%%OK%%%");
+			string response = Receive (ns, 1024);
+			ns.Close ();
+			listener.Close ();
+			Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
+			Assert.IsTrue (-1 != response.IndexOf ("Transfer-Encoding: chunked"));
 		}
 	}
 
