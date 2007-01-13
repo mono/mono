@@ -1584,6 +1584,14 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestTopLevelAdd () {
+			Form f = new Form();
+			Form f1 = new Form();
+			f.Controls.Add(f1);
+		}
+		
+		[Test]
 		public void TestForm ()
 		{
 			Form f = new Form ();
