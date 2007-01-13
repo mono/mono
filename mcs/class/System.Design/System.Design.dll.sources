@@ -5,6 +5,13 @@ Assembly/AssemblyInfo.cs
 System.ComponentModel.Design/ArrayEditor.cs
 System.ComponentModel.Design/BinaryEditor.cs
 System.ComponentModel.Design/CollectionEditor.cs
+System.ComponentModel.Design/DesignerActionHeaderItem.cs
+System.ComponentModel.Design/DesignerActionItem.cs
+System.ComponentModel.Design/DesignerActionItemCollection.cs
+System.ComponentModel.Design/DesignerActionList.cs
+System.ComponentModel.Design/DesignerActionMethodItem.cs
+System.ComponentModel.Design/DesignerActionPropertyItem.cs
+System.ComponentModel.Design/DesignerActionTextItem.cs
 System.ComponentModel.Design/DisplayMode.cs
 System.ComponentModel.Design/ByteViewer.cs
 System.ComponentModel.Design/ComponentDesigner.cs
