@@ -30,8 +30,8 @@ namespace System.Web.UI.Design
 	[MonoTODO]
 	public class ControlDesigner : HtmlControlDesigner
 	{
-		[MonoTODO]
-		public ControlDesigner () { throw new NotImplementedException (); }
+		public ControlDesigner () {  }
+		
 		[MonoTODO]
 		protected string CreatePlaceHolderDesignTimeHtml () { throw new NotImplementedException (); }
 		[MonoTODO]

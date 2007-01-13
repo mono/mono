@@ -1,3 +1,7 @@
+2007-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* ControlDesigner.cs: Remove TODO/NIEX from this method.
+
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
 	* IDataSourceFieldSchema.cs: New.  Used by dll in #79012 testcase.
