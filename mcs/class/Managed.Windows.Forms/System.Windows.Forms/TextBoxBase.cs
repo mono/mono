@@ -1987,9 +1987,9 @@ namespace System.Windows.Forms {
 			return line_out.LineNo;
 		}
 
-		protected override void OnMouseUp (MouseButtonEventArgs e)
+		protected override void OnMouseUp (MouseEventArgs e)
 		{
-			return base.OnMouseUp (e);
+			base.OnMouseUp (e);
 		}
 
 #endif
