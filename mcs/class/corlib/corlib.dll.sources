@@ -10,7 +10,10 @@ Microsoft.Win32/RegistryValueOptions.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
+Microsoft.Win32.SafeHandles/CriticalHandleZeroOrMinusOneIsInvalid.cs
+Microsoft.Win32.SafeHandles/CriticalHandleMinusOneIsInvalid.cs
 Microsoft.Win32.SafeHandles/SafeHandleZeroOrMinusOneIsInvalid.cs
+Microsoft.Win32.SafeHandles/SafeHandleMinusOneIsInvalid.cs
 Microsoft.Win32.SafeHandles/SafeFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeWaitHandle.cs
 Mono.Globalization.Unicode/CodePointIndexer.cs

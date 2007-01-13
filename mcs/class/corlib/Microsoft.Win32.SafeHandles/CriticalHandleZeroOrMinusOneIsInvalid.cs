@@ -1,10 +1,11 @@
 //
-// Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid
+// Microsoft.Win32.SafeHandles.CriticalHandleZeroOrMinusOneIsInvalid
 //
 // Author
 //	 Zoltan Varga (vargaz@gmail.com)
+//       Miguel de Icaza (miguel@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,13 +34,13 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.Win32.SafeHandles {
 
-	public abstract class SafeHandleZeroOrMinusOneIsInvalid : SafeHandle, IDisposable {
-		protected SafeHandleZeroOrMinusOneIsInvalid (bool ownsHandle) : base ((IntPtr) 0, ownsHandle) {
+	public abstract class CriticalHandleZeroOrMinusOneIsInvalid : CriticalHandle, IDisposable {
+		protected CriticalHandleZeroOrMinusOneIsInvalid () : base ((IntPtr) (-1)) {
 		}
 
 		public override bool IsInvalid {
 			get {
-				return handle == (IntPtr)(-1) || handle == (IntPtr) 0;
+				return handle == (IntPtr)(-1) || handle == IntPtr.Zero;
 			}
 		}
 	}
