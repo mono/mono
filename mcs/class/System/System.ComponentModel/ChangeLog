@@ -1,3 +1,7 @@
+2007-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* DataObjectFieldAttribute.cs: Add new file.
+
 2007-01-11  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Add error 50 (ERROR_NOT_SUPPORTED)

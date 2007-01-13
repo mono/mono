@@ -188,6 +188,7 @@ namespace System.Diagnostics {
 		}
 
 		// FIXME: From testing .NET, this method should display a dialog
+		//(it probably depends on the listener)p
 		[MonoTODO]
 		public static void Fail (string message)
 		{
@@ -199,6 +200,7 @@ namespace System.Diagnostics {
 		}
 
 		// FIXME: From testing .NET, this method should display a dialog
+		// (it probably depends on the listener)p
 		[MonoTODO]
 		public static void Fail (string message, string detailMessage)
 		{

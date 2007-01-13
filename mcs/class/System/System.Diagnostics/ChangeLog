@@ -1,3 +1,7 @@
+2007-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* Trace.cs: Add a number of 2.0 overloads.
+
 2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Process.cs: Allow GetProcesses and GetProcessById overloads with 

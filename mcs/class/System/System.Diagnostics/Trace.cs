@@ -33,6 +33,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace System.Diagnostics {
 
@@ -213,6 +214,49 @@ namespace System.Diagnostics {
 		{
 			TraceImpl.WriteLineIf (condition, message, category);
 		}
+
+#if NET_2_0
+		void DoTrace (string kind, Assembly report, string message)
+		{
+			TraceImpl.WriteLine (String.Format ("{0} {1} : 0 : {2}", report.Location, kind, message));
+		}
+		
+		[Conditional("TRACE")]
+		public static void TraceError (string message)
+		{
+			DoTrace ("Error", Assembly.GetCallingAssembly (), message);
+		}
+
+		[Conditional("TRACE")]
+		public static void TraceError (string message, params object [] args)
+		{
+			DoTrace ("Error", Assembly.GetCallingAssembly (), String.Format (message, args));
+		}
+
+		[Conditional("TRACE")]
+		public static void TraceInformation (string message)
+		{
+			DoTrace ("Information", Assembly.GetCallingAssembly (), message);
+		}
+
+		[Conditional("TRACE")]
+		public static void TraceInformation (string message, params object [] args)
+		{
+			DoTrace ("Information", Assembly.GetCallingAssembly (), String.Format (message, args));
+		}
+
+		[Conditional("TRACE")]
+		public static void TraceWarning (string message)
+		{
+			DoTrace ("Warning", Assembly.GetCallingAssembly (), message);
+		}
+
+		[Conditional("TRACE")]
+		public static void TraceWarning (string message, params object [] args)
+		{
+			DoTrace ("Warning", Assembly.GetCallingAssembly (), String.Format (message, args));
+		}
+#endif
 	}
 }
 
