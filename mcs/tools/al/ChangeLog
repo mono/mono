@@ -1,3 +1,8 @@
+2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile: Make profile-specific.
+	 (CLEAN_FILES): Add 'al.exe' and 'al.exe.mdb'.
+
 2005-08-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Al.cs: Use AssemblyBuilder.AddResourceFile instead of
