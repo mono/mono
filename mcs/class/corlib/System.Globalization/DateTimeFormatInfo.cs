@@ -50,7 +50,10 @@ namespace System.Globalization
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
 		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
-
+#if NET_2_0
+		static readonly string [] INVARIANT_SHORT_DAY_NAMES =
+			new string [7] {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+#endif
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		//
@@ -91,6 +94,7 @@ namespace System.Globalization
 		private string [] allLongTimePatterns;
 		private string [] monthDayPatterns;
 		private string [] yearMonthPatterns;
+		private string [] shortDayNames;
 
 		//
 		// END OF BIG FAT WARNING
@@ -146,6 +150,9 @@ namespace System.Globalization
 			dayNames = INVARIANT_DAY_NAMES;
 			abbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
 			monthNames = INVARIANT_MONTH_NAMES;
+#if NET_2_0
+			shortDayNames = INVARIANT_SHORT_DAY_NAMES;
+#endif
 		}
 				
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)
@@ -744,10 +751,33 @@ namespace System.Globalization
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO ("NotImplemented")]
+		public string [] ShortestDayNames {
+			get {
+				return shortDayNames;
+			}
+
+			set {
+				if (value == null)
+					throw new ArgumentNullException ();
+
+				if (value.Length != 7)
+					throw new ArgumentException ("Array must have 7 entries");
+				
+				for (int i = 0; i < 7; i++)
+					if (value [i] == null)
+						throw new ArgumentNullException (String.Format ("Element {0} is null", i));
+				
+				shortDayNames = value;
+			}
+		}
+
 		public string GetShortestDayName (DayOfWeek dayOfWeek)
 		{
-			throw new NotImplementedException ();
+			int index = (int) dayOfWeek;
+			if (index < 0 || index > 6)
+				throw new ArgumentOutOfRangeException();
+
+			return shortDayNames [index];
 		}
 
 		[MonoTODO ("NotImplemented")]

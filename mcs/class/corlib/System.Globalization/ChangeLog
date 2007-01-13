@@ -1,3 +1,9 @@
+2007-01-12  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTimeFormatInfo.cs: Add support for shortest day names.
+	Notice that there is no support in the runtime to actually load
+	this information from any place.   So they are all english values.
+
 2007-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : GetSortKey() does not allow Ordinal and 
