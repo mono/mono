@@ -1986,6 +1986,12 @@ namespace System.Windows.Forms {
 
 			return line_out.LineNo;
 		}
+
+		protected override void OnMouseUp (MouseButtonEventArgs e)
+		{
+			return base.OnMouseUp (e);
+		}
+
 #endif
 	}
 }

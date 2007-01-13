@@ -418,6 +418,11 @@ namespace System.Windows.Forms {
 				base.Multiline = value;
 			}
 		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+		}
 #endif
 	}
 }
