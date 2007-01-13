@@ -80,6 +80,7 @@ System.IO/StreamWriterTest.cs
 System.IO/StringReaderTest.cs
 System.IO/StringWriterTest.cs
 System.IO/TextWriterTest.cs
+System.IO/UnmanagedMemoryStreamTest.cs
 System.IO.IsolatedStorage/IsolatedStorageTest.cs
 System.IO.IsolatedStorage/IsolatedStorageFileTest.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStreamTest.cs
