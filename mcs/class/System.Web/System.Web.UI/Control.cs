@@ -763,7 +763,7 @@ namespace System.Web.UI
 			}
                 }
 
-		[MonoTODO("Secure?")]
+		// [MonoTODO("Secure?")]
                 protected string MapPathSecure(string virtualPath)
                 {
 			string combined = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
