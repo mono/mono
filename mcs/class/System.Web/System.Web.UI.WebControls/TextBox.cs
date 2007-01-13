@@ -134,7 +134,6 @@ namespace System.Web.UI.WebControls {
 #endif
 		}
 
-		[MonoTODO ("Am I missing something here")]
 #if NET_2_0
 		protected internal
 #else		
