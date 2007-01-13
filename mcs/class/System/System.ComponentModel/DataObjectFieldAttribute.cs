@@ -64,13 +64,6 @@ namespace System.ComponentModel
 			this.length = length;
 		}
 		
-
-		public override bool Match (object obj) {
-			if (!(obj is DataObjectFieldAttribute))
-				return false;
-			return ((DataObjectFieldAttribute) obj).MethodType == MethodType;
-		}
-
 		public override bool Equals (object obj)
 		{
 			DataObjectFieldAttribute other = obj as DataObjectFieldAttribute;

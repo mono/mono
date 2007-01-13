@@ -216,7 +216,7 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
-		void DoTrace (string kind, Assembly report, string message)
+		static void DoTrace (string kind, Assembly report, string message)
 		{
 			TraceImpl.WriteLine (String.Format ("{0} {1} : 0 : {2}", report.Location, kind, message));
 		}
