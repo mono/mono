@@ -2100,9 +2100,9 @@ namespace Mono.CSharp {
 
 		// TODO: I am still not convinced about this. If someone else will need it
 		// implement this as virtual property in MemberCore hierarchy
-		string GetMemberType (MemberCore mc)
+		public static string GetMemberType (MemberCore mc)
 		{
-			if (mc is PropertyBase)
+			if (mc is Property)
 				return "property";
 			if (mc is Indexer)
 				return "indexer";
@@ -2112,6 +2112,8 @@ namespace Mono.CSharp {
 				return "method";
 			if (mc is EnumMember)
 				return "enum";
+			if (mc is Event)
+				return "event";
 
 			return "type";
 		}
@@ -3941,15 +3943,13 @@ namespace Mono.CSharp {
 
 			if (EventInfo.DeclaringType == ec.ContainerType ||
 			    TypeManager.IsNestedChildOf(ec.ContainerType, EventInfo.DeclaringType)) {
-				MemberInfo mi = TypeManager.GetPrivateFieldOfEvent (EventInfo);
+				EventField mi = TypeManager.GetEventField (EventInfo);
 
 				if (mi != null) {
-					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec.ContainerType, mi, loc);
+					if (!ec.IsInObsoleteScope)
+						mi.CheckObsoleteness (loc);
 
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
+					FieldExpr ml = new FieldExpr (mi.FieldBuilder, loc);
 
 					InstanceExpression = null;
 				

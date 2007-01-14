@@ -1086,7 +1086,7 @@ namespace Mono.CSharp {
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
 
 			case UnmanagedType.ByValArray:
-				FieldMember fm = attr as FieldMember;
+				FieldBase fm = attr as FieldBase;
 				if (fm == null) {
 					Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
 					return null;
@@ -1657,6 +1657,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static IFixedBuffer GetFixedBuffer (FieldInfo fi)
 		{
+			// Fixed buffer helper type is generated as value type
+			if (!fi.FieldType.IsValueType)
+				return null;
+
 			FieldBase fb = TypeManager.GetField (fi);
 			if (fb != null) {
 				return fb as IFixedBuffer;

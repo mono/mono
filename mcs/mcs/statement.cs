@@ -1102,7 +1102,7 @@ namespace Mono.CSharp {
 			}
 
 			if (VariableType.IsAbstract && VariableType.IsSealed) {
-				FieldMember.Error_VariableOfStaticClass (Location, Name, VariableType);
+				FieldBase.Error_VariableOfStaticClass (Location, Name, VariableType);
 				return false;
 			}
 

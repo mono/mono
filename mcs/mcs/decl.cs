@@ -2081,6 +2081,33 @@ namespace Mono.CSharp {
 			
 			return null;
 		}
+
+		public MemberInfo FindBaseEvent (Type invocationType, string name)
+		{
+			ArrayList applicable;
+			if (method_hash != null)
+				applicable = (ArrayList) method_hash [name];
+			else
+				applicable = (ArrayList) member_hash [name];
+			
+			if (applicable == null)
+				return null;
+
+			//
+			// Walk the chain of events, starting from the top.
+			//
+			for (int i = applicable.Count - 1; i >= 0; i--) 
+			{
+				CacheEntry entry = (CacheEntry) applicable [i];
+				if ((entry.EntryType & EntryType.Event) == 0)
+					continue;
+				
+				EventInfo ei = (EventInfo)entry.Member;
+				return ei.GetAddMethod (true);
+			}
+
+			return null;
+		}
 		
 		//
 		// This finds the method or property for us to override. invocationType is the type where

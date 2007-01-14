@@ -1,3 +1,52 @@
+2007-01-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80368
+	* assign.cs (FieldInitializer): New class implements field
+	initializer statement.
+
+	* attribute.cs: Update after FieldMember rename.
+
+	* class.cs (PropertyBasedMember): New common class for property based
+	types.
+	(InterfaceMemberBase): New base class for all members which can be used as
+	an interface members.
+	(MethodCore): Moved really common code to InterfaceMemberBase.
+	(Method.Define): Equal and GetHasCode detection is relevant for methods
+	only.
+	(MethodData.Define): Don't assume that public event implements an
+	interface automatically.
+	(MethodData.DefineMethodBuilder): Issue an error even if only extern
+	modifier is used.
+	(MemberBase): Moved all interface speficic code to InterfaceMemberBase.
+	(FieldMember): Merged with FieldBase.
+	(EventProperty.AEventPropertyAccessor): New specialization to check whether
+	event extern modifier can be used.
+	(EventField.EventFieldAccessor): Moved event field specific code here.
+	(Event.AllowedModifiers): Even event can be extern.
+	(Event.FindOutBaseMethod): New override specific to events.
+	(Indexer.parameters): Reintroduce parameters because base class holds
+	only properties common data.
+	(Indexer.CheckForDuplications): Indexers are threated as methods so we
+	need do extra parameters check.
+
+	* const.cs: Update after FieldMember rename.
+
+	* decl.cs (MemberCache.FindBaseEvent): New method.
+
+	* doc.cs (GetMethodDocCommentName): Accept parameters as extra argument
+	to reflect that indexer is now derived from PropertyBased.
+
+	* ecore.cs (GetMemberType): Made public.
+	(EventExpr.ResolveMemberAccess): Use right event cache and checks for
+	obsolete event.
+
+	* flowanalysis.cs, statement.cs: Update after FieldMember rename.
+	
+	* typemanager.cs (CSharpSignature): Correctly print event accessors.
+	(RegisterEvent): Removed.
+	(RegisterPrivateFieldOfEvent): Renamed to RegisterEventField.
+	(GetPrivateFieldOfEvent): Renamed to GetEventField.
+
 2007-01-11  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80249

@@ -1327,7 +1327,7 @@ namespace Mono.CSharp
 					ArrayList non_public_fields = new ArrayList ();
 
 					if (fields != null) {
-						foreach (FieldMember field in fields) {
+						foreach (FieldBase field in fields) {
 							if ((field.ModFlags & Modifiers.STATIC) != 0)
 								continue;
 							if ((field.ModFlags & Modifiers.PUBLIC) != 0)

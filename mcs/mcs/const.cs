@@ -23,7 +23,7 @@ namespace Mono.CSharp {
 		Constant CreateConstantReference (Location loc);
 	}
 
-	public class Const : FieldMember, IConstant {
+	public class Const : FieldBase, IConstant {
 		Constant value;
 		bool in_transit;
 		bool define_called;
@@ -83,14 +83,15 @@ namespace Mono.CSharp {
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
 			if (ttype == TypeManager.decimal_type) {
 				field_attr |= FieldAttributes.InitOnly;
-				Parent.PartialContainer.RegisterFieldForInitialization (this);
 			} else {
 				field_attr |= FieldAttributes.Literal;
 			}
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, field_attr);
-
 			TypeManager.RegisterConstant (FieldBuilder, this);
+
+			if (ttype == TypeManager.decimal_type)
+				Parent.PartialContainer.RegisterFieldForInitialization (this, new FieldInitializer (FieldBuilder, initializer));
 
 			return true;
 		}

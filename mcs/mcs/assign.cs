@@ -585,6 +585,38 @@ namespace Mono.CSharp {
 	}
 
 
+	// This class implements fields and events class initializers
+	public class FieldInitializer : Assign
+	{
+		public FieldInitializer (FieldBuilder field, Expression expression)
+			: base (new FieldExpr (field, expression.Location, true), expression)
+		{
+			if (!field.IsStatic)
+				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
+		}
+
+		public bool IsComplexInitializer {
+			get {
+				if (embedded != null)
+					return true;
+
+				return !(source is Constant);
+			}
+		}
+
+		public bool IsDefaultInitializer {
+			get {
+				Constant c = source as Constant;
+				if (c == null)
+					return false;
+				
+				FieldExpr fe = (FieldExpr)target;
+				return c.IsDefaultInitializer (fe.Type);
+			}
+		}
+	}
+
+
 	//
 	// This class is used for compound assignments.
 	//

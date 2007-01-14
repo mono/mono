@@ -278,9 +278,7 @@ namespace Mono.CSharp {
 		builder_to_method = null;
 		
 		fields = null;
-		fieldbuilders_to_fields = null;
 		events = null;
-		priv_fields_events = null;
 		type_hash = null;
 		propertybuilder_to_property = null;
 
@@ -768,7 +766,7 @@ namespace Mono.CSharp {
 
 		ParameterData iparams = GetParameterData (mb);
 		string parameters = iparams.GetSignatureForError ();
-		string accessor = "";
+		int accessor_end = 0;
 
 		if (!mb.IsConstructor && TypeManager.IsSpecialMethod (mb)) {
 			Operator.OpType ot = Operator.GetOperatorType (mb.Name);
@@ -781,8 +779,10 @@ namespace Mono.CSharp {
 
 			bool is_getter = mb.Name.StartsWith ("get_");
 			bool is_setter = mb.Name.StartsWith ("set_");
-			if (is_getter || is_setter) {
-				accessor = mb.Name.Substring (0, 3);
+			if (is_getter || is_setter || mb.Name.StartsWith ("add_")) {
+				accessor_end = 3;
+			} else if (mb.Name.StartsWith ("remove_")) {
+				accessor_end = 6;
 			}
 
 			// Is indexer
@@ -794,7 +794,7 @@ namespace Mono.CSharp {
 					sig.Append (parameters.Substring (1, parameters.LastIndexOf (',') - 1));
 				sig.Append (']');
 			} else {
-				sig.Append (mb.Name.Substring (4));
+				sig.Append (mb.Name.Substring (accessor_end + 1));
 			}
 		} else {
 			if (mb.Name == ".ctor")
@@ -819,9 +819,9 @@ namespace Mono.CSharp {
 			sig.Append (parameters);
 		}
 
-		if (show_accessor && accessor.Length > 0) {
+		if (show_accessor && accessor_end > 0) {
 			sig.Append ('.');
-			sig.Append (accessor);
+			sig.Append (mb.Name.Substring (0, accessor_end));
 		}
 
 		return sig.ToString ();
@@ -1630,7 +1630,7 @@ namespace Mono.CSharp {
 		if (t is TypeBuilder) {
 			TypeContainer tc = LookupTypeContainer (t);
 			if (tc.Fields != null){
-				foreach (FieldMember f in tc.Fields){
+				foreach (FieldBase f in tc.Fields){
 					// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
 					if ((f.ModFlags & Modifiers.STATIC) != 0)
 						continue;
@@ -1977,13 +1977,9 @@ namespace Mono.CSharp {
 		return (PropertyBase)propertybuilder_to_property [pi];
 	}
 
-	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)
+	static public void RegisterFieldBase (FieldBuilder fb, FieldBase f)
 	{
-		if (fieldbuilders_to_fields.Contains (fb))
-			return false;
-
 		fieldbuilders_to_fields.Add (fb, f);
-		return true;
 	}
 
 	//
@@ -1998,23 +1994,11 @@ namespace Mono.CSharp {
 #endif
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
-	
-	static public void RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
-	{
-		if (events == null)
-			events = new Hashtable ();
-
-		if (!events.Contains (eb)) {
-			events.Add (eb, new Pair (add, remove));
-		}
-	}
 
 	static public MethodInfo GetAddMethod (EventInfo ei)
 	{
 		if (ei is MyEventBuilder) {
-			Pair pair = (Pair) events [ei];
-
-			return (MethodInfo) pair.First;
+			return ((MyEventBuilder)ei).GetAddMethod (true);
 		}
 		return ei.GetAddMethod (true);
 	}
@@ -2022,36 +2006,27 @@ namespace Mono.CSharp {
 	static public MethodInfo GetRemoveMethod (EventInfo ei)
 	{
 		if (ei is MyEventBuilder) {
-			Pair pair = (Pair) events [ei];
-
-			return (MethodInfo) pair.Second;
+			return ((MyEventBuilder)ei).GetRemoveMethod (true);
 		}
 		return ei.GetRemoveMethod (true);
 	}
 
-	static Hashtable priv_fields_events;
-
-	static public bool RegisterPrivateFieldOfEvent (EventInfo einfo, FieldBuilder builder)
+	static public void RegisterEventField (EventInfo einfo, EventField e)
 	{
-		if (priv_fields_events == null)
-			priv_fields_events = new Hashtable ();
+		if (events == null)
+			events = new Hashtable ();
 
-		if (priv_fields_events.Contains (einfo))
-			return false;
-
-		priv_fields_events.Add (einfo, builder);
-
-		return true;
+		events.Add (einfo, e);
 	}
 
-	static public MemberInfo GetPrivateFieldOfEvent (EventInfo ei)
+	static public EventField GetEventField (EventInfo ei)
 	{
-		if (priv_fields_events == null)
+		if (events == null)
 			return null;
-		else
-			return (MemberInfo) priv_fields_events [ei];
+
+		return (EventField) events [ei];
 	}
-		
+
 	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get,
                                             MethodBase set, Type[] args)
 	{
@@ -2082,7 +2057,7 @@ namespace Mono.CSharp {
 		if (tc.Fields == null)
 			return true;
 
-		foreach (FieldMember field in tc.Fields) {
+		foreach (FieldBase field in tc.Fields) {
 			if (field.FieldBuilder == null || field.FieldBuilder.IsStatic)
 				continue;
 

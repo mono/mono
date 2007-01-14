@@ -693,7 +693,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void AddField (FieldMember field)
+		public void AddField (FieldBase field)
 		{
 			if (!AddMember (field))
 				return;
@@ -923,18 +923,18 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual void RegisterFieldForInitialization (FieldBase field)
+		public virtual void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
 				if (initialized_static_fields == null)
 					initialized_static_fields = new ArrayList (4);
 
-				initialized_static_fields.Add (field);
+				initialized_static_fields.Add (expression);
 			} else {
 				if (initialized_fields == null)
 					initialized_fields = new ArrayList (4);
 
-				initialized_fields.Add (field);
+				initialized_fields.Add (expression);
 			}
 		}
 
@@ -954,8 +954,8 @@ namespace Mono.CSharp {
 			if (fields == null)
 				return true;
 
-			foreach (FieldBase f in fields) {
-				f.EmitInitializer (ec);
+			foreach (FieldInitializer f in fields) {
+				f.EmitStatement (ec);
 			}
 			return true;
 		}
@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 				if (fields != null) {
 					int len = fields.Count;
 					for (int i = 0; i < len; i++) {
-						FieldMember f = (FieldMember) fields [i];
+						FieldBase f = (FieldBase) fields [i];
 						
 						if ((f.ModFlags & modflags) == 0)
 							continue;
@@ -2225,7 +2225,7 @@ namespace Mono.CSharp {
 				CheckMemberUsage (constants, "constant");
 
 				if (fields != null){
-					foreach (FieldMember f in fields) {
+					foreach (FieldBase f in fields) {
 						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
 							continue;
 						
@@ -2354,7 +2354,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (fields != null)
-				foreach (FieldMember f in fields)
+				foreach (FieldBase f in fields)
 					f.Emit ();
 
 			if (events != null){
@@ -2606,7 +2606,7 @@ namespace Mono.CSharp {
 		///   checks whether the `interface_type' is a base inteface implementation.
 		///   Then it checks whether `name' exists in the interface type.
 		/// </summary>
-		public virtual bool VerifyImplements (MemberBase mb)
+		public virtual bool VerifyImplements (InterfaceMemberBase mb)
 		{
 			if (ifaces != null) {
 				foreach (Type t in ifaces){
@@ -2784,10 +2784,13 @@ namespace Mono.CSharp {
 		void DefineFieldInitializers ()
 		{
 			if (initialized_fields != null) {
+				EmitContext ec = new EmitContext (this, this, Location, null, null, ModFlags);
+				ec.IsFieldInitializer = true;
+
 				for (int i = 0; i < initialized_fields.Count; ++i) {
-					FieldBase fb = (FieldBase)initialized_fields[i];
-					fb.ResolveInitializer ();
-					if (fb.HasDefaultInitializer && RootContext.Optimize) {
+					FieldInitializer fi = (FieldInitializer)initialized_fields[i];
+					fi.ResolveStatement (ec);
+					if (fi.IsDefaultInitializer && RootContext.Optimize) {
 						// Field is re-initialized to its default value => removed
 						initialized_fields.RemoveAt (i);
 						--i;
@@ -2797,9 +2800,13 @@ namespace Mono.CSharp {
 
 			if (initialized_static_fields != null) {
 				bool has_complex_initializer = false;
+				EmitContext ec = new EmitContext (this, this, Location, null, null, ModFlags);
+				ec.IsStatic = true;
+				ec.IsFieldInitializer = true;
 
-				foreach (FieldBase fb in initialized_static_fields) {
-					if (fb.ResolveInitializer () is Constant)
+				foreach (FieldInitializer fi in initialized_static_fields) {
+					fi.ResolveStatement (ec);
+					if (!fi.IsComplexInitializer)
 						continue;
 
 					has_complex_initializer = true;
@@ -2810,8 +2817,8 @@ namespace Mono.CSharp {
 				// static int b = 0;
 				if (!has_complex_initializer && RootContext.Optimize) {
 					for (int i = 0; i < initialized_static_fields.Count; ++i) {
-						FieldBase fb = (FieldBase)initialized_static_fields[i];
-						if (fb.HasDefaultInitializer) {
+						FieldInitializer fi = (FieldInitializer)initialized_static_fields[i];
+						if (fi.IsDefaultInitializer) {
 							initialized_static_fields.RemoveAt (i);
 							--i;
 						}
@@ -3164,14 +3171,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void RegisterFieldForInitialization (FieldBase field)
+		public override void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) == 0) {
 				Report.Error (573, field.Location, "`{0}': Structs cannot have instance field initializers",
 					field.GetSignatureForError ());
 				return;
 			}
-			base.RegisterFieldForInitialization (field);
+			base.RegisterFieldForInitialization (field, expression);
 		}
 
 	}
@@ -3254,25 +3261,50 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class MethodCore : MemberBase {
+	// It is used as a base class for all property based members
+	// This includes properties, indexers, and events
+	public abstract class PropertyBasedMember : InterfaceMemberBase
+	{
+		public PropertyBasedMember (DeclSpace parent, GenericMethod generic,
+			Expression type, int mod, int allowed_mod, bool is_iface,
+			MemberName name, Attributes attrs)
+			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
+		{
+		}
+
+		protected override bool CheckForDuplications ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected override bool VerifyClsCompliance ()
+		{
+			if (!base.VerifyClsCompliance ())
+				return false;
+
+			if (!AttributeTester.IsClsCompliant (MemberType)) {
+				Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
+					GetSignatureForError ());
+			}
+			return true;
+		}
+
+	}
+
+
+	public abstract class MethodCore : InterfaceMemberBase
+	{
 		public readonly Parameters Parameters;
 		protected ToplevelBlock block;
 
-		//
-		// The method we're overriding if this is an override method.
-		//
-		protected MethodInfo base_method = null;
-
 		public MethodCore (DeclSpace parent, GenericMethod generic,
-				   Expression type, int mod, int allowed_mod, bool is_iface,
-				   MemberName name, Attributes attrs, Parameters parameters)
-			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
-				name, attrs)
+			Expression type, int mod, int allowed_mod, bool is_iface,
+			MemberName name, Attributes attrs, Parameters parameters)
+			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
 		{
 			Parameters = parameters;
-			IsInterface = is_iface;
 		}
-		
+
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//
@@ -3299,20 +3331,202 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected bool DoDefineParameters ()
+		{
+			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
+
+			// Check if arguments were correct
+			if (!Parameters.Resolve (rc))
+				return false;
+
+			return CheckParameters (Parameters);
+		}
+
+		protected override bool CheckBase ()
+		{
+			// Check whether arguments were correct.
+			if (!DoDefineParameters ())
+				return false;
+
+			if (!base.CheckBase ())
+				return false;
+
+			return true;
+		}
+
+		// TODO: create a special method for operators only to make code better
+		protected bool IsDuplicateImplementation (MethodCore method)
+		{
+			if (method == this)
+				return false;
+
+			Operator op2 = null;
+			Operator op1 = null;
+
+			if (!(method.MemberName.Equals (MemberName)))
+			{
+				op1 = this as Operator;
+				if (op1 == null || !(op1.OperatorType == Operator.OpType.Explicit || op1.OperatorType == Operator.OpType.Implicit))
+					return false;
+
+				op2 = method as Operator;
+				if (op2 == null || !(op2.OperatorType == Operator.OpType.Explicit || op2.OperatorType == Operator.OpType.Implicit))
+					return false;
+			} else {
+				op1 = this as Operator;
+				op2 = method as Operator;
+			}
+
+			Type[] param_types = method.ParameterTypes;
+			// This never happen. Rewrite this as Equal
+			if (param_types == null && ParameterTypes == null)
+				return true;
+			if (param_types == null || ParameterTypes == null)
+				return false;
+
+			if (param_types.Length != ParameterTypes.Length)
+				return false;
+
+			if (method.Parameters.HasArglist != Parameters.HasArglist)
+				return false;
+			
+			bool equal = true;
+
+			for (int i = 0; i < param_types.Length; i++) {
+				if (param_types [i] != ParameterTypes [i])
+					equal = false;
+			}
+
+			if (IsExplicitImpl && (method.InterfaceType != InterfaceType))
+				equal = false;
+
+			// TODO: make operator compatible with MethodCore to avoid this
+			if (op1 != null && op2 != null) {
+				if (MemberType != method.MemberType)
+					equal = false;
+			}
+
+			if (equal) {
+				//
+				// Try to report 663: method only differs on out/ref
+				//
+				Parameters info = ParameterInfo;
+				Parameters other_info = method.ParameterInfo;
+				for (int i = 0; i < info.Count; i++){
+					if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
+						Report.SymbolRelatedToPreviousError (method);
+						Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
+							      GetSignatureForError ());
+						return false;
+					}
+				}
+
+				Report.SymbolRelatedToPreviousError (method);
+				if (this is Operator && method is Operator)
+					Report.Error (557, Location, "Duplicate user-defined conversion in type `{0}'", Parent.Name);
+				else
+					Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
+
+				return true;
+			}
+
+			return false;
+		}
+
+		//
+		// Returns a string that represents the signature for this 
+		// member which should be used in XML documentation.
+		//
+		public override string GetDocCommentName (DeclSpace ds)
+		{
+			return DocUtil.GetMethodDocCommentName (this, Parameters, ds);
+		}
+
+		//
+		// Raised (and passed an XmlElement that contains the comment)
+		// when GenerateDocComment is writing documentation expectedly.
+		//
+		// FIXME: with a few effort, it could be done with XmlReader,
+		// that means removal of DOM use.
+		//
+		internal override void OnGenerateDocComment (XmlElement el)
+		{
+			DocUtil.OnMethodGenerateDocComment (this, el);
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader 
+		{
+			get { return "M:"; }
+		}
+
 		public virtual void SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 
+		protected override bool VerifyClsCompliance ()
+		{
+			if (!base.VerifyClsCompliance ())
+				return false;
+
+			if (Parameters.HasArglist) {
+				Report.Error (3000, Location, "Methods with variable arguments are not CLS-compliant");
+			}
+
+			if (!AttributeTester.IsClsCompliant (MemberType)) {
+				Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant",
+					GetSignatureForError ());
+			}
+
+			Parameters.VerifyClsCompliance ();
+			return true;
+		}
+
+	}
+
+	public abstract class InterfaceMemberBase : MemberBase {
+		//
+		// Whether this is an interface member.
+		//
+		public bool IsInterface;
+
+		//
+		// If true, this is an explicit interface implementation
+		//
+		public bool IsExplicitImpl;
+
+		//
+		// The interface type we are explicitly implementing
+		//
+		public Type InterfaceType;
+
+		//
+		// The method we're overriding if this is an override method.
+		//
+		protected MethodInfo base_method;
+
+		readonly int explicit_mod_flags;
+		public MethodAttributes flags;
+
+		public InterfaceMemberBase (DeclSpace parent, GenericMethod generic,
+				   Expression type, int mod, int allowed_mod, bool is_iface,
+				   MemberName name, Attributes attrs)
+			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
+				name, attrs)
+		{
+			IsInterface = is_iface;
+			IsExplicitImpl = (MemberName.Left != null);
+			explicit_mod_flags = mod;
+		}
+		
 		protected override bool CheckBase ()
 		{
 			if (!base.CheckBase ())
 				return false;
 			
-			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
-
 			if ((caching_flags & Flags.TestMethodDuplication) != 0 && !CheckForDuplications ())
 				return false;
 
@@ -3321,7 +3535,7 @@ namespace Mono.CSharp {
 
 			// Is null for System.Object while compiling corlib and base interfaces
 			if (Parent.PartialContainer.BaseCache == null) {
-				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
+				if ((ModFlags & Modifiers.NEW) != 0) {
 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
 				return true;
@@ -3332,41 +3546,8 @@ namespace Mono.CSharp {
 
 			// method is override
 			if (base_method != null) {
-
-				if (!CheckMethodAgainstBase ())
+				if (!CheckMethodAgainstBase (base_ret_type))
 					return false;
-
-				if ((ModFlags & Modifiers.NEW) == 0) {
-					if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (base_ret_type))) {
-						Report.SymbolRelatedToPreviousError (base_method);
-						if (this is PropertyBase) {
-							Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'", 
-								GetSignatureForError (), TypeManager.CSharpName (base_ret_type), TypeManager.CSharpSignature (base_method));
-						}
-						else {
-							Report.Error (508, Location, "`{0}': return type must be `{1}' to match overridden member `{2}'",
-								GetSignatureForError (), TypeManager.CSharpName (base_ret_type), TypeManager.CSharpSignature (base_method));
-						}
-						return false;
-					}
-				} else {
-					if (base_method.IsAbstract && !IsInterface) {
-						Report.SymbolRelatedToPreviousError (base_method);
-						Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
-							GetSignatureForError (), TypeManager.CSharpSignature (base_method));
-						return false;
-					}
-				}
-
-				if (base_method.IsSpecialName && !(this is PropertyBase)) {
-					Report.Error (115, Location, "`{0}': no suitable method found to override", GetSignatureForError ());
-					return false;
-				}
-
-				if (Name == "Equals" && Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type)
-					Parent.PartialContainer.Mark_HasEquals ();
-				else if (Name == "GetHashCode" && Parameters.Empty)
-					Parent.PartialContainer.Mark_HasGetHashCode ();
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
@@ -3386,16 +3567,20 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, !(this is Property));
+			MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, !((this is Event) || (this is Property)));
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (conflict_symbol != null) {
 					Report.SymbolRelatedToPreviousError (conflict_symbol);
-					if (this is PropertyBase)
+					if (this is Event)
+						Report.Error (72, Location, "`{0}': cannot override because `{1}' is not an event", GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
+					else if (this is PropertyBase)
 						Report.Error (544, Location, "`{0}': cannot override because `{1}' is not a property", GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
 					else
 						Report.Error (505, Location, "`{0}': cannot override because `{1}' is not a method", GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
-				} else
-					Report.Error (115, Location, "`{0}': no suitable method found to override", GetSignatureForError ());
+				} else {
+					Report.Error (115, Location, "`{0}' is marked as an override but no suitable {1} found to override",
+						GetSignatureForError (), SimpleName.GetMemberType (this));
+				}
 				return false;
 			}
 
@@ -3425,7 +3610,7 @@ namespace Mono.CSharp {
 		// `name' is the user visible name for reporting errors (this is used to
 		// provide the right name regarding method names and properties)
 		//
-		bool CheckMethodAgainstBase ()
+		bool CheckMethodAgainstBase (Type baseMethodType)
 		{
 			bool ok = true;
 
@@ -3455,17 +3640,39 @@ namespace Mono.CSharp {
 					Error_CannotChangeAccessModifiers (base_method, base_classp, null);
 					ok = false;
 				}
+
+				if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (baseMethodType))) {
+					Report.SymbolRelatedToPreviousError (base_method);
+					if (this is PropertyBasedMember) {
+						Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'", 
+							GetSignatureForError (), TypeManager.CSharpName (baseMethodType), TypeManager.CSharpSignature (base_method));
+					}
+					else {
+						Report.Error (508, Location, "`{0}': return type must be `{1}' to match overridden member `{2}'",
+							GetSignatureForError (), TypeManager.CSharpName (baseMethodType), TypeManager.CSharpSignature (base_method));
+					}
+					ok = false;
+				}
 			}
 
-			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0 && Name != "Finalize") {
-				ModFlags |= Modifiers.NEW;
-				Report.SymbolRelatedToPreviousError (base_method);
-				if (!IsInterface && (base_method.IsVirtual || base_method.IsAbstract)) {
-					Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
+			if ((ModFlags & Modifiers.NEW) == 0) {
+				if ((ModFlags & Modifiers.OVERRIDE) == 0 && Name != "Finalize") {
+					ModFlags |= Modifiers.NEW;
+					Report.SymbolRelatedToPreviousError (base_method);
+					if (!IsInterface && (base_method.IsVirtual || base_method.IsAbstract)) {
+						Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
+							GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+					} else {
+						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+							GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+					}
+				}
+			} else {
+				if (base_method.IsAbstract && !IsInterface) {
+					Report.SymbolRelatedToPreviousError (base_method);
+					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
 						GetSignatureForError (), TypeManager.CSharpSignature (base_method));
-				} else {
-					Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-						GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+					return ok = false;
 				}
 			}
 
@@ -3546,58 +3753,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected void Error_CannotChangeAccessModifiers (MemberInfo base_method, MethodAttributes ma, string suffix)
-		{
-			Report.SymbolRelatedToPreviousError (base_method);
-			string base_name = TypeManager.GetFullNameSignature (base_method);
-			string this_name = GetSignatureForError ();
-			if (suffix != null) {
-				base_name += suffix;
-				this_name += suffix;
-			}
-
-			Report.Error (507, Location, "`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
-				this_name, Modifiers.GetDescription (ma), base_name);
-		}
-
-		protected static string Error722 {
-			get {
-				return "`{0}': static types cannot be used as return types";
-			}
-		}
-
-		/// <summary>
-		/// For custom member duplication search in a container
-		/// </summary>
-		protected abstract bool CheckForDuplications ();
-
-		/// <summary>
-		/// Gets base method and its return type
-		/// </summary>
-		protected abstract MethodInfo FindOutBaseMethod (ref Type base_ret_type);
-
-		protected bool DoDefineParameters ()
-		{
-			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
-
-			// Check if arguments were correct
-			if (!Parameters.Resolve (rc))
-				return false;
-
-			return CheckParameters (ParameterTypes);
-		}
-
-		bool CheckParameters (Type [] parameters)
+		protected bool CheckParameters (Parameters parameters)
 		{
 			bool error = false;
 
-			foreach (Type partype in parameters){
-				if (partype == TypeManager.void_type) {
-					// TODO: location is wrong
-					Expression.Error_VoidInvalidInTheContext (Location);
-					return false;
-				}
-
+			foreach (Type partype in parameters.Types){
 				if (partype.IsPointer){
 					if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (partype), Location))
 						error = true;
@@ -3628,146 +3788,137 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
+		protected override bool DoDefine()
+		{
+			if (!base.DoDefine ())
+				return false;
+
+			if (IsExplicitImpl) {
+				Expression expr = MemberName.Left.GetTypeExpression ();
+				TypeExpr texpr = expr.ResolveAsTypeTerminal (this, false);
+				if (texpr == null)
+					return false;
+
+				InterfaceType = texpr.Type;
+
+				if (!InterfaceType.IsInterface) {
+					Report.Error (538, Location, "`{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
+					return false;
+				}
+				
+				if (!Parent.PartialContainer.VerifyImplements (this))
+					return false;
+				
+			}
+			return true;
+		}
+
+		protected virtual bool DoDefineBase ()
+		{
+			if (Name == null)
+				throw new InternalErrorException ();
+
+			if (IsInterface) {
+				ModFlags = Modifiers.PUBLIC |
+					Modifiers.ABSTRACT |
+					Modifiers.VIRTUAL | (ModFlags & Modifiers.UNSAFE) | (ModFlags & Modifiers.NEW);
+
+				flags = MethodAttributes.Public |
+					MethodAttributes.Abstract |
+					MethodAttributes.HideBySig |
+					MethodAttributes.NewSlot |
+					MethodAttributes.Virtual;
+			} else {
+				if (!Parent.PartialContainer.MethodModifiersValid (this))
+					return false;
+
+				flags = Modifiers.MethodAttr (ModFlags);
+			}
+
+			if (IsExplicitImpl) {
+				Expression expr = MemberName.Left.GetTypeExpression ();
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (this, false);
+				if (iface_texpr == null)
+					return false;
+
+				InterfaceType = iface_texpr.Type;
+
+				if (!InterfaceType.IsInterface) {
+					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
+					return false;
+				}
+
+				if (!Parent.PartialContainer.VerifyImplements (this))
+					return false;
+				
+				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
+			}
+
+			return true;
+		}
+
+		protected void Error_CannotChangeAccessModifiers (MemberInfo base_method, MethodAttributes ma, string suffix)
+		{
+			Report.SymbolRelatedToPreviousError (base_method);
+			string base_name = TypeManager.GetFullNameSignature (base_method);
+			string this_name = GetSignatureForError ();
+			if (suffix != null) {
+				base_name += suffix;
+				this_name += suffix;
+			}
+
+			Report.Error (507, Location, "`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
+				this_name, Modifiers.GetDescription (ma), base_name);
+		}
+
+		protected static string Error722 {
+			get {
+				return "`{0}': static types cannot be used as return types";
+			}
+		}
+
+		/// <summary>
+		/// For custom member duplication search in a container
+		/// </summary>
+		protected abstract bool CheckForDuplications ();
+
+		/// <summary>
+		/// Gets base method and its return type
+		/// </summary>
+		protected abstract MethodInfo FindOutBaseMethod (ref Type base_ret_type);
+
+		//
+		// The "short" name of this property / indexer / event.  This is the
+		// name without the explicit interface.
+		//
+		public string ShortName 
+		{
+			get { return MemberName.Name; }
+			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ()) {
+				if (IsInterface && HasClsCompliantAttribute && Parent.IsClsComplianceRequired ()) {
+					Report.Error (3010, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
+				}
+
 				if ((ModFlags & Modifiers.ABSTRACT) != 0 && Parent.TypeBuilder.IsClass && IsExposedFromAssembly () && Parent.IsClsComplianceRequired ()) {
 					Report.Error (3011, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
 			}
 
-			if (Parameters.HasArglist) {
-				Report.Error (3000, Location, "Methods with variable arguments are not CLS-compliant");
-			}
-
-			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				if (this is PropertyBase)
-					Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
-						      GetSignatureForError ());
-				else
-					Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant",
-						      GetSignatureForError ());
-			}
-
-			Parameters.VerifyClsCompliance ();
+			if (GenericMethod != null)
+				GenericMethod.VerifyClsCompliance ();
 
 			return true;
 		}
 
-		// TODO: create a special method for operators only to make code better
-		protected bool IsDuplicateImplementation (MethodCore method)
+		public override bool IsUsed 
 		{
-			if (method == this)
-				return false;
-
-			Operator op2 = null;
-			Operator op1 = null;
-
-			if (!(method.MemberName.Equals (MemberName)))
-			{
-				op1 = this as Operator;
-				if (op1 == null || !(op1.OperatorType == Operator.OpType.Explicit || op1.OperatorType == Operator.OpType.Implicit))
-					return false;
-
-				op2 = method as Operator;
-				if (op2 == null || !(op2.OperatorType == Operator.OpType.Explicit || op2.OperatorType == Operator.OpType.Implicit))
-					return false;
-			} else {
-				op1 = this as Operator;
-				op2 = method as Operator;
-			}
-
-			Type[] param_types = method.ParameterTypes;
-			// This never happen. Rewrite this as Equal
-			if (param_types == null && ParameterTypes == null)
-				return true;
-			if (param_types == null || ParameterTypes == null)
-				return false;
-
-			if (param_types.Length != ParameterTypes.Length)
-				return false;
-
-			if (method.Parameters.HasArglist != Parameters.HasArglist)
-				return false;
-			
-			bool equal = true;
-
-			for (int i = 0; i < param_types.Length; i++) {
-				if (param_types [i] != ParameterTypes [i])
-					equal = false;
-			}
-
-			if (IsExplicitImpl && (method.InterfaceType != InterfaceType))
-				equal = false;
-
-			// TODO: make operator compatible with MethodCore to avoid this
-			if (op1 != null && op2 != null) {
-				if (MemberType != method.MemberType)
-					equal = false;
-			}
-
-			if (equal) {
-				//
-				// Try to report 663: method only differs on out/ref
-				//
-				Parameters info = ParameterInfo;
-				Parameters other_info = method.ParameterInfo;
-				for (int i = 0; i < info.Count; i++){
-					try {
-					if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
-						Report.SymbolRelatedToPreviousError (method);
-						Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
-							      GetSignatureForError ());
-						return false;
-					}} catch {
-						Console.WriteLine ("Method is: {0} {1}", method.Location, method);
-						Console.WriteLine ("this is: {0} {1}", Location, this);
-					}
-				}
-
-				Report.SymbolRelatedToPreviousError (method);
-				if (this is Operator && method is Operator)
-					Report.Error (557, Location, "Duplicate user-defined conversion in type `{0}'", Parent.Name);
-				else
-					Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
-
-				return true;
-			}
-
-			return false;
-		}
-
-		public override bool IsUsed {
 			get { return IsExplicitImpl || base.IsUsed; }
-		}
-
-		//
-		// Returns a string that represents the signature for this 
-		// member which should be used in XML documentation.
-		//
-		public override string GetDocCommentName (DeclSpace ds)
-		{
-			return DocUtil.GetMethodDocCommentName (this, ds);
-		}
-
-		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		// FIXME: with a few effort, it could be done with XmlReader,
-		// that means removal of DOM use.
-		//
-		internal override void OnGenerateDocComment (XmlElement el)
-		{
-			DocUtil.OnMethodGenerateDocComment (this, el);
-		}
-
-		//
-		//   Represents header string for documentation comment.
-		//
-		public override string DocCommentHeader {
-			get { return "M:"; }
 		}
 
 	}
@@ -3990,7 +4141,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool CheckBase() {
+		protected override bool CheckBase ()
+		{
 			if (!base.CheckBase ())
 				return false;
 
@@ -4292,6 +4444,13 @@ namespace Mono.CSharp {
 			if (ReturnType == TypeManager.void_type && ParameterTypes.Length == 0 && 
 				Name == "Finalize" && !(this is Destructor)) {
 				Report.Warning (465, 1, Location, "Introducing a 'Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
+			}
+
+			if (base_method != null) {
+				if (Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type && Name == "Equals")
+					Parent.PartialContainer.Mark_HasEquals ();
+				else if (Parameters.Empty && Name == "GetHashCode")
+					Parent.PartialContainer.Mark_HasGetHashCode ();
 			}
 
 			//
@@ -4941,7 +5100,7 @@ namespace Mono.CSharp {
 		//
 		// Protected data.
 		//
-		protected MemberBase member;
+		protected InterfaceMemberBase member;
 		protected int modifiers;
 		protected MethodAttributes flags;
 		protected Type declaring_type;
@@ -4960,7 +5119,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public MethodData (MemberBase member,
+		public MethodData (InterfaceMemberBase member,
 				   int modifiers, MethodAttributes flags, IMethodData method)
 		{
 			this.member = member;
@@ -4970,7 +5129,7 @@ namespace Mono.CSharp {
 			this.method = method;
 		}
 
-		public MethodData (MemberBase member, 
+		public MethodData (InterfaceMemberBase member, 
 				   int modifiers, MethodAttributes flags, 
 				   IMethodData method, MethodBuilder builder,
 				   GenericMethod generic, MethodInfo parent_method)
@@ -5069,13 +5228,14 @@ namespace Mono.CSharp {
 							method.GetSignatureForError ());
 						return false;
 					}
-				} else if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
-					if (TypeManager.IsInterfaceType (implementing.DeclaringType)){
+				} else {
+					if (implementing.DeclaringType.IsInterface) {
 						//
 						// If this is an interface method implementation,
 						// check for public accessibility
 						//
-						implementing = null;
+						if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public)
+							implementing = null;
 					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private){
 						// We may never be private.
 						implementing = null;
@@ -5085,7 +5245,7 @@ namespace Mono.CSharp {
 						//
 						implementing = null;
 					}
-				} 
+				}
 					
 				//
 				// Static is not allowed
@@ -5172,9 +5332,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		void DefineMethodBuilder (TypeContainer container, string method_name, Type[] ParameterTypes)
 		{
-			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
-
-			if ((modifiers & extern_static) == extern_static) {
+			if ((modifiers & Modifiers.EXTERN) != 0) {
 
 				if (method.OptAttributes != null) {
 					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type);
@@ -5192,8 +5350,9 @@ namespace Mono.CSharp {
 				// We are more strict than Microsoft and report CS0626 like error
 				if (method.OptAttributes == null ||
 					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type)) {
-					Report.Error (626, method.Location, "Method, operator, or accessor `{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation",
-						method.GetSignatureForError ());
+					Report.Error (626, method.Location,
+						"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
+						member.GetSignatureForError ());
 					return;
 				}
 			}
@@ -5317,21 +5476,8 @@ namespace Mono.CSharp {
 	
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
-
-		public MethodAttributes flags;
 		public readonly DeclSpace ds;
 		public readonly GenericMethod GenericMethod;
-
-		protected readonly int explicit_mod_flags;
-
-		//
-		// The "short" name of this property / indexer / event.  This is the
-		// name without the explicit interface.
-		//
-		public string ShortName {
-			get { return MemberName.Name; }
-			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
-		}
 
 		//
 		// The type of this property / indexer / event
@@ -5351,21 +5497,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Whether this is an interface member.
-		//
-		public bool IsInterface;
-
-		//
-		// If true, this is an explicit interface implementation
-		//
-		public bool IsExplicitImpl;
-
-		//
-		// The interface type we are explicitly implementing
-		//
-		public Type InterfaceType = null;
-
-		//
 		// The constructor is only exposed to our children
 		//
 		protected MemberBase (DeclSpace parent, GenericMethod generic,
@@ -5374,10 +5505,8 @@ namespace Mono.CSharp {
 			: base (parent, name, attrs)
 		{
 			this.ds = generic != null ? generic : (DeclSpace) parent;
-			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, Location);
-			IsExplicitImpl = (MemberName.Left != null);
 			GenericMethod = generic;
 			if (GenericMethod != null)
 				GenericMethod.ModFlags = ModFlags;
@@ -5396,51 +5525,7 @@ namespace Mono.CSharp {
 			    ((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
   				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
    			}
-  			return true;
-		}
-
-		protected virtual bool DoDefineBase ()
-		{
-			if (Name == null)
-				throw new InternalErrorException ();
-
-			if (IsInterface) {
-				ModFlags = Modifiers.PUBLIC |
-					Modifiers.ABSTRACT |
-					Modifiers.VIRTUAL | (ModFlags & Modifiers.UNSAFE) | (ModFlags & Modifiers.NEW);
-
-				flags = MethodAttributes.Public |
-					MethodAttributes.Abstract |
-					MethodAttributes.HideBySig |
-					MethodAttributes.NewSlot |
-					MethodAttributes.Virtual;
-			} else {
-				if (!Parent.PartialContainer.MethodModifiersValid (this))
-					return false;
-
-				flags = Modifiers.MethodAttr (ModFlags);
-			}
-
-			if (IsExplicitImpl) {
-				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (this, false);
-				if (iface_texpr == null)
-					return false;
-
-				InterfaceType = iface_texpr.Type;
-
-				if (!InterfaceType.IsInterface) {
-					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
-					return false;
-				}
-
-				if (!Parent.PartialContainer.VerifyImplements (this))
-					return false;
-				
-				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
-			}
-
-			return true;
+				return true;
 		}
 
 		protected virtual bool DoDefine ()
@@ -5488,24 +5573,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (IsExplicitImpl) {
-				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr texpr = expr.ResolveAsTypeTerminal (this, false);
-				if (texpr == null)
-					return false;
-
-				InterfaceType = texpr.Type;
-
-				if (!InterfaceType.IsInterface) {
-					Report.Error (538, Location, "`{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
-					return false;
-				}
-				
-				if (!Parent.PartialContainer.VerifyImplements (this))
-					return false;
-				
-				
-			}
 			return true;
 		}
 
@@ -5517,51 +5584,30 @@ namespace Mono.CSharp {
 			}
 			return true;
 		}
-
-		protected override bool VerifyClsCompliance()
-		{
-			if (base.VerifyClsCompliance ()) {
-				if (GenericMethod != null)
-					GenericMethod.VerifyClsCompliance ();
-
-				return true;
-			}
-
-			if (IsInterface && HasClsCompliantAttribute && Parent.IsClsComplianceRequired ()) {
-				Report.Error (3010, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
-			}
-			return false;
-		}
-
 	}
 
 	//
-	// Fields and Events both generate FieldBuilders, we use this to share 
-	// their common bits.  This is also used to flag usage of the field
+	// Abstract class for all fields
 	//
 	abstract public class FieldBase : MemberBase {
-		public FieldBuilder  FieldBuilder;
+		public FieldBuilder FieldBuilder;
 		public Status status;
 		protected Expression initializer;
-		ExpressionStatement initializerStatement;
 
 		[Flags]
 		public enum Status : byte {
 			HAS_OFFSET = 4		// Used by FieldMember.
 		}
 
-		static string[] attribute_targets = new string [] { "field" };
-
-		/// <summary>
-		///  Symbol with same name in base class/struct
-		/// </summary>
-		public MemberInfo conflict_symbol;
+		static readonly string[] attribute_targets = new string [] { "field" };
 
 		protected FieldBase (DeclSpace parent, Expression type, int mod,
 				     int allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, null, type, mod, allowed_mod, Modifiers.PRIVATE,
+			: base (parent, null, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE,
 				name, attrs)
 		{
+			if ((mod & Modifiers.ABSTRACT) != 0)
+				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -5572,143 +5618,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type == TypeManager.marshal_as_attr_type) {
-				UnmanagedMarshal marshal = a.GetMarshal (this);
-				if (marshal != null) {
-					FieldBuilder.SetMarshal (marshal);
-				}
-				return;
-			}
-
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
-				a.Error_InvalidSecurityParent ();
-				return;
-			}
-
-			FieldBuilder.SetCustomAttribute (cb);
-		}
-
-		public void EmitInitializer (EmitContext ec)
-		{
-			initializerStatement.EmitStatement (ec);
-		}
-
- 		protected override bool CheckBase ()
-		{
- 			if (!base.CheckBase ())
- 				return false;
- 
- 			// TODO: Implement
- 			if (IsInterface)
- 				return true;
- 
- 			conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, false);
- 			if (conflict_symbol == null) {
- 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
- 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
- 				}
- 				return true;
- 			}
- 
- 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
-				Report.SymbolRelatedToPreviousError (conflict_symbol);
-				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
-			}
- 
- 			return true;
- 		}
-
-		public Expression Initializer {
-			set {
-				if (value != null) {
-					this.initializer = value;
-					Parent.PartialContainer.RegisterFieldForInitialization (this);
-				}
-			}
-		}
-
-		protected virtual bool IsFieldClsCompliant {
-			get {
-				if (FieldBuilder == null)
-					return true;
-
-				return AttributeTester.IsClsCompliant (FieldBuilder.FieldType);
-			}
-		}
-
-		public Expression ResolveInitializer ()
-		{
-			// TODO: again it's too heavy-weight
-			EmitContext ec = new EmitContext (this, Parent, Location, null, null, ModFlags);
-			ec.IsFieldInitializer = true;
-			initializer = initializer.Resolve (ec);
-			if (initializer == null)
-				return null;
-			if (FieldBuilder == null)
-				return null;
-
-			FieldExpr fe = new FieldExpr (FieldBuilder, Location, true);
-			if ((ModFlags & Modifiers.STATIC) == 0) 
-			{
-				fe.InstanceExpression = CompilerGeneratedThis.Instance;
-			}
-
-			initializerStatement = new Assign (fe, initializer, Location).ResolveStatement (ec);
-			return initializer;
-		}
-
-		public bool HasDefaultInitializer
-		{
-			get
-			{
-				Constant c = initializer as Constant;
-				if (c == null)
-					return false;
-
-				return c.IsDefaultInitializer (MemberType);
-			}
-		}
-
-		public override string[] ValidAttributeTargets 
-		{
-			get {
-				return attribute_targets;
-			}
-		}
-
-		protected override bool VerifyClsCompliance ()
-		{
-			if (!base.VerifyClsCompliance ())
-				return false;
-
-			if (!IsFieldClsCompliant) {
-				Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant", GetSignatureForError ());
-			}
-			return true;
-		}
-
-
-		public void SetAssigned ()
-		{
-			caching_flags |= Flags.IsAssigned;
-		}
-	}
-
-	public abstract class FieldMember : FieldBase
-	{
-		protected FieldMember (DeclSpace parent, Expression type, int mod,
-			int allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, attrs)
-		{
-			if ((mod & Modifiers.ABSTRACT) != 0)
-				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
-		}
-
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
-		{
-			if (a.Type == TypeManager.field_offset_attribute_type)
-			{
+			if (a.Type == TypeManager.field_offset_attribute_type) {
 				status |= Status.HAS_OFFSET;
 
 				if (!Parent.PartialContainer.HasExplicitLayout) {
@@ -5729,8 +5639,43 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			base.ApplyAttributeBuilder (a, cb);
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = a.GetMarshal (this);
+				if (marshal != null) {
+					FieldBuilder.SetMarshal (marshal);
+				}
+				return;
+			}
+
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
+				return;
+			}
+
+			FieldBuilder.SetCustomAttribute (cb);
 		}
+
+ 		protected override bool CheckBase ()
+		{
+ 			if (!base.CheckBase ())
+ 				return false;
+ 
+ 			MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, false);
+ 			if (conflict_symbol == null) {
+ 				if ((ModFlags & Modifiers.NEW) != 0) {
+ 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+ 				}
+ 				return true;
+ 			}
+ 
+ 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
+				Report.SymbolRelatedToPreviousError (conflict_symbol);
+				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
+			}
+ 
+ 			return true;
+ 		}
 
 		public override bool Define()
 		{
@@ -5765,6 +5710,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "F:"; }
+		}
+
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
@@ -5785,11 +5737,44 @@ namespace Mono.CSharp {
 				variableName);
 		}
 
-		//
-		//   Represents header string for documentation comment.
-		//
-		public override string DocCommentHeader {
-			get { return "F:"; }
+		public Expression Initializer {
+			set {
+				if (value != null) {
+					this.initializer = value;
+				}
+			}
+		}
+
+		protected virtual bool IsFieldClsCompliant {
+			get {
+				if (FieldBuilder == null)
+					return true;
+
+				return AttributeTester.IsClsCompliant (FieldBuilder.FieldType);
+			}
+		}
+
+		public override string[] ValidAttributeTargets 
+		{
+			get {
+				return attribute_targets;
+			}
+		}
+
+		protected override bool VerifyClsCompliance ()
+		{
+			if (!base.VerifyClsCompliance ())
+				return false;
+
+			if (!IsFieldClsCompliant) {
+				Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant", GetSignatureForError ());
+			}
+			return true;
+		}
+
+		public void SetAssigned ()
+		{
+			caching_flags |= Flags.IsAssigned;
 		}
 	}
 
@@ -5828,7 +5813,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Fixed buffer implementation
 	/// </summary>
-	public class FixedField : FieldMember, IFixedBuffer
+	public class FixedField : FieldBase, IFixedBuffer
 	{
 		public const string FixedElementName = "FixedElementField";
 		static int GlobalCounter = 0;
@@ -5964,7 +5949,7 @@ namespace Mono.CSharp {
 	//
 	// The Field class is used to represents class/struct fields during parsing.
 	//
-	public class Field : FieldMember {
+	public class Field : FieldBase {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
@@ -6056,6 +6041,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (initializer != null)
+				Parent.PartialContainer.RegisterFieldForInitialization (this,
+					new FieldInitializer (FieldBuilder, initializer));
+
 			return true;
 		}
 
@@ -6129,14 +6118,14 @@ namespace Mono.CSharp {
 
 		ReturnParameter return_attributes;
 
-		public AbstractPropertyEventMethod (MemberBase member, string prefix)
+		public AbstractPropertyEventMethod (PropertyBasedMember member, string prefix)
 			: base (member.Parent, SetupName (prefix, member, member.Location), null)
 		{
 			this.prefix = prefix;
 			IsDummy = true;
 		}
 
-		public AbstractPropertyEventMethod (MemberBase member, Accessor accessor,
+		public AbstractPropertyEventMethod (InterfaceMemberBase member, Accessor accessor,
 						    string prefix)
 			: base (member.Parent, SetupName (prefix, member, accessor.Location),
 				accessor.Attributes)
@@ -6145,12 +6134,12 @@ namespace Mono.CSharp {
 			this.block = accessor.Block;
 		}
 
-		static MemberName SetupName (string prefix, MemberBase member, Location loc)
+		static MemberName SetupName (string prefix, InterfaceMemberBase member, Location loc)
 		{
 			return new MemberName (member.MemberName.Left, prefix + member.ShortName, loc);
 		}
 
-		public void UpdateName (MemberBase member)
+		public void UpdateName (InterfaceMemberBase member)
 		{
 			SetMemberName (SetupName (prefix, member, Location));
 		}
@@ -6244,7 +6233,8 @@ namespace Mono.CSharp {
 			System.Diagnostics.Debug.Fail ("You forgot to define special attribute target handling");
 		}
 
-		public override bool Define()
+		// It is not supported for the accessors
+		public sealed override bool Define()
 		{
 			throw new NotSupportedException ();
 		}
@@ -6323,18 +6313,18 @@ namespace Mono.CSharp {
 	// Properties and Indexers both generate PropertyBuilders, we use this to share 
 	// their common bits.
 	//
-	abstract public class PropertyBase : MethodCore {
+	abstract public class PropertyBase : PropertyBasedMember {
 
 		public class GetMethod : PropertyMethod
 		{
 			static string[] attribute_targets = new string [] { "method", "return" };
 
-			public GetMethod (MethodCore method):
+			public GetMethod (PropertyBase method):
 				base (method, "get_")
 			{
 			}
 
-			public GetMethod (MethodCore method, Accessor accessor):
+			public GetMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor, "get_")
 			{
 			}
@@ -6376,12 +6366,12 @@ namespace Mono.CSharp {
 			ImplicitParameter param_attr;
 			protected Parameters parameters;
 
-			public SetMethod (MethodCore method):
+			public SetMethod (PropertyBase method):
 				base (method, "set_")
 			{
 			}
 
-			public SetMethod (MethodCore method, Accessor accessor):
+			public SetMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor, "set_")
 			{
 			}
@@ -6445,19 +6435,19 @@ namespace Mono.CSharp {
 
 		public abstract class PropertyMethod : AbstractPropertyEventMethod
 		{
-			protected readonly MethodCore method;
+			protected readonly PropertyBase method;
 			protected MethodAttributes flags;
 			Iterator iterator;
 			ArrayList anonymous_methods;
 			bool yields;
 
-			public PropertyMethod (MethodCore method, string prefix)
+			public PropertyMethod (PropertyBase method, string prefix)
 				: base (method, prefix)
 			{
 				this.method = method;
 			}
 
-			public PropertyMethod (MethodCore method, Accessor accessor,
+			public PropertyMethod (PropertyBase method, Accessor accessor,
 					       string prefix)
 				: base (method, accessor, prefix)
 			{
@@ -6595,13 +6585,10 @@ namespace Mono.CSharp {
 		public PropertyBuilder PropertyBuilder;
 		public MethodBuilder GetBuilder, SetBuilder;
 
-		protected EmitContext ec;
-
 		public PropertyBase (DeclSpace parent, Expression type, int mod_flags,
 				     int allowed_mod, bool is_iface, MemberName name,
-				     Parameters parameters, Attributes attrs)
-			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,
-				attrs, parameters)
+				     Attributes attrs)
+			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,	attrs)
 		{
 		}
 
@@ -6659,43 +6646,15 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec = new EmitContext (this, Parent, Location, null, MemberType, ModFlags);
 			return true;
 		}
 
-		protected override bool CheckForDuplications ()
-		{
-			ArrayList ar = Parent.PartialContainer.Indexers;
-			if (ar != null) {
-				int arLen = ar.Count;
-					
-				for (int i = 0; i < arLen; i++) {
-					Indexer m = (Indexer) ar [i];
-					if (IsDuplicateImplementation (m))
-						return false;
-				}
-			}
-
-			ar = Parent.PartialContainer.Properties;
-			if (ar != null) {
-				int arLen = ar.Count;
-					
-				for (int i = 0; i < arLen; i++) {
-					Property m = (Property) ar [i];
-					if (IsDuplicateImplementation (m))
-						return false;
-				}
-			}
-
-			return true;
-		}
+		protected abstract PropertyInfo ResolveBaseProperty ();
 
 		// TODO: rename to Resolve......
  		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
- 			PropertyInfo base_property = Parent.PartialContainer.BaseCache.FindMemberToOverride (
- 				Parent.TypeBuilder, Name, ParameterTypes, null, true) as PropertyInfo;
-  
+ 			PropertyInfo base_property = ResolveBaseProperty ();
  			if (base_property == null)
  				return null;
   
@@ -6829,7 +6788,7 @@ namespace Mono.CSharp {
 				 Accessor set_block)
 			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, Parameters.EmptyReadOnlyParameters, attrs)
+				is_iface, name, attrs)
 		{
 			if (get_block == null)
 				Get = new GetMethod (this);
@@ -6880,6 +6839,12 @@ namespace Mono.CSharp {
 			
 			TypeManager.RegisterProperty (PropertyBuilder, this);
 			return true;
+		}
+
+		protected override PropertyInfo ResolveBaseProperty ()
+		{
+			return Parent.PartialContainer.BaseCache.FindMemberToOverride (
+				Parent.TypeBuilder, Name, Parameters.EmptyReadOnlyParameters.Types, null, true) as PropertyInfo;
 		}
 	}
 
@@ -7023,7 +6988,7 @@ namespace Mono.CSharp {
 		public void SetUsed ()
 		{
 			if (my_event != null) {
-				my_event.SetAssigned ();
+//				my_event.SetAssigned ();
 				my_event.SetMemberIsUsed ();
 			}
 		}
@@ -7033,8 +6998,50 @@ namespace Mono.CSharp {
 	/// For case when event is declared like property (with add and remove accessors).
 	/// </summary>
 	public class EventProperty: Event {
+		abstract class AEventPropertyAccessor : AEventAccessor
+		{
+			public AEventPropertyAccessor (Event method, Accessor accessor, string prefix):
+				base (method, accessor, prefix)
+			{
+			}
 
-		static string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
+			public override MethodBuilder Define (DeclSpace ds)
+			{
+				method.CheckAbstractAndExtern (block != null);
+				return base.Define (ds);
+			}
+		}
+
+		sealed class AddDelegateMethod: AEventPropertyAccessor
+		{
+			public AddDelegateMethod (Event method, Accessor accessor):
+				base (method, accessor, "add_")
+			{
+			}
+
+			protected override MethodInfo DelegateMethodInfo {
+				get {
+					return TypeManager.delegate_combine_delegate_delegate;
+				}
+			}
+		}
+
+		sealed class RemoveDelegateMethod: AEventPropertyAccessor
+		{
+			public RemoveDelegateMethod (Event method, Accessor accessor):
+				base (method, accessor, "remove_")
+			{
+			}
+
+			protected override MethodInfo DelegateMethodInfo {
+				get {
+					return TypeManager.delegate_remove_delegate_delegate;
+				}
+			}
+		}
+
+
+		static readonly string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
 		public EventProperty (DeclSpace parent, Expression type, int mod_flags,
 				      bool is_iface, MemberName name,
@@ -7043,10 +7050,6 @@ namespace Mono.CSharp {
 		{
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
-
-			// For this event syntax we don't report error CS0067
-			// because it is hard to do it.
-			SetAssigned ();
 		}
 
 		public override bool Define()
@@ -7071,9 +7074,77 @@ namespace Mono.CSharp {
 	/// Event is declared like field.
 	/// </summary>
 	public class EventField : Event {
+		abstract class EventFieldAccessor : AEventAccessor
+		{
+			protected EventFieldAccessor (Event method, string prefix)
+				: base (method, prefix)
+			{
+			}
 
-		static string[] attribute_targets = new string [] { "event", "field", "method" };
-		static string[] attribute_targets_interface = new string[] { "event", "method" };
+			protected override void EmitMethod(DeclSpace parent)
+			{
+				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+					return;
+
+				ILGenerator ig = method_data.MethodBuilder.GetILGenerator ();
+
+				// TODO: because we cannot use generics yet
+				FieldInfo field_info = ((EventField)method).FieldBuilder;
+
+				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);
+				if ((method.ModFlags & Modifiers.STATIC) != 0) {
+					ig.Emit (OpCodes.Ldsfld, field_info);
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Call, DelegateMethodInfo);
+					ig.Emit (OpCodes.Castclass, method.MemberType);
+					ig.Emit (OpCodes.Stsfld, field_info);
+				} else {
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldfld, field_info);
+					ig.Emit (OpCodes.Ldarg_1);
+					ig.Emit (OpCodes.Call, DelegateMethodInfo);
+					ig.Emit (OpCodes.Castclass, method.MemberType);
+					ig.Emit (OpCodes.Stfld, field_info);
+				}
+				ig.Emit (OpCodes.Ret);
+			}
+		}
+
+		sealed class AddDelegateMethod: EventFieldAccessor
+		{
+			public AddDelegateMethod (Event method):
+				base (method, "add_")
+			{
+			}
+
+			protected override MethodInfo DelegateMethodInfo {
+				get {
+					return TypeManager.delegate_combine_delegate_delegate;
+				}
+			}
+		}
+
+		sealed class RemoveDelegateMethod: EventFieldAccessor
+		{
+			public RemoveDelegateMethod (Event method):
+				base (method, "remove_")
+			{
+			}
+
+			protected override MethodInfo DelegateMethodInfo {
+				get {
+					return TypeManager.delegate_remove_delegate_delegate;
+				}
+			}
+		}
+
+
+		static readonly string[] attribute_targets = new string [] { "event", "field", "method" };
+		static readonly string[] attribute_targets_interface = new string[] { "event", "method" };
+
+		public FieldBuilder FieldBuilder;
+		public Expression Initializer;
 
 		public EventField (DeclSpace parent, Expression type, int mod_flags,
 				   bool is_iface, MemberName name,
@@ -7107,81 +7178,57 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (initializer != null) {
+			if (IsInterface)
+				return true;
+
+			// FIXME: We are unable to detect whether generic event is used because
+			// we are using FieldExpr instead of EventExpr for event access in that
+			// case.  When this issue will be fixed this hack can be removed.
+			if (TypeManager.IsGenericType (MemberType))
+				SetMemberIsUsed();
+
+			FieldBuilder = Parent.TypeBuilder.DefineField (
+				Name, MemberType,
+				FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
+			TypeManager.RegisterEventField (EventBuilder, this);
+
+			if (Initializer != null) {
 				if (((ModFlags & Modifiers.ABSTRACT) != 0)) {
 					Report.Error (74, Location, "`{0}': abstract event cannot have an initializer",
 						GetSignatureForError ());
 					return false;
 				}
+
+				Parent.PartialContainer.RegisterFieldForInitialization (this,
+					new FieldInitializer (FieldBuilder, Initializer));
 			}
 
 			return true;
 		}
 
-		public override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets 
+		{
 			get {
 				return IsInterface ? attribute_targets_interface : attribute_targets;
 			}
 		}
 	}
 
-	public abstract class Event : FieldBase {
-
-		protected sealed class AddDelegateMethod: DelegateMethod
-		{
-
-			public AddDelegateMethod (Event method):
-				base (method, "add_")
-			{
-			}
-
-			public AddDelegateMethod (Event method, Accessor accessor):
-				base (method, accessor, "add_")
-			{
-			}
-
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_combine_delegate_delegate;
-				}
-			}
-
-		}
-
-		protected sealed class RemoveDelegateMethod: DelegateMethod
-		{
-			public RemoveDelegateMethod (Event method):
-				base (method, "remove_")
-			{
-			}
-
-			public RemoveDelegateMethod (Event method, Accessor accessor):
-				base (method, accessor, "remove_")
-			{
-			}
-
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_remove_delegate_delegate;
-				}
-			}
-
-		}
-
-		public abstract class DelegateMethod : AbstractPropertyEventMethod
+	public abstract class Event : PropertyBasedMember {
+		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
 			ImplicitParameter param_attr;
 
-			static string[] attribute_targets = new string [] { "method", "param", "return" };
+			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
 
-			public DelegateMethod (Event method, string prefix)
+			protected AEventAccessor (Event method, string prefix)
 				: base (method, prefix)
 			{
 				this.method = method;
 			}
 
-			public DelegateMethod (Event method, Accessor accessor, string prefix)
+			protected AEventAccessor (Event method, Accessor accessor, string prefix)
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
@@ -7215,7 +7262,7 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public MethodBuilder Define (DeclSpace parent)
+			public virtual MethodBuilder Define (DeclSpace parent)
 			{
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
@@ -7226,39 +7273,6 @@ namespace Mono.CSharp {
 				MethodBuilder mb = method_data.MethodBuilder;
 				ParameterInfo.ApplyAttributes (mb);
 				return mb;
-			}
-
-
-			protected override void EmitMethod (DeclSpace parent)
-			{
-				if (block != null) {
-					base.EmitMethod (parent);
-					return;
-				}
-
-				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
-					return;
-
-				ILGenerator ig = method_data.MethodBuilder.GetILGenerator ();
-				FieldInfo field_info = (FieldInfo)method.FieldBuilder;
-
-				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);
-				if ((method.ModFlags & Modifiers.STATIC) != 0) {
-					ig.Emit (OpCodes.Ldsfld, field_info);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Call, DelegateMethodInfo);
-					ig.Emit (OpCodes.Castclass, method.MemberType);
-					ig.Emit (OpCodes.Stsfld, field_info);
-				} else {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, field_info);
-					ig.Emit (OpCodes.Ldarg_1);
-					ig.Emit (OpCodes.Call, DelegateMethodInfo);
-					ig.Emit (OpCodes.Castclass, method.MemberType);
-					ig.Emit (OpCodes.Stfld, field_info);
-				}
-				ig.Emit (OpCodes.Ret);
 			}
 
 			protected abstract MethodInfo DelegateMethodInfo { get; }
@@ -7292,7 +7306,6 @@ namespace Mono.CSharp {
 					return method.parameters;
 				}
 			}
-
 		}
 
 
@@ -7307,23 +7320,24 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.UNSAFE |
-			Modifiers.ABSTRACT;
+			Modifiers.ABSTRACT |
+			Modifiers.EXTERN;
 
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public DelegateMethod Add, Remove;
+		public AEventAccessor Add, Remove;
 		public MyEventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
+
 		Parameters parameters;
 
 		protected Event (DeclSpace parent, Expression type, int mod_flags,
 			      bool is_iface, MemberName name, Attributes attrs)
-			: base (parent, type, mod_flags,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
+			: base (parent, null, type, mod_flags,
+				is_iface ? AllowedInterfaceModifiers : AllowedModifiers, is_iface,
 				name, attrs)
 		{
-			IsInterface = is_iface;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -7349,9 +7363,6 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			EventAttributes e_attr;
-			e_attr = EventAttributes.None;
-
 			if (!DoDefineBase ())
 				return false;
 
@@ -7382,39 +7393,11 @@ namespace Mono.CSharp {
 			if (RemoveBuilder == null)
 				return false;
 
-			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, e_attr, MemberType);
-			
-			if (Add.Block == null && Remove.Block == null && !IsInterface) {
-				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, MemberType,
-					FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
-				TypeManager.RegisterPrivateFieldOfEvent (
-					(EventInfo) EventBuilder, FieldBuilder);
-				TypeManager.RegisterFieldBase (FieldBuilder, this);
-			}
-			
+			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, EventAttributes.None, MemberType);						
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
-
-			TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder);
 			return true;
 		}
-
- 		protected override bool CheckBase ()
- 		{
- 			if (!base.CheckBase ())
- 				return false;
- 
- 			if (conflict_symbol != null && (ModFlags & Modifiers.NEW) == 0) {
- 				if (!(conflict_symbol is EventInfo)) {
- 					Report.SymbolRelatedToPreviousError (conflict_symbol);
- 					Report.Error (72, Location, "Event `{0}' can override only event", GetSignatureForError ());
- 					return false;
- 				}
- 			}
- 
- 			return true;
- 		}
 
 		public override void Emit ()
 		{
@@ -7428,9 +7411,17 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		public override string GetSignatureForError ()
+		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
-			return base.GetSignatureForError ();
+			MethodInfo mi = (MethodInfo) Parent.PartialContainer.BaseCache.FindBaseEvent (
+				Parent.TypeBuilder, Name);
+
+			if (mi == null)
+				return null;
+
+			ParameterData pd = TypeManager.GetParameterData (mi);
+			base_ret_type = pd.ParameterType (0);
+			return mi;
 		}
 
 		//
@@ -7446,38 +7437,38 @@ namespace Mono.CSharp {
 
 		class GetIndexerMethod : GetMethod
 		{
-			public GetIndexerMethod (MethodCore method):
+			public GetIndexerMethod (PropertyBase method):
 				base (method)
 			{
 			}
 
-			public GetIndexerMethod (MethodCore method, Accessor accessor):
+			public GetIndexerMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor)
 			{
 			}
 
 			public override Parameters ParameterInfo {
 				get {
-					return method.ParameterInfo;
+					return ((Indexer)method).parameters;
 				}
 			}
 		}
 
 		class SetIndexerMethod: SetMethod
 		{
-			public SetIndexerMethod (MethodCore method):
+			public SetIndexerMethod (PropertyBase method):
 				base (method)
 			{
 			}
 
-			public SetIndexerMethod (MethodCore method, Accessor accessor):
+			public SetIndexerMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor)
 			{
 			}
 
 			protected override void DefineParameters ()
 			{
-				parameters = Parameters.MergeGenerated (method.Parameters,
+				parameters = Parameters.MergeGenerated (((Indexer)method).parameters,
 					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location));
 			}
 		}
@@ -7498,14 +7489,17 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
+		public readonly Parameters parameters;
 
 		public Indexer (DeclSpace parent, Expression type, MemberName name, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block)
 			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, parameters, attrs)
+				is_iface, name, attrs)
 		{
+			this.parameters = parameters;
+
 			if (get_block == null)
 				Get = new GetIndexerMethod (this);
 			else
@@ -7516,13 +7510,62 @@ namespace Mono.CSharp {
 			else
 				Set = new SetIndexerMethod (this, set_block);
 		}
-		       
+		
+		protected override bool CheckForDuplications ()
+		{
+			ArrayList ar = Parent.PartialContainer.Indexers;
+			if (ar != null) {
+				int arLen = ar.Count;
+					
+				for (int i = 0; i < arLen; i++) {
+					Indexer m = (Indexer) ar [i];
+					if (IsDuplicateImplementation (m))
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool IsDuplicateImplementation (Indexer indexer)
+		{
+			if (this == indexer)
+				return false;
+
+			if (!MemberName.Equals (indexer.MemberName))
+				return false;
+
+			Type[] param_types = indexer.parameters.Types;
+
+			// When it is not yet defined
+			if (param_types == null)
+				return false;
+
+			if (param_types.Length != parameters.Count)
+				return false;
+
+			for (int i = 0; i < param_types.Length; i++)
+				if (param_types [i] != parameters.Types [i])
+					return false;
+
+			Report.SymbolRelatedToPreviousError (indexer);
+			Report.Error (111, Location, TypeContainer.Error111, indexer.GetSignatureForError ());
+			return true;
+		}
+
+
 		public override bool Define ()
 		{
 			if (!DoDefineBase ())
 				return false;
 
 			if (!base.Define ())
+				return false;
+
+			if (!parameters.Resolve (ds))
+				return false;
+
+			if (!CheckParameters (parameters))
 				return false;
 
 			if (MemberType == TypeManager.void_type) {
@@ -7595,7 +7638,7 @@ namespace Mono.CSharp {
 			//
 			// Now name the parameters
 			//
-			Parameter [] p = Parameters.FixedParameters;
+			Parameter [] p = parameters.FixedParameters;
 			if (p != null) {
 				// TODO: should be done in parser and it needs to do cycle
 				if ((p [0].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
@@ -7605,7 +7648,7 @@ namespace Mono.CSharp {
 			}
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				Name, PropertyAttributes.None, MemberType, ParameterTypes);
+				Name, PropertyAttributes.None, MemberType, parameters.Types);
 			
 			if (!Get.IsDummy)
 				PropertyBuilder.SetGetMethod (GetBuilder);
@@ -7613,9 +7656,14 @@ namespace Mono.CSharp {
 			if (!Set.IsDummy)
 				PropertyBuilder.SetSetMethod (SetBuilder);
 				
-			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, ParameterTypes);
+			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, parameters.Types);
 
 			return true;
+		}
+
+		public override string GetDocCommentName (DeclSpace ds)
+		{
+			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
 		}
 
 		public override string GetSignatureForError ()
@@ -7627,13 +7675,28 @@ namespace Mono.CSharp {
 			}
 
 			sb.Append (".this");
-			sb.Append (Parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
+			sb.Append (parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
 			return sb.ToString ();
 		}
 
 		public override bool MarkForDuplicationCheck ()
 		{
 			caching_flags |= Flags.TestMethodDuplication;
+			return true;
+		}
+
+		protected override PropertyInfo ResolveBaseProperty ()
+		{
+			return Parent.PartialContainer.BaseCache.FindMemberToOverride (
+				Parent.TypeBuilder, Name, parameters.Types, null, true) as PropertyInfo;
+		}
+
+		protected override bool VerifyClsCompliance ()
+		{
+			if (!base.VerifyClsCompliance ())
+				return false;
+
+			parameters.VerifyClsCompliance ();
 			return true;
 		}
 	}
