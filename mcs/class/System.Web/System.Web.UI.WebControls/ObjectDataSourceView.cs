@@ -847,7 +847,7 @@ namespace System.Web.UI.WebControls
 				if (outParamInfos != null) {
 					outParams = new Hashtable ();
 					foreach (ParameterInfo op in outParamInfos)
-						outParams [op.Name] = methodArgs [op.Position - 1];
+						outParams [op.Name] = methodArgs [op.Position];
 				}
 				return new ObjectDataSourceStatusEventArgs (result, outParams, null);
 			}
