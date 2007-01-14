@@ -776,6 +776,130 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Ignore ("NullRefException on MS .NET 2.0")]
+		public void TestRemoveItemGroup1 ()
+		{
+			Engine engine;
+			Project p1;
+
+			engine = new Engine (Consts.BinPath);
+			p1 = engine.CreateNewProject ();
+
+			p1.RemoveItemGroup (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.")]
+		[Category ("NotWorking")]
+		public void TestRemoveItemGroup2 ()
+		{
+			Engine engine;
+			Project p1;
+			Project p2;
+			BuildItemGroup [] groups  = new BuildItemGroup [1];
+
+			engine = new Engine (Consts.BinPath);
+			p1 = engine.CreateNewProject ();
+			p2 = engine.CreateNewProject ();
+
+			p1.AddNewItem ("A", "B");
+			p1.ItemGroups.CopyTo (groups, 0);
+
+			p2.RemoveItemGroup (groups [0]);
+		}
+
+		[Test]
+		[Ignore ("NullRefException on MS .NET 2.0")]
+		public void TestRemoveItem1 ()
+		{
+			Engine engine;
+			Project project;
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			project.RemoveItem (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"The object passed in is not part of the project.")]
+		public void TestRemoveItem2 ()
+		{
+			Engine engine;
+			Project project;
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			project.RemoveItem (new BuildItem ("name", "include"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.")]
+		[Category ("NotWorking")]
+		public void TestRemoveItem3 ()
+		{
+			Engine engine;
+			Project p1;
+			Project p2;
+
+			engine = new Engine (Consts.BinPath);
+			p1 = engine.CreateNewProject ();
+			p2 = engine.CreateNewProject ();
+
+			p1.AddNewItem ("A", "B");
+
+			p2.RemoveItem (p1.EvaluatedItems [0]);
+		}
+
+		[Test]
+		[Ignore ("Should throw an exception")]
+		public void TestRemoveItem4 ()
+		{
+			Engine engine;
+			Project p1;
+			Project p2;
+
+			engine = new Engine (Consts.BinPath);
+			p1 = engine.CreateNewProject ();
+			p2 = engine.CreateNewProject ();
+
+			p1.AddNewItem ("A", "B");
+			p1.AddNewItem ("A", "C");
+
+			p2.RemoveItem (p1.EvaluatedItems [0]);
+		}
+
+		[Test]
+		public void TestRemoveItem5 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='a'/>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.RemoveItem (project.EvaluatedItems [0]);
+			Assert.AreEqual (0, project.EvaluatedItems.Count, "A1");
+			project.ItemGroups.CopyTo (groups, 0);
+			Assert.IsNull (groups [0], "A2");
+			Assert.AreEqual (0, project.ItemGroups.Count, "A3");
+		}
+
+		[Test]
 		[Category ("NotWorking")]
 		public void TestResetBuildStatus ()
 		{

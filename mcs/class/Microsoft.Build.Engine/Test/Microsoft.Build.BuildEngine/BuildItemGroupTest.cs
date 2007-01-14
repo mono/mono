@@ -522,6 +522,39 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestRemoveItem3 ()
+		{
+			Engine engine;
+			Project project;
+			XmlDocument xd;
+			XmlNode node;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='B'/>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (groups, 0);
+
+			groups [0].RemoveItem (groups [0] [0]);
+			Assert.AreEqual (0, groups [0].Count, "A1");
+			Assert.AreEqual (1, project.ItemGroups.Count, "A2");
+
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("tns:Project/tns:ItemGroup/tns:A", TestNamespaceManager.NamespaceManager);
+			Assert.IsNull (node, "A3");
+		}
+
+		[Test]
 		public void TestRemoveItemAt1 ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();
@@ -562,6 +595,42 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			big.AddNewItem ("c", "d");
 
 			big.RemoveItemAt (3);
+		}
+
+		[Test]
+		public void TestRemoveItemAt4 ()
+		{
+			Engine engine;
+			Project project;
+			XmlDocument xd;
+			XmlNode node;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<A Include='D'/>
+						<B Include='D'/>
+						<C Include='D'/>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+			project.ItemGroups.CopyTo (groups, 0);
+
+			groups [0].RemoveItemAt (1);
+			Assert.AreEqual (2, groups [0].Count, "A1");
+			Assert.AreEqual (1, project.ItemGroups.Count, "A2");
+
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("tns:Project/tns:ItemGroup/tns:B", TestNamespaceManager.NamespaceManager);
+			Assert.IsNull (node, "A3");
+			Assert.IsTrue (project.IsDirty, "A4");
 		}
 
 		[Test]
