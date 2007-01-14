@@ -144,12 +144,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Remove (BuildItemGroup big)
 		{
-			big.XmlElement.ParentNode.RemoveChild (big.XmlElement);
+			big.Detach ();
 			list.Remove (big);
 		}
 
 		internal void Remove (BuildPropertyGroup bpg)
 		{
+			// FIXME: add bpg.Detach ();
 			bpg.XmlElement.ParentNode.RemoveChild (bpg.XmlElement);
 			list.Remove (bpg);
 		}
@@ -157,7 +158,6 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			Evaluate (EvaluationType.Property);
-
 			Evaluate (EvaluationType.Item);
 		}
 

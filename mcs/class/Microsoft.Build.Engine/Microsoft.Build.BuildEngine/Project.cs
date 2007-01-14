@@ -84,6 +84,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			buildEnabled = ParentEngine.BuildEnabled;
 			xmlDocument = new XmlDocument ();
+			xmlDocument.PreserveWhitespace = false;
 			xmlDocument.AppendChild (xmlDocument.CreateElement ("Project", XmlNamespace));
 			xmlDocument.DocumentElement.SetAttribute ("xmlns", ns);
 			
@@ -261,7 +262,12 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByName (string itemName)
-		{
+		{			
+			if (needToReevaluate) {
+				needToReevaluate = false;
+				Reevaluate ();
+			}
+
 			if (evaluatedItemsByName.ContainsKey (itemName))
 				return evaluatedItemsByName [itemName];
 			else
@@ -270,6 +276,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName)
 		{
+			if (needToReevaluate) {
+				needToReevaluate = false;
+				Reevaluate ();
+			}
+
 			if (evaluatedItemsByNameIgnoringCondition.ContainsKey (itemName))
 				return evaluatedItemsByNameIgnoringCondition [itemName];
 			else
@@ -278,6 +289,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string GetEvaluatedProperty (string propertyName)
 		{
+			if (needToReevaluate) {
+				needToReevaluate = false;
+				Reevaluate ();
+			}
+
 			if (propertyName == null)
 				throw new ArgumentNullException ("propertyName");
 
@@ -328,22 +344,59 @@ namespace Microsoft.Build.BuildEngine {
 			timeOfLastDirty = DateTime.Now;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void RemoveAllItemGroups ()
 		{
-			throw new NotImplementedException ();
+			int length = ItemGroups.Count;
+			BuildItemGroup [] groups = new BuildItemGroup [length];
+			ItemGroups.CopyTo (groups, 0);
+
+			for (int i = 0; i < length; i++)
+				RemoveItemGroup (groups [i]);
+
+			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public void RemoveAllPropertyGroups ()
 		{
-			throw new NotImplementedException ();
+			int length = PropertyGroups.Count;
+			BuildPropertyGroup [] groups = new BuildPropertyGroup [length];
+			PropertyGroups.CopyTo (groups, 0);
+
+			for (int i = 0; i < length; i++)
+				RemovePropertyGroup (groups [i]);
+
+			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 		}
 
 		[MonoTODO]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
-			throw new NotImplementedException ();
+			if (itemToRemove == null)
+				throw new ArgumentNullException ("itemToRemove");
+
+			if (!itemToRemove.FromXml && !itemToRemove.HasParent)
+				throw new InvalidOperationException ("The object passed in is not part of the project.");
+
+			BuildItemGroup big = itemToRemove.ParentItemGroup;
+			
+			if (itemToRemove.FromXml) {
+				if (big.Count == 1)
+					groupingCollection.Remove (big);
+				else
+					big.RemoveItem (itemToRemove);
+			} else {
+				if (big.Count == 1)
+					groupingCollection.Remove (big);
+				else
+					big.RemoveItem (itemToRemove.ParentItem);
+			}
+
+			MarkProjectAsDirty ();
+			NeedToReevaluate ();
 		}
 
 		[MonoTODO ("Not tested")]
@@ -558,6 +611,8 @@ namespace Microsoft.Build.BuildEngine {
 				ParentEngine.AddLoadedProject (this);
 			} catch (Exception e) {
 				throw new InvalidProjectFileException (e.Message, e);
+			} finally {
+				textReader.Close ();
 			}
 		}
 

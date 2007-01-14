@@ -101,6 +101,11 @@ namespace Microsoft.Build.BuildEngine {
 				itemGroupElement.RemoveAll ();
 			
 			buildItems = new List <BuildItem> ();
+
+			if (parentProject != null) {
+				parentProject.MarkProjectAsDirty ();
+				parentProject.NeedToReevaluate ();
+			}
 		}
 
 		[MonoTODO]
@@ -124,16 +129,21 @@ namespace Microsoft.Build.BuildEngine {
 			return buildItems.GetEnumerator ();
 		}
 
-		[MonoTODO ("Doesn't remove item from XML")]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
+			if (itemToRemove == null)
+				return;
+
+			itemToRemove.Detach ();
+
 			buildItems.Remove (itemToRemove);
 		}
 
-		[MonoTODO ("Doesn't remove item from XML")]
 		public void RemoveItemAt (int index)
 		{
-			buildItems.RemoveAt (index);
+			BuildItem item = buildItems [index];
+
+			RemoveItem (item);
 		}
 
 		public BuildItem[] ToArray ()
@@ -179,6 +189,14 @@ namespace Microsoft.Build.BuildEngine {
 			return array;
 		}
 
+		internal void Detach ()
+		{
+			if (!FromXml)
+				throw new InvalidOperationException ();
+
+			itemGroupElement.ParentNode.RemoveChild (itemGroupElement);
+		}
+
 		internal void Evaluate ()
 		{
 			foreach (BuildItem bi in buildItems) {
@@ -198,8 +216,6 @@ namespace Microsoft.Build.BuildEngine {
 			buildItems.InsertRange (index, list);
 		}
 		
-		[MonoTODO]
-		// FIXME: whether we can invoke get_Condition on BuildItemGroup not based on XML
 		public string Condition {
 			get {
 				if (FromXml)

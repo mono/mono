@@ -1,3 +1,25 @@
+2007-01-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemGroup.cs (Detach): Added.
+	(RemoveItem)
+	(RemoveItemAt): Used Detach ().
+
+	* BuildItem.cs: Made FromXml and HasParent internal and added
+	ParentItem and ParentItemGroup properties (internal).
+	(Detach): Added.
+
+	* GroupingCollection.cs (Remove): Used Detach ().
+
+	* Project.cs (ctor): Added PreserveWhitespace = false to get formatted
+	text on Save ().
+	(GetEvaluatedItemsByNameIgnoringCondition)
+	(GetEvaluatedItemsByName)
+	(GetEvaluatedProperty): Reevaluate if needed.
+	(RemoveItem)
+	(RemoveAllItemGroups)
+	(RemoveAllPropertyGroups): Implemented.
+	(DoLoad): Added closing of TextReader.
+
 2007-01-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyGroup.cs: Don't trigger reevaluation just after a

@@ -47,7 +47,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool		isImported;
 		string		itemInclude;
 		string		name;
-		BuildItemGroup	parentItemGroup;
+		BuildItemGroup	parent_item_group;
 		BuildItem	parent_item;
 		//string		recursiveDir;
 		IDictionary	evaluatedMetadata;
@@ -86,7 +86,7 @@ namespace Microsoft.Build.BuildEngine {
 			isImported = parentItemGroup.IsImported;
 			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			this.parentItemGroup = parentItemGroup;
+			this.parent_item_group = parentItemGroup;
 			
 			this.itemElement = itemElement;
 			
@@ -100,7 +100,7 @@ namespace Microsoft.Build.BuildEngine {
 			name = parent.Name;
 			parent_item = parent;
 			parent_item.child_items.AddItem (this);
-			parentItemGroup = parent.parentItemGroup;
+			parent_item_group = parent.parent_item_group;
 			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.unevaluatedMetadata);
 			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.evaluatedMetadata);
 		}
@@ -200,10 +200,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		void AddMetadata (string name, string value, bool literal)
 		{
-			if (parentItemGroup != null) {
+			if (parent_item_group != null) {
 				Expression e = new Expression ();
 				e.Parse (value);
-				evaluatedMetadata.Add (name, (string) e.ConvertTo (parentItemGroup.Project, typeof (string)));
+				evaluatedMetadata.Add (name, (string) e.ConvertTo (parent_item_group.Project, typeof (string)));
 			} else
 				evaluatedMetadata.Add (name, Utilities.Unescape (value));
 				
@@ -304,6 +304,17 @@ namespace Microsoft.Build.BuildEngine {
 			return taskItem;
 		}
 
+		internal void Detach ()
+		{
+			if (FromXml)
+				itemElement.ParentNode.RemoveChild (itemElement);
+			else if (HasParent) {
+				if (parent_item.child_items.Count > 1)
+					SplitParentItem ();
+				parent_item.Detach ();
+			}
+		}
+
 		string GetItemSpecFromTransform (Expression transform)
 		{
 			StringBuilder sb;
@@ -316,9 +327,9 @@ namespace Microsoft.Build.BuildEngine {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {
-						sb.Append (((PropertyReference)o).ConvertToString (parentItemGroup.Project));
+						sb.Append (((PropertyReference)o).ConvertToString (parent_item_group.Project));
 					} else if (o is ItemReference) {
-						sb.Append (((ItemReference)o).ConvertToString (parentItemGroup.Project));
+						sb.Append (((ItemReference)o).ConvertToString (parent_item_group.Project));
 					} else if (o is MetadataReference) {
 						sb.Append (GetMetadata (((MetadataReference)o).MetadataName));
 					}
@@ -337,7 +348,7 @@ namespace Microsoft.Build.BuildEngine {
 				insertAfter = added.itemElement;
 				list.Add (added);
 			}
-			parent.parentItemGroup.ReplaceWith (parent, list);
+			parent.parent_item_group.ReplaceWith (parent, list);
 			parent.itemElement.ParentNode.RemoveChild (parent.itemElement);			
 		}
 
@@ -354,7 +365,7 @@ namespace Microsoft.Build.BuildEngine {
 				newElement.AppendChild (xe.Clone ());
 			parent.itemElement.ParentNode.InsertAfter (newElement, insertAfter);
 
-			newParent = new BuildItem (newElement, parent.parentItemGroup);
+			newParent = new BuildItem (newElement, parent.parent_item_group);
 			newParent.child_items.AddItem (child);
 			child.parent_item = newParent;
 
@@ -408,13 +419,9 @@ namespace Microsoft.Build.BuildEngine {
 				if (FromXml)
 					itemElement.SetAttribute ("Include", value);
 				else if (HasParent) {
-					if (parent_item.child_items.Count == 1)
-						parent_item.Include = value;
-					else {
+					if (parent_item.child_items.Count > 1)
 						SplitParentItem ();
-						
-						parent_item.Include = value;
-					}
+					parent_item.Include = value;
 				} else
 					itemInclude = value;
 			}
@@ -442,28 +449,29 @@ namespace Microsoft.Build.BuildEngine {
 						newElement.AppendChild (xe.Clone ());
 					itemElement.ParentNode.ReplaceChild (newElement, itemElement);
 					itemElement = newElement;
-				} else if (HasParent)
-					if (parent_item.child_items.Count == 1)
-						parent_item.Name = value;
-					else {
+				} else if (HasParent) {
+					if (parent_item.child_items.Count > 1)
 						SplitParentItem ();
-						parent_item.Name = value;
-					}
-				else
+					parent_item.Name = value;
+				} else
 					name = value;
 			}
 		}
 		
-		bool FromXml {
-			get {
-				return itemElement != null;
-			}
+		internal bool FromXml {
+			get { return itemElement != null; }
 		}
 		
-		bool HasParent {
-			get {
-				return parent_item != null;
-			}
+		internal bool HasParent {
+			get { return parent_item != null; }
+		}
+
+		internal BuildItem ParentItem {
+			get { return parent_item; }
+		}
+
+		internal BuildItemGroup ParentItemGroup {
+			get { return parent_item_group; }
 		}
 	}
 }
