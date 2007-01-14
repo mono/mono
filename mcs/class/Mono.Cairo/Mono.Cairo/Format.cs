@@ -44,7 +44,7 @@ namespace Cairo
 
 		//[Obsolete ("Use Argb32")]
 		ARGB32 = Argb32,
-		//[Obsolete ("Use Rgb32")]
+		//[Obsolete ("Use Rgb24")]
 		RGB24	= Rgb24,
 	}
 }
