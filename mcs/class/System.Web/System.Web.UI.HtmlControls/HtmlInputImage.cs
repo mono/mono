@@ -260,6 +260,7 @@ namespace System.Web.UI.HtmlControls {
 			}
 #endif		
 
+			PreProcessRelativeReference (writer,"src");
 			base.RenderAttributes (writer);
 		}
 

@@ -1,3 +1,7 @@
+2007-01-07  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* HtmlInputImage.cs: to handle correctly relative URLs to the image.
+
 2007-01-07  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlInputRadioButton.cs: fixed: LoadPostData.		  
