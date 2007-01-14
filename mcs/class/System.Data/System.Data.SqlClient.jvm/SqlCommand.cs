@@ -84,6 +84,23 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
+		public override string CommandText {
+			get {
+				string commandText = base.CommandText;
+				if (CommandType != CommandType.StoredProcedure || string.IsNullOrEmpty (commandText))
+					return commandText;
+
+				string trimmedCommandText = commandText.TrimEnd ();
+				if (commandText [0] != '[' && trimmedCommandText [trimmedCommandText.Length - 1] != ')')
+					commandText = String.Concat ("[", commandText, "]");
+
+				return commandText;
+			}
+			set {
+				base.CommandText = value;
+			}
+		}
+
 		public new SqlConnection Connection
 		{
 			get { return (SqlConnection)base.Connection; }
