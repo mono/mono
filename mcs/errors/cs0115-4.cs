@@ -1,4 +1,4 @@
-// cs0115-4.cs: `DerivedClass.get_Value()': no suitable method found to override
+// CS0115: `DerivedClass.get_Value()' is marked as an override but no suitable method found to override
 // Line: 13
 
 class BaseClass {

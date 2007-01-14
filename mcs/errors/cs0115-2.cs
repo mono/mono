@@ -1,4 +1,4 @@
-// cs0115.cs: `X.this[int]': no suitable method found to override
+// CS0115: `X.this[int]' is marked as an override but no suitable indexer found to override
 // Line: 5
 
 class X {

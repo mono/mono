@@ -1,3 +1,7 @@
+// CS0266: Cannot implicitly convert type `System.IntPtr' to `byte*'. An explicit conversion exists (are you missing a cast?)
+// Line: 23
+// Compiler options: -unsafe
+
 using System;
 
 public class Pixbuf {
