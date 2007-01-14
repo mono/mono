@@ -155,7 +155,7 @@ namespace System.Data.ProviderBase
 
 			for (int i = 0; i < _list.Count; i++) {
 				string name = ((DbParameter)_list [i]).ParameterName;
-				if (name == parameterName) {
+				if (String.Compare (name, parameterName, StringComparison.OrdinalIgnoreCase) == 0) {
 					return i;
 				}
 			}

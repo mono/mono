@@ -95,6 +95,7 @@ namespace MonoTests.System.Data.OleDb
 				BeginCase("Check contains - 5");
 				cmd.Parameters.Add(new OleDbParameter("MyParam", 12));
 				Compare(cmd.Parameters.Contains("MyParam"),true );
+				Compare(cmd.Parameters.Contains("myparam"),true );
 			} 
 			catch(Exception ex){exp = ex;}
 			finally{EndCase(exp); exp = null;}
