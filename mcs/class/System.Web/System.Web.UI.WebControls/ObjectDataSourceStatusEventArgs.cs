@@ -36,18 +36,15 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceStatusEventArgs : EventArgs
 	{
-		private object returnVal; 
-		private IDictionary outPutParam;
-		private Exception exception;
+		private readonly object returnVal;
+		private readonly IDictionary outPutParam;
+		private readonly Exception exception;
 		private bool exceptionHandled;
-		
+		private int affectedRows;
+
 		public ObjectDataSourceStatusEventArgs (object returnVal, IDictionary outPutParam)
-		{
-			this.returnVal = returnVal;
-			this.outPutParam = outPutParam;
-			this.exception = null;
-			this.exceptionHandled = false;
-		}
+			:
+			this (returnVal, outPutParam, null) { }
 		
 		public ObjectDataSourceStatusEventArgs (object returnVal, IDictionary outPutParam, Exception e)
 		{
@@ -55,6 +52,12 @@ namespace System.Web.UI.WebControls
 			this.outPutParam = outPutParam;
 			this.exception = e;
 			this.exceptionHandled = false;
+			this.affectedRows = -1;
+		}
+
+		public int AffectedRows {
+			get { return affectedRows; }
+			set { affectedRows = value; }
 		}
 		
 		public Exception Exception {
