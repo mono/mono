@@ -1,4 +1,8 @@
-2007-01-07  Eyal Alaluf  <eyala@mainsoft.com>
+2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* HtmlForm.cs, HtmlAnchor.cs: Added H2EE Portal support for TARGET_J2EE.
+
+2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
 
 	* HtmlInputImage.cs: to handle correctly relative URLs to the image.
 

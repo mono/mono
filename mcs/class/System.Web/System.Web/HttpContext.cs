@@ -55,7 +55,7 @@ namespace System.Web {
 	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpContext : IServiceProvider {
+	public sealed partial class HttpContext : IServiceProvider {
 		internal HttpWorkerRequest WorkerRequest;
 		HttpApplication app_instance;
 		HttpRequest request;
@@ -77,10 +77,7 @@ namespace System.Web {
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
 #endif
-#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
-		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
-#endif
-		
+
 		public HttpContext (HttpWorkerRequest wr)
 		{
 			WorkerRequest = wr;
@@ -136,14 +133,7 @@ namespace System.Web {
 		// The "Current" property is set just after we have constructed it with 
 		// the 'HttpContext (HttpWorkerRequest)' constructor.
 		//
-#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
-		[MonoTODO("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
-		public static HttpContext Current
-		{
-			get { return (HttpContext) Thread.GetData (_ContextSlot); }
-			set { Thread.SetData (_ContextSlot, value); }
-		}
-#else
+#if !TARGET_JVM // No remoting CallContext support in Grasshopper
 		public static HttpContext Current {
 			get {
 				return (HttpContext) CallContext.GetData ("c");
@@ -195,9 +185,7 @@ namespace System.Web {
 					(Request.WorkerRequest.GetLocalAddress () != Request.UserHostAddress);
 			}
 		}
-#if TARGET_JVM
-		public bool IsDebuggingEnabled { get { return false; } }
-#else
+#if !TARGET_JVM
 		public bool IsDebuggingEnabled {
 			get {
 #if NET_2_0

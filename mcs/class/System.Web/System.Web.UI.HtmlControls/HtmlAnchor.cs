@@ -165,8 +165,11 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			// we don't want to render the "user" URL, so we either render:
+			string target = Attributes ["target"];
+			if ((target == null) || (target.Length == 0))
+				Attributes.Remove("target");
 
+			// we don't want to render the "user" URL, so we either render:
 			EventHandler serverClick = (EventHandler) Events [serverClickEvent];
 			if (serverClick != null) {
 #if NET_2_0
@@ -181,12 +184,13 @@ namespace System.Web.UI.HtmlControls {
 			} else {
 				string hr = HRef;
 				if (hr != "")
+#if TARGET_J2EE
+					// For J2EE portlets we need to genreate a render URL.
+					HRef = ResolveUrl (hr, String.Compare(target, "_blank", true) != 0);
+#else
 					HRef = ResolveUrl (hr);
+#endif
 			}
-
-			string target = Attributes ["target"];
-			if ((target == null) || (target.Length == 0))
-				Attributes.Remove("target");
 
 			base.RenderAttributes (writer);
 

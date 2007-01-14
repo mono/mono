@@ -45,7 +45,7 @@ namespace System.Web {
 	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpRequest {
+	public sealed partial class HttpRequest {
 		HttpWorkerRequest worker_request;
 		HttpContext context;
 		WebROCollection query_string_nvc;
@@ -306,6 +306,10 @@ namespace System.Web {
 					}
 				}
 
+#if TARGET_J2EE
+				// For J2EE portal support we emulate cookies using the session.
+				GetSessionCookiesForPortal (cookies);
+#endif
 				if (validate_cookies && !checked_cookies){
 					ValidateCookieCollection (cookies);
 					checked_cookies = true;
@@ -443,6 +447,7 @@ namespace System.Web {
 			EndSubStream (input);
 		}
 
+#if !TARGET_J2EE
 		//
 		// Adds the key/value to the form, and sets the argumets to empty
 		//
@@ -491,7 +496,8 @@ namespace System.Web {
 
 			EndSubStream (input);
 		}
-		
+#endif
+
 		bool IsContentType (string ct, bool starts_with)
 		{
 			if (starts_with)
@@ -569,63 +575,7 @@ namespace System.Web {
 			}
 		}
 
-
-#if TARGET_JVM	
-		const int INPUT_BUFFER_SIZE = 1024;
-
-		void MakeInputStream ()
-		{
-			if (worker_request == null)
-				throw new HttpException ("No HttpWorkerRequest");
-
-			// consider for perf:
-			//    return ((ServletWorkerRequest)worker_request).InputStream();
-
-			//
-			// Use an unmanaged memory block as this might be a large
-			// upload
-			//
-			int content_length = ContentLength;
-
-#if NET_2_0
-			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
-#else
-			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
-#endif
-			if (content_length > (config.MaxRequestLength * 1024))
-				throw new HttpException ("File exceeds httpRuntime limit");
-			
-			byte[] content = new byte[content_length];
-			if (content == null)
-				throw new HttpException (String.Format ("Not enough memory to allocate {0} bytes", content_length));
-
-			int total;
-			byte [] buffer;
-			buffer = worker_request.GetPreloadedEntityBody ();
-			if (buffer != null){
-				total = buffer.Length;
-				if (content_length > 0)
-					total = Math.Min (content_length, total);
-				Array.Copy (buffer, content, total);
-			} else
-				total = 0;
-			
-			
-			buffer = new byte [INPUT_BUFFER_SIZE];
-			while (total < content_length){
-				int n;
-				n = worker_request.ReadEntityBody (buffer, Math.Min (content_length-total, INPUT_BUFFER_SIZE));
-				if (n <= 0)
-					break;
-				Array.Copy (buffer, 0, content, total, n);
-				total += n;
-			} 
-			if (total < content_length)
-				throw new HttpException (411, "The uploaded file is incomplete");
-							 
-			input_stream = new MemoryStream (content, 0, content.Length, false, true);
-		}
-#else
+#if !TARGET_JVM
 		const int INPUT_BUFFER_SIZE = 32*1024;
 
 		TempFileStream GetTempStream ()
@@ -804,6 +754,7 @@ namespace System.Web {
 				throw new HttpException (411, "The request body is incomplete.");
 		}
 #endif
+
 		internal void ReleaseResources ()
 		{
 			Stream stream;

@@ -66,7 +66,7 @@ namespace System.Web.UI
 	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner,
 				"System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 #endif		
-        public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
+        public partial class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
 #if NET_2_0
         , IUrlResolutionService, IControlBuilderAccessor, IControlDesignerAccessor, IExpressionsAccessor
 #endif
@@ -532,6 +532,7 @@ namespace System.Web.UI
 			defaultNumberID = 0;
 		}
 
+#if !TARGET_J2EE
 		string GetDefaultName ()
 		{
 			string defaultName;
@@ -542,6 +543,7 @@ namespace System.Web.UI
 			}
 			return defaultName;
 		}
+#endif
 
 		void NullifyUniqueID ()
 		{
@@ -1149,6 +1151,11 @@ namespace System.Web.UI
 		string ResolveClientUrl (string relativeUrl)
 		{
 			string absoluteUrl = ResolveUrl (relativeUrl);
+#if TARGET_J2EE
+			// There are no relative paths when rendering a J2EE portlet
+			if (IsPortletRender)
+				return absoluteUrl;
+#endif
 			if (Context != null && Context.Request != null) {
 				string baseUrl = Context.Request.BaseVirtualDir;
 				if (absoluteUrl.StartsWith (baseUrl + "/"))

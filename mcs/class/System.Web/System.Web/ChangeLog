@@ -1,3 +1,9 @@
+2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* HttpRequest.jvm.cs, HttpContext.jvm.cs: Added TARGET_J2EE specific files.
+	* HttpContext.cs, HttpResponse.cs, HttpRequest.cs, HttpCookie.cs:
+	  Add J2EE Portal support for TARGET_J2EE.
+
 2007-01-04  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed IsLocal, should check all ip addresses of host

@@ -1,3 +1,8 @@
+2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* System.Web20.vmwcsproj: added .jvm files for Control.cs, Page.cs,
+	  HttpRequest.cs & HttpContext.cs
+
 2007-01-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web20.vmwcsproj: added ProfileParameter.cs

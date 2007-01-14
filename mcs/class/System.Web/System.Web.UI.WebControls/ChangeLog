@@ -1,3 +1,7 @@
+2007-01-14 Eyal Alaluf <eyala@mainsoft.com>
+	* Button.cs, HyperLink.cs, DataGrid.cs, ImageButton.cs, LinkButton.cs,
+	  PagedDataSource.cs: Added J2EE Portal support for TARGET_J2EE.
+
 2007-01-14  Ilya Kharmatsky <ilyak-at-mainsoft.com>
 	* BaseCompareValidator
 	* CompareValidator

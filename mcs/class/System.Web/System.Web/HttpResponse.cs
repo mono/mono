@@ -39,6 +39,9 @@ using System.Web.Util;
 using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
+#if TARGET_J2EE
+using vmw.@internal.j2ee;
+#endif
 
 namespace System.Web {
 	
@@ -382,6 +385,7 @@ namespace System.Web {
 				suppress_content = value;
 			}
 		}
+
 #if NET_2_0
 		[MonoTODO ("Not implemented")]
 		public void AddCacheDependency (CacheDependency[] dependencies)
@@ -657,8 +661,11 @@ namespace System.Web {
 				int n = cookies.Count;
 				for (int i = 0; i < n; i++)
 					write_headers.Add (cookies.Get (i).GetCookieHeader ());
+#if TARGET_J2EE
+				// For J2EE Portal support emulate cookies by storing them in the session.
+				context.Request.SetSessionCookiesForPortal (cookies);
+#endif
 			}
-			
 		}
 
 		internal void WriteHeaders (bool final_flush)
@@ -758,6 +765,19 @@ namespace System.Web {
 		{
 			if (headers_sent)
 				throw new HttpException ("header have been already sent");
+
+#if TARGET_J2EE
+			// In J2EE portal we need to handle Redirect at the processAction phase
+			// using the portlet ActionResponse that will send for us the redirect header.
+			IPortletActionResponse resp = context.ServletResponse as IPortletActionResponse;
+			if (resp != null) {
+				resp.sendRedirect (url);
+				if (endResponse)
+					End ();
+				return;
+			}
+#endif
+
 #if NET_2_0
 			is_request_being_redirected = true;
 #endif

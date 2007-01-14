@@ -31,12 +31,8 @@ using vmw.common;
 
 namespace System.Web.J2EE
 {
-	internal sealed class J2EEUtils
+	internal static class J2EEUtils
 	{
-		public J2EEUtils()
-		{
-		}
-
 		public static int RunProc(string[] cmd)
 		{	
 			java.lang.Runtime rt = java.lang.Runtime.getRuntime();

@@ -1,3 +1,9 @@
+2007-01-14  Eya; Alaluf <eyala@mainsoft.com>
+
+	* Control.jvm.cs, Page.jvm.cs: Added TARGET_J2EE specific files.
+	* Page.cs, ClientScriptManager.cs, Control.cs: Added J2EE portal
+	  support for TARGET_J2EE.
+
 2007-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Control.cs: Remove comment, it provides no information about

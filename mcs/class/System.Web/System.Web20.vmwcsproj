@@ -35,6 +35,7 @@
     <Version>2.0</Version>
     <JDKName>1.5.0_05</JDKName>
     <TargetPlatform>0</TargetPlatform>
+    <NoWarn>67,168,169,219,414,612,618,649</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,7 @@
     <SkipValidation>True</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
+    <NoWarn>67,168,169,219,414,612,618,649</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
   </PropertyGroup>
@@ -64,6 +66,7 @@
     <SkipValidation>false</SkipValidation>
     <KeepIntermediate>false</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
+    <NoWarn>67,168,169,219,414,612,618,649</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
   </PropertyGroup>
@@ -87,6 +90,7 @@
     <Version>2.0</Version>
     <JDKName>1.5.0_05</JDKName>
     <TargetPlatform>0</TargetPlatform>
+    <NoWarn>67,168,169,219,414,612,618,649</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\build\common\Locale.cs">
@@ -848,6 +852,7 @@
     <Compile Include="System.Web.UI\ConflictOptions.cs" />
     <Compile Include="System.Web.UI\ConstructorNeedsTagAttribute.cs" />
     <Compile Include="System.Web.UI\Control.cs" />
+    <Compile Include="System.Web.UI\Control.jvm.cs" />
     <Compile Include="System.Web.UI\ControlBuilderAttribute.cs" />
     <Compile Include="System.Web.UI\ControlCachePolicy.cs" />
     <Compile Include="System.Web.UI\ControlCollection.cs" />
@@ -1036,6 +1041,9 @@
     <Compile Include="System.Web\HttpContext.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web\HttpContext.jvm.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="System.Web\HttpCookie.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1059,6 +1067,7 @@
     <Compile Include="System.Web\HttpParseException.cs" />
     <Compile Include="System.Web\HttpPostedFile.cs" />
     <Compile Include="System.Web\HttpRequest.cs" />
+    <Compile Include="System.Web\HttpRequest.jvm.cs" />
     <Compile Include="System.Web\HttpRequestValidationException.cs" />
     <Compile Include="System.Web\HttpResponse.cs" />
     <Compile Include="System.Web\HttpResponseHeader.cs" />
@@ -1193,6 +1202,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web.UI\Page.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Web.UI\Page.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web.UI\PageParser.jvm.cs" />
@@ -1339,6 +1351,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="j2ee">
+      <Private>False</Private>
+      <HintPath>..\lib\j2ee.dll</HintPath>
+    </Reference>
+    <Reference Include="J2EE.Helpers">
+      <Private>False</Private>
+      <HintPath>..\lib\J2EE.Helpers.dll</HintPath>
+    </Reference>
     <Reference Include="J2SE.Helpers">
       <Private>False</Private>
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
@@ -1371,7 +1391,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
+      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\llib\j2ee.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

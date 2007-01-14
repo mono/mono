@@ -68,7 +68,7 @@ namespace System.Web.UI
 #else
 [Designer ("Microsoft.VSDesigner.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VSDesigner, typeof (IRootDesigner))]
 #endif
-public class Page : TemplateControl, IHttpHandler
+public partial class Page : TemplateControl, IHttpHandler
 {
 #if NET_2_0
 	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
@@ -439,6 +439,14 @@ public class Page : TemplateControl, IHttpHandler
 	}
 #endif
 
+#if !TARGET_J2EE
+	internal string PostBackFunctionName {
+		get {
+			return "__doPostBack";
+		}
+	}
+#endif
+
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
 	public HttpRequest Request
@@ -754,6 +762,10 @@ public class Page : TemplateControl, IHttpHandler
 			coll = req.QueryString;
 		}
 
+#if TARGET_J2EE
+		coll = LoadViewStateForPortlet((WebROCollection)coll);
+#endif
+
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
 
@@ -955,7 +967,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		writer.WriteLine ("\tvar theForm;\n\tif (document.getElementById) {{ theForm = document.getElementById ('{0}'); }}", formUniqueID);
 		writer.WriteLine ("\telse {{ theForm = document.{0}; }}", formUniqueID);
-		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
+		writer.WriteLine ("\tfunction " + PostBackFunctionName + "(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 		writer.WriteLine ("\t\ttheForm.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\ttheForm.{0}.value = eventArgument;", postEventArgumentID);
@@ -989,7 +1001,7 @@ public class Page : TemplateControl, IHttpHandler
 		return new ObjectStateFormatter (this);
 	}
 
-	internal object GetSavedViewState ()
+	internal string GetSavedViewState ()
 	{
 		return _savedViewState;
 	}
@@ -1257,6 +1269,14 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.SaveStateComplete;
 		OnSaveStateComplete (EventArgs.Empty);
+#endif
+
+#if TARGET_J2EE
+		if (SaveViewStateForNextPortletRender())
+			return;
+#endif
+
+#if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;
 #endif
 		
