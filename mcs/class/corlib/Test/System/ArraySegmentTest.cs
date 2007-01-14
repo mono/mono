@@ -2,6 +2,7 @@
 //
 // Ankit Jain  <jankit@novell.com>
 // Raja R Harinath  <rharinath@novell.com>
+// Jensen Somers <jensen.somers@gmail.com>
 // 
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 // 
@@ -136,8 +137,27 @@ public class ArraySegmentTest
 	{
 		ArraySegment<byte> seg = new ArraySegment<byte> (null);
 	}
-
-
+	
+	[Test]
+	public void TestArraySegmentEqual ()
+	{
+	    string[] myArr_1 = { "The", "good" };
+	    string[] myArr_2 = { "The", "good" };
+	    
+	    ArraySegment<string> myArrSeg_1 = new ArraySegment<string>(myArr_1);
+	    ArraySegment<string> myArrSeg_2 = new ArraySegment<string>(myArr_2);
+	    
+	    // Should return true.
+	    Assert.AreEqual(myArrSeg_1.Equals(myArrSeg_1), true);
+	    Assert.AreEqual(myArrSeg_1 == myArrSeg_1, true);
+	    
+	    // Should return false. Allthough the strings are the same.
+	    Assert.AreEqual(myArrSeg_1.Equals(myArrSeg_2), false);
+	    Assert.AreEqual(myArrSeg_1 == myArrSeg_2, false);
+	    
+	    // Should return true.
+	    Assert.AreEqual(myArrSeg_1 != myArrSeg_2, true);
+	}
 }
 
 }

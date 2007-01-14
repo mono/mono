@@ -1,3 +1,8 @@
+2007-01-14  Jensen Somers <jensen.somers@gmail.com>
+
+    * ArraySegment.cs: Added Equals() method, operator == and !=
+    overloading and GetHashCode().
+
 2007-01-10  Andy Hume <andyhume32@yahoo.co.uk>
 
 	* Fixes to a number of exception classes.

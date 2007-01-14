@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Ben Maurer (bmaurer@ximian.com)
+//  Jensen Somers <jensen.somers@gmail.com>
 //
 // Copyright (C) 2004 Novell
 //
@@ -76,6 +77,36 @@ namespace System {
 		
 		public int Count {
 			get { return count; }
+		}
+		
+		public override bool Equals (Object obj)
+		{
+			if (obj is ArraySegment<T>) {
+				return this.Equals((ArraySegment<T>) obj);
+			}
+			return false;
+		}
+		
+		public bool Equals (ArraySegment<T> obj)
+		{
+			if ((this.array == obj.Array) && (this.offset == obj.Offset) && (this.count == obj.Count))
+				return true;
+			return false;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return ((this.array.GetHashCode() ^ this.offset) ^ this.count);
+		}
+		
+		public static bool operator ==(ArraySegment<T> a, ArraySegment<T> b)
+		{
+			return a.Equals(b);
+		}
+		
+		public static bool operator !=(ArraySegment<T> a, ArraySegment<T> b)
+		{
+			return !(a.Equals(b));
 		}
 	}
 }
