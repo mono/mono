@@ -1,3 +1,7 @@
+2007-01-14  Marek Habersack  <grendello@gmail.com>
+
+	* doc-bootstrap.cs: Fix a compilation problem in the bootstrap phase.
+
 2007-01-14  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80368
