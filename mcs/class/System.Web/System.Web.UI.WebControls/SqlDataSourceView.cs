@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls {
 			else {
 				command.CommandType = CommandType.StoredProcedure;
 				if (SortParameterName.Length > 0 && arguments.SortExpression.Length > 0)
-					command.Parameters.Add (CreateDbParameter (ParameterPrefix + SortParameterName, arguments.SortExpression));
+					command.Parameters.Add (CreateDbParameter (SortParameterName, arguments.SortExpression));
 			}
 
 			if (SelectParameters.Count > 0)
