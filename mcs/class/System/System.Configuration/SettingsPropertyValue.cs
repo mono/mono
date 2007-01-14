@@ -88,15 +88,11 @@ namespace System.Configuration
 					needPropertyValue = false;
 				}
 
-#if notyet
-				/* LAMESPEC: the msdn2 docs say that
-				 * for object types this
-				 * pessimistically sets Dirty == true.
-				 * tests, however, point out that that
-				 * is not the case. */
-				if (!property.PropertyType.IsValueType)
+				if (propertyValue != null &&
+					!(propertyValue is string) &&
+					!(propertyValue is DateTime) &&
+					!property.PropertyType.IsPrimitive)
 					dirty = true;
-#endif
 
 				return propertyValue;
 			}
@@ -159,9 +155,17 @@ namespace System.Configuration
 
 		private object GetDeserializedDefaultValue ()
 		{
-			if (property.DefaultValue == null ||
-				(property.DefaultValue is string && ((string) property.DefaultValue).Length == 0))
-				return Activator.CreateInstance (property.PropertyType);
+			if (property.DefaultValue == null)
+				if (property.PropertyType.IsValueType)
+					return Activator.CreateInstance (property.PropertyType);
+				else
+					return null;
+
+			if (property.DefaultValue is string && ((string) property.DefaultValue).Length == 0)
+				if (property.PropertyType != typeof (string))
+					return Activator.CreateInstance (property.PropertyType);
+				else
+					return string.Empty;
 
 			if (property.DefaultValue is string && ((string) property.DefaultValue).Length > 0)
 				return GetDeserializedValue (property.DefaultValue);

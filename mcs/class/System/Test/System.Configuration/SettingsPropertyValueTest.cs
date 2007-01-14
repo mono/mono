@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using System.Configuration;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
@@ -108,30 +109,22 @@ namespace MonoTests.System.Configuration {
 			v.PropertyValue = 5;
 			Assert.IsTrue (v.IsDirty, "A3");
 
-
-#if notyet
-			/* the msdn docs say that
-			 * SettingsPropertyValue pessimistically sets
-			 * IsDirty to true when you use
-			 * v.PropertyValue on non-primitive types */
-
 			/* try out a non-value type */
 			p = new SettingsProperty ("property",
 						  typeof (StringWriter),
 						  null,
 						  true,
-						  null,
+						  "",
 						  SettingsSerializeAs.String,
 						  null,
 						  true,
 						  false);
 			v = new SettingsPropertyValue (p);
 
-			Assert.IsNull (v.PropertyValue, "A5");
+			Assert.IsNotNull (v.PropertyValue, "A5");
 
 			Console.WriteLine (v.PropertyValue);
 			Assert.IsTrue (v.IsDirty, "A6");
-#endif
 		}
 
 		[Test]
@@ -257,13 +250,11 @@ namespace MonoTests.System.Configuration {
 			BinaryFormatter bf = new BinaryFormatter ();
 			MemoryStream ms = new MemoryStream (foo);
 			Assert.AreEqual (10, bf.Deserialize (ms), "A3");
-			
-#if notyet
+
 			v.Deserialized = false;
 			v.SerializedValue = foo;
 
 			Assert.AreEqual (10, v.PropertyValue, "A4");
-#endif
 		}
 
 		[Test]
@@ -343,6 +334,106 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual (typeof (MyData), v2.PropertyValue.GetType (), "A2");
 			MyData h = (MyData) v2.PropertyValue;
 			Assert.AreEqual (5, h.IntProp, "A3");
+		}
+
+		[Test]
+		public void IsDirtyAndValueDateTime ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (DateTime);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.IsNotNull (spv.PropertyValue, "A2");
+			Assert.AreEqual (typeof (DateTime), spv.PropertyValue.GetType (), "A3");
+			Assert.IsFalse (spv.IsDirty, "A4");
+		}
+
+		[Test]
+		public void IsDirtyAndValuePrimitive ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (int);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.AreEqual (0, spv.PropertyValue, "A2");
+			Assert.AreEqual (typeof (int), spv.PropertyValue.GetType (), "A3");
+			Assert.IsFalse (spv.IsDirty, "A4");
+		}
+
+		[Test]
+		public void IsDirtyAndValueDecimal ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (decimal);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.AreEqual (0, spv.PropertyValue, "A2");
+			Assert.AreEqual (typeof (decimal), spv.PropertyValue.GetType (), "A3");
+			Assert.IsTrue (spv.IsDirty, "A4");
+		}
+
+		[Test]
+		public void IsDirtyAndValueString ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (string);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.IsNull (spv.PropertyValue, "A2");
+			Assert.IsFalse (spv.IsDirty, "A3");
+
+			SettingsProperty sp2 = new SettingsProperty ("heh");
+			sp2.PropertyType = typeof (string);
+			sp2.DefaultValue = "";
+
+			SettingsPropertyValue spv2 = new SettingsPropertyValue (sp2);
+			Assert.IsFalse (spv2.IsDirty, "A4");
+			Assert.IsNotNull (spv2.PropertyValue, "A5");
+			Assert.IsFalse (spv2.IsDirty, "A6");
+		}
+
+		[Serializable]
+		public struct MyData2
+		{
+			public int intProp;
+		}
+
+		[Test]
+		public void IsDirtyAndValueMyData2 ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (MyData2);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.IsNotNull (spv.PropertyValue, "A2");
+			Assert.IsTrue (spv.IsDirty, "A3");
+		}
+
+		[Test]
+		public void IsDirtyAndValueArrayList ()
+		{
+			SettingsProperty sp = new SettingsProperty ("heh");
+			sp.PropertyType = typeof (ArrayList);
+
+			SettingsPropertyValue spv = new SettingsPropertyValue (sp);
+			Assert.IsFalse (spv.IsDirty, "A1");
+			Assert.IsNull (spv.PropertyValue, "A2");
+			Assert.IsFalse (spv.IsDirty, "A3");
+
+			SettingsProperty sp2 = new SettingsProperty ("heh");
+			sp2.PropertyType = typeof (ArrayList);
+			sp2.DefaultValue = "";
+
+			SettingsPropertyValue spv2 = new SettingsPropertyValue (sp2);
+			Assert.IsFalse (spv2.IsDirty, "A5");
+			Assert.IsNotNull (spv2.PropertyValue, "A6");
+			Assert.AreEqual (typeof (ArrayList), spv2.PropertyValue.GetType (), "A7");
+			Assert.IsTrue (spv2.IsDirty, "A8");
 		}
 	}
 }

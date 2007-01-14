@@ -1,3 +1,7 @@
+2007-01-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingsPropertyValue.cs: fixed IsDirty Property
+
 2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingsPropertyValue.cs: fixed PropertyValue, default value of
