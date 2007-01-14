@@ -35,8 +35,21 @@ namespace Mainsoft.Web
 {
 	internal static class J2EEUtils
 	{
-		public static string GetApplicationRealPath (ServletConfig config) {
-			string realFs = config.getInitParameter (J2EEConsts.FILESYSTEM_ACCESS);
+		public static string GetInitParameterByHierarchy(ServletConfig config, string name)
+		{
+			if (config == null)
+				throw new ArgumentNullException("config");
+
+			string value = config.getInitParameter(name);
+			if (value != null)
+				return value;
+
+			return config.getServletContext().getInitParameter(name);
+		}
+
+		public static string GetApplicationRealPath (ServletConfig config)
+		{
+			string realFs = GetInitParameterByHierarchy (config, J2EEConsts.FILESYSTEM_ACCESS);
 			if (realFs == null || realFs == J2EEConsts.ACCESS_FULL) {
 				try {
 					if (Path.IsPathRooted (config.getServletContext ().getRealPath ("")))
@@ -55,7 +68,7 @@ namespace Mainsoft.Web
 		public static string GetApplicationPhysicalPath (ServletConfig config) {
 			string path = "";
 			ServletContext context = config.getServletContext ();
-			string appDir = config.getInitParameter (IAppDomainConfig.APP_DIR_NAME);
+			string appDir = GetInitParameterByHierarchy (config, IAppDomainConfig.APP_DIR_NAME);
 			//			Console.WriteLine("appdir = {0}", appDir);
 			if (appDir != null) {
 				try {

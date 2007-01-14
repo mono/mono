@@ -45,7 +45,7 @@ namespace Mainsoft.Web.SessionState
 			HttpStaticObjectsCollection _staticObjects;
 			bool _needSessionPersistence;
 
-			public ServletSessionStateItemCollection () { } //for deserialization
+			public ServletSessionStateItemCollection () {} // For Java deserialization
 
 			public ServletSessionStateItemCollection (HttpContext context)
 				: this () {
@@ -55,7 +55,7 @@ namespace Mainsoft.Web.SessionState
 
 				if (context != null) {
 					ServletConfig config = ServletSessionStateStoreProvider.GetWorkerRequest (context).Servlet.getServletConfig ();
-					string sessionPersistance = config.getInitParameter (J2EEConsts.Enable_Session_Persistency);
+					string sessionPersistance = J2EEUtils.GetInitParameterByHierarchy(config, J2EEConsts.Enable_Session_Persistency);
 					if (sessionPersistance == null)
 						sessionPersistance = config.getServletContext().getInitParameter (J2EEConsts.Enable_Session_Persistency);
 					if (sessionPersistance != null) {
@@ -155,8 +155,13 @@ namespace Mainsoft.Web.SessionState
 			public void readExternal (java.io.ObjectInput input) {
 				lock (this) {
 					_needSessionPersistence = input.readBoolean ();
-					if (!_needSessionPersistence) //noting has been written 
+					if (!_needSessionPersistence) { //nothing has been written 
+						if (_items == null)
+							_items = new SessionStateItemCollection ();
+						if (_staticObjects == null)
+							_staticObjects = new HttpStaticObjectsCollection ();
 						return;
+					}
 
 					ObjectInputStream ms = new ObjectInputStream (input);
 					System.IO.BinaryReader br = new System.IO.BinaryReader (ms);

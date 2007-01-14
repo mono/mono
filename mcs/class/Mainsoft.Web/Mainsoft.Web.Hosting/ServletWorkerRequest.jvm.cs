@@ -27,7 +27,6 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Web.Util;
-using vmw.common;
 using System.Web.J2EE;
 using System.Collections;
 using System.Web;
@@ -36,14 +35,17 @@ using javax.servlet.http;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Web.Hosting;
+using vmw.common;
+using vmw.@internal.j2ee;
 
 namespace Mainsoft.Web.Hosting {
 	[MonoTODO("Implement security demands on the path usage functions (and review)")]
 	[ComVisible (false)]
-	internal sealed class ServletWorkerRequest : HttpWorkerRequest {
+	internal sealed class ServletWorkerRequest : HttpWorkerRequest, IServiceProvider {
 		readonly HttpServlet _HttpServlet;
 		readonly HttpServletRequest _HttpServletRequest;
 		readonly HttpServletResponse _HttpServletResponse;
+		java.io.OutputStream _OutputStream;
 
 		readonly string _requestUri;
 		readonly string _pathInfo;
@@ -93,10 +95,11 @@ namespace Mainsoft.Web.Hosting {
 				KnownServerVariableMap[knownServerVariableNames[i]] = (KnownServerVariable)i;
 		}
 
-		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp) {
+		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp, java.io.OutputStream outputStream) {
 			_HttpServlet = servlet;
 			_HttpServletRequest = req;
 			_HttpServletResponse = resp;
+			_OutputStream = outputStream;
 
 			string contextPath = req.getContextPath();
 			string requestURI = req.getRequestURI();
@@ -117,6 +120,17 @@ namespace Mainsoft.Web.Hosting {
 				int paramNameStart = _requestUri.LastIndexOf('/');
 				_pathInfo = _requestUri.Substring(paramNameStart, _requestUri.Length - paramNameStart);
 			}
+		}
+
+		public object GetService (Type serviceType)
+		{
+			if (serviceType == typeof(HttpServlet))
+				return Servlet;
+			if (serviceType == typeof(HttpServletRequest))
+				return ServletRequest;
+			if (serviceType == typeof(HttpServletResponse))
+				return ServletResponse;
+			return null;
 		}
 
 		public HttpServlet Servlet {
@@ -151,13 +165,17 @@ namespace Mainsoft.Web.Hosting {
 		public override void EndOfRequest () {
 			if (_endOfSendCallback != null)
 				_endOfSendCallback(this, _endOfSendArgs);
+			_OutputStream = null;
 		}
 
 		public override void FlushResponse (bool finalFlush) {
-			ServletOutputStream servletOutputStream = _HttpServletResponse.getOutputStream();
-			servletOutputStream.flush();
+			IPortletActionResponse resp =_HttpServletResponse as IPortletActionResponse;
+			if (_OutputStream == null || resp != null && resp.isRedirected())
+				return;
+
+			_OutputStream.flush();
 			if (finalFlush)
-				servletOutputStream.close();
+				_OutputStream.close();
 		}
 
 		public override string GetAppPath () {
@@ -243,10 +261,9 @@ namespace Mainsoft.Web.Hosting {
 			try {
 				return _HttpServletRequest.getRemotePort();
 			}
-			catch(Exception e) { //should catch also java.lang.Throwable
-				//if servlet API is 2.3 and below - there is no
-				//method getRemotePort in ServletRequest interface...
-				//should be described as limitation.
+			catch(Exception e) {
+				// if servlet API is 2.3 and below - there is no method getRemotePort 
+                // in ServletRequest interface... should be described as limitation.
 				return 0;
 			}
 		}
@@ -351,8 +368,12 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override void SendResponseFromMemory (byte [] data, int length) {
+			IPortletActionResponse resp =_HttpServletResponse as IPortletActionResponse;
+			if (_OutputStream == null || resp != null && resp.isRedirected())
+				return;
+
 			sbyte [] sdata = vmw.common.TypeUtils.ToSByteArray(data);
-			_HttpServletResponse.getOutputStream().write(sdata, 0 , length);
+			_OutputStream.write(sdata, 0 , length);
 		}
 
 		public override void SendStatus(int statusCode, string statusDescription) {

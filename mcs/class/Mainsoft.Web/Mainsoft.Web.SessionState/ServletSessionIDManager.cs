@@ -55,7 +55,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public void RemoveSessionID (HttpContext context) {
-			ServletSessionStateStoreProvider.GetWorkerRequest (context).ServletRequest.getSession (false).invalidate ();
+			ServletSessionStateStoreProvider.GetSession (context, false).invalidate ();
 		}
 
 		public void SaveSessionID (HttpContext context, string id, out bool redirected, out bool cookieAdded) {

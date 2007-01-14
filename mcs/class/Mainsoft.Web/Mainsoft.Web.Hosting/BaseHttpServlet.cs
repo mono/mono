@@ -42,9 +42,11 @@ namespace Mainsoft.Web.Hosting
 	public class BaseHttpServlet : HttpServlet
 	{
 		//private AppDomain _servletDomain;
-		static LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_REQUEST);
-		static LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
-		static LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
+		static readonly LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_REQUEST);
+		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
+		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
+
+		bool _performedInit = false;
 
 		public BaseHttpServlet()
 		{
@@ -59,6 +61,9 @@ namespace Mainsoft.Web.Hosting
 
 		protected virtual void InitServlet(ServletConfig config)
 		{
+			if (config.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN) != null)
+				return;
+
 			try 
 			{
 				AppDomain servletDomain = createServletDomain(config);
@@ -76,6 +81,7 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData(J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader(config.getServletContext()));
 
 				config.getServletContext().setAttribute(J2EEConsts.APP_DOMAIN, servletDomain);
+				_performedInit = true;
 			}
 			finally 
 			{
@@ -84,7 +90,13 @@ namespace Mainsoft.Web.Hosting
 			}
 		}
 
-		override protected void service (HttpServletRequest req, HttpServletResponse resp)
+		protected override void service (HttpServletRequest req, HttpServletResponse resp)
+		{
+			resp.setContentType("text/html");
+			service(req, resp, resp.getOutputStream());
+		}
+
+		public virtual void service(HttpServletRequest req, HttpServletResponse resp, java.io.OutputStream output)
 		{
 			try 
 			{
@@ -96,22 +108,17 @@ namespace Mainsoft.Web.Hosting
 				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 
-				//put request to the TLS
+				// put request to the TLS
 				Thread.SetData(_servletRequestSlot, req);
-				//put response to the TLS
+				// put response to the TLS
 				Thread.SetData(_servletResponseSlot, resp);
-				//put the servlet object to the TLS
+				// put the servlet object to the TLS
 				Thread.SetData(_servletSlot, this);
-				
-
 
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
-				//PageMapper.LoadFileList();
-
-				resp.setContentType("text/html");
-				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp);
+				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp, output);
 				HttpRuntime.ProcessRequest(gwr);
 			}
 			finally 
@@ -121,14 +128,15 @@ namespace Mainsoft.Web.Hosting
 				Thread.SetData(_servletResponseSlot, null);
 				Thread.SetData(_servletSlot, null);
 				vmw.@internal.EnvironmentUtils.clearAppDomain();
-				//cleaning
-				//vmw.Utils.cleanTLS(); //clean up all TLS entries for current Thread.
-				//java.lang.Thread.currentThread().setContextClassLoader(null);
 			}
 		}
 
 		override public void destroy()
 		{
+			base.destroy();
+			if (!_performedInit)
+				return;
+
 			try 
 			{
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
@@ -136,7 +144,6 @@ namespace Mainsoft.Web.Hosting
 #if DEBUG
 				Console.WriteLine("Destroy of GhHttpServlet");
 #endif
-				base.destroy();
 				HttpRuntime.Close();
 				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy(this);
 				this.getServletContext().removeAttribute(J2EEConsts.APP_DOMAIN);
@@ -179,7 +186,7 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
 
 				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
-				string dataDirectory = config.getServletContext().getInitParameter ("DataDirectory");
+				string dataDirectory = J2EEUtils.GetInitParameterByHierarchy(config, "DataDirectory");
 				if (dataDirectory == null)
 					dataDirectory = "APP_DATA";
 
