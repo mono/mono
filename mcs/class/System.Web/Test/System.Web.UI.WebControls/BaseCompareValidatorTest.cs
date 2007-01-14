@@ -492,7 +492,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void CultureInvariantValues_1 ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
@@ -529,7 +528,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CultureInvariantValues_2 ()
 		{
 
@@ -567,7 +565,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException(typeof(HttpException))]
 		public void CultureInvariantValues_Exception ()
 		{
@@ -579,7 +576,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			CompareValidator v = new CompareValidator ();
 			v.ControlToValidate = "tb1";
 			v.Type = ValidationDataType.Date;
-			v.ValueToCompare = "12/24/2005";
+			v.ValueToCompare = "12--24--2005";
 			v.CultureInvariantValues = false;
 
 			TextBox tb1 = new TextBox ();

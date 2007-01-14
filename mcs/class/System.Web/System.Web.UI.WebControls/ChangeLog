@@ -1,3 +1,11 @@
+2007-01-14  Ilya Kharmatsky <ilyak-at-mainsoft.com>
+	* BaseCompareValidator
+	* CompareValidator
+	Added support for CultureInvariantValues property, which should be 
+	counted in new 2.0 methods such as - Compare, Convert etc. The code
+	has been changed in such way, that the old - 1.1 method implementation 
+	could use the new methods defined for 2.0 version.
+
 2007-01-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* XmlDataSource.cs: refactored to use cached collection.
