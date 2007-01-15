@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls
 				if (PostedFile == null)
 					return string.Empty;
 				else
-					return PostedFile.FileName;
+					return Path.GetFileName (PostedFile.FileName);
 			}
 		}
 
