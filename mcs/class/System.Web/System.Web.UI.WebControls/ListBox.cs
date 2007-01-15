@@ -282,6 +282,16 @@ namespace System.Web.UI.WebControls {
 		{
 			RaisePostDataChangedEvent ();
 		}
+#if NET_2_0
+        protected internal override void VerifyMultiSelect()
+        {
+            //by default the ListControl will throw an exception in this method,
+            //therefor we should override the method if the class is supporting
+            //MultiSelect option.
+            if (this.SelectionMode != ListSelectionMode.Multiple)
+                throw new HttpException("Multiple select option is not supported");
+        }
+#endif
 	}
 }
 

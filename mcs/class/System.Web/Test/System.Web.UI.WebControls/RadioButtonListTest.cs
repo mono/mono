@@ -127,6 +127,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			{
 				base.RaisePostDataChangedEvent ();
 			}
+
+			public new virtual void VerifyMultiSelect()
+			{
+				base.VerifyMultiSelect();
+			}
 		}
 #endif
 		#endregion
@@ -318,6 +323,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		
 #if NET_2_0
+		[Test]
+		[ExpectedException(typeof(HttpException))]
+		public void VerifyMultiSelectTest()
+	        {
+	            PokerRadioButtonList list = new PokerRadioButtonList();
+	            list.VerifyMultiSelect();
+	        }
+
 		[Test]
 		public void Defaults ()
 		{

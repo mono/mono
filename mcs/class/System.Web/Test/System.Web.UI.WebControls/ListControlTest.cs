@@ -1014,7 +1014,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
 		public void VerifyMultiSelect_Exception ()
 		{

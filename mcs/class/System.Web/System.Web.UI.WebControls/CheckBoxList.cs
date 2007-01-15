@@ -357,5 +357,13 @@ namespace System.Web.UI.WebControls {
 		{
 			RenderItem (itemType, repeatIndex, repeatInfo, writer);
 		}
-	}
+#if NET_2_0
+        protected internal override void VerifyMultiSelect()
+        {
+            //by default the ListControl will throw an exception in this method,
+            //therefor we should override the method if the class is supporting
+            //MultiSelect option.
+        }
+#endif
+    }
 }

@@ -512,7 +512,20 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Render (c, exp, "C1");
 		}	
 #if NET_2_0
-		[TestFixtureTearDown]
+        class TestCheckBoxList : CheckBoxList
+        {
+            public new virtual void VerifyMultiSelect()
+            {
+                base.VerifyMultiSelect();
+            }
+        }
+        [Test]
+        public void VerifyMultiSelectTest()
+        {
+            TestCheckBoxList list = new TestCheckBoxList();
+            list.VerifyMultiSelect();
+        }
+        [TestFixtureTearDown]
 		public void teardown ()
 		{
 			WebTest.Unload ();
@@ -522,4 +535,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 		
 	}
 }
+
 

@@ -1,3 +1,11 @@
+2007-01-15 Ilya Kharmatsky  <ilya -at- decode-systems.com>
+
+	* ListControl.cs
+	* CheckBoxList.cs
+	* ListBox.cs
+	Implemented the protected net_2_0 method 'VerifyMultiSelect' with
+	proper overloading in derived types.
+ 
 2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNode.cs

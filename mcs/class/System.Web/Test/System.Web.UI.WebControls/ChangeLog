@@ -1,3 +1,14 @@
+2007-01-15 Ilya Kharmatsky <ilya -at- decode-systems.com>
+	
+	* CheckBoxListTest.cs
+	* RadioButtonListTest.cs
+	* DropDownListTest.cs
+	* ListControlTest.cs
+	* ListBoxTest.cs
+	* BulletedListTest.cs
+	Added tests for checking method 'VerifyMultiSelect', removed
+	'NotWorking' attribute.
+
 2007-01-04 Adar Wesley <adarw@mainsoft.com>
 
 	* RepeatInfoTest.auto.cs: Fixed tests to compare HTML with HtmlDiff

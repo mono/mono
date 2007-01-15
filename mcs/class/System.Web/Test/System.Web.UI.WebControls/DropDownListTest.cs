@@ -396,6 +396,24 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (html.IndexOf ("<hola>") == -1, "#01");
 			Assert.IsTrue (html.IndexOf ("&lt;hola>") != -1, "#02");
 		}
+
+#if NET_2_0
+        class VerifyMultiSelectDropDownList : DropDownList
+        {
+            public new virtual void VerifyMultiSelect()
+            {
+                base.VerifyMultiSelect();
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(HttpException))]
+        public void VerifyMultiSelectTest()
+        {
+            VerifyMultiSelectDropDownList list = new VerifyMultiSelectDropDownList();
+            list.VerifyMultiSelect();
+        }
+#endif
         
         
 

@@ -86,6 +86,14 @@ namespace MonoTests.System.Web.UI.WebControls
 
 	}
 
+    class VerifyMultiSelectBulletedList : BulletedList
+    {
+        public new virtual void VerifyMultiSelect()
+        {
+            base.VerifyMultiSelect();
+        }
+    }
+
 	[TestFixture]
 	public class BulletedListTest
 	{
@@ -330,6 +338,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.Items.Add (item9);
 			b.Items.Add (item10);
 		}
+
+        [Test]
+        [ExpectedException(typeof(HttpException))]
+        public void VerifyMultiSelectTest()
+        {
+            VerifyMultiSelectBulletedList list = new VerifyMultiSelectBulletedList();
+            list.VerifyMultiSelect();
+        }
 	}
 }
 

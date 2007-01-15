@@ -78,6 +78,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
+#if NET_2_0
+        public new virtual void VerifyMultiSelect()
+        {
+            base.VerifyMultiSelect();
+        }
+#endif
 	}
 
 	[TestFixture]	
@@ -359,6 +365,25 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsFalse (list.Items [3].Selected, "#14");
 
 		}
+#if NET_2_0
+        [Test]
+        public void VerifyMultiSelectPositive()
+        {
+            ListBoxPoker list = new ListBoxPoker();
+            list.SelectionMode = ListSelectionMode.Multiple;
+            list.VerifyMultiSelect();
+        }
+
+        [Test]
+        [ExpectedException(typeof(HttpException))]
+        public void VerifyMultiSelectNegative()
+        {
+            ListBoxPoker list = new ListBoxPoker();
+            list.SelectionMode = ListSelectionMode.Single;
+            list.VerifyMultiSelect();
+        }
+#endif
 	}
 }
+
 
