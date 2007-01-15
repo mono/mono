@@ -1,5 +1,13 @@
 2007-01-15  Jonathan Pobst  <jpobst@novell.com>
 
+	* Form.cs: Implement Form.ShowIcon.
+	
+	* XplatUIWin32.cs: Allow the SetIcon win32 call to set the icon to
+	null, which when combined with the DlgModalFrame window style removes
+	the icon from the title bar.
+
+2007-01-15  Jonathan Pobst  <jpobst@novell.com>
+
 	* Control.cs: Call OnMouseClick after OnClick. (2.0)
 
 2007-01-15  Everaldo Canuto  <everaldo@simios.org>

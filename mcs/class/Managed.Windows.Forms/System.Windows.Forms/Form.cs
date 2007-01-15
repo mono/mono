@@ -89,6 +89,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
+		private bool			show_icon;
 #endif
 		#endregion	// Local Variables
 
@@ -204,6 +205,10 @@ namespace System.Windows.Forms {
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
+
+#if NET_2_0
+			show_icon = true;
+#endif
 
 			// FIXME: this should disappear just as soon as the handle creation is done in the right place (here is too soon()
 			UpdateBounds();
@@ -856,6 +861,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (true)]
+		public bool ShowIcon {
+			get { return this.show_icon; }
+			set {
+				if (this.show_icon != value ) {
+					this.show_icon = value;
+					UpdateStyles ();
+					
+					XplatUI.SetIcon (this.Handle, value == true ? this.Icon : null);
+					
+					Message msg = new Message ();
+					XplatUI.InvalidateNC (this.Handle);
+				}
+			}
+		}			
+#endif
+	
 		[DefaultValue(true)]
 		[MWFCategory("Window Style")]
 		public bool ShowInTaskbar {
@@ -1141,6 +1164,12 @@ namespace System.Windows.Forms {
 				if (ControlBox) {
 					cp.Style |= (int)WindowStyles.WS_SYSMENU;
 				}
+
+#if NET_2_0
+				if (!this.show_icon) {
+					cp.ExStyle |= (int)WindowExStyles.WS_EX_DLGMODALFRAME;
+				}
+#endif
 
 				if (HelpButton && !MaximizeBox && !MinimizeBox) {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;

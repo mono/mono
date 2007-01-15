@@ -2178,7 +2178,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetIcon(IntPtr hwnd, Icon icon) {
-			Win32SendMessage(hwnd, Msg.WM_SETICON, (IntPtr)1, icon.Handle);	// 1 = large icon (0 would be small)
+			Win32SendMessage(hwnd, Msg.WM_SETICON, (IntPtr)1, icon == null ? IntPtr.Zero : icon.Handle);	// 1 = large icon (0 would be small)
 		}
 
 		internal override void ClipboardClose(IntPtr handle) {
