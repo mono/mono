@@ -91,7 +91,7 @@ namespace System.Data.SqlClient
 					return commandText;
 
 				string trimmedCommandText = commandText.TrimEnd ();
-				if (commandText [0] != '[' && trimmedCommandText [trimmedCommandText.Length - 1] != ')')
+				if (commandText [0] != '[' && trimmedCommandText.Length > 0 && trimmedCommandText [trimmedCommandText.Length - 1] != ')')
 					commandText = String.Concat ("[", commandText, "]");
 
 				return commandText;
