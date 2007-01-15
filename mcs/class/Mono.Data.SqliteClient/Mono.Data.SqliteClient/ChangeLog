@@ -1,3 +1,28 @@
+2007-01-15  Marek Habersack  <grendello@gmail.com>
+
+	* SqliteCommandBuilder.cs: new file, ADO.NET 2.0 command builder
+	for generic Db* support
+
+	* SqliteTransaction.cs: ADO.NET 2.0 support
+
+	* SqliteParameter.cs: ADO.NET 2.0 support
+
+	* SqliteCommand.cs: ADO.NET 2.0 support
+
+	* SqliteDataAdapter.cs: ADO.NET 2.0 support
+
+	* SqliteConnection.cs: ADO.NET 2.0 support
+
+	* SqliteDataReader.cs: ADO.NET 2.0 support
+
+	* SqliteParameterCollection.cs: ADO.NET 2.0 support
+
+	* SqliteDataSourceEnumerator.cs: ADO.NET 2.0 data source
+	enumerator stubs.
+
+	* SqliteClientFactory.cs: new file, ADO.NET 2.0 factory for
+	generic Db* support.
+
 2007-01-07  Miguel de Icaza  <miguel@novell.com>
 
 	* SqliteConnection.cs: Automatically try version 3 if this fails.

@@ -31,11 +31,18 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Data;
+#if NET_2_0
+using System.Data.Common;
+#endif
 using System.Text;
 
 namespace Mono.Data.SqliteClient
 {
+#if NET_2_0
+	public class SqliteConnection : DbConnection
+#else
 	public class SqliteConnection : IDbConnection
+#endif
 	{
 
 		#region Fields
@@ -68,29 +75,44 @@ namespace Mono.Data.SqliteClient
 		{
 			ConnectionString = connstring;
 		}
-		
+
+
+#if !NET_2_0
 		public void Dispose ()
 		{
 			Close ();
 		}
+#endif
 		                
 		#endregion
 
 		#region Properties
 		
+#if NET_2_0
+		override
+#endif
 		public string ConnectionString {
 			get { return conn_str; }
 			set { SetConnectionString(value); }
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public int ConnectionTimeout {
 			get { return 0; }
 		}
-		
+	
+#if NET_2_0
+		override
+#endif
 		public string Database {
 			get { return db_file; }
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public ConnectionState State {
 			get { return state; }
 		}
@@ -107,6 +129,16 @@ namespace Mono.Data.SqliteClient
 			get { return sqlite_handle; }
 		}
 		
+#if NET_2_0
+		public override string DataSource {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string ServerVersion {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		public int LastInsertRowId {
 			get {
 				if (Version == 3)
@@ -213,24 +245,48 @@ namespace Mono.Data.SqliteClient
 
 		#region Public Methods
 		
+#if NET_2_0
+		// [MonoTODO ("handle IsolationLevel")]
+		protected override DbTransaction BeginDbTransaction (IsolationLevel il)
+#else
 		public IDbTransaction BeginTransaction ()
+#endif
 		{
 			if (state != ConnectionState.Open)
 				throw new InvalidOperationException("Invalid operation: The connection is closed");
 			
 			SqliteTransaction t = new SqliteTransaction();
+#if NET_2_0
+			t.SetConnection (this);
+#else
 			t.Connection = this;
-			SqliteCommand cmd = this.CreateCommand();
+#endif
+			SqliteCommand cmd = (SqliteCommand)this.CreateCommand();
 			cmd.CommandText = "BEGIN";
 			cmd.ExecuteNonQuery();
 			return t;
 		}
-		
+
+#if NET_2_0
+		public new DbTransaction BeginTransaction ()
+		{
+			return BeginDbTransaction (IsolationLevel.Unspecified);
+		}
+
+		public new DbTransaction BeginTransaction (IsolationLevel il)
+		{
+			return BeginDbTransaction (il);
+		}
+#else
 		public IDbTransaction BeginTransaction (IsolationLevel il)
 		{
 			throw new InvalidOperationException();
 		}
+#endif
 		
+#if NET_2_0
+		override
+#endif
 		public void Close ()
 		{
 			if (state != ConnectionState.Open) {
@@ -242,25 +298,37 @@ namespace Mono.Data.SqliteClient
 			if (Version == 3)
 				Sqlite.sqlite3_close (sqlite_handle);
 			else 
-				Sqlite.sqlite_close(sqlite_handle);
+				Sqlite.sqlite_close (sqlite_handle);
 			sqlite_handle = IntPtr.Zero;
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public void ChangeDatabase (string databaseName)
 		{
 			throw new NotImplementedException ();
 		}
 		
+#if !NET_2_0
 		IDbCommand IDbConnection.CreateCommand ()
 		{
 			return CreateCommand ();
 		}
+#endif
 		
+#if NET_2_0
+		protected override DbCommand CreateDbCommand ()
+#else
 		public SqliteCommand CreateCommand ()
+#endif
 		{
 			return new SqliteCommand (null, this);
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public void Open ()
 		{
 			if (conn_str == null) {
@@ -281,9 +349,9 @@ namespace Mono.Data.SqliteClient
 						Sqlite.sqliteFree (errmsg);
 						throw new ApplicationException (msg);
 					}
-				} catch (DllNotFoundException dll) {
+				} catch (DllNotFoundException) {
 					db_version = 3;
-				} catch (EntryPointNotFoundException ep){
+				} catch (EntryPointNotFoundException) {
 					db_version = 3;
 				}
 				

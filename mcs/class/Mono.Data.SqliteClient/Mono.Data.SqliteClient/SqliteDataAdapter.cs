@@ -40,14 +40,19 @@ namespace Mono.Data.SqliteClient
 	/// Represents a set of data commands and a database connection that are used 
 	/// to fill the <see cref="DataSet">DataSet</see> and update the data source.
 	/// </summary>
-	public class SqliteDataAdapter : DbDataAdapter, IDbDataAdapter
+	public class SqliteDataAdapter : DbDataAdapter
+#if !NET_2_0
+	, IDbDataAdapter
+#endif
 	{
 		#region Fields
 		
+#if !NET_2_0
 		private IDbCommand _deleteCommand;
 		private IDbCommand _insertCommand;
 		private IDbCommand _selectCommand;
 		private IDbCommand _updateCommand;
+#endif
 		
 		#endregion
 
@@ -83,7 +88,11 @@ namespace Mono.Data.SqliteClient
 		/// with the specified SqliteCommand as the SelectCommand property.
 		/// </summary>
 		/// <param name="selectCommand"></param>
+#if NET_2_0
+		public SqliteDataAdapter(DbCommand selectCommand)
+#else
 		public SqliteDataAdapter(IDbCommand selectCommand) 
+#endif
 		{
 			SelectCommand = selectCommand;
 		}
@@ -96,7 +105,13 @@ namespace Mono.Data.SqliteClient
 		/// <param name="connection"></param>
 		public SqliteDataAdapter(string selectCommandText, SqliteConnection connection)
 		{
-			IDbCommand cmd = connection.CreateCommand();
+#if NET_2_0
+			DbCommand cmd;
+#else
+			IDbCommand cmd;
+#endif
+
+			cmd = connection.CreateCommand();
 			cmd.CommandText = selectCommandText;
 			SelectCommand = cmd;
 		}
@@ -115,6 +130,7 @@ namespace Mono.Data.SqliteClient
 
 		#region Public Properties
 		
+#if !NET_2_0
 		/// <summary>
 		/// Gets or sets a Transact-SQL statement or stored procedure to delete 
 		/// records from the data set.
@@ -150,7 +166,7 @@ namespace Mono.Data.SqliteClient
 			get { return _updateCommand; }
 			set { _updateCommand = value; }
 		}
-		
+#endif		
 		#endregion
 
 		#region Protected Methods

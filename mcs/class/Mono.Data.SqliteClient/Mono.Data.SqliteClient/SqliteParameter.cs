@@ -31,10 +31,18 @@
 
 using System;
 using System.Data;
+#if NET_2_0
+using System.Data.Common;
+#endif
 
 namespace Mono.Data.SqliteClient
 {
-	public class SqliteParameter : IDbDataParameter
+	public class SqliteParameter :
+#if NET_2_0
+		DbParameter
+#else
+		IDbDataParameter
+#endif
 	{
 
 		#region Fields
@@ -48,7 +56,8 @@ namespace Mono.Data.SqliteClient
 		private byte precision;
 		private byte scale;
 		private int size;
-		
+		private bool isNullable;
+
 		#endregion
 
 		#region Constructors and destructors
@@ -57,12 +66,14 @@ namespace Mono.Data.SqliteClient
 		{
 			type = DbType.String;
 			direction = ParameterDirection.Input;
+			isNullable = true;
 		}
 		
 		public SqliteParameter (string name, DbType type)
 		{
 			this.name = name;
 			this.type = type;
+			isNullable = true;
 		}
 		
 		public SqliteParameter (string name, object value)
@@ -71,6 +82,7 @@ namespace Mono.Data.SqliteClient
 			type = DbType.String;
 			param_value = value;
 			direction = ParameterDirection.Input;
+			isNullable = true;
 		}
 		
 		public SqliteParameter (string name, DbType type, int size) : this (name, type)
@@ -87,25 +99,40 @@ namespace Mono.Data.SqliteClient
 
 		#region Properties
 		
+#if NET_2_0
+		override
+#endif
 		public DbType DbType {
 			get { return type; }
 			set { type = value; }
 		}
-		
+	
+#if NET_2_0
+		override
+#endif
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
-		
+	
+#if NET_2_0
+		override
+#endif
 		public bool IsNullable {
-			get { return true; }
+			get { return isNullable; }
+#if NET_2_0
+			set { isNullable = value; }
+#endif
 		}
-		
+
+#if NET_2_0
+		override
+#endif
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
-		
+	
 		public byte Precision {
 			get { return precision; }
 			set { precision = value; }
@@ -115,22 +142,42 @@ namespace Mono.Data.SqliteClient
 			get { return scale; }
 			set { scale = value; }
 		}
-		
+
+#if NET_2_0
+		override
+#endif
 		public int Size {
 			get { return size; }
 			set { size = value; }
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public string SourceColumn {
 			get { return source_column; }
 			set { source_column = value; }
 		}
-		
+
+#if NET_2_0
+		// [MonoTODO]
+		public override bool SourceColumnNullMapping {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
+#if NET_2_0
+		override
+#endif
 		public DataRowVersion SourceVersion {
 			get { return row_version; }
 			set { row_version = value; }
 		}
 		
+#if NET_2_0
+		override
+#endif
 		public object Value {
 			get { return param_value; }
 			set { param_value = value; }
@@ -138,5 +185,14 @@ namespace Mono.Data.SqliteClient
 		
 		#endregion
 
+		#region methods
+#if NET_2_0
+//		[MonoTODO]
+		public override void ResetDbType ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		#endregion
 	}
 }
