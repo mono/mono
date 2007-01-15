@@ -6,19 +6,27 @@
 	* SqliteTransaction.cs: ADO.NET 2.0 support
 
 	* SqliteParameter.cs: ADO.NET 2.0 support
+	Implement SourceColumnNullMapping.
+	Implement ResetDbType.
 
 	* SqliteCommand.cs: ADO.NET 2.0 support
+	Implement the ICloneable interface.
+	Implement parameterless ExecuteReader.
+	Implement the DesignTimeVisible property.
 
 	* SqliteDataAdapter.cs: ADO.NET 2.0 support
 
 	* SqliteConnection.cs: ADO.NET 2.0 support
+	Implement ServerVersion.
+	Implement the ICloneable interface.
 
 	* SqliteDataReader.cs: ADO.NET 2.0 support
+	Add a few interfaces to the class signature.
 
 	* SqliteParameterCollection.cs: ADO.NET 2.0 support
+	Implement AddRange.
 
-	* SqliteDataSourceEnumerator.cs: ADO.NET 2.0 data source
-	enumerator stubs.
+	* SqliteDataSourceEnumerator.cs: ADO.NET 2.0 data support.
 
 	* SqliteClientFactory.cs: new file, ADO.NET 2.0 factory for
 	generic Db* support.

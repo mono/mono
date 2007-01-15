@@ -49,6 +49,8 @@ namespace Mono.Data.SqliteClient
 		
 		private string name;
 		private DbType type;
+		private DbType originalType;
+		private bool typeSet;
 		private string source_column;
 		private ParameterDirection direction;
 		private DataRowVersion row_version;
@@ -57,7 +59,8 @@ namespace Mono.Data.SqliteClient
 		private byte scale;
 		private int size;
 		private bool isNullable;
-
+		private bool sourceColumnNullMapping;
+		
 		#endregion
 
 		#region Constructors and destructors
@@ -104,7 +107,15 @@ namespace Mono.Data.SqliteClient
 #endif
 		public DbType DbType {
 			get { return type; }
-			set { type = value; }
+			set {
+				if (!typeSet) {
+					originalType = type;
+					typeSet = true;
+				}
+				type = value;
+				if (!typeSet)
+					originalType = type;
+			}
 		}
 	
 #if NET_2_0
@@ -160,10 +171,9 @@ namespace Mono.Data.SqliteClient
 		}
 
 #if NET_2_0
-		// [MonoTODO]
 		public override bool SourceColumnNullMapping {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return sourceColumnNullMapping; }
+			set { sourceColumnNullMapping = value; }
 		}
 #endif
 
@@ -187,10 +197,9 @@ namespace Mono.Data.SqliteClient
 
 		#region methods
 #if NET_2_0
-//		[MonoTODO]
 		public override void ResetDbType ()
 		{
-			throw new NotImplementedException ();
+			type = originalType;
 		}
 #endif
 		#endregion

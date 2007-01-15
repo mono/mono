@@ -39,9 +39,9 @@ using System.Text;
 namespace Mono.Data.SqliteClient
 {
 #if NET_2_0
-	public class SqliteConnection : DbConnection
+	public class SqliteConnection : DbConnection, ICloneable
 #else
-	public class SqliteConnection : IDbConnection
+		public class SqliteConnection : IDbConnection, ICloneable
 #endif
 	{
 
@@ -135,7 +135,12 @@ namespace Mono.Data.SqliteClient
 		}
 
 		public override string ServerVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				if (Version == 3)
+					return "3";
+				else
+					return "2";
+			}
 		}
 #endif
 
@@ -244,6 +249,11 @@ namespace Mono.Data.SqliteClient
 		#endregion
 
 		#region Public Methods
+
+		object ICloneable.Clone ()
+		{
+			return new SqliteConnection (ConnectionString);
+		}
 		
 #if NET_2_0
 		// [MonoTODO ("handle IsolationLevel")]

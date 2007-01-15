@@ -40,7 +40,7 @@ namespace Mono.Data.SqliteClient
 {
 	public class SqliteDataReader :
 #if NET_2_0
-		DbDataReader
+		DbDataReader, IDataReader, IDisposable, IDataRecord
 #else
 		MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 #endif

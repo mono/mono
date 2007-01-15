@@ -259,10 +259,13 @@ namespace Mono.Data.SqliteClient
 		#region Public Methods
 
 #if NET_2_0
-		// [MonoTODO]
 		public override void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			if (values == null || values.Length == 0)
+				return;
+
+			foreach (object value in values)
+				Add (value);
 		}
 #endif
 		

@@ -1,11 +1,13 @@
 //
 // Mono.Data.SqliteClient.SqliteDataSourceEnumerator.cs
 //
-// Author:
+// Author(s):
 //   Chris Toshok (toshok@ximian.com)
+//   Marek Habersack (grendello@gmail.com)
 //
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Marek Habersack
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,21 +38,42 @@ using System.Data.Common;
 namespace Mono.Data.SqliteClient
 {
         public sealed class SqliteDataSourceEnumerator : DbDataSourceEnumerator
-        {
+	{		
                 public SqliteDataSourceEnumerator ()
                 {
-                        
                 }
 
-                // [MonoTODO]
                 public override DataTable GetDataSources ()
                 {
-                        throw new NotImplementedException ();
-                }
-                
-                
+			DataTable dt = new DataTable ();
+			DataColumn col;
+
+			col = new DataColumn ("ServerName", Type.GetType ("System.String"));
+			dt.Columns.Add (col);
+			
+			col = new DataColumn ("InstanceName", Type.GetType ("System.String"));
+			dt.Columns.Add (col);
+
+			col = new DataColumn ("IsClustered", Type.GetType("System.Bool"));
+			dt.Columns.Add (col);
+			
+			col = new DataColumn ("Version", Type.GetType("System.String"));
+			dt.Columns.Add (col);
+			
+			col = new DataColumn ("FactoryName", Type.GetType("System.String"));
+			dt.Columns.Add (col);
+
+			DataRow dr = dt.NewRow ();
+			dr [0] = "Sqlite Embedded Database";
+			dr [1] = "Sqlite Default Instance";
+			dr [2] = false;
+			dr [3] = "?";
+			dr [4] = "Mono.Data.SqliteClient.SqliteConnectionFactory";
+			dt.Rows.Add (dr);
+			
+			return dt;
+                }                
         }
-        
 }
 
 #endif

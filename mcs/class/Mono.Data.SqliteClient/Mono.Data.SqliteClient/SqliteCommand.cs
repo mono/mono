@@ -48,9 +48,9 @@ using Group = System.Text.RegularExpressions.Group;
 namespace Mono.Data.SqliteClient 
 {
 #if NET_2_0
-	public class SqliteCommand : DbCommand
+	public class SqliteCommand : DbCommand, ICloneable
 #else
-	public class SqliteCommand : IDbCommand
+	public class SqliteCommand : IDbCommand, ICloneable
 #endif
 	{
 		#region Fields
@@ -64,7 +64,8 @@ namespace Mono.Data.SqliteClient
 		private UpdateRowSource upd_row_source;
 		private SqliteParameterCollection sql_params;
 		private bool prepared = false;
-
+		private bool _designTimeVisible = true;
+		
 		#endregion
 
 		#region Constructors and destructors
@@ -206,8 +207,8 @@ namespace Mono.Data.SqliteClient
 #if NET_2_0
 		public override bool DesignTimeVisible
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _designTimeVisible; }
+			set { _designTimeVisible = value; }
 		}
 #endif
 
@@ -403,6 +404,10 @@ namespace Mono.Data.SqliteClient
 
 		#region Public Methods
 		
+		object ICloneable.Clone ()
+		{
+			return new SqliteCommand (sql, parent_conn, transaction);
+		}
 #if NET_2_0
 		override
 #endif
@@ -532,6 +537,11 @@ namespace Mono.Data.SqliteClient
 		}
 		
 #if NET_2_0
+		public new SqliteDataReader ExecuteReader ()
+		{
+			return ExecuteReader (CommandBehavior.Default);
+		}
+		
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
 			return (DbDataReader) ExecuteReader (behavior);
