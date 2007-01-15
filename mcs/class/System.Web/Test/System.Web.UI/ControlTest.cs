@@ -137,14 +137,19 @@ namespace MonoTests.System.Web.UI
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
+		[Category("NunitWeb")]
 		public void AppRelativeTemplateSourceDirectory ()
 		{
-			Control ctrl = new Control ();
-			Assert.AreEqual ("", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#1");
-			ctrl.AppRelativeTemplateSourceDirectory = "~/Fake";
-			Assert.AreEqual ("~/Fake", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#2");
+		            new WebTest(PageInvoker.CreateOnLoad(AppRelativeTemplateSourceDirectory_Load)).Run();
 		}
+		
+		public static void AppRelativeTemplateSourceDirectory_Load(Page p)
+		{
+		            Control ctrl = new Control();
+		            Assert.AreEqual("~/", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#1");
+		            ctrl.AppRelativeTemplateSourceDirectory = "~/Fake";
+		            Assert.AreEqual("~/Fake", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#2");
+        	}
 
 		[Test]
 		public void ApplyStyleSheetSkin ()
@@ -351,7 +356,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		public void HasEvent ()
 		{
 			MyNC ctrl1 = new MyNC ();
@@ -370,7 +374,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsViewStateEnabled ()
 		{
 			DerivedControl c = new DerivedControl ();
@@ -848,6 +851,7 @@ namespace MonoTests.System.Web.UI
 	}
 #endif
 }
+
 
 
 

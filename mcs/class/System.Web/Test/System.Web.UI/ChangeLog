@@ -1,3 +1,9 @@
+2006-01-15  Ilya Kharmatsky    <ilya-at-decode-systems.com>
+	
+	* ControlTest.cs: removed NotWorking attributes,
+	    AppRelativeTemplateSourceDirectory - changed to be WebTest, since
+	    it checks the web context depended feature.
+	
 2006-12-27  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* PageTest.cs: added test.

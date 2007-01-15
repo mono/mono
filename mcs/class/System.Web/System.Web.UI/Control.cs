@@ -280,8 +280,6 @@ namespace System.Web.UI
 		protected internal bool IsViewStateEnabled 
 		{
 			get {
-				if (Page == null)
-					return false;
 
 				for (Control control = this; control != null; control = control.Parent)
 					if (!control.EnableViewState)
@@ -676,7 +674,7 @@ namespace System.Web.UI
 
 		protected bool HasEvents ()
 		{
-			throw new NotImplementedException ();
+            		return _events != null;
 		}
 		
 #endif
