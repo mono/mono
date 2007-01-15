@@ -1,3 +1,6 @@
+2007-01-15 Mark Mason <mason@broadcom.com>
+
+	* basic.cs, exceptions.cs: break up large tests to increase debugability.
 
 Mon Jan 15 18:57:14 CET 2007 Paolo Molaro <lupus@ximian.com>
 
