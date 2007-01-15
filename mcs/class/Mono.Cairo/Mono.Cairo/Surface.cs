@@ -68,6 +68,7 @@ namespace Cairo {
 			}
 		}		
 
+#if CAIRO_1_2
 		static internal Surface LookupSurface (IntPtr surface)
 		{
 				SurfaceType st = CairoAPI.cairo_surface_get_type (surface);
@@ -82,7 +83,7 @@ namespace Cairo {
 						return new GlitzSurface (surface, true);
 					case SurfaceType.Win32:
 						return new Win32Surface (surface, true);
-#if CAIRO_1_2
+//#if CAIRO_1_2
 					case SurfaceType.Pdf:
 						return new PdfSurface (surface, true);
 					case SurfaceType.PS:
@@ -91,11 +92,12 @@ namespace Cairo {
 						return new DirectFBSurface (surface, true);
 					case SurfaceType.Svg:
 						return new SvgSurface (surface, true);
-#endif
+//#endif
 					default:
 						return Surface.LookupExternalSurface (surface);
 				}
 		}
+#endif
 
 		[Obsolete ("Use an ImageSurface constructor instead.")]
                 public static Cairo.Surface CreateForImage (

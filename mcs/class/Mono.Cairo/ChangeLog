@@ -1,3 +1,9 @@
+2007-01-15  Alp Toker  <alp@atoker.com>
+
+	* Mono.Cairo/Surface.cs:
+	* Makefile: Disable CAIRO_1_2. Patches to make the 1.2 binding work
+	are being developed out-of-tree but not ready yet.
+
 2007-01-08  Alp Toker  <alp@atoker.com>
 
 	* Mono.Cairo/Context.cs: Implement Context.GlyphExtents().
