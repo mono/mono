@@ -1,3 +1,7 @@
+2007-01-15 Mark Mason <mason@broadcom.com
+
+	* atomic.h: add locking primitives for MIPS.
+	
 2007-01-11  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (_wapi_connect): Don't do the SO_BROADCAST setting
