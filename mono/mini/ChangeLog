@@ -1,3 +1,8 @@
+
+Mon Jan 15 18:57:14 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimized RuntimeHelpers::InitializeArray () calls.
+
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	* mini.c (mono_method_to_ir): Use new MonoGenericContext accessor.
