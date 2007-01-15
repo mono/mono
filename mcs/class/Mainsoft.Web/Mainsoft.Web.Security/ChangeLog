@@ -1,3 +1,8 @@
+2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyDBSchema.cs: fixed GetSchemaVersion, return nullif DB does
+	not exist
+
 2007-01-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyDBSchema.cs: added version table, refactored schema

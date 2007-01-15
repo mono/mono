@@ -191,7 +191,13 @@ namespace Mainsoft.Web.Security
 		{
 			OleDbConnection connection = new OleDbConnection ();
 			connection.ConnectionString = connectionString;
-			connection.Open ();
+
+			try {
+				connection.Open ();
+			}
+			catch (Exception) {
+				return null;
+			}
 
 			using (connection) {
 				OleDbCommand cmd = new OleDbCommand ("SELECT SchemaVersion FROM aspnet_Version", connection);

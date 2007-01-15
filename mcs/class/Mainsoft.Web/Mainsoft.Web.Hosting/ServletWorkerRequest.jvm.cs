@@ -102,12 +102,7 @@ namespace Mainsoft.Web.Hosting {
 			_OutputStream = outputStream;
 
 			string contextPath = req.getContextPath();
-			string requestURI = req.getRequestURI();
-			if (String.CompareOrdinal(requestURI, contextPath) == 0 ||
-				(((requestURI.Length - contextPath.Length) == 1) &&
-					requestURI[contextPath.Length] == '/' &&
-					String.CompareOrdinal(requestURI, 0, contextPath, 0, contextPath.Length) == 0 ))
-				requestURI = contextPath + req.getServletPath();	
+			string requestURI = contextPath + req.getServletPath();	
 
 			_requestUri = Uri.UnescapeDataString(requestURI);
 			const int dotInvokeLength = 7; //".invoke".Length

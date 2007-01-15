@@ -254,6 +254,9 @@ namespace Mainsoft.Web.Profile
 
 		private static string GetUserId (DbConnection connection, DbTransaction trans, string applicationId, string username)
 		{
+			if (username == null)
+				return null;
+
 			string selectQuery = "SELECT UserId FROM aspnet_Users WHERE LoweredUserName = ? AND ApplicationId = ?";
 
 			OleDbCommand selectCmd = new OleDbCommand (selectQuery, (OleDbConnection) connection);

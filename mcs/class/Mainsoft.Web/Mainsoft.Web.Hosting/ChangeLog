@@ -1,0 +1,4 @@
+2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: fixed ctor, welcome file in sub dir
+
