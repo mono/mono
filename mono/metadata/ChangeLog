@@ -1,4 +1,16 @@
+2007-01-15  Miguel de Icaza  <miguel@novell.com>
 
+	* loader.c (mono_loader_error_prepare_exception): Clear the error
+	once we have extracted the information from it, do this before we
+	call into the JIT's class loading mechanisms.
+
+	* object.c (mono_class_create_runtime_vtable): Do not clear the
+	loader error before calling mono_class_get_exception_for_failure
+	as the loader error is needed inside
+	mono_class_get_exception_for_failure to throw the error (thinko).
+
+	Fixes #80521
+	
 Mon Jan 15 10:27:31 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: align fields rva data so it's faster to load at
