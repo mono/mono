@@ -32,6 +32,9 @@
 using System;
 using System.Web;
 using VPU = System.Web.VirtualPathUtility;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+using System.Web.UI;
 
 using NUnit.Framework;
 
@@ -104,7 +107,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetDirectory ()
 		{
 			Assert.AreEqual ("/hi/", VPU.GetDirectory ("/hi/there"), "A1");
@@ -125,7 +127,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetExtension ()
 		{
 			Assert.AreEqual (".aspx", VPU.GetExtension ("/hi/index.aspx"), "A1");
@@ -365,13 +366,19 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MakeRelative5 ()
 		{
 			Assert.AreEqual ("", VPU.MakeRelative ("", ""));
 			Assert.AreEqual ("", VPU.MakeRelative ("/something", ""));
-			Assert.AreEqual ("./", VPU.MakeRelative ("/", "/"));
 		}
+
+        [Test]
+        [Category ("NotWorking")]
+        public void MakeRelative6()
+        {
+            //The test is not working due to the : System.URI.MakeRelativeUri - not implemented exception
+            Assert.AreEqual("./", VPU.MakeRelative("/", "/"));
+        }
 
 		[Test]
 		public void RemoveTrailingSlash2 ()
@@ -385,65 +392,91 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+        [Category("NunitWeb")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ToAbsolute1 ()
 		{
-			VPU.ToAbsolute (null);
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute1_Load)).Run();
 		}
 
+        public static void ToAbsolute1_Load(Page p)
+        {
+            VPU.ToAbsolute(null);
+        }
+
 		[Test]
-		[Category ("NotWorking")]
+        [Category("NunitWeb")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ToAbsolute2 ()
 		{
-			VPU.ToAbsolute ("");
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute2_Load)).Run();
 		}
 
+        public static void ToAbsolute2_Load(Page p) 
+        {
+            VPU.ToAbsolute("");
+        }
+
 		[Test]
-		[Category ("NotWorking")]
+        [Category("NunitWeb")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute3 ()
 		{
-			VPU.ToAbsolute ("..");
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute3_Load)).Run();
 		}
 
+        public static void ToAbsolute3_Load(Page p)
+        {
+            VPU.ToAbsolute("..");
+        }
+
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute4 ()
 		{
-			VPU.ToAbsolute ("...");
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute4_Load)).Run();
 		}
 
+        public static void ToAbsolute4_Load(Page p)
+        {
+            VPU.ToAbsolute("...");
+        }
+
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute5 ()
 		{
-			VPU.ToAbsolute ("../blah");
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute5_Load)).Run();
 		}
 
+        public static void ToAbsolute5_Load(Page p)
+        {
+            VPU.ToAbsolute("../blah");
+        }
+
 		[Test]
-		[ExpectedException (typeof (HttpException))]
-#if TARGET_JVM
-		[Ignore ("TD #6964")]
-#endif
-		public void ToAbsolute6 ()
+        [Category("NunitWeb")]
+        public void ToAbsolute6()
 		{
-			VPU.ToAbsolute ("~/");
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute6_Load)).Run();
 		}
+        public static void ToAbsolute6_Load(Page p)
+        {
+            Assert.IsNotEmpty(VPU.ToAbsolute("~/"));
+        }
 
 		[Test]
-		[ExpectedException (typeof (HttpException))]
-#if TARGET_JVM
-		[Ignore ("TD #6964")]
-#endif
+		[Category("NunitWeb")]
 		public void ToAbsolute7 ()
 		{
-			Assert.AreEqual ("/", VPU.ToAbsolute ("/"));
+            new WebTest(PageInvoker.CreateOnLoad(ToAbsolute7_Load)).Run();
 		}
-
+        public static void ToAbsolute7_Load(Page p)
+        {
+            Assert.AreEqual("/", VPU.ToAbsolute("/"));
+        }
 		[Test]
 		public void ToAbsolute8 ()
 		{
@@ -490,4 +523,5 @@ namespace MonoTests.System.Web {
 }
 
 #endif
+
 

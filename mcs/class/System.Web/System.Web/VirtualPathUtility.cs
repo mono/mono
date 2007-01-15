@@ -83,13 +83,27 @@ namespace System.Web {
 			if (virtualPath [0] != '/')
 				throw new ArgumentException ("The virtual path is not rooted", "virtualPath");
 
-			string result = UrlUtils.GetDirectory (virtualPath);
+            		if (virtualPath == "/")
+                		return null; //.net behavior
+
+            		//In .Net - will look for one '/' before the last one, and will return it as a directory
+            		//therefor we always should remove the last slash.
+            		if (virtualPath.EndsWith("/")) 
+                		virtualPath = virtualPath.Substring(0, virtualPath.Length - 1);
+
+            		string result = UrlUtils.GetDirectory (virtualPath);
 			return AppendTrailingSlash (result);
 		}
 
 		public static string GetExtension (string virtualPath)
 		{
-			string filename = GetFileName (virtualPath);
+            		if (virtualPath != null && virtualPath != "" && 
+				virtualPath.IndexOf('/') == -1)
+                	{
+				virtualPath = "./" + virtualPath;
+			}
+
+            		string filename = GetFileName (virtualPath);
 			int dot = filename.LastIndexOf ('.');
 			if (dot == -1 || dot == filename.Length + 1)
 				return "";
@@ -220,4 +234,5 @@ namespace System.Web {
 }
 
 #endif
+
 

@@ -1,3 +1,8 @@
+2007-01-15  Ilya Kharmatsky   <ilya -at- decode-systems.com>
+
+	* VirtualPathUtility.cs: fixed bugs in methods - GetDirectory and
+	GetExtension, according to the VirtualPathUtilityTest
+
 2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SiteMapProvider.cs: fixed IsAccessibleToUser, true if

@@ -1,3 +1,16 @@
+2007-01-15 Ilya Kharmatsky  <ilya -at- decode-systems.com>
+	
+	* VirtualPathUtility.cs : 
+		- ToAbsoluteXXX (where XXX are numbers between 1-7) tests
+		  transformed to WebTest - since the real-life scenarios 
+		  for those tests are in web context.
+		- Removed NotWorking attributes - fixed bugs in
+		  VirtualPathUtility - GetDirectory and GetExtension, and
+		  moving ToAbsoluteXXX test to web tests.
+		- MakeRelative5 test has been splatted to 2 different tests 
+		  - added MakeRelative6
+		- Removed 'TARGET_JVM' directives
+
 2006-12-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* StaticSiteMapProviderTest.cs: new tests added.
