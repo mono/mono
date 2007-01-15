@@ -1621,6 +1621,7 @@ namespace System.Windows.Forms
 					OnDoubleClick(me);
 				} else {
 					OnClick(me);
+					OnMouseClick (me);
 #endif
 				}
 			}
