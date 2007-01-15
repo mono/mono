@@ -1,6 +1,7 @@
 2007-01-15  Marek Habersack  <grendello@gmail.com>
 
 	* WsdlBuildProvider.cs: New build provider for WSDL files.
+	Compile only when System.Web.Services are present.
 
 	* TemplateControlCompiler.cs: Forgotten in the previous commit -
 	don't pass the current culture to GetLocalResourceObject, let the
