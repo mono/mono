@@ -223,6 +223,12 @@ namespace MonoTests.System.Drawing {
 					Assert.AreEqual (size, xp.Width, "Width");
 					Assert.AreEqual (size, xp.Size.Width, "Size.Width");
 					Assert.AreEqual (size, xp.Size.Height, "Size.Height");
+
+					Bitmap bmp = xp.ToBitmap ();
+					Assert.AreEqual (size, bmp.Height, "Bitmap.Height");
+					Assert.AreEqual (size, bmp.Width, "Bitmap.Width");
+					Assert.AreEqual (size, bmp.Size.Width, "Bitmap.Size.Width");
+					Assert.AreEqual (size, bmp.Size.Height, "Bitmap.Size.Height");
 				}
 			}
 		}
@@ -295,6 +301,13 @@ namespace MonoTests.System.Drawing {
 			SaveAndCompare ("48", icon48);
 			SaveAndCompare ("64", icon64);
 			SaveAndCompare ("96", icon96);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Save_Null ()
+		{
+			icon.Save (null);
 		}
 
 		[Test]

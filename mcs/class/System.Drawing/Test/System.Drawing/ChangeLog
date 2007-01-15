@@ -1,3 +1,8 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestIcon.cs: Add test cases for ToBitmap when multiple icon sizes
+	coexists in the same icon file.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestIcon.cs: Add test cases for non-standard size icons, 10x16 and
