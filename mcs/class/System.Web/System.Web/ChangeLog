@@ -1,3 +1,9 @@
+2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SiteMapProvider.cs: fixed IsAccessibleToUser, true if
+	SecurityTrimmingEnabled not enabled, true if Roles exists on node and
+	rolename is '*'
+
 2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
 
 	* HttpRequest.jvm.cs, HttpContext.jvm.cs: Added TARGET_J2EE specific files.

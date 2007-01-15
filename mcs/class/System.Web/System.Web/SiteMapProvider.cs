@@ -168,6 +168,9 @@ namespace System.Web {
 			if (context == null) throw new ArgumentNullException ("context");
 			if (node == null) throw new ArgumentNullException ("node");
 
+			if (!SecurityTrimmingEnabled)
+				return true;
+
 			/* the node is accessible (according to msdn2)
 			 * if:
 			 *
@@ -186,7 +189,7 @@ namespace System.Web {
 			/* 1. */
 			if (node.Roles != null)
 				foreach (string rolename in node.Roles)
-					if (context.User.IsInRole (rolename))
+					if (rolename == "*" || context.User.IsInRole (rolename))
 						return true;
 
 			/* 2. */
