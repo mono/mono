@@ -1,3 +1,7 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Add new test icon 32bpp.ico for newer, XP, ARGB icons.
+
 2007-01-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add new test icons 16x16x16 and 32x32x16 to dist.
