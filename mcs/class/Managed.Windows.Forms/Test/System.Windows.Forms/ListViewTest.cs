@@ -310,6 +310,96 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
+#if NET_2_0
+		[Test]
+		public void FindItemWithText ()
+		{
+			ListView lvw = new ListView();
+			ListViewItem lvi1 = new ListViewItem (String.Empty);
+			ListViewItem lvi2 = new ListViewItem ("angle bracket");
+			ListViewItem lvi3 = new ListViewItem ("bracket holder");
+			ListViewItem lvi4 = new ListViewItem ("bracket");
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3, lvi4 });
+
+			Assert.AreEqual (lvi1, lvw.FindItemWithText (String.Empty), "#A1");
+			Assert.AreEqual (lvi3, lvw.FindItemWithText ("bracket"), "#A2");
+			Assert.AreEqual (lvi3, lvw.FindItemWithText ("BrackeT"), "#A3");
+			Assert.IsNull (lvw.FindItemWithText ("holder"), "#A5");
+
+			Assert.AreEqual (lvw.Items [3], lvw.FindItemWithText ("bracket", true, 3), "#B1");
+
+			Assert.AreEqual (lvw.Items [2], lvw.FindItemWithText ("bracket", true, 0, true), "#C1");
+			Assert.AreEqual (lvw.Items [3], lvw.FindItemWithText ("bracket", true, 0, false), "#C2");
+			Assert.AreEqual(lvw.Items [3], lvw.FindItemWithText("BrackeT", true, 0, false), "#C3");
+			Assert.IsNull (lvw.FindItemWithText ("brack", true, 0, false), "#C4");
+
+			// Sub item search tests
+			lvw.Items.Clear ();
+
+			lvi1.Text = "A";
+			lvi1.SubItems.Add ("car bracket");
+			lvi1.SubItems.Add ("C");
+
+			lvi2.Text = "B";
+			lvi2.SubItems.Add ("car");
+
+			lvi3.Text = "C";
+
+			lvw.Items.AddRange (new ListViewItem [] { lvi1, lvi2, lvi3 });
+
+			Assert.AreEqual (lvi1, lvw.FindItemWithText ("car", true, 0), "#D1");
+			Assert.AreEqual (lvi3, lvw.FindItemWithText ("C", true, 0), "#D2");
+			Assert.AreEqual (lvi2, lvw.FindItemWithText ("car", true, 1), "#D3");
+			Assert.IsNull (lvw.FindItemWithText ("car", false, 0), "#D4");
+
+			Assert.AreEqual (lvi1, lvw.FindItemWithText ("car", true, 0, true), "#E1");
+			Assert.AreEqual (lvi2, lvw.FindItemWithText ("car", true, 0, false), "#E2");
+			Assert.AreEqual (lvi2, lvw.FindItemWithText ("CaR", true, 0, false), "#E3");
+		}
+
+		[Test]
+		public void FindItemWithText_Exceptions ()
+		{
+			ListView lvw = new ListView ();
+
+			// Shouldn't throw any exception
+			lvw.FindItemWithText (null);
+
+			try {
+				lvw.FindItemWithText (null, false, 0);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.FindItemWithText (null, false, lvw.Items.Count);
+				Assert.Fail ("#A2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			// Add a single item
+			lvw.Items.Add ("bracket");
+
+			try {
+				lvw.FindItemWithText (null);
+				Assert.Fail ("#A3");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				lvw.FindItemWithText ("bracket", false, -1);
+				Assert.Fail ("#A4");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				lvw.FindItemWithText ("bracket", false, lvw.Items.Count);
+				Assert.Fail ("#A5");
+			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+#endif
+
 		[Test]
 		public void Sort_Details_Checked ()
 		{

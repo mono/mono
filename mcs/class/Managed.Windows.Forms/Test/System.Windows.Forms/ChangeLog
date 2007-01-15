@@ -1,3 +1,7 @@
+2007-01-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewTest.cs: Add tests for new 2.0 FindItemWithText methods.
+
 2007-01-13  Andreia Gaita  <avidigal@novell.com>
 
 	* ControlTest.cs: Add test to check if Exception is raised when
