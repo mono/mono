@@ -102,7 +102,8 @@ namespace System.Drawing
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
-			InitFromStream (stream);
+			// false: stream is owned by user code
+			InitFromStream (stream, false);
 		}
 
 		public Bitmap (string filename, bool useIcm)
@@ -121,12 +122,13 @@ namespace System.Drawing
 
 		public Bitmap (Type type, string resource)
 		{
-			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)){
-				if (s == null)
-					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
-
-				InitFromStream (s);
+			Stream s = type.Assembly.GetManifestResourceStream (type, resource);
+			if (s == null) {
+				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
+				throw new FileNotFoundException ();
 			}
+			// true: stream is owned by SD code
+			InitFromStream (s, true);
 		}
 
 		public Bitmap (Image original, int width, int height)  : this(width, height, PixelFormat.Format32bppArgb)
@@ -153,7 +155,8 @@ namespace System.Drawing
 					byte[] bytes = (byte[]) serEnum.Value;
 		
 					if (bytes != null) {
-						InitFromStream(new MemoryStream(bytes));
+						// true: stream is owned by SD code
+						InitFromStream (new MemoryStream (bytes), true);
 					}
 				}
 			}

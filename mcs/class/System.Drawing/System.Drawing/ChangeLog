@@ -1,6 +1,9 @@
-2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* Bitmap.cs: Make sure we're not building bitmaps using stream that
+	can be disposed (as GDI+ may require access to them anytime);
 	* Icon.cs: Change icon selection to match either width *or* height.
+	* Image.cs: Track user versus internal streams in InitFromStream
 
 2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 

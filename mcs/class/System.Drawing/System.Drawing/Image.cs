@@ -1,18 +1,14 @@
 //
 // System.Drawing.Image.cs
 //
-// Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
-//
 // Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
 // 		Alexandre Pigolkine (pigolkine@gmx.de)
 //		Jordi Mas i Hernandez (jordi@ximian.com)
 //		Sanjay Gupta (gsanjay@novell.com)
 //		Ravindra (rkumar@novell.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,13 +51,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort();
 	private object tag;
 	
-	internal IntPtr nativeObject = IntPtr.Zero;	
+	internal IntPtr nativeObject = IntPtr.Zero;
+	// when using MS GDI+ and IStream we must ensure the stream stays alive for all the life of the Image
+	// http://groups.google.com/group/microsoft.public.win32.programmer.gdi/browse_thread/thread/4967097db1469a27/4d36385b83532126?lnk=st&q=IStream+gdi&rnum=3&hl=en#4d36385b83532126
+	private Stream stream;
 	
 	
 	// constructor
 	internal  Image()
 	{	
-		
 	}
 	
 	private Image (SerializationInfo info, StreamingContext context)
@@ -71,7 +69,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				byte[] bytes = (byte[]) serEnum.Value;
 
 				if (bytes != null) {
-					InitFromStream(new MemoryStream(bytes));
+					// true: stream is owned by SD code
+					InitFromStream (new MemoryStream (bytes), true);
 				}
 			}
 		}
@@ -220,7 +219,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return ((pixfmt & PixelFormat.Extended) != 0);
 	}
 
-	internal void InitFromStream (Stream stream)
+	internal void InitFromStream (Stream stream, bool keepAlive)
 	{
 		IntPtr imagePtr;
 		Status st;
@@ -256,7 +255,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, out imagePtr);
 		} else {
 			// this is MS-land
-			st = GDIPlus.GdipLoadImageFromStream(new ComIStreamWrapper(stream), out imagePtr);
+			// we *may* have to keep the stream alive as long as the image is alive (GDI+ seems to use a lazy loader)
+			if (keepAlive)
+				this.stream = stream;
+			st = GDIPlus.GdipLoadImageFromStream (new ComIStreamWrapper (stream), out imagePtr);
 		}
 
 		GDIPlus.CheckStatus (st);
@@ -757,7 +759,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		if (GDIPlus.GdiPlusToken != 0 && nativeObject != IntPtr.Zero) {
 			Status status = GDIPlus.GdipDisposeImage (nativeObject);
-			// set nativeObject to null before throwing an exception
+			// dispose the stream (set under Win32 only if SD owns the stream) and ...
+			if (stream != null) {
+				stream.Close ();
+				stream = null;
+			}
+			// ... set nativeObject to null before (possibly) throwing an exception
 			nativeObject = IntPtr.Zero;
 			GDIPlus.CheckStatus (status);		
 		}
