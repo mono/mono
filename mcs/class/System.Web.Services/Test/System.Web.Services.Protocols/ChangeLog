@@ -1,0 +1,4 @@
+2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapHttpClientProtocolTest.cs: Added test for bug #79988.
+	* SocketResponder.cs: Utility class for emulating Web Service backend.

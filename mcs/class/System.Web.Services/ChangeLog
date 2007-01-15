@@ -1,3 +1,8 @@
+2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Web.Services_test.dll.sources: added SocketResponder.cs and
+	SoapHttpClientProtocolTest.cs.
+
 2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services_test.dll.sources :
