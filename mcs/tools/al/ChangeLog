@@ -1,3 +1,25 @@
+2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Al.cs: Use DelaySign enum to capture whether a delaysign (+ or -)
+	option was specified, and what value was set. This was necessary to
+	make a distinction between leaving the default value (possibly
+	obtained from a template assembly), and explicitly turned delay signing
+	off. Removed unused IsStrongName method. Added support for absolute
+	paths for modules on unix (borrowed from mcs). Previously absolute
+	paths where reported as unrecognized command line options. Only add
+	AssemblyDelaySignAttribute, AssemblyKeyFileAttribute and
+	AssemblyKeyNameAttribute on 1.0 profile. Do not add an 
+	AssemblyCultureAttribute if culture is specified, instead set the
+	culture on the AssemblyName. When template is not an absolute path,
+	then consider it to relative to the current directory. Removed unused
+	AddResource method. Do not require template to be strongly signed;
+	although MSDN states this, MS does not enforce this (and it should not).
+	Template option take a file name, not an assembly name. Fixed bug
+	#80440. When a template is set, use the keyfile specified in
+	AssemblyKeyFileAttribute of that template to sign the assembly (unless
+	overridden by /keyfile option). Same goes for AssemblyDelaySignAttribute
+	and AssemblyKeyNameAttribute.
+
 2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Makefile: Make profile-specific.

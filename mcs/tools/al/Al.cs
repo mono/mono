@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Collections;
 using System.Reflection;
@@ -40,6 +41,12 @@ namespace Mono.AssemblyLinker
 		Win
 	}
 
+	enum DelaySign {
+		NotSet,
+		Yes,
+		No
+	}
+
 	public class AssemblyLinker {
 
 		ArrayList inputFiles = new ArrayList ();
@@ -52,10 +59,11 @@ namespace Mono.AssemblyLinker
 		string win32ResFile;
 		string templateFile;
 		bool isTemplateFile = false;
-		Target target;
-		bool delaysign;
+		Target target = Target.Dll;
+		DelaySign delaysign = DelaySign.NotSet;
 		string keyfile;
 		string keyname;
+		string culture;
 
 		public static int Main (String[] args) {
 			return new AssemblyLinker ().DynMain (args);
@@ -69,22 +77,8 @@ namespace Mono.AssemblyLinker
 			return 0;
 		}
 
-		static bool IsStrongNamed (Assembly assembly)
-		{
-			object[] attrs = assembly.GetCustomAttributes (true);
-			foreach (object o in attrs) 
-			{
-				if (o is AssemblyKeyFileAttribute)
-					return true;
-				else if (o is AssemblyKeyNameAttribute)
-					return true;
-			}
-			return false;
-		}
-
 		private void ParseArgs (string[] args) 
 		{
-
 			ArrayList flat_args = new ArrayList ();
 
 			// Process response files
@@ -110,31 +104,58 @@ namespace Mono.AssemblyLinker
 
 			foreach (string str in flat_args) {
 				if ((str [0] != '-') && (str [0] != '/')) {
-					string[] parts = str.Split (',');
-					ModuleInfo mod = new ModuleInfo ();
-					mod.fileName = parts [0];
-					if (parts.Length > 1)
-						mod.target = parts [1];
-					inputFiles.Add (mod);
+					inputFiles.Add (GetModuleInfo (str));
 					continue;
 				}
 
-				string arg;
-				string opt = GetCommand (str, out arg);
+				if (!ParseOption(str)) {
+					if (RunningOnUnix) {
+						// cope with absolute filenames for modules on unix, as
+						// they also match the option pattern
+						//
+						// `/home/test.cs' is considered as a module, however
+						// '/test.cs' is considered as error
+						if (str.Length > 2 && str.IndexOf ('/', 2) != -1) {
+							inputFiles.Add (GetModuleInfo (str));
+							continue;
+						}
+					}
 
-				ResourceInfo res;
-				switch (opt) {
-				case "help":
-				case "?":
-					Usage ();
+					Report (1013, String.Format ("Unrecognized command line option: '{0}'", str));
 					break;
+				}
+			}
 
-				case "embed": {
+			if ((inputFiles.Count == 0) && (resources.Count == 0))
+				Report (1016, "No valid input files were specified");
+
+			if (outFile == null)
+				Report (1017, "No target filename was specified");
+
+			if (target == Target.Dll && (entryPoint != null))
+				Report (1035, "Libraries cannot have an entry point");
+
+			if (target == Target.Exe && (entryPoint == null))
+				Report (1036, "Entry point required for executable applications");						
+		}
+
+		private bool ParseOption (string str)
+		{
+			string arg;
+			string opt = GetCommand (str, out arg);
+
+			switch (opt) {
+			case "help":
+			case "?":
+				Usage ();
+				return true;
+
+			case "embed": {
 					if (arg == null)
 						ReportMissingFileSpec (opt);
-					res = new ResourceInfo ();
+					ResourceInfo res = new ResourceInfo ();
 					res.isEmbedded = true;
-					String[] parts = arg.Split (',');
+					String [] parts = arg.Split (',');
 					res.fileName = parts [0];
 					if (parts.Length > 1)
 						res.name = parts [1];
@@ -151,14 +172,14 @@ namespace Mono.AssemblyLinker
 						}
 					}
 					resources.Add (res);
-					break;
+					return true;
 				}
 
-				case "link": {
+			case "link": {
 					if (arg == null)
 						ReportMissingFileSpec (opt);
-					res = new ResourceInfo ();
-					String[] parts = arg.Split (',');
+					ResourceInfo res = new ResourceInfo ();
+					String [] parts = arg.Split (',');
 					res.fileName = parts [0];
 					if (parts.Length > 1)
 						res.name = parts [1];
@@ -177,248 +198,246 @@ namespace Mono.AssemblyLinker
 						}
 					}
 					resources.Add (res);
-					break;
+					return true;
 				}
 
-				case "algid":
-					if (arg == null)
-						ReportMissingArgument (opt);
-					try {
-						string realArg = arg;
-						if (realArg.StartsWith ("0x"))
-							realArg = realArg.Substring (2);
-						uint val = Convert.ToUInt32 (realArg, 16);
-						AddCattr (typeof (AssemblyAlgorithmIdAttribute), typeof (uint), val);
-					}
-					catch (Exception) {
-						ReportInvalidArgument (opt, arg);
-					}
-					break;
+			case "algid":
+				if (arg == null)
+					ReportMissingArgument (opt);
+				try {
+					string realArg = arg;
+					if (realArg.StartsWith ("0x"))
+						realArg = realArg.Substring (2);
+					uint val = Convert.ToUInt32 (realArg, 16);
+					AddCattr (typeof (AssemblyAlgorithmIdAttribute), typeof (uint), val);
+				} catch (Exception) {
+					ReportInvalidArgument (opt, arg);
+				}
+				return true;
 
-				case "base":
-					ReportNotImplemented (opt);
-					break;
+			case "base":
+				ReportNotImplemented (opt);
+				return true;
 
-				case "baseaddress":
-					ReportNotImplemented (opt);
-					break;
+			case "baseaddress":
+				ReportNotImplemented (opt);
+				return true;
 
-				case "bugreport":
-					ReportNotImplemented (opt);
-					break;
+			case "bugreport":
+				ReportNotImplemented (opt);
+				return true;
 
-				case "comp":
-				case "company":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyCompanyAttribute), arg);
-					break;
+			case "comp":
+			case "company":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyCompanyAttribute), arg);
+				return true;
 
-				case "config":
-				case "configuration":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyConfigurationAttribute), arg);
-					break;
+			case "config":
+			case "configuration":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyConfigurationAttribute), arg);
+				return true;
 
-				case "copy":
-				case "copyright":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyCopyrightAttribute), arg);
-					break;
+			case "copy":
+			case "copyright":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyCopyrightAttribute), arg);
+				return true;
 
-				case "c":
-				case "culture":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyCultureAttribute), arg);
-					break;
+			case "c":
+			case "culture":
+				if (arg == null)
+					ReportMissingText (opt);
+				culture = arg;
+				return true;
 
-				case "delay":
-				case "delaysign":
-				case "delay+":
-				case "delaysign+":
-					AddCattr (typeof (AssemblyDelaySignAttribute), typeof (bool), true);
-					delaysign = true;
-					break;
+			case "delay":
+			case "delaysign":
+			case "delay+":
+			case "delaysign+":
+				delaysign = DelaySign.Yes;
+				return true;
 
-				case "delay-":
-				case "delaysign-":
-					delaysign = false;
-					break;
+			case "delay-":
+			case "delaysign-":
+				delaysign = DelaySign.No;
+				return true;
 
-				case "descr":
-				case "description":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyDescriptionAttribute), arg);
-					break;
+			case "descr":
+			case "description":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyDescriptionAttribute), arg);
+				return true;
 
-				case "e":
-				case "evidence":
-					if (arg == null)
-						ReportMissingFileSpec (opt);
-					res = new ResourceInfo ();
-					res.name = "Security.Evidence";
-					res.fileName = arg;
-					res.isEmbedded = true;
-					res.isPrivate = true;
-					resources.Add (res);
-					break;
+			case "e":
+			case "evidence":
+				if (arg == null)
+					ReportMissingFileSpec (opt);
+				ResourceInfo res = new ResourceInfo ();
+				res.name = "Security.Evidence";
+				res.fileName = arg;
+				res.isEmbedded = true;
+				res.isPrivate = true;
+				resources.Add (res);
+				return true;
 
-				case "fileversion":
-					if (arg == null)
-						ReportMissingText (opt);
+			case "fileversion":
+				if (arg == null)
+					ReportMissingText (opt);
 
-					AddCattr (typeof (AssemblyFileVersionAttribute), arg);
-					break;
+				AddCattr (typeof (AssemblyFileVersionAttribute), arg);
+				return true;
 
-				case "flags":
-					if (arg == null)
-						ReportMissingArgument (opt);
-					try {
-						string realArg = arg;
-						if (realArg.StartsWith ("0x"))
-							realArg = realArg.Substring (2);
-						uint val = Convert.ToUInt32 (realArg, 16);
-						AddCattr (typeof (AssemblyFlagsAttribute), typeof (uint), val);
-					}
-					catch (Exception) {
-						ReportInvalidArgument (opt, arg);
-					}
-					break;
+			case "flags":
+				if (arg == null)
+					ReportMissingArgument (opt);
+				try {
+					string realArg = arg;
+					if (realArg.StartsWith ("0x"))
+						realArg = realArg.Substring (2);
+					uint val = Convert.ToUInt32 (realArg, 16);
+					AddCattr (typeof (AssemblyFlagsAttribute), typeof (uint), val);
+				} catch (Exception) {
+					ReportInvalidArgument (opt, arg);
+				}
+				return true;
 
-				case "fullpaths":
-					fullPaths = true;
-					break;
+			case "fullpaths":
+				fullPaths = true;
+				return true;
 
-				case "keyf":
-				case "keyfile":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyKeyFileAttribute), arg);
-					keyfile = arg;
-					break;
-					
-				case "keyn":
-				case "keyname":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyKeyNameAttribute), arg);
-					keyname = arg;
-					break;
+			case "keyf":
+			case "keyfile":
+				if (arg == null)
+					ReportMissingText (opt);
+				keyfile = arg;
+				return true;
 
-				case "main":
-					if (arg == null)
-						ReportMissingText (opt);
-					entryPoint = arg;
-					break;
+			case "keyn":
+			case "keyname":
+				if (arg == null)
+					ReportMissingText (opt);
+				keyname = arg;
+				return true;
 
-				case "nologo":
-					break;
+			case "main":
+				if (arg == null)
+					ReportMissingText (opt);
+				entryPoint = arg;
+				return true;
 
-				case "out":
-					if (arg == null)
-						ReportMissingFileSpec (opt);
-					outFile = arg;
-					break;
+			case "nologo":
+				return true;
 
-				case "prod":
-				case "product":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyProductAttribute), arg);
-					break;
+			case "out":
+				if (arg == null)
+					ReportMissingFileSpec (opt);
+				outFile = arg;
+				return true;
 
-				case "productv":
-				case "productversion":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyInformationalVersionAttribute), arg);
-					break;
+			case "prod":
+			case "product":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyProductAttribute), arg);
+				return true;
 
-				case "t":
-				case "target":
-					if (arg == null)
-						ReportMissingText (opt);
-					switch (arg) {
-					case "lib":
-					case "library":
-						target = Target.Dll;
-						break;
-					case "exe":
-						target = Target.Exe;
-						break;
-					case "win":
-					case "winexe":
-						Report (0, "target:win is not implemented");
-						break;
-					default:
-						ReportInvalidArgument (opt, arg);
-						break;
-					}
-					break;
+			case "productv":
+			case "productversion":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyInformationalVersionAttribute), arg);
+				return true;
 
-				case "template":
-                        		if (arg == null)
-                            			ReportMissingFileSpec (opt);
-					isTemplateFile = true;
-					templateFile = arg;
+			case "t":
+			case "target":
+				if (arg == null)
+					ReportMissingText (opt);
+				switch (arg) {
+				case "lib":
+				case "library":
+					target = Target.Dll;
 					break;
-
-				case "title":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyTitleAttribute), arg);
+				case "exe":
+					target = Target.Exe;
 					break;
-
-				case "trade":
-				case "trademark":
-					if (arg == null)
-						ReportMissingText (opt);
-					AddCattr (typeof (AssemblyTrademarkAttribute), arg);
+				case "win":
+				case "winexe":
+					Report (0, "target:win is not implemented");
 					break;
-
-				case "v":
-				case "version":
-					// This option conflicts with the standard UNIX meaning
-					if (arg == null) {
-						Version ();
-						break;
-					}
-					AddCattr (typeof (AssemblyVersionAttribute), arg);
-					break;
-
-				case "win32icon":
-					if (arg == null)
-						ReportMissingFileSpec (opt);
-					win32IconFile = arg;
-					break;
-
-				case "win32res":
-					if (arg == null)
-						ReportMissingFileSpec (opt);
-					win32ResFile = arg;
-					break;
-
 				default:
-					Report (1013, String.Format ("Unrecognized command line option: '{0}'", opt));
+					ReportInvalidArgument (opt, arg);
 					break;
 				}
+				return true;
+
+			case "template":
+				if (arg == null)
+					ReportMissingFileSpec (opt);
+				isTemplateFile = true;
+				templateFile = Path.Combine (Directory.GetCurrentDirectory (), arg);
+				return true;
+
+			case "title":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyTitleAttribute), arg);
+				return true;
+
+			case "trade":
+			case "trademark":
+				if (arg == null)
+					ReportMissingText (opt);
+				AddCattr (typeof (AssemblyTrademarkAttribute), arg);
+				return true;
+
+			case "v":
+			case "version":
+				// This option conflicts with the standard UNIX meaning
+				if (arg == null) {
+					Version ();
+					break;
+				}
+				AddCattr (typeof (AssemblyVersionAttribute), arg);
+				return true;
+
+			case "win32icon":
+				if (arg == null)
+					ReportMissingFileSpec (opt);
+				win32IconFile = arg;
+				return true;
+
+			case "win32res":
+				if (arg == null)
+					ReportMissingFileSpec (opt);
+				win32ResFile = arg;
+				return true;
 			}
+			return false;
+		}
 
-			if ((inputFiles.Count == 0) && (resources.Count == 0))
-				Report (1016, "No valid input files were specified");
+		private bool RunningOnUnix {
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
+		}
 
-			if (outFile == null)
-				Report (1017, "No target filename was specified");
-
-			if (target == Target.Dll && (entryPoint != null))
-				Report (1035, "Libraries cannot have an entry point");
-
-			if (target == Target.Exe && (entryPoint == null))
-				Report (1036, "Entry point required for executable applications");						
+		private ModuleInfo GetModuleInfo (string str)
+		{
+			string [] parts = str.Split (',');
+			ModuleInfo mod = new ModuleInfo ();
+			mod.fileName = parts [0];
+			if (parts.Length > 1)
+				mod.target = parts [1];
+			return mod;
 		}
 
 		private string GetCommand (string str, out string command_arg) {
@@ -446,15 +465,6 @@ namespace Mono.AssemblyLinker
 
 		private void AddCattr (Type attrType, object value) {
 			AddCattr (attrType, typeof (string), value);
-		}
-
-		private void AddResource (ResourceInfo res) {
-			foreach (ResourceInfo res2 in resources) {
-				if (res.name == res2.name) {
-
-				}
-			}
-			resources.Add (res);
 		}
 
 		private void PrintVersion () {
@@ -528,17 +538,35 @@ namespace Mono.AssemblyLinker
 
 		private void SetKeyPair (AssemblyName aname)
 		{
+#if ONLY_1_1
+			switch (delaysign) {
+			case DelaySign.Yes:
+				AddCattr (typeof (AssemblyDelaySignAttribute),
+					typeof (bool), true);
+				break;
+			case DelaySign.No:
+				AddCattr (typeof (AssemblyDelaySignAttribute),
+					typeof (bool), false);
+				break;
+			}
+#endif
+
 			if (keyfile != null) {
 				if (!File.Exists (keyfile)) {
 					Report (1044, String.Format ("Couldn't open '{0}' key file.", keyfile));
 				}
+
+#if ONLY_1_1			
+				AddCattr (typeof (AssemblyKeyFileAttribute),
+					keyfile);
+#endif
 
 				using (FileStream fs = File.OpenRead (keyfile)) {
 					byte[] data = new byte [fs.Length];
 					try {
 						fs.Read (data, 0, data.Length);
 
-						if (delaysign) {
+						if (delaysign == DelaySign.Yes) {
 							SetPublicKey (aname, data);
 						} else {
 							CryptoConvert.FromCapiPrivateKeyBlob (data);
@@ -546,7 +574,7 @@ namespace Mono.AssemblyLinker
 						}
 					}
 					catch (CryptographicException) {
-						if (!delaysign) {
+						if (delaysign != DelaySign.Yes) {
 							if (data.Length == 16) {
 								// error # is different for ECMA key
 								Report (1019, "Could not strongname the assembly. " + 
@@ -562,6 +590,10 @@ namespace Mono.AssemblyLinker
 					fs.Close ();
 				}
 			} else if (keyname != null) {
+#if ONLY_1_1
+				AddCattr (typeof (AssemblyKeyNameAttribute),
+					keyname);
+#endif
 				// delay-sign doesn't apply to key containers
 				aname.KeyPair = new StrongNameKeyPair (keyname);
 			}
@@ -570,7 +602,8 @@ namespace Mono.AssemblyLinker
 		private void DoIt () {
 			AssemblyName aname = new AssemblyName ();
 			aname.Name = Path.GetFileNameWithoutExtension (outFile);
-			SetKeyPair (aname);
+			if (culture != null)
+				aname.CultureInfo = new CultureInfo (culture);
 
 			string fileName = Path.GetFileName (outFile);
 
@@ -580,23 +613,42 @@ namespace Mono.AssemblyLinker
 			 * Emit Manifest
 			 * */
 
-			if(isTemplateFile) {
-				
-				byte[] pk;
-				AssemblyName myAssm = new AssemblyName();
-				myAssm.Name = Path.GetFileNameWithoutExtension (templateFile);
-				Assembly assembly = Assembly.Load(myAssm);
-	
-				if (!IsStrongNamed(assembly)){
-					Report (1055, String.Format ("Assembly specified does not have Strong Name '{0}'","template"));
-                      }
-				pk = assembly.GetName().GetPublicKey();
+			if (isTemplateFile) {
+				// LAMESPEC: according to MSDN, the template assembly must have a
+				// strong name but this is not enforced
+				Assembly assembly = Assembly.LoadFrom (templateFile);
 
-				aname.SetPublicKey(pk);
-				aname.HashAlgorithm = assembly.GetName().HashAlgorithm;
+				// inherit signing related settings from template, but do not
+				// override command-line options
+				object [] attrs = assembly.GetCustomAttributes (true);
+				foreach (object o in attrs) {
+					if (o is AssemblyKeyFileAttribute) {
+						if (keyfile != null)
+							// ignore if specified on command line
+							continue;
+						AssemblyKeyFileAttribute keyFileAttr = (AssemblyKeyFileAttribute) o;
+						keyfile = Path.Combine (Path.GetDirectoryName(templateFile),
+							keyFileAttr.KeyFile);
+					} else if (o is AssemblyDelaySignAttribute) {
+						if (delaysign != DelaySign.NotSet)
+							// ignore if specified on command line
+							continue;
+						AssemblyDelaySignAttribute delaySignAttr = (AssemblyDelaySignAttribute) o;
+						delaysign = delaySignAttr.DelaySign ? DelaySign.Yes :
+							DelaySign.No;
+					} else if (o is AssemblyKeyNameAttribute) {
+						if (keyname != null)
+							// ignore if specified on command line
+							continue;
+						AssemblyKeyNameAttribute keynameAttr = (AssemblyKeyNameAttribute) o;
+						keyname = keynameAttr.KeyName;
+					}
+				}
 				aname.Version = assembly.GetName().Version;
 				aname.HashAlgorithm = assembly.GetName().HashAlgorithm;
 			}
+
+			SetKeyPair (aname);
 
 			if (fileName != outFile)
 				ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (outFile));
@@ -807,6 +859,5 @@ namespace Mono.AssemblyLinker
 			"  /link[resource]:<filename>[,<name>[,<targetfile>[,Private]]]",
 			"                            link the file as a resource to the assembly",
 		};
-
 	}
 }
