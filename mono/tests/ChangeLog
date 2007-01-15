@@ -1,3 +1,14 @@
+2007-01-15  Miguel de Icaza  <miguel@novell.com>
+
+	* load-missing.il: Add test for missing assembly reference in
+	field reference;
+
+	Add test for missing type in newobj call.
+
+	Add test for missing type reference in a parameter.
+
+	Add test for missing assembly in method call.
+
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* libtest.c, cominterop.cs: Tests for unmanaged->managed
