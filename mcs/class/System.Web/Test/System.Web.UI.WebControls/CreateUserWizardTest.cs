@@ -665,7 +665,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		// ValidatorTextStyle
 		// ErrorMessageStyle
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void CreateUserTest ()
 		{

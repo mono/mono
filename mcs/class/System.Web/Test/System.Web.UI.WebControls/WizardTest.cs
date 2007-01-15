@@ -305,13 +305,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class WizardTest
 	{
-
-		[SetUp]
-		public void SetupTestCase ()
-		{
-			Thread.Sleep (100);
-		}
-
 		[Test]
 		public void Wizard_DefaultProperty ()
 		{
@@ -1615,7 +1608,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // implementation details
 		[Category ("NunitWeb")]
 		public void Wizard_PostBackFireEvents_1 ()
 		{
@@ -1623,33 +1615,52 @@ namespace MonoTests.System.Web.UI.WebControls
 			PageDelegates pd = new PageDelegates ();
 			pd.PreInit = _postbackEvents;
 			t.Invoker = new PageInvoker (pd);
-			t.Run ();
+			string html = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
 
 			//Cancel
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$CancelButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$StartNavigationTemplateContainerID$CancelButton"].Value = "Cancel";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1:StartNavContainer:CancelButtonButton");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Wizard1:StartNavContainer:CancelButtonButton"].Value = "Cancel";
+#endif
 			t.Request = fr;
-			t.Run ();
+			html = t.Run ();
 			Assert.AreEqual ("CancelButtonClick", t.UserData.ToString (), "Cancel");
 			
 			// Next
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1:StartNavContainer:StartNextButtonButton");
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Wizard1:StartNavContainer:StartNextButtonButton"].Value = "Next";
+#endif
 			t.Request = fr;
-			t.Run ();
+			html = t.Run ();
 			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
 
 			// Previous
 			fr = new FormRequest (t.Response, "form1");
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton");
@@ -1657,60 +1668,107 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishPreviousButton"].Value = "Previous";
-			t.Request = fr;
-			t.Run ();
-			Assert.AreEqual ("PreviousButtonClick", t.UserData.ToString (), "Previous");
-
-			//SideBarButton
-			fr = new FormRequest (t.Response, "form1");
+#else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1:FinishNavContainer:FinishPreviousButtonButton");
 
-			fr.Controls["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
-			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Wizard1:FinishNavContainer:FinishPreviousButtonButton"].Value = "Previous";
+#endif
 			t.Request = fr;
-			t.Run ();
-			Assert.AreEqual ("SideBarButtonClick", t.UserData.ToString (), "SideBarButton");
+			html = t.Run ();
+			Assert.AreEqual ("PreviousButtonClick", t.UserData.ToString (), "Previous");
 			
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // implementation details
 		public void Wizard_PostBackFireEvents_2 ()
 		{
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreInit = _postbackEvents;
 			t.Invoker = new PageInvoker (pd);
-			t.Run ();
+			string html = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
 
 			// Next
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$StartNavigationTemplateContainerID$StartNextButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$StartNavigationTemplateContainerID$StartNextButton"].Value = "Next";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1:StartNavContainer:StartNextButtonButton");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Wizard1:StartNavContainer:StartNextButtonButton"].Value = "Next";
+#endif
 			t.Request = fr;
-			t.Run ();
+			html = t.Run ();
 			Assert.AreEqual ("NextButtonClick", t.UserData.ToString (), "Next");
 
 			// Finish
 			fr = new FormRequest (t.Response, "form1");
+#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("Wizard1$FinishNavigationTemplateContainerID$FinishButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["Wizard1$FinishNavigationTemplateContainerID$FinishButton"].Value = "Finish";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Wizard1:FinishNavContainer:FinishButtonButton");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			fr.Controls ["Wizard1:FinishNavContainer:FinishButtonButton"].Value = "Finish";
+#endif
 			t.Request = fr;
 			t.Run ();
 			Assert.AreEqual ("FinishButtonClick", t.UserData.ToString (), "Finish");
 
 		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Wizard_PostBackFireEvents_3 ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreInit = _postbackEvents;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
 
+			//SideBarButton
+			fr = new FormRequest (t.Response, "form1");
+#if DOT_NET
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+#else
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls ["__EVENTTARGET"].Value = "Wizard1:_ctl1c:SideBarList:_ctl0:SideBarButton";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+#endif
+			t.Request = fr;
+			html = t.Run ();
+			Assert.AreEqual ("SideBarButtonClick", t.UserData.ToString (), "SideBarButton");
+		}
+		
 		public static void _postbackEvents (Page p)
 		{
 			p.EnableEventValidation = false;

@@ -1,3 +1,13 @@
+2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CompleteWizardStep.cs
+	* CreateUserWizard.cs
+	* CreateUserWizardStep.cs
+	* TemplatedWizardStep.cs
+	* Wizard.cs
+	make the design complied to .NET	
+	build all possible controls at once and manage render by Visible property
+
 2007-01-14 Eyal Alaluf <eyala@mainsoft.com>
 	* Button.cs, HyperLink.cs, DataGrid.cs, ImageButton.cs, LinkButton.cs,
 	  PagedDataSource.cs: Added J2EE Portal support for TARGET_J2EE.

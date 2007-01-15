@@ -55,6 +55,8 @@ namespace System.Web.UI.WebControls
 		private TableItemStyle _labelStyle = null;
 		private TableItemStyle _passwordHintStyle = null;
 		private TableItemStyle _titleTextStyle = null;
+		Style _createUserButtonStyle;
+		Style _continueButtonStyle;
 
 		private static readonly object CreatedUserEvent = new object ();
 		private static readonly object CreateUserErrorEvent = new object ();
@@ -249,40 +251,38 @@ namespace System.Web.UI.WebControls
 
 		public virtual string ContinueButtonImageUrl
 		{
-			get { return base.FinishCompleteButtonImageUrl; }
-			set { base.FinishCompleteButtonImageUrl = value; }
+			get { return ViewState.GetString ("ContinueButtonImageUrl", String.Empty); }
+			set { ViewState ["ContinueButtonImageUrl"] = value; }
 		}
 
 		public Style ContinueButtonStyle
 		{
-			get
-			{
-				return base.FinishCompleteButtonStyle;
+			get {
+				if (_continueButtonStyle == null) {
+					_continueButtonStyle = new Style ();
+					if (IsTrackingViewState)
+						((IStateManager) _continueButtonStyle).TrackViewState ();
+				}
+				return _continueButtonStyle;
 			}
 		}
 
 		[LocalizableAttribute (true)]
 		public virtual string ContinueButtonText
 		{
-			get
-			{
-				object o = ViewState ["ContinueButtonText"];
-				return (o == null) ? Locale.GetText ("Continue") : (string) o;
-			}
-			set
-			{
-				if (value == null)
-					ViewState.Remove ("ContinueButtonText");
-				else
-					ViewState ["ContinueButtonText"] = value;
-			}
+			get { return ViewState.GetString ("ContinueButtonText", "Continue"); }
+			set { ViewState ["ContinueButtonText"] = value; }
 		}
 
-		[MonoTODO ("This should be saved to viewstate")]
 		public virtual ButtonType ContinueButtonType
 		{
-			get { return base.FinishCompleteButtonType; }
-			set { base.FinishCompleteButtonType = value; }
+			get {
+				object v = ViewState ["ContinueButtonType"];
+				return v != null ? (ButtonType) v : ButtonType.Button;
+			}
+			set {
+				ViewState ["ContinueButtonType"] = value;
+			}
 		}
 
 		[ThemeableAttribute (false)]
@@ -304,40 +304,38 @@ namespace System.Web.UI.WebControls
 
 		public virtual string CreateUserButtonImageUrl
 		{
-			get { return base.StartNextButtonImageUrl; }
-			set { StartNextButtonImageUrl = value; }
+			get { return ViewState.GetString ("CreateUserButtonImageUrl", String.Empty); }
+			set { ViewState ["CreateUserButtonImageUrl"] = value; }
 		}
 
 		public Style CreateUserButtonStyle
 		{
-			get
-			{
-				return base.StartNextButtonStyle;
+			get {
+				if (_createUserButtonStyle == null) {
+					_createUserButtonStyle = new Style ();
+					if (IsTrackingViewState)
+						((IStateManager) _createUserButtonStyle).TrackViewState ();
+				}
+				return _createUserButtonStyle;
 			}
 		}
 
 		[LocalizableAttribute (true)]
 		public virtual string CreateUserButtonText
 		{
-			get
-			{
-				object o = ViewState ["CreateUserButtonText"];
-				return (o == null) ? Locale.GetText ("Create User") : (string) o;
-			}
-			set
-			{
-				if (value == null)
-					ViewState.Remove ("CreateUserButtonText");
-				else
-					ViewState ["CreateUserButtonText"] = value;
-			}
+			get { return ViewState.GetString ("CreateUserButtonText", "Create User"); }
+			set { ViewState ["CreateUserButtonText"] = value; }
 		}
 
-		[MonoTODO ("This should be saved to viewstate")]
 		public virtual ButtonType CreateUserButtonType
 		{
-			get { return base.StartNextButtonType; }
-			set { base.StartNextButtonType = value; }
+			get {
+				object v = ViewState ["CreateUserButtonType"];
+				return v != null ? (ButtonType) v : ButtonType.Button;
+			}
+			set {
+				ViewState ["CreateUserButtonType"] = value;
+			}
 		}
 
 		public CreateUserWizardStep CreateUserStep
@@ -1146,8 +1144,14 @@ namespace System.Web.UI.WebControls
 
 		private void InstantiateCompleteWizardStep (CompleteWizardStep step)
 		{
-			BaseWizardContainer contentTemplateContainer = new BaseWizardContainer ();
-			contentTemplateContainer.InstatiateTemplate (step.ContentTemplate != null ? step.ContentTemplate : new CompleteStepTemplate (this));
+			CompleteStepContainer contentTemplateContainer = new CompleteStepContainer (this);
+			if (step.ContentTemplate != null) {
+				step.ContentTemplate.InstantiateIn (contentTemplateContainer.InnerCell);
+			}
+			else {
+				new CompleteStepTemplate (this).InstantiateIn (contentTemplateContainer.InnerCell);
+				contentTemplateContainer.ConfirmDefaultTemplate ();
+			}
 
 			step.ContentTemplateContainer = contentTemplateContainer;
 			step.Controls.Clear ();
@@ -1163,15 +1167,28 @@ namespace System.Web.UI.WebControls
 
 		void InstantiateCreateUserWizardStep (CreateUserWizardStep step)
 		{
-			BaseWizardContainer contentTemplateContainer = new CreateUserStepContainer ();
-			contentTemplateContainer.InstatiateTemplate (step.ContentTemplate != null ? step.ContentTemplate : new CreateUserStepTemplate (this));
+			CreateUserStepContainer contentTemplateContainer = new CreateUserStepContainer (this);
+			if (step.ContentTemplate != null) {
+				step.ContentTemplate.InstantiateIn (contentTemplateContainer.InnerCell);
+			}
+			else {
+				new CreateUserStepTemplate (this).InstantiateIn (contentTemplateContainer.InnerCell);
+				contentTemplateContainer.ConfirmDefaultTemplate ();
+				contentTemplateContainer.EnsureValidatorsState ();
+			}
 
 			step.ContentTemplateContainer = contentTemplateContainer;
 			step.Controls.Clear ();
 			step.Controls.Add (contentTemplateContainer);
 
-			BaseWizardNavigationContainer customNavigationTemplateContainer = new BaseWizardNavigationContainer ();
-			(step.CustomNavigationTemplate != null ? step.CustomNavigationTemplate : new CreateUserStepNavigationTemplate (this)).InstantiateIn (customNavigationTemplateContainer);
+			CreateUserNavigationContainer customNavigationTemplateContainer = new CreateUserNavigationContainer (this);
+			if (step.CustomNavigationTemplate != null) {
+				step.CustomNavigationTemplate.InstantiateIn (customNavigationTemplateContainer);
+			}
+			else {
+				new CreateUserStepNavigationTemplate (this).InstantiateIn (customNavigationTemplateContainer);
+				customNavigationTemplateContainer.ConfirmDefaultTemplate ();
+			}
 			RegisterCustomNavigation (step, customNavigationTemplateContainer);
 
 			step.CustomNavigationTemplateContainer = customNavigationTemplateContainer;
@@ -1188,7 +1205,11 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void CreateChildControls ()
 		{
-			CreateUserWizardStep c = CreateUserStep;
+			if (CreateUserStep == null)
+				WizardSteps.AddAt (0, new CreateUserWizardStep ());
+
+			if (CompleteStep == null)
+				WizardSteps.AddAt (WizardSteps.Count, new CompleteWizardStep ());
 
 			base.CreateChildControls ();
 		}
@@ -1245,20 +1266,6 @@ namespace System.Web.UI.WebControls
 		protected override IDictionary GetDesignModeState ()
 		{
 			throw new NotImplementedException ();
-		}
-
-		protected internal override void OnInit (EventArgs e)
-		{
-			base.OnInit (e);
-
-			if (CreateUserStep == null)
-				WizardSteps.AddAt (0, new CreateUserWizardStep ());
-
-			if (CompleteStep == null)
-				WizardSteps.AddAt (WizardSteps.Count, new CompleteWizardStep ());
-
-			if (ActiveStepIndex < 0)
-				ActiveStepIndex = 0;
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
@@ -1355,34 +1362,63 @@ namespace System.Web.UI.WebControls
 			object [] states = (object []) savedState;
 			base.LoadViewState (states [0]);
 
-			if (states [1] != null) ((IStateManager) TextBoxStyle).LoadViewState (states [1]);
-			if (states [2] != null) ((IStateManager) ValidatorTextStyle).LoadViewState (states [2]);
-			if (states [3] != null) ((IStateManager) CompleteSuccessTextStyle).LoadViewState (states [3]);
-			if (states [4] != null) ((IStateManager) ErrorMessageStyle).LoadViewState (states [4]);
-			if (states [5] != null) ((IStateManager) HyperLinkStyle).LoadViewState (states [5]);
-			if (states [6] != null) ((IStateManager) InstructionTextStyle).LoadViewState (states [6]);
-			if (states [7] != null) ((IStateManager) LabelStyle).LoadViewState (states [7]);
-			if (states [8] != null) ((IStateManager) PasswordHintStyle).LoadViewState (states [8]);
-			if (states [9] != null) ((IStateManager) TitleTextStyle).LoadViewState (states [9]);
+			if (states [1] != null)
+				((IStateManager) TextBoxStyle).LoadViewState (states [1]);
+			if (states [2] != null)
+				((IStateManager) ValidatorTextStyle).LoadViewState (states [2]);
+			if (states [3] != null)
+				((IStateManager) CompleteSuccessTextStyle).LoadViewState (states [3]);
+			if (states [4] != null)
+				((IStateManager) ErrorMessageStyle).LoadViewState (states [4]);
+			if (states [5] != null)
+				((IStateManager) HyperLinkStyle).LoadViewState (states [5]);
+			if (states [6] != null)
+				((IStateManager) InstructionTextStyle).LoadViewState (states [6]);
+			if (states [7] != null)
+				((IStateManager) LabelStyle).LoadViewState (states [7]);
+			if (states [8] != null)
+				((IStateManager) PasswordHintStyle).LoadViewState (states [8]);
+			if (states [9] != null)
+				((IStateManager) TitleTextStyle).LoadViewState (states [9]);
+			if (states [10] != null)
+				((IStateManager) CreateUserButtonStyle).LoadViewState (states [10]);
+			if (states [11] != null)
+				((IStateManager) ContinueButtonStyle).LoadViewState (states [11]);
+
+			((CreateUserStepContainer) CreateUserStep.ContentTemplateContainer).EnsureValidatorsState ();
 		}
 
 		protected override object SaveViewState ()
 		{
-			object [] state = new object [10];
+			object [] state = new object [12];
 			state [0] = base.SaveViewState ();
 
-			if (TextBoxStyle != null) state [1] = ((IStateManager) TextBoxStyle).SaveViewState ();
-			if (ValidatorTextStyle != null) state [2] = ((IStateManager) ValidatorTextStyle).SaveViewState ();
-			if (CompleteSuccessTextStyle != null) state [3] = ((IStateManager) CompleteSuccessTextStyle).SaveViewState ();
-			if (ErrorMessageStyle != null) state [4] = ((IStateManager) ErrorMessageStyle).SaveViewState ();
-			if (HyperLinkStyle != null) state [5] = ((IStateManager) HyperLinkStyle).SaveViewState ();
-			if (InstructionTextStyle != null) state [6] = ((IStateManager) InstructionTextStyle).SaveViewState ();
-			if (LabelStyle != null) state [7] = ((IStateManager) LabelStyle).SaveViewState ();
-			if (PasswordHintStyle != null) state [8] = ((IStateManager) PasswordHintStyle).SaveViewState ();
-			if (TitleTextStyle != null) state [9] = ((IStateManager) TitleTextStyle).SaveViewState ();
+			if (_textBoxStyle != null)
+				state [1] = ((IStateManager) _textBoxStyle).SaveViewState ();
+			if (_validatorTextStyle != null)
+				state [2] = ((IStateManager) _validatorTextStyle).SaveViewState ();
+			if (_completeSuccessTextStyle != null)
+				state [3] = ((IStateManager) _completeSuccessTextStyle).SaveViewState ();
+			if (_errorMessageStyle != null)
+				state [4] = ((IStateManager) _errorMessageStyle).SaveViewState ();
+			if (_hyperLinkStyle != null)
+				state [5] = ((IStateManager) _hyperLinkStyle).SaveViewState ();
+			if (_instructionTextStyle != null)
+				state [6] = ((IStateManager) _instructionTextStyle).SaveViewState ();
+			if (_labelStyle != null)
+				state [7] = ((IStateManager) _labelStyle).SaveViewState ();
+			if (_passwordHintStyle != null)
+				state [8] = ((IStateManager) _passwordHintStyle).SaveViewState ();
+			if (_titleTextStyle != null)
+				state [9] = ((IStateManager) _titleTextStyle).SaveViewState ();
+			if (_createUserButtonStyle != null)
+				state [10] = ((IStateManager) _createUserButtonStyle).SaveViewState ();
+			if (_continueButtonStyle != null)
+				state [11] = ((IStateManager) _continueButtonStyle).SaveViewState ();
 
 			for (int n = 0; n < state.Length; n++)
-				if (state [n] != null) return state;
+				if (state [n] != null)
+					return state;
 
 			return null;
 		}
@@ -1396,15 +1432,28 @@ namespace System.Web.UI.WebControls
 		protected override void TrackViewState ()
 		{
 			base.TrackViewState ();
-			if (_textBoxStyle != null) ((IStateManager) _textBoxStyle).TrackViewState ();
-			if (_validatorTextStyle != null) ((IStateManager) _validatorTextStyle).TrackViewState ();
-			if (_completeSuccessTextStyle != null) ((IStateManager) _completeSuccessTextStyle).TrackViewState ();
-			if (_errorMessageStyle != null) ((IStateManager) _errorMessageStyle).TrackViewState ();
-			if (_hyperLinkStyle != null) ((IStateManager) _hyperLinkStyle).TrackViewState ();
-			if (_instructionTextStyle != null) ((IStateManager) _instructionTextStyle).TrackViewState ();
-			if (_labelStyle != null) ((IStateManager) _labelStyle).TrackViewState ();
-			if (_passwordHintStyle != null) ((IStateManager) _passwordHintStyle).TrackViewState ();
-			if (_titleTextStyle != null) ((IStateManager) _titleTextStyle).TrackViewState ();
+			if (_textBoxStyle != null)
+				((IStateManager) _textBoxStyle).TrackViewState ();
+			if (_validatorTextStyle != null)
+				((IStateManager) _validatorTextStyle).TrackViewState ();
+			if (_completeSuccessTextStyle != null)
+				((IStateManager) _completeSuccessTextStyle).TrackViewState ();
+			if (_errorMessageStyle != null)
+				((IStateManager) _errorMessageStyle).TrackViewState ();
+			if (_hyperLinkStyle != null)
+				((IStateManager) _hyperLinkStyle).TrackViewState ();
+			if (_instructionTextStyle != null)
+				((IStateManager) _instructionTextStyle).TrackViewState ();
+			if (_labelStyle != null)
+				((IStateManager) _labelStyle).TrackViewState ();
+			if (_passwordHintStyle != null)
+				((IStateManager) _passwordHintStyle).TrackViewState ();
+			if (_titleTextStyle != null)
+				((IStateManager) _titleTextStyle).TrackViewState ();
+			if (_createUserButtonStyle != null)
+				((IStateManager) _createUserButtonStyle).TrackViewState ();
+			if (_continueButtonStyle != null)
+				((IStateManager) _continueButtonStyle).TrackViewState ();
 		}
 
 		#endregion
@@ -1546,7 +1595,7 @@ namespace System.Web.UI.WebControls
 			public void InstantiateIn (Control control)
 			{
 				Label b = new Label ();
-				wizard.RegisterApplyStyle (b, wizard.SideBarButtonStyle, false);
+				wizard.RegisterApplyStyle (b, wizard.SideBarButtonStyle);
 				control.Controls.Add (b);
 				control.DataBinding += Bound;
 			}
@@ -1566,6 +1615,678 @@ namespace System.Web.UI.WebControls
 		}
 
 		#endregion
+
+		sealed class CreateUserNavigationContainer : DefaultNavigationContainer
+		{
+			CreateUserWizard _createUserWizard;
+
+			public CreateUserNavigationContainer (CreateUserWizard createUserWizard)
+				: base (createUserWizard)
+			{
+				_createUserWizard = createUserWizard;
+			}
+
+			protected override void UpdateState ()
+			{
+				// previous
+				if (_createUserWizard.AllowNavigationToStep (_createUserWizard.ActiveStepIndex - 1)) {
+					UpdateNavButtonState (Wizard.StepPreviousButtonID + Wizard.StepPreviousButtonType, Wizard.StepPreviousButtonText, Wizard.StepPreviousButtonImageUrl, Wizard.StepPreviousButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [0].Visible = false;
+				}
+
+				// create user
+				UpdateNavButtonState (Wizard.StepNextButtonID + _createUserWizard.CreateUserButtonType, _createUserWizard.CreateUserButtonText, _createUserWizard.CreateUserButtonImageUrl, _createUserWizard.CreateUserButtonStyle);
+
+				// cancel
+				if (Wizard.DisplayCancelButton) {
+					UpdateNavButtonState (Wizard.CancelButtonID + Wizard.CancelButtonType, Wizard.CancelButtonText, Wizard.CancelButtonImageUrl, Wizard.CancelButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [2].Visible = false;
+				}
+			}
+		}
+
+		sealed class CreateUserStepNavigationTemplate : ITemplate
+		{
+			readonly CreateUserWizard _createUserWizard;
+
+			public CreateUserStepNavigationTemplate (CreateUserWizard createUserWizard) {
+				_createUserWizard = createUserWizard;
+			}
+
+			#region ITemplate Members
+
+			public void InstantiateIn (Control container) {
+				Table t = new Table ();
+				t.CellPadding = 5;
+				t.CellSpacing = 5;
+				t.Width = Unit.Percentage (100);
+				t.Height = Unit.Percentage (100);
+				TableRow row = new TableRow ();
+
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepPreviousButtonID, Wizard.MovePreviousCommandName, false));
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepNextButtonID, Wizard.MoveNextCommandName));
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.CancelButtonID, Wizard.CancelCommandName, false));
+				
+				t.Rows.Add (row);
+				container.Controls.Add (t);
+			}
+
+			void AddButtonCell (TableRow row, params Control [] controls)
+			{
+				TableCell cell = new TableCell ();
+				cell.HorizontalAlign = HorizontalAlign.Right;
+				for (int i = 0; i < controls.Length; i++)
+					cell.Controls.Add (controls[i]);
+				row.Cells.Add (cell);
+			}
+
+			#endregion
+		}
+
+		sealed class CreateUserStepContainer : DefaultContentContainer
+		{
+			CreateUserWizard _createUserWizard;
+
+			public CreateUserStepContainer (CreateUserWizard createUserWizard)
+				: base (createUserWizard)
+			{
+				_createUserWizard = createUserWizard;
+			}
+
+			public Control UserNameTextBox {
+				get {
+					Control c = FindControl ("UserName");
+					if (c == null)
+						throw new HttpException ("CreateUserWizardStep.ContentTemplate does not contain an IEditableTextControl with ID UserName for the username.");
+
+					return c;
+				}
+			}
+			public Control PasswordTextBox {
+				get {
+					Control c = FindControl ("Password");
+					if (c == null)
+						throw new HttpException ("CreateUserWizardStep.ContentTemplate does not contain an IEditableTextControl with ID Password for the new password, this is required if AutoGeneratePassword = true.");
+
+					return c;
+				}
+			}
+			public Control ConfirmPasswordTextBox {
+				get {
+					Control c = FindControl ("Password");
+					return c;
+				}
+			}
+			public Control EmailTextBox {
+				get {
+					Control c = FindControl ("Email");
+					if (c == null)
+						throw new HttpException ("CreateUserWizardStep.ContentTemplate does not contain an IEditableTextControl with ID Email for the e-mail, this is required if RequireEmail = true.");
+
+					return c;
+				}
+			}
+			public Control QuestionTextBox {
+				get {
+					Control c = FindControl ("Question");
+					if (c == null)
+						throw new HttpException ("CreateUserWizardStep.ContentTemplate does not contain an IEditableTextControl with ID Question for the security question, this is required if your membership provider requires a question and answer.");
+
+					return c;
+				}
+			}
+			public Control AnswerTextBox {
+				get {
+					Control c = FindControl ("Answer");
+					if (c == null)
+						throw new HttpException ("CreateUserWizardStep.ContentTemplate does not contain an IEditableTextControl with ID Answer for the security answer, this is required if your membership provider requires a question and answer.");
+
+					return c;
+				}
+			}
+			public ITextControl ErrorMessageLabel {
+				get { return FindControl ("ErrorMessage") as ITextControl; }
+			}
+
+			protected override void UpdateState () {
+				// Row #0 - title
+				if (String.IsNullOrEmpty (_createUserWizard.CreateUserStep.Title)) {
+					((Table) InnerCell.Controls [0]).Rows [0].Visible = false;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [0].Cells [0].Text = _createUserWizard.CreateUserStep.Title;
+				}
+
+				// Row #1 - InstructionText
+				if (String.IsNullOrEmpty (_createUserWizard.InstructionText)) {
+					((Table) InnerCell.Controls [0]).Rows [1].Visible = false;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [1].Cells [0].Text = _createUserWizard.InstructionText;
+				}
+
+				// Row #2
+				Label UserNameLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [2].Cells [0].Controls [0];
+				UserNameLabel.Text = _createUserWizard.UserNameLabelText;
+
+				RequiredFieldValidator UserNameRequired = (RequiredFieldValidator) FindControl ("UserNameRequired");
+				UserNameRequired.ErrorMessage = _createUserWizard.UserNameRequiredErrorMessage;
+				UserNameRequired.ToolTip = _createUserWizard.UserNameRequiredErrorMessage;
+
+				if (_createUserWizard.AutoGeneratePassword) {
+					((Table) InnerCell.Controls [0]).Rows [3].Visible = false;
+					((Table) InnerCell.Controls [0]).Rows [4].Visible = false;
+					((Table) InnerCell.Controls [0]).Rows [5].Visible = false;
+				}
+				else {
+					// Row #3
+					Label PasswordLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [3].Cells [0].Controls [0];
+					PasswordLabel.Text = _createUserWizard.PasswordLabelText;
+
+					RequiredFieldValidator PasswordRequired = (RequiredFieldValidator) FindControl ("PasswordRequired");
+					PasswordRequired.ErrorMessage = _createUserWizard.PasswordRequiredErrorMessage;
+					PasswordRequired.ToolTip = _createUserWizard.PasswordRequiredErrorMessage;
+
+					// Row #4
+					if (String.IsNullOrEmpty (_createUserWizard.PasswordHintText)) {
+						((Table) InnerCell.Controls [0]).Rows [4].Visible = false;
+					}
+					else {
+						((Table) InnerCell.Controls [0]).Rows [4].Cells [1].Text = _createUserWizard.PasswordHintText;
+					}
+
+					// Row #5
+					Label ConfirmPasswordLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [5].Cells [0].Controls [0];
+					ConfirmPasswordLabel.Text = _createUserWizard.ConfirmPasswordLabelText;
+
+					RequiredFieldValidator ConfirmPasswordRequired = (RequiredFieldValidator) FindControl ("ConfirmPasswordRequired");
+					ConfirmPasswordRequired.ErrorMessage = _createUserWizard.ConfirmPasswordRequiredErrorMessage;
+					ConfirmPasswordRequired.ToolTip = _createUserWizard.ConfirmPasswordRequiredErrorMessage;
+				}
+
+				// Row #6
+				if (_createUserWizard.RequireEmail) {
+					Label EmailLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [6].Cells [0].Controls [0];
+					EmailLabel.Text = _createUserWizard.EmailLabelText;
+
+					RequiredFieldValidator EmailRequired = (RequiredFieldValidator) FindControl ("EmailRequired");
+					EmailRequired.ErrorMessage = _createUserWizard.EmailRequiredErrorMessage;
+					EmailRequired.ToolTip = _createUserWizard.EmailRequiredErrorMessage;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [6].Visible = false;
+				}
+
+				if (_createUserWizard.QuestionAndAnswerRequired) {
+					// Row #7
+					Label QuestionLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [7].Cells [0].Controls [0];
+					QuestionLabel.Text = _createUserWizard.QuestionLabelText;
+
+					RequiredFieldValidator QuestionRequired = (RequiredFieldValidator) FindControl ("QuestionRequired");
+					QuestionRequired.ErrorMessage = _createUserWizard.QuestionRequiredErrorMessage;
+					QuestionRequired.ToolTip = _createUserWizard.QuestionRequiredErrorMessage;
+
+					// Row #8
+					Label AnswerLabel = (Label) ((Table) InnerCell.Controls [0]).Rows [8].Cells [0].Controls [0];
+					AnswerLabel.Text = _createUserWizard.AnswerLabelText;
+
+					RequiredFieldValidator AnswerRequired = (RequiredFieldValidator) FindControl ("AnswerRequired");
+					AnswerRequired.ErrorMessage = _createUserWizard.AnswerRequiredErrorMessage;
+					AnswerRequired.ToolTip = _createUserWizard.AnswerRequiredErrorMessage;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [7].Visible = false;
+					((Table) InnerCell.Controls [0]).Rows [8].Visible = false;
+				}
+
+				// Row #9
+				if (_createUserWizard.AutoGeneratePassword) {
+					((Table) InnerCell.Controls [0]).Rows [9].Visible = false;
+				}
+				else {
+					CompareValidator PasswordCompare = (CompareValidator) FindControl ("PasswordCompare");
+					PasswordCompare.ErrorMessage = _createUserWizard.ConfirmPasswordCompareErrorMessage;
+				}
+
+				// Row #10
+				if (_createUserWizard.AutoGeneratePassword || String.IsNullOrEmpty (_createUserWizard.PasswordRegularExpression)) {
+					((Table) InnerCell.Controls [0]).Rows [10].Visible = false;
+				}
+				else {
+					RegularExpressionValidator PasswordRegEx = (RegularExpressionValidator) FindControl ("PasswordRegEx");
+					PasswordRegEx.ValidationExpression = _createUserWizard.PasswordRegularExpression;
+					PasswordRegEx.ErrorMessage = _createUserWizard.PasswordRegularExpressionErrorMessage;
+				}
+
+				// Row #11
+				if (!_createUserWizard.RequireEmail || String.IsNullOrEmpty (_createUserWizard.EmailRegularExpression)) {
+					((Table) InnerCell.Controls [0]).Rows [11].Visible = false;
+				}
+				else {
+					RegularExpressionValidator EmailRegEx = (RegularExpressionValidator) FindControl ("EmailRegEx");
+					EmailRegEx.ErrorMessage = _createUserWizard.EmailRegularExpressionErrorMessage;
+					EmailRegEx.ValidationExpression = _createUserWizard.EmailRegularExpression;
+				}
+
+				// Row #12
+				if (String.IsNullOrEmpty (ErrorMessageLabel.Text)) {
+					((Table) InnerCell.Controls [0]).Rows [12].Visible = false;
+				}
+
+				// Row #13
+				// HelpPageIconUrl
+				Image img = (Image) ((Table) InnerCell.Controls [0]).Rows [13].Cells [0].Controls [0];
+				if (String.IsNullOrEmpty (_createUserWizard.HelpPageIconUrl)) {
+					img.Visible = false;
+				}
+				else {
+					img.ImageUrl = _createUserWizard.HelpPageIconUrl;
+					img.AlternateText = _createUserWizard.HelpPageText;
+				}
+
+				// HelpPageText
+				HyperLink link = (HyperLink) ((Table) InnerCell.Controls [0]).Rows [13].Cells [0].Controls [1];
+				if (String.IsNullOrEmpty (_createUserWizard.HelpPageText)) {
+					link.Visible = false;
+				}
+				else {
+					link.Text = _createUserWizard.HelpPageText;
+					link.NavigateUrl = _createUserWizard.HelpPageUrl;
+				}
+
+				((Table) InnerCell.Controls [0]).Rows [13].Visible = img.Visible || link.Visible;
+
+			}
+
+			public void EnsureValidatorsState ()
+			{
+				if (!IsDefaultTemplate)
+					return;
+
+				((RequiredFieldValidator) FindControl ("PasswordRequired")).Enabled = !_createUserWizard.AutoGeneratePassword;
+				((RequiredFieldValidator) FindControl ("ConfirmPasswordRequired")).Enabled = !_createUserWizard.AutoGeneratePassword;
+				((CompareValidator) FindControl ("PasswordCompare")).Enabled = !_createUserWizard.AutoGeneratePassword;
+				RegularExpressionValidator PasswordRegEx = (RegularExpressionValidator) FindControl ("PasswordRegEx");
+				PasswordRegEx.Enabled = !_createUserWizard.AutoGeneratePassword && !String.IsNullOrEmpty (_createUserWizard.PasswordRegularExpression);
+				PasswordRegEx.ValidationExpression = _createUserWizard.PasswordRegularExpression;
+
+				((RequiredFieldValidator) FindControl ("EmailRequired")).Enabled = _createUserWizard.RequireEmail;
+				RegularExpressionValidator EmailRegEx = (RegularExpressionValidator) FindControl ("EmailRegEx");
+				EmailRegEx.Enabled = _createUserWizard.RequireEmail && !String.IsNullOrEmpty (_createUserWizard.EmailRegularExpression);
+				EmailRegEx.ValidationExpression = _createUserWizard.EmailRegularExpression;
+
+				((RequiredFieldValidator) FindControl ("QuestionRequired")).Enabled = _createUserWizard.QuestionAndAnswerRequired;
+				((RequiredFieldValidator) FindControl ("AnswerRequired")).Enabled = _createUserWizard.QuestionAndAnswerRequired;
+			}
+		}
+
+		sealed class CreateUserStepTemplate : ITemplate
+		{
+			readonly CreateUserWizard _createUserWizard;
+
+			public CreateUserStepTemplate (CreateUserWizard createUserWizard)
+			{
+				_createUserWizard = createUserWizard;
+			}
+
+			#region ITemplate Members
+
+			TableRow CreateRow (Control c0, Control c1, Control c2, Style s0, Style s1) {
+				TableRow row = new TableRow ();
+				TableCell cell0 = new TableCell ();
+				TableCell cell1 = new TableCell ();
+
+				if (c0 != null)
+					cell0.Controls.Add (c0);
+				row.Controls.Add (cell0);
+
+				if ((c1 != null) && (c2 != null)) {
+					cell1.Controls.Add (c1);
+					cell1.Controls.Add (c2);
+					cell0.HorizontalAlign = HorizontalAlign.Right;
+
+					if (s0 != null)
+						_createUserWizard.RegisterApplyStyle (cell0, s0);
+					if (s1 != null)
+						_createUserWizard.RegisterApplyStyle (cell1, s1);
+
+					row.Controls.Add (cell1);
+				}
+				else {
+					cell0.ColumnSpan = 2;
+					cell0.HorizontalAlign = HorizontalAlign.Center;
+					if (s0 != null)
+						_createUserWizard.RegisterApplyStyle (cell0, s0);
+				}
+				return row;
+			}
+
+			public void InstantiateIn (Control container) {
+				Table table = new Table ();
+				table.ControlStyle.Width = Unit.Percentage (100);
+				table.ControlStyle.Height = Unit.Percentage (100);
+
+				// Row #0
+				table.Controls.Add (CreateRow (null, null, null, _createUserWizard.TitleTextStyle, null));
+
+				// Row #1
+				table.Controls.Add (CreateRow (null, null, null, _createUserWizard.InstructionTextStyle, null));
+
+				// Row #2
+				TextBox UserName = new TextBox ();
+				UserName.ID = "UserName";
+				_createUserWizard.RegisterApplyStyle (UserName, _createUserWizard.TextBoxStyle);
+
+				Label UserNameLabel = new Label ();
+				UserNameLabel.AssociatedControlID = "UserName";
+
+				RequiredFieldValidator UserNameRequired = new RequiredFieldValidator ();
+				UserNameRequired.ID = "UserNameRequired";
+				// alternatively we can create only required validators
+				// and reinstantiate collection when relevant property changes
+				UserNameRequired.EnableViewState = false;
+				UserNameRequired.ControlToValidate = "UserName";
+				UserNameRequired.Text = "*";
+				UserNameRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (UserNameRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (UserNameLabel, UserName, UserNameRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #3
+				TextBox Password = new TextBox ();
+				Password.ID = "Password";
+				Password.TextMode = TextBoxMode.Password;
+				_createUserWizard.RegisterApplyStyle (Password, _createUserWizard.TextBoxStyle);
+
+				Label PasswordLabel = new Label ();
+				PasswordLabel.AssociatedControlID = "Password";
+
+				RequiredFieldValidator PasswordRequired = new RequiredFieldValidator ();
+				PasswordRequired.ID = "PasswordRequired";
+				PasswordRequired.EnableViewState = false;
+				PasswordRequired.ControlToValidate = "Password";
+				PasswordRequired.Text = "*";
+				//PasswordRequired.EnableViewState = false;
+				PasswordRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (PasswordRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (PasswordLabel, Password, PasswordRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #4
+				table.Controls.Add (CreateRow (new LiteralControl (""), new LiteralControl (""), new LiteralControl (""), null, _createUserWizard.PasswordHintStyle));
+
+				// Row #5
+				TextBox ConfirmPassword = new TextBox ();
+				ConfirmPassword.ID = "ConfirmPassword";
+				ConfirmPassword.TextMode = TextBoxMode.Password;
+				_createUserWizard.RegisterApplyStyle (ConfirmPassword, _createUserWizard.TextBoxStyle);
+
+				Label ConfirmPasswordLabel = new Label ();
+				ConfirmPasswordLabel.AssociatedControlID = "ConfirmPassword";
+
+				RequiredFieldValidator ConfirmPasswordRequired = new RequiredFieldValidator ();
+				ConfirmPasswordRequired.ID = "ConfirmPasswordRequired";
+				ConfirmPasswordRequired.EnableViewState = false;
+				ConfirmPasswordRequired.ControlToValidate = "ConfirmPassword";
+				ConfirmPasswordRequired.Text = "*";
+				ConfirmPasswordRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (ConfirmPasswordRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (ConfirmPasswordLabel, ConfirmPassword, ConfirmPasswordRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #6
+				TextBox Email = new TextBox ();
+				Email.ID = "Email";
+				_createUserWizard.RegisterApplyStyle (Email, _createUserWizard.TextBoxStyle);
+
+				Label EmailLabel = new Label ();
+				EmailLabel.AssociatedControlID = "Email";
+
+				RequiredFieldValidator EmailRequired = new RequiredFieldValidator ();
+				EmailRequired.ID = "EmailRequired";
+				EmailRequired.EnableViewState = false;
+				EmailRequired.ControlToValidate = "Email";
+				EmailRequired.Text = "*";
+				EmailRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (EmailRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (EmailLabel, Email, EmailRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #7
+				TextBox Question = new TextBox ();
+				Question.ID = "Question";
+				_createUserWizard.RegisterApplyStyle (Question, _createUserWizard.TextBoxStyle);
+
+				Label QuestionLabel = new Label ();
+				QuestionLabel.AssociatedControlID = "Question";
+
+				RequiredFieldValidator QuestionRequired = new RequiredFieldValidator ();
+				QuestionRequired.ID = "QuestionRequired";
+				QuestionRequired.EnableViewState = false;
+				QuestionRequired.ControlToValidate = "Question";
+				QuestionRequired.Text = "*";
+				QuestionRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (QuestionRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (QuestionLabel, Question, QuestionRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #8
+				TextBox Answer = new TextBox ();
+				Answer.ID = "Answer";
+				_createUserWizard.RegisterApplyStyle (Answer, _createUserWizard.TextBoxStyle);
+
+				Label AnswerLabel = new Label ();
+				AnswerLabel.AssociatedControlID = "Answer";
+
+				RequiredFieldValidator AnswerRequired = new RequiredFieldValidator ();
+				AnswerRequired.ID = "AnswerRequired";
+				AnswerRequired.EnableViewState = false;
+				AnswerRequired.ControlToValidate = "Answer";
+				AnswerRequired.Text = "*";
+				AnswerRequired.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (AnswerRequired, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (AnswerLabel, Answer, AnswerRequired, _createUserWizard.LabelStyle, null));
+
+				// Row #9
+				CompareValidator PasswordCompare = new CompareValidator ();
+				PasswordCompare.ID = "PasswordCompare";
+				PasswordCompare.EnableViewState = false;
+				PasswordCompare.ControlToCompare = "Password";
+				PasswordCompare.ControlToValidate = "ConfirmPassword";
+				PasswordCompare.Display = ValidatorDisplay.Static;
+				PasswordCompare.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (PasswordCompare, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (PasswordCompare, null, null, null, null));
+
+				// Row #10
+				RegularExpressionValidator PasswordRegEx = new RegularExpressionValidator ();
+				PasswordRegEx.ID = "PasswordRegEx";
+				PasswordRegEx.EnableViewState = false;
+				PasswordRegEx.ControlToValidate = "Password";
+				PasswordRegEx.Display = ValidatorDisplay.Static;
+				PasswordRegEx.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (PasswordRegEx, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (PasswordRegEx, null, null, null, null));
+
+				// Row #11
+				RegularExpressionValidator EmailRegEx = new RegularExpressionValidator ();
+				EmailRegEx.ID = "EmailRegEx";
+				EmailRegEx.EnableViewState = false;
+				EmailRegEx.ControlToValidate = "Email";
+				EmailRegEx.Display = ValidatorDisplay.Static;
+				EmailRegEx.ValidationGroup = _createUserWizard.ID;
+				_createUserWizard.RegisterApplyStyle (EmailRegEx, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (EmailRegEx, null, null, null, null));
+
+				// Row #12
+				Label ErrorMessage = new Label ();
+				ErrorMessage.ID = "ErrorMessage";
+				ErrorMessage.EnableViewState = false;
+				_createUserWizard.RegisterApplyStyle (ErrorMessage, _createUserWizard.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (ErrorMessage, null, null, null, null));
+
+				// Row #13
+				TableRow row13 = CreateRow (new Image (), null, null, null, null);
+
+				HyperLink HelpLink = new HyperLink ();
+				HelpLink.ID = "HelpLink";
+				_createUserWizard.RegisterApplyStyle (HelpLink, _createUserWizard.HyperLinkStyle);
+				row13.Cells [0].Controls.Add (HelpLink);
+
+				row13.Cells [0].HorizontalAlign = HorizontalAlign.Left;
+				table.Controls.Add (row13);
+
+				//
+				container.Controls.Add (table);
+			}
+
+			#endregion
+		}
+
+		sealed class CompleteStepContainer : DefaultContentContainer
+		{
+			CreateUserWizard _createUserWizard;
+
+			public CompleteStepContainer (CreateUserWizard createUserWizard)
+				: base (createUserWizard)
+			{
+				_createUserWizard = createUserWizard;
+			}
+
+			protected override void UpdateState ()
+			{
+				// title
+				if (String.IsNullOrEmpty (_createUserWizard.CompleteStep.Title)) {
+					((Table) InnerCell.Controls [0]).Rows [0].Visible = false;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [0].Cells [0].Text = _createUserWizard.CompleteStep.Title;
+				}
+
+				// CompleteSuccessText
+				if (String.IsNullOrEmpty (_createUserWizard.CompleteSuccessText)) {
+					((Table) InnerCell.Controls [0]).Rows [1].Visible = false;
+				}
+				else {
+					((Table) InnerCell.Controls [0]).Rows [1].Cells [0].Text = _createUserWizard.CompleteSuccessText;
+				}
+
+				// ContinueButton
+				UpdateNavButtonState ("ContinueButton" + _createUserWizard.ContinueButtonType, _createUserWizard.ContinueButtonText, _createUserWizard.ContinueButtonImageUrl, _createUserWizard.ContinueButtonStyle);
+
+				// EditProfileIconUrl
+				Image img = (Image) ((Table) InnerCell.Controls [0]).Rows [3].Cells [0].Controls [0];
+				if (String.IsNullOrEmpty (_createUserWizard.EditProfileIconUrl)) {
+					img.Visible = false;
+				}
+				else {
+					img.ImageUrl = _createUserWizard.EditProfileIconUrl;
+					img.AlternateText = _createUserWizard.EditProfileText;
+				}
+
+				// EditProfileText
+				HyperLink link = (HyperLink) ((Table) InnerCell.Controls [0]).Rows [3].Cells [0].Controls [1];
+				if (String.IsNullOrEmpty (_createUserWizard.EditProfileText)) {
+					link.Visible = false;
+				}
+				else {
+					link.Text = _createUserWizard.EditProfileText;
+					link.NavigateUrl = _createUserWizard.EditProfileUrl;
+				}
+
+				((Table) InnerCell.Controls [0]).Rows [3].Visible = img.Visible || link.Visible;
+			}
+				
+			void UpdateNavButtonState (string id, string text, string image, Style style)
+			{
+				WebControl b = (WebControl) FindControl (id);
+				foreach (Control c in b.Parent.Controls)
+					c.Visible = b == c;
+
+				((IButtonControl) b).Text = text;
+				ImageButton imgbtn = b as ImageButton;
+				if (imgbtn != null)
+					imgbtn.ImageUrl = image;
+
+				b.ApplyStyle (style);
+			}
+		}
+
+		sealed class CompleteStepTemplate : ITemplate
+		{
+			readonly CreateUserWizard _createUserWizard;
+
+			public CompleteStepTemplate (CreateUserWizard createUserWizard)
+			{
+				_createUserWizard = createUserWizard;
+			}
+
+			#region ITemplate Members
+
+			public void InstantiateIn (Control container)
+			{
+				Table table = new Table ();
+
+				// Row #0
+				TableRow row0 = new TableRow ();
+				TableCell cell00 = new TableCell ();
+
+				cell00.HorizontalAlign = HorizontalAlign.Center;
+				cell00.ColumnSpan = 2;
+				_createUserWizard.RegisterApplyStyle (cell00, _createUserWizard.TitleTextStyle);
+				row0.Cells.Add (cell00);
+
+				// Row #1
+				TableRow row1 = new TableRow ();
+				TableCell cell10 = new TableCell ();
+
+				cell10.HorizontalAlign = HorizontalAlign.Center;
+				_createUserWizard.RegisterApplyStyle (cell10, _createUserWizard.CompleteSuccessTextStyle);
+				row1.Cells.Add (cell10);
+
+				// Row #2
+				TableRow row2 = new TableRow ();
+				TableCell cell20 = new TableCell ();
+
+				cell20.HorizontalAlign = HorizontalAlign.Right;
+				cell20.ColumnSpan = 2;
+				row2.Cells.Add (cell20);
+
+				Control[] b = _createUserWizard.CreateButtonSet ("ContinueButton", CreateUserWizard.ContinueButtonCommandName);
+				for (int i = 0; i < b.Length; i++)
+					cell20.Controls.Add (b [i]);
+
+				// Row #3
+				TableRow row3 = new TableRow ();
+				TableCell cell30 = new TableCell ();
+
+				cell30.Controls.Add (new Image ());
+				HyperLink link = new HyperLink ();
+				link.ID = "EditProfileLink";
+				_createUserWizard.RegisterApplyStyle (link, _createUserWizard.HyperLinkStyle);
+				cell30.Controls.Add (link);
+				row3.Cells.Add (cell30);
+
+				// table
+				table.Rows.Add (row0);
+				table.Rows.Add (row1);
+				table.Rows.Add (row2);
+				table.Rows.Add (row3);
+
+				container.Controls.Add (table);
+			}
+
+			#endregion
+		}
 	}
 }
 

@@ -88,14 +88,17 @@ namespace System.Web.UI.WebControls
 		
 		int activeStepIndex = -1;
 		bool inited = false;
-		bool dontRender = false;
 		ArrayList history;
 
 		Table wizardTable;
+		WizardHeaderCell _headerCell;
+		TableCell _navigationCell;
+		StartNavigationContainer _startNavContainer;
+		StepNavigationContainer _stepNavContainer;
+		FinishNavigationContainer _finishNavContainer;
 		MultiView multiView;
 		DataList stepDatalist;
 		ArrayList styles = new ArrayList ();
-		ArrayList persistStyles = new ArrayList ();
 		SideBarButtonTemplate sideBarItemTemplate;
 		Hashtable customNavigation;
 		
@@ -210,20 +213,13 @@ namespace System.Web.UI.WebControls
 				if (value < -1 || (value > WizardSteps.Count && (inited || WizardSteps.Count > 0)))
 					throw new ArgumentOutOfRangeException ("The ActiveStepIndex must be less than WizardSteps.Count and at least -1");
 
-				if (inited && value == -1) {
-					dontRender = true;
-					activeStepIndex = -1;
-					return;
-				}
-
 				if (inited && !AllowNavigationToStep (value))
 					return;
 
 				activeStepIndex = value;
-				dontRender = false;
 
-				UpdateControls ();
 				if (inited) {
+					multiView.ActiveViewIndex = value;
 					OnActiveStepChanged (this, EventArgs.Empty);
 				}
 			}
@@ -239,7 +235,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["CancelButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -266,7 +261,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["CancelButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -278,7 +272,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["CancelButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -298,24 +291,24 @@ namespace System.Web.UI.WebControls
 	    [DefaultValueAttribute (0)]
 		public virtual int CellPadding {
 			get {
-				object v = ViewState ["CellPadding"];
-				return v != null ? (int)v : 0;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellPadding;
+				return 0;
 			}
 			set {
-				ViewState ["CellPadding"] = value;
-				UpdateControls ();
+				((TableStyle) ControlStyle).CellPadding = value;
 			}
 		}
 		
 	    [DefaultValueAttribute (0)]
 		public virtual int CellSpacing {
 			get {
-				object v = ViewState ["CellSpacing"];
-				return v != null ? (int)v : 0;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellSpacing;
+				return 0;
 			}
 			set {
-				ViewState ["CellSpacing"] = value;
-				UpdateControls ();
+				((TableStyle) ControlStyle).CellSpacing = value;
 			}
 		}
 		
@@ -328,7 +321,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["DisplayCancelButton"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -341,7 +333,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["DisplaySideBar"] = value;
-				UpdateControls ();
+				UpdateViews ();
 			}
 		}
 		
@@ -355,7 +347,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishCompleteButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -382,7 +373,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishCompleteButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -394,7 +384,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishCompleteButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -417,7 +406,7 @@ namespace System.Web.UI.WebControls
 	    [Browsable (false)]
 		public virtual ITemplate FinishNavigationTemplate {
 			get { return finishNavigationTemplate; }
-			set { finishNavigationTemplate = value; UpdateControls (); }
+			set { finishNavigationTemplate = value; UpdateViews (); }
 		}
 		
 	    [UrlPropertyAttribute]
@@ -430,7 +419,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishPreviousButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -457,7 +445,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishPreviousButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -469,7 +456,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["FinishPreviousButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -494,7 +480,7 @@ namespace System.Web.UI.WebControls
 	    [Browsable (false)]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
-			set { headerTemplate = value; UpdateControls (); }
+			set { headerTemplate = value; UpdateViews (); }
 		}
 		
 	    [DefaultValueAttribute ("")]
@@ -506,7 +492,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["HeaderText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -576,7 +561,7 @@ namespace System.Web.UI.WebControls
 	    [Browsable (false)]
 		public virtual ITemplate SideBarTemplate {
 			get { return sideBarTemplate; }
-			set { sideBarTemplate = value; UpdateControls (); }
+			set { sideBarTemplate = value; UpdateViews (); }
 		}
 
 		[Localizable (true)]
@@ -599,7 +584,7 @@ namespace System.Web.UI.WebControls
 	    [Browsable (false)]
 		public virtual ITemplate StartNavigationTemplate {
 			get { return startNavigationTemplate; }
-			set { startNavigationTemplate = value; UpdateControls (); }
+			set { startNavigationTemplate = value; UpdateViews (); }
 		}
 		
 	    [UrlPropertyAttribute]
@@ -612,7 +597,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StartNextButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -639,7 +623,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StartNextButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -651,7 +634,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StartNextButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -661,7 +643,7 @@ namespace System.Web.UI.WebControls
 	    [Browsable (false)]
 		public virtual ITemplate StepNavigationTemplate {
 			get { return stepNavigationTemplate; }
-			set { stepNavigationTemplate = value; UpdateControls (); }
+			set { stepNavigationTemplate = value; UpdateViews (); }
 		}
 		
 	    [UrlPropertyAttribute]
@@ -674,7 +656,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepNextButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -701,7 +682,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepNextButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -713,7 +693,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepNextButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -727,7 +706,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepPreviousButtonImageUrl"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -754,7 +732,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepPreviousButtonText"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -766,7 +743,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["StepPreviousButtonType"] = value;
-				UpdateControls ();
 			}
 		}
 		
@@ -852,10 +828,15 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
-			inited = true;
-			
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
+
+			if (ActiveStepIndex == -1)
+				ActiveStepIndex = 0;
+
+			EnsureChildControls ();
+			
+			inited = true;
 		}
 		
 		protected override ControlCollection CreateControlCollection ()
@@ -884,24 +865,15 @@ namespace System.Web.UI.WebControls
 			TableRow viewRow = new TableRow ();
 			TableCell viewCell = new TableCell ();
 
-			if (multiView == null)
-			{
-				persistStyles.Clear ();
-				customNavigation = null;
-				multiView = new MultiView();
-				foreach (View v in WizardSteps) {
-					if (v is TemplatedWizardStep) 
-						InstantiateTemplateStep ((TemplatedWizardStep) v);
-					multiView.Views.Add (v);
-				}
+			customNavigation = null;
+			multiView = new MultiView ();
+			foreach (View v in WizardSteps) {
+				if (v is TemplatedWizardStep)
+					InstantiateTemplateStep ((TemplatedWizardStep) v);
+				multiView.Views.Add (v);
 			}
-
-			if (ActiveStepIndex == -1 && !dontRender)
-				ActiveStepIndex = 0;
-
 			multiView.ActiveViewIndex = ActiveStepIndex;
 
-			if (ActiveStepIndex >= 0) {
 				RegisterApplyStyle (viewCell, StepStyle);
 				viewCell.Controls.Add (multiView);
 				viewRow.Cells.Add (viewCell);
@@ -909,15 +881,14 @@ namespace System.Web.UI.WebControls
 				wizardTable.Rows.Add (viewRow);
 
 				TableRow buttonRow = new TableRow ();
-				TableCell buttonCell = new TableCell ();
-				buttonCell.HorizontalAlign = HorizontalAlign.Right;
-				RegisterApplyStyle (buttonCell, NavigationStyle);
-				if (CreateButtonBar (buttonCell)) {
-					buttonRow.Cells.Add (buttonCell);
-					wizardTable.Rows.Add (buttonRow);
-				}
+				_navigationCell = new TableCell ();
+				_navigationCell	.HorizontalAlign = HorizontalAlign.Right;
+				RegisterApplyStyle (_navigationCell, NavigationStyle);
+				CreateButtonBar (_navigationCell);
+				buttonRow.Cells.Add (_navigationCell);
+				wizardTable.Rows.Add (buttonRow);
 
-				if (DisplaySideBar && ActiveStep.StepType != WizardStepType.Complete) {
+				if (DisplaySideBar) {
 					Table contentTable = wizardTable;
 					contentTable.Height = new Unit ("100%");
 					contentTable.Width = new Unit ("100%");
@@ -939,7 +910,6 @@ namespace System.Web.UI.WebControls
 
 					wizardTable.Rows.Add (row);
 				}
-			}
 			
 			Controls.SetReadonly (false);
 			Controls.Add (wizardTable);
@@ -951,7 +921,7 @@ namespace System.Web.UI.WebControls
 			BaseWizardContainer contentTemplateContainer = new BaseWizardContainer ();
 
 			if (step.ContentTemplate != null)
-				contentTemplateContainer.InstatiateTemplate (step.ContentTemplate);
+				step.ContentTemplate.InstantiateIn (contentTemplateContainer.InnerCell);
 
 			step.ContentTemplateContainer = contentTemplateContainer;
 			step.Controls.Clear ();
@@ -972,75 +942,96 @@ namespace System.Web.UI.WebControls
 			customNavigation [step] = customNavigationTemplateContainer;
 		}
 		
-		bool CreateButtonBar (TableCell buttonBarCell)
+		void CreateButtonBar (TableCell buttonBarCell)
 		{
-			if(customNavigation!=null && customNavigation [ActiveStep]!=null) {
-				Control customNavigationTemplateContainer = (Control) customNavigation [ActiveStep];
-				customNavigationTemplateContainer.ID = "CustomNavContainer";
-				buttonBarCell.Controls.Add (customNavigationTemplateContainer);
-				return true;
+			if(customNavigation!=null && customNavigation.Values.Count>0)
+			{
+				int i = 0;
+				foreach (Control customNavigationTemplateContainer in customNavigation.Values) {
+					customNavigationTemplateContainer.ID = "CustomNavContainer" + i++;
+					buttonBarCell.Controls.Add (customNavigationTemplateContainer);
+				}
 			}
 			
+			//
+			// StartNavContainer
+			//
+			_startNavContainer = new StartNavigationContainer (this);
+			_startNavContainer.ID = "StartNavContainer";
+			if (startNavigationTemplate != null) {
+				AddTemplateButtonBar (_startNavContainer, startNavigationTemplate, StartNextButtonID, CancelButtonID);
+			}
+			else {
+				TableRow row;
+				AddNavButtonsTable (_startNavContainer, out row);
+				AddButtonCell (row, CreateButtonSet (StartNextButtonID, MoveNextCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				_startNavContainer.ConfirmDefaultTemplate ();
+			}
+			buttonBarCell.Controls.Add (_startNavContainer);
+
+			//
+			// StepNavContainer
+			//
+			_stepNavContainer = new StepNavigationContainer (this);
+			_stepNavContainer.ID = "StepNavContainer";
+			if (stepNavigationTemplate != null) {
+				AddTemplateButtonBar (_stepNavContainer, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
+			}
+			else {
+				TableRow row;
+				AddNavButtonsTable (_stepNavContainer, out row);
+				AddButtonCell (row, CreateButtonSet (StepPreviousButtonID, MovePreviousCommandName));
+				AddButtonCell (row, CreateButtonSet (StepNextButtonID, MoveNextCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				_stepNavContainer.ConfirmDefaultTemplate ();
+			}
+			buttonBarCell.Controls.Add (_stepNavContainer);
+
+			//
+			// StepNavContainer
+			//
+			_finishNavContainer = new FinishNavigationContainer (this);
+			_finishNavContainer.ID = "FinishNavContainer";
+			if (finishNavigationTemplate != null) {
+				AddTemplateButtonBar (_finishNavContainer, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
+			}
+			else {
+				TableRow row;
+				AddNavButtonsTable (_finishNavContainer, out row);
+				AddButtonCell (row, CreateButtonSet (FinishPreviousButtonID, MovePreviousCommandName));
+				AddButtonCell (row, CreateButtonSet (FinishButtonID, MoveCompleteCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				_finishNavContainer.ConfirmDefaultTemplate ();
+			}
+			buttonBarCell.Controls.Add (_finishNavContainer);
+		}
+
+		private static void AddNavButtonsTable (BaseWizardNavigationContainer container, out TableRow row)
+		{
 			Table t = new Table ();
 			t.CellPadding = 5;
 			t.CellSpacing = 5;
-			TableRow row = new TableRow ();
-			
-			WizardStepType stepType = GetStepType (ActiveStep, ActiveStepIndex);
-			switch (stepType) {
-				case WizardStepType.Start:
-					if (startNavigationTemplate != null) {
-						AddTemplateButtonBar (buttonBarCell, startNavigationTemplate, StartNextButtonID, CancelButtonID);
-						return true;
-					} else {
-						if (AllowNavigationToStep (ActiveStepIndex + 1))
-							AddButtonCell (row, CreateButton (StartNextButtonID, MoveNextCommandName, StartNextButtonType, StartNextButtonText, StartNextButtonImageUrl, StartNextButtonStyle));
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
-					}
-					break;
-				case WizardStepType.Step:
-					if (stepNavigationTemplate != null) {
-						AddTemplateButtonBar (buttonBarCell, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
-						return true;
-					} else {
-						if (AllowNavigationToStep (ActiveStepIndex - 1))
-							AddButtonCell (row, CreateButton (StepPreviousButtonID, MovePreviousCommandName, StepPreviousButtonType, StepPreviousButtonText, StepPreviousButtonImageUrl, StepPreviousButtonStyle));
-						if (AllowNavigationToStep (ActiveStepIndex + 1))
-							AddButtonCell (row, CreateButton (StepNextButtonID, MoveNextCommandName, StepNextButtonType, StepNextButtonText, StepNextButtonImageUrl, StepNextButtonStyle));
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
-					}
-					break;
-				case WizardStepType.Finish:
-					if (finishNavigationTemplate != null) {
-						AddTemplateButtonBar (buttonBarCell, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
-						return true;
-					} else {
-						if (AllowNavigationToStep (ActiveStepIndex - 1))
-							AddButtonCell (row, CreateButton (FinishPreviousButtonID, MovePreviousCommandName, FinishPreviousButtonType, FinishPreviousButtonText, FinishPreviousButtonImageUrl, FinishPreviousButtonStyle));
-						AddButtonCell (row, CreateButton (FinishButtonID, MoveCompleteCommandName, FinishCompleteButtonType, FinishCompleteButtonText, FinishCompleteButtonImageUrl, FinishCompleteButtonStyle));
-						if (DisplayCancelButton)
-							AddButtonCell (row, CreateButton (CancelButtonID, CancelCommandName, CancelButtonType, CancelButtonText, CancelButtonImageUrl, CancelButtonStyle));
-					}
-					break;
-			}
-			
-			if (row.Cells.Count == 0) 
-				return false;
-			
+			row = new TableRow ();
 			t.Rows.Add (row);
-			buttonBarCell.Controls.Add (t);
-			
-			return true;
+			container.Controls.Add (t);
 		}
 
-		Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
+		internal Control [] CreateButtonSet (string id, string command)
 		{
-			return CreateButton (id, command, type, text, image, style, false);
+			return CreateButtonSet (id, command, true);
 		}
 
-		internal Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style, bool persistStyle)
+		internal Control [] CreateButtonSet (string id, string command, bool causesValidation)
+		{
+			return new Control [] { 
+				CreateButton ( id + ButtonType.Button,  command, ButtonType.Button, causesValidation),
+				CreateButton ( id + ButtonType.Image,  command, ButtonType.Image, causesValidation),
+				CreateButton ( id + ButtonType.Link,  command, ButtonType.Link, causesValidation)
+				};
+		}
+
+		Control CreateButton (string id, string command, ButtonType type, bool causesValidation)
 		{
 			WebControl b;
 			switch (type) {
@@ -1048,7 +1039,7 @@ namespace System.Web.UI.WebControls
 				b = CreateStandartButton ();
 				break;
 			case ButtonType.Image:
-				b = CreateImageButton (image);
+				b = CreateImageButton (null);
 				break;
 			case ButtonType.Link:
 				b = CreateLinkButton ();
@@ -1056,15 +1047,15 @@ namespace System.Web.UI.WebControls
 			default:
 				throw new ArgumentOutOfRangeException ("type");
 			}
-			
+
 			b.ID = id;
 			b.EnableTheming = false;
 			((IButtonControl) b).CommandName = command;
-			((IButtonControl) b).Text = text;
 			((IButtonControl) b).ValidationGroup = ID;
+			((IButtonControl) b).CausesValidation = causesValidation;
 
-			RegisterApplyStyle (b, NavigationButtonStyle, persistStyle);
-			RegisterApplyStyle (b, style, persistStyle);
+			RegisterApplyStyle (b, NavigationButtonStyle);
+
 			return b;
 		}
 
@@ -1084,11 +1075,8 @@ namespace System.Web.UI.WebControls
 			return link;
 		}
 
-		void AddTemplateButtonBar (TableCell cell, ITemplate template, params string[] buttonIds)
+		void AddTemplateButtonBar (BaseWizardNavigationContainer container, ITemplate template, params string [] buttonIds)
 		{
-			BaseWizardNavigationContainer container = new BaseWizardNavigationContainer ();
-			container.ID = "WizardNavContainer";
-			cell.Controls.Add (container);
 			template.InstantiateIn (container);
 			
 			foreach (string id in buttonIds) {
@@ -1096,12 +1084,13 @@ namespace System.Web.UI.WebControls
 				if (b != null) RegisterCommandEvents (b);
 			}
 		}
-		
-		void AddButtonCell (TableRow row, Control control)
+
+		void AddButtonCell (TableRow row, params Control[] controls)
 		{
 			TableCell cell = new TableCell ();
 			cell.HorizontalAlign = HorizontalAlign.Right;
-			cell.Controls.Add (control);
+			for (int i = 0; i < controls.Length; i++)
+				cell.Controls.Add (controls [i]);
 			row.Cells.Add (cell);
 		}
 		
@@ -1162,33 +1151,23 @@ namespace System.Web.UI.WebControls
 				button.Text = step.Name;
 			}
 		}
-		
+
 		void AddHeaderRow (Table table)
 		{
-			if (HeaderText.Length != 0 || headerTemplate != null) {
-				TableRow row = new TableRow ();
-				TableCell cell = new TableCell ();
-				RegisterApplyStyle (cell, HeaderStyle);
-				if (headerTemplate != null)
-					headerTemplate.InstantiateIn (cell);
-				else
-					cell.Text = HeaderText;
-				row.Cells.Add (cell);
-				table.Rows.Add (row);
+			TableRow row = new TableRow ();
+			_headerCell = new WizardHeaderCell ();
+			RegisterApplyStyle (_headerCell, HeaderStyle);
+			if (headerTemplate != null) {
+				headerTemplate.InstantiateIn (_headerCell);
+				_headerCell.ConfirmInitState ();
 			}
+			row.Cells.Add (_headerCell);
+			table.Rows.Add (row);
 		}
 
-		void RegisterApplyStyle (WebControl control, Style style)
+		internal void RegisterApplyStyle (WebControl control, Style style)
 		{
-			RegisterApplyStyle (control, style, false);
-		}
-
-		internal void RegisterApplyStyle (WebControl control, Style style, bool persistStyle)
-		{
-			if (persistStyle)
-				persistStyles.Add (new object [] { control, style });
-			else
-				styles.Add (new object [] { control, style });
+			styles.Add (new object [] { control, style });
 		}
 		
 		protected override Style CreateControlStyle ()
@@ -1396,28 +1375,80 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		void UpdateControls ()
+		internal void UpdateViews ()
 		{
 			ChildControlsCreated = false;
 		}
 		
-		internal void UpdateViews ()
-		{
-			multiView = null;
-			UpdateControls ();
-		}
-		
 		protected internal override void Render (HtmlTextWriter writer)
+		{
+			PrepareControlHierarchy ();
+			
+			wizardTable.Render (writer);
+		}
+
+		void PrepareControlHierarchy ()
 		{
 			wizardTable.ApplyStyle (ControlStyle);
 
-			foreach (object[] styleDef in styles)
-				((WebControl)styleDef[0]).ApplyStyle ((Style)styleDef[1]);
-			
-			foreach (object [] styleDef in persistStyles)
+			foreach (object [] styleDef in styles)
 				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
-			
-			wizardTable.Render (writer);
+
+			// header
+			if (!_headerCell.Initialized) {
+				if (String.IsNullOrEmpty (HeaderText))
+					_headerCell.Parent.Visible = false;
+				else
+					_headerCell.Text = HeaderText;
+			}
+
+			// content
+			TemplatedWizardStep templateStep = ActiveStep as TemplatedWizardStep;
+			if (templateStep != null) {
+				BaseWizardContainer contentContainer = templateStep.ContentTemplateContainer as BaseWizardContainer;
+				if (contentContainer != null)
+					contentContainer.PrepareControlHierarchy ();
+			}
+
+			// navigation
+			if (customNavigation != null) {
+				foreach (Control c in customNavigation.Values)
+					c.Visible = false;
+			}
+			_startNavContainer.Visible = false;
+			_stepNavContainer.Visible = false;
+			_finishNavContainer.Visible = false;
+
+			BaseWizardNavigationContainer currentNavContainer = GetCurrentNavContainer ();
+			if (currentNavContainer == null) {
+				_navigationCell.Parent.Visible = false;
+			}
+			else {
+				currentNavContainer.Visible = true;
+				currentNavContainer.PrepareControlHierarchy ();
+				if (!currentNavContainer.Visible)
+					_navigationCell.Parent.Visible = false;
+			}
+		}
+
+		private BaseWizardNavigationContainer GetCurrentNavContainer ()
+		{
+			if (customNavigation != null && customNavigation [ActiveStep] != null) {
+				return (BaseWizardNavigationContainer) customNavigation [ActiveStep];
+			}
+			else {
+				WizardStepType stepType = GetStepType (ActiveStep, ActiveStepIndex);
+				switch (stepType) {
+				case WizardStepType.Start:
+					return _startNavContainer;
+				case WizardStepType.Step:
+					return _stepNavContainer;
+				case WizardStepType.Finish:
+					return _finishNavContainer;
+				default:
+					return null;
+				}
+			}
 		}
 
 		class TableCellNamingContainer : TableCell, INamingContainer
@@ -1457,6 +1488,243 @@ namespace System.Web.UI.WebControls
 						c.Font.Bold = true;
 					wizard.RegisterCommandEvents (b);
 				}
+			}
+		}
+
+		class WizardHeaderCell : TableCell
+		{
+			bool _initialized;
+
+			public bool Initialized {
+				get { return _initialized; }
+			}
+
+			public void ConfirmInitState ()
+			{
+				_initialized = true;
+			}
+		}
+
+		internal abstract class DefaultNavigationContainer : BaseWizardNavigationContainer
+		{
+			bool _isDefault;
+			Wizard _wizard;
+
+			protected Wizard Wizard {
+				get { return _wizard; }
+			}
+
+			protected DefaultNavigationContainer (Wizard wizard)
+			{
+				_wizard = wizard;
+			}
+
+			public override sealed void PrepareControlHierarchy ()
+			{
+				if (_isDefault)
+					UpdateState ();
+			}
+
+			protected abstract void UpdateState ();
+
+			public void ConfirmDefaultTemplate ()
+			{
+				_isDefault = true;
+			}
+
+			protected void UpdateNavButtonState (string id, string text, string image, Style style)
+			{
+				WebControl b = (WebControl) FindControl (id);
+				foreach (Control c in b.Parent.Controls)
+					c.Visible = b == c;
+
+				((IButtonControl) b).Text = text;
+				ImageButton imgbtn = b as ImageButton;
+				if (imgbtn != null)
+					imgbtn.ImageUrl = image;
+
+				b.ApplyStyle (style);
+			}
+		}
+
+		sealed class StartNavigationContainer : DefaultNavigationContainer
+		{
+			public StartNavigationContainer (Wizard wizard)
+				: base (wizard)
+			{
+			}
+
+			protected override void UpdateState ()
+			{
+				bool visible = false;
+				
+				// next
+				if (Wizard.AllowNavigationToStep (Wizard.ActiveStepIndex + 1)) {
+					visible = true;
+					UpdateNavButtonState (Wizard.StartNextButtonID + Wizard.StartNextButtonType, Wizard.StartNextButtonText, Wizard.StartNextButtonImageUrl, Wizard.StartNextButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [0].Visible = false;
+				}
+
+				// cancel
+				if (Wizard.DisplayCancelButton) {
+					visible = true;
+					UpdateNavButtonState (Wizard.CancelButtonID + Wizard.CancelButtonType, Wizard.CancelButtonText, Wizard.CancelButtonImageUrl, Wizard.CancelButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [1].Visible = false;
+				}
+				Visible = visible;
+			}
+		}
+
+		sealed class StepNavigationContainer : DefaultNavigationContainer
+		{
+			public StepNavigationContainer (Wizard wizard)
+				: base (wizard)
+			{
+			}
+
+			protected override void UpdateState ()
+			{
+				bool visible = false;
+
+				// previous
+				if (Wizard.AllowNavigationToStep (Wizard.ActiveStepIndex - 1)) {
+					visible = true;
+					UpdateNavButtonState (Wizard.StepPreviousButtonID + Wizard.StepPreviousButtonType, Wizard.StepPreviousButtonText, Wizard.StepPreviousButtonImageUrl, Wizard.StepPreviousButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [0].Visible = false;
+				}
+
+				// next
+				if (Wizard.AllowNavigationToStep (Wizard.ActiveStepIndex + 1)) {
+					visible = true;
+					UpdateNavButtonState (Wizard.StepNextButtonID + Wizard.StepNextButtonType, Wizard.StepNextButtonText, Wizard.StepNextButtonImageUrl, Wizard.StepNextButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [1].Visible = false;
+				}
+
+				// cancel
+				if (Wizard.DisplayCancelButton) {
+					visible = true;
+					UpdateNavButtonState (Wizard.CancelButtonID + Wizard.CancelButtonType, Wizard.CancelButtonText, Wizard.CancelButtonImageUrl, Wizard.CancelButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [2].Visible = false;
+				}
+				Visible = visible;
+			}
+		}
+
+		sealed class FinishNavigationContainer : DefaultNavigationContainer
+		{
+			public FinishNavigationContainer (Wizard wizard)
+				: base (wizard)
+			{
+			}
+
+			protected override void UpdateState ()
+			{
+				// previous
+				if (Wizard.AllowNavigationToStep (Wizard.ActiveStepIndex - 1)) {
+					UpdateNavButtonState (Wizard.FinishPreviousButtonID + Wizard.FinishPreviousButtonType, Wizard.FinishPreviousButtonText, Wizard.FinishPreviousButtonImageUrl, Wizard.FinishPreviousButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [0].Visible = false;
+				}
+
+				// finish
+				UpdateNavButtonState (Wizard.FinishButtonID + Wizard.FinishCompleteButtonType, Wizard.FinishCompleteButtonText, Wizard.FinishCompleteButtonImageUrl, Wizard.FinishCompleteButtonStyle);
+
+				// cancel
+				if (Wizard.DisplayCancelButton) {
+					UpdateNavButtonState (Wizard.CancelButtonID + Wizard.CancelButtonType, Wizard.CancelButtonText, Wizard.CancelButtonImageUrl, Wizard.CancelButtonStyle);
+				}
+				else {
+					((Table) Controls [0]).Rows [0].Cells [2].Visible = false;
+				}
+			}
+		}
+
+		internal class BaseWizardContainer : Table, INamingContainer
+		{
+			public TableCell InnerCell {
+				get { return Rows [0].Cells [0]; }
+			}
+
+			internal BaseWizardContainer ()
+			{
+				SetBindingContainer (false);
+				InitTable ();
+			}
+
+			private void InitTable () {
+				TableRow row = new TableRow ();
+				TableCell cell = new TableCell ();
+
+				cell.ControlStyle.Width = Unit.Percentage (100);
+				cell.ControlStyle.Height = Unit.Percentage (100);
+
+				row.Cells.Add (cell);
+
+				this.ControlStyle.Width = Unit.Percentage (100);
+				this.ControlStyle.Height = Unit.Percentage (100);
+				this.CellPadding = 0;
+				this.CellSpacing = 0;
+
+				this.Rows.Add (row);
+			}
+
+			public virtual void PrepareControlHierarchy ()
+			{
+			}
+		}
+
+		internal class BaseWizardNavigationContainer : Control, INamingContainer
+		{
+			internal BaseWizardNavigationContainer ()
+			{
+				SetBindingContainer (false);
+			}
+
+			public virtual void PrepareControlHierarchy ()
+			{
+			}
+		}
+
+		internal abstract class DefaultContentContainer : BaseWizardContainer
+		{
+			bool _isDefault;
+			Wizard _wizard;
+
+			protected bool IsDefaultTemplate {
+				get { return _isDefault; }
+			}
+
+			protected Wizard Wizard {
+				get { return _wizard; }
+			}
+
+			protected DefaultContentContainer (Wizard wizard)
+			{
+				_wizard = wizard;
+			}
+
+			public override sealed void PrepareControlHierarchy ()
+			{
+				if (_isDefault)
+					UpdateState ();
+			}
+
+			protected abstract void UpdateState ();
+
+			public void ConfirmDefaultTemplate ()
+			{
+				_isDefault = true;
 			}
 		}
 	}

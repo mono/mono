@@ -78,47 +78,6 @@ namespace System.Web.UI.WebControls
 			set { base.SkinID = value; }
 		}
 	}
-
-	internal class BaseWizardContainer : Table, INamingContainer
-	{
-		internal BaseWizardContainer ()
-		{
-			SetBindingContainer (false);
-			InitTable ();
-		}
-
-		internal void InstatiateTemplate (ITemplate template)
-		{
-			TableCell defaultCell = this.Rows [0].Cells [0];
-			template.InstantiateIn (defaultCell);
-		}
-
-		private void InitTable ()
-		{
-			TableRow row = new TableRow ();
-			TableCell cell = new TableCell ();
-
-			cell.ControlStyle.Width = Unit.Percentage (100);
-			cell.ControlStyle.Height = Unit.Percentage (100);
-
-			row.Cells.Add (cell);
-
-			this.ControlStyle.Width = Unit.Percentage (100);
-			this.ControlStyle.Height = Unit.Percentage (100);
-			this.CellPadding = 0;
-			this.CellSpacing = 0;
-
-			this.Rows.Add (row);
-		}
-	}
-
-	internal class BaseWizardNavigationContainer : Control, INamingContainer
-	{
-		internal BaseWizardNavigationContainer ()
-		{
-			SetBindingContainer (false);
-		}
-	}
 }
 
 #endif

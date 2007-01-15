@@ -68,62 +68,6 @@ namespace System.Web.UI.WebControls
 		}
 	}
 
-	sealed class CompleteStepTemplate : ITemplate
-	{
-		readonly CreateUserWizard _createUserWizard;
-
-		public CompleteStepTemplate (CreateUserWizard createUserWizard)
-		{
-			_createUserWizard = createUserWizard;
-		}
-
-		#region ITemplate Members
-
-		public void InstantiateIn (Control container)
-		{
-			Table table = new Table ();
-
-			// Row #0
-			TableRow row0 = new TableRow ();
-			TableCell cell00 = new TableCell ();
-
-			cell00.HorizontalAlign = HorizontalAlign.Center;
-			cell00.ColumnSpan = 2;
-			cell00.ControlStyle.CopyFrom (_createUserWizard.TitleTextStyle);
-			cell00.Controls.Add (new LiteralControl (_createUserWizard.CompleteStep.Title));
-			row0.Cells.Add (cell00);
-
-			// Row #1
-			TableRow row1 = new TableRow ();
-			TableCell cell10 = new TableCell ();
-
-			cell10.HorizontalAlign = HorizontalAlign.Center;
-			cell10.ControlStyle.CopyFrom (_createUserWizard.CompleteSuccessTextStyle);
-			cell10.Controls.Add (new LiteralControl (_createUserWizard.CompleteSuccessText));
-			row1.Cells.Add (cell10);
-
-			// Row #2
-			TableRow row2 = new TableRow ();
-			TableCell cell20 = new TableCell ();
-
-			cell20.HorizontalAlign = HorizontalAlign.Right;
-			cell20.ColumnSpan = 2;
-			row2.Cells.Add (cell20);
-
-			Control b = _createUserWizard.CreateButton ("ContinueButtonButton", CreateUserWizard.ContinueButtonCommandName, _createUserWizard.ContinueButtonType, _createUserWizard.ContinueButtonText, _createUserWizard.ContinueButtonImageUrl, _createUserWizard.ContinueButtonStyle, true);
-			cell20.Controls.Add (b);
-			
-			// table
-			table.Rows.Add (row0);
-			table.Rows.Add (row1);
-			table.Rows.Add (row2);
-
-			container.Controls.Add (table);
-		}
-
-		#endregion
-	}
-
 }
 
 #endif

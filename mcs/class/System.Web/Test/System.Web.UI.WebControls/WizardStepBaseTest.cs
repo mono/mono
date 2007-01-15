@@ -329,10 +329,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-        [Category ("NotWorking")]
 		public void WizardStepBase_Theme ()
 		{
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
 #else
 			WebTest.CopyResource (GetType (), "WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
