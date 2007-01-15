@@ -43,6 +43,7 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/64x64x256.ico	\
 	Test/System.Drawing/bitmaps/96x96x256.ico	\
 	Test/System.Drawing/bitmaps/32bpp.ico	\
+	Test/System.Drawing/bitmaps/80509.ico	\
 	Assembly/Application.ico	\
 	Assembly/Asterisk.ico		\
 	Assembly/Error.ico		\

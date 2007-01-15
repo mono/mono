@@ -1,3 +1,7 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add new non-standard size icons, 10x16 and 11x22.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add new test icon 32bpp.ico for newer, XP, ARGB icons.
