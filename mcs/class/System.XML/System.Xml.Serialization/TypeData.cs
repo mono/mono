@@ -61,6 +61,10 @@ namespace System.Xml.Serialization
 
 		public TypeData (Type type, string elementName, bool isPrimitive, TypeData mappedType, XmlSchemaPatternFacet facet)
 		{
+#if NET_2_0
+			if (type.IsGenericTypeDefinition)
+				throw new InvalidOperationException ("Generic type definition cannot be used in serialization. Only specific generic types can be used.");
+#endif
 			this.mappedType = mappedType;
 			this.facet = facet;
 			this.type = type;

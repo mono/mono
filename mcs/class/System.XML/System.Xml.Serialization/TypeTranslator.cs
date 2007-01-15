@@ -207,12 +207,21 @@ namespace System.Xml.Serialization
 				typeData = dynamicCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 #endif
-				
+
 				string name;
 				if (type.IsArray) {
 					string sufix = GetTypeData (type.GetElementType ()).XmlType;
 					name = GetArrayName (sufix);
 				}
+#if NET_2_0
+				else if (type.IsGenericType && !type.IsGenericTypeDefinition) {
+					name = XmlConvert.EncodeLocalName (type.Name.Substring (0, type.Name.IndexOf ('`'))) + "Of";
+					foreach (Type garg in type.GetGenericArguments ())
+						name += garg.IsArray || garg.IsGenericType ?
+							GetTypeData (garg).XmlType :
+							CodeIdentifier.MakePascal (XmlConvert.EncodeLocalName (garg.Name));
+				}
+#endif
 				else 
 					name = XmlConvert.EncodeLocalName (type.Name);
 

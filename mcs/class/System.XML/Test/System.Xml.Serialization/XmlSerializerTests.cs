@@ -2189,7 +2189,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")] // hmm, why?
 		public void XmlArrayAttributeUnqualifiedWithNamespace ()
 		{
 			new XmlSerializer (typeof (XmlArrayUnqualifiedWithNamespace));
@@ -2233,7 +2232,6 @@ namespace MonoTests.System.XmlSerialization
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenSimpleClassString ()
 		{
 			GenSimpleClass<string> simple = new GenSimpleClass<string> ();
@@ -2247,7 +2245,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenSimpleClassBool ()
 		{
 			GenSimpleClass<bool> simple = new GenSimpleClass<bool> ();
@@ -2261,7 +2258,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenSimpleStructInt ()
 		{
 			GenSimpleStruct<int> simple = new GenSimpleStruct<int> (0);
@@ -2275,7 +2271,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenListClassString ()
 		{
 			GenListClass<string> genlist = new GenListClass<string> ();
@@ -2290,7 +2285,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenListClassFloat ()
 		{
 			GenListClass<float> genlist = new GenListClass<float> ();
@@ -2305,7 +2299,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenListClassList ()
 		{
 			GenListClass<GenListClass<int>> genlist = new GenListClass<GenListClass<int>> ();
@@ -2326,7 +2319,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenListClassArray ()
 		{
 			GenListClass<GenArrayClass<char>> genlist = new GenListClass<GenArrayClass<char>> ();
@@ -2348,7 +2340,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenTwoClassCharDouble ()
 		{
 			GenTwoClass<char, double> gentwo = new GenTwoClass<char, double> ();
@@ -2363,7 +2354,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenDerivedClassDecimalShort ()
 		{
 			GenDerivedClass<decimal, short> derived = new GenDerivedClass<decimal, short> ();
@@ -2380,7 +2370,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenDerivedSecondClassByteUlong ()
 		{
 			GenDerived2Class<byte, ulong> derived2 = new GenDerived2Class<byte, ulong> ();
@@ -2397,7 +2386,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenNestedClass ()
 		{
 			GenNestedClass<string, int>.InnerClass<bool> nested =
@@ -2413,7 +2401,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenListClassListNested ()
 		{
 			GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>> genlist =
@@ -2446,7 +2433,6 @@ namespace MonoTests.System.XmlSerialization
 
 		public enum Myenum { one, two, three, four, five, six };
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenArrayClassEnum ()
 		{
 			GenArrayClass<Myenum> genarr = new GenArrayClass<Myenum> ();
@@ -2462,7 +2448,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenArrayStruct ()
 		{
 			GenArrayClass<GenSimpleStruct<uint>> genarr = new GenArrayClass<GenSimpleStruct<uint>> ();
@@ -2513,7 +2498,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSerializeGenComplexStruct ()
 		{
 			GenComplexStruct<int, string> complex = new GenComplexStruct<int, string> (0);

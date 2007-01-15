@@ -17,6 +17,9 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 using NUnit.Framework;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 using MonoTests.System.Xml.TestClasses;
 
@@ -1540,6 +1543,13 @@ namespace MonoTests.System.XmlSerialization
 		public void ImportNullableContainer ()
 		{
 			new XmlSerializer (typeof (NullableContainer));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ImportGenericTypeDefinition ()
+		{
+			new XmlSerializer (typeof (List<int>).GetGenericTypeDefinition ());
 		}
 #endif
 

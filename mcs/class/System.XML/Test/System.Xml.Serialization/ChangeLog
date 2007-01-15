@@ -1,3 +1,9 @@
+2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : most of generic tests are working now.
+	* XmlReflectionImporterTests.cs : test for rejecting generic type
+	  definition.
+
 2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs :

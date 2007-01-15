@@ -1,3 +1,9 @@
+2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeData.cs : reject generic type definitions.
+	* TypeTranslator.cs : Make generic type names in XML compatible with
+	  .net: foo_x0060_1 -> fooOfString.
+
 2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlCustomFormatter.cs :
