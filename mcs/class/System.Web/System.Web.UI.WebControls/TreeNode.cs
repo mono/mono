@@ -688,6 +688,12 @@ namespace System.Web.UI.WebControls
 			} else {
 				Text = Value = GetDefaultBoundText ();
 			}
+
+			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
+			if (navigateUIData != null) {
+				Text = navigateUIData.ToString ();
+				NavigateUrl = navigateUIData.NavigateUrl;
+			}
 		}
 		
 		internal void SetDataItem (object item)

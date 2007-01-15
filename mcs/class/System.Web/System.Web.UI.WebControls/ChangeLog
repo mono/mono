@@ -1,5 +1,10 @@
 2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeNode.cs
+	considers INavigateUIData.NavigateUrl when bound.	
+
+2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CompleteWizardStep.cs
 	* CreateUserWizard.cs
 	* CreateUserWizardStep.cs
