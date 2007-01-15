@@ -460,13 +460,14 @@ namespace System.Drawing
 				ide.imageOffset = reader.ReadUInt32 ();
 				iconDir.idEntries [i] = ide;
 				//is this is the best fit??
-				if (!sizeObtained)
-					if (ide.height==height && ide.width==width) {
+				if (!sizeObtained) {
+					if ((ide.height == height) || (ide.width == width)) {
 						this.id = (ushort) i;
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
 						this.iconSize.Width = ide.width;
-					}			
+					}
+				}
 			}
 			//if we havent found the best match, return the one with the
 			//largest size. Is this approach correct??
