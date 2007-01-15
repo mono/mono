@@ -2467,9 +2467,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		// There is a bug in DotNet for this scenario, see comment below. 
-		[Category ("NotWorking")]
 		public void TestSerializeGenArrayList ()
 		{
 			GenArrayClass<GenListClass<string>> genarr = new GenArrayClass<GenListClass<string>> ();
@@ -2487,14 +2484,11 @@ namespace MonoTests.System.XmlSerialization
 			genlist2.somelist.Add ("list2-val4");
 			genarr.arr[1] = genlist2;
 			GenListClass<string> genlist3 = new GenListClass<string> ();
-			genlist1.somelist.Add ("list3val");
+			genlist3.somelist.Add ("list3val");
 			genarr.arr[2] = genlist3;
 
 			Serialize (genarr);
-			Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString><:somelist><:string>list1-val1</><:string>list1-val2</><:GenListClassOfString><:somelist><:string>list2-val1</><:string>list2-val2</><:string>list2-val3</><:string>list2-val4</></><:GenListClassOfString><:somelist><:string>list3val</></></></>", WriterText);
-			// Following is the DotNet result which is a bug, where member 
-			// of the third list is wrongly added to the first list.  
-			//Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString><:somelist><:string>list1-val1</><:string>list1-val2</><:string>list3val</></></><:GenListClassOfString><:somelist><:string>list2-val1</><:string>list2-val2</><:string>list2-val3</><:string>list2-val4</></></><:GenListClassOfString><:somelist></></></></>", WriterText);
+			Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString><:somelist><:string>list1-val1</><:string>list1-val2</></></><:GenListClassOfString><:somelist><:string>list2-val1</><:string>list2-val2</><:string>list2-val3</><:string>list2-val4</></></><:GenListClassOfString><:somelist><:string>list3val</></></></></>", WriterText);
 		}
 
 		[Test]

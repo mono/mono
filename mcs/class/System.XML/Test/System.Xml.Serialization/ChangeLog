@@ -1,5 +1,10 @@
 2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializerTests.cs : Fixed NotDotNet generic test which itself
+	  was wrong.
+
+2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializerTests.cs : most of generic tests are working now.
 	* XmlReflectionImporterTests.cs : test for rejecting generic type
 	  definition.
