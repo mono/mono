@@ -1,3 +1,9 @@
+
+Mon Jan 15 10:27:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: align fields rva data so it's faster to load at
+	runtime.
+
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	Prepare to simplify GenericMethod handling.
