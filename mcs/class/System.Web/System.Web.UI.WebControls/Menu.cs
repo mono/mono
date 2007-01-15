@@ -1355,6 +1355,7 @@ namespace System.Web.UI.WebControls
 
 			writer.AddStyleAttribute ("visibility", "hidden");
 			writer.AddStyleAttribute ("position", "absolute");
+			writer.AddStyleAttribute ("z-index", "1");
 			writer.AddStyleAttribute ("left", "0px");
 			writer.AddStyleAttribute ("top", "0px");
 			writer.AddAttribute ("id", GetItemClientId (item, "s"));

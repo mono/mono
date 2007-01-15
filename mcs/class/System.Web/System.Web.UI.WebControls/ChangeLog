@@ -1,3 +1,7 @@
+2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs: added z-index attribute to popup div's.
+
 2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* FileUpload.cs: fixed FileName property, should return filename
