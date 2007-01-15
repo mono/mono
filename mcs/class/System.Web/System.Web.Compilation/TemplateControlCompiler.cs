@@ -659,11 +659,6 @@ namespace System.Web.Compilation
 				new CodeTypeReferenceExpression (typeof(Convert)),
 				"ToString");
 			convert.Parameters.Add (eb.GetCodeExpression (null, fields, ctx));
-			convert.Parameters.Add (
-				new CodePropertyReferenceExpression (
-					new CodeTypeReferenceExpression (typeof(Globalization.CultureInfo)),
-					"CurrentCulture"));
-			
 			assign.Right = convert;
 			
 			method.Statements.Add (assign);
@@ -688,7 +683,7 @@ namespace System.Web.Compilation
 			} else // should never happen
 				return;
 
-			// __ctrl.Text = System.Convert.ToString(this.GetLocalResourceObject("ButtonResource1.Text"), System.Globalization.CultureInfo.CurrentCulture);
+			// __ctrl.Text = System.Convert.ToString(this.GetLocalResourceObject("ButtonResource1.Text"));
 			object obj = HttpContext.GetLocalResourceObject (HttpContext.Current.Request.FilePath,
 									 resname);
 			if (obj == null)
@@ -706,10 +701,6 @@ namespace System.Web.Compilation
 				new CodeTypeReferenceExpression (typeof(System.Convert)),
 				"ToString");
 			convert.Parameters.Add (getlro);
-			convert.Parameters.Add (
-				new CodePropertyReferenceExpression (
-					new CodeTypeReferenceExpression (typeof(Globalization.CultureInfo)),
-					"CurrentCulture"));
 			assign.Right = convert;
 			
 // 			assign.Left = new CodeVariableReferenceExpression (varname);

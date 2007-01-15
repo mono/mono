@@ -1,3 +1,9 @@
+2007-01-15  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateControlCompiler.cs: Forgotten in the previous commit -
+	don't pass the current culture to GetLocalResourceObject, let the
+	method figure it out on its own.
+
 2007-01-05  Marek Habersack  <grendello@gmail.com>
 
 	* AppResourceFilesCollection.cs: new class to keep and manage
