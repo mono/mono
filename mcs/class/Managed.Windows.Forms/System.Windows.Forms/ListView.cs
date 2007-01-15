@@ -2362,6 +2362,50 @@ namespace System.Windows.Forms
 			else if (bounds.Bottom > view_rect.Bottom)
 				v_scroll.Value += (bounds.Bottom - view_rect.Bottom);
 		}
+
+#if NET_2_0
+		public ListViewItem FindItemWithText (string text)
+		{
+			if (items.Count == 0)
+				return null;
+
+			return FindItemWithText (text, true, 0, true);
+		}
+
+		public ListViewItem FindItemWithText (string text, bool includeSubItems, int startIndex)
+		{
+			return FindItemWithText (text, includeSubItems, startIndex, true);
+		}
+
+		public ListViewItem FindItemWithText (string text, bool includeSubItems, int startIndex, bool prefixSearch)
+		{
+			if (startIndex < 0 || startIndex >= items.Count)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (text == null)
+				throw new ArgumentNullException ("text");
+
+			for (int i = startIndex; i < items.Count; i++) {
+				ListViewItem lvi = items [i];
+
+				if ((prefixSearch && lvi.Text.StartsWith (text, true, CultureInfo.CurrentCulture)) // prefix search
+						|| String.Compare (lvi.Text, text, true) == 0) // match
+					return lvi;
+			}
+
+			if (includeSubItems) {
+				for (int i = startIndex; i < items.Count; i++) {
+					ListViewItem lvi = items [i];
+					foreach (ListViewItem.ListViewSubItem sub_item in lvi.SubItems)
+						if ((prefixSearch && sub_item.Text.StartsWith (text, true, CultureInfo.CurrentCulture))
+								|| String.Compare (sub_item.Text, text, true) == 0)
+							return lvi;
+				}
+			}
+
+			return null;
+		}
+#endif
 		
 		public ListViewItem GetItemAt (int x, int y)
 		{

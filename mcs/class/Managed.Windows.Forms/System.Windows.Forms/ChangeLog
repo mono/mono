@@ -1,3 +1,7 @@
+2007-01-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Implement 2.0 FindItemWithText method.
+
 2007-01-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* Form.cs: When process WM_NCCALCSIZE message use ClienSize.Width
