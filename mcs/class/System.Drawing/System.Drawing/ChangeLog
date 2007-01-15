@@ -1,3 +1,9 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Refactor Save code to allow saving a single icon size.
+	This allows ToBitmap to produce the right (sized) bitmap wrt the
+	selected icon size. Fix #80509 under UNIX.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Bitmap.cs: Make sure we're not building bitmaps using stream that

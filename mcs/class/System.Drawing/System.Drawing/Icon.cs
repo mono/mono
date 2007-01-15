@@ -300,64 +300,110 @@ namespace System.Drawing
 			return new Icon (handle);
 		}
 
+		private void SaveIconImage (BinaryWriter writer, IconImage ii)
+		{
+			BitmapInfoHeader bih = ii.iconHeader;
+			writer.Write (bih.biSize);
+			writer.Write (bih.biWidth);
+			writer.Write (bih.biHeight);
+			writer.Write (bih.biPlanes);
+			writer.Write (bih.biBitCount);
+			writer.Write (bih.biCompression);
+			writer.Write (bih.biSizeImage);
+			writer.Write (bih.biXPelsPerMeter);
+			writer.Write (bih.biYPelsPerMeter);
+			writer.Write (bih.biClrUsed);
+			writer.Write (bih.biClrImportant);
+
+			//now write color table
+			int colCount = ii.iconColors.Length;
+			for (int j=0; j < colCount; j++)
+				writer.Write (ii.iconColors [j]);
+
+			//now write XOR Mask
+			writer.Write (ii.iconXOR);
+
+			//now write AND Mask
+			writer.Write (ii.iconAND);
+		}
+
+		private void SaveIconDirEntry (BinaryWriter writer, IconDirEntry ide, uint offset)
+		{
+			writer.Write (ide.width);
+			writer.Write (ide.height);
+			writer.Write (ide.colorCount);
+			writer.Write (ide.reserved);
+			writer.Write (ide.planes);
+			writer.Write (ide.bitCount);
+			writer.Write (ide.bytesInRes);
+			writer.Write ((offset == UInt32.MaxValue) ? ide.imageOffset : offset);
+		}
+
+		private void SaveAll (BinaryWriter writer)
+		{
+			ushort count = iconDir.idCount;
+			writer.Write (count);
+
+			for (int i=0; i < (int)count; i++) {
+				SaveIconDirEntry (writer, iconDir.idEntries [i], UInt32.MaxValue);
+			}
+
+			for (int i=0; i < (int)count; i++) {
+				SaveIconImage (writer, imageData [i]);
+			}
+		}
+
+		private void SaveBestSingleIcon (BinaryWriter writer, int width, int height)
+		{
+			writer.Write ((ushort)1);
+
+			// find best entry and save it
+			int best = 0;
+			int bitCount = 0;
+			for (int i=0; i < iconDir.idCount; i++) {
+				IconDirEntry ide = iconDir.idEntries [i];
+				if ((width == ide.width) && (height == ide.height)) {
+					if (ide.bitCount >= bitCount) {
+						bitCount = ide.bitCount;
+						best = i;
+					}
+				}
+			}
+
+			SaveIconDirEntry (writer, iconDir.idEntries [best], 22);
+			SaveIconImage (writer, imageData [best]);
+		}
+
+		private void Save (Stream outputStream, int width, int height)
+		{
+			if (iconDir.idEntries == null)
+				return;
+
+			BinaryWriter writer = new BinaryWriter (outputStream);
+			writer.Write (iconDir.idReserved);
+			writer.Write (iconDir.idType);
+			if ((width == -1) && (height == -1))
+				SaveAll (writer);
+			else
+				SaveBestSingleIcon (writer, width, height);
+			writer.Flush ();
+		}
+
 		public void Save (Stream outputStream)
 		{
-			if (iconDir.idEntries!=null){
-				BinaryWriter bw = new BinaryWriter (outputStream);
-				//write icondir
-				bw.Write (iconDir.idReserved);
-				bw.Write (iconDir.idType);
-				ushort count = iconDir.idCount;
-				bw.Write (count);
-				
-				//now write iconDirEntries
-				for (int i=0; i<(int)count; i++){
-					IconDirEntry ide = iconDir.idEntries [i];
-					bw.Write (ide.width);
-					bw.Write (ide.height);
-					bw.Write (ide.colorCount);
-					bw.Write (ide.reserved);
-					bw.Write (ide.planes);
-					bw.Write (ide.bitCount);
-					bw.Write (ide.bytesInRes);
-					bw.Write (ide.imageOffset);				
-				}
-				
-				//now write iconImage data
-				for (int i=0; i<(int)count; i++){
-					BitmapInfoHeader bih = imageData [i].iconHeader;
-					bw.Write (bih.biSize);
-					bw.Write (bih.biWidth);
-					bw.Write (bih.biHeight);
-					bw.Write (bih.biPlanes);
-					bw.Write (bih.biBitCount);
-					bw.Write (bih.biCompression);
-					bw.Write (bih.biSizeImage);
-					bw.Write (bih.biXPelsPerMeter);
-					bw.Write (bih.biYPelsPerMeter);
-					bw.Write (bih.biClrUsed);
-					bw.Write (bih.biClrImportant);
+			if (outputStream == null)
+				throw new NullReferenceException ("outputStream");
 
-					//now write color table
-					int colCount = imageData [i].iconColors.Length;
-					for (int j=0; j<colCount; j++)
-						bw.Write (imageData [i].iconColors [j]);
-
-					//now write XOR Mask
-					bw.Write (imageData [i].iconXOR);
-					
-					//now write AND Mask
-					bw.Write (imageData [i].iconAND);
-				}
-				bw.Flush();				
-			}
+			// save every icons available
+			Save (outputStream, -1, -1);
 		}
 
 		internal Bitmap GetInternalBitmap ()
 		{
 			if (bitmap == null) {
 				using (MemoryStream ms = new MemoryStream ()) {
-					Save (ms);
+					// save the current icon
+					Save (ms, Width, Height);
 					// libgdiplus can now decode icons
 					bitmap = (Bitmap) Image.FromStream (ms);
 				}
