@@ -464,7 +464,7 @@ namespace MonoTests.System.Web {
 		}
         public static void ToAbsolute6_Load(Page p)
         {
-            Assert.IsNotEmpty(VPU.ToAbsolute("~/"));
+            VPU.ToAbsolute("~/");
         }
 
 		[Test]

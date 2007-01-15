@@ -1,4 +1,10 @@
 2007-01-15 Ilya Kharmatsky  <ilya -at- decode-systems.com>
+
+	* VirtualPathUtilityTest.cs: fixed introduced by previous patch
+	bug, which used not supported in mono's nunit function 
+        'Assert.IsNotEmpty'
+
+2007-01-15 Ilya Kharmatsky  <ilya -at- decode-systems.com>
 	
 	* VirtualPathUtility.cs : 
 		- ToAbsoluteXXX (where XXX are numbers between 1-7) tests
