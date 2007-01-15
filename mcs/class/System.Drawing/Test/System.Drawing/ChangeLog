@@ -1,7 +1,9 @@
-2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* TestIcon.cs: Add test cases for non-standard size icons, 10x16 and 11x22, 
-	to test for non perfect match icon selection.
+	* TestIcon.cs: Add test cases for non-standard size icons, 10x16 and
+	11x22, to test for non perfect match icon selection.
+	* TestImage.cs: Add test cases for locked/unlocked streams when using
+	GDI+ (e.g. Mono running on Windows).
 
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 

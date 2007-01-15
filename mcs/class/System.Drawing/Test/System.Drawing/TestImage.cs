@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2005 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -162,6 +162,45 @@ namespace MonoTests.System.Drawing{
 				Assert.AreEqual (40, tn.Width, "Width");
 				Assert.IsFalse (callback, "Callback called");
 				tn.Save (fname, ImageFormat.Png);
+			}
+		}
+
+		[Test]
+		public void Stream_Unlocked ()
+		{
+			try {
+				Image img = null;
+				using (MemoryStream ms = new MemoryStream ()) {
+					using (Bitmap bmp = new Bitmap (10, 10)) {
+						bmp.Save (ms, ImageFormat.Png);
+					}
+					ms.Position = 0;
+					img = Image.FromStream (ms);
+				}
+				// stream isn't available anymore
+				((Bitmap) img).MakeTransparent (Color.Transparent);
+			}
+			catch (OutOfMemoryException) {
+				int p = (int) Environment.OSVersion.Platform;
+				// libgdiplus (UNIX) doesn't lazy load the image so the
+				// stream may be freed (and this exception will never occur)
+				if ((p == 4) || (p == 128))
+					throw;
+			}
+		}
+
+		[Test]
+		public void Stream_Locked ()
+		{
+			Image img = null;
+			using (MemoryStream ms = new MemoryStream ()) {
+				using (Bitmap bmp = new Bitmap (10, 10)) {
+					bmp.Save (ms, ImageFormat.Png);
+				}
+				ms.Position = 0;
+				img = Image.FromStream (ms);
+				// stream is available
+				((Bitmap) img).MakeTransparent (Color.Transparent);
 			}
 		}
 	}
