@@ -1,3 +1,7 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestIcon.cs: Add test cases for XP (32bpp) icons.
+
 2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Add test cases for FromHicon and roundtripping using

@@ -214,6 +214,37 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, clone.Size.Height, "Size.Height");
 		}
 
+		private void XPIcon (int size)
+		{
+			// note: the Icon(string,Size) or Icon(string,int,int) doesn't exists under 1.x
+			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/32bpp.ico"))) {
+				using (Icon xp = new Icon (fs, size, size)) {
+					Assert.AreEqual (size, xp.Height, "Height");
+					Assert.AreEqual (size, xp.Width, "Width");
+					Assert.AreEqual (size, xp.Size.Width, "Size.Width");
+					Assert.AreEqual (size, xp.Size.Height, "Size.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void Icon32bits_XP16 ()
+		{
+			XPIcon (16);
+		}
+
+		[Test]
+		public void Icon32bits_XP32 ()
+		{
+			XPIcon (32);
+		}
+
+		[Test]
+		public void Icon32bits_XP48 ()
+		{
+			XPIcon (48);
+		}
+
 		internal static void SaveAndCompare (string msg, Icon icon)
 		{
 			using (MemoryStream ms = new MemoryStream ()) {
