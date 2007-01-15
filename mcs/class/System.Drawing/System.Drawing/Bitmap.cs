@@ -125,7 +125,7 @@ namespace System.Drawing
 			Stream s = type.Assembly.GetManifestResourceStream (type, resource);
 			if (s == null) {
 				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
-				throw new FileNotFoundException ();
+				throw new FileNotFoundException (msg);
 			}
 			// true: stream is owned by SD code
 			InitFromStream (s, true);
