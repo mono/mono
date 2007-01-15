@@ -1,3 +1,7 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IconCodecTest.cs: New test case to check 32bpp (XP) icons.
+
 2007-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IconCodecTest.cs: New test case to check loading from an Icon then

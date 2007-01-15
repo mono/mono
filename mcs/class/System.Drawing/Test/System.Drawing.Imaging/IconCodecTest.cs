@@ -1933,6 +1933,40 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
+		[Test]
+		public void Xp32bppIconFeatures ()
+		{
+			string sInFile = getInFile ("bitmaps/32bpp.ico");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+				GraphicsUnit unit = GraphicsUnit.World;
+				RectangleF rect = bmp.GetBounds (ref unit);
+
+				Assert.IsTrue (bmp.RawFormat.Equals (ImageFormat.Icon), "Icon");
+				// note that image is "promoted" to 32bits
+				Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+				Assert.AreEqual (73746, bmp.Flags, "bmp.Flags");
+				Assert.AreEqual (0, bmp.Palette.Entries.Length, "Palette");
+				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
+				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
+				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
+#if NET_2_0
+				Assert.IsNull (bmp.Tag, "Tag");
+#endif
+				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
+				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
+				Assert.AreEqual (16, bmp.Width, "bmp.Width");
+				Assert.AreEqual (16, bmp.Height, "bmp.Height");
+
+				Assert.AreEqual (0, rect.X, "rect.X");
+				Assert.AreEqual (0, rect.Y, "rect.Y");
+				Assert.AreEqual (16, rect.Width, "rect.Width");
+				Assert.AreEqual (16, rect.Height, "rect.Height");
+
+				Assert.AreEqual (16, bmp.Size.Width, "bmp.Size.Width");
+				Assert.AreEqual (16, bmp.Size.Height, "bmp.Size.Height");
+			}
+		}
+
 		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck)
 		{
 			string sOutFile = "linerect" + getOutSufix () + ".ico";
