@@ -245,6 +245,32 @@ namespace MonoTests.System.Drawing {
 			XPIcon (48);
 		}
 
+		[Test]
+		public void SelectFromUnusualSize_Small16 ()
+		{
+			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/80509.ico"))) {
+				using (Icon xp = new Icon (fs, 16, 16)) {
+					Assert.AreEqual (16, xp.Height, "Height");
+					Assert.AreEqual (10, xp.Width, "Width");
+					Assert.AreEqual (10, xp.Size.Width, "Size.Width");
+					Assert.AreEqual (16, xp.Size.Height, "Size.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void SelectFromUnusualSize_Normal32 ()
+		{
+			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/80509.ico"))) {
+				using (Icon xp = new Icon (fs, 32, 32)) {
+					Assert.AreEqual (22, xp.Height, "Height");
+					Assert.AreEqual (11, xp.Width, "Width");
+					Assert.AreEqual (11, xp.Size.Width, "Size.Width");
+					Assert.AreEqual (22, xp.Size.Height, "Size.Height");
+				}
+			}
+		}
+
 		internal static void SaveAndCompare (string msg, Icon icon)
 		{
 			using (MemoryStream ms = new MemoryStream ()) {

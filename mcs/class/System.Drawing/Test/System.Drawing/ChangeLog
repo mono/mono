@@ -1,3 +1,8 @@
+2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestIcon.cs: Add test cases for non-standard size icons, 10x16 and 11x22, 
+	to test for non perfect match icon selection.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestIcon.cs: Add test cases for XP (32bpp) icons.
