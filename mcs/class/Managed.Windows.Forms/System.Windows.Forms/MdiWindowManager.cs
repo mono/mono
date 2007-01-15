@@ -154,8 +154,6 @@ namespace System.Windows.Forms {
 			Form parent = (Form) mdi_container.Parent;
 			MainMenu res = new MainMenu ();
 
-			res.MenuItems.Add (icon_menu);
-
 			if (parent.Menu != null) {
 				MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
 				res.MergeMenu (clone);
@@ -168,6 +166,8 @@ namespace System.Windows.Forms {
 			
 			if (res.MenuItems.Count == 0)
 				res.MenuItems.Add (new MenuItem ()); // Dummy item to get the menu height correct
+			
+			res.MenuItems.Insert (0, icon_menu);
 			
 			res.SetForm (parent);
 			return res;
