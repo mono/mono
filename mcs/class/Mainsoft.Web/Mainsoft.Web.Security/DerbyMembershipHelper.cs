@@ -686,15 +686,16 @@ namespace Mainsoft.Web.Security
 					numTablesDeletedFrom++;
 				}
 
-				if ((tablesToDeleteFrom & 8) == 8) {
-					string queryDelete = "DELETE FROM aspnet_PersonalizationPerUser WHERE UserId = ?";
-					OleDbCommand cmdDelete = new OleDbCommand (queryDelete, (OleDbConnection) connection);
-					AddParameter (cmdDelete, "UserId", userId);
-					cmdDelete.Transaction = trans;
-					cmdDelete.ExecuteNonQuery ();
+				// this table was removed  from schema
+				//if ((tablesToDeleteFrom & 8) == 8) {
+				//    string queryDelete = "DELETE FROM aspnet_PersonalizationPerUser WHERE UserId = ?";
+				//    OleDbCommand cmdDelete = new OleDbCommand (queryDelete, (OleDbConnection) connection);
+				//    AddParameter (cmdDelete, "UserId", userId);
+				//    cmdDelete.Transaction = trans;
+				//    cmdDelete.ExecuteNonQuery ();
 
-					numTablesDeletedFrom++;
-				}
+				//    numTablesDeletedFrom++;
+				//}
 
 				if ((tablesToDeleteFrom & 15) == 15) {
 					string queryDelete = "DELETE FROM aspnet_Users WHERE UserId = ?";
