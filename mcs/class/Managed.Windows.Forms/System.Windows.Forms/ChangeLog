@@ -1,3 +1,7 @@
+2007-01-15  Jonathan Pobst  <jpobst@novell.com>
+
+	* Clipboard.cs: Implement 2.0 methods.
+
 2007-01-15  Everaldo Canuto  <everaldo@simios.org>
 
 	* Menu.cs: Implement Insert method of MenuItemCollection class
