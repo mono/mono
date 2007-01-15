@@ -106,7 +106,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MenuItemMerge ()
 		{
 			MenuItem item1 = new MenuItem ("File (0)");		// Position 0

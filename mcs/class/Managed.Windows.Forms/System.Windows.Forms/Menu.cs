@@ -430,6 +430,9 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
+				
+				items.Insert (index, mi);
+				
 				UpdateItemsIndices ();
 				UpdateItem (mi);
 			}
