@@ -114,7 +114,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("destinationItem");
 
 			foreach (DictionaryEntry de in unevaluatedMetadata)
-				destinationItem.AddMetadata ((string) de.Key, (string) de.Value, false);
+				destinationItem.AddMetadata ((string) de.Key, (string) de.Value);
 		}
 		
 		[MonoTODO]
@@ -182,29 +182,28 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
 					metadataName));
 
+			if (treatMetadataValueAsLiteral && !HasParent)
+				metadataValue = Utilities.Escape (metadataValue);
+
 			if (FromXml) {
 				XmlElement element = itemElement [metadataName];
 				if (element == null) {
 					element = itemElement.OwnerDocument.CreateElement (metadataName, Project.XmlNamespace);
-					// FIXME treat as literal
 					element.InnerText = metadataValue;
 					itemElement.AppendChild (element);
 				} else
 					element.InnerText = metadataValue;
 			} else if (HasParent) {
-				if (parent_item.child_items.Count == 1)
-					parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
-				else {
+				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
-					parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
-				}
+				parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
 			}
 			
 			DeleteMetadata (metadataName);
-			AddMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
+			AddMetadata (metadataName, metadataValue);
 		}
 
-		void AddMetadata (string name, string value, bool literal)
+		void AddMetadata (string name, string value)
 		{
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
@@ -213,9 +212,6 @@ namespace Microsoft.Build.BuildEngine {
 			} else
 				evaluatedMetadata.Add (name, Utilities.Unescape (value));
 				
-			if (literal)
-				unevaluatedMetadata.Add (name, Utilities.Escape (value));
-			else
 				unevaluatedMetadata.Add (name, value);
 		}
 
@@ -237,7 +233,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			foreach (XmlElement xe in itemElement.ChildNodes)
-				AddMetadata (xe.Name, xe.InnerText, false);
+				AddMetadata (xe.Name, xe.InnerText);
 
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;

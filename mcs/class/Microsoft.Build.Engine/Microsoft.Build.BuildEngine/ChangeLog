@@ -1,5 +1,10 @@
 2007-01-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildItem.cs (SetMetadata): Escape when we get virtual item or item
+	from XML. (not to escape items that have parents twice).
+
+2007-01-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* BuildItemGroup.cs (AddNewItem): Add XML and mark project as dirty.
 	(Project): Renamed to ParentProject.
 
