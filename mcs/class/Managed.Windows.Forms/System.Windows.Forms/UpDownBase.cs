@@ -57,17 +57,19 @@ namespace System.Windows.Forms
 			#endregion	// Local Variables
 
 			#region Constructors
-			public UpDownSpinner(UpDownBase owner) {
+			public UpDownSpinner(UpDownBase owner)
+			{
 				this.owner = owner;
 
 				mouse_pressed = 0;
 
-				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-				this.SetStyle(ControlStyles.DoubleBuffer, true);
-				this.SetStyle(ControlStyles.Opaque, true);
-				this.SetStyle(ControlStyles.ResizeRedraw, true);
-				this.SetStyle(ControlStyles.UserPaint, true);
-				this.SetStyle(ControlStyles.FixedHeight, true);
+				SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				SetStyle(ControlStyles.DoubleBuffer, true);
+				SetStyle(ControlStyles.Opaque, true);
+				SetStyle(ControlStyles.ResizeRedraw, true);
+				SetStyle(ControlStyles.UserPaint, true);
+				SetStyle(ControlStyles.FixedHeight, true);
+				SetStyle(ControlStyles.Selectable, false);
 
 				tmrRepeat = new Timer();
 
@@ -80,7 +82,8 @@ namespace System.Windows.Forms
 			#endregion	// Constructors
 
 			#region Private & Internal Methods
-			private void compute_rects() {
+			private void compute_rects ()
+			{
 				int top_button_height;
 				int bottom_button_height;
 
@@ -91,7 +94,8 @@ namespace System.Windows.Forms
 				bottom_button_rect = new Rectangle(0, top_button_height, ClientSize.Width, bottom_button_height);
 			}
 
-			private void redraw(Graphics graphics) {
+			private void redraw (Graphics graphics)
+			{
 				ButtonState top_button_state;
 				ButtonState bottom_button_state;
 
@@ -111,7 +115,8 @@ namespace System.Windows.Forms
 				ControlPaint.DrawScrollButton(graphics, bottom_button_rect, ScrollButton.Down, bottom_button_state);
 			}
 
-			private void tmrRepeat_Tick(object sender, EventArgs e) {
+			private void tmrRepeat_Tick (object sender, EventArgs e)
+			{
 				if (repeat_delay > 1) {
 					repeat_counter++;
 
@@ -138,7 +143,8 @@ namespace System.Windows.Forms
 			#endregion	// Private & Internal Methods
 
 			#region Protected Instance Methods
-			protected override void OnMouseDown(MouseEventArgs e) {
+			protected override void OnMouseDown (MouseEventArgs e)
+			{
 				if (e.Button != MouseButtons.Left) {
 					return;
 				}
@@ -162,7 +168,8 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 
-			protected override void OnMouseMove(MouseEventArgs e) {
+			protected override void OnMouseMove (MouseEventArgs e)
+			{
 				ButtonState before, after;
 
 				before = ButtonState.Normal;
@@ -199,71 +206,89 @@ namespace System.Windows.Forms
 				}
 			}
 
-			protected override void OnMouseUp(MouseEventArgs e) {
+			protected override void OnMouseUp(MouseEventArgs e)
+			{
 				mouse_pressed = 0;
 				Capture = false;
 
 				Refresh ();
 			}
 
-			protected override void OnMouseWheel(MouseEventArgs e) {
+			protected override void OnMouseWheel(MouseEventArgs e)
+			{
 				if (e.Delta > 0)
 					owner.UpButton();
 				else if (e.Delta < 0)
 					owner.DownButton();
 			}
 
-			protected override void OnPaint(PaintEventArgs e) {
+			protected override void OnPaint(PaintEventArgs e)
+			{
 				redraw(e.Graphics);
 			}
 
-			protected override void OnResize(EventArgs e) {
+			protected override void OnResize(EventArgs e)
+			{
 				base.OnResize(e);
 				compute_rects();
 			}
 			#endregion	// Protected Instance Methods
-
-			
-			internal void SetSelectable (bool selectable)
-			{
-				SetStyle (ControlStyles.Selectable, selectable);
-			}
 		}
 		#endregion	// UpDownSpinner Sub-class
 
 		internal class UpDownTextBox : TextBox {
 
-			//private UpDownBase owner;
+			private UpDownBase owner;
 
 			public UpDownTextBox (UpDownBase owner)
 			{
-				//this.owner = owner;
+				this.owner = owner;
 
 				SetStyle (ControlStyles.FixedWidth, false);
+				SetStyle (ControlStyles.Selectable, false);
 			}
 
-			internal void SetSelectable (bool selectable)
+
+			// The following can be shown to be present by
+			// adding events to both the UpDown and the
+			// internal textbox.  the textbox doesn't
+			// generate any, and the updown generates them
+			// all instead.
+			protected override void OnGotFocus (EventArgs e)
 			{
-				SetStyle (ControlStyles.Selectable, selectable);
+				ShowSelection = true;
+				owner.OnGotFocus (e);
+				// doesn't chain up
 			}
 
-			internal void ActivateCaret (bool active)
+			protected override void OnLostFocus (EventArgs e)
 			{
-				if (active)
-					document.CaretHasFocus ();
-				else
-					document.CaretLostFocus ();
+				ShowSelection = false;
+				owner.OnLostFocus (e);
+				// doesn't chain up
 			}
 
-			protected override void OnGotFocus(EventArgs e)
+			protected override void OnMouseDown (MouseEventArgs e)
 			{
-				this.Parent.OnGotFocusInternal(e);
+				// XXX look into whether or not the
+				// mouse event args are altered in
+				// some way.
+
+				owner.OnMouseDown (e);
+				// doesn't chain up
 			}
 
-			protected override void OnLostFocus(EventArgs e)
+			protected override void OnMouseUp (MouseEventArgs e)
 			{
-				this.Parent.OnLostFocusInternal(e);
+				// XXX look into whether or not the
+				// mouse event args are altered in
+				// some way.
+
+				owner.OnMouseUp (e);
+				// doesn't chain up
 			}
+
+			// XXX there are likely more events that forward up to the UpDown
 		}
 
 		#region Local Variables
@@ -276,7 +301,8 @@ namespace System.Windows.Forms
 		#endregion	// Local Variables
 
 		#region Public Constructors
-		public UpDownBase() {
+		public UpDownBase()
+		{
 			_UpDownAlign = LeftRightAlignment.Right;
 			border_style = BorderStyle.Fixed3D;
 
@@ -311,17 +337,17 @@ namespace System.Windows.Forms
 			// So the child controls don't get auto selected when the updown is selected
 			auto_select_child = false;
 			SetStyle(ControlStyles.FixedHeight, true);
+			SetStyle(ControlStyles.Selectable, true);
 #if NET_2_0
 			SetStyle (ControlStyles.Opaque | ControlStyles.ResizeRedraw, true);
 			SetStyle (ControlStyles.StandardClick | ControlStyles.UseTextForAccessibility, false);
 #endif
-
-			UpdateEditText ();
 		}
 		#endregion
 
 		#region Private Methods
-		void reseat_controls() {
+		void reseat_controls()
+		{
 			int text_displacement = 0;
 
 			int spinner_width = 16;
@@ -346,24 +372,9 @@ namespace System.Windows.Forms
 			txtView.TabIndex = TabIndex;
 		}
 
-		internal override void OnPaintInternal (PaintEventArgs e) {
+		internal override void OnPaintInternal (PaintEventArgs e)
+		{
 			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), ClientRectangle);
-		}
-
-		internal override void OnGotFocusInternal (EventArgs e)
-		{
-			base.OnGotFocusInternal (e);
-			txtView.ActivateCaret (true);
-			txtView.SetSelectable (false);
-			spnSpinner.SetSelectable (false);
-		}
-
-		internal override void OnLostFocusInternal (EventArgs e)
-		{
-			base.OnLostFocusInternal (e);
-			txtView.ActivateCaret (false);
-			txtView.SetSelectable (true);
-			spnSpinner.SetSelectable (true);
 		}
 
 		#endregion	// Private Methods
@@ -452,7 +463,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override bool Focused {
 			get {
-				return base.Focused;
+				return txtView.Focused;
 			}
 		}
 
@@ -526,6 +537,8 @@ namespace System.Windows.Forms
 
 				if (!suppress_validation)
 					ValidateEditText();
+
+				txtView.SelectionLength = 0;
 			}
 		}
 
@@ -587,16 +600,18 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public abstract void DownButton();
-		public void Select(int start, int length) {
+		public abstract void DownButton ();
+		public void Select(int start, int length)
+		{
 			txtView.Select(start, length);
 		}
 
-		public abstract void UpButton();
+		public abstract void UpButton ();
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose (bool disposing)
+		{
 			if (disposing) {
 				txtView.Dispose();
 				txtView = null;
@@ -607,34 +622,36 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-		protected virtual void OnChanged(object source, EventArgs e) {
+		protected virtual void OnChanged (object source, EventArgs e)
+		{
 		}
 
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged (EventArgs e)
+		{
 			txtView.Font = this.Font;
 			Height = PreferredHeight;
 		}
 
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated (EventArgs e)
+		{
 			base.OnHandleCreated (e);
 		}
 
-		protected override void OnLayout(LayoutEventArgs e) {
+		protected override void OnLayout (LayoutEventArgs e)
+		{
 			base.OnLayout(e);
 		}
 
-		protected override void OnMouseWheel(MouseEventArgs e) {
-			if (e.Delta > 0) 
-			{
+		protected override void OnMouseWheel (MouseEventArgs e)
+		{
+			if (e.Delta > 0)
 				UpButton();
-			} 
-			else if (e.Delta < 0) 
-			{
+			else if (e.Delta < 0)
 				DownButton();
-			}
 		}
 
-		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) {
+		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
+		{
 			if (_InterceptArrowKeys) {
 				if ((e.KeyCode == Keys.Up) || (e.KeyCode == Keys.Down)) {
 					e.Handled = true;
@@ -649,7 +666,8 @@ namespace System.Windows.Forms
 			OnKeyDown(e);
 		}
 
-		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) {
+		protected virtual void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
+		{
 			if (e.KeyChar == '\r') {
 				e.Handled = true;
 				ValidateEditText();
@@ -657,51 +675,60 @@ namespace System.Windows.Forms
 			OnKeyPress(e);
 		}
 
-		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) {
+		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
+		{
 			if (user_edit) {
 				ValidateEditText();
 			}
 		}
 
-		protected virtual void OnTextBoxResize(object source, EventArgs e) {
+		protected virtual void OnTextBoxResize (object source, EventArgs e)
+		{
 			// compute the new height, taking the border into account
 			Height = PreferredHeight;
 
 			// let anchoring reposition the controls
 		}
 
-		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) {
-			if (changing_text) {
+		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
+		{
+			if (changing_text)
 				ChangingText = false;
-			} else {
+			else
 				UserEdit = true;
-			}
 
 			OnTextChanged(e);
 		}
 
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
 			base.SetBoundsCore(x, y, width, height, specified);
 
-			if ((specified & BoundsSpecified.Size) != BoundsSpecified.None) {
+			if ((specified & BoundsSpecified.Size) != BoundsSpecified.None)
 				reseat_controls();
-			}
 		}
 
-		protected abstract void UpdateEditText();
+		protected abstract void UpdateEditText ();
 
-		protected virtual void ValidateEditText() {
+		protected virtual void ValidateEditText ()
+		{
 			// to be overridden by subclassers
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected override void WndProc(ref Message m) {
-
+		protected override void WndProc (ref Message m)
+		{
 			switch((Msg) m.Msg) {
 			case Msg.WM_KEYUP:
 			case Msg.WM_KEYDOWN:
 			case Msg.WM_CHAR:
 				XplatUI.SendMessage (txtView.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+				break;
+			case Msg.WM_SETFOCUS:
+				ActiveControl = txtView;
+				break;
+			case Msg.WM_KILLFOCUS:
+				ActiveControl = null;
 				break;
 			default:
 				base.WndProc (ref m);

@@ -271,6 +271,7 @@ namespace System.Windows.Forms
 			if (sorted && (index >= 0)) // index < 0 means it is already sorting
 				items.PrivSort();
 
+			// XXX this might be wrong - it might be an explict 'Text = ...' assignment.
 			UpdateEditText();
 
 			if (new_item) {
@@ -421,6 +422,8 @@ namespace System.Windows.Forms
 
 			this.txtView.LostFocus +=new EventHandler(TextBoxLostFocus);
 			this.txtView.KeyPress += new KeyPressEventHandler(TextBoxKeyDown);
+
+			UpdateEditText ();
 		}
 		#endregion	// Public Constructors
 

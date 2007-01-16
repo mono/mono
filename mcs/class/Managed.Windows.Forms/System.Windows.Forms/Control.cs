@@ -1228,12 +1228,6 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		internal void SelectChild (Control control)
-		{
-			if (control.IsHandleCreated)
-				XplatUI.SetFocus (control.window.Handle);
-		}
-
 		internal virtual void DoDefaultAction() {
 			// Only here to be overriden by our actual controls; this is needed by the accessibility class
 		}
@@ -3276,6 +3270,13 @@ namespace System.Windows.Forms
 			return has_focus;
 		}
 
+		internal void FocusInternal ()
+		{
+			is_focusing = true;
+			Select(this);
+			is_focusing = false;
+		}
+
 		public Control GetChildAtPoint(Point pt) {
 			// Microsoft's version of this function doesn't seem to work, so I can't check
 			// if we only consider children or also grandchildren, etc.
@@ -4693,14 +4694,14 @@ namespace System.Windows.Forms
 
 			case Msg.WM_KILLFOCUS: {
 				this.has_focus = false;
-				OnLostFocusInternal (EventArgs.Empty);
+				OnLostFocus (EventArgs.Empty);
 				return;
 			}
 
 			case Msg.WM_SETFOCUS: {
 				if (!has_focus) {                
 					this.has_focus = true;
-					OnGotFocusInternal (EventArgs.Empty);
+					OnGotFocus (EventArgs.Empty);
 				}
 				return;
 			}
@@ -5172,16 +5173,6 @@ namespace System.Windows.Forms
 
 		internal virtual void OnPaintInternal(PaintEventArgs e) {
 			// Override me
-		}
-
-		internal virtual void OnGotFocusInternal (EventArgs e)
-		{
-			OnGotFocus (e);
-		}
-
-		internal virtual void OnLostFocusInternal (EventArgs e)
-		{
-			OnLostFocus (e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

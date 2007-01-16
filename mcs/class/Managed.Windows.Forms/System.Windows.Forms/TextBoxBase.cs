@@ -1221,67 +1221,76 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
-				case Msg.WM_KEYDOWN: {
-					if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
-						m.Result = IntPtr.Zero;
-						return;
-					}
-					DefWndProc (ref m);
-					return;
-				}
-
-				case Msg.WM_CHAR: {
-					int	ch;
-
-					if (ProcessKeyMessage(ref m)) {
-						m.Result = IntPtr.Zero;
-						return;
-					}
-
-					if (read_only) {
-						return;
-					}
-
+			case Msg.WM_KEYDOWN: {
+				if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
 					m.Result = IntPtr.Zero;
+					return;
+				}
+				DefWndProc (ref m);
+				return;
+			}
 
-					ch = m.WParam.ToInt32();
+			case Msg.WM_CHAR: {
+				int	ch;
 
-					if (ch == 127) {
-						HandleBackspace(true);
-					} else if (ch >= 32) {
-						if (document.selection_visible) {
-							document.ReplaceSelection("", false);
-						}
+				if (ProcessKeyMessage(ref m)) {
+					m.Result = IntPtr.Zero;
+					return;
+				}
 
-						char c = (char)m.WParam;
-						switch (character_casing) {
-						case CharacterCasing.Upper:
-							c = Char.ToUpper((char) m.WParam);
-							break;
-						case CharacterCasing.Lower:
-							c = Char.ToLower((char) m.WParam);
-							break;
-						}
+				if (read_only) {
+					return;
+				}
 
-						if (document.Length < max_length) {
-							document.InsertCharAtCaret(c, true);
-							OnTextChanged(EventArgs.Empty);
-							CaretMoved(this, null);
-						} else {
-							XplatUI.AudibleAlert();
-						}
-						return;
-					} else if (ch == 8) {
-						HandleBackspace(false);
+				m.Result = IntPtr.Zero;
+
+				ch = m.WParam.ToInt32();
+
+				if (ch == 127) {
+					HandleBackspace(true);
+				} else if (ch >= 32) {
+					if (document.selection_visible) {
+						document.ReplaceSelection("", false);
 					}
 
+					char c = (char)m.WParam;
+					switch (character_casing) {
+					case CharacterCasing.Upper:
+						c = Char.ToUpper((char) m.WParam);
+						break;
+					case CharacterCasing.Lower:
+						c = Char.ToLower((char) m.WParam);
+						break;
+					}
+
+					if (document.Length < max_length) {
+						document.InsertCharAtCaret(c, true);
+						OnTextChanged(EventArgs.Empty);
+						CaretMoved(this, null);
+					} else {
+						XplatUI.AudibleAlert();
+					}
 					return;
+				} else if (ch == 8) {
+					HandleBackspace(false);
 				}
 
-				default: {
-					base.WndProc(ref m);
-					return;
-				}
+				return;
+			}
+
+			case Msg.WM_SETFOCUS:
+				document.CaretHasFocus ();
+				base.WndProc(ref m);
+				break;
+
+			case Msg.WM_KILLFOCUS:
+				document.CaretLostFocus ();
+				base.WndProc(ref m);
+				break;
+
+			default:
+				base.WndProc(ref m);
+				return;
 			}
 		}
 
@@ -1450,18 +1459,6 @@ namespace System.Windows.Forms {
 					line_no++;
 				}
 			#endif
-		}
-
-		internal override void OnGotFocusInternal (EventArgs e)
-		{
-			document.CaretHasFocus ();
-			base.OnGotFocusInternal (e);
-		}
-
-		internal override void OnLostFocusInternal (EventArgs e)
-		{
-			document.CaretLostFocus ();
-			base.OnLostFocusInternal (e);
 		}
 
 		private bool IsDoubleClick (MouseEventArgs e)

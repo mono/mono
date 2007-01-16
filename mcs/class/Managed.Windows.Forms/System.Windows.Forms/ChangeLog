@@ -1,3 +1,32 @@
+2007-01-15  Chris Toshok  <toshok@ximian.com>
+
+	* ListView.cs: drop the *Internal overrides, just do our work in
+	ItemControl's WndProc instead.
+
+	* UpDownBase.cs: a few large changes.  Fix up the Selectable state
+	of the various controls, and forward the events properly (in the
+	same manner as MS) from the textbox to the UpDown.  Also the
+	ActiveControl of the UpDownBase gets set properly now.  Finally,
+	we don't call UpdateEditText from the ctor.  Fixes bug #79957.
+
+	* NumericUpDown.cs: set Text in the ctor.
+
+	* DomainUpDown.cs: call UpdateEditText in the ctor.
+	
+	* TextBox.cs: on ms.net, WM_LBUTTONDOWN sets focus on the textbox,
+	so even a Selectable = false textbox can be focused if you click
+	in it.  Go figure.
+
+	* Control.cs: remove On{Got,Lost}FocusInternal.  Subclasses can
+	just add their handling in their respective WndProc's.  Also add
+	an explicit FocusInternal method that doesn't consult CanFocus
+	before calling Select(this).
+
+	* TextBoxBase.cs: deal with removal of the FocusInternal calls -
+	do our work in WndProc instead.
+
+	* TabControl.cs: same.
+
 2007-01-15  Everaldo Canuto  <everaldo@simios.org>
 
 	* Menu.cs: implement MergeItems and Replace for MenuMerge method.

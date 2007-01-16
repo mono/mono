@@ -64,6 +64,8 @@ namespace System.Windows.Forms {
 			maximum = 100M;
 			minimum = 0.0M;
 			thousands_separator = false;
+
+			Text = "0";
 		}
 		#endregion	// Public Constructors
 
