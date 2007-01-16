@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace ProfessionalColorTest
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class SplitContainerTests
@@ -31,55 +31,7 @@ namespace ProfessionalColorTest
 		}
 		
 		[Test]
-		public void TestNotReleventProperties()
-		{
-			// (MSDN lists are the following as "This property is not relevant to this class.")
-			SplitContainer sc = new SplitContainer ();
-			
-			Assert.AreEqual (false, sc.AutoScroll, "B1");
-			sc.AutoScroll = true;
-			Assert.AreEqual (false, sc.AutoScroll, "B1-2");
-
-			Assert.AreEqual (new Size(0,0), sc.AutoScrollMargin, "B2");
-			sc.AutoScrollMargin = new Size (100, 100);
-			Assert.AreEqual (new Size (100,100), sc.AutoScrollMargin, "B2-2");
-
-			Assert.AreEqual (new Size (0, 0), sc.AutoScrollMinSize, "B3");
-			sc.AutoScrollMinSize = new Size (100, 100);
-			Assert.AreEqual (new Size (100, 100), sc.AutoScrollMinSize, "B3-2");
-
-			//Assert.AreEqual (new Point (0, 0), sc.AutoScrollOffset, "B4");
-			//sc.AutoScrollOffset = new Point (100, 100);
-			//Assert.AreEqual (new Point (100, 100), sc.AutoScrollOffset, "B4-2");
-
-			Assert.AreEqual (new Point (0, 0), sc.AutoScrollPosition, "B5");
-			sc.AutoScrollPosition = new Point (100, 100);
-			Assert.AreEqual (new Point (0, 0), sc.AutoScrollPosition, "B5-2");
-
-			Assert.AreEqual (false, sc.AutoSize, "B6");
-			sc.AutoSize = true;
-			Assert.AreEqual (true, sc.AutoSize, "B6-2");
-
-			//Assert.AreEqual (ImageLayout.Tile, sc.BackgroundImageLayout, "B7");
-			//sc.BackgroundImageLayout =  ImageLayout.Stretch;
-			//Assert.AreEqual (ImageLayout.Stretch, sc.BackgroundImageLayout, "B7-2");
-
-			Assert.AreEqual (null, sc.BindingContext, "B8");
-			sc.BindingContext = new BindingContext();
-			Assert.AreEqual ("System.Windows.Forms.BindingContext", sc.BindingContext.ToString (), "B8-2");
-
-			Assert.AreEqual (new Padding(0), sc.Padding, "B10");
-			sc.Padding = new Padding (7);
-			Assert.AreEqual (new Padding (7), sc.Padding, "B10-2");
-
-			Assert.AreEqual (String.Empty, sc.Text, "B11");
-			sc.Text = "Hello";
-			Assert.AreEqual ("Hello", sc.Text, "B11-2");
-
-		}
-
-		[Test]
-		public void TestRelevantProperties ()
+		public void TestProperties ()
 		{
 			SplitContainer sc = new SplitContainer ();
 			

@@ -18,6 +18,7 @@ System.Windows.Forms/Common.cs
 System.Windows.Forms/CommonDialogsTest.cs
 System.Windows.Forms/ContainerControlTest.cs
 System.Windows.Forms/ControlBindingsConverterTest.cs
+System.Windows.Forms/ControlCollectionTest.cs
 System.Windows.Forms/ControlEventTest.cs
 System.Windows.Forms/ControlTest.cs
 System.Windows.Forms/ControlPaintTest.cs
@@ -59,6 +60,7 @@ System.Windows.Forms/ListViewGroupCollectionTest.cs
 System.Windows.Forms/ListViewItemTest.cs
 System.Windows.Forms/MdiFormTest.cs
 System.Windows.Forms/MessageTest.cs
+System.Windows.Forms/MenuStripTest.cs
 System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MenuItemTest.cs
 System.Windows.Forms/MonthCalendarTest.cs
@@ -89,6 +91,7 @@ System.Windows.Forms/ToolStripComboBoxTest.cs
 System.Windows.Forms/ToolStripControlHostTest.cs
 System.Windows.Forms/ToolStripItemTest.cs
 System.Windows.Forms/ToolStripLabelTest.cs
+System.Windows.Forms/ToolStripMenuItemTest.cs
 System.Windows.Forms/ToolStripProgressBarTest.cs
 System.Windows.Forms/ToolStripSeparatorTest.cs
 System.Windows.Forms/ToolStripTest.cs

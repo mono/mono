@@ -378,7 +378,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("Resize events do not fire because MinimumSize is not considered in the PerformLayout yet")]
 		public void PropertyMinimumSize ()
 		{
 			Control c = new Control ();

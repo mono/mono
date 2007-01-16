@@ -85,6 +85,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("OptimizedDoubleBuffer is disabled due to bug #80447")]
 		public void ControlStyle ()
 		{
 			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
@@ -207,7 +208,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("Needs Control.AutoSizeChanged to fire")]
+		//[Ignore ("Needs Control.AutoSizeChanged to fire")]
 		public void PropertyAutoSize ()
 		{
 			ToolStrip ts = new ToolStrip ();

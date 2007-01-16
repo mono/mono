@@ -1,3 +1,21 @@
+2007-01-16  Jonathan Pobst  <jpobst@novell.com>
+
+	* ControlPropertyEventsTest.cs: Enable PropertyMinimumSize test.
+
+	* ControlTest.cs: Move ControlCollection tests to ControlCollectionTest.cs.
+
+	* EventArgsTest.cs, FlowPanelTests.cs: Change namespace to match all other tests.
+
+	* FormTest.cs: Add tests for FormClosed event and Show (IWin32Window).
+
+	* MenuStripTest.cs: Add test for MDI.
+
+	* SplitContainerTest.cs: Change namespace, remove TestNotRelaventProperties.
+
+	* ToolStripMenuItemTest.cs: Add test for MDI.	
+
+	* ToolStripTest.cs: Ignore ControlStyle, Un-Ignore PropertyAutoSize.
+
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiFormTest.cs: Added tests for ActiveChild for mdi parents.

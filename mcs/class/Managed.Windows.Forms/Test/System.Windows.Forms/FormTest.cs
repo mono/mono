@@ -547,6 +547,59 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual ("Closing;FormClosing [Reason:UserClosing - Cancel:True]", events, "A1");
 		}
+
+		[Test]
+		public void FormClosedEvents ()
+		{
+			// Standard Closed
+			Form f = new Form ();
+			string events = string.Empty;
+
+			f.Closed += new EventHandler (delegate (Object obj, EventArgs e) { events += ("Closed;"); });
+			f.FormClosed += new FormClosedEventHandler (delegate (Object obj, FormClosedEventArgs e) { events += string.Format ("FormClosed [Reason:{0}]", e.CloseReason); });
+
+			f.Show ();
+			f.Close ();
+
+			Assert.AreEqual ("Closed;FormClosed [Reason:UserClosing]", events, "A1");
+		}
+
+		[Test]
+		public void ShowWithOwner ()
+		{
+			Form f = new Form ();
+			Button b = new Button ();
+			f.Controls.Add (b);
+
+			Form f2 = new Form ();
+
+			f2.Show (f);
+
+			Assert.AreSame (f, f2.Owner, "A1");
+
+			f2 = new Form ();
+
+			f2.Show (b);
+			Assert.AreSame (f, f2.Owner, "A2");
+
+			Button b2 = new Button ();
+			f2 = new Form ();
+
+			f2.Show (b2);
+			Assert.AreEqual (null, f2.Owner, "A3");
+
+			f2 = new Form ();
+			f2.Show (null);
+			Assert.AreEqual (null, f2.Owner, "A4");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ShowWithOwnerIOE ()
+		{
+			Form f = new Form ();
+			f.Show (f);
+		}
 #endif
 
 		private bool RunningOnUnix {

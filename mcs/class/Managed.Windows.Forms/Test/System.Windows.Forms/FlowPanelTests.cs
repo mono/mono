@@ -1,12 +1,12 @@
+#if NET_2_0
 using System;
 using System.Text;
 using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
-
-#if NET_2_0
 using System.Collections.Generic;
-namespace ProfessionalColorTest
+
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture()]	
 	public class FlowPanelTests

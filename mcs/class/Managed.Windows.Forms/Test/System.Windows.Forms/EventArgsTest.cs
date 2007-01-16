@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace MonoTestSuite
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class EventArgsTest
