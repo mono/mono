@@ -1,3 +1,9 @@
+
+Tue Jan 16 11:28:45 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, patch-info.h, Makefile.am, aot-compiler.c: reduce
+	relocations and put the patch info names close to the enum definition.
+
 2007-01-15 Mark Mason <mason@broadcom.com>
 
 	* basic.cs, exceptions.cs: break up large tests to increase debugability.
