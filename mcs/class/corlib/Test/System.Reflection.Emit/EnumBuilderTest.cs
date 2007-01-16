@@ -271,6 +271,15 @@ namespace MonoTests.System.Reflection.Emit {
 				BindingFlags.Instance | BindingFlags.Public);
 			AssertEquals (0, ctors.Length);
 		}
+		
+		[Test]
+		public void TestIsValue__SpecialName ()
+		{
+			EnumBuilder enumBuilder = GenerateEnum ();
+			Type enumType = enumBuilder.CreateType ();
+			FieldInfo value = enumType.GetField ("value__", BindingFlags.Instance | BindingFlags.NonPublic);
+			AssertEquals ("value__ must have FieldAttributes.RTSpecialName set", FieldAttributes.RTSpecialName, value.Attributes & FieldAttributes.RTSpecialName);
+		}
 
 		private static void VerifyType (Type type)
 		{
