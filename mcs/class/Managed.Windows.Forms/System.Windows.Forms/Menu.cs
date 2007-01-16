@@ -263,24 +263,43 @@ namespace System.Windows.Forms
 			if (menuSrc == this)
 				throw new ArgumentException ("The menu cannot be merged with itself");
 			
-			for (int i = 0; i < menuSrc.MenuItems.Count; i++){
-								
-				switch (menuSrc.MenuItems[i].MergeType) {
+			for (int i = 0; i < menuSrc.MenuItems.Count; i++) {
+				
+				MenuItem sourceitem = menuSrc.MenuItems[i];
+				
+				switch (sourceitem.MergeType) {
 					case MenuMerge.Remove:	// Item not included
 						break;
 						
 					case MenuMerge.Add:
 					{
-						int pos = FindMergePosition (menuSrc.MenuItems[i].MergeOrder);						
-						MenuItems.Add (pos, menuSrc.MenuItems[i].CloneMenu ());
+						int pos = FindMergePosition (sourceitem.MergeOrder);						
+						MenuItems.Add (pos, sourceitem.CloneMenu ());
 						break;					
 					}
 					
 					case MenuMerge.Replace:
 					case MenuMerge.MergeItems:
 					{
-						int pos = FindMergePosition (menuSrc.MenuItems[i].MergeOrder - 1);						
-						MenuItems.Insert (pos, menuSrc.MenuItems[i].CloneMenu ());
+						for (int pos = FindMergePosition (sourceitem.MergeOrder-1); pos <= MenuItems.Count; pos++) {
+							
+							if  ((pos >= MenuItems.Count) || (MenuItems[pos].MergeOrder != sourceitem.MergeOrder)) {
+								MenuItems.Add (pos, sourceitem.CloneMenu ());
+								break;
+							}
+							
+							MenuItem mergeitem = MenuItems[pos];
+							
+							if (mergeitem.MergeType != MenuMerge.Add) {
+								if ((sourceitem.MergeType == MenuMerge.MergeItems) && (mergeitem.MergeType == MenuMerge.MergeItems)) {
+									mergeitem.MergeMenu (sourceitem);
+								} else {
+									MenuItems.Remove (sourceitem);
+									MenuItems.Add (pos, sourceitem.CloneMenu ());
+								}
+								break;
+							}
+						}
 						
 						break;
 					}
