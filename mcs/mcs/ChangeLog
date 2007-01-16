@@ -1,3 +1,25 @@
+2007-01-16  Marek Safar  <marek.safar@gmail.com>
+
+	* const.cs (ResolveValue): Updated after constant conversion was made more
+	generic.
+
+	* constant.cs (GetAttributableValue): constant to object conversion is
+	used for attributes only.
+	(IntConstant.ConvertImplicitly): Moved from convert to be used in all
+	constant conversions.
+	(LongConstant.ConvertImplicitly): Ditto.
+
+	* convert.cs (ImplicitNumericConversion): Extracted constant bussiness.
+	(ImplicitConversionStandard): Handle constant conversion as extra step.
+	It solves the issue when constant conversion was called indirectly like
+	inside array initializer and constant folding was skipped.
+
+	* literal.cs (NullLiteral.ConvertImplicitly): Fixed an issue exposed by
+	this change.
+
+	* statement.cs(ImplicitConversionStandard): Updated after constant
+	conversion was made more generic.
+
 2007-01-16  Sergey P. Kondratyev <se@unicom.tomica.ru>
 
 	* expression.cs (As.DoResolve): Use GenericConstraints instead of

@@ -41,6 +41,11 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
+			if (valueType == TypeManager.object_type) {
+				value = GetTypedValue ();
+				return true;
+			}
+
 			Constant c = ImplicitConversionRequired (valueType, loc);
 			if (c == null) {
 				value = null;
@@ -82,9 +87,6 @@ namespace Mono.CSharp {
 		{
 			if (this.type == type)
 				return this;
-
-			if (type == TypeManager.object_type)
-				return new EmptyConstantCast (this, type);
 
 			if (Convert.ImplicitNumericConversion (this, type) == null) 
 				return null;
@@ -925,6 +927,62 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		public override Constant ConvertImplicitly (Type type)
+		{
+			if (this.type == type)
+				return this;
+
+			Constant c = TryImplicitIntConversion (type);
+			if (c != null)
+				return c;
+
+			return base.ConvertImplicitly (type);
+		}
+
+		/// <summary>
+		///   Attempts to perform an implicit constant conversion of the IntConstant
+		///   into a different data type using casts (See Implicit Constant
+		///   Expression Conversions)
+		/// </summary>
+		Constant TryImplicitIntConversion (Type target_type)
+		{
+			if (target_type == TypeManager.sbyte_type) {
+				if (Value >= SByte.MinValue && Value <= SByte.MaxValue)
+					return new SByteConstant ((sbyte) Value, loc);
+			} 
+			else if (target_type == TypeManager.byte_type) {
+				if (Value >= Byte.MinValue && Value <= Byte.MaxValue)
+					return new ByteConstant ((byte) Value, loc);
+			} 
+			else if (target_type == TypeManager.short_type) {
+				if (Value >= Int16.MinValue && Value <= Int16.MaxValue)
+					return new ShortConstant ((short) Value, loc);
+			} 
+			else if (target_type == TypeManager.ushort_type) {
+				if (Value >= UInt16.MinValue && Value <= UInt16.MaxValue)
+					return new UShortConstant ((ushort) Value, loc);
+			} 
+			else if (target_type == TypeManager.uint32_type) {
+				if (Value >= 0)
+					return new UIntConstant ((uint) Value, loc);
+			} 
+			else if (target_type == TypeManager.uint64_type) {
+				//
+				// we can optimize this case: a positive int32
+				// always fits on a uint64.  But we need an opcode
+				// to do it.
+				//
+				if (Value >= 0)
+					return new ULongConstant ((ulong) Value, loc);
+			} 
+			else if (target_type == TypeManager.double_type)
+				return new DoubleConstant ((double) Value, loc);
+			else if (target_type == TypeManager.float_type)
+				return new FloatConstant ((float) Value, loc);
+
+			return null;
+		}
 	}
 
 	public class UIntConstant : IntegralConstant {
@@ -1117,6 +1175,14 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override Constant ConvertImplicitly (Type type)
+		{
+			if (Value >= 0 && type == TypeManager.uint64_type) {
+				return new ULongConstant ((ulong) Value, loc);
+			}
+
+			return base.ConvertImplicitly (type);
+		}
 	}
 
 	public class ULongConstant : IntegralConstant {

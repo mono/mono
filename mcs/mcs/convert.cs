@@ -436,30 +436,6 @@ namespace Mono.CSharp {
 								    Type target_type)
 		{
 			Type expr_type = expr.Type;
-
-			//
-			// Attempt to do the implicit constant expression conversions
-
-			if (expr is Constant){
-				if (expr is IntConstant){
-					Expression e;
-
-					e = TryImplicitIntConversion (target_type, (IntConstant) expr);
-
-					if (e != null)
-						return e;
-				} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
-					//
-					// Try the implicit constant expression conversion
-					// from long to ulong, instead of a nice routine,
-					// we just inline it
-					//
-					long v = ((LongConstant) expr).Value;
-					if (v >= 0)
-						return new ULongConstant ((ulong) v, expr.Location);
-				}
-			}
-
 			Type real_target_type = target_type;
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -1299,6 +1275,23 @@ namespace Mono.CSharp {
 			if (expr_type.Equals (target_type) && !TypeManager.IsNullType (expr_type))
 				return expr;
 
+			//
+			// Attempt to do the implicit constant expression conversions
+			//
+			Constant c = expr as Constant;
+			if (c != null) {
+				//
+				// If `target_type' is an interface and the type of `ic' implements the interface
+				// e.g. target_type is IComparable, IConvertible, IFormattable
+				//
+				if (c.Type == TypeManager.int32_type && target_type.IsInterface && target_type.IsAssignableFrom (c.Type))
+					return new BoxedCast (c, target_type);
+
+				c = c.ConvertImplicitly (target_type);
+				if (c != null)
+					return c;
+			}
+
 			e = ImplicitNumericConversion (expr, target_type);
 			if (e != null)
 				return e;
@@ -1352,69 +1345,6 @@ namespace Mono.CSharp {
 				if (errors != Report.Errors)
 					return new EmptyCast (expr, target_type);
 			}
-
-			return null;
-		}
-
-		/// <summary>
-		///   Attempts to perform an implicit constant conversion of the IntConstant
-		///   into a different data type using casts (See Implicit Constant
-		///   Expression Conversions)
-		/// </summary>
-		static public Expression TryImplicitIntConversion (Type target_type, IntConstant ic)
-		{
-			int value = ic.Value;
-
-			if (target_type == TypeManager.sbyte_type){
-				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return new SByteConstant ((sbyte) value, ic.Location);
-			} else if (target_type == TypeManager.byte_type){
-				if (value >= Byte.MinValue && value <= Byte.MaxValue)
-					return new ByteConstant ((byte) value, ic.Location);
-			} else if (target_type == TypeManager.short_type){
-				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return new ShortConstant ((short) value, ic.Location);
-			} else if (target_type == TypeManager.ushort_type){
-				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return new UShortConstant ((ushort) value, ic.Location);
-			} else if (target_type == TypeManager.uint32_type){
-				if (value >= 0)
-					return new UIntConstant ((uint) value, ic.Location);
-			} else if (target_type == TypeManager.uint64_type){
-				//
-				// we can optimize this case: a positive int32
-				// always fits on a uint64.  But we need an opcode
-				// to do it.
-				//
-				if (value >= 0)
-					return new ULongConstant ((ulong) value, ic.Location);
-			} else if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) value, ic.Location);
-			else if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) value, ic.Location);
-
-			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
-				Type underlying = TypeManager.EnumToUnderlying (target_type);
-				Constant e = (Constant) ic;
-
-				//
-				// Possibly, we need to create a different 0 literal before passing
-				// to EnumConstant
-				//
-				if (underlying == TypeManager.int64_type)
-					e = new LongLiteral (0, ic.Location);
-				else if (underlying == TypeManager.uint64_type)
-					e = new ULongLiteral (0, ic.Location);
-
-				return new EnumConstant (e, target_type);
-			}
-
-			//
-			// If `target_type' is an interface and the type of `ic' implements the interface
-			// e.g. target_type is IComparable, IConvertible, IFormattable
-			//
-			if (target_type.IsInterface && target_type.IsAssignableFrom (ic.Type))
-				return new BoxedCast (ic, target_type);
 
 			return null;
 		}

@@ -178,15 +178,16 @@ namespace Mono.CSharp {
 			if (value == null)
 				return false;
 
-			value = value.ImplicitConversionRequired (MemberType, Location);
-			if (value == null)
-				return false;
-
-			if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue) {
-				Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
+			Constant c  = value.ConvertImplicitly (MemberType);
+			if (c == null) {
+				if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue)
+					Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
+				else
+					value.Error_ValueCannotBeConverted (null, Location, MemberType, false);
 				return false;
 			}
 
+			value = c;
 			return true;
 		}
 

@@ -168,7 +168,6 @@ namespace Mono.CSharp {
 				if (gc != null && gc.IsReferenceType)
 					return new EmptyConstantCast (this, targetType);
 
-				Error_ValueCannotBeConverted (null, loc, targetType, false);
 				return null;
 			}
 
