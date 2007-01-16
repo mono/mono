@@ -70,6 +70,8 @@ namespace System.Web.UI.HtmlControls
 		[MonoTODO ("why override?")]
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+			if (Href.Length > 0)
+				Href = ResolveClientUrl (Href);
 			base.RenderAttributes (writer);
 		}
 	}
