@@ -1,4 +1,10 @@
-2007-01-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+2007-01-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: remover TemplateSourceDirectory propery
+	* Control.cs: moved TemplateSourceDirectory from TemplateControl for
+	TARGET_JVM, fixed AppRelativeTemplateSourceDirectory
+
+2007-01-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: added 2.0 event names for wiring up
 

@@ -162,14 +162,22 @@ namespace System.Web.UI
 			}
 		}
 
-		string _appRelativeTemplateSourceDirectory = "~/";
+		string _appRelativeTemplateSourceDirectory = null;
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string AppRelativeTemplateSourceDirectory 
 		{
-			get { return _appRelativeTemplateSourceDirectory; }
+			get {
+				if (_appRelativeTemplateSourceDirectory != null)
+					return _appRelativeTemplateSourceDirectory;
+
+				if (Parent != null)
+					return Parent.AppRelativeTemplateSourceDirectory;
+
+				return "~/";
+			}
 			[EditorBrowsable (EditorBrowsableState.Never)]
 			set	{ _appRelativeTemplateSourceDirectory = value; }
 		}
@@ -373,12 +381,48 @@ namespace System.Web.UI
 		}
 #endif		
 
+#if TARGET_JVM
+			private string _templateSourceDir;
+			public virtual string TemplateSourceDirectory
+			{
+				get
+				{
+					int location = 0;
+					if (_templateSourceDir == null) {
+						string tempSrcDir = _appRelativeTemplateSourceDirectory;
+						if (tempSrcDir == null && Parent != null)
+							tempSrcDir = Parent.TemplateSourceDirectory;
+						if (tempSrcDir != null && tempSrcDir.Length > 1) {
+							location = tempSrcDir.IndexOf ('/', 1);
+							if (location != -1)
+								tempSrcDir = tempSrcDir.Substring (location + 1);
+							else
+								tempSrcDir = string.Empty;
+						}
+						string answer = HttpRuntime.AppDomainAppVirtualPath;
+						if (tempSrcDir == null)
+							tempSrcDir = "";
+
+						if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
+							tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
+
+						if (tempSrcDir.StartsWith ("/") || tempSrcDir.Length == 0)
+							_templateSourceDir = answer + tempSrcDir;
+						else
+							_templateSourceDir = answer + "/" + tempSrcDir;
+					}
+					return _templateSourceDir;
+				}
+			}
+
+#else
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
                 public virtual string TemplateSourceDirectory {
 			get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
                 }
+#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]

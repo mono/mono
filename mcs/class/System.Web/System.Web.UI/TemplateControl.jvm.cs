@@ -63,7 +63,6 @@ namespace System.Web.UI {
 						BindingFlags.NonPublic |
 						BindingFlags.Instance;
 
-		private string _templateSourceDir;
 		private static string hashTableMutex = "lock"; //used to sync access ResourceHash property
 		private byte [] GetResourceBytes (Type type)
 		{
@@ -117,49 +116,6 @@ namespace System.Web.UI {
 		{
 			get { return null; }
 		}
-
-		[MonoTODO]
-		// This shouldnt be there, Page.TemplateSourceDirectory must know to get 
-		// the right directory of the control.
-		public override string TemplateSourceDirectory
-		{
-			get
-			{
-#if NET_2_0
-				if (this is MasterPage)
-					// because MasterPage also has implementation of this property,
-					// but not always gets the right directory, in case where master page
-					// is in the root of webapp and the page that uses it is in sub folder.
-					return base.TemplateSourceDirectory;
-#endif
-				int location = 0;
-				if (_templateSourceDir == null) {
-					string tempSrcDir = AppRelativeTemplateSourceDirectory;
-					if (tempSrcDir == null && Parent != null)
-						tempSrcDir = Parent.TemplateSourceDirectory;
-					if (tempSrcDir != null && tempSrcDir.Length > 1) {
-						location = tempSrcDir.IndexOf ('/', 1);
-						if (location != -1)
-							tempSrcDir = tempSrcDir.Substring (location + 1);
-						else
-							tempSrcDir = string.Empty;
-					}
-					string answer = HttpRuntime.AppDomainAppVirtualPath;
-					if (tempSrcDir == null)
-						tempSrcDir = "";
-
-					if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
-						tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
-
-					if (tempSrcDir.StartsWith ("/") || tempSrcDir.Length == 0)
-						_templateSourceDir = answer + tempSrcDir;
-					else
-						_templateSourceDir = answer + "/" + tempSrcDir;
-				}
-				return _templateSourceDir;
-			}
-		}
-
 
 		#region Constructor
 		protected TemplateControl ()
