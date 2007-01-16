@@ -83,7 +83,6 @@ namespace System.Windows.Forms
 		bool                    is_recreating; // tracks if the handle for the control is being recreated
 		bool                    causes_validation; // tracks if validation is executed on changes
 		bool                    is_focusing; // tracks if Focus has been called on the control and has not yet finished
-		bool                    container_selected; // true if Select() or Focus() is called on a container, to prevent child controls from raising their GotFocus event
 		int                     tab_index; // position in tab order of siblings
 		bool                    tab_stop; // is the control a tab stop?
 		bool                    is_disposed; // has the window already been disposed?
