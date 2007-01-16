@@ -1,3 +1,8 @@
+2007-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Form.cs: Provide meaningful message when MdiParent is assigned a
+	Form that is not an MdiContainer.
+
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiWindowManager.cs: Fix NRE when merging menus and main form

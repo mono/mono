@@ -613,7 +613,8 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != null && !value.IsMdiContainer)
-					throw new ArgumentException ();
+					throw new ArgumentException ("Form that was specified to be "
+						+ "the MdiParent for this form is not an MdiContainer.");
 
 				if (mdi_parent != null) {
 					mdi_parent.MdiContainer.Controls.Remove (this);
