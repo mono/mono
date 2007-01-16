@@ -60,8 +60,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This method is only valid for persisted <System.Object[]> elements.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddNewProperty1 ()
 		{
 			string name = "name";
@@ -73,8 +72,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This method is only valid for persisted <System.Object[]> elements.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddNewProperty2 ()
 		{
 			Engine engine;
@@ -333,7 +331,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException on MS .NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestRemoveProperty1 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();
@@ -456,7 +455,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("It doesn't throw an exception on MS .NET 2.0")]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestRemoveProperty7 ()
 		{
 			Engine engine;

@@ -138,7 +138,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Throws InvalidCastException on MS NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (InvalidCastException))]
 		public void TestCopyTo3 ()
 		{
 			string documentString = @"

@@ -162,7 +162,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("InvalidCastException on MS .NET 2.0")]
+		[ExpectedException (typeof (InvalidCastException))]
 		public void TestCopyTo3 ()
 		{
                         string documentString = @"
@@ -303,7 +303,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException on MS .NET 2.0")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestRemoveTarget2 ()
 		{
                         string documentString = @"

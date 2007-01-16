@@ -162,7 +162,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NRE on .NET 2.0")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestRegisterLogger ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -183,7 +184,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NRE on .NET 2.0")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestUnloadProject2 ()
 		{
 			Engine a = new Engine (Consts.BinPath);

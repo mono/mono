@@ -161,6 +161,42 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Ignore ("Too detailed probably (implementation specific)")]
+		public void TestAddNewItem1 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItem item = project.AddNewItem ("A", "B");
+
+			Assert.AreEqual (1, project.ItemGroups.Count, "A1");
+			project.ItemGroups.CopyTo (groups, 0);
+			Assert.AreEqual (1, groups [0].Count, "A2");
+			Assert.AreEqual ("B", groups [0] [0].Include, "A3");
+			Assert.AreEqual ("B", groups [0] [0].FinalItemSpec, "A4");
+			Assert.AreEqual ("A", groups [0] [0].Name, "A5");
+			//Assert.AreNotSame (item, groups [0] [0], "A6");
+			Assert.IsFalse (object.ReferenceEquals (item, groups [0] [0]), "A6");
+
+			Assert.AreEqual (1, project.EvaluatedItems.Count, "A7");
+			Assert.AreEqual ("B", project.EvaluatedItems [0].Include, "A8");
+			Assert.AreEqual ("B", project.EvaluatedItems [0].FinalItemSpec, "A9");
+			Assert.AreEqual ("A", project.EvaluatedItems [0].Name, "A10");
+			//Assert.AreNotSame (item, project.EvaluatedItems [0], "A11");
+			Assert.IsFalse (object.ReferenceEquals (item, project.EvaluatedItems [0]), "A11");
+		}
+
+		[Test]
 		public void TestAddNewItemGroup ()
 		{
 			Engine engine;
@@ -665,7 +701,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException under MS .NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestGlobalProperties3 ()
 		{
 			Engine engine;
@@ -684,7 +721,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException under MS .NET 2.0")]
+		[Ignore ("needs rewriting")]
 		public void TestGlobalProperties4 ()
 		{
 			Engine engine;
@@ -710,7 +747,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("It should throw an exception under MS NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestGlobalProperties5 ()
 		{
 			Engine engine;
@@ -776,7 +814,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException on MS .NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestRemoveItemGroup1 ()
 		{
 			Engine engine;
@@ -810,7 +849,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException on MS .NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestRemoveItem1 ()
 		{
 			Engine engine;
@@ -839,7 +879,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException),
 					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.")]
-		[Category ("NotWorking")]
 		public void TestRemoveItem3 ()
 		{
 			Engine engine;
@@ -856,7 +895,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Should throw an exception")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestRemoveItem4 ()
 		{
 			Engine engine;
@@ -946,7 +986,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsNull (project.SchemaFile, "A1");
 		}
 		[Test]
-		[Ignore ("NRE on .NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestSetProjectExtensions1 ()
 		{
 			Engine engine;

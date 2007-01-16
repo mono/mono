@@ -187,6 +187,40 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestAddNewItem6 ()
+		{
+			Engine engine;
+			Project project;
+			string name = "name";
+			string include = "include";
+			BuildItemGroup [] groups = new BuildItemGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup />
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.ItemGroups.CopyTo (groups, 0);
+			BuildItem bi = groups [0].AddNewItem (name, include, true);
+
+			Assert.AreEqual (String.Empty, bi.Condition, "A1");
+			Assert.AreEqual (String.Empty, bi.Exclude, "A2");
+			Assert.AreEqual (include, bi.FinalItemSpec, "A3");
+			Assert.AreEqual (Utilities.Escape (include), bi.Include, "A4");
+			Assert.IsFalse (bi.IsImported, "A5");
+			Assert.AreEqual (name, bi.Name, "A6");
+			//Assert.AreSame (bi, groups [0] [0], "A7");
+			Assert.IsTrue (object.ReferenceEquals (bi, groups [0][0]), "A7");
+			//Assert.AreNotSame (bi, project.EvaluatedItems [0], "A8");
+			Assert.IsFalse (object.ReferenceEquals (bi, project.EvaluatedItems [0]), "A8");
+		}
+
+		[Test]
 		public void TestClear1 ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();

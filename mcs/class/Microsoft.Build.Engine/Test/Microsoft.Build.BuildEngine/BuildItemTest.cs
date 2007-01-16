@@ -80,7 +80,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("NullRefException on MS .NET 2.0")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestCtor4 ()
 		{
 			new BuildItem (null, (ITaskItem) null);
@@ -101,7 +102,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("IndexOutOfRange on MS .NET 2.0")]
+		[Category ("NotDotNet")] //IndexOutOfRange throw by MS .NET 2.0
 		public void TestCtor7 ()
 		{
 			new BuildItem (String.Empty, "something");
@@ -205,9 +206,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (metadataValue, destination.GetEvaluatedMetadata (metadataName), "A2");
 		}
 
-		// NOTE: it's weird that they don't throw ArgumentNullException
 		[Test]
-		[Ignore ("MS throws NullRefException")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestCopyCustomMetadataTo2 ()
 		{
 			BuildItem item = new BuildItem ("name", "include");

@@ -40,7 +40,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		Project			project;
 		
 		[Test]
-		[Ignore ("NullRefException on MS NET 2.0")]
+		[Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCopyTo1 ()
 		{
 			string documentString = @"
@@ -81,7 +82,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Throws InvalidCastException on MS NET 2.0")]
+		[ExpectedException (typeof (InvalidCastException))]
 		public void TestCopyTo3 ()
 		{
 			string documentString = @"
