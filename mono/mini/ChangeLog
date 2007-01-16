@@ -1,4 +1,8 @@
 
+Tue Jan 16 13:14:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle also floating point values in initialize_array.
+
 Tue Jan 16 12:42:40 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, aot-runtime.c, aot-compiler.c: enable aot compilation of
