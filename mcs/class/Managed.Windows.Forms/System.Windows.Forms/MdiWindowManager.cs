@@ -131,7 +131,12 @@ namespace System.Windows.Forms {
 		private MainMenu CreateMergedMenu ()
 		{
 			Form parent = (Form) mdi_container.Parent;
-			MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
+			MainMenu clone;
+			if (parent.Menu != null)
+				clone = (MainMenu) parent.Menu.CloneMenu ();
+			else
+				clone = new MainMenu ();
+				
 			if (form.WindowState == FormWindowState.Maximized) {
 				
 			}

@@ -107,6 +107,16 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		internal void SendFocusToActiveChild ()
+		{
+			Form active = this.ActiveMdiChild;
+			if (active == null) {
+				ParentForm.SendControlFocus (this);
+			} else {
+				active.SendControlFocus (active);
+			}
+		}
+
 		internal bool HorizontalScrollbarVisible {
 			get { return hbar != null && hbar.Visible; }
 		}
@@ -158,14 +168,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc(ref Message m) {
-			/*
-			switch ((Msg) m.Msg) {
-				case Msg.WM_PAINT: {				
-					Console.WriteLine ("ignoring paint");
-					return;
-				}
-			}
-			*/
 			switch ((Msg)m.Msg) {
 			case Msg.WM_NCCALCSIZE:
 				XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
@@ -672,6 +674,7 @@ namespace System.Windows.Forms {
 			Form current = (Form) Controls [0];
 			form.SuspendLayout ();
 			form.BringToFront ();
+			form.SendControlFocus (form);
 			form.ResumeLayout(false);
 			SetWindowStates ((MdiWindowManager) form.window_manager);
 			if (current != form) {

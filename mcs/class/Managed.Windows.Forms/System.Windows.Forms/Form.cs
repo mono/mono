@@ -127,7 +127,7 @@ namespace System.Windows.Forms {
 		private void SelectActiveControl ()
 		{
 			if (this.IsMdiContainer) {
-				SendControlFocus (this.mdi_container);
+				mdi_container.SendFocusToActiveChild ();
 				return;
 			}
 				
@@ -1262,7 +1262,7 @@ namespace System.Windows.Forms {
 				if (IsMdiChild) {
 					MdiParent.ActivateMdiChild (this);
 				} else if (IsMdiContainer) {
-					SendControlFocus (mdi_container);
+					mdi_container.SendFocusToActiveChild ();
 				} else {
 					active = ActiveForm;
 					if ((active != null) && (this != active)) {
@@ -1523,8 +1523,11 @@ namespace System.Windows.Forms {
 					XplatUI.SetTopmost(owned_forms[i].window.Handle, window.Handle, true);
 			}
 			
-			if (window_manager != null && window_state != FormWindowState.Normal) {
-				window_manager.SetWindowState (FormWindowState.Normal, window_state);
+			if (window_manager != null) {
+				if (window_state != FormWindowState.Normal) {
+					window_manager.SetWindowState (FormWindowState.Normal, window_state);
+				}
+				XplatUI.RequestNCRecalc (window.Handle);
 			}
 
 		}
@@ -1740,6 +1743,24 @@ namespace System.Windows.Forms {
 			// Give our menu a shot
 			if (ActiveMenu != null) {
 				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
+			}
+
+			if (IsMdiChild) {
+				switch (keyData)
+				{
+				case Keys.Control | Keys.F4:
+				case Keys.Control | Keys.Shift | Keys.F4:
+					Close ();
+					return true;
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.F6:
+					MdiParent.SelectNextControl (MdiParent.ActiveControl, false, false, true, true);
+					return true;
+				case Keys.Control | Keys.Shift | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.F6:
+					MdiParent.SelectNextControl (MdiParent.ActiveControl, true, false, true, true);
+					return true;
+				}
 			}
 
 			return false;
@@ -1981,6 +2002,10 @@ namespace System.Windows.Forms {
 					if (ActiveControl != null && ActiveControl != this) {
 						ActiveControl.Focus();
 						return;	// FIXME - do we need to run base.WndProc, even though we just changed focus?
+					}
+					if (IsMdiContainer) {
+						mdi_container.SendFocusToActiveChild ();
+						return;
 					}
 					base.WndProc(ref m);
 					return;

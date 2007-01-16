@@ -1,3 +1,17 @@
+2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiWindowManager.cs: Fix NRE when merging menus and main form
+	doesn't have a menu.
+
+	* Form.cs: Request NCRecalc after creating a mdi child window.
+	Implement mdi key handling (Ctrl+F4, Ctrl+Shift+F4, Ctrl+Tab, 
+	Ctrl+Shift+Tab, Ctrl+F6 and Ctrl+Shift+F6).
+	
+	* MdiClient.cs: Add new method SendFocusToActiveChild that either
+	sends keyboard focus to the active child, or to the MdiClient
+	if there are no child forms.
+	
+	* 
 2007-01-15  Chris Toshok  <toshok@ximian.com>
 
 	* ListView.cs: drop the *Internal overrides, just do our work in
