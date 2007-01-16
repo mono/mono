@@ -293,7 +293,7 @@ namespace System.Web {
 		{
 			Table table = CreateTable ();
 			
-			int page_vs_size = GetViewStateSize (page, page.GetSavedViewState ());
+			int page_vs_size = page == null ? 0 : GetViewStateSize (page, page.GetSavedViewState ());
 			table.Rows.Add (AltRow ("Control Tree"));
 			table.Rows.Add (SubHeadRow ("Control Id", "Type",
 						"Render Size Bytes (including children)",
