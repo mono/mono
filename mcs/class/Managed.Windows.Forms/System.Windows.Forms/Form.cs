@@ -90,6 +90,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
 		private bool			show_icon;
+		private bool			shown_raised;  // The shown event is only raised once
 #endif
 		#endregion	// Local Variables
 
@@ -550,6 +551,12 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		
+		[Browsable (false)]
+		public new Padding Margin {
+			get { return base.Margin; }
+			set { base.Margin = value; }
+		}
 #endif
 
 		[DefaultValue(true)]
@@ -872,8 +879,6 @@ namespace System.Windows.Forms {
 					UpdateStyles ();
 					
 					XplatUI.SetIcon (this.Handle, value == true ? this.Icon : null);
-					
-					Message msg = new Message ();
 					XplatUI.InvalidateNC (this.Handle);
 				}
 			}
@@ -964,6 +969,16 @@ namespace System.Windows.Forms {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
+
+#if NET_2_0
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1307,6 +1322,21 @@ namespace System.Windows.Forms {
 		public void SetDesktopLocation(int x, int y) {
 			DesktopLocation = new Point(x, y);
 		}
+
+#if NET_2_0
+		public void Show (IWin32Window owner)
+		{
+			if (owner == null)
+				this.Owner = null;
+			else
+				this.Owner = Control.FromHandle (owner.Handle).TopLevelControl as Form;
+
+			if (owner == this)
+				throw new InvalidOperationException ("The 'owner' cannot be the form being shown.");
+
+			base.Show ();
+		}
+#endif
 
 		public DialogResult ShowDialog() {
 			return ShowDialog(this.owner);
@@ -1897,6 +1927,14 @@ namespace System.Windows.Forms {
 			has_been_visible = value || has_been_visible;
 			base.SetVisibleCore (value);
 			is_changing_visible_state = false;
+			
+#if NET_2_0
+			// Shown event is only called once, the first time the form is made visible
+			if (value && !shown_raised) {
+				this.OnShown (EventArgs.Empty);
+				shown_raised = true;
+			}
+#endif
 		}
 
 		protected override void UpdateDefaultButton() {
@@ -1939,6 +1977,9 @@ namespace System.Windows.Forms {
 					if (!is_modal) {
 						if (!FireClosingEvents (CloseReason.UserClosing)) {
 							OnClosed (EventArgs.Empty);
+#if NET_2_0
+							OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
+#endif
 							closing = true;
 							Dispose ();
 						}
@@ -1952,6 +1993,9 @@ namespace System.Windows.Forms {
 						}
 						else {
 							OnClosed (EventArgs.Empty);
+#if NET_2_0
+							OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
+#endif
 							closing = true;
 							Hide ();
 						}
@@ -2456,6 +2500,38 @@ namespace System.Windows.Forms {
 			remove { base.TabStopChanged -= value; }
 		}
 
+
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		protected override void OnBackgroundImageChanged (EventArgs e)
+		{
+			base.OnBackgroundImageChanged (e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		protected override void OnBackgroundImageLayoutChanged (EventArgs e)
+		{
+			base.OnBackgroundImageLayoutChanged (e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnEnabledChanged (EventArgs e)
+		{
+			base.OnEnabledChanged (e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnEnter (EventArgs e)
+		{
+			base.OnEnter (e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnFormClosed (FormClosedEventArgs e) {
+			FormClosedEventHandler eh = (FormClosedEventHandler)(Events[FormClosedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
 		// Consider calling FireClosingEvents instead of calling this directly.
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnFormClosing (FormClosingEventArgs e)
@@ -2463,6 +2539,21 @@ namespace System.Windows.Forms {
 			FormClosingEventHandler eh = (FormClosingEventHandler)(Events [FormClosingEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		[MonoTODO ("Not hooked up to event")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnHelpButtonClicked (CancelEventArgs e)
+		{
+			CancelEventHandler eh = (CancelEventHandler)(Events[HelpButtonClickedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnLayout (LayoutEventArgs levent)
+		{
+			base.OnLayout (levent);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -2477,6 +2568,14 @@ namespace System.Windows.Forms {
 		protected virtual void OnResizeEnd (EventArgs e)
 		{
 			EventHandler eh = (EventHandler) (Events [ResizeEndEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnShown (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) (Events [ShownEvent]);
 			if (eh != null)
 				eh (this, e);
 		}

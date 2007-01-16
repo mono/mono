@@ -1917,7 +1917,7 @@ namespace System.Windows.Forms
 			set {
 				if (maximum_size != value) {
 					maximum_size = value;
-					if (parent != null) parent.PerformLayout ();
+					Size = PreferredSize;
 				}
 			}
 		}
@@ -1929,7 +1929,7 @@ namespace System.Windows.Forms
 			set {
 				if (minimum_size != value) {
 					minimum_size = value;
-					if (parent != null) parent.PerformLayout ();
+					Size = PreferredSize;
 				}
 			}
 		}
@@ -2684,6 +2684,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Browsable (false)]
 		public Size PreferredSize {
 			get { return this.GetPreferredSize (Size.Empty); }
 		}
