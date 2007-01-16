@@ -705,7 +705,7 @@ namespace System.Windows.Forms
 				label_rect.X = icon_rect.Right + 1;
 
 				if (owner.Columns.Count > 0)
-					label_rect.Width = Math.Max (text_size.Width, owner.Columns[0].Wd);
+					label_rect.Width = owner.Columns [0].Wd - label_rect.X;
 				else
 					label_rect.Width = text_size.Width;
 

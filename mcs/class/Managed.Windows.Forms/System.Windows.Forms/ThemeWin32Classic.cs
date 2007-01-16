@@ -1897,11 +1897,16 @@ namespace System.Windows.Forms
 				format.FormatFlags = StringFormatFlags.LineLimit;
 			else
 				format.FormatFlags = StringFormatFlags.NoWrap;
-			
+
 			Rectangle highlight_rect = text_rect;
-			if (control.View == View.Details && !control.FullRowSelect) {
+			if (control.View == View.Details) { // Adjustments for Details view
 				Size text_size = Size.Ceiling (dc.MeasureString (item.Text, item.Font));
-				highlight_rect.Width = text_size.Width + 4;
+
+				if (!control.FullRowSelect) // Selection shouldn't be outside the item bounds
+					highlight_rect.Width = Math.Min (text_size.Width + 4, text_rect.Width);
+
+				if (text_size.Width > text_rect.Width)
+					format.Trimming = StringTrimming.EllipsisCharacter;
 			}
 
 			if (item.Selected && control.Focused)
@@ -1980,6 +1985,12 @@ namespace System.Windows.Forms
 							sub_item_fore_br = ResPool.GetSolidBrush (subItem.ForeColor);
 							sub_item_font = subItem.Font;
 						}
+
+						int sub_item_text_width = (int) Math.Ceiling (control.DeviceContext.MeasureString (subItem.Text,
+								sub_item_font).Width);
+
+						format.Trimming = sub_item_text_width > sub_item_text_rect.Width ? StringTrimming.EllipsisCharacter :
+							StringTrimming.None;
 
 						if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
 							Brush bg, text;
