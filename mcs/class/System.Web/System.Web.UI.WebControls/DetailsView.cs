@@ -1102,6 +1102,11 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
+			if (AllowPaging && PageIndex >= PageCount) {
+				PageIndex = PageCount - 1;
+				dataSource.CurrentPageIndex = PageIndex;
+			}
+
 			bool showPager = AllowPaging && (PageCount > 1);
 			
 			Controls.Clear ();

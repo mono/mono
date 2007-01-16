@@ -1,3 +1,8 @@
+2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DetailsView.cs: fixed CreateChildControls, PageIndex should be less
+	or equal to PageCount
+
 2007-01-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: added z-index attribute to popup div's.
