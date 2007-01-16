@@ -1,3 +1,23 @@
+2007-01-16  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Use the new SuspendRecalc/ResumeRecalc methods
+	that allow us to have nested recalc = false blocks.
+	- Add paste support for images in the RichTextBox
+	* RichTextBox.cs: flush the text after the color is changed, so
+	the change takes effect.
+	- Use SuspendRecalc
+	- Some extra debugging info
+	* TextControl.cs: Tags no longer track their length, it is just
+	computed from the next tags length, this makes things a little
+	simpler and reduces places that we have to track length changes.
+	- Refactored the linetag class a little so we could make it
+	a base class for different kinds of tags
+	- Created a image tag, a tag that can have a single image inserted
+	into it
+	- Replace the norecalc flag with a Suspend/Resume Recalc pair, so
+	that we can call suspend multiple times.
+	- Add some debugging methods
+
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiClient.cs: Add ActivatePreviousChild for 

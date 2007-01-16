@@ -351,7 +351,7 @@ namespace System.Windows.Forms {
 				l = value.Length;
 				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.ForeColor);
 
-				document.NoRecalc = true;
+				document.SuspendRecalc ();
 				for (i = 0; i < l; i++) {
 
 					// Don't add the last line if it is just an empty line feed
@@ -372,7 +372,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				document.NoRecalc = false;
+				document.ResumeRecalc (true);
 
 				// CalculateDocument();
 				OnTextChanged(EventArgs.Empty);
@@ -703,8 +703,8 @@ namespace System.Windows.Forms {
 			if (this is RichTextBox) {
 				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
 			}
-			Clipboard.SetDataObject(o);
-			document.ReplaceSelection("", false);
+			Clipboard.SetDataObject (o);
+			document.ReplaceSelection ("", false);
 		}
 
 		public void Paste() {
@@ -1477,7 +1477,7 @@ namespace System.Windows.Forms {
 		private void TextBoxBase_MouseDown (object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left) {
-				
+
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 
 				if (IsDoubleClick (e)) {
@@ -1803,7 +1803,7 @@ namespace System.Windows.Forms {
 			if (!richtext) {
 				Line	line;
 
-				document.NoRecalc = true;
+				document.SuspendRecalc ();
 				// Font changes apply to the whole document
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
@@ -1812,7 +1812,8 @@ namespace System.Windows.Forms {
 							null, FormatSpecified.Font | FormatSpecified.Color);
 				}
 				document.UpdateView (document.GetLine (1), 0);
-				document.NoRecalc = false;
+				document.ResumeRecalc (true);
+
 				// Make sure the caret height is matching the new font height
 				document.AlignCaret();
 			}
@@ -1921,10 +1922,12 @@ namespace System.Windows.Forms {
 
 			if (clip == null)
 				return false;
-			
+
 			if (format == null) {
 				if ((this is RichTextBox) && clip.GetDataPresent(DataFormats.Rtf)) {
 					format = DataFormats.GetFormat(DataFormats.Rtf);
+				} else if ((this is RichTextBox) && clip.GetDataPresent (DataFormats.Bitmap)) {
+					format = DataFormats.GetFormat (DataFormats.Bitmap);
 				} else if (clip.GetDataPresent(DataFormats.UnicodeText)) {
 					format = DataFormats.GetFormat(DataFormats.UnicodeText);
 				} else if (clip.GetDataPresent(DataFormats.Text)) {
@@ -1944,6 +1947,10 @@ namespace System.Windows.Forms {
 
 			if (format.Name == DataFormats.Rtf) {
 				((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
+				return true;
+			} else if (format.Name == DataFormats.Bitmap) {
+				document.InsertImage (document.caret.tag, document.caret.pos, (Image) clip.GetData (DataFormats.Bitmap));
+				document.MoveCaret (CaretDirection.CharForward);
 				return true;
 			} else if (format.Name == DataFormats.UnicodeText) {
 				s = (string)clip.GetData(DataFormats.UnicodeText);

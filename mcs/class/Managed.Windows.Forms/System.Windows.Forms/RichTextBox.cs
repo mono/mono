@@ -26,6 +26,8 @@
 
 // NOT COMPLETE
 
+// #define DEBUG
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -857,9 +859,7 @@ namespace System.Windows.Forms {
 				try {
 					sb = new StringBuilder((int)data.Length);
 					buffer = new byte[1024];
-				}
-
-				catch {
+				} catch {
 					throw new IOException("Not enough memory to load document");
 				}
 
@@ -893,15 +893,17 @@ namespace System.Windows.Forms {
 
 			data = null;
 
+
 			try {
 				data = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+
 				LoadFile(data, fileType);
 			}
-
+#if !DEBUG
 			catch {
 				throw new IOException("Could not open file " + path);
 			}
-
+#endif
 			finally {
 				if (data != null) {
 					data.Close();
@@ -1227,6 +1229,7 @@ namespace System.Windows.Forms {
 							System.Windows.Forms.RTF.Color	color;
 
 							color = System.Windows.Forms.RTF.Color.GetColor(rtf, rtf.Param);
+							
 							if (color != null) {
 								FlushText(rtf, false);
 								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
@@ -1234,6 +1237,7 @@ namespace System.Windows.Forms {
 								} else {
 									this.rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
 								}
+								FlushText (rtf, false);
 							}
 							break;
 						}
@@ -1443,6 +1447,7 @@ namespace System.Windows.Forms {
 				} else {
 					rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
 				}
+				
 			}
 
 			rtf_chars += rtf_line.Length;
@@ -1504,26 +1509,31 @@ namespace System.Windows.Forms {
 			rtf_text_map = new RTF.TextMap();
 			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
 
-			document.NoRecalc = true;
+			document.SuspendRecalc ();
 
 			try {
 				rtf.Read();	// That's it
 				FlushText(rtf, false);
+
 			}
 
+
 			catch (RTF.RTFException e) {
+#if DEBUG
+				throw e;
+#endif
 				// Seems to be plain text or broken RTF
 				Console.WriteLine("RTF Parsing failure: {0}", e.Message);
-			}
+			}                     
 
 			to_x = rtf_cursor_x;
 			to_y = rtf_cursor_y;
 			chars = rtf_chars;
 
 			document.RecalculateDocument(CreateGraphicsInternal(), cursor_y, document.Lines, false);
-			document.NoRecalc = false;
+			document.ResumeRecalc (true);
 
-			document.Invalidate(document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+			document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
 		}
 
 		private void RichTextBox_HScrolled(object sender, EventArgs e) {

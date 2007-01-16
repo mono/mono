@@ -129,7 +129,6 @@ namespace System.Windows.Forms {
 		internal Line			right;			// Line with higher line number
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
 		internal int			DEFAULT_TEXT_LEN;	// 
-		internal static StringFormat	string_format;		// For calculating widths/heights
 		internal bool			recalc;			// Line changed
 		#endregion	// Local Variables
 
@@ -143,12 +142,6 @@ namespace System.Windows.Forms {
 			recalc = true;
 			soft_break = false;
 			alignment = HorizontalAlignment.Left;
-
-			if (string_format == null) {
-				string_format = new StringFormat(StringFormat.GenericTypographic);
-				string_format.Trimming = StringTrimming.None;
-				string_format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
-			}
 		}
 
 		internal Line(int LineNo, string Text, Font font, SolidBrush color) : this() {
@@ -158,7 +151,7 @@ namespace System.Windows.Forms {
 			line_no = LineNo;
 
 			widths = new float[space + 1];
-			tags = new LineTag(this, 1, text.Length);
+			tags = new LineTag(this, 1);
 			tags.font = font;
 			tags.color = color;
 		}
@@ -171,7 +164,7 @@ namespace System.Windows.Forms {
 			alignment = align;
 
 			widths = new float[space + 1];
-			tags = new LineTag(this, 1, text.Length);
+			tags = new LineTag(this, 1);
 			tags.font = font;
 			tags.color = color;
 		}
@@ -389,7 +382,7 @@ namespace System.Windows.Forms {
 			widths[0] = indent;
 			tag.X = indent;
 
-			w = g.MeasureString(doc.password_char, tags.font, 10000, string_format).Width;
+			w = g.MeasureString(doc.password_char, tags.font, 10000, Document.string_format).Width;
 
 			if (this.height != (int)tag.font.Height) {
 				ret = true;
@@ -426,7 +419,6 @@ namespace System.Windows.Forms {
 			bool	wrapped;
 			Line	line;
 			int	wrap_pos;
-			float	wrap_width;
 
 			pos = 0;
 			len = this.text.Length;
@@ -447,10 +439,8 @@ namespace System.Windows.Forms {
 			wrapped = false;
 
 			wrap_pos = 0;
-			wrap_width = 0;
 
 			while (pos < len) {
-				size = g.MeasureString(this.text.ToString(pos, 1), tag.font, 10000, string_format);
 
 				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					tag.ascent = 0;
@@ -463,11 +453,11 @@ namespace System.Windows.Forms {
 					tag.shift = 0;
 				}
 
+				size = tag.SizeOfPosition (g, pos);
 				w = size.Width;
 
 				if (Char.IsWhiteSpace(text[pos])) {
 					wrap_pos = pos + 1;
-					wrap_width = tag.width + w;
 				}
 
 				if (doc.wrap) {
@@ -476,9 +466,11 @@ namespace System.Windows.Forms {
 						widths [pos + 1] = widths [pos] + w;
 
 						pos = wrap_pos;
+						len = text.Length;
 						doc.Split(this, tag, pos, this.soft_break);
 						this.soft_break = true;
 						len = this.text.Length;
+						
 						retval = true;
 						wrapped = true;
 					}  else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
@@ -514,7 +506,7 @@ namespace System.Windows.Forms {
 
 				if (pos == (tag.start-1 + tag.length)) {
 					// We just found the end of our current tag
-					tag.height = (int)tag.font.Height;
+					tag.height = tag.MaxHeight ();
 
 					// Check if we're the tallest on the line (so far)
 					if (tag.height > this.height) {
@@ -554,7 +546,6 @@ namespace System.Windows.Forms {
 					if (tag != null) {
 						tag.shift = 0;
 						wrap_pos = pos;
-						wrap_width = tag.width;
 					}
 				}
 			}
@@ -738,9 +729,12 @@ namespace System.Windows.Forms {
 		private bool		calc_pass;
 		private int		char_count;
 
-		private bool		no_recalc;
+		// For calculating widths/heights
+		public static readonly StringFormat string_format = new StringFormat (StringFormat.GenericTypographic);
+
+		private int 		recalc_suspended;
 		private bool		recalc_pending;
-		private int		recalc_start;
+		private int		recalc_start = 1;   // This starts at one, since lines are 1 based
 		private int		recalc_end;
 		private bool		recalc_optimize;
 
@@ -783,7 +777,6 @@ namespace System.Windows.Forms {
 			multiline = true;
 			password_char = "";
 			calc_pass = false;
-			no_recalc = false;
 			recalc_pending = false;
 
 			// Tree related stuff
@@ -824,6 +817,9 @@ namespace System.Windows.Forms {
 			// Default selection is empty
 
 			document_id = random.Next();
+
+			string_format.Trimming = StringTrimming.None;
+			string_format.FormatFlags = StringFormatFlags.MeasureTrailingSpaces;
 		}
 		#endregion
 
@@ -935,22 +931,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		///<summary>Setting NoRecalc to true will prevent the document from being recalculated.
-		///This ensures that coordinates of added text are predictable after adding the text even with wrapped view</summary>
-		internal bool NoRecalc {
-			get {
-				return no_recalc;
-			}
-
-			set {
-				no_recalc = value;
-				if (!no_recalc && recalc_pending) {
-					RecalculateDocument(owner.CreateGraphicsInternal(), recalc_start, recalc_end, recalc_optimize);
-					recalc_pending = false;
-				}
-			}
-		}
-
 		internal int ViewPortY {
 			get {
 				return viewport_y;
@@ -1013,6 +993,23 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Properties
 
 		#region Private Methods
+
+		internal void SuspendRecalc ()
+		{
+			recalc_suspended++;
+		}
+
+		internal void ResumeRecalc (bool immediate_update)
+		{
+			if (recalc_suspended > 0)
+				recalc_suspended--;
+
+			if (immediate_update && recalc_suspended == 0 && recalc_pending) {
+				RecalculateDocument (owner.CreateGraphicsInternal(), recalc_start, recalc_end, recalc_optimize);
+				recalc_pending = false;
+			}
+		}
+
 		// For debugging
 		internal int DumpTree(Line line, bool with_tags) {
 			int	total;
@@ -1047,7 +1044,7 @@ namespace System.Windows.Forms {
 				length = 0;
 				Console.Write("   Tags: ");
 				while (tag != null) {
-					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.start + tag.length
+					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.end
 							/*line.text.ToString (tag.start - 1, tag.length)*/);
 					length += tag.length;
 
@@ -1302,9 +1299,9 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (no_recalc) {
-				recalc_start = line.line_no;
-				recalc_end = line.line_no;
+			if (recalc_suspended > 0) {
+				recalc_start = Math.Min (recalc_start, line.line_no);
+				recalc_end = Math.Max (recalc_end, line.line_no);
 				recalc_optimize = true;
 				recalc_pending = true;
 				return;
@@ -1347,9 +1344,9 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (no_recalc) {
-				recalc_start = line.line_no;
-				recalc_end = line.line_no + line_count - 1;
+			if (recalc_suspended > 0) {
+				recalc_start = Math.Min (recalc_start, line.line_no);
+				recalc_end = Math.Max (recalc_end, line.line_no + line_count - 1);
 				recalc_optimize = true;
 				recalc_pending = true;
 				return;
@@ -1811,6 +1808,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void DumpDoc ()
+		{
+			Console.WriteLine ("<doc>");
+			for (int i = 1; i < lines; i++) {
+				Line line = GetLine (i);
+				Console.WriteLine ("<line no='{0}'>", line.line_no);
+
+				LineTag tag = line.tags;
+				while (tag != null) {
+					Console.Write ("\t<tag color='{0}'>", tag.color.Color);
+					Console.Write (tag.Text ());
+					Console.WriteLine ("\t</tag>");
+					tag = tag.next;
+				}
+				Console.WriteLine ("</line>");
+			}
+			Console.WriteLine ("</doc>");
+		}
+
 		internal void Draw (Graphics g, Rectangle clip)
 		{
 			Line line;		// Current line being drawn
@@ -1836,6 +1852,7 @@ namespace System.Windows.Forms {
 
 			line_no = start;
 
+			g.FillRectangle (new SolidBrush (Color.White), clip);
 			#if Debug
 				DateTime	n = DateTime.Now;
 				Console.WriteLine ("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
@@ -1892,7 +1909,6 @@ namespace System.Windows.Forms {
 
 				current_brush = line.tags.color;
 				while (tag != null) {
-					
 
 					// Skip empty tags
 					if (tag.length == 0) {
@@ -1929,22 +1945,19 @@ namespace System.Windows.Forms {
 
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
 							current_brush = hilight_text;
-							tag_pos = Math.Min (tag.start + tag.length, line_selection_end);
+							tag_pos = Math.Min (tag.end, line_selection_end);
 						} else if (tag_pos < line_selection_start) {
 							current_brush = tag.color;
-							tag_pos = Math.Min (tag.start + tag.length, line_selection_start);
+							tag_pos = Math.Min (tag.end, line_selection_start);
 						} else {
 							current_brush = tag.color;
-							tag_pos = tag.start + tag.length;
+							tag_pos = tag.end;
 						}
 
-						
-						g.DrawString (text.ToString (old_tag_pos - 1,
-									      Math.Min (tag.length, tag_pos - old_tag_pos)),
-								tag.font, current_brush,
+						tag.Draw (g, current_brush,
 								line.widths [old_tag_pos - 1] + line.align_shift - viewport_x,
 								line.Y + tag.shift  - viewport_y,
-								StringFormat.GenericTypographic);
+								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos));
 					}
 					tag = tag.next;
 				}
@@ -1977,7 +1990,7 @@ namespace System.Windows.Forms {
 			int count = 1;
 			LineTag tag = LineTag.FindTag (line, pos);
 			
-			NoRecalc = true;
+			SuspendRecalc ();
 			undo.BeginCompoundAction ();
 			
 			base_line = line.line_no;
@@ -2033,7 +2046,7 @@ namespace System.Windows.Forms {
 				break_index = next_break + 1;
 			}
 
-			NoRecalc = false;
+			ResumeRecalc (true);
 
 			UpdateView(line, lines - old_line_count + 1, pos);
 
@@ -2063,9 +2076,7 @@ namespace System.Windows.Forms {
 
 			line = tag.line;
 			line.text.Insert(pos, s);
-			tag.length += len;
 
-			// TODO: sometimes getting a null tag here when pasting ???
 			tag = tag.next;
 			while (tag != null) {
 				tag.start += len;
@@ -2079,29 +2090,12 @@ namespace System.Windows.Forms {
 
 		// Inserts a string at the caret position
 		internal void InsertStringAtCaret(string s, bool move_caret) {
-			LineTag	tag;
-			int	len;
 
-			len = s.Length;
-
-			CharCount += len;
-
-			caret.line.text.Insert(caret.pos, s);
-			caret.tag.length += len;
-			
-			if (caret.tag.next != null) {
-				tag = caret.tag.next;
-				while (tag != null) {
-					tag.start += len;
-					tag = tag.next;
-				}
-			}
-			caret.line.Grow(len);
-			caret.line.recalc = true;
+			InsertString (caret.tag, caret.pos, s);
 
 			UpdateView(caret.line, caret.pos);
 			if (move_caret) {
-				caret.pos += len;
+				caret.pos += s.Length;
 				UpdateCaret();
 			}
 		}
@@ -2121,7 +2115,7 @@ namespace System.Windows.Forms {
 
 			line = tag.line;
 			line.text.Insert(pos, ch);
-			tag.length++;
+			//	tag.length++;
 
 			tag = tag.next;
 			while (tag != null) {
@@ -2136,6 +2130,7 @@ namespace System.Windows.Forms {
 
 		// Inserts a character at the current caret position
 		internal void InsertCharAtCaret(char ch, bool move_caret) {
+			/*
 			LineTag	tag;
 
 			CharCount++;
@@ -2152,6 +2147,8 @@ namespace System.Windows.Forms {
 			}
 			caret.line.Grow(1);
 			caret.line.recalc = true;
+			*/
+			InsertChar (caret.tag, caret.pos, ch);
 
 			UpdateView(caret.line, caret.pos);
 			if (move_caret) {
@@ -2159,6 +2156,36 @@ namespace System.Windows.Forms {
 				UpdateCaret();
 				SetSelectionToCaret(true);
 			}
+		}
+		
+		internal void InsertImage (LineTag tag, int pos, Image image)
+		{
+			Line line;
+			int len;
+
+			len = 1;
+
+			line = tag.line;
+			line.text.Insert (pos, "I");
+
+			LineTag next_tag = tag.Break (pos);
+			ImageTag image_tag = new ImageTag (line, pos, image);
+			image_tag.CopyFormattingFrom (tag);
+			image_tag.next = next_tag;
+			image_tag.previous = tag;
+			tag.next = image_tag;
+			
+			tag = image_tag.next;
+			while (tag != null) {
+				tag.start += len;
+				tag = tag.next;
+			}
+
+			line.Grow (len);
+			line.recalc = true;
+
+			DumpDoc ();
+			UpdateView (line, pos);
 		}
 
 		internal void DeleteMultiline (Line start_line, int pos, int length)
@@ -2233,25 +2260,21 @@ namespace System.Windows.Forms {
 				left = count;
 
 				left -= tag.start + tag.length - pos - 1;
-				tag.length -= tag.start + tag.length - pos - 1;
 
 				tag = tag.next;
 				while ((tag != null) && (left > 0)) {
 					tag.start -= count - left;
+
 					if (tag.length > left) {
-						tag.length -= left;
 						left = 0;
 					} else {
 						left -= tag.length;
-						tag.length = 0;
-	
 						tag = tag.next;
 					}
+
 				}
 			} else {
 				// We got off easy, same tag
-
-				tag.length -= count;
 
 				if (tag.length == 0) {
 					streamline = true;
@@ -2311,7 +2334,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				tag.length--;
+				//	tag.length--;
 
 				if (tag.length == 0) {
 					streamline = true;
@@ -2320,12 +2343,12 @@ namespace System.Windows.Forms {
 				pos--;
 				line.text.Remove(pos, 1);
 				if (pos >= (tag.start - 1)) {
-					tag.length--;
+					//		tag.length--;
 					if (tag.length == 0) {
 						streamline = true;
 					}
 				} else if (tag.previous != null) {
-					tag.previous.length--;
+					//		tag.previous.length--;
 					if (tag.previous.length == 0) {
 						streamline = true;
 					}
@@ -2374,10 +2397,10 @@ namespace System.Windows.Forms {
 				last = last.next;
 			}
 
+			// need to get the shift before setting the next tag since that effects length
+			shift = last.start + last.length - 1;
 			last.next = second.tags;
 			last.next.previous = last;
-
-			shift = last.start + last.length - 1;
 
 			// Fix up references within the chain
 			last = last.next;
@@ -2510,7 +2533,7 @@ namespace System.Windows.Forms {
 			}
 
 			// We need to move the rest of the text into the new line
-			Add(line.line_no + 1, line.text.ToString(pos, line.text.Length - pos), line.alignment, tag.font, tag.color);
+			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.font, tag.color);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2527,7 +2550,7 @@ namespace System.Windows.Forms {
 
 				// We can simply break the chain and move the tag into the next line
 				if (tag == line.tags) {
-					new_tag = new LineTag(line, 1, 0);
+					new_tag = new LineTag(line, 1);
 					new_tag.CopyFormattingFrom (tag);
 					line.tags = new_tag;
 				}
@@ -2551,7 +2574,7 @@ namespace System.Windows.Forms {
 			} else {
 				int	shift;
 
-				new_tag = new LineTag(new_line, 1, tag.start - 1 + tag.length - pos);
+				new_tag = new LineTag (new_line, 1);			
 				new_tag.next = tag.next;
 				new_tag.CopyFormattingFrom (tag);
 				new_line.tags = new_tag;
@@ -2559,7 +2582,6 @@ namespace System.Windows.Forms {
 					new_tag.next.previous = new_tag;
 				}
 				tag.next = null;
-				tag.length = pos - tag.start + 1;
 
 				shift = pos;
 				new_tag = new_tag.next;
@@ -2854,6 +2876,7 @@ namespace System.Windows.Forms {
 			owner.Invalidate(new Rectangle((int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height));
 			#if Debug
 				Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} End    => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, (int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height);
+
 			#endif
 		}
 
@@ -3263,10 +3286,8 @@ namespace System.Windows.Forms {
 
 			undo.BeginCompoundAction ();
 
-			InvalidateSelectionArea ();
-
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
-			NoRecalc = true;
+			SuspendRecalc ();
 
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
@@ -3309,9 +3330,8 @@ namespace System.Windows.Forms {
 
 
 			Insert(selection_start.line, selection_start.pos, false, s);
-			NoRecalc = false;
-
 			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
+			ResumeRecalc (false);
 
 			if (!select_new) {
 				CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
@@ -3340,6 +3360,7 @@ namespace System.Windows.Forms {
 			}
 
 			PositionCaret (selection_start.line, selection_start.pos);
+			UpdateView (selection_start.line, selection_start.pos);
 
 			undo.EndCompoundAction ();
 		}
@@ -3743,13 +3764,17 @@ namespace System.Windows.Forms {
 			bool	changed;
 			int	shift;
 
-			if (no_recalc) {
+			if (recalc_suspended > 0) {
 				recalc_pending = true;
-				recalc_start = start;
-				recalc_end = end;
+				recalc_start = Math.Min (recalc_start, start);
+				recalc_end = Math.Max (recalc_end, end);
 				recalc_optimize = optimize;
 				return false;
 			}
+
+			// Fixup the positions, they can go kinda nuts
+			start = Math.Max (start, 1);
+			end = Math.Min (end, lines);
 
 			Y = GetLine(start).Y;
 			line_no = start;
@@ -4172,6 +4197,31 @@ namespace System.Windows.Forms {
 		#endregion	// Administrative
 	}
 
+	internal class ImageTag : LineTag {
+
+		internal Image image;
+
+		internal ImageTag (Line line, int start, Image image) : base (line, start)
+		{
+			this.image = image;
+		}
+
+		internal override SizeF SizeOfPosition (Graphics dc, int pos)
+		{
+			return image.Size;
+		}
+
+		internal override int MaxHeight ()
+		{
+			return image.Height;
+		}
+
+		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
+		{
+			dc.DrawImage (image, x, y);
+		}
+	}
+
 	internal class LineTag {
 		#region	Local Variables;
 		// Payload; formatting
@@ -4184,13 +4234,12 @@ namespace System.Windows.Forms {
 
 		// Payload; text
 		internal int		start;		// start, in chars; index into Line.text
-		internal int		length;		// length, in chars
 		internal bool		r_to_l;		// Which way is the font
 
 		// Drawing support
 		internal int		height;		// Height in pixels of the text this tag describes
 		internal int		X;		// X location of the text this tag describes
-		//	internal float		width;		// Width in pixels of the text this tag describes
+
 		internal int		ascent;		// Ascent of the font for this tag
 		internal int		shift;		// Shift down for this tag, to stay on baseline
 
@@ -4201,17 +4250,16 @@ namespace System.Windows.Forms {
 		#endregion;
 
 		#region Constructors
-		internal LineTag(Line line, int start, int length) {
+		internal LineTag(Line line, int start) {
 			this.line = line;
 			this.start = start;
-			this.length = length;
 			this.X = 0;
 		}
 		#endregion	// Constructors
 
 		#region Internal Methods
 
-		public int End {
+		public int end {
 			get { return start + length; }
 		}
 
@@ -4222,6 +4270,34 @@ namespace System.Windows.Forms {
 				return line.widths [start + length - 1];
 			}
 		}
+
+		public int length {
+			get {
+				int res = 0;
+				if (next != null)
+					res = next.start - start;
+				else
+					res = line.text.Length - (start - 1);
+
+				return res > 0 ? res : 0;
+			}
+		}
+
+		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
+		{
+			return dc.MeasureString (line.text.ToString (pos, 1), font, 10000, Document.string_format);
+		}
+
+		internal virtual int MaxHeight ()
+		{
+			return font.Height;
+		}
+
+		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
+		{
+			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
+		}
+
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
 		internal LineTag Break(int pos) {
 
@@ -4234,17 +4310,23 @@ namespace System.Windows.Forms {
 				return null;
 			}
 
-			new_tag = new LineTag(line, pos, start + length - pos);
+			new_tag = new LineTag(line, pos);
 			new_tag.CopyFormattingFrom (this);
-			this.length -= new_tag.length;
+
 			new_tag.next = this.next;
 			this.next = new_tag;
 			new_tag.previous = this;
+
 			if (new_tag.next != null) {
 				new_tag.next.previous = new_tag;
 			}
 
 			return new_tag;
+		}
+
+		public string Text ()
+		{
+			return line.text.ToString (start - 1, length);
 		}
 
 		public void CopyFormattingFrom (LineTag other)
@@ -4335,7 +4417,7 @@ namespace System.Windows.Forms {
 
 			tag = start_tag.Break (start);
 
-			while (tag != null && tag.End < end) {
+			while (tag != null && tag.end <= end) {
 				SetFormat (tag, font, color, back_color, specified);
 				tag = tag.next;
 			}
@@ -4362,6 +4444,7 @@ namespace System.Windows.Forms {
 			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
 				tag.back_color = back_color;
 			}
+			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
 		}
 
 		/// <summary>Applies font attributes specified to characters starting at 'start' for 'length' chars; 
@@ -4396,7 +4479,7 @@ namespace System.Windows.Forms {
 				if (length == 0) {
 					// We are 'starting' after all valid tags; create a new tag with the right attributes
 					start_tag = FindTag(line, line.text.Length - 1);
-					start_tag.next = new LineTag(line, line.text.Length + 1, 0);
+					start_tag.next = new LineTag(line, line.text.Length + 1);
 					start_tag.next.CopyFormattingFrom (start_tag);
 					start_tag.next.previous = start_tag;
 					start_tag = start_tag.next;
@@ -4436,7 +4519,7 @@ namespace System.Windows.Forms {
 			}
 
 			while (tag != null) {
-				if ((tag.start <= pos) && (pos < (tag.start+tag.length))) {
+				if ((tag.start <= pos) && (pos <= tag.end)) {
 					return GetFinalTag (tag);
 				}
 
@@ -4463,7 +4546,6 @@ namespace System.Windows.Forms {
 				return false;
 			}
 
-			this.length += other.length;
 			this.next = other.next;
 			if (this.next != null) {
 				this.next.previous = this;
@@ -4480,12 +4562,10 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			if (this.start != 1) {
-				this.previous.length += this.length;
 				this.previous.next = this.next;
 				this.next.previous = this.previous;
 			} else {
 				this.next.start = 1;
-				this.next.length += this.length;
 				this.line.tags = this.next;
 				this.next.previous = null;
 			}
@@ -4524,7 +4604,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString() {
 			if (length > 0)
-				return "Tag starts at index " + this.start + " length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
+				return "Tag starts at index " + this.start + " length " + this.length + " text: " + Text () + "Font " + this.font.ToString();
 			return "Zero Lengthed tag at index " + this.start;
 		}
 
@@ -4803,7 +4883,6 @@ namespace System.Windows.Forms {
 			int	start;
 			int	end;
 			int	tag_start;
-			int	tag_length;
 
 			line = new Line();
 			ret = line;
@@ -4836,12 +4915,7 @@ namespace System.Windows.Forms {
 						tag_start = current_tag.start;
 					}
 
-					if (end < (current_tag.start + current_tag.length)) {
-						tag_length = end - tag_start + 1;
-					} else {
-						tag_length = current_tag.start + current_tag.length - tag_start;
-					}
-					tag = new LineTag(line, tag_start - start + 1, tag_length);
+					tag = new LineTag(line, tag_start - start + 1);
 					tag.CopyFormattingFrom (current_tag);
 
 					current_tag = current_tag.next;
