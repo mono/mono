@@ -11,6 +11,11 @@
 
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* MdiClient.cs: Update main form's ActiveChild when
+	activating a mdi child.
+
+2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MdiWindowManager.cs: Fix NRE when merging menus and main form
 	doesn't have a menu.
 

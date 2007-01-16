@@ -45,12 +45,20 @@ namespace MonoTests.System.Windows.Forms
 		// each test directly, not by nunit.
 		public void SetUp (bool only_create, bool only_text)
 		{
+			SetUp (only_create, only_text, false);
+		}
+
+		// No attribute here since this is supposed to be called from 
+		// each test directly, not by nunit.
+		public void SetUp (bool only_create, bool only_text, bool set_parent)
+		{
 			TearDown ();
+			
 			main = new Form ();
 			child1 = new Form ();
 			child2 = new Form ();
 			child3 = new Form ();
-			
+
 			if (only_create)
 				return;
 
@@ -58,13 +66,78 @@ namespace MonoTests.System.Windows.Forms
 			child1.Text = child1.Name = "child1";
 			child2.Text = child2.Name = "child2";
 			child3.Text = child3.Name = "child3";
-			
+
 			if (only_text)
 				return;
 
 			main.IsMdiContainer = true;
+			
+			if (set_parent) {
+				child1.MdiParent = main;
+				child2.MdiParent = main;
+				child3.MdiParent = main;
+			}
+		}
+		
+		[Test]
+		public void ActiveControlTest ()
+		{
+			SetUp (false, false, true);
+			
+			main.Show ();
+			
+			Assert.IsNull (main.ActiveControl, "#01");			
+			child1.Visible = true;
+			Assert.AreSame (child1, main.ActiveControl, "#02");
+			child2.Visible = true;
+			Assert.AreSame (child2, main.ActiveControl, "#03");
+			child3.Visible = true;
+			Assert.AreSame (child3, main.ActiveControl, "#04");
+			TearDown ();
+		}
+		
+		[Test]
+		public void SelectNextControlTest ()
+		{
+			SetUp (false, false, true);
+
+			main.Show ();
+			
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+			
+			main.SelectNextControl (main.ActiveControl, true, false, true, true);
+			Assert.AreSame (child1, main.ActiveControl, "#01");
+			main.SelectNextControl (main.ActiveControl, true, false, true, true);
+			Assert.AreSame (child2, main.ActiveControl, "#02");
+			main.SelectNextControl (main.ActiveControl, true, false, true, true);
+			Assert.AreSame (child3, main.ActiveControl, "#03");
+						
+			TearDown ();
 		}
 
+		[Test]
+		public void SelectPreviousControlTest ()
+		{
+			SetUp (false, false, true);
+
+			main.Show ();
+			
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.SelectNextControl (main.ActiveControl, false, false, true, true);
+			Assert.AreSame (child2, main.ActiveControl, "#01");
+			main.SelectNextControl (main.ActiveControl, false, false, true, true);
+			Assert.AreSame (child1, main.ActiveControl, "#02");
+			main.SelectNextControl (main.ActiveControl, false, false, true, true);
+			Assert.AreSame (child3, main.ActiveControl, "#03");
+
+			TearDown ();
+		}
+		
 		[Category("NotWorking")]
 		[Test]
 		public void StartLocationTest1 ()

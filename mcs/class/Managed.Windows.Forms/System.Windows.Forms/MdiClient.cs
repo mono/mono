@@ -683,6 +683,7 @@ namespace System.Windows.Forms {
 				XplatUI.InvalidateNC (form.Handle);
 			}
 			active_child = (Form) Controls [0];
+			ParentForm.ActiveControl = active_child;
 		}
 
 		internal override IntPtr AfterTopMostControl ()
