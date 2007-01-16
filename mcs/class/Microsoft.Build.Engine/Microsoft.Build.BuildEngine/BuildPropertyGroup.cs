@@ -82,42 +82,38 @@ namespace Microsoft.Build.BuildEngine {
 						     string propertyValue,
 						     bool treatPropertyValueAsLiteral)
 		{
-			BuildProperty prop;
+			if (!FromXml)
+				throw new InvalidOperationException ("This method is only valid for persisted property groups.");
 
-			if (FromXml) {
-				XmlElement xe;
-				
-				xe = propertyGroup.OwnerDocument.CreateElement (propertyName, Project.XmlNamespace);
-				propertyGroup.AppendChild (xe);
-				
-				if (treatPropertyValueAsLiteral)
-					xe.InnerText = Utilities.Escape (propertyValue);
-				else
-					xe.InnerText = propertyValue;
-				
-				prop = new BuildProperty (parentProject, xe);
-				AddProperty (prop);
-				parentProject.NeedToReevaluate ();
+			if (treatPropertyValueAsLiteral)
+				propertyValue = Utilities.Escape (propertyValue);
 
-				return prop;
-			} else
-				throw new InvalidOperationException ("This method is only valid for persisted <System.Object[]> elements.");
+			XmlElement element = propertyGroup.OwnerDocument.CreateElement (propertyName, Project.XmlNamespace);
+			propertyGroup.AppendChild (element);
+
+			BuildProperty property = new BuildProperty (parentProject, element);
+			property.Value = propertyValue;
+			AddProperty (property);
+
+			parentProject.MarkProjectAsDirty ();
+			parentProject.NeedToReevaluate ();
+
+			return property;
 		}
 
 		internal void AddProperty (BuildProperty property)
 		{
-			if (FromXml) {
+			if (FromXml)
 				properties.Add (property);
-			} else {
+			else {
 				if (propertiesByName.ContainsKey (property.Name)) {
 					BuildProperty existing = propertiesByName [property.Name];
 					if (property.PropertyType <= existing.PropertyType) {
 						propertiesByName.Remove (property.Name);
 						propertiesByName.Add (property.Name, property);
 					}
-				} else {
+				} else
 					propertiesByName.Add (property.Name, property);
-				}
 			}
 		}
 		
@@ -148,19 +144,17 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveProperty (BuildProperty propertyToRemove)
 		{
+			if (propertyToRemove == null)
+				throw new ArgumentNullException ("propertyToRemove");
+
 			if (FromXml) {
 				if (!propertyToRemove.FromXml)
 					throw new InvalidOperationException ("The specified property does not belong to the current property group.");
 
 				propertyToRemove.XmlElement.ParentNode.RemoveChild (propertyToRemove.XmlElement);
 				properties.Remove (propertyToRemove);
-			} else {
-				foreach (KeyValuePair <string, BuildProperty> kvp in propertiesByName)
-					if (kvp.Value == propertyToRemove) {
-						propertiesByName.Remove (kvp.Key);
-						break;
-					}
-			}
+			} else
+				propertiesByName.Remove (propertyToRemove.Name);
 		}
 
 		public void RemoveProperty (string propertyName)

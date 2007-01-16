@@ -88,6 +88,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveTarget (Target targetToRemove)
 		{
+			if (targetToRemove == null)
+				throw new ArgumentNullException ();
+			
 			targetsByName.Remove (targetToRemove.Name);
 		}
 

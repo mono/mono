@@ -28,6 +28,7 @@
 
 #if NET_2_0
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -144,6 +145,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Remove (BuildItemGroup big)
 		{
+			if (big.ParentProject != project)
+				throw new InvalidOperationException (
+					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.");
+
 			big.Detach ();
 			list.Remove (big);
 		}

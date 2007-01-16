@@ -59,6 +59,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public BuildItem (string itemName, ITaskItem taskItem)
 		{
+			if (taskItem == null)
+				throw new ArgumentNullException ("taskItem");
+
 			this.name = itemName;
 			this.finalItemSpec = taskItem.ItemSpec;
 			this.itemInclude = Utilities.Escape (taskItem.ItemSpec);
@@ -107,6 +110,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void CopyCustomMetadataTo (BuildItem destinationItem)
 		{
+			if (destinationItem == null)
+				throw new ArgumentNullException ("destinationItem");
+
 			foreach (DictionaryEntry de in unevaluatedMetadata)
 				destinationItem.AddMetadata ((string) de.Key, (string) de.Value, false);
 		}
@@ -203,7 +209,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
 				e.Parse (value);
-				evaluatedMetadata.Add (name, (string) e.ConvertTo (parent_item_group.Project, typeof (string)));
+				evaluatedMetadata.Add (name, (string) e.ConvertTo (parent_item_group.ParentProject, typeof (string)));
 			} else
 				evaluatedMetadata.Add (name, Utilities.Unescape (value));
 				
@@ -226,7 +232,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			// FIXME: maybe make Expression.ConvertTo (null, ...) work as Utilities.Unescape ()?
 			if (project == null) {
-				this.finalItemSpec = Utilities.Unescape (itemInclude);
+				this.finalItemSpec = Utilities.Unescape (Include);
 				return;
 			}
 			
@@ -327,9 +333,9 @@ namespace Microsoft.Build.BuildEngine {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {
-						sb.Append (((PropertyReference)o).ConvertToString (parent_item_group.Project));
+						sb.Append (((PropertyReference)o).ConvertToString (parent_item_group.ParentProject));
 					} else if (o is ItemReference) {
-						sb.Append (((ItemReference)o).ConvertToString (parent_item_group.Project));
+						sb.Append (((ItemReference)o).ConvertToString (parent_item_group.ParentProject));
 					} else if (o is MetadataReference) {
 						sb.Append (GetMetadata (((MetadataReference)o).MetadataName));
 					}

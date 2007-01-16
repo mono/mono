@@ -122,12 +122,27 @@ namespace Microsoft.Build.BuildEngine {
 			return AddNewItem (itemName, itemInclude, false);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not tested")]
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude,
 					     bool treatItemIncludeAsLiteral)
 		{
-			throw new NotImplementedException ();
+			BuildItemGroup big;
+
+			if (itemGroups.Count == 0)
+				big = AddNewItemGroup ();
+			else {
+				BuildItemGroup [] groups = new BuildItemGroup [itemGroups.Count];
+				itemGroups.CopyTo (groups, 0);
+				big = groups [0];
+			}
+
+			BuildItem item = big.AddNewItem (itemName, itemInclude, treatItemIncludeAsLiteral);
+				
+			MarkProjectAsDirty ();
+			NeedToReevaluate ();
+
+			return item;
 		}
 
 		[MonoTODO ("Not tested")]
@@ -382,15 +397,16 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidOperationException ("The object passed in is not part of the project.");
 
 			BuildItemGroup big = itemToRemove.ParentItemGroup;
-			
-			if (itemToRemove.FromXml) {
-				if (big.Count == 1)
-					groupingCollection.Remove (big);
-				else
-					big.RemoveItem (itemToRemove);
+
+			if (big.Count == 1) {
+				// ParentItemGroup for items from xml and that have parent is the same
+				groupingCollection.Remove (big);
 			} else {
-				if (big.Count == 1)
-					groupingCollection.Remove (big);
+				if (big.ParentProject != this)
+					throw new InvalidOperationException ("The object passed in is not part of the project.");
+
+				if (itemToRemove.FromXml)
+					big.RemoveItem (itemToRemove);
 				else
 					big.RemoveItem (itemToRemove.ParentItem);
 			}
@@ -498,13 +514,14 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void SetProjectExtensions (string id, string xmlText)
 		{
+			if (id == null)
+				throw new ArgumentNullException ("id");
+			if (xmlText == null)
+				throw new ArgumentNullException ("xmlText");
+
 			XmlNode projectExtensions, node;
 
-			if (id == null || id == String.Empty || xmlText == null)
-				return;
-
 			projectExtensions = xmlDocument.SelectSingleNode ("/tns:Project/tns:ProjectExtensions", XmlNamespaceManager);
-			
 			
 			if (projectExtensions == null) {
 				projectExtensions = xmlDocument.CreateElement ("ProjectExtensions", XmlNamespace);
@@ -870,7 +887,7 @@ namespace Microsoft.Build.BuildEngine {
 					throw new ArgumentNullException ("value");
 				
 				if (value.FromXml)
-					throw new InvalidOperationException ("Can't do that.");
+					throw new InvalidOperationException ("GlobalProperties can not be set to persisted property group.");
 				
 				globalProperties = value;
 				NeedToReevaluate ();

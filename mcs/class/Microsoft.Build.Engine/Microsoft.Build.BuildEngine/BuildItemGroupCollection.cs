@@ -50,8 +50,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (index < 0)
-				throw new 
-					IndexOutOfRangeException ("Index was outside the bounds of the array.");
+				throw new IndexOutOfRangeException ("Index was outside the bounds of the array.");
 			if (array.Rank > 1)
 				throw new ArgumentException ("array is multidimensional");
 			if ((array.Length > 0) && (index >= array.Length))

@@ -82,17 +82,31 @@ namespace Microsoft.Build.BuildEngine {
 					     string itemInclude,
 					     bool treatItemIncludeAsLiteral)
 		{
+			BuildItem item;
+
 			if (treatItemIncludeAsLiteral)
 				itemInclude = Utilities.Escape (itemInclude);
 
-			BuildItem bi = new BuildItem (itemName, itemInclude);
+			if (FromXml) {
+				XmlElement element = itemGroupElement.OwnerDocument.CreateElement (itemName, Project.XmlNamespace);
+				itemGroupElement.AppendChild (element);
+				element.SetAttribute ("Include", itemInclude);
+				item = new BuildItem (element, this);
+			} else {
+				item = new BuildItem (itemName, itemInclude);
+			}
 
-			bi.Evaluate (null, true);
+			item.Evaluate (null, true);
 
 			if (!read_only)
-				buildItems.Add (bi);
+				buildItems.Add (item);
 
-			return bi;
+			if (parentProject != null) {
+				parentProject.MarkProjectAsDirty ();
+				parentProject.NeedToReevaluate ();
+			}
+
+			return item;
 		}
 		
 		public void Clear ()
@@ -252,7 +266,7 @@ namespace Microsoft.Build.BuildEngine {
 			set { parentCollection = value; }
 		}
 		
-		internal Project Project {
+		internal Project ParentProject {
 			get { return parentProject; }
 		}
 

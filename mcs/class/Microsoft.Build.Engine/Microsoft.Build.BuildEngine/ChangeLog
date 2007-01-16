@@ -1,3 +1,25 @@
+2007-01-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemGroup.cs (AddNewItem): Add XML and mark project as dirty.
+	(Project): Renamed to ParentProject.
+
+	* BuildItem.cs (ctor)
+	(CopyCustomMetadata): Add null check.
+
+	* BuildPropertyGroup.cs (AddNewProperty): Reorganized.
+	(RemoveProperty): Added null check.
+
+	* TargetCollection.cs (RemoveTarget): Added null check.
+
+	* Engine.cs (UnloadProject): Added null check.
+
+	* GroupingCollection.cs (Remove): Check if removed group belongs to
+	current project.
+
+	* Project.cs (AddNewItem): Implemented.
+	(RemoveItem): Reorganized.
+	(SetProjectExtensions): Added null check.
+
 2007-01-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemGroup.cs (Detach): Added.

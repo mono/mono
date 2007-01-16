@@ -227,6 +227,9 @@ namespace Microsoft.Build.BuildEngine {
 	
 		public void UnloadProject (Project project)
 		{
+			if (project == null)
+				throw new ArgumentNullException ("project");
+
 			if (project.ParentEngine != this)
 				throw new InvalidOperationException ("The \"Project\" object specified does not belong to the correct \"Engine\" object.");
 			
