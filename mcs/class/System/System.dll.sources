@@ -290,6 +290,7 @@ System.ComponentModel/HandledEventArgs.cs
 System.ComponentModel/HandledEventHandler.cs
 System.ComponentModel/IBindingList.cs
 System.ComponentModel/IBindingListView.cs
+System.ComponentModel/ICancelAddNew.cs
 System.ComponentModel/IChangeTracking.cs
 System.ComponentModel/IComNativeDescriptorHandler.cs
 System.ComponentModel/IComponent.cs
@@ -298,8 +299,11 @@ System.ComponentModel/ICustomTypeDescriptor.cs
 System.ComponentModel/IDataErrorInfo.cs
 System.ComponentModel/IEditableObject.cs
 System.ComponentModel/IExtenderProvider.cs
+System.ComponentModel/IIntellisenseBuilder.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/ImmutableObjectAttribute.cs
+System.ComponentModel/INestedContainer.cs
+System.ComponentModel/INestedSite.cs
 System.ComponentModel/InheritanceAttribute.cs
 System.ComponentModel/InheritanceLevel.cs
 System.ComponentModel/InitializationEventAttribute.cs
