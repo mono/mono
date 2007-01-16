@@ -61,7 +61,7 @@ namespace MonoTests.Mono.Data.SqliteClient
                         SqliteDataReader reader = null;
                         using (_conn) {
                                 _conn.Open ();
-                                SqliteCommand cmd = _conn.CreateCommand ();
+                                SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
                                 cmd.CommandText = "select * from test";
                                 reader = cmd.ExecuteReader ();
                                 try {
@@ -83,7 +83,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 			SqliteDataReader reader = null;
 			using (_conn) {
 				_conn.Open ();
-				SqliteCommand cmd = _conn.CreateCommand ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
 				cmd.CommandText = "select null from test";
 				reader = cmd.ExecuteReader ();
 				try {

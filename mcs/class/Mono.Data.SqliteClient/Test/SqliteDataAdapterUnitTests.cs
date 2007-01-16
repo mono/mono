@@ -73,7 +73,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 			using (_conn) 
 			{
 				_conn.Open ();
-				SqliteCommand cmd = _conn.CreateCommand ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
 				cmd.CommandText = "select * from t1";
 				reader = cmd.ExecuteReader ();
 				try 
