@@ -33,6 +33,13 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void UpDownActiveControlTest ()
+		{
+			NumericUpDown n1 = new NumericUpDown ();
+			Assert.IsNull (n1.ActiveControl, "1");
+		}
+
+		[Test]
 		public void UpDownBasePropTest ()
 		{
 			NumericUpDown n1 = new NumericUpDown ();
