@@ -1,4 +1,8 @@
 
+Tue Jan 16 20:01:01 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: execute fault handlers.
+
 Tue Jan 16 19:54:44 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: handle missing call locationss with FORCE_INDIR_CALL.
