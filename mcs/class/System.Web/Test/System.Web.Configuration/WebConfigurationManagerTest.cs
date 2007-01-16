@@ -38,11 +38,19 @@ using System.IO;
 using System.Web.Configuration;
 using System.Web;
 using System.Web.Security;
+using MonoTests.SystemWeb.Framework;
+using System.Web.UI;
 
 namespace MonoTests.System.Web.Configuration {
 
 	[TestFixture]
 	public class WebConfigurationManagerTest  {
+
+		[TestFixtureTearDown]
+		public void Unload ()
+		{
+			WebTest.Unload ();
+		}
 
 		[Test]
 		public void OpenMachineConfiguration_1 ()
@@ -158,6 +166,19 @@ namespace MonoTests.System.Web.Configuration {
 		{
 			object sect1 = WebConfigurationManager.GetSection ("system.web/clientTarget", "/clientTest");
 			Assert.IsNull (sect1, "A1");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ClientTarget () {
+			new WebTest (PageInvoker.CreateOnLoad (ClientTarget_load)).Run ();
+		}
+
+		public static void ClientTarget_load (Page p) {
+			ClientTargetSection sec = (ClientTargetSection) WebConfigurationManager.GetSection ("system.web/clientTarget");
+			ClientTarget clientTarget = sec.ClientTargets ["downlevel"];
+			if (clientTarget == null)
+				Assert.Fail ("ClientTarget Section: downlevel");
 		}
 
 		[Test]
