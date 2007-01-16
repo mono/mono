@@ -334,13 +334,12 @@ namespace System.Configuration
 					
 					PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
 					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
-						if (prop == null) {
-							ConfigurationElementCollection c = GetDefaultCollection ();
-							if (c != null && c.OnDeserializeUnrecognizedElement (reader.LocalName, reader))
-								continue;
-						}
-
 						if (!OnDeserializeUnrecognizedElement (reader.LocalName, reader)) {
+							if (prop == null) {
+								ConfigurationElementCollection c = GetDefaultCollection ();
+								if (c != null && c.OnDeserializeUnrecognizedElement (reader.LocalName, reader))
+									continue;
+							}
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
 						}
 						continue;
