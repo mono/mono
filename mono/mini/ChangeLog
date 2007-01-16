@@ -1,3 +1,8 @@
+
+Tue Jan 16 19:54:44 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: handle missing call locationss with FORCE_INDIR_CALL.
+
 2006-11-29  Mark Mason  <mason@broadcom.com>
 
 	* basic-calls.cs: additional tests for passing
