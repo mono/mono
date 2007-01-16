@@ -1,4 +1,8 @@
-2006-12-04  Everaldo Canuto  <everaldo@simios.org>
+2007-01-15  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuTest.cs: Add test for #80006, mainmenu merge operations.
+
+2007-01-15  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuItemTest.cs: Remove the "NotWorking" from MenuItemMerge test.
 

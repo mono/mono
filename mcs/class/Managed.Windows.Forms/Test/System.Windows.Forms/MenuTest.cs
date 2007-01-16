@@ -99,5 +99,43 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (mycontextmenu, menuItem1.GetContextMenu (),"#11");
 			myform.Dispose ();
 		}
+		
+		[Test]
+		public void MenuItemMerge ()
+		{
+			MenuItem itemA2 = new MenuItem ("Exit");
+			itemA2.MergeType = MenuMerge.MergeItems;
+			itemA2.MergeOrder = 3;
+
+			MenuItem itemA1 = new MenuItem ("File");
+			itemA1.MenuItems.Add (itemA2);
+			itemA1.MergeType = MenuMerge.MergeItems;
+
+			MenuItem itemB2 = new MenuItem ("Open");
+			itemB2.MergeOrder = 1;
+			itemB2.MergeType = MenuMerge.Add;
+
+			MenuItem itemB3 = new MenuItem ("Close");
+			itemB3.MergeOrder = 2;
+			itemB3.MergeType = MenuMerge.Add;
+
+			MenuItem itemB1 = new MenuItem ("File");
+			itemB1.MenuItems.Add (itemB2);
+			itemB1.MenuItems.Add (itemB3);
+			itemB1.MergeType = MenuMerge.MergeItems;
+
+			MainMenu mainMenu1 = new MainMenu();
+			mainMenu1.MenuItems.Add (itemA1);
+			
+			MainMenu mainMenu2 = new MainMenu();
+			mainMenu2.MenuItems.Add (itemB1);
+			
+			mainMenu1.MergeMenu (mainMenu2);
+
+			Assert.AreEqual ("File",  mainMenu1.MenuItems[0].Text,              "ItemMerge#1");
+			Assert.AreEqual ("Open",  mainMenu1.MenuItems[0].MenuItems[0].Text, "ItemMerge#2");
+			Assert.AreEqual ("Close", mainMenu1.MenuItems[0].MenuItems[1].Text, "ItemMerge#3");
+			Assert.AreEqual ("Exit",  mainMenu1.MenuItems[0].MenuItems[2].Text, "ItemMerge#4");
+		}
 	}
 }
