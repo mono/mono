@@ -1,3 +1,9 @@
+2007-01-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* RoleManagerModule.cs: fixed OnPostAuthenticateRequest,
+	CacheRolesInCookie not supported yet
+	* Roles.cs: fixed DeleteCookie, CacheRolesInCookie not supported yet
+
 2007-01-11 Adar Wesley <adarw@mainsoft.com>
 
 	* MembershipProvider.cs: fixed EncryptPassword to use password buffer length

@@ -58,6 +58,10 @@ namespace System.Web.Security {
 			if (!config.Enabled)
 				return;
 
+			/* not supported yet */
+			if (config.CacheRolesInCookie)
+				throw new NotSupportedException ("Caching roles in cookie is not supported");
+
 			/* allow the user to populate the Role */
 			if (GetRoles != null) {
 				RoleManagerEventArgs role_args = new RoleManagerEventArgs (app.Context);

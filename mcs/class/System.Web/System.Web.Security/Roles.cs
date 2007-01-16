@@ -119,7 +119,8 @@ namespace System.Web.Security {
 		[MonoTODO ("Not implemented")]
 		public static void DeleteCookie ()
 		{
-			throw new NotImplementedException ();
+			if (CacheRolesInCookie)
+				throw new NotSupportedException ("Caching roles in cookie is not supported");
 		}
 		
 		public static bool DeleteRole (string rolename)
