@@ -901,7 +901,7 @@ namespace Mono.CSharp {
 		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 					       MemberFilter filter, object criteria)
 		{
-			if (constraints == null)
+			if (gc == null)
 				return MemberList.Empty;
 
 			ArrayList members = new ArrayList ();

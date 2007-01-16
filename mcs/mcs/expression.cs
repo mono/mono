@@ -1262,7 +1262,7 @@ namespace Mono.CSharp {
 			//
 			TypeParameterExpr tpe = probe_type_expr as TypeParameterExpr;
 			if (tpe != null){
-				Constraints constraints = tpe.TypeParameter.Constraints;
+				GenericConstraints constraints = tpe.TypeParameter.GenericConstraints;
 				bool error = false;
 				
 				if (constraints == null)

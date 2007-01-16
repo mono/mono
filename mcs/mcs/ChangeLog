@@ -1,3 +1,10 @@
+2007-01-16  Sergey P. Kondratyev <se@unicom.tomica.ru>
+
+	* expression.cs (As.DoResolve): Use GenericConstraints instead of
+	Constraints, solves the problem where the compiler incorrectly
+	reported that a type parameter was not constrained to a class (Bug
+	80518)
+
 2007-01-14  Marek Habersack  <grendello@gmail.com>
 
 	* doc-bootstrap.cs: Fix a compilation problem in the bootstrap phase.
