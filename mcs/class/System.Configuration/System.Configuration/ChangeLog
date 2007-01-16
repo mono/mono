@@ -1,5 +1,9 @@
 2007-01-16  Konstantin Triger <kostat@mainsoft.com>
 
+	* ConfigurationElement.cs: ignore properties with null or empty name.
+
+2007-01-16  Konstantin Triger <kostat@mainsoft.com>
+
 	* ConfigurationElement.cs: Try to deserilalize an unrecognized element by
 		current element, and only if failed delegate to default collection.
 

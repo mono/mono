@@ -91,7 +91,7 @@ namespace ConsoleAppConfigSection
 			internal set { base ["name"] = value; }
 		}
 
-		[ConfigurationProperty ("", IsDefaultCollection = true)]
+		[ConfigurationProperty ("", IsDefaultCollection = true, IsRequired = true)]
 		[ConfigurationCollection (typeof (UrlsCollection))]
 		public UrlsCollection PropertySettings {
 			get { return (UrlsCollection) base [String.Empty]; }

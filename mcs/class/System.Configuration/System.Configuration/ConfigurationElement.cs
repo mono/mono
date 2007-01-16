@@ -366,7 +366,7 @@ namespace System.Configuration
 			modified = false;
 				
 			foreach (PropertyInformation prop in ElementInformation.Properties)
-				if (prop.IsRequired && !readProps.ContainsKey (prop)) {
+				if (!String.IsNullOrEmpty(prop.Name) && prop.IsRequired && !readProps.ContainsKey (prop)) {
 					object val = OnRequiredPropertyNotFound (prop.Name);
 					if (!object.Equals (val, prop.DefaultValue)) {
 						prop.Value = val;
