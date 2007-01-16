@@ -341,6 +341,8 @@ namespace System.Drawing
 
 		private void SaveAll (BinaryWriter writer)
 		{
+			writer.Write (iconDir.idReserved);
+			writer.Write (iconDir.idType);
 			ushort count = iconDir.idCount;
 			writer.Write (count);
 
@@ -355,6 +357,8 @@ namespace System.Drawing
 
 		private void SaveBestSingleIcon (BinaryWriter writer, int width, int height)
 		{
+			writer.Write (iconDir.idReserved);
+			writer.Write (iconDir.idType);
 			writer.Write ((ushort)1);
 
 			// find best entry and save it
@@ -374,18 +378,73 @@ namespace System.Drawing
 			SaveIconImage (writer, imageData [best]);
 		}
 
+		private void SaveBitmapAsIcon (BinaryWriter writer)
+		{
+			writer.Write ((ushort)0);	// idReserved must be 0
+			writer.Write ((ushort)1);	// idType must be 1
+			writer.Write ((ushort)1);	// only one icon
+
+			// when transformed into a bitmap only a single image exists
+			IconDirEntry ide = new IconDirEntry ();
+			ide.width = (byte) bitmap.Width;
+			ide.height = (byte) bitmap.Height;
+			ide.colorCount = 0;	// 32 bbp == 0, for palette size
+			ide.reserved = 0;	// always 0
+			ide.planes = 0;
+			ide.bitCount = 32;
+			ide.imageOffset = 22;	// 22 is the first icon position (for single icon files)
+
+			BitmapInfoHeader bih = new BitmapInfoHeader ();
+			bih.biSize = (uint) Marshal.SizeOf (typeof (BitmapInfoHeader));
+			bih.biWidth = bitmap.Width;
+			bih.biHeight = 2 * bitmap.Height; // include both XOR and AND images
+			bih.biPlanes = 1;
+			bih.biBitCount = 32;
+			bih.biCompression = 0;
+			bih.biSizeImage = 0;
+			bih.biXPelsPerMeter = 0;
+			bih.biYPelsPerMeter = 0;
+			bih.biClrUsed = 0;
+			bih.biClrImportant = 0;
+
+			IconImage ii = new IconImage ();
+			ii.iconHeader = bih;
+			ii.iconColors = new uint [0];	// no palette
+			int xor_size = (((bih.biBitCount * bitmap.Width + 31) & ~31) >> 3) * bitmap.Height;
+			ii.iconXOR = new byte [xor_size];
+			int p = 0;
+			for (int y = bitmap.Height - 1; y >=0; y--) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					Color c = bitmap.GetPixel (x, y);
+					ii.iconXOR [p++] = c.B;
+					ii.iconXOR [p++] = c.G;
+					ii.iconXOR [p++] = c.R;
+					ii.iconXOR [p++] = c.A;
+				}
+			}
+			int and_line_size = (((Width + 31) & ~31) >> 3);	// must be a multiple of 4 bytes
+			int and_size = and_line_size * bitmap.Height;
+			ii.iconAND = new byte [and_size];
+
+			ide.bytesInRes = (uint) (bih.biSize + xor_size + and_size);
+
+			SaveIconDirEntry (writer, ide, UInt32.MaxValue);
+			SaveIconImage (writer, ii);
+		}
+
 		private void Save (Stream outputStream, int width, int height)
 		{
-			if (iconDir.idEntries == null)
-				return;
-
 			BinaryWriter writer = new BinaryWriter (outputStream);
-			writer.Write (iconDir.idReserved);
-			writer.Write (iconDir.idType);
-			if ((width == -1) && (height == -1))
-				SaveAll (writer);
-			else
-				SaveBestSingleIcon (writer, width, height);
+			// if we have the icon information then save from this
+			if (iconDir.idEntries != null) {
+				if ((width == -1) && (height == -1))
+					SaveAll (writer);
+				else
+					SaveBestSingleIcon (writer, width, height);
+			} else if (bitmap != null) {
+				// if the icon was created from a bitmap then convert it
+				SaveBitmapAsIcon (writer);
+			}
 			writer.Flush ();
 		}
 
@@ -505,6 +564,17 @@ namespace System.Drawing
 				ide.bytesInRes = reader.ReadUInt32 ();
 				ide.imageOffset = reader.ReadUInt32 ();
 				iconDir.idEntries [i] = ide;
+#if false
+Console.WriteLine ("Entry: {0}", i);
+Console.WriteLine ("\tide.width: {0}", ide.width);
+Console.WriteLine ("\tide.height: {0}", ide.height);
+Console.WriteLine ("\tide.colorCount: {0}", ide.colorCount);
+Console.WriteLine ("\tide.reserved: {0}", ide.reserved);
+Console.WriteLine ("\tide.planes: {0}", ide.planes);
+Console.WriteLine ("\tide.bitCount: {0}", ide.bitCount);
+Console.WriteLine ("\tide.bytesInRes: {0}", ide.bytesInRes);
+Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
+#endif
 				//is this is the best fit??
 				if (!sizeObtained) {
 					if ((ide.height == height) || (ide.width == width)) {
@@ -549,7 +619,20 @@ namespace System.Drawing
 				bih.biYPelsPerMeter = bihReader.ReadInt32 ();
 				bih.biClrUsed = bihReader.ReadUInt32 ();
 				bih.biClrImportant = bihReader.ReadUInt32 ();
-
+#if false
+Console.WriteLine ("Entry: {0}", j);
+Console.WriteLine ("\tbih.biSize: {0}", bih.biSize);
+Console.WriteLine ("\tbih.biWidth: {0}", bih.biWidth);
+Console.WriteLine ("\tbih.biHeight: {0}", bih.biHeight);
+Console.WriteLine ("\tbih.biPlanes: {0}", bih.biPlanes);
+Console.WriteLine ("\tbih.biBitCount: {0}", bih.biBitCount);
+Console.WriteLine ("\tbih.biCompression: {0}", bih.biCompression);
+Console.WriteLine ("\tbih.biSizeImage: {0}", bih.biSizeImage);
+Console.WriteLine ("\tbih.biXPelsPerMeter: {0}", bih.biXPelsPerMeter);
+Console.WriteLine ("\tbih.biYPelsPerMeter: {0}", bih.biYPelsPerMeter);
+Console.WriteLine ("\tbih.biClrUsed: {0}", bih.biClrUsed);
+Console.WriteLine ("\tbih.biClrImportant: {0}", bih.biClrImportant);
+#endif
 				iidata.iconHeader = bih;
 				//Read the number of colors used and corresponding memory occupied by
 				//color table. Fill this memory chunk into rgbquad[]
@@ -583,16 +666,20 @@ namespace System.Drawing
 				int xorSize = numBytesPerLine * iconHeight;
 				iidata.iconXOR = new byte [xorSize];
 				int nread = bihReader.Read (iidata.iconXOR, 0, xorSize);
-				if (nread != xorSize)
-					throw new Exception ("Short file");
+				if (nread != xorSize) {
+					string msg = Locale.GetText ("{0} data length expected {1}, read {2}", "XOR", xorSize, nread);
+					throw new ArgumentException (msg, "stream");
+				}
 				
 				//Determine the AND array size
 				numBytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
 				int andSize = numBytesPerLine * iconHeight;
 				iidata.iconAND = new byte [andSize];
 				nread = bihReader.Read (iidata.iconAND, 0, andSize);
-				if (nread != andSize)
-					throw new Exception ("Short file");
+				if (nread != andSize) {
+					string msg = Locale.GetText ("{0} data length expected {1}, read {2}", "AND", andSize, nread);
+					throw new ArgumentException (msg, "stream");
+				}
 				
 				imageData [j] = iidata;
 				bihReader.Close();

@@ -1,3 +1,8 @@
+2007-01-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Icon.cs: Implement saving an icon from it's bitmap representation.
+	This allows roundtripped icons (Handle or HICON) to be saved.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Refactor Save code to allow saving a single icon size.
