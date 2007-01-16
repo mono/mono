@@ -1,4 +1,8 @@
 
+Tue Jan 16 19:54:44 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: handle missing call locationss with FORCE_INDIR_CALL.
+
 Tue Jan 16 13:14:31 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: handle also floating point values in initialize_array.
