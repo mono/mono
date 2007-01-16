@@ -42,6 +42,14 @@ namespace System.Web.UI {
 		static object commitTransaction = new object ();
 		static object error = new object ();
 		static string [] methodNames = { "Page_Init",
+#if NET_2_0
+						 "Page_PreInit",
+						 "Page_PreLoad",
+						 "Page_LoadComplete",
+						 "Page_PreRenderComplete",
+						 "Page_SaveStateComplete",
+						 "Page_InitComplete",
+#endif
 						 "Page_Load",
 						 "Page_DataBind",
 						 "Page_PreRender",
