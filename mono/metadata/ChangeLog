@@ -1,4 +1,8 @@
 
+Tue Jan 16 15:32:53 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: optimized InitializeArray() on bigendian.
+
 Tue Jan 16 13:18:51 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix for the broken ARM FPA double format.
