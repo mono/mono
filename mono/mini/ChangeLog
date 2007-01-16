@@ -1,4 +1,9 @@
 
+Tue Jan 16 12:42:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, aot-runtime.c, aot-compiler.c: enable aot compilation of
+	array initialization and make it conditional on the intrins option.
+
 Tue Jan 16 11:28:45 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, patch-info.h, Makefile.am, aot-compiler.c: reduce
