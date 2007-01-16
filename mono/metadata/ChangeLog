@@ -1,4 +1,8 @@
 
+Tue Jan 16 13:18:51 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix for the broken ARM FPA double format.
+
 Tue Jan 16 12:51:16 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: handle endian issues for r4 and r8 types, too, in
