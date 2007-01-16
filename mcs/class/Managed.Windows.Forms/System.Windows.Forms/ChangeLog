@@ -1,3 +1,13 @@
+2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiClient.cs: Add ActivatePreviousChild for 
+	mdi child window navigation.
+	* Form.cs: Use MdiClient.ActivateNextChild/
+	ActivatePreviousChild instead of Form.SelectNextControl
+	to select the next/previous child since 
+	SelectNextControl doesn't do it in the same order
+	as mdi children should do it.
+
 2007-01-16  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: remove container_selected field.

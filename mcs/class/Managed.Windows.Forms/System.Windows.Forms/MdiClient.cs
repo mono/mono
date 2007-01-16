@@ -660,8 +660,18 @@ namespace System.Windows.Forms {
 			Form front = (Form) Controls [0];
 			Form form = (Form) Controls [1];
 
-			front.SendToBack ();
 			ActivateChild (form);
+			front.SendToBack ();
+		}
+
+		internal void ActivatePreviousChild ()
+		{
+			if (Controls.Count <= 1)
+				return;
+			
+			Form back = (Form) Controls [Controls.Count - 1];
+			
+			ActivateChild (back);
 		}
 
 		internal void ActivateChild (Form form)
@@ -684,7 +694,9 @@ namespace System.Windows.Forms {
 				XplatUI.InvalidateNC (form.Handle);
 			}
 			active_child = (Form) Controls [0];
-			ParentForm.ActiveControl = active_child;
+			
+			if (active_child.Visible)
+				ParentForm.ActiveControl = active_child;
 		}
 
 		internal override IntPtr AfterTopMostControl ()

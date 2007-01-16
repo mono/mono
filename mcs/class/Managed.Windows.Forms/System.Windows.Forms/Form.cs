@@ -1785,11 +1785,11 @@ namespace System.Windows.Forms {
 					return true;
 				case Keys.Control | Keys.Tab:
 				case Keys.Control | Keys.F6:
-					MdiParent.SelectNextControl (MdiParent.ActiveControl, false, false, true, true);
+					MdiParent.MdiContainer.ActivateNextChild ();
 					return true;
 				case Keys.Control | Keys.Shift | Keys.Tab:
 				case Keys.Control | Keys.Shift | Keys.F6:
-					MdiParent.SelectNextControl (MdiParent.ActiveControl, true, false, true, true);
+					MdiParent.MdiContainer.ActivatePreviousChild ();
 					return true;
 				}
 			}
