@@ -1,3 +1,10 @@
+2007-01-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestBitmap.cs: Added test case to create multiple bitmaps from a
+	single HBITMAP.
+	* TestIcon.cs: Added test cases to create multiple icons from a
+	single Handle or HICON. Enabled SaveAndCompare on roundtrip tests.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestIcon.cs: Add test cases for ToBitmap when multiple icon sizes

@@ -908,6 +908,39 @@ namespace MonoTests.System.Drawing{
 				Assert.IsTrue (image.RawFormat.Equals (ImageFormat.MemoryBmp), "FromHbitmap.RawFormat");
 			}
 		}
+
+		[Test]
+		public void CreateMultipleBitmapFromSameHBITMAP ()
+		{
+			IntPtr hbitmap;
+			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver24bits.bmp");
+			using (Bitmap bitmap = new Bitmap (sInFile)) {
+				Assert.AreEqual (PixelFormat.Format24bppRgb, bitmap.PixelFormat, "Original.PixelFormat");
+				Assert.AreEqual (0, bitmap.Palette.Entries.Length, "Original.Palette");
+				Assert.AreEqual (183, bitmap.Height, "Original.Height");
+				Assert.AreEqual (173, bitmap.Width, "Original.Width");
+				Assert.AreEqual (73744, bitmap.Flags, "Original.Flags");
+				Assert.IsTrue (bitmap.RawFormat.Equals (ImageFormat.Bmp), "Original.RawFormat");
+				hbitmap = bitmap.GetHbitmap ();
+			}
+			// hbitmap survives original bitmap disposal
+			using (Image image = Image.FromHbitmap (hbitmap)) {
+				//Assert.AreEqual (PixelFormat.Format32bppRgb, image.PixelFormat, "1.PixelFormat");
+				Assert.AreEqual (0, image.Palette.Entries.Length, "1.Palette");
+				Assert.AreEqual (183, image.Height, "1.Height");
+				Assert.AreEqual (173, image.Width, "1.Width");
+				Assert.AreEqual (335888, image.Flags, "1.Flags");
+				Assert.IsTrue (image.RawFormat.Equals (ImageFormat.MemoryBmp), "1.RawFormat");
+			}
+			using (Image image2 = Image.FromHbitmap (hbitmap)) {
+				//Assert.AreEqual (PixelFormat.Format32bppRgb, image2.PixelFormat, "2.PixelFormat");
+				Assert.AreEqual (0, image2.Palette.Entries.Length, "2.Palette");
+				Assert.AreEqual (183, image2.Height, "2.Height");
+				Assert.AreEqual (173, image2.Width, "2.Width");
+				Assert.AreEqual (335888, image2.Flags, "2.Flags");
+				Assert.IsTrue (image2.RawFormat.Equals (ImageFormat.MemoryBmp), "2.RawFormat");
+			}
+		}
 	}
 }
 

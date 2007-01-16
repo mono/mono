@@ -277,7 +277,7 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
-		internal static void SaveAndCompare (string msg, Icon icon)
+		internal static void SaveAndCompare (string msg, Icon icon, bool alpha)
 		{
 			using (MemoryStream ms = new MemoryStream ()) {
 				icon.Save (ms);
@@ -286,6 +286,25 @@ namespace MonoTests.System.Drawing {
 				using (Icon loaded = new Icon (ms)) {
 					Assert.AreEqual (icon.Height, loaded.Height, msg + ".Loaded.Height");
 					Assert.AreEqual (icon.Width, loaded.Width, msg + ".Loaded.Width");
+
+					using (Bitmap expected = icon.ToBitmap ()) {
+						using (Bitmap actual = loaded.ToBitmap ()) {
+							Assert.AreEqual (expected.Height, actual.Height, msg + ".Bitmap.Height");
+							Assert.AreEqual (expected.Width, actual.Width, msg + ".Bitmap.Width");
+
+							for (int y = 0; y < expected.Height; y++) {
+								for (int x = 0; x < expected.Width; x++) {
+									Color e = expected.GetPixel (x, y);
+									Color a = actual.GetPixel (x, y);
+									if (alpha)
+										Assert.AreEqual (e.A, a.A, String.Format ("{0}:{1}x{2}:A", msg, x, y));
+									Assert.AreEqual (e.R, a.R, String.Format ("{0}:{1}x{2}:R", msg, x, y));
+									Assert.AreEqual (e.G, a.G, String.Format ("{0}:{1}x{2}:G", msg, x, y));
+									Assert.AreEqual (e.B, a.B, String.Format ("{0}:{1}x{2}:B", msg, x, y));
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -296,11 +315,11 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void Save ()
 		{
-			SaveAndCompare ("16", icon16);
-			SaveAndCompare ("32", icon32);
-			SaveAndCompare ("48", icon48);
-			SaveAndCompare ("64", icon64);
-			SaveAndCompare ("96", icon96);
+			SaveAndCompare ("16", icon16, true);
+			SaveAndCompare ("32", icon32, true);
+			SaveAndCompare ("48", icon48, true);
+			SaveAndCompare ("64", icon64, true);
+			SaveAndCompare ("96", icon96, true);
 		}
 
 		[Test]
@@ -427,8 +446,7 @@ namespace MonoTests.System.Drawing {
 					Assert.AreEqual (16, icon2.Height, "FromHandle.Height");
 					Assert.AreEqual (16, icon2.Width, "FromHandle.Width");
 					Assert.AreEqual (handle, icon2.Handle, "FromHandle.Handle");
-// enable when Save is enabled for re-constructed icons
-//					IconTest.SaveAndCompare ("Handle", icon2);
+					IconTest.SaveAndCompare ("Handle", icon2, false);
 				}
 			}
 			// unlike other cases (HICON, HBITMAP) handle DOESN'T survives original icon disposal
@@ -438,6 +456,31 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (0, icon3.Width, "Survivor.Width");
 				Assert.AreEqual (handle, icon3.Handle, "Survivor.Handle");
 			}*/
+		}
+
+		[Test]
+		public void CreateMultipleIconFromSameHandle ()
+		{
+			IntPtr handle;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+				Assert.AreEqual (16, icon.Height, "Original.Height");
+				Assert.AreEqual (16, icon.Width, "Original.Width");
+				handle = icon.Handle;
+				using (Icon icon2 = Icon.FromHandle (handle)) {
+					Assert.AreEqual (16, icon2.Height, "2.Height");
+					Assert.AreEqual (16, icon2.Width, "2.Width");
+					Assert.AreEqual (handle, icon2.Handle, "2.Handle");
+					IconTest.SaveAndCompare ("Handle2", icon2, false);
+				}
+				using (Icon icon3 = Icon.FromHandle (handle)) {
+					Assert.AreEqual (16, icon3.Height, "3.Height");
+					Assert.AreEqual (16, icon3.Width, "3.Width");
+					Assert.AreEqual (handle, icon3.Handle, "3.Handle");
+					IconTest.SaveAndCompare ("Handle3", icon3, false);
+				}
+			}
+			// unlike other cases (HICON, HBITMAP) handle DOESN'T survives original icon disposal
+			// commented / using freed memory is risky ;-)
 		}
 
 		[Test]
@@ -454,8 +497,31 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (16, icon2.Height, "Survivor.Height");
 				Assert.AreEqual (16, icon2.Width, "Survivor.Width");
 				Assert.AreEqual (handle, icon2.Handle, "Survivor.Handle");
-// enable when Save is enabled for re-constructed icons
-//				IconTest.SaveAndCompare ("HICON", icon2);
+				IconTest.SaveAndCompare ("HICON", icon2, false);
+			}
+		}
+
+		[Test]
+		public void CreateMultipleIconFromSameHICON ()
+		{
+			IntPtr handle;
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+				Assert.AreEqual (16, icon.Height, "Original.Height");
+				Assert.AreEqual (16, icon.Width, "Original.Width");
+				handle = icon.ToBitmap ().GetHicon ();
+			}
+			// HICON survives
+			using (Icon icon2 = Icon.FromHandle (handle)) {
+				Assert.AreEqual (16, icon2.Height, "2.Height");
+				Assert.AreEqual (16, icon2.Width, "2.Width");
+				Assert.AreEqual (handle, icon2.Handle, "2.Handle");
+				IconTest.SaveAndCompare ("HICON2", icon2, false);
+			}
+			using (Icon icon3 = Icon.FromHandle (handle)) {
+				Assert.AreEqual (16, icon3.Height, "3.Height");
+				Assert.AreEqual (16, icon3.Width, "3.Width");
+				Assert.AreEqual (handle, icon3.Handle, "3.Handle");
+				IconTest.SaveAndCompare ("HICON", icon3, false);
 			}
 		}
 	}
