@@ -565,7 +565,23 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc (ref Message m)
 		{
-			base.WndProc (ref m);
+			switch ((Msg)m.Msg) {
+			case Msg.WM_SETFOCUS:
+				if (selected_index == -1 && this.TabCount > 0)
+					this.SelectedIndex = 0;
+				if (selected_index != -1)
+					Invalidate(GetTabRect(selected_index));
+				base.WndProc (ref m);
+				break;
+			case Msg.WM_KILLFOCUS:
+				if (selected_index != -1)
+					Invalidate(GetTabRect(selected_index));
+				base.WndProc (ref m);
+				break;
+			default:
+				base.WndProc (ref m);
+				break;
+			}
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
@@ -580,23 +596,6 @@ namespace System.Windows.Forms {
 			Draw (pe.Graphics, pe.ClipRectangle);
 			pe.Handled = true;
 		}
-
-		internal override void OnGotFocusInternal(EventArgs e) {
-			if (selected_index == -1 && this.TabCount > 0)
-				this.SelectedIndex = 0;
-			if (selected_index != -1)
-				Invalidate(GetTabRect(selected_index));
-			base.OnGotFocusInternal (e);
-		}
-
-
-		internal override void OnLostFocusInternal(EventArgs e) {
-			if (selected_index != -1)
-				Invalidate(GetTabRect(selected_index));
-			base.OnLostFocusInternal (e);
-		}
-
-
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods

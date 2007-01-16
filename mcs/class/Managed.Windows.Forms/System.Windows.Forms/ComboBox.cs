@@ -1649,13 +1649,13 @@ namespace System.Windows.Forms
 				else
 					document.CaretLostFocus ();
 			}
-
-			internal override void OnGotFocusInternal (EventArgs e)
+			
+			protected override void OnGotFocus (EventArgs e)
 			{
 				owner.Select (false, true);
 			}
 
-			internal override void OnLostFocusInternal (EventArgs e)
+			protected override void OnLostFocus (EventArgs e)
 			{
 				owner.Select (false, true);
 			}			

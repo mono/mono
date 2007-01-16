@@ -27,6 +27,8 @@
 
 	* TabControl.cs: same.
 
+	* ComboBox.cs: same.
+
 2007-01-15  Everaldo Canuto  <everaldo@simios.org>
 
 	* Menu.cs: implement MergeItems and Replace for MenuMerge method.
