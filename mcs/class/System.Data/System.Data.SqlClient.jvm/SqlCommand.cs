@@ -87,11 +87,14 @@ namespace System.Data.SqlClient
 		public override string CommandText {
 			get {
 				string commandText = base.CommandText;
-				if (CommandType != CommandType.StoredProcedure || string.IsNullOrEmpty (commandText))
+				if (CommandType != CommandType.StoredProcedure ||
+					string.IsNullOrEmpty (commandText) ||
+					commandText [0] == '[' ||
+					commandText.IndexOf ('.') >= 0)
 					return commandText;
 
 				string trimmedCommandText = commandText.TrimEnd ();
-				if (commandText [0] != '[' && trimmedCommandText.Length > 0 && trimmedCommandText [trimmedCommandText.Length - 1] != ')')
+				if (trimmedCommandText.Length > 0 && trimmedCommandText [trimmedCommandText.Length - 1] != ')')
 					commandText = String.Concat ("[", commandText, "]");
 
 				return commandText;
