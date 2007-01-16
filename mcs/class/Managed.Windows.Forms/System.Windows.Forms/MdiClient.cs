@@ -114,6 +114,7 @@ namespace System.Windows.Forms {
 				ParentForm.SendControlFocus (this);
 			} else {
 				active.SendControlFocus (active);
+				ParentForm.ActiveControl = active;
 			}
 		}
 
