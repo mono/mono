@@ -4773,7 +4773,7 @@ namespace System.Windows.Forms
 
 		public override int ManagedWindowBorderWidth (InternalWindowManager wm)
 		{
-			return 3;
+			return 4;
 		}
 
 		public override int ManagedWindowIconWidth (InternalWindowManager wm)
@@ -4811,33 +4811,31 @@ namespace System.Windows.Forms
 			int bdwidth = ManagedWindowBorderWidth (wm);
 			Color titlebar_color = Color.FromArgb (255, 10, 36, 106);
 			Color titlebar_color2 = Color.FromArgb (255, 166, 202, 240);
-
-			if (wm.HasBorders) {
-				Pen pen = new Pen(ColorControl, 1);
-				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
-				// The 3d border is only 2 pixels wide, so we draw the innermost pixel ourselves
-				dc.DrawRectangle (new Pen (ColorControl, 1), 2, 2, form.Width - 5, form.Height - 5);
-				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
-				
-				if (!wm.IsMaximized) {
-					borders.Y += tbheight + bdwidth;
-					borders.X += bdwidth;
-					borders.Height -= tbheight + bdwidth * 2 + 1;
-					borders.Width -= bdwidth * 2 + 1;
-					
-					dc.DrawRectangle (pen, borders);
-				}
-			}
-
 			Color color = ThemeEngine.Current.ColorControlDark;
 			Color color2 = Color.FromArgb (255, 192, 192, 192);
+
+#if debug
+				dc.FillRectangle (Brushes.Black, clip);
+#endif
+			
+			if (wm.HasBorders) {
+				Pen pen = ResPool.GetPen (ColorControl);
+				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
+				ControlPaint.DrawBorder3D (dc, borders, Border3DStyle.Raised);
+				// The 3d border is only 2 pixels wide, so we draw the innermost pixels ourselves
+				borders = new Rectangle (2, 2, form.Width - 5, form.Height - 5);
+				for (int i = 2; i < bdwidth; i++) {
+					dc.DrawRectangle (pen, borders);
+					borders.Inflate (-1, -1);
+				}				
+			}
+
 			if (wm.IsActive () && !wm.IsMaximized) {
 				color = titlebar_color;
 				color2 = titlebar_color2;
 			}
 
-			Rectangle tb = new Rectangle (bdwidth, bdwidth,
-					form.Width - (bdwidth * 2), tbheight);
+			Rectangle tb = new Rectangle (bdwidth, bdwidth, form.Width - (bdwidth * 2), tbheight - 1);
 
 			// HACK: For now always draw the titlebar until we get updates better
 			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
@@ -4849,9 +4847,10 @@ namespace System.Windows.Forms
 				}	
 			}
 			
-			dc.DrawLine (new Pen (SystemColors.ControlLight, 1), bdwidth,
-					tbheight + bdwidth, form.Width - (bdwidth * 2),
-					tbheight + bdwidth);
+			// Draw the line just beneath the title bar
+			dc.DrawLine (ResPool.GetPen (SystemColors.Control), bdwidth,
+					tbheight + bdwidth - 1, form.Width - bdwidth - 1,
+					tbheight + bdwidth - 1);
 
 			if (!wm.IsToolWindow) {
 				tb.X += 18; // Room for the icon and the buttons

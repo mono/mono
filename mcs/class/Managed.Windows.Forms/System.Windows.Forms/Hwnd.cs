@@ -197,6 +197,8 @@ namespace System.Windows.Forms {
 				border_size = ThemeEngine.Current.BorderSize;
 			else if (border_style == FormBorderStyle.Fixed3D)
 				border_size = ThemeEngine.Current.Border3DSize;
+			else if (border_style == (FormBorderStyle) 0xFFFF)
+				border_size = new Size(4, 4);
 			
 			if (border_size.Width != 0) {
 				rect.X -= border_size.Width;
@@ -207,6 +209,9 @@ namespace System.Windows.Forms {
 				rect.Y -= border_size.Height;
 				rect.Height += border_size.Height * 2;
 			}
+			
+			rect.Y -= caption_height;
+			rect.Height += caption_height;
 
 			return rect;
 		}

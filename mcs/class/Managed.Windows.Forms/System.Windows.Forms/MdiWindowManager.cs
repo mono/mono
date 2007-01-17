@@ -585,15 +585,15 @@ namespace System.Windows.Forms {
 						typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
 
 				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-				if (!IsMaximized)
-					bw++;
+				//if (!IsMaximized)
+				//        bw++;
 
 				if (HasBorders) {
 					ncp.rgrc1.top += TitleBarHeight + bw;
 					if (!IsMaximized) {
 						//ncp.rgrc1.top -= 1;
-						ncp.rgrc1.left += bw - 2;
-						ncp.rgrc1.bottom -= bw - 2;
+						ncp.rgrc1.left += bw;// - 2;
+						ncp.rgrc1.bottom -= bw;// - 2;
 						ncp.rgrc1.right -= bw;
 					} else {
 						ncp.rgrc1.left += 1;

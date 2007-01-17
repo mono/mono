@@ -774,7 +774,7 @@ namespace System.Windows.Forms {
 				title_style = TitleStyle.None;
 
 				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_MDICHILD)) {
-					caption_height = 26;
+					caption_height = 19;
 
 					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
 						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {

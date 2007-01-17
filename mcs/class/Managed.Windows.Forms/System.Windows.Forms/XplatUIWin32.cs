@@ -1254,6 +1254,9 @@ namespace System.Windows.Forms {
 
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
+
+			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) > 0)
+				XplatUI.RequestNCRecalc (handle);
 		}
 
 		internal override double GetWindowTransparency(IntPtr handle)

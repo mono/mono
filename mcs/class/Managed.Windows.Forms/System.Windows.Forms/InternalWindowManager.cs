@@ -775,7 +775,10 @@ namespace System.Windows.Forms {
 			ClearVirtualPosition ();
 
 			form.Capture = false;
-			form.Bounds = virtual_position;
+			if (state == State.Moving && form.Location != virtual_position.Location) 
+				form.Location = virtual_position.Location;
+			else if (state == State.Sizing && form.Bounds != virtual_position)
+				form.Bounds = virtual_position;
 			state = State.Idle;
 
 			OnWindowFinishedMoving ();

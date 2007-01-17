@@ -1,3 +1,26 @@
+2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XplatUIX11.cs: Caption height for MDI children is 19, not 26.
+	* XplatUIWin32.cs: We need to recalculate NC size after changing 
+	window style to toolwindow (otherwise the client rectangle will be
+	3 pixels to small for some reason).
+	* MdiWindowManager.cs: Revert NC size calculations to match how
+	they are calculated only based on window styles (to match
+	Win32AdjustWindowRectEx, since otherwise when setting size or 
+	location, Control will call Win32AdjustWindowRectEx to update client 
+	size, which would provoke a paint, then	we'd get a NCCALCSIZE and 
+	calculate a different value of client size causing another paint 
+	(and flickering))
+	* InternalWindowManager.cs: When moving or resizing a window only
+	update size or location if they actually changed.
+	* ThemeWin32Classic.cs: ManagedWindowsBorderWidth is now 4 instead of 3
+	(seems to match Windows behaviour better). Cleaned up 
+	ManagedWindowDecorations to draw what's needed and nothing else
+	(was drawing borders and lines where they shouldn't be)
+	* Hwnd.cs: GetWindowRectangle now knows about MDI border sizes
+	(style = 0xFFFF) and takes into account caption height when 
+	calculating window rectangle.	
+
 2007-01-16  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Internal ToolBarButtonInfo class added, Because same button 
