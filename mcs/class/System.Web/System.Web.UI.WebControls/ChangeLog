@@ -1,5 +1,9 @@
 2007-01-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* DataList.cs: fixed OnBubbleEvent, added SelectedIndex updating
+
+2007-01-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* DetailsView.cs: fixed CreateChildControls, PageIndex cannot be less
 	than zero
 

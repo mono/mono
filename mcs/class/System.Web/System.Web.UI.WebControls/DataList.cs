@@ -691,6 +691,7 @@ namespace System.Web.UI.WebControls {
 				OnEditCommand (dlca);
 				return true;
 			} else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
+				SelectedIndex = dlca.Item.ItemIndex;
 				OnSelectedIndexChanged (dlca);
 				return true;
 			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0) {
