@@ -333,13 +333,6 @@ namespace System.Web.Compilation
 			if (tparser != null)
 				tparser.Location = location;
 
-			// MS ignores tbody/thead
-			if ((attributes == null || !attributes.IsRunAtServer ())) {
-				if (String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0 ||
-				    String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0)
-				return;
-			}
-
 			if (text.Length != 0)
 				FlushText ();
 
