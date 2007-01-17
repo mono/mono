@@ -1166,7 +1166,7 @@ namespace System.Web.UI.WebControls
 		void RegisterStyle (Style baseStyle) {
 			if (Page.Header == null)
 				return;
-			string className = IncrementStyleClassName ();
+			string className = IncrementStyleClassName ().Trim ('_');
 			baseStyle.SetRegisteredCssClass (className);
 			Page.Header.StyleSheet.CreateStyleRule (baseStyle, this, "." + className);
 		}
@@ -1381,6 +1381,9 @@ namespace System.Web.UI.WebControls
 				else if (imageStyle.LeafIcon != null && node.IsLeafNode)
 					imageUrl = GetNodeIconUrl (imageStyle.LeafIcon);
 			}
+			
+			if (level < LevelStyles.Count && LevelStyles [level].ImageUrl != null)
+				imageUrl = ResolveClientUrl (LevelStyles [level].ImageUrl);
 			
 			if (!String.IsNullOrEmpty (imageUrl)) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
