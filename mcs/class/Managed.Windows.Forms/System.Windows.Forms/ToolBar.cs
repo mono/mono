@@ -22,6 +22,7 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //	Mike Kestner <mkestner@novell.com>
+//	Everaldo Canuto <ecanuto@novell.com>
 //
 // TODO:
 //   - Tooltip
@@ -951,17 +952,17 @@ namespace System.Windows.Forms
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable
 		{
 			#region instance variables
-			private ArrayList list;
-			private ToolBar owner;
-			private bool redraw;
+			private ArrayList list; // List of button
+			private ToolBar owner;  // ToolBar associated to Collection
+			private bool redraw;    // Flag if needs to redraw after add/remove operations
 			#endregion
 
 			#region constructors
 			public ToolBarButtonCollection (ToolBar owner)
 			{
-				this.owner = owner;
-				list = new ArrayList ();
-				redraw = true;
+				this.list   = new ArrayList ();
+				this.owner  = owner;
+				this.redraw = true;
 			}
 			#endregion
 
@@ -1126,6 +1127,49 @@ namespace System.Windows.Forms
 			}
 			#endregion methods
 		}
+		
+		// Because same button can be added to toolbar multiple times, we need to maintain
+		// a list of button information for each positions. 
+		internal class ToolBarButtonInfo : Component
+		{
+			#region Instance variables
+			
+			private ToolBar       toolbar; // Parent toolbar
+			private ToolBarButton button;  // Associated toolBar button 
+			private Rectangle     bounds;  // Toolbar button bounds
+			
+			#endregion
+			
+			#region Constructors
+			
+			public ToolBarButtonInfo (ToolBarButton button)
+			{
+				this.toolbar = button.Parent;
+				this.button  = button;
+			}
+			
+			#endregion Constructors
+		
+			#region Properties
+
+			public ToolBarButton Button {
+				get { return this.button; }
+				set { this.button = value; }
+			}
+			
+			public Rectangle Rectangle {
+				get { return this.bounds; }
+				set { this.bounds = value; }
+			}
+			
+			#endregion Properties
+			
+			#region Methods
+			
+			
+			#endregion Methods
+		}
+
 		#endregion subclass
 	}
 }

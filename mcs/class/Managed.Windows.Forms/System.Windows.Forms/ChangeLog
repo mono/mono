@@ -1,5 +1,11 @@
 2007-01-16  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Internal ToolBarButtonInfo class added, Because same button 
+	can be added to toolbar multiple times, we need to maintain a list of 
+	button information for each positions.
+
+2007-01-16  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: Some small stetic changes.
 
 2007-01-16  Jackson Harper  <jackson@ximian.com>
