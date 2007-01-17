@@ -1,4 +1,8 @@
-2007-01-16  Jonathan Pobst  <monkey@jpobst.com>
+2007-01-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIWin32.cs: Don't use 2.0 methods in 1.1 code!  Doh!
+
+2007-01-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIWin32.cs: Implement proper double buffering for Windows.
 	[Fixes bug #80447, and probably speeds up things as well]

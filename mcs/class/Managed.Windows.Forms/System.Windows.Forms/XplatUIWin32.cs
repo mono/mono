@@ -2654,7 +2654,7 @@ namespace System.Windows.Forms {
 
 			offscreen_drawable = new WinBuffer (srcHdc, srcBmp);
 
-			destG.ReleaseHdc ();
+			destG.ReleaseHdc (destHdc);
 		}
 
 		internal override Graphics GetOffscreenGraphics (object offscreen_drawable)
@@ -2666,8 +2666,9 @@ namespace System.Windows.Forms {
 		{
 			WinBuffer wb = (WinBuffer)offscreen_drawable;
 
-			Win32BitBlt (dest_dc.GetHdc (), r.Left, r.Top, r.Width, r.Height, wb.hdc, r.Left, r.Top, TernaryRasterOperations.SRCCOPY);
-			dest_dc.ReleaseHdc ();
+			IntPtr destHdc = dest_dc.GetHdc ();
+			Win32BitBlt (destHdc, r.Left, r.Top, r.Width, r.Height, wb.hdc, r.Left, r.Top, TernaryRasterOperations.SRCCOPY);
+			dest_dc.ReleaseHdc (destHdc);
 		}
 
 		internal override void DestroyOffscreenDrawable (object offscreen_drawable)
