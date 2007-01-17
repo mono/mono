@@ -68,6 +68,7 @@ namespace System.Web {
 #else
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
 #endif
+        
 
 		MethodInfo session_end;
 		bool needs_init = true;
@@ -76,9 +77,8 @@ namespace System.Web {
 		HttpApplicationState app_state;
 		Hashtable app_event_handlers;
 #if !TARGET_JVM
-		FileSystemWatcher app_file_watcher;
-		FileSystemWatcher bin_watcher;
-		FileSystemWatcher config_watcher;
+		static ArrayList watchers = new ArrayList();
+		static object watchers_lock = new object();
 #endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
@@ -138,7 +138,7 @@ namespace System.Web {
 
 				app_event_handlers = new Hashtable ();
 				BindingFlags flags = BindingFlags.Public    | BindingFlags.NonPublic | 
-						     BindingFlags.Instance  | BindingFlags.Static;
+					BindingFlags.Instance  | BindingFlags.Static;
 
 				MethodInfo [] methods = type.GetMethods (flags);
 				foreach (MethodInfo m in methods) {
@@ -221,22 +221,6 @@ namespace System.Web {
 
 			return watcher;
 		}
-
-		void OnAppFileRenamed (object sender, RenamedEventArgs args)
-		{
-			OnAppFileChanged (sender, args);
-		}
-
-		void OnAppFileChanged (object sender, FileSystemEventArgs args)
-		{
-			if (config_watcher != null)
-				config_watcher.EnableRaisingEvents = false;
-			if (bin_watcher != null)
-				bin_watcher.EnableRaisingEvents = false;
-			if (app_file_watcher != null)
-				app_file_watcher.EnableRaisingEvents = false;
-			HttpRuntime.UnloadAppDomain ();
-		}
 #endif
 
 		internal static void AttachEvents (HttpApplication app)
@@ -293,7 +277,7 @@ namespace System.Web {
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
-							evt.EventHandlerType, app, method.Name));
+							     evt.EventHandlerType, app, method.Name));
 			}
 		}
 
@@ -416,17 +400,18 @@ namespace System.Web {
 				}
 
 #if !TARGET_JVM
-				FileSystemEventHandler fseh = new FileSystemEventHandler (OnAppFileChanged);
-				RenamedEventHandler reh = new RenamedEventHandler (OnAppFileRenamed);
-				app_file_watcher = CreateWatcher (app_file, fseh, reh);
+		                app_file = "Global.asax";
+		                if (!File.Exists(Path.Combine(physical_app_path, app_file)))
+					app_file =  "global.asax";
 
-				string config_file = Path.Combine (physical_app_path, "Web.config");
-				if (!File.Exists (config_file))
-					config_file = Path.Combine (physical_app_path, "web.config");
-				if (!File.Exists (config_file))
-					config_file = Path.Combine (physical_app_path, "Web.Config");
-
-				config_watcher = CreateWatcher (config_file, fseh, reh);
+				WatchLocationForRestart(app_file);
+					    
+		                if (File.Exists(Path.Combine(physical_app_path, "Web.config")))
+		                	WatchLocationForRestart("Web.config");
+		                else if (File.Exists(Path.Combine(physical_app_path, "web.config")))
+		                	WatchLocationForRestart("web.config");
+		                else if (File.Exists(Path.Combine(physical_app_path, "Web.Config")))
+		                	WatchLocationForRestart("Web.Config");
 #endif
 				needs_init = false;
 
@@ -453,16 +438,14 @@ namespace System.Web {
 				lock (factory) {
 					if (factory.app_start_needed) {
 #if !TARGET_JVM
-						string bin = HttpRuntime.BinDirectory;
-						if (Directory.Exists (bin))
-							bin = Path.Combine (bin, "*.dll");
-
-						FileSystemEventHandler fseh = new FileSystemEventHandler (factory.OnAppFileChanged);
-						RenamedEventHandler reh = new RenamedEventHandler (factory.OnAppFileRenamed);
-						// We watch bin or bin/*.dll if the directory exists
-						factory.bin_watcher = CreateWatcher (bin, fseh, reh);
+						WatchLocationForRestart("bin", "*.dll");
+#if NET_2_0 && !TARGET_J2EE
+			                        WatchLocationForRestart("App_Code", "");
+			                        WatchLocationForRestart("App_Browsers", "");
+			                        WatchLocationForRestart("App_GlobalResources", "");
 #endif
-						app = factory.FireOnAppStart (context);
+#endif
+			                        app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
 						return app;
 					}
@@ -518,6 +501,51 @@ namespace System.Web {
 		internal static bool ContextAvailable {
 			get { return theFactory != null && !theFactory.app_start_needed; }
 		}
+		
+		internal static bool WatchLocationForRestart(string filter)
+	        {
+			return WatchLocationForRestart("", filter);
+	        }
+        
+	        internal static bool WatchLocationForRestart(string virtualPath, string filter)
+		{
+			// map the path to the physical one
+			string physicalPath = HttpRuntime.AppDomainAppPath;
+			physicalPath = Path.Combine(physicalPath, virtualPath);
+
+			if (Directory.Exists(physicalPath) || File.Exists(physicalPath)) {
+				physicalPath = Path.Combine(physicalPath, filter);
+
+				// create the watcher
+				FileSystemEventHandler fseh = new FileSystemEventHandler(OnFileChanged);
+				RenamedEventHandler reh = new RenamedEventHandler(OnFileRenamed);
+				FileSystemWatcher watcher = CreateWatcher(physicalPath, fseh, reh);
+	                
+				lock (watchers_lock) {
+					watchers.Add(watcher);
+				}
+				return true;
+			} else {
+				return false;
+			}
+	        }
+
+	        static void OnFileRenamed(object sender, RenamedEventArgs args)
+		{
+			OnFileChanged(sender, args);
+	        }
+
+	        static void OnFileChanged(object sender, FileSystemEventArgs args)
+	        {
+	        	lock (watchers_lock) {
+				// Disable event raising to avoid concurrent restarts
+				foreach (FileSystemWatcher watcher in watchers) {
+					watcher.EnableRaisingEvents = false;
+				}
+				// Restart application
+				HttpRuntime.UnloadAppDomain();
+			}
+	        }
 	}
 }
 
