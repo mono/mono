@@ -91,6 +91,9 @@ namespace System.Web.Compilation
 					return results;
 
 				ICodeCompiler comp = compiler.Compiler;
+#if NET_2_0
+				GetExtraAssemblies (compiler.CompilerParameters);
+#endif
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
@@ -245,6 +248,12 @@ namespace System.Web.Compilation
 				foreach (object o in list)
 					if (o is string)
 						options.ReferencedAssemblies.Add ((string) o);
+			}
+			
+			list = BuildManager.TopLevelAssemblies;
+			if (list != null && list.Count > 0) {
+				foreach (Assembly a in list)
+					options.ReferencedAssemblies.Add (a.Location);
 			}
 		}
 #endif

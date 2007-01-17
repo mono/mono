@@ -548,13 +548,13 @@ namespace System.Web.Compilation
 				throw new HttpException ("Failed to compile resource file", ex);
 			} finally {
 				if (reader != null)
-					reader.Dispose ();
+					reader.Close ();
 				else if (source != null)
-					source.Dispose ();
+					source.Close ();
 				if (writer != null)
-					writer.Dispose ();
+					writer.Close ();
 				else if (destination != null)
-					destination.Dispose ();
+					destination.Close ();
 			}
 			
 			return resource;

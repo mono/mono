@@ -212,6 +212,8 @@ namespace System.Web.Compilation
 				AppDomain.CurrentDomain.SetupInformation.DynamicBase,
 				name, "dll", OnCreateTemporaryAssemblyFile);
 			parameters.OutputAssembly = outputAssemblyName;
+			foreach (Assembly a in BuildManager.TopLevelAssemblies)
+				parameters.ReferencedAssemblies.Add (a.Location);
 			CompilerResults results = abuilder.BuildAssembly (parameters);
 			if (results.Errors.Count == 0) {
 				BuildManager.CodeAssemblies.Add (results.PathToAssembly);
