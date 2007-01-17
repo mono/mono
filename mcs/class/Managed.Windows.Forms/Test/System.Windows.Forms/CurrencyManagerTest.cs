@@ -739,8 +739,8 @@ namespace MonoTests.System.Windows.Forms
 
 			cm.EndCurrentEdit ();
 
-			//			Assert.AreEqual (3, item_changed, "EndAddNew7");
-			//			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew8");
+			Assert.AreEqual (3, item_changed, "EndAddNew7");
+			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew8");
 			Assert.AreEqual (1, current_changed, "EndAddNew9");
 			Assert.AreEqual (2, position_changed, "EndAddNew10");
 
