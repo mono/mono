@@ -1103,7 +1103,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (AllowPaging && PageIndex >= PageCount) {
-				PageIndex = PageCount - 1;
+				PageIndex = (PageCount > 0) ? PageCount - 1 : 0;
 				dataSource.CurrentPageIndex = PageIndex;
 			}
 

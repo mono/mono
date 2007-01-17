@@ -1,3 +1,8 @@
+2007-01-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DetailsView.cs: fixed CreateChildControls, PageIndex cannot be less
+	than zero
+
 2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DetailsView.cs: fixed CreateChildControls, PageIndex should be less
