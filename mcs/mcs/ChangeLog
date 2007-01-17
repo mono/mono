@@ -1,3 +1,10 @@
+2007-01-17  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0029-6.cs and gcs0029-2.cs (regression)
+	* ecore.cs (EmptyConstantCast.ConvertImplicitly): Check that
+	there's an implicit conversion from the current type to the target
+	type before converting the underlying constant.
+
 2007-01-16  Marek Safar  <marek.safar@gmail.com>
 
 	* const.cs (ResolveValue): Updated after constant conversion was made more

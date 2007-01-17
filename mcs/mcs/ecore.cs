@@ -1393,6 +1393,7 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
+			// FIXME: check that 'type' can be converted to 'target_type' first
 			return child.ConvertExplicitly (inCheckedContext, target_type);
 		}
 
@@ -1401,13 +1402,11 @@ namespace Mono.CSharp {
 			return child.Increment ();
 		}
 
-		public override bool IsDefaultValue
-		{
+		public override bool IsDefaultValue {
 			get { return child.IsDefaultValue; }
 		}
 
-		public override bool IsNegative
-		{
+		public override bool IsNegative {
 			get { return child.IsNegative; }
 		}
 
@@ -1416,9 +1415,12 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override Constant ConvertImplicitly (Type type)
+		public override Constant ConvertImplicitly (Type target_type)
 		{
-			return child.ConvertImplicitly (type);
+			// FIXME: Do we need to check user conversions?
+			if (!Convert.ImplicitStandardConversionExists (this, target_type))
+				return null;
+			return child.ConvertImplicitly (target_type);
 		}
 	}
 
