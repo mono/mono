@@ -1,4 +1,9 @@
 
+Wed Jan 17 14:28:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, metadata-internals.h, object.c: execute module
+	cctors when running on the 2 runtime if present (bug #80487).
+
 Tue Jan 16 15:32:53 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: optimized InitializeArray() on bigendian.
