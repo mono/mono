@@ -1,3 +1,10 @@
+2007-01-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlCanonicalizer.cs : don't output default namespace when the node's
+	  namespace is not empty. Check "visibly utilized" namespace nodes in
+	  exc-c14n. Also, in exc-c14n, rendered namespaces are not written.
+	  Added InclusiveNamespaces PrefixList field (not in use yet).
+
 2005-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlCanonicalizer.cs : don't rip &#xD; off here.

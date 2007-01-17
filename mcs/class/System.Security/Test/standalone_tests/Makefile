@@ -1,8 +1,13 @@
-RUNTIME = mono --debug 
-CSCOMPILE = mcs --debug
 PROFILE = default
+RUNTIME = MONO_PATH=../../../lib/$(PROFILE) mono --debug 
 #XMLDSIG_EXE_OPTIONS =
 XMLDSIG_EXE_OPTIONS = --decent-reader
+
+ifeq ($(PROFILE), net_2_0)
+CSCOMPILE = gmcs --debug -d:NET_2_0
+else
+CSCOMPILE = mcs --debug
+endif
 
 run-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt
@@ -29,7 +34,7 @@ ms-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	rm Mono.Security.dll
 
 clean:
-	rm *.exe
+	rm -f *.exe *.exe.mdb
 
 c14n.exe : c14n.cs
 	$(CSCOMPILE) c14n.cs -r:System.Security.dll

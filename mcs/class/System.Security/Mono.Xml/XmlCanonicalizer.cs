@@ -48,6 +48,7 @@ namespace Mono.Xml {
 		// c14n parameters
 		private bool comments;
 		private bool exclusive;
+		string inclusiveNamespacesPrefixList;
 
 		// input/output
 		private XmlNodeList xnl;
@@ -86,6 +87,12 @@ namespace Mono.Xml {
 				return new MemoryStream ();
 			return Canonicalize (nodes[0].OwnerDocument);
 		}		
+
+		// See xml-enc-c14n specification
+		public string InclusiveNamespacesPrefixList {
+			get { return inclusiveNamespacesPrefixList; }
+			set { inclusiveNamespacesPrefixList = value; }
+		}
 
 		private void WriteNode (XmlNode node)
 		{
@@ -226,7 +233,7 @@ namespace Mono.Xml {
 			bool has_empty_namespace = false;
 			ArrayList list = new ArrayList ();
 			for (XmlNode cur = node; cur != null && cur != doc; cur = cur.ParentNode) {
-			        foreach (XmlNode attribute in cur.Attributes) {		
+			        foreach (XmlAttribute attribute in cur.Attributes) {		
 					if (!IsNamespaceNode (attribute)) 
 			    			continue;
 			    	
@@ -252,6 +259,13 @@ namespace Mono.Xml {
 					// check that we have not rendered it yet
 					bool rendered = IsNamespaceRendered (prefix, attribute.Value);
 
+					// For exc-c14n, only visually utilized
+					// namespaces are written.
+					if (exclusive && rendered)
+						continue;
+					if (exclusive && !IsVisiblyUtilized (node as XmlElement, attribute))
+						continue;
+
 					// add to the visible namespaces stack
 					if (visible)
 						visibleNamespaces.Add (attribute);			      
@@ -264,8 +278,8 @@ namespace Mono.Xml {
 				}
 			}
 
-			// add empty namespace if needed		    
-			if (visible && !has_empty_namespace && !IsNamespaceRendered (string.Empty, string.Empty)) 
+			// add empty namespace if needed
+			if (visible && !has_empty_namespace && !IsNamespaceRendered (string.Empty, string.Empty) && node.NamespaceURI == String.Empty)
 				res.Append (" xmlns=\"\"");
 		    
 			list.Sort (new XmlDsigC14NTransformNamespacesComparer ());
@@ -441,7 +455,8 @@ namespace Mono.Xml {
 					res.Append ("?>");
 	    		}
 		}
-		
+
+		// determines whether the node is in the node-set or not.
 		private bool IsNodeVisible (XmlNode node)
 		{
 			// if node list is empty then we process whole document
@@ -454,6 +469,29 @@ namespace Mono.Xml {
 					return true;
 			}
 		    
+			return false;
+		}
+		
+		// This method assumes that the namespace node is *not*
+		// rendered yet.
+		private bool IsVisiblyUtilized (XmlElement owner, XmlAttribute ns)
+		{
+			if (owner == null)
+				return false;
+
+			string prefix = ns.LocalName == "xmlns" ? String.Empty : ns.LocalName;
+			if (owner.Prefix == prefix && owner.NamespaceURI == ns.Value)
+				return true;
+			if (!owner.HasAttributes)
+				return false;
+			foreach (XmlAttribute a in owner.Attributes) {
+				if (a.Prefix == String.Empty)
+					continue;
+				if (a.Prefix != prefix || a.NamespaceURI != ns.Value)
+					continue;
+				if (IsNodeVisible (a))
+					return true;
+			}
 			return false;
 		}
 

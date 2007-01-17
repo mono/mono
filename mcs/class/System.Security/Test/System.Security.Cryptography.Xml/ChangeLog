@@ -1,3 +1,8 @@
+2007-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigExcC14NTransformTest.cs : new tests, mostly copied from
+	  non-exc test.
+
 2007-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedXmlTest.cs : added DataReferenceToNonDataObject().

@@ -1,11 +1,16 @@
 //
-// XmlDsigExcC14NTransform.cs - XmlDsigExcC14NTransform implementation for XML Encryption
+// XmlDsigExcC14NTransform.cs - ExcC14N Transform implementation for XML Signature
+// http://www.w3.org/TR/xml-c14n
 //
-// Author:
+// Authors:
+//	Sebastien Pouliot <sebastien@ximian.com>
+//	Aleksey Sanin (aleksey@aleksey.com)
 //      Tim Coleman (tim@timcoleman.com)
 //
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
 // Copyright (C) Tim Coleman, 2004
-
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,55 +31,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
 
-using Mono.Xml;
+using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Xml;
 
-namespace System.Security.Cryptography.Xml {
+using Mono.Xml;
+
+namespace System.Security.Cryptography.Xml { 
+
 	public class XmlDsigExcC14NTransform : Transform {
-
-		#region Fields
-
-		XmlCanonicalizer canonicalizer;
-		object inputObj;
-		string inclusiveNamespacesPrefixList;
-		bool includeComments;
-
-		#endregion // Fields
-	
-		#region Constructors
-
-		public XmlDsigExcC14NTransform ()
+		private Type[] input;
+		private Type[] output;
+		private XmlCanonicalizer canonicalizer;
+		private Stream s;
+		private string inclusiveNamespacesPrefixList;
+		
+		public XmlDsigExcC14NTransform ()	
+			: this (false, null)
 		{
-			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform;
-			canonicalizer = new XmlCanonicalizer (true, false);
 		}
 
-		public XmlDsigExcC14NTransform (bool includeComments)
+		public XmlDsigExcC14NTransform (bool includeComments) 
+			: this (includeComments, null)
 		{
-			this.includeComments = includeComments;
-			canonicalizer = new XmlCanonicalizer (true, includeComments);
 		}
 
-		[MonoTODO ("What does inclusiveNamespacesPrefixList mean?")]
 		public XmlDsigExcC14NTransform (string inclusiveNamespacesPrefixList)
+			: this (false, inclusiveNamespacesPrefixList)
 		{
-			this.inclusiveNamespacesPrefixList = inclusiveNamespacesPrefixList;
 		}
 
-		[MonoTODO ("What does inclusiveNamespacesPrefixList mean?")]
 		public XmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList)
 		{
-			this.inclusiveNamespacesPrefixList = inclusiveNamespacesPrefixList;
-			this.includeComments = includeComments;
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform;
+			canonicalizer = new XmlCanonicalizer (includeComments, true);
 		}
-	
-		#endregion // Constructors
-	
-		#region Properties
 
 		public string InclusiveNamespacesPrefixList {
 			get { return inclusiveNamespacesPrefixList; }
@@ -82,64 +77,88 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 		public override Type[] InputTypes {
-			get { return new Type [3] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument), typeof (System.Xml.XmlNodeList)}; }
+			get {
+				if (input == null) {
+					lock (this) {
+						// this way the result is cached if called multiple time
+						input = new Type [3];
+						input[0] = typeof (System.IO.Stream);
+						input[1] = typeof (System.Xml.XmlDocument);
+						input[2] = typeof (System.Xml.XmlNodeList);
+					}
+				}
+				return input;
+			}
 		}
 
 		public override Type[] OutputTypes {
-			get { return new Type [1] {typeof (System.IO.Stream)}; }
+			get {
+				if (output == null) {
+					lock (this) {
+						// this way the result is cached if called multiple time
+						output = new Type [1];
+						output[0] = typeof (System.IO.Stream);
+					}
+				}
+				return output;
+			}
 		}
 
-		#endregion // Properties
+		protected override XmlNodeList GetInnerXml () 
+		{
+			return null; // THIS IS DOCUMENTED AS SUCH
+		}
 
-		#region Methods
-
+#if NET_2_0
+		[ComVisible (false)]
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
-			return hash.ComputeHash ((Stream) GetOutput());
+			return hash.ComputeHash ((Stream) GetOutput ());
 		}
+#endif
 
-		protected override XmlNodeList GetInnerXml ()
+		public override object GetOutput () 
 		{
-			return null;
-		}
-
-		public override object GetOutput ()
-		{
-			Stream s = null;
-
-			if (inputObj is Stream) {
-                                XmlDocument doc = new XmlDocument ();
-                                doc.PreserveWhitespace = true;  // REALLY IMPORTANT
-                                doc.Load (inputObj as Stream);
-                                s = canonicalizer.Canonicalize (doc);
-                        } 
-			else if (inputObj is XmlDocument)
-                                s = canonicalizer.Canonicalize (inputObj as XmlDocument);
-                        else if (inputObj is XmlNodeList)
-                                s = canonicalizer.Canonicalize (inputObj as XmlNodeList);
-
-                        // note: there is no default are other types won't throw an exception
-
 			return (object) s;
 		}
 
-		public override object GetOutput (Type type)
+		public override object GetOutput (Type type) 
 		{
- 			if (type == Type.GetType ("Stream"))
+			if (type == Type.GetType ("Stream"))
 				return GetOutput ();
 			throw new ArgumentException ("type");
 		}
 
-		public override void LoadInnerXml (XmlNodeList nodeList)
+		public override void LoadInnerXml (XmlNodeList nodeList) 
 		{
-		}
-		
-		public override void LoadInput (object obj)
-		{
-			inputObj = obj;
+			// documented as not changing the state of the transform
 		}
 
-		#endregion // Methods
+		public override void LoadInput (object obj) 
+		{
+			canonicalizer.InclusiveNamespacesPrefixList = InclusiveNamespacesPrefixList;
+			if (obj is Stream) {
+				s = (obj as Stream);
+				XmlDocument doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;	// REALLY IMPORTANT
+#if NET_1_1
+				doc.XmlResolver = GetResolver ();
+#endif
+				doc.Load (new XmlSignatureStreamReader (
+					new StreamReader ((Stream) obj)));
+//				doc.Load ((Stream) obj);
+				s = canonicalizer.Canonicalize (doc);
+			} else if (obj is XmlDocument)
+				s = canonicalizer.Canonicalize ((obj as XmlDocument));
+			else if (obj is XmlNodeList)
+				s = canonicalizer.Canonicalize ((obj as XmlNodeList));
+#if NET_2_0
+			else
+				throw new ArgumentException ("obj");
+#else
+			// note: there is no default are other types won't throw an exception
+#endif
+		}
 	}
 }
 
