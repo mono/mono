@@ -404,7 +404,26 @@ namespace System.Windows.Forms {
 			internal byte			tmStruckOut; 
 			internal byte			tmPitchAndFamily; 
 			internal byte			tmCharSet; 
-		} 
+		}
+
+		public enum TernaryRasterOperations : uint
+		{
+			SRCCOPY = 0x00CC0020,
+			SRCPAINT = 0x00EE0086,
+			SRCAND = 0x008800C6,
+			SRCINVERT = 0x00660046,
+			SRCERASE = 0x00440328,
+			NOTSRCCOPY = 0x00330008,
+			NOTSRCERASE = 0x001100A6,
+			MERGECOPY = 0x00C000CA,
+			MERGEPAINT = 0x00BB0226,
+			PATCOPY = 0x00F00021,
+			PATPAINT = 0x00FB0A09,
+			PATINVERT = 0x005A0049,
+			DSTINVERT = 0x00550009,
+			BLACKNESS = 0x00000042,
+			WHITENESS = 0x00FF0062
+		}
 
 		[Flags]
 		private enum ScrollWindowExFlags {
@@ -2611,9 +2630,55 @@ namespace System.Windows.Forms {
 				return 1;
 			}
 		}
-		
-		internal override event EventHandler Idle;
 
+		private class WinBuffer
+		{
+			public IntPtr hdc;
+			public IntPtr bitmap;
+
+			public WinBuffer (IntPtr hdc, IntPtr bitmap)
+			{
+				this.hdc = hdc;
+				this.bitmap = bitmap;
+			}
+		}
+
+		internal override void CreateOffscreenDrawable (IntPtr handle, int width, int height, out object offscreen_drawable)
+		{
+			Graphics destG = Graphics.FromHwnd (handle);
+			IntPtr destHdc = destG.GetHdc ();
+
+			IntPtr srcHdc = Win32CreateCompatibleDC (destHdc);
+			IntPtr srcBmp = Win32CreateCompatibleBitmap (destHdc, width, height);
+			Win32SelectObject (srcHdc, srcBmp);
+
+			offscreen_drawable = new WinBuffer (srcHdc, srcBmp);
+
+			destG.ReleaseHdc ();
+		}
+
+		internal override Graphics GetOffscreenGraphics (object offscreen_drawable)
+		{
+			return Graphics.FromHdc (((WinBuffer)offscreen_drawable).hdc);
+		}
+
+		internal override void BlitFromOffscreen (IntPtr dest_handle, Graphics dest_dc, object offscreen_drawable, Graphics offscreen_dc, Rectangle r)
+		{
+			WinBuffer wb = (WinBuffer)offscreen_drawable;
+
+			Win32BitBlt (dest_dc.GetHdc (), r.Left, r.Top, r.Width, r.Height, wb.hdc, r.Left, r.Top, TernaryRasterOperations.SRCCOPY);
+			dest_dc.ReleaseHdc ();
+		}
+
+		internal override void DestroyOffscreenDrawable (object offscreen_drawable)
+		{
+			WinBuffer wb = (WinBuffer)offscreen_drawable;
+
+			Win32DeleteObject (wb.bitmap);
+			Win32DeleteDC (wb.hdc);
+		}
+
+		internal override event EventHandler Idle;
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports
@@ -2973,6 +3038,19 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetClipCursor", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32GetClipCursor (out RECT lpRect);
+
+		[DllImport ("gdi32.dll", EntryPoint="BitBlt", CallingConvention=CallingConvention.StdCall)]
+		internal static extern bool Win32BitBlt (IntPtr hObject, int nXDest, int nYDest, int nWidth,
+		   int nHeight, IntPtr hObjSource, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateCompatibleDC", CallingConvention=CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
+		internal static extern IntPtr Win32CreateCompatibleDC (IntPtr hdc);
+
+		[DllImport ("gdi32.dll", EntryPoint="DeleteDC", CallingConvention=CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
+		internal static extern bool Win32DeleteDC (IntPtr hdc);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateCompatibleBitmap", CallingConvention=CallingConvention.StdCall)]
+		internal static extern IntPtr Win32CreateCompatibleBitmap (IntPtr hdc, int nWidth, int nHeight);
 		#endregion
 	}
 }
