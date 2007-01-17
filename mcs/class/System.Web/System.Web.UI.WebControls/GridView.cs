@@ -907,13 +907,13 @@ namespace System.Web.UI.WebControls
 				return selectedIndex;
 			}
 			set {
-				if (Rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
+				if (rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
 					int oldIndex = selectedIndex;
 					selectedIndex = -1;
 					Rows [oldIndex].RowState = GetRowState (oldIndex);
 				}
 				selectedIndex = value;
-				if (Rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
+				if (rows != null && selectedIndex >= 0 && selectedIndex < Rows.Count) {
 					Rows [selectedIndex].RowState = GetRowState (selectedIndex);
 				}
 			}
@@ -1717,6 +1717,7 @@ namespace System.Web.UI.WebControls
 			GridViewSelectEventArgs args = new GridViewSelectEventArgs (index);
 			OnSelectedIndexChanging (args);
 			if (!args.Cancel) {
+				RequireBinding ();
 				SelectedIndex = args.NewSelectedIndex;
 				OnSelectedIndexChanged (EventArgs.Empty);
 			}
