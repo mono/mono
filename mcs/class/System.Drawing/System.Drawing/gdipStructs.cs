@@ -178,13 +178,12 @@ namespace System.Drawing
 		int fIcon;
 		public int xHotspot;
 		public int yHotspot;
-		IntPtr hbmMask;
-		IntPtr hbmColor;
+		public IntPtr hbmMask;
+		public IntPtr hbmColor;
 
 		public bool IsIcon {
-			get {
-				return fIcon == 1;
-			}
+			get { return (fIcon == 1); }
+			set { fIcon = (value) ? 1 : 0; }
 		}
 	}
 

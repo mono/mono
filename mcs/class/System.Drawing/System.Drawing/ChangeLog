@@ -1,3 +1,12 @@
+2007-01-17  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* gdipFunctions.cs: Added Win32 CreateIconIndirect and DestoryIcon
+	imports. Both are required under Win32 to get HICON stuff working.
+	Added some GDI+ Metafile related definitions too.
+	* gdipStructs.cs: Update IconInfo structure so it can be used when
+	calling CreateIconIndirect on Win32.
+	* Icon.cs: Add support for handles under Win32.
+
 2007-01-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Icon.cs: Implement saving an icon from it's bitmap representation.

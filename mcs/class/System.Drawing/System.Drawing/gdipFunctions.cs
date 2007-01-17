@@ -1444,6 +1444,10 @@ namespace System.Drawing
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
 		[DllImport("user32.dll", SetLastError=true)]
 		internal static extern bool GetIconInfo (IntPtr hIcon, out IconInfo iconinfo);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, SetLastError=true)]
+		internal static extern IntPtr CreateIconIndirect ([In] ref IconInfo piconinfo);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, SetLastError=true)]
+		internal static extern bool DestroyIcon (IntPtr hIcon);
  
 		[DllImport("user32.dll")]
 		internal static extern IntPtr GetDesktopWindow ();
@@ -1598,6 +1602,27 @@ namespace System.Drawing
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, [In, Out] float [] tabStops);
                 		
+		// metafile
+		[DllImport ("gdiplus.dll", CharSet = CharSet.Auto)]
+		internal static extern Status GdipCreateMetafileFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr metafile);
+		[DllImport ("gdiplus.dll", CharSet = CharSet.Auto)]
+		internal static extern Status GdipGetMetafileHeaderFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr header);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetMetafileHeaderFromMetafile (IntPtr metafile, IntPtr header);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetMetafileHeaderFromEmf (IntPtr hEmf, IntPtr header);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetMetafileHeaderFromWmf (IntPtr hWmf, IntPtr wmfPlaceableFileHeader, IntPtr header);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetHemfFromMetafile (IntPtr metafile, out IntPtr hEmf);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipPlayMetafileRecord (IntPtr metafile, EmfPlusRecordType recordType, int flags, int dataSize, byte[] data);
+#if !TEST
+		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
+		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr header);
+#endif
 		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetImageDecodersSize (out int decoderNums, out int arraySize);

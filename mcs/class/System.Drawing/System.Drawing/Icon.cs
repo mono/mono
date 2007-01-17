@@ -99,6 +99,7 @@ namespace System.Drawing
 		private bool undisposable;
 		private bool disposed;
 		private Bitmap bitmap;
+		private MemoryStream ms;
 
 		private Icon ()
 		{
@@ -119,8 +120,7 @@ namespace System.Drawing
 
 				// If this structure defines an icon, the hot spot is always in the center of the icon
 				iconSize = new Size (ii.xHotspot * 2, ii.yHotspot * 2);
-
-				// FIXME: we need to convert the bitmap(s) into an icon
+				bitmap = (Bitmap) Image.FromHbitmap (ii.hbmColor);
 			}
 			undisposable = true;
 		}
@@ -169,8 +169,12 @@ namespace System.Drawing
 			iconSize.Height = iconDir.idEntries [id].height;
 			iconSize.Width = iconDir.idEntries [id].width;
 
-			if (original.bitmap != null)
-				bitmap = (Bitmap)original.bitmap.Clone ();
+			if (original.ms != null) {
+				ms = new MemoryStream (original.ms.ToArray ());
+				bitmap = (Bitmap) Image.FromStream (ms);
+			} else if (original.bitmap != null) {
+				bitmap = (Bitmap) original.bitmap.Clone ();
+			}
 		}
 
 		public Icon (Stream stream) : this (stream, 32, 32) 
@@ -277,9 +281,17 @@ namespace System.Drawing
 				return;
 
 			if (!disposed) {
+				if (GDIPlus.RunningOnWindows () && (handle != IntPtr.Zero)) {
+					GDIPlus.DestroyIcon (handle);
+					handle = IntPtr.Zero;
+				}
 				if (bitmap != null) {
 					bitmap.Dispose ();
 					bitmap = null;
+				}
+				if (ms != null) {
+					ms.Close ();
+					ms = null;
 				}
 				GC.SuppressFinalize (this);
 			}
@@ -460,11 +472,18 @@ namespace System.Drawing
 		internal Bitmap GetInternalBitmap ()
 		{
 			if (bitmap == null) {
-				using (MemoryStream ms = new MemoryStream ()) {
-					// save the current icon
-					Save (ms, Width, Height);
-					// libgdiplus can now decode icons
-					bitmap = (Bitmap) Image.FromStream (ms);
+				ms = new MemoryStream ();
+				// save the current icon
+				Save (ms, Width, Height);
+				ms.Position = 0;
+				// libgdiplus can now decode icons
+				bitmap = (Bitmap) Image.FromStream (ms);
+
+				// MS GDI+ requires the stream to be available for the life of the image
+				// E.g. if we dispose the MemoryStream we can't get an HBITMAP handle later :|
+				if (GDIPlus.RunningOnUnix ()) {
+					ms.Close ();
+					ms = null;
 				}
 			}
 
@@ -498,7 +517,12 @@ namespace System.Drawing
 					if (GDIPlus.RunningOnUnix ()) {
 						handle = GetInternalBitmap ().NativeObject;
 					} else {
-						// FIXME - construct a real (win32) icon and return it's handle
+						// remember that this block executes only with MS GDI+
+						IconInfo ii = new IconInfo ();
+						ii.IsIcon = true;
+						ii.hbmColor = ToBitmap ().GetHbitmap ();
+						ii.hbmMask = ii.hbmColor;
+						handle = GDIPlus.CreateIconIndirect (ref ii);
 					}
 				}
 				return handle;
