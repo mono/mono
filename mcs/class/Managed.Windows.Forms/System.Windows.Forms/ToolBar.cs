@@ -871,7 +871,7 @@ namespace System.Windows.Forms
 
 		// Flat toolbars disregard specified sizes.  Normal toolbars grow the
 		// button size to be at least large enough to show the image.
-		Size AdjustedButtonSize {
+		private Size AdjustedButtonSize {
 			get {
 				Size size = ButtonSize;
 				if (size_specified) {
@@ -952,7 +952,7 @@ namespace System.Windows.Forms
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable
 		{
 			#region instance variables
-			private ArrayList list; // List of button
+			private ArrayList list; // ToolBarButton list
 			private ToolBar owner;  // ToolBar associated to Collection
 			private bool redraw;    // Flag if needs to redraw after add/remove operations
 			#endregion
@@ -1134,9 +1134,11 @@ namespace System.Windows.Forms
 		{
 			#region Instance variables
 			
-			private ToolBar       toolbar; // Parent toolbar
-			private ToolBarButton button;  // Associated toolBar button 
-			private Rectangle     bounds;  // Toolbar button bounds
+			private ToolBar       toolbar;    // Parent toolbar
+			private ToolBarButton button;     // Associated toolBar button 
+			private Rectangle     bounds;     // Toolbar button bounds
+			private Rectangle     image_rect; // Image button bounds
+			private Rectangle     text_rect;  // Text button bounds
 			
 			#endregion
 			
@@ -1154,18 +1156,126 @@ namespace System.Windows.Forms
 
 			public ToolBarButton Button {
 				get { return this.button; }
-				set { this.button = value; }
 			}
 			
 			public Rectangle Rectangle {
 				get { return this.bounds; }
-				set { this.bounds = value; }
+			}
+		
+			public Rectangle ImageRectangle {
+				get {
+					Rectangle result = image_rect;
+					result.X += bounds.X;
+					result.Y += bounds.Y;
+					return result; 
+				}
+			}
+			
+			public Rectangle TextRectangle {
+				get { 
+					Rectangle result = text_rect;
+					result.X += bounds.X;
+					result.Y += bounds.Y;
+					return result; 
+				}
+			}
+
+			private Size TextSize {
+				get {
+					SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font);
+					if (sz == SizeF.Empty)
+						return Size.Empty;
+					return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
+				}
 			}
 			
 			#endregion Properties
 			
 			#region Methods
+
+			public static ToolBarButtonInfo [] GetArray (ToolBarButtonCollection collection)
+			{
+				ToolBarButtonInfo[] info_array = new ToolBarButtonInfo [collection.Count];
+				
+				return info_array;
+			}
 			
+			private Size CalculateSize ()
+			{
+				if (toolbar == null)
+					return Size.Empty;
+
+				Theme theme = ThemeEngine.Current;
+
+				int ht = toolbar.ButtonSize.Height + 2 * theme.ToolBarGripWidth;
+
+				if (button.Style == ToolBarButtonStyle.Separator)
+					return new Size (theme.ToolBarSeparatorWidth, ht);
+
+				Size size = TextSize;
+				Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
+
+				int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
+				int image_height = image_size.Height + 2 * theme.ToolBarImageGripWidth; 
+
+				if (toolbar.TextAlign == ToolBarTextAlign.Right) {
+					size.Width =  image_width + size.Width;
+					size.Height = (size.Height > image_height) ? size.Height : image_height;
+				} else {
+					size.Height = image_height + size.Height;
+					size.Width = (size.Width > image_width) ? size.Width : image_width;
+				}
+
+				size.Width += theme.ToolBarGripWidth;
+				size.Height += theme.ToolBarGripWidth;
+				return size;
+			}
+			
+			public bool Layout ()
+			{
+				if (toolbar == null || !button.Visible)
+					return false;
+	
+				Size psize = toolbar.ButtonSize;
+				Size size = psize;
+				if ((!toolbar.SizeSpecified) || (button.Style == ToolBarButtonStyle.Separator)) {
+					size = CalculateSize ();
+					if (size.Width == 0 || size.Height == 0)
+						size = psize;
+				}
+				return Layout (size);
+			}
+			
+			public bool Layout (Size size)
+			{
+				if (toolbar == null || !button.Visible)
+					return false;
+
+				bounds.Size = size;
+
+				Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
+				int grip = ThemeEngine.Current.ToolBarImageGripWidth;
+
+				Rectangle new_image_rect, new_text_rect;
+				
+				if (toolbar.TextAlign == ToolBarTextAlign.Underneath) {
+					new_image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
+					new_text_rect = new Rectangle (0, new_image_rect.Height, bounds.Size.Width, bounds.Size.Height - new_image_rect.Height - 2 * grip);
+				} else {
+					new_image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
+					new_text_rect = new Rectangle (new_image_rect.Width, 0, bounds.Size.Width - new_image_rect.Width, bounds.Size.Height - 2 * grip);
+				}
+
+				bool changed = false;
+
+				if (new_image_rect != image_rect || new_text_rect != text_rect)
+					changed = true;
+
+				image_rect = new_image_rect;
+				text_rect = new_text_rect;
+
+				return changed;
+			}
 			
 			#endregion Methods
 		}
