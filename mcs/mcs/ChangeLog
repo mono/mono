@@ -1,3 +1,13 @@
+2007-01-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80368, #80522
+	* expression.cs (ArrayCreation.only_constant_initializers): Indicates
+	whether array initializer contains constants only.
+	(ArrayCreation.Emit): Use better formula to decide when
+	are array initializers for static initialization.
+	(ArrayCreation.EmitDynamicInitializers): When the array is small enough we
+	have to emit even constants otherwise they are pre-initialized.
+
 2007-01-17  Bill Holmes  <bill.holmes@ansys.com>
 	    Raja R Harinath  <rharinath@novell.com>
 

@@ -5938,6 +5938,7 @@ namespace Mono.CSharp {
 
 		// The number of constants in array initializers
 		int const_initializers_count;
+		bool only_constant_initializers;
 		
 		public ArrayCreation (Expression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
@@ -6016,6 +6017,7 @@ namespace Mono.CSharp {
 			}
 
 			int child_bounds = -1;
+			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
 				object o = probe [i];
 				if (o is ArrayList) {
@@ -6055,7 +6057,7 @@ namespace Mono.CSharp {
 						return false;
 
 					// Initializers with the default values can be ignored
-					Constant c = tmp as Constant;
+					Constant c = conv as Constant;
 					if (c != null) {
 						if (c.IsDefaultInitializer (array_element_type)) {
 							conv = null;
@@ -6064,8 +6066,7 @@ namespace Mono.CSharp {
 							++const_initializers_count;
 						}
 					} else {
-						// Used to invalidate static initializer
-						const_initializers_count = int.MinValue;
+						only_constant_initializers = false;
 					}
 					
 					array_data.Add (conv);
@@ -6441,7 +6442,7 @@ namespace Mono.CSharp {
 		//
 		// This always expect the top value on the stack to be the array
 		//
-		void EmitDynamicInitializers (EmitContext ec)
+		void EmitDynamicInitializers (EmitContext ec, bool emitConstants)
 		{
 			ILGenerator ig = ec.ig;
 			int dims = bounds.Count;
@@ -6466,7 +6467,8 @@ namespace Mono.CSharp {
 
 				Expression e = (Expression)array_data [i];
 
-				if (e != null) {
+				// Constant can be initialized via StaticInitializer
+				if (e != null && !(!emitConstants && e is Constant)) {
 					Type etype = e.Type;
 
 					ig.Emit (OpCodes.Dup);
@@ -6554,17 +6556,18 @@ namespace Mono.CSharp {
 			if (initializers == null)
 				return;
 
-			// This is a treshold for static initializers
-			// I tried to make more accurate but it seems to me that Array.Initialize is
-			// always slower (managed -> unmanaged switch?)
-			const int max_automatic_initializers = 200;
-
-			if (const_initializers_count > max_automatic_initializers && TypeManager.IsPrimitiveType (array_element_type)) {
+			// Emit static initializer for arrays which have contain more than 4 items and
+			// the static initializer will initialize at least 25% of array values.
+			// NOTE: const_initializers_count does not contain default constant values.
+			if (const_initializers_count >= 4 && const_initializers_count * 4 > (array_data.Count) &&
+				TypeManager.IsPrimitiveType (array_element_type)) {
 				EmitStaticInitializers (ec);
-				return;
-			}
-				
-			EmitDynamicInitializers (ec);
+
+				if (!only_constant_initializers)
+					EmitDynamicInitializers (ec, false);
+			} else {
+				EmitDynamicInitializers (ec, true);
+			}				
 		}
 
 		public override bool GetAttributableValue (Type valueType, out object value)
