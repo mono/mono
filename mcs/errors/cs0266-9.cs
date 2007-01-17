@@ -1,4 +1,4 @@
-// cs0023: Operator `~' cannot be applied to operand of type `ulong'
+// CS0266: Cannot implicitly convert type 'E2' to 'E1'. An explicit conversion exists (are you missing a cast?)
 // Line : 6
 
 enum E1 { A }
