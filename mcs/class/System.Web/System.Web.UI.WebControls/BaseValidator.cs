@@ -325,14 +325,7 @@ namespace System.Web.UI.WebControls {
 				return null;
 
 			object o = prop.GetValue (control);
-			if (o is string)
-				return (string)o;
-			else if (o is ListItem)
-				return ((ListItem)o).Value;
-			else {
-				// XXX
-				return null;
-			}
+			return o != null ? o.ToString () : String.Empty;
 		}
 
 		public static PropertyDescriptor GetValidationProperty (object o)

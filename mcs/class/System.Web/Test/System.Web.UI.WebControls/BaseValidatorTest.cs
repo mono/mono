@@ -243,6 +243,21 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void NullValidationProperty ()
+		{
+			BaseValidatorPoker v = new BaseValidatorPoker ();
+
+			Page p = new Page ();
+			p.Controls.Add (v);
+			RadioButtonList l = new RadioButtonList ();
+			p.Controls.Add (l);
+			l.ID = "XXX";
+			v.ControlToValidate = "XXX";
+
+			Assert.AreEqual (String.Empty, v.DoGetControlValidationValue ("XXX"), "#A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (HttpException))]
 		public void ControlPropertiesValid2 ()
 		{
