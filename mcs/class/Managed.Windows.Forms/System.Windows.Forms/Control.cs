@@ -4287,6 +4287,9 @@ namespace System.Windows.Forms
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
+				
+				if (this.background_color == Color.Transparent)
+					Invalidate ();
 			}
 
 			if (resized) {
@@ -5190,7 +5193,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBackgroundImageChanged(EventArgs e) {
-			if (background_color.IsEmpty && background_image==null) {
+			if ((background_color.IsEmpty || background_color == Color.Transparent) && background_image==null) {
 				Invalidate();
 				OnBackgroundImageChanged(e);
 			}
