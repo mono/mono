@@ -1,3 +1,9 @@
+2007-01-17  Bill Holmes  <bill.holmes@ansys.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (accessor_declarations): Use it instead of 'Pair'.
+	Note the order in which accessors are declared in the source.
+
 2007-01-16  Sergey P. Kondratyev <se@unicom.tomica.ru>
 
 	* generic.cs (TypeParameter.FindMembers): Use the generic

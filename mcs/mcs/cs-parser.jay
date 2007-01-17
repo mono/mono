@@ -1346,14 +1346,14 @@ property_declaration
 			break;
 
 		Property prop;
-		Pair pair = (Pair) $8;
-		Accessor get_block = (Accessor) pair.First;
-		Accessor set_block = (Accessor) pair.Second;
+		Accessors accessors = (Accessors) $8;
+		Accessor get_block = accessors.get_or_add;
+		Accessor set_block = accessors.set_or_remove;
 
 		MemberName name = (MemberName) $4;
 
 		prop = new Property (current_class, (Expression) $3, (int) $2,
-			false, name, (Attributes) $1, get_block, set_block);
+			false, name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse);
 		
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
@@ -1367,23 +1367,24 @@ property_declaration
 accessor_declarations
 	: get_accessor_declaration
 	 {
-		$$ = new Pair ($1, null);
+		$$ = new Accessors ((Accessor) $1, null);
 	 }
 	| get_accessor_declaration accessor_declarations
 	 { 
-		Pair pair = (Pair) $2;
-		pair.First = $1;
-		$$ = pair;
+		Accessors accessors = (Accessors) $2;
+		accessors.get_or_add = (Accessor) $1;
+		$$ = accessors;
 	 }
 	| set_accessor_declaration
 	 {
-		$$ = new Pair (null, $1);
+		$$ = new Accessors (null, (Accessor) $1);
 	 }
 	| set_accessor_declaration accessor_declarations
 	 { 
-		Pair pair = (Pair) $2;
-		pair.Second = $1;
-		$$ = pair;
+		Accessors accessors = (Accessors) $2;
+		accessors.set_or_remove = (Accessor) $1;
+		accessors.declared_in_reverse = true;
+		$$ = accessors;
 	 }
 	| error
 	  {
@@ -1697,24 +1698,24 @@ interface_property_declaration
 		if ($7 == null) {
 			p = new Property (current_class, (Expression) $3, (int) $2, true,
 				   name, (Attributes) $1,
-				   null, null);
+				   null, null, false);
 
 			Report.Error (548, p.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
 			break;
 		}
 
-		Pair pair = (Pair) $7;
+		Accessors accessor = (Accessors) $7;
 		p = new Property (current_class, (Expression) $3, (int) $2, true,
 				   name, (Attributes) $1,
-				   (Accessor)pair.First, (Accessor)pair.Second);
+				   accessor.get_or_add, accessor.set_or_remove, accessor.declared_in_reverse);
 
-		if (pair.First != null && ((Accessor)(pair.First)).Block != null) {
+		if (accessor.get_or_add != null && accessor.get_or_add.Block != null) {
 			Report.Error (531, p.Location, "`{0}.get': interface members cannot have a definition", p.GetSignatureForError ());
 			$$ = null;
 			break;
 		}
 
-		if (pair.Second != null && ((Accessor)(pair.Second)).Block != null) {
+		if (accessor.set_or_remove != null && accessor.set_or_remove.Block != null) {
 			Report.Error (531, p.Location, "`{0}.set': interface members cannot have a definition", p.GetSignatureForError ());
 			$$ = null;
 			break;
@@ -1784,25 +1785,25 @@ interface_indexer_declaration
 			i = new Indexer (current_class, (Expression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				  null, null);
+				  null, null, false);
 
 			Report.Error (548, i.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
 			break;
 		}
 
-		Pair pair = (Pair) $10;
+		Accessors accessors = (Accessors) $10;
 		i = new Indexer (current_class, (Expression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				   (Accessor)pair.First, (Accessor)pair.Second);
+				   accessors.get_or_add, accessors.set_or_remove, accessors.declared_in_reverse);
 
-		if (pair.First != null && ((Accessor)(pair.First)).Block != null) {
+		if (accessors.get_or_add != null && accessors.get_or_add.Block != null) {
 			Report.Error (531, i.Location, "`{0}.get': interface members cannot have a definition", i.GetSignatureForError ());
 			$$ = null;
 			break;
 		}
 
-		if (pair.Second != null && ((Accessor)(pair.Second)).Block != null) {
+		if (accessors.set_or_remove != null && accessors.set_or_remove.Block != null) {
 			Report.Error (531, i.Location, "`{0}.set': interface members cannot have a definition", i.GetSignatureForError ());
 			$$ = null;
 			break;
@@ -2205,14 +2206,14 @@ event_declaration
 				current_container.Name, name.ToString ());
 			$$ = null;
 		} else {
-			Pair pair = (Pair) $8;
-			if (pair.First == null || pair.Second == null)
+			Accessors accessors = (Accessors) $8;
+			if (accessors.get_or_add == null || accessors.set_or_remove == null)
 				// CS0073 is already reported, so no CS0065 here.
 				$$ = null;
 			else {
 				Event e = new EventProperty (
 					current_class, (Expression) $4, (int) $2, false, name,
-					(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second);
+					(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
 				if (RootContext.Documentation != null) {
 					e.DocComment = Lexer.consume_doc_comment ();
 					Lexer.doc_state = XmlCommentState.Allowed;
@@ -2239,11 +2240,13 @@ event_declaration
 event_accessor_declarations
 	: add_accessor_declaration remove_accessor_declaration
 	  {
-		$$ = new Pair ($1, $2);
+		$$ = new Accessors ((Accessor) $1, (Accessor) $2);
 	  }
 	| remove_accessor_declaration add_accessor_declaration
 	  {
-		$$ = new Pair ($2, $1);
+		Accessors accessors = new Accessors ((Accessor) $2, (Accessor) $1);
+		accessors.declared_in_reverse = true;
+		$$ = accessors;
 	  }	
 	| add_accessor_declaration  { $$ = null; } 
 	| remove_accessor_declaration { $$ = null; } 
@@ -2341,9 +2344,9 @@ indexer_declaration
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 		Location loc = decl.location;
-		Pair pair = (Pair) $6;
-		Accessor get_block = (Accessor) pair.First;
-		Accessor set_block = (Accessor) pair.Second;
+		Accessors accessors = (Accessors) $6;
+		Accessor get_block = accessors.get_or_add;
+		Accessor set_block = accessors.set_or_remove;
 
 		MemberName name;
 		if (decl.interface_type != null)
@@ -2353,7 +2356,7 @@ indexer_declaration
 
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
-				       get_block, set_block);
+				       get_block, set_block, accessors.declared_in_reverse);
 
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();

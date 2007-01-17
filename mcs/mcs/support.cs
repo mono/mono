@@ -341,6 +341,20 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class Accessors {
+		public Accessor get_or_add;
+		public Accessor set_or_remove;
+
+		// was 'set' declared before 'get'?  was 'remove' declared before 'add'?
+		public bool declared_in_reverse;
+
+		public Accessors (Accessor get_or_add, Accessor set_or_remove)
+		{
+			this.get_or_add = get_or_add;
+			this.set_or_remove = set_or_remove;
+		}
+	}
+
 	/// <summary>
 	///   This is a wrapper around StreamReader which is seekable backwards
 	///   within a window of around 2048 chars.

@@ -306,7 +306,7 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
-				this, type, 0, false, name, null, getter, null);
+				this, type, 0, false, name, null, getter, null, false);
 			AddProperty (current);
 		}
 

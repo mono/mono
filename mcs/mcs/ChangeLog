@@ -1,3 +1,17 @@
+2007-01-17  Bill Holmes  <bill.holmes@ansys.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	Fix emit order of 'get' vs. 'set'.
+	* support.cs (Accessors): New.
+	* cs-parser.jay (accessor_declarations): Use it instead of 'Pair'.
+	Note the order in which accessors are declared in the source.
+	* class.cs (PropertyBase.DefineGet, PropertyBase.DefineSet): New.
+	Refactored from Property.Define and Indexer.Define.
+	(PropertyBase.DefineAccessors): New helper that calls the above in
+	appropriate order as noted by the parser.
+	(Property.Define, Indexer.Define): Update to changes.
+	(PropertyBase.SetMethod.PropertyInfo): Don't return a null.
+
 2007-01-17  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0029-6.cs and gcs0029-2.cs (regression)

@@ -6391,6 +6391,8 @@ namespace Mono.CSharp {
 
 			public override Parameters ParameterInfo {
 				get {
+					if (parameters == null)
+						DefineParameters ();
 					return parameters;
 				}
 			}
@@ -6404,7 +6406,6 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				DefineParameters ();
 				if (IsDummy)
 					return null;
 
@@ -6585,11 +6586,14 @@ namespace Mono.CSharp {
 		public PropertyBuilder PropertyBuilder;
 		public MethodBuilder GetBuilder, SetBuilder;
 
+		protected bool define_set_first = false;
+
 		public PropertyBase (DeclSpace parent, Expression type, int mod_flags,
 				     int allowed_mod, bool is_iface, MemberName name,
-				     Attributes attrs)
+				     Attributes attrs, bool define_set_first)
 			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,	attrs)
 		{
+			 this.define_set_first = define_set_first;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -6647,6 +6651,31 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		bool DefineGet ()
+		{
+			if (Get.IsDummy)
+				return true;
+
+			GetBuilder = Get.Define (Parent);
+			return GetBuilder != null;
+		}
+
+		bool DefineSet (bool define)
+		{
+			if (!define || Set.IsDummy)
+				return true;
+
+			SetBuilder = Set.Define (Parent);
+			return SetBuilder != null;
+		}
+
+		protected bool DefineAccessors ()
+		{
+			return DefineSet (define_set_first) &&
+				DefineGet () &&
+				DefineSet (!define_set_first);
 		}
 
 		protected abstract PropertyInfo ResolveBaseProperty ();
@@ -6785,10 +6814,10 @@ namespace Mono.CSharp {
 
 		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
-				 Accessor set_block)
+				 Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs)
+				is_iface, name, attrs, define_set_first)
 		{
 			if (get_block == null)
 				Get = new GetMethod (this);
@@ -6814,17 +6843,8 @@ namespace Mono.CSharp {
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
-			if (!Get.IsDummy) {
-				GetBuilder = Get.Define (Parent);
-				if (GetBuilder == null)
-					return false;
-			}
-
-			SetBuilder = Set.Define (Parent);
-			if (!Set.IsDummy) {
-				if (SetBuilder == null)
-					return false;
-			}
+			if (!DefineAccessors ())
+				return false;
 
 			// FIXME - PropertyAttributes.HasDefault ?
 
@@ -7493,10 +7513,10 @@ namespace Mono.CSharp {
 
 		public Indexer (DeclSpace parent, Expression type, MemberName name, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
-				Accessor get_block, Accessor set_block)
+				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs)
+				is_iface, name, attrs, define_set_first)
 		{
 			this.parameters = parameters;
 
@@ -7614,25 +7634,17 @@ namespace Mono.CSharp {
 				return false;
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
-			if (!Get.IsDummy){
-				GetBuilder = Get.Define (Parent);
-				if (GetBuilder == null)
-					return false;
+			
+			if (!DefineAccessors ())
+				return false;
 
-				//
+			if (!Get.IsDummy) {
 				// Setup iterator if we are one
-				//
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
 					Iterator iterator = Iterator.CreateIterator (Get, Parent, null, ModFlags);
 					if (iterator == null)
 						return false;
 				}
-			}
-			
-			SetBuilder = Set.Define (Parent);
-			if (!Set.IsDummy){
-				if (SetBuilder == null)
-					return false;
 			}
 
 			//
