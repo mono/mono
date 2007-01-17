@@ -47,8 +47,8 @@ namespace System.Windows.Forms
 	public class ToolBar : Control
 	{
 		#region Instance Variables
-		bool size_specified = false;
-		ToolBarButton current_button;
+		private bool size_specified = false;
+		private ToolBarButton current_button;
 		#endregion Instance Variables
 
 		#region Events
@@ -140,8 +140,7 @@ namespace System.Windows.Forms
 		#endregion Constructor
 
 		#region protected Properties
-		protected override CreateParams CreateParams 
-		{
+		protected override CreateParams CreateParams {
 			get { return base.CreateParams; }
 		}
 
@@ -532,21 +531,23 @@ namespace System.Windows.Forms
 				return;
 
 			ToolBarButton prelit = null;
-			foreach (ToolBarButton b in Buttons)
+			foreach (ToolBarButton b in Buttons) {
 				if (b.Hilight) {
 					prelit = b;
 					break;
 				}
+			}
 
-			if (Focused && prelit == null)
+			if (Focused && prelit == null) {
 				foreach (ToolBarButton btn in Buttons) {
 					if (btn.Enabled) {
 						btn.Hilight = true;
 						break;
 					}
 				}
-			else if (prelit != null)
+			} else if (prelit != null) {
 				prelit.Hilight = false;
+			}
 		}
 
 		private bool HandleKeyDown (Keys key_data)
@@ -555,16 +556,16 @@ namespace System.Windows.Forms
 				return false;
 
 			switch (key_data) {
-			case Keys.Left:
-			case Keys.Up:
-				HighlightButton (-1);
-				return true;
-			case Keys.Right:
-			case Keys.Down:
-				HighlightButton (1);
-				return true;
-			default:
-				return false;
+				case Keys.Left:
+				case Keys.Up:
+					HighlightButton (-1);
+					return true;
+				case Keys.Right:
+				case Keys.Down:
+					HighlightButton (1);
+					return true;
+				default:
+					return false;
 			}
 		}
 
