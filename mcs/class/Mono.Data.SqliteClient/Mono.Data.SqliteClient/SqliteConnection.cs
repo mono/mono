@@ -34,6 +34,7 @@ using System.Data;
 #if NET_2_0
 using System.Data.Common;
 #endif
+using System.IO;
 using System.Text;
 
 namespace Mono.Data.SqliteClient
@@ -45,7 +46,7 @@ namespace Mono.Data.SqliteClient
 #endif
 	{
 
-		#region Fields
+#region Fields
 		
 		private string conn_str;
 		private string db_file;
@@ -56,9 +57,9 @@ namespace Mono.Data.SqliteClient
 		private Encoding encoding;
 		private int busy_timeout;
 
-		#endregion
+#endregion
 
-		#region Constructors and destructors
+#region Constructors and destructors
 		
 		public SqliteConnection ()
 		{
@@ -84,14 +85,14 @@ namespace Mono.Data.SqliteClient
 		}
 #endif
 		                
-		#endregion
+#endregion
 
-		#region Properties
+#region Properties
 		
 #if NET_2_0
 		override
 #endif
-		public string ConnectionString {
+			public string ConnectionString {
 			get { return conn_str; }
 			set { SetConnectionString(value); }
 		}
@@ -99,21 +100,21 @@ namespace Mono.Data.SqliteClient
 #if NET_2_0
 		override
 #endif
-		public int ConnectionTimeout {
+			public int ConnectionTimeout {
 			get { return 0; }
 		}
 	
 #if NET_2_0
 		override
 #endif
-		public string Database {
+			public string Database {
 			get { return db_file; }
 		}
 		
 #if NET_2_0
 		override
 #endif
-		public ConnectionState State {
+			public ConnectionState State {
 			get { return state; }
 		}
 		
@@ -131,7 +132,7 @@ namespace Mono.Data.SqliteClient
 		
 #if NET_2_0
 		public override string DataSource {
-			get { throw new NotImplementedException (); }
+			get { return db_file; }
 		}
 
 		public override string ServerVersion {
@@ -162,9 +163,9 @@ namespace Mono.Data.SqliteClient
 			}
 		}
 		
-		#endregion
+#endregion
 
-		#region Private Methods
+#region Private Methods
 		
 		private void SetConnectionString(string connstring)
 		{
@@ -195,33 +196,46 @@ namespace Mono.Data.SqliteClient
 					string tvalue = arg_pieces[1].Trim ();
 					string tvalue_lc = arg_pieces[1].ToLower (System.Globalization.CultureInfo.InvariantCulture).Trim ();
 					switch (token) {
-					case "uri": 
-						if (tvalue_lc.StartsWith ("file://")) {
-							db_file = tvalue.Substring (7);
-						} else if (tvalue_lc.StartsWith ("file:")) {
-							db_file = tvalue.Substring (5);
-						} else if (tvalue_lc.StartsWith ("/")) {
-							db_file = tvalue;
-						} else {
-							throw new InvalidOperationException ("Invalid connection string: invalid URI");
-						}
-						break;
+#if NET_2_0
+						case "DataSource":
+#endif
+						case "uri": 
+							if (tvalue_lc.StartsWith ("file://")) {
+								db_file = tvalue.Substring (7);
+							} else if (tvalue_lc.StartsWith ("file:")) {
+								db_file = tvalue.Substring (5);
+							} else if (tvalue_lc.StartsWith ("/")) {
+								db_file = tvalue;
+#if NET_2_0
+							} else if (tvalue_lc.StartsWith ("|DataDirectory|",
+											 StringComparison.InvariantCultureIgnoreCase)) {
+								AppDomainSetup ads = AppDomain.CurrentDomain.SetupInformation;
+								string filePath = String.Format ("App_Data{0}{1}",
+												 Path.DirectorySeparatorChar,
+												 tvalue_lc.Substring (15));
+								
+								db_file = Path.Combine (ads.ApplicationBase, filePath);
+#endif
+							} else {
+								throw new InvalidOperationException ("Invalid connection string: invalid URI");
+							}
+							break;
 
-					case "mode": 
-						db_mode = Convert.ToInt32 (tvalue);
-						break;
+						case "mode": 
+							db_mode = Convert.ToInt32 (tvalue);
+							break;
 
-					case "version":
-						db_version = Convert.ToInt32 (tvalue);
-						break;
+						case "version":
+							db_version = Convert.ToInt32 (tvalue);
+							break;
 
-					case "encoding": // only for sqlite2
-						encoding = Encoding.GetEncoding (tvalue);
-						break;
+						case "encoding": // only for sqlite2
+							encoding = Encoding.GetEncoding (tvalue);
+							break;
 
-					case "busy_timeout":
-						busy_timeout = Convert.ToInt32 (tvalue);
-						break;
+						case "busy_timeout":
+							busy_timeout = Convert.ToInt32 (tvalue);
+							break;
 					}
 				}
 				
@@ -229,11 +243,10 @@ namespace Mono.Data.SqliteClient
 					throw new InvalidOperationException ("Invalid connection string: no URI");
 				}
 			}
-		}
-		
-		#endregion
+		}		
+#endregion
 
-		#region Internal Methods
+#region Internal Methods
 		
 		internal void StartExec ()
 		{
@@ -246,9 +259,9 @@ namespace Mono.Data.SqliteClient
 			state = ConnectionState.Open;
 		}
 		
-		#endregion
+#endregion
 
-		#region Public Methods
+#region Public Methods
 
 		object ICloneable.Clone ()
 		{
@@ -259,7 +272,7 @@ namespace Mono.Data.SqliteClient
 		// [MonoTODO ("handle IsolationLevel")]
 		protected override DbTransaction BeginDbTransaction (IsolationLevel il)
 #else
-		public IDbTransaction BeginTransaction ()
+			public IDbTransaction BeginTransaction ()
 #endif
 		{
 			if (state != ConnectionState.Open)
@@ -279,16 +292,16 @@ namespace Mono.Data.SqliteClient
 
 #if NET_2_0
 		public new DbTransaction BeginTransaction ()
-		{
-			return BeginDbTransaction (IsolationLevel.Unspecified);
+			{
+				return BeginDbTransaction (IsolationLevel.Unspecified);
 		}
 
-		public new DbTransaction BeginTransaction (IsolationLevel il)
-		{
-			return BeginDbTransaction (il);
-		}
+			public new DbTransaction BeginTransaction (IsolationLevel il)
+				{
+					return BeginDbTransaction (il);
+			}
 #else
-		public IDbTransaction BeginTransaction (IsolationLevel il)
+			public IDbTransaction BeginTransaction (IsolationLevel il)
 		{
 			throw new InvalidOperationException();
 		}
@@ -317,7 +330,9 @@ namespace Mono.Data.SqliteClient
 #endif
 		public void ChangeDatabase (string databaseName)
 		{
-			throw new NotImplementedException ();
+			Close ();
+			db_file = databaseName;
+			Open ();
 		}
 		
 #if !NET_2_0
@@ -330,7 +345,7 @@ namespace Mono.Data.SqliteClient
 #if NET_2_0
 		protected override DbCommand CreateDbCommand ()
 #else
-		public SqliteCommand CreateCommand ()
+			public SqliteCommand CreateCommand ()
 #endif
 		{
 			return new SqliteCommand (null, this);
@@ -378,8 +393,6 @@ namespace Mono.Data.SqliteClient
 			}
 			state = ConnectionState.Open;
 		}
-		
-		#endregion
-
+#endregion
 	}
 }

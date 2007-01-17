@@ -85,6 +85,11 @@ namespace Mono.Data.SqliteClient
                 {
                         return new SqliteParameter ();
                 }
+
+		public override DbConnectionStringBuilder CreateConnectionStringBuilder ()
+		{
+			return new SqliteConnectionStringBuilder ();
+		}
 	}
 
 }

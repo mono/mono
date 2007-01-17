@@ -142,7 +142,7 @@ namespace Mono.Data.SqliteClient
                                                             StatementType statementType,
                                                             bool whereClause)
                 {
-                        throw new NotImplementedException ();
+                        // Nothing to do here
                 }
 
 		protected override string GetParameterName (int position)

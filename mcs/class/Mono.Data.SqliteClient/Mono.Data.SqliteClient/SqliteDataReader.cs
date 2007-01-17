@@ -403,13 +403,16 @@ namespace Mono.Data.SqliteClient
 #endif
 		public long GetChars (int i, long fieldOffset, char[] buffer, int bufferOffset, int length)
 		{
-			throw new NotImplementedException ();
+			char[] data = (char[])(((object[]) rows[current_row])[i]);
+			if (buffer != null)
+				Array.Copy (data, fieldOffset, buffer, bufferOffset, length);
+			return data.LongLength - fieldOffset;
 		}
 		
 #if !NET_2_0
 		public IDataReader GetData (int i)
 		{
-			throw new NotImplementedException ();
+			return ((IDataReader) this [i]);
 		}
 #endif
 		
@@ -479,7 +482,13 @@ namespace Mono.Data.SqliteClient
 #endif
 		public Guid GetGuid (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is Guid)) {
+				if (value is DBNull)
+					throw new SqliteExecutionException ("Column value must not be null");
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
+			return ((Guid) value);
 		}
 		
 #if NET_2_0
