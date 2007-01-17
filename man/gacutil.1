@@ -10,7 +10,7 @@
 ..
 .TH gacutil "Mono 1.0"
 .SH NAME
-gacutil \- Global Asssembly Cache management utility.
+gacutil \- Global Assembly Cache management utility.
 .SH SYNOPSIS
 .PP
 .B gacutil [-user] [command] [options] 
@@ -19,9 +19,9 @@ gacutil \- Global Asssembly Cache management utility.
 assemblies into the system Global Assembly Cache (GAC) to become part
 of the assemblies that are available for all applications at runtime.
 .PP
-Notice that they are not directly available to the compiler, the
+Notice that they are not directly available to the compiler. The
 convention is that assemblies must also be placed in a separate
-directory for being accessed to the compiler.  This is done with the
+directory to be accessed by the compiler.  This is done with the
 -package directive to gacutil.
 .PP
 The tool allows for installation, removal, and listing of the
@@ -74,15 +74,15 @@ this takes as an argument the assembly name, which looks like this:
 	MyLibrary.Something, version=1.0.0.0, publicKeyToken=xxxx,culture=neutral
 .fi
 .Sp
-Notice that you can have spaces in the command line, there is no need
+Notice that you can have spaces in the command line. There is no need
 to quote them.
 .Sp
-The removal performs a greedy removal, if you only specifiy one
+Performs a greedy removal. If you only specify one
 component like, "MyLibrary.Something", it will remove all versions of
 the library.
 .Sp
 .I "-us" <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]
-Uninstalls an assembly using the specifed assemblies full name.
+Uninstalls an assembly using the specified assembly's full name.
 <assembly path> is the path to an assembly. The full assembly name
 is retrieved from the specified assembly if there is an assembly in
 the GAC with a matching name, it is removed. Unlike the -u option this
