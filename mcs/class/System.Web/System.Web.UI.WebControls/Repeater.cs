@@ -58,6 +58,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		IDataSource boundDataSource;
 		private bool initialized;
+		private bool preRendered = false;
 		private bool requiresDataBinding;
 		private DataSourceSelectArguments selectArguments;
 		private IEnumerable data;
@@ -124,13 +125,7 @@ namespace System.Web.UI.WebControls {
 			itemscol = null;
 			
 			if (useDataSource) {
-#if NET_2_0
-				if (IsBoundUsingDataSourceID) {
-					ds = GetData ();
-				}
-				else
-#endif
-					ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+				ds = GetData ();
 			}
 			else {
 				// Optimize (shouldn't need all this memory ;-)
@@ -315,15 +310,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable (true)]
-		[MonoTODO ("Not implemented")]
-		public virtual new bool EnableTheming
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		[DefaultValue(false)]
+		public override bool EnableTheming {
+			get { return base.EnableTheming; }
+			set { base.EnableTheming = value; }
 		}
 #endif		
 
@@ -465,27 +455,28 @@ namespace System.Web.UI.WebControls {
 		protected bool RequiresDataBinding
 		{
 			get { return requiresDataBinding; }
-			set { requiresDataBinding = value; }
+			set { 
+				requiresDataBinding = value;
+				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback)
+					EnsureDataBound ();
+			}
 		}
 
 		protected DataSourceSelectArguments SelectArguments
 		{
 			get {
-				/* i know this seems weird - i mean, why
-				 * don't we call
-				 * CreateDataSourceSelectArguments here?  i
-				 * have no idea. ask MS */
+				// MSDN: The first call to the SelectArguments property calls the 
+				// CreateDataSourceSelectArguments method to return the Empty value.
 				if (selectArguments == null)
-					selectArguments = new DataSourceSelectArguments ();
+					selectArguments = CreateDataSourceSelectArguments();
 				return selectArguments;
 			}
 		}
 
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
-			if (selectArguments == null)
-				selectArguments = new DataSourceSelectArguments ();
-			return selectArguments;
+			// MSDN: Returns the Empty value. 
+			return DataSourceSelectArguments.Empty;
 		}
 
 		protected void EnsureDataBound ()
@@ -499,25 +490,39 @@ namespace System.Web.UI.WebControls {
 			this.data = data;
 		}
 
-		protected virtual IEnumerable GetData ()
+#endif
+#if NET_2_0
+		protected virtual 
+#endif
+		IEnumerable GetData ()
 		{
 			IEnumerable result;
-			if (DataSourceID.Length == 0)
-				return null;
+#if NET_2_0
+			if (IsBoundUsingDataSourceID) {
+				if (DataSourceID.Length == 0)
+					return null;
 
-			if (boundDataSource == null)
-				return null;
+				if (boundDataSource == null)
+					return null;
 
-			DataSourceView dsv = boundDataSource.GetView (String.Empty);
-			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
+				DataSourceView dsv = boundDataSource.GetView (String.Empty);
+				dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
 
-			result = data;
-			data = null;
+				result = data;
+				data = null;
+			}
+			else
+#endif
+				result = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+
 			return result;
 		}
 
+#if NET_2_0
 		protected virtual void OnDataPropertyChanged ()
 		{
+			if (Initialized)
+				RequiresDataBinding = true;
 		}
 
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
@@ -528,22 +533,43 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+			Page.PreLoad += new EventHandler (OnPagePreLoad);
+
+			if (!IsViewStateEnabled && Page != null && Page.IsPostBack)
+				RequiresDataBinding = true;
+		}
+
+		protected virtual void OnPagePreLoad (object sender, EventArgs e) 
+		{
+			ConfirmInitState ();
+		}
+
+		void ConfirmInitState () 
+		{
+			initialized = true;
 		}
 
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if ((Page != null) && !Page.IsPostBack)
-				RequiresDataBinding = true;
+			Initialize ();
 
-			initialized = true;
+			ConfirmInitState ();
+
 			base.OnLoad (e);
 
 			if (IsBoundUsingDataSourceID)
 				ConnectToDataSource ();
 		}
 
+		private void Initialize () 
+		{
+			if ((Page != null) && !Page.IsPostBack)
+				RequiresDataBinding = true;
+		}
+
 		protected internal override void OnPreRender (EventArgs e)
 		{
+			preRendered = true;
 			EnsureDataBound ();
 			base.OnPreRender (e);
 		}

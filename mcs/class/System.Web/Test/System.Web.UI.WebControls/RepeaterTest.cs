@@ -150,8 +150,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void Repeater_DefaultsNotWorking ()
+		public void Repeater_Defaults ()
 		{
 			Poker p = new Poker ();
 			Assert.AreEqual (true, p.EnableTheming, "EnableTheming");
@@ -177,7 +176,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetData ()
 		{
 			Poker p = new Poker ();
@@ -199,7 +197,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Initialized ()
 		{
@@ -288,7 +285,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetSelectArguments ()
 		{
 			PokerS p = new PokerS ();
