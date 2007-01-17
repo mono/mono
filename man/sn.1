@@ -12,9 +12,9 @@ sn \- Digitally sign/verify/compare strongname on CLR assemblies.
 .PP
 .B sn [-q | -quiet] [options] [parameters]
 .SH DESCRIPTION
-Digitally sign, verify or compare, CLR assemblies using strongnames.
+Digitally sign, verify or compare CLR assemblies using strongnames.
 .PP
-You can use the sn command to create "snk files", using the -k option,
+You can use the sn command to create "snk files" using the -k option
 described below.
 .SH CONFIGURATION OPTIONS
 Configuration options are stored in the machine.config configuration file
@@ -34,7 +34,7 @@ strongNames/verificationSettings in machine.config.
 .TP
 .I "-Vr assembly [userlist]"
 Exempt the specified assembly from verification for the specified user list.
-Currently not supported by sn, you must edit machine.config manually if you
+Currently not supported by sn. You must edit machine.config manually if you
 require this.
 .TP
 .I "-Vu assembly"
@@ -54,7 +54,7 @@ Import the specified strongname file into the specified container.
 .TP
 .I "-pc container publickey"
 Export the public key from the specified CSP container to the specified file.
-.SH CONVERTION OPTIONS
+.SH CONVERSION OPTIONS
 .TP
 .I "-e assembly output.pub"
 Export the assembly public key to the specified output file.
@@ -83,13 +83,13 @@ want to continue using 1024 bits keys. Note that there's no good reason,
 even if it's possible, to use length lesser than 1024 bits.
 .TP
 .I "-R assembly keypair.snk"
-Resign the specified assembly using the specified strongname keypair file 
+Re-sign the specified assembly using the specified strongname keypair file 
 (SNK) or a PKCS#12/PFX password protected file. You can only sign an 
 assembly with the private key that match the public key inside the assembly
 (unless it's public key token has been remapped in machine.config).
 .TP
 .I "-Rc assembly container"
-Resign the specified assembly using the specified strongname container.
+Re-sign the specified assembly using the specified strongname container.
 .TP
 .I "-t file"
 Show the public key from the specified file.
@@ -120,7 +120,7 @@ Display configuration related help about this tool.
 Display Cryptographic Service Provider related help about this tool.
 .TP
 .I "-h convert", "-? convert"
-Display convertion related help about this tool.
+Display conversion related help about this tool.
 .TP
 .I "-h sn", "-? sn"
 Display strongname related help about this tool.
@@ -130,9 +130,9 @@ Strongnames configuration is kept in "machine.config" file. Currently two
 features can be configured.
 .TP
 .I "/configuration/strongNames/pubTokenMapping"
-This mechanism let Mono remap a public key token, like the ECMA token, to
-another public key for verification. This is useful in two scenarios. First 
-assemblies signed with the "ECMA key" needs to be verified by the "runtime"
+This mechanism lets Mono remap a public key token, like the ECMA token, to
+another public key for verification. This is useful in two scenarios. First,
+assemblies signed with the "ECMA key" need to be verified by the "runtime"
 key (as the ECMA key isn't a public key). Second, many assemblies are signed
 with private keys that Mono can't use (e.g. System.Security.dll assembly).
 A new key cannot be used because it should change thr strongname (a new key 

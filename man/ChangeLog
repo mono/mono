@@ -1,3 +1,7 @@
+2007-01-17  Alp Toker  <alp@atoker.com>
+
+	* sn.1: Spelling and grammar fixes.
+
 2006-12-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono.1: Document the MONO_TLS_SESSION_CACHE_TIMEOUT environment 
