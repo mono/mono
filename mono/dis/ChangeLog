@@ -1,3 +1,9 @@
+
+Wed Jan 17 17:26:08 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: if a file can't be loaded as an assembly, load it as a
+	modules, so monodis can be used also for netmodules.
+
 2007-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	* get.c (get_method_core): Pick generic container from the
