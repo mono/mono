@@ -683,6 +683,8 @@ namespace System.Web.UI.WebControls
 					Value = bin.Value;
 				else if (bin.Text.Length > 0)
 					Value = bin.Text;
+				else if (Text.Length > 0)
+					Value = Text;
 				else
 					Value = GetDefaultBoundText ();
 			} else {
