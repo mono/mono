@@ -94,33 +94,22 @@ namespace MonoTests.System.Web.Hosting {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
 		public void ConstructorTestNull2 ()
 		{
-			//
-			// Throws an Uri exception from Uri.Parse
-			//
 			ApplicationHost.CreateApplicationHost (null, "/app", ".");
 		}
 
 		[Test]
-        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorTestNull3 ()
 		{
-			//
-			// Throws an Uri exception from Uri.Parse
-			//
 			ApplicationHost.CreateApplicationHost (typeof (MBR), null, ".");
 		}
 
 		[Test][ExpectedException (typeof (NullReferenceException))]
 		public void ConstructorTestNull4 ()
 		{
-			//
-			// Throws an Uri exception from Uri.Parse
-			//
 			ApplicationHost.CreateApplicationHost (typeof (MBR), "/app", null);
 		}
 
@@ -162,8 +151,8 @@ namespace MonoTests.System.Web.Hosting {
 			AppDomain other = m.GetDomain ();
 			AppDomainSetup setup = other.SetupInformation;
 
-			string tb = Environment.CurrentDirectory.Replace ("\\","/");
-			if (tb.EndsWith ("/"))
+			string tb = Environment.CurrentDirectory;
+			if (tb[tb.Length - 1] == Path.DirectorySeparatorChar)
 				tb = tb.Substring (0, tb.Length - 1);
 
 			// Need to fix an issue in AppDomainSetup
@@ -171,7 +160,7 @@ namespace MonoTests.System.Web.Hosting {
 			
 			p ("AppDomain's Applicationname is: ", setup.ApplicationName);
 			Assert.AreEqual (null, setup.CachePath, "D2");
-			Assert.AreEqual (tb + "/web.config", setup.ConfigurationFile, "D3");
+			Assert.AreEqual (tb + Path.DirectorySeparatorChar + "web.config", setup.ConfigurationFile, "D3");
 			Assert.AreEqual (false, setup.DisallowBindingRedirects, "D4");
 			Assert.AreEqual (true, setup.DisallowCodeDownload, "D5");
 			Assert.AreEqual (false, setup.DisallowPublisherPolicy, "D6");

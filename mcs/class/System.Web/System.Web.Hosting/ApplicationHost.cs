@@ -86,10 +86,10 @@ namespace System.Web.Hosting {
 			physicalDir = Path.GetFullPath (physicalDir);
 
 			if (hostType == null)
-				throw new NullReferenceException ();
+				throw new ArgumentException ("hostType can't be null");
 
 			if (virtualDir == null)
-				throw new NullReferenceException ();
+				throw new ArgumentNullException ("virtualDir");
 
 			Evidence evidence = new Evidence (AppDomain.CurrentDomain.Evidence);
 

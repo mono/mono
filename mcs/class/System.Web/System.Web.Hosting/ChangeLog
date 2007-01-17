@@ -1,3 +1,8 @@
+2007-01-17  Adar Wesley <adarw@mainsoft.com>
+
+	* ApplicationHost.cs: tweaking CreateApplicationHost to throw the 
+	right exceptions so the tests will pass.
+
 2007-01-11  Adar Wesley <adarw@mainsoft.com>
 
 	* ApplicationHost.cs: fixed AppDomain initialization of physical
