@@ -1,4 +1,9 @@
 
+Wed Jan 17 19:22:34 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: patch from Mark Mason <mason@broadcom.com>
+	to deal with mips missing of flags.
+
 Tue Jan 16 20:01:01 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: execute fault handlers.
