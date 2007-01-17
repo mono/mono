@@ -1,4 +1,16 @@
+2007-01-17 Mark Mason <mason@broadcom.com>
 
+	* inssel-long.brg: patch to deal with mips missing flags
+	* inssel-long32-mips.brg: implement overflow checks
+	* insset-mips.brg: implement overflow checks
+	* mini-mips.h: implement conditional exception handling
+	* mini-mips.c: add mips_emit_exc_by_name(), implement conditional exception handling.
+	  Remove unused code, minor cleanups.
+	* exceptions-mips.c: minor cleanups
+	* mini-ops.h: add mips conditional exception ops
+	* cpu-mips.md: add mips conditional exception ops
+
+	
 Wed Jan 17 19:22:34 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* inssel.brg: patch from Mark Mason <mason@broadcom.com>
