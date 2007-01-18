@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -40,8 +38,8 @@ namespace System.Windows.Forms
 		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
 		private DataGridTextBox textbox;
-		private static readonly int offset_x = 0;
-		private static readonly int offset_y = 0;
+		private static readonly int offset_x = 2;
+		private static readonly int offset_y = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -161,15 +159,15 @@ namespace System.Windows.Forms
 
 			textbox.TextAlign = alignment;
 			
+			bool ro = false;
+
 			if ((ParentReadOnly == true)  || 
 				(ParentReadOnly == false && ReadOnly == true) || 
 				(ParentReadOnly == false && _ro == true)) {
 				textbox.ReadOnly = true;
-			} else {
-				textbox.ReadOnly = false;
 			}			
-			
-			if (instantText != null && instantText != "") {
+
+			if (!ro && instantText != null && instantText != "") {
 				textbox.Text = instantText;
 			}
 			else {
@@ -180,10 +178,10 @@ namespace System.Windows.Forms
 					textbox.Text = GetFormattedString (obj);
 			}
 
-			textbox.Location = new Point (bounds.X + offset_x, bounds.Y + offset_y);
-			textbox.Size = new Size (bounds.Width - offset_x, bounds.Height - offset_y);
-
-			textbox.IsInEditOrNavigateMode = true;
+			textbox.ReadOnly = ro;
+			textbox.Bounds = new Rectangle (new Point (bounds.X + offset_x, bounds.Y + offset_y),
+							new Size (bounds.Width - offset_x, bounds.Height - offset_y));
+			textbox.IsInEditOrNavigateMode = false;
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();

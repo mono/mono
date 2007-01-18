@@ -1,3 +1,8 @@
+2007-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumn.cs: fix most of the NotWorking unit tests
+	I just added.
+
 2007-01-17  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Add layout methods to ToolBarButtonInfo class, every 
