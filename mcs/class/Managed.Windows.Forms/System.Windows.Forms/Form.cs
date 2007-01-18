@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
-		private bool			show_icon;
+		private bool			show_icon = true;
 		private bool			shown_raised;  // The shown event is only raised once
 #endif
 		#endregion	// Local Variables
@@ -206,10 +206,6 @@ namespace System.Windows.Forms {
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
-
-#if NET_2_0
-			show_icon = true;
-#endif
 
 			// FIXME: this should disappear just as soon as the handle creation is done in the right place (here is too soon()
 			UpdateBounds();

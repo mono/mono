@@ -1,3 +1,10 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Move setting show_icon = true to before the constructor
+	so that the base constructor has that information when it calculates
+	the form's size.  Was causing forms to be (6, 6) bigger than they
+	were supposed to be.  Thanks for catching this Rolf!
+
 2007-01-18  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When replacing a selection we need to invalidate
