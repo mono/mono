@@ -5,7 +5,7 @@
 //   Jordi Mas, jordi@ximian.com
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,8 +30,9 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
 
@@ -359,17 +360,35 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void LoadIndexed ()
+		[Category ("NotWorking")] // looks like MS PNG codec promote indexed format to 32bpp ARGB
+		public void LoadIndexed_PngStream ()
 		{
-			//
 			// Tests that we can load an indexed file
-			//
-
-			Stream str = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("indexed.png");
-			Image x = Image.FromStream (str);
-			Graphics g = Graphics.FromImage (x);
+			using (Stream s = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("indexed.png")) {
+				using (Image img = Image.FromStream (s)) {
+					// however it's no more indexed once loaded
+					Assert.AreEqual (PixelFormat.Format32bppArgb, img.PixelFormat, "PixelFormat");
+					using (Graphics g = Graphics.FromImage (img)) {
+						Assert.AreEqual (img.Height, g.VisibleClipBounds.Height, "Height");
+						Assert.AreEqual (img.Width, g.VisibleClipBounds.Width, "Width");
+					}
+				}
+			}
 		}
-		
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void LoadIndexed_BmpFile ()
+		{
+			// Tests that we can load an indexed file, but...
+			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver1bit.bmp");
+			// note: file is misnamed (it's a 4bpp bitmap)
+			using (Image img = Image.FromFile (sInFile)) {
+				Assert.AreEqual (PixelFormat.Format4bppIndexed, img.PixelFormat, "PixelFormat");
+				Graphics.FromImage (img);
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromImage ()
