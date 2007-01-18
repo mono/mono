@@ -279,7 +279,10 @@ namespace Mainsoft.Web.Security
 			try {
 				connection.Open ();
 			}
-			catch (Exception) {
+			catch (Exception ex) {
+#if TRACE
+				Console.Write (ex.ToString ());
+#endif
 			}
 		}
 

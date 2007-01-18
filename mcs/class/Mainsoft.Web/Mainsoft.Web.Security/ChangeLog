@@ -1,3 +1,7 @@
+2007-01-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyDBSchema.cs: added traces to unload handler
+
 2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyMembershipHelper.cs: fixed Users_DeleteUser, commented delete
