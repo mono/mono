@@ -1,9 +1,11 @@
-2007-01-18  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Fix the LoadIndexed test case as it's current 
 	implementation leads to false conclusions. MS GDI+ upgrades the 
 	indexed PNG images to 32bpp ARGB. BMP are kept indexed but it's not 
 	possible to create a Graphics from them.
+	* TestImage.cs: Test cases Stream_Unlock and Stream_Lock both fails
+	under MS 1.x with ArgumentNullException.
 
 2007-01-16  Sebastien Pouliot  <sebastien@ximian.com> 
 

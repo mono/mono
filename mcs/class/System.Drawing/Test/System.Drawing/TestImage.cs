@@ -166,6 +166,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")] // MS 1.x throws an ArgumentNullException in this case
+#endif
 		public void Stream_Unlocked ()
 		{
 			try {
@@ -190,6 +193,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")] // MS 1.x throws an ArgumentNullException in this case
+#endif
 		public void Stream_Locked ()
 		{
 			Image img = null;
