@@ -422,7 +422,7 @@ namespace System.Windows.Forms
 		
 		[Localizable (true)]
 		[DefaultValue (false)]
-		public bool RightToLeftLayout {
+		public virtual bool RightToLeftLayout {
 			get {
 				return right_to_left_layout;
 			}

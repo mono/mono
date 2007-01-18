@@ -145,6 +145,7 @@ namespace System.Windows.Forms {
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
 		private static FormCollection		forms			= new FormCollection ();
+		private static bool			use_wait_cursor		= false;
 
 #if NET_2_0
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
@@ -316,6 +317,21 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+
+		public static bool UseWaitCursor {
+			get {
+				return use_wait_cursor;
+			}
+			set {
+				use_wait_cursor = value;
+				if (use_wait_cursor) {
+					foreach (Form form in OpenForms) {
+						form.Cursor = Cursors.WaitCursor;
+					}
+				}
+			}
+		}
+		
 		public static bool RenderWithVisualStyles {
 		      get {
 				if (VisualStyleInformation.IsSupportedByOS)

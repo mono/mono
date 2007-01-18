@@ -1,3 +1,10 @@
+2007-01-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TrackBar.cs: Fix signature of RightToLeftLayout.
+	* StatusBar.cs: Implemented missing 2.0 methods and attributes.
+	* StatusBarPanel.cs: Implemented missing 2.0 methods and attributes.
+	* Application.cs: Implemented UseWaitCursor.
+
 2007-01-18  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: We can't skip tags if any part of the tag is

@@ -33,8 +33,13 @@ using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+#endif
 	[DefaultEvent("PanelClick")]
 	[Designer("System.Windows.Forms.Design.StatusBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
@@ -71,6 +76,19 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get {
+				return base.BackgroundImageLayout;
+			}
+			set {
+				base.BackgroundImageLayout = value;
+			}
+		}
+#endif
+
 		[Localizable(true)]
 		[DefaultValue(DockStyle.Bottom)]
 		public override DockStyle Dock {
@@ -78,6 +96,18 @@ namespace System.Windows.Forms {
 			set { base.Dock = value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		protected override bool DoubleBuffered {
+			get {
+				return base.DoubleBuffered;
+			}
+			set {
+				base.DoubleBuffered = value;
+			}
+		}
+#endif
 		[Localizable(true)]
 		public override Font Font {
 			get { return base.Font; }
@@ -370,6 +400,16 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged
+		{
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif	
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged {
@@ -407,10 +447,16 @@ namespace System.Windows.Forms {
 		
 
 		#region Subclass StatusBarPanelCollection
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {
 			#region Fields
 			private StatusBar owner;
 			private ArrayList panels;
+#if NET_2_0
+			private int last_index_by_key;
+#endif
 			#endregion	// Fields
 
 			#region Public Constructors
@@ -470,6 +516,19 @@ namespace System.Windows.Forms {
 					panels [index] = value;
 				}
 			}
+			
+#if NET_2_0
+
+			public virtual StatusBarPanel this [string key] {
+				get {
+					int index = IndexOfKey (key);
+					if (index >= 0 && index < Count) {
+						return (StatusBarPanel) panels [index];
+					} 
+					return null;
+				}
+			}
+#endif
 
 			#endregion	// Public Instance Properties
 
@@ -508,6 +567,14 @@ namespace System.Windows.Forms {
 				return panels.Contains (panel);
 			}
 
+#if NET_2_0
+			public virtual bool ContainsKey (string key)
+			{
+				int index = IndexOfKey (key);
+				return index >= 0 && index < Count;
+			}
+#endif
+
 			public IEnumerator GetEnumerator () {
 				return panels.GetEnumerator ();
 			}
@@ -515,6 +582,30 @@ namespace System.Windows.Forms {
 			public int IndexOf (StatusBarPanel panel) {
 				return panels.IndexOf (panel);
 			}
+			
+#if NET_2_0
+			public virtual int IndexOfKey (string key)
+			{
+				if (key == null || key == string.Empty)
+					return -1;
+				
+				if (last_index_by_key >= 0 && last_index_by_key < Count &&
+					String.Compare (((StatusBarPanel)panels [last_index_by_key]).Name, key, StringComparison.OrdinalIgnoreCase) == 0) {
+					return last_index_by_key;
+				}
+					
+				for (int i = 0; i < Count; i++) {
+					StatusBarPanel item;
+					item = panels [i] as StatusBarPanel;
+					if (item != null && String.Compare (item.Name, key, StringComparison.OrdinalIgnoreCase) == 0) {
+						last_index_by_key = i;
+						return i;
+					}
+				}
+				
+				return -1;
+			}
+#endif
 
 			public virtual void Insert (int index, StatusBarPanel value) {
 				if (value == null)
@@ -536,6 +627,15 @@ namespace System.Windows.Forms {
 			public virtual void RemoveAt (int index) {
 				panels.RemoveAt (index);
 			}
+
+#if NET_2_0
+			public virtual void RemoveByKey (string key)
+			{
+				int index = IndexOfKey (key);
+				if (index >= 0 && index < Count)
+					RemoveAt (index);
+			}
+#endif
 
 			#endregion	// Public Instance Methods
 
