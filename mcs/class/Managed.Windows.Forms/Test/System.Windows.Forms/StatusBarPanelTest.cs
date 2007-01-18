@@ -56,7 +56,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException(typeof(ArgumentException))]
+#endif
 		public void MinimumWidth4 ()
 		{
 			StatusBarPanel p = new StatusBarPanel ();
@@ -98,6 +102,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (String.Empty, p.ToolTipText, "#8");
 			
 		}
+		
+#if NET_2_0
+		[Test]
+		public void TagTest ()
+		{
+			StatusBarPanel p = new StatusBarPanel ();
+			
+			Assert.AreEqual (null, p.Tag, "#1");
+			p.Tag = "a";
+			Assert.AreEqual ("a", p.Tag, "#2");
+			p.Tag = null;
+			Assert.AreEqual (null, p.Tag, "#3");
+		}
+		
+		[Test]
+		public void NameTest ()
+		{
+			StatusBarPanel p = new StatusBarPanel ();
+			Assert.AreEqual ("", p.Name, "#1");
+			p.Name = "a";
+			Assert.AreEqual ("a", p.Name, "#2");
+			p.Name = null;
+			Assert.AreEqual ("", p.Name, "#3");
+		}
+#endif 
 		
 	}
 }
