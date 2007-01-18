@@ -103,8 +103,18 @@ namespace System.Windows.Forms
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
 			LinkColor = Color.FromArgb (255, 0, 0, 255);
 			VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
-			SetStyle (ControlStyles.Opaque, true);
 			SetStyle (ControlStyles.Selectable, false);
+			SetStyle (ControlStyles.ResizeRedraw | 
+				ControlStyles.UserPaint | 
+				ControlStyles.AllPaintingInWmPaint |
+				ControlStyles.SupportsTransparentBackColor
+#if NET_2_0
+				| ControlStyles.OptimizedDoubleBuffer
+#else
+				| ControlStyles.DoubleBuffer
+#endif
+				, true);
+
 		}
 
 		#region Public Properties

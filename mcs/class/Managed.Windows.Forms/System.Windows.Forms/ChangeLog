@@ -1,3 +1,7 @@
+2007-01-18  Andreia Gaita  <avidigal@novell.com>
+
+	* LinkLabel.cs: Missing ControlStyles. Fixes #80482
+
 2007-01-18  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTextBoxColumn.cs: fix most of the NotWorking unit tests
