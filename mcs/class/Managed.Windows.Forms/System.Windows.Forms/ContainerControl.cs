@@ -532,7 +532,15 @@ namespace System.Windows.Forms {
 			base.OnFontChanged (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected override void OnLayout (LayoutEventArgs levent)
+		{
+			base.OnLayout (levent);
+		}
+		
 		AutoValidate auto_validate = AutoValidate.Inherit;
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual AutoValidate AutoValidate {
 			get {
 				return auto_validate;
@@ -556,6 +564,8 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler AutoValidateChanged {
 			add { Events.AddHandler (OnValidateChanged, value); }
 			remove { Events.RemoveHandler (OnValidateChanged, value); }
