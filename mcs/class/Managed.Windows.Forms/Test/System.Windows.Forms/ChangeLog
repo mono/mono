@@ -1,8 +1,12 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* NotifyIconTest.cs: Add test for Tag, ContextMenuStrip.
+
 2007-01-16  Chris Toshok  <toshok@ximian.com>
 
 	* UpDownTest.cs: add UpDownActiveControlTest.
 
-2007-01-16  Jonathan Pobst  <jpobst@novell.com>
+2007-01-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ControlPropertyEventsTest.cs: Enable PropertyMinimumSize test.
 

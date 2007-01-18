@@ -50,6 +50,10 @@ namespace System.Windows.Forms {
 		private NotifyIconWindow	window;
 		private bool			systray_active;
 		private ToolTip			tooltip;
+#if NET_2_0
+		private ContextMenuStrip	context_menu_strip;
+		private object			tag;
+#endif
 		#endregion	// Local Variables
 
 		#region NotifyIconWindow Class
@@ -75,6 +79,9 @@ namespace System.Windows.Forms {
 				MouseUp +=new MouseEventHandler(HandleMouseUp);
 				MouseMove +=new MouseEventHandler(HandleMouseMove);
 				ContextMenu = owner.context_menu;
+#if NET_2_0
+				ContextMenuStrip = owner.context_menu_strip;
+#endif
 			}
 
 			protected override CreateParams CreateParams {
@@ -248,7 +255,11 @@ namespace System.Windows.Forms {
 		{
 			if ((e.Button & MouseButtons.Right) == MouseButtons.Right && context_menu != null)
 				context_menu.Show (window, new Point(e.X, e.Y));
-
+#if NET_2_0
+			else if ((e.Button & MouseButtons.Right) == MouseButtons.Right && context_menu_strip != null)
+				context_menu_strip.Show (window, new Point (e.X, e.Y), ToolStripDropDownDirection.AboveLeft);
+#endif
+			
 			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -324,6 +335,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public ContextMenuStrip ContextMenuStrip {
+			get { return this.context_menu_strip; }
+			set {
+				if (this.context_menu_strip != value) {
+					this.context_menu_strip = value;
+					window.ContextMenuStrip = value;
+				}
+			}
+		}
+#endif
+
 		[Localizable(true)]
 		[DefaultValue(null)]
 		public Icon Icon {
@@ -345,6 +368,15 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Localizable (false)]
+		[Bindable (true)]
+		[TypeConverter (typeof (StringConverter))]
+		[DefaultValue (null)]
+		public object Tag {
+			get { return this.tag; }
+			set { this.tag = value; }
+		}
+
 		[DefaultValue ("")]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]

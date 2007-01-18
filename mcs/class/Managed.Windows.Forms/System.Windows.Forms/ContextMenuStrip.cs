@@ -65,6 +65,7 @@ namespace System.Windows.Forms
 		protected override void SetVisibleCore (bool value)
 		{
 			base.SetVisibleCore (value);
+			if (value) XplatUI.SetTopmost (this.Handle, IntPtr.Zero, true);
 		}
 		#endregion
 	}

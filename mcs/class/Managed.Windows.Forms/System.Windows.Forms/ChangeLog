@@ -1,3 +1,10 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* NotifyIcon.cs: Add ContextMenuStrip and Tag properties.
+
+	* ContextMenuStrip.cs: Make sure context menu is shown on top of 
+	everything else.
+
 2007-01-18  Chris Toshok  <toshok@ximian.com>
 
 	* ContainerControl.cs: remove the partial handling of LBUTTONDOWN

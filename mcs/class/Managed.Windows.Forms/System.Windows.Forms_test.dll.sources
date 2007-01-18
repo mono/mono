@@ -65,6 +65,7 @@ System.Windows.Forms/MenuStripTest.cs
 System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MenuItemTest.cs
 System.Windows.Forms/MonthCalendarTest.cs
+System.Windows.Forms/NotifyIconTest.cs
 System.Windows.Forms/PaddingTest.cs
 System.Windows.Forms/PaintEventArgsTest.cs
 System.Windows.Forms/PictureBoxTest.cs
