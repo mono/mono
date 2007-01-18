@@ -108,4 +108,3 @@ System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
 System.Resources/WriterTest.cs
-interactive/80282.cs
