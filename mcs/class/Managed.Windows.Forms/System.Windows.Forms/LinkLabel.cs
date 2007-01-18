@@ -107,7 +107,8 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.ResizeRedraw | 
 				ControlStyles.UserPaint | 
 				ControlStyles.AllPaintingInWmPaint |
-				ControlStyles.SupportsTransparentBackColor
+				ControlStyles.SupportsTransparentBackColor | 
+				ControlStyles.Opaque 
 #if NET_2_0
 				| ControlStyles.OptimizedDoubleBuffer
 #else
