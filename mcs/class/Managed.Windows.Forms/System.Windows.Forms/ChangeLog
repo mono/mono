@@ -1,3 +1,8 @@
+2007-01-18  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: We can't skip tags if any part of the tag is
+	visible.
+
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControl.cs: Override OnLayout.

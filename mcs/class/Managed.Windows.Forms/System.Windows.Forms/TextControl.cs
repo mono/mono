@@ -1916,7 +1916,7 @@ namespace System.Windows.Forms {
 						continue;
 					}
 
-					if (((tag.X + tag.width) < (clip.Left - viewport_x)) || (tag.X > (clip.Right - viewport_x))) {
+					if (((tag.X + tag.width) < (clip.Left - viewport_x)) && (tag.X > (clip.Right - viewport_x))) {
 						tag = tag.next;
 						continue;
 					}
