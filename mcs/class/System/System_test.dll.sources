@@ -142,6 +142,8 @@ System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
+System.Diagnostics/SourceSwitchTest.cs
+System.Diagnostics/TraceSourceTest.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs

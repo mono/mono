@@ -25,7 +25,7 @@ namespace MonoTests.System.Diagnostics {
 		private StringBuilder ops = new StringBuilder ();
 		private const string expected = 
 			".ctor\n" +
-			"get_Value\n" +
+			"get_TestValue\n" +
 			"OnSwitchSettingChanged\n" +
 			"GetSetting\n";
 
@@ -35,9 +35,9 @@ namespace MonoTests.System.Diagnostics {
 			ops.Append (".ctor\n");
 		}
 
-		public string Value {
+		public string TestValue {
 			get {
-				ops.Append ("get_Value\n");
+				ops.Append ("get_TestValue\n");
 				// ensure that the .config file is read in
 				int n = base.SwitchSetting;
 				// remove warning about unused variable
@@ -45,6 +45,13 @@ namespace MonoTests.System.Diagnostics {
 				return v;
 			}
 		}
+
+#if NET_2_0
+		public string [] ExposeSupportedAttributes ()
+		{
+			return GetSupportedAttributes ();
+		}
+#endif
 
 		public bool Validate ()
 		{
@@ -136,9 +143,17 @@ namespace MonoTests.System.Diagnostics {
 #endif
 		public void NewSwitch ()
 		{
-			AssertEquals ("#NS:Value", "42", tns.Value);
+			AssertEquals ("#NS:TestValue", "42", tns.TestValue);
 			Assert ("#NS:Validate", tns.Validate());
 		}
+
+#if NET_2_0
+		[Test]
+		public void GetSupportedAttributes ()
+		{
+			AssertNull (tns.ExposeSupportedAttributes ());
+		}
+#endif
 	}
 }
 

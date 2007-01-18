@@ -33,6 +33,7 @@
 //
 
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Diagnostics
 {
@@ -63,6 +64,16 @@ namespace System.Diagnostics
 			this.description = description;
 		}
 
+		private string value;
+
+#if NET_2_0
+		protected Switch(string displayName, string description, string defaultSwitchValue)
+			: this (displayName, description)
+		{
+			this.value = defaultSwitchValue;
+		}
+#endif
+
 		public string Description {
 			get {return description;}
 		}
@@ -88,6 +99,31 @@ namespace System.Diagnostics
 				initialized = true;
 			}
 		}
+
+#if NET_2_0
+		StringDictionary attributes = new StringDictionary ();
+
+		public StringDictionary Attributes {
+			get { return attributes; }
+		}
+
+		protected string Value {
+			get { return value; }
+			set {
+				this.value = value;
+				OnValueChanged ();
+			}
+		}
+
+		protected internal virtual string [] GetSupportedAttributes ()
+		{
+			return null;
+		}
+
+		protected virtual void OnValueChanged ()
+		{
+		}
+#endif
 
 		private void GetConfigFileSetting ()
 		{

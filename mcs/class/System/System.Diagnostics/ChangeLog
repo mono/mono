@@ -1,3 +1,14 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Switch.cs : added missing .ctor(), Attributes, Value, 
+	  GetSupportedAttributes() and OnValueChanged().
+	* DiagnosticsConfigurationHandler.cs : added some hacky handler for
+	  new "sources" element. Don't wrap another ConfigurationException.
+	* TraceListener.cs : added missing trace methods.
+	* TraceSource.cs, SourceLevels.cs, CorrelationManager.cs,
+	  TraceEventCache.cs, TraceEventType.cs, SourceSwitch.cs:
+	  added missing 2.0 stuff, mostly just stubs.
+
 2007-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Trace.cs: Add a number of 2.0 overloads.

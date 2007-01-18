@@ -33,6 +33,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Threading;
 #if (XML_DEP)
@@ -82,6 +83,9 @@ namespace System.Diagnostics
 			elementHandlers ["assert"] = new ElementHandler (AddAssertNode);
 			elementHandlers ["switches"] = new ElementHandler (AddSwitchesNode);
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
+#if NET_2_0
+			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
+#endif
 		}
 
 		public virtual object Create (object parent, object configContext, XmlNode section)
@@ -248,12 +252,91 @@ namespace System.Diagnostics
 					d ["indentsize"] = n;
 					TraceImpl.IndentSize = n;
 				}
+				catch (ConfigurationException e) {
+					throw;
+				}
 				catch (Exception e) {
 					throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",
 							e, node);
 				}
 			}
 		}
+
+#if NET_2_0
+		static readonly Hashtable static_sources = new Hashtable ();
+
+		private void AddSourcesNode (IDictionary d, XmlNode node)
+		{
+			// FIXME: are there valid attributes?
+			ValidateInvalidAttributes (node.Attributes, node);
+			Hashtable sources = d ["sources"] as Hashtable;
+			if (sources == null) {
+				sources = new Hashtable ();
+				d ["sources"] = sources;
+			}
+			// FIXME: here I replace the table with fake static variable.
+			sources = static_sources;
+
+			foreach (XmlNode child in node.ChildNodes) {
+				XmlNodeType t = child.NodeType;
+				if (t == XmlNodeType.Whitespace || t == XmlNodeType.Comment)
+					continue;
+				if (t == XmlNodeType.Element) {
+					if (child.Name == "source")
+						AddTraceSource (sources, child);
+					else
+						ThrowUnrecognizedElement (child);
+//					ValidateInvalidAttributes (child.Attributes, child);
+				}
+				else
+					ThrowUnrecognizedNode (child);
+			}
+		}
+
+		private void AddTraceSource (Hashtable sources, XmlNode node)
+		{
+			string name = null;
+			SourceLevels levels = SourceLevels.Error;
+			StringDictionary atts = new StringDictionary ();
+			foreach (XmlAttribute a in node.Attributes) {
+				switch (a.Name) {
+				case "name":
+					name = a.Value;
+					break;
+				case "switchValue":
+					levels = (SourceLevels) Enum.Parse (typeof (SourceLevels), a.Value);
+					break;
+				default:
+					atts [a.Name] = a.Value;
+					break;
+				}
+			}
+			if (name == null)
+				throw new ConfigurationException ("Mandatory attribute 'name' is missing in 'source' element.");
+
+			// FIXME: it should raise an error for duplicate name sources.
+			if (sources.ContainsKey (name))
+				return;
+
+			TraceSource source = new TraceSource (name, levels);
+			sources.Add (source.Name, source);
+			
+			foreach (XmlNode child in node.ChildNodes) {
+				XmlNodeType t = child.NodeType;
+				if (t == XmlNodeType.Whitespace || t == XmlNodeType.Comment)
+					continue;
+				if (t == XmlNodeType.Element) {
+					if (child.Name == "listeners")
+						AddTraceListeners (child);
+					else
+						ThrowUnrecognizedElement (child);
+					ValidateInvalidAttributes (child.Attributes, child);
+				}
+				else
+					ThrowUnrecognizedNode (child);
+			}
+		}
+#endif
 
 		// only defines "add" and "remove", but "clear" also works
 		// for add, "name" and "type" are required; initializeData is optional

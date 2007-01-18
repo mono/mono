@@ -1,3 +1,8 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TraceSourceTest.cs, SourceSwitchTest.cs : new tests.
+	* SwitchesTest.cs : added test for GetSupportedAttributes().
+
 2007-01-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ProcessTest.cs: Added null check tests.

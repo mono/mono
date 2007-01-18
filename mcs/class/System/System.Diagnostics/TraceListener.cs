@@ -32,6 +32,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace System.Diagnostics {
@@ -152,6 +153,53 @@ namespace System.Diagnostics {
 		{
 			WriteLine (category + ": " + message);
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceData (TraceEventCache eventCache, string source,
+			TraceEventType eventType, int id, object data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceData (TraceEventCache eventCache, string source,
+			TraceEventType eventType, int id, params object [] data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType, int id)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType,
+			int id, string message)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceEvent (TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object [] args)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public virtual void TraceTransfer (TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 

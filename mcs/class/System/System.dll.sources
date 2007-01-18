@@ -440,6 +440,7 @@ System/DefaultUriParser.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs
 System.Diagnostics/ConsoleTraceListener.cs
+System.Diagnostics/CorrelationManager.cs
 System.Diagnostics/CounterCreationDataCollection.cs
 System.Diagnostics/CounterCreationData.cs
 System.Diagnostics/CounterSampleCalculator.cs
@@ -492,6 +493,8 @@ System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
+System.Diagnostics/SourceLevels.cs
+System.Diagnostics/SourceSwitch.cs
 System.Diagnostics/Switch.cs
 System.Diagnostics/Stopwatch.cs
 System.Diagnostics/TextWriterTraceListener.cs
@@ -499,10 +502,13 @@ System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
 System.Diagnostics/ThreadWaitReason.cs
 System.Diagnostics/Trace.cs
+System.Diagnostics/TraceEventCache.cs
+System.Diagnostics/TraceEventType.cs
 System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
+System.Diagnostics/TraceSource.cs
 System.Diagnostics/TraceSwitch.cs
 System.Diagnostics/Win32EventLog.cs
 System/FileStyleUriParser.cs

@@ -1,3 +1,11 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources: added new sources:
+	  TraceSource.cs, SourceLevels.cs, CorrelationManager.cs,
+	  TraceEventCache.cs, TraceEventType.cs and SourceSwitch.cs.
+	* System_test.dll.sources: added new tests:
+	  TraceSourceTest.cs and SourceSwitchTest.cs.
+
 2007-01-11  Dick Porter  <dick@ximian.com>
 
 	* System.dll.sources: Add System.Net.Sockets/{IOControlCode,SocketInformation,SocketInformationOptions,TransmitFileOptions}.cs
