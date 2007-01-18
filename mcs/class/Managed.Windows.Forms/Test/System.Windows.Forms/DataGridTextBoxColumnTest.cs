@@ -202,7 +202,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDoEdit ()
 		{
 			MakeTable (true);
@@ -289,7 +288,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCommit ()
 		{
 			MakeTable (false);
@@ -323,7 +321,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCommit2 ()
 		{
 			MakeTable (false);
@@ -374,7 +371,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAbort ()
 		{
 			MakeTable (false);
@@ -407,7 +403,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAbort_DifferentRow ()
 		{
 			MakeTable (false);
@@ -440,7 +435,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestUpdateUI ()
 		{
 			MakeTable (false);
