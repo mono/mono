@@ -358,63 +358,77 @@ namespace System.Web {
 			lock (this) {
 				if (!needs_init)
 					return;
+
+#if NET_2_0
+				try {
+#endif
+					string physical_app_path = context.Request.PhysicalApplicationPath;
+					string app_file;
 				
-				string physical_app_path = context.Request.PhysicalApplicationPath;
-				string app_file;
-				
-				app_file = Path.Combine (physical_app_path, "Global.asax");
-				if (!File.Exists (app_file))
-					app_file = Path.Combine (physical_app_path, "global.asax");
+					app_file = Path.Combine (physical_app_path, "Global.asax");
+					if (!File.Exists (app_file))
+						app_file = Path.Combine (physical_app_path, "global.asax");
 
 			
 #if !NET_2_0
-				WebConfigurationSettings.Init (context);
+					WebConfigurationSettings.Init (context);
 #endif
 		
 #if NET_2_0 && !TARGET_J2EE
-				AppResourcesCompiler ac = new AppResourcesCompiler (context, true);
-				ac.Compile ();
+					AppResourcesCompiler ac = new AppResourcesCompiler (context, true);
+					ac.Compile ();
 				
-				// Todo: Process App_WebResources here
+					// Todo: Process App_WebResources here
 				
-				// Todo: Generate profile properties assembly from Web.config here
+					// Todo: Generate profile properties assembly from Web.config here
 				
-				// Todo: Compile code from App_Code here
-				AppCodeCompiler acc = new AppCodeCompiler ();
-				acc.Compile ();
+					// Todo: Compile code from App_Code here
+					AppCodeCompiler acc = new AppCodeCompiler ();
+					acc.Compile ();
 #endif
 
-				if (File.Exists (app_file)) {
+					if (File.Exists (app_file)) {
 #if TARGET_J2EE
-					app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);
+						app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);
 #else
-					app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
-					if (app_type == null) {
-						string msg = String.Format ("Error compiling application file ({0}).", app_file);
-						throw new ApplicationException (msg);
-					}
+						app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
+						if (app_type == null) {
+							string msg = String.Format ("Error compiling application file ({0}).", app_file);
+							throw new ApplicationException (msg);
+						}
 #endif
-				} else {
-					app_type = typeof (System.Web.HttpApplication);
-					app_state = new HttpApplicationState ();
-				}
+					} else {
+						app_type = typeof (System.Web.HttpApplication);
+						app_state = new HttpApplicationState ();
+					}
 
 #if !TARGET_JVM
-		                app_file = "Global.asax";
-		                if (!File.Exists(Path.Combine(physical_app_path, app_file)))
-					app_file =  "global.asax";
+					app_file = "Global.asax";
+					if (!File.Exists(Path.Combine(physical_app_path, app_file)))
+						app_file =  "global.asax";
 
-				WatchLocationForRestart(app_file);
+					WatchLocationForRestart(app_file);
 					    
-		                if (File.Exists(Path.Combine(physical_app_path, "Web.config")))
-		                	WatchLocationForRestart("Web.config");
-		                else if (File.Exists(Path.Combine(physical_app_path, "web.config")))
-		                	WatchLocationForRestart("web.config");
-		                else if (File.Exists(Path.Combine(physical_app_path, "Web.Config")))
-		                	WatchLocationForRestart("Web.Config");
+					if (File.Exists(Path.Combine(physical_app_path, "Web.config")))
+						WatchLocationForRestart("Web.config");
+					else if (File.Exists(Path.Combine(physical_app_path, "web.config")))
+						WatchLocationForRestart("web.config");
+					else if (File.Exists(Path.Combine(physical_app_path, "Web.Config")))
+						WatchLocationForRestart("Web.Config");
 #endif
-				needs_init = false;
-
+					needs_init = false;
+#if NET_2_0
+				} catch (Exception) {
+					if (BuildManager.CodeAssemblies != null)
+						BuildManager.CodeAssemblies.Clear ();
+					if (BuildManager.TopLevelAssemblies != null)
+						BuildManager.TopLevelAssemblies.Clear ();
+					if (WebConfigurationManager.ExtraAssemblies != null)
+						WebConfigurationManager.ExtraAssemblies.Clear ();
+					throw;
+				}
+#endif
+				
 				//
 				// Now init the settings
 				//

@@ -4,6 +4,8 @@
 	enable automatic application restarts on changes to folders/files
 	in a generic way. Patch from Damien Churchill
 	<damien.churchill@ukplc.net>, thanks!
+	Make sure the top-level assemblies (App_Code, resources) are not
+	referenced twice should a compilation error occur.
 
 2007-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
