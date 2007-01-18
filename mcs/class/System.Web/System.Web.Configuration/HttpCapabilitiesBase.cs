@@ -52,8 +52,9 @@ namespace System.Web.Configuration
 
 		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
 		{
-			string ua = null;
+		        string ua;
 #if NET_2_0
+			ua = null;
 			if (request.Context.CurrentHandler is System.Web.UI.Page)
 				ua = ((System.Web.UI.Page) request.Context.CurrentHandler).ClientTarget;
 			
@@ -64,7 +65,7 @@ namespace System.Web.Configuration
 					ua = request.UserAgent;
 			}
 #else
-			string ua = request.ClientTarget;
+			ua = request.ClientTarget;
 			if (ua == null || ua.Length == 0)
 				ua = request.UserAgent;
 #endif
