@@ -1,5 +1,11 @@
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Apply patch from George to fix the new testcase on
+	bug #80451.  We can't just check for Color.Transparent, we need 
+	to check if the back color's alpha channel is < 255.
+
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Move setting show_icon = true to before the constructor
 	so that the base constructor has that information when it calculates
 	the form's size.  Was causing forms to be (6, 6) bigger than they
