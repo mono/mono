@@ -53,7 +53,7 @@ namespace System.Net.Mail {
 		int port;
 		int timeout = 100000;
 		ICredentialsByHost credentials;
-		bool useDefaultCredentials;
+		bool useDefaultCredentials = false;
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
 		bool enableSsl;
