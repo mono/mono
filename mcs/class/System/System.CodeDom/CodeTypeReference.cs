@@ -76,6 +76,23 @@ namespace System.CodeDom
 			if (baseType == null) {
 				throw new ArgumentNullException ("baseType");
 			}
+
+			if (baseType.IsGenericParameter) {
+				this.baseType = baseType.Name;
+				this.codeTypeReferenceOption = CodeTypeReferenceOptions.GenericTypeParameter;
+			}
+			else if (baseType.IsGenericTypeDefinition)
+				this.baseType = baseType.FullName;
+			else if (baseType.IsGenericType) {
+				this.baseType = baseType.GetGenericTypeDefinition ().FullName;
+				foreach (Type arg in baseType.GetGenericArguments ()) {
+					if (arg.IsGenericParameter)
+						TypeArguments.Add (new CodeTypeReference (new CodeTypeParameter (arg.Name)));
+					else
+						TypeArguments.Add (new CodeTypeReference (arg));
+				}
+			}
+			else
 #endif
 			if (baseType.IsArray) {
 				this.rank = baseType.GetArrayRank ();
@@ -125,6 +142,8 @@ namespace System.CodeDom
 			this (typeName)
 		{
 			TypeArguments.AddRange (typeArguments);
+			if (this.baseType.IndexOf ('`') < 0)
+				this.baseType += "`" + TypeArguments.Count;
 		}
 #endif
 

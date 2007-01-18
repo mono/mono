@@ -1,3 +1,11 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeTypeReference.cs :
+	  Support generic type definition in .ctor(Type)
+	  Handle generic type in straightforward way in .ctor(Type), no need
+	  to do ToString() and Parse().
+	  Supply "`n" in .ctor(string,params CodeTypeReference[]).
+
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* CodeNamespaceImportCollection.cs: It turns out that a lot of the

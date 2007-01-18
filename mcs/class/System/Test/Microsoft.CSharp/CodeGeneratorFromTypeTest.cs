@@ -921,6 +921,21 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
+
+#if NET_2_0
+		[Test]
+		public void GenericCodeTypeReferencesTest ()
+		{
+			string code = GenerateGenericCodeTypeReferences (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test {{{0}" +
+				"    {0}" +
+				"    private System.Nullable<int> Foo;{0}" +
+				"    {0}" +
+				"    private System.Nullable<> Bar;{0}" +
+				"}}{0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]

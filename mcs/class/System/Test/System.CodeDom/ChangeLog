@@ -1,3 +1,10 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeTypeReferenceTest.cs :
+	  Fixed generic type tests and let them involved in the actual tests.
+	  Added some more generic type tests, including generic type
+	  definition.
+
 2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeRemoveEventStatementTest.cs: Added tests for ctors.

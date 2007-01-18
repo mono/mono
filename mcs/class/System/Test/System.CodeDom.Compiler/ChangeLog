@@ -1,3 +1,8 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeGeneratorFromTypeTestBase.cs :
+	  added GenerateGenericCodeTypeReferences() for generic type test.
+
 2005-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IndentedTextWriterTest.cs: Added tests for Indent property.

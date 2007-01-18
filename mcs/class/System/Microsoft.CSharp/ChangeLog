@@ -1,3 +1,10 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs : for GenericTypeParameter, GetTypeOutput()
+	  should just print its name.
+	  For generic type definition, print "<>". OutputTypeArguments() was
+	  also causing IndexOutOfRangeException.
+
 2006-12-30  Marek Habersack  <grendello@gmail.com>
 
 	* CSharpCodeGenerator.cs: implement actual identifier syntax correctness

@@ -1244,6 +1244,11 @@ namespace Mono.CSharp
     
 		protected override string GetTypeOutput (CodeTypeReference type)
 		{
+#if NET_2_0
+			if ((type.Options & CodeTypeReferenceOptions.GenericTypeParameter) != 0)
+				return type.BaseType;
+#endif
+
 			string typeOutput = null;
 
 			if (type.ArrayElementType != null) {
@@ -1260,6 +1265,7 @@ namespace Mono.CSharp
 				}
 				typeOutput += ']';
 			}
+
 			return typeOutput;
 		}
 
@@ -1520,6 +1526,10 @@ namespace Mono.CSharp
 		private void OutputTypeArguments (CodeTypeReferenceCollection typeArguments, StringBuilder sb, int count)
 		{
 			if (count == 0) {
+				return;
+			} else if (typeArguments.Count == 0) {
+				// generic type definition
+				sb.Append ("<>");
 				return;
 			}
 

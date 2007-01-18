@@ -1016,5 +1016,22 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}
+
+#if NET_2_0
+		protected string GenerateGenericCodeTypeReferences (CodeGeneratorOptions options)
+		{
+			CodeTypeDeclaration td = new CodeTypeDeclaration ("Test");
+			CodeMemberField f = new CodeMemberField (
+			new CodeTypeReference ("System.Nullable",
+			new CodeTypeReference (typeof (int))),
+			"Foo");
+			td.Members.Add (f);
+			CodeMemberField f2 = new CodeMemberField (
+			new CodeTypeReference (typeof (int?).GetGenericTypeDefinition ()),
+			"Bar");
+			td.Members.Add (f2);
+			return GenerateCodeFromType (td, options);
+		}
+#endif
 	}
 }

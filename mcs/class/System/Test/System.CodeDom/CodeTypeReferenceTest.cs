@@ -468,13 +468,14 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
 		}
 
+		[Test]
 		public void GenericTypeTest1 () {
 			CodeTypeReference reference = new CodeTypeReference (
 				typeof (Dictionary<int,string>));
 			Assert.AreEqual ("System.Collections.Generic.Dictionary`2", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
-			Assert.AreEqual (CodeTypeReferenceOptions.GenericTypeParameter, reference.Options, "#4");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (2, reference.TypeArguments.Count, "#6");
 
@@ -495,13 +496,14 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#18");
 		}
 
+		[Test]
 		public void GenericTypeTest2 () {
 			CodeTypeReference reference = new CodeTypeReference (
 				typeof (Dictionary<List<int>, string>));
 			Assert.AreEqual ("System.Collections.Generic.Dictionary`2", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
-			Assert.AreEqual (CodeTypeReferenceOptions.GenericTypeParameter, reference.Options, "#4");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (2, reference.TypeArguments.Count, "#6");
 
@@ -509,7 +511,7 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ("System.Collections.Generic.List`1", typeArgument.BaseType, "#7");
 			Assert.AreEqual (0, typeArgument.ArrayRank, "#8");
 			Assert.IsNull (typeArgument.ArrayElementType, "#9");
-			Assert.AreEqual (CodeTypeReferenceOptions.GenericTypeParameter, typeArgument.Options, "#10");
+			Assert.AreEqual (0, (int) typeArgument.Options, "#10");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#11");
 			Assert.AreEqual (1, typeArgument.TypeArguments.Count, "#12");
 
@@ -528,6 +530,61 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#22");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#23");
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#24");
+		}
+
+		[Test]
+		public void GenericTypeTest3 () 
+		{
+			CodeTypeReference reference = new CodeTypeReference (
+				"System.Nullable", new CodeTypeReference (typeof (int)));
+			Assert.AreEqual ("System.Nullable`1", reference.BaseType, "#1");
+			Assert.AreEqual (0, reference.ArrayRank, "#2");
+			Assert.IsNull (reference.ArrayElementType, "#3");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
+			Assert.IsNotNull (reference.TypeArguments, "#5");
+			Assert.AreEqual (1, reference.TypeArguments.Count, "#6");
+
+			CodeTypeReference typeArgument = reference.TypeArguments[0];
+			Assert.AreEqual ("System.Int32", typeArgument.BaseType, "#7");
+			Assert.AreEqual (0, typeArgument.ArrayRank, "#8");
+			Assert.IsNull (typeArgument.ArrayElementType, "#9");
+			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#10");
+			Assert.IsNotNull (typeArgument.TypeArguments, "#11");
+			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#12");
+		}
+
+		[Test]
+		public void GenericTypeTest4 () 
+		{
+			CodeTypeReference reference = new CodeTypeReference (
+				"System.Nullable`1", new CodeTypeReference (typeof (int)));
+			Assert.AreEqual ("System.Nullable`1", reference.BaseType, "#1");
+			Assert.AreEqual (0, reference.ArrayRank, "#2");
+			Assert.IsNull (reference.ArrayElementType, "#3");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
+			Assert.IsNotNull (reference.TypeArguments, "#5");
+			Assert.AreEqual (1, reference.TypeArguments.Count, "#6");
+
+			CodeTypeReference typeArgument = reference.TypeArguments[0];
+			Assert.AreEqual ("System.Int32", typeArgument.BaseType, "#7");
+			Assert.AreEqual (0, typeArgument.ArrayRank, "#8");
+			Assert.IsNull (typeArgument.ArrayElementType, "#9");
+			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#10");
+			Assert.IsNotNull (typeArgument.TypeArguments, "#11");
+			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#12");
+		}
+
+		[Test]
+		public void GenericTypeTest5 () 
+		{
+			CodeTypeReference reference = new CodeTypeReference (
+				typeof (int?).GetGenericTypeDefinition ());
+			Assert.AreEqual ("System.Nullable`1", reference.BaseType, "#1");
+			Assert.AreEqual (0, reference.ArrayRank, "#2");
+			Assert.IsNull (reference.ArrayElementType, "#3");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
+			Assert.IsNotNull (reference.TypeArguments, "#5");
+			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
 		}
 #endif
 
