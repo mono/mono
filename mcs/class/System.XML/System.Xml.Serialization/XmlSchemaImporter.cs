@@ -378,7 +378,7 @@ namespace System.Xml.Serialization
 			XmlMemberMapping[] mapping = new XmlMemberMapping [members.Length];
 			for (int n=0; n<members.Length; n++)
 			{
-				TypeData td = GetTypeData (members[n].MemberType, null);
+				TypeData td = GetTypeData (members[n].MemberType, null, false); // FIXME: isNullable could be true?
 				XmlTypeMapping tmap = GetTypeMapping (td);
 				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, true, td, tmap);
 			}
@@ -833,7 +833,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				itemTypeData = GetTypeData (new XmlQualifiedName (itemType, ns), null);
+				itemTypeData = GetTypeData (new XmlQualifiedName (itemType, ns), null, false);
 			}
 			
 			arrayTypeData = itemTypeData.ListTypeData;
@@ -1669,8 +1669,8 @@ namespace System.Xml.Serialization
 
 			TypeData td;
 			if (!elem.SchemaTypeName.IsEmpty) {
-				td = GetTypeData (elem.SchemaTypeName, root);
-				map = GetRegisteredTypeMapping (elem.SchemaTypeName);
+				td = GetTypeData (elem.SchemaTypeName, root, elem.IsNillable);
+				map = (XmlTypeMapping) dataMappedTypes [td];
 			}
 			else if (elem.SchemaType == null) 
 				td = TypeTranslator.GetTypeData (typeof(object));
@@ -1694,17 +1694,17 @@ namespace System.Xml.Serialization
 				sharedAnnType = true;
 			}
 			
-			if (!attr.SchemaTypeName.IsEmpty) return GetTypeData (attr.SchemaTypeName, null);
+			if (!attr.SchemaTypeName.IsEmpty) return GetTypeData (attr.SchemaTypeName, null, false);
 			if (attr.SchemaType == null) return TypeTranslator.GetTypeData (typeof(string));
 			else return GetTypeData (attr.SchemaType, typeQName, attr.Name, sharedAnnType, null);
 		}
 
-		TypeData GetTypeData (XmlQualifiedName typeQName, XmlQualifiedName root)
+		TypeData GetTypeData (XmlQualifiedName typeQName, XmlQualifiedName root, bool isNullable)
 		{
 			if (IsPrimitiveTypeNamespace (typeQName.Namespace)) {
 				XmlTypeMapping map = ImportType (typeQName, root, false);
 				if (map != null) return map.TypeData;
-				else return TypeTranslator.GetPrimitiveTypeData (typeQName.Name);
+				else return TypeTranslator.GetPrimitiveTypeData (typeQName.Name, isNullable);
 			}
 			
 			if (encodedFormat && typeQName.Namespace == "")

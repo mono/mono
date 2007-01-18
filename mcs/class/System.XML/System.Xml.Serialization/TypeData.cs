@@ -240,6 +240,10 @@ namespace System.Xml.Serialization
 
 		public bool IsGenericNullable
 		{
+			get
+			{
+				return genericNullable;
+			}
 			set
 			{
 				genericNullable = value;

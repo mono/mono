@@ -1,3 +1,18 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeData.cs : added get_IsGenericNullable.
+	* MapCodeGenerator.cs : in GetDomType(), return Nullable<T> when
+	  the TypeData.IsGenericNullable.
+	  Use GetDomType() instead of CodeTypeReference.ctor() to not lose
+	  Nullable<T> info.
+	* XmlSchemaImporter.cs : added isNullable argument to GetTypeData()
+	  so that it won't XmlSchemaElement.IsNillable.
+	* TypeTranslator.cs :
+	  Fixed wrong TypeData modification against non-nullable stuff.
+	  Added another GetTypeData() that takes isNullableRuntimeType so
+	  that it won't miss XmlSchemaElement.IsNillable.
+	  Added another GetPrimitiveTypeData() that takes nullable.
+
 2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeData.cs : reject generic type definitions.

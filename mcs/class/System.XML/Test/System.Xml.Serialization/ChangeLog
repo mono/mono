@@ -1,3 +1,8 @@
+2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs :
+	  test that <xs:element nillable='true' ...> is mapped to Nullable<T>.
+
 2007-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : Fixed NotDotNet generic test which itself

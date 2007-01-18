@@ -140,8 +140,8 @@ namespace System.Xml.Serialization
 			foreach (DictionaryEntry de in primitiveTypes) {
 				TypeData td = (TypeData) de.Value;
 				TypeData ntd = new TypeData (td.Type, td.XmlType, true);
-				td.IsGenericNullable = true;
-				primitiveNullableTypes.Add (de.Key, td);
+				ntd.IsGenericNullable = true;
+				primitiveNullableTypes.Add (de.Key, ntd);
 			}
 #endif
 		}
@@ -153,9 +153,12 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetTypeData (Type runtimeType, string xmlDataType)
 		{
-			Type type = runtimeType;
-			bool isNullableRuntimeType = false;
+			return GetTypeData (runtimeType, xmlDataType, false);
+		}
 
+		public static TypeData GetTypeData (Type runtimeType, string xmlDataType, bool isNullableRuntimeType)
+		{
+			Type type = runtimeType;
 #if NET_2_0
 			// Nullable<T> is serialized as T
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
@@ -244,7 +247,17 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetPrimitiveTypeData (string typeName)
 		{
-			TypeData td = (TypeData) primitiveTypes[typeName];
+			return GetPrimitiveTypeData (typeName, false);
+		}
+
+		public static TypeData GetPrimitiveTypeData (string typeName, bool nullable)
+		{
+			TypeData td = (TypeData) primitiveTypes [typeName];
+			if (td != null && !td.Type.IsValueType)
+				return td;
+			// for 1.x profile, 'primitiveNullableTypes' is null
+			Hashtable table = nullable && primitiveNullableTypes != null ? primitiveNullableTypes : primitiveTypes;
+			td = (TypeData) table [typeName];
 			if (td == null) throw new NotSupportedException ("Data type '" + typeName + "' not supported");
 			return td;
 		}
@@ -261,7 +274,7 @@ namespace System.Xml.Serialization
 			
 			if (primType.SchemaType == SchemaTypes.Primitive)
 			{
-				TypeData newPrim = GetTypeData (primType.Type);
+				TypeData newPrim = GetTypeData (primType.Type, null, primType.IsGenericNullable);
 				if (newPrim != primType) return newPrim;
 			}
 			return primType;

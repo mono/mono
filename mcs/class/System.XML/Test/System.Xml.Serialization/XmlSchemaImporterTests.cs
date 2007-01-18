@@ -968,6 +968,41 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#B2");
 #endif
 		}
+
+		XmlSchemaImporter CreateSchemaImporter (string xsd)
+		{
+			XmlSchemas s = new XmlSchemas ();
+			XmlReader r = new XmlTextReader (xsd, XmlNodeType.Document, null);
+			s.Add (XmlSchema.Read (r, null));
+			return new XmlSchemaImporter (s);
+		}
+
+		[Test]
+		public void ImportTypeMapping_NullableField ()
+		{
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='Root'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='Bar' nillable='true' type='xs:int' />
+      </xs:sequence>
+      <xs:attribute name='A' use='optional' type='xs:int' />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+			XmlSchemaImporter imp = CreateSchemaImporter (xsd);
+			XmlTypeMapping map = imp.ImportTypeMapping (new XmlQualifiedName ("Root"));
+			CodeNamespace cns = ExportCode (map);
+#if NET_2_0
+			CodeMemberProperty p = (CodeMemberProperty) FindMember (FindType (cns, "Root"), "Bar");
+			Assert.AreEqual (1, p.Type.TypeArguments.Count, "2.0 #1");
+			Assert.AreEqual ("System.Int32", p.Type.TypeArguments [0].BaseType, "2.0 #2");
+#else
+			CodeMemberField f = (CodeMemberField) FindMember (FindType (cns, "Root"), "Bar");
+			Assert.AreEqual ("System.Int32", f.Type.BaseType, "1.x #1");
+#endif
+		}
 		
 		CodeNamespace ExportCode (XmlTypeMapping map)
 		{

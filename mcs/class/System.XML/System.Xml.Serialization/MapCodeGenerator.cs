@@ -169,7 +169,7 @@ namespace System.Xml.Serialization {
 
 			if (map.BaseMap != null && map.BaseMap.TypeData.SchemaType != SchemaTypes.XmlNode)
 			{
-				CodeTypeReference ctr = new CodeTypeReference (map.BaseMap.TypeData.FullTypeName);
+				CodeTypeReference ctr = GetDomType (map.BaseMap.TypeData);
 				codeClass.BaseTypes.Add (ctr);
 				if (map.BaseMap.IncludeInSchema) {
 					ExportMapCode (map.BaseMap, false);
@@ -614,6 +614,10 @@ namespace System.Xml.Serialization {
 		
 		CodeTypeReference GetDomType (TypeData data)
 		{
+#if NET_2_0
+			if (data.IsGenericNullable)
+				return new CodeTypeReference ("System.Nullable", new CodeTypeReference (data.FullTypeName));
+#endif
 			if (data.SchemaType == SchemaTypes.Array)
 				return new CodeTypeReference (GetDomType (data.ListItemTypeData),1);
 			else
@@ -660,7 +664,7 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("Type " + typeData.TypeName + " not supported");
 
 				IFormattable defaultValueFormattable = defaultValue as IFormattable;
-				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeData.FullTypeName), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
+				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (GetDomType (typeData)), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
 				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
 				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", arg);
 				internalField.InitExpression = fref;
