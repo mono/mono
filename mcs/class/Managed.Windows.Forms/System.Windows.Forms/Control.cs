@@ -4288,7 +4288,7 @@ namespace System.Windows.Forms
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
 
-                if (background_color.A < byte.MaxValue)
+			if (!background_color.IsEmpty && background_color.A < byte.MaxValue)
 					Invalidate ();
 			}
 

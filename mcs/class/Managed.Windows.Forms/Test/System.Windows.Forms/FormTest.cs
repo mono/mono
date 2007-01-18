@@ -600,6 +600,29 @@ namespace MonoTests.System.Windows.Forms
 			Form f = new Form ();
 			f.Show (f);
 		}
+		
+		[Test]	// Bug #79959
+		[NUnit.Framework.Category ("NotWorking")]
+		public void BehaviorResizeOnBorderStyleChanged ()
+		{
+			// Marked NotWorking because the ClientSize is probably dependent on the WM.
+			// The values below match .Net to make sure our behavior is the same.
+			Form f = new Form ();
+			f.Show ();
+
+			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A2");
+
+			f.FormBorderStyle = FormBorderStyle.FixedSingle;
+			Assert.AreEqual (new Size (298, 298), f.Size, "A3");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
+
+			f.FormBorderStyle = FormBorderStyle.Sizable;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A5");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A6");
+			
+			f.Close ();
+		}
 #endif
 
 		private bool RunningOnUnix {

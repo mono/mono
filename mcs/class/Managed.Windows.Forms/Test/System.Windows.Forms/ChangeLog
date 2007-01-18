@@ -1,3 +1,7 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #79959.
+
 2007-01-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* StatusBarTest.cs: Added tests for StatusBarPanelCollection.

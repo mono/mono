@@ -1,3 +1,11 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Recalculate our size after setting a new FormBorderStyle.
+	[Fixes bug #79959]
+
+	* Control.cs: Color.Empty shouldn't count for previous transparent
+	redraw changes.
+
 2007-01-18  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs:

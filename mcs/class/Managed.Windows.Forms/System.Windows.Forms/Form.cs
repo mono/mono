@@ -440,6 +440,7 @@ namespace System.Windows.Forms {
 				}
 
 				UpdateStyles();
+				this.Size = SizeFromClientSize (this.ClientSize);
 			}
 		}
 
