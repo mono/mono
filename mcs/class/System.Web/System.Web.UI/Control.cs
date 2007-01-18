@@ -1177,7 +1177,9 @@ namespace System.Web.UI
 				return relativeUrl;
 			
 			string ts = TemplateSourceDirectory;
-			if (ts == "" || !UrlUtils.IsRelativeUrl (relativeUrl))
+			if (ts == null || ts.Length == 0 ||
+				Context == null || Context.Response == null ||
+				!UrlUtils.IsRelativeUrl (relativeUrl))
 				return relativeUrl;
 
 			HttpResponse resp = Context.Response;
