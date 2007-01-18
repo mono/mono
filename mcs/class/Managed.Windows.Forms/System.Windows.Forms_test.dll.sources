@@ -30,6 +30,7 @@ System.Windows.Forms/DataGridColumnStyleTest.cs
 System.Windows.Forms/DataGridTableStyleTest.cs
 System.Windows.Forms/DataGridTest.cs
 System.Windows.Forms/DataGridTextBoxColumnTest.cs
+System.Windows.Forms/DataGridTextBoxTest.cs
 System.Windows.Forms/DataGridViewAdvancedBorderStyleTest.cs
 System.Windows.Forms/DataGridViewCellStyleTest.cs
 System.Windows.Forms/DataGridViewCellTest.cs
@@ -107,3 +108,4 @@ System.Windows.Forms.Layout/TableLayoutSettingsTypeConverterTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
 System.Resources/WriterTest.cs
+interactive/80282.cs
