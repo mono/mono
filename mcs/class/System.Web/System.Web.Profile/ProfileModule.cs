@@ -93,18 +93,20 @@ namespace System.Web.Profile
 			if (!ProfileManager.Enabled)
 				return;
 
-			profile = app.Context.Profile;
+			if (ProfileManager.AutomaticSaveEnabled) {
+				profile = app.Context.Profile;
 
-			if (profile == null)
-				return;
-
-			if (ProfileAutoSaving != null) {
-				ProfileAutoSaveEventArgs args = new ProfileAutoSaveEventArgs (app.Context);
-				ProfileAutoSaving (this, args);
-				if (!args.ContinueWithProfileAutoSave)
+				if (profile == null)
 					return;
+
+				if (ProfileAutoSaving != null) {
+					ProfileAutoSaveEventArgs args = new ProfileAutoSaveEventArgs (app.Context);
+					ProfileAutoSaving (this, args);
+					if (!args.ContinueWithProfileAutoSave)
+						return;
+				}
+				profile.Save ();
 			}
-			profile.Save();
 		}
 
 		public event ProfileMigrateEventHandler MigrateAnonymous;
