@@ -52,9 +52,16 @@ namespace System.Web.Configuration
 
 		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
 		{
-			string ua = request.ClientTarget;
-			if (ua == null)
-				ua = request.UserAgent;
+			string ua = null;
+			if (request.Context.CurrentHandler is System.Web.UI.Page)
+				ua = ((System.Web.UI.Page) request.Context.CurrentHandler).ClientTarget;
+			
+			if (ua == null || ua.Length == 0) {
+				ua = request.ClientTarget;
+
+				if (ua == null || ua.Length == 0)
+					ua = request.UserAgent;
+			}
 
 			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities ();
 			bcap.useragent = ua;

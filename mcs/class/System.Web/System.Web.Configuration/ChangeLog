@@ -1,3 +1,7 @@
+2007-01-18  Konstantin Triger  <kostat@mainsoft.com>
+
+	* HttpCapabilitiesBase.cs: consider Page's ClientTarget for BrowseCaps.
+
 2006-08-15  Eyal Alalouf  <eyala@mainsoft.com>
     * WebConfigurationSettings.cs: Remove i#if TARGET_JVM since Grasshopper
 	  supports Remtoing now.
