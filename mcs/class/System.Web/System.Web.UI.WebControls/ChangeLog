@@ -1,3 +1,8 @@
+2007-01-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Menu.js, Menu.js: added null reference checking for every getTree or
+	getMenu call
+
 2007-01-18  Adar Wesley <adarw@mainsoft.com>
 
         * SiteMapDataSource.cs: implemented logic of GetStartNode when

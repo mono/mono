@@ -1,6 +1,8 @@
 
 function TreeView_ToggleExpand (treeId, nodeId) {
 	var tree = getTree (treeId);
+	if (tree == null)
+	    return;
 	var spanId = treeId + "_" + nodeId;
 	var node = document.getElementById (spanId);
 	var expand = node.style.display == "none";
@@ -49,6 +51,8 @@ function TreeView_PopulateCallback (data, ids)
 {
 	var idArray = ids.split (" ");
 	var tree = getTree (idArray[0]);
+	if (tree == null)
+	    return;
 	var spanId = idArray[0] + "_" + idArray[1];
 	var node = document.getElementById (spanId);
 	node.populated = true;
@@ -81,6 +85,8 @@ function getNodeLink (node) { return node.childNodes[node.childNodes.length - 1]
 function TreeView_HoverNode (treeId, node)
 {
 	var tree = getTree (treeId);
+	if (tree == null)
+	    return;
 	if (tree.hoverClass != null) {
 	    if (node.normalClass == null)
 		    node.normalClass = node.className;

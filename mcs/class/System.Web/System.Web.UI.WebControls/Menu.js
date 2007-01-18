@@ -1,6 +1,8 @@
 
 function Menu_OverItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	var subm = getSubMenu (menuId, itemId);
 	if (subm.parentMenu == null && parentId != null)
 		subm.parentMenu = getSubMenu (menuId, parentId);
@@ -44,6 +46,8 @@ function Menu_OverItem (menuId, itemId, parentId) {
 
 function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	var subm = getSubMenu (menuId, parentId);
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
@@ -53,6 +57,8 @@ function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {
 
 function Menu_OverStaticLeafItem (menuId, itemId) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	Menu_SetActive (menu, null);
 	if (menu.dynamicHover != null)
 		Menu_HilighItem (menuId, itemId, menu.staticHover, menu.staticLinkHover);
@@ -73,6 +79,8 @@ function Menu_HilighItem (menuId, itemId, hoverClass, hoverLinkClass)
 
 function Menu_OutItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	var subm = getSubMenu (menuId, itemId);
 	if (subm == null && parentId != null)
 		subm = getSubMenu (menuId, parentId);
@@ -88,6 +96,8 @@ function Menu_OutItem (menuId, itemId, parentId) {
 
 function Menu_OverScrollBtn (menuId, parentId, updown) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	var subm = getSubMenu (menuId, parentId);
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
@@ -99,6 +109,8 @@ function Menu_OverScrollBtn (menuId, parentId, updown) {
 
 function Menu_OutScrollBtn (menuId, parentId, updown) {
 	var menu = getMenu (menuId);
+	if (menu == null)
+	    return;
 	var subm = getSubMenu (menuId, parentId);
 	if (subm.scrollThread != null)
 		clearInterval (subm.scrollThread);
