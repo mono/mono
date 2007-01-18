@@ -1,3 +1,10 @@
+2007-01-18  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Calculate width properly.
+	- Don't store the tag's X offset, this can be figured out very
+	easily.
+	- When getting the caret tag make sure to get the last empty tag.
+
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Recalculate our size after setting a new FormBorderStyle.

@@ -380,7 +380,6 @@ namespace System.Windows.Forms {
 
 			this.recalc = false;
 			widths[0] = indent;
-			tag.X = indent;
 
 			w = g.MeasureString(doc.password_char, tags.font, 10000, Document.string_format).Width;
 
@@ -444,11 +443,6 @@ namespace System.Windows.Forms {
 
 				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					tag.ascent = 0;
-					if (tag.previous != null) {
-						tag.X = tag.previous.X;
-					} else {
-						tag.X = (int)widths[pos];
-					}
 					tag = tag.next;
 					tag.shift = 0;
 				}
@@ -533,13 +527,6 @@ namespace System.Windows.Forms {
 						this.ascent = tag.ascent;
 					} else {
 						tag.shift = this.ascent - tag.ascent;
-					}
-
-					// Update our horizontal starting pixel position
-					if (tag.previous == null) {
-						tag.X = (int)widths[0];
-					} else {
-						tag.X = tag.previous.X + (int)tag.previous.width;
 					}
 
 					tag = tag.next;
@@ -3636,7 +3623,7 @@ namespace System.Windows.Forms {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
 					int	end;
 
-					end = tag.start + tag.length - 1;
+					end = tag.end;
 
 					for (int pos = tag.start-1; pos < end; pos++) {
 						// When clicking on a character, we position the cursor to whatever edge
@@ -3647,13 +3634,13 @@ namespace System.Windows.Forms {
 						}
 					}
 					index=end;
-					return tag;
+					return LineTag.GetFinalTag (tag);
 				}
 				if (tag.next != null) {
 					tag = tag.next;
 				} else {
 					index = line.text.Length;
-					return tag;
+					return LineTag.GetFinalTag (tag);
 				}
 			}
 		}
@@ -4239,7 +4226,6 @@ namespace System.Windows.Forms {
 
 		// Drawing support
 		internal int		height;		// Height in pixels of the text this tag describes
-		internal int		X;		// X location of the text this tag describes
 
 		internal int		ascent;		// Ascent of the font for this tag
 		internal int		shift;		// Shift down for this tag, to stay on baseline
@@ -4254,11 +4240,18 @@ namespace System.Windows.Forms {
 		internal LineTag(Line line, int start) {
 			this.line = line;
 			this.start = start;
-			this.X = 0;
 		}
 		#endregion	// Constructors
 
 		#region Internal Methods
+
+		public float X {
+			get {
+				if (start == 0)
+					return line.indent;
+				return line.widths [start - 1];
+			}
+		}
 
 		public int end {
 			get { return start + length; }
@@ -4268,7 +4261,7 @@ namespace System.Windows.Forms {
 			get {
 				if (length == 0)
 					return 0;
-				return line.widths [start + length - 1];
+				return line.widths [start + length - 1] - line.widths [start - 1];
 			}
 		}
 
