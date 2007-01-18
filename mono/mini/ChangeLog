@@ -1,4 +1,9 @@
 
+Thu Jan 18 16:52:56 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: match the generic definition to check for
+	private access with generic types (bug #78431).
+
 Thu Jan 18 11:50:13 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* genmdesc.pl, Makefile.am: perl implementation of genmdesc,
