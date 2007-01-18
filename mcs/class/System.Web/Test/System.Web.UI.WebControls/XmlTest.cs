@@ -151,15 +151,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (null, xml.Transform, "V9");
 #if NET_2_0
 			Assert.AreEqual (false, xml.EnableTheming, "EnableTheming");
-#endif
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void Xml_Values_NotWorking ()
-		{
-			Xml xml = new Xml ();
-#if NET_2_0
 			Assert.AreEqual (String.Empty, xml.SkinID, "SkinID");
 			Assert.AreEqual (null, xml.XPathNavigator, "XPathNavigator");
 #endif
@@ -167,7 +158,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		// Tests that invalid documents can be set before rendering.
 		[Test] 
-		[Category ("NotWorking")]
 		public void Xml_InvalidDocument ()
 		{
 			Xml xml = new Xml ();
@@ -231,6 +221,32 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><content></content>",
 					 sw.ToString (), "SP1");
 		}
+
+#if NET_2_0
+		[Test]
+		public void Xml_SourcePrecedence_2 () 
+		{
+			XmlPoker xml = new XmlPoker ();
+
+			XmlDocument xml_doc = new XmlDocument ();
+			xml_doc.LoadXml ("<document></document>");
+
+			xml.Document = xml_doc;
+
+			XmlDocument xml_navigator_doc = new XmlDocument ();
+			xml_navigator_doc.LoadXml ("<navigator></navigator>");
+
+			xml.XPathNavigator = xml_navigator_doc.CreateNavigator ();
+
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter hw = new HtmlTextWriter (sw);
+			xml.DoRender (hw);
+
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><navigator></navigator>",
+					 sw.ToString (), "Xml_SourcePrecedence_2");
+
+		}
+#endif
 
 		[Test] public void Xml_DefaultTrasnform ()
 		{
@@ -375,7 +391,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented
 		public void XPathNavigable_1 ()
 		{
 			Xml xml = new Xml ();
@@ -386,7 +401,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		
 		[Test]
-		[Category ("NotWorking")] // Not implemented
 		public void XPathNavigable_2 ()
 		{
 			Xml xml = new Xml ();
@@ -395,7 +409,20 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void XPathNavigatorInstance_1 () 
+		{
+			Xml xml = new Xml ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<document></document>");
+
+			xml.Document = doc;
+
+			XPathNavigator nav1 = xml.XPathNavigator;
+
+			Assert.IsNull (nav1, "XPathNavigatorInstance_1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Focus ()
 		{
@@ -405,7 +432,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SkinID ()
 		{

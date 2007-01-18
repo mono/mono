@@ -53,7 +53,10 @@ namespace System.Web.UI.WebControls {
 	[ControlBuilder (typeof (XmlBuilder))] 
 	public class Xml : Control {
 		// Property set variables
-		XmlDocument xml_document; 
+		XmlDocument xml_document;
+#if NET_2_0
+		XPathNavigator xpath_navigator;
+#endif
 		string xml_content;
 		string xml_file;
 
@@ -111,7 +114,11 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentContent {
 			get {
+#if NET_2_0
+				return (xml_content != null)? xml_content : "";
+#else
 				return "";
+#endif
 			}
 
 			set {
@@ -152,15 +159,10 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DefaultValue (false)]
-		[MonoTODO ("Theming is not implemented")]
 		public override bool EnableTheming 
 		{
-			get {
-				return enable_theming;
-			}
-			set {
-				enable_theming = value;
-			}
+			get { return false; }
+			set { throw new NotSupportedException (); }
 		}
 
 		[DefaultValue ("")]
@@ -168,12 +170,10 @@ namespace System.Web.UI.WebControls {
 		[Browsable (false)]
 		public override string SkinID
 		{
-			get {
-				return skin_id;
-			}
-			set {
-				skin_id = value;
-			}
+			// MSDN: Always returns an empty string (""). This property is not supported.
+			get { return String.Empty; }
+			// MSDN: Any attempt to set the value of this property throws a NotSupportedException exception.
+			set { throw new NotSupportedException ("SkinID is not supported on Xml control"); }
 		}
 #endif		
 		
@@ -232,15 +232,10 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		[MonoTODO ("Not implemented")]
 		public XPathNavigator XPathNavigator 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return xpath_navigator; }
+			set { xpath_navigator = value; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -252,6 +247,7 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
+			throw new NotSupportedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -268,20 +264,28 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter output)
 		{
-			XmlDocument xml_doc;
-			
-			if (xml_document != null)
-				xml_doc = xml_document;
-			else {
-				if (xml_content != null){
-					xml_doc = new XmlDocument ();
-					xml_doc.LoadXml (xml_content);
-				} else if (xml_file != null){
-					xml_doc = new XmlDocument ();
-					xml_doc.Load (MapPathSecure (xml_file));
-				} else
-					return;
+			XmlDocument xml_doc = null;
+
+#if NET_2_0
+			if (xpath_navigator == null) {
+#endif
+				if (xml_document != null)
+					xml_doc = xml_document;
+				else {
+					if (xml_content != null) {
+						xml_doc = new XmlDocument ();
+						xml_doc.LoadXml (xml_content);
+					}
+					else if (xml_file != null) {
+						xml_doc = new XmlDocument ();
+						xml_doc.Load (MapPathSecure (xml_file));
+					}
+					else
+						return;
+				}
+#if NET_2_0
 			}
+#endif
 
 			XslTransform t = xsl_transform;
 			if (transform_file != null){
@@ -290,14 +294,32 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (t != null){
-				t.Transform (xml_doc, transform_arguments, output, null);
+#if NET_2_0
+				if (xpath_navigator != null) {
+					t.Transform(xpath_navigator, transform_arguments, output);
+				}
+				else {
+#endif
+					t.Transform (xml_doc, transform_arguments, output, null);
+#if NET_2_0
+				}
+#endif
 				return;
 			}
 				
 			XmlTextWriter xmlwriter = new XmlTextWriter (output);
 			xmlwriter.Formatting = Formatting.None;
-			xml_doc.Save (xmlwriter);
-
+#if NET_2_0
+			if (xpath_navigator != null) {
+				xmlwriter.WriteStartDocument ();
+				xpath_navigator.WriteSubtree (xmlwriter);
+			}
+			else {
+#endif
+				xml_doc.Save (xmlwriter);
+#if NET_2_0
+			}
+#endif
 		}
 
 		protected override void AddParsedSubObject (object obj)
