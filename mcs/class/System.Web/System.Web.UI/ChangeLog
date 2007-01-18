@@ -1,3 +1,7 @@
+2007-01-18  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Control.jvm.cs: Added PortletNamespace property.
+
 2007-01-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: remover TemplateSourceDirectory propery
@@ -18,7 +22,7 @@
 				through the property 'Events', but currently we can't see
 				better implementation)
 
-2007-01-14  Eya; Alaluf <eyala@mainsoft.com>
+2007-01-14  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Control.jvm.cs, Page.jvm.cs: Added TARGET_J2EE specific files.
 	* Page.cs, ClientScriptManager.cs, Control.cs: Added J2EE portal

@@ -45,6 +45,22 @@ namespace System.Web.UI
 			}
 		}
 
+		internal string PortletNamespace
+		{
+			get {
+				if (_emptyPortletNamespace)
+					return null;
+
+				if (_PortletNamespace == null) {
+					IPortletResponse portletResponse = GetRenderResponse ();
+					if (portletResponse != null)
+						_PortletNamespace = portletResponse.getNamespace ();
+					_emptyPortletNamespace = _PortletNamespace == null;
+				}
+				return _PortletNamespace;
+			}
+		}
+
 		// For J2EE Portal we need to use the portlet namespace when we generate control IDs.
 		string GetDefaultName ()
 		{
@@ -55,17 +71,10 @@ namespace System.Web.UI
 				defaultName = defaultNameArray [defaultNumberID++];
 			}
 
-			if (this != _page || _emptyPortletNamespace)
+			if (this != _page)
 				return defaultName;
 
-			if (_PortletNamespace == null) {
-				IPortletResponse portletResponse = GetRenderResponse ();
-				if (portletResponse != null)
-					_PortletNamespace = portletResponse.getNamespace ();
-				_emptyPortletNamespace = _PortletNamespace == null;
-			}
-
-			return _PortletNamespace + defaultName;
+			return PortletNamespace + defaultName;
 		}
 
 		// Add a variant for specifying use of portlet resolveRenderUrl
