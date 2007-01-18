@@ -35,6 +35,7 @@ using System.Collections;
 using System.Web.UI;
 using System.Web.Util;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.Web.UI.WebControls
 {
@@ -206,6 +207,18 @@ namespace System.Web.UI.WebControls
 				}
 			}
 			else if (StartingNodeOffset > 0) {
+				List<SiteMapNode> pathCurrentToStartingNode = new List<SiteMapNode> ();
+				SiteMapNode tmpNode = Provider.CurrentNode;
+				while (tmpNode != null && tmpNode != starting_node) {
+					pathCurrentToStartingNode.Insert (0, tmpNode);
+					tmpNode = tmpNode.ParentNode;
+				}
+				if (tmpNode == starting_node &&
+					StartingNodeOffset <= pathCurrentToStartingNode.Count) {
+					// The requested node is in the same subtree as the starting_node
+					// try to advance on this path.
+					starting_node = pathCurrentToStartingNode [StartingNodeOffset - 1];
+				}
 			}
 
 			return starting_node;
@@ -224,4 +237,5 @@ namespace System.Web.UI.WebControls
 }
 
 #endif
+
 
