@@ -271,7 +271,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanUndo {
 			get {
-				return document.undo.UndoLevels != 0;
+				return document.undo.CanUndo;
 			}
 		}
 

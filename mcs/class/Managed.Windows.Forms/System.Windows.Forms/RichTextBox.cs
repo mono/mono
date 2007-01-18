@@ -41,11 +41,8 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		internal bool		auto_word_select;
 		internal int		bullet_indent;
-		internal bool		can_redo;
 		internal bool		detect_urls;
-		internal string		redo_action_name;
 		internal int		margin_right;
-		internal string		undo_action_name;
 		internal float		zoom;
 
 		private RTF.TextMap	rtf_text_map;
@@ -67,12 +64,9 @@ namespace System.Windows.Forms {
 			accepts_return = true;
 			auto_word_select = false;
 			bullet_indent = 0;
-			can_redo = false;
 			detect_urls = true;
 			max_length = Int32.MaxValue;
-			redo_action_name = string.Empty;
 			margin_right = 0;
-			undo_action_name = string.Empty;
 			zoom = 1;
 			base.Multiline = true;
 			document.CRLFSize = 1;
@@ -159,7 +153,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanRedo {
 			get {
-				return can_redo;
+				return document.undo.CanRedo;
 			}
 		}
 
@@ -237,7 +231,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public string RedoActionName {
 			get {
-				return redo_action_name;
+				return document.undo.RedoActionName;
 			}
 		}
 
@@ -657,7 +651,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string UndoActionName {
 			get {
-				return document.undo.UndoName;
+				return document.undo.UndoActionName;
 			}
 		}
 
@@ -915,8 +909,9 @@ namespace System.Windows.Forms {
 			base.Paste(Clipboard.GetDataObject(), clipFormat, false);
 		}
 
-		[MonoTODO()]
-		public void Redo() {
+		public void Redo()
+		{
+			document.undo.Redo ();
 		}
 
 		public void SaveFile(Stream data, RichTextBoxStreamType fileType) {

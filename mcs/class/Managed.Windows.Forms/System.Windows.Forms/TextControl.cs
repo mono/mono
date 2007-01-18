@@ -4622,6 +4622,9 @@ namespace System.Windows.Forms {
 			Mark,
 			CompoundBegin,
 			CompoundEnd,
+
+			UserActionBegin,
+			UserActionEnd
 		}
 
 		internal class Action {
@@ -4636,8 +4639,6 @@ namespace System.Windows.Forms {
 		private Stack		undo_actions;
 		private Stack		redo_actions;
 
-		private int undo_levels;
-		private int redo_levels;
 		private int		caret_line;
 		private int		caret_pos;
 		#endregion	// Local Variables
@@ -4651,19 +4652,28 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors
 
 		#region Properties
-		internal int UndoLevels {
+		internal bool CanUndo {
 			get {
-				return undo_levels;
+				foreach (Action action in undo_actions) {
+					if (action.type == ActionType.UserActionEnd)
+						return true;
+				}
+				return false;
 			}
 		}
 
-		internal int RedoLevels {
+		internal bool CanRedo {
 			get {
-				return redo_levels;
+				foreach (Action action in undo_actions) {
+					if (action.type == ActionType.UserActionBegin)
+						return true;
+				}
+				return false;
 			}
 		}
 
-		internal string UndoName {
+		internal string UndoActionName
+		{
 			get {
 				Action action;
 
@@ -4702,8 +4712,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal string RedoName() {
-			return null;
+		internal string RedoActionName
+		{
+			get {
+				return null;
+			}
 		}
 		#endregion	// Properties
 
@@ -4711,8 +4724,6 @@ namespace System.Windows.Forms {
 		internal void Clear() {
 			undo_actions.Clear();
 			redo_actions.Clear();
-			undo_levels = 0;
-			redo_levels = 0;
 		}
 
 		internal void Undo() {
@@ -4739,8 +4750,6 @@ namespace System.Windows.Forms {
 
 				case ActionType.CompoundBegin:
 					compound_stack--;
-					undo_levels--;
-					redo_levels++;
 					break;
 
 				case ActionType.InsertString:
@@ -4809,7 +4818,6 @@ namespace System.Windows.Forms {
 			ce.type = ActionType.CompoundEnd;
 
 			undo_actions.Push (ce);
-			undo_levels++;
 		}
 
 		// pos = 1-based
