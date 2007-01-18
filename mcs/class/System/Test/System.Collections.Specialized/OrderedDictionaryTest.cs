@@ -121,6 +121,15 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+		public void Constructor_NoCase_IEqualityComparer ()
+		{
+			OrderedDictionary od = new OrderedDictionary (StringComparer.InvariantCultureIgnoreCase);
+			od ["Original_PhotoID"] = null;
+			od ["original_PhotoID"] = 12;
+			Assert.AreEqual (1, od.Count);
+		}
+
+		[Test]
 		// [ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Constructor_IntNegative_IEqualityComparer ()
 		{

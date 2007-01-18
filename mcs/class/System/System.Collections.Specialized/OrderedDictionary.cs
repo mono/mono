@@ -238,7 +238,7 @@ namespace System.Collections.Specialized
 		{
 			for (int n=0; n<list.Count; n++) {
 				DictionaryEntry de = (DictionaryEntry) list [n];
-				if (de.Key.Equals (key))
+				if (comparer != null ? comparer.Equals(de.Key, key) : de.Key.Equals(key))
 					return n;
 			}
 			return -1;

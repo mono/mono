@@ -1,3 +1,7 @@
+2007-01-18  Konstantin Triger  <kostat@mainsoft.com>
+
+	* OrderedDictionary.cs: use IEqualityComparer for key comparison.
+
 2006-10-03  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ListDictionary.cs: remove unnecessary out parameter
