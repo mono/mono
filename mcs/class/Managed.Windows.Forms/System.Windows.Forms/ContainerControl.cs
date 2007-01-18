@@ -495,12 +495,6 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
 
-				case Msg.WM_LBUTTONDOWN:
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()),
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
-						HighOrder ((int) m.LParam.ToInt32 ()), 0));
-				break;
-
 				case Msg.WM_SETFOCUS:
 					if (active_control != null)
 						Select (active_control);

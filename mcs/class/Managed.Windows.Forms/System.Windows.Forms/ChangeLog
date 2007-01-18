@@ -1,3 +1,9 @@
+2007-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* ContainerControl.cs: remove the partial handling of LBUTTONDOWN
+	(leftover from the container_selected days, I'd wager).  fixes bug
+	#80546.
+
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Apply patch from George to fix the new testcase on
