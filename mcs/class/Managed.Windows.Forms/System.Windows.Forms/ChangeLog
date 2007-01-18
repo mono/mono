@@ -1,3 +1,9 @@
+2007-01-18  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: When replacing a selection we need to invalidate
+	from the initial selection start, because selection start is moved
+	to the end of the replacement.
+
 2007-01-18  Andreia Gaita  <avidigal@novell.com>
 
 	* LinkLabel.cs: Missing ControlStyles. Fixes #80482

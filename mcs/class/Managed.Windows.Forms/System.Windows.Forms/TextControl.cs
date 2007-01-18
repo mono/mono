@@ -3286,6 +3286,7 @@ namespace System.Windows.Forms {
 
 			undo.BeginCompoundAction ();
 
+			int selection_pos_on_line = selection_start.pos;
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			SuspendRecalc ();
 
@@ -3360,7 +3361,7 @@ namespace System.Windows.Forms {
 			}
 
 			PositionCaret (selection_start.line, selection_start.pos);
-			UpdateView (selection_start.line, selection_start.pos);
+			UpdateView (selection_start.line, selection_pos_on_line);
 
 			undo.EndCompoundAction ();
 		}
