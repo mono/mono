@@ -1148,14 +1148,30 @@ namespace System.Data.OracleClient.Oci
 
 		#endregion
 
+		#region AllocateClear
+
+		private static bool IsUnix =
+		(int) Environment.OSVersion.Platform == 4 || (int) Environment.OSVersion.Platform == 128;
+
+		[DllImport("libc")]
+		private static extern IntPtr calloc (int nmemb, int size);
+
+		private const int GMEM_ZEROINIT = 0x40;
+
+		[DllImport("kernel32")]
+		private static extern IntPtr GlobalAlloc (int flags, int bytes);
+
 		//http://download-uk.oracle.com/docs/cd/B14117_01/appdev.101/b10779/oci05bnd.htm#423147
 		internal static IntPtr AllocateClear (int cb)
 		{
-			IntPtr result = Marshal.AllocHGlobal ( cb);
-			for (int cleaner = 0; cleaner < cb; cleaner ++)
-				Marshal.WriteByte (result, cleaner, 0);
-			return result;
+			if (IsUnix) {
+				return calloc (1, cb);
+			} else {
+				return GlobalAlloc (GMEM_ZEROINIT, cb);
+			}
+		}
+
+		#endregion AllocateClear
 	}
-}
 }
 
