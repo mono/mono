@@ -62,8 +62,9 @@ namespace Microsoft.Build.BuildEngine {
 		Item,
 		Property,
 		Metadata,
-		Transform,
-		LiteralSubExpression,
+		FunctionName,
+//		Transform,
+//		LiteralSubExpression,
 
 		FirstPunct,
 

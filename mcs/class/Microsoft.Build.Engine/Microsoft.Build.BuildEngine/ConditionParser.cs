@@ -37,10 +37,11 @@ namespace Microsoft.Build.BuildEngine {
 
 	internal class ConditionParser {
 	
-		ConditionTokenizer tokenizer = new ConditionTokenizer ();
+		ConditionTokenizer tokenizer;
 		
 		ConditionParser (string condition)
 		{
+			tokenizer = new ConditionTokenizer ();
 			tokenizer.Tokenize (condition);
 		}
 		
@@ -63,7 +64,7 @@ namespace Microsoft.Build.BuildEngine {
 			ConditionExpression e = parser.ParseExpression ();
 			
 			if (!parser.tokenizer.IsEOF ())
-				throw new ExpressionParseException (String.Format ("Unexpected token: {0}", parser.tokenizer.Token.Value));
+				throw new ExpressionParseException (String.Format ("Unexpected token: \"{0}\"", parser.tokenizer.Token.Value));
 			
 			return e;
 		}
@@ -84,7 +85,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			while (tokenizer.IsToken (TokenType.And)) {
 				tokenizer.GetNextToken ();
-				e = new ConditionAndExpression ((ConditionExpression) e, (ConditionExpression) ParseBooleanOr ());
+				e = new ConditionAndExpression (e, ParseBooleanOr ());
 			}
 			
 			return e;
@@ -96,7 +97,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			while (tokenizer.IsToken (TokenType.Or)) {
 				tokenizer.GetNextToken ();
-				e = new ConditionOrExpression ((ConditionExpression) e, (ConditionExpression) ParseRelationalExpression ());
+				e = new ConditionOrExpression (e, ParseRelationalExpression ());
 			}
 			
 			return e;
@@ -141,22 +142,47 @@ namespace Microsoft.Build.BuildEngine {
 					throw new ExpressionParseException (String.Format ("Wrong relation operator {0}", opToken.Value));
 				}
 				
-				e =  new ConditionRelationalExpression ((ConditionExpression) e, ParseFactorExpression (), op);
+				e =  new ConditionRelationalExpression (e, ParseFactorExpression (), op);
 			}
 			
 			return e;
 		}
 		
-		// FIXME: parse sub expression in parens, parse TokenType.Not, parse functions
 		ConditionExpression ParseFactorExpression ()
 		{
+			ConditionExpression e;
 			Token token = tokenizer.Token;
 			tokenizer.GetNextToken ();
-			
-			if (token.Type != TokenType.String && token.Type != TokenType.Number)
+
+			if (token.Type == TokenType.LeftParen) {
+				e = ParseExpression ();
+				tokenizer.Expect (TokenType.RightParen);
+			} else if (token.Type == TokenType.String)
+				e = new ConditionFactorExpression (token);
+			else if (token.Type == TokenType.Number)
+				e = new ConditionFactorExpression (token);
+			else if (token.Type == TokenType.FunctionName) {
+				e = ParseFunctionExpression ();
+			} else if (token.Type == TokenType.Item) {
+				throw new NotImplementedException ();
+			} else if (token.Type == TokenType.Property) {
+				throw new NotImplementedException ();
+			} else if (token.Type == TokenType.Not) {
+				e = ParseNotExpression ();
+			} else
 				throw new ExpressionParseException (String.Format ("Unexpected token type {0}.", token.Type));
 			
-			return new ConditionFactorExpression (token);
+			return e;
+		}
+
+		ConditionExpression ParseNotExpression ()
+		{
+			return new ConditionNotExpression (ParseFactorExpression ());
+		}
+
+		ConditionExpression ParseFunctionExpression ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -25,7 +25,7 @@ Factor		:	TOKEN_LPAREN Expr TOKEN_RPAREN
 		;
 
 Arg-list	:	Args
-		|	ε /*empty sign in utf-8 probably should be just empty*/
+		|
 		;
 
 Args		:	Arg TOKEN_COMMA Args

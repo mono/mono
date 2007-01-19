@@ -122,7 +122,7 @@ namespace Microsoft.Build.BuildEngine {
 			return AddNewItem (itemName, itemInclude, false);
 		}
 		
-		[MonoTODO ("Not tested")]
+		[MonoTODO ("Adds item not in the same place as MS")]
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude,
 					     bool treatItemIncludeAsLiteral)

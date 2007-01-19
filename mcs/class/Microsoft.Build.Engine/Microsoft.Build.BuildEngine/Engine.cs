@@ -261,6 +261,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void UnregisterAllLoggers ()
 		{
 			// FIXME: check if build succeeded
+			// FIXME: it shouldn't be here
 			LogBuildFinished (true);
 			foreach (ILogger i in loggers) {
 				i.Shutdown ();

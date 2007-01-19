@@ -45,7 +45,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		Token	token;
 		
-		bool	ignoreWhiteSpace = true;
+//		bool	ignoreWhiteSpace = true;
 		
 		static TokenType[] charIndexToTokenType = new TokenType[128];
 		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.InvariantCultureIgnoreCase);
@@ -64,7 +64,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public ConditionTokenizer ()
 		{
-			this.ignoreWhiteSpace = true;
+//			this.ignoreWhiteSpace = true;
 		}
 		
 		public void Tokenize (string s)
@@ -79,7 +79,7 @@ namespace Microsoft.Build.BuildEngine {
 			GetNextToken ();
 		}
 		
-		private void SkipWhiteSpace ()
+		void SkipWhiteSpace ()
 		{
 			int ch;
 			
@@ -90,7 +90,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		private int PeekChar ()
+		int PeekChar ()
 		{
 			if (position < inputString.Length)
 				return (int) inputString [position];
@@ -98,7 +98,7 @@ namespace Microsoft.Build.BuildEngine {
 				return -1;
 		}
 		
-		private int ReadChar ()
+		int ReadChar ()
 		{
 			if (position < inputString.Length)
 				return (int) inputString [position++];
@@ -141,12 +141,12 @@ namespace Microsoft.Build.BuildEngine {
 			if (token.Type == TokenType.EOF)
 				throw new ExpressionParseException ("Cannot read past the end of stream.");
 			
-			if (IgnoreWhiteSpace)
-				SkipWhiteSpace ();
+			SkipWhiteSpace ();
 			
 			tokenPosition = position;
 			
-			int i = PeekChar ();
+//			int i = PeekChar ();
+			int i = ReadChar ();
 			
 			if (i == -1) {
 				token = new Token (null, TokenType.EOF);
@@ -154,22 +154,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			char ch = (char) i;
-			
-			if (IgnoreWhiteSpace == false && Char.IsWhiteSpace (ch)) {
-				StringBuilder sb = new StringBuilder ();
-				int ch2;
 
-				while ((ch2 = PeekChar ()) != -1)  {
-					if (!Char.IsWhiteSpace ((char) ch2))
-						break;
-
-					sb.Append ((char)ch2);
-					ReadChar();
-				}
-				
-				token = new Token (sb.ToString (), TokenType.WhiteSpace);
-				return;
-			}
 			
 			// FIXME: looks like a hack: if '-' is here '->' won't be tokenized
 			// maybe we should treat item reference as a token
@@ -177,7 +162,6 @@ namespace Microsoft.Build.BuildEngine {
 				StringBuilder sb = new StringBuilder ();
 				
 				sb.Append (ch);
-				ReadChar ();
 				
 				while ((i = PeekChar ()) != -1) {
 					ch = (char) i;
@@ -189,15 +173,11 @@ namespace Microsoft.Build.BuildEngine {
 				}
 				
 				token = new Token (sb.ToString (), TokenType.Number);
-				return;
-			}
-			
-			if (ch == '\'') {
+			} else if (ch == '\'') {
 				StringBuilder sb = new StringBuilder ();
 				string temp;
 				
 				sb.Append (ch);
-				ReadChar ();
 				
 				while ((i = PeekChar ()) != -1) {
 					ch = (char) i;
@@ -210,18 +190,12 @@ namespace Microsoft.Build.BuildEngine {
 				
 				temp = sb.ToString ();
 				
-				// FIXME: test extreme cases
-				// it fails on '$(something) == ''
 				token = new Token (temp.Substring (1, temp.Length - 2), TokenType.String);
 				
-				return;
-			}
-			
-			if (ch == '_' || Char.IsLetter (ch)) {
+			} else 	if (ch == '_' || Char.IsLetter (ch)) {
 				StringBuilder sb = new StringBuilder ();
 				
 				sb.Append ((char) ch);
-				ReadChar ();
 				
 				while ((i = PeekChar ()) != -1) {
 					if ((char) i == '_' || Char.IsLetterOrDigit ((char) i))
@@ -237,50 +211,26 @@ namespace Microsoft.Build.BuildEngine {
 				else
 					token = new Token (temp, TokenType.String);
 					
-				return;
-			}
-			
-			ReadChar ();
-			
-			if (ch == '!' && PeekChar () == (int) '=') {
+			} else if (ch == '!' && PeekChar () == (int) '=') {
 				token = new Token ("!=", TokenType.NotEqual);
 				ReadChar ();
-				return;
-			}
-			
-			if (ch == '<' && PeekChar () == (int) '=') {
+			} else if (ch == '<' && PeekChar () == (int) '=') {
 				token = new Token ("<=", TokenType.LessOrEqual);
 				ReadChar ();
-				return;
-			}
-			
-			if (ch == '>' && PeekChar () == (int) '=') {
+			} else if (ch == '>' && PeekChar () == (int) '=') {
 				token = new Token (">=", TokenType.GreaterOrEqual);
 				ReadChar ();
-				return;
-			}
-			
-			if (ch == '=' && PeekChar () == (int) '=') {
+			} else if (ch == '=' && PeekChar () == (int) '=') {
 				token = new Token ("==", TokenType.Equal);
 				ReadChar ();
-				return;
-			}
-			
-			if (ch == '-' && PeekChar () == (int) '>') {
-				token = new Token ("->", TokenType.Transform);
-				ReadChar ();
-				return;
-			}
-			
-			if (ch >= 32 && ch < 128) {
+			} else if (ch >= 32 && ch < 128) {
 				if (charIndexToTokenType [ch] != TokenType.Invalid) {
 					token = new Token (new String (ch, 1), charIndexToTokenType [ch]);
 					return;
 				} else
 					throw new ExpressionParseException (String.Format ("Invalid punctuation: {0}", ch));
-			}
-			
-			throw new ExpressionParseException (String.Format ("Invalid token: {0}", ch));
+			} else
+				throw new ExpressionParseException (String.Format ("Invalid token: {0}", ch));
 		}
 		
 		public int TokenPosition {
@@ -291,10 +241,12 @@ namespace Microsoft.Build.BuildEngine {
 			get { return token; }
 		}
 		
+/*
 		public bool IgnoreWhiteSpace {
 			get { return ignoreWhiteSpace; }
 			set { ignoreWhiteSpace = value; }
 		}
+*/
 		
 		struct CharToTokenType {
 			public char ch;
