@@ -41,6 +41,7 @@ using System.Xml.Schema;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
+using Microsoft.CSharp;
 
 namespace System.Web.Services.Description {
 	public class ServiceDescriptionImporter {
@@ -54,7 +55,7 @@ namespace System.Web.Services.Description {
 		
 #if NET_2_0
 		CodeGenerationOptions options;
-		CodeDomProvider codeGenerator;
+		CodeDomProvider codeGenerator = new CSharpCodeProvider ();
 		ImportContext context;
 #endif
 
@@ -187,7 +188,8 @@ namespace System.Web.Services.Description {
 			foreach (WebReference reference in webReferences) 
 			{
 				ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
-				importer.CodeGenerator = codeGenerator;
+				if (codeGenerator != null)
+					importer.CodeGenerator = codeGenerator;
 				importer.CodeGenerationOptions = options.CodeGenerationOptions;
 				importer.Context = context;
 				importer.Style = options.Style;

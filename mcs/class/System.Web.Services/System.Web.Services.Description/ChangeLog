@@ -1,3 +1,9 @@
+2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionImporter.cs : initialize CodeGenerator with C#.
+	* SoapProtocolImporter.cs : use XmlMemberMapping.GenerateTypeName()
+	  instead of TypeFullName for 2.0 nullable support. Fixed bug #80551.
+
 2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProtocolReflector.cs, SoapProtocolReflector.cs,

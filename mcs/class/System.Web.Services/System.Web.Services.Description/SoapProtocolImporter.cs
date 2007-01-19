@@ -557,7 +557,12 @@ namespace System.Web.Services.Description {
 		
 		CodeParameterDeclarationExpression GenerateParameter (XmlMemberMapping member, FieldDirection dir)
 		{
-			CodeParameterDeclarationExpression par = new CodeParameterDeclarationExpression (member.TypeFullName, member.MemberName);
+#if NET_2_0
+			string type = member.GenerateTypeName (CodeGenerator);
+#else
+			string type = member.TypeFullName;
+#endif
+			CodeParameterDeclarationExpression par = new CodeParameterDeclarationExpression (type, member.MemberName);
 			par.Direction = dir;
 			return par;
 		}

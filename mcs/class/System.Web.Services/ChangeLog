@@ -1,3 +1,9 @@
+2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Services_test.dll.sources:
+	  Added ServiceDescriptionImporterTest.cs.
+	* Makefile : added test2.wsdl to EXTRA_DISTFILES.
+
 2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Web.Services_test.dll.sources: added SocketResponder.cs and

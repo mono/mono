@@ -1,3 +1,8 @@
+2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionImporterTest.cs : new test.
+	* test2.wsdl : new test support file.
+
 2006-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionFormatExtensionCollectionTest.cs :
