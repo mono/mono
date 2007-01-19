@@ -435,6 +435,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestUpdateUI ()
 		{
 			MakeTable (false);
@@ -464,6 +465,74 @@ namespace MonoTests.System.Windows.Forms
 
 			DataRowView v = (DataRowView)cm.Current;
 			Assert.AreEqual ("Miguel", v[0], "8");
+		}
+
+		[Test]
+		public void TestReadOnly_InEditCall ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			TextBox tb = nameColumnStyle.TextBox;
+
+			Assert.IsNotNull (tb, "1");
+			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
+			Assert.IsTrue (tb.Enabled, "3");
+			Assert.IsFalse (tb.Visible, "4");
+			Assert.AreEqual ("", tb.Text, "5");
+			Assert.IsFalse (tb.ReadOnly, "6");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), true, "hi there", true);
+
+			Assert.IsTrue (tb.ReadOnly, "7");
+
+			// since it's readonly
+			Assert.AreEqual ("Miguel", tb.Text, "8");
+		}
+
+		[Test]
+		public void TestReadOnly_AfterEditCall ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			TextBox tb = nameColumnStyle.TextBox;
+
+			Assert.IsNotNull (tb, "1");
+			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
+			Assert.IsTrue (tb.Enabled, "3");
+			Assert.IsFalse (tb.Visible, "4");
+			Assert.AreEqual ("", tb.Text, "5");
+			Assert.IsFalse (tb.ReadOnly, "6");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
+			column.ReadOnly = true;
+
+			Assert.IsFalse (tb.ReadOnly, "7");
+
+			Assert.AreEqual ("hi there", tb.Text, "8");
+
+			bool rv;
+
+			rv = column.DoCommit (cm, cm.Position);
+			column.DoEndEdit ();
+			Assert.IsTrue (rv, "9");
+			DataRowView v = (DataRowView)cm.Current;
+			Assert.AreEqual ("hi there", v[0], "10");
 		}
 	}
 }

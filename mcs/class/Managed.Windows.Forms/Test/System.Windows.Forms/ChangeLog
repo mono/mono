@@ -1,3 +1,14 @@
+2007-01-19  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumnTest.cs: mark TestUpdateUI as NotWorking,
+	and add a couple of tests for the overloaded ReadOnly property.
+	can't figure out how it's being used, maybe all it really does is
+	chain up to base.ReadOnly.
+
+	* DataGridColumnStyleTest.cs: add some tests to see if we should
+	be mucking with the ReadOnly property when the PropertyDescriptor
+	is set (turns out we shouldn't be).
+
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Add test for bug #79959.
@@ -10,6 +21,12 @@
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* NotifyIconTest.cs: Add test for Tag, ContextMenuStrip.
+
+2007-01-18  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridTextBoxColumnTest.cs: add some tests (some of which aren't working on mono)
+
+	* DataGridTextBoxTest.cs: add some tests (some of which aren't working on mono)
 
 2007-01-16  Chris Toshok  <toshok@ximian.com>
 

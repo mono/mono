@@ -98,5 +98,78 @@ namespace MonoTests.System.Windows.Forms
 
 			p.DoCheckValidDataSource ((CurrencyManager)bc[arr]);
 		}
+
+		class ReadOnlyPropertyTest {
+			public int ROProp {
+				get { return 5; }
+			}
+			public int RWProp {
+				get { return 5; }
+				set { }
+			}
+		}
+
+		[Test]
+		public void TestReadOnly ()
+		{
+			StylePoker p = new StylePoker ();
+
+			Assert.IsFalse (p.ReadOnly, "1");
+			p.ReadOnly = true;
+			Assert.IsTrue (p.ReadOnly, "2");
+
+			p.ReadOnly = false;
+
+			DataGridTableStyle ts = new DataGridTableStyle();
+			ts.GridColumnStyles.Add (p);
+
+			ts.ReadOnly = true;
+			Assert.IsFalse (p.ReadOnly, "3");
+		}
+
+		[Test]
+		public void TestReadOnly_PropertyDescriptorSet ()
+		{
+			/* check the effect the PropertyDescriptor setter has on the property */
+			PropertyDescriptor ro_prop = TypeDescriptor.GetProperties(typeof (ReadOnlyPropertyTest))["ROProp"];
+			PropertyDescriptor rw_prop = TypeDescriptor.GetProperties(typeof (ReadOnlyPropertyTest))["RWProp"];
+			StylePoker p;
+
+			/* non-user set, readonly property */
+			p = new StylePoker ();
+			Assert.IsFalse (p.ReadOnly, "a1");
+			p.PropertyDescriptor = ro_prop;
+			Assert.IsFalse (p.ReadOnly, "a2");
+
+			/* non-user set, non-readonly property */
+			p = new StylePoker ();
+			Assert.IsFalse (p.ReadOnly, "b1");
+			p.PropertyDescriptor = rw_prop;
+			Assert.IsFalse (p.ReadOnly, "b2");
+
+			/* user set to false, readonly property */
+			p = new StylePoker ();
+			p.ReadOnly = false;
+			p.PropertyDescriptor = ro_prop;
+			Assert.IsFalse (p.ReadOnly, "c1");
+
+			/* user set to false, non-readonly property */
+			p = new StylePoker ();
+			p.ReadOnly = false;
+			p.PropertyDescriptor = rw_prop;
+			Assert.IsFalse (p.ReadOnly, "d1");
+
+			/* user set to true, readonly property */
+			p = new StylePoker ();
+			p.ReadOnly = true;
+			p.PropertyDescriptor = ro_prop;
+			Assert.IsTrue (p.ReadOnly, "e1");
+
+			/* user set to true, non-readonly property */
+			p = new StylePoker ();
+			p.ReadOnly = true;
+			p.PropertyDescriptor = rw_prop;
+			Assert.IsTrue (p.ReadOnly, "f1");
+		}
 	}
 }
