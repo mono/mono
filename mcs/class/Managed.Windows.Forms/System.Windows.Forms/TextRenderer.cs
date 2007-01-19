@@ -31,77 +31,140 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing.Text;
+using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
 {
 	public sealed class TextRenderer
 	{
+		private static Bitmap measure_bitmap = new Bitmap (1, 1);
+
 		private TextRenderer ()
 		{
 		}
-		
+
 		#region Public Methods
-		[MonoTODO("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
-		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
+		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor)
 		{
-			if (text == null || text.Length == 0)
-				return;
-				
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
-				Rectangle new_bounds = bounds;
-				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX + 0, (int)(dc as Graphics).Transform.OffsetY + 0);
-				IntPtr hdc = dc.GetHdc ();
-
-				SetTextColor (hdc, ColorTranslator.ToWin32 (foreColor));
-				SetBkMode (hdc, 1);	//1-Transparent, 2-Opaque
-
-				VisualStyles.UXTheme.RECT r = VisualStyles.UXTheme.RECT.FromRectangle (new_bounds);
-
-				if (font != null)
-					SelectObject (hdc, font.ToHfont ());
-
-				DrawText (hdc, text, text.Length, ref r, (int)flags);
-				dc.ReleaseHdc ();
-			}
-			else {
-				Graphics g;
-
-				if (dc is Graphics)
-					g = (Graphics)dc;
-				else
-					g = Graphics.FromHdc (dc.GetHdc ());
-
-				StringFormat sf = FlagsToStringFormat (flags);
-
-				using (Brush b = new SolidBrush (foreColor))
-					g.DrawString (text, font, b, bounds, sf);
-
-				if (!(dc is Graphics)) {
-					g.Dispose ();
-					dc.ReleaseHdc ();
-				}
-			}
+			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, TextFormatFlags.Default, false);
 		}
 
-		[MonoTODO ("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
+		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, false);
+		}
+
+		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, backColor, TextFormatFlags.Default, false);
+		}
+
 		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
+			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, flags, false);
+		}
+
+		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, false);
+		}
+
+		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, false);
+		}
+
+		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, backColor, flags, false);
+		}
+
+		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, TextFormatFlags flags)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, flags, false);
+		}
+
+		public static Size MeasureText (string text, Font font)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, false);
+		}
+
+		public static Size MeasureText (IDeviceContext dc, string text, Font font)
+		{
+			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, false);
+		}
+
+		public static Size MeasureText (string text, Font font, Size proposedSize)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, TextFormatFlags.Default, false);
+		}
+
+		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize)
+		{
+			return MeasureTextInternal (dc, text, font, proposedSize, TextFormatFlags.Default, false);
+		}
+
+		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, flags, false);
+		}
+
+		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags)
+		{
+			return MeasureTextInternal (dc, text, font, proposedSize, flags, false);
+		}
+		#endregion
+
+		#region Internal Methods That Do Stuff
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
+		{
+			if (dc == null)
+				throw new ArgumentNullException ("dc");
+
+			if (string.IsNullOrEmpty (text))
+				return;
+
+			// We use MS GDI API's unless told not to, or we aren't on Windows
+			if (!useDrawString && (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows)) {
+				if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter || (flags & TextFormatFlags.Bottom) == TextFormatFlags.Bottom)
+					flags |= TextFormatFlags.SingleLine;
+
+				// Calculate the text bounds (there is often padding added)
+				Rectangle new_bounds = PadRectangle (bounds, flags);
+				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX, (int)(dc as Graphics).Transform.OffsetY);
+
 				IntPtr hdc = dc.GetHdc ();
 
-				SetTextColor (hdc, ColorTranslator.ToWin32 (foreColor));
-				SetBkMode (hdc, 1);	//1-Transparent, 2-Opaque
+				// Set the fore color
+				if (foreColor != Color.Empty)
+					SetTextColor (hdc, ColorTranslator.ToWin32 (foreColor));
 
-				Size sz = MeasureText(text, font);
-				
-				VisualStyles.UXTheme.RECT r = new System.Windows.Forms.VisualStyles.UXTheme.RECT(pt.X, pt.Y, pt.X + sz.Width, pt.Y + sz.Height);
+				// Set the back color
+				if (backColor != Color.Transparent && backColor != Color.Empty) {
+					SetBkMode (hdc, 2);	//1-Transparent, 2-Opaque
+					SetBkColor (hdc, ColorTranslator.ToWin32 (backColor));
+				}
+				else {
+					SetBkMode (hdc, 1);	//1-Transparent, 2-Opaque
+				}
 
-				if (font != null)
-					SelectObject (hdc, font.ToHfont ());
+				UXTheme.RECT r = UXTheme.RECT.FromRectangle (new_bounds);
 
-				DrawText (hdc, text, text.Length, ref r, (int)flags);
+				IntPtr prevobj;
+
+				if (font != null) {
+					prevobj = SelectObject (hdc, font.ToHfont ());
+					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
+					prevobj = SelectObject (hdc, prevobj);
+					DeleteObject (prevobj);
+				}
+				else {
+					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
+				}
+
 				dc.ReleaseHdc ();
 			}
+			// Use Graphics.DrawString as a fallback method
 			else {
 				Graphics g;
 
@@ -112,8 +175,10 @@ namespace System.Windows.Forms
 
 				StringFormat sf = FlagsToStringFormat (flags);
 
+				Rectangle new_bounds = PadDrawStringRectangle (bounds, flags);
+
 				using (Brush b = new SolidBrush (foreColor))
-					g.DrawString (text, font, b, pt, sf);
+					g.DrawString (text, font, b, new_bounds, sf);
 
 				if (!(dc is Graphics)) {
 					g.Dispose ();
@@ -122,75 +187,113 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
-		public static Size MeasureText (string text, Font font)
+		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
-				Bitmap b = new Bitmap (5, 5);
-				Graphics g = Graphics.FromImage (b);
-				
-				IntPtr hdc = g.GetHdc ();
+			if (!useMeasureString && (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows)) {
+				// Tell DrawText to calculate size instead of draw
+				flags |= (TextFormatFlags)1024;		// DT_CALCRECT
 
-				if (font != null)
-					SelectObject (hdc, font.ToHfont ());
-					
-				VisualStyles.UXTheme.SIZE text_size = new System.Windows.Forms.VisualStyles.UXTheme.SIZE();
+				IntPtr hdc = dc.GetHdc ();
 
-				GetTextExtentPoint32 (hdc, text, text.Length, out text_size);
-				
-				g.ReleaseHdc();
-				
-				Size retval = text_size.ToSize();
-				//retval.Height += 4;
-				if (retval.Width > 0) retval.Width += 6;
-				return retval;
-			}
-			else {
-				Bitmap b = new Bitmap (5, 5);
-				Graphics g = Graphics.FromImage (b);
+				UXTheme.RECT r = UXTheme.RECT.FromRectangle (new Rectangle (Point.Empty, proposedSize));
 
-				Size retval = g.MeasureString(text,font).ToSize();
-				if (retval.Width > 0) retval.Width += 6;
-				return retval;	
-			}
-		}
+				IntPtr prevobj;
 
-		[MonoTODO ("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
-		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
-		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
-				if ((flags & TextFormatFlags.HidePrefix) == TextFormatFlags.HidePrefix)
-				{
-					text = text.Replace ("&", "");
+				if (font != null) {
+					prevobj = SelectObject (hdc, font.ToHfont ());
+					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
+					prevobj = SelectObject (hdc, prevobj);
+					DeleteObject (prevobj);
 				}
-				
-				Bitmap b = new Bitmap (5, 5);
-				Graphics g = Graphics.FromImage (b);
+				else {
+					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
+				}
 
-				IntPtr hdc = g.GetHdc ();
+				dc.ReleaseHdc ();
 
-				if (font != null)
-					SelectObject (hdc, font.ToHfont ());
+				// Really, I am just making something up here, which as far as I can tell, MS
+				// just makes something up as well.  This will require lots of tweaking to match MS.  :(
+				Size retval = r.ToRectangle ().Size;
 
-				VisualStyles.UXTheme.SIZE text_size = new System.Windows.Forms.VisualStyles.UXTheme.SIZE ();
+				if (retval.Width > 0) {
+					retval.Width += 6;
+					retval.Width += (int)retval.Height / 8;
+				}
 
-				GetTextExtentPoint32 (hdc, text, text.Length, out text_size);
-
-				g.ReleaseHdc ();
-
-				Size retval = text_size.ToSize ();
-				//retval.Height += 4;
-				if (retval.Width > 0) retval.Width += 6;
 				return retval;
 			}
 			else {
-				Bitmap b = new Bitmap (5, 5);
-				Graphics g = Graphics.FromImage (b);
+				Graphics g = Graphics.FromImage (measure_bitmap);
 
 				Size retval = g.MeasureString (text, font).ToSize ();
-				if (retval.Width > 0) retval.Width += 6;
+
+				if (retval.Width > 0)
+					retval.Width += 6;
+
 				return retval;
 			}
+		}
+		#endregion
+
+		#region Internal Methods That Are Just Overloads
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, TextFormatFlags.Default, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, backColor, TextFormatFlags.Default, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, flags, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, useDrawString);
+		}
+
+		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
+		{
+			DrawTextInternal (dc, text, font, pt, foreColor, backColor, flags, useDrawString);
+		}
+
+		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+		}
+
+		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, bool useMeasureString)
+		{
+			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+		}
+
+		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+		}
+
+		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, bool useMeasureString)
+		{
+			return MeasureTextInternal (dc, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+		}
+
+		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
+		{
+			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, flags, useMeasureString);
 		}
 		#endregion
 
@@ -246,37 +349,94 @@ namespace System.Windows.Forms
 				sf.FormatFlags |= StringFormatFlags.LineLimit;
 
 			// Other Flags
-			if ((flags & TextFormatFlags.RightToLeft) == TextFormatFlags.RightToLeft)
-				sf.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
+			//if ((flags & TextFormatFlags.RightToLeft) == TextFormatFlags.RightToLeft)
+			//        sf.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			if ((flags & TextFormatFlags.NoClipping) == TextFormatFlags.NoClipping)
 				sf.FormatFlags |= StringFormatFlags.NoClip;
-			sf.FormatFlags |= StringFormatFlags.NoClip;
+			//sf.FormatFlags |= StringFormatFlags.NoClip;
+
+			if ((flags & TextFormatFlags.WordBreak) == 0)
+				sf.FormatFlags |= StringFormatFlags.LineLimit;
 
 			return sf;
+		}
+
+		private static Rectangle PadRectangle (Rectangle r, TextFormatFlags flags)
+		{
+			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {
+				r.X += 3;
+				r.Width -= 3;
+			}
+			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == TextFormatFlags.Right) {
+				r.Width -= 4;
+			}
+			if ((flags & TextFormatFlags.LeftAndRightPadding) == TextFormatFlags.LeftAndRightPadding) {
+				r.X += 2;
+				r.Width -= 2;
+			}
+			if ((flags & TextFormatFlags.WordEllipsis) == TextFormatFlags.WordEllipsis || (flags & TextFormatFlags.EndEllipsis) == TextFormatFlags.EndEllipsis || (flags & TextFormatFlags.WordBreak) == TextFormatFlags.WordBreak) {
+				r.Width -= 4;
+			}
+			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter) {
+				r.Y += 1;
+				r.Height -= 1;
+			}
+
+			return r;
+		}
+
+		private static Rectangle PadDrawStringRectangle (Rectangle r, TextFormatFlags flags)
+		{
+			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {
+				r.X += 1;
+				r.Width -= 1;
+			}
+			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == TextFormatFlags.Right) {
+				r.Width -= 4;
+			}
+			if ((flags & TextFormatFlags.NoPadding) == TextFormatFlags.NoPadding) {
+				r.X -= 2;
+			}
+			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Bottom) == TextFormatFlags.Bottom) {
+				r.Y += 1;
+			}
+			if ((flags & TextFormatFlags.LeftAndRightPadding) == TextFormatFlags.LeftAndRightPadding) {
+				r.X += 2;
+				r.Width -= 2;
+			}
+			if ((flags & TextFormatFlags.WordEllipsis) == TextFormatFlags.WordEllipsis || (flags & TextFormatFlags.EndEllipsis) == TextFormatFlags.EndEllipsis || (flags & TextFormatFlags.WordBreak) == TextFormatFlags.WordBreak) {
+				r.Width -= 4;
+			}
+			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter) {
+				r.Y += 1;
+				r.Height -= 1;
+			}
+
+			return r;
 		}
 		#endregion
 
 		#region DllImports (Windows)
-		[DllImport ("user32", CharSet = CharSet.Unicode)]
-		static extern int DrawText (IntPtr hdc, string lpStr, int nCount, ref VisualStyles.UXTheme.RECT lpRect, int wFormat);
+		[DllImport ("user32", CharSet = CharSet.Unicode, EntryPoint = "DrawText")]
+		static extern int Win32DrawText (IntPtr hdc, string lpStr, int nCount, ref UXTheme.RECT lpRect, int wFormat);
 
 		[DllImport ("gdi32")]
 		static extern int SetTextColor (IntPtr hdc, int crColor);
 
 		[DllImport ("gdi32")]
-		private extern static IntPtr SelectObject (IntPtr hDC, IntPtr hObject);
+		static extern IntPtr SelectObject (IntPtr hDC, IntPtr hObject);
 
-		//[DllImport ("gdi32")]
-		//static extern int SetBkColor (IntPtr hdc, int crColor);
+		[DllImport ("gdi32")]
+		static extern int SetBkColor (IntPtr hdc, int crColor);
 
 		[DllImport ("gdi32")]
 		static extern int SetBkMode (IntPtr hdc, int iBkMode);
 
-		//[DllImport ("gdi32")]
-		//static extern bool GetTextExtentExPoint (IntPtr hdc, string lpszStr, int cchString, int nMaxExtent, IntPtr lpnFit, IntPtr alpDx, out VisualStyles.UXTheme.SIZE lpSize);
+		[DllImport ("gdi32")]
+		static extern bool GetTextExtentPoint32 (IntPtr hdc, string lpString, int cbString, out UXTheme.SIZE lpSize);
 
 		[DllImport ("gdi32")]
-		static extern bool GetTextExtentPoint32 (IntPtr hdc, string lpString, int cbString, out VisualStyles.UXTheme.SIZE lpSize);
+		static extern bool DeleteObject (IntPtr objectHandle);
 		#endregion
 	}
 
