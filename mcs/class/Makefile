@@ -38,6 +38,7 @@ common_dirs := \
 	System.Security			\
 	System.Configuration		\
 	System				\
+	System.XML			\
 	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\
