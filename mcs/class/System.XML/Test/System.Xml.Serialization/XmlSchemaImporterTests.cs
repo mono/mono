@@ -32,6 +32,7 @@
 
 using System;
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -1001,6 +1002,41 @@ namespace MonoTests.System.XmlSerialization
 #else
 			CodeMemberField f = (CodeMemberField) FindMember (FindType (cns, "Root"), "Bar");
 			Assert.AreEqual ("System.Int32", f.Type.BaseType, "1.x #1");
+#endif
+		}
+
+		[Test]
+		public void ImportMembersMapping_NullableField ()
+		{
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='Root'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='Bar' nillable='true' type='xs:int' />
+        <xs:element name='Baz' type='xs:int' />
+      </xs:sequence>
+      <xs:attribute name='A' use='optional' type='xs:int' />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+			XmlSchemaImporter imp = CreateSchemaImporter (xsd);
+			XmlMembersMapping map = imp.ImportMembersMapping (new XmlQualifiedName ("Root"));
+			Assert.AreEqual (3, map.Count, "#1");
+			XmlMemberMapping bar = map [0];
+			Assert.AreEqual ("Bar", bar.ElementName, "#2-1");
+			Assert.IsFalse (bar.CheckSpecified, "#2-2");
+			XmlMemberMapping baz = map [1];
+			Assert.AreEqual ("Baz", baz.ElementName, "#3-1");
+			Assert.IsFalse (baz.CheckSpecified, "#3-2");
+			XmlMemberMapping a = map [2];
+			Assert.AreEqual ("A", a.ElementName, "#4-1"); // ... element name?
+			Assert.IsTrue (a.CheckSpecified, "#4-2");
+
+#if NET_2_0
+			CodeDomProvider p = new Microsoft.CSharp.CSharpCodeProvider ();
+			Assert.AreEqual ("System.Nullable`1[System.Int32]", bar.GenerateTypeName (p), "#5-1");
+			Assert.AreEqual ("System.Int32", baz.GenerateTypeName (p), "#5-2");
 #endif
 		}
 		

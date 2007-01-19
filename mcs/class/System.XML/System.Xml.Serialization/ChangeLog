@@ -1,3 +1,8 @@
+2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlMemberMapping.cs : uhoh, there is a nasty trick to output
+	  Nullable info.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeData.cs : added get_IsGenericNullable.

@@ -1,3 +1,8 @@
+2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs :
+	  Added ImportMembersMapping_NullableField().
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporterTests.cs :

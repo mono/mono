@@ -123,16 +123,16 @@ namespace System.Xml.Serialization
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		public string XsdElementName
 		{
-			get { throw new NotImplementedException (); }
+			get { return _mapMember.Name; }
 		}
 #if !TARGET_JVM		
-		[MonoTODO]
 		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
-			throw new NotImplementedException ();
+			string ret = codeProvider.CreateValidIdentifier (_mapMember.TypeData.FullTypeName);
+			return _mapMember.TypeData.IsGenericNullable ? 
+				"System.Nullable`1[" + ret + "]" : ret;
 		}
 #endif
 #endif
