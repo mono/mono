@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
@@ -689,6 +690,61 @@ namespace MonoTests.System.Drawing {
 			finally {
 				GDIPlus.GdipDisposeImage (bitmap);
 			}
+		}
+
+		[Test]
+		public void FromFile_IndexedBitmap ()
+		{
+			// despite it's name it's a 4bpp indexed bitmap
+			string filename = TestBitmap.getInFile ("bitmaps/almogaver1bit.bmp");
+			IntPtr graphics;
+
+			IntPtr image;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipLoadImageFromFile (filename, out image), "GdipLoadImageFromFile");
+			try {
+				Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext/image");
+				Assert.AreEqual (IntPtr.Zero, graphics, "image/graphics");
+			}
+			finally {
+				GDIPlus.GdipDisposeImage (image);
+			}
+
+			IntPtr bitmap;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateBitmapFromFile (filename, out bitmap), "GdipCreateBitmapFromFile");
+			try {
+				Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipGetImageGraphicsContext (bitmap, out graphics), "GdipGetImageGraphicsContext/bitmap");
+				Assert.AreEqual (IntPtr.Zero, graphics, "bitmap/graphics");
+			}
+			finally {
+				GDIPlus.GdipDisposeImage (bitmap);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void GdipLoadImageFromFile_FileNotFound ()
+		{
+			string filename = "filenotfound";
+
+			IntPtr image;
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipLoadImageFromFile (filename, out image), "GdipLoadImageFromFile");
+			Assert.AreEqual (IntPtr.Zero, image, "image handle");
+
+			// this doesn't throw a OutOfMemoryException
+			Image.FromFile (filename);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GdipCreateBitmapFromFile_FileNotFound ()
+		{
+			string filename = "filenotfound";
+
+			IntPtr bitmap;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateBitmapFromFile (filename, out bitmap), "GdipCreateBitmapFromFile");
+			Assert.AreEqual (IntPtr.Zero, bitmap, "bitmap handle");
+
+			new Bitmap (filename);
 		}
 
 		[Test]

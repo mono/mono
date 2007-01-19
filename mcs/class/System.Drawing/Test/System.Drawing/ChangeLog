@@ -1,3 +1,10 @@
+2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for loading unexisting files in
+	GdipLoadImageFromFile and GdipCreateBitmapFromFile. Added test case
+	for error code returned by GdipGetImageGraphicsContext for indexed
+	bitmaps.
+
 2007-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Fix the LoadIndexed test case as it's current 
