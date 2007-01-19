@@ -1,3 +1,9 @@
+2007-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	Fix tests/bug79956.2.il
+	* class.c (mono_type_get_underlying_type): Handle genericinst enums.
+	(mono_generic_class_get_class): If the generic definition in an
+	enum, copy over other fields related to it.
 
 Thu Jan 18 18:37:28 CET 2007 Paolo Molaro <lupus@ximian.com>
 
