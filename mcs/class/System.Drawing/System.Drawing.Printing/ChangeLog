@@ -1,3 +1,9 @@
+2007-01-19  Andreia Gaita  <avidigal@novell.com>
+
+	* PrintingServicesUnix.cs: Add is_default flag check for 
+	detecting default printer when cupsGetDefault doesn't return
+	valid values (mainly ubuntu). Fixes #80198, #80519
+
 2007-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingServices.cs: Unify platform detection code.

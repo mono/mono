@@ -347,14 +347,44 @@ namespace System.Drawing.Printing
 				str = cupsGetDefault ();
 				if (str != IntPtr.Zero)
 					return Marshal.PtrToStringAnsi (str);
-				PrinterSettings.StringCollection printers = this.InstalledPrinters;
-				if (printers.Count > 0)
-					return printers[0];
-				return String.Empty;
+
+				return GetAlternativeDefaultPrinter();
 			}
 		}
 
 		// Private functions
+
+		/// <summary>
+		/// Due to some weird cups thing, cupsGetDefault does not always return 
+		/// the default printer, hence this function, that goes through each
+		/// printer searching for one that has the is_default flag set. 
+		/// If there is none with the flag, but there are printers available,
+		/// returns the first one. See #80519, #80198
+		/// </summary>
+		/// <returns></returns>
+		private string GetAlternativeDefaultPrinter() {
+			IntPtr printers = IntPtr.Zero;
+			CUPS_DESTS printer;
+			string printer_name = String.Empty;
+
+			int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
+
+			int printer_count = cupsGetDests (ref printers);
+
+			for (int i = 0; i < printer_count; i++) {
+				printer = (CUPS_DESTS) Marshal.PtrToStructure (printers, typeof (CUPS_DESTS));
+
+				if (printer.is_default != 0 || printer_name.Equals(String.Empty)) {
+					printer_name = Marshal.PtrToStringAnsi (printer.name);
+					if (printer.is_default != 0)
+						break;
+				}
+				printers = new IntPtr (printers.ToInt64 () + cups_dests_size);
+			}
+			Marshal.FreeHGlobal (printers);
+
+			return printer_name;
+		}
 
 		private string GetPaperSizeName (IntPtr ppd, string name)
 		{
