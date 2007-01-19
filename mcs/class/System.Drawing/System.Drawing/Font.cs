@@ -47,6 +47,7 @@ namespace System.Drawing
 		private IntPtr	fontObject = IntPtr.Zero;
 		private string  systemFontName;
 		private float _size;
+		private object olf;
 
 		private const byte DefaultCharSet = 1;
 		private static int CharSetOffset = -1;
@@ -260,9 +261,11 @@ namespace System.Drawing
 			if (GDIPlus.RunningOnUnix ())
 				return fontObject;
 
-			// win32 specific code			
-			object olf = new LOGFONT ();
-			ToLogFont(olf);
+			// win32 specific code
+			if (olf == null) {
+				olf = new LOGFONT ();
+				ToLogFont(olf);
+			}
 			LOGFONT lf = (LOGFONT)olf;
 			return GDIPlus.CreateFontIndirect (ref lf);
 		}
@@ -572,35 +575,23 @@ namespace System.Drawing
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ToLogFont (object logFont)
 		{
-			Graphics g = null;
-
 			if (GDIPlus.RunningOnUnix ()) {
-				// Unix
-				Bitmap img = null;
-				try {
-					// We don't have a window we could associate the DC with
-					// so we use an image instead
-					img = new Bitmap (1, 1, Imaging.PixelFormat.Format32bppArgb);
-					g = Graphics.FromImage (img);
-					ToLogFont (logFont, g);
-				}
-				finally {
-					if (g != null)
-						g.Dispose ();
-					if (img != null)
-						img.Dispose ();
+				// Unix - We don't have a window we could associate the DC with
+				// so we use an image instead
+				using (Bitmap img = new Bitmap (1, 1, Imaging.PixelFormat.Format32bppArgb)) {
+					using (Graphics g = Graphics.FromImage (img)) {
+						ToLogFont (logFont, g);
+					}
 				}
 			} else {
 				// Windows
-				IntPtr hDC = IntPtr.Zero;
+				IntPtr hDC = GDIPlus.GetDC (IntPtr.Zero);
 				try {
-					hDC = GDIPlus.GetDC (IntPtr.Zero);
-					g = Graphics.FromHdc (hDC);
-					ToLogFont (logFont, g);
+					using (Graphics g = Graphics.FromHdc (hDC)) {
+						ToLogFont (logFont, g);
+					}
 				}
 				finally {
-					if (g != null)
-						g.Dispose ();
 					GDIPlus.ReleaseDC (hDC);
 				}
 			}

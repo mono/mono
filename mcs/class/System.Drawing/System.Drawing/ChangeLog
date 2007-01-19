@@ -1,3 +1,8 @@
+2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Under Win32 cache the LOGFONT we use to create the HFONT
+	handle. This "hides" the fact that ToLogFont leaks (#80552).
+
 2007-01-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Added Win32 CreateIconIndirect and DestoryIcon
