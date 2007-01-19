@@ -1,8 +1,9 @@
-2007-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
+2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Fix calls to GDIPlus.ReleaseDC (missing parameter). This
 	fix the GDI object leaks under Win32 (#80552).
 	* gdipFunctions.cs: Fix ReleaseDC signature (missing hWnd).
+	* Graphics.cs: Fix ReleaseDC signature (missing hWnd) in NET_2_0.
 
 2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -204,7 +204,7 @@ namespace System.Drawing
 			GDIPlus.BitBlt (dstDC, destinationX, destinationY, blockRegionSize.Width,
 				blockRegionSize.Height, srcDC, sourceX, sourceY, (int) copyPixelOperation);
 
-			GDIPlus.ReleaseDC (srcDC);
+			GDIPlus.ReleaseDC (IntPtr.Zero, srcDC);
 			ReleaseHdc (dstDC);			
 		}
 		
