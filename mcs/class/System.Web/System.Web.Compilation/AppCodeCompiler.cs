@@ -156,11 +156,11 @@ namespace System.Web.Compilation
 			}
 
 			CodeDomProvider provider = null;
+			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 			if (compilerInfo == null) {
-				CompilationSection config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
-				if (config == null || !CodeDomProvider.IsDefinedLanguage (config.DefaultLanguage))
+				if (!CodeDomProvider.IsDefinedLanguage (compilationSection.DefaultLanguage))
 					throw new HttpException ("Failed to retrieve default source language");
-				compilerInfo = CodeDomProvider.GetCompilerInfo (config.DefaultLanguage);
+				compilerInfo = CodeDomProvider.GetCompilerInfo (compilationSection.DefaultLanguage);
 				if (compilerInfo == null || !compilerInfo.IsCodeDomProviderTypeValid)
 					throw new HttpException ("Internal error while initializing application");
 				provider = compilerInfo.CreateProvider ();
@@ -179,8 +179,9 @@ namespace System.Web.Compilation
 				abuilder.AddCodeCompileUnit (unit);
 			
 			BuildProvider bprovider;
-			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
+			parameters.IncludeDebugInformation = compilationSection.Debug;
+			
 			if (binAssemblies != null && binAssemblies.Length > 0)
 				parameters.ReferencedAssemblies.AddRange (binAssemblies);
 			

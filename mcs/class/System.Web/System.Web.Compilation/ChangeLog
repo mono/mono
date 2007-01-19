@@ -1,3 +1,8 @@
+2007-01-20  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: Include debug information if configured in
+	web.config. Fixes bug #80096.
+
 2007-01-17  Marek Habersack  <grendello@gmail.com>
 
 	* AppCodeCompiler.cs: Reference toplevel assemblies (at this stage
