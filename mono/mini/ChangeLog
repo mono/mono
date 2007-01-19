@@ -1,3 +1,9 @@
+
+Fri Jan 19 17:23:32 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-codegen.c, mini-$(arch).h: claenup references
+	to cpu spec data.
+
 2007-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (encode_klass_info): Allow classes of the form <Type>[][].
