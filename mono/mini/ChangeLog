@@ -1,4 +1,11 @@
+2007-01-19 Mark Mason <mason@broadcom.com>
 
+	* exceptions-mips.c: fix mono_arch_ip_from_context(), increase exception debug support.
+	* mini-mips.c: more configuration macros, support long conditional branches, additional
+	asserts, fix epilog instrumentation.
+	* mini-mips.h: use standard stack walk
+	* cpu-mips.md: increase size of div, rem and conditional branches
+	
 Fri Jan 19 17:23:32 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-codegen.c, mini-$(arch).h: claenup references
