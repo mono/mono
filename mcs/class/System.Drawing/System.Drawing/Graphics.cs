@@ -1752,6 +1752,9 @@ namespace System.Drawing
 			if (image == null) 
 				throw new ArgumentNullException ("image");
 
+			if ((image.PixelFormat & PixelFormat.Indexed) != 0)
+				throw new Exception (Locale.GetText ("Cannot create Graphics from an indexed bitmap."));
+
 			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);

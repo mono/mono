@@ -1,3 +1,10 @@
+2007-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Graphics.cs: Fix FromImage to check for indexed images inside
+	managed code (and not GDI+ which will report the wrong error code
+	for the exception we expect).
+	* Image.cs: Remove unused private method IsIndexedPixelFormat.
+
 2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Fix calls to GDIPlus.ReleaseDC (missing parameter). This

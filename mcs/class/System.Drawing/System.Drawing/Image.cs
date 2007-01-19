@@ -76,12 +76,6 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 
-	private static bool IsIndexedPixelFormat(PixelFormat pixfmt)
-	{
-		return ((pixfmt & PixelFormat.Indexed) != 0);
-	}
-
-	
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
 		MemoryStream ms = new MemoryStream ();
