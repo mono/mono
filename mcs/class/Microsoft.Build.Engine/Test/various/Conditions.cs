@@ -113,7 +113,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCondition4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -260,6 +259,31 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		public void TestCondition9 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition=""'A' == 'A'""></A>
+						<B Condition="" 'A' == 'A' ""></B>
+						<C Condition=""'A' == 'a'""></C>
+						<D Condition=""'A' == 'b'""></D>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.IsNotNull (proj.EvaluatedProperties ["A"], "A1");
+			Assert.IsNotNull (proj.EvaluatedProperties ["B"], "A1");
+			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A1");
+			Assert.IsNull (proj.EvaluatedProperties ["D"], "A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestIncorrectCondition1 ()
 		{
@@ -330,6 +354,24 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
 						<A Include='a' Condition='%(A)' />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestIncorrectCondition5 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<A Include='a' Condition="" '  == ''  "" />
 					</ItemGroup>
 				</Project>
 			";
