@@ -1439,7 +1439,7 @@ namespace System.Drawing
 		[DllImport("user32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr GetDC(IntPtr hwnd);	
 		[DllImport("user32.dll", EntryPoint="ReleaseDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
-		internal static extern int ReleaseDC(IntPtr hdc);
+		internal static extern int ReleaseDC (IntPtr hWnd, IntPtr hDC);
 		[DllImport("gdi32.dll", EntryPoint="SelectObject", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
 		[DllImport("user32.dll", SetLastError=true)]

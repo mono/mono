@@ -223,9 +223,12 @@ namespace System.Drawing
 				newStyle = FontStyle.Regular;
 
 				hdc = GDIPlus.GetDC (IntPtr.Zero);
-				Font f = FromLogFont (lf, hdc);
-				GDIPlus.ReleaseDC (hdc);
-				return f;				
+				try {
+					return FromLogFont (lf, hdc);
+				}
+				finally {
+					GDIPlus.ReleaseDC (IntPtr.Zero, hdc);
+				}
 			}
 			
 			if (lf.lfItalic != 0) {
@@ -568,7 +571,7 @@ namespace System.Drawing
 				return FromLogFont (lf, hDC);
 			}
 			finally {
-				GDIPlus.ReleaseDC(hDC);
+				GDIPlus.ReleaseDC (IntPtr.Zero, hDC);
 			}
 		}
 
@@ -592,7 +595,7 @@ namespace System.Drawing
 					}
 				}
 				finally {
-					GDIPlus.ReleaseDC (hDC);
+					GDIPlus.ReleaseDC (IntPtr.Zero, hDC);
 				}
 			}
 		}
