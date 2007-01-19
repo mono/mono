@@ -280,8 +280,6 @@ namespace System.Windows.Forms
 				if (value != property_descriptor) {
 					property_descriptor = value;					
 
-					_readonly = property_descriptor == null ? false : property_descriptor.IsReadOnly;
-
 					EventHandler eh = (EventHandler)(Events [PropertyDescriptorChangedEvent]);
 					if (eh != null)
 						eh (this, EventArgs.Empty);
@@ -339,26 +337,9 @@ namespace System.Windows.Forms
 			set { arrow_drawing = value; }
 		}
 		
-		// The logic seems to be that: 
-		// - If DataGrid.ReadOnly is true all the tables and columns are readonly ignoring other settings
-		// - If DataGridTableStyle.ReadOnly is true all columns are readonly ignoring other settings
-		// - If DataGrid.ReadOnly and DataGridTableStyle.ReadOnly are false, the columns settings are mandatory
-		//
-		internal bool ParentReadOnly {
+		internal bool TableStyleReadOnly {
 			get {
-				if (grid != null) {
-					if (grid.ReadOnly == true) {
-						return true;
-					}
-				}
-				
-				if (table_style != null) {
-					if (table_style.ReadOnly == true) {
-						return true;
-					}
-				}
-				
-				return false;
+				return table_style != null && table_style.ReadOnly; 
 			}
 		}
 		

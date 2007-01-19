@@ -161,11 +161,7 @@ namespace System.Windows.Forms
 			
 			bool ro = false;
 
-			if ((ParentReadOnly == true)  || 
-				(ParentReadOnly == false && ReadOnly == true) || 
-				(ParentReadOnly == false && _ro == true)) {
-				textbox.ReadOnly = true;
-			}			
+			ro = (TableStyleReadOnly || ReadOnly || _ro);
 
 			if (!ro && instantText != null && instantText != "") {
 				textbox.Text = instantText;

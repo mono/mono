@@ -25,9 +25,6 @@
 //
 //
 
-// NOT COMPLETE
-
-
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -511,22 +508,22 @@ namespace System.Windows.Forms
 
 					if (value.RowNumber == RowsCount && !ListManager.CanAddRows)
 						value.RowNumber --;
-
-					if (value.RowNumber == RowsCount) {
-						cursor_in_add_row = true;
-						add_row_changed = false;
-						AddNewRow ();
-					}
-					else {
-						cursor_in_add_row = false;
-					}
 				}
 
 				int old_row = current_cell.RowNumber;
 
+				current_cell = value;
+
 				EnsureCellVisibility (value);
 
-				current_cell = value;
+				if (CurrentRow == RowsCount && ListManager.CanAddRows) {
+					cursor_in_add_row = true;
+					add_row_changed = false;
+					AddNewRow ();
+				}
+				else {
+					cursor_in_add_row = false;
+				}
 
 				InvalidateRowHeader (old_row);
 				InvalidateRowHeader (current_cell.RowNumber);
@@ -1045,7 +1042,7 @@ namespace System.Windows.Forms
 
 		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{
-			if (shouldAbort || gridColumn.ParentReadOnly)
+			if (shouldAbort || (_readonly || gridColumn.TableStyleReadOnly || gridColumn.ReadOnly))
 				gridColumn.Abort (rowNumber);
 			else {
 				gridColumn.Commit (ListManager, rowNumber);
@@ -1349,6 +1346,7 @@ namespace System.Windows.Forms
 		protected override void OnEnter (EventArgs e)
 		{
 			base.OnEnter (e);
+			Edit ();
 		}
 
 		protected virtual void OnFlatModeChanged (EventArgs e)
@@ -2386,10 +2384,12 @@ namespace System.Windows.Forms
 			if (list_manager != null) {
 				string list_name = list_manager.GetListName (null);
 				if (TableStyles[list_name] == null) {
+					// no style exists by the supplied name
 					current_style.GridColumnStyles.Clear ();			
 					current_style.CreateColumnsForTable (false);
 				}
-				else if (CurrentTableStyle.MappingName != list_name) {
+				else if (CurrentTableStyle == grid_style ||
+					 CurrentTableStyle.MappingName != list_name) {
 					// If the style has been defined by the user, use it
 					CurrentTableStyle = styles_collection[list_name];
 					current_style.CreateColumnsForTable (true);
@@ -2486,14 +2486,14 @@ namespace System.Windows.Forms
 
 		private void Edit ()
 		{
-			if (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].bound == false)
+			if (CurrentTableStyle.GridColumnStyles[CurrentColumn].bound == false)
 				return;
 
 			is_editing = true;
 			is_changing = false;
-			
-			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Edit (ListManager,
-				current_cell.RowNumber, GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber),
+
+			CurrentTableStyle.GridColumnStyles[CurrentColumn].Edit (ListManager,
+				CurrentRow, GetCellBounds (CurrentRow, CurrentColumn),
 				_readonly, "", true);
 		}
 

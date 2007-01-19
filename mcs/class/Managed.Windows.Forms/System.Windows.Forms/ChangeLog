@@ -1,3 +1,33 @@
+2007-01-19  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridColumnStyle.cs: stop setting _readonly in the
+	PropertyDescriptor setter.  fixes a unit test failure.
+
+	also, rename ParentReadOnly to TableStyleReadOnly, and have it
+	just consult our table style (if we have one).  We don't need to
+	consult the datagrid readonly attribute because that's passed in
+	as the _ro arg to Edit.  this simplifies things a little.
+	
+	* DataGrid.cs: use CurrentColumn instead of
+	current_cell.ColumnNumber just to simplify some of the code.
+
+	switch the order of some things in the CurrentCell setter to keep
+	the previous cell from getting a textbox again -
+	EnsureCellVisibility causes scrolling to happen, which calls Edit.
+	So we need to set the new cell before calling it.
+	
+	call Edit in OnEnter, as does Microsoft.
+	
+	also, make sure the current table style isn't the one we create
+	initially when checking to see if it's different than the one
+	we're setting it to in BindColumns (this fixes #80421).
+
+	* GridTableStylesCollection.cs: table styles can have "" for a
+	mapping name.  part of the fix for #80421.
+
+	* DataGridTextBoxColumn.cs: simplify the readonly calculation in
+	Edit significantly.
+
 2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: Rewrote to be complete-er, more MS-matching-er,

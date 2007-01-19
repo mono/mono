@@ -219,9 +219,6 @@ namespace System.Windows.Forms
 		{		
 			for (int i = 0; i < items.Count; i++) {
 				DataGridTableStyle table = (DataGridTableStyle) items[i];
-								
-				if (table.MappingName == null || table.MappingName == string.Empty)
-					continue;
 
 				if (String.Compare (table.MappingName, tableName, true) == 0) {
 					return i;
