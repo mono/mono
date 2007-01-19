@@ -1,3 +1,8 @@
+2007-01-19  Marek Habersack  <grendello@gmail.com>
+
+	* SimpleWorkerRequest.cs: If path is empty, return the physical
+	application directory. Fixes bug #80544.
+
 2007-01-17  Adar Wesley <adarw@mainsoft.com>
 
 	* ApplicationHost.cs: tweaking CreateApplicationHost to throw the 
