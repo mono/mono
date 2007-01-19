@@ -712,9 +712,9 @@ namespace System {
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
 
+			AppDomain def = AppDomain.DefaultDomain;
 			if (info == null) {
-				// if null, get default domain's SetupInformation
-				AppDomain def = AppDomain.DefaultDomain;
+				// if null, get default domain's SetupInformation	
 				if (def == null)
 					info = new AppDomainSetup ();	// we're default!
 				else
@@ -724,11 +724,15 @@ namespace System {
 				info = new AppDomainSetup (info);	// copy
 
 			// todo: allow setup in the other domain
+			if (def != null) {
+				if (!info.Equals (def.SetupInformation) && info.ConfigurationFile == null)
+					info.ConfigurationFile = def.SetupInformation.ConfigurationFile;
+			} else if (info.ConfigurationFile == null)
+				info.ConfigurationFile = "[I don't have a config file]";
 
 			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
 			if (securityInfo == null) {
 				// get default domain's Evidence (unless we're are the default!)
-				AppDomain def = AppDomain.DefaultDomain; 
 				if (def == null)
 					ad._evidence = null;		// we'll get them later (GetEntryAssembly)
 				else

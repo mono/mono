@@ -1,3 +1,10 @@
+2007-01-19  Marek Habersack  <grendello@gmail.com>
+
+	* AppDomain.cs: Make sure that domain
+	SetupInformation.ConfigurationFile is never null. MS.NET by
+	default copies the default domain's ConfigurationFile value
+	there. Fixes bug #80547.
+
 2007-01-14  Jensen Somers <jensen.somers@gmail.com>
 
     * ArraySegment.cs: Added Equals() method, operator == and !=
