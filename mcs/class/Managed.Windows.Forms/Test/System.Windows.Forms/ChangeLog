@@ -1,5 +1,10 @@
 2007-01-19  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumnTest.cs: add a couple more tests to see how
+	DataGrid.ReadOnly affects things.
+
+2007-01-19  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTextBoxColumnTest.cs: mark TestUpdateUI as NotWorking,
 	and add a couple of tests for the overloaded ReadOnly property.
 	can't figure out how it's being used, maybe all it really does is
