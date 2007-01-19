@@ -1,3 +1,7 @@
+2007-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (bug-80307.exe): Fix srcdir != builddir.
+
 2007-01-17  Massimiliano Mantione  <massi@ximian.com>
 	* bug-80307.cs, Makefile.am: Added test for bug 80307.
 
