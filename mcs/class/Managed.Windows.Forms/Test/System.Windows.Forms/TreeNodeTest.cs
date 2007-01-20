@@ -174,5 +174,21 @@ namespace MonoTests.System.Windows.Forms {
 			tv.Nodes.Add (tn_1);
 			Assert.AreEqual (0, tn_1.Index, "#2");
 		}
+		
+#if NET_2_0
+		[Test]
+		public void PropertyName ()
+		{
+			TreeNode tn = new TreeNode ();
+			
+			Assert.AreEqual (string.Empty, tn.Name, "A1");
+			
+			tn.Name = "Monkey";
+			Assert.AreEqual ("Monkey", tn.Name, "A2");
+	
+			tn.Name = null;
+			Assert.AreEqual (string.Empty, tn.Name, "A3");
+		}
+#endif
 	}
 }

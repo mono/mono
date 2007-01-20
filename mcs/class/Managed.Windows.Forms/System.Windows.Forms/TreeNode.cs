@@ -54,6 +54,9 @@ namespace System.Windows.Forms {
 
 		internal IntPtr handle;
 		
+#if NET_2_0
+		private string name = string.Empty;
+#endif
 		#endregion	// Fields
 
 		#region Internal Constructors		
@@ -355,6 +358,17 @@ namespace System.Windows.Forms {
 				return (nodes == null || nodes.Count == 0) ? null : nodes [nodes.Count - 1];
 			}
 		}
+
+#if NET_2_0
+		public string Name
+		{
+			get { return this.name; }
+			set {
+				// Value should never be null as per spec
+				this.name = (value == null) ? string.Empty : value;
+			}
+		}
+#endif
 
 		public TreeNode NextNode {
 			get {
@@ -798,4 +812,5 @@ namespace System.Windows.Forms {
 
 	}
 }
+
 
