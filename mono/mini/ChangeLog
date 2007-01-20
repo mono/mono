@@ -1,3 +1,8 @@
+2007-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* genmdesc.c genmdesc.pl mini.h: Remove some unused fields from the mdesc tables
+	to reduce their size.
+
 2007-01-19 Mark Mason <mason@broadcom.com>
 
 	* exceptions-mips.c: fix mono_arch_ip_from_context(), increase exception debug support.
