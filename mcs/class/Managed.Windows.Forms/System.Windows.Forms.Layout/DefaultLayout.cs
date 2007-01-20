@@ -71,16 +71,11 @@ namespace System.Windows.Forms.Layout
 					child.SetImplicitBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height);
 					space.Height -= child.Height;
 					break;
-				}
-			}
-
-			for (int i = controls.Length - 1; i >= 0; i--) {
-				Control child = controls[i];
-
-				if (child.VisibleInternal
-				    && (child.ControlLayoutType == Control.LayoutType.Dock)
-				    && (child.Dock == DockStyle.Fill))
+					
+				case DockStyle.Fill:
 					child.SetImplicitBounds (space.Left, space.Top, space.Width, space.Height);
+					break;
+				}
 			}
 		}
 

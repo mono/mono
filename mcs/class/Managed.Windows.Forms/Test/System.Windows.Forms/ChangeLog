@@ -1,5 +1,10 @@
 2007-01-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefaultLayoutTest.cs: Add tests for Dock.Fill behavior
+	with other !Dock.Fill controls.
+
+2007-01-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayoutTest.cs: Add test for interactions between
 	setting Dock and Anchor.
 

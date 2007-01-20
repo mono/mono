@@ -420,6 +420,45 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, event_count);
 		}
 
+		[Test]
+		public void TestDockFillFirst ()
+		{
+			Form f = new Form ();
+
+			Panel b1 = new Panel ();
+			Panel b2 = new Panel ();
+
+			b1.Dock = DockStyle.Fill;
+			b2.Dock = DockStyle.Left;
+
+			f.Controls.Add (b1);
+			f.Controls.Add (b2);
+
+			f.Show ();
+			Assert.AreEqual (new Rectangle (200, 0, 92, 266), b1.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (0, 0, 200, 266), b2.Bounds, "A2");
+			f.Dispose ();
+		}
+
+		[Test]
+		public void TestDockFillLast ()
+		{
+			Form f = new Form ();
+
+			Panel b1 = new Panel ();
+			Panel b2 = new Panel ();
+
+			b1.Dock = DockStyle.Fill;
+			b2.Dock = DockStyle.Left;
+
+			f.Controls.Add (b2);
+			f.Controls.Add (b1);
+
+			f.Show ();
+			Assert.AreEqual (new Rectangle (0, 0, 292, 266), b1.Bounds, "B1");
+			Assert.AreEqual (new Rectangle (0, 0, 200, 266), b2.Bounds, "B2");
+			f.Dispose ();
+		}
 	}
 
 	[TestFixture]	
@@ -680,6 +719,5 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (37, panel.Top, "Top");
 			Assert.AreEqual (37, panel.Width, "Width");
 		}
-
 	}
 }
