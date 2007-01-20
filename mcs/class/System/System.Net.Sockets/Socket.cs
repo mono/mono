@@ -688,20 +688,24 @@ namespace System.Net.Sockets
 		private void SocketDefaults ()
 		{
 #if NET_2_0
-			if (address_family == AddressFamily.InterNetwork ||
-			    address_family == AddressFamily.InterNetworkV6) {
-				/* This is the default, but it
-				 * probably has nasty side effects on
-				 * Linux, as the socket option is
-				 * kludged by turning on or off PMTU
-				 * discovery...
-				 */
-				this.DontFragment = false;
-			}
+			try {
+				if (address_family == AddressFamily.InterNetwork ||
+				    address_family == AddressFamily.InterNetworkV6) {
+					/* This is the default, but it
+					 * probably has nasty side
+					 * effects on Linux, as the
+					 * socket option is kludged by
+					 * turning on or off PMTU
+					 * discovery...
+					 */
+					this.DontFragment = false;
+				}
 
-			/* Set the same defaults as the MS runtime */
-			this.ReceiveBufferSize = 8192;
-			this.SendBufferSize = 8192;
+				/* Set the same defaults as the MS runtime */
+				this.ReceiveBufferSize = 8192;
+				this.SendBufferSize = 8192;
+			} catch (SocketException) {
+			}
 #endif
 		}
 		

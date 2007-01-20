@@ -1,3 +1,9 @@
+2007-01-20  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs(SocketDefaults): Catch and ignore any SocketExceptions
+	thrown from setting default socket options - some platforms might
+	not support a particular default we're trying to set.
+
 2007-01-11  Dick Porter  <dick@ximian.com>
 
 	* IOControlCode.cs: 
