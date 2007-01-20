@@ -2783,6 +2783,31 @@ public class ArrayTest : Assertion
     	}
 
 	}
+
+	[Test]
+	// From bug #80563
+	public void ICollectionNull ()
+	{
+		ICollection<object> test;
+		
+		test = new List<object>();
+		AssertEquals ("list<o>", test.Contains (null), false);
+
+		test = new object[] {};
+		AssertEquals ("empty array", test.Contains (null), false);
+
+		test = new object[] {null};
+		AssertEquals ("array with null", test.Contains (null), true);
+
+		test = new List<object>(test);
+		AssertEquals ("List<object> with test", test.Contains (null), true);
+		
+		test = new object[] {new object()};
+		AssertEquals ("array with object", test.Contains (null), false);
+
+		test = new List<object>(test);
+		AssertEquals ("array with test", test.Contains (null), false);
+	}
 #endif
 
 	#region Bug 80299

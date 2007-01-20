@@ -87,6 +87,13 @@ namespace System
 			for (int i = 0; i < length; i++) {
 				T value;
 				GetGenericValueImpl (i, out value);
+				if (item == null){
+					if (value == null)
+						return true;
+					else
+						return false;
+				}
+				
 				if (item.Equals (value))
 					return true;
 			}
@@ -133,6 +140,15 @@ namespace System
 			for (int i = 0; i < length; i++) {
 				T value;
 				GetGenericValueImpl (i, out value);
+				if (item == null){
+					if (value == null)
+						return i + this.GetLowerBound (0);
+					else {
+						unchecked {
+							return this.GetLowerBound (0) - 1;
+						}
+					}
+				}
 				if (item.Equals (value))
 					// array index may not be zero-based.
 					// use lower bound

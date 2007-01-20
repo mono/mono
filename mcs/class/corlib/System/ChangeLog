@@ -1,3 +1,9 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Array.cs (InternalArray__ICollection_Contains,
+	InternalArray__IndexOf): Cope with null values in the array (See
+	bug #80563).
+
 2007-01-19  Marek Habersack  <grendello@gmail.com>
 
 	* AppDomain.cs: Make sure that domain
@@ -7,8 +13,8 @@
 
 2007-01-14  Jensen Somers <jensen.somers@gmail.com>
 
-    * ArraySegment.cs: Added Equals() method, operator == and !=
-    overloading and GetHashCode().
+	* ArraySegment.cs: Added Equals() method, operator == and !=
+	overloading and GetHashCode().
 
 2007-01-10  Andy Hume <andyhume32@yahoo.co.uk>
 
