@@ -1,3 +1,7 @@
+2007-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BaseCompiler.cs: Fixed build on 1.0 profile.
+
 2007-01-20  Marek Habersack  <grendello@gmail.com>
 
 	* BaseCompiler.cs: If the control base type is in the root
