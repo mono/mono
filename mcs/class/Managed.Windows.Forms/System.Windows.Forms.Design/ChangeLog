@@ -1,3 +1,9 @@
+2007-01-20  Chris Toshok  <toshok@ximian.com>
+
+	* ComponentEditorPage.cs: class status fixes.
+
+	* ComponentEditorForm.cs: same.
+
 2006-11-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItemDesignerAvailability.cs: Added.

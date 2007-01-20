@@ -24,8 +24,6 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-// COMPLETE
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,6 +32,11 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Checked")]
 	[DefaultEvent("CheckedChanged")]
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[DefaultBindingProperty ("CheckState")]
+#endif
 	public class CheckBox : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -162,6 +165,9 @@ namespace System.Windows.Forms {
 		[Bindable(true)]
 		[RefreshProperties(RefreshProperties.All)]
 		[DefaultValue(false)]
+#if NET_2_0
+		[SettingsBindable (true)]
+#endif
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {

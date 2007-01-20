@@ -627,6 +627,9 @@ namespace System.Windows.Forms {
 		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public new Size MinimumSize {
 			get { return base.MinimumSize; }
 			set { base.MinimumSize = value; }

@@ -23,16 +23,18 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-
-// NOT COMPLETE
-
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[Designer ("System.Windows.Forms.Design.ScrollableControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class ScrollableControl : Control {
 		#region Local Variables
 		private bool			hscroll_visible;
@@ -408,9 +410,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MWFCategory("Layout")]
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#else
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[Localizable(true)]
-		[MWFCategory("Layout")]
+#endif
 		public DockPaddingEdges DockPadding {
 			get {
 				return dock_padding;
@@ -567,6 +575,9 @@ namespace System.Windows.Forms {
 			base.OnVisibleChanged(e);
 		}
 
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		protected override void ScaleCore(float dx, float dy) {
 			dock_padding.Scale(dx, dy);
 			base.ScaleCore(dx, dy);
@@ -827,6 +838,7 @@ namespace System.Windows.Forms {
 			base.OnPaintBackground (e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);

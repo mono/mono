@@ -190,6 +190,9 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
+#if NET_2_0
+		[ComVisible (false)]
+#endif		
 		public new class ControlCollection : Control.ControlCollection {
 			Form	form_owner;
 
@@ -587,6 +590,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public new Padding Margin {
 			get { return base.Margin; }
@@ -1007,7 +1011,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue (true)]
+		[DispIdAttribute (-516)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop {
 			get { return base.TabStop; }
@@ -2542,14 +2547,11 @@ namespace System.Windows.Forms {
 			remove { base.TabStopChanged -= value; }
 		}
 
-
-		[EditorBrowsable (EditorBrowsableState.Always)]
 		protected override void OnBackgroundImageChanged (EventArgs e)
 		{
 			base.OnBackgroundImageChanged (e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Always)]
 		protected override void OnBackgroundImageLayoutChanged (EventArgs e)
 		{
 			base.OnBackgroundImageLayoutChanged (e);
@@ -2592,7 +2594,6 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			base.OnLayout (levent);

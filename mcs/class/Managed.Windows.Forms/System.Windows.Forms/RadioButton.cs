@@ -23,8 +23,6 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-// COMPLETE
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
@@ -33,6 +31,11 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("Checked")]
 	[DefaultEvent("CheckedChanged")]
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	[DefaultBindingProperty ("Checked")]
+#endif
 	public class RadioButton : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -167,7 +170,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleLeft)]
 		public ContentAlignment CheckAlign {
@@ -185,6 +190,10 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+#if NET_2_0
+		[SettingsBindable (true)]
+		[Bindable (true, BindingDirection.OneWay)]
+#endif
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {

@@ -22,14 +22,17 @@
 // Authors:
 //	Dennis Hayes	(dennish@raytek.com)
 
-// NOT COMPLETE
-
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.Design {
-	[ToolboxItem(false)]
+	[ToolboxItem (false)]
+#if NET_2_0
+	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class ComponentEditorForm : Form {
 
 		[MonoTODO]

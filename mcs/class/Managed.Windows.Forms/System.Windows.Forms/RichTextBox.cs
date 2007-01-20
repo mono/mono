@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 // #define DEBUG
 
 using System;
@@ -34,9 +32,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 using RTF=System.Windows.Forms.RTF;
 
 namespace System.Windows.Forms {
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[Docking (DockingBehavior.Ask)]
+	[ComVisible (true)]
+#endif
 	public class RichTextBox : TextBoxBase {
 		#region Local Variables
 		internal bool		auto_word_select;
@@ -97,6 +101,9 @@ namespace System.Windows.Forms {
 		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public override bool AllowDrop {
 			get {
 				return base.AllowDrop;
@@ -108,7 +115,14 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+#else
 		[Localizable(true)]
+#endif
 		public override bool AutoSize {
 			get {
 				return auto_size;
@@ -249,8 +263,12 @@ namespace System.Windows.Forms {
 		}
 
 		[Browsable(false)]
-		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]
+#else
+		[DefaultValue("")]
+#endif
 		public string Rtf {
 			get {
 				Line		start_line;
@@ -630,6 +648,9 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public override string Text {
 			get {
 				return base.Text;
@@ -1112,14 +1133,18 @@ namespace System.Windows.Forms {
 		}
 
 		[Browsable(false)]
+#if !NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 		public new event DragEventHandler DragDrop {
 			add { base.DragDrop += value; }
 			remove { base.DragDrop -= value; }
 		}
 
 		[Browsable(false)]
+#if !NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 		public new event DragEventHandler DragEnter {
 			add { base.DragEnter += value; }
 			remove { base.DragEnter -= value; }

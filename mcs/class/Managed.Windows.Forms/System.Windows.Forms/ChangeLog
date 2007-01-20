@@ -1,3 +1,27 @@
+2007-01-20  Chris Toshok  <toshok@ximian.com>
+
+	* CheckedListBox.cs: class status changes.
+
+	* ScrollableControl.cs: same.
+
+	* RichTextBox.cs: same.
+
+	* ContainerControl.cs: same.
+
+	* ListView.cs: same.
+
+	* NotifyIcon.cs: same.
+
+	* MenuStrip.cs: same.
+
+	* RadioButton.cs: same.
+
+	* CheckBox.cs: same.
+
+	* PrintPreviewDialog.cs: same.
+
+	* Form.cs: same.
+
 2007-01-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNode.cs: Apply Alan's patch for Name property.

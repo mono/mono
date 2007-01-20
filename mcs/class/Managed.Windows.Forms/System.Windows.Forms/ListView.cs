@@ -376,6 +376,11 @@ namespace System.Windows.Forms
 			get {
 				return focused_item;
 			}
+#if NET_2_0
+			set {
+				throw new NotImplementedException ();
+			}
+#endif
 		}
 
 		public override Color ForeColor {
@@ -538,7 +543,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[LocalizableAttribute(true)]
+		[LocalizableAttribute (true)]
+		[MergableProperty (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ListViewGroupCollection Groups {
 			get { return groups;	}
 		}
@@ -625,6 +632,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[Browsable (true)]
 		public Size TileSize {
 			get {
 				return tile_size;
@@ -659,16 +667,23 @@ namespace System.Windows.Forms
 					return null;
 				}
 			}
+#if NET_2_0
+			set {
+				throw new NotImplementedException ();
+			}
+#endif
 		}
 
 #if NET_2_0
-		[MonoTODO("Implement")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DefaultValue (true)]
+		[Browsable (false)]
 		public bool UseCompatibleStateImageBehavior {
 			get {
 				return false;
 			}
-
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 #endif

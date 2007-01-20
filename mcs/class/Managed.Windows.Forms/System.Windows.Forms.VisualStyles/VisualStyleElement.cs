@@ -672,7 +672,7 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 		#region TaskBar
-		public static class TaskBar
+		public static class Taskbar
 		{
 			public static class BackgroundBottom
 			{
@@ -709,7 +709,7 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 		#region TaskBarClock
-		public static class TaskBarClock
+		public static class TaskbarClock
 		{
 			public static class Time
 			{

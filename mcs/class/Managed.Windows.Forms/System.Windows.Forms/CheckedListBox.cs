@@ -25,17 +25,19 @@
 //
 //
 
-// COMPLETE
-
 using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-
+#if NET_2_0
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public class CheckedListBox : ListBox
 	{
 		private CheckedIndexCollection checked_indices;
@@ -54,8 +56,13 @@ namespace System.Windows.Forms
 		#region events
 		static object ItemCheckEvent = new object ();
 
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+#else
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
@@ -619,15 +626,10 @@ namespace System.Windows.Forms
 			#endregion Private Methods
 		}
 #if NET_2_0
-
+		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
-			get {
-				return use_compatible_text_rendering;
-			}
-
-			set {
-				use_compatible_text_rendering = value;
-			}
+			get { return use_compatible_text_rendering; }
+			set { use_compatible_text_rendering = value; }
 		}
 #endif
 

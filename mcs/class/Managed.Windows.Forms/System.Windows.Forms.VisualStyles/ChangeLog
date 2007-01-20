@@ -1,3 +1,8 @@
+2007-01-19  Chris Toshok  <toshok@ximian.com>
+
+	* VisualStyleElement.cs: rename TaskBar to Taskbar, and
+	TaskBarClock to TaskbarClock to make corcompare happy.
+
 2006-08-05  Jonathan Pobst <monkey@jpobst.com>
 	* TextMetrics.cs: Change variables to properties.
 	* VisualStyleRenderer.cs, EdgeEffects.cs, Edges.cs,

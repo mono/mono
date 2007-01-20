@@ -25,9 +25,14 @@
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.Design
 {
+#if NET_2_0
+	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+#endif
 	public abstract class ComponentEditorPage : Panel
 	{
 		private bool commitOnDeactivate = false;

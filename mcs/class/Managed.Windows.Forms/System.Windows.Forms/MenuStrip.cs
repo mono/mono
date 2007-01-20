@@ -63,6 +63,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (null)]
+		[MergableProperty (false)]
 		public ToolStripMenuItem MdiWindowListItem {
 			get { return this.mdi_window_list_item; }
 			set { 

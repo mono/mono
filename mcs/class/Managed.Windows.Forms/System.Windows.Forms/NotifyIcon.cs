@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -336,6 +334,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue (null)]
 		public ContextMenuStrip ContextMenuStrip {
 			get { return this.context_menu_strip; }
 			set {
