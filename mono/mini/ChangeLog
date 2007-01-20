@@ -1,3 +1,10 @@
+
+Sat Jan 20 16:59:01 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, genmdesc.c, genmdesc.pl, mini-${arch}.c, cprop.c,
+	mini-codegen.c: reduce relocations and memory usage for the cpu
+	description.
+
 2007-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_regstate2_alloc_int): Optimize this using bsfq on amd64.
