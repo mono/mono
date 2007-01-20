@@ -1078,6 +1078,20 @@ namespace MonoTests.System.Net.Sockets
 			sock.Close ();
 		}
 
+		//
+		// We need this because the Linux kernel in certain configurations
+		// will end up rounding up the values passed on to the kernel
+		// for socket send/receive timeouts.
+		//
+		int Approximate (int target, int value)
+		{
+			int epsilon = 10;
+			
+			if (value > target-10 && value < target+10)
+				return target;
+			return value;
+		}
+		
 		[Test]
 		public void UseOnlyOverlappedIOChange ()
 		{
@@ -1132,15 +1146,15 @@ namespace MonoTests.System.Net.Sockets
 			 */
 			sock.SendTimeout = 50;
 			Assertion.AssertEquals ("SendTimeoutChange #1",
-						50, sock.SendTimeout);
+						50, Approximate (50, sock.SendTimeout));
 			
 			sock.SendTimeout = 2000;
 			Assertion.AssertEquals ("SendTimeoutChange #2",
-						2000, sock.SendTimeout);
+						2000, Approximate (2000, sock.SendTimeout));
 			
 			sock.SendTimeout = 0;
 			Assertion.AssertEquals ("SendTimeoutChange #3",
-						0, sock.SendTimeout);
+						0, Approximate (0, sock.SendTimeout));
 			
 			/* Should be the same as setting 0 */
 			sock.SendTimeout = -1;
@@ -1149,7 +1163,7 @@ namespace MonoTests.System.Net.Sockets
 
 			sock.SendTimeout = 65536;
 			Assertion.AssertEquals ("SendTimeoutChange #5",
-						65536, sock.SendTimeout);
+						65536, Approximate (65536, sock.SendTimeout));
 			
 			try {
 				sock.SendTimeout = -2;
@@ -1197,11 +1211,11 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.ReceiveTimeout = 50;
 			Assertion.AssertEquals ("ReceiveTimeoutChange #1",
-						50, sock.ReceiveTimeout);
+						50, Approximate (50, sock.ReceiveTimeout));
 			
 			sock.ReceiveTimeout = 2000;
 			Assertion.AssertEquals ("ReceiveTimeoutChange #2",
-						2000, sock.ReceiveTimeout);
+						2000, Approximate (2000, sock.ReceiveTimeout));
 			
 			sock.ReceiveTimeout = 0;
 			Assertion.AssertEquals ("ReceiveTimeoutChange #3",
@@ -1214,7 +1228,7 @@ namespace MonoTests.System.Net.Sockets
 
 			sock.ReceiveTimeout = 65536;
 			Assertion.AssertEquals ("ReceiveTimeoutChange #5",
-						65536, sock.ReceiveTimeout);
+						65536, Approximate (65536, sock.ReceiveTimeout));
 			
 			try {
 				sock.ReceiveTimeout = -2;
