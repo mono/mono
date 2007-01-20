@@ -77,6 +77,7 @@ namespace System.Windows.Forms {
 		private Size			maximum_size;
 		private Size			minimum_size;
 		private SizeGripStyle		size_grip_style;
+		private SizeGrip		size_grip;
 		private Rectangle		maximized_bounds;
 		private Rectangle		default_maximized_bounds;
 		private double			opacity;
@@ -149,6 +150,43 @@ namespace System.Windows.Forms {
 				Select (ActiveControl);
 			}
 		}
+		
+		private void UpdateSizeGripVisible ()
+		{
+			// Following link explains when to show size grip:
+			// http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=138687&SiteID=1
+			// if SizeGripStyle.Auto, only shown if form is shown using ShowDialog and is sizable
+			// if SizeGripStyle.Show, only shown if form is sizable
+			
+			bool show = false;
+			
+			switch (size_grip_style) {
+			case SizeGripStyle.Auto:
+				show = is_modal && (form_border_style == FormBorderStyle.Sizable || form_border_style == FormBorderStyle.SizableToolWindow);
+				break;
+			case SizeGripStyle.Hide:
+				show = false;
+				break;
+			case SizeGripStyle.Show:
+				show = (form_border_style == FormBorderStyle.Sizable || form_border_style == FormBorderStyle.SizableToolWindow);
+				break;
+			}
+			
+			if (!show) {
+				if (size_grip != null && size_grip.Visible)
+					size_grip.Visible = false;
+			} else {
+				if (size_grip == null) {
+					size_grip = new SizeGrip ();
+					this.Controls.AddImplicit (size_grip);
+				}
+				size_grip.Width = SystemInformation.VerticalScrollBarWidth;
+				size_grip.Height = SystemInformation.HorizontalScrollBarHeight;
+				size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
+				size_grip.Visible = true;
+			}
+		}
+		
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -907,7 +945,6 @@ namespace System.Windows.Forms {
 			set { base.Size = value; }
 		}
 
-		[MonoTODO("Trigger something when GripStyle is set")]
 		[DefaultValue(SizeGripStyle.Auto)]
 		[MWFCategory("Window Style")]
 		public SizeGripStyle SizeGripStyle {
@@ -917,6 +954,7 @@ namespace System.Windows.Forms {
 
 			set {
 				size_grip_style = value;
+				UpdateSizeGripVisible ();
 			}
 		}
 
@@ -1738,6 +1776,10 @@ namespace System.Windows.Forms {
 				ParentForm.PerformLayout();
 				ParentForm.Size = ParentForm.Size;
 			}
+			
+			if (this.size_grip != null && this.size_grip.Visible) {
+				this.size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1940,6 +1982,9 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
+#if debug
+			Console.WriteLine(DateTime.Now.ToLongTimeString () + " Form {0} ({2}) received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), m.ToString (), Text);
+#endif
 
 			if (window_manager != null && window_manager.HandleMessage (ref m)) {
 				return;

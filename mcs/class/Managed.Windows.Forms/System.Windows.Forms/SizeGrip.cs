@@ -113,8 +113,26 @@ namespace System.Windows.Forms {
 				delta_x = current_point.X - capture_point.X;
 				delta_y = current_point.Y - capture_point.Y;
 
-				CapturedControl.Size = new Size(window_w + delta_x, window_h + delta_y);
-				XplatUI.DoEvents();
+				Control parent = CapturedControl;
+				Form form_parent = parent as Form;
+				Size new_size = new Size (window_w + delta_x, window_h + delta_y);
+				Size max_size = form_parent != null ? form_parent.MaximumSize : Size.Empty;
+				Size min_size = form_parent != null ? form_parent.MinimumSize : Size.Empty;
+				
+				if (new_size.Width > max_size.Width && max_size.Width > 0)
+					new_size.Width = max_size.Width;
+				else if (new_size.Width < min_size.Width)
+					new_size.Width = min_size.Width;
+				
+				if (new_size.Height > max_size.Height && max_size.Height > 0)
+					new_size.Height = max_size.Height;
+				else if (new_size.Height < min_size.Height)
+					new_size.Height = min_size.Height;
+
+				if (new_size != parent.Size) {
+					parent.Size = new_size;
+					XplatUI.DoEvents();
+				}
 			}
 		}
 

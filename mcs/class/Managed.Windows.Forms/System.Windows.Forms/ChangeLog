@@ -1,3 +1,10 @@
+2007-01-19  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* Form.cs: Implemented SizeGripStyle.
+	* SizeGrip.cs: Check for minimum and maximum size for the
+	control being resized and only resize if size has actually
+	changed.
+
 2007-01-19  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridColumnStyle.cs: stop setting _readonly in the
