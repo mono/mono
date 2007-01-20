@@ -321,6 +321,57 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Dispose ();
 		}
+
+		private string event_raised = string.Empty;
+
+		[Test]
+		public void TestAnchorDockInteraction ()
+		{
+			Panel p = new Panel ();
+			p.DockChanged += new EventHandler (DockChanged_Handler);
+
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, p.Anchor, "A1");
+			Assert.AreEqual (DockStyle.None, p.Dock, "A2");
+
+			p.Dock = DockStyle.Right;
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, p.Anchor, "A3");
+			Assert.AreEqual (DockStyle.Right, p.Dock, "A4");
+			Assert.AreEqual ("DockStyleChanged", event_raised, "A5");
+			event_raised = string.Empty;
+
+			p.Anchor = AnchorStyles.Bottom;
+			Assert.AreEqual (AnchorStyles.Bottom, p.Anchor, "A6");
+			Assert.AreEqual (DockStyle.None, p.Dock, "A7");
+			Assert.AreEqual (string.Empty, event_raised, "A8");
+
+			p.Dock = DockStyle.Fill;
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, p.Anchor, "A9");
+			Assert.AreEqual (DockStyle.Fill, p.Dock, "A10");
+			Assert.AreEqual ("DockStyleChanged", event_raised, "A11");
+			event_raised = string.Empty;
+
+			p.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, p.Anchor, "A12");
+			Assert.AreEqual (DockStyle.Fill, p.Dock, "A13");
+			Assert.AreEqual (string.Empty, event_raised, "A14");
+
+			p.Dock = DockStyle.None;
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, p.Anchor, "A15");
+			Assert.AreEqual (DockStyle.None, p.Dock, "A16");
+			Assert.AreEqual ("DockStyleChanged", event_raised, "A17");
+			event_raised = string.Empty;
+
+			p.Anchor = AnchorStyles.Bottom;
+			p.Dock = DockStyle.None;
+			Assert.AreEqual (AnchorStyles.Bottom, p.Anchor, "A18");
+			Assert.AreEqual (DockStyle.None, p.Dock, "A19");
+			Assert.AreEqual (string.Empty, event_raised, "A20");
+		}
+
+		public void DockChanged_Handler (object sender, EventArgs e)
+		{
+			event_raised += "DockStyleChanged";
+		}
 	}
 
 	[TestFixture]	

@@ -1,3 +1,8 @@
+2007-01-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayoutTest.cs: Add test for interactions between
+	setting Dock and Anchor.
+
 2007-01-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNodeTest.cs: Add test for 2.0 Name property.

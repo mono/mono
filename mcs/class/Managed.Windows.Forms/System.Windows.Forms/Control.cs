@@ -1874,8 +1874,12 @@ namespace System.Windows.Forms
 			set {
 				layout_type = LayoutType.Anchor;
 
+				if (anchor_style == value)
+					return;
+					
 				anchor_style=value;
-
+				dock_style = DockStyle.None;
+				
 				UpdateDistances ();
 
 				if (parent != null)
@@ -2338,6 +2342,7 @@ namespace System.Windows.Forms
 				}
 
 				dock_style = value;
+				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 				if (dock_style == DockStyle.None) {
 					if (explicit_bounds == Rectangle.Empty)
