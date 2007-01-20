@@ -1,3 +1,8 @@
+2007-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* monobitset.h: monobitset.c: Move MonoBitSet type definition to
+	the header file. Add fast macro based versions of most bitset 
+	operations and optimize the rest a bit.
 
 Mon Dec 18 18:59:08 CET 2006 Paolo Molaro <lupus@ximian.com>
 
