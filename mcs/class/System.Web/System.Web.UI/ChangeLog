@@ -1,3 +1,8 @@
+2007-01-20  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateParser.cs: Check whether the base type is in the root
+	namespace.
+
 2007-01-18  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Control.jvm.cs: Added PortletNamespace property.

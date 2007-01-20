@@ -89,7 +89,10 @@ namespace System.Web.Compilation
 #endif
 			mainNS = new CodeNamespace ("ASP");
 			mainClass = new CodeTypeDeclaration (parser.ClassName);
-			mainClass.BaseTypes.Add (new CodeTypeReference (parser.BaseType.FullName));
+			CodeTypeReference baseTypeRef = new CodeTypeReference (parser.BaseType.FullName);
+			if (parser.BaseTypeIsGlobal)
+				baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+			mainClass.BaseTypes.Add (baseTypeRef);
 			mainClassExpr = new CodeTypeReferenceExpression ("ASP." + parser.ClassName);
 #if NET_2_0
 			}

@@ -56,6 +56,7 @@ namespace System.Web.UI {
 		ArrayList interfaces;
 		ArrayList scripts;
 		Type baseType;
+		bool baseTypeIsGlobal;
 		string className;
 		RootBuilder rootBuilder;
 		bool debug;
@@ -409,9 +410,8 @@ namespace System.Web.UI {
 				return;
 
 			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
-			foreach (string s in binDlls) {
+			foreach (string s in binDlls)
 				assemblies.Add (s);
-			}
 		}
 
 		internal virtual void AddInterface (string iface)
@@ -615,6 +615,8 @@ namespace System.Web.UI {
 				ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
 
 			baseType = parent;
+			if (parent.FullName.IndexOf ('.') == -1)
+				baseTypeIsGlobal = true;
 		}
 
 		Assembly GetAssemblyFromSource (string vpath)
@@ -672,6 +674,10 @@ namespace System.Web.UI {
 
 				return baseType;
 			}
+		}
+		
+		internal bool BaseTypeIsGlobal {
+			get { return baseTypeIsGlobal; }
 		}
 		
 		internal string ClassName {

@@ -1452,9 +1452,13 @@ namespace System.Web.Compilation
 			fldRef = new CodeFieldReferenceExpression (mainClassExpr, "__autoHandlers");
 			ret.Expression = fldRef;
 			prop.GetStatements.Add (ret);
-			
 			prop.SetStatements.Add (new CodeAssignStatement (fldRef, new CodePropertySetValueReferenceExpression ()));
 
+#if NET_2_0
+			CodeAttributeDeclaration attr = new CodeAttributeDeclaration ("System.Obsolete");
+			prop.CustomAttributes.Add (attr);
+#endif
+			
 			mainClass.Members.Add (prop);
 
 			// Add the __autoHandlers field

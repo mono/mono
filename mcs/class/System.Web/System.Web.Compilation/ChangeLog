@@ -1,5 +1,11 @@
 2007-01-20  Marek Habersack  <grendello@gmail.com>
 
+	* BaseCompiler.cs: If the control base type is in the root
+	namespace, make sure global:: is prepended to it.
+
+	* TemplateControlCompiler.cs: AutoHandlers is obsolete in 2.0,
+        mark it as such in the generated code as well.	
+
 	* AppCodeCompiler.cs: Include debug information if configured in
 	web.config. Fixes bug #80096.
 
