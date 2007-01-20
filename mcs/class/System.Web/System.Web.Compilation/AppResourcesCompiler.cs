@@ -336,7 +336,6 @@ namespace System.Web.Compilation
 			// culture or not. If it is not a culture, then we have a
 			// default file that doesn't have any translations. Otherwise,
 			// the file is ignored (it's the same thing MS.NET does)
-			string fullName;
 			foreach (AppResourceFileInfo arfi in files) {
 				if (arfi.Seen)
 					continue;

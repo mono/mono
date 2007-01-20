@@ -1,3 +1,16 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* XhtmlTextWriter.cs: comment out unused code. 
+
+	* ThemeProvider.cs: comment out unused code.
+
+	* DataSourceView.cs: Comment unused variable. 
+
+	* ClientScriptManager.cs: Put the expandoAttributes inside the 2.0
+	code 
+
+	* Control.cs: Put _templateControl inside the NET_2_0 ifdef
+
 2007-01-20  Marek Habersack  <grendello@gmail.com>
 
 	* TemplateParser.cs: Check whether the base type is in the root

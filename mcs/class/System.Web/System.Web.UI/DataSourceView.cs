@@ -39,7 +39,7 @@ using System.ComponentModel;
 namespace System.Web.UI {
 	public abstract class DataSourceView
 	{
-		IDataSource dataSourceOwner;
+		//IDataSource dataSourceOwner;
 		string viewName = String.Empty;
 
 		protected DataSourceView (IDataSource owner, string viewName)
@@ -47,7 +47,7 @@ namespace System.Web.UI {
 			if (owner == null)
 				throw new ArgumentNullException ("owner");
 
-			this.dataSourceOwner = owner;
+			//this.dataSourceOwner = owner;
 			this.viewName = viewName;
 		}
 

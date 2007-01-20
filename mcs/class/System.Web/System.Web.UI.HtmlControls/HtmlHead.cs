@@ -43,8 +43,7 @@ namespace System.Web.UI.HtmlControls
 
 		string titleText;
 		HtmlTitle title;
-		Hashtable metadata;
-		ArrayList styleSheets;
+		//Hashtable metadata;
 		StyleSheetBag styleSheet;
 		
 		public HtmlHead(): base("head") {}
@@ -66,14 +65,14 @@ namespace System.Web.UI.HtmlControls
 			EnsureTitleControl ();
 
 			base.RenderChildren (writer);
-			if (metadata != null) {
-				foreach (DictionaryEntry entry in metadata) {
-					writer.AddAttribute ("name", entry.Key.ToString ());
-					writer.AddAttribute ("content", entry.Value.ToString ());
-					writer.RenderBeginTag (HtmlTextWriterTag.Meta);
-					writer.RenderEndTag ();
-				}
-			}
+//			if (metadata != null) {
+//				foreach (DictionaryEntry entry in metadata) {
+//					writer.AddAttribute ("name", entry.Key.ToString ());
+//					writer.AddAttribute ("content", entry.Value.ToString ());
+//					writer.RenderBeginTag (HtmlTextWriterTag.Meta);
+//					writer.RenderEndTag ();
+//				}
+//			}
 			
 			if (styleSheet != null)
 				styleSheet.Render (writer);
@@ -109,19 +108,19 @@ namespace System.Web.UI.HtmlControls
 			Controls.Add (t);
 		}
 
-		IList LinkedStyleSheets {
-			get {
-				if (styleSheets == null) styleSheets = new ArrayList ();
-				return styleSheets;
-			}
-		} 
-		
-		IDictionary Metadata {
-			get {
-				if (metadata == null) metadata = new Hashtable ();
-				return metadata;
-			}
-		}
+//		IList LinkedStyleSheets {
+//			get {
+//				if (styleSheets == null) styleSheets = new ArrayList ();
+//				return styleSheets;
+//			}
+//		} 
+//		
+//		IDictionary Metadata {
+//			get {
+//				if (metadata == null) metadata = new Hashtable ();
+//				return metadata;
+//			}
+//		}
 		
 		public IStyleSheet StyleSheet {
 			get {

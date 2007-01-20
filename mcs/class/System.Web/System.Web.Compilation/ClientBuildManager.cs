@@ -43,8 +43,8 @@ namespace System.Web.Compilation {
 	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
 		string virt_dir;
 		string phys_src_dir;
-		string phys_target_dir;
-		ClientBuildManagerParameter build_params;
+		//string phys_target_dir;
+		//ClientBuildManagerParameter build_params;
 		BareApplicationHost host;
 		ApplicationManager manager;
 		string app_id;
@@ -63,20 +63,20 @@ namespace System.Web.Compilation {
 		}
 
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir,
-					string appPhysicalTargetDir)
+					   string appPhysicalTargetDir)
 			: this (appVirtualDir, appPhysicalSourceDir)
 		{
 			if (appPhysicalTargetDir == null || appPhysicalTargetDir == "")
 				throw new ArgumentNullException ("appPhysicalTargetDir");
 
-			phys_target_dir = appPhysicalTargetDir;
+			//phys_target_dir = appPhysicalTargetDir;
 		}
 
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir,
 					string appPhysicalTargetDir, ClientBuildManagerParameter parameter)
 			: this (appVirtualDir, appPhysicalSourceDir, appPhysicalTargetDir)
 		{
-			build_params = parameter;
+			//build_params = parameter;
 		}
 
 		public event BuildManagerHostUnloadEventHandler AppDomainShutdown;
@@ -120,18 +120,18 @@ namespace System.Web.Compilation {
 			}
 		}
 
-		void OnDomainUnload (object sender, EventArgs args)
-		{
-			OnAppDomainUnloaded (0); // FIXME: set a reason?
-		}
-
-		void OnAppDomainUnloaded (ApplicationShutdownReason reason)
-		{
-			if (AppDomainUnloaded != null) {
-				BuildManagerHostUnloadEventArgs args = new BuildManagerHostUnloadEventArgs (reason);
-				AppDomainUnloaded (this, args);
-			}
-		}
+//		void OnDomainUnload (object sender, EventArgs args)
+//		{
+//			OnAppDomainUnloaded (0); // FIXME: set a reason?
+//		}
+//
+//		void OnAppDomainUnloaded (ApplicationShutdownReason reason)
+//		{
+//			if (AppDomainUnloaded != null) {
+//				BuildManagerHostUnloadEventArgs args = new BuildManagerHostUnloadEventArgs (reason);
+//				AppDomainUnloaded (this, args);
+//			}
+//		}
 
 		[MonoTODO ("Not implemented")]
 		public void CompileApplicationDependencies ()
@@ -158,6 +158,7 @@ namespace System.Web.Compilation {
 			return manager.CreateObject (app_id, type, virt_dir, phys_src_dir, failIfExists);
 		}
 
+		[MonoTODO("Currently does not return the GeneratedCode")]
 		public string GenerateCode (string virtualPath, string virtualFileString, out IDictionary linePragmasTable)
 		{
 			// This thing generates a .ccu (CodeCompileUnit?) file (reported as TrueType font data by 'file'!)

@@ -265,7 +265,7 @@ namespace System.Web.UI.WebControls.WebParts
 
 		[MonoTODO("Not implemented")]
 		/* msdn2 lists this as an override, but it doesn't appear to work with our implementation */
-		public /*override*/ ContentDirection Direction 
+		public override ContentDirection Direction 
 		{
 			get {
 				throw new NotImplementedException ();

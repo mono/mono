@@ -1,3 +1,13 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* WebPart.cs: Remove 
+
+	* PersonalizableAttribute.cs: Remove extra API that was wrong as well.
+
+2006-11-28  Miguel de Icaza  <miguel@novell.com>
+
+	* WebPart.cs: 
+
 2006-11-25  Marek Habersack  <grendello@gmail.com>
 
 	* PersonalizableAttribute.cs: A few optimizations.

@@ -36,8 +36,9 @@ using System.Web.Configuration;
 namespace System.Web {
 
 	internal class TraceManager {
-
+#if !NET_2_0
 		private static string traceConfigPath = "system.web/trace";
+#endif
 		private bool enabled = false;
 		private bool local_only = true;
 		private bool page_output = false;

@@ -1,3 +1,7 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* SessionStateModule.cs: Removed unused variables.
+
 2007-01-07  Konstantin Triger <kostat@mainsoft.com>
 
 	* SessionStateModule.cs: Implemented raising of Session_OnEnd event,

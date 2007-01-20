@@ -51,7 +51,7 @@ namespace System.Web {
 		WebROCollection query_string_nvc;
 
 		//
-		string filename;
+		//string filename;
 		string orig_url = null;
 		UriBuilder url_components;
 
@@ -104,7 +104,7 @@ namespace System.Web {
 		{
 			// warning 169: what are we supposed to do with filename?
 			
-			this.filename = filename;
+			//this.filename = filename;
 
 			orig_url = url;
 			url_components = new UriBuilder (url);

@@ -346,7 +346,7 @@ namespace System.Web.Configuration {
 #else
 		static internal IConfigurationSystem oldConfig;
 		static Web20DefaultConfig config;
-		static IInternalConfigSystem configSystem;
+		//static IInternalConfigSystem configSystem;
 #endif
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
@@ -386,7 +386,7 @@ namespace System.Web.Configuration {
 
 					object [] args = new object [] {system};
 					changeConfig.Invoke (null, args);
-					configSystem = system;
+					//configSystem = system;
 				}
 			}
 		}

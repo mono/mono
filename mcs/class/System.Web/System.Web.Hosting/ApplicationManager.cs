@@ -94,7 +94,7 @@ namespace System.Web.Hosting {
 				if (host == null)
 					host = CreateHost (appId, virtualPath, physicalPath);
 				ireg = host.CreateInstance (type);
-			} catch (Exception e) {
+			} catch (Exception) {
 				if (throwOnError)
 					throw;
 			}
@@ -200,8 +200,6 @@ namespace System.Web.Hosting {
 			ICollection<string> coll = id_to_host.Keys;
 			string [] keys = new string [coll.Count];
 			coll.CopyTo (keys, 0);
-			ApplicationInfo [] result = new ApplicationInfo [coll.Count];
-			int i = 0;
 			foreach (string str in keys) {
 				BareApplicationHost host = id_to_host [str];
 				host.Shutdown ();

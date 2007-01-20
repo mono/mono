@@ -32,20 +32,20 @@ namespace System.Web.UI {
 
 	public sealed class SkinBuilder : ControlBuilder
 	{
-		ThemeProvider provider;
+		//ThemeProvider provider;
+		//ControlBuilder skinBuilder;
+		//string themePath;
 		Control control;
-		ControlBuilder skinBuilder;
-		string themePath;
 
 		public SkinBuilder (ThemeProvider provider,
 				    Control control,
 				    ControlBuilder skinBuilder,
 				    string themePath)
 		{
-			this.provider = provider;
+			//this.provider = provider;
 			this.control = control;
-			this.skinBuilder = skinBuilder;
-			this.themePath = themePath;
+			//this.skinBuilder = skinBuilder;
+			//this.themePath = themePath;
 		}
 
 		public Control ApplyTheme ()

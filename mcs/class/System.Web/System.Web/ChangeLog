@@ -1,5 +1,13 @@
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
+	* SiteMapNode.cs (GetExplicitResourceString): implement.
+
+	* HttpContext.cs (GetGlobalResourceObject): remove unused variable.
+
+	* StaticFileHandler.cs (ProcessRequest): remove unused variable.
+
+	* HttpApplication.cs (ProcessError): Remove unused variable. 
+
 	* HttpServerUtility.cs (Execute): Add new overload and rename
 	parameter to match MS (as they are normative).
 

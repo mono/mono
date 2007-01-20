@@ -63,11 +63,7 @@ namespace System.Web.UI.WebControls {
 		XslTransform xsl_transform;
 		XsltArgumentList transform_arguments;
 		string transform_file;
-#if NET_2_0
-		bool enable_theming;
-		string skin_id;
-#endif
-		
+
 		public Xml ()
 		{
 		}

@@ -117,7 +117,6 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			ClientScriptManager csm = new ClientScriptManager (Page);
 #if NET_2_0
 			if (Page != null && Events [ServerClickEvent] != null) {
 				PostBackOptions options = GetPostBackOptions ();
@@ -126,6 +125,7 @@ namespace System.Web.UI.HtmlControls {
 				writer.WriteAttribute ("language", "javascript");
 			}
 #else		
+			ClientScriptManager csm = new ClientScriptManager (Page);
 			bool postback = false;
 
 			if (Page != null && Events [ServerClickEvent] != null)

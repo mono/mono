@@ -122,17 +122,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		protected override
-#endif
-		void RaisePostDataChangedEvent ()
+		protected override void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
-#endif
 			OnCheckedChanged (EventArgs.Empty);
 		}
-
+#endif
+		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostData (postDataKey, postCollection);

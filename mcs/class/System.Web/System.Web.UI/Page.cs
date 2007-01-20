@@ -636,6 +636,17 @@ public partial class Page : TemplateControl, IHttpHandler
 		set { _transactionMode = value; }
 	}
 
+#if !NET_2_0
+	//
+	// This method is here just to remove the warning about "_transactionMode" not being
+	// used.  We probably will use it internally at some point.
+	//
+	internal int GetTransactionMode ()
+	{
+		return _transactionMode;
+	}
+#endif
+	
 #if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

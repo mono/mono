@@ -39,9 +39,9 @@ namespace System.Web.UI {
 	{
 		IDesignerHost host;
 		string name;
-		string themeDefinition;
 		string[] cssFiles;
-		string themePath;
+		//string themeDefinition;
+		//string themePath;
 
 		public ThemeProvider (IDesignerHost host,
 				      string name,
@@ -51,9 +51,9 @@ namespace System.Web.UI {
 		{
 			this.host = host;
 			this.name = name;
-			this.themeDefinition = themeDefinition;
+			//this.themeDefinition = themeDefinition;
 			this.cssFiles = cssFiles; /* XXX copy? */
-			this.themePath = themePath;
+			//this.themePath = themePath;
 		}
 
 		[MonoTODO("Not implemented")]

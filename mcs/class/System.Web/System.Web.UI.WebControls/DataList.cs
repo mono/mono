@@ -83,12 +83,12 @@ namespace System.Web.UI.WebControls {
 		private int idx;
 
 #if NET_2_0
-		private int editIndex;
+		//private int editIndex;
 		private int selectedIndex;
 
 		public DataList ()
 		{
-			editIndex = -1;
+			//editIndex = -1;
 			selectedIndex = -1;
 			idx = -1;
 		}

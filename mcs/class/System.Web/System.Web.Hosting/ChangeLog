@@ -1,3 +1,10 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* ApplicationManager.cs: Remove unused variable.
+	(ShutdownAll) remove unused variables.
+
+	* ApplicationHost.cs: Protect create_dir lock 
+
 2007-01-19  Marek Habersack  <grendello@gmail.com>
 
 	* SimpleWorkerRequest.cs: If path is empty, return the physical

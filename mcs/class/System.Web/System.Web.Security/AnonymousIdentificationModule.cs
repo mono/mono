@@ -44,8 +44,6 @@ namespace System.Web.Security {
 
 		public static void ClearAnonymousIdentifier ()
 		{
-			HttpContext c = HttpContext.Current;
-
 			if (Config == null || !Config.Enabled)
 				/* XXX The user for the current request is anonymous */
 				throw new NotSupportedException ();

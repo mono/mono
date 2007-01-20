@@ -84,7 +84,7 @@ namespace System.Web.SessionState
 
 		// config
 		TimeSpan executionTimeout;
-		int executionTimeoutMS;
+		//int executionTimeoutMS;
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public SessionStateModule () {
@@ -145,7 +145,7 @@ namespace System.Web.SessionState
 			supportsExpiration = handler.SetItemExpireCallback (OnSessionExpired);
 			HttpRuntimeSection runtime = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
 			executionTimeout = runtime.ExecutionTimeout;
-			executionTimeoutMS = executionTimeout.Milliseconds;
+			//executionTimeoutMS = executionTimeout.Milliseconds;
 
 			this.app = app;
 

@@ -77,7 +77,6 @@ namespace System.Web.Compilation
 	internal class AppResourceFilesCollection
 	{
 		List <AppResourceFileInfo> files;
-		HttpContext context;
 		bool isGlobal;
 		string sourceDir;
 
@@ -102,7 +101,7 @@ namespace System.Web.Compilation
 			if (context == null)
 				throw new ArgumentNullException ("context");
 			
-			this.context = context;
+			//this.context = context;
 			this.isGlobal = isGlobal;
 			this.files = new List <AppResourceFileInfo> ();
 

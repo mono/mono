@@ -401,7 +401,6 @@ namespace System.Web {
 
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			HttpContext context = HttpContext.Current;
 			if (AppGlobalResourcesAssembly == null)
 				throw new MissingManifestResourceException ();
 			return GetResourceObject (classKey, resourceKey, culture, AppGlobalResourcesAssembly);

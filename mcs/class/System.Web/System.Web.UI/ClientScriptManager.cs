@@ -56,10 +56,10 @@ namespace System.Web.UI
 		Hashtable hiddenFields;
 		ScriptEntry submitStatements;
 		ScriptEntry scriptIncludes;
-		Hashtable expandoAttributes;
 		Page page;
 #if NET_2_0
 		List <int> eventValidationValues;
+		Hashtable expandoAttributes;
 #endif
 		
 		internal ClientScriptManager (Page page)

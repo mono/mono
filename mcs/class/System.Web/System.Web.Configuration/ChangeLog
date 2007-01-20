@@ -1,3 +1,10 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* HandlerFactoryConfiguration.cs (LoadType): remove unused
+	variable.
+	(ctor): do not assign parent, we do not use it, keep the code for
+	reference.
+
 2007-01-18  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpCapabilitiesBase.cs: Fix the build, I kept an old code path

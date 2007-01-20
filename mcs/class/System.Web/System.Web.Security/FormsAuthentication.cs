@@ -549,12 +549,14 @@ namespace System.Web.Security
 			}
 		}
 
+#if NET_2_0
 		static string MapUrl (string url) {
 			if (UrlUtils.IsRelativeUrl (url))
 				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
 			else
 				return UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
 		}
+#endif
 
 		public static void RedirectFromLoginPage (string userName, bool createPersistentCookie)
 		{
@@ -693,11 +695,12 @@ namespace System.Web.Security
 			// TODO: if ? is in LoginUrl (legal?), ? in query (legal?) ...
 			Redirect (LoginUrl + "?" + extraQueryString);
 		}
-#endif
+
 		private static void Redirect (string url)
 		{
 			HttpContext.Current.Response.Redirect (url);
 		}
+#endif
 
 		private static void Redirect (string url, bool end)
 		{

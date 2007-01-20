@@ -102,18 +102,6 @@ namespace System.Web.UI.WebControls.WebParts
 				this.scope == attr.Scope);
 		}
 		
-		public static bool Equals (object objA, object objB)
-		{
-			PersonalizableAttribute attrA = objA as PersonalizableAttribute;
-			PersonalizableAttribute attrB = objB as PersonalizableAttribute;
-
-			if (objA == null || objB == null)
-				return false;
-			return (attrA.IsPersonalizable == attrB.IsPersonalizable &&
-				attrA.IsSensitive == attrB.IsSensitive &&
-				attrA.Scope == attrB.Scope);
-		}
-
 		public override int GetHashCode ()
 		{
 			return (this.isPersonalizable.GetHashCode () ^

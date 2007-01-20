@@ -63,7 +63,7 @@ namespace System.Web.Compilation {
 				TypeConverter converter = TypeDescriptor.GetConverter (targetType);
 				return converter.ConvertFrom (GetAppSetting (key));
 			}
-			catch (NotSupportedException e) {
+			catch (NotSupportedException) {
 				throw new InvalidOperationException (String.Format ("Could not convert app setting {0} to type {1}", key, targetType));
 			}
 		}

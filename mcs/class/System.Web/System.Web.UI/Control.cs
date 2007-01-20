@@ -90,7 +90,6 @@ namespace System.Web.UI
 
 		string uniqueID;
 		string _userId;
-		TemplateControl _templateControl;
 		ControlCollection _controls;
 		Control _namingContainer;
 		Page _page;
@@ -107,7 +106,8 @@ namespace System.Web.UI
 		
 
 #if NET_2_0
-			bool _isChildControlStateCleared;
+		TemplateControl _templateControl;
+		bool _isChildControlStateCleared;
 #endif
 		/*************/
 		int stateMask;

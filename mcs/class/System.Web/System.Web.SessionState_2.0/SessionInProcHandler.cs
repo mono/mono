@@ -69,7 +69,7 @@ namespace System.Web.SessionState
 		private const Int32 lockAcquireTimeout = 30000;
 		
 		CacheItemRemovedCallback removedCB;
-		NameValueCollection privateConfig;
+		//NameValueCollection privateConfig;
 		SessionStateItemExpireCallback expireCallback;
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
@@ -191,7 +191,7 @@ namespace System.Web.SessionState
 			if (String.IsNullOrEmpty (name))
 				name = "Session InProc handler";
 			removedCB = new CacheItemRemovedCallback (OnSessionRemoved);
-			privateConfig = config;
+			//privateConfig = config;
 			base.Initialize (name, config);
 		}
 		

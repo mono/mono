@@ -359,7 +359,7 @@ namespace System.Web.Profile
 			}
 		}
 
-		public static SettingsPropertyCollection Properties {
+		public new static SettingsPropertyCollection Properties {
 			get {
 				if (_properties == null)
 					InitProperties ();

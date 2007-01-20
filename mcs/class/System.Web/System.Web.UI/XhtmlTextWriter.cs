@@ -43,7 +43,7 @@ namespace System.Web.UI {
 
 		Hashtable attr_render = new Hashtable ();
 
-		XhtmlMobileDocType doc_type;
+		//XhtmlMobileDocType doc_type;
 
 		static string [] DefaultCommonAttributes = {
 			"class",
@@ -251,7 +251,7 @@ namespace System.Web.UI {
 
 		public virtual void SetDocType (XhtmlMobileDocType docType)
 		{
-			doc_type = docType;
+			//doc_type = docType;
 		}
 
 		// writes <br/>

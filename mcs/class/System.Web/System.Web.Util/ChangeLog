@@ -1,3 +1,7 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* FileUtils.cs (CreateTemporaryFile): Remove unused variable.
+
 2006-11-26 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* StrUtils.cs: added new helper method EscapeQuotesAndBackslashes

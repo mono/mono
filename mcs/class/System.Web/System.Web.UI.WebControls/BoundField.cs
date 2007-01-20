@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls {
 	{
 		public static readonly string ThisExpression = "!";
 		
-		PropertyDescriptor boundProperty;
+		//PropertyDescriptor boundProperty;
 
 		[DefaultValueAttribute (false)]
 		[WebSysDescription ("")]

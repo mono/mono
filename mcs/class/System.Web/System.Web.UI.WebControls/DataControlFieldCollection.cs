@@ -85,7 +85,6 @@ namespace System.Web.UI.WebControls
 		
 		public void RemoveAt (int index)
 		{
-			DataControlField field = this [index];
 			((IList)this).RemoveAt (index);
 		}
 		

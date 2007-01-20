@@ -351,7 +351,9 @@ namespace System.Web.Profile
 				AddParameter (command, "UserName", username);
 				AddParameter (command, "IsUserAnonymous", isAnonymous);
 				AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+
+				// Return value
+				AddParameter (command, null, ParameterDirection.ReturnValue, null);
 
 				command.ExecuteNonQuery ();
 				return;

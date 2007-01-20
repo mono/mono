@@ -36,8 +36,12 @@ namespace System.Web.UI.WebControls {
 	public sealed class PagedDataSource : ICollection, IEnumerable, ITypedList
 	{
 		int page_size, current_page_index, virtual_count;
-		bool allow_paging, allow_custom_paging, allow_server_paging;
+		bool allow_paging, allow_custom_paging;
 		IEnumerable source;
+		
+#if NET_2_0
+		bool allow_server_paging;
+#endif
 		
 		public PagedDataSource ()
 		{

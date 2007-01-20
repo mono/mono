@@ -614,7 +614,7 @@ namespace System.Web {
 				if (Error != null){
 					try {
 						Error (this, EventArgs.Empty);
-					} catch (ThreadAbortException ee){
+					} catch (ThreadAbortException){
 						// This happens on Redirect() or End()
 						Thread.ResetAbort ();
 					} catch (Exception ee){

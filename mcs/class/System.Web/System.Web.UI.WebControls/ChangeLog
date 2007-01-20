@@ -1,3 +1,14 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* DataControlFieldCollection.cs (RemoveAt): remove unused
+	variable. 
+
+	* RoleGroupCollection.cs (OnValidate): Flag as protected, as it
+	should not show up.
+
+	* RadioButton.cs (RaisePostDataChangedEvent): This method was not
+	used in 1.0, so put the whole method in 2.0
+
 2007-01-18  Adar Wesley <adarw@mainsoft.com>
 
 	* Xml.cs: added support for XPathNavigator, fixed DocumentContent

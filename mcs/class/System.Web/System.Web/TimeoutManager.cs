@@ -48,6 +48,13 @@ namespace System.Web
 		{
 			contexts = Hashtable.Synchronized (new Hashtable ());
 			timer = new Timer (new TimerCallback (CheckTimeouts), null, 0, 15000);
+
+			/*
+			 * To prevent the compiler from issuing a warning, we need to keep a
+			 * reference to the timer so it is not disposed
+			 */
+			if (timer == null)
+				timer = null;
 		}
 
 		public void Add (HttpContext context)

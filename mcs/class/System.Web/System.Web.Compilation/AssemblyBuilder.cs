@@ -52,7 +52,6 @@ namespace System.Web.Compilation {
 		List <string> referenced_assemblies;
 		Dictionary <string, string> resource_files;
 		TempFileCollection temp_files;
-		string virtual_path;
 		//TODO: there should be a Compile () method here which is where all the compilation exceptions are thrown from.
 
 		internal AssemblyBuilder (CodeDomProvider provider)
@@ -62,7 +61,6 @@ namespace System.Web.Compilation {
 		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
 		{
 			this.provider = provider;
-			this.virtual_path = virtualPath;
 			units = new List <CodeCompileUnit> ();
 			temp_files = new TempFileCollection ();
 			referenced_assemblies = new List <string> ();

@@ -1488,7 +1488,6 @@ namespace System.Web.Compilation
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{			
 #if NET_2_0
-			Type origType = type;
 			bool wasNullable = false;
 			
 			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {

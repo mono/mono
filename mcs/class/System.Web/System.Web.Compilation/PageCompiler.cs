@@ -89,6 +89,7 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
+#if NET_2_0
 		void InternalCreatePageProperty (string retType, string name, string contextProperty)
 		{
 			CodeMemberProperty property = new CodeMemberProperty ();
@@ -111,7 +112,6 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (property);
 		}
 		
-#if NET_2_0
 		void CreateProfileProperty ()
 		{
 			string retType;

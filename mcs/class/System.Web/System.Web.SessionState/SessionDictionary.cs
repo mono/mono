@@ -35,8 +35,6 @@ namespace System.Web.SessionState {
 
 internal class SessionDictionary : NameObjectCollectionBase
 {
-	bool _dirty;
-	
 	public SessionDictionary ()
 	{
 	}
@@ -55,7 +53,6 @@ internal class SessionDictionary : NameObjectCollectionBase
 	
 	internal void Clear ()
 	{
-		_dirty = true;
 		lock (this)
 			BaseClear ();
 	}
@@ -73,14 +70,12 @@ internal class SessionDictionary : NameObjectCollectionBase
 	{
 		lock (this)
 			BaseRemove (s);
-		_dirty = true;
 	}
 
 	internal void RemoveAt (int index)
 	{
 		lock (this)
 			BaseRemoveAt (index);
-		_dirty = true;
 	}
 
 	internal void Serialize (BinaryWriter w)
@@ -133,8 +128,6 @@ internal class SessionDictionary : NameObjectCollectionBase
 					return; 
 				BaseSet (s, value);
 			}
-
-			_dirty = true;
 		}
 	}
 
@@ -149,14 +142,12 @@ internal class SessionDictionary : NameObjectCollectionBase
 		}
 		set {
 			lock (this)
-			{				 
+			{
 				object obj = BaseGet(index);
 				if ((obj == null) && (value == null))
-					return; 
+					return;
 				BaseSet (index, value);
 			}
-
-			_dirty = true;
 		}
 	}
 

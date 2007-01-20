@@ -108,7 +108,7 @@ namespace System.Web.Configuration {
 			
 			try {
 				t = Type.GetType (type_name, true);
-			} catch (Exception e) {
+			} catch {
 				throw new HttpException (String.Format ("Failed to load httpHandler type `{0}'", type_name));
 			}
 
@@ -163,13 +163,13 @@ namespace System.Web.Configuration {
 	
 	class HandlerFactoryConfiguration {
 		ArrayList handlers;
-		HandlerFactoryConfiguration parent;
+		//HandlerFactoryConfiguration parent;
 		int parent_items;
 
 		public HandlerFactoryConfiguration (HandlerFactoryConfiguration parent)
 		{
-			this.parent = parent;
-
+			//this.parent = parent;
+			
 			if (parent != null) {
 				handlers = new ArrayList (parent.handlers);
 				parent_items = handlers.Count;

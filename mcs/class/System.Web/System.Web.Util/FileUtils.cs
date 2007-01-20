@@ -57,7 +57,6 @@ namespace System.Web.Util
 			if (createFile == null)
 				return null;
 			string path = null;
-			bool done = false;
 			object ret = null;
 			int num;
 			

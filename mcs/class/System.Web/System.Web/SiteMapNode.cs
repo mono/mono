@@ -41,11 +41,18 @@ namespace System.Web {
 	
 		private SiteMapNode () {}
 		
-		public SiteMapNode (SiteMapProvider provider, string key) : this (provider, key, null, null, null, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url) : this (provider, key, url, null, null, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title) : this (provider, key, url, title, null, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description) : this (provider, key, url, title, description, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description, IList roles, NameValueCollection attributes, NameValueCollection explicitResourceKeys, string implicitResourceKey)
+		public SiteMapNode (SiteMapProvider provider, string key)
+			: this (provider, key, null, null, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url)
+			: this (provider, key, url, null, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title)
+			: this (provider, key, url, title, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description)
+			: this (provider, key, url, title, description, null, null, null, null) {}
+		
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description,
+				    IList roles, NameValueCollection attributes, NameValueCollection explicitResourceKeys,
+				    string implicitResourceKey)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ("provider");
@@ -187,16 +194,30 @@ namespace System.Web {
 			}
 		}
 		
-		[MonoTODO("Not implemented, always returns null")]
 		protected string GetExplicitResourceString (string attributeName, string defaultValue, bool throwIfNotFound)
 		{
-			return null;
+			if (attributeName == null)
+				throw new ArgumentNullException ("attributeName");
+			
+			if (resourceKeys != null){
+				string v = resourceKeys [attributeName];
+				if (v != null)
+					return v;
+			}
+
+			if (throwIfNotFound && defaultValue == null)
+				throw new InvalidOperationException ();
+
+			return defaultValue;
 		}
-		
-		[MonoTODO("Not implemented, always returns null")]
+
+		[MonoTODO("Currently returns the argument passed")]
 		protected string GetImplicitResourceString (string attributeName)
 		{
-			return null;
+			if (attributeName == null)
+				throw new ArgumentNullException ("attributeName");
+			
+			return attributeName;
 		}
 		
 		public virtual string this [string key]
@@ -328,7 +349,6 @@ namespace System.Web {
 			set { readOnly = value; }
 		}
 		
-		[MonoTODO ("Do somethig with this")]
 		public string ResourceKey {
 			get { return resourceKey; }
 			set { resourceKey = value; }

@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls {
 		const string PROVIDER_NAME = "System.Data.OleDb";
 		const string PROVIDER_STRING = "Microsoft.Jet.OLEDB.4.0";
 
-		string dataFile;
+		//string dataFile;
 		string connectionString;
 
 		public AccessDataSource () : base ()
@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls {
 		public AccessDataSource (string dataFile, string selectCommand) : 
 			base (String.Empty, selectCommand)
 		{
-			this.dataFile = dataFile;
+			//this.dataFile = dataFile;
 			this.ProviderName = PROVIDER_NAME;
 		}
 

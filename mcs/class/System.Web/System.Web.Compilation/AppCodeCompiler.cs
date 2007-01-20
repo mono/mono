@@ -540,14 +540,14 @@ namespace System.Web.Compilation
 			return true;
 		}
 
-		void PutCustomProfileInContext (HttpContext context, string assemblyName)
-		{
-			Type type = Type.GetType (String.Format ("ProfileCommon, {0}",
-								 Path.GetFileNameWithoutExtension (assemblyName)));
-			ProfileBase pb = Activator.CreateInstance (type) as ProfileBase;
-			if (pb != null)
-				context.Profile = pb;
-		}
+//		void PutCustomProfileInContext (HttpContext context, string assemblyName)
+//		{
+//			Type type = Type.GetType (String.Format ("ProfileCommon, {0}",
+//								 Path.GetFileNameWithoutExtension (assemblyName)));
+//			ProfileBase pb = Activator.CreateInstance (type) as ProfileBase;
+//			if (pb != null)
+//				context.Profile = pb;
+//		}
 		
 		public void Compile ()
 		{

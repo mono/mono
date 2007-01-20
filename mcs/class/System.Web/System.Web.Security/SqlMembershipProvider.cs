@@ -43,9 +43,6 @@ using System.Security.Cryptography;
 namespace System.Web.Security {
 	public class SqlMembershipProvider : MembershipProvider
 	{
-		/* can this be done just by setting the datetime fields to 0? */
-		DateTime DefaultDateTime = new DateTime (1754, 1, 1).ToUniversalTime ();
-
 		bool enablePasswordReset;
 		bool enablePasswordRetrieval;
 		int maxInvalidPasswordAttempts;
@@ -397,7 +394,8 @@ namespace System.Web.Security {
 				AddParameter (command, "PageSize", pageSize);
 				AddParameter (command, "EmailToMatch", emailToMatch);
 				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				// return value
+				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -416,8 +414,6 @@ namespace System.Web.Security {
 			if (pageIndex * pageSize + pageSize - 1 > Int32.MaxValue)
 				throw new ArgumentException ("pageIndex and pageSize are too large");
 
-			string commandText;
-
 			using (DbConnection connection = CreateConnection ()) {
 
 				DbCommand command = factory.CreateCommand ();
@@ -429,7 +425,8 @@ namespace System.Web.Security {
 				AddParameter (command, "PageSize", pageSize);
 				AddParameter (command, "UserNameToMatch", nameToMatch);
 				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				// return value
+				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -446,8 +443,6 @@ namespace System.Web.Security {
 			if (pageIndex * pageSize + pageSize - 1 > Int32.MaxValue)
 				throw new ArgumentException ("pageIndex and pageSize are too large");
 
-			string commandText;
-
 			using (DbConnection connection = CreateConnection ()) {
 				DbCommand command = factory.CreateCommand ();
 				command.Connection = connection;
@@ -457,7 +452,8 @@ namespace System.Web.Security {
 				AddParameter (command, "ApplicationName", ApplicationName);
 				AddParameter (command, "PageIndex", pageIndex);
 				AddParameter (command, "PageSize", pageSize);
-				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				// return value
+				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -476,8 +472,7 @@ namespace System.Web.Security {
 
 				totalRecords = Convert.ToInt32 (command.Parameters ["ReturnValue"].Value);
 				return users;
-			}
-			catch (Exception e) {
+			} catch (Exception) {
 				totalRecords = 0;
 				return null; /* should we let the exception through? */
 			}
@@ -596,8 +591,7 @@ namespace System.Web.Security {
 						return GetUserFromReader (reader, username, userId);
 					}
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception) {
 				return null; /* should we let the exception through? */
 			}
 			finally {
@@ -987,7 +981,8 @@ namespace System.Web.Security {
 				AddParameter (command, "UserName", username);
 				AddParameter (command, "UpdateLastLoginActivityDate", false);
 				AddParameter (command, "CurrentTimeUtc", DateTime.Now);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				// return value
+				AddParameter (command, null, ParameterDirection.ReturnValue, null);
 
 				DbDataReader reader = command.ExecuteReader ();
 				if (!reader.Read ())

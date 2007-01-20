@@ -57,7 +57,10 @@ namespace System.Web.Hosting {
 			return r;
 		}
 
+#if NET_2_0
 		static object create_dir = new object ();
+#endif
+		
 		static void CreateDirectory (string directory)
 		{
 #if NET_2_0

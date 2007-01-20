@@ -83,9 +83,6 @@ namespace System.Web {
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
 		
-		// Watch this thing out when getting an instance
-		IHttpHandler custom_application;
-
 		bool IsEventHandler (MethodInfo m)
 		{
 			int pos = m.Name.IndexOf ('_');
@@ -340,11 +337,6 @@ namespace System.Web {
 				return theFactory.app_state;
 			}
 #endif
-		}
-
-		public static void SetCustomApplication (IHttpHandler customApplication)
-		{
-			theFactory.custom_application = customApplication;
 		}
 
 		internal static Type AppType {
