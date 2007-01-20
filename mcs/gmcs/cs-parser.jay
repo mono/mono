@@ -1365,7 +1365,19 @@ fixed_parameter
 
 opt_parameter_modifier
 	: /* empty */		{ $$ = Parameter.Modifier.NONE; }
-	| parameter_modifier
+	| parameter_modifiers
+	;
+
+parameter_modifiers
+	: parameter_modifier
+	  {
+		$$ = $1;
+	  }
+	| parameter_modifiers parameter_modifier
+	  {
+		Report.Error (1108, lexer.Location, "A parameter cannot have specified more than one modifier");
+		$$ = $1;
+	  }
 	;
 
 parameter_modifier
@@ -1378,7 +1390,6 @@ parameter_array
 	  { 
 		LocatedToken lt = (LocatedToken) $4;
 		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
-		note ("type must be a single-dimension array type"); 
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
 	  {
