@@ -24,8 +24,6 @@
 //
 //
 
-// COMPLETE
-
 // NOTE: We made a concious decision to have only a single 'screen'
 // due to the differences in platforms. On Win32 we could gather
 // all information, but not for X11 (and possibly Mac). So for now
