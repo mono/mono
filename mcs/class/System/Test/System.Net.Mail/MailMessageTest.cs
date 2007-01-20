@@ -19,6 +19,7 @@ namespace MonoTests.System.Net.Mail
 	public class MailMessageTest
 	{
 		MailMessage msg;
+		MailMessage msg2;
 		
 		[SetUp]
 		public void GetReady ()
@@ -29,6 +30,16 @@ namespace MonoTests.System.Net.Mail
 			//msg.AlternateViews.Add (AlternateView.CreateAlternateViewFromString ("<html><body>hello</body></html>", "text/html"));
 			//Attachment a = Attachment.CreateAttachmentFromString ("blah blah", "text/plain");
 			//msg.Attachments.Add (a);
+
+			msg2 = new MailMessage ("from@example.com", "r1@t1.com, r2@t1.com");
+		}
+
+		[Test]
+		public void TestRecipients ()
+		{
+			Assert.AreEqual (msg2.To.Count,  2);
+			Assert.AreEqual (msg2.To[0].Address, "r1@t1.com");
+			Assert.AreEqual (msg2.To[1].Address, "r2@t1.com");
 		}
 		
 		[Test]

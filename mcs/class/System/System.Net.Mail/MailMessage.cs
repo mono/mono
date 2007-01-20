@@ -85,19 +85,27 @@ namespace System.Net.Mail {
 
 		public MailMessage (string from, string to) : this ()
 		{
-			if (from == null || to == null)
-				throw new ArgumentNullException ();
-
+			if (from == null || from == String.Empty)
+				throw new ArgumentNullException ("from");
+			if (to == null || to == String.Empty)
+				throw new ArgumentNullException ("to");
+			
 			this.from = new MailAddress (from);
-			this.to.Add (new MailAddress (to));
+			foreach (string recipient in to.Split (new char [] {','}))
+				this.to.Add (new MailAddress (recipient.Trim ()));
 		}
 
 		public MailMessage (string from, string to, string subject, string body) : this ()
 		{
-			if (from == null || to == null)
-				throw new ArgumentNullException ();
+			if (from == null || from == String.Empty)
+				throw new ArgumentNullException ("from");
+			if (to == null || to == String.Empty)
+				throw new ArgumentNullException ("to");
+			
 			this.from = new MailAddress (from);
-			this.to.Add (new MailAddress (to));
+			foreach (string recipient in to.Split (new char [] {','}))
+				this.to.Add (new MailAddress (recipient.Trim ()));
+
 			Body = body;
 			Subject = subject;
 		}

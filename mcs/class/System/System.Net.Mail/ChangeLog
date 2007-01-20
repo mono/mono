@@ -1,3 +1,8 @@
+2007-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* MailMessage.cs: Add suport to the MailMessage constructor to
+	take a comma-separated list of addresses (Bug #80548). 
+
 2006-12-12  Miguel de Icaza  <miguel@novell.com>
 
 	* MailMessage.cs: Fix this code so that it correctly reports
