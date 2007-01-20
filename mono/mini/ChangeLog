@@ -1,5 +1,7 @@
 2007-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_regstate2_alloc_int): Optimize this using bsfq on amd64.
+
 	* genmdesc.c genmdesc.pl mini.h: Remove some unused fields from the mdesc tables
 	to reduce their size.
 
