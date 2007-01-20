@@ -87,11 +87,18 @@ namespace System.Web {
 		}
 
 #if NET_2_0
+		public void Execute (string path, bool preserveForm)
+		{
+			Execute (path, null, preserveForm);
+		}
+#endif
+		
+#if NET_2_0
 		public
 #else
 		internal
 #endif
-		void Execute (string path, TextWriter writer, bool preserveQuery)
+		void Execute (string path, TextWriter writer, bool preserveForm)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
@@ -105,13 +112,13 @@ namespace System.Web {
 			if (qmark != -1) {
 				request.QueryStringRaw = path.Substring (qmark + 1);
 				path = path.Substring (0, qmark);
-			} else if (!preserveQuery) {
+			} else if (!preserveForm) {
 				request.QueryStringRaw = "";
 			}
 
 			HttpResponse response = context.Response;
 			WebROCollection oldForm = null;
-			if (!preserveQuery) {
+			if (!preserveForm) {
 				oldForm = request.Form as WebROCollection;
 				request.SetForm (new WebROCollection ());
 			}
@@ -144,7 +151,7 @@ namespace System.Web {
 					request.QueryStringRaw = oldQuery; // which is added here.
 				}
 				response.SetTextWriter (previous);
-				if (!preserveQuery)
+				if (!preserveForm)
 					request.SetForm (oldForm);
 #if NET_2_0
 				context.PopHandler ();
