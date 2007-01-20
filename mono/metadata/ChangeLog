@@ -1,3 +1,10 @@
+2007-01-19  Miguel de Icaza  <miguel@novell.com>
+
+	*  socket-io.c (convert_sockopt_level_and_name): return -2 as a
+	value that means that the value is not supported, but that we
+	should not return a failure, but instead report this as a
+	successful operation.
+
 2007-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	Fix tests/bug79956.2.il
