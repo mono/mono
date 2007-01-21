@@ -1,3 +1,7 @@
+2007-01-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.VisualBasic.targets: Added.
+
 2007-01-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.Common.targets: Added $(ProjectDir).
