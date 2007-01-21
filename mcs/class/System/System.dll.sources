@@ -169,6 +169,7 @@ System.ComponentModel/BaseNumberConverter.cs
 System.ComponentModel/BindableAttribute.cs
 System.ComponentModel/BindableSupport.cs
 System.ComponentModel/BindingDirection.cs
+System.ComponentModel/BindingList.cs
 System.ComponentModel/BooleanConverter.cs
 System.ComponentModel/BrowsableAttribute.cs
 System.ComponentModel/ByteConverter.cs
