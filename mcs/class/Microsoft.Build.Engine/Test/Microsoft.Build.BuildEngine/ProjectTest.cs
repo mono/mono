@@ -197,6 +197,57 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void TestAddNewItem2 ()
+		{
+			Engine engine;
+			Project project;
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			BuildItem item = project.AddNewItem ("A", "a;b;c");
+			Assert.AreEqual ("a;b;c", item.Include, "A1");
+			Assert.AreEqual ("a", item.FinalItemSpec, "A2");
+
+			Assert.AreEqual (3, project.EvaluatedItems.Count, "A3");
+		}
+
+		[Test]
+		public void TestAddNewItem3 ()
+		{
+			Engine engine;
+			Project project;
+			BuildItemGroup [] groups = new BuildItemGroup [4];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup />
+					<ItemGroup>
+						<A Include='a'/>
+					</ItemGroup>
+					<ItemGroup>
+						<B Include='a'/>
+					</ItemGroup>
+					<ItemGroup>
+						<B Include='a'/>
+					</ItemGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItem item = project.AddNewItem ("B", "b");
+
+			project.ItemGroups.CopyTo (groups, 0);
+			Assert.AreEqual (0, groups [0].Count, "A1");
+			Assert.AreEqual (1, groups [1].Count, "A2");
+			Assert.AreEqual (1, groups [2].Count, "A3");
+			Assert.AreEqual (2, groups [3].Count, "A4");
+		}
+		[Test]
 		public void TestAddNewItemGroup ()
 		{
 			Engine engine;
