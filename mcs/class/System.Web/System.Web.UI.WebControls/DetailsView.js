@@ -1,13 +1,17 @@
 function DetailsView_ClientEvent (ctrlId, evnt)
 {
-	var gridData = eval (ctrlId + "_data");
+	var gridData = getDetails (ctrlId);
+	if (!gridData)
+	    return null;
 	var clientData = gridData.pageIndex + '|' + evnt;
 	WebForm_DoCallback (gridData.uid, clientData, DetailsView_ClientRender, ctrlId, DetailsView_ClientRender_Error);
 }
 
 function DetailsView_ClientRender (data, ctx)
 {
-	var gridData = eval (ctx + "_data");
+	var gridData = getDetails (ctx);
+	if (!gridData)
+	    return;
 	var grid = document.getElementById (ctx + "_div");
 	var i = data.indexOf ("|");
 	gridData.pageIndex = parseInt (data.substring (0, i));
@@ -20,3 +24,6 @@ function DetailsView_ClientRender (data, ctx)
 function DetailsView_ClientRender_Error (data, ctx)
 {
 }
+
+function getDetails (detailsId) { try { return eval (detailsId + "_data"); } catch(e) { return null; } }
+

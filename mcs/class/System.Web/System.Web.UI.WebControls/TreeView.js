@@ -79,7 +79,7 @@ function TreeView_ErrorCallback (data, ids)
 	node.hasError = true;
 }
 
-function getTree (treeId) { return eval (treeId + "_data"); }
+function getTree (treeId) { try { return eval (treeId + "_data"); } catch(e) { return null; } }
 function getNodeLink (node) { return node.childNodes[node.childNodes.length - 1]; }
 
 function TreeView_HoverNode (treeId, node)

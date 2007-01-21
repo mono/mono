@@ -203,7 +203,7 @@ function Menu_Resize (subm, menuId, itemId)
 	btn.style.display = displayScroll;
 }
 
-function getMenu (menuId) { return eval (menuId + "_data"); }
+function getMenu (menuId) { try { return eval (menuId + "_data"); } catch(e) { return null; } }
 function getSubMenu (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "s"); }
 function getMenuItem (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "i"); }
 function getMenuItemLink (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "l"); }
