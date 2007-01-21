@@ -1004,6 +1004,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
+		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
@@ -1029,7 +1030,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteExpandoAttributes (writer);
 #endif
 		scriptManager.WriteHiddenFields (writer);
-		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
 		postBackScriptRendered = false;
