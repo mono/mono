@@ -28,6 +28,8 @@ using System.Web.Util;
 using System.IO;
 using vmw.@internal.io;
 using vmw.common;
+using System.ComponentModel;
+using System.Threading;
 
 namespace System.Web.J2EE
 {
@@ -87,20 +89,186 @@ namespace System.Web.J2EE
 	}
 }
 
-#if !CODEDOM_SUPPORT
-//stubs for CodeDom symbols
-namespace System.CodeDom
+#region FileSystemWatcher Stub
+
+namespace System.IO
 {
-	public class CodeObject
+	[DefaultEvent ("Changed")]
+#if NET_2_0
+	[IODescription ("")]
+#endif
+	public class FileSystemWatcher : Component, ISupportInitialize
 	{
-		protected CodeObject () { }
+		public FileSystemWatcher ()
+			: this (String.Empty) {
+		}
 
-		public System.Collections.IDictionary UserData { get { throw new NotSupportedException (); } }
-	}
+		public FileSystemWatcher (string path)
+			: this (path, "*.*") {
+		}
 
-	public class CodeExpression : CodeObject
-	{
-		protected CodeExpression () { }
+		public FileSystemWatcher (string path, string filter) {
+		}
+
+		#region Properties
+
+		[DefaultValue (false)]
+		[IODescription ("Flag to indicate if this instance is active")]
+		public bool EnableRaisingEvents {
+			get { return false; }
+			set { }
+		}
+
+		[DefaultValue ("*.*")]
+		[IODescription ("File name filter pattern")]
+		[RecommendedAsConfigurable (true)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
+		public string Filter {
+			get { return "*.*"; }
+			set { }
+		}
+
+		[DefaultValue (false)]
+		[IODescription ("Flag to indicate we want to watch subdirectories")]
+		public bool IncludeSubdirectories {
+			get { return false; }
+			set { }
+		}
+
+		[Browsable (false)]
+		[DefaultValue (8192)]
+		public int InternalBufferSize {
+			get { return 8192; }
+			set { }
+		}
+
+		[DefaultValue (NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite)]
+		[IODescription ("Flag to indicate which change event we want to monitor")]
+		public NotifyFilters NotifyFilter {
+			get { return NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite; }
+			set { }
+		}
+
+		[DefaultValue ("")]
+		[IODescription ("The directory to monitor")]
+		[RecommendedAsConfigurable (true)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
+		[Editor ("System.Diagnostics.Design.FSWPathEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public string Path {
+			get { return String.Empty; }
+			set { }
+		}
+
+		[DefaultValue (null)]
+		[IODescription ("The object used to marshal the event handler calls resulting from a directory change")]
+#if NET_2_0
+		[Browsable (false)]
+#endif
+		public ISynchronizeInvoke SynchronizingObject {
+			get { return null; }
+			set { }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		protected override void Dispose (bool disposing) {
+			base.Dispose (disposing);
+		}
+
+		enum EventType
+		{
+			FileSystemEvent,
+			ErrorEvent,
+			RenameEvent
+		}
+
+		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype) {
+			if (ev == null)
+				return;
+
+			if (SynchronizingObject == null) {
+				Delegate [] delegates = ev.GetInvocationList ();
+				if (evtype == EventType.RenameEvent) {
+					foreach (RenamedEventHandler d in delegates) {
+						d.BeginInvoke (this, (RenamedEventArgs) arg, null, null);
+					}
+				}
+				else if (evtype == EventType.ErrorEvent) {
+					foreach (ErrorEventHandler d in delegates) {
+						d.BeginInvoke (this, (ErrorEventArgs) arg, null, null);
+					}
+				}
+				else {
+					foreach (FileSystemEventHandler d in delegates) {
+						d.BeginInvoke (this, (FileSystemEventArgs) arg, null, null);
+					}
+				}
+				return;
+			}
+
+			SynchronizingObject.BeginInvoke (ev, new object [] { this, arg });
+		}
+
+		protected void OnChanged (FileSystemEventArgs e) {
+			RaiseEvent (Changed, e, EventType.FileSystemEvent);
+		}
+
+		protected void OnCreated (FileSystemEventArgs e) {
+			RaiseEvent (Created, e, EventType.FileSystemEvent);
+		}
+
+		protected void OnDeleted (FileSystemEventArgs e) {
+			RaiseEvent (Deleted, e, EventType.FileSystemEvent);
+		}
+
+		protected void OnError (ErrorEventArgs e) {
+			RaiseEvent (Error, e, EventType.ErrorEvent);
+		}
+
+		protected void OnRenamed (RenamedEventArgs e) {
+			RaiseEvent (Renamed, e, EventType.RenameEvent);
+		}
+
+		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType) {
+			return WaitForChanged (changeType, Timeout.Infinite);
+		}
+
+		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout) {
+			return new WaitForChangedResult ();
+		}
+
+		#endregion
+
+		#region Events and Delegates
+
+		[IODescription ("Occurs when a file/directory change matches the filter")]
+		public event FileSystemEventHandler Changed;
+
+		[IODescription ("Occurs when a file/directory creation matches the filter")]
+		public event FileSystemEventHandler Created;
+
+		[IODescription ("Occurs when a file/directory deletion matches the filter")]
+		public event FileSystemEventHandler Deleted;
+
+		[Browsable (false)]
+		public event ErrorEventHandler Error;
+
+		[IODescription ("Occurs when a file/directory rename matches the filter")]
+		public event RenamedEventHandler Renamed;
+
+		#endregion // Events and Delegates
+
+		#region ISupportInitialize Members
+
+		public void BeginInit () {
+		}
+
+		public void EndInit () {
+		}
+
+		#endregion
 	}
 }
-#endif
+#endregion

@@ -76,10 +76,8 @@ namespace System.Web {
 		Type app_type;
 		HttpApplicationState app_state;
 		Hashtable app_event_handlers;
-#if !TARGET_JVM
 		static ArrayList watchers = new ArrayList();
 		static object watchers_lock = new object();
-#endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
 		
@@ -201,7 +199,6 @@ namespace System.Web {
 			theFactory.FireOnAppEnd ();
 		}
 
-#if !TARGET_JVM
 		static FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd, RenamedEventHandler reh)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
@@ -218,7 +215,6 @@ namespace System.Web {
 
 			return watcher;
 		}
-#endif
 
 		internal static void AttachEvents (HttpApplication app)
 		{
@@ -394,7 +390,6 @@ namespace System.Web {
 						app_state = new HttpApplicationState ();
 					}
 
-#if !TARGET_JVM
 					app_file = "Global.asax";
 					if (!File.Exists(Path.Combine(physical_app_path, app_file)))
 						app_file =  "global.asax";
@@ -407,14 +402,15 @@ namespace System.Web {
 						WatchLocationForRestart("web.config");
 					else if (File.Exists(Path.Combine(physical_app_path, "Web.Config")))
 						WatchLocationForRestart("Web.Config");
-#endif
 					needs_init = false;
 #if NET_2_0
 				} catch (Exception) {
+#if !TARGET_J2EE
 					if (BuildManager.CodeAssemblies != null)
 						BuildManager.CodeAssemblies.Clear ();
 					if (BuildManager.TopLevelAssemblies != null)
 						BuildManager.TopLevelAssemblies.Clear ();
+#endif
 					if (WebConfigurationManager.ExtraAssemblies != null)
 						WebConfigurationManager.ExtraAssemblies.Clear ();
 					throw;
@@ -443,13 +439,11 @@ namespace System.Web {
 				factory.InitType (context);
 				lock (factory) {
 					if (factory.app_start_needed) {
-#if !TARGET_JVM
 						WatchLocationForRestart("bin", "*.dll");
-#if NET_2_0 && !TARGET_J2EE
+#if NET_2_0
 			                        WatchLocationForRestart("App_Code", "");
 			                        WatchLocationForRestart("App_Browsers", "");
 			                        WatchLocationForRestart("App_GlobalResources", "");
-#endif
 #endif
 			                        app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;

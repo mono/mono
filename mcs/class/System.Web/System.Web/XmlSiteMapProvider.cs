@@ -47,9 +47,7 @@ namespace System.Web
 		bool building;
 		string file;
 		SiteMapNode root = null;
-#if !TARGET_JVM // Java platform does not support file notifications
 		FileSystemWatcher watcher;
-#endif
 
 		protected internal override void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
@@ -168,10 +166,8 @@ namespace System.Web
 
 		protected virtual void Dispose (bool disposing)
 		{
-#if !TARGET_JVM // Java platform does not support file notifications
 			if (disposing)
 				watcher.Dispose ();
-#endif
 		}
 
 		public void Dispose ()
@@ -203,7 +199,6 @@ namespace System.Web
 			else
 				file = UrlUtils.ResolvePhysicalPathFromAppAbsolute (file);
 
-#if !TARGET_JVM // Java platform does not support file notifications
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();
 				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
@@ -211,7 +206,6 @@ namespace System.Web
 				watcher.Changed += new FileSystemEventHandler (OnFileChanged);
 				watcher.EnableRaisingEvents = true;
 			}
-#endif
 		}
 
 		protected override void RemoveNode (SiteMapNode node)
@@ -224,12 +218,10 @@ namespace System.Web
 		{
 			throw new NotImplementedException ();
 		}
-#if !TARGET_JVM
 		void OnFileChanged (object sender, FileSystemEventArgs args)
 		{
 			Clear ();
 		}
-#endif
 		public override SiteMapNode RootNode {
 			get {
 				BuildSiteMap ();

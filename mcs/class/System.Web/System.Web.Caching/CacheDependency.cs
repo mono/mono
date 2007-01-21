@@ -50,9 +50,7 @@ namespace System.Web.Caching
 		CacheDependency dependency;
 		DateTime start;
 		Cache cache;
-#if !TARGET_JVM
 		FileSystemWatcher[] watchers;
-#endif
 		bool hasChanged;
 #if NET_2_0
 		bool used;
@@ -96,7 +94,6 @@ namespace System.Web.Caching
 		
 		public CacheDependency (string[] filenames, string[] cachekeys, CacheDependency dependency, DateTime start)
 		{
-#if !TARGET_JVM
 			if (filenames != null) {
 				watchers = new FileSystemWatcher [filenames.Length];
 				for (int n=0; n<filenames.Length; n++) {
@@ -119,7 +116,6 @@ namespace System.Web.Caching
 					watchers [n] = watcher;
 				}
 			}
-#endif
 			this.cachekeys = cachekeys;
 			this.dependency = dependency;
 			if (dependency != null)
@@ -131,14 +127,12 @@ namespace System.Web.Caching
 		public virtual string GetUniqueID ()
 		{
 			StringBuilder sb = new StringBuilder ();
-#if !TARGET_JVM
 			lock (locker) {
 				if (watchers != null)
 					foreach (FileSystemWatcher fsw in watchers)
 						if (fsw != null && fsw.Path != null && fsw.Path.Length != 0)
 							sb.AppendFormat ("_{0}", fsw.Path);
 			}
-#endif
 
 			if (cachekeys != null)
 				foreach (string key in cachekeys)
@@ -147,7 +141,6 @@ namespace System.Web.Caching
 		}
 #endif
 		
-#if !TARGET_JVM
 		void OnChanged (object sender, FileSystemEventArgs args)
 		{
 			if (DateTime.Now < start)
@@ -170,11 +163,6 @@ namespace System.Web.Caching
 				watchers = null;
 			}
 		}
-#else
-		void DisposeWatchers ()
-		{
-		}
-#endif
 		public void Dispose ()
 		{
 			DisposeWatchers ();
