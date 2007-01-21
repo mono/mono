@@ -2746,7 +2746,9 @@ namespace MonoTests.System.Data
 		#region Read/Write XML Tests
 
 		[Test]
-		//[Category ("NotWorking")]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void ReadXmlSchema () {
 			DataTable Table = new DataTable ();
 			Table.ReadXmlSchema ("Test/System.Data/own_schema1.xsd");
@@ -3621,6 +3623,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema_Hierarchy () {
 			DataSet ds = new DataSet ();
 			DataTable table1 = new DataTable ();
@@ -3650,7 +3655,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		//[Category ("NotWorking")]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		// WriteXmlSchema doesn't have overload wityh 2 parameters in System.Data
 		// and is commented-out TWICE below
 		public void ReadWriteXmlSchema()
@@ -3762,7 +3769,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		//[Category ("NotWorking")]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void ReadWriteXmlSchema_IgnoreSchema () {
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/store.xsd");

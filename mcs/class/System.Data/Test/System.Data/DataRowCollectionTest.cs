@@ -400,6 +400,9 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7168")]
+#endif
 		public void CopyTo ()
 		{
 			_tbl.Columns.Add ();

@@ -173,6 +173,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7169")]
+#endif
 		public void OwnWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ("test_dataset");
