@@ -1,5 +1,14 @@
 2007-01-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_allocate_stack_slots_full): Allocate memory from the cfg mempool.
+	Share stack slots for scalar types. Avoid expensive g_list_free () calls.
+
+	* mini-x86.c (mono_arch_allocate_vars): Don't free the result of allocate_stack_slots_full.
+
+	* mini-amd64.c mini-ia64.c mini-alpha.c: Ditto.	
+
+	* mini.h (MonoJitStats): Add a new JIT statistics: locals_stack_size.
+	
 	* inssel.brg: Fix a warning.
 
 	* mini.h (MonoBasicBlock): Make bb->dominated a GSList.
