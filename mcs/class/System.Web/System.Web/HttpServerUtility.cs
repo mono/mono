@@ -213,7 +213,59 @@ namespace System.Web {
 		[MonoTODO ("Not implemented")]
 		public void Transfer (IHttpHandler handler, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
+
+			// TODO: see the MS doc and search for "enableViewStateMac": this method is not
+			// allowed for pages when preserveForm is true and the page IsCallback property
+			// is true.
+
+			Execute (handler, null, preserveForm);
+			context.Response.End ();
+		}
+
+		public void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm)
+		{
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
+
+			HttpRequest request = context.Request;
+			string oldQuery = request.QueryStringRaw;
+			if (!preserveForm) {
+				request.QueryStringRaw = "";
+			}
+
+			HttpResponse response = context.Response;
+			WebROCollection oldForm = null;
+			if (!preserveForm) {
+				oldForm = request.Form as WebROCollection;
+				request.SetForm (new WebROCollection ());
+			}
+
+			TextWriter output = writer;
+			if (output == null)
+			 	output = response.Output;
+
+			TextWriter previous = null;
+			try {
+				previous = response.SetTextWriter (output);
+				if (!(handler is IHttpAsyncHandler)) {
+					handler.ProcessRequest (context);
+				} else {
+					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;
+					IAsyncResult ar = asyncHandler.BeginProcessRequest (context, null, null);
+					ar.AsyncWaitHandle.WaitOne ();
+					asyncHandler.EndProcessRequest (ar);
+				}
+			} finally {
+				if (oldQuery != null && oldQuery != "" && oldQuery != request.QueryStringRaw) {
+					oldQuery = oldQuery.Substring (1); // Ignore initial '?'
+					request.QueryStringRaw = oldQuery; // which is added here.
+				}
+				response.SetTextWriter (previous);
+				if (!preserveForm)
+					request.SetForm (oldForm);
+			}
 		}
 
 		public static byte[] UrlTokenDecode (string input)

@@ -1,3 +1,12 @@
+2007-01-21 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* HttpServerUtility.cs: implement Execute/Transfer overloads that take
+	an IHttpHandler. Still missing the documented check for page IsCallback.
+	Also, on MS when i derive from Page for my IHttpHandler, it works fine,
+	but if I just implement IHttpHandler, an exception is thrown. This needs
+	to be researched but, by now, the IHttpHandler version works on mono
+	and fails on MS.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* SiteMapNode.cs (GetExplicitResourceString): implement.
