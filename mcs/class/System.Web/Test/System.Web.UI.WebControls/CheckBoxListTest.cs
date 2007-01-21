@@ -520,6 +520,9 @@ namespace MonoTests.System.Web.UI.WebControls {
             }
         }
         [Test]
+#if TARGET_JVM
+	[Ignore ("TD #7164")]
+#endif
         public void VerifyMultiSelectTest()
         {
             TestCheckBoxList list = new TestCheckBoxList();
