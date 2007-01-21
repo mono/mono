@@ -1650,8 +1650,8 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE");
-			ec.ig.Emit (OpCodes.Pop);
+			//ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE");
+			//ec.ig.Emit (OpCodes.Pop);
 
 			//
 			// Now emit the delegate creation.
@@ -1673,8 +1673,8 @@ namespace Mono.CSharp {
 			delegate_method = am.GetMethodBuilder (ec);
 			base.Emit (ec);
 
-			ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE DONE");
-			ec.ig.Emit (OpCodes.Pop);
+			//ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE DONE");
+			//ec.ig.Emit (OpCodes.Pop);
 
 			Report.Debug (128, "EMIT ANONYMOUS DELEGATE DONE", this, am, am.Scope, loc);
 		}
