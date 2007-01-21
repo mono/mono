@@ -574,7 +574,7 @@ namespace Mono.Tools {
 
 		private static bool IsSwitch (string arg)
 		{
-			return (arg [0] == '-' || arg [0] == '/');
+			return (arg [0] == '-' || (arg [0] == '/' && !arg.EndsWith(".dll") && arg.IndexOf('/', 1) < 0 ) );
 		}
 
 		private static Command GetCommand (string arg)

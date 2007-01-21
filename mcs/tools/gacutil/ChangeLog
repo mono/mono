@@ -1,3 +1,7 @@
+2007-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+
+	* driver.cs: accept absolute *nix paths for library names without getting them confused with options
+
 2006-07-24  Alp Toker  <alp@atoker.com>
 
 	* driver.cs: Minor typo fixes in comments and informational output.
