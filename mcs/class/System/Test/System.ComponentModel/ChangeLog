@@ -1,3 +1,7 @@
+2007-01-20  Chris Toshok  <toshok@ximian.com>
+
+	* BindingListTest.cs: new tests for BindingList<T>
+
 2007-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TypeDescriptorTests.cs: Fix TestGetAttributes t16 as there can be

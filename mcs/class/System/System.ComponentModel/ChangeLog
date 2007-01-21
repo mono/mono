@@ -1,3 +1,7 @@
+2007-01-20  Chris Toshok  <toshok@ximian.com>
+
+	* BindingList.cs: new class.
+
 2007-01-13  Miguel de Icaza  <miguel@novell.com>
 
 	* DataObjectFieldAttribute.cs: Removed some code I left from the
