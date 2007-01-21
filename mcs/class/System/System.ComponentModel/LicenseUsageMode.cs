@@ -32,7 +32,9 @@ using System.Reflection;
 
 namespace System.ComponentModel
 {
+#if !NET_2_0
 	[Serializable]
+#endif
         public enum LicenseUsageMode
 	{
 		Designtime = 1,

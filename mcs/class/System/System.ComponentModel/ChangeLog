@@ -1,5 +1,33 @@
 2007-01-20  Chris Toshok  <toshok@ximian.com>
 
+	* InheritanceLevel.cs: 2.0 class-status work.
+
+	* ListSortDirection.cs: same.
+
+	* BindableSupport.cs: same.
+
+	* SyntaxCheck.cs: same.
+
+	* CancelEventHandler.cs: same.
+
+	* ListChangedEventHandler.cs: same.
+
+	* SettingsBindableAttribute.cs: same.
+
+	* ToolboxItemFilterType.cs: same.
+
+	* PropertyChangedEventHandler.cs: same.
+
+	* MarshalByValueComponent.cs: same.
+
+	* LicenseUsageMode.cs: same.
+
+	* RefreshProperties.cs: same.
+
+	* RecommendedAsConfigurableAttribute.cs: same.
+
+2007-01-20  Chris Toshok  <toshok@ximian.com>
+
 	* BindingList.cs: new class.
 
 2007-01-13  Miguel de Icaza  <miguel@novell.com>

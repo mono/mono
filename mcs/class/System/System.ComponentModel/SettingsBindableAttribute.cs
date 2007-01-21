@@ -32,12 +32,11 @@
 
 namespace System.ComponentModel
 {
+	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class SettingsBindableAttribute : Attribute
 	{
-		public static SettingsBindableAttribute Yes =
-			new SettingsBindableAttribute (true);
-		public static SettingsBindableAttribute No =
-			new SettingsBindableAttribute (false);
+		public static readonly SettingsBindableAttribute Yes = new SettingsBindableAttribute (true);
+		public static readonly SettingsBindableAttribute No = new SettingsBindableAttribute (false);
 
 		public SettingsBindableAttribute (bool bindable)
 		{

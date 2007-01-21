@@ -33,6 +33,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
@@ -41,6 +42,9 @@ namespace System.ComponentModel
 	/// </summary>
 	[DesignerCategory ("Component"), TypeConverter (typeof (ComponentConverter))]
     	[Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, " + Consts.AssemblySystem_Design, typeof (IRootDesigner))]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class MarshalByValueComponent : IComponent, IDisposable, IServiceProvider
 	{
 		private EventHandlerList eventList;

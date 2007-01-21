@@ -35,6 +35,9 @@ using System;
 namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.Property)]
+#if NET_2_0
+	[Obsolete ("Use SettingsBindableAttribute instead of RecommendedAsConfigurableAttribute")]
+#endif
 	public class RecommendedAsConfigurableAttribute : Attribute {
 
 		#region Fields

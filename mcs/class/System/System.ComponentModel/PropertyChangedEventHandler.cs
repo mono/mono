@@ -30,7 +30,9 @@ using System;
 
 namespace System.ComponentModel {
 
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void PropertyChangedEventHandler( object sender, PropertyChangedEventArgs e );
 }
 

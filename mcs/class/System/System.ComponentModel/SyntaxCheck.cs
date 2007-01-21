@@ -32,7 +32,9 @@ using System.IO;
 
 namespace System.ComponentModel
 {
-	// LAMESPEC should be sealed or event internal?
+#if NET_2_0
+	sealed
+#endif
 	public class SyntaxCheck
 	{
 		private SyntaxCheck ()

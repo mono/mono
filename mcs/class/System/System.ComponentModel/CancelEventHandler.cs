@@ -31,7 +31,9 @@ using System;
 
 namespace System.ComponentModel {
 
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void CancelEventHandler( object sender, CancelEventArgs e );
 }
 

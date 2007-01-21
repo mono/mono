@@ -32,7 +32,9 @@
 
 namespace System.ComponentModel
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum BindingDirection {
 		OneWay,
 		TwoWay
