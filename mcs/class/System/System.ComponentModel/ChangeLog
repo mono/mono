@@ -1,3 +1,8 @@
+2007-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* RecommendedAsConfigurableAttribute.cs: Make this non-obsolete to fix
+	the 2.0 build, since System.ServiceProcess.ServiceController uses it.
+
 2007-01-20  Chris Toshok  <toshok@ximian.com>
 
 	* InheritanceLevel.cs: 2.0 class-status work.
