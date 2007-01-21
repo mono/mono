@@ -68,6 +68,7 @@ namespace Microsoft.Build.BuildEngine {
 				XmlElement xe = (XmlElement) xn;
 				BuildItem bi = new BuildItem (xe, this);
 				buildItems.Add (bi);
+				project.LastItemGroupContaining [bi.Name] = this;
 			}
 		}
 

@@ -1,3 +1,10 @@
+2007-01-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemGroup.cs: Store information saying what is the last item
+	group that contains build item name.
+
+	* Project.cs (Build): Pass empty array (build default targets).
+
 2007-01-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Token.cs: Commented Transform and LiteralSubExpression and added

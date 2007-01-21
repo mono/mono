@@ -59,6 +59,7 @@ namespace Microsoft.Build.BuildEngine {
 		BuildItemGroupCollection	itemGroups;
 		ImportCollection		imports;
 		string				initialTargets;
+		Dictionary <string, BuildItemGroup> last_item_group_containing;
 		bool				needToReevaluate;
 		Engine				parentEngine;
 		BuildPropertyGroupCollection	propertyGroups;
@@ -132,9 +133,14 @@ namespace Microsoft.Build.BuildEngine {
 			if (itemGroups.Count == 0)
 				big = AddNewItemGroup ();
 			else {
-				BuildItemGroup [] groups = new BuildItemGroup [itemGroups.Count];
-				itemGroups.CopyTo (groups, 0);
-				big = groups [0];
+				if (last_item_group_containing.ContainsKey (itemName)) {
+					big = last_item_group_containing [itemName];
+				} else {
+					// FIXME: not tested
+					BuildItemGroup [] groups = new BuildItemGroup [itemGroups.Count];
+					itemGroups.CopyTo (groups, 0);
+					big = groups [0];
+				}
 			}
 
 			BuildItem item = big.AddNewItem (itemName, itemInclude, treatItemIncludeAsLiteral);
@@ -211,10 +217,10 @@ namespace Microsoft.Build.BuildEngine {
 			MarkProjectAsDirty ();
 		}
 		
-		[MonoTODO ("Does nothing")]
+		[MonoTODO ("Not tested")]
 		public bool Build ()
 		{
-			return true;
+			return Build (new string [0]);
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -470,6 +476,7 @@ namespace Microsoft.Build.BuildEngine {
 			isDirty = false;
 		}
 
+		[MonoTODO ("Ignores encoding")]
 		public void Save (string projectFileName, Encoding encoding)
 		{
 			xmlDocument.Save (projectFileName);
@@ -646,6 +653,7 @@ namespace Microsoft.Build.BuildEngine {
 			itemGroups = new BuildItemGroupCollection (groupingCollection);
 			propertyGroups = new BuildPropertyGroupCollection (groupingCollection);
 			targets = new TargetCollection (this);
+			last_item_group_containing = new Dictionary <string, BuildItemGroup> ();
 			
 			taskDatabase = new TaskDatabase ();
 			if (ParentEngine.DefaultTasksRegistered)
@@ -809,6 +817,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		[MonoTODO]
 		public Encoding Encoding {
 			get { return encoding; }
 		}
@@ -944,6 +953,10 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public string Xml {
 			get { return xmlDocument.InnerXml; }
+		}
+
+		internal Dictionary <string, BuildItemGroup> LastItemGroupContaining {
+			get { return last_item_group_containing; }
 		}
 		
 		internal static XmlNamespaceManager XmlNamespaceManager {
