@@ -687,12 +687,14 @@ namespace System {
 			return true;
 		}
 
-		[MonoTODO ("Find out what this should do")]
-#if NET_2_0
-		[Obsolete]
-#endif
+		// Am making this obsolete in both 1.0 and 2.0, as it served no purpose in 1.0
+		[Obsolete("This method does nothing, it has been obsoleted")]
 		protected virtual void Canonicalize ()
 		{
+			//
+			// This is flagged in the Microsoft documentation as used
+			// internally, no longer in use, and Obsolete.
+			//
 		}
 
 		// defined in RFC3986 as = ALPHA *( ALPHA / DIGIT / "+" / "-" / ".")
@@ -1837,7 +1839,7 @@ namespace System {
 			return uri.IsWellFormedOriginalString ();
 		}
 
-		[MonoTODO ("rework code to avoid exception catching")]
+		// [MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (string uriString, UriKind uriKind, out Uri result)
 		{
 			try {
@@ -1850,7 +1852,7 @@ namespace System {
 			}
 		}
 
-		[MonoTODO ("rework code to avoid exception catching")]
+		// [MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, string relativeUri, out Uri result)
 		{
 			try {
@@ -1864,7 +1866,7 @@ namespace System {
 			}
 		}
 
-		[MonoTODO ("rework code to avoid exception catching")]
+		//[MonoTODO ("rework code to avoid exception catching")]
 		public static bool TryCreate (Uri baseUri, Uri relativeUri, out Uri result)
 		{
 			try {
