@@ -1,3 +1,9 @@
+2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : Added Compare() tests for hyphens.
+	  Removed NotWorking from previous new test (its existence wasn't
+	  even recognized until today).
+
 2007-01-11 Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CompareInfoTest.cs: Added test for checking valid CompareOptions for

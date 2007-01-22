@@ -1,3 +1,10 @@
+2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : for non-StringSort comparison, level5 (- and ')
+	  should be still skipped after initial level5 check is done (while
+	  they were simply treated as a normal character). Fixed bug #78748.
+	* SortKeyBuffer.cs : Fixed NRE in french sort.
+
 2006-12-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : added IndexOf() implementation for Ordinal

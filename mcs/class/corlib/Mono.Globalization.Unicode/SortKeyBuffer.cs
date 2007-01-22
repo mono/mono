@@ -234,7 +234,7 @@ namespace Mono.Globalization.Unicode
 
 		public SortKey GetResult ()
 		{
-			if (frenchSort && !frenchSorted) {
+			if (frenchSort && !frenchSorted && l2b != null) {
 				int i = 0;
 				for (; i < l2b.Length; i++)
 					if (l2b [i] == 0)

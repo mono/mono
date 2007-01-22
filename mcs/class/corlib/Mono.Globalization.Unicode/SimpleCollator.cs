@@ -761,11 +761,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (idx1 == idx2 && len1 == len2 &&
 				Object.ReferenceEquals (s1, s2))
 				return 0;
-			// FIXME: this should be done inside Compare() at
-			// any time.
-//			int ord = CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
-//			if (ord == 0)
-//				return 0;
 			if (options == CompareOptions.Ordinal)
 				return CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
 #if NET_2_0
@@ -984,31 +979,41 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				byte cat2 = Category (i2);
 
 				// Handle special weight characters
-				if (!stringSort && currentLevel > 4) {
-					if (cat1 == 6) {
+				if (cat1 == 6) {
+					if (!stringSort && currentLevel == 5) {
 						lv5At1 = escape1.Source != null ?
 							escape1.Index - escape1.Start :
 							cur1 - start1;
 						// here Windows has a bug that it does
 						// not consider thirtiary weight.
 						lv5Value1 = Level1 (i1) << 8 + Uni.Level3 (i1);
-						ctx.PrevCode = i1;
-						idx1++;
 					}
-					if (cat2 == 6) {
+					ctx.PrevCode = i1;
+					idx1++;
+				}
+				if (cat2 == 6) {
+					if (!stringSort && currentLevel == 5) {
 						lv5At2 = escape2.Source != null ?
 							escape2.Index - escape2.Start :
 							cur2 - start2;
 						// here Windows has a bug that it does
 						// not consider thirtiary weight.
 						lv5Value2 = Level1 (i2) << 8 + Uni.Level3 (i2);
-						prev2.Code = i2;
-						idx2++;
 					}
-					if (cat1 == 6 || cat2 == 6) {
-						currentLevel = 4;
-						continue;
+					prev2.Code = i2;
+					idx2++;
+				}
+				if (cat1 == 6 || cat2 == 6) {
+					if (currentLevel == 5) {
+						if (lv5Value1 == lv5Value2) {
+							// There is not really difference here.
+							lv5At1 = lv5At2 = -1;
+							lv5Value1 = lv5Value2 = 0;
+						}
+						else
+							currentLevel = 4;
 					}
+					continue;
 				}
 
 				Contraction ct1 = null;
@@ -1103,8 +1108,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				// idx1 while s2 has a replacement.
 				idx1 += offset1;
 
-				// add diacritical marks in s1 here
 				if (!ignoreNonSpace) {
+					// add diacritical marks in s1 here
 					while (idx1 < end1) {
 						if (Category (s1 [idx1]) != 1)
 							break;
@@ -1219,11 +1224,17 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						break;
 				}
 			}
-			// we still have to handle level 5
+			// we still have to check level 5
 			if (finalResult == 0) {
-				finalResult = lv5At1 - lv5At2;
-				if (finalResult == 0)
-					finalResult = lv5Value1 - lv5Value2;
+				if (lv5At1 < 0 && lv5At2 >= 0)
+					finalResult = -1;
+				else if (lv5At2 < 0 && lv5At1 >= 0)
+					finalResult = 1;
+				else {
+					finalResult = lv5At1 - lv5At2;
+					if (finalResult == 0)
+						finalResult = lv5Value1 - lv5Value2;
+				}
 			}
 			if (finalResult == 0) {
 				if (idx2 == end2)

@@ -512,7 +512,6 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void GetSortKey_Options ()
 	{
 		Array values = Enum.GetValues (typeof (CompareOptions));
@@ -762,6 +761,15 @@ public class CompareInfoTest : Assertion
 		// expansion
 // BUG in .NET 2.0: the same 00C6/00E6 issue.
 		AssertCompare ("#21", -1, "\u00E6", "aes");
+
+// bug #78748
+		AssertCompare ("#22", -1, "++)", "+-+)");
+		AssertCompare ("#23", -1, "+-+)", "+-+-)");
+		AssertCompare ("#24", 1, "+-+-)", "++)");
+		// BUG in .NET: it returns 1
+		AssertCompare ("#25", -1, "+-+-)", "-+-+)");
+		AssertCompare ("#26", -1, "+-+)", "-+-+)");
+		AssertCompare ("#27", -1, "++)", "-+-+)");
 	}
 
 	[Test]
