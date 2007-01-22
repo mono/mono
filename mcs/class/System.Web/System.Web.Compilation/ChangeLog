@@ -1,3 +1,7 @@
+2007-01-22  Marek Habersack  <grendello@gmail.com>
+
+	* ThemeDirectoryCompiler.cs: Make sure the code works for empty themes.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* ClientBuildManager.cs: Remove unused variable (this could be a

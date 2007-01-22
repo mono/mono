@@ -68,11 +68,12 @@ namespace System.Web.UI
 				AspGenerator gen = new AspGenerator (ptfp);
 				gen.Parse ();
 
-				foreach (object o in ptfp.RootBuilder.Children) {
-					if (!(o is ControlBuilder))
-						continue;
-					ptp.RootBuilder.AppendSubBuilder ((ControlBuilder)o);
-				}
+				if (ptfp.RootBuilder.Children != null)
+					foreach (object o in ptfp.RootBuilder.Children) {
+						if (!(o is ControlBuilder))
+							continue;
+						ptp.RootBuilder.AppendSubBuilder ((ControlBuilder)o);
+					}
 
 				foreach (string ass in ptfp.Assemblies)
 					if (!ptp.Assemblies.Contains (ass))
