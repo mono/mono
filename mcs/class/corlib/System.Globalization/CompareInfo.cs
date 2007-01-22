@@ -364,7 +364,7 @@ namespace System.Globalization
 			switch (options) {
 			case CompareOptions.Ordinal:
 			case CompareOptions.OrdinalIgnoreCase:
-				throw new ArgumentException ("Now allowed CompareOptions.");
+				throw new ArgumentException ("Now allowed CompareOptions.", "options");
 			}
 #endif
 			if (UseManagedCollation)
