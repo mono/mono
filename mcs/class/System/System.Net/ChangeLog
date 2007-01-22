@@ -1,3 +1,7 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* WebHeaderCollection.cs: Remove a handful of NotImplementedException's
+
 2007-01-11  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpListenerRequest.cs (SetRequestLine): Add validation for the

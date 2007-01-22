@@ -4,10 +4,12 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Miguel de Icaza (miguel@novell.com)
 //
-// (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// Copyright 2003 Ximian, Inc. (http://www.ximian.com)
+// Copyright 2007 Novell, Inc. (http://www.novell.com)
 //
-
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -285,29 +287,184 @@ namespace System.Net
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		string RequestHeaderToString (HttpRequestHeader value)
+		{
+			switch (value){
+			case HttpRequestHeader.CacheControl:
+				return "cache-control";
+			case HttpRequestHeader.Connection:
+				return "connection";
+			case HttpRequestHeader.Date:
+				return "date";
+			case HttpRequestHeader.KeepAlive:
+				return "keep-alive";
+			case HttpRequestHeader.Pragma:
+				return "pragma";
+			case HttpRequestHeader.Trailer:
+				return "trailer";
+			case HttpRequestHeader.TransferEncoding:
+				return "transfer-encoding";
+			case HttpRequestHeader.Upgrade:
+				return "upgrade";
+			case HttpRequestHeader.Via:
+				return "via";
+			case HttpRequestHeader.Warning:
+				return "warning";
+			case HttpRequestHeader.Allow:
+				return "allow";
+			case HttpRequestHeader.ContentLength:
+				return "content-length";
+			case HttpRequestHeader.ContentType:
+				return "content-type";
+			case HttpRequestHeader.ContentEncoding:
+				return "content-encoding";
+			case HttpRequestHeader.ContentLanguage:
+				return "content-language";
+			case HttpRequestHeader.ContentLocation:
+				return "content-location";
+			case HttpRequestHeader.ContentMd5:
+				return "content-md5";
+			case HttpRequestHeader.ContentRange:
+				return "content-range";
+			case HttpRequestHeader.Expires:
+				return "expires";
+			case HttpRequestHeader.LastModified:
+				return "last-modified";
+			case HttpRequestHeader.Accept:
+				return "accept";
+			case HttpRequestHeader.AcceptCharset:
+				return "accept-charset";
+			case HttpRequestHeader.AcceptEncoding:
+				return "accept-encoding";
+			case HttpRequestHeader.AcceptLanguage:
+				return "accept-language";
+			case HttpRequestHeader.Authorization:
+				return "authorization";
+			case HttpRequestHeader.Cookie:
+				return "cookie";
+			case HttpRequestHeader.Expect:
+				return "expect";
+			case HttpRequestHeader.From:
+				return "from";
+			case HttpRequestHeader.Host:
+				return "host";
+			case HttpRequestHeader.IfMatch:
+				return "if-match";
+			case HttpRequestHeader.IfModifiedSince:
+				return "if-modified-since";
+			case HttpRequestHeader.IfNoneMatch:
+				return "if-none-match";
+			case HttpRequestHeader.IfRange:
+				return "if-range";
+			case HttpRequestHeader.IfUnmodifiedSince:
+				return "if-unmodified-since";
+			case HttpRequestHeader.MaxForwards:
+				return "max-forwards";
+			case HttpRequestHeader.ProxyAuthorization:
+				return "proxy-authorization";
+			case HttpRequestHeader.Referer:
+				return "referer";
+			case HttpRequestHeader.Range:
+				return "range";
+			case HttpRequestHeader.Te:
+				return "te";
+			case HttpRequestHeader.Translate:
+				return "translate";
+			case HttpRequestHeader.UserAgent:
+				return "user-agent";
+			default:
+				throw new InvalidOperationException ();
+			}
+		}
+		
 		public string this[HttpRequestHeader hrh]
 		{
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return Get (RequestHeaderToString (hrh));
 			}
-			set
-			{
-				throw new NotImplementedException ();
+			
+			set {
+				Add (RequestHeaderToString (hrh), value);
 			}
 		}
 
-		[MonoTODO]
+		string ResponseHeaderToString (HttpResponseHeader value)
+		{
+			switch (value){
+			case HttpResponseHeader.CacheControl:
+				return "cache-control";
+			case HttpResponseHeader.Connection:
+				return "connection";
+			case HttpResponseHeader.Date:
+				return "date";
+			case HttpResponseHeader.KeepAlive:
+				return "keep-alive";
+			case HttpResponseHeader.Pragma:
+				return "pragma";
+			case HttpResponseHeader.Trailer:
+				return "trailer";
+			case HttpResponseHeader.TransferEncoding:
+				return "transfer-encoding";
+			case HttpResponseHeader.Upgrade:
+				return "upgrade";
+			case HttpResponseHeader.Via:
+				return "via";
+			case HttpResponseHeader.Warning:
+				return "warning";
+			case HttpResponseHeader.Allow:
+				return "allow";
+			case HttpResponseHeader.ContentLength:
+				return "content-length";
+			case HttpResponseHeader.ContentType:
+				return "content-type";
+			case HttpResponseHeader.ContentEncoding:
+				return "content-encoding";
+			case HttpResponseHeader.ContentLanguage:
+				return "content-language";
+			case HttpResponseHeader.ContentLocation:
+				return "content-location";
+			case HttpResponseHeader.ContentMd5:
+				return "content-md5";
+			case HttpResponseHeader.ContentRange:
+				return "content-range";
+			case HttpResponseHeader.Expires:
+				return "expires";
+			case HttpResponseHeader.LastModified:
+				return "last-modified";
+			case HttpResponseHeader.AcceptRanges:
+				return "accept-ranges";
+			case HttpResponseHeader.Age:
+				return "age";
+			case HttpResponseHeader.ETag:
+				return "etag";
+			case HttpResponseHeader.Location:
+				return "location";
+			case HttpResponseHeader.ProxyAuthenticate:
+				return "proxy-authenticate";
+			case HttpResponseHeader.RetryAfter:
+				return "RetryAfter";
+			case HttpResponseHeader.Server:
+				return "server";
+			case HttpResponseHeader.SetCookie:
+				return "set-cookie";
+			case HttpResponseHeader.Vary:
+				return "vary";
+			case HttpResponseHeader.WwwAuthenticate:
+				return "www-authenticate";
+			default:
+				throw new InvalidOperationException ();
+			}
+		}
 		public string this[HttpResponseHeader hrh]
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				return Get (ResponseHeaderToString (hrh));
 			}
+
 			set
 			{
-				throw new NotImplementedException ();
+				Add (ResponseHeaderToString (hrh), value);
 			}
 		}
 #endif
