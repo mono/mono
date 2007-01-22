@@ -37,6 +37,7 @@ using System.Globalization;
 using System.Web.Hosting;
 using vmw.common;
 using vmw.@internal.j2ee;
+using InputStream=java.io.InputStream;
 
 namespace Mainsoft.Web.Hosting {
 	[MonoTODO("Implement security demands on the path usage functions (and review)")]
@@ -429,8 +430,11 @@ namespace Mainsoft.Web.Hosting {
 			if (buffer == null || size == 0)
 				return 0;
 			sbyte [] sbuffer = vmw.common.TypeUtils.ToSByteArray(buffer);
-			int r = _HttpServletRequest.getInputStream().read(sbuffer, 0, size);	
-			return (r==-1)?0:r;
+			InputStream inp = _HttpServletRequest.getInputStream();
+			if (inp == null && _HttpServletRequest is IPortletActionRequest)
+				inp = ((IPortletActionRequest) _HttpServletRequest).getPortletInputStream();
+			int r = (inp != null) ? inp.read(sbuffer, 0, size) : -1;
+			return r == -1 ? 0 : r;
 		}
 
 		public override void SetEndOfSendNotification(System.Web.HttpWorkerRequest.EndOfSendNotification callback, object extraData) {
