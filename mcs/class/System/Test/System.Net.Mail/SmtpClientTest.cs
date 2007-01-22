@@ -59,6 +59,56 @@ namespace MonoTests.System.Net.Mail
 		{
 			smtp.Host = String.Empty;
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Credentials_Default ()
+		{
+			Assert.IsNull (smtp.Credentials);
+		}
+
+		[Test]
+		public void DeliveryMethod_Default ()
+		{
+			Assert.AreEqual (SmtpDeliveryMethod.Network, smtp.DeliveryMethod);
+		}
+
+		[Test]
+		public void EnableSsl_Default ()
+		{
+			Assert.IsFalse (smtp.EnableSsl);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Host_Default ()
+		{
+			Assert.IsNull (smtp.Host);
+		}
+
+		[Test]
+		public void PickupDirectoryLocation_Default ()
+		{
+			Assert.IsNull (smtp.PickupDirectoryLocation);
+		}
+
+		[Test]
+		public void Port_Default ()
+		{
+			Assert.AreEqual (25, smtp.Port);
+		}
+
+		[Test]
+		public void Timeout_Default ()
+		{
+			Assert.AreEqual (100000, smtp.Timeout);
+		}
+
+		[Test]
+		public void UseDefaultCredentials_Default ()
+		{
+			Assert.IsFalse (smtp.UseDefaultCredentials);
+		}
 	}
 }
 #endif
