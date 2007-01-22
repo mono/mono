@@ -160,9 +160,11 @@ namespace System.Web.UI
 
 		internal void RegisterWebFormClientScript ()
 		{
-			if (!IsClientScriptIncludeRegistered (typeof (Page), "webform")) {
+			if (!IsClientScriptIncludeRegistered (typeof (Page), "webform"))
 				RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
-			}
+
+			if (!IsClientScriptIncludeRegistered (typeof (Page), "callback"))
+				RegisterClientScriptInclude (typeof (Page), "callback", GetWebResourceUrl (typeof (Page), "callback.js"));
 		}
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
@@ -188,9 +190,6 @@ namespace System.Web.UI
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
 			page.RequiresPostBackScript ();
-
-			if (!IsClientScriptIncludeRegistered (typeof(Page), "callback"))
-				RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
 			
 			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"));
 		}

@@ -1,5 +1,10 @@
 2007-01-22  Konstantin Triger <kostat@mainsoft.com>
 
+	* ClientScriptManager.cs: ensure the callback client script is
+		registered before the client script includes are rendered.
+
+2007-01-22  Konstantin Triger <kostat@mainsoft.com>
+
 	* Page.cs, ClientScriptManager.cs: ensure the web form client script is
 		registerd before the client script includes are rendered.
 
