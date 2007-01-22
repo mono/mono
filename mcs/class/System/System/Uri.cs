@@ -912,6 +912,38 @@ namespace System {
 		}
 
 #if NET_2_0
+		//
+		// Implemented by copying most of the MakeRelative code
+		//
+		public Uri MakeRelativeUri (Uri uri)
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (Host != uri.Host || Scheme != uri.Scheme)
+				return uri;
+
+			if (this.path == uri.path)
+				return new Uri (String.Empty, UriKind.Relative);
+			
+			string [] segments = this.Segments;
+			string [] segments2 = uri.Segments;
+			
+			int k = 0;
+			int max = Math.Min (segments.Length, segments2.Length);
+			for (; k < max; k++)
+				if (segments [k] != segments2 [k]) 
+					break;
+			
+			string result = String.Empty;
+			for (int i = k + 1; i < segments.Length; i++)
+				result += "../";
+			for (int i = k; i < segments2.Length; i++)
+				result += segments2 [i];
+			
+			return new Uri (result, UriKind.Relative);
+		}
+
 		[Obsolete ("Use MakeRelativeUri(Uri uri) instead.")]
 #endif
 		public string MakeRelative (Uri toUri) 
@@ -1689,15 +1721,6 @@ namespace System {
 		public bool IsWellFormedOriginalString ()
 		{
 			return Parser.IsWellFormedOriginalString (this);
-		}
-
-		[MonoTODO]
-		public Uri MakeRelativeUri (Uri uri)
-		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
-
-			throw new NotImplementedException ();
 		}
 
 		// static methods

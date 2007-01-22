@@ -1,6 +1,9 @@
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
-	* Uri.cs (EscapeUriString, EscapeDataString): Implement stuff
+	* Uri.cs (MakeRelativeUri): implement, copy most of the code from
+	MakeRelative. 
+	
+	(EscapeUriString, EscapeDataString): Implement stuff
 	needed by apps in Moma.
 
 2006-12-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
