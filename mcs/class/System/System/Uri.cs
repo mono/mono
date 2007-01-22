@@ -1719,7 +1719,18 @@ namespace System {
 			return String.Compare (s1, s2, comparisonType);
 		}
 
-		[MonoTODO]
+		//
+		// The rules for EscapeDataString
+		//
+		static bool NeedToEscapeDataChar (char b)
+		{
+			return !((b >= 'A' && b <= 'Z') ||
+				 (b >= 'a' && b <= 'z') ||
+				 (b >= '0' && b <= '9') ||
+				 b == '_' || b == '~' || b == '!' || b == '\'' ||
+				 b == '(' || b == ')' || b == '*' || b == '-' || b == '.');
+		}
+		
 		public static string EscapeDataString (string stringToEscape)
 		{
 			if (stringToEscape == null)
@@ -1729,11 +1740,41 @@ namespace System {
 				string msg = Locale.GetText ("Uri is longer than the maximum {0} characters.");
 				throw new UriFormatException (msg);
 			}
-
-			throw new NotImplementedException ();
+			bool escape = false;
+			foreach (char c in stringToEscape){
+				if (NeedToEscapeDataChar (c)){
+					escape = true;
+					break;
+				}
+			}
+			if (!escape){
+				Console.WriteLine ("NO NEED TO ECAPE");
+				return stringToEscape;
+			}
+			
+			StringBuilder sb = new StringBuilder ();
+			byte [] bytes = Encoding.UTF8.GetBytes (stringToEscape);
+			foreach (byte b in bytes){
+				if (NeedToEscapeDataChar ((char) b))
+					sb.Append (HexEscape ((char) b));
+				else
+					sb.Append ((char) b);
+			}
+			return sb.ToString ();
 		}
 
-		[MonoTODO]
+		//
+		// The rules for EscapeUriString
+		//
+		static bool NeedToEscapeUriChar (char b)
+		{
+			return !((b >= 'A' && b <= 'Z') ||
+				 (b >= 'a' && b <= 'z') ||
+				 (b >= '&' && b <= ';') ||
+				 b == '!' || b == '#' || b == '$' || b == '=' ||
+				 b == '?' || b == '@' || b == '_' || b == '~');
+		}
+		
 		public static string EscapeUriString (string stringToEscape)
 		{
 			if (stringToEscape == null)
@@ -1744,7 +1785,25 @@ namespace System {
 				throw new UriFormatException (msg);
 			}
 
-			throw new NotImplementedException ();
+			bool escape = false;
+			foreach (char c in stringToEscape){
+				if (NeedToEscapeUriChar (c)){
+					escape = true;
+					break;
+				}
+			}
+			if (!escape)
+				return stringToEscape;
+
+			StringBuilder sb = new StringBuilder ();
+			byte [] bytes = Encoding.UTF8.GetBytes (stringToEscape);
+			foreach (byte b in bytes){
+				if (NeedToEscapeUriChar ((char) b))
+					sb.Append (HexEscape ((char) b));
+				else
+					sb.Append ((char) b);
+			}
+			return sb.ToString ();
 		}
 
 		public static bool IsWellFormedUriString (string uriString, UriKind uriKind)
