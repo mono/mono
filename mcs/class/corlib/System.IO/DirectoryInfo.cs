@@ -277,36 +277,36 @@ namespace System.IO {
 		public void Create (DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
-				throw new NotImplementedException ();
+				throw new UnauthorizedAccessException ();
 			Create ();
 		}
 
-		[MonoTODO ("DirectorySecurity isn't implemented")]
+		[MonoTODO ("Mono provides no support for DirectorySecurity")]
 		public DirectoryInfo CreateSubdirectory (string name, DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
-				throw new NotImplementedException ();
+				throw new UnauthorizedAccessException ();
 			return CreateSubdirectory (name);
 		}
 
-		[MonoTODO ("DirectorySecurity isn't implemented")]
+		[MonoTODO ("Mono provides no support for this")]
 		public DirectorySecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			throw new UnauthorizedAccessException ();
 		}
 
-		[MonoTODO ("DirectorySecurity isn't implemented")]
+		[MonoTODO ("Mono provides no support for this")]
 		public DirectorySecurity GetAccessControl (AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			throw new UnauthorizedAccessException ();
 		}
 
-		[MonoTODO ("DirectorySecurity isn't implemented")]
+		[MonoTODO ("Mono provides no support for this")]
 		public void SetAccessControl (DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
 				throw new ArgumentNullException ("directorySecurity");
-			throw new NotImplementedException ();
+			throw new UnauthorizedAccessException ();
 		}
 #endif
 	}
