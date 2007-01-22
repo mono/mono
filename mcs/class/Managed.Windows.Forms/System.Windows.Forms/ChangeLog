@@ -1,5 +1,12 @@
 2007-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Changing FormBorderStyle has different semantics based
+	on whether the Form is visible or not.  If not visible, don't change
+	the Size.  But InvalidateNC needs to be called to force the window
+	to pick up the changes and redraw itself.  [Fixes bug #80574]
+
+2007-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
 	[Moma work]
 	* ContainerControl.cs: ProcessCmdKey.
 	* ErrorProvider.cs: new constructor.

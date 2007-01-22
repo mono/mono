@@ -481,7 +481,11 @@ namespace System.Windows.Forms {
 				}
 
 				UpdateStyles();
-				this.Size = SizeFromClientSize (this.ClientSize);
+				
+				if (this.Visible) 
+					this.Size = SizeFromClientSize (this.ClientSize);
+				else
+					XplatUI.InvalidateNC (this.Handle);
 			}
 		}
 

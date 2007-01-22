@@ -1,3 +1,7 @@
+2007-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #80574.
+
 2007-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TabControlTest.cs: Add tests for SelectTab and Selected event.

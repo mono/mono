@@ -623,6 +623,43 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Close ();
 		}
+		
+		[Test]	// bug #80574
+		public void BehaviorResizeOnBorderStyleChangedNotVisible ()
+		{
+			Form f = new Form ();
+
+			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A2");
+
+			f.FormBorderStyle = FormBorderStyle.Fixed3D;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A3");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
+
+			f.FormBorderStyle = FormBorderStyle.FixedDialog;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A5");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A6");
+
+			f.FormBorderStyle = FormBorderStyle.FixedSingle;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A7");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A8");
+
+			f.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A9");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A0");
+
+			f.FormBorderStyle = FormBorderStyle.None;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A11");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A12");
+
+			f.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A13");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A14");
+
+			f.FormBorderStyle = FormBorderStyle.Sizable;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A15");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A16");
+		}
 #endif
 
 		private bool RunningOnUnix {
