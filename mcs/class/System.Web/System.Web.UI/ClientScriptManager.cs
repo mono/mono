@@ -138,8 +138,6 @@ namespace System.Web.UI
 				else
 					return GetPostBackEventReference (options.TargetControl, options.Argument);
 			}
-
-			RegisterWebFormClientScript ();
 			
 			if (options.ActionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
