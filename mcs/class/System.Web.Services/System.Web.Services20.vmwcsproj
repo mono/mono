@@ -119,6 +119,7 @@
 		<Compile Include="System.Web.Services.Description\BasicProfileChecker.cs"/>
 		<Compile Include="System.Web.Services.Description\BasicProfileViolation.cs"/>
 		<Compile Include="System.Web.Services.Description\BasicProfileViolationCollection.cs"/>
+		<Compile Include="System.Web.Services.Description\BasicProfileViolationEnumerator.cs"/>
 		<Compile Include="System.Web.Services.Description\Binding.cs"/>
 		<Compile Include="System.Web.Services.Description\BindingCollection.cs"/>
 		<Compile Include="System.Web.Services.Description\ConformanceChecker.cs"/>
@@ -229,6 +230,8 @@
 		<Compile Include="System.Web.Services.Discovery\XmlSchemaSearchPattern.cs"/>
 		<Compile Include="System.Web.Services.Protocols\AnyReturnReader.cs"/>
 		<Compile Include="System.Web.Services.Protocols\Fault.cs"/>
+		<Compile Include="System.Web.Services.Protocols\Fault12.cs"/>
+		<Compile Include="System.Web.Services.Protocols\Fault12Serializer.cs"/>
 		<Compile Include="System.Web.Services.Protocols\HtmlFormParameterReader.cs"/>
 		<Compile Include="System.Web.Services.Protocols\HtmlFormParameterWriter.cs"/>
 		<Compile Include="System.Web.Services.Protocols\HttpGetClientProtocol.cs">
