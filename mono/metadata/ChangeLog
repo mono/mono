@@ -1,3 +1,8 @@
+
+Mon Jan 22 11:24:27 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: removed duplicated function.
+
 2007-01-19  Miguel de Icaza  <miguel@novell.com>
 
 	*  socket-io.c (convert_sockopt_level_and_name): return -2 as a
