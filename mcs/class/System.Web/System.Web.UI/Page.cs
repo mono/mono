@@ -1004,7 +1004,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
+#if NET_2_0
 		scriptManager.RegisterWebFormClientScript ();
+#endif
 		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
