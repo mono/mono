@@ -195,8 +195,8 @@ public class CryptoConfig {
 	private const string urlEnveloped = urlXmlDsig + "enveloped-signature";		// no space
 #if NET_2_0
 	private const string urlXmlDecryption = "http://www.w3.org/2002/07/decrypt#XML";
-	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
-	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#";
+	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
+	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#";
 #endif
 
 	// LAMESPEC: only documentated in ".NET Framework Security" book

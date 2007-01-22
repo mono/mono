@@ -1,3 +1,8 @@
+2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CryptoConfig.cs: Fixed incorrect exchange in urlExcC14N and
+	  urlExcC14NWithComments.
+
 2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Add support for (2.0) custom X.509 chains.
