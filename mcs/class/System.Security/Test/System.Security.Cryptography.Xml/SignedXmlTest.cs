@@ -538,6 +538,54 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			signedXml.ComputeSignature ();
 		}
 
+		[Test]
+		public void SignElementWithoutPrefixedNamespace ()
+		{
+			string input = "<Action xmlns='urn:foo'>http://tempuri.org/IFoo/Echo</Action>";
+			string expected = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" /><Reference URI=""#_1""><Transforms><Transform Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /></Transforms><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>zdFEZB8rNzvpNG/gFEJBWk/M5Nk=</DigestValue></Reference></SignedInfo><SignatureValue>+OyGVzrHjmKSDWLNyvgx8pjbPfM=</SignatureValue><Object Id=""_1""><Action xmlns=""urn:foo"">http://tempuri.org/IFoo/Echo</Action></Object></Signature>";
+
+			byte [] decrypted = Convert.FromBase64String (
+				"1W5EigVnbnRjGLbg99ElieOmuUgYO+KcwMJtE35SAGI=");
+			AssertEquals (expected, SignWithHMACSHA1 (input, decrypted));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void SignElementWithPrefixedNamespace ()
+		{
+			string input = "<a:Action xmlns:a='urn:foo'>http://tempuri.org/IFoo/Echo</a:Action>";
+			string expected = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" /><Reference URI=""#_1""><Transforms><Transform Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /></Transforms><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>6i5FlqkEfJOdUaOMCK7xn0I0HDg=</DigestValue></Reference></SignedInfo><SignatureValue>tASp+e2A0xqcm02jKg5TGqlhKpI=</SignatureValue><Object Id=""_1""><a:Action xmlns:a=""urn:foo"">http://tempuri.org/IFoo/Echo</a:Action></Object></Signature>";
+
+			byte [] decrypted = Convert.FromBase64String (
+				"1W5EigVnbnRjGLbg99ElieOmuUgYO+KcwMJtE35SAGI=");
+			AssertEquals (expected, SignWithHMACSHA1 (input, decrypted));
+		}
+		
+		string SignWithHMACSHA1 (string input, byte [] key)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (input);
+			SignedXml sxml = new SignedXml (doc);
+
+			HMACSHA1 keyhash = new HMACSHA1 (key);
+			DataObject d = new DataObject ();
+			//d.Data = doc.SelectNodes ("//*[local-name()='Body']/*");
+			d.Data = doc.SelectNodes ("//*[local-name()='Action']");
+			d.Id = "_1";
+			sxml.AddObject (d);
+			Reference r = new Reference ("#_1");
+			//r.AddTransform (new XmlDsigExcC14NTransform ());
+			r.AddTransform (new XmlDsigC14NTransform ());
+			r.DigestMethod = SignedXml.XmlDsigSHA1Url;
+			sxml.SignedInfo.AddReference (r);
+			sxml.ComputeSignature (keyhash);
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = new XmlTextWriter (sw);
+			sxml.GetXml ().WriteTo (w);
+			w.Close ();
+			return sw.ToString ();
+		}
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // bug #79483

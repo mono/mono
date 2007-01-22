@@ -479,6 +479,20 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    	        "]";
 	        static string ExcC14NSpecExample7Output =  
 	    	        "<e1 xmlns=\"http://www.ietf.org\" xmlns:w3c=\"http://www.w3.org\"><e3 xmlns=\"\" id=\"E3\" xml:space=\"preserve\"></e3></e1>";
+
+		[Test]
+		public void SimpleNamespacePrefixes ()
+		{
+			string input = "<a:Action xmlns:a='urn:foo'>http://tempuri.org/IFoo/Echo</a:Action>";
+			string expected = @"<a:Action xmlns:a=""urn:foo"">http://tempuri.org/IFoo/Echo</a:Action>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (input);
+			XmlDsigExcC14NTransform t = new XmlDsigExcC14NTransform ();
+			t.LoadInput (doc);
+			Stream s = t.GetOutput () as Stream;
+			AssertEquals (expected, new StreamReader (s, Encoding.UTF8).ReadToEnd ());
+		}
 	}    
 }
 
