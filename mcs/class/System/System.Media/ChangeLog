@@ -1,3 +1,7 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* SoundPlayer.cs: Remove unused variables 
+
 2006-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SoundPlayer.cs: Hide default public ctor (to please corcompare)

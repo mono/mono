@@ -112,7 +112,7 @@ namespace System.Media {
 			if (load_completed)
 				return;
 			ThreadStart async = new ThreadStart (Load);
-			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
+			async.BeginInvoke (AsyncFinished, async);
 		}
 
 		protected virtual void OnLoadCompleted (AsyncCompletedEventArgs e)
@@ -139,7 +139,7 @@ namespace System.Media {
 		public void Play ()
 		{
 			ThreadStart async = new ThreadStart (PlaySync);
-			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
+			async.BeginInvoke (AsyncFinished, async);
 		}
 
 		private void PlayLoop ()
@@ -153,7 +153,7 @@ namespace System.Media {
 		public void PlayLooping ()
 		{
 			ThreadStart async = new ThreadStart (PlayLoop);
-			IAsyncResult a = async.BeginInvoke (AsyncFinished, async);
+			async.BeginInvoke (AsyncFinished, async);
 		}
 
 		public void PlaySync ()
