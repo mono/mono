@@ -308,6 +308,8 @@ namespace System.Windows.Forms {
 
 		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
+			bool mdiclient_layout;
+			
 			if (this.mdi_container.SetWindowStates (this))
 				return;
 			
@@ -316,6 +318,8 @@ namespace System.Windows.Forms {
 			
 			if (prev_window_state == FormWindowState.Normal)
 				prev_bounds = form.Bounds;
+			
+			mdiclient_layout = prev_window_state == FormWindowState.Maximized || window_state == FormWindowState.Maximized;
 			
 			switch (window_state) {
 			case FormWindowState.Minimized:
@@ -348,6 +352,10 @@ namespace System.Windows.Forms {
 			}
 
 			form.ResetCursor ();
+			
+			if (mdiclient_layout)
+				mdi_container.Parent.PerformLayout ();
+			
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 			XplatUI.RequestNCRecalc (form.Handle);
 			mdi_container.SizeScrollBars ();
@@ -357,10 +365,13 @@ namespace System.Windows.Forms {
 		{
 			Rectangle pb = mdi_container.ClientRectangle;
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			form.Bounds = new Rectangle (pb.Left - bw,
-					pb.Top - TitleBarHeight - bw,
+			int tw = TitleBarHeight;
+
+			Rectangle new_bounds = new Rectangle (pb.Left - bw,
+					pb.Top - tw - bw,
 					pb.Width + bw * 2,
-					pb.Height + TitleBarHeight + bw * 2);
+					pb.Height + tw + bw * 2);
+			form.Bounds = new_bounds;
 		}
 
 		private void FormClosed (object sender, EventArgs e)
@@ -574,39 +585,6 @@ namespace System.Windows.Forms {
 		{
 			XplatUI.RequestAdditionalWM_NCMessages (form.Handle, true, true);
 			return base.HandleNCMouseMove (ref m);
-		}
-
-		protected override void HandleNCCalcSize (ref Message m)
-		{
-			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
-
-			if (m.WParam == (IntPtr)1) {
-				ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
-						typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
-
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-				//if (!IsMaximized)
-				//        bw++;
-
-				if (HasBorders) {
-					ncp.rgrc1.top += TitleBarHeight + bw;
-					if (!IsMaximized) {
-						//ncp.rgrc1.top -= 1;
-						ncp.rgrc1.left += bw;// - 2;
-						ncp.rgrc1.bottom -= bw;// - 2;
-						ncp.rgrc1.right -= bw;
-					} else {
-						ncp.rgrc1.left += 1;
-						ncp.rgrc1.bottom -= 2;
-						ncp.rgrc1.right -= 3;
-					}
-				}
-
-				if (ncp.rgrc1.bottom < ncp.rgrc1.top)
-					ncp.rgrc1.bottom = ncp.rgrc1.top + 1;
-
-				Marshal.StructureToPtr (ncp, m.LParam, true);
-			}
 		}
 
 		protected override void DrawVirtualPosition (Rectangle virtual_position)

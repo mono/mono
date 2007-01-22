@@ -1777,10 +1777,6 @@ namespace System.Windows.Forms {
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 
-			if (this.IsMdiChild && ParentForm != null) {
-				ParentForm.PerformLayout();
-				ParentForm.Size = ParentForm.Size;
-			}
 			
 			if (this.size_grip != null && this.size_grip.Visible) {
 				this.size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);

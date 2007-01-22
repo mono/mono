@@ -1,3 +1,12 @@
+2007-01-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Form.cs: Move the layout of the main form to MdiWindowManager.
+	* MdiWindowManager.cs: If WindowState changes from or to Maximized,
+	do a layout of the main window to update MdiClient's client area to
+	the right area. Fixes #80533. Remove the calculation of nc size, 
+	it was just wrong and the correct one is the same as for 
+	InternalWindowManager. 
+
 2007-01-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Setting Anchor or Dock needs to reset the other
