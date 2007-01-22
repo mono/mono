@@ -1,3 +1,8 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* SettingsBase.cs: Removed a NotImplementedException, it provides
+	a default Save implementation. 
+
 2007-01-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingsPropertyValue.cs: fixed IsDirty Property

@@ -50,7 +50,23 @@ namespace System.Configuration
 
 		public virtual void Save ()
 		{
-			throw new NotImplementedException ();
+			//
+			// Copied from ApplicationSettingsBase
+			//
+#if (CONFIGURATION_DEP)
+			/* ew.. this needs to be more efficient */
+			foreach (SettingsProvider provider in Providers) {
+				SettingsPropertyValueCollection cache = new SettingsPropertyValueCollection ();
+
+				foreach (SettingsPropertyValue val in PropertyValues) {
+					if (val.Property.Provider == provider)
+						cache.Add (val);
+				}
+
+				if (cache.Count > 0)
+					provider.SetPropertyValues (Context, cache);
+			}
+#endif
 		}
 
 		public static SettingsBase Synchronized (SettingsBase settingsBase)
