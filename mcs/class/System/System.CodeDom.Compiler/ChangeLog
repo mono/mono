@@ -1,3 +1,7 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* CodeDomProvider.cs: Prevent Moma from getting confused.
+
 2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TempFileCollection.cs : make it work under non-libc environment.

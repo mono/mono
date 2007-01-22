@@ -67,6 +67,14 @@ namespace System.CodeDom.Compiler {
 		}
 
 		//
+		// This is used to prevent confusing Moma about methods not implemented.
+		//
+		Exception GetNotImplemented ()
+		{
+			return new NotImplementedException ();
+		}
+		
+		//
 		// Methods
 		//
 #if NET_2_0
@@ -107,7 +115,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeCompiler cc = CreateCompiler ();
 			if (cc == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cc.CompileAssemblyFromDomBatch (options, compilationUnits);
 		}
 
@@ -115,7 +123,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeCompiler cc = CreateCompiler ();
 			if (cc == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cc.CompileAssemblyFromFileBatch (options, fileNames);
 		}
 
@@ -123,7 +131,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeCompiler cc = CreateCompiler ();
 			if (cc == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cc.CompileAssemblyFromSourceBatch (options, fileNames);
 		}
 
@@ -131,7 +139,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cg.CreateEscapedIdentifier (value);
 		}
 
@@ -149,7 +157,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cg.CreateValidIdentifier (value);
 		}
 
@@ -158,7 +166,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			cg.GenerateCodeFromCompileUnit (compileUnit, writer, options);
 		}
 
@@ -166,14 +174,14 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			cg.GenerateCodeFromExpression (expression, writer, options);
 		}
 
 		public virtual void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
 		{
 			// Documented to always throw an exception (if not overriden)
-			throw new NotImplementedException ();
+			throw GetNotImplemented ();
 			// Note: the pattern is different from other GenerateCodeFrom* because 
 			// ICodeGenerator doesn't have a GenerateCodeFromMember member
 		}
@@ -182,7 +190,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			cg.GenerateCodeFromNamespace (codeNamespace, writer, options);
 		}
 
@@ -190,7 +198,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			cg.GenerateCodeFromStatement (statement, writer, options);
 		}
 
@@ -198,7 +206,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			cg.GenerateCodeFromType (codeType, writer, options);
 		}
 
@@ -241,7 +249,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cg.GetTypeOutput (type);
 		}
 
@@ -277,7 +285,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cg.IsValidIdentifier (value);
 		}
 
@@ -285,7 +293,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeParser cp = CreateParser ();
 			if (cp == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cp.Parse (codeStream);
 		}
 
@@ -293,7 +301,7 @@ namespace System.CodeDom.Compiler {
 		{
 			ICodeGenerator cg = CreateGenerator ();
 			if (cg == null)
-				throw new NotImplementedException ();
+				throw GetNotImplemented ();
 			return cg.Supports (supports);
 		}
 
