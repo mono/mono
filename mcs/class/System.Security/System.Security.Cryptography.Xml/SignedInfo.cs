@@ -44,17 +44,10 @@ namespace System.Security.Cryptography.Xml {
 		private string signatureLength;
 		private XmlElement element;
 
-#if NET_2_0
-		XmlDsigC14NTransform canonicalizationMethodObject;
-#endif
-
 		public SignedInfo() 
 		{
 			references = new ArrayList ();
 			c14nMethod = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-#if NET_2_0	
-			canonicalizationMethodObject = new XmlDsigC14NTransform ();
-#endif
 		}
 
 		public string CanonicalizationMethod {
@@ -67,8 +60,9 @@ namespace System.Security.Cryptography.Xml {
 
 #if NET_2_0
 		[ComVisible (false)]
+		[MonoTODO]
 		public Transform CanonicalizationMethodObject {
-			get { return canonicalizationMethodObject; }
+			get { throw new NotImplementedException (); }
 		}
 #endif
 

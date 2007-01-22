@@ -259,10 +259,8 @@ namespace Mono.Xml {
 					// check that we have not rendered it yet
 					bool rendered = IsNamespaceRendered (prefix, attribute.Value);
 
-					// For exc-c14n, only visually utilized
+					// For exc-c14n, only visibly utilized
 					// namespaces are written.
-					if (exclusive && rendered)
-						continue;
 					if (exclusive && !IsVisiblyUtilized (node as XmlElement, attribute))
 						continue;
 

@@ -156,6 +156,12 @@ namespace System.Security.Cryptography.Xml {
 								t = new XmlDsigXsltTransform ();
 								break;
 #if NET_2_0
+							case XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform:
+								t = new XmlDsigExcC14NTransform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NWithCommentsTransform:
+								t = new XmlDsigExcC14NWithCommentsTransform ();
+								break;
 							case XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform:
 								t = new XmlDecryptionTransform ();
 								break;
