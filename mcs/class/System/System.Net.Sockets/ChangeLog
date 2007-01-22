@@ -1,3 +1,8 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* Socket.cs: Move the throw new NotImplementedException ()
+	elsewhere to prevent Moma reports.
+
 2007-01-20  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs(SocketDefaults): Catch and ignore any SocketExceptions

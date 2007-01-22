@@ -1087,6 +1087,12 @@ namespace System.Net.Sockets
 				return(socket);
 			}
 		}
+
+		Exception GetNotImplemented (string msg)
+		{
+			return new NotImplementedException (msg);
+		}
+		
 #if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1114,7 +1120,7 @@ namespace System.Net.Sockets
 				} else if (sa.Family==AddressFamily.Unix && unixendpoint!=null) {
 					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
 				} else {
-					throw new NotImplementedException(Locale.GetText ("No support for the {0} AddressFamily", sa.Family));
+					throw GetNotImplemented (Locale.GetText ("No support for the {0} AddressFamily", sa.Family));
 				}
 			}
 		}
