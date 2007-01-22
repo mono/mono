@@ -785,6 +785,9 @@ namespace MonoTests.System.Drawing{
 	}
 
 	[TestFixture]
+#if TARGET_JVM
+	[Ignore ("Unsafe code is not supported")]
+#endif
 	public class BitmapFullTrustTest {
 
 		// BitmapFromHicon## is *almost* the same as IconTest.Icon##ToBitmap except
