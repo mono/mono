@@ -193,11 +193,33 @@ namespace System.Web.Services.Protocols {
 		}
 		
 #if NET_2_0
+		Hashtable mappings = new Hashtable ();
+		
+		internal void RegisterMapping (object userState, WebClientAsyncResult result)
+		{
+			if (userState == null)
+				userState = typeof (string);
+			
+			mappings [userState] = result;
+		}
 
-		[MonoTODO]
+		internal void UnregisterMapping (object userState)
+		{
+			if (userState == null)
+				userState = typeof (string);
+			
+			mappings.Remove (userState);
+		}
+		
 		protected void CancelAsync (object userState)
 		{
-			throw new NotImplementedException ();
+			WebClientAsyncResult result = (WebClientAsyncResult) mappings [userState];
+
+			if (result == null)
+				return;
+			
+			mappings.Remove (userState);
+			result.Abort ();
 		}
 
 		[MonoTODO]
@@ -210,6 +232,14 @@ namespace System.Web.Services.Protocols {
 		public static Hashtable GenerateXmlMappings (Type[] types, ArrayList mapping)
 		{
 			throw new NotImplementedException ();
+		}
+#else
+		internal void UnregisterMapping (object userState)
+		{
+		}
+
+		internal void RegisterMapping (object userState, WebClientAsyncResult result)
+		{
 		}
 #endif
 

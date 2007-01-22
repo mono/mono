@@ -1,3 +1,14 @@
+2007-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpSimpleClientProtocol.cs, SoapHttpClientProtocol.cs: Hook up
+	RegisterMapping and UnregisterMapping.
+
+	* HttpWebClientProtocol.cs (RegisterMapping, UnregisterMapping):
+	Keep track of all the async invocations that are created, based on
+	the "userState" key.
+
+	(CancelAsync): Implement. 
+	
 2006-12-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs : (SerializeFault) requestMessage

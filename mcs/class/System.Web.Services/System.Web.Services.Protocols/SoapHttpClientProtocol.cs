@@ -102,6 +102,7 @@ namespace System.Web.Services.Protocols
 				ainfo.Extensions = SoapExtension.CreateExtensionChain (type_info.SoapExtensions[0], msi.SoapExtensions, type_info.SoapExtensions[1]);
 
 				ainfo.Request.BeginGetRequestStream (new AsyncCallback (AsyncGetRequestStreamDone), ainfo);
+				RegisterMapping (asyncState, ainfo);
 			}
 			catch (Exception ex)
 			{
@@ -166,9 +167,15 @@ namespace System.Web.Services.Protocols
 			SoapWebClientAsyncResult ainfo = (SoapWebClientAsyncResult) asyncResult;
 			lock (ainfo)
 			{
-				if (!ainfo.IsCompleted) ainfo.WaitForComplete ();
-				if (ainfo.Exception != null) throw ainfo.Exception;
-				else return (object[]) ainfo.Result;
+				if (!ainfo.IsCompleted)
+					ainfo.WaitForComplete ();
+
+				UnregisterMapping (ainfo.AsyncState);
+				
+				if (ainfo.Exception != null)
+					throw ainfo.Exception;
+				else
+					return (object[]) ainfo.Result;
 			}
 		}
 
@@ -188,7 +195,9 @@ namespace System.Web.Services.Protocols
 				}
 			}
 			
-			string msg = string.Format ("The binding named '{0}' from namespace '{1}' was not found in the discovery document at '{2}'", bnd.Name, bnd.Namespace, Url);
+			string msg = string.Format (
+		        	"The binding named '{0}' from namespace '{1}' was not found in the discovery document at '{2}'",
+				bnd.Name, bnd.Namespace, Url);
 			throw new Exception (msg);
 		}
 
@@ -312,15 +321,13 @@ namespace System.Web.Services.Protocols
 			}
 
 #if NET_2_0
-			if (content is Soap12Fault)
-			{
+			if (content is Soap12Fault) {
 				SoapException ex = WebServiceHelper.Soap12FaultToSoapException ((Soap12Fault) content);
 				message.SetException (ex);
 			}
 			else
 #endif
-			if (content is Fault)
-			{
+			if (content is Fault) {
 				Fault fault = (Fault) content;
 				SoapException ex = new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
 				message.SetException (ex);

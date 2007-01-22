@@ -74,6 +74,7 @@ namespace System.Web.Services.Protocols {
 				
 				ainfo.Request = req;
 				ainfo.Request.BeginGetRequestStream (new AsyncCallback (AsyncGetRequestStreamDone), ainfo);
+				RegisterMapping (asyncState, ainfo);
 			}
 			catch (Exception ex)
 			{
@@ -141,14 +142,21 @@ namespace System.Web.Services.Protocols {
 
 		protected object EndInvoke (IAsyncResult asyncResult)
 		{
-			if (!(asyncResult is SimpleWebClientAsyncResult)) throw new ArgumentException ("asyncResult is not the return value from BeginInvoke");
+			if (!(asyncResult is SimpleWebClientAsyncResult))
+				throw new ArgumentException ("asyncResult is not the return value from BeginInvoke");
 
 			SimpleWebClientAsyncResult ainfo = (SimpleWebClientAsyncResult) asyncResult;
 			lock (ainfo)
 			{
-				if (!ainfo.IsCompleted) ainfo.WaitForComplete ();
-				if (ainfo.Exception != null) throw ainfo.Exception;
-				else return ainfo.Result;
+				if (!ainfo.IsCompleted)
+					ainfo.WaitForComplete ();
+
+				UnregisterMapping (ainfo.AsyncState);
+				
+				if (ainfo.Exception != null)
+					throw ainfo.Exception;
+				else
+					return ainfo.Result;
 			}
 		}
 
