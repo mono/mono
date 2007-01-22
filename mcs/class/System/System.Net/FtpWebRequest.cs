@@ -300,7 +300,8 @@ namespace System.Net
 		public override void Abort () {
 			lock (locker) {
 				if (State == RequestState.TransferInProgress) {
-					FtpStatus status = SendCommand (false, AbortCommand);
+					/*FtpStatus status = */
+					SendCommand (false, AbortCommand);
 				}
 
 				if (!InFinalState ()) {

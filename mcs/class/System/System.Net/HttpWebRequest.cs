@@ -973,7 +973,7 @@ namespace System.Net
 				writeStream.SetHeaders (bytes, 0, bytes.Length);
 			} catch (WebException wexc) {
 				SetWriteStreamError (wexc.Status);
-			} catch (Exception e) {
+			} catch (Exception) {
 				SetWriteStreamError (WebExceptionStatus.SendFailure);
 			}
 		}

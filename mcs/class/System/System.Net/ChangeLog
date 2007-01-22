@@ -1,5 +1,9 @@
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
+	* HttpWebRequest.cs: Remove unused variable.
+
+	* FtpWebRequest.cs: Remove unused variable.
+
 	* WebHeaderCollection.cs: Remove a handful of NotImplementedException's
 
 2007-01-11  Miguel de Icaza  <miguel@novell.com>
