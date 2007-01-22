@@ -314,6 +314,13 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Protected Instance Methods
+#if NET_2_0
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+#endif
+
 		protected override bool IsInputKey(Keys keyData) {
 			return base.IsInputKey (keyData);
 		}

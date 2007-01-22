@@ -613,5 +613,67 @@ namespace MonoTests.System.Windows.Forms
 		{
 			_selected_index_changed++;
 		}
+		
+#if NET_2_0
+		[Test]
+		public void MethodSelectTab ()
+		{
+			TabControl tc = new TabControl ();
+			tc.TabPages.Add (new TabPage ("One"));
+			tc.TabPages.Add (new TabPage ("Two"));
+			
+			tc.SelectTab (1);
+			Assert.AreEqual (1, tc.SelectedIndex, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void MethodSelectTabAOORE ()
+		{
+			TabControl tc = new TabControl ();
+			tc.TabPages.Add (new TabPage ("One"));
+			tc.TabPages.Add (new TabPage ("Two"));
+
+			tc.SelectTab (-1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void MethodSelectTabAOORE2 ()
+		{
+			TabControl tc = new TabControl ();
+			tc.TabPages.Add (new TabPage ("One"));
+			tc.TabPages.Add (new TabPage ("Two"));
+
+			tc.SelectTab (2);
+		}
+
+		[Test]
+		public void EventSelected ()
+		{
+			Form f = new Form ();
+			TabControl tc = new TabControl ();
+			TabControlEventArgs tcea = new TabControlEventArgs (null, 0, TabControlAction.Deselected);
+			
+			f.Controls.Add (tc);
+			string events = string.Empty;
+			tc.SelectedIndexChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("SelectedIndexChanged;"); });
+			tc.Selected += new TabControlEventHandler (delegate (Object obj, TabControlEventArgs e) { events += ("Selected;"); tcea = e; });
+			
+			TabPage tp1 = new TabPage ("One");
+			TabPage tp2 = new TabPage ("Two");
+			
+			tc.TabPages.Add (tp1);
+			tc.TabPages.Add (tp2);
+			
+			f.Show ();
+			tc.SelectTab (1);
+			Assert.AreEqual ("Selected;SelectedIndexChanged;", events, "A1");
+			Assert.AreEqual (TabControlAction.Selected, tcea.Action, "A2");
+			Assert.AreSame (tp2, tcea.TabPage, "A3");
+			Assert.AreEqual (1, tcea.TabPageIndex, "A4");
+			f.Close ();
+		}
+#endif
 	}
 }

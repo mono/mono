@@ -1,3 +1,18 @@
+2007-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	[Moma work]
+	* ContainerControl.cs: ProcessCmdKey.
+	* ErrorProvider.cs: new constructor.
+	* Form.cs: fix AutoValidateEvent compiler warning.
+	* Label.cs: fix OnAutoSizeChanged compiler warning.
+	* MenuStrip.cs: fix CanOverflow compiler warning.
+	* TabControl.cs: SelectTab, OnSelected methods, Selected event.
+	* TextBox.cs: Dispose.
+	* ToolStrip.cs: CanOverflow, re-enable double buffering.
+	* ToolStripControlHost.cs: fix CausesValidation compiler warning.
+	* ToolStripDropDown.cs: fix ContextStripMenu compiler warning.
+	* ToolStripItem.cs: Overflow, RightToLeft properties.
+
 2007-01-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Form.cs: Move the layout of the main form to MdiWindowManager.

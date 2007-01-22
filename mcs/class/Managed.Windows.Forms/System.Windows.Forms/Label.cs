@@ -503,12 +503,14 @@ namespace System.Windows.Forms
 				ControlPaint.DrawImageDisabled (g, image, rcImageClip.X, rcImageClip.Y, BackColor);
 		}
 
+#if !NET_2_0
 		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
+#endif
 
 		protected override void OnEnabledChanged (EventArgs e)
 		{

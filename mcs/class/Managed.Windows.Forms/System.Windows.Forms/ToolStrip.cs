@@ -43,6 +43,7 @@ namespace System.Windows.Forms
 	{
 		#region Private Variables
 		private Color back_color;
+		private bool can_overflow;
 		private ToolStripDropDownDirection default_drop_down_direction;
 		private Color fore_color;
 		private ToolStripGripDisplayStyle grip_display_style;
@@ -73,13 +74,14 @@ namespace System.Windows.Forms
 		public ToolStrip (params ToolStripItem[] items) : base ()
 		{
 			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
-			//SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
+			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 
 			this.SuspendLayout ();
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
+			this.can_overflow = true;
 			base.CausesValidation = false;
 			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
 			this.Dock = this.DefaultDock;
@@ -129,6 +131,12 @@ namespace System.Windows.Forms
 			set { this.back_color = value; }
 		}
 
+		[DefaultValue (true)]
+		public bool CanOverflow {
+			get { return this.can_overflow; }
+			set { this.can_overflow = value; }
+		}
+		
 		[Browsable (false)]
 		[DefaultValue (false)]
 		public new bool CausesValidation {
@@ -673,7 +681,7 @@ namespace System.Windows.Forms
 
 			// Make each item draw itself (if within the ClipRectangle)
 			foreach (ToolStripItem tsi in this.items) {
-				if (tsi.Available == false || !e.ClipRectangle.IntersectsWith (tsi.Bounds))
+				if (tsi.Available == false) // || !e.ClipRectangle.IntersectsWith (tsi.Bounds))
 					continue;
 
 				e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);

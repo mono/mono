@@ -79,7 +79,7 @@ namespace System.Windows.Forms
 			get { return control.CanSelect; }
 		}
 
-		public new bool CausesValidation {
+		public bool CausesValidation {
 			get { return control.CausesValidation; }
 			set { control.CausesValidation = value; }
 		}

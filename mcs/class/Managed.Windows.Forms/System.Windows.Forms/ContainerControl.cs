@@ -393,6 +393,13 @@ namespace System.Windows.Forms {
 			OnBindingContextChanged (EventArgs.Empty);
 		}
 
+#if NET_2_0
+		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		{
+			return base.ProcessCmdKey (ref msg, keyData);
+		}
+#endif
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override bool ProcessDialogChar(char charCode) {
 			if (GetTopLevel()) {

@@ -268,6 +268,9 @@ namespace System.Windows.Forms {
 				}
 				selected_index = value;
 
+#if NET_2_0
+				OnSelected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Selected));
+#endif
 				OnSelectedIndexChanged (EventArgs.Empty);
 
 				TabPage selected = null;
@@ -411,6 +414,16 @@ namespace System.Windows.Forms {
 		{
 			return GetTab (index);
 		}
+
+#if NET_2_0
+		public void SelectTab (int index)
+		{
+			if (index < 0 || index > this.tab_pages.Count - 1)
+				throw new ArgumentOutOfRangeException ("index");
+				
+			SelectedIndex = index;
+		}
+#endif
 
 		public override string ToString ()
 		{
@@ -583,6 +596,15 @@ namespace System.Windows.Forms {
 				break;
 			}
 		}
+
+#if NET_2_0
+		protected virtual void OnSelected (TabControlEventArgs e)
+		{
+			TabControlEventHandler eh = (TabControlEventHandler)(Events[SelectedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
@@ -1094,6 +1116,15 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
 		}
+		
+#if NET_2_0
+		static object SelectedEvent = new object ();
+		
+		public event TabControlEventHandler Selected {
+			add { Events.AddHandler (SelectedEvent, value); }
+			remove { Events.RemoveHandler (SelectedEvent, value); }
+		}
+#endif
 		#endregion	// Events
 
 

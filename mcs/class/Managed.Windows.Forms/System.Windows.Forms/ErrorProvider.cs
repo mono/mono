@@ -296,6 +296,13 @@ namespace System.Windows.Forms {
 		{
 			container = parentControl;
 		}
+		
+#if NET_2_0
+		public ErrorProvider (IContainer container)
+		{
+			container.Add (this);
+		}
+#endif
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties

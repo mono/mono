@@ -2469,7 +2469,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		static object AutoValidateChangedEvent = new object ();
 		static object FormClosingEvent = new object ();
 		static object FormClosedEvent = new object ();
 		static object HelpButtonClickedEvent = new object ();
@@ -2487,9 +2486,9 @@ namespace System.Windows.Forms {
 
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-		public event EventHandler AutoValidateChanged {
-			add { Events.AddHandler (AutoValidateChangedEvent, value); }
-			remove { Events.RemoveHandler (AutoValidateChangedEvent, value); }
+		public new event EventHandler AutoValidateChanged {
+			add { base.AutoValidateChanged += value; }
+			remove { base.AutoValidateChanged -= value; }
 		}
 
 		public event FormClosingEventHandler FormClosing {

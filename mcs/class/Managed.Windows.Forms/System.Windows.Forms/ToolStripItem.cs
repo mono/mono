@@ -66,9 +66,11 @@ namespace System.Windows.Forms
 		private bool is_selected;
 		private Padding margin;
 		private string name;
+		private ToolStripItemOverflow overflow;
 		private ToolStrip owner;
 		internal ToolStripItem owner_item;
 		private Padding padding;
+		private RightToLeft right_to_left;
 		private Object tag;
 		private string text;
 		private ContentAlignment text_align;
@@ -111,7 +113,9 @@ namespace System.Windows.Forms
 			this.image_transparent_color = Color.Empty;
 			this.margin = this.DefaultMargin;
 			this.name = name;
+			this.overflow = ToolStripItemOverflow.AsNeeded;
 			this.padding = this.DefaultPadding;
+			this.right_to_left = RightToLeft.Inherit;
 			this.bounds.Size = this.DefaultSize;
 			this.text = text;
 			this.text_align = ContentAlignment.MiddleCenter;
@@ -464,6 +468,22 @@ namespace System.Windows.Forms
 			set { this.name = value; }
 		}
 
+		[DefaultValue (ToolStripItemOverflow.AsNeeded)]
+		public ToolStripItemOverflow Overflow {
+			get { return this.overflow; }
+			set { 
+				if (this.overflow != value) {
+					if (!Enum.IsDefined (typeof (ToolStripItemOverflow), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripItemOverflow", value));
+				
+					this.overflow = value;
+					
+					if (owner != null)
+						owner.PerformLayout ();
+				}
+			}
+		}
+			
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStrip Owner {
@@ -496,6 +516,14 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Pressed { get { return this.is_pressed; } }
 
+		[MonoTODO ("Stub, not implemented")]
+		[Localizable (true)]
+		[DefaultValue (RightToLeft.Inherit)]
+		public virtual RightToLeft RightToLeft {
+			get { return this.right_to_left; }
+			set { this.right_to_left = value; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected { get { return this.is_selected; } }

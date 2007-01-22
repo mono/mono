@@ -104,7 +104,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContextMenuStrip ContextMenuStrip {
+		public new ContextMenuStrip ContextMenuStrip {
 			get { return null; }
 			set { }
 		}
@@ -262,6 +262,8 @@ namespace System.Windows.Forms
 
 				if (Opacity < 1.0 && allow_transparency)
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_LAYERED;
+				if (TopMost)
+					cp.ExStyle |= (int) WindowExStyles.WS_EX_TOPMOST;
 
 				return cp;
 			}
