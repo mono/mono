@@ -45,9 +45,7 @@ namespace System.Runtime.CompilerServices
 		public delegate void TryCode (Object userData);
 
 		public delegate void CleanupCode (Object userData, bool exceptionThrown);
-#endif
-
-#if !NET_2_0
+#else
 		private RuntimeHelpers () {}
 #endif
 
@@ -97,49 +95,49 @@ namespace System.Runtime.CompilerServices
 		}
 
 #if NET_2_0
-		[MonoTODO("Not implemented")]
-		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData) {
-			throw new NotImplementedException ();
+		[MonoTODO("Currently a no-op")]
+		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
+		{
 		}
 
-		[MonoTODO("Not implemented")]
+		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static void PrepareConstrainedRegions () {
-			throw new NotImplementedException ();
+		public static void PrepareConstrainedRegions ()
+		{
 		}
 
-		[MonoTODO("Not implemented")]
+		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static void PrepareConstrainedRegionsNoOP () {
-			throw new NotImplementedException ();
+		public static void PrepareConstrainedRegionsNoOP ()
+		{
 		}
 
-		[MonoTODO("Not implemented")]
+		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static void ProbeForSufficientStack() {
-			throw new NotImplementedException ();
+		public static void ProbeForSufficientStack()
+		{
 		}
 
-		[MonoTODO("Not implemented")]
-		public static void PrepareDelegate (Delegate d) {
+		[MonoTODO("Currently a no-op")]
+		public static void PrepareDelegate (Delegate d)
+		{
 			if (d == null)
 				throw new ArgumentNullException ("d");
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static void PrepareMethod (RuntimeMethodHandle method) {
-			throw new NotImplementedException ();
+		[MonoTODO("Currently a no-op")]
+		public static void PrepareMethod (RuntimeMethodHandle method)
+		{
 		}
 
-		[MonoTODO]
-		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation) {
-			throw new NotImplementedException ();
+		[MonoTODO("Currently a no-op")]
+		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation)
+		{
 		}
 
-		[MonoTODO]
-		public static void RunModuleConstructor (ModuleHandle module) {
-			throw new NotImplementedException ();
+		[MonoTODO("Currently a no-op")]
+		public static void RunModuleConstructor (ModuleHandle module)
+		{
 		}
 #endif
 	}
