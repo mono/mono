@@ -65,14 +65,21 @@ namespace Mono.Xml {
 			res = new StringBuilder ();
 			comments = withComments;
 			exclusive = excC14N;
+		}
+		
+		void Initialize ()
+		{
 			state = XmlCanonicalizerState.BeforeDocElement;
 			visibleNamespaces = new ArrayList ();
 			prevVisibleNamespacesStart = 0;
 			prevVisibleNamespacesEnd = 0;
+			res.Length = 0;
 		}
 		
 		public Stream Canonicalize (XmlDocument doc)
 		{
+			Initialize ();
+			
 			WriteDocumentNode (doc);
 			
 			UTF8Encoding utf8 = new UTF8Encoding ();

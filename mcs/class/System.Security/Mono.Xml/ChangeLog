@@ -1,3 +1,7 @@
+2007-01-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlCanonicalizer.cs : it should be reset before being reused.
+
 2007-01-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlCanonicalizer.cs : Fixed incorect is-visibly-utilized check. Got

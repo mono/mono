@@ -1,3 +1,8 @@
+2007-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXmlTest.cs :
+	  run the transformation in yesterday's test twice.
+
 2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigExcC14NTransformTest.cs, XmlDsigC14NTransformTest.cs,

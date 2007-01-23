@@ -546,7 +546,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			byte [] decrypted = Convert.FromBase64String (
 				"1W5EigVnbnRjGLbg99ElieOmuUgYO+KcwMJtE35SAGI=");
-			AssertEquals (expected, SignWithHMACSHA1 (input, decrypted));
+			Transform t = new XmlDsigC14NTransform ();
+			AssertEquals ("#1", expected, SignWithHMACSHA1 (input, decrypted, t));
+			// The second result should be still identical.
+			AssertEquals ("#2", expected, SignWithHMACSHA1 (input, decrypted, t));
 		}
 
 		[Test]
@@ -563,6 +566,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		
 		string SignWithHMACSHA1 (string input, byte [] key)
 		{
+			return SignWithHMACSHA1 (input, key, new XmlDsigC14NTransform ());
+		}
+
+		string SignWithHMACSHA1 (string input, byte [] key, Transform transform)
+		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (input);
 			SignedXml sxml = new SignedXml (doc);
@@ -574,8 +582,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			d.Id = "_1";
 			sxml.AddObject (d);
 			Reference r = new Reference ("#_1");
-			//r.AddTransform (new XmlDsigExcC14NTransform ());
-			r.AddTransform (new XmlDsigC14NTransform ());
+			r.AddTransform (transform);
 			r.DigestMethod = SignedXml.XmlDsigSHA1Url;
 			sxml.SignedInfo.AddReference (r);
 			sxml.ComputeSignature (keyhash);
