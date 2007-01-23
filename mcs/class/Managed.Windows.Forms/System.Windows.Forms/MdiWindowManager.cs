@@ -350,7 +350,7 @@ namespace System.Windows.Forms {
 
 		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
-			mdi_container.SetWindowState (form, old_state, window_state, true);
+			mdi_container.SetWindowState (form, old_state, window_state, false);
 		}
 
 		private void FormClosed (object sender, EventArgs e)
