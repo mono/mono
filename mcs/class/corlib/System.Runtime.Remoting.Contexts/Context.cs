@@ -47,7 +47,7 @@ namespace System.Runtime.Remoting.Contexts {
 		#region Sync with domain-internals.h
 		int domain_id;
 		int context_id;
-		IntPtr static_data;
+		UIntPtr static_data; /* GC-tracked */
 		#endregion
 
 		// Default server context sink chain

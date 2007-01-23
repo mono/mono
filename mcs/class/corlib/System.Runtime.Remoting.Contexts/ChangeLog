@@ -1,4 +1,8 @@
 
+Tue Jan 23 17:48:42 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Context.cs: mark the GC-tracked field with UIntPtr.
+
 Wed Mar 15 16:35:13 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* Context.cs: update for LocalDataStoreSlot changes.
