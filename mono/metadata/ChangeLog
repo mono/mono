@@ -1,4 +1,11 @@
 
+Tue Jan 23 18:09:21 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, object.c: restrict GC-tracked fields to
+	UIntPtr fields used inside corlib, so we provide better
+	type info to the GC and also allow broken packing as in
+	bug #80580.
+
 Mon Jan 22 11:24:27 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: removed duplicated function.
