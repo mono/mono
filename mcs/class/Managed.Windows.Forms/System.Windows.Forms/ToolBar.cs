@@ -889,7 +889,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		bool LayoutToolBar ()
+		private bool LayoutToolBar ()
 		{
 			bool changed = false;
 			Theme theme = ThemeEngine.Current;
@@ -1139,6 +1139,11 @@ namespace System.Windows.Forms
 			private Rectangle     bounds;     // Toolbar button bounds
 			private Rectangle     image_rect; // Image button bounds
 			private Rectangle     text_rect;  // Text button bounds
+
+			private bool dd_pressed = false;  // to check for a mouse down on dropdown rect
+			private bool hilight    = false;  // to hilight buttons in flat style
+			private bool inside     = false;  // to handle the mouse move event with mouse pressed
+			private bool pressed    = false;  // this is to check for mouse down on a button
 			
 			#endregion
 			
@@ -1187,6 +1192,11 @@ namespace System.Windows.Forms
 						return Size.Empty;
 					return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
 				}
+			}
+			
+			public bool Pressed {
+				get { return (pressed && inside); }
+				set { pressed = value; }
 			}
 			
 			#endregion Properties
