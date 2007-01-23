@@ -1,3 +1,7 @@
+2007-01-23  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c: Use lgb instructions for I1 type variables instead of lb.
+
 2007-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_allocate_stack_slots_full): Allocate memory from the cfg mempool.
