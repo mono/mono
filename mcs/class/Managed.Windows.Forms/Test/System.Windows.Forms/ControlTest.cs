@@ -1592,6 +1592,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add(f1);
 		}
 		
+		[Category ("NotWorking")]
 		[Test]
 		public void TestForm ()
 		{

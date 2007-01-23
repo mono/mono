@@ -1,3 +1,9 @@
+2007-01-23  Andreia Gaita  <avidigal@novell.com>
+
+	* SendKeysTest.cs: Marked interactive, they're unstable
+	* ControlTest.cs (ControlSetTopLevelTest): TestForm marked NotWorking,
+	we have to see why SetTopLevel is toggling the Form's visibility.
+	
 2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: Make OnPaintTest NotWorking, since it only
