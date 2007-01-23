@@ -1287,7 +1287,12 @@ namespace Mono.CSharp {
 				if (c.Type == TypeManager.int32_type && target_type.IsInterface && target_type.IsAssignableFrom (c.Type))
 					return new BoxedCast (c, target_type);
 
-				c = c.ConvertImplicitly (target_type);
+				try {
+					c = c.ConvertImplicitly (target_type);
+				} catch {
+					Console.WriteLine ("Conversion error happened in line {0}", loc);
+					throw;
+				}
 				if (c != null)
 					return c;
 			}
