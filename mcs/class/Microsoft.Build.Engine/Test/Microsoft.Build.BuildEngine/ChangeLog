@@ -1,3 +1,7 @@
+2007-01-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectTest: Removed warning.
+
 2007-01-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ProjectTest.cs: Tests for Project.AddNewItem ().

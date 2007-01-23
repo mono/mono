@@ -239,7 +239,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 
-			BuildItem item = project.AddNewItem ("B", "b");
+			project.AddNewItem ("B", "b");
 
 			project.ItemGroups.CopyTo (groups, 0);
 			Assert.AreEqual (0, groups [0].Count, "A1");
