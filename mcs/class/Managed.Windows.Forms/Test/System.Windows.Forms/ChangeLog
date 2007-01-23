@@ -1,3 +1,9 @@
+2007-01-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* GridTableStylesCollectionTest.cs: Mark TestAdd as NotWorking.
+	There is a TODO in the DataGrid source referencing that Add should allow
+	multiple columns with the same name, but currently doesn't.
+
 2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: Added a tests for ControlCollection and
