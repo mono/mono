@@ -38,7 +38,6 @@ namespace System.Windows.Forms {
 		private MainMenu maximized_menu;
 		private MenuItem icon_menu;
 		private ContextMenu icon_popup_menu;
-		private FormWindowState prev_window_state;
 		internal bool was_minimized;
 		
 		private PaintEventHandler draw_maximized_buttons;
@@ -46,13 +45,35 @@ namespace System.Windows.Forms {
 		
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
-		private Rectangle prev_bounds;
-
+		private Rectangle normal_bounds;
 		private Rectangle iconic_bounds;
 
 		private Point icon_clicked;
 		private DateTime icon_clicked_time;
 		private bool icon_dont_show_popup;
+		
+		internal Rectangle MaximizedBounds {
+			get {
+				Rectangle pb = mdi_container.ClientRectangle;
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+				int tw = TitleBarHeight;
+
+				Rectangle new_bounds = new Rectangle (pb.Left - bw,
+						pb.Top - tw - bw,
+						pb.Width + bw * 2,
+						pb.Height + tw + bw * 2);
+				return new_bounds;
+			}
+		}
+		
+		internal Rectangle NormalBounds {
+			get {
+				return normal_bounds;
+			}
+			set {
+				normal_bounds = value;
+			}
+		}
 		
 		internal Rectangle IconicBounds {
 			get {
@@ -71,8 +92,8 @@ namespace System.Windows.Forms {
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
-			prev_bounds = form.Bounds;
-			prev_window_state = form.window_state;
+			if (form.WindowState == FormWindowState.Normal)
+				normal_bounds = form.Bounds;
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
 			form.TextChanged += new EventHandler (FormTextChangedHandler);
@@ -109,14 +130,11 @@ namespace System.Windows.Forms {
 		{
 			if (form.window_state == FormWindowState.Minimized)
 				IconicBounds = form.Bounds;
-			XplatUI.RequestNCRecalc (mdi_container.Handle);
 			form.MdiParent.MdiContainer.SizeScrollBars ();
 		}
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
-			XplatUI.RequestNCRecalc (form.MdiParent.MdiContainer.Handle);
-			XplatUI.RequestNCRecalc (form.Handle);
 			form.MdiParent.MdiContainer.SizeScrollBars ();
 		}
 	
@@ -306,72 +324,33 @@ namespace System.Windows.Forms {
 			XplatUI.ClientToScreen (mdi_container.Handle, ref x, ref y);
 		}
 
-		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
+		public void UpdateWindowDecorations (FormWindowState window_state)
 		{
-			bool mdiclient_layout;
-			
-			if (this.mdi_container.SetWindowStates (this))
-				return;
-			
-			if (prev_window_state == window_state)
-				return;
-			
-			if (prev_window_state == FormWindowState.Normal)
-				prev_bounds = form.Bounds;
-			
-			mdiclient_layout = prev_window_state == FormWindowState.Maximized || window_state == FormWindowState.Maximized;
+			CreateButtons ();
 			
 			switch (window_state) {
 			case FormWindowState.Minimized:
-				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
-				prev_window_state = FormWindowState.Minimized;
-				mdi_container.ArrangeIconicWindows (false);
 				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			case FormWindowState.Maximized:
-				if (mdi_container.ActiveMdiChild != form)
-					mdi_container.ActivateChild (form);
-				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Restore;
 				minimize_button.Caption = CaptionButton.Minimize;
-				prev_window_state = FormWindowState.Maximized;
-				SizeMaximized ();
 				MaximizedMenu.Paint += draw_maximized_buttons;
 				break;
 			case FormWindowState.Normal:
-				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Minimize;
-				form.Bounds = prev_bounds;
-				prev_window_state =FormWindowState.Normal;
-
 				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			}
-
-			form.ResetCursor ();
-			
-			if (mdiclient_layout)
-				mdi_container.Parent.PerformLayout ();
-			
-			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 			XplatUI.RequestNCRecalc (form.Handle);
-			mdi_container.SizeScrollBars ();
 		}
 
-		internal void SizeMaximized ()
+		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
-			Rectangle pb = mdi_container.ClientRectangle;
-			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			int tw = TitleBarHeight;
-
-			Rectangle new_bounds = new Rectangle (pb.Left - bw,
-					pb.Top - tw - bw,
-					pb.Width + bw * 2,
-					pb.Height + tw + bw * 2);
-			form.Bounds = new_bounds;
+			mdi_container.SetWindowState (form, old_state, window_state, true);
 		}
 
 		private void FormClosed (object sender, EventArgs e)
@@ -618,7 +597,6 @@ namespace System.Windows.Forms {
 		{
 			if (mdi_container.ActiveMdiChild != form) {
 				mdi_container.ActivateChild (form);
-				mdi_container.SetWindowStates (this);
 			}
 			base.Activate ();
 		}	

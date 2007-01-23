@@ -1,3 +1,18 @@
+2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XplatWin32.cs: In RequestNCRecalc call SetWindowPos with SWP_NOZORDER
+	to prevent it from changing z-order.
+	* MdiWindowManager.cs: Refactor part of SetWindowState to MdiClient, only
+	leave UI updates in MdiWindowManager.
+	* InternalWindowManager.cs: Check for 0 sized nc areas and make them
+	1 sized (NC handling goes weird on Linux otherwise).
+	* MdiClient.cs: Add missing ExStyle (WS_EX_CLIENTEDGE), so it's no longer
+	necessary to handle WM_NCCALCSIZE anymore. This also made it possible to
+	remove a few NCRequestRecalcs. Changed calculations in IconicBounds
+	to use ClientSize of MdiClient instead of entire size. Refactored ActivateChild
+	and SetWindowState(s) to allow for changing the size of an activated child
+	before activating it (reduces a lot of flicker).
+
 2007-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Changing FormBorderStyle has different semantics based

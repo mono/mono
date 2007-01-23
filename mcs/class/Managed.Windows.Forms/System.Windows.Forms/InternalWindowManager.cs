@@ -225,6 +225,15 @@ namespace System.Windows.Forms {
 					ncp.rgrc1.right -= bw;
 				}
 
+				// This is necessary for Linux, can't handle 0-sized 
+				// client areas correctly.
+				if (ncp.rgrc1.right == ncp.rgrc1.left) {
+					ncp.rgrc1.right++;
+				}	
+				if (ncp.rgrc1.top == ncp.rgrc1.bottom) {
+					ncp.rgrc1.bottom++;
+				}
+				
 				Marshal.StructureToPtr (ncp, m.LParam, true);
 			}
 		}

@@ -170,25 +170,6 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
-			case Msg.WM_NCCALCSIZE:
-				XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
-
-				if (m.WParam == (IntPtr) 1) {
-					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
-							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
-
-					int bw = 2;
-
-					ncp.rgrc1.top += bw;
-					ncp.rgrc1.bottom -= bw;
-					ncp.rgrc1.left += bw;
-					ncp.rgrc1.right -= bw;
-					
-					Marshal.StructureToPtr (ncp, m.LParam, true);
-				}
-
-				break;
-
 			case Msg.WM_NCPAINT:
 				PaintEventArgs pe = XplatUI.PaintEventStart (Handle, false);
 
@@ -263,7 +244,9 @@ namespace System.Windows.Forms {
 #region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
-				return base.CreateParams;
+				CreateParams result = base.CreateParams;
+				result.ExStyle |= (int) WindowExStyles.WS_EX_CLIENTEDGE;
+				return result;
 			}
 		}
 		#endregion	// Protected Instance Properties
@@ -554,7 +537,7 @@ namespace System.Windows.Forms {
 
 				MdiWindowManager wm = child.WindowManager as MdiWindowManager;
 				if (wm.GetWindowState () == FormWindowState.Maximized)
-					wm.SizeMaximized ();
+					child.Bounds = wm.MaximizedBounds;
 
 				if (wm.GetWindowState () == FormWindowState.Minimized) {
 					child.Top += change;
@@ -568,7 +551,7 @@ namespace System.Windows.Forms {
 		internal void ArrangeIconicWindows (bool rearrange_all)
 		{
 			int xspacing = 160;
-			int yspacing = 25;
+			int yspacing = 27;
 
 			Rectangle rect = new Rectangle (0, 0, xspacing, yspacing);
 
@@ -589,15 +572,13 @@ namespace System.Windows.Forms {
 				// different widths for different styles
 				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (wm);
 				
-				// The extra one pixel is a cheap hack for now until we
-				// handle 0 client sizes properly in the driver
-				int height = wm.TitleBarHeight + (bw * 2) + 1;
+				int height = wm.TitleBarHeight + (bw * 2);
 				
 				bool success = true;
 				int startx, starty, currentx, currenty;
 				
 				startx = 0;
-				starty = Bottom - yspacing - bw - 2;
+				starty = ClientSize.Height - yspacing;
 				currentx = startx;
 				currenty = starty;
 				
@@ -641,7 +622,6 @@ namespace System.Windows.Forms {
 			Controls.Remove (form);
 			form.Close ();
 
-			XplatUI.RequestNCRecalc (Handle);
 			if (Controls.Count == 0) {
 				XplatUI.RequestNCRecalc (Parent.Handle);
 				ParentForm.PerformLayout ();
@@ -681,13 +661,27 @@ namespace System.Windows.Forms {
 			
 			if (ParentForm.is_changing_visible_state)
 				return;
-				
+			
 			Form current = (Form) Controls [0];
-			form.SuspendLayout ();
+
+			// We want to resize the new active form before it is 
+			// made active to avoid flickering. Can't do it in the
+			// normal way (form.WindowState = Maximized) since it's not
+			// active yet and everything would just return to before. 
+			// We also won't suspend layout, this way the layout will
+			// happen before the form is made active (and in many cases
+			// before it is visible, which avoids flickering as well).
+			MdiWindowManager wm = (MdiWindowManager)form.WindowManager;
+			if (current.WindowState == FormWindowState.Maximized && form.WindowState != FormWindowState.Maximized && form.Visible) {
+				FormWindowState old_state = form.window_state;
+				SetWindowState (form, old_state, FormWindowState.Maximized, true);
+				wm.was_minimized = form.window_state == FormWindowState.Minimized;
+				form.window_state = FormWindowState.Maximized;
+				SetParentText (false);
+			}
 			form.BringToFront ();
 			form.SendControlFocus (form);
-			form.ResumeLayout(false);
-			SetWindowStates ((MdiWindowManager) form.window_manager);
+			SetWindowStates (wm);
 			if (current != form) {
 				form.has_focus = false;
 				XplatUI.InvalidateNC (current.Handle);
@@ -741,6 +735,9 @@ namespace System.Windows.Forms {
 			if (!is_active){
 				return false;
 			}
+			
+			ArrayList minimize_these = new ArrayList ();
+			ArrayList normalize_these = new ArrayList ();
 
 			setting_windowstates = true;
 			foreach (Form frm in mdi_child_list) {
@@ -751,19 +748,29 @@ namespace System.Windows.Forms {
 				}
 				if (frm.WindowState == FormWindowState.Maximized && is_active) {
 					maximize_this = true;	
-					if (((MdiWindowManager) frm.window_manager).was_minimized)
-						frm.WindowState = FormWindowState.Minimized;
-					else
-						frm.WindowState = FormWindowState.Normal;//
+					if (((MdiWindowManager) frm.window_manager).was_minimized) {
+						minimize_these.Add (frm); 
+					} else {
+						normalize_these.Add (frm); 
+					}
 				}
 			}
-			if (maximize_this) {
+
+			if (maximize_this && form.WindowState != FormWindowState.Maximized) {
 				wm.was_minimized = form.window_state == FormWindowState.Minimized;
 				form.WindowState = FormWindowState.Maximized;
 			}
-			SetParentText(false);
 			
-			XplatUI.RequestNCRecalc(ParentForm.Handle);
+			foreach (Form frm in minimize_these)
+				frm.WindowState = FormWindowState.Minimized;
+
+			foreach (Form frm in normalize_these)
+				frm.WindowState = FormWindowState.Normal;
+
+
+			SetParentText (false);
+			
+			XplatUI.RequestNCRecalc (ParentForm.Handle);
 			XplatUI.RequestNCRecalc (Handle);
 
 			SizeScrollBars ();
@@ -778,6 +785,52 @@ namespace System.Windows.Forms {
 			return maximize_this;
 		}
 
+		internal void SetWindowState (Form form, FormWindowState old_window_state, FormWindowState new_window_state, bool is_activating_child)
+		{
+			bool mdiclient_layout;
+
+			MdiWindowManager wm = (MdiWindowManager) form.window_manager;
+
+			if (!is_activating_child && new_window_state == FormWindowState.Maximized && !wm.IsActive ()) {
+				ActivateChild (form);
+				return;
+			}
+
+			if (SetWindowStates (wm))
+				return;
+
+			if (old_window_state == new_window_state)
+				return;
+				
+			if (old_window_state == FormWindowState.Normal)
+				wm.NormalBounds = form.Bounds;
+
+			mdiclient_layout = old_window_state == FormWindowState.Maximized || new_window_state == FormWindowState.Maximized;
+
+			switch (new_window_state) {
+			case FormWindowState.Minimized:
+				ArrangeIconicWindows (false);
+				break;
+			case FormWindowState.Maximized:
+				form.Bounds = wm.MaximizedBounds;
+				break;
+			case FormWindowState.Normal:
+				form.Bounds = wm.NormalBounds;
+				break;
+			}
+
+			wm.UpdateWindowDecorations (new_window_state);
+
+			form.ResetCursor ();
+
+			if (mdiclient_layout)
+				Parent.PerformLayout ();
+
+			//XplatUI.RequestNCRecalc (Parent.Handle);
+			//XplatUI.RequestNCRecalc (form.Handle);
+			if (!setting_windowstates)
+				SizeScrollBars ();
+		}
 		internal int ChildrenCreated {
 			get { return mdi_created; }
 			set { mdi_created = value; }
