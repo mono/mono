@@ -467,9 +467,12 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				if (((Control)value).GetTopLevel() && !(owner is MdiClient)) {
+				bool owner_permits_toplevels = (owner is MdiClient) || (owner is Form && ((Form)owner).IsMdiContainer);
+				bool child_is_toplevel = ((Control)value).GetTopLevel();
+				bool child_is_mdichild = (value is Form && ((Form)value).IsMdiChild);
+
+				if (child_is_toplevel && !(owner_permits_toplevels && child_is_mdichild))
 					throw new ArgumentException("Cannot add a top level control to a control.", "value");
-				}
 				
 				if (Contains (value)) {
 					owner.PerformLayout();
@@ -884,9 +887,12 @@ namespace System.Windows.Forms
 					throw new ArgumentException("value", "Cannot add null controls");
 				}
 
-				if (((Control)value).GetTopLevel() && !(owner is MdiClient)) {
+				bool owner_permits_toplevels = (owner is MdiClient) || (owner is Form && ((Form)owner).IsMdiContainer);
+				bool child_is_toplevel = ((Control)value).GetTopLevel();
+				bool child_is_mdichild = (value is Form && ((Form)value).IsMdiChild);
+
+				if (child_is_toplevel && !(owner_permits_toplevels && child_is_mdichild))
 					throw new ArgumentException("Cannot add a top level control to a control.", "value");
-				}
 
 				return list.Add(value);
 			}

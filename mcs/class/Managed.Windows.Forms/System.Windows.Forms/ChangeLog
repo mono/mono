@@ -1,5 +1,10 @@
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: fix the checks so that they work correctly for mdi
+	parents/children.
+
+2007-01-23  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: ControlCollection seems to have super-secret
 	abstraction breaking knowledge of Mdi containers.  allow MdiClient
 	to add toplevel controls.
