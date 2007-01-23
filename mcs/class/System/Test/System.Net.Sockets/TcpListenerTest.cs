@@ -167,5 +167,28 @@ namespace MonoTests.System.Net.Sockets
 			Assert ("#07", null != listener.GetSocket ());
 			Assert ("#08", sock != listener.GetSocket ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void StartListenMoreThan5 ()
+		{
+			TcpListener listen = new TcpListener (IPAddress.Loopback, 1234);
+
+			listen.Start (6);
+			listen.Stop ();
+			
+			listen.Start (256);
+			listen.Stop ();
+			
+			listen.Start (1024);
+			listen.Stop ();
+
+			listen.Start (32768);
+			listen.Stop ();
+			
+			listen.Start (65536);
+			listen.Stop ();
+		}
+#endif
 	}
 }

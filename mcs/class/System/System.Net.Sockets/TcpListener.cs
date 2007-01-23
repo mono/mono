@@ -4,12 +4,13 @@
 //    Phillip Pearson (pp@myelin.co.nz)
 //    Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	  Patrik Torstensson
+//    Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //
 // Copyright (C) 2001, Phillip Pearson
 //    http://www.myelin.co.nz
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
-// (c) 2004 Novell, Inc.
+// (c) 2004-2006 Novell, Inc.
 //
 
 //
@@ -139,7 +140,36 @@ namespace System.Net.Sockets
 		{
 			get { return server; }
 		}
-		
+
+#if NET_2_0
+		/// <summary>
+		/// Specifies whether the TcpListener allows only one
+		/// underlying socket to listen to a specific port
+		/// </summary>
+		public bool ExclusiveAddressUse
+		{
+			get {
+				if (server == null) {
+					throw new ObjectDisposedException (GetType ().ToString ());
+				}
+				if (active) {
+					throw new InvalidOperationException ("The TcpListener has been started");
+				}
+
+				return(server.ExclusiveAddressUse);
+			}
+			set {
+				if (server == null) {
+					throw new ObjectDisposedException (GetType ().ToString ());
+				}
+				if (active) {
+					throw new InvalidOperationException ("The TcpListener has been started");
+				}
+
+				server.ExclusiveAddressUse = value;
+			}
+		}
+#endif
 		
 		// methods
 
@@ -201,22 +231,72 @@ namespace System.Net.Sockets
 		/// </summary>
 		public void Start ()
 		{
-			if (active)
-				return;
-
-			if (server == null)
-				throw new InvalidOperationException("Invalid server socket");
-
-			server.Bind (savedEP);
-			
 			// MS: sets Listen to Int32.MaxValue
-			server.Listen(5);	
+			this.Start (5);
 			// According to the man page some BSD and BSD-derived
 			// systems limit the backlog to 5.  This should really be
 			// configurable though
+		}
 
+		/// <summary>
+		/// Tells the TcpListener to start listening for max number
+		/// of pending connections.
+		/// </summary>
+
+#if NET_2_0
+		public
+#else
+		private
+#endif
+		void Start (int backlog)
+		{
+			if (active) {
+				return;
+			}
+			if (server == null) {
+				throw new InvalidOperationException ("Invalid server socket");
+			}
+			
+			server.Bind (savedEP);
+			server.Listen (backlog);
 			active = true;
 		}
+
+#if NET_2_0		
+		public IAsyncResult BeginAcceptSocket (AsyncCallback callback,
+						       object state)
+		{
+			if (server == null) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			return(server.BeginAccept (callback, state));
+		}
+		
+		public IAsyncResult BeginAcceptTcpClient (AsyncCallback callback, object state)
+		{
+			if (server == null) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			return(server.BeginAccept (callback, state));
+		}
+		
+		public Socket EndAcceptSocket (IAsyncResult asyncResult) 
+		{
+			return(server.EndAccept (asyncResult));
+		}
+		
+		public TcpClient EndAcceptTcpClient (IAsyncResult asyncResult)
+		{
+			Socket clientSocket = server.EndAccept (asyncResult);
+			TcpClient client = new TcpClient ();
+			
+			client.SetTcpClient (clientSocket);
+			
+			return(client);
+		}
+#endif
 		
 		/// <summary>
 		/// Tells the TcpListener to stop listening and dispose
