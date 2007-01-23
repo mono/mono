@@ -118,10 +118,11 @@ namespace Microsoft.Build.BuildEngine {
 			return true;
 		}
 		
-		private static Token EvaluateToken (Token token, Project context)
+		// FIXME: in some situations items might not be allowed
+		static Token EvaluateToken (Token token, Project context)
 		{
 			Expression oe = new Expression ();
-			oe.Parse (token.Value);
+			oe.Parse (token.Value, true);
 			return new Token ((string) oe.ConvertTo (context, typeof (string)), token.Type);
 		}
 	}

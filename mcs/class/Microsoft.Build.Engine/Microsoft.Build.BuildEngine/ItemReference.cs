@@ -48,12 +48,12 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (transform != null) {
 				this.transform = new Expression ();
-				this.transform.Parse (transform);
+				this.transform.Parse (transform, false);
 			}
 
 			if (separator != null) {
 				this.separator = new Expression ();
-				this.separator.Parse (separator);
+				this.separator.Parse (separator, false);
 			}
 		}
 		

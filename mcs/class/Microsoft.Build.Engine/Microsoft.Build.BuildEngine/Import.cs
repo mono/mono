@@ -53,6 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
 		}
 
+		// FIXME: condition
 		internal void Evaluate ()
 		{
 			evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
@@ -60,6 +61,10 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (EvaluatedProjectPath == String.Empty)
 				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+
+			// NOTE: it's a hack to transform Microsoft.CSharp.Targets to Microsoft.CSharp.targets
+			if (Path.HasExtension (filename))
+				filename = Path.ChangeExtension (filename, Path.GetExtension (filename));
 			
 			if (!File.Exists (filename)) {
 				throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", filename));
@@ -76,7 +81,7 @@ namespace Microsoft.Build.BuildEngine {
 			Expression exp;
 
 			exp = new Expression ();
-			exp.Parse (file);
+			exp.Parse (file, false);
 			return (string) exp.ConvertTo (project, typeof (string));
 		}
 

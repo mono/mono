@@ -195,7 +195,7 @@ namespace Microsoft.Build.BuildEngine {
 					return false;
 				else {
 					Expression exp = new Expression ();
-					exp.Parse (str);
+					exp.Parse (str, true);
 					return (bool) exp.ConvertTo (parentTarget.Project, typeof (bool));
 				}
 			}

@@ -63,7 +63,8 @@ namespace Microsoft.Build.BuildEngine {
 				loadInfo = new AssemblyLoadInfo (AssemblyName, TaskName);
 			} else if (AssemblyFile != null) {
 				Expression exp = new Expression ();
-				exp.Parse (AssemblyFile);
+				// FIXME: test it
+				exp.Parse (AssemblyFile, false);
 				string filename = (string) exp.ConvertTo (project, typeof (string));
 
 				if (Path.IsPathRooted (filename) == false) {

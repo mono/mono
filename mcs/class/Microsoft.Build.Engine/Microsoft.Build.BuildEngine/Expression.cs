@@ -38,13 +38,17 @@ namespace Microsoft.Build.BuildEngine {
 	internal class Expression {
 	
 		ExpressionCollection expressionCollection;
+
+		static Regex item_regex;
+		static Regex property_regex;
+		static Regex metadata_regex;
 	
 		public Expression ()
 		{
 			this.expressionCollection = new ExpressionCollection ();
 		}
 
-		public void Parse (string expression)
+		public void Parse (string expression, bool allowItems)
 		{
 			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
 			expression = expression.Replace ('\\', Path.DirectorySeparatorChar);
@@ -59,9 +63,8 @@ namespace Microsoft.Build.BuildEngine {
 			Prepare (p2, parts.Length);
 			Prepare (p3, parts.Length);
 
-			for (int i = 0; i < parts.Length; i++) {
-				p1 [i] = SplitItems (parts [i]);
-			}
+			for (int i = 0; i < parts.Length; i++)
+				p1 [i] = SplitItems (parts [i], allowItems);
 
 			for (int i = 0; i < parts.Length; i++) {
 				p2 [i] = new ArrayList ();
@@ -110,29 +113,30 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		ArrayList SplitItems (string text)
+		ArrayList SplitItems (string text, bool allowItems)
 		{
+			if (!allowItems) {
+				// FIXME: it's probably larger than 1
+				ArrayList l = new ArrayList ();
+				l.Add (text);
+				return l;
+			}
+
 			ArrayList phase1 = new ArrayList ();
 			Match m;
-			Regex item = new Regex (
-				@"@\(\s*"
-				+ @"(?<itemname>[_A-Za-z][_0-9a-zA-Z]*)"
-				+ @"(?<has_transform>\s*->\s*'(?<transform>[^']*)')?"
-				+ @"(?<has_separator>\s*,\s*'(?<separator>[^']*)')?"
-				+ @"\s*\)");
-			m = item.Match (text);
+			m = ItemRegex.Match (text);
 
 			while (m.Success) {
 				string name = null, transform = null, separator = null;
 				ItemReference ir;
 				
-				name = m.Groups [item.GroupNumberFromName ("itemname")].Value;
+				name = m.Groups [ItemRegex.GroupNumberFromName ("itemname")].Value;
 				
-				if (m.Groups [item.GroupNumberFromName ("has_transform")].Success)
-					transform = m.Groups [item.GroupNumberFromName ("transform")].Value;
+				if (m.Groups [ItemRegex.GroupNumberFromName ("has_transform")].Success)
+					transform = m.Groups [ItemRegex.GroupNumberFromName ("transform")].Value;
 				
-				if (m.Groups [item.GroupNumberFromName ("has_separator")].Success)
-					separator = m.Groups [item.GroupNumberFromName ("separator")].Value;
+				if (m.Groups [ItemRegex.GroupNumberFromName ("has_separator")].Success)
+					separator = m.Groups [ItemRegex.GroupNumberFromName ("separator")].Value;
 
 				ir = new ItemReference (name, transform, separator, m.Groups [0].Index, m.Groups [0].Length);
 				phase1.Add (ir);
@@ -167,17 +171,13 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			ArrayList phase1 = new ArrayList ();
 			Match m;
-			Regex property = new Regex (
-				@"\$\(\s*"
-				+ @"(?<name>[_a-zA-Z][_0-9a-zA-Z]*)"
-				+ @"\s*\)");
-			m = property.Match (text);
+			m = PropertyRegex.Match (text);
 
 			while (m.Success) {
 				string name = null;
 				PropertyReference pr;
 				
-				name = m.Groups [property.GroupNumberFromName ("name")].Value;
+				name = m.Groups [PropertyRegex.GroupNumberFromName ("name")].Value;
 				
 				pr = new PropertyReference (name, m.Groups [0].Index, m.Groups [0].Length);
 				phase1.Add (pr);
@@ -212,21 +212,16 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			ArrayList phase1 = new ArrayList ();
 			Match m;
-			Regex metadata = new Regex (
-				@"%\(\s*"
-				+ @"((?<name>[_a-zA-Z][_0-9a-zA-Z]*)\.)?"
-				+ @"(?<meta>[_a-zA-Z][_0-9a-zA-Z]*)"
-				+ @"\s*\)");
-			m = metadata.Match (text);
+			m = MetadataRegex.Match (text);
 
 			while (m.Success) {
 				string name = null, meta = null;
 				MetadataReference mr;
 				
-				if (m.Groups [metadata.GroupNumberFromName ("name")].Success)
-					name = m.Groups [metadata.GroupNumberFromName ("name")].Value;
+				if (m.Groups [MetadataRegex.GroupNumberFromName ("name")].Success)
+					name = m.Groups [MetadataRegex.GroupNumberFromName ("name")].Value;
 				
-				meta = m.Groups [metadata.GroupNumberFromName ("meta")].Value;
+				meta = m.Groups [MetadataRegex.GroupNumberFromName ("meta")].Value;
 				
 				mr = new MetadataReference (name, meta, m.Groups [0].Index, m.Groups [0].Length);
 				phase1.Add (mr);
@@ -264,6 +259,42 @@ namespace Microsoft.Build.BuildEngine {
 
 		public ExpressionCollection Collection {
 			get { return expressionCollection; }
+		}
+
+		static Regex ItemRegex {
+			get {
+				if (item_regex == null)
+					item_regex = new Regex (
+						@"@\(\s*"
+						+ @"(?<itemname>[_A-Za-z][_0-9a-zA-Z]*)"
+						+ @"(?<has_transform>\s*->\s*'(?<transform>[^']*)')?"
+						+ @"(?<has_separator>\s*,\s*'(?<separator>[^']*)')?"
+						+ @"\s*\)");
+				return item_regex;
+			}
+		}
+
+		static Regex PropertyRegex {
+			get {
+				if (property_regex == null)
+					property_regex = new Regex (
+						@"\$\(\s*"
+						+ @"(?<name>[_a-zA-Z][_0-9a-zA-Z]*)"
+						+ @"\s*\)");
+				return property_regex;
+			}
+		}
+
+		static Regex MetadataRegex {
+			get {
+				if (metadata_regex == null)
+					metadata_regex = new Regex (
+						@"%\(\s*"
+						+ @"((?<name>[_a-zA-Z][_0-9a-zA-Z]*)\.)?"
+						+ @"(?<meta>[_a-zA-Z][_0-9a-zA-Z]*)"
+						+ @"\s*\)");
+				return metadata_regex;
+			}
 		}
 	}
 }

@@ -236,7 +236,7 @@ namespace Microsoft.Build.BuildEngine {
 			object result;
 			
 			e = new Expression ();
-			e.Parse (raw);
+			e.Parse (raw, true);
 			
 			if ((string) e.ConvertTo (parentProject, typeof (string)) == String.Empty)
 				return null;

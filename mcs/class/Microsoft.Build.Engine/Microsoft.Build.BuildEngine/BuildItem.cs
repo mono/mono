@@ -207,7 +207,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
-				e.Parse (value);
+				e.Parse (value, true);
 				evaluatedMetadata.Add (name, (string) e.ConvertTo (parent_item_group.ParentProject, typeof (string)));
 			} else
 				evaluatedMetadata.Add (name, Utilities.Unescape (value));
@@ -240,9 +240,9 @@ namespace Microsoft.Build.BuildEngine {
 			string includes, excludes;
 
 			includeExpr = new Expression ();
-			includeExpr.Parse (Include);
+			includeExpr.Parse (Include, true);
 			excludeExpr = new Expression ();
-			excludeExpr.Parse (Exclude);
+			excludeExpr.Parse (Exclude, true);
 			
 			includes = (string) includeExpr.ConvertTo (project, typeof (string));
 			excludes = (string) excludeExpr.ConvertTo (project, typeof (string));

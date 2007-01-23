@@ -119,7 +119,7 @@ namespace Microsoft.Build.BuildEngine {
 
 				if (DependsOnTargets != String.Empty) {
 					Expression dependencies = new Expression ();
-					dependencies.Parse (DependsOnTargets);
+					dependencies.Parse (DependsOnTargets, true);
 					
 					string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (Project, typeof (string[]));
 					foreach (string target in targetsToBuildFirst) {

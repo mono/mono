@@ -67,9 +67,9 @@ namespace Microsoft.Build.BuildEngine {
 			
 			
 			inputExpr = new Expression ();
-			inputExpr.Parse (inputs);
+			inputExpr.Parse (inputs, true);
 			outputExpr = new Expression ();
-			outputExpr.Parse (outputs);
+			outputExpr.Parse (outputs, true);
 			
 			inputFiles = (string[]) inputExpr.ConvertTo (project, typeof (string[]));
 			outputFiles = (string[]) outputExpr.ConvertTo (project, typeof (string[]));

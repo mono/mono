@@ -1,3 +1,15 @@
+2007-01-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs, ConditionFactorExpression.cs, Target.cs,
+	TaskEngine.cs, UsingTask.cs, ItemReference.cs, BuildItem.cs,
+	BatchingImpl.cs, BuildProperty.cs: Track API changes.
+
+	* Expression.cs (Parse): Added allowItems parameter and made regexes
+	static.
+
+	* Import.cs (Evaluate): Moved hack from tools/xbuild/Makefile here. It
+	will try to import a.ext when given a.EXT.
+
 2007-01-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemGroup.cs: Store information saying what is the last item
