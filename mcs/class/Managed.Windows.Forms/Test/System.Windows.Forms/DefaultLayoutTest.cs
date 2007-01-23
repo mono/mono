@@ -435,8 +435,8 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (b2);
 
 			f.Show ();
-			Assert.AreEqual (new Rectangle (200, 0, 92, 273), b1.Bounds, "A1");
-			Assert.AreEqual (new Rectangle (0, 0, 200, 273), b2.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (b2.Width, 0, f.ClientRectangle.Width - b2.Width, f.ClientRectangle.Height), b1.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (0, 0, 200, f.ClientRectangle.Height), b2.Bounds, "A2");
 			f.Dispose ();
 		}
 
@@ -455,8 +455,8 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (b1);
 
 			f.Show ();
-			Assert.AreEqual (new Rectangle (0, 0, 292, 273), b1.Bounds, "B1");
-			Assert.AreEqual (new Rectangle (0, 0, 200, 273), b2.Bounds, "B2");
+			Assert.AreEqual (new Rectangle (0, 0, f.ClientRectangle.Width, f.ClientRectangle.Height), b1.Bounds, "B1");
+			Assert.AreEqual (new Rectangle (0, 0, 200, f.ClientRectangle.Height), b2.Bounds, "B2");
 			f.Dispose ();
 		}
 	}
