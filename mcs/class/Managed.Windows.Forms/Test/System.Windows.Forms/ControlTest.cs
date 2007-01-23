@@ -73,6 +73,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void OnPaintTest ()
 		{
 			using (OnPaintTester t = new OnPaintTester ()) {

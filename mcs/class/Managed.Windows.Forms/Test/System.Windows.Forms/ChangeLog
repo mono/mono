@@ -1,3 +1,8 @@
+2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ControlTest.cs: Make OnPaintTest NotWorking, since it only
+	works once in a while.
+
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
 	* BindingSourceTest.cs: initial BindingSource tests.  not built
