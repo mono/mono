@@ -3,6 +3,7 @@
 // Author:
 // 	Phillip Pearson (pp@myelin.co.nz)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //
 // Copyright (C) 2001, Phillip Pearson
 //    http://www.myelin.co.nz
@@ -126,12 +127,10 @@ namespace System.Net.Sockets
 
 		public bool ExclusiveAddressUse {
 			get {
-				return !((bool) client.GetSocketOption (SocketOptionLevel.Socket,
-								SocketOptionName.ReuseAddress));
+				return(client.ExclusiveAddressUse);
 			}
 			set {
-				client.SetSocketOption (SocketOptionLevel.Socket,
-							SocketOptionName.ReuseAddress, !value);
+				client.ExclusiveAddressUse = value;
 			}
 		}
 #endif
@@ -310,37 +309,100 @@ namespace System.Net.Sockets
 
 		public void Connect (string hostname, int port)
 		{
-			CheckDisposed ();
-
 			IPHostEntry host = Dns.GetHostByName(hostname);
 
-			for(int i=0; i<host.AddressList.Length; i++) {
-				try {
-					Init(host.AddressList[i].AddressFamily);
+			Connect (host.AddressList, port);
+		}
 
-					if(host.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
-						client.Bind(new IPEndPoint(IPAddress.Any, 0));
-#if NET_1_1
-					else if(host.AddressList[i].AddressFamily == AddressFamily.InterNetworkV6)
-						client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+#if NET_2_0
+		public
+#else
+		private
 #endif
+		void Connect (IPAddress[] ipAddresses, int port)
+		{
+			CheckDisposed ();
+			
+			if (ipAddresses == null) {
+				throw new ArgumentNullException ("ipAddresses");
+			}
+			
+			for(int i = 0; i < ipAddresses.Length; i++) {
+				try {
+					IPAddress address = ipAddresses[i];
 
-					Connect(new IPEndPoint(host.AddressList[i], port));
-					if (values != 0)
+					if (address.Equals (IPAddress.Any) ||
+					    address.Equals (IPAddress.IPv6Any)) {
+						throw new SocketException ((int)SocketError.AddressNotAvailable);
+					}
+
+					Init (address.AddressFamily);
+					
+					if (address.AddressFamily == AddressFamily.InterNetwork) {
+						client.Bind (new IPEndPoint (IPAddress.Any, 0));
+#if NET_1_1
+					} else if (address.AddressFamily == AddressFamily.InterNetworkV6) {
+						client.Bind (new IPEndPoint (IPAddress.IPv6Any, 0));
+#endif
+					} else {
+						throw new NotSupportedException ("This method is only valid for sockets in the InterNetwork and InterNetworkV6 families");
+					}
+
+					Connect (new IPEndPoint (address, port));
+					
+					if (values != 0) {
 						SetOptions ();
+					}
+					
 					break;
 				} catch (Exception e) {
-					if(client != null) {
-						client.Close();
+					if (client != null) {
+						client.Close ();
 						client = null;
 					}
 
-					/// This is the last known address, re-throw the exception
-					if(i == host.AddressList.Length-1)
+					/* This is the last known
+					 * address, so re-throw the
+					 * exception
+					 */
+					if (i == ipAddresses.Length - 1) {
 						throw e;
+					}
 				}
 			}
 		}
+		
+#if NET_2_0		
+		public void EndConnect (IAsyncResult asyncResult)
+		{
+			client.EndConnect (asyncResult);
+		}
+		
+		public IAsyncResult BeginConnect (IPAddress address, int port,
+						  AsyncCallback callback,
+						  object state)
+		{
+			return(client.BeginConnect (address, port, callback,
+						    state));
+		}
+		
+		public IAsyncResult BeginConnect (IPAddress[] addresses,
+						  int port,
+						  AsyncCallback callback,
+						  object state)
+		{
+			return(client.BeginConnect (addresses, port, callback,
+						    state));
+		}
+		
+		public IAsyncResult BeginConnect (string host, int port,
+						  AsyncCallback callback,
+						  object state)
+		{
+			return(client.BeginConnect (host, port, callback,
+						    state));
+		}
+#endif
 		
 		void IDisposable.Dispose ()
 		{

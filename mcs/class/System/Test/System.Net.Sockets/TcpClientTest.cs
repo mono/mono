@@ -71,6 +71,56 @@ namespace MonoTests.System.Net.Sockets {
 			lSock.Close();
 			
 		}	
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof(ArgumentNullException))]
+		public void ConnectMultiNull ()
+		{
+			TcpClient client = new TcpClient ();
+			IPAddress[] ipAddresses = null;
+			
+			client.Connect (ipAddresses, 1234);
+		}
+		
+		[Test]
+		public void ConnectMultiAny ()
+		{
+			TcpClient client = new TcpClient ();
+			IPAddress[] ipAddresses = new IPAddress[1];
+			
+			ipAddresses[0] = IPAddress.Any;
+			
+			try {
+				client.Connect (ipAddresses, 1234);
+				Assert.Fail ("ConnectMultiAny #1");
+			} catch (SocketException ex) {
+				Assertion.AssertEquals ("ConnectMultiAny #2",
+							10049, ex.ErrorCode);
+			} catch {
+				Assert.Fail ("ConnectMultiAny #3");
+			}
+		}
+		
+		[Test]
+		public void ConnectMultiRefused ()
+		{
+			TcpClient client = new TcpClient ();
+			IPAddress[] ipAddresses = new IPAddress[1];
+			
+			ipAddresses[0] = IPAddress.Loopback;
+			
+			try {
+				client.Connect (ipAddresses, 1234);
+				Assert.Fail ("ConnectMultiRefused #1");
+			} catch (SocketException ex) {
+				Assertion.AssertEquals ("ConnectMultiRefused #2", 10061, ex.ErrorCode);
+			} catch {
+				Assert.Fail ("ConnectMultiRefused #3");
+			}
+		}
+		
+#endif
 		
 	}
 
