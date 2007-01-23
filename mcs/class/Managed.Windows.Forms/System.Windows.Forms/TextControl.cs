@@ -4230,7 +4230,6 @@ namespace System.Windows.Forms {
 
 		public float X {
 			get {
-				Console.WriteLine ("index:  {0}", start);
 				if (start == 0)
 					return line.indent;
 				return line.widths [start - 1];
