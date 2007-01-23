@@ -98,8 +98,12 @@ namespace MonoTests.System.Windows.Forms {
 			c.BindingContextChanged += new EventHandler (Event_Handler1);
 			eventcount = 0;
 			f.Show ();
+#if NET_2_0
+			Assert.AreEqual (1, eventcount, "A1");
+#else
 			Assert.AreEqual (2, eventcount, "A1");
-			f.Dispose();
+#endif
+            f.Dispose();
 		}
 
 		[Test]

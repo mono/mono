@@ -232,7 +232,9 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+#if ONLY_1_1
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void FindStringExactMaxException ()
 		{
 			ComboBox cmbbox = new ComboBox ();

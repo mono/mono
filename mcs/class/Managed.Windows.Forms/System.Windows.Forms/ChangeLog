@@ -1,3 +1,9 @@
+2007-01-23  Andreia Gaita  <avidigal@novell.com>
+
+	* TreeNode.cs: Add new 2.0 ImageKey and SelectedImageKey properties.
+	* TreeNodeCollection.cs: New Add() methods, ContainsKey and
+	IndexOfKey() for 2.0
+
 2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XplatWin32.cs: In RequestNCRecalc call SetWindowPos with SWP_NOZORDER

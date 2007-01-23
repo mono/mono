@@ -124,6 +124,49 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+#if NET_2_0
+		public virtual TreeNode Add (string key, string text)
+		{
+			TreeNode node = new TreeNode (text);
+			node.Name = key;
+			Add (node);
+			return node;
+		}
+
+		public virtual TreeNode Add (string key, string text, int imageIndex)
+		{
+			TreeNode node = Add (key, text);
+			node.ImageIndex = imageIndex;
+			return node;
+		}
+
+		public virtual TreeNode Add (string key, string text, string imageKey)
+		{
+			TreeNode node = Add (key, text);
+			node.ImageKey = imageKey;
+			return node;
+
+		}
+
+		public virtual TreeNode Add (string key, string text, int imageIndex, int selectedImageIndex)
+		{
+			TreeNode node = Add (key, text);
+			node.ImageIndex = imageIndex;
+			node.SelectedImageIndex = selectedImageIndex;
+			return node;
+		}
+
+		public virtual TreeNode Add (string key, string text, string imageKey, string selectedImageKey)
+		{
+			TreeNode node = Add (key, text);
+			node.ImageKey = imageKey;
+			node.SelectedImageKey = selectedImageKey;
+			return node;
+		}
+
+
+#endif
+
 		public virtual void AddRange (TreeNode [] nodes)
 		{
 			if (nodes == null)
@@ -160,6 +203,16 @@ namespace System.Windows.Forms {
 		{
 			return (Array.BinarySearch (nodes, node) > 0);
 		}
+#if NET_2_0
+		public bool ContainsKey (string key)
+		{
+			for (int i = 0; i < nodes.Length; i++) {
+				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
+					return true;
+			}
+			return false;
+		}
+#endif
 
 		public void CopyTo (Array dest, int index)
 		{
@@ -175,6 +228,17 @@ namespace System.Windows.Forms {
 		{
 			return Array.IndexOf (nodes, node);
 		}
+
+#if NET_2_0
+		public int IndexOfKey (string key)
+		{
+			for (int i = 0; i < nodes.Length; i++) {
+				if (string.Compare (nodes [i].Name, key, true, CultureInfo.InvariantCulture) == 0)
+					return i;
+			}
+			return -1;
+		}
+#endif
 
 		public virtual void Insert (int index, TreeNode node)
 		{

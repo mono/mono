@@ -10,6 +10,104 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class TreeNodeCollectionTest
 	{
+
+        [Test]
+        public void Add()
+        {
+            ImageList imglist;
+
+            TreeView tv = new TreeView();
+            tv.Nodes.Add("text");
+            Assert.AreEqual(1, tv.Nodes.Count, "#A1");
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#A2");
+#if NET_2_0
+            Assert.AreEqual("", tv.Nodes[0].Name, "#A3");
+#endif
+            tv.Nodes.Clear();
+
+            tv.Nodes.Add(new TreeNode());
+            Assert.AreEqual("", tv.Nodes[0].Text, "#B1");
+#if NET_2_0
+            Assert.AreEqual("", tv.Nodes[0].Name, "#B2");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+
+            tv.Nodes.Add("key", "text");
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#C1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#C2");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+            imglist = new ImageList();
+            imglist.Images.Add("image key", new Bitmap(16, 16));
+
+            tv.Nodes.Add("key", "text", 0);
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#D1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#D2");
+            Assert.AreEqual(0, tv.Nodes[0].ImageIndex, "#D3");
+            Assert.AreEqual("", tv.Nodes[0].ImageKey, "#D4");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+            imglist = new ImageList();
+            imglist.Images.Add("image key", new Bitmap(16, 16));
+
+            tv.Nodes.Add("key", "text", "image key");
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#E1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#E2");
+            Assert.AreEqual(-1, tv.Nodes[0].ImageIndex, "#E3");
+            Assert.AreEqual("image key", tv.Nodes[0].ImageKey, "#E4");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+            imglist = new ImageList();
+            imglist.Images.Add("image key", new Bitmap(16, 16));
+            imglist.Images.Add("selected image key", new Bitmap(16, 16));
+
+            tv.Nodes.Add("key", "text", 0, 1);
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#F1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#F2");
+            Assert.AreEqual(0, tv.Nodes[0].ImageIndex, "#F3");
+            Assert.AreEqual("", tv.Nodes[0].ImageKey, "#F4");
+            Assert.AreEqual(1, tv.Nodes[0].SelectedImageIndex, "#F5");
+            Assert.AreEqual("", tv.Nodes[0].SelectedImageKey, "#F6");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+            imglist = new ImageList();
+            imglist.Images.Add("image key", new Bitmap(16, 16));
+            imglist.Images.Add("selected image key", new Bitmap(16, 16));
+
+            tv.Nodes.Add("key", "text", "image key", "selected image key");
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#G1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#G2");
+            Assert.AreEqual(-1, tv.Nodes[0].ImageIndex, "#G3");
+            Assert.AreEqual("image key", tv.Nodes[0].ImageKey, "#G4");
+            Assert.AreEqual(-1, tv.Nodes[0].SelectedImageIndex, "#G5");
+            Assert.AreEqual("selected image key", tv.Nodes[0].SelectedImageKey, "#G6");
+#endif
+
+#if NET_2_0
+            tv.Nodes.Clear();
+            tv.Nodes.Add("key", "text");
+            tv.Nodes.Add("key", "text 2");
+            Assert.AreEqual(2, tv.Nodes.Count, "#H1");
+            Assert.AreEqual("text", tv.Nodes[0].Text, "#H1");
+            Assert.AreEqual("key", tv.Nodes[0].Name, "#H2");
+            Assert.AreEqual("text 2", tv.Nodes[1].Text, "#H1");
+            Assert.AreEqual("key", tv.Nodes[1].Name, "#H2");
+
+            Assert.IsTrue(tv.Nodes.ContainsKey("key"), "#I1");
+            Assert.AreEqual(0, tv.Nodes.IndexOfKey("key"), "#I2");
+#endif
+        }
+
 		[Test]
 		public void Remove ()
 		{

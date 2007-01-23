@@ -681,7 +681,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, c.Anchor, "4");
 
 			c.Anchor = AnchorStyles.Top;
-			Assert.AreEqual (DockStyle.Top, c.Dock, "5");
+			Assert.AreEqual (DockStyle.None, c.Dock, "5");
 			Assert.AreEqual (AnchorStyles.Top, c.Anchor, "6");
 		}
 
@@ -1597,7 +1597,7 @@ namespace MonoTests.System.Windows.Forms
 			Form f = new Form ();
 			Assert.IsFalse (f.Visible, "3");
 			f.TopLevel = true;
-			Assert.IsTrue (f.Visible, "4");
+			Assert.IsFalse (f.Visible, "4");
 		}
 	}
 

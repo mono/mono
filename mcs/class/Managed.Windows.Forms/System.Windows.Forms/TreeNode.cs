@@ -40,7 +40,9 @@ namespace System.Windows.Forms {
 		private string text;
 		private int image_index = -1;
 		private int selected_image_index = -1;
-		internal TreeNodeCollection nodes;
+        private string image_key = String.Empty;
+        private string selected_image_key = String.Empty;
+        internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 
 		internal int visible_order;
@@ -313,7 +315,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool IsEditing {
+#if NET_2_0
+        [Localizable(true)]
+        public string ImageKey
+        {
+            get { return image_key; }
+            set
+            {
+                if (image_key == value)
+                    return;
+                image_key = value;
+                TreeView tree = TreeView;
+                if (tree != null)
+                    tree.UpdateNode(this);
+            }
+        }
+#endif
+
+        public bool IsEditing {
 			get {
 				TreeView tv = TreeView;
 				if (tv == null)
@@ -457,7 +476,16 @@ namespace System.Windows.Forms {
 			set { selected_image_index = value; }
 		}
 
-		[Bindable(true)]
+#if NET_2_0
+        [Localizable(true)]
+        public string SelectedImageKey
+        {
+            get { return selected_image_key; }
+            set { selected_image_key = value; }
+        }
+#endif
+
+        [Bindable(true)]
 		[Localizable(false)]
 		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
 		[DefaultValue(null)]
