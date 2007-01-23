@@ -40,20 +40,20 @@ namespace System.Diagnostics
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ProcessStartInfo 
 	{
-
+		/* keep these fields in this order and in sync with metadata/process.h */
 		private string arguments = "";
-		private bool create_no_window = false;
-		private bool error_dialog = false;
 		private IntPtr error_dialog_parent_handle = (IntPtr)0;
 		private string filename = "";
+		private string verb = "";
+		private string working_directory = "";
+		private ProcessStringDictionary envVars;
+		private bool create_no_window = false;
+		private bool error_dialog = false;
 		private bool redirect_standard_error = false;
 		private bool redirect_standard_input = false;
 		private bool redirect_standard_output = false;
 		private bool use_shell_execute = true;
-		private string verb = "";
 		private ProcessWindowStyle window_style = ProcessWindowStyle.Normal;
-		private string working_directory = "";
-		private ProcessStringDictionary envVars;
 
 		public ProcessStartInfo() 
 		{

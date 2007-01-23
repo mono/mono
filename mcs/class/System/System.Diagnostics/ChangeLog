@@ -1,3 +1,9 @@
+
+Tue Jan 23 17:19:13 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* ProcessStartInfo.cs: put the fields in the order expected
+	by the runtime code.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Switch.cs : added missing .ctor(), Attributes, Value, 
