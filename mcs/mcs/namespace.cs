@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 		{
 			// Expression members.
 			this.eclass = ExprClass.Namespace;
-			this.Type = null;
+			this.Type = typeof (Namespace);
 			this.loc = Location.Null;
 
 			this.parent = parent;
