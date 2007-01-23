@@ -103,7 +103,9 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	ufd.fd = fd;
 	ufd.events = POLLHUP | POLLOUT | POLLERR;
 
-	poll (&ufd, 1, timeout);
+	while (poll (&ufd, 1, timeout) == -1 && errno == EINTR){
+		
+	}
 
 	if ((ufd.revents & POLLOUT) != POLLOUT) {
 		return;
@@ -333,12 +335,12 @@ poll_serial (int fd, gint32 *error, int timeout)
 	pinfo.events = POLLIN;
 	pinfo.revents = 0;
 
-	if (poll (&pinfo, 1, timeout) == -1) {
+	while (poll (&pinfo, 1, timeout) == -1 && errno == EINTR) {
 		/* EINTR is an OK condition, we should not throw in the upper layer an IOException */
-		if (errno == EINTR)
+		if (errno != EINTR){
+			*error = -1;
 			return FALSE;
-		*error = -1;
-		return FALSE;
+		}
 	}
 
 	return (pinfo.revents & POLLIN) != 0 ? 1 : 0;
