@@ -33,7 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class EvaluationOrder {
-		private string GetItems (Project proj, string name)
+		string GetItems (Project proj, string name)
 		{
 			BuildItemGroup big = proj.GetEvaluatedItemsByName (name);
 			string str = String.Empty;
@@ -51,7 +51,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestOrder0 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -78,7 +77,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestOrder1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -104,7 +102,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestOrder2 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -180,7 +177,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestOrder5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -284,7 +280,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestImportOrder3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -309,7 +304,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		[Test]
 		// NOTE: It will try to import "@(Item)" instead of Test/...
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestImportOrder4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
