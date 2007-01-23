@@ -86,7 +86,7 @@ namespace MonoTests.System.Windows.Forms
 			SendKeys.SendWait("a");
 
 			t = new  Timer();
-			t.Interval = 0;
+			t.Interval = 1;
 			t.Tick +=new EventHandler(SendKeysTest1_tick);
 			t.Start();
 			
@@ -134,7 +134,7 @@ namespace MonoTests.System.Windows.Forms
 			SendKeys.SendWait("+(abc){BACKSPACE 2}");
 
 			t = new Timer();
-			t.Interval = 0;
+			t.Interval = 1;
 			t.Tick +=new EventHandler(SendKeysTest2_tick);
 			t.Start();
 			

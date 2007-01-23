@@ -1,5 +1,9 @@
 2007-01-23  Andreia Gaita  <avidigal@novell.com>
 
+	* SendKeysTest.cs: wrong value for Interval, should be > 0
+
+2007-01-23  Andreia Gaita  <avidigal@novell.com>
+
 	* BindingTest.cs (BindingContextChangedTest2): Added 2.0-specific check,
 	was failing under ms.net.
 	
