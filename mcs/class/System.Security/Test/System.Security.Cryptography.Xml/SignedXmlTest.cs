@@ -544,12 +544,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			string input = "<Action xmlns='urn:foo'>http://tempuri.org/IFoo/Echo</Action>";
 			string expected = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" /><Reference URI=""#_1""><Transforms><Transform Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /></Transforms><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>zdFEZB8rNzvpNG/gFEJBWk/M5Nk=</DigestValue></Reference></SignedInfo><SignatureValue>+OyGVzrHjmKSDWLNyvgx8pjbPfM=</SignatureValue><Object Id=""_1""><Action xmlns=""urn:foo"">http://tempuri.org/IFoo/Echo</Action></Object></Signature>";
 
-			byte [] decrypted = Convert.FromBase64String (
+			byte [] key = Convert.FromBase64String (
 				"1W5EigVnbnRjGLbg99ElieOmuUgYO+KcwMJtE35SAGI=");
 			Transform t = new XmlDsigC14NTransform ();
-			AssertEquals ("#1", expected, SignWithHMACSHA1 (input, decrypted, t));
+			AssertEquals ("#1", expected, SignWithHMACSHA1 (input, key, t));
 			// The second result should be still identical.
-			AssertEquals ("#2", expected, SignWithHMACSHA1 (input, decrypted, t));
+			AssertEquals ("#2", expected, SignWithHMACSHA1 (input, key, t));
 		}
 
 		[Test]
@@ -559,9 +559,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			string input = "<a:Action xmlns:a='urn:foo'>http://tempuri.org/IFoo/Echo</a:Action>";
 			string expected = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" /><Reference URI=""#_1""><Transforms><Transform Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /></Transforms><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>6i5FlqkEfJOdUaOMCK7xn0I0HDg=</DigestValue></Reference></SignedInfo><SignatureValue>tASp+e2A0xqcm02jKg5TGqlhKpI=</SignatureValue><Object Id=""_1""><a:Action xmlns:a=""urn:foo"">http://tempuri.org/IFoo/Echo</a:Action></Object></Signature>";
 
-			byte [] decrypted = Convert.FromBase64String (
+			byte [] key = Convert.FromBase64String (
 				"1W5EigVnbnRjGLbg99ElieOmuUgYO+KcwMJtE35SAGI=");
-			AssertEquals (expected, SignWithHMACSHA1 (input, decrypted));
+			AssertEquals (expected, SignWithHMACSHA1 (input, key));
 		}
 		
 		string SignWithHMACSHA1 (string input, byte [] key)

@@ -1,5 +1,9 @@
 2007-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SignedXmlTest.cs : fixed ambiguous variable name in previous tests.
+
+2007-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignedXmlTest.cs :
 	  run the transformation in yesterday's test twice.
 
