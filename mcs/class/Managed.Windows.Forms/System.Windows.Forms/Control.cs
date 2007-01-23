@@ -466,6 +466,10 @@ namespace System.Windows.Forms
 			{
 				if (value == null)
 					return;
+
+				if (((Control)value).GetTopLevel()) {
+					throw new ArgumentException("Cannot add a top level control to a control.", "value");
+				}
 				
 				if (Contains (value)) {
 					owner.PerformLayout();
@@ -872,12 +876,12 @@ namespace System.Windows.Forms
 
 			#region	ControlCollection Interface Methods
 			int IList.Add(object value) {
-				if (value == null) {
-					throw new ArgumentNullException("value", "Cannot add null controls");
-				}
-
 				if (!(value is Control)) {
 					throw new ArgumentException("Object of type Control required", "value");
+				}
+
+				if (value == null) {
+					throw new ArgumentException("value", "Cannot add null controls");
 				}
 
 				if (((Control)value).GetTopLevel()) {

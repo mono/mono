@@ -1,5 +1,16 @@
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: throw an ArgumentException if a toplevel control is
+	added to our control collection from ControlCollection.Add, as
+	well as from ControlCollection.IList.Add.  This fixes the
+	ControlSetTopLevelTest.TestTopLevelAdd unit test.
+
+	Also, in ControlCollection.IList.Add, don't through an
+	ArgumentNullException, throw an ArgumentException, when value ==
+	null.  This matches MS.
+
+2007-01-23  Chris Toshok  <toshok@ximian.com>
+
 	* BindingSource.cs: initial, incomplete, implementation of
 	BindingSource.
 
