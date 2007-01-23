@@ -78,6 +78,8 @@ namespace Mono.Xml {
 		
 		public Stream Canonicalize (XmlDocument doc)
 		{
+			if (doc == null)
+				throw new ArgumentNullException ("doc");
 			Initialize ();
 			
 			WriteDocumentNode (doc);
@@ -92,7 +94,8 @@ namespace Mono.Xml {
 			xnl = nodes;
 			if (nodes == null || nodes.Count < 1)
 				return new MemoryStream ();
-			return Canonicalize (nodes[0].OwnerDocument);
+			XmlNode n = nodes [0];
+			return Canonicalize (n.NodeType == XmlNodeType.Document ? n as XmlDocument : n.OwnerDocument);
 		}		
 
 		// See xml-enc-c14n specification

@@ -72,9 +72,7 @@ namespace System.Security.Cryptography.Xml {
 				XmlNode newNode = document.ImportNode (data, true);
 				xel.AppendChild (newNode);
 			}
-			document.AppendChild (xel); // FIXME: it should not be appended
-			
-			element = document.DocumentElement;
+			element = xel;
 		}
 
 		// why is data a XmlNodeList instead of a XmlElement ?
@@ -87,7 +85,6 @@ namespace System.Security.Cryptography.Xml {
 					throw new ArgumentNullException ("value");
 				XmlDocument doc = new XmlDocument ();
 				XmlElement el = (XmlElement) doc.ImportNode (element, true);
-				doc.AppendChild (el); // FIXME: it should not be appended
 				while (el.LastChild != null)
 					el.RemoveChild (el.LastChild);
 				foreach (XmlNode n in value)
@@ -132,7 +129,6 @@ namespace System.Security.Cryptography.Xml {
 			else {
 				XmlDocument document = new XmlDocument ();
 				XmlElement el = document.ImportNode (element, true) as XmlElement;
-				document.AppendChild (el); // FIXME: it should not be appended
 				el.SetAttribute (attribute, value);
 				element = el;
 				propertyModified = true;
@@ -146,7 +142,6 @@ namespace System.Security.Cryptography.Xml {
 				XmlElement oldElement = element;
 				XmlDocument doc = new XmlDocument ();
 				element = doc.CreateElement (XmlSignature.ElementNames.Object, XmlSignature.NamespaceURI);
-				doc.AppendChild (element); // FIXME: it should not be appended
 				foreach (XmlAttribute attribute in oldElement.Attributes) {
 					switch (attribute.Name) {
 					case XmlSignature.AttributeNames.Id:

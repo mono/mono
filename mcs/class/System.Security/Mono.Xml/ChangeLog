@@ -1,5 +1,10 @@
 2007-01-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlCanonicalizer.cs : in Canonicalize(XmlNodeList), nodes [0] could
+	  be XmlDocument and thus it could cause NullReferenceException.
+
+2007-01-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlCanonicalizer.cs : it should be reset before being reused.
 
 2007-01-22  Atsushi Enomoto <atsushi@ximian.com>
