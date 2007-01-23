@@ -1625,7 +1625,7 @@ function clearForm ()
 	<br/><br/>
 	<% if (ProfileViolations.Count > 0) { %>
 		<p class="label">Basic Profile Conformance</p>
-		This web service does not conform to WS-I Basic Profile v1.0
+		This web service does not conform to WS-I Basic Profile v1.1
 	<%
 		Response.Write ("<ul>");
 		foreach (BasicProfileViolation vio in ProfileViolations) {
