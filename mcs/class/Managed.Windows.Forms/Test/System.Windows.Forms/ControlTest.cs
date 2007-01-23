@@ -71,6 +71,29 @@ namespace MonoTests.System.Windows.Forms
 				Application.DoEvents ();
 			}
 		}
+
+		[Test]
+		public void ControlCollectionTest ()
+		{
+			Form frm = new Form ();
+			frm.IsMdiContainer = true;
+			Form child = new Form ();
+			Control.ControlCollection c = new Control.ControlCollection (frm);
+			child.MdiParent = frm;
+			c.Add (child);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ControlCollectionExceptionTest ()
+		{
+			Form frm = new Form ();
+			frm.IsMdiContainer = true;
+			Form child = new Form ();
+			Control.ControlCollection c = new Control.ControlCollection (frm);
+			//child.MdiParent = frm;
+			c.Add (child);
+		}
 		
 		[Test]
 		[Category ("NotWorking")]
