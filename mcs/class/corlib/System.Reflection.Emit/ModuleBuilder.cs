@@ -49,7 +49,7 @@ namespace System.Reflection.Emit {
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
 		#region Sync with object-internals.h
-		private IntPtr dynamic_image;
+		private UIntPtr dynamic_image; /* GC-tracked */
 		private int num_types;
 		private TypeBuilder[] types;
 		private CustomAttributeBuilder[] cattrs;

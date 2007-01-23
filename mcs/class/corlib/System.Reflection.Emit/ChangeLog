@@ -1,3 +1,9 @@
+
+Tue Jan 23 17:45:07 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs, AssemblyBuilder.cs: mark the GC-tracked field
+	with UIntPtr.
+
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* EnumBuilder.cs: value__ must have RTSpecialName flag set.
