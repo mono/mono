@@ -1,3 +1,8 @@
+2007-01-23  Chris Toshok  <toshok@ximian.com>
+
+	* BindingSource.cs: initial, incomplete, implementation of
+	BindingSource.
+
 2007-01-23  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs:
