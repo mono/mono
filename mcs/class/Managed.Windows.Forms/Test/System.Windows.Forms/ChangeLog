@@ -1,5 +1,10 @@
 2007-01-23  Andreia Gaita  <avidigal@novell.com>
 
+	* DefaultLayoutTest.cs: correct TestDockFillFirst and TestDockFillLast, 
+	failing on ms.net
+
+2007-01-23  Andreia Gaita  <avidigal@novell.com>
+
 	* SendKeysTest.cs: wrong value for Interval, should be > 0
 
 2007-01-23  Andreia Gaita  <avidigal@novell.com>
