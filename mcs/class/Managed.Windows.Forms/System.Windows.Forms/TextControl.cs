@@ -728,7 +728,7 @@ namespace System.Windows.Forms {
 		internal bool		multiline;
 		internal bool		wrap;
 
-		internal UndoClass	undo;
+		internal UndoManager	undo;
 
 		internal Marker		caret;
 		internal Marker		selection_start;
@@ -780,7 +780,7 @@ namespace System.Windows.Forms {
 			Line l = GetLine (1);
 			l.soft_break = true;
 
-			undo = new UndoClass(this);
+			undo = new UndoManager (this);
 
 			selection_visible = false;
 			selection_start.line = this.document;
@@ -1400,10 +1400,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(Line line, int pos) {
-			if (owner.IsHandleCreated) {
-				undo.RecordCursor();
-			}
-
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
 			caret.pos = pos;
@@ -1428,8 +1424,6 @@ namespace System.Windows.Forms {
 			if (!owner.IsHandleCreated) {
 				return;
 			}
-
-			undo.RecordCursor();
 
 			caret.tag = FindCursor(x, y, out caret.pos);
 			caret.line = caret.tag.line;
@@ -1468,8 +1462,6 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			undo.RecordCursor();
-
 			caret.tag = LineTag.FindTag(caret.line, caret.pos);
 			caret.height = caret.tag.height;
 
@@ -1486,8 +1478,6 @@ namespace System.Windows.Forms {
 			if (!owner.IsHandleCreated || caret.tag == null) {
 				return;
 			}
-
-			undo.RecordCursor();
 
 			if (caret.tag.height != caret.height) {
 				caret.height = caret.tag.height;
@@ -1978,7 +1968,6 @@ namespace System.Windows.Forms {
 			LineTag tag = LineTag.FindTag (line, pos);
 			
 			SuspendRecalc ();
-			undo.BeginCompoundAction ();
 			
 			base_line = line.line_no;
 			old_line_count = lines;
@@ -2043,8 +2032,6 @@ namespace System.Windows.Forms {
 				PositionCaret(l, l.text.Length);
 				DisplayCaret ();
 			}
-
-			undo.EndCompoundAction ();
 		}
 
 		// Inserts a character at the given position
@@ -3271,8 +3258,6 @@ namespace System.Windows.Forms {
 		internal void ReplaceSelection(string s, bool select_new) {
 			int		i;
 
-			undo.BeginCompoundAction ();
-
 			int selection_pos_on_line = selection_start.pos;
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			SuspendRecalc ();
@@ -3349,8 +3334,6 @@ namespace System.Windows.Forms {
 
 			PositionCaret (selection_start.line, selection_start.pos);
 			UpdateView (selection_start.line, selection_pos_on_line);
-
-			undo.EndCompoundAction ();
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
@@ -4247,6 +4230,7 @@ namespace System.Windows.Forms {
 
 		public float X {
 			get {
+				Console.WriteLine ("index:  {0}", start);
 				if (start == 0)
 					return line.indent;
 				return line.widths [start - 1];
@@ -4605,16 +4589,14 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 	}
 
-	internal class UndoClass {
+	internal class UndoManager {
+
 		internal enum ActionType {
 			InsertChar,
 			InsertString,
 			DeleteChar,
 			DeleteChars,
-			CursorMove,
 			Mark,
-			CompoundBegin,
-			CompoundEnd,
 
 			UserActionBegin,
 			UserActionEnd
@@ -4637,10 +4619,11 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Constructors
-		internal UndoClass(Document doc) {
-			document = doc;
-			undo_actions = new Stack(50);
-			redo_actions = new Stack(50);
+		internal UndoManager (Document document)
+		{
+			this.document = document;
+			undo_actions = new Stack (50);
+			redo_actions = new Stack (50);
 		}
 		#endregion	// Constructors
 
@@ -4668,47 +4651,22 @@ namespace System.Windows.Forms {
 		internal string UndoActionName
 		{
 			get {
-				Action action;
-
-				action = (Action)undo_actions.Peek();
-
-				if (action.type == ActionType.CompoundEnd)
-					return (string) action.data;
-
-				switch(action.type) {
-					case ActionType.InsertChar: {
-						Locale.GetText("Insert character");
-						break;
-					}
-
-					case ActionType.DeleteChar: {
-						Locale.GetText("Delete character");
-						break;
-					}
-
-					case ActionType.InsertString: {
-						Locale.GetText("Insert string");
-						break;
-					}
-
-					case ActionType.DeleteChars: {
-						Locale.GetText("Delete string");
-						break;
-					}
-
-					case ActionType.CursorMove: {
-						Locale.GetText("Cursor move");
-						break;
-					}
+				foreach (Action action in undo_actions) {
+					if (action.type == ActionType.UserActionBegin)
+						return (string) action.data;
 				}
-				return null;
+				return String.Empty;
 			}
 		}
 
 		internal string RedoActionName
 		{
 			get {
-				return null;
+				foreach (Action action in redo_actions) {
+					if (action.type == ActionType.UserActionBegin)
+						return (string) action.data;
+				}
+				return String.Empty;
 			}
 		}
 		#endregion	// Properties
@@ -4721,33 +4679,32 @@ namespace System.Windows.Forms {
 
 		internal void Undo() {
 			Action action;
-			int compound_stack = 0;
+			int user_action_depth = 0;
 
 			if (undo_actions.Count == 0) {
 				return;
 			}
 
-			
-
 			do {
-				action = (Action)undo_actions.Pop();
+				action = (Action) undo_actions.Pop();
 
 				// Put onto redo stack
 				redo_actions.Push(action);
 
 				// Do the thing
 				switch(action.type) {
-				case ActionType.CompoundEnd:
-					compound_stack++;
+				case ActionType.UserActionEnd:
+					user_action_depth++;
 					break;
 
-				case ActionType.CompoundBegin:
-					compound_stack--;
+				case ActionType.UserActionBegin:
+					user_action_depth--;
 					break;
 
 				case ActionType.InsertString:
 					document.DeleteMultiline (document.GetLine (action.line_no),
 							action.pos, ((string) action.data).Length + 1);
+					document.PositionCaret (document.GetLine (action.line_no), action.pos);
 					break;
 
 				case ActionType.InsertChar: {
@@ -4757,35 +4714,11 @@ namespace System.Windows.Forms {
 					
 				case ActionType.DeleteChars: {
 					this.Insert(document.GetLine(action.line_no), action.pos, (Line)action.data);
-					Undo();	// Grab the cursor location
-					break;
-				}
-
-				case ActionType.CursorMove: {
-					document.caret.line = document.GetLine(action.line_no);
-					if (document.caret.line == null) {
-						Undo();
-						break;
-					}
-
-					document.caret.tag = document.caret.line.FindTag(action.pos);
-					document.caret.pos = action.pos;
-					document.caret.height = document.caret.tag.height;
-
-					if (document.owner.IsHandleCreated) {
-						XplatUI.DestroyCaret(document.owner.Handle);
-						XplatUI.CreateCaret(document.owner.Handle, 2, document.caret.height);
-						XplatUI.SetCaretPos(document.owner.Handle, (int)document.caret.tag.line.widths[document.caret.pos] + document.caret.line.align_shift - document.viewport_x, document.caret.line.Y + document.caret.tag.shift - document.viewport_y + Document.caret_shift);
-
-						document.DisplayCaret ();
-					}
-
-					// FIXME - enable call
-					//if (document.CaretMoved != null) document.CaretMoved(this, EventArgs.Empty);
+					
 					break;
 				}
 				}
-			} while (compound_stack > 0);
+			} while (user_action_depth >= 0 && undo_actions.Count > 0);
 		}
 
 		internal void Redo() {
@@ -4797,20 +4730,21 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 
-		public void BeginCompoundAction ()
+		public void BeginUserAction (string name)
 		{
-			Action cb = new Action ();
-			cb.type = ActionType.CompoundBegin;
+			Action ua = new Action ();
+			ua.type = ActionType.UserActionBegin;
+			ua.data = name;
 
-			undo_actions.Push (cb);
+			undo_actions.Push (ua);
 		}
 
-		public void EndCompoundAction ()
+		public void EndUserAction ()
 		{
-			Action ce = new Action ();
-			ce.type = ActionType.CompoundEnd;
+			Action ua = new Action ();
+			ua.type = ActionType.UserActionEnd;
 
-			undo_actions.Push (ce);
+			undo_actions.Push (ua);
 		}
 
 		// pos = 1-based
@@ -4831,8 +4765,6 @@ namespace System.Windows.Forms {
 			a.line_no = start_line.line_no;
 			a.pos = start_pos - 1;
 
-			// Record the cursor position before, since the actions will occur in reverse order
-			RecordCursor();
 			undo_actions.Push(a);
 		}
 
@@ -4846,32 +4778,6 @@ namespace System.Windows.Forms {
 			a.pos = pos;
 
 			undo_actions.Push (a);
-		}
-
-		public void RecordCursor() {
-			if (document.caret.line == null) {
-				return;
-			}
-
-			RecordCursor(document.caret.line, document.caret.pos);
-		}
-
-		public void RecordCursor(Line line, int pos) {
-			Action a;
-
-			if ((line.line_no == caret_line) && (pos == caret_pos)) {
-				return;
-			}
-
-			caret_line = line.line_no;
-			caret_pos = pos;
-
-			a = new Action();
-			a.type = ActionType.CursorMove;
-			a.line_no = line.line_no;
-			a.pos = pos;
-
-			undo_actions.Push(a);
 		}
 
 		// start_pos = 1-based

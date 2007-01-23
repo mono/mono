@@ -1,3 +1,9 @@
+2007-01-23  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs:
+	* TextBoxBase.cs: Checking in some pieces of the undo stuff so
+	that I can fix a broken unit test (TextBoxTest::ClearUndo)
+ 	
 2007-01-23  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Add status fields to ToolBarButtonInfo.

@@ -1946,11 +1946,15 @@ namespace System.Windows.Forms {
 			}
 
 			if (format.Name == DataFormats.Rtf) {
+				document.undo.BeginUserAction (Locale.GetText ("Paste"));
 				((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
+				document.undo.EndUserAction ();
 				return true;
 			} else if (format.Name == DataFormats.Bitmap) {
+				document.undo.BeginUserAction (Locale.GetText ("Paste"));
 				document.InsertImage (document.caret.tag, document.caret.pos, (Image) clip.GetData (DataFormats.Bitmap));
 				document.MoveCaret (CaretDirection.CharForward);
+				document.undo.EndUserAction ();
 				return true;
 			} else if (format.Name == DataFormats.UnicodeText) {
 				s = (string)clip.GetData(DataFormats.UnicodeText);
@@ -1961,12 +1965,18 @@ namespace System.Windows.Forms {
 			}
 
 			if (!obey_length) {
+				document.undo.BeginUserAction (Locale.GetText ("Paste"));
 				this.SelectedText = s;
+				document.undo.EndUserAction ();
 			} else {
 				if ((s.Length + document.Length) < max_length) {
+					document.undo.BeginUserAction (Locale.GetText ("Paste"));
 					this.SelectedText = s;
+					document.undo.EndUserAction ();
 				} else if (document.Length < max_length) {
-					this.SelectedText = s.Substring(0, max_length - document.Length);
+					document.undo.BeginUserAction (Locale.GetText ("Paste"));
+					this.SelectedText = s.Substring (0, max_length - document.Length);
+					document.undo.EndUserAction ();
 				}
 			}
 
