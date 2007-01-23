@@ -1,0 +1,762 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2007 Novell, Inc.
+//
+
+#if NET_2_0
+
+using System;
+using System.Data;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+
+using NUnit.Framework;
+
+namespace MonoTests.System.Windows.Forms {
+
+	[TestFixture]
+	public class BindingSourceTest
+	{
+		[Test]
+		public void DefaultDataSource ()
+		{
+			BindingSource source = new BindingSource ();
+			Assert.IsTrue (source.List is BindingList<object>, "1");
+			Assert.AreEqual (0, source.List.Count, "2");
+		}
+
+		[Test]
+		public void DataSource_InitialAddChangingType ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.Add ((int)32);
+			Assert.IsTrue (source.List is BindingList<int>, "1");
+		}
+
+		class EmptyEnumerable : IEnumerable {
+			class EmptyEnumerator : IEnumerator {
+				public object Current {
+					get { throw new InvalidOperationException (); }
+				}
+
+				public void Reset () {
+					// nada
+				}
+
+				public bool MoveNext () {
+					return false;
+				}
+
+			}
+
+			public IEnumerator GetEnumerator () {
+				return new EmptyEnumerator ();
+			}
+		}
+
+		class InfiniteEnumerable : IEnumerable {
+			class InfiniteEnumerator : IEnumerator {
+				public object Current {
+					get { return 5; }
+				}
+
+				public void Reset () {
+					// nada
+				}
+
+				public bool MoveNext () {
+					return true;
+				}
+
+			}
+
+			public IEnumerator GetEnumerator () {
+				return new InfiniteEnumerator ();
+			}
+		}
+
+		class WorkingEnumerable : IEnumerable {
+			int length;
+
+			public WorkingEnumerable (int length) {
+				this.length = length;
+			}
+
+			class MyEnumerator : IEnumerator {
+				public int count;
+				public int index;
+
+				public object Current {
+					get { return index; }
+				}
+
+				public void Reset () {
+					index = 0;
+				}
+
+				public bool MoveNext () {
+					if (index++ == count)
+						return false;
+					else
+						return true;
+				}
+			}
+
+			public IEnumerator GetEnumerator () {
+				MyEnumerator e = new MyEnumerator ();
+				e.count = length;
+
+				return e;
+			}
+		}
+
+		[Test]
+		public void DataSource_ListRelationship ()
+		{
+			BindingSource source = new BindingSource ();
+
+			// null
+			source.DataSource = null;
+			Assert.IsTrue (source.List is BindingList<object>, "1");
+
+			// a non-list object
+			source.DataSource = new object ();
+			Assert.IsTrue (source.List is BindingList<object>, "2");
+
+			// array instance (value type)
+			source.DataSource = new int[32];
+			Assert.IsTrue (source.List is int[], "3");
+
+			// an instance array with 0 elements
+			source.DataSource = new int[0];
+			Assert.IsTrue (source.List is int[], "4");
+
+			// array instance (object type)
+			source.DataSource = new string[32];
+			Assert.IsTrue (source.List is string[], "5");
+
+			// list type
+			source.DataSource = new List<bool>();
+			Assert.IsTrue (source.List is List<bool>, "6");
+
+			// an IEnumerable type
+			source.DataSource = "hi";
+			Assert.IsTrue (source.List is BindingList<char>, "7");
+
+			// an IEnumerable type with 0 items
+			source.DataSource = "";
+			Assert.IsTrue (source.List is BindingList<char>, "8");
+			Assert.AreEqual (0, source.List.Count, "9");
+
+			// a non-string IEnumerable type with 0 items
+			// this doesn't seem to change the type of the
+			// binding source's list, probably because it
+			// can't determine the type of the
+			// enumerable's elements.
+			source.DataSource = new EmptyEnumerable ();
+			Assert.IsTrue (source.List is BindingList<char>, "10");
+
+			// an enumerable with some elements
+			source.DataSource = new WorkingEnumerable (5);
+			Assert.IsTrue (source.List is BindingList<int>, "11");
+			Assert.AreEqual (5, source.List.Count, "12");
+		}
+
+
+#if false
+		[Test]
+		[Ignore ("BindingSource seems to try to get all elements of the enumerator, probably copying them to a propertly typed BindingList")]
+		public void InfiniteEnumeratorTest ()
+		{
+			BindingSource source = new BindingSource ();
+
+			// an infinite IEnumerable type
+			source.DataSource = new InfiniteEnumerable ();
+			Console.WriteLine (source.List.GetType());
+			Assert.IsTrue (source.List is BindingList<int>, "10");
+		}
+#endif
+
+		[Test]
+		public void DataMember_ListRelationship ()
+		{
+		}
+
+		[Test]
+		public void DataMemberNull ()
+		{
+			BindingSource source = new BindingSource ();
+
+			Assert.AreEqual ("", source.DataMember, "1");
+			source.DataMember = null;
+			Assert.AreEqual ("", source.DataMember, "2");
+		}
+
+		[Test]
+		public void DataSourceChanged ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingSource source = new BindingSource ();
+
+			bool event_raised = false;
+
+			source.DataSourceChanged += delegate (object sender, EventArgs e) {
+				event_raised = true;
+			};
+
+			source.DataSource = list;
+			Assert.IsTrue (event_raised, "1");
+			event_raised = false;
+			source.DataSource = list;
+			Assert.IsFalse (event_raised, "2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))] // DataMember property 'hi' cannot be found on the DataSource.
+		public void DataMemberArgumentException ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingSource source = new BindingSource ();
+			source.DataSource = list;
+			source.DataMember = "hi";
+		}
+
+		[Test]
+		public void DataMemberBeforeDataSource ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingSource source = new BindingSource ();
+			source.DataMember = "hi";
+			Assert.AreEqual ("hi", source.DataMember, "1");
+			source.DataSource = list;
+			Assert.AreEqual ("", source.DataMember, "2");
+		}
+
+		[Test]
+		public void DataSourceAssignToDefaultType()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataMember = "hi";
+			Assert.AreEqual ("hi", source.DataMember, "1");
+			Assert.IsTrue (source.List is BindingList<object>, "2");
+			source.DataSource = new BindingList<object>();
+			Assert.AreEqual ("", source.DataMember, "3");
+		}
+
+		[Test]
+		public void DataMemberChanged ()
+		{
+			ArrayList list = new ArrayList ();
+			BindingSource source = new BindingSource ();
+
+			bool event_raised = false;
+
+			list.Add ("hi"); // make the type System.String
+
+			source.DataMemberChanged += delegate (object sender, EventArgs e) {
+				event_raised = true;
+			};
+
+			source.DataSource = list;
+			source.DataMember = "Length";
+			Assert.IsTrue (event_raised, "1");
+			event_raised = false;
+			source.DataMember = "Length";
+			Assert.IsFalse (event_raised, "2");
+		}
+
+		[Test]
+		public void SuppliedDataSource ()
+		{
+			List<string> list = new List<string>();
+
+			BindingSource source;
+
+			source = new BindingSource (list, "");
+			Assert.IsTrue (source.List is List<string>, "1");
+
+			source.DataMember = "Length";
+			Assert.IsTrue (source.List is BindingList<int>, "2");
+
+			source = new BindingSource (list, "Length");
+			Assert.IsTrue (source.List is BindingList<int>, "3");
+		}
+
+		[Test]
+		public void DataSourceMember_set ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.DataSource = new List<string>();
+			source.DataMember = "Length";
+			Assert.IsNotNull (source.CurrencyManager, "1");
+
+			source.DataSource = new List<string>();
+			Assert.AreEqual ("Length", source.DataMember, "2");
+			Assert.IsNotNull (source.CurrencyManager, "3");
+
+			source.DataSource = new List<string>();
+			Assert.AreEqual ("Length", source.DataMember, "4");
+			Assert.IsNotNull (source.CurrencyManager, "5");
+		}
+
+		[Test]
+		public void DataSourceMemberChangedEvents ()
+		{
+			BindingSource source = new BindingSource ();
+
+			bool data_source_changed = false;
+			bool data_member_changed = false;
+
+			source.DataSourceChanged += delegate (object sender, EventArgs e) {
+				data_source_changed = true;
+			};
+			source.DataMemberChanged += delegate (object sender, EventArgs e) {
+				data_member_changed = true;
+			};
+
+			data_source_changed = false;
+			data_member_changed = false;
+			source.DataSource = new List<string>();
+			Assert.IsTrue (data_source_changed, "1");
+			Assert.IsFalse (data_member_changed, "2");
+
+			data_source_changed = false;
+			data_member_changed = false;
+			source.DataMember = "Length";
+			Assert.IsFalse (data_source_changed, "3");
+			Assert.IsTrue (data_member_changed, "4");
+		}
+
+		[Test]
+		public void AddNew ()
+		{
+			BindingSource source = new BindingSource ();
+			source.AddNew ();
+			Assert.AreEqual (1, source.Count, "1");
+		}
+
+		[Test]
+		public void AddNew_NonBindingList ()
+		{
+			IList list = new List<object> ();
+			BindingSource source = new BindingSource ();
+			source.DataSource = list;
+			Assert.IsTrue (source.List is List<object>, "1");
+			source.AddNew ();
+			Assert.AreEqual (1, source.Count, "2");
+		}
+
+		[Test]
+		public void AllowNew_getter ()
+		{
+			BindingSource source = new BindingSource ();
+
+			// true because the default datasource is BindingList<object>
+			Assert.IsTrue (source.AllowNew, "1");
+
+			source.DataSource = new object[10];
+
+			// fixed size
+			Assert.IsFalse (source.AllowNew, "2");
+
+			source.DataSource = new BindingList<string>();
+
+			// no default ctor
+			Assert.IsFalse (source.AllowNew, "3");
+		}
+
+		[Test]
+		public void AllowNew ()
+		{
+			BindingSource source = new BindingSource ();
+			source.AllowNew = false;
+
+			Assert.IsFalse (source.AllowNew, "1");
+
+			source.ResetAllowNew ();
+
+			Assert.IsTrue (source.AllowNew, "2");
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// "AllowNew can only be set to true on an
+		// IBindingList or on a read-write list with a default
+		// public constructor."
+		public void AllowNew_FixedSize ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new object[10];
+
+			source.AllowNew = true;
+		}
+
+#if false
+		// According to the MS docs, this should fail with a MissingMethodException
+
+		[Test]
+		public void AllowNew_NoDefaultCtor ()
+		{
+			List<string> s = new List<string>();
+			s.Add ("hi");
+
+			BindingSource source = new BindingSource ();
+			source.DataSource = s;
+
+			source.AllowNew = true;
+
+			Assert.Fail ();
+		}
+#endif
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// "Item cannot be added to a read-only or fixed-size list."
+		public void AddNew_BindingListWithoutAllowNew ()
+		{
+			BindingList<int> l = new BindingList<int>();
+			l.AllowNew = false;
+
+			BindingSource source = new BindingSource ();
+			source.DataSource = l;
+			source.AddNew ();
+			Assert.AreEqual (1, source.Count, "1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// "Item cannot be added to a read-only or fixed-size list."
+		public void AddNew_FixedSize ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new int[5];
+			object o = source.AddNew ();
+			Assert.IsTrue (o is int, "1");
+			Assert.AreEqual (6, source.Count, "2");
+		}
+
+		class ReadOnlyList : List<int>, IList {
+			public int Add (object value) {
+				throw new Exception ();
+			}
+
+			public void Clear () {
+				throw new Exception ();
+			} 
+			public bool Contains (object value) {
+				throw new Exception ();
+			}
+			public int IndexOf (object value) {
+				throw new Exception ();
+			}
+
+			public void Insert (int index, object value) {
+				throw new Exception ();
+			}
+			public void Remove (object value) {
+				throw new Exception ();
+			}
+			public void RemoveAt (int index) {
+				throw new Exception ();
+			}
+
+			public bool IsFixedSize {
+				get { return false; }
+			}
+			public bool IsReadOnly {
+				get { return true; }
+			}
+			public object this [int index] {
+				get { throw new Exception (); }
+				set { }
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// "Item cannot be added to a read-only or fixed-size list."
+		public void AddNew_ReadOnly ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new ReadOnlyList ();
+			object o = source.AddNew ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		// "AddNew cannot be called on the 'System.String' type.  This type does not have a public default constructor.  You can call AddNew on the 'System.String' type if you set AllowNew=true and handle the AddingNew event."
+		public void AddNew_Invalid ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new List<string>();
+			object o = source.AddNew ();
+		}
+
+		[Test]
+		public void BindingSuspended1 ()
+		{
+			/* how does this property work? */
+			BindingSource source = new BindingSource ();
+
+			source.DataSource = new List<string>();
+
+			Assert.IsTrue (source.IsBindingSuspended, "1");
+			source.SuspendBinding ();
+			Assert.IsTrue (source.IsBindingSuspended, "2");
+			source.ResumeBinding ();
+			Assert.IsTrue (source.IsBindingSuspended, "3");
+			source.ResumeBinding ();
+			Assert.IsTrue (source.IsBindingSuspended, "4");
+		}
+
+		class BindingListViewPoker : BindingList<string>, IBindingListView
+		{
+			public bool supports_filter;
+			public bool supports_advanced_sorting;
+
+			public string Filter {
+				get { return ""; }
+				set { }
+			}
+
+			public ListSortDescriptionCollection SortDescriptions {
+				get { return null; }
+			}
+
+			public bool SupportsAdvancedSorting {
+				get { return supports_advanced_sorting; }
+			}
+
+			public bool SupportsFiltering {
+				get { return supports_filter; }
+			}
+
+			public void ApplySort (ListSortDescriptionCollection sorts)
+			{
+			}
+
+			public void RemoveFilter ()
+			{
+			}
+		}
+
+		[Test]
+		public void SupportsFilter ()
+		{
+			BindingListViewPoker c = new BindingListViewPoker ();
+			BindingSource source = new BindingSource ();
+
+			// because the default list is a BindingList<object>
+			Assert.IsFalse (source.SupportsFiltering, "1");
+
+			source.DataSource = c;
+
+			// the DataSource is IBindingListView, but
+			// SupportsFilter is false.
+			Assert.IsFalse (source.SupportsFiltering, "2");
+
+			c.supports_filter = true;
+
+			Assert.IsTrue (source.SupportsFiltering, "3");
+		}
+
+		[Test]
+		public void SupportsAdvancedSorting ()
+		{
+			BindingListViewPoker c = new BindingListViewPoker ();
+			BindingSource source = new BindingSource ();
+
+			// because the default list is a BindingList<object>
+			Assert.IsFalse (source.SupportsAdvancedSorting, "1");
+
+			source.DataSource = c;
+
+			// the DataSource is IBindingListView, but
+			// SupportsAdvancedSorting is false.
+			Assert.IsFalse (source.SupportsAdvancedSorting, "2");
+
+			c.supports_advanced_sorting = true;
+
+			Assert.IsTrue (source.SupportsAdvancedSorting, "3");
+		}
+
+		class IBindingListPoker : BindingList<string>, IBindingList {
+			public void AddIndex (PropertyDescriptor property)
+			{
+			}
+
+			public object AddNew ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			public void ApplySort (PropertyDescriptor property, ListSortDirection direction)
+			{
+			}
+
+			public int Find (PropertyDescriptor property, object key)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public void RemoveIndex (PropertyDescriptor property)
+			{
+			}
+
+			public void RemoveSort ()
+			{
+			}
+
+			public bool AllowEdit {
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool AllowNew {
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool AllowRemove {
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool IsSorted {
+				get { throw new NotImplementedException (); }
+			}
+
+			public ListSortDirection SortDirection {
+				get { throw new NotImplementedException (); }
+			}
+
+			public PropertyDescriptor SortProperty {
+				get { throw new NotImplementedException (); }
+			}
+
+			public bool SupportsChangeNotification {
+				get { return supports_change_notification; }
+			}
+
+			public bool SupportsSearching {
+				get { return supports_searching; }
+			}
+
+			public bool SupportsSorting {
+				get { return supports_sorting; }
+			}
+
+			public event ListChangedEventHandler ListChanged;
+
+			public bool supports_change_notification;
+			public bool supports_searching;
+			public bool supports_sorting;
+		}
+
+		[Test]
+		public void SupportsSearching ()
+		{
+			IBindingListPoker c = new IBindingListPoker ();
+			BindingSource source = new BindingSource ();
+
+			// because the default list is a BindingList<object>
+			Assert.IsFalse (source.SupportsSearching, "1");
+
+			source.DataSource = c;
+
+			// the DataSource is IBindingList, but
+			// SupportsSearching is false.
+			Assert.IsFalse (source.SupportsSearching, "2");
+
+			c.supports_searching = true;
+
+			Console.WriteLine ("set c.supports_searching to {0}, so c.SupportsSearching = {1}",
+					   c.supports_searching, c.SupportsSearching);
+
+			Assert.IsTrue (source.SupportsSearching, "3");
+		}
+
+		[Test]
+		public void SupportsSorting ()
+		{
+			IBindingListPoker c = new IBindingListPoker ();
+			BindingSource source = new BindingSource ();
+
+			// because the default list is a BindingList<object>
+			Assert.IsFalse (source.SupportsSorting, "1");
+
+			source.DataSource = c;
+
+			// the DataSource is IBindingList, but
+			// SupportsSorting is false.
+			Assert.IsFalse (source.SupportsSorting, "2");
+
+			c.supports_sorting = true;
+
+			Assert.IsTrue (source.SupportsSorting, "3");
+		}
+
+		[Test]
+		public void SupportsChangeNotification ()
+		{
+			IBindingListPoker c = new IBindingListPoker ();
+			BindingSource source = new BindingSource ();
+
+			// because the default list is a BindingList<object>
+			Assert.IsTrue (source.SupportsChangeNotification, "1");
+
+			source.DataSource = c;
+
+			// the DataSource is IBindingList, but
+			// SupportsChangeNotification is false.
+			Assert.IsTrue (source.SupportsChangeNotification, "2");
+
+			c.supports_change_notification = true;
+
+			Assert.IsTrue (source.SupportsChangeNotification, "3");
+		}
+
+		[Test]
+		public void InitializedEvent ()
+		{
+			// XXX this test is officially useless.  does
+			// BindingSource even raise the event?  it
+			// seems to always be initialized.
+			BindingSource source = new BindingSource ();
+			ISupportInitializeNotification n = (ISupportInitializeNotification)source;
+
+			bool event_handled = false;
+			n.Initialized += delegate (object sender, EventArgs e) {
+				event_handled = true;
+			};
+
+			Assert.IsTrue (n.IsInitialized, "1");
+
+			source.DataSource = "hi";
+
+			Assert.IsTrue (n.IsInitialized, "2");
+			Assert.IsFalse (event_handled, "3");
+		}
+	}
+}
+
+#endif

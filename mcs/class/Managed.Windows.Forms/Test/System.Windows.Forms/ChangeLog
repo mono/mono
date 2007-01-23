@@ -1,5 +1,10 @@
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
+	* BindingSourceTest.cs: initial BindingSource tests.  not built
+	yet.
+
+2007-01-23  Chris Toshok  <toshok@ximian.com>
+
 	* DefaultLayoutTest.cs: make the docking tests independent of
 	constants relating to the form's clientrectangle bounds, since on
 	X it has a different value when the window isn't mapped (as in
