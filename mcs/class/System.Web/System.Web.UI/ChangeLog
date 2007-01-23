@@ -1,3 +1,8 @@
+2007-01-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: ParseControl not supported, added limited
+	implementation if TestDeviceFilter
+
 2007-01-22  Konstantin Triger <kostat@mainsoft.com>
 
 	* ClientScriptManager.cs: ensure the callback client script is

@@ -255,10 +255,16 @@ namespace System.Web.UI {
 				eh (this, e);
 		}
 
-		[MonoTODO]
+		[MonoNotSupported ("Not supported")]
 		public Control ParseControl (string content)
 		{
-			return null;
+			throw new NotSupportedException ();
+		}
+
+		[MonoLimitation ("Always returns false")]
+		public virtual bool TestDeviceFilter (string filterName)
+		{
+			return false;
 		}
 
 		[MonoTODO]

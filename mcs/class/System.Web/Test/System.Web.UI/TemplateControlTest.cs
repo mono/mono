@@ -119,14 +119,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, t.DoSupportAutoEvents, "SupportAutoEvents");
 		}
 
+#if TARGET_JVM
 		[Test]
-		[Category ("NotWorking")]
 		public void TemplateControl_DefaultPropertyNotWorking ()
 		{
 			PokerTemplateControl t = new PokerTemplateControl ();
-			//Does not have definition
-			//Assert.AreEqual (null, t.AppRelativeVirtualPath, "AppRelativeVirtualPath");
+			Assert.AreEqual (null, t.AppRelativeVirtualPath, "AppRelativeVirtualPath");
 		}
+#endif
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -195,12 +195,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TemplateControl_TestDeviceFilter ()
 		{
 			//Have no definition to TestDeviceFilter
-			WebTest t = new WebTest (PageInvoker.CreateOnLoad (TestDeviceFilter));
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (DoTestDeviceFilter));
 			string html = t.Run ();
 			
 		}
 
-		public static void TestDeviceFilter (Page p)
+		public static void DoTestDeviceFilter (Page p)
 		{
 			//Have no definition to TestDeviceFilter
 			// bool res = p.TestDeviceFilter("test");
@@ -220,7 +220,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void TemplateControl_Eval ()
 		{
 			// In this test aspx page used as template control
@@ -327,11 +326,11 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TemplateControl_EvalException ()
 		{
 			PokerTemplateControl t = new PokerTemplateControl ();
+			t.Page = new Page ();
 			t.DoEval (null);
 		}
 		
@@ -343,27 +342,24 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.LoadControl (null);
 		}
 
-		
+
+#if TARGET_JVM
 		[Test]
-		[Category ("NotWorking")]
-		//[ExpectedException(typeof(ArgumentNullException))]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void TemplateControl_AppRelativeVirtualPathException1 ()
 		{
 			PokerTemplateControl t = new PokerTemplateControl ();
-			//Does not have definition
-			//t.AppRelativeVirtualPath = null;
+			t.AppRelativeVirtualPath = null;
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		//[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TemplateControl_AppRelativeVirtualPathException2 ()
 		{
 			PokerTemplateControl t = new PokerTemplateControl ();
-			//Does not have definition
-			//t.AppRelativeVirtualPath = "fake";
+			t.AppRelativeVirtualPath = "fake";
 		}
-
+#endif
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
