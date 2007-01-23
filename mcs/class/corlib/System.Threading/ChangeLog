@@ -1,3 +1,8 @@
+
+Tue Jan 23 17:43:50 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: mark the GC-tracked field with UIntPtr.
+
 2006-12-31  Miguel de Icaza  <miguel@novell.com>
 
 	* ThreadPool.cs: Stub a method.

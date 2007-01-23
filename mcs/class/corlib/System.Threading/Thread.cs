@@ -77,7 +77,7 @@ namespace System.Threading {
 		 */
 		private IntPtr start_notify;
 		private IntPtr stack_ptr;
-		private IntPtr static_data;
+		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr jit_data;
 		private IntPtr lock_data;
 		Context current_appcontext;
