@@ -1,5 +1,11 @@
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: ControlCollection seems to have super-secret
+	abstraction breaking knowledge of Mdi containers.  allow MdiClient
+	to add toplevel controls.
+
+2007-01-23  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: throw an ArgumentException if a toplevel control is
 	added to our control collection from ControlCollection.Add, as
 	well as from ControlCollection.IList.Add.  This fixes the

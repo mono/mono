@@ -467,7 +467,7 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				if (((Control)value).GetTopLevel()) {
+				if (((Control)value).GetTopLevel() && !(owner is MdiClient)) {
 					throw new ArgumentException("Cannot add a top level control to a control.", "value");
 				}
 				
@@ -884,7 +884,7 @@ namespace System.Windows.Forms
 					throw new ArgumentException("value", "Cannot add null controls");
 				}
 
-				if (((Control)value).GetTopLevel()) {
+				if (((Control)value).GetTopLevel() && !(owner is MdiClient)) {
 					throw new ArgumentException("Cannot add a top level control to a control.", "value");
 				}
 
