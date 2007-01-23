@@ -21,8 +21,6 @@ install-extras:
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)/MSBuild
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
-	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(EXTRAS_DIR)
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \
