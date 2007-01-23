@@ -17,15 +17,16 @@ install-extras:
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
-	cp xbuild/Microsoft.CSharp.targets xbuild/Microsoft.CSharp.Targets
-	$(INSTALL_DATA) xbuild/Microsoft.CSharp.Targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(EXTRAS_DIR)
-	cp xbuild/Microsoft.VisualBasic.targets xbuild/Microsoft.VisualBasic.Targets
-	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.Targets $(DESTDIR)$(EXTRAS_DIR)
-
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)/MSBuild
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
 	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
+ifneq ($(PLATFORM),win32)
+	cp xbuild/Microsoft.CSharp.targets xbuild/Microsoft.CSharp.Targets
+	$(INSTALL_DATA) xbuild/Microsoft.CSharp.Targets $(DESTDIR)$(EXTRAS_DIR)
+	cp xbuild/Microsoft.VisualBasic.targets xbuild/Microsoft.VisualBasic.Targets
+	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.Targets $(DESTDIR)$(EXTRAS_DIR)
+endif
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \

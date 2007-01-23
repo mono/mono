@@ -1,3 +1,7 @@
+2007-01-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Makefile: Fix Windows build.
+
 2007-01-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.VisualBasic.targets: Added.
