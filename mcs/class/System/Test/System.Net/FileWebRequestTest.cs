@@ -35,7 +35,7 @@ public class FileWebRequestTest
 			if (File.Exists (tmpFilename)) 
 				File.Delete (tmpFilename);
 			
-			Uri uri = new Uri ("file:///" + tmpFilename);
+			Uri uri = new Uri ("file://" + tmpFilename);
 			
 			WebRequest req = WebRequest.Create (uri);
 			req.Method = "PUT";
@@ -210,7 +210,7 @@ public class FileWebRequestTest
 			if (File.Exists (tmpFilename)) 
 				File.Delete (tmpFilename);
 			
-			Uri uri = new Uri ("file:///" + tmpFilename);
+			Uri uri = new Uri ("file://" + tmpFilename);
 			
 			WebRequest req = WebRequest.Create (uri);
 			
