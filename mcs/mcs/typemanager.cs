@@ -1197,7 +1197,7 @@ namespace Mono.CSharp {
 			string_type, "Concat", params_object);
 
 		Type [] string_ = { string_type };
-		string_isinterneted_string = GetMethod (
+		string_isinterned_string = GetMethod (
 			string_type, "IsInterned", string_);
 		
 		Type [] runtime_type_handle = { runtime_handle_type };

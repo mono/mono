@@ -3228,7 +3228,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Brfalse, default_target);
 			
 			ig.Emit (OpCodes.Ldloc, val);
-			ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
+			ig.Emit (OpCodes.Call, TypeManager.string_isinterned_string);
 			ig.Emit (OpCodes.Stloc, val);
 
 			int section_count = Sections.Count;
