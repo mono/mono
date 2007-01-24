@@ -1,3 +1,7 @@
+2007-01-24  Massimiliano Mantione  <massi@ximian.com>
+	* mini-arch.h, , inssel-amd64.brg, mini-x86.c, inssel-x86.brg,
+	mini-ia64.c, mini-sparc.c, mini-alpha.c: Introduced
+	MONO_ARCH_LOCALLOC_ALIGNMEENT to fix bug 80498.
 
 Wed Jan 24 12:04:39 GMT 2007 Paolo Molaro <lupus@ximian.com>
 
