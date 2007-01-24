@@ -1,9 +1,3 @@
-2007-01-23  Miguel de Icaza  <miguel@novell.com>
-
-	* StreamReader.cs (Read): Fix this overload, we were just lucky
-	that it worked in the past.   Must trigger a load from the buffer
-	if we reached its end.
-
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* DirectoryInfo.cs: Throw a better exception (accorind go the
