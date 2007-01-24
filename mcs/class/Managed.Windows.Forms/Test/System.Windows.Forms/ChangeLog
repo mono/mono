@@ -1,5 +1,9 @@
 2007-01-23  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToobarTest.cs: Comment DPI dependent asserts in ButtonSize test. 
+
+2007-01-23  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToobarTest.cs: TooBar.ButtonSize tests added. 
 
 2007-01-23  Jonathan Pobst  <monkey@jpobst.com>
