@@ -1,3 +1,7 @@
+2007-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.h (MONO_ARCH_FRAME_ALIGNMENT): Fix sparc build.
+
 2007-01-24  Massimiliano Mantione  <massi@ximian.com>
 	* mini-arch.h, , inssel-amd64.brg, mini-x86.c, inssel-x86.brg,
 	mini-ia64.c, mini-sparc.c, mini-alpha.c: Introduced
