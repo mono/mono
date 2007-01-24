@@ -1,3 +1,8 @@
+2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: fixed CheckForValidationSupport,
+	SupportsEventValidationAttribute should be checked at only one level
+
 2007-01-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: ParseControl not supported, added limited

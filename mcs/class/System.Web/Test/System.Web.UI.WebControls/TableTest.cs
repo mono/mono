@@ -565,7 +565,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		[Category("NunitWeb")] // Note: No event fired , only flow been checked.
 		public void RaisePostBackEvent ()
 		{

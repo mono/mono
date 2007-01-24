@@ -1325,7 +1325,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (targetControl == null)
 			return false;
 		Type type = targetControl.GetType ();
-		object[] attributes = type.GetCustomAttributes (true);
+		object[] attributes = type.GetCustomAttributes (false);
 		foreach (object attr in attributes)
 			if (attr is SupportsEventValidationAttribute)
 				return true;
