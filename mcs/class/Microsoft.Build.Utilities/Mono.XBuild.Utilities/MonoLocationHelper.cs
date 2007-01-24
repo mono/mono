@@ -31,7 +31,7 @@ using System;
 using System.IO;
 
 namespace Mono.XBuild.Utilities {
-	public class MonoLocationHelper {
+	internal class MonoLocationHelper {
 	
 		static string binDir;
 		static string libDir;
@@ -59,17 +59,17 @@ namespace Mono.XBuild.Utilities {
 			libDir = Path.Combine (t4.FullName, "lib");
 		}
 	
-		public static string GetBinDir ()
+		internal static string GetBinDir ()
 		{
 			return binDir;
 		}
 		
-		public static string GetLibDir ()
+		internal static string GetLibDir ()
 		{
 			return libDir;
 		}
 		
-		public static string GetAssembliesDir ()
+		internal static string GetAssembliesDir ()
 		{
 			return assembliesDir;
 		}

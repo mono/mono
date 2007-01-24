@@ -1,3 +1,9 @@
+2007-01-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MonoLocationHelper.cs: Made class internal. It will be removed soon
+	(all its functionality is in ToolLocationHelper and it wasn't
+	documented yet)
+
 2007-01-06  Marek Sieradzki  <marek.sieradzi@gmail.com>
 
 	* MonoLocationHelper.cs: Commented GetXBuildDir () out.
