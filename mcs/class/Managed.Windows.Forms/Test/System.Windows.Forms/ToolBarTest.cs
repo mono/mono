@@ -140,6 +140,33 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (DockStyle.Top, toolBar.Dock, "#1");
 			Assert.AreEqual (form.ClientSize.Width, toolBar.Width, "#2");
 		}
+		
+		[Test]
+		public void ButtonSizeTest ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ToolBar toolBar = new ToolBar ();
+			
+			// Size is fixed when dont have buttons
+			Assert.AreEqual (39, toolBar.ButtonSize.Width, "#1");
+			Assert.AreEqual (36, toolBar.ButtonSize.Height, "#2");
+
+			toolBar.Buttons.Add (new ToolBarButton (""));
+			form.Controls.Add (toolBar);
+			form.Show ();
+
+			// We cannot determine exact size as it depends of font size
+			Assert.IsTrue (toolBar.ButtonSize.Width < 39, "#3");
+			Assert.IsTrue (toolBar.ButtonSize.Height < 36, "#4");
+			
+			toolBar.Buttons.Add (new ToolBarButton ("Teste"));
+			
+			// We cannot determine exact size as it depends of font size
+			Assert.IsTrue (toolBar.ButtonSize.Width >= 39, "#5");
+			Assert.IsTrue (toolBar.ButtonSize.Height >= 36, "#6");
+		}
 	}
 
 	// [MonoTODO ("Add test for ButtonClickEvent (Visual Test)"]
