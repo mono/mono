@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using Microsoft.Build.Framework;
-using Mono.XBuild.Utilities;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class GetFrameworkSdkPath : TaskExtension {
@@ -41,7 +41,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			path = MonoLocationHelper.GetBinDir ();
+			path = ToolLocationHelper.GetPathToDotNetFrameworkSdk (TargetDotNetFrameworkVersion.Version20);
 			return true;
 		}
 
