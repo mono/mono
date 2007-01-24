@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 	static public MethodInfo string_concat_object_object;
 	static public MethodInfo string_concat_object_object_object;
 	static public MethodInfo string_concat_object_dot_dot_dot;
-	static public MethodInfo string_isinterneted_string;
+	static public MethodInfo string_isinterned_string;
 	static public MethodInfo system_type_get_type_from_handle;
 	static public MethodInfo bool_movenext_void;
 	static public MethodInfo ienumerable_getenumerator_void;
