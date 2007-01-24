@@ -98,6 +98,10 @@ namespace System.Globalization {
 		bool m_useUserOverride; // Unused, but MS.NET serializes this.
 		bool validForParseAsNumber; // Unused, but MS.NET serializes this.
 		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
+#if NET_2_0
+		string[] nativeDigits; // Unused, but MS.NET serializes this.
+		int digitSubstitution; // Unused, but MS.NET serializes this.
+#endif
 
 		internal NumberFormatInfo (int lcid)
 		{

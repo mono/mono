@@ -56,6 +56,9 @@ namespace System.Globalization
 		[NonSerialized]
 		private IntPtr ICU_collator;
 		private int win32LCID;	// Unused, but MS.NET serializes this
+#if NET_2_0
+		private string m_name; // Unused, but MS.NET serializes this
+#endif
 
 		[NonSerialized]
 		SimpleCollator collator;

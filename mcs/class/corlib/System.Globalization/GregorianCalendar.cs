@@ -44,6 +44,7 @@ using System;
 [Serializable]
 [MonoTODO ("Serialization format not compatible with .NET")]
 public class GregorianCalendar : Calendar {
+
 	/// <summary>
 	/// The era number for the Common Era (C.E.) or Anno Domini (A.D.)
 	/// respective.
@@ -506,6 +507,9 @@ public class GregorianCalendar : Calendar {
 			return Max;
 		}
 	}
+
+	private int m_type; // Unused, by MS serializes this
+	private int m_currentEraValue; // Unused, by MS serializes this
 #endif
 	
 	/// <summary>

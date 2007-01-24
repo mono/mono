@@ -36,6 +36,17 @@ using System.Threading;
 
 namespace System.Globalization
 {
+#if NET_2_0
+	[Flags]
+	enum DateTimeFormatFlags {
+		Unused,
+		But,
+		Serialized,
+		By,
+		Microsoft
+	}
+#endif
+
 	[Serializable]
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
 		private static readonly string MSG_READONLY = "This instance is read only";
@@ -79,9 +90,9 @@ namespace System.Globalization
 		private string _RFC1123Pattern;
 		private string _SortableDateTimePattern;
 		private string _UniversalSortableDateTimePattern;
-		private DayOfWeek firstDayOfWeek;
+		private int firstDayOfWeek;
 		private Calendar calendar;
-		private CalendarWeekRule calendarWeekRule;
+		private int calendarWeekRule;
 		private string[] abbreviatedDayNames;
 		private string[] dayNames;
 		private string[] monthNames;
@@ -113,6 +124,14 @@ namespace System.Globalization
 		private string[] m_abbrevEnglishEraNames;
 		private string[] m_dateWords;
 		private int[] optionalCalendars;
+#if NET_2_0
+		private string[] m_superShortDayNames;
+		private string[] genitiveMonthNames;
+		private string[] m_genitiveAbbreviatedMonthNames;
+		private string[] leapYearMonthNames;
+		private DateTimeFormatFlags formatFlags;
+		private string m_name; // Unused, but MS.NET serializes this
+#endif
 
 		public DateTimeFormatInfo()
 		{
@@ -142,9 +161,9 @@ namespace System.Globalization
 			_SortableDateTimePattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
 			_UniversalSortableDateTimePattern = "yyyy'-'MM'-'dd HH':'mm':'ss'Z'";
 
-			firstDayOfWeek = DayOfWeek.Sunday;
+			firstDayOfWeek = (int)DayOfWeek.Sunday;
 			calendar = new GregorianCalendar();
-			calendarWeekRule = CalendarWeekRule.FirstDay;
+			calendarWeekRule = (int)CalendarWeekRule.FirstDay;
 
 			abbreviatedDayNames = INVARIANT_ABBREVIATED_DAY_NAMES;
 			dayNames = INVARIANT_DAY_NAMES;
@@ -498,13 +517,13 @@ namespace System.Globalization
 		{
 			get
 			{
-				return firstDayOfWeek;
+				return (DayOfWeek)firstDayOfWeek;
 			}
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if ((int) value < 0 || (int) value > 6) throw new ArgumentOutOfRangeException();
-				firstDayOfWeek = value;
+				firstDayOfWeek = (int)value;
 			}
 		}
 
@@ -526,12 +545,12 @@ namespace System.Globalization
 		{
 			get
 			{
-				return calendarWeekRule;
+				return (CalendarWeekRule)calendarWeekRule;
 			}
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				calendarWeekRule = value;
+				calendarWeekRule = (int)value;
 			}
 		}
 

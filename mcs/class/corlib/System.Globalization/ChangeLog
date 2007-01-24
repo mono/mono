@@ -1,3 +1,19 @@
+2006-01-24  Chris Toshok  <toshok@ximian.com>
+
+	[ these fix nunit built with MS .net 2.0, running on mono.  nunit
+	apparently stores all manner of things in its resources ]
+	
+	* NumberFormatInfo.cs: add unused nativeDigits and
+	digitSubstitution fields that MS serializes.
+
+	* DateTimeFormatInfo.cs: serialization fixes.  MS apparently
+	stores (and serializes) a couple of fields as ints, but exposes
+	them to programmers as Enum's.
+	
+	* CompareInfo.cs: add unused m_name field that MS serializes.
+
+	* GregorianCalendar.cs: add a couple of unused fields that MS serializes.
+
 2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : there was a test which raises assertion failure
