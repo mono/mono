@@ -1,3 +1,7 @@
+2007-01-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Form.cs: Update SizeGrip's location even if it's not visible (fixes #80592).
+
 2007-01-23  Everaldo Canuto  <everaldo@simios.org>
 
 	* Control.cs: In OnParentBackgroundImageChanged remove conditions to call

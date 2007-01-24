@@ -1782,8 +1782,8 @@ namespace System.Windows.Forms {
 			base.OnResize(e);
 
 			
-			if (this.size_grip != null && this.size_grip.Visible) {
-				this.size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
+			if (size_grip != null) {
+				size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
 			}
 		}
 
