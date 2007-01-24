@@ -47,6 +47,10 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripContainer () : base ()
 		{
+			content_panel = new ToolStripContentPanel ();
+			content_panel.Dock = DockStyle.Fill;
+			this.Controls.Add (content_panel);
+
 			this.top_panel = new ToolStripPanel ();
 			this.top_panel.Dock = DockStyle.Top;
 			this.top_panel.Height = 0;
@@ -54,7 +58,7 @@ namespace System.Windows.Forms
 
 			this.bottom_panel = new ToolStripPanel ();
 			this.bottom_panel.Dock = DockStyle.Bottom;
-			this.top_panel.Height = 0;
+			this.bottom_panel.Height = 0;
 			this.Controls.Add (bottom_panel);
 
 			this.left_panel = new ToolStripPanel ();
@@ -66,11 +70,7 @@ namespace System.Windows.Forms
 			this.right_panel.Dock = DockStyle.Right;
 			this.right_panel.Width = 0;
 			this.Controls.Add (right_panel);
-
-			content_panel = new ToolStripContentPanel ();
-			content_panel.Dock = DockStyle.Fill;
-			this.Controls.Add (content_panel);
-		}
+	}
 		#endregion
 
 		#region Public Properties
@@ -123,7 +123,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripPanel BottomToolStripPanel {
 			get { return this.bottom_panel; }
 		}
@@ -143,7 +143,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripContentPanel ContentPanel {
 			get { return this.content_panel; }
 		}
@@ -179,7 +179,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripPanel LeftToolStripPanel {
 			get { return this.left_panel; }
 		}
@@ -191,7 +191,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripPanel RightToolStripPanel {
 			get { return this.right_panel; }
 		}
@@ -203,7 +203,7 @@ namespace System.Windows.Forms
 		}
 	
 		[Localizable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolStripPanel TopToolStripPanel {
 			get { return this.top_panel; }
 		}
@@ -222,7 +222,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return base.CreateControlsInstance ();

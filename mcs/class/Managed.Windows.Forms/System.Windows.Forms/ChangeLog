@@ -1,3 +1,8 @@
+2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripContainer.cs: The recent Dock fix exposed that I was
+	adding the panels in the wrong order.
+
 2007-01-24  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: When we move the caret we also need to move the
