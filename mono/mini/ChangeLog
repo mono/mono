@@ -1,3 +1,8 @@
+
+Wed Jan 24 12:04:39 GMT 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: typo fix.
+
 2007-01-23  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c: Use lgb instructions for I1 type variables instead of lb.
