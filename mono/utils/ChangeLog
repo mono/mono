@@ -1,3 +1,8 @@
+
+Wed Jan 24 23:20:17 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c: don't call mono_mprotect() on windows.
+
 2007-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* monobitset.h: monobitset.c: Move MonoBitSet type definition to
