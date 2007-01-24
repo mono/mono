@@ -1,3 +1,8 @@
+
+Wed Jan 24 14:54:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix some more soft-float issues.
+
 2007-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.h (MONO_ARCH_FRAME_ALIGNMENT): Fix sparc build.
