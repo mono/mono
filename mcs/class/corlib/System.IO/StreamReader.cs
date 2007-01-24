@@ -346,6 +346,10 @@ namespace System.IO {
 			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
+			if (pos >= decoded_count){
+				if (ReadBuffer () == 0)
+					return -1;
+			}
 			return decoded_buffer [pos++];
 		}
 
