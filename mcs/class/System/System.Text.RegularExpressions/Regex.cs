@@ -48,7 +48,7 @@ namespace System.Text.RegularExpressions {
 #if NET_2_0
 		private static int cache_size = 15;
 #endif
-
+#if !TARGET_JVM
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
@@ -96,6 +96,7 @@ namespace System.Text.RegularExpressions {
 			asmBuilder.Save(aname.Name);
 			*/
 		}
+#endif
 		
 		public static string Escape (string str)
 		{
