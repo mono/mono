@@ -1,3 +1,8 @@
+2007-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): When force-aligning a field, make sure
+	we doesn't decrease its alignment. Should fix the sparc build.
+
 2007-01-24  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c
