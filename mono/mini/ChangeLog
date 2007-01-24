@@ -1,4 +1,8 @@
 
+Wed Jan 24 19:10:28 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.h: use soft-float also on vfp for now.
+
 Wed Jan 24 14:54:40 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: fix some more soft-float issues.
