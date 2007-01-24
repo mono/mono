@@ -1,5 +1,9 @@
 2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* TextBoxTest.cs: removed NotWorking attribute
+
+2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* TableTest.cs: removed NotWorking attribute
 
 2007-01-24 Ilya Kharmatsky <ilya -at- decode-systems.com>

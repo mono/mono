@@ -95,7 +95,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void Defaults_NotWorking ()
 		{
 			Poker p = new Poker ();
@@ -105,7 +104,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MultilineRenderEscape ()
 		{
 			Poker t = new Poker ();
@@ -160,7 +158,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ValidationRender ()
 		{
 			/* test to show that the validation settings
@@ -256,7 +253,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void LoadPostData_Flow ()  //Just flow and not implementation detail
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
@@ -302,7 +298,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void LoadPostData ()  
 		{
@@ -372,7 +367,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented
 		public void AutoCompleteType_Test ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");

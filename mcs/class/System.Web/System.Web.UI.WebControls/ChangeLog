@@ -1,3 +1,8 @@
+2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TextBox.cs: implemented AutoCompleteType property, fixed
+	AddAttributesToRender
+
 2007-01-24  Ilya Kharmatsky <ilya -at- decode-systems.com>
 	
 	* DetailsView.cs: fixed problems with rendering of control, when

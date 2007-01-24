@@ -55,6 +55,43 @@ namespace System.Web.UI.WebControls {
 	, IEditableTextControl, ITextControl
 #endif		  
 	{
+#if NET_2_0
+		readonly static string [] VCardValues = new string [] {
+			null,
+			null,
+			"vCard.Cellular",
+			"vCard.Company",
+			"vCard.Department",
+			"vCard.DisplayName",
+			"vCard.Email",
+			"vCard.FirstName",
+			"vCard.Gender",
+			"vCard.Home.City",
+			"HomeCountry",
+			"vCard.Home.Fax",
+			"vCard.Home.Phone",
+			"vCard.Home.State",
+			"vCard.Home.StreetAddress",
+			"vCard.Home.ZipCode",
+			"vCard.Home.page",
+			"vCard.JobTitle",
+			"vCard.LastName",
+			"vCard.MiddleName",
+			"vCard.Notes",
+			"vCard.Office",
+			"vCard.Pager",
+			"vCard.Business.City",
+			"BusinessCountry",
+			"vCard.Business.Fax",
+			"vCard.Business.Phone",
+			"vCard.Business.State",
+			"vCard.Business.StreetAddress",
+			"vCard.Business.Url",
+			"vCard.Business.ZipCode",
+			"search"
+		};
+#endif
+
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (Page != null)
@@ -69,8 +106,18 @@ namespace System.Web.UI.WebControls {
 			case TextBoxMode.MultiLine:
 				if (Columns != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString ());
+#if NET_2_0
+				else
+					w.AddAttribute (HtmlTextWriterAttribute.Cols, "20");
+#endif
+				
 				if (Rows != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString ());
+#if NET_2_0
+				else
+					w.AddAttribute (HtmlTextWriterAttribute.Rows, "2");
+#endif
+
 				if (!Wrap)
 					w.AddAttribute (HtmlTextWriterAttribute.Wrap, "off");
 				
@@ -92,6 +139,14 @@ namespace System.Web.UI.WebControls {
 		
 				if (MaxLength != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString ());
+
+#if NET_2_0
+				if (AutoCompleteType != AutoCompleteType.None && TextMode == TextBoxMode.SingleLine)
+					if (AutoCompleteType != AutoCompleteType.Disabled)
+						w.AddAttribute (HtmlTextWriterAttribute.VCardName, VCardValues [(int) AutoCompleteType]);
+					else
+						w.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off");
+#endif
 				break;	
 			}
 
@@ -232,14 +287,14 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (AutoCompleteType.None)]
 		[Themeable (false)]
-		[MonoTODO ("Not implemented")]
 		public virtual AutoCompleteType AutoCompleteType 
 		{
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState ["AutoCompleteType"];
+				return o != null ? (AutoCompleteType) o : AutoCompleteType.None;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["AutoCompleteType"] = value;
 			}
 		}
 #endif		
