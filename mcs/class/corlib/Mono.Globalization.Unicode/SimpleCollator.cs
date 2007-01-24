@@ -352,21 +352,21 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				throw new SystemException (String.Format ("MONO internal error. Failed to get TailContraction. start = {0} end = {1} string = '{2}'", start, end, s));
 			for (int i = 0; i < clist.Length; i++) {
 				Contraction ct = clist [i];
-				int diff = ct.Source [0] - s [end + 1];
-				if (diff > 0)
-					return null; // it's already sorted
-				else if (diff < 0)
-					continue;
 				char [] chars = ct.Source;
-
-				bool match = true;
 				if (chars.Length > start - end)
 					continue;
-				for (int n = 0; n < chars.Length; n++)
-					if (s [start - n] != chars [chars.Length - 1 - n]) {
+				if (chars [chars.Length - 1] != s [start])
+					continue;
+
+				bool match = true;
+				for (int n = 0, spos = start - chars.Length + 1;
+				     n < chars.Length;
+				     n++, spos++) {
+					if (s [spos] != chars [n]) {
 						match = false;
 						break;
 					}
+				}
 				if (match)
 					return ct;
 			}

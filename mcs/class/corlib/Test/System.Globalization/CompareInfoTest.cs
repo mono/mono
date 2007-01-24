@@ -851,6 +851,8 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#11", 0, "\\", '\\');
 		AssertEquals ("#11en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\", '\\'));
 		AssertEquals ("#11ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\", '\\'));
+		AssertLastIndexOf ("#12", 8, "/system/web", 'w');
+		AssertEquals ("#12sv", 8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", 'w'));
 	}
 
 	[Test]
@@ -1084,6 +1086,9 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
 		AssertEquals ("#19en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
 		AssertEquals ("#19ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
+		// bug #80612
+		AssertLastIndexOf ("#20", 8, "/system/web", "w");
+		AssertEquals ("#20sv", 8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", "w"));
 	}
 
 	[Test]

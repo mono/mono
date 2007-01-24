@@ -1,3 +1,9 @@
+2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : GetTailContraction() was broken to pick correct
+	  contraction/special sortkey out and thus LastIndexOf() failed when 
+	  it is involved. Fixed bug #80612.
+
 2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : for non-StringSort comparison, level5 (- and ')

@@ -1,3 +1,7 @@
+2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added test for bug #80612.
+
 2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : Added Compare() tests for hyphens.
