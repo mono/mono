@@ -1,3 +1,10 @@
+2007-01-24 Ilya Kharmatsky <ilya -at- decode-systems.com>
+	
+	* DetailsViewTest.cs : added 3 tests, which test rendering of
+	  control, when data source is empty - it should not contain
+	  header or footer,even when the values are provided for those
+	  properties.
+	 
 2007-01-15 Ilya Kharmatsky <ilya -at- decode-systems.com>
 	
 	* CheckBoxListTest.cs

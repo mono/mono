@@ -604,7 +604,143 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, origHtmlValue.Contains ("Blue_hills.jpg"), "BackImageRender");
 			//GridLines and HorizontalAlign were set but can not be shown in this rendering.
 		}
+		
+		///
+		/// The test checks, that when the DataSource is empty, the control
+		/// will not render the content even when footer/header are set to some
+		/// values.
+		///
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_EmptyContentRendering()
+		{
+			PageDelegate pd = new PageDelegate (DetailsView_EmptyContentRendering_Load);
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pd));
+			string result = t.Run ();						
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "LinkButton1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			result = t.Run ();
+			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+			string origHtml=@"<div>
+					<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+					</table>
+					</div><a id=""LinkButton1"" href=""javascript:__doPostBack('LinkButton1','')"">Test</a>";
+			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyContentTest");
+		}
+		
+		public static void DetailsView_EmptyContentRendering_Load(Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
 
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.DataSource = new ArrayList ();
+			dv.HeaderText = "Header Text";
+			dv.FooterText = "Footer Text";
+			LinkButton lb = new LinkButton ();
+			lb.ID = "LinkButton1";
+			lb.Text = "Test";
+			
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (dv);
+			dv.DataBind ();
+			p.Form.Controls.Add (lb);
+			p.Form.Controls.Add (lce);		
+		}
+		
+		///
+		/// This test checks, that when the footer text is set, but
+		/// the DataSource is empty, the footer is not rendered.
+		///
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_EmptyFooterRendering()
+		{
+			PageDelegate pd = new PageDelegate (DetailsView_EmptyFooterRendering_Load);
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pd));
+			string result = t.Run ();						
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "LinkButton1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			result = t.Run ();
+			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+			string origHtml=@"<div>
+					<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+					</table>
+					</div><a id=""LinkButton1"" href=""javascript:__doPostBack('LinkButton1','')"">Test</a>";
+			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyFooterTextTest");
+		}
+		
+		public static void DetailsView_EmptyFooterRendering_Load(Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.DataSource = new ArrayList ();
+			dv.FooterText = "Footer Text";
+			LinkButton lb = new LinkButton ();
+			lb.ID = "LinkButton1";
+			lb.Text = "Test";
+			
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (dv);
+			dv.DataBind ();
+			p.Form.Controls.Add (lb);
+			p.Form.Controls.Add (lce);		
+		}
+
+		///
+		/// This test checks, that when the header text is set, but
+		/// the DataSource is empty, the header is not rendered
+		///
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_EmptyHeaderRendering()
+		{
+			PageDelegate pd = new PageDelegate (DetailsView_EmptyHeaderRendering_Load);
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pd));
+			string result = t.Run ();						
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "LinkButton1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			result = t.Run ();
+			string newHtml = HtmlDiff.GetControlFromPageHtml (result); 
+			string origHtml=@"<div>
+					<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+					</table>
+					</div><a id=""LinkButton1"" href=""javascript:__doPostBack('LinkButton1','')"">Test</a>";
+			HtmlDiff.AssertAreEqual(origHtml, newHtml, "EmptyHeaderTextTest");
+		}
+		
+		public static void DetailsView_EmptyHeaderRendering_Load(Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.DataSource = new ArrayList ();
+			dv.HeaderText = "Header Text";
+			LinkButton lb = new LinkButton ();
+			lb.ID = "LinkButton1";
+			lb.Text = "Test";
+			
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (dv);
+			dv.DataBind ();
+			p.Form.Controls.Add (lb);
+			p.Form.Controls.Add (lce);	
+		}
 		
 		[Test]
 		[Category ("NunitWeb")]

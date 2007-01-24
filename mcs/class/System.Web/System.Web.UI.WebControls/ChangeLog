@@ -1,3 +1,9 @@
+2007-01-24  Ilya Kharmatsky <ilya -at- decode-systems.com>
+	
+	* DetailsView.cs: fixed problems with rendering of control, when
+	  empty data source is provided. Respective tests are provided 
+	  in DetailsViewTest.cs
+	  
 2007-01-21  Konstantin Triger <kostat@mainsoft.com>
 
 	* TreeView.js, DetailsView.js, Menu.js, GridView.js:

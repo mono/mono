@@ -1110,8 +1110,7 @@ namespace System.Web.UI.WebControls
 			bool showPager = AllowPaging && (PageCount > 1);
 			
 			Controls.Clear ();
-			table = CreateTable ();
-			Controls.Add (table);
+			table = null;
 				
 			ArrayList list = new ArrayList ();
 			
@@ -1136,57 +1135,72 @@ namespace System.Web.UI.WebControls
 			}
 
 			// Main table creation
-			
-			headerRow = CreateRow (-1, DataControlRowType.Header, DataControlRowState.Normal);
-			DataControlFieldCell headerCell = new DataControlFieldCell (null);
-			headerCell.ColumnSpan = 2;
-			if (headerTemplate != null)
-				headerTemplate.InstantiateIn (headerCell);
-			else
-				headerCell.Text = HeaderText;
-			headerRow.Cells.Add (headerCell);
-			table.Rows.Add (headerRow);
-			
-			if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
-				topPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
-				InitializePager (topPagerRow, dataSource);
-				table.Rows.Add (topPagerRow);
-			}
-			
-			if (dataSource.Count > 0) {
-				foreach (DataControlField field in fields) {
-					DataControlRowState rstate = GetRowState (list.Count);
-					DetailsViewRow row = CreateRow (PageIndex, DataControlRowType.DataRow, rstate);
-					InitializeRow (row, field);
-					table.Rows.Add (row);
-					list.Add (row);
-				}
-			} else {
-				table.Rows.Add (CreateEmptyrRow ());
-			}
 
-			rows = new DetailsViewRowCollection (list);
+            bool hasEmptyText = EmptyDataText != null && EmptyDataText != String.Empty;
 
-			footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
-			DataControlFieldCell footerCell = new DataControlFieldCell (null);
-			footerCell.ColumnSpan = 2;
-			if (footerTemplate != null)
-				footerTemplate.InstantiateIn (footerCell);
-			else
-				footerCell.Text = FooterText;
-			footerRow.Cells.Add (footerCell);
-			table.Rows.Add (footerRow);
-			
-			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
-				bottomPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
-				InitializePager (bottomPagerRow, dataSource);
-				table.Rows.Add (bottomPagerRow);
-			}
-			
-			if (dataBinding)
-				DataBind (false);
-			
-			return dataSource.DataSourceCount;
+            if (fields.Length > 0)
+            {
+                headerRow = CreateRow(-1, DataControlRowType.Header, DataControlRowState.Normal);
+                DataControlFieldCell headerCell = new DataControlFieldCell(null);
+                headerCell.ColumnSpan = 2;
+                if (headerTemplate != null)
+                    headerTemplate.InstantiateIn(headerCell);
+                else
+                    headerCell.Text = HeaderText;
+                headerRow.Cells.Add(headerCell);
+                ContainedTable.Rows.Add(headerRow);
+
+                if (showPager && PagerSettings.Position == PagerPosition.Top ||
+                        PagerSettings.Position == PagerPosition.TopAndBottom)
+                {
+                    topPagerRow = CreateRow(-1, DataControlRowType.Pager, DataControlRowState.Normal);
+                    InitializePager(topPagerRow, dataSource);
+                    ContainedTable.Rows.Add(topPagerRow);
+                }
+            }
+
+            foreach (DataControlField field in fields)
+            {
+                DataControlRowState rstate = GetRowState(list.Count);
+                DetailsViewRow row = CreateRow(PageIndex, DataControlRowType.DataRow, rstate);
+                InitializeRow(row, field);
+                ContainedTable.Rows.Add(row);
+                list.Add(row);
+            }
+
+            rows = new DetailsViewRowCollection(list);
+
+            if (list.Count == 0 && hasEmptyText)
+            {
+                ContainedTable.Rows.Add(CreateEmptyRow());
+            }
+            
+            if (list.Count > 0)
+            {
+                footerRow = CreateRow(-1, DataControlRowType.Footer, DataControlRowState.Normal);
+                DataControlFieldCell footerCell = new DataControlFieldCell(null);
+                footerCell.ColumnSpan = 2;
+                if (footerTemplate != null)
+                    footerTemplate.InstantiateIn(footerCell);
+                else
+                    footerCell.Text = FooterText;
+
+                footerRow.Cells.Add(footerCell);
+                ContainedTable.Rows.Add(footerRow);
+
+                if (showPager && PagerSettings.Position == PagerPosition.Bottom ||
+                        PagerSettings.Position == PagerPosition.TopAndBottom)
+                {
+                    bottomPagerRow = CreateRow(-1, DataControlRowType.Pager, DataControlRowState.Normal);
+                    InitializePager(bottomPagerRow, dataSource);
+                    ContainedTable.Rows.Add(bottomPagerRow);
+                }
+            }
+
+            if (dataBinding)
+                DataBind(false);
+
+            return dataSource.DataSourceCount;
 		}
 
 		protected override void EnsureDataBound ()
@@ -1215,7 +1229,7 @@ namespace System.Web.UI.WebControls
 			row.Cells.Add (cell);
 		}
 		
-		DetailsViewRow CreateEmptyrRow ()
+		DetailsViewRow CreateEmptyRow ()
 		{
 			DetailsViewRow row = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
 			TableCell cell = new TableCell ();
@@ -1325,19 +1339,23 @@ namespace System.Web.UI.WebControls
 
 		protected internal virtual void PrepareControlHierarchy ()
 		{
-			if (table == null)
-				return;
-
-			table.Caption = Caption;
-			table.CaptionAlign = CaptionAlign;
+            ContainedTable.Caption = Caption;
+            ContainedTable.CaptionAlign = CaptionAlign;
 
 			// set visible for header and footer
-			TableCell headerCell = (TableCell) HeaderRow.Controls [0];
-			HeaderRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
-			TableCell footerCell = (TableCell) FooterRow.Controls [0];
-			FooterRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
+			if (HeaderRow != null) 
+			{
+				TableCell headerCell = (TableCell) HeaderRow.Controls [0];
+				HeaderRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
+			}
+			if (FooterRow != null)
+			{
+				TableCell footerCell = (TableCell) FooterRow.Controls [0];
+				FooterRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
+			}
 
-			foreach (DetailsViewRow row in table.Rows) {
+            foreach (DetailsViewRow row in ContainedTable.Rows)
+            {
 				switch (row.RowType) {
 				case DataControlRowType.Header:
 					if (headerStyle != null && !headerStyle.IsEmpty)
@@ -1916,8 +1934,21 @@ namespace System.Web.UI.WebControls
 			table.Render (writer);
 		}
 
-		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
-		{
+        private Table ContainedTable
+        {
+            get
+            {
+                if (table == null)
+                {
+                    table = CreateTable();
+                    Controls.Add(table);
+                }
+                return table;
+            }
+        }
+
+        PostBackOptions IPostBackContainer.GetPostBackOptions(IButtonControl control)
+        {
 			if (control == null)
 				throw new ArgumentNullException ("control");
 
