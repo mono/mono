@@ -5208,10 +5208,8 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBackgroundImageChanged(EventArgs e) {
-			if ((background_color.IsEmpty || background_color.A < byte.MaxValue) && background_image==null) {
-				Invalidate();
-				OnBackgroundImageChanged(e);
-			}
+			Invalidate();
+			OnBackgroundImageChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

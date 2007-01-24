@@ -1,5 +1,11 @@
 2007-01-23  Everaldo Canuto  <everaldo@simios.org>
 
+	* Control.cs: In OnParentBackgroundImageChanged remove conditions to call
+	OnBackgroundImageChanged, it mimics win32 behavior. Fixes #80553. 
+	* ToolBar.cs: Force redraw in BackgroundImageChanged.
+
+2007-01-23  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs:
 	- Implement support for vertical toolbars. Fixes #80539;
 	- Call LayoutToolBar when resize, it fix some other problems in layout.

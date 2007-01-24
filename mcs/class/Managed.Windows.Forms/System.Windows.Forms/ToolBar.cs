@@ -619,7 +619,7 @@ namespace System.Windows.Forms
 
 		private void ToolBar_BackgroundImageChanged (object sender, EventArgs args)
 		{
-			Redraw (false);
+			Redraw (false, true);
 		}
 
 		private void ToolBar_MouseDown (object sender, MouseEventArgs me)
