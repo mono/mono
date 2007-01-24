@@ -199,7 +199,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < -1)
-					throw new ArgumentOutOfRangeException ("value");
+					throw new ArgumentOutOfRangeException ("ImageIndex");
 
 				image_index = value;
 				image_key = String.Empty;

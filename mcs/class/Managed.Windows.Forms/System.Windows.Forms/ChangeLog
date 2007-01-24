@@ -1,3 +1,7 @@
+2007-01-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ColumnHeader.cs: Fixed ParamName in ArgumentOutOfRangeException.
+
 2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripContainer.cs: The recent Dock fix exposed that I was
