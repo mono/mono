@@ -1,3 +1,8 @@
+2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: FindStringExactMaxException doesn't throw AOORE on 2.0
+	until you pass Items.Count, not Items.Count - 1 like 1.1.
+
 2007-01-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ColumnHeader.cs: Fixed ParamName in ArgumentOutOfRangeException.

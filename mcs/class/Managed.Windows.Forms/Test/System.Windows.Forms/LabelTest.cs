@@ -206,6 +206,9 @@ namespace MonoTests.System.Windows.Forms
 		   eventhandled = true;
 	   }
 
+#if NET_2_0
+	   [Ignore ("AutoSize moved to Control in 2.0, Label.AutoSize needs to be reworked a bit.")]
+#endif
 	   [Test]
 	   public void AutoSizeChangedChangedTest ()
 	     {

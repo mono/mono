@@ -725,7 +725,11 @@ namespace System.Windows.Forms
 			if (Items.Count == 0) 
 				return -1; // No exception throwing if empty
 
+#if NET_2_0
+			if (startIndex < -1 || startIndex >= Items.Count)
+#else
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
+#endif
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
 			startIndex++;

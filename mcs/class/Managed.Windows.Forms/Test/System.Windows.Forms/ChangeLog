@@ -1,3 +1,13 @@
+2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBoxTest.cs: Add FindStringExactMaxExceptionNet20 test.
+	* FormTest.cs: Mark BehaviorResizeOnBorderStyleChangedNotVisible as NotWorking,
+	it's values match MS only.
+	* LabelTest.cs: Mark AutoSizeChangedChangedTest as Ignore for 2.0 until it is 
+	reworked.
+	* ToolStripTextBoxTest.cs: Mark PropertyModified as Ignore until a bug in TextBox
+	is fixed.  Same for Constructor: A12.
+
 2007-01-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ControlTest.cs: Marked OnPaintDoubleBufferedTest as Interactive,

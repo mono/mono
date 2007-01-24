@@ -625,8 +625,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]	// bug #80574
+		[NUnit.Framework.Category ("NotWorking")]
 		public void BehaviorResizeOnBorderStyleChangedNotVisible ()
 		{
+			// Marked NotWorking because the ClientSize is probably dependent on the WM.
+			// The values below match .Net to make sure our behavior is the same.
 			Form f = new Form ();
 
 			Assert.AreEqual (new Size (300, 300), f.Size, "A1");

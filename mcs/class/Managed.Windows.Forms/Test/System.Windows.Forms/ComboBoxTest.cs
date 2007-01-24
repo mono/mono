@@ -242,6 +242,16 @@ namespace MonoTests.System.Windows.Forms
 			cmbbox.FindStringExact ("Hola", 3);
 		}
 
+		// 2.0 doesn't throw an exception until Item.Count instead of Item.Count - 1 like docs say
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void FindStringExactMaxExceptionNet20 ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object[] { "ACBD", "ABDC", "ACBD", "ABCD" });
+			cmbbox.FindStringExact ("Hola", 4);
+		}
+
 		//
 		// Events
 		//
