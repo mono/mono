@@ -1,4 +1,9 @@
 
+Wed Jan 24 21:00:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* arm/arm-codegen.h: fixed encoding of short/byte load/store
+	instructions with negative immediate offsets.
+
 Mon Nov 20 17:36:45 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* arm/arm-codegen.h: added suppot for thumb interworking instructions.
