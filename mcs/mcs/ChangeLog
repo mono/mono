@@ -1,3 +1,11 @@
+2007-01-23  Miguel de Icaza  <miguel@novell.com>
+
+	* constant.cs: Bloat removal, CheckRange and CheckUnsigned are
+	gone, instead we inline the test, preventing the needless casts to
+	longs, ulongs and doubles for the parameters, avoiding calls to
+	methods that overchecked stuff, and instead inlined things
+	nicely. 
+
 2007-01-20  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Better parameter error handling.
