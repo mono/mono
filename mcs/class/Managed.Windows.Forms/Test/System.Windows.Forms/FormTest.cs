@@ -243,6 +243,17 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.IsDisposed, "A10");
 		}
 
+		[Test] // bug #80604
+		[NUnit.Framework.Category ("NotWorking")]
+		public void VisibleOnLoad ()
+		{
+			MockForm form = new MockForm ();
+			form.ShowInTaskbar = false;
+			form.Show ();
+			Assert.IsTrue (form.VisibleOnLoad);
+			form.Dispose ();
+		}
+
 		[Test] // bug #80052
 		[NUnit.Framework.Category ("NotWorking")]
 		public void Location ()
@@ -672,6 +683,20 @@ namespace MonoTests.System.Windows.Forms
 				int platform = (int) Environment.OSVersion.Platform;
 				return ((platform == 4) || (platform == 128));
 			}
+		}
+
+		private class MockForm : Form
+		{
+			public bool VisibleOnLoad {
+				get { return _visibleOnLoad; }
+			}
+
+			protected override void OnLoad(EventArgs e) {
+				base.OnLoad(e);
+				_visibleOnLoad = Visible;
+			}
+
+			private bool _visibleOnLoad;
 		}
 	}
 }

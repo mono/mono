@@ -1,3 +1,9 @@
+2007-01-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FormTest.cs: Added NotWorking test for bug #80604.
+	* ColumnHeaderTest.cs: Added tests for bug #80607. Added test for
+	properties introduced in 2.0 profile.
+
 2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Add FindStringExactMaxExceptionNet20 test.
@@ -179,6 +185,11 @@
 	* ControlTest.cs: Add test to check if Exception is raised when
 	adding a top level control (form) as a child control
 	
+2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlStyleTest.cs: Added style test for LinkLabel with text, but
+	no links.
+
 2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FocusTest.cs: Ignore tests that rely on Form.Show () synchronously
