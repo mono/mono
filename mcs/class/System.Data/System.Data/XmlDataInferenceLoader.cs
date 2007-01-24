@@ -258,7 +258,7 @@ namespace System.Data
 				return;
 			}
 			if (table.ChildTables [localName] != null)
-				// Child is already mapped, or infered as a table
+				// Child is already mapped, or inferred as a table
 				// (in that case, that takes precedence than
 				// this simple column inference.)
 				return;
@@ -756,7 +756,7 @@ sw = Console.Out;
 //
 // *** Mapping strategy
 //
-//	Attributes are always (except for namespace nodes) infered as 
+//	Attributes are always (except for namespace nodes) inferred as 
 //	DataColumn (of MappingType.Attribute).
 //
 //	When an element has attributes, it always becomes a DataTable.

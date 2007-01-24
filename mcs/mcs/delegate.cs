@@ -653,7 +653,7 @@ namespace Mono.CSharp {
 			if (!mg.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (param, ref found_method)) {
 				Report.Error (411, loc, "The type arguments for " +
-					      "method `{0}' cannot be infered from " +
+					      "method `{0}' cannot be inferred from " +
 					      "the usage. Try specifying the type " +
 					      "arguments explicitly.", method_desc);
 				return;

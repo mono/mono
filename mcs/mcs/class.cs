@@ -1141,8 +1141,8 @@ namespace Mono.CSharp {
 					if (iface == t)
 						continue;
 
-					Type[] infered = new Type [CountTypeParameters];
-					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t, infered, null))
+					Type[] inferred = new Type [CountTypeParameters];
+					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t, inferred, null))
 						continue;
 
 					Report.Error (695, Location,

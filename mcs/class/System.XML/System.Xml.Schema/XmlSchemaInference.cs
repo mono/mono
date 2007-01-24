@@ -1003,7 +1003,7 @@ namespace System.Xml.Schema
 				return QNameString;
 
 			switch (value) {
-			// 0 and 1 are not infered as byte unlike MS.XSDInfer
+			// 0 and 1 are not inferred as byte unlike MS.XSDInfer
 //			case "0":
 //			case "1":
 			case "true":

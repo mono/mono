@@ -65,7 +65,7 @@
 	For example, it keeps elementFormDefault and attributeFormDefault.
 
 	Basically it will process the XmlReader with existing XmlSchemaSet
-	and won't "merge" two XmlSchemaSets one of which is newly infered
+	and won't "merge" two XmlSchemaSets one of which is newly inferred
 	from this XmlReader. Because anyways the XmlReader will have to
 	infer sequential nodes (siblings).
 
@@ -142,10 +142,10 @@
 	<ul>
 		- If the content type was simpleType, then it is changed
 		  into complexType with complexContent and mixed='true'.
-		  The infered content particle must be optional.
+		  The inferred content particle must be optional.
 		- If the content type was empty, then it is changed into
 		  complexType with complexContent (it is not mixed unlike
-		  above). The infered content particle must be optional.
+		  above). The inferred content particle must be optional.
 		- If the content type was elementOnly or mixed, no need
 		  to change.
 	</ul>
@@ -181,7 +181,7 @@
 			  (none != empty).
 		</ul>
 
-		- When the target element is infered in a new element
+		- When the target element is inferred in a new element
 		  definition, then 
 	</ul>
 
@@ -284,7 +284,7 @@
 
 	(Actually inference is done from non post compilation information.)
 
-	Note that type relaxation happens only when it is infered as textOnly
+	Note that type relaxation happens only when it is inferred as textOnly
 	and it always occurs.
 
 
@@ -292,7 +292,7 @@
 
 ** Type inference
 
-	All data types are infered from string value; either element content
+	All data types are inferred from string value; either element content
 	or attribute value.
 
 
@@ -317,8 +317,8 @@
 		  related schema types.
 
 		- If if did not match any kind of predefined types, then
-		  xs:string is infered. No other string-based types (such
-		  as xs:token) are infered.
+		  xs:string is inferred. No other string-based types (such
+		  as xs:token) are inferred.
 	</ul>
 
 
@@ -337,7 +337,7 @@
 		  for unsignedShort
 	</ul>
 
-	Here, the new string value is infered into a simpleType, and then
+	Here, the new string value is inferred into a simpleType, and then
 	the processor will compute the most specific common type between
-	the existing type and the newly infered type.
+	the existing type and the newly inferred type.
 

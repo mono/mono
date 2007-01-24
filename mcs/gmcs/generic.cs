@@ -2095,8 +2095,8 @@ namespace Mono.CSharp {
 		///   Check whether `a' and `b' may become equal generic types.
 		///   The algorithm to do that is a little bit complicated.
 		/// </summary>
-		public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered,
-							       Type[] method_infered)
+		public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_inferred,
+							       Type[] method_inferred)
 		{
 			if (a.IsGenericParameter) {
 				//
@@ -2118,7 +2118,7 @@ namespace Mono.CSharp {
 				// 
 				if (b.IsGenericParameter || !b.IsGenericType) {
 					int pos = a.GenericParameterPosition;
-					Type[] args = a.DeclaringMethod != null ? method_infered : class_infered;
+					Type[] args = a.DeclaringMethod != null ? method_inferred : class_inferred;
 					if (args [pos] == null) {
 						args [pos] = b;
 						return true;
@@ -2150,7 +2150,7 @@ namespace Mono.CSharp {
 			}
 
 			if (b.IsGenericParameter)
-				return MayBecomeEqualGenericTypes (b, a, class_infered, method_infered);
+				return MayBecomeEqualGenericTypes (b, a, class_inferred, method_inferred);
 
 			//
 			// At this point, neither a nor b are a type parameter.
@@ -2162,7 +2162,7 @@ namespace Mono.CSharp {
 			//
 
 			if (a.IsGenericType || b.IsGenericType)
-				return MayBecomeEqualGenericInstances (a, b, class_infered, method_infered);
+				return MayBecomeEqualGenericInstances (a, b, class_inferred, method_inferred);
 
 			//
 			// If both of them are arrays.
@@ -2175,7 +2175,7 @@ namespace Mono.CSharp {
 				a = a.GetElementType ();
 				b = b.GetElementType ();
 
-				return MayBecomeEqualGenericTypes (a, b, class_infered, method_infered);
+				return MayBecomeEqualGenericTypes (a, b, class_inferred, method_inferred);
 			}
 
 			//
@@ -2190,8 +2190,8 @@ namespace Mono.CSharp {
 		// particular instantiation (26.3.1).
 		//
 		public static bool MayBecomeEqualGenericInstances (Type a, Type b,
-								   Type[] class_infered,
-								   Type[] method_infered)
+								   Type[] class_inferred,
+								   Type[] method_inferred)
 		{
 			if (!a.IsGenericType || !b.IsGenericType)
 				return false;
@@ -2199,18 +2199,18 @@ namespace Mono.CSharp {
 				return false;
 
 			return MayBecomeEqualGenericInstances (
-				GetTypeArguments (a), GetTypeArguments (b), class_infered, method_infered);
+				GetTypeArguments (a), GetTypeArguments (b), class_inferred, method_inferred);
 		}
 
 		public static bool MayBecomeEqualGenericInstances (Type[] aargs, Type[] bargs,
-								   Type[] class_infered,
-								   Type[] method_infered)
+								   Type[] class_inferred,
+								   Type[] method_inferred)
 		{
 			if (aargs.Length != bargs.Length)
 				return false;
 
 			for (int i = 0; i < aargs.Length; i++) {
-				if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_infered, method_infered))
+				if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_inferred, method_inferred))
 					return false;
 			}
 
@@ -2221,7 +2221,7 @@ namespace Mono.CSharp {
 		// Type inference.
 		//
 
-		static bool InferType (Type pt, Type at, Type[] infered)
+		static bool InferType (Type pt, Type at, Type[] inferred)
 		{
 			if (pt.IsGenericParameter) {
 				if (pt.DeclaringMethod == null)
@@ -2229,12 +2229,12 @@ namespace Mono.CSharp {
 
 				int pos = pt.GenericParameterPosition;
 
-				if (infered [pos] == null) {
-					infered [pos] = at;
+				if (inferred [pos] == null) {
+					inferred [pos] = at;
 					return true;
 				}
 
-				if (infered [pos] != at)
+				if (inferred [pos] != at)
 					return false;
 
 				return true;
@@ -2242,7 +2242,7 @@ namespace Mono.CSharp {
 
 			if (!pt.ContainsGenericParameters) {
 				if (at.ContainsGenericParameters)
-					return InferType (at, pt, infered);
+					return InferType (at, pt, inferred);
 				else
 					return true;
 			}
@@ -2252,7 +2252,7 @@ namespace Mono.CSharp {
 					if (at.GetArrayRank () != pt.GetArrayRank ())
 						return false;
 
-					return InferType (pt.GetElementType (), at.GetElementType (), infered);
+					return InferType (pt.GetElementType (), at.GetElementType (), inferred);
 				}
 
 				if (!pt.IsGenericType)
@@ -2264,7 +2264,7 @@ namespace Mono.CSharp {
 					return false;
 
 				Type[] args = GetTypeArguments (pt);
-				return InferType (args [0], at.GetElementType (), infered);
+				return InferType (args [0], at.GetElementType (), inferred);
 			}
 
 			if (pt.IsArray) {
@@ -2272,11 +2272,11 @@ namespace Mono.CSharp {
 				    (pt.GetArrayRank () != at.GetArrayRank ()))
 					return false;
 
-				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+				return InferType (pt.GetElementType (), at.GetElementType (), inferred);
 			}
 
 			if (pt.IsByRef && at.IsByRef)
-				return InferType (pt.GetElementType (), at.GetElementType (), infered);
+				return InferType (pt.GetElementType (), at.GetElementType (), inferred);
 			ArrayList list = new ArrayList ();
 			if (at.IsGenericType)
 				list.Add (at);
@@ -2291,18 +2291,18 @@ namespace Mono.CSharp {
 				if (!type.IsGenericType)
 					continue;
 
-				Type[] infered_types = new Type [infered.Length];
+				Type[] inferred_types = new Type [inferred.Length];
 
-				if (!InferGenericInstance (pt, type, infered_types))
+				if (!InferGenericInstance (pt, type, inferred_types))
 					continue;
 
-				for (int i = 0; i < infered_types.Length; i++) {
-					if (infered [i] == null) {
-						infered [i] = infered_types [i];
+				for (int i = 0; i < inferred_types.Length; i++) {
+					if (inferred [i] == null) {
+						inferred [i] = inferred_types [i];
 						continue;
 					}
 
-					if (infered [i] != infered_types [i])
+					if (inferred [i] != inferred_types [i])
 						return false;
 				}
 
@@ -2312,7 +2312,7 @@ namespace Mono.CSharp {
 			return found_one;
 		}
 
-		static bool InferGenericInstance (Type pt, Type at, Type[] infered_types)
+		static bool InferGenericInstance (Type pt, Type at, Type[] inferred_types)
 		{
 			Type[] at_args = at.GetGenericArguments ();
 			Type[] pt_args = pt.GetGenericArguments ();
@@ -2321,12 +2321,12 @@ namespace Mono.CSharp {
 				return false;
 
 			for (int i = 0; i < at_args.Length; i++) {
-				if (!InferType (pt_args [i], at_args [i], infered_types))
+				if (!InferType (pt_args [i], at_args [i], inferred_types))
 					return false;
 			}
 
-			for (int i = 0; i < infered_types.Length; i++) {
-				if (infered_types [i] == null)
+			for (int i = 0; i < inferred_types.Length; i++) {
+				if (inferred_types [i] == null)
 					return false;
 			}
 
@@ -2363,7 +2363,7 @@ namespace Mono.CSharp {
 				return false;
 
 			Type[] method_args = method.GetGenericArguments ();
-			Type[] infered_types = new Type [method_args.Length];
+			Type[] inferred_types = new Type [method_args.Length];
 
 			//
 			// If we have come this far, the case which
@@ -2379,7 +2379,7 @@ namespace Mono.CSharp {
 				Type pt = pd.ParameterType (i);
 				Type at = a.Type;
 
-				if (!InferType (pt, at, infered_types))
+				if (!InferType (pt, at, inferred_types))
 					return false;
 			}
 
@@ -2391,34 +2391,34 @@ namespace Mono.CSharp {
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
 					continue;
 
-				if (!InferType (element_type, a.Type, infered_types))
+				if (!InferType (element_type, a.Type, inferred_types))
 					return false;
 			}
 
-			for (int i = 0; i < infered_types.Length; i++)
-				if (infered_types [i] == null)
+			for (int i = 0; i < inferred_types.Length; i++)
+				if (inferred_types [i] == null)
 					return false;
 
-			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;
 		}
 
 		static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
-						Type[] infered_types)
+						Type[] inferred_types)
 		{
-			if (infered_types == null)
+			if (inferred_types == null)
 				return false;
 
 			for (int i = 0; i < arg_types.Length; i++) {
 				if (arg_types [i] == null)
 					continue;
 
-				if (!InferType (param_types [i], arg_types [i], infered_types))
+				if (!InferType (param_types [i], arg_types [i], inferred_types))
 					return false;
 			}
 
-			for (int i = 0; i < infered_types.Length; i++)
-				if (infered_types [i] == null)
+			for (int i = 0; i < inferred_types.Length; i++)
+				if (inferred_types [i] == null)
 					return false;
 
 			return true;
@@ -2460,7 +2460,7 @@ namespace Mono.CSharp {
 			if (!is_open)
 				return !TypeManager.IsGenericMethodDefinition (method);
 
-			Type[] infered_types = new Type [method_args.Length];
+			Type[] inferred_types = new Type [method_args.Length];
 
 			Type[] param_types = new Type [pd.Count];
 			Type[] arg_types = new Type [pd.Count];
@@ -2476,10 +2476,10 @@ namespace Mono.CSharp {
 				arg_types [i] = a.Type;
 			}
 
-			if (!InferTypeArguments (param_types, arg_types, infered_types))
+			if (!InferTypeArguments (param_types, arg_types, inferred_types))
 				return false;
 
-			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;
 		}
 
@@ -2497,7 +2497,7 @@ namespace Mono.CSharp {
 				return false;
 
 			Type[] method_args = method.GetGenericArguments ();
-			Type[] infered_types = new Type [method_args.Length];
+			Type[] inferred_types = new Type [method_args.Length];
 
 			Type[] param_types = new Type [pd.Count];
 			Type[] arg_types = new Type [pd.Count];
@@ -2507,10 +2507,10 @@ namespace Mono.CSharp {
 				arg_types [i] = apd.ParameterType (i);
 			}
 
-			if (!InferTypeArguments (param_types, arg_types, infered_types))
+			if (!InferTypeArguments (param_types, arg_types, inferred_types))
 				return false;
 
-			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;
 		}
 	}

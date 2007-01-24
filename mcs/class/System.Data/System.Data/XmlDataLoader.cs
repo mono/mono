@@ -281,8 +281,8 @@ namespace System.Data
 				// Elements that have attributes are inferred as tables. 
 				// Elements that have child elements are inferred as tables. 
 				// Elements that repeat are inferred as a single table. 
-				if (IsInferedAsTable(childNode)) {
-					// child node infered as table
+				if (IsInferredAsTable(childNode)) {
+					// child node inferred as table
 					if (inferSchema) {
 						// We need to create new column for the relation between the current
 						// table and the new table we found (the child table).
@@ -447,7 +447,7 @@ namespace System.Data
 			return (node.Attributes != null && node.Attributes.Count > 0);
 		}
 
-		private bool IsInferedAsTable(XmlNode node)
+		private bool IsInferredAsTable(XmlNode node)
 		{
 			// Elements that have attributes are inferred as tables. 
 			// Elements that have child elements are inferred as tables. 

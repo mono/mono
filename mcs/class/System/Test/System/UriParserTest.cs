@@ -423,7 +423,7 @@ namespace MonoTests.System {
 			Assert.IsTrue (UriParser.IsKnownScheme ("net.tcp"), "net.tcp");
 			Assert.IsTrue (UriParser.IsKnownScheme ("news"), "news");
 			Assert.IsTrue (UriParser.IsKnownScheme ("nntp"), "nntp");
-			// infered from class library
+			// inferred from class library
 			Assert.IsTrue (UriParser.IsKnownScheme ("ldap"), "ldap");
 			Assert.IsFalse (UriParser.IsKnownScheme ("ldaps"), "ldaps");
 			// well known for not existing

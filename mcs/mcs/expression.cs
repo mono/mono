@@ -4658,7 +4658,7 @@ namespace Mono.CSharp {
 
 						Report.Error (
 							411, loc, "The type arguments for " +
-							"method `{0}' cannot be infered from " +
+							"method `{0}' cannot be inferred from " +
 							"the usage. Try specifying the type " +
 							"arguments explicitly.", report_name);
 						return null;
