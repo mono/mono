@@ -1,3 +1,9 @@
+2007-01-24  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: When we move the caret we also need to move the
+	selection, this fixes some random crashing after doing select
+	text, unselect, delete a char, paste.
+
 2007-01-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Form.cs: Update SizeGrip's location even if it's not visible (fixes #80592).

@@ -1170,7 +1170,7 @@ namespace System.Windows.Forms {
 					document.Combine(line, document.CaretLine);
 					document.UpdateView(line, 1, 0);
 					document.PositionCaret(line, new_caret_pos);
-					//document.MoveCaret(CaretDirection.CharForward);
+					document.SetSelectionToCaret (true);
 					document.UpdateCaret();
 					fire_changed = true;
 				}
@@ -1183,7 +1183,7 @@ namespace System.Windows.Forms {
 					int pos = document.CaretPosition;
 					document.MoveCaret (CaretDirection.CharBack);
 					document.DeleteChar (tag, pos, false);
-
+					document.SetSelectionToCaret (true);
 				} else {
 					int start_pos;
 
@@ -1194,6 +1194,7 @@ namespace System.Windows.Forms {
 					}
 					document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
 					document.PositionCaret(document.CaretLine, start_pos);
+					document.SetSelectionToCaret (true);
 				}
 				document.UpdateCaret();
 				fire_changed = true;
