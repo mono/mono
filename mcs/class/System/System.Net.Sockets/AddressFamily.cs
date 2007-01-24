@@ -34,7 +34,9 @@
 namespace System.Net.Sockets {
 
 
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum AddressFamily {
 		Unknown = -1,
 		Unspecified = 0,
