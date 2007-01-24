@@ -119,6 +119,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 #if NET_2_0
 		[Test]
+		[Category ("Interactive")]
 		public void OnPaintDoubleBufferedTest ()
 		{
 			using (OnPaintTester t = new OnPaintTester ()) {

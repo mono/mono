@@ -1,3 +1,8 @@
+2007-01-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ControlTest.cs: Marked OnPaintDoubleBufferedTest as Interactive,
+	they'll only work if you actually have a display to show them on.
+
 2007-01-23  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToobarTest.cs: Comment DPI dependent asserts in ButtonSize test. 
