@@ -1,3 +1,18 @@
+2007-01-23  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs:
+	- Implement support for vertical toolbars. Fixes #80539;
+	- Call LayoutToolBar when resize, it fix some other problems in layout.
+	- Rename requested_height to requested_size, as we can have width on it
+	when toolbar is vertical.
+	- Create a private property "Vertical" that uses Dock to verify when 
+	toolbar is vertical or not.
+	- Set ControlStyles when change Dock property.
+	- Refactory in LayoutToolBar to have better variables names and to support
+	vertical toolbars.
+	- Fixes default value for ButtonSize when button count is equal zero, size
+	must be (39, 36) test case writed.
+
 2007-01-23  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: fix the checks so that they work correctly for mdi

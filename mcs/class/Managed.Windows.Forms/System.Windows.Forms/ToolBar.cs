@@ -137,6 +137,7 @@ namespace System.Windows.Forms
 			
 			SetStyle (ControlStyles.UserPaint, false);
 			SetStyle (ControlStyles.FixedHeight, true);
+			SetStyle (ControlStyles.FixedWidth, false);
 		}
 		#endregion Constructor
 
@@ -228,16 +229,17 @@ namespace System.Windows.Forms
 		[RefreshProperties (RefreshProperties.All)]
 		public Size ButtonSize {
 			get {
-				if (button_size.IsEmpty) {
-					if (buttons.Count == 0)
-						return new Size (24, 22);
-					Size result = CalcButtonSize ();
-					if (result.IsEmpty)
-						return new Size (24, 22);
-					else
-						return result;
-				}
-				return button_size;
+				if (!button_size.IsEmpty)
+					return button_size; 
+				
+				if (buttons.Count == 0)
+					return new Size (39, 36);
+					
+				Size result = CalcButtonSize ();
+				if (result.IsEmpty)
+					return new Size (24, 22);
+				else
+					return result;
 			}
 			set {
 				size_specified = value != Size.Empty;
@@ -267,7 +269,22 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
-			set { base.Dock = value; } 
+			set {
+				if (base.Dock == value)
+					return;
+					
+				if (Vertical) {
+					SetStyle (ControlStyles.FixedWidth, AutoSize);
+					SetStyle (ControlStyles.FixedHeight, false);
+				} else {
+					SetStyle (ControlStyles.FixedHeight, AutoSize);
+					SetStyle (ControlStyles.FixedWidth, false);
+				}
+				
+				LayoutToolBar ();
+				
+				base.Dock = value;
+			}
 		}
 
 		bool drop_down_arrows = true;
@@ -490,20 +507,20 @@ namespace System.Windows.Forms
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-
-			if (Width <= 0 || Height <= 0 || !Visible)
-				return;
-
-			Redraw (true, BackgroundImage != null);
+			LayoutToolBar ();
 		}
 
-		int requested_height = -1;
+		private int requested_size = -1;
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			// New height requested
-			if (!AutoSize && (requested_height != height) && ((specified & BoundsSpecified.Height) != BoundsSpecified.None)) 
-				requested_height = height;
+			if (Vertical) {
+				if (!AutoSize && (requested_size != width) && ((specified & BoundsSpecified.Width) != BoundsSpecified.None)) 
+					requested_size = width;
+			} else {
+				if (!AutoSize && (requested_size != height) && ((specified & BoundsSpecified.Height) != BoundsSpecified.None)) 
+					requested_size = height;
+			}
 			
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
@@ -818,9 +835,9 @@ namespace System.Windows.Forms
 		internal void Redraw (bool recalculate, bool force)
 		{
 			bool invalidate = true;
-			if (recalculate) {
+			
+			if (recalculate)
 				invalidate = LayoutToolBar ();
-			}
 
 			if (force || invalidate)
 				Invalidate ();
@@ -828,6 +845,10 @@ namespace System.Windows.Forms
 
 		internal bool SizeSpecified {
 			get { return size_specified; }
+		}
+		
+		private bool Vertical {
+			get { return (Dock == DockStyle.Left) || (Dock == DockStyle.Right); }
 		}
 
 		const int text_padding = 3;
@@ -897,8 +918,9 @@ namespace System.Windows.Forms
 			int y = theme.ToolBarGripWidth;
 
 			Size adjusted_size = AdjustedButtonSize;
-			int ht = adjusted_size.Height + theme.ToolBarGripWidth;
-
+			
+			int calculated_size = (Vertical ? adjusted_size.Width : adjusted_size.Height) + theme.ToolBarGripWidth;
+			
 			int separator_index = -1;
 
 			for (int i = 0; i < buttons.Count; i++) {
@@ -913,36 +935,62 @@ namespace System.Windows.Forms
 					changed = button.Layout ();
 				
 				bool is_separator = button.Style == ToolBarButtonStyle.Separator;
-
-				if (x + button.Rectangle.Width < Width || is_separator || !Wrappable) {
-					if (button.Location.X != x || button.Location.Y != y)
-						changed = true;
-					button.Location = new Point (x, y);
-					x += button.Rectangle.Width;
-					if (is_separator)
-						separator_index = i;
-				} else if (separator_index > 0) {
-					i = separator_index;
-					separator_index = -1;
-					x = theme.ToolBarGripWidth;
-					y += ht; 
+				
+				if (Vertical) {
+					if (y + button.Rectangle.Height < Height || is_separator || !Wrappable) {
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
+						button.Location = new Point (x, y);
+						y += button.Rectangle.Height;
+						if (is_separator)
+							separator_index = i;
+					} else if (separator_index > 0) {
+						i = separator_index;
+						separator_index = -1;
+						y = theme.ToolBarGripWidth;
+						x += calculated_size; 
+					} else {
+						y = theme.ToolBarGripWidth;
+						x += calculated_size; 
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
+						button.Location = new Point (x, y);
+						y += button.Rectangle.Height;
+					}
 				} else {
-					x = theme.ToolBarGripWidth;
-					y += ht; 
-					if (button.Location.X != x || button.Location.Y != y)
-						changed = true;
-					button.Location = new Point (x, y);
-					x += button.Rectangle.Width;
+					if (x + button.Rectangle.Width < Width || is_separator || !Wrappable) {
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
+						button.Location = new Point (x, y);
+						x += button.Rectangle.Width;
+						if (is_separator)
+							separator_index = i;
+					} else if (separator_index > 0) {
+						i = separator_index;
+						separator_index = -1;
+						x = theme.ToolBarGripWidth;
+						y += calculated_size; 
+					} else {
+						x = theme.ToolBarGripWidth;
+						y += calculated_size; 
+						if (button.Location.X != x || button.Location.Y != y)
+							changed = true;
+						button.Location = new Point (x, y);
+						x += button.Rectangle.Width;
+					}
 				}
 			}
 			
 			if (Parent == null)
 				return changed;
 			
-			if (AutoSize)
-				Height = ht + (Wrappable ? y : 0);
+			if (Wrappable)
+				calculated_size += Vertical ? x : y;
+			
+			if (Vertical)
+				Width = AutoSize ? calculated_size : requested_size;
 			else
-				Height = requested_height;
+				Height = AutoSize ? calculated_size : requested_size;
 			
 			return changed;
 		}
