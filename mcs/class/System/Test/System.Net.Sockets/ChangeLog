@@ -1,3 +1,7 @@
+2007-01-24  Dick Porter  <dick@ximian.com>
+
+	* NetworkStreamTest.cs: Test 2.0 ReadTimeout property
+
 2007-01-23  Dick Porter  <dick@ximian.com>
 
 	* TcpListenerTest.cs: Test 2.0 Start(int) overload

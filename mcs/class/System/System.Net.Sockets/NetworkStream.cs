@@ -3,8 +3,10 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Sridhar Kulkarni <sridharkulkarni@gmail.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2002-2006 Novell, Inc.  http://www.novell.com
 //
 
 //
@@ -30,6 +32,10 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+#if NET_2_0
+using System.Timers;
+using System.Threading;
+#endif
 
 namespace System.Net.Sockets
 {
@@ -87,6 +93,15 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if NET_2_0
+		public override bool CanTimeout
+		{
+			get {
+				return(true);
+			}
+		}
+#endif
+
 		public override bool CanWrite {
 			get {
 				return access == FileAccess.ReadWrite || access == FileAccess.Write;
@@ -129,6 +144,22 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if NET_2_0
+		public override int ReadTimeout
+		{
+			get {
+				return(socket.ReceiveTimeout);
+			}
+			set {
+				if (value <= 0 && value != Timeout.Infinite) {
+					throw new ArgumentOutOfRangeException ("value", "The value specified is less than or equal to zero and is not Infinite.");
+				}
+				
+				socket.ReceiveTimeout = value;
+			}
+		}
+#endif
+
 		protected Socket Socket {
 			get {
 				return socket;
@@ -144,6 +175,22 @@ namespace System.Net.Sockets
 				writeable = value;
 			}
 		}
+
+#if NET_2_0
+		public override int WriteTimeout
+		{
+			get {
+				return(socket.SendTimeout);
+			}
+			set {
+				if (value <= 0 && value != Timeout.Infinite) {
+					throw new ArgumentOutOfRangeException ("value", "The value specified is less than or equal to zero and is not Infinite");
+				}
+				
+				socket.SendTimeout = value;
+			}
+		}
+#endif
 
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int size,
 							AsyncCallback callback, object state)
@@ -205,6 +252,29 @@ namespace System.Net.Sockets
 		{
 			((IDisposable) this).Dispose ();
 		}
+
+#if NET_2_0
+		public void Close (int timeout)
+		{
+			if (timeout < -1) {
+				throw new ArgumentOutOfRangeException ("timeout", "timeout is less than -1");
+			}
+			
+			System.Timers.Timer close_timer = new System.Timers.Timer ();
+			close_timer.Elapsed += new ElapsedEventHandler (OnTimeoutClose);
+			/* NB timeout is in milliseconds here, cf
+			 * seconds in Socket.Close(int)
+			 */
+			close_timer.Interval = timeout;
+			close_timer.AutoReset = false;
+			close_timer.Enabled = true;
+		}
+		
+		private void OnTimeoutClose (object source, ElapsedEventArgs e)
+		{
+			this.Close ();
+		}
+#endif
 
 		protected
 #if NET_2_0
