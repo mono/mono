@@ -30,7 +30,7 @@
 // the time to write it all yet.
 // Stuff missing (in no particular order):
 // - Align text after RecalculateLine
-// - Implement tag types for hotlinks, images, etc.
+// - Implement tag types for hotlinks, etc.
 // - Implement CaretPgUp/PgDown
 
 // NOTE:
@@ -2826,26 +2826,28 @@ namespace System.Windows.Forms {
 					p2 = start_pos;
 				}
 
+				int endpoint = (int) l1.widths [p2];
+				if (p2 == l1.text.Length + 1) {
+					endpoint = (int) viewport_width;
+				}
+
 				#if Debug
-					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3}   {4}",
+					Console.WriteLine("Invaliding backwards from {0}:{1} to {2}:{3}   {4}",
 							l1.line_no, p1, l2.line_no, p2,
 							new Rectangle(
 								(int)l1.widths[p1] + l1.align_shift - viewport_x, 
 								l1.Y - viewport_y, 
-								(int)l2.widths[p2] - (int)l1.widths[p1] + 1, 
+								(int)l1.widths[p2], 
 								l1.height
 								)
 						);
 				#endif
 
-				owner.Invalidate(
-					new Rectangle(
-						(int)l1.widths[p1] + l1.align_shift - viewport_x, 
-						l1.Y - viewport_y, 
-						(int)l2.widths[p2] - (int)l1.widths[p1] + 1, 
-						l1.height
-					)
-				);
+				owner.Invalidate(new Rectangle (
+					(int)l1.widths[p1] + l1.align_shift - viewport_x, 
+					l1.Y - viewport_y, 
+					endpoint - (int)l1.widths[p1] + 1, 
+					l1.height));
 				return;
 			}
 

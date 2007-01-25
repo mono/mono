@@ -1,3 +1,10 @@
+2007-01-25  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: For the last char of a line we need to use the
+	line size, not that chars width, since it won't actually be
+	computed since the right side of a char is based on the start of
+	the left side of the next char, and the next char does not exist.
+
 2007-01-25  Chris Toshok  <toshok@ximian.com>
 
 	* Splitter.cs: fix the new unit tests, and reindent some switch
