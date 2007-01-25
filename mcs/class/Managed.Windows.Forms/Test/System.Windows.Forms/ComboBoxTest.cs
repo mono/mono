@@ -82,6 +82,17 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test]
+		public void ResetTextTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			Assert.AreEqual ("", cmbbox.Text, "#01");
+			cmbbox.Text = "abc";
+			Assert.AreEqual ("abc", cmbbox.Text, "#02");
+			cmbbox.ResetText ();
+			Assert.AreEqual ("", cmbbox.Text, "#03");
+		}
+		
+		[Test]
 		public void BackgroundImageLayoutTest ()
 		{
 			ComboBox cmbbox = new ComboBox ();

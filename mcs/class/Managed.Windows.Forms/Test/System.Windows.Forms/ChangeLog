@@ -1,5 +1,9 @@
 2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* ComboBoxTest.cs: Added tests for ResetText.
+
+2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* ComboBoxTest.cs: Add tests for new properties.
 	* MdiFormTest.cs: Set ShowInTaskbar = false for main forms.
 
