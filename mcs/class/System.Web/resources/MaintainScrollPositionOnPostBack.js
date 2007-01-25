@@ -1,23 +1,27 @@
 function WebForm_SaveScrollPositionSubmit() {
-    theForm.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
-    theForm.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
+    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
+    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
     if ((typeof(this.oldSubmit) != "undefined") && (this.oldSubmit != null)) {
         return this.oldSubmit();
     }
     return true;
 }
 function WebForm_SaveScrollPositionOnSubmit() {
-    theForm.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
-    theForm.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
+    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
+    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
     if ((typeof(this.oldOnSubmit) != "undefined") && (this.oldOnSubmit != null)) {
         return this.oldOnSubmit();
     }
     return true;
 }
-function WebForm_RestoreScrollPosition() {
-    window.scrollTo(theForm.elements['__SCROLLPOSITIONX'].value, theForm.elements['__SCROLLPOSITIONY'].value);
-    if ((typeof(theForm.oldOnLoad) != "undefined") && (theForm.oldOnLoad != null)) {
-        return theForm.oldOnLoad();
+function WebForm_RestoreScrollPosition(currForm) {
+	currForm = currForm || theForm;
+	var ScrollX = currForm.elements['__SCROLLPOSITIONX'].value;
+	var ScrollY = currForm.elements['__SCROLLPOSITIONY'].value;
+	if (ScrollX != "" || ScrollY != "")
+    	window.scrollTo(ScrollX, ScrollY);
+    if ((typeof(this.oldOnLoad) != "undefined") && (this.oldOnLoad != null)) {
+        return this.oldOnLoad();
     }
     return true;
 }

@@ -1,3 +1,11 @@
+2007-01-25 Eyal Alaluf <eyala@mainsoft.com>
+
+	* MaintainScrollPositionOnPostBack.js, callback.js, webform.js: Under
+	  TARGET_J2EE portlet support we may have more then one ASP.Net form in a
+	  client page. Modify code to not assume we have a global 'theForm'
+	  variable. We either lookup the form using the control ID and DOM hierarchy
+	  or we receive it as an optional parameter to the function.
+
 2006-12-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* webform.js: WebForm_AutoFocus support for not focusable elements 

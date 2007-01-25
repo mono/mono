@@ -29,55 +29,59 @@
 using vmw.@internal.j2ee;
 using javax.servlet.http;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web.Hosting;
 
 namespace System.Web.UI
 {
 	public partial class Page
 	{
-		internal string PostBackFunctionName {
-			get {
-#if LATER // Enable when we fix the jscripts not to reference __doPostBack.
-				IPortletRenderResponse resp = GetRenderResponse();
-				if (resp != null)
-					return "__doPostBack_" + resp.getNamespace();
-#endif
-				return "__doPostBack";
-			}
-		}
+		bool _emptyPortletNamespace = false;
+		string _PortletNamespace = null;
 
-		// For J2EE portlets we load the view state from the render parameters
-		WebROCollection LoadViewStateForPortlet(WebROCollection coll)
+		internal string PortletNamespace
 		{
-			IPortletRenderRequest renderRequest = Context.ServletRequest as IPortletRenderRequest;
-			if (renderRequest != null && (coll == null || coll ["__VIEWSTATE"] == null)) {
-				string mode = renderRequest.getPortletMode();
-				string viewstate = Context.ServletRequest.getParameter("vmw.viewstate." + mode);
-				if (viewstate != null) {
-					if (coll == null)
-						coll = new WebROCollection();
-					else 
-						coll.Unprotect();
-					coll["__VIEWSTATE"] = viewstate;
-					coll.Protect();
+			get {
+				if (_emptyPortletNamespace)
+					return null;
+
+				if (_PortletNamespace == null) {
+					IPortletResponse portletResponse = Context.ServletResponse as IPortletResponse;
+					if (portletResponse != null)
+						_PortletNamespace = portletResponse.getNamespace ();
+					_emptyPortletNamespace = _PortletNamespace == null;
 				}
+				return _PortletNamespace;
 			}
-			return coll;
 		}
 
-		internal bool SaveViewStateForNextPortletRender()
+		internal string theForm {
+			get {
+				return "theForm" + PortletNamespace;
+			}
+		}
+
+		internal bool SaveViewStateForNextPortletRender ()
 		{
 			IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
 			IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
 			if (req == null)
 				return false;
 
-			if (IsPostBack && String.Compare (Request.HttpMethod, "POST", true) == 0 && !resp.isRedirected())
-				resp.setRenderParameter("vmw.viewstate." + req.getPortletMode(), GetSavedViewState());
+			// When redirecting don't save the page viewstate and hidden fields
+			if (resp.isRedirected ())
+				return true;
+
+			if (IsPostBack && 0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
+				resp.setRenderParameter ("__VIEWSTATE", GetSavedViewState ());
+				if (ClientScript.hiddenFields != null)
+					foreach (string key in ClientScript.hiddenFields.Keys)
+						resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
+			}
 
 			// Stop processing only if we are handling processAction. If we
 			// are handling a postback from render then fall through.
-			return req.processActionOnly() || resp.isRedirected();
+			return req.processActionOnly ();
 		}
 	}
 }

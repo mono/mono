@@ -30,8 +30,7 @@
 
 function WebForm_AutoFocus (id)
 {
-	var x = document.getElementById ? document.getElementById (id) :
-					  ((document.all) ? document.all [id] : null);
+	var x = WebForm_GetElementById (id);
 
 	if (x && (!WebForm_CanFocus(x))) {
 		x = WebForm_FindFirstFocusableChild(x);
@@ -95,13 +94,14 @@ function wasControlEnabled (id)
 	return false;
 }
 
-function WebForm_ReEnableControls()
+function WebForm_ReEnableControls (currForm)
 {
-	if (typeof (theForm) == 'undefined')
+	currForm = currForm || theForm;
+	if (typeof (currForm) == 'undefined')
 		return;
 
-	for (var i = 0; i < theForm.childNodes.length; i ++) {
-		var node = theForm.childNodes[i];
+	for (var i = 0; i < currForm.childNodes.length; i ++) {
+		var node = currForm.childNodes[i];
 		if (node.disabled && wasControlEnabled (node.id))
 			node.disabled = false;
 	}
@@ -112,11 +112,31 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate(vg))
 		return;
 
+	var form = WebForm_GetFormFromCtrl (ctrl);
 	if (url != null)
-		theForm.action = url;
+		form.action = url;
 		
 	if (csubm)
 		__doPostBack (ctrl, par);
+}
+
+function WebForm_GetFormFromCtrl (id)
+{
+	// We need to translate the id from ASPX UniqueID to its ClientID.
+	var ctrl = WebForm_GetElementById (id.replace(/:/g, "_"));
+	while (ctrl != null) {
+		if (ctrl.isAspForm)
+			return ctrl;
+		ctrl = ctrl.parentNode;
+	}
+	return theForm;
+}
+
+function WebForm_GetElementById (id)
+{
+	return document.getElementById ? document.getElementById (id) :
+	       document.all ? document.all [id] :
+		   document [id];
 }
 
 function WebForm_FireDefaultButton(event, target)
@@ -127,7 +147,7 @@ function WebForm_FireDefaultButton(event, target)
 	if(event.srcElement && (event.srcElement.tagName.toLowerCase() == "textarea")) {
 		return true;
 	}
-	var defaultButton = document.getElementById(target);
+	var defaultButton = WebForm_GetElementById(target);
 	if (defaultButton && typeof(defaultButton.click) != "undefined") {
 		defaultButton.click();
 		event.cancelBubble = true;

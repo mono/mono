@@ -53,7 +53,7 @@ namespace System.Web.UI
 		Hashtable registeredArrayDeclares;
 		ScriptEntry clientScriptBlocks;
 		ScriptEntry startupScriptBlocks;
-		Hashtable hiddenFields;
+		internal Hashtable hiddenFields;
 		ScriptEntry submitStatements;
 		ScriptEntry scriptIncludes;
 		Page page;
@@ -99,7 +99,7 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("control");
 			
 			page.RequiresPostBackScript ();
-			return String.Format ("{0}('{1}','{2}')", page.PostBackFunctionName, control.UniqueID, argument);
+			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
 		}
 
 #if NET_2_0

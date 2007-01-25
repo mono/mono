@@ -1,3 +1,7 @@
+2007-01-14 Eyal Alaluf <eyala@mainsoft.com>
+
+	* TreeView.js: Used WebForm_GetFormFromCtrl to lookup the form.
+
 2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TextBox.cs: implemented AutoCompleteType property, fixed

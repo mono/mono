@@ -443,6 +443,12 @@ namespace System.Web.UI
 					_userId = _namingContainer.GetDefaultName ();
 
 				string prefix = _namingContainer.UniqueID;
+#if TARGET_J2EE
+				// For J2EE portlets we need to add the namespace to the ID.
+				if (_namingContainer == _page && _page.PortletNamespace != null)
+					prefix = _page.PortletNamespace;
+				else
+#endif
 				if (_namingContainer == _page || prefix == null) {
 					uniqueID = _userId;
 					return uniqueID;
@@ -574,7 +580,6 @@ namespace System.Web.UI
 			defaultNumberID = 0;
 		}
 
-#if !TARGET_J2EE
 		string GetDefaultName ()
 		{
 			string defaultName;
@@ -585,7 +590,6 @@ namespace System.Web.UI
 			}
 			return defaultName;
 		}
-#endif
 
 		void NullifyUniqueID ()
 		{
@@ -740,6 +744,10 @@ namespace System.Web.UI
 
 		Control LookForControlByName (string id)
 		{
+#if TARGET_J2EE
+			if (this == _page && id != null && id == _page.PortletNamespace)
+				return this;
+#endif
 			if (!HasControls ())
 				return null;
 

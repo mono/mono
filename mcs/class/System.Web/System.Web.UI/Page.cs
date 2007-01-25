@@ -440,9 +440,9 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 #if !TARGET_J2EE
-	internal string PostBackFunctionName {
+	internal string theForm {
 		get {
-			return "__doPostBack";
+			return "theForm";
 		}
 	}
 #endif
@@ -760,22 +760,21 @@ public partial class Page : TemplateControl, IHttpHandler
 			return null;
 
 		NameValueCollection coll = null;
-		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
-			coll =	req.Form;
-			WebROCollection c = (WebROCollection) coll;
-			allow_load = !c.GotID;
-			if (allow_load) {
-				c.ID = GetTypeHashCode ();
-			} else {
-				allow_load = (c.ID == GetTypeHashCode ());
-			}
-		} else  {
-			coll = req.QueryString;
-		}
-
+		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture))
+			coll = req.Form;
 #if TARGET_J2EE
-		coll = LoadViewStateForPortlet((WebROCollection)coll);
+		else if (IsPortletRender && req.Form ["__VIEWSTATE"] != null)
+			coll = req.Form;
 #endif
+		else
+			coll = req.QueryString;
+
+		WebROCollection c = (WebROCollection) coll;
+		allow_load = !c.GotID;
+		if (allow_load)
+			c.ID = GetTypeHashCode ();
+		else
+			allow_load = (c.ID == GetTypeHashCode ());
 
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
@@ -951,13 +950,13 @@ public partial class Page : TemplateControl, IHttpHandler
 			StringBuilder script = new StringBuilder ();
 			script.AppendLine ("<script type=\"text/javascript\">");
 			script.AppendLine ("<!--");
-			script.AppendLine ("theForm.oldSubmit = theForm.submit");
-			script.AppendLine ("theForm.submit = WebForm_SaveScrollPositionSubmit");
-			script.AppendLine ("theForm.oldOnSubmit = theForm.onsubmit");
-			script.AppendLine ("theForm.onsubmit = WebForm_SaveScrollPositionOnSubmit");
+			script.AppendLine (theForm + ".oldSubmit = " + theForm + ".submit;");
+			script.AppendLine (theForm + ".submit = WebForm_SaveScrollPositionSubmit;");
+			script.AppendLine (theForm + ".oldOnSubmit = " + theForm + ".onsubmit;");
+			script.AppendLine (theForm + ".onsubmit = WebForm_SaveScrollPositionOnSubmit;");
 			if (IsPostBack) {
-				script.AppendLine ("theForm.oldOnLoad = window.onload");
-				script.AppendLine ("window.onload = WebForm_RestoreScrollPosition");
+				script.AppendLine (theForm + ".oldOnLoad = window.onload;");
+				script.AppendLine ("window.onload = function () { WebForm_RestoreScrollPosition (" + theForm + "); };");
 			}
 			script.AppendLine ("// -->");
 			script.AppendLine ("</script>");
@@ -976,13 +975,19 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
 
-		writer.WriteLine ("\tvar theForm;\n\tif (document.getElementById) {{ theForm = document.getElementById ('{0}'); }}", formUniqueID);
-		writer.WriteLine ("\telse {{ theForm = document.{0}; }}", formUniqueID);
-		writer.WriteLine ("\tfunction " + PostBackFunctionName + "(eventTarget, eventArgument) {");
+		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
+		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
+		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
+		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
-		writer.WriteLine ("\t\ttheForm.{0}.value = eventTarget;", postEventSourceID);
-		writer.WriteLine ("\t\ttheForm.{0}.value = eventArgument;", postEventArgumentID);
-		writer.WriteLine ("\t\ttheForm.submit();");
+#if NET_2_0
+		writer.WriteLine ("\t\tvar myForm = WebForm_GetFormFromCtrl (eventTarget);");
+#else
+		writer.WriteLine ("\t\tvar myForm = " + theForm + ";");
+#endif
+		writer.WriteLine ("\t\tmyForm.{0}.value = eventTarget;", postEventSourceID);
+		writer.WriteLine ("\t\tmyForm.{0}.value = eventArgument;", postEventArgumentID);
+		writer.WriteLine ("\t\tmyForm.submit();");
 		writer.WriteLine ("\t}");
 		writer.WriteLine ("// -->");
 		writer.WriteLine ("</script>");
@@ -1794,12 +1799,12 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			if (Form.SubmitDisabledControls) {
 				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-										 "javascript: return WebForm_OnSubmit();");
+										 "javascript: return WebForm_OnSubmit(" + theForm + ");");
 				ClientScript.RegisterStartupScript ("HtmlForm-SubmitDisabledControls-StartupScript",
 @"<script language=""JavaScript"">
 <!--
-function WebForm_OnSubmit() {
-WebForm_ReEnableControls();
+function WebForm_OnSubmit(currForm) {
+WebForm_ReEnableControls(currForm);
 return true;
 } // -->
 </script>");

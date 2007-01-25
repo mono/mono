@@ -35,46 +35,11 @@ namespace System.Web.UI
 {
 	public partial class Control
 	{
-		bool _emptyPortletNamespace = false;
-		string _PortletNamespace = null;
-
 		internal bool IsPortletRender
 		{
 			get {
 				return GetRenderResponse() != null;
 			}
-		}
-
-		internal string PortletNamespace
-		{
-			get {
-				if (_emptyPortletNamespace)
-					return null;
-
-				if (_PortletNamespace == null) {
-					IPortletResponse portletResponse = GetRenderResponse ();
-					if (portletResponse != null)
-						_PortletNamespace = portletResponse.getNamespace ();
-					_emptyPortletNamespace = _PortletNamespace == null;
-				}
-				return _PortletNamespace;
-			}
-		}
-
-		// For J2EE Portal we need to use the portlet namespace when we generate control IDs.
-		string GetDefaultName ()
-		{
-			string defaultName;
-			if (defaultNumberID > 99) {
-				defaultName = "_ctl" + defaultNumberID++;
-			} else {
-				defaultName = defaultNameArray [defaultNumberID++];
-			}
-
-			if (this != _page)
-				return defaultName;
-
-			return PortletNamespace + defaultName;
 		}
 
 		// Add a variant for specifying use of portlet resolveRenderUrl

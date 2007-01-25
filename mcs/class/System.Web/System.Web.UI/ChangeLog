@@ -1,3 +1,14 @@
+2007-01-25  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Page.cs: Change code to use the 'theForm' property when generating
+	  JavaScript code. Ensure that we pass 'theForm' as param to the JS funcs.
+	* Page.jvm.cs, Control.jvm.cs: Implement the 'theForm' property to include
+	  the portlet namespace. Moved 'PortletNamespace' from Control.jvm.cs
+    * Page.jvm.cs, Control.jvm.cs, ClientScriptManager.cs: Added support for
+	  saving hidden fields for TARGET_J2EE Portlets re-render.
+	* Control.cs: Under TARGET_J2EE portal support add the PortletNamespace
+	  to all the control IDs to ensure they different between portlets.
+
 2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: fixed CheckForValidationSupport,

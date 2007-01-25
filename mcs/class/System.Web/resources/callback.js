@@ -1,7 +1,8 @@
-
 function WebForm_DoCallback (id, arg, callback, ctx, errorCallback)
 {
-	var qs = WebForm_getFormData () + "&__CALLBACKTARGET=" + id + "&&__CALLBACKARGUMENT=" + escape(arg);
+	var myForm = WebForm_GetFormFromCtrl (id);
+	var qs = WebForm_getFormData (myForm) + "&__CALLBACKTARGET=" + id + "&&__CALLBACKARGUMENT=" + escape(arg);
+	// WebForm_httpPost (myForm.serverURL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
 	WebForm_httpPost (document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
 }
 
@@ -17,7 +18,7 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 	callback (doc, ctx);
 }
 
-function WebForm_getFormData ()
+function WebForm_getFormData (theForm)
 {
 	var qs = "";
 	var len = theForm.elements.length;
