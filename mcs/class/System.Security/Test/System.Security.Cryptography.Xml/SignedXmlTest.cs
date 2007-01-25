@@ -553,7 +553,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SignElementWithPrefixedNamespace ()
 		{
 			string input = "<a:Action xmlns:a='urn:foo'>http://tempuri.org/IFoo/Echo</a:Action>";

@@ -237,7 +237,7 @@ namespace System.Security.Cryptography.Xml {
 					if (xel == null)
 						throw new CryptographicException ("Manifest targeted by Reference was not found: " + r.Uri.Substring (1));
 					doc.LoadXml (xel.OuterXml);
-					FixupNamespaceNodes (xel, doc.DocumentElement);
+					FixupNamespaceNodes (xel, doc.DocumentElement, false);
 				}
 			}
 			else if (xmlResolver != null) {
@@ -257,19 +257,18 @@ namespace System.Security.Cryptography.Xml {
 			return null;
 		}
 
-		private void FixupNamespaceNodes (XmlElement src, XmlElement dst)
+		private void FixupNamespaceNodes (XmlElement src, XmlElement dst, bool ignoreDefault)
 		{
 			// add namespace nodes
 			foreach (XmlAttribute attr in src.SelectNodes ("namespace::*")) {
 				if (attr.LocalName == "xml")
 					continue;
-				if (attr.OwnerElement == src)
+				if (ignoreDefault && attr.LocalName == "xmlns")
 					continue;
 				dst.SetAttributeNode (dst.OwnerDocument.ImportNode (attr, true) as XmlAttribute);
 			}
 		}
 
-		[MonoTODO ("Need testing")]
 		private byte[] GetReferenceHash (Reference r) 
 		{
 			Stream s = null;
@@ -318,6 +317,13 @@ namespace System.Security.Cryptography.Xml {
 					foreach (DataObject obj in m_signature.ObjectList) {
 						if (obj.Id == objectName) {
 							found = obj.GetXml ();
+							found.SetAttribute ("xmlns", SignedXml.XmlDsigNamespaceUrl);
+							doc.LoadXml (found.OuterXml);
+							// FIXME: there should be theoretical justification of copying namespace declaration nodes this way.
+							foreach (XmlNode n in found.ChildNodes)
+								// Do not copy default namespace as it must be xmldsig namespace for "Object" element.
+								if (n.NodeType == XmlNodeType.Element)
+									FixupNamespaceNodes (n as XmlElement, doc.DocumentElement, true);
 							break;
 						}
 					}
@@ -325,14 +331,11 @@ namespace System.Security.Cryptography.Xml {
 						foreach (XmlElement el in envdoc.SelectNodes ("//*[@Id]"))
 							if (el.GetAttribute ("Id") == objectName) {
 								found = el;
+								doc.LoadXml (found.OuterXml);
 								break;
 							}
 					}
-					if (found != null) {
-						doc.LoadXml (found.OuterXml);
-						FixupNamespaceNodes (found, doc.DocumentElement);
-					}
-					else
+					if (found == null)
 						throw new CryptographicException (String.Format ("Malformed reference object: {0}", objectName));
 				}
 			}
