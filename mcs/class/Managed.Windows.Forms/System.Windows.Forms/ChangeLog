@@ -1,3 +1,12 @@
+2007-01-25  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Add a Suspend/Resume for updating, basically the
+	same as the Suspend/Resume for recalc, except this will do actual
+	Invalidates.
+	- New Undo manager, works much like the MS version.
+	- Implemented Redo
+	* TextBoxBase.cs: The Cut operation is undoable.
+
 2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XplatUIWin32.cs: Set SWP_NOACTIVATE in RequestNCRecalc as well,

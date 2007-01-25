@@ -704,7 +704,10 @@ namespace System.Windows.Forms {
 				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
 			}
 			Clipboard.SetDataObject (o);
-			document.ReplaceSelection ("", false);
+
+			document.undo.BeginUserAction (Locale.GetText ("Cut"));
+			document.ReplaceSelection (String.Empty, false);
+			document.undo.EndUserAction ();
 		}
 
 		public void Paste() {

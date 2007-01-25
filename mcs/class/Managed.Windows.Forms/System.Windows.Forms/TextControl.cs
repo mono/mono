@@ -725,6 +725,10 @@ namespace System.Windows.Forms {
 		private int		recalc_end;
 		private bool		recalc_optimize;
 
+		private int             update_suspended;
+		private bool update_pending;
+		private int update_start = 1;
+
 		internal bool		multiline;
 		internal bool		wrap;
 
@@ -994,6 +998,22 @@ namespace System.Windows.Forms {
 			if (immediate_update && recalc_suspended == 0 && recalc_pending) {
 				RecalculateDocument (owner.CreateGraphicsInternal(), recalc_start, recalc_end, recalc_optimize);
 				recalc_pending = false;
+			}
+		}
+
+		internal void SuspendUpdate ()
+		{
+			update_suspended++;
+		}
+
+		internal void ResumeUpdate (bool immediate_update)
+		{
+			if (update_suspended > 0)
+				update_suspended--;
+
+			if (immediate_update && update_suspended == 0 && update_pending) {
+				UpdateView (GetLine (update_start), 0);
+				update_pending = false;
 			}
 		}
 
@@ -1286,11 +1306,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (recalc_suspended > 0) {
-				recalc_start = Math.Min (recalc_start, line.line_no);
-				recalc_end = Math.Max (recalc_end, line.line_no);
-				recalc_optimize = true;
-				recalc_pending = true;
+			if (update_suspended > 0) {
+				update_start = Math.Min (update_start, line.line_no);
+				// update_end = Math.Max (update_end, line.line_no);
+				// recalc_optimize = true;
+				update_pending = true;
 				return;
 			}
 
@@ -1829,7 +1849,6 @@ namespace System.Windows.Forms {
 
 			line_no = start;
 
-			g.FillRectangle (new SolidBrush (Color.White), clip);
 			#if Debug
 				DateTime	n = DateTime.Now;
 				Console.WriteLine ("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
@@ -1899,6 +1918,7 @@ namespace System.Windows.Forms {
 					}
 
 					if (tag.back_color != null) {
+						Console.WriteLine ("TAG BACK COLOR:   {0}", tag.back_color.Color);
 						g.FillRectangle (tag.back_color, tag.X + line.align_shift - viewport_x,
 								line.Y + tag.shift - viewport_y, tag.width, line.height);
 					}
@@ -2099,6 +2119,7 @@ namespace System.Windows.Forms {
 			line.Grow(1);
 			line.recalc = true;
 
+			undo.RecordTyping (line, pos, ch);
 			UpdateView(line, pos);
 		}
 
@@ -2130,6 +2151,7 @@ namespace System.Windows.Forms {
 				UpdateCaret();
 				SetSelectionToCaret(true);
 			}
+
 		}
 		
 		internal void InsertImage (LineTag tag, int pos, Image image)
@@ -2175,6 +2197,8 @@ namespace System.Windows.Forms {
 			CharIndexToLineTag (start_index + length, out end.line,
 					out end.tag, out end.pos);
 
+			SuspendUpdate ();
+
 			if (start.line == end.line) {
 				DeleteChars (start.tag, pos, end.pos - pos);
 			} else {
@@ -2196,6 +2220,8 @@ namespace System.Windows.Forms {
 				// Join start and end
 				Combine (start.line.line_no, current);
 			}
+
+			ResumeUpdate (true);
 		}
 
 		
@@ -2217,7 +2243,7 @@ namespace System.Windows.Forms {
 			line.text.Remove(pos, count);
 
 			// Make sure the tag points to the right spot
-			while ((tag != null) && (tag.start + tag.length - 1) <= pos) {
+			while ((tag != null) && (tag.end) < pos) {
 				tag = tag.next;
 			}
 
@@ -3265,7 +3291,7 @@ namespace System.Windows.Forms {
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (!multiline || (selection_start.line == selection_end.line)) {
-					undo.RecordDeleteChars(selection_start.line, selection_start.pos + 1, selection_end.pos - selection_start.pos);
+					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 
 					DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
 
@@ -3278,7 +3304,7 @@ namespace System.Windows.Forms {
 					start = selection_start.line.line_no;
 					end = selection_end.line.line_no;
 
-					undo.RecordDelete(selection_start.line, selection_start.pos + 1, selection_end.line, selection_end.pos);
+					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 
 					// Delete first line
 					DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
@@ -4591,11 +4617,12 @@ namespace System.Windows.Forms {
 	internal class UndoManager {
 
 		internal enum ActionType {
-			InsertChar,
+
+			Typing,
+
+			// This is basically just cut & paste
 			InsertString,
-			DeleteChar,
-			DeleteChars,
-			Mark,
+			DeleteString,
 
 			UserActionBegin,
 			UserActionEnd
@@ -4615,6 +4642,9 @@ namespace System.Windows.Forms {
 
 		private int		caret_line;
 		private int		caret_pos;
+
+		// When performing an action, we lock the queue, so that the action can't be undone
+		private bool locked;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -4628,42 +4658,32 @@ namespace System.Windows.Forms {
 
 		#region Properties
 		internal bool CanUndo {
-			get {
-				foreach (Action action in undo_actions) {
-					if (action.type == ActionType.UserActionEnd)
-						return true;
-				}
-				return false;
-			}
+			get { return undo_actions.Count > 0; }
 		}
 
 		internal bool CanRedo {
-			get {
-				foreach (Action action in undo_actions) {
-					if (action.type == ActionType.UserActionBegin)
-						return true;
-				}
-				return false;
-			}
+			get { return redo_actions.Count > 0; }
 		}
 
-		internal string UndoActionName
-		{
+		internal string UndoActionName {
 			get {
 				foreach (Action action in undo_actions) {
 					if (action.type == ActionType.UserActionBegin)
 						return (string) action.data;
+					if (action.type == ActionType.Typing)
+						return Locale.GetText ("Typing");
 				}
 				return String.Empty;
 			}
 		}
 
-		internal string RedoActionName
-		{
+		internal string RedoActionName {
 			get {
 				foreach (Action action in redo_actions) {
 					if (action.type == ActionType.UserActionBegin)
 						return (string) action.data;
+					if (action.type == ActionType.Typing)
+						return Locale.GetText ("Typing");
 				}
 				return String.Empty;
 			}
@@ -4671,59 +4691,145 @@ namespace System.Windows.Forms {
 		#endregion	// Properties
 
 		#region Internal Methods
-		internal void Clear() {
+		internal void Clear ()
+		{
 			undo_actions.Clear();
 			redo_actions.Clear();
 		}
 
-		internal void Undo() {
+		internal void Undo ()
+		{
 			Action action;
-			int user_action_depth = 0;
+			bool user_action_finished = false;
 
-			if (undo_actions.Count == 0) {
+			if (undo_actions.Count == 0)
 				return;
-			}
 
+			// Nuke the redo queue
+			redo_actions.Clear ();
+
+			locked = true;
 			do {
-				action = (Action) undo_actions.Pop();
+				Line start;
+				action = (Action) undo_actions.Pop ();
 
 				// Put onto redo stack
 				redo_actions.Push(action);
 
 				// Do the thing
 				switch(action.type) {
-				case ActionType.UserActionEnd:
-					user_action_depth++;
-					break;
 
 				case ActionType.UserActionBegin:
-					user_action_depth--;
+					user_action_finished = true;
+					break;
+
+				case ActionType.UserActionEnd:
+					// noop
 					break;
 
 				case ActionType.InsertString:
-					document.DeleteMultiline (document.GetLine (action.line_no),
-							action.pos, ((string) action.data).Length + 1);
-					document.PositionCaret (document.GetLine (action.line_no), action.pos);
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					document.DeleteMultiline (start, action.pos, ((string) action.data).Length + 1);
+					document.PositionCaret (start, action.pos);
+					document.SetSelectionToCaret (true);
+					document.ResumeUpdate (true);
 					break;
 
-				case ActionType.InsertChar: {
-					// FIXME - implement me
+				case ActionType.Typing:
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					document.DeleteMultiline (start, action.pos, ((StringBuilder) action.data).Length);
+					document.PositionCaret (start, action.pos);
+					document.SetSelectionToCaret (true);
+					document.ResumeUpdate (true);
+
+					// This is an open ended operation, so only a single typing operation can be undone at once
+					user_action_finished = true;
+					break;
+
+				case ActionType.DeleteString:
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					Insert (start, action.pos, (Line) action.data, true);
+					document.ResumeUpdate (true);
 					break;
 				}
-					
-				case ActionType.DeleteChars: {
-					this.Insert(document.GetLine(action.line_no), action.pos, (Line)action.data);
-					
-					break;
-				}
-				}
-			} while (user_action_depth >= 0 && undo_actions.Count > 0);
+			} while (!user_action_finished && undo_actions.Count > 0);
+
+			locked = false;
 		}
 
-		internal void Redo() {
-			if (redo_actions.Count == 0) {
+		internal void Redo ()
+		{
+			Action action;
+			bool user_action_finished = false;
+
+			if (redo_actions.Count == 0)
 				return;
-			}
+
+			// You can't undo anything after redoing
+			undo_actions.Clear ();
+
+			locked = true;
+			do {
+				Line start;
+				int start_index;
+
+				action = (Action) redo_actions.Pop ();
+
+				switch (action.type) {
+
+				case ActionType.UserActionBegin:
+					//  Noop
+					break;
+
+				case ActionType.UserActionEnd:
+					user_action_finished = true;
+					break;
+
+				case ActionType.InsertString:
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					start_index = document.LineTagToCharIndex (start, action.pos);
+					document.InsertString (start, action.pos, (string) action.data);
+					document.CharIndexToLineTag (start_index + ((string) action.data).Length,
+							out document.caret.line, out document.caret.tag,
+							out document.caret.pos);
+					document.UpdateCaret ();
+					document.SetSelectionToCaret (true);
+					document.ResumeUpdate (true);
+					break;
+
+				case ActionType.Typing:
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					start_index = document.LineTagToCharIndex (start, action.pos);
+					document.InsertString (start, action.pos, ((StringBuilder) action.data).ToString ());
+					document.CharIndexToLineTag (start_index + ((StringBuilder) action.data).Length,
+							out document.caret.line, out document.caret.tag,
+							out document.caret.pos);
+					document.UpdateCaret ();
+					document.SetSelectionToCaret (true);
+					document.ResumeUpdate (true);
+
+					// This is an open ended operation, so only a single typing operation can be undone at once
+					user_action_finished = true;
+					break;
+
+				case ActionType.DeleteString:
+					start = document.GetLine (action.line_no);
+					document.SuspendUpdate ();
+					document.DeleteMultiline (start, action.pos, ((Line) action.data).text.Length);
+					document.PositionCaret (start, action.pos);
+					document.SetSelectionToCaret (true);
+					document.ResumeUpdate (true);
+
+					break;
+				}
+			} while (!user_action_finished && redo_actions.Count > 0);
+
+			locked = false;
 		}
 		#endregion	// Internal Methods
 
@@ -4731,6 +4837,9 @@ namespace System.Windows.Forms {
 
 		public void BeginUserAction (string name)
 		{
+			if (locked)
+				return;
+
 			Action ua = new Action ();
 			ua.type = ActionType.UserActionBegin;
 			ua.data = name;
@@ -4740,35 +4849,37 @@ namespace System.Windows.Forms {
 
 		public void EndUserAction ()
 		{
+			if (locked)
+				return;
+
 			Action ua = new Action ();
 			ua.type = ActionType.UserActionEnd;
 
 			undo_actions.Push (ua);
 		}
 
-		// pos = 1-based
-		public void RecordDeleteChars(Line line, int pos, int length) {
-			RecordDelete(line, pos, line, pos + length - 1);
-		}
-
 		// start_pos, end_pos = 1 based
-		public void RecordDelete(Line start_line, int start_pos, Line end_line, int end_pos) {
-			Line	l;
-			Action	a;
+		public void RecordDeleteString (Line start_line, int start_pos, Line end_line, int end_pos)
+		{
+			if (locked)
+				return;
 
-			l = Duplicate(start_line, start_pos, end_line, end_pos);
+			Action	a = new Action ();
 
-			a = new Action();
-			a.type = ActionType.DeleteChars;
-			a.data = l;
+			// We cant simply store the string, because then formatting would be lost
+			a.type = ActionType.DeleteString;
 			a.line_no = start_line.line_no;
-			a.pos = start_pos - 1;
+			a.pos = start_pos;
+			a.data = Duplicate (start_line, start_pos, end_line, end_pos);
 
 			undo_actions.Push(a);
 		}
 
 		public void RecordInsertString (Line line, int pos, string str)
 		{
+			if (locked || str.Length == 0)
+				return;
+
 			Action a = new Action ();
 
 			a.type = ActionType.InsertString;
@@ -4777,6 +4888,30 @@ namespace System.Windows.Forms {
 			a.pos = pos;
 
 			undo_actions.Push (a);
+		}
+
+		public void RecordTyping (Line line, int pos, char ch)
+		{
+			if (locked)
+				return;
+
+			Action a = null;
+
+			if (undo_actions.Count > 0)
+				a = (Action) undo_actions.Peek ();
+
+			if (a == null || a.type != ActionType.Typing) {
+				a = new Action ();
+				a.type = ActionType.Typing;
+				a.data = new StringBuilder ();
+				a.line_no = line.line_no;
+				a.pos = pos;
+
+				undo_actions.Push (a);
+			}
+
+			StringBuilder data = (StringBuilder) a.data;
+			data.Append (ch);
 		}
 
 		// start_pos = 1-based
@@ -4810,10 +4945,10 @@ namespace System.Windows.Forms {
 				}
 
 				// Text for the tag
-				line.text = new StringBuilder(current.text.ToString(start - 1, end - start + 1));
+				line.text = new StringBuilder (current.text.ToString (start, end - start));
 
 				// Copy tags from start to start+length onto new line
-				current_tag = current.FindTag(start - 1);
+				current_tag = current.FindTag (start);
 				while ((current_tag != null) && (current_tag.start < end)) {
 					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.length))) {
 						// start tag is within this tag
@@ -4856,7 +4991,8 @@ namespace System.Windows.Forms {
 		}
 
 		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
-		internal void Insert(Line line, int pos, Line insert) {
+		internal void Insert(Line line, int pos, Line insert, bool select)
+		{
 			Line	current;
 			LineTag	tag;
 			int	offset;
@@ -4884,7 +5020,7 @@ namespace System.Windows.Forms {
 
 				tag.next = insert.tags;
 				line.text.Insert(offset, insert.text.ToString());
-			
+
 				// Adjust start locations
 				tag = tag.next;
 				while (tag != null) {
@@ -4894,6 +5030,12 @@ namespace System.Windows.Forms {
 				}
 				// Put it back together
 				document.Combine(line.line_no, line.line_no + 1);
+
+				if (select) {
+					document.SetSelectionStart (line, pos);
+					document.SetSelectionEnd (line, pos + insert.text.Length);
+				}
+
 				document.UpdateView(line, pos);
 				return;
 			}
@@ -4901,6 +5043,7 @@ namespace System.Windows.Forms {
 			first = line;
 			lines = 1;
 			current = insert;
+
 			while (current != null) {
 				if (current == insert) {
 					// Inserting the first line we split the line (and make space)
