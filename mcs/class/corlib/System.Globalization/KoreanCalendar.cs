@@ -69,8 +69,8 @@ public class KoreanCalendar : Calendar {
 	public KoreanCalendar() {
 		M_AbbrEraNames = new string[] {"K.C.E."};
 		M_EraNames = new string[] {"Korean Current Era"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 4362;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 4362;
 	}
 
 	/// <value>Overridden. Gives the eras supported by the

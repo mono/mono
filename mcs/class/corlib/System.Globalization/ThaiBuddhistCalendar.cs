@@ -69,8 +69,8 @@ public class ThaiBuddhistCalendar : Calendar {
 	public ThaiBuddhistCalendar() {
 		M_AbbrEraNames = new string[] {"T.B.C.E."};
 		M_EraNames = new string[] {"ThaiBuddhist current era"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 2572;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 2572;
 	}
 
 	/// <value>Overridden. Gives the eras supported by the

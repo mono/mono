@@ -81,18 +81,18 @@ public class GregorianCalendar : Calendar {
 	/// <see cref="T:System.Globalization.GregorianCalendarTypes"/>.
 	/// </summary>
 	[NonSerialized]
-	internal GregorianCalendarTypes M_CalendarType;
+	internal GregorianCalendarTypes m_type;
 
 	/// <value>
 	/// The property stores the 
 	/// <see cref="T:System.Globalization.GregorianCalendarTypes"/>.
 	/// </value>
 	public virtual GregorianCalendarTypes CalendarType {
-		get { return M_CalendarType; }
+		get { return m_type; }
 		set { 
 			CheckReadOnly ();
 			// mscorlib 1:0:3300:0 doesn't check anything here
-			M_CalendarType = value;
+			m_type = value;
 		}
 	}
 
@@ -482,8 +482,8 @@ public class GregorianCalendar : Calendar {
 		CalendarType = type;
 		M_AbbrEraNames = new string[] {"C.E."};
 		M_EraNames = new string[] {"Common Era"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 2029;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 2029;
 	}
 	
 #if NET_2_0
@@ -507,9 +507,6 @@ public class GregorianCalendar : Calendar {
 			return Max;
 		}
 	}
-
-	private int m_type; // Unused, by MS serializes this
-	private int m_currentEraValue; // Unused, by MS serializes this
 #endif
 	
 	/// <summary>

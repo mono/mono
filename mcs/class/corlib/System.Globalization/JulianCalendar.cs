@@ -50,8 +50,8 @@ public class JulianCalendar : Calendar {
 	public JulianCalendar() {
 		M_AbbrEraNames = new string[] {"C.E."};
 		M_EraNames = new string[] {"Common Era"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 2029;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 2029;
 	}
 		
 	/// <summary>

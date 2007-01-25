@@ -127,7 +127,7 @@ public abstract class Calendar
 	public abstract int[] Eras { get; }
 
 	[NonSerialized]
-	bool is_readonly;
+	bool m_isReadOnly;
 
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(false)]
@@ -155,22 +155,22 @@ public abstract class Calendar
 	public virtual object Clone ()
 	{
 		Calendar c = (Calendar) MemberwiseClone ();
-		c.is_readonly = false;
+		c.m_isReadOnly = false;
 		return c;
 	}
 #endif
 
 #if NET_2_0
 	public bool IsReadOnly {
-		get { return is_readonly; }
+		get { return m_isReadOnly; }
 	}
 
 	public static Calendar ReadOnly (Calendar source)
 	{
-		if (source.is_readonly)
+		if (source.m_isReadOnly)
 			return source;
 		Calendar c = (Calendar) source.Clone ();
-		c.is_readonly = true;
+		c.m_isReadOnly = true;
 		return c;
 	}
 #else
@@ -186,7 +186,7 @@ public abstract class Calendar
 
 	internal void CheckReadOnly ()
 	{
-		if (is_readonly)
+		if (m_isReadOnly)
 			throw new InvalidOperationException ("This Calendar is read-only.");
 	}
 
@@ -196,7 +196,7 @@ public abstract class Calendar
 	/// property.
 	/// </summary>
 	[NonSerialized]
-	internal int M_TwoDigitYearMax;
+	internal int twoDigitYearMax;
 	
 
 	/// <summary>
@@ -237,13 +237,13 @@ public abstract class Calendar
 	/// <para>It might be overridden.</para>
 	/// </value>
 	public virtual int TwoDigitYearMax {
-		get { return M_TwoDigitYearMax; }
+		get { return twoDigitYearMax; }
 		set {
 			CheckReadOnly ();
 			M_ArgumentInRange("year", value, 100, M_MaxYear);
 			int era = CurrentEra;
 			M_CheckYE(value, ref era);
-			M_TwoDigitYearMax = value;
+			twoDigitYearMax = value;
 		}
 	}
 
@@ -947,7 +947,7 @@ public abstract class Calendar
 	/// in the ctors of the derived classes, if it is 99.
 	/// </remarks>
 	protected Calendar() {
-		M_TwoDigitYearMax = 99;
+		twoDigitYearMax = 99;
 	}
 
 	/// <summary>Protected field storing the abbreviated era names.
@@ -1010,6 +1010,11 @@ public abstract class Calendar
 			M_EraNames = (string[])value.Clone();
 		}
 	}
+
+#if NET_2_0
+	internal int m_currentEraValue; // Unused, by MS serializes this
+#endif
+
 } // class Calendar
 	
 } // namespace System.Globalization

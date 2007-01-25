@@ -61,8 +61,8 @@ public class HijriCalendar : Calendar {
 	public HijriCalendar() {
 		M_AbbrEraNames = new string[] {"A.H."};
 		M_EraNames = new string[] {"Anno Hegirae"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 1451;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 1451;
 	}
 
 	/// <summary>

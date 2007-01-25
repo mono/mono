@@ -72,10 +72,10 @@ public class PersianCalendar : Calendar {
 	public PersianCalendar() {
 		M_AbbrEraNames = new string[] {"A.P."};
 		M_EraNames = new string[] {"Anno Persico"};
-		if (M_TwoDigitYearMax == 99)
+		if (twoDigitYearMax == 99)
 			// FIXME: the .NET documentation does not mention the default value,
 			// This is the value mentioned in the .NET documentation example result.
-			M_TwoDigitYearMax = 1410;
+			twoDigitYearMax = 1410;
 	}
 
 	/// <summary>

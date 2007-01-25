@@ -51,8 +51,8 @@ public class HebrewCalendar : Calendar {
 	public HebrewCalendar() {
 		M_AbbrEraNames = new string[] {"A.M."};
 		M_EraNames = new string[] {"Anno Mundi"};
-		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 5790;
+		if (twoDigitYearMax == 99)
+			twoDigitYearMax = 5790;
 	}
 
 	/// <summary>

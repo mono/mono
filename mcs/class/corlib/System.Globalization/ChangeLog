@@ -1,3 +1,25 @@
+2007-01-25  Chris Toshok  <toshok@ximian.com>
+
+	* Calendar.cs, HijriCalendar.cs, ThaiBuddhistCalendar.cs,
+	HebrewCalendar.cs, GregorianCalendar.cs, KoreanCalendar.cs,
+	JulianCalendar.cs, PersianCalendar.cs:
+
+	more serialization fixes.  the M_TwoDigitYearMax field we use
+	appears to be called twoDigitYearMax in MS.NET.  rename it (and
+	fix all the Calendar subclasses to use this naming).  Likewise
+	with is_readonly (MS calls it m_isReadOnly).
+
+	Also, the m_currentEraValue field I had originally placed in
+	GregorianCalendar appears to be in Calendar (as running
+	nunit-2.2.8-2.0 shows.)
+
+	In GregorianCalendar, rename the M_CalendarType field to m_type
+	and remove the extra field I added.
+	
+	The previous fix got nunit 2.4-2.0 running.  This change gets
+	versions 2.2.8 and 2.4 of nunit running against both 1.1 and 2.0
+	profiles.
+
 2006-01-24  Chris Toshok  <toshok@ximian.com>
 
 	[ these fix nunit built with MS .net 2.0, running on mono.  nunit
