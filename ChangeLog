@@ -1,3 +1,7 @@
+2007-01-24  Wade Berrier  <wberrier@novell.com>
+
+	* configure.in: version bump -> 1.2.3
+
 2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* scripts/Makefile.am: Added 'al2'.
