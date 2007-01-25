@@ -1424,8 +1424,7 @@ namespace System.Windows.Forms {
 			} else {
 				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorControl), pevent.ClipRectangle);
 			}
-			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
-
+			
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 

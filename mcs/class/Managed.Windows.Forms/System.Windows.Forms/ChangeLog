@@ -8,6 +8,11 @@
 	* TextBoxBase.cs: The Cut operation is undoable.
 
 2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* TextBoxBase.cs: Don't antialias text. Makes it look way better
+	on Windows (no difference on Linux).	
+
+2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XplatUIWin32.cs: Set SWP_NOACTIVATE in RequestNCRecalc as well,
 	we don't want to activate any windows. Fixes #79433.
