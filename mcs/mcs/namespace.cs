@@ -535,7 +535,7 @@ namespace Mono.CSharp {
 				resolved = fne as Namespace;
 				if (resolved == null) {
 					Report.Error (138, Location,
-						"`{0} is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.ToString ());
+						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.ToString ());
 				}
 				return resolved;
 			}

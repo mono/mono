@@ -2332,7 +2332,7 @@ namespace Mono.CSharp {
 			    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
 			    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
 				if (left.Equals (right)) {
-					Report.Warning (1718, 3, loc, "Comparison made to same variable; did you mean to compare something else?");
+					Report.Warning (1718, 3, loc, "A comparison made to same variable. Did you mean to compare something else?");
 				}
 				CheckUselessComparison (lc, right.Type);
 				CheckUselessComparison (rc, left.Type);
@@ -2351,7 +2351,6 @@ namespace Mono.CSharp {
 			if (c == null || !IsTypeIntegral (type)
 				|| c is StringConstant
 				|| c is BoolConstant
-				|| c is CharConstant
 				|| c is FloatConstant
 				|| c is DoubleConstant
 				|| c is DecimalConstant
@@ -2369,7 +2368,8 @@ namespace Mono.CSharp {
 					    type == TypeManager.ushort_type ||
 					    type == TypeManager.int32_type ||
 					    type == TypeManager.uint32_type ||
-					    type == TypeManager.int64_type)
+					    type == TypeManager.int64_type ||
+						type == TypeManager.char_type)
 						WarnUselessComparison (type);
 					return;
 				}
@@ -2389,12 +2389,14 @@ namespace Mono.CSharp {
 				value = ((UIntConstant) c).Value;
 			else if (c is LongConstant)
 				value = ((LongConstant) c).Value;
+			else if (c is CharConstant)
+				value = ((CharConstant)c).Value;
 
-			if (value != 0) {
-				if (IsValueOutOfRange (value, type))
-					WarnUselessComparison (type);
+			if (value == 0)
 				return;
-			}
+
+			if (IsValueOutOfRange (value, type))
+				WarnUselessComparison (type);
 		}
 
 		private bool IsValueOutOfRange (long value, Type type)
@@ -2418,7 +2420,8 @@ namespace Mono.CSharp {
 				type == TypeManager.ushort_type ||
 				type == TypeManager.short_type ||
 				type == TypeManager.sbyte_type ||
-				type == TypeManager.byte_type;
+				type == TypeManager.byte_type ||
+				type == TypeManager.char_type;
 		}
 
 		private static bool IsTypeUnsigned (Type type)
@@ -2426,12 +2429,13 @@ namespace Mono.CSharp {
 			return type == TypeManager.uint64_type ||
 				type == TypeManager.uint32_type ||
 				type == TypeManager.ushort_type ||
-				type == TypeManager.byte_type;
+				type == TypeManager.byte_type ||
+				type == TypeManager.char_type;
 		}
 
 		private void WarnUselessComparison (Type type)
 		{
-			Report.Warning (652, 2, loc, "Comparison to integral constant is useless; the constant is outside the range of type `{0}'",
+			Report.Warning (652, 2, loc, "A comparison between a constant and a variable is useless. The constant is out of the range of the variable type `{0}'",
 				TypeManager.CSharpName (type));
 		}
 

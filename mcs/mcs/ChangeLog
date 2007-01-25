@@ -1,3 +1,10 @@
+2007-01-25  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (CheckUselessComparison): Add additional check for char
+	constants.
+
+	* namespace.cs: Fixed typo.
+
 2007-01-23  Miguel de Icaza  <miguel@novell.com>
 
 	* constant.cs: Bloat removal, CheckRange and CheckUnsigned are
