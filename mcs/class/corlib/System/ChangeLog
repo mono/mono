@@ -1,3 +1,8 @@
+2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : copy Kind in those members that return DateTime.
+	  Fixed bug #80614.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Array.cs (InternalArray__ICollection_Contains,

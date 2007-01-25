@@ -1,3 +1,7 @@
+2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : test for copying Kind property.
+
 2007-01-14  Jensen Somers <jensen.somers@gmail.com>
 
     * ArraySegmentTest.cs: Add a test case for the ArraySegment.Equals

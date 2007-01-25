@@ -1555,6 +1555,24 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
+	public void InstanceMembersAndKind ()
+	{
+		AssertEquals ("#1", DateTimeKind.Utc, DateTime.UtcNow.Date.Kind);
+		AssertEquals ("#2", DateTimeKind.Utc, DateTime.UtcNow.Add (TimeSpan.FromMinutes (1)).Kind);
+		AssertEquals ("#3", DateTimeKind.Utc, DateTime.UtcNow.Subtract (TimeSpan.FromMinutes (1)).Kind);
+		AssertEquals ("#4-1", DateTimeKind.Utc, DateTime.UtcNow.AddDays (1).Kind);
+		AssertEquals ("#4-2", DateTimeKind.Utc, DateTime.UtcNow.AddTicks (1).Kind);
+		AssertEquals ("#4-3", DateTimeKind.Utc, DateTime.UtcNow.AddHours (1).Kind);
+		AssertEquals ("#4-4", DateTimeKind.Utc, DateTime.UtcNow.AddMinutes (1).Kind);
+		AssertEquals ("#4-5", DateTimeKind.Utc, DateTime.UtcNow.AddSeconds (1).Kind);
+		AssertEquals ("#4-6", DateTimeKind.Utc, DateTime.UtcNow.AddMilliseconds (1).Kind);
+		AssertEquals ("#4-7", DateTimeKind.Utc, DateTime.UtcNow.AddMonths (1).Kind);
+		AssertEquals ("#4-8", DateTimeKind.Utc, DateTime.UtcNow.AddYears (1).Kind);
+		AssertEquals ("#5-1", DateTimeKind.Utc, (DateTime.UtcNow + TimeSpan.FromMinutes (1)).Kind);
+		AssertEquals ("#5-2", DateTimeKind.Utc, (DateTime.UtcNow - TimeSpan.FromMinutes (1)).Kind);
+	}
+
+	[Test]
 	public void FromBinary ()
 	{
 		DateTime dt_utc = DateTime.FromBinary (0x4000000000000001);

@@ -336,7 +336,11 @@ namespace System
 		{
 			get	
 			{ 
-				return new DateTime (Year, Month, Day);
+				DateTime ret = new DateTime (Year, Month, Day);
+#if NET_2_0
+				ret.kind = kind;
+#endif
+				return ret;
 			}
 		}
         
@@ -499,7 +503,11 @@ namespace System
 
 		public DateTime Add (TimeSpan ts)
 		{
-			return AddTicks (ts.Ticks);
+			DateTime ret = AddTicks (ts.Ticks);
+#if NET_2_0
+			ret.kind = kind;
+#endif
+			return ret;
 		}
 
 		public DateTime AddDays (double days)
@@ -512,7 +520,11 @@ namespace System
 			if ((t + ticks.Ticks) > MAX_VALUE_TICKS || (t + ticks.Ticks) < 0) {
 				throw new ArgumentOutOfRangeException();
 			}
-			return new DateTime (t + ticks.Ticks);
+			DateTime ret = new DateTime (t + ticks.Ticks);
+#if NET_2_0
+			ret.kind = kind;
+#endif
+			return ret;
 		}
 
 		public DateTime AddHours (double hours)
@@ -572,6 +584,9 @@ namespace System
 				day = maxday;
 
 			temp = new DateTime (year, month, day);
+#if NET_2_0
+			temp.kind = kind;
+#endif
 			return  temp.Add (this.TimeOfDay);
 		}
 
@@ -1559,7 +1574,11 @@ namespace System
 			TimeSpan newticks;
 
 			newticks = (new TimeSpan (ticks.Ticks)) - ts;
-			return new DateTime(true,newticks);
+			DateTime ret = new DateTime(true,newticks);
+#if NET_2_0
+			ret.kind = kind;
+#endif
+			return ret;
 		}
 
 		public long ToFileTime()
@@ -1994,7 +2013,11 @@ namespace System
 
 		public static DateTime operator +(DateTime d, TimeSpan t)
 		{
-			return new DateTime (true, d.ticks + t);
+			DateTime ret = new DateTime (true, d.ticks + t);
+#if NET_2_0
+			ret.kind = d.kind;
+#endif
+			return ret;
 		}
 
 		public static bool operator ==(DateTime d1, DateTime d2)
@@ -2034,7 +2057,11 @@ namespace System
 
 		public static DateTime operator -(DateTime d,TimeSpan t)
 		{
-			return new DateTime (true, d.ticks - t);
+			DateTime ret = new DateTime (true, d.ticks - t);
+#if NET_2_0
+			ret.kind = d.kind;
+#endif
+			return ret;
 		}
 
 		bool IConvertible.ToBoolean(IFormatProvider provider)
