@@ -1,4 +1,12 @@
 
+Thu Jan 25 20:31:41 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, boehm-gc.c, class-internals.h, class.c,
+	debug-mono-symfile.c, domain.c, locales.c, marshal.c, metadata.c,
+	monitor.c, mono-debug.c, mono-debug.h, object.c, profiler.c:
+	warning cleanup.
+	* reflection.c: warning cleanup, some threading and moving GC fixes.
+
 Thu Jan 25 16:22:36 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, loader.c: create the needed Set/Get/Address array methods
