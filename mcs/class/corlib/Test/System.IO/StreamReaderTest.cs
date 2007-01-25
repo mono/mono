@@ -732,6 +732,24 @@ public class StreamReaderTest : Assertion
 		MemoryStream ms = new MemoryStream (Encoding.ASCII.GetBytes ("Line1\rLine2\r\nLine3\nLine4"));
 		StreamReader reader = new StreamReader (ms);
 		AssertEquals (24, reader.Read (new char[24], 0, 24));
-	}	
+	}
+
+	[Test]
+	public void bug75526 ()
+	{
+		StreamReader sr = new StreamReader (new Bug75526Stream ());
+		int len = sr.Read (new char [10], 0, 10);
+		AssertEquals (2, len);
+	}
+
+	class Bug75526Stream : MemoryStream
+	{
+		public override int Read (byte [] buffer, int offset, int count)
+		{
+			buffer [offset + 0] = (byte) 'a';
+			buffer [offset + 1] = (byte) 'b';
+			return 2;
+		}
+	}
 }
 }

@@ -1,3 +1,7 @@
+2007-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StreamReaderTest.cs: Added test for bug #75526.
+
 2007-01-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Fixed compiler warning by improving test.
