@@ -1,3 +1,7 @@
+2007-01-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+        * LoginTest.cs: removed NotWorking attribute
+
 2007-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TextBoxTest.cs: removed NotWorking attribute

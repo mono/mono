@@ -790,7 +790,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]
 		public void OnBubbleEvent ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent));
@@ -833,7 +832,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void OnBubbleEvent_Authenticated_OnAuthenticate ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent_Authenticated_OnAuthenticate));
