@@ -1,3 +1,8 @@
+2007-01-25  Konstantin Triger <kostat@mainsoft.com>
+
+	* ServiceDescriptionReflector.cs: describe only supported bindings and
+		never HttpPostLocalhost.
+
 2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionImporter.cs : initialize CodeGenerator with C#.

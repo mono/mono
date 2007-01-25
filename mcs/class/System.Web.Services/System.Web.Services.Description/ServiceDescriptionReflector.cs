@@ -83,15 +83,17 @@ namespace System.Web.Services.Description {
 		{
 			XmlSchemaExporter schemaExporter = new XmlSchemaExporter (Schemas);
 			SoapSchemaExporter soapSchemaExporter = new SoapSchemaExporter (Schemas);
-			
-			new Soap11ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
+
+			if (WSConfig.IsSupported (WSProtocol.HttpSoap))
+				new Soap11ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 #if NET_2_0
-			new Soap12ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
+			if (WSConfig.IsSupported (WSProtocol.HttpSoap12))
+				new Soap12ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 #endif
 			if (WSConfig.IsSupported (WSProtocol.HttpGet))
 				new HttpGetProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 			
-#if NET_1_1
+#if ONLY_1_1
 			if (WSConfig.IsSupported (WSProtocol.HttpPost) || WSConfig.IsSupported (WSProtocol.HttpPostLocalhost))
 #else
 			if (WSConfig.IsSupported (WSProtocol.HttpPost))
