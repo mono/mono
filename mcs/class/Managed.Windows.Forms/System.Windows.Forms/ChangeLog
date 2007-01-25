@@ -1,3 +1,11 @@
+2007-01-24  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: fix the wake_waiting logic - we always clear the
+	wake_waiting flag, not just when there's data to be read.  if we
+	don't, then future wakeup's won't reach us and we'll be doomed to
+	wait for the entire 1 second timeout forever (unless there are X
+	events to be had).
+
 2007-01-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: FindStringExactMaxException doesn't throw AOORE on 2.0

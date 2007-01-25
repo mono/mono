@@ -1313,8 +1313,10 @@ namespace System.Windows.Forms {
 
 					Syscall.poll (pollfds, (uint)length, timeout);
 					// Clean out buffer, so we're not busy-looping on the same data
-					if (pollfds[1].revents != 0) {
+					if (length == pollfds.Length && pollfds[1].revents != 0) {
 						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
+					}
+					lock (wake_waiting_lock) {
 						wake_waiting = false;
 					}
 					#endif
@@ -4545,6 +4547,7 @@ namespace System.Windows.Forms {
 					      out mask);
 			}
 			XUngrabServer (display);
+			XFlush (display);
 
 			child = child_last;
 		}
