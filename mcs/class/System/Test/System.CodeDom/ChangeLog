@@ -1,3 +1,9 @@
+2007-01-25  Ilya Kharmatsky  <ilyak -at- mainsoft.com>
+	
+	* CodeTypeReferenceTest.cs :
+	  Added 'Ignore' attributes for several tests, under TARGET_JVM
+	  directive, in order to workaround the Grasshopper's bugs.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeTypeReferenceTest.cs :

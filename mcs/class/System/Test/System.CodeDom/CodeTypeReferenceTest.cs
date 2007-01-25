@@ -469,6 +469,9 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore("TD BUG ID: 7202")]
+#endif
 		public void GenericTypeTest1 () {
 			CodeTypeReference reference = new CodeTypeReference (
 				typeof (Dictionary<int,string>));
@@ -497,6 +500,9 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore("TD BUG ID: 7202")]
+#endif
 		public void GenericTypeTest2 () {
 			CodeTypeReference reference = new CodeTypeReference (
 				typeof (Dictionary<List<int>, string>));
@@ -533,6 +539,9 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore("TD BUG ID: 7202")]
+#endif		
 		public void GenericTypeTest3 () 
 		{
 			CodeTypeReference reference = new CodeTypeReference (
@@ -575,6 +584,9 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD BUG ID: 7203")]
+#endif		
 		public void GenericTypeTest5 () 
 		{
 			CodeTypeReference reference = new CodeTypeReference (
