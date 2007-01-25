@@ -1518,7 +1518,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (owner.Focused && (!selection_visible || owner.show_caret_w_selection)) {
+			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}

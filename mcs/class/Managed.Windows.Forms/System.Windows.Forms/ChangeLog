@@ -1,5 +1,11 @@
 2007-01-25  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Respect ShowSelection when deciding whether or
+	not to display the caret, this allows comboboxes to have carets
+	when the combotextbox does not have focus.
+
+2007-01-25  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: Add a Suspend/Resume for updating, basically the
 	same as the Suspend/Resume for recalc, except this will do actual
 	Invalidates.
