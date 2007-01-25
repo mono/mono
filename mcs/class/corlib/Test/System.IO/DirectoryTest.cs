@@ -273,13 +273,19 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-	public void GetCreationTimeException1 ()
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif	
+    public void GetCreationTimeException1 ()
 	{
 		Directory.GetCreationTime (null as string);
 	}
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeException2 ()
 	{
 		Directory.GetCreationTime ("");
@@ -288,6 +294,9 @@ public class DirectoryTest
 	[Test]
 #if !NET_2_0
 	[ExpectedException(typeof(IOException))]
+#endif
+#if TARGET_JVM
+    [Category("NotWorking")]
 #endif
 	public void GetCreationTimeException_NonExistingPath ()
 	{
@@ -312,6 +321,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeException4 ()
 	{
 		Directory.GetCreationTime ("    ");
@@ -319,6 +331,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -326,6 +341,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeUtcException1 ()
 	{
 		Directory.GetCreationTimeUtc (null as string);
@@ -333,6 +351,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeUtcException2 ()
 	{
 		Directory.GetCreationTimeUtc ("");
@@ -341,6 +362,9 @@ public class DirectoryTest
 	[Test]
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+    [Category("NotWorking")]
 #endif
 	public void GetCreationTimeUtc_NonExistingPath ()
 	{
@@ -365,6 +389,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeUtcException4 ()
 	{
 		Directory.GetCreationTimeUtc ("    ");
@@ -372,6 +399,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetCreationTimeUtcException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -379,6 +409,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTime_Null ()
 	{
 		Directory.GetLastAccessTime (null as string);
@@ -386,6 +419,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeException2 ()
 	{
 		Directory.GetLastAccessTime ("");
@@ -394,6 +430,9 @@ public class DirectoryTest
 	[Test]
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+    [Category("NotWorking")]
 #endif
 	public void GetLastAccessTime_NonExistingPath ()
 	{
@@ -419,6 +458,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeException4 ()
 	{
 		Directory.GetLastAccessTime ("    ");
@@ -426,6 +468,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeException5 ()
 	{
 		Directory.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
@@ -433,6 +478,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeUtc_Null ()
 	{
 		Directory.GetLastAccessTimeUtc (null as string);
@@ -440,6 +488,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeUtcException2 ()
 	{
 		Directory.GetLastAccessTimeUtc ("");
@@ -448,6 +499,9 @@ public class DirectoryTest
 	[Test]
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+    [Category("NotWorking")]
 #endif
 	public void GetLastAccessTimeUtc_NonExistingPath ()
 	{
@@ -471,6 +525,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeUtcException4 ()
 	{
 		Directory.GetLastAccessTimeUtc ("    ");
@@ -478,6 +535,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void GetLastAccessTimeUtcException5 ()
 	{
 		Directory.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
@@ -719,6 +779,9 @@ public class DirectoryTest
 	}
 	
 	[Test]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void CreationTime ()
 	{
 		// check for Unix platforms - see FAQ for more details
@@ -772,6 +835,9 @@ public class DirectoryTest
 	}
 
 	[Test]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void LastAccessTime ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.AccessTime.1";
@@ -993,6 +1059,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1001,6 +1070,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1009,6 +1081,9 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1023,6 +1098,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1031,6 +1109,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1056,6 +1137,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeUtcException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1064,6 +1148,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1072,6 +1159,9 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1086,6 +1176,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeUtcException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1094,6 +1187,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetLastAccessTimeUtcException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1118,6 +1214,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1126,6 +1225,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1134,6 +1236,9 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1149,6 +1254,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1157,6 +1265,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1183,6 +1294,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeUtcException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1191,6 +1305,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1199,6 +1316,9 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1215,6 +1335,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeUtcException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1223,6 +1346,9 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void SetCreationTimeUtcException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);

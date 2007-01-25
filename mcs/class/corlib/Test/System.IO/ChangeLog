@@ -2,6 +2,11 @@
 
 	* DirectoryTest.cs: Fixed compiler warning by improving test.
 
+2006-01-25	Bors Kirzner <borisk@mainsoft.com>
+
+	* DirectoryInfoTest.cs, DirectoryTest.cs, FileInfoTest.cs, FileSystemInfoTest.cs
+	FileTest.cs: add ifdefs for TARGET_JVM.
+	
 2006-12-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MemoryStreamTest.cs: Added (de)serialization tests for bug #80205.

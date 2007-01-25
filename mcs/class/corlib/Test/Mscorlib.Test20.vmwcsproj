@@ -24,7 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>False</SkipValidation>
+    <SkipValidation>True</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
@@ -66,6 +66,35 @@
     <EmbeddedResource Include="resources\MyResources.resources" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileCas.cs" />
+    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileStreamCas.cs" />
+    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileStreamTest.cs" />
+    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileTest.cs" />
+    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageTest.cs" />
+    <Compile Include="System.IO\BinaryReaderTest.cs" />
+    <Compile Include="System.IO\BinaryWriterTest.cs" />
+    <Compile Include="System.IO\BufferedStreamTest.cs" />
+    <Compile Include="System.IO\DirectoryCas.cs" />
+    <Compile Include="System.IO\DirectoryInfoTest.cs" />
+    <Compile Include="System.IO\DirectoryTest.cs" />
+    <Compile Include="System.IO\FileInfoTest.cs" />
+    <Compile Include="System.IO\FileLoadExceptionCas.cs" />
+    <Compile Include="System.IO\FileNotFoundExceptionCas.cs" />
+    <Compile Include="System.IO\FileNotFoundExceptionTest.cs" />
+    <Compile Include="System.IO\FileStreamCas.cs" />
+    <Compile Include="System.IO\FileStreamTest.cs" />
+    <Compile Include="System.IO\FileSystemInfoTest.cs" />
+    <Compile Include="System.IO\FileTest.cs" />
+    <Compile Include="System.IO\MemoryStreamTest.cs" />
+    <Compile Include="System.IO\PathCas.cs" />
+    <Compile Include="System.IO\PathTest.cs" />
+    <Compile Include="System.IO\StreamCas.cs" />
+    <Compile Include="System.IO\StreamHelperTest.cs" />
+    <Compile Include="System.IO\StreamReaderTest.cs" />
+    <Compile Include="System.IO\StreamWriterTest.cs" />
+    <Compile Include="System.IO\StringReaderTest.cs" />
+    <Compile Include="System.IO\StringWriterTest.cs" />
+    <Compile Include="System.IO\TextWriterTest.cs" />
     <Compile Include="System\ActivatorTest.cs">
       <SubType>Code</SubType>
     </Compile>

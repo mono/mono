@@ -587,6 +587,9 @@ namespace MonoTests.System.IO
                 }
 
 		[Test]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void TestGetCreationTime ()
 		{
                         string path = TempFolder + Path.DirectorySeparatorChar + "baz";
@@ -603,6 +606,9 @@ namespace MonoTests.System.IO
 
 		// Setting the creation time on Unix is not possible
                 [Test]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
                 public void CreationTime ()
                 {
 			int platform = (int) Environment.OSVersion.Platform;
@@ -647,6 +653,9 @@ namespace MonoTests.System.IO
                 }
 
                 [Test]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
                 public void LastAccessTime ()
                 {
                         string path = TempFolder + Path.DirectorySeparatorChar + "lastAccessTime";                	
@@ -742,6 +751,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]	
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeException1 ()
 		{
 			File.GetCreationTime (null as string);
@@ -749,6 +761,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]	
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeException2 ()
 		{
 			File.GetCreationTime ("");
@@ -757,6 +772,9 @@ namespace MonoTests.System.IO
 		[Test]
 #if !NET_2_0
 		[ExpectedException(typeof(IOException))]
+#endif
+#if TARGET_JVM
+        [Category("NotWorking")]
 #endif
 		public void GetCreationTime_NonExistingPath ()
 		{
@@ -777,6 +795,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeException4 ()
 		{
 			File.GetCreationTime ("    ");
@@ -784,6 +805,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeException5 ()
 		{
 			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -791,6 +815,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeUtcException1 ()
 		{
 			File.GetCreationTimeUtc (null as string);
@@ -798,6 +825,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeUtcException2 ()
 		{
 			File.GetCreationTimeUtc ("");
@@ -806,6 +836,9 @@ namespace MonoTests.System.IO
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+        [Category("NotWorking")]
 #endif
 		public void GetCreationTimeUtc_NonExistingPath ()
 		{
@@ -825,6 +858,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeUtcException4 ()
 		{
 			File.GetCreationTimeUtc ("    ");
@@ -832,6 +868,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetCreationTimeUtcException5 ()
 		{
 			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -839,6 +878,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeException1 ()
 		{
 			File.GetLastAccessTime (null as string);
@@ -846,6 +888,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeException2 ()
 		{
 			File.GetLastAccessTime ("");
@@ -854,6 +899,9 @@ namespace MonoTests.System.IO
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+        [Category("NotWorking")]
 #endif
 		public void GetLastAccessTime_NonExistingPath ()
 		{
@@ -874,6 +922,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeException4 ()
 		{
 			File.GetLastAccessTime ("    ");
@@ -881,6 +932,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeException5 ()
 		{
 			File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
@@ -888,6 +942,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeUtcException1 ()
 		{
 			File.GetLastAccessTimeUtc (null as string);
@@ -895,6 +952,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeUtcException2 ()
 		{
 			File.GetLastAccessTimeUtc ("");
@@ -903,6 +963,9 @@ namespace MonoTests.System.IO
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (IOException))]
+#endif
+#if TARGET_JVM
+        [Category("NotWorking")]
 #endif
 		public void GetLastAccessTimeUtc_NonExistingPath ()
 		{
@@ -922,6 +985,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeUtcException4 ()
 		{
 			File.GetLastAccessTimeUtc ("    ");
@@ -929,6 +995,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void GetLastAccessTimeUtcException5 ()
 		{
 			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
@@ -1051,6 +1120,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeArgumentNullException1 ()
 		{
 			File.SetCreationTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1058,6 +1130,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeArgumenException1 ()
 		{
 			File.SetCreationTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1065,6 +1140,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeArgumenException2 ()
 		{
 			File.SetCreationTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1072,6 +1150,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		// On Unix there are no invalid path chars.
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeArgumenException3 ()
 		{
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1088,6 +1169,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (FileNotFoundException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeFileNotFoundException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
@@ -1116,6 +1200,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "CreationTimeIOException1";
@@ -1133,6 +1220,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcArgumentNullException1 ()
 		{ 
 			File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1140,6 +1230,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcArgumenException1 ()
 		{
 			File.SetCreationTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1147,6 +1240,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcArgumenException2 ()
 		{
 			File.SetCreationTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1154,6 +1250,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		// On Unix there are no invalid path chars.
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcArgumentException3 ()
 		{
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1170,6 +1269,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (FileNotFoundException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcFileNotFoundException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
@@ -1198,6 +1300,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCreationTimeUtcIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
@@ -1217,6 +1322,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeArgumentNullException1 ()
 		{
 			File.SetLastAccessTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1224,6 +1332,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeArgumenException1 ()
 		{
 			File.SetLastAccessTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1231,6 +1342,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeArgumenException2 ()
 		{
 			File.SetLastAccessTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1238,6 +1352,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		// On Unix there are no invalid path chars.
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeArgumenException3 ()
 		{
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1254,6 +1371,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (FileNotFoundException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeFileNotFoundException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
@@ -1282,6 +1402,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "LastAccessIOException1";
@@ -1299,6 +1422,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeUtcArgumentNullException1 ()
 		{
 			File.SetLastAccessTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1306,6 +1432,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetCLastAccessTimeUtcArgumenException1 ()
 		{
 			File.SetLastAccessTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1313,6 +1442,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeUtcArgumenException2 ()
 		{
 			File.SetLastAccessTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
@@ -1320,6 +1452,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		// On Unix there are no invalid path chars.
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeUtcArgumenException3 ()
 		{
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1336,6 +1471,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (FileNotFoundException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeUtcFileNotFoundException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
@@ -1364,6 +1502,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastAccessTimeUtcIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
@@ -1448,6 +1589,9 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastWriteTimeIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
@@ -1507,7 +1651,7 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcFileNotFoundException1";
 			DeleteFile (path);
 			
-			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+			File.SetLastWriteTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
 		}
 
 //		[Test]
@@ -1530,6 +1674,9 @@ namespace MonoTests.System.IO
 //
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void SetLastWriteTimeUtcIOException1 ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";

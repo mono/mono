@@ -612,6 +612,9 @@ namespace MonoTests.System.IO
         	}
  
  		[Test]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void DirectoryNameWithSpace ()
 		{
 			// check for Unix platforms - see FAQ for more details
@@ -677,6 +680,9 @@ namespace MonoTests.System.IO
 			}
 
 			[Test]
+#if TARGET_JVM
+            [Category("NotWorking")]
+#endif
 			public void LastAccessTime ()
 			{
 				DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -684,6 +690,9 @@ namespace MonoTests.System.IO
 			}
 
 			[Test]
+#if TARGET_JVM
+            [Category("NotWorking")]
+#endif
 			public void LastAccessTimeUtc ()
 			{
 				DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -691,6 +700,9 @@ namespace MonoTests.System.IO
 			}
 
 			[Test]
+#if TARGET_JVM
+            [Category("NotWorking")]
+#endif
 			public void CreationTime ()
 			{
 				DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -698,6 +710,9 @@ namespace MonoTests.System.IO
 			}
 
 			[Test]
+#if TARGET_JVM
+            [Category("NotWorking")]
+#endif
 			public void CreationTimeUtc ()
 			{
 				DirectoryInfo info = new DirectoryInfo (TempFolder);
@@ -752,11 +767,13 @@ namespace MonoTests.System.IO
 		[Test]
 		public void WindowsSystem32_76191 ()
 		{
+#if !TARGET_JVM
 			// check for Unix platforms - see FAQ for more details
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128))
 				return;
+#endif
 
 			Directory.SetCurrentDirectory (@"C:\WINDOWS\system32");
 			WindowsParentFullName ("C:", "C:\\WINDOWS");

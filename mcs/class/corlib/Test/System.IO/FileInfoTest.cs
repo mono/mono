@@ -632,6 +632,9 @@ namespace MonoTests.System.IO
 		
 		[Test]
 		[ExpectedException(typeof (IOException))]
+#if TARGET_JVM
+        [Category("NotWorking")]
+#endif
 		public void OpenReadIOException ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenReadIOException.Test";
