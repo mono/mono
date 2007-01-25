@@ -23,12 +23,12 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" EnableTheming="false" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.Default" %>
 <asp:Content runat="server" ContentPlaceHolderID="Main">
     <table>
         <tr>
             <td>
-                You can use the Web Site AspnetConfig Tool to manage all the security settings for your application. You can set up users and passwords (authentication), create roles (groups of users), and create permissions (rules for controlling access to parts of your application).
+                You can use the Web Site Administration Tool to manage all the security settings for your application. You can set up users and passwords (authentication), and create roles (groups of users). By default, user information is stored in a Cloudscape database in the Data folder of your Web project. If you want to store user information in a different database, you may configure a different provider in the web.config file.
                 <br /><br /><br />
             </td>
         </tr>
@@ -69,7 +69,7 @@
                     </tr>
                     <tr>
                         <td>
-                            Existing roles : <%= Roles_count %>
+                             <%= Roles_count %>
                         </td>
                     </tr>
                     <tr>

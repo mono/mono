@@ -23,7 +23,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.MenageRole" %>
+<%@ Page Language="C#" AutoEventWireup="true" EnableTheming="false" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.AspnetConfig.MenageRole" %>
 <%@ Register tagprefix="custom" namespace="Mainsoft.Web.AspnetConfig" Assembly="Mainsoft.Web.AspnetConfig"  %>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table class="maintable">

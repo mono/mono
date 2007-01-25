@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Searcher.ascx.cs" Inherits="Mainsoft.Web.AspnetConfig.Searcher" %>
+<%@ Control Language="C#" AutoEventWireup="true" EnableTheming="false" CodeBehind="Searcher.ascx.cs" Inherits="Mainsoft.Web.AspnetConfig.Searcher" %>
 <%@ Register tagprefix="custom" namespace="Mainsoft.Web.AspnetConfig" Assembly="Mainsoft.Web.AspnetConfig"  %>
 
 <table width="100%" cellpadding="0" cellspacing="0">

@@ -60,17 +60,22 @@ namespace Mainsoft.Web.AspnetConfig
 			{
 				if (Roles.Enabled) {
 					string[] list = Roles.GetAllRoles ();
-					return list.Length.ToString ();
+					return "Existing roles :" + list.Length.ToString ();
 				}
 				else
-					return "Roles not enabled";
+					return @"In order to create or manage roles, the roleManger key must be enabled. To enable roleManager, please modify your Web.config file as follows: <br />
+							&nbsp; &lt;configuration xmlns=""http://schemas.microsoft.com/.NetConfiguration/v2.0""&gt; <br />
+							&nbsp;&nbsp;	&lt;system.web&gt; <br />
+							&nbsp;&nbsp;&nbsp;	&lt;roleManager enabled=""true"" /&gt; <br />
+                                                        &nbsp;&nbsp;    &lt/system.web&gt; <br />
+							&nbsp; &lt;/configuration&gt;";
 			}
 		}
 
 		protected void HyperLink1_Load (object sender, EventArgs e)
 		{
 			if (!Roles.Enabled)
-				((HyperLink) sender).Enabled = false;
+				((HyperLink) sender).Visible = false;
 		}
 	}
 }
