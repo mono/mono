@@ -1025,7 +1025,7 @@ namespace System.Web {
 			string[] languages = request.UserLanguages;
 			try {
 				if (languages != null && languages.Length > 0)
-					ret = new CultureInfo (languages[0]);
+					ret = CultureInfo.CreateSpecificCulture (languages[0]);
 			} catch {
 			}
 			
