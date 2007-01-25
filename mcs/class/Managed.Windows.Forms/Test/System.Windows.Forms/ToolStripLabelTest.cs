@@ -271,10 +271,10 @@ namespace MonoTests.System.Windows.Forms
 			tsi.Image = i;
 			tsi.Font = f1;
 			tsi.Text = string1;
-			Assert.AreEqual (new Size (string1size.Width + 16, 16), tsi.GetPreferredSize (Size.Empty), "K6");
+			Assert.AreEqual (new Size (string1size.Width + 16, string1size.Height + 3), tsi.GetPreferredSize (Size.Empty), "K6");
 
 			tsi.Text = string2;
-			Assert.AreEqual (new Size (string2size.Width + 16, 16), tsi.GetPreferredSize (Size.Empty), "K7");
+			Assert.AreEqual (new Size (string2size.Width + 16, string2size.Height + 3), tsi.GetPreferredSize (Size.Empty), "K7");
 
 			tsi.Image = i2;
 			tsi.Font = f2;

@@ -1,3 +1,8 @@
+2007-01-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButtonTest.cs, ToolStripItemTest.cs, ToolStripLabelTest.cs:
+	Try to make some tests not Font/DPI dependent.
+
 2007-01-25  Chris Toshok  <toshok@ximian.com>
 
 	* SplitterTest.cs: new tests.
