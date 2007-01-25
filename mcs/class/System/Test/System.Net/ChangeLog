@@ -1,3 +1,8 @@
+2007-01-25  Ilya Kharmatsky  <ilyak -at- mainsoft.com>
+
+	* FileWebRequestTest.cs: Workaround Grasshopper's bugs with
+	'Ignore' and 'NotWorking' attributes.
+
 2007-01-11  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpListener2Test.cs: Put a bunch of verbs that would not be

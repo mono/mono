@@ -200,6 +200,10 @@ public class FileWebRequestTest
 	}	        
         
         [Test]
+#if TARGET_JVM
+	[Ignore ("TD BUG ID: 7205")]
+	[Category ("NotWorking")]
+#endif	
         public void Sync ()
         {
 		string tmpFilename = GetFilename ();
@@ -207,6 +211,12 @@ public class FileWebRequestTest
 			return;
 		
 		try {		
+#if TARGET_JVM
+			/*
+			  Probably due to the fact that previos test doesn't close
+			  the temp file clearly the file cannot be deleted.
+			*/
+#endif
 			if (File.Exists (tmpFilename)) 
 				File.Delete (tmpFilename);
 			
