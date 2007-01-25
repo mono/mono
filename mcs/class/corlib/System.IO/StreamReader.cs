@@ -375,6 +375,8 @@ namespace System.IO {
 				index += cch;
 				count -= cch;
 				chars_read += cch;
+				if (mayBlock)
+					break;
 			}
 			return chars_read;
 		}

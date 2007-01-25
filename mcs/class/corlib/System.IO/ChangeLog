@@ -1,3 +1,8 @@
+2007-01-24 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* StreamReader.cs: fix for bug #75526. We return earlier from Read () if
+	the underlying stream might block or end on the next read.
+
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* DirectoryInfo.cs: Throw a better exception (accorind go the
