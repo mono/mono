@@ -1,3 +1,8 @@
+2007-01-25  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+	
+	* QueueTest.cs, StackTest.cs: Added 'Ignore' attribute under 
+	TARGET_JVM to workaround Grasshopper's bug.
+
 2006-11-15  Andrew Skiba  <andrews@mainsoft.com>
 
 	* LinkedListTest.cs, QueueTest.cs, SortedListTest.cs, StackTest.cs:

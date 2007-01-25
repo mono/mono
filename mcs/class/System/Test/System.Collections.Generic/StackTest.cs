@@ -174,6 +174,9 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD BUG ID: 7204")]
+#endif		
 		public void TestToArray ()
 		{
 			Stack <int> s = new Stack <int> ();
