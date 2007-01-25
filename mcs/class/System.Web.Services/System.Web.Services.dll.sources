@@ -17,6 +17,7 @@ System.Web.Services.Configuration/SoapExtensionTypeElement.cs
 System.Web.Services.Configuration/SoapExtensionTypeElementCollection.cs
 System.Web.Services.Configuration/TypeElement.cs
 System.Web.Services.Configuration/TypeElementCollection.cs
+System.Web.Services.Configuration/TypeTypeConverter.cs
 System.Web.Services.Configuration/WebServicesConfigurationSectionHandler.cs
 System.Web.Services.Configuration/WebServiceProtocols.cs
 System.Web.Services.Configuration/WebServicesSection.cs

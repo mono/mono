@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,6 +32,8 @@
 using System;
 using System.Configuration;
 using System.ComponentModel;
+using System.Globalization;
+using System.Security.Permissions;
 
 #if NET_2_0
 
@@ -49,8 +52,9 @@ namespace System.Web.Services.Configuration {
 			priorityProp = new ConfigurationProperty ("priority", typeof (int), 0,
 								  new Int32Converter(), new IntegerValidator (0, Int32.MaxValue),
 								  ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (Type), null,
-							      null, null, ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (Type), String.Empty,
+							      new TypeTypeConverter (),
+							      null, ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (groupProp);
@@ -89,7 +93,7 @@ namespace System.Web.Services.Configuration {
 			set { base[priorityProp] = value; }
 		}
 
-		[TypeConverter]
+		[TypeConverter (typeof (TypeTypeConverter))]
 		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsKey)]
 		public Type Type {
 			get { return (Type) base [typeProp];}
@@ -106,7 +110,6 @@ namespace System.Web.Services.Configuration {
 		}
 
 	}
-
 }
 
 #endif

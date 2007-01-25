@@ -1,3 +1,10 @@
+2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeTypeConverter.cs :
+	  New internal stuff, TypeConverter for a type name.
+	* SoapExtensionTypeElement.cs :
+	  For Type property, use above. Part of #80619 fix.
+
 2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapExtensionTypeElement.cs : another config property fix.
