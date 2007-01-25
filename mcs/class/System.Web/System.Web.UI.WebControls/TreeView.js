@@ -60,7 +60,7 @@ function TreeView_PopulateCallback (data, ids)
 	if (data != "*") {
 		node.innerHTML = data;
 	    TreeView_ToggleExpand (idArray[0], idArray[1]);
-		var myForm = WebForm_GetFormFromCtrl (treeId);
+		var myForm = WebForm_GetFormFromCtrl (idArray[0]);
 	    TreeView_SetNodeFlag (myForm [idArray[0] + "_PopulatedStates"], idArray[1], true);
 	} else {
 		if (tree.showImage && tree.noExpandImage != null) {
