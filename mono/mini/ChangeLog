@@ -1,5 +1,7 @@
 2007-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Fix #80507 for x86.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Fix #80507 for amd64.
 
 	* iltests.il: Add new test for bug #80507.
