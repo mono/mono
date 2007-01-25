@@ -1,4 +1,9 @@
-2006-01-25  Alexander Olk  <alex.olk@googlemail.com>
+2007-01-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	- ButtonBase.cs: Fix capitalization of parameter: disposing.
+	[Fixes bug #80609]
+
+2007-01-25  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs:
 	- Move to using System.ComponentModel.EventHandlerList

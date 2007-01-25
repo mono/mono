@@ -371,8 +371,8 @@ namespace System.Windows.Forms {
 			return new ButtonBaseAccessibleObject (this);
 		}
 
-		protected override void Dispose(bool Disposing) {
-			base.Dispose(Disposing);
+		protected override void Dispose(bool disposing) {
+			base.Dispose(disposing);
 		}
 
 		protected override void OnEnabledChanged(EventArgs e) {
