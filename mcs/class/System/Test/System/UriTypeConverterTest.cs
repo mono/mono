@@ -257,6 +257,9 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD BUG ID: 7202")]
+#endif		
 		public void ConvertTo_Bad ()
 		{
 			Assert.AreEqual ("System.Object", converter.ConvertTo (new object (), typeof (string)), "object");
@@ -303,6 +306,9 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD BUG ID: 7202")]
+#endif		
 		public void ConvertTo_TypeDescriptorContext_Bad ()
 		{
 			Assert.AreEqual ("System.Object", converter.ConvertTo (context, null, new object (), typeof (string)), "object");
