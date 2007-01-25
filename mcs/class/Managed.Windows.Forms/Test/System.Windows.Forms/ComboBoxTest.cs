@@ -68,8 +68,97 @@ namespace MonoTests.System.Windows.Forms
 
 			mycmbbox.AutoCompleteCustomSource = null;
 			Assert.AreEqual (true, mycmbbox.AutoCompleteCustomSource != null, "#21");
+			
+			Assert.AreEqual (ImageLayout.Tile, mycmbbox.BackgroundImageLayout, "#22");
+			Assert.AreEqual (null, mycmbbox.DataSource, "#23");
+			Assert.AreEqual (106, mycmbbox.DropDownHeight, "#24");
+			Assert.AreEqual (FlatStyle.Standard, mycmbbox.FlatStyle, "#25");
+			Assert.AreEqual ("{Width=0, Height=0}", mycmbbox.MaximumSize.ToString (), "#26");
+			Assert.AreEqual ("{Width=0, Height=0}", mycmbbox.MinimumSize.ToString (), "#27");
+			Assert.AreEqual ("{Left=0,Top=0,Right=0,Bottom=0}", mycmbbox.Padding.ToString (), "#28");
+			
 #endif
 		}
+
+#if NET_2_0
+		[Test]
+		public void BackgroundImageLayoutTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.BackgroundImageLayout = ImageLayout.Stretch;
+			Assert.AreEqual (ImageLayout.Stretch, cmbbox.BackgroundImageLayout, "#01");
+		}
+		
+		[Test]
+		public void DropDownHeightTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.DropDownHeight = 225;
+			Assert.AreEqual (225, cmbbox.DropDownHeight, "#01");
+			cmbbox.DropDownHeight = 1;
+			Assert.AreEqual (1, cmbbox.DropDownHeight, "#02");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DropDownHeightExceptionTest1 ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.DropDownHeight = -225;	
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DropDownHeightExceptionTest2 ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.DropDownHeight = 0;
+		}
+		
+		[Test]
+		public void FlatStyleTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.FlatStyle = FlatStyle.Popup;
+			Assert.AreEqual (FlatStyle.Popup, cmbbox.FlatStyle, "#01");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void FlatStyleExceptionTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.FlatStyle = (FlatStyle) (-123);
+		}
+	
+		[Test]
+		public void MaximumSizeTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.MaximumSize = new Size (25, 25);
+			Assert.AreEqual ("{Width=25, Height=0}", cmbbox.MaximumSize.ToString (), "#01");
+			cmbbox.MaximumSize = new Size (50, 75);
+			Assert.AreEqual ("{Width=50, Height=0}", cmbbox.MaximumSize.ToString (), "#02");
+		}
+	
+		[Test]
+		public void MinumumSizeTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.MinimumSize = new Size (25, 25);
+			Assert.AreEqual ("{Width=25, Height=0}", cmbbox.MinimumSize.ToString (), "#1");
+			cmbbox.MinimumSize = new Size (50, 75);
+			Assert.AreEqual ("{Width=50, Height=0}", cmbbox.MinimumSize.ToString (), "#2");	
+		}
+		
+		[Test]
+		public void PaddingTest ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Padding = new Padding (21);
+			Assert.AreEqual ("{Left=21,Top=21,Right=21,Bottom=21}", cmbbox.Padding.ToString (), "#01");
+		}
+#endif
 
 		[Test]
 		public void BeginEndUpdateTest ()

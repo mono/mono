@@ -46,8 +46,8 @@ namespace MonoTests.System.Windows.Forms
 		public void SetUp (bool only_create, bool only_text)
 		{
 			SetUp (only_create, only_text, false);
-		}
-
+		}	
+				
 		// No attribute here since this is supposed to be called from 
 		// each test directly, not by nunit.
 		public void SetUp (bool only_create, bool only_text, bool set_parent)
@@ -63,6 +63,7 @@ namespace MonoTests.System.Windows.Forms
 				return;
 
 			main.Text = main.Name = "main";
+			main.ShowInTaskbar = false;
 			child1.Text = child1.Name = "child1";
 			child2.Text = child2.Name = "child2";
 			child3.Text = child3.Name = "child3";
@@ -985,12 +986,14 @@ namespace MonoTests.System.Windows.Forms
 
 				child1 = new Form ();
 				child1.Name = "child1";
+				child1.Text = "child1";
 				child1.MdiParent = main;
 				child1.WindowState = FormWindowState.Maximized;
 				child1.Show ();
 				
 				child2 = new Form ();
 				child2.Name = "child2";
+				child2.Text = "child2";
 				child2.MdiParent = main;
 				child2.Show();
 				
