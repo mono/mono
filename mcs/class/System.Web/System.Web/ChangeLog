@@ -1,3 +1,8 @@
+2007-01-25  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplication.cs: Make sure that a specific culture is used
+	when setting the current thread culture.
+
 2007-01-21 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* HttpServerUtility.cs: implement Execute/Transfer overloads that take
