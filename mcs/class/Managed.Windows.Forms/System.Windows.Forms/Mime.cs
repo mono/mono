@@ -82,8 +82,6 @@ namespace System.Windows.Forms
 		
 		private static object lock_object = new Object();
 		
-//		private int platform = (int) Environment.OSVersion.Platform;
-		
 		private bool is_zero_file = false;
 		
 		private int bytes_read = 0;
@@ -101,7 +99,7 @@ namespace System.Windows.Forms
 		public static ArrayList Matches80Plus;
 		public static ArrayList MatchesBelow80;
 		
-		private Mime( )
+		private Mime ()
 		{
 #if NET_2_0
 			Aliases = new NameValueCollection (StringComparer.CurrentCultureIgnoreCase);
@@ -126,83 +124,82 @@ namespace System.Windows.Forms
 			int buffer_length = fmcr.Init ();
 			
 			if (buffer_length != -1) {
-				buffer = new byte[ buffer_length ];
+				buffer = new byte [buffer_length];
 				mime_available = true;
 			}
 		}
 		
-		public static bool MimeAvailable
-		{
+		public static bool MimeAvailable {
 			get {
 				return Instance.mime_available;
 			}
 		}
 		
-		public static string GetMimeTypeForFile( string filename )
+		public static string GetMimeTypeForFile (string filename)
 		{
-			lock ( lock_object )
-			{
-				Instance.StartByFileName( filename );
+			lock (lock_object) {
+				Instance.StartByFileName (filename);
 			}
 			
 			return Instance.global_result;
 		}
 		
 		// not tested
-		public static string GetMimeTypeForData( byte[] data )
+		public static string GetMimeTypeForData (byte[] data)
 		{
-			lock ( lock_object )
-			{
-				Instance.StartDataLookup( data );
+			lock (lock_object) {
+				Instance.StartDataLookup (data);
 			}
 			
 			return Instance.global_result;
 		}
 		
-		public static string GetMimeTypeForString( string input )
+		public static string GetMimeTypeForString (string input)
 		{
-			lock ( lock_object )
-			{
-				Instance.StartStringLookup( input );
+			lock (lock_object) {
+				Instance.StartStringLookup (input);
 			}
 			
 			return Instance.global_result;
 		}
 		
-		public static string GetMimeAlias( string mimetype )
+		public static string GetMimeAlias (string mimetype)
 		{
-			return Aliases[ mimetype ];
+			return Aliases [mimetype];
 		}
 		
-		public static string GetMimeSubClass( string mimetype )
+		public static string GetMimeSubClass (string mimetype)
 		{
-			return SubClasses[ mimetype ];
+			return SubClasses [mimetype];
 		}
 		
-		private void StartByFileName( string filename )
+		public static void CleanFileCache ()
 		{
-			if ( mime_file_cache.ContainsKey( filename ) )
-			{
-				global_result = mime_file_cache[ filename ];
+			lock (lock_object) {
+				Instance.mime_file_cache.Clear ();
+			}
+		}
+		
+		private void StartByFileName (string filename)
+		{
+			if (mime_file_cache.ContainsKey (filename)) {
+				global_result = mime_file_cache [filename];
 				return;
 			}
 			
 			current_file_name = filename;
 			is_zero_file = false;
 			
-//			if ( !CheckForInode( ) )
-//			{
 			global_result = octet_stream;
 			
-			GoByFileName( );
-//			}
+			GoByFileName ();
 			
-			mime_file_cache.Add( current_file_name, global_result );
+			mime_file_cache.Add (current_file_name, global_result);
 			
 			if (mime_file_cache.Count > mime_file_cache_max_size) {
 				IEnumerator enumerator = mime_file_cache.GetEnumerator ();
 				
-				int counter = mime_file_cache_max_size - 1000;
+				int counter = mime_file_cache_max_size - 500;
 				
 				while (enumerator.MoveNext ()) {
 					mime_file_cache.Remove (enumerator.Current.ToString ());
@@ -214,120 +211,50 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		private void StartDataLookup( byte[] data )
+		private void StartDataLookup (byte[] data)
 		{
 			global_result = octet_stream;
 			
-			System.Array.Clear( buffer, 0, buffer.Length );
+			System.Array.Clear (buffer, 0, buffer.Length);
 			
-			if ( data.Length > buffer.Length )
-			{
-				System.Array.Copy( data, buffer, buffer.Length );
-			}
-			else
-			{
-				System.Array.Copy( data, buffer, data.Length );
+			if (data.Length > buffer.Length) {
+				System.Array.Copy (data, buffer, buffer.Length);
+			} else {
+				System.Array.Copy (data, buffer, data.Length);
 			}
 			
-			if ( CheckMatch80Plus( ) )
+			if (CheckMatch80Plus ())
 				return;
 			
-			if ( CheckMatchBelow80( ) )
+			if (CheckMatchBelow80 ())
 				return;
 			
-			CheckForBinaryOrText( );
+			CheckForBinaryOrText ();
 		}
 		
-		private void StartStringLookup( string input )
+		private void StartStringLookup (string input)
 		{
 			global_result = text_plain;
 			
 			search_string = input;
 			
-			if ( CheckForContentTypeString( ) )
+			if (CheckForContentTypeString ())
 				return;
 		}
 		
-//		private bool CheckForInode( )
-//		{
-//			if ( ( platform == 4 ) || ( platform == 128 ) )
-//			{
-//#if __MonoCS__
-//				try
-//				{
-//					// *nix platform
-//					Mono.Unix.UnixFileInfo ufi = new Mono.Unix.UnixFileInfo( current_file_name );
-//
-//					if ( ufi.IsFile )
-//					{
-//						return false;
-//					}
-//					else
-//					if ( ufi.IsDirectory )
-//					{
-//						global_result = "inode/directory";
-//						return true;
-//					}
-//					else
-//					if ( ufi.IsBlockDevice )
-//					{
-//						global_result = "inode/blockdevice";
-//						return true;
-//					}
-//					else
-//					if ( ufi.IsSocket )
-//					{
-//						global_result = "inode/socket";
-//						return true;
-//					}
-//					else
-//					if ( ufi.IsSymbolicLink )
-//					{
-//						global_result = "inode/symlink";
-//						return true;
-//					}
-//					else
-//					if ( ufi.IsCharacterDevice )
-//					{
-//						global_result = "inode/chardevice";
-//						return true;
-//					}
-//					else
-//					if ( ufi.IsFIFO )
-//					{
-//						global_result = "inode/fifo";
-//						return true;
-//					}
-//				} catch( Exception e )
-//				{
-//					return false;
-//				}
-//#endif
-//			}
-//			else
-//			{
-//				// TODO!!!!
-//				// windows platform
-//			}
-//			
-//			return false;
-//		}
-		
-		private void GoByFileName( )
+		private void GoByFileName ()
 		{
 			// check if we can open the file
-			if ( !OpenFile( ) )
-			{
+			if (!OpenFile ()) {
 				// couldn't open the file, check globals only
-				CheckGlobalPatterns( );
+				CheckGlobalPatterns ();
 				
 				return;
 			}
 			
-			if ( !is_zero_file )
-			{
+			if (!is_zero_file) {
 				// check for matches with a priority >= 80
-				if ( CheckMatch80Plus( ) )
+				if (CheckMatch80Plus ())
 					return;
 			}
 			
@@ -335,27 +262,25 @@ namespace System.Windows.Forms
 			// this should be done for zero size files also,
 			// for example zero size file trash.ccc~ should return
 			// application/x-trash instead of application/x-zerosize
-			if ( CheckGlobalPatterns( ) )
+			if (CheckGlobalPatterns ())
 				return;
 			
 			// if file size is zero, no other checks are needed
-			if ( is_zero_file )
+			if (is_zero_file)
 				return;
 			
 			// ok, still nothing matches then try matches with a priority < 80
-			if ( CheckMatchBelow80( ) )
+			if (CheckMatchBelow80 ())
 				return;
 			
 			// wow, still nothing... return application/octet-stream for binary data, or text/plain for textual data
-			CheckForBinaryOrText( );
+			CheckForBinaryOrText ();
 		}
 		
-		private bool CheckMatch80Plus( )
+		private bool CheckMatch80Plus ()
 		{
-			foreach ( Match match in Matches80Plus )
-			{
-				if ( TestMatch( match ) )
-				{
+			foreach (Match match in Matches80Plus) {
+				if (TestMatch (match)) {
 					global_result = match.MimeType;
 					
 					return true;
@@ -366,7 +291,7 @@ namespace System.Windows.Forms
 		}
 		
 		// this little helper method gives us a real speed improvement
-		private bool FastEndsWidth(string input, string value)
+		private bool FastEndsWidth (string input, string value)
 		{
 			if (value.Length > input.Length)
 				return false;
@@ -374,7 +299,7 @@ namespace System.Windows.Forms
 			int z = input.Length - 1;
 			
 			for (int i = value.Length - 1; i > -1; i--) {
-				if (value[i] != input[z])
+				if (value [i] != input [z])
 					return false;
 				
 				z--;
@@ -383,46 +308,46 @@ namespace System.Windows.Forms
 			return true;
 		}
 		
-		private bool FastStartsWith(string input, string value)
+		private bool FastStartsWith (string input, string value)
 		{
 			if (value.Length > input.Length)
 				return false;
 			
 			for (int i = 0; i < value.Length; i++)
-				if (value[i] != input[i])
+				if (value [i] != input [i])
 					return false;
 			
 			return true;
 		}
 		
 		// start always with index = 0
-		private int FastIndexOf(string input, char value)
+		private int FastIndexOf (string input, char value)
 		{
 			if (input.Length == 0)
 				return -1;
 			
 			for (int i = 0; i < input.Length; i++)
-				if (input[i] == value)
+				if (input [i] == value)
 					return i;
 			
 			return -1;
 		}
 		
-		private int FastIndexOf(string input, string value)
+		private int FastIndexOf (string input, string value)
 		{
 			if (input.Length == 0)
 				return -1;
 			
 			for (int i = 0; i < input.Length - value.Length; i++) {
-				if (input[i] == value[0]) {
+				if (input [i] == value [0]) {
 					int counter = 0;
 					for (int z = 1; z < value.Length; z++) {
-						if (input[i+z] != value[z])
+						if (input [i + z] != value [z])
 							break;
 						
 						counter++;
 					}
-					if (counter == value.Length -1) {
+					if (counter == value.Length - 1) {
 						return i;
 					}
 				}
@@ -431,115 +356,93 @@ namespace System.Windows.Forms
 			return -1;
 		}
 		
-		private void CheckGlobalResult( )
+		private void CheckGlobalResult ()
 		{
-			int comma_index = FastIndexOf(global_result, ',');
+			int comma_index = FastIndexOf (global_result, ',');
 			
-			if ( comma_index != -1 )
-			{
-				global_result = global_result.Substring( 0, comma_index );
+			if (comma_index != -1) {
+				global_result = global_result.Substring (0, comma_index);
 			}
 		}
 		
-		private bool CheckGlobalPatterns( )
+		private bool CheckGlobalPatterns ()
 		{
-			string filename = Path.GetFileName( current_file_name );
+			string filename = Path.GetFileName (current_file_name);
 			
 			// first check for literals
-			for ( int i = 0; i < GlobalLiterals.Count; i++ )
-			{
-				string key = GlobalLiterals.GetKey(i);
+			for (int i = 0; i < GlobalLiterals.Count; i++) {
+				string key = GlobalLiterals.GetKey (i);
 				
 				// no regex char
-				if ( FastIndexOf(key, '[' ) == -1 )
-				{
-					if (FastIndexOf(filename, key) != -1)
-					{
-						global_result = GlobalLiterals[i];
-						CheckGlobalResult( );
+				if (FastIndexOf (key, '[') == -1) {
+					if (FastIndexOf (filename, key) != -1) {
+						global_result = GlobalLiterals [i];
+						CheckGlobalResult ();
 						return true;
 					}
-				}
-				else // regex it ;)
-				{
-					if ( Regex.IsMatch( filename, key ) )
-					{
-						global_result = GlobalLiterals[ i ];
-						CheckGlobalResult( );
+				} else {
+					if (Regex.IsMatch (filename, key)) {
+						global_result = GlobalLiterals [i];
+						CheckGlobalResult ();
 						return true;
 					}
 				}
 			}
 			
-			if ( FastIndexOf(filename, '.' ) != -1 )
-			{
+			if (FastIndexOf (filename, '.') != -1) {
 				// check for double extension like .tar.gz
-				for ( int i = 0; i < GlobalPatternsLong.Count; i++ )
-				{
-					string key = GlobalPatternsLong.GetKey( i );
+				for (int i = 0; i < GlobalPatternsLong.Count; i++) {
+					string key = GlobalPatternsLong.GetKey (i);
 					
-					if (FastEndsWidth (filename, key))
-					{
-						global_result = GlobalPatternsLong[ i ];
-						CheckGlobalResult( );
+					if (FastEndsWidth (filename, key)) {
+						global_result = GlobalPatternsLong [i];
+						CheckGlobalResult ();
 						return true;
-					}
-					else
-					{
-						if ( FastEndsWidth (filename.ToLower( ), key ) )
-						{
-							global_result = GlobalPatternsLong[ i ];
-							CheckGlobalResult( );
+					} else {
+						if (FastEndsWidth (filename.ToLower (), key)) {
+							global_result = GlobalPatternsLong [i];
+							CheckGlobalResult ();
 							return true;
 						}
 					}
 				}
 				
 				// check normal extensions...
-				string extension = Path.GetExtension( current_file_name );
+				string extension = Path.GetExtension (current_file_name);
 				
-				if ( extension.Length != 0 )
-				{
-					string global_result_tmp = GlobalPatternsShort[ extension ];
+				if (extension.Length != 0) {
+					string global_result_tmp = GlobalPatternsShort [extension];
 					
-					if ( global_result_tmp != null )
-					{
+					if (global_result_tmp != null) {
 						global_result = global_result_tmp;
-						CheckGlobalResult( );
+						CheckGlobalResult ();
 						return true;
 					}
 					
-					global_result_tmp = GlobalPatternsShort[ extension.ToLower( ) ];
+					global_result_tmp = GlobalPatternsShort [extension.ToLower ()];
 					
-					if ( global_result_tmp != null )
-					{
+					if (global_result_tmp != null) {
 						global_result = global_result_tmp;
-						CheckGlobalResult( );
+						CheckGlobalResult ();
 						return true;
 					}
 				}
 			}
 			
 			// finally check if a prefix or suffix matches
-			for ( int i = 0; i < GlobalSufPref.Count; i++ )
-			{
-				string key = GlobalSufPref.GetKey( i );
+			for (int i = 0; i < GlobalSufPref.Count; i++) {
+				string key = GlobalSufPref.GetKey (i);
 				
-				if ( key[0] == '*' )
-				{
-					if (FastEndsWidth(filename, key.Replace( "*", String.Empty )))
-					{
-						global_result = GlobalSufPref[ i ];
-						CheckGlobalResult( );
+				if (key [0] == '*') {
+					if (FastEndsWidth (filename, key.Replace ("*", String.Empty))) {
+						global_result = GlobalSufPref [i];
+						CheckGlobalResult ();
 						return true;
 					}
-				}
-				else
-				{
-					if ( FastStartsWith(filename, key.Replace( "*", String.Empty ) ) )
-					{
-						global_result = GlobalSufPref[ i ];
-						CheckGlobalResult( );
+				} else {
+					if (FastStartsWith (filename, key.Replace ("*", String.Empty))) {
+						global_result = GlobalSufPref [i];
+						CheckGlobalResult ();
 						return true;
 					}
 				}
@@ -548,12 +451,10 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		private bool CheckMatchBelow80( )
+		private bool CheckMatchBelow80 ()
 		{
-			foreach ( Match match in MatchesBelow80 )
-			{
-				if ( TestMatch( match ) )
-				{
+			foreach (Match match in MatchesBelow80) {
+				if (TestMatch (match)) {
 					global_result = match.MimeType;
 					
 					return true;
@@ -563,16 +464,14 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		private void CheckForBinaryOrText( )
+		private void CheckForBinaryOrText ()
 		{
 			// check the first 32 bytes
 			
-			for ( int i = 0; i < 32; i++ )
-			{
-				char c = System.Convert.ToChar( buffer[ i ] );
+			for (int i = 0; i < 32; i++) {
+				char c = System.Convert.ToChar (buffer [i]);
 				
-				if ( c != '\t' &&  c != '\n' && c != '\r' && c != 12 && c < 32 )
-				{
+				if (c != '\t' &&  c != '\n' && c != '\r' && c != 12 && c < 32) {
 					global_result = octet_stream;
 					return;
 				}
@@ -590,7 +489,7 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		private bool TestMatchlet( Matchlet matchlet )
+		private bool TestMatchlet (Matchlet matchlet)
 		{
 			//  using a simple brute force search algorithm
 			// compare each (masked) value from the buffer with the (masked) value from the matchlet
@@ -599,72 +498,54 @@ namespace System.Windows.Forms
 			if (matchlet.Offset + matchlet.ByteValue.Length > bytes_read)
 				return false;
 			
-			for ( int offset_counter = 0; offset_counter < matchlet.OffsetLength; offset_counter++ )
-			{
+			for (int offset_counter = 0; offset_counter < matchlet.OffsetLength; offset_counter++) {
 				if (matchlet.Offset + offset_counter + matchlet.ByteValue.Length > bytes_read)
 					return false;
 				
-				if ( matchlet.Mask == null )
-				{
-					if ( buffer[ matchlet.Offset + offset_counter ] == matchlet.ByteValue[ 0 ] )
-					{
-						if ( matchlet.ByteValue.Length == 1 )
-						{
-							if ( matchlet.Matchlets.Count > 0 )
-							{
-								foreach ( Matchlet sub_matchlet in matchlet.Matchlets )
-								{
-									if ( TestMatchlet( sub_matchlet ) )
+				if (matchlet.Mask == null) {
+					if (buffer [matchlet.Offset + offset_counter] == matchlet.ByteValue [0]) {
+						if (matchlet.ByteValue.Length == 1) {
+							if (matchlet.Matchlets.Count > 0) {
+								foreach (Matchlet sub_matchlet in matchlet.Matchlets) {
+									if (TestMatchlet (sub_matchlet))
 										return true;
 								}
-							}
-							else
+							} else
 								return true;
 						}
 						
 						int minus = 0;
 						// check if the last matchlet byte value is the same as the byte value in the buffer...
 						if (matchlet.ByteValue.Length > 2) {
-							if (buffer[ matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1 ] != matchlet.ByteValue[ matchlet.ByteValue.Length - 1 ])
+							if (buffer [matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1] != matchlet.ByteValue [matchlet.ByteValue.Length - 1])
 								return false;
 							
 							minus = 1;
 						}
 						
-						for ( int i = 1; i < matchlet.ByteValue.Length - minus; i++ )
-						{
-							if ( buffer[ matchlet.Offset + offset_counter + i ] != matchlet.ByteValue[ i ] )
+						for (int i = 1; i < matchlet.ByteValue.Length - minus; i++) {
+							if (buffer [matchlet.Offset + offset_counter + i] != matchlet.ByteValue [i])
 								return false;
 						}
 						
-						if ( matchlet.Matchlets.Count > 0 )
-						{
-							foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
-							{
-								if ( TestMatchlet( sub_matchlets ) )
+						if (matchlet.Matchlets.Count > 0) {
+							foreach (Matchlet sub_matchlets in matchlet.Matchlets) {
+								if (TestMatchlet (sub_matchlets))
 									return true;
 							}
-						}
-						else
+						} else
 							return true;
 					}
-				}
-				else // with mask ( it's the same as above, only AND the byte with the corresponding mask byte
-				{
-					if ( ( buffer[ matchlet.Offset + offset_counter ] & matchlet.Mask[ 0 ] )  ==
-					    ( matchlet.ByteValue[ 0 ] & matchlet.Mask[ 0 ] ) )
-					{
-						if ( matchlet.ByteValue.Length == 1 )
-						{
-							if ( matchlet.Matchlets.Count > 0 )
-							{
-								foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
-								{
-									if ( TestMatchlet( sub_matchlets ) )
+				} else {
+					if ((buffer [matchlet.Offset + offset_counter] & matchlet.Mask [0])  ==
+					    (matchlet.ByteValue [0] & matchlet.Mask [0])) {
+						if (matchlet.ByteValue.Length == 1) {
+							if (matchlet.Matchlets.Count > 0) {
+								foreach (Matchlet sub_matchlets in matchlet.Matchlets) {
+									if (TestMatchlet (sub_matchlets))
 										return true;
 								}
-							}
-							else
+							} else
 								return true;
 						}
 						
@@ -672,29 +553,25 @@ namespace System.Windows.Forms
 						// check if the last matchlet byte value is the same as the byte value in the buffer...
 						if (matchlet.ByteValue.Length > 2) {
 							
-							if ((buffer[ matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1 ] & matchlet.Mask[ matchlet.ByteValue.Length - 1 ])
-							    != (matchlet.ByteValue[ matchlet.ByteValue.Length - 1 ] & matchlet.Mask[ matchlet.ByteValue.Length - 1 ]))
+							if ((buffer [matchlet.Offset + offset_counter + matchlet.ByteValue.Length - 1] & matchlet.Mask [matchlet.ByteValue.Length - 1])
+							    != (matchlet.ByteValue [matchlet.ByteValue.Length - 1] & matchlet.Mask [matchlet.ByteValue.Length - 1]))
 								return false;
 							
 							minus = 1;
 						}
 						
-						for ( int i = 1; i < matchlet.ByteValue.Length - minus; i++ )
-						{
-							if ( ( buffer[ matchlet.Offset + offset_counter + i ]  & matchlet.Mask[ i ] ) !=
-							    ( matchlet.ByteValue[ i ] & matchlet.Mask[ i ] ) )
+						for (int i = 1; i < matchlet.ByteValue.Length - minus; i++) {
+							if ((buffer [matchlet.Offset + offset_counter + i]  & matchlet.Mask [i]) !=
+							    (matchlet.ByteValue [i] & matchlet.Mask [i]))
 								return false;
 						}
 						
-						if ( matchlet.Matchlets.Count > 0 )
-						{
-							foreach ( Matchlet sub_matchlets in matchlet.Matchlets )
-							{
-								if ( TestMatchlet( sub_matchlets ) )
+						if (matchlet.Matchlets.Count > 0) {
+							foreach (Matchlet sub_matchlets in matchlet.Matchlets) {
+								if (TestMatchlet (sub_matchlets))
 									return true;
 							}
-						}
-						else
+						} else
 							return true;
 					}
 				}
@@ -703,82 +580,72 @@ namespace System.Windows.Forms
 			return false;
 		}
 		
-		private bool OpenFile( )
+		private bool OpenFile ()
 		{
-			try
-			{
-				file_stream = new FileStream( current_file_name, FileMode.Open, FileAccess.Read ); // FileShare ??? use BinaryReader ???
+			try {
+				file_stream = new FileStream (current_file_name, FileMode.Open, FileAccess.Read); // FileShare ??? use BinaryReader ???
 				
-				if ( file_stream.Length == 0 )
-				{
+				if (file_stream.Length == 0) {
 					global_result = zero_file;
 					is_zero_file = true;
-				}
-				else
-				{
-					bytes_read = file_stream.Read( buffer, 0, buffer.Length );
+				} else {
+					bytes_read = file_stream.Read (buffer, 0, buffer.Length);
 					
 					// do not clear the whole buffer everytime; clear only what's needed
 					if (bytes_read < buffer.Length) {
-						System.Array.Clear( buffer, bytes_read, buffer.Length - bytes_read );
+						System.Array.Clear (buffer, bytes_read, buffer.Length - bytes_read);
 					}
 				}
 				
-				file_stream.Close( );
-			}
-			catch (Exception)
-			{
+				file_stream.Close ();
+			} catch (Exception) {
 				return false;
 			}
 			
 			return true;
 		}
 		
-		private bool CheckForContentTypeString( )
+		private bool CheckForContentTypeString ()
 		{
-			int index = search_string.IndexOf( "Content-type:" );
+			int index = search_string.IndexOf ("Content-type:");
 			
-			if ( index != -1 )
-			{
+			if (index != -1) {
 				index += 13; // Length of string "Content-type:"
 				
 				global_result = String.Empty;
 				
-				while ( search_string[ index ] != ';' )
-				{
-					global_result += search_string[ index++ ];
+				while (search_string [index] != ';') {
+					global_result += search_string [index++];
 				}
 				
-				global_result.Trim( );
+				global_result.Trim ();
 				
 				return true;
 			}
 			
 			// convert string to byte array
-			byte[] string_byte = ( new ASCIIEncoding( ) ).GetBytes( search_string );
+			byte[] string_byte = (new ASCIIEncoding ()).GetBytes (search_string);
 			
-			System.Array.Clear( buffer, 0, buffer.Length );
+			System.Array.Clear (buffer, 0, buffer.Length);
 			
-			if ( string_byte.Length > buffer.Length )
-			{
-				System.Array.Copy( string_byte, buffer, buffer.Length );
-			}
-			else
-			{
-				System.Array.Copy( string_byte, buffer, string_byte.Length );
+			if (string_byte.Length > buffer.Length) {
+				System.Array.Copy (string_byte, buffer, buffer.Length);
+			} else {
+				System.Array.Copy (string_byte, buffer, string_byte.Length);
 			}
 			
-			if ( CheckMatch80Plus( ) )
+			if (CheckMatch80Plus ())
 				return true;
 			
-			if ( CheckMatchBelow80( ) )
+			if (CheckMatchBelow80 ())
 				return true;
 			
 			return false;
 		}
 	}
 	
-	internal class FDOMimeConfigReader {
+	internal class FDOMimeConfigReader
+	{
 		bool fdo_mime_available = false;
 		StringCollection shared_mime_paths = new StringCollection ();
 		BinaryReader br;
@@ -862,15 +729,17 @@ namespace System.Windows.Forms
 						// indent
 						char c;
 						if (br.PeekChar () != '>') {
-							string indent_string = String.Empty;
+							StringBuilder indent_string = new StringBuilder ();
+							//string indent_string = String.Empty;
 							while (true) {
 								if (br.PeekChar () == '>')
 									break;
 								
 								c = br.ReadChar ();
-								indent_string += c;
+								//indent_string += c;
+								indent_string.Append (c);
 							}
-							indent = Convert.ToInt32 (indent_string);
+							indent = Convert.ToInt32 (indent_string.ToString ());
 						}
 						
 						int offset = 0;
@@ -1030,10 +899,10 @@ namespace System.Windows.Forms
 							
 							if (split2.Length > 2) {
 								// more than one dot
-								Mime.GlobalPatternsLong.Add (split [1].Remove(0, 1), split [0]);
+								Mime.GlobalPatternsLong.Add (split [1].Remove (0, 1), split [0]);
 							} else {
 								// normal
-								Mime.GlobalPatternsShort.Add (split [1].Remove(0, 1), split [0]);
+								Mime.GlobalPatternsShort.Add (split [1].Remove (0, 1), split [0]);
 							}
 						}
 					}
@@ -1098,7 +967,7 @@ namespace System.Windows.Forms
 		
 		private int ReadValue ()
 		{
-			string result_string = String.Empty;
+			StringBuilder result_string = new StringBuilder ();
 			int result = 0;
 			char c;
 			
@@ -1107,10 +976,10 @@ namespace System.Windows.Forms
 					break;
 				
 				c = br.ReadChar ();
-				result_string += c;
+				result_string.Append (c);
 			}
 			
-			result = Convert.ToInt32 (result_string);
+			result = Convert.ToInt32 (result_string.ToString ());
 			
 			return result;
 		}
@@ -1118,27 +987,27 @@ namespace System.Windows.Forms
 		private string ReadPriorityAndMimeType (ref int priority)
 		{
 			if (br.ReadChar () == '[') {
-				string priority_string = String.Empty;
+				StringBuilder priority_string = new StringBuilder ();
 				while (true) {
 					char c = br.ReadChar ();
 					if (c == ':')
 						break;
-					priority_string += c;
+					priority_string.Append (c);
 				}
 				
-				priority = System.Convert.ToInt32 (priority_string);
+				priority = System.Convert.ToInt32 (priority_string.ToString ());
 				
-				string mime_type_result = String.Empty;
+				StringBuilder mime_type_result = new StringBuilder ();
 				while (true) {
 					char c = br.ReadChar ();
 					if (c == ']')
 						break;
 					
-					mime_type_result += c;
+					mime_type_result.Append (c);
 				}
 				
 				if (br.ReadChar () == '\n')
-					return mime_type_result;
+					return mime_type_result.ToString ();
 			}
 			return null;
 		}
@@ -1160,7 +1029,8 @@ namespace System.Windows.Forms
 		}
 	}
 	
-	internal class Match {
+	internal class Match
+	{
 		string mimeType;
 		int priority;
 		ArrayList matchlets = new ArrayList();
@@ -1192,7 +1062,8 @@ namespace System.Windows.Forms
 		}
 	}
 	
-	internal class Matchlet {
+	internal class Matchlet
+	{
 		byte[] byteValue;
 		byte[] mask = null;
 		

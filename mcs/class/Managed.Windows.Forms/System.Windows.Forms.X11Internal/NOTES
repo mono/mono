@@ -21,7 +21,6 @@ more event work:
 
 CheckedListBox:  nothing done.
 DataGridView*: nothing done.
-FileDialog: nothing done.
 GridColumnStylesCollection: nothing done, no Component inheritance
 GridTableStylesCollection: nothing done, no Component inheritance
 MenuItem: what do we do about CloneMenu?  we can't have assignment of events like that (look for the #if notyet)

@@ -367,6 +367,11 @@ namespace System.Windows.Forms {
 			popupButtonPanel.DirectoryChanged += new EventHandler (OnDirectoryChangedPopupButtonPanel);
 			
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
+#if NET_2_0
+			form.FormClosed += new FormClosedEventHandler (OnFileDialogFormClosed);
+#else
+			form.Closed += new EventHandler (OnClickCancelButton);
+#endif
 		}
 		
 		[DefaultValue(true)]
@@ -647,6 +652,8 @@ namespace System.Windows.Forms {
 			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
 				fo (this, e);
+			
+			Mime.CleanFileCache ();
 		}
 		
 		protected  override bool RunDialog (IntPtr hWndOwner)
@@ -1016,6 +1023,13 @@ namespace System.Windows.Forms {
 		{
 			ReadOnlyChecked = readonlyCheckBox.Checked;
 		}
+
+#if NET_2_0		
+		void OnFileDialogFormClosed (object sender, EventArgs e)
+		{
+			OnClickCancelButton (sender, EventArgs.Empty);
+		}
+#endif
 		
 		private void UpdateFilters ()
 		{
@@ -1143,7 +1157,7 @@ namespace System.Windows.Forms {
 			public Image Image {
 				set {
 					image = value;
-					Refresh ();
+					Invalidate ();
 				}
 				
 				get {
@@ -1154,7 +1168,7 @@ namespace System.Windows.Forms {
 			public PopupButtonState ButtonState {
 				set {
 					popupButtonState = value;
-					Refresh ();
+					Invalidate ();
 				}
 				
 				get {
@@ -1217,7 +1231,7 @@ namespace System.Windows.Forms {
 					panel.focusButton.ButtonState = PopupButtonState.Normal;
 					panel.focusButton = null;
 				}
-				Refresh ();
+				Invalidate ();
 				base.OnMouseEnter (e);
 			}
 			
@@ -1225,20 +1239,18 @@ namespace System.Windows.Forms {
 			{
 				if (popupButtonState == PopupButtonState.Up)
 					popupButtonState = PopupButtonState.Normal;
-				Refresh ();
+				Invalidate ();
 				base.OnMouseLeave (e);
 			}
 			
 			protected override void OnClick (EventArgs e)
 			{
 				popupButtonState = PopupButtonState.Down;
-				Refresh ();
+				Invalidate ();
 				base.OnClick (e);
 			}
 		}
 		#endregion
-		
-		private EventHandler on_directory_changed;
 		
 		private PopupButton recentlyusedButton;
 		private PopupButton desktopButton;
@@ -1341,8 +1353,9 @@ namespace System.Windows.Forms {
 				currentPath = MWFVFS.MyNetworkPrefix;
 			}
 			
-			if (on_directory_changed != null)
-				on_directory_changed (this, EventArgs.Empty);
+			EventHandler eh = (EventHandler)(Events [PDirectoryChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 		
 		public string CurrentFolder {
@@ -1473,9 +1486,11 @@ namespace System.Windows.Forms {
 			e.Handled = true;
 		}
 		
+		static object PDirectoryChangedEvent = new object ();
+		
 		public event EventHandler DirectoryChanged {
-			add { on_directory_changed += value; }
-			remove { on_directory_changed -= value; }
+			add { Events.AddHandler (PDirectoryChangedEvent, value); }
+			remove { Events.RemoveHandler (PDirectoryChangedEvent, value); }
 		}
 	}
 	#endregion
@@ -1541,8 +1556,6 @@ namespace System.Windows.Forms {
 		
 		private string currentPath;
 		
-		private EventHandler on_directory_changed;
-		
 		private Stack folderStack = new Stack();
 		
 		private static readonly int indent = 6;
@@ -1589,6 +1602,9 @@ namespace System.Windows.Forms {
 			foreach (FSEntry fsEntry in al) {
 				myComputerItems.Add (new DirComboBoxItem (MimeIconEngine.LargeIcons, fsEntry.IconIndex, fsEntry.Name, fsEntry.FullName, indent * 2));
 			}
+			
+			al.Clear ();
+			al = null;
 			
 			mainParentDirComboBoxItem = myComputerDirComboboxItem;
 			
@@ -1781,13 +1797,16 @@ namespace System.Windows.Forms {
 		
 		protected override void OnSelectionChangeCommitted (EventArgs e)
 		{
-			if (on_directory_changed != null)
-				on_directory_changed (this, EventArgs.Empty);
+			EventHandler eh = (EventHandler)(Events [CDirectoryChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 		
+		static object CDirectoryChangedEvent = new object ();
+		
 		public event EventHandler DirectoryChanged {
-			add { on_directory_changed += value; }
-			remove { on_directory_changed -= value; }
+			add { Events.AddHandler (CDirectoryChangedEvent, value); }
+			remove { Events.RemoveHandler (CDirectoryChangedEvent, value); }
 		}
 	}
 	#endregion
@@ -1894,11 +1913,6 @@ namespace System.Windows.Forms {
 		private ArrayList filterArrayList;
 		
 		private bool showHiddenFiles = false;
-		
-		private EventHandler on_selected_file_changed;
-		private EventHandler on_selected_files_changed;
-		private EventHandler on_directory_changed;
-		private EventHandler on_force_dialog_end;
 		
 		private string selectedFilesString;
 		
@@ -2326,6 +2340,12 @@ namespace System.Windows.Forms {
 			}
 			
 			EndUpdate ();
+			
+			collection.Clear ();
+			collection = null;
+			
+			directoriesArrayList.Clear ();
+			fileArrayList.Clear ();
 		}
 		
 		public void AddControlToEnableDisableByDirStack (object control)
@@ -2386,8 +2406,9 @@ namespace System.Windows.Forms {
 					if (fsEntry.FileType == FSEntry.FSEntryType.File) {
 						currentFSEntry = fsEntry;
 						
-						if (on_selected_file_changed != null)
-							on_selected_file_changed (this, EventArgs.Empty);
+						EventHandler eh = (EventHandler)(Events [MSelectedFileChangedEvent]);
+						if (eh != null)
+							eh (this, EventArgs.Empty);
 					}
 				}
 			}
@@ -2406,16 +2427,19 @@ namespace System.Windows.Forms {
 					
 					ChangeDirectory (null, fsEntry.FullName);
 					
-					if (on_directory_changed != null)
-						on_directory_changed (this, EventArgs.Empty);
+					EventHandler eh = (EventHandler)(Events [MDirectoryChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				} else {
 					currentFSEntry = fsEntry;
 					
-					if (on_selected_file_changed != null)
-						on_selected_file_changed (this, EventArgs.Empty);
+					EventHandler eh = (EventHandler)(Events [MSelectedFileChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 					
-					if (on_force_dialog_end != null)
-						on_force_dialog_end (this, EventArgs.Empty);
+					eh = (EventHandler)(Events [MForceDialogEndEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 					
 					return;
 				}
@@ -2445,8 +2469,9 @@ namespace System.Windows.Forms {
 					}
 				}
 				
-				if (on_selected_files_changed != null)
-					on_selected_files_changed (this, EventArgs.Empty);
+				EventHandler eh = (EventHandler)(Events [MSelectedFilesChangedEvent]);
+				if (eh != null)
+					eh (this, EventArgs.Empty);
 			}
 			
 			base.OnSelectedIndexChanged (e);
@@ -2546,24 +2571,29 @@ namespace System.Windows.Forms {
 			CreateNewFolder ();
 		}
 		
+		static object MSelectedFileChangedEvent = new object ();
+		static object MSelectedFilesChangedEvent = new object ();
+		static object MDirectoryChangedEvent = new object ();
+		static object MForceDialogEndEvent = new object ();
+		
 		public event EventHandler SelectedFileChanged {
-			add { on_selected_file_changed += value; }
-			remove { on_selected_file_changed -= value; }
+			add { Events.AddHandler (MSelectedFileChangedEvent, value); }
+			remove { Events.RemoveHandler (MSelectedFileChangedEvent, value); }
 		}
 		
 		public event EventHandler SelectedFilesChanged {
-			add { on_selected_files_changed += value; }
-			remove { on_selected_files_changed -= value; }
+			add { Events.AddHandler (MSelectedFilesChangedEvent, value); }
+			remove { Events.RemoveHandler (MSelectedFilesChangedEvent, value); }
 		}
 		
 		public event EventHandler DirectoryChanged {
-			add { on_directory_changed += value; }
-			remove { on_directory_changed -= value; }
+			add { Events.AddHandler (MDirectoryChangedEvent, value); }
+			remove { Events.RemoveHandler (MDirectoryChangedEvent, value); }
 		}
 		
 		public event EventHandler ForceDialogEnd {
-			add { on_force_dialog_end += value; }
-			remove { on_force_dialog_end -= value; }
+			add { Events.AddHandler (MForceDialogEndEvent, value); }
+			remove { Events.RemoveHandler (MForceDialogEndEvent, value); }
 		}
 	}
 	#endregion
@@ -4205,10 +4235,7 @@ namespace System.Windows.Forms {
 		internal class MWFConfigInstance
 		{
 			Hashtable classes_hashtable = new Hashtable ();
-			string path;
 			static string full_file_name;
-			XmlTextReader xtr;
-			XmlTextWriter xtw;
 			static string default_file_name;
 			readonly string configName = "MWFConfig";
 			static int platform = (int) Environment.OSVersion.Platform;
@@ -4242,7 +4269,7 @@ namespace System.Windows.Forms {
 			// only for testing
 			public MWFConfigInstance (string filename)
 			{
-				path = Path.GetDirectoryName (filename);
+				string path = Path.GetDirectoryName (filename);
 				if (path == null || path == String.Empty) {
 					path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 					
@@ -4284,9 +4311,9 @@ namespace System.Windows.Forms {
 			private void Open (string filename)
 			{
 				try {
-					xtr = new XmlTextReader (filename);
+					XmlTextReader xtr = new XmlTextReader (filename);
 					
-					ReadConfig ();
+					ReadConfig (xtr);
 					
 					xtr.Close ();
 				} catch (Exception) {
@@ -4296,10 +4323,10 @@ namespace System.Windows.Forms {
 			public void Flush ()
 			{
 				try {
-					xtw = new XmlTextWriter (full_file_name, null);
+					XmlTextWriter xtw = new XmlTextWriter (full_file_name, null);
 					xtw.Formatting = Formatting.Indented;
 					
-					WriteConfig ();
+					WriteConfig (xtw);
 					
 					xtw.Close ();
 
@@ -4338,9 +4365,9 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			private void ReadConfig ()
+			private void ReadConfig (XmlTextReader xtr)
 			{
-				if (!CheckForMWFConfig ())
+				if (!CheckForMWFConfig (xtr))
 					return;
 				
 				while (xtr.Read ()) {
@@ -4360,7 +4387,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			private bool CheckForMWFConfig ()
+			private bool CheckForMWFConfig (XmlTextReader xtr)
 			{
 				if (xtr.Read ()) {
 					if (xtr.NodeType == XmlNodeType.Element) {
@@ -4372,7 +4399,7 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			
-			private void WriteConfig ()
+			private void WriteConfig (XmlTextWriter xtw)
 			{
 				if (classes_hashtable.Count == 0)
 					return;
