@@ -709,6 +709,7 @@ namespace System.Windows.Forms
 		#region ComboBox
 		// Drawing
 		public abstract void DrawComboBoxItem (ComboBox ctrl, DrawItemEventArgs e);
+		public abstract void DrawFlatStyleComboButton (Graphics graphics, Rectangle rectangle, ButtonState state);
 		#endregion	// ComboBox
 
 		#region Control

@@ -825,6 +825,58 @@ namespace System.Windows.Forms
 
 			string_format.Dispose ();
 		}
+		
+		public override void DrawFlatStyleComboButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		{
+			Point[]			arrow = new Point[3];
+			Point				P1;
+			Point				P2;
+			Point				P3;
+			int				centerX;
+			int				centerY;
+			int				shiftX;
+			int				shiftY;
+			Rectangle		rect;
+
+			rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
+			centerX=rect.Left+rect.Width/2;
+			centerY=rect.Top+rect.Height/2;
+			shiftX=Math.Max(1, rect.Width/8);
+			shiftY=Math.Max(1, rect.Height/8);
+
+			if ((state & ButtonState.Pushed)!=0) {
+				shiftX++;
+				shiftY++;
+			}
+
+			rect.Y-=shiftY;
+			centerY-=shiftY;
+			P1=new Point(rect.Left + 1, centerY);
+			P2=new Point(rect.Right - 1, centerY);
+			P3=new Point(centerX, rect.Bottom - 1);
+
+			arrow[0]=P1;
+			arrow[1]=P2;
+			arrow[2]=P3;
+			
+			/* Draw the arrow */
+			if ((state & ButtonState.Inactive)!=0) {
+				/* Move away from the shadow */
+				arrow[0].X += 1;	arrow[0].Y += 1;
+				arrow[1].X += 1;	arrow[1].Y += 1;
+				arrow[2].X += 1;	arrow[2].Y += 1;
+				
+				graphics.FillPolygon(SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
+
+				arrow[0]=P1;
+				arrow[1]=P2;
+				arrow[2]=P3;
+
+				graphics.FillPolygon(SystemBrushes.ControlDark, arrow, FillMode.Winding);
+			} else {
+				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
+			}		
+		}
 		#endregion ComboBox
 		
 		#region Datagrid
@@ -3263,6 +3315,7 @@ namespace System.Windows.Forms
 			if ( radio_button.Focused && radio_button.appearance != Appearance.Button && radio_button.Enabled )
 				DrawInnerFocusRectangle( dc, text_rectangle, radio_button.BackColor );
 		}
+		
 		
 		// renders a radio button with the Flat and Popup FlatStyle
 		protected virtual void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)

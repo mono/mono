@@ -74,6 +74,8 @@ namespace System.Windows.Forms
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
+		private int drop_down_height;
+		private FlatStyle flat_style;
 #endif
 
 		[ComVisible(true)]
@@ -98,6 +100,11 @@ namespace System.Windows.Forms
 			item_height = FontHeight + 2;
 			BackColor = ThemeEngine.Current.ColorWindow;
 			border_style = BorderStyle.None;
+
+#if NET_2_0
+			drop_down_height = 106;
+			flat_style = FlatStyle.Standard;
+#endif
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
@@ -251,10 +258,28 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+
 		protected override CreateParams CreateParams {
 			get { return base.CreateParams;}
 		}
 
+#if NET_2_0
+		[DefaultValue ((string)null)]
+		[AttributeProvider (typeof (IListSource))]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		public object DataSource {
+			get { return base.DataSource; }
+			set { base.DataSource = value; }
+		}
+#endif
 		protected override Size DefaultSize {
 			get { return new Size (121, 21); }
 		}
@@ -279,6 +304,24 @@ namespace System.Windows.Forms
 				Refresh ();
     			}
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[DefaultValue (106)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public int DropDownHeight {
+			get {
+				return drop_down_height;
+			}
+			set {
+				if (value < 1)
+					throw new ArgumentOutOfRangeException ("DropDownHeight", "DropDownHeight must be greater than 0.");
+					
+				drop_down_height = value;
+				IntegralHeight = false;
+			}
+		}
+#endif
 
 		[DefaultValue (ComboBoxStyle.DropDown)]
 		[RefreshProperties(RefreshProperties.Repaint)]
@@ -391,6 +434,24 @@ namespace System.Windows.Forms
 			}
 		}		
 
+#if NET_2_0
+		[DefaultValue (FlatStyle.Standard)]
+		[Localizable (true)]
+		public FlatStyle FlatStyle {
+			get { return flat_style; }
+			set {
+				if (!Enum.IsDefined (typeof (FlatStyle), value))
+					throw new InvalidEnumArgumentException ("FlatStyle", (int) value, typeof (FlatStyle));
+				
+				flat_style = value;
+				LayoutComboBox ();
+				Invalidate ();
+			}
+		}
+ 
+
+#endif
+
 		public override bool Focused {
 			get { return base.Focused; }
 		}
@@ -469,6 +530,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public override Size MaximumSize {
+			get { return base.MaximumSize; }
+			set {
+				base.MaximumSize = new Size (value.Width, 0);
+			}
+		}
+#endif
 		[DefaultValue (0)]
 		[Localizable (true)]
 		public int MaxLength {
@@ -489,6 +558,23 @@ namespace System.Windows.Forms
 				}			
 			}
 		}
+
+#if NET_2_0
+		public override Size MinimumSize {
+			get { return base.MinimumSize; }
+			set {
+				base.MinimumSize = new Size (value.Width, 0);
+			}
+		}
+		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		public Padding Padding  {
+			get { return base.Padding; }
+			set { base.Padding = value; }
+		}
+#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]		
@@ -1008,11 +1094,19 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseLeave (EventArgs e)
 		{
+#if NET_2_0
+			if (flat_style == FlatStyle.Popup)
+				Invalidate ();
+#endif
 			base.OnMouseLeave (e);
 		}
 		
 		protected override void OnMouseEnter (EventArgs e)
 		{
+#if NET_2_0
+			if (flat_style == FlatStyle.Popup)
+				Invalidate ();
+#endif
 			base.OnMouseEnter (e);
 		}
 #endif
@@ -1149,6 +1243,13 @@ namespace System.Windows.Forms
 			       	button_area.Y = text_area.Y + border;
 				button_area.Width = button_width;
 				button_area.Height = text_area.Height - 2 * border;
+#if NET_2_0
+				if (flat_style == FlatStyle.Popup || flat_style == FlatStyle.Flat) {
+					button_area.Inflate (1, 1);
+					button_area.X += 2;
+					button_area.Width -= 2;
+				}
+#endif
 			}
 
 			if (button_area != prev_button_area) {
@@ -1180,11 +1281,25 @@ namespace System.Windows.Forms
 		internal void Draw (Rectangle clip, Graphics dc)
 		{				
 			Theme theme = ThemeEngine.Current;
+			FlatStyle style = FlatStyle.Standard;
+			bool is_flat = false;
+
+#if NET_2_0
+			style = this.FlatStyle;
+			is_flat = style == FlatStyle.Flat || style == FlatStyle.Popup;
+#endif
 
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				dc.FillRectangle (theme.ResPool.GetSolidBrush (Parent.BackColor), ClientRectangle);
 
-			if (clip.IntersectsWith (text_area))
+			if (style == FlatStyle.Popup && (is_entered || Focused)) {
+				Rectangle area = text_area;
+				area.Height -= 1;
+				area.Width -= 1;
+				dc.DrawRectangle (theme.ResPool.GetPen (SystemColors.ControlDark), area);
+				dc.DrawLine (theme.ResPool.GetPen (SystemColors.ControlDark), button_area.X - 1, button_area.Top, button_area.X - 1, button_area.Bottom);
+			}
+			if (!is_flat && clip.IntersectsWith (text_area))
 				ControlPaint.DrawBorder3D (dc, text_area, Border3DStyle.Sunken);
 
 			int border = theme.Border3DSize.Width;
@@ -1213,7 +1328,11 @@ namespace System.Windows.Forms
 				if (!is_enabled)
 					button_state = ButtonState.Inactive;
 				
-				theme.CPDrawComboButton (dc, button_area, button_state);
+				if (is_flat) {
+					theme.DrawFlatStyleComboButton (dc, button_area, button_state);
+				} else {
+					theme.CPDrawComboButton (dc, button_area, button_state);
+				}
 			}			
 		}
 
@@ -1813,7 +1932,11 @@ namespace System.Windows.Forms
 						}
 						
 					} else	{
+#if NET_2_0
+						height = owner.DropDownHeight;
+#else		
 						height = owner.ItemHeight * count;
+#endif
 					}
 				}
 				
