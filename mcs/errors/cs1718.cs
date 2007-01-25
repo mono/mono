@@ -1,4 +1,4 @@
-// cs1718.cs: Comparison made to same variable; did you mean to compare something else?
+// CS1718: A comparison made to same variable. Did you mean to compare something else?
 // Line: 10
 // Compiler options: -warnaserror -warn:3
 
