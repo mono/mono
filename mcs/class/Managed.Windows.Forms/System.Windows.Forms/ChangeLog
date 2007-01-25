@@ -1,3 +1,8 @@
+2007-01-25  Chris Toshok  <toshok@ximian.com>
+
+	* Splitter.cs: fix the new unit tests, and reindent some switch
+	statements.
+
 2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ComboBox.cs: Implemented 2.0 methods and events.

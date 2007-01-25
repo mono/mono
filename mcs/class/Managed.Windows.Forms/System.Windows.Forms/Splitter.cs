@@ -148,25 +148,21 @@ namespace System.Windows.Forms {
 				border_style = value;
 
 				switch(value) {
-					case BorderStyle.FixedSingle: {
-						splitter_size = 4;	// We don't get motion events for 1px wide windows on X11. sigh.
-						break;
-					}
+				case BorderStyle.FixedSingle:
+					splitter_size = 4;	// We don't get motion events for 1px wide windows on X11. sigh.
+					break;
 
-					case BorderStyle.Fixed3D: {
-						value = BorderStyle.None;
-						splitter_size = 3;
-						break;
-					}
+				case BorderStyle.Fixed3D:
+					value = BorderStyle.None;
+					splitter_size = 3;
+					break;
 
-					case BorderStyle.None: {
-						splitter_size = 3;
-						break;
-					}
+				case BorderStyle.None:
+					splitter_size = 3;
+					break;
 
-					default: {
-						throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
-					}
+				default:
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
 				}
 
 				base.InternalBorderStyle = value;
@@ -289,15 +285,12 @@ namespace System.Windows.Forms {
 				if (affected == null) {
 					split_requested = value;
 				}
-
-				if (Capture || (affected == null)) {
-					return;
-				}
-
-				if (horizontal) {
-					affected.Height = value;
-				} else {
-					affected.Width = value;
+				else {
+					if (horizontal) {
+						affected.Height = value;
+					} else {
+						affected.Width = value;
+					}
 				}
 			}
 		}
@@ -491,11 +484,8 @@ namespace System.Windows.Forms {
 				split_position = limit_max;
 			}
 
-			// Don't waste cycles
-			if (prev_split_position != split_position) {
-				// Update our handle location
-				DrawDragHandle(DrawType.Redraw);
-			}
+			// Update our handle location
+			DrawDragHandle(DrawType.Redraw);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {
@@ -576,40 +566,28 @@ namespace System.Windows.Forms {
 		#region Private Properties and Methods
 		private Control AffectedControl {
 			get {
-				if (Parent == null) {
+				if (Parent == null)
 					return null;
-				}
 
 				// Doc says the first control preceeding us in the zorder 
 				for (int i = Parent.Controls.GetChildIndex(this) + 1; i < Parent.Controls.Count; i++) {
 					switch (Dock) {
-						case DockStyle.Top: {
-							if (Top == Parent.Controls[i].Bottom) {
-								return Parent.Controls[i];
-							}
-							break;
-						}
-
-						case DockStyle.Bottom: {
-							if (Bottom == Parent.Controls[i].Top) {
-								return Parent.Controls[i];
-							}
-							break;
-						}
-
-						case DockStyle.Left: {
-							if (Left == Parent.Controls[i].Right) {
-								return Parent.Controls[i];
-							}
-							break;
-						}
-
-						case DockStyle.Right: {
-							if (Right == Parent.Controls[i].Left) {
-								return Parent.Controls[i];
-							}
-							break;
-						}
+					case DockStyle.Top:
+						if (Top == Parent.Controls[i].Bottom)
+							return Parent.Controls[i];
+						break;
+					case DockStyle.Bottom:
+						if (Bottom == Parent.Controls[i].Top)
+							return Parent.Controls[i];
+						break;
+					case DockStyle.Left:
+						if (Left == Parent.Controls[i].Right)
+							return Parent.Controls[i];
+						break;
+					case DockStyle.Right:
+						if (Right == Parent.Controls[i].Left)
+							return Parent.Controls[i];
+						break;
 					}
 				}
 				return null;
@@ -618,9 +596,8 @@ namespace System.Windows.Forms {
 
 		private Control FillerControl {
 			get {
-				if (Parent == null) {
+				if (Parent == null)
 					return null;
-				}
 
 				// Doc says the first control preceeding us in the zorder 
 				for (int i = Parent.Controls.GetChildIndex(this) - 1; i >= 0; i--) {
@@ -634,17 +611,15 @@ namespace System.Windows.Forms {
 
 		private int CalculateSplitPosition() {
 			if (horizontal) {
-				if (Dock == DockStyle.Top) {
+				if (Dock == DockStyle.Top)
 					return split_position - affected.Top;
-				} else {
+				else
 					return affected.Bottom - split_position - splitter_size;
-				}
 			} else {
-				if (Dock == DockStyle.Left) {
+				if (Dock == DockStyle.Left)
 					return split_position - affected.Left;
-				} else {
+				else
 					return affected.Right - split_position - splitter_size;
-				}
 			}
 		}
 
@@ -679,25 +654,21 @@ namespace System.Windows.Forms {
 			}
 
 			switch(type) {
-				case DrawType.Initial: {
-					XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
-					return;
-				}
+			case DrawType.Initial:
+				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
+				return;
 
-				case DrawType.Redraw: {
-					if (prev.X == current.X && prev.Y == current.Y) {
-						return;
-					}
-
-					XplatUI.DrawReversibleRectangle(Parent.window.Handle, prev, 3);
-					XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
+			case DrawType.Redraw:
+				if (prev.X == current.X && prev.Y == current.Y)
 					return;
-				}
 
-				case DrawType.Finish: {
-					XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
-					return;
-				}
+				XplatUI.DrawReversibleRectangle(Parent.window.Handle, prev, 3);
+				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
+				return;
+
+			case DrawType.Finish:
+				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
+				return;
 			}
 		}
 		#endregion	// Private Properties and Methods
