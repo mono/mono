@@ -1313,11 +1313,12 @@ namespace System.Windows.Forms {
 
 					Syscall.poll (pollfds, (uint)length, timeout);
 					// Clean out buffer, so we're not busy-looping on the same data
-					if (length == pollfds.Length && pollfds[1].revents != 0) {
-						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
-					}
-					lock (wake_waiting_lock) {
-						wake_waiting = false;
+					if (length == pollfds.Length) {
+						if (pollfds[1].revents != 0)
+							wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
+						lock (wake_waiting_lock) {
+							wake_waiting = false;
+						}
 					}
 					#endif
 					lock (XlibLock) {
