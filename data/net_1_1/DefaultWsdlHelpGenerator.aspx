@@ -24,6 +24,7 @@
 <%@ Import Namespace="System.CodeDom.Compiler" %>
 <%@ Import Namespace="Microsoft.CSharp" %>
 <%@ Import Namespace="Microsoft.VisualBasic" %>
+<%@ Import Namespace="System.Text" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Import Namespace="System.Security.Cryptography.X509Certificates" %>
 <%@ Assembly name="System.Web.Services" %>
@@ -347,7 +348,19 @@ string GetTestResult ()
 	{
 		string url = location + "/" + CurrentOperationName;
 		Uri uri = new Uri (url);
-		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url + "?" + qs);
+		WebRequest req;
+		if (CurrentOperationProtocols.IndexOf ("HttpGet") < 0) {
+			req = WebRequest.Create (url);
+			req.Method = "POST";
+			if (qs != null && qs.Length > 0) {
+				byte [] postBuffer = Encoding.UTF8.GetBytes (qs);
+				req.ContentLength = postBuffer.Length;
+ 				using (Stream requestStream = req.GetRequestStream ())
+					requestStream.Write (postBuffer, 0, postBuffer.Length);
+			}
+		}
+		else
+			req = WebRequest.Create (url + "?" + qs);
 		if (url.StartsWith ("https:"))
 			ServicePointManager.CertificatePolicy = new NoCheckCertificatePolicy ();
 		HttpCookieCollection cookies = Request.Cookies;
