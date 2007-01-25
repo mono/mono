@@ -122,6 +122,25 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+		
+#if NET_2_0
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged
+		{
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DoubleClick
+		{
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
+#endif
 
 		static object DrawItemEvent = new object ();
 		static object DropDownEvent = new object ();
@@ -129,6 +148,10 @@ namespace System.Windows.Forms
 		static object MeasureItemEvent = new object ();
 		static object SelectedIndexChangedEvent = new object ();
 		static object SelectionChangeCommittedEvent = new object ();
+#if NET_2_0
+		static object DropDownClosedEvent = new object ();
+		static object TextUpdateEvent = new object ();
+#endif
 
 		public event DrawItemEventHandler DrawItem {
 			add { Events.AddHandler (DrawItemEvent, value); }
@@ -139,6 +162,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (DropDownEvent, value); }
 			remove { Events.RemoveHandler (DropDownEvent, value); }
 		}
+#if NET_2_0
+		public event EventHandler DropDownClosed
+		{
+			add { Events.AddHandler (DropDownClosedEvent, value); }
+			remove { Events.RemoveHandler (DropDownClosedEvent, value); }
+		}
+#endif
 
 		public event EventHandler DropDownStyleChanged {
 			add { Events.AddHandler (DropDownStyleChangedEvent, value); }
@@ -149,6 +179,15 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MeasureItemEvent, value); }
 			remove { Events.RemoveHandler (MeasureItemEvent, value); }
 		}
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler PaddingChanged
+		{
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
+		}
+#endif
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -166,6 +205,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (SelectionChangeCommittedEvent, value); }
 			remove { Events.RemoveHandler (SelectionChangeCommittedEvent, value); }
 		}
+#if NET_2_0
+		public event EventHandler TextUpdate
+		{
+			add { Events.AddHandler (TextUpdateEvent, value); }
+			remove { Events.RemoveHandler (TextUpdateEvent, value); }
+		}
+#endif
 
 		#endregion Events
 
@@ -753,6 +799,17 @@ namespace System.Windows.Forms
 			suspend_ctrlupdate = true;
 		}
 
+#if NET_2_0
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return base.CreateAccessibilityInstance ();
+		}
+		
+		protected override void CreateHandle ()
+		{
+			base.CreateHandle ();
+		}
+#endif
 		protected override void Dispose (bool disposing)
 		{						
 			if (disposing) {
@@ -914,6 +971,14 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+#if NET_2_0
+		protected virtual void OnDropDownClosed (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [DropDownClosedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		protected virtual void OnDropDownStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [DropDownStyleChangedEvent]);
@@ -1069,6 +1134,11 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		public override void ResetText ()
+		{
+			base.ResetText ();
+		}
+		
 		protected override bool ProcessKeyEventArgs (ref Message m)
 		{
 			return base.ProcessKeyEventArgs (ref m);
@@ -1092,6 +1162,14 @@ namespace System.Windows.Forms
 			base.OnTextChanged (e);
 		}
 
+#if NET_2_0
+		protected virtual void OnTextUpdate (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [TextUpdateEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 		protected override void OnMouseLeave (EventArgs e)
 		{
 #if NET_2_0
@@ -1362,6 +1440,9 @@ namespace System.Windows.Forms
 			button_state = ButtonState.Normal;
 			Invalidate (button_area);
 			dropped_down = false;
+#if NET_2_0
+			OnDropDownClosed (EventArgs.Empty);
+#endif
 		}
 		
 		private int FindStringCaseInsensitive (string search)
@@ -1772,6 +1853,14 @@ namespace System.Windows.Forms
 				else
 					document.CaretLostFocus ();
 			}
+			
+#if NET_2_0
+			internal override void OnTextUpdate ()
+			{
+				base.OnTextUpdate ();
+				owner.OnTextUpdate (EventArgs.Empty);
+			}
+#endif
 			
 			protected override void OnGotFocus (EventArgs e)
 			{

@@ -1269,6 +1269,9 @@ namespace System.Windows.Forms {
 
 					if (document.Length < max_length) {
 						document.InsertCharAtCaret(c, true);
+#if NET_2_0
+						OnTextUpdate ();
+#endif
 						OnTextChanged(EventArgs.Empty);
 						CaretMoved(this, null);
 					} else {
@@ -1988,6 +1991,11 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 #if NET_2_0
+		// This is called just before OnTextChanged is called.
+		internal virtual void OnTextUpdate ()
+		{
+		}
+		
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);
