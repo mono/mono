@@ -1,5 +1,12 @@
 2007-01-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ControlHandleTest.cs: Added.  Has tests to find exactly which
+	Methods and Properties create a Handle.  Not added to sources file
+	because it's written against MS, and we're probably missing some
+	methods/properties.
+
+2007-01-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripButtonTest.cs, ToolStripItemTest.cs, ToolStripLabelTest.cs:
 	Try to make some tests not Font/DPI dependent.
 
