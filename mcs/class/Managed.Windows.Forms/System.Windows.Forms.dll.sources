@@ -474,6 +474,7 @@ System.Windows.Forms/OpenTreeNodeEnumerator.cs
 System.Windows.Forms/Orientation.cs
 System.Windows.Forms/OwnerDrawPropertyBag.cs
 System.Windows.Forms/Padding.cs
+System.Windows.Forms/PaddingConverter.cs
 System.Windows.Forms/PageSetupDialog.cs
 System.Windows.Forms/PaintEventArgs.cs
 System.Windows.Forms/PaintEventHandler.cs

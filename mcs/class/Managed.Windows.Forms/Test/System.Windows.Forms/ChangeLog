@@ -1,3 +1,7 @@
+2007-01-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PaddingConverterTest.cs: Added.
+
 2007-01-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* StatusBarTest.cs: Added a few more tests.
