@@ -18,6 +18,24 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class StatusBarTest 
 	{
+		[Test]
+		public void StatusBarTextTest ()
+		{
+			string a = new string ('a', 127);
+			string ab = a + "b";
+			StatusBar sb = new StatusBar();
+			sb.Text = ab;
+			Assert.AreEqual (ab, sb.Text, "#01");
+		}
+		
+		[Test]
+		public void StatusBarShowPanelsTest ()
+		{
+			StatusBar sb = new StatusBar ();
+			sb.ShowPanels = true;
+			sb.Text = "Test";
+			Assert.AreEqual ("Test", sb.Text, "#01");
+		}	
 
 		[Test]
 		public void StatusBarPropertyTest ()

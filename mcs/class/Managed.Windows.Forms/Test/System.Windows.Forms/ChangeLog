@@ -1,3 +1,7 @@
+2007-01-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* StatusBarTest.cs: Added a few more tests.
+
 2007-01-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ControlHandleTest.cs: Added.  Has tests to find exactly which
