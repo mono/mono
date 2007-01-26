@@ -1,3 +1,7 @@
+2007-01-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ComboBox.cs: Fixed implementation of ResetText.
+
 2007-01-25  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: For the last char of a line we need to use the

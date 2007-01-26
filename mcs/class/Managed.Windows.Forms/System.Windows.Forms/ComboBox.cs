@@ -1136,7 +1136,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		public override void ResetText ()
 		{
-			base.ResetText ();
+			Text = String.Empty;
 		}
 		
 		protected override bool ProcessKeyEventArgs (ref Message m)
