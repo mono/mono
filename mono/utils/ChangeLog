@@ -1,4 +1,8 @@
 
+Fri Jan 26 13:06:57 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-dl.h, mono-dl.c: make symbols internal and fixes.
+
 Wed Jan 24 23:20:17 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mono-codeman.c: don't call mono_mprotect() on windows.
