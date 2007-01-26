@@ -614,5 +614,26 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.IsNull (project.EvaluatedProperties ["A"], "A1");
 		}
+
+		[Test]
+		public void TestSetProperty9 ()
+		{
+			Engine engine;
+			Project project;
+			BuildPropertyGroup [] groups = new BuildPropertyGroup [1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup />
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.PropertyGroups.CopyTo (groups, 0);
+			groups [0].SetProperty ("A", "B");
+		}
 	}
 }
