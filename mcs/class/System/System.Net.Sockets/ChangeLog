@@ -1,3 +1,9 @@
+2007-01-26  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: There's no point checking the SO_ERROR status of a
+	socket after poll() or select() if we already know that connected
+	== true.
+
 2007-01-24  Dick Porter  <dick@ximian.com>
 
 	* IOControlCode.cs: 

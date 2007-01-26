@@ -1,3 +1,8 @@
+2007-01-26  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: New test for SO_ERROR reading, returning the same
+	value over and over.
+
 2007-01-25  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* UdbClientTest.cs: Added Ignore attribute for entire test fixture

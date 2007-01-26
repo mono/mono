@@ -415,8 +415,8 @@ namespace System.Net.Sockets
 						}
 
 						if (!result.Sock.Blocking) {
-							result.Sock.Poll (-1, SelectMode.SelectWrite);
-							int success = (int)result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+							int success;
+							result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
 							if (success == 0) {
 								result.Sock.connected = true;
 								result.Complete ();
@@ -631,7 +631,8 @@ namespace System.Net.Sockets
 				}
 
 				if (currentList != null) {
-					if (currentList == checkWrite) {
+					if (currentList == checkWrite &&
+					    sock.connected == false) {
 						if ((int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
 							sock.connected = true;
 						}
@@ -2477,7 +2478,9 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-			if (mode == SelectMode.SelectWrite && result == true) {
+			if (mode == SelectMode.SelectWrite &&
+			    result == true &&
+			    connected == false) {
 				/* Update the connected state; for
 				 * non-blocking Connect()s this is
 				 * when we can find out that the

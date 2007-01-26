@@ -502,6 +502,55 @@ namespace MonoTests.System.Net.Sockets
 			s.Shutdown (0);
 		}
 
+		static ManualResetEvent SocketError_event = new ManualResetEvent (false);
+
+		private static void SocketError_callback (IAsyncResult ar)
+		{
+			Socket sock = (Socket)ar.AsyncState;
+			
+			if(sock.Connected) {
+				sock.EndConnect (ar);
+			}
+
+			SocketError_event.Set ();
+		}
+
+		[Test]
+		public void SocketError ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
+							BogusPort);
+			
+			SocketError_event.Reset ();
+
+			sock.Blocking = false;
+			sock.BeginConnect (ep, SocketError_callback,
+					   sock);
+
+			if (SocketError_event.WaitOne (2000, false) == false) {
+				Assert.Fail ("SocketError wait timed out");
+			}
+
+			Assertion.AssertEquals ("SocketError #1", false,
+						sock.Connected);
+
+			int error;
+
+			error = (int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+			Assertion.AssertEquals ("SocketError #2", 10061,
+						error);
+
+			error = (int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+			Assertion.AssertEquals ("SocketError #3", 10061,
+						error);
+
+			sock.Close ();
+		}
+		
+
 #if NET_2_0
 		[Test]
 		public void SocketInformationCtor ()
