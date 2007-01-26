@@ -1,4 +1,10 @@
 
+Fri Jan 26 18:31:45 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-trampolines.c, aliasing.c, mini-codegen.c,
+	debug-debugger.c, debug-debugger.h: warning fixes.
+	* driver.c: updated copyright year and made it fit in one line.
+
 Fri Jan 26 12:48:39 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* aot-runtime.c: updated to use mono-dl instead of gmodule.
