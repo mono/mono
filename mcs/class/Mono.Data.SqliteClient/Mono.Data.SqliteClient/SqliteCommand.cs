@@ -132,9 +132,12 @@ namespace Mono.Data.SqliteClient
 		
 #if NET_2_0
 		protected override DbConnection DbConnection
-#else
-		public SqliteConnection Connection
+		{
+			get { return parent_conn; }
+			set { parent_conn = (SqliteConnection)value; }
+		}
 #endif
+		public SqliteConnection Connection
 		{
 			get { return parent_conn; }
 			set { parent_conn = (SqliteConnection)value; }
