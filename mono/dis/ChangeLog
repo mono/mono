@@ -1,4 +1,8 @@
 
+Fri Jan 26 12:30:22 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* get.c, dis-cil.c: warning fixes.
+
 Wed Jan 17 17:26:08 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: if a file can't be loaded as an assembly, load it as a
