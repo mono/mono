@@ -1,5 +1,24 @@
 2007-01-26  Dick Porter  <dick@ximian.com>
 
+	* Socket.cs: SupportsIPv6 is obsolete in the 2.0 profile.  Stub
+	out BeginReceiveMessageFrom(), BeginSendFile(),
+	EndReceiveMessageFrom(), EndSendFile(), ReceiveMessageFrom(), and
+	SendFile().
+
+	* IPPacketInformation.cs: New in the 2.0 profile
+
+	* SocketFlags.cs: Remove useless (and empty) inline documentation,
+	and add 2.0 items.
+
+	* TcpListener.cs: Mark Server as public in the 2.0 profile.
+
+	* UdpClient.cs: Mark Dispose(bool) as protected in the 2.0
+	profile.
+
+	System.Net.Sockets should now be 2.0-complete.
+
+2007-01-26  Dick Porter  <dick@ximian.com>
+
 	* Socket.cs: There's no point checking the SO_ERROR status of a
 	socket after poll() or select() if we already know that connected
 	== true.

@@ -610,6 +610,9 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
+#if NET_2_0
+		protected virtual
+#endif
 		void Dispose (bool disposing)
 		{
 			if (disposed)

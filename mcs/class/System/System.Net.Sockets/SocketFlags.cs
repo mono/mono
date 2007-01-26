@@ -32,36 +32,20 @@
 
 
 namespace System.Net.Sockets {
-
-
-	/// <summary>
-	/// </summary>
 	[Flags]
 	public enum SocketFlags {
-
-		/// <summary>
-		/// </summary>
-		None = 0x00000000,
-
-		/// <summary>
-		/// </summary>
-		OutOfBand = 0x00000001,
-
-		/// <summary>
-		/// </summary>
-		MaxIOVectorLength = 0x00000010,
-		
-		/// <summary>
-		/// </summary>
-		Peek = 0x00000002,
-
-		/// <summary>
-		/// </summary>
-		DontRoute = 0x00000004,
-
-		/// <summary>
-		/// </summary>
-		Partial = 0x00008000,
+		None			= 0x00000000,
+		OutOfBand		= 0x00000001,
+		Peek			= 0x00000002,
+		DontRoute		= 0x00000004,
+		MaxIOVectorLength	= 0x00000010,
+#if NET_2_0
+		Truncated		= 0x00000100,
+		ControlDataTruncated	= 0x00000200,
+		Broadcast		= 0x00000400,
+		Multicast		= 0x00000800,
+#endif
+		Partial			= 0x00008000,
 	} // SocketFlags
 
 } // System.Net.Sockets

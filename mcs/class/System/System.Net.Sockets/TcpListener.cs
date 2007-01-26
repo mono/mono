@@ -136,7 +136,12 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The listening socket
 		/// </summary>
-		protected Socket Server
+#if NET_2_0
+		public
+#else
+		protected
+#endif
+		Socket Server
 		{
 			get { return server; }
 		}

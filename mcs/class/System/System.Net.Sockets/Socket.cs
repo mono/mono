@@ -1179,6 +1179,9 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if NET_2_0
+		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
+#endif
 		public static bool SupportsIPv6 {
 			get {
 				CheckProtocolSupport();
@@ -1762,6 +1765,36 @@ namespace System.Net.Sockets
 			return req;
 		}
 
+#if NET_2_0
+		public IAsyncResult BeginReceiveMessageFrom (
+			byte[] buffer, int offset, int size,
+			SocketFlags socketFlags, ref EndPoint remoteEP,
+			AsyncCallback callback, object state)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (buffer == null) {
+				throw new ArgumentNullException ("buffer");
+			}
+			
+			if (remoteEP == null) {
+				throw new ArgumentNullException ("remoteEP");
+			}
+			
+			if (offset < 0 || offset > buffer.Length) {
+				throw new ArgumentOutOfRangeException ("offset");
+			}
+			
+			if (size < 0 || offset + size > buffer.Length) {
+				throw new ArgumentOutOfRangeException ("size");
+			}
+			
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags,
 					       AsyncCallback callback, object state)
 		{
@@ -1870,6 +1903,47 @@ namespace System.Net.Sockets
 			errorCode = SocketError.Success;
 			return(BeginSend (buffers, socketFlags, callback,
 					  state));
+		}
+
+		public IAsyncResult BeginSendFile (string fileName,
+						   AsyncCallback callback,
+						   object state)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (connected == false) {
+				throw new NotSupportedException ();
+			}
+
+			if (!File.Exists (fileName)) {
+				throw new FileNotFoundException ();
+			}
+			
+			throw new NotImplementedException ();
+		}
+		
+		public IAsyncResult BeginSendFile (string fileName,
+						   byte[] preBuffer,
+						   byte[] postBuffer,
+						   TransmitFileOptions flags,
+						   AsyncCallback callback,
+						   object state)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (connected == false) {
+				throw new NotSupportedException ();
+			}
+			
+			if (!File.Exists (fileName)) {
+				throw new FileNotFoundException ();
+			}
+			
+			throw new NotImplementedException ();
 		}
 #endif		
 
@@ -2267,6 +2341,33 @@ namespace System.Net.Sockets
 			return req.Total;
 		}
 
+#if NET_2_0
+		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
+						  ref SocketFlags socketFlags,
+						  ref EndPoint endPoint,
+						  out IPPacketInformation ipPacketInformation)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (asyncResult == null) {
+				throw new ArgumentNullException ("asyncResult");
+			}
+			
+			if (endPoint == null) {
+				throw new ArgumentNullException ("endPoint");
+			}
+			
+			SocketAsyncResult req = asyncResult as SocketAsyncResult;
+			if (req == null) {
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+			}
+			
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public int EndSend(IAsyncResult result)
 		{
 			SocketError error;
@@ -2303,6 +2404,26 @@ namespace System.Net.Sockets
 			
 			return(req.Total);
 		}
+
+#if NET_2_0
+		public void EndSendFile (IAsyncResult asyncResult)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (asyncResult == null) {
+				throw new ArgumentNullException ("asyncResult");
+			}
+			
+			SocketAsyncResult req = asyncResult as SocketAsyncResult;
+			if (req == null) {
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+			}
+			
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public int EndSendTo(IAsyncResult result) {
 			if (disposed && closed)
@@ -2802,6 +2923,40 @@ namespace System.Net.Sockets
 			return cnt;
 		}
 
+#if NET_2_0
+		public int ReceiveMessageFrom (byte[] buffer, int offset,
+					       int size,
+					       ref SocketFlags socketFlags,
+					       ref EndPoint remoteEP,
+					       out IPPacketInformation ipPacketInformation)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (buffer == null) {
+				throw new ArgumentNullException ("buffer");
+			}
+
+			if (remoteEP == null) {
+				throw new ArgumentNullException ("remoteEP");
+			}
+			
+			if (offset < 0 || offset > buffer.Length) {
+				throw new ArgumentOutOfRangeException ("offset");
+			}
+			
+			if (size < 0 || offset + size > buffer.Length) {
+				throw new ArgumentOutOfRangeException ("size");
+			}
+			
+			/* FIXME: figure out how we get hold of the
+			 * IPPacketInformation
+			 */
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public int Send (byte [] buf)
 		{
 			if (disposed && closed)
@@ -2954,6 +3109,52 @@ namespace System.Net.Sockets
 
 			return ret;
 		}
+
+#if NET_2_0
+		public void SendFile (string fileName)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+
+			if (!connected) {
+				throw new NotSupportedException ();
+			}
+			
+			if (blocking == false) {
+				throw new InvalidOperationException ();
+			}
+			
+			if (!File.Exists (fileName)) {
+				throw new FileNotFoundException ();
+			}
+			
+			/* FIXME: Implement TransmitFile */
+			throw new NotImplementedException ();
+		}
+
+		public void SendFile (string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags)
+		{
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (!connected) {
+				throw new NotSupportedException ();
+			}
+
+			if (blocking == false) {
+				throw new InvalidOperationException ();
+			}
+			
+			if (!File.Exists (fileName)) {
+				throw new FileNotFoundException ();
+			}
+			
+			/* FIXME: Implement TransmitFile */
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{

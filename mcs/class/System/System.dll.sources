@@ -766,6 +766,7 @@ System.Net/SocketPermission.cs
 System.Net.Sockets/AddressFamily.cs
 System.Net.Sockets/IOControlCode.cs
 System.Net.Sockets/IPv6MulticastOption.cs
+System.Net.Sockets/IPPacketInformation.cs
 System.Net.Sockets/LingerOption.cs
 System.Net.Sockets/MulticastOption.cs
 System.Net.Sockets/NetworkStream.cs
