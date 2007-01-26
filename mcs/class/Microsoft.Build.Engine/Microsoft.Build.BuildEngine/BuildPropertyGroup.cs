@@ -183,22 +183,32 @@ namespace Microsoft.Build.BuildEngine {
 			if (read_only)
 				return;
 
-			if (propertiesByName.ContainsKey (propertyName))
-				propertiesByName.Remove (propertyName);
-
-			BuildProperty bp;
 			if (treatPropertyValueAsLiteral)
-				bp = new BuildProperty (propertyName, Utilities.Escape (propertyValue));
-			else
-				bp = new BuildProperty (propertyName, propertyValue);
-			
-			if (Char.IsDigit (propertyName [0]))
-				throw new ArgumentException (String.Format ("The name \"{0}\" contains an invalid character \"{1}\".", propertyName, propertyName [0]));
+				propertyValue = Utilities.Escape (propertyValue);
 
-			AddProperty (bp);
+			if (FromXml) {
+				int idx = properties.FindIndex (delegate (BuildProperty p) {
+					return p.Name == propertyName;
+				});
 
-			if (IsGlobal)
-				parentProject.NeedToReevaluate ();
+				if (idx == -1)
+					AddNewProperty (propertyName, propertyValue, false);
+				else
+					properties [idx].Value = propertyValue;
+			} else {
+				if (propertiesByName.ContainsKey (propertyName))
+					propertiesByName.Remove (propertyName);
+
+				BuildProperty bp = new BuildProperty (propertyName, propertyValue);
+				if (Char.IsDigit (propertyName [0]))
+					throw new ArgumentException (String.Format (
+						"The name \"{0}\" contains an invalid character \"{1}\".", propertyName, propertyName [0]));
+
+				AddProperty (bp);
+
+				if (IsGlobal)
+					parentProject.NeedToReevaluate ();
+			}
 		}
 		
 		internal void Evaluate ()
