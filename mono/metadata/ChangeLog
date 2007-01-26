@@ -1,4 +1,9 @@
 
+Fri Jan 26 12:49:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.h, loader.c, metadata-internals.h: use mono-dl instead of
+	gmodule.
+
 Fri Jan 26 12:00:45 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* threadpool.c: made the code moving-GC safe.
