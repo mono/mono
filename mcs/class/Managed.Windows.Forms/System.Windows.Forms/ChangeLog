@@ -1,4 +1,11 @@
 2007-01-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* ThemeWin32Classic.cs: Only draw the text of a StatusBar if
+	ShowPanels is false (fixes #80600). Only draw up to 127 characters
+	of text (fixes #80601). For panels clip the text to draw to the
+	panel (fixes #80603).
+
+2007-01-26  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ComboBox.cs: Fixed implementation of ResetText.
 

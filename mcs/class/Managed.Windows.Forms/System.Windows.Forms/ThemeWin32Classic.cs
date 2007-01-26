@@ -3599,11 +3599,14 @@ namespace System.Windows.Forms
 			Brush brush = is_color_control ? SystemBrushes.Control : ResPool.GetSolidBrush (sb.BackColor);
 			dc.FillRectangle (brush, clip);
 			
-			if (sb.Panels.Count == 0 && sb.Text != String.Empty) {
+			if (!sb.ShowPanels && sb.Text != String.Empty) {
 				string text = sb.Text;
 				StringFormat string_format = new StringFormat ();
 				string_format.Trimming = StringTrimming.Character;
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
+				
+				if (text.Length > 127)
+					text = text.Substring (0, 127);
 
 				if (text [0] == '\t') {
 					string_format.Alignment = StringAlignment.Center;
@@ -3723,7 +3726,10 @@ namespace System.Windows.Forms
 				break;
 			}
 
+			RectangleF clip_bounds = dc.ClipBounds;
+			dc.SetClip (area);
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, string_rect, string_format);			
+			dc.SetClip (clip_bounds);
 
 			if (panel.Icon != null) {
 				dc.DrawIcon (panel.Icon, new Rectangle (icon_x, y, icon_width, icon_width));
