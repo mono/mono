@@ -1,4 +1,8 @@
 
+Fri Jan 26 12:00:45 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: made the code moving-GC safe.
+
 Thu Jan 25 20:31:41 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c, boehm-gc.c, class-internals.h, class.c,
