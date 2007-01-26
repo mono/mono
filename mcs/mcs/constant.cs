@@ -466,14 +466,14 @@ namespace Mono.CSharp {
 			}
 			if (target_type == TypeManager.sbyte_type) {
 				if (inCheckedContext){
-					if (Value < SByte.MinValue || Value > SByte.MaxValue)
+					if (Value > SByte.MaxValue)
 						throw new OverflowException ();
 				}
 				return new SByteConstant ((sbyte) Value, Location);
 			}
 			if (target_type == TypeManager.short_type) {
 				if (inCheckedContext){
-					if (Value < Int16.MinValue || Value > Int16.MaxValue)
+					if (Value > Int16.MaxValue)
 						throw new OverflowException ();
 				}					
 				return new ShortConstant ((short) Value, Location);
@@ -677,7 +677,7 @@ namespace Mono.CSharp {
 				return new DoubleConstant ((double) Value, Location);
 			if (target_type == TypeManager.char_type) {
 				if (inCheckedContext){
-					if (Value < Char.MinValue && Value > Char.MaxValue)
+					if (Value < Char.MinValue)
 						throw new OverflowException ();
 				}
 				return new CharConstant ((char) Value, Location);

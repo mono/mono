@@ -1,3 +1,8 @@
+2007-01-26  Miguel de Icaza  <miguel@novell.com>
+
+	* constant.cs: Removed a handful of out-of-range checks that were
+	not necessary. 
+
 2007-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (CheckUselessComparison): Add additional check for char
