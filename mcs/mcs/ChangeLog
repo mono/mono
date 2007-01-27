@@ -1,5 +1,10 @@
 2007-01-27  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #80530
+	* expression.cs (Error_InvalidArguments): Don't use two different
+	messages for CS1503.  Use ExtraInformation and
+	SymbolRelatedToPreviousError instead.
+
 	Fix #80358
 	* decl.cs (DeclSpace.initialize_type_params): Don't access
 	'type_params' of a partial class directly.

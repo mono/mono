@@ -4852,20 +4852,13 @@ namespace Mono.CSharp {
 				string p1 = Argument.FullDesc (a);
 				string p2 = expected_par.ParameterDesc (idx);
 
-				//
-				// The parameter names are the same, most likely they come from different
-				// assemblies.
-				//
-				if (p1 == p2){
-					Report.Error (1503, loc,
-						      "Argument {0}: Cannot conver from equally named types from different " +
-						      "assemblies {0} (from {1}) and {2} (from {3})",
-						      p1, a.Expr.Type.Assembly.FullName, p2,
-						      expected_par.ParameterType (idx).Assembly.FullName);
-				} else
-					Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'",
-						      index, p1, p2);
+				if (p1 == p2) {
+					Report.ExtraInformation (loc, "(equally named types possibly from different assemblies in previous ");
+					Report.SymbolRelatedToPreviousError (a.Expr.Type);
+					Report.SymbolRelatedToPreviousError (expected_par.ParameterType (idx));
 				}
+				Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'", index, p1, p2);
+			}
 		}
 		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
