@@ -359,9 +359,14 @@ namespace Mono.Data.SqliteClient
 #endif
 		public int IndexOf (string parameterName)
 		{
+			if (isPrefixed (parameterName)){
+				string sub = parameterName.Substring (1);
+				if (named_param_hash.Contains(sub))
+					return (int) named_param_hash [sub];
+			}
 			if (named_param_hash.Contains(parameterName))
 				return (int) named_param_hash[parameterName];
-			else
+			else 
 				return -1;
 		}
 		
