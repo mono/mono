@@ -1,3 +1,9 @@
+2007-01-27  Raja R Harinath  <rharinath@novell.com>
+ 
+ 	Fix #80358
+ 	* decl.cs (DeclSpace.initialize_type_params): Don't access
+ 	'type_params' of a partial class directly.
+ 
 2007-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (CheckUselessComparison): Add additional check for char

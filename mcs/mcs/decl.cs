@@ -1158,16 +1158,14 @@ namespace Mono.CSharp {
 				the_parent = null;
 
 			int start = 0;
-			TypeParameter[] parent_params = null;
-			if ((the_parent != null) && the_parent.IsGeneric) {
-				parent_params = the_parent.initialize_type_params ();
-				start = parent_params != null ? parent_params.Length : 0;
-			}
-
 			ArrayList list = new ArrayList ();
-			if (parent_params != null)
+			if (the_parent != null && the_parent.IsGeneric) {
+				// FIXME: move generics info out of DeclSpace
+				TypeParameter[] parent_params = the_parent.PartialContainer.TypeParameters;
+				start = parent_params.Length;
 				list.AddRange (parent_params);
-
+			}
+ 
 			int count = type_params != null ? type_params.Length : 0;
 			for (int i = 0; i < count; i++) {
 				TypeParameter param = type_params [i];
