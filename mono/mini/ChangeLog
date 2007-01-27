@@ -1,3 +1,9 @@
+2007-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Remove optimizations which omit a 
+	narrowing. Fixes #80622.
+
+	* iltests.il: Add new regresssion test.	
 
 Fri Jan 26 18:31:45 CET 2007 Paolo Molaro <lupus@ximian.com>
 
