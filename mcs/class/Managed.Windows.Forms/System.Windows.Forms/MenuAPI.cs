@@ -22,6 +22,7 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Mike Kestner  <mkestner@novell.com>
+//	Everaldo Canuto  <ecanuto@novell.com>
 //
 
 using System.Collections;
@@ -308,7 +309,7 @@ namespace System.Windows.Forms {
 			if (!item.Enabled)
 			 	return;
 			 	
-			if (item.IsPopup) {				
+			if (item.IsPopup) {
 				ShowSubPopup (menu, item);
 			} else {
 				Deactivate ();
@@ -558,90 +559,6 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		void ProcessArrowKey (Keys keyData)
-		{
-			MenuItem item;
-			switch (keyData) {
-			case Keys.Up:
-				if (CurrentMenu is MainMenu)
-					return;
-				else if (CurrentMenu.MenuItems.Count == 1 && CurrentMenu.parent_menu == TopMenu) {
-					DeselectItem (CurrentMenu.SelectedItem);
-					CurrentMenu = TopMenu;
-					return;
-				}
-				item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
-				if (item != null)
-					SelectItem (CurrentMenu, item, false);
-				break;
-
-			case Keys.Down:
-				if (CurrentMenu is MainMenu) {
-					if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
-						keynav_state = KeyNavState.Navigating;
-						item = CurrentMenu.SelectedItem;
-						ShowSubPopup (CurrentMenu, item);
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-						active = true;
-					}
-					return;
-				}
-				item = GetNextItem (CurrentMenu, ItemNavigation.Next);
-				if (item != null)
-					SelectItem (CurrentMenu, item, false);
-				break;
-
-			case Keys.Right:
-				if (CurrentMenu is MainMenu) {
-					item = GetNextItem (CurrentMenu, ItemNavigation.Next);
-					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
-					SelectItem (CurrentMenu, item, popup);
-					if (popup) {
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-					}
-				} else if (CurrentMenu.SelectedItem.IsPopup) {
-					item = CurrentMenu.SelectedItem;
-					ShowSubPopup (CurrentMenu, item);
-					SelectItem (item, item.MenuItems [0], false);
-					CurrentMenu = item;
-				} else if (CurrentMenu.parent_menu is MainMenu) {
-					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Next);
-					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
-					if (item.IsPopup) {
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-					}
-				}
-				break;
-
-			case Keys.Left:
-				if (CurrentMenu is MainMenu) {
-					item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
-					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
-					SelectItem (CurrentMenu, item, popup);
-					if (popup) {
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-					}
-				} else if (CurrentMenu.parent_menu is MainMenu) {
-					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Previous);
-					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
-					if (item.IsPopup) {
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-					}
-				} else {
-					HideSubPopups (CurrentMenu);
-					CurrentMenu = CurrentMenu.parent_menu;
-				}
-				break;
-			default:
-				throw new ArgumentException ("Invalid keyData: " + keyData);
-			}
-		}
-
 		Hashtable shortcuts = new Hashtable ();
 		
 		public void AddShortcuts (MenuItem item)
@@ -693,20 +610,105 @@ namespace System.Windows.Forms {
 			else if (!Navigating)
 				return false;
 
+			MenuItem item;
+			
 			switch (keyData) {
 			case Keys.Up:
+				if (CurrentMenu is MainMenu)
+					return true;
+				else if (CurrentMenu.MenuItems.Count == 1 && CurrentMenu.parent_menu == TopMenu) {
+					DeselectItem (CurrentMenu.SelectedItem);
+					CurrentMenu = TopMenu;
+					return true;
+				}
+				item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
+				if (item != null)
+					SelectItem (CurrentMenu, item, false);
+				break;
+			
 			case Keys.Down:
+				if (CurrentMenu is MainMenu) {
+					if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
+						keynav_state = KeyNavState.Navigating;
+						item = CurrentMenu.SelectedItem;
+						ShowSubPopup (CurrentMenu, item);
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+						active = true;
+						grab_control.ActiveTracker = this;
+					}
+					return true;
+				}
+				item = GetNextItem (CurrentMenu, ItemNavigation.Next);
+				if (item != null)
+					SelectItem (CurrentMenu, item, false);
+				break;
+			
 			case Keys.Right:
+				if (CurrentMenu is MainMenu) {
+					item = GetNextItem (CurrentMenu, ItemNavigation.Next);
+					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
+					SelectItem (CurrentMenu, item, popup);
+					if (popup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else if (CurrentMenu.SelectedItem.IsPopup) {
+					item = CurrentMenu.SelectedItem;
+					ShowSubPopup (CurrentMenu, item);
+					SelectItem (item, item.MenuItems [0], false);
+					CurrentMenu = item;
+				} else if (CurrentMenu.parent_menu is MainMenu) {
+					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Next);
+					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
+					if (item.IsPopup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				}
+				break;
+			
 			case Keys.Left:
-				ProcessArrowKey (keyData);
+				if (CurrentMenu is MainMenu) {
+					item = GetNextItem (CurrentMenu, ItemNavigation.Previous);
+					bool popup = item.IsPopup && keynav_state != KeyNavState.NoPopups;
+					SelectItem (CurrentMenu, item, popup);
+					if (popup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else if (CurrentMenu.parent_menu is MainMenu) {
+					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Previous);
+					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
+					if (item.IsPopup) {
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+					}
+				} else {
+					HideSubPopups (CurrentMenu);
+					CurrentMenu = CurrentMenu.parent_menu;
+				}
+				break;
+
+			case Keys.Return:
+				if (CurrentMenu is MainMenu) {
+					if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
+						keynav_state = KeyNavState.Navigating;
+						item = CurrentMenu.SelectedItem;
+						ShowSubPopup (CurrentMenu, item);
+						SelectItem (item, item.MenuItems [0], false);
+						CurrentMenu = item;
+						active = true;
+						grab_control.ActiveTracker = this;
+					}
+					return true;
+				}
+			
+				ExecFocusedItem (CurrentMenu, CurrentMenu.SelectedItem);
 				break;
 				
 			case Keys.Escape:
 				Deactivate ();
-				break;
-
-			case Keys.Return:
-				ExecFocusedItem (CurrentMenu, CurrentMenu.SelectedItem);
 				break;
 
 			default:
