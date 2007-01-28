@@ -107,6 +107,7 @@
 		<Compile Include="System.Web.Services.Configuration\SoapExtensionTypeElementCollection.cs"/>
 		<Compile Include="System.Web.Services.Configuration\TypeElement.cs"/>
 		<Compile Include="System.Web.Services.Configuration\TypeElementCollection.cs"/>
+		<Compile Include="System.Web.Services.Configuration\TypeTypeConverter.cs"/>
 		<Compile Include="System.Web.Services.Configuration\WebServiceProtocols.cs"/>
 		<Compile Include="System.Web.Services.Configuration\WebServicesConfigurationSectionHandler.cs"/>
 		<Compile Include="System.Web.Services.Configuration\WebServicesSection.cs"/>
