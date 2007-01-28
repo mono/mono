@@ -1,5 +1,10 @@
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* IPAddress.cs: Provide more meaningful exception message on 2.0
+	profile.
+
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FileWebRequest.cs: Fixed PreAuthenticate and Proxy properties to
 	no longer throw NotSupportedException. No longer store ContentLength
 	in headers. Do not allow null or zero-length method. Allow timeout

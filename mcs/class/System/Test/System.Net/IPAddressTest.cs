@@ -347,6 +347,61 @@ public class IPAddressTest
 	}
 
 	[Test]
+	public void Constructor0_Address_Invalid ()
+	{
+		try {
+			new IPAddress (new byte [0]);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+			Assert.IsFalse (ex.Message == "address", ex.Message, "#A5");
+			Assert.IsNotNull (ex.ParamName, "#A6");
+			Assert.AreEqual ("address", ex.ParamName, "#A7");
+#else
+			Assert.AreEqual ("address", ex.Message, "#A5");
+			Assert.IsNull (ex.ParamName, "#A6");
+#endif
+		}
+
+		try {
+			new IPAddress (new byte [3] { 192, 202, 112 });
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+#if NET_2_0
+			Assert.IsFalse (ex.Message == "address", ex.Message, "#B5");
+			Assert.IsNotNull (ex.ParamName, "#B6");
+			Assert.AreEqual ("address", ex.ParamName, "#B7");
+#else
+			Assert.AreEqual ("address", ex.Message, "#B5");
+			Assert.IsNull (ex.ParamName, "#B6");
+#endif
+		}
+
+		try {
+			new IPAddress (new byte [5] { 192, 202, 112, 142, 25 });
+			Assert.Fail ("#C1");
+		} catch (ArgumentException ex) {
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+#if NET_2_0
+			Assert.IsFalse (ex.Message == "address", "#C5");
+			Assert.IsNotNull (ex.ParamName, "#C6");
+			Assert.AreEqual ("address", ex.ParamName, "#C7");
+#else
+			Assert.AreEqual ("address", ex.Message, "#C5");
+			Assert.IsNull (ex.ParamName, "#C6");
+#endif
+		}
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void Constructor0_Address_Null ()
 	{
@@ -362,10 +417,16 @@ public class IPAddressTest
 			Assert.Fail ("#1");
 		} catch (ArgumentException ex) {
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-			Assert.IsNotNull (ex.Message, "#3");
-			Assert.AreEqual ("address", ex.Message, "#4");
-			Assert.IsNull (ex.ParamName, "#5");
-			Assert.IsNull (ex.InnerException, "#6");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+			Assert.IsFalse (ex.Message == "address", "#5");
+			Assert.IsNotNull (ex.ParamName, "#6");
+			Assert.AreEqual ("address", ex.ParamName, "#7");
+#else
+			Assert.AreEqual ("address", ex.Message, "#5");
+			Assert.IsNull (ex.ParamName, "#6");
+#endif
 		}
 	}
 

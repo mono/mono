@@ -143,7 +143,8 @@ namespace System.Net {
 
 #if NET_2_0
 			if (len != 16 && len != 4)
-				throw new ArgumentException ("address");
+				throw new ArgumentException ("An invalid IP address was specified.",
+					"address");
 #else
 			if (len != 16)
 				throw new ArgumentException ("address");
@@ -165,7 +166,12 @@ namespace System.Net {
 				throw new ArgumentNullException ("address");
 
 			if (address.Length != 16)
+#if NET_2_0
+				throw new ArgumentException ("An invalid IP address was specified.",
+					"address");
+#else
 				throw new ArgumentException("address");
+#endif
 
 			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
 			m_Family = AddressFamily.InterNetworkV6;
