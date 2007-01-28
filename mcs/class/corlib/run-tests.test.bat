@@ -34,7 +34,7 @@ set OUTPUT_FILE_PREFIX=System_MonoTests
 set RUNNING_FIXTURE=MonoTests.System
 set TEST_SOLUTION=Test\Mscorlib.Test20.sln
 set TEST_ASSEMBLY=Mscorlib.Test20.jar
-set PROJECT_CONFIGURATION=Debug_Java
+set PROJECT_CONFIGURATION=Debug_Java20
 
 
 set startDate=%date%
@@ -120,7 +120,7 @@ REM ********************************************************
 copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -Djava.io.tmpdir="C:\Temp" -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
 REM ********************************************************
