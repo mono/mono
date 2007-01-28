@@ -80,6 +80,7 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
 			base.AddAttributesToRender (w);
+			AddDisplayStyleAttribute (w);
 #else
 			base.AddAttributesToRender (w);
 			if (Page == null || !Enabled)

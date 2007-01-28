@@ -365,8 +365,12 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 			
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
-			if (need_span)
+			if (need_span) {
+#if NET_2_0
+				AddDisplayStyleAttribute (w);
+#endif
 				ControlStyle.AddAttributesToRender (w, this);
+			}
 
 			if (!Enabled) {
 				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");

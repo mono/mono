@@ -56,6 +56,9 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			base.AddAttributesToRender (w);
+#if NET_2_0
+			AddDisplayStyleAttribute (w);
+#endif
 			if (!Enabled)
 				return;
 			// add attributes - only if they're not empty

@@ -1,3 +1,11 @@
+2007-01-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebControl.cs: added internal method AddDisplayStyleAttribute for
+	display:inline-block style attribute
+	* LinkButton.cs
+	* HyperLink.cs
+	* CheckBox.cs: added call to AddDisplayStyleAttribute on rendering
+
 2007-01-14 Eyal Alaluf <eyala@mainsoft.com>
 
 	* TreeView.js: Used WebForm_GetFormFromCtrl to lookup the form.

@@ -471,6 +471,17 @@ namespace System.Web.UI.WebControls {
 			writer.RenderEndTag ();
 		}
 
+#if NET_2_0
+		internal void AddDisplayStyleAttribute (HtmlTextWriter writer)
+		{
+			if (!ControlStyle.BorderWidth.IsEmpty ||
+			(ControlStyle.BorderStyle != BorderStyle.None && ControlStyle.BorderStyle != BorderStyle.NotSet) ||
+			!ControlStyle.Height.IsEmpty ||
+			!ControlStyle.Width.IsEmpty)
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "inline-block");
+		}
+#endif
+
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer) 
 		{
 			if (ID != null)
@@ -492,9 +503,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 				//unbelievable, but see WebControlTest.RenderBeginTag_BorderWidth_xxx
 				if (TagKey == HtmlTextWriterTag.Span)
-					if (style.BorderWidth != Unit.Empty 
-						|| style.BorderStyle != BorderStyle.NotSet)
-						writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "inline-block");
+					AddDisplayStyleAttribute (writer);
 #endif
 				style.AddAttributesToRender(writer, this);
 			}
