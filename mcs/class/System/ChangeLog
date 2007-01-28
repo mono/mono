@@ -1,3 +1,7 @@
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added FileWebResponseTest.cs.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources: added new sources:

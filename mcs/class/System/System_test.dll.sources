@@ -166,6 +166,7 @@ System.Net/DnsPermissionAttributeTest.cs
 System.Net/DnsPermissionTest.cs
 System.Net/DnsTest.cs
 System.Net/FileWebRequestTest.cs
+System.Net/FileWebResponseTest.cs
 System.Net/HttpWebRequestTest.cs
 System.Net/HttpListenerTest.cs
 System.Net/HttpListenerBasicIdentityTest.cs

@@ -1,5 +1,15 @@
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FileWebRequestTest.cs: Reworked tests to no longer rely on TMPDIR.
+	Added tests for ConnectionGroupName, ContentLength, ContentType,
+	Credentials, GetRequestStream, GetResponse, Method, PreAuthenticate,
+	Proxy, RequestUri, Timeout. Added binary serialization compatibility
+	tests.
+	* FileWebResponseTest.cs: Added tests for ContentLength, ContentType,
+	GetResponseStream, Headers, ResponseUri.
+
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* WebHeaderCollectionTest.cs: Added tests for binary serialization
 	compatibility.
 

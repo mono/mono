@@ -43,7 +43,11 @@ namespace System.Net
 		
 		private ICredentials credentials;
 		private string connectionGroup;
+		private long contentLength;
+		private FileAccess fileAccess = FileAccess.Read;
 		private string method = "GET";
+		private IWebProxy proxy;
+		private bool preAuthenticate;
 		private int timeout = 100000;
 		
 		private Stream requestStream;
@@ -57,40 +61,41 @@ namespace System.Net
 		internal FileWebRequest (Uri uri) 
 		{ 
 			this.uri = uri;
-			this.webHeaders = new WebHeaderCollection ();
-		}		
+ 			this.webHeaders = new WebHeaderCollection ();
+		}
 		
 		protected FileWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 			SerializationInfo info = serializationInfo;
-
-			method = info.GetString ("method");
+			webHeaders = (WebHeaderCollection) info.GetValue ("headers", typeof (WebHeaderCollection));
+			proxy = (IWebProxy) info.GetValue ("proxy", typeof (IWebProxy));
 			uri = (Uri) info.GetValue ("uri", typeof (Uri));
+			connectionGroup = info.GetString ("connectionGroupName");
+			method = info.GetString ("method");
+			contentLength = info.GetInt64 ("contentLength");
 			timeout = info.GetInt32 ("timeout");
-			connectionGroup = info.GetString ("connectionGroup");
-			webHeaders = (WebHeaderCollection) info.GetValue ("webHeaders", typeof (WebHeaderCollection));
+			fileAccess = (FileAccess) info.GetValue ("fileAccess", typeof (FileAccess));
+			preAuthenticate = info.GetBoolean ("preauthenticate");
 		}
 		
 		// Properties
 		
 		// currently not used according to spec
-		public override string ConnectionGroupName { 
+		public override string ConnectionGroupName {
 			get { return connectionGroup; }
 			set { connectionGroup = value; }
 		}
 		
-		public override long ContentLength { 
-			get { 
-				try {
-					return Int64.Parse (webHeaders ["Content-Length"]); 
-				} catch (Exception) {
-					return 0;
-				}
-			}
-			set { 
+		public override long ContentLength {
+			get { return contentLength; }
+			set {
 				if (value < 0)
+#if NET_2_0
+					throw new ArgumentException ("The Content-Length value must be greater than or equal to zero.", "value");
+#else
 					throw new ArgumentException ("value");
-				webHeaders ["Content-Length"] = Convert.ToString (value);
+#endif
+				contentLength =  value;
 			}
 		}
 		
@@ -111,19 +116,29 @@ namespace System.Net
 		// currently not used according to spec
 		public override string Method { 
 			get { return this.method; }
-			set { this.method = value; }
+			set {
+				if (value == null || value.Length == 0)
+#if NET_2_0
+					throw new ArgumentException ("Cannot set null or blank "
+						+ "methods on request.", "value");
+#else
+					throw new ArgumentException ("Cannot set null or blank "
+						+ "methods on request.");
+#endif
+				this.method = value;
+			}
 		}
 		
 		// currently not used according to spec
 		public override bool PreAuthenticate { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { return preAuthenticate; }
+			set { preAuthenticate = value; }
 		}
 		
 		// currently not used according to spec
-		public override IWebProxy Proxy { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+		public override IWebProxy Proxy {
+			get { return proxy; }
+			set { proxy = value; }
 		}
 		
 		public override Uri RequestUri { 
@@ -133,8 +148,14 @@ namespace System.Net
 		public override int Timeout { 
 			get { return timeout; }
 			set { 
-				if (value < 0)
-					throw new ArgumentException ("value");
+				if (value < -1)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("Timeout can be "
+						+ "only set to 'System.Threading.Timeout.Infinite' "
+						+ "or a value >= 0.");
+#else
+					throw new ArgumentOutOfRangeException ("value");
+#endif
 				timeout = value;
 			}
 		}
@@ -145,22 +166,11 @@ namespace System.Net
 		private delegate WebResponse GetResponseCallback ();
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
-		{		
-			if (method == null || (!method.Equals ("PUT") && !method.Equals ("POST")))
-				throw new ProtocolViolationException ("Cannot send file when method is: " + this.method + ". Method must be PUT.");
-			// workaround for bug 24943
-			Exception e = null;
-			lock (this) {
-				if (asyncResponding || webResponse != null)
-					e = new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
-				else if (requesting)
-					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
-				else
-					requesting = true;
-			}
-			if (e != null)
-				throw e;
-			/*
+		{
+			if (string.Compare ("GET", method, true) == 0 ||
+				string.Compare ("HEAD", method, true) == 0 ||
+				string.Compare ("CONNECT", method, true) == 0)
+				throw new ProtocolViolationException ("Cannot send a content-body with this verb-type.");
 			lock (this) {
 				if (asyncResponding || webResponse != null)
 					throw new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
@@ -168,9 +178,8 @@ namespace System.Net
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
 				requesting = true;
 			}
-			*/
 			GetRequestStreamCallback c = new GetRequestStreamCallback (this.GetRequestStreamInternal);
-			return c.BeginInvoke (callback, state);			
+			return c.BeginInvoke (callback, state);
 		}
 		
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
@@ -178,7 +187,7 @@ namespace System.Net
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();				
+				asyncResult.AsyncWaitHandle.WaitOne ();
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetRequestStreamCallback cb = (GetRequestStreamCallback) async.AsyncDelegate;
 			return cb.EndInvoke (asyncResult);
@@ -197,7 +206,7 @@ namespace System.Net
 		{
 			this.requestStream = new FileWebStream (
 						this,
-						FileMode.CreateNew,
+						FileMode.Create,
 						FileAccess.Write, 
 						FileShare.Read);
 			return this.requestStream;
@@ -205,40 +214,28 @@ namespace System.Net
 		
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			// workaround for bug 24943
-			Exception e = null;
-			lock (this) {
-				if (asyncResponding)
-					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
-				else 
-					asyncResponding = true;
-			}
-			if (e != null)
-				throw e;
-			/*
 			lock (this) {
 				if (asyncResponding)
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
 				asyncResponding = true;
 			}
-			*/
 			GetResponseCallback c = new GetResponseCallback (this.GetResponseInternal);
 			return c.BeginInvoke (callback, state);
 		}
-
+		
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();			
+				asyncResult.AsyncWaitHandle.WaitOne ();
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
 			WebResponse webResponse = cb.EndInvoke(asyncResult);
 			asyncResponding = false;
 			return webResponse;
 		}
-				
+		
 		public override WebResponse GetResponse ()
 		{
 			IAsyncResult asyncResult = BeginGetResponse (null, null);
@@ -247,11 +244,11 @@ namespace System.Net
 			}
 			return EndGetResponse (asyncResult);
 		}
-			
+		
 		WebResponse GetResponseInternal ()
 		{
 			if (webResponse != null)
-				return webResponse;			
+				return webResponse;
 			lock (this) {
 				if (requesting) {
 					requestEndEvent = new AutoResetEvent (false);
@@ -260,24 +257,33 @@ namespace System.Net
 			if (requestEndEvent != null) {
 				requestEndEvent.WaitOne ();
 			}
-			FileStream fileStream = new FileWebStream (
-							this,
-						     	FileMode.Open, 
-							FileAccess.Read, 
-							FileShare.Read);
- 			this.webResponse = new FileWebResponse (this.uri, fileStream);
- 			return (WebResponse) this.webResponse;
+			FileStream fileStream = null;
+			try {
+				fileStream = new FileWebStream (this, FileMode.Open,
+				 FileAccess.Read, FileShare.Read);
+			} catch (Exception ex) {
+				throw new WebException (ex.Message, ex);
+			}
+			this.webResponse = new FileWebResponse (this.uri, fileStream);
+			return (WebResponse) this.webResponse;
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
-
-			info.AddValue ("method", method);
+			info.AddValue ("headers", webHeaders, typeof (WebHeaderCollection));
+			info.AddValue ("proxy", proxy, typeof (IWebProxy));
 			info.AddValue ("uri", uri, typeof (Uri));
+			info.AddValue ("connectionGroupName", connectionGroup);
+			info.AddValue ("method", method);
+			info.AddValue ("contentLength", contentLength);
 			info.AddValue ("timeout", timeout);
-			info.AddValue ("connectionGroup", connectionGroup);
-			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
+			info.AddValue ("fileAccess", fileAccess);
+#if NET_2_0
+			info.AddValue ("preauthenticate", false);
+#else
+			info.AddValue ("preauthenticate", preAuthenticate);
+#endif
 		}
 		
 		internal void Close ()
@@ -287,7 +293,7 @@ namespace System.Net
 			// 	requestStream.Close ();
 			// }
 
-			lock (this) {			
+			lock (this) {
 				requesting = false;
 				if (requestEndEvent != null) 
 					requestEndEvent.Set ();
@@ -309,7 +315,7 @@ namespace System.Net
 			{
 				this.webRequest = webRequest;
 			}
-					   	
+			
 			public override void Close() 
 			{
 				base.Close ();

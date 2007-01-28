@@ -51,7 +51,7 @@ namespace System.Net
 				this.contentLength = fileStream.Length;
 				this.webHeaders = new WebHeaderCollection ();
 				this.webHeaders.Add ("Content-Length", Convert.ToString (contentLength));
-				this.webHeaders.Add ("Content-Type", "binary/octet-stream");
+				this.webHeaders.Add ("Content-Type", "application/octet-stream");
 			} catch (Exception e) {
 				throw new WebException (e.Message, e);
 			}
@@ -68,33 +68,33 @@ namespace System.Net
 		
 		// Properties
 		
-		public override long ContentLength {		
+		public override long ContentLength {
 			get {
 				CheckDisposed ();
 				return this.contentLength;
 			}
 		}
 		
-		public override string ContentType {		
+		public override string ContentType {
 			get {
 				CheckDisposed ();
-				return "binary/octet-stream";
+				return "application/octet-stream";
 			}
 		}
 		
-		public override WebHeaderCollection Headers {		
+		public override WebHeaderCollection Headers {
 			get {
 				CheckDisposed ();
 				return this.webHeaders;
 			}
 		}
 		
-		public override Uri ResponseUri {		
+		public override Uri ResponseUri {
 			get {
 				CheckDisposed ();
 				return this.responseUri;
 			}
-		}		
+		}
 
 		// Methods
 

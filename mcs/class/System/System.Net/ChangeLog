@@ -1,5 +1,15 @@
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FileWebRequest.cs: Fixed PreAuthenticate and Proxy properties to
+	no longer throw NotSupportedException. No longer store ContentLength
+	in headers. Do not allow null or zero-length method. Allow timeout
+	to be set to -1 (infine). Only disallow GET, HEAD and CONNECT requests.
+	Removed workarounds for bug #24943. In (Begin)GetRequest overwrite
+	file if it already exists. Binary serialization compatibility fixes.
+	* FileWebResponse.cs: Return application/octet-stream as ContentType.
+
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* WebHeaderCollection.cs: Fixed binary serialization compatibility 
 	with MS.
 
