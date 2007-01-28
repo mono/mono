@@ -1,5 +1,7 @@
 2007-01-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (peephole_pass): Fix #80622 for sparc as well.
+
 	mini.h *.c: Allocate fp vregs from the same pool as the int vregs. Use this to
 	simplify and speed up the local register allocator. Also rename some fields
 	like iassign->vassign.
