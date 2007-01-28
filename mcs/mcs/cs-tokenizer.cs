@@ -663,16 +663,15 @@ namespace Mono.CSharp
 		
 		bool parse_namespace_or_typename (int next)
 		{
-		again:
 			if (next == -1)
 				next = peek_token ();
-			if (next == Token.IDENTIFIER){
+			while (next == Token.IDENTIFIER){
 				token ();
 				next = peek_token ();
 				if (next == Token.DOT || next == Token.DOUBLE_COLON){
 					token ();
 					next = peek_token ();
-					goto again;
+					continue;
 				}
 				if (next == Token.OP_GENERICS_LT || next == Token.OP_LT){
 					token ();
