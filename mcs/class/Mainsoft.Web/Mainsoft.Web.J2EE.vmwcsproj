@@ -19,7 +19,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
-    <DefineConstants>TRACE;JAVA;NET_2_0</DefineConstants>
+    <DefineConstants>JAVA;NET_2_0</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -78,7 +78,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <DefineConstants>JAVA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
