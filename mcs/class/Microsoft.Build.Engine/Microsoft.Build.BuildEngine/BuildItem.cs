@@ -158,6 +158,17 @@ namespace Microsoft.Build.BuildEngine {
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
 				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
 					metadataName));
+
+			if (FromXml) {
+				if (unevaluatedMetadata.Contains (metadataName)) {
+					XmlNode node = itemElement [metadataName];
+					itemElement.RemoveChild (node);
+				}
+			} else if (HasParent) {
+				if (parent_item.child_items.Count > 1)
+					SplitParentItem ();
+				parent_item.RemoveMetadata (metadataName);
+			} 
 			
 			DeleteMetadata (metadataName);
 		}
@@ -197,6 +208,10 @@ namespace Microsoft.Build.BuildEngine {
 				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
 				parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
+			}
+			if (FromXml || HasParent) {
+				parent_item_group.ParentProject.MarkProjectAsDirty ();
+				parent_item_group.ParentProject.NeedToReevaluate ();
 			}
 			
 			DeleteMetadata (metadataName);

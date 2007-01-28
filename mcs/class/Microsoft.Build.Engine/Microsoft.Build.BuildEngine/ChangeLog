@@ -1,3 +1,8 @@
+2007-01-28  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItem.cs (RemoveMetadata): Remove from XML.
+	(SetMetadata): Trigger project reevaluation.
+
 2007-01-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyGroup.cs (SetProperty): Made it work with persisted
