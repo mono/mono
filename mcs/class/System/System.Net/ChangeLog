@@ -1,3 +1,9 @@
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebProxy.cs: Lazy init bypassList. Fixes for binary serialization
+	compatibility. Added stub for UseDefaultCredentials (2.0). On 2.0
+	profile, throw ArgumentNullException in IsBypassed if host is null.
+
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpWebRequest.cs: Remove unused variable.

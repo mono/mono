@@ -36,11 +36,15 @@ using System.Text.RegularExpressions;
 namespace System.Net 
 {
 	[Serializable]
-	public class WebProxy : IWebProxy, ISerializable {
+	public class WebProxy : IWebProxy, ISerializable
+	{
 		Uri address;
 		bool bypassOnLocal;
 		ArrayList bypassList;
 		ICredentials credentials;
+#if NET_2_0
+		bool useDefaultCredentials;
+#endif
 
 		// Constructors
 
@@ -77,18 +81,20 @@ namespace System.Net
 		{
 			this.address = address;
 			this.bypassOnLocal = bypassOnLocal;
-			if (bypassList == null)
-				bypassList = new string [] {};
-			this.bypassList = new ArrayList (bypassList);
+			if (bypassList != null)
+				this.bypassList = new ArrayList (bypassList);
 			this.credentials = credentials;
 			CheckBypassList ();
 		}
 
 		protected WebProxy (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
-			this.address = (Uri) serializationInfo.GetValue ("address", typeof (Uri));
-			this.bypassOnLocal = serializationInfo.GetBoolean ("bypassOnLocal");
-			this.bypassList = (ArrayList) serializationInfo.GetValue ("bypassList", typeof (ArrayList));
+			this.address = (Uri) serializationInfo.GetValue ("_ProxyAddress", typeof (Uri));
+			this.bypassOnLocal = serializationInfo.GetBoolean ("_BypassOnLocal");
+			this.bypassList = (ArrayList) serializationInfo.GetValue ("_BypassList", typeof (ArrayList));
+#if NET_2_0
+			this.useDefaultCredentials =  serializationInfo.GetBoolean ("_UseDefaultCredentials");
+#endif
 			this.credentials = null;
 			CheckBypassList ();
 		}
@@ -100,11 +106,15 @@ namespace System.Net
 		}
 
 		public ArrayList BypassArrayList {
-			get { return bypassList; }
+			get {
+				if (bypassList == null)
+					bypassList = new ArrayList ();
+				return bypassList;
+			}
 		}
 
 		public string [] BypassList {
-			get { return (string []) bypassList.ToArray (typeof (string)); }
+			get { return (string []) BypassArrayList.ToArray (typeof (string)); }
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ();
@@ -122,6 +132,14 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
+
+#if NET_2_0
+		[MonoTODO ("Does not affect Credentials, since CredentialCache.DefaultCredentials is not implemented.")]
+		public bool UseDefaultCredentials {
+			get { return useDefaultCredentials; }
+			set { useDefaultCredentials = value; }
+		}
+#endif
 
 		// Methods
 		[MonoTODO("Can we get this info under windows from the system?")]
@@ -145,8 +163,10 @@ namespace System.Net
 
 		public bool IsBypassed (Uri host)
 		{
-			if (address == null)
-				return true;
+#if NET_2_0
+			if (host == null)
+				throw new ArgumentNullException ("host");
+#endif
 
 			if (bypassOnLocal && host.IsLoopback)
 				return true;
@@ -169,8 +189,11 @@ namespace System.Net
 				} catch {}
 			}
 
-			try {				
-				string hostStr = host.Scheme + "://" + host.Authority;				
+			if (bypassList == null)
+				return false;
+
+			try {
+				string hostStr = host.Scheme + "://" + host.Authority;
 				int i = 0;
 				for (; i < bypassList.Count; i++) {
 					Regex regex = new Regex ((string) bypassList [i], 
@@ -199,16 +222,21 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		                                  StreamingContext streamingContext)
 		{
-			serializationInfo.AddValue ("bypassOnLocal", bypassOnLocal);
-			serializationInfo.AddValue ("address", address);
-			serializationInfo.AddValue ("bypassList", bypassList);
+			serializationInfo.AddValue ("_BypassOnLocal", bypassOnLocal);
+			serializationInfo.AddValue ("_ProxyAddress", address);
+			serializationInfo.AddValue ("_BypassList", bypassList);
+#if NET_2_0
+			serializationInfo.AddValue ("_UseDefaultCredentials", UseDefaultCredentials);
+#endif
 		}
 
 		// Private Methods
 		// this compiles the regular expressions, and will throw
 		// an exception when an invalid one is found.
 		void CheckBypassList ()
-		{			
+		{
+			if (bypassList == null)
+				return;
 			for (int i = 0; i < bypassList.Count; i++)
 				new Regex ((string) bypassList [i]);
 		}
@@ -225,4 +253,3 @@ namespace System.Net
 		}
 	}
 }
-
