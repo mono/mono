@@ -7,7 +7,7 @@
 // (c) 2006 Sridhar Kulkarni.
 // Copyright (C) 2004 Novell (http://www.novell.com)
 //
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 using NUnit.Framework;
 using System.IO;
 using System;

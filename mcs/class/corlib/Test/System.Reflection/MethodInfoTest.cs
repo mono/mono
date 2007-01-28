@@ -42,9 +42,10 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
+#if !TARGET_JVM
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 		public static extern void dllImportMethod ();
-
+#endif
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
 		public void preserveSigMethod () {
 		}
@@ -201,7 +202,7 @@ namespace MonoTests.System.Reflection
 					Assert.IsNull (mb);
 				}
 		}
-
+#if !TARGET_JVM
 		public static void locals_method () {
 			byte[] b = new byte [10];
 
@@ -211,7 +212,7 @@ namespace MonoTests.System.Reflection
 				}
 			}
 		}
-
+#endif
 		[Test]
 		public void GetMethodBody () {
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();

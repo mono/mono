@@ -61,13 +61,13 @@ public class ParameterInfoTest : Assertion
 
 	public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {
 	}
-
+#if !TARGET_JVM
 	[DllImport ("foo")]
 	public extern static void marshalAsMethod (
 		[MarshalAs(UnmanagedType.Bool)]int p0, 
 		[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)] string [] p1,
 		[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")] object p2);
-
+#endif
 	[Test]
 	public void DefaultValueEnum () {
 		ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();

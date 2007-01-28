@@ -64,7 +64,7 @@ namespace MonoTests.System.Security {
 				Assert.Ignore (NotSupported);
 			}
 		}
-
+#if !TARGET_JVM
 		[Test]
 		public unsafe void UnsafeConstructor ()
 		{
@@ -142,7 +142,7 @@ namespace MonoTests.System.Security {
 			SecureString ss = GetMaxLength ();
 			ss.AppendChar ('a');
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void InsertAt_Negative ()
@@ -190,7 +190,7 @@ namespace MonoTests.System.Security {
 			SecureString ss = new SecureString ();
 			ss.RemoveAt (1);
 		}
-
+#if !TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void InsertAt_BiggerThanMax ()
@@ -198,7 +198,7 @@ namespace MonoTests.System.Security {
 			SecureString ss = GetMaxLength ();
 			ss.InsertAt (ss.Length, 'a');
 		}
-
+#endif
 		private SecureString GetReadOnly ()
 		{
 			SecureString ss = new SecureString ();
