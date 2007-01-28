@@ -100,6 +100,27 @@ namespace Mono.CSharp {
 			get { return generic_method; }
 		}
 
+		public Parameters InflateParameters (Parameters ps)
+		{
+			if (generic_method == null)
+				return ps;
+
+			int n = ps.Count;
+			if (n == 0)
+				return ps;
+
+			Parameter[] inflated_params = new Parameter [n];
+			Type[] inflated_types = new Type [n];
+
+			for (int i = 0; i < n; ++i) {
+				Parameter p = ps [i];
+				Type it = InflateType (p.ExternalType ()).ResolveAsTypeTerminal (this, false).Type;
+				inflated_types [i] = it;
+				inflated_params [i] = new Parameter (it, p.Name, p.ModFlags, p.OptAttributes, p.Location);
+			}
+			return new Parameters (inflated_params, inflated_types);
+		}
+
 		public TypeExpr InflateType (Type it)
 		{
 #if GMCS_SOURCE
@@ -1302,8 +1323,7 @@ namespace Mono.CSharp {
 	{
 		public readonly Location Location;
 
-		// An array list of AnonymousMethodParameter or null
-		public readonly Parameters Parameters;
+		public Parameters Parameters;
 
 		//
 		// The block that makes up the body for the anonymous mehtod
@@ -1379,6 +1399,9 @@ namespace Mono.CSharp {
 					return false;
 				ReturnType = return_type_expr.Type;
 			}
+
+			if (RootScope != null)
+				Parameters = RootScope.InflateParameters (Parameters);
 
 			aec = new EmitContext (
 				ec.ResolveContext, ec.TypeContainer,

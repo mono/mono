@@ -1,3 +1,10 @@
+2007-01-28  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #80531
+	* anonymous.cs (ScopeInfo.InflateParameters): New.
+	(AnonymousContainer.Resolve): Use it to redirect types of
+	delegate parameters.
+
 2007-01-27  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80530
