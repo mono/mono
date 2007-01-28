@@ -204,6 +204,7 @@ namespace Mono.CSharp
 %token WHILE	
 %token ARGLIST
 %token PARTIAL
+%token ARROW
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -273,6 +274,7 @@ namespace Mono.CSharp
 %token LITERAL_STRING            "string literal"
 
 %token IDENTIFIER
+%token OPEN_PARENS_LAMBDA
 %token CLOSE_PARENS_CAST
 %token CLOSE_PARENS_NO_CAST
 %token CLOSE_PARENS_OPEN_PARENS
@@ -344,7 +346,7 @@ extern_alias_directive
 		if (s != "alias"){
 			Report.Error (1003, lt.Location, "'alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotStandardized (lt.Location, "external alias");
+			Report.FeatureIsNotISO1 (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
@@ -2763,13 +2765,13 @@ opt_type_argument_list
 	  {
 		$$ = $2;
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotStandardized (lexer.Location, "generics");
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");
 	  }
 	| GENERIC_DIMENSION
 	  {
 		$$ = new TypeArguments ((int) $1, lexer.Location);
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotStandardized (lexer.Location, "generics");
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");
 	  }
 	;
 
@@ -3457,7 +3459,7 @@ anonymous_method_expression
 		current_block = (Block) oob_stack.Pop ();
 
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (loc, "anonymous methods");
+			Report.FeatureIsNotISO1 (loc, "anonymous methods");
 			$$ = null;
 		} else  {
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
@@ -3861,9 +3863,84 @@ assignment_expression
 	  }
 	;
 
+implicitly_typed_lambda_parameter_list
+	: IDENTIFIER { 
+		ArrayList a = new ArrayList (4); 
+		a.Add ($1);  
+		$$ = a; 
+	  } 
+	| implicitly_typed_lambda_parameter_list COMMA IDENTIFIER {
+		ArrayList a = (ArrayList) $1;
+		a.Add ($3);
+		$$ = a;
+	  }
+	;
+
+explicitly_typed_lambda_parameter_list
+	: explicitly_typed_lambda_parameter
+	  {
+		ArrayList pars = new ArrayList (4);
+		pars.Add ($1);
+
+		$$ = pars;
+	  }
+	| explicitly_typed_lambda_parameter_list COMMA explicitly_typed_lambda_parameter
+	  {
+		ArrayList pars = (ArrayList) $1;
+		pars.Add ($3);
+
+		$$ = pars;
+	  }
+	;
+
+explicitly_typed_lambda_parameter
+	: parameter_modifier type IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+
+		$$ = new Parameter ((Expression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
+	  }
+	| type IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+
+		$$ = new Parameter ((Expression) $2, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+	  }
+	;
+
+lambda_parameter_list
+	: implicitly_typed_lambda_parameter_list { $$ = $1; }
+	| explicitly_typed_lambda_parameter_list { $$ = $1; }
+	;
+
+lambda_expression_body
+	: expression
+	| block
+	;
+
+lambda_expression
+	: IDENTIFIER ARROW lambda_expression_body
+	  {
+		LocatedToken lt = (LocatedToken) $2;
+		ArrayList a = new ArrayList (1);
+		a.Add ($1);
+		$$ = new LambdaExpression (a, $3, lt.Location);
+	  }
+	| OPEN_PARENS CLOSE_PARENS ARROW lambda_expression_body {
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new LambdaExpression (new ArrayList (), $3, lt.Location);
+	  }
+	| OPEN_PARENS_LAMBDA lambda_parameter_list CLOSE_PARENS ARROW lambda_expression_body
+	  {
+		LocatedToken lt = (LocatedToken) $4;
+		$$ = new LambdaExpression ((ArrayList) $2, $5, lt.Location);
+	  }
+	;
+
 expression
 	: conditional_expression
 	| assignment_expression
+	| lambda_expression
 	;
 
 constant_expression
@@ -4682,7 +4759,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
+			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -4707,7 +4784,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
+			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){

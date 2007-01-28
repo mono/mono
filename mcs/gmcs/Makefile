@@ -96,3 +96,5 @@ profile : gmcs2.exe
 	-rm -f gmcs3.exe
 	make gmcs3.exe RUNTIME_FLAGS='--profile=$(PROFILER)'
 
+typetest:
+	mono gmcs.exe --typetest ../mcs/lambda.test

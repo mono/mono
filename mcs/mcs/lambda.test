@@ -1,0 +1,34 @@
+!
+! This file contains tests for the tokenizer to recognize a type followed
+! by an identifier.   This is used for the internal deambiguation 
+! used for lambda_expressions
+!
++identifier::identifier<> name
++identifier::identifier<arg::two,arg<>,blah::blah<blah>> name
++file?[,] name
++file?[,,,] name
+-dingus<<int>? name
+-dingus?<int> name
++identifier name
++identifier.dot.identifier name
++identifier<typeparm>.name name
++identifier<typeparm> name
++identifier<identifier<identifier,two,three>,two>.identifier<two,three> name
++identifier::identifier name
++identifier::identifier<arg> name
++identifier::identifier<arg::one> name
++identifier::identifier<arg::one,arg::two> name
++identifier::identifier<arg,arg::two> name
++identifier::identifier<arg::two,arg> name
++identifier::identifier<arg::two,arg<second,third>> name
++identifier<arg::one> name
++file[] name
++file[][][][] name
++file[,,,,][,][][,] name
++file[][,,,] name
++dingus<type[]> name
++dingus<type[,,,]> name
++dingus<type[,,,][]> name
++dingus<type[,,,][,]> name
++dingus<type[,,,][,]> name
++file file

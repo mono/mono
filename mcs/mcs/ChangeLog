@@ -1,3 +1,34 @@
+2007-01-28  Miguel de Icaza  <miguel@novell.com>
+
+	* lambda.cs: Empty new file, will eventually have the lambda
+	expression implementation.
+
+	* lambda.test: used to test the internal tokenizer. 
+
+	* report.cs (FeatureIsNotISO1): Rename from
+	FeatureIsNotStandardized, because it was about the language level
+	(1 vs 2) it was not about standarization.
+
+	(FeatureRequiresLINQ): New.
+
+	* support.cs (SeekableStreamReader): Only require that the reader
+	is a TextReader, not a StreamReader, so we can plug StringReader. 
+
+	* cs-tokenizer.cs (parse_type_and_parameter): Returns true if at a
+	given position in the input stream the following tokens can be
+	parsed as a type followed by an identifier.
+
+	(is_punct): after a '(' if parse_type_and_parameter returns true,
+	then return a special token OPEN_PARENS_LAMBDA which is used to
+	avoid reduce/reduce errors in the grammar for the
+	lambda_expression rules.
+
+	(parse_type): implement a type parser inside the
+	tokenizer, the parser only returns true or false depending on
+	whether the input at a given position can be parsed as a type.
+
+	(peek_token): new method used during type parsing.
+
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80531
