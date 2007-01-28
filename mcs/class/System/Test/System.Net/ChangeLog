@@ -1,5 +1,10 @@
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* WebHeaderCollectionTest.cs: Added tests for binary serialization
+	compatibility.
+
+2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* WebProxyTest.cs: Move IsBypassed null check to separate test, and
 	fixed it for 2.0 profile. Added test for binary serialization.
 
