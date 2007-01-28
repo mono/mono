@@ -2254,7 +2254,93 @@ namespace System.Net.Sockets
 		}
 #endif
 
-		void IDisposable.Dispose ()
+        #region .Net 2.0 properties and methods
+#if NET_2_0
+
+            #region Properties
+        [MonoTODO]
+        public bool ExclusiveAddressUse
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO("udp sockets are not supported")]
+        public bool DontFragment 
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public bool EnableBroadcast
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public bool MulticastLoopback
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public short Ttl
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public int ReceiveTimeout
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public int SendTimeout
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+            
+            #endregion //Properties
+
+            #region Methods
+
+        [MonoTODO]
+        public IAsyncResult BeginConnect(IPAddress address, int port,
+                                        AsyncCallback requestCallback,
+                                        object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginConnect(IPAddress[] addresses, int port,
+                                        AsyncCallback requestCallback,
+                                        object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginConnect(string host, int port,
+                                        AsyncCallback requestCallback,
+                                        object state)
+        {
+            throw new NotImplementedException();
+        }
+
+            #endregion //Methods
+
+#endif
+        #endregion
+
+        void IDisposable.Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

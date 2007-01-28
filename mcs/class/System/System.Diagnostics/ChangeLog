@@ -1,3 +1,6 @@
+2007-01-28 Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* TraceEventCache.jvm.cs: added as a stub class.
 
 Tue Jan 23 17:19:13 CET 2007 Paolo Molaro <lupus@ximian.com>
 

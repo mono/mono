@@ -524,11 +524,16 @@
     <Compile Include="System.Diagnostics\DiagnosticsConfigurationHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Diagnostics\SourceLevels.cs" />
+    <Compile Include="System.Diagnostics\SourceSwitch.cs" />
     <Compile Include="System.Diagnostics\StackFrame.jvm.cs" />
     <Compile Include="System.Diagnostics\StackTrace.jvm.cs" />
+    <Compile Include="System.Diagnostics\Switch.cs" />
     <Compile Include="System.Diagnostics\Trace.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Diagnostics\TraceEventCache.jvm.cs" />
+    <Compile Include="System.Diagnostics\TraceEventType.cs" />
     <Compile Include="System.Diagnostics\TraceImpl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -541,6 +546,7 @@
     <Compile Include="System.Diagnostics\TraceListenerCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Diagnostics\TraceSource.cs" />
     <Compile Include="System.IO\ErrorEventArgs.cs" />
     <Compile Include="System.IO\ErrorEventHandler.cs" />
     <Compile Include="System.IO\FileAction.cs" />
