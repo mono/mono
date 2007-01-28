@@ -1,3 +1,13 @@
+2007-01-28  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #80534, gtest-309.cs
+	* generic.cs (UnifyType): Rename from InferType.  Make unification
+	of generic insts simpler and don't insist on inferring all generic
+	parameters in a single generic inst unification.
+	(UnifyTypes): New.
+	(InferGenericInstance): Remove.
+	Analysis and initial patch by David Mitchell <dmitchell@logos.com>.
+
 2007-01-20  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Better parameter error handling.

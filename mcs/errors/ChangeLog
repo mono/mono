@@ -1,3 +1,7 @@
+2007-01-28  Raja R Harinath  <rharinath@novell.com>
+
+	* gcs0411-3.cs: Rename to tests/gtest-309.cs.
+
 2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* cs1058.cs: Removed as CS1058 does not apply to 1.0 profile.

@@ -2217,11 +2217,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		//
-		// Type inference.
-		//
-
-		static bool InferType (Type pt, Type at, Type[] inferred)
+		static bool UnifyType (Type pt, Type at, Type[] inferred)
 		{
 			if (pt.IsGenericParameter) {
 				if (pt.DeclaringMethod == null)
@@ -2229,20 +2225,15 @@ namespace Mono.CSharp {
 
 				int pos = pt.GenericParameterPosition;
 
-				if (inferred [pos] == null) {
+				if (inferred [pos] == null)
 					inferred [pos] = at;
-					return true;
-				}
 
-				if (inferred [pos] != at)
-					return false;
-
-				return true;
+				return inferred [pos] == at;
 			}
 
 			if (!pt.ContainsGenericParameters) {
 				if (at.ContainsGenericParameters)
-					return InferType (at, pt, inferred);
+					return UnifyType (at, pt, inferred);
 				else
 					return true;
 			}
@@ -2252,7 +2243,7 @@ namespace Mono.CSharp {
 					if (at.GetArrayRank () != pt.GetArrayRank ())
 						return false;
 
-					return InferType (pt.GetElementType (), at.GetElementType (), inferred);
+					return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
 				}
 
 				if (!pt.IsGenericType)
@@ -2264,7 +2255,7 @@ namespace Mono.CSharp {
 					return false;
 
 				Type[] args = GetTypeArguments (pt);
-				return InferType (args [0], at.GetElementType (), inferred);
+				return UnifyType (args [0], at.GetElementType (), inferred);
 			}
 
 			if (pt.IsArray) {
@@ -2272,11 +2263,11 @@ namespace Mono.CSharp {
 				    (pt.GetArrayRank () != at.GetArrayRank ()))
 					return false;
 
-				return InferType (pt.GetElementType (), at.GetElementType (), inferred);
+				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
 			}
 
 			if (pt.IsByRef && at.IsByRef)
-				return InferType (pt.GetElementType (), at.GetElementType (), inferred);
+				return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
 			ArrayList list = new ArrayList ();
 			if (at.IsGenericType)
 				list.Add (at);
@@ -2285,51 +2276,26 @@ namespace Mono.CSharp {
 
 			list.AddRange (TypeManager.GetInterfaces (at));
 
-			bool found_one = false;
-
 			foreach (Type type in list) {
 				if (!type.IsGenericType)
 					continue;
 
-				Type[] inferred_types = new Type [inferred.Length];
-
-				if (!InferGenericInstance (pt, type, inferred_types))
+				if (DropGenericTypeArguments (pt) != DropGenericTypeArguments (type))
 					continue;
 
-				for (int i = 0; i < inferred_types.Length; i++) {
-					if (inferred [i] == null) {
-						inferred [i] = inferred_types [i];
-						continue;
-					}
-
-					if (inferred [i] != inferred_types [i])
-						return false;
-				}
-
-				found_one = true;
+				if (!UnifyTypes (pt.GetGenericArguments (), type.GetGenericArguments (), inferred))
+					return false;
 			}
 
-			return found_one;
+			return true;
 		}
 
-		static bool InferGenericInstance (Type pt, Type at, Type[] inferred_types)
+		static bool UnifyTypes (Type[] pts, Type [] ats, Type [] inferred)
 		{
-			Type[] at_args = at.GetGenericArguments ();
-			Type[] pt_args = pt.GetGenericArguments ();
-
-			if (at_args.Length != pt_args.Length)
-				return false;
-
-			for (int i = 0; i < at_args.Length; i++) {
-				if (!InferType (pt_args [i], at_args [i], inferred_types))
+			for (int i = 0; i < ats.Length; i++) {
+				if (!UnifyType (pts [i], ats [i], inferred))
 					return false;
 			}
-
-			for (int i = 0; i < inferred_types.Length; i++) {
-				if (inferred_types [i] == null)
-					return false;
-			}
-
 			return true;
 		}
 
@@ -2379,7 +2345,7 @@ namespace Mono.CSharp {
 				Type pt = pd.ParameterType (i);
 				Type at = a.Type;
 
-				if (!InferType (pt, at, inferred_types))
+				if (!UnifyType (pt, at, inferred_types))
 					return false;
 			}
 
@@ -2391,7 +2357,7 @@ namespace Mono.CSharp {
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
 					continue;
 
-				if (!InferType (element_type, a.Type, inferred_types))
+				if (!UnifyType (element_type, a.Type, inferred_types))
 					return false;
 			}
 
@@ -2406,14 +2372,11 @@ namespace Mono.CSharp {
 		static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
 						Type[] inferred_types)
 		{
-			if (inferred_types == null)
-				return false;
-
 			for (int i = 0; i < arg_types.Length; i++) {
 				if (arg_types [i] == null)
 					continue;
 
-				if (!InferType (param_types [i], arg_types [i], inferred_types))
+				if (!UnifyType (param_types [i], arg_types [i], inferred_types))
 					return false;
 			}
 

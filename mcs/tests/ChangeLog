@@ -1,5 +1,8 @@
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
+	* gtest-309.cs: Renamed from errors/gcs0411-3.cs.
+	* gtest-310.cs: New test from #80534.
+
 	* gtest-308.cs: New test based on #80531.
 
 2007-01-27  Raja R Harinath  <rharinath@novell.com>
