@@ -1,3 +1,8 @@
+2007-01-28  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* IPAddressTest.cs: Added 'Ignore' attribute for 
+	Constructor0_Address_Invalid test under TARGET_JVM directive.
+
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddressTest.cs: Added test for invalid addresses. Fixed 4-byte
