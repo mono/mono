@@ -1,3 +1,8 @@
+2007-01-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: MdiClient should always be added last, it should
+	never Dock:Fill under other controls.  [Fixes a part of bug #80223]
+
 2007-01-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Remove special loop for Dock.Fill and handle

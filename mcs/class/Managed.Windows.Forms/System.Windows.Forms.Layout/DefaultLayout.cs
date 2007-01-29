@@ -36,7 +36,8 @@ namespace System.Windows.Forms.Layout
 		void LayoutDockedChildren (Control parent, Control[] controls)
 		{
 			Rectangle space = parent.DisplayRectangle;
-
+			MdiClient mdi = null;
+			
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 			for (int i = controls.Length - 1; i >= 0; i--) {
 				Control child = controls[i];
@@ -45,6 +46,12 @@ namespace System.Windows.Forms.Layout
 				    || child.ControlLayoutType == Control.LayoutType.Anchor)
 					continue;
 
+				// MdiClient never fills the whole area like other controls, have to do it later
+				if (child is MdiClient) {
+					mdi = (MdiClient)child;
+					continue;
+				}
+				
 				switch (child.Dock) {
 				case DockStyle.None:
 					// Do nothing
@@ -77,6 +84,10 @@ namespace System.Windows.Forms.Layout
 					break;
 				}
 			}
+
+			// MdiClient gets whatever space is left
+			if (mdi != null)
+				mdi.SetImplicitBounds (space.Left, space.Top, space.Width, space.Height);
 		}
 
 		void LayoutAnchoredChildren (Control parent, Control[] controls)
