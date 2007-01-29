@@ -262,7 +262,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			Write (new MyBinaryWriter (fs), guid);
 		}
 
-		Assembly assembly;
 		MyBinaryReader reader;
 		Hashtable method_hash;
 		Hashtable source_file_hash;
@@ -270,14 +269,12 @@ namespace Mono.CompilerServices.SymbolWriter
 		Hashtable method_token_hash;
 		Hashtable source_name_hash;
 
+		Guid guid;
+
 		protected MonoSymbolFile (string filename, Assembly assembly)
 		{
-			this.assembly = assembly;
-
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
 			reader = new MyBinaryReader (stream);
-
-			Guid guid;
 
 			try {
 				long magic = reader.ReadInt64 ();
@@ -306,7 +303,7 @@ namespace Mono.CompilerServices.SymbolWriter
 				
 				Module[] modules = assembly.GetModules ();
 				Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
-	
+
 				if (guid != assembly_guid)
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' does not match assembly `{1}'",
@@ -330,10 +327,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			return new MonoSymbolFile (mdbFilename, null);
 		}
 
-		public Assembly Assembly {
-			get { return assembly; }
-		}
-
 		public int SourceCount {
 			get { return ot.SourceCount; }
 		}
@@ -348,6 +341,10 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public int NamespaceCount {
 			get { return last_namespace_index; }
+		}
+
+		public Guid Guid {
+			get { return guid; }
 		}
 
 		internal int LineNumberCount = 0;

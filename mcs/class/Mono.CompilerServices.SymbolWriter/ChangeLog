@@ -1,3 +1,9 @@
+2007-01-29  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs
+	(MonoSymbolFile.Assembly): Removed this property.
+	(MonoSymbolFile.Guid): New public property.
+
 2006-09-24  Joshua Tauberer  <jit@occams.info>
 
 	* MonoSymbolFile.cs: Allow MonoSymbolFile to be created
