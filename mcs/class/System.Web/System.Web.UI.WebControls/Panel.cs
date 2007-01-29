@@ -106,7 +106,11 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (align != "")
+#if NET_2_0
+				w.AddStyleAttribute (HtmlTextWriterStyle.TextAlign, align);
+#else
 				w.AddAttribute (HtmlTextWriterAttribute.Align, align);
+#endif
 		}
 		
 #if !NET_2_0

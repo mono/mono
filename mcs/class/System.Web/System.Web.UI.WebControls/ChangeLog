@@ -1,3 +1,8 @@
+2007-01-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Panel.cs: fixed AddAttributesToRender for 2.0, text align should be
+	style attribute
+
 2007-01-29  Adar Wesley <adarw@mainsoft.com>
 
         * EditCommandColumn.cs: implemented CausesValidation and
