@@ -646,7 +646,7 @@ namespace Mono.CSharp
 		
 		bool parse_opt_type_arguments (int next)
 		{
-			if (next == Token.OP_GENERICS_LT || next == Token.OP_LT){
+			if (next == Token.OP_GENERICS_LT){
 				while (true) {
 					token ();
 					if (!parse_type ())
@@ -655,14 +655,14 @@ namespace Mono.CSharp
 					if (next == Token.COMMA)
 						continue;
 
-					if (next == Token.OP_GENERICS_GT || next == Token.OP_GT){
+					if (next == Token.OP_GENERICS_GT){
 						token ();
 						return true;
 					}
 					return false;
 				} 
 			}
-			if (next == Token.OP_GT || next == Token.OP_GENERICS_GT){
+			if (next == Token.OP_GENERICS_GT){
 				token ();
 				return true;
 			}
@@ -682,7 +682,7 @@ namespace Mono.CSharp
 					next = peek_token ();
 					continue;
 				}
-				if (next == Token.OP_GENERICS_LT || next == Token.OP_LT){
+				if (next == Token.OP_GENERICS_LT){
 					if (parse_opt_type_arguments (next))
 						goto again;
 				}
