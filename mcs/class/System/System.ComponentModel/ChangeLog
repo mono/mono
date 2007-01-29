@@ -1,3 +1,7 @@
+2007-01-29  Marek Habersack  <grendello@gmail.com>
+
+	* PasswordPropertyTextAttribute.cs: Implement.
+
 2007-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* RecommendedAsConfigurableAttribute.cs: Make this non-obsolete to fix
