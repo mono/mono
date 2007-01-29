@@ -652,7 +652,7 @@ namespace Mono.CSharp
 				if (next == Token.OP_GENERICS_LT){
 					token ();
 					if (!parse_less_than ())
-						throw new InternalErrorException ("cannot happen");
+						return false;
 					goto again;
 				}
 				return true;
