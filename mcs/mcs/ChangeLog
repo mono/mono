@@ -1,5 +1,10 @@
 2007-01-28  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-tokenizer.cs: Typo fix, its not GMCS_SOURCES but GMCS_SOURCE,
+	this bug took a few hours to find, because the state saved and
+	restored by PushPosition and PopPosition was ignoring the state of
+	parse_generic_less_than.
+
 	* cs-tokenizer.cs: store the location for the ARROW token, we use
 	that in the parser.
 

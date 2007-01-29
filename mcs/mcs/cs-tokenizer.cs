@@ -266,7 +266,7 @@ namespace Mono.CSharp
 			public int putback_char;
 			public int previous_col;
 			public Stack ifstack;
-#if GMCS_SOURCES
+#if GMCS_SOURCE
 			public int parsing_generic_less_than;
 			public int current_token;
 #endif			
@@ -279,7 +279,7 @@ namespace Mono.CSharp
 				previous_col = t.previous_col;
 				if (t.ifstack != null && t.ifstack.Count != 0)
 					ifstack = (Stack)t.ifstack.Clone ();
-#if GMCS_SOURCES
+#if GMCS_SOURCE
 				parsing_generic_less_than = t.parsing_generic_less_than;
 				current_token = t.current_token;
 #endif
@@ -301,7 +301,7 @@ namespace Mono.CSharp
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
-#if GMCS_SOURCES
+#if GMCS_SOURCE
 			parsing_generic_less_than = p.parsing_generic_less_than;
 			current_token = p.current_token;
 #endif
@@ -635,10 +635,12 @@ namespace Mono.CSharp
 		public int peek_token ()
 		{
 			int the_token;
-			
+
+			int old = parsing_generic_less_than;
 			PushPosition ();
 			the_token = token ();
 			PopPosition ();
+			
 			return the_token;
 		}
 		
