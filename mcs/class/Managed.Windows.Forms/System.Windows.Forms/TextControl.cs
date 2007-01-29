@@ -876,19 +876,20 @@ namespace System.Windows.Forms {
 
 			set {
 				password_char = value;
+				PasswordCache.Length = 0;
 				if ((password_char.Length != 0) && (password_char[0] != '\0')) {
-					char	ch;
-
 					calc_pass = true;
-					ch = value[0];
-					password_cache = new StringBuilder(1024);
-					for (int i = 0; i < 1024; i++) {
-						password_cache.Append(ch);
-					}
 				} else {
 					calc_pass = false;
-					password_cache = null;
 				}
+			}
+		}
+
+		private StringBuilder PasswordCache {
+			get { 
+				if (password_cache == null) 
+					  password_cache = new StringBuilder(); 
+				return password_cache;
 			}
 		}
 
@@ -1868,8 +1869,11 @@ namespace System.Windows.Forms {
 				if (!calc_pass) {
 					text = line.text;
 				} else {
-					// This fails if there's a password > 1024 chars...
-					text = this.password_cache;
+					if (PasswordCache.Length < line.text.Length)
+						PasswordCache.Append(Char.Parse(password_char), line.text.Length - PasswordCache.Length);
+					else if (PasswordCache.Length > line.text.Length)
+						PasswordCache.Remove(line.text.Length, PasswordCache.Length - line.text.Length);
+					text = PasswordCache;
 				}
 
 				int line_selection_start = text.Length + 1;
@@ -1954,7 +1958,8 @@ namespace System.Windows.Forms {
 						tag.Draw (g, current_brush,
 								line.widths [old_tag_pos - 1] + line.align_shift - viewport_x,
 								line.Y + tag.shift  - viewport_y,
-								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos));
+								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos),
+								text.ToString() );
 					}
 					tag = tag.next;
 				}
@@ -4301,6 +4306,10 @@ namespace System.Windows.Forms {
 		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
 		{
 			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
+		}
+
+		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text) {
+			dc.DrawString (text.ToString().Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>

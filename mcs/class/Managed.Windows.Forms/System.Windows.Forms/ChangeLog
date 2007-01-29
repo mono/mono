@@ -1,3 +1,12 @@
+2007-01-29  Andreia Gaita  <avidigal@novell.com>
+
+	* TextBox.cs: Redraw when the password characters changes
+	* TextControl.cs: Check if textbox has a password char and draw 
+	a line of password chars instead of the text in the line. LineTag gets 
+	an extra Draw() method which allows document.Draw to override the text 
+	that will be drawn. Removes 1024 char limitation on length of passworded 
+	lines.
+
 2007-01-29  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Deleting sections of text is undoable.  Deleting
