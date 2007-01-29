@@ -30,6 +30,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace System.Resources {
 	[Serializable]
@@ -60,14 +61,26 @@ namespace System.Resources {
 				}
 
 				parts = ((string)value).Split(';');
-
+				string typename = parts[1];
 				using (FileStream file = new FileStream(parts[0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
+
+					if (typename == "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8"){
+						string encoding = null;
+						if (parts.Length > 2){
+							encoding = parts [2];
+							if (encoding == null || encoding == String.Empty)
+								encoding = "utf-8";
+						}
+						StreamReader sr = new StreamReader (file, Encoding.GetEncoding (encoding));
+						return sr.ReadToEnd ();
+					}
 					buffer = new byte[file.Length];
 
 					file.Read(buffer, 0, (int)file.Length);
 				}
 
-				return Activator.CreateInstance(Type.GetType(parts[1]), BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { new MemoryStream(buffer) }, culture);
+
+				return Activator.CreateInstance(Type.GetType (typename), BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { new MemoryStream(buffer) }, culture);
 			}
 
 			public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {

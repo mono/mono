@@ -1,3 +1,8 @@
+2007-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* ResXFileRef.cs: Catch the string case and create strings with
+	the specified encoding from its string source.
+
 2006-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXResourceReader.cs: For invalid mime type, return value as string
