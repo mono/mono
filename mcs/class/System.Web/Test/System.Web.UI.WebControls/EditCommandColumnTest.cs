@@ -38,6 +38,8 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.stand_alone.WebHarness;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -58,7 +60,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		[Category("NotWorking")]
 		public void Defaults ()
 		{
 			EditCommandColumn	e;
@@ -70,15 +71,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(string.Empty, e.EditText, "D3");
 			Assert.AreEqual(string.Empty, e.UpdateText, "D4");
 #if NET_2_0
-			// MONO BUG: CausesValidation and ValidationGroup have no definition
-			//Assert.AreEqual (true, e.CausesValidation, "CausesValidation");
-			//Assert.AreEqual (string.Empty, e.ValidationGroup, "ValidationGroup");
-			Assert.Fail("CausesValidation and ValidationGroup have no definition");
+			Assert.AreEqual (true, e.CausesValidation, "CausesValidation");
+			Assert.AreEqual (string.Empty, e.ValidationGroup, "ValidationGroup");
 #endif
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Properties () {
 			EditCommandColumn	e;
 
@@ -96,14 +94,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			e.UpdateText = "Update? What update?";
 			Assert.AreEqual("Update? What update?", e.UpdateText, "D4");
 #if NET_2_0
-			// MONO BUG: CausesValidation and ValidationGroup have no definition
-			//e.CausesValidation = false;
-			//Assert.AreEqual (false, e.CausesValidation, "CausesValidation");
-			//e.ValidationGroup = "test";
-			//Assert.AreEqual ("test", e.ValidationGroup, "ValidationGroup");
-			Assert.Fail ("CausesValidation and ValidationGroup have no definition");
+			e.CausesValidation = false;
+			Assert.AreEqual (false, e.CausesValidation, "CausesValidation");
+			e.ValidationGroup = "test";
+			Assert.AreEqual ("test", e.ValidationGroup, "ValidationGroup");
 #endif
-
 		}
 
 		private string ControlMarkup(Control c) {
@@ -128,8 +123,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		[Category ("NotWorking")]
 		public void InitializeCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -168,7 +161,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\n", "");
 
 #if NET_2_0
-			Assert.AreEqual (
+			HtmlDiff.AssertAreEqual (
 				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
 				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
@@ -184,8 +177,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		[Category("NotWorking")]
 		public void ThisIsADGTest () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -227,7 +218,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\n", "");
 
 #if NET_2_0
-			Assert.AreEqual (
+			HtmlDiff.AssertAreEqual (
 				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
 				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker_tbl$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
@@ -250,8 +241,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		[Category("NotWorking")]
 		public void InitializeEditCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -308,7 +297,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (2, p.Columns.Count, "I1");
 
 #if NET_2_0
-			Assert.AreEqual (
+			HtmlDiff.AssertAreEqual (
 				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" + 
 				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;" + 
 				"<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td>" + 
@@ -384,5 +373,304 @@ namespace MonoTests.System.Web.UI.WebControls
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
 		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NunitWeb")]
+		public void Validation_ValidatingValid () 
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Validation_Load;
+			pd.PreRender = Validation_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.UserData = "ValidatingValid";
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = (string) t.UserData;
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.UserData = "ValidatingValid";
+			
+			html = t.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Validation_ValidatingInvalid () {
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Validation_Load;
+			pd.PreRender = Validation_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.UserData = "ValidatingInvalid";
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = (string)t.UserData;
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.UserData = "ValidatingInvalid";
+
+			html = t.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Validation_NotValidatingInvalid () {
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Validation_Load;
+			pd.PreRender = Validation_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.UserData = "NotValidatingInvalid";
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = (string) t.UserData;
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.UserData = "NotValidatingInvalid";
+
+			html = t.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Validation_ValidationGroupIncluded () {
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Validation_Load;
+			pd.PreRender = Validation_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.UserData = "ValidationGroupIncluded";
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = (string) t.UserData;
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.UserData = "ValidationGroupIncluded";
+
+			html = t.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Validation_ValidationGroupNotIncluded () {
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Validation_Load;
+			pd.PreRender = Validation_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.UserData = "ValidationGroupNotIncluded";
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = (string) t.UserData;
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.UserData = "ValidationGroupNotIncluded";
+
+			html = t.Run ();
+		}
+
+		public static void Validation_Load (Page p) 
+		{
+			string testType = (string)WebTest.CurrentTest.UserData;
+			DataGridTest dg = new DataGridTest ();
+			dg.ID = "mygrid";
+			EditCommandColumn e;
+
+			e = new EditCommandColumn ();
+			e.ButtonType = ButtonColumnType.LinkButton;
+			e.CancelText = "Cancel";
+			e.EditText = "Edit";
+			e.UpdateText = "Update";
+
+			switch (testType) {
+			case "ValidatingValid":
+			case "ValidatingInvalid":
+			case "ValidationGroupIncluded":
+			case "ValidationGroupNotIncluded":
+				e.CausesValidation = true;
+				break;
+
+			case "NotValidatingInvalid":
+				e.CausesValidation = false;
+				break;
+			}
+
+			switch (testType) {
+			case "ValidationGroupIncluded":
+			case "ValidationGroupNotIncluded":
+				e.ValidationGroup = "Group1";
+				break;
+
+			default:
+				e.ValidationGroup = "";
+				break;
+			}
+
+			dg.Columns.Add (e);
+
+			TextBox tb = new TextBox ();
+			tb.ID = "Text1";
+			switch (testType) {
+			case "ValidatingValid":
+				tb.Text = "111";
+				break;
+
+			case "ValidatingInvalid":
+			case "NotValidatingInvalid":
+			case "ValidationGroupIncluded":
+			case "ValidationGroupNotIncluded":
+				tb.Text = "";
+				break;
+			}
+
+			RequiredFieldValidator v = new RequiredFieldValidator ();
+			v.ControlToValidate = "Text1";
+			switch (testType) {
+			case "ValidationGroupIncluded":
+				v.ValidationGroup = "Group1";
+				break;
+
+			case "ValidationGroupNotIncluded":
+				v.ValidationGroup = "NotGroup1";
+				break;
+
+			default:
+				v.ValidationGroup = "";
+				break;
+			}
+			TemplateColumn tc = new TemplateColumn ();
+			tc.EditItemTemplate = new ValidatingEditTemplate (tb, v);
+			dg.Columns.Add (tc);
+
+			ObjectDataSource ods = new ObjectDataSource ("MyObjectDS", "Select");
+			ods.UpdateMethod = "Update";
+			ods.DataObjectTypeName = "MyObjectDS";
+			ods.ID = "MyDS";
+
+			p.Form.Controls.Add (ods);
+
+			dg.DataSource = ods;
+			//dg.DataKeyField = "i";
+
+			//DataTable table = new DataTable ();
+			//table.Columns.Add (new DataColumn ("one", typeof (string)));
+			//table.Columns.Add (new DataColumn ("two", typeof (string)));
+			//table.Columns.Add (new DataColumn ("three", typeof (string)));
+			//table.Rows.Add (new object [] { "1", "2", "3" });
+
+			//dg.DataSource = new DataView (table);
+
+			dg.EditItemIndex = 0;
+			p.Form.Controls.Add (dg);
+
+			dg.DataBind ();
+			if (!p.IsPostBack) {
+				WebTest.CurrentTest.UserData = dg.Items [0].Cells [0].Controls [0].UniqueID;
+			}
+		}
+
+		public static void Validation_PreRender (Page p) 
+		{
+			string testType = (string) WebTest.CurrentTest.UserData;
+
+			if (p.IsPostBack) {
+				switch (testType) {
+				case "ValidatingValid":
+				case "ValidationGroupNotIncluded":
+					Assert.AreEqual (true, p.IsValid, "ValidatingValid");
+					break;
+				case "ValidatingInvalid":
+				case "ValidationGroupIncluded":
+					Assert.AreEqual (false, p.IsValid, "ValidatingInvalid");
+					break;
+
+				case "NotValidatingInvalid":
+					bool isValidated = true;
+					try {
+						if (p.IsValid) {
+							Assert.Fail ("NotValidatingInvalid IsValid == true");
+						}
+					}
+					catch (HttpException httpException) {
+						isValidated = false;
+					}
+					Assert.AreEqual(false, isValidated, "NotValidatingInvalid");
+					break;
+				}
+			}
+		}
+
+		public class ValidatingEditTemplate : ITemplate
+		{
+			public ValidatingEditTemplate (params Control [] templateControls) 
+			{
+				this.templateControls = new Control[templateControls.Length];
+				templateControls.CopyTo (this.templateControls, 0);
+			}
+
+			#region ITemplate Members
+
+			public void InstantiateIn (Control container) 
+			{
+				foreach (Control c in templateControls) {
+					container.Controls.Add (c);
+				}
+			}
+
+			#endregion
+
+			private Control[] templateControls;
+		}
+#endif
 	}
 }
+
+#if NET_2_0
+#region MyObjectDS
+public class MyObjectDS
+{
+	public MyObjectDS () {
+		_i = 0;
+	}
+
+	public MyObjectDS (int value) {
+		_i = value;
+	}
+
+	private int _i;
+	public int i {
+		get { return _i; }
+		set { _i = value; }
+	}
+
+	static MyObjectDS [] myData = null;
+
+	public static IList Select () {
+		if (myData == null) {
+			myData = new MyObjectDS [] { new MyObjectDS (1), new MyObjectDS (2), new MyObjectDS (3) };
+		}
+		return myData;
+	}
+
+	public static void Update (MyObjectDS instance) {
+	}
+}
+#endregion
+#endif

@@ -70,6 +70,21 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		[DefaultValue(true)]
+		public virtual bool CausesValidation {
+			get { return ViewState.GetBool ("CausesValidation", true); }
+			set { ViewState ["CausesValidation"] = value; } 
+		}
+
+		[DefaultValue("")]
+		public virtual string ValidationGroup {
+			get { return ViewState.GetString ("ValidationGroup", ""); }
+			set { ViewState ["ValidationGroup"] = value; } 
+		}
+
+#endif
+
+#if NET_2_0
 		[DefaultValue ("")]
 		[Localizable (true)]
 #endif
@@ -121,7 +136,11 @@ namespace System.Web.UI.WebControls {
 				}
 
 				case ListItemType.EditItem: {
+#if NET_2_0
+					cell.Controls.Add (CreateButton (ButtonType, UpdateText, "Update", CausesValidation));
+#else
 					cell.Controls.Add(CreateButton(ButtonType, UpdateText, "Update", true));
+#endif
 					cell.Controls.Add(new LiteralControl("&nbsp;"));
 					cell.Controls.Add(CreateButton(ButtonType, CancelText, "Cancel", false));
 					break;
@@ -140,6 +159,11 @@ namespace System.Web.UI.WebControls {
 				d.Text = text;
 				d.CommandName = command;
 				d.CausesValidation = valid;
+#if NET_2_0
+				if (valid) {
+					d.ValidationGroup = ValidationGroup;
+				}
+#endif
 				return d;
 			}
 
@@ -147,6 +171,11 @@ namespace System.Web.UI.WebControls {
 			b.Text = text;
 			b.CommandName = command;
 			b.CausesValidation = valid;
+#if NET_2_0
+			if (valid) {
+				b.ValidationGroup = ValidationGroup;
+			}
+#endif
 			return b;
 		}
 		#endregion	// Private Methods

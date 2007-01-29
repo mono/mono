@@ -416,7 +416,11 @@ namespace System.Web.UI.WebControls {
 		private Table RenderTable {
 			get {
 				if (render_table == null) {
+#if ONLY_1_1
 					render_table = new TableID (this);
+#else
+					render_table = new Table ();
+#endif
 					render_table.AutoID = false;
 				}
 				return render_table;
@@ -1285,4 +1289,5 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
+
 
