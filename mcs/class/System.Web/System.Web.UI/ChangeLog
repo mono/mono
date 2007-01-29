@@ -1,3 +1,9 @@
+2007-01-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	* ClientScriptManager.cs:
+	CallBack works with EvantValidation.		
+
 2007-01-25  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Page.cs: Change code to use the 'theForm' property when generating

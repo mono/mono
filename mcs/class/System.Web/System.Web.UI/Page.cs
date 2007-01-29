@@ -1344,11 +1344,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		Control targetControl;
 #endif
 		if (requiresRaiseEvent != null) {
-#if NET_2_0
-			targetControl = requiresRaiseEvent as Control;
-			if (targetControl != null && CheckForValidationSupport (targetControl))
-				scriptManager.ValidateEvent (targetControl.UniqueID, null);
-#endif
 			RaisePostBackEvent (requiresRaiseEvent, null);
 			return;
 		}
@@ -1374,10 +1369,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 
 		string eventArgument = postdata [postEventArgumentID];
-#if NET_2_0
-		if (CheckForValidationSupport (targetControl))
-			scriptManager.ValidateEvent (targetControl.UniqueID, eventArgument);
-#endif
 		RaisePostBackEvent (target, eventArgument);
 	}
 
@@ -1395,6 +1386,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
 	{
+#if NET_2_0
+		Control targetControl = sourceControl as Control;
+		if (targetControl != null && CheckForValidationSupport (targetControl))
+			scriptManager.ValidateEvent (targetControl.UniqueID, eventArgument);
+#endif
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
@@ -1874,7 +1870,11 @@ return true;
 
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
 		target.RaiseCallbackEvent (callbackArgument);
-		return target.GetCallbackResult ();
+
+		string eventValidation = ClientScript.GetEventValidationStateFormatted ();
+		string callBackResult= target.GetCallbackResult ();
+
+		return String.Format ("{0}|{1}{2}", eventValidation == null ? 0 : eventValidation.Length, eventValidation, callBackResult);
 	}
 
 	[BrowsableAttribute (false)]

@@ -10,12 +10,31 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 {
 	try {
 		var doc = httpPost.responseText;
+		var separatorIndex = doc.indexOf("|");
+		if (separatorIndex != -1) {
+			var validationFieldLength = parseInt(doc.substring(0, separatorIndex));
+			if (!isNaN(validationFieldLength)) {
+				var validationField = doc.substring(separatorIndex + 1, separatorIndex + validationFieldLength + 1);
+				if (validationField != "") {
+					var validationFieldElement = theForm["__EVENTVALIDATION"];
+					if (!validationFieldElement) {
+						validationFieldElement = document.createElement("INPUT");
+						validationFieldElement.type = "hidden";
+						validationFieldElement.name = "__EVENTVALIDATION";
+						theForm.appendChild(validationFieldElement);
+					}
+					validationFieldElement.value = validationField;
+				}
+				callback (doc.substring(separatorIndex + validationFieldLength + 1), ctx);
+				return;
+			}
+		}
 	} catch (e) {
 		if (errorCallback != null)
 			errorCallback (httpPost.responseText, ctx);
 		return;
 	}
-	callback (doc, ctx);
+	callback (httpPost.responseText, ctx);
 }
 
 function WebForm_getFormData (theForm)

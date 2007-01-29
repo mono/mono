@@ -423,7 +423,7 @@ namespace System.Web.UI
 				return;
 			if (uniqueId == null || uniqueId.Length == 0)
 				return;
-			if (page.LifeCycle < PageLifeCycle.Render)
+			if (page.LifeCycle < PageLifeCycle.Render && !page.IsCallback)
 				throw new InvalidOperationException ("RegisterForEventValidation may only be called from the Render method");
 			if (eventValidationValues == null)
 				eventValidationValues = new List <int> ();
@@ -471,16 +471,31 @@ namespace System.Web.UI
 			if (!page.EnableEventValidation || fieldValue == null || fieldValue.Length == 0)
 				return;
 			IStateFormatter fmt = page.GetFormatter ();
-			eventValidationValues = (List <int>)fmt.Deserialize (fieldValue);
+			eventValidationValues = new List<int> ((int []) fmt.Deserialize (fieldValue));
+			eventValidationValues.Sort ();
 		}
 		
 		internal void SaveEventValidationState ()
 		{
-			if (!page.EnableEventValidation || eventValidationValues == null || eventValidationValues.Count == 0)
+			if (!page.EnableEventValidation)
 				return;
-			eventValidationValues.Sort ();
+
+			string eventValidation = GetEventValidationStateFormatted ();
+			if (eventValidation == null)
+				return;
+
+			RegisterHiddenField (EventStateFieldName, eventValidation);
+		}
+
+		internal string GetEventValidationStateFormatted ()
+		{
+			if (eventValidationValues == null || eventValidationValues.Count == 0)
+				return null;
+
 			IStateFormatter fmt = page.GetFormatter ();
-			RegisterHiddenField (EventStateFieldName, fmt.Serialize (eventValidationValues));
+			int [] array = new int [eventValidationValues.Count];
+			eventValidationValues.CopyTo (array);
+			return fmt.Serialize (array);
 		}
 
 		internal string EventStateFieldName
