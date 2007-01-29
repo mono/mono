@@ -347,7 +347,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void MultiView_Events_Base_PostBack ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");
-			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest));
+			t.Invoker = PageInvoker.CreateOnLoad (new PageDelegate (EventsTest));
 			string html = t.Run ();
 			if (html.IndexOf ("View_1_is_active") < 0)
 				Assert.Fail ("MultiView_Events#1 Failed");
@@ -367,7 +367,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		#region base_events
-		public static void EventsTest_1 (Page p)
+		public static void EventsTest (Page p)
 		{
 
 			MultiView MultiView1 = new MultiView ();
@@ -378,6 +378,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			view_2.ID = "view_2";
 			Button bt = new Button ();
 			bt.ID = "bt";
+			
 
 			view_1.Controls.Add (bt);
 			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
@@ -399,7 +400,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void MultiView_Events_NextView_PostBack ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");
-			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest));
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest_1));
 			string html = t.Run ();
 			if (html.IndexOf ("View_1_is_active") < 0)
 				Assert.Fail ("MultiView_Events#1 Failed");
@@ -419,7 +420,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		#region NextView_PostBack
-		public static void EventsTest (Page p)
+		public static void EventsTest_1 (Page p)
 		{
 			MultiView MultiView1 = new MultiView ();
 			MultiView1.ID = "MultiView1";
@@ -594,6 +595,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			mv.Page.Controls.Add (new LiteralControl ("ActiveViewChangedFired"));
 		}
 		#endregion
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 	}
 }
 #endif
