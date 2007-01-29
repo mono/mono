@@ -3,15 +3,15 @@
 ! by an identifier.   This is used for the internal deambiguation 
 ! used for lambda_expressions
 !
-+identifier::identifier<> name
-+identifier::identifier<arg::two,arg<>,blah::blah<blah>> name
++identifier<typeparm>.name name
++identifier::identifier<T> name
+-Test<T>.Count != 1
 +file?[,] name
 +file?[,,,] name
 -dingus<<int>? name
 -dingus?<int> name
 +identifier name
 +identifier.dot.identifier name
-+identifier<typeparm>.name name
 +identifier<typeparm> name
 +identifier<identifier<identifier,two,three>,two>.identifier<two,three> name
 +identifier::identifier name
@@ -32,3 +32,9 @@
 +dingus<type[,,,][,]> name
 +dingus<type[,,,][,]> name
 +file file
+!
+! These are broken because of the handling for '>' seems to be
+! having issues:
+!
+!+a<arg<l>,blah<blah>> name
+!+identifier::identifier<arg::two,arg<l>,blah::blah<blah>> name

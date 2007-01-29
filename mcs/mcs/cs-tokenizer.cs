@@ -268,6 +268,7 @@ namespace Mono.CSharp
 			public Stack ifstack;
 #if GMCS_SOURCES
 			public int parsing_generic_less_than;
+			public int current_token;
 #endif			
 			public Position (Tokenizer t)
 			{
@@ -280,6 +281,7 @@ namespace Mono.CSharp
 					ifstack = (Stack)t.ifstack.Clone ();
 #if GMCS_SOURCES
 				parsing_generic_less_than = t.parsing_generic_less_than;
+				current_token = t.current_token;
 #endif
 			}
 		}
@@ -299,6 +301,10 @@ namespace Mono.CSharp
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
+#if GMCS_SOURCES
+			parsing_generic_less_than = p.parsing_generic_less_than;
+			current_token = p.current_token;
+#endif
 		}
 
 		// Do not reset the position, ignore it.
@@ -626,7 +632,7 @@ namespace Mono.CSharp
 		}
 #endif
 		
-		int peek_token ()
+		public int peek_token ()
 		{
 			int the_token;
 			
@@ -636,17 +642,17 @@ namespace Mono.CSharp
 			return the_token;
 		}
 		
-		bool parse_opt_type_arguments ()
+		bool parse_opt_type_arguments (int next)
 		{
-			int next = peek_token ();
-			if (next == Token.OP_GENERICS_LT){
+			if (next == Token.OP_GENERICS_LT || next == Token.OP_LT){
 				while (true) {
 					token ();
-					if (!parse_namespace_or_typename (-1))
+					if (!parse_type ())
 						return false;
 					next = peek_token ();
 					if (next == Token.COMMA)
 						continue;
+
 					if (next == Token.OP_GENERICS_GT || next == Token.OP_GT){
 						token ();
 						return true;
@@ -667,6 +673,7 @@ namespace Mono.CSharp
 				next = peek_token ();
 			while (next == Token.IDENTIFIER){
 				token ();
+			  again:
 				next = peek_token ();
 				if (next == Token.DOT || next == Token.DOUBLE_COLON){
 					token ();
@@ -674,9 +681,8 @@ namespace Mono.CSharp
 					continue;
 				}
 				if (next == Token.OP_GENERICS_LT || next == Token.OP_LT){
-					token ();
-					if (parse_opt_type_arguments ())
-						return true;
+					if (parse_opt_type_arguments (next))
+						goto again;
 				}
 				return true;
 			}
@@ -962,6 +968,7 @@ namespace Mono.CSharp
 				}
 				if (d == '>'){
 					doread = true;
+					val = Location;
 					return Token.ARROW;
 				}
 				return Token.ASSIGN;
@@ -2442,8 +2449,8 @@ namespace Mono.CSharp
 							}
 						}
 						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
-						if (d == '\n'){
-						}
+							if (d == '\n'){
+							}
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
 						comments_seen = false;

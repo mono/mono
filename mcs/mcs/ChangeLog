@@ -1,5 +1,14 @@
 2007-01-28  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-tokenizer.cs: store the location for the ARROW token, we use
+	that in the parser.
+
+	(PushPosition, PopPosition): save/restore also `current_token',
+	restore `parse_generic_less_than' (was missing).
+
+	(parse_opt_type_arguments): use parse_type, not
+	parse_namespace_or_typename to parse types.
+
 	* lambda.cs: Empty new file, will eventually have the lambda
 	expression implementation.
 
