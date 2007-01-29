@@ -268,7 +268,8 @@ namespace System.Windows.Forms
 
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
 		{
-			DrawTextInternal (dc, text, font, pt, foreColor, backColor, flags, useDrawString);
+			Size sz = MeasureTextInternal (dc, text, font, useDrawString);
+			DrawTextInternal (dc, text, font, new Rectangle (pt, sz), foreColor, backColor, flags, useDrawString);
 		}
 
 		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
@@ -379,7 +380,6 @@ namespace System.Windows.Forms
 			}
 			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter) {
 				r.Y += 1;
-				r.Height -= 1;
 			}
 
 			return r;
@@ -409,7 +409,6 @@ namespace System.Windows.Forms
 			}
 			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter) {
 				r.Y += 1;
-				r.Height -= 1;
 			}
 
 			return r;
@@ -433,12 +432,8 @@ namespace System.Windows.Forms
 		static extern int SetBkMode (IntPtr hdc, int iBkMode);
 
 		[DllImport ("gdi32")]
-		static extern bool GetTextExtentPoint32 (IntPtr hdc, string lpString, int cbString, out UXTheme.SIZE lpSize);
-
-		[DllImport ("gdi32")]
 		static extern bool DeleteObject (IntPtr objectHandle);
 		#endregion
 	}
-
 }
 #endif

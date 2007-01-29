@@ -1,3 +1,9 @@
+2007-01-28  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1-2-3]
+	* TextRenderer.cs: Fix cutting off the bottom of letters like "j" by
+	one pixel.  Fix a StackOverflowException caused by an overload wrongly
+	calling itself.
+
 2007-01-24  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: fix the wake_waiting logic - we always clear the
