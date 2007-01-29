@@ -1003,27 +1003,43 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void SetIcon(Hwnd hwnd, Icon icon) {
-			Bitmap		bitmap;
-			int		size;
-			IntPtr[]	data;
-			int		index;
+		private void SetIcon(Hwnd hwnd, Icon icon)
+		{
+			if (icon == null) {
+				// XXX
 
-			bitmap = icon.ToBitmap();
-			index = 0;
-			size = bitmap.Width * bitmap.Height + 2;
-			data = new IntPtr[size];
-
-			data[index++] = (IntPtr)bitmap.Width;
-			data[index++] = (IntPtr)bitmap.Height;
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					data[index++] = (IntPtr)bitmap.GetPixel(x, y).ToArgb();
-				}
+				// This really needs to do whatever it
+				// takes to remove the window manager
+				// menu, not just delete the ICON
+				// property.  This will cause metacity
+				// to use the "no icon set" icon, and
+				// we'll still have an icon.
+				XDeleteProperty (DisplayHandle, hwnd.whole_window, _NET_WM_ICON);
 			}
+			else {
+				Bitmap		bitmap;
+				int		size;
+				IntPtr[]	data;
+				int		index;
 
-			XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
+				bitmap = icon.ToBitmap();
+				index = 0;
+				size = bitmap.Width * bitmap.Height + 2;
+				data = new IntPtr[size];
+
+				data[index++] = (IntPtr)bitmap.Width;
+				data[index++] = (IntPtr)bitmap.Height;
+
+				for (int y = 0; y < bitmap.Height; y++) {
+					for (int x = 0; x < bitmap.Width; x++) {
+						data[index++] = (IntPtr)bitmap.GetPixel (x, y).ToArgb ();
+					}
+				}
+
+				XChangeProperty (DisplayHandle, hwnd.whole_window,
+						 _NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32,
+						 PropertyMode.Replace, data, size);
+			}
 		}
 
 		private void WakeupMain () {
