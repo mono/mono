@@ -5,6 +5,9 @@
 	restored by PushPosition and PopPosition was ignoring the state of
 	parse_generic_less_than.
 
+	I can also now remove the handling of OP_LT and OP_GT, this solves
+	the big mistery.
+	
 	* cs-tokenizer.cs: store the location for the ARROW token, we use
 	that in the parser.
 
