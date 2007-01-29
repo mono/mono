@@ -1,3 +1,7 @@
+2007-01-29  Marek Habersack  <grendello@gmail.com>
+
+	* Marshal.cs: Implement a missing Marshal.Copy overload.
+
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs: Implement Marshal.ReAllocCoTaskMem.

@@ -176,6 +176,13 @@ namespace System.Runtime.InteropServices
 			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
+#if NET_2_0
+		public static void Copy (IntPtr source, IntPtr[] destination, int startIndex, int length)
+		{
+			copy_from_unmanaged (source, startIndex, destination, length);
+		}
+#endif
+		
 		public static object CreateWrapperOfType (object o, Type t)
 		{
 			__ComObject co = o as __ComObject;
