@@ -1,3 +1,7 @@
+2007-01-28  yonik <yonik@mainsoft.com>
+
+     * MultiViewTest.cs: Add new tests for post back events 
+
 2007-01-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
         * LoginTest.cs: removed NotWorking attribute

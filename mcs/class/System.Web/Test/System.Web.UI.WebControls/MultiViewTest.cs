@@ -35,6 +35,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -95,6 +98,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class MultiViewTest
 	{
 
+		[SetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
 		[Test]
 		public void MultiView_DefaultProperties ()
 		{
@@ -112,7 +121,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void MultiView_NotWorkingDefaultProperties ()
 		{
 			PokerMultiView pmw = new PokerMultiView ();
-			Assert.IsTrue (pmw.EnableTheming, "EnableTheming"); 
+			Assert.IsTrue (pmw.EnableTheming, "EnableTheming");
 
 		}
 
@@ -121,7 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerMultiView pmv = new PokerMultiView ();
 			View v1 = new View ();
-			pmv.Controls.Add (v1);			
+			pmv.Controls.Add (v1);
 			Assert.AreEqual (1, pmv.Views.Count, "ViewsCount");
 			Assert.AreEqual (-1, pmv.ActiveViewIndex, "ActiveViewIndex");
 		}
@@ -212,7 +221,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.Controls.Add (v);
 			m.SetActiveView (v);
 			string html = m.Render ();
-			Assert.AreEqual ("<input type=\"submit\" name=\"test\" value=\"\" id=\"test\" />", html, "ButtonRender");			
+			Assert.AreEqual ("<input type=\"submit\" name=\"test\" value=\"\" id=\"test\" />", html, "ButtonRender");
 		}
 
 		[Test]
@@ -331,6 +340,260 @@ namespace MonoTests.System.Web.UI.WebControls
 			LiteralControl l1 = new LiteralControl ("literal");
 			pmv.DoAddParsedSubObject (l1);
 		}
+
+		//PostBack Events
+		[Test]
+		[Category ("NunitWeb")]
+		public void MultiView_Events_Base_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest));
+			string html = t.Run ();
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("MultiView_Events#1 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("ActiveViewChangedFired") < 0) {
+				Assert.Fail ("MultiView_Events#3 Failed");
+			}
+
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("MultiView_Events#4 Failed");
+		}
+
+		#region base_events
+		public static void EventsTest_1 (Page p)
+		{
+
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			MultiView1.ActiveViewIndex = 0;
+			MultiView1.ActiveViewChanged += new EventHandler (MultiView1_ActiveViewChanged);
+			p.Controls.Add (MultiView1);
+
+			if (p.IsPostBack) {
+				MultiView1.ActiveViewIndex = 1;
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MultiView_Events_NextView_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest));
+			string html = t.Run ();
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("MultiView_Events#1 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("ActiveViewChangedFired") < 0) {
+				Assert.Fail ("MultiView_Events#3 Failed");
+			}
+
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("MultiView_Events#4 Failed");
+		}
+
+		#region NextView_PostBack
+		public static void EventsTest (Page p)
+		{
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+			bt.CommandName = "NextView";
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			MultiView1.ActiveViewIndex = 0;
+			MultiView1.ActiveViewChanged += new EventHandler (MultiView1_ActiveViewChanged);
+			p.Controls.Add (MultiView1);
+		}
+
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MultiView_Events_PrevView_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest_2));
+			string html = t.Run ();
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("MultiView_Events#1 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("ActiveViewChangedFired") < 0) {
+				Assert.Fail ("MultiView_Events#3 Failed");
+			}
+
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("MultiView_Events#4 Failed");
+		}
+
+		#region PrevView_PostBack
+		public static void EventsTest_2 (Page p)
+		{
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+			bt.CommandName = "PrevView";
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			MultiView1.ActiveViewIndex = 1;
+			MultiView1.ActiveViewChanged += new EventHandler (MultiView1_ActiveViewChanged);
+			p.Controls.Add (MultiView1);
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MultiView_Events_SwitchViewByID_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest_3));
+			string html = t.Run ();
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("MultiView_Events#1 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("ActiveViewChangedFired") < 0) {
+				Assert.Fail ("MultiView_Events#3 Failed");
+			}
+
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("MultiView_Events#4 Failed");
+		}
+
+		#region ByID_PostBack
+		public static void EventsTest_3 (Page p)
+		{
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+			bt.CommandName = "SwitchViewByID";
+			bt.CommandArgument = "view_2";
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			MultiView1.ActiveViewIndex = 0;
+			MultiView1.ActiveViewChanged += new EventHandler (MultiView1_ActiveViewChanged);
+			p.Controls.Add (MultiView1);
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MultiView_Events_SwitchViewByIndex_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest_4));
+			string html = t.Run ();
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("MultiView_Events#1 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("ActiveViewChangedFired") < 0) {
+				Assert.Fail ("MultiView_Events#3 Failed");
+			}
+
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("MultiView_Events#4 Failed");
+		}
+
+		#region SwitchViewByIndex_PostBack
+		public static void EventsTest_4 (Page p)
+		{
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+			bt.CommandName = "SwitchViewByIndex";
+			bt.CommandArgument = "1";
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			MultiView1.ActiveViewIndex = 0;
+			MultiView1.ActiveViewChanged += new EventHandler (MultiView1_ActiveViewChanged);
+			p.Controls.Add (MultiView1);
+		}
+		#endregion
+
+		#region help_event_handler
+		public static void MultiView1_ActiveViewChanged (object sender, EventArgs e)
+		{
+			MultiView mv = sender as MultiView;
+			if (mv == null)
+				Assert.Fail ("MultiView_Events#2 Failed");
+			mv.Page.Controls.Add (new LiteralControl ("ActiveViewChangedFired"));
+		}
+		#endregion
 	}
 }
 #endif
