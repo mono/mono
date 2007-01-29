@@ -1,3 +1,9 @@
+2007-01-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added tests for case-sensitive dealing with
+	HTTP method.
+	* SocketResponser.cs: Utility class for tests that require a listener.
+
 2007-01-29  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 	
 	* IPAddressTest.cs: Fixed missing bracket (under TARGET_JVM)

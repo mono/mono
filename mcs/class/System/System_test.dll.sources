@@ -178,6 +178,7 @@ System.Net/ServicePointManagerTest.cs
 System.Net/ServicePointTest.cs
 System.Net/SocketPermissionAttributeTest.cs
 System.Net/SocketPermissionTest.cs
+System.Net/SocketResponder.cs
 System.Net/WebHeaderCollectionTest.cs
 System.Net/WebPermissionAttributeTest.cs
 System.Net/WebProxyTest.cs

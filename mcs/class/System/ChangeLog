@@ -1,3 +1,7 @@
+2007-01-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added SocketResponder.cs.
+
 2007-01-28  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 	
 	* System20.vmwcsproj: Added new net_2_0 classes to the project

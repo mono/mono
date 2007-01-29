@@ -13,6 +13,8 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -180,6 +182,102 @@ namespace MonoTests.System.Net
 				throw server.Error;
 
 			Assertion.AssertEquals ("1234567890123456", x);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MethodCase ()
+		{
+			ListDictionary methods = new ListDictionary ();
+#if NET_2_0
+			methods.Add ("post", "POST");
+			methods.Add ("puT", "PUT");
+#else
+			methods.Add ("post", "post");
+			methods.Add ("puT", "puT");
+#endif
+			methods.Add ("POST", "POST");
+			methods.Add ("whatever", "whatever");
+			methods.Add ("PUT", "PUT");
+
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			foreach (DictionaryEntry de in methods) {
+				SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), 
+					new SocketRequestHandler (EchoRequestHandler));
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = (string) de.Key;
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string line = sr.ReadLine ();
+					sr.Close ();
+					Assert.AreEqual (((string) de.Value) + " /test/ HTTP/1.1",
+						line, req.Method);
+					resp.Close ();
+				}
+				responder.Stop ();
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetRequestStream_Body_NotAllowed ()
+		{
+			string [] methods = new string [] { "GET", "HEAD", "CONNECT",
+				"get", "HeAd", "ConNect" };
+
+			foreach (string method in methods) {
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (
+					"http://localhost:8000");
+				req.Method = method;
+				try {
+					req.GetRequestStream ();
+					Assert.Fail ("#1:" + method);
+				} catch (ProtocolViolationException ex) {
+					Assert.AreEqual (typeof (ProtocolViolationException), ex.GetType (), "#2:" + method);
+					Assert.IsNull (ex.InnerException, "#3:" + method);
+					Assert.IsNotNull (ex.Message, "#4:" + method);
+				}
+			}
+		}
+
+		private static byte [] EchoRequestHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+			StreamReader sr = new StreamReader (ms, Encoding.UTF8);
+			string request = sr.ReadToEnd ();
+
+			MemoryStream outputStream = new MemoryStream ();
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Content-Length: " + request.Length.ToString (CultureInfo.InvariantCulture));
+			sw.WriteLine ();
+			sw.Write (request);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 
 		class BadChunkedServer : HttpServer {
