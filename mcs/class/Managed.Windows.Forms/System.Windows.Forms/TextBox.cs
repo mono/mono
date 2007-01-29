@@ -226,6 +226,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.PasswordChar = "";
 					}
+					this.CalculateDocument();
 				}
 			}
 		}
