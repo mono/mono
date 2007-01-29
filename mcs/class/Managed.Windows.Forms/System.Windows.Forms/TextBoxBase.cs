@@ -1157,7 +1157,9 @@ namespace System.Windows.Forms {
 
 			// delete only deletes on the line, doesn't do the combine
 			if (document.selection_visible) {
+				document.undo.BeginUserAction (Locale.GetText ("Delete"));
 				document.ReplaceSelection("", false);
+				document.undo.EndUserAction ();
 				fire_changed = true;
 			}
 			document.SetSelectionToCaret(true);
@@ -1190,18 +1192,22 @@ namespace System.Windows.Forms {
 				} else {
 					int start_pos;
 
+					
 					start_pos = document.CaretPosition - 1;
-
 					while ((start_pos > 0) && !Document.IsWordSeparator(document.CaretLine.Text[start_pos - 1])) {
 						start_pos--;
 					}
+
+					document.undo.BeginUserAction (Locale.GetText ("Delete"));
 					document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
+					document.undo.EndUserAction ();
 					document.PositionCaret(document.CaretLine, start_pos);
 					document.SetSelectionToCaret (true);
 				}
 				document.UpdateCaret();
 				fire_changed = true;
 			}
+
 			if (fire_changed) {
 				OnTextChanged(EventArgs.Empty);
 			}
