@@ -270,9 +270,8 @@ namespace Mono.CSharp
 			public int putback_char;
 			public int previous_col;
 			public Stack ifstack;
-#if GMCS_SOURCES
 			public int parsing_generic_less_than;
-#endif			
+
 			public Position (Tokenizer t)
 			{
 				position = t.reader.Position;
@@ -282,9 +281,7 @@ namespace Mono.CSharp
 				previous_col = t.previous_col;
 				if (t.ifstack != null && t.ifstack.Count != 0)
 					ifstack = (Stack)t.ifstack.Clone ();
-#if GMCS_SOURCES
 				parsing_generic_less_than = t.parsing_generic_less_than;
-#endif
 			}
 		}
 		
@@ -303,6 +300,7 @@ namespace Mono.CSharp
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
+			parsing_generic_less_than = p.parsing_generic_less_than;
 		}
 
 		// Do not reset the position, ignore it.
@@ -598,8 +596,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		int parsing_generic_less_than = 0;
-
 		public void PutbackNullable ()
 		{
 			if (nullable_pos < 0)
@@ -628,6 +624,9 @@ namespace Mono.CSharp
 				nullable_pos = -1;
 		}
 #endif
+
+		int parsing_generic_less_than = 0;
+
 		int is_punct (char c, ref bool doread)
 		{
 			int d;
@@ -706,7 +705,6 @@ namespace Mono.CSharp
 				PopPosition ();
 
 				if (is_generic_lt) {
-					parsing_generic_less_than++;
 					return Token.OP_GENERICS_LT;
 				} else
 					parsing_generic_less_than = 0;

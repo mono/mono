@@ -1,3 +1,9 @@
+2007-01-29  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-tokenizer.cs (PushPosition): Save 'parsing_generic_less_than'.
+	(PopPosition): Restore 'parsing_generic_less_than'.
+	(is_punct) ['<']: Update to changes.
+
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80531
