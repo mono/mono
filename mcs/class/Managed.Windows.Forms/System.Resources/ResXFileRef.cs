@@ -64,7 +64,7 @@ namespace System.Resources {
 				string typename = parts[1];
 				using (FileStream file = new FileStream(parts[0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
 
-					if (typename == "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8"){
+					if (typename == "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"){
 						string encoding = null;
 						if (parts.Length > 2){
 							encoding = parts [2];
