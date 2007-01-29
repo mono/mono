@@ -1,3 +1,8 @@
+2007-01-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AssemblyResolver.cs: Added.
+	* ResolveAssemblyReference.cs: Moved most of code to AssemblyResolver.
+
 2007-01-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* GetFrameworkPath.cs

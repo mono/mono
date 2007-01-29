@@ -63,26 +63,29 @@ namespace Microsoft.Build.Tasks {
 		string[]	targetFrameworkDirectories;
 		string		targetProcessorArchitecture;
 
+		AssemblyResolver	assembly_resolver;
+
 		public ResolveAssemblyReference ()
 		{
+			assembly_resolver = new AssemblyResolver ();
 		}
 
-		// FIXME: very primitive version that references <reference>.dll or uses
-		// HintPath if it's there
-		
 		public override bool Execute ()
 		{
 			List <ITaskItem> tempResolvedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem item in assemblies) {
-				if (item.GetMetadata ("HintPath") != String.Empty)
-					tempResolvedFiles.Add (new TaskItem (item.GetMetadata ("HintPath")));
-				else
-					tempResolvedFiles.Add (new TaskItem (String.Format ("{0}.dll",item.ItemSpec)));
+				string resolved = assembly_resolver.ResolveAssemblyReference (item);
+
+				if (resolved == null) {
+					Log.LogWarning ("Reference {0} not resolved", item.ItemSpec);
+				} else
+					Log.LogMessage ("Reference {0} resolved to {1}", item.ItemSpec, resolved);
+					tempResolvedFiles.Add (new TaskItem (resolved));
 			}
 			
 			resolvedFiles = tempResolvedFiles.ToArray ();
-			
+
 			return true;
 		}
 		
