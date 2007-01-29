@@ -1,3 +1,8 @@
+2007-01-25  Radek Doulik  <rodo@novell.com>
+
+	* ModuleBuilder.cs: return created type from GetType in case the
+	type builder type was already created. Added test-555.cs as
+	regression test.
 
 Tue Jan 23 17:45:07 CET 2007 Paolo Molaro <lupus@ximian.com>
 

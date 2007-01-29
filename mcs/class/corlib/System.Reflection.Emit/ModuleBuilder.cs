@@ -391,9 +391,17 @@ namespace System.Reflection.Emit {
 			}
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (orig);
-			if (result != null && (modifiers != null))
-				return create_modified_type (result, modifiers);
-			return result;
+			if (result != null && (modifiers != null)) {
+				Type mt = create_modified_type (result, modifiers);
+				if (mt is TypeBuilder)
+					result = mt as TypeBuilder;
+				else
+					return mt;
+			}
+			if (result != null && result.is_created)
+				return result.CreateType ();
+			else
+				return result;
 		}
 
 		internal int get_next_table_index (object obj, int table, bool inc) {
