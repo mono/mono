@@ -202,7 +202,6 @@ namespace Mono.CSharp
 %token WHILE	
 %token ARGLIST
 %token PARTIAL
-%token ARROW
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -228,9 +227,7 @@ namespace Mono.CSharp
 %token BANG           "!"
 %token ASSIGN         "="
 %token OP_LT          "<"
-%token OP_GENERICS_LT "<"
 %token OP_GT          ">"
-%token OP_GENERICS_GT ">"
 %token BITWISE_AND    "&"
 %token BITWISE_OR     "|"
 %token STAR           "*"
@@ -272,7 +269,6 @@ namespace Mono.CSharp
 %token LITERAL_STRING            "string literal"
 
 %token IDENTIFIER
-%token OPEN_PARENS_LAMBDA
 %token CLOSE_PARENS_CAST
 %token CLOSE_PARENS_NO_CAST
 %token CLOSE_PARENS_OPEN_PARENS
@@ -341,7 +337,7 @@ extern_alias_directive
 		if (s != "alias"){
 			Report.Error (1003, lt.Location, "'alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotISO1 (lt.Location, "external alias");
+			Report.FeatureIsNotStandardized (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
@@ -3201,7 +3197,7 @@ anonymous_method_expression
 		current_block = (Block) oob_stack.Pop ();
 
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (loc, "anonymous methods");
+			Report.FeatureIsNotStandardized (loc, "anonymous methods");
 			$$ = null;
 		} else  {
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
@@ -4303,7 +4299,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -4328,7 +4324,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){

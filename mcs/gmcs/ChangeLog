@@ -1,17 +1,3 @@
-2007-01-28  Miguel de Icaza  <miguel@novell.com>
-
-	* cs-parser.jay (open_parens): Introduce new non-terminal that
-	abstracts OPEN_PARENS and OPEN_PARENS_LAMBDA as the later can now
-	be returned in places where types are followed by identifiers
-	(this is expected in declaration, fixed, using, foreach and catch
-	clauses). 
-	
-
-	Use open_parens in those places, keep OPEN_PARENS in the
-	expressions.  
-
-	cs-parser.jay: New grammar bits for parsing lambda expressions. 
-
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #80534, gtest-309.cs

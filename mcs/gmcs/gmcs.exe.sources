@@ -19,7 +19,6 @@
 ../mcs/flowanalysis.cs
 generic.cs
 ../mcs/iterators.cs
-../mcs/lambda.cs
 ../mcs/literal.cs
 ../mcs/location.cs
 ../mcs/modifiers.cs

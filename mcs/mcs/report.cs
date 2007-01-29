@@ -236,17 +236,9 @@ namespace Mono.CSharp {
 
 		}
 
-		public static void FeatureIsNotISO1 (Location loc, string feature)
+		public static void FeatureIsNotStandardized (Location loc, string feature)
 		{
-			Report.Error (1644, loc,
-				"Feature `{0}' cannot be used because it is not part of the C# 1.0 language specification",
-				      feature);
-		}
-
-		public static void FeatureRequiresLINQ (Location loc, string feature)
-		{
-			Report.Error (1644, loc,
-				      "Feature `{0}' can only be used if the language level is LINQ", feature);
+			Report.Error (1644, loc, "Feature `{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
 		}
 		
 		public static string FriendlyStackTrace (Exception e)

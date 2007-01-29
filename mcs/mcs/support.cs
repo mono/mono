@@ -361,7 +361,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader
 	{
-		public SeekableStreamReader (TextReader reader)
+		public SeekableStreamReader (StreamReader reader)
 		{
 			this.reader = reader;
 			this.buffer = new char [AverageReadLength * 3];
@@ -374,7 +374,7 @@ namespace Mono.CSharp {
 			: this (new StreamReader (stream, encoding, true))
 		{ }
 
-		TextReader reader;
+		StreamReader reader;
 
 		private const int AverageReadLength = 1024;
 
