@@ -52,7 +52,7 @@ namespace System.Web.Services.Configuration {
 			priorityProp = new ConfigurationProperty ("priority", typeof (int), 0,
 								  new Int32Converter(), new IntegerValidator (0, Int32.MaxValue),
 								  ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (Type), String.Empty,
+			typeProp = new ConfigurationProperty ("type", typeof (Type), null,
 							      new TypeTypeConverter (),
 							      null, ConfigurationPropertyOptions.IsKey);
 			properties = new ConfigurationPropertyCollection ();

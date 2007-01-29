@@ -1,3 +1,7 @@
+2007-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapExtensionTypeElement.cs : use null for default Type value.
+
 2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeTypeConverter.cs :
