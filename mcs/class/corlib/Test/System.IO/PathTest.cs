@@ -470,7 +470,9 @@ namespace MonoTests.System.IO
 		{
 			if (Windows) {
 				AssertEquals ("GetFullPath w#01", @"Z:\", Path.GetFullPath ("Z:"));
+#if !TARGET_JVM // Java full (canonical) path always starts with caps drive letter
 				AssertEquals ("GetFullPath w#02", @"c:\abc\def", Path.GetFullPath (@"c:\abc\def"));
+#endif
 				Assert ("GetFullPath w#03", Path.GetFullPath (@"\").EndsWith (@"\"));
 				// "\\\\" is not allowed
 				Assert ("GetFullPath w#05", Path.GetFullPath ("/").EndsWith (@"\"));
@@ -648,15 +650,21 @@ namespace MonoTests.System.IO
 		[Test]
 		public void WindowsSystem32_76191 ()
 		{
+#if !TARGET_JVM
 			// check for Unix platforms - see FAQ for more details
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128))
 				return;
+#endif
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
+#if TARGET_JVM
+                string system = "C:\\WINDOWS\\system32\\";
+#else
 				string system = Environment.SystemDirectory;
+#endif
 				Directory.SetCurrentDirectory (system);
 				string drive = system.Substring (0, 2);
 				AssertEquals ("current dir", system, Path.GetFullPath (drive));
@@ -669,15 +677,21 @@ namespace MonoTests.System.IO
 		[Test]
 		public void WindowsSystem32_77007 ()
 		{
+#if !TARGET_JVM
 			// check for Unix platforms - see FAQ for more details
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128))
 				return;
+#endif
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
+#if TARGET_JVM
+                string system = "C:\\WINDOWS\\system32\\";
+#else
 				string system = Environment.SystemDirectory;
+#endif
 				Directory.SetCurrentDirectory (system);
 				// e.g. C:dir (no backslash) will return CurrentDirectory + dir
 				string dir = system.Substring (0, 2) + "dir";
@@ -689,6 +703,9 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+#if TARGET_JVM
+        [Ignore("Java full (canonical) path always returns windows dir in caps")]
+#endif
 		public void WindowsDriveC14N_77058 ()
 		{
 			// check for Unix platforms - see FAQ for more details

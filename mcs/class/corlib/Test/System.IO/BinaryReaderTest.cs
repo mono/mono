@@ -1063,6 +1063,9 @@ namespace MonoTests.System.IO
 	
 	[Test]
 	[ExpectedException(typeof(EndOfStreamException))]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void ReadDecimalException ()
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0, 0});
@@ -1231,6 +1234,9 @@ namespace MonoTests.System.IO
 	}
 	
 	[Test]
+#if TARGET_JVM
+    [Category("NotWorking")]
+#endif
 	public void ReadSingle ()
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
