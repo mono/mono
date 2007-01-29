@@ -1,3 +1,8 @@
+2007-01-29  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* ToolboxItemAttributeTests.cs: excluded DefaultType test,
+        under TARGET_JVM
+
 2007-01-25  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* ArrayConverterTests.cs: workaround not supported under TARGET_JVM
