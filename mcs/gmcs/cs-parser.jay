@@ -204,6 +204,7 @@ namespace Mono.CSharp
 %token WHILE	
 %token ARGLIST
 %token PARTIAL
+%token ARROW
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -273,6 +274,7 @@ namespace Mono.CSharp
 %token LITERAL_STRING            "string literal"
 
 %token IDENTIFIER
+%token OPEN_PARENS_LAMBDA
 %token CLOSE_PARENS_CAST
 %token CLOSE_PARENS_NO_CAST
 %token CLOSE_PARENS_OPEN_PARENS
@@ -344,7 +346,7 @@ extern_alias_directive
 		if (s != "alias"){
 			Report.Error (1003, lt.Location, "'alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotStandardized (lt.Location, "external alias");
+			Report.FeatureIsNotISO1 (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
@@ -1130,11 +1132,22 @@ opt_error_modifier
 	  }
 	;
 
+	// 
+	// This rule is used to handle the cases where OPEN_PARENS_LAMBDA
+	// is returned (type followed by an identifier), these are the
+	// declarations (methods, overloads, constructors, etc) and a handful
+	// of expressions ("using", "fixed") or "catch".
+	//
+open_parens
+	: OPEN_PARENS
+	| OPEN_PARENS_LAMBDA
+	;
+
 method_header
 	: opt_attributes
 	  opt_modifiers
 	  type namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  open_parens opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -1173,7 +1186,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  VOID namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  open_parens opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -1211,7 +1224,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  modifiers namespace_or_type_name open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
 		Report.Error (1585, name.Location, 
@@ -1747,7 +1760,7 @@ opt_new
 	;
 
 interface_method_declaration_body
-	: OPEN_BRACE
+	: open_brace
 	  {
 		lexer.ConstraintsParsing = false;
 	  }
@@ -1762,7 +1775,7 @@ interface_method_declaration_body
 
 interface_method_declaration
 	: opt_attributes opt_new type namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -1795,7 +1808,7 @@ interface_method_declaration
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes opt_new VOID namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -2015,7 +2028,7 @@ operator_body
 	; 
 operator_declarator
 	: type OPERATOR overloadable_operator 
-	  OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	  open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
 		// TODO: wrong location
 		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
@@ -2047,7 +2060,7 @@ operator_declarator
 					      null, null, (Location) $2);
 	  }
 	| type OPERATOR overloadable_operator
-	  OPEN_PARENS 
+	  open_parens 
 		opt_parameter_modifier type IDENTIFIER COMMA
 	  	opt_parameter_modifier type IDENTIFIER 
 	  CLOSE_PARENS
@@ -2081,7 +2094,7 @@ operator_declarator
           }
 	| conversion_operator_declarator
 	| type OPERATOR overloadable_operator
-	  OPEN_PARENS 
+	  open_parens 
 		opt_parameter_modifier type IDENTIFIER COMMA
 	  	opt_parameter_modifier type IDENTIFIER COMMA
 		opt_parameter_modifier type IDENTIFIER
@@ -2092,7 +2105,7 @@ operator_declarator
 		$$ = null;
 	  }
 	| type OPERATOR overloadable_operator 
-	  OPEN_PARENS CLOSE_PARENS
+	  open_parens CLOSE_PARENS
 	  {
 		Report.Error (1535, (Location) $2, "Overloaded unary operator `{0}' takes one parameter",
 			Operator.GetName ((Operator.OpType) $3));
@@ -2129,7 +2142,7 @@ overloadable_operator
 	;
 
 conversion_operator_declarator
-	: IMPLICIT OPERATOR type OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	: IMPLICIT OPERATOR type open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
   		// TODO: wrong location
 		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
@@ -2150,7 +2163,7 @@ conversion_operator_declarator
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $6, lt.Value,
 					      null, null, (Location) $2);
 	  }
-	| EXPLICIT OPERATOR type OPEN_PARENS opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	| EXPLICIT OPERATOR type open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
 	  {
   		// TODO: wrong location
 		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
@@ -2234,7 +2247,7 @@ constructor_declarator
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		current_local_parameters = (Parameters) $4;
 	  }
@@ -2259,11 +2272,11 @@ opt_constructor_initializer
 	;
 
 constructor_initializer
-	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: COLON BASE open_parens opt_argument_list CLOSE_PARENS
 	  {
 		$$ = new ConstructorBaseInitializer ((ArrayList) $4, (Location) $2);
 	  }
-	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
+	| COLON THIS open_parens opt_argument_list CLOSE_PARENS
 	  {
 		$$ = new ConstructorThisInitializer ((ArrayList) $4, (Location) $2);
 	  }
@@ -2691,7 +2704,7 @@ delegate_declaration
 		lexer.ConstraintsParsing = true;
 	  }
 	  type member_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 		Parameters p = (Parameters) $8;
@@ -2763,13 +2776,13 @@ opt_type_argument_list
 	  {
 		$$ = $2;
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotStandardized (lexer.Location, "generics");
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");
 	  }
 	| GENERIC_DIMENSION
 	  {
 		$$ = new TypeArguments ((int) $1, lexer.Location);
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotStandardized (lexer.Location, "generics");
+			Report.FeatureIsNotISO1 (lexer.Location, "generics");
 	  }
 	;
 
@@ -3457,7 +3470,7 @@ anonymous_method_expression
 		current_block = (Block) oob_stack.Pop ();
 
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (loc, "anonymous methods");
+			Report.FeatureIsNotISO1 (loc, "anonymous methods");
 			$$ = null;
 		} else  {
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
@@ -3482,7 +3495,7 @@ opt_anonymous_method_signature
 	;
 
 anonymous_method_signature
-	: OPEN_PARENS opt_anonymous_method_parameter_list CLOSE_PARENS 
+	: open_parens opt_anonymous_method_parameter_list CLOSE_PARENS 
 	  {
 		if ($2 == null)
 			$$ = Parameters.EmptyReadOnlyParameters;
@@ -3861,9 +3874,82 @@ assignment_expression
 	  }
 	;
 
+implicitly_typed_lambda_parameter_list
+	: IDENTIFIER { 
+		ArrayList a = new ArrayList (4); 
+		a.Add ($1);  
+		$$ = a; 
+	  } 
+	| implicitly_typed_lambda_parameter_list COMMA IDENTIFIER {
+		ArrayList a = (ArrayList) $1;
+		a.Add ($3);
+		$$ = a;
+	  }
+	;
+
+explicitly_typed_lambda_parameter_list
+	: explicitly_typed_lambda_parameter
+	  {
+		ArrayList pars = new ArrayList (4);
+		pars.Add ($1);
+
+		$$ = pars;
+	  }
+	| explicitly_typed_lambda_parameter_list COMMA explicitly_typed_lambda_parameter
+	  {
+		ArrayList pars = (ArrayList) $1;
+		pars.Add ($3);
+
+		$$ = pars;
+	  }
+	;
+
+explicitly_typed_lambda_parameter
+	: parameter_modifier type IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+
+		$$ = new Parameter ((Expression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
+	  }
+	| type IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $2;
+
+		$$ = new Parameter ((Expression) $2, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+	  }
+	;
+
+lambda_parameter_list
+	: implicitly_typed_lambda_parameter_list { $$ = $1; }
+	| explicitly_typed_lambda_parameter_list { $$ = $1; }
+	;
+
+lambda_expression_body
+	: expression
+	| block
+	;
+
+lambda_expression
+	: IDENTIFIER ARROW lambda_expression_body
+	  {
+		Console.WriteLine ("return");
+		ArrayList a = new ArrayList (1);
+		a.Add ($1);
+		$$ = new LambdaExpression (a, $3, (Location) $2);
+	  }
+	| OPEN_PARENS CLOSE_PARENS ARROW lambda_expression_body  {
+		$$ = new LambdaExpression (new ArrayList (), $4, (Location) $3);
+	  }
+	| OPEN_PARENS_LAMBDA lambda_parameter_list CLOSE_PARENS ARROW lambda_expression_body 
+	  {
+		$$ = new LambdaExpression ((ArrayList) $2, $5, (Location) $4);
+	  }
+	;
+
 expression
 	: conditional_expression
 	| assignment_expression
+	| lambda_expression
 	;
 
 constant_expression
@@ -4474,7 +4560,7 @@ do_statement
 	;
 
 for_statement
-	: FOR OPEN_PARENS 
+	: FOR open_parens 
 	  opt_for_initializer SEMICOLON
 	  {
 		Block assign_block = new Block (current_block);
@@ -4574,12 +4660,12 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
+	: FOREACH open_parens type IN expression CLOSE_PARENS
 	  {
 		Report.Error (230, (Location) $1, "Type and identifier are both required in a foreach statement");
 		$$ = null;
 	  }
-	| FOREACH OPEN_PARENS type IDENTIFIER IN
+	| FOREACH open_parens type IDENTIFIER IN
 	  expression CLOSE_PARENS 
 	  {
 		Block foreach_block = new Block (current_block);
@@ -4682,7 +4768,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
+			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -4707,7 +4793,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
+			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -4847,7 +4933,7 @@ opt_catch_args
 	;	  
 
 catch_args 
-        : OPEN_PARENS type opt_identifier CLOSE_PARENS 
+        : open_parens type opt_identifier CLOSE_PARENS 
           {
 		$$ = new DictionaryEntry ($2, $3);
 	  }
@@ -4878,7 +4964,7 @@ unsafe_statement
 	;
 
 fixed_statement
-	: FIXED OPEN_PARENS 
+	: FIXED open_parens 
 	  type fixed_pointer_declarators 
 	  CLOSE_PARENS
 	  {
@@ -4960,7 +5046,7 @@ lock_statement
 	;
 
 using_statement
-	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS
+	: USING open_parens resource_acquisition CLOSE_PARENS
 	  {
 		Block assign_block = new Block (current_block);
 		current_block = assign_block;

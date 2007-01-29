@@ -47,13 +47,13 @@ bootstrap-libs:
 $(PROGRAM): $(bootstrap_libfiles)
 
 gmcs2.exe: $(PROGRAM)
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(PROGRAM) -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) /target:exe /debug /out:$@ -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 cs-parser.cs  @gmcs.exe.sources
 
 gmcs3.exe: gmcs2.exe
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs2.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs2.exe /target:exe /debug /out:$@ -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 cs-parser.cs  @gmcs.exe.sources
 
 gmcs4.exe: gmcs3.exe
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs3.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs3.exe /target:exe /debug /out:$@ -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 cs-parser.cs  @gmcs.exe.sources
 
 
 # Testing targets
@@ -96,3 +96,5 @@ profile : gmcs2.exe
 	-rm -f gmcs3.exe
 	make gmcs3.exe RUNTIME_FLAGS='--profile=$(PROFILER)'
 
+typetest:
+	mono gmcs.exe --typetest ../mcs/lambda.test

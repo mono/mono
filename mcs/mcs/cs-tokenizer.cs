@@ -10,12 +10,7 @@
 // (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
 // (C) 2004 Novell, Inc
 //
-
-/*
- * TODO:
- *   Make sure we accept the proper Unicode ranges, per the spec.
- *   Report error 1032
-*/
+//
 
 using System;
 using System.Text;
@@ -45,6 +40,7 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
+		bool linq;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
@@ -271,6 +267,7 @@ namespace Mono.CSharp
 			public int previous_col;
 			public Stack ifstack;
 			public int parsing_generic_less_than;
+			public int current_token;
 
 			public Position (Tokenizer t)
 			{
@@ -282,6 +279,7 @@ namespace Mono.CSharp
 				if (t.ifstack != null && t.ifstack.Count != 0)
 					ifstack = (Stack)t.ifstack.Clone ();
 				parsing_generic_less_than = t.parsing_generic_less_than;
+				current_token = t.current_token;
 			}
 		}
 		
@@ -301,6 +299,7 @@ namespace Mono.CSharp
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
 			parsing_generic_less_than = p.parsing_generic_less_than;
+			current_token = p.current_token;
 		}
 
 		// Do not reset the position, ignore it.
@@ -470,6 +469,7 @@ namespace Mono.CSharp
 		{
 			this.ref_name = file;
 			this.file_name = file;
+			linq = RootContext.Version == LanguageVersion.LINQ;
 			reader = input;
 			
 			putback_char = -1;
@@ -520,7 +520,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-#if GMCS_SOURCE
 		bool parse_generic_dimension (out int dimension)
 		{
 			dimension = 1;
@@ -596,6 +595,7 @@ namespace Mono.CSharp
 			return false;
 		}
 
+#if GMCS_SOURCE
 		public void PutbackNullable ()
 		{
 			if (nullable_pos < 0)
@@ -624,9 +624,143 @@ namespace Mono.CSharp
 				nullable_pos = -1;
 		}
 #endif
+		
+		public int peek_token ()
+		{
+			int the_token;
+
+			PushPosition ();
+			the_token = token ();
+			PopPosition ();
+			
+			return the_token;
+		}
+		
+		bool parse_namespace_or_typename (int next)
+		{
+			if (next == -1)
+				next = peek_token ();
+			while (next == Token.IDENTIFIER){
+				token ();
+			  again:
+				next = peek_token ();
+				if (next == Token.DOT || next == Token.DOUBLE_COLON){
+					token ();
+					next = peek_token ();
+					continue;
+				}
+				if (next == Token.OP_GENERICS_LT){
+					token ();
+					if (!parse_less_than ())
+						throw new InternalErrorException ("cannot happen");
+					goto again;
+				}
+				return true;
+			}
+
+			return false;
+		}
+
+		bool is_simple_type (int token)
+		{
+			return  (token == Token.BOOL ||
+				 token == Token.DECIMAL ||
+				 token == Token.SBYTE ||
+				 token == Token.BYTE ||
+				 token == Token.SHORT ||
+				 token == Token.USHORT ||
+				 token == Token.INT ||
+				 token == Token.UINT ||
+				 token == Token.LONG ||
+				 token == Token.ULONG ||
+				 token == Token.CHAR ||
+				 token == Token.FLOAT ||
+				 token == Token.DOUBLE);
+		}
+
+		bool is_builtin_reference_type (int token)
+		{
+			return (token == Token.OBJECT || token == Token.STRING);
+		}
+
+		bool parse_opt_rank (int next)
+		{
+			while (true){
+				if (next != Token.OPEN_BRACKET)
+					return true;
+
+				token ();
+				while (true){
+					next = token ();
+					if (next == Token.CLOSE_BRACKET){
+						next = peek_token ();
+						break;
+					}
+					if (next == Token.COMMA)
+						continue;
+					
+					return false;
+				}
+			}
+		}
+			
+		bool parse_type ()
+		{
+			int next = peek_token ();
+			
+			if (is_simple_type (next)){
+				token ();
+				next = peek_token ();
+				if (next == Token.INTERR)
+					token ();
+				return parse_opt_rank (peek_token ());
+			}
+			if (parse_namespace_or_typename (next)){
+				next = peek_token ();
+				if (next == Token.INTERR)
+					token ();
+				return parse_opt_rank (peek_token ());
+			} else if (is_builtin_reference_type (next)){
+				token ();
+				return parse_opt_rank (peek_token ());
+			}
+			
+			return false;
+		}
+		
+		//
+		// Invoked after '(' has been seen and tries to parse
+		// a type expression followed by an identifier, if this
+		// is the case, instead of returning an OPEN_PARENS token
+		// we return a special token that triggers lambda parsing.
+		//
+		// This is needed because we can not introduce the
+		// explicitly_typed_lambda_parameter_list after a '(' in the
+		// grammar without introducing reduce/reduce conflicts.
+		//
+		// We need to parse a type and if it is followed by an
+		// identifier, we know it has to be parsed as a lambda
+		// expression.  
+		//
+		// the type expression can be prefixed with `ref' or `out'
+		//
+		public bool parse_type_and_parameter ()
+		{
+			int next = peek_token ();
+
+			if (next == Token.REF || next == Token.OUT)
+				token ();
+						 
+			if (parse_type ()){
+				next = peek_token ();
+				if (next == Token.IDENTIFIER)
+					return true;
+			}
+			return false;
+		}
 
 		int parsing_generic_less_than = 0;
-
+		
 		int is_punct (char c, ref bool doread)
 		{
 			int d;
@@ -649,7 +783,17 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				return Token.OPEN_PARENS;
+				if (linq){
+					PushPosition ();
+					bool is_type_and_parameter = parse_type_and_parameter ();
+					PopPosition ();
+					
+					if (is_type_and_parameter)
+						return Token.OPEN_PARENS_LAMBDA;
+					else
+						return Token.OPEN_PARENS;
+				} else
+					return Token.OPEN_PARENS;
 			case ')': {
 				if (deambiguate_close_parens == 0)
 					return Token.CLOSE_PARENS;
@@ -793,6 +937,11 @@ namespace Mono.CSharp
 				if (d == '='){
 					doread = true;
 					return Token.OP_EQ;
+				}
+				if (d == '>'){
+					doread = true;
+					val = Location;
+					return Token.ARROW;
 				}
 				return Token.ASSIGN;
 			}
@@ -2059,7 +2208,7 @@ namespace Mono.CSharp
 
 			case "pragma":
 				if (RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotStandardized (Location, "#pragma");
+					Report.FeatureIsNotISO1 (Location, "#pragma");
 					return true;
 				}
 
@@ -2272,8 +2421,8 @@ namespace Mono.CSharp
 							}
 						}
 						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
-						if (d == '\n'){
-						}
+							if (d == '\n'){
+							}
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
 						comments_seen = false;

@@ -2885,7 +2885,7 @@ namespace Mono.CSharp {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location);
 
 			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
-				Report.FeatureIsNotStandardized (Location, "static classes");
+				Report.FeatureIsNotISO1 (Location, "static classes");
 			}
 		}
 
@@ -5837,7 +5837,7 @@ namespace Mono.CSharp {
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1)
-				Report.FeatureIsNotStandardized (loc, "fixed size buffers");
+				Report.FeatureIsNotISO1 (loc, "fixed size buffers");
 
 			this.size_expr = size_expr;
 		}
@@ -6458,7 +6458,7 @@ namespace Mono.CSharp {
 				anonymous_methods = accessor.AnonymousMethods;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotStandardized (Location, "access modifiers on properties");
+					Report.FeatureIsNotISO1 (Location, "access modifiers on properties");
 				}
 			}
 
