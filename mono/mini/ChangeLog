@@ -1,3 +1,9 @@
+
+Mon Jan 29 12:14:34 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: put back the --export-dynamic option as with
+	the previous gmodule flags (thanks to Robert Jordan).
+
 2007-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (peephole_pass): Fix #80622 for sparc as well.
