@@ -1,3 +1,9 @@
+
+Mon Jan 29 16:51:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* MonoSymbolWriter.cs: unlink the file before writing it, since it may
+	be mmapped by the runtime.
+
 2007-01-29  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs

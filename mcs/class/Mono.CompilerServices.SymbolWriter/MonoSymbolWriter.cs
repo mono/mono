@@ -181,6 +181,12 @@ namespace Mono.CompilerServices.SymbolWriter
 					method.Method.NamespaceID);
 			}
 
+			try {
+				// We mmap the file, so unlink the previous version since it may be in use
+				File.Delete (filename);
+			} catch {
+				// We can safely ignore
+			}
 			using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
 				file.CreateSymbolFile (guid, fs);
 			}
