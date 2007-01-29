@@ -150,6 +150,8 @@ namespace Microsoft.Build.BuildEngine {
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
 				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".",
 					args.TargetName, args.ProjectFile));
+			if (!args.Succeeded)
+				errorCount++;
 			WriteLine (String.Empty);
 		}
 		
@@ -163,8 +165,14 @@ namespace Microsoft.Build.BuildEngine {
 		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
 		{
 			indent--;
-			if (this.verbosity == LoggerVerbosity.Diagnostic)
-				WriteLine (String.Format ("Done executing task \"{0}\"",args.TaskName));
+			if (this.verbosity == LoggerVerbosity.Diagnostic) {
+				if (args.Succeeded)
+					WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
+				else {
+					WriteLine (String.Format ("Task \"{0}\" execution failed", args.TaskName));
+					errorCount++;
+				}
+			}
 		}
 		
 		public void MessageHandler (object sender, BuildMessageEventArgs args)

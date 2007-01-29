@@ -1,3 +1,11 @@
+2007-01-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs (Execute): Log errors that happen when invoking ITask
+	.ctor.
+
+	* ConsoleLogger.cs (TargetFinishedHandler)
+	(TaskFinishedHandler): Increment error count.
+
 2007-01-28  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItem.cs (RemoveMetadata): Remove from XML.

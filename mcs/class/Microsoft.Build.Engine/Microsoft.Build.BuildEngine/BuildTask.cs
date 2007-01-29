@@ -87,15 +87,17 @@ namespace Microsoft.Build.BuildEngine {
 			TaskEngine	taskEngine;
 
 			LogTaskStarted ();
-			
-			taskEngine = new TaskEngine (parentTarget.Project);
-			
-			taskEngine.Prepare (InitializeTask (), this.taskElement, GetParameters (), this.Type);
-			
-			result = taskEngine.Execute ();
-			
-			taskEngine.PublishOutput ();
-			
+
+			try {
+				taskEngine = new TaskEngine (parentTarget.Project);		
+				taskEngine.Prepare (InitializeTask (), this.taskElement, GetParameters (), this.Type);
+				result = taskEngine.Execute ();
+				taskEngine.PublishOutput ();
+			// FIXME: it should be logged (exception)
+			} catch {
+				result = false;
+			}
+
 			LogTaskFinished (result);
 		
 			return result;
