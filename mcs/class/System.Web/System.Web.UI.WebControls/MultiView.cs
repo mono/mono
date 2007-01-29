@@ -123,6 +123,8 @@ namespace System.Web.UI.WebControls
 					((View)Controls [viewIndex]).NotifyActivation (true);
 
 				UpdateViewVisibility ();
+
+				OnActiveViewChanged (EventArgs.Empty);
 			}
 		}
 

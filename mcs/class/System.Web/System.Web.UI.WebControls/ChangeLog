@@ -1,3 +1,7 @@
+2007-01-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MultyView.cs: OnActiveViewChanged is called.
+
 2007-01-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Panel.cs: fixed AddAttributesToRender for 2.0, text align should be
