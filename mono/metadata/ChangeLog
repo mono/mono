@@ -1,3 +1,9 @@
+
+Mon Jan 29 11:30:46 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix from Robert Jordan (robertj@gmx.net)
+	for bug #80618.
+
 2007-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_layout_fields): When force-aligning a field, make sure
