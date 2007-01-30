@@ -1,13 +1,13 @@
 //
 // Bitmap class testing unit
 //
-// Author:
-//
-// 	 Jordi Mas i Hernàndez (jmas@softcatala.org>
-//	 Jonathan Gilbert <logic@deltaq.org>
+// Authors:
+// 	Jordi Mas i Hernàndez (jmas@softcatala.org>
+//	Jonathan Gilbert <logic@deltaq.org>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using NUnit.Framework;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Text;
+using NUnit.Framework;
 
-namespace MonoTests.System.Drawing{
+namespace MonoTests.System.Drawing {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
@@ -780,6 +783,38 @@ namespace MonoTests.System.Drawing{
 			} finally {
 				bmp.UnlockBits (data);
 				bmp.Dispose ();
+			}
+		}
+
+		private Stream Serialize (object o)
+		{
+			MemoryStream ms = new MemoryStream ();
+			IFormatter formatter = new BinaryFormatter ();
+			formatter.Serialize (ms, o);
+			ms.Position = 0;
+			return ms;
+		}
+
+		private object Deserialize (Stream s)
+		{
+			return new BinaryFormatter ().Deserialize (s);
+		}
+
+		[Test]
+		public void Serialize_Icon ()
+		{
+			// this cause a problem with resgen, see http://bugzilla.ximian.com/show_bug.cgi?id=80565
+			string filename = getInFile ("bitmaps/16x16x16.ico");
+			using (Bitmap icon = new Bitmap (filename)) {
+				using (Stream s = Serialize (icon)) {
+					using (Bitmap copy = (Bitmap)Deserialize (s)) {
+						Assert.AreEqual (icon.Height, copy.Height, "Height");
+						Assert.AreEqual (icon.Width, copy.Width, "Width");
+						Assert.AreEqual (icon.PixelFormat, copy.PixelFormat, "PixelFormat");
+						Assert.IsTrue (icon.RawFormat.Equals (ImageFormat.Icon), "Icon");
+						Assert.IsTrue (copy.RawFormat.Equals (ImageFormat.Png), "Png");
+					}
+				}
 			}
 		}
 	}

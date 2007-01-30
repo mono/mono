@@ -1,3 +1,8 @@
+2007-01-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Add a test case to serialize and deserialize a icon,
+	which use a decoder-only codec.
+
 2007-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for loading unexisting files in
