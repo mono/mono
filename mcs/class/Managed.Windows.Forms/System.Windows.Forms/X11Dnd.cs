@@ -401,7 +401,6 @@ namespace System.Windows.Forms {
 							xevent.ButtonEvent.time);
 				}
 
-				XplatUIX11.XUngrabPointer (display, IntPtr.Zero);
 				drag_data.State = DragState.None;
 				// WE can't reset the drag data yet as it is still
 				// most likely going to be used by the SelectionRequest
@@ -425,22 +424,6 @@ namespace System.Windows.Forms {
 
 				if (suc == 0) {
 					Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
-					drag_data.Reset ();
-					return false;
-				}
-
-				suc = XplatUIX11.XGrabPointer (display, xevent.AnyEvent.window,
-						false,
-						EventMask.ButtonMotionMask |
-						EventMask.PointerMotionMask |
-						EventMask.ButtonPressMask |
-						EventMask.ButtonReleaseMask,
-						GrabMode.GrabModeAsync,
-						GrabMode.GrabModeAsync,
-						IntPtr.Zero, IntPtr.Zero/*CursorCopy.Handle*/, IntPtr.Zero);
-
-				if (suc != 0) {
-					Console.Error.WriteLine ("Could not grab pointer aborting drag.");
 					drag_data.Reset ();
 					return false;
 				}

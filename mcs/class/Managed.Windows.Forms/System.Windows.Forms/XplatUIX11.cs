@@ -3405,7 +3405,7 @@ namespace System.Windows.Forms {
 				case XEventName.ButtonRelease: {
 					if (Dnd.InDrag()) {
 						Dnd.HandleButtonRelease (ref xevent);
-						break;
+						// Don't break here, so that the BUTTONUP message can get through
 					}
 
 					switch(xevent.ButtonEvent.button) {

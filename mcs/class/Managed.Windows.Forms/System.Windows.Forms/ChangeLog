@@ -1,4 +1,12 @@
-x2007-01-29  Chris Toshok  <toshok@ximian.com>
+2007-01-30  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Don't break when handling button release in drag
+	and drop operations. We need that BUTTONUP message to get through
+	so capture is released.
+	* X11Dnd.cs: We don't need to manually grab the pointer anymore,
+	this is handled automatically when the mouse is down.
+
+2007-01-29  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: don't crash, and remove the icon if the user has
 	set one, if SetIcon is passed a null icon.
