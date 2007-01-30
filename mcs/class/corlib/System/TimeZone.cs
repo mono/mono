@@ -121,9 +121,9 @@ namespace System
 #else
 					return DateTime.MaxValue;
 #endif
-			//} else if (utcOffset.Ticks < 0) {
-			//	LAMESPEC: MS.NET fails to check validity here
-			//	it may throw ArgumentOutOfRangeException.
+			} else if (utcOffset.Ticks < 0) {
+				if (time.Ticks + utcOffset.Ticks < DateTime.MinValue.Ticks)
+					return DateTime.MinValue;
 			}
 
 			DateTime local = time.Add (utcOffset);
