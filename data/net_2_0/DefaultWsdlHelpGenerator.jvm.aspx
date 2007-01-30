@@ -383,7 +383,7 @@ string GetTestResult ()
 	}
 	catch (Exception ex)
 	{ 
-		string res = "<b style='color:red'>" + ex.Message + "<br/>" + ex.StackTrace.Replace("\n", "<br/>") + "</b>";
+		string res = "<b style='color:red'>" + ex.Message + "</b>";
 		WebException wex = ex as WebException;
 		if (wex != null)
 		{
