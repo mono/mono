@@ -1,5 +1,13 @@
 2007-01-30  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: Don't break when handling button release in drag
+	and drop operations. We need that BUTTONUP message to get through
+	so capture is released.
+	* X11Dnd.cs: We don't need to manually grab the pointer anymore,
+	this is handled automatically when the mouse is down.
+
+2007-01-30  Jackson Harper  <jackson@ximian.com>
+
 	* FileDialog.cs: OnClickCancelButton gets called whenever the dialog
 	is closed, so we need to make sure that we aren't changing the
 	dialog result when the OK (Open or Save) button has been clicked
