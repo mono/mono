@@ -1,3 +1,9 @@
+2007-01-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Fix serialization of Image/Bitmap that contains ICO. In 
+	this case the image is serialized as a PNG bitmap (note: the ICO codec
+	is a decoder-only codec).
+
 2007-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Graphics.cs: Fix FromImage to check for indexed images inside

@@ -1,11 +1,12 @@
 //
 // System.Drawing.Image.cs
 //
-// Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
+// Authors: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
 // 		Alexandre Pigolkine (pigolkine@gmx.de)
 //		Jordi Mas i Hernandez (jordi@ximian.com)
 //		Sanjay Gupta (gsanjay@novell.com)
 //		Ravindra (rkumar@novell.com)
+//		Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
@@ -76,11 +77,18 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 
-	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+	// FIXME - find out how metafiles (another decoder-only codec) are handled
+	void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 	{
-		MemoryStream ms = new MemoryStream ();
-		this.Save (ms, RawFormat);
-		info.AddValue ("Data", ms.ToArray ());
+		using (MemoryStream ms = new MemoryStream ()) {
+			// Icon is a decoder-only codec
+			if (RawFormat.Equals (ImageFormat.Icon)) {
+				Save (ms, ImageFormat.Png);
+			} else {
+				Save (ms, RawFormat);
+			}
+			info.AddValue ("Data", ms.ToArray ());
+		}
 	}
     
 	// public methods
