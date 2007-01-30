@@ -300,28 +300,33 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void SetIcon (Icon icon)
 		{
-			Bitmap		bitmap;
-			int		size;
-			IntPtr[]	data;
-			int		index;
-
-			bitmap = icon.ToBitmap();
-			index = 0;
-			size = bitmap.Width * bitmap.Height + 2;
-			data = new IntPtr[size];
-
-			data[index++] = (IntPtr)bitmap.Width;
-			data[index++] = (IntPtr)bitmap.Height;
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				for (int x = 0; x < bitmap.Width; x++) {
-					data[index++] = (IntPtr)bitmap.GetPixel(x, y).ToArgb();
-				}
+			if (icon == null) {
+				Xlib.XDeleteProperty (display.Handle, WholeWindow, display.Atoms._NET_WM_ICON);
 			}
+			else {
+				Bitmap		bitmap;
+				int		size;
+				IntPtr[]	data;
+				int		index;
 
-			Xlib.XChangeProperty (display.Handle, WholeWindow,
-					      display.Atoms._NET_WM_ICON, display.Atoms.XA_CARDINAL, 32,
-					      PropertyMode.Replace, data, size);
+				bitmap = icon.ToBitmap();
+				index = 0;
+				size = bitmap.Width * bitmap.Height + 2;
+				data = new IntPtr[size];
+
+				data[index++] = (IntPtr)bitmap.Width;
+				data[index++] = (IntPtr)bitmap.Height;
+
+				for (int y = 0; y < bitmap.Height; y++) {
+					for (int x = 0; x < bitmap.Width; x++) {
+						data[index++] = (IntPtr)bitmap.GetPixel(x, y).ToArgb();
+					}
+				}
+
+				Xlib.XChangeProperty (display.Handle, WholeWindow,
+						      display.Atoms._NET_WM_ICON, display.Atoms.XA_CARDINAL, 32,
+						      PropertyMode.Replace, data, size);
+			}
 		}
 
 		public double GetWindowTransparency ()

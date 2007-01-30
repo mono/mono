@@ -1,3 +1,7 @@
+2007-01-30  Chris Toshok  <toshok@ximian.com>
+
+	* X11Hwnd.cs: port over the XplatUIX11.cs patch for SetIcon.
+
 2007-01-11  Chris Toshok  <toshok@ximian.com>
 
 	* X11Display.cs: don't send duplicate WM_ACTIVATE messages to the
