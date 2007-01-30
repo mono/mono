@@ -1,3 +1,6 @@
+2007-01-30	Boris Kirzner <borisk@mainsoft.com>
+	* FileNotFoundExceptionTest.cs: fix tests for TARGET_JVM.
+
 2007-01-29	Boris Kirzner <borisk@mainsoft.com>
 	* BinaryReaderTest.cs, BinaryWriterTest.cs, PathTest.cs: test fixes
 	for TARGET_JVM.
