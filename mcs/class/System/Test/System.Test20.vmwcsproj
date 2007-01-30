@@ -226,6 +226,7 @@
     <Compile Include="System.Net\CredentialCacheTest.cs" />
     <Compile Include="System.Net\DnsTest.cs" />
     <Compile Include="System.Net\FileWebRequestTest.cs" />
+    <Compile Include="System.Net\FileWebResponseTest.cs" />
     <Compile Include="System.Net\FtpWebRequestTest.cs" />
     <Compile Include="System.Net\HttpListenerBasicIdentityTest.cs" />
     <Compile Include="System.Net\HttpListenerPrefixCollectionTest.cs" />
@@ -237,6 +238,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Net\ServicePointTest.cs" />
+    <Compile Include="System.Net\SocketResponder.cs" />
     <Compile Include="System.Net\WebHeaderCollectionTest.cs" />
     <Compile Include="System.Net\WebProxyTest.cs" />
     <Compile Include="System.Net\WebRequestTest.cs" />
