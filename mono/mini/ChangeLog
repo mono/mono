@@ -1,3 +1,9 @@
+
+Tue Jan 30 16:33:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: statistical profiler fix for windows, patch
+	from Tor Lillqvist (tml@novell.com).
+
 2007-01-30  Massimiliano Mantione  <massi@ximian.com>
 	* local-propagation.c: Fix bug 80591.
 
