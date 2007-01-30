@@ -291,12 +291,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			public object GetFormat (Type format_type)
 			{
-				return Activator.CreateInstance (format_type);
+				if (format_type.IsAssignableFrom (this.GetType ())) {
+					return this;
+				}
+				return null;
 			}
 		}
 
 		[Test]
-        [Category ("NotWorking")]
 		public void FontUnit_IFormatProviderToString ()
 		{
 			MyFormatProvider mfp = new MyFormatProvider ();
