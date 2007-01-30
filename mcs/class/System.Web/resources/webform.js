@@ -112,9 +112,8 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate(vg))
 		return;
 
-	var form = WebForm_GetFormFromCtrl (ctrl);
 	if (url != null)
-		form.action = url;
+		WebForm_GetFormFromCtrl (ctrl).action = url;
 		
 	if (csubm)
 		__doPostBack (ctrl, par);
