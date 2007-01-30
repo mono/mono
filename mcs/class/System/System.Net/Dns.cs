@@ -247,14 +247,20 @@ namespace System.Net {
 			h_name = null;
 			h_aliases = null;
 			h_addrlist = null;
-			java.net.InetAddress[] iaArr = java.net.InetAddress.getAllByName (address);
-			if (iaArr != null && iaArr.Length > 0)
-				h_name = iaArr[0].getHostName ();
-			if (iaArr != null && iaArr.Length > 0) {
-				h_addrlist = new String[iaArr.Length];
-				for (int i = 0; i < h_addrlist.Length; i++)
-					h_addrlist[i] = iaArr[i].getHostAddress ();
-			}
+            		try {
+                		java.net.InetAddress[] iaArr = 
+					java.net.InetAddress.getAllByName(address);
+		                if (iaArr != null && iaArr.Length > 0)
+                		    h_name = iaArr[0].getHostName();
+		                if (iaArr != null && iaArr.Length > 0)
+                		{
+		                    h_addrlist = new String[iaArr.Length];
+                		    for (int i = 0; i < h_addrlist.Length; i++)
+		                        h_addrlist[i] = iaArr[i].getHostAddress();
+                		}
+            		} catch (java.net.UnknownHostException jUHE) {
+		                throw new SocketException((int)SocketError.HostNotFound, jUHE.Message);
+            		}
 #else
 			bool ret = GetHostByAddr_internal(address, out h_name, out h_aliases, out h_addrlist);
 			if (!ret)
@@ -318,21 +324,22 @@ namespace System.Net {
 #if TARGET_JVM
 			if (hostName.Length == 0)
 				hostName = "localhost";
+		        try {
+				java.net.InetAddress[] iaArr = java.net.InetAddress.getAllByName(hostName);
+				IPHostEntry host = new IPHostEntry();
+				if (iaArr != null && iaArr.Length > 0)
+                		{
+					host.HostName = iaArr[0].getHostName();
+                		    	IPAddress[] ipArr = new IPAddress[iaArr.Length];
+		                    	for (int i = 0; i < iaArr.Length; i++)
+                		        	ipArr[i] = IPAddress.Parse(iaArr[i].getHostAddress());
 
-			java.net.InetAddress[] iaArr = java.net.InetAddress.getAllByName (hostName);
-			IPHostEntry host = new IPHostEntry ();
-			if (iaArr != null && iaArr.Length > 0) {
-
-				host.HostName = iaArr[0].getHostName ();
-
-				IPAddress[] ipArr = new IPAddress[iaArr.Length];
-				for (int i = 0; i < iaArr.Length; i++)
-					ipArr[i] = IPAddress.Parse (iaArr[i].getHostAddress ());
-
-				host.AddressList = ipArr;
-
+					host.AddressList = ipArr;
+                		}
+		                return host;
+			} catch (java.net.UnknownHostException jUHE) {
+				throw new SocketException((int)SocketError.HostNotFound, jUHE.Message);
 			}
-			return host;
 #else
 			string h_name;
 			string[] h_aliases, h_addrlist;

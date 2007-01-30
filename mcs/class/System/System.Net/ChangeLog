@@ -1,3 +1,8 @@
+2007-01-30  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* Dns.cs : implemented proper exception handling under TARGET_JVM
+	when trying to resolve not existing host.
+
 2007-01-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddress.cs: Provide more meaningful exception message on 2.0
