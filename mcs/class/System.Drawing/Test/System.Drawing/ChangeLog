@@ -1,3 +1,10 @@
+2007-01-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestBitmap.cs: Add a test cases for SoapFormatter and Xml 
+	serialization, which "works" under 2.0 but not under 1.1.
+	* TestImage.cs: Add test case for XmlSerializer on Image type, which
+	"works"	under 2.0 but not under 1.1.
+
 2007-01-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Add a test case to serialize and deserialize a icon,

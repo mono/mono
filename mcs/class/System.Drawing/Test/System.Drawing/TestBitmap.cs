@@ -36,9 +36,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing {
@@ -816,6 +818,84 @@ namespace MonoTests.System.Drawing {
 					}
 				}
 			}
+		}
+
+		private Stream SoapSerialize (object o)
+		{
+			MemoryStream ms = new MemoryStream ();
+			IFormatter formatter = new SoapFormatter ();
+			formatter.Serialize (ms, o);
+			ms.Position = 0;
+			return ms;
+		}
+
+		private object SoapDeserialize (Stream s)
+		{
+			return new SoapFormatter ().Deserialize (s);
+		}
+
+		[Test]
+		public void SoapSerialize_Icon ()
+		{
+			string filename = getInFile ("bitmaps/16x16x16.ico");
+			using (Bitmap icon = new Bitmap (filename)) {
+				using (Stream s = SoapSerialize (icon)) {
+					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
+						Assert.AreEqual (icon.Height, copy.Height, "Height");
+						Assert.AreEqual (icon.Width, copy.Width, "Width");
+						Assert.AreEqual (icon.PixelFormat, copy.PixelFormat, "PixelFormat");
+						Assert.AreEqual (16, icon.Palette.Entries.Length, "icon Palette");
+						Assert.IsTrue (icon.RawFormat.Equals (ImageFormat.Icon), "Icon");
+						Assert.AreEqual (0, copy.Palette.Entries.Length, "copy Palette");
+						Assert.IsTrue (copy.RawFormat.Equals (ImageFormat.Png), "Png");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void SoapSerialize_Bitmap8 ()
+		{
+			string filename = getInFile ("bitmaps/almogaver8bits.bmp");
+			using (Bitmap bmp = new Bitmap (filename)) {
+				using (Stream s = SoapSerialize (bmp)) {
+					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
+						Assert.AreEqual (bmp.Height, copy.Height, "Height");
+						Assert.AreEqual (bmp.Width, copy.Width, "Width");
+						Assert.AreEqual (bmp.PixelFormat, copy.PixelFormat, "PixelFormat");
+						Assert.AreEqual (256, copy.Palette.Entries.Length, "Palette");
+						Assert.AreEqual (bmp.RawFormat, copy.RawFormat, "RawFormat");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void SoapSerialize_Bitmap24 ()
+		{
+			string filename = getInFile ("bitmaps/almogaver24bits.bmp");
+			using (Bitmap bmp = new Bitmap (filename)) {
+				using (Stream s = SoapSerialize (bmp)) {
+					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
+						Assert.AreEqual (bmp.Height, copy.Height, "Height");
+						Assert.AreEqual (bmp.Width, copy.Width, "Width");
+						Assert.AreEqual (bmp.PixelFormat, copy.PixelFormat, "PixelFormat");
+						Assert.AreEqual (bmp.Palette.Entries.Length, copy.Palette.Entries.Length, "Palette");
+						Assert.AreEqual (bmp.RawFormat, copy.RawFormat, "RawFormat");
+					}
+				}
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]	// http://bugzilla.ximian.com/show_bug.cgi?id=80558
+#else
+		[ExpectedException (typeof (InvalidOperationException))]
+#endif
+		public void XmlSerialize ()
+		{
+			new XmlSerializer (typeof (Bitmap));
 		}
 	}
 

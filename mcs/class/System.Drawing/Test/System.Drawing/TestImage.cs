@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Permissions;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing{
@@ -208,6 +209,17 @@ namespace MonoTests.System.Drawing{
 				// stream is available
 				((Bitmap) img).MakeTransparent (Color.Transparent);
 			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]	// http://bugzilla.ximian.com/show_bug.cgi?id=80558
+#else
+		[ExpectedException (typeof (InvalidOperationException))]
+#endif
+		public void XmlSerialize ()
+		{
+			new XmlSerializer (typeof (Image));
 		}
 	}
 }
