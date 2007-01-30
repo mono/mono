@@ -185,7 +185,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("This test asserts that our code violates RFC 2616")]
 		public void MethodCase ()
 		{
 			ListDictionary methods = new ListDictionary ();
@@ -229,7 +229,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("This test asserts that our code violates RFC 2616")]
 		public void GetRequestStream_Body_NotAllowed ()
 		{
 			string [] methods = new string [] { "GET", "HEAD", "CONNECT",
