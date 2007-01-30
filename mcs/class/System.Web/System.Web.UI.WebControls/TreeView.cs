@@ -1052,6 +1052,7 @@ namespace System.Web.UI.WebControls
 			
 			string ctree = ClientID + "_data";
 			string script = string.Format ("var {0} = new Object ();\n", ctree);
+			script += string.Format ("{0}.uid = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (UniqueID));
 			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
 			
 			if (ShowExpandCollapse) {
