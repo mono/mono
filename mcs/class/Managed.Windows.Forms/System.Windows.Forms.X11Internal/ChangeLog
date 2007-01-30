@@ -1,5 +1,10 @@
 2007-01-30  Chris Toshok  <toshok@ximian.com>
 
+	* X11Display.cs: port over jackson's XplatUIX11.cs fix for DND
+	ButtonRelease handling.
+
+2007-01-30  Chris Toshok  <toshok@ximian.com>
+
 	* X11Hwnd.cs: port over the XplatUIX11.cs patch for SetIcon.
 
 2007-01-11  Chris Toshok  <toshok@ximian.com>

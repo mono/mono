@@ -1966,7 +1966,7 @@ namespace System.Windows.Forms.X11Internal {
 				case XEventName.ButtonRelease:
 					if (Dnd.InDrag()) {
 						Dnd.HandleButtonRelease (ref xevent);
-						return true;
+						// Don't return here, so that the BUTTONUP message can get through
 					}
 
 					switch(xevent.ButtonEvent.button) {
