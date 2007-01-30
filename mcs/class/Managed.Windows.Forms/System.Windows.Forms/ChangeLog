@@ -1,4 +1,9 @@
-x2007-01-29  Chris Toshok  <toshok@ximian.com>
+2007-01-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* DateTimePicker.cs: Remove a warning.
+	* ComboBox.cs: Remove a couple of warnings.
+
+2007-01-29  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: don't crash, and remove the icon if the user has
 	set one, if SetIcon is passed a null icon.

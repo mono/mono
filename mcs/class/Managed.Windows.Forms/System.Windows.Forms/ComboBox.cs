@@ -321,7 +321,7 @@ namespace System.Windows.Forms
 		[DefaultValue ((string)null)]
 		[AttributeProvider (typeof (IListSource))]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		public object DataSource {
+		public new object DataSource {
 			get { return base.DataSource; }
 			set { base.DataSource = value; }
 		}
@@ -616,7 +616,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-		public Padding Padding  {
+		public new Padding Padding  {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}

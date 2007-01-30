@@ -103,7 +103,7 @@ namespace System.Windows.Forms {
 		[ComVisible(true)]
 		public class DateTimePickerAccessibleObject : ControlAccessibleObject {
 			#region DateTimePickerAccessibleObject Local Variables
-			private DateTimePicker	owner;
+			private new DateTimePicker	owner;
 			#endregion	// DateTimePickerAccessibleObject Local Variables
 
 			#region DateTimePickerAccessibleObject Constructors
