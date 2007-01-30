@@ -79,7 +79,7 @@ namespace Mono.CSharp
 		///
 		/// An out-of-band stack.
 		///
-		Stack oob_stack;
+		static Stack oob_stack;
 
 		///
 		/// Switch stack.
@@ -3445,47 +3445,11 @@ pointer_member_access
 anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature
 	  {
-		if (oob_stack == null)
-			oob_stack = new Stack (6);
-
-		oob_stack.Push (current_anonymous_method);
-		oob_stack.Push (current_local_parameters);
-		current_local_parameters = (Parameters)$2;
-
-		// Force the next block to be created as a ToplevelBlock
-		oob_stack.Push (current_block);
-		oob_stack.Push (top_current_block);
-
-		Location loc = (Location) $1;
-		current_anonymous_method = new AnonymousMethodExpression (
-			current_anonymous_method, current_generic_method, current_container,
-			(Parameters) $2, (ToplevelBlock) top_current_block, loc);
-
-		parsing_anonymous_method = true;
+		start_anonymous (false, (Parameters) $2, (Location) $1);
 	  }
 	  block
 	  {
-		Location loc = (Location) $1;
-		top_current_block = (Block) oob_stack.Pop ();
-		current_block = (Block) oob_stack.Pop ();
-
-		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (loc, "anonymous methods");
-			$$ = null;
-		} else  {
-			ToplevelBlock anon_block = (ToplevelBlock) $4;
-
-			anon_block.Parent = current_block;
-
-			current_anonymous_method.Block = anon_block;
-			if ((anonymous_host != null) && (current_anonymous_method.Parent == null))
-				anonymous_host.AddAnonymousMethod (current_anonymous_method);
-
-			$$ = current_anonymous_method;
-		}
-
-		current_local_parameters = (Parameters) oob_stack.Pop ();
-		current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
+		$$ = end_anonymous ((ToplevelBlock) $4, null, (Location) $1);
 	}
 	;
 
@@ -3876,13 +3840,16 @@ assignment_expression
 
 implicitly_typed_lambda_parameter_list
 	: IDENTIFIER { 
+		LocatedToken lt = (LocatedToken) $1;
 		ArrayList a = new ArrayList (4); 
-		a.Add ($1);  
-		$$ = a; 
+
+		a.Add (new Parameter ((Expression)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location));
+		$$ = a;
 	  } 
 	| implicitly_typed_lambda_parameter_list COMMA IDENTIFIER {
+		LocatedToken lt = (LocatedToken) $3;
 		ArrayList a = (ArrayList) $1;
-		a.Add ($3);
+		a.Add (new Parameter ((Expression)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location));
 		$$ = a;
 	  }
 	;
@@ -3924,25 +3891,54 @@ lambda_parameter_list
 	| explicitly_typed_lambda_parameter_list { $$ = $1; }
 	;
 
+opt_lambda_parameter_list
+	: /* empty */			{ $$ = null; }
+	| lambda_parameter_list		{ 
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+		$$ = new Parameters (pars);
+	  }
+	;
+
 lambda_expression_body
-	: expression
-	| block
+	: {
+		start_block (lexer.Location);
+	  }
+	  expression 
+	  {
+		oob_stack.Push ($2);
+		$$ = end_block (lexer.Location);
+	  } 
+	| block { 
+		oob_stack.Push (null);
+	  	$$ = $1; 
+	  } 
 	;
 
 lambda_expression
-	: IDENTIFIER ARROW lambda_expression_body
+	: IDENTIFIER ARROW 
 	  {
-		Console.WriteLine ("return");
-		ArrayList a = new ArrayList (1);
-		a.Add ($1);
-		$$ = new LambdaExpression (a, $3, (Location) $2);
+		Parameter [] pars = new Parameter [1];
+		LocatedToken lt = (LocatedToken) $1;
+		pars [0] = new Parameter ((Expression)null, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+
+		Parameters parameters = new Parameters (pars);
+
+		start_anonymous (true, parameters, (Location) $2);
 	  }
-	| OPEN_PARENS CLOSE_PARENS ARROW lambda_expression_body  {
-		$$ = new LambdaExpression (new ArrayList (), $4, (Location) $3);
-	  }
-	| OPEN_PARENS_LAMBDA lambda_parameter_list CLOSE_PARENS ARROW lambda_expression_body 
+	  lambda_expression_body
 	  {
-		$$ = new LambdaExpression ((ArrayList) $2, $5, (Location) $4);
+		$$ = end_anonymous ((ToplevelBlock) $4, (Expression) oob_stack.Pop (), (Location) $2);
+	  }
+	| OPEN_PARENS_LAMBDA opt_lambda_parameter_list CLOSE_PARENS ARROW 
+	  {
+		start_anonymous (true, (Parameters) $2, (Location) $4);
+	  }
+	  lambda_expression_body 
+	  {
+		$$ = end_anonymous ((ToplevelBlock) $5, (Expression) oob_stack.Pop (), (Location) $4);
 	  }
 	;
 
@@ -4141,34 +4137,13 @@ type_parameter_constraint
 //	event_declaration as part of add_accessor_declaration or remove_accessor_declaration
 //      
 block
-	: OPEN_BRACE 
+	: OPEN_BRACE  
 	  {
-		if (parsing_anonymous_method) {
-			top_current_block = new ToplevelBlock (
-				current_block, current_local_parameters, current_generic_method,
-				(Location) $1);
-			if (current_block != null)
-				current_block.AddAnonymousChild ((ToplevelBlock) top_current_block);
-			current_block = top_current_block;
-			parsing_anonymous_method = false;
-		} else if (current_block == null) {
-			current_block = new ToplevelBlock (
-				(ToplevelBlock) top_current_block, current_local_parameters,
-				current_generic_method, (Location) $1);
-			top_current_block = current_block;
-		} else {
-			current_block = new Block (current_block, (Location) $1, Location.Null);
-		}
+		start_block ((Location) $1);
 	  } 
 	  opt_statement_list CLOSE_BRACE 
 	  { 
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
-		$$ = current_block;
-		current_block.SetEndLocation ((Location) $4);
-		current_block = current_block.Parent;
-		if (current_block == null)
-			top_current_block = null;
+		$$ = end_block ((Location) $4);
 	  }
 	;
 
@@ -5427,6 +5402,11 @@ public Tokenizer Lexer {
 	}
 }		   
 
+static CSharpParser ()
+{
+	oob_stack = new Stack ();
+}
+
 public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
 	this.name = file.Name;
@@ -5434,7 +5414,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	current_namespace = new NamespaceEntry (null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
-
+	oob_stack.Clear ();
 	lexer = new Tokenizer (reader, file, defines);
 }
 
@@ -5495,6 +5475,94 @@ Location GetLocation (object obj)
 	if (obj is Location)
 		return (Location) obj;
 	return lexer.Location;
+}
+
+void 
+start_block (Location loc)
+{
+	if (parsing_anonymous_method) {
+		top_current_block = new ToplevelBlock (
+			current_block, current_local_parameters, current_generic_method, loc);
+		if (current_block != null)
+			current_block.AddAnonymousChild ((ToplevelBlock) top_current_block);
+		current_block = top_current_block;
+		parsing_anonymous_method = false;
+	} else if (current_block == null) {
+		current_block = new ToplevelBlock (
+			(ToplevelBlock) top_current_block, current_local_parameters,
+			current_generic_method, loc);
+		top_current_block = current_block;
+	} else {
+		current_block = new Block (current_block, loc, Location.Null);
+	}
+}
+
+Block
+end_block (Location loc)
+{
+	Block retval;
+
+	while (current_block.Implicit)
+		current_block = current_block.Parent;
+	retval = current_block;
+	current_block.SetEndLocation (loc);
+	current_block = current_block.Parent;
+	if (current_block == null)
+		top_current_block = null;
+	return retval;
+}
+
+void
+start_anonymous (bool lambda, Parameters parameters, Location loc)
+{
+	oob_stack.Push (current_anonymous_method);
+	oob_stack.Push (current_local_parameters);
+
+	current_local_parameters = parameters;
+
+	// Force the next block to be created as a ToplevelBlock
+	oob_stack.Push (current_block);
+	oob_stack.Push (top_current_block);
+
+	current_anonymous_method = lambda 
+		? new LambdaExpression (
+			current_anonymous_method, current_generic_method, current_container,
+			parameters, (ToplevelBlock) top_current_block, loc) 
+		: new AnonymousMethodExpression (
+			current_anonymous_method, current_generic_method, current_container,
+			parameters, (ToplevelBlock) top_current_block, loc);
+
+	parsing_anonymous_method = true;
+}
+
+AnonymousMethodExpression 
+end_anonymous (ToplevelBlock anon_block, Expression lambda_expr, Location loc)
+{
+	AnonymousMethodExpression retval;
+
+	top_current_block = (Block) oob_stack.Pop ();
+	current_block = (Block) oob_stack.Pop ();
+
+	if (RootContext.Version == LanguageVersion.ISO_1){
+		Report.FeatureIsNotISO1 (loc, "anonymous methods");
+		retval = null;
+	} else  {
+		anon_block.Parent = current_block;
+
+		if (lambda_expr != null)
+			((LambdaExpression) current_anonymous_method).SetExpression (lambda_expr);
+
+		current_anonymous_method.Block = anon_block;
+		if ((anonymous_host != null) && (current_anonymous_method.Parent == null))
+			anonymous_host.AddAnonymousMethod (current_anonymous_method);
+
+		retval = current_anonymous_method;
+	}
+
+	current_local_parameters = (Parameters) oob_stack.Pop ();
+	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
+
+	return retval;
 }
 
 /* end end end */

@@ -1149,7 +1149,7 @@ namespace Mono.CSharp {
 				      TypeManager.CSharpName (t));
 		}
 
-		public bool ImplicitStandardConversionExists (Type delegate_type)
+		public virtual bool ImplicitStandardConversionExists (Type delegate_type)
 		{
 			if (Parameters == null)
 				return true;

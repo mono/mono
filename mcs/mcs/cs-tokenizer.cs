@@ -729,10 +729,12 @@ namespace Mono.CSharp
 		}
 		
 		//
-		// Invoked after '(' has been seen and tries to parse
-		// a type expression followed by an identifier, if this
-		// is the case, instead of returning an OPEN_PARENS token
-		// we return a special token that triggers lambda parsing.
+		// Invoked after '(' has been seen and tries to parse:
+		// type identifier [, type identifier]*
+		//
+		// if this is the case, instead of returning an
+		// OPEN_PARENS token we return a special token that
+		// triggers lambda parsing.
 		//
 		// This is needed because we can not introduce the
 		// explicitly_typed_lambda_parameter_list after a '(' in the
@@ -744,19 +746,29 @@ namespace Mono.CSharp
 		//
 		// the type expression can be prefixed with `ref' or `out'
 		//
-		public bool parse_type_and_parameter ()
+		public bool parse_lambda_parameters ()
 		{
-			int next = peek_token ();
+			while (true){
+				int next = peek_token ();
 
-			if (next == Token.REF || next == Token.OUT)
-				token ();
+				if (next == Token.REF || next == Token.OUT)
+					token ();
 						 
-			if (parse_type ()){
-				next = peek_token ();
-				if (next == Token.IDENTIFIER)
-					return true;
+				if (parse_type ()){
+					next = peek_token ();
+					if (next == Token.IDENTIFIER){
+						token ();
+						next = peek_token ();
+						if (next == Token.COMMA){
+							token ();
+							continue;
+						}
+						if (next == Token.CLOSE_PARENS)
+							return true;
+					}
+				}
+				return false;
 			}
-			return false;
 		}
 
 		int parsing_generic_less_than = 0;
@@ -785,10 +797,10 @@ namespace Mono.CSharp
 			case '(':
 				if (linq){
 					PushPosition ();
-					bool is_type_and_parameter = parse_type_and_parameter ();
+					bool have_lambda_parameter = parse_lambda_parameters ();
 					PopPosition ();
 					
-					if (is_type_and_parameter)
+					if (have_lambda_parameter)
 						return Token.OPEN_PARENS_LAMBDA;
 					else
 						return Token.OPEN_PARENS;

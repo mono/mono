@@ -1,3 +1,23 @@
+2007-01-30  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay (anonymous_method_expression): move the
+	before/after productions to the start_anonymous and end_anonymous
+	methods so the code can be reused for lambda functions.
+
+	(lambda_expression_body): wrap expressions implicitly into a
+	block.
+
+	(block): factor out the setup/teardown of parsing a block so we
+	can reuse that in lambda_expression_body
+
+	(lambda_expression): use new anonymous method helper methods.
+
+2007-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: oob_stack make it static (am guessing that is why
+	we no longer initialize it anymore) and reuse it across
+	instances.
+
 2007-01-28  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay (open_parens): Introduce new non-terminal that
@@ -5,7 +25,6 @@
 	be returned in places where types are followed by identifiers
 	(this is expected in declaration, fixed, using, foreach and catch
 	clauses). 
-	
 
 	Use open_parens in those places, keep OPEN_PARENS in the
 	expressions.  

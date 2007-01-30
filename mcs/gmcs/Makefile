@@ -98,3 +98,6 @@ profile : gmcs2.exe
 
 typetest:
 	mono gmcs.exe --typetest ../mcs/lambda.test
+
+l:
+	mono --debug gmcs.exe -langversion:linq l1.cs

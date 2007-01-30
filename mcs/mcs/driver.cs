@@ -199,7 +199,9 @@ namespace Mono.CSharp
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
-				Report.Error(666, "Compilation aborted: " + ex);
+				Report.Error(
+					666, String.Format ("Compilation aborted in file {0}, parser at {1}: {2}",
+							    file.Name, parser.Lexer.Location, ex));
 			} finally {
 				input.Close ();
 			}
@@ -285,9 +287,7 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
-#if GMCS_SOURCE
 			RootContext.Version = LanguageVersion.Default;
-#endif
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
 			bool ok = MainDriver (args);
@@ -725,7 +725,7 @@ namespace Mono.CSharp
 					SourceFile file = new SourceFile (fname, fname, 0);
 					
 					Tokenizer lexer = new Tokenizer (reader, file, defines);
-					bool res = lexer.parse_type_and_parameter ();
+					bool res = lexer.parse_lambda_parameters ();
 					
 					Console.WriteLine ("{3} ({1}=={2}): {0}", line.Substring (1), res, must_pass, res == must_pass);
 					if (res != must_pass)

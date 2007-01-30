@@ -1,3 +1,21 @@
+2007-01-30  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs
+	(AnonymousMethodExpression.ImplicitStandardConversionExists): turn
+	this into a virtual method, so we can override it in LambdaExpression.
+
+	* driver.cs: Improve diagnostics in case of failure. 
+
+	* cs-tokenizer.cs: Instead of trying to parse a type and a name,
+	write a function that is slightly more complex and that parses:
+
+	type identifier [, type identifier]* )
+
+	The old function would return incorrectly a OPEN_PARENS_LAMBDA for
+	this expression:
+
+		(canEmpty ? i >= 0 : i > 0)
+
 2007-01-30  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-tokenizer.cs (parse_namespace_or_typename): Don't throw an
