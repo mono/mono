@@ -1367,9 +1367,9 @@ namespace System.Xml.XPath
 				case Axes.Parent:
 					return "parent";
 				case Axes.Preceding:
-					return "preceeding";
+					return "preceding";
 				case Axes.PrecedingSibling:
-					return "preceeding-sibling";
+					return "preceding-sibling";
 				case Axes.Self:
 					return "self";
 				default:
