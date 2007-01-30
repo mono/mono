@@ -1,5 +1,10 @@
 2007-01-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CheckBox.cs:
+	does not RegisterRequiresPostBack if is not enabled.
+
+2007-01-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs:
 	* TreeView.js:
 	fixed PopulateOnDemand: used UniqueID to call WebForms_DoCallBack().

@@ -298,7 +298,7 @@ namespace System.Web.UI.WebControls {
 		{
 			base.OnPreRender (e);
 
-			if (Page != null) {
+			if (Page != null && Enabled) {
 				Page.RegisterRequiresPostBack (this);
 			}
 		}
