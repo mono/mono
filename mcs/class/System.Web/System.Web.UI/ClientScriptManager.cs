@@ -471,7 +471,14 @@ namespace System.Web.UI
 			if (!page.EnableEventValidation || fieldValue == null || fieldValue.Length == 0)
 				return;
 			IStateFormatter fmt = page.GetFormatter ();
-			eventValidationValues = new List<int> ((int []) fmt.Deserialize (fieldValue));
+			int [] eventValues = (int []) fmt.Deserialize (fieldValue);
+#if TARGET_JVM // FIXME: No support yet for passing 'int[]' as 'T[]'
+			eventValidationValues = new List<int> (eventValues.Length);
+			for (int i = 0; i < eventValues.Length; i++)
+				eventValidationValues.Add(eventValues[i]);
+#else
+			eventValidationValues = new List<int> (eventValues);
+#endif
 			eventValidationValues.Sort ();
 		}
 		
@@ -494,7 +501,11 @@ namespace System.Web.UI
 
 			IStateFormatter fmt = page.GetFormatter ();
 			int [] array = new int [eventValidationValues.Count];
+#if TARGET_JVM // FIXME: No support yet for passing 'int[]' as 'T[]'
+			((ICollection)eventValidationValues).CopyTo (array, 0);
+#else
 			eventValidationValues.CopyTo (array);
+#endif
 			return fmt.Serialize (array);
 		}
 
