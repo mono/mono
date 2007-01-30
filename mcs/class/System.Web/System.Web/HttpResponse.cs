@@ -771,7 +771,7 @@ namespace System.Web {
 			// using the portlet ActionResponse that will send for us the redirect header.
 			IPortletActionResponse resp = context.ServletResponse as IPortletActionResponse;
 			if (resp != null) {
-				resp.sendRedirect (url);
+				resp.sendRedirect (ApplyAppPathModifier (url));
 				if (endResponse)
 					End ();
 				return;

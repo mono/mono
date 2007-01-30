@@ -1,3 +1,7 @@
+2007-01-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpResponse.cs: fixed TARGET_J2EE part of Redirect for portlet
+
 2007-01-30  Adar Wesley <adarw@mainsoft.com>
 
 	* VirtualPathUtility.cs: fixed exceptions thrown from Combine
