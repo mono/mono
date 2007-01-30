@@ -1,3 +1,9 @@
+2007-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TimeZone.cs: According to the docs, we should not throw when
+	converting to Localtime if we are a negative value.  Instead we
+	return DateTime.MinValue.
+
 2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : copy Kind in those members that return DateTime.
