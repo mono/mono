@@ -217,7 +217,7 @@ namespace System.Web.Util {
 				return url.Substring (last+1);
 			}
 
-			throw new Exception (String.Format ("GetFile: `{0}' does not contain a /", url));
+			throw new ArgumentException (String.Format ("GetFile: `{0}' does not contain a /", url));
 		}
 		
 		internal static bool IsRooted (string path)

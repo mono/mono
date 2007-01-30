@@ -1,3 +1,7 @@
+2007-01-30  Adar Wesley <adarw@mainsoft.com>
+
+	* UrlUtils.cs: fixed GetFile to throw right exception
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* FileUtils.cs (CreateTemporaryFile): Remove unused variable.

@@ -68,7 +68,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Combine_ArgException2 ()
 		{
@@ -170,7 +169,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetFileName_ArgException3 ()
 		{
@@ -257,7 +255,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Combine2 ()
 		{
@@ -523,5 +520,6 @@ namespace MonoTests.System.Web {
 }
 
 #endif
+
 
 

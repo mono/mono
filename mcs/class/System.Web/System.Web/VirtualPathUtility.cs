@@ -54,7 +54,12 @@ namespace System.Web {
 			if (basePath == null || basePath == "")
 				throw new ArgumentNullException ("basePath");
 
-			if (relativePath == null || relativePath == "")
+			if (relativePath == null)
+				// LAME SPEC - MSDN Specifies ArgumentNullException but MS throws ArgumentException
+				throw new ArgumentException ("relativePath");
+
+			if (relativePath == "")
+				// MS throw different exception for null or empty string.
 				throw new ArgumentNullException ("relativePath");
 
 			if (relativePath.Length == 1 && relativePath [0] == '~')
@@ -234,5 +239,6 @@ namespace System.Web {
 }
 
 #endif
+
 
 
