@@ -1606,6 +1606,13 @@ public class DateTimeTest : Assertion
 		AssertEquals ("Unspecified.ToBinary", 1, dt_unspecified.ToBinary ());
 		AssertEquals ("Unspecified.Ticks", 1, dt_unspecified.Ticks);
 	}
+
+	[Test]
+	public void TestMin ()
+	{
+		// This should never throw.
+		DateTime.MinValue.ToLocalTime ();
+	}
 #endif
 }
 
