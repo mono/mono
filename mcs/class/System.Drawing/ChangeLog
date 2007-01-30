@@ -1,3 +1,8 @@
+2007-01-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add System.Runtime.Serialization.Formatters.Soap.dll and 
+	System.Xml.dll for building the unit tests.
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add new non-standard size icons, 10x16 and 11x22.
