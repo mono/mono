@@ -36,6 +36,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -86,6 +89,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class ViewTest
 	{
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
 		[Test]
 		public void View_DefaultProperties ()
 		{
@@ -175,6 +184,81 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerView b = new PokerView ();
 			b.Visible = true;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void View_Events_Base_PostBack ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (EventsTest));
+			string html = t.Run ();
+
+			if (html.IndexOf ("View_1_is_active") < 0)
+				Assert.Fail ("View_Events#1 Failed");
+
+			if (html.IndexOf ("Activate") < 0)
+				Assert.Fail ("View_Events#3 Failed");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("bt");
+			fr.Controls["bt"].Value = "Button";
+			t.Request = fr;
+			html = t.Run ();
+
+			if (html.IndexOf ("Deactivate") < 0) {
+				Assert.Fail ("View_Events#4 Failed");
+			}
+
+			if (html.IndexOf ("View_2_is_active") < 0)
+				Assert.Fail ("View_Events#5 Failed");
+		}
+
+		#region base_events
+		public static void EventsTest (Page p)
+		{
+			MultiView MultiView1 = new MultiView ();
+			MultiView1.ID = "MultiView1";
+			View view_1 = new View ();
+			view_1.ID = "view_1";
+			View view_2 = new View ();
+			view_2.ID = "view_2";
+			Button bt = new Button ();
+			bt.ID = "bt";
+			bt.CommandName = "NextView";
+
+			view_1.Controls.Add (bt);
+			view_1.Controls.Add (new LiteralControl ("View_1_is_active"));
+			view_2.Controls.Add (new LiteralControl ("View_2_is_active"));
+
+			view_1.Activate += new EventHandler (view_1_Activate);
+			view_1.Deactivate += new EventHandler (view_1_Deactivate);
+			MultiView1.Views.Add (view_1);
+			MultiView1.Views.Add (view_2);
+			p.Controls.Add (MultiView1);
+			MultiView1.ActiveViewIndex = 0;
+		}
+
+		public static void view_1_Deactivate (object sender, EventArgs e)
+		{
+			View v = sender as View;
+			if (v == null)
+				Assert.Fail ("View_Events#2 Failed");
+			v.Page.Controls.Add (new LiteralControl ("Deactivate"));
+		}
+		public static void view_1_Activate (object sender, EventArgs e)
+		{
+			View v = sender as View;
+			if (v == null)
+				Assert.Fail ("View_Events#2 Failed");
+			v.Page.Controls.Add (new LiteralControl ("Activate"));
+		}
+		#endregion
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
 		}
 	}
 }
