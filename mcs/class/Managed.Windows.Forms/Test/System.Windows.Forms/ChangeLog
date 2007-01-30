@@ -1,3 +1,10 @@
+2007-01-29  Chris Toshok  <toshok@ximian.com>
+
+	* ControlHandleTest.cs: make this compile against mono.  we can
+	remove the __MonoCS__ ifdefs as we add properties.  Also, split
+	out the Show() tests because they were failing and I wanted to see
+	which other tests were passing.
+
 2007-01-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* PaddingConverterTest.cs: Added.
