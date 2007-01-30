@@ -952,6 +952,15 @@ namespace System.Windows.Forms {
 		
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
+			//
+			// This method gets called whenever the dialog is closed, so we need
+			// to make sure that we aren't changing the dialog result when the
+			// OK (Open or Save) button has been clicked and we are closing the 
+			// window ourselves.
+			//
+			if (form.DialogResult == DialogResult.OK)
+				return;
+
 			if (restoreDirectory)
 				mwfFileView.CurrentFolder = restoreDirectoryString;
 			
