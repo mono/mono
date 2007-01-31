@@ -1,3 +1,9 @@
+2007-01-30  Marek Habersack  <grendello@gmail.com>
+
+	* ApplicationHost.cs: Define AppDomain data item "DataDirectory" - used
+	by the ADO.NET |DataDirectory| connection string placeholder. Present
+	by default in MS.NET.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* ApplicationManager.cs: Remove unused variable.

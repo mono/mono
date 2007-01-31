@@ -157,7 +157,9 @@ namespace System.Web.Hosting {
 			appdomain.SetData (".domainId", domain_id);
 			appdomain.SetData (".hostingVirtualPath", virtualDir);
 			appdomain.SetData (".hostingInstallDir", Path.GetDirectoryName (typeof (Object).Assembly.CodeBase));
-
+#if NET_2_0
+			appdomain.SetData ("DataDirectory", Path.Combine (physicalDir, "App_Data"));
+#endif
 			return appdomain.CreateInstanceAndUnwrap (hostType.Module.Assembly.FullName, hostType.FullName);
 		}
 	}
