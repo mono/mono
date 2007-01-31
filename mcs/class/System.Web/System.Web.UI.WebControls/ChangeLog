@@ -1,5 +1,12 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: 
+	RowDataBound is fired for PagerRow.
+	Styles are applied using MergeWith instead CopyFrom 
+	to allow using custom styles for rows in code-behind.
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: RowCommand event is fired properly.
 
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>

@@ -1258,6 +1258,10 @@ namespace System.Web.UI.WebControls
 						topPagerRow = CreatePagerRow (fields.Length, dataSource);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 						ContainedTable.Rows.Add (topPagerRow);
+						if (dataBinding) {
+							topPagerRow.DataBind ();
+							OnRowDataBound (new GridViewRowEventArgs (topPagerRow));
+						}
 					}
 
 					GridViewRow headerRow = CreateRow (-1, -1, DataControlRowType.Header, DataControlRowState.Normal);
@@ -1312,6 +1316,10 @@ namespace System.Web.UI.WebControls
 					bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 					ContainedTable.Rows.Add (bottomPagerRow);
+					if (dataBinding) {
+						bottomPagerRow.DataBind ();
+						OnRowDataBound (new GridViewRowEventArgs (bottomPagerRow));
+					}
 				}
 			}
 
@@ -1494,31 +1502,31 @@ namespace System.Web.UI.WebControls
 				switch (row.RowType) {
 				case DataControlRowType.Header:
 					if (headerStyle != null && !headerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom(headerStyle);
+						row.ControlStyle.MergeWith(headerStyle);
 					row.Visible = ShowHeader;
 					break;
 				case DataControlRowType.Footer:
 					if (footerStyle != null && !footerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (footerStyle);
+						row.ControlStyle.MergeWith (footerStyle);
 					row.Visible = ShowFooter;
 					break;
 				case DataControlRowType.Pager:
 					if (pagerStyle != null && !pagerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (pagerStyle);
+						row.ControlStyle.MergeWith (pagerStyle);
 					break;
 				case DataControlRowType.EmptyDataRow:
 					if (emptyDataRowStyle != null && !emptyDataRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (emptyDataRowStyle);
+						row.ControlStyle.MergeWith (emptyDataRowStyle);
 					break;
 				case DataControlRowType.DataRow:
-					if (rowStyle != null && !rowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (rowStyle);
-					if ((row.RowState & DataControlRowState.Alternate) != 0 && alternatingRowStyle != null && !alternatingRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (alternatingRowStyle);
-					if ((row.RowState & DataControlRowState.Selected) != 0 && selectedRowStyle != null && !selectedRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (selectedRowStyle);
 					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (editRowStyle);
+						row.ControlStyle.MergeWith (editRowStyle);
+					if ((row.RowState & DataControlRowState.Selected) != 0 && selectedRowStyle != null && !selectedRowStyle.IsEmpty)
+						row.ControlStyle.MergeWith (selectedRowStyle);
+					if ((row.RowState & DataControlRowState.Alternate) != 0 && alternatingRowStyle != null && !alternatingRowStyle.IsEmpty)
+						row.ControlStyle.MergeWith (alternatingRowStyle);
+					if (rowStyle != null && !rowStyle.IsEmpty)
+						row.ControlStyle.MergeWith (rowStyle);
 					break;
 				default:
 					break;
@@ -1531,11 +1539,11 @@ namespace System.Web.UI.WebControls
 						switch (row.RowType) {
 						case DataControlRowType.Header:
 							if (field.HeaderStyleCreated && !field.HeaderStyle.IsEmpty)
-								cell.ControlStyle.CopyFrom (field.HeaderStyle);
+								cell.ControlStyle.MergeWith (field.HeaderStyle);
 							break;
 						case DataControlRowType.Footer:
 							if (field.FooterStyleCreated && !field.FooterStyle.IsEmpty)
-								cell.ControlStyle.CopyFrom (field.FooterStyle);
+								cell.ControlStyle.MergeWith (field.FooterStyle);
 							break;
 						default:
 							if (field.ControlStyleCreated && !field.ControlStyle.IsEmpty)
@@ -1545,7 +1553,7 @@ namespace System.Web.UI.WebControls
 										wc.ControlStyle.MergeWith (field.ControlStyle);
 								}
 							if (field.ItemStyleCreated && !field.ItemStyle.IsEmpty)
-								cell.ControlStyle.CopyFrom (field.ItemStyle);
+								cell.ControlStyle.MergeWith (field.ItemStyle);
 							break;
 						}
 					}
