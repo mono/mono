@@ -242,6 +242,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]	// Font dependent, values are for win32
 		public void BehaviorAutoSize ()
 		{
 			// Lots of things depend on this, it needs to be 100% correct...

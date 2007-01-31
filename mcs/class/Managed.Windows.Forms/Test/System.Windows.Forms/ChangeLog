@@ -1,3 +1,8 @@
+2007-01-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButtonTest.cs, ToolStripItemTest.cs, ToolStripLabelTest.cs:
+	Mark BehaviorAutoSize as NotWorking, it is font dependent.
+
 2007-01-29  Chris Toshok  <toshok@ximian.com>
 
 	* ControlHandleTest.cs: make this compile against mono.  we can
