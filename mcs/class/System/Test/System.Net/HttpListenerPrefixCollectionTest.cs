@@ -34,6 +34,9 @@ using HLPC=System.Net.HttpListenerPrefixCollection;
 
 namespace MonoTests.System.Net {
 	[TestFixture]
+#if TARGET_JVM
+	[Ignore ("The class System.Net.HttpListenerPrefixCollection - is not supported")]
+#endif
 	public class HttpListenerPrefixCollectionTest {
 		// NL -> Not listening -> tests when listener.IsListening == false
 		[Test]

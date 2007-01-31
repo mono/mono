@@ -41,6 +41,9 @@ using NUnit.Framework;
 // ***************************************************************************************
 namespace MonoTests.System.Net {
 	[TestFixture]
+#if TARGET_JVM	
+	[Ignore ("The class HttpListener is not supported")]
+#endif
 	public class HttpListener2Test {
 		public class MyNetworkStream : NetworkStream {
 			public MyNetworkStream (Socket sock) : base (sock, true)

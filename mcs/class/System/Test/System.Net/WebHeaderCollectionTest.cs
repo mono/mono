@@ -219,6 +219,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		//FIXME: include Java serialization compliant tests - the order of object
+		// in SerializationInfo should stay same to MS format...
+		[Ignore ("The MS compliant binary serialization is not supported")]
+#endif			
 		public void GetObjectData ()
 		{
 			SerializationInfo si = new SerializationInfo (typeof (WebHeaderCollection),
@@ -279,6 +284,10 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		//FIXME: include Java serialization compliant tests
+		[Ignore ("The MS compliant binary serialization is not supported")]
+#endif		
 		public void Serialize ()
 		{
 			WebHeaderCollection headers = new WebHeaderCollection ();
@@ -299,6 +308,10 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		//FIXME: include Java serialization compliant tests
+		[Ignore ("The MS compliant binary serialization format is not supported")]
+#endif				
 		public void Deserialize ()
 		{
 			MemoryStream ms = new MemoryStream ();

@@ -21,6 +21,11 @@ using System.Security.Permissions;
 
 using NUnit.Framework;
 
+#if TARGET_JVM
+using System.Globalization;
+using System.Reflection;
+#endif
+
 namespace MonoTests.System.Net
 {
 	[TestFixture]
@@ -58,6 +63,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Bug in resource releasing - cannot delete file")]
+#endif
 		public void Async ()
 		{
 			WebResponse res = null;
@@ -184,10 +192,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-	[Ignore ("TD BUG ID: 7205")]
-	[Category ("NotWorking")]
-#endif	
 		public void Sync ()
 		{
 			WebResponse res = null;
@@ -676,6 +680,10 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		//FIXME: include Java serialization compliant tests
+		[Ignore ("The MS compliant binary serialization is not supported")]
+#endif			
 		public void GetObjectData ()
 		{
 			FileWebRequest fwr = (FileWebRequest) WebRequest.Create ("file:///test.txt");
@@ -779,6 +787,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("The MS compliant binary serialization is not supported")]
+#endif		
 		public void Deserialize ()
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -831,6 +842,23 @@ namespace MonoTests.System.Net
 			return new Uri ("file:///" + tempFile);
 		}
 
+#if TARGET_JVM
+        
+        private bool RunningOnUnix {
+			get {
+                Type t = Type.GetType("java.lang.System");
+                MethodInfo mi = t.GetMethod("getProperty", new Type[] { typeof(string) });
+                string osName = (string) mi.Invoke(null, new object[] { "os.name" });
+				
+				if(osName == null) {
+					return false;
+				}
+				
+				return !osName.StartsWith("win", true, CultureInfo.InvariantCulture);
+			}
+		}
+				
+#else
 		private bool RunningOnUnix {
 			get {
 				// check for Unix platforms - see FAQ for more details
@@ -839,6 +867,7 @@ namespace MonoTests.System.Net
 				return ((platform == 4) || (platform == 128));
 			}
 		}
+#endif		
 
 		private static readonly byte [] _serialized = new byte [] {
 #if NET_2_0

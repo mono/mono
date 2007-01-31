@@ -35,6 +35,9 @@ public class ServicePointTest
 
         [Test]
 		[Category ("InetAccess")]
+#if TARGET_JVM
+	[Ignore ("Unsupported - ServicePointManager.FindServicePoint")]
+#endif
         public void All ()
         {
 		ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -116,6 +119,9 @@ public class ServicePointTest
 
 	[Test]
 	[Category ("InetAccess")]
+#if TARGET_JVM
+	[Ignore ("The System.Net.ServicePointManager.FindServicePoint(Uri) is not supported")]
+#endif	
 	public void ConnectionLimit ()
 	{		
 		// the default is already 2, just in case it isn't..

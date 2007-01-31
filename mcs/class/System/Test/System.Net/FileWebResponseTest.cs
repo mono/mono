@@ -13,6 +13,12 @@ using System.Net;
 
 using NUnit.Framework;
 
+#if TARGET_JVM
+using System.Globalization;
+using System.Reflection;
+#endif
+
+
 namespace MonoTests.System.Net
 {
 	[TestFixture]
@@ -219,7 +225,23 @@ namespace MonoTests.System.Net
 			}
 			return new Uri ("file:///" + tempFile);
 		}
-
+#if TARGET_JVM
+        
+        private bool RunningOnUnix {
+			get {
+                		Type t = Type.GetType("java.lang.System");
+                		MethodInfo mi = t.GetMethod("getProperty", new Type[] { typeof(string) });
+                		string osName = (string) mi.Invoke(null, new object[] { "os.name" });
+				
+				if(osName == null) {
+					return false;
+				}
+				
+				return !osName.StartsWith("win", true, CultureInfo.InvariantCulture);
+			}
+		}
+				
+#else
 		private bool RunningOnUnix {
 			get {
 				// check for Unix platforms - see FAQ for more details
@@ -228,5 +250,6 @@ namespace MonoTests.System.Net
 				return ((platform == 4) || (platform == 128));
 			}
 		}
+#endif		
 	}
 }

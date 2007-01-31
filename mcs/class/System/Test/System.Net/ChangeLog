@@ -1,3 +1,17 @@
+2007-01-31  Ilya Kharmatsky  <ilyak -at- mainsoft.com>
+
+	* IPAddressTest.cs, WebProxyTest.cs, WebHeaderCollectionTest.cs,
+	  ServicePointManagerTest.cs, ServicePointTest.cs:
+	  Excluded not working in Grasshopper tests, under 'TARGET_JVM'
+	  directive
+	* HttpListenerPrefixCollectionTest.cs, HttpListenerTest.cs,
+	  HttpListenerBasicIdentityTest.cs, HttpListener2Test.cs:
+	  Excluded entire test fixture, since HttpListener still not 
+	  implemented in Grasshopper.
+	* FileWebRequestTest.cs, FileWebResponseTest.cs:
+	  Excluded not working in Grasshopper tests and provided different
+	  implementation of helper methods - under 'TARGET_JVM'
+
 2007-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpWebRequestTest.cs : use correct attribute.

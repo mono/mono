@@ -33,6 +33,9 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Net {
 	[TestFixture]
+#if TARGET_JVM
+	[Ignore ("The class HttpListenerBasicIdentity - is not supported")]
+#endif
 	public class HttpListenerBasicIdentityTest {
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
