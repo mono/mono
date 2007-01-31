@@ -69,10 +69,19 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetEncoding_Name_NotSupported ()
 		{
-			Encoding.GetEncoding ("doesnotexist");
+			try {
+				Encoding.GetEncoding ("doesnotexist");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("doesnotexist") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("name", ex.ParamName, "#7");
+			}
 		}
 
 		[Test]

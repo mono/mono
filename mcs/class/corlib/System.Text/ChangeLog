@@ -1,5 +1,9 @@
 2007-01-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Encoding.cs: Also set ParamName of the ArgumentException.
+
+2007-01-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Encoding.cs: In GetEncoding (int) do not allow codepage value below zero
 	and above 0xffff. Modified NotSupportedException to ArgumentException in
 	GetEncoding (string).
