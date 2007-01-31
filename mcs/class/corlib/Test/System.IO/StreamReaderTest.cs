@@ -6,24 +6,24 @@
 // Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
-using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
 
+using NUnit.Framework;
+
 namespace MonoTests.System.IO
 {
-
 [TestFixture]
-public class StreamReaderTest : Assertion
+public class StreamReaderTest
 {
 	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 
 	[SetUp]
- 	public void SetUp ()
+	public void SetUp ()
 	{	
-		if (!Directory.Exists (TempFolder))				
+		if (!Directory.Exists (TempFolder))
 			Directory.CreateDirectory (TempFolder);
 		
 		if (!File.Exists (_codeFileName))
@@ -43,11 +43,11 @@ public class StreamReaderTest : Assertion
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader((Stream)null);
+				new StreamReader((Stream)null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null string error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -59,7 +59,7 @@ public class StreamReaderTest : Assertion
 				errorThrown = true;
 			}
 			f.Close();
-			Assert("no read error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "no read error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
@@ -67,7 +67,7 @@ public class StreamReaderTest : Assertion
 						      FileMode.Open, 
 						      FileAccess.Read);
 			StreamReader r = new StreamReader(f);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 			f.Close();
 		}
@@ -78,51 +78,51 @@ public class StreamReaderTest : Assertion
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("");
+				new StreamReader("");
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("empty string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "empty string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader((string)null);
+				new StreamReader((string)null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 2: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentfile");
+				new StreamReader("nonexistentfile");
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 3: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
-			Assert("fileNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "fileNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentdir/file");
+				new StreamReader("nonexistentdir/file");
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 4: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("dirNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "dirNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0]);
+				new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0]);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -130,14 +130,14 @@ public class StreamReaderTest : Assertion
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 5: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "invalid filename error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
 			StreamReader r = new StreamReader(_codeFileName);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 		}
 	}
@@ -147,13 +147,13 @@ public class StreamReaderTest : Assertion
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader((Stream)null, false);
+				new StreamReader((Stream)null, false);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("null stream error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null stream error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -164,10 +164,10 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 2: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			f.Close();
-			Assert("no read error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "no read error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
@@ -175,7 +175,7 @@ public class StreamReaderTest : Assertion
 						      FileMode.Open, 
 						      FileAccess.Read);
 			StreamReader r = new StreamReader(f, false);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 			f.Close();
 		}
@@ -186,9 +186,9 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 3: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null string error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -199,10 +199,10 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 4: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			f.Close();
-			Assert("no read error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "no read error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
@@ -210,7 +210,7 @@ public class StreamReaderTest : Assertion
 						      FileMode.Open, 
 						      FileAccess.Read);
 			StreamReader r = new StreamReader(f, true);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 			f.Close();
 		}
@@ -221,51 +221,51 @@ public class StreamReaderTest : Assertion
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("", false);
+				new StreamReader("", false);
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("empty string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "empty string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader((string)null, false);
+				new StreamReader((string)null, false);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 2: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader(TempFolder + "/nonexistentfile", false);
+				new StreamReader(TempFolder + "/nonexistentfile", false);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 3: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
-			Assert("fileNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "fileNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader(TempFolder + "/nonexistentdir/file", false);
+				new StreamReader(TempFolder + "/nonexistentdir/file", false);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 4: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("dirNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "dirNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], false);
+				new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], false);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -273,64 +273,64 @@ public class StreamReaderTest : Assertion
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 5: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "invalid filename error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
 			StreamReader r = new StreamReader(_codeFileName, false);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("", true);
+				new StreamReader("", true);
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 6: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 6: " + e.ToString());
 			}
-			Assert("empty string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "empty string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader((string)null, true);
+				new StreamReader((string)null, true);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 7: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 7: " + e.ToString());
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null string error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader(TempFolder + "/nonexistentfile", true);
+				new StreamReader(TempFolder + "/nonexistentfile", true);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 8: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 8: " + e.ToString());
 			}
-			Assert("fileNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "fileNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader(TempFolder + "/nonexistentdir/file", true);
+				new StreamReader(TempFolder + "/nonexistentdir/file", true);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 9: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 9: " + e.ToString());
 			}
-			Assert("dirNotFound error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "dirNotFound error not thrown");
 		}
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], true);
+				new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], true);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -338,14 +338,14 @@ public class StreamReaderTest : Assertion
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 10: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 10: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "invalid filename error not thrown");
 		}
 		{
 			// this is probably incestuous, but, oh well.
 			StreamReader r = new StreamReader(_codeFileName, true);
-			AssertNotNull("no stream reader", r);
+			Assert.IsNotNull (r, "no stream reader");
 			r.Close();
 		}
 	}
@@ -354,31 +354,20 @@ public class StreamReaderTest : Assertion
 	
 	[Test]
 	public void TestBaseStream() {
-		string progress = "beginning";
-		try {
-			Byte[] b = {};
-			MemoryStream m = new MemoryStream(b);
-			StreamReader r = new StreamReader(m);
-			AssertEquals("wrong base stream ", m, r.BaseStream);
-			progress = "Closing StreamReader";
-			r.Close();
-			progress = "Closing MemoryStream";
-			m.Close();
-		} catch (Exception e) {
-			Fail ("At '" + progress + "' an unexpected exception was thrown: " + e.ToString());
-		}
+		Byte[] b = {};
+		MemoryStream m = new MemoryStream(b);
+		StreamReader r = new StreamReader(m);
+		Assert.AreSame (m, r.BaseStream, "wrong base stream ");
+		r.Close();
+		m.Close();
 	}
 
 	public void TestCurrentEncoding() {
-		try {
-			Byte[] b = {};
-			MemoryStream m = new MemoryStream(b);
-			StreamReader r = new StreamReader(m);
-			AssertEquals("wrong encoding", 
-				     Encoding.UTF8.GetType (), r.CurrentEncoding.GetType ());
-		} catch (Exception e) {
-			Fail ("Unexpected exception thrown: " + e.ToString());
-		}
+		Byte[] b = {};
+		MemoryStream m = new MemoryStream(b);
+		StreamReader r = new StreamReader(m);
+		Assert.AreEqual (Encoding.UTF8.GetType (), r.CurrentEncoding.GetType (),
+			"wrong encoding");
 	}
 
 	// TODO - Close - annoying spec - won't commit to any exceptions. How to test?
@@ -387,30 +376,28 @@ public class StreamReaderTest : Assertion
 	[Test]
 	public void TestPeek() {
 		// FIXME - how to get an IO Exception?
-		{
-			bool errorThrown = false;
-			try {
-				Byte[] b = {};
-				MemoryStream m = new MemoryStream(b);
-				StreamReader r = new StreamReader(m);
-				m.Close();
-				int nothing = r.Peek();
-			} catch (ObjectDisposedException) {
-				errorThrown = true;
-			}
-			Assert("nothing-to-peek-at error not thrown", errorThrown);
+		Byte [] b;
+		MemoryStream m;
+		StreamReader r;
+
+		try {
+			b = new byte [0];
+			m = new MemoryStream (b);
+			r = new StreamReader(m);
+			m.Close();
+			int nothing = r.Peek();
+			Assert.Fail ("#1");
+		} catch (ObjectDisposedException) {
 		}
-		{
-			Byte[] b = {1, 2, 3, 4, 5, 6};
-			MemoryStream m = new MemoryStream(b);
-			
-			StreamReader r = new StreamReader(m);
-			for (int i = 1; i <= 6; i++) {
-				AssertEquals("peek incorrect", i, r.Peek());
-				r.Read();
-			}
-			AssertEquals("should be none left", -1, r.Peek());
+
+		b = new byte [] {1, 2, 3, 4, 5, 6};
+		m = new MemoryStream (b);
+		r = new StreamReader(m);
+		for (int i = 1; i <= 6; i++) {
+			Assert.AreEqual (i, r.Peek(), "#2");
+			r.Read();
 		}
+		Assert.AreEqual (-1, r.Peek(), "#3");
 	}
 
 	[Test]
@@ -427,9 +414,9 @@ public class StreamReaderTest : Assertion
 			} catch (ObjectDisposedException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("nothing-to-read error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "nothing-to-read error not thrown");
 		}
 		{
 			Byte[] b = {1, 2, 3, 4, 5, 6};
@@ -437,9 +424,9 @@ public class StreamReaderTest : Assertion
 			
 			StreamReader r = new StreamReader(m);
 			for (int i = 1; i <= 6; i++) {
-				AssertEquals("read incorrect", i, r.Read());
+				Assert.AreEqual (i, r.Read (), "read incorrect");
 			}
-			AssertEquals("Should be none left", -1, r.Read());
+			Assert.AreEqual (-1, r.Read (), "Should be none left");
 		}
 
 		{
@@ -453,9 +440,9 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 2: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
-			Assert("null buffer error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "null buffer error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -467,9 +454,9 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 3: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
-			Assert("too-long range error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "too-long range error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -481,9 +468,9 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 4: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("out of range error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "out of range error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -495,9 +482,9 @@ public class StreamReaderTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 5: " + e.ToString());
+				Assert.Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
-			Assert("out of range error not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "out of range error not thrown");
 		}
 		{
 			int ii = 1;
@@ -523,13 +510,11 @@ public class StreamReaderTest : Assertion
 				r.Read(buffer, 0, 1);
 				ii++;
 				for (int i = 0; i < target.Length; i++) {
-					AssertEquals("read no work", 
-						     target[i], buffer[i]);
+					Assert.AreEqual (target[i], buffer[i], "read no work");
 				i++;
 				}
-						    
 			} catch (Exception e) {
-				Fail ("Caught when ii=" + ii + ". e:" + e.ToString());
+				Assert.Fail ("Caught when ii=" + ii + ". e:" + e.ToString());
 			}
 		}
 	}
@@ -548,11 +533,11 @@ public class StreamReaderTest : Assertion
 		b[7] = (byte)'\n';
 		MemoryStream m = new MemoryStream(b);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", "a", r.ReadLine());
-		AssertEquals("line doesn't match", "b", r.ReadLine());
-		AssertEquals("line doesn't match", "c", r.ReadLine());
-		AssertEquals("line doesn't match", "d", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual ("a", r.ReadLine(), "#1");
+		Assert.AreEqual ("b", r.ReadLine (), "#2");
+		Assert.AreEqual ("c", r.ReadLine (), "#3");
+		Assert.AreEqual ("d", r.ReadLine(), "#4");
+		Assert.IsNull (r.ReadLine (), "#5");
 	}
 
 	[Test]
@@ -571,12 +556,12 @@ public class StreamReaderTest : Assertion
 		b[9] = (byte)'\n';
 		MemoryStream m = new MemoryStream(b);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", "a", r.ReadLine());
-		AssertEquals("line doesn't match", "b", r.ReadLine());
-		AssertEquals("line doesn't match", "c", r.ReadLine());
-		AssertEquals("line doesn't match", "d", r.ReadLine());
-		AssertEquals("line doesn't match", "", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual ("a", r.ReadLine (), "#1");
+		Assert.AreEqual ("b", r.ReadLine (), "#2");
+		Assert.AreEqual ("c", r.ReadLine (), "#3");
+		Assert.AreEqual ("d", r.ReadLine (), "#4");
+		Assert.AreEqual (string.Empty, r.ReadLine (), "#5");
+		Assert.IsNull (r.ReadLine(), "#6");
 	}
 
 	[Test]
@@ -595,13 +580,13 @@ public class StreamReaderTest : Assertion
 		b[9] = (byte)'\n';
 		MemoryStream m = new MemoryStream(b);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", "", r.ReadLine());
-		AssertEquals("line doesn't match", "", r.ReadLine());
-		AssertEquals("line doesn't match", "", r.ReadLine());
-		AssertEquals("line doesn't match", "c", r.ReadLine());
-		AssertEquals("line doesn't match", "d", r.ReadLine());
-		AssertEquals("line doesn't match", "", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual (string.Empty, r.ReadLine (), "#1");
+		Assert.AreEqual (string.Empty, r.ReadLine (), "#2");
+		Assert.AreEqual (string.Empty, r.ReadLine (), "#3");
+		Assert.AreEqual ("c", r.ReadLine (), "#4");
+		Assert.AreEqual ("d", r.ReadLine (), "#5");
+		Assert.AreEqual (string.Empty, r.ReadLine (), "#6");
+		Assert.IsNull (r.ReadLine (), "#7");
 	}
 
 	[Test]
@@ -614,9 +599,9 @@ public class StreamReaderTest : Assertion
 		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
 		MemoryStream m = new MemoryStream(bytes);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
-		AssertEquals("line doesn't match", "Hola", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual (new string ('1', 32767), r.ReadLine(), "#1");
+		Assert.AreEqual ("Hola", r.ReadLine (), "#2");
+		Assert.IsNull (r.ReadLine (), "#3");
 	}
 
 	[Test]
@@ -630,11 +615,11 @@ public class StreamReaderTest : Assertion
 		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
 		MemoryStream m = new MemoryStream(bytes);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
-		AssertEquals("line doesn't match", "Hola", r.ReadLine());
-		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
-		AssertEquals("line doesn't match", "Hola", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual (new string ('1', 32767), r.ReadLine (), "#1");
+		Assert.AreEqual ("Hola", r.ReadLine (), "#2");
+		Assert.AreEqual (new string ('1', 32767), r.ReadLine (), "#3");
+		Assert.AreEqual ("Hola", r.ReadLine (), "#4");
+		Assert.IsNull (r.ReadLine (), "#5");
 	}
 
 	[Test]
@@ -647,9 +632,9 @@ public class StreamReaderTest : Assertion
 		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
 		MemoryStream m = new MemoryStream(bytes);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", new string ('1', 32768), r.ReadLine());
-		AssertEquals("line doesn't match", "Hola", r.ReadLine());
-		AssertEquals("line doesn't match", null, r.ReadLine());
+		Assert.AreEqual (new string ('1', 32768), r.ReadLine (), "#1");
+		Assert.AreEqual ("Hola", r.ReadLine (), "#2");
+		Assert.IsNull (r.ReadLine (), "#3");
 	}
 
 	public void TestReadToEnd() {
@@ -665,8 +650,8 @@ public class StreamReaderTest : Assertion
 		b[7] = (byte)'\n';
 		MemoryStream m = new MemoryStream(b);
 		StreamReader r = new StreamReader(m);
-		AssertEquals("line doesn't match", "a\nb\nc\nd\n", r.ReadToEnd());
-		AssertEquals("line doesn't match", "", r.ReadToEnd());
+		Assert.AreEqual ("a\nb\nc\nd\n", r.ReadToEnd (), "#1");
+		Assert.AreEqual (string.Empty, r.ReadToEnd (), "#2");
 	}
 
 	[Test]
@@ -676,28 +661,25 @@ public class StreamReaderTest : Assertion
 		MemoryStream m = new MemoryStream (b);
 		StreamReader r = new StreamReader (m);
 		m.Close ();
-		bool thrown = false;
 		try {
 			r.Peek ();
+			Assert.Fail ();
 		} catch (ObjectDisposedException) {
-			thrown = true;
 		}
-
-		AssertEquals ("#01", true, thrown);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void Contructor_Stream_NullEncoding () 
 	{
-		StreamReader r = new StreamReader (new MemoryStream (), null);
+		new StreamReader (new MemoryStream (), null);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void Contructor_Path_NullEncoding () 
 	{
-		StreamReader r = new StreamReader (_codeFileName, null);
+		new StreamReader (_codeFileName, null);
 	}
 
 	[Test]
@@ -731,7 +713,7 @@ public class StreamReaderTest : Assertion
 	{
 		MemoryStream ms = new MemoryStream (Encoding.ASCII.GetBytes ("Line1\rLine2\r\nLine3\nLine4"));
 		StreamReader reader = new StreamReader (ms);
-		AssertEquals (24, reader.Read (new char[24], 0, 24));
+		Assert.AreEqual (24, reader.Read (new char[24], 0, 24));
 	}
 
 	[Test]
@@ -739,7 +721,7 @@ public class StreamReaderTest : Assertion
 	{
 		StreamReader sr = new StreamReader (new Bug75526Stream ());
 		int len = sr.Read (new char [10], 0, 10);
-		AssertEquals (2, len);
+		Assert.AreEqual (2, len);
 	}
 
 	class Bug75526Stream : MemoryStream
