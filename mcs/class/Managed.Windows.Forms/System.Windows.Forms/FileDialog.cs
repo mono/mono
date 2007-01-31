@@ -113,6 +113,8 @@ namespace System.Windows.Forms {
 		private readonly string x_string = "X";
 		private readonly string y_string = "Y";
 		
+		private bool disable_form_closed_event = false;
+		
 		internal FileDialog ()
 		{
 			vfs = new MWFVFS ();
@@ -370,7 +372,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 			form.FormClosed += new FormClosedEventHandler (OnFileDialogFormClosed);
 #else
-			form.Closed += new EventHandler (OnClickCancelButton);
+			form.Closed += new EventHandler (OnFileDialogFormClosed);
 #endif
 		}
 		
@@ -654,6 +656,8 @@ namespace System.Windows.Forms {
 				fo (this, e);
 			
 			Mime.CleanFileCache ();
+			
+			disable_form_closed_event = true;
 		}
 		
 		protected  override bool RunDialog (IntPtr hWndOwner)
@@ -952,15 +956,6 @@ namespace System.Windows.Forms {
 		
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
-			//
-			// This method gets called whenever the dialog is closed, so we need
-			// to make sure that we aren't changing the dialog result when the
-			// OK (Open or Save) button has been clicked and we are closing the 
-			// window ourselves.
-			//
-			if (form.DialogResult == DialogResult.OK)
-				return;
-
 			if (restoreDirectory)
 				mwfFileView.CurrentFolder = restoreDirectoryString;
 			
@@ -1034,11 +1029,24 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0		
+		void OnFileDialogFormClosed (object sender, FormClosedEventArgs e)
+		{
+			HandleFormClosedEvent (sender);
+		}
+#else
 		void OnFileDialogFormClosed (object sender, EventArgs e)
 		{
-			OnClickCancelButton (sender, EventArgs.Empty);
+			HandleFormClosedEvent (sender);
 		}
 #endif
+		
+		void HandleFormClosedEvent (object sender)
+		{
+			if (!disable_form_closed_event)
+				OnClickCancelButton (sender, EventArgs.Empty);
+			
+			disable_form_closed_event = false;
+		}
 		
 		private void UpdateFilters ()
 		{
