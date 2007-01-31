@@ -1565,6 +1565,52 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		public void MeasureString_Bug80680 ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string s = String.Empty;
+					SizeF size = g.MeasureString (s, font);
+					Assert.AreEqual (0, size.Height, "Empty.Height");
+					Assert.AreEqual (0, size.Width, "Empty.Width");
+
+					s += " ";
+					SizeF expected = g.MeasureString (s, font);
+					for (int i = 1; i < 10; i++) {
+						s += " ";
+						size = g.MeasureString (s, font);
+						Assert.AreEqual (expected.Height, size.Height, 0.1, ">" + s + "< Height");
+						Assert.AreEqual (expected.Width, size.Width, 0.1, ">" + s + "< Width");
+					}
+
+					s = "a";
+					expected = g.MeasureString (s, font);
+					s = " " + s;
+					size = g.MeasureString (s, font);
+					float space_width = size.Width - expected.Width;
+					for (int i = 1; i < 10; i++) {
+						size = g.MeasureString (s, font);
+						Assert.AreEqual (expected.Height, size.Height, 0.1, ">" + s + "< Height");
+						Assert.AreEqual (expected.Width + i * space_width, size.Width, 0.1, ">" + s + "< Width");
+						s = " " + s;
+					}
+
+					s = "a";
+					expected = g.MeasureString (s, font);
+					for (int i = 1; i < 10; i++) {
+						s = s + " ";
+						size = g.MeasureString (s, font);
+						Assert.AreEqual (expected.Height, size.Height, 0.1, ">" + s + "< Height");
+						Assert.AreEqual (expected.Width, size.Width, 0.1, ">" + s + "< Width");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void MeasureCharacterRanges_NullOrEmptyText ()
 		{
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
