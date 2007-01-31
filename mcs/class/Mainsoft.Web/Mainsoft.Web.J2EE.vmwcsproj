@@ -134,6 +134,7 @@
     </Compile>
     <Compile Include="Mainsoft.Web.Hosting\BaseHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseStaticHttpServlet.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\IncludeHelperServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
     <Compile Include="Mainsoft.Web.Profile\CloudscapeProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />
