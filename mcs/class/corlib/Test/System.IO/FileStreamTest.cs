@@ -71,15 +71,44 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
-		public void CtorFileNotFoundException1 ()
+		public void CtorFileNotFoundException_Mode_Open ()
 		{
+			// absolute path
 			string path = TempFolder + DSC + "thisfileshouldnotexists.test";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = new FileStream (TempFolder + DSC + "thisfileshouldnotexists.test", FileMode.Open);
+				Assert.Fail ("#A1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#A2");
+				Assert.AreEqual (path, ex.FileName, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#A6");
 			} finally {
+				if (stream != null) {
+					stream.Close ();
+					stream = null;
+				}
+				DeleteFile (path);
+			}
+
+			// relative path
+			string orignalCurrentDir = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (TempFolder);
+			try {
+				stream = new FileStream ("thisfileshouldnotexists.test", FileMode.Open);
+				Assert.Fail ("#B1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
+				Assert.AreEqual (path, ex.FileName, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#B6");
+			} finally {
+				// restore original current directory
+				Directory.SetCurrentDirectory (orignalCurrentDir);
 				if (stream != null)
 					stream.Close ();
 				DeleteFile (path);
@@ -87,27 +116,54 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
-		public void CtorFileNotFoundException2 ()
+		public void CtorFileNotFoundException_Mode_Truncate ()
 		{
+			// absolute path
 			string path = TempFolder + DSC + "thisfileshouldNOTexists.test";
 			DeleteFile (path);
 			FileStream stream = null;
-
 			try {
-				stream = new FileStream (TempFolder + DSC + "thisfileshouldNOTexists.test", FileMode.Truncate);
+				stream = new FileStream (path, FileMode.Truncate);
+				Assert.Fail ("#A1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#A2");
+				Assert.AreEqual (path, ex.FileName, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#A6");
 			} finally {
+				if (stream != null) {
+					stream.Close ();
+					stream = null;
+				}
+				DeleteFile (path);
+			}
+
+			// relative path
+			string orignalCurrentDir = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (TempFolder);
+			try {
+				stream = new FileStream ("thisfileshouldNOTexists.test", FileMode.Truncate);
+				Assert.Fail ("#B1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
+				Assert.AreEqual (path, ex.FileName, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#B6");
+			} finally {
+				// restore original current directory
+				Directory.SetCurrentDirectory (orignalCurrentDir);
 				if (stream != null)
 					stream.Close ();
-
 				DeleteFile (path);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (IOException))]
 		public void CtorIOException1 ()
 		{
+			// absolute path
 			string path = TempFolder + DSC + "thisfileshouldexists.test";
 			FileStream stream = null;
 			DeleteFile (path);
@@ -116,13 +172,41 @@ namespace MonoTests.System.IO
 				stream.Close ();
 				stream = null;
 				stream = new FileStream (path, FileMode.CreateNew);
+				Assert.Fail ("#A1");
+			} catch (IOException ex) {
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#A5");
 			} finally {
+				if (stream != null) {
+					stream.Close ();
+					stream = null;
+				}
+				DeleteFile (path);
+			}
 
+			// relative path
+			string orignalCurrentDir = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (TempFolder);
+			try {
+				stream = new FileStream ("thisfileshouldexists.test", FileMode.CreateNew);
+				stream.Close ();
+				stream = null;
+				stream = new FileStream ("thisfileshouldexists.test", FileMode.CreateNew);
+				Assert.Fail ("#B1");
+			} catch (IOException ex) {
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#B5");
+			} finally {
+				// restore original current directory
+				Directory.SetCurrentDirectory (orignalCurrentDir);
 				if (stream != null)
 					stream.Close ();
 				DeleteFile (path);
 			}
-
 		}
 
 		[Test]
@@ -216,6 +300,27 @@ namespace MonoTests.System.IO
 		public void CtorDirectoryNotFoundException_Append ()
 		{
 			CtorDirectoryNotFoundException (FileMode.Append);
+		}
+
+		[Test]
+		public void CtorDirectoryNotFound_RelativePath ()
+		{
+			string orignalCurrentDir = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (TempFolder);
+			string relativePath = "DirectoryDoesNotExist" + Path.DirectorySeparatorChar + "file.txt";
+			string fullPath = Path.Combine (TempFolder, relativePath);
+			try {
+				new FileStream (relativePath, FileMode.Open);
+				Assert.Fail ("#A1");
+			} catch (DirectoryNotFoundException ex) {
+				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf (fullPath) != -1, "#A5");
+			} finally {
+				// restore original current directory
+				Directory.SetCurrentDirectory (orignalCurrentDir);
+			}
 		}
 
 		[Test]
@@ -465,6 +570,10 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException ex) {
 				// make sure it is exact this exception, and not a derived type
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#E2");
+				Assert.AreEqual (path, ex.FileName, "#E3");
+				Assert.IsNull (ex.InnerException, "#E4");
+				Assert.IsNotNull (ex.Message, "#E5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#E6");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -479,6 +588,10 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException ex) {
 				// make sure it is exact this exception, and not a derived type
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#F2");
+				Assert.AreEqual (path, ex.FileName, "#F3");
+				Assert.IsNull (ex.InnerException, "#F4");
+				Assert.IsNotNull (ex.Message, "#F5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#F6");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -493,6 +606,10 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException ex) {
 				// make sure it is exact this exception, and not a derived type
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#G2");
+				Assert.AreEqual (path, ex.FileName, "#G3");
+				Assert.IsNull (ex.InnerException, "#G4");
+				Assert.IsNotNull (ex.Message, "#G5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#G6");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -551,6 +668,10 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException ex) {
 				// make sure it is exact this exception, and not a derived type
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#I2");
+				Assert.AreEqual (path, ex.FileName, "#I3");
+				Assert.IsNull (ex.InnerException, "#I4");
+				Assert.IsNotNull (ex.Message, "#I5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#I6");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -565,6 +686,10 @@ namespace MonoTests.System.IO
 			} catch (FileNotFoundException ex) {
 				// make sure it is exact this exception, and not a derived type
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#J2");
+				Assert.AreEqual (path, ex.FileName, "#J3");
+				Assert.IsNull (ex.InnerException, "#J4");
+				Assert.IsNotNull (ex.Message, "#J5");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#J6");
 			} finally {
 				if (stream != null)
 					stream.Close ();

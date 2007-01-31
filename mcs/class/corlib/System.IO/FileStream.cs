@@ -208,7 +208,7 @@ namespace System.IO
 				if (!Directory.Exists (fp)) {
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
-					string fname = (anonymous) ? dname : fp;
+					string fname = (anonymous) ? dname : Path.GetFullPath (name);
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
 				}
 			}
@@ -217,7 +217,7 @@ namespace System.IO
 					mode != FileMode.CreateNew && !File.Exists (name)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
+				string fname = (anonymous) ? Path.GetFileName (name) : Path.GetFullPath (name);
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
 			}
 
@@ -232,7 +232,7 @@ namespace System.IO
 			this.handle = MonoIO.Open (name, mode, access, share, options, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
+				string fname = (anonymous) ? Path.GetFileName (name) : Path.GetFullPath (name);
 				throw MonoIO.GetException (fname, error);
 			}
 
