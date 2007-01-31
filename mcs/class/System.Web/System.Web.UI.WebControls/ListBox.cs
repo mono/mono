@@ -212,6 +212,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			EnsureDataBound ();
+#endif
 			string [] values = postCollection.GetValues (postDataKey);
 			if (values == null || values.Length == 0) {
 				int prev_index = SelectedIndex;
@@ -294,5 +297,6 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 
 

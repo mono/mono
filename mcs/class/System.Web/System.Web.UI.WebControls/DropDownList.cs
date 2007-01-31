@@ -210,6 +210,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			EnsureDataBound ();
+#endif
 			int	index;
 
 			index = Items.IndexOf(postCollection[postDataKey]);

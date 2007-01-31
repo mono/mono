@@ -1,5 +1,14 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CheckBoxList.cs:
+	* DropDownList.cs:
+	* ListBox.cs:
+	* RadioButtonList.cs:
+	EnsureDataBound is called when PostData is processed to restore 
+	'state' of control if EnableViewState is false				 
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: 
 	RowDataBound is fired for PagerRow.
 	Styles are applied using MergeWith instead CopyFrom 

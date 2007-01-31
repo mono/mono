@@ -208,6 +208,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			EnsureDataBound ();
+#endif
 			int checkbox = -1;
 
 			try {

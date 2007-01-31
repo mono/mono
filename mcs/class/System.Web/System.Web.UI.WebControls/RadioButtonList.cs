@@ -266,6 +266,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			EnsureDataBound ();
+#endif
 			string val = postCollection [postDataKey];
 			ListItemCollection items = Items;
 			int end = items.Count;
@@ -356,6 +359,7 @@ namespace System.Web.UI.WebControls {
 	}
 
 }
+
 
 
 
