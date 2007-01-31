@@ -1,3 +1,8 @@
+2007-01-30  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* Socket.jvm.cs: additional stubs for net_2_0 properties,
+	bug fixes (EnsureStillUsable method inserted)
+
 2007-01-28  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* Socket.jvm.cs: added stubs for net_2_0 properties and methods.

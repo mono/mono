@@ -703,8 +703,7 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-				if (disposed && closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
+                		EnsureStillUsable();
 
 				int ret, error;
 				
@@ -735,11 +734,15 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-				return(blocking);
+                		EnsureStillUsable();
+
+                		return(blocking);
 			}
 			set 
 			{
-				int error;
+                		EnsureStillUsable();
+
+                		int error;
 				
 				Blocking_internal(socket, value, out error);
 
@@ -829,8 +832,7 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-				if (disposed && closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
+                		EnsureStillUsable();
 
 				int error;
 
@@ -898,8 +900,7 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-				if (disposed && closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
+                		EnsureStillUsable();
 
 				int error;
 
@@ -1018,8 +1019,7 @@ namespace System.Net.Sockets
 		Thread blocking_thread;
 		public Socket Accept() 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			int error = 0;
 #if !TARGET_JVM
@@ -1055,8 +1055,7 @@ namespace System.Net.Sockets
 			object state) 
 		{
 
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
 			Worker worker = new Worker (req);
@@ -1070,8 +1069,7 @@ namespace System.Net.Sockets
 			object state) 
 		{
 
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (end_point == null)
 				throw new ArgumentNullException ("end_point");
@@ -1132,8 +1130,7 @@ namespace System.Net.Sockets
 			object state) 
 		{
 
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -1171,8 +1168,7 @@ namespace System.Net.Sockets
 			AsyncCallback callback,
 			object state) 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -1209,8 +1205,7 @@ namespace System.Net.Sockets
 		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags,
 			AsyncCallback callback, object state)
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -1250,8 +1245,7 @@ namespace System.Net.Sockets
 			AsyncCallback callback,
 			object state) 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -1320,8 +1314,7 @@ namespace System.Net.Sockets
 
 		public void Bind(EndPoint local_end) 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if(local_end==null) {
 				throw new ArgumentNullException("local_end");
@@ -1372,8 +1365,7 @@ namespace System.Net.Sockets
 
 		public void Connect(EndPoint remote_end) 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			EnsureStillUsable();
 
 			if(remote_end==null) {
 				throw new ArgumentNullException("remote_end");
@@ -1435,8 +1427,7 @@ namespace System.Net.Sockets
 		
 		public Socket EndAccept(IAsyncResult result) 
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1453,8 +1444,7 @@ namespace System.Net.Sockets
 		}
 
 		public void EndConnect(IAsyncResult result) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1470,8 +1460,7 @@ namespace System.Net.Sockets
 		}
 
 		public int EndReceive(IAsyncResult result) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1488,9 +1477,9 @@ namespace System.Net.Sockets
 		}
 
 		public int EndReceiveFrom(IAsyncResult result,
-					  ref EndPoint end_point) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+					  ref EndPoint end_point) 
+        {
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1508,8 +1497,7 @@ namespace System.Net.Sockets
 		}
 
 		public int EndSend(IAsyncResult result) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1526,8 +1514,7 @@ namespace System.Net.Sockets
 		}
 
 		public int EndSendTo(IAsyncResult result) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+            		EnsureStillUsable();
 
 			if (result == null)
 				throw new ArgumentNullException ("result");
@@ -1552,12 +1539,16 @@ namespace System.Net.Sockets
 		private void GetSocketOption_obj_internal(GHSocket socket, SocketOptionLevel level, 
 			SocketOptionName name, out object obj_val, out int error)
 		{
-			socket.GetSocketOption_obj_internal(level, name, out obj_val, out error);
+            		EnsureStillUsable();
+
+            socket.GetSocketOption_obj_internal(level, name, out obj_val, out error);
 		}
 		private void GetSocketOption_arr_internal(GHSocket socket, SocketOptionLevel level, 
 			SocketOptionName name, ref byte[] byte_val, out int error)
 		{
-			socket.GetSocketOption_arr_internal(level, name, ref byte_val, out error);
+            		EnsureStillUsable();
+
+            socket.GetSocketOption_arr_internal(level, name, ref byte_val, out error);
 		}
 #endif
 
@@ -1661,7 +1652,9 @@ namespace System.Net.Sockets
 			int backlog,
 			out int error)
 		{
-			sock.Listen_internal(backlog, out error);
+            		EnsureStillUsable();
+
+            		sock.Listen_internal(backlog, out error);
 		}
 #endif
 
@@ -1688,7 +1681,9 @@ namespace System.Net.Sockets
 
 		public bool Poll(int time_us, SelectMode mode) 
 		{
-          if (mode != SelectMode.SelectRead &&
+		        EnsureStillUsable();
+
+            		if (mode != SelectMode.SelectRead &&
 			    mode != SelectMode.SelectWrite &&
 			    mode != SelectMode.SelectError)
 				throw new NotSupportedException ("'mode' parameter is not valid.");
@@ -1712,7 +1707,9 @@ namespace System.Net.Sockets
 		
 		public int Receive (byte [] buf)
 		{
-			if (buf == null)
+            		EnsureStillUsable();
+
+            		if (buf == null)
 				throw new ArgumentNullException ("buf");
 
 			return Receive_nochecks (buf, 0, buf.Length, SocketFlags.None);
@@ -1720,7 +1717,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, SocketFlags flags)
 		{
-			if (buf == null)
+            		EnsureStillUsable();
+
+            		if (buf == null)
 				throw new ArgumentNullException ("buf");
 
 			return Receive_nochecks (buf, 0, buf.Length, flags);
@@ -1728,7 +1727,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, int size, SocketFlags flags)
 		{
-			if (buf == null)
+            		EnsureStillUsable();
+
+            		if (buf == null)
 				throw new ArgumentNullException ("buf");
 
 			if (size < 0 || size > buf.Length)
@@ -1759,7 +1760,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, int offset, int size, SocketFlags flags)
 		{
-			if(buf==null) 
+            		EnsureStillUsable();
+
+            		if(buf==null) 
 				throw new ArgumentNullException ("buf");
 
 			if (offset < 0 || offset > buf.Length)
@@ -1851,8 +1854,10 @@ namespace System.Net.Sockets
 
 		public int ReceiveFrom(byte[] buf, int offset, int size, SocketFlags flags,
 				       ref EndPoint remote_end) 
-	    {
-			if (buf == null)
+	    	{
+	        	EnsureStillUsable();
+
+        	    	if (buf == null)
 				throw new ArgumentNullException ("buf");
 
 			if (remote_end == null)
@@ -1870,7 +1875,9 @@ namespace System.Net.Sockets
 		int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
 					  ref EndPoint remote_end)
 		{
-			SocketAddress sockaddr=remote_end.Serialize();
+		        EnsureStillUsable();
+
+            		SocketAddress sockaddr=remote_end.Serialize();
 			int cnt, error;
 
 			cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
@@ -1900,22 +1907,28 @@ namespace System.Net.Sockets
 
 		public int Send (byte [] buf)
 		{
-			if (buf == null)
+	            EnsureStillUsable();
+
+        	    if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Send_nochecks (buf, 0, buf.Length, SocketFlags.None);
+		    return Send_nochecks (buf, 0, buf.Length, SocketFlags.None);
 		}
 
 		public int Send (byte [] buf, SocketFlags flags)
 		{
-			if (buf == null)
+	            EnsureStillUsable();
+
+        	    if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			return Send_nochecks (buf, 0, buf.Length, flags);
+		    return Send_nochecks (buf, 0, buf.Length, flags);
 		}
 
 		public int Send (byte [] buf, int size, SocketFlags flags)
 		{
+			EnsureStillUsable();
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1945,6 +1958,8 @@ namespace System.Net.Sockets
 
 		public int Send (byte[] buf, int offset, int size, SocketFlags flags)
 		{
+			EnsureStillUsable();
+
 			if (buf == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1979,6 +1994,8 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{
+			EnsureStillUsable();
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1990,6 +2007,8 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
 		{
+			EnsureStillUsable();
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -2001,6 +2020,8 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
 		{
+			EnsureStillUsable();
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -2038,6 +2059,8 @@ namespace System.Net.Sockets
 		public int SendTo(byte[] buffer, int offset, int size, SocketFlags flags, 
 		           EndPoint remote_end) 
 		{
+			EnsureStillUsable();
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -2092,8 +2115,8 @@ namespace System.Net.Sockets
 
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, byte[] opt_value)
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			EnsureStillUsable();
+
 			int error;
 			
 			SetSocketOption_internal(socket, level, name, null,
@@ -2106,8 +2129,7 @@ namespace System.Net.Sockets
 
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, int opt_value)
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			EnsureStillUsable();
 
 			int error;
 			
@@ -2122,8 +2144,7 @@ namespace System.Net.Sockets
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, object opt_value)
 		{
 
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			EnsureStillUsable();
 
 			if(opt_value==null) {
 				throw new ArgumentNullException();
@@ -2156,8 +2177,7 @@ namespace System.Net.Sockets
 
 #if NET_2_0
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, bool optionValue) {
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			EnsureStillUsable();
 
 			int error;
 			int int_val = (optionValue) ? 1 : 0;
@@ -2178,7 +2198,9 @@ namespace System.Net.Sockets
 
 		public void Shutdown(SocketShutdown how) 
 		{
-			int error;
+			EnsureStillUsable();
+
+            		int error;
 			
 			Shutdown_internal(socket, how, out error);
 
@@ -2228,7 +2250,12 @@ namespace System.Net.Sockets
 			}
 		}
 #else
-		protected virtual void Dispose (bool explicitDisposing)
+        private void EnsureStillUsable()
+        {
+            if (disposed && closed)
+                throw new ObjectDisposedException(this.GetType().ToString());
+        }
+        protected virtual void Dispose (bool explicitDisposing)
 		{
 			if (disposed)
 				return;
@@ -2258,6 +2285,40 @@ namespace System.Net.Sockets
 #if NET_2_0
 
             #region Properties
+        [MonoTODO]
+        public int ReceiveBufferSize
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public int SendBufferSize
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public bool UseOnlyOverlappedIO
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+        
+        [MonoTODO]
+        public bool NoDelay
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        [MonoTODO]
+        public bool IsBound
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         [MonoTODO]
         public bool ExclusiveAddressUse
         {
@@ -2331,6 +2392,72 @@ namespace System.Net.Sockets
         public IAsyncResult BeginConnect(string host, int port,
                                         AsyncCallback requestCallback,
                                         object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginAccept(int receiveSize, AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginAccept( Socket acceptSocket,int receiveSize,
+                                        AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginDisconnect(bool reuseSocket, AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO] //FIXME: generic list can't be compiled
+        public IAsyncResult BeginSend(IList buffers, SocketFlags socketFlags,
+            AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [MonoTODO] //FIXME: generic list can't be compiled
+        public IAsyncResult BeginSend(IList buffers, SocketFlags socketFlags,
+                                        out SocketError errorCode, AsyncCallback callback,
+                                        object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public IAsyncResult BeginSend(byte[] buffer, int offset, int size,
+                                        SocketFlags socketFlags, out SocketError errorCode,
+                                        AsyncCallback callback, object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public void Close(int timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public void Connect(IPAddress address, int port)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public void Connect(IPAddress[] address, int port)
+        {
+            throw new NotImplementedException();
+        }
+
+        [MonoTODO]
+        public void Connect(string host, int port)
         {
             throw new NotImplementedException();
         }
