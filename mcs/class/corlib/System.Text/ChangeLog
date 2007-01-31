@@ -1,3 +1,9 @@
+2007-01-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Encoding.cs: In GetEncoding (int) do not allow codepage value below zero
+	and above 0xffff. Modified NotSupportedException to ArgumentException in
+	GetEncoding (string).
+
 2006-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderFallbackBuffer.cs : implement Reset().

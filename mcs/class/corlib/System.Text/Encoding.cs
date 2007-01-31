@@ -1,5 +1,5 @@
 /*
- * Encoding.cs - Implementation of the "System.Text.Encoding" class.
+	 * Encoding.cs - Implementation of the "System.Text.Encoding" class.
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
  * Copyright (c) 2002, Ximian, Inc.
@@ -454,6 +454,10 @@ public abstract class Encoding
 #endif
 	static Encoding GetEncoding (int codePage)
 	{
+		if (codePage < 0 || codePage > 0xffff)
+			throw new ArgumentOutOfRangeException ("codepage", 
+				"Valid values are between 0 and 65535, inclusive.");
+
 		// Check for the builtin code pages first.
 		switch (codePage) {
 			case 0: return Default;
@@ -695,7 +699,7 @@ public abstract class Encoding
 		}
 
 		// We have no idea how to handle this encoding name.
-		throw new NotSupportedException (String.Format ("Encoding name `{0}' not supported", name));
+		throw new ArgumentException (String.Format ("Encoding name `{0}' not supported", name));
 	}
 
 #endif // !ECMA_COMPAT

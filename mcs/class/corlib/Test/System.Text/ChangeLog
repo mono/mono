@@ -1,3 +1,7 @@
+2007-01-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EncodingTest.cs: Added tests for GetEncoding.
+
 2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* ASCIIEncodingTest.cs: Added TestGetString3 test.
