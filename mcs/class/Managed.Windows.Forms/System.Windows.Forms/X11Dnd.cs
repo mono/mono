@@ -381,24 +381,26 @@ namespace System.Windows.Forms {
 			return DragDropEffects.Copy;
 		}
 
-		public void HandleButtonRelease (ref XEvent xevent)
+		public bool HandleButtonRelease (ref XEvent xevent)
 		{
 			if (drag_data == null)
-				return;
+				return false;
 
 			if (!((drag_data.MouseState == MouseButtons.Left &&
 					      xevent.ButtonEvent.button == 1) ||
 					    (drag_data.MouseState == MouseButtons.Right &&
 							    xevent.ButtonEvent.button == 3)))
-				return;
+				return false;
 
 			if (drag_data.State == DragState.Beginning) {
 				//state = State.Accepting;
 			} else if (drag_data.State != DragState.None) {
 
 				if (drag_data.WillAccept) {
-					SendDrop (drag_data.LastTopLevel, xevent.AnyEvent.window,
-							xevent.ButtonEvent.time);
+
+					if (QueryContinue (xevent, false, DragAction.Drop))
+						return true;
+					
 				}
 
 				drag_data.State = DragState.None;
@@ -406,6 +408,8 @@ namespace System.Windows.Forms {
 				// most likely going to be used by the SelectionRequest
 				// handlers
 			}
+
+			return false;
 		}
 
 		public bool HandleMotionNotify (ref XEvent xevent)
@@ -490,6 +494,16 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		public bool HandleKeyPress (ref XEvent xevent)
+		{
+			if (VirtualKeys.VK_ESCAPE == XplatUIX11.EventToKeyCode (xevent)) {
+				if (!QueryContinue (xevent, true, DragAction.Cancel))
+					return true;
+			}
+
+			return false;
+		}
+
 		// return true if the event is handled here
 		public bool HandleClientMessage (ref XEvent xevent)
 		{
@@ -544,6 +558,62 @@ namespace System.Windows.Forms {
 			handler.Converter.SetData (this, drag_data.Data, ref xevent);
 
 			return true;
+		}
+
+		private bool QueryContinue (XEvent xevent, bool escape, DragAction action)
+		{
+			QueryContinueDragEventArgs qce = new QueryContinueDragEventArgs ((int) XplatUI.State.ModifierKeys,
+					escape, action);
+			Control c = MwfWindow (source);
+			c.DndContinueDrag (qce);
+
+			switch (qce.Action) {
+			case DragAction.Continue:
+				return true;
+			case DragAction.Drop:
+				Console.WriteLine ("sending drop");
+				SendDrop (drag_data.LastTopLevel, source, xevent.ButtonEvent.time);
+				break;
+			case DragAction.Cancel:
+				drag_data.Reset ();
+				c.InternalCapture = false;
+				break;
+			}
+
+			return false;
+		}
+
+		private void GiveFeedback (IntPtr action)
+		{
+			if (drag_event == null)
+				return;
+			GiveFeedbackEventArgs gfe = new GiveFeedbackEventArgs (drag_event.Effect, true);
+			Control c = MwfWindow (source);
+
+			c.DndFeedback (gfe);
+			
+			if (gfe.UseDefaultCursors) {
+				Cursor cursor = CursorNo;
+				if (drag_data.WillAccept) {
+					// Same order as on MS
+					if (action == XdndActionCopy)
+						cursor = CursorCopy;
+					else if (action == XdndActionLink)
+						cursor = CursorLink;
+					else if (action == XdndActionMove)
+						cursor = CursorMove;
+				}
+				// TODO: Try not to set the cursor so much
+				//if (cursor.Handle != CurrentCursorHandle) {
+				XplatUIX11.XChangeActivePointerGrab (display,
+						EventMask.ButtonMotionMask |
+						EventMask.PointerMotionMask |
+						EventMask.ButtonPressMask |
+						EventMask.ButtonReleaseMask,
+						cursor.Handle, IntPtr.Zero);
+				//CurrentCursorHandle = cursor.Handle;
+				//}
+			}
 		}
 
 		private void SetProperty (ref XEvent xevent, IntPtr data, int length)
@@ -709,30 +779,13 @@ namespace System.Windows.Forms {
 		private bool HandleStatusEvent (ref XEvent xevent)
 		{
 			if (drag_data != null && drag_data.State == DragState.Entered) {
+
+				if (!QueryContinue (xevent, false, DragAction.Continue))
+					return true;
+
 				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
-				Cursor cursor = CursorNo;
-				if (drag_data.WillAccept) {
-					// Same order as on MS
-					IntPtr action = xevent.ClientMessageEvent.ptr5;
-					if (action == XdndActionCopy)
-						cursor = CursorCopy;
-					else if (action == XdndActionLink)
-						cursor = CursorLink;
-					else if (action == XdndActionMove)
-						cursor = CursorMove;
 
-				}
-
-					// TODO: Try not to set the cursor so much
-				//if (cursor.Handle != CurrentCursorHandle) {
-					XplatUIX11.XChangeActivePointerGrab (display,
-							EventMask.ButtonMotionMask |
-							EventMask.PointerMotionMask |
-							EventMask.ButtonPressMask |
-							EventMask.ButtonReleaseMask,
-							cursor.Handle, IntPtr.Zero);
-					//CurrentCursorHandle = cursor.Handle;
-					//}	
+				GiveFeedback (xevent.ClientMessageEvent.ptr5);
 			}
 			return true;
 		}

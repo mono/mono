@@ -1,3 +1,14 @@
+2007-01-31  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Add support for handling the QueryContinue and
+	GiveFeedback events.
+	- Cancel drag and drop actions when the escape key is clicked.
+	* XplatUIX11.cs: Let the dnd subsystem get key events, so that it
+	can handle the ESCAPE key.
+	- Allow dnd to swallow BUTTONUP messages if it needs to.  This is
+	done when dnd events are continued after the button is released.
+	- Add a new helper method so that dnd can translate key events.
+
 2007-01-31  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Rewrite of Jacksons OnClickCancelButton patch to

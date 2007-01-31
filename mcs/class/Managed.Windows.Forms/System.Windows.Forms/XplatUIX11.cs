@@ -3288,6 +3288,8 @@ namespace System.Windows.Forms {
 			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
+					if (Dnd.InDrag ())
+						Dnd.HandleKeyPress (ref xevent);
 					Keyboard.KeyEvent (FocusWindow, xevent, ref msg);
 					break;
 				}
@@ -3404,8 +3406,10 @@ namespace System.Windows.Forms {
 
 				case XEventName.ButtonRelease: {
 					if (Dnd.InDrag()) {
-						Dnd.HandleButtonRelease (ref xevent);
-						// Don't break here, so that the BUTTONUP message can get through
+						if (Dnd.HandleButtonRelease (ref xevent)) {
+							break;
+						}
+						// Allow the LBUTTONUP message to get through
 					}
 
 					switch(xevent.ButtonEvent.button) {
@@ -4451,6 +4455,10 @@ namespace System.Windows.Forms {
 			return count;
 		}
 
+		internal static VirtualKeys EventToKeyCode (XEvent key_event)
+		{
+			return (VirtualKeys) Keyboard.EventToVkey (key_event);
+		}
 
 		internal override void SetAllowDrop (IntPtr handle, bool value)
 		{
