@@ -1607,11 +1607,15 @@ namespace System.Web.UI.WebControls
 		// This is prolly obsolete
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			GridViewCommandEventArgs args;
 			int i = eventArgument.IndexOf ('$');
 			if (i != -1)
-				ProcessEvent (eventArgument.Substring (0, i), eventArgument.Substring (i + 1), false);
+				args = new GridViewCommandEventArgs (this, new CommandEventArgs (eventArgument.Substring (0, i), eventArgument.Substring (i + 1)));
 			else
-				ProcessEvent (eventArgument, null, false);
+				args = new GridViewCommandEventArgs (this, new CommandEventArgs (eventArgument, null));
+
+			OnRowCommand (args);
+			ProcessEvent (args.CommandName, (string) args.CommandArgument, false);
 		}
 
 		void ProcessEvent (string eventName, string param, bool causesValidation)

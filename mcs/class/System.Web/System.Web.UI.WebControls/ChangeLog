@@ -1,5 +1,9 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: RowCommand event is fired properly.
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: created rows are added in table after initialization.
 	* BoundField.cs: 	
 
