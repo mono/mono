@@ -54,7 +54,9 @@ namespace System.Web.UI.WebControls {
 			
 			string image = BackImageUrl;
 			if (image != "") {
+#if !NET_2_0 // see HtmlTextWriter.WriteStyleAttribute(string, string, bool) 
 				image = String.Format ("url({0})", image);
+#endif
 				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, image);
 			}
 

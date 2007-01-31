@@ -1,5 +1,9 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Panel.cs: fixed 'background-image' attribute.
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseDataBoundControl.cs:
 	* DataBoundControl.cs:
 	fixed DataBinding flow: RequiresDataBinding is set to false in 
