@@ -4075,7 +4075,18 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
-		internal override void OverrideCursor(IntPtr cursor) {
+		internal override void OverrideCursor(IntPtr cursor)
+		{
+			if (Grab.Hwnd != IntPtr.Zero) {
+				XChangeActivePointerGrab (DisplayHandle,
+						EventMask.ButtonMotionMask |
+						EventMask.PointerMotionMask |
+						EventMask.ButtonPressMask |
+						EventMask.ButtonReleaseMask,
+						cursor, IntPtr.Zero);
+				return;
+			}
+
 			OverrideCursorHandle = cursor;
 		}
 

@@ -1,5 +1,11 @@
 2007-01-31  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: If you set the override cursor during a grab, it
+	should actually override the grab cursor.  This comes into play
+	when you are setting custom cursors in a DND feedback method.
+
+2007-01-31  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Add support for handling the QueryContinue and
 	GiveFeedback events.
 	- Cancel drag and drop actions when the escape key is clicked.
