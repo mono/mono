@@ -1,5 +1,13 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseDataBoundControl.cs:
+	* DataBoundControl.cs:
+	fixed DataBinding flow: RequiresDataBinding is set to false in 
+	PerformSelect().			
+	* HierarchicalDataBoundControl.cs: implemented MarkAsDataBound().
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs:
 	* FormView.cs:
 	fixed DataBinding flow for Insert mode.

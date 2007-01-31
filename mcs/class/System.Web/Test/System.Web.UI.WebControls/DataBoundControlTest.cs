@@ -48,7 +48,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		class Poker : DataBoundControl {
 			protected override void PerformSelect () 
 			{
-				Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
+				//Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
+				Assert.IsTrue (RequiresDataBinding);
+				base.PerformSelect ();
+				Assert.IsFalse (RequiresDataBinding);
 			}
 
 			public void DoValidateDataSource (object dataSource)
@@ -69,6 +72,20 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void SetRequiresDataBinding (bool value)
 			{
 				RequiresDataBinding = value;
+			}
+
+			public override void DataBind ()
+			{
+				Assert.IsTrue (RequiresDataBinding);
+				base.DataBind ();
+				Assert.IsFalse (RequiresDataBinding);
+			}
+
+			public void DoEnsureDataBound ()
+			{
+				Assert.IsTrue (RequiresDataBinding);
+				EnsureDataBound ();
+				Assert.IsFalse (RequiresDataBinding);
 			}
 		}
 
@@ -286,6 +303,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (c.GetInitialized (), "Initialized_PreRender");
 			Assert.IsFalse (c.GetRequiresDataBinding (), "RequiresDataBinding_PreRender");
 		}
+
+		[Test]
+		public void DataBind ()
+		{
+			Page p = new Page ();
+			
+			ObjectDataSource ods = new ObjectDataSource (typeof (Control).FullName, "ToString");
+			ods.ID = "ObjectDataSource1";
+			p.Controls.Add (ods);
+			
+			Poker c = new Poker ();
+			c.DataSourceID = "ObjectDataSource1";
+			c.SetRequiresDataBinding (true);
+			p.Controls.Add (c);
+			
+			c.DataBind ();
+		}
+
+		[Test]
+		public void EnsureDataBound ()
+		{
+			Page p = new Page ();
+
+			ObjectDataSource ods = new ObjectDataSource (typeof (Control).FullName, "ToString");
+			ods.ID = "ObjectDataSource1";
+			p.Controls.Add (ods);
+
+			Poker c = new Poker ();
+			c.DataSourceID = "ObjectDataSource1";
+			c.SetRequiresDataBinding (true);
+			p.Controls.Add (c);
+			
+			c.DoEnsureDataBound ();
+		}
+
 	}
 }
 #endif

@@ -208,6 +208,9 @@ namespace System.Web.UI.WebControls {
 
 			SelectArguments = CreateDataSourceSelectArguments ();
 			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
+
+			// The PerformDataBinding method has completed.
+			RequiresDataBinding = false;
 			MarkAsDataBound ();
 			
 			// Raise the DataBound event.

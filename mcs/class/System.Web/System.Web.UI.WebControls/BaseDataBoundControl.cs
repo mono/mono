@@ -110,7 +110,6 @@ namespace System.Web.UI.WebControls {
 		
 		public override void DataBind ()
 		{
-			RequiresDataBinding = false;
 			PerformSelect ();
 		}
 

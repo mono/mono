@@ -59,7 +59,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			protected override void PerformSelect () 
 			{
-				Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
+				Assert.IsTrue (RequiresDataBinding);
+				//Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
 			}
 
 			protected override void ValidateDataSource (object dataSource)
@@ -80,6 +81,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			protected override void OnDataPropertyChanged () {
 				base.OnDataPropertyChanged ();
 				OnDataPropertyChangedCalled = true;
+			}
+
+			public void SetRequiresDataBinding (bool val)
+			{
+				RequiresDataBinding = val;
+			}
+
+			public bool GetRequiresDataBinding ()
+			{
+				return RequiresDataBinding;
+			}
+			
+			public override void DataBind ()
+			{
+				Assert.IsTrue (RequiresDataBinding);
+				base.DataBind ();
+				Assert.IsTrue (RequiresDataBinding);
+			}
+
+			public void DoEnsureDataBound ()
+			{
+				Assert.IsTrue (RequiresDataBinding);
+				EnsureDataBound ();
+				Assert.IsTrue (RequiresDataBinding);
 			}
 		}
 		
@@ -125,6 +150,24 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			p.DataSource = null;
 			Assert.IsTrue (p.OnDataPropertyChangedCalled, "OnDataPropertyChanged: DataSource");
+		}
+
+		[Test]
+		public void DataBind ()
+		{
+			Poker p = new Poker ();
+			p.DataSourceID = "DataSourceID";
+			p.SetRequiresDataBinding (true);
+			p.DataBind ();
+		}
+
+		[Test]
+		public void EnsureDataBound ()
+		{
+			Poker p = new Poker ();
+			p.DataSourceID = "DataSourceID";
+			p.SetRequiresDataBinding (true);
+			p.DoEnsureDataBound ();
 		}
 	}
 }

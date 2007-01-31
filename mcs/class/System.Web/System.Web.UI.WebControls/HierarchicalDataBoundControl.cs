@@ -74,10 +74,18 @@ namespace System.Web.UI.WebControls
 			return DataSource as IHierarchicalDataSource;
 		}
 
-		[MonoTODO ("Not implemented")]
+		bool IsDataBound {
+			get {
+				return ViewState.GetBool ("DataBound", false);
+			}
+			set {
+				ViewState ["DataBound"] = value;
+			}
+		}
+
 		protected void MarkAsDataBound ()
 		{
-			throw new NotImplementedException ();
+			IsDataBound = true;
 		}
 		
 		protected override void OnDataPropertyChanged ()
@@ -92,19 +100,29 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
+			if (!Initialized) {
+				Initialize ();
+				ConfirmInitState ();
+			}
+			
+			base.OnLoad(e);
+		}
+
+		private void Initialize ()
+		{
+			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
 				RequiresDataBinding = true;
-		
+
 			IHierarchicalDataSource ds = GetDataSource ();
 			if (ds != null && DataSourceID != "")
 				ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);
-			
-			base.OnLoad(e);
 		}
 
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
+			
+			Initialize ();
 		}
 		
 		protected internal virtual void PerformDataBinding ()
@@ -115,6 +133,9 @@ namespace System.Web.UI.WebControls
 		{
 			OnDataBinding (EventArgs.Empty);
 			PerformDataBinding ();
+			// The PerformDataBinding method has completed.
+			RequiresDataBinding = false;
+			MarkAsDataBound ();
 			OnDataBound (EventArgs.Empty);
 		}
 		
