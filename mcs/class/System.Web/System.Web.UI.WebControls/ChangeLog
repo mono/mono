@@ -1,3 +1,9 @@
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsView.cs:
+	* FormView.cs:
+	fixed DataBinding flow for Insert mode.
+
 2007-01-30 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CheckBox.cs:

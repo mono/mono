@@ -402,7 +402,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual DetailsViewRow BottomPagerRow {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return bottomPagerRow;
 			}
 		}
@@ -898,7 +898,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual DetailsViewRow TopPagerRow {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return topPagerRow;
 			}
 		}
@@ -907,7 +907,6 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual object DataItem {
 			get {
-				EnsureDataBound ();
 				return dataItem;
 			}
 		}
@@ -1205,7 +1204,17 @@ namespace System.Web.UI.WebControls
 
 		protected override void EnsureDataBound ()
 		{
-			base.EnsureDataBound ();
+			if (CurrentMode == DetailsViewMode.Insert) {
+				if (RequiresDataBinding) {
+					OnDataBinding (EventArgs.Empty);
+					PerformDataBinding (new object [] { null });
+					RequiresDataBinding = false;
+					MarkAsDataBound ();
+					OnDataBound (EventArgs.Empty);
+				}
+			}
+			else
+				base.EnsureDataBound ();
 		}
 		
 		DataControlRowState GetRowState (int index)
@@ -1314,13 +1323,6 @@ namespace System.Web.UI.WebControls
 		
 		public sealed override void DataBind ()
 		{
-			if (CurrentMode == DetailsViewMode.Insert) {
-				RequiresDataBinding = false;
-				PerformDataBinding (new object [] { null });
-				MarkAsDataBound ();
-				return;
-			}
-			
 			cachedKeyProperties = null;
 			base.DataBind ();
 			

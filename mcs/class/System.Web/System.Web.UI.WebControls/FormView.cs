@@ -860,9 +860,9 @@ namespace System.Web.UI.WebControls
 		{
 			if (CurrentMode == FormViewMode.Insert) {
 				if (RequiresDataBinding) {
-					RequiresDataBinding = false;
 					OnDataBinding (EventArgs.Empty);
 					PerformDataBinding (new object [] { null });
+					RequiresDataBinding = false;
 					MarkAsDataBound ();
 					OnDataBound (EventArgs.Empty);
 				}
