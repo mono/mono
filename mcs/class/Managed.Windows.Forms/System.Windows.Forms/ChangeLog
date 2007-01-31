@@ -1,5 +1,10 @@
 2007-01-31  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Use IDataObject instead of the DataObject class.
+	- Remove some debug code.
+
+2007-01-31  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: If you set the override cursor during a grab, it
 	should actually override the grab cursor.  This comes into play
 	when you are setting custom cursors in a DND feedback method.

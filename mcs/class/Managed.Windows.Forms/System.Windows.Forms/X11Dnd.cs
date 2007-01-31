@@ -51,12 +51,12 @@ namespace System.Windows.Forms {
 		}
 
 		private interface IDataConverter {
-			void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent);
+			void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent);
 			void SetData (X11Dnd dnd, object data, ref XEvent xevent);
 		}
 
 		private delegate void MimeConverter (IntPtr dsp,
-				DataObject data, ref XEvent xevent);
+				IDataObject data, ref XEvent xevent);
 
 		private class MimeHandler {
 			public string Name;
@@ -91,7 +91,7 @@ namespace System.Windows.Forms {
 
 		private class SerializedObjectConverter : IDataConverter {
 
-			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
 			{
 				MemoryStream stream = dnd.GetData (ref xevent);
 				BinaryFormatter bf = new BinaryFormatter ();
@@ -127,7 +127,7 @@ namespace System.Windows.Forms {
 
 		private class HtmlConverter : IDataConverter {
 
-			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
 			{
 				string text = dnd.GetText (ref xevent, false);
 				if (text == null)
@@ -166,7 +166,7 @@ namespace System.Windows.Forms {
 
 		private class TextConverter : IDataConverter {
 
-			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
 			{
 				string text = dnd.GetText (ref xevent, true);
 				if (text == null)
@@ -205,7 +205,7 @@ namespace System.Windows.Forms {
 
 		private class UriListConverter : IDataConverter {
 
-			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
 			{
 				string text = dnd.GetText (ref xevent, false);
 				if (text == null)
@@ -312,7 +312,7 @@ namespace System.Windows.Forms {
 		private IntPtr target;
 		private IntPtr source;
 		private IntPtr toplevel;
-		private DataObject data;
+		private IDataObject data;
 
 		private Control control;
 		private int pos_x, pos_y;
@@ -571,7 +571,6 @@ namespace System.Windows.Forms {
 			case DragAction.Continue:
 				return true;
 			case DragAction.Drop:
-				Console.WriteLine ("sending drop");
 				SendDrop (drag_data.LastTopLevel, source, xevent.ButtonEvent.time);
 				break;
 			case DragAction.Cancel:
@@ -829,7 +828,7 @@ namespace System.Windows.Forms {
 			Control mwfcontrol = MwfWindow (source);
 
 			if (mwfcontrol != null && drag_data != null) {
-				DataObject dragged = drag_data.Data as DataObject;
+				IDataObject dragged = drag_data.Data as IDataObject;
 				if (dragged != null) {
 					data = dragged;
 				} else {
