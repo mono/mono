@@ -1,0 +1,17 @@
+2006-11-01  Alejandro Serrano "Serras"  <trupill@yahoo.es>
+
+    * Add IOrderedSequence, IQueryable
+    * Change Sequence.Join and Sequence.GroupJoin to use Lookup<K, T>
+      as stated on the Standard Query Operators paper
+
+2006-06-05  Alejandro Serrano "Serras"  <trupill@yahoo.es>
+
+    * Updates as of LINQ May 2006 release
+
+2006-01-31  Alejandro Serrano "Serras"  <trupill@yahoo.es>
+
+    * Fix bug in SkipWhile<T>, where the first element was never yielded
+
+2006-01-30  Alejandro Serrano "Serras"  <trupill@yahoo.es>
+
+    * Initial commit

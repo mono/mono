@@ -1,0 +1,10 @@
+2007-01-19  Marek Safar <marek.safar@gmail.com>
+
+	* QueryExpression.cs,
+	* Enumerable.cs: New files.
+
+	* Small update to recent version.
+
+2007-01-19  Marek Safar <marek.safar@gmail.com>
+
+	* ChangeLog: Added
