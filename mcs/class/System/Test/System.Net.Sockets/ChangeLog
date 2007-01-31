@@ -1,3 +1,8 @@
+2007-01-30  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* SocketTest.jvm.cs: added - forked out from SocketTest.cs due to
+	a lot 'TARGET_JVM' specific changes.
+
 2007-01-26  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: New test for SO_ERROR reading, returning the same
