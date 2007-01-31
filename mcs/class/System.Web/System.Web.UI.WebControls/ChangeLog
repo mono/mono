@@ -1,5 +1,10 @@
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: created rows are added in table after initialization.
+	* BoundField.cs: 	
+
+2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Panel.cs: fixed 'background-image' attribute.
 
 2007-01-31 Igor Zelmanovich <igorz@mainsoft.com>

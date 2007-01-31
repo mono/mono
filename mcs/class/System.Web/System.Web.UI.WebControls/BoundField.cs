@@ -171,7 +171,6 @@ namespace System.Web.UI.WebControls {
 			bool editable = IsEditable (rowState);
 			if (editable) {
 				TextBox box = new TextBox ();
-				box.ID = cell.ClientID;
 				cell.Controls.Add (box);
 				box.ToolTip = HeaderText;
 			}

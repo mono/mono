@@ -1256,14 +1256,14 @@ namespace System.Web.UI.WebControls
 				if (list.Count == 0) {
 					if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
 						topPagerRow = CreatePagerRow (fields.Length, dataSource);
-						ContainedTable.Rows.Add (topPagerRow);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
+						ContainedTable.Rows.Add (topPagerRow);
 					}
 
 					GridViewRow headerRow = CreateRow (-1, -1, DataControlRowType.Header, DataControlRowState.Normal);
-					ContainedTable.Rows.Add (headerRow);
 					InitializeRow (headerRow, fields);
 					OnRowCreated (new GridViewRowEventArgs (headerRow));
+					ContainedTable.Rows.Add (headerRow);
 					if (dataBinding) {
 						headerRow.DataBind ();
 						OnRowDataBound (new GridViewRowEventArgs (headerRow));
@@ -1274,9 +1274,9 @@ namespace System.Web.UI.WebControls
 				GridViewRow row = CreateRow (list.Count, list.Count, DataControlRowType.DataRow, rstate);
 				row.DataItem = obj;
 				list.Add (row);
-				ContainedTable.Rows.Add (row);
 				InitializeRow (row, fields);
 				OnRowCreated (new GridViewRowEventArgs (row));
+				ContainedTable.Rows.Add (row);
 				if (dataBinding) {
 					row.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (row));
@@ -1289,8 +1289,8 @@ namespace System.Web.UI.WebControls
 			if (list.Count == 0) {
 				GridViewRow emptyRow = CreateEmptyrRow (fields.Length);
 				if (emptyRow != null) {
-					ContainedTable.Rows.Add (emptyRow);
 					OnRowCreated (new GridViewRowEventArgs (emptyRow));
+					ContainedTable.Rows.Add (emptyRow);
 					if (dataBinding) {
 						emptyRow.DataBind ();
 						OnRowDataBound (new GridViewRowEventArgs (emptyRow));
@@ -1300,9 +1300,9 @@ namespace System.Web.UI.WebControls
 			}
 			else {
 				GridViewRow footerRow = CreateRow (-1, -1, DataControlRowType.Footer, DataControlRowState.Normal);
-				ContainedTable.Rows.Add (footerRow);
 				InitializeRow (footerRow, fields);
 				OnRowCreated (new GridViewRowEventArgs (footerRow));
+				ContainedTable.Rows.Add (footerRow);
 				if (dataBinding) {
 					footerRow.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (footerRow));
@@ -1310,8 +1310,8 @@ namespace System.Web.UI.WebControls
 
 				if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
 					bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
-					ContainedTable.Rows.Add (bottomPagerRow);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
+					ContainedTable.Rows.Add (bottomPagerRow);
 				}
 			}
 
