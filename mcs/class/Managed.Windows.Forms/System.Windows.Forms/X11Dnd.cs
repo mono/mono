@@ -276,10 +276,6 @@ namespace System.Windows.Forms {
 				WillAccept = false;
 			}
 		}
-		
-		private class DropData {
-
-		}
 
 		// This version seems to be the most common
 		private static readonly IntPtr [] XdndVersion = new IntPtr [] { new IntPtr (4) }; 
@@ -325,10 +321,14 @@ namespace System.Windows.Forms {
 		private Cursor CursorLink;
 		// check out the TODO below
 		//private IntPtr CurrentCursorHandle;
-		
-		public X11Dnd (IntPtr display)
+
+		private X11Keyboard keyboard;
+
+		public X11Dnd (IntPtr display, X11Keyboard keyboard)
 		{
 			this.display = display;
+			this.keyboard = keyboard;
+
 			Init ();
 		}
 
@@ -496,7 +496,7 @@ namespace System.Windows.Forms {
 
 		public bool HandleKeyPress (ref XEvent xevent)
 		{
-			if (VirtualKeys.VK_ESCAPE == XplatUIX11.EventToKeyCode (xevent)) {
+			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) keyboard.EventToVkey (xevent)) {
 				if (!QueryContinue (xevent, true, DragAction.Cancel))
 					return true;
 			}

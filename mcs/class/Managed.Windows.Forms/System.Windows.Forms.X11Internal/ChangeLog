@@ -1,3 +1,7 @@
+2007-01-31  Jackson Harper  <jackson@ximian.com>
+
+	* X11Display.cs: Give teh keyboard to teh dnd.
+
 2007-01-30  Chris Toshok  <toshok@ximian.com>
 
 	* X11Display.cs: port over jackson's XplatUIX11.cs fix for DND

@@ -1,5 +1,11 @@
 2007-01-31  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Take the keyboard on init to reduce coupling with
+	XplatUIX11.
+	* XplatUIX11.cs: Give teh keyboard to teh dnd.
+
+2007-01-31  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Use IDataObject instead of the DataObject class.
 	- Remove some debug code.
 

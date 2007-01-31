@@ -159,7 +159,7 @@ namespace System.Windows.Forms.X11Internal {
 #endif
 
 			Keyboard = new X11Keyboard(display, foster_hwnd.Handle);
-			Dnd = new X11Dnd (display);
+			Dnd = new X11Dnd (display, Keyboard);
 
 			ErrorExceptions = false;
 

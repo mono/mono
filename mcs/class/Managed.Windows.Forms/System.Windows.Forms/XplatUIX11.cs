@@ -470,7 +470,7 @@ namespace System.Windows.Forms {
 				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
-				Dnd = new X11Dnd (DisplayHandle);
+				Dnd = new X11Dnd (DisplayHandle, Keyboard);
 
 				DoubleClickInterval = 500;
 
@@ -4464,11 +4464,6 @@ namespace System.Windows.Forms {
 				hwnd.Queue.EnqueueLocked (xevent);
 			}
 			return count;
-		}
-
-		internal static VirtualKeys EventToKeyCode (XEvent key_event)
-		{
-			return (VirtualKeys) Keyboard.EventToVkey (key_event);
 		}
 
 		internal override void SetAllowDrop (IntPtr handle, bool value)
