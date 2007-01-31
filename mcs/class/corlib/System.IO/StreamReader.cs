@@ -161,12 +161,6 @@ namespace System.IO {
 			if (buffer_size <= 0)
 				throw new ArgumentOutOfRangeException ("buffer_size", "The minimum size of the buffer must be positive");
 
-			string DirName = Path.GetDirectoryName(path);
-			if (DirName != String.Empty && !Directory.Exists(DirName))
-				throw new DirectoryNotFoundException ("Directory '" + DirName + "' not found.");
-			if (!File.Exists(path))
-				throw new FileNotFoundException("File not found.", path);
-
 			Stream stream = (Stream) File.OpenRead (path);
 			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
 		}
