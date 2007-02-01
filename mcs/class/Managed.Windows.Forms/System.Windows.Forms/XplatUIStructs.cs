@@ -22,7 +22,7 @@
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
-
+// *** When you make some changes to this file, dont forget to update Tests/TestHelper class ***
 
 // NOT COMPLETE
 

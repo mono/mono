@@ -86,6 +86,7 @@ System.Windows.Forms/StatusBarPanelTest.cs
 System.Windows.Forms/StatusBarTest.cs
 System.Windows.Forms/SystemInformationTest.cs
 System.Windows.Forms/TabControlTest.cs
+System.Windows.Forms/TestHelper.cs
 System.Windows.Forms/TestImageIndexConverter.cs
 System.Windows.Forms/TextBoxTest.cs
 System.Windows.Forms/ToolBarTest.cs
