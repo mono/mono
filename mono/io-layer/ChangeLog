@@ -1,3 +1,7 @@
+2007-02-01  Geoff Norton  <gnorton@customerdna.com>
+
+	* collection.c: NetBSD doesn't define PTHREAD_STACK_MIN.
+
 2007-01-26  Dick Porter  <dick@ximian.com>
 
 	* socket-private.h: 
