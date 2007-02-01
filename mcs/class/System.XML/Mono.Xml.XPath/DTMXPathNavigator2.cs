@@ -346,11 +346,14 @@ namespace Mono.Xml.XPath
 			if (another == null || another.document != this.document)
 				return false;
 
-			// Maybe we can improve here more efficiently by
-			// comparing node indices.
 			if (another.currentNode == currentNode)
 				return !another.currentIsNode;
 			int tmp = nodes [another.currentNode].Parent;
+
+			// ancestors must appear in prior on the node list.
+			if (tmp < currentNode)
+				return false;
+
 			while (tmp != 0) {
 				if (tmp == currentNode)
 					return true;
@@ -415,11 +418,8 @@ namespace Mono.Xml.XPath
 			if (cur == 0)
 				return false;
 
-			int next = cur;
-			while (next != 0) {
-				cur = next;
-				next = nodes [cur].PreviousSibling;
-			}
+			cur = nodes [cur].Parent;
+			cur = nodes [cur].FirstChild;
 			currentNode = cur;
 			currentIsNode = true;
 			return true;

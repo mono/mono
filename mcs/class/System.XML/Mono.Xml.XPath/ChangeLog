@@ -1,3 +1,7 @@
+2007-01-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathNavigator2.cs : cosmetic performance improvement.
+
 2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder2.cs : fixed incorrect namespace node links
