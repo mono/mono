@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -81,7 +79,9 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
-			base.OnMouseWheel (e);
+			// XXX we need to invoke a method on the datagrid to forward the mouse wheel - figure out what it is.
+			//  base.OnMouseWheel is wrong, as the event is never raised by the textbox itself.
+			// grid.OnMouseWheel (e);
 		}
 
 		protected internal override bool ProcessKeyMessage (ref Message m)
