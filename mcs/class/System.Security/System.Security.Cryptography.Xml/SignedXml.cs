@@ -328,12 +328,9 @@ namespace System.Security.Cryptography.Xml {
 						}
 					}
 					if (found == null && envdoc != null) {
-						foreach (XmlElement el in envdoc.SelectNodes ("//*[@Id]"))
-							if (el.GetAttribute ("Id") == objectName) {
-								found = el;
-								doc.LoadXml (found.OuterXml);
-								break;
-							}
+						found = GetIdElement (envdoc, objectName);
+						if (found != null)
+							doc.LoadXml (found.OuterXml);
 					}
 					if (found == null)
 						throw new CryptographicException (String.Format ("Malformed reference object: {0}", objectName));
