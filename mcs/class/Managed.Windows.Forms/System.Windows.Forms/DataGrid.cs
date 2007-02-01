@@ -1409,17 +1409,9 @@ namespace System.Windows.Forms
 		{
 			base.OnLeave (e);
 
-#if false
-			/* we get an OnLeave call when the
-			 * DataGridTextBox control is focused, so we
-			 * need to ignore that.  If we get an OnLeave
-			 * call when a child control is not receiving
-			 * focus, we need to cancel the current
-			 * edit. */
 			if (cursor_in_add_row) {
 				ListManager.CancelCurrentEdit ();
 			}
-#endif
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -2494,7 +2486,7 @@ namespace System.Windows.Forms
 
 			CurrentTableStyle.GridColumnStyles[CurrentColumn].Edit (ListManager,
 				CurrentRow, GetCellBounds (CurrentRow, CurrentColumn),
-				_readonly, "", true);
+				_readonly, null, true);
 		}
 
 		private void EndEdit ()

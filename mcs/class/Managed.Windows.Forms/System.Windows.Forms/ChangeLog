@@ -1,3 +1,11 @@
+2007-02-01  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (OnLeave): we can now do the CancelCurrentEdit thing
+	here, since the most recent focus fixes keep us from generating
+	the Leave event when our textbox gets focus.
+	(Edit): we should be passing null for the column style's
+	instantText parameter.
+	
 2007-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownItem.cs: Make sure DropDownOpening event is 
