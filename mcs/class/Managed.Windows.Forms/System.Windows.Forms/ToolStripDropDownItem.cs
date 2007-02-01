@@ -131,8 +131,12 @@ namespace System.Windows.Forms
 
 		public void ShowDropDown ()
 		{
+			if (!this.HasDropDownItems)
+				return;
+				
 			this.DropDown.OwnerItem = this;
 			
+			this.OnDropDownOpening (this, EventArgs.Empty);
 			this.DropDown.Show (this.DropDownLocation);
 			this.OnDropDownShow (EventArgs.Empty);
 		}
@@ -232,6 +236,13 @@ namespace System.Windows.Forms
 		private void DropDown_ItemAdded (object sender, ToolStripItemEventArgs e)
 		{
 			e.Item.owner_item = this;
+		}
+		
+		private void OnDropDownOpening (object sender, EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[DropDownOpeningEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		#endregion
 	}
