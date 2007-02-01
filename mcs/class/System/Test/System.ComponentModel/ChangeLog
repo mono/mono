@@ -1,3 +1,8 @@
+2007-02-01  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* TypeConverterTests.cs, PropertyDescriptorCollectionTests.cs:
+	excluded test which not working under TARGET_JVM
+
 2007-01-29  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* ToolboxItemAttributeTests.cs: excluded DefaultType test,

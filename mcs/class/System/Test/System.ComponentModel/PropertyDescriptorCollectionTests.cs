@@ -20,6 +20,9 @@ namespace MonoTests.System.ComponentModel
 	public class PropertyDescriptorCollectionTests
 	{
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD BUG ID: 7229")]
+#endif		
 		public void Empty ()
 		{
 			PropertyDescriptorCollection descriptors = PropertyDescriptorCollection.Empty;
