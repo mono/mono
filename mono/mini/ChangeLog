@@ -1,3 +1,9 @@
+
+Thu Feb 1 14:02:09 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: remove extern to workaround what looks likes gcc bug 26905
+	on amd64.
+
 2007-01-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_is_regsize_var): New helper function usable by the back
