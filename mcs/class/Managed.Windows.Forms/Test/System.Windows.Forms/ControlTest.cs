@@ -24,6 +24,41 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
+		public class ControlStylesTester : Control {
+			private int style;
+			private int ex_style;
+			private bool or_styles;
+
+			public ControlStylesTester (int Style, int ExStyle, bool OrStyles)
+			{
+				style = Style;
+				ex_style = ExStyle;
+				or_styles = OrStyles;
+			}
+
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams result = base.CreateParams;
+					if (or_styles) {
+						result.Style |= style;
+						result.ExStyle |= ex_style;
+					} else {
+						result.Style = style;
+						result.ExStyle = ex_style;
+					}
+					return result;
+				}
+			}
+		}
+		
+		[Test]
+		public void ControlSizeTest ()
+		{
+			ControlStylesTester c = new ControlStylesTester (0x40000000, 0, true);
+			Assert.AreEqual ("{X=0,Y=0}", c.Location.ToString (), "#L1");
+			Assert.AreEqual ("{Width=0, Height=0}", c.Size.ToString (), "#S1");
+		}
+		
 		public class OnPaintTester : Form
 		{
 			int counter;
