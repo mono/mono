@@ -228,9 +228,6 @@ namespace System.Web.UI.WebControls {
 #else
 			validators = Page.Validators;
 #endif
-			if (validators.Count == 0) {
-				return;
-			}
 
 			// We have validators
 			errors = new ArrayList(validators.Count);
