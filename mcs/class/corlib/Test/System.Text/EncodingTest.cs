@@ -69,6 +69,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetEncoding_Name_NotSupported ()
 		{
 			try {

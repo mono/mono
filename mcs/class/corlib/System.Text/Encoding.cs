@@ -699,8 +699,8 @@ public abstract class Encoding
 		}
 
 		// We have no idea how to handle this encoding name.
-		throw new ArgumentException (String.Format ("Encoding name '{0}' not "
-			+ "supported", name), "name");
+		throw new NotSupportedException (String.Format ("Encoding name '{0}' not "
+			+ "supported", name));
 	}
 
 #endif // !ECMA_COMPAT
