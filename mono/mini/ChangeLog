@@ -1,3 +1,46 @@
+2006-11-29  Mark Mason  <mason@broadcom.com>
+
+	* basic-calls.cs: additional tests for passing
+	structures as function arguments.
+
+2006-11-29  Mark Mason  <mason@broadcom.com>
+
+	* mini-mips.h: disable custom exception handling
+	* mini-mips.c: throw/rethrow should use jalr to call
+	exception stubs.  Fixed bug with passing structures
+	by value. More support for tracing floating point
+	functions.
+
+Wed Nov 29 20:28:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fixed typo in the soft-float ldind.r4 handling
+	(bug #80086).
+
+Wed Nov 29 11:33:03 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, driver.c: added --runtime command line
+	option to select a different runtime than the autodetected one.
+	* jit.h: added API for embedders to initialize with a specific
+	runtime version.
+
+Tue Nov 28 21:24:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle also boxing of r4 values (bug #80024).
+
+Tue Nov 28 19:45:44 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: force indirect calls until we reserve
+	enough address space for all the generated code.
+
+Tue Nov 28 20:04:34 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: workaround bugs in the libc definition
+	of struct ucontext.
+
+Mon Nov 27 15:13:41 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: fixes from me and Mark Mason.
+
 2006-11-23  Dick Porter  <dick@ximian.com>
 
 	* wapihandles.c (mini_wapi_seminfo): No need to adjust the counter

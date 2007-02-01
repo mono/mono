@@ -113,7 +113,6 @@ libmonoruntime_la_SOURCES = \
 	mono-endian.c	\
 	mono-endian.h	\
 	mono-config.c	\
-	mono-config.h	\
 	rawbuffer.c	\
 	rawbuffer.h	\
 	loader.c	\
@@ -129,6 +128,7 @@ libmonoruntime_static_la_LDFLAGS = -static
 libmonoruntimeincludedir = $(includedir)/mono/metadata
 
 libmonoruntimeinclude_HEADERS = \
+	attrdefs.h	\
 	appdomain.h	\
 	mono-debug.h	\
 	mono-gc.h	\
@@ -150,6 +150,7 @@ libmonoruntimeinclude_HEADERS = \
 	exception.h	\
 	profiler.h	\
 	appdomain.h	\
+	mono-config.h	\
 	debug-helpers.h	\
 	mempool.h
 

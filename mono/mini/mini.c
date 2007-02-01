@@ -3346,6 +3346,11 @@ handle_box (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *val, const gucha
 	vstore->inst_left = add;
 	vstore->inst_right = val;
 
+#ifdef MONO_ARCH_SOFT_FLOAT
+	if (vstore->opcode == CEE_STIND_R4) {
+		handle_store_float (cfg, bblock, add, val, ip);
+	} else
+#endif
 	if (vstore->opcode == CEE_STOBJ) {
 		handle_stobj (cfg, bblock, add, val, ip, klass, FALSE, FALSE, TRUE);
 	} else
@@ -5516,7 +5521,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 #ifdef MONO_ARCH_SOFT_FLOAT
 			if (*ip == CEE_LDIND_R4) {
 				int temp;
-				++sp;
+				--sp;
 				temp = handle_load_float (cfg, bblock, ins->inst_i0, ip);
 				NEW_TEMPLOAD (cfg, *sp, temp);
 				sp++;
@@ -12357,7 +12362,7 @@ mini_parse_debug_options (void)
 }
 
 MonoDomain *
-mini_init (const char *filename)
+mini_init (const char *filename, const char *runtime_version)
 {
 	MonoDomain *domain;
 
@@ -12475,7 +12480,10 @@ mini_init (const char *filename)
 		mono_aot_set_make_unreadable (TRUE);
 	}
 
-	domain = mono_init_from_assembly (filename, filename);
+	if (runtime_version)
+		domain = mono_init_version (filename, runtime_version);
+	else
+		domain = mono_init_from_assembly (filename, filename);
 	mono_icall_init ();
 
 	mono_add_internal_call ("System.Diagnostics.StackFrame::get_frame_info", 

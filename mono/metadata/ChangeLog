@@ -1,3 +1,49 @@
+2006-11-30  Paolo Molaro (lupus@ximian.com)
+
+	* metadata.c, marshal.c: locking fixes when writing to image->mempool.
+
+Thu Nov 30 11:11:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: back out GetFields () fix until the serialization code is
+	fixed to not depend on the incorrect behaviour.
+
+Wed Nov 29 22:01:46 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: provide defaults if none are set.
+
+Tue Nov 28 12:54:51 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, attrdefs.h: new public header file with
+	constants for attributes for use by embedders.
+
+Tue Nov 28 11:44:52 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: GetFields () fix for bug #80064.
+
+Tue Nov 28 10:56:01 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* filewatcher.c, filewatcher.h, icall-def.h, icall.c, locales.c:
+	removed long unused icalls.
+
+2006-11-27  Jonathan Chambers  <joncham@gmail.com>
+  
+	* marshal.c: 
+		(mono_marshal_emit_managed_wrapper): Level of indirection for 
+		mono_marshal_get_managed_wrapper so that a wrapper for a managed method
+		can be generated without a delegate class.
+		(mono_marshal_get_managed_wrapper): Move wrapper logic to mono_marshal_emit_managed_wrapper.
+	
+	Signed-off-by: Jonathan Chambers <joncham@gmail.com>
+
+2006-11-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.c: add the 'signal' call removed by mistake. Fixes bug
+	#80069.
+
+Mon Nov 27 19:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c, null-gc.c, sgen-gc.c, mono-gc.h, icall.c,
+	icall-def.h: added icalls needed by System.GC.
 
 Thu Nov 23 20:01:12 CET 2006 Paolo Molaro <lupus@ximian.com>
 

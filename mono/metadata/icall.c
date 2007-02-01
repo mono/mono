@@ -39,6 +39,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/mono-gc.h>
 #include <mono/metadata/rand.h>
 #include <mono/metadata/sysmath.h>
 #include <mono/metadata/string-icalls.h>
@@ -113,14 +114,6 @@ mono_class_get_throw (MonoImage *image, guint32 type_token)
 	ex = mono_loader_error_prepare_exception (error);
 	mono_raise_exception (ex);
 	return NULL;
-}
-
-static void
-ves_icall_System_Double_AssertEndianity (double *value)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	MONO_DOUBLE_ASSERT_ENDIANITY (value);
 }
 
 static MonoObject *
@@ -3110,8 +3103,11 @@ handle_parent:
 			if (bflags & BFLAGS_Public)
 				match++;
 		} else {
-			if (bflags & BFLAGS_NonPublic)
-				match++;
+			if (bflags & BFLAGS_NonPublic) {
+				/* Serialization currently depends on the old behavior.
+				 * if ((field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) != FIELD_ATTRIBUTE_PRIVATE || startklass == klass)*/
+					match++;
+			}
 		}
 		if (!match)
 			continue;
@@ -5121,14 +5117,6 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	mono_delegate_ctor (delegate, target, func);
 
 	return delegate;
-}
-
-static void
-ves_icall_System_Delegate_FreeTrampoline (MonoDelegate *this)
-{
-	/*
-	Delegates have a finalizer only when needed, now.
-	mono_delegate_free_ftnptr (this);*/
 }
 
 /*

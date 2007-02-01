@@ -24,6 +24,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy wparser.c parser.c"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -93,6 +94,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="runburg.bat"
 			/>
 		</Configuration>
 		<Configuration

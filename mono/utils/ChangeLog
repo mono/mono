@@ -1,3 +1,8 @@
+
+Mon Nov 27 16:03:58 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* strtod.c: fix, again, 64 bit issues.
+
 2006-11-25  Miguel de Icaza  <miguel@novell.com>
 
 	* strtod.c: Upgrade this implementation to the one from:

@@ -21,6 +21,8 @@
 #include <sys/sysctl.h>
 #endif
 
+#define FORCE_INDIR_CALL 1
+
 enum {
 	TLS_MODE_DETECT,
 	TLS_MODE_FAILED,
@@ -2950,7 +2952,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
 			else
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, call->fptr);
-			if (cfg->method->dynamic) {
+			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_lis (code, ppc_r0, 0);
 				ppc_ori (code, ppc_r0, ppc_r0, 0);
 				ppc_mtlr (code, ppc_r0);
@@ -3019,7 +3021,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_mr (code, ppc_r3, ins->sreg1);
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 					     (gpointer)"mono_arch_throw_exception");
-			if (cfg->method->dynamic) {
+			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_lis (code, ppc_r0, 0);
 				ppc_ori (code, ppc_r0, ppc_r0, 0);
 				ppc_mtlr (code, ppc_r0);
@@ -3034,7 +3036,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_mr (code, ppc_r3, ins->sreg1);
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 					     (gpointer)"mono_arch_rethrow_exception");
-			if (cfg->method->dynamic) {
+			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_lis (code, ppc_r0, 0);
 				ppc_ori (code, ppc_r0, ppc_r0, 0);
 				ppc_mtlr (code, ppc_r0);
@@ -3775,7 +3777,7 @@ register.  Should this case include linux/ppc?
 		} else {
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 				     (gpointer)"mono_get_lmf_addr");
-			if (cfg->method->dynamic) {
+			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_lis (code, ppc_r0, 0);
 				ppc_ori (code, ppc_r0, ppc_r0, 0);
 				ppc_mtlr (code, ppc_r0);

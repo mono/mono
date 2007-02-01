@@ -105,7 +105,7 @@ collection a bit.
 .I "--help", "-h"
 Displays usage instructions.
 .TP
-.I "--optimize=MODE", "-O=mode"
+.I "--optimize=MODE", "-O=MODE"
 MODE is a comma separated list of optimizations.  They also allow
 optimizations to be turned off by prefixing the optimization name with
 a minus sign.
@@ -139,6 +139,17 @@ For example, to enable all the optimization but dead code
 elimination and inlining, you can use:
 .nf
 	-O=all,-deadce,-inline
+.fi
+.TP
+.I "--runtime=VERSION"
+Mono supports different runtime versions. The version used depends on the program
+that is being run or on its configuration file (named program.exe.config). This option
+can be used to override such autodetection, by forcing a different runtime version
+to be used. Note that this should only be used to select a later compatible runtime
+version than the one the program was compiled against. A typical usage is for
+running a 1.1 program on a 2.0 version:
+.nf
+         mono --runtime=v2.0.50727 program.exe
 .fi
 .TP
 .I "--security"
