@@ -1,3 +1,8 @@
+2007-02-01  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* System.Test20.vmwcsproj: in project's files list - changed
+	SocketTest.cs to SocketTest.jvm.cs .
+
 2007-01-30  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 
 	* System.Test20.vmwcsproj: updated list of files.
