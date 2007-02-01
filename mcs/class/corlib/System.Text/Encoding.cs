@@ -699,8 +699,8 @@ public abstract class Encoding
 		}
 
 		// We have no idea how to handle this encoding name.
-		throw new NotSupportedException (String.Format ("Encoding name '{0}' not "
-			+ "supported", name));
+		throw new ArgumentException (String.Format ("Encoding name '{0}' not "
+			+ "supported", name), "name");
 	}
 
 #endif // !ECMA_COMPAT
@@ -920,6 +920,11 @@ public abstract class Encoding
 								defaultEncoding = GetEncoding (code_page);
 							}
 						} catch (NotSupportedException) {
+							// code_page is not supported on underlying platform
+							defaultEncoding = UTF8Unmarked;
+						} catch (ArgumentException) {
+							// code_page_name is not a valid code page, or is 
+							// not supported by underlying OS
 							defaultEncoding = UTF8Unmarked;
 						}
 						defaultEncoding.is_readonly = true;
