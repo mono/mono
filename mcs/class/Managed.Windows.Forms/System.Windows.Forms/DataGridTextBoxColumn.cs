@@ -129,8 +129,7 @@ namespace System.Windows.Forms
 				return true;
 
 			try {
-				object obj = GetColumnValueAtRow (dataSource, rowNum);
-				string existing_text = GetFormattedString (obj);
+				string existing_text = GetFormattedValue (dataSource, rowNum);
 
 				if (existing_text != textbox.Text) {
 					if (textbox.Text == NullText)
@@ -163,21 +162,17 @@ namespace System.Windows.Forms
 
 			ro = (TableStyleReadOnly || ReadOnly || _ro);
 
-			if (!ro && instantText != null && instantText != "") {
+			if (!ro && instantText != null) {
 				textbox.Text = instantText;
 			}
 			else {
-				object obj = GetColumnValueAtRow (source, rowNum);
-				if (obj == null)
-					textbox.Text = "";
-				else
-					textbox.Text = GetFormattedString (obj);
+				textbox.Text = GetFormattedValue (source, rowNum);
 			}
 
 			textbox.ReadOnly = ro;
 			textbox.Bounds = new Rectangle (new Point (bounds.X + offset_x, bounds.Y + offset_y),
 							new Size (bounds.Width - offset_x, bounds.Height - offset_y));
-			textbox.IsInEditOrNavigateMode = false;
+			textbox.IsInEditOrNavigateMode = ro || instantText == null;
 			textbox.Visible = cellIsVisible;
 			textbox.Focus ();
 			textbox.SelectAll ();
@@ -236,10 +231,7 @@ namespace System.Windows.Forms
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
-			object obj;
-			obj = GetColumnValueAtRow (source, rowNum);
-
-			PaintText (g, bounds, GetFormattedString (obj),  backBrush, foreBrush, alignToRight);
+			PaintText (g, bounds, GetFormattedValue (source, rowNum),  backBrush, foreBrush, alignToRight);
 		}
 
 		protected void PaintText (Graphics g, Rectangle bounds, string text, bool alignToRight)
@@ -305,7 +297,13 @@ namespace System.Windows.Forms
 		
 		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
 		{
-
+			if (textbox.Visible // I don't really like this, but it gets DataGridTextBoxColumnTest.TestUpdateUI passing
+			    && textbox.IsInEditOrNavigateMode) {
+				textbox.Text = GetFormattedValue (source, rowNum);
+			}
+			else {
+				textbox.Text = instantText;
+			}
 		}
 
 		#endregion	// Public Instance Methods
@@ -313,12 +311,11 @@ namespace System.Windows.Forms
 
 		#region Private Instance Methods
 
-		private string GetFormattedString (object obj)
+		private string GetFormattedValue (CurrencyManager source, int rowNum)
 		{
-			if (obj == null)
-				return "";
+			object obj = GetColumnValueAtRow (source, rowNum);
 
-			if (obj == DBNull.Value)
+			if (DBNull.Value.Equals(obj) || obj == null)
 				return NullText;
 			
 			if (format != null && obj as IFormattable != null) {

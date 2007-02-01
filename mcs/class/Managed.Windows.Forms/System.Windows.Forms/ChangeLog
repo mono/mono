@@ -1,5 +1,16 @@
 2007-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumn.cs: clean up the
+	GetFormattedString/GetColumnValueAtRow combination of functions.
+	Also fix UpdateUI, and the initial state of
+	IsInEditOrNavigateMode.
+
+	* DataGridTextBox.cs: don't chain up to base.OnMouseWheel - we
+	aren't supposed to scroll the textbox here, we're supposed to
+	scroll the datagrid.
+
+2007-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* ComboBox.cs: use vscrollbar_ctrl.Dock instead of explicitly
 	setting the position.
 
