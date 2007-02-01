@@ -1,3 +1,32 @@
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* io.c (_wapi_stat_to_file_attributes): If the file is a symlink
+	add the FILE_ATTRIBUTE_REPARSE_POINT flag.  This is an attempt to
+	follow the specs for the windows symlink support, but will
+	probably have to be reworked when I have test data from a vista
+	machine.  Fixes bug 79887.
+
+2006-11-11  Miguel de Icaza  <miguel@novell.com>
+
+	* handles.c (CloseHandle): Cope here with the new value
+	INVALID_HANDLE_VALUE set on handles.  
+
+	* processes.c (CreateProcess): Initialize the value of hThread to
+	be INVALID_HANDLE_VALUE on failure, not to be NULL.  Improvement
+	for #75733
+
+2006-11-09  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_select): Do some sanity checking on the
+	fd_sets, to avoid file descriptors > FD_SETSIZE.
+	(_wapi_FD_CLR, _wapi_FD_ISSET, _wapi_FD_SET): Avoid file
+	descriptors > FD_SETSIZE.
+
+2006-10-27  Dick Porter  <dick@ximian.com>
+
+	* io.c (GetFileAttributes): Force symlinks to directories to be
+	returned as a regular file.  Fixes bug 79733.
+
 2006-10-18  Miguel de Icaza  <miguel@novell.com>
 
 	* io-portability.c (find_in_dir): First string dup, then closedir.

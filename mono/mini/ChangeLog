@@ -1,3 +1,104 @@
+
+Thu Nov 16 14:07:18 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* brach-opts.c: in optimize_exception_target() make sure we
+	are in a catch clause (fixes bug #79871).
+
+Thu Nov 16 12:42:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c, jit-icalls.h, mini-arm.c, mini.c:
+	more soft-float support fixes.
+
+Wed Nov 15 18:45:47 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, inssel-arm.brg: ABI fix for longs and doubles
+	that are passed half on the stack and half in registers.
+
+Wed Nov 15 17:00:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini-arch.h, helpers.c, Makefile.am:
+	more mips integration work from Mark E Mason 
+	<mark.e.mason@broadcom.com>.
+
+Wed Nov 15 16:34:03 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-mips.c, inssel-mips.brg, mini-mips.h,
+	cpu-mips.md, inssel-long32-mips.brg, mini-mips.c,
+	tramp-mips.c: added sources for the mips port, not
+	integrated in the build yet. Contributed by
+	Mark E Mason <mark.e.mason@broadcom.com>.
+
+2006-11-14  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390[x].c (is_regsize_var): Support PTR/FNPTR too.
+
+Tue Nov 14 16:06:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, inssel-float.brg, inssel-softfloat.brg:
+	put the soft-float rules in its own file since it seems to
+	break s390 compilation.
+
+Mon Nov 13 15:54:38 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: fixed wrnings.
+
+Fri Nov 10 19:18:32 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, mini-arm.h, cpu-arm.md, inssel-float.brg,
+	inssel-arm.brg: ARM support for soft-float.
+
+Fri Nov 10 18:38:15 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c, jit-icalls.h: added first cut at handling
+	loads and stores of 32 bit fp values.
+
+2006-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (is_regsize_var): Support PTR/FNPTR too.
+
+	* tramp-sparc.c (mono_arch_patch_callsite): Fix this function so it actually
+	works. Fixes #79852 and #79463.
+
+Thu Nov 9 16:56:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-codegen.c, jit-icalls.c, jit-icalls.h:
+	more soft-float support WIP and fixes.
+
+Wed Nov 8 16:40:02 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: some VFP updates.
+
+Tue Nov 7 19:45:51 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: 0 is a valid local var offset in some
+	architectures, don't assert (bug #78508).
+
+Tue Nov 7 18:17:52 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: fixed off by one error in stack walk code.
+
+Tue Nov 7 11:27:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c: more precise tracking of type load exceptions.
+
+2006-11-03  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: [WIN32] Add monow.exe target.
+	* driver.c: [WIN32] Don't detach the console when debugging.
+	Fixes bug #79797.
+	
+2006-10-30  Miguel de Icaza  <miguel@novell.com>
+
+	* tramp-x86.c (mono_arch_patch_delegate_trampoline): Eliminate warning.
+
+2006-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_info): Add a case missed earlier.
+
+	* driver.c (mini_regression): Fix --regression with AOT.
+
+	* aot-compiler.c (emit_method_info): Fix AOT on amd64.
+
 2006-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Add some new comments.
@@ -503,7 +604,6 @@ Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* aot-runtime.c (mono_aot_plt_resolve): Add an assert.
 
->>>>>>> .merge-right.r65118
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_specific_trampoline): Don't increase

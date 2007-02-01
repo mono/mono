@@ -13,20 +13,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Syscall__Passwd {
-	/* string */ char      *pw_name;
-	/* string */ char      *pw_passwd;
-	/* uid_t  */ mph_uid_t  pw_uid;
-	/* gid_t  */ mph_gid_t  pw_gid;
-	/* string */ char      *pw_gecos;
-	/* string */ char      *pw_dir;
-	/* string */ char      *pw_shell;
-	/* string */ char      *_pw_buf_;
-};
 
 static const size_t
 passwd_offsets[] = {

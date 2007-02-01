@@ -1,3 +1,8 @@
+
+Wed Nov 15 16:56:53 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mips/*: fixes by Mark E Mason <mark.e.mason@broadcom.com>.
+
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* alpha/alpha-codegen.h: More alpha updates from Sergey Tikhonov <tsv@solvo.ru>.

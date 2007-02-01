@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004-2005 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #ifndef _GNU_SOURCE
@@ -227,12 +227,13 @@ Mono_Posix_Syscall_lockf (int fd, int cmd, mph_off_t len)
 	return lockf (fd, cmd, (off_t) len);
 }
 
-void
+int
 Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 {
 	if (mph_have_long_overflow (n))
-		return;
+		return -1;
 	swab (from, to, (ssize_t) n);
+	return 0;
 }
 
 int

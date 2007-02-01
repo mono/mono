@@ -1,0 +1,70 @@
+.\" 
+.\" sgen manual page.
+.\" Copyright 2006 Novell
+.\" Author:
+.\"   Atsushi Enomoto <atsushi@ximian.com>
+.\"
+.TH Mono "sgen"
+.SH NAME
+sgen \- Mono XML Serializer GENerator
+.SH SYNOPSIS
+.PP
+.B sgen [options]
+.SH DESCRIPTION
+Generates pre-compilable custom XML serializer classes for specific types.
+.SH OPTIONS
+.TP
+.I "--assembly[:filename]", "-a"
+Specifies the assembly filename to process.
+.TP
+.I "--type[:typefullname]", "-t"
+Explicitly specifies the runtime type to process.
+.TP
+.I "--reference:[filename]", "-r"
+Specifies an assembly filename, which is referenced by the target assembly
+and thus required to process it.
+.TP
+.I "--compiler:[options]", "-c"
+Specifies compiler options.
+.TP
+.I "--proxytypes", "-p"
+(Not supported yet.)
+.TP
+.I "--debug", "-d"
+Indicates the compiler to generate debug information.
+.TP
+.I "--keep", "-k"
+Indicates the compiler to keep generated temporary source files.
+.TP
+.I "--force", "-f"
+Indicates the generator to force overwriting existing assembly.
+.TP
+.I "--out:[output-directory]", "-o"
+Specifies the output directory for resulting files. By default, it is current directory.
+.TP
+.I "--nologo", "-n"
+Indicates to not print the logo for this tool.
+.TP
+.I "--silent", "-s"
+Indicates the tool to run silently.
+.TP
+.I "--verbose", "-v"
+Indicates the tool to be more verbose on its progress.
+.TP
+.I "--help", "-?"
+Display command line help.
+.SH FEATURES
+.TP
+It generates a file which contains a set of classes for custom XML serialization. The resulting classes enable xml serialization faster since it does not have to generate serialization classes dynamically at run time.
+.PP
+Generated classes are supported only after 2.0 profile.
+.SH AUTHOR
+Written by Lluis Sanchez Gual
+.SH COPYRIGHT
+Copyright (C) 2006 Novell.
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
+.SH SEE ALSO
+.BR xsd(1),wsdl(1),genxs(1)

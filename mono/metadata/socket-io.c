@@ -29,6 +29,7 @@
 /* FIXME change this code to not mess so much with the internals */
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/threadpool-internals.h>
+#include <mono/metadata/domain-internals.h>
 
 #include <sys/time.h> 
 #ifdef HAVE_SYS_IOCTL_H
@@ -1121,52 +1122,78 @@ MonoBoolean
 ves_icall_System_Net_Sockets_Socket_Poll_internal (SOCKET sock, gint mode,
 						   gint timeout, gint32 *error)
 {
-	fd_set fds;
-	int ret = 0;
-	struct timeval tv;
-	struct timeval *tvptr;
-	div_t divvy;
+	MonoThread *thread = NULL;
+	mono_pollfd *pfds;
+	int ret;
 	time_t start;
+	
 
 	MONO_ARCH_SAVE_REGS;
+	
+	pfds = g_new0 (mono_pollfd, 1);
+	pfds[0].fd = GPOINTER_TO_INT (sock);
+	pfds[0].events = (mode == SelectModeRead) ? MONO_POLLIN :
+		(mode == SelectModeWrite) ? MONO_POLLOUT :
+		(MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL);
 
+	timeout = (timeout >= 0) ? (timeout / 1000) : -1;
 	start = time (NULL);
 	do {
 		*error = 0;
-		FD_ZERO (&fds);
-		_wapi_FD_SET (sock, &fds);
-		if (timeout >= 0) {
-			divvy = div (timeout, 1000000);
-			tv.tv_sec = divvy.quot;
-			tv.tv_usec = divvy.rem;
-			tvptr = &tv;
-		} else {
-			tvptr = NULL;
-		}
-
-		if (mode == SelectModeRead) {
-			ret = _wapi_select (0, &fds, NULL, NULL, tvptr);
-		} else if (mode == SelectModeWrite) {
-			ret = _wapi_select (0, NULL, &fds, NULL, tvptr);
-		} else if (mode == SelectModeError) {
-			ret = _wapi_select (0, NULL, NULL, &fds, tvptr);
-		} else {
-			g_assert_not_reached ();
-		}
-
+		
+		ret = mono_poll (pfds, 1, timeout);
 		if (timeout > 0 && ret < 0) {
 			int err = errno;
 			int sec = time (NULL) - start;
-
+			
 			timeout -= sec * 1000;
-			if (timeout < 0)
+			if (timeout < 0) {
 				timeout = 0;
+			}
+			
 			errno = err;
 		}
+		
+		if (ret == -1 && errno == EINTR) {
+			int leave = 0;
 
-	} while ((ret == SOCKET_ERROR) && (*error = WSAGetLastError ()) == WSAEINTR);
+			if (thread == NULL) {
+				thread = mono_thread_current ();
+			}
+			
+			mono_monitor_enter (thread->synch_lock);
+			leave = ((thread->state & ThreadState_AbortRequested) != 0 ||
+				 (thread->state & ThreadState_StopRequested) != 0);
+			mono_monitor_exit (thread->synch_lock);
+			
+			if (leave != 0) {
+				g_free (pfds);
+				return(FALSE);
+			} else {
+				/* Suspend requested? */
+				mono_thread_interruption_checkpoint ();
+			}
+			errno = EINTR;
+		}
+	} while (ret == -1 && errno == EINTR);
 
-	return (ret != SOCKET_ERROR && _wapi_FD_ISSET (sock, &fds));
+	if (ret == -1) {
+#ifdef PLATFORM_WIN32
+		*error = WSAGetLastError ();
+#else
+		*error = errno_to_WSA (errno, __func__);
+#endif
+		g_free (pfds);
+		return(FALSE);
+	}
+	
+	g_free (pfds);
+
+	if (ret == 0) {
+		return(FALSE);
+	} else {
+		return (TRUE);
+	}
 }
 
 extern void ves_icall_System_Net_Sockets_Socket_Connect_internal(SOCKET sock, MonoObject *sockaddr, gint32 *error)
@@ -2132,6 +2159,20 @@ static gboolean hostent_to_IPHostEntry(struct hostent *he, MonoString **h_name,
 
 	return(TRUE);
 }
+
+static gboolean ipaddr_to_IPHostEntry(const char *addr, MonoString **h_name,
+				      MonoArray **h_aliases,
+				      MonoArray **h_addr_list)
+{
+	MonoDomain *domain = mono_domain_get ();
+
+	*h_name=mono_string_new(domain, addr);
+	*h_aliases=mono_array_new(domain, mono_get_string_class (), 0);
+	*h_addr_list=mono_array_new(domain, mono_get_string_class (), 1);
+	mono_array_setref (*h_addr_list, 0, *h_name);
+
+	return(TRUE);
+}
 #endif
 
 #if defined(AF_INET6) && defined(HAVE_GETHOSTBYNAME2_R)
@@ -2538,7 +2579,7 @@ MonoBoolean ves_icall_System_Net_Dns_GetHostByName_internal(MonoString *host, Mo
 	char *hostname;
 	gboolean add_local_ips = FALSE;
 #ifdef HAVE_SIOCGIFCONF
-	guchar this_hostname [256];
+	gchar this_hostname [256];
 #endif
 	
 	MONO_ARCH_SAVE_REGS;
@@ -2604,19 +2645,26 @@ inet_pton (int family, const char *address, void *inaddrp)
 extern MonoBoolean ves_icall_System_Net_Dns_GetHostByAddr_internal(MonoString *addr, MonoString **h_name, MonoArray **h_aliases, MonoArray **h_addr_list)
 {
 	char *address;
-
+	const char *version;
+	gboolean v1;
+	
 #ifdef AF_INET6
 	struct sockaddr_in saddr;
 	struct sockaddr_in6 saddr6;
 	struct addrinfo *info = NULL, hints;
 	gint32 family;
 	char hostname[1024] = {0};
+	int flags = 0;
 #else
 	struct in_addr inaddr;
 	struct hostent *he;
+	gboolean ret;
 #endif
 
 	MONO_ARCH_SAVE_REGS;
+
+	version = mono_get_runtime_info ()->framework_version;
+	v1 = (version[0] == '1');
 
 	address = mono_string_to_utf8 (addr);
 
@@ -2638,16 +2686,20 @@ extern MonoBoolean ves_icall_System_Net_Dns_GetHostByAddr_internal(MonoString *a
 	}
 	g_free(address);
 
+	if (v1) {
+		flags = NI_NAMEREQD;
+	}
+	
 	if(family == AF_INET) {
 		if(getnameinfo ((struct sockaddr*)&saddr, sizeof(saddr),
 				hostname, sizeof(hostname), NULL, 0,
-				NI_NAMEREQD) != 0) {
+				flags) != 0) {
 			return(FALSE);
 		}
 	} else if(family == AF_INET6) {
 		if(getnameinfo ((struct sockaddr*)&saddr6, sizeof(saddr6),
 				hostname, sizeof(hostname), NULL, 0,
-				NI_NAMEREQD) != 0) {
+				flags) != 0) {
 			return(FALSE);
 		}
 	}
@@ -2667,13 +2719,21 @@ extern MonoBoolean ves_icall_System_Net_Dns_GetHostByAddr_internal(MonoString *a
 		g_free (address);
 		return(FALSE);
 	}
-	g_free (address);
 
 	if ((he = gethostbyaddr ((char *) &inaddr, sizeof (inaddr), AF_INET)) == NULL) {
-		return(FALSE);
+		if (v1) {
+			ret = FALSE;
+		} else {
+			ret = ipaddr_to_IPHostEntry (address, h_name,
+						     h_aliases, h_addr_list);
+		}
+	} else {
+		ret = hostent_to_IPHostEntry (he, h_name, h_aliases,
+					      h_addr_list, FALSE);
 	}
 
-	return(hostent_to_IPHostEntry (he, h_name, h_aliases, h_addr_list, FALSE));
+	g_free (address);
+	return(ret);
 #endif
 }
 

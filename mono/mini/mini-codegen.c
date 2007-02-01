@@ -304,12 +304,13 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 #define is_soft_reg(r,fp) (!is_hard_reg((r),(fp)))
 #define rassign(cfg,reg,fp) ((cfg)->rs->vassign [(reg)])
 
-#define sreg1_is_fp(spec) (spec [MONO_INST_SRC1] == 'f')
-#define sreg2_is_fp(spec) (spec [MONO_INST_SRC2] == 'f')
-
 #ifdef MONO_ARCH_INST_IS_FLOAT
 #define dreg_is_fp(spec)  (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_DEST]))
+#define sreg1_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC1]))
+#define sreg2_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC2]))
 #else
+#define sreg1_is_fp(spec) (spec [MONO_INST_SRC1] == 'f')
+#define sreg2_is_fp(spec) (spec [MONO_INST_SRC2] == 'f')
 #define dreg_is_fp(spec)  (spec [MONO_INST_DEST] == 'f')
 #endif
 

@@ -9,6 +9,7 @@
 
 #include <string.h>
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS

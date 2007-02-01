@@ -13,17 +13,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Syscall__Dirent {
-	/* ino_t  */ mph_ino_t      d_ino;
-	/* off_t  */ mph_off_t      d_off;
-	/* ushort */ unsigned short d_reclen;
-	/* byte   */ unsigned char  d_type;
-	/* string */ char          *d_name;
-};
 
 gint32
 Mono_Posix_Syscall_seekdir (void *dir, mph_off_t offset)

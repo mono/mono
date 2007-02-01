@@ -326,7 +326,6 @@ mini_regression (MonoImage *image, int verbose, int *total_run) {
 	*total_run = 0;
 	for (opt = 0; opt < G_N_ELEMENTS (opt_sets); ++opt) {
 		double elapsed, comp_time, start_time;
-		MonoJitInfo *jinfo;
 
 		opt_flags = opt_sets [opt];
 		mono_set_defaults (verbose, opt_flags);
@@ -358,8 +357,8 @@ mini_regression (MonoImage *image, int verbose, int *total_run) {
 					if (verbose >= 2)
 						g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
-					if ((jinfo = mono_aot_get_method (mono_get_root_domain (), method)))
-						func = jinfo->code_start;
+					if ((func = mono_aot_get_method (mono_get_root_domain (), method)))
+						;
 					else
 #endif
 						func = (TestMethod)(gpointer)cfg->native_code;
@@ -982,7 +981,7 @@ mono_main (int argc, char* argv[])
 
 #ifdef PLATFORM_WIN32
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
-		if (!mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
+		if (!enable_debugging && !mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();
 #endif
 

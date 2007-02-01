@@ -404,6 +404,7 @@ retry:
 	if (mon->entry_sem == NULL) {
 		/* Create the semaphore */
 		sem = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
+		g_assert (sem != NULL);
 		if (InterlockedCompareExchangePointer ((gpointer*)&mon->entry_sem, sem, NULL) != NULL) {
 			/* Someone else just put a handle here */
 			CloseHandle (sem);
@@ -755,6 +756,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked by this thread"));
 		return FALSE;
 	}
+
+	/* Do this WaitSleepJoin check before creating the event handle */
+	mono_thread_current_check_pending_interrupt ();
 	
 	event = CreateEvent (NULL, FALSE, FALSE, NULL);
 	if (event == NULL) {

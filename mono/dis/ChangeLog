@@ -1,3 +1,10 @@
+2006-11-09  Ankit Jain  <jankit@novell.com>
+
+	* dump.c (dump_table_assemblyref): Dump Flags also.
+	* main.c (assembly_ref_flags): New. Stringify AssemblyRef flags.
+	(dis_directive_assemblyref): Emit flags also.
+	(dis_directive_assembly): Likewise.
+
 2006-10-06  Miguel de Icaza  <miguel@novell.com>
 
 	* main.c (dis_directive_assembly): Fix the rendering of .locale to

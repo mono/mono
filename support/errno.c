@@ -4,6 +4,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include "map.h"
 #include "mph.h"
 #include <stdio.h>
 

@@ -1,3 +1,17 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* genxs.1 : introduced <baseSerializer> and <implementation>
+	  elements. See also sgen.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* sgen.1, Makefile: revised a bit, to not mislead as if the output
+	  were sources. It indeed generates an assembly.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* sgen.1, Makefile: added manpage for sgen.
+
 2006-10-03  Dick Porter  <dick@ximian.com>
 
 	* mono.1: Document the new MONO_IO_PORTABILITY_HELP environment

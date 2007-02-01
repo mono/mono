@@ -70,7 +70,12 @@ libmono_la_LDFLAGS=$(monoldflags)
 endif
 
 if JIT_SUPPORTED
+
+if PLATFORM_WIN32
+bin_PROGRAMS = mono monow
+else
 bin_PROGRAMS = mono
+endif
 
 noinst_PROGRAMS = genmdesc
 
@@ -96,6 +101,13 @@ mono_LDADD = \
 
 mono_LDFLAGS = \
 	$(static_flags) -export-dynamic $(monobinldflags)
+
+# Create monow.exe, linked for the 'windows' subsystem
+if PLATFORM_WIN32
+monow_LDADD = $(mono_LDADD)
+monow_LDFLAGS = $(mono_LDFLAGS) -mwindows
+monow_SOURCES = $(mono_SOURCES)
+endif
 
 genmdesc_SOURCES = \
 	mini.h		\
@@ -133,6 +145,13 @@ arm_sources = \
 	mini-arm.h		\
 	exceptions-arm.c	\
 	tramp-arm.c
+
+mips_sources = \
+	mini-mips.c		\
+	mini-mips.h		\
+	exceptions-mips.c	\
+	mini-codegen.c		\
+	tramp-mips.c
 
 sparc_sources = \
 	mini-sparc.c		\
@@ -255,6 +274,12 @@ arch_BURGSRC= $(srcdir)/inssel-long32.brg $(srcdir)/inssel-ppc.brg
 arch_built=cpu-g4.h
 endif
 
+if MIPS
+arch_sources = $(mips_sources)
+arch_BURGSRC= $(srcdir)/inssel-long32-mips.brg $(srcdir)/inssel-mips.brg
+arch_built=cpu-mips.h
+endif
+
 if ARM
 
 # pick up arm_dpimacros.h and arm_fpamacros.h
@@ -262,7 +287,7 @@ ARCH_CFLAGS = -I../arch/arm
 
 arch_sources = $(arm_sources)
 
-arch_BURGSRC= $(srcdir)/inssel-long32.brg $(srcdir)/inssel-arm.brg
+arch_BURGSRC= $(srcdir)/inssel-long32.brg $(srcdir)/inssel-arm.brg $(srcdir)/inssel-softfloat.brg
 arch_built=cpu-arm.h
 endif
 
@@ -358,6 +383,7 @@ cpu-s390.h: cpu-s390.md
 cpu-s390x.h: cpu-s390x.md
 cpu-ia64.h: cpu-ia64.md
 cpu-alpha.h: cpu-alpha.md
+cpu-mips.h: cpu-mips.md
 
 ## Gross hack.  Making 'genmdesc' a host binary takes more effort
 $(arch_built):
@@ -392,6 +418,9 @@ cpu-ia64.h: cpu-ia64.md genmdesc$(EXEEXT)
 
 cpu-alpha.h: cpu-alpha.md genmdesc$(EXEEXT)
 	./genmdesc $(srcdir)/cpu-alpha.md cpu-alpha.h alpha_desc
+
+cpu-mips.h: cpu-mips.md genmdesc$(EXEEXT)
+	./genmdesc $(srcdir)/cpu-mips.md cpu-mips.h mips_desc
 
 endif !CROSS_COMPILING
 
@@ -455,6 +484,7 @@ CLEANFILES= $(BUILT_SOURCES) *.exe *.dll
 EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	$(test_sources) $(test_sources2) \
 	inssel-long.brg inssel-long32.brg \
+	inssel-softfloat.brg	\
 	$(x86_sources) inssel-x86.brg cpu-x86.md \
 	$(amd64_sources) inssel-amd64.brg cpu-amd64.md \
 	$(ppc_sources) inssel-ppc.brg cpu-g4.md \

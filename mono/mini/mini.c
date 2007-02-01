@@ -1390,7 +1390,7 @@ ovf3ops_op_map [STACK_MAX] = {
 /* handles from CEE_CEQ to CEE_CLT_UN */
 static const guint16
 ceqops_op_map [STACK_MAX] = {
-	0, 0, OP_LCEQ-CEE_CEQ, OP_PCEQ-CEE_CEQ, OP_FCEQ-CEE_CEQ, OP_LCEQ-CEE_CEQ
+	0, 0, OP_LCEQ-OP_CEQ, OP_PCEQ-OP_CEQ, OP_FCEQ-OP_CEQ, OP_LCEQ-OP_CEQ
 };
 
 /*
@@ -2746,13 +2746,31 @@ mono_emit_call_args (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignatu
 	MonoInst *arg;
 
 	MONO_INST_NEW_CALL (cfg, call, ret_type_to_call_opcode (sig->ret, calli, virtual));
-	
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+	/* we need to convert the r4 value to an int value */
+	{
+		int i;
+		for (i = 0; i < sig->param_count; ++i) {
+			if (sig->params [i]->type == MONO_TYPE_R4) {
+				MonoInst *iargs [1];
+				int temp;
+				iargs [0] = args [i + sig->hasthis];
+
+				temp = mono_emit_jit_icall (cfg, bblock, mono_fload_r4_arg, iargs, ip);
+				NEW_TEMPLOAD (cfg, arg, temp);
+				args [i + sig->hasthis] = arg;
+			}
+		}
+	}
+#endif
+
 	call->inst.cil_code = ip;
 	call->args = args;
 	call->signature = sig;
 	call = mono_arch_call_opcode (cfg, bblock, call, virtual);
 	type_to_eval_stack_type (sig->ret, &call->inst);
-	
+
 	for (arg = call->out_args; arg;) {
 		MonoInst *narg = arg->next;
 		arg->next = NULL;
@@ -3050,6 +3068,56 @@ mono_get_array_new_va_icall (int rank)
 
 	return info;
 }
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+static void
+handle_store_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, MonoInst *val, const unsigned char *ip)
+{
+	MonoInst *iargs [2];
+	iargs [0] = val;
+	iargs [1] = ptr;
+
+	mono_emit_jit_icall (cfg, bblock, mono_fstore_r4, iargs, ip);
+}
+
+static int
+handle_load_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, const unsigned char *ip)
+{
+	MonoInst *iargs [1];
+	iargs [0] = ptr;
+
+	return mono_emit_jit_icall (cfg, bblock, mono_fload_r4, iargs, ip);
+}
+
+#define LDLOC_SOFT_FLOAT(cfg,ins,idx,ip) do {\
+		if (header->locals [(idx)]->type == MONO_TYPE_R4 && !header->locals [(idx)]->byref) {	\
+			int temp;	\
+			NEW_LOCLOADA (cfg, (ins), (idx));	\
+			temp = handle_load_float (cfg, bblock, (ins), (ip));	\
+			NEW_TEMPLOAD (cfg, (ins), temp);	\
+		}	\
+	} while (0)
+#define STLOC_SOFT_FLOAT(cfg,ins,idx,ip) do {\
+		if (header->locals [(idx)]->type == MONO_TYPE_R4 && !header->locals [(idx)]->byref) {	\
+			int temp;	\
+			NEW_LOCLOADA (cfg, (ins), (idx));	\
+			handle_store_float (cfg, bblock, (ins), *sp, (ip));	\
+			MONO_INST_NEW (cfg, (ins), CEE_NOP);	\
+		}	\
+	} while (0)
+#define LDARG_SOFT_FLOAT(cfg,ins,idx,ip) do {\
+		if (param_types [(idx)]->type == MONO_TYPE_R4 && !param_types [(idx)]->byref) {	\
+			int temp;	\
+			NEW_ARGLOADA (cfg, (ins), (idx));	\
+			temp = handle_load_float (cfg, bblock, (ins), (ip));	\
+			NEW_TEMPLOAD (cfg, (ins), temp);	\
+		}	\
+	} while (0)
+#else
+#define LDLOC_SOFT_FLOAT(cfg,ins,idx,ip)
+#define STLOC_SOFT_FLOAT(cfg,ins,idx,ip)
+#define LDARG_SOFT_FLOAT(cfg,ins,idx,ip)
+#endif
 
 static MonoMethod*
 get_memcpy_method (void)
@@ -3350,6 +3418,11 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		if (MONO_TYPE_ISSTRUCT (signature->params [i])) {
 			return FALSE;
 		}
+#ifdef MONO_ARCH_SOFT_FLOAT
+		/* this complicates things, fix later */
+		if (signature->params [i]->type == MONO_TYPE_R4)
+			return FALSE;
+#endif
 	}
 
 	/*
@@ -3466,11 +3539,12 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 	return addr;
 }
 
-MonoJitICallInfo **emul_opcode_map = NULL;
+static MonoJitICallInfo **emul_opcode_map = NULL;
 
 MonoJitICallInfo *
 mono_find_jit_opcode_emulation (int opcode)
 {
+	g_assert (opcode >= 0 && opcode <= OP_LAST);
 	if  (emul_opcode_map)
 		return emul_opcode_map [opcode];
 	else
@@ -3782,6 +3856,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 #define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
 #define CHECK_OPSIZE(size) if (ip + size > end) UNVERIFIED
 #define CHECK_UNVERIFIABLE(cfg) if (cfg->unverifiable) UNVERIFIED
+#define CHECK_TYPELOAD(klass) if (!(klass) || (klass)->exception_type) {cfg->exception_ptr = klass; goto load_error;}
 
 /* offset from br.s -> br like opcodes */
 #define BIG_BRANCH_OFFSET 13
@@ -4486,6 +4561,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
 			NEW_ARGLOAD (cfg, ins, n);
+			LDARG_SOFT_FLOAT (cfg, ins, n, ip);
 			ins->cil_code = ip++;
 			*sp++ = ins;
 			break;
@@ -4497,6 +4573,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
 			NEW_LOCLOAD (cfg, ins, n);
+			LDLOC_SOFT_FLOAT (cfg, ins, n, ip);
 			ins->cil_code = ip++;
 			*sp++ = ins;
 			break;
@@ -4513,6 +4590,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->cil_code = ip;
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 				UNVERIFIED;
+			STLOC_SOFT_FLOAT (cfg, ins, n, ip);
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, n);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
@@ -4526,6 +4604,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			CHECK_ARG (ip [1]);
 			NEW_ARGLOAD (cfg, ins, ip [1]);
+			LDARG_SOFT_FLOAT (cfg, ins, ip [1], ip);
 			ins->cil_code = ip;
 			*sp++ = ins;
 			ip += 2;
@@ -4561,6 +4640,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			CHECK_LOCAL (ip [1]);
 			NEW_LOCLOAD (cfg, ins, ip [1]);
+			LDLOC_SOFT_FLOAT (cfg, ins, ip [1], ip);
 			ins->cil_code = ip;
 			*sp++ = ins;
 			ip += 2;
@@ -4584,6 +4664,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->cil_code = ip;
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
 				UNVERIFIED;
+			STLOC_SOFT_FLOAT (cfg, ins, ip [1], ip);
 			if (ins->opcode == CEE_STOBJ) {
 				NEW_LOCLOADA (cfg, ins, ip [1]);
 				handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
@@ -5256,7 +5337,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				sp -= 2;
 				ins->inst_left = sp [0];
 				ins->inst_right = sp [1];
+				ins->type = STACK_I4;
 				*sp++ = emit_tree (cfg, bblock, ins, ins->cil_code);
+				MONO_INST_NEW (cfg, ins, CEE_BRTRUE);
 				ADD_UNCOND (TRUE);
 			} else {
 				ADD_BINCOND (NULL);
@@ -5330,7 +5413,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				sp -= 2;
 				ins->inst_left = sp [0];
 				ins->inst_right = sp [1];
+				ins->type = STACK_I4;
 				*sp++ = emit_tree (cfg, bblock, ins, ins->cil_code);
+				MONO_INST_NEW (cfg, ins, CEE_BRTRUE);
 				ADD_UNCOND (TRUE);
 			} else {
 				ADD_BINCOND (NULL);
@@ -5402,6 +5487,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins_flag = 0;
 			if (ins->type == STACK_OBJ)
 				ins->klass = mono_defaults.object_class;
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (*ip == CEE_LDIND_R4) {
+				int temp;
+				++sp;
+				temp = handle_load_float (cfg, bblock, ins->inst_i0, ip);
+				NEW_TEMPLOAD (cfg, *sp, temp);
+				sp++;
+			}
+#endif
 			++ip;
 			break;
 		case CEE_STIND_REF:
@@ -5412,6 +5506,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_STIND_R4:
 		case CEE_STIND_R8:
 			CHECK_STACK (2);
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (*ip == CEE_STIND_R4) {
+				sp -= 2;
+				handle_store_float (cfg, bblock, sp [0], sp [1], ip);
+				ip++;
+				break;
+			}
+#endif
 #if HAVE_WRITE_BARRIERS
 			if (*ip == CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER) {
 				/* insert call to write barrier */
@@ -5562,8 +5664,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (2);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			sp -= 2;
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				MonoInst *store, *load;
@@ -5613,8 +5714,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			--sp;
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				MONO_INST_NEW (cfg, ins, CEE_LDIND_REF);
 				ins->cil_code = ip;
@@ -5881,8 +5981,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
@@ -5938,8 +6037,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				/* CASTCLASS */
@@ -6040,8 +6138,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 
 			if (mono_class_is_nullable (klass)) {
 				int v = handle_unbox_nullable (cfg, bblock, *sp, ip, klass);
@@ -6078,8 +6175,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
@@ -6229,6 +6325,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					iargs [1] = sp [1];
 					mono_emit_method_call_spilled (cfg, bblock, write_barrier, mono_method_signature (write_barrier), iargs, ip, NULL);
 #endif
+#ifdef MONO_ARCH_SOFT_FLOAT
+				} else if (mono_type_to_stind (field->type) == CEE_STIND_R4) {
+					NEW_ICONST (cfg, offset_ins, foffset);
+					MONO_INST_NEW (cfg, ins, OP_PADD);
+					ins->cil_code = ip;
+					ins->inst_left = *sp;
+					ins->inst_right = offset_ins;
+					ins->type = STACK_MP;
+					ins->klass = mono_defaults.object_class;
+					handle_store_float (cfg, bblock, ins, sp [1], ip);
+#endif
 				} else {
 					MonoInst *store;
 					NEW_ICONST (cfg, offset_ins, foffset);
@@ -6308,6 +6415,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						load->inst_left = ins;
 						load->flags |= ins_flag;
 						ins_flag = 0;
+#ifdef MONO_ARCH_SOFT_FLOAT
+						if (mono_type_to_ldind (field->type) == CEE_LDIND_R4) {
+							int temp;
+							temp = handle_load_float (cfg, bblock, ins, ip);
+							NEW_TEMPLOAD (cfg, *sp, temp);
+							sp++;
+						} else
+#endif
 						*sp++ = load;
 					}
 				}
@@ -6516,8 +6631,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			n = mono_type_to_stind (&klass->byval_arg);
 			if (n == CEE_STOBJ) {
 				handle_stobj (cfg, bblock, sp [0], sp [1], ip, klass, FALSE, FALSE, TRUE);
@@ -6543,8 +6657,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				*sp++ = val;
@@ -6615,8 +6728,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			mono_get_got_var (cfg);
 
 			klass = mini_get_class (method, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			ins->inst_newa_class = klass;
 			ins->inst_newa_len = *sp;
 			ins->type = STACK_OBJ;
@@ -6659,8 +6771,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				UNVERIFIED;
 
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
-			if (!klass)
-				goto load_error;			
+			CHECK_TYPELOAD (klass);
 			/* we need to make sure that this array is exactly the type it needs
 			 * to be for correctness. the wrappers are lax with their usage
 			 * so we need to ignore them here
@@ -6691,8 +6802,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mono_class_get_full (image, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
@@ -6728,6 +6838,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			klass = array_access_to_klass (*ip);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (*ip == CEE_LDELEM_R4) {
+				int temp;
+				temp = handle_load_float (cfg, bblock, load, ip);
+				NEW_TEMPLOAD (cfg, *sp, temp);
+				sp++;
+				++ip;
+				break;
+			}
+#endif
 			MONO_INST_NEW (cfg, ins, ldelem_to_ldind [*ip - CEE_LDELEM_I1]);
 			ins->cil_code = ip;
 			ins->inst_left = load;
@@ -6757,6 +6877,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			klass = array_access_to_klass (*ip);
 			NEW_LDELEMA (cfg, load, sp, klass);
 			load->cil_code = ip;
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (*ip == CEE_STELEM_R4) {
+				handle_store_float (cfg, bblock, load, sp [2], ip);
+				ip++;
+				break;
+			}
+#endif
 			MONO_INST_NEW (cfg, ins, stelem_to_stind [*ip - CEE_STELEM_I]);
 			ins->cil_code = ip;
 			ins->inst_left = load;
@@ -6781,8 +6908,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mono_class_get_full (image, token, generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 			if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 				MonoMethod* helper = mono_marshal_get_stelemref ();
@@ -6877,8 +7003,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			--sp;
 			CHECK_OPSIZE (5);
 			klass = mono_class_get_full (image, read32 (ip + 1), generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 			ins->type = STACK_MP;
 			ins->inst_left = *sp;
@@ -6896,8 +7021,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			--sp;
 			CHECK_OPSIZE (5);
 			klass = mono_class_get_full (image, read32 (ip + 1), generic_context);
-			if (!klass)
-				goto load_error;
+			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 			ins->cil_code = ip;
 
@@ -7328,13 +7452,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				cmp->cil_code = ip;
 				type_from_op (cmp);
 				CHECK_TYPE (cmp);
+				ins->cil_code = ip;
+				ins->type = STACK_I4;
+				ins->inst_i0 = cmp;
+#if MONO_ARCH_SOFT_FLOAT
+				if (sp [0]->type == STACK_R8) {
+					cmp->type = STACK_I4;
+					*sp++ = emit_tree (cfg, bblock, cmp, ip + 2);
+					ip += 2;
+					break;
+				}
+#endif
 				if ((sp [0]->type == STACK_I8) || ((sizeof (gpointer) == 8) && ((sp [0]->type == STACK_PTR) || (sp [0]->type == STACK_OBJ) || (sp [0]->type == STACK_MP))))
 					cmp->opcode = OP_LCOMPARE;
 				else
 					cmp->opcode = OP_COMPARE;
-				ins->cil_code = ip;
-				ins->type = STACK_I4;
-				ins->inst_i0 = cmp;
 				*sp++ = ins;
 				/* spill it to reduce the expression complexity
 				 * and workaround bug 54209 
@@ -7413,6 +7545,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
 				NEW_ARGLOAD (cfg, ins, n);
+				LDARG_SOFT_FLOAT (cfg, ins, n, ip);
 				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 4;
@@ -7451,6 +7584,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
 				NEW_LOCLOAD (cfg, ins, n);
+				LDLOC_SOFT_FLOAT (cfg, ins, n, ip);
 				ins->cil_code = ip;
 				*sp++ = ins;
 				ip += 4;
@@ -7476,6 +7610,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 					UNVERIFIED;
 				ins->cil_code = ip;
+				STLOC_SOFT_FLOAT (cfg, ins, n, ip);
 				if (ins->opcode == CEE_STOBJ) {
 					NEW_LOCLOADA (cfg, ins, n);
 					handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
@@ -7564,8 +7699,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				klass = mini_get_class (method, token, generic_context);
-				if (!klass)
-					goto load_error;
+				CHECK_TYPELOAD (klass);
 				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 					MonoInst *store, *load;
 					NEW_PCONST (cfg, load, NULL);
@@ -7589,8 +7723,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				constrained_call = mono_class_get_full (image, token, generic_context);
-				if (!constrained_call)
-					goto load_error;
+				CHECK_TYPELOAD (constrained_call);
 				ip += 6;
 				break;
 			case CEE_CPBLK:
@@ -7671,8 +7804,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					token = mono_type_size (type, &ialign);
 				} else {
 					MonoClass *klass = mono_class_get_full (image, token, generic_context);
-					if (!klass)
-						goto load_error;
+					CHECK_TYPELOAD (klass);
 					mono_class_init (klass);
 					token = mono_class_value_size (klass, &align);
 				}
@@ -7754,11 +7886,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
 			} else if (t == MONO_TYPE_R4 || t == MONO_TYPE_R8) {
+#ifdef MONO_ARCH_SOFT_FLOAT
+				/* FIXME: handle init of R4 */
+#else
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
 				ins->inst_p0 = (void*)&r8_0;
 				NEW_LOCSTORE (cfg, store, i, ins);
 				MONO_ADD_INS (init_localsbb, store);
+#endif
 			} else if ((t == MONO_TYPE_VALUETYPE) || (t == MONO_TYPE_TYPEDBYREF) ||
 				   ((t == MONO_TYPE_GENERICINST) && mono_type_generic_inst_is_valuetype (ptype))) {
 				NEW_LOCLOADA (cfg, ins, i);
@@ -8851,6 +8987,58 @@ decompose_foreach (MonoInst *tree, gpointer data)
 			dec_foreach (iargs [i], cfg);
 		break;
 	}
+#ifdef MONO_ARCH_SOFT_FLOAT
+	case OP_FBEQ:
+	case OP_FBGE:
+	case OP_FBGT:
+	case OP_FBLE:
+	case OP_FBLT:
+	case OP_FBNE_UN:
+	case OP_FBGE_UN:
+	case OP_FBGT_UN:
+	case OP_FBLE_UN:
+	case OP_FBLT_UN: {
+		if ((info = mono_find_jit_opcode_emulation (tree->opcode))) {
+			MonoCompile *cfg = data;
+			MonoInst *iargs [2];
+		
+			iargs [0] = tree->inst_i0;
+			iargs [1] = tree->inst_i1;
+		
+			mono_emulate_opcode (cfg, tree, iargs, info);
+
+			dec_foreach (iargs [0], cfg);
+			dec_foreach (iargs [1], cfg);
+			break;
+		} else {
+			g_assert_not_reached ();
+		}
+		break;
+	}
+	case OP_FCEQ:
+	case OP_FCGT:
+	case OP_FCGT_UN:
+	case OP_FCLT:
+	case OP_FCLT_UN: {
+		if ((info = mono_find_jit_opcode_emulation (tree->opcode))) {
+			MonoCompile *cfg = data;
+			MonoInst *iargs [2];
+
+			/* the args are in the compare opcode ... */
+			iargs [0] = tree->inst_i0;
+			iargs [1] = tree->inst_i1;
+		
+			mono_emulate_opcode (cfg, tree, iargs, info);
+
+			dec_foreach (iargs [0], cfg);
+			dec_foreach (iargs [1], cfg);
+			break;
+		} else {
+			g_assert_not_reached ();
+		}
+		break;
+	}
+#endif
 
 	default:
 		break;
@@ -10271,7 +10459,12 @@ emit_state (MonoCompile *cfg, MBState *state, int goal)
 		state->reg2 = mono_regstate_next_int (cfg->rs);
 		break;
 	case MB_NTERM_freg:
+#ifdef MONO_ARCH_SOFT_FLOAT
+		state->reg1 = mono_regstate_next_int (cfg->rs);
+		state->reg2 = mono_regstate_next_int (cfg->rs);
+#else
 		state->reg1 = mono_regstate_next_float (cfg->rs);
+#endif
 		break;
 	default:
 #ifdef MONO_ARCH_ENABLE_EMIT_STATE_OPT
@@ -11301,11 +11494,16 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		/* Throw a type load exception if needed */
 		MonoLoaderError *error = mono_loader_get_last_error ();
 
-		mono_destroy_compile (cfg);
 		if (error) {
 			MonoException *ex = mono_loader_error_prepare_exception (error);
+			mono_destroy_compile (cfg);
 			mono_raise_exception (ex);
 		} else {
+			if (cfg->exception_ptr) {
+				MonoException *ex = mono_class_get_exception_for_failure (cfg->exception_ptr);
+				mono_destroy_compile (cfg);
+				mono_raise_exception (ex);
+			}
 			g_assert_not_reached ();
 		}
 	}
@@ -12365,6 +12563,8 @@ mini_init (const char *filename)
 	mono_register_opcode_emulation (OP_FADD, "__emul_fadd", "double double double", mono_fadd, FALSE);
 	mono_register_opcode_emulation (OP_FMUL, "__emul_fmul", "double double double", mono_fmul, FALSE);
 	mono_register_opcode_emulation (OP_FNEG, "__emul_fneg", "double double", mono_fneg, FALSE);
+	mono_register_opcode_emulation (CEE_CONV_R8, "__emul_conv_r8", "double int32", mono_conv_to_r8, FALSE);
+	mono_register_opcode_emulation (CEE_CONV_R4, "__emul_conv_r4", "double int32", mono_conv_to_r4, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", "double double", mono_fconv_r4, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", "int8 double", mono_fconv_i1, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", "int16 double", mono_fconv_i2, FALSE);
@@ -12382,6 +12582,16 @@ mini_init (const char *filename)
 	mono_register_opcode_emulation (OP_FBGT_UN, "__emul_fcmp_gt_un", "uint32 double double", mono_fcmp_gt_un, FALSE);
 	mono_register_opcode_emulation (OP_FBLE_UN, "__emul_fcmp_le_un", "uint32 double double", mono_fcmp_le_un, FALSE);
 	mono_register_opcode_emulation (OP_FBGE_UN, "__emul_fcmp_ge_un", "uint32 double double", mono_fcmp_ge_un, FALSE);
+
+	mono_register_opcode_emulation (OP_FCEQ, "__emul_fcmp_ceq", "uint32 double double", mono_fceq, FALSE);
+	mono_register_opcode_emulation (OP_FCGT, "__emul_fcmp_cgt", "uint32 double double", mono_fcgt, FALSE);
+	mono_register_opcode_emulation (OP_FCGT_UN, "__emul_fcmp_cgt_un", "uint32 double double", mono_fcgt_un, FALSE);
+	mono_register_opcode_emulation (OP_FCLT, "__emul_fcmp_clt", "uint32 double double", mono_fclt, FALSE);
+	mono_register_opcode_emulation (OP_FCLT_UN, "__emul_fcmp_clt_un", "uint32 double double", mono_fclt_un, FALSE);
+
+	register_icall (mono_fload_r4, "mono_fload_r4", "double ptr", FALSE);
+	register_icall (mono_fstore_r4, "mono_fstore_r4", "void double ptr", FALSE);
+	register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", "uint32 double", FALSE);
 #endif
 
 #if SIZEOF_VOID_P == 4

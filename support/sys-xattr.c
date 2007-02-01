@@ -3,8 +3,10 @@
  *
  * Authors:
  *   Daniel Drake (dsd@gentoo.org)
+ *   Jonathan Pryor (jonpryor@vt.edu)
  *
  * Copyright (C) 2005 Daniel Drake
+ * Copyright (C) 2006 Jonathan Pryor
  */
 
 #include <config.h>
@@ -327,7 +329,7 @@ bsd_flistxattr (int fd, void *list, mph_size_t size)
 //
 
 gint32
-Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_setxattr (const char *path, const char *name, unsigned char *value, mph_size_t size, gint32 flags)
 {
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
@@ -361,7 +363,7 @@ Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mp
 
 #if !__APPLE__
 gint32
-Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, void *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, unsigned char *value, mph_size_t size, gint32 flags)
 {
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
@@ -391,7 +393,7 @@ Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, void *value, m
 #endif /* !__APPLE__ */
 
 gint32
-Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_fsetxattr (int fd, const char *name, unsigned char *value, mph_size_t size, gint32 flags)
 {
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
@@ -424,7 +426,7 @@ Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t 
 }
 
 mph_ssize_t
-Mono_Posix_Syscall_getxattr (const char *path, const char *name, void *value, mph_size_t size)
+Mono_Posix_Syscall_getxattr (const char *path, const char *name, unsigned char *value, mph_size_t size)
 {
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
@@ -451,7 +453,7 @@ Mono_Posix_Syscall_getxattr (const char *path, const char *name, void *value, mp
 
 #if !__APPLE__
 mph_ssize_t
-Mono_Posix_Syscall_lgetxattr (const char *path, const char *name, void *value, mph_size_t size)
+Mono_Posix_Syscall_lgetxattr (const char *path, const char *name, unsigned char *value, mph_size_t size)
 {
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
@@ -474,7 +476,7 @@ Mono_Posix_Syscall_lgetxattr (const char *path, const char *name, void *value, m
 #endif /* !__APPLE__ */
 
 mph_ssize_t
-Mono_Posix_Syscall_fgetxattr (int fd, const char *name, void *value, mph_size_t size)
+Mono_Posix_Syscall_fgetxattr (int fd, const char *name, unsigned char *value, mph_size_t size)
 {
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
@@ -500,15 +502,15 @@ Mono_Posix_Syscall_fgetxattr (int fd, const char *name, void *value, mph_size_t 
 }
 
 mph_ssize_t
-Mono_Posix_Syscall_listxattr (const char *path, void *list, mph_size_t size)
+Mono_Posix_Syscall_listxattr (const char *path, unsigned char *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
 #ifdef EA_UNIX
 #if __APPLE__
-	return listxattr (path, list, (size_t) size, 0);
+	return listxattr (path, (char*) list, (size_t) size, 0);
 #else /* __APPLE__ */
-	return listxattr (path, list, (size_t) size);
+	return listxattr (path, (char*) list, (size_t) size);
 #endif /* __APPLE__ */
 #else /* EA_UNIX */
 	return bsd_listxattr (path, list, size);
@@ -517,12 +519,12 @@ Mono_Posix_Syscall_listxattr (const char *path, void *list, mph_size_t size)
 
 #if !__APPLE__
 mph_ssize_t
-Mono_Posix_Syscall_llistxattr (const char *path, void *list, mph_size_t size)
+Mono_Posix_Syscall_llistxattr (const char *path, unsigned char *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
 #ifdef EA_UNIX
-	return llistxattr (path, list, (size_t) size);
+	return llistxattr (path, (char*) list, (size_t) size);
 #else /* EA_UNIX */
 	return bsd_llistxattr (path, list, size);
 #endif /* EA_UNIX */
@@ -530,15 +532,15 @@ Mono_Posix_Syscall_llistxattr (const char *path, void *list, mph_size_t size)
 #endif /* !__APPLE__ */
 
 mph_ssize_t
-Mono_Posix_Syscall_flistxattr (int fd, void *list, mph_size_t size)
+Mono_Posix_Syscall_flistxattr (int fd, unsigned char *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
 #ifdef EA_UNIX
 #if __APPLE__
-	return flistxattr (fd, list, (size_t) size, 0);
+	return flistxattr (fd, (char*) list, (size_t) size, 0);
 #else /* __APPLE__ */
-	return flistxattr (fd, list, (size_t) size);
+	return flistxattr (fd, (char*) list, (size_t) size);
 #endif /* __APPLE__ */
 #else /* EA_UNIX */
 	return bsd_flistxattr (fd, list, size);

@@ -4,20 +4,16 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #include <sys/types.h>
 #include <utime.h>
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Utimbuf {
-	/* time_t */ mph_time_t actime;   /* access time */
-	/* time_t */ mph_time_t modtime;  /* modification time */
-};
 
 gint32
 Mono_Posix_Syscall_utime (const char *filename, struct Mono_Posix_Utimbuf *buf, 

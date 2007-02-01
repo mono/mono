@@ -1,4 +1,3 @@
-<<<<<<< .working
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Fix problem with previous change.
@@ -13,7 +12,13 @@
 
 	* libtest.c: Fix merge problem.
 
-=======
+2006-11-02  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile.am: Fix path to mkbundle so test passes
+
+2006-10-31  Massimiliano Mantione  <massi@ximian.com>
+	* bug-79684.2.cs, Makefile.am: Added test for bug 79684.
+
 2006-10-20  Jonathan Chambers  <joncham@gmail.com>
 
 	* cominterop.cs: Added more tests for Variant.

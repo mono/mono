@@ -1,3 +1,95 @@
+2006-11-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Flush (removes warnings due to _cnm_return_val_if_overflow()).
+
+2006-11-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Flush (fixes FilePermissions conversion, allowing Syscall.stat() to
+	  work as expected).
+
+2006-11-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mph.h: Add macro for XATTR_AUTO, so that XattrFlags mapping works (as
+	  XATTR_AUTO is a value which frequently isn't definedy by any OS, yet it
+	  has the value 0, a default value which is supported by most OS's).
+
+2006-11-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Revert addition of L_SET et al; this breaks the Win32 build.
+	* map.c: Revert addition of L_SET et al; this breaks the Win32 build.
+	* mph.h: Add macros for L_SET, L_INCR, and L_XTND for non-Win32 platforms.
+
+2006-11-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Add implementation macros for L_SET, L_INCR, and L_XTND.
+	* map.c: Make sure that L_SET, L_INCR, and L_XTND are defined.  Lets
+	  Mono_Posix_FromSeekFlags() work on Solaris, fixing Gnome Bugzilla 370081.
+
+2006-11-01  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* stdio.c: Some BSDs define clearerr(3) as a macro, so we need to cast
+	  `stream' to a `FILE*' to avoid derefing a `void*'.
+	* sys-statvfs.c: Build fix to support OS X 10.3.9 & systems w/o statvfs(2).
+
+2006-11-01  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mph.h: Add fallback typedefs for blkcnt_t, blksize_t, suseconds_t so that
+	  map.c can rely on their presence.  (Some versions of OS X don't provide
+	  these typedefs.)
+
+2006-10-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Improve handling of [Flags] enumerations which mix bitfields and
+	  non-bitfield values (i.e. FilePermissions and S_IFREG, which isn't a bit
+	  field, along with a few other FilePermissions values).  Fixes #79161.
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Enclose structure conversion functions with HAVE_<<STRUCT NAME>>,
+	  so that Unix-specific structures don't break the Win32 build.
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* create-native-map.exe: Remove.  Just grab a new copy whenever we need to
+	  refresh map.[ch].
+	* Makefile.am: Remove `update-create-native-map' target, and just have the
+	  `refresh' target grab the latest create-native-map.exe program.
+	* map.c: Flush (remove fallback to <inttypes.h> constants).
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* create-native-map.exe: Update; Adds support for integral limit fallback.
+	* map.c: Flush (adds integral limits fallback, so that if G_MININT8 doesn't
+	  exist we can fallback sanely instead of breaking the build).
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Add "mph.h" to the generated code for map.c, so that
+	  EOVERFLOW is defined on Win32.
+	* map.c: Flush (adds #include "mph.h").
+
+2006-10-25  Wade berrier  <wberrier@novell.com>
+
+	* Makefile.am: remove map-icalls.h so make dist succeeds
+
+2006-10-24  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c, errno.c, fcntl.c, fstab.c, grp.c, macros.c, pwd.c, signal.c, 
+	  stdio.c, stdlib.c, string.c, sys-mman.c, sys-sendfile.c, sys-stat.c, 
+	  sys-statvfs.c, sys-time.c, sys-xattr.c syslog.c, time.c, unistd.c, 
+	  utime.c: Remove structure definitions, and use the
+	  create-native-map generated definitions within map.h.  Update function
+	  prototypes to match current map.h declarations.
+	* map.c, map.h: Flush (current create-native-map output).
+	* mph.h: Don't include "map-icalls.h"; "icalls" are now in map.h.
+	* create-native-map.exe: Added; cached version of create-native-map.exe
+	  used to update map.c, map.h.  (create-native-map.exe source within
+	  mono-tools/create-native-map.)
+	* Makefile.am: Added update-create-native-map target to update 
+	  create-native-map.exe using pkg-config & the create-native-map.pc package. 
+		Use create-native-map.exe to generate map.* files instead of make-map.exe.
+	* sys-statvfs.c: Add Mono_Posix_ToStatvfs, Mono_Posix_FromStatvfs exports.
+
 2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Remove CRYPT_LIBS use; we no longer rely on libcrypt.

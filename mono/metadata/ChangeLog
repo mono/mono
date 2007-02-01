@@ -1,3 +1,134 @@
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (get_file_attributes): If the file is a symlink try
+	and get the stat data for the target, but also add the
+	FILE_ATTRIBUTE_REPARSE_POINT flag.  This is an attempt to follow
+	the specs for the windows symlink support, but will probably have
+	to be reworked when I have test data from a vista machine.  Fixes
+	bug 79887.
+
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* gc.c (mono_domain_finalize): 
+	* marshal.c (mono_delegate_begin_invoke): 
+	* threadpool.c (socket_io_init, mono_thread_pool_init)
+	(mono_thread_pool_finish): 
+	* monitor.c (mono_monitor_try_enter_internal): 
+	* threads.c (mono_thread_resume, mono_thread_init)
+	(mono_thread_suspend_all_other_threads)
+	(mono_thread_execute_interruption): 
+	* appdomain.c (mono_domain_unload): Check for NULL error returns
+	from CreateThread(), CreateEvent() and CreateSemaphore().  See bug
+	75733.
+
+2006-11-11  Miguel de Icaza  <miguel@novell.com>
+
+	* process.c
+	(ves_icall_System_Diagnostics_Process_CreateProcess_internal):
+	Only close the handle if the value of the handle is not
+	INVALID_HANDLE_VALUE.  This just makes the process a bit more
+	robust.
+
+	Improvement for #75733, so that we do not run into this problem. 
+
+	
+	* assembly.c (check_path_env, check_extra_gac_path_env): Do not
+	include empty directories from MONO_PATH or MONO_GAC_PREFIX in our
+	internal variables.  Fixes #79462 
+	
+
+2006-11-09  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
+	Use poll() not select().  Fixes bug 79397.
+
+2006-11-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79872
+	* assembly.c (mono_assembly_load_from_full): Check that the given
+	image has an assembly manifest.
+
+2006-11-09  Ankit Jain  <jankit@novell.com>
+
+	* tabledefs.h (ASSEMBLYREF_RETARGETABLE_FLAG):
+	(ASSEMBLYREF_ENABLEJITCOMPILE_TRACKING_FLAG):
+	(ASSEMBLYREF_DISABLEJITCOMPILE_OPTIMIZER_FLAG): Add AssemblyRef flags.
+
+2006-11-07  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Dns_GetHostByAddr_internal):
+	Put the old resolver behaviour back for pre-2.0 profiles.
+
+Tue Nov 7 16:56:24 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: precise GC and locking fixes.
+
+Tue Nov 7 11:02:42 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: don't load types that have an explicit unaligned
+	managed reference. Provide better info in the TypeLoad exception.
+	Part of the fix for bug #79744.
+	* object.c: use the correct check for class type load issues.
+
+Mon Nov 6 17:07:43 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: enforce alignment of fields with managed references
+	even when Pack=1 is forced by the user (bug #77788).
+
+2006-11-03  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Dns_GetHostByAddr_internal):
+	If the address reverse lookup fails, return it as the hostname
+	anyway.  Fixes bug 79721.
+
+2006-11-03  Dick Porter  <dick@ximian.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_SpinWait_internal):
+	Fix build on Windows.
+
+2006-11-02  Dick Porter  <dick@ximian.com>
+
+	* icall-def.h: 
+	* object-internals.h: 
+	* exception.c (mono_get_exception_thread_interrupted): 
+	* threads.c: Implement Thread.Interrupt and Thread.SpinWait.
+	Fixes bug 74525.
+
+	* monitor.c (ves_icall_System_Threading_Monitor_Monitor_wait):
+	Check for pending Thread.Interrupt.
+
+2006-10-27  Massimiliano Mantione  <massi@ximian.com>
+	* loader.c: Fixed bug 79684.
+
+2006-10-27  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (get_file_attributes): Force symlinks to directories
+	to be returned as a regular file.  Fixes bug 79733.
+2006-10-26  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Open): If we're calling
+	CreateFile to open a directory then we need to set the
+	FILE_FLAG_BACKUP_SEMANTICS flag.  Fixes bug 75285.
+
+2006-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_method_get_object): Cache the MonoMethod class and its
+	friends.
+
+Mon Oct 23 03:06:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgengc.c: small cleanup of timer code.
+
+Mon Oct 23 02:49:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: fix some warnings and start adding support for
+	complete object removal on domain unload.
+
+2006-10-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* assembly.c: build_assembly_name should not consider a version
+	number without build or revision number invalid. Fixes bug #79715.
+
 2006-10-18  Jonathan Chambers  <joncham@gmail.com>
 
 	* icall.c: Have ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString

@@ -18,7 +18,7 @@ RUNTIME2 = $(with_mono_path2) $(top_builddir)/runtime/mono-wrapper
 
 MKBUNDLE = \
 	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
-	$(RUNTIME) $(mcs_topdir)/tools/mkbundle/mkbundle.exe
+	$(RUNTIME) $(mcs_topdir)/class/lib/default/mkbundle.exe
 
 MCS = $(RUNTIME) $(mcs_topdir)/class/lib/default/mcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
 GMCS = $(RUNTIME2) $(mcs_topdir)/class/lib/net_2_0/gmcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
@@ -45,6 +45,7 @@ TEST_CS_SRC=			\
 	create-instance.cs	\
 	field-layout.cs		\
 	pack-layout.cs		\
+	pack-bug.cs		\
 	hash-table.cs		\
 	test-ops.cs		\
 	obj.cs			\
@@ -69,6 +70,7 @@ TEST_CS_SRC=			\
 	exception14.cs		\
 	exception15.cs		\
 	exception16.cs		\
+	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
 	typeof-ptr.cs		\
@@ -257,9 +259,10 @@ TEST_IL_SRC=			\
 	static-fields-nonconst.il	\
 	reload-at-bb-end.il	\
 	test-enum-indstoreil.il	\
+	filter-bug.il		\
 	even-odd.il
 
-TEST_CS2_SRC = interlocked-2.2.cs pinvoke-2.2.cs
+TEST_CS2_SRC = interlocked-2.2.cs pinvoke-2.2.cs bug-79684.2.cs
 TEST_IL2_SRC = find-method.2.il
 
 TESTSI_CS=$(TEST_CS_SRC:.cs=.exe)

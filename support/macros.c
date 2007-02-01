@@ -81,18 +81,18 @@ int helper_Mono_Posix_Stat(const char *filename, int dereference,
 	return 0;
 }
 
-const char *helper_Mono_Posix_GetUserName(int uid) {
+char *helper_Mono_Posix_GetUserName(int uid) {
 	struct passwd *p = getpwuid(uid);
 	if (p == NULL) return NULL;
 	return strdup (p->pw_name);
 }
-const char *helper_Mono_Posix_GetGroupName(int gid) {
+char *helper_Mono_Posix_GetGroupName(int gid) {
 	struct group *p = getgrgid(gid);
 	if (p == NULL) return NULL;
 	return strdup (p->gr_name);
 }
 
-const char *helper_Mono_Posix_readdir(void *dir) {
+char *helper_Mono_Posix_readdir(void *dir) {
 	struct dirent* e = readdir((DIR*) dir);
 	if (e == NULL) return NULL;
 	return strdup (e->d_name);

@@ -69,6 +69,27 @@ test_split ()
 	if (v == NULL)
 		return FAILED ("g_strsplit returned NULL");
 	g_strfreev (v);
+
+	v = g_strsplit ("/home/miguel/dingus", "/", 0);
+	if (v [0][0] != 0)
+		return FAILED ("Got a non-empty first element");
+	g_strfreev (v);
+
+	v = g_strsplit ("appdomain1, Version=0.0.0.0, Culture=neutral", ",", 4);
+	if (strcmp (v [0], "appdomain1") != 0)
+		return FAILED ("Invalid value");
+	
+	if (strcmp (v [1], " Version=0.0.0.0") != 0)
+		return FAILED ("Invalid value");
+	
+	if (strcmp (v [2], " Culture=neutral") != 0)
+		return FAILED ("Invalid value");
+
+	if (v [3] != NULL)
+		return FAILED ("Expected only 3 elements");
+	
+	g_strfreev (v);
+
 	return OK;
 }
 
@@ -289,6 +310,8 @@ test_strdelimit ()
 	return OK;
 }
 
+#define TEXT "0123456789"
+
 RESULT
 test_strlcpy ()
 {
@@ -323,6 +346,13 @@ test_strlcpy ()
 	if (0 != strcmp (dest, src))
 		return FAILED ("Src and dest not equal 2");
 	g_free (dest);
+
+	/* This is a test for g_filename_from_utf8, even if it does not look like it */
+	dest = g_filename_from_utf8 (TEXT, strlen (TEXT), NULL, NULL, NULL);
+	if (0 != strcmp (dest, TEXT))
+		return FAILED ("problem [%s] and [%s]", dest, TEXT);
+	g_free (dest);
+	
 	return OK;
 }
 

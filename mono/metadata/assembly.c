@@ -155,7 +155,7 @@ static void
 check_path_env (void)
 {
 	const char *path;
-	char **splitted;
+	char **splitted, **dest;
 	
 	path = g_getenv ("MONO_PATH");
 	if (!path)
@@ -164,7 +164,14 @@ check_path_env (void)
 	splitted = g_strsplit (path, G_SEARCHPATH_SEPARATOR_S, 1000);
 	if (assemblies_path)
 		g_strfreev (assemblies_path);
-	assemblies_path = splitted;
+	assemblies_path = dest = splitted;
+	while (*splitted){
+		if (**splitted)
+			*dest++ = *splitted;
+		splitted++;
+	}
+	*dest = *splitted;
+	
 	if (g_getenv ("MONO_DEBUG") == NULL)
 		return;
 
@@ -179,7 +186,7 @@ check_path_env (void)
 static void
 check_extra_gac_path_env (void) {
 	const char *path;
-	char **splitted;
+	char **splitted, **dest;
 	
 	path = g_getenv ("MONO_GAC_PREFIX");
 	if (!path)
@@ -188,7 +195,14 @@ check_extra_gac_path_env (void) {
 	splitted = g_strsplit (path, G_SEARCHPATH_SEPARATOR_S, 1000);
 	if (extra_gac_paths)
 		g_strfreev (extra_gac_paths);
-	extra_gac_paths = splitted;
+	extra_gac_paths = dest = splitted;
+	while (*splitted){
+		if (**splitted)
+			*dest++ = *splitted;
+		splitted++;
+	}
+	*dest = *splitted;
+	
 	if (g_getenv ("MONO_DEBUG") == NULL)
 		return;
 
@@ -1171,11 +1185,12 @@ absolute_dir (const gchar *filename)
 	list = g_list_reverse (list);
 
 	/* Ignores last data pointer, which should be the filename */
-	for (tmp = list; tmp && tmp->next != NULL; tmp = tmp->next)
+	for (tmp = list; tmp && tmp->next != NULL; tmp = tmp->next){
 		if (tmp->data)
 			g_string_append_printf (result, "%s%c", (char *) tmp->data,
 								G_DIR_SEPARATOR);
-	
+	}
+
 	res = result->str;
 	g_string_free (result, FALSE);
 	g_list_free (list);
@@ -1379,6 +1394,13 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	char *base_dir;
 	GList *loading;
 	GHashTable *ass_loading;
+
+	if (!image->tables [MONO_TABLE_ASSEMBLY].rows) {
+		/* 'image' doesn't have a manifest -- maybe someone is trying to Assembly.Load a .netmodule */
+		*status = MONO_IMAGE_IMAGE_INVALID;
+		return NULL;
+	}
+
 
 #if defined (PLATFORM_WIN32)
 	{
@@ -1587,18 +1609,29 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 {
 	gint major, minor, build, revision;
 	gint len;
+	gint version_parts;
 	gchar *pkey, *pkeyptr, *encoded, tok [8];
 
 	memset (aname, 0, sizeof (MonoAssemblyName));
 
 	if (version) {
-		if (sscanf (version, "%u.%u.%u.%u", &major, &minor, &build, &revision) != 4)
+		version_parts = sscanf (version, "%u.%u.%u.%u", &major, &minor, &build, &revision);
+		if (version_parts < 2 || version_parts > 4)
 			return FALSE;
 
+		/* FIXME: we should set build & revision to -1 (instead of 0)
+		if these are not set in the version string. That way, later on,
+		we can still determine if these were specified.	*/
 		aname->major = major;
 		aname->minor = minor;
-		aname->build = build;
-		aname->revision = revision;
+		if (version_parts >= 3)
+			aname->build = build;
+		else
+			aname->build = 0;
+		if (version_parts == 4)
+			aname->revision = revision;
+		else
+			aname->revision = 0;
 	}
 	
 	aname->name = g_strdup (name);

@@ -16,18 +16,10 @@
 #include <string.h>
 #include <unistd.h>	/* for setgroups on Mac OS X */
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Syscall__Group {
-	/* string */  char     *gr_name;
-	/* string */  char     *gr_passwd;
-	/* gid_t  */  mph_gid_t gr_gid;
-	/* int    */  int       _gr_nmem_;
-	/* string */  char    **gr_mem;
-	/* string */  char     *_gr_buf_;  /* holds all but gr_mem */
-};
 
 static void
 count_members (char **gr_mem, int *count, size_t *mem)
@@ -56,7 +48,7 @@ copy_group (struct Mono_Posix_Syscall__Group *to, struct group *from)
 {
 	size_t nlen, plen, buflen;
 	int i, count;
-	char *cur;
+	char *cur, **to_mem;
 
 	to->gr_gid    = from->gr_gid;
 
@@ -83,7 +75,7 @@ copy_group (struct Mono_Posix_Syscall__Group *to, struct group *from)
 
 	to->_gr_nmem_ = count;
 	cur = to->_gr_buf_ = (char*) malloc (buflen);
-	to->gr_mem = (char **) malloc (sizeof(char*)*(count+1));
+	to_mem = to->gr_mem = malloc (sizeof(char*)*(count+1));
 	if (to->_gr_buf_ == NULL || to->gr_mem == NULL) {
 		free (to->_gr_buf_);
 		free (to->gr_mem);
@@ -96,10 +88,10 @@ copy_group (struct Mono_Posix_Syscall__Group *to, struct group *from)
 	cur += (plen + 1);
 
 	for (i = 0; i != count; ++i) {
-		to->gr_mem[i] = strcpy (cur, from->gr_mem[i]);
+		to_mem [i] = strcpy (cur, from->gr_mem[i]);
 		cur += (strlen (from->gr_mem[i])+1);
 	}
-	to->gr_mem[i] = NULL;
+	to_mem [i] = NULL;
 
 	return 0;
 }

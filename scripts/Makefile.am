@@ -46,9 +46,11 @@ scripts_1_0_umask = \
 scripts_2_0 = \
 	gmcs			\
 	ilasm2			\
+	mkbundle2		\
 	monop2 			\
 	resgen2			\
 	wsdl2			\
+	sgen			\
 	xbuild
 
 scripts_service = mono-service mono-service2

@@ -173,6 +173,7 @@ typedef struct {
 void    g_error_free (GError *error);
 GError *g_error_new  (gpointer domain, gint code, const char *format, ...);
 void    g_set_error  (GError **err, gpointer domain, gint code, const gchar *format, ...);
+void    g_propagate_error (GError **dest, GError *src);
 
 /*
  * Strings utility
@@ -190,8 +191,11 @@ gboolean     g_str_has_prefix (const gchar *str, const gchar *prefix);
 gboolean     g_str_has_suffix (const gchar *str, const gchar *suffix);
 guint        g_strv_length    (gchar **str_array);
 gchar       *g_strjoin        (const gchar *separator, ...);
+gchar       *g_strjoinv       (const gchar *separator, gchar **str_array);
 gchar       *g_strchug        (gchar *str);
 gchar       *g_strchomp       (gchar *str);
+void         g_strdown        (gchar *string);
+
 gchar       *g_strdelimit     (gchar *string, const gchar *delimiters, gchar new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
 
@@ -214,16 +218,13 @@ gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ..
 gsize       g_strlcpy          (gchar *dest, const gchar *src, gsize dest_size);
 #endif
 
-gchar  *g_ascii_strdown     (const gchar *str, gssize len);
-gint    g_ascii_strncasecmp (const gchar *s1, const gchar *s2, gsize n);
-#define g_ascii_isspace(c)  (isspace (c) != 0)
-#define g_ascii_isalpha(c)  (isalpha (c) != 0)
-#define g_ascii_isprint(c)  (isprint (c) != 0)
-#define g_ascii_isxdigit(c) (isxdigit (c) != 0)
-#define g_ascii_xdigit_value(c) ((isxdigit (c) == 0) ? -1 : \
-					((c >= '0' && c <= '9') ? (c - '0') : \
-					 	((c >= 'a' && c <= 'f') ? (c - 'a' + 10) : \
-						 (c - 'A' + 10))))
+gchar  *g_ascii_strdown      (const gchar *str, gssize len);
+gint    g_ascii_strncasecmp  (const gchar *s1, const gchar *s2, gsize n);
+gint    g_ascii_xdigit_value (gchar c);
+#define g_ascii_isspace(c)   (isspace (c) != 0)
+#define g_ascii_isalpha(c)   (isalpha (c) != 0)
+#define g_ascii_isprint(c)   (isprint (c) != 0)
+#define g_ascii_isxdigit(c)  (isxdigit (c) != 0)
 
 /* FIXME: g_strcasecmp supports utf8 unicode stuff */
 #define g_strcasecmp strcasecmp
@@ -300,7 +301,6 @@ GSList *g_slist_insert_before (GSList        *list,
 			       gpointer       data);
 GSList *g_slist_sort          (GSList        *list,
 			       GCompareFunc   func);
-
 #define g_slist_next(slist) ((slist) ? (((GSList *) (slist))->next) : NULL)
 
 typedef struct _GList GList;
@@ -683,7 +683,7 @@ gboolean         g_markup_parse_context_end_parse (GMarkupParseContext *context,
 /*
  * Character set conversion
  */
-gboolean  g_get_charset        (char **charset);
+gboolean  g_get_charset        (G_CONST_RETURN char **charset);
 gchar    *g_locale_to_utf8     (const gchar *opsysstring, gssize len,
 				gsize *bytes_read, gsize *bytes_written,
 				GError **error);

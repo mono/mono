@@ -11,6 +11,7 @@
 #include <time.h>
 #include <errno.h>
 
+#include "map.h"
 #include "mph.h"
 #include <glib.h>
 

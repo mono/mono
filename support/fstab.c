@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+#include "map.h"
 #include "mph.h"
 
 #if defined (HAVE_CHECKLIST_H)
@@ -26,18 +27,6 @@
 #endif /* def HAVE_SYS_VFSTAB_H */
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Syscall__Fstab {
-	char  *fs_spec;     /* block device name */
-	char  *fs_file;     /* mount point */
-	char  *fs_vfstype;	/* filesystem type */
-	char  *fs_mntops;   /* mount options */
-	char  *fs_type;     /* rw/rq/ro/sw/xx option */
-	int    fs_freq;     /* dump frequency, in days */
-	int    fs_passno;   /* pass number on parallel dump */
-
-	char  *_fs_buf_;
-};
 
 #ifdef HAVE_CHECKLIST_H
 
@@ -245,10 +234,11 @@ getfsspec (const char *special_file)
 
 #if defined (HAVE_FSTAB_H) || defined (HAVE_CHECKPOINT_H) || defined (HAVE_SYS_VFSTAB_H)
 
-void
+int
 Mono_Posix_Syscall_endfsent (void)
 {
 	endfsent ();
+	return 0;
 }
 
 gint32
