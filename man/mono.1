@@ -87,6 +87,8 @@ Pre compilation is just a mechanism to reduce startup time, increase
 code sharing across multiple mono processes and avoid just-in-time
 compilation program startup costs.  The original assembly must still
 be present, as the metadata is contained there.
+.Sp
+For more information about AOT, see: http://www.mono-project.com/AOT
 .TP
 .I "--config filename"
 Load the specified configuration file instead of the default one(s).
@@ -173,9 +175,13 @@ traced.
 The trace can be customized to include or exclude methods, classes or
 assemblies.  A trace expression is a comma separated list of targets,
 each target can be prefixed with a minus sign to turn off a particular
-target.  The words `program' and `all' have special meaning.
-`program' refers to the main program being executed, and `all' means
-all the method calls. 
+target.  The words `program', `all' and `disabled' have special
+meaning.  `program' refers to the main program being executed, and
+`all' means all the method calls.
+.Sp
+The `disabled' option is used to start up with tracing disabled.  It
+can be enabled at a later point in time in the program by sending the
+SIGUSR2 signal to the runtime.
 .Sp
 Assemblies are specified by their name, for example, to trace all
 calls in the System assembly, use:
@@ -468,6 +474,9 @@ Typical output looks like this:
 .fi
 .PP
 The offsets displayed are IL offsets.
+.PP
+A more powerful coverage tool is available in the module `monocov'.
+See the monocov(1) man page for details.
 .SH DEBUGGING
 It is possible to obtain a stack trace of all the active threads in
 Mono by sending the QUIT signal to Mono, you can do this from the
@@ -902,6 +911,10 @@ http://www.mono-project.com/Mailing_Lists
 .SH WEB SITE
 http://www.mono-project.com
 .SH SEE ALSO
-.BR certmgr(1), mcs(1), mint(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
+.PP
+certmgr(1), mcs(1), monocov(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
+.PP
+For more information on AOT:
+http://www.mono-project.com/AOT
 .PP
 For ASP.NET-related documentation, see the xsp(1) manual page

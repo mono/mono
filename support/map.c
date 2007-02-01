@@ -2258,31 +2258,31 @@ int Mono_Posix_FromFilePermissions (unsigned int x, unsigned int *r)
 #endif /* ndef DEFFILEMODE */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFBLK)
 #ifdef S_IFBLK
-		{*r = S_IFBLK; return 0;}
+		*r |= S_IFBLK;
 #else /* def S_IFBLK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFBLK */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFCHR)
 #ifdef S_IFCHR
-		{*r = S_IFCHR; return 0;}
+		*r |= S_IFCHR;
 #else /* def S_IFCHR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFCHR */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFDIR)
 #ifdef S_IFDIR
-		{*r = S_IFDIR; return 0;}
+		*r |= S_IFDIR;
 #else /* def S_IFDIR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFDIR */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFIFO)
 #ifdef S_IFIFO
-		{*r = S_IFIFO; return 0;}
+		*r |= S_IFIFO;
 #else /* def S_IFIFO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFIFO */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFLNK)
 #ifdef S_IFLNK
-		{*r = S_IFLNK; return 0;}
+		*r |= S_IFLNK;
 #else /* def S_IFLNK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFLNK */
@@ -2294,13 +2294,13 @@ int Mono_Posix_FromFilePermissions (unsigned int x, unsigned int *r)
 #endif /* ndef S_IFMT */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFREG)
 #ifdef S_IFREG
-		{*r = S_IFREG; return 0;}
+		*r |= S_IFREG;
 #else /* def S_IFREG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFREG */
 	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFSOCK)
 #ifdef S_IFSOCK
-		{*r = S_IFSOCK; return 0;}
+		*r |= S_IFSOCK;
 #else /* def S_IFSOCK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFSOCK */

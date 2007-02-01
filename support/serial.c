@@ -11,6 +11,7 @@
 #include <string.h>
 #include <sys/poll.h>
 #include <sys/ioctl.h>
+#include <errno.h>
 
 #include <glib.h>
 
@@ -322,7 +323,7 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 }
 
 gboolean
-poll_serial (int fd, gint32 *error)
+poll_serial (int fd, gint32 *error, int timeout)
 {
 	struct pollfd pinfo;
 	
@@ -332,7 +333,10 @@ poll_serial (int fd, gint32 *error)
 	pinfo.events = POLLIN;
 	pinfo.revents = 0;
 
-	if (poll (&pinfo, 1, 0) == -1) {
+	if (poll (&pinfo, 1, timeout) == -1) {
+		/* EINTR is an OK condition, we should not throw in the upper layer an IOException */
+		if (errno == EINTR)
+			return FALSE;
 		*error = -1;
 		return FALSE;
 	}

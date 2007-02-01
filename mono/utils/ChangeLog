@@ -1,3 +1,13 @@
+2006-11-25  Miguel de Icaza  <miguel@novell.com>
+
+	* strtod.c: Upgrade this implementation to the one from:
+	http://www.netlib.org/fp/
+
+	Fixed a few warnings, and added the header thta we had to
+	autodetect the FPU setup to use.
+
+	This should fix the hang when running the corlib test suite. 
+
 2006-10-18  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-ehash.c (mono_g_hash_table_destroy): Use mg_free, not

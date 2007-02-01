@@ -238,13 +238,35 @@ get_method_from_ip (void *ip)
 	return res;
 }
 
+/** 
+ * mono_pmip:
+ * @ip: an instruction pointer address
+ *
+ * This method is used from a debugger to get the name of the
+ * method at address @ip.   This routine is typically invoked from
+ * a debugger like this:
+ *
+ * (gdb) print mono_pmip ($pc)
+ *
+ * Returns: the name of the method at address @ip.
+ */
 G_GNUC_UNUSED char *
 mono_pmip (void *ip)
 {
 	return get_method_from_ip (ip);
 }
 
-/* debug function */
+/** 
+ * mono_print_method_from_ip
+ * @ip: an instruction pointer address
+ *
+ * This method is used from a debugger to get the name of the
+ * method at address @ip.
+ *
+ * This prints the name of the method at address @ip in the standard
+ * output.  Unlike mono_pmip which returns a string, this routine
+ * prints the value on the standard output. 
+ */
 void
 mono_print_method_from_ip (void *ip)
 {
@@ -1436,11 +1458,15 @@ type_from_op (MonoInst *ins) {
 			ins->opcode = OP_LCOMPARE;
 		return;
 	case OP_CEQ:
+		ins->type = bin_comp_table [ins->inst_i0->type] [ins->inst_i1->type] ? STACK_I4: STACK_INV;
+		ins->opcode += ceqops_op_map [ins->inst_i0->type];
+		return;
+		
 	case OP_CGT:
 	case OP_CGT_UN:
 	case OP_CLT:
 	case OP_CLT_UN:
-		ins->type = bin_comp_table [ins->inst_i0->type] [ins->inst_i1->type] ? STACK_I4: STACK_INV;
+		ins->type = (bin_comp_table [ins->inst_i0->type] [ins->inst_i1->type] & 1) ? STACK_I4: STACK_INV;
 		ins->opcode += ceqops_op_map [ins->inst_i0->type];
 		return;
 	/* unops */
@@ -11767,6 +11793,11 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	return runtime_invoke (obj, params, exc, compiled_method);
 }
 
+#ifdef MONO_GET_CONTEXT
+#define GET_CONTEXT MONO_GET_CONTEXT
+#endif
+
+#ifndef GET_CONTEXT
 #ifdef PLATFORM_WIN32
 #define GET_CONTEXT \
 	struct sigcontext *ctx = (struct sigcontext*)_dummy;
@@ -11781,6 +11812,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 #define GET_CONTEXT \
 	void **_p = (void **)&_dummy; \
 	struct sigcontext *ctx = (struct sigcontext *)++_p;
+#endif
 #endif
 #endif
 

@@ -1,3 +1,48 @@
+Mon Nov 27 13:12:17 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: fix arm compare and exchange (bug #78500).
+
+2006-11-23  Dick Porter  <dick@ximian.com>
+
+	* process-private.h (struct _WapiHandle_process): Add 'waited'
+	parameter
+
+	* processes.c (process_wait): Check the 'waited' parameter not the
+	signalled state when testing if a process has already been waited
+	for, as the child process itself may set signalled when exiting.
+	Fixes bug 79885.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Bump shared data version
+
+	* shared.c: Now the shared data version has been incremented we
+	can set the counter semaphore initial value correctly
+
+2006-11-22  Dick Porter  <dick@ximian.com>
+
+	* processes.c (process_wait): Cope when the background process
+	reaper gets the process we were waiting for.  Special case for
+	waiting for our own process to exit.  Fixes bug 77736.
+
+2006-11-17  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Fix const correctness and typos that caused memory
+	corruption. 
+	
+2006-11-17  Miguel de Icaza  <miguel@novell.com>
+
+	* processes.c (ShellExecuteEx): Check error after CreateProcess,
+	thanks to Dick for pointing this out. 
+
+2006-11-16  Miguel de Icaza  <miguel@novell.com>
+
+	* processes.c (ShellExecuteEx): If we fail to create a process in
+	ShellExecute, then try to use the xdg-open command, and if that
+	fails, try to use the gnome-open command, 
+
+	Refactor the code so that we do not have to duplicate all this
+	code, but instead use a ucs2-aware version of the code to do
+	concatenations.
+
 2006-11-13  Dick Porter  <dick@ximian.com>
 
 	* io.c (_wapi_stat_to_file_attributes): If the file is a symlink

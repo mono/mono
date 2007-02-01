@@ -27,6 +27,9 @@ static const char*const * ins_spec = amd64_desc;
 #elif defined(__sparc__) || defined(sparc)
 const char * const sparc_desc [OP_LAST];
 static const char*const * ins_spec = sparc_desc;
+#elif defined(__mips__) || defined(mips)
+const char * const mips_desc [OP_LAST];
+static const char*const * ins_spec = mips_desc;
 #elif defined(__i386__)
 extern const char * const x86_desc [OP_LAST];
 static const char*const * ins_spec = x86_desc;
@@ -204,9 +207,13 @@ mono_call_inst_add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, int vreg, i
 
 	regpair = (((guint32)hreg) << 24) + vreg;
 	if (fp) {
+		g_assert (vreg >= MONO_MAX_FREGS);
+		g_assert (hreg < MONO_MAX_FREGS);
 		call->used_fregs |= 1 << hreg;
 		call->out_freg_args = g_slist_append_mempool (cfg->mempool, call->out_freg_args, (gpointer)(gssize)(regpair));
 	} else {
+		g_assert (vreg >= MONO_MAX_IREGS);
+		g_assert (hreg < MONO_MAX_IREGS);
 		call->used_iregs |= 1 << hreg;
 		call->out_ireg_args = g_slist_append_mempool (cfg->mempool, call->out_ireg_args, (gpointer)(gssize)(regpair));
 	}
@@ -245,6 +252,9 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 {
 	MonoSpillInfo *info;
 
+#if defined (__mips__)
+	g_assert_not_reached();
+#endif
 	if (G_UNLIKELY (spillvar >= (fp ? cfg->spill_info_float_len : cfg->spill_info_len))) {
 		resize_spill_info (cfg, fp);
 		g_assert (spillvar < (fp ? cfg->spill_info_float_len : cfg->spill_info_len));

@@ -1,3 +1,53 @@
+2006-11-23  Dick Porter  <dick@ximian.com>
+
+	* wapihandles.c (mini_wapi_seminfo): No need to adjust the counter
+	semaphore display now we've fixed the initial value
+
+Wed Nov 22 11:04:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: partially revert the last change to fix the build.
+
+2006-11-21  Mark Mason  <mason@broadcom.com>
+
+	* inssel.brg: Add and use compare-and-branch macros to support
+	architectures that do not have condition code registers (ie. MIPS).
+	* *-mips.{c,brg,md}: Fix copyright statements
+
+2006-11-20  Mark Mason  <mason@broadcom.com>
+
+	* Makefile.am: remove mini-codegen.c from list of MIPS sources
+	* mini.c: Allow GET_CONTEXT to be specified by the arch port
+	* mini.h: Added declaration for mono_print_ins()
+	* mini-codegen.c: added ins_spec initializer for MIPS
+	* mini-codegen.c (mono_call_inst_add_outarg_reg): added asserts for
+	vreg to be virtual and hreg to be non-virtual.
+	* mini-codegen.c (mono_spillvar_offset): assert if MIPS - spilling
+	is not yet working/implemented correctly.
+	* mini-codegen.c (print_ins): rename to mono_print_ins(), make
+	non-static, fixup calls to print_ins() from other parts in the file.
+
+2006-11-20  Mark Mason  <mason@broadcom.com>
+
+	* basic-calls.cs: added tests for passing structures as arguments
+	to calls.
+
+Mon Nov 20 19:40:11 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg: optimize signed division by power of two.
+
+Mon Nov 20 17:37:58 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: added support for interworking with thumb code
+	(mono must be still be built using the ARM instruction encoding).
+
+2006-11-19  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (type_from_op): Separate the conditions for OP_EQ as the
+	verifier has different rules for it.   Fixes a few verifier issues
+	in the test suite.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Put the message
+	at the end, so people know what happened.
 
 Thu Nov 16 14:07:18 CET 2006 Paolo Molaro <lupus@ximian.com>
 

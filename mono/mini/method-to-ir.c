@@ -1407,11 +1407,14 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		return;
 		break;
 	case OP_CEQ:
+		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
+		ins->opcode += ceqops_op_map [src1->type];
+		return;
 	case OP_CGT:
 	case OP_CGT_UN:
 	case OP_CLT:
 	case OP_CLT_UN:
-		ins->type = bin_comp_table [src1->type] [src2->type] ? STACK_I4: STACK_INV;
+		ins->type = (bin_comp_table [src1->type] [src2->type] & 1) ? STACK_I4: STACK_INV;
 		ins->opcode += ceqops_op_map [src1->type];
 		return;
 	/* unops */
@@ -10055,6 +10058,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge new GC changes in mini.c.
  * - merge the stack merge stuff.
  * - merge the soft float support.
+ * - merge r68207.
+ * - merge the mips conditional changes.
  * - use the op_ opcodes in the old JIT as well.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
@@ -10066,7 +10071,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 68000.
+ * - LAST MERGE: 68500.
  */
 
 /*

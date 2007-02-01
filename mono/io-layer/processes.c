@@ -80,6 +80,10 @@ static gboolean process_set_termination_details (gpointer handle, int status)
 		process_handle->exitstatus = WEXITSTATUS(status);
 	}
 	_wapi_time_t_to_filetime (time(NULL), &process_handle->exit_time);
+
+	/* Don't set process_handle->waited here, it needs to only
+	 * happen in the parent when wait() has been called.
+	 */
 	
 #ifdef DEBUG
 	g_message ("%s: Setting handle %p signalled", __func__, handle);
@@ -108,16 +112,16 @@ static gboolean waitfor_pid (gpointer test, gpointer user_data)
 	int status;
 	pid_t ret;
 	
-	if (_wapi_handle_issignalled (test)) {
-		/* We've already done this one */
-		return (FALSE);
-	}
-	
 	ok = _wapi_lookup_handle (test, WAPI_HANDLE_PROCESS,
 				  (gpointer *)&process);
 	if (ok == FALSE) {
 		/* The handle must have been too old and was reaped */
 		return (FALSE);
+	}
+
+	if (process->waited) {
+		/* We've already done this one */
+		return(FALSE);
 	}
 	
 	do {
@@ -138,6 +142,8 @@ static gboolean waitfor_pid (gpointer test, gpointer user_data)
 	g_message ("%s: Process %d finished", __func__, ret);
 #endif
 
+	process->waited = TRUE;
+	
 	*(int *)user_data = status;
 	
 	return (TRUE);
@@ -185,16 +191,6 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 #ifdef DEBUG
 	g_message ("%s: Waiting for process %p", __func__, handle);
 #endif
-	
-	if (_wapi_handle_issignalled (handle)) {
-		/* We've already done this one */
-#ifdef DEBUG
-		g_message ("%s: Process %p already signalled", __func__,
-			   handle);
-#endif
-
-		return (WAIT_OBJECT_0);
-	}
 
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_PROCESS,
 				  (gpointer *)&process_handle);
@@ -204,6 +200,16 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		return(WAIT_FAILED);
 	}
 	
+	if (process_handle->waited) {
+		/* We've already done this one */
+#ifdef DEBUG
+		g_message ("%s: Process %p already signalled", __func__,
+			   handle);
+#endif
+
+		return (WAIT_OBJECT_0);
+	}
+	
 	pid = process_handle->id;
 	
 #ifdef DEBUG
@@ -211,9 +217,15 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 #endif
 
 	if (timeout == INFINITE) {
-		while ((ret = waitpid (pid, &status, 0)) != pid) {
-			if (ret == (pid_t)-1 && errno != EINTR) {
-				return(WAIT_FAILED);
+		if (pid == _wapi_getpid ()) {
+			do {
+				Sleep (10000);
+			} while(1);
+		} else {
+			while ((ret = waitpid (pid, &status, 0)) != pid) {
+				if (ret == (pid_t)-1 && errno != EINTR) {
+					return(WAIT_FAILED);
+				}
 			}
 		}
 	} else if (timeout == 0) {
@@ -224,18 +236,47 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		}
 	} else {
 		/* Poll in a loop */
-		do {
-			ret = waitpid (pid, &status, WNOHANG);
-			if (ret == pid) {
-				break;
-			} else if (ret == (pid_t)-1 && errno != EINTR) {
-				return(WAIT_FAILED);
-			}
+		if (pid == _wapi_getpid ()) {
+			Sleep (timeout);
+			return(WAIT_TIMEOUT);
+		} else {
+			do {
+				ret = waitpid (pid, &status, WNOHANG);
+#ifdef DEBUG
+				g_message ("%s: waitpid returns: %d, timeout is %d", __func__, ret, timeout);
+#endif
+				
+				if (ret == pid) {
+					break;
+				} else if (ret == (pid_t)-1 &&
+					   errno != EINTR) {
+#ifdef DEBUG
+					g_message ("%s: waitpid failure: %s",
+						   __func__,
+						   g_strerror (errno));
+#endif
 
-			_wapi_handle_spin (100);
-			timeout -= 100;
-		} while (timeout > 0);
+					if (errno == ECHILD &&
+					    process_handle->waited) {
+						/* The background
+						 * process reaper must
+						 * have got this one
+						 */
+#ifdef DEBUG
+						g_message ("%s: Process %p already reaped", __func__, handle);
+#endif
 
+						return(WAIT_OBJECT_0);
+					} else {
+						return(WAIT_FAILED);
+					}
+				}
+
+				_wapi_handle_spin (100);
+				timeout -= 100;
+			} while (timeout > 0);
+		}
+		
 		if (timeout <= 0) {
 			return(WAIT_TIMEOUT);
 		}
@@ -251,7 +292,8 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		SetLastError (ERROR_OUTOFMEMORY);
 		return (WAIT_FAILED);
 	}
-
+	process_handle->waited = TRUE;
+	
 	return(WAIT_OBJECT_0);
 }
 
@@ -268,8 +310,59 @@ static void process_set_defaults (struct _WapiHandle_process *process_handle)
 	process_handle->min_working_set = 204800;
 	process_handle->max_working_set = 1413120;
 
+	process_handle->waited = FALSE;
+	
 	_wapi_time_t_to_filetime (time (NULL), &process_handle->create_time);
 }
+
+static int
+len16 (const gunichar2 *str)
+{
+	int len = 0;
+	
+	while (*str++ != 0)
+		len++;
+
+	return len;
+}
+
+static gunichar2 *
+utf16_concat (const gunichar2 *first, ...)
+{
+	va_list args;
+	int total = 0, i;
+	const gunichar2 *s;
+	gunichar2 *ret;
+
+	va_start (args, first);
+	total += len16 (first);
+        for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg(args, gunichar2 *)){
+		total += len16 (s);
+        }
+	va_end (args);
+
+	ret = g_new (gunichar2, total + 1);
+	if (ret == NULL)
+		return NULL;
+
+	ret [total] = 0;
+	i = 0;
+	for (s = first; *s != 0; s++)
+		ret [i++] = *s;
+	va_start (args, first);
+	for (s = va_arg (args, gunichar2 *); s != NULL; s = va_arg (args, gunichar2 *)){
+		const gunichar2 *p;
+		
+		for (p = s; *p != 0; p++)
+			ret [i++] = *p;
+	}
+	va_end (args);
+	
+	return ret;
+}
+
+static const gunichar2 utf16_space_bytes [2] = { 0x20, 0 };
+static const gunichar2 *utf16_space = utf16_space_bytes; 
 
 /* Implemented as just a wrapper around CreateProcess () */
 gboolean ShellExecuteEx (WapiShellExecuteInfo *sei)
@@ -277,7 +370,6 @@ gboolean ShellExecuteEx (WapiShellExecuteInfo *sei)
 	gboolean ret;
 	WapiProcessInformation process_info;
 	gunichar2 *args;
-	gchar *u8file, *u8params, *u8args;
 	
 	if (sei == NULL) {
 		/* w2k just segfaults here, but we can do better than
@@ -297,49 +389,65 @@ gboolean ShellExecuteEx (WapiShellExecuteInfo *sei)
 	 * into and back out of utf8 is because there is no
 	 * g_strdup_printf () equivalent for gunichar2 :-(
 	 */
-	u8file = g_utf16_to_utf8 (sei->lpFile, -1, NULL, NULL, NULL);
-	if (u8file == NULL) {
+	args = utf16_concat (sei->lpFile, sei->lpParameters == NULL ? NULL : utf16_space, sei->lpParameters, NULL);
+	if (args == NULL){
 		SetLastError (ERROR_INVALID_DATA);
 		return (FALSE);
 	}
-	
-	if (sei->lpParameters != NULL) {
-		u8params = g_utf16_to_utf8 (sei->lpParameters, -1, NULL, NULL, NULL);
-		if (u8params == NULL) {
-			SetLastError (ERROR_INVALID_DATA);
-			g_free (u8file);
-			return (FALSE);
-		}
-	
-		u8args = g_strdup_printf ("%s %s", u8file, u8params);
-		if (u8args == NULL) {
-			SetLastError (ERROR_INVALID_DATA);
-			g_free (u8params);
-			g_free (u8file);
-			return (FALSE);
-		}
-	
-		args = g_utf8_to_utf16 (u8args, -1, NULL, NULL, NULL);
-	
-		g_free (u8file);
-		g_free (u8params);
-		g_free (u8args);
-	} else {
-		args = g_utf8_to_utf16 (u8file, -1, NULL, NULL, NULL);
-	}
-		
-	if (args == NULL) {
-		SetLastError (ERROR_INVALID_DATA);
-		return (FALSE);
-	}
-	
 	ret = CreateProcess (NULL, args, NULL, NULL, TRUE,
 			     CREATE_UNICODE_ENVIRONMENT, NULL,
 			     sei->lpDirectory, NULL, &process_info);
 	g_free (args);
 	
 	if (!ret) {
-		return (FALSE);
+		static char *handler;
+		static gunichar2 *handler_utf16;
+		
+		if (handler_utf16 == (gunichar2 *)-1)
+			return FALSE;
+
+#ifdef PLATFORM_MACOSX
+		handler = "/usr/bin/open";
+#else
+		/*
+		 * On Linux, try: xdg-open, the FreeDesktop standard way of doing it,
+		 * if that fails, try to use gnome-open, then kfmclient
+		 */
+		handler = g_find_program_in_path ("xdg-open");
+		if (handler == NULL){
+			handler = g_find_program_in_path ("gnome-open");
+			if (handler == NULL){
+				handler = g_find_program_in_path ("kfmclient");
+				if (handler == NULL){
+					handler_utf16 = (gunichar2 *) -1;
+					return (FALSE);
+				} else {
+					/* kfmclient needs exec argument */
+					char *old = handler;
+					handler = g_strconcat (old, " exec",
+							       NULL);
+					g_free (old);
+				}
+			}
+		}
+#endif
+		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
+		g_free (handler);
+		args = utf16_concat (handler_utf16, utf16_space, sei->lpFile,
+				     sei->lpParameters == NULL ? NULL : utf16_space,
+				     sei->lpParameters, NULL);
+		if (args == NULL){
+			SetLastError (ERROR_INVALID_DATA);
+			return FALSE;
+		}
+		ret = CreateProcess (NULL, args, NULL, NULL, TRUE,
+				     CREATE_UNICODE_ENVIRONMENT, NULL,
+				     sei->lpDirectory, NULL, &process_info);
+		g_free (args);
+		if (!ret){
+			SetLastError (ERROR_INVALID_DATA);
+			return FALSE;
+		}
 	}
 	
 	if (sei->fMask & SEE_MASK_NOCLOSEPROCESS) {
@@ -855,6 +963,11 @@ cleanup:
 		g_strfreev (env_strings);
 	}
 	
+#ifdef DEBUG
+	g_message ("%s: returning handle %p for pid %d", __func__, handle,
+		   pid);
+#endif
+
 	return(ret);
 }
 		
@@ -895,6 +1008,8 @@ static void process_set_current (void)
 	pid_t pid = _wapi_getpid ();
 	const char *handle_env;
 	struct _WapiHandle_process process_handle = {0};
+	
+	mono_once (&process_ops_once, process_ops_init);
 	
 	handle_env = g_getenv ("_WAPI_PROCESS_HANDLE_OFFSET");
 	g_unsetenv ("_WAPI_PROCESS_HANDLE_OFFSET");
