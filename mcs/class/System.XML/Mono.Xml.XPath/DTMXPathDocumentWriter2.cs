@@ -525,10 +525,12 @@ namespace Mono.Xml.XPath
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
-			if (prefix == null)
-				prefix = String.Empty;
 			if (ns == null)
 				ns = String.Empty;
+			else if (prefix == null && ns.Length > 0)
+				prefix = LookupPrefix (ns);
+			if (prefix == null)
+				prefix = String.Empty;
 
 			switch (state) {
 			case WriteState.Element:
@@ -640,6 +642,8 @@ namespace Mono.Xml.XPath
 
 		private void ProcessAttribute (string prefix, string localName, string ns, string value)
 		{
+			if (prefix == null && ns.Length > 0)
+				prefix = LookupPrefix (ns);
 			attributeIndex ++;
 
 			this.AddAttribute (nodeIndex,
