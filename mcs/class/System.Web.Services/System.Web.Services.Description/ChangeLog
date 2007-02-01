@@ -1,3 +1,7 @@
+2007-02-01  Konstantin Triger <kostat@mainsoft.com>
+
+	* ProtocolReflector.cs: throw if not conformant, but declared to be.
+
 2007-01-25  Konstantin Triger <kostat@mainsoft.com>
 
 	* ServiceDescriptionReflector.cs: describe only supported bindings and

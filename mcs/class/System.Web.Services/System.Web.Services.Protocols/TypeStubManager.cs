@@ -94,14 +94,22 @@ namespace System.Web.Services.Protocols {
 		{
 			this.logicalType = logicalTypeInfo;
 
-			defaultBinding = logicalType.WebServiceName + ProtocolName;
-			BindingInfo binfo = new BindingInfo (defaultBinding, logicalType.WebServiceNamespace);
-			Bindings.Add (binfo);
+			object [] o = Type.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
+
+			string defaultBindingName = logicalType.WebServiceName + ProtocolName;
+			if (o.Length > 0)
+				foreach (WebServiceBindingAttribute at in o)
+					AddBinding (new BindingInfo (at, defaultBindingName, LogicalType.WebServiceNamespace));
+			else 
+				AddBinding (new BindingInfo (null, defaultBindingName, logicalType.WebServiceNamespace));
 		}
 		
 #if NET_2_0
-		public virtual WsiProfiles WsiClaims {
-			get { return WsiProfiles.None; }
+		public WsiProfiles WsiClaims {
+			get {
+				return (((BindingInfo) Bindings [0]).WebServiceBindingAttribute != null) ?
+					((BindingInfo) Bindings [0]).WebServiceBindingAttribute.ConformsTo : WsiProfiles.None;
+			}
 		}
 #endif
 		
@@ -225,23 +233,26 @@ namespace System.Web.Services.Protocols {
 	
 	internal class BindingInfo
 	{
-		public BindingInfo (WebServiceBindingAttribute at, string ns)
+		public BindingInfo (WebServiceBindingAttribute at, string name, string ns)
 		{
-			Name = at.Name;
-			Namespace = at.Namespace;
-			if (Namespace == "") Namespace = ns;
-			Location = at.Location;
+			if (at != null) {
+				Name = at.Name;
+				Namespace = at.Namespace;
+				Location = at.Location;
+				WebServiceBindingAttribute = at;
+			}
+
+			if (Name == null || Name.Length == 0)
+				Name = name;
+
+			if (Namespace == null || Namespace.Length == 0)
+				Namespace = ns;
 		}
 		
-		public BindingInfo (string name, string ns)
-		{
-			Name = name;
-			Namespace = ns;
-		}
-		
-		public string Name;
-		public string Namespace;
-		public string Location;
+		public readonly string Name;
+		public readonly string Namespace;
+		public readonly string Location;
+		public readonly WebServiceBindingAttribute WebServiceBindingAttribute;
 	}
 
 	//

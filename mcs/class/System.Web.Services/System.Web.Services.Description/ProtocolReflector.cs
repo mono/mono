@@ -280,6 +280,14 @@ namespace System.Web.Services.Description {
 				port.Binding = new XmlQualifiedName (binding.Name, binfo.Namespace);
 				service.Ports.Add (port);
 			}
+
+#if NET_2_0
+			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.ConformsTo != WsiProfiles.None && String.IsNullOrEmpty (binfo.WebServiceBindingAttribute.Name)) {
+				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
+				if (!WebServicesInteroperability.CheckConformance (binfo.WebServiceBindingAttribute.ConformsTo, desc, violations))
+					throw new InvalidOperationException (violations [0].ToString ());
+			}
+#endif	
 		}
 
 		bool ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
