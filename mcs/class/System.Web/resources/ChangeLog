@@ -1,3 +1,8 @@
+2007-02-01  Adar Wesley <adarw@mainsoft.com>
+
+	* webform.js: fixed WebForm_GetFormFromCtrl to find controls by id
+	after chaning UniqueId implementation to have '$'.
+
 2007-01-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* webform.js: fixed WebForm_DoPostback, no need to find form if url is

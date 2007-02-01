@@ -122,7 +122,7 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 function WebForm_GetFormFromCtrl (id)
 {
 	// We need to translate the id from ASPX UniqueID to its ClientID.
-	var ctrl = WebForm_GetElementById (id.replace(/:/g, "_"));
+	var ctrl = WebForm_GetElementById (id.replace(/\$/g, "_"));
 	while (ctrl != null) {
 		if (ctrl.isAspForm)
 			return ctrl;
@@ -154,5 +154,6 @@ function WebForm_FireDefaultButton(event, target)
 	}
 	return true;
 }
+
 
 
