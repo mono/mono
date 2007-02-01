@@ -2040,5 +2040,138 @@ namespace MonoTests.System.Drawing
 			g.ReleaseHdc ();
 		}
 #endif
+		[Test]
+		public void VisibleClipBound ()
+		{
+			// see #78958
+			using (Bitmap bmp = new Bitmap (100, 100)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					RectangleF noclip = g.VisibleClipBounds;
+					Assert.AreEqual (0, noclip.X, "noclip.X");
+					Assert.AreEqual (0, noclip.Y, "noclip.Y");
+					Assert.AreEqual (100, noclip.Width, "noclip.Width");
+					Assert.AreEqual (100, noclip.Height, "noclip.Height");
+
+					// note: libgdiplus regions are precise to multiple of multiple of 8
+					g.Clip = new Region (new RectangleF (0, 0, 32, 32));
+					RectangleF clip = g.VisibleClipBounds;
+					Assert.AreEqual (0, clip.X, "clip.X");
+					Assert.AreEqual (0, clip.Y, "clip.Y");
+					Assert.AreEqual (32, clip.Width, "clip.Width");
+					Assert.AreEqual (32, clip.Height, "clip.Height");
+
+					g.RotateTransform (90);
+					RectangleF rotclip = g.VisibleClipBounds;
+					Assert.AreEqual (0, rotclip.X, "rotclip.X");
+					Assert.AreEqual (-32, rotclip.Y, "rotclip.Y");
+					Assert.AreEqual (32, rotclip.Width, "rotclip.Width");
+					Assert.AreEqual (32, rotclip.Height, "rotclip.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void VisibleClipBound_BigClip ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					RectangleF noclip = g.VisibleClipBounds;
+					Assert.AreEqual (0, noclip.X, "noclip.X");
+					Assert.AreEqual (0, noclip.Y, "noclip.Y");
+					Assert.AreEqual (100, noclip.Width, "noclip.Width");
+					Assert.AreEqual (100, noclip.Height, "noclip.Height");
+
+					// clip is larger than bitmap
+					g.Clip = new Region (new RectangleF (0, 0, 200, 200));
+					RectangleF clipbound = g.ClipBounds;
+					Assert.AreEqual (0, clipbound.X, "clipbound.X");
+					Assert.AreEqual (0, clipbound.Y, "clipbound.Y");
+					Assert.AreEqual (200, clipbound.Width, "clipbound.Width");
+					Assert.AreEqual (200, clipbound.Height, "clipbound.Height");
+
+					RectangleF clip = g.VisibleClipBounds;
+					Assert.AreEqual (0, clip.X, "clip.X");
+					Assert.AreEqual (0, clip.Y, "clip.Y");
+					Assert.AreEqual (100, clip.Width, "clip.Width");
+					Assert.AreEqual (100, clip.Height, "clip.Height");
+
+					g.RotateTransform (90);
+					RectangleF rotclipbound = g.ClipBounds;
+					Assert.AreEqual (0, rotclipbound.X, "rotclipbound.X");
+					Assert.AreEqual (-200, rotclipbound.Y, "rotclipbound.Y");
+					Assert.AreEqual (200, rotclipbound.Width, "rotclipbound.Width");
+					Assert.AreEqual (200, rotclipbound.Height, "rotclipbound.Height");
+
+					RectangleF rotclip = g.VisibleClipBounds;
+					Assert.AreEqual (0, rotclip.X, "rotclip.X");
+					Assert.AreEqual (-100, rotclip.Y, "rotclip.Y");
+					Assert.AreEqual (100, rotclip.Width, "rotclip.Width");
+					Assert.AreEqual (100, rotclip.Height, "rotclip.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void Rotate ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 50)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					RectangleF vcb = g.VisibleClipBounds;
+					Assert.AreEqual (0, vcb.X, "vcb.X");
+					Assert.AreEqual (0, vcb.Y, "vcb.Y");
+					Assert.AreEqual (100, vcb.Width, "vcb.Width");
+					Assert.AreEqual (50, vcb.Height, "vcb.Height");
+
+					g.RotateTransform (90);
+					RectangleF rvcb = g.VisibleClipBounds;
+					Assert.AreEqual (0, rvcb.X, "rvcb.X");
+					Assert.AreEqual (-100, rvcb.Y, "rvcb.Y");
+					Assert.AreEqual (50, rvcb.Width, "rvcb.Width");
+					Assert.AreEqual (100, rvcb.Height, "rvcb.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void Scale ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 50)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					RectangleF vcb = g.VisibleClipBounds;
+					Assert.AreEqual (0, vcb.X, "vcb.X");
+					Assert.AreEqual (0, vcb.Y, "vcb.Y");
+					Assert.AreEqual (100, vcb.Width, "vcb.Width");
+					Assert.AreEqual (50, vcb.Height, "vcb.Height");
+
+					g.ScaleTransform (2, 0.5f);
+					RectangleF svcb = g.VisibleClipBounds;
+					Assert.AreEqual (0, svcb.X, "svcb.X");
+					Assert.AreEqual (0, svcb.Y, "svcb.Y");
+					Assert.AreEqual (50, svcb.Width, "svcb.Width");
+					Assert.AreEqual (100, svcb.Height, "svcb.Height");
+				}
+			}
+		}
+
+		[Test]
+		public void Translate ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 50)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					RectangleF vcb = g.VisibleClipBounds;
+					Assert.AreEqual (0, vcb.X, "vcb.X");
+					Assert.AreEqual (0, vcb.Y, "vcb.Y");
+					Assert.AreEqual (100, vcb.Width, "vcb.Width");
+					Assert.AreEqual (50, vcb.Height, "vcb.Height");
+
+					g.TranslateTransform (-25, 25);
+					RectangleF tvcb = g.VisibleClipBounds;
+					Assert.AreEqual (25, tvcb.X, "tvcb.X");
+					Assert.AreEqual (-25, tvcb.Y, "tvcb.Y");
+					Assert.AreEqual (100, tvcb.Width, "tvcb.Width");
+					Assert.AreEqual (50, tvcb.Height, "tvcb.Height");
+				}
+			}
+		}
 	}
 }
