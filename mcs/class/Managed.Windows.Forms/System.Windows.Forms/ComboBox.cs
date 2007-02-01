@@ -2046,9 +2046,7 @@ namespace System.Windows.Forms
 						Controls.AddImplicit (vscrollbar_ctrl);
 					}
 					
-					vscrollbar_ctrl.Height = height - 2 * BorderWidth;
-							
-					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - BorderWidth - 1, 0);
+					vscrollbar_ctrl.Dock = DockStyle.Right;
 
 					vscrollbar_ctrl.Maximum = owner.Items.Count - 2;
 					int large = (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;

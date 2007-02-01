@@ -1,5 +1,10 @@
 2007-02-01  Chris Toshok  <toshok@ximian.com>
 
+	* ComboBox.cs: use vscrollbar_ctrl.Dock instead of explicitly
+	setting the position.
+
+2007-02-01  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (OnLeave): we can now do the CancelCurrentEdit thing
 	here, since the most recent focus fixes keep us from generating
 	the Leave event when our textbox gets focus.
