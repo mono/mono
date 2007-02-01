@@ -3882,7 +3882,7 @@ explicitly_typed_lambda_parameter
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 
-		$$ = new Parameter ((Expression) $2, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+		$$ = new Parameter ((Expression) $1, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 	  }
 	;
 
@@ -3938,7 +3938,7 @@ lambda_expression
 	  }
 	  lambda_expression_body 
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $5, (Expression) oob_stack.Pop (), (Location) $4);
+		$$ = end_anonymous ((ToplevelBlock) $6, (Expression) oob_stack.Pop (), (Location) $4);
 	  }
 	;
 
