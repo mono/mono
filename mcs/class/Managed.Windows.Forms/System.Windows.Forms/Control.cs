@@ -992,10 +992,6 @@ namespace System.Windows.Forms
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			bounds.Size = SizeFromClientSize (client_size);
-			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
-				bounds.X=-1;
-				bounds.Y=-1;
-			}
 			explicit_bounds = bounds;
 		}
 
