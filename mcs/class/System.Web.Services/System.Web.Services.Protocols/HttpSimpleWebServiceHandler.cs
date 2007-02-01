@@ -92,7 +92,7 @@ namespace System.Web.Services.Protocols
 			}
 			
 			if (error != null)
-				WriteError (context, error.Message);
+				WriteError (context, error.ToString ());
 			
 			if (respStream != null)
 				respStream.Close ();
