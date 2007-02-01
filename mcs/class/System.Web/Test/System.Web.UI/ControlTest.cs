@@ -121,6 +121,26 @@ namespace MonoTests.System.Web.UI
 			Assert.IsTrue (-1 != control.UniqueID.IndexOfAny (new char[] { ':', '$' }), "separator");
 		}
 
+		[Test]
+		public void ClientID () 
+		{
+			// NC in control
+			Control control = new Control ();
+			Control nc = new MyNC ();
+			Control nc2 = new MyNC ();
+			Control nc3 = new MyNC ();
+
+			nc3.Controls.Add (nc2);
+			nc2.Controls.Add (nc);
+			nc.Controls.Add (control);
+#if NET_2_0
+			string expected = "ctl00_ctl00_ctl00";
+#else
+			string expected = "_ctl0__ctl0__ctl0";
+#endif
+			Assert.AreEqual (expected, control.ClientID, "ClientID");
+		}
+
 		// From bug #76919: Control uses _controls instead of
 		// Controls when RenderChildren is called.
 		[Test]
@@ -164,7 +184,7 @@ namespace MonoTests.System.Web.UI
 		[Category ("NunitWeb")]
 		public void ApplyStyleSheetSkin_1 ()
 		{
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme2.skin", "App_Themes/Theme2/Theme2.skin");
 #else
 			WebTest.CopyResource (GetType (), "Theme2.skin", "App_Themes/Theme2/Theme2.skin");
@@ -669,6 +689,17 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (null, ctr.Adapter (), "Adapter");
 		}
 #endif
+		[Test]
+		public void ChildControlsCreated () {
+			ChildControlsCreatedControl ctr = new ChildControlsCreatedControl ();
+			ctr.Controls.Add (new Control ());
+			//ctr.DoEnsureChildControls ();
+
+			Assert.AreEqual (1, ctr.Controls.Count, "ChildControlsCreated#1");
+			ctr.SetChildControlsCreated (false);
+			Assert.AreEqual (1, ctr.Controls.Count, "ChildControlsCreated#2");
+		}
+
 #if NET_2_0
 		[TestFixtureTearDown]
 		public void Tear_down ()
@@ -850,7 +881,23 @@ namespace MonoTests.System.Web.UI
 	{
 	}
 #endif
+
+	public class ChildControlsCreatedControl : Control
+	{
+		protected override void CreateChildControls () {
+			Controls.Add (new Control ());
+		}
+
+		public void DoEnsureChildControls () {
+			EnsureChildControls ();
+		}
+
+		public void SetChildControlsCreated (bool value) {
+			ChildControlsCreated = value;
+		}
+	}
 }
+
 
 
 

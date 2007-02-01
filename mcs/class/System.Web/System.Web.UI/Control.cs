@@ -136,7 +136,11 @@ namespace System.Web.UI
 		{
 			defaultNameArray = new string [100];
 			for (int i = 0 ; i < 100 ; i++)
+#if NET_2_0
+				defaultNameArray [i] = String.Format("ctl{0:D2}", i);
+#else
 				defaultNameArray [i] = "_ctl" + i;
+#endif
 		}
 
                 public Control()
@@ -203,7 +207,11 @@ namespace System.Web.UI
 				string client = UniqueID;
 
 				if (client != null)
+#if NET_2_0
+					client = client.Replace (IdSeparator, ClientIDSeparator);
+#else
 					client = client.Replace (':', ClientIDSeparator);
+#endif
 				
 				stateMask |= ID_SET;
 				return client;
@@ -454,7 +462,11 @@ namespace System.Web.UI
 					return uniqueID;
 				}
 
+#if NET_2_0
+				uniqueID = prefix + IdSeparator + _userId;
+#else
 				uniqueID = prefix + ":" + _userId;
+#endif
 				return uniqueID;
                         }
                 }
@@ -584,7 +596,11 @@ namespace System.Web.UI
 		{
 			string defaultName;
 			if (defaultNumberID > 99) {
+#if NET_2_0
+				defaultName = "ctl" + defaultNumberID++;
+#else
 				defaultName = "_ctl" + defaultNumberID++;
+#endif
 			} else {
 				defaultName = defaultNameArray [defaultNumberID++];
 			}
@@ -790,17 +806,20 @@ namespace System.Web.UI
 
 			if (!HasControls ())
 				return null;
-
-			int colon = id.IndexOf (':', pathOffset);
-			if (colon == -1)
+#if NET_2_0
+			int separatorIdx = id.IndexOf (IdSeparator, pathOffset);
+#else
+			int separatorIdx = id.IndexOf (':', pathOffset);
+#endif
+			if (separatorIdx == -1)
 				return LookForControlByName (id.Substring (pathOffset));
 			
-			string idfound = id.Substring (pathOffset, colon - pathOffset);
+			string idfound = id.Substring (pathOffset, separatorIdx - pathOffset);
 			namingContainer = LookForControlByName (idfound);
 			if (namingContainer == null)
 				return null;
 
-			return namingContainer.FindControl (id, colon + 1);
+			return namingContainer.FindControl (id, separatorIdx + 1);
                 }
 
                 protected virtual void LoadViewState(object savedState)

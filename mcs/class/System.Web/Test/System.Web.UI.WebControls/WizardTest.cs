@@ -1629,10 +1629,10 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1:StartNavContainer:CancelButtonButton");
+			fr.Controls.Add ("Wizard1$StartNavContainer$CancelButtonButton");
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1:StartNavContainer:CancelButtonButton"].Value = "Cancel";
+			fr.Controls ["Wizard1$StartNavContainer$CancelButtonButton"].Value = "Cancel";
 #endif
 			t.Request = fr;
 			html = t.Run ();
@@ -1649,10 +1649,10 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1:StartNavContainer:StartNextButtonButton");
+			fr.Controls.Add ("Wizard1$StartNavContainer$StartNextButtonButton");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1:StartNavContainer:StartNextButtonButton"].Value = "Next";
+			fr.Controls ["Wizard1$StartNavContainer$StartNextButtonButton"].Value = "Next";
 #endif
 			t.Request = fr;
 			html = t.Run ();
@@ -1671,11 +1671,11 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1:FinishNavContainer:FinishPreviousButtonButton");
+			fr.Controls.Add ("Wizard1$FinishNavContainer$FinishPreviousButtonButton");
 
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1:FinishNavContainer:FinishPreviousButtonButton"].Value = "Previous";
+			fr.Controls ["Wizard1$FinishNavContainer$FinishPreviousButtonButton"].Value = "Previous";
 #endif
 			t.Request = fr;
 			html = t.Run ();
@@ -1705,10 +1705,10 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1:StartNavContainer:StartNextButtonButton");
+			fr.Controls.Add ("Wizard1$StartNavContainer$StartNextButtonButton");
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1:StartNavContainer:StartNextButtonButton"].Value = "Next";
+			fr.Controls ["Wizard1$StartNavContainer$StartNextButtonButton"].Value = "Next";
 #endif
 			t.Request = fr;
 			html = t.Run ();
@@ -1726,10 +1726,10 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("Wizard1:FinishNavContainer:FinishButtonButton");
+			fr.Controls.Add ("Wizard1$FinishNavContainer$FinishButtonButton");
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Wizard1:FinishNavContainer:FinishButtonButton"].Value = "Finish";
+			fr.Controls ["Wizard1$FinishNavContainer$FinishButtonButton"].Value = "Finish";
 #endif
 			t.Request = fr;
 			t.Run ();

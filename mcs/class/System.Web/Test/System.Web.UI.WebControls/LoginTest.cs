@@ -261,7 +261,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 		}
 #endif
 
@@ -958,9 +962,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls.Add (GetDecoratedId (html, "LoginButton"));
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Login1:UserName"].Value = "yonik";
-			fr.Controls ["Login1:Password"].Value = "123456";
-			fr.Controls ["Login1:LoginButton"].Value = "Log In";
+			fr.Controls ["Login1$UserName"].Value = "yonik";
+			fr.Controls ["Login1$Password"].Value = "123456";
+			fr.Controls ["Login1$LoginButton"].Value = "Log In";
 			t.Request = fr;
 			t.Run ();
 
@@ -988,9 +992,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls.Add (GetDecoratedId (html, "LoginButton"));
 			fr.Controls ["__EVENTTARGET"].Value = "";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["Login1:UserName"].Value = "yonik";
-			fr.Controls ["Login1:Password"].Value = "123456";
-			fr.Controls ["Login1:LoginButton"].Value = "Log In";
+			fr.Controls ["Login1$UserName"].Value = "yonik";
+			fr.Controls ["Login1$Password"].Value = "123456";
+			fr.Controls ["Login1$LoginButton"].Value = "Log In";
 			t.Request = fr;
 			t.Run ();
 

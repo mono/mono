@@ -1228,11 +1228,11 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.EditCommandName:
-				ProcessChangeMode (FormViewMode.Edit);
+				ProcessChangeMode (FormViewMode.Edit, false);
 				break;
 					
 			case DataControlCommands.NewCommandName:
-				ProcessChangeMode (FormViewMode.Insert);
+				ProcessChangeMode (FormViewMode.Insert, false);
 				break;
 					
 			case DataControlCommands.UpdateCommandName:
@@ -1264,7 +1264,7 @@ namespace System.Web.UI.WebControls
 			int newIndex = args.NewPageIndex;
 			if (newIndex < 0 || newIndex >= PageCount)
 				return;
-			EndRowEdit (false);
+			EndRowEdit (false, false);
 			PageIndex = newIndex;
 			OnPageIndexChanged (EventArgs.Empty);
 		}
@@ -1277,9 +1277,9 @@ namespace System.Web.UI.WebControls
 			RequireBinding ();
 		}
 
-		void ProcessChangeMode (FormViewMode newMode)
+		void ProcessChangeMode (FormViewMode newMode, bool cancelingEdit)
 		{
-			FormViewModeEventArgs args = new FormViewModeEventArgs (newMode, false);
+			FormViewModeEventArgs args = new FormViewModeEventArgs (newMode, cancelingEdit);
 			OnModeChanging (args);
 
 			if (args.Cancel || !IsBoundUsingDataSourceID)
@@ -1292,13 +1292,7 @@ namespace System.Web.UI.WebControls
 		
 		void CancelEdit ()
 		{
-			FormViewModeEventArgs args = new FormViewModeEventArgs (FormViewMode.ReadOnly, true);
-			OnModeChanging (args);
-
-			if (args.Cancel || !IsBoundUsingDataSourceID)
-				return;
-
-			EndRowEdit ();
+			EndRowEdit (true, true);
 		}
 
 		public virtual void UpdateItem (bool causesValidation)
@@ -1335,7 +1329,7 @@ namespace System.Web.UI.WebControls
 			OnItemUpdated (dargs);
 
 			if (!dargs.KeepInEditMode)				
-				EndRowEdit ();
+				EndRowEdit (true, false);
 
 			return dargs.ExceptionHandled;
 		}
@@ -1371,7 +1365,7 @@ namespace System.Web.UI.WebControls
 			OnItemInserted (dargs);
 
 			if (!dargs.KeepInInsertMode)				
-				EndRowEdit ();
+				EndRowEdit (true, false);
 
 			return dargs.ExceptionHandled;
 		}
@@ -1408,15 +1402,10 @@ namespace System.Web.UI.WebControls
 			return dargs.ExceptionHandled;
 		}
 		
-		void EndRowEdit ()
-		{
-			EndRowEdit (true);
-		}
-
-		void EndRowEdit (bool switchToDefaultMode) 
+		void EndRowEdit (bool switchToDefaultMode, bool cancelingEdit) 
 		{
 			if (switchToDefaultMode)
-				ChangeMode (DefaultMode);
+				ProcessChangeMode (DefaultMode, cancelingEdit);
 			oldEditValues = new DataKey (new OrderedDictionary ());
 			currentEditRowKeys = null;
 			currentEditOldValues = null;

@@ -1767,15 +1767,15 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("DetailsView1:_ctl1c");
-			fr.Controls.Add ("DetailsView1:_ctl2c");
-			fr.Controls.Add ("DetailsView1:_ctl3c");
+			fr.Controls.Add ("DetailsView1$ctl01c");
+			fr.Controls.Add ("DetailsView1$ctl02c");
+			fr.Controls.Add ("DetailsView1$ctl03c");
 
-			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1:_ctl4c";
+			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1$ctl04c";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["DetailsView1:_ctl1c"].Value = "123";
-			fr.Controls ["DetailsView1:_ctl2c"].Value = "123";
-			fr.Controls ["DetailsView1:_ctl3c"].Value = "123";
+			fr.Controls ["DetailsView1$ctl01c"].Value = "123";
+			fr.Controls ["DetailsView1$ctl02c"].Value = "123";
+			fr.Controls ["DetailsView1$ctl03c"].Value = "123";
 #endif
 			t.Request = fr;			
 			t.Run ();
@@ -1925,13 +1925,13 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("DetailsView1:_ctl1c");
-			fr.Controls.Add ("DetailsView1:_ctl2c");
+			fr.Controls.Add ("DetailsView1$ctl01c");
+			fr.Controls.Add ("DetailsView1$ctl02c");
 
-			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1:_ctl3c";
+			fr.Controls ["__EVENTTARGET"].Value = "DetailsView1$ctl03c";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["DetailsView1:_ctl1c"].Value = "1";
-			fr.Controls ["DetailsView1:_ctl2c"].Value = "2";
+			fr.Controls ["DetailsView1$ctl01c"].Value = "1";
+			fr.Controls ["DetailsView1$ctl02c"].Value = "2";
 #endif
 			t.Request = fr;
 			t.Run ();
@@ -2762,6 +2762,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 

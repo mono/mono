@@ -1569,7 +1569,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		
 
 		[Test]
-		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
 		[Category ("NunitWeb")]
 		public void FormView_EditPostback ()
 		{
@@ -1604,7 +1603,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:EditButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1635,12 +1634,12 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1:FNameEdit");
-			fr.Controls.Add ("FormView1:LNameEdit");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:UpdateButton";
+			fr.Controls.Add ("FormView1$FNameEdit");
+			fr.Controls.Add ("FormView1$LNameEdit");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$UpdateButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";			
-			fr.Controls["FormView1:FNameEdit"].Value = "Merav";
-			fr.Controls["FormView1:LNameEdit"].Value = "Test";			
+			fr.Controls["FormView1$FNameEdit"].Value = "Merav";
+			fr.Controls["FormView1$LNameEdit"].Value = "Test";			
 			t.Request = fr;
 			pageHTML = t.Run ();
 			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
@@ -1671,7 +1670,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:EditButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";			
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1683,11 +1682,11 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1:FNameEdit");
-			fr.Controls.Add ("FormView1:LNameEdit");
-			fr.Controls["FormView1:FNameEdit"].Value = "EditFirstName";
-			fr.Controls["FormView1:LNameEdit"].Value = "EditLastName";
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:CancelUpdateButton";
+			fr.Controls.Add ("FormView1$FNameEdit");
+			fr.Controls.Add ("FormView1$LNameEdit");
+			fr.Controls["FormView1$FNameEdit"].Value = "EditFirstName";
+			fr.Controls["FormView1$LNameEdit"].Value = "EditLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$CancelUpdateButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1718,13 +1717,12 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-		[Category ("NotWorking")] //Implementation specific for mono 
 		[Category ("NunitWeb")]
 		public void FormView_FireEvent_1 ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
 			t.Invoker = PageInvoker.CreateOnInit (EditPostbackFireEvent_Init);
-			t.Run ();
+			string html = t.Run ();
 			//Edit button postback (change to edit mode - buttons "Update" and "Cancel" should appear.
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
@@ -1733,7 +1731,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
-			t.Run ();
+			html = t.Run ();
 
 			ArrayList eventlist = t.UserData as ArrayList;
 			if (eventlist == null)
@@ -1751,12 +1749,12 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("FormView1$FNameEdit");
 			fr.Controls.Add ("FormView1$LNameEdit");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:UpdateButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$UpdateButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			fr.Controls["FormView1$FNameEdit"].Value = "Merav";
 			fr.Controls["FormView1$LNameEdit"].Value = "Test";
 			t.Request = fr;
-			t.Run ();
+			html = t.Run ();
 
 			eventlist = t.UserData as ArrayList;
 			if (eventlist == null)
@@ -1909,7 +1907,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")] //Implementation specific for mono 
 		[Category ("NunitWeb")]
 		public void FormView_FireEvent_3 ()
 		{
@@ -1993,7 +1990,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")] //Implementation specific for mono 
 		[Category ("NunitWeb")]
 		public void FormView_FireEvent_4 ()
 		{
@@ -2063,7 +2059,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		#endregion
 
 		[Test]
-		[Category ("NotWorking")] //Implementation specific for mono 
 		[Category ("NunitWeb")]
 		public void FormView_FireEvent_5 ()
 		{
@@ -2132,7 +2127,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		#endregion
 
 		[Test]
-		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
 		[Category ("NunitWeb")] 
 		public void FormView_InsertPostback ()
 		{
@@ -2145,7 +2139,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1"); 
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");			
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:NewButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$NewButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";						
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -2175,13 +2169,13 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1:IDInsert");
-			fr.Controls.Add ("FormView1:FNameInsert");
-			fr.Controls.Add ("FormView1:LNameInsert");
-			fr.Controls["FormView1:IDInsert"].Value = "33";
-			fr.Controls["FormView1:FNameInsert"].Value = "InsertFirstName";
-			fr.Controls["FormView1:LNameInsert"].Value ="InsertLastName";
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:InsertButton";
+			fr.Controls.Add ("FormView1$IDInsert");
+			fr.Controls.Add ("FormView1$FNameInsert");
+			fr.Controls.Add ("FormView1$LNameInsert");
+			fr.Controls["FormView1$IDInsert"].Value = "33";
+			fr.Controls["FormView1$FNameInsert"].Value = "InsertFirstName";
+			fr.Controls["FormView1$LNameInsert"].Value ="InsertLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$InsertButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			
@@ -2206,26 +2200,12 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}		
 
 		[Test]
-		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$DeleteButton" for DotNet
 		[Category ("NunitWeb")]
 		public void FormView_DeleteAndEmptyTemplatePostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
 			string pageHTML = t.Run ();
 			
-			//Before Delete
-			//
-			// The following line fails, it returns "false" instead of true, because
-			// the page actually contains the value "1002", not 1001.
-			//
-//Failures: 1) MonoTests.System.Web.UI.WebControls.FormViewTest.FormView_DeleteAndEmptyTemplatePostback : BeforeDelete1 ^M
-//        expected:<True>^M
-//         but was:<False>^M
-//  at MonoTests.System.Web.UI.WebControls.FormViewTest.FormView_DeleteAndEmptyTemplatePostback () [0x00018] in /home/cvs/mcs/class/System.Web/Test/System.Web.UI.WebControls/FormViewTest.cs:1769
-//  at <0x00000> <unknown method>
-//  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
-//  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00056] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
-//			
 			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeDelete1");
 			Assert.AreEqual (true, pageHTML.Contains ("Mahesh"), "BeforeDelete2");
 			Assert.AreEqual (true, pageHTML.Contains ("Chand"), "BeforeDelete3");
@@ -2234,7 +2214,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			
@@ -2249,7 +2229,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -2263,7 +2243,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			

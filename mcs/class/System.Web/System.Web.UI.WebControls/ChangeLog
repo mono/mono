@@ -1,3 +1,8 @@
+2007-02-01 Adar Wesley <adarw@mainsoft.com>
+
+	* FormView.cs: fixed events ModeChanging and ModeChanged 
+	to be raized in all relevant situations.
+
 2007-02-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ValidationSammary.cs: fixed:

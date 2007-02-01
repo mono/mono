@@ -399,7 +399,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
 #else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
@@ -2399,12 +2399,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("GridView1:_ctl2:Name"); // for .NET use "GridView1$ctl02$Name"
-			fr.Controls.Add ("GridView1:_ctl3:Name");
+			fr.Controls.Add ("GridView1$ctl02$Name"); // for .NET use "GridView1$ctl02$Name"
+			fr.Controls.Add ("GridView1$ctl03$Name");
 			fr.Controls ["__EVENTTARGET"].Value = "Button1";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
-			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			fr.Controls ["GridView1$ctl02$Name"].Value = "ABC";
+			fr.Controls ["GridView1$ctl03$Name"].Value = "123";
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
@@ -2433,12 +2433,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("GridView1:_ctl2:Name");
-			fr.Controls.Add ("GridView1:_ctl3:Name");
-			fr.Controls ["__EVENTTARGET"].Value = "GridView1:_ctl2:b1";
+			fr.Controls.Add ("GridView1$ctl02$Name");
+			fr.Controls.Add ("GridView1$ctl03$Name");
+			fr.Controls ["__EVENTTARGET"].Value = "GridView1$ctl02$b1";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
-			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			fr.Controls ["GridView1$ctl02$Name"].Value = "ABC";
+			fr.Controls ["GridView1$ctl03$Name"].Value = "123";
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
@@ -2467,12 +2467,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("GridView1:_ctl2:Name");
-			fr.Controls.Add ("GridView1:_ctl3:Name");
-			fr.Controls ["__EVENTTARGET"].Value = "GridView1:_ctl3:b1";
+			fr.Controls.Add ("GridView1$ctl02$Name");
+			fr.Controls.Add ("GridView1$ctl03$Name");
+			fr.Controls ["__EVENTTARGET"].Value = "GridView1$ctl03$b1";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["GridView1:_ctl2:Name"].Value = "ABC";
-			fr.Controls ["GridView1:_ctl3:Name"].Value = "123";
+			fr.Controls ["GridView1$ctl02$Name"].Value = "ABC";
+			fr.Controls ["GridView1$ctl03$Name"].Value = "123";
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
@@ -2658,6 +2658,7 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 
 

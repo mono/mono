@@ -211,7 +211,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ctrl.Controls.Add (ta);
 			ta.Name = "mono";
 			ta.ID = "go";
-			Assert.AreEqual (" name=\"UC:go\" id=\"UC_go\"", ta.RenderAttributes ());
+#if NET_2_0
+			string expected = " name=\"UC$go\" id=\"UC_go\"";
+#else
+			string expected = " name=\"UC:go\" id=\"UC_go\"";
+#endif
+			Assert.AreEqual (expected, ta.RenderAttributes ());
 		}
 
 		[Test]

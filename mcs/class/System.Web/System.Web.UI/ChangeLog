@@ -1,3 +1,9 @@
+2007-02-02  Adar Wesley <adarw@mainsoft.com>
+
+	* Control.cs: Changed UniqueId implementation to have '$' and not ':'
+	to conform to MS.  This led to updating several Tests that referenced
+	the UniqueId as string.
+
 2007-01-30  Eyal Alaluf <eyala@mainsoft.com>
 
 	* ClientScriptManager.cs: Fix Igor's last changes for TARGET_JVM.
