@@ -74,7 +74,10 @@
 # define pthread_join GC_pthread_join
 # define pthread_detach GC_pthread_detach
 
-#ifndef GC_DARWIN_THREADS
+#ifndef GC_DARWIN_THREADS 
+# ifdef GC_NETBSD_THREADS
+#  undef pthread_sigmask
+# endif
 # define pthread_sigmask GC_pthread_sigmask
 # define dlopen GC_dlopen
 #endif

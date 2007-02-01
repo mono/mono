@@ -67,8 +67,8 @@
 # endif
 
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
-      defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) \
-      && !defined(USE_PTHREAD_SPECIFIC)
+      defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) || \
+      defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC)
 #   define USE_PTHREAD_SPECIFIC
 # endif
 
@@ -125,6 +125,11 @@
 #if defined(GC_DARWIN_THREADS) || defined(GC_FREEBSD_THREADS)
 # include <sys/sysctl.h>
 #endif /* GC_DARWIN_THREADS */
+
+#if defined(GC_NETBSD_THREADS)
+# include <sys/param.h>
+# include <sys/sysctl.h>
+#endif
 
 
 
@@ -1013,7 +1018,7 @@ void GC_thr_init()
 	  GC_nprocs = sysconf(_SC_NPROC_ONLN);
 	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #       endif
-#       if defined(GC_DARWIN_THREADS) || defined(GC_FREEBSD_THREADS)
+#       if defined(GC_DARWIN_THREADS) || defined(GC_FREEBSD_THREADS) || defined(GC_NETBSD_THREADS)
 	  int ncpus = 1;
 	  size_t len = sizeof(ncpus);
 	  sysctl((int[2]) {CTL_HW, HW_NCPU}, 2, &ncpus, &len, NULL, 0);

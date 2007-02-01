@@ -1,3 +1,13 @@
+2007-02-01  Geoff Norton  <gnorton@customerdna.com>
+
+	* include/private/gc_pthread_redirects.h:
+	* include/private/gc_config_macros.h:
+	* include/private/gc_priv.h:
+	* configure.in:
+	* pthread_support.c
+	* specific.c:  Support for NetBSD-CURRENT.  Loosely based on NetBSD
+	pkgsrc patch.
+
 2006-12-22  Robert Jordan  <robertj@gmx.net>
 
 	* include/private/gcconfig.h, os_dep.c:
