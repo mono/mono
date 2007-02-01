@@ -173,6 +173,16 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		public void IsByPassed_Address_Null ()
+		{
+			WebProxy p = new WebProxy ((Uri) null, false);
+			Assertion.Assert ("#1", p.IsBypassed (new Uri ("http://www.google.com")));
+
+			p = new WebProxy ((Uri) null, true);
+			Assertion.Assert ("#2", p.IsBypassed (new Uri ("http://www.google.com")));
+		}
+
+		[Test]
 #if TARGET_JVM
 		[Ignore ("TD BUG ID: 7213")]
 #endif		
@@ -211,8 +221,24 @@ namespace MonoTests.System.Net
 			} catch (NullReferenceException) {
 			}
 #endif
-		}
 
+			p = new WebProxy ((Uri) null, true);
+			try {
+				p.IsBypassed (null);
+				Assertion.Fail ("#C1");
+#if NET_2_0
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsNotNull (ex.ParamName, "#C4");
+				Assert.AreEqual ("host", ex.ParamName, "#C5");
+				Assert.IsNull (ex.InnerException, "#C6");
+			}
+#else
+			} catch (NullReferenceException) {
+			}
+#endif
+		}
 
 		[Test]
 #if TARGET_JVM

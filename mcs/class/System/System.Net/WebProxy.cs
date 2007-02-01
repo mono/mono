@@ -163,14 +163,15 @@ namespace System.Net
 
 		public bool IsBypassed (Uri host)
 		{
-			if (address == null)
-				return true;
 #if NET_2_0
 			if (host == null)
 				throw new ArgumentNullException ("host");
 #endif
 
-			if (bypassOnLocal && host.IsLoopback)
+			if (host.IsLoopback && bypassOnLocal)
+				return true;
+
+			if (address == null)
 				return true;
 
 			string server = host.Host;
