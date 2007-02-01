@@ -163,6 +163,8 @@ namespace System.Net
 
 		public bool IsBypassed (Uri host)
 		{
+			if (address == null)
+				return true;
 #if NET_2_0
 			if (host == null)
 				throw new ArgumentNullException ("host");
