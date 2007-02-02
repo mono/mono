@@ -104,6 +104,7 @@ namespace System.Windows.Forms {
 			redraw = true;
 		}
 
+#if NET_2_0
 		protected override void OnMouseCaptureChanged (EventArgs e) {
 			base.OnMouseCaptureChanged (e);
 			
@@ -112,7 +113,7 @@ namespace System.Windows.Forms {
 				CapturedControl.Size = new Size (window_w, window_h);
 			}
 		}
-
+#endif
 		protected override void OnMouseDown(MouseEventArgs e) {
 			if (Enabled) {
 				Capture = true;
