@@ -332,8 +332,9 @@ namespace Mono.CSharp {
 						return new UIntConstant (~((UIntConstant)e).Value, e.Location);
 					if (expr_type == TypeManager.int64_type)
 						return new LongConstant (~((LongConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.uint64_type)
-						return new ULongConstant (~((UIntConstant)e).Value, e.Location);
+					if (expr_type == TypeManager.uint64_type){
+						return new ULongConstant (~((ULongConstant)e).Value, e.Location);
+					}
 					if (e is EnumConstant) {
 						e = TryReduceConstant (ec, ((EnumConstant)e).Child);
 						if (e != null)
