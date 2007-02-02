@@ -1,6 +1,6 @@
 2007-02-01  Everaldo Canuto  <everaldo@simios.org>
 
-	* LabelTest.cs: StyleTest created to test #79537. TesHelper as used. 
+	* LabelTest.cs: StyleTest created to test #79537. TestHelper was used. 
 
 2007-02-01  Everaldo Canuto  <everaldo@simios.org>
 
