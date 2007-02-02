@@ -75,6 +75,15 @@ namespace System.Windows.Forms {
 		#endregion	// Properties
 
 		#region Methods
+		protected override void OnEnabledChanged (EventArgs e) {
+			base.OnEnabledChanged (e);
+			if (Enabled) {
+				this.Cursor = Cursors.SizeNWSE;			
+			} else {
+				this.Cursor = Cursors.Default;
+			}
+		}
+		
 		protected override void OnPaint (PaintEventArgs pe) {
 			if (redraw && show_grip) {
 				pe.Graphics.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorControl), ClientRectangle);

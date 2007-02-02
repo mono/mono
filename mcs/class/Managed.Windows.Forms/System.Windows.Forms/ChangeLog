@@ -1,5 +1,9 @@
 2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* SizeGrip.cs: Use the normal icon for SizeGrip if it is disabled.
+
+2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* SizeGrip.cs: Only draw sizegrip if enabled (but always draw
 	  background) and only allow dragging if enabled. This way the
 	  sizegrip can be used to fill the open square that otherwise would
