@@ -4197,7 +4197,6 @@ namespace System.Windows.Forms {
 			return GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		// FIXME - I think this should just enqueue directly
 		internal override bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam) {
 			XEvent xevent = new XEvent ();
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
