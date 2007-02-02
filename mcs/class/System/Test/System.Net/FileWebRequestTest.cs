@@ -54,18 +54,11 @@ namespace MonoTests.System.Net
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (_tempDirectory)) {
-				string [] files = Directory.GetFiles (_tempDirectory, "*");
-				foreach (string file in files)
-					File.Delete (file);
+			if (Directory.Exists (_tempDirectory))
 				Directory.Delete (_tempDirectory, true);
-			}
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Bug in resource releasing - cannot delete file")]
-#endif
 		public void Async ()
 		{
 			WebResponse res = null;
@@ -94,32 +87,18 @@ namespace MonoTests.System.Net
 					// a previous call is still in progress
 				}
 
-				try {
-					req.GetResponse ();
-					Assert.Fail ("#4 should've failed");
-				} catch (WebException) {
-					// The operation has timed out
+				using (Stream wstream = req.EndGetRequestStream (async)) {
+					Assert.IsFalse (wstream.CanRead, "#1r");
+					Assert.IsTrue (wstream.CanWrite, "#1w");
+					Assert.IsTrue (wstream.CanSeek, "#1s");
+
+					wstream.WriteByte (72);
+					wstream.WriteByte (101);
+					wstream.WriteByte (108);
+					wstream.WriteByte (108);
+					wstream.WriteByte (111);
+					wstream.Close ();
 				}
-
-				try {
-					req.BeginGetResponse (null, null);
-					Assert.Fail ("#5 should've failed");
-				} catch (InvalidOperationException) {
-					// Cannot re-call BeginGetRequestStream/BeginGetResponse while
-					// a previous call is still in progress
-				}
-
-				Stream wstream = req.EndGetRequestStream (async);
-				Assert.IsFalse (wstream.CanRead, "#1r");
-				Assert.IsTrue (wstream.CanWrite, "#1w");
-				Assert.IsTrue (wstream.CanSeek, "#1s");
-
-				wstream.WriteByte (72);
-				wstream.WriteByte (101);
-				wstream.WriteByte (108);
-				wstream.WriteByte (108);
-				wstream.WriteByte (111);
-				wstream.Close ();
 
 				Assert.AreEqual (1, req.ContentLength, "#1cl");
 				Assert.AreEqual ("image/png", req.ContentType, "#1ct");
@@ -189,6 +168,42 @@ namespace MonoTests.System.Net
 				if (res != null)
 					res.Close ();
 			}
+		}
+
+		[Test]
+		public void Async_GetResponse_Failure ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("bug #80700");
+
+			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);
+			req.Method = "PUT";
+			req.ContentLength = 1;
+			req.ContentType = "image/png";
+			req.Timeout = 500;
+
+			IAsyncResult async = req.BeginGetRequestStream (null, null);
+			try {
+				req.GetResponse ();
+				Assert.Fail ("#1");
+			} catch (WebException) {
+				// The operation has timed out
+			}
+
+			try {
+				req.BeginGetResponse (null, null);
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+				// Cannot re-call BeginGetRequestStream/BeginGetResponse while
+				// a previous call is still in progress
+			}
+
+			using (Stream wstream = req.EndGetRequestStream (async)) {
+				wstream.WriteByte (72);
+			}
+
+			// the temp file should not be in use
+			Directory.Delete (_tempDirectory, true);
 		}
 
 		[Test]
@@ -265,6 +280,39 @@ namespace MonoTests.System.Net
 				if (res != null)
 					res.Close ();
 			}
+		}
+
+		[Test]
+		public void Sync_GetResponse_Failure ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("bug #80700");
+
+			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);
+			req.Method = "PUT";
+			req.ContentLength = 1;
+			req.ContentType = "image/png";
+			req.Timeout = 500;
+
+			using (Stream rs = req.GetRequestStream ()) {
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#1");
+				} catch (WebException) {
+					// The operation has timed out
+				}
+
+				try {
+					req.BeginGetResponse (null, null);
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException) {
+					// Cannot re-call BeginGetRequestStream/BeginGetResponse while
+					// a previous call is still in progress
+				}
+			}
+
+			// the temp file should not be in use
+			Directory.Delete (_tempDirectory, true);
 		}
 
 		[Test]
@@ -846,9 +894,9 @@ namespace MonoTests.System.Net
         
         private bool RunningOnUnix {
 			get {
-                Type t = Type.GetType("java.lang.System");
-                MethodInfo mi = t.GetMethod("getProperty", new Type[] { typeof(string) });
-                string osName = (string) mi.Invoke(null, new object[] { "os.name" });
+				Type t = Type.GetType("java.lang.System");
+				MethodInfo mi = t.GetMethod("getProperty", new Type[] { typeof(string) });
+				string osName = (string) mi.Invoke(null, new object[] { "os.name" });
 				
 				if(osName == null) {
 					return false;
