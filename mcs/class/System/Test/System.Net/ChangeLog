@@ -1,5 +1,9 @@
 2007-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SocketResponder.cs: Fixed typo. Moved to correct namespace.
+
+2007-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FileWebRequestTest.cs: Separate tests that fail on Windows due to
 	bug #80700, and ignore them on Windows.
 

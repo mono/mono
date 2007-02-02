@@ -1,5 +1,5 @@
 //
-// SocketResponsder.cs - Utility class for tests that require a listener
+// SocketResponder.cs - Utility class for tests that require a listener
 //
 // Author:
 //	Gert Driesen (drieseng@users.sourceforge.net)
@@ -34,55 +34,58 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-public delegate byte[] SocketRequestHandler (Socket socket);
-
-public class SocketResponder : IDisposable
+namespace MonoTests.System.Net
 {
-	private TcpListener tcpListener;
-	private readonly IPEndPoint _localEndPoint;
-	private Thread listenThread;
-	private SocketRequestHandler _requestHandler;
+	public delegate byte [] SocketRequestHandler (Socket socket);
 
-	public SocketResponder (IPEndPoint localEP, SocketRequestHandler requestHandler)
+	public class SocketResponder : IDisposable
 	{
-		_localEndPoint = localEP;
-		_requestHandler = requestHandler;
-	}
+		private TcpListener tcpListener;
+		private readonly IPEndPoint _localEndPoint;
+		private Thread listenThread;
+		private SocketRequestHandler _requestHandler;
 
-	public IPEndPoint LocalEndPoint
-	{
-		get { return _localEndPoint; }
-	}
-
-	public void Dispose ()
-	{
-		Stop ();
-	}
-
-	public void Start ()
-	{
-		tcpListener = new TcpListener (LocalEndPoint);
-		tcpListener.Start ();
-		listenThread = new Thread (new ThreadStart (Listen));
-		listenThread.Start ();
-	}
-
-	public void Stop ()
-	{
-		if (tcpListener != null)
-			tcpListener.Stop ();
-
-		try {
-			if (listenThread != null && listenThread.ThreadState == ThreadState.Running) {
-				listenThread.Abort ();
-			}
-		} catch {
+		public SocketResponder (IPEndPoint localEP, SocketRequestHandler requestHandler)
+		{
+			_localEndPoint = localEP;
+			_requestHandler = requestHandler;
 		}
-	}
 
-	private void Listen ()
-	{
-		Socket socket = tcpListener.AcceptSocket ();
-		socket.Send(_requestHandler(socket));
+		public IPEndPoint LocalEndPoint
+		{
+			get { return _localEndPoint; }
+		}
+
+		public void Dispose ()
+		{
+			Stop ();
+		}
+
+		public void Start ()
+		{
+			tcpListener = new TcpListener (LocalEndPoint);
+			tcpListener.Start ();
+			listenThread = new Thread (new ThreadStart (Listen));
+			listenThread.Start ();
+		}
+
+		public void Stop ()
+		{
+			if (tcpListener != null)
+				tcpListener.Stop ();
+
+			try {
+				if (listenThread != null && listenThread.ThreadState == ThreadState.Running) {
+					listenThread.Abort ();
+				}
+			} catch {
+			}
+		}
+
+		private void Listen ()
+		{
+			Socket socket = tcpListener.AcceptSocket ();
+			socket.Send (_requestHandler (socket));
+		}
 	}
 }
