@@ -79,9 +79,10 @@ namespace Microsoft.Build.Tasks {
 
 				if (resolved == null) {
 					Log.LogWarning ("Reference {0} not resolved", item.ItemSpec);
-				} else
-					Log.LogMessage ("Reference {0} resolved to {1}", item.ItemSpec, resolved);
+				} else {
+					Log.LogMessage (MessageImportance.Low, "Reference {0} resolved to {1}", item.ItemSpec, resolved);
 					tempResolvedFiles.Add (new TaskItem (resolved));
+				}
 			}
 			
 			resolvedFiles = tempResolvedFiles.ToArray ();
