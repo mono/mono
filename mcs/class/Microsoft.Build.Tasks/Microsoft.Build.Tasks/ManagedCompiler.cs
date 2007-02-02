@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -130,13 +131,13 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		[MonoTODO]
-		protected bool ListHasNoDuplicateItems (ITaskItem[] itemList,
+		protected bool ListHasNoDuplicateItems (ITaskItem [] itemList,
 							string parameterName)
 		{
-			Hashtable items = new Hashtable ();
+			Dictionary <string, object> items = new Dictionary <string, object> ();
 			
 			foreach (ITaskItem item in itemList) {
-				if (items.Contains (item.ItemSpec))
+				if (!items.ContainsKey (item.ItemSpec))
 					items.Add (item.ItemSpec, null);
 				else
 					return false;
@@ -265,10 +266,13 @@ namespace Microsoft.Build.Tasks {
 			get { return Console.Error.Encoding; }
 		}
 
-		// FIXME: hack to get build of hello world working
 		public string TargetType {
 			get {
-				return  (Bag.Contains ("TargetType")) ? (((string) Bag ["TargetType"]).ToLower ()) : null;
+				if (Bag.Contains ("TargetType")) {
+					string s = (string) Bag ["TargetType"];
+					return s.ToLower ();
+				} else
+					return null;
 			}
 			set { Bag ["TargetType"] = value; }
 		}

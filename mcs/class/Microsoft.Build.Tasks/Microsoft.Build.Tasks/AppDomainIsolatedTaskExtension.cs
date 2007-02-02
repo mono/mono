@@ -34,6 +34,11 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.Tasks {
 	[LoadInSeparateAppDomain]
 	public abstract class AppDomainIsolatedTaskExtension : AppDomainIsolatedTask {
+
+		internal AppDomainIsolatedTaskExtension ()
+		{
+		}
+
 		public new TaskLoggingHelper Log {
 			get {
 				return base.Log;

@@ -1,5 +1,10 @@
 2007-02-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* AppDomainIsolatedTaskExtension.cs
+	* ManagedCompiler.cs: corcompare changes.
+
+2007-02-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* ResolveAssemblyReference.cs (Execute): Use Low MessageImportance.
 
 2007-01-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
