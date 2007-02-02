@@ -103,6 +103,9 @@ namespace System.Diagnostics
 				}
 #endif
 				if (_coreEventLog.Log != null) {
+					if (_coreEventLog.Log.Length == 0)
+						return string.Empty;
+
 					if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
 						throw new InvalidOperationException (string.Format (
 							CultureInfo.InvariantCulture, "Cannot find Log {0}"
