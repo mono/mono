@@ -51,6 +51,7 @@ namespace System.Windows.Forms {
 		private ImplicitVScrollBar	vscrollbar;
 		private Size			canvas_size;
 		private Rectangle		display_rectangle;
+		private Control			old_parent;
 		#endregion	// Local Variables
 
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
@@ -229,6 +230,46 @@ namespace System.Windows.Forms {
 			dock_padding = new DockPaddingEdges(this);
 			SizeChanged +=new EventHandler(Recalculate);
 			VisibleChanged += new EventHandler(Recalculate);
+			LocationChanged += new EventHandler (LocationChangedHandler);
+			ParentChanged += new EventHandler (ParentChangedHandler);
+		}
+
+		void LocationChangedHandler (object sender, EventArgs e)
+		{
+			UpdateSizeGripVisible ();
+		}
+
+		void ParentChangedHandler (object sender, EventArgs e)
+		{
+			
+			if (old_parent == Parent)
+				return;
+				
+			if (old_parent != null) {
+				old_parent.SizeChanged -= new EventHandler (Parent_SizeChanged);
+#if NET_2_0				
+				old_parent.PaddingChanged -= new EventHandler (Parent_PaddingChanged);
+#endif
+			}
+			
+			if (Parent != null) {
+				Parent.SizeChanged += new EventHandler (Parent_SizeChanged);
+#if NET_2_0
+				Parent.PaddingChanged += new EventHandler (Parent_PaddingChanged);
+#endif
+			}
+			
+			old_parent = Parent;
+		}
+
+		void Parent_PaddingChanged (object sender, EventArgs e)
+		{
+			UpdateSizeGripVisible ();
+		}
+
+		void Parent_SizeChanged (object sender, EventArgs e)
+		{
+			UpdateSizeGripVisible ();
 		}
 		#endregion	// Public Constructors
 
@@ -785,7 +826,27 @@ namespace System.Windows.Forms {
 			vscrollbar.Bounds = vscroll_bounds;
 			hscrollbar.Visible = hscroll_visible;
 			vscrollbar.Visible = vscroll_visible;
-			sizegrip.Visible = hscroll_visible && vscroll_visible;
+			UpdateSizeGripVisible ();
+		}
+
+		private void UpdateSizeGripVisible ()
+		{
+			if (sizegrip == null)
+				return;
+				
+			sizegrip.CapturedControl = Parent;
+			// This is really wierd, the size grip is only showing up 
+			// if the bottom right corner of the scrollable control is within
+			// two pixels from the bottom right corner of its parent.
+			bool show_sizegrip = hscroll_visible && vscroll_visible;
+			bool enable_sizegrip = false;
+			if (show_sizegrip && Parent != null) {
+				Point diff = new Point (Parent.ClientRectangle.Bottom - Bottom, Parent.ClientRectangle.Right - Right);
+				enable_sizegrip = diff.X <= 2 && diff.X >= 0 && diff.Y <= 2 && diff.Y >= 0;
+				Console.WriteLine (DateTime.Now.ToLongTimeString () + " " + enable_sizegrip.ToString () + " " + diff.ToString ());
+			}
+			sizegrip.Visible = show_sizegrip;
+			sizegrip.Enabled = enable_sizegrip || sizegrip.Capture;
 		}
 
 		private void HandleScrollBar(object sender, EventArgs e) {

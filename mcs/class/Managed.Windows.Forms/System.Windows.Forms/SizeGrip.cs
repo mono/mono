@@ -78,7 +78,8 @@ namespace System.Windows.Forms {
 		protected override void OnPaint (PaintEventArgs pe) {
 			if (redraw && show_grip) {
 				pe.Graphics.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorControl), ClientRectangle);
-                                ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
+				if (Enabled)
+					ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
 			}
 			base.OnPaint (pe);
 		}
@@ -94,12 +95,14 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e) {
-			Capture = true;
-			
-			capture_point = Control.MousePosition;
+			if (Enabled) {
+				Capture = true;
+				
+				capture_point = Control.MousePosition;
 
-			window_w = CapturedControl.Width;
-			window_h = CapturedControl.Height;
+				window_w = CapturedControl.Width;
+				window_h = CapturedControl.Height;
+			}
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {
