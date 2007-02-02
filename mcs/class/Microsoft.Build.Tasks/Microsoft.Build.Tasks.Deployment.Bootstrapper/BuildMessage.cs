@@ -35,17 +35,21 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 
 	public class BuildMessage : IBuildMessage {
 	
-		int	helpId;
-		string	helpKeyword;
-		string	message;
+		int			help_id;
+		string			help_keyword;
+		string			message;
 		BuildMessageSeverity	severity;
+
+		BuildMessage ()
+		{
+		}
 		
 		public int HelpId {
-			get { return helpId;}
+			get { return help_id;}
 		}
 		
 		public string HelpKeyword {
-			get { return helpKeyword; }
+			get { return help_keyword; }
 		}
 		
 		public string Message {

@@ -36,6 +36,10 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 	public class ProductBuilder : IProductBuilder {
 	
 		Product	product;
+
+		ProductBuilder ()
+		{
+		}
 		
 		public Product Product {
 			get { return product; }

@@ -38,20 +38,11 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 	[ComVisible (true)]
 	public class BootstrapperBuilder : IBootstrapperBuilder {
 		
-		string	path;
+		string			path;
 		ProductCollection	products;
 
 		public BootstrapperBuilder ()
 		{
-		}
-		
-		public string Path {
-			get { return path; }
-			set { path = value; }
-		}
-		
-		public ProductCollection Products {
-			get { return products; }
 		}
 		
 		[MonoTODO]
@@ -61,9 +52,19 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 		}
 		
 		[MonoTODO]
-		public string[] GetOutputFolders (string[] productCodes, string culture, string fallbackCulture)
+		public string [] GetOutputFolders (string [] productCodes, string culture, string fallbackCulture,
+						   ComponentsLocation componentsLocation)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public string Path {
+			get { return path; }
+			set { path = value; }
+		}
+		
+		public ProductCollection Products {
+			get { return products; }
 		}
 	}
 }

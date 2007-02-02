@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
@@ -38,17 +39,24 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 	[Guid ("D25C0741-99CA-49f7-9460-95E5F25EEF43")]
 	[ComVisible (true)]
 	public class ProductBuilderCollection : IProductBuilderCollection, IEnumerable {
+
+		List <ProductBuilder> list;
+
+		ProductBuilderCollection ()
+		{
+			list = new List <ProductBuilder> ();
+		}
 		
 		[MonoTODO]
 		public void Add (ProductBuilder builder)
 		{
-			throw new NotImplementedException ();
+			list.Add (builder);
 		}
 		
 		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 	}
 }

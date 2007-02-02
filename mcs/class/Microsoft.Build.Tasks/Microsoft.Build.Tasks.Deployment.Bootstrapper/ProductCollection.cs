@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
@@ -38,28 +39,39 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 	[Guid ("EFFA164B-3E87-4195-88DB-8AC004DDFE2A")]
 	[ComVisible (true)]
 	public class ProductCollection : IProductCollection, IEnumerable {
+
+		List <Product> list;
+
+		ProductCollection ()
+		{
+			list = new List <Product> ();
+		}
 		
 		[MonoTODO]
 		public int Count {
-			get { throw new NotImplementedException (); }
+			get { return list.Count; }
 		}
 		
 		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 		
 		[MonoTODO]
 		public Product Item (int index)
 		{
-			throw new NotImplementedException ();
+			return list [index];
 		}
 		
 		[MonoTODO]
 		public Product Product (string productCode)
 		{
-			throw new NotImplementedException ();
+			int idx = list.FindIndex (delegate (Product p) {
+				return p.ProductCode == productCode;
+			});
+
+			return (idx == -1) ? null : list [idx];
 		}
 	}
 }

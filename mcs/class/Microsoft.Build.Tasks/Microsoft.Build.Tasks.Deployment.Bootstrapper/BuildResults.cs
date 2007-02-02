@@ -38,20 +38,24 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 	[ComVisible (true)]
 	public class BuildResults : IBuildResults {
 	
-		string[]	componentFiles;
-		string		keyFile;
-		BuildMessage[]	messages;
+		string []	component_files;
+		string		key_file;
+		BuildMessage []	messages;
 		bool		succeeded;
+
+		BuildResults ()
+		{
+		}
 		
 		public string[] ComponentFiles {
-			get { return componentFiles; }
+			get { return component_files; }
 		}
 		
 		public string KeyFile {
-			get { return keyFile; }
+			get { return key_file; }
 		}
 		
-		public BuildMessage[] Messages {
+		public BuildMessage [] Messages {
 			get { return messages; }
 		}
 		
