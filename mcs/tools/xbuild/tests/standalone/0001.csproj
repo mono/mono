@@ -1,5 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Main" >
-	<Target Name="Main" >
-		<Message Text="test" Condition="false or true" />
-	</Target>
-</Project>
