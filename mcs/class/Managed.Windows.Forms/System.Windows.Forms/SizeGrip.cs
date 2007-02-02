@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 		private int	window_h;
 		private bool	show_grip;
 		private bool	hide_pending;
+		private bool	captured;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -103,9 +104,19 @@ namespace System.Windows.Forms {
 			redraw = true;
 		}
 
+		protected override void OnMouseCaptureChanged (EventArgs e) {
+			base.OnMouseCaptureChanged (e);
+			
+			if (captured && !Capture) {
+				captured = false;
+				CapturedControl.Size = new Size (window_w, window_h);
+			}
+		}
+
 		protected override void OnMouseDown(MouseEventArgs e) {
 			if (Enabled) {
 				Capture = true;
+				captured = true;
 				
 				capture_point = Control.MousePosition;
 
@@ -150,6 +161,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseUp(MouseEventArgs e) {
 			if (Capture) {
+				captured = false;
 				Capture = false;
 				if (hide_pending) {
 					Hide();

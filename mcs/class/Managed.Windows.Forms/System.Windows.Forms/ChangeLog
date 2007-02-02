@@ -1,5 +1,10 @@
 2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* SizeGrip.cs: If resizing and the capture is lost, revert any size
+	  changes to initial size (fixes #80597).
+
+2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* SizeGrip.cs: Use the normal icon for SizeGrip if it is disabled.
 
 2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
