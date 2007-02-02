@@ -95,6 +95,34 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void StyleTest ()
+		{
+			Label l = new Label ();
+			
+			Assert.IsFalse (TestHelper.IsStyleSet (l, WindowStyles.WS_BORDER), "#1");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_CLIENTEDGE), "#2");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_STATICEDGE), "#3");
+			
+			l.BorderStyle = BorderStyle.None;
+
+			Assert.IsFalse (TestHelper.IsStyleSet (l, WindowStyles.WS_BORDER), "#4");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_CLIENTEDGE), "#5");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_STATICEDGE), "#6");
+			
+			l.BorderStyle = BorderStyle.FixedSingle;
+
+			Assert.IsTrue (TestHelper.IsStyleSet (l, WindowStyles.WS_BORDER), "#7");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_CLIENTEDGE), "#8");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_STATICEDGE), "#9");
+
+			l.BorderStyle = BorderStyle.Fixed3D;
+			
+			Assert.IsFalse (TestHelper.IsStyleSet (l, WindowStyles.WS_BORDER), "#10");
+			Assert.IsFalse (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_CLIENTEDGE), "#11");
+			Assert.IsTrue (TestHelper.IsExStyleSet (l, WindowExStyles.WS_EX_STATICEDGE), "#12");
+		}
+
+		[Test]
 		public void BoundsTest ()
 		{
 			Label l = new Label ();

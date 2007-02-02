@@ -1,5 +1,9 @@
 2007-02-01  Everaldo Canuto  <everaldo@simios.org>
 
+	* LabelTest.cs: StyleTest created to test #79537. TesHelper as used. 
+
+2007-02-01  Everaldo Canuto  <everaldo@simios.org>
+
 	* TestHelper.cs: TesHelper class added. This class will provide some 
 	usefull methods that can be used to test Control derived classes,
 	at moment only static methods GetCreateParams, IsStyleSet and
