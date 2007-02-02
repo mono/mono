@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
@@ -36,35 +37,41 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
 	public sealed class OutputMessageCollection : IEnumerable {
-	
-		int	errorCount;
-		int	warningCount;
+
+		int			error_count;
+		List <OutputMessage>	list;
+		int			warning_count;
+
+		OutputMessageCollection ()
+		{
+			list = new List <OutputMessage> ();
+		}
 	
 		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
 		}
 		
 		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 		
 		[MonoTODO]
 		public int ErrorCount {
-			get { return errorCount; }
+			get { return error_count; }
 		}
 		
 		[MonoTODO]
 		public int WarningCount {
-			get { return warningCount; }
+			get { return warning_count; }
 		}
 		
 		[MonoTODO]
 		public OutputMessage this [int index] {
-			get { return null; }
+			get { return list [index]; }
 		}
 	}
 }

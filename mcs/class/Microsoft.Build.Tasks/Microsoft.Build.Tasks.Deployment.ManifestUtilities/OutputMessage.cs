@@ -39,6 +39,10 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 		string			name;
 		string			text;
 		OutputMessageType	type;
+
+		OutputMessage ()
+		{
+		}
 	
 		[MonoTODO]
 		public string[] GetArguments ()

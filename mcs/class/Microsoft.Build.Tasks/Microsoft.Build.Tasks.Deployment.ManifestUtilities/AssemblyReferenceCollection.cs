@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
@@ -37,21 +38,29 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	[ComVisible (false)]
 	public sealed class AssemblyReferenceCollection : IEnumerable {
 	
-		int count;
+		List <AssemblyReference> list;
+
+		AssemblyReferenceCollection ()
+		{
+			list = new List <AssemblyReference> ();
+		}
 	
 		public AssemblyReference Add (AssemblyReference assembly)
 		{
-			throw new NotImplementedException ();
+			list.Add (assembly);
+			return assembly;
 		}
 		
 		public AssemblyReference Add (string path)
 		{
-			throw new NotImplementedException ();
+			AssemblyReference ar = new AssemblyReference (path);
+			list.Add (ar);
+			return ar;
 		}
 		
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
 		}
 		
 		public AssemblyReference Find (AssemblyIdentity identity)
@@ -71,20 +80,20 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 		
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 		
 		public void Remove (AssemblyReference assemblyReference)
 		{
-			throw new NotImplementedException ();
+			list.Remove (assemblyReference);
 		}
 		
 		public int Count {
-			get { return count; }
+			get { return list.Count; }
 		}
 		
 		public AssemblyReference this [int index] {
-			get { return null; }
+			get { return list [index]; }
 		}
 	}
 }

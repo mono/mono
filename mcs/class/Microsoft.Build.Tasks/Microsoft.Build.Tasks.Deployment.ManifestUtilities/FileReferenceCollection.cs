@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
@@ -36,23 +37,33 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 	
 	[ComVisible (false)]
 	public sealed class FileReferenceCollection : IEnumerable {
+
+		List <FileReference> list;
+
+		FileReferenceCollection ()
+		{
+			list = new List <FileReference> ();
+		}
 	
 		[MonoTODO]
 		public FileReference Add (FileReference file)
 		{
-			throw new NotImplementedException ();
+			list.Add (file);
+			return file;
 		}
 
 		[MonoTODO]
 		public FileReference Add (string path)
 		{
-			throw new NotImplementedException ();
+			FileReference fr = new FileReference (path);
+			list.Add (fr);
+			return fr;
 		}
 		
 		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			list.Clear ();
 		}
 		
 		[MonoTODO]
@@ -64,23 +75,23 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities {
 		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 		
 		[MonoTODO]
 		public void Remove (FileReference file)
 		{
-			throw new NotImplementedException ();
+			list.Remove (file);
 		}
 		
 		[MonoTODO]
 		public int Count {
-			get { return 0; }
+			get { return list.Count; }
 		}
 		
 		[MonoTODO]
 		public FileReference this [int index] {
-			get { return null; }
+			get { return list [index]; }
 		}
 	}
 }
