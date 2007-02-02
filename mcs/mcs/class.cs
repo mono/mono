@@ -2877,6 +2877,8 @@ namespace Mono.CSharp {
 			Modifiers.STATIC |
 			Modifiers.UNSAFE;
 
+		public const TypeAttributes StaticClassAttribute = TypeAttributes.Abstract | TypeAttributes.Sealed;
+
 		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
 			      Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Class)
@@ -3096,7 +3098,7 @@ namespace Mono.CSharp {
 			get {
 				TypeAttributes ta = base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class;
 				if (IsStatic)
-					ta |= TypeAttributes.Abstract | TypeAttributes.Sealed;
+					ta |= StaticClassAttribute;
 				return ta;
 			}
 		}
@@ -4323,23 +4325,23 @@ namespace Mono.CSharp {
 				CodeGen.FileName, TypeManager.CSharpSignature(b));
 		}
 
-		bool IsEntryPoint (Parameters pinfo)
+		bool IsEntryPoint ()
 		{
 			if (ReturnType != TypeManager.void_type &&
 				ReturnType != TypeManager.int32_type)
 				return false;
 
-			if (pinfo.Count == 0)
+			if (Parameters.Count == 0)
 				return true;
 
-			if (pinfo.Count > 1)
+			if (Parameters.Count > 1)
 				return false;
 
-			Type t = pinfo.ParameterType (0);
+			Type t = Parameters.ParameterType (0);
 			if (t.IsArray &&
 				(t.GetArrayRank () == 1) &&
 				(TypeManager.GetElementType (t) == TypeManager.string_type) &&
-				(pinfo.ParameterModifier (0) == Parameter.Modifier.NONE))
+				(Parameters.ParameterModifier (0) == Parameter.Modifier.NONE))
 				return true;
 			else
 				return false;
@@ -4374,8 +4376,8 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				for (int i = 0; i < ParameterInfo.Count; ++i) {
-					if ((ParameterInfo.ParameterModifier (i) & Parameter.Modifier.OUTMASK) != 0) {
+				for (int i = 0; i < Parameters.Count; ++i) {
+					if ((Parameters.ParameterModifier (i) & Parameter.Modifier.OUTMASK) != 0) {
 						Report.Error (685, Location, "Conditional method `{0}' cannot have an out parameter", GetSignatureForError ());
 						return;
 					}
@@ -4460,7 +4462,7 @@ namespace Mono.CSharp {
 				Name == "Main" &&
 				(RootContext.MainClass == null ||
 				RootContext.MainClass == Parent.TypeBuilder.FullName)){
-				if (IsEntryPoint (ParameterInfo)) {
+				if (IsEntryPoint ()) {
 
 					if (RootContext.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {

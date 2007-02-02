@@ -316,15 +316,17 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
+			parameter_type = texpr.Type;
+
 #if GMCS_SOURCE
 			TypeParameterExpr tparam = texpr as TypeParameterExpr;
-			if (tparam != null)
+			if (tparam != null) {
 				constraints = tparam.TypeParameter.Constraints;
+				return true;
+			}
 #endif
 
-			parameter_type = texpr.Type;
-			
-			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
+			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", GetSignatureForError ());
 				return false;
 			}

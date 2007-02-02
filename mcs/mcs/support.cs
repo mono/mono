@@ -80,8 +80,7 @@ namespace Mono.CSharp {
 				if (!pi [i].ParameterType.IsArray)
 					continue;
 
-				object [] attrs = pi [i].GetCustomAttributes (TypeManager.param_array_type, true);
-				if (attrs.Length == 1) {
+				if (pi [i].IsDefined (TypeManager.param_array_type, false)) {
 					params_idx = i;
 					return;
 				}

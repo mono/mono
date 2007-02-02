@@ -1066,7 +1066,7 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public FullNamedExpression LookupType (string name, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			if (Cache.Contains (name))
 				return (FullNamedExpression) Cache [name];
@@ -1076,7 +1076,7 @@ namespace Mono.CSharp {
 			if (t != null)
 				e = new TypeExpression (t, Location.Null);
 			else if (Parent != null)
-				e = Parent.LookupType (name, loc, ignore_cs0104);
+				e = Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 			else
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
 

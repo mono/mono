@@ -1,3 +1,24 @@
+2007-02-02  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs: Unified one error message.
+
+	* class.cs (Class): Use type attributes and not properties to test static
+	class.
+	(IsEntryPoint): Don's pass local variable.
+
+	* convert.cs: Removed duplicate check.
+
+	* decl.cs, doc.cs, ecore.cs (LookupType): Renamed to LookupNamespaceOrType.
+
+	* driver.cs: Don't crash when soft reference does not exist.
+
+	* namespace.cs (EnsureNamespace): Renamed to RegisterNamespace.
+	(UsingEntry): Removed redundant allocation.
+
+	* parameter.cs: Add fast path for type parameters.
+
+	* support.cs: Don't allocate attribute when it's not used.
+
 2007-01-30  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs

@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (target));
 		}
 
-		protected static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
+		public static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
 		{
 			Report.Error (117, loc, "`{0}' does not contain a definition for `{1}'",
 				TypeManager.CSharpName (type), name);
@@ -1974,7 +1974,7 @@ namespace Mono.CSharp {
 		{
 			return resolved_to != null && resolved_to.Type != null && 
 				resolved_to.Type.Name == Name &&
-				(ec.DeclContainer.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
+				(ec.DeclContainer.LookupNamespaceOrType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -2052,7 +2052,7 @@ namespace Mono.CSharp {
 				return fne.ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
-			fne = ec.DeclContainer.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+			fne = ec.DeclContainer.LookupNamespaceOrType (Name, loc, /*ignore_cs0104=*/ false);
 
 			if (fne != null) {
 				if (fne.Type == null)

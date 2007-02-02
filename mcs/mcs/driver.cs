@@ -389,6 +389,8 @@ namespace Mono.CSharp
 							err = false;
 							break;
 						} catch (FileNotFoundException ff) {
+							if (soft)
+								return;
 							total_log += ff.FusionLog;
 						}
 					}
@@ -660,9 +662,7 @@ namespace Mono.CSharp
 #endif
 			};
 			
-			int p = 0;
-			foreach (string def in default_config)
-				soft_references.Insert (p++, def);
+			soft_references.AddRange (default_config);
 		}
 
 		public static string OutputFile

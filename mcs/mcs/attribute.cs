@@ -538,8 +538,7 @@ namespace Mono.CSharp {
 				}
 
 				if (member == null){
-					Report.Error (117, Location, "`{0}' does not contain a definition for `{1}'",
-						      TypeManager.CSharpName (Type), member_name);
+					Expression.Error_TypeDoesNotContainDefinition (Location, Type, member_name);
 					return false;
 				}
 				

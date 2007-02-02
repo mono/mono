@@ -811,15 +811,6 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			if ((target_type == TypeManager.enum_type ||
-			     target_type.IsSubclassOf (TypeManager.enum_type)) &&
-			     expr is IntLiteral){
-				IntLiteral i = (IntLiteral) expr;
-
-				if (i.Value == 0)
-					return true;
-			}
-
 			//
 			// If `expr_type' implements `target_type' (which is an iface)
 			// see TryImplicitIntConversion

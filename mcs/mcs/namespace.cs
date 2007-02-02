@@ -85,7 +85,7 @@ namespace Mono.CSharp {
 			return all_namespaces.Contains (name);
 		}
 
-		protected void EnsureNamespace (string dotted_name)
+		protected void RegisterNamespace (string dotted_name)
 		{
 			if (dotted_name != null && dotted_name.Length != 0 && ! IsNamespace (dotted_name))
 				GetNamespace (dotted_name, true);
@@ -96,12 +96,12 @@ namespace Mono.CSharp {
 			if (get_namespaces_method != null) {
 				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
 				foreach (string ns in namespaces)
-					EnsureNamespace (ns);
+					RegisterNamespace (ns);
 				return;
 			}
 
 			foreach (Type t in assembly.GetExportedTypes ())
-				EnsureNamespace (t.Namespace);
+				RegisterNamespace (t.Namespace);
 		}
 		
 		protected static Type GetTypeInAssembly (Assembly assembly, string name)
@@ -184,7 +184,7 @@ namespace Mono.CSharp {
 				return;
 
 			foreach (Type t in m.GetTypes ())
-				EnsureNamespace (t.Namespace);
+				RegisterNamespace (t.Namespace);
 		}
 
 		public override void Error_NamespaceDoesNotExist(DeclSpace ds, Location loc, string name)
@@ -253,7 +253,7 @@ namespace Mono.CSharp {
 		
 		Namespace parent;
 		string fullname;
-		Hashtable namespaces;
+		IDictionary namespaces;
 		IDictionary declspaces;
 		Hashtable cached_types;
 		RootNamespace root;
@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 			else
 				MemberName = new MemberName (name);
 
-			namespaces = new Hashtable ();
+			namespaces = new HybridDictionary ();
 			cached_types = new Hashtable ();
 
 			root.RegisterNamespace (this);
@@ -507,14 +507,12 @@ namespace Mono.CSharp {
 		//
 		public class UsingEntry : IResolveContext {
 			public readonly MemberName Name;
-			readonly Expression Expr;
 			readonly NamespaceEntry NamespaceEntry;
 			readonly Location Location;
 			
 			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
 			{
 				Name = name;
-				Expr = name.GetTypeExpression ();
 				NamespaceEntry = entry;
 				Location = loc;
 			}
@@ -526,7 +524,7 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				FullNamedExpression fne = Expr.ResolveAsTypeStep (this, false);
+				FullNamedExpression fne = Name.GetTypeExpression ().ResolveAsTypeStep (this, false);
 				if (fne == null) {
 					Error_NamespaceNotFound (Location, Name.ToString ());
 					return null;
@@ -534,6 +532,7 @@ namespace Mono.CSharp {
 
 				resolved = fne as Namespace;
 				if (resolved == null) {
+					Report.SymbolRelatedToPreviousError (fne.Type);
 					Report.Error (138, Location,
 						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.ToString ());
 				}
@@ -845,7 +844,7 @@ namespace Mono.CSharp {
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = NS.Lookup (ds, name, loc);
+			FullNamedExpression fne = ns.Lookup (ds, name, loc);
 			if (fne != null)
 				return fne;
 
@@ -887,7 +886,7 @@ namespace Mono.CSharp {
 		}
 
 		// Our cached computation.
-		readonly Namespace [] empty_namespaces = new Namespace [0];
+		static readonly Namespace [] empty_namespaces = new Namespace [0];
 		Namespace [] namespace_using_table;
 		Namespace [] GetUsingTable ()
 		{
@@ -914,7 +913,7 @@ namespace Mono.CSharp {
 			return namespace_using_table;
 		}
 
-		readonly string [] empty_using_list = new string [0];
+		static readonly string [] empty_using_list = new string [0];
 
 		public int SymbolFileID {
 			get {
