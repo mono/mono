@@ -843,7 +843,6 @@ namespace System.Windows.Forms {
 			if (show_sizegrip && Parent != null) {
 				Point diff = new Point (Parent.ClientRectangle.Bottom - Bottom, Parent.ClientRectangle.Right - Right);
 				enable_sizegrip = diff.X <= 2 && diff.X >= 0 && diff.Y <= 2 && diff.Y >= 0;
-				Console.WriteLine (DateTime.Now.ToLongTimeString () + " " + enable_sizegrip.ToString () + " " + diff.ToString ());
 			}
 			sizegrip.Visible = show_sizegrip;
 			sizegrip.Enabled = enable_sizegrip || sizegrip.Capture;
