@@ -16,8 +16,12 @@ libmonoutils_la_SOURCES = \
 	mono-codeman.c	\
 	mono-counters.c	\
 	mono-compiler.h	\
+	mono-dl.c	\
+	mono-dl.h	\
 	monobitset.c	\
 	mono-math.c  \
+	mono-mmap.c  \
+	mono-mmap.h  \
 	strtod.h	\
 	strtod.c	\
 	strenc.h	\
@@ -27,7 +31,7 @@ libmonoutils_la_SOURCES = \
 	mono-path.c	\
 	mono-stdlib.c
 
-libmonoutilsincludedir = $(includedir)/mono/utils
+libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
 libmonoutilsinclude_HEADERS = \
 	monobitset.h	\

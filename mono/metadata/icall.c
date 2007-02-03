@@ -187,6 +187,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	MonoClass *ac, *vc, *ec;
 	gint32 esize, vsize;
 	gpointer *ea, *va;
+	int et, vt;
 
 	guint64 u64 = 0;
 	gint64 i64 = 0;
@@ -275,8 +276,16 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 
 	vsize = mono_class_instance_size (vc) - sizeof (MonoObject);
 
+	et = ec->byval_arg.type;
+	if (et == MONO_TYPE_VALUETYPE && ec->byval_arg.data.klass->enumtype)
+		et = ec->byval_arg.data.klass->enum_basetype->type;
+
+	vt = vc->byval_arg.type;
+	if (vt == MONO_TYPE_VALUETYPE && vc->byval_arg.data.klass->enumtype)
+		vt = vc->byval_arg.data.klass->enum_basetype->type;
+
 #define ASSIGN_UNSIGNED(etype) G_STMT_START{\
-	switch (vc->byval_arg.type) { \
+	switch (vt) { \
 	case MONO_TYPE_U1: \
 	case MONO_TYPE_U2: \
 	case MONO_TYPE_U4: \
@@ -298,7 +307,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 }G_STMT_END
 
 #define ASSIGN_SIGNED(etype) G_STMT_START{\
-	switch (vc->byval_arg.type) { \
+	switch (vt) { \
 	case MONO_TYPE_I1: \
 	case MONO_TYPE_I2: \
 	case MONO_TYPE_I4: \
@@ -324,7 +333,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 }G_STMT_END
 
 #define ASSIGN_REAL(etype) G_STMT_START{\
-	switch (vc->byval_arg.type) { \
+	switch (vt) { \
 	case MONO_TYPE_R4: \
 	case MONO_TYPE_R8: \
 		CHECK_WIDENING_CONVERSION(0); \
@@ -348,7 +357,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	} \
 }G_STMT_END
 
-	switch (vc->byval_arg.type) {
+	switch (vt) {
 	case MONO_TYPE_U1:
 		u64 = *(guint8 *) va;
 		break;
@@ -384,7 +393,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 		break;
 	case MONO_TYPE_BOOLEAN:
 		/* Boolean is only compatible with itself. */
-		switch (ec->byval_arg.type) {
+		switch (et) {
 		case MONO_TYPE_CHAR:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_U2:
@@ -404,7 +413,7 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	}
 
 	/* If we can't do a direct copy, let's try a widening conversion. */
-	switch (ec->byval_arg.type) {
+	switch (et) {
 	case MONO_TYPE_CHAR:
 		ASSIGN_UNSIGNED (guint16);
 	case MONO_TYPE_U1:
@@ -2007,6 +2016,7 @@ ves_icall_Type_MakeGenericType (MonoReflectionType *type, MonoArray *type_array)
 	}
 
 	geninst = mono_reflection_bind_generic_parameters (type, count, types);
+	g_free (types);
 	if (!geninst)
 		return NULL;
 
@@ -2736,7 +2746,8 @@ ves_icall_InternalExecute (MonoReflectionMethod *method, MonoObject *this, MonoA
 		} else if (!strcmp (m->name, "FieldSetter")) {
 			MonoClass *k = this->vtable->klass;
 			MonoString *name;
-			guint32 size, align;
+			guint32 size;
+			gint32 align;
 			char *str;
 			
 			/* If this is a proxy, then it must be a CBO */
@@ -3604,7 +3615,7 @@ static MonoReflectionType *
 ves_icall_Type_GetNestedType (MonoReflectionType *type, MonoString *name, guint32 bflags)
 {
 	MonoDomain *domain; 
-	MonoClass *startklass, *klass;
+	MonoClass *klass;
 	MonoClass *nested;
 	GList *tmpn;
 	char *str;
@@ -3614,10 +3625,22 @@ ves_icall_Type_GetNestedType (MonoReflectionType *type, MonoString *name, guint3
 	domain = ((MonoObject *)type)->vtable->domain;
 	if (type->type->byref)
 		return NULL;
-	klass = startklass = mono_class_from_mono_type (type->type);
+	klass = mono_class_from_mono_type (type->type);
 	str = mono_string_to_utf8 (name);
 
  handle_parent:
+	/*
+	 * If a nested type is generic, return its generic type definition.
+	 * Note that this means that the return value is essentially a
+	 * nested type of the generic type definition of @klass.
+	 *
+	 * A note in MSDN claims that a generic type definition can have
+	 * nested types that aren't generic.  In any case, the container of that
+	 * nested type would be the generic type definition.
+	 */
+	if (klass->generic_class)
+		klass = klass->generic_class->container_class;
+
 	for (tmpn = klass->nested_classes; tmpn; tmpn = tmpn->next) {
 		int match = 0;
 		nested = tmpn->data;
@@ -3646,7 +3669,7 @@ ves_icall_Type_GetNestedTypes (MonoReflectionType *type, guint32 bflags)
 {
 	MonoDomain *domain; 
 	GList *tmpn;
-	MonoClass *startklass, *klass;
+	MonoClass *klass;
 	MonoArray *res;
 	MonoObject *member;
 	int i, len, match;
@@ -3657,7 +3680,19 @@ ves_icall_Type_GetNestedTypes (MonoReflectionType *type, guint32 bflags)
 	domain = ((MonoObject *)type)->vtable->domain;
 	if (type->type->byref)
 		return mono_array_new (domain, mono_defaults.monotype_class, 0);
-	klass = startklass = mono_class_from_mono_type (type->type);
+	klass = mono_class_from_mono_type (type->type);
+
+	/*
+	 * If a nested type is generic, return its generic type definition.
+	 * Note that this means that the return value is essentially the set
+	 * of nested types of the generic type definition of @klass.
+	 *
+	 * A note in MSDN claims that a generic type definition can have
+	 * nested types that aren't generic.  In any case, the container of that
+	 * nested type would be the generic type definition.
+	 */
+	if (klass->generic_class)
+		klass = klass->generic_class->container_class;
 
 	i = 0;
 	len = 1;
@@ -6105,7 +6140,8 @@ mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
 	if (start) {
 		iter->args = start;
 	} else {
-		guint32 i, align, arg_size;
+		guint32 i, arg_size;
+		gint32 align;
 		iter->args = argsp + sizeof (gpointer);
 #ifndef MONO_ARCH_REGPARMS
 		for (i = 0; i < iter->sig->sentinelpos; ++i) {
@@ -6122,7 +6158,8 @@ mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
 static MonoTypedRef
 mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 {
-	guint32 i, align, arg_size;
+	guint32 i, arg_size;
+	gint32 align;
 	MonoTypedRef res;
 	MONO_ARCH_SAVE_REGS;
 
@@ -6146,7 +6183,8 @@ mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 static MonoTypedRef
 mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type)
 {
-	guint32 i, align, arg_size;
+	guint32 i, arg_size;
+	gint32 align;
 	MonoTypedRef res;
 	MONO_ARCH_SAVE_REGS;
 
@@ -6270,6 +6308,74 @@ static gint32
 ves_icall_MonoDebugger_GetMethodToken (MonoReflectionMethod *method)
 {
 	return method->method->token;
+}
+
+/*
+ * We eturn NULL for no modifiers so the corlib code can return Type.EmptyTypes
+ * and avoid useless allocations.
+ */
+static MonoArray*
+type_array_from_modifiers (MonoImage *image, MonoType *type, int optional)
+{
+	MonoArray *res;
+	int i, count = 0;
+	for (i = 0; i < type->num_mods; ++i) {
+		if ((optional && !type->modifiers [i].required) || (!optional && type->modifiers [i].required))
+			count++;
+	}
+	if (!count)
+		return NULL;
+	res = mono_array_new (mono_domain_get (), mono_defaults.systemtype_class, count);
+	count = 0;
+	for (i = 0; i < type->num_mods; ++i) {
+		if ((optional && !type->modifiers [i].required) || (!optional && type->modifiers [i].required)) {
+			MonoClass *klass = mono_class_get (image, type->modifiers [i].token);
+			mono_array_setref (res, count, mono_type_get_object (mono_domain_get (), &klass->byval_arg));
+			count++;
+		}
+	}
+	return res;
+}
+
+static MonoArray*
+param_info_get_type_modifiers (MonoReflectionParameter *param, MonoBoolean optional)
+{
+	MonoType *type = param->ClassImpl->type;
+	MonoReflectionMethod *method = (MonoReflectionMethod*)param->MemberImpl;
+	MonoImage *image = method->method->klass->image;
+	int pos = param->PositionImpl;
+	MonoMethodSignature *sig = mono_method_signature (method->method);
+	if (pos == -1)
+		type = sig->ret;
+	else
+		type = sig->params [pos];
+
+	return type_array_from_modifiers (image, type, optional);
+}
+
+static MonoType*
+get_property_type (MonoProperty *prop)
+{
+	MonoMethodSignature *sig;
+	if (prop->get) {
+		sig = mono_method_signature (prop->get);
+		return sig->ret;
+	} else if (prop->set) {
+		sig = mono_method_signature (prop->set);
+		return sig->params [sig->param_count - 1];
+	}
+	return NULL;
+}
+
+static MonoArray*
+property_info_get_type_modifiers (MonoReflectionProperty *property, MonoBoolean optional)
+{
+	MonoType *type = get_property_type (property->property);
+	MonoImage *image = property->klass->image;
+
+	if (!type)
+		return NULL;
+	return type_array_from_modifiers (image, type, optional);
 }
 
 static MonoBoolean

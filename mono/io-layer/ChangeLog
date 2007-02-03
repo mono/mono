@@ -1,3 +1,13 @@
+
+Mon Dec 18 14:54:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* processes.c: moved a free on the error path.
+
+Thu Dec 14 21:42:39 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* processes.c: fixed a few memory leaks when executing
+	processes.
+
 Mon Nov 27 13:12:17 GMT 2006 Paolo Molaro <lupus@ximian.com>
 
 	* atomic.h: fix arm compare and exchange (bug #78500).

@@ -1663,18 +1663,7 @@ type_from_stack_type (MonoInst *ins) {
 	case STACK_PTR: return &mono_defaults.int_class->byval_arg;
 	case STACK_R8: return &mono_defaults.double_class->byval_arg;
 	case STACK_MP:
-		/* 
-		 * FIXME: This doesn't work because mono_class_from_mono_type ()
-		 * returns the original klass for a byref type, not a 'byref' class,
-		 * causing the JIT to create variables with the wrong type, for
-		 * example.
-		 */
-		/*
-		if (ins->klass)
-			return &ins->klass->this_arg;
-		else
-		*/
-		return &mono_defaults.object_class->this_arg;
+		return &ins->klass->this_arg;
 	case STACK_OBJ: return &mono_defaults.object_class->byval_arg;
 	case STACK_VTYPE: return &ins->klass->byval_arg;
 	default:
@@ -3560,7 +3549,8 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 {
 	int rank;
 	MonoInst *addr;
-	MonoJitICallInfo *info;
+	MonoMethod *addr_method;
+	int element_size;
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
 
@@ -3574,12 +3564,9 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	}
 #endif
 
-	/* Need to register the icall so it gets an icall wrapper */
-	info = mono_get_element_address_icall (rank);
-
-	cfg->flags |= MONO_CFG_HAS_VARARGS;
-	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
-	addr = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp, ip);
+	element_size = mono_class_array_element_size (cmethod->klass->element_class);
+	addr_method = mono_marshal_get_array_address (rank, element_size);
+	addr = mono_emit_method_call (cfg, addr_method, addr_method->signature, sp, ip, NULL);
 
 	return addr;
 }
@@ -10071,7 +10058,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 69000.
+ * - LAST MERGE: 70000.
  */
 
 /*

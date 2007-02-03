@@ -55,6 +55,8 @@ libmonoruntime_la_SOURCES = \
 	gc-internal.h	\
 	marshal.c	\
 	marshal.h	\
+	mono-mlist.c	\
+	mono-mlist.h	\
 	monitor.c	\
 	monitor.h	\
 	tabledefs.h \
@@ -125,7 +127,7 @@ libmonoruntime_static_la_SOURCES = $(libmonoruntime_la_SOURCES)
 
 libmonoruntime_static_la_LDFLAGS = -static
 
-libmonoruntimeincludedir = $(includedir)/mono/metadata
+libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
 libmonoruntimeinclude_HEADERS = \
 	attrdefs.h	\

@@ -84,11 +84,6 @@ typedef struct {
 #define CULTURES_START_IDX 0
 #define UICULTURES_START_IDX NUM_CACHED_CULTURES
 
-/*
- * The "os_handle" field of the WaitHandle class.
- */
-static MonoClassField *wait_handle_os_handle_field = NULL;
-
 /* Controls access to the 'threads' hash table */
 #define mono_threads_lock() EnterCriticalSection (&threads_mutex)
 #define mono_threads_unlock() LeaveCriticalSection (&threads_mutex)
@@ -864,7 +859,6 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_
 	guint32 ret;
 	guint32 i;
 	MonoObject *waitHandle;
-	MonoClass *klass;
 	MonoThread *thread = mono_thread_current ();
 		
 	MONO_ARCH_SAVE_REGS;
@@ -875,15 +869,9 @@ gboolean ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_
 	numhandles = mono_array_length(mono_handles);
 	handles = g_new0(HANDLE, numhandles);
 
-	if (wait_handle_os_handle_field == 0) {
-		/* Get the field os_handle which will contain the actual handle */
-		klass = mono_class_from_name(mono_defaults.corlib, "System.Threading", "WaitHandle");	
-		wait_handle_os_handle_field = mono_class_get_field_from_name(klass, "os_handle");
-	}
-		
 	for(i = 0; i < numhandles; i++) {	
-		waitHandle = mono_array_get(mono_handles, MonoObject*, i);		
-		mono_field_get_value(waitHandle, wait_handle_os_handle_field, &handles[i]);
+		waitHandle = mono_array_get(mono_handles, MonoObject*, i);
+		handles [i] = mono_wait_handle_get_handle ((MonoWaitHandle *) waitHandle);
 	}
 	
 	if(ms== -1) {
@@ -926,7 +914,6 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	guint32 ret;
 	guint32 i;
 	MonoObject *waitHandle;
-	MonoClass *klass;
 	MonoThread *thread = mono_thread_current ();
 		
 	MONO_ARCH_SAVE_REGS;
@@ -937,15 +924,9 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	numhandles = mono_array_length(mono_handles);
 	handles = g_new0(HANDLE, numhandles);
 
-	if (wait_handle_os_handle_field == 0) {
-		/* Get the field os_handle which will contain the actual handle */
-		klass = mono_class_from_name(mono_defaults.corlib, "System.Threading", "WaitHandle");	
-		wait_handle_os_handle_field = mono_class_get_field_from_name(klass, "os_handle");
-	}
-		
 	for(i = 0; i < numhandles; i++) {	
-		waitHandle = mono_array_get(mono_handles, MonoObject*, i);		
-		mono_field_get_value(waitHandle, wait_handle_os_handle_field, &handles[i]);
+		waitHandle = mono_array_get(mono_handles, MonoObject*, i);
+		handles [i] = mono_wait_handle_get_handle ((MonoWaitHandle *) waitHandle);
 	}
 	
 	if(ms== -1) {

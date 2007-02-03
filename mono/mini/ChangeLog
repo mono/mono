@@ -1,3 +1,64 @@
+2006-12-22  Martin Baulig  <martin@ximian.com>
+
+	* mdb-debug-info32.s, mdb-debug-info64.s: New files.
+	Put a pointer to the `MONO_DEBUGGER__debugger_info' into a
+	seperate `.mdb_debug_info' section, so we can access it from the
+	debugger even if the binary is stripped.
+
+	* debug-debug.c: Reference the `MONO_DEBUGGER__debugger_info_ptr'
+	from the `.mdb_debug_info' here to prevent the linker from
+	removing that section.
+
+	* Makefile.am (mono_debugger_sources): Add mdb-debug-info32.s /
+	mdb-debug-info64.s.
+
+2006-12-19  Robert Jordan  <robertj@gmx.net>
+
+	* mini-x86: enable the code to return small structures in
+	registers for FreeBSD as well. Fixes bug #80278.
+	* aot-runtime.c: Include sys/wait.h for WEXITSTATUS/WIFEXITED.
+
+Mon Dec 18 19:47:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: align the stack when calling the profiler
+	function instrumenting the prolog (on OSX).
+
+Thu Dec 14 15:22:43 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: emit a break opcode where Debugger.Break () is called.
+
+2006-12-13  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_method_to_ir): Provide useful information on this
+	assert, to prevent others from debugging like I did.
+
+Tue Dec 12 17:01:38 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: enable code which was incorrectly commented
+	(bug #80235).
+
+Tue Dec 12 16:28:15 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: enable on OSX, too, the code to return small
+	structures in registers.
+
+Mon Dec 11 19:22:35 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: remove the use of the dynamic code manager here, too.
+
+Mon Dec 11 19:08:33 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, debug-debugger.c, tramp-*.c: fixed 
+	mono_debugger_create_notification_function() to use
+	mono_global_codeman_reserve () instead of a dynamic code manager.
+
+Tue Dec 5 17:54:50 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.h, jit-icalls.c: remove the 
+	ves_array_element_address() jit icall and use a generated
+	managed method instead (which is about 4 times faster for a rank 3
+	array access).
+
 2006-11-29  Mark Mason  <mason@broadcom.com>
 
 	* basic-calls.cs: additional tests for passing

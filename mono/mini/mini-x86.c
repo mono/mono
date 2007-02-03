@@ -129,7 +129,8 @@ typedef struct {
 
 static X86_Reg_No param_regs [] = { 0 };
 
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) || defined(__APPLE__) || defined(__FreeBSD__)
+#define SMALL_STRUCTS_IN_REGS
 static X86_Reg_No return_regs [] = { X86_EAX, X86_EDX };
 #endif
 
@@ -195,7 +196,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	else 
 		size = mono_type_stack_size (&klass->byval_arg, NULL);
 
-#ifdef PLATFORM_WIN32
+#ifdef SMALL_STRUCTS_IN_REGS
 	if (sig->pinvoke && is_return) {
 		MonoMarshalType *info;
 
@@ -559,15 +560,14 @@ cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 #endif
 	if (have_cpuid) {
 		/* Have to use the code manager to get around WinXP DEP */
-		MonoCodeManager *codeman = mono_code_manager_new_dynamic ();
-		CpuidFunc func;
-		void *ptr = mono_code_manager_reserve (codeman, sizeof (cpuid_impl));
-		memcpy (ptr, cpuid_impl, sizeof (cpuid_impl));
-
-		func = (CpuidFunc)ptr;
+		static CpuidFunc func = NULL;
+		void *ptr;
+		if (!func) {
+			ptr = mono_global_codeman_reserve (sizeof (cpuid_impl));
+			memcpy (ptr, cpuid_impl, sizeof (cpuid_impl));
+			func = (CpuidFunc)ptr;
+		}
 		func (id, p_eax, p_ebx, p_ecx, p_edx);
-
-		mono_code_manager_destroy (codeman);
 
 		/*
 		 * We use this approach because of issues with gcc and pic code, see:
@@ -1344,6 +1344,10 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 {
 	guchar *code = p;
 
+#if __APPLE__
+	x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
+#endif
+
 	/* if some args are passed in registers, we need to save them here */
 	x86_push_reg (code, X86_EBP);
 
@@ -1357,7 +1361,11 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_ABS, func);
 		x86_call_code (code, 0);
 	}
+#if __APPLE__
+	x86_alu_reg_imm (code, X86_ADD, X86_ESP, 16);
+#else
 	x86_alu_reg_imm (code, X86_ADD, X86_ESP, 8);
+#endif
 
 	return code;
 }

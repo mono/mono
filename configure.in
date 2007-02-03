@@ -9,6 +9,9 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(mono,1.2)
 AM_MAINTAINER_MODE
 
+API_VER=1.0
+AC_SUBST(API_VER)
+
 AC_PROG_LN_S
 
 # In case of cygwin, override LN_S, irrespective of what it determines.
@@ -190,6 +193,14 @@ case "$host" in
 	*-*-hpux*)
         platform_win32=no
 		CPPFLAGS="$CPPFLAGS -DGC_HPUX_THREADS -D_HPUX_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_REENTRANT"
+		# +ESdbgasm only valid on bundled cc on RISC
+		# silently ignored for ia64
+		if test $GCC != "yes"; then
+			CFLAGS="$CFLAGS +ESdbgasm"
+			# Arrange for run-time dereferencing of null
+			# pointers to produce a SIGSEGV signal.
+			LDFLAGS="$LDFLAGS -z"
+		fi
 		CFLAGS="$CFLAGS +ESdbgasm"
 		LDFLAGS="$LDFLAGS -z"
 		libmono_cflags="-D_REENTRANT"
@@ -679,6 +690,41 @@ dnl
 
 if test x$platform_win32 = xno; then
 
+	dnl dynamic loader support
+	AC_CHECK_FUNC(dlopen, DL_LIB="",
+		AC_CHECK_LIB(dl, dlopen, DL_LIB="-ldl", dl_support=no)
+	)
+	if test x$dl_support = xno; then
+		AC_MSG_WARN([No dynamic loading support available])
+	else
+		LIBS="$LIBS $DL_LIB"
+		AC_DEFINE(HAVE_DL_LOADER,1,[dlopen-based dynamic loader available])
+		dnl from glib's configure.in
+		AC_CACHE_CHECK([for preceeding underscore in symbols],
+			mono_cv_uscore,[
+			AC_TRY_RUN([#include <dlfcn.h>
+			int mono_underscore_test (void) { return 42; }
+			int main() {
+			  void *f1 = (void*)0, *f2 = (void*)0, *handle;
+			  handle = dlopen ((void*)0, 0);
+			  if (handle) {
+			    f1 = dlsym (handle, "mono_underscore_test");
+			    f2 = dlsym (handle, "_mono_underscore_test");
+			  } return (!f2 || f1);
+			}],
+				[mono_cv_uscore=yes],
+				[mono_cv_uscore=no],
+			[])
+		])
+		if test "x$mono_cv_uscore" = "xyes"; then
+			MONO_DL_NEED_USCORE=1
+		else
+			MONO_DL_NEED_USCORE=0
+		fi
+		AC_SUBST(MONO_DL_NEED_USCORE)
+		AC_CHECK_FUNC(dlerror)
+	fi
+
 	dnl ******************************************************************
 	dnl *** Checks for the IKVM JNI interface library                  ***
 	dnl ******************************************************************
@@ -703,6 +749,8 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_FUNCS(kqueue)
 	AC_CHECK_FUNCS(backtrace_symbols)
 	AC_CHECK_FUNCS(mkstemp)
+	AC_CHECK_FUNCS(mmap)
+	AC_CHECK_FUNCS(madvise)
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -1575,7 +1623,7 @@ case "$host" in
 		JIT_SUPPORTED=yes
 		jit_wanted=true
 		arch_target=alpha;
-		CFLAGS="$CFLAGS -mieee"
+		CFLAGS="$CFLAGS -mieee -O0"
 		case $host_os in
 		  linux*)
 			LIBC="libc.so.6.1"
@@ -1749,7 +1797,7 @@ if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
 fi
 
 mono_debugger_supported=no
-if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
+if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86" -o "x$TARGET" = "xALPHA"; then
 	if test x$use_included_gc = xyes; then
 		case "$host" in
 		*-*-*linux*)

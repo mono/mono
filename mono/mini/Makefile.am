@@ -242,7 +242,16 @@ test_sources = 		\
 test_sources2 = generics.2.cs il2tests.2.il
 
 if MONO_DEBUGGER_SUPPORTED
-mono_debugger_sources = debug-debugger.c debug-debugger.h
+if AMD64
+mono_debugger_arch_sources = mdb-debug-info64.s
+else
+if ALPHA
+mono_debugger_arch_sources = mdb-debug-info64.s
+else
+mono_debugger_arch_sources = mdb-debug-info32.s
+endif
+endif
+mono_debugger_sources = debug-debugger.c debug-debugger.h $(mono_debugger_arch_sources)
 else
 mono_debugger_sources =
 endif
@@ -332,7 +341,7 @@ endif
 
 if ALPHA
 arch_sources = \
-	$(alpha_sources)
+	$(alpha_sources) $(mono_debugger_sources)
 
 arch_BURGSRC = $(srcdir)/inssel-long.brg $(srcdir)/inssel-alpha.brg
 arch_built = cpu-alpha.h
@@ -349,7 +358,7 @@ libmono_static_la_LIBADD = $(static_libs)
 
 BURGSRC= $(common_BURGSRC) $(arch_BURGSRC)
 
-libmonoincludedir = $(includedir)/mono/jit
+libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
 libmonoinclude_HEADERS = jit.h
 

@@ -467,7 +467,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 			WapiStartupInfo *startup,
 			WapiProcessInformation *process_info)
 {
-	gchar *cmd=NULL, *prog = NULL, *full_prog = NULL, *args = NULL, *args_after_prog = NULL, *dir = NULL, **env_strings = NULL, **argv;
+	gchar *cmd=NULL, *prog = NULL, *full_prog = NULL, *args = NULL, *args_after_prog = NULL, *dir = NULL, **env_strings = NULL, **argv = NULL;
 	guint32 i, env_count = 0;
 	gboolean ret = FALSE;
 	gpointer handle;
@@ -580,7 +580,6 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 				g_message ("%s: Couldn't find executable %s",
 					   __func__, prog);
 #endif
-				g_free (prog);
 				g_free (unquoted);
 				SetLastError (ERROR_FILE_NOT_FOUND);
 				goto cleanup;
@@ -592,7 +591,6 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 			char *curdir = g_get_current_dir ();
 
 			prog = g_strdup_printf ("%s/%s", curdir, unquoted);
-			g_free (unquoted);
 			g_free (curdir);
 
 			/* And make sure it's executable */
@@ -601,11 +599,12 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 				g_message ("%s: Couldn't find executable %s",
 					   __func__, prog);
 #endif
-				g_free (prog);
+				g_free (unquoted);
 				SetLastError (ERROR_FILE_NOT_FOUND);
 				goto cleanup;
 			}
 		}
+		g_free (unquoted);
 
 		args_after_prog = args;
 	} else {
@@ -695,7 +694,6 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 			
 			/* Executable existing ? */
 			if (access (prog, X_OK) != 0) {
-				g_free (prog);
 #ifdef DEBUG
 				g_message ("%s: Couldn't find executable %s",
 					   __func__, token);
@@ -951,6 +949,9 @@ cleanup:
 		g_free (cmd);
 	}
 	if (full_prog != NULL) {
+		g_free (full_prog);
+	}
+	if (prog != NULL) {
 		g_free (prog);
 	}
 	if (args != NULL) {
@@ -961,6 +962,9 @@ cleanup:
 	}
 	if(env_strings != NULL) {
 		g_strfreev (env_strings);
+	}
+	if (argv != NULL) {
+		g_strfreev (argv);
 	}
 	
 #ifdef DEBUG

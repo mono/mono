@@ -154,6 +154,22 @@ mono_marshal_set_last_error_windows (int error);
 static void
 mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func);
 
+static void init_safe_handle (void);
+
+/* MonoMethod pointers to SafeHandle::DangerousAddRef and ::DangerousRelease */
+static MonoMethod *sh_dangerous_add_ref;
+static MonoMethod *sh_dangerous_release;
+
+
+static void
+init_safe_handle ()
+{
+	sh_dangerous_add_ref = mono_class_get_method_from_name (
+		mono_defaults.safehandle_class, "DangerousAddRef", 1);
+	sh_dangerous_release = mono_class_get_method_from_name (
+		mono_defaults.safehandle_class, "DangerousRelease", 0);
+}
+
 static void
 register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
 {
@@ -708,9 +724,9 @@ mono_array_to_byvalarray (gpointer native_arr, MonoArray *arr, MonoClass *elclas
 
 		memcpy (native_arr, as, MIN (strlen (as), elnum));
 		g_free (as);
-	}
-	else
+	} else {
 		g_assert_not_reached ();
+	}
 }
 
 void
@@ -799,9 +815,9 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 	tmp = g_utf16_to_utf8 (mono_string_chars (sb->str), sb->length, NULL, res, &error);
 	if (error) {
 		g_error_free (error);
+		mono_marshal_free (res);
 		mono_raise_exception (mono_get_exception_execution_engine ("Failed to convert StringBuilder from utf16 to utf8"));
-	}
-	else {
+	} else {
 		memcpy (res, tmp, sb->length + 1);
 		g_free (tmp);
 	}
@@ -870,10 +886,10 @@ mono_string_to_lpstr (MonoString *s)
 		g_error_free (error);
 		mono_raise_exception(exc);
 		return NULL;
-	}
-	else {
+	} else {
 		as = CoTaskMemAlloc (len + 1);
 		memcpy (as, tmp, len + 1);
+		g_free (tmp);
 		return as;
 	}
 #else
@@ -896,8 +912,16 @@ mono_string_to_bstr (MonoString *string_obj)
 		return NULL;
 	return SysAllocStringLen (mono_string_chars (string_obj), mono_string_length (string_obj));
 #else
-	g_error ("UnmanagedMarshal.BStr is not implemented.");
-	return NULL;
+	int slen = mono_string_length (string_obj);
+	char *ret = g_malloc (slen * 2 + 4 + 2);
+	if (ret == NULL)
+		return NULL;
+	memcpy (ret + 4, mono_string_chars (string_obj), slen * 2);
+	* ((guint32 *) ret) = slen * 2;
+	ret [4 + slen * 2] = 0;
+	ret [5 + slen * 2] = 0;
+
+	return ret + 4;
 #endif
 }
 
@@ -909,8 +933,7 @@ mono_string_from_bstr (gpointer bstr)
 		return NULL;
 	return mono_string_new_utf16 (mono_domain_get (), bstr, SysStringLen (bstr));
 #else
-	g_error ("UnmanagedMarshal.BStr is not implemented.");
-	return NULL;
+	return mono_string_new_utf16 (mono_domain_get (), bstr, *(guint32 *)((char *)bstr - 4));
 #endif
 }
 
@@ -920,7 +943,7 @@ mono_free_bstr (gpointer bstr)
 #ifdef PLATFORM_WIN32
 	SysFreeString ((BSTR)bstr);
 #else
-	g_error ("Free BSTR is not implemented.");
+	g_free (((char *)bstr) - 4);
 #endif
 }
 
@@ -1837,6 +1860,23 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_patch_short_branch (mb, pos_failed);
 		break;
 	}
+
+	case MONO_MARSHAL_CONV_SAFEHANDLE: {
+		/*
+		 * Passing SafeHandles as ref does not allow the unmanaged code
+		 * to change the SafeHandle value.   If the value is changed,
+		 * we should issue a diagnostic exception (NotSupportedException)
+		 * that informs the user that changes to handles in unmanaged code
+		 * is not supported. 
+		 *
+		 * Since we currently have no access to the original
+		 * SafeHandle that was used during the marshalling,
+		 * for now we just ignore this, and ignore/discard any
+		 * changes that might have happened to the handle.
+		 */
+		break;
+	}
+		
 	case MONO_MARSHAL_CONV_STR_BSTR:
 	case MONO_MARSHAL_CONV_STR_ANSIBSTR:
 	case MONO_MARSHAL_CONV_STR_TBSTR:
@@ -2171,6 +2211,44 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_patch_short_branch (mb, pos_failed);
 		break;
 	}
+
+	case MONO_MARSHAL_CONV_SAFEHANDLE: {
+		int dar_release_slot, pos;
+		
+		dar_release_slot = mono_mb_add_local (mb, &mono_defaults.boolean_class->byval_arg);
+
+		/*
+		 * The following is ifdefed-out, because I have no way of doing the
+		 * DangerousRelease when destroying the structure
+		 */
+#if 0
+		/* set release = false */
+		mono_mb_emit_icon (mb, 0);
+		mono_mb_emit_stloc (mb, dar_release_slot);
+		if (!sh_dangerous_add_ref)
+			init_safe_handle ();
+
+		/* safehandle.DangerousAddRef (ref release) */
+		mono_mb_emit_ldloc (mb, 0); /* the source */
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+		mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+#endif
+		mono_mb_emit_ldloc (mb, 0);
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		pos = mono_mb_emit_branch (mb, CEE_BRTRUE);
+		mono_mb_emit_exception (mb, "ArgumentNullException", NULL);
+		mono_mb_patch_branch (mb, pos);
+		
+		/* Pull the handle field from SafeHandle */
+		mono_mb_emit_ldloc (mb, 1);
+		mono_mb_emit_ldloc (mb, 0);
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoSafeHandle, handle));
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		mono_mb_emit_byte (mb, CEE_STIND_I);
+		break;
+	}
 	default: {
 		char *msg = g_strdup_printf ("marshalling conversion %d not implemented", conv);
 		MonoException *exc = mono_get_exception_not_implemented (msg);
@@ -2230,18 +2308,26 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 			usize = info->fields [i + 1].offset - info->fields [i].offset;
 		}
 
-		/* 
-		 * FIXME: Should really check for usize==0 and msize>0, but we apply 
-		 * the layout to the managed structure as well.
-		 */
-		if (((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) && (usize == 0)) {
-			if (MONO_TYPE_IS_REFERENCE (info->fields [i].field->type) || ((!last_field && MONO_TYPE_IS_REFERENCE (info->fields [i + 1].field->type))))
-			g_error ("Type %s which has an [ExplicitLayout] attribute cannot have a reference field at the same offset as another field.", mono_type_full_name (&klass->byval_arg));
+		if (klass != mono_defaults.safehandle_class){
+			/* 
+			 * FIXME: Should really check for usize==0 and msize>0, but we apply 
+			 * the layout to the managed structure as well.
+			 */
+			
+			if (((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) && (usize == 0)) {
+				if (MONO_TYPE_IS_REFERENCE (info->fields [i].field->type) ||
+				    ((!last_field && MONO_TYPE_IS_REFERENCE (info->fields [i + 1].field->type))))
+					g_error ("Type %s which has an [ExplicitLayout] attribute cannot have a "
+						 "reference field at the same offset as another field.",
+						 mono_type_full_name (&klass->byval_arg));
+			}
+			
+			if ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_AUTO_LAYOUT)
+				g_error ("Type %s which is passed to unmanaged code must have a StructLayout attribute",
+					 mono_type_full_name (&klass->byval_arg));
+			
 		}
-
-		if ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_AUTO_LAYOUT)
-			g_error ("Type %s which is passed to unmanaged code must have a StructLayout attribute", mono_type_full_name (&klass->byval_arg));
-
+		
 		switch (conv) {
 		case MONO_MARSHAL_CONV_NONE: {
 			int t;
@@ -2322,6 +2408,7 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 				}
 				else {
 					static MonoMethod *get_native_variant_for_object = NULL;
+
 					if (!get_native_variant_for_object)
 						get_native_variant_for_object = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetNativeVariantForObject", 2);
 
@@ -2333,7 +2420,7 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 				break;
 			}
 
-			default:
+			default: 
 				g_warning ("marshaling type %02x not implemented", ftype->type);
 				g_assert_not_reached ();
 			}
@@ -2876,9 +2963,9 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
 		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args);
-	}
-	else
+	} else {
 		res = mono_thread_pool_finish (ares, &out_args, &exc);
+	}
 
 	if (exc) {
 		if (((MonoException*)exc)->stack_trace) {
@@ -5223,10 +5310,34 @@ typedef struct {
 } EmitMarshalContext;
 
 typedef enum {
+	/*
+	 * This is invoked to convert arguments from the current types to
+	 * the underlying types expected by the platform routine.  If required,
+	 * the methods create a temporary variable with the proper type, and return
+	 * the location for it (either the passed argument, or the newly allocated
+	 * local slot).
+	 */
 	MARSHAL_ACTION_CONV_IN,
+
+	/*
+	 * This operation is called to push the actual value that was optionally
+	 * converted on the first stage
+	 */
 	MARSHAL_ACTION_PUSH,
+
+	/*
+	 * Convert byref arguments back or free resources allocated during the
+	 * CONV_IN stage
+	 */
 	MARSHAL_ACTION_CONV_OUT,
+
+	/*
+	 * The result from the unmanaged call is at the top of the stack when
+	 * this action is invoked.    The result should be stored in the
+	 * third local variable slot. 
+	 */
 	MARSHAL_ACTION_CONV_RESULT,
+
 	MARSHAL_ACTION_MANAGED_CONV_IN,
 	MARSHAL_ACTION_MANAGED_CONV_OUT,
 	MARSHAL_ACTION_MANAGED_CONV_RESULT
@@ -5913,20 +6024,175 @@ emit_marshal_string (EmitMarshalContext *m, int argnum, MonoType *t,
 }
 
 static int
+emit_marshal_safehandle (EmitMarshalContext *m, int argnum, MonoType *t, 
+			 MonoMarshalSpec *spec, int conv_arg, 
+			 MonoType **conv_arg_type, MarshalAction action)
+{
+	MonoMethodBuilder *mb = m->mb;
+
+	switch (action){
+	case MARSHAL_ACTION_CONV_IN: {
+		MonoType *intptr_type;
+		int dar_release_slot, pos;
+
+		intptr_type = &mono_defaults.int_class->byval_arg;
+		conv_arg = mono_mb_add_local (mb, intptr_type);
+		*conv_arg_type = intptr_type;
+
+		if (!sh_dangerous_add_ref)
+			init_safe_handle ();
+
+		mono_mb_emit_ldarg (mb, argnum);
+		pos = mono_mb_emit_branch (mb, CEE_BRTRUE);
+		mono_mb_emit_exception (mb, "ArgumentNullException", NULL);
+		
+		mono_mb_patch_branch (mb, pos);
+		if (t->byref){
+			/*
+			 * My tests in show that ref SafeHandles are not really
+			 * passed as ref objects.  Instead a NULL is passed as the
+			 * value of the ref
+			 */
+			mono_mb_emit_icon (mb, 0);
+			mono_mb_emit_stloc (mb, conv_arg);
+			break;
+		} 
+
+		/* Create local to hold the ref parameter to DangerousAddRef */
+		dar_release_slot = mono_mb_add_local (mb, &mono_defaults.boolean_class->byval_arg);
+
+		/* set release = false; */
+		mono_mb_emit_icon (mb, 0);
+		mono_mb_emit_stloc (mb, dar_release_slot);
+
+		/* safehandle.DangerousAddRef (ref release) */
+		mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_ldloc_addr (mb, dar_release_slot);
+		mono_mb_emit_managed_call (mb, sh_dangerous_add_ref, NULL);
+
+		/* Pull the handle field from SafeHandle */
+		mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoSafeHandle, handle));
+		mono_mb_emit_byte (mb, CEE_LDIND_I);
+		mono_mb_emit_stloc (mb, conv_arg);
+
+		break;
+	}
+
+	case MARSHAL_ACTION_PUSH:
+		if (t->byref)
+			mono_mb_emit_ldloc_addr (mb, conv_arg);
+		else 
+			mono_mb_emit_ldloc (mb, conv_arg);
+		break;
+
+	case MARSHAL_ACTION_CONV_OUT: {
+		/* The slot for the boolean is the next temporary created after conv_arg, see the CONV_IN code */
+		int dar_release_slot = conv_arg + 1;
+		int label_next;
+
+		if (!sh_dangerous_release)
+			init_safe_handle ();
+
+		if (t->byref){
+			MonoMethod *ctor;
+			
+			/*
+			 * My tests indicate that ref SafeHandles parameters are not actually
+			 * passed by ref, but instead a new Handle is created regardless of
+			 * whether a change happens in the unmanaged side.
+			 *
+			 * Also, the Handle is created before calling into unmanaged code,
+			 * but we do not support that mechanism (getting to the original
+			 * handle) and it makes no difference where we create this
+			 */
+			ctor = mono_class_get_method_from_name (t->data.klass, ".ctor", 0);
+			if (ctor == NULL){
+				mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+				break;
+			}
+			/* refval = new SafeHandleDerived ()*/
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+			mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+			/* refval.handle = returned_handle */
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_byte (mb, CEE_LDIND_REF);
+			mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoSafeHandle, handle));
+			mono_mb_emit_ldloc (mb, conv_arg);
+			mono_mb_emit_byte (mb, CEE_STIND_I);
+		} else {
+			mono_mb_emit_ldloc (mb, dar_release_slot);
+			label_next = mono_mb_emit_branch (mb, CEE_BRFALSE);
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_managed_call (mb, sh_dangerous_release, NULL);
+			mono_mb_patch_addr (mb, label_next, mb->pos - (label_next + 4));
+		}
+		break;
+	}
+		
+	case MARSHAL_ACTION_CONV_RESULT: {
+		MonoMethod *ctor = NULL;
+		int intptr_handle_slot;
+		
+		if (t->data.klass->flags & TYPE_ATTRIBUTE_ABSTRACT){
+			mono_mb_emit_byte (mb, CEE_POP);
+			mono_mb_emit_exception_marshal_directive (mb, "Returned SafeHandles should not be abstract");
+			break;
+		}
+
+		ctor = mono_class_get_method_from_name (t->data.klass, ".ctor", 0);
+		if (ctor == NULL){
+			mono_mb_emit_byte (mb, CEE_POP);
+			mono_mb_emit_exception (mb, "MissingMethodException", "paramterless constructor required");
+			break;
+		}
+		/* Store the IntPtr results into a local */
+		intptr_handle_slot = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+		mono_mb_emit_stloc (mb, intptr_handle_slot);
+
+		/* Create return value */
+		mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
+		mono_mb_emit_stloc (mb, 3);
+
+		/* Set the return.handle to the value, am using ldflda, not sure if thats a good idea */
+		mono_mb_emit_ldloc (mb, 3);
+		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoSafeHandle, handle));
+		mono_mb_emit_ldloc (mb, intptr_handle_slot);
+		mono_mb_emit_byte (mb, CEE_STIND_I);
+		break;
+	}
+		
+	case MARSHAL_ACTION_MANAGED_CONV_IN:
+		fprintf (stderr, "mono/marshal: SafeHandles missing MANAGED_CONV_IN\n");
+		break;
+		
+	case MARSHAL_ACTION_MANAGED_CONV_OUT:
+		fprintf (stderr, "mono/marshal: SafeHandles missing MANAGED_CONV_OUT\n");
+		break;
+
+	case MARSHAL_ACTION_MANAGED_CONV_RESULT:
+		fprintf (stderr, "mono/marshal: SafeHandles missing MANAGED_CONV_RESULT\n");
+		break;
+	default:
+		printf ("Unhandled case for MarshalAction: %d\n", action);
+	}
+
+	return conv_arg;
+}
+
+static int
 emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
-					 MonoMarshalSpec *spec, 
-					 int conv_arg, MonoType **conv_arg_type, 
-					 MarshalAction action)
+		     MonoMarshalSpec *spec, 
+		     int conv_arg, MonoType **conv_arg_type, 
+		     MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
 	MonoClass *klass = t->data.klass;
 	int pos, pos2, loc;
 
-	if (mono_class_from_mono_type (t) == mono_defaults.object_class && 
-		(!spec || (spec && spec->native != MONO_NATIVE_STRUCT)) &&
-		(!spec || (spec && (spec->native != MONO_NATIVE_IUNKNOWN &&
-			spec->native != MONO_NATIVE_IDISPATCH &&
-			spec->native != MONO_NATIVE_INTERFACE)))) {
+	if (mono_class_from_mono_type (t) == mono_defaults.object_class) {
 		mono_raise_exception (mono_get_exception_not_implemented ("Marshalling of type object is not implemented"));
 	}
 
@@ -5936,98 +6202,8 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 		conv_arg = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
 		m->orig_conv_args [argnum] = 0;
-
-		if (spec && spec->native == MONO_NATIVE_STRUCT)
-		{
-			static MonoMethod *get_native_variant_for_object = NULL;
-			int local_variant;
-			if (!get_native_variant_for_object)
-				get_native_variant_for_object = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetNativeVariantForObject", 2);
-
-			*conv_arg_type = &mono_defaults.variant_class->byval_arg;
-
-			local_variant = mono_mb_add_local (mb, &mono_defaults.variant_class->byval_arg);
-			conv_arg = local_variant;
-			mono_mb_emit_ldarg (mb, argnum);
-			if (t->byref)
-				mono_mb_emit_byte(mb, CEE_LDIND_REF);
-			mono_mb_emit_ldloc_addr (mb, local_variant);
-			mono_mb_emit_managed_call (mb, get_native_variant_for_object, NULL);
-		}
-		else if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
-			spec->native == MONO_NATIVE_IDISPATCH ||
-			spec->native == MONO_NATIVE_INTERFACE)) {
-			mono_mb_emit_ptr (mb, 0);
-			mono_mb_emit_stloc (mb, conv_arg);
-
-			if (t->byref) {
-				/* we dont need any conversions for out parameters */
-				if (t->attrs & PARAM_ATTRIBUTE_OUT)
-					break;
-				else {
-					char *msg = g_strdup_printf ("non out object references are no implemented");
-					MonoException *exc = mono_get_exception_not_implemented (msg);
-					g_warning (msg);
-					g_free (msg);
-					mono_raise_exception (exc);
-
-				}
-			} else {
-				char *msg = NULL;
-				guint32 pos_failed = 0, pos_rcw = 0;
-				mono_mb_emit_ldarg (mb, argnum);	
-				// if null just break, conv arg was already inited to 0
-				pos_failed = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
-
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_icall (mb, cominterop_object_is_rcw);
-				pos_rcw = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
-
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoTransparentProxy, rp));
-				mono_mb_emit_byte (mb, CEE_LDIND_REF);
-
-				/* load the RCW from the ComInteropProxy*/
-				mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoComInteropProxy, com_object));
-				mono_mb_emit_byte (mb, CEE_LDIND_REF);
-
-				if (klass && klass != mono_defaults.object_class) {
-					static MonoMethod* GetInterface = NULL;
-					
-					if (!GetInterface)
-						GetInterface = mono_class_get_method_from_name (mono_defaults.com_object_class, "GetInterface", 1);
-					mono_mb_emit_ptr (mb, t);
-					mono_mb_emit_icall (mb, type_from_handle);
-					mono_mb_emit_managed_call (mb, GetInterface, NULL);
-				}
-				else if (spec->native == MONO_NATIVE_IUNKNOWN) {
-					static MonoProperty* iunknown = NULL;
-					
-					if (!iunknown)
-						iunknown = mono_class_get_property_from_name (mono_defaults.com_object_class, "IUnknown");
-					mono_mb_emit_managed_call (mb, iunknown->get, NULL);
-				}
-				else if (spec->native == MONO_NATIVE_IDISPATCH) {
-					static MonoProperty* idispatch = NULL;
-					
-					if (!idispatch)
-						idispatch = mono_class_get_property_from_name (mono_defaults.com_object_class, "IDispatch");
-					mono_mb_emit_managed_call (mb, idispatch->get, NULL);
-				}
-				else {
-				}
-				mono_mb_emit_stloc (mb, conv_arg);
-				
-				// if not rcw
-				mono_mb_patch_short_branch (mb, pos_rcw);
-				msg = g_strdup ("Marshalling of COM Callable Wrappers is not yet implemented.");
-				mono_mb_emit_exception_marshal_directive (mb, msg);
-
-				// case if null
-				mono_mb_patch_short_branch (mb, pos_failed);
-			}
-		}
-		else if (klass->delegate) {
+		
+		if (klass->delegate) {
 			g_assert (!t->byref);
 			mono_mb_emit_ldarg (mb, argnum);
 			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_DEL_FTN));
@@ -6116,70 +6292,6 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_CONV_OUT:
-		if (spec && spec->native == MONO_NATIVE_STRUCT)	{
-			static MonoMethod *variant_clear = NULL;
-			static MonoMethod *get_object_for_native_variant = NULL;
-			if (!variant_clear)
-				variant_clear = mono_class_get_method_from_name (mono_defaults.variant_class, "Clear", 0);
-			if (!get_object_for_native_variant)
-				get_object_for_native_variant = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1);
-			if (t->byref) {
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_ldloc_addr (mb, conv_arg);
-				mono_mb_emit_managed_call (mb, get_object_for_native_variant, NULL);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
-			}
-
-			mono_mb_emit_ldloc_addr (mb, conv_arg);
-			mono_mb_emit_managed_call (mb, variant_clear, NULL);
-			break;
-		}
-
-		if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
-			spec->native == MONO_NATIVE_IDISPATCH ||
-			spec->native == MONO_NATIVE_INTERFACE)) {
-			if (t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT)) {
-				static MonoClass* com_interop_proxy_class = NULL;
-				static MonoMethod* com_interop_proxy_get_proxy = NULL;
-				static MonoMethod* get_transparent_proxy = NULL;
-				int real_proxy;
-				guint32 pos_failed = 0;
-
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_byte (mb, CEE_LDNULL);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
-
-				mono_mb_emit_ldloc (mb, conv_arg);
-				pos_failed = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
-
-				if (!com_interop_proxy_class)
-					com_interop_proxy_class = mono_class_from_name (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
-				if (!com_interop_proxy_get_proxy)
-					com_interop_proxy_get_proxy = mono_class_get_method_from_name_flags (com_interop_proxy_class, "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE);
-				if (!get_transparent_proxy)
-					get_transparent_proxy = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "GetTransparentProxy", 0);
-
-				real_proxy = mono_mb_add_local (mb, &com_interop_proxy_class->byval_arg);
-
-				mono_mb_emit_ldloc (mb, conv_arg);
-				mono_mb_emit_ptr (mb, &mono_defaults.com_object_class->byval_arg);
-				mono_mb_emit_icall (mb, type_from_handle);
-				mono_mb_emit_managed_call (mb, com_interop_proxy_get_proxy, NULL);
-				mono_mb_emit_stloc (mb, real_proxy);
-
-				
-				mono_mb_emit_ldarg (mb, argnum);
-				mono_mb_emit_ldloc (mb, real_proxy);
-				mono_mb_emit_managed_call (mb, get_transparent_proxy, NULL);
-				if (klass && klass != mono_defaults.object_class)
-					mono_mb_emit_op (mb, CEE_CASTCLASS, klass);
-				mono_mb_emit_byte (mb, CEE_STIND_REF);
-
-				// case if null
-				mono_mb_patch_short_branch (mb, pos_failed);
-			}
-				break;
-		}
 		if (klass == mono_defaults.stringbuilder_class) {
 			gboolean need_free;
 			MonoMarshalNative encoding;
@@ -6285,11 +6397,6 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 			mono_mb_emit_ldloc (mb, 0);
 			mono_mb_emit_icall (mb, conv_to_icall (MONO_MARSHAL_CONV_FTN_DEL));
 			mono_mb_emit_stloc (mb, 3);
-		} else if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
-			spec->native == MONO_NATIVE_IDISPATCH ||
-			spec->native == MONO_NATIVE_INTERFACE)) {
-			char *msg = g_strdup ("Marshalling of COM Objects is not yet implemented.");
-			mono_mb_emit_exception_marshal_directive (mb, msg);
 		} else {
 			/* set src */
 			mono_mb_emit_stloc (mb, 0);
@@ -6482,6 +6589,265 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		mono_mb_patch_branch (mb, pos2);
 		break;
+
+	default:
+		g_assert_not_reached ();
+	}
+
+	return conv_arg;
+}
+
+static int
+emit_marshal_com_interface (EmitMarshalContext *m, int argnum, MonoType *t,
+		     MonoMarshalSpec *spec, 
+		     int conv_arg, MonoType **conv_arg_type, 
+		     MarshalAction action)
+{
+	MonoMethodBuilder *mb = m->mb;
+	MonoClass *klass = t->data.klass;
+
+	switch (action) {
+	case MARSHAL_ACTION_CONV_IN: {
+		*conv_arg_type = &mono_defaults.int_class->byval_arg;
+		conv_arg = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+
+		m->orig_conv_args [argnum] = 0;
+
+		mono_mb_emit_ptr (mb, 0);
+		mono_mb_emit_stloc (mb, conv_arg);
+
+		if (t->byref) {
+			/* we dont need any conversions for out parameters */
+			if (t->attrs & PARAM_ATTRIBUTE_OUT)
+				break;
+			else {
+				char *msg = g_strdup_printf ("non out object references are no implemented");
+				MonoException *exc = mono_get_exception_not_implemented (msg);
+				g_warning (msg);
+				g_free (msg);
+				mono_raise_exception (exc);
+
+			}
+		} else {
+			char *msg = NULL;
+			guint32 pos_failed = 0, pos_rcw = 0;
+			mono_mb_emit_ldarg (mb, argnum);	
+			// if null just break, conv arg was already inited to 0
+			pos_failed = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
+
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_icall (mb, cominterop_object_is_rcw);
+			pos_rcw = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
+
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoTransparentProxy, rp));
+			mono_mb_emit_byte (mb, CEE_LDIND_REF);
+
+			/* load the RCW from the ComInteropProxy*/
+			mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoComInteropProxy, com_object));
+			mono_mb_emit_byte (mb, CEE_LDIND_REF);
+
+			if (klass && klass != mono_defaults.object_class) {
+				static MonoMethod* GetInterface = NULL;
+				
+				if (!GetInterface)
+					GetInterface = mono_class_get_method_from_name (mono_defaults.com_object_class, "GetInterface", 1);
+				mono_mb_emit_ptr (mb, t);
+				mono_mb_emit_icall (mb, type_from_handle);
+				mono_mb_emit_managed_call (mb, GetInterface, NULL);
+			}
+			else if (spec->native == MONO_NATIVE_IUNKNOWN) {
+				static MonoProperty* iunknown = NULL;
+				
+				if (!iunknown)
+					iunknown = mono_class_get_property_from_name (mono_defaults.com_object_class, "IUnknown");
+				mono_mb_emit_managed_call (mb, iunknown->get, NULL);
+			}
+			else if (spec->native == MONO_NATIVE_IDISPATCH) {
+				static MonoProperty* idispatch = NULL;
+				
+				if (!idispatch)
+					idispatch = mono_class_get_property_from_name (mono_defaults.com_object_class, "IDispatch");
+				mono_mb_emit_managed_call (mb, idispatch->get, NULL);
+			}
+			else {
+			}
+			mono_mb_emit_stloc (mb, conv_arg);
+			
+			// if not rcw
+			mono_mb_patch_short_branch (mb, pos_rcw);
+			msg = g_strdup ("Marshalling of COM Callable Wrappers is not yet implemented.");
+			mono_mb_emit_exception_marshal_directive (mb, msg);
+
+			// case if null
+			mono_mb_patch_short_branch (mb, pos_failed);
+		}
+		break;
+	}
+	
+	case MARSHAL_ACTION_CONV_OUT: {
+		if (t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT)) {
+			static MonoClass* com_interop_proxy_class = NULL;
+			static MonoMethod* com_interop_proxy_get_proxy = NULL;
+			static MonoMethod* get_transparent_proxy = NULL;
+			int real_proxy;
+			guint32 pos_failed = 0;
+
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_byte (mb, CEE_LDNULL);
+			mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+			mono_mb_emit_ldloc (mb, conv_arg);
+			pos_failed = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
+
+			if (!com_interop_proxy_class)
+				com_interop_proxy_class = mono_class_from_name (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
+			if (!com_interop_proxy_get_proxy)
+				com_interop_proxy_get_proxy = mono_class_get_method_from_name_flags (com_interop_proxy_class, "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE);
+			if (!get_transparent_proxy)
+				get_transparent_proxy = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "GetTransparentProxy", 0);
+
+			real_proxy = mono_mb_add_local (mb, &com_interop_proxy_class->byval_arg);
+
+			mono_mb_emit_ldloc (mb, conv_arg);
+			mono_mb_emit_ptr (mb, &mono_defaults.com_object_class->byval_arg);
+			mono_mb_emit_icall (mb, type_from_handle);
+			mono_mb_emit_managed_call (mb, com_interop_proxy_get_proxy, NULL);
+			mono_mb_emit_stloc (mb, real_proxy);
+
+			
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldloc (mb, real_proxy);
+			mono_mb_emit_managed_call (mb, get_transparent_proxy, NULL);
+			if (klass && klass != mono_defaults.object_class)
+				mono_mb_emit_op (mb, CEE_CASTCLASS, klass);
+			mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+			// case if null
+			mono_mb_patch_short_branch (mb, pos_failed);
+		}
+		break;
+	}
+
+	case MARSHAL_ACTION_PUSH:
+		if (t->byref)
+			mono_mb_emit_ldloc_addr (mb, conv_arg);
+		else
+			mono_mb_emit_ldloc (mb, conv_arg);
+		break;
+
+	case MARSHAL_ACTION_CONV_RESULT: {
+		char *msg = g_strdup ("Marshalling of COM Objects is not yet implemented.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_IN: {
+		char *msg = g_strdup ("Marshalling of COM Objects is not yet implemented.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_OUT: {
+		char *msg = g_strdup ("Marshalling of COM Objects is not yet implemented.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_RESULT: {
+		char *msg = g_strdup ("Marshalling of COM Objects is not yet implemented.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	default:
+		g_assert_not_reached ();
+	}
+
+	return conv_arg;
+}
+
+static int
+emit_marshal_variant (EmitMarshalContext *m, int argnum, MonoType *t,
+		     MonoMarshalSpec *spec, 
+		     int conv_arg, MonoType **conv_arg_type, 
+		     MarshalAction action)
+{
+	MonoMethodBuilder *mb = m->mb;
+
+	switch (action) {
+	case MARSHAL_ACTION_CONV_IN: {
+		static MonoMethod *get_native_variant_for_object = NULL;
+
+		if (!get_native_variant_for_object)
+			get_native_variant_for_object = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetNativeVariantForObject", 2);
+		g_assert (get_native_variant_for_object);
+
+		*conv_arg_type = &mono_defaults.variant_class->byval_arg;
+		conv_arg = mono_mb_add_local (mb, &mono_defaults.variant_class->byval_arg);
+
+		mono_mb_emit_ldarg (mb, argnum);
+		if (t->byref)
+			mono_mb_emit_byte(mb, CEE_LDIND_REF);
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_managed_call (mb, get_native_variant_for_object, NULL);
+		break;
+	}
+
+	case MARSHAL_ACTION_CONV_OUT: {
+		static MonoMethod *variant_clear = NULL;
+		static MonoMethod *get_object_for_native_variant = NULL;
+
+		if (!variant_clear)
+			variant_clear = mono_class_get_method_from_name (mono_defaults.variant_class, "Clear", 0);
+		g_assert (variant_clear);
+
+		if (!get_object_for_native_variant)
+			get_object_for_native_variant = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1);
+		g_assert (get_object_for_native_variant);
+
+		if (t->byref) {
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_ldloc_addr (mb, conv_arg);
+			mono_mb_emit_managed_call (mb, get_object_for_native_variant, NULL);
+			mono_mb_emit_byte (mb, CEE_STIND_REF);
+		}
+
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_managed_call (mb, variant_clear, NULL);
+		break;
+	}
+
+	case MARSHAL_ACTION_PUSH:
+		if (t->byref)
+			mono_mb_emit_ldloc_addr (mb, conv_arg);
+		else
+			mono_mb_emit_ldloc (mb, conv_arg);
+		break;
+
+	case MARSHAL_ACTION_CONV_RESULT: {
+		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_IN: {
+		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_OUT: {
+		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+
+	case MARSHAL_ACTION_MANAGED_CONV_RESULT: {
+		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
 
 	default:
 		g_assert_not_reached ();
@@ -7339,6 +7705,18 @@ emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 		return emit_marshal_string (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_OBJECT:
+		if (spec && spec->native == MONO_NATIVE_STRUCT)
+			return emit_marshal_variant (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+
+		if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
+			spec->native == MONO_NATIVE_IDISPATCH ||
+			spec->native == MONO_NATIVE_INTERFACE))
+			return emit_marshal_com_interface (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+
+		if (mono_defaults.safehandle_class != NULL &&
+		    mono_class_is_subclass_of (t->data.klass,  mono_defaults.safehandle_class, FALSE))
+			return emit_marshal_safehandle (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+		
 		return emit_marshal_object (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 	case MONO_TYPE_ARRAY:
 	case MONO_TYPE_SZARRAY:
@@ -8717,6 +9095,174 @@ mono_marshal_get_stelemref ()
 	return ret;
 }
 
+typedef struct {
+	int rank;
+	int elem_size;
+	MonoMethod *method;
+} ArrayElemAddr;
+
+/* LOCKING: vars accessed under the marshal lock */
+static ArrayElemAddr *elem_addr_cache = NULL;
+static int elem_addr_cache_size = 0;
+static int elem_addr_cache_next = 0;
+
+/**
+ * mono_marshal_get_array_address:
+ * @rank: rank of the array type
+ * @elem_size: size in bytes of an element of an array.
+ *
+ * Returns a MonoMethd that implements the code to get the address
+ * of an element in a multi-dimenasional array of @rank dimensions.
+ * The returned method takes an array as the first argument and then
+ * @rank indexes for the @rank dimensions.
+ */
+MonoMethod*
+mono_marshal_get_array_address (int rank, int elem_size)
+{
+	MonoMethod *ret;
+	MonoMethodBuilder *mb;
+	MonoMethodSignature *sig;
+	int i, bounds, ind, realidx;
+	int branch_pos, *branch_positions;
+	int cached;
+
+	ret = NULL;
+	mono_marshal_lock ();
+	for (i = 0; i < elem_addr_cache_next; ++i) {
+		if (elem_addr_cache [i].rank == rank && elem_addr_cache [i].elem_size == elem_size) {
+			ret = elem_addr_cache [i].method;
+			break;
+		}
+	}
+	mono_marshal_unlock ();
+	if (ret)
+		return ret;
+
+	branch_positions = g_new0 (int, rank);
+
+	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 1 + rank);
+
+	/* void* address (void* array, int idx0, int idx1, int idx2, ...) */
+	sig->ret = &mono_defaults.int_class->byval_arg;
+	sig->params [0] = &mono_defaults.object_class->byval_arg;
+	for (i = 0; i < rank; ++i) {
+		sig->params [i + 1] = &mono_defaults.int32_class->byval_arg;
+	}
+
+	mb = mono_mb_new (mono_defaults.object_class, "ElementAddr", MONO_WRAPPER_MANAGED_TO_MANAGED);
+	
+	bounds = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	ind = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+	realidx = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+
+	/* bounds = array->bounds; */
+	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoArray, bounds));
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_stloc (mb, bounds);
+
+	/* ind is the overall element index, realidx is the partial index in a single dimension */
+	/* ind = idx0 - bounds [0].lower_bound */
+	mono_mb_emit_ldarg (mb, 1);
+	mono_mb_emit_ldloc (mb, bounds);
+	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArrayBounds, lower_bound));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I4);
+	mono_mb_emit_byte (mb, CEE_SUB);
+	mono_mb_emit_stloc (mb, ind);
+	/* if (ind >= bounds [0].length) goto exeception; */
+	mono_mb_emit_ldloc (mb, ind);
+	mono_mb_emit_ldloc (mb, bounds);
+	mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoArrayBounds, length));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I4);
+	/* note that we use unsigned comparison */
+	branch_pos = mono_mb_emit_branch (mb, CEE_BGE_UN);
+
+ 	/* For large ranks (> 4?) use a loop n IL later to reduce code size.
+	 * We could also decide to ignore the passed elem_size and get it
+	 * from the array object, to reduce the number of methods we generate:
+	 * the additional cost is 3 memory loads and a non-immediate mul.
+	 */
+	for (i = 1; i < rank; ++i) {
+		/* realidx = idxi - bounds [i].lower_bound */
+		mono_mb_emit_ldarg (mb, 1 + i);
+		mono_mb_emit_ldloc (mb, bounds);
+		mono_mb_emit_icon (mb, (i * sizeof (MonoArrayBounds)) + G_STRUCT_OFFSET (MonoArrayBounds, lower_bound));
+		mono_mb_emit_byte (mb, CEE_ADD);
+		mono_mb_emit_byte (mb, CEE_LDIND_I4);
+		mono_mb_emit_byte (mb, CEE_SUB);
+		mono_mb_emit_stloc (mb, realidx);
+		/* if (realidx >= bounds [i].length) goto exeception; */
+		mono_mb_emit_ldloc (mb, realidx);
+		mono_mb_emit_ldloc (mb, bounds);
+		mono_mb_emit_icon (mb, (i * sizeof (MonoArrayBounds)) + G_STRUCT_OFFSET (MonoArrayBounds, length));
+		mono_mb_emit_byte (mb, CEE_ADD);
+		mono_mb_emit_byte (mb, CEE_LDIND_I4);
+		branch_positions [i] = mono_mb_emit_branch (mb, CEE_BGE_UN);
+		/* ind = ind * bounds [i].length + realidx */
+		mono_mb_emit_ldloc (mb, ind);
+		mono_mb_emit_ldloc (mb, bounds);
+		mono_mb_emit_icon (mb, (i * sizeof (MonoArrayBounds)) + G_STRUCT_OFFSET (MonoArrayBounds, length));
+		mono_mb_emit_byte (mb, CEE_ADD);
+		mono_mb_emit_byte (mb, CEE_LDIND_I4);
+		mono_mb_emit_byte (mb, CEE_MUL);
+		mono_mb_emit_ldloc (mb, realidx);
+		mono_mb_emit_byte (mb, CEE_ADD);
+		mono_mb_emit_stloc (mb, ind);
+	}
+
+	/* return array->vector + ind * element_size */
+	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoArray, vector));
+	mono_mb_emit_ldloc (mb, ind);
+	mono_mb_emit_icon (mb, elem_size);
+	mono_mb_emit_byte (mb, CEE_MUL);
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_RET);
+
+	/* patch the branches to get here and throw */
+	for (i = 1; i < rank; ++i) {
+		mono_mb_patch_branch (mb, branch_positions [i]);
+	}
+	mono_mb_patch_branch (mb, branch_pos);
+	/* throw exception */
+	mono_mb_emit_exception (mb, "IndexOutOfRangeException", NULL);
+
+	g_free (branch_positions);
+	mono_loader_lock ();
+	ret = mono_mb_create_method (mb, sig, 4);
+	mono_loader_unlock ();
+	mono_mb_free (mb);
+
+	/* cache the result */
+	cached = 0;
+	mono_marshal_lock ();
+	for (i = 0; i < elem_addr_cache_next; ++i) {
+		if (elem_addr_cache [i].rank == rank && elem_addr_cache [i].elem_size == elem_size) {
+			/* FIXME: free ret */
+			ret = elem_addr_cache [i].method;
+			cached = TRUE;
+			break;
+		}
+	}
+	if (!cached) {
+		if (elem_addr_cache_next >= elem_addr_cache_size) {
+			int new_size = elem_addr_cache_size + 4;
+			ArrayElemAddr *new_array = g_new0 (ArrayElemAddr, new_size);
+			memcpy (new_array, elem_addr_cache, elem_addr_cache_size * sizeof (ArrayElemAddr));
+			g_free (elem_addr_cache);
+			elem_addr_cache = new_array;
+			elem_addr_cache_size = new_size;
+		}
+		elem_addr_cache [elem_addr_cache_next].rank = rank;
+		elem_addr_cache [elem_addr_cache_next].elem_size = elem_size;
+		elem_addr_cache [elem_addr_cache_next].method = ret;
+	}
+	mono_marshal_unlock ();
+	return ret;
+}
+
 MonoMethod*
 mono_marshal_get_write_barrier (void)
 {
@@ -8845,10 +9391,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArray *s
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (dest);
 
-	g_assert (src->obj.vtable->klass->rank == 1);
-	g_assert (start_index >= 0);
-	g_assert (length >= 0);
-	g_assert (start_index + length <= mono_array_length (src));
+	if (src->obj.vtable->klass->rank != 1)
+		mono_raise_exception (mono_get_exception_argument ("array", "array is multi-dimensional"));
+	if (start_index < 0)
+		mono_raise_exception (mono_get_exception_argument ("startIndex", "Must be >= 0"));
+	if (length < 0)
+		mono_raise_exception (mono_get_exception_argument ("length", "Must be >= 0"));
+	if (start_index + length > mono_array_length (src))
+		mono_raise_exception (mono_get_exception_argument ("length", "start_index + length > array length"));
 
 	element_size = mono_array_element_size (src->obj.vtable->klass);
 
@@ -8870,10 +9420,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer s
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (dest);
 
-	g_assert (dest->obj.vtable->klass->rank == 1);
-	g_assert (start_index >= 0);
-	g_assert (length >= 0);
-	g_assert (start_index + length <= mono_array_length (dest));
+	if (dest->obj.vtable->klass->rank != 1)
+		mono_raise_exception (mono_get_exception_argument ("array", "array is multi-dimensional"));
+	if (start_index < 0)
+		mono_raise_exception (mono_get_exception_argument ("startIndex", "Must be >= 0"));
+	if (length < 0)
+		mono_raise_exception (mono_get_exception_argument ("length", "Must be >= 0"));
+	if (start_index + length > mono_array_length (dest))
+		mono_raise_exception (mono_get_exception_argument ("length", "start_index + length > array length"));
 
 	element_size = mono_array_element_size (dest->obj.vtable->klass);
 	  
@@ -9019,8 +9573,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr,
 		mono_raise_exception (mono_get_exception_argument_null ("ptr"));
 		g_assert_not_reached ();
 		return NULL;
-	} else
+	} else {
 		return mono_string_new_len (mono_domain_get (), ptr, len);
+	}
 }
 
 MonoString *
@@ -9052,8 +9607,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (guint16 *pt
 		mono_raise_exception (mono_get_exception_argument_null ("ptr"));
 		g_assert_not_reached ();
 		return NULL;
-	} else
+	} else {
 		return mono_string_new_utf16 (domain, ptr, len);
+	}
 }
 
 MonoString *
@@ -9362,6 +9918,7 @@ mono_struct_delete_old (MonoClass *klass, char *ptr)
 		case MONO_MARSHAL_CONV_STR_TBSTR:
 			mono_marshal_free (*(gpointer *)cpos);
 			break;
+
 		default:
 			continue;
 		}
@@ -9383,8 +9940,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 	mono_struct_delete_old (klass, (char *)src);
 }
 
-
-/* FIXME: on win32 we should probably use GlobalAlloc(). */
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (int size)
 {
@@ -9396,7 +9951,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (int size)
 		/* This returns a valid pointer for size 0 on MS.NET */
 		size = 4;
 
+#ifdef PLATFORM_WIN32
+	res = GlobalAlloc (GMEM_FIXED, (gulong)size);
+#else
 	res = g_try_malloc ((gulong)size);
+#endif
 	if (!res)
 		mono_gc_out_of_memory ((gulong)size);
 
@@ -9408,7 +9967,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 {
 	MONO_ARCH_SAVE_REGS;
 
+#ifdef PLATFORM_WIN32
+	GlobalFree (ptr);
+#else
 	g_free (ptr);
+#endif
 }
 
 void*

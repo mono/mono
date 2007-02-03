@@ -3742,11 +3742,20 @@ assembly_add_resource (MonoReflectionModuleBuilder *mb, MonoDynamicImage *assemb
 		idx = MONO_IMPLEMENTATION_FILE | (idx << MONO_IMPLEMENTATION_BITS);
 	} else {
 		char sizebuf [4];
-		offset = mono_array_length (rsrc->data);
+		char *data;
+		guint len;
+		if (rsrc->data) {
+			data = mono_array_addr (rsrc->data, char, 0);
+			len = mono_array_length (rsrc->data);
+		} else {
+			data = NULL;
+			len = 0;
+		}
+		offset = len;
 		sizebuf [0] = offset; sizebuf [1] = offset >> 8;
 		sizebuf [2] = offset >> 16; sizebuf [3] = offset >> 24;
 		rsrc->offset = mono_image_add_stream_data (&assembly->resources, sizebuf, 4);
-		mono_image_add_stream_data (&assembly->resources, mono_array_addr (rsrc->data, char, 0), mono_array_length (rsrc->data));
+		mono_image_add_stream_data (&assembly->resources, data, len);
 
 		if (!mb->is_main)
 			/* 
@@ -4274,6 +4283,10 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj, gboolean c
 	} else if (strcmp (klass->name, "SignatureHelper") == 0) {
 		MonoReflectionSigHelper *s = (MonoReflectionSigHelper*)obj;
 		token = MONO_TOKEN_SIGNATURE | mono_image_get_sighelper_token (assembly, s);
+	} else if (strcmp (klass->name, "EnumBuilder") == 0) {
+		MonoReflectionType *tb = (MonoReflectionType *)obj;
+		token = mono_metadata_token_from_dor (
+			mono_image_typedef_or_ref (assembly, tb->type));
 	} else {
 		g_error ("requested token for %s\n", klass->name);
 	}
@@ -8048,6 +8061,15 @@ mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObj
 
 #if HAVE_SGEN_GC
 static void* reflection_info_desc = NULL;
+#define MOVING_GC_REGISTER(addr) do {	\
+		if (!reflection_info_desc) {	\
+			gsize bmap = 1;		\
+			reflection_info_desc = mono_gc_make_descr_from_bitmap (&bmap, 1);	\
+		}	\
+		mono_gc_register_root ((addr), sizeof (gpointer), reflection_info_desc);	\
+	} while (0)
+#else
+#define MOVING_GC_REGISTER(addr)
 #endif
 
 /*
@@ -8103,13 +8125,7 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 
 	klass->element_class = klass;
 
-#if HAVE_SGEN_GC
-	if (!reflection_info_desc) {
-		gsize bmap = 1;
-		reflection_info_desc = mono_gc_make_descr_from_bitmap (&bmap, 1);
-	}
-	mono_gc_register_root (&klass->reflection_info, sizeof (gpointer), reflection_info_desc);
-#endif
+	MOVING_GC_REGISTER (&klass->reflection_info);
 	klass->reflection_info = tb;
 
 	/* Put into cache so mono_class_get () will find it */
@@ -8682,17 +8698,10 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 	MonoClass *klass;
 	MonoReflectionTypeBuilder *tb = NULL;
 	MonoGenericClass *gclass, *cached;
-	MonoInflatedGenericClass *igclass;
-	MonoDynamicGenericClass *dgclass = NULL;
 	gboolean is_dynamic = FALSE;
 	MonoDomain *domain;
 	MonoType *geninst;
 	int i;
-
-	klass = mono_class_from_mono_type (type->type);
-	if (!klass->generic_container && !klass->generic_class &&
-	    !(klass->nested_in && klass->nested_in->generic_container))
-		return NULL;
 
 	mono_loader_lock ();
 
@@ -8710,20 +8719,32 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 		tb = (MonoReflectionTypeBuilder *) rgt;
 
 		is_dynamic = TRUE;
-	} else if (klass->wastypebuilder) {
+	}
+
+	/* FIXME: fix the CreateGenericParameters protocol to avoid the two stage setup of TypeBuilders */
+	if (tb && tb->generic_container)
+		mono_reflection_create_generic_class (tb);
+
+	klass = mono_class_from_mono_type (type->type);
+	if (!klass->generic_container) {
+		mono_loader_unlock ();
+		return NULL;
+	}
+
+	if (klass->wastypebuilder) {
 		tb = (MonoReflectionTypeBuilder *) klass->reflection_info;
 
 		is_dynamic = TRUE;
 	}
 
 	if (is_dynamic) {
-		dgclass = g_new0 (MonoDynamicGenericClass, 1);
-		igclass = &dgclass->generic_class;
+		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
+		MonoInflatedGenericClass *igclass = &dgclass->generic_class;
 		gclass = &igclass->generic_class;
 		gclass->is_dynamic = TRUE;
 		gclass->is_inflated = TRUE;
 	} else {
-		igclass = g_new0 (MonoInflatedGenericClass, 1);
+		MonoInflatedGenericClass *igclass = g_new0 (MonoInflatedGenericClass, 1);
 		gclass = &igclass->generic_class;
 		gclass->is_inflated = TRUE;
 	}
@@ -8747,50 +8768,6 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 	gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
 
 	gclass->container_class = klass;
-
-	if (klass->generic_class) {
-		MonoGenericClass *kgclass = klass->generic_class;
-		MonoGenericClass *ogclass = gclass;
-
-		ogclass->context = g_new0 (MonoGenericContext, 1);
-		ogclass->context->container = gclass->container_class->generic_container;
-		ogclass->context->gclass = gclass;
-
-		if (is_dynamic) {
-			dgclass = g_new0 (MonoDynamicGenericClass, 1);
-			igclass = &dgclass->generic_class;
-			gclass = &igclass->generic_class;
-			gclass->is_dynamic = TRUE;
-			gclass->is_inflated = TRUE;
-		} else {
-			igclass = g_new0 (MonoInflatedGenericClass, 1);
-			gclass = &igclass->generic_class;
-			gclass->is_inflated = TRUE;
-		}
-
-		gclass->inst = g_new0 (MonoGenericInst, 1);
-
-		gclass->inst->type_argc = kgclass->inst->type_argc;
-		gclass->inst->type_argv = g_new0 (MonoType *, gclass->inst->type_argc);
-		gclass->inst->is_reference = 1;
-
-		for (i = 0; i < gclass->inst->type_argc; i++) {
-			MonoType *t = kgclass->inst->type_argv [i];
-
-			t = mono_class_inflate_generic_type (t, ogclass->context);
-
-			if (!gclass->inst->is_open)
-				gclass->inst->is_open = mono_class_is_open_constructed_type (t);
-			if (gclass->inst->is_reference)
-				gclass->inst->is_reference = MONO_TYPE_IS_REFERENCE (t);
-
-			gclass->inst->type_argv [i] = t;
-		}
-
-		gclass->inst = mono_metadata_lookup_generic_inst (gclass->inst);
-
-		gclass->container_class = kgclass->container_class;
-	}
 
 	geninst = g_new0 (MonoType, 1);
 	geninst->type = MONO_TYPE_GENERICINST;
@@ -8994,6 +8971,7 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 		return mono_method_get_object (mono_object_domain (rmethod), inflated, NULL);
 	}
 
+	MOVING_GC_REGISTER (&gmethod->reflection_info);
 	gmethod->reflection_info = rmethod;
 
 	context = g_new0 (MonoGenericContext, 1);
@@ -9029,6 +9007,7 @@ inflate_mono_method (MonoReflectionGenericClass *type, MonoMethod *method, MonoO
 		gmethod = g_new0 (MonoGenericMethod, 1);
 		gmethod->generic_class = &gclass->generic_class;
 		gmethod->container = method->generic_container;
+		MOVING_GC_REGISTER (&gmethod->reflection_info);
 		gmethod->reflection_info = obj;
 
 		gmethod->inst = g_new0 (MonoGenericInst, 1);
@@ -9138,6 +9117,7 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
 
 		ifield = g_new0 (MonoInflatedField, 1);
 		ifield->generic_type = field->type;
+		MOVING_GC_REGISTER (&ifield->reflection_info);
 		ifield->reflection_info = obj;
 
 		dgclass->fields [i] = *field;
@@ -9564,6 +9544,7 @@ mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam
 	image = &gparam->tbuilder->module->dynamic_image->image;
 	mono_class_from_generic_parameter (param, image, gparam->mbuilder != NULL);
 
+	MOVING_GC_REGISTER (&param->pklass->reflection_info);
 	param->pklass->reflection_info = gparam; /* FIXME: GC pin gparam */
 
 	gparam->type.type = g_new0 (MonoType, 1);

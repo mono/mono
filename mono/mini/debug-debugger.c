@@ -25,8 +25,6 @@
 #error "Some clown #defined MONO_DEBUGGER_SUPPORTED without USE_INCLUDED_GC - fix configure.in!"
 #endif
 
-static MonoCodeManager *debugger_codeman = NULL;
-
 static guint64 debugger_insert_breakpoint (guint64 method_argument, const gchar *string_argument);
 static guint64 debugger_remove_breakpoint (guint64 breakpoint);
 static guint64 debugger_compile_method (guint64 method_arg);
@@ -332,6 +330,8 @@ debugger_detach (void)
 	debugger_finalize_threads ();
 }
 
+extern MonoDebuggerInfo *MONO_DEBUGGER__debugger_info_ptr;
+
 static void
 debugger_initialize (void)
 {
@@ -340,12 +340,7 @@ debugger_initialize (void)
 void
 mono_debugger_init (void)
 {
-	/*
-	 * Use mono_code_manager_new_dynamic() to create a new malloc()-based code manager
-	 * and intentionally leak the memory on exit.
-	 */
-	debugger_codeman = mono_code_manager_new_dynamic ();
-	mono_debugger_notification_function = mono_debugger_create_notification_function (debugger_codeman);
+	mono_debugger_notification_function = mono_debugger_create_notification_function ();
 	mono_debugger_event_handler = debugger_event_handler;
 
 	/*
@@ -414,8 +409,12 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 
 	/*
 	 * Reload symbol tables.
+	 *
+	 * NOTE: We only reference the `MONO_DEBUGGER__debugger_info_ptr' here to prevent the
+	 * linker from removing the .mdb_debug_info section.
 	 */
-	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE, 0, 0);
+	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE,
+					     (guint64) (gssize) MONO_DEBUGGER__debugger_info_ptr, 0);
 	mono_debugger_unlock ();
 
 	/*

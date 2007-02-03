@@ -25,6 +25,7 @@
 <%@ Import Namespace="Microsoft.CSharp" %>
 <%@ Import Namespace="Microsoft.VisualBasic" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
+<%@ Import Namespace="System.Security.Cryptography.X509Certificates" %>
 <%@ Assembly name="System.Web.Services" %>
 <%@ Page debug="true" %>
 
@@ -306,6 +307,13 @@ bool HasFormResult
 	get { return Request.QueryString ["ext"] == "testform"; }
 }
 
+class NoCheckCertificatePolicy : ICertificatePolicy {
+	public bool CheckValidationResult (ServicePoint a, X509Certificate b, WebRequest c, int d)
+	{
+		return true;
+	}
+}
+
 string GetTestResult ()
 { 
 	if (!HasFormResult) return null;
@@ -339,7 +347,9 @@ string GetTestResult ()
 	{
 		string url = location + "/" + CurrentOperationName;
 		Uri uri = new Uri (url);
-		WebRequest req = WebRequest.Create (url + "?" + qs);
+		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url + "?" + qs);
+		if (url.StartsWith ("https:"))
+			ServicePointManager.CertificatePolicy = new NoCheckCertificatePolicy ();
 		HttpCookieCollection cookies = Request.Cookies;
 		int last = cookies.Count;
 		if (last > 0) {
