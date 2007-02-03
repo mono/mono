@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
@@ -64,7 +65,7 @@ namespace Microsoft.Build.BuildEngine {
 			ConditionExpression e = parser.ParseExpression ();
 			
 			if (!parser.tokenizer.IsEOF ())
-				throw new ExpressionParseException (String.Format ("Unexpected token: \"{0}\"", parser.tokenizer.Token.Value));
+				throw new ExpressionParseException (String.Format ("Unexpected token at end of condition: \"{0}\"", parser.tokenizer.Token.Value));
 			
 			return e;
 		}
@@ -106,6 +107,7 @@ namespace Microsoft.Build.BuildEngine {
 		ConditionExpression ParseRelationalExpression ()
 		{
 			ConditionExpression e = ParseFactorExpression ();
+			
 			Token opToken;
 			RelationOperator op;
 			
@@ -141,7 +143,7 @@ namespace Microsoft.Build.BuildEngine {
 				default:
 					throw new ExpressionParseException (String.Format ("Wrong relation operator {0}", opToken.Value));
 				}
-				
+
 				e =  new ConditionRelationalExpression (e, ParseFactorExpression (), op);
 			}
 			
@@ -157,12 +159,12 @@ namespace Microsoft.Build.BuildEngine {
 			if (token.Type == TokenType.LeftParen) {
 				e = ParseExpression ();
 				tokenizer.Expect (TokenType.RightParen);
-			} else if (token.Type == TokenType.String)
+			} else if (token.Type == TokenType.String && tokenizer.Token.Type == TokenType.LeftParen) {
+				e = ParseFunctionExpression (token.Value);
+			} else if (token.Type == TokenType.String) {
 				e = new ConditionFactorExpression (token);
-			else if (token.Type == TokenType.Number)
+			} else if (token.Type == TokenType.Number) {
 				e = new ConditionFactorExpression (token);
-			else if (token.Type == TokenType.FunctionName) {
-				e = ParseFunctionExpression ();
 			} else if (token.Type == TokenType.Item) {
 				throw new NotImplementedException ();
 			} else if (token.Type == TokenType.Property) {
@@ -180,9 +182,31 @@ namespace Microsoft.Build.BuildEngine {
 			return new ConditionNotExpression (ParseFactorExpression ());
 		}
 
-		ConditionExpression ParseFunctionExpression ()
+		ConditionExpression ParseFunctionExpression (string function_name)
 		{
-			throw new NotImplementedException ();
+			return new ConditionFunctionExpression (function_name, ParseFunctionArguments ());
+		}
+		
+		List <ConditionFactorExpression> ParseFunctionArguments ()
+		{
+			List <ConditionFactorExpression> list = new List <ConditionFactorExpression> ();
+			ConditionFactorExpression e;
+			
+			while (true) {
+				tokenizer.GetNextToken ();
+				if (tokenizer.Token.Type == TokenType.RightParen) {
+					tokenizer.GetNextToken ();
+					break;
+				}
+				if (tokenizer.Token.Type == TokenType.Comma)
+					continue;
+					
+				tokenizer.Putback (tokenizer.Token);
+				e = (ConditionFactorExpression) ParseFactorExpression ();
+				list.Add (e);
+			}
+			
+			return list;
 		}
 	}
 }

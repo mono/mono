@@ -44,6 +44,7 @@ namespace Microsoft.Build.BuildEngine {
 		int	tokenPosition = 0;
 		
 		Token	token;
+		Token	putback = null;
 		
 //		bool	ignoreWhiteSpace = true;
 		
@@ -135,9 +136,20 @@ namespace Microsoft.Build.BuildEngine {
 			return (token.Type >= TokenType.FirstPunct && token.Type < TokenType.LastPunct);
 		}
 		
-		// FIXME: add 'and' and 'or' tokens
+		// FIXME test this
+		public void Putback (Token token)
+		{
+			putback = token;
+		}
+		
 		public void GetNextToken ()
 		{
+			if (putback != null) {
+				token = putback;
+				putback = null;
+				return;
+			}
+		
 			if (token.Type == TokenType.EOF)
 				throw new ExpressionParseException ("Cannot read past the end of stream.");
 			

@@ -21,6 +21,7 @@ Microsoft.Build.BuildEngine/ColorSetter.cs
 Microsoft.Build.BuildEngine/ConditionAndExpression.cs
 Microsoft.Build.BuildEngine/ConditionExpression.cs
 Microsoft.Build.BuildEngine/ConditionFactorExpresion.cs
+Microsoft.Build.BuildEngine/ConditionFunctionExpression.cs
 Microsoft.Build.BuildEngine/ConditionNotExpression.cs
 Microsoft.Build.BuildEngine/ConditionOrExpression.cs
 Microsoft.Build.BuildEngine/ConditionParser.cs

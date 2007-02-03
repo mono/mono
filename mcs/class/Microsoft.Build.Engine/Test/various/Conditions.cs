@@ -278,9 +278,36 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 
 			Assert.IsNotNull (proj.EvaluatedProperties ["A"], "A1");
-			Assert.IsNotNull (proj.EvaluatedProperties ["B"], "A1");
-			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A1");
-			Assert.IsNull (proj.EvaluatedProperties ["D"], "A1");
+			Assert.IsNotNull (proj.EvaluatedProperties ["B"], "A2");
+			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A3");
+			Assert.IsNull (proj.EvaluatedProperties ["D"], "A4");
+		}
+
+		[Test]
+		public void TestCondition10 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition="" !'true' ""></A>
+						<B Condition="" 'on' == 'true' ""></B>
+						<C Condition="" 4 == 4.0 and 04 == 4""></C>
+						<D Condition="" !(false and false) ==  !false or !false ""></D>
+						<E Condition="" Exists ('Test\resources\Import.csproj') ""></E>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.IsNull (proj.EvaluatedProperties ["A"], "A1");
+			Assert.IsNotNull (proj.EvaluatedProperties ["B"], "A2");
+			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A3");
+			Assert.IsNotNull (proj.EvaluatedProperties ["D"], "A4");
+			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
 		}
 
 		[Test]
