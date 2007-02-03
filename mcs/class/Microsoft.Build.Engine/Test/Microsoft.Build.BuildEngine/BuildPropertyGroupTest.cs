@@ -616,6 +616,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"This method is only valid for virtual property groups, not <PropertyGroup> elements.")]
 		public void TestSetProperty9 ()
 		{
 			Engine engine;
