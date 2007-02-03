@@ -19,17 +19,21 @@ using System.Windows.Forms.Layout;
 
 using NUnit.Framework;
 
+#if NET_2_0
+#pragma warning disable 612 // Warning about obsolete members.
+#endif
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class ControlTest
 	{
 		public class ControlStylesTester : Control {
-			private int style;
-			private int ex_style;
+			private WindowStyles style;
+			private WindowStyles ex_style;
 			private bool or_styles;
 
-			public ControlStylesTester (int Style, int ExStyle, bool OrStyles)
+			public ControlStylesTester (WindowStyles Style, WindowStyles ExStyle, bool OrStyles)
 			{
 				style = Style;
 				ex_style = ExStyle;
@@ -40,11 +44,11 @@ namespace MonoTests.System.Windows.Forms
 				get {
 					CreateParams result = base.CreateParams;
 					if (or_styles) {
-						result.Style |= style;
-						result.ExStyle |= ex_style;
+						result.Style |= (int) style;
+						result.ExStyle |= (int) ex_style;
 					} else {
-						result.Style = style;
-						result.ExStyle = ex_style;
+						result.Style = (int) style;
+						result.ExStyle = (int) ex_style;
 					}
 					return result;
 				}
@@ -54,11 +58,47 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ControlSizeTest ()
 		{
-			ControlStylesTester c = new ControlStylesTester (0x40000000, 0, true);
+			ControlStylesTester c = new ControlStylesTester (WindowStyles.WS_CHILD, 0, true);
 			Assert.AreEqual ("{X=0,Y=0}", c.Location.ToString (), "#L1");
 			Assert.AreEqual ("{Width=0, Height=0}", c.Size.ToString (), "#S1");
 		}
-		
+
+#if NET_2_0
+		[Test]
+		public void CaptureTest ()
+		{
+			Form frm = new Form ();
+			ControlOverrideLogger log = new ControlOverrideLogger ();
+			frm.Controls.Add (log);
+			log.Visible = true;
+			log.Capture = true;
+			log.Capture = false;
+			log.BackColor = Color.Blue;
+			log.Size = new Size (100, 100);
+			
+			frm.Show ();
+			Application.DoEvents ();
+			
+			frm.Dispose ();
+			Assert.IsTrue (log.Log.ToString ().IndexOf ("OnMouseCaptureChanged") > -1, "#01");
+			
+			log = new ControlOverrideLogger ();
+			log.Capture = true;
+			log.Capture = false;
+			Assert.IsTrue (log.Log.ToString ().IndexOf ("OnMouseCaptureChanged") > -1, "#02");
+
+			log = new ControlOverrideLogger ();
+			log.Capture = true;
+			Assert.IsTrue (log.IsHandleCreated, "#03");
+			Assert.IsTrue (log.Log.ToString ().IndexOf ("OnMouseCaptureChanged") == -1, "#04");
+			
+			log = new ControlOverrideLogger ();
+			log.Capture = false;
+			Assert.IsFalse (log.IsHandleCreated, "#05");
+			Assert.IsTrue (log.Log.ToString ().IndexOf ("OnMouseCaptureChanged") == -1, "#06");
+		}
+#endif
+	
 		public class OnPaintTester : Form
 		{
 			int counter;
@@ -750,7 +790,7 @@ namespace MonoTests.System.Windows.Forms
 		public void TabOrder()
 		{
 			Form		form;
-			Control		active;
+			//Control		active;
 
 			Label		label1 = new Label();		// To test non-tabstop items as well
 			Label		label2 = new Label();
@@ -1176,6 +1216,8 @@ namespace MonoTests.System.Windows.Forms
 
 		public void delegate_call () {
 			delegateCalled = true;
+
+			TestHelper.RemoveWarning (delegateCalled);
 		}
 
 		[Test]
@@ -1686,6 +1728,8 @@ namespace MonoTests.System.Windows.Forms
 		{
 			parent_event ++;
 			parent_affected_property = e.AffectedProperty;
+
+			TestHelper.RemoveWarning (parent_affected_property);
 		}
 
 		[Test]

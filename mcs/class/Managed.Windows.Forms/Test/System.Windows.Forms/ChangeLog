@@ -1,3 +1,8 @@
+2007-02-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ControlTest.cs: Removed warnings. Added CaptureTest.
+	* ControlLogger(2).cs: Added.
+
 2007-02-01  Everaldo Canuto  <everaldo@simios.org>
 
 	* LabelTest.cs: StyleTest created to test #79537. TestHelper was used. 
