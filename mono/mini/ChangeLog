@@ -1,3 +1,8 @@
+2007-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix ATOMIC_EXCHANGE in the
+	presence of frame pointer elimination.
+
 2007-02-01  Geoff Norton  <gnorton@customerdna.com>
         
 	* mini-x86.h: NetBSD UCONTEX_REG defines.
