@@ -175,40 +175,31 @@ namespace Microsoft.Build.BuildEngine {
 			SetProperty (propertyName, propertyValue, false);
 		}
 		
-		// FIXME: add a test for SetProperty on property from xml
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 bool treatPropertyValueAsLiteral)
 		{
 			if (read_only)
 				return;
+			if (FromXml)
+				throw new InvalidOperationException (
+					"This method is only valid for virtual property groups, not <PropertyGroup> elements.");
 
 			if (treatPropertyValueAsLiteral)
 				propertyValue = Utilities.Escape (propertyValue);
 
-			if (FromXml) {
-				int idx = properties.FindIndex (delegate (BuildProperty p) {
-					return p.Name == propertyName;
-				});
+			if (propertiesByName.ContainsKey (propertyName))
+				propertiesByName.Remove (propertyName);
 
-				if (idx == -1)
-					AddNewProperty (propertyName, propertyValue, false);
-				else
-					properties [idx].Value = propertyValue;
-			} else {
-				if (propertiesByName.ContainsKey (propertyName))
-					propertiesByName.Remove (propertyName);
+			BuildProperty bp = new BuildProperty (propertyName, propertyValue);
+			if (Char.IsDigit (propertyName [0]))
+				throw new ArgumentException (String.Format (
+					"The name \"{0}\" contains an invalid character \"{1}\".", propertyName, propertyName [0]));
 
-				BuildProperty bp = new BuildProperty (propertyName, propertyValue);
-				if (Char.IsDigit (propertyName [0]))
-					throw new ArgumentException (String.Format (
-						"The name \"{0}\" contains an invalid character \"{1}\".", propertyName, propertyName [0]));
+			AddProperty (bp);
 
-				AddProperty (bp);
-
-				if (IsGlobal)
-					parentProject.NeedToReevaluate ();
-			}
+			if (IsGlobal)
+				parentProject.NeedToReevaluate ();
 		}
 		
 		internal void Evaluate ()
