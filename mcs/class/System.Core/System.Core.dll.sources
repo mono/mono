@@ -15,4 +15,5 @@ System.Linq/OrderedSequence.cs
 System.Linq/Queryable.cs
 System.Linq.Expressions/Expression.cs
 System.Linq.Expressions/Expression_T.cs
+System.Linq.Expressions/LambdaExpression.cs
 System.Linq.Expressions/ParameterExpression.cs

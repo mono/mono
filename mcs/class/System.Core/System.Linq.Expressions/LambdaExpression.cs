@@ -17,19 +17,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Alejandro Serrano "Serras" (trupill@yahoo.es)
-//        Marek Safar (mare.safar@gmail.com)
+//        Atsushi Enomoto  <atsushi@ximian.com>
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Collections.ObjectModel;
 
-namespace System.Linq
+namespace System.Linq.Expressions
 {
-        public interface IQueryable<T> : IQueryable, IEnumerable<T>
+        public class LambdaExpression : Expression
         {
-                IQueryable<TElement> CreateQuery<TElement> (Expression expression);
-                TResult Execute<TResult> (Expression expression);
+                internal LambdaExpression ()
+                {
+                }
+                public Delegate Compile ()
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public Expression Body {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public ReadOnlyCollection<ParameterExpression> Parameters {
+                        get { throw new NotImplementedException (); }
+                }
         }
 }
