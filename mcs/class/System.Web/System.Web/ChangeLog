@@ -1,3 +1,7 @@
+2007-02-02  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplicationFactory.cs: make code a bit more compact.
+
 2007-01-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpResponse.cs: fixed TARGET_J2EE part of Redirect for portlet

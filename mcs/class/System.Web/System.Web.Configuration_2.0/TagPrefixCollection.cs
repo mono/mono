@@ -36,8 +36,8 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (TagPrefixInfo))]
-	public sealed class TagPrefixCollection : ConfigurationElementCollection, ICollection, IEnumerable
+	[ConfigurationCollection (typeof (TagPrefixInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+	public sealed class TagPrefixCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;
 
@@ -67,7 +67,7 @@ namespace System.Web.Configuration
 
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((TagPrefixInfo)element).TagPrefix;
+			return ((TagPrefixInfo)element).Source;
 		}
 
 		public void Remove (TagPrefixInfo tagPrefixInformation)

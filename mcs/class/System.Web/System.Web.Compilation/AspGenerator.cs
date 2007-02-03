@@ -269,6 +269,12 @@ namespace System.Web.Compilation
 			Parse (Path.GetFullPath (tparser.InputFile));
 		}
 
+		internal static void AddTypeToCache (ArrayList dependencies, string inputFile, Type type)
+		{
+			CacheDependency cd = new CacheDependency ((string[])dependencies.ToArray (typeof (string)));
+			HttpRuntime.Cache.InsertPrivate ("@@Type" + inputFile, type, cd);
+		}
+		
 		public Type GetCompiledType ()
 		{
 			Type type = (Type) HttpRuntime.Cache.Get ("@@Type" + tparser.InputFile);
@@ -277,18 +283,12 @@ namespace System.Web.Compilation
 			}
 
 			isApplication = tparser.DefaultDirectiveName == "application";
-#if NET_2_0
-			tparser.RegisterConfigControls ();
-#endif
 			Parse ();
 
 			BaseCompiler compiler = GetCompilerFromType ();
 
 			type = compiler.GetCompiledType ();
-			CacheDependency cd = new CacheDependency ((string[])
-							tparser.Dependencies.ToArray (typeof (string)));
-
-			HttpRuntime.Cache.InsertPrivate ("@@Type" + tparser.InputFile, type, cd);
+			AddTypeToCache (tparser.Dependencies, tparser.InputFile, type);
 			return type;
 		}
 

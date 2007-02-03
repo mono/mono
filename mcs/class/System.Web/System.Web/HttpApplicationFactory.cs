@@ -340,7 +340,7 @@ namespace System.Web {
 				return theFactory.app_type;
 			}
 		}
-
+		
 		void InitType (HttpContext context)
 		{
 			lock (this) {
@@ -351,12 +351,14 @@ namespace System.Web {
 				try {
 #endif
 					string physical_app_path = context.Request.PhysicalApplicationPath;
-					string app_file;
-				
+					string app_file = null;
+					
 					app_file = Path.Combine (physical_app_path, "Global.asax");
-					if (!File.Exists (app_file))
+					if (!File.Exists (app_file)) {
 						app_file = Path.Combine (physical_app_path, "global.asax");
-
+						if (!File.Exists (app_file))
+							app_file = null;
+					}
 			
 #if !NET_2_0
 					WebConfigurationSettings.Init (context);
@@ -375,7 +377,7 @@ namespace System.Web {
 					acc.Compile ();
 #endif
 
-					if (File.Exists (app_file)) {
+					if (app_file != null) {
 #if TARGET_J2EE
 						app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);
 #else
@@ -390,11 +392,8 @@ namespace System.Web {
 						app_state = new HttpApplicationState ();
 					}
 
-					app_file = "Global.asax";
-					if (!File.Exists(Path.Combine(physical_app_path, app_file)))
-						app_file =  "global.asax";
-
-					WatchLocationForRestart(app_file);
+					if (app_file != null)
+						WatchLocationForRestart(app_file);
 					    
 					if (File.Exists(Path.Combine(physical_app_path, "Web.config")))
 						WatchLocationForRestart("Web.config");

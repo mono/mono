@@ -153,61 +153,43 @@ namespace System.Web.UI {
 			foreach (NamespaceInfo nsi in namespaces)
 				imports.Add (nsi.Namespace);
 		}
-		
-		internal void RegisterConfigControls ()
-		{
-			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
-			if (pages == null)
-				return;
-
-			TagPrefixCollection controls = pages.Controls;
-			if (controls == null || controls.Count == 0)
-				return;
-
-			foreach (TagPrefixInfo tpi in controls) {
-				if (!String.IsNullOrEmpty (tpi.TagName))
-					RegisterCustomControl (tpi.TagPrefix, tpi.TagName, tpi.Source);
-				else if (!String.IsNullOrEmpty (tpi.Namespace))
-					RegisterNamespace (tpi.TagPrefix, tpi.Namespace, tpi.Assembly);
-			}
-		}
 #endif
 		
 		internal void RegisterCustomControl (string tagPrefix, string tagName, string src)
-		{
-			string realpath = MapPath (src);
-			if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
-				return;
-			
-			if (!File.Exists (realpath))
-				throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
-			string vpath = UrlUtils.Combine (BaseVirtualDir, src);
-			Type type = null;
-			AddDependency (realpath);
-			try {
-				ArrayList other_deps = new ArrayList ();
-				type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
-				foreach (string s in other_deps) {
-					AddDependency (s);
-				}
-			} catch (ParseException pe) {
-				if (this is UserControlParser)
-					throw new ParseException (Location, pe.Message, pe);
-				throw;
-			}
+                {
+                        string realpath = MapPath (src);
+                        if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
+                                return;
+                        
+                        if (!File.Exists (realpath))
+                                throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
+                        string vpath = UrlUtils.Combine (BaseVirtualDir, src);
+                        Type type = null;
+                        AddDependency (realpath);
+                        try {
+                                ArrayList other_deps = new ArrayList ();
+                                type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
+                                foreach (string s in other_deps) {
+                                        AddDependency (s);
+                                }
+                        } catch (ParseException pe) {
+                                if (this is UserControlParser)
+                                        throw new ParseException (Location, pe.Message, pe);
+                                throw;
+                        }
 
-			AddAssembly (type.Assembly, true);
-			RootBuilder.Foundry.RegisterFoundry (tagPrefix, tagName, type);
-		}
+                        AddAssembly (type.Assembly, true);
+                        RootBuilder.Foundry.RegisterFoundry (tagPrefix, tagName, type);
+                }
 
-		internal void RegisterNamespace (string tagPrefix, string ns, string assembly)
-		{
-			AddImport (ns);
-			Assembly ass = AddAssemblyByName (assembly);
-			AddDependency (ass.Location);
-			RootBuilder.Foundry.RegisterFoundry (tagPrefix, ass, ns);
-		}
-		
+                internal void RegisterNamespace (string tagPrefix, string ns, string assembly)
+                {
+                        AddImport (ns);
+                        Assembly ass = AddAssemblyByName (assembly);
+                        AddDependency (ass.Location);
+                        RootBuilder.Foundry.RegisterFoundry (tagPrefix, ass, ns);
+                }
+
 		internal virtual void HandleOptions (object obj)
 		{
 		}

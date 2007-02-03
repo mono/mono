@@ -1,3 +1,7 @@
+2007-02-02  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateParser.cs: Do not register controls here.
+
 2007-02-02  Adar Wesley <adarw@mainsoft.com>
 
 	* Control.cs: Changed UniqueId implementation to have '$' and not ':'
