@@ -1,5 +1,9 @@
 2007-02-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* TestHelper.cs: Added a helper method to remove warnings.
+
+2007-02-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ControlTest.cs: Removed warnings. Added CaptureTest.
 	* LogGenerator.cs: Added (used to generate ControlLogger and ControlLogger2).
 	* ControlLogger(2).cs: Added.

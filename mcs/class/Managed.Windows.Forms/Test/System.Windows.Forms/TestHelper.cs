@@ -23,6 +23,11 @@ namespace MonoTests.System.Windows.Forms
 			// nothing to do.
 		}
 
+		public static void RemoveWarning (params object [] param)
+		{
+			// Call this function with the unused variable as the parameter.
+		}
+
 		public static CreateParams GetCreateParams (Control control)
 		{
 			CreateParams cp = (CreateParams) control.GetType().GetProperty("CreateParams", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(control, null);
