@@ -1,3 +1,7 @@
+2007-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* BitConverter.cs (ToDouble): Fix this on big-endian machines.
+
 2007-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TimeZone.cs: According to the docs, we should not throw when
