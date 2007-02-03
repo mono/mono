@@ -3567,6 +3567,10 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.LeaveNotify: {
+					if (xevent.CrossingEvent.mode == NotifyMode.NotifyUngrab) {
+						WindowUngrabbed (hwnd.Handle);
+						goto ProcessNextMessage;
+					}
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
@@ -3998,7 +4002,8 @@ namespace System.Windows.Forms {
 			lock (XlibLock) {
 				XGrabPointer(DisplayHandle, hwnd.client_window, false, 
 					EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
-					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
+					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask | 
+					EventMask.LeaveWindowMask,
 					GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_to_window, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
@@ -4008,8 +4013,24 @@ namespace System.Windows.Forms {
 				XUngrabPointer(DisplayHandle, IntPtr.Zero);
 				XFlush(DisplayHandle);
 			}
+			WindowUngrabbed (hwnd);			
+		}
+		
+		private void WindowUngrabbed (IntPtr hwnd) {
+			bool was_grabbed = Grab.Hwnd != IntPtr.Zero;
+			
 			Grab.Hwnd = IntPtr.Zero;
 			Grab.Confined = false;
+			
+			if (was_grabbed) {
+				// lparam should be the handle to the window gaining the mouse capture,
+				// but X doesn't seem to give us that information.
+				// Also only generate WM_CAPTURECHANGED if the window actually was grabbed.
+				// X will send a NotifyUngrab, but since it comes late sometimes we're
+				// calling WindowUngrabbed directly from UngrabWindow in order to send
+				// this WM right away.
+				SendMessage (hwnd, Msg.WM_CAPTURECHANGED, IntPtr.Zero, IntPtr.Zero);
+			}
 		}
 
 		internal override void HandleException(Exception e) {

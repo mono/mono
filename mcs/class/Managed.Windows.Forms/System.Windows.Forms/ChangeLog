@@ -1,3 +1,14 @@
+2007-02-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: Implemented WM_CAPTURECHANGED support, we're now
+	  handling LeaveNotify->NotifyUngrab in order to send
+	  WM_CAPTURECHANGED. However sometimes the NotifyUngrab arrives late
+	  after calling XUngrabPointer, so we call WindowUngrabbed directly
+	  from UngrabWindow in order to send WM_CAPTURECHANGED immediately.
+	* Control.cs: Handle WM_CAPTURECHANGED in order to raise
+	  MouseCaptureChanged correctly. Also create handles if changing
+	  Capture (matches MS behaviour).
+
 2007-02-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SizeGrip.cs: Make the last change 2.0 only.

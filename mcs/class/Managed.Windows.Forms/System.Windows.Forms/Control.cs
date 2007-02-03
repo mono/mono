@@ -2106,12 +2106,13 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (this.IsHandleCreated && value != is_captured) {
+				// Call OnMouseCaptureChanged when we get WM_CAPTURECHANGED.
+				if (value != is_captured) {
 					if (value) {
 						is_captured = true;
-						XplatUI.GrabWindow(this.window.Handle, IntPtr.Zero);
+						XplatUI.GrabWindow(this.Handle, IntPtr.Zero);
 					} else {
-						XplatUI.UngrabWindow(this.window.Handle);
+						XplatUI.UngrabWindow(this.Handle);
 						is_captured = false;
 					}
 				}
@@ -4737,7 +4738,13 @@ namespace System.Windows.Forms
 
 				return;
 			}
-
+#if NET_2_0
+			case Msg.WM_CAPTURECHANGED:
+				is_captured = false;
+				OnMouseCaptureChanged (EventArgs.Empty);
+				m.Result = (IntPtr) 0;
+				return;
+#endif
 			default:
 				DefWndProc(ref m);
 				return;
