@@ -1,3 +1,11 @@
+2007-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
+
+	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
+
+	* interlocked.cs: Fix return values.
+	
 2007-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (bug-80307.exe): Fix srcdir != builddir.
