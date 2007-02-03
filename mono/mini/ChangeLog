@@ -1,5 +1,8 @@
 2007-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c inssel-sparc.brg mini-sparc.c cpu-sparc.md: Get rid of OP_SETREG/
+	OP_SETREGIMM, use OP_MOVE/OP_ICONST instead.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Fix ATOMIC_EXCHANGE in the
 	presence of frame pointer elimination.
 
