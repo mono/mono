@@ -1,0 +1,54 @@
+2007-02-03  Marek Habersack  <grendello@gmail.com>
+
+	* UnsafeNativeMethods.cs: New file.
+
+	* SR.Designer.cs: New file.
+
+	* SQLiteTransaction.cs: New file.
+
+	* SQLiteStatement.cs: New file.
+
+	* SQLiteParameter.cs: New file.
+
+	* SQLiteParameterCollection.cs: New
+	file.
+
+	* SQLiteMetaDataCollectionNames.cs: New
+	file
+
+	* SQLiteKeyReader.cs: New file (not
+	used for the moment)
+
+	* SQLiteFunction.cs: New file
+
+	* SQLiteFunctionAttribute.cs: New file
+
+	* SQLiteFactory.cs: New file
+
+	* SQLiteException.cs: New file
+
+	* SQLiteEnlistment.cs: New file
+
+	* SqliteDataSourceEnumerator.cs: Moved
+	to the new location.
+
+	* SQLiteDataReader.cs: New file
+
+	* SQLiteDataAdapter.cs: New file
+
+	* SQLiteConvert.cs: New file
+
+	* SQLiteConnectionStringBuilder.cs: New
+	file
+
+	* SQLiteConnection.cs: New file
+
+	* SQLiteCommand.cs: New file
+
+	* SQLiteCommandBuilder.cs: New file
+
+	* SQLiteBase.cs: New file
+
+	* SQLite3_UTF16.cs: New file
+
+	* SQLite3.cs: New file

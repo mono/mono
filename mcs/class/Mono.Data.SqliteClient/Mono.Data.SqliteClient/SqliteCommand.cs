@@ -32,26 +32,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Data;
-#if NET_2_0
-using System.Data.Common;
-#endif
 using System.Diagnostics; 
 using Group = System.Text.RegularExpressions.Group;
 
 namespace Mono.Data.SqliteClient 
 {
-#if NET_2_0
-	public class SqliteCommand : DbCommand, ICloneable
-#else
 	public class SqliteCommand : IDbCommand, ICloneable
-#endif
 	{
 		#region Fields
 		
@@ -93,57 +86,37 @@ namespace Mono.Data.SqliteClient
 			transaction = trans;
 		}
 		
-#if !NET_2_0
 		public void Dispose ()
 		{
 		}
-#endif
 		
 		#endregion
 
 		#region Properties
-		
-#if NET_2_0
-		override
-#endif
 		public string CommandText 
 		{
 			get { return sql; }
 			set { sql = value; prepared = false; }
-		}
-	
-#if NET_2_0
-		override
-#endif
+		}	
+
 		public int CommandTimeout
 		{
 			get { return timeout; }
 			set { timeout = value; }
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public CommandType CommandType 
 		{
 			get { return type; }
 			set { type = value; }
-		}
-		
-#if NET_2_0
-		protected override DbConnection DbConnection
-		{
-			get { return parent_conn; }
-			set { parent_conn = (SqliteConnection)value; }
-		}
-#endif
+		}		
+
 		public SqliteConnection Connection
 		{
 			get { return parent_conn; }
 			set { parent_conn = (SqliteConnection)value; }
 		}
 		
-#if !NET_2_0
 		IDbConnection IDbCommand.Connection 
 		{
 			get 
@@ -159,71 +132,29 @@ namespace Mono.Data.SqliteClient
 				parent_conn = (SqliteConnection) value;
 			}
 		}
-#endif
 
-		public
-#if NET_2_0
-		new
-#endif
-		SqliteParameterCollection Parameters 
-
-		{
-			get
-			{
+		public SqliteParameterCollection Parameters {
+			get {
 				if (sql_params == null)
 					sql_params = new SqliteParameterCollection();
 				return sql_params;
 			}
 		}
-
-#if NET_2_0
-		protected override DbParameterCollection DbParameterCollection
-                {
-                        get { return (DbParameterCollection) Parameters; }
-                }
-#endif
 		
-#if !NET_2_0
-		IDataParameterCollection IDbCommand.Parameters 
-		{
+		IDataParameterCollection IDbCommand.Parameters  {
 			get { return Parameters; }
-		}
-		
-#endif
-		
-#if NET_2_0
-		protected override DbTransaction DbTransaction
-#else
-		public IDbTransaction Transaction 
-#endif
-		{
-			get {
-#if NET_2_0
-				return (DbTransaction)transaction;
-#else
-				return transaction;
-#endif
-			}
-			set { transaction = value; }
-		}
-		
-#if NET_2_0
-		public override bool DesignTimeVisible
-		{
-			get { return _designTimeVisible; }
-			set { _designTimeVisible = value; }
-		}
-#endif
+		}		
 
-#if NET_2_0
-		override
-#endif
+		public IDbTransaction Transaction {
+			get { return transaction; }
+			set { transaction = value; }
+		}		
+
 		public UpdateRowSource UpdatedRowSource 
 		{
 			get { return upd_row_source; }
 			set { upd_row_source = value; }
-		}
-		                
+		}               
 		#endregion
 
 		#region Internal Methods
@@ -238,15 +169,17 @@ namespace Mono.Data.SqliteClient
 		
 		private void BindParameters3 (IntPtr pStmt)
 		{
+			Console.WriteLine ("SqliteCommand.BindParameters3");
 			if (sql_params == null) return;
 			if (sql_params.Count == 0) return;
-			
+			Console.WriteLine ("\tpStmt == {0}", pStmt);
 			int pcount = Sqlite.sqlite3_bind_parameter_count (pStmt);
-
+			Console.WriteLine ("\tpcount == {0}", pcount);
 			for (int i = 1; i <= pcount; i++) 
 			{
+				Console.WriteLine ("\t{0}: pStmt == {1}", i, pStmt);
 				String name = Sqlite.HeapToString (Sqlite.sqlite3_bind_parameter_name (pStmt, i), Encoding.UTF8);
-
+				Console.WriteLine ("\t{0}: name == {1}", i, name);
 				SqliteParameter param = null;
 				if (name != null)
 					param = sql_params[name] as SqliteParameter;
@@ -348,17 +281,14 @@ namespace Mono.Data.SqliteClient
 				SqliteError err = Sqlite.sqlite3_prepare16 (parent_conn.Handle, pzStart, -1, out pStmt, out pzTail);
 				if (err != SqliteError.OK)
 					throw new SqliteSyntaxException (GetError3());
-			}
-			else
-			{
+			} else {
 				IntPtr errMsg;
 				SqliteError err = Sqlite.sqlite_compile (parent_conn.Handle, pzStart, out pzTail, out pStmt, out errMsg);
 				
 				if (err != SqliteError.OK) 
 				{
 					string msg = "unknown error";
-					if (errMsg != IntPtr.Zero) 
-					{
+					if (errMsg != IntPtr.Zero) {
 						msg = Marshal.PtrToStringAnsi (errMsg);
 						Sqlite.sqliteFree (errMsg);
 					}
@@ -411,9 +341,7 @@ namespace Mono.Data.SqliteClient
 		{
 			return new SqliteCommand (sql, parent_conn, transaction);
 		}
-#if NET_2_0
-		override
-#endif
+
 		public void Cancel ()
 		{
 		}
@@ -441,11 +369,13 @@ namespace Mono.Data.SqliteClient
 					int start = i;
 					while (++i < text.Length && char.IsLetterOrDigit(text[i])) { } // scan to end
 					string name = text.Substring(start, i-start);
+					Console.WriteLine ("BindParameters2, name == {0}", name);
 					SqliteParameter p;
 					if (name.Length > 1)
 						p = Parameters[name] as SqliteParameter;
 					else
 						p = Parameters[counter] as SqliteParameter;
+					Console.WriteLine ("Got parameter: {0}", p);
 					string value = "'" + Convert.ToString(p.Value).Replace("'", "''") + "'";
 					text = text.Remove(start, name.Length).Insert(start, value);
 					i += value.Length - name.Length - 1;
@@ -453,58 +383,44 @@ namespace Mono.Data.SqliteClient
 				}
 			}
 			
+			Console.WriteLine ("BindParameters2 returning '{0}'", text);
 			return text;
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public void Prepare ()
 		{
 			// There isn't much we can do here.  If a table schema
 			// changes after preparing a statement, Sqlite bails,
 			// so we can only compile statements right before we
-			// want to run them.
-			
-			if (prepared) return;		
+			// want to run them.		
+	
+			if (prepared) return;
 		
 			if (Parameters.Count > 0 && parent_conn.Version == 2)
 			{
 				sql = BindParameters2();
 			}
-			
+			Console.WriteLine ("Prepared SQL == {0}", sql);
 			prepared = true;
 		}
 		
-#if !NET_2_0
 		IDbDataParameter IDbCommand.CreateParameter()
 		{
 			return CreateParameter ();
-		}
-#endif
-		
-#if NET_2_0
-		protected override DbParameter CreateDbParameter ()
-#else
+		}		
+
 		public SqliteParameter CreateParameter ()
-#endif
 		{
 			return new SqliteParameter ();
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public int ExecuteNonQuery ()
 		{
 			int rows_affected;
 			ExecuteReader (CommandBehavior.Default, false, out rows_affected);
 			return rows_affected;
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public object ExecuteScalar ()
 		{
 			SqliteDataReader r = (SqliteDataReader)ExecuteReader ();
@@ -516,7 +432,6 @@ namespace Mono.Data.SqliteClient
 			return o;
 		}
 		
-#if !NET_2_0
 		IDataReader IDbCommand.ExecuteReader ()
 		{
 			return ExecuteReader ();
@@ -531,25 +446,12 @@ namespace Mono.Data.SqliteClient
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
-#endif
 		
 		public new SqliteDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			int r;
 			return ExecuteReader (behavior, true, out r);
-		}
-		
-#if NET_2_0
-		public new SqliteDataReader ExecuteReader ()
-		{
-			return ExecuteReader (CommandBehavior.Default);
-		}
-		
-		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
-		{
-			return (DbDataReader) ExecuteReader (behavior);
-		}
-#endif
+		}		
 
 		public SqliteDataReader ExecuteReader (CommandBehavior behavior, bool want_results, out int rows_affected)
 		{
@@ -644,3 +546,4 @@ namespace Mono.Data.SqliteClient
 	#endregion
 	}
 }
+#endif

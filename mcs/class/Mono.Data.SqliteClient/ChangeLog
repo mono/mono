@@ -3,6 +3,10 @@
 	* Mono.Data.SqliteClient.dll.sources: Added
 	SqliteConnectionStringBuilder.cs
 
+	* Makefile: we have some resources now.
+
+	* Mono.Data.SqliteClient.dll.sources: Added new files.
+
 2007-01-15  Marek Habersack  <grendello@gmail.com>
 
 	* Mono.Data.SqliteClient.dll.sources: Added new 2.0 files

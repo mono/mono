@@ -28,21 +28,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.Data;
-#if NET_2_0
-using System.Data.Common;
-#endif
 
 namespace Mono.Data.SqliteClient
 {
-	public class SqliteParameter :
-#if NET_2_0
-		DbParameter
-#else
-		IDbDataParameter
-#endif
+	public class SqliteParameter : IDbDataParameter
 	{
 
 		#region Fields
@@ -102,9 +94,6 @@ namespace Mono.Data.SqliteClient
 
 		#region Properties
 		
-#if NET_2_0
-		override
-#endif
 		public DbType DbType {
 			get { return type; }
 			set {
@@ -118,27 +107,15 @@ namespace Mono.Data.SqliteClient
 			}
 		}
 	
-#if NET_2_0
-		override
-#endif
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 	
-#if NET_2_0
-		override
-#endif
 		public bool IsNullable {
 			get { return isNullable; }
-#if NET_2_0
-			set { isNullable = value; }
-#endif
 		}
 
-#if NET_2_0
-		override
-#endif
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
@@ -154,54 +131,27 @@ namespace Mono.Data.SqliteClient
 			set { scale = value; }
 		}
 
-#if NET_2_0
-		override
-#endif
 		public int Size {
 			get { return size; }
 			set { size = value; }
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public string SourceColumn {
 			get { return source_column; }
 			set { source_column = value; }
 		}
 
-#if NET_2_0
-		public override bool SourceColumnNullMapping {
-			get { return sourceColumnNullMapping; }
-			set { sourceColumnNullMapping = value; }
-		}
-#endif
-
-#if NET_2_0
-		override
-#endif
 		public DataRowVersion SourceVersion {
 			get { return row_version; }
 			set { row_version = value; }
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public object Value {
 			get { return param_value; }
 			set { param_value = value; }
 		}
 		
 		#endregion
-
-		#region methods
-#if NET_2_0
-		public override void ResetDbType ()
-		{
-			type = originalType;
-		}
-#endif
-		#endregion
 	}
 }
+#endif

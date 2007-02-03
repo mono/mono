@@ -29,7 +29,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -38,12 +38,7 @@ using System.Data.Common;
 
 namespace Mono.Data.SqliteClient
 {
-	public class SqliteDataReader :
-#if NET_2_0
-		DbDataReader, IDataReader, IDisposable, IDataRecord
-#else
-		MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
-#endif
+	public class SqliteDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 	{
 
 		#region Fields
@@ -67,12 +62,8 @@ namespace Mono.Data.SqliteClient
 			command = cmd;
 			rows = new ArrayList ();
 			column_names_sens = new Hashtable ();
-#if NET_2_0
-			column_names_insens = new Hashtable (StringComparer.InvariantCulture);
-#else
 			column_names_insens = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 							     CaseInsensitiveComparer.DefaultInvariant);
-#endif
 			closed = false;
 			current_row = -1;
 			reading = true;
@@ -82,48 +73,30 @@ namespace Mono.Data.SqliteClient
 		
 		#endregion
 
-		#region Properties
-		
-#if NET_2_0
-		override
-#endif
+		#region Properties		
+
 		public int Depth {
 			get { return 0; }
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public int FieldCount {
 			get { return columns.Length; }
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public object this[string name] {
 			get {
 				return GetValue (GetOrdinal (name));
 			}
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public object this[int i] {
 			get { return GetValue (i); }
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public bool IsClosed {
 			get { return closed; }
-		}
-		
-#if NET_2_0
-		override
-#endif
+		}		
+
 		public int RecordsAffected {
 			get { return records_affected; }
 		}
@@ -243,41 +216,23 @@ namespace Mono.Data.SqliteClient
 		
 		#endregion
 
-		#region  Public Methods
-		
-#if NET_2_0
-		override
-#endif
+		#region  Public Methods		
+
 		public void Close ()
 		{
 			closed = true;
-		}
-		
-#if NET_2_0
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing)
-				Close ();
-		}
-#else
+		}		
+
 		public void Dispose ()
 		{
 			Close ();
 		}
-#endif
-		
-#if NET_2_0
-		public override IEnumerator GetEnumerator ()
-#else
+
 		IEnumerator IEnumerable.GetEnumerator () 
-#endif
 		{
 			return new DbEnumerator (this);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public DataTable GetSchemaTable () 
 		{
 			DataTable dataTableSchema = new DataTable ();
@@ -341,9 +296,6 @@ namespace Mono.Data.SqliteClient
 			return dataTableSchema;
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public bool NextResult ()
 		{
 			current_row++;
@@ -351,9 +303,6 @@ namespace Mono.Data.SqliteClient
 			return (current_row < rows.Count);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public bool Read ()
 		{
 			return NextResult ();
@@ -363,25 +312,16 @@ namespace Mono.Data.SqliteClient
 		
 		#region IDataRecord getters
 		
-#if NET_2_0
-		override
-#endif
 		public bool GetBoolean (int i)
 		{
 			return Convert.ToBoolean (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public byte GetByte (int i)
 		{
 			return Convert.ToByte (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			byte[] data = (byte[])(((object[]) rows[current_row])[i]);
@@ -390,17 +330,11 @@ namespace Mono.Data.SqliteClient
 			return data.LongLength - fieldOffset;
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public char GetChar (int i)
 		{
 			return Convert.ToChar (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public long GetChars (int i, long fieldOffset, char[] buffer, int bufferOffset, int length)
 		{
 			char[] data = (char[])(((object[]) rows[current_row])[i]);
@@ -409,16 +343,11 @@ namespace Mono.Data.SqliteClient
 			return data.LongLength - fieldOffset;
 		}
 		
-#if !NET_2_0
 		public IDataReader GetData (int i)
 		{
 			return ((IDataReader) this [i]);
 		}
-#endif
-		
-#if NET_2_0
-		override
-#endif
+
 		public string GetDataTypeName (int i)
 		{
 			if (decltypes != null && decltypes[i] != null)
@@ -426,33 +355,21 @@ namespace Mono.Data.SqliteClient
 			return "text"; // SQL Lite data type
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public DateTime GetDateTime (int i)
 		{
 			return Convert.ToDateTime (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public decimal GetDecimal (int i)
 		{
 			return Convert.ToDecimal (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public double GetDouble (int i)
 		{
 			return Convert.ToDouble (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public Type GetFieldType (int i)
 		{
 			int row = current_row;
@@ -469,17 +386,11 @@ namespace Mono.Data.SqliteClient
 			// types of information are stored in the column.
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public float GetFloat (int i)
 		{
 			return Convert.ToSingle (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
@@ -491,41 +402,26 @@ namespace Mono.Data.SqliteClient
 			return ((Guid) value);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public short GetInt16 (int i)
 		{
 			return Convert.ToInt16 (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public int GetInt32 (int i)
 		{
 			return Convert.ToInt32 (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public long GetInt64 (int i)
 		{
 			return Convert.ToInt64 (((object[]) rows[current_row])[i]);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public string GetName (int i)
 		{
 			return columns[i];
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public int GetOrdinal (string name)
 		{
 			object v = column_names_sens[name];
@@ -536,25 +432,16 @@ namespace Mono.Data.SqliteClient
 			return (int) v;
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public string GetString (int i)
 		{
 			return (((object[]) rows[current_row])[i]).ToString();
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public object GetValue (int i)
 		{
 			return ((object[]) rows[current_row])[i];
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public int GetValues (object[] values)
 		{
 			int num_to_fill = System.Math.Min (values.Length, columns.Length);
@@ -568,24 +455,12 @@ namespace Mono.Data.SqliteClient
 			return num_to_fill;
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public bool IsDBNull (int i)
 		{
 			return (((object[]) rows[current_row])[i] == null);
 		}
 
-#if NET_2_0
-		public override bool HasRows {
-			get { return rows.Count > 0; }
-		}
-
-		// [MonoTODO]
-		public override int VisibleFieldCount {
-			get { return FieldCount; }
-		}
-#endif
 		#endregion
 	}
 }
+#endif

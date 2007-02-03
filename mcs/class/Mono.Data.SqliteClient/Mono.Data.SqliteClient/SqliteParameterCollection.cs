@@ -31,22 +31,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !NET_2_0
 using System;
 using System.Data;
-#if NET_2_0
-using System.Data.Common;
-#endif
 using System.Collections;
 
 namespace Mono.Data.SqliteClient
 {
-	public class SqliteParameterCollection :
-#if NET_2_0
-		DbParameterCollection
-#else
-		IDataParameterCollection, IList
-#endif
+	public class SqliteParameterCollection : IDataParameterCollection, IList
 	{
 	
 		#region Fields
@@ -96,7 +88,6 @@ namespace Mono.Data.SqliteClient
 
 		#region Properties
 		
-#if !NET_2_0
 		object IList.this[int index] {
 			get 
 			{
@@ -120,18 +111,13 @@ namespace Mono.Data.SqliteClient
 				this[parameterName] = (SqliteParameter) value;
 			}
 		}
-#endif
 		
 		private bool isPrefixed (string parameterName)
 		{
 			return parameterName.Length > 1 && (parameterName[0] == ':' || parameterName[0] == '$');
 		}
 
-#if NET_2_0
-		protected override DbParameter GetParameter (int parameterIndex)
-#else
 		SqliteParameter GetParameter (int parameterIndex)
-#endif
 		{
 			if (this.Count >= parameterIndex+1)
 				return (SqliteParameter) numeric_param_list[parameterIndex];
@@ -139,11 +125,7 @@ namespace Mono.Data.SqliteClient
 				throw new IndexOutOfRangeException("The specified parameter index does not exist: " + parameterIndex.ToString());
 		}
 
-#if NET_2_0
-		protected override DbParameter GetParameter (string parameterName)
-#else
 		SqliteParameter GetParameter (string parameterName)
-#endif
 		{
 			if (this.Contains(parameterName))
 				return this[(int) named_param_hash[parameterName]];
@@ -153,11 +135,7 @@ namespace Mono.Data.SqliteClient
 				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 		}
 
-#if NET_2_0
-		protected override void SetParameter (int parameterIndex, DbParameter parameter)
-#else
 		void SetParameter (int parameterIndex, SqliteParameter parameter)
-#endif
 		{
 			if (this.Count >= parameterIndex+1)
 				numeric_param_list[parameterIndex] = parameter;
@@ -165,11 +143,7 @@ namespace Mono.Data.SqliteClient
 				throw new IndexOutOfRangeException("The specified parameter index does not exist: " + parameterIndex.ToString());
 		}
 
-#if NET_2_0
-		protected override void SetParameter (string parameterName, DbParameter parameter)
-#else
 		void SetParameter (string parameterName, SqliteParameter parameter)
-#endif
 		{
 			if (this.Contains(parameterName))
 				numeric_param_list[(int) named_param_hash[parameterName]] = parameter;
@@ -179,7 +153,6 @@ namespace Mono.Data.SqliteClient
 				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 		}
 
-#if !NET_2_0
 		public SqliteParameter this[string parameterName] 
 		{
 			get { return GetParameter (parameterName); }
@@ -191,24 +164,12 @@ namespace Mono.Data.SqliteClient
 			get { return GetParameter (parameterIndex); }
 			set { SetParameter (parameterIndex, value); }
 		}
-#endif
 
-#if NET_2_0
-		override
-#endif
-		public int Count 
-		{
-			get
-			{
-				return this.numeric_param_list.Count;
-			}
+		public int Count {
+			get { return this.numeric_param_list.Count; }
 		}
 
-#if NET_2_0
-		public override bool IsFixedSize
-#else
 		bool IList.IsFixedSize
-#endif
 		{
 			get
 			{
@@ -216,62 +177,23 @@ namespace Mono.Data.SqliteClient
 			}
 		}
 
-#if NET_2_0
-		public override bool IsReadOnly
-#else
-		bool IList.IsReadOnly
-#endif
-		{
-			get
-			{
-				return this.numeric_param_list.IsReadOnly;
-			}
+		bool IList.IsReadOnly {
+			get { return this.numeric_param_list.IsReadOnly; }
 		}
 
 
-#if NET_2_0
-		public override bool IsSynchronized
-#else
-		bool ICollection.IsSynchronized 
-#endif
-		{
-			get
-			{
-				return this.numeric_param_list.IsSynchronized;
-			}
-		}
-		
+		bool ICollection.IsSynchronized {
+			get { return this.numeric_param_list.IsSynchronized; }
+		}		
 
-#if NET_2_0
-		public override object SyncRoot
-#else
-		object ICollection.SyncRoot 
-#endif
-		{
-			get
-			{
-				return this.numeric_param_list.SyncRoot;
-			}
+		object ICollection.SyncRoot {
+			get { return this.numeric_param_list.SyncRoot; }
 		}
 
 		#endregion
 
 		#region Public Methods
 
-#if NET_2_0
-		public override void AddRange (Array values)
-		{
-			if (values == null || values.Length == 0)
-				return;
-
-			foreach (object value in values)
-				Add (value);
-		}
-#endif
-		
-#if NET_2_0
-		override
-#endif
 		public int Add (object value)
 		{
 			CheckSqliteParam (value);
@@ -298,35 +220,22 @@ namespace Mono.Data.SqliteClient
 			return Add (new SqliteParameter (name, type));
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public void Clear ()
 		{
 			numeric_param_list.Clear ();
 			named_param_hash.Clear ();
 		}
 	
-#if NET_2_0
-		override
-#endif
 		public void CopyTo (Array array, int index)
 		{
 			this.numeric_param_list.CopyTo(array, index);
 		}
 		
-#if NET_2_0
-		public override bool Contains (object value)
-#else
 		bool IList.Contains (object value)
-#endif
 		{
 			return Contains ((SqliteParameter) value);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public bool Contains (string parameterName)
 		{
 			return named_param_hash.Contains (parameterName);
@@ -337,26 +246,16 @@ namespace Mono.Data.SqliteClient
 			return Contains (param.ParameterName);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public IEnumerator GetEnumerator ()
 		{
 			return this.numeric_param_list.GetEnumerator();
 		}
 		
-#if NET_2_0
-		public override int IndexOf (object param)
-#else
 		int IList.IndexOf (object param)
-#endif
 		{
 			return IndexOf ((SqliteParameter) param);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public int IndexOf (string parameterName)
 		{
 			if (isPrefixed (parameterName)){
@@ -375,9 +274,6 @@ namespace Mono.Data.SqliteClient
 			return IndexOf (param.ParameterName);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public void Insert (int index, object value)
 		{
 			CheckSqliteParam (value);
@@ -391,26 +287,17 @@ namespace Mono.Data.SqliteClient
 			RecreateNamedHash ();
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public void Remove (object value)
 		{
 			CheckSqliteParam (value);
 			RemoveAt ((SqliteParameter) value);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public void RemoveAt (int index)
 		{
 			RemoveAt (((SqliteParameter) numeric_param_list[index]).ParameterName);
 		}
 		
-#if NET_2_0
-		override
-#endif
 		public void RemoveAt (string parameterName)
 		{
 			if (!named_param_hash.Contains (parameterName))
@@ -430,3 +317,4 @@ namespace Mono.Data.SqliteClient
 		#endregion
 	}
 }
+#endif
