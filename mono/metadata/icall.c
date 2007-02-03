@@ -1080,8 +1080,14 @@ ves_icall_type_from_name (MonoString *name,
 	type = type_from_name (str, ignoreCase);
 	g_free (str);
 	if (type == NULL){
+		MonoException *e = NULL;
+		
 		if (throwOnError)
-			mono_raise_exception (mono_get_exception_type_load (name, NULL));
+			e = mono_get_exception_type_load (name, NULL);
+
+		mono_loader_clear_error ();
+		if (e != NULL)
+			mono_raise_exception (e);
 	}
 	
 	return type;
@@ -1675,7 +1681,7 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 
 	/* open generic-instance classes can share their interface_id */
 	if (class->generic_class && class->generic_class->inst->is_open) {
-		context = class->generic_class->context;
+		context = mono_class_get_context (class);
 		class = class->generic_class->container_class;
 	}
 
@@ -1861,9 +1867,9 @@ ves_icall_MonoType_get_DeclaringType (MonoReflectionType *type)
 	if (type->type->byref)
 		return NULL;
 	if (type->type->type == MONO_TYPE_VAR)
-		class = type->type->data.generic_param->owner->klass;
+		class = type->type->data.generic_param->owner->owner.klass;
 	else if (type->type->type == MONO_TYPE_MVAR)
-		class = type->type->data.generic_param->method->klass;
+		class = type->type->data.generic_param->owner->owner.method->klass;
 	else
 		class = mono_class_from_mono_type (type->type)->nested_in;
 
@@ -2148,7 +2154,7 @@ ves_icall_MonoGenericClass_GetParentType (MonoReflectionGenericClass *type)
 		return NULL;
 
 	inflated = mono_class_inflate_generic_type (
-		parent->type, gclass->generic_class.generic_class.context);
+		parent->type, mono_generic_class_get_context ((MonoGenericClass *) gclass));
 
 	return mono_type_get_object (domain, inflated);
 }
@@ -2157,7 +2163,7 @@ static MonoArray*
 ves_icall_MonoGenericClass_GetInterfaces (MonoReflectionGenericClass *type)
 {
 	static MonoClass *System_Reflection_MonoGenericClass;
-	MonoDynamicGenericClass *gclass;
+	MonoGenericClass *gclass;
 	MonoReflectionTypeBuilder *tb = NULL;
 	MonoClass *klass = NULL;
 	MonoDomain *domain;
@@ -2174,14 +2180,14 @@ ves_icall_MonoGenericClass_GetInterfaces (MonoReflectionGenericClass *type)
 
 	domain = mono_object_domain (type);
 
-	g_assert (type->type.type->data.generic_class->is_dynamic);
-	gclass = (MonoDynamicGenericClass *) type->type.type->data.generic_class;
+	gclass = type->type.type->data.generic_class;
+	g_assert (gclass->is_dynamic);
 
 	if (!strcmp (type->generic_type->object.vtable->klass->name, "TypeBuilder")) {
 		tb = (MonoReflectionTypeBuilder *) type->generic_type;
 		icount = tb->interfaces ? mono_array_length (tb->interfaces) : 0;
 	} else {
-		klass = gclass->generic_class.generic_class.container_class;
+		klass = gclass->container_class;
 		mono_class_init (klass);
 		icount = klass->interface_count;
 	}
@@ -2198,8 +2204,7 @@ ves_icall_MonoGenericClass_GetInterfaces (MonoReflectionGenericClass *type)
 		} else
 			it = &klass->interfaces [i]->byval_arg;
 
-		it = mono_class_inflate_generic_type (
-			it, gclass->generic_class.generic_class.context);
+		it = mono_class_inflate_generic_type (it, mono_generic_class_get_context (gclass));
 
 		iface = mono_type_get_object (domain, it);
 		mono_array_setref (res, i, iface);
@@ -2483,7 +2488,7 @@ ves_icall_MonoType_get_DeclaringMethod (MonoReflectionType *type)
 	if (type->type->byref || type->type->type != MONO_TYPE_MVAR)
 		return NULL;
 
-	method = type->type->data.generic_param->method;
+	method = type->type->data.generic_param->owner->owner.method;
 	g_assert (method);
 	klass = mono_class_from_mono_type (type->type);
 	return mono_method_get_object (mono_object_domain (type), method, klass);
@@ -2557,6 +2562,7 @@ ves_icall_MonoMethod_GetDllImportAttribute (MonoMethod *method)
 static MonoReflectionMethod *
 ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 {
+	MonoGenericContext *context;
 	MonoMethodInflated *imethod;
 
 	MONO_ARCH_SAVE_REGS;
@@ -2569,8 +2575,11 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 	}
 
 	imethod = (MonoMethodInflated *) method->method;
-	if (imethod->context->gmethod && imethod->context->gmethod->reflection_info)
-		return imethod->context->gmethod->reflection_info;
+
+	/* FIXME: should reflection_info be part of imethod? */
+	context = mono_method_get_context (method->method);
+	if (context->gmethod && context->gmethod->reflection_info)
+		return context->gmethod->reflection_info;
 	else
 		return mono_method_get_object (
 			mono_object_domain (method), imethod->declaring, NULL);
@@ -2604,8 +2613,7 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 	domain = mono_object_domain (method);
 
 	if (method->method->is_inflated) {
-		MonoMethodInflated *imethod = (MonoMethodInflated *) method->method;
-		MonoGenericMethod *gmethod = imethod->context->gmethod;
+		MonoGenericMethod *gmethod = mono_method_get_context (method->method)->gmethod;
 
 		if (gmethod) {
 			count = gmethod->inst->type_argc;
@@ -3792,9 +3800,16 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 	g_list_free (info.modifiers);
 	g_list_free (info.nested);
 	if (!type) {
+		MonoException *e = NULL;
+		
 		if (throwOnError)
-			mono_raise_exception (mono_get_exception_type_load (name, NULL));
-		/* g_print ("failed find\n"); */
+			e = mono_get_exception_type_load (name, NULL);
+
+		mono_loader_clear_error ();
+
+		if (e != NULL)
+			mono_raise_exception (e);
+
 		return NULL;
 	}
 
@@ -3804,6 +3819,7 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 		if (throwOnError && klass->exception_type) {
 			/* report SecurityException (or others) that occured when loading the assembly */
 			MonoException *exc = mono_class_get_exception_for_failure (klass);
+			mono_loader_clear_error ();
 			mono_raise_exception (exc);
 		} else if (klass->exception_type == MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND) {
 			return NULL;
@@ -4736,6 +4752,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssembly *assembly,
 		list = NULL;
 
 		exc = mono_get_exception_reflection_type_load (res, exl);
+		mono_loader_clear_error ();
 		mono_raise_exception (exc);
 	}
 		
@@ -5630,10 +5647,12 @@ ves_icall_System_Environment_GetEnvironmentVariable (MonoString *name)
 /*
  * There is no standard way to get at environ.
  */
+#ifndef __MINGW32_VERSION
 #ifndef _MSC_VER
 extern
 #endif
 char **environ;
+#endif
 
 static MonoArray *
 ves_icall_System_Environment_GetEnvironmentVariableNames (void)
@@ -6022,6 +6041,21 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (void)
 	g_free (path);
 
 	return mcpath;
+}
+
+static MonoString *
+ves_icall_System_Configuration_DefaultConfig_get_bundled_machine_config (void)
+{
+	const gchar *machine_config;
+
+	MONO_ARCH_SAVE_REGS;
+
+	machine_config = mono_get_machine_config ();
+
+	if (!machine_config)
+		return NULL;
+
+	return mono_string_new (mono_domain_get (), machine_config);
 }
 
 static MonoString *

@@ -1,3 +1,48 @@
+2007-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* mini.c (mono_method_to_ir): Use new MonoGenericContext accessor.
+
+Thu Jan 11 11:16:42 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: distribute the mips sources.
+
+Wed Jan 10 19:49:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.h: handle bug #80489 here, by excluding ecx
+	directly.
+
+Wed Jan 10 19:08:05 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-x86.md: back out for now as this triggers other regressions.
+
+Wed Jan 10 18:33:16 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-x86.md: force src1 and dest regpair for long shift instructions
+	to eax:edx, so ecx can't get allocated to them (bug #80489).
+
+Tue Jan 9 12:36:11 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-exceptions.c: enabled running fault handlers
+	(bug #80469).
+
+2007-01-03  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c: If nothing fail, do not use the string "failed",
+	because it makes it very annoying to view test result logs on the
+	web. 
+
+2006-12-30  Miguel de Icaza  <miguel@novell.com>
+
+	* debug-debugger.c (mono_debugger_main): Rename "main" to
+	"main_method" to prevent a warning.
+
+	Remove a warning for unused field.
+
+2006-12-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c
+	(MONO_DEBUGGER__debugger_info): Add `get_lmf_addr'.
+
 2006-12-22  Martin Baulig  <martin@ximian.com>
 
 	* mdb-debug-info32.s, mdb-debug-info64.s: New files.

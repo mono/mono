@@ -95,6 +95,7 @@ TEST_CS_SRC=			\
 	enumcast.cs		\
 	assignable-tests.cs	\
 	array-cast.cs		\
+	array-subtype-attr.cs	\
 	cattr-compile.cs	\
 	cattr-field.cs		\
 	cattr-object.cs		\
@@ -220,10 +221,11 @@ TEST_CS_SRC=			\
 	main-returns-background-resetabort.cs	\
 	main-returns-background.cs	\
 	main-returns-background-change.cs	\
-	main-returns.cs	\
+	main-returns.cs		\
 	subthread-exit.cs	\
-	desweak.cs	\
-	cominterop.cs	
+	desweak.cs		\
+	cominterop.cs		\
+	exists.cs
 
 if X86
 # bug #71274
@@ -251,7 +253,9 @@ TEST_IL_SRC=			\
 	jmpTest.il		\
 	calliTest.il		\
 	ckfiniteTest.il		\
+	fault-handler.il		\
 	locallocTest.il		\
+	long-shift-regalloc.il		\
 	initblkTest.il		\
 	qt-instance.il		\
 	vararg.il		\
@@ -269,7 +273,8 @@ TEST_CS2_SRC = \
 	bug-79684.2.cs 		\
 	catch-generics.2.cs	\
 	event-get.2.cs		\
-	safehandle.2.cs
+	safehandle.2.cs		\
+	bug-80392.2.cs
 
 TEST_IL2_SRC = find-method.2.il
 
@@ -310,7 +315,7 @@ else
 if PLATFORM_WIN32
 test:   testjit test-type-load test-inline-call-stack
 else
-test:	testjit testbundle test-type-load test-inline-call-stack
+test:	testjit testbundle test-type-load test-inline-call-stack test-iomap-regression
 endif
 endif
 
@@ -440,6 +445,10 @@ testjitspeed: $(JITTEST_PROG) $(TESTBS)
 		echo $$i;	\
 		time $(JITTEST_PROG) $$i;	\
 	done
+
+test-iomap-regression: exists.cs
+	$(MCS) $(srcdir)/exists.cs -out:exists.exe
+	MONO_IOMAP=all $(JITTEST_PROG) exists.exe
 
 stresstest: $(STRESS_TESTS)
 	@failed=0; \

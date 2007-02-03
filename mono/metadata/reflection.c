@@ -2465,7 +2465,6 @@ method_encode_methodspec (MonoDynamicImage *assembly, MonoMethod *method)
 	table = &assembly->tables [MONO_TABLE_METHODSPEC];
 
 	g_assert (method->is_inflated);
-	method = mono_get_inflated_method (method);
 	imethod = (MonoMethodInflated *) method;
 	declaring = imethod->declaring;
 
@@ -2486,7 +2485,7 @@ method_encode_methodspec (MonoDynamicImage *assembly, MonoMethod *method)
 		g_assert_not_reached ();
 	}
 
-	sig = encode_generic_method_sig (assembly, imethod->context->gmethod);
+	sig = encode_generic_method_sig (assembly, mono_method_get_context (method)->gmethod);
 
 	if (assembly->save) {
 		alloc_table (table, table->rows + 1);
@@ -5441,8 +5440,7 @@ mono_generic_class_get_object (MonoDomain *domain, MonoType *geninst)
 {
 	static MonoClass *System_Reflection_MonoGenericClass;
 	MonoReflectionGenericClass *res;
-	MonoInflatedGenericClass *gclass;
-	MonoClass *gklass;
+	MonoClass *klass, *gklass;
 
 	if (!System_Reflection_MonoGenericClass) {
 		System_Reflection_MonoGenericClass = mono_class_from_name (
@@ -5450,11 +5448,10 @@ mono_generic_class_get_object (MonoDomain *domain, MonoType *geninst)
 		g_assert (System_Reflection_MonoGenericClass);
 	}
 
-	gclass = mono_get_inflated_generic_class (geninst->data.generic_class);
-	gklass = gclass->generic_class.container_class;
-	g_assert (gklass->generic_container);
+	klass = mono_class_from_mono_type (geninst);
+	gklass = klass->generic_class->container_class;
 
-	mono_class_init (gclass->klass);
+	mono_class_init (klass);
 
 #ifdef HAVE_SGEN_GC
 	/* FIXME: allow unpinned later */
@@ -6767,6 +6764,8 @@ handle_type:
 		}
 		arr = mono_array_new (mono_domain_get(), tklass, alen);
 		basetype = tklass->byval_arg.type;
+		if (basetype == MONO_TYPE_VALUETYPE && tklass->enumtype)
+			basetype = tklass->enum_basetype->type;
 		switch (basetype)
 		{
 			case MONO_TYPE_U1:
@@ -6813,7 +6812,7 @@ handle_type:
 				}
 				break;
 			default:
-				g_error("Type 0x%02x not handled in custom attr array decoding",t->data.type->type);
+				g_error ("Type 0x%02x not handled in custom attr array decoding", basetype);
 		}
 		*end=p;
 		return arr;
@@ -6983,14 +6982,12 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 	named += 2;
 	for (j = 0; j < num_named; j++) {
 		gint name_len;
-		gboolean is_boxed = FALSE;
 		char *name, named_type, data_type;
 		named_type = *named++;
 		data_type = *named++; /* type of data */
-		if (data_type == 0x51)
-			is_boxed = TRUE;
-
-		if (data_type == 0x55) {
+		if (data_type == MONO_TYPE_SZARRAY)
+			data_type = *named++;
+		if (data_type == MONO_TYPE_ENUM) {
 			gint type_len;
 			char *type_name;
 			type_len = mono_metadata_decode_blob_size (named, &named);
@@ -7000,10 +6997,6 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			named += type_len;
 			/* FIXME: lookup the type and check type consistency */
 			g_free (type_name);
-		} else if (data_type == MONO_TYPE_SZARRAY && (named_type == 0x54 || named_type == 0x53)) {
-			/* this seems to be the type of the element of the array */
-			/* g_print ("skipping 0x%02x after prop\n", *named); */
-			named++;
 		}
 		name_len = mono_metadata_decode_blob_size (named, &named);
 		name = g_malloc (name_len + 1);
@@ -7098,7 +7091,9 @@ create_custom_attr_data (MonoImage *image, MonoMethod *method, const guchar *dat
 		char *name, named_type, data_type;
 		named_type = *named++;
 		data_type = *named++; /* type of data */
-		if (data_type == 0x55) {
+		if (data_type == MONO_TYPE_SZARRAY)
+			data_type = *named++;
+		if (data_type == MONO_TYPE_ENUM) {
 			gint type_len;
 			char *type_name;
 			type_len = mono_metadata_decode_blob_size (named, &named);
@@ -7108,10 +7103,6 @@ create_custom_attr_data (MonoImage *image, MonoMethod *method, const guchar *dat
 			named += type_len;
 			/* FIXME: lookup the type and check type consistency */
 			g_free (type_name);
-		} else if (data_type == MONO_TYPE_SZARRAY && (named_type == 0x54 || named_type == 0x53)) {
-			/* this seems to be the type of the element of the array */
-			/* g_print ("skipping 0x%02x after prop\n", *named); */
-			named++;
 		}
 		name_len = mono_metadata_decode_blob_size (named, &named);
 		name = g_malloc (name_len + 1);
@@ -7869,10 +7860,10 @@ handle_type:
 			*p++ = 0x0E;
 			goto handle_enum;
 		} else if (klass->rank == 1) {
-			simple_type = MONO_TYPE_SZARRAY;
 			*p++ = 0x1D;
 			*p++ = klass->element_class->byval_arg.type;
-			goto handle_enum;
+			encode_cattr_value (assembly, buffer, p, &buffer, &p, buflen, &klass->byval_arg, arg, NULL);
+			break;
 		} else if (klass->byval_arg.type >= MONO_TYPE_BOOLEAN && klass->byval_arg.type <= MONO_TYPE_R8) {
 			*p++ = simple_type = klass->byval_arg.type;
 			goto handle_enum;
@@ -8190,9 +8181,7 @@ mono_reflection_setup_generic_class (MonoReflectionTypeBuilder *tb)
 		return;
 
 	tb->generic_container = g_new0 (MonoGenericContainer, 1);
-	tb->generic_container->klass = klass;
-
-	tb->generic_container->context.container = tb->generic_container;
+	tb->generic_container->owner.klass = klass;
 }
 
 /*
@@ -8216,7 +8205,7 @@ mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb)
 	if (klass->generic_container || (count == 0))
 		return;
 
-	g_assert (tb->generic_container && (tb->generic_container->klass == klass));
+	g_assert (tb->generic_container && (tb->generic_container->owner.klass == klass));
 
 	klass->generic_container = tb->generic_container;
 
@@ -8229,7 +8218,7 @@ mono_reflection_create_generic_class (MonoReflectionTypeBuilder *tb)
 		g_assert (klass->generic_container->type_params [i].owner);
 	}
 
-	klass->generic_container->context.gclass = mono_get_shared_generic_class (klass->generic_container, TRUE);
+	klass->generic_container->context.class_inst = mono_get_shared_generic_inst (klass->generic_container);
 }
 
 /*
@@ -8495,27 +8484,24 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 	if (rmb->generic_params) {
 		int count = mono_array_length (rmb->generic_params);
 		MonoGenericContainer *container;
-		MonoGenericContext *context;
 
 		m->generic_container = container = rmb->generic_container;
 		container->type_argc = count;
 		container->type_params = g_new0 (MonoGenericParam, count);
+		container->owner.method = m;
 
 		for (i = 0; i < count; i++) {
 			MonoReflectionGenericParam *gp =
 				mono_array_get (rmb->generic_params, MonoReflectionGenericParam*, i);
 
 			container->type_params [i] = *gp->type.type->data.generic_param;
-			container->type_params [i].method = m;
 		}
 
-		context = &container->context;
-		context->container = container;
 		if (klass->generic_container) {
 			container->parent = klass->generic_container;
-			context->gclass = klass->generic_container->context.gclass;
+			container->context.class_inst = klass->generic_container->context.class_inst;
 		}
-		context->gmethod = mono_get_shared_generic_method (container);
+		container->context.gmethod = mono_get_shared_generic_method (container);
 	}
 
 	if (rmb->refs) {
@@ -8739,14 +8725,10 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 
 	if (is_dynamic) {
 		MonoDynamicGenericClass *dgclass = g_new0 (MonoDynamicGenericClass, 1);
-		MonoInflatedGenericClass *igclass = &dgclass->generic_class;
-		gclass = &igclass->generic_class;
+		gclass = &dgclass->generic_class;
 		gclass->is_dynamic = TRUE;
-		gclass->is_inflated = TRUE;
 	} else {
-		MonoInflatedGenericClass *igclass = g_new0 (MonoInflatedGenericClass, 1);
-		gclass = &igclass->generic_class;
-		gclass->is_inflated = TRUE;
+		gclass = g_new0 (MonoGenericClass, 1);
 	}
 
 	gclass->inst = g_new0 (MonoGenericInst, 1);
@@ -8782,10 +8764,6 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 
 	geninst->data.generic_class = gclass;
 
-	gclass->context = g_new0 (MonoGenericContext, 1);
-	gclass->context->container = gclass->container_class->generic_container;
-	gclass->context->gclass = gclass;
-
 	mono_loader_unlock ();
 
 	return geninst;
@@ -8796,7 +8774,6 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 {
 	MonoClass *klass;
 	MonoGenericClass *gclass, *cached;
-	MonoInflatedGenericClass *igclass;
 	MonoType *geninst;
 	int i;
 
@@ -8807,9 +8784,7 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 
 	mono_loader_lock ();
 
-	igclass = g_new0 (MonoInflatedGenericClass, 1);
-	gclass = &igclass->generic_class;
-	gclass->is_inflated = TRUE;
+	gclass = g_new0 (MonoGenericClass, 1);
 
 	gclass->inst = g_new0 (MonoGenericInst, 1);
 	gclass->inst->type_argc = type_argc;
@@ -8835,13 +8810,7 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 		MonoGenericClass *kgclass = klass->generic_class;
 		MonoGenericClass *ogclass = gclass;
 
-		gclass->context = g_new0 (MonoGenericContext, 1);
-		gclass->context->container = gclass->container_class->generic_container;
-		gclass->context->gclass = gclass;
-
-		igclass = g_new0 (MonoInflatedGenericClass, 1);
-		gclass = &igclass->generic_class;
-		gclass->is_inflated = TRUE;
+		gclass = g_new0 (MonoGenericClass, 1);
 
 		gclass->inst = g_new0 (MonoGenericInst, 1);
 		gclass->inst->type_argc = kgclass->inst->type_argc;
@@ -8851,7 +8820,7 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 		for (i = 0; i < gclass->inst->type_argc; i++) {
 			MonoType *t = kgclass->inst->type_argv [i];
 
-			t = mono_class_inflate_generic_type (t, ogclass->context);
+			t = mono_class_inflate_generic_type (t, mono_generic_class_get_context (ogclass));
 
 			if (!gclass->inst->is_open)
 				gclass->inst->is_open = mono_class_is_open_constructed_type (t);
@@ -8878,10 +8847,6 @@ mono_class_bind_generic_parameters (MonoType *type, int type_argc, MonoType **ty
 	}
 
 	geninst->data.generic_class = gclass;
-
-	gclass->context = g_new0 (MonoGenericContext, 1);
-	gclass->context->container = gclass->container_class->generic_container;
-	gclass->context->gclass = gclass;
 
 	mono_loader_unlock ();
 
@@ -8960,7 +8925,8 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 	ginst = mono_metadata_lookup_generic_inst (ginst);
 
 	gmethod = g_new0 (MonoGenericMethod, 1);
-	gmethod->generic_class = method->klass->generic_class;
+	if (method->klass->generic_class)
+		gmethod->class_inst = method->klass->generic_class->inst;
 	gmethod->container = container;
 	gmethod->inst = ginst;
 
@@ -8975,8 +8941,7 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 	gmethod->reflection_info = rmethod;
 
 	context = g_new0 (MonoGenericContext, 1);
-	context->container = container;
-	context->gclass = method->klass->generic_class;
+	context->class_inst = gmethod->class_inst;
 	context->gmethod = gmethod;
 
 	if (method->is_inflated)
@@ -8992,43 +8957,29 @@ static MonoMethod *
 inflate_mono_method (MonoReflectionGenericClass *type, MonoMethod *method, MonoObject *obj)
 {
 	MonoGenericMethod *gmethod = NULL;
-	MonoInflatedGenericClass *gclass;
 	MonoGenericContext *context;
 	MonoClass *klass;
-	int i, n;
 
 	klass = mono_class_from_mono_type (type->type.type);
-	gclass = mono_get_inflated_generic_class (type->type.type->data.generic_class);
-	n = mono_method_signature (method)->generic_param_count;
+	g_assert (klass->generic_class);
+	context = mono_class_get_context (klass);
 
-	context = gclass->generic_class.context;
-	g_assert (context && context->container);
-	if (n) {
+	if (method->generic_container) {
+		g_assert (method->klass == klass->generic_class->container_class);
+
 		gmethod = g_new0 (MonoGenericMethod, 1);
-		gmethod->generic_class = &gclass->generic_class;
+		gmethod->class_inst = klass->generic_class->inst;
 		gmethod->container = method->generic_container;
 		MOVING_GC_REGISTER (&gmethod->reflection_info);
 		gmethod->reflection_info = obj;
-
-		gmethod->inst = g_new0 (MonoGenericInst, 1);
-		gmethod->inst->type_argc = n;
-		gmethod->inst->type_argv = g_new0 (MonoType *, n);
-
-		for (i = 0; i < n; i++) {
-			MonoGenericParam *gparam = &method->generic_container->type_params [i];
-			g_assert (gparam->pklass);
-			gmethod->inst->type_argv [i] = &gparam->pklass->byval_arg;
-		}
-
-		g_assert (gmethod->container->parent == context->container);
+		gmethod->inst = method->generic_container->context.gmethod->inst;
 
 		context = g_new0 (MonoGenericContext, 1);
-		context->container = gmethod->container;
-		context->gclass = &gclass->generic_class;
+		context->class_inst = klass->generic_class->inst;
 		context->gmethod = gmethod;
 	}
 
-	return mono_class_inflate_generic_method (method, context);
+	return mono_class_inflate_generic_method_full (method, klass, context);
 }
 
 static MonoMethod *
@@ -9124,7 +9075,7 @@ mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, Mono
 		dgclass->fields [i].parent = klass;
 		dgclass->fields [i].generic_info = ifield;
 		dgclass->fields [i].type = mono_class_inflate_generic_type (
-			field->type, dgclass->generic_class.generic_class.context);
+			field->type, mono_generic_class_get_context ((MonoGenericClass *) dgclass));
 	}
 
 	for (i = 0; i < dgclass->count_properties; i++) {
@@ -9537,7 +9488,6 @@ mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam
 		param->owner = gparam->tbuilder->generic_container;
 	}
 
-	param->method = NULL;
 	param->name = mono_string_to_utf8 (gparam->name);
 	param->num = gparam->index;
 

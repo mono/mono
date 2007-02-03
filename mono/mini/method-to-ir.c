@@ -996,8 +996,10 @@ mono_find_block_region (MonoCompile *cfg, int offset)
 			return ((i + 1) << 8) | MONO_REGION_FILTER | clause->flags;
 			   
 		if (MONO_OFFSET_IN_HANDLER (clause, offset)) {
-			if (clause->flags & MONO_EXCEPTION_CLAUSE_FINALLY)
+			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
 				return ((i + 1) << 8) | MONO_REGION_FINALLY | clause->flags;
+			else if (clause->flags == MONO_EXCEPTION_CLAUSE_FAULT)
+				return ((i + 1) << 8) | MONO_REGION_FAULT | clause->flags;
 			else
 				return ((i + 1) << 8) | MONO_REGION_CATCH | clause->flags;
 		}
@@ -5461,7 +5463,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	mono_jit_stats.cil_code_size += header->code_size;
 
 	if (sig->is_inflated)
-		generic_context = ((MonoMethodInflated *) method)->context;
+		generic_context = mono_method_get_context (method);
 	else if (generic_container)
 		generic_context = &generic_container->context;
 
@@ -5522,7 +5524,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				tblock->flags |= BB_EXCEPTION_DEAD_OBJ;
 
 			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY ||
-			    clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+			    clause->flags == MONO_EXCEPTION_CLAUSE_FILTER ||
+			    clause->flags == MONO_EXCEPTION_CLAUSE_FAULT) {
 				MONO_INST_NEW (cfg, ins, OP_START_HANDLER);
 				MONO_ADD_INS (tblock, ins);
 
@@ -6225,7 +6228,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
 				EMIT_NEW_PCONST (cfg, iargs [1], cmethod);
-				EMIT_NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
+				EMIT_NEW_PCONST (cfg, iargs [2], mono_method_get_context (cmethod));
 				EMIT_NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs, ip);
 				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
@@ -8131,8 +8134,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					bblock = cfg->cbb;
 				}
 			}
-
-			/* fixme: call fault handler ? */
 
 			if ((handlers = mono_find_final_block (cfg, ip, target, MONO_EXCEPTION_CLAUSE_FINALLY))) {
 				GList *tmp;
@@ -10058,7 +10059,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 70000.
+ * - LAST MERGE: 71000.
  */
 
 /*

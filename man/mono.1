@@ -493,10 +493,20 @@ It is possible to obtain a stack trace of all the active threads in
 Mono by sending the QUIT signal to Mono, you can do this from the
 command line, like this:
 .nf
+
 	kill -QUIT pid
+
 .fi
 Where pid is the Process ID of the Mono process you want to examine.
-The process will continue running afterwards.
+The process will continue running afterwards, but its state is not
+guaranteed.
+.PP
+.B Important:
+this is a last-resort mechanism for debugging applications and should
+not be used to monitor or probe a production application.  The
+integrity of the runtime after sending this signal is not guaranteed
+and the application might crash or terminate at any given point
+afterwards.   
 .PP
 You can use the MONO_LOG_LEVEL and MONO_LOG_MASK environment variables
 to get verbose debugging output about the execution of your

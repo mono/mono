@@ -1,10 +1,13 @@
 #!/bin/sh
-args="$@"
+args=""
 assembly=
+debug=false
 while test x$1 != x; do
 	case $1 in
-		-[ldnm]:*) ;;
-		*) assembly=$1;;
+		-[ldnm]:*) args="$args$1 " ;;
+	        --debug) debug=true ;;
+	        --no-daemon) debug=true ;;
+		*) assembly=$1;  args="$args$assembly ";;
 	esac
 	shift
 done
@@ -18,6 +21,8 @@ if test x$assembly = x; then
 	echo '    -l:<lock file>         Lock file (default is /tmp/<service>.lock)'
 	echo '    -m:<syslog name>       Name to show in syslog'
 	echo '    -n:<service name>      Name of service to start (default is first defined)'
+        echo '    --debug                Do not send to background nor redirect input/output'
+        echo '    --no-daemon            Do not send to background nor redirect input/output'
 	echo 
 	echo Controlling the service:
 	echo 
@@ -29,4 +34,8 @@ if test x$assembly = x; then
 fi
 
 export MONO_DISABLE_SHM=1
-exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/@exe_name@.exe $args </dev/null >& /dev/null &
+if $debug; then
+   exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args
+else
+   exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args </dev/null >& /dev/null &
+fi

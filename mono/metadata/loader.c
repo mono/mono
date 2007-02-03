@@ -214,8 +214,8 @@ mono_loader_clear_error (void)
 	MonoLoaderError *ex = (MonoLoaderError*)TlsGetValue (loader_error_thread_id);
 
 	if (ex) {
-        g_free (ex->class_name);
-        g_free (ex->assembly_name);
+		g_free (ex->class_name);
+		g_free (ex->assembly_name);
 		g_free (ex);
 	
 		TlsSetValue (loader_error_thread_id, NULL);
@@ -627,8 +627,7 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 
 		ptr = mono_metadata_blob_heap (image, cols [MONO_MEMBERREF_SIGNATURE]);
 		mono_metadata_decode_blob_size (ptr, &ptr);
-		sig = mono_metadata_parse_method_signature_full (
-			image, context ? context->container : NULL, 0, ptr, NULL);
+		sig = mono_metadata_parse_method_signature (image, 0, ptr, NULL);
 
 		mono_loader_lock ();
 		prev_sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (token));
@@ -870,14 +869,15 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	g_assert (container);
 
 	gmethod = g_new0 (MonoGenericMethod, 1);
-	gmethod->generic_class = method->klass->generic_class;
+	if (method->klass->generic_class)
+		gmethod->class_inst = method->klass->generic_class->inst;
 	gmethod->container = container;
 
 	new_context = g_new0 (MonoGenericContext, 1);
-	new_context->container = container;
 	new_context->gmethod = gmethod;
+	/* FIXME: Is this correct? */
 	if (container->parent)
-		new_context->gclass = container->parent->context.gclass;
+		new_context->class_inst = container->parent->context.class_inst;
 
 	/*
 	 * When parsing the methodspec signature, we're in the old context again:
@@ -900,7 +900,7 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	 * ie. instantiate the method as `Foo.Hello<float>.
 	 */
 
-	gmethod->inst = mono_metadata_parse_generic_inst (image, context ? context->container : NULL, param_count, ptr, &ptr);
+	gmethod->inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
 
 	if (context && gmethod->inst->is_open)
 		gmethod->inst = mono_metadata_inflate_generic_inst (gmethod->inst, context);
@@ -1281,7 +1281,7 @@ mono_get_shared_generic_method (MonoGenericContainer *container)
 {
 	MonoGenericMethod *gmethod = g_new0 (MonoGenericMethod, 1);
 	gmethod->container = container;
-	gmethod->generic_class = container->context.gclass;
+	gmethod->class_inst = container->context.class_inst;
 	gmethod->inst = mono_get_shared_generic_inst (container);
 
 	return gmethod;
@@ -1341,18 +1341,18 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	container = klass->generic_container;
 	generic_container = mono_metadata_load_generic_params (image, token, container);
 	if (generic_container) {
-		MonoGenericContext *context = &generic_container->context;
+		MonoGenericContext *context;
+
+		generic_container->owner.method = result;
+		context = &generic_container->context;
 		if (container)
-			context->gclass = container->context.gclass;
+			context->class_inst = container->context.class_inst;
 		context->gmethod = mono_get_shared_generic_method (generic_container);
+
 		mono_metadata_load_generic_param_constraints (image, token, generic_container);
 
-		for (i = 0; i < generic_container->type_argc; i++) {
-			generic_container->type_params [i].method = result;
-
-			mono_class_from_generic_parameter (
-				&generic_container->type_params [i], image, TRUE);
-		}
+		for (i = 0; i < generic_container->type_argc; i++)
+			mono_class_from_generic_parameter (&generic_container->type_params [i], image, TRUE);
 
 		container = generic_container;
 	}
@@ -1452,14 +1452,14 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 	if (method->is_inflated && sig->generic_param_count) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
 		sig = mono_method_signature (imethod->declaring);
-		method_context = imethod->context;
+		method_context = mono_method_get_context (method);
 	}
 
 	if ((constrained_class != method->klass) && (method->klass->interface_id != 0))
 		ic = method->klass;
 
 	if (constrained_class->generic_class)
-		class_context = constrained_class->generic_class->context;
+		class_context = mono_class_get_context (constrained_class);
 
 	result = find_method (constrained_class, ic, method->name, sig, constrained_class);
 	if (!result) {
@@ -1794,7 +1794,7 @@ mono_method_signature (MonoMethod *m)
 		MonoMethodSignature *signature;
 		/* the lock is recursive */
 		signature = mono_method_signature (imethod->declaring);
-		m->signature = inflate_generic_signature (imethod->declaring->klass->image, signature, imethod->context);
+		m->signature = inflate_generic_signature (imethod->declaring->klass->image, signature, mono_method_get_context (m));
 		mono_loader_unlock ();
 		return m->signature;
 	}
@@ -1935,7 +1935,7 @@ mono_method_get_header (MonoMethod *method)
 		MonoMethodHeader *header;
 		/* the lock is recursive */
 		header = mono_method_get_header (imethod->declaring);
-		mn->header = inflate_generic_header (header, imethod->context);
+		mn->header = inflate_generic_header (header, mono_method_get_context (method));
 		mono_loader_unlock ();
 		return mn->header;
 	}

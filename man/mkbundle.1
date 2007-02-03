@@ -84,15 +84,19 @@ distribute a self-contained image.
 By default mkbundle will delete the temporary files that it uses to
 produce the bundle.  This option keeps the file around.
 .TP
-.I "--static"
-By default mkbundle dynamically links to mono and glib.  This option
-causes it to statically link instead.
+.I "--machine-config FILE"
+Uses the given FILE as the machine.config file for the generated
+application.   
 .TP
 .I "--nomain"
 With the -c option, generate the host stub without a main() function.
 .TP
 .I "--config-dir DIR"
 When passed, DIR will be set for the MONO_CFG_DIR environment variable
+.TP
+.I "--static"
+By default mkbundle dynamically links to mono and glib.  This option
+causes it to statically link instead.
 .TP
 .I "-z"
 Compresses the assemblies before embedding. This results in smaller

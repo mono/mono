@@ -539,7 +539,7 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 	// Add the delegate to the delegate hash table
 	delegate_hash_table_add (delegate);
 
-	/* when the object is collected, collect the dunamic method, too */
+	/* when the object is collected, collect the dynamic method, too */
 	mono_object_register_finalizer ((MonoObject*)delegate);
 
 	return delegate->delegate_trampoline;
@@ -966,16 +966,15 @@ mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
 	g_assert (size > 0);
 
 	memset (dst, 0, size);
-	
 	if (!src)
 		return;
 
 	s = mono_string_to_utf8 (src);
 	len = MIN (size, strlen (s));
+	if (len >= size)
+		len--;
 	memcpy (dst, s, len);
 	g_free (s);
-
-	*((char *)dst + size - 1) = 0;
 }
 
 /**
@@ -984,8 +983,9 @@ mono_string_to_byvalstr (gpointer dst, MonoString *src, int size)
  * @src: the MonoString to copy.
  * @size: the maximum number of bytes to copy.
  *
- * Copies the MonoString pointed to by @src as a utf16 string
- * into @dst, it copies at most @size bytes into the destination.
+ * Copies the MonoString pointed to by @src as a utf16 string into
+ * @dst, it copies at most @size bytes into the destination (including
+ * a terminating 16-bit zero terminator).
  */
 void
 mono_string_to_byvalwstr (gpointer dst, MonoString *src, int size)
@@ -1001,9 +1001,10 @@ mono_string_to_byvalwstr (gpointer dst, MonoString *src, int size)
 	}
 
 	len = MIN (size, (mono_string_length (src)));
-	memcpy (dst, mono_string_chars (src), len * 2);
-
-	*((gunichar2 *)dst + len - 1) = 0;
+	memcpy (dst, mono_string_chars (src), size * 2);
+	if (size <= mono_string_length (src))
+		len--;
+	*((gunichar2 *) dst + len) = 0;
 }
 
 void
@@ -2956,6 +2957,12 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	ares = mono_array_get (msg->args, gpointer, sig->param_count - 1);
 	g_assert (ares);
 
+	if (ares->async_delegate != delegate && mono_get_runtime_info ()->framework_version [0] >= '2') {
+		mono_raise_exception (mono_get_exception_invalid_operation (
+			"The IAsyncResult object provided does not match this delegate."));
+		return NULL;
+	}
+
 	if (delegate->target && mono_object_class (delegate->target) == mono_defaults.transparent_proxy_class) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
 		msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
@@ -3465,9 +3472,6 @@ mono_get_xdomain_marshal_type (MonoType *t)
 	}
 	}
 
-	if (mono_class_from_mono_type (t) == mono_defaults.stringbuilder_class)
-		return MONO_MARSHAL_COPY;
-	
 	return MONO_MARSHAL_SERIALIZE;
 }
 
@@ -4274,14 +4278,14 @@ mono_marshal_get_remoting_invoke_with_check (MonoMethod *method)
 	if (method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK)
 		return method;
 
-	sig = signature_no_pinvoke (method);
-	
 	/* we cant remote methods without this pointer */
-	g_assert (sig->hasthis);
+	g_assert (mono_method_signature (method)->hasthis);
 
 	if ((res = mono_marshal_remoting_find_in_cache (method, MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK)))
 		return res;
 
+	sig = signature_no_pinvoke (method);
+	
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK);
 
 	for (i = 0; i <= sig->param_count; i++)
@@ -4481,8 +4485,6 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 
 	g_assert (method);
 
-	target_klass = method->klass;
-	
 	mono_marshal_lock ();
 
 	if (method->string_ctor) {
@@ -4517,7 +4519,22 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 		}
 	}
 
-	cache = method->klass->image->runtime_invoke_cache;
+	target_klass = mono_defaults.object_class;
+	/* 
+	 * if types in the signature belong to non-mscorlib, we cache only
+	 * in the method image
+	 */
+	if (mono_class_from_mono_type (callsig->ret)->image != mono_defaults.corlib) {
+		target_klass = method->klass;
+	} else {
+		for (i = 0; i < callsig->param_count; i++) {
+			if (mono_class_from_mono_type (callsig->params [i])->image != mono_defaults.corlib) {
+				target_klass = method->klass;
+				break;
+			}
+		}
+	}
+	cache = target_klass->image->runtime_invoke_cache;
 
 	/* from mono_marshal_find_in_cache */
 	res = g_hash_table_lookup (cache, callsig);
@@ -4533,8 +4550,6 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 		dealy_abort_sig->pinvoke = 0;
 	}
 	
-	target_klass = mono_defaults.object_class;
-
 	/* to make it work with our special string constructors */
 	if (!string_dummy) {
 		MONO_GC_REGISTER_ROOT (string_dummy);
@@ -4630,7 +4645,7 @@ handle_enum:
 
 			/* fall through */
 		case MONO_TYPE_VALUETYPE:
-			if (t->data.klass->enumtype) {
+			if (type == MONO_TYPE_VALUETYPE && t->data.klass->enumtype) {
 				type = t->data.klass->enum_basetype->type;
 				goto handle_enum;
 			}
@@ -6774,17 +6789,28 @@ emit_marshal_variant (EmitMarshalContext *m, int argnum, MonoType *t,
 		     MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
+	static MonoMethod *get_object_for_native_variant = NULL;
+	static MonoMethod *get_native_variant_for_object = NULL;
+	
+	if (!get_object_for_native_variant)
+		get_object_for_native_variant = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1);
+	g_assert (get_object_for_native_variant);
+
+	if (!get_native_variant_for_object)
+		get_native_variant_for_object = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetNativeVariantForObject", 2);
+	g_assert (get_native_variant_for_object);
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN: {
-		static MonoMethod *get_native_variant_for_object = NULL;
-
-		if (!get_native_variant_for_object)
-			get_native_variant_for_object = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetNativeVariantForObject", 2);
-		g_assert (get_native_variant_for_object);
-
-		*conv_arg_type = &mono_defaults.variant_class->byval_arg;
 		conv_arg = mono_mb_add_local (mb, &mono_defaults.variant_class->byval_arg);
+		
+		if (t->byref)
+			*conv_arg_type = &mono_defaults.variant_class->this_arg;
+		else
+			*conv_arg_type = &mono_defaults.variant_class->byval_arg;
+
+		if (t->byref && t->attrs & PARAM_ATTRIBUTE_OUT)
+			break;
 
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
@@ -6796,15 +6822,11 @@ emit_marshal_variant (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	case MARSHAL_ACTION_CONV_OUT: {
 		static MonoMethod *variant_clear = NULL;
-		static MonoMethod *get_object_for_native_variant = NULL;
 
 		if (!variant_clear)
 			variant_clear = mono_class_get_method_from_name (mono_defaults.variant_class, "Clear", 0);
 		g_assert (variant_clear);
 
-		if (!get_object_for_native_variant)
-			get_object_for_native_variant = mono_class_get_method_from_name (mono_defaults.marshal_class, "GetObjectForNativeVariant", 1);
-		g_assert (get_object_for_native_variant);
 
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
@@ -6826,25 +6848,42 @@ emit_marshal_variant (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_CONV_RESULT: {
-		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		char *msg = g_strdup ("Marshalling of VARIANT not supported as a return type.");
 		mono_mb_emit_exception_marshal_directive (mb, msg);
 		break;
 	}
 
 	case MARSHAL_ACTION_MANAGED_CONV_IN: {
-		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
-		mono_mb_emit_exception_marshal_directive (mb, msg);
+		conv_arg = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
+
+		if (t->byref)
+			*conv_arg_type = &mono_defaults.variant_class->this_arg;
+		else
+			*conv_arg_type = &mono_defaults.variant_class->byval_arg;
+
+		if (t->byref && t->attrs & PARAM_ATTRIBUTE_OUT)
+			break;
+
+		if (t->byref)
+			mono_mb_emit_ldarg (mb, argnum);
+		else
+			mono_mb_emit_ldarg_addr (mb, argnum);
+		mono_mb_emit_managed_call (mb, get_object_for_native_variant, NULL);
+		mono_mb_emit_stloc (mb, conv_arg);
 		break;
 	}
 
 	case MARSHAL_ACTION_MANAGED_CONV_OUT: {
-		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
-		mono_mb_emit_exception_marshal_directive (mb, msg);
+		if (t->byref) {
+			mono_mb_emit_ldloc (mb, conv_arg);
+			mono_mb_emit_ldarg (mb, argnum);
+			mono_mb_emit_managed_call (mb, get_native_variant_for_object, NULL);
+		}
 		break;
 	}
 
 	case MARSHAL_ACTION_MANAGED_CONV_RESULT: {
-		char *msg = g_strdup ("Marshalling of VARIANT not supported.");
+		char *msg = g_strdup ("Marshalling of VARIANT not supported as a return type.");
 		mono_mb_emit_exception_marshal_directive (mb, msg);
 		break;
 	}
@@ -8261,6 +8300,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 			switch (t->type) {
 			case MONO_TYPE_CLASS:
 			case MONO_TYPE_VALUETYPE:
+			case MONO_TYPE_OBJECT:
 				emit_marshal (m, i, t, mspecs [i + 1], tmp_locals [i], NULL, MARSHAL_ACTION_MANAGED_CONV_OUT);
 				break;
 			}
@@ -9995,6 +10035,18 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 	CoTaskMemFree (ptr);
 #else
 	g_free (ptr);
+#endif
+}
+
+gpointer
+ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size)
+{
+	MONO_ARCH_SAVE_REGS;
+
+#ifdef PLATFORM_WIN32
+	return CoTaskMemRealloc (ptr, size);
+#else
+	return g_try_realloc (ptr, (gulong)size);
 #endif
 }
 

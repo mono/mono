@@ -2012,27 +2012,14 @@ static gboolean
 do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericContainer *container,
 				      const char *ptr, const char **rptr)
 {
-	MonoInflatedGenericClass *igclass;
 	MonoGenericClass *gclass, *cached;
 	MonoClass *gklass;
 	MonoType *gtype;
 	int count;
 
-	igclass = g_new0 (MonoInflatedGenericClass, 1);
-	gclass = &igclass->generic_class;
-	gclass->is_inflated = TRUE;
+	gclass = g_new0 (MonoGenericClass, 1);
 
 	type->data.generic_class = gclass;
-
-	gclass->context = g_new0 (MonoGenericContext, 1);
-	gclass->context->gclass = gclass;
-
-	/*
-	 * Create the klass before parsing the type arguments.
-	 * This is required to support "recursive" definitions.
-	 * See mcs/tests/gen-23.cs for an example.
-	 */
-	igclass->klass = g_new0 (MonoClass, 1);
 
 	gtype = mono_metadata_parse_type (m, MONO_PARSE_TYPE, 0, ptr, &ptr);
 	if (gtype == NULL)
@@ -2040,11 +2027,15 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 	gclass->container_class = gklass = mono_class_from_mono_type (gtype);
 
 	g_assert (gklass->generic_container);
-	gclass->context->container = gklass->generic_container;
 
 	count = mono_metadata_decode_value (ptr, &ptr);
 
 	gclass->inst = mono_metadata_parse_generic_inst (m, container, count, ptr, &ptr);
+	/* FIXME: this hack is needed to handle the incestuous relationship between metadata parsing and MonoClass. */
+	if (gclass->cached_context) {
+		g_free (gclass->cached_context);
+		gclass->cached_context = NULL;
+	}
 
 	if (rptr)
 		*rptr = ptr;
@@ -2069,7 +2060,6 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 
 	cached = g_hash_table_lookup (generic_class_cache, gclass);
 	if (cached) {
-		g_free (igclass->klass);
 		g_free (gclass);
 
 		type->data.generic_class = cached;
@@ -3239,20 +3229,16 @@ mono_type_size (MonoType *t, int *align)
 	case MONO_TYPE_TYPEDBYREF:
 		return mono_class_value_size (mono_defaults.typed_reference_class, align);
 	case MONO_TYPE_GENERICINST: {
-		MonoInflatedGenericClass *gclass;
-		MonoClass *container_class;
+		MonoGenericClass *gclass = t->data.generic_class;
+		MonoClass *container_class = gclass->container_class;
 
-		gclass = mono_get_inflated_generic_class (t->data.generic_class);
-		// g_assert (!gclass->generic_class.inst->is_open);
-		// g_assert (!gclass->klass->generic_container);
-
-		container_class = gclass->generic_class.container_class;
+		// g_assert (!gclass->inst->is_open);
 
 		if (container_class->valuetype) {
 			if (container_class->enumtype)
 				return mono_type_size (container_class->enum_basetype, align);
 			else
-				return mono_class_value_size (gclass->klass, align);
+				return mono_class_value_size (mono_class_from_mono_type (t), align);
 		} else {
 			*align = __alignof__(gpointer);
 			return sizeof (gpointer);
@@ -3342,20 +3328,16 @@ mono_type_stack_size (MonoType *t, int *align)
 		}
 	}
 	case MONO_TYPE_GENERICINST: {
-		MonoInflatedGenericClass *gclass;
-		MonoClass *container_class;
+		MonoGenericClass *gclass = t->data.generic_class;
+		MonoClass *container_class = gclass->container_class;
 
-		gclass = mono_get_inflated_generic_class (t->data.generic_class);
-		container_class = gclass->generic_class.container_class;
-
-		g_assert (!gclass->generic_class.inst->is_open);
-		g_assert (!gclass->klass->generic_container);
+		g_assert (!gclass->inst->is_open);
 
 		if (container_class->valuetype) {
 			if (container_class->enumtype)
 				return mono_type_stack_size (container_class->enum_basetype, align);
 			else {
-				guint32 size = mono_class_value_size (gclass->klass, align);
+				guint32 size = mono_class_value_size (mono_class_from_mono_type (t), align);
 
 				*align = *align + __alignof__(gpointer) - 1;
 				*align &= ~(__alignof__(gpointer) - 1);
@@ -3415,7 +3397,7 @@ mono_metadata_generic_method_hash (MonoGenericMethod *gmethod)
 gboolean
 mono_metadata_generic_method_equal (MonoGenericMethod *g1, MonoGenericMethod *g2)
 {
-	return (g1->container == g2->container) && (g1->generic_class == g2->generic_class) &&
+	return (g1->container == g2->container) && (g1->class_inst == g2->class_inst) &&
 		(g1->inst == g2->inst);
 }
 
@@ -4460,9 +4442,6 @@ get_constraints (MonoImage *image, int owner, MonoClass ***constraints, MonoGene
 	GList *cons = NULL, *tmp;
 	MonoGenericContext *context = &container->context;
 
-	/* FIXME: !container->klass => this is probably monodis */
-	g_assert (!container->klass || context->gclass || context->gmethod);
-
 	*constraints = NULL;
 	found = 0;
 	for (i = 0; i < tdef->rows; ++i) {
@@ -4589,7 +4568,6 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 		params = g_realloc (params, sizeof (MonoGenericParam) * n);
 		params [n - 1].owner = container;
 		params [n - 1].pklass = NULL;
-		params [n - 1].method = NULL;
 		params [n - 1].flags = cols [MONO_GENERICPARAM_FLAGS];
 		params [n - 1].num = cols [MONO_GENERICPARAM_NUMBER];
 		params [n - 1].name = mono_metadata_string_heap (image, cols [MONO_GENERICPARAM_NAME]);
@@ -4606,7 +4584,7 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
 		container->is_method = 1;
 
-	container->context.container = container;
+	g_assert (container->parent == NULL || container->is_method);
 
 	return container;
 }

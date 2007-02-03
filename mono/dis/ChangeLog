@@ -1,3 +1,21 @@
+2007-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (get_method_core): Pick generic container from the
+	declaring method.
+
+2006-12-27  Raja R Harinath  <rharinath@novell.com>
+
+	Avoid MonoGenericContext
+	* dis-cil.c, dump.c, get.c, get.h, main.c: Replace all instances
+	of MonoGenericContext with MonoGenericContainer, except for calls
+	to mono_class_get_full and mono_get_method_full.  Use a top-down
+	pass to propagate the original argument type from 'dis_method_list'.
+
+	* dis-cil.c, dump.c, get.c, get.h, main.c: Replace several
+	instances of MonoGenericContext with MonoGenericContainer.
+	Use a bottom-up pass to propagate the "demand" parameter type from
+	metadata type parsing.
+
 2006-11-09  Ankit Jain  <jankit@novell.com>
 
 	* dump.c (dump_table_assemblyref): Dump Flags also.

@@ -1,3 +1,249 @@
+2007-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Prepare to simplify GenericMethod handling.
+	* class-internals.h (mono_method_get_context): New accessor function.
+	* class.c, icall.c, loader.c, reflection.c, verify.c: Use accessor
+	rather than directly accessing '->context' field.
+
+	* class-internals.h (_MonoGenericParam.method): Move ...
+	(_MonoGenericContainer): ... here.  Add into union with klass field.
+	* class.c, icall.c, loader.c, metadata.c, reflection.c:
+	Update to changes.
+
+Fri Jan 12 11:58:52 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, class-internals.h, debug-helpers.c: consolidate
+	the wrapper type enum and reduce relocations.
+
+2007-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (inflate_mono_method): Reuse method instantiation
+	from the generic method, if available.
+
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c (emit_marshal_variant): Fix conv_arg
+	type in last commit, based on whether parameter is byref.
+	
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c (emit_marshal_variant): Handle unmanaged->managed
+	marshalling.
+	(mono_marshal_emit_managed_wrapper): Convert byref arguments of type
+	MONO_TYPE_OBJECT back for VARIANT support.
+
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c, marshal.h, icall-def.h: Implement 
+	Marshal.ReAllocCoTaskMem.
+
+Thu Jan 11 19:00:03 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: memory retention fixes: use the proper
+	image cache for runtime_invoke method lookups.
+
+Thu Jan 11 18:53:19 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mempool.c: added code to help debug mempool allocations.
+
+2007-01-11  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (convert_sockopt_level_and_name): Add DontFragment
+	support (experimenting with faking it with IP_MTU_DISCOVER for
+	systems that don't have IP_DONTFRAGMENT.)
+	(ves_icall_System_Net_Sockets_Socket_Disconnect_internal): New
+	icall.
+
+	* icall-def.h: new System.Net.Sockets.Disconnect icall.
+
+	* socket-io.h: Add new fields to MonoSocketAsyncResult
+	corresponding to the new ones in Socket.cs.
+
+2007-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix IronPython regression mentioned in #80249
+	* metadata.c (do_mono_metadata_parse_generic_class): Clear
+	'cached_context' field, since it may have been initialized as a
+	side-effect of metadata parsing.
+
+	* class-internals.h (_MonoGenericClass.is_inflated): Remove.
+	(_MonoGenericClass.cached_class): Move here and rename from lone
+	remaining field of ...
+	(_MonoInflatedGenericClass): ... this.  Remove.
+	* metadata.h, class.c, reflection.c, metadata.c, icall.c: Update
+	to changes.
+
+	Fix mcs/tests/test-128.cs regression.
+	* reflection.c (encode_cattr_value) [MONO_TYPE_SZARRAY]: Revert
+	2007-01-10 change below.
+	[MONO_TYPE_OBJECT]: Recurse into array case.
+
+2007-01-11  Raja R Harinath  <harinath@gmail.com>
+
+	* class-internals.h (mono_get_inflated_generic_class): Remove.
+	* class.c (mono_get_inflated_generic_class): Remove.
+	(mono_generic_class_get_class): Rename from
+	mono_class_create_generic.
+	(mono_class_from_mono_type) [GENERICINST]: Use it.
+	* reflection.c, metadata.c: Update to changes.  Use
+	'mono_class_from_mono_type'.
+
+Wed Jan 10 16:19:54 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: use passed type when encoding an array element
+	in custom attributes (patch from David Mitchell, dmitchell@logos.com).
+
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.c (mono_delegate_end_invoke): Add check for unpaired asyc
+	result arguments (someDelegate.EndInvoke (unrelatedAres)).
+	Fixes bug #80392.
+
+2007-01-09  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (_MonoInflatedGenericClass.is_initialized): Remove.
+
+	* object.c (set_value): Avoid aliasing between type->data.klass
+	and type->data.generic_class.
+
+	* class.c (mono_class_create_generic): Don't use 'is_initialized' field.
+
+2007-01-08  Raja R Harinath  <rharinath@novell.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Avoid aliasing
+	between type->data.klass and type->data.generic_class.
+
+2007-01-08  Lluis Sanchez  <lluis@ximian.com>
+
+	* marshal.c: In MS.NET, StringBuilder objects are not copied by
+	value in out parameters.
+
+2007-01-08  Raja R Harinath  <rharinath@novell.com>
+
+	Simplify invariant for MonoGenericClass::klass field.
+	* class.c (mono_class_create_generic): Verify 'klass' is null.
+	* metadata.c (do_mono_metadata_parse_generic_class): Don't
+	initialize 'klass' field.
+
+2007-01-05  Raja R Harinath  <rharinath@novell.com>
+
+	Ongoing work to avoid redundant data and simplify invariants.
+	* class-internals.h (_MonoGenericMethod.class_inst): Rename from
+	'generic_class', and change type to a GenericInst.
+	(_MonoGenericContext.class_inst): Likewise, rename from 'gclass'.
+	* class.c, loader.c, metadata.c, reflection.c: Update to changes.
+
+2007-01-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.c : skip io-layer under PLATFORM_WIN32.
+
+2007-01-03  Tor Lillqvist  <tml@novell.com>
+
+	Fix #80305: In a bundled executable, look in the bundled exe
+	assembly to determine the runtime version. Add the possibility to
+	bundle also the machine.config file.
+	
+	* assembly.c (mono_assembly_open_from_bundle): Make
+	non-static. Allow being called even if we have no bundled
+	assemblies, and return NULL right away in that case.
+
+	* domain-internals.h: Declare mono_assembly_open_from_bundle()
+	here.
+
+	* domain.c (app_config_parse): Take an assembly exe file name as
+	parameter instead of a config file name. Check for a bundled
+	config file for that assembly by calling
+	mono_config_string_for_assembly_file() (see below) before looking
+	for one in the file system.
+	(get_runtimes_from_exe): Corrsponding change to call of
+	app_config_parse().
+	(get_runtimes_from_exe): Check for bundled assembly exe file first
+	by calling mono_assembly_open_from_bundle(). If no bundled
+	assembly exe file is found, call mono_image_open() as before to
+	look it up in the file system.
+
+	* mono-config.c: Add variable bundled_machinec_onfig.
+	(mono_config_string_for_assembly_file): New function.
+	(mono_config_for_assembly): Move code snippet that looks for a
+	bundled assembly .config file into the above new function. Call
+	it.
+	(mono_register_machine_config, mono_get_machine_config): New
+	functions to set and retrieve
+
+	* assembly.h: Declare mono_register_machine_config().
+
+	* mono-config.h: Declare mono_get_machine_config() and
+	mono_config_string_for_assembly_file().
+
+	* icall.c: No declaration of environ necessary on Win32. It is
+	declared (as a macro expanding to a function call) in stdlib.h.
+	(ves_icall_System_Configuration_DefaultConfig_get_bundled_machine_config):
+	New internal mono function. Returns the value of
+	mono_get_machine_config() as a Mono string.
+
+	* icall-def.h: Add get_bundled_machine_config().
+
+2007-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	Remove redundant field
+	* class-internals.h (_MonoGenericContext.container): Remove field.
+	* loader.c (mono_method_get_signature_full): Don't parse a
+	"container" for a signature parse when the signature is inflated
+	immediately.
+	(method_from_methodspec): Likewise, for a generic_inst.
+	* class.c, metadata.c, reflection.c: Update to changes.
+
+2006-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	* class-internals.h (_MonoGenericClass): Rename 'context' field to
+	'cached_context', and change semantics -- it starts off NULL, and
+	is initialized on demand.
+	* class.c (mono_generic_class_get_context): New accessor to
+	replace 'context' field accesses.
+	(mono_class_get_context): New helper.
+	(*): Update to changes.
+	* icall.c, loader.c, metadata.c, reflection.c: Update to changes.
+
+2007-01-03  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (mono_string_to_byvalstr): Fix thinko, shorten len
+	before the memcpy.   Fixes Marshal2 regression.
+
+2007-01-02  Jb Evain  <jbevain@gmail.com>
+
+	* blob.h: add a MONO_TYPE_ENUM definition
+	* reflection.c (load_cattr_value, create_custom_attr, create_custom_attr_data):
+	fix the encoding of arrays of enums in custom attributes.
+
+	Fixes #79666.
+
+2007-01-01  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (mono_string_to_byvalwstr): Fix this routine.   The
+	string is null terminated, but only cut the string short if it
+	overflows the buffer.   
+	
+	(mono_string_to_byvalstr): Also fix this routine.   The code here
+	was not properly terminating a string (it was only terminated
+	because of the previous catch-all memset). 
+
+	I left the memset, because I do not know if applications expect
+	the runtime to clear this region. 
+
+	Fixes #79944.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType):
+	Clear the error before returning to unmanaged code to prevent the
+	runtime from being confused later on (fixes  80420).
+	(ves_icall_type_from_name): Always call mono_loader_clear_error
+	after parsing a type that could have failed.
+	(ves_icall_System_Reflection_Assembly_GetTypes): ditto.
+
+	* loader.c (mono_loader_clear_error): Fix indentation.
+
+2006-12-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 58.
 
 Fri Dec 22 20:04:57 CET 2006 Paolo Molaro <lupus@ximian.com>
 

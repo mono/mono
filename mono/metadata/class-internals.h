@@ -19,38 +19,11 @@ typedef struct _MonoMethodWrapper MonoMethodWrapper;
 typedef struct _MonoMethodInflated MonoMethodInflated;
 typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
 
-/*
- * remember to update wrapper_type_names if you change something here
- */
 typedef enum {
-	MONO_WRAPPER_NONE,
-	MONO_WRAPPER_DELEGATE_INVOKE,
-	MONO_WRAPPER_DELEGATE_BEGIN_INVOKE,
-	MONO_WRAPPER_DELEGATE_END_INVOKE,
-	MONO_WRAPPER_RUNTIME_INVOKE,
-	MONO_WRAPPER_NATIVE_TO_MANAGED,
-	MONO_WRAPPER_MANAGED_TO_NATIVE,
-	MONO_WRAPPER_MANAGED_TO_MANAGED,
-	MONO_WRAPPER_REMOTING_INVOKE,
-	MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK,
-	MONO_WRAPPER_XDOMAIN_INVOKE,
-	MONO_WRAPPER_XDOMAIN_DISPATCH,
-	MONO_WRAPPER_LDFLD,
-	MONO_WRAPPER_STFLD,
-	MONO_WRAPPER_LDFLD_REMOTE,
-	MONO_WRAPPER_STFLD_REMOTE,
-	MONO_WRAPPER_SYNCHRONIZED,
-	MONO_WRAPPER_DYNAMIC_METHOD,
-	MONO_WRAPPER_ISINST,
-	MONO_WRAPPER_CASTCLASS,
-	MONO_WRAPPER_PROXY_ISINST,
-	MONO_WRAPPER_STELEMREF,
-	MONO_WRAPPER_UNBOX,
-	MONO_WRAPPER_LDFLDA,
-	MONO_WRAPPER_WRITE_BARRIER,
-	MONO_WRAPPER_UNKNOWN,
-	MONO_WRAPPER_COMINTEROP_INVOKE,
-	MONO_WRAPPER_COMINTEROP
+#define WRAPPER(e,n) MONO_WRAPPER_ ## e,
+#include "wrapper-types.h"
+#undef WRAPPER
+	MONO_WRAPPER_NUM
 } MonoWrapperType;
 
 typedef enum {
@@ -393,20 +366,9 @@ struct _MonoGenericInst {
 struct _MonoGenericClass {
 	MonoGenericInst *inst;		/* the instantiation */
 	MonoClass *container_class;	/* the generic type definition */
-	MonoGenericContext *context;	/* current context */
+	MonoGenericContext *cached_context;	/* if present, a "trivial" context that doesn't contain any method instantiation */
 	guint is_dynamic  : 1;		/* We're a MonoDynamicGenericClass */
-	guint is_inflated : 1;		/* We're a MonoInflatedGenericClass */
-};
-
-/*
- * Performance optimization:
- * We don't create the `MonoClass' for a `MonoGenericClass' until we really
- * need it.
- */
-struct _MonoInflatedGenericClass {
-	MonoGenericClass generic_class;
-	guint is_initialized   : 1;
-	MonoClass *klass;
+	MonoClass *cached_class;	/* if present, the MonoClass corresponding to the instantiation.  */
 };
 
 /*
@@ -414,7 +376,7 @@ struct _MonoInflatedGenericClass {
  * a TypeBuilder.
  */
 struct _MonoDynamicGenericClass {
-	MonoInflatedGenericClass generic_class;
+	MonoGenericClass generic_class;
 	int count_methods;
 	MonoMethod **methods;
 	int count_ctors;
@@ -433,24 +395,17 @@ struct _MonoDynamicGenericClass {
  */
 struct _MonoGenericMethod {
 	MonoGenericInst *inst;			/* the instantiation */
-	MonoGenericClass *generic_class;	/* if we're in a generic type */
+	MonoGenericInst *class_inst;		/* if we're in a generic type, the instantiation of that type */
 	MonoGenericContainer *container;	/* type parameters */
 	gpointer reflection_info;
 };
 
 /*
- * The generic context.
+ * The generic context: an instantiation of a set of class and method generic parameters.
  */
 struct _MonoGenericContext {
-	/*
-	 * The container which has been instantiated.
-	 *
-	 * If we're in a generic method, the generic method definition's container.
-	 * Otherwise the generic type's container.
-	 */
-	MonoGenericContainer *container;
-	/* The current generic class */
-	MonoGenericClass *gclass;
+	/* The instantiation corresponding to the class generic parameters */
+	MonoGenericInst *class_inst;
 	/* The current generic method */
 	MonoGenericMethod *gmethod;
 };
@@ -467,8 +422,11 @@ struct _MonoGenericContainer {
 	MonoGenericContainer *parent;
 	/* If we're a generic method definition, caches all their instantiations. */
 	GHashTable *method_hash;
-	/* If we're a generic type definition, its `MonoClass'. */
-	MonoClass *klass;
+	/* the generic type definition or the generic method definition corresponding to this container */
+	union {
+		MonoClass *klass;
+		MonoMethod *method;
+	} owner;
 	int type_argc    : 6;
 	/* If true, we're a generic method, otherwise a generic type definition. */
 	/* Invariant: parent != NULL => is_method */
@@ -483,7 +441,6 @@ struct _MonoGenericContainer {
 struct _MonoGenericParam {
 	MonoGenericContainer *owner;	/* Type or method this parameter was defined in. */
 	MonoClass *pklass;		/* The corresponding `MonoClass'. */
-	MonoMethod *method;		/* If we're a method type parameter, the method. */
 	const char *name;
 	guint16 flags;
 	guint16 num;
@@ -659,8 +616,14 @@ mono_install_get_cached_class_info (MonoGetCachedClassInfo func) MONO_INTERNAL;
 void
 mono_install_get_class_from_name (MonoGetClassFromName func) MONO_INTERNAL;
 
-MonoInflatedGenericClass*
-mono_get_inflated_generic_class (MonoGenericClass *gclass) MONO_INTERNAL;
+MonoGenericContext*
+mono_class_get_context (MonoClass *class) MONO_INTERNAL;
+
+MonoGenericContext*
+mono_generic_class_get_context (MonoGenericClass *gclass) MONO_INTERNAL;
+
+MonoGenericContext*
+mono_method_get_context (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod*
 mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context);

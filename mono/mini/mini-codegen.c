@@ -1367,6 +1367,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (prev_dreg > -1);
 			g_assert (!is_global_ireg (rs->vassign [prev_dreg]));
 			mask = regpair_reg2_mask (spec [MONO_INST_DEST], rs->vassign [prev_dreg]);
+#ifdef __i386__
+			/* bug #80489 */
+			mask &= ~regmask (X86_ECX);
+#endif
 			val = rs->vassign [reg2];
 			if (val < 0) {
 				int spill = 0;

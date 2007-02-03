@@ -18,6 +18,7 @@
 #include "dump.h"
 #include "dis-cil.h"
 #include "mono/metadata/opcodes.h"
+#include "mono/metadata/class-internals.h"
 #include "mono/utils/mono-compiler.h"
 
 #ifndef HAVE_ISINF
@@ -55,7 +56,7 @@ isinf (double num)
 	indent[indent_level*2] = 0;
 
 void
-disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContext *context)
+disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContainer *container)
 {
 	const unsigned char *start = mh->code;
 	int size = mh->code_size;
@@ -149,7 +150,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContext *context
 			guint32 token = read32 (ptr);
 			char *s;
 			
-			s = get_field (m, token, context);
+			s = get_field (m, token, container);
 			fprintf (output, "%s", s);
 			g_free (s);
 			ptr += 4;
@@ -176,7 +177,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContext *context
 			guint32 token = read32 (ptr);
 			char *s;
 
-			s = get_method (m, token, context);
+			s = get_method (m, token, container);
 			fprintf (output, "%s", s);
 			g_free (s);
 			ptr += 4;
@@ -252,7 +253,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContext *context
 			guint32 token = read32 (ptr);
 			char *s;
 			
-			s = get_token (m, token, context);
+			s = get_token (m, token, container);
 			fprintf (output, "%s", s);
 			g_free (s);
 			
@@ -262,7 +263,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContext *context
 		
 		case MonoInlineType: {
 			guint32 token = read32 (ptr);
-			char *s = get_token_type (m, token, context);
+			char *s = get_token_type (m, token, container);
 			fprintf (output, "%s", s);
 			g_free (s);
 			ptr += 4;

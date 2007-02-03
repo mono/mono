@@ -56,12 +56,36 @@ MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
 MPH_LIBS   = $(GLIB_LIBS)
 endif
 
+ZLIB_SOURCES = \
+	adler32.c	\
+	compress.c	\
+	crc32.c		\
+	gzio.c		\
+	uncompr.c	\
+	deflate.c	\
+	trees.c		\
+	zutil.c		\
+	inflate.c	\
+	infback.c	\
+	inftrees.c	\
+	inffast.c	\
+	crc32.h		\
+	deflate.h  	\
+	inffast.h  	\
+	inffixed.h  	\
+	inflate.h  	\
+	inftrees.h  	\
+	trees.h  	\
+	zconf.h  	\
+	zlib.h  	\
+	zutil.h
+
 if HAVE_ZLIB
-Z_SOURCE = zlib_macros.c
-Z_LIBS   = -lz
+Z_SOURCE = zlib_macros.c 
+Z_LIBS= -lz
 else
-Z_SOURCE = 
-Z_LIBS   = 
+Z_SOURCE = zlib_macros.c $(ZLIB_SOURCES)
+Z_LIBS=
 endif
 
 libMonoPosixHelper_la_SOURCES =			\

@@ -44,6 +44,7 @@ scripts_1_0_umask = \
 	sn
 
 scripts_2_0 = \
+	al2			\
 	gmcs			\
 	httpcfg			\
 	ilasm2			\

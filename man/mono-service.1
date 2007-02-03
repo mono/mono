@@ -41,6 +41,16 @@ Name to show in the syslog.
 Use this to specify the service to be launched (if the program
 contains more than one service).   The default is to run the first
 defined service.
+.TP
+.I "--debug"
+Use this option to prevent mono-service from redirecting stdin and
+stdout and prevent the program to be sent to the background.
+Equivalent to --no-daemon
+.TP
+.I "--no-daemon"
+Use this option to prevent mono-service from redirecting stdin and
+stdout and prevent the program to be sent to the background.
+Equivalent to --debug.
 .SH CONTROL
 You can control the service by sending signals to the process, you can
 use the following commands:

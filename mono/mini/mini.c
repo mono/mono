@@ -898,9 +898,11 @@ mono_find_block_region (MonoCompile *cfg, int offset)
 			return ((i + 1) << 8) | MONO_REGION_FILTER | clause->flags;
 			   
 		if (MONO_OFFSET_IN_HANDLER (clause, offset)) {
-			if (clause->flags & MONO_EXCEPTION_CLAUSE_FINALLY)
+			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
 				return ((i + 1) << 8) | MONO_REGION_FINALLY | clause->flags;
-			else
+			else if (clause->flags == MONO_EXCEPTION_CLAUSE_FAULT)
+				return ((i + 1) << 8) | MONO_REGION_FAULT | clause->flags;
+			else if (clause->flags == MONO_EXCEPTION_CLAUSE_NONE)
 				return ((i + 1) << 8) | MONO_REGION_CATCH | clause->flags;
 		}
 	}
@@ -4176,7 +4178,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	mono_jit_stats.cil_code_size += header->code_size;
 
 	if (sig->is_inflated)
-		generic_context = ((MonoMethodInflated *) method)->context;
+		generic_context = mono_method_get_context (method);
 	else if (generic_container)
 		generic_context = &generic_container->context;
 
@@ -4236,7 +4238,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				tblock->flags |= BB_EXCEPTION_DEAD_OBJ;
 
 			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY ||
-			    clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+			    clause->flags == MONO_EXCEPTION_CLAUSE_FILTER ||
+			    clause->flags == MONO_EXCEPTION_CLAUSE_FAULT) {
 				MONO_INST_NEW (cfg, ins, OP_START_HANDLER);
 				MONO_ADD_INS (tblock, ins);
 
@@ -4951,7 +4954,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
 				NEW_PCONST (cfg, iargs [1], cmethod);
-				NEW_PCONST (cfg, iargs [2], ((MonoMethodInflated *) cmethod)->context);
+				NEW_PCONST (cfg, iargs [2], mono_method_get_context (cmethod));
 				NEW_TEMPLOADA (cfg, iargs [3], this_arg_temp->inst_c0);
 				temp = mono_emit_jit_icall (cfg, bblock, mono_helper_compile_generic_method, iargs, ip);
 
@@ -7160,8 +7163,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MONO_ADD_INS (bblock, ins);
 				}
 			}
-
-			/* fixme: call fault handler ? */
 
 			if ((handlers = mono_find_final_block (cfg, ip, target, MONO_EXCEPTION_CLAUSE_FINALLY))) {
 				GList *tmp;

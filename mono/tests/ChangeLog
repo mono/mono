@@ -12,6 +12,34 @@
 
 	* libtest.c: Fix merge problem.
 
+2007-01-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* libtest.c, cominterop.cs: Tests for unmanaged->managed
+	VARIANT marshalling.
+
+2007-01-10  Robert Jordan  <robertj@gmx.net>
+
+	* bug-80392.2.cs: Add more tests.
+
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* bug-80392.2.cs: Add test for bug #80392.
+
+2007-01-09  Robert Jordan  <robertj@gmx.net>
+
+	* cross-domain.cs: Reflect marshal.c changes: after r70643
+	StringBuilders are not ReferenceEquals () anymore, because
+	they are marshaled by value.
+
+2007-01-01  Miguel de Icaza  <miguel@novell.com>
+
+	* libtest.c, marshal5.cs: Add tests for ByValTStr marshalling when
+	the charset is Unicode (see bugs 79944 and 78722).
+
+2006-12-31  Miguel de Icaza  <miguel@novell.com>
+
+	* exists.cs: Add new test case for MONO_IOMAP bug. 
+
 2006-11-02  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile.am: Fix path to mkbundle so test passes
