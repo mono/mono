@@ -1,3 +1,4 @@
+../../build/common/Consts.cs
 Assembly/AssemblyInfo.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Linq/Enumerable.cs

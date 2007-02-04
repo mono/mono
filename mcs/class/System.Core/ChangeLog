@@ -1,3 +1,9 @@
+2007-02-04  Marek Safar  <marek.safar@gmail.com>
+
+	* System.Core.dll.sources: Added common constants.
+
+	* Makefile: An assembly is 2.0 only.
+
 2007-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Core.dll.sources : added LambdaExpression.cs.
