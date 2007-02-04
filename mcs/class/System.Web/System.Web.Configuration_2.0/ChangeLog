@@ -1,3 +1,8 @@
+2007-02-04  Konstantin Triger <kostat@mainsoft.com>
+
+	* NamespaceInfo.cs, HttpModuleAction.cs, RoleManagerSection.cs:
+		fix the default value.
+
 2007-02-02  Marek Habersack  <grendello@gmail.com>
 
 	* TagPrefixCollection.cs: Add the CollectionType parameter.

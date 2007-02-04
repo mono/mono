@@ -46,11 +46,11 @@ namespace System.Web.Configuration
 
 		static HttpModuleAction ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "",
+			nameProp = new ConfigurationProperty ("name", typeof (string), null,
 							      TypeDescriptor.GetConverter (typeof (string)),
 							      PropertyHelper.NonEmptyStringValidator,
 							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "hoho", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
 			properties.Add (typeProp);

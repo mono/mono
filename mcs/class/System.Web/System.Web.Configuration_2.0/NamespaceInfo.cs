@@ -45,7 +45,7 @@ namespace System.Web.Configuration
 
 		static NamespaceInfo ()
 		{
-			namespaceProp = new ConfigurationProperty ("namespace", typeof (string), "",
+			namespaceProp = new ConfigurationProperty ("namespace", typeof (string), null,
 								   TypeDescriptor.GetConverter (typeof (string)),
 								   PropertyHelper.NonEmptyStringValidator,
 								   ConfigurationPropertyOptions.None);

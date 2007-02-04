@@ -81,7 +81,7 @@ namespace System.Web.Configuration {
 
 		[TypeConverter (typeof (TimeSpanMinutesOrInfiniteConverter))]
 		[PositiveTimeSpanValidator]
-		[ConfigurationProperty ("cookieTimeout", DefaultValue = "00:30:00")]
+		[ConfigurationProperty ("cookieTimeout", DefaultValue = "30")]
 		public TimeSpan CookieTimeout {
 			get { return (TimeSpan) base ["cookieTimeout"]; }
 			set { base ["cookieTimeout"] = value; }
