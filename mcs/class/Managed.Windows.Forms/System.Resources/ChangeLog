@@ -1,3 +1,15 @@
+2007-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXResourceReader.cs: Added support for BasePath (2.0 only). Lazy load
+	resources in GetEnumerator. Always verify resheader (resmimetype). When
+	loading resources from file, release file once reading is finished.
+	Exception compatibility fixes. Allow data & resheader elements to be in
+	non-default namespace. Do not allow data element without name.
+	* ResXFileRef.cs: In ConvertFrom, return null if value is not a string.
+	On 2.0 profile, throw ArgumentException if value consists of only a single
+	part. Added FileName, TypeName, TextFileEncoding property (public on
+	2.0 only). Fixed ToString to including encoding.
+
 2007-01-29  Marek Habersack  <grendello@gmail.com>
 
 	* ResXFileRef.cs: Remove extra ;utf8 from the System.String name

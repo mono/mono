@@ -21,10 +21,8 @@
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
+//	Gert Driesen	(drieseng@users.sourceforge.net)
 //
-//
-
-// COMPLETE
 
 using System;
 using System.ComponentModel;
@@ -36,14 +34,10 @@ namespace System.Resources {
 	[Serializable]
 	[TypeConverter(typeof(ResXFileRef.Converter))]
 	public class ResXFileRef {
-		#region Converter Class
 		public class Converter : TypeConverter {
-			#region Constructors
 			public Converter() {
 			}
-			#endregion	// Constructors
 
-			#region Methods
 			public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
 				return sourceType == typeof(string);
 			}
@@ -53,34 +47,42 @@ namespace System.Resources {
 			}
 
 			public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
-				string[]	parts;
 				byte[]		buffer;
 
 				if ( !(value is String)) {
-					return base.ConvertFrom(context, culture, value);
+					return null;
 				}
 
-				parts = ((string)value).Split(';');
-				string typename = parts[1];
-				using (FileStream file = new FileStream(parts[0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				string [] parts = ResXFileRef.Parse ((string) value);
+#if NET_2_0
+				if (parts.Length == 1)
+					throw new ArgumentException ("value");
+#endif
 
-					if (typename == "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"){
-						string encoding = null;
-						if (parts.Length > 2){
-							encoding = parts [2];
-							if (encoding == null || encoding == String.Empty)
-								encoding = "utf-8";
-						}
-						StreamReader sr = new StreamReader (file, Encoding.GetEncoding (encoding));
-						return sr.ReadToEnd ();
+				Type type = Type.GetType (parts [1]);
+#if NET_2_0
+				if (type == typeof(string)) {
+					Encoding encoding;
+					if (parts.Length > 2) {
+						encoding = Encoding.GetEncoding (parts [2]);
+					} else {
+						encoding = Encoding.Default;
 					}
-					buffer = new byte[file.Length];
 
-					file.Read(buffer, 0, (int)file.Length);
+					using (TextReader reader = new StreamReader(parts [0], encoding)) {
+						return reader.ReadToEnd();
+					}
+				}
+#endif
+
+				using (FileStream file = new FileStream (parts [0], FileMode.Open, FileAccess.Read, FileShare.Read)) {
+					buffer = new byte [file.Length];
+					file.Read(buffer, 0, (int) file.Length);
 				}
 
-
-				return Activator.CreateInstance(Type.GetType (typename), BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { new MemoryStream(buffer) }, culture);
+				return Activator.CreateInstance(type, BindingFlags.CreateInstance
+					| BindingFlags.Public | BindingFlags.Instance, null, 
+					new object[] { new MemoryStream (buffer) }, culture);
 			}
 
 			public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
@@ -90,29 +92,88 @@ namespace System.Resources {
 
 				return ((ResXFileRef)value).ToString();
 			}
-			#endregion	// Methods
 		}
-		#endregion	// Converter Class
 
-		#region Local Variables
 		private string filename;
 		private string typename;
-		#endregion	// Local Variables
+		private Encoding textFileEncoding;
 
-		#region Public Constructors
-		public ResXFileRef(string fileName, string typeName) {
+		public ResXFileRef (string fileName, string typeName)
+		{
+#if NET_2_0
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+#endif
+
 			this.filename = fileName;
 			this.typename = typeName;
 		}
-		#endregion	// Public Constructors
 
-		#region Public Instance Properties
-		#endregion	// Public Instance Properties
-
-		#region Public Instance Methods
-		public override string ToString() {
-			return filename + ";" + typename;
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		ResXFileRef (string fileName, string typeName, Encoding textFileEncoding)
+			: this (fileName, typeName) 
+		{
+			this.textFileEncoding = textFileEncoding;
 		}
-		#endregion	// Public Instance Methods
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string FileName {
+			get { return filename; }
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		Encoding TextFileEncoding {
+			get { return textFileEncoding; }
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string TypeName {
+			get { return typename; }
+		}
+
+		public override string ToString() {
+			StringBuilder sb = new StringBuilder ();
+			if (filename != null) {
+				sb.Append (filename);
+			}
+			sb.Append (';');
+			if (typename != null) {
+				sb.Append (typename);
+			}
+			if (textFileEncoding != null) {
+				sb.Append (';');
+				sb.Append (textFileEncoding.WebName);
+			}
+			return sb.ToString ();
+		}
+
+		internal static string [] Parse (string fileRef)
+		{
+			// we cannot return ResXFileRef, as that would mean we'd have to
+			// instantiate the encoding, and we do not always need this
+
+			if (fileRef == null)
+				throw new ArgumentNullException ("fileRef");
+
+			return fileRef.Split (';');
+		}
 	}
 }
