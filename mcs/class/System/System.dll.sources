@@ -344,6 +344,7 @@ System.ComponentModel/MemberDescriptor.cs
 System.ComponentModel/MergablePropertyAttribute.cs
 System.ComponentModel/NotifyParentPropertyAttribute.cs
 System.ComponentModel/ParenthesizePropertyNameAttribute.cs
+System.ComponentModel/PasswordPropertyTextAttribute.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
 System.ComponentModel/PropertyChangedEventHandler.cs
 System.ComponentModel/PropertyDescriptorCollection.cs
