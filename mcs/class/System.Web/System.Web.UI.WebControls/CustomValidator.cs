@@ -79,6 +79,11 @@ namespace System.Web.UI.WebControls {
 				if (s != string.Empty) {
 					writer.AddAttribute("clientvalidationfunction", s);
 				}
+
+#if NET_2_0
+				if (ValidateEmptyText)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validateemptytext", "true");
+#endif
 			}
 		}
 

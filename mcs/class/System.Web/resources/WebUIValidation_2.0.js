@@ -425,11 +425,16 @@ function CustomValidatorEvaluateIsValid (validator)
 	var evaluationfunc = validator.getAttribute ("clientvalidationfunction");
 
 	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	
+    if ((ctrl_value.length == 0) && ((typeof(validator.validateemptytext) != "string") || (validator.validateemptytext != "true"))) {
+		ValidatorSucceeded (validator);
+		return true;
+	}
 
 	var result = true;
 
 	if (evaluationfunc && evaluationfunc != "") {
-		args = {Value:ctrl_value, IsValid:false};
+		args = {Value:ctrl_value, IsValid:true};
 		eval (evaluationfunc + "(validator, args)");
 		result = args.IsValid;
 	}
