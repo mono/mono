@@ -17,7 +17,11 @@ LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll $(OTHER_LIB_MCS_FLAGS) 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 
 EXTRA_DISTFILES = Test/SqliteTest.cs \
-	Test/test.sql $(wildcard resources/*.cs)
+	Test/test.sql \
+	resources/SR.resx	\
+	resources/ChangeLog	\
+	resources/DataTypes.xml	\
+	resources/MetaDataCollections.xml
 
 run-test-local: test.db 
 
