@@ -25,12 +25,11 @@ test.db: Test/test.sql
 	rm -f $@
 	sqlite3 $@ < $< || :
 
-ifeq (net_2_0, $(PROFILE))
 include ../../build/library.make
+ifeq (net_2_0, $(PROFILE))
 $(the_lib): $(RESOURCES)
 
 $(RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $<
 endif
 
-include ../../build/library.make
