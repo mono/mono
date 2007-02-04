@@ -548,6 +548,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Parameter Clone ()
+		{
+			Parameter p = new Parameter (TypeName, Name, ModFlags, attributes, Location);
+			p.parameter_type = parameter_type;
+
+			return p;
+		}
 	}
 
 	/// <summary>
@@ -819,6 +826,15 @@ namespace Mono.CSharp {
 			return this [pos].ModFlags;
 		}
 
+		public Parameters Clone ()
+		{
+			Parameter [] parameters_copy = new Parameter [FixedParameters.Length];
+			int i = 0;
+			foreach (Parameter p in FixedParameters)
+				parameters_copy [i++] = p.Clone ();
+			return new Parameters (parameters_copy, HasArglist);
+		}
+		
 		#endregion
 	}
 }
