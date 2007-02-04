@@ -68,7 +68,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (p3, RoundTripPadding (p3), "B3");
 			
 		}
-		
+
+		[Test]
+		public void ConvertFrom ()
+		{
+			string listSeparator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+			PaddingConverter pc = new PaddingConverter ();
+			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom (
+				string.Format ("1{0} 2{0} 3{0} 4", listSeparator)), "A1");
+			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom (
+				string.Format ("1{0}2{0}3{0}4", listSeparator)), "A2");
+			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom (
+				string.Format ("1{0}  2{0}  3{0}  4", listSeparator)), "A3");
+			Assert.AreEqual (new Padding (1), pc.ConvertFrom (string.Format (
+				"1{0} 1{0} 1{0} 1", listSeparator)), "A4");
+			Assert.AreEqual (new Padding (), pc.ConvertFrom (string.Format (
+				"0{0} 0{0} 0{0} 0", listSeparator)), "A5");
+		}
+
+		[Test]
+		public void ConvertTo ()
+		{
+			PaddingConverter pc = new PaddingConverter ();
+
+			Assert.AreEqual (string.Format (CultureInfo.CurrentCulture,
+				"1{0} 2{0} 3{0} 4", CultureInfo.CurrentCulture.TextInfo.ListSeparator),
+				(string) pc.ConvertTo (new Padding (1, 2, 3, 4), typeof (string)), "A1");
+			Assert.AreEqual (string.Format (CultureInfo.CurrentCulture,
+				"1{0} 1{0} 1{0} 1", CultureInfo.CurrentCulture.TextInfo.ListSeparator),
+				(string) pc.ConvertTo (new Padding (1), typeof (string)), "A2");
+			Assert.AreEqual (string.Format (CultureInfo.CurrentCulture,
+				"0{0} 0{0} 0{0} 0", CultureInfo.CurrentCulture.TextInfo.ListSeparator),
+				(string) pc.ConvertTo (Padding.Empty, typeof (string)), "A3");
+		}
+
 		private Padding RoundTripPadding (Padding p)
 		{
 			PaddingConverter pc = new PaddingConverter ();
