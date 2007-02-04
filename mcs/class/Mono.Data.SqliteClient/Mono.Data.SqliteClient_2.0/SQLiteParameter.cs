@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-﻿/********************************************************
+/********************************************************
  * ADO.NET 2.0 Data Provider for Sqlite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
