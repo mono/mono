@@ -1,3 +1,10 @@
+2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	* ClientScriptManager.cs:
+	fixed RegisterClientScriptInclude: all includes that was registered before 
+	rendering are rendered at begin form.		
+
 2007-02-02  Marek Habersack  <grendello@gmail.com>
 
 	* TemplateParser.cs: Do not register controls here.

@@ -1078,10 +1078,9 @@ namespace System.Web.UI.WebControls
 
 				if (EnableClientScript) {
 					Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
-				
+
 					// Make sure the basic script infrastructure is rendered
-					Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
-					Page.ClientScript.GetPostBackClientHyperlink (this, "");
+					Page.ClientScript.RegisterWebFormClientScript ();
 				}
 
 				if (EnableClientScript && PopulateNodesFromClient) {

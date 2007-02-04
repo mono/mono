@@ -830,6 +830,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal void RequiresPostBackScript ()
 	{
 		requiresPostBackScript = true;
+#if TARGET_J2EE
+		if (IsPortletRender)
+			RegisterWebFormClientScript ();
+#endif
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -980,10 +984,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
-#if NET_2_0
-		writer.WriteLine ("\t\tvar myForm = WebForm_GetFormFromCtrl (eventTarget);");
-#else
 		writer.WriteLine ("\t\tvar myForm = " + theForm + ";");
+#if NET_2_0
+		writer.WriteLine ("\t\tif(document.WebForm_GetFormFromCtrl) myForm = WebForm_GetFormFromCtrl (eventTarget);");
 #endif
 		writer.WriteLine ("\t\tmyForm.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\tmyForm.{0}.value = eventArgument;", postEventArgumentID);
@@ -1009,9 +1012,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
-#if NET_2_0
-		scriptManager.RegisterWebFormClientScript ();
-#endif
 		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
@@ -1038,6 +1038,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteExpandoAttributes (writer);
 #endif
 		scriptManager.WriteHiddenFields (writer);
+		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
 		postBackScriptRendered = false;
@@ -1784,6 +1785,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (!String.IsNullOrEmpty (_focusedControlID) || Form.SubmitDisabledControls) {
 
 			RequiresPostBackScript ();
+			ClientScript.RegisterWebFormClientScript ();
 
 			if (!String.IsNullOrEmpty (_focusedControlID)) {
 				ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",

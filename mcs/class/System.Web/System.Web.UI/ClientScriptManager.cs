@@ -138,6 +138,8 @@ namespace System.Web.UI
 				else
 					return GetPostBackEventReference (options.TargetControl, options.Argument);
 			}
+
+			RegisterWebFormClientScript ();
 			
 			if (options.ActionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
@@ -190,6 +192,7 @@ namespace System.Web.UI
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
 			page.RequiresPostBackScript ();
+			RegisterWebFormClientScript ();
 			
 			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"));
 		}
@@ -553,7 +556,10 @@ namespace System.Web.UI
 		{
 			ScriptEntry entry = scriptIncludes;
 			while (entry != null) {
-				writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+				if (!entry.Rendered) {
+					writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+					entry.Rendered = true;
+				}
 				entry = entry.Next;
 			}
 		}
@@ -642,6 +648,7 @@ namespace System.Web.UI
 			public string Key;
 			public string Script;
 			public ScriptEntry Next;
+			public bool Rendered;
 			 
 			public ScriptEntry (Type type, string key, string script)
 			{
