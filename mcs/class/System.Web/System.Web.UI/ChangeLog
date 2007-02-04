@@ -1,5 +1,11 @@
 2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs:
+	http://msdn2.microsoft.com/en-us/library/ms178141.aspx	 
+	LAMESPEC: on Callback IsPostBack is set to false, but true.
+
+2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs: 
 	VerifyRenderingInServerForm does not fire exception when IsCallback
 

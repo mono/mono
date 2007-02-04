@@ -1191,7 +1191,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 			else {
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
-				isPostBack = !isCallback;
+				// LAMESPEC: on Callback IsPostBack is set to false, but true.
+				//isPostBack = !isCallback;
+				isPostBack = true;
 			}
 		}
 		
