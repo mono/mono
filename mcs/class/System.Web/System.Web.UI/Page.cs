@@ -832,7 +832,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		requiresPostBackScript = true;
 #if TARGET_J2EE
 		if (IsPortletRender)
-			RegisterWebFormClientScript ();
+			ClientScript.RegisterWebFormClientScript ();
 #endif
 	}
 
