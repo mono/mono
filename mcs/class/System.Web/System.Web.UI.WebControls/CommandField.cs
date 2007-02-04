@@ -318,10 +318,9 @@ namespace System.Web.UI.WebControls {
 				base.InitializeCell (cell, cellType, rowState, rowIndex);
 		}
 		
-		DataControlButton CreateButton (string text, string image, string command, string arg)
+		Control CreateButton (string text, string image, string command, string arg)
 		{
-			DataControlButton c = new DataControlButton (Control, text, image, command, arg, false);
-			c.ButtonType = ButtonType;
+			IDataControlButton c = DataControlButton.CreateButton (ButtonType, Control, text, image, command, arg, false);
 			if (CausesValidation) {
 				if (command == DataControlCommands.UpdateCommandName || command == DataControlCommands.InsertCommandName) {
 					c.Container = null;
@@ -329,7 +328,7 @@ namespace System.Web.UI.WebControls {
 					c.ValidationGroup = ValidationGroup;
 				}
 			}
-			return c;
+			return (Control)c;
 		}
 		
 		void AddSeparator (DataControlFieldCell cell)

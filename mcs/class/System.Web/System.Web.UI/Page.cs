@@ -1634,7 +1634,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		if (_context == null)
 			return;
-
+#if NET_2_0
+		if (IsCallback)
+			return;
+#endif
 		if (!renderingForm)
 			throw new HttpException ("Control '" +
 						 control.ClientID +

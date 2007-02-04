@@ -123,25 +123,20 @@ namespace System.Web.UI.WebControls {
 			string index = rowIndex.ToString ();
 			
 			if (cellType == DataControlCellType.DataCell) {
-				DataControlButton btn = new DataControlButton (Control);
-				btn.CommandName = CommandName;
-				btn.CommandArgument = index;
 				
-				if (DataTextField != "") {
-					if ((rowState & DataControlRowState.Insert) == 0)
-						cell.DataBinding += new EventHandler (OnDataBindField);
-				}
-				else {
-					btn.Text = Text;
-					btn.ButtonType = ButtonType;
-					if (ButtonType == ButtonType.Image) btn.ImageUrl = ImageUrl;
-				}
+				IDataControlButton btn = DataControlButton.CreateButton (ButtonType, Control, Text, ImageUrl, CommandName, index, false);
+
 				if (CausesValidation) {
 					btn.Container = null;
 					btn.CausesValidation = true;
 					btn.ValidationGroup = ValidationGroup;
 				}
-				cell.Controls.Add (btn);
+				
+				if (DataTextField != "") {
+					if ((rowState & DataControlRowState.Insert) == 0)
+						cell.DataBinding += new EventHandler (OnDataBindField);
+				}
+				cell.Controls.Add ((Control) btn);
 			}
 			else
 				base.InitializeCell (cell, cellType, rowState, rowIndex);
@@ -150,10 +145,8 @@ namespace System.Web.UI.WebControls {
 		void OnDataBindField (object sender, EventArgs e)
 		{
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
-			DataControlButton btn = (DataControlButton) cell.Controls [0]; 
+			IDataControlButton btn = (IDataControlButton) cell.Controls [0]; 
 			btn.Text = FormatDataTextValue (GetBoundValue (cell.BindingContainer));
-			if (ButtonType == ButtonType.Image) btn.ImageUrl = ImageUrl;
-			btn.ButtonType = ButtonType;
 		}
 		
 		object GetBoundValue (Control controlContainer)
@@ -183,10 +176,12 @@ namespace System.Web.UI.WebControls {
 			field.Text = Text;
 		}
 
-		[MonoTODO ("Not implemented")]
+		// MSDN: The ValidateSupportsCallback method is a helper method used to determine 
+		// whether the controls contained in a BoundField object support callbacks. 
+		// This method has been implemented as an empty method (a method that does not 
+		// contain any code) to indicate that callbacks are supported.
 		public override void ValidateSupportsCallback ()
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

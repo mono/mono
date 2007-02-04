@@ -1,5 +1,18 @@
 2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Button.cs:
+	* ButtonField.cs:
+	* CommandField.cs:
+	* DataControlButton.cs:
+	* DataControlField.cs:
+	* ImageButton.cs:
+	* PagerSettings.cs:						
+	Internal classes are used in databound controls for buttons 
+	are derived from right types. It allows to have access to them by casting
+	to public types. This trick is used in one of starter kits of MS.
+
+2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Panel.cs: fixed: reverted r71441.
 	* TreeView.cs: used internal RegisterWebFormClientScript API 
 	to cause the relevant script be included.	

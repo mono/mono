@@ -37,163 +37,125 @@ using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
-	internal class DataControlButton: Button
+	internal interface IDataControlButton : IButtonControl
 	{
-		Control container;
-		
-		public DataControlButton (Control container)
+		Control Container { get; set;}
+		string ImageUrl { get;set;}
+		bool AllowCallback { get; set;}
+		ButtonType ButtonType { get;}
+	}
+	
+	internal class DataControlButton : Button, IDataControlButton
+	{
+		public static IDataControlButton CreateButton (ButtonType type, Control container, string text, string image, string command, string commandArg, bool allowCallback)
 		{
-			this.container = container;
-			CausesValidation = false;
+			IDataControlButton btn;
+
+			switch (type) {
+			case ButtonType.Link:
+				btn = new DataControlLinkButton ();
+				break;
+			case ButtonType.Image:
+				btn = new DataControlImageButton ();
+				btn.ImageUrl = image;
+				break;
+			default:
+				btn = new DataControlButton ();
+				break;
+			}
+
+			btn.Container = container;
+			btn.CommandName = command;
+			btn.CommandArgument = commandArg;
+			btn.Text = text;
+			btn.CausesValidation = false;
+			btn.AllowCallback = allowCallback;
+
+			return btn;
 		}
-		
-		public DataControlButton (Control container, string text, string image, string command, string commandArg, bool allowCallback)
-			: this (container)
-		{
-			Text = text;
-			ImageUrl = image;
-			CommandName = command;
-			CommandArgument = commandArg;
-			AllowCallback = allowCallback;
-		}
-		
+
+		Control _container;
+
 		public Control Container {
-			get { return container; }
-			set { container = value; }
+			get { return _container; }
+			set { _container = value; }
 		}
 
 		public string ImageUrl {
-			get {
-				object o = ViewState["iu"];
-				if (o != null) return (string) o;
-				return String.Empty;
-			}
-			set {
-				ViewState["iu"] = value;
-			}
+			get { return String.Empty; }
+			set { }
 		}
-		
+
 		public bool AllowCallback {
-			get {
-				object o = ViewState["ac"];
-				if (o != null) return (bool) o;
-				return true;
-			}
-			set {
-				ViewState["ac"] = value;
-			}
+			get { return ViewState.GetBool ("AllowCallback", true); }
+			set { ViewState ["AllowCallback"] = value; }
 		}
-		
-		public virtual ButtonType ButtonType {
-			get {
-				object ob = ViewState ["ButtonType"];
-				if (ob != null) return (ButtonType) ob;
-				return ButtonType.Link;
+
+		public ButtonType ButtonType {
+			get { return ButtonType.Button; }
+		}
+
+		public override bool UseSubmitBehavior {
+			get { return false; }
+			set { throw new NotSupportedException (); }
+		}
+
+		internal override string GetClientScriptEventReference ()
+		{
+			if (AllowCallback) {
+				ICallbackContainer ccner = Container as ICallbackContainer;
+				if (ccner != null)
+					return ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
 			}
-			set {
-				ViewState ["ButtonType"] = value;
-			}
+			return base.GetClientScriptEventReference ();
+		}
+
+		protected override PostBackOptions GetPostBackOptions ()
+		{
+			IPostBackContainer pcner = Container as IPostBackContainer;
+			if (pcner != null)
+				return pcner.GetPostBackOptions (this);
+			return base.GetPostBackOptions ();
+		}
+	}
+
+	internal class DataControlLinkButton : LinkButton, IDataControlButton
+	{
+		Control _container;
+
+		public Control Container {
+			get { return _container; }
+			set { _container = value; }
+		}
+
+		public string ImageUrl {
+			get { return String.Empty; }
+			set { }
+		}
+
+		public bool AllowCallback {
+			get { return ViewState.GetBool ("AllowCallback", true); }
+			set { ViewState ["AllowCallback"] = value; }
+		}
+
+		public ButtonType ButtonType {
+			get { return ButtonType.Link; }
 		}
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (CommandName.Length > 0 && ButtonType == ButtonType.Link) {
-				EnsureForeColor ();
+			EnsureForeColor ();
+			if (AllowCallback) {
+				ICallbackContainer ccner = Container as ICallbackContainer;
+				if (ccner != null)
+					OnClientClick = ClientScriptManager.EnsureEndsWithSemicolon (OnClientClick) + ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
 			}
 
-			if (CommandName.Length > 0 || CommandArgument.Length > 0 || ButtonType == ButtonType.Button)
-			{
-				string postScript = null;
-				string callScript = null;
-				PostBackOptions ops = null;
-
-				IPostBackContainer pcner = container as IPostBackContainer;
-				if (pcner != null) {
-					ops = pcner.GetPostBackOptions (this);
-					ops.RequiresJavaScriptProtocol = ButtonType == ButtonType.Link;
-				}
-				else
-					ops = GetPostBackOptions ();
-
-				postScript = Page.ClientScript.GetPostBackEventReference (ops, !Page.IsCallback);
-				
-				if (AllowCallback) {
-					ICallbackContainer ccner = container as ICallbackContainer;
-					if (ccner != null)
-						callScript = ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
-				}
-			
-				ControlStyle.AddAttributesToRender (writer);
-				
-				if (ButtonType == ButtonType.Image) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
-					if (callScript != null)
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
-					if (Text.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-					writer.RenderBeginTag (HtmlTextWriterTag.Input);
-					writer.RenderEndTag ();
-				}
-				if (ButtonType == ButtonType.Link) {
-					if (callScript != null) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-					}
-					writer.AddAttribute (HtmlTextWriterAttribute.Href, postScript);
-					writer.RenderBeginTag (HtmlTextWriterTag.A);
-					writer.Write (Text);
-					writer.RenderEndTag ();
-				}
-				if (ButtonType == ButtonType.Button) {
-					if (callScript != null)
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
-
-					writer.AddAttribute (HtmlTextWriterAttribute.Type, "button");
-					writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
-					writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
-					writer.RenderBeginTag (HtmlTextWriterTag.Input);
-					writer.RenderEndTag ();
-				}
-			}
-			else {
-				if (ImageUrl.Length > 0) {
-					ControlStyle.AddAttributesToRender (writer);
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
-					if (Text.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-					writer.RenderBeginTag (HtmlTextWriterTag.Img);
-					writer.RenderEndTag ();
-				}
-				else {
-					if (!ControlStyle.IsEmpty) {
-						ControlStyle.AddAttributesToRender (writer);
-					}
-					writer.RenderBeginTag (HtmlTextWriterTag.Span);
-					writer.Write (Text);
-					writer.RenderEndTag ();
-				}
-			}
-		}
-		
-		protected override PostBackOptions GetPostBackOptions () {
-			PostBackOptions options = new PostBackOptions (this);
-			options.Argument = "";
-			options.RequiresJavaScriptProtocol = ButtonType == ButtonType.Link;
-			options.ClientSubmit = true;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
-			if (options.PerformValidation)
-				options.ValidationGroup = ValidationGroup;
-
-			return options;
+			base.Render (writer);
 		}
 
-		private void EnsureForeColor () {
+		void EnsureForeColor ()
+		{
 			if (ForeColor != Color.Empty)
 				return;
 
@@ -203,10 +165,57 @@ namespace System.Web.UI.WebControls
 					ForeColor = wc.ForeColor;
 					break;
 				}
-				if (parent == container)
+				if (parent == Container)
 					break;
 			}
 		}
+
+		protected override PostBackOptions GetPostBackOptions ()
+		{
+			IPostBackContainer pcner = Container as IPostBackContainer;
+			if (pcner != null)
+				return pcner.GetPostBackOptions (this);
+			return base.GetPostBackOptions ();
+		}
+
+	}
+
+	internal class DataControlImageButton : ImageButton, IDataControlButton
+	{
+		Control _container;
+
+		public Control Container {
+			get { return _container; }
+			set { _container = value; }
+		}
+
+		public bool AllowCallback {
+			get { return ViewState.GetBool ("AllowCallback", true); }
+			set { ViewState ["AllowCallback"] = value; }
+		}
+
+		public ButtonType ButtonType {
+			get { return ButtonType.Image; }
+		}
+
+		internal override string GetClientScriptEventReference ()
+		{
+			if (AllowCallback) {
+				ICallbackContainer ccner = Container as ICallbackContainer;
+				if (ccner != null)
+					return ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
+			}
+			return base.GetClientScriptEventReference ();
+		}
+
+		protected override PostBackOptions GetPostBackOptions ()
+		{
+			IPostBackContainer pcner = Container as IPostBackContainer;
+			if (pcner != null)
+				return pcner.GetPostBackOptions (this);
+			return base.GetPostBackOptions ();
+		}
+
 	}
 }
 

@@ -180,8 +180,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (Page != null) {
-				PostBackOptions options = GetPostBackOptions ();
-				onclick += Page.ClientScript.GetPostBackEventReference (options, true);
+				onclick += GetClientScriptEventReference ();
 			}
 
 			if (onclick.Length > 0)
@@ -209,6 +208,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		internal virtual string GetClientScriptEventReference ()
+		{
+			PostBackOptions options = GetPostBackOptions ();
+			return Page.ClientScript.GetPostBackEventReference (options, true);
+		}
+
 		protected virtual PostBackOptions GetPostBackOptions () 
 		{
 			PostBackOptions options = new PostBackOptions (this);

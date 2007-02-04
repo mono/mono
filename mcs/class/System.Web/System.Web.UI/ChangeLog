@@ -1,5 +1,10 @@
 2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: 
+	VerifyRenderingInServerForm does not fire exception when IsCallback
+
+2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs:
 	* ClientScriptManager.cs:
 	fixed RegisterClientScriptInclude: all includes that was registered before 

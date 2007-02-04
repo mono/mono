@@ -326,11 +326,16 @@ namespace System.Web.UI.WebControls
 
 		TableCell CreateCell (string text, string image, string command, string argument) {
 			TableCell cell = new TableCell ();
-			DataControlButton button = new DataControlButton (ctrl, text, image, command, argument, true);
 
-			if (!String.IsNullOrEmpty(image))
-				button.ButtonType = ButtonType.Image;
-			
+			Control button;
+			if (String.IsNullOrEmpty (command)) {
+				Label l = new Label ();
+				l.Text = text;
+				button = l;
+			}
+			else
+				button = (Control)DataControlButton.CreateButton (String.IsNullOrEmpty (image) ? ButtonType.Link : ButtonType.Image, ctrl, text, image, command, argument, true);
+
 			cell.Controls.Add (button);
 			return cell;
 		}
