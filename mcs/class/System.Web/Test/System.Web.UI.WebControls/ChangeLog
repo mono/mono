@@ -1,5 +1,9 @@
 2007-02-04  yonik <yonik@mainsoft.com>
 
+     * SqlDataSourceTest.cs: Add new tests  
+
+2007-02-04  yonik <yonik@mainsoft.com>
+
      * ObjectDataSourceTest.cs: Add new tests  
 
 2007-01-30  Adar Wesley <adarw@mainsofot.com>
