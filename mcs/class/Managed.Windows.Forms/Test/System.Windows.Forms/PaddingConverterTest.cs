@@ -55,27 +55,26 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.CanConvertTo (null, typeof (float)), "3");
 			Assert.IsFalse (c.CanConvertTo (null, typeof (object)), "4");
 		}
-
+		
 		[Test]
-		public void ConvertTo ()
+		public void RoundTrip ()
 		{
-			PaddingConverter pc = new PaddingConverter ();
+			Padding p1 = new Padding (1, 2, 3, 4);
+			Padding p2 = new Padding (1);
+			Padding p3 = new Padding ();
 
-			Assert.AreEqual ("1, 2, 3, 4", (string)pc.ConvertTo (new Padding (1, 2, 3, 4), typeof (string)), "A1");
-			Assert.AreEqual ("1, 1, 1, 1", (string)pc.ConvertTo (new Padding (1), typeof (string)), "A2");
-			Assert.AreEqual ("0, 0, 0, 0", (string)pc.ConvertTo (Padding.Empty, typeof (string)), "A3");
+			Assert.AreEqual (p1, RoundTripPadding (p1), "B1");
+			Assert.AreEqual (p2, RoundTripPadding (p2), "B2");
+			Assert.AreEqual (p3, RoundTripPadding (p3), "B3");
+			
 		}
-
-		[Test]
-		public void ConvertFrom ()
+		
+		private Padding RoundTripPadding (Padding p)
 		{
 			PaddingConverter pc = new PaddingConverter ();
-
-			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom ("1, 2, 3, 4"), "A1");
-			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom ("1,2,3,4"), "A2");
-			Assert.AreEqual (new Padding (1, 2, 3, 4), pc.ConvertFrom ("1,  2,  3,  4"), "A3");
-			Assert.AreEqual (new Padding (1), pc.ConvertFrom ("1, 1, 1, 1"), "A4");
-			Assert.AreEqual (new Padding (), pc.ConvertFrom ("0, 0, 0, 0"), "A5");
+			
+			string s = (string)pc.ConvertTo (p, typeof (string));
+			return (Padding)pc.ConvertFrom (s);
 		}
 		
 		[Test]
