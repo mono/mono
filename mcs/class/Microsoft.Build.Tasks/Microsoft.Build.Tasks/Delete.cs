@@ -36,13 +36,13 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Tasks {
 	public sealed class Delete : TaskExtension {
 	
-		ITaskItem[]	deletedFiles;
-		ITaskItem[]	files;
+		ITaskItem []	deletedFiles;
+		ITaskItem []	files;
 		bool		treatErrorsAsWarnings;
 		
 		public Delete ()
 		{
-			this.treatErrorsAsWarnings = false;
+			treatErrorsAsWarnings = false;
 		}
 
 		public override bool Execute ()
@@ -85,41 +85,29 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 		
-		private void LogException (Exception ex)
+		void LogException (Exception ex)
 		{
-			if (treatErrorsAsWarnings == true)
+			if (treatErrorsAsWarnings)
 				Log.LogWarningFromException (ex);
 			else
 				Log.LogErrorFromException (ex);
 		}
 
 		[Output]
-		public ITaskItem[] DeletedFiles {
-			get {
-				return deletedFiles;
-			}
-			set {
-				deletedFiles = value;
-			}
+		public ITaskItem [] DeletedFiles {
+			get { return deletedFiles; }
+			set { deletedFiles = value; }
 		}
 
 		[Required]
-		public ITaskItem[] Files {
-			get {
-				return files;
-			}
-			set {
-				files = value;
-			}
+		public ITaskItem [] Files {
+			get { return files; }
+			set { files = value; }
 		}
 
 		public bool TreatErrorsAsWarnings {
-			get {
-				return treatErrorsAsWarnings;
-			}
-			set {
-				treatErrorsAsWarnings = value;
-			}
+			get { return treatErrorsAsWarnings; }
+			set { treatErrorsAsWarnings = value; }
 		}
 	}
 }
