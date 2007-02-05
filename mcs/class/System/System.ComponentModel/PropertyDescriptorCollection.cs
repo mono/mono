@@ -143,17 +143,6 @@ namespace System.ComponentModel
 				throw new ArgumentNullException ("name");
 			}
 
-#if TARGET_JVM
-			if (!ignoreCase)
-			{
-				foreach (PropertyDescriptor p in properties) 
-				{
-					if (String.Equals (name, p.Name))
-						return p;				
-				}
-				return null;
-			}
-#endif
 			foreach (PropertyDescriptor p in properties) {
 				if (0 == String.Compare (name, p.Name, ignoreCase))
 					return p;
