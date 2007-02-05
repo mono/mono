@@ -90,6 +90,7 @@ common_dirs := \
 default_dirs := FirebirdSql.Data.Firebird
 
 net_2_0_dirs := \
+	System.Core			\
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
