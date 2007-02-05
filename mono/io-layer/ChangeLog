@@ -1,3 +1,11 @@
+2007-01-26  Dick Porter  <dick@ximian.com>
+
+	* socket-private.h: 
+	* sockets.c (_wapi_getsockopt): Windows seems to not reset
+	SO_ERROR values when they're read, contrary to the documentation.
+	Fixes the new issues raised in bug 79878 (example in C showing
+	winsock behaviour attached to that bug.)
+
 2007-01-15 Mark Mason <mason@broadcom.com
 
 	* atomic.h: add locking primitives for MIPS.

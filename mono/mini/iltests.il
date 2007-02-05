@@ -1258,4 +1258,99 @@ COND:   ldloc.0
 		ldc.i4.0
         ret
     }
+
+	// This belongs to basic-float.cs, but its hard to tell mcs/csc to
+	// generate the non .un version of the opcodes
+    .method private static  hidebysig 
+           default int32 test_4_float_branch_nan ()  cil managed 
+    {
+        // Method begins at RVA 0x27a4
+	// Code size 74 (0x4a)
+	.maxstack 2
+	.locals init (
+		float64	V_0,
+		float64	V_1,
+		int32	V_2)
+	IL_0000:  ldc.r8 (00 00 00 00 00 00 f8 ff)
+	IL_0009:  stloc.0 
+	IL_000a:  ldc.r8 1.
+	IL_0013:  stloc.1 
+	IL_0014:  ldc.i4.0 
+	IL_0015:  stloc.2 
+	IL_0016:  ldloc.0 
+	IL_0017:  ldloc.1 
+	IL_0018:  bge.s IL_001a
+
+				br L1
+	IL_001a:  ldloc.2 
+	IL_001b:  ret 
+	L1:
+	IL_001c:  ldloc.2 
+	IL_001d:  ldc.i4.1 
+	IL_001e:  add 
+	IL_001f:  stloc.2 
+	IL_0020:  ldloc.0 
+	IL_0021:  ldloc.1 
+	IL_0022:  ble.s IL_002e
+				br L2
+	IL_002e:  ldloc.2 
+	IL_002f:  ret 
+	L2:
+	IL_0030:  ldloc.2 
+	IL_0031:  ldc.i4.1 
+	IL_0032:  add 
+	IL_0033:  stloc.2 
+	IL_0034:  ldloc.0 
+	IL_0035:  ldloc.1 
+	IL_0036:  blt.s IL_0038
+				br L3		
+	IL_0038:  ldloc.2 
+	IL_0039:  ret 
+	L3:
+	IL_003a:  ldloc.2 
+	IL_003b:  ldc.i4.1 
+	IL_003c:  add 
+	IL_003d:  stloc.2 
+	IL_003e:  ldloc.0 
+	IL_003f:  ldloc.1 
+	IL_0040:  bgt.s IL_0042
+				br L4
+	IL_0042:  ldloc.2 
+	IL_0043:  ret 
+	L4:
+	IL_0044:  ldloc.2 
+	IL_0045:  ldc.i4.1 
+	IL_0046:  add 
+	IL_0047:  stloc.2 
+	IL_0048:  ldloc.2 
+	IL_0049:  ret 
+    } // end of method Tests::test_5_float_branch_nan
+
+    .method private static  hidebysig
+           default void regress_80622_inner (object x)  cil managed
+    {
+		.locals (unsigned int8 i)
+        // Method begins at RVA 0x2050
+        // Code size 14 (0xe)
+        .maxstack 8
+        IL_1000:  ldarg.0
+        IL_1001:  unbox unsigned int8
+        IL_1006:  ldobj unsigned int8
+        IL_000b:  conv.ovf.i4.un
+        IL_000c:  pop
+        IL_000d:  ret
+    }
+
+    // method line 2
+    .method private static  hidebysig
+           default int32 test_0_regress_80622 ()  cil managed
+    {
+        .maxstack 8
+        IL_0000:  ldc.i4 255
+        IL_0005:  box unsigned int8
+        IL_000a:  call void class Tests::regress_80622_inner (object)
+		ldc.i4.0
+        IL_000f:  ret
+    }
+
 }

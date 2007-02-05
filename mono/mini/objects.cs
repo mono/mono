@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -1029,6 +1030,15 @@ ncells ) {
 		new Bar ();
 
 		return 0;
+	}
+
+	static unsafe int test_97_negative_index () {
+		char[] arr = new char[] {'a', 'b'};
+		fixed (char *p = arr) {
+			char *i = p + 2;
+			char a = i[-2];
+			return a;
+		}
 	}
 }
 

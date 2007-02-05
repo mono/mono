@@ -1,3 +1,31 @@
+
+Fri Jan 26 12:49:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.h, loader.c, metadata-internals.h: use mono-dl instead of
+	gmodule.
+
+Fri Jan 26 12:00:45 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: made the code moving-GC safe.
+
+Thu Jan 25 20:31:41 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, boehm-gc.c, class-internals.h, class.c,
+	debug-mono-symfile.c, domain.c, locales.c, marshal.c, metadata.c,
+	monitor.c, mono-debug.c, mono-debug.h, object.c, profiler.c:
+	warning cleanup.
+	* reflection.c: warning cleanup, some threading and moving GC fixes.
+
+Thu Jan 25 16:22:36 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, loader.c: create the needed Set/Get/Address array methods
+	as well as the .ctors in mono_class_init (), fixes bug #80567.
+
+2007-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): When force-aligning a field, make sure
+	we doesn't decrease its alignment. Should fix the sparc build.
+
 2007-01-24  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c

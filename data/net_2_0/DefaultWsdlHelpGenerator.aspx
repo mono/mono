@@ -16,6 +16,7 @@
 <%@ Import Namespace="System.Xml.Schema" %>
 <%@ Import Namespace="System.Web.Services" %>
 <%@ Import Namespace="System.Web.Services.Description" %>
+<%@ Import Namespace="System.Web.Services.Configuration" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Globalization" %>
@@ -25,6 +26,7 @@
 <%@ Import Namespace="System.CodeDom.Compiler" %>
 <%@ Import Namespace="Microsoft.CSharp" %>
 <%@ Import Namespace="Microsoft.VisualBasic" %>
+<%@ Import Namespace="System.Text" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Import Namespace="System.Security.Cryptography.X509Certificates" %>
 <%@ Assembly name="System.Web.Services" %>
@@ -123,7 +125,10 @@ void BuildOperationInfo ()
 		CurrentOperationProtocols += (string) prots[n];
 	}
 	
-	CurrentOperationSupportsTest = prots.Contains ("HttpGet") || prots.Contains ("HttpPost");
+	WebServiceProtocols testProtocols = WebServiceProtocols.HttpGet | WebServiceProtocols.HttpPost;
+	if (Context.Request.IsLocal)
+	    testProtocols |= WebServiceProtocols.HttpPostLocalhost;
+	CurrentOperationSupportsTest = (WebServicesSection.Current.EnabledProtocols & testProtocols) != 0;
 
 	// Operation format
 	OperationBinding obin = FindOperation (binding, CurrentOperationName);
@@ -354,7 +359,19 @@ string GetTestResult ()
 	{
 		string url = location + "/" + CurrentOperationName;
 		Uri uri = new Uri (url);
-		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url + "?" + qs);
+		WebRequest req;
+		if (CurrentOperationProtocols.IndexOf ("HttpGet") < 0) {
+		    req = WebRequest.Create (url);
+		    req.Method="POST";
+		    if (!String.IsNullOrEmpty (qs)) {
+		        byte [] postBuffer = Encoding.UTF8.GetBytes (qs);
+		        req.ContentLength = postBuffer.Length;
+		        using (Stream requestStream = req.GetRequestStream())
+		            requestStream.Write (postBuffer, 0, postBuffer.Length);
+		    }
+		}
+		else
+		    req = WebRequest.Create (url + "?" + qs);
 		if (url.StartsWith ("https:"))
 			ServicePointManager.CertificatePolicy = new NoCheckCertificatePolicy ();
 		HttpCookieCollection cookies = Request.Cookies;
