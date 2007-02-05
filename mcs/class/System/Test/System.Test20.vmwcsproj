@@ -159,6 +159,9 @@
     <Compile Include="System.Collections.Specialized\BitVector32Test.cs" />
     <Compile Include="System.Collections.Specialized\HybridDictionaryTest.cs" />
     <Compile Include="System.Collections.Specialized\ListDictionaryTest.cs" />
+    <Compile Include="System.Collections.Specialized\NameObjectCollectionBaseTest.cs" />
+    <Compile Include="System.Collections.Specialized\NameValueCollectionTest.cs" />
+    <Compile Include="System.Collections.Specialized\OrderedDictionaryTest.cs" />
     <Compile Include="System.Collections.Specialized\StringCollectionTest.cs" />
     <Compile Include="System.Collections.Specialized\StringDictionaryTest.cs" />
     <Compile Include="System.ComponentModel.Design.Serialization\InstanceDescriptorTest.cs" />
@@ -242,6 +245,10 @@
     <Compile Include="System.Net\WebHeaderCollectionTest.cs" />
     <Compile Include="System.Net\WebProxyTest.cs" />
     <Compile Include="System.Net\WebRequestTest.cs" />
+    <Compile Include="System.Security.Cryptography\AsnEncodedDataTest.cs" />
+    <Compile Include="System.Security.Cryptography\OidCollectionTest.cs" />
+    <Compile Include="System.Security.Cryptography\OidEnumeratorTest.cs" />
+    <Compile Include="System.Security.Cryptography\OidTest.cs" />
     <Compile Include="System.Security.Permissions\ResourcePermissionBaseEntryTest.cs" />
     <Compile Include="System.Text.RegularExpressions\GroupTest.cs" />
     <Compile Include="System.Text.RegularExpressions\MatchTest.cs" />
