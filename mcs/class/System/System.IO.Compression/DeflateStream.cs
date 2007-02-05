@@ -45,7 +45,6 @@ namespace System.IO.Compression {
 			Z_BLOCK         = 5,
 		};
 
-#if !TARGET_JVM
 		[DllImport("MonoPosixHelper")]
 		static extern IntPtr create_z_stream(CompressionMode compress, bool gzip);
 		[DllImport("MonoPosixHelper")]
@@ -64,7 +63,6 @@ namespace System.IO.Compression {
 		static extern ZReturnConsts z_stream_inflate(IntPtr z_stream, ref int avail_out);
 		[DllImport("MonoPosixHelper")]
 		static extern ZReturnConsts z_stream_deflate(IntPtr z_stream, ZFlushConsts flush, IntPtr next_out, ref int avail_out);
-#endif
 		delegate int  ReadMethod (byte[] array, int offset, int count);
 		delegate void WriteMethod(byte[] array, int offset, int count);
 
