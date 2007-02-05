@@ -34,18 +34,14 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	[ComVisible (false)]
 	public sealed class SemaphoreAuditRule
-#if !TARGET_JVM
 		: AuditRule
-#endif
 	{
 		SemaphoreRights semaphoreRights;
 		
 		public SemaphoreAuditRule (IdentityReference identity,
 					   SemaphoreRights semaphoreRights,
 					   AuditFlags flags)
-#if !TARGET_JVM
 			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
-#endif
 		{
 			this.semaphoreRights = semaphoreRights;
 		}
