@@ -54,6 +54,12 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.IsFalse (RequiresDataBinding);
 			}
 
+			protected override void PerformDataBinding (IEnumerable data)
+			{
+				Assert.IsFalse (RequiresDataBinding);
+				base.PerformDataBinding (data);
+			}
+
 			public void DoValidateDataSource (object dataSource)
 			{
 				ValidateDataSource (dataSource);

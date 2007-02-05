@@ -210,7 +210,6 @@ namespace System.Web.UI.WebControls {
 			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
 
 			// The PerformDataBinding method has completed.
-			RequiresDataBinding = false;
 			MarkAsDataBound ();
 			
 			// Raise the DataBound event.
@@ -226,6 +225,7 @@ namespace System.Web.UI.WebControls {
 			}
 			// The PerformDataBinding method binds the data in the  
 			// retrievedData collection to elements of the data-bound control.
+			RequiresDataBinding = false;
 			PerformDataBinding (data);
 		}
 		
