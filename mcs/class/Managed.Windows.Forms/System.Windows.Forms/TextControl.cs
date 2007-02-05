@@ -3436,7 +3436,7 @@ namespace System.Windows.Forms {
 			// Count the lines in the middle
 
 			for (i = 1; i < line.line_no; i++) {
-				length += GetLine(i).text.Length + crlf_size;
+				length += GetLine(i).text.Length + (line.soft_break ? 0 : crlf_size);
 			}
 
 			length += pos;
@@ -3466,7 +3466,7 @@ namespace System.Windows.Forms {
 
 				if (start < end) {
 					for (i = start; i < end; i++) {
-						length += GetLine(i).text.Length + crlf_size;
+						length += GetLine(i).text.Length + (line.soft_break ? 0 : crlf_size);
 					}
 				}
 

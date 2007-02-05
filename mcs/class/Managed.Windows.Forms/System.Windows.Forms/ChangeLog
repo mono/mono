@@ -1,5 +1,9 @@
 2007-02-05  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Don't have crlfs when we are non multiline.
+
+2007-02-05  Jackson Harper  <jackson@ximian.com>
+
 	* X11Keyboard.cs: BACK+CTRL gets a special char code.
 
 2007-02-03  Rolf Bjarne Kvinge <RKvinge@novell.com> 
