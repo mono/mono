@@ -58,6 +58,8 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 
 #define MONO_ARCH_SIGNAL_STACK_SIZE (64 * 1024)
 
+#define MONO_ARCH_CPU_SPEC x86_desc
+
 #define MONO_MAX_IREGS 8
 #define MONO_MAX_FREGS 8
 
