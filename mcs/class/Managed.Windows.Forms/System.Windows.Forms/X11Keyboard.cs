@@ -337,6 +337,12 @@ namespace System.Windows.Forms {
 					res = 0;
 				}
 
+				if (keysym == (int) TtyKeys.XK_BackSpace && (key_state_table [(int) VirtualKeys.VK_CONTROL] & 0x80) != 0) {
+					buffer = new string (new char [] { (char) 127 });
+
+					return 1;
+				}
+
 				if (res != 0) {
 					buffer = lookup_buffer.ToString ();
 					res = buffer.Length;
