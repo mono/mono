@@ -1,3 +1,9 @@
+2007-02-05 Adar Wesley <adarw@mainsoft.com>
+
+        * PasswordRecoveryTest.cs: Fixed tests.  This fix required adding
+        the section mailSettings to Web.config.  This in turn requires the
+        section handler be registered in the active machine.config.
+
 2007-02-04  yonik <yonik@mainsoft.com>
 
      * SqlDataSourceTest.cs: Add new tests  

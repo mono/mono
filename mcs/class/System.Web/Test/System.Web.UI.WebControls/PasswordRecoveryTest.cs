@@ -125,18 +125,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 	[Serializable]
 	[TestFixture]
-	[Category("NotWorking")]
-	//
-	// This  uses CopyResource to Web.config, and until WebTest is not fixed to create
-	// per-test domains, this will break.
-	//
 	public class PasswordRecoveryTest
 	{
-		[TestFixtureSetUp]
-		public void CopyTestResources ()
-		{
-			WebTest.CopyResource (GetType (), "WebControl.config", "Web.config");
-		}
+		// Merged required Web.config settings into NunitWeb/Resources/Web.config
 
 		[SetUp]
 		public void TestSetup ()
@@ -153,7 +144,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual ("Answer:", w.AnswerLabelText, "AnswerLabelText");
 			Assert.AreEqual ("Answer is required.", w.AnswerRequiredErrorMessage, "AnswerRequiredErrorMessage");
-			//Assert.IsFalse (w.AutoGeneratePassword, "AutoGeneratePassword");
 			Assert.AreEqual ("Your attempt to retrieve your password was not successful. Please try again.", w.GeneralFailureText, "CompleteSuccessText");
 			Assert.AreEqual (string.Empty, w.HelpPageIconUrl, "HelpPageIconUrl");
 			Assert.AreEqual (string.Empty, w.HelpPageText, "HelpPageText");
@@ -450,13 +440,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			e.Handled = true;
 		}
 
-		// TODO:
-		// ValidatorTextStyle
-		// ErrorMessageStyle
+		// TODO: ValidatorTextStyle, ErrorMessageStyle
+
 		[Test]
-		[Category ("NotDotNet")]
+		[Category ("NotDotNet")]  // MS does not call GetPassword on the FakeProvider
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GetPasswordTest ()
 		{
 			PageInvoker pi = PageInvoker.CreateOnLoad (new PageDelegate (StylesRenderTestInit));
@@ -477,25 +465,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			test.Request = fr;
 			html = test.Run ();
 
-//6) MonoTests.System.Web.UI.WebControls.PasswordRecoveryTest.GetPasswordTest : System.Xml.XmlException : comments cannot contain '--'  Line 40, position 33.^M
-//  at Mono.Xml2.XmlTextReader.ReadComment () [0x000b4] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader.cs:2279
-//  at Mono.Xml2.XmlTextReader.ReadDeclaration () [0x00031] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader.cs:2223
-//  at Mono.Xml2.XmlTextReader.ReadContent () [0x0012f] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader.cs:1273
-//  at Mono.Xml2.XmlTextReader.ReadContent () [0x00155] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader.cs:1286
-//  at Mono.Xml2.XmlTextReader.Read () [0x00125] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader.cs:605
-//  at System.Xml.XmlTextReader.Read () [0x0006d] in /home/cvs/mcs/class/System.XML/System.Xml/XmlTextReader2.cs:551
-//  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00364] in /home/cvs/mcs/class/System.XML/System.Xml/XmlDocument.cs:976
-//  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00195] in /home/cvs/mcs/class/System.XML/System.Xml/XmlDocument.cs:904
-//  at System.Xml.XmlDocument.ReadNode (System.Xml.XmlReader reader) [0x00033] in /home/cvs/mcs/class/System.XML/System.Xml/XmlDocument.cs:823
-//  at System.Xml.XmlDocument.Load (System.Xml.XmlReader xmlReader) [0x00019] in /home/cvs/mcs/class/System.XML/System.Xml/XmlDocument.cs:693
-//  at System.Xml.XmlDocument.LoadXml (System.String xml) [0x00023] in /home/cvs/mcs/class/System.XML/System.Xml/XmlDocument.cs:716
-//  at MonoTests.SystemWeb.Framework.FormRequest.ExtractFormAndHiddenControls (MonoTests.SystemWeb.Framework.Response response, System.String formId) [0x00033] in /home/cvs/mcs/class/System.Web/Test/mainsoft/NunitWeb/NunitWeb/FormRequest.cs:55
-//  at MonoTests.SystemWeb.Framework.FormRequest..ctor (MonoTests.SystemWeb.Framework.Response response, System.String formId) [0x00011] in /home/cvs/mcs/class/System.Web/Test/mainsoft/NunitWeb/NunitWeb/FormRequest.cs:31
-//  at MonoTests.System.Web.UI.WebControls.PasswordRecoveryTest.GetPasswordTest () [0x000c8] in /home/cvs/mcs/class/System.Web/Test/System.Web.UI.WebControls/PasswordRecoveryTest.cs:474
-//  at <0x00000> <unknown method>
-//  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
-//  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00056] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
-//
 			FormRequest fr2 = new FormRequest (test.Response, "form1");
 
 			fr2.Controls.Add (new BaseControl (GetDecoratedId (html, "Answer"), "heh"));
