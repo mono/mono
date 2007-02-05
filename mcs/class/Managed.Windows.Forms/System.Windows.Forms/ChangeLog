@@ -3,6 +3,8 @@
 	* TreeView.cs: We need to check scrollbar visibility when window
 	visibility is updated, because non visible trees don't ever add
 	scrollbars.
+	* Cursor.cs: We want the override cursor to be reset to NULL when
+	we set current cursor to the default cursor.
 
 2007-02-05  Jackson Harper  <jackson@ximian.com>
 

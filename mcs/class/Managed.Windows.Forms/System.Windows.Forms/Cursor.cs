@@ -200,7 +200,7 @@ namespace System.Windows.Forms {
 			set {
 				if (current != value) {
 					current = value;
-					if (current == null){
+					if (current == null || current == Cursors.Default){
 						// FIXME - define and set empty cursor
 						XplatUI.OverrideCursor(IntPtr.Zero);
 					} else
