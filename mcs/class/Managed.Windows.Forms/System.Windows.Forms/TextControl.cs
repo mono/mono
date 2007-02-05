@@ -1864,7 +1864,8 @@ namespace System.Windows.Forms {
 
 			while (line_no <= end) {
 				line = GetLine (line_no);
-
+				float line_y = line.Y - viewport_y;
+				
 				tag = line.tags;
 				if (!calc_pass) {
 					text = line.text;
@@ -1901,8 +1902,7 @@ namespace System.Windows.Forms {
 
 						g.FillRectangle (hilight,
 								line.widths [line_selection_start - 1] + line.align_shift - viewport_x, 
-								line.Y - viewport_y, 
-								line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
+								line_y, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
 								line.height);
 					}
 				}
@@ -1922,9 +1922,8 @@ namespace System.Windows.Forms {
 					}
 
 					if (tag.back_color != null) {
-						Console.WriteLine ("TAG BACK COLOR:   {0}", tag.back_color.Color);
 						g.FillRectangle (tag.back_color, tag.X + line.align_shift - viewport_x,
-								line.Y + tag.shift - viewport_y, tag.width, line.height);
+								line_y + tag.shift, tag.width, line.height);
 					}
 
 					tag_brush = tag.color;
@@ -1957,7 +1956,7 @@ namespace System.Windows.Forms {
 
 						tag.Draw (g, current_brush,
 								line.widths [old_tag_pos - 1] + line.align_shift - viewport_x,
-								line.Y + tag.shift  - viewport_y,
+								line_y + tag.shift,
 								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos),
 								text.ToString() );
 					}
@@ -3466,7 +3465,8 @@ namespace System.Windows.Forms {
 
 				if (start < end) {
 					for (i = start; i < end; i++) {
-						length += GetLine(i).text.Length + (line.soft_break ? 0 : crlf_size);
+						Line line = GetLine (i);
+						length += line.text.Length + (line.soft_break ? 0 : crlf_size);
 					}
 				}
 
