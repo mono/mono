@@ -1,3 +1,8 @@
+2007-02-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BaseValidator.cs: refactored RegisterValidatorCommonScript to use
+	RegisterClientScriptInclude instead of RegisterClientScriptBlock
+
 2007-02-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControl.cs:
