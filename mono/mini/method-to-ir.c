@@ -10047,6 +10047,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge the stack merge stuff.
  * - merge the soft float support.
  * - merge r68207.
+ * - merge 71065.
  * - merge the mips conditional changes.
  * - use the op_ opcodes in the old JIT as well.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
@@ -10059,7 +10060,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 71000.
+ * - LAST MERGE: 71200.
  */
 
 /*

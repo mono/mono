@@ -1,16 +1,13 @@
-2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+2007-01-15  Miguel de Icaza  <miguel@novell.com>
 
-	* interlocked-2.2.cs: Fix problem with previous change.
-	
-	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
+	* load-missing.il: Add test for missing assembly reference in
+	field reference;
 
-2006-06-24  Zoltan Varga  <vargaz@gmail.com>
+	Add test for missing type in newobj call.
 
-	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
+	Add test for missing type reference in a parameter.
 
-2006-05-20  Zoltan Varga  <vargaz@gmail.com>
-
-	* libtest.c: Fix merge problem.
+	Add test for missing assembly in method call.
 
 2007-01-11  Jonathan Chambers  <joncham@gmail.com>
 

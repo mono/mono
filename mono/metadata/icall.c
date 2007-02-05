@@ -692,27 +692,17 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoAr
 {
 	MonoClass *klass = array->obj.vtable->klass;
 	guint32 size = mono_array_element_size (klass);
-	int i;
 
-	MONO_ARCH_SAVE_REGS;
-
-	if (array->bounds == NULL)
-		size *= array->max_length;
-	else
-		for (i = 0; i < klass->rank; ++i) 
-			size *= array->bounds [i].length;
-
-	memcpy (mono_array_addr (array, char, 0), field_handle->data, size);
+	size *= array->max_length;
 
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 #define SWAP(n) {\
-	gint i; \
-	guint ## n tmp; \
 	guint ## n *data = (guint ## n *) mono_array_addr (array, char, 0); \
+	guint ## n *src = (guint ## n *) field_handle->data; \
+	guint ## n *end = (guint ## n *)((char*)src + size); \
 \
-	for (i = 0; i < size; i += n/8, data++) { \
-		tmp = read ## n (data); \
-		*data = tmp; \
+	for (; src < end; data++, src++) { \
+		*data = read ## n (src); \
 	} \
 }
 
@@ -726,14 +716,32 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoAr
 		break;
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4:
+	case MONO_TYPE_R4:
 		SWAP (32);
 		break;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
+	case MONO_TYPE_R8:
 		SWAP (64);
 		break;
+	default:
+		memcpy (mono_array_addr (array, char, 0), field_handle->data, size);
+		break;
 	}
-		 
+#else
+	memcpy (mono_array_addr (array, char, 0), field_handle->data, size);
+#ifdef ARM_FPU_FPA
+	if (klass->element_class->byval_arg.type == MONO_TYPE_R8) {
+		gint i;
+		double tmp;
+		double *data = (double*)mono_array_addr (array, double, 0);
+
+		for (i = 0; i < size; i++, data++) {
+			readr8 (data, &tmp);
+			*data = tmp;
+		}
+	}
+#endif
 #endif
 }
 

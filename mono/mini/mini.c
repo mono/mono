@@ -4116,6 +4116,73 @@ can_access_method (MonoMethod *method, MonoMethod *called)
 }
 
 /*
+ * Check that the IL instructions at ip are the array initialization
+ * sequence and return the pointer to the data and the size.
+ */
+static const char*
+initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, MonoInst *newarr, int *out_size)
+{
+	/*
+	 * newarr[System.Int32]
+	 * dup
+	 * ldtoken field valuetype ...
+	 * call void class [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::InitializeArray(class [mscorlib]System.Array, valuetype [mscorlib]System.RuntimeFieldHandle)
+	 */
+	if (ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
+		MonoClass *klass = newarr->inst_newa_class;
+		guint32 token = read32 (ip + 7);
+		guint32 rva, field_index;
+		const char *data_ptr;
+		int size = 0;
+		MonoMethod *cmethod;
+
+		if (newarr->inst_newa_len->opcode != OP_ICONST)
+			return NULL;
+		cmethod = mini_get_method (method, token, NULL, NULL);
+		if (strcmp (cmethod->name, "InitializeArray") || strcmp (cmethod->klass->name, "RuntimeHelpers") || cmethod->klass->image != mono_defaults.corlib)
+			return NULL;
+		switch (mono_type_get_underlying_type (&klass->byval_arg)->type) {
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+			size = 1; break;
+		/* we need to swap on big endian, so punt. Should we handle R4 and R8 as well? */
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+			size = 2; break;
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_R4:
+			size = 4; break;
+		case MONO_TYPE_R8:
+#ifdef ARM_FPU_FPA
+			return NULL; /* stupid ARM FP swapped format */
+#endif
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+			size = 8; break;
+#endif
+		default:
+			return NULL;
+		}
+		size *= newarr->inst_newa_len->inst_c0;
+		*out_size = size;
+		/*g_print ("optimized in %s: size: %d, numelems: %d\n", method->name, size, newarr->inst_newa_len->inst_c0);*/
+		field_index = read32 (ip + 2) & 0xffffff;
+		mono_metadata_field_info (method->klass->image, field_index - 1, NULL, &rva, NULL);
+		data_ptr = mono_image_rva_map (method->klass->image, rva);
+		/*g_print ("field: 0x%08x, rva: %d, rva_ptr: %p\n", read32 (ip + 2), rva, data_ptr);*/
+		/* for aot code we do the lookup on load */
+		if (aot && data_ptr)
+			return GUINT_TO_POINTER (rva);
+		return data_ptr;
+	}
+	return NULL;
+}
+
+/*
  * mono_method_to_ir: translates IL into basic blocks containing trees
  */
 static int
@@ -6707,11 +6774,40 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if (1) {
 				MonoInst *store, *temp, *load;
+				const char *data_ptr;
+				int data_size = 0;
 				--sp;
 				temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
 				NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
 				store->cil_code = ins->cil_code;
 				MONO_ADD_INS (bblock, store);
+				/* 
+				 * we inline/optimize the initialization sequence if possible.
+				 * we should also allocate the array as not cleared, since we spend as much time clearing to 0 as initializing
+				 * for small sizes open code the memcpy
+				 * ensure the rva field is big enough
+				 */
+				if ((cfg->opt & MONO_OPT_INTRINS) && ip_in_bb (cfg, bblock, ip + 6) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, ins, &data_size))) {
+					MonoMethod *memcpy_method = get_memcpy_method ();
+					MonoInst *data_offset, *add;
+					MonoInst *iargs [3];
+					NEW_ICONST (cfg, iargs [2], data_size);
+					NEW_TEMPLOAD (cfg, load, temp->inst_c0);
+					load->cil_code = ins->cil_code;
+					NEW_ICONST (cfg, data_offset, G_STRUCT_OFFSET (MonoArray, vector));
+					MONO_INST_NEW (cfg, add, OP_PADD);
+					add->inst_left = load;
+					add->inst_right = data_offset;
+					add->cil_code = ip;
+					iargs [0] = add;
+					if (cfg->compile_aot) {
+						NEW_AOTCONST_TOKEN (cfg, iargs [1], MONO_PATCH_INFO_RVA, method->klass->image, GPOINTER_TO_UINT(data_ptr), STACK_PTR, NULL);
+					} else {
+						NEW_PCONST (cfg, iargs [1], data_ptr);
+					}
+					mono_emit_method_call_spilled (cfg, bblock, memcpy_method, memcpy_method->signature, iargs, ip, NULL);
+					ip += 11;
+				}
 				NEW_TEMPLOAD (cfg, load, temp->inst_c0);
 				load->cil_code = ins->cil_code;
 				*sp++ = load;
@@ -9375,6 +9471,7 @@ mono_patch_info_dup_mp (MonoMemPool *mp, MonoJumpInfo *patch_info)
 	memcpy (res, patch_info, sizeof (MonoJumpInfo));
 
 	switch (patch_info->type) {
+	case MONO_PATCH_INFO_RVA:
 	case MONO_PATCH_INFO_LDSTR:
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
 	case MONO_PATCH_INFO_LDTOKEN:
@@ -9399,6 +9496,7 @@ mono_patch_info_hash (gconstpointer data)
 	const MonoJumpInfo *ji = (MonoJumpInfo*)data;
 
 	switch (ji->type) {
+	case MONO_PATCH_INFO_RVA:
 	case MONO_PATCH_INFO_LDSTR:
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
 	case MONO_PATCH_INFO_LDTOKEN:
@@ -9426,6 +9524,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		return 0;
 
 	switch (ji1->type) {
+	case MONO_PATCH_INFO_RVA:
 	case MONO_PATCH_INFO_LDSTR:
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
 	case MONO_PATCH_INFO_LDTOKEN:
@@ -9543,6 +9642,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = (char*)vtable->data + patch_info->data.field->offset;
 		break;
 	}
+	case MONO_PATCH_INFO_RVA:
+		target = mono_image_rva_map (patch_info->data.token->image, patch_info->data.token->token);
+		break;
 	case MONO_PATCH_INFO_R4:
 	case MONO_PATCH_INFO_R8:
 		target = patch_info->data.target;

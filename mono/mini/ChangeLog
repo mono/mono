@@ -1,3 +1,34 @@
+
+Tue Jan 16 20:01:01 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: execute fault handlers.
+
+Tue Jan 16 19:54:44 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: handle missing call locationss with FORCE_INDIR_CALL.
+
+Tue Jan 16 13:14:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle also floating point values in initialize_array.
+
+Tue Jan 16 12:42:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, aot-runtime.c, aot-compiler.c: enable aot compilation of
+	array initialization and make it conditional on the intrins option.
+
+Tue Jan 16 11:28:45 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, patch-info.h, Makefile.am, aot-compiler.c: reduce
+	relocations and put the patch info names close to the enum definition.
+
+2007-01-15 Mark Mason <mason@broadcom.com>
+
+	* basic.cs, exceptions.cs: break up large tests to increase debugability.
+
+Mon Jan 15 18:57:14 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimized RuntimeHelpers::InitializeArray () calls.
+
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	* mini.c (mono_method_to_ir): Use new MonoGenericContext accessor.

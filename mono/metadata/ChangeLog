@@ -1,3 +1,40 @@
+
+Wed Jan 17 14:28:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, metadata-internals.h, object.c: execute module
+	cctors when running on the 2 runtime if present (bug #80487).
+
+Tue Jan 16 15:32:53 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: optimized InitializeArray() on bigendian.
+
+Tue Jan 16 13:18:51 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix for the broken ARM FPA double format.
+
+Tue Jan 16 12:51:16 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: handle endian issues for r4 and r8 types, too, in
+	the InitializeArray() icall.
+
+2007-01-15  Miguel de Icaza  <miguel@novell.com>
+
+	* loader.c (mono_loader_error_prepare_exception): Clear the error
+	once we have extracted the information from it, do this before we
+	call into the JIT's class loading mechanisms.
+
+	* object.c (mono_class_create_runtime_vtable): Do not clear the
+	loader error before calling mono_class_get_exception_for_failure
+	as the loader error is needed inside
+	mono_class_get_exception_for_failure to throw the error (thinko).
+
+	Fixes #80521
+	
+Mon Jan 15 10:27:31 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: align fields rva data so it's faster to load at
+	runtime.
+
 2007-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	Prepare to simplify GenericMethod handling.
