@@ -132,11 +132,7 @@ namespace System {
 
 			string base_string = baseUri.LocalPath;
 			int last_slash = base_string.LastIndexOf ('/') + 1; // keep the slash
-#if TARGET_JVM
-			return (String.Compare (base_string, 0, relativeUri.LocalPath, 0, last_slash, true, CultureInfo.InvariantCulture) == 0);
-#else
 			return (String.Compare (base_string, 0, relativeUri.LocalPath, 0, last_slash, StringComparison.InvariantCultureIgnoreCase) == 0);
-#endif
 		}
 
 		[MonoTODO]
