@@ -39,7 +39,6 @@ namespace System.Threading {
 	[ComVisible (false)]
 	public sealed class Semaphore : WaitHandle {
 
-#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr CreateSemaphore_internal (
 			int initialCount, int maximumCount, string name,
@@ -51,7 +50,6 @@ namespace System.Threading {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern IntPtr OpenSemaphore_internal (string name, SemaphoreRights rights, out MonoIOError error);
-#endif
 		
 		private Semaphore (IntPtr handle)
 		{
@@ -116,9 +114,6 @@ namespace System.Threading {
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public int Release (int releaseCount)
 		{
-#if TARGET_JVM
-			throw new NotImplementedException ();
-#else
 			if (releaseCount < 1)
 				throw new ArgumentOutOfRangeException ("releaseCount");
 
@@ -133,7 +128,6 @@ namespace System.Threading {
 			}
 
 			return (ret);
-#endif
 		}
 
 		[MonoTODO]
@@ -159,7 +153,6 @@ namespace System.Threading {
 			if ((name.Length ==0) || (name.Length > 260))
 				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
 
-#if !TARGET_JVM
 			MonoIOError error;
 			IntPtr handle = OpenSemaphore_internal (name, rights,
 								out error);
@@ -174,9 +167,6 @@ namespace System.Threading {
 			}
 			
 			return(new Semaphore (handle));
-#else
-			return null;
-#endif
 		}
 	}
 }
