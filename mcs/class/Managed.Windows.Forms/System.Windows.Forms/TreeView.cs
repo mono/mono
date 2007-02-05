@@ -112,6 +112,7 @@ namespace System.Windows.Forms {
 			LostFocus += new EventHandler (LostFocusHandler);
 			GotFocus += new EventHandler (GotFocusHandler);
 			MouseWheel += new MouseEventHandler(MouseWheelHandler);
+			VisibleChanged += new EventHandler (VisibleChangedHandler);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0
@@ -1531,6 +1532,13 @@ namespace System.Windows.Forms {
 				vbar.Value = Math.Min(vbar.Value + SystemInformation.MouseWheelScrollLines, vbar.Maximum - VisibleCount + 1);
 			} else {
 				vbar.Value = Math.Max(0, vbar.Value - SystemInformation.MouseWheelScrollLines);
+			}
+		}
+
+		private void VisibleChangedHandler (object sender, EventArgs e)
+		{
+			if (Visible) {
+				UpdateScrollBars ();
 			}
 		}
 

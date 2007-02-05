@@ -1,5 +1,11 @@
 2007-02-05  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: We need to check scrollbar visibility when window
+	visibility is updated, because non visible trees don't ever add
+	scrollbars.
+
+2007-02-05  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: Don't have crlfs when we are non multiline.
 	- Consolidate the line position.
 
