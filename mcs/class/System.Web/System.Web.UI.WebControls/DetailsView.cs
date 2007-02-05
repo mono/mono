@@ -1446,15 +1446,21 @@ namespace System.Web.UI.WebControls
 		{
 			DetailsViewCommandEventArgs args = e as DetailsViewCommandEventArgs;
 			if (args != null) {
-				ProcessCommand (args);
+				bool causesValidation = false;
+				IButtonControl button = args.CommandSource as IButtonControl;
+				if (button != null && button.CausesValidation) {
+					Page.Validate (button.ValidationGroup);
+					causesValidation = true;
+				}
+				ProcessCommand (args, causesValidation);
 				return true;
 			}
 			return base.OnBubbleEvent (source, e);
 		}
 
-		void ProcessCommand (DetailsViewCommandEventArgs args) {
+		void ProcessCommand (DetailsViewCommandEventArgs args, bool causesValidation) {
 			OnItemCommand (args);
-			ProcessEvent (args.CommandName, args.CommandArgument as string);
+			ProcessEvent (args.CommandName, args.CommandArgument as string, causesValidation);
 		}
 
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
@@ -1471,10 +1477,10 @@ namespace System.Web.UI.WebControls
 				arg = new CommandEventArgs (eventArgument.Substring (0, i), eventArgument.Substring (i + 1));
 			else
 				arg = new CommandEventArgs (eventArgument, null);
-			ProcessCommand (new DetailsViewCommandEventArgs (this, arg));
+			ProcessCommand (new DetailsViewCommandEventArgs (this, arg), false);
 		}
-		
-		void ProcessEvent (string eventName, string param)
+
+		void ProcessEvent (string eventName, string param, bool causesValidation)
 		{
 			switch (eventName)
 			{
@@ -1529,7 +1535,7 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.UpdateCommandName:
-				UpdateItem (param, true);
+				UpdateItem (param, causesValidation);
 				break;
 					
 			case DataControlCommands.CancelCommandName:
@@ -1541,7 +1547,7 @@ namespace System.Web.UI.WebControls
 				break;
 					
 			case DataControlCommands.InsertCommandName:
-				InsertItem (true);
+				InsertItem (causesValidation);
 				break;
 			}
 		}
@@ -1598,8 +1604,8 @@ namespace System.Web.UI.WebControls
 		
 		void UpdateItem (string param, bool causesValidation)
 		{
-			if (causesValidation && Page != null)
-				Page.Validate ();
+			if (causesValidation && Page != null && !Page.IsValid)
+				return;
 			
 			if (CurrentMode != DetailsViewMode.Edit) throw new HttpException ();
 
@@ -1638,8 +1644,8 @@ namespace System.Web.UI.WebControls
 		
 		void InsertItem (string param, bool causesValidation)
 		{
-			if (causesValidation && Page != null)
-				Page.Validate ();
+			if (causesValidation && Page != null && !Page.IsValid)
+				return;
 			
 			if (CurrentMode != DetailsViewMode.Insert) throw new HttpException ();
 			
