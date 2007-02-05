@@ -67,12 +67,13 @@ namespace System.Web.Configuration
 
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((TagPrefixInfo)element).Source;
+			TagPrefixInfo info = (TagPrefixInfo)element;
+			return String.Concat (info.TagPrefix, "-", info.TagName, "-", info.Source, "-", info.Namespace, "-", info.Assembly);
 		}
 
 		public void Remove (TagPrefixInfo tagPrefixInformation)
 		{
-			BaseRemove (tagPrefixInformation.TagPrefix);
+			BaseRemove (GetElementKey (tagPrefixInformation));
 		}
 
 		[MonoTODO ("why override this?")]
