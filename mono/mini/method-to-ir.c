@@ -4309,7 +4309,8 @@ can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_
 		/* same compilation unit */
 		return access_klass->image == member_klass->image;
 	case FIELD_ATTRIBUTE_PRIVATE:
-		return access_klass == member_klass;
+		if (access_klass->generic_class && member_klass->generic_class && member_klass->generic_class->container_class)
+			return member_klass->generic_class->container_class == access_klass->generic_class->container_class;
 	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
 		if (mono_class_has_parent (access_klass, member_klass) &&
 				can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
@@ -10049,6 +10050,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge r68207.
  * - merge 71065.
  * - merge the mips conditional changes.
+ * - get rid of duplicate functions like can_access_... from method-to-ir.c.
  * - use the op_ opcodes in the old JIT as well.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
@@ -10060,7 +10062,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 71200.
+ * - LAST MERGE: 71300.
  */
 
 /*

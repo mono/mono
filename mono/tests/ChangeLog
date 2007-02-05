@@ -1,3 +1,6 @@
+2007-01-17  Massimiliano Mantione  <massi@ximian.com>
+	* bug-80307.cs, Makefile.am: Added test for bug 80307.
+
 2007-01-15  Miguel de Icaza  <miguel@novell.com>
 
 	* load-missing.il: Add test for missing assembly reference in
