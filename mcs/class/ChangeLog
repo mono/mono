@@ -1,7 +1,3 @@
-2007-02-05  Marek Safar <marek.safar@gmail.com>
-
-	* Makefile: Add System.Core to build.
-
 2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: there are configuration dependency things in sys.xml too.
