@@ -3448,8 +3448,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	   // top of stack is used for call params
 	   CFG_DEBUG(4) g_print("ALPHA_CHECK: [localloc] sreg=%d, dreg=%d\n",
 				ins->sreg1, ins->dreg);
-	   alpha_addq_(code, ins->sreg1, (MONO_ARCH_FRAME_ALIGNMENT - 1), ins->sreg1);
-	   alpha_and_(code, ins->sreg1, ~(MONO_ARCH_FRAME_ALIGNMENT - 1), ins->sreg1);
+	   alpha_addq_(code, ins->sreg1, (MONO_ARCH_LOCALLOC_ALIGNMENT - 1), ins->sreg1);
+	   alpha_and_(code, ins->sreg1, ~(MONO_ARCH_LOCALLOC_ALIGNMENT - 1), ins->sreg1);
 	   alpha_subq(code, alpha_sp, ins->sreg1, alpha_sp);
 	   alpha_lda(code, ins->dreg, alpha_zero, (cfg->arch.params_stack_size));
 	   alpha_addq(code, alpha_sp, ins->dreg, ins->dreg);
@@ -5654,8 +5654,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
        }
      }
    
-   g_free (offsets);
-
    // TODO check how offsets[i] are calculated
    // it seems they are points to the end on data. Like 8, but it actually - 0
 

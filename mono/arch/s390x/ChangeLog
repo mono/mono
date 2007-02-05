@@ -1,3 +1,7 @@
+2007-01-23	Neale Ferguson <neale@sinenomine.net>
+	
+	* s390x-codegen.h: Add packed attribute to several instruction structures.
+
 2006-03-13	Neale Ferguson <neale@sinenomine.net>
 
 	* s390x-codegen.h: Fix immediate checks.

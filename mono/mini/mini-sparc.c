@@ -3243,8 +3243,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			/* Keep alignment */
 			/* Add 4 to compensate for the rounding of localloc_offset */
-			sparc_add_imm (code, FALSE, ins->sreg1, 4 + MONO_ARCH_FRAME_ALIGNMENT - 1, ins->dreg);
-			sparc_set (code, ~(MONO_ARCH_FRAME_ALIGNMENT - 1), sparc_o7);
+			sparc_add_imm (code, FALSE, ins->sreg1, 4 + MONO_ARCH_LOCALLOC_ALIGNMENT - 1, ins->dreg);
+			sparc_set (code, ~(MONO_ARCH_LOCALLOC_ALIGNMENT - 1), sparc_o7);
 			sparc_and (code, FALSE, ins->dreg, sparc_o7, ins->dreg);
 
 			if ((ins->flags & MONO_INST_INIT) && (ins->sreg1 == ins->dreg)) {
@@ -3301,9 +3301,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			NOT_IMPLEMENTED;
 #endif
 
+<<<<<<< .working
 			/* To compensate for the rounding of localloc_offset */
 			offset += sizeof (gpointer);
 			offset = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
+=======
+			offset = ALIGN_TO (offset, MONO_ARCH_LOCALLOC_ALIGNMENT);
+>>>>>>> .merge-right.r71600
 			if (sparc_is_imm13 (offset))
 				sparc_sub_imm (code, FALSE, sparc_sp, offset, sparc_sp);
 			else {

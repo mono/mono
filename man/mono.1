@@ -27,7 +27,7 @@ The code generator can operate in two modes: just in time compilation
 dynamically loaded, the runtime environment and the JIT are always
 present, even if code is compiled ahead of time.
 .PP
-The runtime loads ths specified
+The runtime loads the specified
 .I file
 and optionally passes
 the
@@ -37,12 +37,12 @@ to it.  The
 is an ECMA assembly.  They typically have a .exe or .dll extension.
 .PP
 The runtime provides a number of configuration options for running
-applications, for developping and debugging, and for testing and
+applications, for developing and debugging, and for testing and
 debugging the runtime itself.
 .SH PORTABILITY
 On Unix-based systems, Mono provides a mechanism to emulate the 
 Windows-style file access, this includes providing a case insensitive
-view of the file system, directory separator mapping (from \ to /) and
+view of the file system, directory separator mapping (from \\ to /) and
 stripping the drive letters.
 .PP
 This functionality is enabled by setting the 
@@ -79,7 +79,7 @@ code for use in multi-domain applications, consider using the
 .Sp
 This pre-compiles the methods, but the original assembly is still
 required to execute as this one contains the metadata and exception
-information which is not availble on the generated file.  When
+information which is not available on the generated file.  When
 precompiling code, you might want to compile with all optimizations
 (-O=all).  Pre-compiled code is position independent code.
 .Sp
@@ -209,7 +209,7 @@ calls to the System.String class, use:
 
 .fi
 And individual methods are referenced with the M: prefix, and the
-standar method notation:
+standard method notation:
 .nf
 
 	mono --trace=M:System.Console:WriteLine app.exe
@@ -543,7 +543,7 @@ The following is a common use to track down problems with P/Invoke:
 .PP
 .SH SERIALIZATION
 Mono's XML serialization engine by default will use a reflection-based
-approach to serialize which might be slow for continous processing
+approach to serialize which might be slow for continuous processing
 (web service applications).  The serialization engine will determine
 when a class must use a hand-tuned serializer based on a few
 parameters and if needed it will produce a customized C# serializer
@@ -604,7 +604,7 @@ given point.  This only displays the stack trace of a single thread.
 .I "keep-delegates"
 This option will leak delegate trampolines that are no longer
 referenced as to present the user with more information about a
-delegate missuse.  Basically a delegate instance might be created,
+delegate misuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
@@ -643,7 +643,7 @@ Possible values are:
 .Sp
 Persists event logs and entries to the local file system.
 .Sp
-The directory in which to persit the event logs, event sources and entries
+The directory in which to persist the event logs, event sources and entries
 can be specified as part of the value.
 .Sp
 If the path is not explicitly set, it defaults to "/var/lib/mono/eventlog"
@@ -747,7 +747,7 @@ http://www.mono-project.com/Guidelines:Application_Deployment page.
 .I "MONO_RTC"
 Experimental RTC support in the statistical profiler: if the user has
 the permission, more accurate statistics are gathered.  The MONO_RTC
-value must be restricted to what the linux rtc allows: power of two
+value must be restricted to what the Linux rtc allows: power of two
 from 64 to 8192 Hz. To enable higher frequencies like 4096 Hz, run as root:
 .nf
 

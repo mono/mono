@@ -1,3 +1,8 @@
+
+Mon Jan 22 11:15:26 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono.1: typo fixes from jessemerriman@warpmail.net (Jesse Merriman).
+
 2007-01-17  Alp Toker  <alp@atoker.com>
 
 	* gacutil.1: Spelling and grammar fixes.

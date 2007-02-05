@@ -88,7 +88,7 @@ void Page_Load(object sender, EventArgs e)
 	Page.DataBind();
 	
 	ProfileViolations = new BasicProfileViolationCollection ();
-	//WebServicesInteroperability.CheckConformance (WsiClaims.BP10, descriptions, ProfileViolations);
+	WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, descriptions, ProfileViolations);
 }
 
 void BuildOperationInfo ()
@@ -1583,7 +1583,7 @@ function clearForm ()
 	<br/><br/>
 	<% if (ProfileViolations.Count > 0) { %>
 		<p class="label">Basic Profile Conformance</p>
-		This web service does not conform to WS-I Basic Profile v1.0
+		This web service does not conform to WS-I Basic Profile v1.1
 	<%
 		Response.Write ("<ul>");
 		foreach (BasicProfileViolation vio in ProfileViolations) {
