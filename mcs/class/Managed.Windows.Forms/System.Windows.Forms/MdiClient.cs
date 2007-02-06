@@ -429,13 +429,10 @@ namespace System.Windows.Forms {
 
 			if (need_hbar && need_vbar) {
 				if (sizegrip == null) {
-					sizegrip = new SizeGrip ();
-					sizegrip.CapturedControl = this.ParentForm;
+					sizegrip = new SizeGrip (this.ParentForm);
 					Controls.AddImplicit (sizegrip);
 				}
 				sizegrip.Location = new Point (hbar.Right, vbar.Bottom);
-				sizegrip.Width = vbar.Width;
-				sizegrip.Height = hbar.Height;
 				sizegrip.Visible = true;
 				XplatUI.SetZOrder (sizegrip.Handle, vbar.Handle, false, false);
 			} else if (sizegrip != null) {
