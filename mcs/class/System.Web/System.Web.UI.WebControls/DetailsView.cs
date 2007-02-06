@@ -1159,8 +1159,10 @@ namespace System.Web.UI.WebControls
 				headerCell.ColumnSpan = 2;
 				if (headerTemplate != null)
 					headerTemplate.InstantiateIn (headerCell);
-				else
+				else if (!String.IsNullOrEmpty (HeaderText))
 					headerCell.Text = HeaderText;
+				else
+					headerRow.Visible = false;
 				headerRow.Cells.Add (headerCell);
 				table.Rows.Add (headerRow);
 
@@ -1184,9 +1186,10 @@ namespace System.Web.UI.WebControls
 				footerCell.ColumnSpan = 2;
 				if (footerTemplate != null)
 					footerTemplate.InstantiateIn (footerCell);
-				else
+				else if (!String.IsNullOrEmpty (FooterText))
 					footerCell.Text = FooterText;
-
+				else
+					footerRow.Visible = false;
 				footerRow.Cells.Add (footerCell);
 				table.Rows.Add (footerRow);
 
@@ -1354,18 +1357,6 @@ namespace System.Web.UI.WebControls
 
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
-
-			// set visible for header and footer
-			if (headerRow != null) 
-			{
-				TableCell headerCell = (TableCell) headerRow.Controls [0];
-				headerRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
-			}
-			if (footerRow != null)
-			{
-				TableCell footerCell = (TableCell) footerRow.Controls [0];
-				footerRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
-			}
 
 			foreach (DetailsViewRow row in table.Rows) {
 				switch (row.RowType) {

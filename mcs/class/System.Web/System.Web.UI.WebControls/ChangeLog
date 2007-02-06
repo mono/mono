@@ -1,5 +1,10 @@
 2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DetailsView.cs: 
+	header and footer visibility is set at creation.	
+
+2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormView.cs: fixed: 
 	header and footer are not created with empty row.	
 
