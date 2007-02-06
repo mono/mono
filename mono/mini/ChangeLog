@@ -1,3 +1,10 @@
+
+Tue Feb 6 12:23:50 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: patch from Zoltan to correctly check for
+	stack boundaries (using the stack register, not the frame register),
+	fixes bugs #80724, #79717.
+
 2007-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c inssel-sparc.brg mini-sparc.c cpu-sparc.md: Get rid of OP_SETREG/
