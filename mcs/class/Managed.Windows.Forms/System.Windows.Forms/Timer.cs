@@ -81,6 +81,9 @@ namespace System.Windows.Forms {
 				return interval;
 			}
 			set {
+				if (value <= 0)
+					throw new ArgumentException (string.Format("'{0}' is not a valid value for Interval. Interval must be greater than 0.", value));
+
 				if (interval == value) {
 					return;
 				}

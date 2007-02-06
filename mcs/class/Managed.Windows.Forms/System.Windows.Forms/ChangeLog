@@ -1,3 +1,7 @@
+2007-02-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Timer.cs: Throw ArgumentException if Interval <= 0.
+
 2007-02-05  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: We need to check scrollbar visibility when window
