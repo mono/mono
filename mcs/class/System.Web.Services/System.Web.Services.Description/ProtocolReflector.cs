@@ -284,6 +284,7 @@ namespace System.Web.Services.Description {
 #if NET_2_0
 			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.ConformsTo != WsiProfiles.None && String.IsNullOrEmpty (binfo.WebServiceBindingAttribute.Name)) {
 				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
+				desc.Types.Schemas.Add (Schemas);
 				if (!WebServicesInteroperability.CheckConformance (binfo.WebServiceBindingAttribute.ConformsTo, desc, violations))
 					throw new InvalidOperationException (violations [0].ToString ());
 			}
