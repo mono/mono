@@ -939,8 +939,9 @@ namespace System.Web.UI.WebControls
 			}
 
 			// Main table creation
-			
-			if (HeaderText.Length != 0 || headerTemplate != null) {
+			bool emptyRow = PageCount == 0 && CurrentMode != FormViewMode.Insert;
+
+			if (!emptyRow) {
 				headerRow = CreateRow (-1, DataControlRowType.Header, DataControlRowState.Normal);
 				InitializeRow (headerRow);
 				table.Rows.Add (headerRow);
@@ -969,11 +970,11 @@ namespace System.Web.UI.WebControls
 					itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
 					break;
 				}
-				table.Rows.Add (itemRow);
 				InitializeRow (itemRow);
+				table.Rows.Add (itemRow);
 			}
 
-			if (FooterText.Length != 0 || footerTemplate != null) {
+			if (!emptyRow) {
 				footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
 				InitializeRow (footerRow);
 				table.Rows.Add (footerRow);
@@ -1040,22 +1041,28 @@ namespace System.Web.UI.WebControls
 			{
 				if (emptyDataTemplate != null)
 					emptyDataTemplate.InstantiateIn (cell);
-				else
+				else if (!String.IsNullOrEmpty (EmptyDataText))
 					cell.Text = EmptyDataText;
+				else
+					row.Visible = false;
 			}
 			else if (row.RowType == DataControlRowType.Footer)
 			{
 				if (footerTemplate != null)
 					footerTemplate.InstantiateIn (cell);
-				else
+				else if (!String.IsNullOrEmpty (FooterText))
 					cell.Text = FooterText;
+				else
+					row.Visible = false;
 			}
 			else if (row.RowType == DataControlRowType.Header)
 			{
 				if (headerTemplate != null)
 					headerTemplate.InstantiateIn (cell);
-				else
+				else if (!String.IsNullOrEmpty (HeaderText))
 					cell.Text = HeaderText;
+				else
+					row.Visible = false;
 			}
 			cell.ColumnSpan = 2;
 			row.Cells.Add (cell);
