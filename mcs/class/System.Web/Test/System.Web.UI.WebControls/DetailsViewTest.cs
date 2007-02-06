@@ -358,6 +358,11 @@ namespace MonoTests.System.Web.UI.WebControls
 				base.EnsureChildControls ();
 			}
 
+			public void DoEnsureDataBound ()
+			{
+				base.EnsureDataBound ();
+			}
+
 			public DataSourceSelectArguments DoCreateDataSourceSelectArguments ()
 			{
 				return CreateDataSourceSelectArguments ();
@@ -371,6 +376,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void SetRequiresDataBinding (bool value)
 			{
 				RequiresDataBinding = value;
+			}
+
+			public bool GetRequiresDataBinding ()
+			{
+				return RequiresDataBinding;
+			}
+			
+			public bool GetInitialized ()
+			{
+				return Initialized;
 			}
 		}
 
@@ -1004,6 +1019,166 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerDetailsView dv = new PokerDetailsView ();			
 			Assert.AreEqual (6,dv.DoCreateChildControls (myds, true),"CreateChildControls1");
 			Assert.AreEqual (6, dv.DoCreateChildControls (myds, false), "CreateChildControls2");
+		}
+
+		class MyEnumSource : IEnumerable
+		{
+			int _count;
+
+			public MyEnumSource (int count) {
+				_count = count;
+			}
+
+			#region IEnumerable Members
+
+			public IEnumerator GetEnumerator () {
+
+				for (int i = 0; i < _count; i++)
+					yield return i;
+			}
+
+			#endregion
+		}
+
+		[Test]
+		public void DetailsView_CreateChildControls2 ()
+		{
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.Page = new Page ();
+			dv.DataSource = new MyEnumSource (20);
+			dv.DataBind ();
+
+			Assert.AreEqual (20, dv.PageCount, "CreateChildControls#0");
+
+			Assert.AreEqual (0, dv.DoCreateChildControls (null, true), "CreateChildControls#1");
+			Assert.AreEqual (0, dv.DoCreateChildControls (new MyEnumSource (0), true), "CreateChildControls#1");
+			Assert.AreEqual (20, dv.DoCreateChildControls (new MyEnumSource (20), true), "CreateChildControls#2");
+
+			Assert.AreEqual (0, dv.DoCreateChildControls (new object [0], false), "CreateChildControls#3");
+			Assert.AreEqual (5, dv.DoCreateChildControls (new object [5], false), "CreateChildControls#4");
+		}
+
+		[Test]
+		public void DetailsView_PageIndex ()
+		{
+			PokerDetailsView p = new PokerDetailsView ();
+			Assert.AreEqual (0, p.PageIndex, "#00");
+			Assert.AreEqual (false, p.GetInitialized (), "#01");
+			Assert.AreEqual (false, p.GetRequiresDataBinding (), "#02");
+			p.PageIndex = 2;
+			Assert.AreEqual (2, p.PageIndex, "#03");
+			Assert.AreEqual (false, p.GetRequiresDataBinding (), "#04");
+			p.PageIndex = -1;
+			Assert.AreEqual (2, p.PageIndex, "#05");
+			Assert.AreEqual (false, p.GetRequiresDataBinding (), "#06");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void DetailsView_PageIndex2 ()
+		{
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = DetailsView_PageIndex2_load;
+			delegates.LoadComplete = DetailsView_PageIndex2_loadComplete;
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest test = new WebTest (invoker);
+			test.Run ();
+		}
+
+		public static void DetailsView_PageIndex2_load (Page p)
+		{
+			PokerDetailsView fv = new PokerDetailsView ();
+			p.Form.Controls.Add (fv);
+			Assert.AreEqual (0, fv.PageIndex, "#00");
+			Assert.AreEqual (false, fv.GetInitialized (), "#01");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#02");
+			fv.PageIndex = 2;
+			Assert.AreEqual (2, fv.PageIndex, "#03");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#04");
+			fv.PageIndex = -1;
+			Assert.AreEqual (2, fv.PageIndex, "#05");
+			Assert.AreEqual (false, fv.GetRequiresDataBinding (), "#06");
+		}
+
+		public static void DetailsView_PageIndex2_loadComplete (Page p)
+		{
+			PokerDetailsView fv = new PokerDetailsView ();
+			p.Form.Controls.Add (fv);
+			Assert.AreEqual (0, fv.PageIndex, "#100");
+			Assert.AreEqual (true, fv.GetInitialized (), "#101");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#102");
+			fv.PageIndex = 2;
+			Assert.AreEqual (2, fv.PageIndex, "#103");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#104");
+			fv.PageIndex = -1;
+			Assert.AreEqual (2, fv.PageIndex, "#105");
+			Assert.AreEqual (true, fv.GetRequiresDataBinding (), "#106");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DetailsView_PageIndex_Ex ()
+		{
+			PokerDetailsView p = new PokerDetailsView ();
+			p.PageIndex = -2;
+		}
+
+		[Test]
+		public void DetailsView_PageIndex3 ()
+		{
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.AutoGenerateRows = false;
+			dv.Fields.Add (new TemplateField ());
+			dv.Page = new Page ();
+			dv.PageIndex = 10;
+			dv.DefaultMode = DetailsViewMode.Insert;
+			dv.SetRequiresDataBinding (true);
+
+			Assert.AreEqual (0, dv.PageCount, "#0");
+			Assert.AreEqual (-1, dv.PageIndex, "#1");
+
+			dv.DataSource = myds;
+			dv.DoEnsureDataBound ();
+
+			Assert.AreEqual (0, dv.PageCount, "#2");
+			Assert.AreEqual (-1, dv.PageIndex, "#3");
+
+			dv.ChangeMode (DetailsViewMode.ReadOnly);
+
+			Assert.AreEqual (0, dv.PageCount, "#4");
+			Assert.AreEqual (10, dv.PageIndex, "#5");
+		}
+		
+		[Test]
+		public void DetailsView_PageIndex4 ()
+		{
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.AllowPaging = true;
+			dv.AutoGenerateRows = false;
+			dv.Fields.Add (new TemplateField ());
+			dv.Page = new Page ();
+			dv.PageIndex = 10;
+
+			dv.DataSource = myds;
+			dv.DataBind ();
+
+			Assert.AreEqual (6, dv.PageCount, "#0");
+			Assert.AreEqual (5, dv.PageIndex, "#1");
+		}
+
+		[Test]
+		public void DetailsView_PageIndex5 ()
+		{
+			PokerDetailsView dv = new PokerDetailsView ();
+			dv.AutoGenerateRows = false;
+			dv.Fields.Add (new TemplateField ());
+			dv.Page = new Page ();
+			dv.PageIndex = 10;
+
+			dv.DataSource = new MyEnumSource(6);
+			dv.DataBind ();
+
+			Assert.AreEqual (5, dv.PageIndex, "#1");
 		}
 
 		[Test]
@@ -1718,7 +1893,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotDotNet")] // Implementation details in mono
 		public void DetailsView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
@@ -1777,8 +1951,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls ["DetailsView1$ctl02c"].Value = "123";
 			fr.Controls ["DetailsView1$ctl03c"].Value = "123";
 #endif
-			t.Request = fr;			
-			t.Run ();
+			t.Request = fr;
+			pageHTML = t.Run ();
 
 			// Checking for insert event fired.
 			ArrayList eventlist = t.UserData as ArrayList;

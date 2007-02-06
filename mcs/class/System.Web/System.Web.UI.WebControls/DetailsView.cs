@@ -804,6 +804,9 @@ namespace System.Web.UI.WebControls
 			get {
 				return pageCount;
 			}
+			private set {
+				pageCount = value;
+			}
 		}
 
 		[WebCategoryAttribute ("Paging")]
@@ -811,12 +814,14 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (0)]
 		public virtual int PageIndex {
 			get {
+				if (CurrentMode == DetailsViewMode.Insert)
+					return -1;
 				return pageIndex;
 			}
 			set {
-				if (value < 0)
+				if (value < -1)
 					throw new ArgumentOutOfRangeException ("PageIndex must be non-negative");
-				if (value == pageIndex)
+				if (pageIndex == value || value == -1)
 					return;
 				pageIndex = value;
 				RequireBinding ();
@@ -1044,7 +1049,6 @@ namespace System.Web.UI.WebControls
 				row = new DetailsViewPagerRow (rowIndex, rowType, rowState);
 			else
 				row = new DetailsViewRow (rowIndex, rowType, rowState);
-			OnItemCreated (EventArgs.Empty);
 			return row;
 		}
 		
@@ -1070,136 +1074,138 @@ namespace System.Web.UI.WebControls
 		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
-			PagedDataSource dataSource;
+			PagedDataSource dataSource = new PagedDataSource ();
+			dataSource.DataSource = CurrentMode != DetailsViewMode.Insert ? data : null;
+			dataSource.AllowPaging = AllowPaging;
+			dataSource.PageSize = 1;
+			dataSource.CurrentPageIndex = PageIndex;
 
-			if (dataBinding) {
+			if (dataBinding && CurrentMode != DetailsViewMode.Insert) {
 				DataSourceView view = GetData ();
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
-				
-				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = 1;
-					dataSource.CurrentPageIndex = PageIndex;
-					if (view.CanPage) {
-						dataSource.AllowServerPaging = true;
-						if (SelectArguments.RetrieveTotalRowCount)
-							dataSource.VirtualCount = SelectArguments.TotalRowCount;
+				if (view != null && view.CanPage) {
+					dataSource.AllowServerPaging = true;
+					if (SelectArguments.RetrieveTotalRowCount)
+						dataSource.VirtualCount = SelectArguments.TotalRowCount;
+				}
+			}
+
+			bool showPager = AllowPaging && (dataSource.PageCount > 1);
+
+			Controls.Clear ();
+			table = CreateTable ();
+			Controls.Add (table);
+			headerRow = null;
+			footerRow = null;
+			topPagerRow = null;
+			bottomPagerRow = null;
+			ArrayList list = new ArrayList ();
+
+			// Gets the current data item
+
+			if (AllowPaging) {
+				PageCount = dataSource.DataSourceCount;
+				if (PageIndex >= PageCount && PageCount > 0) {
+					pageIndex = dataSource.CurrentPageIndex = PageCount - 1;
+				}
+				if (dataSource.DataSource != null) {
+					IEnumerator e = dataSource.GetEnumerator ();
+					if (e.MoveNext ())
+						dataItem = e.Current;
+				}
+			}
+			else {
+				int page = 0;
+				object lastItem = null;
+				if (dataSource.DataSource != null) {
+					IEnumerator e = dataSource.GetEnumerator ();
+					for (; e.MoveNext (); page++) {
+						lastItem = e.Current;
+						if (page == PageIndex)
+							dataItem = e.Current;
 					}
 				}
-				
-				pageCount = dataSource.DataSourceCount;
-			}
-			else
-			{
-				dataSource = new PagedDataSource ();
-				dataSource.DataSource = data;
-				if (AllowPaging) {
-					dataSource.AllowPaging = true;
-					dataSource.PageSize = 1;
-					dataSource.CurrentPageIndex = PageIndex;
+				PageCount = page;
+				if (PageIndex >= PageCount && PageCount > 0) {
+					pageIndex = PageCount - 1;
+					dataItem = lastItem;
 				}
 			}
 
-			if (AllowPaging && PageIndex >= PageCount) {
-				PageIndex = (PageCount > 0) ? PageCount - 1 : 0;
-				dataSource.CurrentPageIndex = PageIndex;
+			if (PageCount == 0 && CurrentMode != DetailsViewMode.Insert) {
+				DetailsViewRow row = CreateEmptyRow ();
+				if (row != null) {
+					table.Rows.Add (row);
+					list.Add (row);
+				}
 			}
+			else {
 
-			bool showPager = AllowPaging && (PageCount > 1);
-			
-			Controls.Clear ();
-			table = null;
-				
-			ArrayList list = new ArrayList ();
-			
-			// Gets the current data item
-			
-			IEnumerator e = dataSource.GetEnumerator (); 
-			if (e.MoveNext ())
-				dataItem = e.Current;
-			else
-				dataItem = null;
-			
-			// Creates the set of fields to show
+				// Creates the set of fields to show
 
-			ICollection fieldCollection = CreateFieldSet (dataItem, dataBinding && dataItem != null);
-			DataControlField[] fields = new DataControlField [fieldCollection.Count];
-			fieldCollection.CopyTo (fields, 0);
+				ICollection fieldCollection = CreateFieldSet (dataItem, dataBinding && dataItem != null);
+				DataControlField [] fields = new DataControlField [fieldCollection.Count];
+				fieldCollection.CopyTo (fields, 0);
 
-			foreach (DataControlField field in fields) {
-				field.Initialize (false, this);
-				if (EnablePagingCallbacks)
-					field.ValidateSupportsCallback ();
+				foreach (DataControlField field in fields) {
+					field.Initialize (false, this);
+					if (EnablePagingCallbacks)
+						field.ValidateSupportsCallback ();
+				}
+
+				// Main table creation
+
+				headerRow = CreateRow (-1, DataControlRowType.Header, DataControlRowState.Normal);
+				DataControlFieldCell headerCell = new DataControlFieldCell (null);
+				headerCell.ColumnSpan = 2;
+				if (headerTemplate != null)
+					headerTemplate.InstantiateIn (headerCell);
+				else
+					headerCell.Text = HeaderText;
+				headerRow.Cells.Add (headerCell);
+				table.Rows.Add (headerRow);
+
+				if (showPager && PagerSettings.Position == PagerPosition.Top ||
+						PagerSettings.Position == PagerPosition.TopAndBottom) {
+					topPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
+					InitializePager (topPagerRow, dataSource);
+					table.Rows.Add (topPagerRow);
+				}
+
+				foreach (DataControlField field in fields) {
+					DataControlRowState rstate = GetRowState (list.Count);
+					DetailsViewRow row = CreateRow (PageIndex, DataControlRowType.DataRow, rstate);
+					InitializeRow (row, field);
+					table.Rows.Add (row);
+					list.Add (row);
+				}
+
+				footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
+				DataControlFieldCell footerCell = new DataControlFieldCell (null);
+				footerCell.ColumnSpan = 2;
+				if (footerTemplate != null)
+					footerTemplate.InstantiateIn (footerCell);
+				else
+					footerCell.Text = FooterText;
+
+				footerRow.Cells.Add (footerCell);
+				table.Rows.Add (footerRow);
+
+				if (showPager && PagerSettings.Position == PagerPosition.Bottom ||
+						PagerSettings.Position == PagerPosition.TopAndBottom) {
+					bottomPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
+					InitializePager (bottomPagerRow, dataSource);
+					table.Rows.Add (bottomPagerRow);
+				}
 			}
+			
+			rows = new DetailsViewRowCollection (list);
 
-			// Main table creation
+			if (dataBinding)
+				DataBind (false);
+			
+			OnItemCreated (EventArgs.Empty);
 
-            bool hasEmptyText = EmptyDataText != null && EmptyDataText != String.Empty;
-
-            if (fields.Length > 0)
-            {
-                headerRow = CreateRow(-1, DataControlRowType.Header, DataControlRowState.Normal);
-                DataControlFieldCell headerCell = new DataControlFieldCell(null);
-                headerCell.ColumnSpan = 2;
-                if (headerTemplate != null)
-                    headerTemplate.InstantiateIn(headerCell);
-                else
-                    headerCell.Text = HeaderText;
-                headerRow.Cells.Add(headerCell);
-                ContainedTable.Rows.Add(headerRow);
-
-                if (showPager && PagerSettings.Position == PagerPosition.Top ||
-                        PagerSettings.Position == PagerPosition.TopAndBottom)
-                {
-                    topPagerRow = CreateRow(-1, DataControlRowType.Pager, DataControlRowState.Normal);
-                    InitializePager(topPagerRow, dataSource);
-                    ContainedTable.Rows.Add(topPagerRow);
-                }
-            }
-
-            foreach (DataControlField field in fields)
-            {
-                DataControlRowState rstate = GetRowState(list.Count);
-                DetailsViewRow row = CreateRow(PageIndex, DataControlRowType.DataRow, rstate);
-                InitializeRow(row, field);
-                ContainedTable.Rows.Add(row);
-                list.Add(row);
-            }
-
-            rows = new DetailsViewRowCollection(list);
-
-            if (list.Count == 0 && hasEmptyText)
-            {
-                ContainedTable.Rows.Add(CreateEmptyRow());
-            }
-            
-            if (list.Count > 0)
-            {
-                footerRow = CreateRow(-1, DataControlRowType.Footer, DataControlRowState.Normal);
-                DataControlFieldCell footerCell = new DataControlFieldCell(null);
-                footerCell.ColumnSpan = 2;
-                if (footerTemplate != null)
-                    footerTemplate.InstantiateIn(footerCell);
-                else
-                    footerCell.Text = FooterText;
-
-                footerRow.Cells.Add(footerCell);
-                ContainedTable.Rows.Add(footerRow);
-
-                if (showPager && PagerSettings.Position == PagerPosition.Bottom ||
-                        PagerSettings.Position == PagerPosition.TopAndBottom)
-                {
-                    bottomPagerRow = CreateRow(-1, DataControlRowType.Pager, DataControlRowState.Normal);
-                    InitializePager(bottomPagerRow, dataSource);
-                    ContainedTable.Rows.Add(bottomPagerRow);
-                }
-            }
-
-            if (dataBinding)
-                DataBind(false);
-
-            return dataSource.DataSourceCount;
+			return PageCount;
 		}
 
 		protected override void EnsureDataBound ()
@@ -1208,7 +1214,7 @@ namespace System.Web.UI.WebControls
 				if (RequiresDataBinding) {
 					OnDataBinding (EventArgs.Empty);
 					RequiresDataBinding = false;
-					PerformDataBinding (new object [] { null });
+					PerformDataBinding (null);
 					MarkAsDataBound ();
 					OnDataBound (EventArgs.Empty);
 				}
@@ -1240,14 +1246,16 @@ namespace System.Web.UI.WebControls
 		
 		DetailsViewRow CreateEmptyRow ()
 		{
-			DetailsViewRow row = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
 			TableCell cell = new TableCell ();
-			
+
 			if (emptyDataTemplate != null)
 				emptyDataTemplate.InstantiateIn (cell);
-			else
+			else if (!String.IsNullOrEmpty (EmptyDataText))
 				cell.Text = EmptyDataText;
+			else
+				return null;
 			
+			DetailsViewRow row = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
 			row.Cells.Add (cell);
 			return row;
 		}
@@ -1341,23 +1349,25 @@ namespace System.Web.UI.WebControls
 
 		protected internal virtual void PrepareControlHierarchy ()
 		{
-            ContainedTable.Caption = Caption;
-            ContainedTable.CaptionAlign = CaptionAlign;
+			if (table == null)
+				return;
+
+			table.Caption = Caption;
+			table.CaptionAlign = CaptionAlign;
 
 			// set visible for header and footer
-			if (HeaderRow != null) 
+			if (headerRow != null) 
 			{
-				TableCell headerCell = (TableCell) HeaderRow.Controls [0];
-				HeaderRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
+				TableCell headerCell = (TableCell) headerRow.Controls [0];
+				headerRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
 			}
-			if (FooterRow != null)
+			if (footerRow != null)
 			{
-				TableCell footerCell = (TableCell) FooterRow.Controls [0];
-				FooterRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
+				TableCell footerCell = (TableCell) footerRow.Controls [0];
+				footerRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
 			}
 
-            foreach (DetailsViewRow row in ContainedTable.Rows)
-            {
+			foreach (DetailsViewRow row in table.Rows) {
 				switch (row.RowType) {
 				case DataControlRowType.Header:
 					if (headerStyle != null && !headerStyle.IsEmpty)
@@ -1691,7 +1701,7 @@ namespace System.Web.UI.WebControls
 				DetailsViewDeletedEventArgs dargs = new DetailsViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
 				OnItemDeleted (dargs);
 			}
-			if (PageIndex == PageCount - 1)
+			if (PageIndex > 0 && PageIndex == PageCount - 1)
 				PageIndex --;
 			RequireBinding ();
 		}
@@ -1941,19 +1951,6 @@ namespace System.Web.UI.WebControls
 
 			table.Render (writer);
 		}
-
-        private Table ContainedTable
-        {
-            get
-            {
-                if (table == null)
-                {
-                    table = CreateTable();
-                    Controls.Add(table);
-                }
-                return table;
-            }
-        }
 
         PostBackOptions IPostBackContainer.GetPostBackOptions(IButtonControl control)
         {

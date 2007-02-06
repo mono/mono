@@ -903,12 +903,47 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (6, g.DoCreateChildControls (myds, true), "CreateChildControls#1");
 		}
 
+		class MyEnumSource : IEnumerable
+		{
+			int _count;
+
+			public MyEnumSource (int count)
+			{
+				_count = count;
+			}
+
+			#region IEnumerable Members
+
+			public IEnumerator GetEnumerator () {
+
+				for (int i = 0; i < _count; i++)
+					yield return i;
+			}
+
+			#endregion
+		}
+
+		[Test]
+		public void GridView_CreateChildControls_2 () {
+			PokerGridView g = new PokerGridView ();
+			g.AutoGenerateColumns = false;
+			g.AutoGenerateSelectButton = true;
+			g.EmptyDataText = "empty";
+			g.Page = new Page ();
+			g.DataSource = new MyEnumSource (20);
+			//g.DataBind ();
+			//Assert.AreEqual (20, g.DoCreateChildControls (new MyEnumSource (20), true), "CreateChildControls#1");
+			Assert.AreEqual (0, g.DoCreateChildControls (new MyEnumSource (0), true), "CreateChildControls#2");
+		}
+
 		[Test]
 		public void GridView_CreateChildControls_1 ()
 		{
-			ArrayList l = new ArrayList(); 
 			PokerGridView g = new PokerGridView ();
-			Assert.AreEqual (0, g.DoCreateChildControls (l, false), "CreateChildControls#1");
+			g.AutoGenerateSelectButton = true;
+			g.EmptyDataText = "empty";
+			Assert.AreEqual (0, g.DoCreateChildControls (new object [0], false), "CreateChildControls#2");
+			Assert.AreEqual (-1, g.DoCreateChildControls (new object [5], false), "CreateChildControls#3");
 		}
 
 		[Test]

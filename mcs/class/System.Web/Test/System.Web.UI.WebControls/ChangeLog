@@ -1,3 +1,9 @@
+2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs:
+	* GridViewTest:
+	new test were added	 
+
 2007-02-05 Adar Wesley <adarw@mainsoft.com>
 
         * PasswordRecoveryTest.cs: Fixed tests.  This fix required adding
