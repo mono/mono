@@ -1,3 +1,6 @@
+2007-02-06  Massimiliano Mantione  <massi@ximian.com>
+	* inssel.brg: Fix bug 59286.
+
 
 Tue Feb 6 12:23:50 CET 2007 Paolo Molaro <lupus@ximian.com>
 
