@@ -1,3 +1,6 @@
+2007-02-06  Massimiliano Mantione  <massi@ximian.com>
+	* bug-59286.cs, Makefile.am: Added test for bug 59286.
+
 2007-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
