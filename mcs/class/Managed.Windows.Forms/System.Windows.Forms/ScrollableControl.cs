@@ -329,7 +329,7 @@ namespace System.Windows.Forms {
 					vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
 					this.Controls.AddImplicit (vscrollbar);
 
-					sizegrip = new SizeGrip();
+					sizegrip = new SizeGrip (this);
 					sizegrip.Visible = false;
 					this.Controls.AddImplicit (sizegrip);
 
@@ -829,7 +829,7 @@ namespace System.Windows.Forms {
 			UpdateSizeGripVisible ();
 		}
 
-		private void UpdateSizeGripVisible ()
+		internal void UpdateSizeGripVisible ()
 		{
 			if (sizegrip == null)
 				return;

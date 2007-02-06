@@ -4738,13 +4738,14 @@ namespace System.Windows.Forms
 
 				return;
 			}
-#if NET_2_0
-			case Msg.WM_CAPTURECHANGED:
+
+			case Msg.WM_CAPTURECHANGED: {
 				is_captured = false;
 				OnMouseCaptureChanged (EventArgs.Empty);
 				m.Result = (IntPtr) 0;
 				return;
-#endif
+			}
+
 			default:
 				DefWndProc(ref m);
 				return;
@@ -5086,15 +5087,20 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-
+#endif
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#if NET_2_0
 		protected virtual void OnMouseCaptureChanged (EventArgs e)
+#else
+		internal virtual void OnMouseCaptureChanged (EventArgs e)
+#endif
 		{
 			EventHandler eh = (EventHandler)(Events [MouseCaptureChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
+#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseClick (MouseEventArgs e)
 		{
@@ -5431,7 +5437,9 @@ namespace System.Windows.Forms
 		static object LostFocusEvent = new object ();
 #if NET_2_0
 		static object MarginChangedEvent = new object ();
+#endif
 		static object MouseCaptureChangedEvent = new object ();
+#if NET_2_0
 		static object MouseClickEvent = new object ();
 		static object MouseDoubleClickEvent = new object ();
 #endif
@@ -5699,12 +5707,16 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (MarginChangedEvent, value); }
 			remove {Events.RemoveHandler (MarginChangedEvent, value); }
 		}
-		
+#endif
+#if NET_2_0
 		public event EventHandler MouseCaptureChanged {
+#else
+		internal event EventHandler MouseCaptureChanged {
+#endif
 			add { Events.AddHandler (MouseCaptureChangedEvent, value); }
 			remove { Events.RemoveHandler (MouseCaptureChangedEvent, value); }
 		}
-		
+#if NET_2_0		
 		public event MouseEventHandler MouseClick
 		{
 			add { Events.AddHandler (MouseClickEvent, value); }

@@ -29,96 +29,150 @@ namespace System.Windows.Forms {
 
 	internal class SizeGrip : Control {
 		#region Local Variables
-		private bool	redraw;
 		private Point	capture_point;
 		private Control captured_control;
 		private int	window_w;
 		private int	window_h;
-		private bool	show_grip;
 		private bool	hide_pending;
 		private bool	captured;
+		private bool	is_virtual; // If virtual the size grip is painted directly on the captured controls' surface.
+		private bool	enabled;
+		private bool	fill_background;
+		private Rectangle	last_painted_area; // The last area that was painted (to know which area to invalidate when resizing).
 		#endregion	// Local Variables
 
 		#region Constructors
-		public SizeGrip ()
+		public SizeGrip (Control CapturedControl)
 		{
 			this.Cursor = Cursors.SizeNWSE;
-			show_grip = true;
-			redraw = true;
-			hide_pending = false;
+			enabled = true;
+			fill_background = true;
+			this.Size = GetDefaultSize ();
+			this.CapturedControl = CapturedControl;
 		}
 		#endregion	// Constructors
 
 		#region Properties
+		public bool FillBackground {
+			get {
+				return fill_background;
+			}
+			set {
+				fill_background = value;
+			}
+		}
+		
+		public bool Virtual {
+			get { 
+				return is_virtual;
+			}
+			set {
+				if (is_virtual == value)	
+					return;
+					
+				is_virtual = value;
+				if (is_virtual) {
+					CapturedControl.MouseMove += new MouseEventHandler(HandleMouseMove);
+					CapturedControl.MouseUp += new MouseEventHandler(HandleMouseUp);
+					CapturedControl.MouseDown += new MouseEventHandler(HandleMouseDown);
+					CapturedControl.EnabledChanged += new EventHandler(HandleEnabledChanged);
+					CapturedControl.Resize += new EventHandler(HandleResize);
+				} else {
+					CapturedControl.MouseMove -= new MouseEventHandler (HandleMouseMove);
+					CapturedControl.MouseUp -= new MouseEventHandler (HandleMouseUp);
+					CapturedControl.MouseDown -= new MouseEventHandler (HandleMouseDown);
+					CapturedControl.EnabledChanged -= new EventHandler (HandleEnabledChanged);
+					CapturedControl.Resize -= new EventHandler (HandleResize);
+				}
+			}
+		}
 		
 		public Control CapturedControl {
 			get {
-				if (captured_control != null)
-					return captured_control;
-				else
-					return Parent;
+				return captured_control;
 			}
 			set {
 				captured_control = value;
 			}
 		}
 		
-		public bool ShowGrip {
-			get {
-				return show_grip;
-			}
-
-			set {
-				show_grip = value;
-				redraw = true;
-			}
-		}
 		#endregion	// Properties
 
 		#region Methods
-		protected override void OnEnabledChanged (EventArgs e) {
-			base.OnEnabledChanged (e);
-			if (Enabled) {
-				this.Cursor = Cursors.SizeNWSE;			
-			} else {
-				this.Cursor = Cursors.Default;
-			}
+		static internal Size GetDefaultSize () {
+			return new Size (SystemInformation.VerticalScrollBarWidth, SystemInformation.HorizontalScrollBarHeight);
 		}
 		
-		protected override void OnPaint (PaintEventArgs pe) {
-			if (redraw && show_grip) {
-				pe.Graphics.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorControl), ClientRectangle);
-				if (Enabled)
-					ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
+		static internal Rectangle GetDefaultRectangle (Control Parent)
+		{
+			Size size = GetDefaultSize ();
+			return new Rectangle (Parent.ClientSize.Width - size.Width, Parent.ClientSize.Height - size.Height, size.Width, size.Height);
+		}
+		
+		private void HandleResize (object sender, EventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			ctrl.Invalidate (last_painted_area);
+		}
+
+		private void HandleEnabledChanged (object sender, EventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			enabled = ctrl.Enabled;
+			Cursor cursor;
+			if (enabled) {
+				cursor = Cursors.SizeNWSE;
+			} else {
+				cursor = Cursors.Default;
 			}
-			base.OnPaint (pe);
-		}
-
-		protected override void OnSizeChanged (EventArgs e) {
-			base.OnSizeChanged (e);
-			redraw = true;
-		}
-
-		protected override void OnVisibleChanged (EventArgs e) {
-			base.OnVisibleChanged (e);
-			redraw = true;
-		}
-
-#if NET_2_0
-		protected override void OnMouseCaptureChanged (EventArgs e) {
-			base.OnMouseCaptureChanged (e);
+			if (is_virtual) {
+				if (CapturedControl != null)
+					CapturedControl.Cursor = cursor;
+			} else {
+				this.Cursor = cursor;
+			}
+			ctrl.Invalidate (GetDefaultRectangle (ctrl));
 			
-			if (captured && !Capture) {
+		}
+
+		// This method needs to be internal, since the captured control must be able to call
+		// it. We can't use events to hook it up, since then the paint ordering won't be correct
+		internal void HandlePaint (object sender, PaintEventArgs e)
+		{
+			if (Visible) {
+				Control destination = (Control) sender;
+				Graphics gr = e.Graphics;
+				Rectangle rect = GetDefaultRectangle (destination);
+			
+				if (!is_virtual || fill_background) {
+					gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), rect);
+				}
+				if (enabled) {
+					ControlPaint.DrawSizeGrip (gr, BackColor, rect);
+				}
+				last_painted_area = rect;
+			}
+		}
+
+		private void HandleMouseCaptureChanged (object sender, EventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			if (captured && !ctrl.Capture) {
 				captured = false;
 				CapturedControl.Size = new Size (window_w, window_h);
 			}
 		}
-#endif
-		protected override void OnMouseDown(MouseEventArgs e) {
-			if (Enabled) {
-				Capture = true;
-				captured = true;
+
+		internal void HandleMouseDown (object sender, MouseEventArgs e)
+		{
+			if (enabled) {
+				Control ctrl = (Control)sender;
+				if (!GetDefaultRectangle (ctrl).Contains (e.X, e.Y)) {
+					return;
+				}
 				
+				ctrl.Capture = true;
+				captured = true;
 				capture_point = Control.MousePosition;
 
 				window_w = CapturedControl.Width;
@@ -126,8 +180,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override void OnMouseMove(MouseEventArgs e) {
-			if (Capture) {
+		internal void HandleMouseMove (object sender, MouseEventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			Rectangle rect = GetDefaultRectangle (ctrl);
+			
+			if (rect.Contains (e.X, e.Y)) {
+				ctrl.Cursor = Cursors.SizeNWSE;
+			} else {
+				ctrl.Cursor = Cursors.Default;
+			}
+			
+			if (captured) {
 				int	delta_x;
 				int	delta_y;
 				Point	current_point;
@@ -155,15 +219,21 @@ namespace System.Windows.Forms {
 
 				if (new_size != parent.Size) {
 					parent.Size = new_size;
-					XplatUI.DoEvents();
 				}
 			}
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e) {
-			if (Capture) {
+		internal void HandleMouseUp (object sender, MouseEventArgs e)
+		{
+			if (captured) {
+				Control ctrl = (Control) sender;
 				captured = false;
-				Capture = false;
+				ctrl.Capture = false;
+				ctrl.Invalidate (last_painted_area);
+				
+				if (Parent is ScrollableControl) {
+					((ScrollableControl)Parent).UpdateSizeGripVisible ();
+				}
 				if (hide_pending) {
 					Hide();
 					hide_pending = false;
@@ -184,6 +254,42 @@ namespace System.Windows.Forms {
 			base.SetVisibleCore (value);
 		}
 
+		protected override void OnPaint (PaintEventArgs pe)
+		{
+			HandlePaint (this, pe);
+			base.OnPaint (pe);
+		}
+
+#if NET_2_0
+		protected override void OnMouseCaptureChanged (EventArgs e)
+#else
+		internal override void OnMouseCaptureChanged (EventArgs e)
+#endif
+		{
+			base.OnMouseCaptureChanged (e);
+			HandleMouseCaptureChanged (this, e);
+		}
+
+		protected override void OnEnabledChanged (EventArgs e)
+		{
+			base.OnEnabledChanged (e);
+			HandleEnabledChanged (this, e);
+		}
+		
+		protected override void OnMouseDown (MouseEventArgs e)
+		{
+			HandleMouseDown (this, e);
+		}
+		
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			HandleMouseMove (this, e);
+		}
+
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
+			HandleMouseUp (this, e);
+		}
 		#endregion	// Methods
 	}
 }

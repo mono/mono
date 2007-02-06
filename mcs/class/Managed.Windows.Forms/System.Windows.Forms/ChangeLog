@@ -1,5 +1,20 @@
 2007-02-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Control.cs: Handle WM_CAPTURECHANGED in 1.1 code as well, and change
+	  corresponding events and methods to be internal for 1.1 profile and
+	  public for 2.0 profile (required by SizeGrip).
+	* Form.cs: Use SizeGrip as a virtual SizeGrip (and don't add it to the
+	  implicit control list). Don't set the size nor the location of the
+	  SizeGrip anymore as it's not needed.
+	* SizeGrip.cs: Rewrote large parts, it now supports a virtual mode to
+	  draw directly on the captured control (fixes #80656). Removed
+	  ShowGrip (it wasn't used anywhere), redraw (always true), added
+	  GetDefaultSize and GetDefaultRectangle to calculate defaults.
+	* ScrollableControl.cs: Make UpdateSIzeGripVisible internal so it can
+	  be called from SizeGrip.
+
+2007-02-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Timer.cs: Throw ArgumentException if Interval <= 0.
 
 2007-02-05  Jackson Harper  <jackson@ximian.com>

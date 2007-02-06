@@ -177,12 +177,10 @@ namespace System.Windows.Forms {
 					size_grip.Visible = false;
 			} else {
 				if (size_grip == null) {
-					size_grip = new SizeGrip ();
-					this.Controls.AddImplicit (size_grip);
+					size_grip = new SizeGrip (this);
+					size_grip.Virtual = true;
+					size_grip.FillBackground = false;
 				}
-				size_grip.Width = SystemInformation.VerticalScrollBarWidth;
-				size_grip.Height = SystemInformation.HorizontalScrollBarHeight;
-				size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
 				size_grip.Visible = true;
 			}
 		}
@@ -1775,16 +1773,16 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnPaint (PaintEventArgs pevent) {
 			base.OnPaint (pevent);
+
+			if (size_grip != null) {
+				size_grip.HandlePaint (this, pevent);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 
-			
-			if (size_grip != null) {
-				size_grip.Location = new Point (ClientSize.Width - size_grip.Width, ClientSize.Height - size_grip.Height);
-			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
