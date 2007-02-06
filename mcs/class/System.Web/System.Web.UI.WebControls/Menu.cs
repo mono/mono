@@ -1845,11 +1845,15 @@ namespace System.Web.UI.WebControls
 				writer.AddStyleAttribute ("cursor", "text");
 			}
 			else if (item.NavigateUrl != "") {
-				writer.AddAttribute ("href", ResolveClientUrl (item.NavigateUrl));
-				if (item.Target != "")
-					writer.AddAttribute ("target", item.Target);
-				else if (Target != "")
-					writer.AddAttribute ("target", Target);
+				string target = item.Target != "" ? item.Target : Target;
+#if TARGET_J2EE
+				string navUrl = ResolveClientUrl (item.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+#else
+				string navUrl = ResolveClientUrl (item.NavigateUrl);
+#endif
+				writer.AddAttribute ("href", navUrl);
+				if (target != "")
+					writer.AddAttribute ("target", target);
 			}
 			else {
 				writer.AddAttribute ("href", GetClientEvent (item));

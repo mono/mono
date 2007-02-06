@@ -1658,11 +1658,15 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute ("title", node.ToolTip);
 
 			if (node.NavigateUrl != "") {
-				writer.AddAttribute ("href", ResolveClientUrl (node.NavigateUrl));
-				if (node.Target.Length > 0)
-					writer.AddAttribute ("target", node.Target);
-				else if (Target.Length > 0)
-					writer.AddAttribute ("target", Target);
+				string target = node.Target.Length > 0 ? node.Target : Target;
+#if TARGET_J2EE
+				string navUrl = ResolveClientUrl (node.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+#else
+				string navUrl = ResolveClientUrl (node.NavigateUrl);
+#endif
+				writer.AddAttribute ("href", navUrl);
+				if (target.Length > 0)
+					writer.AddAttribute ("target", target);
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			}
 			else if (node.SelectAction != TreeNodeSelectAction.None) {

@@ -1,3 +1,8 @@
+2007-02-06 Eyal Alaluf <eyala@mainsoft.com>
+
+	* Menu.cs ImageMap.cs Panel.cs TreeView.cs: Ensure that the NavigateUrl
+	  property is rendered as a RenderURL for J2EE portlets.
+
 2007-02-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseValidator.cs: refactored RegisterValidatorCommonScript to use

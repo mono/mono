@@ -166,7 +166,12 @@ namespace System.Web.UI.WebControls
 							string target = spot.Target.Length > 0 ? spot.Target : Target;
 							if (!String.IsNullOrEmpty (target))
 								writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, spot.NavigateUrl);
+#if TARGET_J2EE
+							string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", true) != 0);
+#else
+							string navUrl = ResolveClientUrl (spot.NavigateUrl);
+#endif
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
 							break;
 						case HotSpotMode.PostBack:
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString()));
