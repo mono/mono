@@ -253,7 +253,7 @@ namespace Mono.Security.Cryptography {
 				if (0 > len) {
 					// there's a special case if this is the end of the decryption process
 					if (inputBuffer.Length - inputOffset - outputBuffer.Length == BlockSizeByte)
-						inputCount = inputCount = outputBuffer.Length - outputOffset;
+						inputCount = outputBuffer.Length - outputOffset;
 					else
 						throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 				}
