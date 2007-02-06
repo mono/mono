@@ -4338,13 +4338,9 @@ namespace Mono.CSharp {
 				return false;
 
 			Type t = Parameters.ParameterType (0);
-			if (t.IsArray &&
-				(t.GetArrayRank () == 1) &&
-				(TypeManager.GetElementType (t) == TypeManager.string_type) &&
-				(Parameters.ParameterModifier (0) == Parameter.Modifier.NONE))
-				return true;
-			else
-				return false;
+			return t.IsArray && t.GetArrayRank () == 1 &&
+					TypeManager.GetElementType (t) == TypeManager.string_type &&
+					(Parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
