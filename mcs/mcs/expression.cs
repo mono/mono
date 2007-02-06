@@ -4513,11 +4513,10 @@ namespace Mono.CSharp {
 			if (Arguments != null)
 				arg_count = Arguments.Count;
 
-			if ((me.Name == "Invoke") &&
-				TypeManager.IsDelegateType (me.DeclaringType)) {
-				Error_InvokeOnDelegate (loc);
-				return null;
-			}
+			// This error was reported by csc 1.x only 
+			// if (me.Name == "Invoke" && TypeManager.IsDelegateType (me.DeclaringType)) {
+			//	Report.Error (1533, loc, "Invoke cannot be called directly on a delegate");
+			// }
 
 			MethodBase[] methods = me.Methods;
 
@@ -4822,12 +4821,6 @@ namespace Mono.CSharp {
 			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
 				name, arg_count.ToString ());
 		}
-
-                static void Error_InvokeOnDelegate (Location loc)
-                {
-                        Report.Error (1533, loc,
-                                      "Invoke cannot be called directly on a delegate");
-                }
                         
 		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
                                                     Type delegate_type, Argument a, ParameterData expected_par)
