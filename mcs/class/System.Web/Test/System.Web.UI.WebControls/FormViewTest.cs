@@ -620,6 +620,42 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		}
 
+		class MyEnumSource : IEnumerable
+		{
+			int _count;
+
+			public MyEnumSource (int count) {
+				_count = count;
+			}
+
+			#region IEnumerable Members
+
+			public IEnumerator GetEnumerator () {
+
+				for (int i = 0; i < _count; i++)
+					yield return i;
+			}
+
+			#endregion
+		}
+
+		[Test]
+		public void FormView_CreateChildControls2 ()
+		{
+			Poker fv = new Poker ();
+			fv.Page = new Page ();
+			fv.DataSource = new MyEnumSource (20);
+			fv.DataBind ();
+			
+			Assert.AreEqual (20, fv.PageCount, "CreateChildControls#0");
+
+			Assert.AreEqual (0, fv.DoCreateChildControls (new MyEnumSource (0), true), "CreateChildControls#1");
+			Assert.AreEqual (20, fv.DoCreateChildControls (new MyEnumSource (20), true), "CreateChildControls#2");
+
+			Assert.AreEqual (0, fv.DoCreateChildControls (new object [0], false), "CreateChildControls#3");
+			Assert.AreEqual (5, fv.DoCreateChildControls (new object [5], false), "CreateChildControls#4");
+		}
+
 		[Test]
 		public void FormView_CreateDataSourceSelectArguments ()
 		{

@@ -1,5 +1,10 @@
 2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs: fixed: 
+	works properly with not ICollection data source.	
+
+2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: fixed: 
 	PageIndex, CreateChildControls, 
 	works properly with not ICollection data source.	

@@ -687,6 +687,9 @@ namespace System.Web.UI.WebControls
 			get {
 				return pageCount;
 			}
+			private set {
+				pageCount = value;
+			}
 		}
 
 		[WebCategoryAttribute ("Paging")]
@@ -840,7 +843,6 @@ namespace System.Web.UI.WebControls
 		protected virtual FormViewRow CreateRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
 			FormViewRow row = new FormViewRow (rowIndex, rowType, rowState);
-			OnItemCreated (EventArgs.Empty);
 			return row;
 		}
 		
@@ -862,7 +864,7 @@ namespace System.Web.UI.WebControls
 				if (RequiresDataBinding) {
 					OnDataBinding (EventArgs.Empty);
 					RequiresDataBinding = false;
-					PerformDataBinding (new object [] { null });
+					PerformDataBinding (null);
 					MarkAsDataBound ();
 					OnDataBound (EventArgs.Empty);
 				}
@@ -881,7 +883,7 @@ namespace System.Web.UI.WebControls
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
 			PagedDataSource dataSource = new PagedDataSource ();
-			dataSource.DataSource = data;
+			dataSource.DataSource = CurrentMode != FormViewMode.Insert ? data : null;
 			dataSource.AllowPaging = AllowPaging;
 			dataSource.PageSize = 1;
 			dataSource.CurrentPageIndex = PageIndex;
@@ -895,27 +897,47 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			pageCount = dataSource.DataSourceCount;
-			bool showPager = AllowPaging && (pageCount > 1);
+			bool showPager = AllowPaging && (dataSource.PageCount > 1);
 			
 			Controls.Clear ();
 			table = CreateTable ();
 			Controls.Add (table);
+			headerRow = null;
+			footerRow = null;
+			topPagerRow = null;
+			bottomPagerRow = null;
 
 			// Gets the current data item
-			
-			IEnumerator e = dataSource.GetEnumerator (); 
-			dataItem = null;
 
 			if (AllowPaging) {
-				if (e.MoveNext ())
-					dataItem = e.Current;
+				PageCount = dataSource.DataSourceCount;
+				if (PageIndex >= PageCount && PageCount > 0) {
+					pageIndex = dataSource.CurrentPageIndex = PageCount - 1;
+				}
+				if (dataSource.DataSource != null) {
+					IEnumerator e = dataSource.GetEnumerator ();
+					if (e.MoveNext ())
+						dataItem = e.Current;
+				}
 			}
-			else
-			for (int page = 0; e.MoveNext (); page++ )
-				if (page == PageIndex)
-					dataItem = e.Current;
-			
+			else {
+				int page = 0;
+				object lastItem = null;
+				if (dataSource.DataSource != null) {
+					IEnumerator e = dataSource.GetEnumerator ();
+					for (; e.MoveNext (); page++) {
+						lastItem = e.Current;
+						if (page == PageIndex)
+							dataItem = e.Current;
+					}
+				}
+				PageCount = page;
+				if (PageIndex >= PageCount && PageCount > 0) {
+					pageIndex = PageCount - 1;
+					dataItem = lastItem;
+				}
+			}
+
 			// Main table creation
 			
 			if (HeaderText.Length != 0 || headerTemplate != null) {
@@ -930,7 +952,7 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (topPagerRow);
 			}
 
-			if (pageCount > 0) {
+			if (PageCount > 0) {
 				DataControlRowState rstate = GetRowState ();
 				itemRow = CreateRow (0, DataControlRowType.DataRow, rstate);
 				InitializeRow (itemRow);
@@ -966,7 +988,9 @@ namespace System.Web.UI.WebControls
 			if (dataBinding)
 				DataBind (false);
 			
-			return dataSource.DataSourceCount;
+			OnItemCreated (EventArgs.Empty);
+
+			return PageCount;
 		}
 		
 		DataControlRowState GetRowState ()
