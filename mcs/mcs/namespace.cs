@@ -55,8 +55,7 @@ namespace Mono.CSharp {
 		public static void DefineRootNamespace (string name, Assembly assembly)
 		{
 			if (name == "global") {
-				// FIXME: Add proper error number
-				Report.Error (-42, "Cannot define an external alias named `global'");
+				NamespaceEntry.Error_GlobalNamespaceRedefined (Location.Null);
 				return;
 			}
 			RootNamespace retval = GetRootNamespace (name);
@@ -799,7 +798,7 @@ namespace Mono.CSharp {
 			}
 
 			if (name == "global") {
-				Report.Error (1681, loc, "You cannot redefine the global extern alias");
+				Error_GlobalNamespaceRedefined (loc);
 				return;
 			}
 
@@ -941,6 +940,11 @@ namespace Mono.CSharp {
 		static void MsgtryPkg (string s)
 		{
 			Console.WriteLine ("    Try using -pkg:" + s);
+		}
+
+		public static void Error_GlobalNamespaceRedefined (Location loc)
+		{
+			Report.Error (1681, loc, "You cannot redefine the global extern alias");
 		}
 
 		public static void Error_NamespaceNotFound (Location loc, string name)

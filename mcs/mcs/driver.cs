@@ -1088,15 +1088,16 @@ namespace Mono.CSharp
 
 			case "/d":
 			case "/define": {
-				string [] defs;
-
 				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
 				}
 
-				defs = value.Split (new Char [] {';', ','});
-				foreach (string d in defs){
+				foreach (string d in value.Split (';', ',')){
+					if (!Tokenizer.IsValidIdentifier (d)) {
+						Report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", d);
+						continue;
+					}
 					defines.Add (d);
 				}
 				return true;

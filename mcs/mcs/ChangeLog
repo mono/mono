@@ -1,5 +1,13 @@
 2007-02-06  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs: Check define identifier before is registered.
+
+	* namespace.cs: Use existing error message.
+
+	* report.cs: New warning.
+
+2007-02-06  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #80742
 	* expression.cs: Delegate Invoke method can be called directly.
 
