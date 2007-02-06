@@ -1,6 +1,3 @@
-// cs1533 : Invoke cannot be called directly on a delegate
-// Line : 11
-
 public class TestClass
 {
 	delegate void OneDelegate (int i);
