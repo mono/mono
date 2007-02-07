@@ -609,7 +609,7 @@ namespace System.Xml.Serialization
 
 			CheckReferenceQueue ();
 
-			if (callbacks.ContainsKey (o.GetType ()))
+			if (callbacks != null && callbacks.ContainsKey (o.GetType ()))
 			{
 				WriteCallbackInfo info = (WriteCallbackInfo) callbacks[o.GetType()];
 				if (o.GetType ().IsEnum) {
