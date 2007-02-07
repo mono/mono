@@ -1,4 +1,10 @@
-2007-01-06  Everaldo Canuto  <everaldo@simios.org>
+2007-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListView.cs: UseCompatibleStateImageBehavior setter changed from NIEX to 
+	MonoInternalNote.  This is added automagically by VS2005, so let's not crash
+	on it.
+
+2007-02-06  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: hotkey_active internal field added, it is required because
 	we need to know when hotkeys must be draw, before this change a keystate

@@ -678,12 +678,12 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DefaultValue (true)]
 		[Browsable (false)]
+		[MonoInternalNote ("Stub, not implemented")]
 		public bool UseCompatibleStateImageBehavior {
 			get {
 				return false;
 			}
 			set {
-				throw new NotImplementedException ();
 			}
 		}
 #endif
