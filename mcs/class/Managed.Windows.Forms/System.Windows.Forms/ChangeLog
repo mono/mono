@@ -1,5 +1,10 @@
 2007-02-07  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: return immediately from Edit() when there are no
+	columns.  Fixes #80662.
+
+2007-02-07  Chris Toshok  <toshok@ximian.com>
+
 	* MessageBox.cs: fix #80625.  don't always show the Help button in
 	2.0.  use the displayHelpButton parameter to determine if we
 	should show it. Also, make the internal show_help field private.
