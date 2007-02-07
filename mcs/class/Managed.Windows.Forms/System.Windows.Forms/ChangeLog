@@ -1,3 +1,12 @@
+2007-01-06  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuAPI.cs: hotkey_active internal field added, it is required because
+	we need to know when hotkeys must be draw, before this change a keystate
+	Navigating was used but we can have menu in navigating state without
+	hotkeys. Fixes #80694.
+	
+	* ThemeWin32Classic.cs: Only draw hot keys when hotkey_active is true.
+
 2007-02-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: Handle WM_CAPTURECHANGED in 1.1 code as well, and change

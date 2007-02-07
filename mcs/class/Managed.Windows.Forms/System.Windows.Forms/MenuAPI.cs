@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		internal bool active;
 		internal bool popup_active;
 		internal bool popdown_menu;
+		internal bool hotkey_active;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
 		Form grab_control;
@@ -82,6 +83,7 @@ namespace System.Windows.Forms {
 		{
 			active = false;
 			popup_active = false;
+			hotkey_active = false;
 			grab_control.ActiveTracker = null;
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
@@ -509,6 +511,7 @@ namespace System.Windows.Forms {
 				switch (keynav_state) {
 				case KeyNavState.Idle:
 					keynav_state = KeyNavState.Startup;
+					hotkey_active = true;
 					CurrentMenu = TopMenu;
 					main_menu.Draw ();
 					break;

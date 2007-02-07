@@ -2269,7 +2269,7 @@ namespace System.Windows.Forms
 			if (menu.Height == 0)
 				CalcMenuBarSize (dc, menu, rect.Width);
 
-			bool keynav = (menu as MainMenu).tracker.Navigating;
+			bool keynav = (menu as MainMenu).tracker.hotkey_active; //.Navigating;
 			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
 			string_format_menu_menubar_text.HotkeyPrefix = hp;
 			string_format_menu_text.HotkeyPrefix = hp;
