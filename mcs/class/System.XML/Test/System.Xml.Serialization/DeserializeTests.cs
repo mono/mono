@@ -280,7 +280,6 @@ namespace MonoTests.System.XmlSerialization
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenSimpleClassString ()
 		{
 			Deserialize (typeof (GenSimpleClass<string>), "<GenSimpleClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
@@ -291,7 +290,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenSimpleClassBool ()
 		{
 			Deserialize (typeof (GenSimpleClass<bool>), "<GenSimpleClassOfBoolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>false</something></GenSimpleClassOfBoolean>");
@@ -302,7 +300,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenSimpleStructInt ()
 		{
 			Deserialize (typeof (GenSimpleStruct<int>), "<GenSimpleStructOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>0</something></GenSimpleStructOfInt32>");
@@ -315,7 +312,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenListClassString ()
 		{
 			Deserialize (typeof (GenListClass<string>), "<GenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfString>");
@@ -327,7 +323,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenListClassFloat ()
 		{
 			Deserialize (typeof (GenListClass<float>), "<GenListClassOfSingle xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfSingle>");
@@ -339,7 +334,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenListClassList ()
 		{
 			Deserialize (typeof (GenListClass<GenListClass<int>>), "<GenListClassOfGenListClassOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenListClassOfInt32>");
@@ -353,7 +347,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenListClassArray ()
 		{
 			Deserialize (typeof (GenListClass<GenArrayClass<char>>), "<GenListClassOfGenArrayClassOfChar xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenArrayClassOfChar>");
@@ -368,7 +361,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenTwoClassCharDouble ()
 		{
 			Deserialize (typeof (GenTwoClass<char, double>), "<GenTwoClassOfCharDouble xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2></GenTwoClassOfCharDouble>");
@@ -380,7 +372,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenDerivedClassDecimalShort ()
 		{
 			Deserialize (typeof (GenDerivedClass<decimal, short>), "<GenDerivedClassOfDecimalInt16 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something2>0</something2><another1>0</another1><another2>0</another2></GenDerivedClassOfDecimalInt16>");
@@ -394,7 +385,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenDerivedSecondClassByteUlong ()
 		{
 			Deserialize (typeof (GenDerived2Class<byte, ulong>), "<GenDerived2ClassOfByteUInt64 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2><another1>0</another1><another2>0</another2></GenDerived2ClassOfByteUInt64>");
@@ -408,7 +398,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenNestedClass ()
 		{
 			Deserialize (typeof (GenNestedClass<string, int>.InnerClass<bool>), "<InnerClassOfStringInt32Boolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><inner>0</inner><something>false</something></InnerClassOfStringInt32Boolean>");
@@ -420,7 +409,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenListClassListNested ()
 		{
 			Deserialize (typeof (GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>>),
@@ -440,7 +428,6 @@ namespace MonoTests.System.XmlSerialization
 
 		public enum Myenum { one, two, three, four, five, six };
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenArrayClassEnum ()
 		{
 			Deserialize (typeof (GenArrayClass<Myenum>), "<GenArrayClassOfMyenum xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><Myenum>one</Myenum><Myenum>one</Myenum><Myenum>one</Myenum></arr></GenArrayClassOfMyenum>");
@@ -453,7 +440,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenArrayClassStruct ()
 		{
 			Deserialize (typeof (GenArrayClass<GenSimpleStruct<uint>>), "<GenArrayClassOfGenSimpleStructOfUInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32></arr></GenArrayClassOfGenSimpleStructOfUInt32>");
@@ -466,7 +452,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenArrayClassList ()
 		{
 			Deserialize (typeof (GenArrayClass<GenListClass<string>>), "<GenArrayClassOfGenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenListClassOfString>0</GenListClassOfString><GenListClassOfString>0</GenListClassOfString><GenListClassOfString>0</GenListClassOfString></arr></GenArrayClassOfGenListClassOfString>");
@@ -495,7 +480,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestDeserializeGenComplexStruct ()
 		{
 			Deserialize (typeof (GenComplexStruct<int, string>), "<GenComplexStructOfInt32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>0</something><simpleclass><something>0</something></simpleclass><simplestruct><something>0</something></simplestruct><listclass><somelist></somelist></listclass><arrayclass><arr><int>0</int><int>0</int><int>0</int></arr></arrayclass><twoclass><something1>0</something1></twoclass><derivedclass><something2>0</something2><another1>0</another1></derivedclass><derived2><something1>0</something1><another1>0</another1></derived2><nestedouter><outer>0</outer></nestedouter><nestedinner><something>0</something></nestedinner></GenComplexStructOfInt32String>");
