@@ -1,3 +1,6 @@
+2007-02-07  Massimiliano Mantione  <massi@ximian.com>
+
+	* local-propagation.c: Actually *apply* the fix for bug 80591...
 
 Tue Feb 6 19:03:19 CET 2007 Paolo Molaro <lupus@ximian.com>
 
