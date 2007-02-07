@@ -45,11 +45,11 @@ namespace System.Web.Configuration {
 
 		static ExpressionBuilder ()
 		{
-			expressionPrefixProp = new ConfigurationProperty ("expressionPrefix", typeof (string), "",
+			expressionPrefixProp = new ConfigurationProperty ("expressionPrefix", typeof (string), null,
 									  TypeDescriptor.GetConverter (typeof (string)),
 									  PropertyHelper.NonEmptyStringValidator,
 									  ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "",
+			typeProp = new ConfigurationProperty ("type", typeof (string), null,
 							      TypeDescriptor.GetConverter (typeof (string)),
 							      PropertyHelper.NonEmptyStringValidator,
 							      ConfigurationPropertyOptions.IsRequired);
@@ -70,14 +70,14 @@ namespace System.Web.Configuration {
 		}
 
 		[StringValidator (MinLength = 1)]
-		[ConfigurationProperty ("expressionPrefix", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		[ConfigurationProperty ("expressionPrefix", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string ExpressionPrefix {
 			get { return (string) base[expressionPrefixProp]; }
 			set { base[expressionPrefixProp] = value; }
 		}
 
 		[StringValidator (MinLength = 1)]
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
+		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
 			get { return (string) base[typeProp]; }
 			set { base[typeProp] = value; }
