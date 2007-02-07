@@ -1481,8 +1481,6 @@ namespace Mono.CSharp {
 		public override string AsString ()
 		{
 			return TypeManager.CSharpEnumValue (type, Child.GetValue ());
-			string value = System.Enum.GetName (type, Child.GetValue ());
-			return value == null ? "0" : value;
 		}
 
 		public override Constant Increment()
