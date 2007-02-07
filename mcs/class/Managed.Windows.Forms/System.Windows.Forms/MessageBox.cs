@@ -59,13 +59,16 @@ namespace System.Windows.Forms
 			bool			buttons_placed	= false;
 			int			button_left;
 			Button[]		buttons = new Button[3];
-			internal bool           show_help;
+			bool                    show_help;
 			#endregion	// MessageBoxFrom Local Variables
 			
 			#region MessageBoxForm Constructors
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
-					MessageBoxButtons buttons, MessageBoxIcon icon) 
+					       MessageBoxButtons buttons, MessageBoxIcon icon,
+					       bool displayHelpButton)
 			{
+				show_help = displayHelpButton;
+
 				switch (icon) {
 					case MessageBoxIcon.None: {
 						icon_image = null;
@@ -109,9 +112,16 @@ namespace System.Windows.Forms
 
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
 					MessageBoxButtons buttons, MessageBoxIcon icon,
-					MessageBoxDefaultButton defaultButton, MessageBoxOptions options) : this (owner, text, caption, buttons, icon)
+					MessageBoxDefaultButton defaultButton, MessageBoxOptions options, bool displayHelpButton)
+				: this (owner, text, caption, buttons, icon, displayHelpButton)
 			{
 				msgbox_default = defaultButton;
+			}
+
+			public MessageBoxForm (IWin32Window owner, string text, string caption,
+					       MessageBoxButtons buttons, MessageBoxIcon icon)
+				: this (owner, text, caption, buttons, icon, false)
+			{
 			}
 			#endregion	// MessageBoxForm Constructors
 
@@ -308,13 +318,16 @@ namespace System.Windows.Forms
 							break;
 						}
 					}
+
 #if NET_2_0
-					int pos = 0;
-					for (int i = 0; i < 3; i++){
-						pos += 110;
-						if (buttons [i] == null){
-							AddHelpButton (pos + button_left);
-							break;
+					if (show_help) {
+						int pos = 0;
+						for (int i = 0; i < 3; i++){
+							pos += 110;
+							if (buttons [i] == null){
+								AddHelpButton (pos + button_left);
+								break;
+							}
 						}
 					}
 #endif
@@ -532,7 +545,7 @@ namespace System.Windows.Forms
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption,
-				MessageBoxButtons buttons)
+						 MessageBoxButtons buttons)
 		{
 			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, MessageBoxIcon.None);
 				
@@ -540,7 +553,7 @@ namespace System.Windows.Forms
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption,
-				MessageBoxButtons buttons, MessageBoxIcon icon)
+						 MessageBoxButtons buttons, MessageBoxIcon icon)
 		{
 			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, icon);
 				
@@ -565,36 +578,40 @@ namespace System.Windows.Forms
 		}
 
 		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons,
-				MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
+						 MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
 		{
 
-			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly, false);
 				
 			return form.RunDialog ();
 
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption,
-				MessageBoxButtons buttons, MessageBoxIcon icon,	 MessageBoxDefaultButton defaultButton)
+						 MessageBoxButtons buttons, MessageBoxIcon icon,
+						 MessageBoxDefaultButton defaultButton)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly, false);
 				
 			return form.RunDialog ();
 		}
 
 		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
-						MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, options);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, false);
 				
 			return form.RunDialog ();
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
-						MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
+						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
-					buttons, icon, defaultButton, options);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons,
+								  icon, defaultButton, options, false);
 				
 			return form.RunDialog ();
 		}
@@ -605,9 +622,8 @@ namespace System.Windows.Forms
 						 MessageBoxDefaultButton defaultButton, MessageBoxOptions options,
 						 bool displayHelpButton)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, options);
-			form.show_help = true;
-			
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons,
+								  icon, defaultButton, options, displayHelpButton);
 			return form.RunDialog ();
 		}
 #endif
