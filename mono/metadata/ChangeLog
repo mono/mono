@@ -1,4 +1,9 @@
 
+Wed Feb 7 18:49:10 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make the delegate function pointer mapping
+	work for the moving GC.
+
 Mon Jan 29 11:30:46 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: fix from Robert Jordan (robertj@gmx.net)
