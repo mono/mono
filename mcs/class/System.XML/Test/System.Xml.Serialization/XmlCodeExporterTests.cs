@@ -13,6 +13,9 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+#if NET_2_0
+using System.Reflection;
+#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -29,9 +32,6 @@ namespace MonoTests.System.XmlSerialization
 	public class XmlCodeExporterTests
 	{
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_ArrayClass ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ArrayClass));
@@ -46,7 +46,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -64,14 +64,16 @@ namespace MonoTests.System.XmlSerialization
 				"            this.namesField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
 				"public class ArrayClass {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    public object names;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
+
 
 			codeNamespace = ExportCode (typeof (ArrayClass[]));
 			Assert.IsNotNull (codeNamespace, "#3");
@@ -83,7 +85,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -100,19 +102,17 @@ namespace MonoTests.System.XmlSerialization
 				"            this.namesField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#4");
 #else
 				"public class ArrayClass {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    public object names;{0}" +
+				"}}{0}", Environment.NewLine), sw.ToString (), "#4");
 #endif
-			"}}{0}", Environment.NewLine), sw.ToString (), "#4");
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_ArrayContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ArrayContainer));
@@ -127,7 +127,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -145,20 +145,18 @@ namespace MonoTests.System.XmlSerialization
 				"            this.itemsField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
 				"public class ArrayContainer {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    public object[] items;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_CDataContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (CDataContainer));
@@ -173,7 +171,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -191,20 +189,18 @@ namespace MonoTests.System.XmlSerialization
 				"            this.cdataField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
 				"public class CDataContainer {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    public System.Xml.XmlCDataSection cdata;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		[Category ("NotWorking")] // order of XmlElementAttribute's does not match that of MSFT
 		[Category ("NotDotNet")] // Mono bug ##77117 and MS.NET randomly modifies the order of the elements!
 		public void ExportTypeMapping_Choices ()
@@ -221,7 +217,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -243,6 +239,7 @@ namespace MonoTests.System.XmlSerialization
 				"            this.myChoiceField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
 				"public class Choices {{{0}" +
@@ -253,14 +250,11 @@ namespace MonoTests.System.XmlSerialization
 				"    [System.Xml.Serialization.XmlElementAttribute(\"ChoiceOne\", typeof(string))]{0}" +
 				"    [System.Xml.Serialization.XmlChoiceIdentifierAttribute(\"ItemType\")]{0}" +
 				"    public string MyChoice;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 #if NET_2_0
 		[Category ("NotDotNet")] // regression in MS.NET 2.0
 #endif
@@ -279,7 +273,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -493,7 +487,7 @@ namespace MonoTests.System.XmlSerialization
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 #endif
 				"public enum FlagEnum {{{0}" +
@@ -514,7 +508,7 @@ namespace MonoTests.System.XmlSerialization
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 #endif
 				"public enum MapModifiers {{{0}" +
@@ -526,13 +520,14 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlEnumAttribute(\"protected\")]{0}" +
 				"    Protected = 2,{0}" +
+#if NET_2_0
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
+#else
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_ItemChoiceType ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ItemChoiceType));
@@ -547,7 +542,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 #endif
 				"[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]{0}" +
@@ -563,7 +558,11 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    ChoiceTwo,{0}" +
+#if NET_2_0
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
+#else
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 
 			codeNamespace = ExportCode (typeof (ItemChoiceType[]));
 			Assert.IsNotNull (codeNamespace, "#3");
@@ -575,7 +574,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 #endif
 				"[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]{0}" +
@@ -590,13 +589,14 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    ChoiceTwo,{0}" +
+#if NET_2_0
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#4");
+#else
 				"}}{0}", Environment.NewLine), sw.ToString (), "#4");
+#endif
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_ClassArrayContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ClassArrayContainer));
@@ -611,7 +611,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -632,7 +632,7 @@ namespace MonoTests.System.XmlSerialization
 				"}}{0}" +
 				"{0}" +
 				"/// <remarks/>{0}" +
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -649,6 +649,7 @@ namespace MonoTests.System.XmlSerialization
 				"            this.somethingField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
 				"public class ClassArrayContainer {{{0}" +
@@ -662,8 +663,8 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    public string something;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
@@ -809,9 +810,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_SimpleClassWithXmlAttributes ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (SimpleClassWithXmlAttributes));
@@ -826,7 +824,7 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
 				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
@@ -845,6 +843,7 @@ namespace MonoTests.System.XmlSerialization
 				"            this.somethingField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
 #else
 				"[System.Xml.Serialization.XmlRootAttribute(\"simple\", Namespace=\"\", IsNullable=true)]{0}" +
 				"public class SimpleClassWithXmlAttributes {{{0}" +
@@ -852,8 +851,8 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"member\")]{0}" +
 				"    public string something;{0}" +
-#endif
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
@@ -893,9 +892,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
-		[Ignore ("This test does not really consider upgrades.")]
-#endif
 		public void ExportTypeMapping_ZeroFlagEnum ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ZeroFlagEnum));
@@ -911,7 +907,7 @@ namespace MonoTests.System.XmlSerialization
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
 #if NET_2_0
-				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"2.0.50727.42\")]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 #endif
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=false)]{0}" +
@@ -928,7 +924,11 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlEnumAttribute(\"tns:t<w>o\")]{0}" +
 				"    e2 = 4,{0}" +
+#if NET_2_0
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
+#else
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		CodeNamespace ExportCode (Type type)
@@ -940,6 +940,17 @@ namespace MonoTests.System.XmlSerialization
 			exp.ExportTypeMapping (map);
 			return codeNamespace;
 		}
+
+#if NET_2_0
+		string XmlFileVersion {
+			get {
+				Assembly xmlAsm = typeof (XmlDocument).Assembly;
+				AssemblyFileVersionAttribute afv = (AssemblyFileVersionAttribute)
+					Attribute.GetCustomAttribute (xmlAsm, typeof (AssemblyFileVersionAttribute));
+				return afv.Version;
+			}
+		}
+#endif
 
 		[XmlRootAttribute ("root", Namespace="urn:aNS", IsNullable=false)]
 		public class Root

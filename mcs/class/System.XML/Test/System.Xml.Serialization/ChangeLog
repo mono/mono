@@ -1,3 +1,8 @@
+2007-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlCodeExporter.cs: Avoid hardcoding version numbers. Enable tests
+	again on 2.0 profile.
+
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapReflectionImporterTests.cs : removed some NotWorking.
