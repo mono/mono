@@ -61,3 +61,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../ecma.pub")]
 #endif
+
+#if NET_2_0
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+#endif
