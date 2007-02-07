@@ -1,5 +1,10 @@
 2007-02-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseValidator.cs: fixed render, works in static mode properly 
+	* CreateUserWizard.cs: fixed display mode for validators.		
+
+2007-02-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormView.cs:
 	* FormViewPagerRow:		
 	implemented FormViewPagerRow class	

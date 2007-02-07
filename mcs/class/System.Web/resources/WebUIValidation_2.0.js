@@ -498,16 +498,11 @@ function ValidatorGetText (v)
 
 function ValidatorFailed (v)
 {
-	var text = ValidatorGetText (v);
-	v.innerHTML = text;
-
 	ValidatorUpdateDisplay (v, false);
 }
 
 function ValidatorSucceeded (v)
 {
-	v.innerHTML = "";
-
 	ValidatorUpdateDisplay (v, true);
 }
 

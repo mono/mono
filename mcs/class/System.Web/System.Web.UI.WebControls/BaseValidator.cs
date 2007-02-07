@@ -465,8 +465,12 @@ namespace System.Web.UI.WebControls {
 			}
 			else if (render_uplevel) {
 				render_tags = true;
+#if NET_2_0
+				render_text = Display != ValidatorDisplay.None;
+#else
 				if (Display != ValidatorDisplay.None)
 					render_text = !v || Display == ValidatorDisplay.Dynamic;
+#endif
 			}
 			else {
 				if (Display == ValidatorDisplay.Static) {

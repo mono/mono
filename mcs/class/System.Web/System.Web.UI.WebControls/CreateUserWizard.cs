@@ -2100,6 +2100,7 @@ namespace System.Web.UI.WebControls
 				PasswordCompare.ControlToValidate = "ConfirmPassword";
 				PasswordCompare.Display = ValidatorDisplay.Static;
 				PasswordCompare.ValidationGroup = _createUserWizard.ID;
+				PasswordCompare.Display = ValidatorDisplay.Dynamic;
 				_createUserWizard.RegisterApplyStyle (PasswordCompare, _createUserWizard.ValidatorTextStyle);
 
 				table.Controls.Add (CreateRow (PasswordCompare, null, null, null, null));
@@ -2111,6 +2112,7 @@ namespace System.Web.UI.WebControls
 				PasswordRegEx.ControlToValidate = "Password";
 				PasswordRegEx.Display = ValidatorDisplay.Static;
 				PasswordRegEx.ValidationGroup = _createUserWizard.ID;
+				PasswordRegEx.Display = ValidatorDisplay.Dynamic;
 				_createUserWizard.RegisterApplyStyle (PasswordRegEx, _createUserWizard.ValidatorTextStyle);
 
 				table.Controls.Add (CreateRow (PasswordRegEx, null, null, null, null));
@@ -2122,6 +2124,7 @@ namespace System.Web.UI.WebControls
 				EmailRegEx.ControlToValidate = "Email";
 				EmailRegEx.Display = ValidatorDisplay.Static;
 				EmailRegEx.ValidationGroup = _createUserWizard.ID;
+				EmailRegEx.Display = ValidatorDisplay.Dynamic;
 				_createUserWizard.RegisterApplyStyle (EmailRegEx, _createUserWizard.ValidatorTextStyle);
 
 				table.Controls.Add (CreateRow (EmailRegEx, null, null, null, null));
