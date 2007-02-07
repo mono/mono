@@ -1,5 +1,9 @@
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapReflectionImporterTests.cs : removed some NotWorking.
+
+2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializerTests.cs : added some XmlNode array/list tests.
 	* XmlSerializationWriterTests.cs : removed more NotWorking. Added
 	  WriteTypedPrimitive() error test for XmlNode.

@@ -65,7 +65,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestIntTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (int));
@@ -115,7 +114,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestStringTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (string));
@@ -214,7 +212,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestByteTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (byte));
@@ -260,7 +257,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestBoolTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (bool));
@@ -285,7 +281,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestShortTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (short));
@@ -310,7 +305,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestUnsignedShortTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (ushort));
@@ -335,7 +329,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestUIntTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (uint));
@@ -360,7 +353,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestLongTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (long));
@@ -385,7 +377,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestULongTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (ulong));
@@ -410,7 +401,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestFloatTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (float));
@@ -435,7 +425,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestDoubleTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (double));
@@ -460,7 +449,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestDateTimeTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (DateTime));
@@ -510,7 +498,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestGuidTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (Guid));
@@ -560,7 +547,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestDecimalTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (decimal));
@@ -585,7 +571,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestXmlQualifiedNameTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (XmlQualifiedName));
@@ -635,7 +620,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestSByteTypeMapping ()
 		{
 			XmlTypeMapping tm = Map (typeof (sbyte));
@@ -685,7 +669,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void TestCharTypeMapping()
 		{
 			XmlTypeMapping tm = Map (typeof (char));

@@ -344,6 +344,9 @@ namespace System.Xml.Serialization {
 		
 		XmlTypeMapping ImportPrimitiveMapping (TypeData typeData, string defaultNamespace)
 		{
+			if (typeData.SchemaType == SchemaTypes.Primitive)
+				defaultNamespace = typeData.IsXsdType ? XmlSchema.Namespace : XmlSerializer.WsdlTypesNamespace;
+
 			Type type = typeData.Type;
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;

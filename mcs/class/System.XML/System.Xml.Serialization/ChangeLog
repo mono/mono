@@ -1,5 +1,10 @@
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapReflectionImporter.cs : for primitive types, set predefined
+	  namespaces, regardless of the actual specification.
+
+2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializationWriter.cs : WriteTypedPrimitive() does not support
 	  XmlNode arrays.
 	* XmlSerializationWriterInterpreter.cs,
