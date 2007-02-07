@@ -741,8 +741,7 @@ namespace System.Web.UI.WebControls
 		
 		
 		[DefaultValue (null)]
-		/* DataControlPagerCell isnt specified in the docs */
-		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
+		[TemplateContainerAttribute (typeof (FormView))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Browsable (false)]
 		public virtual ITemplate PagerTemplate {
@@ -842,8 +841,10 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual FormViewRow CreateRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
-			FormViewRow row = new FormViewRow (rowIndex, rowType, rowState);
-			return row;
+			if (rowType == DataControlRowType.Pager)
+				return new FormViewPagerRow (rowIndex, rowType, rowState);
+			else
+				return new FormViewRow (rowIndex, rowType, rowState);
 		}
 		
 		void RequireBinding ()

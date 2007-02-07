@@ -1,3 +1,9 @@
+2007-02-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs:
+	* FormViewPagerRow:		
+	implemented FormViewPagerRow class	
+
 2007-02-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: 

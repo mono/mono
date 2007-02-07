@@ -811,6 +811,7 @@ System.Web.UI.WebControls/FormViewModeEventHandler.cs
 System.Web.UI.WebControls/FormViewPageEventArgs.cs
 System.Web.UI.WebControls/FormViewPageEventHandler.cs
 System.Web.UI.WebControls/FormViewRow.cs
+System.Web.UI.WebControls/FormViewPagerRow.cs
 System.Web.UI.WebControls/FormViewUpdatedEventArgs.cs
 System.Web.UI.WebControls/FormViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/FormViewUpdateEventArgs.cs

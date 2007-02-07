@@ -591,6 +591,7 @@
     <Compile Include="System.Web.UI.WebControls\FormViewPageEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewPageEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewRow.cs" />
+    <Compile Include="System.Web.UI.WebControls\FormViewPagerRow.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewUpdatedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewUpdatedEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewUpdateEventArgs.cs" />
