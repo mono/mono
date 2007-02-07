@@ -1251,9 +1251,6 @@
     <EmbeddedResource Include="resources\box_plus.gif">
       <LogicalName>box_plus.gif</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\callback.js">
-      <LogicalName>callback.js</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources\contact.gif">
       <LogicalName>contact.gif</LogicalName>
     </EmbeddedResource>
@@ -1334,9 +1331,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\WebUIValidation_2.0.js">
       <LogicalName>WebUIValidation_2.0.js</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\MaintainScrollPositionOnPostBack.js">
-      <LogicalName>MaintainScrollPositionOnPostBack.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.UI.WebControls\GridView.js">
       <LogicalName>GridView.js</LogicalName>

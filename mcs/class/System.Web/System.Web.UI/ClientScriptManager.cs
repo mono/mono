@@ -164,9 +164,6 @@ namespace System.Web.UI
 		{
 			if (!IsClientScriptIncludeRegistered (typeof (Page), "webform"))
 				RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
-
-			if (!IsClientScriptIncludeRegistered (typeof (Page), "callback"))
-				RegisterClientScriptInclude (typeof (Page), "callback", GetWebResourceUrl (typeof (Page), "callback.js"));
 		}
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)

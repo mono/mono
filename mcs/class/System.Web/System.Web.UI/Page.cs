@@ -943,10 +943,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected internal override void Render (HtmlTextWriter writer) {
 		if (MaintainScrollPositionOnPostBack) {
 			RequiresPostBackScript ();
-
-			string scriptUrl = ClientScript.GetWebResourceUrl (typeof (Page), "MaintainScrollPositionOnPostBack.js");
-
-			ClientScript.RegisterClientScriptInclude (typeof (Page), "MaintainScrollPositionOnPostBack.js", scriptUrl);
+			ClientScript.RegisterWebFormClientScript ();
 
 			ClientScript.RegisterHiddenField (ScrollPositionXID, Request [ScrollPositionXID]);
 			ClientScript.RegisterHiddenField (ScrollPositionYID, Request [ScrollPositionYID]);

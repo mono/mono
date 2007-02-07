@@ -4,6 +4,7 @@
  * Authors:
  *   Chris Toshok (toshok@ximian.com)
  *   Lluis Sanchez Gual (lluis@novell.com)
+ *   Igor Zelmanovich (igorz@mainsoft.com)
  *
  * (c) 2005 Novell, Inc. (http://www.novell.com)
  *
@@ -119,6 +120,86 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 		__doPostBack (ctrl, par);
 }
 
+function WebForm_DoCallback (id, arg, callback, ctx, errorCallback)
+{
+	var myForm = WebForm_GetFormFromCtrl (id);
+	var qs = WebForm_getFormData (myForm) + "&__CALLBACKTARGET=" + id + "&&__CALLBACKARGUMENT=" + escape(arg);
+	// WebForm_httpPost (myForm.serverURL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+	WebForm_httpPost (document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+}
+
+function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
+{
+	try {
+		var doc = httpPost.responseText;
+		var separatorIndex = doc.indexOf("|");
+		if (separatorIndex != -1) {
+			var validationFieldLength = parseInt(doc.substring(0, separatorIndex));
+			if (!isNaN(validationFieldLength)) {
+				var validationField = doc.substring(separatorIndex + 1, separatorIndex + validationFieldLength + 1);
+				if (validationField != "") {
+					var validationFieldElement = theForm["__EVENTVALIDATION"];
+					if (!validationFieldElement) {
+						validationFieldElement = document.createElement("INPUT");
+						validationFieldElement.type = "hidden";
+						validationFieldElement.name = "__EVENTVALIDATION";
+						theForm.appendChild(validationFieldElement);
+					}
+					validationFieldElement.value = validationField;
+				}
+				callback (doc.substring(separatorIndex + validationFieldLength + 1), ctx);
+				return;
+			}
+		}
+	} catch (e) {
+		if (errorCallback != null)
+			errorCallback (httpPost.responseText, ctx);
+		return;
+	}
+	callback (httpPost.responseText, ctx);
+}
+
+function WebForm_getFormData (theForm)
+{
+	var qs = "";
+	var len = theForm.elements.length;
+	for (n=0; n<len; n++) {
+		var elem = theForm.elements [n];
+		if (qs.length > 0) qs += "&";
+		qs += elem.name + "=" + encodeURIComponent (elem.value);
+	}
+	return qs;
+}
+
+var axName = null;
+function WebForm_httpPost (url, data, callback)
+{
+	var httpPost = null;
+	
+	if (typeof XMLHttpRequest != "undefined") {
+		httpPost = new XMLHttpRequest ();
+	} else {
+		if (axName != null)
+			httpPost = new ActiveXObject (axName);
+		else {
+			var clsnames = new Array ("MSXML", "MSXML2", "MSXML3", "Microsoft");
+			for (n = 0; n < clsnames.length && httpPost == null; n++) {
+				axName = clsnames [n] + ".XMLHTTP";
+				try {
+					httpPost = new ActiveXObject (axName);
+				} catch (e) { axName = null; }
+			}
+			if (httpPost == null)
+				throw new Error ("XMLHTTP object could not be created.");
+		}
+	}
+	httpPost.onreadystatechange = function () { if (httpPost.readyState == 4) callback (httpPost); };
+	
+	httpPost.open ("POST", url, true);	// async
+	httpPost.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
+	setTimeout (function () { httpPost.send (data); }, 10);
+}
+
 function WebForm_GetFormFromCtrl (id)
 {
 	// We need to translate the id from ASPX UniqueID to its ClientID.
@@ -155,5 +236,60 @@ function WebForm_FireDefaultButton(event, target)
 	return true;
 }
 
+function WebForm_SaveScrollPositionSubmit() {
+    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
+    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
+    if ((typeof(this.oldSubmit) != "undefined") && (this.oldSubmit != null)) {
+        return this.oldSubmit();
+    }
+    return true;
+}
+
+function WebForm_SaveScrollPositionOnSubmit() {
+    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
+    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
+    if ((typeof(this.oldOnSubmit) != "undefined") && (this.oldOnSubmit != null)) {
+        return this.oldOnSubmit();
+    }
+    return true;
+}
+
+function WebForm_RestoreScrollPosition(currForm) {
+	currForm = currForm || theForm;
+	var ScrollX = currForm.elements['__SCROLLPOSITIONX'].value;
+	var ScrollY = currForm.elements['__SCROLLPOSITIONY'].value;
+	if (ScrollX != "" || ScrollY != "")
+    	window.scrollTo(ScrollX, ScrollY);
+    if ((typeof(this.oldOnLoad) != "undefined") && (this.oldOnLoad != null)) {
+        return this.oldOnLoad();
+    }
+    return true;
+}
+
+function WebForm_GetScrollX() {
+    if (window.pageXOffset) {
+        return window.pageXOffset;
+    }
+    else if (document.documentElement && document.documentElement.scrollLeft) {
+        return document.documentElement.scrollLeft;
+    }
+    else if (document.body) {
+        return document.body.scrollLeft;
+    }
+    return 0;
+}
+
+function WebForm_GetScrollY() {
+    if (window.pageYOffset) {
+        return window.pageYOffset;
+    }
+    else if (document.documentElement && document.documentElement.scrollTop) {
+        return document.documentElement.scrollTop;
+    }
+    else if (document.body) {
+        return document.body.scrollTop;
+    }
+    return 0;
+}
 
 
