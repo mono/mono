@@ -247,6 +247,42 @@ namespace MonoTests.System.Windows.Forms
 			listBox.ItemHeight = 256;
 		}
 
+		[Test] // bug #80696
+		[NUnit.Framework.Category ("NotWorking")]
+		public void SelectedIndex_Created ()
+		{
+			Form form = new Form ();
+			ListBox listBox = new ListBox ();
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			form.Controls.Add (listBox);
+			form.Show ();
+
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#1");
+			listBox.SelectedIndex = 0;
+			Assert.AreEqual (0, listBox.SelectedIndex, "#2");
+			listBox.SelectedIndex = -1;
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#3");
+			listBox.SelectedIndex = 1;
+			Assert.AreEqual (1, listBox.SelectedIndex, "#4");
+		}
+
+		[Test] // bug #80753
+		[NUnit.Framework.Category ("NotWorking")]
+		public void SelectedIndex_NotCreated ()
+		{
+			ListBox listBox = new ListBox ();
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#1");
+			listBox.SelectedIndex = 0;
+			Assert.AreEqual (0, listBox.SelectedIndex, "#2");
+			listBox.SelectedIndex = -1;
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#3");
+			listBox.SelectedIndex = 1;
+			Assert.AreEqual (1, listBox.SelectedIndex, "#4");
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SelectedIndexException ()
