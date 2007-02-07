@@ -1,3 +1,7 @@
+2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SectionInfo.cs : don't stop at restartOnExternalChanges attribute.
+
 2007-01-16  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConfigurationElement.cs: ignore properties with null or empty name.

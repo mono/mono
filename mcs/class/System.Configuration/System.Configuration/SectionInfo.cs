@@ -39,6 +39,7 @@ namespace System.Configuration
 	{
 		bool allowLocation = true;
 		bool requirePermission = true;
+		bool restartOnExternalChanges;
 		ConfigurationAllowDefinition allowDefinition = ConfigurationAllowDefinition.Everywhere;
 		ConfigurationAllowExeDefinition allowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
 
@@ -54,6 +55,7 @@ namespace System.Configuration
 			this.allowDefinition = info.AllowDefinition;
 			this.allowExeDefinition = info.AllowExeDefinition;
 			this.requirePermission = info.RequirePermission;
+			this.restartOnExternalChanges = info.RestartOnExternalChanges;
 		}
 		
 		public override object CreateInstance ()
@@ -65,6 +67,7 @@ namespace System.Configuration
 				sec.SectionInformation.AllowDefinition = allowDefinition;
 				sec.SectionInformation.AllowExeDefinition = allowExeDefinition;
 				sec.SectionInformation.RequirePermission = requirePermission;
+				sec.SectionInformation.RestartOnExternalChanges = restartOnExternalChanges;
 				sec.SectionInformation.SetName (Name);
 			}
 			return ob;
@@ -131,6 +134,14 @@ namespace System.Configuration
 						if (!reqPermValue && reqPerm != "false")
 							ThrowException ("Invalid attribute value", reader);
 						requirePermission = reqPermValue;
+						break;
+
+					case "restartOnExternalChanges":
+						string restart = reader.Value;
+						bool restartValue = (restart == "true");
+						if (!restartValue && restart != "false")
+							ThrowException ("Invalid attribute value", reader);
+						restartOnExternalChanges = restartValue;
 						break;
 
 					default:
