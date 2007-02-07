@@ -1,3 +1,8 @@
+2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadElementContentAsString() and all relevant methods
+	  didn't consume empty element correctly.
+
 2006-12-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : (InsertBefore) when newChild == refChild, do nothing

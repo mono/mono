@@ -1124,8 +1124,9 @@ namespace System.Xml
 
 		public virtual string ReadElementContentAsString (string localName, string namespaceURI)
 		{
+			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
-			if (IsEmptyElement)
+			if (isEmpty)
 				return String.Empty;
 			string s = ReadContentString (false);
 			ReadEndElement ();

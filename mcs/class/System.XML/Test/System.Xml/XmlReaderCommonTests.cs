@@ -1951,6 +1951,21 @@ namespace MonoTests.System.Xml
 			Assert (reader.MoveToAttribute ("id"));
 			AssertEquals ("myId", reader.ReadContentAsString ());
 		}
+
+		[Test]
+		public void ReadElementContentAsStringEmpty ()
+		{
+			string xml = "<root><sample/></root>";
+			RunTest (xml, new TestMethod (ReadElementContentAsStringEmpty));
+		}
+
+		void ReadElementContentAsStringEmpty (XmlReader reader)
+		{
+			reader.MoveToContent ();
+			reader.Read ();
+			AssertEquals (String.Empty, reader.ReadElementContentAsString ("sample", ""));
+			AssertEquals (XmlNodeType.EndElement, reader.NodeType);
+		}
 #endif
 	}
 }
