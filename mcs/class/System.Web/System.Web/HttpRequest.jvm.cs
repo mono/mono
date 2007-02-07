@@ -57,6 +57,7 @@ namespace System.Web
 		void LoadWwwForm ()
 		{
 			HttpServletRequest servletReq = context.ServletRequest;
+			servletReq.setCharacterEncoding (ContentEncoding.WebName);
 
 			for (java.util.Enumeration e = servletReq.getParameterNames(); e.hasMoreElements() ;) {
 				string key = (string) e.nextElement();
