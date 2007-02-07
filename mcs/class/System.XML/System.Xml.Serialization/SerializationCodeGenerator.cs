@@ -690,7 +690,14 @@ namespace System.Xml.Serialization
 			
 			if (typeMap.TypeData.Type == typeof (object)) {
 				WriteLineInd ("else {");
-				WriteLine ("WriteTypedPrimitive (element, namesp, ob, true);");
+				WriteLineInd ("if (ob.GetType().IsArray && typeof(XmlNode).IsAssignableFrom(ob.GetType().GetElementType())) {");
+				WriteLine ("Writer.WriteStartElement ($ELEMENT, $NAMESPACE);");
+				WriteLineInd ("foreach (XmlNode node in (System.Collections.IEnumerable) ob)");
+				WriteLineUni ("node.WriteTo (Writer);");
+				WriteLineUni ("Writer.WriteEndElement ();");
+				WriteLine ("}");
+				WriteLineInd ("else");
+				WriteLineUni ("WriteTypedPrimitive (element, namesp, ob, true);");
 				WriteLine ("return;");
 				WriteLineUni ("}");
 			}

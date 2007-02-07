@@ -739,7 +739,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // namespace should be wsdl types ns
 		public void TestWriteTypedPrimitive_Char_XsiType ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -963,7 +962,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // namespace should be wsdl types ns
 		public void TestWriteTypedPrimitive_Guid_XsiType ()
 		{
 			Guid guid = new Guid ("CA761232-ED42-11CE-BACD-00AA0057B223");
@@ -1132,7 +1130,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // order of namespace declaration differs from that of MSFT
 		public void TestWriteTypedPrimitive_String_XsiType_Namespace ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1360,7 +1357,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // InvalidOperatinException is not thrown
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestWriteTypedPrimitive_NonPrimitive ()
 		{
@@ -1368,6 +1364,13 @@ namespace MonoTests.System.XmlSerialization
 			// or SoapInclude attribute to specify types that are not known
 			// statically.
 			WriteTypedPrimitive ("x", ANamespace, new Version (), false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestWriteTypedPrimitive_XmlNode ()
+		{
+			WriteTypedPrimitive ("x", ANamespace, new XmlDocument ().CreateElement ("foo"), false);
 		}
 
 		[Test]
@@ -1461,7 +1464,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // order of namespace declaration differs from that of MSFT
 		public void TestWriteXsiType_Namespace ()
 		{
 			WriteStartElement ("x", ANamespace);

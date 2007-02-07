@@ -1801,6 +1801,34 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeXmlElementArray ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new XmlElement[] { doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }, typeof (object));
+			Assert.AreEqual (Infoset ("<anyType><elem1/><elem2/></anyType>"), WriterText);
+		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))] // List<XmlNode> is not supported
+		public void TestSerializeGenericListOfNode ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new List<XmlNode> (new XmlNode [] { doc.CreateAttribute ("at"), doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }), typeof (object));
+			Assert.AreEqual (Infoset ("<anyType at=\"\"><elem1/><elem2/></anyType>"), WriterText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))] // List<XmlElement> is not supported
+		public void TestSerializeGenericListOfElement ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Serialize (new List<XmlElement> (new XmlElement [] { doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }), typeof (object));
+			Assert.AreEqual (Infoset ("<anyType><elem1/><elem2/></anyType>"), WriterText);
+		}
+#endif
+
+		[Test]
 		public void TestSerializeXmlElement ()
 		{
 			XmlDocument doc = new XmlDocument ();

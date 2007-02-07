@@ -114,6 +114,14 @@ namespace System.Xml.Serialization
 				return;
 			}
 
+			if (ob.GetType ().IsArray && typeof (XmlNode).IsAssignableFrom (ob.GetType ().GetElementType ())) {
+				Writer.WriteStartElement (element, namesp);
+				foreach (XmlNode node in (IEnumerable) ob)
+					node.WriteTo (Writer);
+				Writer.WriteEndElement ();
+				return;
+			}
+
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
 				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
