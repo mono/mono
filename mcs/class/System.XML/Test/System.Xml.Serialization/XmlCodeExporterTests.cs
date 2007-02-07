@@ -29,6 +29,9 @@ namespace MonoTests.System.XmlSerialization
 	public class XmlCodeExporterTests
 	{
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_ArrayClass ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ArrayClass));
@@ -107,6 +110,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_ArrayContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ArrayContainer));
@@ -150,6 +156,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_CDataContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (CDataContainer));
@@ -193,6 +202,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		[Category ("NotWorking")] // order of XmlElementAttribute's does not match that of MSFT
 		[Category ("NotDotNet")] // Mono bug ##77117 and MS.NET randomly modifies the order of the elements!
 		public void ExportTypeMapping_Choices ()
@@ -246,6 +258,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 #if NET_2_0
 		[Category ("NotDotNet")] // regression in MS.NET 2.0
 #endif
@@ -515,6 +530,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_ItemChoiceType ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ItemChoiceType));
@@ -576,6 +594,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_ClassArrayContainer ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ClassArrayContainer));
@@ -788,6 +809,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_SimpleClassWithXmlAttributes ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (SimpleClassWithXmlAttributes));
@@ -869,6 +893,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("This test does not really consider upgrades.")]
+#endif
 		public void ExportTypeMapping_ZeroFlagEnum ()
 		{
 			CodeNamespace codeNamespace = ExportCode (typeof (ZeroFlagEnum));

@@ -1,3 +1,8 @@
+2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlCodeExporterTests.cs : Gert's tests often condemn Microsoft
+	  that they upgrade version numbers.
+
 2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporterTests.cs :
