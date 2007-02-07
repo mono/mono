@@ -1,3 +1,7 @@
+2007-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewColumnTest.cs.
+
 2007-02-06  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
 	* System.Windows.Forms_test.dll.sources: Add TimerTest.cs

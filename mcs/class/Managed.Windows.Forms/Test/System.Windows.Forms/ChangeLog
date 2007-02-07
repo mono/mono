@@ -1,5 +1,9 @@
 2007-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataGridViewColumnTest.cs: Added test for bug #80746.
+
+2007-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ListBoxTest.cs: Added tests for bug #80696 and bug #80753.
 
 2007-02-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
