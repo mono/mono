@@ -546,7 +546,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_Base64Binary ()
 		{
 			byte[] byteArray = new byte[] { 255, 20, 10, 5, 0, 7 };
@@ -625,7 +624,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_Boolean ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -694,7 +692,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_Char ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -764,7 +761,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_DateTime ()
 		{
 			DateTime dateTime = new DateTime (1973, 08, 13);
@@ -912,7 +908,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_Guid ()
 		{
 			Guid guid = new Guid ("CA761232-ED42-11CE-BACD-00AA0057B223");
@@ -993,7 +988,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_Int ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1062,7 +1056,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #8 fails
 		public void TestWriteTypedPrimitive_String ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1192,7 +1185,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #7 fails
 		public void TestWriteTypedPrimitive_UnsignedByte ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1261,7 +1253,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #A7 fails
 		public void TestWriteTypedPrimitive_XmlQualifiedName ()
 		{
 			XmlQualifiedName qname = new XmlQualifiedName ("something", AnotherNamespace);

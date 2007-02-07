@@ -749,7 +749,7 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // Mono does not generate the <xs:choice> node
-		[Category ("NotDotNet")] // MS.NET randomly modifies the order of the elements!
+		[Category ("NotDotNet")] // MS.NET randomly modifies the order of the elements! -> Of course. There is nothing strange. The test is rather strange.
 		public void ExportClass_Choices ()
 		{
 			XmlSchemas schemas = Export (typeof (Choices), "NSChoices");

@@ -841,7 +841,12 @@ namespace System.Xml.Serialization
 			string value;
 			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 
-			name = XmlCustomFormatter.FromXmlName (name);
+			if (name == null) {
+				ns = td.IsXsdType ? XmlSchema.Namespace : XmlSerializer.WsdlTypesNamespace;
+				name = td.XmlType;
+			}
+			else
+				name = XmlCustomFormatter.FromXmlName (name);
 			Writer.WriteStartElement (name, ns);
 
 			if (o is XmlNode[]) {
