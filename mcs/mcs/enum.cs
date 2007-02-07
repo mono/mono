@@ -194,6 +194,8 @@ namespace Mono.CSharp {
 			get { return "F:"; }
 		}
 
+		public object Value { get { return value.GetValue (); } }
+
 		#region IConstant Members
 
 		public Constant CreateConstantReference (Location loc)
@@ -337,6 +339,20 @@ namespace Mono.CSharp {
 			return new MemberList (fb);
 		}
 
+		//
+		// Used for error reporting only
+		//
+		public EnumMember GetDefinition (object value)
+		{
+			foreach (EnumMember e in defined_names.Values) {
+				if (e.Value.Equals (value))
+					return e;
+			}
+
+			throw new ArgumentOutOfRangeException (value.ToString ());
+		}
+
+		
  		void VerifyClsName ()
   		{
 			HybridDictionary dict = new HybridDictionary (defined_names.Count, true);

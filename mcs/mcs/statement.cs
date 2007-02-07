@@ -2709,16 +2709,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Erorr_AlreadyOccurs ()
+		public void Erorr_AlreadyOccurs (Type switchType, SwitchLabel collisionWith)
 		{
 			string label;
 			if (converted == null)
 				label = "default";
 			else if (converted == NullStringCase)
 				label = "null";
+			else if (TypeManager.IsEnumType (switchType)) 
+				label = TypeManager.CSharpEnumValue (switchType, converted);
 			else
 				label = converted.ToString ();
-
+			
+			Report.SymbolRelatedToPreviousError (collisionWith.loc, null);
 			Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
 		}
 	}
@@ -2891,7 +2894,7 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels){
 					if (sl.Label == null){
 						if (default_section != null){
-							sl.Erorr_AlreadyOccurs ();
+							sl.Erorr_AlreadyOccurs (SwitchType, (SwitchLabel)default_section.Labels [0]);
 							error = true;
 						}
 						default_section = ss;
@@ -2907,7 +2910,7 @@ namespace Mono.CSharp {
 					try {
 						Elements.Add (key, sl);
 					} catch (ArgumentException) {
-						sl.Erorr_AlreadyOccurs ();
+						sl.Erorr_AlreadyOccurs (SwitchType, (SwitchLabel)Elements [key]);
 						error = true;
 					}
 				}

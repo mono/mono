@@ -665,6 +665,16 @@ namespace Mono.CSharp {
 		+ match.Groups [2].Captures [0].Value;
 	}
 
+	// Used for error reporting to show symbolic name instead of underlying value
+	public static string CSharpEnumValue (Type t, object value)
+	{
+		Enum e = LookupDeclSpace (t) as Enum;
+		if (e == null)
+			return System.Enum.GetName (t, value);
+
+		return e.GetDefinition (value).GetSignatureForError ();
+	}
+
         /// <summary>
 	///  Returns the signature of the method with full namespace classification
 	/// </summary>

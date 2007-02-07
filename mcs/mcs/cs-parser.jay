@@ -1308,8 +1308,14 @@ parameter_modifiers
 	  }
 	| parameter_modifiers parameter_modifier
 	  {
-		Report.Error (1108, lexer.Location, "A parameter cannot have specified more than one modifier");
-		$$ = $1;
+		Parameter.Modifier p2 = (Parameter.Modifier)$2;
+  		Parameter.Modifier mod = (Parameter.Modifier)$1 | p2;
+  		if (((Parameter.Modifier)$1 & p2) == p2) {
+  			Error_DuplicateParameterModifier (lexer.Location, p2);
+  		} else {
+			Report.Error (1108, lexer.Location, "A parameter cannot have specified more than one modifier");
+  		}
+  		$$ = mod;
 	  }
 	;
 
@@ -1323,6 +1329,11 @@ parameter_array
 	  { 
 		LocatedToken lt = (LocatedToken) $4;
 		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
+	  }
+	| opt_attributes PARAMS PARAMS type IDENTIFIER 
+	  {
+		Error_DuplicateParameterModifier (lexer.Location, Parameter.Modifier.PARAMS);
+		$$ = null;
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
 	  {
@@ -4769,6 +4780,12 @@ void Error_ExpectingTypeName (Expression expr)
 public static void Error_ParameterModifierNotValid (Location loc)
 {
 	Report.Error (631, loc, "The modifiers `ref' and `out' are not valid in this context");
+}
+
+static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
+{
+	Report.Error (1107, loc, "Duplicate parameter modifier `{0}'",
+  		Parameter.GetModifierSignature (mod));
 }
 
 void push_current_class (TypeContainer tc, bool is_interface, object partial_token)
