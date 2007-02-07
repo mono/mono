@@ -1,4 +1,10 @@
 
+Wed Feb 7 20:37:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: locking fixes: never take the loader lock
+	or other runtime locks when holding the marshal lock
+	(fixes bug#80664).
+
 Wed Feb 7 18:49:10 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: make the delegate function pointer mapping
