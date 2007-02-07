@@ -4183,11 +4183,11 @@ namespace System.Windows.Forms
 
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
+				is_visible=value;
+				
 				if (value && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 				}
-
-				is_visible=value;
 
 				if (IsHandleCreated) {
 					XplatUI.SetVisible(Handle, value, true);
