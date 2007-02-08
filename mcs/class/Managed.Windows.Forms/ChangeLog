@@ -1,3 +1,8 @@
+2007-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add ToolStripOverflow.cs,
+	ToolStripOverflowButton.cs.
+
 2007-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Windows.Forms_test.dll.sources: Add DataGridViewColumnTest.cs.

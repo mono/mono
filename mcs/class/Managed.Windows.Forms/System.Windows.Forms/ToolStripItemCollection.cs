@@ -246,6 +246,19 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Internal Methods
+		// When we create DisplayedItems, we don't want to modify the item's
+		// parent or trigger a layout.
+		internal int AddNoOwnerOrLayout (ToolStripItem value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			int index = base.Add (value);
+			return index;
+		}
+		#endregion
+		
 		#region IList Members
 		int IList.Add (object value)
 		{

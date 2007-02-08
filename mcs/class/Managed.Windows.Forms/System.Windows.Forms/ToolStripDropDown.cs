@@ -452,14 +452,15 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			base.OnLayout (e);
-
 			// Find the widest menu item
 			int widest = 0;
 
 			foreach (ToolStripItem tsi in this.Items) {
 				if (!tsi.Available) 
 					continue;
+					
+				tsi.SetPlacement (ToolStripItemPlacement.Main);
+				
 				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
 					widest = tsi.GetPreferredSize (Size.Empty).Width;
 			}
@@ -486,6 +487,9 @@ namespace System.Windows.Forms
 			}
 
 			this.Size = new Size (widest + this.Padding.Horizontal, y + this.Padding.Bottom);// + 2);
+			this.SetDisplayedItems ();
+			this.OnLayoutCompleted (EventArgs.Empty);
+			this.Invalidate ();
 		}
 
 		protected override void OnMouseUp (MouseEventArgs mea)

@@ -254,7 +254,7 @@ namespace System.Windows.Forms
 		{
 			base.OnRenderMenuItemBackground (e);
 
-			Rectangle paint_here = new Rectangle (1, 0, e.Item.Width - 3, e.Item.Height - 1);
+			Rectangle paint_here = new Rectangle (1, 0, e.Item.Bounds.Width - 3, e.Item.Bounds.Height - 1);
 
 			if (e.Item.Selected || e.Item.Pressed) {		//|| (e.Item is ToolStripMenuItem && (e.Item as ToolStripMenuItem).DropDown.Visible)) {
 				if (this.ColorTable.UseSystemColors){
@@ -272,6 +272,33 @@ namespace System.Windows.Forms
 		protected override void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
 		{
 			base.OnRenderOverflowButtonBackground (e);
+
+			Rectangle paint_here = new Rectangle (e.Item.Width - 11, 0, 11, e.Item.Height - 1);
+
+			// Paint gradient background
+			if (e.Item.Selected && !e.Item.Pressed)
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonSelectedGradientBegin, this.ColorTable.ButtonSelectedGradientEnd, LinearGradientMode.Vertical))
+					e.Graphics.FillRectangle (b, paint_here);
+			else if (e.Item.Pressed)
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonPressedGradientBegin, this.ColorTable.ButtonPressedGradientEnd, LinearGradientMode.Vertical))
+					e.Graphics.FillRectangle (b, paint_here);
+			else
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.OverflowButtonGradientBegin, this.ColorTable.OverflowButtonGradientEnd, LinearGradientMode.Vertical))
+					e.Graphics.FillRectangle (b, paint_here);
+
+			// Paint down arrow
+			Point arrow_loc = new Point (paint_here.X + 2, paint_here.Bottom - 9);
+
+			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 1, arrow_loc.Y + 1, arrow_loc.X + 5, arrow_loc.Y + 1);
+			e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y, arrow_loc.X + 4, arrow_loc.Y);
+
+			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 5, arrow_loc.Y + 4);
+			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 5, arrow_loc.X + 4, arrow_loc.Y + 5);
+			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 6);
+
+			e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y + 3, arrow_loc.X + 4, arrow_loc.Y + 3);
+			e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 1, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 4);
+			e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 2, arrow_loc.Y + 4, arrow_loc.X + 2, arrow_loc.Y + 5);
 		}
 
 		protected override void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
@@ -324,7 +351,7 @@ namespace System.Windows.Forms
 				using (Pen p = new Pen (this.ColorTable.ButtonSelectedBorder))
 				{
 					e.Graphics.DrawRectangle (p, paint_here);
-					e.Graphics.DrawLine (p, tssb.SplitterBounds.Left, tssb.SplitterBounds.Top, tssb.SplitterBounds.Left, tssb.SplitterBounds.Bottom);
+					e.Graphics.DrawLine (p, button_part.Right, 0, button_part.Right, button_part.Height);
 				}
 			else if (e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.MenuBorder))
@@ -337,9 +364,10 @@ namespace System.Windows.Forms
 
 			if (e.ToolStrip is ToolStripDropDown) {
 				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
+				if (!(e.ToolStrip is ToolStripOverflow)) {
 				Rectangle side_gradient = new Rectangle (1, 2, 24, e.ToolStrip.Height - 3);
 				using (LinearGradientBrush b = new LinearGradientBrush (side_gradient, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Horizontal))
-					e.Graphics.FillRectangle (b, side_gradient);
+					e.Graphics.FillRectangle (b, side_gradient); }
 				return;
 			}
 
@@ -360,7 +388,10 @@ namespace System.Windows.Forms
 			base.OnRenderToolStripBorder (e);
 
 			if (e.ToolStrip is ToolStripDropDown) {
-				e.Graphics.DrawLines (new Pen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
+				if (e.ToolStrip is ToolStripOverflow)
+					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left, e.AffectedBounds.Top) });
+				else
+					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
 				return;
 			}
 

@@ -1,0 +1,123 @@
+//
+// ToolStripOverflow.cs
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2007 Novell
+//
+// Authors:
+//	Jonathan Pobst (monkey@jpobst.com)
+//
+
+#if NET_2_0
+using System;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable
+	{
+		ToolStripItem parent_item;
+		
+		#region Public Constructors
+		public ToolStripOverflow (ToolStripItem parentItem)
+		{
+			this.parent_item = parentItem;
+			this.OwnerItem = parentItem;
+		}
+		#endregion
+		
+		#region Public Properties
+		#endregion
+
+		#region Protected Properties
+		protected internal override ToolStripItemCollection DisplayedItems {
+			get { return base.DisplayedItems; }
+		}
+		#endregion
+
+		#region Public Methods
+		public override Size GetPreferredSize (Size constrainingSize)
+		{
+			return base.GetPreferredSize (constrainingSize);
+		}
+		#endregion
+
+		#region Protected Methods
+		[MonoInternalNote ("This should stack in rows of ~3, but for now 1 column will work.")]
+		protected override void OnLayout (LayoutEventArgs e)
+		{
+			SetDisplayedItems ();
+			
+			// Find the widest menu item
+			int widest = 0;
+
+			foreach (ToolStripItem tsi in this.DisplayedItems) {
+				if (!tsi.Available)
+					continue;
+				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
+					widest = tsi.GetPreferredSize (Size.Empty).Width;
+			}
+
+			int x = this.Padding.Left;
+			widest += this.Padding.Horizontal;
+			int y = this.Padding.Top;
+
+			foreach (ToolStripItem tsi in this.DisplayedItems) {
+				if (!tsi.Available)
+					continue;
+
+				y += tsi.Margin.Top;
+
+				int height = 0;
+
+				if (tsi is ToolStripSeparator)
+					height = 7;
+				else
+					height = 22;
+
+				tsi.SetBounds (new Rectangle (x, y, widest, height));
+				y += tsi.Height + tsi.Margin.Bottom;
+			}
+
+			this.Size = new Size (widest + this.Padding.Horizontal, y + this.Padding.Bottom);// + 2);
+		}
+
+		protected override void SetDisplayedItems ()
+		{
+			this.displayed_items.Clear ();
+
+			if (this.OwnerItem != null)
+				foreach (ToolStripItem tsi in this.OwnerItem.Parent.Items)
+					if (tsi.Placement == ToolStripItemPlacement.Overflow && tsi.Available && !(tsi is ToolStripSeparator)) {
+						this.displayed_items.AddNoOwnerOrLayout (tsi);
+						//tsi.Parent = this;
+					}
+
+			this.PerformLayout ();
+		}
+		#endregion
+	}
+}
+#endif

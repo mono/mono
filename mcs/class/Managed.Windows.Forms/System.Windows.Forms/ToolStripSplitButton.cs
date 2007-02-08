@@ -182,7 +182,9 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
-			return new ToolStripDropDownMenu ();
+			ToolStripDropDownMenu tsddm = new ToolStripDropDownMenu ();
+			tsddm.OwnerItem = this;
+			return tsddm;
 		}
 		
 		protected virtual void OnButtonClick (EventArgs e)

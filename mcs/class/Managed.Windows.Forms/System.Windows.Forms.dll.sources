@@ -673,6 +673,8 @@ System.Windows.Forms/ToolStripLayoutStyle.cs
 System.Windows.Forms/ToolStripManager.cs
 System.Windows.Forms/ToolStripManagerRenderMode.cs
 System.Windows.Forms/ToolStripMenuItem.cs
+System.Windows.Forms/ToolStripOverflow.cs
+System.Windows.Forms/ToolStripOverflowButton.cs
 System.Windows.Forms/ToolStripPanel.cs
 System.Windows.Forms/ToolStripPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripPanelRenderEventHandler.cs

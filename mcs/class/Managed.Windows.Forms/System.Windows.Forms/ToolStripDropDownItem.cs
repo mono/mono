@@ -134,8 +134,6 @@ namespace System.Windows.Forms
 			if (!this.HasDropDownItems)
 				return;
 				
-			this.DropDown.OwnerItem = this;
-			
 			this.OnDropDownOpening (this, EventArgs.Empty);
 			this.DropDown.Show (this.DropDownLocation);
 			this.OnDropDownShow (EventArgs.Empty);
@@ -145,7 +143,9 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected virtual ToolStripDropDown CreateDefaultDropDown ()
 		{
-			return new ToolStripDropDown ();
+			ToolStripDropDown tsdd = new ToolStripDropDown ();
+			tsdd.OwnerItem = this;
+			return tsdd;
 		}
 
 		protected override void Dispose (bool disposing)

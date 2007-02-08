@@ -184,7 +184,9 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
-			return new ToolStripDropDownMenu ();
+			ToolStripDropDownMenu tsddm = new ToolStripDropDownMenu ();
+			tsddm.OwnerItem = this;
+			return tsddm;
 		}
 
 		protected override void Dispose (bool disposing)
@@ -265,7 +267,7 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
-			if (this.HasDropDownItems)
+			if (this.HasDropDownItems && Enabled)
 				if (!this.DropDown.Visible)
 					this.ShowDropDown ();
 
@@ -274,7 +276,7 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseEnter (EventArgs e)
 		{
-			if (this.IsOnDropDown && this.HasDropDownItems)
+			if (this.IsOnDropDown && this.HasDropDownItems && Enabled)
 				this.ShowDropDown ();
 
 			base.OnMouseEnter (e);
@@ -287,7 +289,8 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
-			base.OnMouseUp (e);
+			if (!this.HasDropDownItems && Enabled)
+				base.OnMouseUp (e);
 		}
 
 		protected override void OnOwnerChanged (EventArgs e)

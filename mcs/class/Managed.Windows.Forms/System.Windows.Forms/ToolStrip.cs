@@ -45,6 +45,7 @@ namespace System.Windows.Forms
 		private Color back_color;
 		private bool can_overflow;
 		private ToolStripDropDownDirection default_drop_down_direction;
+		internal ToolStripItemCollection displayed_items;
 		private Color fore_color;
 		private ToolStripGripDisplayStyle grip_display_style;
 		private Padding grip_margin;
@@ -56,6 +57,7 @@ namespace System.Windows.Forms
 		private LayoutSettings layout_settings;
 		private ToolStripLayoutStyle layout_style;
 		private Orientation orientation;
+		private ToolStripOverflowButton overflow_button;
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
 		private bool show_item_tool_tips;
@@ -84,6 +86,7 @@ namespace System.Windows.Forms
 			this.can_overflow = true;
 			base.CausesValidation = false;
 			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
+			this.displayed_items = new ToolStripItemCollection (this, null);
 			this.Dock = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
@@ -95,6 +98,8 @@ namespace System.Windows.Forms
 			this.layout_engine = new ToolStripSplitStackLayout ();
 			this.layout_style = ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.orientation = Orientation.Horizontal;
+			if (!(this is ToolStripDropDown))
+				this.overflow_button = new ToolStripOverflowButton (this);
 			this.Padding = this.DefaultPadding;
 			this.renderer = null;
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
@@ -336,6 +341,10 @@ namespace System.Windows.Forms
 			get { return this.orientation; }
 		}
 
+		public ToolStripOverflowButton OverflowButton {
+			get { return this.overflow_button; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripRenderer Renderer {
@@ -395,16 +404,16 @@ namespace System.Windows.Forms
 		protected virtual DockStyle DefaultDock { get { return DockStyle.Top; } }
 		protected virtual Padding DefaultGripMargin { get { return new Padding (2); } }
 		protected override Padding DefaultMargin { get { return Padding.Empty; } }
-		[MonoTODO ("This should override Control.DefaultPadding once it exists.")]
 		protected override Padding DefaultPadding { get { return new Padding (0, 0, 1, 0); } }
 		protected virtual bool DefaultShowItemToolTips { get { return true; } }
 		protected override Size DefaultSize { get { return new Size (100, 25); } }
+		protected internal virtual ToolStripItemCollection DisplayedItems { get { return this.displayed_items; } }
 		#endregion
 
 		#region Public Methods
 		public ToolStripItem GetItemAt (Point point)
 		{
-			foreach (ToolStripItem tsi in this.items)
+			foreach (ToolStripItem tsi in this.displayed_items)
 				if (tsi.Visible && tsi.Bounds.Contains (point))
 					return tsi;
 
@@ -533,11 +542,10 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
+			DoAutoSize ();
 			base.OnLayout (e);
 
-			DoAutoSize ();
-
-			this.layout_engine.Layout (this, e);
+			this.SetDisplayedItems ();
 			this.OnLayoutCompleted (EventArgs.Empty);
 			this.Invalidate ();
 		}
@@ -610,64 +618,58 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseMove (MouseEventArgs mea)
 		{
-			ToolStripItem tsi = this.GetItemAt (mea.X, mea.Y);
+			ToolStripItem tsi;
+			// Find the item we are now 
+			if (this.overflow_button != null && this.overflow_button.Visible && this.overflow_button.Bounds.Contains (mea.Location))
+				tsi = this.overflow_button;
+			else
+				tsi = this.GetItemAt (mea.X, mea.Y);
 
 			if (tsi != null) {
+				// If we were already hovering on this item, just send a mouse move
 				if (tsi == mouse_currently_over) 
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
 				else {
-					if (mouse_currently_over != null) {
+					// If we were over a different item, fire a mouse leave on it
+					if (mouse_currently_over != null)
 						mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
-						
-						if (mouse_currently_over is ToolStripMenuItem)
-							(mouse_currently_over as ToolStripMenuItem).HideDropDown(ToolStripDropDownCloseReason.Keyboard);
-					} else {
-						foreach (ToolStripItem tsi2 in this.Items)
-							if (tsi2 is ToolStripMenuItem)
-								(tsi2 as ToolStripMenuItem).HideDropDown (ToolStripDropDownCloseReason.Keyboard);
-					}
-						
+					
+					// Set the new item we are currently over
 					mouse_currently_over = tsi;
 					
+					// Fire mouse enter and mouse move
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseEnter);
 					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
 
-					if (menu_selected && mouse_currently_over is ToolStripDropDownItem && (mouse_currently_over as ToolStripDropDownItem).HasDropDownItems) {
-						(mouse_currently_over as ToolStripDropDownItem).DropDown.OwnerItem = (ToolStripMenuItem)mouse_currently_over;
+					// If we're over something with a drop down, show it
+					if (menu_selected && mouse_currently_over.Enabled && mouse_currently_over is ToolStripDropDownItem && (mouse_currently_over as ToolStripDropDownItem).HasDropDownItems)
 						(mouse_currently_over as ToolStripDropDownItem).DropDown.Show ((mouse_currently_over as ToolStripDropDownItem).DropDownLocation);
-					}
 				}
 			} else {
+				// We're not over anything now, just fire the mouse leave on what we used to be over
 				if (mouse_currently_over != null) {
 					mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
 					mouse_currently_over = null;
 				}
 			}
-
+			
 			base.OnMouseMove (mea);
 		}
 
 		protected override void OnMouseUp (MouseEventArgs mea)
 		{
+			// If we're currently over an item (set in MouseMove)
 			if (mouse_currently_over != null) {
+				// Fire the item's MouseUp event
 				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
 
 				// The event handler may have blocked until the mouse moved off of the ToolStripItem
 				if (mouse_currently_over == null)
 					return;
 					
+				// Fire our ItemClicked event
 				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
-				
-				if (mouse_currently_over.IsOnDropDown)
-					need_to_release_menu = true;
-					
-				if (this is MenuStrip)
-					if (!(mouse_currently_over as ToolStripMenuItem).HasDropDownItems && !(need_to_release_menu && menu_selected))
-						(this as MenuStrip).FireMenuDeactivate ();
 			}
-
-			if (this is MenuStrip && need_to_release_menu)
-				this.HideMenus (true, ToolStripDropDownCloseReason.ItemClicked);
 
 			base.OnMouseUp (mea);
 		}
@@ -679,13 +681,17 @@ namespace System.Windows.Forms
 			// Draw the grip
 			this.OnPaintGrip (e);
 
-			// Make each item draw itself (if within the ClipRectangle)
-			foreach (ToolStripItem tsi in this.items) {
-				if (tsi.Available == false) // || !e.ClipRectangle.IntersectsWith (tsi.Bounds))
-					continue;
-
+			// Make each item draw itself
+			foreach (ToolStripItem tsi in this.displayed_items) {
 				e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);
 				tsi.FireEvent (e, ToolStripItemEventType.Paint);
+				e.Graphics.ResetTransform ();
+			}
+
+			// Paint the Overflow button if it's visible
+			if (this.overflow_button != null && this.overflow_button.Visible) {
+				e.Graphics.TranslateTransform (this.overflow_button.Bounds.Left, this.overflow_button.Bounds.Top);
+				this.overflow_button.FireEvent (e, ToolStripItemEventType.Paint);
 				e.Graphics.ResetTransform ();
 			}
 		}
@@ -753,10 +759,20 @@ namespace System.Windows.Forms
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
-		[MonoTODO("Implement for overflow")]
 		protected virtual void SetDisplayedItems ()
 		{
-
+			this.displayed_items.Clear ();
+			
+			foreach (ToolStripItem tsi in this.items)
+				if (tsi.Placement == ToolStripItemPlacement.Main && tsi.Available) {
+					this.displayed_items.AddNoOwnerOrLayout (tsi);
+					tsi.Parent = this; 
+				}
+				else if (tsi.Placement == ToolStripItemPlacement.Overflow)
+					tsi.Parent = this.OverflowButton.DropDown; 
+			
+			if (this.OverflowButton != null)
+				this.OverflowButton.DropDown.SetDisplayedItems ();
 		}
 
 		protected static void SetItemParent (ToolStripItem item, ToolStrip parent)
@@ -878,7 +894,7 @@ namespace System.Windows.Forms
 				new_size.Width = this.Width;
 			} else {
 				foreach (ToolStripItem tsi in this.items) 
-					if (tsi.Visible)
+					if (tsi.Available)
 						new_size.Width += tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Left + tsi.Margin.Right;
 
 				new_size.Height = this.Height;
@@ -896,17 +912,27 @@ namespace System.Windows.Forms
 			if (release)
 				menu_selected = false;
 				
-			foreach (ToolStripDropDownItem tsi in this.Items)
-				if (tsi.Visible)
-					tsi.DropDown.Close ();
+			NotifySelectedChanged (null);
 		}
 
-		//private void OnCursorChanged (EventArgs e)
-		//{
-		//        EventHandler eh = (EventHandler)(Events[CursorChangedEvent]);
-		//        if (eh != null)
-		//                eh (this, e);
-		//}
+		internal void NotifySelectedChanged (ToolStripItem tsi)
+		{
+			foreach (ToolStripItem tsi2 in this.DisplayedItems)
+				if (tsi != tsi2)
+					if (tsi2 is ToolStripDropDownItem)
+						(tsi2 as ToolStripDropDownItem).HideDropDown (ToolStripDropDownCloseReason.Keyboard);
+
+			if (this.OverflowButton != null) {
+				ToolStripItemCollection tsic = this.OverflowButton.DropDown.DisplayedItems;
+				
+				foreach (ToolStripItem tsi2 in tsic)
+					if (tsi != tsi2)
+						if (tsi2 is ToolStripDropDownItem)
+							(tsi2 as ToolStripDropDownItem).HideDropDown (ToolStripDropDownCloseReason.Keyboard);
+			
+				this.OverflowButton.HideDropDown ();
+			}
+		}
 		#endregion
 	}
 }

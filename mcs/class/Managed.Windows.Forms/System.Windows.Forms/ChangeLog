@@ -1,3 +1,15 @@
+2007-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Tell MenuStrips to close when the form is clicked.
+	* MenuStrip.cs, ToolStrip.cs, ToolStripControlHost.cs, 
+	ToolStripDropDown.cs, ToolStripDropDownItem.cs, ToolStripItem.cs,
+	ToolStripItemCollection.cs, ToolStripMenuItem.cs, ToolStripProfessionalRenderer.cs,
+	ToolStripSplitButton.cs, ToolStripSplitStackLayout.cs: Add 
+	support for Overflow, where items that do not fit are automatically
+	reparented to a drop down menu.
+	* ToolStripOverflow.cs, ToolStripOverflowButton.cs: Added.
+	Also: fixes bug #80747.
+
 2007-02-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComboBox.cs: Remove warning (unused code).

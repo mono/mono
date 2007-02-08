@@ -38,11 +38,11 @@ namespace System.Windows.Forms
 	[ComVisible (true)]
 	public class MenuStrip : ToolStrip
 	{
-		private bool can_overflow;
 		private ToolStripMenuItem mdi_window_list_item;
 
 		public MenuStrip () : base ()
 		{
+			base.CanOverflow = false;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.Stretch = true;
 			this.Dock = DockStyle.Top;
@@ -52,8 +52,8 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		[Browsable (false)]
 		public new bool CanOverflow {
-			get { return this.can_overflow; }
-			set { this.can_overflow = value; }
+			get { return base.CanOverflow; }
+			set { base.CanOverflow = value; }
 		}
 
 		[DefaultValue (ToolStripGripStyle.Hidden)]

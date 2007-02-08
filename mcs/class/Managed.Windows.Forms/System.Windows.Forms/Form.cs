@@ -2221,7 +2221,10 @@ namespace System.Windows.Forms {
 						active_tracker.OnMouseDown(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
 						return;
 					}
-					base.WndProc(ref m);
+#if NET_2_0
+					ToolStripManager.FireAppClicked ();
+#endif
+					base.WndProc (ref m);
 					return;
 				}
 

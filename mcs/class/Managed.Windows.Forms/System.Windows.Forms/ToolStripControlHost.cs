@@ -269,11 +269,6 @@ namespace System.Windows.Forms
 		protected override void OnBoundsChanged ()
 		{
 			base.OnBoundsChanged ();
-
-			control.Size = this.Size;
-			if (this.Parent != null) {
-				OnLayout (new LayoutEventArgs (null, string.Empty));
-			}
 		}
 		
 		protected virtual void OnEnter (EventArgs e)

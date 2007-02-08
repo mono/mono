@@ -70,6 +70,7 @@ namespace System.Windows.Forms
 		private ToolStrip owner;
 		internal ToolStripItem owner_item;
 		private Padding padding;
+		private ToolStripItemPlacement placement;
 		private RightToLeft right_to_left;
 		private Object tag;
 		private string text;
@@ -115,6 +116,7 @@ namespace System.Windows.Forms
 			this.name = name;
 			this.overflow = ToolStripItemOverflow.AsNeeded;
 			this.padding = this.DefaultPadding;
+			this.placement = ToolStripItemPlacement.None;
 			this.right_to_left = RightToLeft.Inherit;
 			this.bounds.Size = this.DefaultSize;
 			this.text = text;
@@ -226,10 +228,10 @@ namespace System.Windows.Forms
 			get { return this.visible; }
 			set {
 				if (this.visible != value) {
-					visible = value; 
-					
-					if (this.owner != null) 
-						owner.PerformLayout (); 
+					visible = value;
+
+					if (this.parent != null)
+						parent.PerformLayout (); 
 						
 					OnAvailableChanged (EventArgs.Empty); 
 					OnVisibleChanged (EventArgs.Empty);
@@ -302,8 +304,9 @@ namespace System.Windows.Forms
 				if (this.display_style != value) {
 					this.display_style = value; 
 					this.CalculateAutoSize (); 
-					OnDisplayStyleChanged (EventArgs.Empty); 
-					this.Invalidate ();
+					OnDisplayStyleChanged (EventArgs.Empty);
+					if (this.Parent != null)
+						this.Parent.PerformLayout ();
 				}
 			}
 		}
@@ -446,7 +449,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
-				if (this.owner != null && this.owner is ToolStripDropDown)
+				if (this.parent != null && this.parent is ToolStripDropDown)
 					return true;
 
 				return false;
@@ -512,6 +515,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public ToolStripItemPlacement Placement {
+			get { return this.placement; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Pressed { get { return this.is_pressed; } }
@@ -667,14 +674,14 @@ namespace System.Windows.Forms
 
 		public void Invalidate ()
 		{
-			if (owner != null)
-				owner.Invalidate (this.bounds);
+			if (parent != null)
+				parent.Invalidate (this.bounds);
 		}
 
 		public void Invalidate (Rectangle r)
 		{
-			if (owner != null)
-				owner.Invalidate (r);
+			if (parent != null)
+				parent.Invalidate (r);
 		}
 
 		public void PerformClick ()
@@ -705,9 +712,10 @@ namespace System.Windows.Forms
 
 		public void Select ()
 		{
-			if (this.CanSelect) {
+			if (!this.is_selected && this.CanSelect) {
 				this.is_selected = true;
 				this.Invalidate ();
+				this.Parent.NotifySelectedChanged (this);
 			}
 		}
 
@@ -839,10 +847,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMouseEnter (EventArgs e)
 		{
-			if (this.CanSelect) {
-				this.is_selected = true;
-				this.Invalidate ();
-			}
+			this.Select ();
 
 			EventHandler eh = (EventHandler)(Events [MouseEnterEvent]);
 			if (eh != null)
@@ -886,6 +891,10 @@ namespace System.Windows.Forms
 				this.is_pressed = false;
 				this.Invalidate ();
 
+				if (this.IsOnDropDown)
+					if (!(this is ToolStripDropDownItem)|| (this as ToolStripDropDownItem).DropDown.Visible == false)
+						((this.Parent as ToolStripDropDown).OwnerItem as ToolStripDropDownItem).HideDropDown ();;
+				
 				MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 				if (eh != null)
 					eh (this, e);
@@ -901,8 +910,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnPaint (PaintEventArgs e)
 		{
-			if (this.Owner != null)
-				this.Owner.Renderer.DrawItemBackground (new ToolStripItemRenderEventArgs (e.Graphics, this));
+			if (this.parent != null)
+				this.parent.Renderer.DrawItemBackground (new ToolStripItemRenderEventArgs (e.Graphics, this));
 				
 			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
 			if (eh != null)
@@ -911,6 +920,11 @@ namespace System.Windows.Forms
 
 		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
 		{
+			if (oldParent != null)
+				oldParent.PerformLayout ();
+				
+			if (newParent != null)
+				newParent.PerformLayout ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1083,8 +1097,8 @@ namespace System.Windows.Forms
 
 			if (final_size != this.Size) {
 				this.bounds.Size = final_size;
-				if (this.owner != null) 
-					this.owner.PerformLayout ();
+				if (this.parent != null)
+					this.parent.PerformLayout ();
 			}
 		}
 
@@ -1107,10 +1121,10 @@ namespace System.Windows.Forms
 								preferred_size = this.image.Size;
 								break;
 							case ToolStripItemImageScaling.SizeToFit:
-								if (this.owner == null)
+								if (this.parent == null)
 									preferred_size = this.image.Size;
 								else
-									preferred_size = this.owner.ImageScalingSize;
+									preferred_size = this.parent.ImageScalingSize;
 								break;
 						}
 					}
@@ -1251,6 +1265,11 @@ namespace System.Windows.Forms
 					this.OnPaint ((PaintEventArgs)e);
 					break;
 			}
+		}
+		
+		internal void SetPlacement (ToolStripItemPlacement placement)
+		{
+			this.placement = placement;
 		}
 		#endregion
 		
