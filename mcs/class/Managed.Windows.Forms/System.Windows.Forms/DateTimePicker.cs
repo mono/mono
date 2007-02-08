@@ -1073,7 +1073,7 @@ namespace System.Windows.Forms {
 			case DateTimePickerFormat.Time:
 				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern;
 			case DateTimePickerFormat.Custom:
-				return this.custom_format;
+				return this.custom_format == null ? String.Empty : this.custom_format;
 			default:
 				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongDatePattern;
 			}
@@ -1111,6 +1111,7 @@ namespace System.Windows.Forms {
 					case 'M':
 					case 's':
 					case 'y':
+					case 'g': // Spec says nothing about g, but it seems to be treated like spaces.
 						if (!(lastch == ch || lastch == 0) && literal.Length != 0)
 						{
 							formats.Add (new PartData(literal.ToString (), false));
@@ -1119,8 +1120,15 @@ namespace System.Windows.Forms {
 						literal.Append (ch);
 						break;
 					case '\'':
-						if (literal.Length == 0)
+						if (is_literal && i < real_format.Length - 1 && real_format [i + 1] == '\'') {
+							literal.Append (ch);
+							i++;
 							break;
+						}
+						if (literal.Length == 0) {
+							is_literal = !is_literal;
+							break;
+						}
 						formats.Add (new PartData (literal.ToString (), is_literal));
 						literal.Length = 0;
 						is_literal = !is_literal;
@@ -1138,7 +1146,7 @@ namespace System.Windows.Forms {
 				lastch = ch;
 			}
 			if (literal.Length >= 0)
-				formats.Add (new PartData (literal.ToString (), false));
+				formats.Add (new PartData (literal.ToString (), is_literal));
 
 			part_data = new PartData [formats.Count];
 			formats.CopyTo (part_data);
@@ -1766,12 +1774,12 @@ namespace System.Windows.Forms {
 
 			static internal string GetText(DateTime date, string format)
 			{
-				switch (format) {
-				case "h": return (date.Hour % 12).ToString ("#0");
-				case "H": return date.Hour.ToString ("#0");
-				default: return date.ToString (format);
-				}
-
+				if (format.StartsWith ("g")) 
+					return " ";
+				else if (format.Length == 1)
+					return date.ToString ("%" + format);
+				else
+					return date.ToString (format);
 			}
 		}
 		
