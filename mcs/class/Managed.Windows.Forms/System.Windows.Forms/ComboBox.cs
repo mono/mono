@@ -1986,17 +1986,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			int BorderWidth {
-				get {
-					switch (border_style) {
-					case BorderStyle.Fixed3D:
-						return ThemeEngine.Current.Border3DSize.Width;
-					default:
-						return ThemeEngine.Current.BorderSize.Width;
-					}
-				}
-			}
-
 			#region Private Methods			
 			// Calcs the listbox area
 			internal void CalcListBoxArea ()

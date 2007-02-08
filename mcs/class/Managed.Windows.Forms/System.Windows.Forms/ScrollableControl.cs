@@ -261,12 +261,12 @@ namespace System.Windows.Forms {
 			
 			old_parent = Parent;
 		}
-
+#if NET_2_0
 		void Parent_PaddingChanged (object sender, EventArgs e)
 		{
 			UpdateSizeGripVisible ();
 		}
-
+#endif
 		void Parent_SizeChanged (object sender, EventArgs e)
 		{
 			UpdateSizeGripVisible ();
