@@ -1,3 +1,10 @@
+2007-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRegion.cs: Add test cases for matrix operations on infinite 
+	regions (result is always an infinite region). Add test cases for
+	scale and scale+translate on regions (to see that they do not trigger
+	a convertion into bitmap-based regions).
+
 2007-02-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Add test cases for VisibleClipBound (bug #78958)

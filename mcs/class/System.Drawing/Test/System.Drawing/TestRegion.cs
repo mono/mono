@@ -5,7 +5,7 @@
 //   Jordi Mas, jordi@ximian.com
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1392,17 +1392,136 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void ExcludeFromInfinity ()
+		public void InfinityExclude ()
 		{
-			Region r = new Region ();
-			Assert.IsTrue (r.IsInfinite (graphic), "before");
-			r.Exclude (new Rectangle (5, 5, 10, 10));
-			Assert.IsFalse (r.IsInfinite (graphic), "after");
-			RectangleF bounds = r.GetBounds (graphic);
-			Assert.AreEqual (-4194304, bounds.X, "X");
-			Assert.AreEqual (-4194304, bounds.Y, "Y");
-			Assert.AreEqual (8388608, bounds.Width, "Width");
-			Assert.AreEqual (8388608, bounds.Height, "Height");
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Exclude (new Rectangle (5, 5, 10, 10));
+				Assert.IsFalse (r.IsInfinite (graphic), "after");
+				RectangleF bounds = r.GetBounds (graphic);
+				Assert.AreEqual (-4194304, bounds.X, "X");
+				Assert.AreEqual (-4194304, bounds.Y, "Y");
+				Assert.AreEqual (8388608, bounds.Width, "Width");
+				Assert.AreEqual (8388608, bounds.Height, "Height");
+			}
+		}
+
+		[Test]
+		public void InfinityIntersect ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Intersect (new Rectangle (-10, -10, 20, 20));
+				Assert.IsFalse (r.IsInfinite (graphic), "after");
+				RectangleF bounds = r.GetBounds (graphic);
+				Assert.AreEqual (-10, bounds.X, "X");
+				Assert.AreEqual (-10, bounds.Y, "Y");
+				Assert.AreEqual (20, bounds.Width, "Width");
+				Assert.AreEqual (20, bounds.Height, "Height");
+			}
+		}
+
+		[Test]
+		public void InfinityIntersectTranslate ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Intersect (new Rectangle (-10, -10, 20, 20));
+				r.Translate (10, 10);
+				RectangleF bounds = r.GetBounds (graphic);
+				Assert.AreEqual (0, bounds.X, "X");
+				Assert.AreEqual (0, bounds.Y, "Y");
+				Assert.AreEqual (20, bounds.Width, "Width");
+				Assert.AreEqual (20, bounds.Height, "Height");
+			}
+		}
+
+		[Test]
+		public void InfinityIntersectScale ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Intersect (new Rectangle (-10, -10, 20, 20));
+				using (Matrix m = new Matrix ()) {
+					m.Scale (2, 0.5f);
+					r.Transform (m);
+				}
+				RectangleF bounds = r.GetBounds (graphic);
+				Assert.AreEqual (-20, bounds.X, "X");
+				Assert.AreEqual (-5, bounds.Y, "Y");
+				Assert.AreEqual (40, bounds.Width, "Width");
+				Assert.AreEqual (10, bounds.Height, "Height");
+			}
+		}
+
+		[Test]
+		public void InfinityIntersectTransform ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Intersect (new Rectangle (-10, -10, 20, 20));
+				using (Matrix m = new Matrix (2, 0, 0, 0.5f, 10, 10)) {
+					r.Transform (m);
+				}
+				RectangleF bounds = r.GetBounds (graphic);
+				Assert.AreEqual (-10, bounds.X, "X");
+				Assert.AreEqual (5, bounds.Y, "Y");
+				Assert.AreEqual (40, bounds.Width, "Width");
+				Assert.AreEqual (10, bounds.Height, "Height");
+			}
+		}
+
+		[Test]
+		public void InfinityTranslate ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				r.Translate (10, 10);
+				Assert.IsTrue (r.IsInfinite (graphic), "after");
+				CheckEmpty ("InfinityTranslate", r);
+			}
+		}
+
+		[Test]
+		public void InfinityScaleUp ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				using (Matrix m = new Matrix ()) {
+					m.Scale (2, 2);
+					r.Transform (m);
+				}
+				Assert.IsTrue (r.IsInfinite (graphic), "after");
+				CheckEmpty ("InfinityScaleUp", r);
+			}
+		}
+
+		[Test]
+		public void InfinityScaleDown ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				using (Matrix m = new Matrix ()) {
+					m.Scale (0.5f, 0.5f);
+					r.Transform (m);
+				}
+				Assert.IsTrue (r.IsInfinite (graphic), "after");
+				CheckEmpty ("InfinityScaleDown", r);
+			}
+		}
+
+		[Test]
+		public void InfinityRotate ()
+		{
+			using (Region r = new Region ()) {
+				Assert.IsTrue (r.IsInfinite (graphic), "before");
+				using (Matrix m = new Matrix ()) {
+					m.Rotate (45);
+					r.Transform (m);
+				}
+				Assert.IsTrue (r.IsInfinite (graphic), "after");
+				CheckEmpty ("InfinityRotate", r);
+			}
 		}
 	}
 
