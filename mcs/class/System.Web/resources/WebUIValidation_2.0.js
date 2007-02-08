@@ -28,6 +28,15 @@
 
 var have_validation_summaries = false;
 
+function SetValidatorContext (currForm)
+{
+	if (currForm.Page_Validators && (Page_Validators != currForm.Page_Validators)) {
+		Page_Validators = currForm.Page_Validators;
+		Page_ValidationSummaries = currForm.Page_ValidationSummaries;
+		ValidatorOnLoad ();
+	}
+}
+
 function ValidatorOnLoad ()
 {
 	if (typeof (Page_ValidationSummaries) != 'undefined' && Page_ValidationSummaries != null) {
@@ -41,11 +50,6 @@ function ValidatorOnLoad ()
 
 	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
-		var funcname = vo.getAttribute ("evaluationfunction");
-
-		func = this[funcname];
-
-		vo["evaluationfunction"] = func;
 
 		if (vo.getAttribute ("isvalid") == null)
 			vo.setAttribute ("isvalid", "true");
@@ -55,8 +59,6 @@ function ValidatorOnLoad ()
 
 		if (vo.getAttribute ("validationgroup") == null)
 			vo.setAttribute ("validationgroup", "");
-
-		func = vo ["evaluationfunction"];
 	}
 
 	Page_ValidationActive = true;
@@ -194,7 +196,7 @@ function Page_ClientValidate(group)
 
 	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
-		var evalfunc = vo["evaluationfunction"];
+		var evalfunc = this[vo.getAttribute ("evaluationfunction")];
 		var result = false;
 
 		if (vo.getAttribute ("enabled").toLowerCase() == "false" || !IsValidationGroupMatch(vo, group)) {

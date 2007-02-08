@@ -1,3 +1,10 @@
+2007-02-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* webform.js: added validators context init for j2ee portal support
+	* WebUIValidation_2.0.js: added SetValidatorContext function,
+	refactored evaluation function init ValidatorOnLoad and
+	Page_ClientValidate
+
 2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MaintainScrollPositionOnPostBack.js:

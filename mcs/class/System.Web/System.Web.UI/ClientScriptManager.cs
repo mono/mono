@@ -271,6 +271,8 @@ namespace System.Web.UI
 				registeredArrayDeclares.Add (arrayName, new ArrayList());
 	
 			((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
+
+			page.RequiresPostBackScript ();
 		}
 	
 		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags)
@@ -554,7 +556,22 @@ namespace System.Web.UI
 			ScriptEntry entry = scriptIncludes;
 			while (entry != null) {
 				if (!entry.Rendered) {
-					writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+#if TARGET_J2EE
+					if (!page.IsPortletRender)
+#endif
+						writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+#if TARGET_J2EE
+					else {
+						string scriptKey = "inc_" + entry.Key.GetHashCode ().ToString ("X");
+						writer.WriteLine ("\n<script type=\"text/javascript\">");
+						writer.WriteLine ("<!--");
+						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
+						writer.WriteLine ("\tdocument.{0} = true", scriptKey);
+						writer.WriteLine ("\tdocument.write('<script src=\"{0}\" type=\"text/javascript\"><\\/script>'); }}", entry.Script);
+						writer.WriteLine ("// -->");
+						writer.WriteLine ("</script>");
+					}
+#endif
 					entry.Rendered = true;
 				}
 				entry = entry.Next;
@@ -592,6 +609,16 @@ namespace System.Web.UI
 						writer.Write(arrayListEnum.Current);
 					}
 					writer.WriteLine(");");
+#if TARGET_J2EE
+					// in addition, add a form array declaration
+					if (page.IsPortletRender) {
+						writer.Write ("\t" + page.theForm + ".");
+						writer.Write (arrayEnum.Key);
+						writer.Write (" = ");
+						writer.Write (arrayEnum.Key);
+						writer.WriteLine (";");
+					}
+#endif
 				}
 				writer.WriteLine("// -->");
 				writer.WriteLine("</script>");
@@ -601,13 +628,23 @@ namespace System.Web.UI
 
 #if NET_2_0
 		internal string GetClientValidationEvent (string validationGroup) {
-			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" + validationGroup + "');";
+			string eventScript = "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" + validationGroup + "');";
+#if TARGET_J2EE
+			if (page.IsPortletRender)
+				return "if (typeof(SetValidatorContext) == 'function') SetValidatorContext ('" + page.theForm + "'); " + eventScript;
+#endif
+			return eventScript;
 		}
 #endif
 
 		internal string GetClientValidationEvent ()
 		{
-			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";
+			string eventScript = "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";
+#if TARGET_J2EE
+			if (page.IsPortletRender)
+				return "if (typeof(SetValidatorContext) == 'function') SetValidatorContext ('" + page.theForm + "'); " + eventScript;
+#endif
+			return eventScript;
 		}
 
 

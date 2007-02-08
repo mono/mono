@@ -1025,10 +1025,10 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
-		scriptManager.WriteArrayDeclares (writer);
-
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
+
+		scriptManager.WriteArrayDeclares (writer);
 		
 #if NET_2_0
 		scriptManager.SaveEventValidationState ();

@@ -110,6 +110,9 @@ function WebForm_ReEnableControls (currForm)
 
 function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 {
+	if (typeof(SetValidatorContext) == "function") 
+		SetValidatorContext (WebForm_GetFormFromCtrl (ctrl));
+
 	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate(vg))
 		return;
 
