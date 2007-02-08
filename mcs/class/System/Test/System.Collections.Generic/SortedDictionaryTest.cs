@@ -275,6 +275,9 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("NMA")]
+#endif		
 		[ExpectedException (typeof (ArgumentException))]
 		public void IDictionaryAddValueNullValueType ()
 		{

@@ -1,3 +1,8 @@
+2007-02-08  Ilya Kharmatsky <ilyak -at- mainsoft.com>
+
+	* SortedDictionaryTest.cs: Added 'Ignore' attribute under
+	TARGET_JVM to workaround not working under Grasshopper test.
+
 2007-01-25  Ilya Kharmatsky <ilyak -at- mainsoft.com>
 	
 	* QueueTest.cs, StackTest.cs: Added 'Ignore' attribute under 
