@@ -187,6 +187,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public static bool MenuAccessKeysUnderlined {
+#else
+		internal static bool MenuAccessKeysUnderlined {
+#endif
+			get {
+				return ThemeEngine.Current.MenuAccessKeysUnderlined;
+			}
+		}
+
 		public static Size MenuButtonSize {
 			get {
 				return ThemeEngine.Current.MenuButtonSize;

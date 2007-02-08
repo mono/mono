@@ -1,3 +1,12 @@
+2007-02-08  Everaldo Canuto  <everaldo@simios.org>
+
+	* Theme.cs: An new property MenuAccessKeysUnderlined added with default value
+	false.
+
+	* SystemInformation.cs: An new property MenuAccessKeysUnderlined added, it is
+	public in 2.0 and for easy maintenance and dont break compatibility it is 
+	internal in 1.1.
+	
 2007-02-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Implement using images from ImageList.

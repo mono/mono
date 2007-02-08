@@ -477,6 +477,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public virtual bool MenuAccessKeysUnderlined {
+			get {
+				return false;
+			}
+		}
+		
 		public virtual Size MenuButtonSize {
 			get {
 				return new Size(18, 18);
