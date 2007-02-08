@@ -1,3 +1,8 @@
+2007-02-08  Andreia Gaita  <avidigal@novell.com>
+
+	* PrintPreviewControl.cs: rewrite toolbar code to fix #80725. Correct 6-up image 
+	(the 6 was cut off on the right side)
+
 2007-02-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Tell MenuStrips to close when the form is clicked.
