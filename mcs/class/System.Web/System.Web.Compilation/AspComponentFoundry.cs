@@ -179,6 +179,10 @@ namespace System.Web.Compilation
 #if NET_2_0
 			string source;
 
+			public bool FromWebConfig {
+				get { return source != null; }
+			}
+			
 			public TagNameFoundry (string tagName, string source)
 			{
 				this.tagName = tagName;
@@ -282,6 +286,10 @@ namespace System.Web.Compilation
 				TagNameFoundry tn = (TagNameFoundry) foundry;
 				string tagName = tn.TagName;
 				if (tagnames.Contains (tagName)) {
+#if NET_2_0
+					if (tn.FromWebConfig)
+						return;
+#endif
 					string msg = String.Format ("{0}:{1} already registered.", tagPrefix, tagName);
 					throw new ApplicationException (msg);
 				}
