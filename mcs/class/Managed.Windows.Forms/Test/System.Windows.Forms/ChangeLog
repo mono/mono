@@ -1,3 +1,8 @@
+2007-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LogGenerator.cs: Generate code that can be built using csc 1.x.
+	* ControlLogger.cs: Fixed code to compile using csc 1.x.
+
 2007-02-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DateTimePickerTest.cs: Created more tests for DateTimePicker, now

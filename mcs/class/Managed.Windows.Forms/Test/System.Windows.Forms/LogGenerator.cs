@@ -99,7 +99,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Runtime.Remoting;
+#if NET_2_0
 using System.Windows.Forms.Layout;
+#endif
 using System.Text;
 
 namespace MonoTests.System.Windows.Forms 
