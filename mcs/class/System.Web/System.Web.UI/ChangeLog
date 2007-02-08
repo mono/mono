@@ -1,3 +1,7 @@
+2007-02-08  Marek Habersack  <grendello@gmail.com>
+
+	* Page.cs: Make sure to create specific cultures.
+
 2007-02-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ClientScriptManager.cs: added array declaration also as member of

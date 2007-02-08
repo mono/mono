@@ -710,14 +710,14 @@ public partial class Page : TemplateControl, IHttpHandler
 			string[] languages = Request.UserLanguages;
 			try {
 				if (languages != null && languages.Length > 0)
-					ret = new CultureInfo (languages[0]);
+					ret = CultureInfo.CreateSpecificCulture (languages[0]);
 			} catch {
 			}
 			
 			if (ret == null)
 				ret = deflt;
 		} else
-			ret = new CultureInfo (culture);
+			ret = CultureInfo.CreateSpecificCulture (culture);
 
 		return ret;
 	}
