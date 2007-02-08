@@ -248,9 +248,15 @@ namespace MonoTests.System.Windows.Forms
 		public void VisibleOnLoad ()
 		{
 			MockForm form = new MockForm ();
+			form.CloseOnLoad = true;
+			Application.Run (form);
+			Assert.IsTrue (form.VisibleOnLoad, "#1");
+			form.Dispose ();
+
+			form = new MockForm ();
 			form.ShowInTaskbar = false;
 			form.Show ();
-			Assert.IsTrue (form.VisibleOnLoad);
+			Assert.IsTrue (form.VisibleOnLoad, "#2");
 			form.Dispose ();
 		}
 
@@ -687,6 +693,11 @@ namespace MonoTests.System.Windows.Forms
 
 		private class MockForm : Form
 		{
+			public bool CloseOnLoad {
+				get { return _closeOnLoad; }
+				set { _closeOnLoad = value; }
+			}
+
 			public bool VisibleOnLoad {
 				get { return _visibleOnLoad; }
 			}
@@ -694,8 +705,11 @@ namespace MonoTests.System.Windows.Forms
 			protected override void OnLoad(EventArgs e) {
 				base.OnLoad(e);
 				_visibleOnLoad = Visible;
+				if (CloseOnLoad)
+					Close ();
 			}
 
+			private bool _closeOnLoad;
 			private bool _visibleOnLoad;
 		}
 	}

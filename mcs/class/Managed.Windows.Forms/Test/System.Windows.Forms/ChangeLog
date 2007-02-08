@@ -1,5 +1,9 @@
 2007-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FormTest.cs: Improved test for bug #80604.
+
+2007-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ControlTest.cs: Removed use of #pragma to allow tests to be built using
 	csc 1.x.
 
