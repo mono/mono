@@ -43,6 +43,7 @@ namespace System.Windows.Forms
 		
 		public StatusStrip ()
 		{
+			base.CanOverflow = false;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.layout_style = ToolStripLayoutStyle.Table;
 			this.sizing_grip = true;
@@ -54,6 +55,12 @@ namespace System.Windows.Forms
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; }
+		}
+
+		[DefaultValue (false)]
+		public new bool CanOverflow {
+			get { return base.CanOverflow; }
+			set { base.CanOverflow = value; }
 		}
 		
 		[DefaultValue (ToolStripGripStyle.Hidden)]
@@ -93,8 +100,8 @@ namespace System.Windows.Forms
 		
 		[DefaultValue (true)]
 		public new bool Stretch {
-			get { return this.Stretch; }
-			set { this.Stretch = value; }
+			get { return base.Stretch; }
+			set { base.Stretch = value; }
 		}
 		#endregion
 
