@@ -1,3 +1,8 @@
+2007-02-08  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80755
+	* decl.cs (FindBaseEvent): Don't use method cache for events.
+
 2007-02-07  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Better syntax error handling.

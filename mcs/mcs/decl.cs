@@ -2082,12 +2082,7 @@ namespace Mono.CSharp {
 
 		public MemberInfo FindBaseEvent (Type invocationType, string name)
 		{
-			ArrayList applicable;
-			if (method_hash != null)
-				applicable = (ArrayList) method_hash [name];
-			else
-				applicable = (ArrayList) member_hash [name];
-			
+			ArrayList applicable = (ArrayList) member_hash [name];
 			if (applicable == null)
 				return null;
 
