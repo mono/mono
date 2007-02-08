@@ -1,3 +1,9 @@
+2007-02-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateTimePicker.cs: Change default date-formatting culture from
+	  CurrentThread.CurrentUICulture to CurrentThread.CurrentCulture,
+	  seems to be the way MS does it.
+
 2007-02-08  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintPreviewControl.cs: rewrite toolbar code to fix #80725. Correct 6-up image 
