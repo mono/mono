@@ -991,6 +991,9 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageFlags(IntPtr image, out int flag);
 
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetImageType (IntPtr image, out ImageType type);
+
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageGetFrameDimensionsCount ( IntPtr image, out uint count );
 												   
@@ -1605,6 +1608,10 @@ namespace System.Drawing
 		// metafile
 		[DllImport ("gdiplus.dll", CharSet = CharSet.Auto)]
 		internal static extern Status GdipCreateMetafileFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreateMetafileFromEmf (IntPtr hEmf, bool deleteEmf, out IntPtr metafile);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreateMetafileFromWmf (IntPtr hWmf, bool deleteWmf, WmfPlaceableFileHeader wmfPlaceableFileHeader, out IntPtr metafile);
 		[DllImport ("gdiplus.dll", CharSet = CharSet.Auto)]
 		internal static extern Status GdipGetMetafileHeaderFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr header);
 		[DllImport ("gdiplus.dll")]
@@ -1621,7 +1628,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr header);
+		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr header);
 #endif
 		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]

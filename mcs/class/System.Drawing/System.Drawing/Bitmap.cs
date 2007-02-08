@@ -99,11 +99,8 @@ namespace System.Drawing
 
 		public Bitmap (Stream stream, bool useIcm)
 		{
-			if (stream == null)
-				throw new ArgumentNullException ("stream");
-
 			// false: stream is owned by user code
-			InitFromStream (stream, false);
+			nativeObject = InitFromStream (stream);
 		}
 
 		public Bitmap (string filename, bool useIcm)
@@ -127,8 +124,11 @@ namespace System.Drawing
 				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
 				throw new FileNotFoundException (msg);
 			}
-			// true: stream is owned by SD code
-			InitFromStream (s, true);
+
+			nativeObject = InitFromStream (s);
+			// under Win32 stream is owned by SD/GDI+ code
+			if (GDIPlus.RunningOnWindows ())
+				stream = s;
 		}
 
 		public Bitmap (Image original, int width, int height)  : this(width, height, PixelFormat.Format32bppArgb)
@@ -149,24 +149,9 @@ namespace System.Drawing
 		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
-			foreach (SerializationEntry serEnum in info) {
-				if (String.Compare(serEnum.Name, "Data", true) == 0) {
-					byte[] bytes = (byte[]) serEnum.Value;
-		
-					if (bytes != null) {
-						// true: stream is owned by SD code
-						InitFromStream (new MemoryStream (bytes), true);
-					}
-				}
-			}
 		}
-		//The below function is not required. Call should resolve to base
-		//Moreover there is a problem with the declaration. Base class function
-		//is not declared as protected to access in descendent class
-		/*private Bitmap (SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}*/
 
 		#endregion
 		// methods

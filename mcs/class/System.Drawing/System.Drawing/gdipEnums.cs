@@ -1,12 +1,11 @@
 //
 // System.Drawing.gdipEnums.cs
 //
-// Author: 
-// Alexandre Pigolkine (pigolkine@gmx.de)
+// Authors:
+//	Alexandre Pigolkine (pigolkine@gmx.de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,14 +26,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
 namespace System.Drawing {
-	/// <summary>
-	/// GDI+ API enumerations
-	/// </summary>
-	
-	#region Status
+
 	internal enum Status {
 		Ok = 0,
 		GenericError = 1,
@@ -59,22 +53,17 @@ namespace System.Drawing {
 		PropertyNotSupported = 20,
 		ProfileNotFound = 21
 	}
-	#endregion
-	
-	#region Unit
-	internal enum Unit
-	{
-		UnitWorld		= 0,
+
+	internal enum Unit {
+		UnitWorld	= 0,
 		UnitDisplay 	= 1,
-		UnitPixel 		= 2,
-		UnitPoint		= 3,
-		UnitInch		= 4,
+		UnitPixel 	= 2,
+		UnitPoint	= 3,
+		UnitInch	= 4,
 		UnitDocument	= 5,
 		UnitMillimeter	= 6
-	};
-	#endregion
+	}
 
-        #region BrushType
         internal enum BrushType {
                 BrushTypeSolidColor = 0,
                 BrushTypeHatchFill = 1,
@@ -82,6 +71,10 @@ namespace System.Drawing {
                 BrushTypePathGradient = 3,
                 BrushTypeLinearGradient = 4
         }
-        #endregion
-	
+
+	internal enum ImageType {
+		Unknown = 0,
+		Bitmap = 1,
+		Metafile = 2
+	}
 }

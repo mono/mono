@@ -55,7 +55,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	internal IntPtr nativeObject = IntPtr.Zero;
 	// when using MS GDI+ and IStream we must ensure the stream stays alive for all the life of the Image
 	// http://groups.google.com/group/microsoft.public.win32.programmer.gdi/browse_thread/thread/4967097db1469a27/4d36385b83532126?lnk=st&q=IStream+gdi&rnum=3&hl=en#4d36385b83532126
-	private Stream stream;
+	internal Stream stream;
 	
 	
 	// constructor
@@ -63,15 +63,18 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{	
 	}
 	
-	private Image (SerializationInfo info, StreamingContext context)
+	internal Image (SerializationInfo info, StreamingContext context)
 	{
 		foreach (SerializationEntry serEnum in info) {
 			if (String.Compare(serEnum.Name, "Data", true) == 0) {
 				byte[] bytes = (byte[]) serEnum.Value;
 
 				if (bytes != null) {
-					// true: stream is owned by SD code
-					InitFromStream (new MemoryStream (bytes), true);
+					MemoryStream ms = new MemoryStream (bytes);
+					nativeObject = InitFromStream (ms);
+					// under Win32 stream is owned by SD/GDI+ code
+					if (GDIPlus.RunningOnWindows ())
+						stream = ms;
 				}
 			}
 		}
@@ -110,9 +113,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			st = GDIPlus.GdipLoadImageFromFileICM (filename, out imagePtr);
 		else
 			st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
-
 		GDIPlus.CheckStatus (st);
-		return new Bitmap (imagePtr);
+
+		return CreateFromHandle (imagePtr);
 	}
 
 	public static Bitmap FromHbitmap(IntPtr hbitmap)
@@ -131,20 +134,59 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return new Bitmap (imagePtr);
 	}
 
+	// note: FromStream can return either a Bitmap or Metafile instance
+
 	public static Image FromStream (Stream stream)
 	{
-		return new Bitmap (stream);
+		return LoadFromStream (stream, false);
 	}
-	
+
+	[MonoLimitation ("useECM isn't supported.")]	
 	public static Image FromStream (Stream stream, bool useECM)
 	{
-		return new Bitmap (stream, useECM);
+		return LoadFromStream (stream, false);
 	}
 
 	// See http://support.microsoft.com/default.aspx?scid=kb;en-us;831419 for performance discussion	
+	[MonoLimitation ("useECM and validateImageData aren't supported.")]	
 	public static Image FromStream (Stream stream, bool useECM, bool validateImageData)
 	{
-		return new Bitmap (stream, useECM);
+		return LoadFromStream (stream, false);
+	}
+
+	internal static Image LoadFromStream (Stream stream, bool keepAlive)
+	{
+		if (stream == null)
+			throw new ArgumentNullException ("stream");
+
+		Image img = CreateFromHandle (InitFromStream (stream));
+
+		// Under Windows, we may need to keep a reference on the stream as long as the image is alive
+		// (GDI+ seems to use a lazy loader)
+		if (keepAlive && GDIPlus.RunningOnWindows ())
+			img.stream = stream;
+
+		return img;
+	}
+
+	internal static Image CreateFromHandle (IntPtr handle)
+	{
+		Image img = null;
+
+		ImageType type;
+		GDIPlus.CheckStatus (GDIPlus.GdipGetImageType (handle, out type));
+		switch (type) {
+		case ImageType.Bitmap:
+			img = new Bitmap (handle);
+			break;
+		case ImageType.Metafile:
+			img = new Metafile (handle, false);
+			break;
+		default:
+			throw new NotSupportedException (Locale.GetText ("Unknown image type."));
+		}
+
+		return img;
 	}
 
 	public static int GetPixelFormatSize(PixelFormat pixfmt)
@@ -221,7 +263,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return ((pixfmt & PixelFormat.Extended) != 0);
 	}
 
-	internal void InitFromStream (Stream stream, bool keepAlive)
+	internal static IntPtr InitFromStream (Stream stream)
 	{
 		IntPtr imagePtr;
 		Status st;
@@ -256,15 +298,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetHeaderDelegate, sh.GetBytesDelegate,
 				sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, out imagePtr);
 		} else {
-			// this is MS-land
-			// we *may* have to keep the stream alive as long as the image is alive (GDI+ seems to use a lazy loader)
-			if (keepAlive)
-				this.stream = stream;
 			st = GDIPlus.GdipLoadImageFromStream (new ComIStreamWrapper (stream), out imagePtr);
 		}
 
 		GDIPlus.CheckStatus (st);
-		nativeObject = imagePtr;
+		return imagePtr;
 	}
 
 	// non-static	
