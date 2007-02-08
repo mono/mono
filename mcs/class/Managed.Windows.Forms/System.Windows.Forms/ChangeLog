@@ -1,5 +1,11 @@
 2007-02-07  Chris Toshok  <toshok@ximian.com>
 
+	* ThemeWin32Classic.cs (DrawButtonBase): don't clear to the
+	background color.  it overwrites the background image we've
+	already painted.  Fixes #80599.
+
+2007-02-07  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: return immediately from Edit() when there are no
 	columns.  Fixes #80662.
 

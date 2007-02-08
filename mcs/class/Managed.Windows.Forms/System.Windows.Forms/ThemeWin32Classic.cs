@@ -142,12 +142,8 @@ namespace System.Windows.Forms
 		#endregion	// OwnerDraw Support
 
 		#region ButtonBase
-		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
-			
-			// Fill the button with the correct color
-			bool is_ColorControl = button.BackColor.ToArgb () == ColorControl.ToArgb () ? true : false;
-			dc.FillRectangle (is_ColorControl ? SystemBrushes.Control : ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
-			
+		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button)
+		{
 			// First, draw the image
 			if (button.FlatStyle != FlatStyle.System && ((button.image != null) || (button.image_list != null)))
 				ButtonBase_DrawImage(button, dc);
