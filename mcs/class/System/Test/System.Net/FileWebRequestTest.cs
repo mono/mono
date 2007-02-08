@@ -592,9 +592,11 @@ namespace MonoTests.System.Net
 			} catch (WebException ex) {
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#1");
 				Assert.IsNotNull (ex.Message, "#2");
-				Assert.IsTrue (ex.Message.IndexOf ("FileWebRequestTest.tmp") != -1, "#3");
+#if !TARGET_JVM				
+				Assert.IsTrue (ex.Message.IndexOf ("FileWebRequestTest.tmp") != -1, "#3");				
 				Assert.IsNull (ex.Response, "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
+#endif				
 
 #if ONLY_1_1
 				FileNotFoundException fnf = ex.InnerException as FileNotFoundException;
