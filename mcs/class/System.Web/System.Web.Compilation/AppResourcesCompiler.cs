@@ -86,6 +86,7 @@ namespace System.Web.Compilation
 									     "App_GlobalResources",
 									     "dll",
 									     OnCreateRandomFile) as string;
+
 			if (assemblyPath == null)
 				throw new ApplicationException ("Failed to create global resources assembly");
 			
@@ -365,10 +366,11 @@ namespace System.Web.Compilation
 				classname = nsname;
 				nsname = "Resources";
 			} else {
-				nsname = String.Format ("Resources.{0}", nsname);
+				if (!nsname.StartsWith ("Resources", StringComparison.InvariantCulture))
+					nsname = String.Format ("Resources.{0}", nsname);
 				classname = classname.Substring(1);
 			}
-
+			
 			if (!provider.IsValidIdentifier (nsname) || !provider.IsValidIdentifier (classname))
 				throw new ApplicationException ("Invalid resource file name.");
 			
@@ -526,7 +528,7 @@ namespace System.Web.Compilation
 		{
 			string path = arfi.Info.FullName;
 			string resource = Path.Combine (TempDirectory,
-							Path.GetFileNameWithoutExtension (path) + ".resources");
+							"Resources." + Path.GetFileNameWithoutExtension (path) + ".resources");
 			FileStream source = null, destination = null;
 			IResourceReader reader = null;
 			ResourceWriter writer = null;

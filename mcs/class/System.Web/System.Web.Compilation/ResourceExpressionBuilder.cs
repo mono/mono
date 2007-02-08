@@ -48,7 +48,7 @@ namespace System.Web.Compilation {
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
 			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
-			return HttpContext.GetGlobalResourceObject (fields.ClassKey, fields.ResourceKey);
+			return HttpContext.GetGlobalResourceObject ("Resources." + fields.ClassKey, fields.ResourceKey);
 		}
 
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
@@ -57,7 +57,7 @@ namespace System.Web.Compilation {
 			return new CodeMethodInvokeExpression (
 				new CodeThisReferenceExpression (),
 				"GetGlobalResourceObject",
-				new CodeExpression [] { new CodePrimitiveExpression (fields.ClassKey),
+				new CodeExpression [] { new CodePrimitiveExpression ("Resources." + fields.ClassKey),
 							new CodePrimitiveExpression (fields.ResourceKey) });
 		}
 
