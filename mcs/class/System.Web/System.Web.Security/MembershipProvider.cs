@@ -125,7 +125,6 @@ namespace System.Web.Security
 			byte [] iv = new byte [SALT_BYTES];
 
 			Array.Copy (password, 0, iv, 0, Math.Min(password.Length, SALT_BYTES));
-			Array.Clear (password, 0, password.Length);
 
 			using (SymmetricAlgorithm alg = GetAlg (out decryptionKey)) {
 				using (ICryptoTransform encryptor = alg.CreateEncryptor (decryptionKey, iv)) {

@@ -1,3 +1,8 @@
+2007-02-08  Marek Habersack  <grendello@gmail.com>
+
+	* MembershipProvider.cs: Do not clear the password before
+	encrypting it. 
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* SqlRoleProvider.cs: comment out unused code.
