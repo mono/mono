@@ -1,3 +1,10 @@
+2007-02-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* libtest.c: Add tests for COM Callable Wrapper marshalling.
+	* cominterop.cs: Add tests for COM Callable Wrapper marshalling.
+	
+	Code is contributed under MIT/X11 license.
+	
 2007-02-06  Massimiliano Mantione  <massi@ximian.com>
 	* bug-59286.cs, Makefile.am: Added test for bug 59286.
 

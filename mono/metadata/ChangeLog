@@ -1,3 +1,19 @@
+2007-02-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* class.c (mono_class_setup_parent): Lazily init com types.
+	* domain.c (mono_init_internal, mono_init_com_types): Lazily 
+	init com types.
+	* object.c (mono_remote_class_vtable): Lazily init com types.
+	* class-internals.h: Add iunknown and idispatch to MonoDefaults.
+	* object-internals.h: Add MonoComInteropProxy and MonoReflectionGuidAttribute.
+	* domain-internals.h: Expose mono_init_com_types.
+	* icall-def.h: Add icalls for ComInteropProxy, __ComObject, and Marshal.
+	* marshal.c: Add mutex for cominterop use. Init locals for wrapper methods.
+	Add support for COM Callable Wrapper marshalling.
+	* marshal.h: Add icall definitions.
+	* gc.c: Handle freeing of CCWs in finalizer code.
+	
+	Code is contributed under MIT/X11 license.
 
 Thu Feb 8 12:46:18 CET 2007 Paolo Molaro <lupus@ximian.com>
 
