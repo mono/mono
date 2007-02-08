@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -601,6 +601,32 @@ namespace MonoTests.System.Drawing.Imaging {
 		public void Save_64bppPArgb ()
 		{
 			Save (PixelFormat.Format64bppPArgb, PixelFormat.Format64bppArgb, true);
+		}
+
+		[Test]
+		public void NonInvertedBitmap ()
+		{
+			// regression check against http://bugzilla.ximian.com/show_bug.cgi?id=80751
+			string sInFile = getInFile ("bitmaps/non-inverted.bmp");
+			using (Bitmap bmp = new Bitmap (sInFile)) {
+				GraphicsUnit unit = GraphicsUnit.World;
+				RectangleF rect = bmp.GetBounds (ref unit);
+
+				Assert.AreEqual (90, bmp.Width, "bmp.Width");
+				Assert.AreEqual (60, bmp.Height, "bmp.Height");
+
+				Assert.AreEqual (0, rect.X, "rect.X");
+				Assert.AreEqual (0, rect.Y, "rect.Y");
+				Assert.AreEqual (90, rect.Width, "rect.Width");
+				Assert.AreEqual (60, rect.Height, "rect.Height");
+
+				Assert.AreEqual (90, bmp.Size.Width, "bmp.Size.Width");
+				Assert.AreEqual (60, bmp.Size.Height, "bmp.Size.Height");
+
+				// sampling values from a well known bitmap
+				Assert.AreEqual (-16777216, bmp.GetPixel (12, 21).ToArgb (), "12,21");
+				Assert.AreEqual (-1, bmp.GetPixel (21, 37).ToArgb (), "21,37");
+			}
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2007-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBmpCodec.cs: Add test case for non-inverted bitmaps #80751
+
 2007-01-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IconCodecTest.cs: New test case to check 32bpp (XP) icons.
