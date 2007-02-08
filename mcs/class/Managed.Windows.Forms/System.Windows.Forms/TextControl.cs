@@ -4309,7 +4309,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text) {
-			dc.DrawString (text.ToString().Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
+			dc.DrawString (text.Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>

@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 
 		public PrintPreviewDialog()
 		{
+			this.ClientSize = new Size (400, 300);
 			ToolBar toolbar = CreateToolBar ();
 
 			toolbar.Location = new Point (0, 0);
@@ -70,16 +71,7 @@ namespace System.Windows.Forms {
 
 		ToolBar CreateToolBar ()
 		{
-			ToolBar toolbar = new ToolBar ();
-			ToolBarButton b;
-
 			ImageList image_list = new ImageList ();
-
-			toolbar.ImageList = image_list;
-			toolbar.Appearance = ToolBarAppearance.Flat;
-			toolbar.DropDownArrows = true;
-			toolbar.ButtonClick += new ToolBarButtonClickEventHandler (OnClickToolBarButton);
-
 			image_list.Images.Add (ResourceImageLoader.Get ("32_printer.png"));
 			image_list.Images.Add (ResourceImageLoader.Get ("22_page-magnifier.png"));
 			image_list.Images.Add (ResourceImageLoader.Get ("1-up.png"));
@@ -88,27 +80,52 @@ namespace System.Windows.Forms {
 			image_list.Images.Add (ResourceImageLoader.Get ("4-up.png"));
 			image_list.Images.Add (ResourceImageLoader.Get ("6-up.png"));
 
+			MenuItem mi;
+			mag_menu = new ContextMenu ();
+
+			ToolBar toolbar = new ToolBar();
+			ToolBarButton print = new ToolBarButton();
+			ToolBarButton zoom = new ToolBarButton();
+			ToolBarButton separator1 = new ToolBarButton();
+
+			ToolBarButton one_page = new ToolBarButton();
+			ToolBarButton two_page = new ToolBarButton();
+			ToolBarButton three_page = new ToolBarButton();
+			ToolBarButton four_page = new ToolBarButton();
+			ToolBarButton six_page = new ToolBarButton();
+			ToolBarButton separator2 = new ToolBarButton();
+
+			Button close = new Button();
+			Label label = new Label();
+			pageUpDown = new NumericUpDown();
+
+			toolbar.ImageList = image_list;
+			toolbar.Size = new Size(792, 43);
+			toolbar.Dock = DockStyle.Top;
+			toolbar.Appearance = ToolBarAppearance.Flat;
+			toolbar.ShowToolTips = true;
+			toolbar.DropDownArrows = true;
+			toolbar.Buttons.AddRange(new ToolBarButton[] { print, zoom, separator1, 
+														   one_page, two_page, three_page, four_page, six_page, separator2 });
+			toolbar.ButtonClick += new ToolBarButtonClickEventHandler (OnClickToolBarButton);
+
 			/* print button */
-			b = new ToolBarButton ();
-			b.ImageIndex = 0;
-			b.Tag = 0;
-			b.ToolTipText = "Print";
-			toolbar.Buttons.Add (b);
+			print.ImageIndex = 0;
+			print.Tag = 0;
+			print.ToolTipText = "Print";
 
 			/* magnify dropdown */
-			b = new ToolBarButton ();
-			b.ImageIndex = 1;
-			b.Tag = 1;
-			b.ToolTipText = "Zoom";
-			toolbar.Buttons.Add (b);
-
-			mag_menu = new ContextMenu ();
-			MenuItem mi;
-
+			zoom.ImageIndex = 1;
+			zoom.Tag = 1;
+			zoom.ToolTipText = "Zoom";
+			zoom.Style = ToolBarButtonStyle.DropDownButton;
+			zoom.DropDownMenu = mag_menu;
+		
 			mi = mag_menu.MenuItems.Add ("Auto", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
 			mi.Checked = true;
 			previous_checked_menu_item = mi;
 			auto_zoom_item = mi;
+
 			mi = mag_menu.MenuItems.Add ("500%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
 			mi = mag_menu.MenuItems.Add ("200%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
 			mi = mag_menu.MenuItems.Add ("150%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
@@ -118,77 +135,70 @@ namespace System.Windows.Forms {
 			mi = mag_menu.MenuItems.Add ("25%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
 			mi = mag_menu.MenuItems.Add ("10%", new EventHandler (OnClickPageMagnifierItem)); mi.RadioCheck = true;
 
-			b.DropDownMenu = mag_menu;
-			b.Style = ToolBarButtonStyle.DropDownButton;
 
 			/* separator */
-			b = new ToolBarButton ();
-			b.Style = ToolBarButtonStyle.Separator;
-			toolbar.Buttons.Add (b);
+			separator1.Style = ToolBarButtonStyle.Separator;
 
 			/* n-up icons */
-			b = new ToolBarButton ();
-			b.ImageIndex = 2;
-			b.Tag = 2;
-			b.ToolTipText = "One page";
-			toolbar.Buttons.Add (b);
+			one_page.ImageIndex = 2;
+			one_page.Tag = 2;
+			one_page.ToolTipText = "One page";
 
-			b = new ToolBarButton ();
-			b.ImageIndex = 3;
-			b.Tag = 3;
-			b.ToolTipText = "Two pages";
-			toolbar.Buttons.Add (b);
+			two_page.ImageIndex = 3;
+			two_page.Tag = 3;
+			two_page.ToolTipText = "Two pages";
 
-			b = new ToolBarButton ();
-			b.ImageIndex = 4;
-			b.Tag = 4;
-			b.ToolTipText = "Three pages";
-			toolbar.Buttons.Add (b);
-
-			b = new ToolBarButton ();
-			b.ImageIndex = 5;
-			b.Tag = 5;
-			b.ToolTipText = "Four pages";
-			toolbar.Buttons.Add (b);
-
-			b = new ToolBarButton ();
-			b.ImageIndex = 6;
-			b.Tag = 6;
-			b.ToolTipText = "Six pages";
-			toolbar.Buttons.Add (b);
+			three_page.ImageIndex = 4;
+			three_page.Tag = 4;
+			three_page.ToolTipText = "Three pages";
+			
+			four_page.ImageIndex = 5;
+			four_page.Tag = 5;
+			four_page.ToolTipText = "Four pages";
+			
+			six_page.ImageIndex = 6;
+			six_page.Tag = 6;
+			six_page.ToolTipText = "Six pages";
+			
 
 			/* separator */
-			b = new ToolBarButton ();
-			b.Style = ToolBarButtonStyle.Separator;
-			toolbar.Buttons.Add (b);
+			separator2.Style = ToolBarButtonStyle.Separator;
 
 			/* Page label */
-			Label label = new Label ();
 			label.Text = "Page";
-			label.TextAlign = ContentAlignment.MiddleCenter;
+			label.TabStop = false;
+			label.Size = new Size(50, 18);
+			label.TextAlign = ContentAlignment.MiddleLeft;
 			label.Dock = DockStyle.Right;
-			toolbar.Controls.Add (label);
 
 			/* the page number updown */
-			pageUpDown = new NumericUpDown ();
 			pageUpDown.Dock = DockStyle.Right;
 			pageUpDown.TextAlign = HorizontalAlignment.Right;
-			toolbar.Controls.Add (pageUpDown);
-			pageUpDown.Value = 1;
+			pageUpDown.DecimalPlaces = 0;
+			pageUpDown.TabIndex = 1;
+			pageUpDown.Text = "1";
+			pageUpDown.Minimum = 0;
+			pageUpDown.Maximum = 1000;
+			pageUpDown.Size = new Size(64, 14);
+			pageUpDown.Dock = DockStyle.Right;
+//			pageUpDown.Location = new Point(568, 0);
 			pageUpDown.ValueChanged += new EventHandler (OnPageUpDownValueChanged);
 
 			/* close button */
-			Button close = new Button ();
+			close.Location = new Point(196, 2);
+			close.Size = new Size(50, 20);
+			close.TabIndex = 2;
 			close.FlatStyle = FlatStyle.Popup;
 			close.Text = "Close";
-			toolbar.Controls.Add (close);
-
-			close.Location = new Point (b.Rectangle.X + b.Rectangle.Width, toolbar.Height / 2 - close.Height / 2);
-
-			MinimumSize = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width,
-						220);
-
 			close.Click += new EventHandler (CloseButtonClicked);
+
+			toolbar.Controls.Add(label);
+			toolbar.Controls.Add(pageUpDown);
+			toolbar.Controls.Add(close);
+
+//			close.Location = new Point (b.Rectangle.X + b.Rectangle.Width, toolbar.Height / 2 - close.Height / 2);
+//			MinimumSize = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width, 220);
+
 			return toolbar;
 		}
 
