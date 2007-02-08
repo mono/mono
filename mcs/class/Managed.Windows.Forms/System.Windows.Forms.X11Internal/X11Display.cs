@@ -1626,7 +1626,19 @@ namespace System.Windows.Forms.X11Internal {
 
 		public IntPtr OverrideCursor {
 			get { return OverrideCursorHandle; }
-			set { OverrideCursorHandle = value; }
+			set {
+				if (Grab.Hwnd != IntPtr.Zero) {
+					Xlib.XChangeActivePointerGrab (display,
+								       EventMask.ButtonMotionMask |
+								       EventMask.PointerMotionMask |
+								       EventMask.ButtonPressMask |
+								       EventMask.ButtonReleaseMask,
+								       value, IntPtr.Zero);
+					return;
+				}
+
+				OverrideCursorHandle = value;
+			}
 		}
 
 		public X11RootHwnd RootWindow {
@@ -1860,6 +1872,8 @@ namespace System.Windows.Forms.X11Internal {
 
 				switch (xevent.type) {
 				case XEventName.KeyPress:
+					if (Dnd.InDrag ())
+						Dnd.HandleKeyPress (ref xevent);
 					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
 					return true;
 
@@ -1965,7 +1979,8 @@ namespace System.Windows.Forms.X11Internal {
 
 				case XEventName.ButtonRelease:
 					if (Dnd.InDrag()) {
-						Dnd.HandleButtonRelease (ref xevent);
+						if (Dnd.HandleButtonRelease (ref xevent))
+							return true;
 						// Don't return here, so that the BUTTONUP message can get through
 					}
 
