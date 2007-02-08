@@ -19,10 +19,6 @@ using System.Windows.Forms.Layout;
 
 using NUnit.Framework;
 
-#if NET_2_0
-#pragma warning disable 612 // Warning about obsolete members.
-#endif
-
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
