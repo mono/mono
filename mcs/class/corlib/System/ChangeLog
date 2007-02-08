@@ -1,3 +1,7 @@
+2007-02-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Add IUnknown field to object. Cleanup icalls.
+	
 2007-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* BitConverter.cs (ToDouble): Fix this on big-endian machines.

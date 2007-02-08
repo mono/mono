@@ -31,6 +31,7 @@
 //
 
 using Mono.Interop;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System;
 using System.Security;
@@ -67,7 +68,14 @@ namespace System.Runtime.InteropServices
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int AddRef (IntPtr pUnk);
+		private extern static int AddRefInternal (IntPtr pUnk);
+
+		public static int AddRef (IntPtr pUnk)
+		{
+			if (pUnk == IntPtr.Zero)
+				throw new ArgumentException ("Value cannot be null.", "pUnk");
+			return AddRefInternal (pUnk);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
@@ -286,16 +294,22 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static IntPtr GetCCW (object o, Type T);
+
+		private static IntPtr GetComInterfaceForObjectInternal (object o, Type T)
+		{
+			if (IsComObject (o))
+				return ((__ComObject)o).GetInterface (T);
+			else
+				return GetCCW (o, T);
+		}
+
 		public static IntPtr GetComInterfaceForObject (object o, Type T)
 		{
-			__ComObject co = o as __ComObject;
-			if (co == null)
-				throw new NotSupportedException ("Only RCWs are currently supported");
-			
-			IntPtr pUnk = co.GetInterface (T);
-			AddRef (pUnk);
-			return pUnk;
+			IntPtr pItf = GetComInterfaceForObjectInternal (o, T);
+			AddRef (pItf);
+			return pItf;
 		}
 
 #if NET_2_0
@@ -306,18 +320,10 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
+		[MonoNotSupportedAttribute ("MSDN states user code should never need to call this method.")]
 		public static object GetComObjectData (object obj, object key)
 		{
-			if (obj == null)
-				throw new ArgumentNullException ("obj");
-			if (key == null)
-				throw new ArgumentNullException ("key");
-
-			__ComObject com_object = obj as __ComObject;
-			if (com_object == null)
-				throw new ArgumentException ("obj is not a COM object", "obj");
-
-			return com_object.Hashtable[key];
+			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -370,17 +376,15 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static IntPtr GetIDispatchForObjectInternal (object o);
+
 		public static IntPtr GetIDispatchForObject (object o)
 		{
-			// only handle case of RCW objects for now
-			__ComObject co = o as __ComObject;
-			if (co != null) {
-				IntPtr pUnk = co.IDispatch;
-				AddRef (pUnk);
-				return pUnk;
-			}
-			throw new NotImplementedException ();
+			IntPtr pUnk = GetIDispatchForObjectInternal (o);
+			// Internal method does not AddRef
+			AddRef (pUnk);
+			return pUnk;
 		}
 
 #if NET_2_0
@@ -397,17 +401,15 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static IntPtr GetIUnknownForObjectInternal (object o);
+
 		public static IntPtr GetIUnknownForObject (object o)
 		{
-			// only handle case of RCW objects for now
-			__ComObject co = o as __ComObject;
-			if (co != null) {
-				IntPtr pUnk = co.IUnknown;
-				AddRef (pUnk);
-				return pUnk;
-			}
-			throw new NotImplementedException ();
+			IntPtr pUnk = GetIUnknownForObjectInternal (o);
+			// Internal method does not AddRef
+			AddRef (pUnk);
+			return pUnk;
 		}
 
 #if NET_2_0
@@ -443,10 +445,18 @@ namespace System.Runtime.InteropServices
 			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern object GetObjectForCCW (IntPtr pUnk);
+
 		public static object GetObjectForIUnknown (IntPtr pUnk)
 		{
-			ComInteropProxy proxy = ComInteropProxy.GetProxy (pUnk, typeof(__ComObject));
-			return proxy.GetTransparentProxy ();
+			object obj = GetObjectForCCW (pUnk);
+			// was not a CCW
+			if (obj == null) {
+				ComInteropProxy proxy = ComInteropProxy.GetProxy (pUnk, typeof (__ComObject));
+				obj = proxy.GetTransparentProxy ();
+			}
+			return obj;
 		}
 
 		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant)
@@ -455,10 +465,15 @@ namespace System.Runtime.InteropServices
 			return vt.GetValue();
 		}
 
-		[MonoTODO]
 		public static object[] GetObjectsForNativeVariants (IntPtr aSrcNativeVariant, int cVars)
 		{
-			throw new NotImplementedException ();
+			if (cVars < 0)
+				throw new ArgumentOutOfRangeException ("cVars", "cVars cannot be a negative number.");
+			object[] objects = new object[cVars];
+			for (int i = 0; i < cVars; i++)
+				objects[i] = GetObjectForNativeVariant ((IntPtr)(aSrcNativeVariant.ToInt64 () +
+					i * SizeOf (typeof(Variant))));
+			return objects;
 		}
 
 		[MonoTODO]
@@ -570,12 +585,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static bool IsComObject (object o)
-		{
-			Type t = o.GetType ();
-			object[] attrs = t.GetCustomAttributes (typeof (ComImportAttribute), true);
-			return (attrs != null && attrs.Length > 0);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool IsComObject (object o);
 
 		[MonoTODO]
 		public static bool IsTypeVisibleFromCom (Type t)
@@ -632,7 +643,14 @@ namespace System.Runtime.InteropServices
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
+		private extern static int QueryInterfaceInternal (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
+
+		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv)
+		{
+			if (pUnk == IntPtr.Zero)
+				throw new ArgumentException ("Value cannot be null.", "pUnk");
+			return QueryInterfaceInternal (pUnk, ref iid, out ppv);
+		}
 
 		public static byte ReadByte (IntPtr ptr)
 		{
@@ -741,16 +759,25 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Release (IntPtr pUnk);
+		private extern static int ReleaseInternal (IntPtr pUnk);
+
+		public static int Release (IntPtr pUnk)
+		{
+			if (pUnk == IntPtr.Zero)
+				throw new ArgumentException ("Value cannot be null.", "pUnk");
+			return ReleaseInternal (pUnk);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int ReleaseComObjectInternal (object co);
 
 		public static int ReleaseComObject (object o)
 		{
 			if (o == null)
-				throw new ArgumentException ("o");
-			__ComObject co = o as __ComObject;
-			if (co == null)
-				throw new ArgumentException ("o");
-			return ComInteropProxy.ReleaseComObject (co);
+				throw new ArgumentException ("Value cannot be null.", "o");
+			if (!IsComObject (o))
+				throw new ArgumentException ("Value must be a Com object.", "o");
+			return ReleaseComObjectInternal (o);
 		}
 
 #if NET_2_0
@@ -762,19 +789,10 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+		[MonoNotSupportedAttribute ("MSDN states user code should never need to call this method.")]
 		public static bool SetComObjectData (object obj, object key, object data)
 		{
-			if (obj == null)
-				throw new ArgumentNullException ("obj");
-			if (key == null)
-				throw new ArgumentNullException ("key");
-
-			__ComObject com_object = obj as __ComObject;
-			if (com_object == null)
-				throw new ArgumentException ("obj is not a COM object", "obj");
-
-			com_object.Hashtable[key] = data;
-			return true;
+			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
 
 		public static int SizeOf (object structure)
@@ -1035,10 +1053,10 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public static int FinalReleaseComObject (object o)
 		{
-			throw new NotImplementedException ();
+			while (ReleaseComObject (o) != 0);
+			return 0;
 		}
 
 		[MonoTODO]

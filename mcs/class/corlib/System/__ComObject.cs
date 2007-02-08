@@ -53,23 +53,28 @@ namespace System
 	internal class __ComObject : MarshalByRefObject
 	{
 		#region Sync with object-internals.h
+		IntPtr iunknown;
 		IntPtr hash_table;
 		#endregion
-
-		// this is used internally and for the the methods
-		// Marshal.GetComObjectData and Marshal.SetComObjectData
-		Hashtable hashtable;
 
 		[ThreadStatic]
 		static bool coinitialized;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void Finalizer ();
+		internal static extern __ComObject CreateRCW (Type t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern void AddInterface (__ComObject co, Type t, IntPtr pItf);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern IntPtr FindInterface (__ComObject co, Type t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void ReleaseInterfaces ();
 
 		~__ComObject ()
 		{
-			ComInteropProxy.ReleaseComObject (this);
-			Finalizer ();
+			ReleaseInterfaces ();
 		}
 
 		public __ComObject ()
@@ -80,14 +85,9 @@ namespace System
 				coinitialized = true;
 			}
 
-			hashtable = new Hashtable ();
-
-			IntPtr ppv;
 			Type t = GetType ();
-			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
-
-			SetIUnknown (ppv);
 		}
 
 		internal __ComObject (Type t)
@@ -98,16 +98,18 @@ namespace System
 				coinitialized = true;
 			}
 
-			hashtable = new Hashtable ();
-
-			IntPtr ppv;
-			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out ppv);
+			int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
-
-			SetIUnknown (ppv);
 		}
 
-		private Guid GetCLSID (Type t)
+		internal __ComObject (IntPtr pItf)
+		{
+			Guid iid = IID_IUnknown;
+			int hr = Marshal.QueryInterface (pItf, ref iid, out iunknown);
+			Marshal.ThrowExceptionForHR (hr);
+		}
+
+		private static Guid GetCLSID (Type t)
 		{
 			if (t.IsImport)
 				return t.GUID;
@@ -122,65 +124,35 @@ namespace System
 			throw new COMException ("Could not find base COM type for type " + t.ToString());
 		}
 
-		internal __ComObject (IntPtr pItf)
-		{
-			hashtable = new Hashtable ();
-			IntPtr ppv;
-			Guid iid = IID_IUnknown;
-			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
-			Marshal.ThrowExceptionForHR (hr);
-			SetIUnknown (ppv);
-        }
-
-		public Hashtable Hashtable
-		{
-			get
-			{
-				return hashtable;
-			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern __ComObject CreateRCW (Type t);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void SetIUnknown (IntPtr t);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern IntPtr GetIUnknown ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern IntPtr FindInterface (Type t);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void CacheInterface (Type t, IntPtr pItf);
-
 		internal IntPtr GetInterface(Type t)
 		{
-			// this is needed later and checks to see if we are
-			// a valid RCW
-			IntPtr pUnk = IUnknown;
-			IntPtr pItf = FindInterface (t);
+			CheckIUnknown ();
+			IntPtr pItf = FindInterface (this, t);
 			if (pItf != IntPtr.Zero) {
 				return pItf;
 			}
 
 			Guid iid = t.GUID;
 			IntPtr ppv;
-			int hr = Marshal.QueryInterface (pUnk, ref iid, out ppv);
+			int hr = Marshal.QueryInterface (iunknown, ref iid, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
-			CacheInterface (t, ppv);
+			AddInterface (this, t, ppv);
 			return ppv;
+		}
+
+		private void CheckIUnknown ()
+		{
+			if (iunknown == IntPtr.Zero)
+				throw new InvalidComObjectException ("COM object that has been separated from its underlying RCW cannot be used.");
 		}
 
 		internal IntPtr IUnknown
 		{
 			get
 			{
-				IntPtr pUnk = GetIUnknown();
-				if (pUnk == IntPtr.Zero)
+				if (iunknown == IntPtr.Zero)
 					throw new InvalidComObjectException ("COM object that has been separated from its underlying RCW cannot be used.");
-				return pUnk;
+				return iunknown;
 			}
 		}
 
@@ -213,21 +185,22 @@ namespace System
 
 		public override bool Equals (object obj)
 		{
+			CheckIUnknown ();
 			if (obj == null)
 				return false;
 
 			__ComObject co = obj as __ComObject;
 			if ((object)co == null)
 				return false;
-
-			return (IUnknown == co.IUnknown);
+			return (iunknown == co.IUnknown);
 		}
 
 		public override int GetHashCode ()
 		{
+			CheckIUnknown ();
 			// not what MS seems to do, 
 			// but IUnknown is identity in COM
-			return IUnknown.ToInt32 ();
+			return iunknown.ToInt32 ();
 		}
 
 		[DllImport ("ole32.dll", CallingConvention = CallingConvention.StdCall)]

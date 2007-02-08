@@ -40,30 +40,19 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Interop
 {
-	internal struct ComInteropProxyEntry
-	{
-		public int refcount;
-		public WeakReference weakref;
-
-		public ComInteropProxyEntry (int refcount, WeakReference weak)
-		{
-			this.refcount = refcount;
-			this.weakref = weak;
-		}
-	}
-
 	internal class ComInteropProxy : RealProxy, IRemotingTypeInfo
     {
         #region Sync with object-internals.h
 		private __ComObject com_object;
+		int ref_count = 1; // wrapper ref count
         #endregion
 		private string type_name;
-		static Hashtable iunknown_hashtable;
 
-		static ComInteropProxy ()
-		{
-			iunknown_hashtable = new Hashtable ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void AddProxy (IntPtr pItf, ComInteropProxy proxy);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static ComInteropProxy FindProxy (IntPtr pItf);
 
 		public ComInteropProxy (Type t)
 			: base (t)
@@ -77,7 +66,7 @@ namespace Mono.Interop
 		{
 			// called from unmanaged code after .ctor is invoked
 			// we need .ctor to create unmanaged object and thus IUnknown property value
-			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference (this)));
+			AddProxy (com_object.IUnknown, this);
 		}
 
         internal ComInteropProxy (IntPtr pUnk)
@@ -89,30 +78,7 @@ namespace Mono.Interop
 			: base (t)
 		{
 			com_object = new __ComObject (pUnk);
-			iunknown_hashtable.Add (com_object.IUnknown, new ComInteropProxyEntry (1, new WeakReference (this)));
-		}
-
-		internal static int ReleaseComObject (__ComObject co)
-		{
-			if (co == null)
-				throw new ArgumentNullException ("co");
-			int refcount = -1;
-			IntPtr pUnk = co.IUnknown;
-			object obj = iunknown_hashtable[pUnk];
-			if (obj != null) {
-				ComInteropProxyEntry entry = (ComInteropProxyEntry)obj;
-				refcount = entry.refcount - 1;
-				if (refcount == 0) {
-					iunknown_hashtable.Remove (pUnk);
-					ComInteropProxy proxy = (ComInteropProxy)entry.weakref.Target;
-					if (proxy != null && proxy.com_object != null)
-						proxy.com_object.Finalizer ();
-				}
-				else {
-					iunknown_hashtable[pUnk] = new ComInteropProxyEntry (refcount, entry.weakref);
-				}
-			}
-			return refcount;
+			CacheProxy ();
 		}
 
 		internal static ComInteropProxy GetProxy (IntPtr pItf, Type t)
@@ -121,25 +87,20 @@ namespace Mono.Interop
 			Guid iid = __ComObject.IID_IUnknown;
 			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
-			object obj = iunknown_hashtable[ppv];
+			ComInteropProxy obj = FindProxy (ppv);
 			if (obj == null) {
 				return new ComInteropProxy (ppv);
 			}
 			else {
-				ComInteropProxyEntry entry = ((ComInteropProxyEntry)obj);
-				WeakReference weak_ref = entry.weakref;
-				object target = weak_ref.Target;
-				if (target == null) {
-					return new ComInteropProxy (ppv);
-				}
-				iunknown_hashtable[ppv] = new ComInteropProxyEntry (entry.refcount + 1, weak_ref);
-				return ((ComInteropProxy)target);
+				System.Threading.Interlocked.Increment (ref obj.ref_count);
+				return obj;
 			}
 		}
 
 		public override IMessage Invoke (IMessage msg)
 		{
 			Console.WriteLine ("Invoke");
+            Console.WriteLine (System.Environment.StackTrace);
 
 			throw new Exception ("The method or operation is not implemented.");
 		}
