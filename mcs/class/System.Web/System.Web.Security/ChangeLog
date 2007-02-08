@@ -1,5 +1,7 @@
 2007-02-08  Marek Habersack  <grendello@gmail.com>
 
+	* FormsAuthenticationModule.cs: Expire auth tickets properly.
+
 	* MembershipProvider.cs: Do not clear the password before
 	encrypting it. 
 
