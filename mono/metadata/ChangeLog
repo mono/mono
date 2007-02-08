@@ -1,4 +1,9 @@
 
+Thu Feb 8 12:46:18 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: changed all the signature encoding code to use
+	a variable-sized buffer.
+
 Wed Feb 7 20:37:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: locking fixes: never take the loader lock
