@@ -1,5 +1,7 @@
 2007-02-08  Marek Habersack  <grendello@gmail.com>
 
+	* TemplateControlCompiler.cs: Fix TemplateSourceDirectory.
+
 	* AspComponentFoundry.cs: Avoid duplicate control registration
 	exception.
 

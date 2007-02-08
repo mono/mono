@@ -1417,7 +1417,37 @@ namespace System.Web.Compilation
 			prop.Name = "TemplateSourceDirectory";
 			prop.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
-			CodePrimitiveExpression expr = new CodePrimitiveExpression (parser.BaseVirtualDir);
+			// if ((this.Parent != null))
+			//   return this.Parent.TemplateSourceDirectory;
+			CodeFieldReferenceExpression parentField = new CodeFieldReferenceExpression ();
+			parentField.TargetObject = thisRef;
+			parentField.FieldName = "Parent";
+			
+			CodeFieldReferenceExpression tsdField = new CodeFieldReferenceExpression ();
+			tsdField.TargetObject = parentField;
+			tsdField.FieldName = "TemplateSourceDirectory";
+
+			CodeMethodReturnStatement parentRet = new CodeMethodReturnStatement (tsdField);
+			CodeConditionStatement condStatement = new CodeConditionStatement (
+				new CodeBinaryOperatorExpression (parentField,
+								  CodeBinaryOperatorType.IdentityInequality,
+								  new CodePrimitiveExpression (null)),
+				parentRet);
+			
+			prop.GetStatements.Add (condStatement);
+			
+			string tsd, bvd = parser.BaseVirtualDir;
+			int len = bvd.Length;
+			if (len >= 2 && bvd [0] == '~') {
+				if (bvd [1] == '/')
+				    tsd = bvd.Substring (1);
+				else
+				    tsd = '/' + bvd.Substring (1);
+			} else if (len >= 1 && bvd [0] != '/')
+				tsd = '/' + bvd;
+			else
+				tsd = bvd;
+			CodePrimitiveExpression expr = new CodePrimitiveExpression (tsd);
 			prop.GetStatements.Add (new CodeMethodReturnStatement (expr));
 			mainClass.Members.Add (prop);
 		}
