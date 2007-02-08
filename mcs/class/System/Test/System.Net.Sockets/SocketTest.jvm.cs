@@ -28,7 +28,8 @@ namespace MonoTests.System.Net.Sockets
 		public void ConnectIPAddressAny ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
-
+#if !TARGET_JVM 
+//udp sockets are not supported
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
 					s.Connect (ep);
@@ -38,6 +39,7 @@ namespace MonoTests.System.Net.Sockets
 			} catch (SocketException ex) {
 				Assert.AreEqual (10049, ex.ErrorCode, "#2");
 			}
+#endif			
 
 			try {
 				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
@@ -198,6 +200,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 #endif
 		[Test]
+#if TARGET_JVM
+		[Ignore ("NMA")]
+#endif		
 		public void TestSelect1 ()
 		{
 			Socket srv = CreateServer ();
@@ -632,6 +637,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("NMA")]
+#endif		
 		public void SocketError ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1647,6 +1655,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("NMA")]
+#endif		
 		[ExpectedException (typeof(InvalidOperationException))]
 		public void BeginAcceptNotBound ()
 		{
@@ -1660,6 +1671,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("NMA")]
+#endif		
 		[ExpectedException (typeof(InvalidOperationException))]
 		public void BeginAcceptNotListening ()
 		{
