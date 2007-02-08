@@ -66,20 +66,21 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, tsi.Image, "A20");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, tsi.ImageAlign, "A21");
 			Assert.AreEqual (-1, tsi.ImageIndex, "A22");
+			Assert.AreEqual (string.Empty, tsi.ImageKey, "A22-1");
 			Assert.AreEqual (ToolStripItemImageScaling.SizeToFit, tsi.ImageScaling, "A23");
 			Assert.AreEqual (Color.Empty, tsi.ImageTransparentColor, "A24");
 			//Assert.AreEqual (false, tsi.IsDisposed, "A25");
 			Assert.AreEqual (false, tsi.IsOnDropDown, "A26");
-			//Assert.AreEqual (false, tsi.IsOnOverflow, "A27");
+			Assert.AreEqual (false, tsi.IsOnOverflow, "A27");
 			Assert.AreEqual (new Padding(0,1,0,2), tsi.Margin, "A28");
 			//Assert.AreEqual (MergeAction.Append, tsi.MergeAction, "A29");
 			//Assert.AreEqual (-1, tsi.MergeIndex, "A30");
 			Assert.AreEqual (string.Empty, tsi.Name, "A31");
-			//Assert.AreEqual (ToolStripItemOverflow.AsNeeded, tsi.Overflow, "A32");
+			Assert.AreEqual (ToolStripItemOverflow.AsNeeded, tsi.Overflow, "A32");
 			Assert.AreEqual (null, tsi.Owner, "A33");
 			Assert.AreEqual (null, tsi.OwnerItem, "A34");
 			Assert.AreEqual (new Padding(0), tsi.Padding, "A35");
-			//Assert.AreEqual (ToolStripItemPlacement.None, tsi.Placement, "A36");
+			Assert.AreEqual (ToolStripItemPlacement.None, tsi.Placement, "A36");
 			Assert.AreEqual (false, tsi.Pressed, "A37");
 			//Assert.AreEqual (RightToLeft.Inherit, tsi.RightToLeft, "A38");
 			//Assert.AreEqual (false, tsi.RightToLeftAutoMirrorImage, "A39");
@@ -531,28 +532,28 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
 		}
 
-		//[Test]
-		//public void PropertyOverflow ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        EventWatcher ew = new EventWatcher (tsi);
+		[Test]
+		public void PropertyOverflow ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			EventWatcher ew = new EventWatcher (tsi);
 
-		//        tsi.Overflow = ToolStripItemOverflow.Never;
-		//        Assert.AreEqual (ToolStripItemOverflow.Never, tsi.Overflow, "B1");
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			tsi.Overflow = ToolStripItemOverflow.Never;
+			Assert.AreEqual (ToolStripItemOverflow.Never, tsi.Overflow, "B1");
+			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 
-		//        ew.Clear ();
-		//        tsi.Overflow = ToolStripItemOverflow.Never;
-		//        Assert.AreEqual (string.Empty, ew.ToString (), "B3");
-		//}
+			ew.Clear ();
+			tsi.Overflow = ToolStripItemOverflow.Never;
+			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+		}
 
-		//[Test]
-		//[ExpectedException (typeof (System.ComponentModel.InvalidEnumArgumentException))]
-		//public void PropertyOverflowIEAE ()
-		//{
-		//        ToolStripItem tsi = new NullToolStripItem ();
-		//        tsi.Overflow = (ToolStripItemOverflow)42;
-		//}
+		[Test]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void PropertyOverflowIEAE ()
+		{
+			ToolStripItem tsi = new NullToolStripItem ();
+			tsi.Overflow = (ToolStripItemOverflow)42;
+		}
 
 		[Test]
 		public void PropertyOwner ()
@@ -1077,6 +1078,59 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.Control, tsi.BackColor, "C7");
 		}
 
+		[Test]
+		public void BehaviorImageList ()
+		{
+			// Basically, this shows that whichever of [Image|ImageIndex|ImageKey]
+			// is set last resets the others to their default state
+			ToolStripItem tsi = new NullToolStripItem ();
+			
+			Bitmap i1 = new Bitmap (16, 4);
+			i1.SetPixel (0, 0, Color.Blue);
+			Bitmap i2 = new Bitmap (16, 5);
+			i2.SetPixel (0, 0, Color.Red);
+			Bitmap i3 = new Bitmap (16, 6);
+			i3.SetPixel (0, 0, Color.Green);
+			
+			Assert.AreEqual (null, tsi.Image, "D1");
+			Assert.AreEqual (-1, tsi.ImageIndex, "D2");
+			Assert.AreEqual (string.Empty, tsi.ImageKey, "D3");
+			
+			ImageList il = new ImageList ();
+			il.Images.Add ("i2", i2);
+			il.Images.Add ("i3", i3);
+			
+			ToolStrip ts = new ToolStrip ();
+			ts.ImageList = il;
+			
+			ts.Items.Add (tsi);
+	
+			tsi.ImageKey = "i3";
+			Assert.AreEqual (-1, tsi.ImageIndex, "D4");
+			Assert.AreEqual ("i3", tsi.ImageKey, "D5");
+			Assert.AreEqual (i3.GetPixel (0, 0), (tsi.Image as Bitmap).GetPixel (0, 0), "D6");
+
+			tsi.ImageIndex = 0;
+			Assert.AreEqual (0, tsi.ImageIndex, "D7");
+			Assert.AreEqual (string.Empty, tsi.ImageKey, "D8");
+			Assert.AreEqual (i2.GetPixel (0, 0), (tsi.Image as Bitmap).GetPixel (0, 0), "D9");
+
+			tsi.Image = i1;
+			Assert.AreEqual (-1, tsi.ImageIndex, "D10");
+			Assert.AreEqual (string.Empty, tsi.ImageKey, "D11");
+			Assert.AreEqual (i1.GetPixel (0, 0), (tsi.Image as Bitmap).GetPixel (0, 0), "D12");
+			
+			tsi.Image = null;
+			Assert.AreEqual (null, tsi.Image, "D13");
+			Assert.AreEqual (-1, tsi.ImageIndex, "D14");
+			Assert.AreEqual (string.Empty, tsi.ImageKey, "D15");
+			
+			// Also, Image is not cached, changing the underlying ImageList image is reflected
+			tsi.ImageIndex = 0;
+			il.Images[0] = i1;
+			Assert.AreEqual (i1.GetPixel (0, 0), (tsi.Image as Bitmap).GetPixel (0, 0), "D16");
+		}
+		
 		private class EventWatcher
 		{
 			private string events = string.Empty;

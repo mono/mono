@@ -60,6 +60,7 @@ namespace System.Windows.Forms
 		private Image image;
 		private ContentAlignment image_align;
 		private int image_index;
+		private string image_key;
 		private ToolStripItemImageScaling image_scaling;
 		private Color image_transparent_color;
 		internal bool is_pressed;
@@ -110,6 +111,7 @@ namespace System.Windows.Forms
 			this.image = image;
 			this.image_align = ContentAlignment.MiddleCenter;
 			this.image_index = -1;
+			this.image_key = string.Empty;
 			this.image_scaling = ToolStripItemImageScaling.SizeToFit;
 			this.image_transparent_color = Color.Empty;
 			this.margin = this.DefaultMargin;
@@ -389,11 +391,29 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		public virtual Image Image {
-			get { return this.image; }
+			get { 
+				if (this.image != null)
+					return this.image;
+					
+				if (this.image_index >= 0)
+					if (this.owner != null && this.owner.ImageList != null)
+						return this.owner.ImageList.Images[this.image_index];
+
+
+				if (!string.IsNullOrEmpty (this.image_key))
+					if (this.owner != null && this.owner.ImageList != null)
+						return this.owner.ImageList.Images[this.image_key];
+						
+				return null;
+			}
 			set {
-				this.image = value; 
-				this.CalculateAutoSize (); 
-				this.Invalidate ();
+				if (this.image != value) {
+					this.image = value; 
+					this.image_index = -1;
+					this.image_key = string.Empty;
+					this.CalculateAutoSize (); 
+					this.Invalidate ();
+				}
 			}
 		}
 
@@ -418,16 +438,34 @@ namespace System.Windows.Forms
 		public int ImageIndex {
 			get { return this.image_index; }
 			set {
-				// Lamespec: MSDN says ArgumentException, tests say otherwise
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("ImageIndex cannot be less than -1");
+				if (this.image_index != value) {
+					// Lamespec: MSDN says ArgumentException, tests say otherwise
+					if (value < -1)
+						throw new ArgumentOutOfRangeException ("ImageIndex cannot be less than -1");
 
-				this.image_index = value;
-				this.CalculateAutoSize ();
-				this.Invalidate ();
+					this.image_index = value;
+					this.image = null;
+					this.image_key = string.Empty;
+					this.CalculateAutoSize ();
+					this.Invalidate ();
+				}
 			}
 		}
 
+		[Localizable (true)]
+		public string ImageKey {
+			get { return this.image_key; }
+			set { 
+				if (this.image_key != value) {
+					this.image = null;
+					this.image_index = -1;
+					this.image_key = value;
+					this.CalculateAutoSize ();
+					this.Invalidate ();
+				}
+			}
+		}
+		
 		[Localizable (true)]
 		[DefaultValue (ToolStripItemImageScaling.SizeToFit)]
 		public ToolStripItemImageScaling ImageScaling {
@@ -456,6 +494,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public bool IsOnOverflow {
+			get { return this.placement == ToolStripItemPlacement.Overflow; }
+		}
+		
 		public Padding Margin {
 			get { return this.margin; }
 			set {
@@ -1113,16 +1155,16 @@ namespace System.Windows.Forms
 					preferred_size = new Size (width, height);
 					break;
 				case ToolStripItemDisplayStyle.Image:
-					if (this.image == null)
+					if (this.Image == null)
 						preferred_size = this.DefaultSize;
 					else {
 						switch (this.image_scaling) {
 							case ToolStripItemImageScaling.None:
-								preferred_size = this.image.Size;
+								preferred_size = this.Image.Size;
 								break;
 							case ToolStripItemImageScaling.SizeToFit:
 								if (this.parent == null)
-									preferred_size = this.image.Size;
+									preferred_size = this.Image.Size;
 								else
 									preferred_size = this.parent.ImageScalingSize;
 								break;
@@ -1133,21 +1175,21 @@ namespace System.Windows.Forms
 					int width2 = text_size.Width + this.padding.Horizontal;
 					int height2 = text_size.Height + this.padding.Vertical;
 
-					if (this.image != null) {
+					if (this.Image != null) {
 						switch (this.text_image_relation) {
 							case TextImageRelation.Overlay:
-								width2 = Math.Max (width2, this.image.Width);
-								height2 = Math.Max (height2, this.image.Height);
+								width2 = Math.Max (width2, this.Image.Width);
+								height2 = Math.Max (height2, this.Image.Height);
 								break;
 							case TextImageRelation.ImageAboveText:
 							case TextImageRelation.TextAboveImage:
-								width2 = Math.Max (width2, this.image.Width);
-								height2 += this.image.Height;
+								width2 = Math.Max (width2, this.Image.Width);
+								height2 += this.Image.Height;
 								break;
 							case TextImageRelation.ImageBeforeText:
 							case TextImageRelation.TextBeforeImage:
-								height2 = Math.Max (height2, this.image.Height);
-								width2 += this.image.Width;
+								height2 = Math.Max (height2, this.Image.Height);
+								width2 += this.Image.Width;
 								break;
 						}
 					}
@@ -1186,15 +1228,15 @@ namespace System.Windows.Forms
 						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
 					break;
 				case ToolStripItemDisplayStyle.Image:
-					if (this.image != null)
-						image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
+					if (this.Image != null)
+						image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
 					break;
 				case ToolStripItemDisplayStyle.ImageAndText:
-					if (this.text != string.Empty && this.image == null)
+					if (this.text != string.Empty && this.Image == null)
 						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
-					else if (this.text == string.Empty && this.image != null)
-						image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
-					else if (this.text == string.Empty && this.image == null)
+					else if (this.text == string.Empty && this.Image != null)
+						image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
+					else if (this.text == string.Empty && this.Image == null)
 						break;
 					else {
 						Rectangle text_area;
@@ -1203,35 +1245,35 @@ namespace System.Windows.Forms
 						switch (this.text_image_relation) {
 							case TextImageRelation.Overlay:
 								text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
+								image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
 								break;
 							case TextImageRelation.ImageAboveText:
 								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Bottom - (text_size.Height - 4), contentRectangle.Width, text_size.Height - 4);
 								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
 								break;
 							case TextImageRelation.TextAboveImage:
 								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, text_size.Height - 4);
 								image_area = new Rectangle (contentRectangle.Left, text_area.Bottom, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
 								break;
 							case TextImageRelation.ImageBeforeText:
 								text_area = new Rectangle (contentRectangle.Right - this.text_size.Width, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
 								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, text_area.Left - contentRectangle.Left, contentRectangle.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
 								break;
 							case TextImageRelation.TextBeforeImage:
 								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
 								image_area = new Rectangle (text_area.Right, contentRectangle.Top, contentRectangle.Width - text_area.Width, contentRectangle.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
 								break;
 						}
 					}
