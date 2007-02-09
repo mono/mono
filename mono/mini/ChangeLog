@@ -1,3 +1,7 @@
+2007-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_class_check): New helper function.
+
 2007-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic.cs objects.cs iltests.il: Merge tests from the linear IL branch.

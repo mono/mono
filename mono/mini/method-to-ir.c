@@ -2054,6 +2054,19 @@ mini_emit_iface_class_cast (MonoCompile *cfg, int klass_reg, MonoClass *klass, M
 		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "InvalidCastException");
 }
 
+static inline void
+mini_emit_class_check (MonoCompile *cfg, int klass_reg, MonoClass *klass)
+{
+	if (cfg->compile_aot) {
+		int const_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
+		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, const_reg);
+	} else {
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
+	}
+	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+}
+	
 static void 
 mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 {
@@ -2068,14 +2081,7 @@ mini_emit_castclass (MonoCompile *cfg, int klass_reg, MonoClass *klass)
 	}
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, supertypes));
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((klass->idepth - 1) * SIZEOF_VOID_P));
-	if (cfg->compile_aot) {
-		int const_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
-		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, stype, const_reg);
-	} else {
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
-	}
-	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+	mini_emit_class_check (cfg, stype, klass);
 }
 
 static void 
@@ -2767,16 +2773,8 @@ handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, const guchar *i
 
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, eclass_reg, klass_reg, G_STRUCT_OFFSET (MonoClass, element_class));
-			
-	if (cfg->compile_aot) {
-		int const_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass->element_class);
-		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-	} else {
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, klass->element_class);
-	}
-	
-	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+
+	mini_emit_class_check (cfg, eclass_reg, klass->element_class);
 
 	NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_PTR), obj_reg, sizeof (MonoObject));
 	MONO_ADD_INS (cfg->cbb, add);
@@ -2879,13 +2877,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, parent_reg, mono_defaults.enum_class->parent);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, is_null_bb);
-				if (cfg->compile_aot) {
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 			} else if (klass->cast_class == mono_defaults.enum_class->parent) {
 				int const_reg = alloc_preg (cfg);
 				if (cfg->compile_aot) {
@@ -2895,22 +2887,9 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class->parent);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
-				if (cfg->compile_aot) {
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 			} else if (klass->cast_class == mono_defaults.enum_class) {
-				if (cfg->compile_aot) {
-					int const_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, mono_defaults.enum_class);
-					MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, eclass_reg, const_reg);
-				} else {
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, eclass_reg, mono_defaults.enum_class);
-				}
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+				mini_emit_class_check (cfg, eclass_reg, mono_defaults.enum_class);
 			} else if (klass->cast_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 				mini_emit_iface_class_cast (cfg, eclass_reg, klass->cast_class, NULL, NULL);
 			} else {
@@ -3214,15 +3193,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 		MONO_START_BB (cfg, interface_fail_bb);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
-		if (cfg->compile_aot) {
-			int tproxy_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_CLASSCONST (cfg, tproxy_reg, mono_defaults.transparent_proxy_class);
-			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, tproxy_reg);
-		} else {
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, mono_defaults.transparent_proxy_class);
-		}
-		
-		MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+		mini_emit_class_check (cfg, klass_reg, mono_defaults.transparent_proxy_class);
 
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
@@ -7929,14 +7900,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				src_var = mono_compile_create_var_for_vreg (cfg, &mono_defaults.typed_reference_class->byval_arg, OP_LOCAL, sp [0]->dreg);
 			EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, src->dreg, G_STRUCT_OFFSET (MonoTypedRef, klass));
-			if (cfg->compile_aot) {
-				int const_reg = alloc_preg (cfg);
-				MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
-				MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, const_reg);
-			} else {
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
-			}
-			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
+			mini_emit_class_check (cfg, klass_reg, klass);
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, src->dreg, G_STRUCT_OFFSET (MonoTypedRef, value));
 			ins->type = STACK_MP;
 			*sp++ = ins;
