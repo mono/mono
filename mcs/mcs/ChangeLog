@@ -1,3 +1,12 @@
+2007-02-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80315 by martin.voelkle@gmail.com (Martin Voelkle)
+	* assign.cs: Use full implicit conversion for right side check.
+
+2007-02-09  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs (Switch): Switch over boolean type is not standardized.
+
 2007-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80755
