@@ -207,7 +207,6 @@ System.Data.SqlTypes/SqlByte.cs
 System.Data.SqlTypes/SqlBytes.cs
 System.Data.SqlTypes/SqlChars.cs
 System.Data.SqlTypes/SqlCompareOptions.cs
-System.Data.SqlTypes/SqlDate.cs
 System.Data.SqlTypes/SqlDateTime.cs
 System.Data.SqlTypes/SqlDecimal.cs
 System.Data.SqlTypes/SqlDouble.cs
@@ -220,11 +219,8 @@ System.Data.SqlTypes/SqlNullValueException.cs
 System.Data.SqlTypes/SqlSingle.cs
 System.Data.SqlTypes/SqlStreamChars.cs
 System.Data.SqlTypes/SqlString.cs
-System.Data.SqlTypes/SqlTime.cs
 System.Data.SqlTypes/SqlTruncateException.cs
 System.Data.SqlTypes/SqlTypeException.cs
-System.Data.SqlTypes/SqlUtcDateTime.cs
-System.Data.SqlTypes/SqlXmlReader.cs
 System.Data.SqlTypes/StorageState.cs
 System.Data.SqlTypes/SqlAlreadyFilledException.cs
 System.Data.SqlTypes/SqlNotFilledException.cs

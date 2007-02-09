@@ -1,7 +1,9 @@
 System.Data.Test.Utils/DataProvider.cs
 System.Data.SqlTypes/SqlBinaryTest.cs
 System.Data.SqlTypes/SqlBooleanTest.cs
+System.Data.SqlTypes/SqlBytesTest.cs
 System.Data.SqlTypes/SqlByteTest.cs
+System.Data.SqlTypes/SqlCharsTest.cs
 System.Data.SqlTypes/SqlDoubleTest.cs
 System.Data.SqlTypes/SqlInt16Test.cs
 System.Data.SqlTypes/SqlInt32Test.cs
