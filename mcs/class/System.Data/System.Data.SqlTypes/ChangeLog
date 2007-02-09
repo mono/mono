@@ -1,3 +1,22 @@
+2007-02-09  Nagappan A  <anagappan@novell.com>
+
+	* SqlNotFilledException.cs: Removed APIs that are not part of both
+	1.0 and 2.0.
+
+	* SqlTypeException.cs: Implemented missing attributes.
+
+	* SqlChars.cs, SqlBytes.cs: Implemented missing attributes,
+	methods and added IXmlSerializable.
+
+	* SqlDouble.cs, SqlSingle.cs, SqlBinary.cs, SqlString.cs:
+	Implemented missing attributes, added IXmlSerializable.
+
+	* SqlXml.cs, SqlInt16.cs, SqlInt32.cs, SqlInt64.cs: Implemented
+	missing attributes, added IXmlSerializable.
+
+	* SqlDateTime.cs, SqlDecimal.cs, SqlMoney.cs, SqlGuid.cs:
+	Implemented missing attributes, added IXmlSerializable
+
 2006-07-19  Senganal T  <tsenganal@novell.com>
 
 	* SqlDecimal.cs :

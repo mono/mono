@@ -34,9 +34,11 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes {
 
-	#if !NET_2_0	
+#if NET_2_0	
+	[SerializableAttribute]
+#else
 	[Serializable]
-	#endif
+#endif
 	public class SqlTypeException : SystemException, ISerializable
 	{
 		public SqlTypeException()

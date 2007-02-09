@@ -37,55 +37,144 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-	[MonoTODO]
-	public sealed class SqlChars : INullable, IXmlSerializable
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetSchema")]
+	public sealed class SqlChars : INullable, IXmlSerializable, ISerializable
 	{
 		#region Fields
 
 		bool notNull;
+		char [] buffer;
+		StorageState storage = StorageState.UnmanagedBuffer;
 
 		#endregion
 
 		#region Constructors
 
-		[MonoTODO]
+		public SqlChars ()
+		{
+			notNull = false;
+			buffer = null;
+		}
+
 		public SqlChars (char[] buffer)
 		{
-			notNull = true;
+			if (buffer == null) {
+				notNull = false;
+				this.buffer = null;
+			} else {
+				notNull = true;
+				this.buffer = buffer;
+				storage = StorageState.Buffer;
+			}
 		}
 
-		[MonoTODO]
-		public SqlChars (SqlStreamChars s)
-		{
-			notNull = true;
-		}
-
-		[MonoTODO]
 		public SqlChars (SqlString value)
 		{
-			notNull = true;
-		}
-
-		[MonoTODO]
-		public SqlChars (IntPtr ptrBuffer, long length)
-		{
-			notNull = true;
+			if (value == null) {
+				notNull = false;
+				buffer = null;
+			} else {
+				notNull = true;
+				buffer = value.Value.ToCharArray ();
+				storage = StorageState.Buffer;
+			}
 		}
 
 		#endregion
 
 		#region Properties
 
+                public char [] Buffer {
+                        get { return buffer; }
+                }
+
                 public bool IsNull {
                         get { return !notNull; }
+                }
+
+                public char this [long offset] {
+                        set {
+				if (notNull && offset >= 0 && offset < buffer.Length)
+					buffer [offset] = value;
+			}
+                        get {
+				if (buffer == null)
+					throw new SqlNullValueException ("Data is Null");
+				if (offset < 0 || offset >= buffer.Length)
+					throw new ArgumentOutOfRangeException ("Parameter name: offset");
+				return buffer [offset];
+			}
+                }
+
+                public long Length {
+                        get {
+				if (!notNull || buffer == null)
+					throw new SqlNullValueException ("Data is Null");
+				if (buffer.Length < 0)
+					return -1;
+				return buffer.Length;
+			}
+                }
+
+                public long MaxLength {
+                        get {
+				if (!notNull || buffer == null || storage == StorageState.Stream)
+					return -1;
+				return buffer.Length;
+			}
+                }
+
+                public static SqlChars Null {
+                        get {
+				return new SqlChars ();
+			}
+                }
+
+                public StorageState Storage {
+                        get {
+				if (storage == StorageState.UnmanagedBuffer)
+					throw new SqlNullValueException ("Data is Null");
+				return storage;
+			}
+                }
+
+                public char [] Value {
+                        get {
+				if (buffer == null)
+					return buffer;
+				return (char []) buffer.Clone ();
+			}
                 }
 
 		#endregion
 
 		#region Methods
+
+		public void SetLength (long value)
+		{
+			if (buffer == null)
+				throw new SqlTypeException ("There is no buffer");
+			if (value < 0 || value > buffer.Length)
+				throw new ArgumentOutOfRangeException ("Specified argument was out of the range of valid values.");
+			Array.Resize (ref buffer, (int) value);
+		}
+                                                                                
+		public void SetNull ()
+		{
+			buffer = null;
+			notNull = false;
+		}
+                                                                                
+		[MonoTODO]
+		public long Read (long offset, char [] buffer, int offsetInBuffer, int count)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
@@ -105,6 +194,12 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+                                                                                
 		#endregion
 	}
 }

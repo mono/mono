@@ -35,9 +35,12 @@
 //
 
 using System;
+using System.Xml;
 using System.Text;
-using System.Globalization;
 using System.Threading;
+using System.Xml.Schema;
+using System.Globalization;
+using System.Xml.Serialization;
 
 namespace System.Data.SqlTypes
 {
@@ -45,7 +48,14 @@ namespace System.Data.SqlTypes
 	/// A variable-length stream of characters 
 	/// to be stored in or retrieved from the database
 	/// </summary>
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetSchema")]
+#endif
 	public struct SqlString : INullable, IComparable 
+#if NET_2_0
+				, IXmlSerializable
+#endif
 	{
 
 		#region Fields
@@ -578,5 +588,24 @@ namespace System.Data.SqlTypes
 
 
 		#endregion // Public Methods
+#if NET_2_0
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

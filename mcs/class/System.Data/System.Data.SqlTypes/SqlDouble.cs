@@ -32,11 +32,21 @@
 //
 
 using System;
+using System.Xml;
+using System.Xml.Schema;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetSchema")]
+#endif
 	public struct SqlDouble : INullable, IComparable
+#if NET_2_0
+				, IXmlSerializable
+#endif
 	{
 		#region Fields
 		double value;
@@ -395,6 +405,25 @@ namespace System.Data.SqlTypes
 				return new SqlDouble ((double)x.Value);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion
 	}
 }

@@ -34,14 +34,24 @@
 //
 
 using System;
+using System.Xml;
+using System.Xml.Schema;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace System.Data.SqlTypes
 {
 	/// <summary>
 	/// Represents a variable-length stream of binary data to be stored in or retrieved from a database.
 	/// </summary>
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetSchema")]
+#endif
 	public struct SqlBinary : INullable, IComparable
+#if NET_2_0
+				, IXmlSerializable
+#endif
 	{
 
 		#region Fields
@@ -327,6 +337,24 @@ namespace System.Data.SqlTypes
 			// If we are here, x and y were same size
 			return 0;
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

@@ -35,7 +35,10 @@
 //
 
 using System;
+using System.Xml;
+using System.Xml.Schema;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace System.Data.SqlTypes
 {
@@ -44,7 +47,14 @@ namespace System.Data.SqlTypes
 	/// a 32-bit signed integer to be used in reading or writing
 	/// of data from a database
 	/// </summary>
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetSchema")]
+#endif
 	public struct SqlInt32 : INullable, IComparable 
+#if NET_2_0
+				, IXmlSerializable
+#endif
 	{
 		#region Fields
 
@@ -488,6 +498,25 @@ namespace System.Data.SqlTypes
 				return new SqlInt32 ((int)x.Value);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion
 	}
 }

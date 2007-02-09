@@ -27,18 +27,74 @@
 //
 
 using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Schema;
 using System.Globalization;
 using System.Threading;
+using System.Xml.Serialization;
 
 #if NET_2_0
 
 namespace System.Data.SqlTypes
 {
-	[MonoTODO]
-	public class SqlXml 
+	[SerializableAttribute]
+	public class SqlXml : INullable, IXmlSerializable
 	{
-		public SqlXml()
+		bool notNull;
+
+		[MonoTODO]
+		public SqlXml ()
 		{
+			notNull = false;
+		}
+
+		[MonoTODO]
+		public SqlXml (Stream value)
+		{
+			if (value == null) {
+				notNull = false;
+			} else {
+				notNull = true;
+			}
+		}
+
+		[MonoTODO]
+		public SqlXml (XmlReader value)
+		{
+			if (value == null) {
+				notNull = false;
+			} else {
+				notNull = true;
+			}
+		}
+
+                public bool IsNull {
+                        get { return !notNull; }
+                }
+
+                public static SqlXml Null {
+                        get {
+				return new SqlXml ();
+			}
+                }
+
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer) 
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
