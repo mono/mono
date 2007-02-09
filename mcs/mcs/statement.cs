@@ -3222,6 +3222,11 @@ namespace Mono.CSharp {
 			bool pending_goto_end = false;
 			bool null_marked = false;
 			bool null_found;
+			int section_count = Sections.Count;
+
+			// TODO: implement switch optimization for string by using Hashtable
+			//if (SwitchType == TypeManager.string_type && section_count > 7)
+			//	Console.WriteLine ("Switch optimization possible " + loc);
 
 			ig.Emit (OpCodes.Ldloc, val);
 			
@@ -3234,7 +3239,6 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, TypeManager.string_isinterned_string);
 			ig.Emit (OpCodes.Stloc, val);
 
-			int section_count = Sections.Count;
 			for (int section = 0; section < section_count; section++){
 				SwitchSection ss = (SwitchSection) Sections [section];
 
@@ -3341,6 +3345,11 @@ namespace Mono.CSharp {
 
 			// Validate switch.
 			SwitchType = new_expr.Type;
+
+			if (RootContext.Version == LanguageVersion.ISO_1 && SwitchType == TypeManager.bool_type) {
+				Report.FeatureIsNotISO1 (loc, "switch expression of boolean type");
+				return false;
+			}
 
 			if (!CheckSwitch (ec))
 				return false;
