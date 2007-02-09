@@ -215,6 +215,7 @@
     <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventArgs.cs" />
     <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventHandler.cs" />
     <Compile Include="System.Windows.Forms\BindingMemberInfo.cs" />
+    <Compile Include="System.Windows.Forms\BindingSource.cs" />
     <Compile Include="System.Windows.Forms\BindingsCollection.cs" />
     <Compile Include="System.Windows.Forms\BootMode.cs" />
     <Compile Include="System.Windows.Forms\Border3DSide.cs" />
@@ -616,6 +617,7 @@
     <Compile Include="System.Windows.Forms\Orientation.cs" />
     <Compile Include="System.Windows.Forms\OwnerDrawPropertyBag.cs" />
     <Compile Include="System.Windows.Forms\Padding.cs" />
+    <Compile Include="System.Windows.Forms\PaddingConverter.cs" />
     <Compile Include="System.Windows.Forms\PageSetupDialog.cs" />
     <Compile Include="System.Windows.Forms\PaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\PaintEventHandler.cs" />
@@ -814,6 +816,8 @@
     <Compile Include="System.Windows.Forms\ToolStripManager.cs" />
     <Compile Include="System.Windows.Forms\ToolStripManagerRenderMode.cs" />
     <Compile Include="System.Windows.Forms\ToolStripMenuItem.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripOverflow.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripOverflowButton.cs" />
     <Compile Include="System.Windows.Forms\ToolStripPanel.cs" />
     <Compile Include="System.Windows.Forms\ToolStripPanelRenderEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolStripPanelRenderEventHandler.cs" />

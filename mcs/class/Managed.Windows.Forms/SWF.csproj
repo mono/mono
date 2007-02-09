@@ -504,6 +504,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\BindingSource.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\BindingsCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2509,6 +2514,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\PaddingConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\PageSetupDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3495,6 +3505,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripMenuItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripOverflow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripOverflowButton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
