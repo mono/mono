@@ -149,9 +149,9 @@ namespace System.Windows.Forms
 				labelTo.Enabled = value;
 				labelFrom.Enabled = value;
 
-				if (current_settings != null) {
-					txtFrom.Text = current_settings.FromPage.ToString ();
-					txtTo.Text = current_settings.ToPage.ToString ();
+				if (PrinterSettings != null) {
+					txtFrom.Text = PrinterSettings.FromPage.ToString ();
+					txtTo.Text = PrinterSettings.ToPage.ToString ();
 				}
 			}
 		}
@@ -164,7 +164,7 @@ namespace System.Windows.Forms
 
 			set {
 				document = value;
-				current_settings = value == null ? new PrinterSettings () : value.PrinterSettings;
+				current_settings = (value == null) ? new PrinterSettings () : value.PrinterSettings;
 			}
 		}
 
@@ -173,6 +173,10 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get {
+#if NET_2_0
+				if (current_settings == null)
+					current_settings = new PrinterSettings ();
+#endif
 				return current_settings;
 			}
 
@@ -180,7 +184,7 @@ namespace System.Windows.Forms
 				if (value != null && value == current_settings)
 					return;
 
-				current_settings = value == null ? new PrinterSettings () : value;
+				current_settings = (value == null) ? new PrinterSettings () : value;
 				document = null;
 			}
 		}
@@ -221,23 +225,28 @@ namespace System.Windows.Forms
 
 		protected override bool RunDialog (IntPtr hwnd)
 		{
-			if (allow_some_pages && current_settings.FromPage > current_settings.ToPage)
+#if ONLY_1_1
+			if (PrinterSettings == null)
+				throw new ArgumentException ("PrintDialog needs a PrinterSettings object to display.");
+#endif
+
+			if (allow_some_pages && PrinterSettings.FromPage > PrinterSettings.ToPage)
 				throw new ArgumentException ("FromPage out of range");
 
 			if (allow_some_pages) {
-				txtFrom.Text = current_settings.FromPage.ToString ();
-				txtTo.Text = current_settings.ToPage.ToString ();
+				txtFrom.Text = PrinterSettings.FromPage.ToString ();
+				txtTo.Text = PrinterSettings.ToPage.ToString ();
 			}
 
-			if (current_settings.PrintRange == PrintRange.SomePages && allow_some_pages)
+			if (PrinterSettings.PrintRange == PrintRange.SomePages && allow_some_pages)
 				radio_pages.Checked = true;
-			else if (current_settings.PrintRange == PrintRange.Selection && allow_selection)
+			else if (PrinterSettings.PrintRange == PrintRange.Selection && allow_selection)
 				radio_sel.Checked = true;
 			else
 				radio_all.Checked = true;
 
-			updown_copies.Value = current_settings.Copies == 0 ? 1 : (int) current_settings.Copies;
-			chkbox_collate.Checked = current_settings.Collate;
+			updown_copies.Value = PrinterSettings.Copies == 0 ? 1 : (int) PrinterSettings.Copies;
+			chkbox_collate.Checked = PrinterSettings.Collate;
 			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
 
 			if (show_help) {
@@ -291,48 +300,48 @@ namespace System.Windows.Forms
 					ShowErrorMessage ("'From' value cannot be greater than 'To' value.", txtFrom);
 					return;
 				}
-					
-				if (to < current_settings.MinimumPage || to > current_settings.MaximumPage) {
+
+				if (to < PrinterSettings.MinimumPage || to > PrinterSettings.MaximumPage) {
 					ShowErrorMessage ("'To' value is not within the page range\n" +
-							"Enter a number between " + current_settings.MinimumPage +
-							" and " + current_settings.MaximumPage + ".", txtTo);
+							"Enter a number between " + PrinterSettings.MinimumPage +
+							" and " + PrinterSettings.MaximumPage + ".", txtTo);
 					return;
 				}
-					
-				if (from < current_settings.MinimumPage || from > current_settings.MaximumPage) {
+
+				if (from < PrinterSettings.MinimumPage || from > PrinterSettings.MaximumPage) {
 					ShowErrorMessage ("'From' value is not within the page range\n" +
-							"Enter a number between " + current_settings.MinimumPage +
-							" and " + current_settings.MaximumPage + ".", txtFrom);
+							"Enter a number between " + PrinterSettings.MinimumPage +
+							" and " + PrinterSettings.MaximumPage + ".", txtFrom);
 					return;
 				}
 			}
 			
 			if (radio_all.Checked == true)
-				current_settings.PrintRange = PrintRange.AllPages;
+				PrinterSettings.PrintRange = PrintRange.AllPages;
 			else if (radio_pages.Checked == true)
-				current_settings.PrintRange = PrintRange.SomePages;
+				PrinterSettings.PrintRange = PrintRange.SomePages;
 			else
-				current_settings.PrintRange = PrintRange.Selection;
+				PrinterSettings.PrintRange = PrintRange.Selection;
 
-			current_settings.Copies = (short) updown_copies.Value;
-			if (current_settings.PrintRange == PrintRange.SomePages) {
-				current_settings.FromPage = from;
-				current_settings.ToPage = to;
+			PrinterSettings.Copies = (short) updown_copies.Value;
+			if (PrinterSettings.PrintRange == PrintRange.SomePages) {
+				PrinterSettings.FromPage = from;
+				PrinterSettings.ToPage = to;
 			}
-			current_settings.Collate = chkbox_collate.Checked;
+			PrinterSettings.Collate = chkbox_collate.Checked;
 
 			if (allow_print_to_file) {
-				current_settings.PrintToFile = chkbox_print.Checked;
+				PrinterSettings.PrintToFile = chkbox_print.Checked;
 			}
 
 			form.DialogResult = DialogResult.OK;
 
 			if (printer_combo.SelectedItem != null)
-				current_settings.PrinterName = (string) printer_combo.SelectedItem;
+				PrinterSettings.PrinterName = (string) printer_combo.SelectedItem;
 
 			if (document != null) {
 				document.PrintController = new PrintControllerWithStatusDialog (document.PrintController);
-				document.PrinterSettings = current_settings;
+				document.PrinterSettings = PrinterSettings;
 			}
 		}
 
