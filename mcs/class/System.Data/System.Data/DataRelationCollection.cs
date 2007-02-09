@@ -641,24 +641,24 @@ namespace System.Data {
 
 		public void Remove (string name)
 		{
-			DataRelation relation = this[name];
+			DataRelation relation = this [name];
 			if (relation == null)
-				throw new ArgumentException("Relation doesnot belong to this Collection.");
-			Remove(relation);
+				throw new ArgumentException ("Relation doesnot belong to this Collection.");
+			Remove (relation);
 		}
 
 		public void RemoveAt (int index)
 		{		
-			DataRelation relation = this[index];
+			DataRelation relation = this [index];
 			if (relation == null)
-				throw new IndexOutOfRangeException(String.Format("Cannot find relation {0}", index));
-			Remove(relation);
+				throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}", index));
+			Remove (relation);
 		}
 
-		protected virtual void RemoveCore(DataRelation relation)
+		protected virtual void RemoveCore (DataRelation relation)
 		{
 			// Remove from collection
-			List.Remove(relation);
+			List.Remove (relation);
 		}
 
 		#region Events

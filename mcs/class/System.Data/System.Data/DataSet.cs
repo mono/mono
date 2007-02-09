@@ -88,7 +88,7 @@ namespace System.Data {
 		#region Constructors
 
 		public DataSet () : this ("NewDataSet") 
-		{		
+		{
 		}
 		
 		public DataSet (string name)
@@ -97,9 +97,9 @@ namespace System.Data {
 			tableCollection = new DataTableCollection (this);
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
 			properties = new PropertyCollection ();
-			this.prefix = String.Empty;
+			prefix = String.Empty;
 			
-			this.Locale = CultureInfo.CurrentCulture;
+			Locale = CultureInfo.CurrentCulture;
 		}
 
 		protected DataSet (SerializationInfo info, StreamingContext context) : this ()
