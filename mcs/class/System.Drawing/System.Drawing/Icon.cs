@@ -99,7 +99,6 @@ namespace System.Drawing
 		private bool undisposable;
 		private bool disposed;
 		private Bitmap bitmap;
-		private MemoryStream ms;
 
 		private Icon ()
 		{
@@ -169,12 +168,8 @@ namespace System.Drawing
 			iconSize.Height = iconDir.idEntries [id].height;
 			iconSize.Width = iconDir.idEntries [id].width;
 
-			if (original.ms != null) {
-				ms = new MemoryStream (original.ms.ToArray ());
-				bitmap = (Bitmap) Image.FromStream (ms);
-			} else if (original.bitmap != null) {
+			if (original.bitmap != null)
 				bitmap = (Bitmap) original.bitmap.Clone ();
-			}
 		}
 
 		public Icon (Stream stream) : this (stream, 32, 32) 
@@ -288,10 +283,6 @@ namespace System.Drawing
 				if (bitmap != null) {
 					bitmap.Dispose ();
 					bitmap = null;
-				}
-				if (ms != null) {
-					ms.Close ();
-					ms = null;
 				}
 				GC.SuppressFinalize (this);
 			}
@@ -469,21 +460,95 @@ namespace System.Drawing
 			Save (outputStream, -1, -1);
 		}
 
+		internal Bitmap BuildBitmapOnWin32 ()
+		{
+			Bitmap bmp;
+
+			if (imageData == null)
+				return new Bitmap (32, 32);
+
+			IconImage ii = imageData [id];
+			BitmapInfoHeader bih = ii.iconHeader;
+			int biHeight = bih.biHeight / 2;
+
+			int ncolors = (int)bih.biClrUsed;
+			if ((ncolors == 0) && (bih.biBitCount < 24))
+				ncolors = (int)(1 << bih.biBitCount);
+
+			switch (bih.biBitCount) {
+			case 1:
+				bmp = new Bitmap (bih.biWidth, biHeight, PixelFormat.Format1bppIndexed);
+				break;
+			case 4:
+				bmp = new Bitmap (bih.biWidth, biHeight, PixelFormat.Format4bppIndexed);
+				break;
+			case 8:
+				bmp = new Bitmap (bih.biWidth, biHeight, PixelFormat.Format8bppIndexed);
+				break;
+			case 24:
+				bmp = new Bitmap (bih.biWidth, biHeight, PixelFormat.Format24bppRgb);
+				break;
+			case 32:
+				bmp = new Bitmap (bih.biWidth, biHeight, PixelFormat.Format32bppArgb);
+				break;
+			default:
+				string msg = Locale.GetText ("Unexpected number of bits: {0}", bih.biBitCount);
+				throw new Exception (msg);
+			}
+
+			if (bih.biBitCount < 24) {
+				ColorPalette pal = bmp.Palette; // Managed palette
+
+				for (int i = 0; i < ii.iconColors.Length; i++) {
+					pal.Entries[i] = Color.FromArgb ((int)ii.iconColors[i] | unchecked((int)0xff000000));
+				}
+				bmp.Palette = pal;
+			}
+
+			int bytesPerLine = (int)((((bih.biWidth * bih.biBitCount) + 31) & ~31) >> 3);
+			BitmapData bits = bmp.LockBits (new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+			for (int y = 0; y < biHeight; y++) {
+				Marshal.Copy (ii.iconXOR, bytesPerLine * y, 
+					(IntPtr)(bits.Scan0.ToInt64() + bits.Stride * (biHeight - 1 - y)), bytesPerLine);
+			}
+			
+			bmp.UnlockBits (bits);
+
+			bmp = new Bitmap (bmp); // This makes a 32bpp image out of an indexed one
+
+			// Apply the mask to make properly transparent
+			bytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
+			for (int y = 0; y < biHeight; y++) {
+				for (int x = 0; x < bih.biWidth / 8; x++) {
+					for (int bit = 7; bit >= 0; bit--) {
+						if (((ii.iconAND[y * bytesPerLine +x] >> bit) & 1) != 0) {
+							bmp.SetPixel (x*8 + 7-bit, biHeight - y - 1, Color.Transparent);
+						}
+					}
+				}
+			}
+
+			return bmp;
+		}
+
 		internal Bitmap GetInternalBitmap ()
 		{
 			if (bitmap == null) {
-				ms = new MemoryStream ();
-				// save the current icon
-				Save (ms, Width, Height);
-				ms.Position = 0;
-				// libgdiplus can now decode icons
-				bitmap = (Bitmap) Image.FromStream (ms);
-
-				// MS GDI+ requires the stream to be available for the life of the image
-				// E.g. if we dispose the MemoryStream we can't get an HBITMAP handle later :|
 				if (GDIPlus.RunningOnUnix ()) {
-					ms.Close ();
-					ms = null;
+					// Mono's libgdiplus doesn't require to keep the stream alive when loading images
+					using (MemoryStream ms = new MemoryStream ()) {
+						// save the current icon
+						Save (ms, Width, Height);
+						ms.Position = 0;
+
+						// libgdiplus can now decode icons
+						bitmap = (Bitmap) Image.LoadFromStream (ms, false);
+					}
+				} else {
+					// MS GDI+ ICO codec is more limited than the MS Icon class
+					// so we can't, reliably, get bitmap using it. We need to do this the "slow" way
+					bitmap = BuildBitmapOnWin32 ();
 				}
 			}
 

@@ -1,3 +1,9 @@
+2007-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Resurrected some old Icon to Bitmap code from SVN history
+	to handle convertion for Win32, where MS GDI+ ICO codec doesn't 
+	support all the icon formats supported by the Icon class.
+
 2007-02-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Adapt code wrt Image changes. Reuse the serialization 
