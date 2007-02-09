@@ -799,6 +799,7 @@ namespace System.Data.SqlClient {
                 }
 
                 #endregion // Asynchronous Methods
+		public event StatementCompletedEventHandler StatementCompleted;
 #endif // NET_2_0
 	}
 }

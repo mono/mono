@@ -1,3 +1,8 @@
+2007-02-09  Nagappan A  <anagappan@novell.com>
+
+	* SqlConnection.cs (SetConnectionString): Fixes bug # 80712. A
+	small typo.
+
 2007-01-08  Nagappan A  <anagappan@novell.com>
 
 	* SqlTransaction.cs (Dispose): Fixed compliation warning.

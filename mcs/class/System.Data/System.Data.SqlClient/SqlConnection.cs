@@ -678,7 +678,7 @@ namespace System.Data.SqlClient {
 							parameters [name.ToUpper ().Trim ()] = value.Trim ();
 						}
 						else if (sb.Length != 0)
-							throw new ArgumentException ("Format of initialization string doesnot conform to specifications");
+							throw new ArgumentException ("Format of initialization string does not conform to specifications");
 						inName = true;
 						name = String.Empty;
 						value = String.Empty;
