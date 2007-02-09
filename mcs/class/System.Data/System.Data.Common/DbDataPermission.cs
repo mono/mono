@@ -184,9 +184,9 @@ namespace System.Data.Common {
 			}
 		}
 
-		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override IPermission Intersect (IPermission target) 
 		{
+			// FIXME: restrictions not completely implemented - nor documented
 			DBDataPermission dbdp = Cast (target);
 			if (dbdp == null)
 				return null;
@@ -213,9 +213,9 @@ namespace System.Data.Common {
 			return (p._connections.Count > 0) ? p : null;
 		}
 
-		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
+			// FIXME: restrictions not completely implemented - nor documented
 			DBDataPermission dbdp = Cast (target);
 			if (dbdp == null)
 				return IsEmpty ();
@@ -267,9 +267,9 @@ namespace System.Data.Common {
 			return se;
 		}
 
-		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override IPermission Union (IPermission target) 
 		{
+			// FIXME: restrictions not completely implemented - nor documented
 			DBDataPermission dbdp = Cast (target);
 			if (dbdp == null)
 				return Copy ();

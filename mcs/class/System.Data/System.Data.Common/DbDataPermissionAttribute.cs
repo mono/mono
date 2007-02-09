@@ -107,17 +107,17 @@ namespace System.Data.Common {
 
 		#region // Methods
 #if NET_2_0
-		[MonoTODO ("configurable ? why is this in the attribute class ?")]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public bool ShouldSerializeConnectionString ()
 		{
+			// FIXME: configurable ? why is this in the attribute class ?
 			return false;
 		}
 
-		[MonoTODO ("configurable ? why is this in the attribute class ?")]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public bool ShouldSerializeKeyRestrictions ()
 		{
+			// FIXME: configurable ? why is this in the attribute class ?
 			return false;
 		}
 #endif

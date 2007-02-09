@@ -43,7 +43,6 @@ namespace System.Data.Common {
 	{
 		#region Constructors
 
-		[MonoTODO]
 		public DbProviderFactoriesConfigurationHandler ()
 		{
 		}
@@ -52,7 +51,6 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
                         DataSet ds = new DataSet ("DbProviderFactories");

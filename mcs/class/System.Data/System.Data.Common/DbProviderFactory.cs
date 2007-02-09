@@ -49,8 +49,16 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		private void ThrowNotImplementedException ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual bool CanCreateDataSourceEnumerator { 
-			get {throw new NotImplementedException ();}
+			get {
+				ThrowNotImplementedException ();
+				return false; // To fix compiler error
+			}
 		}
 		#endregion // Properties
 
@@ -58,42 +66,50 @@ namespace System.Data.Common {
 
 		public virtual DbCommand CreateCommand ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbCommandBuilder CreateCommandBuilder ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbConnection CreateConnection ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbDataAdapter CreateDataAdapter ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbDataSourceEnumerator CreateDataSourceEnumerator ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbParameter CreateParameter ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual CodeAccessPermission CreatePermission (PermissionState state)
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 
 		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{
-			throw new NotImplementedException ();
+			ThrowNotImplementedException ();
+			return null; // To fix compiler error
 		}
 		#endregion // Methods
 	}

@@ -1,3 +1,11 @@
+2007-02-09  Nagappan A  <anagappan@novell.com>
+
+	* DbProviderFactory.cs: Derived class has to implement all the
+	methods of this class.
+
+	* DbProviderFactoriesConfigurationHandler.cs (Create): Removed
+	bogus MonoTODO
+
 2007-01-08  Nagappan A  <anagappan@novell.com>
 
 	* DataTableMappingCollection.cs (AddRange):  Implemented missing

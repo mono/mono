@@ -40,7 +40,6 @@ namespace System.Data.Common {
 	{
 		#region Constructors
 
-		[MonoTODO]
 		public DbProviderConfigurationHandler ()
 		{
 		}
