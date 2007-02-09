@@ -148,13 +148,12 @@ namespace System.Data.Odbc
 #if NET_2_0
                 override
 #endif // NET_2_0
-                object this[int index] {
+                object this [int index] {
 			get {
 				return (object) GetValue (index);
 			}
 		}
 
-                [MonoTODO]
 		public
 #if NET_2_0
                 override
@@ -178,9 +177,9 @@ namespace System.Data.Odbc
 
 		#region Methods
 		
-		private int ColIndex(string colname)
+		private int ColIndex (string colname)
 		{
-			int i=0;
+			int i = 0;
 			foreach (OdbcColumn col in cols)
 			{
 				if (col != null) {
@@ -196,31 +195,30 @@ namespace System.Data.Odbc
 		}
 
 		// Dynamically load column descriptions as needed.
-		private OdbcColumn GetColumn(int ordinal)
+		private OdbcColumn GetColumn (int ordinal)
 		{
-			if (cols[ordinal]==null)
-			{
-				short bufsize=255;
-				byte[] colname_buffer=new byte[bufsize];
+			if (cols [ordinal] == null) {
+				short bufsize = 255;
+				byte [] colname_buffer = new byte [bufsize];
 				string colname;
-				short colname_size=0;
-				uint ColSize=0;
-				short DecDigits=0, Nullable=0, dt=0;
-				OdbcReturn ret=libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
-								      colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
-								      ref DecDigits, ref Nullable);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLDescribeCol",OdbcHandleType.Stmt,hstmt));
-				colname=System.Text.Encoding.Default.GetString(colname_buffer);
-				colname=colname.Replace((char) 0,' ').Trim();
-				OdbcColumn c=new OdbcColumn(colname, (SQL_TYPE) dt);
-				c.AllowDBNull=(Nullable!=0);
-				c.Digits=DecDigits;
+				short colname_size = 0;
+				uint ColSize = 0;
+				short DecDigits = 0, Nullable = 0, dt = 0;
+				OdbcReturn ret = libodbc.SQLDescribeCol (hstmt, Convert.ToUInt16 (ordinal + 1), 
+									 colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
+									 ref DecDigits, ref Nullable);
+				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+					throw new OdbcException (new OdbcError ("SQLDescribeCol", OdbcHandleType.Stmt, hstmt));
+				colname = System.Text.Encoding.Default.GetString (colname_buffer);
+				colname = colname.Replace ((char) 0, ' ').Trim ();
+				OdbcColumn c = new OdbcColumn (colname, (SQL_TYPE) dt);
+				c.AllowDBNull = (Nullable != 0);
+				c.Digits = DecDigits;
 				if (c.IsVariableSizeType)
-					c.MaxLength=(int)ColSize;
-				cols[ordinal]=c;
+					c.MaxLength = (int) ColSize;
+				cols [ordinal] = c;
 			}
-			return cols[ordinal];
+			return cols [ordinal];
 		}
 
 		public
@@ -357,11 +355,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetDataTypeName (int index)
 		{
-			return GetColumn(index).OdbcType.ToString();
+			return GetColumn (index).OdbcType.ToString ();
 		}
 
-		public DateTime GetDate(int ordinal) {
-			return GetDateTime(ordinal);
+		public DateTime GetDate (int ordinal) {
+			return GetDateTime (ordinal);
 		}
 
 		public 
@@ -370,17 +368,16 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		DateTime GetDateTime (int ordinal)
 		{
-			return (DateTime) GetValue(ordinal);
+			return (DateTime) GetValue (ordinal);
 		}
 
-		[MonoTODO]
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
 		decimal GetDecimal (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (decimal) GetValue (ordinal);
 		}
 
 		public 
@@ -389,7 +386,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		double GetDouble (int ordinal)
 		{
-			return (double) GetValue(ordinal);
+			return (double) GetValue (ordinal);
 		}
 
 		public 
@@ -407,7 +404,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		float GetFloat (int ordinal)
 		{
-			return (float) GetValue(ordinal);
+			return (float) GetValue (ordinal);
 		}
 
 		[MonoTODO]
@@ -426,7 +423,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		short GetInt16 (int ordinal)
 		{
-			return (short) GetValue(ordinal);
+			return (short) GetValue (ordinal);
 		}
 
 		public 
@@ -435,7 +432,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		int GetInt32 (int ordinal)
 		{
-			return (int) GetValue(ordinal);
+			return (int) GetValue (ordinal);
 		}
 
 		public 
@@ -444,7 +441,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		long GetInt64 (int ordinal)
 		{
-			return (long) GetValue(ordinal);
+			return (long) GetValue (ordinal);
 		}
 
 		public 
@@ -603,7 +600,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetString (int ordinal)
 		{
-			return (string) GetValue(ordinal);
+			return (string) GetValue (ordinal);
 		}
 
 		[MonoTODO]
@@ -621,69 +618,69 @@ namespace System.Data.Odbc
 			if (currentRow == -1)
 				throw new IndexOutOfRangeException ();
 
-			if (ordinal>cols.Length-1 || ordinal<0)
+			if (ordinal > cols.Length-1 || ordinal < 0)
 				throw new IndexOutOfRangeException ();
 
 			OdbcReturn ret;
-			int outsize=0, bufsize;
+			int outsize = 0, bufsize;
 			byte[] buffer;
-			OdbcColumn col=GetColumn(ordinal);
-			object DataValue=null;
-			ushort ColIndex=Convert.ToUInt16(ordinal+1);
+			OdbcColumn col = GetColumn (ordinal);
+			object DataValue = null;
+			ushort ColIndex = Convert.ToUInt16 (ordinal+1);
 
 			// Check cached values
-			if (col.Value==null) {
+			if (col.Value == null) {
                                 // odbc help file
 				// mk:@MSITStore:C:\program%20files\Microsoft%20Data%20Access%20SDK\Docs\odbc.chm::/htm/odbcc_data_types.htm
 				switch (col.OdbcType) {
 				case OdbcType.Bit:
 					short bit_data = 0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref bit_data, 0, ref outsize);
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref bit_data, 0, ref outsize);
 					if (outsize != (int) OdbcLengthIndicator.NullData)
 						DataValue = bit_data == 0 ? "False" : "True";
 					break;
 				case OdbcType.Numeric:
 				case OdbcType.Decimal:
-					bufsize=50;
-					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal.
+					bufsize = 50;
+					buffer = new byte [bufsize];  // According to sqlext.h, use SQL_CHAR for decimal.
 					// FIXME : use Numeric.
-					ret=libodbc.SQLGetData(hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
+					ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
 					if (outsize!=-1) {
-						byte[] temp = new byte[outsize];
-						for (int i=0;i<outsize;i++)
-							temp[i]=buffer[i];
-						DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
+						byte [] temp = new byte [outsize];
+						for (int i = 0;i<outsize;i++)
+							temp[i] = buffer[i];
+						DataValue = Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
 					}
 					break;
 				case OdbcType.TinyInt:
-					short short_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref short_data, 0, ref outsize);
-					DataValue=System.Convert.ToByte(short_data);
+					short short_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref short_data, 0, ref outsize);
+					DataValue = System.Convert.ToByte(short_data);
 					break;
 				case OdbcType.Int:
-					int int_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref int_data, 0, ref outsize);
-					DataValue=int_data;
+					int int_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref int_data, 0, ref outsize);
+					DataValue = int_data;
 					break;
 
 				case OdbcType.SmallInt:
-					short sint_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref sint_data, 0, ref outsize);
-					DataValue=sint_data;
+					short sint_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref sint_data, 0, ref outsize);
+					DataValue = sint_data;
 					break;
 
 				case OdbcType.BigInt:
-					long long_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref long_data, 0, ref outsize);
-					DataValue=long_data;
+					long long_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref long_data, 0, ref outsize);
+					DataValue = long_data;
 					break;
 				case OdbcType.NText:
 				case OdbcType.NVarChar:
-					bufsize=(col.MaxLength < 127 ? (col.MaxLength*2+1) : 255);
-					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
+					bufsize = (col.MaxLength < 127 ? (col.MaxLength*2+1) : 255);
+					buffer = new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
 					StringBuilder sb = new StringBuilder ();
 					do { 
-						ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
+						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
 						if (ret != OdbcReturn.NoData && outsize!=-1) {
@@ -697,11 +694,11 @@ namespace System.Data.Odbc
 					break;
 				case OdbcType.Text:
 				case OdbcType.VarChar:
-					bufsize=(col.MaxLength < 255 ? (col.MaxLength+1) : 255);
-					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
+					bufsize = (col.MaxLength < 255 ? (col.MaxLength+1) : 255);
+					buffer = new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
 					StringBuilder sb1 = new StringBuilder ();
 					do { 
-						ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
+						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
 						if (ret != OdbcReturn.NoData && outsize!=-1) {
@@ -714,32 +711,32 @@ namespace System.Data.Odbc
 					DataValue = sb1.ToString ();
 					break;
 				case OdbcType.Real:
-					float float_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref float_data, 0, ref outsize);
-					DataValue=float_data;
+					float float_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref float_data, 0, ref outsize);
+					DataValue = float_data;
 					break;
 				case OdbcType.Double:
-					double double_data=0;
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref double_data, 0, ref outsize);
-					DataValue=double_data;
+					double double_data = 0;
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref double_data, 0, ref outsize);
+					DataValue = double_data;
 					break;
 				case OdbcType.Timestamp:
 				case OdbcType.DateTime:
 				case OdbcType.Date:
 				case OdbcType.Time:
-					OdbcTimestamp ts_data=new OdbcTimestamp();
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
+					OdbcTimestamp ts_data = new OdbcTimestamp();
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
 					if (outsize!=-1) // This means SQL_NULL_DATA 
-						DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
+						DataValue = new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								       ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
 					break;
 				case OdbcType.VarBinary :
 				case OdbcType.Image :
-					bufsize= (col.MaxLength < 255 ? col.MaxLength : 255);
+					bufsize =  (col.MaxLength < 255 ? col.MaxLength : 255);
 					buffer= new byte [bufsize];
 					ArrayList al = new ArrayList ();
 					do { 
-						ret=libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
+						ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
 						if (ret != OdbcReturn.NoData && outsize!=-1) {
@@ -761,13 +758,13 @@ namespace System.Data.Odbc
 					DataValue = buffer;
 					break;
 				default:
-					bufsize=255;
-					buffer=new byte[bufsize];
-					ret=libodbc.SQLGetData(hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
+					bufsize = 255;
+					buffer = new byte[bufsize];
+					ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
 					if (outsize != (int) OdbcLengthIndicator.NullData)
 						if (! (ret == OdbcReturn.SuccessWithInfo
 						       && outsize == (int) OdbcLengthIndicator.NoTotal))
-							DataValue=System.Text.Encoding.Default.GetString(buffer, 0, outsize);
+							DataValue = System.Text.Encoding.Default.GetString(buffer, 0, outsize);
 					break;
 				}
 
@@ -775,9 +772,9 @@ namespace System.Data.Odbc
 					throw new OdbcException(new OdbcError("SQLGetData",OdbcHandleType.Stmt,hstmt));
 
 				if (outsize==-1) // This means SQL_NULL_DATA 
-					col.Value=DBNull.Value;
+					col.Value = DBNull.Value;
 				else
-					col.Value=DataValue;
+					col.Value = DataValue;
 			}
 			return col.Value;
 		}
@@ -793,7 +790,7 @@ namespace System.Data.Odbc
 			// copy values
 			for (int i = 0; i < values.Length; i++) {
 				if (i < FieldCount) {
-					values[i] = GetValue(i);
+					values[i] = GetValue (i);
 				}
 				else {
 					values[i] = null;
@@ -858,7 +855,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 bool IsDBNull (int ordinal)
 		{
-			return (GetValue(ordinal) is DBNull);
+			return (GetValue (ordinal) is DBNull);
 		}
 
 		/// <remarks>

@@ -39,23 +39,23 @@ namespace System.Data.Odbc
 		internal int Digits;
 		internal object Value;
 
-		internal OdbcColumn(string Name, OdbcType Type)
+		internal OdbcColumn (string Name, OdbcType Type)
 		{
-			this.ColumnName=Name;
-			this.OdbcType=Type;		
-			AllowDBNull=false;
-			MaxLength=0;
-			Digits=0;
-			Value=null;
+			this.ColumnName = Name;
+			this.OdbcType = Type;		
+			AllowDBNull = false;
+			MaxLength = 0;
+			Digits = 0;
+			Value = null;
 		}
 
-                internal OdbcColumn(string Name, SQL_TYPE type)
+                internal OdbcColumn (string Name, SQL_TYPE type)
 		{
-                        this.ColumnName=Name;
-			AllowDBNull=false;
-			MaxLength=0;
-			Digits=0;
-			Value=null;
+                        this.ColumnName = Name;
+			AllowDBNull = false;
+			MaxLength = 0;
+			Digits = 0;
+			Value = null;
                         UpdateTypes (type);
 
 		}
@@ -68,42 +68,42 @@ namespace System.Data.Odbc
 				switch (OdbcType)
 				{
 					case OdbcType.TinyInt:
-						return typeof(System.Byte);
+						return typeof (System.Byte);
 					case OdbcType.BigInt: 
-						return typeof(System.Int64);
+						return typeof (System.Int64);
 					case OdbcType.Image:
 					case OdbcType.VarBinary:
 					case OdbcType.Binary:
-						return typeof(byte[]);
+						return typeof (byte[]);
 					case OdbcType.Bit:
-						return typeof(bool);
+						return typeof (bool);
 					case OdbcType.NChar:
 					case OdbcType.Char:
-						return typeof(string);
+						return typeof (string);
 					case OdbcType.Time:
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
 					case OdbcType.Date:
 					case OdbcType.SmallDateTime:
-						return typeof(DateTime);
+						return typeof (DateTime);
 					case OdbcType.Decimal:
-						return typeof(Decimal);
+						return typeof (Decimal);
 					case OdbcType.Numeric:
 					case OdbcType.Double:
-						return typeof(Double);
+						return typeof (Double);
 					case OdbcType.Int:
-						return typeof(System.Int32);
+						return typeof (System.Int32);
 					case OdbcType.Text:
 					case OdbcType.NText:
 					case OdbcType.NVarChar:
 					case OdbcType.VarChar:
-						return typeof(string);
+						return typeof (string);
 					case OdbcType.Real:
-						return typeof(float);
+						return typeof (float);
 					case OdbcType.SmallInt:
-						return typeof(System.Int16);
+						return typeof (System.Int16);
 					case OdbcType.UniqueIdentifier:
-						return typeof(Guid);
+						return typeof (Guid);
 				}
 				throw new InvalidCastException();
 			}
@@ -189,8 +189,5 @@ namespace System.Data.Odbc
                         OdbcType = map.OdbcType;
                         SqlCType = map.NativeType;
                 }
-                
-                
-
 	}
 }
