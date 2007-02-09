@@ -1,3 +1,8 @@
+2007-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesUnix.cs: Ensure we free the original pointer in
+	GetAlternativeDefaultPrinter (not the one used for iteration).
+
 2007-01-19  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintingServicesUnix.cs: Add is_default flag check for 

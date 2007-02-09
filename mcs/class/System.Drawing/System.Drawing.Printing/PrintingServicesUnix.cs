@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005 Novell, Inc. http://www.novell.com
+// Copyright (C) 2005, 2007 Novell, Inc. http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -362,26 +362,29 @@ namespace System.Drawing.Printing
 		/// returns the first one. See #80519, #80198
 		/// </summary>
 		/// <returns></returns>
-		private string GetAlternativeDefaultPrinter() {
+		private string GetAlternativeDefaultPrinter ()
+		{
 			IntPtr printers = IntPtr.Zero;
-			CUPS_DESTS printer;
 			string printer_name = String.Empty;
 
-			int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
-
 			int printer_count = cupsGetDests (ref printers);
+			try {
+				int cups_dests_size = Marshal.SizeOf (typeof (CUPS_DESTS));
+				IntPtr current = printers;
+				for (int i = 0; i < printer_count; i++) {
+					CUPS_DESTS printer = (CUPS_DESTS) Marshal.PtrToStructure (current, typeof (CUPS_DESTS));
 
-			for (int i = 0; i < printer_count; i++) {
-				printer = (CUPS_DESTS) Marshal.PtrToStructure (printers, typeof (CUPS_DESTS));
-
-				if (printer.is_default != 0 || printer_name.Equals(String.Empty)) {
-					printer_name = Marshal.PtrToStringAnsi (printer.name);
-					if (printer.is_default != 0)
-						break;
+					if ((printer.is_default != 0) || (printer_name.Length == 0)) {
+						printer_name = Marshal.PtrToStringAnsi (printer.name);
+						if (printer.is_default != 0)
+							break;
+					}
+					current = new IntPtr (current.ToInt64 () + cups_dests_size);
 				}
-				printers = new IntPtr (printers.ToInt64 () + cups_dests_size);
 			}
-			Marshal.FreeHGlobal (printers);
+			finally {
+				Marshal.FreeHGlobal (printers);
+			}
 
 			return printer_name;
 		}
