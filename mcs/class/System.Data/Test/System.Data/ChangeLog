@@ -1,3 +1,9 @@
+2007-02-09  Nagappan A  <anagappan@novell.com>
+
+	* TestFile5.xml: Added new XML file required for tests.
+
+	* TestFile3.xml: Added new XML file required for tests.
+
 2007-01-08  Nagappan A  <anagappan@novell.com>
 
 	* DataViewTest.cs: Fixed compilation warning.
