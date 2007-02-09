@@ -1398,23 +1398,30 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner == this) {
-				throw new InvalidOperationException("The 'ownerWin32' cannot be the form being shown.");
+				throw new ArgumentException ("Forms cannot own themselves or their owners.", "owner");
 			}
 
 			if (is_modal) {
-				throw new InvalidOperationException("The form is already displayed as a modal dialog.");
+				throw new InvalidOperationException ("The form is already displayed as a modal dialog.");
 			}
 
 			if (Visible) {
-				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
+				throw new InvalidOperationException ("Forms that are already "
+					+ " visible cannot be displayed as a modal dialog. Set the"
+					+ " form's visible property to false before calling"
+					+ " ShowDialog.");
 			}
 
 			if (!Enabled) {
-				throw new InvalidOperationException("Cannot display a disabled form as modal dialog.");
+				throw new InvalidOperationException ("Forms that are not enabled"
+					+ " cannot be displayed as a modal dialog. Set the form's"
+					+ " enabled property to true before calling ShowDialog.");
 			}
 
 			if (TopLevelControl != this) {
-				throw new InvalidOperationException("Can only display TopLevel forms as modal dialog.");
+				throw new InvalidOperationException ("Forms that are not top level"
+					+ " forms cannot be displayed as amodal dialog. Remove the"
+					+ " form from any parent form before calling ShowDialog.");
 			}
 
 			#if broken

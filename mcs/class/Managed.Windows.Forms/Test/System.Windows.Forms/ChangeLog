@@ -1,5 +1,9 @@
 2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FormTest.cs: Added tests for bug #80773.
+
+2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* PrintDialogTest.cs: Added test for bug #80764.
 
 2007-02-08  Jonathan Pobst  <monkey@jpobst.com>

@@ -243,6 +243,154 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.IsDisposed, "A10");
 		}
 
+		[Test]
+		public void ShowDialog_Child ()
+		{
+			Form main = new Form ();
+			main.IsMdiContainer = true;
+			Form child = new Form ();
+			child.MdiParent = main;
+			try {
+				child.ShowDialog ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Forms that are not top level forms cannot be displayed as a
+				// modal dialog. Remove the form from any parent form before 
+				// calling ShowDialog.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+			Assert.IsNull (child.Owner, "#5");
+			child.Dispose ();
+			main.Dispose ();
+		}
+
+		[Test]
+		public void ShowDialog_Disabled ()
+		{
+			Form form = new Form ();
+			form.Enabled = false;
+			try {
+				form.ShowDialog ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Forms that are not enabled cannot be displayed as a modal
+				// dialog. Set the form's enabled property to true before
+				// calling ShowDialog.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+			Assert.IsNull (form.Owner, "#A5");
+			form.Dispose ();
+
+			Form main = new Form ();
+			form = new Form ();
+			form.Owner = main;
+			form.Enabled = false;
+			try {
+				form.ShowDialog ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException) {
+			}
+			Assert.IsNotNull (form.Owner, "#B2");
+			Assert.AreSame (main, form.Owner, "#B3");
+			form.Dispose ();
+			main.Dispose ();
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ShowDialog_Owner_Circular ()
+		{
+			Form main = new Form ();
+			Form child = new Form ();
+			child.Owner = main;
+			try {
+				main.ShowDialog (child);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// A circular control reference has been made. A control cannot
+				// be owned or parented to itself
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+			Assert.IsNull (main.Owner, "#6");
+			main.Dispose ();
+			child.Dispose ();
+		}
+
+		[Test] // bug #80773
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ShowDialog_Owner_Self ()
+		{
+			Form form = new Form ();
+			try {
+				form.ShowDialog (form);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Forms cannot own themselves or their owners
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("owner", ex.ParamName, "#A6");
+			}
+			Assert.IsNull (form.Owner, "#A7");
+			form.Dispose ();
+
+			Form main = new Form ();
+			form = new Form ();
+			form.Owner = main;
+			try {
+				form.ShowDialog (form);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException) {
+			}
+			Assert.IsNotNull (form.Owner);
+			Assert.AreSame (main, form.Owner, "#B2");
+			form.Dispose ();
+			main.Dispose ();
+		}
+
+		[Test]
+		public void ShowDialog_Visible ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Visible = true;
+			try {
+				form.ShowDialog ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Forms that are already visible cannot be displayed as a modal
+				// dialog. Set the form's visible property to false before 
+				// calling ShowDialog.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+			Assert.IsNull (form.Owner, "#A5");
+			form.Dispose ();
+
+			Form main = new Form ();
+			form = new Form ();
+			form.Owner = main;
+			form.Visible = true;
+			try {
+				form.ShowDialog ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException) {
+			}
+			Assert.IsNotNull (form.Owner, "#B2");
+			Assert.AreSame (main, form.Owner, "#B3");
+			form.Dispose ();
+			main.Dispose ();
+		}
+
 		[Test] // bug #80604
 		[NUnit.Framework.Category ("NotWorking")]
 		public void VisibleOnLoad ()
