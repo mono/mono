@@ -25,14 +25,16 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
+
 #if NET_2_0
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using System.Drawing;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -85,7 +87,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("OptimizedDoubleBuffer is disabled due to bug #80447")]
 		public void ControlStyle ()
 		{
 			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
@@ -99,7 +100,17 @@ namespace MonoTests.System.Windows.Forms
 			cs |= ControlStyles.OptimizedDoubleBuffer;
 			cs |= ControlStyles.UseTextForAccessibility;
 
-			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");		
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");
+		}
+
+		[Test] // bug #80762
+		[NUnit.Framework.Category ("NotWorking")]
+		public void DockSize ()
+		{
+			ToolStrip ts = new ToolStrip();
+			Assert.AreEqual (new Size (100, 25), ts.Size, "#1");
+			ts.Dock = DockStyle.None;
+			Assert.AreEqual (new Size (100, 25), ts.Size, "#2");
 		}
 
 		[Test]
@@ -208,7 +219,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		//[Ignore ("Needs Control.AutoSizeChanged to fire")]
 		public void PropertyAutoSize ()
 		{
 			ToolStrip ts = new ToolStrip ();
@@ -544,9 +554,6 @@ namespace MonoTests.System.Windows.Forms
 		//        ts.TextDirection = (ToolStripTextDirection) 42;
 		//}
 
-
-
-	
 		[Test]
 		public void TestToolStrip ()
 		{
