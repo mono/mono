@@ -28,11 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 using System.Web;
 using System.Web.UI.WebControls;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -105,23 +107,47 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 
 		[Test]
+		public void FontUnitConstructors_Em ()
+		{
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+			try {
+				FontUnit fu = new FontUnit ("4,5em");
+				Assert.AreEqual (FontSize.AsUnit, fu.Type, "#1");
+				Assert.AreEqual (UnitType.Em, fu.Unit.Type, "#2");
+				Assert.AreEqual (4.5, fu.Unit.Value, "#3");
+				Assert.AreEqual ("4,5em", fu.ToString (), "#4");
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
+		}
+
+		[Test]
 		public void FontUnitConstructors_Pixel ()
 		{
 			FontUnit f1 = new FontUnit ("10px");
-			Assert.AreEqual (FontSize.AsUnit, f1.Type, "A12");
-			Assert.AreEqual (UnitType.Pixel, f1.Unit.Type, "A13");
-			Assert.AreEqual (10, f1.Unit.Value, "A14");
-			Assert.AreEqual ("10px", f1.ToString (), "A15");
+			Assert.AreEqual (FontSize.AsUnit, f1.Type, "#1");
+			Assert.AreEqual (UnitType.Pixel, f1.Unit.Type, "#2");
+			Assert.AreEqual (10, f1.Unit.Value, "#3");
+			Assert.AreEqual ("10px", f1.ToString (), "#4");
 		}
 
 		[Test]
 		public void FontUnitConstructors_Point ()
 		{
-			FontUnit f1 = new FontUnit ("12pt");
-			Assert.AreEqual (FontSize.AsUnit, f1.Type, "Type");
-			Assert.AreEqual (UnitType.Point, f1.Unit.Type, "Unit.Type");
-			Assert.AreEqual (12, f1.Unit.Value, "Unit.Value");
-			Assert.AreEqual ("12pt", f1.ToString (), "ToString");
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("nl-BE");
+			try {
+				FontUnit f1 = new FontUnit ("12,5pt");
+				Assert.AreEqual (FontSize.AsUnit, f1.Type, "Type");
+				Assert.AreEqual (UnitType.Point, f1.Unit.Type, "Unit.Type");
+				Assert.AreEqual (12.5, f1.Unit.Value, "Unit.Value");
+				Assert.AreEqual ("12,5pt", f1.ToString (), "ToString");
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
 		}
 
 		[Test]

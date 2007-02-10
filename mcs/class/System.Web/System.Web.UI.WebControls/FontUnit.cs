@@ -211,7 +211,7 @@ namespace System.Web.UI.WebControls {
 			
 		public override string ToString ()
 		{
-			return ToString (CultureInfo.InvariantCulture);
+			return ToString (CultureInfo.CurrentCulture);
 		}
 		
 	}

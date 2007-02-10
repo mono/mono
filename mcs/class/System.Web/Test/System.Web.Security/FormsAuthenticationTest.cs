@@ -16,17 +16,17 @@ using System.Web.Security;
 using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
 
-namespace MonoTests.System.Web.Security {
-
+namespace MonoTests.System.Web.Security
+{
 	[TestFixture]
-	public class FormsAuthenticationTest {
-
+	public class FormsAuthenticationTest
+	{
 		[Test]
 		[Category ("NotDotNet")] // Dot.net url must include Namespace name
 		[Category("NunitWeb")]
 		public void DefaultValues ()
 		{
-			new WebTest(new HandlerInvoker (DefaultValues_delegate)).Run ();
+			new WebTest(new HandlerInvoker (new HandlerDelegate(DefaultValues_delegate))).Run ();
 		}
 
 		static public void DefaultValues_delegate ()
@@ -53,7 +53,7 @@ namespace MonoTests.System.Web.Security {
 		[Category("NunitWeb")]
 		public void Initialize ()
 		{
-			new WebTest(new HandlerInvoker (Initialize_delegate)).Run ();
+			new WebTest(new HandlerInvoker (new HandlerDelegate(Initialize_delegate))).Run ();
 		}
 
 		static public void Initialize_delegate ()
