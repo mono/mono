@@ -396,10 +396,26 @@ namespace System.Resources
 
 			public void Verify ()
 			{
-				if (string.Compare (ResMimeType, ResXResourceWriter.ResMimeType) != 0)
+				if (!IsValid)
 					throw new ArgumentException ("Invalid ResX input.  Could "
 						+ "not find valid \"resheader\" tags for the ResX "
 						+ "reader & writer type names.");
+			}
+
+			public bool IsValid {
+				get {
+					if (string.Compare (ResMimeType, ResXResourceWriter.ResMimeType) != 0)
+						return false;
+					if (Reader == null || Writer == null)
+						return false;
+					string readerType = Reader.Split (',') [0].Trim ();
+					if (readerType != typeof (ResXResourceReader).FullName)
+						return false;
+					string writerType = Writer.Split (',') [0].Trim ();
+					if (writerType != typeof (ResXResourceWriter).FullName)
+						return false;
+					return true;
+				}
 			}
 
 			private string _resMimeType;

@@ -138,8 +138,8 @@ namespace MonoTests.System.Resources
 				try {
 					r.GetEnumerator ();
 					Assert.Fail ("#B2");
-				} catch (NullReferenceException ex) { // MS
-				} catch (InvalidOperationException ex) { // Mono
+				} catch (NullReferenceException) { // MS
+				} catch (InvalidOperationException) { // Mono
 				}
 			}
 		}
@@ -645,7 +645,7 @@ namespace MonoTests.System.Resources
 
 			// <value> element, exact case
 			resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0", 
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0", 
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				r.GetEnumerator ();
@@ -653,7 +653,7 @@ namespace MonoTests.System.Resources
 
 			// <value> element, uppercase
 			resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType.ToUpper (), "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType.ToUpper (), "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				try {
@@ -726,7 +726,7 @@ namespace MonoTests.System.Resources
 
 			// <whatever> element, exact case
 			resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, "<whatever>" + ResXResourceWriter.ResMimeType + "</whatever>",
+				resXTemplate, "<whatever>" + ResXResourceWriter.ResMimeType + "</whatever>",
 				"1.0", Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				r.GetEnumerator ();
@@ -734,7 +734,7 @@ namespace MonoTests.System.Resources
 
 			// <whatever> element, uppercase
 			resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, "<whatever>" + ResXResourceWriter.ResMimeType.ToUpper () + "</whatever>",
+				resXTemplate, "<whatever>" + ResXResourceWriter.ResMimeType.ToUpper () + "</whatever>",
 				"1.0", Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				try {
@@ -758,7 +758,7 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\"></resheader>" +
+				"	<resheader name=\"resmimetype\"></resheader>" +
 				"</root>";
 
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXTemplate))) {
@@ -780,10 +780,34 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void ResHeader_ResMimeType_Invalid ()
 		{
+			const string resXTemplate =
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"<root>" +
+				"	<resheader name=\"resmimetype\">" +
+				"		<value>{0}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"version\">" +
+				"		<value>{1}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"reader\">" +
+				"		<value>System.Resources.ResXResourceReader, {2}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"writer\">" +
+				"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
+				"	</resheader>" +
+				"	<data name=\"name\">" +
+				"		<value>de Icaza</value>" +
+				"	</data>" +
+				"	<data name=\"firstName\">" +
+				"		<value />" +
+				"	</data>" +
+				"	<data name=\"Address\" />" +
+				"</root>";
+
 			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
 			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
-					_resXTemplate, "notvalid", "1.0", Consts.AssemblySystem_Windows_Forms
+					resXTemplate, "notvalid", "1.0", Consts.AssemblySystem_Windows_Forms
 					));
 			}
 
@@ -846,10 +870,49 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\" />" +
+				"	<resheader name=\"resmimetype\" />" +
 				"</root>";
 
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXTemplate))) {
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
+			}
+		}
+
+		[Test]
+		public void ResHeader_Reader_Invalid ()
+		{
+			const string resXTemplate =
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"<root>" +
+				"	<resheader name=\"resmimetype\">" +
+				"		{0}" +
+				"	</resheader>" +
+				"	<resheader name=\"version\">" +
+				"		<value>{1}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"reader\">" +
+				"		<value>System.Resources.InvalidResXResourceReader, {2}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"writer\">" +
+				"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
+				"	</resheader>" +
+				"</root>";
+
+			string resXContent = string.Format (CultureInfo.InvariantCulture,
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				Consts.AssemblySystem_Windows_Forms);
+			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				try {
 					r.GetEnumerator ();
 					Assert.Fail ("#1");
@@ -871,7 +934,7 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\">" +
+				"	<resheader name=\"resmimetype\">" +
 				"		{0}" +
 				"	</resheader>" +
 				"	<resheader name=\"version\">" +
@@ -883,10 +946,21 @@ namespace MonoTests.System.Resources
 				"</root>";
 
 			string resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
-				r.GetEnumerator ();
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
 			}
 		}
 
@@ -896,7 +970,7 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\">" +
+				"	<resheader name=\"resmimetype\">" +
 				"		{0}" +
 				"	</resheader>" +
 				"	<resheader name=\"version\">" +
@@ -909,10 +983,60 @@ namespace MonoTests.System.Resources
 				"</root>";
 
 			string resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
-				r.GetEnumerator ();
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
+			}
+		}
+
+		[Test]
+		public void ResHeader_Writer_Invalid ()
+		{
+			const string resXTemplate =
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"<root>" +
+				"	<resheader name=\"resmimetype\">" +
+				"		{0}" +
+				"	</resheader>" +
+				"	<resheader name=\"version\">" +
+				"		<value>{1}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"reader\">" +
+				"		<value>System.Resources.ResXResourceReader, {2}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"writer\">" +
+				"		<value>System.Resources.InvalidResXResourceWriter, {2}</value>" +
+				"	</resheader>" +
+				"</root>";
+
+			string resXContent = string.Format (CultureInfo.InvariantCulture,
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				Consts.AssemblySystem_Windows_Forms);
+			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
 			}
 		}
 
@@ -922,7 +1046,7 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\">" +
+				"	<resheader name=\"resmimetype\">" +
 				"		{0}" +
 				"	</resheader>" +
 				"	<resheader name=\"version\">" +
@@ -934,10 +1058,21 @@ namespace MonoTests.System.Resources
 				"</root>";
 
 			string resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
-				r.GetEnumerator ();
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
 			}
 		}
 
@@ -947,7 +1082,7 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\">" +
+				"	<resheader name=\"resmimetype\">" +
 				"		{0}" +
 				"	</resheader>" +
 				"	<resheader name=\"version\">" +
@@ -960,10 +1095,21 @@ namespace MonoTests.System.Resources
 				"</root>";
 
 			string resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
-				r.GetEnumerator ();
+				try {
+					r.GetEnumerator ();
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					//Invalid ResX input.  Could not find valid \"resheader\"
+					// tags for the ResX reader & writer type names
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf ("\"resheader\"") != -1, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+				}
 			}
 		}
 
@@ -973,17 +1119,17 @@ namespace MonoTests.System.Resources
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"<root>" +
-				"	<resheader name=\"resmimeype\">" +
+				"	<resheader name=\"resmimetype\">" +
 				"		{0}" +
 				"	</resheader>" +
-				"	<resheader name=\"version\">" +
+				"	<resheader name=\"version\">" +	
 				"		<value>{1}</value>" +
 				"	</resheader>" +
 				"	<resheader name=\"reader\">" +
-				"		<value>System.Resources.ResXResourceReader, {2}</value>" +
+				"		<value>  System.Resources.ResXResourceReader  , {2}</value>" +
 				"	</resheader>" +
 				"	<resheader name=\"writer\">" +
-				"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
+				"		<value>  System.Resources.ResXResourceWriter  , {2}</value>" +
 				"	</resheader>" +
 				"	<resheader name=\"UNKNOWN\">" +
 				"		<value>whatever</value>" +
@@ -991,7 +1137,7 @@ namespace MonoTests.System.Resources
 				"</root>";
 
 			string resXContent = string.Format (CultureInfo.InvariantCulture,
-				_resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
+				resXTemplate, ResXResourceWriter.ResMimeType, "1.0",
 				Consts.AssemblySystem_Windows_Forms);
 			using (ResXResourceReader r = new ResXResourceReader (new StringReader (resXContent))) {
 				r.GetEnumerator ();
@@ -1281,30 +1427,6 @@ namespace MonoTests.System.Resources
 			"	<data name=\"foo\" type=\"System.Resources.ResXFileRef, {2}\">" +
 			"		<value>{3};{4}{5}</value>" +
 			"	</data>" +
-			"</root>";
-
-		private const string _resXTemplate =
-			"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-			"<root>" +
-			"	<resheader name=\"resmimetype\">" +
-			"		<value>{0}</value>" +
-			"	</resheader>" +
-			"	<resheader name=\"version\">" +
-			"		<value>{1}</value>" +
-			"	</resheader>" +
-			"	<resheader name=\"reader\">" +
-			"		<value>System.Resources.ResXResourceReader, {2}</value>" +
-			"	</resheader>" +
-			"	<resheader name=\"writer\">" +
-			"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
-			"	</resheader>" +
-			"	<data name=\"name\">" +
-			"		<value>de Icaza</value>" +
-			"	</data>" +
-			"	<data name=\"firstName\">" +
-			"		<value />" +
-			"	</data>" +
-			"	<data name=\"Address\" />" +
 			"</root>";
 	}
 }

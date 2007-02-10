@@ -1,3 +1,8 @@
+2007-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXResourceReader.cs: Add additional checks for validity of reader
+	and writer.
+
 2007-02-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXResourceReader.cs: Added support for BasePath (2.0 only). Lazy load
