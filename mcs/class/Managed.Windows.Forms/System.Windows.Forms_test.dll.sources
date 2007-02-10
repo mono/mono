@@ -21,6 +21,7 @@ System.Windows.Forms/ContainerControlTest.cs
 System.Windows.Forms/ControlBindingsConverterTest.cs
 System.Windows.Forms/ControlCollectionTest.cs
 System.Windows.Forms/ControlEventTest.cs
+System.Windows.Forms/ControlHandleTest.cs
 System.Windows.Forms/ControlLogger.cs
 System.Windows.Forms/ControlLogger2.cs
 System.Windows.Forms/ControlTest.cs
