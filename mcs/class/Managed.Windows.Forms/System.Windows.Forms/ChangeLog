@@ -1,3 +1,7 @@
+2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Form.cs: Fixed typo in exception message. Fixes bug #80779.
+
 2007-02-09  Chris Toshok  <toshok@ximian.com>
 
 	[big change, fixes #80020]

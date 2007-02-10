@@ -1419,7 +1419,7 @@ namespace System.Windows.Forms {
 
 			if (TopLevelControl != this) {
 				throw new InvalidOperationException ("Forms that are not top level"
-					+ " forms cannot be displayed as amodal dialog. Remove the"
+					+ " forms cannot be displayed as a modal dialog. Remove the"
 					+ " form from any parent form before calling ShowDialog.");
 			}
 
