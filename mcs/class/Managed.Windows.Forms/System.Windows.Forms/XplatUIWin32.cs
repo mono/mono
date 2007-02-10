@@ -1201,6 +1201,8 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
 
+			hwnd.ClientWindow = WindowHandle;
+
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (uint)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
 			return WindowHandle;
