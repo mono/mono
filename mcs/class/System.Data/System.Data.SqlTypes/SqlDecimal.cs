@@ -291,12 +291,20 @@ namespace System.Data.SqlTypes
 		{
 			if (value == null)
 				return 1;
-			else if (!(value is SqlDecimal))
+			if (!(value is SqlDecimal))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlDecimal"));
-			else if (((SqlDecimal)value).IsNull)
+
+			return CompareTo ((SqlDecimal) value);
+		}
+#if NET_2_0
+		public
+#endif
+		int CompareTo (SqlDecimal value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.Value.CompareTo (((SqlDecimal)value).Value);
+				return this.Value.CompareTo (value.Value);
 		}
 
 		public static SqlDecimal ConvertToPrecScale (SqlDecimal n, int precision, int scale)

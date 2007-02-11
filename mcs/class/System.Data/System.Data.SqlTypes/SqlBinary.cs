@@ -112,17 +112,24 @@ namespace System.Data.SqlTypes
 		#endregion
 
 		#region Methods
-
-		public int CompareTo (object value) 
+		public int CompareTo (object value)
 		{
 			if (value == null)
 				return 1;
-			else if (!(value is SqlBinary))
+			if (!(value is SqlBinary))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlBinary"));
-			else if (((SqlBinary)value).IsNull)
+
+			return CompareTo ((SqlBinary) value);
+		}
+#if NET_2_0
+		public
+#endif
+		int CompareTo (SqlBinary value) 
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return Compare (this, (SqlBinary)value);
+				return Compare (this, value);
 		}
 
 		public static SqlBinary Concat (SqlBinary x, SqlBinary y) 

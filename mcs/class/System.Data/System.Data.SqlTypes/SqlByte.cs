@@ -99,12 +99,20 @@ namespace System.Data.SqlTypes
 		{
 			if (value == null)
 				return 1;
-			else if (!(value is SqlByte))
+			if (!(value is SqlByte))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlByte"));
-			else if (((SqlByte)value).IsNull)
+
+			return CompareTo ((SqlByte) value);
+		}
+#if NET_2_0
+		public
+#endif
+		int CompareTo (SqlByte value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlByte)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
 
 		public static SqlByte Divide (SqlByte x, SqlByte y)

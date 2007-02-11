@@ -200,12 +200,20 @@ namespace System.Data.SqlTypes
 		{
 			if (value == null)
 				return 1;
-			else if (!(value is SqlDateTime))
+			if (!(value is SqlDateTime))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlDateTime"));
-			else if (((SqlDateTime)value).IsNull)
+
+			return CompareTo ((SqlDateTime) value);
+		}
+#if NET_2_0
+		public
+#endif
+		int CompareTo (SqlDateTime value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlDateTime)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
 
 		public override bool Equals (object value)

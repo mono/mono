@@ -124,9 +124,17 @@ namespace System.Data.SqlTypes
 		{
 			if (value == null)
 				return 1;
-			else if (!(value is SqlGuid))
+			if (!(value is SqlGuid))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlGuid"));
-			else if (((SqlGuid)value).IsNull)
+
+			return CompareTo ((SqlGuid) value);
+		}
+#if NET_2_0
+		public
+#endif
+		int CompareTo (SqlGuid value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
                                 // LAMESPEC : ms.net implementation actually compares all the 16 bytes.
@@ -147,7 +155,7 @@ namespace System.Data.SqlTypes
 			                return 0;
 				}
                                 */
-                                return this.value.CompareTo (((SqlGuid)value).Value);
+                                return this.value.CompareTo (value.Value);
 				
 		}
 
