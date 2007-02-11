@@ -73,6 +73,10 @@ using System.Threading;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
+
+#if TARGET_J2EE
+using vmw.@internal.j2ee;
+#endif
 	
 namespace System.Web {
 
@@ -770,6 +774,17 @@ namespace System.Web {
 			if (error != null){
 				HttpResponse response = context.Response;
 
+#if TARGET_J2EE
+				IPortletActionRequest actionRequest = context.ServletRequest as IPortletActionRequest;
+				IPortletActionResponse actionResponse = context.ServletResponse as IPortletActionResponse;
+				if (actionRequest != null && actionResponse != null && actionRequest.processActionOnly ()) {
+					string exception = "Exception of type " + context.Error.GetType () + 
+						" during processAction: " + context.Error.Message + Console.Out.NewLine + 
+						context.Error.StackTrace;
+					actionResponse.setRenderParameter ("vmw.action.exception", exception);
+					return;
+				}
+#endif
 				if (!response.HeadersSent){
 					response.ClearHeaders ();
 					response.ClearContent ();
@@ -1162,6 +1177,19 @@ namespace System.Web {
 			done.Reset ();
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
+
+#if TARGET_J2EE
+			IPortletRenderRequest renderRequest = context.ServletRequest as IPortletRenderRequest;
+			if (renderRequest != null) {
+				string actionException = context.ServletRequest.getParameter ("vmw.action.exception");
+				if (actionException != null && actionException.Length > 0) {
+					FinalErrorWrite (context.Response, actionException.Replace("\n", "<br>"));
+					begin_iar.Complete ();
+					return begin_iar;
+				}
+			}
+#endif
+
 #if TARGET_JVM
 			if (true)
 #else
