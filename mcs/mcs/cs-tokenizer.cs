@@ -2399,9 +2399,13 @@ namespace Mono.CSharp
 
 			// Whether we have seen comments on the current line
 			bool comments_seen = false;
-			
 			val = null;
 			for (;(c = getChar ()) != -1;) {
+				if (c == '\t'){
+					col = ((col + 8) / 8) * 8;
+					continue;
+				}
+				
 				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == 0xa0)
 					continue;
 

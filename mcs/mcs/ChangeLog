@@ -1,3 +1,8 @@
+2007-02-11  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs (xtoken): Correctly compute the column, it was
+	treating tabs as spaces. 
+
 2007-02-09  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80315 by martin.voelkle@gmail.com (Martin Voelkle)
