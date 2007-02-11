@@ -1608,8 +1608,6 @@ namespace System.Web.UI.WebControls
 					Label b = (Label) c.Controls [0];
 					b.ID = SideBarButtonID;
 					b.Text = step.Title;
-					if (step == wizard.ActiveStep)
-						b.Font.Bold = true;
 				}
 			}
 		}

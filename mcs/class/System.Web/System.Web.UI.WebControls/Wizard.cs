@@ -99,7 +99,6 @@ namespace System.Web.UI.WebControls
 		MultiView multiView;
 		DataList stepDatalist;
 		ArrayList styles = new ArrayList ();
-		SideBarButtonTemplate sideBarItemTemplate;
 		Hashtable customNavigation;
 		
 		private static readonly object ActiveStepChangedEvent = new object();
@@ -108,11 +107,6 @@ namespace System.Web.UI.WebControls
 		private static readonly object NextButtonClickEvent = new object();
 		private static readonly object PreviousButtonClickEvent = new object();
 		private static readonly object SideBarButtonClickEvent = new object();
-		
-		public Wizard ()
-		{
-			sideBarItemTemplate = new SideBarButtonTemplate (this);
-		}
 		
 		public event EventHandler ActiveStepChanged {
 			add { Events.AddHandler (ActiveStepChangedEvent, value); }
@@ -220,6 +214,10 @@ namespace System.Web.UI.WebControls
 
 				if (inited) {
 					multiView.ActiveViewIndex = value;
+					if (stepDatalist != null) {
+						stepDatalist.SelectedIndex = value;
+						stepDatalist.DataBind ();
+					}
 					OnActiveStepChanged (this, EventArgs.Empty);
 				}
 			}
@@ -782,7 +780,7 @@ namespace System.Web.UI.WebControls
 
 		internal virtual ITemplate SideBarItemTemplate
 		{
-			get { return sideBarItemTemplate; }
+			get { return new SideBarButtonTemplate (this); }
 		}
 		
 		public ICollection GetHistory ()
@@ -899,6 +897,7 @@ namespace System.Web.UI.WebControls
 					TableRow row = new TableRow ();
 
 					TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
+					sideBarCell.ID = "SideBarContainer";
 					sideBarCell.ControlStyle.Height = Unit.Percentage (100);
 					CreateSideBar (sideBarCell);
 					row.Cells.Add (sideBarCell);
@@ -959,7 +958,7 @@ namespace System.Web.UI.WebControls
 			_startNavContainer = new StartNavigationContainer (this);
 			_startNavContainer.ID = "StartNavContainer";
 			if (startNavigationTemplate != null) {
-				AddTemplateButtonBar (_startNavContainer, startNavigationTemplate, StartNextButtonID, CancelButtonID);
+				startNavigationTemplate.InstantiateIn (_startNavContainer);
 			}
 			else {
 				TableRow row;
@@ -976,7 +975,7 @@ namespace System.Web.UI.WebControls
 			_stepNavContainer = new StepNavigationContainer (this);
 			_stepNavContainer.ID = "StepNavContainer";
 			if (stepNavigationTemplate != null) {
-				AddTemplateButtonBar (_stepNavContainer, stepNavigationTemplate, StepPreviousButtonID, StepNextButtonID, CancelButtonID);
+				stepNavigationTemplate.InstantiateIn (_stepNavContainer);
 			}
 			else {
 				TableRow row;
@@ -994,7 +993,7 @@ namespace System.Web.UI.WebControls
 			_finishNavContainer = new FinishNavigationContainer (this);
 			_finishNavContainer.ID = "FinishNavContainer";
 			if (finishNavigationTemplate != null) {
-				AddTemplateButtonBar (_finishNavContainer, finishNavigationTemplate, FinishPreviousButtonID, FinishButtonID, CancelButtonID);
+				finishNavigationTemplate.InstantiateIn (_finishNavContainer);
 			}
 			else {
 				TableRow row;
@@ -1075,16 +1074,6 @@ namespace System.Web.UI.WebControls
 			return link;
 		}
 
-		void AddTemplateButtonBar (BaseWizardNavigationContainer container, ITemplate template, params string [] buttonIds)
-		{
-			template.InstantiateIn (container);
-			
-			foreach (string id in buttonIds) {
-				IButtonControl b = container.FindControl (id) as IButtonControl;
-				if (b != null) RegisterCommandEvents (b);
-			}
-		}
-
 		void AddButtonCell (TableRow row, params Control[] controls)
 		{
 			TableCell cell = new TableCell ();
@@ -1116,12 +1105,13 @@ namespace System.Web.UI.WebControls
 			if (sideBarTemplate != null) {
 				sideBarTemplate.InstantiateIn (sideBarCell);
 				stepDatalist = sideBarCell.FindControl (DataListID) as DataList;
-				stepDatalist.ItemDataBound += new DataListItemEventHandler(StepDatalistItemDataBound);
 				if (stepDatalist == null)
 					throw new InvalidOperationException ("The side bar template must contain a DataList control with id '" + DataListID + "'.");
+				stepDatalist.ItemDataBound += new DataListItemEventHandler(StepDatalistItemDataBound);
 			} else {
 				stepDatalist = new DataList ();
 				stepDatalist.ID = DataListID;
+				stepDatalist.SelectedItemStyle.Font.Bold = true;
 				stepDatalist.ItemTemplate = SideBarItemTemplate;
 				sideBarCell.Controls.Add (stepDatalist);
 			}
@@ -1132,16 +1122,30 @@ namespace System.Web.UI.WebControls
 				sideBarCell.Controls.Add (anchor);
 			}
 
+			stepDatalist.ItemCommand += new DataListCommandEventHandler (StepDatalistItemCommand);
 			stepDatalist.CellSpacing = 0;
 			stepDatalist.DataSource = WizardSteps;
+			stepDatalist.SelectedIndex = ActiveStepIndex;
 			stepDatalist.DataBind ();
+		}
+
+		void StepDatalistItemCommand (object sender, DataListCommandEventArgs e)
+		{
+			WizardNavigationEventArgs arg = new WizardNavigationEventArgs (ActiveStepIndex, Convert.ToInt32 (e.CommandArgument));
+			OnSideBarButtonClick (arg);
+
+			if (!arg.Cancel)
+				ActiveStepIndex = arg.NextStepIndex;
 		}
 
 		void StepDatalistItemDataBound (object sender, DataListItemEventArgs e)
 		{
-			if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem) {
+			if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.SelectedItem) {
 				IButtonControl button = (IButtonControl) e.Item.FindControl (SideBarButtonID);
-				WizardStep step = (WizardStep) e.Item.DataItem;
+				if (button == null)
+					throw new InvalidOperationException ("SideBarList control must contain an IButtonControl with ID " + SideBarButtonID + " in every item template, this maybe include ItemTemplate, EditItemTemplate, SelectedItemTemplate or AlternatingItemTemplate if they exist.");
+
+				WizardStepBase step = (WizardStepBase) e.Item.DataItem;
 
 				if (button is Button)
 					((Button) button).UseSubmitBehavior = false;
@@ -1149,6 +1153,8 @@ namespace System.Web.UI.WebControls
 				button.CommandName = Wizard.MoveToCommandName;
 				button.CommandArgument = WizardSteps.IndexOf (step).ToString ();
 				button.Text = step.Name;
+				if (step.StepType == WizardStepType.Complete && button is WebControl)
+					((WebControl) button).Enabled = false;
 			}
 		}
 
@@ -1391,15 +1397,24 @@ namespace System.Web.UI.WebControls
 		{
 			wizardTable.ApplyStyle (ControlStyle);
 
-			foreach (object [] styleDef in styles)
-				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
-
 			// header
 			if (!_headerCell.Initialized) {
 				if (String.IsNullOrEmpty (HeaderText))
 					_headerCell.Parent.Visible = false;
 				else
 					_headerCell.Text = HeaderText;
+
+				if(ActiveStep.StepType==WizardStepType.Complete)
+					_headerCell.Parent.Visible = false;
+			}
+
+			// sidebar
+			if (stepDatalist != null) {
+				stepDatalist.SelectedIndex = ActiveStepIndex;
+				stepDatalist.DataBind ();
+
+				if (ActiveStep.StepType == WizardStepType.Complete)
+					stepDatalist.NamingContainer.Visible = false;
 			}
 
 			// content
@@ -1429,6 +1444,9 @@ namespace System.Web.UI.WebControls
 				if (!currentNavContainer.Visible)
 					_navigationCell.Parent.Visible = false;
 			}
+
+			foreach (object [] styleDef in styles)
+				((WebControl) styleDef [0]).ApplyStyle ((Style) styleDef [1]);
 		}
 
 		private BaseWizardNavigationContainer GetCurrentNavContainer ()
@@ -1453,6 +1471,10 @@ namespace System.Web.UI.WebControls
 
 		class TableCellNamingContainer : TableCell, INamingContainer
 		{
+			public TableCellNamingContainer ()
+			{
+				SetBindingContainer (false);
+			}
 		}
 
 		class SideBarButtonTemplate: ITemplate
@@ -1484,9 +1506,6 @@ namespace System.Web.UI.WebControls
 					b.Text = step.Name;
 					if (step.StepType == WizardStepType.Complete)
 						b.Enabled = false;
-					if (step == wizard.ActiveStep)
-						c.Font.Bold = true;
-					wizard.RegisterCommandEvents (b);
 				}
 			}
 		}
