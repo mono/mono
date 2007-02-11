@@ -1,3 +1,9 @@
+2007-02-07  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1-2-3]
+	* ListView.cs: UseCompatibleStateImageBehavior setter changed from NIEX to 
+	MonoInternalNote.  This is added automagically by VS2005, so let's not crash
+	on it.
+
 2007-02-05  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: We need to check scrollbar visibility when window
