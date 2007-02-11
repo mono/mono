@@ -1,3 +1,17 @@
+2007-02-10  Miguel de Icaza  <miguel@novell.com>
+
+	* class-internals.h: Add MonoHandleRef definition, and
+	handleref_class to mono_defaults. 
+
+	* metadata.c (mono_type_to_unmanaged): If we find HandleRefs in a
+	structure, use new conversion MONO_MARSHAL_CONV_HANDLEREF.
+
+	* marshal.c (emit_ptr_to_object_conv): Add support for HandleRefs
+	(do nothing on this stage)
+	(emit_object_to_ptr_conv): Extract the handle from the HandleRef.  
+	(emit_marshal_handleref): New method, used for argument handling
+	of HandleRefs. 
+
 2007-02-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* class.c (mono_class_setup_parent): Lazily init com types.
