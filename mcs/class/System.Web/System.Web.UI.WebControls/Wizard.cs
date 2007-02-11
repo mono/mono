@@ -848,18 +848,40 @@ namespace System.Web.UI.WebControls
 		{
 			CreateControlHierarchy ();
 		}
-		
+
 		protected virtual void CreateControlHierarchy ()
 		{
 			styles.Clear ();
 
-			wizardTable = new Table ();
-			wizardTable.CellPadding = CellPadding; 
-			wizardTable.CellSpacing = CellSpacing; 
-			wizardTable.ID = this.ID;
-			
-			AddHeaderRow (wizardTable);
-			
+			wizardTable = new ContainedTable (this);
+
+			Table contentTable = wizardTable;
+
+			if (DisplaySideBar) {
+				contentTable = new Table ();
+				contentTable.CellPadding = 0;
+				contentTable.CellSpacing = 0;
+				contentTable.Height = new Unit ("100%");
+				contentTable.Width = new Unit ("100%");
+
+				TableRow row = new TableRow ();
+
+				TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
+				sideBarCell.ID = "SideBarContainer";
+				sideBarCell.ControlStyle.Height = Unit.Percentage (100);
+				CreateSideBar (sideBarCell);
+				row.Cells.Add (sideBarCell);
+
+				TableCell contentCell = new TableCell ();
+				contentCell.Controls.Add (contentTable);
+				contentCell.Height = new Unit ("100%");
+				row.Cells.Add (contentCell);
+
+				wizardTable.Rows.Add (row);
+			}
+
+			AddHeaderRow (contentTable);
+
 			TableRow viewRow = new TableRow ();
 			TableCell viewCell = new TableCell ();
 
@@ -872,44 +894,20 @@ namespace System.Web.UI.WebControls
 			}
 			multiView.ActiveViewIndex = ActiveStepIndex;
 
-				RegisterApplyStyle (viewCell, StepStyle);
-				viewCell.Controls.Add (multiView);
-				viewRow.Cells.Add (viewCell);
-				viewRow.Height = new Unit ("100%");
-				wizardTable.Rows.Add (viewRow);
+			RegisterApplyStyle (viewCell, StepStyle);
+			viewCell.Controls.Add (multiView);
+			viewRow.Cells.Add (viewCell);
+			viewRow.Height = new Unit ("100%");
+			contentTable.Rows.Add (viewRow);
 
-				TableRow buttonRow = new TableRow ();
-				_navigationCell = new TableCell ();
-				_navigationCell	.HorizontalAlign = HorizontalAlign.Right;
-				RegisterApplyStyle (_navigationCell, NavigationStyle);
-				CreateButtonBar (_navigationCell);
-				buttonRow.Cells.Add (_navigationCell);
-				wizardTable.Rows.Add (buttonRow);
+			TableRow buttonRow = new TableRow ();
+			_navigationCell = new TableCell ();
+			_navigationCell.HorizontalAlign = HorizontalAlign.Right;
+			RegisterApplyStyle (_navigationCell, NavigationStyle);
+			CreateButtonBar (_navigationCell);
+			buttonRow.Cells.Add (_navigationCell);
+			contentTable.Rows.Add (buttonRow);
 
-				if (DisplaySideBar) {
-					Table contentTable = wizardTable;
-					contentTable.Height = new Unit ("100%");
-					contentTable.Width = new Unit ("100%");
-
-					wizardTable = new Table ();
-					wizardTable.CellPadding = CellPadding;
-					wizardTable.CellSpacing = CellSpacing;
-					TableRow row = new TableRow ();
-
-					TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
-					sideBarCell.ID = "SideBarContainer";
-					sideBarCell.ControlStyle.Height = Unit.Percentage (100);
-					CreateSideBar (sideBarCell);
-					row.Cells.Add (sideBarCell);
-
-					TableCell contentCell = new TableCell ();
-					contentCell.Controls.Add (contentTable);
-					contentCell.Height = new Unit ("100%");
-					row.Cells.Add (contentCell);
-
-					wizardTable.Rows.Add (row);
-				}
-			
 			Controls.SetReadonly (false);
 			Controls.Add (wizardTable);
 			Controls.SetReadonly (true);
@@ -1162,6 +1160,7 @@ namespace System.Web.UI.WebControls
 		{
 			TableRow row = new TableRow ();
 			_headerCell = new WizardHeaderCell ();
+			_headerCell.ID = "HeaderContainer";
 			RegisterApplyStyle (_headerCell, HeaderStyle);
 			if (headerTemplate != null) {
 				headerTemplate.InstantiateIn (_headerCell);
@@ -1395,8 +1394,6 @@ namespace System.Web.UI.WebControls
 
 		void PrepareControlHierarchy ()
 		{
-			wizardTable.ApplyStyle (ControlStyle);
-
 			// header
 			if (!_headerCell.Initialized) {
 				if (String.IsNullOrEmpty (HeaderText))
@@ -1510,14 +1507,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		class WizardHeaderCell : TableCell
+		class WizardHeaderCell : TableCell, INamingContainer
 		{
 			bool _initialized;
 
 			public bool Initialized {
 				get { return _initialized; }
 			}
-
+			
+			public WizardHeaderCell ()
+			{
+				SetBindingContainer (false);
+			}
+			
 			public void ConfirmInitState ()
 			{
 				_initialized = true;

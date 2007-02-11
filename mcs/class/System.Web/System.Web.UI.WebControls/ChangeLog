@@ -1,7 +1,13 @@
 2007-02-11 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Wizard.cs: refactoring:
+	used ContainedTable for ID attribute is rendered properly.	 
+
+2007-02-11 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CreateUserWizard.cs: 
-	* Wizard.cs: fixed: SideBar 
+	* Wizard.cs: 
+	fixed SideBar.
 
 2007-02-11 Igor Zelmanovich <igorz@mainsoft.com>
 
