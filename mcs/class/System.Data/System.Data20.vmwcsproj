@@ -13,7 +13,6 @@
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
-    <jarserver>iap2</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
@@ -149,12 +148,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.Common\DbCommandOptionalFeatures.cs" />
-    <Compile Include="System.Data.Common\DbCommandSet.cs" />
     <Compile Include="System.Data.Common\DbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="System.Data.Common\DbConnectionOptions.cs" />
-    <Compile Include="System.Data.Common\DbConnectionString.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilder.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilderHelper.cs" />
     <Compile Include="System.Data.Common\DbDataAdapter.cs">
@@ -177,7 +173,6 @@
     <Compile Include="System.Data.Common\DbProviderFactoriesConfigurationHandler.cs" />
     <Compile Include="System.Data.Common\DbProviderFactory.cs" />
     <Compile Include="System.Data.Common\DbProviderSpecificTypePropertyAttribute.cs" />
-    <Compile Include="System.Data.Common\DbProviderSupportedClasses.cs" />
     <Compile Include="System.Data.Common\DbTransaction.cs" />
     <Compile Include="System.Data.Common\DbTypes.cs" />
     <Compile Include="System.Data.Common\ExceptionHelper.cs" />
@@ -296,7 +291,6 @@
     <Compile Include="System.Data.SqlTypes\SqlBytes.cs" />
     <Compile Include="System.Data.SqlTypes\SqlChars.cs" />
     <Compile Include="System.Data.SqlTypes\SqlCompareOptions.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlDate.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDateTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDecimal.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDouble.cs" />
@@ -310,12 +304,9 @@
     <Compile Include="System.Data.SqlTypes\SqlSingle.cs" />
     <Compile Include="System.Data.SqlTypes\SqlStreamChars.cs" />
     <Compile Include="System.Data.SqlTypes\SqlString.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlTruncateException.cs" />
     <Compile Include="System.Data.SqlTypes\SqlTypeException.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlUtcDateTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlXml.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlXmlReader.cs" />
     <Compile Include="System.Data.SqlTypes\StorageState.cs" />
     <Compile Include="System.Data\AcceptRejectRule.cs" />
     <Compile Include="System.Data\ColumnTypeConverter.cs" />
