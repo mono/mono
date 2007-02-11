@@ -1400,10 +1400,10 @@ namespace System.Web.UI.WebControls
 					_headerCell.Parent.Visible = false;
 				else
 					_headerCell.Text = HeaderText;
-
-				if(ActiveStep.StepType==WizardStepType.Complete)
-					_headerCell.Parent.Visible = false;
 			}
+
+			if (ActiveStep.StepType == WizardStepType.Complete)
+				_headerCell.Parent.Visible = false;
 
 			// sidebar
 			if (stepDatalist != null) {
