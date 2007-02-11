@@ -1,3 +1,10 @@
+2007-02-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Fix warnings and remember to call Release on
+	IUnknown of RCW.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-02-10  Miguel de Icaza  <miguel@novell.com>
 
 	* class-internals.h: Add MonoHandleRef definition, and
