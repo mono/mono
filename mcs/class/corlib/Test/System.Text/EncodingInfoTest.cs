@@ -22,6 +22,9 @@ namespace MonoTests.System.Text
 	public class EncodingInfoTest
 	{
 		[Test]
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		// The purpose of this test is to make sure that
 		// new encodings added to I18N are also listed in the
 		// returned array from Encoding.GetEncodings() so that
