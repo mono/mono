@@ -138,9 +138,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			OnSelectedIndexChanged (e);
 		}
 
-		public void DoBubbleEvent (object source, EventArgs e)
+		public bool DoBubbleEvent (object source, EventArgs e)
 		{
-			OnBubbleEvent (source, e);
+			return OnBubbleEvent (source, e);
 		}
 	}
 
@@ -960,6 +960,17 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selectedIndexChangedEvent, "selectedIndexChangedEvent-3");
 			Assert.IsTrue (itemCommandEvent, "#00");
+
+			//
+			// any comand
+			//
+			ResetEvents ();
+			command_args = new DataListCommandEventArgs (item, null,
+					new CommandEventArgs ("AnyComand", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
+			bool res = dl.DoBubbleEvent (this, command_args);
+			Assert.IsTrue (res, "any comand#00");
+			Assert.IsTrue (itemCommandEvent, "any comand#01");
 		}
 
 		[Test]

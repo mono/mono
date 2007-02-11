@@ -683,22 +683,17 @@ namespace System.Web.UI.WebControls {
 			OnItemCommand (dlca);
 			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {
 				OnCancelCommand (dlca);
-				return true;
 			} else if (String.Compare (cn, DeleteCommandName, true, inv) == 0) {
 				OnDeleteCommand (dlca);
-				return true;
 			} else if (String.Compare (cn, EditCommandName, true, inv) == 0) {
 				OnEditCommand (dlca);
-				return true;
 			} else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
 				SelectedIndex = dlca.Item.ItemIndex;
 				OnSelectedIndexChanged (dlca);
-				return true;
 			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0) {
 				OnUpdateCommand (dlca);
-				return true;
 			}
-			return false;
+			return true;
 		}
 
 		protected virtual void OnCancelCommand (DataListCommandEventArgs e)
