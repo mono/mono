@@ -3908,12 +3908,14 @@ lambda_expression_body
 	  }
 	  expression 
 	  {
+		Block b = end_block (lexer.Location);
 		oob_stack.Push ($2);
-		$$ = end_block (lexer.Location);
+		b.AddStatement (new ContextualReturn ((Expression) $2));
+		$$ = b;
 	  } 
 	| block { 
-		oob_stack.Push (null);
 	  	$$ = $1; 
+		oob_stack.Push (null);
 	  } 
 	;
 
@@ -5535,6 +5537,10 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
 	parsing_anonymous_method = true;
 }
 
+/*
+ * Completes the anonymous method processing, if lambda_expr is null, this
+ * means that we have a Statement instead of an Expression embedded 
+ */
 AnonymousMethodExpression 
 end_anonymous (ToplevelBlock anon_block, Expression lambda_expr, Location loc)
 {

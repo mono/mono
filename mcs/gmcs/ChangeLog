@@ -1,3 +1,19 @@
+2007-02-11  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay (lambda_expression_body): when the body is an
+	expression add a statement of the form:
+
+		contextual-return expression.
+
+	Where `contextual-return' is similar to `return', the difference
+	being that if the delegate that the lambda will be converted to
+	has a void return type, it will check that the result is a
+	ExpressionStatement and the result is a plain ret (no return
+	values on the stack).  If the return type of the delegate is of a
+	given type, this turns into a return with a value and does the
+	regular checking to check that the computed value can be
+	implicitly converted to the delegate return.
+
 2007-01-30  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay (anonymous_method_expression): move the

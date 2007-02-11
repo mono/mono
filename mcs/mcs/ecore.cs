@@ -302,6 +302,17 @@ namespace Mono.CSharp {
 
 		}
 
+		public static void Error_InvalidExpressionStatement (Location loc)
+		{
+			Report.Error (201, loc, "Only assignment, call, increment, decrement and new object " +
+				       "expressions can be used as a statement");
+		}
+		
+		public void Error_InvalidExpressionStatement ()
+		{
+			Error_InvalidExpressionStatement (loc);
+		}
+
 		protected void Error_CannotAssign (string to, string roContext)
 		{
 			Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
@@ -1157,8 +1168,7 @@ namespace Mono.CSharp {
 
 			ExpressionStatement es = e as ExpressionStatement;
 			if (es == null)
-				Error (201, "Only assignment, call, increment, decrement and new object " +
-				       "expressions can be used as a statement");
+				Error_InvalidExpressionStatement ();
 
 			return es;
 		}

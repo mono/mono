@@ -3938,7 +3938,7 @@ statement_expression
 		Expression expr = (Expression) $1;
 		ExpressionStatement s = expr as ExpressionStatement;
 		if (s == null) {
-			Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+			expr.Error_InvalidExpressionStatement ();
 			$$ = null;
 		}
 		$$ = new StatementExpression (s);
@@ -4773,7 +4773,7 @@ void Error_ExpectingTypeName (Expression expr)
 	if (expr is Invocation){
 		Report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+		expr.Error_InvalidExpressionStatement ();
 	}
 }
 

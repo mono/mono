@@ -5447,12 +5447,6 @@ namespace Mono.CSharp {
 			return invocation.Resolve (ec);
 		}
 
-		void error201 ()
-		{
-			Error (201, "Only assignment, call, increment, decrement and new object " +
-			       "expressions can be used as a statement");
-		}
-
 		public override ExpressionStatement ResolveStatement (EmitContext ec)
 		{
 			//
@@ -5460,7 +5454,7 @@ namespace Mono.CSharp {
 			//
 			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
 			if ((te != null) && (te.eclass == ExprClass.Type)) {
-				error201 ();
+				Error_InvalidExpressionStatement ();
 				return null;
 			}
 
@@ -5470,7 +5464,7 @@ namespace Mono.CSharp {
 			//
 			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
 			if ((expr == null) || (expr.eclass == ExprClass.Type)) {
-				error201 ();
+				Error_InvalidExpressionStatement ();
 				return null;
 			}
 

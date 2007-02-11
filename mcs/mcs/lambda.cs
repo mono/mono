@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 	public class LambdaExpression : AnonymousMethodExpression {
@@ -121,42 +122,87 @@ namespace Mono.CSharp {
 						invoke_pd.ParameterType (i),
 						parameters_copy [i].Location);
 			}
-			
-				
-			if (invoke_mb.ReturnType == TypeManager.void_type){
-				
-			}
-			
-			if (lambda_expr == null){
-			} else {
-			}
 
-#if false
 			//
-			// Second: the return type of the delegate must be compatible with 
+			// The return type of the delegate must be compatible with 
 			// the anonymous type.   Instead of doing a pass to examine the block
 			// we satisfy the rule by setting the return type on the EmitContext
 			// to be the delegate type return type.
 			//
 
-			//MethodBuilder builder = method_data.MethodBuilder;
-			//ILGenerator ig = builder.GetILGenerator ();
-
-			Report.Debug (64, "COMPATIBLE", this, Parent, GenericMethod, Host,
-				      Container, Block, invoke_mb.ReturnType, delegate_type,
-				      TypeManager.IsGenericType (delegate_type), loc);
-
 			anonymous = new AnonymousMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, parameters, Container, Block, invoke_mb.ReturnType,
+				GenericMethod, parameters_copy, Container, Block, invoke_mb.ReturnType,
 				delegate_type, loc);
 
 			if (!anonymous.Resolve (ec))
 				return null;
 
 			return anonymous.AnonymousDelegate;
-#endif
-			return null;
 		}
+	}
+
+	//
+	// This is a return statement that is prepended lambda expression bodies that happen
+	// to be expressions.  Depending on the return type of the delegate this will behave
+	// as either { expr (); return (); } or { return expr (); }
+	//
+	public class ContextualReturn : Statement {
+		public Expression Expr;
+		
+		public ContextualReturn (Expression e)
+		{
+			Expr = e;
+			loc = Expr.Location;
+		}
+
+		bool unwind_protect;
+
+		public override bool Resolve (EmitContext ec)
+		{
+			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			if ((am != null) && am.IsIterator && ec.InIterator) {
+				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
+					      "statement to return a value, or yield break to end the iteration");
+				return false;
+			}
+
+			Expr = Expr.Resolve (ec);
+			if (Expr == null)
+				return false;
+
+			if (ec.ReturnType == null){
+				if (!(Expr is ExpressionStatement)){
+					Expression.Error_InvalidExpressionStatement (Expr.Location);
+					return false;
+				}
+			} else {
+				if (Expr.Type != ec.ReturnType) {
+					Expr = Convert.ImplicitConversionRequired (
+						ec, Expr, ec.ReturnType, loc);
+					if (Expr == null)
+						return false;
+				}
+			}
+
+			int errors = Report.Errors;
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			if (unwind_protect)
+				ec.NeedReturnLabel ();
+			ec.CurrentBranching.CurrentUsageVector.Return ();
+			return errors == Report.Errors;
+		}
+		
+		protected override void DoEmit (EmitContext ec)
+		{
+			Expr.Emit (ec);
+
+			if (unwind_protect){
+				ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
+				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
+			} 
+			ec.ig.Emit (OpCodes.Ret);
+		}
+		
 	}
 }

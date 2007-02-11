@@ -1,5 +1,17 @@
 2007-02-11  Miguel de Icaza  <miguel@novell.com>
 
+	* lambda.cs (LambdaExpression.Compatible): Remove some early code,
+	now all the heavy lifting to check that embedded statements or
+	expressions have the right form is done in the ContextualReturn.
+
+	(ContextualReturn): New class.  
+
+	* ecore.cs (Error_InvalidExpressionStatement): Make a helper
+	method that can be invoked to report 201, so we do not replicate
+	this everywhere.
+
+	* cs-parser.jay: Reuse Error_InvalidExpressionStatement.
+	
 	* cs-tokenizer.cs (xtoken): Correctly compute the column, it was
 	treating tabs as spaces. 
 
