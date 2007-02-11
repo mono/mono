@@ -52,8 +52,8 @@ namespace System.Data.SqlTypes
 		private DateTime value;
 		private bool notNull;
 
-		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31,23,59,59, (double)997);
-		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
+		public static readonly SqlDateTime MaxValue;
+		public static readonly SqlDateTime MinValue;
 		public static readonly SqlDateTime Null;
 		public static readonly int SQLTicksPerHour = 1080000;
 		public static readonly int SQLTicksPerMinute = 18000;
@@ -62,6 +62,17 @@ namespace System.Data.SqlTypes
 		#endregion
 
 		#region Constructors
+
+		static SqlDateTime ()
+		{
+			DateTime t = new DateTime (9999, 12, 31, 23, 59, 59);
+			long ticks = (long) (t.Ticks + (997 * 10000));
+			MaxValue.value = new DateTime (ticks);
+			MaxValue.notNull = true;
+
+			MinValue.value = new DateTime (1753, 1, 1);
+			MinValue.notNull = true;
+		}
 
 		public SqlDateTime (DateTime value) 
 		{
