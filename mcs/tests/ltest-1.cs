@@ -1,3 +1,4 @@
+// Compiler options: -langversion:linq
 //
 // Lambda expression test, basics.
 //
