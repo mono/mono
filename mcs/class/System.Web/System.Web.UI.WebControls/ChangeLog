@@ -1,3 +1,7 @@
+2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseValidator.cs: implemented SetFocusOnError feature.
+
 2007-02-11 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Wizard.cs: refactoring:

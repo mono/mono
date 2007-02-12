@@ -223,6 +223,9 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 				if (ValidationGroup != String.Empty)
 					writer.AddAttribute ("validationgroup", ValidationGroup);
+
+				if (SetFocusOnError)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "focusOnError", "t");
 #endif
 				if (!Enabled)
 					writer.AddAttribute ("enabled", "false");

@@ -193,7 +193,8 @@ function Page_ClientValidate(group)
 			vs.innerHTML = "";
 		}
 	}
-
+	
+	var invalidControlHasBeenFocused = false;
 	for (var v = 0; v < Page_Validators.length; v++) {
 		var vo = Page_Validators [v];
 		var evalfunc = this[vo.getAttribute ("evaluationfunction")];
@@ -207,9 +208,13 @@ function Page_ClientValidate(group)
 			result = evalfunc (vo);
 		}
 
-		if (!result)
+		if (!result) {
 			validation_result = false;
-
+			if (!invalidControlHasBeenFocused && typeof(vo.focusOnError) == "string" && vo.focusOnError == "t") {
+				invalidControlHasBeenFocused = ValidatorSetFocus(vo);
+			}
+		}
+		
 		vo.setAttribute("isvalid", result ? "true" : "false");
 	}
     ValidationSummaryOnSubmit(group);
@@ -222,6 +227,40 @@ function IsValidationGroupMatch(vo, group) {
         return (valGroup == "");
     }
     return (valGroup == group);
+}
+
+function ValidatorSetFocus(val) {
+    var ctrl = document.getElementById(val.getAttribute ("controltovalidate"));
+	if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
+		((ctrl.tagName.toLowerCase() != "input") || (ctrl.type.toLowerCase() != "hidden")) &&
+		(typeof(ctrl.disabled) == "undefined" || ctrl.disabled == null || ctrl.disabled == false) &&
+		(typeof(ctrl.visible) == "undefined" || ctrl.visible == null || ctrl.visible != false) &&
+		(IsInVisibleContainer(ctrl))) {
+		if (ctrl.tagName.toLowerCase() == "table") {
+			var inputElements = ctrl.getElementsByTagName("input");
+			var lastInputElement  = inputElements[inputElements.length -1];
+			if (lastInputElement != null) {
+				ctrl = lastInputElement;
+			}
+		}
+		if (typeof(ctrl.focus) != "undefined" && ctrl.focus != null) {
+			ctrl.focus();
+			return true;
+		}
+    }
+    return false;
+}
+
+function IsInVisibleContainer(ctrl) {
+	if (typeof(ctrl.style) != "undefined" && 
+		((typeof(ctrl.style.display) != "undefined" &&	ctrl.style.display == "none") ||
+		(typeof(ctrl.style.visibility) != "undefined" && ctrl.style.visibility == "hidden"))) {
+		return false;
+	}
+	else if (typeof(ctrl.parentNode) != "undefined" && ctrl.parentNode != null && ctrl.parentNode != ctrl) {
+		return IsInVisibleContainer(ctrl.parentNode);
+	}
+	return true;
 }
 
 /*******************/
