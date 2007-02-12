@@ -2784,11 +2784,13 @@ namespace Mono.CSharp {
 		void DefineFieldInitializers ()
 		{
 			if (initialized_fields != null) {
-				EmitContext ec = new EmitContext (this, this, Location, null, null, ModFlags);
-				ec.IsFieldInitializer = true;
-
 				for (int i = 0; i < initialized_fields.Count; ++i) {
 					FieldInitializer fi = (FieldInitializer)initialized_fields[i];
+
+					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
+						Location, null, null, ModFlags);
+					ec.IsFieldInitializer = true;
+
 					fi.ResolveStatement (ec);
 					if (fi.IsDefaultInitializer && RootContext.Optimize) {
 						// Field is re-initialized to its default value => removed
@@ -2800,11 +2802,13 @@ namespace Mono.CSharp {
 
 			if (initialized_static_fields != null) {
 				bool has_complex_initializer = false;
-				EmitContext ec = new EmitContext (this, this, Location, null, null, ModFlags);
-				ec.IsStatic = true;
-				ec.IsFieldInitializer = true;
 
 				foreach (FieldInitializer fi in initialized_static_fields) {
+					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
+						Location, null, null, ModFlags);
+					ec.IsStatic = true;
+					ec.IsFieldInitializer = true;
+
 					fi.ResolveStatement (ec);
 					if (!fi.IsComplexInitializer)
 						continue;
@@ -6041,7 +6045,7 @@ namespace Mono.CSharp {
 
 			if (initializer != null)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, initializer));
+					new FieldInitializer (FieldBuilder, initializer, Parent));
 
 			return true;
 		}
@@ -7218,7 +7222,7 @@ namespace Mono.CSharp {
 				}
 
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, Initializer));
+					new FieldInitializer (FieldBuilder, Initializer, Parent));
 			}
 
 			return true;

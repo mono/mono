@@ -1,3 +1,12 @@
+2007-02-12  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80749
+	* assign.cs (FieldInitializer): FieldInitializer has to keep track of
+	its parent container.
+
+	* class.cs (DefineFieldInitializers): Each initializer can has different
+	resolve context.
+
 2007-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* lambda.cs (LambdaExpression.Compatible): Remove some early code,
