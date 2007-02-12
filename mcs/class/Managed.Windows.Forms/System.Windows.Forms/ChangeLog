@@ -1,3 +1,17 @@
+2007-02-12  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs:
+	* TextBox.cs: By default we have a non multiline document
+	- use the multiline property instead of the internal variable
+	* TextBoxBase.cs: Treat multiline and non multiline the same in
+	most places.
+	- Use the documents multiline flag instead of tracking it ourself
+	* TextControl.cs: Attempt at getting multiline to match MS
+	behavior.  Lines now track an offset, which is either their X or Y
+	offset depending on whether or not we are in multiline mode.
+	- Update all the methods to understand that lines have an X value.
+	- Fix crash in Undo::Duplicate when empty lines are deleted.
+
 2007-02-12  Everaldo Canuto  <everaldo@simios.org>
 
 	* Label.cs: CalcPreferredHeight and CalcPreferredWidth methods removed and 

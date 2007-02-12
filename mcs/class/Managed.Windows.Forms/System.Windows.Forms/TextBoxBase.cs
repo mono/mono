@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 		internal bool			hide_selection;
 		internal int			max_length;
 		internal bool			modified;
-		internal bool			multiline;
 		internal char			password_char;
 		internal bool			read_only;
 		internal bool			word_wrap;
@@ -93,7 +92,6 @@ namespace System.Windows.Forms {
 			hide_selection = true;
 			max_length = 32767;
 			modified = true;
-			multiline = false;
 			password_char = '\0';
 			read_only = false;
 			word_wrap = true;
@@ -418,14 +416,14 @@ namespace System.Windows.Forms {
 		[MWFCategory("Behavior")]
 		public virtual bool Multiline {
 			get {
-				return multiline;
+				return document.multiline;
 			}
 
 			set {
-				if (value != multiline) {
-					multiline = value;
+				if (value != document.multiline) {
+					document.multiline = value;
 					// Make sure we update our size; the user may have already set the size before going to multiline
-					if (multiline && requested_height != -1) {
+					if (document.multiline && requested_height != -1) {
 						Height = requested_height;
 						requested_height = -1;
 					}
@@ -436,9 +434,7 @@ namespace System.Windows.Forms {
 					OnMultilineChanged(EventArgs.Empty);
 				}
 
-				document.multiline = multiline;
-
-				if (multiline) {
+				if (document.multiline) {
 					document.Wrap = word_wrap;
 					document.PasswordChar = "";
 
@@ -607,21 +603,7 @@ namespace System.Windows.Forms {
 				if (document == null || document.Root == null || document.Root.text == null) {
 					return 0;
 				}
-
-				if (!multiline) {
-					return document.Root.text.Length;
-				} else {
-					int	total;
-					int	i;
-
-					total = 0;
-					for (i = 1; i < document.Lines; i++) {
-						total += document.GetLine(i).text.Length + Environment.NewLine.Length;
-					}
-					total += document.GetLine(i).text.Length;
-
-					return total;
-				}
+				return Text.Length;
 			}
 		}
 
@@ -635,7 +617,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != word_wrap) {
-					if (multiline) {
+					if (document.multiline) {
 						word_wrap = value;
 						document.Wrap = value;
 					}
@@ -660,19 +642,9 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void AppendText(string text) {
-			//if (multiline) {
-
-				document.MoveCaret(CaretDirection.CtrlEnd);				
-				document.Insert (document.caret.line, /* document.caret.tag, */ document.caret.pos, false, text);
-				//	CalculateDocument();
-				//} else {
-				//	document.MoveCaret(CaretDirection.CtrlEnd);
-				//	document.InsertStringAtCaret(text, true);
-
-				//	Invalidate();
-				// }
-
-			document.MoveCaret(CaretDirection.CtrlEnd);
+			document.MoveCaret (CaretDirection.CtrlEnd);				
+			document.Insert (document.caret.line, document.caret.pos, false, text);
+			document.MoveCaret (CaretDirection.CtrlEnd);
 			document.SetSelectionToCaret (true);
 
 			OnTextChanged(EventArgs.Empty);
@@ -759,14 +731,14 @@ namespace System.Windows.Forms {
 
 			switch (keyData & Keys.KeyCode) {
 				case Keys.Enter: {
-					if (multiline && accepts_return) {
+					if (accepts_return) {
 						return true;
 					}
 					return false;
 				}
 
 				case Keys.Tab: {
-					if (accepts_tab && multiline) {
+					if (accepts_tab && document.multiline) {
 						if ((keyData & Keys.Control) == 0) {
 							return true;
 						}
@@ -810,7 +782,7 @@ namespace System.Windows.Forms {
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
 
-			if (auto_size && !multiline) {
+			if (auto_size && !document.multiline) {
 				if (PreferredHeight != ClientSize.Height) {
 					Height = PreferredHeight;
 				}
@@ -1019,7 +991,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Enter: {
 					// ignoring accepts_return, fixes bug #76355
-					if (!read_only && multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
+					if (!read_only && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
 						Line	line;
 
 						if (document.selection_visible) {
@@ -1028,7 +1000,8 @@ namespace System.Windows.Forms {
 
 						line = document.CaretLine;
 
-						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition, false);
+						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition, line.soft_break);
+						line.soft_break = false;
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
 
@@ -1039,7 +1012,7 @@ namespace System.Windows.Forms {
 				}
 
 				case Keys.Tab: {
-					if (!read_only && accepts_tab && multiline) {
+					if (!read_only && accepts_tab && document.multiline) {
 						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 						if (document.selection_visible) {
 							document.ReplaceSelection("", false);
@@ -1217,7 +1190,7 @@ namespace System.Windows.Forms {
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Make sure we don't get sized bigger than we want to be
 			if (!richtext) {
-				if (!multiline) {
+				if (!document.multiline) {
 					if (height != PreferredHeight) {
 						requested_height = height;
 						height = PreferredHeight;
@@ -1670,7 +1643,7 @@ namespace System.Windows.Forms {
 		internal void CalculateScrollBars () {
 			// FIXME - need separate calculations for center and right alignment
 
-			if (!multiline) {
+			if (!document.multiline) {
 				PositionControls ();
 				return;
 			}
@@ -1913,7 +1886,7 @@ namespace System.Windows.Forms {
 				// FIXME - implement center cursor alignment
 			}
 
-			if (!multiline) {
+			if (!document.multiline) {
 				return;
 			}
 

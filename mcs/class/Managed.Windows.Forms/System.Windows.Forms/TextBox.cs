@@ -85,6 +85,8 @@ namespace System.Windows.Forms {
 			paste.Click += new EventHandler(paste_Click);
 			delete.Click += new EventHandler(delete_Click);
 			select_all.Click += new EventHandler(select_all_Click);
+
+			document.multiline = false;
 		}
 		#endregion	// Public Constructors
 
@@ -221,7 +223,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != password_char) {
 					password_char = value;
-					if (!multiline) {
+					if (!Multiline) {
 						document.PasswordChar = value.ToString();
 					} else {
 						document.PasswordChar = "";
@@ -282,7 +284,7 @@ namespace System.Windows.Forms {
 					alignment = value;
 
 					// MS word-wraps if alignment isn't left
-					if (multiline) {
+					if (Multiline) {
 						if (alignment != HorizontalAlignment.Left) {
 							document.Wrap = true;
 						} else {

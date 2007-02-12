@@ -232,7 +232,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(true)]
 		public override bool Multiline {
 			get {
-				return multiline;
+				return base.Multiline;
 			}
 
 			set {
@@ -951,7 +951,7 @@ namespace System.Windows.Forms {
 				case RichTextBoxStreamType.PlainText: 
 				case RichTextBoxStreamType.TextTextOleObjs: 
 				case RichTextBoxStreamType.UnicodePlainText: {
-					if (!multiline) {
+					if (!Multiline) {
 						bytes = encoding.GetBytes(document.Root.text.ToString());
 						data.Write(bytes, 0, bytes.Length);
 						return;
