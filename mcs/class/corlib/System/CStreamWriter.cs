@@ -50,8 +50,22 @@ namespace System.IO {
 			if (count <= 0)
 				return;
 
-			for (int i = 0; i < count; i++) {
-				Write (buffer [index + i]);
+			if (driver.Initialized){
+				lock (this){
+					for (int i = 0; i < count; i++) {
+						try {
+							char val = buffer [index + i];
+							if (driver.NotifyWrite (val))
+								InternalWriteChar (val);
+						} catch (IOException){
+						}
+					}
+				}
+			} else {
+				try {
+					base.Write (buffer, index, count);
+				} catch (IOException){
+				}
 			}
 		}
 
@@ -98,8 +112,18 @@ namespace System.IO {
 
 		public override void Write (string val)
 		{
-			if (val != null)
+			if (val == null)
+				return;
+			
+			if (driver.Initialized)
 				Write (val.ToCharArray ());
+			else {
+				try {
+					base.Write (val);
+				} catch (IOException){
+					
+				}
+			}
 		}
 	}
 }
