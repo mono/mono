@@ -1,5 +1,9 @@
 2007-02-12  Marek Safar  <marek.safar@gmail.com>
 
+	* delegate.cs: Delegate creation expression cannot be of Nullable type.
+
+2007-02-12  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #80749
 	* assign.cs (FieldInitializer): FieldInitializer has to keep track of
 	its parent container.

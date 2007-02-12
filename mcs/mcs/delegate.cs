@@ -844,8 +844,15 @@ namespace Mono.CSharp {
 				return ((AnonymousMethodExpression) e).Compatible (ec, type);
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
-			if (mg != null)
+			if (mg != null) {
+				if (TypeManager.IsNullableType (mg.DeclaringType)) {
+					Report.Error (1728, loc, "Cannot use method `{0}' as delegate creation expression because it is member of Nullable type",
+						mg.GetSignatureForError ());
+					return null;
+				}
+
 				return ResolveMethodGroupExpr (ec, mg);
+			}
 
 			if (!TypeManager.IsDelegateType (e.Type)) {
 				Report.Error (149, loc, "Method name expected");
@@ -871,7 +878,7 @@ namespace Mono.CSharp {
 				
 			delegate_instance_expression = e;
 			delegate_method = method_group.Methods [0];
-			
+
 			eclass = ExprClass.Value;
 			return this;
 		}
