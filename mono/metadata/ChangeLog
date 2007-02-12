@@ -1,3 +1,8 @@
+
+Mon Feb 12 21:10:07 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: implemented typedef parent in field memberref.
+
 2007-02-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Fix warnings and remember to call Release on
