@@ -21,6 +21,7 @@ namespace System.Transactions
 	[Serializable]
 	public class Transaction : IDisposable, ISerializable
 	{
+		[ThreadStatic]
 		static Transaction ambient;
 
 		IsolationLevel level;
