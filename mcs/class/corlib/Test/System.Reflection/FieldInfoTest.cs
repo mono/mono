@@ -151,14 +151,38 @@ public class FieldInfoTest : Assertion
 		fi2.SetValue (t, null);
 		AssertEquals (null, fi2.GetValue (t));
 	}
+	
+	[Test]
+	public void NonPublicTests ()
+	{		
+		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+		
+		Type t = assembly.GetType (typeof (NonPublicFieldClass).FullName);
+
+		// try to get non-public field
+		FieldInfo fi = t.GetField ("protectedField");
+		AssertNull (fi);
+		// get it for real
+		fi = t.GetField ("protectedField", BindingFlags.NonPublic | BindingFlags.Instance);
+		AssertNotNull (fi);		
+		// get via typebuilder		
+		FieldInfo f = TypeBuilder.GetField (t, fi);
+		AssertNotNull (f);	
+	}
+	
 #endif
 }		
 #if NET_2_0
-// Helper class
+// Helper classes
 class RefOnlyFieldClass 
 {
 	// Helper property
 	static int RefOnlyField;
+}
+
+class NonPublicFieldClass
+{
+	protected int protectedField;
 }
 #endif
 }

@@ -1,3 +1,9 @@
+
+Mon Feb 12 21:54:57 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: patch from Cedric Vivier <cedricv@neonux.com> to
+	get correctly non-public fields from generic types.
+
 2007-02-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Add IUnknown field to object. Cleanup icalls.

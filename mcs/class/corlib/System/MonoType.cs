@@ -239,7 +239,10 @@ namespace System
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
-			return GetField (fromNoninstanciated.Name);
+			/* create sensible flags from given FieldInfo */
+			BindingFlags flags = fromNoninstanciated.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
+			flags |= fromNoninstanciated.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
+			return GetField (fromNoninstanciated.Name, flags);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
