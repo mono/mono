@@ -164,7 +164,10 @@ namespace System.Web {
 
 				capacity += PreferredLength;
 				capacity = (capacity / PreferredLength) * PreferredLength;
-				data = (byte *) Marshal.ReAllocHGlobal ((IntPtr) data, (IntPtr) capacity);
+
+				data = data == null
+					? (byte *) Marshal.AllocHGlobal (capacity)
+					: (byte *) Marshal.ReAllocHGlobal ((IntPtr) data, (IntPtr) capacity);
 				block_size = capacity;
 			}
 
