@@ -138,6 +138,8 @@ namespace System.Web.Compilation
 					throw new ApplicationException ("An error occurred while compiling global resources.");
 				throw new CompilationException (null, results.Errors, null);
 			}
+			HttpRuntime.WritePreservationFile (results.CompiledAssembly, "App_GlobalResources");
+			HttpRuntime.EnableAssemblyMapping (true);
 		}
 
 		void CompileLocal ()

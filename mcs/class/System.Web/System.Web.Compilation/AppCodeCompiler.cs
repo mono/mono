@@ -575,7 +575,8 @@ namespace System.Web.Compilation
 
 			if (!haveCode)
 				return;
-			
+
+			HttpRuntime.EnableAssemblyMapping (true);
 			string bindir = BinDir;
 			string[] binAssemblies = null;
 			if (Directory.Exists (bindir))

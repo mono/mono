@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Web.Caching;
@@ -56,7 +57,7 @@ namespace System.Web {
 		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
 		static Cache cache { get { return _runtime._cache; } }
 		static WaitCallback do_RealProcessRequest;
-
+		
 		QueueManager _queue_manager;
 		TraceManager _trace_manager;
 		Cache _cache;
@@ -95,6 +96,11 @@ namespace System.Web {
 		static Cache cache;
 		static WaitCallback do_RealProcessRequest;
 
+#if NET_2_0
+		static bool assemblyMappingEnabled;
+		static object assemblyMappingLock = new object ();
+#endif
+		
 		static HttpRuntime ()
 		{
 #if NET_2_0
@@ -396,6 +402,73 @@ namespace System.Web {
 			wr.CloseConnection ();
 		}
 
+#if NET_2_0
+		static internal void WritePreservationFile (Assembly asm, string genericNameBase)
+		{
+			if (asm == null)
+				throw new ArgumentNullException ("asm");
+			if (String.IsNullOrEmpty (genericNameBase))
+				throw new ArgumentNullException ("genericNameBase");
+
+			string compiled = Path.Combine (AppDomain.CurrentDomain.SetupInformation.DynamicBase,
+							genericNameBase + ".compiled");
+			PreservationFile pf = new PreservationFile ();
+			try {
+				pf.VirtualPath = String.Format ("/{0}/", genericNameBase);
+
+				AssemblyName an = asm.GetName ();
+				pf.Assembly = an.Name;
+				pf.ResultType = BuildResultTypeCode.TopLevelAssembly;
+				pf.Save (compiled);
+			} catch (Exception ex) {
+				throw new HttpException (
+					String.Format ("Failed to write preservation file {0}", genericNameBase + ".compiled"),
+					ex);
+			}
+		}
+		
+		static Assembly ResolveAssemblyHandler(object sender, ResolveEventArgs e)
+		{
+			AssemblyName an = new AssemblyName (e.Name);
+			string dynamic_base = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+			string compiled = Path.Combine (dynamic_base, an.Name + ".compiled");
+
+			if (!File.Exists (compiled))
+				return null;
+
+			PreservationFile pf;
+			try {
+				pf = new PreservationFile (compiled);
+			} catch (Exception ex) {
+				throw new HttpException (
+					String.Format ("Failed to read preservation file {0}", an.Name + ".compiled"),
+					ex);
+			}
+			
+			Assembly ret = null;
+			try {
+				string asmPath = Path.Combine (dynamic_base, pf.Assembly + ".dll");
+				ret = Assembly.LoadFrom (asmPath);
+			} catch (Exception) {
+				// ignore
+			}
+			
+			return ret;
+		}
+		
+		internal static void EnableAssemblyMapping (bool enable)
+		{
+			lock (assemblyMappingLock) {
+				if (assemblyMappingEnabled == enable)
+					return;
+				if (enable)
+					AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (ResolveAssemblyHandler);
+				else
+					AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
+			}
+		}
+#endif
+		
 		internal static TraceManager TraceManager {
 			get {
 				return trace_manager;

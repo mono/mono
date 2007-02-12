@@ -1,3 +1,13 @@
+2007-02-12  Marek Habersack  <grendello@gmail.com>
+
+	* PreservationFile.cs: Support preservation (assembly mapping)
+	files (the ones with .compiled extension in the ASP.NET temporary
+	directory). This one implements a loader/saver class.
+
+	* AppResourcesCompiler.cs: support for assembly name mapping.
+
+	* AppCodeCompiler.cs: support for assembly name mapping.
+
 2007-02-08  Marek Habersack  <grendello@gmail.com>
 
 	* TemplateControlCompiler.cs: Fix TemplateSourceDirectory.
