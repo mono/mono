@@ -1,5 +1,9 @@
 2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* RepeaterItem.cs: implemented IDataItemContainer interface.
+
+2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeNodeStyle.cs: fixed public API.
 
 2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
