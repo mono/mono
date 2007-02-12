@@ -50,8 +50,6 @@ namespace System.Windows.Forms
 		private Image image;
 		private bool render_transparent;
 		private FlatStyle flat_style;
-		private int preferred_height;
-		private int preferred_width;
 		private bool use_mnemonic;
 		private int image_index = -1;
 		private ImageList image_list;
@@ -135,9 +133,6 @@ namespace System.Windows.Forms
 			image_align = ContentAlignment.MiddleCenter;
 			SetUseMnemonic (UseMnemonic);
 			flat_style = FlatStyle.Standard;
-
-			CalcPreferredHeight ();
-			CalcPreferredWidth ();
 
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.ResizeRedraw | 
@@ -336,14 +331,33 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-			get { return preferred_height; }
+			get { 
+				int preferred_height = Font.Height;
+
+#if NET_2_0
+				if (!use_compatible_text_rendering)
+					return preferred_height;
+#endif
+
+				if (border_style == BorderStyle.None)
+					return preferred_height + 3;
+					
+				return preferred_height + 6;
+			}
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-			get {return preferred_width; }
+			get {
+				if (Text == string.Empty)
+					return 0;
+
+				SizeF size;
+				size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
+				return (int) size.Width + 3;
+			}
 		}
 
 #if NET_2_0
@@ -520,11 +534,8 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			if (autosize) {
+			if (autosize)
 				CalcAutoSize();
-			} else {
-				CalcPreferredHeight ();
-			}
 			Refresh ();
 		}
 
@@ -550,11 +561,8 @@ namespace System.Windows.Forms
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);			
-			if (autosize) {
+			if (autosize)
 				CalcAutoSize ();
-			} else {
-				CalcPreferredWidth ();
-			}
 			Refresh ();
 		}
 
@@ -608,45 +616,8 @@ namespace System.Windows.Forms
 			if (IsHandleCreated == false || AutoSize == false)
 				return;
 
-			CalcPreferredWidth ();
-			CalcPreferredHeight ();
-
 		 	Width =  PreferredWidth;
 		 	Height =  PreferredHeight;			 	
-		}
-
-		private void CalcPreferredHeight ()
-		{
-			preferred_height = Font.Height;
-
-#if NET_2_0
-			if (!use_compatible_text_rendering)
-				return; 
-#endif
-
-			switch (border_style) {
-			case BorderStyle.None:
-				preferred_height += 3;
-				break;
-			case BorderStyle.FixedSingle:
-			case BorderStyle.Fixed3D:
-				preferred_height += 6;
-				break;
-			default:
-				break;
-			}
-		}
-
-		private void CalcPreferredWidth ()
-		{
-			if (Text == string.Empty) {
-				preferred_width = 0;
-			}
-			else {
-				SizeF size;
-				size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
-				preferred_width = (int) size.Width + 3;
-			}
 		}
 
 		private void OnHandleCreatedLB (Object o, EventArgs e)
