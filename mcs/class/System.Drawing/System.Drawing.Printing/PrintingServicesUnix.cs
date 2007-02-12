@@ -362,26 +362,31 @@ namespace System.Drawing.Printing
 		/// returns the first one. See #80519, #80198
 		/// </summary>
 		/// <returns></returns>
-		private string GetAlternativeDefaultPrinter() {
-			IntPtr printers = IntPtr.Zero;
+		private string GetAlternativeDefaultPrinter () {
+			IntPtr dests = IntPtr.Zero, printers;
 			CUPS_DESTS printer;
 			string printer_name = String.Empty;
 
-			int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
+			try {
+				int cups_dests_size = Marshal.SizeOf (typeof (CUPS_DESTS));
 
-			int printer_count = cupsGetDests (ref printers);
+				int printer_count = cupsGetDests (ref dests);
+				printers = dests;
+				for (int i = 0; i < printer_count; i++) {
+					printer = (CUPS_DESTS) Marshal.PtrToStructure (printers, typeof (CUPS_DESTS));
 
-			for (int i = 0; i < printer_count; i++) {
-				printer = (CUPS_DESTS) Marshal.PtrToStructure (printers, typeof (CUPS_DESTS));
-
-				if (printer.is_default != 0 || printer_name.Equals(String.Empty)) {
-					printer_name = Marshal.PtrToStringAnsi (printer.name);
-					if (printer.is_default != 0)
-						break;
+					if (printer.is_default != 0 || printer_name.Equals (String.Empty)) {
+						printer_name = Marshal.PtrToStringAnsi (printer.name);
+						if (printer.is_default != 0)
+							break;
+					}
+					printers = (IntPtr) ((long)printers + cups_dests_size);
 				}
-				printers = new IntPtr (printers.ToInt64 () + cups_dests_size);
 			}
-			Marshal.FreeHGlobal (printers);
+			finally {
+				if (dests != IntPtr.Zero)
+					Marshal.FreeHGlobal (dests);
+			}
 
 			return printer_name;
 		}
