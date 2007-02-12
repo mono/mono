@@ -752,6 +752,11 @@ namespace System.Web.UI.WebControls {
 		{
 			DayRenderEventHandler eh = (DayRenderEventHandler) (Events [DayRenderEvent]);
 			if (eh != null)
+#if NET_2_0
+				if (Page != null)
+					eh (this, new DayRenderEventArgs (cell, day, Page.ClientScript.GetPostBackClientHyperlink (this, GetDaysFromZenith (day.Date).ToString (), true)));
+				else
+#endif
 				eh (this, new DayRenderEventArgs (cell, day));
 		}
 
@@ -1091,11 +1096,12 @@ namespace System.Web.UI.WebControls {
 			hasLink = (Page != null && hasLink == true) ? true : false;
 
 			if (hasLink) {
-#if NET_2_0
-				Page.ClientScript.RegisterForEventValidation(this.UniqueID, arg);
-#endif			
 				str = "<a href=\"";
+#if NET_2_0
+				str += Page.ClientScript.GetPostBackClientHyperlink (this, arg, true);
+#else
 				str += Page.ClientScript.GetPostBackClientHyperlink (this, arg);
+#endif			
 				str += "\"";
 			
 

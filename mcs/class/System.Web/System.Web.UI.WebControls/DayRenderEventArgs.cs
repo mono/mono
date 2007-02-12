@@ -31,12 +31,23 @@ namespace System.Web.UI.WebControls {
 	{
 		TableCell cell;
 		CalendarDay day;
-		
+#if NET_2_0
+		string _selectUrl;
+#endif
+
 		public DayRenderEventArgs (TableCell cell, CalendarDay day)
 		{
 			this.cell = cell;
 			this.day = day;
 		}
+
+#if NET_2_0
+		public DayRenderEventArgs (TableCell cell, CalendarDay day, string selectUrl)
+			: this (cell, day)
+		{
+			_selectUrl = selectUrl;
+		}
+#endif
 
 		public TableCell Cell {
 			get { return cell; }
@@ -45,5 +56,11 @@ namespace System.Web.UI.WebControls {
 		public CalendarDay Day {
 			get { return day; }
 		}
+
+#if NET_2_0
+		public string SelectUrl {
+			get { return _selectUrl; }
+		}
+#endif
 	}
 }
