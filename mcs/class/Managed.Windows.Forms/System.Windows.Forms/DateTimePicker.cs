@@ -1063,6 +1063,8 @@ namespace System.Windows.Forms {
 
 		// returns the format of the date as a string 
 		// (i.e. resolves the Format enum values to it's corresponding string format)
+		// Why CurrentCulture and not CurrentUICulture is explained here:
+		// http://blogs.msdn.com/michkap/archive/2007/01/11/1449754.aspx
 		private string GetExactFormat()
 		{
 			switch (this.format) {
