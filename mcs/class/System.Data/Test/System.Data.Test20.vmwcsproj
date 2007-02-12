@@ -112,7 +112,7 @@
 		<Compile Include="System.Data.SqlTypes\SqlInt64Test.cs" />
 		<Compile Include="System.Data.SqlTypes\SqlMoneyTest.cs" />
 		<Compile Include="System.Data.SqlTypes\SqlSingleTest.cs" />
-		<Compile Include="System.Data.SqlTypes\SqlStringTest.cs" /
+		<Compile Include="System.Data.SqlTypes\SqlStringTest.cs" />
 		<Compile Include="System.Data.Test.Utils\DataProvider.cs"/>
 		<Compile Include="System.Data\ConstraintCollectionTest.cs"/>
 		<Compile Include="System.Data\ConstraintCollectionTest2.cs"/>
