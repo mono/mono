@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Data.OracleClient.Tests20.J2EE", "System.Data.OracleClient.Tests20.J2EE.vmwcsproj", "{DC2FDC0D-C2C3-4B2B-84F0-6655BD3D1E61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.OracleClient.Tests20.J2EE", "System.Data.OracleClient.Tests20.J2EE.csproj", "{DC2FDC0D-C2C3-4B2B-84F0-6655BD3D1E61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Data.OracleClient20", "System.Data.OracleClient20.vmwcsproj", "{71F3DF41-7E2F-41FB-B470-110851F2E758}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.OracleClient20", "System.Data.OracleClient20.csproj", "{71F3DF41-7E2F-41FB-B470-110851F2E758}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Data20", "..\System.Data\System.Data20.vmwcsproj", "{BD83C476-AEC7-4535-8158-977B04887AF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data20", "..\System.Data\System.Data20.csproj", "{BD83C476-AEC7-4535-8158-977B04887AF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
