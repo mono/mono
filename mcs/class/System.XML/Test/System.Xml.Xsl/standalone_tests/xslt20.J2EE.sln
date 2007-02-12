@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "xslt20.J2EE", "xslt20.J2EE.vmwcsproj", "{52564015-7939-46EF-B930-BB017FB6D26A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xslt20.J2EE", "xslt20.J2EE.csproj", "{52564015-7939-46EF-B930-BB017FB6D26A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

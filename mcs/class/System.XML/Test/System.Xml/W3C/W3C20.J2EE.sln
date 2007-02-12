@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "W3C20.J2EE", "W3C20.J2EE.vmwcsproj", "{4A29F8EF-255A-444D-BAB9-3AB3A2CD72AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3C20.J2EE", "W3C20.J2EE.csproj", "{4A29F8EF-255A-444D-BAB9-3AB3A2CD72AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
