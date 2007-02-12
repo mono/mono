@@ -1,3 +1,8 @@
+2007-02-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ChannelServices.cs: Added conditional calling of StartListener,
+	  to keep old software compatible with mono.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ChannelServices.cs: Don't call StartListening for registered
