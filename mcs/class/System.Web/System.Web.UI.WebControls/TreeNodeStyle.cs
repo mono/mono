@@ -54,6 +54,16 @@ namespace System.Web.UI.WebControls
 			VerticalPadding = 0x00100000,
 		}
 		
+		public TreeNodeStyle ()
+			: base ()
+		{
+		}
+
+		public TreeNodeStyle (StateBag bag)
+			: base (bag)
+		{
+		}
+
 		[DefaultValue ("")]
 		[UrlProperty]
 		[NotifyParentProperty (true)]
