@@ -181,13 +181,16 @@ namespace Mono.Security {
 			string t = Encoding.ASCII.GetString (time.Value);
 			// to support both UTCTime and GeneralizedTime (and not so common format)
 			string mask = null;
+			int year;
+			bool utc = true;
 			switch (t.Length) {
 				case 11:
-					mask = "yyMMddHHmmZ"; // illegal I think ... must check
+					// illegal format, still it's supported for compatibility
+					mask = "yyMMddHHmmZ";
 					break;
 				case 13: 
 					// RFC3280: 4.1.2.5.1  UTCTime
-					int year = Convert.ToInt16 (t.Substring (0, 2), CultureInfo.InvariantCulture);
+					year = Convert.ToInt16 (t.Substring (0, 2), CultureInfo.InvariantCulture);
 					// Where YY is greater than or equal to 50, the 
 					// year SHALL be interpreted as 19YY; and 
 					// Where YY is less than 50, the year SHALL be 
@@ -201,11 +204,25 @@ namespace Mono.Security {
 				case 15:
 					mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
 					break;
+				case 17:
+					// another illegal format (990630000000+1000), again supported for compatibility
+					year = Convert.ToInt16 (t.Substring (0, 2), CultureInfo.InvariantCulture);
+					string century = (year >= 50) ? "19" : "20";
+					// ASN.1 (see ITU X.680 section 43.3) deals with offset differently than .NET
+					char sign = (t[12] == '+') ? '-' : '+';
+					t = String.Format ("{0}{1}{2}{3}{4}:{5}{6}", century, t.Substring (0, 12), sign, 
+						t[13], t[14], t[15], t[16]);
+					mask = "yyyyMMddHHmmsszzz";
+					utc = false;
+					break;
 			}
 #if NET_2_0
 			return DateTime.ParseExact (t, mask, null, DateTimeStyles.AdjustToUniversal);
 #else
-			return DateTime.ParseExact (t, mask, null);
+			DateTime result = DateTime.ParseExact (t, mask, null);
+			if (utc)
+				return result;
+			return result.ToUniversalTime ();
 #endif
 		}
 	}

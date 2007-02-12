@@ -1,3 +1,8 @@
+2007-02-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Add support for decoding ASN.1 dates with an UTC 
+	offset (e.g. 990630000000+1000) as some certificates use this format.
+
 2007-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: Added comment to FromDateTime to specify that, under
