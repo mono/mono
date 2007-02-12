@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Runtime.Remoting_2_0", "System.Runtime.Remoting_2_0.vmwcsproj", "{C4523363-42B4-486B-9422-B52B7D4CA3CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Runtime.Remoting_2_0", "System.Runtime.Remoting_2_0.csproj", "{C4523363-42B4-486B-9422-B52B7D4CA3CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
