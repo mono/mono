@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Runtime.Serialization.Formatters.Soap20", "System.Runtime.Serialization.Formatters.Soap20.vmwcsproj", "{3D1A5F49-3717-4D6B-BD34-10F30CB6DC4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Runtime.Serialization.Formatters.Soap20", "System.Runtime.Serialization.Formatters.Soap20.csproj", "{3D1A5F49-3717-4D6B-BD34-10F30CB6DC4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
