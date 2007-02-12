@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.DirectoryServices.Test20", "System.DirectoryServices.Test20.vmwcsproj", "{4CBF37B7-AFCF-4805-81A4-610282C6D9A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.DirectoryServices.Test20", "System.DirectoryServices.Test20.csproj", "{4CBF37B7-AFCF-4805-81A4-610282C6D9A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

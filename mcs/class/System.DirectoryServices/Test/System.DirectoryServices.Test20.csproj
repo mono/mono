@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
     <DefineConstants>TRACE;JAVA</DefineConstants>
@@ -32,6 +32,7 @@
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
+    <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

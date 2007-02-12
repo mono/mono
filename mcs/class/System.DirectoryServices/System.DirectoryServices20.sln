@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.DirectoryServices20", "System.DirectoryServices20.vmwcsproj", "{6C8C17FE-0F2F-4515-AC3C-2FB79F10FFA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.DirectoryServices20", "System.DirectoryServices20.csproj", "{6C8C17FE-0F2F-4515-AC3C-2FB79F10FFA8}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "Novell.Directory.Ldap20", "..\Novell.Directory.Ldap\Novell.Directory.Ldap20.vmwcsproj", "{7BA54046-FD05-4209-9508-D6367CDAFBC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Novell.Directory.Ldap20", "..\Novell.Directory.Ldap\Novell.Directory.Ldap20.csproj", "{7BA54046-FD05-4209-9508-D6367CDAFBC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
