@@ -2486,6 +2486,9 @@ namespace System.Windows.Forms
 
 		private void Edit ()
 		{
+			if (CurrentTableStyle.GridColumnStyles.Count == 0)
+				return;
+
 			if (CurrentTableStyle.GridColumnStyles[CurrentColumn].bound == false)
 				return;
 
