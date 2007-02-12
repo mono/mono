@@ -1,9 +1,0 @@
-2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* X509Certificate2UICas.cs: New (2.0) CAS tests for X509Certificate2UI
-	* X509Certificate2UITest.cs: New (2.0) unit tests for 
-	X509Certificate2UI
-
-2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* All tests moved to System.dll assembly.

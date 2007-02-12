@@ -116,8 +116,14 @@ namespace MonoTests.System.Windows.Forms
 		{
 			table = new DataTable ();
 			view = table.DefaultView;
-			table.Columns.Add (new DataColumn ("who"));
-			table.Columns.Add (new DataColumn ("where"));
+			DataColumn col;
+
+			col = new DataColumn ("who");
+			col.AllowDBNull = true;
+			table.Columns.Add (col);
+			col = new DataColumn ("where");
+			table.Columns.Add (col);
+
 			DataRow row = table.NewRow ();
 			row ["who"] = "Miguel";
 			row ["where"] = null;
@@ -214,20 +220,22 @@ namespace MonoTests.System.Windows.Forms
 
 			CurrencyManager cm = (CurrencyManager)bc[view];
 			ColumnPoker column = nameColumnStyle;
-			TextBox tb = nameColumnStyle.TextBox;
+			DataGridTextBox tb = (DataGridTextBox)nameColumnStyle.TextBox;
 
 			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
-			Assert.IsTrue (tb.Enabled, "3");
-			Assert.IsFalse (tb.Visible, "4");
-			Assert.AreEqual ("", tb.Text, "5");
-			Assert.IsFalse (tb.ReadOnly, "6");
+			Assert.IsTrue (tb.Enabled, "2");
+			Assert.IsFalse (tb.Visible, "3");
+			Assert.AreEqual ("", tb.Text, "4");
+			Assert.IsFalse (tb.ReadOnly, "5");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "6");
 
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
-			Assert.IsTrue (tb.ReadOnly, "7");
+			Assert.IsTrue (tb.Visible, "7");
+			Assert.IsTrue (tb.ReadOnly, "8");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "9");
 
 			// since it's readonly
-			Assert.AreEqual ("Miguel", tb.Text, "8");
+			Assert.AreEqual ("Miguel", tb.Text, "10");
 		}
 
 		[Test]
@@ -243,20 +251,36 @@ namespace MonoTests.System.Windows.Forms
 
 			CurrencyManager cm = (CurrencyManager)bc[view];
 			ColumnPoker column = nameColumnStyle;
-			TextBox tb = nameColumnStyle.TextBox;
-
-			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
-			Assert.IsTrue (tb.Enabled, "3");
-			Assert.IsFalse (tb.Visible, "4");
-			Assert.AreEqual ("", tb.Text, "5");
-			Assert.IsFalse (tb.ReadOnly, "6");
+			DataGridTextBox tb = (DataGridTextBox)nameColumnStyle.TextBox;
 
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, null, true);
-			Assert.IsFalse (tb.ReadOnly, "7");
+			Assert.IsFalse (tb.ReadOnly, "1");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "2");
 
-			// since it's readonly
-			Assert.AreEqual ("Miguel", tb.Text, "8");
+			// since the instant text in the DoEdit call was null, nothing happens
+			Assert.AreEqual ("Miguel", tb.Text, "3");
+		}
+
+		[Test]
+		public void TestDoEdit_EmptyInstantTest ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)nameColumnStyle.TextBox;
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, string.Empty, true);
+			Assert.IsFalse (tb.ReadOnly, "1");
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "2");
+
+			Assert.AreEqual ("", tb.Text, "3");
 		}
 
 		[Test]
@@ -435,7 +459,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestUpdateUI ()
 		{
 			MakeTable (false);
@@ -468,6 +491,131 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void TestUpdateUI_WhileEditing ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)column.TextBox;
+
+			Assert.AreEqual ("", tb.Text, "1");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "2");
+
+			Assert.AreEqual (Point.Empty, tb.Location, "3");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
+
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "4");
+
+			column.DoUpdateUI (cm, 0, "bye there");
+
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "5");
+
+			Assert.AreEqual ("bye there", tb.Text, "6");
+
+			bool rv;
+
+			rv = column.DoCommit (cm, cm.Position);
+			column.DoEndEdit ();
+			Assert.IsTrue (rv, "7");
+			DataRowView v = (DataRowView)cm.Current;
+			Assert.AreEqual ("bye there", v[0], "8");
+		}
+
+		[Test]
+		public void TestUpdateUI_WhileEditing2 ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)column.TextBox;
+
+			Assert.AreEqual ("", tb.Text, "1");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "2");
+
+			Assert.AreEqual (Point.Empty, tb.Location, "3");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
+
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "4");
+
+			DataRowView v = (DataRowView)cm.Current;
+			v[0] = "Miguelito";
+
+			Assert.AreEqual ("hi there", tb.Text, "5");
+
+			column.DoUpdateUI (cm, 0, "bye there");
+
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "6");
+			Assert.AreEqual ("bye there", tb.Text, "7");
+
+			bool rv;
+
+			rv = column.DoCommit (cm, cm.Position);
+			column.DoEndEdit ();
+			Assert.IsTrue (rv, "6");
+			v = (DataRowView)cm.Current;
+			Assert.AreEqual ("bye there", v[0], "8");
+		}
+
+		[Test]
+		public void TestUpdateUI_ReadOnlyEdit ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)column.TextBox;
+
+			Assert.AreEqual ("", tb.Text, "1");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "2");
+
+			Assert.AreEqual (Point.Empty, tb.Location, "3");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), true, "hi there", true);
+
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "4");
+
+			DataRowView v = (DataRowView)cm.Current;
+			v[0] = "Miguelito";
+
+			Assert.AreEqual ("Miguel", tb.Text, "5");
+
+			column.DoUpdateUI (cm, 0, "bye there");
+
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "6");
+			Assert.AreEqual ("Miguelito", tb.Text, "7");
+
+			bool rv;
+
+			rv = column.DoCommit (cm, cm.Position);
+			column.DoEndEdit ();
+			Assert.IsTrue (rv, "6");
+			v = (DataRowView)cm.Current;
+			Assert.AreEqual ("Miguelito", v[0], "8");
+		}
+
+		[Test]
 		public void TestReadOnly_InEditCall ()
 		{
 			MakeTable (false);
@@ -483,7 +631,6 @@ namespace MonoTests.System.Windows.Forms
 			TextBox tb = nameColumnStyle.TextBox;
 
 			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
 			Assert.IsTrue (tb.Enabled, "3");
 			Assert.IsFalse (tb.Visible, "4");
 			Assert.AreEqual ("", tb.Text, "5");
@@ -513,7 +660,6 @@ namespace MonoTests.System.Windows.Forms
 			TextBox tb = nameColumnStyle.TextBox;
 
 			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
 			Assert.IsTrue (tb.Enabled, "3");
 			Assert.IsFalse (tb.Visible, "4");
 			Assert.AreEqual ("", tb.Text, "5");
@@ -552,7 +698,6 @@ namespace MonoTests.System.Windows.Forms
 			TextBox tb = nameColumnStyle.TextBox;
 
 			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
 			Assert.IsTrue (tb.Enabled, "3");
 			Assert.IsFalse (tb.Visible, "4");
 			Assert.AreEqual ("", tb.Text, "5");
@@ -591,7 +736,6 @@ namespace MonoTests.System.Windows.Forms
 			TextBox tb = nameColumnStyle.TextBox;
 
 			Assert.IsNotNull (tb, "1");
-			Assert.AreEqual (typeof (DataGridTextBox), tb.GetType(), "2");
 			Assert.IsTrue (tb.Enabled, "3");
 			Assert.IsFalse (tb.Visible, "4");
 			Assert.AreEqual ("", tb.Text, "5");
@@ -602,6 +746,79 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tb.ReadOnly, "7");
 
 			Assert.AreEqual ("Miguel", tb.Text, "8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestEnterNullValue_InEdit ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)nameColumnStyle.TextBox;
+
+			Assert.IsNotNull (tb, "1");
+			Assert.IsTrue (tb.Enabled, "3");
+			Assert.IsFalse (tb.Visible, "4");
+			Assert.AreEqual ("", tb.Text, "5");
+			Assert.IsFalse (tb.ReadOnly, "6");
+
+			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
+
+			Assert.AreEqual ("hi there", tb.Text, "7");
+
+			column.DoEnterNullValue ();
+
+			Assert.AreEqual ("hi there", tb.Text, "8");
+
+			DataRowView v = (DataRowView)cm.Current;
+			Assert.AreEqual ("Miguel", v[0], "9");
+			Assert.IsFalse (tb.IsInEditOrNavigateMode, "10");
+
+			bool rv;
+
+			rv = column.DoCommit (cm, cm.Position);
+			column.DoEndEdit ();
+			Assert.IsTrue (rv, "11");
+			v = (DataRowView)cm.Current;
+			Assert.AreEqual ("hi there", v[0], "12");
+		}
+
+		[Test]
+		public void TestEnterNullValue_WithoutEdit ()
+		{
+			MakeTable (false);
+
+			BindingContext bc = new BindingContext ();
+			DataGrid dg = new DataGrid ();
+			dg.BindingContext = bc;
+			dg.TableStyles.Add (tableStyle);
+			dg.DataSource = table;
+
+			CurrencyManager cm = (CurrencyManager)bc[view];
+			ColumnPoker column = nameColumnStyle;
+			DataGridTextBox tb = (DataGridTextBox)nameColumnStyle.TextBox;
+
+			Assert.IsNotNull (tb, "1");
+			Assert.IsTrue (tb.Enabled, "3");
+			Assert.IsFalse (tb.Visible, "4");
+			Assert.AreEqual ("", tb.Text, "5");
+			Assert.IsFalse (tb.ReadOnly, "6");
+
+			cm.Position = 0;
+
+			column.DoEnterNullValue ();
+
+			DataRowView v = (DataRowView)cm.Current;
+			Assert.AreEqual ("Miguel", v[0], "9");
+			Assert.IsTrue (tb.IsInEditOrNavigateMode, "10");
 		}
 	}
 }

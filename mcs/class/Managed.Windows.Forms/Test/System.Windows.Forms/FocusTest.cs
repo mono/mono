@@ -99,10 +99,6 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ControlSelectNextFlatTest ()
 		{
-			if (RunningOnUnix) {
-				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
-			}
-
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
 
@@ -255,7 +251,6 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ContainerSelectUndirectedForward ()
 		{
 			Form form = new Form ();
@@ -824,27 +819,22 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void ActiveControl ()
 		{
-			if (RunningOnUnix) {
-				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
-			}
-
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
 
 			form.Controls.AddRange (flat_controls);
 			form.Show ();
 
-			Assert.AreEqual (form.ActiveControl, flat_controls [0], "A1");
+			Assert.AreEqual (flat_controls[0], form.ActiveControl, "A1");
 
 			flat_controls [1].Focus ();
 
-			Assert.AreEqual (form.ActiveControl, flat_controls [1], "A2");
+			Assert.AreEqual (flat_controls [1], form.ActiveControl, "A2");
 
 			form.Dispose ();
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ActiveControl2 () {
 			ContainerControl cc = new ContainerControl ();
 			Control c1 = new Control ();
@@ -1089,7 +1079,6 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ActiveControl_Invisible () {
 			ContainerControl cc = new ContainerControl ();
 			Control c1 = new Control ();
@@ -1120,7 +1109,6 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ActiveControl_Disabled () {
 			ContainerControl cc = new ContainerControl ();
 			Control c1 = new Control ();
@@ -1151,7 +1139,6 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ActiveControl_Null () {
 			ContainerControl cc = new ContainerControl ();
 			Control c1 = new Control ();
@@ -1188,15 +1175,6 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 			Assert.IsNull (cc.ActiveControl, "#E3");
 
 			form.Dispose ();
-		}
-
-		private bool RunningOnUnix {
-			get {
-				// check for Unix platforms - see FAQ for more details
-				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-				int platform = (int) Environment.OSVersion.Platform;
-				return ((platform == 4) || (platform == 128));
-			}
 		}
 	}
 }

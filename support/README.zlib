@@ -1,7 +1,0 @@
-
-Unmodified sources for zlib-1.2.3 have been included with Mono, this
-is used to support compression and uncompression in older Linux
-systems that might have shipped older versions of zlib and to reduce
-dependencies.
-
-They were imported in Jan 4th 2006.

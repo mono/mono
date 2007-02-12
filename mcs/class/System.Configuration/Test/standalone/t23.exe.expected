@@ -1,2 +1,0 @@
-DefaultProvider = MyRsaProtectedConfigurationProvider
-Exception raised: The type specified does not extend ProtectedConfigurationProvider class.

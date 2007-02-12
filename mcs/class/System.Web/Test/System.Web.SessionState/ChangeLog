@@ -1,4 +1,0 @@
-2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* StateRuntimeCas.cs: New. CAS unit tests.
-	* SessionStateModuleCas.cs: New. CAS unit tests.

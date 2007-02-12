@@ -58,5 +58,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			return false; /* root entries aren't selectable */
 		}
+
+		internal override int Depth {
+			get { return 0; }
+		}
 	}
 }

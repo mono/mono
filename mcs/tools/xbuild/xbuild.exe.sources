@@ -1,8 +1,0 @@
-../../build/common/Consts.cs
-../../class/Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
-AssemblyInfo.cs
-CommandLineException.cs
-ErrorUtilities.cs
-LoggerInfo.cs
-Main.cs
-Parameters.cs

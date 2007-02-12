@@ -48,20 +48,13 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		public virtual bool Expandable
 		{
-			get {
-				return GridItems.Count > 1;
-			}
+			get { return GridItems.Count > 1; }
 		}
 
 		public virtual bool Expanded
 		{
-			get {
-				return expanded;
-			}
-
-			set {
-				expanded = value;
-			}
+			get { return expanded; }
+			set { expanded = value; }
 		}
 
 		public abstract new GridItemCollection GridItems
@@ -102,11 +95,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		internal abstract int Top {
-			get;
-			set;
-		}
-
-		internal abstract Rectangle PlusMinusBounds {
 			get;
 			set;
 		}

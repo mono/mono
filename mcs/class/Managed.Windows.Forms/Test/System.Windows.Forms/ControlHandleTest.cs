@@ -516,57 +516,62 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A18");
 			c.PublicNotifyInvalidate (Rectangle.Empty);
 			Assert.IsFalse (c.IsHandleCreated, "A19");
-			c.PublicRaiseDragEvent (null, null);
+			Form f = new Form ();
+			f.Controls.Add (c);
+			c.OnVisibleChanged (EventArgs.Empty);
 			Assert.IsFalse (c.IsHandleCreated, "A20");
-			c.PublicRaiseKeyEvent (null, null);
+			c = new ProtectedMethodsControl ();
+			c.PublicRaiseDragEvent (null, null);
 			Assert.IsFalse (c.IsHandleCreated, "A21");
-			c.PublicRaiseMouseEvent (null, null);
+			c.PublicRaiseKeyEvent (null, null);
 			Assert.IsFalse (c.IsHandleCreated, "A22");
-			c.PublicRaisePaintEvent (null, null);
+			c.PublicRaiseMouseEvent (null, null);
 			Assert.IsFalse (c.IsHandleCreated, "A23");
-			c.PublicRecreateHandle ();
+			c.PublicRaisePaintEvent (null, null);
 			Assert.IsFalse (c.IsHandleCreated, "A24");
-			c.PublicResetMouseEventArgs ();
+			c.PublicRecreateHandle ();
 			Assert.IsFalse (c.IsHandleCreated, "A25");
-			c.PublicRtlTranslateAlignment (ContentAlignment.BottomLeft);
+			c.PublicResetMouseEventArgs ();
 			Assert.IsFalse (c.IsHandleCreated, "A26");
-			c.PublicRtlTranslateContent (ContentAlignment.BottomLeft);
+			c.PublicRtlTranslateAlignment (ContentAlignment.BottomLeft);
 			Assert.IsFalse (c.IsHandleCreated, "A27");
-			c.PublicRtlTranslateHorizontal (HorizontalAlignment.Left);
+			c.PublicRtlTranslateContent (ContentAlignment.BottomLeft);
 			Assert.IsFalse (c.IsHandleCreated, "A28");
-			c.PublicRtlTranslateLeftRight (LeftRightAlignment.Left);
+			c.PublicRtlTranslateHorizontal (HorizontalAlignment.Left);
 			Assert.IsFalse (c.IsHandleCreated, "A29");
+			c.PublicRtlTranslateLeftRight (LeftRightAlignment.Left);
+			Assert.IsFalse (c.IsHandleCreated, "A30");
 #if !__MonoCS__
 			c.PublicScaleControl (new SizeF (1.5f, 1.5f), BoundsSpecified.All);
-			Assert.IsFalse (c.IsHandleCreated, "A30");
+			Assert.IsFalse (c.IsHandleCreated, "A31");
 #endif
 			c.PublicScaleCore (1.5f, 1.5f);
-			Assert.IsFalse (c.IsHandleCreated, "A31");
-			c.PublicSelect ();
 			Assert.IsFalse (c.IsHandleCreated, "A32");
+			c.PublicSelect ();
+			Assert.IsFalse (c.IsHandleCreated, "A33");
 #if !__MonoCS__
 			c.PublicSetAutoSizeMode (AutoSizeMode.GrowAndShrink);
-			Assert.IsFalse (c.IsHandleCreated, "A33");
+			Assert.IsFalse (c.IsHandleCreated, "A34");
 #endif
 			c.PublicSetBoundsCore (0, 0, 100, 100, BoundsSpecified.All);
-			Assert.IsFalse (c.IsHandleCreated, "A34");
-			c.PublicSetClientSizeCore (122, 122);
 			Assert.IsFalse (c.IsHandleCreated, "A35");
-			c.PublicSetStyle (ControlStyles.FixedHeight, true);
+			c.PublicSetClientSizeCore (122, 122);
 			Assert.IsFalse (c.IsHandleCreated, "A36");
+			c.PublicSetStyle (ControlStyles.FixedHeight, true);
+			Assert.IsFalse (c.IsHandleCreated, "A37");
 			c.PublicSetTopLevel (true);
-			Assert.IsTrue (c.IsHandleCreated, "A37");
+			Assert.IsTrue (c.IsHandleCreated, "A38");
 			c = new ProtectedMethodsControl ();
 			c.PublicSetVisibleCore (true);
-			Assert.IsFalse (c.IsHandleCreated, "A38");
-			c.PublicSizeFromClientSize (new Size (160, 160));
 			Assert.IsFalse (c.IsHandleCreated, "A39");
-			c.PublicUpdateBounds ();
+			c.PublicSizeFromClientSize (new Size (160, 160));
 			Assert.IsFalse (c.IsHandleCreated, "A40");
-			c.PublicUpdateStyles ();
+			c.PublicUpdateBounds ();
 			Assert.IsFalse (c.IsHandleCreated, "A41");
-			c.PublicUpdateZOrder ();
+			c.PublicUpdateStyles ();
 			Assert.IsFalse (c.IsHandleCreated, "A42");
+			c.PublicUpdateZOrder ();
+			Assert.IsFalse (c.IsHandleCreated, "A43");
 		}
 		
 		private class ProtectedMethodsControl : Control
@@ -592,6 +597,7 @@ namespace MonoTests.System.Windows.Forms
 			public bool PublicIsInputChar (char charCode) { return base.IsInputChar (charCode); }
 			public bool PublicIsInputKey (Keys keyData) { return base.IsInputKey (keyData); }
 			public void PublicNotifyInvalidate (Rectangle invalidatedArea) { base.NotifyInvalidate (invalidatedArea); }
+			public void OnVisibleChanged (EventArgs e) { base.OnVisibleChanged (e); }
 			public void PublicRaiseDragEvent (Object key, DragEventArgs e) { base.RaiseDragEvent (key, e); }
 			public void PublicRaiseKeyEvent (Object key, KeyEventArgs e) { base.RaiseKeyEvent (key, e); }
 			public void PublicRaiseMouseEvent (Object key, MouseEventArgs e) { base.RaiseMouseEvent (key, e); }

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="System.Web.UI.HtmlTextWriterAttribute">
-    <span>
-      <br />Accesskey; Align; Alt; Background; Bgcolor; Border; Bordercolor; Cellpadding; Cellspacing; Checked; Class; Cols; Colspan; Disabled; For; Height; Href; Id; Maxlength; Multiple; Name; Nowrap; Onchange; Onclick; ReadOnly; Rows; Rowspan; Rules; Selected; Size; Src; Style; Tabindex; Target; Title; Type; Valign; Value; Width; Wrap; 0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20; 21; 22; 23; 24; 25; 26; 27; 28; 29; 30; 31; 32; 33; 34; 35; 36; 37; 38; 39; </span>
-  </div>
-</testresults>

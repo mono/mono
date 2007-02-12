@@ -1,5 +1,0 @@
-2006-04-21  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* poll.cs: New test tool contributed by Simon Brys for bug #78085.
-	It's a good test for the abbreviated handshake.
-	* Makefile: Build/clean for poll.exe

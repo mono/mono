@@ -1,7 +1,0 @@
-2006-03-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
-
-	* HyperLinkColumn_DataNavigateUrlField.aspx: removed tests that
-	causes differences but decided to be not a bug
-	* HyperLinkColumn_DataNavigateUrlField.aspx.cs: same
-	* HyperLinkColumn_DataTextField.aspx: same
-	* HyperLinkColumn_DataTextField.aspx.cs: same

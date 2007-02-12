@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfEmployee xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Employee>
-    <EmpName>John</EmpName>
-    <EmpID>100xxx</EmpID>
-  </Employee>
-</ArrayOfEmployee>

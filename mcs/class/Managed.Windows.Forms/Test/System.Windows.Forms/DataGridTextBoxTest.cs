@@ -153,7 +153,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestMouseWheel ()
 		{
 			TextBoxPoker tb = new TextBoxPoker ();

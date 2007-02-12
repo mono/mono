@@ -719,7 +719,6 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Map ()
 		{
-			// FIXME why do we set this here and also in the MapNotify event handling?
 			mapped = true;
 			Xlib.XMapWindow (display.Handle, WholeWindow);
 			if (WholeWindow != ClientWindow)
@@ -728,7 +727,6 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Unmap ()
 		{
-			// FIXME why do we set this here and also in the UnmapNotify event handling?
 			mapped = false;
 			Xlib.XUnmapWindow (display.Handle, WholeWindow);
 		}

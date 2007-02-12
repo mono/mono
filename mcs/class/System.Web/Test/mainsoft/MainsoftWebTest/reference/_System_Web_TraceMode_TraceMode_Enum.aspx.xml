@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="System.Web.TraceMode">
-    <span>
-      <br />SortByTime; SortByCategory; Default; 0; 1; 2; </span>
-  </div>
-</testresults>

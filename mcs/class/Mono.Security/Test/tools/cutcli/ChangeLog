@@ -1,7 +1,0 @@
-2005-02-02  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* cutcli.cs: New. SSL/TLS client that cut it's communication after
-	sending and/or receiving 'x' bytes from/to the server.
-	* ControlledNetworkStream.cs: A NetworkStream that can limit it's
-	read/write transfers.
-	* Makefile: Makefile for the new test tool.

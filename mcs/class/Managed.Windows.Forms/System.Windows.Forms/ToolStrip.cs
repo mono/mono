@@ -117,8 +117,8 @@ namespace System.Windows.Forms
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set {
+				base.Dock = DockStyle.None;
 				base.Anchor = value;
-				base.dock_style = DockStyle.None;
 			}
 		}
 

@@ -182,35 +182,87 @@ namespace MonoTests.System.Windows.Forms
 		//        Assert.AreEqual (string.Empty, ew.ToString (), "B2");
 		//}
 
+		void f_Layout (object sender, LayoutEventArgs e)
+		{
+			//Console.WriteLine ("e.AffectedProperty = {0}", e.AffectedProperty);
+			//Console.WriteLine (Environment.StackTrace);
+		}
+
+		bool dock_changed_raised;
+
+		void dock_changed (object sender, EventArgs e)
+		{
+			dock_changed_raised = true;
+		}
+
 		[Test]
-		public void PropertyAnchorAndDocking ()
+		public void PropertyAnchorAndDocking2 ()
 		{
 			ToolStrip ts = new ToolStrip ();
 
+			Assert.AreEqual (DockStyle.Top, ts.Dock, "0");
+			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, ts.Anchor, "1");
+
+			ts.DockChanged += new EventHandler (dock_changed);
+
+			dock_changed_raised = false;
+
+			ts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+
+			Assert.AreEqual (false, dock_changed_raised, "2");
+
+			dock_changed_raised = false;
+
+			ts.Dock = DockStyle.Fill;
+
+			Assert.AreEqual (true, dock_changed_raised, "3");
+
+			dock_changed_raised = false;
+
+			ts.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+
+			Assert.AreEqual (false, dock_changed_raised, "4");
+		}
+
+		[Test]
+		public void PropertyAnchorAndDocking ()
+		{
+			Form f = new Form ();
+			f.Layout += new LayoutEventHandler (f_Layout);
+
+			ToolStrip ts = new ToolStrip ();
+
+			f.Controls.Add (ts);
+
+			Console.WriteLine (1);
 			ts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
 
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Bottom, ts.Anchor, "A1");
 			Assert.AreEqual (DockStyle.None, ts.Dock, "A2");
 			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A3");
 
+			Console.WriteLine (2);
 			ts.Anchor = AnchorStyles.Left | AnchorStyles.Right;
 
 			Assert.AreEqual (AnchorStyles.Left | AnchorStyles.Right, ts.Anchor, "A1");
 			Assert.AreEqual (DockStyle.None, ts.Dock, "A2");
 			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A3");
 
+			Console.WriteLine (3);
 			ts.Dock = DockStyle.Left;
 
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, ts.Anchor, "A1");
 			Assert.AreEqual (DockStyle.Left, ts.Dock, "A2");
 			Assert.AreEqual (Orientation.Vertical, ts.Orientation, "A3");
 
+			Console.WriteLine (4);
 			ts.Dock = DockStyle.None;
 
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, ts.Anchor, "A1");
 			Assert.AreEqual (DockStyle.None, ts.Dock, "A2");
 			Assert.AreEqual (Orientation.Horizontal, ts.Orientation, "A3");
 
+			Console.WriteLine (5);
 			ts.Dock = DockStyle.Top;
 
 			Assert.AreEqual (AnchorStyles.Top | AnchorStyles.Left, ts.Anchor, "A1");

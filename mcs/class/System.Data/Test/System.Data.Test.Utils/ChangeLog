@@ -1,2 +1,0 @@
-2005-05-26  Eyal Alaluf <eyala@mainsoft.com>
-	* DataProvider.cs: Utiltilty class for creating different types of DataTables.

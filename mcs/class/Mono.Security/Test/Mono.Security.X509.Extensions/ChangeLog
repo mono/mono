@@ -1,8 +1,0 @@
-2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* BasicConstraintsExtensionTest.cs: New. Unit tests for encoding and
-	decoding X.509 BasicConstraints certificate extension.
-	* ExtendedKeyUsageExtensionTest.cs: New. Unit tests for encoding and
-	decoding X.509 ExtendedKeyUsage certificate extension.
-	* KeyUsageExtensionTest.cs: New. Unit tests for encoding and
-	decoding X.509 KeyUsage certificate extension.

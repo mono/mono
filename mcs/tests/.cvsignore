@@ -1,9 +1,0 @@
-*.dll
-*.exe
-*.log
-*.netmodule
-boot-casts.out
-dir-gmcs
-dir-mcs
-mcs-casts.out
-semantic.cache

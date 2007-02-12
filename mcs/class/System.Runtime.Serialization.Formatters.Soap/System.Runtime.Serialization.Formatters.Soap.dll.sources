@@ -1,8 +1,0 @@
-Assembly/AssemblyInfo.cs
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs
-System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
-System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
-System.Runtime.Serialization.Formatters.Soap/SoapFormatter.cs
-../../build/common/MonoTODOAttribute.cs

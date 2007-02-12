@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:56px;left:32px;position:absolute;top:24px;width:136px;z-index:101">
-    <input onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;Button1&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" value="Button" type="submit" id="Button1" name="Button1" />
-  </div>
-  <div id="GHTSubTest2" style="height:56px;left:32px;position:absolute;top:96px;width:136px;z-index:102">
-    <input id="Button2" value="Button" type="submit" name="Button2" />
-  </div>
-</testresults>

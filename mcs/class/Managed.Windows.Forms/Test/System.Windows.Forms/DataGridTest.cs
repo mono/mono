@@ -33,6 +33,9 @@ using System.Xml;
 using NUnit.Framework;
 using System.Data;
 
+// resolve the ambiguity between System.ComponentModel and NUnit.Framework
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+
 namespace MonoTests.System.Windows.Forms
 {
 	// Helper classes
@@ -194,7 +197,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void HeaderFont ()
 		{
 			DataGrid dg = new DataGrid ();
@@ -598,6 +601,80 @@ namespace MonoTests.System.Windows.Forms
 
 			dg.DataSource = ds;
 			Assert.AreEqual (0, data_source_changed_count, "A3");
+		}
+
+		class EnterDG : DataGrid {
+			protected override void OnEnter (EventArgs e) {
+				Console.WriteLine (Environment.StackTrace);
+				on_enter_raised = true;
+				handling_enter = true;
+				base.OnEnter (e);
+				handling_enter = false;
+			}
+
+			protected override void ColumnStartedEditing (Control editingControl) {
+				Console.WriteLine (Environment.StackTrace);
+				if (handling_enter)
+					editing_called_while_handling_enter = true;
+				base.ColumnStartedEditing (editingControl);
+			}
+
+			protected override void ColumnStartedEditing (Rectangle bounds) {
+				Console.WriteLine (Environment.StackTrace);
+				if (handling_enter)
+					editing_called_while_handling_enter = true;
+				base.ColumnStartedEditing (bounds);
+			}
+
+			bool handling_enter;
+			public bool on_enter_raised;
+			public bool editing_called_while_handling_enter;
+		}
+
+		void item_changed (object sender, ItemChangedEventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+		}
+
+		void position_changed (object sender, EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+		}
+
+		void f_activated (object sender, EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestOnEnterEdit()
+		{
+			Form f = new Form ();
+			f.Activated += f_activated;
+			f.ShowInTaskbar = false;
+
+			EnterDG dg = new EnterDG ();
+
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			ds.Tables.Add (dt);
+
+			dt.Columns.Add ();
+			dt.Columns.Add ();
+
+			dg.DataSource = ds;
+			dg.DataMember = "DataTable";
+
+			f.Controls.Add (dg);
+			f.Show ();
+			f.Activate ();
+
+			Assert.AreEqual (2, dg.VisibleColumnCount, "1");
+			Assert.IsTrue (dg.on_enter_raised, "2");
+			Assert.IsTrue (dg.editing_called_while_handling_enter, "3");
+
+			f.Dispose ();
 		}
 	}
 }

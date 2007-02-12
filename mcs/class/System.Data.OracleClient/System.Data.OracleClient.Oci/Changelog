@@ -1,8 +1,0 @@
-2007-01-19 Leszek Ciesielski <skolima@gmail.com>
-	* OciCalls.cs: Speed up of the memory allocation
-
-2007-01-04 Leszek Ciesielski <skolima@gmail.com>
-        * OciCalls.cs:
-	* OciErrorHandle.cs:
-	* OciRowIdDescriptor.cs:
-	* OciDefineHandle.cs: padding allocated memory with 0's (this is what OCI expects)

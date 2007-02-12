@@ -35,13 +35,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 	internal class GridEntry : GridItem, ITypeDescriptorContext
 	{
 		#region Local Variables
-		private bool expanded = true;
+		private int depth;
+		private bool expanded;
 		private GridItemCollection grid_items;
 		private GridItem parent;
 		private PropertyDescriptor property_descriptor;
 		private object[] selected_objects;
-		private int top;
-		private Rectangle plus_minus_bounds;
 		private Rectangle bounds;
 		private PropertyGridView property_grid_view;
 		#endregion	// Local Variables
@@ -50,10 +49,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 		protected GridEntry (PropertyGridView view)
 		{
 			property_grid_view = view;
-			plus_minus_bounds = new Rectangle(0,0,0,0);
 			bounds = new Rectangle(0,0,0,0);
-			top = -1;
 			grid_items = new GridItemCollection();
+			expanded = true;
 		}
 
 		public GridEntry(PropertyGridView view, object[] objs, PropertyDescriptor prop_desc) : this (view) {
@@ -65,59 +63,46 @@ namespace System.Windows.Forms.PropertyGridInternal
 		#region Public Instance Properties
 		public override bool Expandable
 		{
-			get {
-				return grid_items.Count > 0;
-			}
+			get { return grid_items.Count > 0; }
 		}
 
 		public override bool Expanded
 		{
-			get {
-				return expanded;
-			}
+			get { return expanded; }
 
 			set {
 				if (expanded == value)
 					return;
 
 				expanded = value;
-				property_grid_view.RedrawBelowItemOnExpansion (this);
+				if (Expandable)
+					property_grid_view.RedrawBelowItemOnExpansion (this);
 			}
 		}
 
 		public override GridItemCollection GridItems
 		{
-			get {
-				return grid_items;
-			}
+			get { return grid_items; }
 		}
 
 		public override GridItemType GridItemType
 		{
-			get {
-				return GridItemType.Property;
-			}
+			get { return GridItemType.Property; }
 		}
 
 		public override string Label
 		{
-			get {
-				return property_descriptor.Name;
-			}
+			get { return property_descriptor.Name; }
 		}
 
 		public override GridItem Parent
 		{
-			get {
-				return parent;
-			}
+			get { return parent; }
 		}
 
 		public override PropertyDescriptor PropertyDescriptor
 		{
-			get {
-				return property_descriptor;
-			}
+			get { return property_descriptor; }
 		}
 
 		public bool CanResetValue ()
@@ -166,9 +151,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		[MonoTODO ("this is broken, as PropertyGridView doesn't implement IContainer")]
 		IContainer ITypeDescriptorContext.Container {
-			get {
-				return property_grid_view as IContainer;
-			}
+			get { return property_grid_view as IContainer; }
 		}
 
 		bool ITypeDescriptorContext.OnComponentChanging() {
@@ -177,15 +160,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		object ITypeDescriptorContext.Instance {
-			get {
-				return Value;
-			}
+			get { return Value; }
 		}
 
 		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
-			get {
-				return PropertyDescriptor;
-			}
+			get { return PropertyDescriptor; }
 		}
 
 		#endregion
@@ -200,42 +179,25 @@ namespace System.Windows.Forms.PropertyGridInternal
 		#endregion
 
 		internal object[] SelectedObjects {
-			get {
-				return selected_objects;
-			}
+			get { return selected_objects; }
 		}
 
 		internal override int Top {
-			get {
-				return top;
-			}
+			get { return bounds.Y; }
 			set {
-				if (top == value)
+				if (bounds.Y == value)
 					return;
 
-				top = value;
+				bounds.Y = value;
 				if (property_grid_view.property_grid.SelectedGridItem == this)
 					property_grid_view.grid_textbox_Show (this);
 			}
 		}
 
-		internal override Rectangle PlusMinusBounds {
-			get{
-				return plus_minus_bounds;
-			}
-			set{
-				plus_minus_bounds = value;
-			}
-		}
-
 		internal override Rectangle Bounds
 		{
-			get
-			{
-				return bounds;
-			}
-			set
-			{
+			get { return bounds; }
+			set {
 				if (bounds == value)
 					return;
 
@@ -245,9 +207,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+		internal virtual int Depth {
+			get { return depth; }
+		}
+
 		internal void SetParent (GridItem parent)
 		{
 			this.parent = parent;
+			if (parent.GridItemType == GridItemType.Category)
+				depth = ((GridEntry)parent).Depth;
+			else
+				depth = ((GridEntry)parent).Depth + 1;
 		}
 	}
 }

@@ -1,9 +1,0 @@
-2003-12-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
-
-	* Mono.Http.dll.sources: Added the new file
-	Mono.Http.Modules/AcceptEncodingModule.cs.
-
-2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	Initial check-in.
-

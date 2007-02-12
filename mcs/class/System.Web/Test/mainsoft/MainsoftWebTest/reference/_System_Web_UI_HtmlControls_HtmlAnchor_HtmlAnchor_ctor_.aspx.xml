@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:64px;width:553px">
-    <a href="telnet://192.1.1.1" id="anchor1" name="anchor1">Anchor1</a>
-  </div>
-  <div id="GHTSubTest2" style="height:64px;width:553px">
-    <a href="http://localhost/" id="anchor2" title="title" name="anchor2" target="_blank">Anchor2</a>
-  </div>
-</testresults>

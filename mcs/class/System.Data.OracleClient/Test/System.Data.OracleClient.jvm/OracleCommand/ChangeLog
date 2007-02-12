@@ -1,3 +1,0 @@
-2006-02-26  Konstantin Triger <kostat@mainsoft.com>
-
-        * OracleCommand_CommandType.cs: Port OleDb invocation style to that of OracleClient.

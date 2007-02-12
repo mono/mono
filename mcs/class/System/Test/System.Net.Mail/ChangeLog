@@ -1,9 +1,0 @@
-2007-01-22  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* SmtpClient.cs: Added tests for default values.
-
-2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* SmtpPermissionAttributeTest.cs: New. Unit tests for 
-	SmtpPermissionAttribute.
-	* SmtpPermissionTest.cs: New. Unit tests for SmtpPermission.

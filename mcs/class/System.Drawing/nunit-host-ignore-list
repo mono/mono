@@ -1,8 +1,0 @@
-# some older distro have (old) libraries which expose some drawing bugs
-# but we do not want to ignore the test on all platforms because of this
-# note: please avoid using this mechanism as much as possible
-monobuild1.boston.ximian.com,MonoTests.System.Drawing.FontFamilyTest.FontFamily_String
-monobuild1.boston.ximian.com,MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString
-monobuild1.boston.ximian.com,MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots
-monobuild2,MonoTests.System.Drawing.GraphicsTest.MeasureString_StringFontInt_LongString
-monobuild2,MonoTests.System.Drawing.GraphicsTest.MeasureString_Wrapping_Dots

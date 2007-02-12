@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="GHTSubTest1">
-    <span>
-      <br />System.Web.HttpApplicationState</span>
-    <span>
-      <br />Objects are equal</span>
-  </div>
-</testresults>

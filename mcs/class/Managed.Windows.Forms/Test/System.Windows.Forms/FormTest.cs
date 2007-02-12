@@ -15,6 +15,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -77,7 +79,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void ActivateTest ()
 		{
 			Form myform = new Form ();
@@ -107,7 +108,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80020
-		[NUnit.Framework.Category ("NotWorking")]
 		public void IsHandleCreated ()
 		{
 			Form main = new Form ();
@@ -301,7 +301,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void ShowDialog_Owner_Circular ()
 		{
 			Form main = new Form ();
@@ -324,7 +324,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80773
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void ShowDialog_Owner_Self ()
 		{
 			Form form = new Form ();
@@ -392,7 +392,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80604
-		[NUnit.Framework.Category ("NotWorking")]
 		public void VisibleOnLoad ()
 		{
 			MockForm form = new MockForm ();
@@ -409,7 +408,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80052
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void Location ()
 		{
 			// 
@@ -767,7 +766,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]	// Bug #79959
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void BehaviorResizeOnBorderStyleChanged ()
 		{
 			// Marked NotWorking because the ClientSize is probably dependent on the WM.
@@ -790,7 +789,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]	// bug #80574
-		[NUnit.Framework.Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void BehaviorResizeOnBorderStyleChangedNotVisible ()
 		{
 			// Marked NotWorking because the ClientSize is probably dependent on the WM.

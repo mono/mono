@@ -167,7 +167,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void OnPaintTest ()
 		{
 			using (OnPaintTester t = new OnPaintTester ()) {
@@ -507,7 +506,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreatedAccessibilityTest ()
 		{
 			Control c = new Control ();
@@ -1128,7 +1126,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateHandleTest2 ()
 		{
 			// This should eventually test all operations
@@ -1170,7 +1167,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsHandleCreated_NotVisible ()
 		{
 			Control c = new Control ();
