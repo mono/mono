@@ -619,6 +619,11 @@ namespace System.Windows.Forms
 		{
 			preferred_height = Font.Height;
 
+#if NET_2_0
+			if (!use_compatible_text_rendering)
+				return; 
+#endif
+
 			switch (border_style) {
 			case BorderStyle.None:
 				preferred_height += 3;

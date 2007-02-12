@@ -1,3 +1,8 @@
+2007-02-12  Everaldo Canuto  <everaldo@simios.org>
+
+	* Label.cs: Fix CalcPreferredHeight for 2.0 that must return only
+	font height when compatible_text_rendering is false. Partially fix #80801.
+
 2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Form.cs: Fixed typo in exception message. Fixes bug #80779.
