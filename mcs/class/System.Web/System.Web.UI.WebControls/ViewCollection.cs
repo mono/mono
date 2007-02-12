@@ -40,7 +40,8 @@ namespace System.Web.UI.WebControls
 {
 	public class ViewCollection: ControlCollection
 	{
-		internal ViewCollection (Control owner): base (owner)
+		public ViewCollection (Control owner)
+			: base (owner)
 		{
 		}
 		
