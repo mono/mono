@@ -471,7 +471,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ConstraintException))]
 		public void ConflictExistingPrimaryKey ()
 		{
