@@ -52,7 +52,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PreferredHeight ()
 		{
 			Label l = new Label();
