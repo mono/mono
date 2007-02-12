@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System.Data.OleDb.Tests20.J2EE", "System.Data.OleDb.Tests20.J2EE.vmwcsproj", "{67E25B16-2068-4DA3-8008-5ACA13DE2843}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.OleDb.Tests20.J2EE", "System.Data.OleDb.Tests20.J2EE.csproj", "{67E25B16-2068-4DA3-8008-5ACA13DE2843}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.framework.dll20.J2EE", "..\..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.vmwcsproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20.J2EE", "..\..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

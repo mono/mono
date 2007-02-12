@@ -13,6 +13,8 @@
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
+    <jarserver>iap2</jarserver>
+    <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
@@ -148,9 +150,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.Common\DbCommandOptionalFeatures.cs" />
+    <Compile Include="System.Data.Common\DbCommandSet.cs" />
     <Compile Include="System.Data.Common\DbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="System.Data.Common\DbConnectionOptions.cs" />
+    <Compile Include="System.Data.Common\DbConnectionString.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilder.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilderHelper.cs" />
     <Compile Include="System.Data.Common\DbDataAdapter.cs">
@@ -173,6 +178,7 @@
     <Compile Include="System.Data.Common\DbProviderFactoriesConfigurationHandler.cs" />
     <Compile Include="System.Data.Common\DbProviderFactory.cs" />
     <Compile Include="System.Data.Common\DbProviderSpecificTypePropertyAttribute.cs" />
+    <Compile Include="System.Data.Common\DbProviderSupportedClasses.cs" />
     <Compile Include="System.Data.Common\DbTransaction.cs" />
     <Compile Include="System.Data.Common\DbTypes.cs" />
     <Compile Include="System.Data.Common\ExceptionHelper.cs" />
@@ -201,7 +207,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.OleDb.jvm\OleDbConnection.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Data.OleDb.jvm\OleDbConvert.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbDataAdapter.cs">
@@ -291,6 +296,7 @@
     <Compile Include="System.Data.SqlTypes\SqlBytes.cs" />
     <Compile Include="System.Data.SqlTypes\SqlChars.cs" />
     <Compile Include="System.Data.SqlTypes\SqlCompareOptions.cs" />
+    <Compile Include="System.Data.SqlTypes\SqlDate.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDateTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDecimal.cs" />
     <Compile Include="System.Data.SqlTypes\SqlDouble.cs" />
@@ -304,9 +310,12 @@
     <Compile Include="System.Data.SqlTypes\SqlSingle.cs" />
     <Compile Include="System.Data.SqlTypes\SqlStreamChars.cs" />
     <Compile Include="System.Data.SqlTypes\SqlString.cs" />
+    <Compile Include="System.Data.SqlTypes\SqlTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlTruncateException.cs" />
     <Compile Include="System.Data.SqlTypes\SqlTypeException.cs" />
+    <Compile Include="System.Data.SqlTypes\SqlUtcDateTime.cs" />
     <Compile Include="System.Data.SqlTypes\SqlXml.cs" />
+    <Compile Include="System.Data.SqlTypes\SqlXmlReader.cs" />
     <Compile Include="System.Data.SqlTypes\StorageState.cs" />
     <Compile Include="System.Data\AcceptRejectRule.cs" />
     <Compile Include="System.Data\ColumnTypeConverter.cs" />
@@ -482,7 +491,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" />
+      <UserProperties REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Configuration.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
