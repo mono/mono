@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "System-tests20", "System-tests20.vmwcsproj", "{25EA16E1-E3B8-4433-8533-23B0FB0F93BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System-tests20", "System-tests20.csproj", "{25EA16E1-E3B8-4433-8533-23B0FB0F93BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
