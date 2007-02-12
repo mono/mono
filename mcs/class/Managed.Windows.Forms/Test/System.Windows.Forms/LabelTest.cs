@@ -25,7 +25,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void PreferredSize ()
+		public void PreferredWidth ()
 		{
 			Label l = new Label();
 
@@ -49,6 +49,23 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (l.PreferredWidth > 0, "5");
 
 			f.Dispose ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void PreferredHeight ()
+		{
+			Label l = new Label();
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 3), "#1");
+			
+			l.BorderStyle = BorderStyle.None;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 3), "#2");
+			
+			l.BorderStyle = BorderStyle.FixedSingle;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 6), "#3");
+			
+			l.BorderStyle = BorderStyle.Fixed3D;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 6), "#4");
 		}
 		
 		[Test]
