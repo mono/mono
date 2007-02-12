@@ -1,5 +1,9 @@
 2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Literal.cs: implemented 2.0 feature - Mode.
+	
+2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ViewCollection.cs: fixed public API.
 
 2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>

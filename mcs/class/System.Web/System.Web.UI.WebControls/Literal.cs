@@ -53,16 +53,17 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue (LiteralMode.Transform)]
-		[MonoTODO ("Not implemented")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public LiteralMode Mode 
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState ["Mode"] == null ? LiteralMode.Transform : (LiteralMode) ViewState ["Mode"];
 			}
 			set {
-				throw new NotImplementedException ();
+				if (((int) value) < 0 || ((int) value) > 2)
+					throw new ArgumentOutOfRangeException ();
+				ViewState ["Mode"] = value;
 			}
 		}
 #endif		
@@ -85,10 +86,9 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO ("Not implemented")]
 		public override void Focus ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 #endif		
 
@@ -117,6 +117,11 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter output)
 		{
+#if NET_2_0
+			if (Mode == LiteralMode.Encode)
+				output.Write (HttpUtility.HtmlEncode (Text));
+			else
+#endif
 			output.Write (Text);
 		}
 	}
