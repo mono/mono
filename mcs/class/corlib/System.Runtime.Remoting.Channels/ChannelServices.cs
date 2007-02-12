@@ -280,6 +280,10 @@ namespace System.Runtime.Remoting.Channels
 				
 				if (pos != -1) registeredChannels.Insert (pos, chnl);
 				else registeredChannels.Add (chnl);
+
+				IChannelReceiver receiver = chnl as IChannelReceiver;
+				if (receiver != null && oldStartModeTypes.Contains (chnl.GetType().ToString ()))
+					receiver.StartListening (null);
 			}
 		}
 
@@ -477,6 +481,12 @@ namespace System.Runtime.Remoting.Channels
 			
 			return  list.ToArray ();
 		}
+
+		// Back compatibility fix. StartListener will be called for the types listed here		
+		static IList oldStartModeTypes = new string[] {
+			"Novell.Zenworks.Zmd.Public.UnixServerChannel",
+			"Novell.Zenworks.Zmd.Public.UnixChannel"
+		};
 	}
 	
 	internal class ExceptionFilterSink: IMessageSink
