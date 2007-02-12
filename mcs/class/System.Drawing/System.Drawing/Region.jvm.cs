@@ -219,6 +219,8 @@ namespace System.Drawing
 
 		public void Translate (float dx, float dy)
 		{
+			if (NativeObject.equals(InfiniteRegion.NativeObject))
+				return;
 			NativeObject.transform(geom.AffineTransform.getTranslateInstance(
 				dx,
 				dy));
@@ -371,6 +373,8 @@ namespace System.Drawing
 		{
 			if (matrix == null)
 				throw new ArgumentNullException("matrix");
+			if (NativeObject.equals(InfiniteRegion.NativeObject))
+				return;
 			NativeObject.transform(matrix.NativeObject);
 		}		
 		#endregion
