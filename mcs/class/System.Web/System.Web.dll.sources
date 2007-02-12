@@ -64,6 +64,7 @@ System.Web.Compilation/PageCompiler.cs
 System.Web.Compilation/PageThemeCompiler.cs
 System.Web.Compilation/ParseException.cs
 System.Web.Compilation/PrecompilationFlags.cs
+System.Web.Compilation/PreservationFile.cs
 System.Web.Compilation/ResourceExpressionBuilder.cs
 System.Web.Compilation/ResourceExpressionFields.cs
 System.Web.Compilation/ResourceProviderFactory.cs
