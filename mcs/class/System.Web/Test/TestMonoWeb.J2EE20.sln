@@ -1,13 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "TestMonoWeb20", "TestMonoWeb20.vmwcsproj", "{7180B7A7-D0AB-4397-AC0A-CDB1A9DE6417}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMonoWeb20", "TestMonoWeb20.csproj", "{7180B7A7-D0AB-4397-AC0A-CDB1A9DE6417}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "NunitWeb20", "mainsoft\NunitWeb\NunitWeb\NunitWeb20.vmwcsproj", "{DC2320EB-CC91-4648-AF2B-8937F6794A14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NunitWeb20", "mainsoft\NunitWeb\NunitWeb\NunitWeb20.csproj", "{DC2320EB-CC91-4648-AF2B-8937F6794A14}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "HtmlCompare20", "mainsoft\MainsoftWebTest\HtmlCompare20.vmwcsproj", "{C3375963-9409-41A1-ADD2-1076F5A90BDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlCompare20", "mainsoft\MainsoftWebTest\HtmlCompare20.csproj", "{C3375963-9409-41A1-ADD2-1076F5A90BDE}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "MainsoftWebApp20", "mainsoft\MainsoftWebApp20\MainsoftWebApp20.vmwcsproj", "{C14E7AA4-23AD-417D-9A63-62DE9036C9BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainsoftWebApp20", "mainsoft\MainsoftWebApp20\MainsoftWebApp20.csproj", "{C14E7AA4-23AD-417D-9A63-62DE9036C9BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
