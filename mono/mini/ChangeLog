@@ -1,3 +1,8 @@
+
+Mon Feb 12 11:54:16 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: simplify and merge rules for cross-compilation.
+
 2007-02-07  Massimiliano Mantione  <massi@ximian.com>
 
 	* local-propagation.c: Actually *apply* the fix for bug 80591...
