@@ -165,6 +165,9 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (b2 [0], 10, "#3 Should be same");
 		}
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Array.Resize(null) is not supported")]
+#endif
 		public void SqlBytesSetLength ()
 		{
 			byte [] b1 = new byte [10];

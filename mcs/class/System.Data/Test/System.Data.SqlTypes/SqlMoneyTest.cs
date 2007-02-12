@@ -446,6 +446,9 @@ namespace MonoTests.System.Data.SqlTypes
                 }
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7287")]
+#endif
 		public void SqlDecimalToSqlMoney()
 		{
 			SqlDecimal TestDecimal = new SqlDecimal (4000);

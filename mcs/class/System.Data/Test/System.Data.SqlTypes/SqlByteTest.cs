@@ -37,6 +37,9 @@ using System;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
+#if TARGET_JVM
+using DivideByZeroException = System.ArithmeticException;
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {

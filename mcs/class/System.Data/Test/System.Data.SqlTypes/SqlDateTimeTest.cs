@@ -274,6 +274,9 @@ namespace MonoTests.System.Data.SqlTypes
                 }
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7284")]
+#endif
                 public void Parse()
                 {
                         try {
@@ -470,6 +473,9 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7284")]
+#endif
 		public void SqlStringToSqlDateTime()
 		{
 

@@ -35,6 +35,9 @@
 using NUnit.Framework;
 using System;
 using System.Data.SqlTypes;
+#if TARGET_JVM
+using DivideByZeroException = System.ArithmeticException;
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
