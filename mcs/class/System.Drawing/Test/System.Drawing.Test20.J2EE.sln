@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "Exocortex.DSP20.v1.J2EE", "DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.vmwcsproj", "{995DE32D-06AB-4926-97FF-565B9205D5F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exocortex.DSP20.v1.J2EE", "DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.csproj", "{995DE32D-06AB-4926-97FF-565B9205D5F8}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "DrawingTestHelper20.J2EE", "DrawingTest\DrawingTestHelper\DrawingTestHelper20.J2EE.vmwcsproj", "{C4329BA9-2E08-4EB3-B6ED-0FA3BB6285AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawingTestHelper20.J2EE", "DrawingTest\DrawingTestHelper\DrawingTestHelper20.J2EE.csproj", "{C4329BA9-2E08-4EB3-B6ED-0FA3BB6285AF}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "Test20.J2EE", "Test20.J2EE.vmwcsproj", "{FD3F01E4-4F19-4124-BD9C-226C3E8D55B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test20.J2EE", "Test20.J2EE.csproj", "{FD3F01E4-4F19-4124-BD9C-226C3E8D55B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
