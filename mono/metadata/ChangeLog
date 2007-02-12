@@ -1,3 +1,9 @@
+2007-02-12  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.c, marshal.h, icall-def.h: rename mono_marshal_realloc
+	to ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal
+	and use GlobalReAlloc on WIN32 to be in sync with GlobalAlloc,
+	GlobalFree. Fixes a part of bug #77075.
 
 Mon Feb 12 21:10:07 CET 2007 Paolo Molaro <lupus@ximian.com>
 
