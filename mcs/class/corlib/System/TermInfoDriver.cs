@@ -35,6 +35,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
+		/* Do not rename this field, its looked up from the runtime */
+		static bool need_window_dimensions = true;
+		
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
 
 		TermInfoReader reader;
@@ -628,7 +631,6 @@ namespace System {
 			}
 		}
 
-		// TODO: use this at the beginning and on every SIGWINCH
 		void GetWindowDimensions ()
 		{
 			/* Try the ioctl first */
@@ -654,6 +656,7 @@ namespace System {
 
 			bufferHeight = windowHeight;
 			bufferWidth = windowWidth;
+			need_window_dimensions = false;
 		}
 
 		public int WindowHeight {
@@ -662,7 +665,8 @@ namespace System {
 					Init ();
 				}
 
-				GetWindowDimensions ();
+				if (need_window_dimensions)
+					GetWindowDimensions ();
 				return windowHeight;
 			}
 			set {
@@ -716,7 +720,8 @@ namespace System {
 					Init ();
 				}
 
-				GetWindowDimensions ();
+				if (need_window_dimensions)
+					GetWindowDimensions ();
 				return windowWidth;
 			}
 			set {
@@ -929,7 +934,7 @@ namespace System {
 				Init ();
 			}
 
-			if (bufferWidth == 0)
+			if (bufferWidth == 0 && need_window_dimensions)
 				GetWindowDimensions ();
 
 			if (left < 0 || left >= bufferWidth)
