@@ -189,7 +189,7 @@ namespace System.Windows.Forms {
 		{
 			base.OnResize (e);
 
-			if (Parent != null && Parent.IsHandleCreated)
+			if (Parent != null)
 				XplatUI.InvalidateNC (Parent.Handle);
 			// Should probably make this into one loop
 			SizeScrollBars ();

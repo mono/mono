@@ -64,8 +64,6 @@ namespace System.Windows.Forms {
 		private static Hashtable	wm_nc_registered;
 		private static RECT		clipped_cursor_rect;
 
-		private Hwnd HwndCreating; // the Hwnd we are currently creating (see CreateWindow)
-
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -1189,11 +1187,7 @@ namespace System.Windows.Forms {
 				SetMdiStyles (cp);
 			}
 
-			HwndCreating = hwnd;
-
 			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-
-			HwndCreating = null;
 
 			if (WindowHandle==IntPtr.Zero) {
 				uint error = Win32GetLastError();
@@ -1477,8 +1471,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
-			if (HwndCreating != null && HwndCreating.ClientWindow != IntPtr.Zero)
-				HwndCreating.ClientWindow = msg.HWnd;
 			msg.Result=Win32DefWindowProc(msg.HWnd, (Msg)msg.Msg, msg.WParam, msg.LParam);
 			return msg.Result;
 		}

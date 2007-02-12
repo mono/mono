@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 		#region Private Variables
 		internal string		name;
 		internal string		value;
-		internal Control owner;
+		private Control owner;
 		internal AccessibleRole	role;
 		internal AccessibleStates	state;
 		internal string		default_action;

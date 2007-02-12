@@ -1,69 +1,6 @@
-2007-02-10  Chris Toshok  <toshok@ximian.com>
-
-	* XplatUIWin32.cs (CreateWindow): reinstate the assignment of
-	hwnd.ClientWindow to properly associate Hwnd to Handle.  This
-	should be handled by the HwndCreating stuff, but it's not being
-	handled properly.  Fixes #80782.
-
 2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Form.cs: Fixed typo in exception message. Fixes bug #80779.
-
-2007-02-09  Chris Toshok  <toshok@ximian.com>
-
-	[big change, fixes #80020]
-	
-	* AccessibleObject.cs: we need to make owner internal again to fix
-	some of ControlAccessibleObject.
-
-	* Control.cs: lots of changes here.  add support for WM_CREATE,
-	for which we generate OnHandleCreated.  Remove the OnHandleCreated
-	call from CreateHandle.  Also add support for WM_SHOWWINDOW where
-	we create child controls.  leave the MonoTODO's for the
-	accessibility calls, but fix the exceptions so the tests pass.
-
-	Add the InvalidOperationExceptions to Invoke methods, and remove a
-	couple of InvokeInternal methods we aren't using.
-	
-	Also, add a couple of CreateHandle calls in places where we know
-	the handles are being created but our code doesn't reference
-	.Handle.
-
-	Make SetVisibleCore call OnVisibleChange if the handle isn't
-	created.  If the handle is created, we rely on XplatUI.SetVisible
-	generating the event synchronously.
-	
-	Lastly, make sure we don't use this.Handle inside CreateHandle,
-	because we can call back into client (and that code can dispose of
-	the control).
-
-	* XplatUIStructs.cs: misc/cleanup.
-
-	* XplatUIX11.cs: Map/Unmap X events correspond to WM_SHOWWINDOW,
-	although we don't populate the wParam properly.
-	(CreateWindow): generate WM_CREATE.
-	(MapWindow,UnmapWindow): make these calls synchronous, at great
-	performance expense (particularly in the unmap case), to match
-	win32 behavior.
-
-	* Form.cs (.ctor): remove the call to UpdateBounds. we don't need
-	to call it.
-	(set_MdiParent): don't recreate the handle unless it's been
-	created already.
-	
-	* MdiClient.cs (OnResize): don't InvalidateNC Parent.Handle unless
-	it's created.
-
-	* NativeWindow.cs: this is probably the weirdest part of the
-	patch.  We need a way to link up the window being created to the
-	WM_CREATE message.  Since we can only be creating one window at a
-	time on a given thread, we keep track of a per-thread reference so
-	we can dispatch it properly.  We also need to keep track of the
-	Hwnd currently being created so that the win32 backend doesn't
-	have problems.
-	
-	* XplatUIWin32.cs: a similar change to the one we made in
-	NativeWindow.cs.
 
 2007-02-09  Gert Driesen  <drieseng@users.sourceforge.net>
 

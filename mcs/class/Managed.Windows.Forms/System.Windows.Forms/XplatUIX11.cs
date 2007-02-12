@@ -1266,57 +1266,23 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void WaitForHwndMessage (Hwnd hwnd, Msg message) {
-			MSG msg = new MSG ();
-			XEventQueue queue;
-
-			queue = ThreadQueue(Thread.CurrentThread);
-
-			queue.DispatchIdle = false;
-
-			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-				bool done = (msg.hwnd == hwnd.Handle) && (Msg)msg.message == message;
-				TranslateMessage (ref msg);
-				DispatchMessage (ref msg);
-				if (done)
-					break;
-			}
-
-			queue.DispatchIdle = true;
-
-		}
-
 		private void MapWindow(Hwnd hwnd, WindowType windows) {
-			if (hwnd.mapped) {
-				SendMessage (hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero /* XXX we need the SHOWWINDOW wParam */, (IntPtr)1);
+			hwnd.mapped = true;
+			if ((windows & WindowType.Whole) != 0) {
+				XMapWindow(DisplayHandle, hwnd.whole_window);
 			}
-			else {
-				hwnd.mapped = true;
-				if ((windows & WindowType.Whole) != 0) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
-				}
-				if ((windows & WindowType.Client) != 0) {
-					XMapWindow(DisplayHandle, hwnd.client_window);
-
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
-				}
+			if ((windows & WindowType.Client) != 0) {
+				XMapWindow(DisplayHandle, hwnd.client_window);
 			}
 		}
 
 		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
-			if (!hwnd.mapped) {
-				SendMessage (hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero /* XXX we need the SHOWWINDOW wParam */, (IntPtr)0);
+			hwnd.mapped = false;
+			if ((windows & WindowType.Whole) != 0) {
+				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 			}
-			else {
-				hwnd.mapped = false;
-				if ((windows & WindowType.Whole) != 0) {
-					XUnmapWindow(DisplayHandle, hwnd.whole_window);
-				}
-				if ((windows & WindowType.Client) != 0) {
-					XUnmapWindow(DisplayHandle, hwnd.client_window);
-
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
-				}
+			if ((windows & WindowType.Client) != 0) {
+				XUnmapWindow(DisplayHandle, hwnd.client_window);
 			}
 		}
 
@@ -1522,7 +1488,6 @@ namespace System.Windows.Forms {
 					if (hwnd.client_window == xevent.MapEvent.window) {
 						hwnd.mapped = true;
 					}
-					hwnd.Queue.EnqueueLocked (xevent);
 					break;
 				}
 
@@ -1530,7 +1495,6 @@ namespace System.Windows.Forms {
 					if (hwnd.client_window == xevent.MapEvent.window) {
 						hwnd.mapped = false;
 					}
-					hwnd.Queue.EnqueueLocked (xevent);
 					break;
 				}
 
@@ -2303,8 +2267,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void CreateCaret (IntPtr handle, int width, int height)
-		{
+		internal override void CreateCaret(IntPtr handle, int width, int height) {
 			XGCValues	gc_values;
 			Hwnd		hwnd;
 
@@ -2333,8 +2296,7 @@ namespace System.Windows.Forms {
 			XSetFunction(DisplayHandle, Caret.gc, GXFunction.GXinvert);
 		}
 
-		internal override IntPtr CreateWindow (CreateParams cp)
-		{
+		internal override IntPtr CreateWindow(CreateParams cp) {
 			XSetWindowAttributes	Attributes;
 			Hwnd			hwnd;
 			int			X;
@@ -2447,7 +2409,12 @@ namespace System.Windows.Forms {
 			lock (XlibLock) {
 				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
 				if (hwnd.whole_window != hwnd.client_window)
-					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
+					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
+
+				if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
+					MapWindow(hwnd, WindowType.Both);
+					hwnd.visible = true;
+				}
 			}
 
 			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
@@ -2488,14 +2455,8 @@ namespace System.Windows.Forms {
 
 			// Set caption/window title
 			Text(hwnd.Handle, cp.Caption);
-
-			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
+			
 			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
-
-			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
-				MapWindow(hwnd, WindowType.Both);
-				hwnd.visible = true;
-			}
 
 			return hwnd.Handle;
 		}
@@ -3737,28 +3698,6 @@ namespace System.Windows.Forms {
 					goto ProcessNextMessage;
 				}
 
-				case XEventName.MapNotify: {
-					if (client) {
-						hwnd.mapped = true;
-						msg.message = Msg.WM_SHOWWINDOW;
-						msg.lParam = (IntPtr) 1;
-						// XXX we're missing the wParam..
-						break;
-					}
-					goto ProcessNextMessage;
-				}
-
-				case XEventName.UnmapNotify: {
-					if (client) {
-						hwnd.mapped = false;
-						msg.message = Msg.WM_SHOWWINDOW;
-						msg.lParam = (IntPtr) 0;
-						// XXX we're missing the wParam..
-						break;
-					}
-					goto ProcessNextMessage;
-				}
-
 				case XEventName.Expose: {
 					if (ThreadQueue(Thread.CurrentThread).PostQuitState || !hwnd.Mapped) {
 						if (client) {
@@ -4845,8 +4784,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
-		{
+		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
@@ -4854,22 +4792,23 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				if (visible) {
-					MapWindow(hwnd, WindowType.Both);
-
 					if (Control.FromHandle(handle) is Form) {
 						FormWindowState	s;
 
 						s = ((Form)Control.FromHandle(handle)).WindowState;
 
+						MapWindow(hwnd, WindowType.Both);
+
 						switch(s) {
 							case FormWindowState.Minimized:	SetWindowState(handle, FormWindowState.Minimized); break;
 							case FormWindowState.Maximized:	SetWindowState(handle, FormWindowState.Maximized); break;
 						}
-					}
 
+					} else {
+						MapWindow(hwnd, WindowType.Both);
+					}
 					SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-				}
-				else {
+				} else {
 					UnmapWindow(hwnd, WindowType.Whole);
 				}
 			}
