@@ -62,6 +62,10 @@ namespace System.Web.UI.WebControls
 		public int Count {
 			get { return rows.Count; }
 		}
+
+		public bool IsReadOnly {
+			get { return false; }
+		}
 		
 		public bool IsSynchronized {
 			get { return false; }
