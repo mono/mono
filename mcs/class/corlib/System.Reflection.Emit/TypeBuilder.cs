@@ -3,6 +3,7 @@
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -1342,18 +1343,22 @@ namespace System.Reflection.Emit {
 
 		static int UnmanagedDataCount = 0;
 		
-		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
+		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes)
+ 		{
 			check_name ("name", name);
 			if ((size <= 0) || (size > 0x3f0000))
 				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
 			check_not_created ();
 
-			string s = "$ArrayType$"+UnmanagedDataCount.ToString();
-			UnmanagedDataCount++;
-			TypeBuilder datablobtype = DefineNestedType (s,
-				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, size);
-			datablobtype.CreateType ();
+			string typeName = "$ArrayType$" + size;
+			Type datablobtype = pmodule.GetRegisteredType (fullname + "+" + typeName);
+			if (datablobtype == null) {
+				TypeBuilder tb = DefineNestedType (typeName,
+					TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+					pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, size);
+				tb.CreateType ();
+				datablobtype = tb;
+			}
 			return DefineField (name, datablobtype, attributes|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
 		}
 

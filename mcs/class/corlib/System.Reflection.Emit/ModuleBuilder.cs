@@ -127,11 +127,15 @@ namespace System.Reflection.Emit {
 			return fb;
 		}
 
-		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
+		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global fields already created");
+			if ((size <= 0) || (size > 0x3f0000))
+				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
+
 			if (global_type == null)
 				global_type = new TypeBuilder (this, 0);
 
@@ -258,8 +262,16 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-		internal void RegisterTypeName (TypeBuilder tb, string name) {
+		internal void RegisterTypeName (TypeBuilder tb, string name)
+		{
 			name_cache.Add (name, tb);
+		}
+		
+		internal TypeBuilder GetRegisteredType (string name)
+		{
+			if (name_cache == null)
+				return null;
+			return (TypeBuilder)name_cache [name];
 		}
 
 #if NET_2_0
