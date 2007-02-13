@@ -1,4 +1,4 @@
-// cs0513.cs: `X.myAbstract()' is abstract but it is contained in nonabstract class
+// CS0513: `X.myAbstract()' is abstract but it is declared in the non-abstract class `X'
 // Line: 5
 
 class X {
