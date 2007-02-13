@@ -11,6 +11,11 @@
 
 2007-02-13  Marek Safar  <marek.safar@gmail.com>
 
+	Another fix for bug #80749
+	* pending.cs: Abstract class has priority over interfaces.
+
+2007-02-13  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs Better error message.
 
 	* driver.cs: Add shorter versions of -optimize option.
