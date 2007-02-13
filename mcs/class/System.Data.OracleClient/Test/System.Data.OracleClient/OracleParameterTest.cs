@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -68,8 +68,14 @@ namespace MonoTests.System.Data.OracleClient {
                                 command.ExecuteNonQuery ();
 
                                 command.CommandText =
-                                                "create table culture_test (id number(10), value1 float, value2 number(20,10))";
+                                                "create table culture_test (id number(10), value1 float,"
+												+ " value2 number(20,10), value3 number (20,10))";
                                 command.ExecuteNonQuery ();
+
+								command.CommandText =
+									"create table oratypes_test (id NUMBER(10), value1 VARCHAR2(100),"
+									+ " value2 DATE)";
+								command.ExecuteNonQuery ();
                         }
                 }
 
@@ -81,6 +87,8 @@ namespace MonoTests.System.Data.OracleClient {
                                 command.ExecuteNonQuery ();
                                 command.CommandText = "drop table culture_test";
                                 command.ExecuteNonQuery ();
+								command.CommandText = "drop table oratypes_test";
+								command.ExecuteNonQuery ();
                         }
 
                         connection.Close ();
@@ -143,13 +151,15 @@ namespace MonoTests.System.Data.OracleClient {
                         using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
                                 // insert test values
                                 command.CommandText =
-                                                "insert into culture_test (id,value1,value2) values (:id,:value1,:value2)";
+								"insert into culture_test (id,value1,value2,value3) values (:id,:value1,:value2,:value3)";
                                 command.Parameters.Add (new OracleParameter ("ID", OracleType.Int32));
                                 command.Parameters.Add( new OracleParameter ("VALUE1", OracleType.Float));
                                 command.Parameters.Add( new OracleParameter ("VALUE2", OracleType.Double));
+								command.Parameters.Add( new OracleParameter ("VALUE3", OracleType.Number));
                                 command.Parameters ["ID"].Value = id;
                                 command.Parameters ["VALUE1"].Value = 2346.2342f;
                                 command.Parameters ["VALUE2"].Value = 4567456.23412m;
+								command.Parameters ["VALUE3"].Value = new OracleNumber(4567456.23412m);
                                 try {
                                         command.ExecuteNonQuery ();
                                 }
@@ -167,7 +177,7 @@ namespace MonoTests.System.Data.OracleClient {
                         using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
                                 // read test values
                                 command.CommandText =
-                                                "select value1,value2 from culture_test where id = " + id;
+                                                "select value1,value2,value3 from culture_test where id = " + id;
                                 command.Parameters.Clear ();
                                 try {
                                         using (OracleDataReader reader = command.ExecuteReader ()) {
@@ -176,6 +186,8 @@ namespace MonoTests.System.Data.OracleClient {
                                                                 "Float value improperly stored [" + id + ']');
                                                         Assert.AreEqual (4567456.23412m, reader.GetDecimal (1),
                                                                 "Decimal value improperly stored [" + id + ']');
+														Assert.AreEqual (4567456.23412m, reader.GetOracleNumber(2).Value,
+																	 "OracleNumber value improperly stored [" + id + ']');
                                                 }
                                                 else {
                                                         Assert.Fail ("Expected records not found [" + id + ']');
@@ -187,5 +199,57 @@ namespace MonoTests.System.Data.OracleClient {
                                 }
                         }
                 }
+
+				// added support for OracleString, OracleNumber and OracleDateTime in OracleParameter
+				[Test]
+				public void OracleTypesInValueTest ()
+				{
+					try {
+						int test_int = 10;
+						string test_string = "koza";
+						DateTime test_dateTime = DateTime.MinValue;
+						using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
+
+							// insert test values
+							command.CommandText =
+								"insert into oratypes_test (id,value1,value2)"
+								+" values (:idx,:txtx,:datex)";
+
+							command.Parameters.Add(
+								new OracleParameter("IDX", OracleType.Number))
+								.Direction = ParameterDirection.Input;
+							command.Parameters.Add(
+								new OracleParameter("TXTX", OracleType.VarChar))
+								.Direction = ParameterDirection.Input;
+							command.Parameters.Add(
+								new OracleParameter("DATEX", OracleType.DateTime))
+								.Direction = ParameterDirection.Input;
+
+							command.Parameters ["IDX"].Value = new OracleNumber(test_int);
+							command.Parameters ["TXTX"].Value = new OracleString(test_string);
+							command.Parameters ["DATEX"].Value = new OracleDateTime(test_dateTime);
+
+							command.ExecuteNonQuery ();
+
+							// read test values
+							command.CommandText =
+								"select value1,value2 from oratypes_test where id = "
+								+ test_int;
+							command.Parameters.Clear ();
+							using (OracleDataReader reader = command.ExecuteReader ()) {
+								if (reader.Read ()) {
+									Assert.AreEqual (test_string, reader.GetString (0), "OracleString mismatched");
+									Assert.AreEqual (test_dateTime, reader.GetDateTime(1), "OracleDateTime mismatched");
+								}
+								else {
+									Assert.Fail ("Expected records not found.");
+								}
+							}
+						}
+					}
+					catch (ArgumentException e) {
+						Assert.Fail("OracleType not handled: " + e.Message);
+					}
+				}
         }
 }

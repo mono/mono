@@ -492,7 +492,9 @@ namespace System.Data.OracleClient {
                                         string svalue = null;
                                         if(v is IFormattable)
                                                 svalue = ((IFormattable)v).ToString (null, con.SessionFormatProvider);
-                                        else
+                                        else if (v is OracleNumber)
+									   		svalue = ((OracleNumber)v).ToString(con.SessionFormatProvider);
+								   		else
                                                 svalue = v.ToString();
 					rsize = 0;
 
@@ -522,7 +524,7 @@ namespace System.Data.OracleClient {
 				}
 			}
 
-			// Now, call the appropriate OCI Bind function
+			// Now, call the appropriate OCI Bind function;
 
 			if (useRef == true) {
 				if (bindType == OciDataType.TimeStamp) {
@@ -634,12 +636,15 @@ namespace System.Data.OracleClient {
 				SetOracleType (OracleType.Byte);
 				break;
 			case "System.String":
+			case "System.Data.OracleClient.OracleString":
 				SetOracleType (OracleType.VarChar);
 				break;
+			case "System.Data.OracleClient.OracleDateTime":
 			case "System.DateTime":
 				SetOracleType (OracleType.DateTime);
 				break;
 			case "System.Decimal":
+			case "System.Data.OracleClient.OracleNumber":
 				SetOracleType (OracleType.Number);
 				//scale = ((decimal) value).Scale;
 				break;

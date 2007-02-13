@@ -1,5 +1,5 @@
 //
-// OracleNumber.cs 
+// OracleNumber.cs
 //
 // Part of the Mono class libraries at
 // mcs/class/System.Data.OracleClient/System.Data.OracleClient
@@ -61,7 +61,7 @@ namespace System.Data.OracleClient {
 			: this ((decimal) longValue)
 		{
 		}
-		
+
 		public OracleNumber (OracleNumber from)
 			: this (from.Value)
 		{
@@ -76,7 +76,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public decimal Value {
-			get { 
+			get {
 				if (IsNull)
 					throw new InvalidOperationException ("The value is Null.");
 				return value;
@@ -378,9 +378,7 @@ namespace System.Data.OracleClient {
 
 		public override string ToString ()
 		{
-			if (IsNull)
-				return "Null";
-			return Value.ToString ();
+			return ToString(null);
 		}
 
 		[MonoTODO]
@@ -507,5 +505,14 @@ namespace System.Data.OracleClient {
 		}
 
 		#endregion // Operators and Type Conversions
+
+		#region internal IFormatProvider handling
+		internal String ToString(IFormatProvider format)
+		{
+			if (IsNull)
+				return "Null";
+			return Value.ToString (format);
+		}
+		#endregion
 	}
 }
