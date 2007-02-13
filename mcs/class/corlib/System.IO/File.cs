@@ -88,10 +88,12 @@ namespace System.IO
 				throw new ArgumentNullException ("src");
 			if (dest == null)
 				throw new ArgumentNullException ("dest");
-			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException (Locale.GetText ("src is null"));
-			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException (Locale.GetText ("dest is empty or contains invalid characters"));
+			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1
+				|| src.IndexOfAny (Path.WildcardChars) != -1)
+				throw new ArgumentException (Locale.GetText ("Illegal characters in path"));
+			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1
+				|| dest.IndexOfAny (Path.WildcardChars) != -1)
+				throw new ArgumentException (Locale.GetText ("Illegal characters in path"));
 			if (!Exists (src))
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
 
@@ -99,13 +101,12 @@ namespace System.IO
 				throw new ArgumentException(Locale.GetText ("{0} is a directory", src));
 			}
 			
-			if (Exists (dest)) {
-				if ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory){
-					throw new ArgumentException (Locale.GetText ("{0} is a directory", dest));
-				}
-				if (!overwrite)
-					throw new IOException (Locale.GetText ("{0} already exists", dest));
-			}
+			if (Directory.Exists (dest))
+				//LAMESPEC: MSDN claims ArgumentException, but IOException is actually thrown
+				throw new IOException (Locale.GetText ("The target file \'{0}\' is a directory, not a file.", dest));
+
+			if (!overwrite && File.Exists (dest))
+				throw new IOException (Locale.GetText ("The file \'{0}\' already exists.", dest));
 
 			string DirName = Path.GetDirectoryName(dest);
 			if (DirName != String.Empty && !Directory.Exists (DirName))

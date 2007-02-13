@@ -22,6 +22,14 @@ namespace MonoTests.System.IO
 
 		static readonly char DSC = Path.DirectorySeparatorChar;
 		string current;
+		static OsType OS;
+
+		bool Windows
+		{
+			get {
+				return OS == OsType.Windows;
+			}
+		}
 
         	[SetUp]
         	protected void SetUp ()
@@ -30,6 +38,15 @@ namespace MonoTests.System.IO
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Directory.CreateDirectory (TempFolder);
+
+			if ('/' == DSC) {
+				OS = OsType.Unix;
+			} else if ('\\' == DSC) {
+				OS = OsType.Windows;
+			} else {
+				OS = OsType.Mac;
+				//FIXME: For Mac. figure this out when we need it
+			}
         	}
         
         	[TearDown]
@@ -178,6 +195,44 @@ namespace MonoTests.System.IO
 		public void CreateSubdirectoryEmptyString ()
 		{
 			new DirectoryInfo (".").CreateSubdirectory ("");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateSubdirectory_ArgumentException1 ()
+		{
+			string path = TempFolder + DSC + "DIT.CreateSubdirectory.Test";
+			string fullsubpath = Path.GetFullPath (path + DSC + "Subdir");
+			DirectoryInfo info = new DirectoryInfo (path);
+
+			info.CreateSubdirectory (fullsubpath);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateSubdirectory_ArgumentException2 ()
+		{
+			string path = TempFolder + DSC + "DIT.CreateSubdirectory.Test";
+			string subpath = ".." + DSC + "Subdir";
+			DirectoryInfo info = new DirectoryInfo (path);
+
+			info.CreateSubdirectory (subpath);
+		}
+
+		[Test]
+		public void CreateSubdirectory_NotSupportedException ()
+		{
+			if (Windows) {
+				string path = TempFolder + DSC + "DIT.CreateSubdirectory.Test";
+				string subpath = "Sub:dir";
+				DirectoryInfo info = new DirectoryInfo (path);
+
+				try {
+					info.CreateSubdirectory (subpath);
+					Fail ("Path containing ':' is not legal on Windows");
+				}
+				catch (NotSupportedException e) { }
+			}
 		}
 
 		[Test]
@@ -513,6 +568,26 @@ namespace MonoTests.System.IO
 				DeleteDir (path2);
 			}
 		}
+
+			[Test]
+			public void MoveTo2 ()
+			{
+				string path1 = TempFolder + DSC + "DIT.MoveTo.Soucre.Test";
+				string path2 = TempFolder + DSC + "DIT.MoveTo.Dest.Test" + DSC;
+				DeleteDir (path1);
+				DeleteDir (path2);
+
+				try {
+					DirectoryInfo info1 = Directory.CreateDirectory (path1);
+
+					info1.MoveTo (path2);
+					AssertEquals ("#01", path2, info1.FullName);
+				}
+				finally {
+					DeleteDir (path1);
+					DeleteDir (path2);
+				}
+			}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

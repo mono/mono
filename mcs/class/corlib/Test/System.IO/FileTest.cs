@@ -197,6 +197,72 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyArgumentException5 ()
+		{
+			File.Copy ("a*", "b");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyArgumentException6 ()
+		{
+			File.Copy ("a?", "b");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyArgumentException7 ()
+		{
+			File.Copy ("a", "b*");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyArgumentException8 ()
+		{
+			File.Copy ("a", "b?");
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CopyIOException2 ()
+		{
+			string dirpath = TempFolder + Path.DirectorySeparatorChar + "dir";
+			string filepath = TempFolder + Path.DirectorySeparatorChar + "file.txt";
+
+			try {
+				Directory.CreateDirectory (dirpath);
+				File.WriteAllText (filepath, "xxx");
+
+				File.Copy (filepath, dirpath);
+			}
+			finally {
+				DeleteFile (filepath);
+				DeleteDirectory (dirpath);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CopyIOException3 ()
+		{
+			string filepath1 = TempFolder + Path.DirectorySeparatorChar + "file1.txt";
+			string filepath2 = TempFolder + Path.DirectorySeparatorChar + "file2.txt";
+
+			try {
+				File.WriteAllText (filepath1, "xxx");
+				File.WriteAllText (filepath2, "yyy");
+
+				File.Copy (filepath1, filepath2);
+			}
+			finally {
+				DeleteFile (filepath1);
+				DeleteDirectory (filepath2);
+			}
+		}
+
+		[Test]
 		[ExpectedException(typeof(FileNotFoundException))]
 		public void CopyFileNotFoundException ()
 		{
@@ -1742,6 +1808,12 @@ namespace MonoTests.System.IO
 		{
 			if (File.Exists (path))
 				File.Delete (path);
+		}
+
+		private void DeleteDirectory (string path)
+		{
+			if (Directory.Exists (path))
+				Directory.Delete (path);
 		}
 	}
 }

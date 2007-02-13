@@ -66,14 +66,13 @@ namespace System.IO
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			
+			path = path.TrimEnd ();
+			
 			if (path == "")
 				throw new ArgumentException ("Path is empty");
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid chars");
-
-			if (path.Trim ().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
 
 #if NET_2_0
 			if (File.Exists(path))
@@ -98,6 +97,8 @@ namespace System.IO
 			if (info.Parent != null && !info.Parent.Exists)
 				 info.Parent.Create ();
 
+			path = Path.GetFullPath (path);
+			
 			MonoIOError error;
 			if (!MonoIO.CreateDirectory (path, out error)) {
 				// LAMESPEC: 1.1 and 1.2alpha allow CreateDirectory on a file path.
@@ -192,7 +193,7 @@ namespace System.IO
 
 		public static bool Exists (string path)
 		{
-			if (path == null)
+			if (path == null || path.Trim ().Length == 0)
 				return false;
 				
 			MonoIOError error;
