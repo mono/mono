@@ -1,5 +1,10 @@
 2007-02-13  Adar Wesley <adarw@mainsoft.com>
 
+        * ObjectDataSourceViewTest.cs: removed NotWorking attribute from a
+        working test.
+
+2007-02-13  Adar Wesley <adarw@mainsoft.com>
+
 	* ObjectDataSourceViewTest.cs: removed NotWorking attribute from a 
 	working test.
 

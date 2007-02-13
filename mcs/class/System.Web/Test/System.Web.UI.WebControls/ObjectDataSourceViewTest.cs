@@ -447,29 +447,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void SelectMethod ()
 		{
-// 8) MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.SelectMethod : NUnit.Framework.AssertionException: SelectedRowsCount ^M
-//         expected:<1>^M
-//          but was:<0>
-//   at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00000]
-//   at NUnit.Framework.Assert.Fail (System.String message) [0x00000]
-//   at NUnit.Framework.Assert.FailNotEquals (System.Object expected, System.Object actual, System.String message, System.Object[] args) [0x00000]
-//   at NUnit.Framework.Assert.AreEqual (Int32 expected, Int32 actual, System.String message, System.Object[] args) [0x00000]
-//   at NUnit.Framework.Assert.AreEqual (Int32 expected, Int32 actual, System.String message) [0x00000]
-//   at MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.select (System.Web.UI.Page p) [0x00000]
-//   at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)
-//   at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]
-//   ----> NUnit.Framework.AssertionException : SelectedRowsCount ^M
-//         expected:<1>^M
-//          but was:<0>^M
-//   at System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke (System.Runtime.Remoting.Proxies.RealProxy rp, IMessage msg, System.Exception& exc, System.Object[]& out_args) [0x00188] in /home/cvs/mcs/class/corlib/System.Runtime.Remoting.Proxies/RealProxy.cs:221
-// --AssertionException
-//   at MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.select (System.Web.UI.Page p) [0x00000]
-//   at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)
-//   at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]
-// 
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (select));
 			string html = t.Run ();
 			string origin = @"<div>
