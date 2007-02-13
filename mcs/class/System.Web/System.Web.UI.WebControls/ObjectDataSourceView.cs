@@ -618,14 +618,7 @@ namespace System.Web.UI.WebControls
 				throw new InvalidOperationException ("ConflictDetection is set to CompareAllValues and oldValues collection is null or empty.");
 
 			IDictionary oldDataValues;
-			if (ConflictDetection == ConflictOptions.CompareAllValues) {
-				oldDataValues = new Hashtable ();
-				foreach (DictionaryEntry de in keys)
-					oldDataValues [de.Key] = de.Value;
-				foreach (DictionaryEntry de in oldValues)
-					oldDataValues [de.Key] = de.Value;
-			} else
-				oldDataValues = keys;
+			oldDataValues = BuildOldValuesList (keys, oldValues, false);
 					
 			IOrderedDictionary paramValues;
 			MethodInfo method;
@@ -656,51 +649,37 @@ namespace System.Web.UI.WebControls
 
 			return -1;
 		}
-		
+
 		protected override int ExecuteUpdate (IDictionary keys, IDictionary values, IDictionary oldValues)
 		{
 			IOrderedDictionary paramValues;
 			MethodInfo method;
-			
+
+			IDictionary oldDataValues;
+			oldDataValues = BuildOldValuesList (keys, oldValues, true);
+
 			if (DataObjectTypeName.Length == 0)
 			{
 				IDictionary dataValues;
-				IDictionary oldDataValues;
-				if (ConflictDetection == ConflictOptions.CompareAllValues) {
-					oldDataValues = new Hashtable ();
-					dataValues = values;
-					foreach (DictionaryEntry de in keys)
-						oldDataValues [de.Key] = de.Value;
-					foreach (DictionaryEntry de in oldValues)
-						oldDataValues [de.Key] = de.Value;
-				} else {
-					oldDataValues = keys;
-					dataValues = values;
-				}
+				dataValues = values;
 				paramValues = MergeParameterValues (UpdateParameters, dataValues, oldDataValues, false);
 				method = GetObjectMethod (UpdateMethod, paramValues, DataObjectMethodType.Update);
 			}
 			else
 			{
-				IDictionary dataValues = new Hashtable ();
-				IDictionary oldDataValues;
-				
-				foreach (DictionaryEntry de in values)
-					dataValues [de.Key] = de.Value;
-					
-				if (ConflictDetection == ConflictOptions.CompareAllValues) {
-					oldDataValues = new Hashtable ();
-					foreach (DictionaryEntry de in keys) {
-						oldDataValues [de.Key] = de.Value;
-						dataValues [de.Key] = de.Value;
-					}
-					foreach (DictionaryEntry de in oldValues)
-						oldDataValues [de.Key] = de.Value;
-				} else {
+				if (ConflictDetection != ConflictOptions.CompareAllValues) {
 					oldDataValues = null;
+				}
+				IDictionary dataValues = new Hashtable ();
+				if (keys != null) {
 					foreach (DictionaryEntry de in keys)
 						dataValues [de.Key] = de.Value;
 				}
+				if (values != null) {
+					foreach (DictionaryEntry de in values)
+						dataValues [de.Key] = de.Value;
+				}
+
 				method = ResolveDataObjectMethod (UpdateMethod, dataValues, oldDataValues, out paramValues);
 			}			
 
@@ -722,7 +701,32 @@ namespace System.Web.UI.WebControls
 
 			return -1;
 		}
-		
+
+		private IDictionary BuildOldValuesList (IDictionary keys, IDictionary oldValues, bool keysWin) 
+		{
+			IDictionary oldDataValues;
+			if (ConflictDetection == ConflictOptions.CompareAllValues) {
+				oldDataValues = new Hashtable ();
+				if (keys != null && !keysWin) {
+					foreach (DictionaryEntry de in keys)
+						oldDataValues [de.Key] = de.Value;
+				}
+				if (oldValues != null) {
+					foreach (DictionaryEntry de in oldValues)
+						oldDataValues [de.Key] = de.Value;
+				}
+				if (keys != null && keysWin) {
+					foreach (DictionaryEntry de in keys)
+						oldDataValues [de.Key] = de.Value;
+				}
+			}
+			else {
+				oldDataValues = keys;
+			}
+
+			return oldDataValues;
+		}
+
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
 			arguments.RaiseUnsupportedCapabilitiesError (this);
@@ -865,6 +869,7 @@ namespace System.Web.UI.WebControls
 			MemberInfo[] methods = ObjectType.GetMember (methodName, MemberTypes.Method, BindingFlags.Instance | 
 										 BindingFlags.Static | 
 										 BindingFlags.Public | 
+										 BindingFlags.IgnoreCase |
 										 BindingFlags.FlattenHierarchy);
 			if (methods.Length > 1) {
 				// MSDN: The ObjectDataSource resolves method overloads by method name and number
@@ -1046,7 +1051,7 @@ namespace System.Web.UI.WebControls
 					object value = FindValueByName (p.Name, oldValues, true);
 					if (value != null) {
 						object dataValue = p.ConvertValue (value);
-						mergedValues [FormatOldParameter (p.Name)] = dataValue;
+						mergedValues [p.Name] = dataValue;
 						oldAdded = true;
 					}
 				}
@@ -1205,5 +1210,6 @@ namespace System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 

@@ -1,3 +1,7 @@
+2007-02-13 Adar Wesley <adarw@mainsoft.com>
+
+	* ObjectDataSourceView.cs: fixed parameter merging and added more tests
+
 2007-02-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Literal.cs: implemented 2.0 feature - Mode.

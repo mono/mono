@@ -183,7 +183,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ds.UpdateParameters.Add (p2);
 			ds.UpdateParameters.Add (p3);
 			ds.ID = "MyObject";
-			ds.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject"; //,MonoTests.System.Web
+			ds.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 					                                              
 
 		}
@@ -271,16 +271,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("sortExpression", ods.SortParameterName, "SortParameterName");			
 			ods.StartRowIndexParameterName = "ID";
 			Assert.AreEqual ("ID", ods.StartRowIndexParameterName, "StartRowIndexParameterName");
-			Assert.AreEqual ("MonoTests.System.Web.UI.WebControls.MyTableObject", ods.TypeName, "TypeName");
+			Assert.AreEqual (typeof (MyTableObject).AssemblyQualifiedName, ods.TypeName, "TypeName");
 			Assert.AreEqual ("Update", ods.UpdateMethod, "UpdateMethod ");
-			Assert.AreEqual ("FName", ods.UpdateParameters[1].Name, "UpdateParameters");		
-			
-		}
-
-		[Test]
-		public void ObjectDataSource_NotWorkingAssignToDefaultProperties ()
-		{
-			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			Assert.AreEqual ("FName", ods.UpdateParameters[1].Name, "UpdateParameters");
 			ods.CacheDuration = 1000;
 			Assert.AreEqual (1000, ods.CacheDuration, "CacheDuration");
 			ods.CacheExpirationPolicy = DataSourceCacheExpiry.Sliding;
@@ -293,6 +286,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, ods.EnableCaching, "EnableCaching ");
 			ods.SqlCacheDependency = "Northwind:Employees";
 			Assert.AreEqual ("Northwind:Employees", ods.SqlCacheDependency, "SqlCacheDependency");
+			
 		}
 
 		//ViewState
@@ -326,7 +320,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_ConvertNullToDBNull ()
 		{
@@ -346,7 +339,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			catch (Exception ex) {
 				Assert.AreEqual (true,
 					ex.Message.Contains ("type 'System.DBNull' cannot be converted to type 'System.String'") || // dotnet
-					ex.Message.Contains ("Value cannot be null."), "ConvertNullToDBNull"); // mono
+					ex.Message.Equals ("parameters"), "ConvertNullToDBNull"); // mono
 				dbnull = true;
 			}
 			Assert.AreEqual (true, dbnull, "ConvertNullToDBNull2");
@@ -427,7 +420,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ObjectDataSource_EnablePaging ()
 		{
 			string html = new WebTest (PageInvoker.CreateOnLoad (
@@ -467,7 +459,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			GridView  gv = new GridView ();
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			ods.ID = "ObjectDataSource1";
-			ods.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject";
+			ods.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			ods.SelectMethod = "SelectForPaging";
 			ods.EnablePaging = true;
 			ods.SelectCountMethod = "SelectCount";
@@ -773,7 +765,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
 			view.SelectMethod = "GetMyData";
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectParameters.Add (new Parameter ("Fname", TypeCode.String, "TestSelect"));
 			ArrayList ls =(ArrayList) view.ExecuteSelect (new DataSourceSelectArguments (""));
 			Assert.AreEqual ("TestSelect", ls[0], "SelectExecute");
@@ -786,7 +778,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
 			view.SelectMethod = "GetMyData";
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectParameters.Add (new Parameter ("fname", TypeCode.String, "TestSelect"));
 			ArrayList ls = (ArrayList) view.ExecuteSelect (new DataSourceSelectArguments (""));
 			Assert.AreEqual ("TestSelect", ls[0], "SelectExecuteCaseSensitive");
@@ -798,22 +790,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.DeleteMethod = "Delete";
 			Parameter p1, p2, p3;
 			p1 = new Parameter ("ID", TypeCode.String, "1001");
-			p2 = new Parameter ("FName", TypeCode.String, "Mahesh");
-			p3 = new Parameter ("LName", TypeCode.String, "chand");
+			p2 = new Parameter ("FName", TypeCode.String, "p_Mahesh");
+			p3 = new Parameter ("LName", TypeCode.String, "p_chand");
 			view.DeleteParameters.Add (p1);
 			view.DeleteParameters.Add (p2);
 			view.DeleteParameters.Add (p3);
 			view.OldValuesParameterFormatString = "oldvalue_{0}";
 			
-			Hashtable value = new Hashtable();
-			value.Add("ID","test_id");
-			view.ExecuteDelete (value, null);
-			Assert.AreEqual (true, MyTableObject.DeleteWithOldValueCollection, "DeleteExecute");
+			Hashtable keys = new Hashtable();
+			keys.Add("ID","k_test_id");
+			view.ExecuteDelete (keys, null);
+			Assert.AreEqual (true, MyTableObject.DeleteWithParamsAndKeys, "DeleteExecute");
+			Assert.AreEqual ("1001, p_Mahesh, p_chand, k_test_id", MyTableObject.UpdatePassedValues, "DeleteExecute Values");
 		}
 
 		[Test]
@@ -822,7 +815,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.DeleteMethod = "Delete";
 			Parameter p1, p2, p3;
@@ -837,17 +830,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			Hashtable value = new Hashtable ();
 			value.Add ("ID", "test_id");
 			view.ExecuteDelete (value, null);
-			Assert.AreEqual (true, MyTableObject.DeleteWithOldValueCollection, "DeleteExecuteParameterCaseSensitive");
+			Assert.AreEqual (true, MyTableObject.DeleteWithParamsAndKeys, "DeleteExecuteParameterCaseSensitive");
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void ObjectDataSource_DeleteExecuteMethodCaseSensitive ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.DeleteMethod = "delete";
 			Parameter p1, p2, p3;
@@ -862,7 +854,69 @@ namespace MonoTests.System.Web.UI.WebControls
 			Hashtable value = new Hashtable ();
 			value.Add ("ID", "test_id");
 			view.ExecuteDelete (value, null);
-			Assert.AreEqual (true, MyTableObject.DeleteWithOldValueCollection, "DeleteExecuteMethodCaseSensitive");
+			Assert.AreEqual (true, MyTableObject.DeleteWithParamsAndKeys, "DeleteExecuteMethodCaseSensitive");
+		}
+
+		[Test]
+		public void ObjectDataSource_DeleteExecuteCompareAllValues () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.SelectMethod = "GetMyData";
+			view.DeleteMethod = "DeleteOldValues";
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteDelete (keys, old_value);
+			Assert.AreEqual (true, MyTableObject.DeleteWithOldValuesCompareAllValues, "DeleteExecuteCompareAllValues");
+			Assert.AreEqual ("ov_1001, ov_Mahesh, ov_chand", MyTableObject.UpdatePassedValues, "DeleteExecuteCompareAllValues Values");
+		}
+
+		[Test]
+		public void ObjectDataSource_DeleteExecuteDataType () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.DataObjectTypeName = typeof (NewData).AssemblyQualifiedName;
+			view.SelectMethod = "GetMyData";
+			view.DeleteMethod = "Delete";
+			view.ConflictDetection = ConflictOptions.OverwriteChanges;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteDelete (keys, old_value);
+			Assert.AreEqual (true, MyTableObject.DeleteWithDataObjectTypeName, "DeleteExecuteDataType");
+			Assert.AreEqual ("k_1001, , ", MyTableObject.UpdatePassedValues, "DeleteExecuteDataType Values");
+		}
+
+		[Test]
+		public void ObjectDataSource_DeleteExecuteDataTypeCompareAllValues () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.DataObjectTypeName = typeof (NewData).AssemblyQualifiedName;
+			view.SelectMethod = "GetMyData";
+			view.DeleteMethod = "Delete";
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteDelete (keys, old_value);
+			Assert.AreEqual (true, MyTableObject.DeleteWithDataObjectTypeName, "DeleteExecuteDataTypeCompareAllValues");
+			Assert.AreEqual ("ov_1001, ov_Mahesh, ov_chand", MyTableObject.UpdatePassedValues, "DeleteExecuteDataTypeCompareAllValues Values");
 		}
 
 		[Test]
@@ -871,7 +925,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.InsertMethod = "Insert";
 
@@ -888,7 +942,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.InsertMethod = "Insert";
 
@@ -915,7 +969,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.InsertMethod = "Insert";
 
@@ -942,7 +996,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "Update";
 			Parameter p1, p2, p3;
@@ -966,7 +1020,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "TryUpdate";
 			Parameter p1, p2, p3;
@@ -986,13 +1040,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ObjectDataSource_UpdateExecute_CompareAllValues ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "TryUpdate_1";
 			Parameter p1, p2, p3;
@@ -1015,34 +1068,147 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, MyTableObject.UpdateWithCompareAllValues, "CompareAllValues");
 		}
 
+		private static void InitializeView (CustomObjectDataSourceView view, out Hashtable keys, out Hashtable old_value, out Hashtable new_value) 
+		{
+			Parameter p1, p2, p3, p4;
+			p1 = new Parameter ("oldvalue_ID", TypeCode.String, "p_1001");
+			p2 = new Parameter ("FName", TypeCode.String, "p_Mahesh");
+			p3 = new Parameter ("LName", TypeCode.String, "p_chand");
+			view.UpdateParameters.Add (p1);
+			view.UpdateParameters.Add (p2);
+			view.UpdateParameters.Add (p3);
+
+			p4 = new Parameter ("oldvalue_ID", TypeCode.String, "p_1001");
+			view.DeleteParameters.Add (p4);
+
+			view.OldValuesParameterFormatString = "oldvalue_{0}";
+
+			keys = new Hashtable ();
+			keys.Add ("ID", "k_1001");
+
+			old_value = new Hashtable ();
+			old_value.Add ("ID", "ov_1001");
+			old_value.Add ("FName", "ov_Mahesh");
+			old_value.Add ("LName", "ov_chand");
+
+			new_value = new Hashtable ();
+			new_value.Add ("ID", "n_1001");
+			new_value.Add ("FName", "n_Mahesh");
+			new_value.Add ("LName", "n_chand");
+		}
+
 		[Test]
-		[Category ("NotWorking")]
+		public void ObjectDataSource_UpdateExecute_CompareAllValues2 () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.SelectMethod = "GetMyData";
+			view.UpdateMethod = "UpdateCompareAllValues";
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteUpdate (keys, new_value, old_value);
+			Assert.AreEqual (true, MyTableObject.UpdateCompareAllValuesCalled, "CompareAllValues2");
+			Assert.AreEqual ("n_1001, n_Mahesh, n_chand, k_1001, ov_Mahesh, ov_chand", MyTableObject.UpdatePassedValues, "CompareAllValues2 Values");
+		}
+
+		[Test]
+		public void ObjectDataSource_UpdateExecute_OverwriteChanges () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.SelectMethod = "GetMyData";
+			view.UpdateMethod = "UpdateOverwriteChanges";
+			view.ConflictDetection = ConflictOptions.OverwriteChanges;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteUpdate (keys, new_value, old_value);
+			Assert.AreEqual (true, MyTableObject.UpdateOverwriteChangesCalled, "OverwriteChanges");
+			Assert.AreEqual ("n_1001, n_Mahesh, n_chand, k_1001", MyTableObject.UpdatePassedValues, "OverwriteChanges Values");
+		}
+
+		[Test]
 		public void ObjectDataSource_UpdateExecute_DataObjectTypeName ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
-			view.DataObjectTypeName = "MonoTests.System.Web.UI.WebControls.NewData,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.DataObjectTypeName = typeof (NewData).AssemblyQualifiedName;
 			
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "Update";
 			view.OldValuesParameterFormatString = "oldvalue_{0}";
 			view.ExecuteUpdate (null, null, null);
 			Assert.AreEqual (true, MyTableObject.UpdateWithDataObjectTypeName, "UpdateExecute_DataObjectTypeName");
+			Assert.AreEqual (", , ", MyTableObject.UpdatePassedValues, "UpdateExecute_DataObjectTypeName Values");
+		}
+		[Test]
+		public void ObjectDataSource_UpdateExecute_DataObjectTypeName2 () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.DataObjectTypeName = typeof (NewData).AssemblyQualifiedName;
+
+			view.SelectMethod = "GetMyData";
+			view.UpdateMethod = "Update";
+			view.OldValuesParameterFormatString = "oldvalue_{0}";
+			view.ConflictDetection = ConflictOptions.OverwriteChanges;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteUpdate (keys, new_value, old_value);
+			Assert.AreEqual (true, MyTableObject.UpdateWithDataObjectTypeName, "UpdateExecute_DataObjectTypeName2");
+			Assert.AreEqual ("n_1001, n_Mahesh, n_chand", MyTableObject.UpdatePassedValues, "UpdateExecute_DataObjectTypeName Values");
 		}
 
 
+		[Test]
+		public void ObjectDataSource_UpdateExecute_DataObjectTypeNameCompareAllValues () 
+		{
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			InitObjectDataSource (ods, "");
+			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
+			view.DataObjectTypeName = typeof (NewData).AssemblyQualifiedName;
+
+			view.SelectMethod = "GetMyData";
+			view.UpdateMethod = "Update";
+			view.OldValuesParameterFormatString = "oldvalue_{0}";
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+			Hashtable keys;
+			Hashtable old_value;
+			Hashtable new_value;
+			InitializeView (view, out keys, out old_value, out new_value);
+
+			view.ExecuteUpdate (keys, new_value, old_value);
+			Assert.AreEqual (true, MyTableObject.UpdateWithDataObjectTypeNameAllValues, "UpdateExecute_DataObjectTypeNameCompareAllValues");
+			Assert.AreEqual ("n_1001, n_Mahesh, n_chand, k_1001, ov_Mahesh, ov_chand", MyTableObject.UpdatePassedValues, "UpdateExecute_DataObjectTypeName Values");
+		}
+
 		//Excpetions
 		[Test]  // Note: on ConflictOptions.CompareAllValues old values cannot be null;
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ObjectDataSource_UpdateExecute_CompareAllValues_Exception ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "TryUpdate_1";
 			Parameter p1, p2, p3;
@@ -1065,7 +1231,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.UpdateMethod = "Update";
 			Parameter p1, p2, p3;
@@ -1089,7 +1255,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.InsertMethod = "Insert";
 
@@ -1117,7 +1283,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.DeleteMethod = "delete";
 			Parameter p1, p2, p3;
@@ -1136,7 +1302,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectMethod = "GetMyData";
 			view.DeleteMethod = "Delete";
 			Parameter p1, p2, p3;
@@ -1152,7 +1318,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			value.Add ("ID", "test_id");
 			value.Add ("FName", "test_FName");
 			view.ExecuteDelete (value, null);
-			Assert.AreEqual (true, MyTableObject.DeleteWithOldValueCollection, "DeleteExecute");
+			Assert.AreEqual (true, MyTableObject.DeleteWithParamsAndKeys, "DeleteExecute");
 		}
 
 		[Test]
@@ -1163,7 +1329,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
 			view.SelectMethod = "GetMyData";
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectParameters.Add (new Parameter ("Name", TypeCode.String, "TestSelect"));
 			IEnumerable res = view.ExecuteSelect (new DataSourceSelectArguments (""));
 		}
@@ -1175,7 +1341,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			InitObjectDataSource (ods, "");
 			CustomObjectDataSourceView view = new CustomObjectDataSourceView (ods, "CustomView", null);
 			view.SelectMethod = "Fake";
-			view.TypeName = "MonoTests.System.Web.UI.WebControls.MyTableObject,MonoTests.System.Web";
+			view.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
 			view.SelectParameters.Add (new Parameter ("Fname", TypeCode.String, "TestSelect"));
 			IEnumerable res = view.ExecuteSelect (new DataSourceSelectArguments (""));
 		}
@@ -1266,7 +1432,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static DataTable Delete (string ID, string FName, string LName, string oldvalue_ID)
 		{
-			DeleteWithOldValueCollection = true;
+			DeleteWithParamsAndKeys = true;
+			UpdatePassedValues = String.Join (", ", new string [] { ID, FName, LName, oldvalue_ID });
 			DataRow dr = ds.Rows.Find (ID);
 			try {
 				ds.Rows.Remove (dr); }
@@ -1274,23 +1441,49 @@ namespace MonoTests.System.Web.UI.WebControls
 			return ds;
 		}
 
-		public static bool DeleteWithOldValueCollection;
+		public static DataTable DeleteOldValues (string oldvalue_ID, string oldvalue_FName, string oldvalue_LName) 
+		{
+			DeleteWithOldValuesCompareAllValues = true;
+			UpdatePassedValues = String.Join (", ", new string [] { oldvalue_ID, oldvalue_FName, oldvalue_LName });
+			return ds;
+		}
+
+		public static DataTable Delete (NewData anyName) 
+		{
+			UpdatePassedValues = String.Join (", ", new string [] { anyName.ID, anyName.FName, anyName.LName });
+			DeleteWithDataObjectTypeName = true;
+			return ds;
+		}
+
+		public static bool DeleteWithParamsAndKeys;
+		public static bool DeleteWithOldValuesCompareAllValues;
+		public static bool DeleteWithDataObjectTypeName;
 		public static bool UpdateWithOldValueCollection;
 		public static bool UpdateWithMergedCollection;
 		public static bool InsertWithParameters;
 		public static bool InsertWithMergedParameters;
 		public static bool UpdateWithCompareAllValues;
 		public static bool UpdateWithDataObjectTypeName;
+		public static bool UpdateWithDataObjectTypeNameAllValues;
+		public static bool UpdateCompareAllValuesCalled;
+		public static bool UpdateOverwriteChangesCalled;
+		public static string UpdatePassedValues;
  	
 		private void ResetEventCheckers()
 		{
-			DeleteWithOldValueCollection = false;
+			DeleteWithParamsAndKeys = false;
+			DeleteWithOldValuesCompareAllValues = false;
+			DeleteWithDataObjectTypeName = false;
 			InsertWithParameters = false;
 			InsertWithMergedParameters = false;
 			UpdateWithOldValueCollection = false;
 			UpdateWithMergedCollection = false;
 			UpdateWithCompareAllValues = false;
 			UpdateWithDataObjectTypeName = false;
+			UpdateWithDataObjectTypeNameAllValues = false;
+			UpdateCompareAllValuesCalled = false;
+			UpdateOverwriteChangesCalled = false;
+			UpdatePassedValues = "";
 		}
 
 		public static DataTable Update (string ID, string FName, string LName)
@@ -1328,9 +1521,33 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static DataTable Update (NewData data)
 		{
+			UpdatePassedValues = String.Join (", ", new string [] { data.ID, data.FName, data.LName});
 			UpdateWithDataObjectTypeName = true;
 			return ds;
 		}
+
+		public static DataTable Update (NewData data, NewData oldvalue_data) 
+		{
+			UpdatePassedValues = String.Join (", ", new string [] { data.ID, data.FName, data.LName, oldvalue_data.ID, oldvalue_data.FName, oldvalue_data.LName });
+			UpdateWithDataObjectTypeNameAllValues = true;
+			return ds;
+		}
+
+		public static DataTable UpdateCompareAllValues (string ID, string FName, string LName,
+													   string oldvalue_ID, string oldvalue_FName, string oldvalue_LName) 
+		{
+			UpdatePassedValues = String.Join (", ", new string [] {ID, FName, LName, oldvalue_ID, oldvalue_FName, oldvalue_LName });
+			UpdateCompareAllValuesCalled = true;
+			return ds;
+		}
+
+		public static DataTable UpdateOverwriteChanges (string ID, string FName, string LName, string oldvalue_ID) 
+		{
+			UpdatePassedValues = String.Join (", ", new string [] { ID, FName, LName, oldvalue_ID });
+			UpdateOverwriteChangesCalled = true;
+			return ds;
+		}
+
 
 		public static DataTable Insert (string ID)
 		{
@@ -1446,8 +1663,8 @@ namespace MonoTests.System.Web.UI.WebControls
 	#region DataObjectTypeName
 	public class NewData
 	{
-		private int IDValue;
-		private string ENameValue;
+		private string IDValue;
+		private string FNameValue;
 		private string LNameValue;
 
 		public string LName
@@ -1456,13 +1673,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			set { LNameValue = value; }
 		}
 		
-		public string EName
+		public string FName
 		{
-			get { return ENameValue; }
-			set { ENameValue = value; }
+			get { return FNameValue; }
+			set { FNameValue = value; }
 		}
 
-		public int ID
+		public string ID
 		{
 			get { return IDValue; }
 			set { IDValue = value; }
