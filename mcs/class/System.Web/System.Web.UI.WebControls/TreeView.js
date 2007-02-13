@@ -8,7 +8,7 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	var expand = node.style.display == "none";
 	
 	if (tree.populateFromClient && expand && node.populated != true && (node.innerHTML.length == 0 || node.hasError)) {
-		WebForm_DoCallback (tree.uid, nodeId, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_ErrorCallback)
+		WebForm_DoCallback (tree.uid, nodeId, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_PopulateCallback)
 		return;
 	}
 	
@@ -68,17 +68,6 @@ function TreeView_PopulateCallback (data, ids)
 			image.src = tree.noExpandImage;
 		}
 	}
-}
-
-function TreeView_ErrorCallback (data, ids)
-{
-	var idArray = ids.split (" ");
-	var node = document.getElementById (idArray[0] + "_" + idArray[1]);
-	node.innerHTML = data;
-	node.populated = true;
-	TreeView_ToggleExpand (idArray[0], idArray[1]);
-	node.populated = false;
-	node.hasError = true;
 }
 
 function getTree (treeId) { try { return eval (treeId + "_data"); } catch(e) { return null; } }

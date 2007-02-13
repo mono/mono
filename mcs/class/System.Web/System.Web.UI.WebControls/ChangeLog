@@ -1,3 +1,8 @@
+2007-02-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.js: refactoring:
+	removed TreeView_ErrorCallback, used TreeView_PopulateCallback instead.
+	
 2007-02-13 Adar Wesley <adarw@mainsoft.com>
 
 	* ObjectDataSourceView.cs: fixed parameter merging and added more tests
