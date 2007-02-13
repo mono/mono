@@ -5338,14 +5338,13 @@ namespace Mono.CSharp {
 		void DefineMethodBuilder (TypeContainer container, string method_name, Type[] ParameterTypes)
 		{
 			if ((modifiers & Modifiers.EXTERN) != 0) {
-
 				if (method.OptAttributes != null) {
 					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type);
 					if (dllimport_attribute != null) {
 						flags |= MethodAttributes.PinvokeImpl;
 						builder = dllimport_attribute.DefinePInvokeMethod (
 							container.TypeBuilder, method_name, flags,
-							method.ReturnType, ParameterTypes);
+							method, ParameterTypes);
 
 						return;
 					}

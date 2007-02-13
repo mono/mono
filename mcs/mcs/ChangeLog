@@ -1,4 +1,10 @@
 2007-02-13  Marek Safar  <marek.safar@gmail.com>
+ 
+	A fix for bug #80418
+	* attribute.cs, class.cs: Use correct calling conventions for pinvoke
+	methods.
+
+2007-02-13  Marek Safar  <marek.safar@gmail.com>
 
 	Another fix for bug #80749
 	* pending.cs: Abstract class has priority over interfaces.

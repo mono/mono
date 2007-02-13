@@ -1215,7 +1215,7 @@ namespace Mono.CSharp {
 		}
 		
 		public MethodBuilder DefinePInvokeMethod (TypeBuilder builder, string name,
-							  MethodAttributes flags, Type ret_type, Type [] param_types)
+							  MethodAttributes flags, IMethodData method, Type [] param_types)
 		{
 			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
@@ -1307,7 +1307,7 @@ namespace Mono.CSharp {
 			try {
 				MethodBuilder mb = builder.DefinePInvokeMethod (
 					name, dll_name, entry_point, flags | MethodAttributes.HideBySig | MethodAttributes.PinvokeImpl,
-					CallingConventions.Standard, ret_type, param_types, cc, charset);
+					method.ParameterInfo.CallingConvention, method.ReturnType, param_types, cc, charset);
 
 				if (preserve_sig)
 					mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
