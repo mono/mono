@@ -81,7 +81,7 @@ EXTRA_DISTFILES = \
 	$(TEST_DISTFILES)
 
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
-	-resource:Test/resources/a.cur,a.cur
+	-resource:Test/resources/a.cur,a.cur -nowarn:612,618
 
 SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj
 	./build-csproj
@@ -89,12 +89,15 @@ SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources 
 SWF2k5.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj2k5
 	./build-csproj2k5
 
+SWF2k5-tests.csproj: System.Windows.Forms_test.dll.sources build-csproj2k5-tests
+	./build-csproj2k5-tests
+
 include ../../build/library.make
 
 TEST_HARNESS_EXCLUDES = /exclude:Interactive,NotWorking,ValueAdd,CAS,InetAccess
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:Interactive,NotDotNet,CAS
 
-$(the_lib): $(RESOURCES) SWF.csproj SWF2k5.csproj
+$(the_lib): $(RESOURCES) SWF.csproj SWF2k5.csproj SWF2k5-tests.csproj
 
 $(RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
