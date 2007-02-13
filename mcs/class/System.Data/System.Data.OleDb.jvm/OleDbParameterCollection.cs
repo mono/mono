@@ -103,6 +103,11 @@ namespace System.Data.OleDb
 		}
 
 #if NET_2_0
+		public OleDbParameter AddWithValue (string parameterName, object value)
+		{
+			return Add (parameterName, value);
+		}
+
 		public bool Contains (OleDbParameter value)
 		{
 			return base.Contains (value);

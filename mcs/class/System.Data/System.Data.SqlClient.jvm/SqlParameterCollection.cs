@@ -101,6 +101,11 @@ namespace System.Data.SqlClient
         }
 
 #if NET_2_0
+		public SqlParameter AddWithValue (string parameterName, object value)
+		{
+			return Add (parameterName, value);
+		}
+
 		public bool Contains (SqlParameter value)
 		{
 			return base.Contains (value);
