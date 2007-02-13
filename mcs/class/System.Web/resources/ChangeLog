@@ -1,3 +1,10 @@
+2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* webform.js:
+	fixed Callback feature: when WebForm_DoCallback is called 
+	not all input elements are posted. for example checkbox if not 
+	checked is not posted.
+
 2007-02-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* webform.js: added validators context init for j2ee portal support
