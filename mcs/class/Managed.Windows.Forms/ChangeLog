@@ -1,7 +1,5 @@
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	* Makefile: Second try at removing obsolete warnings for the tests.
-	We also create a SWF2k5-tests.csproj.
 	* build-csproj2k5-tests: Added to be able to create SWF2k5-tests.csproj.
 	* SWF2k5-tests.csproj: Added.
 
