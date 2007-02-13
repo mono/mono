@@ -93,6 +93,10 @@ namespace System.Data.OracleClient {
 		}
 
 #if NET_2_0
+		public OracleParameter AddWithValue (string parameterName, object value) {
+			return Add (parameterName, value);
+		}
+
 		public bool Contains (OracleParameter value) {
 			return base.Contains (value);
 		}
