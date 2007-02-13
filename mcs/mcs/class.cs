@@ -4933,7 +4933,8 @@ namespace Mono.CSharp {
 
 			bool unreachable = false;
 			if (block != null) {
-				ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
+				if (!ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable))
+					return;
 				ec.EmitMeta (block);
 
 				if (block.ScopeInfo != null) {

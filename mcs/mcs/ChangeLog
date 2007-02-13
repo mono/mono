@@ -1,3 +1,8 @@
+2007-02-13  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Constructor.Emit): Check the return value of
+	ec.ResolveTopBlock() and return on error.
+
 2007-02-13  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (Error_InvalidExpressionStatement): Add a comma to error
