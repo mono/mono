@@ -1,3 +1,8 @@
+2007-02-13  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (Error_InvalidExpressionStatement): Add a comma to error
+	message to fix error message regression.
+
 2007-02-12  Marek Safar  <marek.safar@gmail.com>
 
 	* delegate.cs: Delegate creation expression cannot be of Nullable type.

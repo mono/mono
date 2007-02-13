@@ -304,7 +304,7 @@ namespace Mono.CSharp {
 
 		public static void Error_InvalidExpressionStatement (Location loc)
 		{
-			Report.Error (201, loc, "Only assignment, call, increment, decrement and new object " +
+			Report.Error (201, loc, "Only assignment, call, increment, decrement, and new object " +
 				       "expressions can be used as a statement");
 		}
 		
