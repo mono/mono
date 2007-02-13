@@ -2513,7 +2513,9 @@ namespace Mono.CSharp {
 				}
 
 				if ((ModFlags & Modifiers.ABSTRACT) == 0){
-					Report.Error (513, mc.Location, "`{0}' is abstract but it is contained in nonabstract class", mc.GetSignatureForError ());
+					Report.SymbolRelatedToPreviousError (this);
+					Report.Error (513, mc.Location, "`{0}' is abstract but it is declared in the non-abstract class `{1}'",
+						mc.GetSignatureForError (), GetSignatureForError ());
 					ok = false;
 				}
 			}

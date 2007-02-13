@@ -1071,11 +1071,14 @@ namespace Mono.CSharp
 				OutputFile = value;
 				return true;
 
+			case "/o":
+			case "/o+":
 			case "/optimize":
 			case "/optimize+":
 				RootContext.Optimize = true;
 				return true;
 
+			case "/o-":
 			case "/optimize-":
 				RootContext.Optimize = false;
 				return true;
