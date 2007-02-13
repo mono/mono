@@ -138,6 +138,9 @@ namespace MonoTests.System.Collections {
 		};
 
 		[Test]
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		public void SerializationRoundtrip ()
 		{
 			CaseInsensitiveHashCodeProvider enus = new CaseInsensitiveHashCodeProvider (new CultureInfo ("en-US"));
@@ -152,6 +155,9 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Deserialize ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();

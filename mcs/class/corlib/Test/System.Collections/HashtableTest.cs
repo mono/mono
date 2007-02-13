@@ -410,7 +410,10 @@ public class HashtableTest : Assertion {
 		}
 	}
 
-        [Test]        
+        [Test]
+#if TARGET_JVM
+	[Category ("NotWorking")]
+#endif
 	public void TestCopyTo() {
 		{
 			bool errorThrown = false;
@@ -546,6 +549,9 @@ public class HashtableTest : Assertion {
 	}
 	
 	[Test]
+#if TARGET_JVM
+	[Category ("NotWorking")]
+#endif
 	public void TestSerialization2 () {
 		// Test from bug #70570
 		MemoryStream stream = new MemoryStream();
