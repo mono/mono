@@ -148,7 +148,43 @@ namespace Mono.CSharp {
 			pending_implementations = new TypeAndMethods [total];
 
 			int i = 0;
-			foreach (MissingInterfacesInfo missing in missing_ifaces){
+			if (abstract_methods != null) {
+				int count = abstract_methods.Count;
+				pending_implementations [i].methods = new MethodInfo [count];
+				pending_implementations [i].need_proxy = new MethodInfo [count];
+				
+				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
+				pending_implementations [i].found = new bool [count];
+				pending_implementations [i].args = new Type [count][];
+				pending_implementations [i].mods = new Parameter.Modifier [count][];
+				pending_implementations [i].type = type_builder;
+
+				string indexer_name = TypeManager.IndexerPropertyName (type_builder);
+				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
+				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
+				
+				int j = 0;
+				foreach (MemberInfo m in abstract_methods) {
+					MethodInfo mi = (MethodInfo) m;
+					
+					ParameterData pd = TypeManager.GetParameterData (mi);
+					Type [] types = pd.Types;
+					
+					pending_implementations [i].args [j] = types;
+					pending_implementations [i].mods [j] = null;
+					if (pd.Count > 0) {
+						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
+						for (int k = 0; k < pd.Count; k++)
+							pm [k] = pd.ParameterModifier (k);
+						pending_implementations [i].mods [j] = pm;
+					}
+						
+					j++;
+				}
+				++i;
+			}
+
+			foreach (MissingInterfacesInfo missing in missing_ifaces) {
 				MethodInfo [] mi;
 				Type t = missing.Type;
 				
@@ -199,41 +235,6 @@ namespace Mono.CSharp {
 					j++;
 				}
 				i++;
-			}
-
-			if (abstract_methods != null){
-				int count = abstract_methods.Count;
-				pending_implementations [i].methods = new MethodInfo [count];
-				pending_implementations [i].need_proxy = new MethodInfo [count];
-				
-				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
-				pending_implementations [i].found = new bool [count];
-				pending_implementations [i].args = new Type [count][];
-				pending_implementations [i].mods = new Parameter.Modifier [count][];
-				pending_implementations [i].type = type_builder;
-
-				string indexer_name = TypeManager.IndexerPropertyName (type_builder);
-				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
-				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
-				
-				int j = 0;
-				foreach (MemberInfo m in abstract_methods){
-					MethodInfo mi = (MethodInfo) m;
-					
-					ParameterData pd = TypeManager.GetParameterData (mi);
-					Type [] types = pd.Types;
-					
-					pending_implementations [i].args [j] = types;
-					pending_implementations [i].mods [j] = null;
-					if (pd.Count > 0){
-						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
-						for (int k = 0; k < pd.Count; k++)
-							pm [k] = pd.ParameterModifier (k);
-						pending_implementations [i].mods [j] = pm;
-					}
-						
-					j++;
-				}
 			}
 		}
 
