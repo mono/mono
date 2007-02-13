@@ -64,6 +64,8 @@ namespace MonoTests.System.Windows.Forms
 		public void CtorTest4 ()
 		{
 			RowStyle rs = new RowStyle (SizeType.Absolute, -1.0f);
+			
+			TestHelper.RemoveWarning (rs);
 		}
 
 		[Test]

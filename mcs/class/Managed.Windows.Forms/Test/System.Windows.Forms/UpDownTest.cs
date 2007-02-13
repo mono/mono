@@ -770,6 +770,8 @@ namespace MonoTests.System.Windows.Forms
 			MockItem itemD = new MockItem ("itemD");
 			MockItem itemE = new MockItem ("itemE");
 
+			TestHelper.RemoveWarning (itemAbis);
+			
 			MockDomainUpDown dud = new MockDomainUpDown ();
 			dud.SelectedItemChanged += new EventHandler (DomainUpDown_SelectedItemChanged);
 			dud.TextChanged += new EventHandler (DomainUpDown_TextChanged);
@@ -850,6 +852,7 @@ namespace MonoTests.System.Windows.Forms
 				dud.Items [0] = null;
 				Assert.Fail ();
 			} catch (NullReferenceException ex) {
+				TestHelper.RemoveWarning (ex);
 			}
 		}
 

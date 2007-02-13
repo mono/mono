@@ -42,8 +42,8 @@ namespace MonoTests.System.Windows.Forms
 	public class DataGridTextBoxColumnTest
 	{
 		private bool eventhandled;
-		private object Element;
-		private CollectionChangeAction Action;
+		//private object Element;
+		//private CollectionChangeAction Action;
 
 		[Test]
 		public void TestDefaultValues ()

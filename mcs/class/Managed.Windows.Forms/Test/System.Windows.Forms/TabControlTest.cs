@@ -563,6 +563,8 @@ namespace MonoTests.System.Windows.Forms
 			// Create the handle, things are a little different with
 			// the handle created
 			IntPtr dummy = p.Handle;
+			
+			TestHelper.RemoveWarning (dummy);
 
 			foreach (Keys key in Enum.GetValues (typeof (Keys))) {
 				switch (key) {

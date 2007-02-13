@@ -65,7 +65,7 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class DataGridColumnStyleTest
 	{
-		private bool eventhandled;
+		//private bool eventhandled;
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

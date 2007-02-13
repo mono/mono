@@ -64,6 +64,8 @@ namespace MonoTests.System.Windows.Forms
 		public void CtorTest4 ()
 		{
 			ColumnStyle cs = new ColumnStyle (SizeType.Absolute, -1.0f);
+
+			TestHelper.RemoveWarning (cs);
 		}
 
 		[Test]

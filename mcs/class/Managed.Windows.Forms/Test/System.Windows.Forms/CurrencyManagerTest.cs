@@ -107,6 +107,8 @@ namespace MonoTests.System.Windows.Forms
 
 			// child list can't be created
 			cm = bc [dataset, "Table"] as CurrencyManager;
+
+			TestHelper.RemoveWarning (cm);
 		}
 
 		[Test] // bug #80107
@@ -425,6 +427,8 @@ namespace MonoTests.System.Windows.Forms
 
 			// Can't create a list on a child relation
 			CurrencyManager cm = bc [data_source, "Table2.Relation"] as CurrencyManager;
+
+			TestHelper.RemoveWarning (cm);
 		}
 
 		[Test]

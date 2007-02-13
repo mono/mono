@@ -345,12 +345,12 @@ namespace MonoTests.System.Windows.Forms
 		//
 		// Events
 		//
-		private bool eventFired;
+		//private bool eventFired;
 
-		private void GenericHandler (object sender,  EventArgs e)
-		{
-			eventFired = true;
-		}
+		//private void GenericHandler (object sender,  EventArgs e)
+		//{
+		//        eventFired = true;
+		//}
 
 		public class MockListBox : ListBox
 		{

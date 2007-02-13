@@ -115,9 +115,11 @@ namespace MonoTests.System.Windows.Forms {
 		public void TestIndexerNull ()
 		{
 			BindingContext bc = new BindingContext ();
-			BindingManagerBase a, b;
+			BindingManagerBase a;
 
 			a = bc [null];
+			
+			TestHelper.RemoveWarning (a, bc);
 		}
 
 		[Test]
@@ -172,6 +174,8 @@ namespace MonoTests.System.Windows.Forms {
 			ArrayList data_source = new ArrayList ();
 
 			BindingManagerBase a = bc [data_source, "Items"];
+			
+			TestHelper.RemoveWarning (a);
 		}
 
 		[Test]
@@ -182,6 +186,8 @@ namespace MonoTests.System.Windows.Forms {
 			ArrayList data_source = new ArrayList ();
 
 			BindingManagerBase a = bc [data_source, "Count"];
+			
+			TestHelper.RemoveWarning (a);
 		}
 
 		[Test]
@@ -257,6 +263,8 @@ namespace MonoTests.System.Windows.Forms {
 			BindingContext bc = new BindingContext ();
 			DataSet dataset = CreateRelatedDataSet ();
 			CurrencyManager cm = bc [dataset, "Table1.ImNotRelated"] as CurrencyManager;
+
+			TestHelper.RemoveWarning (cm);
 		}
 
 		[Test]
@@ -266,6 +274,8 @@ namespace MonoTests.System.Windows.Forms {
 			BindingContext bc = new BindingContext ();
 			DataSet dataset = CreateRelatedDataSet ();
 			CurrencyManager cm = bc [dataset, "Relation"] as CurrencyManager;
+
+			TestHelper.RemoveWarning (cm);
 		}
 
 		[Test]
@@ -275,6 +285,8 @@ namespace MonoTests.System.Windows.Forms {
 			BindingContext bc = new BindingContext ();
 			DataSet dataset = CreateRelatedDataSet ();
 			CurrencyManager cm = bc [dataset, "Table2.Relation"] as CurrencyManager;
+
+			TestHelper.RemoveWarning (cm);
 		}
 
 		[Test]

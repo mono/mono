@@ -94,10 +94,10 @@ namespace MonoTests.System.Windows.Forms {
 			currentChangedRaised = true;
 		}
 
-		void OnPositionChanged (object sender, EventArgs args)
-		{
-			positionChangedRaised = true;
-		}
+		//void OnPositionChanged (object sender, EventArgs args)
+		//{
+		//        positionChangedRaised = true;
+		//}
 
 		[Test]
 		public void TestEvent ()

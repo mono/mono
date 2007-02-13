@@ -201,7 +201,7 @@ public class MyScrollBar : HScrollBar
 		     this.WndProc(ref m);
 	     }
 
-	    public void MouseClick()
+	    public new void MouseClick()
 	     {
 
 		     Message m;
@@ -223,7 +223,7 @@ public class MyScrollBar : HScrollBar
 		     this.WndProc(ref m);
 	     }
 
-	    public void MouseDoubleClick ()
+	    public new void MouseDoubleClick ()
 	     {
 		     MouseClick ();
 		     MouseClick ();
@@ -1122,7 +1122,7 @@ public class MyScrollBar2 : HScrollBar
 		     this.WndProc(ref m);
 	     }
 
-	    public void MouseClick()
+	    public new void MouseClick()
 	     {
 		     Message m;
 
@@ -1143,7 +1143,7 @@ public class MyScrollBar2 : HScrollBar
 		     this.WndProc(ref m);
 	     }
 
-	    public void MouseDoubleClick ()
+	    public new void MouseDoubleClick ()
 	     {
 		     MouseClick ();
 		     MouseClick ();

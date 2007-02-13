@@ -545,6 +545,9 @@ namespace MonoTests.System.Windows.Forms {
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
+			
+			TestHelper.RemoveWarning (con_b, con_c);
+			
 			ControlPoker [] ctrls_a = new ControlPoker [] {
 				new ControlPoker ("ctrls-a-0"), new ControlPoker ("ctrls-a-1"), new ControlPoker ("ctrls-a-2")
 			};

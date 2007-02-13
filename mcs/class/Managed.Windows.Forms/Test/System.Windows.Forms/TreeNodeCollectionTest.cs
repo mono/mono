@@ -14,8 +14,10 @@ namespace MonoTests.System.Windows.Forms
         [Test]
         public void Add()
         {
-            ImageList imglist;
+            ImageList imglist = null;
 
+            TestHelper.RemoveWarning (imglist);
+	    
             TreeView tv = new TreeView();
             tv.Nodes.Add("text");
             Assert.AreEqual(1, tv.Nodes.Count, "#A1");
@@ -174,6 +176,9 @@ namespace MonoTests.System.Windows.Forms
 		{
 			TreeView tv = new TreeView ();
 			TreeNode nodeA = tv.Nodes.Add ("A");
+			
+			TestHelper.RemoveWarning (nodeA);
+			
 			IEnumerator enumerator = tv.Nodes.GetEnumerator ();
 			Assert.IsTrue (enumerator.MoveNext (), "#A1");
 			Assert.IsFalse (enumerator.MoveNext (), "#A2");

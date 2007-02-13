@@ -199,10 +199,10 @@ namespace MonoTests.System.Windows.Forms
 			Action = (CollectionChangeAction) 0;
 		}
 
-		private void OnEventHandler (object sender, EventArgs e)
-	        {
-	            	eventhandled = true;
-	        }
+		//private void OnEventHandler (object sender, EventArgs e)
+		//{
+		//        eventhandled = true;
+		//}
 
 	        private void OnCollectionEventHandler (object sender, CollectionChangeEventArgs e)
 	        {
