@@ -402,7 +402,7 @@ namespace System.Web {
 			wr.CloseConnection ();
 		}
 
-#if NET_2_0
+#if NET_2_0 && !TARGET_J2EE
 		static internal void WritePreservationFile (Assembly asm, string genericNameBase)
 		{
 			if (asm == null)
