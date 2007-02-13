@@ -66,8 +66,6 @@ namespace System.IO
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			
-			path = path.TrimEnd ();
-			
 			if (path == "")
 				throw new ArgumentException ("Path is empty");
 			
@@ -128,9 +126,6 @@ namespace System.IO
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid chars");
-
-			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
 
 			if (path == ":")
 				throw new NotSupportedException ("Only ':' In path");
@@ -193,7 +188,7 @@ namespace System.IO
 
 		public static bool Exists (string path)
 		{
-			if (path == null || path.Trim ().Length == 0)
+			if (path == null || path.Length == 0)
 				return false;
 				
 			MonoIOError error;
