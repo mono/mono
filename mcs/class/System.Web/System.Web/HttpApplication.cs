@@ -160,7 +160,7 @@ namespace System.Web {
 
 #if NET_2_0
 				HttpModulesSection modules;
-				modules = (HttpModulesSection) WebConfigurationManager.GetSection ("system.web/httpModules");
+				modules = (HttpModulesSection) WebConfigurationManager.GetSection ("system.web/httpModules", HttpRuntime.AppDomainAppVirtualPath);
 #else
 				ModulesConfiguration modules;
 

@@ -1,3 +1,8 @@
+2007-02-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpApplication.cs: fixed InitOnce, httpModules section is global and
+	taken from the root web.config
+
 2007-02-12  Robert Jordan  <robertj@gmx.net>
 
 	* HttpResponseStream.cs (BlockManager.EnsureCapacity):
