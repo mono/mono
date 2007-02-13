@@ -655,23 +655,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]
 		public void UpdateMethod ()
 		{
-// 10) MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.UpdateMethod : ObjectDataSourceViewUpdate ^M
-//         String lengths are both 4.^M
-//         Strings differ at index 3.^M
-//         ^M
-//         expected:<"1001">^M
-//          but was:<"1000">^M
-//         --------------^^M
-//         ^M
-//   at MonoTests.stand_alone.WebHarness.HtmlDiff.AssertAreEqual (System.String origin, System.String derived, System.String msg) [0x0001b] in /home/cvs/mcs/class/System.Web/Test/mainsoft/MainsoftWebTest/NunitWebTest.cs:98
-//   at MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.UpdateMethod () [0x00024] in /home/cvs/mcs/class/System.Web/Test/System.Web.UI.WebControls/ObjectDataSourceViewTest.cs:631
-//   at <0x00000> <unknown method>
-//   at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
-//   at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00056] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
-// 
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (update));
 			string html = t.Run ();
 			string origin = @"<div>
