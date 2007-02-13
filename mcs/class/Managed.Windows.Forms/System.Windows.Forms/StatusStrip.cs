@@ -38,14 +38,15 @@ namespace System.Windows.Forms
 	[ComVisible (true)]
 	public class StatusStrip : ToolStrip
 	{
-		private ToolStripLayoutStyle layout_style;
 		private bool sizing_grip;
 		
 		public StatusStrip ()
 		{
+			SetStyle (ControlStyles.ResizeRedraw, true);
+			
 			base.CanOverflow = false;
 			this.GripStyle = ToolStripGripStyle.Hidden;
-			this.layout_style = ToolStripLayoutStyle.Table;
+			base.LayoutStyle = ToolStripLayoutStyle.Table;
 			this.sizing_grip = true;
 			base.Stretch = true;
 		}
@@ -71,8 +72,8 @@ namespace System.Windows.Forms
 		
 		[DefaultValue (ToolStripLayoutStyle.Table)]
 		public new ToolStripLayoutStyle LayoutStyle {	
-			get { return this.layout_style; }
-			set { this.layout_style = value; }
+			get { return base.LayoutStyle; }
+			set { base.LayoutStyle = value; }
 		}
 		
 		[Browsable (false)]
@@ -89,7 +90,7 @@ namespace System.Windows.Forms
 		
 		[Browsable (false)]
 		public Rectangle SizeGripBounds {
-			get { return new Rectangle (this.Width - 12, this.Top, 12, this.Height); }
+			get { return new Rectangle (this.Width - 12, 0, 12, this.Height); }
 		}
 		
 		[DefaultValue (true)]
@@ -139,7 +140,7 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			base.OnLayout (e);
+			this.OnSpringTableLayoutCore ();
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs pevent)
@@ -150,6 +151,92 @@ namespace System.Windows.Forms
 				this.Renderer.DrawStatusStripSizingGrip (new ToolStripRenderEventArgs (pevent.Graphics, this));
 		}
 
+		protected virtual void OnSpringTableLayoutCore ()
+		{
+			this.SetDisplayedItems ();
+
+			ToolStripItemOverflow[] overflow = new ToolStripItemOverflow[this.Items.Count];
+			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[this.Items.Count];
+			Size proposedSize = new Size (0, bounds.Height);
+			int[] widths = new int[this.Items.Count];
+			int total_width = 0;
+			int toolstrip_width = DisplayRectangle.Width;
+			int i = 0;
+			int spring_count = 0;
+
+			foreach (ToolStripItem tsi in this.Items) {
+				overflow[i] = tsi.Overflow;
+				widths[i] = tsi.GetPreferredSize (proposedSize).Width + tsi.Margin.Horizontal;
+				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.None : ToolStripItemPlacement.Main;
+				total_width += placement[i] == ToolStripItemPlacement.Main ? widths[i] : 0;
+				if (tsi is ToolStripStatusLabel && (tsi as ToolStripStatusLabel).Spring)
+					spring_count++;
+					
+				i++;
+			}
+
+			while (total_width > toolstrip_width) {
+				bool removed_one = false;
+
+				// Start at the right, removing Overflow.AsNeeded first
+				for (int j = widths.Length - 1; j >= 0; j--)
+					if (overflow[j] == ToolStripItemOverflow.AsNeeded && placement[j] == ToolStripItemPlacement.Main) {
+						placement[j] = ToolStripItemPlacement.None;
+						total_width -= widths[j];
+						removed_one = true;
+						break;
+					}
+
+				// If we didn't remove any AsNeeded ones, we have to start removing Never ones
+				// These are not put on the Overflow, they are simply not shown
+				if (!removed_one)
+					for (int j = widths.Length - 1; j >= 0; j--)
+						if (overflow[j] == ToolStripItemOverflow.Never && placement[j] == ToolStripItemPlacement.Main) {
+							placement[j] = ToolStripItemPlacement.None;
+							total_width -= widths[j];
+							removed_one = true;
+							break;
+						}
+			}
+
+			if (spring_count > 0) {
+				int per_item = (toolstrip_width - total_width) / spring_count;
+				i = 0;
+				
+				foreach (ToolStripItem tsi in this.Items) {
+					if (tsi is ToolStripStatusLabel && (tsi as ToolStripStatusLabel).Spring)
+						widths[i] += per_item;
+						
+					i++;
+				}
+			}
+
+			i = 0;
+			Point layout_pointer = new Point (this.DisplayRectangle.Left, this.DisplayRectangle.Top);
+			int button_height = this.DisplayRectangle.Height;
+
+			// Now we should know where everything goes, so lay everything out
+			foreach (ToolStripItem tsi in this.Items) {
+				tsi.SetPlacement (placement[i]);
+
+				if (placement[i] == ToolStripItemPlacement.Main) {
+					tsi.SetBounds (new Rectangle (layout_pointer.X + tsi.Margin.Left, layout_pointer.Y + tsi.Margin.Top, widths[i] - tsi.Margin.Horizontal, button_height - tsi.Margin.Vertical));
+					layout_pointer.X += widths[i];
+				}
+
+				i++;
+			}			
+		}
+
+		protected override void SetDisplayedItems ()
+		{
+			this.displayed_items.Clear ();
+
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.Available)
+					this.displayed_items.AddNoOwnerOrLayout (tsi);
+		}
+		
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg)m.Msg) {

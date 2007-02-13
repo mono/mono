@@ -378,6 +378,12 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+		protected override void SetVisibleCore (bool visible)
+		{
+			base.SetVisibleCore (visible);
+			this.control.Visible = visible;
+		}
 		#endregion
 
 		#region Public Events

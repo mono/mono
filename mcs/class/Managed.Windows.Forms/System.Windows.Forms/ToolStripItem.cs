@@ -290,7 +290,7 @@ namespace System.Windows.Forms
 		public Rectangle ContentRectangle {
 			get {
 				// ToolStripLabels don't have a border
-				if (this is ToolStripLabel)
+				if (this is ToolStripLabel || this is ToolStripStatusLabel)
 					return new Rectangle (0, 0, this.bounds.Width, this.bounds.Height);
 
 				if (this is ToolStripDropDownButton && (this as ToolStripDropDownButton).ShowDropDownArrow)
@@ -658,9 +658,7 @@ namespace System.Windows.Forms
 			}
 			set { 
 				if (this.visible != value) {
-					this.visible = value; 
-					this.OnVisibleChanged (EventArgs.Empty); 
-					this.Invalidate ();
+					this.SetVisibleCore (value);
 				}
 			}
 		}
@@ -991,6 +989,13 @@ namespace System.Windows.Forms
 				OnBoundsChanged ();
 			}
 		}
+		
+		protected virtual void SetVisibleCore (bool visible)
+		{
+			this.visible = visible;
+			this.OnVisibleChanged (EventArgs.Empty);
+			this.Invalidate ();
+		}
 		#endregion
 
 		#region Public Events
@@ -1129,10 +1134,10 @@ namespace System.Windows.Forms
 
 		internal void CalculateAutoSize ()
 		{
+			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty: this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
+
 			if (!this.auto_size || this is ToolStripControlHost)
 				return;
-
-			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty: this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
 			//this.text_size.Width += 6;
 
 			Size final_size = this.CalculatePreferredSize (Size.Empty);
@@ -1146,6 +1151,9 @@ namespace System.Windows.Forms
 
 		internal Size CalculatePreferredSize (Size constrainingSize)
 		{
+			if (!this.auto_size)
+				return this.explicit_size;
+				
 			Size preferred_size = this.DefaultSize;
 
 			switch (this.display_style) {
@@ -1219,7 +1227,7 @@ namespace System.Windows.Forms
 		{
 			text_rect = Rectangle.Empty;
 			image_rect = Rectangle.Empty;
-
+				
 			switch (this.display_style) {
 				case ToolStripItemDisplayStyle.None:
 					break;
@@ -1262,18 +1270,10 @@ namespace System.Windows.Forms
 								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
 								break;
 							case TextImageRelation.ImageBeforeText:
-								text_area = new Rectangle (contentRectangle.Right - this.text_size.Width, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
-								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, text_area.Left - contentRectangle.Left, contentRectangle.Height);
-
-								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
+								LayoutTextBeforeOrAfterImage (contentRectangle, false, text_size, this.Image.Size, text_align, image_align, out text_rect, out image_rect);
 								break;
 							case TextImageRelation.TextBeforeImage:
-								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
-								image_area = new Rectangle (text_area.Right, contentRectangle.Top, contentRectangle.Width - text_area.Width, contentRectangle.Height);
-
-								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
+								LayoutTextBeforeOrAfterImage (contentRectangle, true, text_size, this.Image.Size, text_align, image_align, out text_rect, out image_rect);
 								break;
 						}
 					}
@@ -1281,6 +1281,60 @@ namespace System.Windows.Forms
 			}
 		}
 
+		private void LayoutTextBeforeOrAfterImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, ContentAlignment textAlign, ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
+		{
+			int element_spacing = 0;	// Spacing between the Text and the Image
+			int total_width = textSize.Width + element_spacing + imageSize.Width;
+			int excess_width = totalArea.Width - total_width;
+			int offset = 0;
+			
+			Rectangle final_text_rect;
+			Rectangle final_image_rect;
+
+			HorizontalAlignment h_text = GetHorizontalAlignment (textAlign);
+			HorizontalAlignment h_image = GetHorizontalAlignment (imageAlign);
+			
+			if (h_image == HorizontalAlignment.Left)
+				offset = 0;
+			else if (h_image == HorizontalAlignment.Right && h_text == HorizontalAlignment.Right)
+				offset = excess_width;
+			else if (h_image == HorizontalAlignment.Center && (h_text == HorizontalAlignment.Left || h_text == HorizontalAlignment.Center))
+				offset += (int)(excess_width / 3);
+			else
+				offset += (int)(2 * (excess_width / 3));
+				
+			if (textFirst) {
+				final_text_rect = new Rectangle (totalArea.Left + offset, AlignInRectangle (totalArea, textSize, textAlign).Top, textSize.Width, textSize.Height);
+				final_image_rect = new Rectangle (final_text_rect.Right + element_spacing, AlignInRectangle (totalArea, imageSize, imageAlign).Top, imageSize.Width, imageSize.Height);
+			} else {
+				final_image_rect = new Rectangle (totalArea.Left + offset, AlignInRectangle (totalArea, imageSize, imageAlign).Top, imageSize.Width, imageSize.Height);
+				final_text_rect = new Rectangle (final_image_rect.Right + element_spacing, AlignInRectangle (totalArea, textSize, textAlign).Top, textSize.Width, textSize.Height);
+			}
+			
+			textRect = final_text_rect;
+			imageRect = final_image_rect;
+		}
+		
+		private HorizontalAlignment GetHorizontalAlignment (ContentAlignment align)
+		{
+			switch (align) {
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.TopLeft:
+					return HorizontalAlignment.Left;
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.TopCenter:
+					return HorizontalAlignment.Center;
+				case ContentAlignment.BottomRight:
+				case ContentAlignment.MiddleRight:
+				case ContentAlignment.TopRight:
+					return HorizontalAlignment.Right;
+			}
+			
+			return HorizontalAlignment.Left;
+		}
+		
 		internal void FireEvent (EventArgs e, ToolStripItemEventType met)
 		{
 			switch (met) {
@@ -1309,7 +1363,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal void SetPlacement (ToolStripItemPlacement placement)
+		internal virtual void SetPlacement (ToolStripItemPlacement placement)
 		{
 			this.placement = placement;
 		}
@@ -1317,14 +1371,14 @@ namespace System.Windows.Forms
 		
 		public class ToolStripItemAccessibleObject : AccessibleObject
 		{
-			private ToolStripItem owner;
+			private ToolStripItem owner_item;
 			
 			public ToolStripItemAccessibleObject (ToolStripItem ownerItem)
 			{
 				if (ownerItem == null)
 					throw new ArgumentNullException ("ownerItem");
 					
-				this.owner = ownerItem;
+				this.owner_item = ownerItem;
 				base.default_action = string.Empty;
 				base.keyboard_shortcut = string.Empty;
 				base.name = string.Empty;
@@ -1334,7 +1388,7 @@ namespace System.Windows.Forms
 			#region Public Properties
 			public override Rectangle Bounds {
 				get {
-					return owner.Visible ? owner.Bounds : Rectangle.Empty;
+					return owner_item.Visible ? owner_item.Bounds : Rectangle.Empty;
 				}
 			}
 
@@ -1357,7 +1411,7 @@ namespace System.Windows.Forms
 			public override string Name {
 				get {
 					if (base.name == string.Empty)
-						return owner.Text;
+						return owner_item.Text;
 						
 					return base.Name;
 				}
@@ -1400,7 +1454,7 @@ namespace System.Windows.Forms
 
 			public override string ToString ()
 			{
-				return string.Format ("ToolStripItemAccessibleObject: Owner = {0}", owner.ToString());
+				return string.Format ("ToolStripItemAccessibleObject: Owner = {0}", owner_item.ToString());
 			}
 			#endregion
 		}
