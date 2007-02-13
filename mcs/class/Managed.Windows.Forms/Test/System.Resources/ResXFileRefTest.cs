@@ -23,6 +23,7 @@ namespace MonoTests.System.Resources
 		public void Constructor1 ()
 		{
 			ResXFileRef r = new ResXFileRef ("mono.bmp", "Bitmap");
+			MonoTests.System.Windows.Forms.TestHelper.RemoveWarning (r);
 #if NET_2_0
 			Assert.AreEqual ("mono.bmp", r.FileName, "#1");
 			Assert.AreEqual ("Bitmap", r.TypeName, "#2");
