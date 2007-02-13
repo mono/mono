@@ -60,6 +60,7 @@ namespace System.Web.UI
 #if NET_2_0
 		List <int> eventValidationValues;
 		Hashtable expandoAttributes;
+		bool _hasRegisteredForEventValidationOnCallback;
 #endif
 		
 		internal ClientScriptManager (Page page)
@@ -425,7 +426,9 @@ namespace System.Web.UI
 				return;
 			if (uniqueId == null || uniqueId.Length == 0)
 				return;
-			if (page.LifeCycle < PageLifeCycle.Render && !page.IsCallback)
+			if (page.IsCallback)
+				_hasRegisteredForEventValidationOnCallback = true;
+			else if (page.LifeCycle < PageLifeCycle.Render)
 				throw new InvalidOperationException ("RegisterForEventValidation may only be called from the Render method");
 			if (eventValidationValues == null)
 				eventValidationValues = new List <int> ();
@@ -499,6 +502,9 @@ namespace System.Web.UI
 		internal string GetEventValidationStateFormatted ()
 		{
 			if (eventValidationValues == null || eventValidationValues.Count == 0)
+				return null;
+
+			if(page.IsCallback && !_hasRegisteredForEventValidationOnCallback)
 				return null;
 
 			IStateFormatter fmt = page.GetFormatter ();

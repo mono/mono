@@ -1,4 +1,8 @@
-2007-02-013 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: EventValidation feature optimization on Callback.
+
+2007-02-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed exception handling on Callback at client.
 
