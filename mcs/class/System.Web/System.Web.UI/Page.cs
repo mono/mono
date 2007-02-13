@@ -1872,13 +1872,26 @@ return true;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
 
+		string callbackEventError = String.Empty;
+		string callBackResult;
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
-		target.RaiseCallbackEvent (callbackArgument);
 
+		try {
+			target.RaiseCallbackEvent (callbackArgument);
+		}
+		catch (Exception ex) {
+			callbackEventError = String.Format ("e{0}", ex.Message);
+		}
+		
+		try {
+			callBackResult = target.GetCallbackResult ();
+		}
+		catch (Exception ex) {
+			return String.Format ("e{0}", ex.Message);
+		}
+		
 		string eventValidation = ClientScript.GetEventValidationStateFormatted ();
-		string callBackResult= target.GetCallbackResult ();
-
-		return String.Format ("{0}|{1}{2}", eventValidation == null ? 0 : eventValidation.Length, eventValidation, callBackResult);
+		return String.Format ("{0}{1}|{2}{3}", callbackEventError, eventValidation == null ? 0 : eventValidation.Length, eventValidation, callBackResult);
 	}
 
 	[BrowsableAttribute (false)]

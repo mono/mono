@@ -134,8 +134,11 @@ function WebForm_DoCallback (id, arg, callback, ctx, errorCallback)
 
 function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 {
-	try {
-		var doc = httpPost.responseText;
+	var doc = httpPost.responseText;
+	if (doc.charAt(0) == "e") {
+		if ((typeof(errorCallback) != "undefined") && (errorCallback != null))
+			errorCallback(doc.substring(1), ctx);
+	} else {
 		var separatorIndex = doc.indexOf("|");
 		if (separatorIndex != -1) {
 			var validationFieldLength = parseInt(doc.substring(0, separatorIndex));
@@ -151,16 +154,14 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 					}
 					validationFieldElement.value = validationField;
 				}
-				callback (doc.substring(separatorIndex + validationFieldLength + 1), ctx);
-				return;
+				if ((typeof(callback) != "undefined") && (callback != null))
+					callback (doc.substring(separatorIndex + validationFieldLength + 1), ctx);
 			}
+		} else {
+			if ((typeof(callback) != "undefined") && (callback != null))
+				callback (doc, ctx);
 		}
-	} catch (e) {
-		if (errorCallback != null)
-			errorCallback (httpPost.responseText, ctx);
-		return;
 	}
-	callback (httpPost.responseText, ctx);
 }
 
 function WebForm_getFormData (theForm)
