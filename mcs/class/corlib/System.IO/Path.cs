@@ -71,14 +71,12 @@ namespace System.IO {
 
 		private static readonly char[] PathSeparatorChars;
 		private static readonly bool dirEqualsVolume;
-		internal static char [] WildcardChars;
-		internal static char [] SpaceChars;
 
 		// class methods
 		public static string ChangeExtension (string path, string extension)
 		{
-			if (path == null || path == String.Empty)
-				return path;
+			if (path == null)
+				return null;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path");
@@ -170,8 +168,8 @@ namespace System.IO {
 
 		public static string GetExtension (string path)
 		{
-			if (path == null || path == String.Empty)
-				return path;
+			if (path == null)
+				return null;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path");
@@ -208,19 +206,7 @@ namespace System.IO {
 
 		public static string GetFullPath (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-
-			if (Environment.IsRunningOnWindows)
-				if (path.Length > 256)
-					throw new PathTooLongException (
-						"The specified path, file name, or both are too long.After full qualification,"
-						+ " each must be less than 260 characters.");
-
-			if (path.IndexOfAny (WildcardChars) != -1)
-				throw new ArgumentException (Environment.GetResourceString ("Argument_InvalidPathChars"));
-
-			string fullpath = InsecureGetFullPath (path.TrimEnd());
+			string fullpath = InsecureGetFullPath (path);
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fullpath).Demand ();
 			}
@@ -266,19 +252,6 @@ namespace System.IO {
 			if (path.Trim ().Length == 0) {
 				string msg = Locale.GetText ("The specified path is not of a legal form (empty).");
 				throw new ArgumentException (msg, "path");
-			}
-
-			if (Environment.IsRunningOnWindows) {
-				if (path.StartsWith (":"))
-					throw new ArgumentException ("The path is not in legal form");
-
-				if (IsPathRooted(path)) {
-					int rootLength = GetPathRoot (path).Length;
-					if ((path.Length > rootLength) && (path.Substring (rootLength).IndexOf (':') != -1))
-						throw new ArgumentException ("The path is not in legal form");
-				}
-				else if (path.IndexOf (':') != -1)
-					throw new NotSupportedException ("The given path's format is not supported.");
 			}
 
 			// adjust for drives, i.e. a special case for windows
@@ -426,12 +399,7 @@ namespace System.IO {
 
 		public static bool IsPathRooted (string path)
 		{
-			if (path == null)
-				return false;
-
-			path = path.Trim (SpaceChars);
-
-			if (path.Length == 0)
+			if (path == null || path.Length == 0)
 				return false;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
@@ -461,10 +429,10 @@ namespace System.IO {
 		{
 			// return a new array as we do not want anyone to be able to change the values
 			if (Environment.IsRunningOnWindows) {
-				return new char [36] { '\x22', '\x3C', '\x3E', '\x7C', '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
+				return new char [36] { '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
 					'\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E', '\x0F', '\x10', '\x11', '\x12', 
 					'\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1A', '\x1B', '\x1C', '\x1D', 
-					'\x1E', '\x1F' };
+					'\x1E', '\x1F', '\x22', '\x3C', '\x3E', '\x7C' };
 			} else {
 				return new char [1] { '\x00' };
 			}
@@ -528,8 +496,6 @@ namespace System.IO {
 			}
 #endif
 			// internal fields
-			WildcardChars = new char [] { '*', '?' };
-			SpaceChars = new char [] { ' ' };
 
 			DirectorySeparatorStr = DirectorySeparatorChar.ToString ();
 			PathSeparatorChars = new char [] {

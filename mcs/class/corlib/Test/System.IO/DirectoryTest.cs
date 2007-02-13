@@ -26,14 +26,6 @@ public class DirectoryTest
 {
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	static readonly char DSC = Path.DirectorySeparatorChar;
-	static OsType OS;
-
-	bool Windows
-	{
-		get {
-			return OS == OsType.Windows;
-		}
-	}
 
 	[SetUp]
 	public void SetUp ()
@@ -42,15 +34,6 @@ public class DirectoryTest
 			Directory.CreateDirectory (TempFolder);
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
-
-		if ('/' == DSC) {
-			OS = OsType.Unix;
-		} else if ('\\' == DSC) {
-			OS = OsType.Windows;
-		} else {
-			OS = OsType.Mac;
-			//FIXME: For Mac. figure this out when we need it
-		}
 	}
 	
 	[TearDown]
@@ -78,29 +61,13 @@ public class DirectoryTest
 	[Test]
 	public void CreateDirectoryNotSupportedException ()
 	{
-		if (Windows) {
-			try {
-				DirectoryInfo info = Directory.CreateDirectory ("aa:");
-				Assert.Fail ("Path containing ':' is not legal on Windows");
-			}
-			catch (NotSupportedException) { }
+		DeleteDirectory (":");
+		try {
+			DirectoryInfo info = Directory.CreateDirectory (":");
+			Assert.Fail ();
+		} catch (ArgumentException) {
 		}
-	}
-
-	[Test]
-	public void CreateDirectoryPathTooLongException ()
-	{
-		if (Windows) {
-			string path = TempFolder + DSC;
-			for (int i = 0; i < 280; i++)
-				path = path + "a";
-
-			try {
-				Directory.CreateDirectory (path);
-				Assert.Fail ("Path longer than 256 chars is not legal on Windows");
-			}
-			catch (PathTooLongException e) { }
-		}
+		DeleteDirectory (":");
 	}
 
 	[Test]
@@ -131,31 +98,12 @@ public class DirectoryTest
 		string path = TempFolder + DSC + "DirectoryTest.Test";
 		DeleteDirectory (path);
 		try {
-			path += '\x00';
+			path += Path.InvalidPathChars [0];
 			path += ".2";
 			DirectoryInfo info = Directory.CreateDirectory (path);
 		} finally {
 			DeleteDirectory (path);
 		}
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void CreateDirectoryArgumentException4 ()
-	{
-		string path = TempFolder + DSC + "DirectoryTest.Test";
-		DirectoryInfo info = Directory.CreateDirectory ("\t\t\t  " + path);
-	}
-
-	[Test]
-	public void CreateDirectory2 ()
-	{
-		string path = TempFolder + DSC + "DirectoryTest.Test";
-		DeleteDirectory (path);
-
-		DirectoryInfo info = Directory.CreateDirectory (path + "\t\t\t  ");
-		Assert.IsTrue (info.Exists, "#1");
-		DeleteDirectory (path);
 	}
 
 	[Test]

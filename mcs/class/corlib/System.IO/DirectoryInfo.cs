@@ -124,20 +124,7 @@ namespace System.IO {
 		public DirectoryInfo CreateSubdirectory (string name) {
 			CheckPath (name);
 			
-			if (Path.IsPathRooted (name))
-				throw new ArgumentException ();
-
-			if (Environment.IsRunningOnWindows)
-				if (name.IndexOf (':') != -1)
-					throw new NotSupportedException ("The given path's format is not supported.");
-			
 			string path = Path.Combine (FullPath, name);
-
-			string subdirectoryPath = Path.GetFullPath (path);
-
-			if (!subdirectoryPath.StartsWith (FullPath))
-				throw new ArgumentException (String.Format ("The directory specified, '{0}', is not a subdirectory of '{1}'.", name, FullPath));
-
 			Directory.CreateDirectory (path);
 
 			return new DirectoryInfo (path);
@@ -208,7 +195,6 @@ namespace System.IO {
 
 		public void MoveTo (string dest) {
  			Directory.Move (FullPath, Path.GetFullPath (dest));
-			this.FullPath = Path.GetFullPath (dest);
 		}
 
 		public override string ToString () {

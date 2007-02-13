@@ -1,12 +1,3 @@
-2007-02-13	Boris Kirzner <borisk@mainsoft.com>
-
-	* Directory.cs: small fixes in path handling.
-	* DirectorYInfo.cs: fix CreateSubdirectory and MoveTo.
-	* File.cs: fixed negative flows in Copy
-	* Path.cs: fixed InvalidPathChars order, fixed handling of spaces
-	and wildcards, fixed negative flows in windows environment.
-
-
 2007-01-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StreamReader.cs: Removed checks for non-existing directory or file,

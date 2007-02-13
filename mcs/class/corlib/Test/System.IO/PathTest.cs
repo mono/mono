@@ -835,22 +835,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void GetInvalidPathChars_Order()
-		{
-			if (Windows) {
-				char [] invalid = Path.GetInvalidPathChars ();
-				char [] expected = new char [36] { '\x22', '\x3C', '\x3E', '\x7C', '\x00', '\x01', '\x02',
-					'\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D',
-					'\x0E', '\x0F', '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18',
-					'\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F' };
-				AssertEquals (expected.Length, invalid.Length);
-				for (int i = 0; i < expected.Length; i++ ) {
-					AssertEquals( "Character at position " + i,expected [i], invalid [i]);
-				}
-			}
-		}
-
-		[Test]
 		public void GetInvalidPathChars_Modify ()
 		{
 			char[] expected = Path.GetInvalidPathChars ();
@@ -872,105 +856,6 @@ namespace MonoTests.System.IO
 				else
 					Assert (i.ToString (), Array.IndexOf (invalid, s[i]) == -1);
 			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void GetFullPath_ArgumentException1 ()
-		{
-			Path.GetFullPath ("aa*");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void GetFullPath_ArgumentException2 ()
-		{
-			Path.GetFullPath ("aa?");
-		}
-
-		[Test]
-		public void GetFullPath_ArgumentException3 ()
-		{
-			if (Windows) {
-				try {
-					Path.GetFullPath (":aa");
-					Fail ("Path containing ':' is not legal on Windows");
-				}
-				catch (ArgumentException e) { }
-			}
-		}
-
-		[Test]
-		public void GetFullPath_ArgumentException4 ()
-		{
-			if (Windows) {
-				try {
-					Path.GetFullPath ("C:\\Temp\aa:");
-					Fail ("Path containing ':' is not legal on Windows");
-				}
-				catch (ArgumentException e) { }
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void GetFullPath_ArgumentException5 ()
-		{
-			try {
-				Path.GetFullPath (" aa \t \n");
-			}
-			catch (Exception e) {
-				Fail ("Path should be trimmed from the end.");
-			}
-			Path.GetFullPath (" \t aa ");
-		}
-
-		[Test]
-		public void GetFullPath_NotSupportedException ()
-		{
-			if (Windows) {
-				try {
-					Path.GetFullPath ("aa:");
-					Fail ("Path containing ':' is not legal on Windows");
-				}
-				catch (NotSupportedException e) { }
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetFullPath_ArgumentNullException ()
-		{
-			Path.GetFullPath (null);
-		}
-
-		[Test]
-		public void GetFullPath_PathTooLongException ()
-		{
-			string path = "";
-			for (int i = 0; i < 280; i++)
-				path = path + "a";
-
-			if (Windows) {
-				try {
-					Path.GetFullPath (path);
-					Fail ("Path longer than 256 chars is not legal on Windows");
-				}
-				catch (PathTooLongException e) { }
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void IsPathRooted_ArgumentException1 ()
-		{
-			try {
-				Path.IsPathRooted ("  aa  ");
-			}
-			catch (Exception e) {
-				Fail ("Spaces in path should be trimmed.");
-			}
-			Path.IsPathRooted (" \t aa ");
 		}
 #endif
 	}
