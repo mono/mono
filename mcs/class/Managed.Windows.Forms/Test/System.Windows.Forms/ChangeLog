@@ -1,5 +1,9 @@
 2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DateTimePickerTest.cs, ControlHandleTest.cs: Remove warnings.
+
+2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DataGridColumnStyleTest.cs, ColumnStyleTest.cs, LabelTest.cs,
 	  PropertyManagerTest.cs, CurrencyManagerTest.cs,
 	  DataGridTextBoxColumnTest.cs, UpDownTest.cs, FocusTest.cs,

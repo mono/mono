@@ -73,8 +73,6 @@ namespace MonoTests.System.Windows.Forms {
 			string file = @"C:\code.cs";
 			File.WriteAllText (file, "");
 
-			int lastID = 0;
-		
 			if (Thread.CurrentThread.CurrentCulture.Name != "en-US")  {
 				Console.WriteLine ("Must be called with english locale.");
 				return null;

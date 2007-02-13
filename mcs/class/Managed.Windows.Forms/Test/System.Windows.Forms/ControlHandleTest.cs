@@ -259,6 +259,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A70");
 			o = c.WindowTarget;
 			Assert.IsFalse (c.IsHandleCreated, "A71");
+			
+			TestHelper.RemoveWarning (o);
 		}
 		
 		[Test]
@@ -308,6 +310,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A15");
 			o = c.PublicShowKeyboardCues;
 			Assert.IsFalse (c.IsHandleCreated, "A16");
+			
+			TestHelper.RemoveWarning (o);
 		}
 		 
 		Control invokecontrol = new Control ();
