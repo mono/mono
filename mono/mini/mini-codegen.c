@@ -1805,7 +1805,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		int tmp;
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			spec = ins_spec [ins->opcode];
+			spec = ins_get_spec (ins->opcode);
 
 			DEBUG (printf ("processing:"));
 			DEBUG (mono_print_ins_index (0, ins));

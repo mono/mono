@@ -1395,7 +1395,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 					}
 					else {
 						/* Special cases */
-#if defined(__i386__) || defined(__x86__64)
+#if defined(__i386__) || defined(__x86__64__)
 						if ((ins->opcode == OP_X86_LEA) && (srcindex == 1)) {
 #if SIZEOF_VOID_P == 8
 							/* FIXME: Use OP_PADD_IMM when the new JIT is done */
@@ -1403,7 +1403,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 #else
 							ins->opcode = OP_ADD_IMM;
 #endif
-							ins->inst_imm += def->inst_c0 << ins->unused;
+							ins->inst_imm += def->inst_c0 << ins->backend.shift_amount;
 							ins->sreg2 = -1;
 						}
 #endif

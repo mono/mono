@@ -2339,7 +2339,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 
 	sig = mono_method_signature (method);
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (cfg->mempool, sig, FALSE);
 	
 	/* This is the opposite of the code in emit_prolog */
 
@@ -4265,11 +4265,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				/* FIXME: Add a separate key for LMF to avoid this */
 				x86_alu_reg_imm (code, X86_ADD, X86_EAX, G_STRUCT_OFFSET (MonoJitTlsData, lmf));
 #endif
-<<<<<<< .working
-		}
-		else {
-			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_get_lmf_addr");
-=======
 			} else {
 				code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_get_lmf_addr");
 			}
@@ -4283,7 +4278,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			x86_push_membase (code, X86_EAX, 0);
 			/* *(lmf) = ESP */
 			x86_mov_membase_reg (code, X86_EAX, 0, X86_ESP, 4);
->>>>>>> .merge-right.r66840
 		}
 	} else {
 
