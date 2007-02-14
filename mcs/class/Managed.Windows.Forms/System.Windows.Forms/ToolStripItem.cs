@@ -43,6 +43,7 @@ namespace System.Windows.Forms
 		private AccessibleObject accessibility_object;
 		private string accessible_default_action_description;
 		private ToolStripItemAlignment alignment;
+		private AnchorStyles anchor;
 		private bool auto_size;
 		private bool auto_tool_tip;
 		private Color back_color;
@@ -98,6 +99,7 @@ namespace System.Windows.Forms
 		protected ToolStripItem (string text, Image image, EventHandler onClick, string name)
 		{
 			this.alignment = ToolStripItemAlignment.Left;
+			this.anchor = AnchorStyles.Left | AnchorStyles.Top;
 			this.auto_size = true;
 			this.auto_tool_tip = this.DefaultAutoToolTip;
 			this.back_color = Control.DefaultBackColor;
@@ -205,6 +207,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (AnchorStyles.Top | AnchorStyles.Left)]
+		public AnchorStyles Anchor {
+			get { return this.anchor; }
+			set { this.anchor = value; }
+		}
+			
 		[Localizable (true)]
 		[DefaultValue (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -1367,6 +1375,39 @@ namespace System.Windows.Forms
 		{
 			this.placement = placement;
 		}
+
+		internal Point Location {
+			get { return this.bounds.Location; }
+			set {
+				if (this.bounds.Location != value) {
+					this.bounds.Location = value;
+					this.OnLocationChanged (EventArgs.Empty);
+				}
+			}
+		}
+
+		internal int Top {
+			get { return this.bounds.Y; }
+			set {
+				if (this.bounds.Y != value) {
+					this.bounds.Y = value;
+					this.OnLocationChanged (EventArgs.Empty);
+				}
+			}
+		}
+
+		internal int Left {
+			get { return this.bounds.X; }
+			set {
+				if (this.bounds.X != value) {
+					this.bounds.X = value;
+					this.OnLocationChanged (EventArgs.Empty);
+				}
+			}
+		}
+		
+		internal int Right { get { return this.bounds.Right; } }
+		internal int Bottom { get { return this.bounds.Bottom; } }
 		#endregion
 		
 		public class ToolStripItemAccessibleObject : AccessibleObject

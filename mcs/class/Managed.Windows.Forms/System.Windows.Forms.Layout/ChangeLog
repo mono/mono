@@ -1,3 +1,8 @@
+2007-02-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlowLayout.cs: Add support for laying out ToolStrips, which
+	use ToolStripItems instead of Controls.
+
 2007-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: MdiClient should always be added last, it should

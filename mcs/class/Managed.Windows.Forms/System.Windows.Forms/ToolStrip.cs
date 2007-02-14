@@ -65,7 +65,6 @@ namespace System.Windows.Forms
 
 		private ToolStripItem mouse_currently_over;
 		private bool menu_selected;
-		private bool need_to_release_menu;
 		#endregion
 
 		#region Public Constructors
@@ -173,7 +172,7 @@ namespace System.Windows.Forms
 		public override Rectangle DisplayRectangle {
 			get {
 				if (this.orientation == Orientation.Horizontal)
-					if (this.grip_style == ToolStripGripStyle.Hidden)
+					if (this.grip_style == ToolStripGripStyle.Hidden || this.layout_style == ToolStripLayoutStyle.Flow || this.layout_style == ToolStripLayoutStyle.Table)
 						return new Rectangle (this.Padding.Left, this.Padding.Top, this.Width - this.Padding.Horizontal, this.Height - this.Padding.Vertical);
 					else
 						return new Rectangle (this.GripRectangle.Right + this.GripMargin.Right, this.Padding.Top, this.Width - this.Padding.Horizontal - this.GripRectangle.Right - this.GripMargin.Right, this.Height - this.Padding.Vertical);
@@ -312,7 +311,7 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override LayoutEngine LayoutEngine {
-			get { return new ToolStripSplitStackLayout(); }
+			get { return this.layout_engine;; }
 		}
 
 		[Browsable (false)]
@@ -330,6 +329,16 @@ namespace System.Windows.Forms
 						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripLayoutStyle", value));
 
 					this.layout_style = value;
+					
+					if (value == ToolStripLayoutStyle.Flow) {
+						this.layout_settings = new FlowLayoutSettings ();
+						this.layout_engine = new FlowLayout ();
+					}
+					else {
+						this.layout_settings = null;
+						this.layout_engine = new ToolStripSplitStackLayout ();
+					}
+						
 					this.PerformLayout ();
 					this.OnLayoutStyleChanged (EventArgs.Empty);
 				}
@@ -582,19 +591,15 @@ namespace System.Windows.Forms
 					if (!menu_selected)
 						(this as MenuStrip).FireMenuActivate ();
 					
-					need_to_release_menu = true; 
 					return;
 				}
 					
 				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseDown);
 				
-				need_to_release_menu = false;
-
 				if (this is MenuStrip && !menu_selected) {
 					(this as MenuStrip).FireMenuActivate ();
 					menu_selected = true;				
-				} else if (this is MenuStrip && menu_selected)
-					need_to_release_menu = true;
+				}
 			} else {
 				if (this is MenuStrip)
 					this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
@@ -643,7 +648,7 @@ namespace System.Windows.Forms
 
 					// If we're over something with a drop down, show it
 					if (menu_selected && mouse_currently_over.Enabled && mouse_currently_over is ToolStripDropDownItem && (mouse_currently_over as ToolStripDropDownItem).HasDropDownItems)
-						(mouse_currently_over as ToolStripDropDownItem).DropDown.Show ((mouse_currently_over as ToolStripDropDownItem).DropDownLocation);
+						(mouse_currently_over as ToolStripDropDownItem).ShowDropDown ();
 				}
 			} else {
 				// We're not over anything now, just fire the mouse leave on what we used to be over
@@ -716,6 +721,10 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
 		{
+			// Never draw a grip with these two layouts
+			if (this.layout_style == ToolStripLayoutStyle.Flow || this.layout_style == ToolStripLayoutStyle.Table)
+				return;
+			
 			PaintEventHandler eh = (PaintEventHandler)(Events [PaintGripEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -726,7 +735,7 @@ namespace System.Windows.Forms
 				else
 					e.Graphics.TranslateTransform (0, 2);
 			}
-			
+				
 			this.Renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.grip_display_style, this.grip_style));
 			e.Graphics.ResetTransform ();
 		}

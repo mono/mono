@@ -1,3 +1,14 @@
+2007-02-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Allow LayoutStyle.Flow, make sure to call OnOpening when
+	showing DropDowns, don't show a Grip when doing Flow layout.
+	[This fixes the toolbox in PDN 2.72.]
+	* ToolStripItem.cs: Add Anchor property and some internal properties to
+	reduces needed changes to FlowLayout.
+	* ToolStripOverflow.cs: Remove unused variable.
+	* ToolStripSplitStackLayout.cs: If a ToolStripItem isn't visible, don't
+	use it in the layout calculations.
+
 2007-02-13  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolTip.cs: Add HotkeyPrefix.Hide to MeasureString format, it fix an issue

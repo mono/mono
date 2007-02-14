@@ -110,6 +110,8 @@ namespace System.Windows.Forms
 				overflow[i] = tsi.Overflow;
 				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.Overflow : ToolStripItemPlacement.Main;
 				widths[i] = tsi.GetPreferredSize (proposedSize).Width + tsi.Margin.Horizontal;
+				if (!tsi.Available)
+					placement[i] = ToolStripItemPlacement.None;
 				total_width += placement[i] == ToolStripItemPlacement.Main ? widths[i] : 0;
 				i++;
 			}

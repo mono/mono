@@ -38,12 +38,9 @@ namespace System.Windows.Forms
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable
 	{
-		ToolStripItem parent_item;
-		
 		#region Public Constructors
 		public ToolStripOverflow (ToolStripItem parentItem)
 		{
-			this.parent_item = parentItem;
 			this.OwnerItem = parentItem;
 		}
 		#endregion
