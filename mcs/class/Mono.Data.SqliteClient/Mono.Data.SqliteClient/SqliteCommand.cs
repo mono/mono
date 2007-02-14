@@ -169,17 +169,12 @@ namespace Mono.Data.SqliteClient
 		
 		private void BindParameters3 (IntPtr pStmt)
 		{
-			Console.WriteLine ("SqliteCommand.BindParameters3");
 			if (sql_params == null) return;
 			if (sql_params.Count == 0) return;
-			Console.WriteLine ("\tpStmt == {0}", pStmt);
 			int pcount = Sqlite.sqlite3_bind_parameter_count (pStmt);
-			Console.WriteLine ("\tpcount == {0}", pcount);
 			for (int i = 1; i <= pcount; i++) 
 			{
-				Console.WriteLine ("\t{0}: pStmt == {1}", i, pStmt);
 				String name = Sqlite.HeapToString (Sqlite.sqlite3_bind_parameter_name (pStmt, i), Encoding.UTF8);
-				Console.WriteLine ("\t{0}: name == {1}", i, name);
 				SqliteParameter param = null;
 				if (name != null)
 					param = sql_params[name] as SqliteParameter;
@@ -369,13 +364,11 @@ namespace Mono.Data.SqliteClient
 					int start = i;
 					while (++i < text.Length && char.IsLetterOrDigit(text[i])) { } // scan to end
 					string name = text.Substring(start, i-start);
-					Console.WriteLine ("BindParameters2, name == {0}", name);
 					SqliteParameter p;
 					if (name.Length > 1)
 						p = Parameters[name] as SqliteParameter;
 					else
 						p = Parameters[counter] as SqliteParameter;
-					Console.WriteLine ("Got parameter: {0}", p);
 					string value = "'" + Convert.ToString(p.Value).Replace("'", "''") + "'";
 					text = text.Remove(start, name.Length).Insert(start, value);
 					i += value.Length - name.Length - 1;
@@ -383,7 +376,6 @@ namespace Mono.Data.SqliteClient
 				}
 			}
 			
-			Console.WriteLine ("BindParameters2 returning '{0}'", text);
 			return text;
 		}		
 
@@ -400,7 +392,6 @@ namespace Mono.Data.SqliteClient
 			{
 				sql = BindParameters2();
 			}
-			Console.WriteLine ("Prepared SQL == {0}", sql);
 			prepared = true;
 		}
 		
@@ -455,7 +446,6 @@ namespace Mono.Data.SqliteClient
 
 		public SqliteDataReader ExecuteReader (CommandBehavior behavior, bool want_results, out int rows_affected)
 		{
-			Console.WriteLine ("Executing reader on sql '{0}'", sql);
 			Prepare ();
 			
 			// The SQL string may contain multiple sql commands, so the main
