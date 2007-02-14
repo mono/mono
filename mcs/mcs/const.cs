@@ -76,6 +76,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			// If the constant is private then we don't need any field the
+			// value is already inlined and cannot be referenced
+			//if ((ModFlags & Modifiers.PRIVATE) != 0 && RootContext.Optimize)
+			//	return true;
+
 			while (ttype.IsArray)
 			    ttype = TypeManager.GetElementType (ttype);
 
@@ -91,7 +96,8 @@ namespace Mono.CSharp {
 			TypeManager.RegisterConstant (FieldBuilder, this);
 
 			if (ttype == TypeManager.decimal_type)
-				Parent.PartialContainer.RegisterFieldForInitialization (this, new FieldInitializer (FieldBuilder, initializer));
+				Parent.PartialContainer.RegisterFieldForInitialization (this,
+					new FieldInitializer (FieldBuilder, initializer, Parent));
 
 			return true;
 		}
@@ -116,6 +122,9 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (!ResolveValue ())
+				return;
+
+			if (FieldBuilder == null)
 				return;
 
 			if (value.Type == TypeManager.decimal_type) {

@@ -6,6 +6,8 @@
 
 	* class.cs (DefineFieldInitializers): Each initializer can has different
 	resolve context.
+
+	* const.cs: Updated.
 	
 2007-01-27  Raja R Harinath  <rharinath@novell.com>
  
