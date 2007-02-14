@@ -2166,6 +2166,12 @@ namespace System.Windows.Forms
 				large_image_list = null;
 				small_image_list = null;
 				state_image_list = null;
+
+				foreach (ColumnHeader col in columns)
+					col.SetListView (null);
+
+				foreach (ListViewItem item in items)
+					item.Owner = null;
 			}
 			
 			base.Dispose (disposing);
