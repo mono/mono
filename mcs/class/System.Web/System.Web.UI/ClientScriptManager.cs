@@ -100,7 +100,11 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("control");
 			
 			page.RequiresPostBackScript ();
+#if NET_2_0
+			return String.Format ("{0}.__doPostBack('{1}','{2}')", page.theForm, control.UniqueID, argument);
+#else
 			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
+#endif
 		}
 
 #if NET_2_0

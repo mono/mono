@@ -834,10 +834,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		ClientScript.RegisterHiddenField (postEventSourceID, String.Empty);
 		ClientScript.RegisterHiddenField (postEventArgumentID, String.Empty);
 #endif
-#if TARGET_J2EE
-		if (IsPortletRender)
-			ClientScript.RegisterWebFormClientScript ();
-#endif
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -973,7 +969,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
-#if !NET_2_0
+#if ONLY_1_1
 		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventSourceID);
 		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventArgumentID);
 #endif
@@ -981,21 +977,24 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 		ClientScript.WriteBeginScriptBlock (writer);
 
-#if !NET_2_0
+#if ONLY_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
 #endif
-		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
-		writer.WriteLine ("\t\tvar myForm = " + theForm + ";");
+		writer.WriteLine ("function __doPostBack(eventTarget, eventArgument) {");
+		writer.WriteLine ("\tvar currForm = {0};", theForm);
 #if NET_2_0
-		writer.WriteLine ("\t\tif(document.WebForm_GetFormFromCtrl) myForm = WebForm_GetFormFromCtrl (eventTarget);");
-		writer.WriteLine ("\t\tif(myForm.onsubmit && myForm.onsubmit() == false) return;");
+		writer.WriteLine ("\tcurrForm.__doPostBack(eventTarget, eventArgument);");
+		writer.WriteLine ("}");
+		writer.WriteLine ("{0}.__doPostBack = function (eventTarget, eventArgument) {{", theForm);
+		writer.WriteLine ("\tvar currForm = this;");
+		writer.WriteLine ("\tif(currForm.onsubmit && currForm.onsubmit() == false) return;");
 #else
-		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
+		writer.WriteLine ("\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 #endif
-		writer.WriteLine ("\t\tmyForm.{0}.value = eventTarget;", postEventSourceID);
-		writer.WriteLine ("\t\tmyForm.{0}.value = eventArgument;", postEventArgumentID);
-		writer.WriteLine ("\t\tmyForm.submit();");
-		writer.WriteLine ("\t}");
+		writer.WriteLine ("\tcurrForm.{0}.value = eventTarget;", postEventSourceID);
+		writer.WriteLine ("\tcurrForm.{0}.value = eventArgument;", postEventArgumentID);
+		writer.WriteLine ("\tcurrForm.submit();");
+		writer.WriteLine ("}");
 		
 		ClientScript.WriteEndScriptBlock (writer);
 	}

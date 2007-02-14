@@ -108,10 +108,12 @@ function WebForm_ReEnableControls (currForm)
 	}
 }
 
-function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
+function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg)
 {
+	var currForm = WebForm_GetFormFromCtrl (id);
+	
 	if (typeof(SetValidatorContext) == "function") 
-		SetValidatorContext (WebForm_GetFormFromCtrl (ctrl));
+		SetValidatorContext (currForm);
 
 	var validationResult = true;
 	if (pval && typeof(Page_ClientValidate) == "function")
@@ -119,19 +121,18 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 
 	if (validationResult) {
 		if (url != null)
-			WebForm_GetFormFromCtrl (ctrl).action = url;
+			currForm.action = url;
 	}
 		
 	if (csubm)
-		__doPostBack (ctrl, par);
+		currForm.__doPostBack (id, par);
 }
 
 function WebForm_DoCallback (id, arg, callback, ctx, errorCallback)
 {
-	var myForm = WebForm_GetFormFromCtrl (id);
-	var qs = WebForm_getFormData (myForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
-	if (myForm["__EVENTVALIDATION"]) qs += "&__EVENTVALIDATION=" + encodeURIComponent(myForm["__EVENTVALIDATION"].value);
-	// WebForm_httpPost (myForm.serverURL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+	var currForm = WebForm_GetFormFromCtrl (id);
+	var qs = WebForm_getFormData (currForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
+	if (currForm["__EVENTVALIDATION"]) qs += "&__EVENTVALIDATION=" + encodeURIComponent(currForm["__EVENTVALIDATION"].value);
 	WebForm_httpPost (document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
 }
 
@@ -167,12 +168,12 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 	}
 }
 
-function WebForm_getFormData (theForm)
+function WebForm_getFormData (currForm)
 {
 	var qs = "";
-	var len = theForm.elements.length;
+	var len = currForm.elements.length;
 	for (n=0; n<len; n++) {
-		var elem = theForm.elements [n];
+		var elem = currForm.elements [n];
 		var tagName = elem.tagName.toLowerCase();
 		if (tagName == "input") {
 			var type = elem.type;

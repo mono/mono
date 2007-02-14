@@ -1,5 +1,10 @@
 2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: for 2.0: '__doPostBack' declared as function of form.
+	convention to use 'currForm' instead 'myForm'	
+
+2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs:
 	* ClientScriptManager.cs:
 	including 'webform.js' requires '__doPostBack' on the form be rendered.  
