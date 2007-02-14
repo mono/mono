@@ -611,6 +611,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnVisibleChanged(EventArgs e) {
 			if (Visible) {
+				UpdateChildrenZOrder ();
 				PerformLayout();
 			}
 			base.OnVisibleChanged(e);

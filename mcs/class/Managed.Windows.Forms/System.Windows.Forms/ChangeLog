@@ -1,3 +1,22 @@
+2007-02-13  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (CreateHandle): don't loop over our children setting
+	their parent here.  do it when in WndProc when we're shown.
+	(UpdateChildrenZOrder): make this internal so we can call it from
+	ScrollableControl.
+	(WndProc): for WM_SHOWWINDOW, reparent the child control after
+	creating its handle.  Also, remove the calls to PerformLayout from
+	here.  they're done in ScrollableControl.OnVisibleChanged.  Also,
+	OnVisibleChanged only seems to be called directly here for the
+	toplevel control.  It's propagated down the window hierarchy by
+	calls to child.OnParentVisibleChanged.
+	(OnVisibleChanged): don't do layout here - it's done (oddly
+	enough, according to a glance at stack traces on ms.net..) in
+	ScrollableControl.
+	
+	* ScrollableControl.cs (OnVisibleChanged): make sure we update the
+	z order of our children before calling PerformLayout.
+
 2007-02-12  Chris Toshok  <toshok@ximian.com>
 
 	[big change, fixes #80020]

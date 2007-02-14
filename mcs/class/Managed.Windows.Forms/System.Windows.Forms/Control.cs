@@ -3773,15 +3773,6 @@ namespace System.Windows.Forms
 					XplatUI.SetParent(window.Handle, parent.Handle);
 				}
 
-				// Set our handle as parent for our children
-				Control [] children;
-
-				children = child_controls.GetAllControls ();
-				for (int i = 0; i < children.Length; i++ ) {
-					if (!children[i].RecreatingHandle && children[i].IsHandleCreated)
-						XplatUI.SetParent(children[i].Handle, window.Handle); 
-				}
-
 				UpdateStyles();
 				XplatUI.SetAllowDrop (window.Handle, allow_drop);
 
@@ -4359,7 +4350,8 @@ namespace System.Windows.Forms
 			return IntPtr.Zero;
 		}
 
-		private void UpdateChildrenZOrder() {
+		// internal because we need to call it from ScrollableControl.OnVisibleChanged
+		internal void UpdateChildrenZOrder() {
 			Control [] controls;
 
 			if (!IsHandleCreated) {
@@ -4472,10 +4464,9 @@ namespace System.Windows.Forms
 					for (int i=0; i<controls.Length; i++) {
 						if (controls [i].is_visible) {
 							controls [i].CreateControl ();
+							XplatUI.SetParent(controls[i].Handle, window.Handle); 
 						}
 					}
-
-					UpdateChildrenZOrder ();
 				}
 				else {
 					if (parent != null && Focused) {
@@ -4489,14 +4480,8 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (parent != null) {
-					parent.PerformLayout(this, "visible");
-				} else {
-					if (is_visible)
-						PerformLayout(this, "visible");
-				}
-
-				OnVisibleChanged(EventArgs.Empty);
+				if (is_toplevel) /* XXX make sure this works for mdi forms */
+					OnVisibleChanged(EventArgs.Empty);
 
 				break;
 			}
@@ -5420,13 +5405,6 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
-			if ((parent != null) && !Created && Visible) {
-				if (!is_disposed) {
-					CreateControl();
-					PerformLayout();
-				}
-			}
-
 			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);
 			if (eh != null)
 				eh (this, e);
