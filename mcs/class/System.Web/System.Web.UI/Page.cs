@@ -980,10 +980,12 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
-		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 		writer.WriteLine ("\t\tvar myForm = " + theForm + ";");
 #if NET_2_0
 		writer.WriteLine ("\t\tif(document.WebForm_GetFormFromCtrl) myForm = WebForm_GetFormFromCtrl (eventTarget);");
+		writer.WriteLine ("\t\tif(myForm.onsubmit && myForm.onsubmit() == false) return;");
+#else
+		writer.WriteLine ("\t\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 #endif
 		writer.WriteLine ("\t\tmyForm.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\tmyForm.{0}.value = eventArgument;", postEventArgumentID);

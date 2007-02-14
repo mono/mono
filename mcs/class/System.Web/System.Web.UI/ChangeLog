@@ -1,5 +1,10 @@
 2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: __doPostBack considers 2.0 features 
+	such RegisterOnSubmitStatement
+
+2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs:
 	* ClientScriptManager.cs:
 	implemented RegisterOnSubmitStatement for 2.0	

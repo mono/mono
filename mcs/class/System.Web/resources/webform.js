@@ -113,11 +113,14 @@ function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 	if (typeof(SetValidatorContext) == "function") 
 		SetValidatorContext (WebForm_GetFormFromCtrl (ctrl));
 
-	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate(vg))
-		return;
+	var validationResult = true;
+	if (pval && typeof(Page_ClientValidate) == "function")
+		validationResult =  Page_ClientValidate(vg);
 
-	if (url != null)
-		WebForm_GetFormFromCtrl (ctrl).action = url;
+	if (validationResult) {
+		if (url != null)
+			WebForm_GetFormFromCtrl (ctrl).action = url;
+	}
 		
 	if (csubm)
 		__doPostBack (ctrl, par);
