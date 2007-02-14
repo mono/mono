@@ -76,6 +76,12 @@ namespace MonoTests.System.Data.OracleClient {
 									"create table oratypes_test (id NUMBER(10), value1 VARCHAR2(100),"
 									+ " value2 DATE)";
 								command.ExecuteNonQuery ();
+
+								command.CommandText =
+									"create or replace procedure params_pos_test (param1 in number,"
+									+ "param2 in number,param3 in number,result out number) as"
+									+ " begin result:=param3; end;";
+								command.ExecuteNonQuery ();
                         }
                 }
 
@@ -251,5 +257,31 @@ namespace MonoTests.System.Data.OracleClient {
 						Assert.Fail("OracleType not handled: " + e.Message);
 					}
 				}
+
+			[Test] // verify that parameters are bound by name
+			public void ProcedureParametersByNameTest ()
+			{
+				using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
+
+					command.CommandText =
+						"params_pos_test";
+					command.CommandType = CommandType.StoredProcedure;
+
+					command.Parameters.Add (new OracleParameter ("PARAM3", OracleType.Int32));
+					command.Parameters.Add (new OracleParameter ("PARAM1", OracleType.Int32));
+					command.Parameters.Add (new OracleParameter ("PARAM2", OracleType.Int32));
+					command.Parameters.Add (new OracleParameter ("RESULT", OracleType.Int32))
+											.Direction = ParameterDirection.Output;
+
+					command.Parameters ["PARAM1"].Value = 1;
+					command.Parameters ["PARAM2"].Value = 2;
+					command.Parameters ["PARAM3"].Value = 3;
+
+					command.ExecuteNonQuery ();
+
+					Assert.AreEqual (3, command.Parameters ["RESULT"].Value,
+						"Unexpected result value.");
+				}
+			}
         }
 }
