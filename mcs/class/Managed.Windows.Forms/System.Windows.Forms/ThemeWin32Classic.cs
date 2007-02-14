@@ -4327,7 +4327,7 @@ namespace System.Windows.Forms
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text) {
 			SizeF	sizef;
 
-			sizef = tt.DeviceContext.MeasureString(text, tt.Font);
+			sizef = tt.DeviceContext.MeasureString(text, tt.Font, SizeF.Empty, tt.string_format);
 			return new Size((int)sizef.Width+8, (int)sizef.Height+3);	// Need space for the border
 		}
 		#endregion	// ToolTip

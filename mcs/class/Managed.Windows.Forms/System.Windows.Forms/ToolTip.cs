@@ -30,6 +30,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Text;
 
 namespace System.Windows.Forms {
 	[ProvideProperty ("ToolTip", typeof(System.Windows.Forms.Control))]
@@ -68,6 +69,7 @@ namespace System.Windows.Forms {
 				string_format.LineAlignment = StringAlignment.Center;
 				string_format.Alignment = StringAlignment.Center;
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
+				string_format.HotkeyPrefix = HotkeyPrefix.Hide;
 
 				Visible = false;
 				Size = new Size(100, 20);
