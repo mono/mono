@@ -2555,6 +2555,22 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (complex);
 			Assert.AreEqual ("<:GenComplexStructOfInt32String http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:something>123</><:simpleclass><:something>456</></><:simplestruct><:something>789</></><:listclass><:somelist><:int>100</><:int>200</></></><:arrayclass><:arr><:int>11</><:int>22</><:int>33</></></><:twoclass><:something1>10</><:something2>Ten</></><:derivedclass><:something1>two</><:something2>2</><:another1>1</><:another2>one</></><:derived2><:something1>4</><:something2>four</><:another1>3</><:another2>three</></><:nestedouter><:outer>5</></><:nestedinner><:inner>six</><:something>6</></></>", WriterText);
 		}
+
+		[Test] // bug #80759
+		public void HasFieldSpecifiedButIrrelevant ()
+		{
+			Bug80759 foo = new Bug80759 ();
+			foo.Test = "BAR";
+			foo.NullableInt = 10;
+
+			XmlSerializer serializer = new XmlSerializer (typeof (Bug80759));
+
+			MemoryStream stream = new MemoryStream ();
+
+			serializer.Serialize (stream, foo);
+			stream.Position = 0;
+			foo = (Bug80759) serializer.Deserialize (stream);
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -2626,6 +2642,19 @@ namespace MonoTests.System.XmlSerialization
 			[XmlText]
 			public string Value;
 		}
+
+#if NET_2_0
+		public class Bug80759
+		{
+			public string Test;
+			public int? NullableInt;
+
+			[XmlIgnore]
+			public bool NullableIntSpecified {
+				get { return NullableInt.HasValue; }
+			}
+		}
+#endif
 
 		void CDataTextNodes_BadNode (object s, XmlNodeEventArgs e)
 		{

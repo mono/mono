@@ -116,6 +116,8 @@ namespace System.Xml.Serialization
 			
 			mems = type.GetMember (_name + "Specified", BindingFlags.Instance|BindingFlags.Public);
 			if (mems.Length > 0) _specifiedMember = mems[0];
+			if (_specifiedMember is PropertyInfo && !((PropertyInfo) _specifiedMember).CanWrite)
+				_specifiedMember = null;
 		}
 
 		public TypeData TypeData

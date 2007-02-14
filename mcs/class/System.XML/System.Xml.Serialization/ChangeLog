@@ -1,3 +1,8 @@
+2007-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTypeMapMember.cs : don't use readonly [Foo]Specified property
+	  as nil-condition member. Fixed bug #80759.
+
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapReflectionImporter.cs : for primitive types, set predefined
