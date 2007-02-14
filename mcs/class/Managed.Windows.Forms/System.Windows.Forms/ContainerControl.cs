@@ -69,7 +69,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value==null || (active_control == value)) {
+				if (value==null || (active_control == value && active_control.Focused)) {
 					return;
 				}
 

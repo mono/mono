@@ -1,3 +1,16 @@
+2007-02-13  Andreia Gaita  <avidigal@novell.com
+
+	* ContainerControl.cs: Focus fix for nunit treeview selection bug.
+	A selected control would not get a Focus call if:
+		- the default active control of the container is the same as
+		  the one that was selected
+		- we are switching from one container to another
+	Under these conditions, the container being selected already has
+	an active_control, which is the same as the one being activated, 
+	so set_ActiveControl would always return and not send the Focus
+	call. Fix to check if the currently active control of the container
+	is actually focused.
+
 2007-02-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* StatusStrip.cs: Implement the spring layout.
