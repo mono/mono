@@ -6732,6 +6732,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// When one accessor does not exist and property hides base one
+			// we need to propagate this upwards
+			if (set_accessor == null)
+				set_accessor = get_accessor;
+
 			//
 			// Get the less restrictive access
 			//

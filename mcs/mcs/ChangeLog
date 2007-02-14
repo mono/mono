@@ -1,3 +1,9 @@
+2007-02-14  Marek Safar  <marek.safar@gmail.com>
+ 
+	A fix for bug #80493
+	* class.cs (FindOutBaseMethod): When the base accessor does not exist and
+	a property is override we need to use second accessor.
+
 2007-02-13  Marek Safar  <marek.safar@gmail.com>
  
 	A fix for bug #80418
