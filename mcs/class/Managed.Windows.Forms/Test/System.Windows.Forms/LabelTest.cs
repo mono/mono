@@ -65,6 +65,19 @@ namespace MonoTests.System.Windows.Forms
 			
 			l.BorderStyle = BorderStyle.Fixed3D;
 			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 6), "#4");
+
+#if NET_2_0			
+			l.UseCompatibleTextRendering = false;
+			
+			l.BorderStyle = BorderStyle.None;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height), "#5");
+			
+			l.BorderStyle = BorderStyle.FixedSingle;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height), "#6");
+			
+			l.BorderStyle = BorderStyle.Fixed3D;
+			Assert.AreEqual (l.PreferredHeight, (l.Font.Height), "#7");
+#endif
 		}
 		
 		[Test]
