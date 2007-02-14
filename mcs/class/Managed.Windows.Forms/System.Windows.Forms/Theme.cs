@@ -192,7 +192,6 @@ namespace System.Windows.Forms
 		protected Font window_border_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
-		protected bool always_draw_hotkeys = true;
 		internal SystemResPool ResPool = new SystemResPool ();
 		private Type system_colors = Type.GetType ("System.Drawing.SystemColors, " + Consts.AssemblySystem_Drawing);
 
@@ -479,7 +478,7 @@ namespace System.Windows.Forms
 
 		public virtual bool MenuAccessKeysUnderlined {
 			get {
-				return false;
+				return true;
 			}
 		}
 		

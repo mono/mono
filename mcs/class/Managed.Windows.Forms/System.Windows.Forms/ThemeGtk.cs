@@ -385,8 +385,6 @@ namespace System.Windows.Forms
 			InitGtk ();
 			
 			LoadSysDefaultColors ();	
-
-			always_draw_hotkeys = true;
 		}	
 
 		public override bool DoubleBufferingSupported {

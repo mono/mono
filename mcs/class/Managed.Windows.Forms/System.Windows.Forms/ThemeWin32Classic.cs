@@ -83,7 +83,6 @@ namespace System.Windows.Forms
 			string_format_menu_menubar_text.LineAlignment = StringAlignment.Center;
 			string_format_menu_menubar_text.Alignment = StringAlignment.Center;
 			string_format_menu_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
-			always_draw_hotkeys = false;
 		}
 
 		public override void ResetDefaults() {
@@ -2139,6 +2138,11 @@ namespace System.Windows.Forms
 		#endregion	// ListView
 		
 		#region Menus
+		
+		public override bool MenuAccessKeysUnderlined {
+			get { return false;	}
+		}
+		
 		public override void CalcItemSize (Graphics dc, MenuItem item, int y, int x, bool menuBar)
 		{
 			item.X = x;
@@ -2266,7 +2270,7 @@ namespace System.Windows.Forms
 				CalcMenuBarSize (dc, menu, rect.Width);
 
 			bool keynav = (menu as MainMenu).tracker.hotkey_active;
-			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
+			HotkeyPrefix hp = MenuAccessKeysUnderlined || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
 			string_format_menu_menubar_text.HotkeyPrefix = hp;
 			string_format_menu_text.HotkeyPrefix = hp;
 

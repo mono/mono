@@ -1,4 +1,14 @@
-2007-02-13  Andreia Gaita  <avidigal@novell.com
+2007-02-13  Everaldo Canuto  <everaldo@simios.org>
+
+	* Theme.cs: Change MenuAccessKeysUnderlined to "true" that is value used
+	for most themes.
+	
+	* ThemeWin32Classic.cs: Override MenuAccessKeysUnderlined as false.
+	
+	* ThemeNice.cs, ThemeGtk.cs, ThemeClearlooks.cs: Remove always_draw_hotkeys
+	and use MenuAccessKeysUnderlined instead.
+
+2007-02-13  Andreia Gaita  <avidigal@novell.com>
 
 	* ContainerControl.cs: Focus fix for nunit treeview selection bug.
 	A selected control would not get a Focus call if:

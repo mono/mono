@@ -63,7 +63,6 @@ namespace System.Windows.Forms
 		public ThemeNice( )
 		{
 			ColorControl = NiceBackColor;
-			always_draw_hotkeys = true;
 			
 			FlatBlend = new Blend ();
 			FlatBlend.Factors = new float []{0.0f, 0.992f, 1.0f};
@@ -272,7 +271,7 @@ namespace System.Windows.Forms
 				CalcMenuBarSize (dc, menu, rect.Width);
 			
 			bool keynav = (menu as MainMenu).tracker.Navigating;
-			HotkeyPrefix hp = always_draw_hotkeys || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
+			HotkeyPrefix hp = MenuAccessKeysUnderlined || keynav ? HotkeyPrefix.Show : HotkeyPrefix.Hide;
 			string_format_menu_menubar_text.HotkeyPrefix = hp;
 			string_format_menu_text.HotkeyPrefix = hp;
 			
