@@ -670,14 +670,15 @@ namespace System.Web.UI
 			}
 #if NET_2_0
 			RegisterClientScriptBlock ("HtmlForm-OnSubmitStatemen",
-@"<script language=""type/javascript"">
+@"<script type=""text/javascript"">
 <!--
 function WebForm_OnSubmit(currForm) {
 " + sb.ToString () + @"
 return true;
-} // -->
+}
+// -->
 </script>");
-			return "javascript:return WebForm_OnSubmit(" + page.theForm + ");";
+			return "javascript:return WebForm_OnSubmit(this);";
 
 #else
 			return sb.ToString ();
