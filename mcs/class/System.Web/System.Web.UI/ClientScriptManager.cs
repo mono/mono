@@ -661,10 +661,27 @@ namespace System.Web.UI
 			StringBuilder sb = new StringBuilder ();
 			ScriptEntry entry = submitStatements;
 			while (entry != null) {
+#if NET_2_0
+				sb.Append (EnsureEndsWithSemicolon (entry.Script));
+#else
 				sb.Append (entry.Script);
+#endif
 				entry = entry.Next;
 			}
+#if NET_2_0
+			RegisterClientScriptBlock ("HtmlForm-OnSubmitStatemen",
+@"<script language=""type/javascript"">
+<!--
+function WebForm_OnSubmit(currForm) {
+" + sb.ToString () + @"
+return true;
+} // -->
+</script>");
+			return "javascript:return WebForm_OnSubmit(" + page.theForm + ");";
+
+#else
 			return sb.ToString ();
+#endif
 		}
 		
 		internal static string GetScriptLiteral (object ob)

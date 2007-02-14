@@ -1799,15 +1799,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			if (Form.SubmitDisabledControls) {
 				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-										 "javascript: return WebForm_OnSubmit(" + theForm + ");");
-				ClientScript.RegisterStartupScript ("HtmlForm-SubmitDisabledControls-StartupScript",
-@"<script language=""JavaScript"">
-<!--
-function WebForm_OnSubmit(currForm) {
-WebForm_ReEnableControls(currForm);
-return true;
-} // -->
-</script>");
+										 "WebForm_ReEnableControls(currForm);");
 			}
 		}
 	}
