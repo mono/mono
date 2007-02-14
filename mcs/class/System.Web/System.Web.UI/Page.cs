@@ -2194,8 +2194,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected internal override void OnInit (EventArgs e)
 	{
 		base.OnInit (e);
-		if (Header == null)
-			return;
 
 		ArrayList themes = new ArrayList();
 
@@ -2203,6 +2201,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
 		if (PageTheme != null && PageTheme.GetStyleSheets () != null)
 			themes.AddRange (PageTheme.GetStyleSheets ());
+
+		if (themes.Count > 0 && Header == null)
+			throw new InvalidOperationException ("Using themed css files requires a header control on the page.");
 
 		foreach (string lss in themes) {
 			HtmlLink hl = new HtmlLink ();

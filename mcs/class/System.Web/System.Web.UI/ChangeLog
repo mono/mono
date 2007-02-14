@@ -1,3 +1,8 @@
+2007-02-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: fixed OnInit, adding css should throw exception if no header
+	present on the page
+
 2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: __doPostBack considers 2.0 features 
