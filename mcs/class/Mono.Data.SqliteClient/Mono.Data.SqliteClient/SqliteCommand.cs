@@ -553,7 +553,6 @@ namespace Mono.Data.SqliteClient
 
 		public SqliteDataReader ExecuteReader (CommandBehavior behavior, bool want_results, out int rows_affected)
 		{
-			Console.WriteLine ("Executing reader on sql '{0}'", sql);
 			Prepare ();
 			
 			// The SQL string may contain multiple sql commands, so the main
