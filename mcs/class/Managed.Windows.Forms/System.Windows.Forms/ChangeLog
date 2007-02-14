@@ -1,3 +1,10 @@
+2007-02-14  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: rework UpdateChildrenZOrder to correctly handle the
+	problem on X where a window might have its handle created (and be
+	visible) while the window is unmapped.  calling XConfigureWindow
+	on an unmapped window is bad, and generates X errors.
+
 2007-02-13  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (CreateHandle): don't loop over our children setting

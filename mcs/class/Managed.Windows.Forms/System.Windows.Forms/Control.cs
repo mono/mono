@@ -508,7 +508,8 @@ namespace System.Windows.Forms
 
 				value.InitLayout();
 
-				owner.UpdateChildrenZOrder();
+				if (owner.Visible)
+					owner.UpdateChildrenZOrder();
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
@@ -538,7 +539,8 @@ namespace System.Windows.Forms
 
 				control.ChangeParent (owner);
 				control.InitLayout ();
-				owner.UpdateChildrenZOrder ();
+				if (owner.Visible)
+					owner.UpdateChildrenZOrder ();
 				owner.PerformLayout (control, "Parent");
 				owner.OnControlAdded (new ControlEventArgs (control));
 			}
@@ -3223,7 +3225,6 @@ namespace System.Windows.Forms
 		public void BringToFront() {
 			if (parent != null) {
 				parent.child_controls.SetChildIndex(this, 0);
-				parent.Refresh();
 			}
 			else if (IsHandleCreated) {
 				XplatUI.SetZOrder(Handle, IntPtr.Zero, false, false);
@@ -4359,8 +4360,36 @@ namespace System.Windows.Forms
 			}
 
 			controls = child_controls.GetAllControls ();
-			for (int i = 1; i < controls.Length; i++ ) {
-				XplatUI.SetZOrder(controls[i].Handle, controls[i-1].Handle, false, false);
+
+			// XXX This code is severely broken.  It leaks
+			// the "zero_sized" abstraction out of the X11
+			// backend and into Control.cs.  It'll work on
+			// windows simply by virtue of windows never
+			// setting that field to true.
+			//
+			// basically what we need to guard against is
+			// calling XplatUI.SetZOrder on an hwnd that
+			// corresponds to an unmapped X window.
+			int i = 0;
+			while (i < controls.Length) {
+				Hwnd upper = Hwnd.ObjectFromHandle (controls[i].Handle);
+				if (upper.zero_sized) {
+					i++;
+					continue;
+				}
+
+				bool found_lower = false;
+				for (int j = i + 1; j < controls.Length; j ++) {
+					Hwnd lower = Hwnd.ObjectFromHandle (controls[j].Handle);
+					if (!lower.zero_sized) {
+						XplatUI.SetZOrder(lower.Handle, upper.Handle, false, false);
+						i = j;
+						found_lower = true;
+					}
+				}
+
+				if (!found_lower)
+					break;
 			}
 		}
 
