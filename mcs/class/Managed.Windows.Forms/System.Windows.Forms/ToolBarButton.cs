@@ -352,10 +352,7 @@ namespace System.Windows.Forms
 
 		Size TextSize {
 			get {
-				StringFormat text_format = new StringFormat ();
-				text_format.HotkeyPrefix = HotkeyPrefix.Hide;
-
-				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font, SizeF.Empty, text_format);
+				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font);
 				if (sz == SizeF.Empty)
 					return Size.Empty;
 				return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));

@@ -865,12 +865,9 @@ namespace System.Windows.Forms
 					longest_text = Buttons[i].Text;
 			}
 
-			StringFormat text_format = new StringFormat ();
-			text_format.HotkeyPrefix = HotkeyPrefix.Hide;
-			
 			Size size = Size.Empty;
 			if (longest_text != null && longest_text.Length > 0) {
-				SizeF sz = DeviceContext.MeasureString (longest_text, Font, SizeF.Empty, text_format);
+				SizeF sz = DeviceContext.MeasureString (longest_text, Font);
 				if (sz != SizeF.Empty)
 					size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
 			}
