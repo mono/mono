@@ -946,7 +946,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	protected internal override void Render (HtmlTextWriter writer) {
 		if (MaintainScrollPositionOnPostBack) {
-			RequiresPostBackScript ();
 			ClientScript.RegisterWebFormClientScript ();
 
 			ClientScript.RegisterHiddenField (ScrollPositionXID, Request [ScrollPositionXID]);
@@ -1807,7 +1806,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		if (!String.IsNullOrEmpty (_focusedControlID) || Form.SubmitDisabledControls) {
 
-			RequiresPostBackScript ();
 			ClientScript.RegisterWebFormClientScript ();
 
 			if (!String.IsNullOrEmpty (_focusedControlID)) {

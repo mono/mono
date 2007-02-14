@@ -145,9 +145,6 @@ namespace System.Web.UI
 			if (options.ActionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
 			
-			if (options.ClientSubmit || options.ActionUrl != null)
-				page.RequiresPostBackScript ();
-			
 			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
 					options.RequiresJavaScriptProtocol ? "javascript:" : "",
 					ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
@@ -163,8 +160,11 @@ namespace System.Web.UI
 
 		internal void RegisterWebFormClientScript ()
 		{
-			if (!IsClientScriptIncludeRegistered (typeof (Page), "webform"))
-				RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
+			if (IsClientScriptIncludeRegistered (typeof (Page), "webform"))
+				return;
+
+			RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
+			page.RequiresPostBackScript ();
 		}
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
@@ -189,7 +189,6 @@ namespace System.Web.UI
 
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
-			page.RequiresPostBackScript ();
 			RegisterWebFormClientScript ();
 			
 			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"));

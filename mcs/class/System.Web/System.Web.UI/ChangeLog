@@ -2,6 +2,12 @@
 
 	* Page.cs:
 	* ClientScriptManager.cs:
+	including 'webform.js' requires '__doPostBack' on the form be rendered.  
+
+2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	* ClientScriptManager.cs:
 	refactoring: 'theForm' variable is always declared on client. 
 	'__EVENTTARGET' and '__EVENTARGUMENT' hidden fields is rendered using 
 	RegisterHiddenField API. 'WebForm_OnSubmit' declared as function of form. 	
