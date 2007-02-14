@@ -40,8 +40,11 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public void sessionDestroyed (HttpSessionEvent se) {
-			AppDomain servletDomain = (AppDomain) se.getSession ().getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
-			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
+			bool setDomain = vmw.@internal.EnvironmentUtils.getAppDomain () == null;
+			if (setDomain) {
+				AppDomain servletDomain = (AppDomain) se.getSession ().getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
+				vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
+			}
 			try {
 				HttpSessionStateContainer container =
 					ServletSessionStateStoreProvider.CreateContainer (se.getSession ());
@@ -55,7 +58,8 @@ namespace Mainsoft.Web.SessionState
 			}
 #endif
 			finally {
-				vmw.@internal.EnvironmentUtils.clearAppDomain ();
+				if (setDomain)
+					vmw.@internal.EnvironmentUtils.clearAppDomain ();
 			}
 		}
 	}

@@ -91,7 +91,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override void RemoveItem (HttpContext context, string id, object lockId, SessionStateStoreData item) {
-			GetSession (context, false).setAttribute (J2EEConsts.SESSION_STATE, null);
+			GetSession (context, false).invalidate ();
 		}
 
 		public override void ResetItemTimeout (HttpContext context, string id) {
@@ -109,7 +109,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override bool SetItemExpireCallback (SessionStateItemExpireCallback expireCallback) {
-			return true;
+			return false; //we call session.invalidate so our session listener will call Session_OnEnd
 		}
 
 		#endregion
