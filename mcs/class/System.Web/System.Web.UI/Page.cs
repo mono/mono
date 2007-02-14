@@ -830,6 +830,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal void RequiresPostBackScript ()
 	{
 		requiresPostBackScript = true;
+#if NET_2_0
+		ClientScript.RegisterHiddenField (postEventSourceID, String.Empty);
+		ClientScript.RegisterHiddenField (postEventArgumentID, String.Empty);
+#endif
 #if TARGET_J2EE
 		if (IsPortletRender)
 			ClientScript.RegisterWebFormClientScript ();
@@ -970,15 +974,17 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
+#if !NET_2_0
 		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventSourceID);
 		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventArgumentID);
+#endif
 		writer.WriteLine ();
-		writer.WriteLine ("<script language=\"javascript\">");
-		writer.WriteLine ("<!--");
+		
+		ClientScript.WriteBeginScriptBlock (writer);
 
-		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
-		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
-		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
+#if !NET_2_0
+		RenderClientScriptFormDeclaration (writer, formUniqueID);
+#endif
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\tvar myForm = " + theForm + ";");
 #if NET_2_0
@@ -991,8 +997,15 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\t\tmyForm.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\t\tmyForm.submit();");
 		writer.WriteLine ("\t}");
-		writer.WriteLine ("// -->");
-		writer.WriteLine ("</script>");
+		
+		ClientScript.WriteEndScriptBlock (writer);
+	}
+
+	void RenderClientScriptFormDeclaration (HtmlTextWriter writer, string formUniqueID)
+	{
+		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
+		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
+		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
 	}
 
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
@@ -1002,6 +1015,12 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		renderingForm = true;
 		writer.WriteLine ();
+
+#if NET_2_0
+		ClientScript.WriteBeginScriptBlock (writer);
+		RenderClientScriptFormDeclaration (writer, formUniqueID);
+		ClientScript.WriteEndScriptBlock (writer);
+#endif
 
 		if (handleViewState)
 			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
@@ -1801,7 +1820,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			if (Form.SubmitDisabledControls) {
 				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-										 "WebForm_ReEnableControls(currForm);");
+										 "WebForm_ReEnableControls(this);");
 			}
 		}
 	}

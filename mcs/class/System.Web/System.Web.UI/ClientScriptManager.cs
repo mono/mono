@@ -272,8 +272,6 @@ namespace System.Web.UI
 				registeredArrayDeclares.Add (arrayName, new ArrayList());
 	
 			((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
-
-			page.RequiresPostBackScript ();
 		}
 	
 		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags)
@@ -528,8 +526,7 @@ namespace System.Web.UI
 				return;
 
 			writer.WriteLine ();
-			writer.WriteLine ("<script type=\"text/javascript\">");
-			writer.WriteLine ("<!--");
+			WriteBeginScriptBlock (writer);
 
 			foreach (string controlId in expandoAttributes.Keys) {
 				writer.WriteLine ("var {0} = document.all ? document.all [\"{0}\"] : document.getElementById (\"{0}\");", controlId);
@@ -538,11 +535,26 @@ namespace System.Web.UI
 					writer.WriteLine ("{0}.{1} = \"{2}\";", controlId, attributeName, attrs [attributeName]);
 				}
 			}
-			writer.WriteLine ("// -->");
-			writer.WriteLine ("</script>");
+			WriteEndScriptBlock (writer);
 			writer.WriteLine ();
 		}
+
 #endif
+		internal void WriteBeginScriptBlock (HtmlTextWriter writer)
+		{
+			writer.WriteLine ("<script"+
+#if !NET_2_0
+				" language=\"javascript\""+
+#endif
+				" type=\"text/javascript\">");
+			writer.WriteLine ("<!--");
+		}
+
+		internal void WriteEndScriptBlock (HtmlTextWriter writer)
+		{
+			writer.WriteLine ("// -->");
+			writer.WriteLine ("</script>");
+		}
 		
 		internal void WriteHiddenFields (HtmlTextWriter writer)
 		{
@@ -551,7 +563,7 @@ namespace System.Web.UI
 	
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
-				writer.WriteLine ("\n<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, value);
+				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, value);
 			}
 	
 			hiddenFields = null;
@@ -598,8 +610,7 @@ namespace System.Web.UI
 		{
 			if (registeredArrayDeclares != null) {
 				writer.WriteLine();
-				writer.WriteLine("<script language=\"javascript\">");
-				writer.WriteLine("<!--");
+				WriteBeginScriptBlock (writer);
 				IDictionaryEnumerator arrayEnum = registeredArrayDeclares.GetEnumerator();
 				while (arrayEnum.MoveNext()) {
 					writer.Write("\tvar ");
@@ -626,9 +637,8 @@ namespace System.Web.UI
 					}
 #endif
 				}
-				writer.WriteLine("// -->");
-				writer.WriteLine("</script>");
-				writer.WriteLine();
+				WriteEndScriptBlock (writer);
+				writer.WriteLine ();
 			}
 		}
 
@@ -672,13 +682,13 @@ namespace System.Web.UI
 			RegisterClientScriptBlock ("HtmlForm-OnSubmitStatemen",
 @"<script type=""text/javascript"">
 <!--
-function WebForm_OnSubmit(currForm) {
+" + page.theForm + @".WebForm_OnSubmit = function () {
 " + sb.ToString () + @"
 return true;
 }
 // -->
 </script>");
-			return "javascript:return WebForm_OnSubmit(this);";
+			return "javascript:return this.WebForm_OnSubmit();";
 
 #else
 			return sb.ToString ();
