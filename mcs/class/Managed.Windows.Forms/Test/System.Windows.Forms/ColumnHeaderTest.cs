@@ -78,8 +78,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, col.DisplayIndex, "3");
 		}
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test] 
 		public void DisplayIndex_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -158,8 +157,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (small, col.ImageList, "#3");
 		}
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test]
 		public void ImageList_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -175,8 +173,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test]
 		public void Index_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -214,8 +211,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test]
 		public void Text_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -227,8 +223,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("whatever", col.Text);
 		}
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test]
 		public void TextAlign_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -286,8 +281,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (col.Width > 0, "#2");
 		}
 
-		[Test] // bug #80607
-		[Category ("NotWorking")]
+		[Test]
 		public void Width_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();

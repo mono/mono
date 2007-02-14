@@ -154,6 +154,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void DisposeTest ()
+		{
+			ListView lv = new ListView ();
+			lv.View = View.Details;
+
+			lv.LargeImageList = new ImageList ();
+			lv.SmallImageList = new ImageList ();
+
+			ListViewItem lvi = new ListViewItem ();
+			lv.Items.Add (lvi);
+
+			ColumnHeader col = new ColumnHeader ();
+			lv.Columns.Add (col);
+
+			lv.Dispose ();
+
+			Assert.IsNull (lvi.ListView, "#A1");
+			Assert.IsNull (col.ListView, "#A2");
+
+			Assert.IsNull (lv.LargeImageList, "#B1");
+			Assert.IsNull (lv.SmallImageList, "#B2");
+			Assert.IsNull(lv.StateImageList, "#B3");
+		}
+
+		[Test]
 		public void EnsureVisibleTest ()
 		{
 			Form myform = new Form ();
