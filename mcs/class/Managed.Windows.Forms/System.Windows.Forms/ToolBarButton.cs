@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Drawing.Imaging;
 
 namespace System.Windows.Forms
@@ -351,7 +352,10 @@ namespace System.Windows.Forms
 
 		Size TextSize {
 			get {
-				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font);
+				StringFormat text_format = new StringFormat ();
+				text_format.HotkeyPrefix = HotkeyPrefix.Hide;
+
+				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font, SizeF.Empty, text_format);
 				if (sz == SizeF.Empty)
 					return Size.Empty;
 				return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));

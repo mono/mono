@@ -37,6 +37,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
@@ -864,9 +865,12 @@ namespace System.Windows.Forms
 					longest_text = Buttons[i].Text;
 			}
 
+			StringFormat text_format = new StringFormat ();
+			text_format.HotkeyPrefix = HotkeyPrefix.Hide;
+			
 			Size size = Size.Empty;
 			if (longest_text != null && longest_text.Length > 0) {
-				SizeF sz = DeviceContext.MeasureString (longest_text, Font);
+				SizeF sz = DeviceContext.MeasureString (longest_text, Font, SizeF.Empty, text_format);
 				if (sz != SizeF.Empty)
 					size = new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
 			}
@@ -1235,7 +1239,10 @@ namespace System.Windows.Forms
 
 			private Size TextSize {
 				get {
-					SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font);
+					StringFormat text_format = new StringFormat ();
+					text_format.HotkeyPrefix = HotkeyPrefix.Hide;
+
+					SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font, SizeF.Empty, text_format);
 					if (sz == SizeF.Empty)
 						return Size.Empty;
 					return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
