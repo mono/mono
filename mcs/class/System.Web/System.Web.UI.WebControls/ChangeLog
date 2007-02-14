@@ -1,3 +1,8 @@
+2007-02-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ParameterCollection.cs: fixed IndexOfString, this indexer should be
+	case insensitive
+
 2007-02-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.js: refactoring:
