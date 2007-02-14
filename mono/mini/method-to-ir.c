@@ -1176,6 +1176,7 @@ type_to_eval_stack_type (MonoType *type, MonoInst *inst)
 
 	if (type->byref) {
 		inst->type = STACK_MP;
+		inst->klass = mono_defaults.object_class;
 		return;
 	}
 

@@ -1,5 +1,9 @@
 2007-02-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (type_to_eval_stack_type): Fix bug introduced by merge.
+
+	* cpu-x86.md: Resurrect x86 support.
+
 	* mini-x86.c local-propagation.c mini-codegen.c: Resurrect x86 support.
 
 2007-02-09  Zoltan Varga  <vargaz@gmail.com>
