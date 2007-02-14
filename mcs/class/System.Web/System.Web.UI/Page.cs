@@ -829,11 +829,13 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal void RequiresPostBackScript ()
 	{
-		requiresPostBackScript = true;
 #if NET_2_0
+		if (requiresPostBackScript)
+			return;
 		ClientScript.RegisterHiddenField (postEventSourceID, String.Empty);
 		ClientScript.RegisterHiddenField (postEventArgumentID, String.Empty);
 #endif
+		requiresPostBackScript = true;
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
