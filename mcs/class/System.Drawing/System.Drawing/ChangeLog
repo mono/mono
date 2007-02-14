@@ -1,3 +1,7 @@
+2007-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Ignore Vista 256x256 icons, just like MS does.
+
 2007-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Resurrected some old Icon to Bitmap code from SVN history
