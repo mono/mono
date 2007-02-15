@@ -79,6 +79,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ActivateTest ()
 		{
 			Form myform = new Form ();
@@ -108,6 +109,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80020
+		[Category ("NotWorking")]
 		public void IsHandleCreated ()
 		{
 			Form main = new Form ();
@@ -392,6 +394,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80604
+		[Category ("NotWorking")]
 		public void VisibleOnLoad ()
 		{
 			MockForm form = new MockForm ();
