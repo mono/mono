@@ -56,12 +56,10 @@ namespace MonoTests.System.Data.Common {
             Assert.IsNotNull (dt.Columns ["Description"], "Description column missing");
             Assert.IsNotNull (dt.Columns ["InvariantName"], "InvariantName column missing");
             Assert.IsNotNull (dt.Columns ["AssemblyQualifiedName"], "AssemblyQualifiedName column missing");
-            Assert.IsNotNull (dt.Columns ["SupportedClasses"], "SupportedClasses column missing");
 
             DataColumn [] pk = dt.PrimaryKey;
             Assert.AreEqual (1, pk.Length, "primary key column not set");
             Assert.AreEqual ("InvariantName", pk [0].ColumnName, "InvariantName should be the primary key");
-
         }
 
         [Test]
@@ -75,8 +73,6 @@ namespace MonoTests.System.Data.Common {
             Assert.AreEqual ("ProviderTest.Description", r ["Description"].ToString (), "Description column missing");
             Assert.AreEqual ("ProviderTest.InvariantName", r ["InvariantName"].ToString (), "InvariantName column missing");
             Assert.AreEqual ("ProviderTest.AssemblyQualifiedName", r ["AssemblyQualifiedName"].ToString (), "AssemblyQualifiedName column missing");
-            Assert.AreEqual (255, (int) r ["SupportedClasses"], "SupportedClasses column missing");
-
         }
     }
 }
