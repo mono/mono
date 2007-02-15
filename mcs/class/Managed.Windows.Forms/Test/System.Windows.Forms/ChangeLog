@@ -1,3 +1,15 @@
+2007-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateTimePickerTest.cs: Some culture dependant tests are only supposed
+	  to run with en-US locale, so check it. On Windows call
+	  GetUserDefaultLCID to check it, since MS DateTimePicker doesn't
+	  honor Thread.CurrentCulture, only the Windows setting (and some
+	  other test might have set Thread.CurrentCulture to some other
+	  value, so the checking only this might fail). Added test for
+	  setting invalid Text property.
+	* EventLogger.cs: Added. Takes an object and creates a class on the fly
+	  that will log all the object's events.
+
 2007-02-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewTest.cs: Added DisposeTest test for bug #80607.

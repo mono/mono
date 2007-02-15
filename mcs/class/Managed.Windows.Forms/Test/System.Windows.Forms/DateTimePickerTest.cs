@@ -42,7 +42,28 @@ namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
 	public class DateTimePickerTest {
-
+		
+		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall, EntryPoint="GetUserDefaultLCID")]
+		private extern static int GetUserDefaultLCID ();
+		
+		private static void CheckCulture ()
+		{
+			try {
+				int LCID = GetUserDefaultLCID ();
+				if ((new CultureInfo ("en-US")).LCID != LCID) {
+					Assert.Ignore ("Must be called with us-english locale, current locale is: " + new CultureInfo (LCID).Name);
+					return;
+				}
+			} catch (Exception ex) {
+				//ignore any exceptions.
+				TestHelper.RemoveWarning (ex);
+			}
+			
+			if (Thread.CurrentThread.CurrentCulture.Name != "en-US") {
+				Assert.Ignore ("Must be called with us-english locale, current locale is: " + Thread.CurrentThread.CurrentCulture.Name);
+				return;
+			}
+		}
 #if NET_2_0
 		// Only use on Windows!
 		public static string GenerateCustomFormatTests ()
@@ -73,10 +94,8 @@ namespace MonoTests.System.Windows.Forms {
 			string file = @"C:\code.cs";
 			File.WriteAllText (file, "");
 
-			if (Thread.CurrentThread.CurrentCulture.Name != "en-US")  {
-				Console.WriteLine ("Must be called with english locale.");
-				return null;
-			}
+			CheckCulture ();
+			
 			builder.AppendLine (@"
 		// On Windows this test must be called with en-US locale specified in the regional settings.
 		// There is no way to change this programmatically for the test to run correctly on other locales
@@ -85,10 +104,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void CustomFormatTestGenerated ()
 		{
-			if (Thread.CurrentThread.CurrentCulture.Name != ""en-US"") {
-				Assert.Ignore (""Must be called with us-english locale, current locale is: "" + Thread.CurrentThread.CurrentCulture.Name);
-				return;
-			}
+			CheckCulture ();
 			
 			using (Form frm = new Form ()) {
 				DateTimePicker dt = new DateTimePicker ();
@@ -99,7 +115,6 @@ namespace MonoTests.System.Windows.Forms {
 				dt.CustomFormat = ""ddd"";
 				dt.Value = new DateTime (2007, 2, 8, 15, 30, 45, 60);
 		");
-			builder.AppendLine (tabs + "Thread.CurrentThread.CurrentUICulture = new CultureInfo (\"en-US\");");
 			foreach (string format in formats) {
 				builder.AppendLine (tabs + "dt.CustomFormat = @\"" + format.Replace ("\"", "\"\"") + "\";");
 				dt.CustomFormat = format;
@@ -126,10 +141,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void CustomFormatTestGenerated ()
 		{
-			if (Thread.CurrentThread.CurrentCulture.Name != "en-US") {
-				Assert.Ignore ("Must be called with us-english locale, current locale is: " + Thread.CurrentThread.CurrentCulture.Name);
-				return;
-			}
+			CheckCulture ();
 
 			using (Form frm = new Form ()) {
 				DateTimePicker dt = new DateTimePicker ();
@@ -140,7 +152,6 @@ namespace MonoTests.System.Windows.Forms {
 				dt.CustomFormat = "ddd";
 				dt.Value = new DateTime (2007, 2, 8, 15, 30, 45, 60);
 
-				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("en-US");
 				dt.CustomFormat = @"dd/MM/yy";
 				Assert.AreEqual (@"08/02/07", dt.Text, "#1");
 				dt.CustomFormat = @"dd/MM/yyyy";
@@ -2994,12 +3005,11 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-
-
-
 		[Test]
 		public void CustomFormatTest ()
 		{
+			CheckCulture ();
+			
 			using (Form frm = new Form ()) {
 				DateTimePicker dt = new DateTimePicker ();
 				frm.Controls.Add (dt);
@@ -3007,8 +3017,6 @@ namespace MonoTests.System.Windows.Forms {
 				
 				dt.Format = DateTimePickerFormat.Custom;
 				dt.Value = new DateTime (2007, 2, 8, 15, 30, 45, 60);
-
-				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("en-US");
 
 				/* 
 				 * This is really weird and necessary, otherwise the tests won't succeed on windows.
@@ -3025,8 +3033,8 @@ namespace MonoTests.System.Windows.Forms {
 				dt.CustomFormat = "ddd"; // Setting CustomFormat to this string (among others) seems to fix it.
 					dt.CustomFormat = "y";
 					Assert.AreEqual ("7", dt.Text, "#msfix1?");
-				
-				dt.CustomFormat = Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern;
+
+				dt.CustomFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
 				Assert.AreEqual ("2/8/2007", dt.Text, "#01");
 
 				dt.CustomFormat = "y-M-d-h-H-m-s-t";
@@ -3165,13 +3173,54 @@ namespace MonoTests.System.Windows.Forms {
 		public void TextTest ()
 		{
 			DateTimePicker dt = new DateTimePicker ();
+			EventLogger log = new EventLogger (dt);
 			DateTime tomorrow = DateTime.Today.AddDays (1);
+			
+			log.Clear ();
 			dt.Value = tomorrow;
 			Assert.AreEqual ("", dt.Text, "#1");
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged"), "#1.1");
 
+			log.Clear ();
 			dt.CreateControl ();
 			Assert.AreEqual (tomorrow.ToLongDateString (), dt.Text, "#2");
+			Assert.IsTrue (log.ContainsEventsOrdered ("HandleCreated"), "#2.1");
+
+			log.Clear ();
+			dt.Text = "";
+			Assert.AreEqual (DateTime.Today.ToLongDateString (), dt.Text, "#3");
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#3.1");
 			
+			log.Clear ();
+			dt.Text = null;
+			Assert.AreEqual (DateTime.Today.ToLongDateString (), dt.Text, "#4");
+			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#4.1");
+
+			log.Clear (); 
+			dt.CustomFormat = "yyyy-MM-dd HH-mm-ss";
+			dt.Format = DateTimePickerFormat.Custom;
+			Assert.AreEqual (DateTime.Now.ToString (dt.CustomFormat), dt.Text, "#5");
+			Assert.IsTrue (log.ContainsEventsOrdered ("HandleDestroyed", "HandleCreated", "FormatChanged"), "#5.1");
+
+			log.Clear ();
+			dt.CustomFormat = "yyyy-MM-dd";
+			Assert.AreEqual (DateTime.Now.ToString (dt.CustomFormat), dt.Text, "#6");
+			Assert.AreEqual ("", log.EventsJoined (), "#6.1");
+			
+			log.Clear ();
+			dt.Format = DateTimePickerFormat.Short;
+			Assert.AreEqual (DateTime.Now.ToShortDateString (), dt.Text, "#7");
+			Assert.IsTrue (log.ContainsEventsOrdered ("HandleDestroyed", "HandleCreated", "FormatChanged"), "#7.1");
+			
+		}
+		
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void InvalidTextTest ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+			dt.Text = "abcdef";
+		
 		}
 	}
 }
