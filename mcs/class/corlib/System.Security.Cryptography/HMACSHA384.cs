@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,16 +38,36 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public class HMACSHA384 : HMAC {
 
+		static bool legacy_mode;
+		private bool legacy;
+
+		static HMACSHA384 ()
+		{
+			legacy_mode = (Environment.GetEnvironmentVariable ("legacyHMACMode") == "1");
+		}
+
 		public HMACSHA384 () 
 			: this (KeyBuilder.Key (8))
 		{
+			ProduceLegacyHmacValues = legacy_mode;
 		}
 
-		public HMACSHA384 (byte[] rgbKey) : base () 
+		public HMACSHA384 (byte[] rgbKey)
 		{
+			ProduceLegacyHmacValues = legacy_mode;
 			HashName = "SHA384";
 			HashSizeValue = 384;
 			Key = rgbKey;
+		}
+
+		// this property will appear in the next .NET service pack
+		// http://blogs.msdn.com/shawnfa/archive/2007/01/31/please-do-not-use-the-net-2-0-hmacsha512-and-hmacsha384-classes.aspx
+		public bool ProduceLegacyHmacValues {
+			get { return legacy; }
+			set {
+				legacy = value;
+				BlockSizeValue = legacy ? 64 : 128;
+			}
 		}
 	}
 }

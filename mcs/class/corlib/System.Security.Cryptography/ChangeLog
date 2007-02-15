@@ -1,3 +1,11 @@
+2007-02-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HMAC.cs: Handle BlockSizeValue correctly.
+	* HMACSHA384.cs: Add support for forthcoming ProduceLegacyHmacValues
+	property (in the next service pack).
+	* HMACSHA512.cs: Add support for forthcoming ProduceLegacyHmacValues
+	property (in the next service pack).
+
 2007-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CryptoConfig.cs: Fixed incorrect exchange in urlExcC14N and

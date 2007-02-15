@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -63,13 +63,14 @@ namespace System.Security.Cryptography {
 		protected HMAC () 
 		{
 			_disposed = false;
+			_blockSizeValue = 64;
 		}
 
 		// properties
 
 		protected int BlockSizeValue {
 			get { return _blockSizeValue; }
-			set { _blockSizeValue = value; }
+			set { _blockSizeValue = value;	}
 		}
 
 		public string HashName {
@@ -77,7 +78,6 @@ namespace System.Security.Cryptography {
 			set { 
 				_hashName = value; 
 				_algo = HashAlgorithm.Create (_hashName);
-				_block = new BlockProcessor (_algo, 8);
 			}
 		}
 
@@ -91,16 +91,24 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		internal BlockProcessor Block {
+			get {
+				if (_block == null)
+					_block = new BlockProcessor (_algo, (BlockSizeValue >> 3));
+				return _block;
+			}
+		}
+
 		// methods
 
 		private byte[] KeySetup (byte[] key, byte padding) 
 		{
-			byte[] buf = new byte [64];
+			byte[] buf = new byte [BlockSizeValue];
 	
 			for (int i = 0; i < key.Length; ++i)
 				buf [i] = (byte) ((byte) key [i] ^ padding);
 	
-			for (int i = key.Length; i < 64; ++i)
+			for (int i = key.Length; i < BlockSizeValue; ++i)
 				buf [i] = padding;
 			
 			return buf;
@@ -122,7 +130,7 @@ namespace System.Security.Cryptography {
 				Initialize ();
 				State = 1;
 			}
-			_block.Core (rgb, ib, cb);
+			Block.Core (rgb, ib, cb);
 		}
 
 		protected override byte[] HashFinal () 
@@ -131,7 +139,7 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("HMAC");
 			State = 0;
 
-			_block.Final ();
+			Block.Final ();
 			byte[] intermediate = _algo.Hash;
 	
 			byte[] buf = KeySetup (Key, 0x5C);
@@ -152,10 +160,10 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("HMAC");
 
 			State = 0;
-			_block.Initialize ();
+			Block.Initialize ();
 			byte[] buf = KeySetup (Key, 0x36);
 			_algo.Initialize ();
-			_block.Core (buf);
+			Block.Core (buf);
 			// zeroize key
 			Array.Clear (buf, 0, buf.Length);
 		}
