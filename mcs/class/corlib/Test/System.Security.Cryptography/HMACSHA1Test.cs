@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,16 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
 
+#if NET_2_0
+	public class HS160 : HMACSHA1 {
+
+		public int BlockSize {
+			get { return base.BlockSizeValue; }
+			set { base.BlockSizeValue = value; }
+		}
+	}
+#endif
+
 // References:
 // a.	The Keyed-Hash Message Authentication Code (HMAC)
 //	http://csrc.nist.gov/publications/fips/fips198/fips-198a.pdf
@@ -56,11 +66,11 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	public void Constructors () 
 	{
 		algo = new HMACSHA1 ();
-		AssertNotNull ("HMACSHA1 ()", hash);
+		Assert.IsNotNull (hash, "HMACSHA1 ()");
 
 		byte[] key = new byte [8];
 		algo = new HMACSHA1 (key);
-		AssertNotNull ("HMACSHA1 (key)", hash);
+		Assert.IsNotNull (hash, "HMACSHA1 (key)");
 	}
 
 	[Test]
@@ -74,16 +84,23 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	public void Invariants () 
 	{
 		algo = new HMACSHA1 ();
-		AssertEquals ("HMACSHA1.CanReuseTransform", true, algo.CanReuseTransform);
-		AssertEquals ("HMACSHA1.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
-		AssertEquals ("HMACSHA1.HashName", "SHA1", algo.HashName);
-		AssertEquals ("HMACSHA1.HashSize", 160, algo.HashSize);
-		AssertEquals ("HMACSHA1.InputBlockSize", 1, algo.InputBlockSize);
-		AssertEquals ("HMACSHA1.OutputBlockSize", 1, algo.OutputBlockSize);
-		AssertEquals ("HMACSHA1.ToString()", "System.Security.Cryptography.HMACSHA1", algo.ToString ()); 
+		Assert.IsTrue (algo.CanReuseTransform, "HMACSHA1.CanReuseTransform");
+		Assert.IsTrue (algo.CanTransformMultipleBlocks, "HMACSHA1.CanTransformMultipleBlocks");
+		Assert.AreEqual ("SHA1", algo.HashName, "HMACSHA1.HashName");
+		Assert.AreEqual (160, algo.HashSize, "HMACSHA1.HashSize");
+		Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA1.InputBlockSize");
+		Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA1.OutputBlockSize");
+		Assert.AreEqual ("System.Security.Cryptography.HMACSHA1", algo.ToString (), "HMACSHA1.ToString()"); 
 	}
 
-#if ! NET_2_0
+#if NET_2_0
+	[Test]
+	public void BlockSize ()
+	{
+		HS160 hmac = new HS160 ();
+		Assert.AreEqual (64, hmac.BlockSize, "BlockSizeValue");
+	}
+#else
 	// this is legal in .NET 2.0 because HMACSHA1 derives from HMAC
 	[Test]
 	[ExpectedException (typeof (InvalidCastException))]
@@ -114,8 +131,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		algo = new HMACSHA1 (key);
 #endif
 		byte[] hmac = algo.ComputeHash (data);
-		AssertEquals (testName + "a1", result, hmac);
-		AssertEquals (testName + "a2", result, algo.Hash);
+		Assert.AreEqual (result, hmac, testName + "a1");
+		Assert.AreEqual (result, algo.Hash, testName + "a2");
 	}
 
 	public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
@@ -126,8 +143,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		algo = new HMACSHA1 (key);
 #endif
 		byte[] hmac = algo.ComputeHash (data, 0, data.Length);
-		AssertEquals (testName + "b1", result, hmac);
-		AssertEquals (testName + "b2", result, algo.Hash);
+		Assert.AreEqual (result, hmac, testName + "b1");
+		Assert.AreEqual (result, algo.Hash, testName + "b2");
 	}
 	
 	public void CheckC (string testName, byte[] key, byte[] data, byte[] result) 
@@ -135,8 +152,8 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		algo = new HMACSHA1 (key);
 		MemoryStream ms = new MemoryStream (data);
 		byte[] hmac = algo.ComputeHash (ms);
-		AssertEquals (testName + "c1", result, hmac);
-		AssertEquals (testName + "c2", result, algo.Hash);
+		Assert.AreEqual (result, hmac, testName + "c1");
+		Assert.AreEqual (result, algo.Hash, testName + "c2");
 	}
 
 	public void CheckD (string testName, byte[] key, byte[] data, byte[] result) 
@@ -144,7 +161,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		algo = new HMACSHA1 (key);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		algo.TransformFinalBlock (data, 0, data.Length);
-		AssertEquals (testName + "d", result, algo.Hash);
+		Assert.AreEqual (result, algo.Hash, testName + "d");
 	}
 
 	public void CheckE (string testName, byte[] key, byte[] data, byte[] result) 
@@ -155,7 +172,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		for (int i=0; i < data.Length - 1; i++)
 			algo.TransformBlock (data, i, 1, copy, i);
 		algo.TransformFinalBlock (data, data.Length - 1, 1);
-		AssertEquals (testName + "e", result, algo.Hash);
+		Assert.AreEqual (result, algo.Hash, testName + "e");
 	}
 
 	[Test]

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -17,6 +17,14 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
+
+	public class HS256 : HMACSHA256 {
+
+		public int BlockSize {
+			get { return base.BlockSizeValue; }
+			set { base.BlockSizeValue = value; }
+		}
+	}
 
 	// References:
 	// a.	The HMAC-SHA-256-128 Algorithm and Its Use With IPsec
@@ -35,34 +43,46 @@ namespace MonoTests.System.Security.Cryptography {
 			hash = algo;
 		}
 
+		// the hash algorithm only exists as a managed implementation
+		public override bool ManagedHashImplementation {
+			get { return true; }
+		}
+
 		[Test]
 		public void Constructors () 
 		{
 			algo = new HMACSHA256 ();
-			AssertNotNull ("HMACSHA256 ()", algo);
+			Assert.IsNotNull (algo, "HMACSHA256 ()");
 
 			byte[] key = new byte [8];
 			algo = new HMACSHA256 (key);
-			AssertNotNull ("HMACSHA256 (key)", algo);
+			Assert.IsNotNull (algo, "HMACSHA256 (key)");
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void Constructor_Null () 
 		{
-			new HMACSHA512 (null);
+			new HMACSHA256 (null);
 		}
 
 		[Test]
 		public void Invariants () 
 		{
-			AssertEquals ("HMACSHA256.CanReuseTransform", true, algo.CanReuseTransform);
-			AssertEquals ("HMACSHA256.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
-			AssertEquals ("HMACSHA256.HashName", "SHA256", algo.HashName);
-			AssertEquals ("HMACSHA256.HashSize", 256, algo.HashSize);
-			AssertEquals ("HMACSHA256.InputBlockSize", 1, algo.InputBlockSize);
-			AssertEquals ("HMACSHA256.OutputBlockSize", 1, algo.OutputBlockSize);
-			AssertEquals ("HMACSHA256.ToString()", "System.Security.Cryptography.HMACSHA256", algo.ToString ()); 
+			Assert.IsTrue (algo.CanReuseTransform, "HMACSHA256.CanReuseTransform");
+			Assert.IsTrue (algo.CanTransformMultipleBlocks, "HMACSHA256.CanTransformMultipleBlocks");
+			Assert.AreEqual ("SHA256", algo.HashName, "HMACSHA256.HashName");
+			Assert.AreEqual (256, algo.HashSize, "HMACSHA256.HashSize");
+			Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA256.InputBlockSize");
+			Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA256.OutputBlockSize");
+			Assert.AreEqual ("System.Security.Cryptography.HMACSHA256", algo.ToString (), "HMACSHA256.ToString()"); 
+		}
+
+		[Test]
+		public void BlockSize ()
+		{
+			HS256 hmac = new HS256 ();
+			Assert.AreEqual (64, hmac.BlockSize, "BlockSizeValue");
 		}
 
 		public void Check (string testName, byte[] key, byte[] data, byte[] result) 
@@ -80,8 +100,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACSHA256 ();
 			algo.Key = key;
 			byte[] hmac = algo.ComputeHash (data);
-			AssertEquals (testName + "a1", result, hmac);
-			AssertEquals (testName + "a2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "a1");
+			Assert.AreEqual (result, algo.Hash, testName + "a2");
 		}
 
 		public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
@@ -89,8 +109,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACSHA256 ();
 			algo.Key = key;
 			byte[] hmac = algo.ComputeHash (data, 0, data.Length);
-			AssertEquals (testName + "b1", result, hmac);
-			AssertEquals (testName + "b2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "b1");
+			Assert.AreEqual (result, algo.Hash, testName + "b2");
 		}
 	
 		public void CheckC (string testName, byte[] key, byte[] data, byte[] result) 
@@ -99,8 +119,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo.Key = key;
 			MemoryStream ms = new MemoryStream (data);
 			byte[] hmac = algo.ComputeHash (ms);
-			AssertEquals (testName + "c1", result, hmac);
-			AssertEquals (testName + "c2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "c1");
+			Assert.AreEqual (result, algo.Hash, testName + "c2");
 		}
 
 		public void CheckD (string testName, byte[] key, byte[] data, byte[] result) 
@@ -109,7 +129,7 @@ namespace MonoTests.System.Security.Cryptography {
 			algo.Key = key;
 			// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 			algo.TransformFinalBlock (data, 0, data.Length);
-			AssertEquals (testName + "d", result, algo.Hash);
+			Assert.AreEqual (result, algo.Hash, testName + "d");
 		}
 
 		public void CheckE (string testName, byte[] key, byte[] data, byte[] result) 
@@ -121,7 +141,7 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i=0; i < data.Length - 1; i++)
 				algo.TransformBlock (data, i, 1, copy, i);
 			algo.TransformFinalBlock (data, data.Length - 1, 1);
-			AssertEquals (testName + "e", result, algo.Hash);
+			Assert.AreEqual (result, algo.Hash, testName + "e");
 		}
 
 		[Test]

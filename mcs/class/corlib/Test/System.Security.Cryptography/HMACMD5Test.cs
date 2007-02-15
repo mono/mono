@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -17,6 +17,14 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
+
+	public class HM5 : HMACMD5 {
+
+		public int BlockSize {
+			get { return base.BlockSizeValue; }
+			set { base.BlockSizeValue = value; }
+		}
+	}
 
 	// References:
 	// a.	IETF RFC2202: Test Cases for HMAC-MD5 and HMAC-SHA-1
@@ -39,11 +47,11 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Constructors () 
 		{
 			algo = new HMACMD5 ();
-			AssertNotNull ("HMACMD5 ()", algo);
+			Assert.IsNotNull (algo, "HMACMD5 ()");
 
 			byte[] key = new byte [8];
 			algo = new HMACMD5 (key);
-			AssertNotNull ("HMACMD5 (key)", algo);
+			Assert.IsNotNull (algo, "HMACMD5 (key)");
 		}
 
 		[Test]
@@ -57,13 +65,20 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Invariants () 
 		{
 			algo = new HMACMD5 ();
-			AssertEquals ("HMACMD5.CanReuseTransform", true, algo.CanReuseTransform);
-			AssertEquals ("HMACMD5.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
-			AssertEquals ("HMACMD5.HashName", "MD5", algo.HashName);
-			AssertEquals ("HMACMD5.HashSize", 128, algo.HashSize);
-			AssertEquals ("HMACMD5.InputBlockSize", 1, algo.InputBlockSize);
-			AssertEquals ("HMACMD5.OutputBlockSize", 1, algo.OutputBlockSize);
-			AssertEquals ("HMACMD5.ToString()", "System.Security.Cryptography.HMACMD5", algo.ToString ()); 
+			Assert.IsTrue (algo.CanReuseTransform, "HMACMD5.CanReuseTransform");
+			Assert.IsTrue (algo.CanTransformMultipleBlocks, "HMACMD5.CanTransformMultipleBlocks");
+			Assert.AreEqual ("MD5", algo.HashName, "HMACMD5.HashName");
+			Assert.AreEqual (128, algo.HashSize, "HMACMD5.HashSize");
+			Assert.AreEqual (1, algo.InputBlockSize, "HMACMD5.InputBlockSize");
+			Assert.AreEqual (1, algo.OutputBlockSize, "HMACMD5.OutputBlockSize");
+			Assert.AreEqual ("System.Security.Cryptography.HMACMD5", algo.ToString (), "HMACMD5.ToString()"); 
+		}
+
+		[Test]
+		public void BlockSize ()
+		{
+			HM5 hmac = new HM5 ();
+			Assert.AreEqual (64, hmac.BlockSize, "BlockSizeValue");
 		}
 
 		public void Check (string testName, byte[] key, byte[] data, byte[] result) 
@@ -81,8 +96,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACMD5 ();
 			algo.Key = key;
 			byte[] hmac = algo.ComputeHash (data);
-			AssertEquals (testName + "a1", result, hmac);
-			AssertEquals (testName + "a2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "a1");
+			Assert.AreEqual (result, algo.Hash, testName + "a2");
 		}
 
 		public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
@@ -90,8 +105,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACMD5 ();
 			algo.Key = key;
 			byte[] hmac = algo.ComputeHash (data, 0, data.Length);
-			AssertEquals (testName + "b1", result, hmac);
-			AssertEquals (testName + "b2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "b1");
+			Assert.AreEqual (result, algo.Hash, testName + "b2");
 		}
 	
 		public void CheckC (string testName, byte[] key, byte[] data, byte[] result) 
@@ -100,8 +115,8 @@ namespace MonoTests.System.Security.Cryptography {
 			algo.Key = key;
 			MemoryStream ms = new MemoryStream (data);
 			byte[] hmac = algo.ComputeHash (ms);
-			AssertEquals (testName + "c1", result, hmac);
-			AssertEquals (testName + "c2", result, algo.Hash);
+			Assert.AreEqual (result, hmac, testName + "c1");
+			Assert.AreEqual (result, algo.Hash, testName + "c2");
 		}
 
 		public void CheckD (string testName, byte[] key, byte[] data, byte[] result) 
@@ -110,7 +125,7 @@ namespace MonoTests.System.Security.Cryptography {
 			algo.Key = key;
 			// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 			algo.TransformFinalBlock (data, 0, data.Length);
-			AssertEquals (testName + "d", result, algo.Hash);
+			Assert.AreEqual (result, algo.Hash, testName + "d");
 		}
 
 		public void CheckE (string testName, byte[] key, byte[] data, byte[] result) 
@@ -122,7 +137,7 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i=0; i < data.Length - 1; i++)
 				algo.TransformBlock (data, i, 1, copy, i);
 			algo.TransformFinalBlock (data, data.Length - 1, 1);
-			AssertEquals (testName + "e", result, algo.Hash);
+			Assert.AreEqual (result, algo.Hash, testName + "e");
 		}
 
 		[Test]

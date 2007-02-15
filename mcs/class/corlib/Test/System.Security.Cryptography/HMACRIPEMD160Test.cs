@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,36 +38,18 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
 
+	public class HR160 : HMACRIPEMD160 {
+
+		public int BlockSize {
+			get { return base.BlockSizeValue; }
+			set { base.BlockSizeValue = value; }
+		}
+	}
+
 	[TestFixture]
 	public class HMACRIPEMD160Test : KeyedHashAlgorithmTest {
 
 		protected HMACRIPEMD160 hmac;
-
-		// because most crypto stuff works with byte[] buffers
-		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-		{
-			if ((array1 == null) && (array2 == null))
-				return;
-			if (array1 == null)
-				Fail (msg + " -> First array is NULL");
-			if (array2 == null)
-				Fail (msg + " -> Second array is NULL");
-	        
-			bool a = (array1.Length == array2.Length);
-			if (a) {
-				for (int i = 0; i < array1.Length; i++) {
-					if (array1 [i] != array2 [i]) {
-						a = false;
-						break;
-					}
-				}
-			}
-			if (array1.Length > 0) {
-				msg += " -> Expected " + BitConverter.ToString (array1, 0);
-				msg += " is different than " + BitConverter.ToString (array2, 0);
-			}
-			Assert (msg, a);
-		}
 
 		[SetUp]
 		protected override void SetUp () 
@@ -75,6 +57,11 @@ namespace MonoTests.System.Security.Cryptography {
 			hmac = new HMACRIPEMD160 ();
 			hmac.Key = new byte [8];
 			hash = hmac;
+		}
+
+		// the hash algorithm only exists as a managed implementation
+		public override bool ManagedHashImplementation {
+			get { return true; }
 		}
 
 		static byte[] key1 = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x01, 0x23, 0x45, 0x67 };
@@ -382,8 +369,8 @@ namespace MonoTests.System.Security.Cryptography {
 		public void HMACRIPEMD160_a (string testName, HMACRIPEMD160 hmac, byte[] input, byte[] result) 
 		{
 			byte[] output = hmac.ComputeHash (input); 
-			AssertEquals (testName + ".a.1", result, output);
-			AssertEquals (testName + ".a.2", result, hmac.Hash);
+			Assert.AreEqual (result, output, testName + ".a.1");
+			Assert.AreEqual (result, hmac.Hash, testName + ".a.2");
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
@@ -391,8 +378,8 @@ namespace MonoTests.System.Security.Cryptography {
 		public void HMACRIPEMD160_b (string testName, HMACRIPEMD160 hmac, byte[] input, byte[] result) 
 		{
 			byte[] output = hmac.ComputeHash (input, 0, input.Length); 
-			AssertEquals (testName + ".b.1", result, output);
-			AssertEquals (testName + ".b.2", result, hmac.Hash);
+			Assert.AreEqual (result, output, testName + ".b.1");
+			Assert.AreEqual (result, hmac.Hash, testName + ".b.2");
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
@@ -401,8 +388,8 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			MemoryStream ms = new MemoryStream (input);
 			byte[] output = hmac.ComputeHash (ms); 
-			AssertEquals (testName + ".c.1", result, output);
-			AssertEquals (testName + ".c.2", result, hmac.Hash);
+			Assert.AreEqual (result, output, testName + ".c.1");
+			Assert.AreEqual (result, hmac.Hash, testName + ".c.2");
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
@@ -410,7 +397,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void HMACRIPEMD160_d (string testName, HMACRIPEMD160 hmac, byte[] input, byte[] result) 
 		{
 			hmac.TransformFinalBlock (input, 0, input.Length);
-			AssertEquals (testName + ".d", result, hmac.Hash);
+			Assert.AreEqual (result, hmac.Hash, testName + ".d");
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
@@ -421,19 +408,29 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i=0; i < input.Length - 1; i++)
 				hmac.TransformBlock (input, i, 1, copy, i);
 			hmac.TransformFinalBlock (input, input.Length - 1, 1);
-			AssertEquals (testName + ".e", result, hmac.Hash);
+			Assert.AreEqual (result, hmac.Hash, testName + ".e");
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
 
 		// none of those values changes for any implementation of RIPEMD160
 		[Test]
-		public virtual void StaticInfo () 
+		public void Invariants ()
 		{
-			string className = hmac.ToString ();
-			AssertEquals (className + ".HashSize", 160, hmac.HashSize);
-			AssertEquals (className + ".InputBlockSize", 1, hmac.InputBlockSize);
-			AssertEquals (className + ".OutputBlockSize", 1, hmac.OutputBlockSize);
+			Assert.IsTrue (hmac.CanReuseTransform, "HMACRIPEMD160.CanReuseTransform");
+			Assert.IsTrue (hmac.CanTransformMultipleBlocks, "HMACRIPEMD160.CanTransformMultipleBlocks");
+			Assert.AreEqual ("RIPEMD160", hmac.HashName, "HMACRIPEMD160.HashName");
+			Assert.AreEqual (160, hmac.HashSize, "HMACRIPEMD160.HashSize");
+			Assert.AreEqual (1, hmac.InputBlockSize, "HMACRIPEMD160.InputBlockSize");
+			Assert.AreEqual (1, hmac.OutputBlockSize, "HMACRIPEMD160.OutputBlockSize");
+			Assert.AreEqual ("System.Security.Cryptography.HMACRIPEMD160", hmac.ToString (), "HMACRIPEMD160.ToString()");
+		}
+
+		[Test]
+		public void BlockSize ()
+		{
+			HR160 hmac = new HR160 ();
+			Assert.AreEqual (64, hmac.BlockSize, "BlockSizeValue");
 		}
 	}
 }

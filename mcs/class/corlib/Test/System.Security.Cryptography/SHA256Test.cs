@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell  http://www.novell.com
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -30,6 +30,11 @@ public class SHA256Test : HashAlgorithmTest {
 	protected override void SetUp () 
 	{
 		hash = SHA256.Create ();
+	}
+
+	// the hash algorithm only exists as a managed implementation
+	public override bool ManagedHashImplementation {
+		get { return true; }
 	}
 
 	// test vectors from NIST FIPS 186-2
@@ -93,8 +98,8 @@ public class SHA256Test : HashAlgorithmTest {
 	public void FIPS186_a (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] output = hash.ComputeHash (input); 
-		AssertEquals (testName + ".a.1", result, output);
-		AssertEquals (testName + ".a.2", result, hash.Hash);
+		Assert.AreEqual (result, output, testName + ".a.1");
+		Assert.AreEqual (result, hash.Hash, testName + ".a.2");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -102,8 +107,8 @@ public class SHA256Test : HashAlgorithmTest {
 	public void FIPS186_b (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] output = hash.ComputeHash (input, 0, input.Length); 
-		AssertEquals (testName + ".b.1", result, output);
-		AssertEquals (testName + ".b.2", result, hash.Hash);
+		Assert.AreEqual (result, output, testName + ".b.1");
+		Assert.AreEqual (result, hash.Hash, testName + ".b.2");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -112,8 +117,8 @@ public class SHA256Test : HashAlgorithmTest {
 	{
 		MemoryStream ms = new MemoryStream (input);
 		byte[] output = hash.ComputeHash (ms); 
-		AssertEquals (testName + ".c.1", result, output);
-		AssertEquals (testName + ".c.2", result, hash.Hash);
+		Assert.AreEqual (result, output, testName + ".c.1");
+		Assert.AreEqual (result, hash.Hash, testName + ".c.2");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -123,7 +128,7 @@ public class SHA256Test : HashAlgorithmTest {
 		byte[] output = hash.TransformFinalBlock (input, 0, input.Length);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		// AssertEquals( testName + ".d.1", result, output );
-		AssertEquals (testName + ".d", result, hash.Hash);
+		Assert.AreEqual (result, hash.Hash, testName + ".d");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -136,7 +141,7 @@ public class SHA256Test : HashAlgorithmTest {
 		byte[] output = hash.TransformFinalBlock (input, input.Length - 1, 1);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		// AssertEquals (testName + ".e.1", result, output);
-		AssertEquals (testName + ".e", result, hash.Hash);
+		Assert.AreEqual (result, hash.Hash, testName + ".e");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -151,13 +156,13 @@ public class SHA256Test : HashAlgorithmTest {
 
 		// try to build the default implementation
 		SHA256 hash = SHA256.Create ();
-		AssertEquals ("SHA256.Create()", hash.ToString (), defaultSHA256);
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create()");
 
 		// try to build, in every way, a SHA256 implementation
 		hash = SHA256.Create ("SHA256");
-		AssertEquals ("SHA256.Create('SHA256')", hash.ToString (), defaultSHA256);
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create('SHA256')");
 		hash = SHA256.Create ("SHA-256");
-		AssertEquals ("SHA256.Create('SHA-256')", hash.ToString (), defaultSHA256);
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create('SHA-256')");
 	}
 
 	[Test]
@@ -173,7 +178,7 @@ public class SHA256Test : HashAlgorithmTest {
 	{
 		// try to build invalid implementation
 		hash = SHA256.Create ("InvalidHash");
-		AssertNull ("SHA256.Create('InvalidHash')", hash);
+		Assert.IsNull (hash, "SHA256.Create('InvalidHash')");
 	}
 
 	[Test]
@@ -189,9 +194,9 @@ public class SHA256Test : HashAlgorithmTest {
 	public virtual void StaticInfo () 
 	{
 		string className = hash.ToString ();
-		AssertEquals (className + ".HashSize", 256, hash.HashSize);
-		AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
-		AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+		Assert.AreEqual (256, hash.HashSize, className + ".HashSize");
+		Assert.AreEqual (1, hash.InputBlockSize, className + ".InputBlockSize");
+		Assert.AreEqual (1, hash.OutputBlockSize, className + ".OutputBlockSize");
 	}
 }
 

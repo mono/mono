@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell  http://www.novell.com
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -39,24 +39,24 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 	public override void Create () 
 	{
 		// try the default keyed hash algorithm (created in SetUp)
-		AssertEquals( "KeyedHashAlgorithm.Create()", defaultKeyedHash, KeyedHashAlgorithm.Create ().ToString());
+		Assert.AreEqual (defaultKeyedHash, KeyedHashAlgorithm.Create ().ToString (), "KeyedHashAlgorithm.Create()");
 
 		// try to build all hash algorithms
 		hash = KeyedHashAlgorithm.Create ("HMACSHA1");
-		AssertEquals ("KeyedHashAlgorithm.Create('HMACSHA1')", defaultHMACSHA1, hash.ToString ());
+		Assert.AreEqual (defaultHMACSHA1, hash.ToString (), "KeyedHashAlgorithm.Create('HMACSHA1')");
 		hash = KeyedHashAlgorithm.Create ("System.Security.Cryptography.HMACSHA1");
-		AssertEquals ("KeyedHashAlgorithm.Create('System.Security.Cryptography.HMACSHA1')", defaultHMACSHA1, hash.ToString ());
+		Assert.AreEqual (defaultHMACSHA1, hash.ToString (), "KeyedHashAlgorithm.Create('System.Security.Cryptography.HMACSHA1')");
 		hash = KeyedHashAlgorithm.Create ("System.Security.Cryptography.KeyedHashAlgorithm" );
-		AssertEquals ("KeyedHashAlgorithm.Create('System.Security.Cryptography.KeyedHashAlgorithm')", defaultKeyedHash, hash.ToString ());
+		Assert.AreEqual (defaultKeyedHash, hash.ToString (), "KeyedHashAlgorithm.Create('System.Security.Cryptography.KeyedHashAlgorithm')");
 
 		hash = KeyedHashAlgorithm.Create ("MACTripleDES");
-		AssertEquals ("KeyedHashAlgorithm.Create('MACTripleDES')", defaultMACTripleDES, hash.ToString ());
+		Assert.AreEqual (defaultMACTripleDES, hash.ToString (), "KeyedHashAlgorithm.Create('MACTripleDES')");
 		hash = KeyedHashAlgorithm.Create ("System.Security.Cryptography.MACTripleDES");
-		AssertEquals ("KeyedHashAlgorithm.Create('System.Security.Cryptography.MACTripleDES')", defaultMACTripleDES, hash.ToString ());
+		Assert.AreEqual (defaultMACTripleDES, hash.ToString (), "KeyedHashAlgorithm.Create('System.Security.Cryptography.MACTripleDES')");
 
 		// try to build invalid implementation
 		hash = KeyedHashAlgorithm.Create ("InvalidKeyedHash");
-		AssertNull ("KeyedHashAlgorithm.Create('InvalidKeyedHash')", hash);
+		Assert.IsNull (hash, "KeyedHashAlgorithm.Create('InvalidKeyedHash')");
 	}
 
 	[Test]
@@ -70,16 +70,16 @@ public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 	public void Key () 
 	{
 		KeyedHashAlgorithm kh = (KeyedHashAlgorithm) hash;
-		AssertNotNull ("KeyedHashAlgorithm.Key not null (random key)", kh.Key);
+		Assert.IsNotNull (kh.Key, "KeyedHashAlgorithm.Key not null (random key)");
 		byte[] key = { 0x01, 0x02, 0x03 };
 		byte[] keybackup = (byte[]) key.Clone ();
 		kh.Key = key;
 		// the KeyedHashAlgorithm use a copy of the key (not a reference to)
 		key [0] = 0x00;
-		AssertEquals ("KeyedHashAlgorithm key[0]", kh.Key, keybackup);
+		Assert.AreEqual (kh.Key, keybackup, "KeyedHashAlgorithm key[0]-before");
 		// you can't change individual bytes from a key
 		kh.Key [0] = 0x00;
-		AssertEquals ("KeyedHashAlgorithm.Key[0]", kh.Key, keybackup);
+		Assert.AreEqual (kh.Key, keybackup, "KeyedHashAlgorithm.Key[0]-after");
 	}
 
 	[Test]

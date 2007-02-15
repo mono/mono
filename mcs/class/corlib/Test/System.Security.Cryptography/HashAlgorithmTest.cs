@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,18 +39,14 @@ namespace MonoTests.System.Security.Cryptography {
 // be tested here (but will be in its descendants).
 
 [TestFixture]
-public class HashAlgorithmTest : Assertion {
+public class HashAlgorithmTest {
+
 	protected HashAlgorithm hash;
 
 	[SetUp]
 	protected virtual void SetUp () 
 	{
 		hash = HashAlgorithm.Create ();
-	}
-
-	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-	{
-		AllTests.AssertEquals (msg, array1, array2);
 	}
 
 	// Note: These tests will only be valid without a "machine.config" file
@@ -67,47 +63,47 @@ public class HashAlgorithmTest : Assertion {
 	public virtual void Create () 
 	{
 		// try the default hash algorithm (created in SetUp)
-		AssertEquals( "HashAlgorithm.Create()", defaultHash, hash.ToString());
+		Assert.AreEqual (defaultHash, hash.ToString (), "HashAlgorithm.Create()");
 
 		// try to build all hash algorithms
 		hash = HashAlgorithm.Create ("SHA");
-		AssertEquals ("HashAlgorithm.Create('SHA')", defaultSHA1, hash.ToString ());
+		Assert.AreEqual (defaultSHA1, hash.ToString (), "HashAlgorithm.Create('SHA')");
 		hash = HashAlgorithm.Create ("SHA1");
-		AssertEquals ("HashAlgorithm.Create('SHA1')", defaultSHA1, hash.ToString ());
+		Assert.AreEqual (defaultSHA1, hash.ToString (), "HashAlgorithm.Create('SHA1')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.SHA1");
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.SHA1')", defaultSHA1, hash.ToString ());
+		Assert.AreEqual (defaultSHA1, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.SHA1')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.HashAlgorithm" );
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.HashAlgorithm')", defaultHash, hash.ToString ());
+		Assert.AreEqual (defaultHash, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.HashAlgorithm')");
 
 		hash = HashAlgorithm.Create ("MD5");
-		AssertEquals ("HashAlgorithm.Create('MD5')", defaultMD5, hash.ToString ());
+		Assert.AreEqual (defaultMD5, hash.ToString (), "HashAlgorithm.Create('MD5')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.MD5");
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.MD5')", defaultMD5, hash.ToString ());
+		Assert.AreEqual (defaultMD5, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.MD5')");
 
 		hash = HashAlgorithm.Create ("SHA256");
-		AssertEquals ("HashAlgorithm.Create('SHA256')", defaultSHA256, hash.ToString ());
+		Assert.AreEqual (defaultSHA256, hash.ToString (), "HashAlgorithm.Create('SHA256')");
 		hash = HashAlgorithm.Create ("SHA-256");
-		AssertEquals ("HashAlgorithm.Create('SHA-256')", defaultSHA256, hash.ToString ());
+		Assert.AreEqual (defaultSHA256, hash.ToString (), "HashAlgorithm.Create('SHA-256')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.SHA256");
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.SHA256')", defaultSHA256, hash.ToString ());
+		Assert.AreEqual (defaultSHA256, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.SHA256')");
 	
 		hash = HashAlgorithm.Create ("SHA384");
-		AssertEquals ("HashAlgorithm.Create('SHA384')", defaultSHA384, hash.ToString ());
+		Assert.AreEqual (defaultSHA384, hash.ToString (), "HashAlgorithm.Create('SHA384')");
 		hash = HashAlgorithm.Create ("SHA-384");
-		AssertEquals ("HashAlgorithm.Create('SHA-384')", defaultSHA384, hash.ToString ());
+		Assert.AreEqual (defaultSHA384, hash.ToString (), "HashAlgorithm.Create('SHA-384')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.SHA384");
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.SHA384')", defaultSHA384, hash.ToString ());
+		Assert.AreEqual (defaultSHA384, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.SHA384')");
 	
 		hash = HashAlgorithm.Create ("SHA512");
-		AssertEquals ("HashAlgorithm.Create('SHA512')", defaultSHA512, hash.ToString ());
+		Assert.AreEqual (defaultSHA512, hash.ToString (), "HashAlgorithm.Create('SHA512')");
 		hash = HashAlgorithm.Create ("SHA-512");
-		AssertEquals ("HashAlgorithm.Create('SHA-512')", defaultSHA512, hash.ToString ());
+		Assert.AreEqual (defaultSHA512, hash.ToString (), "HashAlgorithm.Create('SHA-512')");
 		hash = HashAlgorithm.Create ("System.Security.Cryptography.SHA512");
-		AssertEquals ("HashAlgorithm.Create('System.Security.Cryptography.SHA512')", defaultSHA512, hash.ToString ());
+		Assert.AreEqual (defaultSHA512, hash.ToString (), "HashAlgorithm.Create('System.Security.Cryptography.SHA512')");
 	
 		// try to build invalid implementation
 		hash = HashAlgorithm.Create ("InvalidHash");
-		AssertNull ("HashAlgorithm.Create('InvalidHash')", hash);
+		Assert.IsNull (hash, "HashAlgorithm.Create('InvalidHash')");
 	}
 
 	[Test]
@@ -357,11 +353,14 @@ public class HashAlgorithmTest : Assertion {
 		hash.TransformFinalBlock (input, 0, Int32.MaxValue);
 	}
 
+	public virtual bool ManagedHashImplementation {
+		get { return false; }
+	}
+
 	[Test]
 	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
 	public void TransformFinalBlock_Twice ()
 	{
-		bool managed = (hash.GetType ().ToString ().IndexOf ("Managed") > 0);
 		bool exception = false;
 		byte[] input = new byte [8];
 		hash.TransformFinalBlock (input, 0, input.Length);
@@ -370,18 +369,17 @@ public class HashAlgorithmTest : Assertion {
 		}
 		catch (CryptographicException) {
 			exception = true;
-			if (managed)
-				Fail ("*Managed don't throw CryptographicException");
+			if (ManagedHashImplementation)
+				Assert.Fail ("*Managed don't throw CryptographicException");
 		}
-		if (!managed && !exception)
-			Fail ("Expected CryptographicException from non *Managed classes");
+		if (!ManagedHashImplementation && !exception)
+			Assert.Fail ("Expected CryptographicException from non *Managed classes");
 	}
 
 	[Test]
 	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
 	public void TransformFinalBlock_TransformBlock ()
 	{
-		bool managed = (hash.GetType ().ToString ().IndexOf ("Managed") > 0);
 		bool exception = false;
 		byte[] input = new byte[8];
 		hash.TransformFinalBlock (input, 0, input.Length);
@@ -390,11 +388,11 @@ public class HashAlgorithmTest : Assertion {
 		}
 		catch (CryptographicException) {
 			exception = true;
-			if (managed)
-				Fail ("*Managed don't throw CryptographicException");
+			if (ManagedHashImplementation)
+				Assert.Fail ("*Managed don't throw CryptographicException");
 		}
-		if (!managed && !exception)
-			Fail ("Expected CryptographicException from non *Managed classes");
+		if (!ManagedHashImplementation && !exception)
+			Assert.Fail ("Expected CryptographicException from non *Managed classes");
 	}
 
 	[Test]
@@ -411,9 +409,9 @@ public class HashAlgorithmTest : Assertion {
 	{
 		byte[] input = new byte[8];
 		byte[] output = hash.TransformFinalBlock (input, 0, input.Length);
-		AssertEquals ("buffer", input, output);
+		Assert.AreEqual (input, output, "buffer");
 		output[0] = 1;
-		AssertEquals ("0", 0, input[0]); // output is a copy (not a reference)
+		Assert.AreEqual (0, input[0], "0"); // output is a copy (not a reference)
 	}
 
 	private byte[] HashBuffer (bool intersect)
@@ -435,7 +433,7 @@ public class HashAlgorithmTest : Assertion {
 	[Test]
 	public void InputOutputIntersection ()
 	{
-		AssertEquals ("Intersect", HashBuffer (false), HashBuffer (true));
+		Assert.AreEqual (HashBuffer (false), HashBuffer (true), "Intersect");
 	}
 
 	[Test]
@@ -445,7 +443,7 @@ public class HashAlgorithmTest : Assertion {
 	{
 		hash.Initialize ();
 		// getting the property throws
-		AssertNull (hash.Hash);
+		Assert.IsNull (hash.Hash);
 	}
 
 	[Test]
@@ -457,7 +455,7 @@ public class HashAlgorithmTest : Assertion {
 		hash.TransformBlock (input, 0, input.Length, input, 0);
 		hash.Initialize ();
 		// getting the property throws
-		AssertNull (hash.Hash);
+		Assert.IsNull (hash.Hash);
 	}
 
 	[Test]
@@ -468,7 +466,7 @@ public class HashAlgorithmTest : Assertion {
 		hash.Initialize ();
 		hash.TransformBlock (input, 0, input.Length, input, 0);
 		// getting the property throws
-		AssertNull (hash.Hash);
+		Assert.IsNull (hash.Hash);
 	}
 
 	[Test]
@@ -477,7 +475,7 @@ public class HashAlgorithmTest : Assertion {
 		byte[] input = new byte[8];
 		hash.Initialize ();
 		hash.TransformFinalBlock (input, 0, input.Length);
-		AssertNotNull (hash.Hash);
+		Assert.IsNotNull (hash.Hash);
 	}
 }
 

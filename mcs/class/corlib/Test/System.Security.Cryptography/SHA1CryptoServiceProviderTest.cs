@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell  http://www.novell.com
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -44,9 +44,9 @@ public class SHA1CryptoServiceProviderTest : SHA1Test {
 		// test all values static for SHA1
 		base.StaticInfo();
 		string className = hash.ToString ();
-		AssertEquals (className + ".CanReuseTransform", true, hash.CanReuseTransform);
-		AssertEquals (className + ".CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
-		AssertEquals (className + ".ToString()", "System.Security.Cryptography.SHA1CryptoServiceProvider", className);
+		Assert.IsTrue (hash.CanReuseTransform, className + ".CanReuseTransform");
+		Assert.IsTrue (hash.CanTransformMultipleBlocks, className + ".CanTransformMultipleBlocks");
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", className, className + ".ToString()");
 	}
 
 	public void TestSHA1CSPforFIPSCompliance () 

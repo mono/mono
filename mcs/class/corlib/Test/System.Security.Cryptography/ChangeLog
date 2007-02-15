@@ -1,3 +1,24 @@
+2007-02-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HashAlgorithmTest.cs: Convert to NUnit 2.2 format.
+	* HMACMD5Test.cs: Convert to NUnit 2.2 format.
+	* HMACRIPEMD160Test.cs: Convert to NUnit 2.2 format.
+	* HMACSHA1Test.cs: Convert to NUnit 2.2 format.
+	* HMACSHA256Test.cs: Convert to NUnit 2.2 format.
+	* HMACSHA384Test.cs: Convert to NUnit 2.2 format. Add test cases from
+	RFC4231 using the correct block size (128) and the "legacy" size (64).
+	* HMACSHA512Test.cs: Convert to NUnit 2.2 format. . Add test cases from
+	RFC4231 using the correct block size (128) and the "legacy" size (64).
+	* KeyedHashAlgorithmTest.cs: Convert to NUnit 2.2 format.
+	* SHA1CryptoServiceProviderTest.cs: Convert to NUnit 2.2 format.
+	* SHA1Test.cs: Convert to NUnit 2.2 format.
+	* SHA256ManagedTest.cs: Convert to NUnit 2.2 format.
+	* SHA256Test.cs: Convert to NUnit 2.2 format.
+	* SHA384ManagedTest.cs: Convert to NUnit 2.2 format.
+	* SHA384Test.cs: Convert to NUnit 2.2 format.
+	* SHA512ManagedTest.cs: Convert to NUnit 2.2 format.
+	* SHA512Test.cs: Convert to NUnit 2.2 format.
+
 2007-02-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Adjust line-endings.
