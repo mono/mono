@@ -1,8 +1,3 @@
-2007-02-15  Marek Habersack  <grendello@gmail.com>
-
-	* DbProviderFactoriesConfigurationHandler.cs: remove unsupported
-	column "SupportedClasses" from the table.
-
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* DbProviderFactory.cs: Derived class has to implement all the
