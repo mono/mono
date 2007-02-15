@@ -115,11 +115,11 @@ namespace System.Web.UI.WebControls {
 			string	control_value;
 
 			control_value = GetControlValidationValue(this.ControlToValidate);
-			if (control_value == null || control_value == "") {
+			if (control_value == null)
 				return true;
-			}
-
 			control_value = control_value.Trim();
+			if (control_value.Length == 0)
+				return true;
 
 			if (Compare(control_value, MinimumValue, ValidationCompareOperator.GreaterThanEqual, this.Type)) {
 				if (Compare(control_value, MaximumValue, ValidationCompareOperator.LessThanEqual, this.Type)) {

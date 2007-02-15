@@ -62,29 +62,30 @@ namespace System.Web.UI.WebControls {
 
 		protected override bool ControlPropertiesValid ()
 		{
-            if ((this.Operator != ValidationCompareOperator.DataTypeCheck) && !BaseCompareValidator.CanConvert(this.ValueToCompare, this.Type, this.CultureInvariantValues))
+			if ((this.Operator != ValidationCompareOperator.DataTypeCheck) && ControlToCompare.Length == 0 && !BaseCompareValidator.CanConvert (this.ValueToCompare, this.Type, this.CultureInvariantValues))
             {
                 throw new HttpException(
                     String.Format("Unable to convert the value: {0} as a {1}", ValueToCompare, Enum.GetName(typeof(ValidationDataType), this.Type)));
             }
-            /* if the control id is the default "", or if we're
-			 * using the one Operator that ignores the control
-			 * id.. */
-            if (ControlToCompare == "" || Operator == ValidationCompareOperator.DataTypeCheck)
-                return base.ControlPropertiesValid();
 
-			/* attempt to locate the ControlToCompare somewhere on the page */
-			Control control = NamingContainer.FindControl (ControlToCompare);
-			if (control == null)
-				throw new HttpException (String.Format ("Unable to locate ControlToCompare with id `{0}'", ControlToCompare));
+			if (ControlToCompare.Length > 0) {
+				if (string.CompareOrdinal (ControlToCompare, ControlToValidate) == 0)
+					throw new HttpException (String.Format ("Control '{0}' cannot have the same value '{1}' for both ControlToValidate and ControlToCompare.", ID, ControlToCompare));
+				CheckControlValidationProperty (ControlToCompare, "");
+			}
 
 			return base.ControlPropertiesValid ();
 		}
 
 		protected override bool EvaluateIsValid ()
 		{
-			/* wtf? */
-			if (GetControlValidationValue (ControlToValidate) == "")
+			string control_value;
+
+			control_value = GetControlValidationValue (this.ControlToValidate);
+			if (control_value == null)
+				return true;
+			control_value = control_value.Trim ();
+			if (control_value.Length == 0)
 				return true;
 
 			string compare;

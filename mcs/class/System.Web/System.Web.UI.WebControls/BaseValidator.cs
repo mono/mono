@@ -267,7 +267,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual bool ControlPropertiesValid ()
 		{
 			if (ControlToValidate.Length == 0) {
-				throw new HttpException("ControlToValidate property cannot be emtpy");
+				throw new HttpException (String.Format ("ControlToValidate property of '{0}' cannot be blank.", ID));
 			}
 
 			CheckControlValidationProperty (ControlToValidate, "");
@@ -378,6 +378,8 @@ namespace System.Web.UI.WebControls {
 			base.OnPreRender (e);
 
 			pre_render_called = true;
+			
+			ControlPropertiesValid ();
 
 			render_uplevel = DetermineRenderUplevel ();
 			if (render_uplevel) {

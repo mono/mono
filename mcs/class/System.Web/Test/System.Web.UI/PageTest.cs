@@ -366,17 +366,22 @@ namespace MonoTests.System.Web.UI {
 		public void Page_ValidationCollection () 
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ValidationCollectionload));
-			t.Run ();
+			string html = t.Run ();
 		}
 
 		public static void ValidationCollectionload (Page p)
 		{
+			TextBox txt = new TextBox ();
+			txt.ID = "txt";
 			RequiredFieldValidator validator = new RequiredFieldValidator ();
 			validator.ID = "v";
+			validator.ControlToValidate = "txt";
 			RequiredFieldValidator validator1 = new RequiredFieldValidator ();
-			validator.ID = "v1";
-			p.Controls.Add (validator);
-			p.Controls.Add (validator1);
+			validator1.ID = "v1";
+			validator1.ControlToValidate = "txt";
+			p.Form.Controls.Add (txt);
+			p.Form.Controls.Add (validator);
+			p.Form.Controls.Add (validator1);
 			Assert.AreEqual (2, p.Validators.Count, "Validators collection count fail");
 			Assert.AreEqual (true, p.Validators[0].IsValid, "Validators collection value#1 fail");
 			Assert.AreEqual (true, p.Validators[1].IsValid, "Validators collection value#2 fail");
