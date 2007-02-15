@@ -400,6 +400,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (x != 0)
 					i = x;
 			}
+#if NET_2_0
+			if ((opt & COpt.OrdinalIgnoreCase) != 0)
+				i = textInfo.ToLower ((char) i);
+#endif
 			if ((opt & COpt.IgnoreCase) != 0)
 				i = textInfo.ToLower ((char) i);
 			if ((opt & COpt.IgnoreKanaType) != 0)

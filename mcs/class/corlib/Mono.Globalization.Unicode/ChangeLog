@@ -1,3 +1,8 @@
+2007-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : character filtering is needed for 
+	  OrdinalIgnoreCase in 2.0 profile. Fixed bug #80865.
+
 2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : GetTailContraction() was broken to pick correct

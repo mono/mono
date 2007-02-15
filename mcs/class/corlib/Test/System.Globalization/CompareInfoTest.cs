@@ -1217,6 +1217,12 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#2-2", -1, "AEBECE", '\u00C0', CompareOptions.OrdinalIgnoreCase);
 		AssertLastIndexOf ("#2-3", -1, "@_@", '`', CompareOptions.OrdinalIgnoreCase);
 	}
+
+	[Test] // bug #80865
+	public void IsPrefixOrdinalIgnoreCase ()
+	{
+		Assert ("aaaa".StartsWith ("A", StringComparison.OrdinalIgnoreCase));
+	}
 #endif
 }
 
