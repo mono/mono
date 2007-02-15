@@ -37,6 +37,10 @@ cs0266-9.cs
 cs0457-2.cs
 cs0457.cs
 
-# Temporary stuff
-cs1107.cs
-cs1107-2.cs
+# Errors fixed in version 2.0 only
+cs1533.cs IGNORE
+
+#Temporary disabled
+gcs1112.cs
+gcs1112-2.cs
+gcs1112-3.cs
