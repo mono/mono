@@ -380,6 +380,7 @@ namespace System.Windows.Forms {
 			set {
 				if (format != value) {
 					format = value;
+					RecreateHandle (); // MS recreates the handle on every format change.
 					CalculateFormats ();
 					this.OnFormatChanged (EventArgs.Empty);
 					// invalidate the value inside this control
@@ -525,6 +526,13 @@ namespace System.Windows.Forms {
 		public override string Text {
 			set {
 				DateTime parsed_value;
+				
+				if (value == null || value == string.Empty) {
+					Value = DateTime.Now;
+					OnTextChanged (EventArgs.Empty);
+					return;
+				}
+				
 				if (format == DateTimePickerFormat.Custom) {
 					// TODO: if the format is a custom format we need to do a custom parse here
 					// This implementation will fail if the custom format is set to something that can
