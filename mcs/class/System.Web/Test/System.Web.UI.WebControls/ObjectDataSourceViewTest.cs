@@ -496,23 +496,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void SelectCountMethod ()
 		{
-// 9) MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.SelectCountMethod : ObjectDataSourceViewSelectCount ^M
-//         String lengths differ.  Expected length=389, but was length=11.^M
-//         Strings differ at index 6.^M
-//         ^M
-//         expected:<"<div><table cellspacing="0" rules="all" s...">^M
-//          but was:<"<div></div>">^M
-//         -----------------^^M
-//         ^M
-//   at MonoTests.stand_alone.WebHarness.HtmlDiff.AssertAreEqual (System.String origin, System.String derived, System.String msg) [0x0001b] in /home/cvs/mcs/class/System.Web/Test/mainsoft/MainsoftWebTest/NunitWebTest.cs:98
-//   at MonoTests.System.Web.UI.WebControls.ObjectDataSourceViewTest.SelectCountMethod () [0x00024] in /home/cvs/mcs/class/System.Web/Test/System.Web.UI.WebControls/ObjectDataSourceViewTest.cs:516
-//   at <0x00000> <unknown method>
-//   at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
-//   at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00056] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
-// 
 			// This method will render grid view with paging 
 			// Note : ObjectDataSource will return page counter 5 hard coded
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (selectcount));
@@ -546,6 +531,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			GridView grid = new GridView ();
 			MyDataSource ds = new MyDataSource ();
 			ds.ID = "ObjectDataSource2";
+			ds.EnablePaging = true;
 			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataSourceObject";
 			ds.SelectMethod = "Select";
 			ds.SelectCountMethod = "SelectCount";
