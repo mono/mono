@@ -1,5 +1,11 @@
 2007-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* DateTimePickerTest.cs: Use OSVersion to determine whether to call
+	  GetUserDefaultLCID or not, seems like the runtime crashes on some
+	  architectures instead of throwing an exception otherwise.
+
+2007-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DateTimePickerTest.cs: Some culture dependant tests are only supposed
 	  to run with en-US locale, so check it. On Windows call
 	  GetUserDefaultLCID to check it, since MS DateTimePicker doesn't

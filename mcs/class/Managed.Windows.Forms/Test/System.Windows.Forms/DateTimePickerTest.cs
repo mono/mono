@@ -49,10 +49,12 @@ namespace MonoTests.System.Windows.Forms {
 		private static void CheckCulture ()
 		{
 			try {
-				int LCID = GetUserDefaultLCID ();
-				if ((new CultureInfo ("en-US")).LCID != LCID) {
-					Assert.Ignore ("Must be called with us-english locale, current locale is: " + new CultureInfo (LCID).Name);
-					return;
+				if (Environment.OSVersion.Platform == PlatformID.Win32Windows) {
+					int LCID = GetUserDefaultLCID ();
+					if ((new CultureInfo ("en-US")).LCID != LCID) {
+						Assert.Ignore ("Must be called with us-english locale, current locale is: " + new CultureInfo (LCID).Name);
+						return;
+					}
 				}
 			} catch (Exception ex) {
 				//ignore any exceptions.
