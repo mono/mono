@@ -1148,7 +1148,39 @@ namespace Mono.CSharp {
 
 			return target;
 		}
-		
+
+		//
+		// Derived classes implement this method by cloning the fields that
+		// could become altered during the Resolve stage
+		//
+		// Only expressions that are created for the parser need to implement
+		// this.
+		//
+		protected virtual void CloneTo (Expression target)
+		{
+			throw new NotImplementedException (
+				String.Format (
+					"CloneTo not implemented for expression {0}", this.GetType ()));
+		}
+
+		//
+		// Clones an expression created by the parser.
+		//
+		// We only support expressions created by the parser so far, not
+		// expressions that have been resolved (many more classes would need
+		// to implement CloneTo).
+		//
+		// This infrastructure is here merely for Lambda expressions which
+		// compile the same code using different type values for the same
+		// arguments to find the correct overload
+		//
+		public Expression Clone ()
+		{
+			Expression cloned = (Expression) MemberwiseClone ();
+			CloneTo (cloned);
+
+			return cloned;
+		}
 	}
 
 	/// <summary>
@@ -1195,7 +1227,7 @@ namespace Mono.CSharp {
 	///
 	/// </summary>
 	public class EmptyCast : Expression {
-		protected readonly Expression child;
+		protected Expression child;
 
 		public EmptyCast (Expression child, Type return_type)
 		{
@@ -1223,6 +1255,12 @@ namespace Mono.CSharp {
 			return child.GetAttributableValue (valueType, out value);
 		}
 
+		protected override void CloneTo (Expression t)
+		{
+			EmptyCast target = (EmptyCast) t;
+
+			target.child = child.Clone ();
+		}
 	}
 
 	/// <summary>
@@ -2343,6 +2381,11 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return Name;
+		}
+
+		protected override void CloneTo (Expression target)
+		{
+			// CloneTo: Nothing, we do not keep any state on this expression
 		}
 	}
 

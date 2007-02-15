@@ -582,6 +582,14 @@ namespace Mono.CSharp {
 		{
 			Emit (ec, true);
 		}
+
+		protected override void CloneTo (Expression t)
+		{
+			Assign _target = (Assign) t;
+
+			_target.target = target.Clone ();
+			_target.source = source.Clone ();
+		}
 	}
 
 
@@ -666,6 +674,13 @@ namespace Mono.CSharp {
 			//
 			source = new Binary (op, target, original_source);
 			return base.DoResolve (ec);
+		}
+
+		protected override void CloneTo (Expression t)
+		{
+			CompoundAssign target = (CompoundAssign) t;
+
+			target.original_source = original_source.Clone ();
 		}
 	}
 }

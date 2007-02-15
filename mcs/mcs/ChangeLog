@@ -1,3 +1,68 @@
+2007-02-15  Miguel de Icaza  <miguel@novell.com>
+
+	* report.cs (DisableErrors, EnableErrors): used to prevent error
+	output when we are "trying" to compile various methods with
+	different types. 
+
+	* ecore.cs (Expression): Add Clone method that calls the virtual
+	CloneTo method.  The current CloneTo method in Expression throws
+	an exception so we can track down all the places where this must
+	be implemented (not using abstract, because that would be a lot of
+	up-front-work before we can start testing the implementation
+	idea). 
+
+	Important: we only need Clone capabilities for expressions created
+	by the parser, as the expressions we will be cloning are
+	expressions in the pre-resolved state.   This vastly simplifies
+	the work required. 
+	
+	(SimpleName): Add CloneTo that does nothing.
+	(EmptyCast): Add CloneTo.
+	
+	* expression.cs (Binary): Implement CloneTo.
+	(Invocation.IsApplicable): Store the current ec in
+	EmitContext.TempEc and restore it on return.  This is used so we
+	do not have to sprinkle hundres of methods with an extra
+	EmitContext, we know that the only user is the lambda expression
+	ImplicitConversionExists code. 
+	
+	(Argument): Add Cloning capabilities.
+	(LocalVariableReference, ParenthesizedExpression, Unary, Probe,
+	Cast, Conditional, ArrayCreation, InvocationOrCast, Invocation,
+	ArglistAccess, ArgList, TypeOf, SizeOf, CheckedExpr,
+	UnCheckedExpr, ElementAccess, BaseAccess, BaseIndexerAccess,
+	IndexerAccess): Add Clone capability.
+
+	(LocalVariableReference, This): TODO: needs cloned Block mapping.
+
+	(Argument): Add cloning capability.
+
+	* assign.cs (Assign): Implement CloneTo.
+
+	* anonymous.cs (ImplicitStandardConversionExists): Make virtual.
+	
+	* lambda.cs (ImplicitStandardConversionExists): Implement lambda
+	version by calling Convert with the EmitContext (that we are
+	currently storing in ec, this is not great, but will do for now,
+	to avoid passing EmitContext parameters to hundreds of functions
+	that do not need them now).
+
+	(SetExpression): Remove, it is not needed.
+	
+	(ContextualReturn): Implement CloneTo.
+
+	* statement.cs (Statement): Implement cloning infrastructure,
+	similar to expressions.
+
+	(Block): Partial implementation of Clone for statements.
+
+	(Return): Implement clone.
+	
+	* constant.cs (Constant.CloneTo): New method, does nothing.
+
+	* codegen.cs (TempEc): Add a static EmitContext as a temporary
+	solution, until we decide how to exactly do this.  
+	
 2007-02-14  Marek Safar  <marek.safar@gmail.com>
  
 	A fix for bug #80493
@@ -9,6 +74,11 @@
 	A fix for bug #80418
 	* attribute.cs, class.cs: Use correct calling conventions for pinvoke
 	methods.
+
+2007-02-13  Marek Safar  <marek.safar@gmail.com>
+
+	Another fix for bug #80749
+	* pending.cs: Abstract class has priority over interfaces.
 
 2007-02-13  Marek Safar  <marek.safar@gmail.com>
 

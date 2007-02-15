@@ -85,7 +85,23 @@ namespace Mono.CSharp {
 		{
 			ec.Mark (loc, true);
 			DoEmit (ec);
-		}		
+		}
+
+		//
+		// This routine must be overrided in derived classes and make copies
+		// of all the data that might be modified if resolved
+		// 
+		protected virtual void CloneTo (Statement target)
+		{
+			throw new Exception (String.Format ("Statement.CloneTo not implemented for {0}", this.GetType ()));
+		}
+		
+		public Statement Clone ()
+		{
+			Statement s = (Statement) this.MemberwiseClone ();
+			CloneTo (s);
+			return s;
+		}
 	}
 
 	public sealed class EmptyStatement : Statement {
@@ -569,6 +585,13 @@ namespace Mono.CSharp {
 		{
 			return "StatementExpression (" + expr + ")";
 		}
+
+		protected override void CloneTo (Statement t)
+		{
+			StatementExpression target = (StatementExpression) t;
+
+			target.expr = (ExpressionStatement) expr.Clone ();
+		}
 	}
 
 	/// <summary>
@@ -645,6 +668,13 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
 			else
 				ec.ig.Emit (OpCodes.Ret);
+		}
+
+		protected override void CloneTo (Statement t)
+		{
+			Return target = (Return) t;
+
+			target.Expr = Expr.Clone ();
 		}
 	}
 
@@ -2273,6 +2303,25 @@ namespace Mono.CSharp {
 		{
 			return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
 		}
+
+		protected override void CloneTo (Statement t)
+		{
+			Block target = (Block) t;
+
+			target.statements = new ArrayList ();
+			foreach (Statement s in statements)
+				target.statements.Add (s.Clone ());
+
+			if (target.children != null){
+				target.children = new ArrayList ();
+				foreach (Block b in children)
+					target.children.Add (b.Clone ());
+			}
+
+			//
+			// TODO: labels, switch_block, variables, constants (?), anonymous_children
+			//
+		}
 	}
 
 	//
@@ -2621,6 +2670,7 @@ namespace Mono.CSharp {
 					      root_scope, anonymous_container != null ?
 					      anonymous_container.Scope : null);
 		}
+
 	}
 	
 	public class SwitchLabel {

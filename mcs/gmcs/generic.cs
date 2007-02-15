@@ -1271,6 +1271,15 @@ namespace Mono.CSharp {
 			}
 			return ok;
 		}
+
+		public TypeArguments Clone ()
+		{
+			TypeArguments copy = new TypeArguments (Location);
+			foreach (Expression ta in args)
+				copy.args.Add (ta);
+
+			return copy;
+		}
 	}
 
 	public class TypeParameterName : SimpleName

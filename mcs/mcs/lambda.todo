@@ -16,4 +16,9 @@ pointers to blocks can get the proper block on cloning, something like:
 
 * Generics section support.
 
-* Fix the bug in the modified l1.cs that introduces two rets
+* Fix the bug in the modified l1.cs that introduces two rets instead
+  of a single one.
+
+* Complete CloneTo for Statements.
+
+* Write an extensive test suite to exercise CloneTo

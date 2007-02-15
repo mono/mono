@@ -327,5 +327,10 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+
+		public TypeArguments Clone ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

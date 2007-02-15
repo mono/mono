@@ -18,13 +18,6 @@ namespace Mono.CSharp {
 		bool explicit_parameters;
 
 		//
-		// If set, this was a lambda expression with an expression
-		// argument.  And if so, we have a pointer to it, so we can
-		// change it if needed.
-		//
-		Expression lambda_expr;
-		
-		//
 		// The parameter list can either be:
 		//    null: no parameters
 		//    arraylist of Parameter (explicitly typed parameters)
@@ -41,11 +34,6 @@ namespace Mono.CSharp {
 				Parameters = new Parameters (new Parameter [0]);
 		}
 
-		public void SetExpression (Expression expr)
-		{
-			lambda_expr = expr;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
@@ -67,11 +55,44 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 		}
 
+		public override bool ImplicitStandardConversionExists (Type delegate_type)
+		{
+			EmitContext ec = EmitContext.TempEc;
+
+			bool result;
+
+			try {
+				Report.DisableErrors ();
+				result = Compatible (ec, delegate_type) != null;
+			} finally {
+				Report.EnableErrors ();
+			}
+			
+			// Ignore the result
+			anonymous = null;
+
+			return result;
+		}
+		
 		//
 		// Returns true if this anonymous method can be implicitly
 		// converted to the delegate type `delegate_type'
 		//
 		public override Expression Compatible (EmitContext ec, Type delegate_type)
+		{
+			Expression result;
+			
+			result = DoCompatibleTest (ec, delegate_type);
+
+			if (result == null)
+				Console.WriteLine ("INFO: Lambda.Compatible Failed for {0}", delegate_type);
+			else
+				Console.WriteLine ("INFO: Lambda.Compatible Passed for {0}", delegate_type);
+			
+			return result;
+		}
+
+		Expression DoCompatibleTest (EmitContext ec, Type delegate_type)
 		{
 			if (anonymous != null)
 				return anonymous.AnonymousDelegate;
@@ -94,7 +115,6 @@ namespace Mono.CSharp {
 			if (Parameters.Count != invoke_pd.Count)
 				return null;
 
-			Parameters parameters_copy = Parameters.Clone ();
 			if (explicit_parameters){
 				//
 				// If L has an explicitly typed parameter list, each parameter
@@ -103,8 +123,6 @@ namespace Mono.CSharp {
 				//
 				if (!VerifyExplicitParameterCompatibility (delegate_type, invoke_pd))
 					return null;
-
-				parameters_copy = Parameters.Clone ();
 			} else {
 				//
 				// If L has an implicitly typed parameter list, D has no ref or
@@ -118,9 +136,9 @@ namespace Mono.CSharp {
 				//
 
 				for (int i = 0; i < invoke_pd.Count; i++)
-					parameters_copy [i].TypeName = new TypeExpression (
+					Parameters [i].TypeName = new TypeExpression (
 						invoke_pd.ParameterType (i),
-						parameters_copy [i].Location);
+						Parameters [i].Location);
 			}
 
 			//
@@ -130,9 +148,11 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
+			ToplevelBlock b = (ToplevelBlock) Block.Clone ();
+			
 			anonymous = new AnonymousMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
-				GenericMethod, parameters_copy, Container, Block, invoke_mb.ReturnType,
+				GenericMethod, Parameters, Container, b, invoke_mb.ReturnType,
 				delegate_type, loc);
 
 			if (!anonymous.Resolve (ec))
@@ -203,6 +223,12 @@ namespace Mono.CSharp {
 			} 
 			ec.ig.Emit (OpCodes.Ret);
 		}
-		
+
+		protected override void CloneTo (Statement t)
+		{
+			ContextualReturn cr = (ContextualReturn) t;
+
+			cr.Expr = Expr.Clone ();
+		}
 	}
 }

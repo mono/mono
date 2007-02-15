@@ -617,7 +617,6 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader {
 			get { return "T:"; }
 		}
-
 	}
 
 	//

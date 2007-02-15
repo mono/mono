@@ -3449,7 +3449,7 @@ anonymous_method_expression
 	  }
 	  block
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4, null, (Location) $1);
+		$$ = end_anonymous ((ToplevelBlock) $4, (Location) $1);
 	}
 	;
 
@@ -3909,13 +3909,11 @@ lambda_expression_body
 	  expression 
 	  {
 		Block b = end_block (lexer.Location);
-		oob_stack.Push ($2);
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
 	| block { 
 	  	$$ = $1; 
-		oob_stack.Push (null);
 	  } 
 	;
 
@@ -3932,7 +3930,7 @@ lambda_expression
 	  }
 	  lambda_expression_body
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4, (Expression) oob_stack.Pop (), (Location) $2);
+		$$ = end_anonymous ((ToplevelBlock) $4, (Location) $2);
 	  }
 	| OPEN_PARENS_LAMBDA opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
@@ -3940,7 +3938,7 @@ lambda_expression
 	  }
 	  lambda_expression_body 
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $6, (Expression) oob_stack.Pop (), (Location) $4);
+		$$ = end_anonymous ((ToplevelBlock) $6, (Location) $4);
 	  }
 	;
 
@@ -5542,7 +5540,7 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
  * means that we have a Statement instead of an Expression embedded 
  */
 AnonymousMethodExpression 
-end_anonymous (ToplevelBlock anon_block, Expression lambda_expr, Location loc)
+end_anonymous (ToplevelBlock anon_block, Location loc)
 {
 	AnonymousMethodExpression retval;
 
@@ -5554,9 +5552,6 @@ end_anonymous (ToplevelBlock anon_block, Expression lambda_expr, Location loc)
 		retval = null;
 	} else  {
 		anon_block.Parent = current_block;
-
-		if (lambda_expr != null)
-			((LambdaExpression) current_anonymous_method).SetExpression (lambda_expr);
 
 		current_anonymous_method.Block = anon_block;
 		if ((anonymous_host != null) && (current_anonymous_method.Parent == null))

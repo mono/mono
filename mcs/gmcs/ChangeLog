@@ -1,3 +1,10 @@
+2007-02-15  Miguel de Icaza  <miguel@novell.com>
+
+	* Remove the call to SetExpression for lambda expressions, we do
+	not actually need it.
+
+	Remove expression tracking code as its not needed.
+
 2007-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay (lambda_expression_body): when the body is an

@@ -216,6 +216,11 @@ namespace Mono.CSharp {
 		public virtual bool IsZeroInteger {
 			get { return false; }
 		}
+
+		protected override void CloneTo (Expression target)
+		{
+			// CloneTo: Nothing, we do not keep any state on this expression
+		}
 	}
 
 	public abstract class IntegralConstant : Constant {

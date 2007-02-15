@@ -1149,7 +1149,7 @@ namespace Mono.CSharp {
 				      TypeManager.CSharpName (t));
 		}
 
-		public bool ImplicitStandardConversionExists (Type delegate_type)
+		public virtual bool ImplicitStandardConversionExists (Type delegate_type)
 		{
 			if (Parameters == null)
 				return true;
@@ -1331,6 +1331,15 @@ namespace Mono.CSharp {
 
 		public bool IsIterator {
 			get { return false; }
+		}
+
+		protected override void CloneTo (Expression t)
+		{
+			AnonymousMethodExpression target = (AnonymousMethodExpression) t;
+
+			throw new Exception ("Must map the block");
+			
+			target.Parameters = Parameters.Clone ();
 		}
 	}
 

@@ -64,6 +64,14 @@ namespace Mono.CSharp {
 
 		static Hashtable warning_regions_table;
 
+		//
+		// This is used to save/restore the error state.  When the
+		// error stack contains elements, warnings and errors are not
+		// reported to the user.  This is used by the Lambda expression
+		// support to compile the code with various parameter values.
+		//
+		static Stack error_stack;
+		
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
@@ -105,6 +113,18 @@ namespace Mono.CSharp {
 			warning_regions_table = null;
 		}
 
+		public static void DisableErrors ()
+		{
+			if (error_stack == null)
+				error_stack = new Stack ();
+			error_stack.Push (Errors);
+		}
+
+		public static void EnableErrors ()
+		{
+			Errors = (int) error_stack.Pop ();
+		}
+		
 		abstract class AbstractMessage {
 
 			static void Check (int code)
@@ -120,6 +140,9 @@ namespace Mono.CSharp {
 
 			public virtual void Print (int code, string location, string text)
 			{
+				if (error_stack != null && error_stack.Count != 0)
+					return;
+				
 				if (code < 0)
 					code = 8000-code;
 
