@@ -1,3 +1,8 @@
+2007-02-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SystemColors.cs: Query Windows for the colors added to this class
+	for 2.0.  (Windows-only path of course.)
+
 2007-02-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Ignore Vista 256x256 icons, just like MS does.

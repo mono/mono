@@ -259,6 +259,17 @@ namespace System.Drawing {
 			window = GetSysColor(GetSysColorIndex.COLOR_WINDOW, "Window", KnownColor.Window);
 			window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME, "WindowFrame", KnownColor.WindowFrame);
 			window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT, "WindowText", KnownColor.WindowText);
+			
+#if NET_2_0
+			button_face = GetSysColor (GetSysColorIndex.COLOR_BTNFACE, "ButtonFace", KnownColor.ButtonFace);
+			button_highlight = GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ButtonHighlight", KnownColor.ButtonHighlight);
+			button_shadow = GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW, "ButtonShadow", KnownColor.ButtonShadow);
+			gradient_activecaption = GetSysColor (GetSysColorIndex.COLOR_GRADIENTACTIVECAPTION, "GradientActiveCaption", KnownColor.GradientActiveCaption);
+			gradient_inactivecaption = GetSysColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION, "GradientInactiveCaption", KnownColor.GradientInactiveCaption);
+			menubar = GetSysColor (GetSysColorIndex.COLOR_MENUBAR, "MenuBar", KnownColor.MenuBar);
+			menu_highlight = GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT, "MenuHighlight", KnownColor.MenuHighlight);
+#endif
+
 		}
 
 
