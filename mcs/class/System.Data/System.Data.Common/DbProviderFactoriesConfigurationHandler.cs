@@ -66,6 +66,7 @@ namespace System.Data.Common {
                         columns [1] = new DataColumn ("Description", typeof (string));
                         columns [2] = new DataColumn ("InvariantName", typeof (string));
                         columns [3] = new DataColumn ("AssemblyQualifiedName", typeof (string));
+                        columns [4] = new DataColumn ("SupportedClasses", typeof (int));
                         dt.Columns.AddRange (columns);
                         dt.PrimaryKey = new DataColumn [] {columns [2]};
                                 
@@ -98,18 +99,23 @@ namespace System.Data.Common {
                                 string description = "";
                                 string invariant = "";
                                 string type = "";
+                                string supportedClasses = "";
                                 int support;
 
                                 name            = GetAttributeValue (addNode, "name");
                                 description     = GetAttributeValue (addNode, "description");
                                 invariant       = GetAttributeValue (addNode, "invariant");
                                 type            = GetAttributeValue (addNode, "type");
+                                supportedClasses = GetAttributeValue (addNode, "support");
+                                
+                                support = int.Parse (supportedClasses, NumberStyles.HexNumber);
                                         
                                 DataRow row = dt.NewRow ();
                                 row [0] = name;
                                 row [1] = description;
                                 row [2] = invariant;
                                 row [3] = type;
+                                row [4] = support;
                                         
                                 dt.Rows.Add (row);
                         }        
