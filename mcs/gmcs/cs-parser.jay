@@ -1325,8 +1325,12 @@ fixed_parameters
 	| fixed_parameters COMMA fixed_parameter
 	  {
 		ArrayList pars = (ArrayList) $1;
-
-		pars.Add ($3);
+		Parameter p = (Parameter)$3;
+		if (p != null) {
+			if ((p.modFlags & Parameter.Modifier.This) != 0)
+				Report.Error (1100, p.Location, "The parameter modifier `this' can only be used on the first parameter");
+			pars.Add (p);
+		}
 		$$ = $1;
 	  }
 	;
@@ -1388,14 +1392,31 @@ parameter_modifiers
 	  }
 	| parameter_modifiers parameter_modifier
 	  {
-		Report.Error (1108, lexer.Location, "A parameter cannot have specified more than one modifier");
-		$$ = $1;
+		Parameter.Modifier p2 = (Parameter.Modifier)$2;
+  		Parameter.Modifier mod = (Parameter.Modifier)$1 | p2;
+  		if (((Parameter.Modifier)$1 & p2) == p2) {
+  			Error_DuplicateParameterModifier (lexer.Location, p2);
+  		} else {
+	  		switch (mod & ~Parameter.Modifier.This) {
+  				case Parameter.Modifier.REF:
+					Report.Error (1101, lexer.Location, "The parameter modifiers `this' and `ref' cannot be used altogether");
+  					break;
+   				case Parameter.Modifier.OUT:
+					Report.Error (1102, lexer.Location, "The parameter modifiers `this' and `out' cannot be used altogether");
+  					break;
+  				default:
+ 					Report.Error (1108, lexer.Location, "A parameter cannot have specified more than one modifier");
+ 					break;
+ 			}
+  		}
+  		$$ = mod;
 	  }
 	;
 
 parameter_modifier
 	: REF			{ $$ = Parameter.Modifier.REF; }
 	| OUT			{ $$ = Parameter.Modifier.OUT; }
+	| THIS			{ $$ = Parameter.Modifier.This; }
 	;
 
 parameter_array
@@ -1404,10 +1425,20 @@ parameter_array
 		LocatedToken lt = (LocatedToken) $4;
 		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
 	  }
+	| opt_attributes PARAMS PARAMS type IDENTIFIER 
+	  {
+		Error_DuplicateParameterModifier (lexer.Location, Parameter.Modifier.PARAMS);
+		$$ = null;
+	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
 	  {
-		Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
-                $$ = null;
+		Parameter.Modifier mod = (Parameter.Modifier)$3;
+		if ((mod & Parameter.Modifier.This) != 0) {
+			Report.Error (1104, lexer.Location, "The parameter modifiers `this' and `params' cannot be used altogether");
+		} else {
+			Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
+		}
+        $$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
@@ -5209,6 +5240,12 @@ void Error_ExpectingTypeName (Expression expr)
 public static void Error_ParameterModifierNotValid (Location loc)
 {
 	Report.Error (631, loc, "The modifiers `ref' and `out' are not valid in this context");
+}
+
+static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
+{
+	Report.Error (1107, loc, "Duplicate parameter modifier `{0}'",
+  		Parameter.GetModifierSignature (mod));
 }
 
 void push_current_class (TypeContainer tc, bool is_interface, object partial_token)

@@ -94,6 +94,7 @@ namespace Mono.CSharp {
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type out_attribute_type;
+	static public Type extension_attribute_type;
 	static public Type default_parameter_value_attribute_type;
 
 	static public Type anonymous_method_type;
@@ -206,13 +207,14 @@ namespace Mono.CSharp {
 	static internal ConstructorInfo struct_layout_attribute_ctor;
 	static public ConstructorInfo field_offset_attribute_ctor;
 	
-	///
-	/// A new in C# 2.0
-	/// 
 #if NET_2_0
+	/// C# 2.0
 	static internal CustomAttributeBuilder compiler_generated_attr;
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
 #endif
+
+	/// C# 3.0
+	static internal CustomAttributeBuilder extension_attribute_attr;
 
 	static PtrHashtable builder_to_declspace;
 
@@ -858,13 +860,19 @@ namespace Mono.CSharp {
 	///   Looks up a type, and aborts if it is not found.  This is used
 	///   by types required by the compiler
 	/// </summary>
-	static Type CoreLookupType (string ns_name, string name)
+	static Type CoreLookupType (string namespaceName, string name)
+	{
+		return CoreLookupType (namespaceName, name, false);
+	}
+
+	static Type CoreLookupType (string ns_name, string name, bool mayFail)
 	{
 		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
 		FullNamedExpression fne = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
 		Type t = fne == null ? null : fne.Type;
 		if (t == null) {
-			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
+			if (!mayFail)
+				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 			return null;
 		}
 
@@ -1084,7 +1092,13 @@ namespace Mono.CSharp {
 		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
 		runtime_compatibility_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
 		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute");
+
+		//
+		// C# 3.0
+		//
+		extension_attribute_type = CoreLookupType("System.Runtime.CompilerServices", "ExtensionAttribute", true);
 #endif
+
 		//
 		// When compiling corlib, store the "real" types here.
 		//
@@ -1322,6 +1336,11 @@ namespace Mono.CSharp {
 
 		Type[] type_int_arg = { type_type, int32_type };
 		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
+
+		// C# 3.0
+		if (extension_attribute_type != null)
+			extension_attribute_attr = new CustomAttributeBuilder (
+				GetConstructor (extension_attribute_type, Type.EmptyTypes), new object [0]);
 #endif
 
 		// Object

@@ -1,3 +1,66 @@
+2007-02-15  Marek Safar  <marek.safar@gmail.com>
+
+	C# 3.0 extension methods.
+
+	* attribute.cs (Error_MisusedExtensionAttribute): Extension attribute
+	cannot be used directly.
+
+	* class.cs (Class.Emit): Emit extension attribute if any class method
+	is extension method.
+	(Method.Define): Add basic extension method validation conditions.
+	(Method.Emit): Emit extension attribute for method.
+
+	* codegen.cs (AssemblyClass): Emit extension attribute if at least one
+	extension method exists. Currently we follow same approach as Microsoft
+	does, emit even if a method or a class are private but this can change
+	later.
+
+	* cs-parser.jay: Add handling of `this' keyword in method parameters
+	context.
+
+	* decl.cs (DeclSpace.IsStaticClass): New property.
+	(MemberCache.FindExtensionMethods): Looks for extension methods with
+	defined name and extension type.
+
+	* doc.cs: Updated after OverloadResolve changes.
+
+	* driver.cs: Add new soft reference to System.Core.dll.
+
+	* ecore.cs (MethodLookup): Can return only MethodGroupExpr.
+	(ExtensionMethodGroupExpr): Represents group of extension methods.
+
+	* expression.cs (Invocation): Moved methods BetterConversion, MoreSpecific,
+	BetterFunction, IsOverride, IsAncestralType, OverloadResolve
+	to MethodGroupExpr and made non-static for easier customization.
+	(Invocation.DoResolve): Add extension method lookup when no standard
+	method was found.
+	(MemberAccess.DoResolve): Try extension methods if no member exists.
+
+	* modifiers.cs: Add METHOD_EXTENSION modifier.
+
+	* namespace.cs (RegisterExtensionMethodClass): Register class namespace
+	as well as candidate extension type.
+	(ComputeNamespaces): When assembly constains extension methods registers
+	them.
+	(Namespace.RegisterExternalExtensionMethodClass): Register type for later
+	extension method lookup.
+	(Namespace.LookupExtensionMethod): Looks for extension method in this
+	namespace.
+	(NamespaceEntry.LookupExtensionMethod):	Does extension methods lookup to
+	find a method which matches name and extensionType.
+
+	* parameter.cs (Parameter): Add This modifer.
+	(HasExtensionMethodModifier): New property.
+	(Resolve): Add extension parameter check.
+	(ModFlags): turned to property to exclude this modifier as it is not real
+	parameter modifier.
+	(Parameters): Implemented ExtensionMethodType and HasExtensionMethodType.
+
+	* support.cs (ParameterData): Add ExtensionMethodType.
+	(ReflectionParameters): Implemented ExtensionMethodType interface property.
+
+	* typemanager.cs: Add type and ctor extension attribute type.
+
 2007-02-15  Miguel de Icaza  <miguel@novell.com>
 
 	* report.cs (DisableErrors, EnableErrors): used to prevent error

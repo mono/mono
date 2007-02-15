@@ -457,7 +457,7 @@ namespace Mono.CSharp {
 						bool name_matches = false;
 						if (name == mname || mname == tm.get_indexer_name || mname == tm.set_indexer_name)
 							name_matches = true;
-						
+
 						if ((t == null) && (need_proxy != null) && !name_matches)
 							tm.need_proxy [i] = need_proxy;
 						else 

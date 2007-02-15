@@ -2859,6 +2859,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name)
+		{
+			return NamespaceEntry.LookupExtensionMethod (extensionType, true, name);
+		}
+
 		protected override TypeAttributes TypeAttr {
 			get {
 				if (default_static_constructor == null)
@@ -2918,6 +2923,11 @@ namespace Mono.CSharp {
 					return;
 			}
 
+			if (a.Type == TypeManager.extension_attribute_type) {
+				a.Error_MisusedExtensionAttribute ();
+				return;
+			}
+
 			if (AttributeTester.IsAttributeExcluded (a.Type))
 				return;
 
@@ -2969,6 +2979,12 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				Method method = m as Method;
+				if (method != null && method.Parameters.HasExtensionMethodType) {
+					Report.Error (1105, m.Location, "`{0}': Extension methods must be declared static", m.GetSignatureForError ());
+					continue;
+				}
+
 				Report.Error (708, m.Location, "`{0}': cannot declare instance members in a static class", m.GetSignatureForError ());
 			}
 
@@ -2996,6 +3012,14 @@ namespace Mono.CSharp {
 				DefineDefaultConstructor (false);
 
 			return base.DoDefineMembers ();
+		}
+
+		public override void Emit ()
+		{
+			base.Emit ();
+
+			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
+				TypeBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
 		}
 
 		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
@@ -4386,6 +4410,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (a.Type == TypeManager.extension_attribute_type) {
+				a.Error_MisusedExtensionAttribute ();
+				return;
+			}
+
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
@@ -4457,10 +4486,33 @@ namespace Mono.CSharp {
 					Parent.PartialContainer.Mark_HasGetHashCode ();
 			}
 
+			if ((ModFlags & Modifiers.STATIC) == 0)
+				return true;
+
+			if (Parameters.HasExtensionMethodType) {
+				if (Parent.IsStaticClass && !Parent.IsGeneric) {
+					if (!Parent.IsTopLevel)
+						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
+							GetSignatureForError ());
+
+					if (TypeManager.extension_attribute_type == null)
+						Report.Error (1110, Location, 
+							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
+							GetSignatureForError ());
+
+					ModFlags |= Modifiers.METHOD_EXTENSION;
+					Parent.ModFlags |= Modifiers.METHOD_EXTENSION;
+					CodeGen.Assembly.HasExtensionMethods = true;
+				} else {
+					Report.Error (1106, Location, "`{0}': Extension methods must be defined in a non-generic static class",
+						GetSignatureForError ());
+				}
+			}
+
 			//
 			// This is used to track the Entry Point,
 			//
-			if (RootContext.NeedsEntryPoint &&  ((ModFlags & Modifiers.STATIC) != 0) &&
+			if (RootContext.NeedsEntryPoint &&
 				Name == "Main" &&
 				(RootContext.MainClass == null ||
 				RootContext.MainClass == Parent.TypeBuilder.FullName)){
@@ -4498,6 +4550,9 @@ namespace Mono.CSharp {
 			Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 			MethodData.Emit (Parent);
 			base.Emit ();
+
+			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
+				MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
 
 			Block = null;
 			MethodData = null;
@@ -4609,8 +4664,9 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 			if (base_constructor_group != null)
-				base_constructor = (ConstructorInfo) Invocation.OverloadResolve (
-					ec, (MethodGroupExpr) base_constructor_group, argument_list,
+				base_constructor = (ConstructorInfo)
+					((MethodGroupExpr) base_constructor_group).OverloadResolve (
+					ec, argument_list,
 					false, loc);
 			
 			if (base_constructor == null) {
@@ -5240,10 +5296,13 @@ namespace Mono.CSharp {
 						// check for public accessibility
 						//
 						if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public)
+						{
 							implementing = null;
+						}
 					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private){
 						// We may never be private.
 						implementing = null;
+
 					} else if ((modifiers & Modifiers.OVERRIDE) == 0){
 						//
 						// We may be protected if we're overriding something.
@@ -5296,6 +5355,7 @@ namespace Mono.CSharp {
 			if ((modifiers & Modifiers.UNSAFE) != 0)
 				builder.InitLocals = false;
 
+
 			if (implementing != null){
 				//
 				// clear the pending implemntation flag
@@ -5312,7 +5372,6 @@ namespace Mono.CSharp {
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (
 						builder, implementing);
-
 			}
 
 			TypeManager.AddMethod (builder, method);

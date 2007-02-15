@@ -1322,6 +1322,7 @@ parameter_modifiers
 parameter_modifier
 	: REF			{ $$ = Parameter.Modifier.REF; }
 	| OUT			{ $$ = Parameter.Modifier.OUT; }
+	| THIS			{ $$ = Parameter.Modifier.This; }
 	;
 
 parameter_array
@@ -1337,7 +1338,12 @@ parameter_array
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
 	  {
+		Parameter.Modifier mod = (Parameter.Modifier)$3;
+		if ((mod & Parameter.Modifier.This) != 0) {
+			Report.Error (1104, lexer.Location, "The parameter modifiers `this' and `params' cannot be used altogether");
+		} else {
 		Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
+		}
                 $$ = null;
 	  }
 	| opt_attributes PARAMS type error {

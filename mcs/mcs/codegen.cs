@@ -997,6 +997,7 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
+		bool has_extension_method;
 
 		public Attribute ClsCompliantAttribute;
 
@@ -1015,6 +1016,10 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			wrap_non_exception_throws = true;
 #endif
+		}
+
+		public bool HasExtensionMethods {
+			set { has_extension_method = value; }
 		}
 
 		public bool IsClsCompliant {
@@ -1320,6 +1325,10 @@ namespace Mono.CSharp {
 				return;
 			}
 			
+			if (a.Type == TypeManager.extension_attribute_type) {
+				a.Error_MisusedExtensionAttribute ();
+				return;
+			}
 #endif
 			Builder.SetCustomAttribute (customBuilder);
 		}
@@ -1329,6 +1338,9 @@ namespace Mono.CSharp {
 			base.Emit (tc);
 
 #if GMCS_SOURCE
+			if (has_extension_method)
+				Builder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+
 			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
 			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type)) {
 				ConstructorInfo ci = TypeManager.GetConstructor (

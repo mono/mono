@@ -90,19 +90,44 @@ namespace Mono.CSharp {
 				GetNamespace (dotted_name, true);
 		}
 
-		protected void ComputeNamespaces (Assembly assembly)
-		{
-			if (get_namespaces_method != null) {
-				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
-				foreach (string ns in namespaces)
-					RegisterNamespace (ns);
-				return;
-			}
+		void RegisterExtensionMethodClass (Type t)
+ 		{
+			string n = t.Namespace;
+ 			Namespace ns = n == null ? Global : (Namespace)all_namespaces [n];
+ 			if (ns == null)
+ 				ns = GetNamespace (n, true);
+ 
+ 			ns.RegisterExternalExtensionMethodClass (t);
+ 		}
 
-			foreach (Type t in assembly.GetExportedTypes ())
-				RegisterNamespace (t.Namespace);
-		}
-		
+  		protected void ComputeNamespaces (Assembly assembly)
+  		{
+ 			// How to test whether attribute exists without loading the assembly :-(
+			const string SystemCore = "System.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
+ 			if (TypeManager.extension_attribute_type == null &&
+ 				assembly.FullName == SystemCore) {
+ 				TypeManager.extension_attribute_type = assembly.GetType("System.Runtime.CompilerServices.ExtensionAttribute");
+ 			}
+ 
+ 			bool contains_extension_methods = TypeManager.extension_attribute_type != null &&
+ 					assembly.IsDefined(TypeManager.extension_attribute_type, false);
+ 
+ 			if (get_namespaces_method != null && !contains_extension_methods) {
+  				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
+  				foreach (string ns in namespaces)
+ 					RegisterNamespace (ns);
+  				return;
+  			}
+  
+ 			foreach (Type t in assembly.GetExportedTypes ()) {
+ 				if ((t.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
+ 					contains_extension_methods && t.IsDefined (TypeManager.extension_attribute_type, false))
+ 					RegisterExtensionMethodClass (t);
+ 				else
+ 					RegisterNamespace (t.Namespace);
+ 			}
+  		}
+
 		protected static Type GetTypeInAssembly (Assembly assembly, string name)
 		{
 			Type t = assembly.GetType (name);
@@ -256,6 +281,7 @@ namespace Mono.CSharp {
 		IDictionary declspaces;
 		Hashtable cached_types;
 		RootNamespace root;
+		ArrayList external_exmethod_classes;
 
 		public readonly MemberName MemberName;
 
@@ -442,6 +468,58 @@ namespace Mono.CSharp {
 				return null;
 
 			return te;
+		}
+
+		public void RegisterExternalExtensionMethodClass (Type type)
+		{
+			if (external_exmethod_classes == null)
+				external_exmethod_classes = new ArrayList ();
+
+			external_exmethod_classes.Add (type);
+		}
+
+		/// 
+		/// Looks for extension method in this namespace
+		/// 
+		public ArrayList LookupExtensionMethod (Type extensionType, string name, NamespaceEntry ns)
+		{
+			if (declspaces == null)
+				return null;
+
+			ArrayList found = null;
+			IEnumerator e = declspaces.Values.GetEnumerator ();
+			e.Reset ();
+			while (e.MoveNext ()) {
+				Class c = e.Current as Class;
+				if (c == null)
+					continue;
+
+				if (!c.IsStaticClass)
+					continue;
+
+				ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name);
+				if (res == null)
+					continue;
+
+				if (found == null)
+					found = res;
+				else
+					found.AddRange (res);
+			}
+
+			if (external_exmethod_classes == null)
+				return found;
+
+			foreach (Type t in external_exmethod_classes) {
+				MemberCache m = TypeHandle.GetMemberCache (t);
+				ArrayList res = m.FindExtensionMethods (extensionType, name);
+				if (found == null)
+					found = res;
+				else
+					found.AddRange (res);
+			}
+
+			return found;
 		}
 
 		public void AddDeclSpace (string name, DeclSpace ds)
@@ -806,6 +884,39 @@ namespace Mono.CSharp {
 			// to keep things simple (different resolution scenarios)
 			ExternAliasEntry alias = new ExternAliasEntry (Doppelganger, name, loc);
 			extern_aliases [name] = alias;
+		}
+
+		///
+		/// Does extension methods look up to find a method which matches name and extensionType.
+		/// Search starts from this namespace and continues hierarchically up to top level.
+		///
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, bool fullLookup, string name)
+		{
+			ArrayList candidates = null;
+			if (fullLookup) {
+				candidates = ns.LookupExtensionMethod (extensionType, name, this);
+				if (candidates != null)
+					return new ExtensionMethodGroupExpr (candidates, this, false, extensionType, Location.Null);
+			}
+
+			foreach (Namespace n in GetUsingTable ()) {
+				ArrayList a = n.LookupExtensionMethod (extensionType, name, this);
+				if (a == null)
+					continue;
+
+				if (candidates == null)
+					candidates = a;
+				else
+					candidates.AddRange (a);
+			}
+
+			if (candidates != null)
+				return new ExtensionMethodGroupExpr (candidates, parent, true, extensionType, Location.Null);
+
+			if (parent == null)
+				return null;
+
+			return parent.LookupExtensionMethod (extensionType, true, name);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)

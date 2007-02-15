@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 
 		static bool IsOverride (PropertyInfo deriv_prop, PropertyInfo base_prop)
 		{
-			if (!Invocation.IsAncestralType (base_prop.DeclaringType, deriv_prop.DeclaringType))
+			if (!MethodGroupExpr.IsAncestralType (base_prop.DeclaringType, deriv_prop.DeclaringType))
 				return false;
 
 			Type [] deriv_pd = TypeManager.GetArgumentTypes (deriv_prop);
@@ -405,7 +405,7 @@ namespace Mono.CSharp {
 							continue;
 						MethodBase my = ml [j] as MethodBase;
 						if (mx != null && my != null &&
-							Invocation.IsOverride (my, mx)) {
+							MethodGroupExpr.IsOverride (my, mx)) {
 							overriden = true;
 							break;
 						}

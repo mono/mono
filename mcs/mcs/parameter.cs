@@ -200,13 +200,14 @@ namespace Mono.CSharp {
 			ISBYREF = 8,
 			ARGLIST = 16,
 			REFMASK	= 32,
-			OUTMASK = 64
+			OUTMASK = 64,
+			This	= 128
 		}
 
 		static string[] attribute_targets = new string [] { "param" };
 
 		public Expression TypeName;
-		public readonly Modifier ModFlags;
+		public Modifier modFlags;
 		public string Name;
 		public bool IsCaptured;
 		protected Type parameter_type;
@@ -227,7 +228,7 @@ namespace Mono.CSharp {
 			: base (attrs)
 		{
 			Name = name;
-			ModFlags = mod;
+			modFlags = mod;
 			TypeName = type;
 			Location = loc;
 		}
@@ -236,7 +237,7 @@ namespace Mono.CSharp {
 			: base (attrs)
 		{
 			Name = name;
-			ModFlags = mod;
+			modFlags = mod;
 			parameter_type = type;
 			Location = loc;
 		}
@@ -327,7 +328,8 @@ namespace Mono.CSharp {
 #endif
 
 			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
-				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", GetSignatureForError ());
+				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", 
+					texpr.GetSignatureForError ());
 				return false;
 			}
 
@@ -336,13 +338,19 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
+			if ((modFlags & Parameter.Modifier.ISBYREF) != 0){
 				if (parameter_type == TypeManager.typed_reference_type ||
 				    parameter_type == TypeManager.arg_iterator_type){
 					Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
 						GetSignatureForError ());
 					return false;
 				}
+			}
+
+			if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
+				Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
+					TypeManager.CSharpName (parameter_type));
+				return false;
 			}
 			
 			return true;
@@ -358,10 +366,18 @@ namespace Mono.CSharp {
 
 		public Type ExternalType ()
 		{
-			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0)
+			if ((modFlags & Parameter.Modifier.ISBYREF) != 0)
 				return TypeManager.GetReferenceType (parameter_type);
 			
 			return parameter_type;
+		}
+
+		public bool HasExtensionMethodModifier {
+			get { return (modFlags & Modifier.This) != 0; }
+		}
+
+		public Modifier ModFlags {
+			get { return modFlags & ~Modifier.This; }
 		}
 
 		public Type ParameterType {
@@ -378,23 +394,14 @@ namespace Mono.CSharp {
 		}
 #endif
 
-		public ParameterAttributes Attributes {
+		ParameterAttributes Attributes {
 			get {
-				switch (ModFlags) {
-				case Modifier.NONE:
-					return ParameterAttributes.None;
-				case Modifier.REF:
-					return ParameterAttributes.None;
-				case Modifier.OUT:
-					return ParameterAttributes.Out;
-				case Modifier.PARAMS:
-					return 0;
-				}
-				
-				return ParameterAttributes.None;
+				return (modFlags & Modifier.OUT) == Modifier.OUT ?
+					ParameterAttributes.Out : ParameterAttributes.None;
 			}
 		}
 
+		// TODO: should be removed !!!!!!!
 		public static ParameterAttributes GetParameterAttributes (Modifier mod)
 		{
 			int flags = ((int) mod) & ~((int) Parameter.Modifier.ISBYREF);
@@ -426,7 +433,7 @@ namespace Mono.CSharp {
 			else
 				type_name = TypeName.GetSignatureForError ();
 
-			string mod = GetModifierSignature (ModFlags);
+			string mod = GetModifierSignature (modFlags);
 			if (mod.Length > 0)
 				return String.Concat (mod, ' ', type_name);
 
@@ -444,6 +451,8 @@ namespace Mono.CSharp {
 					return "ref";
 				case Modifier.ARGLIST:
 					return "__arglist";
+				case Modifier.This:
+					return "this";
 				default:
 					return "";
 			}
@@ -638,6 +647,29 @@ namespace Mono.CSharp {
 				return HasArglist ? count + 1 : count;
 			}
 		}
+
+		//
+		// The property can be used after parameter types were resolved.
+		//
+		public Type ExtensionMethodType {
+			get {
+				if (count == 0)
+					return null;
+
+				return FixedParameters [0].HasExtensionMethodModifier ?
+					types [0] : null;
+			}
+		}
+
+		public bool HasExtensionMethodType {
+			get {
+				if (count == 0)
+					return false;
+
+				return FixedParameters [0].HasExtensionMethodModifier;
+			}
+		}
+
 
 		bool VerifyArgs ()
 		{

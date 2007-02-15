@@ -22,9 +22,11 @@ namespace Mono.CSharp {
 		Type ParameterType (int pos);
 		Type [] Types { get; }
 		int  Count { get; }
+		Type ExtensionMethodType { get; }
 		bool HasParams { get; }
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
+
 		Parameter.Modifier ParameterModifier (int pos);
 		string GetSignatureForError ();
 	}
@@ -34,6 +36,7 @@ namespace Mono.CSharp {
 		Type [] types;
 		int params_idx = -1;
 		bool is_varargs;
+		bool is_extension;
 		ParameterData gpd;
 
 		public ReflectionParameters (MethodBase mb)
@@ -85,6 +88,11 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
+
+			if (TypeManager.extension_attribute_type != null && mb.IsStatic &&
+				(mb.DeclaringType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
+				mb.IsDefined (TypeManager.extension_attribute_type, false))
+				is_extension = true;
 		}
 
 		public override bool Equals (object obj)
@@ -166,6 +174,9 @@ namespace Mono.CSharp {
 			if (params_idx == pos)
 				sb.Append ("params ");
 
+			if (ExtensionMethodType != null)
+				sb.Append ("this ");
+
 			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));
 
 			return sb.ToString ();
@@ -194,6 +205,15 @@ namespace Mono.CSharp {
 
 		public int Count {
 			get { return is_varargs ? pi.Length + 1 : pi.Length; }
+		}
+
+		public Type ExtensionMethodType {
+			get {
+				if (!is_extension)
+					return null;
+
+				return types [0];
+			}
 		}
 
 		public bool HasParams {

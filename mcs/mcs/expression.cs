@@ -67,8 +67,8 @@ namespace Mono.CSharp {
                                 return null;
 
                         args.Add (a);
-			method = Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) mg, args, false, loc);
+			method = mg.OverloadResolve (
+				ec, args, false, loc);
 
 			if (method == null)
 				return null;
@@ -1782,7 +1782,7 @@ namespace Mono.CSharp {
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 
-					MethodBase method = Invocation.OverloadResolve (ec, union, args, true, Location.Null);
+					MethodBase method = union.OverloadResolve (ec, args, true, Location.Null);
 
 					if (method != null) {
 						MethodInfo mi = (MethodInfo) method;
@@ -1922,8 +1922,8 @@ namespace Mono.CSharp {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (left, Argument.AType.Expression));
 						args.Add (new Argument (left, Argument.AType.Expression));
-						MethodBase method = Invocation.OverloadResolve (
-							ec, (MethodGroupExpr) left_operators, args, true, Location.Null);
+						MethodBase method = ((MethodGroupExpr)left_operators).OverloadResolve (
+							ec, args, true, Location.Null);
 						if (method != null)
 							Warning_UnintendedReferenceComparison (loc, "right", l);
 					}
@@ -1933,8 +1933,8 @@ namespace Mono.CSharp {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (right, Argument.AType.Expression));
 						args.Add (new Argument (right, Argument.AType.Expression));
-						MethodBase method = Invocation.OverloadResolve (
-							ec, (MethodGroupExpr) right_operators, args, true, Location.Null);
+						MethodBase method = ((MethodGroupExpr)right_operators).OverloadResolve (
+							ec, args, true, Location.Null);
 						if (method != null)
 							Warning_UnintendedReferenceComparison (loc, "left", r);
 					}
@@ -2229,7 +2229,7 @@ namespace Mono.CSharp {
 				ArrayList args = new ArrayList (2);
 				args.Add (new Argument (left, Argument.AType.Expression));
 				args.Add (new Argument (right, Argument.AType.Expression));
-				MethodBase method = Invocation.OverloadResolve (ec, ops, args, true, Location.Null);
+				MethodBase method = ops.OverloadResolve (ec, args, true, Location.Null);
 				return new BinaryMethod (type, method, args);
 			}
 
@@ -3100,8 +3100,8 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList (2);
 			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
-			method = Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
+			method = ((MethodGroupExpr) operator_group).OverloadResolve (
+				ec, arguments, false, loc)
 				as MethodInfo;
 			if (method == null) {
 				Error19 ();
@@ -4007,293 +4007,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		/// <summary>
-		///   Determines "better conversion" as specified in 14.4.2.3
-		///
-                ///    Returns : p    if a->p is better,
- 		///              q    if a->q is better,
-		///              null if neither is better
-		/// </summary>
-		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q)
-		{
-			Type argument_type = TypeManager.TypeToCoreType (a.Type);
-			Expression argument_expr = a.Expr;
-
-			if (argument_type == null)
-				throw new Exception ("Expression of type " + a.Expr +
-                                                     " does not resolve its type");
-
-			if (p == null || q == null)
-				throw new InternalErrorException ("BetterConversion Got a null conversion");
-
-			if (p == q)
-				return null;
-
-			if (argument_expr is NullLiteral) {
-				//
-				// If the argument is null and one of the types to compare is 'object' and
-				// the other is a reference type, we prefer the other.
-				//
-				// This follows from the usual rules:
-				//   * There is an implicit conversion from 'null' to type 'object'
-				//   * There is an implicit conversion from 'null' to any reference type
-				//   * There is an implicit conversion from any reference type to type 'object'
-				//   * There is no implicit conversion from type 'object' to other reference types
-				//  => Conversion of 'null' to a reference type is better than conversion to 'object'
-				//
-				//  FIXME: This probably isn't necessary, since the type of a NullLiteral is the 
-				//         null type. I think it used to be 'object' and thus needed a special 
-				//         case to avoid the immediately following two checks.
-				//
-				if (!p.IsValueType && q == TypeManager.object_type)
-					return p;
-				if (!q.IsValueType && p == TypeManager.object_type)
-					return q;
-			}
-                                
-			if (argument_type == p)
-				return p;
-
-			if (argument_type == q)
-				return q;
-
-			Expression p_tmp = new EmptyExpression (p);
-			Expression q_tmp = new EmptyExpression (q);
-
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
-
-			if (p_to_q && !q_to_p)
-				return p;
-
-			if (q_to_p && !p_to_q)
-				return q;
-
-			if (p == TypeManager.sbyte_type)
-				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
-				    q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return p;
-			if (q == TypeManager.sbyte_type)
-				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
-				    p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return q;
-
-			if (p == TypeManager.short_type)
-				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
-				    q == TypeManager.uint64_type)
-					return p;
-			if (q == TypeManager.short_type)
-				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
-				    p == TypeManager.uint64_type)
-					return q;
-
-			if (p == TypeManager.int32_type)
-				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return p;
-			if (q == TypeManager.int32_type)
-				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return q;
-
-			if (p == TypeManager.int64_type)
-				if (q == TypeManager.uint64_type)
-					return p;
-			if (q == TypeManager.int64_type)
-				if (p == TypeManager.uint64_type)
-					return q;
-
-			return null;
-		}
-
-		static Type MoreSpecific (Type p, Type q)
-		{
-			if (TypeManager.IsGenericParameter (p) && !TypeManager.IsGenericParameter (q))
-				return q;
-			if (!TypeManager.IsGenericParameter (p) && TypeManager.IsGenericParameter (q))
-				return p;
-
-			if (TypeManager.HasElementType (p)) {
-				Type pe = TypeManager.GetElementType (p);
-				Type qe = TypeManager.GetElementType (q);
-				Type specific = MoreSpecific (pe, qe);
-				if (specific == pe)
-					return p;
-				if (specific == qe)
-					return q;
-			} else if (TypeManager.IsGenericType (p)) {
-				Type[] pargs = TypeManager.GetTypeArguments (p);
-				Type[] qargs = TypeManager.GetTypeArguments (q);
-
-				bool p_specific_at_least_once = false;
-				bool q_specific_at_least_once = false;
-
-				for (int i = 0; i < pargs.Length; i++) {
-					Type specific = MoreSpecific (pargs [i], qargs [i]);
-					if (specific == pargs [i])
-						p_specific_at_least_once = true;
-					if (specific == qargs [i])
-						q_specific_at_least_once = true;
-				}
-
-				if (p_specific_at_least_once && !q_specific_at_least_once)
-					return p;
-				if (!p_specific_at_least_once && q_specific_at_least_once)
-					return q;
-			}
-
-			return null;
-		}
-		
-		/// <summary>
-		///   Determines "Better function" between candidate
-                ///   and the current best match
-		/// </summary>
-		/// <remarks>
-		///    Returns a boolean indicating :
-		///     false if candidate ain't better
-		///     true  if candidate is better than the current best match
-		/// </remarks>
-		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
-					    MethodBase candidate, bool candidate_params,
-					    MethodBase best, bool best_params)
-		{
-			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
-			ParameterData best_pd = TypeManager.GetParameterData (best);
-		
-			bool better_at_least_one = false;
-			bool same = true;
-			for (int j = 0, c_idx = 0, b_idx = 0; j < argument_count; ++j, ++c_idx, ++b_idx) {
-				Argument a = (Argument) args [j];
-
-				Type ct = TypeManager.TypeToCoreType (candidate_pd.ParameterType (c_idx));
-				Type bt = TypeManager.TypeToCoreType (best_pd.ParameterType (b_idx));
-
-				if (candidate_params && candidate_pd.ParameterModifier (c_idx) == Parameter.Modifier.PARAMS) {
-					ct = TypeManager.GetElementType (ct);
-					--c_idx;
-				}
-
-				if (best_params && best_pd.ParameterModifier (b_idx) == Parameter.Modifier.PARAMS) {
-					bt = TypeManager.GetElementType (bt);
-					--b_idx;
-				}
-
-				if (ct.Equals (bt))
-					continue;
-
-				same = false;
-				Type better = BetterConversion (ec, a, ct, bt);
-
-				// for each argument, the conversion to 'ct' should be no worse than 
-				// the conversion to 'bt'.
-				if (better == bt)
-					return false;
-
-				// for at least one argument, the conversion to 'ct' should be better than 
-				// the conversion to 'bt'.
-				if (better == ct)
-					better_at_least_one = true;
-			}
-
-			if (better_at_least_one)
-				return true;
-
-			//
-			// This handles the case
-			//
-			//   Add (float f1, float f2, float f3);
-			//   Add (params decimal [] foo);
-			//
-			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
-			// first candidate would've chosen as better.
-			//
-			if (!same)
-				return false;
-
-			//
-			// The two methods have equal parameter types.  Now apply tie-breaking rules
-			//
-			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
-				return true;
-			if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
-				return false;
-
-			//
-			// This handles the following cases:
-			//
-			//   Trim () is better than Trim (params char[] chars)
-			//   Concat (string s1, string s2, string s3) is better than
-			//     Concat (string s1, params string [] srest)
-			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
-			//
-			if (!candidate_params && best_params)
-				return true;
-			if (candidate_params && !best_params)
-				return false;
-
-			int candidate_param_count = candidate_pd.Count;
-			int best_param_count = best_pd.Count;
-
-			if (candidate_param_count != best_param_count)
-				// can only happen if (candidate_params && best_params)
-				return candidate_param_count > best_param_count;
-
-			//
-			// now, both methods have the same number of parameters, and the parameters have the same types
-			// Pick the "more specific" signature
-			//
-
-			MethodBase orig_candidate = TypeManager.DropGenericMethodArguments (candidate);
-			MethodBase orig_best = TypeManager.DropGenericMethodArguments (best);
-
-			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
-			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
-
-			bool specific_at_least_once = false;
-			for (int j = 0; j < candidate_param_count; ++j) {
-				Type ct = TypeManager.TypeToCoreType (orig_candidate_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (orig_best_pd.ParameterType (j));
-				if (ct.Equals (bt))
-					continue;
-				Type specific = MoreSpecific (ct, bt);
-				if (specific == bt)
-					return false;
-				if (specific == ct)
-					specific_at_least_once = true;
-			}
-
-			if (specific_at_least_once)
-				return true;
-
-			// FIXME: handle lifted operators
-			// ...
-
-			return false;
-		}
-
-		internal static bool IsOverride (MethodBase cand_method, MethodBase base_method)
-		{
-			if (!IsAncestralType (base_method.DeclaringType, cand_method.DeclaringType))
-				return false;
-
-			ParameterData cand_pd = TypeManager.GetParameterData (cand_method);
-			ParameterData base_pd = TypeManager.GetParameterData (base_method);
-		
-			if (cand_pd.Count != base_pd.Count)
-				return false;
-
-			for (int j = 0; j < cand_pd.Count; ++j) {
-				Parameter.Modifier cm = cand_pd.ParameterModifier (j);
-				Parameter.Modifier bm = base_pd.ParameterModifier (j);
-				Type ct = TypeManager.TypeToCoreType (cand_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (base_pd.ParameterType (j));
-
-				if (cm != bm || ct != bt)
-					return false;
-			}
-
-			return true;
-		}
-
 		public static string FullMethodDesc (MethodBase mb)
 		{
 			if (mb == null)
@@ -4540,355 +4253,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static internal bool IsAncestralType (Type first_type, Type second_type)
-		{
-			return first_type != second_type &&
-				(TypeManager.IsSubclassOf (second_type, first_type) ||
-				 TypeManager.ImplementsInterface (second_type, first_type));
-		}
-		
-		/// <summary>
-		///   Find the Applicable Function Members (7.4.2.1)
-		///
-		///   me: Method Group expression with the members to select.
-		///       it might contain constructors or methods (or anything
-		///       that maps to a method).
-		///
-		///   Arguments: ArrayList containing resolved Argument objects.
-		///
-		///   loc: The location if we want an error to be reported, or a Null
-		///        location for "probing" purposes.
-		///
-		///   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
-		///            that is the best match of me on Arguments.
-		///
-		/// </summary>
-		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, bool may_fail,
-							  Location loc)
-		{
-			MethodBase method = null;
-			bool method_params = false;
-			Type applicable_type = null;
-			int arg_count = 0;
-			ArrayList candidates = new ArrayList (2);
-			ArrayList candidate_overrides = null;
-
-                        //
-                        // Used to keep a map between the candidate
-                        // and whether it is being considered in its
-                        // normal or expanded form
-                        //
-                        // false is normal form, true is expanded form
-                        //
-                        Hashtable candidate_to_form = null;
-
-			if (Arguments != null)
-				arg_count = Arguments.Count;
-
-			// This error was reported by csc 1.x only 
-			// if (me.Name == "Invoke" && TypeManager.IsDelegateType (me.DeclaringType)) {
-			//	Report.Error (1533, loc, "Invoke cannot be called directly on a delegate");
-			// }
-
-			MethodBase[] methods = me.Methods;
-
-			int nmethods = methods.Length;
-
-			if (!me.IsBase) {
-				//
-				// Methods marked 'override' don't take part in 'applicable_type'
-				// computation, nor in the actual overload resolution.
-				// However, they still need to be emitted instead of a base virtual method.
-				// So, we salt them away into the 'candidate_overrides' array.
-				//
-				// In case of reflected methods, we replace each overriding method with
-				// its corresponding base virtual method.  This is to improve compatibility
-				// with non-C# libraries which change the visibility of overrides (#75636)
-				//
-				int j = 0;
-				for (int i = 0; i < methods.Length; ++i) {
-					MethodBase m = methods [i];
-#if GMCS_SOURCE
-					Type [] gen_args = null;
-					if (m.IsGenericMethod && !m.IsGenericMethodDefinition)
-						gen_args = m.GetGenericArguments ();
-#endif
-					if (TypeManager.IsOverride (m)) {
-						if (candidate_overrides == null)
-							candidate_overrides = new ArrayList ();
-						candidate_overrides.Add (m);
-						m = TypeManager.TryGetBaseDefinition (m);
-#if GMCS_SOURCE
-						if (m != null && gen_args != null) {
-							if (!m.IsGenericMethodDefinition)
-								throw new InternalErrorException ("GetBaseDefinition didn't return a GenericMethodDefinition");
-							m = ((MethodInfo) m).MakeGenericMethod (gen_args);
-						}
-#endif
-					}
-					if (m != null)
-						methods [j++] = m;
-				}
-				nmethods = j;
-			}
-
-			int applicable_errors = Report.Errors;
-			
-			//
-			// First we construct the set of applicable methods
-			//
- 			bool is_sorted = true;
-			for (int i = 0; i < nmethods; i++){
-				Type decl_type = methods [i].DeclaringType;
-
-				//
-				// If we have already found an applicable method
-				// we eliminate all base types (Section 14.5.5.1)
-				//
-				if (applicable_type != null && IsAncestralType (decl_type, applicable_type))
-					continue;
-
-				//
-				// Check if candidate is applicable (section 14.4.2.1)
-				//   Is candidate applicable in normal form?
-				//
-				bool is_applicable = IsApplicable (ec, me, Arguments, arg_count, ref methods [i]);
-
-				if (!is_applicable && IsParamsMethodApplicable (ec, me, Arguments, arg_count, ref methods [i])) {
-					MethodBase candidate = methods [i];
-					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
-					candidate_to_form [candidate] = candidate;
-					// Candidate is applicable in expanded form
-					is_applicable = true;
-				}
-
-				if (!is_applicable)
-					continue;
-
-				candidates.Add (methods [i]);
-
-				if (applicable_type == null)
-					applicable_type = decl_type;
-				else if (applicable_type != decl_type) {
-					is_sorted = false;
-					if (IsAncestralType (applicable_type, decl_type))
-						applicable_type = decl_type;
-				}
-			}
-
-			if (applicable_errors != Report.Errors)
-				return null;
-			
-			int candidate_top = candidates.Count;
-
-			if (applicable_type == null) {
-				//
-				// Okay so we have failed to find anything so we
-				// return by providing info about the closest match
-				//
-				int errors = Report.Errors;
-				for (int i = 0; i < nmethods; ++i) {
-					MethodBase c = (MethodBase) methods [i];
-					ParameterData pd = TypeManager.GetParameterData (c);
-
-					if (pd.Count != arg_count)
-						continue;
-
-#if GMCS_SOURCE
-					if (!TypeManager.InferTypeArguments (Arguments, ref c))
-						continue;
-					if (TypeManager.IsGenericMethodDefinition (c))
-						continue;
-#endif
-
-					VerifyArgumentsCompat (ec, Arguments, arg_count,
-						c, false, null, may_fail, loc);
-
-					if (!may_fail && errors == Report.Errors)
-						throw new InternalErrorException (
-							"VerifyArgumentsCompat and IsApplicable do not agree; " +
-							"likely reason: ImplicitConversion and ImplicitConversionExists have gone out of sync");
-
-					break;
-				}
-
-				if (!may_fail && errors == Report.Errors) {
-					string report_name = me.Name;
-					if (report_name == ".ctor")
-						report_name = TypeManager.CSharpName (me.DeclaringType);
-                                        
-#if GMCS_SOURCE
-					//
-					// Type inference
-					//
-					for (int i = 0; i < methods.Length; ++i) {
-						MethodBase c = methods [i];
-						ParameterData pd = TypeManager.GetParameterData (c);
-
-						if (pd.Count != arg_count)
-							continue;
-
-						if (TypeManager.InferTypeArguments (Arguments, ref c))
-							continue;
-
-						Report.Error (
-							411, loc, "The type arguments for " +
-							"method `{0}' cannot be inferred from " +
-							"the usage. Try specifying the type " +
-							"arguments explicitly.", report_name);
-						return null;
-					}
-#endif
-
-					Error_WrongNumArguments (loc, report_name, arg_count);
-				}
-                                
-				return null;
-			}
-
-			if (!is_sorted) {
-				//
-				// At this point, applicable_type is _one_ of the most derived types
-				// in the set of types containing the methods in this MethodGroup.
-				// Filter the candidates so that they only contain methods from the
-				// most derived types.
-				//
-
-				int finalized = 0; // Number of finalized candidates
-
-				do {
-					// Invariant: applicable_type is a most derived type
-					
-					// We'll try to complete Section 14.5.5.1 for 'applicable_type' by 
-					// eliminating all it's base types.  At the same time, we'll also move
-					// every unrelated type to the end of the array, and pick the next
-					// 'applicable_type'.
-
-					Type next_applicable_type = null;
-					int j = finalized; // where to put the next finalized candidate
-					int k = finalized; // where to put the next undiscarded candidate
-					for (int i = finalized; i < candidate_top; ++i) {
-						MethodBase candidate = (MethodBase) candidates [i];
-						Type decl_type = candidate.DeclaringType;
-
-						if (decl_type == applicable_type) {
-							candidates [k++] = candidates [j];
-							candidates [j++] = candidates [i];
-							continue;
-						}
-
-						if (IsAncestralType (decl_type, applicable_type))
-							continue;
-
-						if (next_applicable_type != null &&
-						    IsAncestralType (decl_type, next_applicable_type))
-							continue;
-
-						candidates [k++] = candidates [i];
-
-						if (next_applicable_type == null ||
-						    IsAncestralType (next_applicable_type, decl_type))
-							next_applicable_type = decl_type;
-					}
-
-					applicable_type = next_applicable_type;
-					finalized = j;
-					candidate_top = k;
-				} while (applicable_type != null);
-			}
-
-                        //
-                        // Now we actually find the best method
-                        //
-
-			method = (MethodBase) candidates [0];
-			method_params = candidate_to_form != null && candidate_to_form.Contains (method);
-			for (int ix = 1; ix < candidate_top; ix++){
-				MethodBase candidate = (MethodBase) candidates [ix];
-
-				if (candidate == method)
-					continue;
-
-				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-
-				if (BetterFunction (ec, Arguments, arg_count, 
-						    candidate, cand_params,
-						    method, method_params)) {
-					method = candidate;
-					method_params = cand_params;
-				}
-			}
-			//
-			// Now check that there are no ambiguities i.e the selected method
-			// should be better than all the others
-			//
-			MethodBase ambiguous = null;
-			for (int ix = 0; ix < candidate_top; ix++){
-				MethodBase candidate = (MethodBase) candidates [ix];
-
-                                if (candidate == method)
-                                        continue;
-
-                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-				if (!BetterFunction (ec, Arguments, arg_count,
-						     method, method_params,
-						     candidate, cand_params)) {
-					Report.SymbolRelatedToPreviousError (candidate);
-					ambiguous = candidate;
-				}
-			}
-
-			if (ambiguous != null) {
-				Report.SymbolRelatedToPreviousError (method);
-				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
-					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (method));
-				return null;
-			}
-
-			//
-			// If the method is a virtual function, pick an override closer to the LHS type.
-			//
-			if (!me.IsBase && method.IsVirtual) {
-				if (TypeManager.IsOverride (method))
-					throw new InternalErrorException (
-						"Should not happen.  An 'override' method took part in overload resolution: " + method);
-
-				if (candidate_overrides != null)
-					foreach (MethodBase candidate in candidate_overrides) {
-						if (IsOverride (candidate, method))
-							method = candidate;
-					}
-			}
-
-			//
-			// And now check if the arguments are all
-			// compatible, perform conversions if
-			// necessary etc. and return if everything is
-			// all right
-			//
-                        if (!VerifyArgumentsCompat (ec, Arguments, arg_count, method,
-                                                    method_params, null, may_fail, loc))
-				return null;
-
-			if (method == null)
-				return null;
-
-			MethodBase the_method = TypeManager.DropGenericMethodArguments (method);
-#if GMCS_SOURCE
-			if (the_method.IsGenericMethodDefinition &&
-			    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
-				return null;
-#endif
-
-			IMethodData data = TypeManager.GetMethod (the_method);
-			if (data != null)
-				data.SetMemberIsUsed ();
-
-			return method;
-		}
-
 		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
 		{
 			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
@@ -4983,7 +4347,8 @@ namespace Mono.CSharp {
 					break;
 
 				if (parameter_type.IsPointer && !ec.InUnsafe) {
-					UnsafeError (loc);
+					if (!may_fail)
+						UnsafeError (loc);
 					return false;
 				}
 			}
@@ -5011,22 +4376,18 @@ namespace Mono.CSharp {
 			if (sn != null)
 				expr = sn.GetMethodGroup ();
 
-			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
-			if (expr == null)
+			Expression expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			if (expr_resolved == null)
 				return null;
 
-			if (!(expr is MethodGroupExpr)) {
-				Type expr_type = expr.Type;
+			MethodGroupExpr mg = expr_resolved as MethodGroupExpr;
+			if (mg == null) {
+				Type expr_type = expr_resolved.Type;
 
-				if (expr_type != null){
-					bool IsDelegate = TypeManager.IsDelegateType (expr_type);
-					if (IsDelegate)
-						return (new DelegateInvocation (
-							this.expr, Arguments, loc)).Resolve (ec);
+				if (expr_type != null && TypeManager.IsDelegateType (expr_type)){
+					return (new DelegateInvocation (
+						expr_resolved, Arguments, loc)).Resolve (ec);
 				}
-			}
-
-			if (!(expr is MethodGroupExpr)){
 				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
 				return null;
 			}
@@ -5041,11 +4402,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			MethodBase method = OverloadResolve (ec, mg, Arguments, false, loc);
-
+			MethodBase method = mg.OverloadExtensionResolve (ec, ref Arguments, ref mg, expr, loc);
 			if (method == null)
 				return null;
+
+			expr = mg;
 
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
@@ -5842,7 +5203,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			method = Invocation.OverloadResolve (ec, mg, Arguments, false, loc);
+			method = mg.OverloadResolve (ec, Arguments, false, loc);
 			if (method == null) {
 				if (almostMatchedMembers.Count != 0)
 					MemberLookupFailed (ec.ContainerType, type, type, ".ctor", null, true, loc);
@@ -6322,8 +5683,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				new_method = Invocation.OverloadResolve (
-					ec, (MethodGroupExpr) ml, arguments, false, loc);
+				new_method = ((MethodGroupExpr) ml).OverloadResolve (
+					ec, arguments, false, loc);
 
 				if (new_method == null) {
 					Error (-6, "New invocation: Can not find a constructor for " +
@@ -7392,6 +6753,10 @@ namespace Mono.CSharp {
 			}
 #endif
 			if (member_lookup == null) {
+				member_lookup = ec.DeclContainer.LookupExtensionMethod (expr_type, Identifier);
+				if (member_lookup != null)
+					return member_lookup.DoResolve (ec);
+
 				MemberLookupFailed (
 					ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
 				return null;
@@ -8387,7 +7752,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			get = (MethodInfo)Invocation.OverloadResolve (ec, new MethodGroupExpr (AllGetters, loc),
+			get = (MethodInfo)new MethodGroupExpr (AllGetters, loc).OverloadResolve (ec,
 					arguments, false, loc);
 
 			if (get == null) {
@@ -8448,8 +7813,8 @@ namespace Mono.CSharp {
 				found_any_setters = true;
 				set_arguments = (ArrayList) arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
-				set = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (AllSetters, loc),
+				set = (MethodInfo)(new MethodGroupExpr (AllSetters, loc)).OverloadResolve (
+					ec,
 					set_arguments, false, loc);
 			}
 

@@ -458,11 +458,17 @@ namespace Mono.CSharp
 		/// </summary>
 		static public void LoadReferences ()
 		{
-			foreach (string r in references)
-				LoadAssembly (r, false);
+			//
+			// Load Core Library for default compilation
+			//
+			if (RootContext.StdLib)
+				LoadAssembly ("mscorlib", false);
 
 			foreach (string r in soft_references)
 				LoadAssembly (r, true);
+
+			foreach (string r in references)
+				LoadAssembly (r, false);
 
 			foreach (DictionaryEntry entry in external_aliases)
 				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
@@ -636,7 +642,7 @@ namespace Mono.CSharp
 			//
 			string [] default_config = {
 				"System",
-				"System.Xml",
+				"System.Xml"
 #if false
 				//
 				// Is it worth pre-loading all this stuff?
@@ -662,6 +668,9 @@ namespace Mono.CSharp
 #endif
 			};
 			
+			if (RootContext.Version == LanguageVersion.LINQ)
+				soft_references.Add ("System.Core");
+
 			soft_references.AddRange (default_config);
 		}
 
@@ -1648,12 +1657,6 @@ namespace Mono.CSharp
 			
 			if (parse_only)
 				return true;
-
-			//
-			// Load Core Library for default compilation
-			//
-			if (RootContext.StdLib)
-				references.Insert (0, "mscorlib");
 
 			if (load_default_config)
 				DefineDefaultConfig ();

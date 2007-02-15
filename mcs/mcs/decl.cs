@@ -766,6 +766,10 @@ namespace Mono.CSharp {
 		{
 			return (MemberCore)defined_names [name];
 		}
+
+		public bool IsStaticClass {
+			get { return (ModFlags & Modifiers.STATIC) != 0; }
+		}
 		
 		// 
 		// root_types contains all the types.  All TopLevel types
@@ -805,7 +809,7 @@ namespace Mono.CSharp {
 		///  Should be overriten by the appropriate declaration space
 		/// </remarks>
 		public abstract TypeBuilder DefineType ();
-		
+
 		/// <summary>
 		///   Define all members, but don't apply any attributes or do anything which may
 		///   access not-yet-defined classes.  This method also creates the MemberCache.
@@ -1057,6 +1061,11 @@ namespace Mono.CSharp {
 			}
 
 			return null;
+		}
+
+		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name)
+		{
+			return NamespaceEntry.LookupExtensionMethod (extensionType, true, name);
 		}
 
 		//
@@ -1857,12 +1866,14 @@ namespace Mono.CSharp {
 			Property	= 0x200,
 			NestedType	= 0x400,
 
+			NotExtensionMethod	= 0x800,
+
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
 		protected class CacheEntry {
 			public readonly IMemberContainer Container;
-			public readonly EntryType EntryType;
+			public EntryType EntryType;
 			public readonly MemberInfo Member;
 
 			public CacheEntry (IMemberContainer container, MemberInfo member,
@@ -2100,6 +2111,46 @@ namespace Mono.CSharp {
 			}
 
 			return null;
+		}
+
+		//
+		// Looks for extension methods with defined name and extension type
+		//
+		public ArrayList FindExtensionMethods (Type extensionType, string name)
+		{
+			ArrayList entries;
+			if (method_hash != null)
+				entries = (ArrayList)method_hash [name];
+			else
+				entries = (ArrayList)member_hash [name];
+
+			if (entries == null)
+				return null;
+
+			ArrayList candidates = null;
+			foreach (CacheEntry entry in entries) {
+				if ((entry.EntryType & (EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod)) == (EntryType.Static | EntryType.Method)) {
+					MethodBase mb = (MethodBase)entry.Member;
+
+					IMethodData md = TypeManager.GetMethod (mb);
+					ParameterData pd = md == null ?
+						TypeManager.GetParameterData (mb) : md.ParameterInfo;
+
+					Type ex_type = pd.ExtensionMethodType;
+					if (ex_type == null) {
+						entry.EntryType |= EntryType.NotExtensionMethod;
+						continue;
+					}
+
+					if (ex_type == extensionType || TypeManager.IsGenericParameter (ex_type)) {
+						if (candidates == null)
+							candidates = new ArrayList (2);
+						candidates.Add (mb);
+					}
+				}
+			}
+
+			return candidates;
 		}
 		
 		//

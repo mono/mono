@@ -187,6 +187,11 @@ namespace Mono.CSharp {
 			Report.Error (596, Location, "The Guid attribute must be specified with the ComImport attribute");
 		}
 
+		public void Error_MisusedExtensionAttribute ()
+		{
+			//Report.Error (1112, Location, "Do not use `{0}' directly. Use parameter modifier `this' instead", GetSignatureForError ());
+		}
+
 		/// <summary>
 		/// This is rather hack. We report many emit attribute error with same error to be compatible with
 		/// csc. But because csc has to report them this way because error came from ilasm we needn't.
@@ -398,8 +403,8 @@ namespace Mono.CSharp {
 			if (mg == null)
 				return null;
 
-			MethodBase constructor = Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) mg, PosArguments, false, Location);
+			MethodBase constructor = ((MethodGroupExpr)mg).OverloadResolve (
+				ec, PosArguments, false, Location);
 
 			if (constructor == null)
 				return null;
