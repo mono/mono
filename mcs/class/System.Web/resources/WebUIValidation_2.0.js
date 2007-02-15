@@ -319,8 +319,27 @@ function ToDate (s, validator)
 
 function ToCurrency (s, validator)
 {
-	/* NYI */
-	return null;
+	var hasDigits = (validator.digits > 0);
+	var beginGroupSize, subsequentGroupSize;
+	var groupSizeNum = parseInt(validator.groupsize, 10);
+	if (!isNaN(groupSizeNum) && groupSizeNum > 0) {
+		beginGroupSize = "{1," + groupSizeNum + "}";
+		subsequentGroupSize = "{" + groupSizeNum + "}";
+	}
+	else {
+		beginGroupSize = subsequentGroupSize = "+";
+	}
+	var exp = new RegExp("^\\s*([-\\+])?((\\d" + beginGroupSize + "(\\" + validator.groupchar + "\\d" + subsequentGroupSize + ")+)|\\d*)"
+					+ (hasDigits ? "\\" + validator.decimalchar + "?(\\d{0," + validator.digits + "})" : "")
+					+ "\\s*$");
+	var m = s.match(exp);
+	if (m == null)
+		return null;
+	if (m[2].length == 0 && hasDigits && m[5].length == 0)
+		return null;
+	var cleanInput = (m[1] != null ? m[1] : "") + m[2].replace(new RegExp("(\\" + validator.groupchar + ")", "g"), "") + ((hasDigits && m[5].length > 0) ? "." + m[5] : "");
+	var num = parseFloat(cleanInput);
+	return (isNaN(num) ? null : num);
 }
 
 function GetFullYear(year, maxYear)
@@ -342,6 +361,10 @@ function CompareValidatorEvaluateIsValid (validator)
 	var DataType = validator.getAttribute ("datatype");
 
 	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
+	if (ctrl_value == "") {
+		ValidatorSucceeded (validator);
+		return true;
+	}
 	var compare = (ControlToCompare != null && ControlToCompare != "") ? ValidatorTrim (ValidatorGetValue (ControlToCompare)) : ValueToCompare;
 
 	var left = Convert (ctrl_value, DataType, validator);
@@ -389,8 +412,6 @@ function CompareValidatorEvaluateIsValid (validator)
 
 function RangeValidatorEvaluateIsValid (validator)
 {
-	var MinimumValue = parseInt (validator.getAttribute ("minimumvalue"));
-	var MaximumValue = parseInt (validator.getAttribute ("maximumvalue"));
 	var ControlToValidate = validator.getAttribute ("controltovalidate");
 	var DataType = validator.getAttribute ("datatype");
 
@@ -401,8 +422,10 @@ function RangeValidatorEvaluateIsValid (validator)
 		return true;
 	}
 
+	var MinimumValue = Convert (validator.getAttribute ("minimumvalue"), DataType, validator);
+	var MaximumValue = Convert (validator.getAttribute ("maximumvalue"), DataType, validator);
 	var val = Convert (ctrl_value, DataType, validator);
-	if (val == null || val < MinimumValue || val > MaximumValue) {
+	if (val == null || val <= MinimumValue || val >= MaximumValue) {
 		ValidatorFailed (validator);
 		return false;
 	}
