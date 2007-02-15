@@ -1,12 +1,12 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.core.dll20.J2EE", "core\nunit.core.dll20.J2EE.vmwcsproj", "{995DE32D-06AB-4926-97FF-565B9205D5F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.core.dll20.J2EE", "core\nunit.core.dll20.J2EE.csproj", "{995DE32D-06AB-4926-97FF-565B9205D5F8}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.framework.dll20.J2EE", "framework\nunit.framework.dll20.J2EE.vmwcsproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20.J2EE", "framework\nunit.framework.dll20.J2EE.csproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit-console20.J2EE", "nunit-console\nunit-console20.J2EE.vmwcsproj", "{4E3FBF55-6720-43F1-880F-562F851B0221}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-console20.J2EE", "nunit-console\nunit-console20.J2EE.csproj", "{4E3FBF55-6720-43F1-880F-562F851B0221}"
 EndProject
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "nunit.util.dll20.J2EE", "util\nunit.util.dll20.J2EE.vmwcsproj", "{170EE6EB-1DEF-4BC6-88B7-6A90358BAA6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.util.dll20.J2EE", "util\nunit.util.dll20.J2EE.csproj", "{170EE6EB-1DEF-4BC6-88B7-6A90358BAA6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
