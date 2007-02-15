@@ -27,6 +27,7 @@
 	<CleanJavaScriptValueList>
 		<a href=""/>
 		<a onclick=""/>
+		<area href=""/>
 	</CleanJavaScriptValueList>
 
 	<!--remove tags by attribute Id or name-->
