@@ -48,6 +48,7 @@ System.Windows.Forms/FlowPanelTests.cs
 System.Windows.Forms/FocusTest.cs
 System.Windows.Forms/FormTest.cs
 System.Windows.Forms/EventArgsTest.cs
+System.Windows.Forms/EventLogger.cs
 System.Windows.Forms/GridColumnStylesCollectionTest.cs
 System.Windows.Forms/GridTableStylesCollectionTest.cs
 System.Windows.Forms/GroupBoxTest.cs
