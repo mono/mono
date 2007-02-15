@@ -150,7 +150,7 @@
     <Content Include="Summary.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\framework\nunit.framework.dll20.J2EE.vmwcsproj">
+    <ProjectReference Include="..\framework\nunit.framework.dll20.J2EE.csproj">
       <Project>{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}</Project>
       <Name>nunit.framework.dll20.J2EE</Name>
     </ProjectReference>

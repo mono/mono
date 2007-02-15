@@ -103,11 +103,11 @@
     <Compile Include="ConsoleUi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\core\nunit.core.dll20.J2EE.vmwcsproj">
+    <ProjectReference Include="..\core\nunit.core.dll20.J2EE.csproj">
       <Project>{995DE32D-06AB-4926-97FF-565B9205D5F8}</Project>
       <Name>nunit.core.dll20.J2EE</Name>
     </ProjectReference>
-    <ProjectReference Include="..\util\nunit.util.dll20.J2EE.vmwcsproj">
+    <ProjectReference Include="..\util\nunit.util.dll20.J2EE.csproj">
       <Project>{170EE6EB-1DEF-4BC6-88B7-6A90358BAA6B}</Project>
       <Name>nunit.util.dll20.J2EE</Name>
     </ProjectReference>
