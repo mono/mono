@@ -1079,6 +1079,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("Needs a bugfix in libgdiplus, #80842")]
 		public void BehaviorImageList ()
 		{
 			// Basically, this shows that whichever of [Image|ImageIndex|ImageKey]
