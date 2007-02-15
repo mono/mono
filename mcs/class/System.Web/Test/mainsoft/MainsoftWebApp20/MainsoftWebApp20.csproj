@@ -148,15 +148,15 @@
     <Content Include="Global.asax" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TestMonoWeb20.vmwcsproj">
+    <ProjectReference Include="..\..\TestMonoWeb20.csproj">
       <Project>{7180B7A7-D0AB-4397-AC0A-CDB1A9DE6417}</Project>
       <Name>TestMonoWeb20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MainsoftWebTest\HtmlCompare20.vmwcsproj">
+    <ProjectReference Include="..\MainsoftWebTest\HtmlCompare20.csproj">
       <Project>{C3375963-9409-41A1-ADD2-1076F5A90BDE}</Project>
       <Name>HtmlCompare20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NunitWeb\NunitWeb\NunitWeb20.vmwcsproj">
+    <ProjectReference Include="..\NunitWeb\NunitWeb\NunitWeb20.csproj">
       <Project>{DC2320EB-CC91-4648-AF2B-8937F6794A14}</Project>
       <Name>NunitWeb20</Name>
     </ProjectReference>

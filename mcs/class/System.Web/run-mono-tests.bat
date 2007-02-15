@@ -24,7 +24,7 @@ REM ********************************************************
 set OUTPUT_FILE_PREFIX=System_Web
 set RUNNING_FIXTURE=System.Web
 set TEST_SOLUTION=Test\TestMonoWeb.J2EE20.sln
-set DEPLOY_PROJECT=Test\mainsoft\MainsoftWebApp20\MainsoftWebApp20.vmwcsproj
+set DEPLOY_PROJECT=Test\mainsoft\MainsoftWebApp20\MainsoftWebApp20.csproj
 set TEST_ASSEMBLY=TestMonoWeb.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 
@@ -145,7 +145,7 @@ set XML_TOOL_PATH=..\..\tools\mono-xmltool
 
 if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
 
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.csproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
