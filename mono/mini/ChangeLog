@@ -1,3 +1,7 @@
+2007-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (emit_load_volatile_arguments): Fix another merge problem.
+
 2007-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (type_to_eval_stack_type): Fix bug introduced by merge.

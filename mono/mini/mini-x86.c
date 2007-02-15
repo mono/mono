@@ -2346,7 +2346,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
 		MonoType *arg_type;
-		inst = cfg->varinfo [i];
+		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
@@ -2363,8 +2363,6 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 			x86_mov_membase_reg (code, X86_EBP, inst->inst_offset, inst->dreg, 4);
 		}
 	}
-
-	g_free (cinfo);
 
 	return code;
 }
