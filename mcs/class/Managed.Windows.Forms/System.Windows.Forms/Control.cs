@@ -3549,7 +3549,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void Refresh() {
-			if (IsHandleCreated) {
+			if (IsHandleCreated && Visible) {
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
 
@@ -3739,6 +3739,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual AccessibleObject CreateAccessibilityInstance() {
+			CreateControl ();
 			return new Control.ControlAccessibleObject(this);
 		}
 
@@ -4359,8 +4360,6 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			controls = child_controls.GetAllControls ();
-
 			// XXX This code is severely broken.  It leaks
 			// the "zero_sized" abstraction out of the X11
 			// backend and into Control.cs.  It'll work on
@@ -4370,26 +4369,26 @@ namespace System.Windows.Forms
 			// basically what we need to guard against is
 			// calling XplatUI.SetZOrder on an hwnd that
 			// corresponds to an unmapped X window.
-			int i = 0;
-			while (i < controls.Length) {
-				Hwnd upper = Hwnd.ObjectFromHandle (controls[i].Handle);
-				if (upper.zero_sized) {
-					i++;
+			controls = child_controls.GetAllControls ();
+
+			ArrayList children_to_order = new ArrayList ();
+
+			for (int i = 0; i < controls.Length; i ++) {
+				if (!controls[i].IsHandleCreated || !controls[i].VisibleInternal)
 					continue;
-				}
 
-				bool found_lower = false;
-				for (int j = i + 1; j < controls.Length; j ++) {
-					Hwnd lower = Hwnd.ObjectFromHandle (controls[j].Handle);
-					if (!lower.zero_sized) {
-						XplatUI.SetZOrder(lower.Handle, upper.Handle, false, false);
-						i = j;
-						found_lower = true;
-					}
-				}
+				Hwnd hwnd = Hwnd.ObjectFromHandle (controls[i].Handle);
+				if (hwnd.zero_sized)
+					continue;
 
-				if (!found_lower)
-					break;
+				children_to_order.Add (controls[i]);
+			}
+
+			for (int i = 1; i < children_to_order.Count; i ++) {
+				Control upper = (Control)children_to_order[i-1];
+				Control lower = (Control)children_to_order[i];
+
+				XplatUI.SetZOrder(lower.Handle, upper.Handle, false, false);
 			}
 		}
 

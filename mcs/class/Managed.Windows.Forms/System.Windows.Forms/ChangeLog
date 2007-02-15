@@ -1,3 +1,20 @@
+2007-02-15  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (Refresh): only refresh if we've got a handle and are
+	visible.
+	(CreateAccessibilityInstance): CreateControl() here.
+	(UpdateChildrenZOrder): complicate the code loop even more by
+	taking into account controls that haven't had their handle
+	created, and those that aren't visible.  But on the flip side,
+	simplify the code by splitting it into two loops.  one which
+	builds up the list of child controls we're interested in, and the
+	other that sets the z order of those children.
+
+2007-02-14  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: Control.AccessibilityObject causes the control to be
+	created, not just the handle.
+
 2007-02-14  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: rework UpdateChildrenZOrder to correctly handle the
