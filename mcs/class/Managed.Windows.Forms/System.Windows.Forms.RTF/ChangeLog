@@ -1,3 +1,10 @@
+2007-02-15  Jackson Harper  <jackson@ximian.com>
+
+	* KeysInit.cs:
+	* Minor.cs: 
+	* RTF.cs: Add support for parsing pngblip data.  These are hex
+	encoded strings that represent a PNG image.
+
 2006-12-05  Chris Toshok  <toshok@ximian.com>
 
 	* RTF.cs: more warning fixes.

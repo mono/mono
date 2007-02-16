@@ -369,6 +369,7 @@ namespace System.Windows.Forms.RTF {
 					new KeyStruct(Major.PictAttr, Minor.WinMetafile, "wmetafile"),
 					new KeyStruct(Major.PictAttr, Minor.DevIndBitmap, "dibitmap"),
 					new KeyStruct(Major.PictAttr, Minor.WinBitmap, "wbitmap"),
+					new KeyStruct(Major.PictAttr, Minor.PngBlip, "pngblip"),
 					new KeyStruct(Major.PictAttr, Minor.PixelBits, "wbmbitspixel"),
 					new KeyStruct(Major.PictAttr, Minor.BitmapPlanes, "wbmplanes"),
 					new KeyStruct(Major.PictAttr, Minor.BitmapWid, "wbmwidthbytes"),

@@ -522,6 +522,7 @@ namespace System.Windows.Forms {
 		WinMetafile,
 		DevIndBitmap,
 		WinBitmap,
+		PngBlip,
 		PixelBits,
 		BitmapPlanes,
 		BitmapWid,

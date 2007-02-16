@@ -43,6 +43,7 @@ namespace System.Windows.Forms.RTF {
 		private Minor		minor;
 		private int		param;
 		private StringBuilder	text_buffer;
+		private byte [] image_data;
 		private int		line_num;
 		private int		line_pos;
 
@@ -167,6 +168,13 @@ namespace System.Windows.Forms.RTF {
 			}
 		}
 
+		public byte [] Image {
+			get { return image_data; }
+			set {
+				image_data = value;
+			}
+		}
+
 		public Color Colors {
 			get {
 				return colors;
@@ -242,11 +250,11 @@ namespace System.Windows.Forms.RTF {
 
 		/// <summary>Read the next character from the input</summary>
 		private char GetChar() {
-			int	c;
+			char	c;
 			bool	old_bump_line;
 
 SkipCRLF:
-			if ((c = source.Read()) != -1) {
+			if ((c = (char) source.Read()) != -1) {
 				this.text_buffer.Append((char) c);
 			}
 
@@ -266,6 +274,7 @@ SkipCRLF:
 				if (this.prev_char == '\r') {
 					old_bump_line = false;
 				}
+				
 				text_buffer.Length--;
 				goto SkipCRLF;
 			}
@@ -478,7 +487,7 @@ SkipCRLF:
 				c = GetChar();
 			}
 
-			if (c != EOF && Char.IsDigit(c)) {
+			if (c != EOF && Char.IsDigit(c) && minor != Minor.PngBlip) {
 				this.param = 0;
 				while (Char.IsDigit(c)) {
 					this.param = this.param * 10 + Convert.ToByte(c) - 48;
@@ -877,9 +886,79 @@ SkipCRLF:
 			rtf.RouteToken();
 		}
 
-		private void ReadPictGroup(RTF rtf) {
-			rtf.SkipGroup();
-			rtf.RouteToken();
+		private void ReadPictGroup(RTF rtf)
+		{
+			Minor image_type = Minor.Undefined;
+			bool read_image_data = false;
+			
+			while (true) {
+				rtf.GetToken ();
+
+				if (rtf.CheckCM (TokenClass.Group, Major.EndGroup))
+					break;
+
+				switch (minor) {
+				case Minor.PngBlip:
+					image_type = minor;
+					read_image_data = true;
+					break;
+				}
+
+				if (read_image_data && rtf.rtf_class == TokenClass.Text) {
+
+					ArrayList image_data = new ArrayList ();
+					char c = (char) rtf.major;
+
+					uint digitValue1;
+					uint digitValue2;
+					char hexDigit1 = (char) rtf.major;
+					char hexDigit2;
+
+					while (true) {
+
+						while (hexDigit1 == '\n' || hexDigit1 == '\r')
+							hexDigit1 = (char) source.Read ();
+
+						hexDigit2 = (char) source.Read ();
+						while (hexDigit2 == '\n' || hexDigit2 == '\r')
+							hexDigit2 = (char) source.Read ();
+
+						if (Char.IsDigit (hexDigit1))
+							digitValue1 = (uint) (hexDigit1 - '0');
+						else if (Char.IsLower (hexDigit1))
+							digitValue1 = (uint) (hexDigit1 - 'a' + 10);
+						else if (Char.IsUpper (hexDigit1))
+							digitValue1 = (uint) (hexDigit1 - 'A' + 10);
+						else if (hexDigit1 == '\n' || hexDigit1 == '\r')
+							continue;
+						else
+							break;
+
+						if (Char.IsDigit (hexDigit2))
+							digitValue2 = (uint) (hexDigit2 - '0');
+						else if (Char.IsLower (hexDigit2))
+							digitValue2 = (uint) (hexDigit2 - 'a' + 10);
+						else if (Char.IsUpper (hexDigit2))
+							digitValue2 = (uint) (hexDigit2 - 'A' + 10);
+						else if (hexDigit2 == '\n' || hexDigit2 == '\r')
+							continue;
+						else
+							break;
+
+						image_data.Add ((byte) checked (digitValue1 * 16 + digitValue2));
+
+						// We get the first hex digit at the end, since in the very first
+						// iteration we use rtf.major as the first hex digit
+						hexDigit1 = (char) source.Read ();
+					}
+
+					read_image_data = false;
+					Image = (byte []) image_data.ToArray (typeof (byte));
+				}
+			}
+
+			if (image_type != Minor.Undefined)
+				SetToken (TokenClass.Control, Major.PictAttr, image_type, 0, String.Empty);
 		}
 
 		private void ReadObjGroup(RTF rtf) {
