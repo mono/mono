@@ -1728,14 +1728,23 @@ namespace System.Web.Compilation
 		{
 			if (value is System.Web.UI.WebControls.Unit) {
 				System.Web.UI.WebControls.Unit s = (System.Web.UI.WebControls.Unit) value;
-				MethodInfo met = typeof(System.Web.UI.WebControls.Unit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+				ConstructorInfo c = typeof(System.Web.UI.WebControls.Unit).GetConstructor (
+					BindingFlags.Instance | BindingFlags.Public,
+					null,
+					new Type[] {typeof(double), typeof(System.Web.UI.WebControls.UnitType)},
+					null);
+				
+				return new InstanceDescriptor (c, new object[] {s.Value, s.Type});
 			}
 			
 			if (value is System.Web.UI.WebControls.FontUnit) {
 				System.Web.UI.WebControls.FontUnit s = (System.Web.UI.WebControls.FontUnit) value;
-				MethodInfo met = typeof(System.Web.UI.WebControls.FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+				ConstructorInfo c = typeof(System.Web.UI.WebControls.FontUnit).GetConstructor (
+					BindingFlags.Instance | BindingFlags.Public,
+					null,
+					new Type[] {typeof(System.Web.UI.WebControls.Unit)},
+					null);
+				return new InstanceDescriptor (c, new object[] {s.Unit});
 			}
 			return null;
 		}

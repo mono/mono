@@ -1,3 +1,13 @@
+2007-02-16  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateControlCompiler.cs: Fix the problem with cultures which
+	have a comma as their decimal separator and font/whatever
+	units. New code does not reparse the text representation of the
+	unit on the runtime (e.g. 0.9em) but instead it constructs the
+	property using the FontUnit/Unit constructors which take,
+	respectively, Unit and double/unittype parameters. This avoids
+	culture-specific parsing.
+
 2007-02-12  Marek Habersack  <grendello@gmail.com>
 
 	* PreservationFile.cs: Support preservation (assembly mapping)
