@@ -1893,6 +1893,9 @@ namespace System.Windows.Forms
 				case Msg.WM_SETFOCUS:
 					owner.Select (false, true);
 					break;
+				case Msg.WM_RBUTTONDOWN:
+					owner.Select (false, true);
+					break;
 				default:
 					break;
 				}

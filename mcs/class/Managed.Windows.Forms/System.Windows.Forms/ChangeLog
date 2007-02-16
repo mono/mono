@@ -1,3 +1,9 @@
+2007-02-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Set focus to ListView when ItemControl gets a
+	WM_RBUTTONDOWN message, to mimic .Net behaviour. 
+	Fixes part of #80467.
+
 2007-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DateTimePicker.cs: Call RecreateHandle if the Format changes and
