@@ -733,7 +733,8 @@ public sealed class TypeDescriptor
 			if (comp != null && comp.Site != null) 
 			{
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) comp.Site.GetService (typeof(ITypeDescriptorFilterService));
-				cache = filter.FilterAttributes (comp, t);
+				if (filter != null)
+					cache = filter.FilterAttributes (comp, t);
 			}
 			
 			ArrayList atts = new ArrayList ();
@@ -775,7 +776,8 @@ public sealed class TypeDescriptor
 			if (_component.Site != null) 
 			{
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
-				cache = filter.FilterEvents (_component, t);
+				if (filter != null)
+					cache = filter.FilterEvents (_component, t);
 			}
 			
 			ArrayList atts = new ArrayList ();
@@ -799,7 +801,8 @@ public sealed class TypeDescriptor
 			if (_component.Site != null) 
 			{
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
-				cache = filter.FilterProperties (_component, t);
+				if (filter != null)
+					cache = filter.FilterProperties (_component, t);
 			}
 
 			PropertyDescriptor[] descriptors = new PropertyDescriptor[t.Values.Count];

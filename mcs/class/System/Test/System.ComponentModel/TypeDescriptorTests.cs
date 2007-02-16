@@ -53,7 +53,7 @@ namespace MonoTests.System.ComponentModel
 
 		public bool DesignMode { get {  return true; } }
 
-		public string Name { get { return "TestName"; } set { } }	
+		public string Name { get { return "TestName"; } set { } }
 
 		public object GetService (Type t)
 		{
@@ -107,6 +107,67 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 
+	class NoFilterSite : ISite
+	{
+		public NoFilterSite () : this (null)
+		{
+		}
+
+		public NoFilterSite (IContainer container)
+		{
+			_container = container;
+		}
+
+		public IComponent Component {
+			get { return null; }
+		}
+
+		public IContainer Container {
+			get { return _container; }
+		}
+
+		public bool DesignMode { get { return true; } }
+
+		public string Name { get { return "TestName"; } set { } }
+
+		public object GetService (Type t)
+		{
+			return null;
+		}
+
+		public IContainer _container;
+	}
+
+	class MyContainer : IContainer
+	{
+		public MyContainer ()
+		{
+			_components = new ComponentCollection (new IComponent [0]);
+		}
+
+		public ComponentCollection Components {
+			get { return _components; }
+		}
+
+		public void Add (IComponent component)
+		{
+		}
+
+		public void Add (IComponent component, string name)
+		{
+		}
+
+		public void Dispose ()
+		{
+		}
+
+		public void Remove (IComponent component)
+		{
+		}
+
+		private ComponentCollection _components;
+	}
+
 	class AnotherFilter: ITypeDescriptorFilterService
 	{
 		public bool FilterAttributes (IComponent component,IDictionary attributes) {
@@ -147,7 +208,12 @@ namespace MonoTests.System.ComponentModel
 		{
 			Site = site;
 		}
-		
+
+		public MyComponent (IContainer container)
+		{
+			container.Add (this);
+		}
+
 		[DescriptionAttribute ("test")]
 		public virtual string TestProperty
 		{
@@ -313,10 +379,11 @@ namespace MonoTests.System.ComponentModel
 	}
 
 	[TestFixture]
-	public class TypeDescriptorTests: Assertion
+	public class TypeDescriptorTests
 	{
 		MyComponent com = new MyComponent ();
 		MyComponent sitedcom = new MyComponent (new MySite ());
+		MyComponent nfscom = new MyComponent (new NoFilterSite (new MyContainer ()));
 		AnotherComponent anothercom = new AnotherComponent ();
 		
 		[Test]
@@ -330,93 +397,98 @@ namespace MonoTests.System.ComponentModel
 
 			test.ResetMethodsCalled ();
 			props = TypeDescriptor.GetProperties (test);
-			AssertEquals ("t1", "5", test.methods_called);
+			Assert.AreEqual ("5", test.methods_called, "#1");
 
 			test.ResetMethodsCalled ();
 			props = TypeDescriptor.GetProperties (test, new Attribute[0]);
-			AssertEquals ("t2", "4", test.methods_called);
+			Assert.AreEqual ("4", test.methods_called, "#2");
 
 			test.ResetMethodsCalled ();
 			props = TypeDescriptor.GetProperties (test, new Attribute[0], false);
-			AssertEquals ("t3", "4", test.methods_called);
+			Assert.AreEqual ("4", test.methods_called, "#3");
 
 			test.ResetMethodsCalled ();
 			props = TypeDescriptor.GetProperties (test, false);
-			AssertEquals ("t4", "5", test.methods_called);
+			Assert.AreEqual ("5", test.methods_called, "#4");
 
 			test.ResetMethodsCalled ();
 			prop = TypeDescriptor.GetDefaultProperty (test);
-			AssertEquals ("t5", "6", test.methods_called);
+			Assert.AreEqual ("6", test.methods_called, "#5");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test);
-			AssertEquals ("t6", "2", test.methods_called);
+			Assert.AreEqual ("2", test.methods_called, "#6");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, new Attribute[0]);
-			AssertEquals ("t7", "1", test.methods_called);
+			Assert.AreEqual ("1", test.methods_called, "#7");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, false);
-			AssertEquals ("t8", "2", test.methods_called);
+			Assert.AreEqual ("2", test.methods_called, "#8");
 		}
 
 		[Test]
 		public void TestCreateDesigner ()
 		{
 			IDesigner des = TypeDescriptor.CreateDesigner (com, typeof(int));
-			Assert ("t1", des is MyDesigner);
+			Assert.IsTrue (des is MyDesigner, "#1");
 			
 			des = TypeDescriptor.CreateDesigner (com, typeof(string));
-			AssertNull ("t2", des);
+			Assert.IsNull (des, "#2");
 		}
 		
 		[Test]
 		public void TestCreateEvent ()
 		{
 			EventDescriptor ed = TypeDescriptor.CreateEvent (typeof(MyComponent), "AnEvent", typeof(EventHandler), null);
-			AssertEquals ("t1", typeof(MyComponent), ed.ComponentType);
-			AssertEquals ("t2", typeof(EventHandler), ed.EventType);
-			AssertEquals ("t3", true, ed.IsMulticast);
-			AssertEquals ("t4", "AnEvent", ed.Name);
+			Assert.AreEqual (typeof (MyComponent), ed.ComponentType, "#1");
+			Assert.AreEqual (typeof (EventHandler), ed.EventType, "#2");
+			Assert.IsTrue (ed.IsMulticast, "#3");
+			Assert.AreEqual ("AnEvent", ed.Name, "#4");
 		}
 		
 		[Test]
 		public void TestCreateProperty ()
 		{
 			PropertyDescriptor pd = TypeDescriptor.CreateProperty (typeof(MyComponent), "TestProperty", typeof(string), null);
-			AssertEquals ("t1", typeof(MyComponent), pd.ComponentType);
-			AssertEquals ("t2", "TestProperty", pd.Name);
-			AssertEquals ("t3", typeof(string), pd.PropertyType);
-			AssertEquals ("t4", false, pd.IsReadOnly);
+			Assert.AreEqual (typeof (MyComponent), pd.ComponentType, "#1");
+			Assert.AreEqual ("TestProperty", pd.Name, "#2");
+			Assert.AreEqual (typeof (string), pd.PropertyType, "#3");
+			Assert.IsFalse (pd.IsReadOnly, "#4");
 			
 			pd.SetValue (com, "hi");
-			AssertEquals ("t5", "hi", pd.GetValue(com));
+			Assert.AreEqual ("hi", pd.GetValue (com), "#5");
 		}
 		
 		[Test]
 		public void TestGetAttributes ()
 		{
 			AttributeCollection col = TypeDescriptor.GetAttributes (typeof(MyComponent));
-			Assert ("t2", col[typeof(DescriptionAttribute)] != null);
-			Assert ("t3", col[typeof(DesignerAttribute)] != null);
-			Assert ("t4", col[typeof(EditorAttribute)] == null);
+			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#A1");
+			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#A2");
+			Assert.IsNull (col [typeof (EditorAttribute)], "#A3");
 			
 			col = TypeDescriptor.GetAttributes (com);
-			Assert ("t6", col[typeof(DescriptionAttribute)] != null);
-			Assert ("t7", col[typeof(DesignerAttribute)] != null);
-			Assert ("t8", col[typeof(EditorAttribute)] == null);
+			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#B1");
+			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#B2");
+			Assert.IsNull (col [typeof (EditorAttribute)], "#B3");
 			
 			col = TypeDescriptor.GetAttributes (sitedcom);
-			Assert ("t10", col[typeof(DescriptionAttribute)] != null);
-			Assert ("t11", col[typeof(DesignerAttribute)] != null);
-			Assert ("t12", col[typeof(EditorAttribute)] != null);
+			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#C1");
+			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#C2");
+			Assert.IsNotNull (col [typeof (EditorAttribute)], "#C3");
+
+			col = TypeDescriptor.GetAttributes (nfscom);
+			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#D1");
+			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#D2");
+			Assert.IsNull (col [typeof (EditorAttribute)], "#D3");
 
 			col = TypeDescriptor.GetAttributes (typeof (MyDerivedComponent));
-			Assert ("t13", col[typeof(DesignerAttribute)] != null);
-			Assert ("t14", col[typeof(DescriptionAttribute)] != null);
+			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#E1");
+			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#E2");
 			DesignerAttribute attribute = col[typeof(DesignerAttribute)] as DesignerAttribute;
-			Assert ("t15", attribute != null);
+			Assert.IsNotNull (attribute, "#E3");
 			// there are multiple DesignerAttribute present and their order in the collection isn't deterministic
 			bool found = false;
 			for (int i = 0; i < col.Count; i++) {
@@ -427,77 +499,77 @@ namespace MonoTests.System.ComponentModel
 						break;
 				}
 			}
-			Assert ("t16", found);
+			Assert.IsTrue (found, "#E4");
 		}
 		
 		[Test]
 		public void TestGetClassName ()
 		{
-			AssertEquals ("t1", typeof(MyComponent).FullName, TypeDescriptor.GetClassName (com));
+			Assert.AreEqual (typeof(MyComponent).FullName, TypeDescriptor.GetClassName (com));
 		}
 		
 		[Test]
 		public void TestGetComponentName ()
 		{
-#if !NET_2_0
-			AssertEquals ("t1", "MyComponent", TypeDescriptor.GetComponentName (com));
-			AssertEquals ("t2", "MyComponent", TypeDescriptor.GetComponentName (com, false));
-			AssertEquals ("t3", "Exception", TypeDescriptor.GetComponentName (new Exception ()));
-			AssertEquals ("t4", "Exception", TypeDescriptor.GetComponentName (new Exception (), false));
-			AssertNotNull ("t5", TypeDescriptor.GetComponentName (typeof (Exception)));
-			AssertNotNull ("t6", TypeDescriptor.GetComponentName (typeof (Exception), false));
-#else
+#if NET_2_0
 			// in MS.NET 2.0, GetComponentName no longer returns
 			// the type name if there's no custom typedescriptor
 			// and no site
-			AssertNull ("t1", TypeDescriptor.GetComponentName (com));
-			AssertNull ("t2", TypeDescriptor.GetComponentName (com, false));
-			AssertNull ("t3", TypeDescriptor.GetComponentName (new Exception ()));
-			AssertNull ("t4", TypeDescriptor.GetComponentName (new Exception (), false));
-			AssertNull ("t5", TypeDescriptor.GetComponentName (typeof (Exception)));
-			AssertNull ("t6", TypeDescriptor.GetComponentName (typeof (Exception), false));
+			Assert.IsNull (TypeDescriptor.GetComponentName (com), "#1");
+			Assert.IsNull (TypeDescriptor.GetComponentName (com, false), "#2");
+			Assert.IsNull (TypeDescriptor.GetComponentName (new Exception ()), "#3");
+			Assert.IsNull (TypeDescriptor.GetComponentName (new Exception (), false), "#4");
+			Assert.IsNull (TypeDescriptor.GetComponentName (typeof (Exception)), "#4");
+			Assert.IsNull (TypeDescriptor.GetComponentName (typeof (Exception), false), "#6");
+#else
+			Assert.AreEqual ("MyComponent", TypeDescriptor.GetComponentName (com), "#1");
+			Assert.AreEqual ("MyComponent", TypeDescriptor.GetComponentName (com, false), "#2");
+			Assert.AreEqual ("Exception", TypeDescriptor.GetComponentName (new Exception ()), "#3");
+			Assert.AreEqual ("Exception", TypeDescriptor.GetComponentName (new Exception (), false), "#4");
+			Assert.IsNotNull (TypeDescriptor.GetComponentName (typeof (Exception)), "#5");
+			Assert.IsNotNull (TypeDescriptor.GetComponentName (typeof (Exception), false), "#6");
 #endif
-			AssertEquals ("t7", "TestName", TypeDescriptor.GetComponentName (sitedcom));
-			AssertEquals ("t8", "TestName", TypeDescriptor.GetComponentName (sitedcom));
+			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#7");
+			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#8");
 		}
 		
 		[Test]
 		public void TestGetConverter ()
 		{
-			AssertEquals (typeof(BooleanConverter), TypeDescriptor.GetConverter (typeof (bool)).GetType());
-			AssertEquals (typeof(ByteConverter), TypeDescriptor.GetConverter (typeof (byte)).GetType());
-			AssertEquals (typeof(SByteConverter), TypeDescriptor.GetConverter (typeof (sbyte)).GetType());
-			AssertEquals (typeof(StringConverter), TypeDescriptor.GetConverter (typeof (string)).GetType());
-			AssertEquals (typeof(CharConverter), TypeDescriptor.GetConverter (typeof (char)).GetType());
-			AssertEquals (typeof(Int16Converter), TypeDescriptor.GetConverter (typeof (short)).GetType());
-			AssertEquals (typeof(Int32Converter), TypeDescriptor.GetConverter (typeof (int)).GetType());
-			AssertEquals (typeof(Int64Converter), TypeDescriptor.GetConverter (typeof (long)).GetType());
-			AssertEquals (typeof(UInt16Converter), TypeDescriptor.GetConverter (typeof (ushort)).GetType());
-			AssertEquals (typeof(UInt32Converter), TypeDescriptor.GetConverter (typeof (uint)).GetType());
-			AssertEquals (typeof(UInt64Converter), TypeDescriptor.GetConverter (typeof (ulong)).GetType());
-			AssertEquals (typeof(SingleConverter), TypeDescriptor.GetConverter (typeof (float)).GetType());
-			AssertEquals (typeof(DoubleConverter), TypeDescriptor.GetConverter (typeof (double)).GetType());
-			AssertEquals (typeof(DecimalConverter), TypeDescriptor.GetConverter (typeof (decimal)).GetType());
-			AssertEquals (typeof(ArrayConverter), TypeDescriptor.GetConverter (typeof (Array)).GetType());
-			AssertEquals (typeof(CultureInfoConverter), TypeDescriptor.GetConverter (typeof (CultureInfo)).GetType());
-			AssertEquals (typeof(DateTimeConverter), TypeDescriptor.GetConverter (typeof (DateTime)).GetType());
-			AssertEquals (typeof(GuidConverter), TypeDescriptor.GetConverter (typeof (Guid)).GetType());
-			AssertEquals (typeof(TimeSpanConverter), TypeDescriptor.GetConverter (typeof (TimeSpan)).GetType());
-			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (typeof (ICollection)).GetType());
+			Assert.AreEqual (typeof (BooleanConverter), TypeDescriptor.GetConverter (typeof (bool)).GetType (), "#1");
+			Assert.AreEqual (typeof (ByteConverter), TypeDescriptor.GetConverter (typeof (byte)).GetType (), "#2");
+			Assert.AreEqual (typeof (SByteConverter), TypeDescriptor.GetConverter (typeof (sbyte)).GetType (), "#3");
+			Assert.AreEqual (typeof (StringConverter), TypeDescriptor.GetConverter (typeof (string)).GetType (), "#4");
+			Assert.AreEqual (typeof (CharConverter), TypeDescriptor.GetConverter (typeof (char)).GetType (), "#5");
+			Assert.AreEqual (typeof (Int16Converter), TypeDescriptor.GetConverter (typeof (short)).GetType (), "#6");
+			Assert.AreEqual (typeof (Int32Converter), TypeDescriptor.GetConverter (typeof (int)).GetType (), "#7");
+			Assert.AreEqual (typeof (Int64Converter), TypeDescriptor.GetConverter (typeof (long)).GetType (), "#8");
+			Assert.AreEqual (typeof (UInt16Converter), TypeDescriptor.GetConverter (typeof (ushort)).GetType (), "#9");
+			Assert.AreEqual (typeof (UInt32Converter), TypeDescriptor.GetConverter (typeof (uint)).GetType (), "#10");
+			Assert.AreEqual (typeof (UInt64Converter), TypeDescriptor.GetConverter (typeof (ulong)).GetType (), "#11");
+			Assert.AreEqual (typeof (SingleConverter), TypeDescriptor.GetConverter (typeof (float)).GetType (), "#12");
+			Assert.AreEqual (typeof (DoubleConverter), TypeDescriptor.GetConverter (typeof (double)).GetType (), "#13");
+			Assert.AreEqual (typeof (DecimalConverter), TypeDescriptor.GetConverter (typeof (decimal)).GetType (), "#14");
+			Assert.AreEqual (typeof (ArrayConverter), TypeDescriptor.GetConverter (typeof (Array)).GetType (), "#15");
+			Assert.AreEqual (typeof (CultureInfoConverter), TypeDescriptor.GetConverter (typeof (CultureInfo)).GetType (), "#16");
+			Assert.AreEqual (typeof (DateTimeConverter), TypeDescriptor.GetConverter (typeof (DateTime)).GetType (), "#17");
+			Assert.AreEqual (typeof (GuidConverter), TypeDescriptor.GetConverter (typeof (Guid)).GetType (), "#18");
+			Assert.AreEqual (typeof (TimeSpanConverter), TypeDescriptor.GetConverter (typeof (TimeSpan)).GetType (), "#19");
+			Assert.AreEqual (typeof (CollectionConverter), TypeDescriptor.GetConverter (typeof (ICollection)).GetType (), "#20");
 
 			// Tests from bug #71444
-			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (typeof (IDictionary)).GetType());
-			AssertEquals (typeof(ReferenceConverter), TypeDescriptor.GetConverter (typeof (ITestInterface)).GetType());
-			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (typeof (TestClass)).GetType());
-			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (typeof (TestStruct)).GetType());
-			
-			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestClass ()).GetType());
-			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestStruct ()).GetType());
-			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (new Hashtable ()).GetType());
+			Assert.AreEqual (typeof (CollectionConverter), TypeDescriptor.GetConverter (typeof (IDictionary)).GetType (), "#21");
+			Assert.AreEqual (typeof (ReferenceConverter), TypeDescriptor.GetConverter (typeof (ITestInterface)).GetType (), "#22");
+			Assert.AreEqual (typeof (TypeConverter), TypeDescriptor.GetConverter (typeof (TestClass)).GetType (), "#23");
+			Assert.AreEqual (typeof (TypeConverter), TypeDescriptor.GetConverter (typeof (TestStruct)).GetType (), "#24");
+
+			Assert.AreEqual (typeof (TypeConverter), TypeDescriptor.GetConverter (new TestClass ()).GetType (), "#25");
+			Assert.AreEqual (typeof (TypeConverter), TypeDescriptor.GetConverter (new TestStruct ()).GetType (), "#26");
+			Assert.AreEqual (typeof (CollectionConverter), TypeDescriptor.GetConverter (new Hashtable ()).GetType (), "#27");
 
 #if NET_2_0
 			// Test from bug #76686
-			AssertEquals (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType ());
+			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
 #endif
 		}
 		
@@ -505,56 +577,56 @@ namespace MonoTests.System.ComponentModel
 		public void TestGetDefaultEvent ()
 		{
 			EventDescriptor des = TypeDescriptor.GetDefaultEvent (typeof(MyComponent));
-			AssertNull ("t1", des);
+			Assert.IsNull ( des, "#A");
 			
 			des = TypeDescriptor.GetDefaultEvent (com);
-			AssertNull ("t2", des);
+			Assert.IsNull (des, "#B");
 
 			des = TypeDescriptor.GetDefaultEvent (typeof(AnotherComponent));
-			AssertNotNull ("t3", des);
-			AssertEquals ("t4", "AnotherEvent", des.Name);
+			Assert.IsNotNull (des, "#C1");
+			Assert.AreEqual ("AnotherEvent", des.Name, "#C2");
 
 			des = TypeDescriptor.GetDefaultEvent (anothercom);
-			AssertNotNull ("t5", des);
-			AssertEquals ("t6", "AnotherEvent", des.Name);
+			Assert.IsNotNull (des, "#D1");
+			Assert.AreEqual ("AnotherEvent", des.Name, "#D2");
 
 			des = TypeDescriptor.GetDefaultEvent (sitedcom);
 #if NET_2_0
-			AssertNull ("t7", des);
+			Assert.IsNull (des, "#E1");
 #else
-			AssertNotNull ("t7/1", des);
-			AssertEquals ("t7/2", "AnotherEvent", des.Name);
+			Assert.IsNotNull (des, "#E1");
+			Assert.AreEqual ("AnotherEvent", des.Name, "#E2");
 #endif
 
 			des = TypeDescriptor.GetDefaultEvent (new MyComponent(new AnotherSite ()));
-			AssertNotNull ("t8", des);
-			AssertEquals ("t9", "AnEvent", des.Name);
+			Assert.IsNotNull (des, "#F1");
+			Assert.AreEqual ("AnEvent", des.Name, "#F2");
 
 			des = TypeDescriptor.GetDefaultEvent (new AnotherComponent(new AnotherSite ()));
-			AssertNotNull ("t10", des);
-			AssertEquals ("t11", "AnEvent", des.Name);
+			Assert.IsNotNull (des, "#G1");
+			Assert.AreEqual ("AnEvent", des.Name, "#G2");
 		}
 		
 		[Test]
 		public void TestGetDefaultProperty ()
 		{
 			PropertyDescriptor des = TypeDescriptor.GetDefaultProperty (typeof(MyComponent));
-			AssertNull ("t1", des);
+			Assert.IsNull (des, "#A");
 			
 			des = TypeDescriptor.GetDefaultProperty (com);
-			AssertNull ("t2", des);
+			Assert.IsNull (des, "#B");
 
 			des = TypeDescriptor.GetDefaultProperty (typeof(AnotherComponent));
-			AssertNotNull ("t1", des);
-			AssertEquals ("t2", "AnotherProperty", des.Name);
+			Assert.IsNotNull (des, "#C1");
+			Assert.AreEqual ("AnotherProperty", des.Name, "#C2");
 
 			des = TypeDescriptor.GetDefaultProperty (anothercom);
-			AssertNotNull ("t1", des);
-			AssertEquals ("t2", "AnotherProperty", des.Name);
+			Assert.IsNotNull (des, "#D1");
+			Assert.AreEqual ("AnotherProperty", des.Name, "#D2");
 		}
 		
 		[Test]
-#if !NET_2_0
+#if ONLY_1_1
 		// throws NullReferenceException on MS.NET 1.x due to bug
 		// which is fixed in MS.NET 2.0
 		[NUnit.Framework.Category("NotDotNet")]
@@ -562,80 +634,96 @@ namespace MonoTests.System.ComponentModel
 		public void TestGetDefaultProperty2 ()
 		{
 			PropertyDescriptor des = TypeDescriptor.GetDefaultProperty (sitedcom);
-			AssertNull ("t1", des);
+			Assert.IsNull (des, "#A");
 
 			des = TypeDescriptor.GetDefaultProperty (new MyComponent (new AnotherSite ()));
-			AssertNotNull ("t2", des);
-			AssertEquals ("t3", "TestProperty", des.Name);
+			Assert.IsNotNull (des, "#B1");
+			Assert.AreEqual ("TestProperty", des.Name, "#B2");
 
 			des = TypeDescriptor.GetDefaultProperty (new AnotherComponent (new AnotherSite ()));
-			AssertNotNull ("t4", des);
-			AssertEquals ("t5", "TestProperty", des.Name);
+			Assert.IsNotNull (des, "#C1");
+			Assert.AreEqual ("TestProperty", des.Name, "#C2");
 
 			des = TypeDescriptor.GetDefaultProperty (new AnotherComponent (new MySite ()));
-			AssertNull ("t6", des);
+			Assert.IsNull (des, "#D");
 		}
 
 		[Test]
 		public void TestGetEvents ()
 		{
 			EventDescriptorCollection col = TypeDescriptor.GetEvents (typeof(MyComponent));
-				
-			AssertEquals ("t1.1", 3, col.Count);
-			Assert ("t1.2", col.Find ("AnEvent", true) != null);
-			Assert ("t1.3", col.Find ("AnotherEvent", true) != null);
-			Assert ("t1.4", col.Find ("Disposed", true) != null);
+			Assert.AreEqual (3, col.Count, "#A1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#A2");
+			Assert.IsNotNull (col.Find ("AnotherEvent", true), "#A3");
+			Assert.IsNotNull (col.Find ("Disposed", true), "#A4");
 			
 			col = TypeDescriptor.GetEvents (com);
-			AssertEquals ("t2.1", 3, col.Count);
-			Assert ("t2.2", col.Find ("AnEvent", true) != null);
-			Assert ("t2.3", col.Find ("AnotherEvent", true) != null);
-			Assert ("t2.4", col.Find ("Disposed", true) != null);
+			Assert.AreEqual (3, col.Count, "#B1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#B2");
+			Assert.IsNotNull (col.Find ("AnotherEvent", true), "#B3");
+			Assert.IsNotNull (col.Find ("Disposed", true), "#B4");
 			
 			col = TypeDescriptor.GetEvents (sitedcom);
-			AssertEquals ("t3.1", 2, col.Count);
-			Assert ("t3.2", col.Find ("AnotherEvent", true) != null);
-			Assert ("t3.3", col.Find ("Disposed", true) != null);
-			
+			Assert.AreEqual (2, col.Count, "#C1");
+			Assert.IsNotNull (col.Find ("AnotherEvent", true), "#C2");
+			Assert.IsNotNull (col.Find ("Disposed", true), "#C3");
+
+			col = TypeDescriptor.GetEvents (nfscom);
+			Assert.AreEqual (3, col.Count, "#D1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#D2");
+			Assert.IsNotNull ( col.Find ("AnotherEvent", true), "#D3");
+			Assert.IsNotNull (col.Find ("Disposed", true), "#D4");
+
 			Attribute[] filter = new Attribute[] { new DescriptionAttribute ("test") };
 			
 			col = TypeDescriptor.GetEvents (typeof(MyComponent), filter);
-			AssertEquals ("t4.1", 1, col.Count);
-			Assert ("t4.2", col.Find ("AnEvent", true) != null);
+			Assert.AreEqual (1, col.Count, "#E1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#E2");
 			
 			col = TypeDescriptor.GetEvents (com, filter);
-			AssertEquals ("t5.1", 1, col.Count);
-			Assert ("t5.2", col.Find ("AnEvent", true) != null);
+			Assert.AreEqual (1, col.Count, "#F1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#F2");
 			
 			col = TypeDescriptor.GetEvents (sitedcom, filter);
-			AssertEquals ("t6", 0, col.Count);
+			Assert.AreEqual (0, col.Count, "#G");
+
+			col = TypeDescriptor.GetEvents (nfscom, filter);
+			Assert.AreEqual (1, col.Count, "#H1");
+			Assert.IsNotNull (col.Find ("AnEvent", true), "#H2");
 		}
 		
 		[Test]
 		public void TestGetProperties ()
 		{
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (typeof(MyComponent));
-			Assert ("t1.1", col.Find ("TestProperty", true) != null);
-			Assert ("t1.2", col.Find ("AnotherProperty", true) != null);
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#A1");
+			Assert.IsNotNull ( col.Find ("AnotherProperty", true), "#A2");
 			
 			col = TypeDescriptor.GetProperties (com);
-			Assert ("t2.1", col.Find ("TestProperty", true) != null);
-			Assert ("t2.2", col.Find ("AnotherProperty", true) != null);
-			
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#B1");
+			Assert.IsNotNull (col.Find ("AnotherProperty", true), "#B2");
+
+			col = TypeDescriptor.GetProperties (nfscom);
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#C1");
+			Assert.IsNotNull (col.Find ("AnotherProperty", true), "#C2");
+
 			Attribute[] filter = new Attribute[] { new DescriptionAttribute ("test") };
 			
 			col = TypeDescriptor.GetProperties (typeof(MyComponent), filter);
-			Assert ("t4.1", col.Find ("TestProperty", true) != null);
-			Assert ("t4.2", col.Find ("AnotherProperty", true) == null);
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#D1");
+			Assert.IsNull (col.Find ("AnotherProperty", true), "#D2");
 			
 			col = TypeDescriptor.GetProperties (com, filter);
-			Assert ("t5.1", col.Find ("TestProperty", true) != null);
-			Assert ("t5.2", col.Find ("AnotherProperty", true) == null);
-			
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#E1");
+			Assert.IsNull (col.Find ("AnotherProperty", true), "#E2");
+
+			col = TypeDescriptor.GetProperties (nfscom, filter);
+			Assert.IsNotNull (col.Find ("TestProperty", true), "#F1");
+			Assert.IsNull (col.Find ("AnotherProperty", true), "#F2");
 		}
 
 		[Test]
-#if !NET_2_0
+#if ONLY_1_1
 		// throws NullReferenceException on MS.NET 1.x due to bug
 		// which is fixed in MS.NET 2.0
 		[NUnit.Framework.Category("NotDotNet")]
@@ -643,13 +731,13 @@ namespace MonoTests.System.ComponentModel
 		public void TestGetProperties2 ()
 		{
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (sitedcom);
-			Assert ("t3.1", col.Find ("TestProperty", true) == null);
-			Assert ("t3.2", col.Find ("AnotherProperty", true) != null);
+			Assert.IsNull (col.Find ("TestProperty", true), "#A1");
+			Assert.IsNotNull (col.Find ("AnotherProperty", true), "#A2");
 
 			Attribute[] filter = new Attribute[] { new DescriptionAttribute ("test") };
 			col = TypeDescriptor.GetProperties (sitedcom, filter);
-			Assert ("t6.1", col.Find ("TestProperty", true) == null);
-			Assert ("t6.2", col.Find ("AnotherProperty", true) == null);
+			Assert.IsNull (col.Find ("TestProperty", true), "#B1");
+			Assert.IsNull (col.Find ("AnotherProperty", true), "#B2");
 		}
 
 		[TypeConverter (typeof (TestConverter))]
@@ -669,10 +757,10 @@ namespace MonoTests.System.ComponentModel
 		public void TestConverterCtorWithArgument ()
 		{
 			TypeConverter t = TypeDescriptor.GetConverter (typeof (TestConverterClass));
-			Assert ("#01", null != t.GetType ());
-			AssertEquals ("#02", typeof (TestConverter), t.GetType ());
+			Assert.IsNotNull (t.GetType (), "#A1");
+			Assert.AreEqual (typeof (TestConverter), t.GetType (), "#A2");
 			TestConverter converter = (TestConverter) t;
-			AssertEquals ("#03", typeof (TestConverterClass), converter.Type);
+			Assert.AreEqual (typeof (TestConverterClass), converter.Type, "#B");
 		}
 
 		[Test]
@@ -686,9 +774,8 @@ namespace MonoTests.System.ComponentModel
 			// Future version of CLI might contain some additional
 			// properties. In that case simply increase the
 			// number. (Also, it is fine to just remove #2.)
-			AssertEquals ("#1", 1, pc.Count);
-			AssertEquals ("#2", "Length", pc [0].Name);
+			Assert.AreEqual (1, pc.Count, "#1");
+			Assert.AreEqual ("Length", pc [0].Name, "#2");
 		}
 	}
 }
-

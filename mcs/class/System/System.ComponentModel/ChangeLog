@@ -1,3 +1,8 @@
+2007-02-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeDescriptor.cs: Do not assume that an ISite always has an
+	ITypeDescriptorFilterService. Fixes bug #80836.
+
 2007-01-29  Marek Habersack  <grendello@gmail.com>
 
 	* PasswordPropertyTextAttribute.cs: Implement.
