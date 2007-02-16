@@ -29,7 +29,6 @@ namespace System.Linq
         {
                 #region Empty
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TResult> Empty<TResult> ()
                 {
                         return new List<TResult> ();

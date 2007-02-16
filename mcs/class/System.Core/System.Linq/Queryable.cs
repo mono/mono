@@ -17,7 +17,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Alejandro Serrano "Serras" (trupill@yahoo.es)
+//      Alejandro Serrano "Serras" (trupill@yahoo.es)
+//      Marek Safar (marek.safar@gmail.com)
 //
 
 using System;
@@ -26,31 +27,26 @@ using System.Linq.Expressions;
 
 namespace System.Linq
 {
-        [System.Runtime.CompilerServices.Extension]
         public static class Queryable
         {
                 #region Count
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int Count<TSource> (
-                        IQueryable<TSource> source)
+                public static int Count<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
                         
                         if (source is ICollection<TSource>)
                                 return ((ICollection<TSource>)source).Count;
-                        else {
-                                int counter = 0;
-                                foreach (TSource element in source)
-                                        counter++;
-                                return counter;
-                        }
+                        
+                        int counter = 0;
+                        foreach (TSource element in source)
+                                counter++;
+                        return counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int Count<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> selector)
                 {
                         if (source == null || selector == null)
@@ -68,9 +64,7 @@ namespace System.Linq
                 
                 #region LongCount
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long LongCount<TSource> (
-                        IQueryable<TSource> source)
+                public static long LongCount<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -81,9 +75,8 @@ namespace System.Linq
                         return counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long LongCount<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> selector)
                 {
                         if (source == null || selector == null)
@@ -101,9 +94,7 @@ namespace System.Linq
                 
                 #region Sum
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int Sum (
-                        IQueryable<int> source)
+                public static int Sum (this IQueryable<int> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -115,9 +106,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int> selector)
                 {
                         if (source == null || selector == null)
@@ -130,9 +120,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int? Sum (
-                        IQueryable<int?> source)
+                public static int? Sum (this IQueryable<int?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -145,9 +133,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int? Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int?> selector)
                 {
                         if (source == null || selector == null)
@@ -163,9 +150,7 @@ namespace System.Linq
                         return sum;
                 }
 
-                [System.Runtime.CompilerServices.Extension]
-                public static long Sum (
-                        IQueryable<long> source)
+                public static long Sum (this IQueryable<long> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -177,9 +162,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long> selector)
                 {
                         if (source == null || selector == null)
@@ -192,9 +176,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long? Sum (
-                        IQueryable<long?> source)
+                public static long? Sum (this IQueryable<long?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -207,9 +189,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long? Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long?> selector)
                 {
                         if (source == null || selector == null)
@@ -225,9 +206,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Sum (
-                        IQueryable<double> source)
+                public static double Sum (this IQueryable<double> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -239,9 +218,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double> selector)
                 {
                         if (source == null || selector == null)
@@ -254,9 +232,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Sum (
-                        IQueryable<double?> source)
+                public static double? Sum (this IQueryable<double?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -269,9 +245,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double? Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double?> selector)
                 {
                         if (source == null || selector == null)
@@ -287,9 +262,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal Sum (
-                        IQueryable<decimal> source)
+                public static decimal Sum (this IQueryable<decimal> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -301,9 +274,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal> selector)
                 {
                         if (source == null || selector == null)
@@ -316,9 +288,7 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal? Sum (
-                        IQueryable<decimal?> source)
+                public static decimal? Sum (this IQueryable<decimal?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -331,9 +301,8 @@ namespace System.Linq
                         return sum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal? Sum<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal?> selector)
                 {
                         if (source == null || selector == null)
@@ -353,9 +322,7 @@ namespace System.Linq
                 
                 #region Min
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int Min (
-                        IQueryable<int> source)
+                public static int Min (this IQueryable<int> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -374,9 +341,7 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int? Min (
-                        IQueryable<int?> source)
+                public static int? Min (this IQueryable<int?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -393,9 +358,7 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long Min (
-                        IQueryable<long> source)
+                public static long Min (this IQueryable<long> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -414,9 +377,7 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long? Min (
-                        IQueryable<long?> source)
+                public static long? Min (this IQueryable<long?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -433,9 +394,7 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Min (
-                        IQueryable<double> source)
+                public static double Min (this IQueryable<double> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -454,9 +413,7 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Min (
-                        IQueryable<double?> source)
+                public static double? Min (this IQueryable<double?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -473,9 +430,7 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal Min (
-                        IQueryable<decimal> source)
+                public static decimal Min (this IQueryable<decimal> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -494,9 +449,7 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal? Min (
-                        IQueryable<decimal?> source)
+                public static decimal? Min (this IQueryable<decimal?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -513,9 +466,7 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource Min<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource Min<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -549,9 +500,8 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int> selector)
                 {
                         if (source == null || selector == null)
@@ -572,9 +522,8 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int? Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int?> selector)
                 {
                         if (source == null || selector == null)
@@ -593,9 +542,8 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long> selector)
                 {
                         if (source == null || selector == null)
@@ -616,9 +564,8 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long? Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long?> selector)
                 {
                         if (source == null || selector == null)
@@ -637,9 +584,8 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double> selector)
                 {
                         if (source == null || selector == null)
@@ -661,9 +607,8 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double? Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double?> selector)
                 {
                         if (source == null || selector == null)
@@ -682,9 +627,8 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal> selector)
                 {
                         if (source == null || selector == null)
@@ -705,9 +649,8 @@ namespace System.Linq
                                 return minimum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal? Min<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal?> selector)
                 {
                         if (source == null || selector == null)
@@ -726,9 +669,8 @@ namespace System.Linq
                         return (onlyNull ? null : minimum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TResult Min<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, TResult> selector)
                 {
                         if (source == null || selector == null)
@@ -768,9 +710,7 @@ namespace System.Linq
                 
                 #region Max
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int Max (
-                        IQueryable<int> source)
+                public static int Max (this IQueryable<int> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -789,9 +729,7 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static int? Max (
-                        IQueryable<int?> source)
+                public static int? Max (this IQueryable<int?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -808,9 +746,7 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long Max (
-                        IQueryable<long> source)
+                public static long Max (this IQueryable<long> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -829,9 +765,7 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static long? Max (
-                        IQueryable<long?> source)
+                public static long? Max (this IQueryable<long?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -848,9 +782,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double Max (
-                        IQueryable<double> source)
+                        this IQueryable<double> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -869,9 +802,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double? Max (
-                        IQueryable<double?> source)
+                        this IQueryable<double?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -888,9 +820,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal Max (
-                        IQueryable<decimal> source)
+                        this IQueryable<decimal> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -909,9 +840,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal? Max (
-                        IQueryable<decimal?> source)
+                        this IQueryable<decimal?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -928,9 +858,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource Max<TSource> (
-                        IQueryable<TSource> source)
+                        this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -964,9 +893,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int> selector)
                 {
                         if (source == null || selector == null)
@@ -988,9 +916,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static int? Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int?> selector)
                 {
                         if (source == null || selector == null)
@@ -1009,9 +936,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long> selector)
                 {
                         if (source == null || selector == null)
@@ -1032,9 +958,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static long? Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, long?> selector)
                 {
                         if (source == null || selector == null)
@@ -1053,9 +978,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double> selector)
                 {
                         if (source == null || selector == null)
@@ -1076,9 +1000,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static double? Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, double?> selector)
                 {
                         if (source == null || selector == null)
@@ -1097,9 +1020,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal> selector)
                 {
                         if (source == null || selector == null)
@@ -1120,9 +1042,8 @@ namespace System.Linq
                                 return maximum;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static decimal? Max<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, decimal?> selector)
                 {
                         if (source == null || selector == null)
@@ -1141,9 +1062,8 @@ namespace System.Linq
                         return (onlyNull ? null : maximum);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TResult Max<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, TResult> selector)
                 {
                         if (source == null || selector == null)
@@ -1184,9 +1104,7 @@ namespace System.Linq
         
                 #region Average
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average (
-                        IQueryable<int> source)
+                public static double Average (this IQueryable<int> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1204,9 +1122,7 @@ namespace System.Linq
                                 return (double)sum / (double)counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average (
-                        IQueryable<int?> source)
+                public static double? Average (this IQueryable<int?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1224,9 +1140,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)sum / (double?)counter);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average (
-                        IQueryable<long> source)
+                public static double Average (this IQueryable<long> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1244,9 +1158,7 @@ namespace System.Linq
                                 return (double)sum / (double)counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average (
-                        IQueryable<long?> source)
+                public static double? Average (this IQueryable<long?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1264,9 +1176,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)sum / (double?)counter);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average (
-                        IQueryable<double> source)
+                public static double Average (this IQueryable<double> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1284,9 +1194,7 @@ namespace System.Linq
                                 return sum / counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average (
-                        IQueryable<double?> source)
+                public static double? Average (this IQueryable<double?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1304,9 +1212,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)(sum / counter));
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal Average (
-                        IQueryable<decimal> source)
+                public static decimal Average (this IQueryable<decimal> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1324,9 +1230,7 @@ namespace System.Linq
                                 return sum / counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal? Average (
-                        IQueryable<decimal?> source)
+                public static decimal? Average (this IQueryable<decimal?> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1344,9 +1248,7 @@ namespace System.Linq
                         return (onlyNull ? null : (decimal?)(sum / counter));
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, int> selector)
                 {
                         if (source == null || selector == null)
@@ -1365,9 +1267,7 @@ namespace System.Linq
                                 return (double)sum / (double)counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double? Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, int?> selector)
                 {
                         if (source == null || selector == null)
@@ -1387,9 +1287,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)sum / (double?)counter);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, long> selector)
                 {
                         if (source == null || selector == null)
@@ -1408,9 +1306,7 @@ namespace System.Linq
                                 return (double)sum / (double)counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double? Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, long?> selector)
                 {
                         if (source == null || selector == null)
@@ -1430,9 +1326,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)sum/(double?)counter);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, double> selector)
                 {
                         if (source == null || selector == null)
@@ -1451,9 +1345,7 @@ namespace System.Linq
                                 return sum / counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static double? Average<TSource> (
-                        IQueryable<TSource> source,
+                public static double? Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, double?> selector)
                 {
                         if (source == null || selector == null)
@@ -1473,9 +1365,7 @@ namespace System.Linq
                         return (onlyNull ? null : (double?)(sum/counter));
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal Average<TSource> (
-                        IQueryable<TSource> source,
+                public static decimal Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, decimal> selector)
                 {
                         if (source == null || selector == null)
@@ -1494,9 +1384,7 @@ namespace System.Linq
                                 return sum / counter;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static decimal? Average<TSource> (
-                        IQueryable<TSource> source,
+                public static decimal? Average<TSource> (this IQueryable<TSource> source,
                         Func<TSource, decimal?> selector)
                 {
                         if (source == null || selector == null)
@@ -1519,7 +1407,7 @@ namespace System.Linq
                 #endregion
                 
                 #region Fold
-                
+/*                
                 [Obsolete ("Use Aggregate instead")]
                 [System.Runtime.CompilerServices.Extension]
                 public static TSource Fold<TSource> (
@@ -1538,14 +1426,13 @@ namespace System.Linq
                 {
                         return Fold<TSource, U> (source, seed, func);
                 }
-                
+*/                
                 #endregion
                 
                 #region Aggregate
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource Aggregate<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, TSource, TSource> func)
                 {
                         if (source == null || func == null)
@@ -1567,9 +1454,8 @@ namespace System.Linq
                                 return folded;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static U Aggregate<TSource, U> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         U seed,
                         Func<U, TSource, U> func)
                 {
@@ -1586,10 +1472,9 @@ namespace System.Linq
 
                 #region Concat
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> Concat<TSource> (
-                        IQueryable<TSource> first,
-                        IQueryable<TSource> second)
+                        this IQueryable<TSource> first,
+                        IEnumerable<TSource> second)
                 {
                         if (first == null || second == null)
                                 throw new ArgumentNullException ();
@@ -1601,7 +1486,7 @@ namespace System.Linq
                 }
                 
                 #endregion
-
+/*
                 #region ToSequence
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -1610,7 +1495,7 @@ namespace System.Linq
                 {
                         return (IQueryable<TSource>)source;
                 }
-                
+               
                 #endregion
                 
                 #region ToArray
@@ -1773,43 +1658,37 @@ namespace System.Linq
                 }
                 
                 #endregion
-                
+  */              
                 #region OfType
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<TSource> OfType<TSource> (
-                        IQueryable source)
+                public static IEnumerable<TResult> OfType<TResult> (this IQueryable source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
                         
                         foreach (object element in source)
-                                if (element is TSource)
-                                        yield return (TSource)element;
+                                if (element is TResult)
+                                        yield return (TResult)element;
                 }
                 
                 #endregion
                 
                 #region Cast
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<TSource> Cast<TSource> (
-                        IQueryable source)
+                public static IEnumerable<TResult> Cast<TResult> (this IQueryable source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
                         
                         foreach (object element in source)
-                                yield return (TSource)element;
+                                yield return (TResult)element;
                 }
                 
                 #endregion
 
                 #region First
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource First<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource First<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1820,9 +1699,8 @@ namespace System.Linq
                         throw new InvalidOperationException ();
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource First<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -1840,9 +1718,7 @@ namespace System.Linq
                 
                 #region FirstOrDefault
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource FirstOrDefault<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource FirstOrDefault<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1853,9 +1729,8 @@ namespace System.Linq
                         return default (TSource);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource FirstOrDefault<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -1873,9 +1748,7 @@ namespace System.Linq
                 
                 #region Last
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource Last<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource Last<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1894,9 +1767,8 @@ namespace System.Linq
                                 throw new InvalidOperationException();
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource Last<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -1922,9 +1794,7 @@ namespace System.Linq
                 
                 #region LastOrDefault
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource LastOrDefault<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource LastOrDefault<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1936,9 +1806,8 @@ namespace System.Linq
                         return lastElement;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource LastOrDefault<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -1957,9 +1826,7 @@ namespace System.Linq
                 
                 #region Single
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource Single<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource Single<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -1979,9 +1846,8 @@ namespace System.Linq
                                 throw new InvalidOperationException();
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource Single<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2008,9 +1874,7 @@ namespace System.Linq
                 
                 #region SingleOrDefault
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static TSource SingleOrDefault<TSource> (
-                        IQueryable<TSource> source)
+                public static TSource SingleOrDefault<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -2027,9 +1891,8 @@ namespace System.Linq
                         return singleElement;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource SingleOrDefault<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2053,9 +1916,8 @@ namespace System.Linq
                 
                 #region ElementAt
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource ElementAt<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         int index)
                 {
                         if (source == null)
@@ -2080,9 +1942,8 @@ namespace System.Linq
                 
                 #region ElementAtOrDefault
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static TSource ElementAtOrDefault<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         int index)
                 {
                         if (source == null)
@@ -2112,9 +1973,8 @@ namespace System.Linq
                 
                 #region DefaultIfEmpty
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> DefaultIfEmpty<TSource> (
-                        IQueryable<TSource> source)
+                        this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -2130,9 +1990,8 @@ namespace System.Linq
                                 yield return default (TSource);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> DefaultIfEmpty<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         TSource defaultValue)
                 {
                         if (source == null)
@@ -2151,7 +2010,7 @@ namespace System.Linq
                 
                 #endregion
 
-                #region EqualAll
+/*                #region EqualAll
                 
                 [System.Runtime.CompilerServices.Extension]
                 public static bool EqualAll<TSource> (
@@ -2191,12 +2050,10 @@ namespace System.Linq
                 }
                 
                 #endregion
-                
+*/                
                 #region Repeat
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static IEnumerable<TSource> Repeat<TSource> (
-                        TSource element, int count)
+                public static IEnumerable<TSource> Repeat<TSource> (this TSource element, int count)
                 {
                         if (count < 0)
                                 throw new ArgumentOutOfRangeException ();
@@ -2241,9 +2098,8 @@ namespace System.Linq
                         return null;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IQueryable<IGrouping<K, TSource>> GroupBy<TSource, K> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector)
                 {
                         throw new NotImplementedException ();
@@ -2297,18 +2153,17 @@ namespace System.Linq
                         }
                 }
 */                
-                [System.Runtime.CompilerServices.Extension]
+
                 public static IQueryable<IGrouping<K, E>> GroupBy<TSource, K, E> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector,
                         Func<TSource, E> elementSelector)
                 {
                         return GroupBy<TSource, K, E> (source, keySelector, elementSelector);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<IGrouping<K, E>> GroupBy<TSource, K, E> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector,
                         Func<TSource, E> elementSelector,
                         IEqualityComparer<K> comparer)
@@ -2359,17 +2214,15 @@ namespace System.Linq
 
                 #region OrderBy
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> OrderBy<TSource, K> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector)
                 {
                         return OrderBy<TSource, K> (source, keySelector, null);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> OrderBy<TSource, K> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector,
                         IComparer<K> comparer)
                 {
@@ -2384,17 +2237,15 @@ namespace System.Linq
                 
                 #region OrderByDescending
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> OrderByDescending<TSource, K> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector)
                 {
                         return OrderByDescending<TSource, K> (source, keySelector, null);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> OrderByDescending<TSource, K> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, K> keySelector,
                         IComparer<K> comparer)
                 {
@@ -2409,17 +2260,15 @@ namespace System.Linq
                 
                 #region ThenBy
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> ThenBy<TSource, K> (
-                        OrderedSequence<TSource> source,
+                        this OrderedSequence<TSource> source,
                         Func<TSource, K> keySelector)
                 {
                         return ThenBy<TSource, K> (source, keySelector, null);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> ThenBy<TSource, K> (
-                        OrderedSequence<TSource> source,
+                        this OrderedSequence<TSource> source,
                         Func<TSource, K> keySelector,
                         IComparer<K> comparer)
                 {
@@ -2434,17 +2283,15 @@ namespace System.Linq
                 
                 #region ThenByDescending
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> ThenByDescending<TSource, K> (
-                        OrderedSequence<TSource> source,
+                        this OrderedSequence<TSource> source,
                         Func<TSource, K> keySelector)
                 {
                         return ThenByDescending<TSource, K> (source, keySelector, null);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static OrderedSequence<TSource> ThenByDescending<TSource, K> (
-                        OrderedSequence<TSource> source,
+                        this OrderedSequence<TSource> source,
                         Func<TSource, K> keySelector,
                         IComparer<K> comparer)
                 {
@@ -2459,9 +2306,8 @@ namespace System.Linq
                 
                 #region Reverse
 
-                [System.Runtime.CompilerServices.Extension]
                 public static IQueryable<TSource> Reverse<TSource> (
-                        IQueryable<TSource> source)
+                        this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -2476,9 +2322,8 @@ namespace System.Linq
 
                 #region Take
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> Take<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         int count)
                 {
                         if (source == null)
@@ -2501,9 +2346,8 @@ namespace System.Linq
                 
                 #region Skip
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> Skip<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         int count)
                 {
                         if (source == null)
@@ -2529,9 +2373,8 @@ namespace System.Linq
                 
                 #region TakeWhile
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> TakeWhile<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2545,9 +2388,8 @@ namespace System.Linq
                         }
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> TakeWhile<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2568,9 +2410,8 @@ namespace System.Linq
                 
                 #region SkipWhile
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> SkipWhile<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2589,9 +2430,8 @@ namespace System.Linq
                         }
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> SkipWhile<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2616,9 +2456,8 @@ namespace System.Linq
 
                 #region Select
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TResult> Select<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, TResult> selector)
                 {
                         if (source == null || selector == null)
@@ -2628,9 +2467,8 @@ namespace System.Linq
                                 yield return selector (element);
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TResult> Select<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int, TResult> selector)
                 {
                         if (source == null || selector == null)
@@ -2647,9 +2485,8 @@ namespace System.Linq
                 
                 #region SelectMany
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TResult> SelectMany<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, IQueryable<TResult>> selector)
                 {
                         if (source == null || selector == null)
@@ -2660,9 +2497,8 @@ namespace System.Linq
                                         yield return item;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TResult> SelectMany<TSource, TResult> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int, IQueryable<TResult>> selector)
                 {
                         if (source == null || selector == null)
@@ -2680,9 +2516,7 @@ namespace System.Linq
 
                 #region Any
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static bool Any<TSource> (
-                        IQueryable<TSource> source)
+                public static bool Any<TSource> (this IQueryable<TSource> source)
                 {
                         if (source == null)
                                 throw new ArgumentNullException ();
@@ -2692,9 +2526,8 @@ namespace System.Linq
                         return false;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static bool Any<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2710,9 +2543,8 @@ namespace System.Linq
                 
                 #region All
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static bool All<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2728,10 +2560,7 @@ namespace System.Linq
                 
                 #region Contains
                 
-                [System.Runtime.CompilerServices.Extension]
-                public static bool Contains<TSource> (
-                        IQueryable<TSource> source,
-                        TSource value)
+                public static bool Contains<TSource> (this IQueryable<TSource> source, TSource value)
                 {
                         if (source is ICollection<TSource>) {
                                 ICollection<TSource> collection = (ICollection<TSource>)source;
@@ -2749,9 +2578,8 @@ namespace System.Linq
 
                 #region Where
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> Where<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2762,9 +2590,8 @@ namespace System.Linq
                                         yield return element;
                 }
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<TSource> Where<TSource> (
-                        IQueryable<TSource> source,
+                        this IQueryable<TSource> source,
                         Func<TSource, int, bool> predicate)
                 {
                         if (source == null || predicate == null)
@@ -2881,9 +2708,8 @@ namespace System.Linq
                 
                 # region Join
                 
-                [System.Runtime.CompilerServices.Extension]
                 public static IEnumerable<V> Join<TSource, U, K, V> (
-                        IQueryable<TSource> outer,
+                        this IQueryable<TSource> outer,
                         IQueryable<U> inner,
                         Func<TSource, K> outerKeySelector,
                         Func<U, K> innerKeySelector,
@@ -2893,7 +2719,7 @@ namespace System.Linq
                                 innerKeySelector == null || resultSelector == null)
                                 throw new ArgumentNullException ();
                         
-                        Lookup<K, U> innerKeys = ToLookup<U, K> (inner, innerKeySelector);                       
+                        /*Lookup<K, U> innerKeys = ToLookup<U, K> (inner, innerKeySelector);                       
                         /*Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
                         foreach (U element in inner)
                         {
@@ -2902,7 +2728,7 @@ namespace System.Linq
                                         innerKeys.Add (innerKey, new List<U> ());
                                 innerKeys[innerKey].Add (element);
                         }*/
-                        
+                        /*
                         foreach (TSource element in outer)
                         {
                                 K outerKey = outerKeySelector (element);
@@ -2911,7 +2737,8 @@ namespace System.Linq
                                         foreach (U innerElement in innerKeys [outerKey])
                                                 yield return resultSelector (element, innerElement);
                                 }
-                        }
+                        }*/
+                        throw new NotImplementedException ();
                 }
                 
                 # endregion
@@ -2956,9 +2783,8 @@ namespace System.Linq
                 
                 #region Compare
                 
-                [System.Runtime.CompilerServices.Extension]
                 private static bool Equals<TSource> (
-                        TSource first, TSource second)
+                        this TSource first, TSource second)
                 {
                         // Mostly, values in Enumerable<TSource> 
                         // sequences need to be compared using
@@ -2972,7 +2798,7 @@ namespace System.Linq
                 }
                 
                 #endregion
-
+/*
                 #region IndexOf
                 
                 [System.Runtime.CompilerServices.Extension]
@@ -2991,5 +2817,6 @@ namespace System.Linq
                 }
                 
                 #endregion
+*/
         }
 }
