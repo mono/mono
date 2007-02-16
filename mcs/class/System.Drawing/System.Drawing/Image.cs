@@ -339,16 +339,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return eps;
 	}
 	
-	public int GetFrameCount(FrameDimension dimension)
+	public int GetFrameCount (FrameDimension dimension)
 	{
-		int count;
+		uint count;
 		Guid guid = dimension.Guid;
-		Status status = GDIPlus.GdipImageGetFrameCount (nativeObject, ref guid, out  count); 
 
-		GDIPlus.CheckStatus (status);		
+		Status status = GDIPlus.GdipImageGetFrameCount (nativeObject, ref guid, out count); 
+		GDIPlus.CheckStatus (status);
 		
-		return count;
-		
+		return (int) count;
 	}
 	
 	public PropertyItem GetPropertyItem(int propid)
@@ -576,11 +575,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Height {
 		get {
-			int height;			
+			uint height;			
 			Status status = GDIPlus.GdipGetImageHeight (nativeObject, out height);		
 			GDIPlus.CheckStatus (status);			
 			
-			return height;
+			return (int)height;
 		}
 	}
 	

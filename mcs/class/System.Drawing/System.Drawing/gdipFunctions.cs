@@ -1001,7 +1001,7 @@ namespace System.Drawing
 		internal static extern Status GdipImageGetFrameDimensionsList ( IntPtr image, [Out] Guid [] dimensionIDs, uint count );
  
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageHeight (IntPtr image, out int height);
+		internal static extern Status GdipGetImageHeight (IntPtr image, out uint height);
 												   
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageHorizontalResolution ( IntPtr image, out float resolution );
@@ -1052,7 +1052,7 @@ namespace System.Drawing
 		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, ref Guid encoder, uint size, IntPtr buffer );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageGetFrameCount (IntPtr image, ref Guid guidDimension, out int count );
+		internal static extern Status GdipImageGetFrameCount (IntPtr image, ref Guid guidDimension, out uint count );
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageSelectActiveFrame (IntPtr image, ref Guid guidDimension, int frameIndex);
@@ -1623,6 +1623,10 @@ namespace System.Drawing
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetHemfFromMetafile (IntPtr metafile, out IntPtr hEmf);
 		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetMetafileDownLevelRasterizationLimit (IntPtr metafile, ref uint metafileRasterizationLimitDpi);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetMetafileDownLevelRasterizationLimit (IntPtr metafile, uint metafileRasterizationLimitDpi);
+		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipPlayMetafileRecord (IntPtr metafile, EmfPlusRecordType recordType, int flags, int dataSize, byte[] data);
 #if !TEST
 		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
@@ -1894,14 +1898,26 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateFromXDrawable_linux (IntPtr drawable, IntPtr display, out IntPtr graphics);
 		
-		// Stream functions for non-Win32 (libgdiplus specific(
+		// Stream functions for non-Win32 (libgdiplus specific)
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetHeaderDelegate getHeader, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
-							StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
+		static internal extern Status GdipLoadImageFromDelegate_linux (StreamGetHeaderDelegate getHeader, 
+			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
+			StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
+
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
-			StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters );		
-		
+		static internal extern Status GdipSaveImageToDelegate_linux (IntPtr image, StreamGetBytesDelegate getBytes, 
+			StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, StreamCloseDelegate close, 
+			StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters);		
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateMetafileFromDelegate_linux (StreamGetHeaderDelegate getHeader, 
+			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
+			StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr metafile);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetMetafileHeaderFromDelegate_linux (StreamGetHeaderDelegate getHeader, 
+			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
+			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr header);
 #endregion
 	}
 }

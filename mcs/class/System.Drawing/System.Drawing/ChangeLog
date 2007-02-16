@@ -1,3 +1,9 @@
+2007-02-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Fix some p/invoke definitions (int versus uint) 
+	and add more for metafile functions.
+	* Image.cs: Fix usage of corrected p/invoke signatures.
+
 2007-02-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* SystemColors.cs: Query Windows for the colors added to this class
