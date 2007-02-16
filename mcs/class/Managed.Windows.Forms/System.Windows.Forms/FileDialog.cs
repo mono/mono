@@ -2569,7 +2569,30 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
+
 		
+		protected override void OnAfterLabelEdit (LabelEditEventArgs e)
+		{
+			base.OnAfterLabelEdit (e);
+
+			// no changes were made
+			if (Items [e.Item].Text == e.Label)
+				return;
+
+			string folder;
+			
+			if (currentFolderFSEntry.RealName != null)
+				folder = currentFolderFSEntry.RealName;
+			else
+				folder = currentFolder;
+			folder = Path.Combine (folder, e.Label);
+
+			if (!vfs.CreateFolder (folder)) {
+				e.CancelEdit = true;
+				// We should really attempt to restart editing here
+			}
+		}
+
 		private void UpdateMenuItems (MenuItem senderMenuItem)
 		{
 			menuItemView.MenuItems [previousCheckedMenuItemIndex].Checked = false;
