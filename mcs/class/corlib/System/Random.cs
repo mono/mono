@@ -103,7 +103,7 @@ namespace System
 		{
 			if (maxValue < 0)
 				throw new ArgumentOutOfRangeException(Locale.GetText (
-					"Max value is less then min value."));
+					"Max value is less than min value."));
 
 			return (int)(Sample () * maxValue);
 		}
@@ -112,7 +112,7 @@ namespace System
 		{
 			if (minValue > maxValue)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"Min value is greater then max value."));
+					"Min value is greater than max value."));
 
 			uint diff = (uint)(maxValue - minValue);
 			if (diff == 0)

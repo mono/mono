@@ -1,3 +1,8 @@
+2007-02-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Fix exception messages ("then" -> "than"). Spotted by
+	Mark A. Nicolosi (#80873).
+
 2007-02-12  Miguel de Icaza  <miguel@novell.com>
 
 	* CStreamWriter.cs (Write with char []): take the lock once for
