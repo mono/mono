@@ -37,7 +37,7 @@ using System.Data.Common;
         
 namespace Mono.Data.SqliteClient
 {
-        public sealed class SqliteDataSourceEnumerator : DbDataSourceEnumerator
+        public class SqliteDataSourceEnumerator : DbDataSourceEnumerator
 	{		
                 public SqliteDataSourceEnumerator ()
                 {

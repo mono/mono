@@ -1,3 +1,29 @@
+2007-02-16  Marek Habersack  <grendello@gmail.com>
+
+	* SQLiteTransaction.cs: unseal the class.
+
+	* SQLiteParameterCollection.cs: unseal the class.
+
+	* SQLiteException.cs: unseal the class.
+
+	* SQLiteDataReader.cs: unseal the class.
+
+	* SQLiteConnectionStringBuilder.cs: unseal the class.
+
+	* SQLiteFunctionAttribute.cs: unseal the class.
+
+	* SqliteDataSourceEnumerator.cs: unseal the class.
+
+	* SQLiteConnection.cs: unseal the class.
+
+	* SQLiteFactory.cs: unseal the class.
+
+	* SQLiteCommandBuilder.cs: unseal the class.
+
+	* SQLiteParameter.cs: unseal the class.
+
+	* SQLiteCommand.cs: unseal the class.
+
 2007-02-05  Marek Habersack  <grendello@gmail.com>
 
 	* SQLiteConnectionStringBuilder.cs: Uncomment the

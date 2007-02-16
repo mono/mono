@@ -54,9 +54,9 @@ namespace Mono.Data.SqliteClient
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
   [Serializable]
-  public sealed class SqliteException : DbException
+  public class SqliteException : DbException
 #else
-  public sealed class SqliteException : Exception
+  public class SqliteException : Exception
 #endif
   {
     private SqliteErrorCode _errorCode;

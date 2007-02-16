@@ -55,7 +55,7 @@ namespace Mono.Data.SqliteClient
   /// </summary>
   [DefaultProperty("DataSource")]
   [DefaultMember("Item")]
-  public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
+  public class SqliteConnectionStringBuilder : DbConnectionStringBuilder
   {
     /// <summary>
     /// Properties of this class

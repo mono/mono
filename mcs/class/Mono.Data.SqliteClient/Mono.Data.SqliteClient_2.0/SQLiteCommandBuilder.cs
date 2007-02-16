@@ -49,7 +49,7 @@ namespace Mono.Data.SqliteClient
   /// <summary>
   /// Sqlite implementation of DbCommandBuilder.
   /// </summary>
-  public sealed class SqliteCommandBuilder : DbCommandBuilder
+  public class SqliteCommandBuilder : DbCommandBuilder
   {
     private EventHandler<RowUpdatingEventArgs> _handler;
 

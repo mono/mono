@@ -47,7 +47,7 @@ namespace Mono.Data.SqliteClient
   /// <summary>
   /// Sqlite implementation of DbTransaction.
   /// </summary>
-  public sealed class SqliteTransaction : DbTransaction
+  public class SqliteTransaction : DbTransaction
   {
     /// <summary>
     /// The connection to which this transaction is bound

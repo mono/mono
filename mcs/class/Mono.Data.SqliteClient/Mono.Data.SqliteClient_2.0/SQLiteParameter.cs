@@ -48,7 +48,7 @@ namespace Mono.Data.SqliteClient
   /// <summary>
   /// Sqlite implementation of DbParameter.
   /// </summary>
-  public sealed class SqliteParameter : DbParameter, ICloneable
+  public class SqliteParameter : DbParameter, ICloneable
   {
     /// <summary>
     /// The data type of the parameter

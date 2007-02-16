@@ -51,7 +51,7 @@ namespace Mono.Data.SqliteClient
   /// <summary>
   /// Sqlite implementation of DbDataReader.
   /// </summary>
-  public sealed class SqliteDataReader : DbDataReader
+  public class SqliteDataReader : DbDataReader
   {
     /// <summary>
     /// Underlying command this reader is attached to

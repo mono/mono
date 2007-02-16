@@ -48,7 +48,7 @@ namespace Mono.Data.SqliteClient
   /// the loaded assemblies and initialize them in Sqlite as connections are made.
   /// </summary>
   [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-  public sealed class SqliteFunctionAttribute : Attribute
+  public class SqliteFunctionAttribute : Attribute
   {
     private string       _name;
     private int          _arguments;

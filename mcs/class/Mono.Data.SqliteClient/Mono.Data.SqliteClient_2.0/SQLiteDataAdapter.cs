@@ -53,7 +53,7 @@ namespace Mono.Data.SqliteClient
   [ToolboxItem("Sqlite.Designer.SqliteDataAdapterToolboxItem, Sqlite.Designer, Version=1.0.31.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139")]
   [Designer("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-  public sealed class SqliteDataAdapter : DbDataAdapter
+  public class SqliteDataAdapter : DbDataAdapter
   {
     private static object _updatingEventPH = new object();
     private static object _updatedEventPH = new object();
