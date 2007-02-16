@@ -99,7 +99,7 @@ namespace System.Web.Hosting {
 			// 
 			// Unique Domain ID
 			//
-			string domain_id = (virtualDir + physicalDir).GetHashCode ().ToString ("x");
+			string domain_id = "ASPHOST_" + DateTime.Now.ToString().GetHashCode().ToString("x");
 			
 			//
 			// Setup
