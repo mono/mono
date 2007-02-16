@@ -1,3 +1,10 @@
+2007-02-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* monoresgen.cs: Added support for /useSourcePath option (2.0 only).
+	Fixes bug #80571. Update usage instructions. When Exception is 
+	TargetInvocationException, and an InnerException is available then use 
+	that one instead. Support absolute filenames for resource files.
+
 2006-05-02  Robert Jordan  <robertj@gmx.net>
 
 	* monoresgen.cs (TxtResourceReader/Writer): Support escapes

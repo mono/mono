@@ -40,20 +40,41 @@ class ResGen {
 	static void Usage () {
 		string Usage = @"Mono Resource Generator version 0.1
 Usage:
-		resgen source.ext [dest.ext]
-		resgen /compile source.ext[,dest.resources] [...]
+		resgen source.ext [dest.ext]";
+#if NET_2_0
+		Usage += @"
+		resgen [options] /compile source.ext[,dest.resources] [...]";
+#else
+		Usage += @"
+		resgen /compile source.ext[,dest.resources] [...]";
+#endif
+		Usage += @"
 
 Convert a resource file from one format to another.
 The currently supported formats are: '.txt' '.resources' '.resx' '.po'.
-If the destination file is not specified, source.resources will be used.
+If the destination file is not specified, source.resources will be used.";
+#if NET_2_0
+		Usage += @"
+Options:
+/compile
+	takes a list of .resX or .txt files to convert to .resources files
+	in one bulk operation, replacing .ext with .resources for the 
+	output file name (if not set).
+/useSourcePath
+	to resolve relative file paths, use the directory of the resource 
+	file as current directory.";
+#else
+		Usage += @"
 The /compile option takes a list of .resX or .txt files to convert to
 .resources files in one bulk operation, replacing .ext with .resources for
-the output file name.
+the output file name (if not set).";
+#endif
+		Usage += @"
 ";
 		Console.WriteLine( Usage );
 	}
 	
-	static IResourceReader GetReader (Stream stream, string name) {
+	static IResourceReader GetReader (Stream stream, string name, bool useSourcePath) {
 		string format = Path.GetExtension (name);
 		switch (format.ToLower ()) {
 		case ".po":
@@ -65,7 +86,16 @@ the output file name.
 			return new ResourceReader (stream);
 		case ".resx":
 			LoadResX ();
-			return (IResourceReader)Activator.CreateInstance (resxr, new object[] {stream});
+			IResourceReader reader = (IResourceReader) Activator.CreateInstance (
+				resxr, new object[] {stream});
+			if (useSourcePath) { // only possible on 2.0 profile, or higher
+				PropertyInfo p = reader.GetType ().GetProperty ("BasePath",
+					BindingFlags.Public | BindingFlags.Instance);
+				if (p != null && p.CanWrite) {
+					p.SetValue (reader, Path.GetDirectoryName (name), null);
+				}
+			}
+			return reader;
 		default:
 			throw new Exception ("Unknown format in file " + name);
 		}
@@ -89,15 +119,14 @@ the output file name.
 		}
 	}
 	
-	static int CompileResourceFile(string sname, string dname ) {
+	static int CompileResourceFile (string sname, string dname, bool useSourcePath) {
 		FileStream source, dest;
 		IResourceReader reader;
 		IResourceWriter writer;
 
 		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
-
-			reader = GetReader (source, sname);
+			reader = GetReader (source, sname, useSourcePath);
 
 			dest = new FileStream (dname, FileMode.Create, FileAccess.Write);
 			writer = GetWriter (dest, dname);
@@ -119,6 +148,8 @@ the output file name.
 		} catch (Exception e) {
 			Console.WriteLine ("Error: {0}", e.Message);
 			Exception inner = e.InnerException;
+			if (inner is TargetInvocationException && inner.InnerException != null)
+				inner = inner.InnerException;
 			if (inner != null)
 				Console.WriteLine ("Inner exception: {0}", inner.Message);
 			return 1;
@@ -127,46 +158,121 @@ the output file name.
 	}
 	
 	static int Main (string[] args) {
-		string sname = "", dname = ""; 
-		if ((int) args.Length < 1 || args[0] == "-h" || args[0] == "-?" || args[0] == "/h" || args[0] == "/?") {
-			  Usage();
-			  return 1;
-		}		
-		if (args[0] == "/compile" || args[0] == "-compile") {
-			for ( int i=1; i< args.Length; i++ ) {				
-				if ( args[i].IndexOf(",") != -1 ){
-					string[] pair =  args[i].Split(',');
-					sname = pair[0]; 
-					dname = pair[1];
-					if (dname == ""){
-						Console.WriteLine(@"error: You must specify an input & outfile file name like this:");
-						Console.WriteLine("inFile.txt,outFile.resources." );
-						Console.WriteLine("You passed in '{0}'.", args[i] );
+		bool compileMultiple = false;
+		bool useSourcePath = false;
+		ArrayList inputFiles = new ArrayList ();
+
+		for (int i = 0; i < args.Length; i++) {
+			switch (args [i].ToLower ()) {
+			case "-h":
+			case "/h":
+			case "-?":
+			case "/?":
+				Usage ();
+				return 1;
+			case "/compile":
+			case "-compile":
+				if (inputFiles.Count > 0) {
+					// the /compile option should be specified before any files
+					Usage ();
+					return 1;
+				}
+				compileMultiple = true;
+				break;
+#if NET_2_0
+			case "/usesourcepath":
+			case "-usesourcepath":
+				if (compileMultiple) {
+					// the /usesourcepath option should not appear after the
+					// /compile switch on the command-line
+					Console.WriteLine ("ResGen : error RG0000: Invalid "
+						+ "command line syntax.  Switch: \"/compile\"  Bad value: "
+						+ args [i] + ".  Use ResGen /? for usage information.");
+					return 1;
+				}
+				useSourcePath = true;
+				break;
+#endif
+			default:
+				if (!IsFileArgument (args [i])) {
+					Usage ();
+					return 1;
+				}
+
+				ResourceInfo resInf = new ResourceInfo ();
+				if (compileMultiple) {
+					string [] pair = args [i].Split (',');
+					switch (pair.Length) {
+					case 1:
+						resInf.InputFile = Path.GetFullPath (pair [0]);
+						resInf.OutputFile = Path.ChangeExtension (resInf.InputFile,
+							"resources");
+						break;
+					case 2:
+						if (pair [1].Length == 0) {
+							Console.WriteLine (@"error: You must specify an input & outfile file name like this:");
+							Console.WriteLine ("inFile.txt,outFile.resources.");
+							Console.WriteLine ("You passed in '{0}'.", args [i]);
+							return 1;
+						}
+						resInf.InputFile = Path.GetFullPath (pair [0]);
+						resInf.OutputFile = Path.GetFullPath (pair [1]);
+						break;
+					default:
+						Usage ();
 						return 1;
 					}
 				} else {
-					sname = args[i]; 
-					dname = Path.ChangeExtension (sname, "resources");
+					if ((i + 1) < args.Length) {
+						resInf.InputFile = Path.GetFullPath (args [i]);
+						// move to next arg, since we assume that one holds
+						// the name of the output file
+						i++;
+						resInf.OutputFile = Path.GetFullPath (args [i]);
+					} else {
+						resInf.InputFile = Path.GetFullPath (args [i]);
+						resInf.OutputFile = Path.ChangeExtension (resInf.InputFile,
+							"resources");
+					}
 				}
-				int ret = CompileResourceFile( sname, dname );
-				if (ret != 0 ) {
-					return ret;
-				}
+				inputFiles.Add (resInf);
+				break;
 			}
-			return 0;
-		
 		}
-		else if (args.Length == 1) {
-			sname = args [0];
-			dname = Path.ChangeExtension (sname, "resources");
-		} else if (args.Length != 2) {
+
+		if (inputFiles.Count == 0) {
 			Usage ();
 			return 1;
-		} else {
-			sname = args [0];
-			dname = args [1];			
-		}		
-		return CompileResourceFile( sname, dname );
+		}
+
+		foreach (ResourceInfo res in inputFiles) {
+			int ret = CompileResourceFile (res.InputFile, res.OutputFile, useSourcePath);
+			if (ret != 0 )
+				return ret;
+		}
+		return 0;
+	}
+
+	private static bool RunningOnUnix {
+		get {
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			return ((platform == 4) || (platform == 128));
+		}
+	}
+
+	private static bool IsFileArgument (string arg)
+	{
+		if ((arg [0] != '-') && (arg [0] != '/'))
+			return true;
+
+		// cope with absolute filenames for resx files on unix, as
+		// they also match the option pattern
+		//
+		// `/home/test.resx' is considered as a resx file, however
+		// '/test.resx' is considered as error
+		return (RunningOnUnix && arg.Length > 2 && arg.IndexOf ('/', 2) != -1);
 	}
 }
 
@@ -538,3 +644,8 @@ class PoResourceWriter : IResourceWriter
 	public void Generate () {}
 }
 
+class ResourceInfo
+{
+	public string InputFile;
+	public string OutputFile;
+}
