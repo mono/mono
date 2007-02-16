@@ -25,7 +25,15 @@ using System.Collections.Generic;
 
 namespace System.Linq.Expressions
 {
-        public sealed class Expression<TDelegate>
+        public sealed class Expression<TDelegate> : LambdaExpression
         {
+                private Expression ()
+                {
+                }
+                
+                public new TDelegate Compile ()
+                {
+                        throw new NotImplementedException ();
+                }
         }
 }
