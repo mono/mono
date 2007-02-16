@@ -22,7 +22,7 @@ class X {
 		//
 		increment = (int x) => { return x + 1; };
 		r = increment (4);
-		Console.WriteLine ("Shoudl be 5={0}", r);
+		Console.WriteLine ("Should be 5={0}", r);
 		if (r != 5)
 			return 1;
 

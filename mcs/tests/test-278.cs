@@ -11,7 +11,7 @@ class X {
         {
                 Rect rect = new Rect ();
                 rect.X += 20;
-                Console.WriteLine ("Shoudl be 20: " + rect.X);
+                Console.WriteLine ("Should be 20: " + rect.X);
                 return rect.X == 20 ? 0 : 1;
         }
 }
