@@ -400,7 +400,9 @@ namespace System.Net.Mail {
 
 		private void SendData (string data)
 		{
-			writer.WriteLine (data);
+			writer.Write (data);
+			// Certain SMTP servers will reject mail sent with unix line-endings; see http://cr.yp.to/docs/smtplf.html
+			writer.Write ("\r\n");
 			writer.Flush ();
 		}
 
@@ -555,7 +557,9 @@ namespace System.Net.Mail {
 
 		private SmtpResponse SendCommand (string command)
 		{
-			writer.WriteLine (command);
+			writer.Write (command);
+			// Certain SMTP servers will reject mail sent with unix line-endings; see http://cr.yp.to/docs/smtplf.html
+			writer.Write ("\r\n");
 			writer.Flush ();
 			return Read ();
 		}

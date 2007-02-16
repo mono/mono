@@ -1,3 +1,8 @@
+2007-02-16  Geoff Norton  <gnorton@customerdna.com>
+
+	* SmtpClient.cs: Dont send bare LF.  Send <CR><LF> regardless
+	of platform.  (ref: http://cr.yp.to/docs/smtplf.html)
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* MailMessage.cs: Add suport to the MailMessage constructor to
