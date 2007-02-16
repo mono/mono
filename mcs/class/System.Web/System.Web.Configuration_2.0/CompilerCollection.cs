@@ -102,7 +102,7 @@ namespace System.Web.Configuration
 		public new Compiler this[string language] {
 			get {
 				foreach (Compiler c in this) {
-					if (c.Language.ToLower().Contains (language.ToLower()))
+					if (c.Language.IndexOf (language, StringComparison.InvariantCultureIgnoreCase) != -1)
 						return c;
 				}
 				return null;

@@ -10,6 +10,9 @@
 	property using the FontUnit/Unit constructors which take,
 	respectively, Unit and double/unittype parameters. This avoids
 	culture-specific parsing.
+	Also fix converting from invariant strings in a culture-aware
+	environment (e.g. in a page that uses Culture="auto") during the
+	page parsing phase.
 
 2007-02-12  Marek Habersack  <grendello@gmail.com>
 

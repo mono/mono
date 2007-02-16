@@ -1631,7 +1631,7 @@ namespace System.Web.Compilation
 			TypeConverter converter = TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
 			
 			if (converter != null && converter.CanConvertFrom (typeof (string))) {
-				object value = converter.ConvertFrom (str);
+				object value = converter.ConvertFromInvariantString (str);
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
