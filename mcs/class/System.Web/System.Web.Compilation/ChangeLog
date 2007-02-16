@@ -1,5 +1,8 @@
 2007-02-16  Marek Habersack  <grendello@gmail.com>
 
+	* CachingCompiler.cs, BaseCompiler.cs: Make sure that no assembly
+	is referenced twice by the compiler(s).
+
 	* TemplateControlCompiler.cs: Fix the problem with cultures which
 	have a comma as their decimal separator and font/whatever
 	units. New code does not reparse the text representation of the

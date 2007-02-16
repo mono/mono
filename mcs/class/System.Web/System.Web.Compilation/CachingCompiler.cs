@@ -237,23 +237,33 @@ namespace System.Web.Compilation
 		static void GetExtraAssemblies (CompilerParameters options)
 		{
 			ArrayList al = WebConfigurationManager.ExtraAssemblies;
+			StringCollection refAsm = options.ReferencedAssemblies;
+			string asmName;
+			
 			if (al != null && al.Count > 0) {
-				foreach (object o in al)
-					if (o is string)
-						options.ReferencedAssemblies.Add ((string) o);
+				foreach (object o in al) {
+					asmName = o as string;
+					if (asmName != null && !refAsm.Contains (asmName))
+						refAsm.Add (asmName);
+				}
 			}
 
 			IList list = BuildManager.CodeAssemblies;
 			if (list != null && list.Count > 0) {
-				foreach (object o in list)
-					if (o is string)
-						options.ReferencedAssemblies.Add ((string) o);
+				foreach (object o in list) {
+					asmName = o as string;
+					if (asmName != null && !refAsm.Contains (asmName))
+						refAsm.Add (asmName);
+				}
 			}
 			
 			list = BuildManager.TopLevelAssemblies;
 			if (list != null && list.Count > 0) {
-				foreach (Assembly a in list)
-					options.ReferencedAssemblies.Add (a.Location);
+				foreach (Assembly a in list) {
+					asmName = a.Location;
+					if (!refAsm.Contains (asmName))
+						refAsm.Add (asmName);
+				}
 			}
 		}
 #endif

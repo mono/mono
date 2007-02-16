@@ -32,6 +32,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 using System.Web.UI;
@@ -108,26 +109,37 @@ namespace System.Web.Compilation
 					mainNS.Imports.Add (new CodeNamespaceImport ((string) o));
 			}
 
+			// StringCollection.Contains has O(n) complexity, but
+			// considering the number of comparisons we make on
+			// average and the fact that using an intermediate array
+			// would be even more costly, this is fine here.
+			StringCollection refAsm = unit.ReferencedAssemblies;
+			string asmName;
 			if (parser.Assemblies != null) {
 				foreach (object o in parser.Assemblies) {
-					if (o is string)
-						unit.ReferencedAssemblies.Add ((string) o);
+					asmName = o as string;
+					if (asmName != null && !refAsm.Contains (asmName))
+						refAsm.Add (asmName);
 				}
 			}
 
 #if NET_2_0
 			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			if (al != null && al.Count > 0) {
-				foreach (object o in al)
-					if (o is string)
-						unit.ReferencedAssemblies.Add ((string) o);
+				foreach (object o in al) {
+					asmName = o as string;
+					if (asmName != null && !refAsm.Contains (asmName))
+						refAsm.Add (asmName);
+				}
 			}
 
 			IList list = BuildManager.CodeAssemblies;
 			if (list != null && list.Count > 0) {
-				foreach (object o in list)
-					if (o is string)
-						unit.ReferencedAssemblies.Add ((string) o);
+				foreach (object o in list) {
+					asmName = o as string;
+					if (asmName != null && !refAsm.Contains (asmName))
+						refAsm.Add (asmName);
+				}
 			}
 #endif
 			// Late-bound generators specifics (as for MonoBASIC/VB.NET)
