@@ -185,12 +185,14 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		internal void GeneratePreview ()
 		{
-			try {
-				if (document == null)
-					return;
+			if (document == null)
+				return;
 
+			try {
 				if (page_infos == null) {
-					document.PrintController = new PrintControllerWithStatusDialog (controller);
+					if (document.PrintController == null || !(document.PrintController is PrintControllerWithStatusDialog)) {
+						document.PrintController = new PrintControllerWithStatusDialog (controller);
+					}
 					document.Print ();
 					page_infos = controller.GetPreviewPageInfo ();
 				}
@@ -223,8 +225,21 @@ namespace System.Windows.Forms {
 
 		public void InvalidatePreview()
 		{
-			page_infos = null;
-			image_cache = null;
+			if (page_infos != null) {
+				for (int i = 0; i < page_infos.Length; i++) {
+					if (page_infos[i].Image != null) {
+						page_infos[i].Image.Dispose();
+					}
+				}
+				page_infos = null;
+			}
+			if (image_cache != null) {
+				for (int i = 0; i < image_cache.Length; i++) {
+					if (image_cache[i] !=null)
+						image_cache[i].Dispose();
+				}
+				image_cache = null;
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]

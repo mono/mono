@@ -788,6 +788,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnClosing(CancelEventArgs e) {
+			print_preview.InvalidatePreview ();
 			base.OnClosing (e);
 		}
 
