@@ -1800,7 +1800,7 @@ namespace System.Windows.Forms
 			{
 				EndEdit (edit_item);
 			}
-			
+
 			internal void BeginEdit (ListViewItem item)
 			{
 				if (edit_item != null)
@@ -1847,35 +1847,30 @@ namespace System.Windows.Forms
 				edit_text_box.Visible = true;
 				edit_text_box.Focus ();
 				edit_text_box.SelectAll ();
-				
+
+				edit_item = item;
 				edit_args = new LabelEditEventArgs (owner.Items.IndexOf(edit_item));
 				owner.OnBeforeLabelEdit (edit_args);
 				
 				if (edit_args.CancelEdit)
 					EndEdit (item);
-				
-				edit_item = item;
 			}
 			
 			internal void EndEdit (ListViewItem item)
 			{
+				if (edit_item != null && edit_item == item) {
+
+					edit_args.SetLabel (edit_text_box.Text);
+					owner.OnAfterLabelEdit (edit_args);
+
+					if (!edit_args.CancelEdit && edit_args.Label != null)
+						edit_item.Text = edit_text_box.Text;
+				}
+
 				if (edit_text_box != null && edit_text_box.Visible) {
 					edit_text_box.Visible = false;
 				}
-				
-				if (edit_item != null && edit_item == item) {
-					owner.OnAfterLabelEdit (edit_args);
-					
-					if (!edit_args.CancelEdit) {
-						if (edit_args.Label != null)
-							edit_item.Text = edit_args.Label;
-						else
-							edit_item.Text = edit_text_box.Text;
-					}
-					
-				}
-				
-				
+
 				edit_item = null;
 			}
 
@@ -1998,7 +1993,7 @@ namespace System.Windows.Forms
 			protected override void OnKeyDown (KeyEventArgs e)
 			{
 				if (e.KeyCode == Keys.Return && Visible) {
-					this.Visible = false;
+					Visible = false;
 					OnEditingFinished (e);
 				}
 			}
