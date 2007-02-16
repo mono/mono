@@ -206,7 +206,7 @@ namespace System.Resources
 				dataSectionOffset = reader.ReadInt32();
 				nameSectionOffset = reader.BaseStream.Position;
 			} catch(EndOfStreamException e) {
-				throw new ArgumentException("Stream is not a valied .resources file!  It was possibly truncated.", e);
+				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.", e);
 			}
 		}
 
