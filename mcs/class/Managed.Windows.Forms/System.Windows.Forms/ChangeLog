@@ -1,3 +1,14 @@
+2007-02-16  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Modified the method for inserting images to
+	taking a line and position instead of tag and position.
+	* RichTextBox.cs: Handle PngBlip data by inserting the png image
+	into the RTF file.
+	* TextControl.cs: Allow images to be inserted as the first tag of
+	a line.
+	- Fix some off by one issues when we assume the first tag is a
+	text tag, not an image tag.
+
 2007-02-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Set focus to ListView when ItemControl gets a

@@ -865,6 +865,7 @@ namespace System.Windows.Forms {
 		public void LoadFile(System.IO.Stream data, RichTextBoxStreamType fileType) {
 			document.Empty();
 
+			
 			// FIXME - ignoring unicode
 			if (fileType == RichTextBoxStreamType.PlainText) {
 				StringBuilder   sb;
@@ -1219,7 +1220,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void HandleControl(RTF.RTF rtf) {
-//			Console.WriteLine ("HANDLING MAJOR:  {0}      MINOR:  {1}", rtf.Major, rtf.Minor);
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
 					switch(rtf.Minor) {
@@ -1242,6 +1242,26 @@ namespace System.Windows.Forms {
 					rtf.SkipGroup();
 					break;
 				}
+
+				case RTF.Major.PictAttr:
+					switch (rtf.Minor) {
+					case Minor.PngBlip:
+						FlushText (rtf, false);
+						try {
+							Image img = new Bitmap (new MemoryStream (rtf.Image));
+
+							Line line = document.GetLine (rtf_cursor_y);
+							document.InsertImage (line, 0, img);
+							rtf_cursor_x++;
+
+							FlushText (rtf, true);
+							rtf.Image = null;
+						} catch (Exception e) {
+							Console.Error.WriteLine ("EXCEPTION while loading image:   {0}", e);
+						}
+						break;
+					}
+					break;
 
 				case RTF.Major.CharAttr: {
 					switch(rtf.Minor) {

@@ -475,8 +475,8 @@ namespace System.Windows.Forms {
 
 				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					tag.ascent = 0;
-					tag = tag.next;
 					tag.shift = 0;
+					tag = tag.next;
 				}
 
 				size = tag.SizeOfPosition (g, pos);
@@ -1847,7 +1847,7 @@ namespace System.Windows.Forms {
 
 				LineTag tag = line.tags;
 				while (tag != null) {
-					Console.Write ("\t<tag color='{0}'>", tag.color.Color);
+					Console.Write ("\t<tag type='{0}' span='{1}->{2}'>", tag.GetType (), tag.start, tag.length);
 					Console.Write (tag.Text ());
 					Console.WriteLine ("\t</tag>");
 					tag = tag.next;
@@ -2005,7 +2005,7 @@ namespace System.Windows.Forms {
 						}
 
 						tag.Draw (g, current_brush,
-								line.widths [old_tag_pos - 1] + line.X - viewport_x,
+								line.widths [Math.Max (0, old_tag_pos - 1)] + line.X - viewport_x,
 								line_y + tag.shift,
 								old_tag_pos - 1, Math.Min (tag.length, tag_pos - old_tag_pos),
 								text.ToString() );
@@ -2208,22 +2208,35 @@ namespace System.Windows.Forms {
 
 		}
 		
-		internal void InsertImage (LineTag tag, int pos, Image image)
+		internal void InsertImage (Line line, int pos, Image image)
 		{
-			Line line;
+			LineTag next_tag;
+			LineTag tag;
 			int len;
 
 			len = 1;
 
-			line = tag.line;
+			// Just a place holder basically
 			line.text.Insert (pos, "I");
 
-			LineTag next_tag = tag.Break (pos);
 			ImageTag image_tag = new ImageTag (line, pos, image);
-			image_tag.CopyFormattingFrom (tag);
+			if (pos != 0) {
+				tag = LineTag.FindTag (line, pos);
+				next_tag = tag.Break (pos);
+				image_tag.CopyFormattingFrom (tag);
+				tag.next = image_tag;
+			} else {
+				tag = null;
+				next_tag = LineTag.FindTag (line, pos);
+				image_tag.CopyFormattingFrom (next_tag);
+				image_tag.next = next_tag;
+				next_tag.previous = image_tag;
+				line.tags = image_tag;
+			}
+
 			image_tag.next = next_tag;
 			image_tag.previous = tag;
-			tag.next = image_tag;
+			
 			
 			tag = image_tag.next;
 			while (tag != null) {
@@ -2234,7 +2247,6 @@ namespace System.Windows.Forms {
 			line.Grow (len);
 			line.recalc = true;
 
-			DumpDoc ();
 			UpdateView (line, pos);
 		}
 
@@ -3345,7 +3357,6 @@ namespace System.Windows.Forms {
 			SuspendRecalc ();
 
 			// First, delete any selected text
-			Console.WriteLine ("selection start:  {0}   selection end:  {1}", selection_start, selection_end);
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (selection_start.line == selection_end.line) {
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
@@ -3704,7 +3715,7 @@ namespace System.Windows.Forms {
 
 					end = tag.end;
 
-					for (int pos = tag.start-1; pos < end; pos++) {
+					for (int pos = tag.start; pos < end; pos++) {
 						// When clicking on a character, we position the cursor to whatever edge
 						// of the character the click was closer
 						if (x < (line.X + line.widths[pos] + ((line.widths[pos+1]-line.widths[pos])/2))) {
@@ -4291,6 +4302,16 @@ namespace System.Windows.Forms {
 		{
 			dc.DrawImage (image, x, y);
 		}
+
+		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
+		{
+			dc.DrawImage (image, x, y);
+		}
+
+		public override string Text ()
+		{
+			return "I";
+		}
 	}
 
 	internal class LineTag {
@@ -4344,7 +4365,7 @@ namespace System.Windows.Forms {
 			get {
 				if (length == 0)
 					return 0;
-				return line.widths [start + length - 1] - line.widths [start - 1];
+				return line.widths [start + length - 1] - (start != 0 ? line.widths [start - 1] : 0);
 			}
 		}
 
@@ -4405,7 +4426,7 @@ namespace System.Windows.Forms {
 			return new_tag;
 		}
 
-		public string Text ()
+		public virtual string Text ()
 		{
 			return line.text.ToString (start - 1, length);
 		}

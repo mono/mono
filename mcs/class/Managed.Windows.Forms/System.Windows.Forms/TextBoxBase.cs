@@ -1937,7 +1937,7 @@ namespace System.Windows.Forms {
 				return true;
 			} else if (format.Name == DataFormats.Bitmap) {
 				document.undo.BeginUserAction (Locale.GetText ("Paste"));
-				document.InsertImage (document.caret.tag, document.caret.pos, (Image) clip.GetData (DataFormats.Bitmap));
+				document.InsertImage (document.caret.line, document.caret.pos, (Image) clip.GetData (DataFormats.Bitmap));
 				document.MoveCaret (CaretDirection.CharForward);
 				document.undo.EndUserAction ();
 				return true;
