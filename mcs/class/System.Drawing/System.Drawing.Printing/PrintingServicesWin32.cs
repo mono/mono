@@ -43,13 +43,10 @@ namespace System.Drawing.Printing
 
 		}
 
-		internal override bool IsPrinterValid(string printer, bool force)
+		internal override bool IsPrinterValid(string printer)
 		{
 			if (printer == null | printer == String.Empty)
 				return false;
-
-			if (!force && this.printer_name != null && String.Intern(this.printer_name).Equals(printer))
-				return is_printer_valid;
 
 			int ret = Win32DocumentProperties (IntPtr.Zero, IntPtr.Zero, printer, IntPtr.Zero, IntPtr.Zero, 0);
 			is_printer_valid = (ret > 0);
@@ -75,6 +72,12 @@ namespace System.Drawing.Printing
 			ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_ORIENTATION, IntPtr.Zero, IntPtr.Zero);
 			if (ret != -1)
 				settings.landscape_angle = ret;
+			
+			IntPtr dc = IntPtr.Zero;
+			dc = Win32CreateIC (null, printer, null, IntPtr.Zero /* DEVMODE */);
+			ret = Win32GetDeviceCaps (dc, (int)DevCapabilities.TECHNOLOGY);
+			settings.is_plotter = ret == (int)PrinterType.DT_PLOTTER;
+			Win32DeleteDC (dc);
 
 			try {
 				Win32OpenPrinter (printer, out hPrn, IntPtr.Zero);
@@ -88,13 +91,15 @@ namespace System.Drawing.Printing
 
 				devmode = (DEVMODE) Marshal.PtrToStructure (ptr_dev, typeof(DEVMODE));
 
-	        		foreach (PaperSize paper_size in settings.PaperSizes) {
+				LoadPrinterPaperSizes (printer, settings);
+	        	foreach (PaperSize paper_size in settings.PaperSizes) {
 					if ((int) paper_size.Kind ==  devmode.dmPaperSize) {
 						settings.DefaultPageSettings.PaperSize = paper_size;
 						break;
 					}
 				}
 
+				LoadPrinterPaperSources (printer, settings);
 				foreach (PaperSource paper_source in settings.PaperSources) {
 					if ((int) paper_source.Kind ==  devmode.dmDefaultSource) {
 						settings.DefaultPageSettings.PaperSource = paper_source;
@@ -106,7 +111,7 @@ namespace System.Drawing.Printing
 	        		Win32ClosePrinter (hPrn);
 
 	        		if (ptr_dev != IntPtr.Zero)
-					Marshal.FreeHGlobal (ptr_dev);
+						Marshal.FreeHGlobal (ptr_dev);
 	        	}
 
 
@@ -140,7 +145,7 @@ namespace System.Drawing.Printing
 			Marshal.FreeHGlobal (buff);
 		}
 
-		internal override void LoadPrinterPaperSizes (string printer, PrinterSettings settings)
+		void LoadPrinterPaperSizes (string printer, PrinterSettings settings)
 		{
 			int items, ret;
 			IntPtr ptr_names, buff_names = IntPtr.Zero;
@@ -148,7 +153,11 @@ namespace System.Drawing.Printing
 			IntPtr ptr_sizes_enum, buff_sizes_enum = IntPtr.Zero;
 			string name;
 
-			settings.PaperSizes.Clear ();
+			if (settings.PaperSizes == null)
+				settings.paper_sizes = new PrinterSettings.PaperSizeCollection (new PaperSize [0]);
+			else
+				settings.PaperSizes.Clear ();
+
 			items = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_PAPERSIZE, IntPtr.Zero, IntPtr.Zero);
 
 			if (items == -1)
@@ -202,7 +211,7 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		internal override bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file)
+		internal static bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file)
 		{
 			DOCINFO di = new DOCINFO ();
 			int ret;
@@ -218,7 +227,7 @@ namespace System.Drawing.Printing
 			return (ret > 0) ? true : false;
 		}
 
-		internal override void LoadPrinterPaperSources (string printer, PrinterSettings settings)
+		void LoadPrinterPaperSources (string printer, PrinterSettings settings)
 		{
 			int items, ret;
 			IntPtr ptr_names, buff_names = IntPtr.Zero;
@@ -226,7 +235,11 @@ namespace System.Drawing.Printing
 			PaperSourceKind kind;
 			string name;
 
-			settings.PaperSources.Clear ();
+			if (settings.PaperSources == null)
+				settings.paper_sources = new PrinterSettings.PaperSourceCollection (new PaperSource [0]);
+			else
+				settings.PaperSources.Clear ();
+
 			items = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_BINNAMES, IntPtr.Zero, IntPtr.Zero);
 
 			if (items == -1)
@@ -266,19 +279,19 @@ namespace System.Drawing.Printing
 
 		}
 
-		internal override bool StartPage (GraphicsPrinter gr)
+		internal static bool StartPage (GraphicsPrinter gr)
 		{
 			int ret = Win32StartPage (gr.Hdc);
 			return (ret > 0) ? true : false;
 		}
 
-		internal override bool EndPage (GraphicsPrinter gr)
+		internal static bool EndPage (GraphicsPrinter gr)
 		{
 			int ret = Win32EndPage (gr.Hdc);
 			return (ret > 0) ? true : false;
 		}
 
-		internal override bool EndDoc (GraphicsPrinter gr)
+		internal static bool EndDoc (GraphicsPrinter gr)
 		{
 			int ret = Win32EndDoc (gr.Hdc);
 			Win32DeleteDC (gr.Hdc);
@@ -286,7 +299,7 @@ namespace System.Drawing.Printing
 			return (ret > 0) ? true : false;
 		}
 
-		internal override IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings default_page_settings)
+		internal static IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings default_page_settings)
 		{
 			IntPtr dc = IntPtr.Zero;
 			dc = Win32CreateDC (null, settings.PrinterName, null, IntPtr.Zero /* DEVMODE */);
@@ -300,13 +313,13 @@ namespace System.Drawing.Printing
 				int length = name.Capacity;
 
 				if (Win32GetDefaultPrinter (name, ref length) > 0)
-					if (this.IsPrinterValid(name.ToString(), false))
+					if (IsPrinterValid(name.ToString()))
 						return name.ToString ();
 				return String.Empty;
 			}
 		}
 
-		internal override PrinterSettings.StringCollection InstalledPrinters {
+		internal static PrinterSettings.StringCollection InstalledPrinters {
 			get {
 				PrinterSettings.StringCollection col = new PrinterSettings.StringCollection (new string[] {});
 				PRINTER_INFO printer_info;
@@ -425,15 +438,19 @@ namespace System.Drawing.Printing
 		static extern int Win32EnumPrinters (int Flags, string Name, uint Level, IntPtr pPrinterEnum, uint cbBuf,
     			ref uint pcbNeeded, ref uint pcReturned);
 
-      		[DllImport("winspool.drv", EntryPoint="GetDefaultPrinter", CharSet=CharSet.Unicode, SetLastError=true)]
-      		private static extern int Win32GetDefaultPrinter (StringBuilder buffer, ref int bufferSize);
+      	[DllImport("winspool.drv", EntryPoint="GetDefaultPrinter", CharSet=CharSet.Unicode, SetLastError=true)]
+      	private static extern int Win32GetDefaultPrinter (StringBuilder buffer, ref int bufferSize);
 
 		[DllImport("winspool.drv", EntryPoint="DocumentProperties", CharSet=CharSet.Unicode, SetLastError=true)]
 		private static extern int Win32DocumentProperties (IntPtr hwnd, IntPtr hPrinter, string pDeviceName,
 			IntPtr pDevModeOutput, IntPtr pDevModeInput, int fMode);
 
-    		[DllImport("gdi32.dll", EntryPoint="CreateDC")]
+    	[DllImport("gdi32.dll", EntryPoint="CreateDC")]
 		static extern IntPtr Win32CreateDC (string lpszDriver, string lpszDevice,
+   			string lpszOutput, IntPtr lpInitData);
+
+    	[DllImport("gdi32.dll", EntryPoint="CreateIC")]
+		static extern IntPtr Win32CreateIC (string lpszDriver, string lpszDevice,
    			string lpszOutput, IntPtr lpInitData);
 
    		[DllImport("gdi32.dll", CharSet=CharSet.Unicode, EntryPoint="StartDoc")]
@@ -451,9 +468,12 @@ namespace System.Drawing.Printing
 		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
   		public static extern IntPtr Win32DeleteDC (IntPtr hDc);
 
-    		//
-    		// Structs
-    		//
+		[DllImport("gdi32.dll", EntryPoint="GetDeviceCaps")]
+  		public static extern int Win32GetDeviceCaps (IntPtr hDc, int index);
+
+		//
+		// Structs
+		//
 		[StructLayout (LayoutKind.Sequential)]
 		internal struct PRINTER_INFO
 		{
@@ -478,9 +498,9 @@ namespace System.Drawing.Printing
 			public uint	Status;
 			public uint	cJobs;
 			public uint	AveragePPM;
-    		}
+    	}
 
-    		[StructLayout (LayoutKind.Sequential)]
+    	[StructLayout (LayoutKind.Sequential)]
 		internal struct DOCINFO
 		{
   			public int     	cbSize;
@@ -600,7 +620,60 @@ namespace System.Drawing.Printing
 			PS_SERVER_UNKNOWN = 	0x00800000,
 			PS_POWER_SAVE = 	0x01000000
  		}
+ 		
+ 		// for use in GetDeviceCaps
+		internal enum DevCapabilities
+		{
+			TECHNOLOGY	= 2,
+		}
+		
+		internal enum PrinterType
+		{
+			DT_PLOTTER		= 0, // Vector Plotter
+			DT_RASDIPLAY	= 1, // Raster Display
+			DT_RASPRINTER	= 2, // Raster printer
+			DT_RASCAMERA	= 3, // Raster camera
+			DT_CHARSTREAM	= 4, // Character-stream, PLP
+			DT_METAFILE		= 5, // Metafile, VDM
+			DT_DISPFILE		= 6, // Display-file
+		}
+
  	}
+
+	class GlobalPrintingServicesWin32 : GlobalPrintingServices
+	{
+		internal override PrinterSettings.StringCollection InstalledPrinters {
+			get {
+				return PrintingServicesWin32.InstalledPrinters;
+			}
+		}
+
+		internal override IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings default_page_settings)
+		{
+			return PrintingServicesWin32.CreateGraphicsContext (settings, default_page_settings);
+		}
+
+		internal override bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file)
+		{
+			return PrintingServicesWin32.StartDoc (gr, doc_name, output_file);
+		}
+
+		internal override bool EndDoc (GraphicsPrinter gr)
+		{
+			return PrintingServicesWin32.EndDoc (gr);
+		}
+
+		internal override bool StartPage (GraphicsPrinter gr)
+		{
+			return PrintingServicesWin32.StartPage (gr);
+		}
+
+		internal override bool EndPage (GraphicsPrinter gr)
+		{
+			return PrintingServicesWin32.EndPage (gr);
+		}
+	}
 }
+
 
 

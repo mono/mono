@@ -42,8 +42,9 @@ namespace System.Drawing.Printing
 #endif	
 	public class PaperSource
 	{
-		PaperSourceKind _Kind;
-		string _SourceName;
+		private PaperSourceKind kind;
+		private string source_name;
+		internal bool is_default;
 		
 #if NET_2_0
 		public PaperSource ()
@@ -51,30 +52,36 @@ namespace System.Drawing.Printing
 			
 		}
 #endif
-		// NOTE:how to construct this class?
-		// I have added a constructor, but I am not sure of me...
+
 		internal PaperSource(string sourceName, PaperSourceKind kind)
 		{
-			_SourceName = sourceName;
-			_Kind = kind;
+			this.source_name = sourceName;
+			this.kind = kind;
+		}
+
+		internal PaperSource(string sourceName, PaperSourceKind kind, bool isDefault)
+		{
+			this.source_name = sourceName;
+			this.kind = kind;
+			this.is_default = IsDefault;
 		}
 
 		public PaperSourceKind Kind{
 			get {
-				return _Kind; 
+				return this.kind; 
 			}
 		}
 		public string SourceName{
 			get {
-				return _SourceName;
+				return this.source_name;
 			}
 #if NET_2_0
 		set {
-				_SourceName = value;
+				this.source_name = value;
 			}
 #endif
 		}
-
+		
 #if NET_2_0
 		[MonoTODO]
 		public int RawKind {
@@ -87,9 +94,15 @@ namespace System.Drawing.Printing
 		}		  
 #endif
 
+		internal bool IsDefault {
+			get { return is_default;}
+			set { is_default = value;}
+		}
+
 		public override string ToString(){
 			string ret = "[PaperSource {0} Kind={1}]";
 			return String.Format(ret, this.SourceName, this.Kind);
 		}
+		
 	}
 }

@@ -77,7 +77,6 @@ namespace System.Drawing.Printing
 		internal PageSettings(PrinterSettings printerSettings, bool color, bool landscape, PaperSize paperSize, PaperSource paperSource, PrinterResolution printerResolution)
 		{
 			PrinterSettings = printerSettings;
-			
 			this.color = color;
 			this.landscape = landscape;
 			this.paperSize = paperSize;
@@ -144,7 +143,8 @@ namespace System.Drawing.Printing
 				return paperSize;
 			}
 			set{
-				paperSize = value;
+				if (value != null)
+					paperSize = value;
 			}
 		}
 		
@@ -155,7 +155,8 @@ namespace System.Drawing.Printing
 				return paperSource;
 			}
 			set{
-				paperSource = value;
+				if (value != null)
+					paperSource = value;
 			}
 		}
 		
@@ -166,7 +167,8 @@ namespace System.Drawing.Printing
 				return printerResolution;
 			}
 			set{
-				printerResolution = value;
+				if (value != null)
+					printerResolution = value;
 			}
 		}
 		

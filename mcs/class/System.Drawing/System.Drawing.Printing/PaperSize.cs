@@ -46,6 +46,8 @@ namespace System.Drawing.Printing
 		int width;
 		int height;
 		PaperKind kind;
+		internal bool is_default;
+		
 #if NET_2_0
 		public PaperSize ()
 		{
@@ -58,7 +60,16 @@ namespace System.Drawing.Printing
 			this.height = height;
 			this.name = name;
 			this.kind = PaperKind.Custom;
-		}		
+		}
+
+		internal PaperSize(string name, int width, int height, PaperKind kind, bool isDefault)
+		{
+			this.width = width;
+			this.height = height;
+			this.name = name;
+			this.kind = PaperKind.Custom;
+			this.is_default = isDefault;
+		}
 
 		public int Width{
 			get{
@@ -97,7 +108,6 @@ namespace System.Drawing.Printing
 				return kind;
 			}
 		}
-		internal void SetKind (PaperKind k) {kind = k;}
 #if NET_2_0
 		[MonoTODO]
 		public int RawKind {
@@ -106,6 +116,14 @@ namespace System.Drawing.Printing
 		}
 
 #endif
+	
+		internal bool IsDefault {
+			get { return this.is_default; }
+			set { this.is_default = value; }
+		}
+
+
+		internal void SetKind (PaperKind k) {kind = k;}
 
 		public override string ToString(){
 			string ret = "[PaperSize {0} Kind={1} Height={2} Width={3}]";

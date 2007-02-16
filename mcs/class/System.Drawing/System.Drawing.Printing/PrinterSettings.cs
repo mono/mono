@@ -31,6 +31,7 @@
 
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 
@@ -60,17 +61,22 @@ namespace System.Drawing.Printing
 		internal PrinterSettings.PaperSizeCollection paper_sizes;
 		internal PrinterSettings.PaperSourceCollection paper_sources;
 		private PageSettings default_pagesettings;
+		private Duplex duplex;
+		internal bool is_plotter;
+		private PrintingServices printing_services;
 		
-		public PrinterSettings() : this (SysPrn.Service.DefaultPrinter)
+		internal NameValueCollection printer_capabilities; // this stores a list of all the printer options. Used only in cups, but might come in handy on win too.
+		public PrinterSettings() : this (SysPrn.CreatePrintingService ())
 		{			
 			print_tofile = false;
 		}
 		
-		internal PrinterSettings (string printer)
-		{						
-			printer_name = printer;			
+		internal PrinterSettings (PrintingServices printing_services)
+		{
+			this.printing_services = printing_services;
+			printer_name = printing_services.DefaultPrinter;
 			ResetToDefaults ();
-			SysPrn.Service.LoadPrinterSettings (printer_name, this);			
+			printing_services.LoadPrinterSettings (printer_name, this);
 		}
 		
 		private void ResetToDefaults ()
@@ -81,9 +87,306 @@ namespace System.Drawing.Printing
 			default_pagesettings = null;
 			maximum_page = 9999; 	
 			copies = 1;
+			collate = true;
+		}
+	
+		//properties
+		
+		public bool CanDuplex
+		{
+			get { return can_duplex; }
+		}
+		
+		public bool Collate
+		{
+			get { return collate; }
+			set { collate = value; }
 		}
 
+		public short Copies
+		{
+			get { return copies; }
+			set { 
+				if (value < 0)
+					throw new ArgumentException ("The value of the Copies property is less than zero.");
+				
+				copies = value;
+			}
+		}
+		
+		public PageSettings DefaultPageSettings
+		{
+			get {
+				if (default_pagesettings == null) {
+					default_pagesettings = new PageSettings (this,
+						SupportsColor,
+						false,	
+						// Real defaults are set by LoadPrinterSettings				
+						new PaperSize("A4", 827, 1169),						
+						new PaperSource("Tray", PaperSourceKind.FormSource),						
+						new PrinterResolution(200, 200, PrinterResolutionKind.Medium));
+				}
+				
+				return default_pagesettings;
+			}
+		}
+
+		public Duplex Duplex
+		{
+			get { return this.duplex; }
+			set { this.duplex = value; }
+		}
+		
+		public int FromPage
+		{
+			get { return from_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the FromPage property is less than zero");
+				
+				from_page = value;
+			}
+		}
+		
+		public static PrinterSettings.StringCollection InstalledPrinters
+		{
+			get { return SysPrn.GlobalService.InstalledPrinters; }
+		}
+	
+		public bool IsDefaultPrinter
+		{
+			get { return (printer_name == printing_services.DefaultPrinter); }
+		}
+
+		public bool IsPlotter
+		{
+			get { return is_plotter; }
+		}
+
+		public bool IsValid
+		{
+			get { return printing_services.IsPrinterValid (this.printer_name); }
+		}
+		
+		public int LandscapeAngle
+		{
+			get { return landscape_angle; }
+		}
+		
+		public int MaximumCopies
+		{
+			get { return maximum_copies; }
+		}
+		
+		public int MaximumPage
+		{
+			get { return maximum_page; }
+			set {
+				// This not documented but behaves like MinimumPage
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+				
+				maximum_page = value;
+			}
+		}
+		
+		public int MinimumPage
+		{
+			get { return minimum_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
+				
+				minimum_page = value;
+			}
+		}
+		
+		public PrinterSettings.PaperSizeCollection PaperSizes
+		{
+			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
+
+				return paper_sizes;				
+			}
+		}
+
+		public PrinterSettings.PaperSourceCollection PaperSources
+		{
+			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
+
+				return paper_sources;
+			}
+		}
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string PrintFileName
+		{
+			get { return print_filename; }
+			set { print_filename = value; }
+		}
+		public string PrinterName
+		{
+			get { return printer_name; }
+			set { 
+				if (printer_name == value)
+					return;
+					
+				printer_name = value;
+				printing_services.LoadPrinterSettings (printer_name, this);
+			}
+		}
+		
+		public PrinterSettings.PrinterResolutionCollection PrinterResolutions
+		{
+			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
+					
+				if (printer_resolutions == null) {
+					printer_resolutions = new PrinterSettings.PrinterResolutionCollection (new PrinterResolution[] {});
+					printing_services.LoadPrinterResolutions (printer_name, this);
+				}
+				
+				return printer_resolutions;
+			}
+		}
+		
+		public PrintRange PrintRange
+		{
+			get { return print_range; }
+			set { 
+				if (value != PrintRange.AllPages && value != PrintRange.Selection &&
+					value != PrintRange.SomePages)
+					throw new InvalidEnumArgumentException ("The value of the PrintRange property is not one of the PrintRange values");
+				
+				print_range = value;
+			}
+		}
+		
+		public bool PrintToFile
+		{
+			get { return print_tofile; }
+			set { print_tofile = value; }
+		}
+		
+		public bool SupportsColor
+		{
+			get { return supports_color; }
+		}
+		
+		public int ToPage
+		{
+			get { return to_page; }
+			set {
+				if (value < 0)
+					throw new ArgumentException ("The value of the ToPage property is less than zero");
+				
+				to_page = value;
+			}		
+		}
+		
+		internal NameValueCollection PrinterCapabilities {
+			get { 
+				if (this.printer_capabilities == null)
+					this.printer_capabilities = new NameValueCollection();
+				return this.printer_capabilities;
+			}
+		}
+
+		//methods		
+		public object Clone ()
+		{
+			PrinterSettings ps = new PrinterSettings (printing_services);
+			return ps;
+		}
+
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics()
+		{
+			throw new NotImplementedException();
+		}
+#if NET_2_0
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics(bool honorOriginAtMargins)		
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics(PageSettings pageSettings)		
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics (PageSettings pageSettings, bool honorOriginAtMargins)		
+		{
+			throw new NotImplementedException();
+		} 
+#endif		
+
+		[MonoTODO("PrinterSettings.GetHdevmode")]
+		public IntPtr GetHdevmode()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.GetHdevmode")]
+		public IntPtr GetHdevmode(PageSettings pageSettings)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.GetHdevname")]
+		public IntPtr GetHdevnames()
+		{
+			throw new NotImplementedException();
+		}
+		
+#if NET_2_0
+
+		[MonoTODO("IsDirectPrintingSupported")]
+		public bool IsDirectPrintingSupported (Image image)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO("IsDirectPrintingSupported")]
+		public bool IsDirectPrintingSupported (ImageFormat imageFormat)
+		{
+			throw new NotImplementedException();
+		}
+#endif
+
+		[MonoTODO("PrinterSettings.SetHdevmode")]
+		public void SetHdevmode(IntPtr hdevmode)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.SetHdevnames")]
+		public void SetHdevnames(IntPtr hdevnames)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public override string ToString()
+		{
+			return "Printer [PrinterSettings " + printer_name + " Copies=" + copies +  " Collate=" + collate 
+			+ " Duplex=" + can_duplex + " FromPage=" + from_page + " LandscapeAngle=" + landscape_angle 
+			+ " MaximumCopies=" + maximum_copies + " OutputPort=" + " ToPage=" + to_page + "]";
+
+		}
+		
 		// Public subclasses
+		#region Public Subclasses
+		
 
 		public class PaperSourceCollection : ICollection, IEnumerable
 		{
@@ -265,296 +568,11 @@ namespace System.Drawing.Printing
 			}			
 		}
 		
-		//properties
-		
-		public bool CanDuplex
-		{
-			get { return can_duplex; }
-		}
-		
-		public bool Collate
-		{
-			get { return collate; }
-			set { collate = value; }
-		}
+		#endregion
 
-		public short Copies
+		void GetPrintDialogInfo (string printer_name, ref string port, ref string type, ref string status, ref string comment)
 		{
-			get { return copies; }
-			set { 
-				if (value < 0)
-					throw new ArgumentException ("The value of the Copies property is less than zero.");
-				
-				copies = value;
-			}
+			printing_services.GetPrintDialogInfo (printer_name, ref port, ref type, ref status, ref comment);
 		}
-		
-		public PageSettings DefaultPageSettings
-		{
-			get {
-				if (default_pagesettings == null) {
-					default_pagesettings = new PageSettings (this,
-						SupportsColor,
-						false,	
-						// Real defaults are set by LoadPrinterSettings				
-						new PaperSize("A4", 827, 1169),						
-						new PaperSource("default", PaperSourceKind.FormSource),						
-						new PrinterResolution(200, 200, PrinterResolutionKind.Medium));
-				}
-				
-				return default_pagesettings;
-			}
-		}
-
-		[MonoTODO("PrinterSettings.Duplex")]
-		public Duplex Duplex
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-		
-		public int FromPage
-		{
-			get { return from_page; }
-			set {
-				if (value < 0)
-					throw new ArgumentException ("The value of the FromPage property is less than zero");
-				
-				from_page = value;
-			}
-		}
-		
-		public static PrinterSettings.StringCollection InstalledPrinters
-		{
-			get { return SysPrn.Service.InstalledPrinters; }
-		}
-	
-		public bool IsDefaultPrinter
-		{
-			get { return (printer_name == SysPrn.Service.DefaultPrinter); }
-		}
-
-		[MonoTODO("PrinterSettings.IsPlotter")]
-		public bool IsPlotter
-		{
-			get { return false; }
-		}
-
-		public bool IsValid
-		{
-			get { return SysPrn.Service.IsPrinterValid(this.printer_name, false); }
-		}
-		
-		public int LandscapeAngle
-		{
-			get { return landscape_angle; }
-		}
-		
-		public int MaximumCopies
-		{
-			get { return maximum_copies; }
-		}
-		
-		public int MaximumPage
-		{
-			get { return maximum_page; }
-			set {
-				// This not documented but behaves like MinimumPage
-				if (value < 0)
-					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
-				
-				maximum_page = value;
-			}
-		}
-		
-		public int MinimumPage
-		{
-			get { return minimum_page; }
-			set {
-				if (value < 0)
-					throw new ArgumentException ("The value of the MaximumPage property is less than zero");
-				
-				minimum_page = value;
-			}
-		}
-		
-		public PrinterSettings.PaperSizeCollection PaperSizes
-		{
-			get {
-				if (!this.IsValid)
-					throw new InvalidPrinterException(this);
-				if (paper_sizes == null) {
-					paper_sizes = new PrinterSettings.PaperSizeCollection (new PaperSize [] {});
-					SysPrn.Service.LoadPrinterPaperSizes (printer_name, this);
-				}				
-				return paper_sizes;				
-			}
-		}
-
-		public PrinterSettings.PaperSourceCollection PaperSources
-		{
-			get {
-				if (!this.IsValid)
-					throw new InvalidPrinterException(this);
-				if (paper_sources == null) {
-					paper_sources = new PrinterSettings.PaperSourceCollection (new PaperSource [] {});
-					SysPrn.Service.LoadPrinterPaperSources (printer_name, this);
-				}
-				return paper_sources;
-			}
-		}
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		string PrintFileName
-		{
-			get { return print_filename; }
-			set { print_filename = value; }
-		}
-		public string PrinterName
-		{
-			get { return printer_name; }
-			set { 
-				if (printer_name == value)
-					return;
-					
-				printer_name = value;
-				SysPrn.Service.LoadPrinterSettings (printer_name, this);
-			}
-		}
-		
-		public PrinterSettings.PrinterResolutionCollection PrinterResolutions
-		{
-			get {
-				if (!this.IsValid)
-					throw new InvalidPrinterException(this);
-				if (printer_resolutions == null) {
-					printer_resolutions = new PrinterSettings.PrinterResolutionCollection (new PrinterResolution[] {});
-					SysPrn.Service.LoadPrinterResolutions (printer_name, this);
-				}
-				return printer_resolutions;
-			}
-		}
-		
-		public PrintRange PrintRange
-		{
-			get { return print_range; }
-			set { 
-				if (value != PrintRange.AllPages && value != PrintRange.Selection &&
-					value != PrintRange.SomePages)
-					throw new InvalidEnumArgumentException ("The value of the PrintRange property is not one of the PrintRange values");
-				
-				print_range = value;
-			}
-		}
-		
-		public bool PrintToFile
-		{
-			get { return print_tofile; }
-			set { print_tofile = value; }
-		}
-		
-		public bool SupportsColor
-		{
-			get { return supports_color; }
-		}
-		
-		public int ToPage
-		{
-			get { return to_page; }
-			set {
-				if (value < 0)
-					throw new ArgumentException ("The value of the ToPage property is less than zero");
-				
-				to_page = value;
-			}		
-		}
-
-		//methods		
-		public object Clone ()
-		{
-			PrinterSettings ps = new PrinterSettings (printer_name);
-			return ps;
-		}
-
-		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
-		public Graphics CreateMeasurementGraphics()
-		{
-			throw new NotImplementedException();
-		}
-#if NET_2_0
-		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
-		public Graphics CreateMeasurementGraphics(bool honorOriginAtMargins)		
-		{
-			throw new NotImplementedException();
-		}
-		
-		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
-		public Graphics CreateMeasurementGraphics(PageSettings pageSettings)		
-		{
-			throw new NotImplementedException();
-		}
-		
-		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
-		public Graphics CreateMeasurementGraphics (PageSettings pageSettings, bool honorOriginAtMargins)		
-		{
-			throw new NotImplementedException();
-		} 
-#endif		
-
-		[MonoTODO("PrinterSettings.GetHdevmode")]
-		public IntPtr GetHdevmode()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO("PrinterSettings.GetHdevmode")]
-		public IntPtr GetHdevmode(PageSettings pageSettings)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO("PrinterSettings.GetHdevname")]
-		public IntPtr GetHdevnames()
-		{
-			throw new NotImplementedException();
-		}
-		
-#if NET_2_0
-
-		[MonoTODO("IsDirectPrintingSupported")]
-		public bool IsDirectPrintingSupported (Image image)
-		{
-			throw new NotImplementedException();
-		}
-		
-		[MonoTODO("IsDirectPrintingSupported")]
-		public bool IsDirectPrintingSupported (ImageFormat imageFormat)
-		{
-			throw new NotImplementedException();
-		}
-#endif
-
-		[MonoTODO("PrinterSettings.SetHdevmode")]
-		public void SetHdevmode(IntPtr hdevmode)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO("PrinterSettings.SetHdevnames")]
-		public void SetHdevnames(IntPtr hdevnames)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public override string ToString()
-		{
-			return "Printer [PrinterSettings " + printer_name + " Copies=" + copies +  " Collate=" + collate 
-			+ " Duplex=" + can_duplex + " FromPage=" + from_page + " LandscapeAngle=" + landscape_angle 
-			+ " MaximumCopies=" + maximum_copies + " OutputPort=" + " ToPage=" + to_page + "]";
-
-		}		
 	}
 }

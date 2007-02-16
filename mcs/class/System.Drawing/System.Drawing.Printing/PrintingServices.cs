@@ -33,27 +33,23 @@ using System.Drawing.Imaging;
 
 namespace System.Drawing.Printing
 {
+	/// <summary>
+	/// This class is designed to cache the values retrieved by the 
+	/// native printing services, as opposed to GlobalPrintingServices, which
+	/// doesn't cache any values.
+	/// </summary>
 	internal abstract class PrintingServices
 	{
-		// Properties
-		internal abstract PrinterSettings.StringCollection InstalledPrinters { get; }
+		#region Properties
 		internal abstract string DefaultPrinter { get; }
-				
+		#endregion
 
-		// Methods
-		internal abstract bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file);
-		internal abstract IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings page_settings);
-		internal abstract bool StartPage (GraphicsPrinter gr);
-		internal abstract bool EndPage (GraphicsPrinter gr);
-		internal abstract bool EndDoc (GraphicsPrinter gr);
-		
+		#region Methods
+		internal abstract bool IsPrinterValid(string printer);
 		internal abstract void LoadPrinterSettings (string printer, PrinterSettings settings);
 		internal abstract void LoadPrinterResolutions (string printer, PrinterSettings settings);
-		internal abstract void LoadPrinterPaperSizes (string printer, PrinterSettings settings);
-		internal abstract void LoadPrinterPaperSources (string printer, PrinterSettings settings);
-		internal abstract bool IsPrinterValid(string printer, bool force);
 
-		//Used from SWF
+		// Used from SWF
 		internal abstract void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment);
 		
 		internal void LoadDefaultResolutions (PrinterSettings.PrinterResolutionCollection col)
@@ -63,28 +59,70 @@ namespace System.Drawing.Printing
 			col.Add (new PrinterResolution ((int) PrinterResolutionKind.Low, -1, PrinterResolutionKind.Low));
 			col.Add (new PrinterResolution ((int) PrinterResolutionKind.Draft, -1, PrinterResolutionKind.Draft));
 		}
+		#endregion
+	}
+	
+	internal abstract class GlobalPrintingServices
+	{
+		#region Properties
+		internal abstract PrinterSettings.StringCollection InstalledPrinters { get; }
+		#endregion
+
+		#region Methods
+		internal abstract IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings page_settings);
+
+		internal abstract bool StartDoc (GraphicsPrinter gr, string doc_name, string output_file);
+		internal abstract bool StartPage (GraphicsPrinter gr);
+		internal abstract bool EndPage (GraphicsPrinter gr);
+		internal abstract bool EndDoc (GraphicsPrinter gr);
+		#endregion
+	
 	}
 
 	internal class SysPrn
 	{
-		static PrintingServices service;
+		static GlobalPrintingServices global_printing_services;
+		static bool is_unix;
 
 		static SysPrn ()
 		{
-			if (GDIPlus.RunningOnUnix ()) {
-				service = new  PrintingServicesUnix ();
-			} else {
-				service = new PrintingServicesWin32 ();
+			is_unix = GDIPlus.RunningOnUnix ();
+		}
+		
+		internal static PrintingServices CreatePrintingService () {
+			if (is_unix)
+				return new PrintingServicesUnix ();
+			return new PrintingServicesWin32 ();				
+		}			
+
+		internal static GlobalPrintingServices GlobalService {
+			get {
+				if (global_printing_services == null) {
+					if (is_unix)
+						global_printing_services = new GlobalPrintingServicesUnix ();
+					else
+						global_printing_services = new GlobalPrintingServicesWin32 ();
+				}
+
+				return global_printing_services;
 			}
 		}
 
-		static internal PrintingServices Service {
-			get { return service; }
-		}
-
-		internal static void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment)
-		{
-			service.GetPrintDialogInfo (printer, ref port, ref type, ref status, ref comment);
+		internal class Printer {
+			public readonly string Name;
+			public readonly string Comment;
+			public readonly string Port;
+			public readonly string Type;
+			public readonly string Status;
+			public PrinterSettings Settings;
+			public bool IsDefault;
+			
+			public Printer (string port, string type, string status, string comment) {
+				Port = port;
+				Type = type;
+				Status = status;
+				Comment = comment;
+			}
 		}
 	}
 	

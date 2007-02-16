@@ -1,3 +1,58 @@
+2007-02-16  Andreia Gaita  <avidigal@novell.com>
+
+	Redesign how and when cups gets called to minimize
+	p/invokes, implements caching of printers and printer
+	settings as per calberto's patch - #79822, plotter detection, 
+	duplex, fixes for image disposing, code modularization, 
+	misc. fixes.
+	
+	* PageSettings.cs: Check and ignore null setter values on
+	paper sizes, sources and resolutions.
+	
+	* PaperSize.cs: Add default paper size flag
+	
+	* PaperSource.cs: Add default paper source flag, minor code
+	beautification
+	
+	* PrinterSettings.cs: Add duplex and plotter implementation, 
+	modify calls to PrintingServices to support caching, add
+	a printer capabilities list to store specific printer options - 
+	only loaded with cups, for now. Move the internal list classes
+	to the end of the code so as not to clutter.
+	
+	* PrintingServices.cs: Separate the PrintingServices class in 2 - 
+	PrintingServices and GlobalPrintingServices (see calberto's patch
+	in #79822). The PrintingServices class is where all the methods
+	caching information reside, the GlobalPrintingServices methods do 
+	no caching.
+	The cached information resides on the Printer class, added to the 
+	SysPrn class.
+	
+	* PrintingServicesUnix.cs: Big rewrite. 
+	- Essentially, redesigned and modularized the code to minimize cups 
+	calls. Then, applied the caching so all the cups calls are reduced 
+	to a minimum, by loading a list of printers onto a hashtable, then 
+	loading the settings of the chosen printer and saving that in the 
+	hashtable all in one go.
+	- Also, fixes for loading	the proper default values of the printer, 
+	which are stored in it's global options;
+	- Modularization of cups/ppd loading methods (LoadPrinterOptions, 
+	LoadOptionList, OpenPrinter, ClosePrinter) so we don't repeat 
+	cups/ppd loading loops everywhere. 
+	- Proper disposing of pointers and structures, calling the proper
+	cups free calls.
+	- Add duplex support
+	
+	* PrintingServicesWin32.cs: IsPrinterValid is no longer caching the value,
+	since it should be supporting global caching as well, though that is not
+	yet complete on win32. Implements plotter detection support, and changes for
+	the new PrinterSettings/GlobalPrinterSettings structure. Some minor changes
+	the code to minimize p/invoke calls (load the printer sources and sizes 
+	before accessing the collections)
+	
+	* StandardPrintController.cs: PrinterSettings/GlobalPrinterSettings structure
+	changes
+
 2007-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingServicesUnix.cs: Ensure we free the original pointer in
