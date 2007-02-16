@@ -1,5 +1,14 @@
 2007-02-16  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Implement aliases on mime handlers, so things like
+	System.String are mapped to text.
+	- Handle dataobjects, getting all the possible formats out of them
+	- We dont need the drag event args before we give feedback. This
+	allows feedback cursors to be immediate before selections have
+	been converted.
+
+2007-02-16  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Modified the method for inserting images to
 	taking a line and position instead of tag and position.
 	* RichTextBox.cs: Handle PngBlip data by inserting the png image

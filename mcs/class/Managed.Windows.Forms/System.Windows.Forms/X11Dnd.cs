@@ -60,14 +60,20 @@ namespace System.Windows.Forms {
 
 		private class MimeHandler {
 			public string Name;
+			public string [] Aliases;
 			public IntPtr Type;
 			public IntPtr NonProtocol;
 			public IDataConverter Converter;
 			
-			public MimeHandler (string name, IDataConverter converter)
+			public MimeHandler (string name, IDataConverter converter) : this (name, converter, name)
+			{
+			}
+
+			public MimeHandler (string name, IDataConverter converter, params string [] aliases)
 			{
 				Name = name;
 				Converter = converter;
+				Aliases = aliases;
 			}
 
 			public override string ToString ()
@@ -83,8 +89,9 @@ namespace System.Windows.Forms {
 //			new MimeHandler ("text/richtext", new MimeConverter (RtfConverter)),
 
 			new MimeHandler ("text/plain", new TextConverter ()),
-			new MimeHandler ("text/html", new HtmlConverter ()),
-			new MimeHandler ("text/uri-list", new UriListConverter ()),
+			new MimeHandler ("text/plain", new TextConverter (), "System.String", DataFormats.Text),
+			new MimeHandler ("text/html", new HtmlConverter (), DataFormats.Html),
+			new MimeHandler ("text/uri-list", new UriListConverter (), DataFormats.FileDrop),
 			new MimeHandler ("application/x-mono-serialized-object",
 					new SerializedObjectConverter ())
 		};
@@ -181,9 +188,13 @@ namespace System.Windows.Forms {
 				int len;
 				string str = data as string;
 
-				if (data == null)
-					return;
-				
+				if (str == null) {
+					IDataObject dobj = data as IDataObject;
+					if (dobj == null)
+						return;
+					str = (string) dobj.GetData ("System.String", true);
+				}
+
 				if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
 					byte [] bytes = Encoding.ASCII.GetBytes (str);
 					buffer = Marshal.AllocHGlobal (bytes.Length);
@@ -236,6 +247,13 @@ namespace System.Windows.Forms {
 			{
 				string [] uri_list = data as string [];
 
+				if (uri_list == null) {
+					IDataObject dobj = data as IDataObject;
+					if (dobj == null)
+						return;
+					uri_list = dobj.GetData (DataFormats.FileDrop, true) as string [];
+				}
+
 				if (uri_list == null)
 					return;
 
@@ -246,7 +264,7 @@ namespace System.Windows.Forms {
 					res.Append ("\r\n");
 				}
 
-				IntPtr buffer = Marshal.StringToHGlobalAnsi ((string) data);
+				IntPtr buffer = Marshal.StringToHGlobalAnsi ((string) res.ToString ());
 				int len = 0;
 				while (Marshal.ReadByte (buffer, len) != 0)
 					len++;
@@ -564,6 +582,7 @@ namespace System.Windows.Forms {
 		{
 			QueryContinueDragEventArgs qce = new QueryContinueDragEventArgs ((int) XplatUI.State.ModifierKeys,
 					escape, action);
+
 			Control c = MwfWindow (source);
 			c.DndContinueDrag (qce);
 
@@ -584,13 +603,11 @@ namespace System.Windows.Forms {
 
 		private void GiveFeedback (IntPtr action)
 		{
-			if (drag_event == null)
-				return;
-			GiveFeedbackEventArgs gfe = new GiveFeedbackEventArgs (drag_event.Effect, true);
-			Control c = MwfWindow (source);
+			GiveFeedbackEventArgs gfe = new GiveFeedbackEventArgs (EffectFromAction (drag_data.Action), true);
 
+			Control c = MwfWindow (source);
 			c.DndFeedback (gfe);
-			
+
 			if (gfe.UseDefaultCursors) {
 				Cursor cursor = CursorNo;
 				if (drag_data.WillAccept) {
@@ -783,7 +800,7 @@ namespace System.Windows.Forms {
 					return true;
 
 				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
-
+				
 				GiveFeedback (xevent.ClientMessageEvent.ptr5);
 			}
 			return true;
@@ -875,8 +892,10 @@ namespace System.Windows.Forms {
 		private MimeHandler FindHandler (string name)
 		{
 			foreach (MimeHandler handler in MimeHandlers) {
-				if (handler.Name == name)
-					return handler;
+				foreach (string alias in handler.Aliases) {
+					if (alias == name)
+						return handler;
+				}
 			}
 			return null;
 		}
@@ -1188,9 +1207,13 @@ namespace System.Windows.Forms {
 
 			 */
 
-			if (data is IDataObject) {
-				
-
+			IDataObject data_object = data as IDataObject;
+			if (data_object != null) {
+				foreach (string format in data_object.GetFormats (true)) {
+					MimeHandler handler = FindHandler (format);
+					if (handler != null && !res.Contains (handler.Type))
+						res.Add (handler.Type);
+				}
 			}
 
 			if (data is ISerializable) {
