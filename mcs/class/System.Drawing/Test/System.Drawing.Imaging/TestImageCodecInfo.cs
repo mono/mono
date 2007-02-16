@@ -226,6 +226,19 @@ namespace MonoTests.System.Drawing.Imaging {
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
+		public void TiffCodec ()
+		{
+			Guid g = new Guid ("557cf405-1a04-11d3-9a73-0000f81ef32e");
+			Check (GetEncoder (g), GetDecoder (g), ImageFormat.Tiff.Guid,
+				"TIFF", null, "*.TIF;*.TIFF",
+				ImageCodecFlags.Builtin | ImageCodecFlags.Encoder | ImageCodecFlags.Decoder | ImageCodecFlags.SupportBitmap,
+				"TIFF", "image/tiff", 1, 2, "FF-FF", "49-49", "4D-4D");
+		}
+
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void IconCodec_Encoder ()
 		{
 			Guid g = new Guid ("557cf407-1a04-11d3-9a73-0000f81ef32e");
