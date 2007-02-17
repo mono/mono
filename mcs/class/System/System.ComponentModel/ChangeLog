@@ -1,3 +1,7 @@
+2007-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimeConverter.cs: Fixed typo in exception message.
+
 2007-02-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeDescriptor.cs: Do not assume that an ISite always has an

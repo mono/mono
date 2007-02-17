@@ -68,7 +68,7 @@ namespace System.ComponentModel
 						return DateTime.Parse (DateString, info);
 					}
 				} catch {
-					throw new FormatException (DateString + "is not a valid DateTime value.");
+					throw new FormatException (DateString + " is not a valid DateTime value.");
 				}
 			}
 			return base.ConvertFrom (context, culture, value);
