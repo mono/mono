@@ -67,15 +67,7 @@ namespace System.Web.Configuration
 			PagesConfiguration config;
 			if (context == null)
 				context = HttpContext.Current;
-
-			try {
-				config = context.GetConfig ("system.web/pages") as PagesConfiguration;
-			} catch {
-				return new PagesConfiguration (null);
-			}
-			return config;
+			return context.GetConfig ("system.web/pages") as PagesConfiguration;
 		}
-
 	}
 }
-

@@ -49,8 +49,9 @@ namespace System.Web.Configuration
 			attvalue = AttValue ("enableSessionState", section);
 			if (attvalue != null) {
 				if (attvalue != "true" && attvalue != "false" && attvalue != "ReadOnly")
-					HandlersUtil.ThrowException ("Invalid value for 'enableSessionState'", section);
-
+					HandlersUtil.ThrowException ("The 'enableSessionState' attribute"
+						+ " is case sensitive and must be one of the following values:"
+						+ " false, true, ReadOnly.", section);
 				config.EnableSessionState = attvalue;
 			}
 
