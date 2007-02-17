@@ -4988,6 +4988,10 @@ namespace Mono.CSharp {
 
 						// Always prefer generics enumerators
 						if (!TypeManager.IsGenericType (mi.ReturnType)) {
+							if (TypeManager.ImplementsInterface (mi.DeclaringType, result.DeclaringType) ||
+							    TypeManager.ImplementsInterface (result.DeclaringType, mi.DeclaringType))
+								continue;
+
 							Report.SymbolRelatedToPreviousError (result);
 							Report.SymbolRelatedToPreviousError (mi);
 							Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
