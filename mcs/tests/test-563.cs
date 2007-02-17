@@ -5,7 +5,7 @@ using System.Collections;
 
 public class Test
 {
-	public static object TestMethod (TestCollection t)
+	internal object TestMethod (TestCollection t)
 	{
 		foreach (object x in t)
 		{
