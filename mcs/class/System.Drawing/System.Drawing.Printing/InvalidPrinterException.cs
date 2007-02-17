@@ -40,11 +40,11 @@ namespace System.Drawing.Printing {
 #endif
 	public class InvalidPrinterException : SystemException {
 
-		private PrinterSettings settings;
+//		private PrinterSettings settings;
 
 		public InvalidPrinterException (PrinterSettings settings): base(InvalidPrinterException.GetMessage(settings))
 		{
-			this.settings = settings;
+//			this.settings = settings;
 		}
 
 		protected InvalidPrinterException (SerializationInfo info, StreamingContext context)

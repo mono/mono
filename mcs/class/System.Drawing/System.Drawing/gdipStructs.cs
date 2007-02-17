@@ -38,10 +38,11 @@ namespace System.Drawing
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct GdiplusStartupInput
 	{
-                uint 		GdiplusVersion;
-                IntPtr 		DebugEventCallback;
-                int             SuppressBackgroundThread;
-                int 		SuppressExternalCodecs;
+			// internalted to silent compiler
+			internal uint 		GdiplusVersion;
+			internal IntPtr 		DebugEventCallback;
+			internal int             SuppressBackgroundThread;
+			internal int 		SuppressExternalCodecs;
     
 	    	internal static GdiplusStartupInput MakeGdiplusStartupInput ()
 	    	{

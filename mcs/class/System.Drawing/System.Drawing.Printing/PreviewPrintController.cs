@@ -47,7 +47,7 @@ namespace System.Drawing.Printing
 			pageInfoList = new ArrayList ();
 		}
 #if NET_2_0
-		public virtual bool IsPreview { 
+		public override bool IsPreview { 
 			get { return true; }
 		}
 #endif		
