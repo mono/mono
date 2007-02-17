@@ -64,5 +64,10 @@ namespace System.Windows.Forms
 			get { return label; }
 		}
 		#endregion	// Public Instance Properties
+
+		internal void SetLabel (string label)
+		{
+			this.label = label;
+		}
 	}
 }
