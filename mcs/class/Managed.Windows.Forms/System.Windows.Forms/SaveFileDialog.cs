@@ -98,6 +98,14 @@ namespace System.Windows.Forms {
 			overwritePrompt = true;
 			createPrompt = false;
 		}
+
+		internal override string DialogTitle {
+			get {
+				string title = base.DialogTitle;
+				if (title.Length == 0)
+					title = "Save As";
+				return title;
+			}
+		}
 	}
 }
-

@@ -103,7 +103,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public Stream OpenFile ()
 		{
-			if (FileName == null)
+			if (FileName.Length == 0)
 				throw new ArgumentNullException ("OpenFile", "FileName is null");
 			
 			return new FileStream (FileName, FileMode.Open, FileAccess.Read);
@@ -117,6 +117,15 @@ namespace System.Windows.Forms {
 			base.CheckFileExists = true;
 			base.ReadOnlyChecked = false;
 			base.ShowReadOnly = false;
+		}
+
+		internal override string DialogTitle {
+			get {
+				string title = base.DialogTitle;
+				if (title.Length == 0)
+					title = "Open";
+				return title;
+			}
 		}
 	}
 }

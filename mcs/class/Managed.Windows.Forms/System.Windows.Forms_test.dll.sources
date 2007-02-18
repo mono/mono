@@ -83,6 +83,7 @@ System.Windows.Forms/PropertyManagerTest.cs
 System.Windows.Forms/RadioButtonTest.cs
 System.Windows.Forms/RowStyleTest.cs
 System.Windows.Forms/RichTextBoxTest.cs
+System.Windows.Forms/SaveFileDialogTest.cs
 System.Windows.Forms/ScrollableControlTest.cs
 System.Windows.Forms/ScrollBarTest.cs
 System.Windows.Forms/SendKeysTest.cs

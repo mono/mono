@@ -1,3 +1,7 @@
+2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SaveFileDialogTest.cs: Added tests for SaveFileDialog.
+
 2007-02-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItemTest.cs: BehaviorImageList fails on *nix due to a bug in

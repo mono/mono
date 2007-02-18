@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 	public abstract class FileDialog : CommonDialog
 	{
 		protected static readonly object EventFileOk = new object ();
+		private static int MaxFileNameItems = 10;
 		
 		internal enum FileDialogType
 		{
@@ -55,7 +56,6 @@ namespace System.Windows.Forms {
 		private bool checkPathExists = true;
 		private string defaultExt = String.Empty;
 		private bool dereferenceLinks = true;
-		private string fileName = String.Empty;
 		private string[] fileNames;
 		private string filter = "";
 		private int filterIndex = 1;
@@ -65,6 +65,9 @@ namespace System.Windows.Forms {
 		private bool showHelp = false;
 		private string title = String.Empty;
 		private bool validateNames = true;
+#if NET_2_0
+		private bool checkForIllegalChars = true;
+#endif
 		
 		private Button cancelButton;
 		private ToolBarButton upToolBarButton;
@@ -236,16 +239,19 @@ namespace System.Windows.Forms {
 			fileNameComboBox.Location = new Point (195, 330);
 			fileNameComboBox.Size = new Size (245, 21);
 			fileNameComboBox.TabIndex = 1;
-			fileNameComboBox.MaxDropDownItems = 10;
+			fileNameComboBox.MaxDropDownItems = MaxFileNameItems;
 			fileNameComboBox.Items.Add (" ");
 			
 			if (configFileNames != null) {
 				fileNameComboBox.Items.Clear ();
 				
 				foreach (string configFileName in configFileNames) {
-					if (configFileName != null)
-						if (configFileName.Trim ().Length > 0)
-							fileNameComboBox.Items.Add (configFileName);
+					if (configFileName == null || configFileName.Trim ().Length == 0)
+						continue;
+					// add no more than 10 items
+					if (fileNameComboBox.Items.Count >= MaxFileNameItems)
+						break;
+					fileNameComboBox.Items.Add (configFileName);
 				}
 			}
 			
@@ -414,14 +420,15 @@ namespace System.Windows.Forms {
 			get {
 				return defaultExt;
 			}
-			
+
 			set {
-				defaultExt = value;
-				
-				// if there is a dot remove it and everything before it
-				if (defaultExt.LastIndexOf ('.') != - 1) {
-					string[] split = defaultExt.Split (new char [] { '.' });
-					defaultExt = split [split.Length - 1];
+				if (value != null && value.Length > 0) {
+					// remove leading dot
+					if (value [0] == '.')
+						value = value.Substring (1);
+					defaultExt = value;
+				} else {
+					defaultExt = string.Empty;
 				}
 			}
 		}
@@ -444,25 +451,38 @@ namespace System.Windows.Forms {
 		[DefaultValue("")]
 		public string FileName {
 			get {
-				return fileName;
+				if (fileNames == null || fileNames.Length == 0)
+					return string.Empty;
+
+				if (fileNames [0].Length == 0)
+					return string.Empty;
+
+#if NET_2_0
+				// skip check for illegal characters if the filename was set
+				// through FileDialog API
+				if (!checkForIllegalChars)
+					return fileNames [0];
+#endif
+
+				// ensure filename contains only valid characters
+				Path.GetFullPath (fileNames [0]);
+				// but return filename as is
+				return fileNames [0];
+
 			}
 			
 			set {
 				if (value != null) {
-					if (SetFileName (value)) {
-						fileName = value;
-						if (fileNames == null) {
-							fileNames = new string [1];
-							fileNames [0] = value;
-						}
-					}
+					fileNames = new string [1] { value };
 				} else {
-					fileName = String.Empty;
 					fileNames = new string [0];
-					// this does not match ms exactly,
-					// but there is no other way to clear that %#&?§ combobox
-					fileNameComboBox.Text = " ";
 				}
+
+#if NET_2_0
+				// skip check for illegal characters if the filename was set
+				// through FileDialog API
+				checkForIllegalChars = false;
+#endif
 			}
 		}
 		
@@ -471,12 +491,23 @@ namespace System.Windows.Forms {
 		public string[] FileNames {
 			get {
 				if (fileNames == null || fileNames.Length == 0) {
-					string[] null_nada_nothing_filenames = new string [0];
-					return null_nada_nothing_filenames;
+					return new string [0];
 				}
 				
 				string[] new_filenames = new string [fileNames.Length];
 				fileNames.CopyTo (new_filenames, 0);
+
+#if NET_2_0
+				// skip check for illegal characters if the filename was set
+				// through FileDialog API
+				if (!checkForIllegalChars)
+					return new_filenames;
+#endif
+
+				foreach (string fileName in new_filenames) {
+					// ensure filename contains only valid characters
+					Path.GetFullPath (fileName);
+				}
 				return new_filenames;
 			}
 		}
@@ -499,7 +530,13 @@ namespace System.Windows.Forms {
 						
 						fileFilter = new FileFilter (filter);
 					} else
-						throw new ArgumentException ();
+						throw new ArgumentException ("The provided filter string"
+							+ " is invalid. The filter string should contain a"
+							+ " description of the filter, followed by the "
+							+ " vertical bar (|) and the filter pattern. The"
+							+ " strings for different filtering options should"
+							+ " also be separated by the vertical bar. Example:"
+							+ " Text files (*.txt)|*.txt|All files (*.*)|*.*");
 				}
 				
 				UpdateFilters ();
@@ -531,10 +568,10 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				if (Directory.Exists (value)) {
+				if (value == null) {
+					initialDirectory = string.Empty;
+				} else {
 					initialDirectory = value;
-					
-					mwfFileView.ChangeDirectory (null, initialDirectory);
 				}
 			}
 		}
@@ -570,9 +607,11 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				title = value;
-				
-				form.Text = title;
+				if (value == null) {
+					title = string.Empty;
+				} else {
+					title = value;
+				}
 			}
 		}
 		
@@ -605,7 +644,7 @@ namespace System.Windows.Forms {
 			checkPathExists = true;
 			defaultExt = String.Empty;
 			dereferenceLinks = true;
-			FileName = String.Empty;
+			FileName = null;
 			Filter = String.Empty;
 			FilterIndex = 1;
 			initialDirectory = String.Empty;
@@ -619,7 +658,7 @@ namespace System.Windows.Forms {
 		
 		public override string ToString ()
 		{
-			return String.Format("{0}: Title: {1}, FileName: {2}", base.ToString (), Title, fileName);
+			return String.Format("{0}: Title: {1}, FileName: {2}", base.ToString (), Title, FileName);
 		}
 		
 		public event CancelEventHandler FileOk {
@@ -639,6 +678,12 @@ namespace System.Windows.Forms {
 		// as it can't really be accessed anyways
 		protected int Options {
 			get { return -1; }
+		}
+
+		internal virtual string DialogTitle {
+			get {
+				return Title;
+			}
 		}
 		
 		[MonoTODO]
@@ -660,14 +705,22 @@ namespace System.Windows.Forms {
 			disable_form_closed_event = true;
 		}
 		
-		protected  override bool RunDialog (IntPtr hWndOwner)
+		protected override bool RunDialog (IntPtr hWndOwner)
 		{
 			ReadConfigValues ();
-			
+			form.Text = DialogTitle;
+
+			// avoid using the FileNames property to skip the invalid characters
+			// check
+			string fileName = null;
+			if (fileNames != null && fileNames.Length != 0)
+				fileName = fileNames [0];
+			else
+				fileName = string.Empty;
+
 			form.Refresh ();
-			
-			mwfFileView.ChangeDirectory (null, lastFolder);
-			
+
+			SetFileAndDirectory (fileName);
 			fileNameComboBox.Select ();
 			
 			return true;
@@ -736,37 +789,38 @@ namespace System.Windows.Forms {
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
 			mwfFileView.FilterIndex = filterIndex;
 		}
-		
-		private bool SetFileName (string fname)
+
+		private void SetFileAndDirectory (string fname)
 		{
-			bool rooted = Path.IsPathRooted (fname);
-			
-			if (!rooted) {
-				string dir = mwfFileView.CurrentRealFolder ;
-				if (dir == null) {
-					dir = Environment.CurrentDirectory;
-				}
-				if (File.Exists (Path.Combine (dir, fname))) {
+			if (fname.Length != 0) {
+				bool rooted = Path.IsPathRooted (fname);
+				if (!rooted) {
+					mwfFileView.ChangeDirectory (null, lastFolder);
 					fileNameComboBox.Text = fname;
-					mwfFileView.SetSelectedIndexTo (fname);
-					
-					return true;
+				} else {
+					string dirname = Path.GetDirectoryName (fname);
+					if (dirname != null && dirname.Length > 0 && Directory.Exists (dirname)) {
+						fileNameComboBox.Text = Path.GetFileName (fname);
+						mwfFileView.ChangeDirectory (null, dirname);
+					} else {
+						fileNameComboBox.Text = fname;
+						mwfFileView.ChangeDirectory (null, lastFolder);
+					}
 				}
 			} else {
-				if (File.Exists (fname)) {
-					fileNameComboBox.Text = Path.GetFileName (fname);
-					mwfFileView.ChangeDirectory (null, Path.GetDirectoryName (fname));
-					mwfFileView.SetSelectedIndexTo (fname);
-					
-					return true;
-				}
+				mwfFileView.ChangeDirectory (null, lastFolder);
+				fileNameComboBox.Text = " ";
 			}
-			
-			return false;
 		}
 		
 		void OnClickOpenSaveButton (object sender, EventArgs e)
 		{
+#if NET_2_0
+			// for filenames typed or selected by user, enable check for 
+			// illegal characters in filename(s)
+			checkForIllegalChars = true;
+#endif
+
 			if (fileDialogType == FileDialogType.OpenFileDialog) {
 				ListView.SelectedListViewItemCollection sl = mwfFileView.SelectedItems;
 				if (sl.Count > 0 && sl [0] != null) {
@@ -816,12 +870,11 @@ namespace System.Windows.Forms {
 						DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
 						if (dirInfo.Exists) {
 							mwfFileView.ChangeDirectory (null, dirInfo.FullName);
-							
 							fileNameComboBox.Text = " ";
 							return;
 						} else {
 							internalfullfilename = fileFromComboBox;
-						}							
+						}
 					}
 				} else
 					return;
@@ -889,12 +942,11 @@ namespace System.Windows.Forms {
 							internalfullfilename += extension_to_use;
 					}
 				}
-				
-				fileNames = new string [1];
-				
-				fileNames [0] = internalfullfilename;
-				
-				fileName = internalfullfilename;
+
+				// do not use the FileName setter internally, as this will 
+				// cause the illegal character check to be skipped, and we
+				// do not want this for filename users have entered
+				fileNames = new string [1] { internalfullfilename };
 				
 				mwfFileView.WriteRecentlyUsed (internalfullfilename);
 			} else // multiSelect = true
@@ -911,8 +963,6 @@ namespace System.Windows.Forms {
 						}
 					}
 					
-					fileName = ((FSEntry)al [0]).FullName;
-					
 					fileNames = new string [al.Count];
 					
 					for (int i = 0; i < al.Count; i++) {
@@ -926,7 +976,7 @@ namespace System.Windows.Forms {
 					string message = "\"" + mwfFileView.CurrentRealFolder + "\" doesn't exist. Please verify that you have entered the correct directory name.";
 					MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					
-					if (initialDirectory == String.Empty)
+					if (initialDirectory == String.Empty || !Directory.Exists (initialDirectory))
 						mwfFileView.ChangeDirectory (null, lastFolder);
 					else
 						mwfFileView.ChangeDirectory (null, initialDirectory);
@@ -940,16 +990,19 @@ namespace System.Windows.Forms {
 			} else {
 				lastFolder = mwfFileView.CurrentFolder;
 			}
-			
-			if (fileNameComboBox.Items.Count > 0) {
-				if (fileNameComboBox.Items.IndexOf (fileName) == -1) {
+
+			foreach (string fileName in fileNames) {
+				if (!File.Exists (fileName))
+					// ignore files that do not exist
+					continue;
+
+				if (fileNameComboBox.Items.IndexOf (fileName) == -1)
 					fileNameComboBox.Items.Insert (0, fileName);
-				}
-			} else
-				fileNameComboBox.Items.Add (fileName);
-			
-			if (fileNameComboBox.Items.Count == 11)
-				fileNameComboBox.Items.RemoveAt (10);
+			}
+
+			// remove items above the maximum items that we want to display
+			while (fileNameComboBox.Items.Count > MaxFileNameItems)
+				fileNameComboBox.Items.RemoveAt (MaxFileNameItems);
 			
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 			
@@ -1011,7 +1064,9 @@ namespace System.Windows.Forms {
 		
 		void OnSelectedFilesChangedFileView (object sender, EventArgs e)
 		{
-			fileNameComboBox.Text = mwfFileView.SelectedFilesString;
+			string selectedFiles = mwfFileView.SelectedFilesString;
+			if (selectedFiles != null && selectedFiles.Length != 0)
+				fileNameComboBox.Text = selectedFiles;
 		}
 		
 		void OnForceDialogEndFileView (object sender, EventArgs e)
@@ -1140,11 +1195,11 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			if (initialDirectory != String.Empty)
+			if (initialDirectory != String.Empty && Directory.Exists (initialDirectory))
 				lastFolder = initialDirectory;
 			else
-			if (lastFolder == null || lastFolder == String.Empty)
-				lastFolder = Environment.CurrentDirectory;
+				if (lastFolder == null || lastFolder.Length == 0)
+					lastFolder = Environment.CurrentDirectory;
 			
 			if (RestoreDirectory)
 				restoreDirectoryString = lastFolder;
@@ -2480,23 +2535,23 @@ namespace System.Windows.Forms {
 					FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
 					
 					FSEntry fsEntry = listViewItem.FSEntry;
-					
+
 					if (fsEntry.Attributes != FileAttributes.Directory)
 						selectedFilesString = SelectedItems [0].Text;
 				} else {
 					foreach (FileViewListViewItem lvi in SelectedItems) {
 						FSEntry fsEntry = lvi.FSEntry;
-						
+
 						if (fsEntry.Attributes != FileAttributes.Directory)
-							selectedFilesString = selectedFilesString + "\"" + lvi.Text + " ";
+							selectedFilesString = selectedFilesString + "\"" + lvi.Text + "\" ";
 					}
 				}
-				
+
 				EventHandler eh = (EventHandler)(Events [MSelectedFilesChangedEvent]);
 				if (eh != null)
 					eh (this, EventArgs.Empty);
 			}
-			
+
 			base.OnSelectedIndexChanged (e);
 		}
 		

@@ -1,5 +1,23 @@
 2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FileDialog.cs: Removed need for separate fileName field. On 2.0
+	profile, do not check filename(s) for illegal character if filename(s)
+	were set non-interactively but always check on 1.0 profile. Fixed NRE
+	 in DefaultExt and only strip off first leading dot. Improve exception
+	message when invalid Filter is set. Do not ignore InitialDirectory if
+	it does no exist. Store specified Title, and if empty use default
+	title (depending on type of dialog). Added an internal DialogTitle 
+	property for retrieving dialog title. Fixed logic of displayed dir to
+	more closely match MS. Avoid setting ComboBox.Text to a zero-length 
+	string as its buggy.
+	* OpenFileDialog.cs: In OpenFile, throw ArgumentNullException if
+	FileName is a zero-length string (it can never be null). Override 
+	DialogTitle property to set default title of dialog box.
+	* SaveFileDialog.cs: Override DialogTitle property to set default
+	title of dialog box.
+
+2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FileDialog.cs: Modify default text of filename and filetype labels
 	to match that of MS. Reset do_not_call_OnSelectedIndexChanged...
 	after we've updated the SelectedIndex. Fixes part of bug #80887.

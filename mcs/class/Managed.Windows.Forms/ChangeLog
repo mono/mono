@@ -1,3 +1,7 @@
+2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: add SaveFileDialogTest.cs.
+
 2007-02-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* System.Windows.Forms_test.dll.sources: add EventLogger.cs
