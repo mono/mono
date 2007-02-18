@@ -215,7 +215,7 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override int GetLocalPort () {
-			return _HttpServletRequest.getLocalPort();
+			return _HttpServletRequest.getServerPort();
 		}
 
 		public override string GetPathInfo () {
