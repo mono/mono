@@ -48,6 +48,7 @@ namespace Microsoft.Build.Tasks {
 		{
 			gac = new Dictionary <string, Dictionary <Version, string>> ();
 			hint_path_assemblies = new Dictionary <string, Dictionary <Version, string>> ();
+			hint_paths = new Dictionary <string, object> ();
 			GatherGacAssemblies ();
 		}
 
@@ -96,22 +97,27 @@ namespace Microsoft.Build.Tasks {
 			Assembly a;
 			AssemblyName name;
 
-			foreach (string assembly_name in Directory.GetDirectories (hintPath)) {
-				try {
-					a = Assembly.ReflectionOnlyLoadFrom (assembly_name);
-					name = new AssemblyName (a.FullName);
-
-					if (!hint_path_assemblies.ContainsKey (name.Name))
-						hint_path_assemblies [name.Name] = new Dictionary <Version, string> ();
-					hint_path_assemblies [name.Name] [name.Version] = assembly_name;
-				} catch {
+			try {
+				foreach (string assembly_name in Directory.GetFiles (Path.GetDirectoryName (hintPath))) {
+					try {
+						a = Assembly.ReflectionOnlyLoadFrom (assembly_name);
+						name = new AssemblyName (a.FullName);
+	
+						if (!hint_path_assemblies.ContainsKey (name.Name))
+							hint_path_assemblies [name.Name] = new Dictionary <Version, string> ();
+						hint_path_assemblies [name.Name] [name.Version] = assembly_name;
+						hint_paths [hintPath] = null;
+					} catch {
+					}
 				}
+			} catch {
 			}
 		}
 
 		public string ResolveAssemblyReference (ITaskItem reference)
 		{
 			AssemblyName name = null;
+			string resolved = null;
 
 			try {
 				name = new AssemblyName (reference.ItemSpec);
@@ -119,50 +125,46 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			return ResolveHintPathReference (name, reference.GetMetadata ("HintPath")) ?? ResolveGacReference (name);
+			if (reference.GetMetadata ("HintPath") != String.Empty)
+				resolved = ResolveHintPathReference (name, reference.GetMetadata ("HintPath"));
+			
+			if (resolved == null)
+				resolved = ResolveGacReference (name);
+
+			return resolved;
 		}
 
 		string ResolveGacReference (AssemblyName name)
 		{
-			if (!gac.ContainsKey (name.Name))
-				return null;
-
-			if (name.Version != null) {
-				if (!gac [name.Name].ContainsKey (name.Version))
-					return null;
-				else
-					return gac [name.Name] [name.Version];
-			}
-
-			Version [] versions = new Version [gac [name.Name].Keys.Count];
-			gac [name.Name].Keys.CopyTo (versions, 0);
-			Array.Sort (versions, (IComparer <Version>) null);
-			Version highest = versions [versions.Length - 1];
-			
-			return gac [name.Name] [highest];
+			return ResolveGenericReference (name, gac);
 		}
 
 		string ResolveHintPathReference (AssemblyName name, string hintpath)
 		{
 			if (hintpath != String.Empty)
 				GatherHintPathAssemblies (hintpath);
+			return ResolveGenericReference (name, hint_path_assemblies);
+		}
 
-			if (!hint_path_assemblies.ContainsKey (name.Name))
+		string ResolveGenericReference (AssemblyName name, Dictionary <string, Dictionary <Version, string>> dic)
+		{
+			// FIXME: deal with SpecificVersion=False
+
+			if (!dic.ContainsKey (name.Name))
 				return null;
 
 			if (name.Version != null) {
-				if (!hint_path_assemblies [name.Name].ContainsKey (name.Version))
+				if (!dic [name.Name].ContainsKey (name.Version))
 					return null;
 				else
-					return hint_path_assemblies [name.Name] [name.Version];
+					return dic [name.Name] [name.Version];
 			}
 
-			Version [] versions = new Version [hint_path_assemblies [name.Name].Keys.Count];
-			hint_path_assemblies [name.Name].Keys.CopyTo (versions, 0);
+			Version [] versions = new Version [dic [name.Name].Keys.Count];
+			dic [name.Name].Keys.CopyTo (versions, 0);
 			Array.Sort (versions, (IComparer <Version>) null);
 			Version highest = versions [versions.Length - 1];
-			
-			return hint_path_assemblies [name.Name] [highest];
+			return dic [name.Name] [highest];
 		}
 	}
 }
