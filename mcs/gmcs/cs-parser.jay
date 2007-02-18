@@ -560,55 +560,63 @@ opt_attributes
 attribute_sections
 	: attribute_section
           {
-		ArrayList sect = (ArrayList) $1;
+		if (current_attr_target != String.Empty) {
+			ArrayList sect = (ArrayList) $1;
 
-		if (global_attrs_enabled) {
-			if (current_attr_target == "module") {
-				CodeGen.Module.AddAttributes (sect);
-				$$ = null;
-			} else if (current_attr_target != null && current_attr_target.Length > 0) {
-				CodeGen.Assembly.AddAttributes (sect);
-				$$ = null;
+			if (global_attrs_enabled) {
+				if (current_attr_target == "module") {
+					CodeGen.Module.AddAttributes (sect);
+					$$ = null;
+				} else if (current_attr_target != null && current_attr_target.Length > 0) {
+					CodeGen.Assembly.AddAttributes (sect);
+					$$ = null;
+				} else {
+					$$ = new Attributes (sect);
+				}
+				if ($$ == null) {
+					if (RootContext.Documentation != null) {
+						Lexer.check_incorrect_doc_comment ();
+						Lexer.doc_state =
+							XmlCommentState.Allowed;
+					}
+				}
 			} else {
 				$$ = new Attributes (sect);
-			}
-			if ($$ == null) {
-				if (RootContext.Documentation != null) {
-					Lexer.check_incorrect_doc_comment ();
-					Lexer.doc_state =
-						XmlCommentState.Allowed;
-				}
-			}
-		} else {
-			$$ = new Attributes (sect);
-		}		
+			}		
+		}
+		else
+			$$ = null;
 		current_attr_target = null;
-      }
+	  }
 	| attribute_sections attribute_section
 	  {
-		Attributes attrs = $1 as Attributes;
-		ArrayList sect = (ArrayList) $2;
+		if (current_attr_target != String.Empty) {
+			Attributes attrs = $1 as Attributes;
+			ArrayList sect = (ArrayList) $2;
 
-		if (global_attrs_enabled) {
-			if (current_attr_target == "module") {
-				CodeGen.Module.AddAttributes (sect);
-				$$ = null;
-			} else if (current_attr_target == "assembly") {
-				CodeGen.Assembly.AddAttributes (sect);
-				$$ = null;
+			if (global_attrs_enabled) {
+				if (current_attr_target == "module") {
+					CodeGen.Module.AddAttributes (sect);
+					$$ = null;
+				} else if (current_attr_target == "assembly") {
+					CodeGen.Assembly.AddAttributes (sect);
+					$$ = null;
+				} else {
+					if (attrs == null)
+						attrs = new Attributes (sect);
+					else
+						attrs.AddAttributes (sect);			
+				}
 			} else {
 				if (attrs == null)
 					attrs = new Attributes (sect);
 				else
-					attrs.AddAttributes (sect);			
-			}
-		} else {
-			if (attrs == null)
-				attrs = new Attributes (sect);
-			else
-				attrs.AddAttributes (sect);
-		}		
-		$$ = attrs;
+					attrs.AddAttributes (sect);
+			}		
+			$$ = attrs;
+		}
+		else
+			$$ = null;
 		current_attr_target = null;
 	  }
 	;
@@ -636,11 +644,15 @@ attribute_target
 	: IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $1;
-		CheckAttributeTarget (lt.Value, lt.Location);
-		$$ = lt.Value; // Location won't be required anymore.
+		$$ = CheckAttributeTarget (lt.Value, lt.Location);
 	  }
         | EVENT  { $$ = "event"; }	  
         | RETURN { $$ = "return"; }
+      | error
+	  {
+  		string name = yyNames [yyToken].ToLower ();
+		$$ = CheckAttributeTarget (name, GetLocation ($1));
+	  }
 	;
 
 attribute_list
@@ -676,7 +688,9 @@ attribute
 
 		Expression left_expr = left == null ? null : left.GetTypeExpression ();
 
-		if (current_attr_target == "assembly" || current_attr_target == "module")
+		if (current_attr_target == String.Empty)
+			$$ = null;
+		else if (current_attr_target == "assembly" || current_attr_target == "module")
 			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_namespace, current_attr_target,
 						  left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
@@ -5356,18 +5370,16 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 	return implicit_block;
 }
 
-void CheckAttributeTarget (string a, Location l)
+string CheckAttributeTarget (string a, Location l)
 {
 	switch (a) {
-
 	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
-		return;
-		
-	default :
-		Report.Error (658, l, "`" + a + "' is an invalid attribute target");
-		break;
+			return a;
 	}
 
+	Report.Warning (658, 1, l,
+		 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
+	return string.Empty;
 }
 
 void CheckUnaryOperator (Operator.OpType op, Location l)

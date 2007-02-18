@@ -1,4 +1,9 @@
 2007-02-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80493 by Atsushi Enomoto
+	* cs-parser.jay: Ignore invalid attribute target.
+
+2007-02-18  Marek Safar  <marek.safar@gmail.com>
  
 	* cs-tokenizer.cs: Ignore '\0' as white space character.
 
