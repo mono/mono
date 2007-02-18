@@ -99,7 +99,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			return false;
 		}
-		
+
+#pragma warning disable 0169
+#region Functions
 		// FIXME imported projects
 		static bool Exists (string file, Project context)
 		{
@@ -113,6 +115,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 			return File.Exists (file);
 		}
+#endregion
+#pragma warning restore 0169
+
 	}
 }
 

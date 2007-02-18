@@ -1,5 +1,5 @@
 //
-// ExpressionCollections.cs
+// ExpressionCollection.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -222,21 +222,16 @@ namespace Microsoft.Build.BuildEngine {
 			return finalItems.ToArray ();
 		}
 		
-		ITaskItem[] ConvertToITaskItemArrayFromString (Project project, string source)
+		ITaskItem [] ConvertToITaskItemArrayFromString (Project project, string source)
 		{
-			ArrayList tempItems = new ArrayList ();
-			ITaskItem[] finalArray;
-			string[] splittedSource = source.Split (';');
-			foreach (string s in splittedSource) {
+			List <ITaskItem> items = new List <ITaskItem> ();
+			string [] splitSource = source.Split (';');
+			foreach (string s in splitSource) {
 				if (s != String.Empty) {
-					tempItems.Add (new TaskItem (s));
+					items.Add (new TaskItem (s));
 				}
 			}
-			finalArray = new ITaskItem [tempItems.Count];
-			int i = 0;
-			foreach (ITaskItem item in tempItems)
-				finalArray [i++] = item;
-			return finalArray;
+			return items.ToArray ();
 		}
 	}
 }

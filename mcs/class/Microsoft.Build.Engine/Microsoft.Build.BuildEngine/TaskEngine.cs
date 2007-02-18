@@ -85,7 +85,7 @@ namespace Microsoft.Build.BuildEngine {
 			properties = taskType.GetProperties ();
 			foreach (PropertyInfo pi in properties) {
 				if (pi.IsDefined (requiredAttribute, false) && values.ContainsKey (pi.Name) == false)
-					throw new InvalidProjectFileException ("Required property not set.");
+					throw new InvalidProjectFileException (String.Format ("Required property '{0}'not set.", pi.Name));
 				
 				if (values.ContainsKey (pi.Name))
 					InitializeParameter (pi, values [pi.Name]);

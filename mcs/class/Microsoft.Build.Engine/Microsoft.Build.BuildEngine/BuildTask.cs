@@ -94,7 +94,8 @@ namespace Microsoft.Build.BuildEngine {
 				result = taskEngine.Execute ();
 				taskEngine.PublishOutput ();
 			// FIXME: it should be logged (exception)
-			} catch {
+			} catch (Exception e) {
+				Console.Error.WriteLine (e);
 				result = false;
 			}
 

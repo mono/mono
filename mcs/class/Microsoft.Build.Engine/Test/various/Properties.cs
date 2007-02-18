@@ -53,5 +53,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("debug", proj.GetEvaluatedProperty ("Config"), "A2");
 			Assert.AreEqual ("debug-debug", proj.GetEvaluatedProperty ("ExpProp"), "A3");
 		}
+
+		[Test]
+		public void TestProperties2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>B</B>
+					</PropertyGroup>
+
+					<Target Name='Main' >
+						<StringTestTask Array='$(A)$(B)'>
+							<Output TaskParameter='Array' ItemName='Out' />
+						</StringTestTask>
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			proj.Build ("Main");
+			Assert.AreEqual (1, proj.GetEvaluatedItemsByName ("Out").Count, "A1");
+			Assert.AreEqual ("AB", proj.GetEvaluatedItemsByName ("Out") [0].Include, "A2");
+		}
 	}
 }
