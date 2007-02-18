@@ -100,6 +100,13 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentIterator.MarkYield (ec, expr, finally_blocks);
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Yield target = (Yield) t;
+
+			target.expr = expr.Clone (clonectx);
+		}
 	}
 
 	public class YieldBreak : Statement {

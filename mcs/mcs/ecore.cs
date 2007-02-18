@@ -1156,7 +1156,7 @@ namespace Mono.CSharp {
 		// Only expressions that are created for the parser need to implement
 		// this.
 		//
-		protected virtual void CloneTo (Expression target)
+		protected virtual void CloneTo (CloneContext clonectx, Expression target)
 		{
 			throw new NotImplementedException (
 				String.Format (
@@ -1174,10 +1174,10 @@ namespace Mono.CSharp {
 		// compile the same code using different type values for the same
 		// arguments to find the correct overload
 		//
-		public Expression Clone ()
+		public Expression Clone (CloneContext clonectx)
 		{
 			Expression cloned = (Expression) MemberwiseClone ();
-			CloneTo (cloned);
+			CloneTo (clonectx, cloned);
 
 			return cloned;
 		}
@@ -1255,11 +1255,11 @@ namespace Mono.CSharp {
 			return child.GetAttributableValue (valueType, out value);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			EmptyCast target = (EmptyCast) t;
 
-			target.child = child.Clone ();
+			target.child = child.Clone (clonectx);
 		}
 	}
 
@@ -2383,7 +2383,7 @@ namespace Mono.CSharp {
 			return Name;
 		}
 
-		protected override void CloneTo (Expression target)
+		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}
@@ -2609,6 +2609,11 @@ namespace Mono.CSharp {
 
 		public override string FullName {
 			get { return name; }
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// CloneTo: Nothing, we do not keep any state on this expression
 		}
 	}
 

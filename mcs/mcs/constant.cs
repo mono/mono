@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		protected override void CloneTo (Expression target)
+		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}

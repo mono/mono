@@ -63,7 +63,11 @@ namespace Mono.CSharp {
 
 			try {
 				Report.DisableErrors ();
-				result = Compatible (ec, delegate_type) != null;
+				result = DoCompatibleTest (ec, delegate_type, true) != null;
+				if (result)
+					Console.WriteLine ("INFO: Lambda.Compatible Passed for {0}", delegate_type);
+				else
+					Console.WriteLine ("INFO: Lambda.Compatible Failed for {0}", delegate_type);
 			} finally {
 				Report.EnableErrors ();
 			}
@@ -80,19 +84,10 @@ namespace Mono.CSharp {
 		//
 		public override Expression Compatible (EmitContext ec, Type delegate_type)
 		{
-			Expression result;
-			
-			result = DoCompatibleTest (ec, delegate_type);
-
-			if (result == null)
-				Console.WriteLine ("INFO: Lambda.Compatible Failed for {0}", delegate_type);
-			else
-				Console.WriteLine ("INFO: Lambda.Compatible Passed for {0}", delegate_type);
-			
-			return result;
+			return DoCompatibleTest (ec, delegate_type, false);
 		}
 
-		Expression DoCompatibleTest (EmitContext ec, Type delegate_type)
+		Expression DoCompatibleTest (EmitContext ec, Type delegate_type, bool clone)
 		{
 			if (anonymous != null)
 				return anonymous.AnonymousDelegate;
@@ -148,7 +143,7 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
-			ToplevelBlock b = (ToplevelBlock) Block.Clone ();
+			ToplevelBlock b = clone ? (ToplevelBlock) Block.PerformClone () : Block;
 			
 			anonymous = new AnonymousMethod (
 				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
@@ -224,11 +219,11 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ret);
 		}
 
-		protected override void CloneTo (Statement t)
+		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			ContextualReturn cr = (ContextualReturn) t;
 
-			cr.Expr = Expr.Clone ();
+			cr.Expr = Expr.Clone (clonectx);
 		}
 	}
 }

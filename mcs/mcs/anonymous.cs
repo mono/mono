@@ -1063,7 +1063,7 @@ namespace Mono.CSharp {
 		public ToplevelBlock Block;
 		protected AnonymousMethod anonymous;
 
-		protected readonly Block container;
+		protected Block container;
 		protected readonly GenericMethod generic;
 
 		public Block Container {
@@ -1333,12 +1333,12 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			AnonymousMethodExpression target = (AnonymousMethodExpression) t;
 
-			throw new Exception ("Must map the block");
-			
+			target.Block = (ToplevelBlock) clonectx.LookupBlock (Block);
+			target.container = clonectx.LookupBlock (Block);
 			target.Parameters = Parameters.Clone ();
 		}
 	}

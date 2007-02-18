@@ -91,19 +91,82 @@ namespace Mono.CSharp {
 		// This routine must be overrided in derived classes and make copies
 		// of all the data that might be modified if resolved
 		// 
-		protected virtual void CloneTo (Statement target)
+		protected virtual void CloneTo (CloneContext clonectx, Statement target)
 		{
 			throw new Exception (String.Format ("Statement.CloneTo not implemented for {0}", this.GetType ()));
 		}
 		
-		public Statement Clone ()
+		public Statement Clone (CloneContext clonectx)
 		{
 			Statement s = (Statement) this.MemberwiseClone ();
-			CloneTo (s);
+			if (s is Block)
+				clonectx.AddBlockMap ((Block) this, (Block) s);
+			
+			CloneTo (clonectx, s);
 			return s;
 		}
+
+		public Statement PerformClone ()
+		{
+			CloneContext clonectx = new CloneContext ();
+
+			return Clone (clonectx);
+		}
+
 	}
 
+	//
+	// This class is used during the Statement.Clone operation
+	// to remap objects that have been cloned.
+	//
+	// Since blocks are cloned by Block.Clone, we need a way for
+	// expressions that must reference the block to be cloned
+	// pointing to the new cloned block.
+	//
+	public class CloneContext {
+		Hashtable block_map = new Hashtable ();
+		Hashtable variable_map;
+		
+		public void AddBlockMap (Block from, Block to)
+		{
+			if (block_map.Contains (from))
+				return;
+			block_map [from] = to;
+		}
+		
+		public Block LookupBlock (Block from)
+		{
+			Block result = (Block) block_map [from];
+
+			if (result == null){
+				result = (Block) from.Clone (this);
+				block_map [from] = result;
+			}
+
+			return result;
+		}
+
+		public void AddVariableMap (LocalInfo from, LocalInfo to)
+		{
+			if (variable_map == null)
+				variable_map = new Hashtable ();
+			
+			if (variable_map.Contains (from))
+				return;
+			variable_map [from] = to;
+		}
+		
+		public LocalInfo LookupVariable (LocalInfo from)
+		{
+			LocalInfo result = (LocalInfo) variable_map [from];
+
+			if (result == null)
+				throw new Exception ("LookupVariable: looking up a variable that has not been registered yet");
+
+			return result;
+		}
+	}
+	
 	public sealed class EmptyStatement : Statement {
 		
 		private EmptyStatement () {}
@@ -255,11 +318,20 @@ namespace Mono.CSharp {
 				ig.MarkLabel (false_target);
 			}
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			If target = (If) t;
+
+			target.expr = expr.Clone (clonectx);
+			target.TrueStatement = TrueStatement.Clone (clonectx);
+			target.FalseStatement = FalseStatement.Clone (clonectx);
+		}
 	}
 
 	public class Do : Statement {
 		public Expression expr;
-		public readonly Statement  EmbeddedStatement;
+		public Statement  EmbeddedStatement;
 		bool infinite;
 		
 		public Do (Statement statement, Expression boolExpr, Location l)
@@ -332,11 +404,19 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Do target = (Do) t;
+
+			target.EmbeddedStatement = EmbeddedStatement.Clone (clonectx);
+			target.expr = expr.Clone (clonectx);
+		}
 	}
 
 	public class While : Statement {
 		public Expression expr;
-		public readonly Statement Statement;
+		public Statement Statement;
 		bool infinite, empty;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
@@ -429,13 +509,21 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			While target = (While) t;
+
+			target.expr = expr.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
+		}
 	}
 
 	public class For : Statement {
 		Expression Test;
-		readonly Statement InitStatement;
-		readonly Statement Increment;
-		public readonly Statement Statement;
+		Statement InitStatement;
+		Statement Increment;
+		public Statement Statement;
 		bool infinite, empty;
 		
 		public For (Statement initStatement,
@@ -558,6 +646,19 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			For target = (For) t;
+
+			if (InitStatement != null)
+				target.InitStatement = InitStatement.Clone (clonectx);
+			if (Test != null)
+				target.Test = Test.Clone (clonectx);
+			if (Increment != null)
+				target.Increment = Increment.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
+		}
 	}
 	
 	public class StatementExpression : Statement {
@@ -586,11 +687,11 @@ namespace Mono.CSharp {
 			return "StatementExpression (" + expr + ")";
 		}
 
-		protected override void CloneTo (Statement t)
+		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			StatementExpression target = (StatementExpression) t;
 
-			target.expr = (ExpressionStatement) expr.Clone ();
+			target.expr = (ExpressionStatement) expr.Clone (clonectx);
 		}
 	}
 
@@ -670,11 +771,11 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ret);
 		}
 
-		protected override void CloneTo (Statement t)
+		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Return target = (Return) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 		}
 	}
 
@@ -882,6 +983,14 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (OpCodes.Br, sl.GetILLabelCode (ec));
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			GotoCase target = (GotoCase) t;
+
+			target.expr = expr.Clone (clonectx);
+			target.sl = sl.Clone (clonectx);
+		}
 	}
 	
 	public class Throw : Statement {
@@ -944,6 +1053,13 @@ namespace Mono.CSharp {
 
 				ec.ig.Emit (OpCodes.Throw);
 			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Throw target = (Throw) t;
+
+			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -1289,8 +1405,14 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldloca, builder);
 			}
 		}
+
+		public LocalInfo Clone (CloneContext clonectx)
+		{
+			// Only this kind is created by the parser.
+			return new LocalInfo (Type.Clone (clonectx), Name, clonectx.LookupBlock (Block), Location);
+		}
 	}
-		
+
 	/// <summary>
 	///   Block represents a C# block.
 	/// </summary>
@@ -1874,8 +1996,9 @@ namespace Mono.CSharp {
 
 		public VariableMap ParameterMap {
 			get {
-				if ((flags & Flags.VariablesInitialized) == 0)
+				if ((flags & Flags.VariablesInitialized) == 0){
 					throw new Exception ("Variables have not been initialized yet");
+				}
 
 				return param_map;
 			}
@@ -2304,22 +2427,39 @@ namespace Mono.CSharp {
 			return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
 		}
 
-		protected override void CloneTo (Statement t)
+		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Block target = (Block) t;
 
+			if (Parent != null)
+				target.Parent = clonectx.LookupBlock (Parent);
+			
 			target.statements = new ArrayList ();
-			foreach (Statement s in statements)
-				target.statements.Add (s.Clone ());
-
 			if (target.children != null){
 				target.children = new ArrayList ();
-				foreach (Block b in children)
-					target.children.Add (b.Clone ());
+				foreach (Block b in children){
+					Block newblock = (Block) b.Clone (clonectx);
+
+					target.children.Add (newblock);
+				}
+				
+			}
+
+			foreach (Statement s in statements)
+				target.statements.Add (s.Clone (clonectx));
+
+			if (variables != null){
+				target.variables = new Hashtable ();
+
+				foreach (DictionaryEntry de in variables){
+					LocalInfo newlocal = ((LocalInfo) de.Value).Clone (clonectx);
+					target.variables [de.Key] = newlocal;
+					clonectx.AddVariableMap ((LocalInfo) de.Value, newlocal);
+				}
 			}
 
 			//
-			// TODO: labels, switch_block, variables, constants (?), anonymous_children
+			// TODO: labels, switch_block, constants (?), anonymous_children
 			//
 		}
 	}
@@ -2670,7 +2810,6 @@ namespace Mono.CSharp {
 					      root_scope, anonymous_container != null ?
 					      anonymous_container.Scope : null);
 		}
-
 	}
 	
 	public class SwitchLabel {
@@ -2774,6 +2913,11 @@ namespace Mono.CSharp {
 			Report.SymbolRelatedToPreviousError (collisionWith.loc, null);
 			Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
 		}
+
+		public SwitchLabel Clone (CloneContext clonectx)
+		{
+			return new SwitchLabel (label.Clone (clonectx), loc);
+		}
 	}
 
 	public class SwitchSection {
@@ -2786,10 +2930,20 @@ namespace Mono.CSharp {
 			Labels = labels;
 			Block = block;
 		}
+
+		public SwitchSection Clone (CloneContext clonectx)
+		{
+			ArrayList cloned_labels = new ArrayList ();
+
+			foreach (SwitchLabel sl in cloned_labels)
+				cloned_labels.Add (sl.Clone (clonectx));
+			
+			return new SwitchSection (cloned_labels, clonectx.LookupBlock (Block));
+		}
 	}
 	
 	public class Switch : Statement {
-		public readonly ArrayList Sections;
+		public ArrayList Sections;
 		public Expression Expr;
 
 		/// <summary>
@@ -3509,6 +3663,17 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.Switch = old_switch;
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Switch target = (Switch) t;
+
+			target.Expr = Expr.Clone (clonectx);
+			target.Sections = new ArrayList ();
+			foreach (SwitchSection ss in Sections){
+				target.Sections.Add (ss.Clone (clonectx));
+			}
+		}
 	}
 
 	public abstract class ExceptionStatement : Statement
@@ -3615,10 +3780,18 @@ namespace Mono.CSharp {
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 		}
+		
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Lock target = (Lock) t;
+
+			target.expr = expr.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
+		}
 	}
 
 	public class Unchecked : Statement {
-		public readonly Block Block;
+		public Block Block;
 		
 		public Unchecked (Block b)
 		{
@@ -3637,10 +3810,17 @@ namespace Mono.CSharp {
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Block.Emit (ec);
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Unchecked target = (Unchecked) t;
+
+			target.Block = clonectx.LookupBlock (Block);
+		}
 	}
 
 	public class Checked : Statement {
-		public readonly Block Block;
+		public Block Block;
 		
 		public Checked (Block b)
 		{
@@ -3659,10 +3839,17 @@ namespace Mono.CSharp {
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Block.Emit (ec);
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Checked target = (Checked) t;
+
+			target.Block = clonectx.LookupBlock (Block);
+		}
 	}
 
 	public class Unsafe : Statement {
-		public readonly Block Block;
+		public Block Block;
 
 		public Unsafe (Block b)
 		{
@@ -3680,6 +3867,12 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (EmitContext.Flags.InUnsafe, true))
 				Block.Emit (ec);
+		}
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Unsafe target = (Unsafe) t;
+
+			target.Block = clonectx.LookupBlock (Block);
 		}
 	}
 
@@ -3968,12 +4161,23 @@ namespace Mono.CSharp {
 				data [i].EmitExit (ec);
 			}
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Fixed target = (Fixed) t;
+
+			target.type = type.Clone (clonectx);
+			target.declarators = new ArrayList ();
+			foreach (LocalInfo var in declarators)
+				target.declarators.Add (clonectx.LookupVariable (var));
+			target.statement = statement.Clone (clonectx);
+		}
 	}
 	
 	public class Catch : Statement {
 		public readonly string Name;
-		public readonly Block  Block;
-		public readonly Block  VarBlock;
+		public Block  Block;
+		public Block  VarBlock;
 
 		Expression type_expr;
 		Type type;
@@ -4059,12 +4263,21 @@ namespace Mono.CSharp {
 				return true;
 			}
 		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Catch target = (Catch) t;
+
+			target.type_expr = type_expr.Clone (clonectx);
+			target.Block = clonectx.LookupBlock (Block);
+			target.VarBlock = clonectx.LookupBlock (VarBlock);
+		}
 	}
 
 	public class Try : ExceptionStatement {
-		public readonly Block Fini, Block;
-		public readonly ArrayList Specific;
-		public readonly Catch General;
+		public Block Fini, Block;
+		public ArrayList Specific;
+		public Catch General;
 
 		bool need_exc_block;
 		
@@ -4221,6 +4434,22 @@ namespace Mono.CSharp {
 		{
 			get {
 				return General != null || Specific.Count > 0;
+			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Try target = (Try) t;
+
+			target.Block = clonectx.LookupBlock (Block);
+			if (Fini != null)
+				target.Fini = clonectx.LookupBlock (Fini);
+			if (General != null)
+				target.General = (Catch) General.Clone (clonectx);
+			if (Specific != null){
+				target.Specific = new ArrayList ();
+				foreach (Catch c in Specific)
+					target.Specific.Add (c.Clone (clonectx));
 			}
 		}
 	}
@@ -4528,6 +4757,18 @@ namespace Mono.CSharp {
 				EmitLocalVariableDeclFinally (ec);
 			else if (expression_or_block is Expression)
 				EmitExpressionFinally (ec);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Using target = (Using) t;
+
+			if (expression_or_block is Expression)
+				target.expression_or_block = ((Expression) expression_or_block).Clone (clonectx);
+			else
+				target.expression_or_block = ((Statement) expression_or_block).Clone (clonectx);
+			
+			target.Statement = Statement.Clone (clonectx);
 		}
 	}
 
@@ -5222,6 +5463,16 @@ namespace Mono.CSharp {
 				assign.EmitStatement (ec);
 				statement.Emit (ec);
 			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			Foreach target = (Foreach) t;
+
+			target.type = type.Clone (clonectx);
+			target.variable = variable.Clone (clonectx);
+			target.expr = expr.Clone (clonectx);
+			target.statement = statement.Clone (clonectx);
 		}
 	}
 }

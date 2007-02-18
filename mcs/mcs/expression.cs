@@ -115,11 +115,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			ParenthesizedExpression target = (ParenthesizedExpression) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 		}
 	}
 	
@@ -667,11 +667,11 @@ namespace Mono.CSharp {
 			return "Unary (" + Oper + ", " + Expr + ")";
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Unary target = (Unary) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 		}
 	}
 
@@ -1039,11 +1039,11 @@ namespace Mono.CSharp {
 			EmitCode (ec, false);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			UnaryMutator target = (UnaryMutator) t;
 
-			target.expr = expr.Clone ();
+			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -1090,12 +1090,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Probe target = (Probe) t;
 
-			target.expr = expr.Clone ();
-			target.ProbeType = ProbeType.Clone ();
+			target.expr = expr.Clone (clonectx);
+			target.ProbeType = ProbeType.Clone (clonectx);
 		}
 
 	}
@@ -1416,12 +1416,12 @@ namespace Mono.CSharp {
 			throw new Exception ("Should not happen");
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Cast target = (Cast) t;
 
-			target.target_type = target_type.Clone ();
-			target.expr = expr.Clone ();
+			target.target_type = target_type.Clone (clonectx);
+			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -2821,12 +2821,12 @@ namespace Mono.CSharp {
 			ig.Emit (opcode);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Binary target = (Binary) t;
 
-			target.left = left.Clone ();
-			target.right = right.Clone ();
+			target.left = left.Clone (clonectx);
+			target.right = right.Clone (clonectx);
 		}
 	}
 
@@ -3379,13 +3379,13 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end_target);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Conditional target = (Conditional) t;
 
-			target.expr = expr.Clone ();
-			target.trueExpr = trueExpr.Clone ();
-			target.falseExpr = falseExpr.Clone ();
+			target.expr = expr.Clone (clonectx);
+			target.trueExpr = trueExpr.Clone (clonectx);
+			target.falseExpr = falseExpr.Clone (clonectx);
 		}
 	}
 
@@ -3495,7 +3495,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class LocalVariableReference : VariableReference, IVariable {
 		public readonly string Name;
-		public readonly Block Block;
+		public Block Block;
 		public LocalInfo local_info;
 		bool is_readonly;
 		Variable variable;
@@ -3641,13 +3641,11 @@ namespace Mono.CSharp {
 			return String.Format ("{0} ({1}:{2})", GetType (), Name, loc);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			//
-			// We need an infrastructure in CloneTo that can be used remap
-			// old block pointers to new block pointers
-			//
-			throw new Exception ("Do something about the block we point to");
+			LocalVariableReference target = (LocalVariableReference) t;
+			
+			target.Block = clonectx.LookupBlock (Block);
 		}
 	}
 
@@ -3774,7 +3772,6 @@ namespace Mono.CSharp {
 			if (!am.IsIterator && block.Toplevel.IsLocalParameter (name))
 				return true;
 
-			RootScopeInfo host = null;
 			ToplevelBlock toplevel = block.Toplevel;
 			while (toplevel != null) {
 				if (toplevel.IsLocalParameter (name))
@@ -3972,9 +3969,9 @@ namespace Mono.CSharp {
 				ml.AddressOf (ec, mode);
 		}
 
-		public Argument Clone ()
+		public Argument Clone (CloneContext clonectx)
 		{
-			return new Argument (Expr.Clone (), ArgType);
+			return new Argument (Expr.Clone (clonectx), ArgType);
 		}
 	}
 
@@ -4827,17 +4824,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Invocation target = (Invocation) t;
 
 			if (Arguments != null){
 				target.Arguments = new ArrayList ();
 				foreach (Argument a in Arguments)
-					target.Arguments.Add (a.Clone ());
+					target.Arguments.Add (a.Clone (clonectx));
 			}
 
-			expr = expr.Clone ();
+			expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -4939,12 +4936,12 @@ namespace Mono.CSharp {
 			throw new Exception ("Cannot happen");
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			InvocationOrCast target = (InvocationOrCast) t;
 
-			target.expr = expr.Clone ();
-			target.argument = argument.Clone ();
+			target.expr = expr.Clone (clonectx);
+			target.argument = argument.Clone (clonectx);
 		}
 	}
 
@@ -5337,15 +5334,15 @@ namespace Mono.CSharp {
 			((IMemoryLocation) value_target).AddressOf (ec, Mode);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			New target = (New) t;
 
-			target.RequestedType = RequestedType.Clone ();
+			target.RequestedType = RequestedType.Clone (clonectx);
 			if (Arguments != null){
 				target.Arguments = new ArrayList ();
 				foreach (Argument a in Arguments){
-					target.Arguments.Add (a.Clone ());
+					target.Arguments.Add (a.Clone (clonectx));
 				}
 			}
 		}
@@ -6060,19 +6057,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			ArrayCreation target = (ArrayCreation) t;
 
-			target.requested_base_type = requested_base_type.Clone ();
+			target.requested_base_type = requested_base_type.Clone (clonectx);
 			target.arguments = new ArrayList ();
 			foreach (Argument a in arguments)
-				target.arguments.Add (a.Clone ());
+				target.arguments.Add (a.Clone (clonectx));
 
 			if (initializers != null){
 				target.initializers = new ArrayList ();
 				foreach (Expression initializer in initializers)
-					target.initializers.Add (initializer.Clone ());
+					target.initializers.Add (initializer.Clone (clonectx));
 			}
 		}
 	}
@@ -6281,11 +6278,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			This target = (This) t;
 
-			throw new Exception ("Must do block remapping");
+			target.block = clonectx.LookupBlock (block);
 		}
 	}
 
@@ -6319,7 +6316,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Arglist);
 		}
 
-		protected override void CloneTo (Expression target)
+		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// nothing.
 		}
@@ -6366,13 +6363,13 @@ namespace Mono.CSharp {
 				arg.Emit (ec);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Arglist target = (Arglist) t;
 
 			target.Arguments = new Argument [Arguments.Length];
 			for (int i = 0; i < Arguments.Length; i++)
-				target.Arguments [i] = Arguments [i].Clone ();
+				target.Arguments [i] = Arguments [i].Clone (clonectx);
 		}
 	}
 
@@ -6469,11 +6466,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			TypeOf target = (TypeOf) t;
 
-			target.QueriedType = QueriedType.Clone ();
+			target.QueriedType = QueriedType.Clone (clonectx);
 		}
 	}
 
@@ -6561,11 +6558,11 @@ namespace Mono.CSharp {
 				IntConstant.EmitInt (ec.ig, size);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			SizeOf target = (SizeOf) t;
 
-			target.QueriedType = QueriedType.Clone ();
+			target.QueriedType = QueriedType.Clone (clonectx);
 		}
 	}
 
@@ -6651,7 +6648,7 @@ namespace Mono.CSharp {
 			return ToString ();
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			// Nothing 
 		}
@@ -6937,11 +6934,11 @@ namespace Mono.CSharp {
 			return expr.GetSignatureForError () + "." + Identifier;
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			MemberAccess target = (MemberAccess) t;
 
-			target.expr = expr.Clone ();
+			target.expr = expr.Clone (clonectx);
 		}
 	}
 
@@ -6986,11 +6983,11 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, onTrue);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			CheckedExpr target = (CheckedExpr) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 		}
 	}
 
@@ -7035,11 +7032,11 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, onTrue);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			UnCheckedExpr target = (UnCheckedExpr) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 		}
 	}
 
@@ -7173,14 +7170,14 @@ namespace Mono.CSharp {
 			throw new Exception ("Should never be reached");
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			ElementAccess target = (ElementAccess) t;
 
-			target.Expr = Expr.Clone ();
+			target.Expr = Expr.Clone (clonectx);
 			target.Arguments = new ArrayList ();
 			foreach (Argument a in Arguments)
-				target.Arguments.Add (a.Clone ());
+				target.Arguments.Add (a.Clone (clonectx));
 		}
 	}
 
@@ -7917,17 +7914,17 @@ namespace Mono.CSharp {
 			return instance_expr.GetSignatureForError () + ".this[...]";
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			IndexerAccess target = (IndexerAccess) t;
 
 			if (arguments != null){
 				target.arguments = new ArrayList ();
 				foreach (Argument a in arguments)
-					target.arguments.Add (a.Clone ());
+					target.arguments.Add (a.Clone (clonectx));
 			}
 			if (instance_expr != null)
-				target.instance_expr = instance_expr.Clone ();
+				target.instance_expr = instance_expr.Clone (clonectx);
 		}
 	}
 
@@ -8042,7 +8039,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Should never be called"); 
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			BaseAccess target = (BaseAccess) t;
 
@@ -8280,11 +8277,11 @@ namespace Mono.CSharp {
 			return left.GetSignatureForError () + dim;
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			ComposedCast target = (ComposedCast) t;
 
-			target.left = left.Clone ();
+			target.left = left.Clone (clonectx);
 		}
 	}
 
@@ -8439,11 +8436,11 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Localloc);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			StackAlloc target = (StackAlloc) t;
-			target.count = count.Clone ();
-			target.t = t.Clone ();
+			target.count = count.Clone (clonectx);
+			target.t = t.Clone (clonectx);
 		}
 	}
 }

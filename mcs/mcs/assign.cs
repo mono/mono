@@ -583,12 +583,12 @@ namespace Mono.CSharp {
 			Emit (ec, true);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Assign _target = (Assign) t;
 
-			_target.target = target.Clone ();
-			_target.source = source.Clone ();
+			_target.target = target.Clone (clonectx);
+			_target.source = source.Clone (clonectx);
 		}
 	}
 
@@ -676,11 +676,11 @@ namespace Mono.CSharp {
 			return base.DoResolve (ec);
 		}
 
-		protected override void CloneTo (Expression t)
+		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			CompoundAssign target = (CompoundAssign) t;
 
-			target.original_source = original_source.Clone ();
+			target.original_source = original_source.Clone (clonectx);
 		}
 	}
 }
