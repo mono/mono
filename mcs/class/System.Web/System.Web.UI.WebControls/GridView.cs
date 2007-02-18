@@ -1038,7 +1038,7 @@ namespace System.Web.UI.WebControls
 	
 		public virtual bool IsBindableType (Type type)
 		{
-			return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Guid);
+			return type.IsPrimitive || type == typeof (string) || type == typeof (decimal) || type == typeof (DateTime) || type == typeof (Guid);
 		}
 		
 		// MSDN: The CreateDataSourceSelectArguments method is a helper method called by 

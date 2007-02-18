@@ -1,5 +1,9 @@
 2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: IsBindableType for decimal returns true.
+
+2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Menu.js: client script: support IE6.
 
 2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
