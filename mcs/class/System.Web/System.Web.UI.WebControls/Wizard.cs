@@ -803,7 +803,7 @@ namespace System.Web.UI.WebControls
 		{
 			if (wizardStep.StepType == WizardStepType.Auto) {
 				if ((index == WizardSteps.Count - 1) || 
-						(WizardSteps.Count > 2 && 
+						(WizardSteps.Count > 1 && 
 						WizardSteps[WizardSteps.Count - 1].StepType == WizardStepType.Complete && 
 						index == WizardSteps.Count - 2))
 					return WizardStepType.Finish;

@@ -1,3 +1,9 @@
+2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Wizard: fixed:
+	first step is recognized as 'finish' if only two steps 
+	and last step is 'complete'
+
 2006-02-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseValidator: ControlPropertiesValid is called on PreRender
