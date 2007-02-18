@@ -172,7 +172,6 @@ function Menu_Reposition (it, elem, offx, offy)
 
 function Menu_Resize (subm, menuId, itemId)
 {
-	subm.style.top = subm.initialTop;
 	var parent = subm.offsetParent;
 	var box = getMenuScrollBox (menuId, itemId, "b");
 	box.scrollTop = 0;
@@ -197,6 +196,7 @@ function Menu_Resize (subm, menuId, itemId)
 		displayScroll = "none";
 		box.style.height = subm.initialContentHeight + "px";
 	}
+	subm.style.width = box.offsetWidth + "px";
 	var btn = getMenuScrollBox (menuId, itemId, "u");
 	btn.style.display = displayScroll;
 	btn = getMenuScrollBox (menuId, itemId, "d");

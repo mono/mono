@@ -1,6 +1,10 @@
 2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* Menu: fixed: considers item.ToolTip, render image inside 'a' tag.
+	* Menu.js: client script: support IE6.
+
+2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs: fixed: considers item.ToolTip, render image inside 'a' tag.
 
 2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
 
