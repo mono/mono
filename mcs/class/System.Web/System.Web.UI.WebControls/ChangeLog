@@ -1,3 +1,7 @@
+2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu: fixed: considers item.ToolTip, render image inside 'a' tag.
+
 2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Button.cs, ImageButton.cs, LinkButton.cs: Hanlding of PostbackOptions for

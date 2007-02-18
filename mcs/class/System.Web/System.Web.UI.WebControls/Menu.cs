@@ -1514,6 +1514,8 @@ namespace System.Web.UI.WebControls
 			if (itemSpacing != Unit.Empty && (item.Depth > 0 || !isFirst))
 				RenderMenuItemSpacing (writer, itemSpacing, vertical);
 
+			if(!String.IsNullOrEmpty(item.ToolTip))
+				writer.AddAttribute (HtmlTextWriterAttribute.Title, item.ToolTip);
 			if (vertical)
 				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 
@@ -1611,18 +1613,6 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("width", "100%");
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-
-			if (item.ImageUrl != "") {
-				writer.RenderBeginTag (HtmlTextWriterTag.Td);
-				RenderItemHref (writer, item);
-				writer.RenderBeginTag (HtmlTextWriterTag.A);
-				writer.AddAttribute ("src", ResolveClientUrl (item.ImageUrl));
-				writer.AddAttribute ("border", "0");
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();	// IMG
-				writer.RenderEndTag ();	// A
-				writer.RenderEndTag ();	// TD
-			}
 
 			// Menu item text
 
@@ -1774,14 +1764,26 @@ namespace System.Web.UI.WebControls
 			if (_menuItemControls!=null && _menuItemControls [item] != null) {
 				((Control) _menuItemControls [item]).Render (writer);
 			}
-			else if (isDynamicItem && DynamicItemFormatString.Length > 0) {
-				writer.Write (string.Format (DynamicItemFormatString, item.Text));
-			}
-			else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
-				writer.Write (string.Format (StaticItemFormatString, item.Text));
-			}
 			else {
-				writer.Write (item.Text);
+
+				if (!String.IsNullOrEmpty (item.ImageUrl)) {
+					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (item.ImageUrl));
+					writer.AddAttribute (HtmlTextWriterAttribute.Alt, item.ToolTip);
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "none");
+					writer.AddStyleAttribute (HtmlTextWriterStyle.VerticalAlign, "middle");
+					writer.RenderBeginTag (HtmlTextWriterTag.Img);
+					writer.RenderEndTag ();	// IMG
+				}
+
+				if (isDynamicItem && DynamicItemFormatString.Length > 0) {
+					writer.Write (string.Format (DynamicItemFormatString, item.Text));
+				}
+				else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
+					writer.Write (string.Format (StaticItemFormatString, item.Text));
+				}
+				else {
+					writer.Write (item.Text);
+				}
 			}
 		}
 			
