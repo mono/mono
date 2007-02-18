@@ -1,5 +1,8 @@
 2007-02-17  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-parser.jay: Add support for lambda expressions to the mcs
+	compiler as well.
+
 	* lambda.cs: Only clone when we are probing, not on the final call
 	(Compatible is the final call). 
 
@@ -14,7 +17,6 @@
 	
 	* expression.cs: Add support for CloneContext in all expressions. 
 	
-
 2007-02-17  Marek Safar  <marek.safar@gmail.com>
  
 	A fix for bug #80493
