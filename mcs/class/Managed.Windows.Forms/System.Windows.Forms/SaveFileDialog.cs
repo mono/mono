@@ -39,8 +39,9 @@ namespace System.Windows.Forms {
 		{
 			form.SuspendLayout ();
 			
-			form.Text = "Save";
-			
+			form.Text = "Save As";
+
+			FileTypeLabel = "Save as type:";
 			OpenSaveButtonText = "Save";
 			SearchSaveLabel = "Save in:";
 			fileDialogType = FileDialogType.SaveFileDialog;

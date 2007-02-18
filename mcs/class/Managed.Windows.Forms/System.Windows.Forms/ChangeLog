@@ -1,3 +1,10 @@
+2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileDialog.cs: Modify default text of filename and filetype labels
+	to match that of MS. Reset do_not_call_OnSelectedIndexChanged...
+	after we've updated the SelectedIndex. Fixes part of bug #80887.
+	* SaveFileDialog.cs: Set text of filetype label.
+
 2007-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* LabelEditEventArgs.cs: New internal SetLabel method, to set the

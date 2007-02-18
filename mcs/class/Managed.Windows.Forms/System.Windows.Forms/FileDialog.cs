@@ -228,7 +228,7 @@ namespace System.Windows.Forms {
 			fileNameLabel.FlatStyle = FlatStyle.System;
 			fileNameLabel.Location = new Point (102, 330);
 			fileNameLabel.Size = new Size (70, 21);
-			fileNameLabel.Text = "Filename:";
+			fileNameLabel.Text = "File name:";
 			fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
 			// fileNameComboBox
@@ -254,8 +254,8 @@ namespace System.Windows.Forms {
 			fileTypeLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 			fileTypeLabel.FlatStyle = FlatStyle.System;
 			fileTypeLabel.Location = new Point (102, 356);
-			fileTypeLabel.Size = new Size (70, 21);
-			fileTypeLabel.Text = "Filetype:";
+			fileTypeLabel.Size = new Size (90, 21);
+			fileTypeLabel.Text = "Files of type:";
 			fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
 			// fileTypeComboBox
@@ -717,7 +717,13 @@ namespace System.Windows.Forms {
 				searchSaveLabel.Text = value;
 			}
 		}
-		
+
+		internal string FileTypeLabel {
+			set {
+				fileTypeLabel.Text = value;
+			}
+		}
+
 		private void SelectFilter ()
 		{
 			if (mwfFileView.FilterArrayList == null || filterIndex > mwfFileView.FilterArrayList.Count)
@@ -727,7 +733,7 @@ namespace System.Windows.Forms {
 			fileTypeComboBox.BeginUpdate ();
 			fileTypeComboBox.SelectedIndex = filterIndex - 1;
 			fileTypeComboBox.EndUpdate ();
-			
+			do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
 			mwfFileView.FilterIndex = filterIndex;
 		}
 		
