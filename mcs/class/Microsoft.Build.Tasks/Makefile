@@ -24,4 +24,11 @@ TEST_MCS_FLAGS = \
 	/r:Microsoft.Build.Tasks.dll		\
 	/r:Microsoft.Build.Utilities.dll
 
+EXTRA_DISTFILES = Test/resources/test.cs
+
+test-local: test.dll
+
+test.dll: Test/resources/test.cs
+	$(CSCOMPILE) Test/resources/test.cs
+
 include ../../build/library.make
