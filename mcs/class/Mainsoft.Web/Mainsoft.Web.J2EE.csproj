@@ -100,14 +100,10 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" />
+      <UserProperties REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="j2ee">
       <HintPath>..\lib\j2ee.dll</HintPath>
       <Private>False</Private>
@@ -118,6 +114,11 @@
     </Reference>
     <Reference Include="J2SE.Helpers">
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
