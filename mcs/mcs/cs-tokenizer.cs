@@ -2406,7 +2406,7 @@ namespace Mono.CSharp
 					continue;
 				}
 				
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == 0xa0)
+				if (c == ' ' || c == '\f' || c == '\v' || c == 0xa0 || c == 0)
 					continue;
 
 				if (c == '\r') {

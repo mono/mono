@@ -1,3 +1,7 @@
+2007-02-18  Marek Safar  <marek.safar@gmail.com>
+ 
+	* cs-tokenizer.cs: Ignore '\0' as white space character.
+
 2007-02-17  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay: Add support for lambda expressions to the mcs
