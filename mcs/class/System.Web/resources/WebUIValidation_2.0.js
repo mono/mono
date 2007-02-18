@@ -171,6 +171,20 @@ function ValidatorGetValue (controlname)
 	if (typeof (el.selectedIndex) != 'undefined') {
 		return el.options[el.selectedIndex].value;
 	}
+	
+	return ValidatorGetValueRecursive(el);
+}
+
+function ValidatorGetValueRecursive(el)
+{
+	if (typeof(el.value) == "string") {
+		if (el.type != "radio" || el.checked == true) return el.value;
+	}
+	for (var i = 0; i<el.childNodes.length; i++) {
+		var val = ValidatorGetValueRecursive(el.childNodes[i]);
+		if (val != "") return val;
+	}
+	return "";
 }
 
 function ValidatorTrim (s)

@@ -1,3 +1,8 @@
+2007-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebUIValidation_2.0.js: 
+	support client side validation for RadioButtonList
+
 2007-02-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* webform.js:
