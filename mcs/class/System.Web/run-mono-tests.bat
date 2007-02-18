@@ -45,6 +45,7 @@ REM @echo Set environment
 REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
 set JAVA_HOME=%VMW_HOME%\jre5
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
@@ -60,6 +61,8 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\derby.jar
 
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar
+
+set TOMCAT_CLASSPATH=%TOMCAT_PATH%servlet-api.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
 if "%GH_VERSION%"=="" (
@@ -79,7 +82,7 @@ set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CON
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
 
-set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
+set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%;%TOMCAT_CLASSPATH%"
 
 REM ********************************************************
 @echo Building GH solution...

@@ -57,6 +57,9 @@ namespace System.Web
 		void LoadWwwForm ()
 		{
 			HttpServletRequest servletReq = context.ServletRequest;
+			if (servletReq == null)
+				return;
+
 			servletReq.setCharacterEncoding (ContentEncoding.WebName);
 
 			for (java.util.Enumeration e = servletReq.getParameterNames(); e.hasMoreElements() ;) {
@@ -121,7 +124,10 @@ namespace System.Web
 
 		internal void GetSessionCookiesForPortal (HttpCookieCollection cookies)
 		{
-			HttpSession javaSession = context.ServletRequest.getSession(false);
+			HttpServletRequest servletReq = context.ServletRequest;
+			if (servletReq == null)
+				return;
+			HttpSession javaSession = servletReq.getSession(false);
 			if (javaSession == null)
 				return;
 
@@ -160,6 +166,8 @@ namespace System.Web
 				return;
 
 			HttpServletRequest servletReq = context.ServletRequest;
+			if (servletReq == null)
+				return;
 			bool inPortletMode = servletReq is IPortletRequest;
 			bool shouldStoreCookiesCollection = false;
 			HttpSession javaSession = servletReq.getSession(false);

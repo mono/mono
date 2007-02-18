@@ -49,7 +49,8 @@ namespace System.Web {
 
 		internal object GetWorkerService(Type t)
 		{
-			return ((IServiceProvider) WorkerRequest).GetService(t);
+			IServiceProvider prv = WorkerRequest as IServiceProvider;
+			return prv != null ? prv.GetService(t) : null;
 		}
 
 		internal HttpServlet Servlet {

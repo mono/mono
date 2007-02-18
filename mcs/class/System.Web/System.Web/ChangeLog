@@ -1,3 +1,8 @@
+2007-02-18  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* HttpContext.jvm.cs, HttpRequest.jvm.cs: Adapt for tunning under test
+	  harness where we don't have a SevletRequest/Response.
+
 2007-02-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpApplication.cs: fixed InitOnce, httpModules section is global and
