@@ -57,8 +57,10 @@ namespace System.Web
 		void LoadWwwForm ()
 		{
 			HttpServletRequest servletReq = context.ServletRequest;
-			if (servletReq == null)
+			if (servletReq == null) {
+				RawLoadWwwForm ();
 				return;
+			}
 
 			servletReq.setCharacterEncoding (ContentEncoding.WebName);
 

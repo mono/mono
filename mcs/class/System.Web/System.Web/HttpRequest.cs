@@ -447,7 +447,6 @@ namespace System.Web {
 			EndSubStream (input);
 		}
 
-#if !TARGET_J2EE
 		//
 		// Adds the key/value to the form, and sets the argumets to empty
 		//
@@ -463,7 +462,11 @@ namespace System.Web {
 		//
 		// Loads the form data from on a application/x-www-form-urlencoded post
 		// 
+#if TARGET_J2EE
+		void RawLoadWwwForm ()
+#else
 		void LoadWwwForm ()
+#endif
 		{
 			Stream input = GetSubStream (InputStream);
 			StreamReader s = new StreamReader (input, ContentEncoding);
@@ -496,7 +499,6 @@ namespace System.Web {
 
 			EndSubStream (input);
 		}
-#endif
 
 		bool IsContentType (string ct, bool starts_with)
 		{
