@@ -1,5 +1,5 @@
-// cs0658.cs: `blah' is an invalid attribute target
-// Line : 8
+// CS0658: `blah' is invalid attribute target. All attributes in this attribute section will be ignored
+// Line : 9
 // Compiler options: -warnaserror -warn:1
 
 public class MyClass {
