@@ -1298,6 +1298,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		// Used for error reporting only
+		public virtual Type LookupAnyGeneric (string typeName)
+		{
+			return NamespaceEntry.NS.LookForAnyGenericType (typeName);
+		}
+
 		public override string[] ValidAttributeTargets {
 			get { return attribute_targets; }
 		}

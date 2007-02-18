@@ -2623,6 +2623,22 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public override Type LookupAnyGeneric (string typeName)
+		{
+			if (types != null) {
+				foreach (TypeContainer tc in types) {
+					if (!tc.IsGeneric)
+						continue;
+
+					int pos = tc.Basename.LastIndexOf ('`');
+					if (pos == typeName.Length && String.Compare (typeName, 0, tc.Basename, 0, pos) == 0)
+						return tc.TypeBuilder;
+				}
+			}
+
+			return base.LookupAnyGeneric (typeName);
+		}
+
 		public void Mark_HasEquals ()
 		{
 			Methods.HasEquals = true;

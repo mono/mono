@@ -1,5 +1,11 @@
 2007-02-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #78712
+	* class.cs.cs, decl.cs, ecore.cs: LookupAnyGeneric inspects nested types
+	too.
+
+2007-02-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #80493 by Atsushi Enomoto
 	* cs-parser.jay: Ignore invalid attribute target.
 

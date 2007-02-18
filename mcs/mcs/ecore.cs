@@ -2137,7 +2137,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Type t = ec.DeclContainer.NamespaceEntry.NS.LookForAnyGenericType (Name);
+			Type t = ec.DeclContainer.LookupAnyGeneric (Name);
 			if (t != null) {
 				Namespace.Error_InvalidNumberOfTypeArguments (t, loc);
 				return null;
