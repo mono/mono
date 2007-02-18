@@ -73,8 +73,8 @@ namespace System.Data.SqlClient
 			// Types.REF
 			if(Types.SMALLINT == jdbcType) return SqlDbType.SmallInt;
 			// Types.STRUCT
-			if(Types.TIME == jdbcType) return SqlDbType.Timestamp;
-			if(Types.TIMESTAMP == jdbcType) return SqlDbType.Timestamp;
+			if(Types.TIME == jdbcType) return SqlDbType.DateTime;
+			if(Types.TIMESTAMP == jdbcType) return SqlDbType.DateTime;
 			if(Types.TINYINT == jdbcType) return SqlDbType.TinyInt;
 			if(Types.VARBINARY == jdbcType) return SqlDbType.VarBinary;
 			if(Types.VARCHAR == jdbcType) return SqlDbType.VarChar;
