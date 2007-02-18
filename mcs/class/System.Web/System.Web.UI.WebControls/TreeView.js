@@ -8,7 +8,7 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	var expand = node.style.display == "none";
 	
 	if (tree.populateFromClient && expand && node.populated != true && (node.innerHTML.length == 0 || node.hasError)) {
-		WebForm_DoCallback (tree.uid, nodeId, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_PopulateCallback)
+		WebForm_DoCallback (tree.uid, nodeId, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_PopulateCallback, tree.form)
 		return;
 	}
 	
@@ -17,8 +17,7 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	
 	node.style.display = expand ? "block" : "none";
 	
-	var myForm = WebForm_GetFormFromCtrl (treeId);
-	var inputStates = myForm [treeId + "_ExpandStates"];
+	var inputStates = tree.form [treeId + "_ExpandStates"];
 	TreeView_SetNodeFlag (inputStates, nodeId, expand);
 	
 	if (tree.showImage) {
@@ -60,8 +59,7 @@ function TreeView_PopulateCallback (data, ids)
 	if (data != "*") {
 		node.innerHTML = data;
 	    TreeView_ToggleExpand (idArray[0], idArray[1]);
-		var myForm = WebForm_GetFormFromCtrl (idArray[0]);
-	    TreeView_SetNodeFlag (myForm [idArray[0] + "_PopulatedStates"], idArray[1], true);
+	    TreeView_SetNodeFlag (tree.form [idArray[0] + "_PopulatedStates"], idArray[1], true);
 	} else {
 		if (tree.showImage && tree.noExpandImage != null) {
 			var image = document.getElementById (spanId + "_img");

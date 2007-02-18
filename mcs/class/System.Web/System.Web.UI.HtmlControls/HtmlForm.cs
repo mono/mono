@@ -251,9 +251,9 @@ namespace System.Web.UI.HtmlControls
 
 			action += Page.Request.QueryStringRaw;
 #if TARGET_J2EE
-			vmw.@internal.j2ee.IPortletRenderResponse resp = GetRenderResponse();
-			if (resp != null)
-				action = resp.createActionURL(action);
+			// Allow the page to transform action to a portlet action url
+			if (Page.IsPortletRender)
+				action = Page.RenderResponse.createActionURL(action);
 #endif
 
 			w.WriteAttribute ("name", Name);

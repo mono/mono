@@ -1,3 +1,8 @@
+2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
+
+	* HtmlForm.cs: Under TARGET_J2EE use Page.RenderResponse instead of
+	  GetRenderResponse.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* HtmlHead.cs: comment out unused code, in particular metadata is
@@ -11,7 +16,7 @@
 
 2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
 
-	* HtmlForm.cs, HtmlAnchor.cs: Added H2EE Portal support for TARGET_J2EE.
+	* HtmlForm.cs, HtmlAnchor.cs: Added J2EE Portal support for TARGET_J2EE.
 
 2007-01-14  Eyal Alaluf  <eyala@mainsoft.com>
 

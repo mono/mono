@@ -1006,6 +1006,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		writer.WriteLine ("\t{0}.isAspForm = true;", theForm);
+#if TARGET_J2EE
+		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
+		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
+#endif
 	}
 
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
@@ -1135,7 +1139,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0 || TARGET_JVM
+#if NET_2_0
 	public virtual void ProcessRequest (HttpContext context)
 #else
 	public void ProcessRequest (HttpContext context)
@@ -1309,12 +1313,11 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.SaveStateComplete;
 		OnSaveStateComplete (EventArgs.Empty);
-#endif
-
 #if TARGET_J2EE
-		if (SaveViewStateForNextPortletRender())
+		if (OnSaveStateCompleteForPortlet ())
 			return;
-#endif
+#endif // TARGET_J2EE
+#endif // NET_2_0
 
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;

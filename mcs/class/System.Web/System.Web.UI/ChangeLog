@@ -1,3 +1,10 @@
+2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Control.jvm.cs, Control.cs: Move TemplateSourceDirectory to .jvm file.
+	* Control.jvm.cs, Page.jvm.cs: Centralize Portlet specific API in Page.jvm
+	* Page.cs, Page.jvm.cs, ClientScriptManager.cs: Support for Http callbacks
+	  for J2EE portlets.
+
 2007-02-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: for 2.0: 

@@ -131,7 +131,7 @@ namespace System.Web.UI
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
-			
+
 			if (options.ActionUrl == null && options.ValidationGroup == null && !options.TrackFocus && 
 				!options.AutoPostBack && !options.PerformValidation)
 			{
@@ -145,20 +145,31 @@ namespace System.Web.UI
 			}
 
 			RegisterWebFormClientScript ();
-			
-			if (options.ActionUrl != null)
+
+			string actionUrl = options.ActionUrl;
+			if (actionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
-			
-			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
-					options.RequiresJavaScriptProtocol ? "javascript:" : "",
+
+			string prefix = options.RequiresJavaScriptProtocol ? "javascript:" : "";
+#if TARGET_J2EE
+			// Allow the page to transform ActionUrl to a portlet action url
+			if (actionUrl != null && page.PortletNamespace != null) {
+				actionUrl = page.CreateActionUrl(actionUrl);
+				prefix += "Portal";
+			}
+#endif
+
+			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8},{9})", 
+					prefix,
 					ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
 					ClientScriptManager.GetScriptLiteral (options.Argument),
-					ClientScriptManager.GetScriptLiteral (options.ActionUrl),
+					ClientScriptManager.GetScriptLiteral (actionUrl),
 					ClientScriptManager.GetScriptLiteral (options.AutoPostBack),
 					ClientScriptManager.GetScriptLiteral (options.PerformValidation),
 					ClientScriptManager.GetScriptLiteral (options.TrackFocus),
 					ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
-					ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
+					ClientScriptManager.GetScriptLiteral (options.ValidationGroup),
+					page.theForm
 				);
 		}
 
@@ -195,7 +206,7 @@ namespace System.Web.UI
 		{
 			RegisterWebFormClientScript ();
 			
-			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"));
+			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5},{6})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), page.theForm);
 		}
 #endif
 		

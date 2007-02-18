@@ -36,8 +36,16 @@ namespace System.Web.UI
 {
 	public partial class Page
 	{
+		const string PageNamespaceKey = "__PAGENAMESPACE";
+		const string RenderPageMark = "vmw.render.page=";
+		const string ActionPageMark = "vmw.action.page=";
+		static readonly string NextActionPageKey = PortletInternalUtils.NextActionPage;
+		static readonly string NextRenderPageKey = PortletInternalUtils.NextRenderPage;
+
 		bool _emptyPortletNamespace = false;
 		string _PortletNamespace = null;
+		bool _renderResponseInit = false;
+		IPortletRenderResponse _renderResponse = null;
 
 		internal string PortletNamespace
 		{
@@ -46,9 +54,14 @@ namespace System.Web.UI
 					return null;
 
 				if (_PortletNamespace == null) {
-					IPortletResponse portletResponse = Context.ServletResponse as IPortletResponse;
+					IPortletResponse portletResponse = null;
+					if (Context != null)
+						portletResponse = Context.ServletResponse as IPortletResponse;
 					if (portletResponse != null)
 						_PortletNamespace = portletResponse.getNamespace ();
+					else if (_requestValueCollection != null && _requestValueCollection [PageNamespaceKey] != null)
+						_PortletNamespace = _requestValueCollection [PageNamespaceKey];
+						
 					_emptyPortletNamespace = _PortletNamespace == null;
 				}
 				return _PortletNamespace;
@@ -61,8 +74,77 @@ namespace System.Web.UI
 			}
 		}
 
-		internal bool SaveViewStateForNextPortletRender ()
+		internal bool IsPortletRender
 		{
+			get {
+				return RenderResponse != null;
+			}
+		}
+
+		internal IPortletRenderResponse RenderResponse
+		{
+			get {
+				if (!_renderResponseInit) {
+					_renderResponse = Context.ServletResponse as IPortletRenderResponse;
+					_renderResponseInit = true;
+				}
+				return _renderResponse;
+			}
+		}
+
+		public string CreateRenderUrl (string url)
+		{
+			if (RenderResponse != null)
+				return RenderResponse.createRenderURL (url);
+			if (PortletNamespace == null)
+				return url;
+
+			string internalUrl = RemoveAppPathIfInternal (url);
+			if (internalUrl == null)
+				return url;
+
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = RenderPageMark + internalUrl;
+			options.RequiresJavaScriptProtocol = true;
+			return ClientScript.GetPostBackEventReference (options);
+		}
+
+		public string CreateActionUrl (string url)
+		{
+			if (url.StartsWith(RenderPageMark) || url.StartsWith(ActionPageMark))
+				return url;
+
+			if (RenderResponse != null)
+				return RenderResponse.createActionURL (url);
+			if (PortletNamespace == null)
+				return url;
+
+			Uri requestUrl = Request.Url;
+			string internalUrl = RemoveAppPathIfInternal (url);
+			if (internalUrl == null)
+				return url;
+
+			return ActionPageMark + internalUrl;
+		}
+
+		private string RemoveAppPathIfInternal (string url)
+		{
+			Uri reqUrl = Request.Url;
+			string appPath = Request.ApplicationPath;
+			string currPage = Request.CurrentExecutionFilePath;
+			if (currPage.StartsWith (appPath))
+				currPage = currPage.Substring (appPath.Length);
+			return PortletInternalUtils.mapPathIfInternal (url, reqUrl.Host, reqUrl.Port, reqUrl.Scheme, appPath, currPage);
+		}
+
+		internal bool OnSaveStateCompleteForPortlet ()
+		{
+			if (PortletNamespace != null) {
+				ClientScript.RegisterHiddenField (PageNamespaceKey, PortletNamespace);
+				ClientScript.RegisterHiddenField (NextActionPageKey, "");
+				ClientScript.RegisterHiddenField (NextRenderPageKey, "");
+			}
+
 			IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
 			IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
 			if (req == null)

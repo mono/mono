@@ -85,17 +85,19 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			StringBuilder context1 = new StringBuilder ();
-			context1.Append ("function ReceiveServerData1(arg, context)");
-			context1.Append ("{");
-			context1.Append ("Message1.innerText =  arg;");
-			context1.Append ("value1 = arg;");
-			context1.Append ("}");
+			StringBuilder func = new StringBuilder ();
+			func.Append ("function ReceiveServerData1(arg, context)");
+			func.Append ("{");
+			func.Append ("Message1.innerText =  arg;");
+			func.Append ("value1 = arg;");
+			func.Append ("}");
 
 			// Define callback references.
-			String cbReference = cs.GetCallbackEventReference (p, "arg",
-			    "ReceiveServerData1", context1.ToString ());
-			Assert.AreEqual ("WebForm_DoCallback('__Page',arg,ReceiveServerData1,function ReceiveServerData1(arg, context){Message1.innerText =  arg;value1 = arg;},null,false)", cbReference, "GetCallbackEventReferenceFail1");
+			String cbReference = cs.GetCallbackEventReference (p, "callArg",
+			    func.ToString (), "ReceiveServerData1Ctx");
+			Assert.IsTrue (cbReference.IndexOf ("callArg") != -1, "GetCallbackEventReferenceFail1_arg");
+			Assert.IsTrue (cbReference.IndexOf (func.ToString ()) != -1, "GetCallbackEventReferenceFail1_callback");
+			Assert.IsTrue (cbReference.IndexOf ("ReceiveServerData1Ctx") != -1, "GetCallbackEventReferenceFail1_context");
 		}
 
 		[Test]
@@ -103,17 +105,23 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			StringBuilder context1 = new StringBuilder ();
-			context1.Append ("function ReceiveServerData1(arg, context)");
-			context1.Append ("{");
-			context1.Append ("Message1.innerText =  arg;");
-			context1.Append ("value1 = arg;");
-			context1.Append ("}");
+			StringBuilder func = new StringBuilder ();
+			func.Append ("function ReceiveServerData1(arg, context)");
+			func.Append ("{");
+			func.Append ("Message1.innerText =  arg;");
+			func.Append ("value1 = arg;");
+			func.Append ("}");
 
 			// Define callback references.
-			String cbReference = cs.GetCallbackEventReference (p, "arg",
-			    "ReceiveServerData1", context1.ToString (), true);
-			Assert.AreEqual ("WebForm_DoCallback('__Page',arg,ReceiveServerData1,function ReceiveServerData1(arg, context){Message1.innerText =  arg;value1 = arg;},null,true)", cbReference, "GetCallbackEventReferenceFail2");
+			String cbReference = cs.GetCallbackEventReference (p, "callArg",
+			    func.ToString (), "ReceiveServerData1Ctx", true);
+			Assert.IsTrue (cbReference.IndexOf ("callArg") != -1, "GetCallbackEventReferenceFail2_arg");
+			Assert.IsTrue (cbReference.IndexOf (func.ToString ()) != -1, "GetCallbackEventReferenceFail2_callback");
+			Assert.IsTrue (cbReference.IndexOf ("ReceiveServerData1Ctx") != -1, "GetCallbackEventReferenceFail2_context");
+			String cbReference2 = cs.GetCallbackEventReference (p, "arg",
+			    func.ToString (), "ReceiveServerData1Ctx", false);
+			// Check that we get different results when useAsync differs.
+			Assert.IsTrue (cbReference != cbReference2, "GetCallbackEventReferenceFail2_useAsync");
 		}
 
 		[Test]
@@ -121,17 +129,20 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			StringBuilder context1 = new StringBuilder ();
-			context1.Append ("function ReceiveServerData1(arg, context)");
-			context1.Append ("{");
-			context1.Append ("Message1.innerText =  arg;");
-			context1.Append ("value1 = arg;");
-			context1.Append ("}");
+			StringBuilder func = new StringBuilder ();
+			func.Append ("function ReceiveServerData1(arg, context)");
+			func.Append ("{");
+			func.Append ("Message1.innerText =  arg;");
+			func.Append ("value1 = arg;");
+			func.Append ("}");
 
 			// Define callback references.
-			String cbReference = cs.GetCallbackEventReference (p, "arg",
-			    "ReceiveServerData1", context1.ToString (), "ErrorCallback", false);
-			Assert.AreEqual ("WebForm_DoCallback('__Page',arg,ReceiveServerData1,function ReceiveServerData1(arg, context){Message1.innerText =  arg;value1 = arg;},ErrorCallback,false)", cbReference, "GetCallbackEventReferenceFail3");
+			String cbReference = cs.GetCallbackEventReference (p, "callArg",
+			    func.ToString (), "ReceiveServerData1Ctx", "ErrorCallback", false);
+			Assert.IsTrue (cbReference.IndexOf ("callArg") != -1, "GetCallbackEventReferenceFail3_arg");
+			Assert.IsTrue (cbReference.IndexOf (func.ToString ()) != -1, "GetCallbackEventReferenceFail3_callback");
+			Assert.IsTrue (cbReference.IndexOf ("ReceiveServerData1Ctx") != -1, "GetCallbackEventReferenceFail3_context");
+			Assert.IsTrue (cbReference.IndexOf ("ErrorCallback") != -1, "GetCallbackEventReferenceFail3_errorCallback");
 		}
 
 		[Test]
@@ -139,8 +150,9 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			String result = cs.GetPostBackEventReference (new PostBackOptions (p, "args"));
-			Assert.AreEqual ("__doPostBack('__Page','args')", result, "GetPostBackEventReference#1");
+			String result = cs.GetPostBackEventReference (new PostBackOptions (p, "args1"));
+			Assert.IsTrue (result.IndexOf(p.ClientID) != -1, "GetPostBackEventReference#1_targetEvent");
+			Assert.IsTrue (result.IndexOf("args1") != -1, "GetPostBackEventReference#1_targetArgs");
 		}
 
 		[Test]
@@ -148,8 +160,9 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			String result = cs.GetPostBackEventReference (p, "args");
-			Assert.AreEqual ("__doPostBack('__Page','args')", result, "GetPostBackEventReference#2");
+			String result = cs.GetPostBackEventReference (p, "args1");
+			Assert.IsTrue (result.IndexOf(p.ClientID) != -1, "GetPostBackEventReference#2_targetEvent");
+			Assert.IsTrue (result.IndexOf("args1") != -1, "GetPostBackEventReference#2_targetArgs");
 		}
 
 		[Test]
@@ -157,8 +170,10 @@ namespace MonoTests.System.Web.UI
 		{
 			MyPage p = new MyPage ();
 			ClientScriptManager cs = p.ClientScript;
-			String hyperlink = cs.GetPostBackClientHyperlink (p, "args");
-			Assert.AreEqual ("javascript:__doPostBack('__Page','args')", hyperlink, "GetPostBackClientHyperlink");
+			String hyperlink = cs.GetPostBackClientHyperlink (p, "args1");
+			Assert.IsTrue (hyperlink.IndexOf("javascript:") != -1, "GetPostBackClientHyperlink_javaScript");
+			Assert.IsTrue (hyperlink.IndexOf(p.ClientID) != -1, "GetPostBackClientHyperlink_targetEvent");
+			Assert.IsTrue (hyperlink.IndexOf("args1") != -1, "GetPostBackClientHyperlink_targetArgs");
 		}
 
 		[Test]

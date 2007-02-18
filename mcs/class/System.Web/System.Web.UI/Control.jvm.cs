@@ -35,39 +35,56 @@ namespace System.Web.UI
 {
 	public partial class Control
 	{
-		internal bool IsPortletRender
+		private string _templateSourceDir;
+
+		public virtual string TemplateSourceDirectory
 		{
-			get {
-				return GetRenderResponse() != null;
+			get
+			{
+				int location = 0;
+				if (_templateSourceDir == null) {
+					string tempSrcDir = _appRelativeTemplateSourceDirectory;
+					if (tempSrcDir == null && Parent != null)
+						tempSrcDir = Parent.TemplateSourceDirectory;
+					if (tempSrcDir != null && tempSrcDir.Length > 1) {
+						location = tempSrcDir.IndexOf ('/', 1);
+						if (location != -1)
+							tempSrcDir = tempSrcDir.Substring (location + 1);
+						else
+							tempSrcDir = string.Empty;
+					}
+					string answer = HttpRuntime.AppDomainAppVirtualPath;
+					if (tempSrcDir == null)
+						tempSrcDir = "";
+
+					if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
+						tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
+
+					if (tempSrcDir.StartsWith ("/") || tempSrcDir.Length == 0)
+						_templateSourceDir = answer + tempSrcDir;
+					else
+						_templateSourceDir = answer + "/" + tempSrcDir;
+				}
+				return _templateSourceDir;
 			}
 		}
+
 
 		// Add a variant for specifying use of portlet resolveRenderUrl
 		internal string ResolveUrl (string relativeUrl, bool usePortletRenderResolve)
 		{
 			relativeUrl = ResolveUrl (relativeUrl);
-			if (usePortletRenderResolve) {
-				IPortletRenderResponse resp = GetRenderResponse ();
-				if (resp != null)
-					relativeUrl = resp.createRenderURL (relativeUrl);
-			}
+			if (usePortletRenderResolve && Page != null)
+				relativeUrl = Page.CreateRenderUrl (relativeUrl);
 			return relativeUrl;
 		}
 
 		internal string ResolveClientUrl (string relativeUrl, bool usePortletRenderResolve)
 		{
 			relativeUrl = ResolveClientUrl (relativeUrl);
-			if (usePortletRenderResolve) {
-				IPortletRenderResponse resp = GetRenderResponse ();
-				if (resp != null)
-					relativeUrl = resp.createRenderURL (relativeUrl);
-			}
+			if (usePortletRenderResolve && Page != null)
+				relativeUrl = Page.CreateRenderUrl (relativeUrl);
 			return relativeUrl;
-		}
-
-		internal IPortletRenderResponse GetRenderResponse ()
-		{
-			return Context.ServletResponse as IPortletRenderResponse;
 		}
 	}
 }

@@ -4,7 +4,7 @@ function DetailsView_ClientEvent (ctrlId, evnt)
 	if (!gridData)
 	    return null;
 	var clientData = gridData.pageIndex + '|' + evnt;
-	WebForm_DoCallback (gridData.uid, clientData, DetailsView_ClientRender, ctrlId, DetailsView_ClientRender_Error);
+	WebForm_DoCallback (gridData.uid, clientData, DetailsView_ClientRender, ctrlId, DetailsView_ClientRender_Error, gridData.form);
 }
 
 function DetailsView_ClientRender (data, ctx)

@@ -1,3 +1,8 @@
+2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
+
+	* webform.js: Adding an optional parameter for passing the form to all JS
+	  methods. This is needed to support Http callbacks for J2EE portlets. 
+
 2007-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebUIValidation_2.0.js: 

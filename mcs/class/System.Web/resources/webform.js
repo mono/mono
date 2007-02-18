@@ -108,10 +108,28 @@ function WebForm_ReEnableControls (currForm)
 	}
 }
 
-function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg)
+// This function is only used in the context of TARGET_J2EE for portlets
+function PortalWebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
 {
-	var currForm = WebForm_GetFormFromCtrl (id);
-	
+	if (url != null) {
+		currForm = WebForm_GetFormFromCtrl (id, currForm);
+		if (url.indexOf ("vmw.action.page=") == 0) {
+			currForm.__NEXTVMWACTIONPAGE.value = url.substring ("vmw.action.page=".length);
+			url = currForm.action;
+		}
+		else if (url.indexOf ("vmw.render.page=") == 0)
+		{
+			currForm.__NEXTVMWRENDERPAGE.value = url.substring ("vmw.render.page=".length);
+			currForm.submit ();
+			return;
+		}
+	}
+	return WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm);
+}
+function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
+{
+	currForm = WebForm_GetFormFromCtrl (id, currForm);
+
 	if (typeof(SetValidatorContext) == "function") 
 		SetValidatorContext (currForm);
 
@@ -119,24 +137,22 @@ function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg)
 	if (pval && typeof(Page_ClientValidate) == "function")
 		validationResult =  Page_ClientValidate(vg);
 
-	if (validationResult) {
-		if (url != null)
-			currForm.action = url;
-	}
+	if (validationResult && url != null)
+		currForm.action = url;
 		
 	if (csubm)
 		currForm.__doPostBack (id, par);
 }
 
-function WebForm_DoCallback (id, arg, callback, ctx, errorCallback)
+function WebForm_DoCallback (id, arg, callback, ctx, errorCallback, currForm)
 {
-	var currForm = WebForm_GetFormFromCtrl (id);
+	currForm = WebForm_GetFormFromCtrl (id, currForm);
 	var qs = WebForm_getFormData (currForm) + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
 	if (currForm["__EVENTVALIDATION"]) qs += "&__EVENTVALIDATION=" + encodeURIComponent(currForm["__EVENTVALIDATION"].value);
-	WebForm_httpPost (document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+	WebForm_httpPost (currForm.serverURL || document.URL, qs, function (httpPost) { WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currForm); });
 }
 
-function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
+function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback, currForm)
 {
 	var doc = httpPost.responseText;
 	if (doc.charAt(0) == "e") {
@@ -149,12 +165,12 @@ function WebForm_ClientCallback (httpPost, ctx, callback, errorCallback)
 			if (!isNaN(validationFieldLength)) {
 				var validationField = doc.substring(separatorIndex + 1, separatorIndex + validationFieldLength + 1);
 				if (validationField != "") {
-					var validationFieldElement = theForm["__EVENTVALIDATION"];
+					var validationFieldElement = currForm["__EVENTVALIDATION"];
 					if (!validationFieldElement) {
 						validationFieldElement = document.createElement("INPUT");
 						validationFieldElement.type = "hidden";
 						validationFieldElement.name = "__EVENTVALIDATION";
-						theForm.appendChild(validationFieldElement);
+						currForm.appendChild(validationFieldElement);
 					}
 					validationFieldElement.value = validationField;
 				}
@@ -228,8 +244,11 @@ function WebForm_httpPost (url, data, callback)
 	setTimeout (function () { httpPost.send (data); }, 10);
 }
 
-function WebForm_GetFormFromCtrl (id)
+function WebForm_GetFormFromCtrl (id, currForm)
 {
+	if (currForm)
+		return currForm;
+
 	// We need to translate the id from ASPX UniqueID to its ClientID.
 	var ctrl = WebForm_GetElementById (id.replace(/\$/g, "_"));
 	while (ctrl != null) {

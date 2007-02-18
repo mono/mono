@@ -2076,6 +2076,7 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.sortExp = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (SortExpression == null ? "" : SortExpression));
 				script += string.Format ("{0}.sortDir = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral ((int) SortDirection));
 				script += string.Format ("{0}.uid = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (UniqueID));
+				script += string.Format ("{0}.form = {1};\n", cgrid, Page.theForm);
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				
 				// Make sure the basic script infrastructure is rendered

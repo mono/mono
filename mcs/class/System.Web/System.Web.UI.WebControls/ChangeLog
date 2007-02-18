@@ -1,3 +1,12 @@
+2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Button.cs, ImageButton.cs, LinkButton.cs: Hanlding of PostbackOptions for
+	  TARGET_J2EE is now centralized in ClientScriptManager.
+	* TreeView.cs, DetailsView.cs, GridView.cs, TreeView.js, DetailsView.js,
+	  GridView.js: Added a field to the controls JavaScript 'data' object. The
+	  form is initialized to the page 'theForm'. This is used for J2EE portlets
+	  callback support.
+
 2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Wizard: fixed:

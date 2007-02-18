@@ -1068,6 +1068,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (Page != null) {
+				script += string.Format ("{0}.form = {1};\n", ctree, Page.theForm);
 				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
 				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));

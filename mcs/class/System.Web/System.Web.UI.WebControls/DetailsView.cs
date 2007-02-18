@@ -1914,6 +1914,7 @@ namespace System.Web.UI.WebControls
 				string script = string.Format ("var {0} = new Object ();\n", cgrid);
 				script += string.Format ("{0}.pageIndex = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (PageIndex));
 				script += string.Format ("{0}.uid = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (UniqueID));
+				script += string.Format ("{0}.form = {1};\n", cgrid, Page.theForm);
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				
 				// Make sure the basic script infrastructure is rendered

@@ -144,11 +144,6 @@ namespace System.Web.UI.WebControls {
 		{
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = (PostBackUrl.Length > 0 ? Page.ResolveClientUrl (PostBackUrl) : null);
-#if TARGET_J2EE
-			vmw.@internal.j2ee.IPortletRenderResponse resp = GetRenderResponse();
-			if (resp != null && options.ActionUrl != null)
-				options.ActionUrl = resp.createActionURL(options.ActionUrl);
-#endif
 			options.ValidationGroup = null;
 			options.Argument = "";
 			options.ClientSubmit = true;
