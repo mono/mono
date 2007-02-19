@@ -150,6 +150,9 @@ namespace System.Web.UI
 			if (actionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
 
+			if(options.TrackFocus)
+				RegisterHiddenField (Page.LastFocusID, String.Empty);
+
 			string prefix = options.RequiresJavaScriptProtocol ? "javascript:" : "";
 #if TARGET_J2EE
 			// Allow the page to transform ActionUrl to a portlet action url

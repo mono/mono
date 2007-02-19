@@ -208,7 +208,7 @@ namespace System.Web.UI
 
 				if (client != null)
 #if NET_2_0
-					client = client.Replace (IdSeparator, ClientIDSeparator);
+					client = UniqueID2ClientID (client);
 #else
 					client = client.Replace (':', ClientIDSeparator);
 #endif
@@ -219,6 +219,11 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
+			internal string UniqueID2ClientID (string uniqueId)
+			{
+				return uniqueId.Replace (IdSeparator, ClientIDSeparator);
+			}
+
 		protected char ClientIDSeparator
 #else
 		char ClientIDSeparator

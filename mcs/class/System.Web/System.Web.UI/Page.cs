@@ -126,6 +126,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 #if NET_2_0
+	internal const string LastFocusID = "__LASTFOCUS";
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
@@ -1218,6 +1219,10 @@ public partial class Page : TemplateControl, IHttpHandler
 				// LAMESPEC: on Callback IsPostBack is set to false, but true.
 				//isPostBack = !isCallback;
 				isPostBack = true;
+			}
+			string lastFocus = _requestValueCollection [LastFocusID];
+			if (!String.IsNullOrEmpty (lastFocus)) {
+				_focusedControlID = UniqueID2ClientID (lastFocus);
 			}
 		}
 		

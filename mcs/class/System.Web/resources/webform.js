@@ -139,9 +139,15 @@ function WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg, currForm)
 	if (pval && typeof(Page_ClientValidate) == "function")
 		validationResult =  Page_ClientValidate(vg);
 
-	if (validationResult && url != null)
-		currForm.action = url;
-		
+	if (validationResult) {
+		if ((typeof(url) != "undefined") && (url != null) && (url.length > 0))
+			currForm.action = url;
+		if (tf) {
+			var lastFocus = currForm.elements["__LASTFOCUS"];
+			if ((typeof(lastFocus) != "undefined") && (lastFocus != null))
+				lastFocus.value = id;
+		}
+	}		
 	if (csubm)
 		currForm.__doPostBack (id, par);
 }
@@ -340,5 +346,6 @@ function WebForm_GetScrollY() {
     }
     return 0;
 }
+
 
 
