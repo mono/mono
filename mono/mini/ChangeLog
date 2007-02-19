@@ -1,3 +1,7 @@
+2007-02-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* trace.c: Remove an erroneous alignemnt check when tracing.
+	  Fixes --trace on OSX86.
 
 Wed Feb 14 19:45:56 CET 2007 Paolo Molaro <lupus@ximian.com>
 
