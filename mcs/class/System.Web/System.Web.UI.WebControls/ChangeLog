@@ -1,3 +1,10 @@
+2006-02-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CheckBox.cs:
+	* ListControl.cs:
+	* TextBox.cs:
+	implemented Form.SubmitDisabledControls feature.			
+
 2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: IsBindableType for decimal returns true.

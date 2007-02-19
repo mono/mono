@@ -382,6 +382,10 @@ namespace System.Web.UI.WebControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+#if NET_2_0
+			if (Page != null && Enabled)
+				Page.RegisterEnabledControl (this);
+#endif
 		}
 
 #if NET_2_0

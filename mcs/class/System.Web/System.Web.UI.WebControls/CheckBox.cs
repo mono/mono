@@ -301,6 +301,10 @@ namespace System.Web.UI.WebControls {
 			if (Page != null && Enabled) {
 				Page.RegisterRequiresPostBack (this);
 			}
+#if NET_2_0
+			if (Page != null && Enabled)
+				Page.RegisterEnabledControl (this);
+#endif
 		}
 
 		static bool IsInputOrCommonAttr (string attname)

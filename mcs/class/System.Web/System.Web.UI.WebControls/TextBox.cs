@@ -186,6 +186,9 @@ namespace System.Web.UI.WebControls {
 			if (AutoPostBack) {
 				RegisterKeyHandlerClientScript ();
 			}
+			
+			if (Page != null && Enabled)
+				Page.RegisterEnabledControl (this);
 #endif
 		}
 
