@@ -1,3 +1,7 @@
+2007-02-19  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIStructs.cs: MsgUIState structure added.
+
 2007-02-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileDialog.cs: Removed need for separate fileName field. On 2.0

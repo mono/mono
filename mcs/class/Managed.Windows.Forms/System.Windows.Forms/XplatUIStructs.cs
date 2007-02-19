@@ -409,6 +409,15 @@ namespace System.Windows.Forms {
 		MK_XBUTTON1		= 0x0020,
 		MK_XBUTTON2		= 0x0040,
 	}
+	
+	internal enum MsgUIState {
+		UIS_SET        = 1,
+		UIS_CLEAR      = 2,
+		UIS_INITIALIZE = 3,
+		UISF_HIDEFOCUS = 0x1,
+		UISF_HIDEACCEL = 0x2,
+		UISF_ACTIVE    = 0x4
+	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct POINT {
