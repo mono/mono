@@ -1539,6 +1539,22 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 #if NET_2_0
+
+		[Test]
+		public void ImportNullableInt ()
+		{
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof (int?));
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter exp = new XmlSchemaExporter (schemas);
+			exp.ExportTypeMapping (map);
+			XmlSchema schema = schemas [0];
+			XmlSchemaElement el = schema.Items [0] as XmlSchemaElement;
+			Assert.AreEqual ("int", el.Name, "#1");
+			Assert.AreEqual (new XmlQualifiedName ("int", XmlSchema.Namespace), el.SchemaTypeName, "#2");
+			Assert.AreEqual (true, el.IsNillable, "#3");
+		}
+
 		[Test]
 		public void ImportNullableContainer ()
 		{

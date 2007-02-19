@@ -1079,7 +1079,7 @@ namespace System.Xml.Serialization {
 			if (type.Type == typeof (XmlQualifiedName))
 				return false;
 #endif
-			return !type.Type.IsValueType;
+			return !type.Type.IsValueType || type.IsNullable;
 		}
 		
 		public void IncludeType (Type type)

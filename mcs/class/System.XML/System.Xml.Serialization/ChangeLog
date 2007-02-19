@@ -1,5 +1,10 @@
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReflectionImporter.cs : CanBeNull() should return true when the
+	  argument is generic nullable value type.
+
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeData.cs, MapCodeGenerator.cs, XmlMemberMapping.cs,
 	  TypeTranslator.cs : removed IsGenericNullable and added
 	  set_IsNullable so that it could be simpler.
