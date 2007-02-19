@@ -90,12 +90,14 @@ namespace System.Xml.Serialization
 		[XmlArray ("writerHooks")]
 		public Hook[] WriterHooks;
 		
-		public ArrayList GetHooks (HookType hookType, HookDir dir, HookAction action, Type type, string member)
+		public ArrayList GetHooks (HookType hookType, XmlMappingAccess dir, HookAction action, Type type, string member)
 		{
-			if (dir == HookDir.Read)
+			if ((dir & XmlMappingAccess.Read) != 0)
 				return FindHook (ReaderHooks, hookType, action, type, member);
-			else
+			if ((dir & XmlMappingAccess.Write) != 0)
 				return FindHook (WriterHooks, hookType, action, type, member);
+			else
+				throw new Exception ("INTERNAL ERROR");
 		}
 		
 		ArrayList FindHook (Hook[] hooks, HookType hookType, HookAction action, Type type, string member)
@@ -178,12 +180,6 @@ namespace System.Xml.Serialization
 		
 		[XmlElement ("typeMember")]
 		public string TypeMember;
-	}
-	
-	internal enum HookDir
-	{
-		Read,
-		Write
 	}
 	
 	internal enum HookAction

@@ -37,6 +37,8 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 
+using HookDir = System.Xml.Serialization.XmlMappingAccess;
+
 namespace System.Xml.Serialization
 {
 	internal class SerializationCodeGenerator
