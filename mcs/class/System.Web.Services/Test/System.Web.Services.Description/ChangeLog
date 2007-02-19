@@ -1,3 +1,8 @@
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionReflectorTest.cs : added test for methods with
+	  nullable return type.
+
 2007-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionImporterTest.cs : new test.

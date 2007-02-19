@@ -3,7 +3,9 @@
 //
 // Author:
 //	Gert Driesen  <drieseng@users.sourceforge.net>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
+// Copyright (C) 2007 Gert Driesen
 // Copyright (C) 2006 Novell, Inc.
 //
 
@@ -14,6 +16,7 @@ using System.Globalization;
 using System.IO;
 using System.Web.Services;
 using System.Web.Services.Description;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace MonoTests.System.Web.Services.Description
@@ -21,6 +24,29 @@ namespace MonoTests.System.Web.Services.Description
 	[TestFixture]
 	public class ServiceDescriptionReflectorTest
 	{
+#if NET_2_0
+		[Test]
+		public void ReflectNullableInt ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (NullableContainer), null);
+			ServiceDescription sd = r.ServiceDescriptions [0];
+			XmlSchema xs = sd.Types.Schemas [0];
+			XmlSchemaElement el = null;
+			foreach (XmlSchemaElement e in xs.Items) {
+				if (e.Name != "GetNullResponse")
+					continue;
+				el = e;
+				break;
+			}
+			XmlSchemaComplexType ct =
+				el.SchemaType as XmlSchemaComplexType;
+			XmlSchemaSequence s = ct.Particle as XmlSchemaSequence;
+			XmlSchemaElement e2 = s.Items [0] as XmlSchemaElement;
+			Assert.IsTrue (e2.IsNillable);
+		}
+#endif
 		[Test]
 		[Category ("NotWorking")]
 		public void IncludeTest ()
@@ -218,6 +244,15 @@ namespace MonoTests.System.Web.Services.Description
 
 		public class Car : Vehicle
 		{
+		}
+
+		public class NullableContainer
+		{
+			[WebMethod (Description="Test nullables")]
+			public int? GetNull ()
+			{
+				return null;
+			}
 		}
 	}
 }
