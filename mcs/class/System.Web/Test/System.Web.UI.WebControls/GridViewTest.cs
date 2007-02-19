@@ -870,9 +870,31 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void GridView_IsBindableType ()
 		{
-			PokerGridView g = new PokerGridView ();
-			Assert.AreEqual (true, g.IsBindableType (typeof (Int32)), "test");
+			Type [] types = new Type [] {
+				typeof(Boolean), 
+				typeof(Byte),
+				typeof(Char),
+				typeof(DateTime),
+				typeof(Decimal),
+				typeof(Double),
+				typeof(Guid),
+				typeof(Int16),
+				typeof(Int32),
+				typeof(Int64),
+				typeof(SByte),
+				typeof(Single),
+				typeof(String),
+				typeof(UInt16),
+				typeof(UInt32),
+				typeof(UInt64)
+				 };
+
+			GridView g = new GridView ();
+			foreach (Type type in types)
+				Assert.AreEqual (true, g.IsBindableType (type), type.ToString ());
+
 			Assert.AreEqual (false, g.IsBindableType (typeof (Enum)), "test");
+			Assert.AreEqual (false, g.IsBindableType (typeof (Object)), "test");
 		}
 
 		[Test]
