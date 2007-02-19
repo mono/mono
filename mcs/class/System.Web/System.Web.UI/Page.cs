@@ -76,6 +76,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	private object [] _savedControlState;
 	private bool _doLoadPreviousPage;
 	string _focusedControlID;
+	bool _hasEnabledControlArray;
 #endif
 	private bool _viewState = true;
 	private bool _viewStateMac;
@@ -121,6 +122,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	const string ScrollPositionXID = "__SCROLLPOSITIONX";
 	const string ScrollPositionYID = "__SCROLLPOSITIONY";
+	const string EnabledControlArrayID = "__enabledControlArray";
 #endif
 
 #if NET_2_0
@@ -1808,11 +1810,8 @@ public partial class Page : TemplateControl, IHttpHandler
 				_focusedControlID = Form.DefaultButton;
 		}
 
-		if (!String.IsNullOrEmpty (_focusedControlID) || Form.SubmitDisabledControls) {
-
-			ClientScript.RegisterWebFormClientScript ();
-
 			if (!String.IsNullOrEmpty (_focusedControlID)) {
+				ClientScript.RegisterWebFormClientScript ();
 				ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
 									 String.Format ("<script type=\"text/javascript\">\n" +
 											"<!--\n" +
@@ -1820,11 +1819,19 @@ public partial class Page : TemplateControl, IHttpHandler
 											"</script>\n", _focusedControlID));
 			}
 
-			if (Form.SubmitDisabledControls) {
+			if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
+				ClientScript.RegisterWebFormClientScript ();
 				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
 										 "WebForm_ReEnableControls(this);");
 			}
-		}
+	}
+
+	internal void RegisterEnabledControl (Control control)
+	{
+		if (Form == null || !Page.Form.SubmitDisabledControls || !Page.Form.DetermineRenderUplevel ())
+			return;
+		_hasEnabledControlArray = true;
+		Page.ClientScript.RegisterArrayDeclaration (EnabledControlArrayID, String.Format ("'{0}'", control.ClientID));
 	}
 	
 	protected virtual void OnSaveStateComplete (EventArgs e)

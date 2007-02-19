@@ -1,3 +1,15 @@
+2007-02-19  Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlInputCheckBox.cs:
+	* HtmlInputControl.cs:
+	* HtmlInputHidden.cs:
+	* HtmlInputRadioButton.cs:
+	* HtmlInputText.cs:
+	* HtmlSelect.cs:
+	* HtmlTextArea.cs:
+	fixed: Form.SubmitDisabledControls feature:	
+	not all HtmlInputControl need to be reenabled on client.		  
+
 2007-02-18  Eyal Alaluf <eyala@mainsoft.com>
 
 	* HtmlForm.cs: Under TARGET_J2EE use Page.RenderResponse instead of
