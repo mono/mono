@@ -39,27 +39,6 @@ namespace System.Web.Security {
 	public static class Roles {
 #if TARGET_J2EE
 		const string Roles_cookie_protection = "Roles.cookie_protection";
-		private static CookieProtection cookie_protection {
-			get {
-				object o = AppDomain.CurrentDomain.GetData (Roles_cookie_protection);
-				if (o == null) {
-					lock (AppDomain.CurrentDomain) {
-						o = AppDomain.CurrentDomain.GetData (Roles_cookie_protection);
-						if (o == null) {
-							cookie_protection = CookieProtection.All;
-							return cookie_protection;
-						}
-					}
-				}
-
-				return (CookieProtection) o;
-			}
-
-			set {
-				AppDomain.CurrentDomain.SetData (Roles_cookie_protection, value);
-			}
-		}
-
 		private static RoleManagerSection config {
 			get {
 				return (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
@@ -83,9 +62,6 @@ namespace System.Web.Security {
 
 		static Roles ()
 		{
-			// default values (when not supplied in web.config)
-			cookie_protection = CookieProtection.All;
-
 			config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
 #endif
@@ -116,11 +92,17 @@ namespace System.Web.Security {
 			Provider.CreateRole (rolename);
 		}
 		
-		[MonoTODO ("Not implemented")]
 		public static void DeleteCookie ()
 		{
-			if (CacheRolesInCookie)
-				throw new NotSupportedException ("Caching roles in cookie is not supported");
+			if (CacheRolesInCookie) {
+				HttpCookie clearCookie = new HttpCookie (CookieName, "");
+				clearCookie.Expires = DateTime.MinValue;
+				clearCookie.Path = CookiePath;
+				clearCookie.Domain = Domain;
+				clearCookie.Secure = CookieRequireSSL;
+
+				HttpContext.Current.Response.SetCookie (clearCookie);
+			}
 		}
 		
 		public static bool DeleteRole (string rolename)
@@ -219,9 +201,8 @@ namespace System.Web.Security {
 			get { return config.CookiePath; }
 		}
 		
-		[MonoTODO ("read infos from web.config")]
 		public static CookieProtection CookieProtectionValue {
-			get { return cookie_protection; }
+			get { return config.CookieProtection; }
 		}
 		
 		public static bool CookieRequireSSL {

@@ -46,7 +46,14 @@ namespace System.Web.Security {
 
 		void ClearCookie (HttpApplication app, string cookieName)
 		{
-			new HttpCookie (cookieName, "", "", DateTime.MinValue);
+			RoleManagerSection config = (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
+			HttpCookie clearCookie = new HttpCookie (config.CookieName, "");
+
+			clearCookie.Path = config.CookiePath;
+			clearCookie.Expires = DateTime.MinValue;
+			clearCookie.Domain = config.Domain;
+			clearCookie.Secure = config.CookieRequireSSL;
+			app.Response.SetCookie (clearCookie);
 		}
 
 		void OnPostAuthenticateRequest (object sender, EventArgs args)
@@ -57,10 +64,6 @@ namespace System.Web.Security {
 			/* if we're disabled, bail out early */
 			if (!config.Enabled)
 				return;
-
-			/* not supported yet */
-			if (config.CacheRolesInCookie)
-				throw new NotSupportedException ("Caching roles in cookie is not supported");
 
 			/* allow the user to populate the Role */
 			if (GetRoles != null) {
@@ -79,7 +82,7 @@ namespace System.Web.Security {
 			IIdentity currentIdentity = app.Context.User.Identity;
 			if (app.Request.IsAuthenticated) {
 				if (cookie != null) {
-					if (config.CacheRolesInCookie)
+					if (!config.CacheRolesInCookie)
 						cookie = null;
 					else if (config.CookieRequireSSL && !app.Request.IsSecureConnection) {
 						cookie = null;
@@ -141,15 +144,15 @@ namespace System.Web.Security {
 				return;
 			}
 
-			HttpCookie cookie = new HttpCookie (config.CookieName,
-							    ticket,
-							    config.CookiePath,
-							    DateTime.Now + config.CookieTimeout);
+			HttpCookie cookie = new HttpCookie (config.CookieName, ticket);
 
-			cookie.Domain = config.Domain;
 			cookie.HttpOnly = true;
+			if (!string.IsNullOrEmpty (config.Domain))
+				cookie.Domain = config.Domain;
 			if (config.CookieRequireSSL)
 				cookie.Secure = true;
+			if (config.CookiePath.Length > 1) // more than '/'
+				cookie.Path = config.CookiePath;
 			app.Response.SetCookie (cookie);
 		}
 
