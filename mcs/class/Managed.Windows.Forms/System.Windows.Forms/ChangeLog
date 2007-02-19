@@ -1,3 +1,12 @@
+2007-02-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Application.cs: When disabling all forms but the main form, do not
+	  disable any descendants of the main form (such as mdi children or
+	  other parented forms). Fixes #80822 on Windows.
+	* Form.cs: If we have a parent, set the WS_CHILD style.
+	* Control.cs: Update the window styles if the control whose parent has
+	  changed is a form (the WS_CHILD style has to be switched).
+
 2007-02-19  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIStructs.cs: MsgUIState structure added.

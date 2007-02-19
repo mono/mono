@@ -1129,6 +1129,11 @@ namespace System.Windows.Forms {
 
 				cp.Style = (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
 
+				if (Parent != null) {
+					cp.Parent = Parent.Handle;
+					cp.Style |= (int) WindowStyles.WS_CHILD;
+				}
+
 				if (IsMdiChild) {
 					cp.Style |= (int)(WindowStyles.WS_CHILD | WindowStyles.WS_CAPTION);
 					if (Parent != null) {

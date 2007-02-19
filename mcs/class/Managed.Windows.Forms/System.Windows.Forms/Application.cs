@@ -567,14 +567,34 @@ namespace System.Windows.Forms {
 					while (control.MoveNext()) {
 						f = (Form)control.Current;
 						
-						if (f != context.MainForm) {
-							if (f.IsHandleCreated && XplatUI.IsEnabled(f.Handle)) {
-								#if DebugRunLoop
-									Console.WriteLine("      Disabling form {0}", f);
-								#endif
-								XplatUI.EnableWindow(f.Handle, false);
-								toplevels.Enqueue(f);
+						// Don't disable the main form.
+						if (f == context.MainForm) {
+							continue;
+						}
+						
+						// Don't disable any children of the main form.
+						// These do not have to be MDI children.
+						Control current = f;
+						bool is_child_of_main = false;;
+
+						do {
+							if (current.Parent == context.MainForm) {
+								is_child_of_main = true;
+								break;
 							}
+							current = current.Parent;
+						} while (current != null);
+
+						if (is_child_of_main)
+							continue;
+						
+						// Disable the rest
+						if (f.IsHandleCreated && XplatUI.IsEnabled(f.Handle)) {
+							#if DebugRunLoop
+								Console.WriteLine("      Disabling form {0}", f);
+							#endif
+							XplatUI.EnableWindow(f.Handle, false);
+							toplevels.Enqueue(f);
 						}
 					}
 				}
