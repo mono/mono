@@ -98,7 +98,7 @@ public class DirectoryTest
 		string path = TempFolder + DSC + "DirectoryTest.Test";
 		DeleteDirectory (path);
 		try {
-			path += Path.InvalidPathChars [0];
+			path += '\x00';
 			path += ".2";
 			DirectoryInfo info = Directory.CreateDirectory (path);
 		} finally {
