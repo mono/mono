@@ -1,5 +1,9 @@
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTypeMapElementInfo.cs : set nullable if the type is Nullable<T>.
+
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReflectionImporter.cs : CanBeNull() should return true when the
 	  argument is generic nullable value type.
 

@@ -1562,6 +1562,23 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void ImportNullableContainer2 ()
+		{
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof (NullableContainer2));
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter exp = new XmlSchemaExporter (schemas);
+			exp.ExportTypeMapping (map);
+
+			XmlSchema schema = schemas [0];
+			XmlSchemaComplexType el = schema.Items [1] as XmlSchemaComplexType;
+
+			XmlSchemaSequence s = el.Particle as XmlSchemaSequence;
+			XmlSchemaElement el2 = s.Items [0] as XmlSchemaElement;
+			Assert.IsTrue (el2.IsNillable);
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ImportGenericTypeDefinition ()
 		{
@@ -2040,6 +2057,16 @@ namespace MonoTests.System.XmlSerialization
 		{
 			[XmlElement (IsNullable = true)]
 			public int? NilInt;
+		}
+
+		public class NullableContainer2
+		{
+			int? value;
+
+			public int? NullableInt {
+				get { return value; }
+				set { this.value = value; }
+			}
 		}
 #endif
 	}

@@ -1,5 +1,10 @@
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReflectionImporterTests.cs : added another test for nullable
+	  container.
+
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReflectionImporterTests.cs : added test for nullable int import.
 
 2007-02-14  Atsushi Enomoto  <atsushi@ximian.com>

@@ -54,6 +54,8 @@ namespace System.Xml.Serialization
 		{
 			_member = member;
 			_type = type;
+			if (type.IsValueType && type.IsNullable)
+				_isNullable = true;
 		}
 
 		public TypeData TypeData
