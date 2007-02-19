@@ -279,7 +279,7 @@ namespace System.Web.SessionState
 				else {
 					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
-					if (supportsExpiration)
+					if (!supportsExpiration)
 						SessionStateUtility.RaiseSessionEnd (container, this, args);
 				}
 				SessionStateUtility.RemoveHttpSessionStateFromContext (context);

@@ -1,3 +1,8 @@
+2007-02-19  Konstantin Triger <kostat@mainsoft.com>
+
+	* SessionStateModule.cs: call Session_End callback only if the handler
+		does not support expiration.
+
 2007-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* SessionStateModule.cs: Removed unused variables.
