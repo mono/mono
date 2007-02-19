@@ -82,29 +82,31 @@ function WebForm_FindFirstFocusableChild(element) {
 	return null;
 }
 
-function wasControlEnabled (id)
-{
-	if (typeof (__enabledControlArray) == 'undefined')
-		return false;
-
-	for (var i = 0; i < __enabledControlArray.length; i ++) {
-		if (id == __enabledControlArray[i])
-			return true;
-	}
-
-	return false;
-}
-
 function WebForm_ReEnableControls (currForm)
 {
-	currForm = currForm || theForm;
-	if (typeof (currForm) == 'undefined')
-		return;
+	if (typeof(currForm.__enabledControlArray) != 'undefined' && currForm.__enabledControlArray != null)
+		__enabledControlArray = currForm.__enabledControlArray;
+	
+	if (typeof(__enabledControlArray) == 'undefined' || __enabledControlArray == null)
+		return false;
+	
+	currForm.__disabledControlArray = new Array();
+	for (var i = 0; i < __enabledControlArray.length; i++) {
+		var c = document.getElementById(__enabledControlArray[i]);
+		if ((typeof(c) != "undefined") && (c != null) && (c.disabled == true)) {
+			c.disabled = false;
+			currForm.__disabledControlArray[currForm.__disabledControlArray.length] = c;
+		}
+	}
+	__currForm = currForm
+	setTimeout("WebForm_ReDisableControls (__currForm)", 0);
+	return true;
+}
 
-	for (var i = 0; i < currForm.childNodes.length; i ++) {
-		var node = currForm.childNodes[i];
-		if (node.disabled && wasControlEnabled (node.id))
-			node.disabled = false;
+function WebForm_ReDisableControls (currForm)
+{
+	for (var i = 0; i < currForm.__disabledControlArray.length; i++) {
+		currForm.__disabledControlArray[i].disabled = true;
 	}
 }
 
