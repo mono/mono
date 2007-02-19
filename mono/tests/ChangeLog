@@ -1,3 +1,6 @@
+2007-02-19  Massimiliano Mantione  <massi@ximian.com>
+	* iface7.cs, Makefile.am: Added test for bug 75903.
+
 2007-02-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* libtest.c: Add tests for COM Callable Wrapper marshalling.
