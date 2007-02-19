@@ -109,7 +109,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public override bool SetItemExpireCallback (SessionStateItemExpireCallback expireCallback) {
-			return false; //we call session.invalidate so our session listener will call Session_OnEnd
+			return true; //we call session.invalidate so our session listener will call Session_OnEnd
 		}
 
 		#endregion
