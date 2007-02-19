@@ -1,3 +1,14 @@
+2007-02-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBox.cs: Setting Text should have no effect if item text of
+	selected item exactly matches value. First lookup text using
+	case-sensitive comparison, and fallback to case-insensitive comparison.
+	FindString(Exact) returns -1 if search string is null. On 2.0 profile, 
+	allow startIndex to be last index. Changed ArgumentOutOfRangeException
+	paramname to match MS. Restart from first item if string is not found
+	after startIndex. Fixed paramname of ArgumentNullException that is
+	thrown for null value in ObjectCollection.Contains.
+
 2007-02-19  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIStructs.cs: WM_XXX UISTATE elements uncommented.

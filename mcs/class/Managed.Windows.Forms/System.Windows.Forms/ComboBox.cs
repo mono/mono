@@ -28,6 +28,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
@@ -640,17 +641,17 @@ namespace System.Windows.Forms
 
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
-    				selected_index = value;
+				selected_index = value;
 
-    				if (dropdown_style != ComboBoxStyle.DropDownList) {
+				if (dropdown_style != ComboBoxStyle.DropDownList) {
 					if (value == -1)
 						SetControlText("");
 					else
 						SetControlText (GetItemText (Items [value]));
-    				}
+				}
 
 				if (DropDownStyle == ComboBoxStyle.DropDownList)
-    					Invalidate ();
+					Invalidate ();
 
 				if (listbox_ctrl != null)
 					listbox_ctrl.HighlightedIndex = value;
@@ -759,25 +760,33 @@ namespace System.Windows.Forms
 						return textbox_ctrl.Text;
 					}
 				}
-
+				
 				if (SelectedItem != null)
 					return GetItemText (SelectedItem);
-								
-				return base.Text;				
+				
+				return base.Text;
 			}
-			set {				
+			set {
 				if (value == null) {
 					SelectedIndex = -1;
 					return;
 				}
-				
-				int index = FindString (value);
-				
+
+				// do nothing if value exactly matches text of selected item
+				if (SelectedItem != null && string.Compare (value, GetItemText (SelectedItem), false, CultureInfo.CurrentCulture) == 0)
+					return;
+
+				// find exact match using case-sensitive comparison, and if does
+				// not result in any match then use case-insensitive comparison
+				int index = FindStringExact (value, -1, false);
+				if (index == -1) {
+					index = FindStringExact (value, -1, true);
+				}
 				if (index != -1) {
 					SelectedIndex = index;
-					return;					
+					return;
 				}
-				
+
 				if (dropdown_style != ComboBoxStyle.DropDownList)
 					textbox_ctrl.Text = GetItemText (value);
 			}
@@ -843,17 +852,28 @@ namespace System.Windows.Forms
 
 		public int FindString (string s, int startIndex)
 		{
-			if (Items.Count == 0) 
-				return -1; // No exception throwing if empty
+			if (s == null || Items.Count == 0) 
+				return -1;
 
+#if NET_2_0
+			if (startIndex < -1 || startIndex >= Items.Count)
+#else
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
-				throw new  ArgumentOutOfRangeException ("Index of out range");
+#endif
+				throw new ArgumentOutOfRangeException ("startIndex");
 
-			startIndex++;
-			for (int i = startIndex; i < Items.Count; i++) {
-				if ((GetItemText (Items[i])).StartsWith (s))
+			int i = startIndex;
+#if NET_2_0
+			if (i == (Items.Count - 1))
+				i = -1;
+#endif
+			do {
+				i++;
+				if (string.Compare (s, 0, GetItemText (Items [i]), 0, s.Length, true) == 0)
 					return i;
-			}
+				if (i == (Items.Count - 1))
+					i = -1;
+			} while (i != startIndex);
 
 			return -1;
 		}
@@ -865,21 +885,33 @@ namespace System.Windows.Forms
 
 		public int FindStringExact (string s, int startIndex)
 		{
-			if (Items.Count == 0) 
-				return -1; // No exception throwing if empty
+			return FindStringExact (s, startIndex, true);
+		}
+
+		private int FindStringExact (string s, int startIndex, bool ignoreCase)
+		{
+			if (s == null || Items.Count == 0) 
+				return -1;
 
 #if NET_2_0
 			if (startIndex < -1 || startIndex >= Items.Count)
 #else
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
 #endif
-				throw new ArgumentOutOfRangeException ("Index of out range");
+				throw new ArgumentOutOfRangeException ("startIndex");
 
-			startIndex++;
-			for (int i = startIndex; i < Items.Count; i++) {
-				if ((GetItemText (Items[i])).Equals (s))
+			int i = startIndex;
+#if NET_2_0
+			if (i == (Items.Count - 1))
+				i = -1;
+#endif
+			do {
+				i++;
+				if (string.Compare (s, GetItemText (Items [i]), ignoreCase, CultureInfo.CurrentCulture) == 0)
 					return i;
-			}
+				if (i == (Items.Count - 1))
+					i = -1;
+			} while (i != startIndex);
 
 			return -1;
 		}
@@ -1718,12 +1750,12 @@ namespace System.Windows.Forms
 				owner.Refresh ();
 			}
 			
-			public bool Contains (object obj)
+			public bool Contains (object value)
 			{
-				if (obj == null)
-					throw new ArgumentNullException ("obj");
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
-				return object_items.Contains (obj);
+				return object_items.Contains (value);
 			}
 
 			public void CopyTo (object[] dest, int arrayIndex)
@@ -1757,7 +1789,7 @@ namespace System.Windows.Forms
 			public void Insert (int index,  object item)
 			{
 				if (index < 0 || index > Count)
-					throw new ArgumentOutOfRangeException ("Index of out range");					
+					throw new ArgumentOutOfRangeException ("Index of out range");
 				if (item == null)
 					throw new ArgumentNullException ("item");
 				
@@ -1772,14 +1804,14 @@ namespace System.Windows.Forms
 			}
 
 			public void Remove (object value)
-			{				
+			{
 				if (value == null)
 					return;
 
 				if (IndexOf (value) == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 				
-				RemoveAt (IndexOf (value));				
+				RemoveAt (IndexOf (value));
 			}
 
 			public void RemoveAt (int index)
@@ -2308,5 +2340,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-

@@ -26,20 +26,36 @@
 //   	Ritvik Mayank <mritvik@novell.com>
 //	Jordi Mas i Hernandez <jordi@ximian.com>
 
-
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Reflection;
-using NUnit.Framework;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class ComboBoxTest
 	{
+		private CultureInfo _originalCulture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			_originalCulture = Thread.CurrentThread.CurrentCulture;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = _originalCulture;
+		}
+
 		[Test]
 		public void ComboBoxPropertyTest ()
 		{
@@ -190,37 +206,200 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void FindStringTest ()
+		public void FindString ()
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
 			ComboBox cmbbox = new ComboBox ();
-			cmbbox.FindString ("Hola", -5); // No exception, it's empty
-			int x = cmbbox.FindString ("Hello");
-			Assert.AreEqual (-1, x, "#19");
-			cmbbox.Items.AddRange(new object[] {"ACBD", "ABDC", "ACBD", "ABCD"});
-			String myString = "ABC";
-			x = cmbbox.FindString (myString);
-			Assert.AreEqual (3, x, "#191");
-			x = cmbbox.FindString (string.Empty);
-			Assert.AreEqual (0, x, "#192");
-			x = cmbbox.FindString ("NonExistant");
-			Assert.AreEqual (-1, x, "#193");
+			Assert.AreEqual (-1, cmbbox.FindString ("Hello"), "#A1");
+			Assert.AreEqual (-1, cmbbox.FindString (string.Empty), "#A2");
+			Assert.AreEqual (-1, cmbbox.FindString (null), "#A3");
+			Assert.AreEqual (-1, cmbbox.FindString ("Hola", -5), "#A4");
+			Assert.AreEqual (-1, cmbbox.FindString ("Hola", 40), "#A5");
+
+			cmbbox.Items.AddRange (new object [] { "in", "BADTest", "IN", "BAD", "Bad", "In" });
+			Assert.AreEqual (2, cmbbox.FindString ("I"), "#B1");
+			Assert.AreEqual (0, cmbbox.FindString ("in"), "#B2");
+			Assert.AreEqual (1, cmbbox.FindString ("BAD"), "#B3");
+			Assert.AreEqual (1, cmbbox.FindString ("Bad"), "#B4");
+			Assert.AreEqual (1, cmbbox.FindString ("b"), "#B5");
+			Assert.AreEqual (0, cmbbox.FindString (string.Empty), "#B6");
+			Assert.AreEqual (-1, cmbbox.FindString (null), "#B7");
+
+			Assert.AreEqual (3, cmbbox.FindString ("b", 2), "#C1");
+			Assert.AreEqual (5, cmbbox.FindString ("I", 3), "#C2");
+			Assert.AreEqual (4, cmbbox.FindString ("B", 3), "#C3");
+			Assert.AreEqual (1, cmbbox.FindString ("B", 4), "#C4");
+			Assert.AreEqual (5, cmbbox.FindString ("I", 4), "#C5");
+			Assert.AreEqual (4, cmbbox.FindString ("BA", 3), "#C6");
+			Assert.AreEqual (0, cmbbox.FindString ("i", -1), "#C7");
+			Assert.AreEqual (3, cmbbox.FindString (string.Empty, 2), "#C8");
+			Assert.AreEqual (-1, cmbbox.FindString (null, 1), "#C9");
+
+			cmbbox.Items.Add (string.Empty);
+			Assert.AreEqual (0, cmbbox.FindString (string.Empty), "#D1");
+			Assert.AreEqual (-1, cmbbox.FindString (null), "#D2");
+
+			Assert.AreEqual (4, cmbbox.FindString (string.Empty, 3), "#E1");
+			Assert.AreEqual (-1, cmbbox.FindString (null, 99), "#E2");
+			Assert.AreEqual (-1, cmbbox.FindString (null, -5), "#E3");
 		}
 
 		[Test]
-		public void FindStringExactTest ()
+		public void FindString_StartIndex_ItemCount ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object [] { "BA", "BB" });
+#if NET_2_0
+			Assert.AreEqual (0, cmbbox.FindString ("b", 1));
+#else
+			try {
+				cmbbox.FindString ("b", 1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
+		public void FindString_StartIndex_Min ()
 		{
 			ComboBox cmbbox = new ComboBox ();
-			cmbbox.FindStringExact ("Hola", -5); // No exception, it's empty
-			int x = cmbbox.FindStringExact ("Hello");
-			Assert.AreEqual (-1, x, "#20");
-			cmbbox.Items.AddRange (new object[] {"ABCD","ABC","ABDC"});
-			String myString = "ABC";
-			x = cmbbox.FindStringExact (myString);
-			Assert.AreEqual (1, x, "#201");
-			x = cmbbox.FindStringExact (string.Empty);
-			Assert.AreEqual (-1, x, "#202");
-			x = cmbbox.FindStringExact ("NonExistant");
-			Assert.AreEqual (-1, x, "#203");
+			cmbbox.Items.AddRange (new object [] { "ACBD", "ABDC", "ACBD", "ABCD" });
+			try {
+				cmbbox.FindString ("Hola", -2);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void FindString_StartIndex_Max ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object [] { "ACBD", "ABDC", "ACBD", "ABCD" });
+			try {
+				cmbbox.FindString ("Hola", 4);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void FindStringExact ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+			ComboBox cmbbox = new ComboBox ();
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("Hello"), "#A1");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (string.Empty), "#A2");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null), "#A3");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("Hola", -5), "#A4");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("Hola", 40), "#A5");
+
+			cmbbox.Items.AddRange (new object [] { "in", "BADTest", "IN", "BAD", "Bad", "In" });
+			Assert.AreEqual (2, cmbbox.FindStringExact ("IN"), "#B1");
+			Assert.AreEqual (0, cmbbox.FindStringExact ("in"), "#B2");
+			Assert.AreEqual (3, cmbbox.FindStringExact ("BAD"), "#B3");
+			Assert.AreEqual (3, cmbbox.FindStringExact ("bad"), "#B4");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("B"), "#B5");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("NonExistant"), "#B6");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (string.Empty), "#B7");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null), "#B8");
+
+			Assert.AreEqual (2, cmbbox.FindStringExact ("In", 1), "#C1");
+			Assert.AreEqual (5, cmbbox.FindStringExact ("In", 2), "#C2");
+			Assert.AreEqual (4, cmbbox.FindStringExact ("BaD", 3), "#C3");
+			Assert.AreEqual (3, cmbbox.FindStringExact ("bad", -1), "#C4");
+			Assert.AreEqual (5, cmbbox.FindStringExact ("In", 4), "#C5");
+			Assert.AreEqual (3, cmbbox.FindStringExact ("bad", 4), "#C6");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("B", 4), "#C7");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("BADNOT", 0), "#C8");
+			Assert.AreEqual (-1, cmbbox.FindStringExact ("i", -1), "#C9");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (string.Empty, 2), "#C10");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null, 1), "#C11");
+
+			cmbbox.Items.Add (string.Empty);
+			Assert.AreEqual (6, cmbbox.FindStringExact (string.Empty), "#D1");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null), "#D2");
+
+			Assert.AreEqual (6, cmbbox.FindStringExact (string.Empty, 3), "#E1");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null, 99), "#E2");
+			Assert.AreEqual (-1, cmbbox.FindStringExact (null, -5), "#E3");
+		}
+
+		[Test]
+		public void FindStringExact_StartIndex_ItemCount ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object [] { "AB", "BA", "AB", "BA" });
+#if NET_2_0
+			Assert.AreEqual (1, cmbbox.FindStringExact ("BA", 3));
+#else
+			try {
+				cmbbox.FindString ("BA", 3);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
+		public void FindStringExact_StartIndex_Min ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object [] { "ACBD", "ABDC", "ACBD", "ABCD" });
+			try {
+				cmbbox.FindStringExact ("Hola", -2);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void FindStringExact_StartIndex_Max ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object [] { "ACBD", "ABDC", "ACBD", "ABCD" });
+			try {
+				cmbbox.FindStringExact ("Hola", 4);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -234,7 +413,6 @@ namespace MonoTests.System.Windows.Forms
 			x = cmbbox.GetItemHeight (x);
 			Assert.IsTrue (cmbbox.ItemHeight > 0, "#21");
 		}
-
 
 		//
 		// Exceptions
@@ -322,36 +500,6 @@ namespace MonoTests.System.Windows.Forms
 			cmbbox.SelectedIndex = -2;
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		public void FindStringExactMinException ()
-		{
-			ComboBox cmbbox = new ComboBox ();
-			cmbbox.Items.AddRange(new object[] {"ACBD", "ABDC", "ACBD", "ABCD"});
-			cmbbox.FindStringExact ("Hola", -2);
-		}
-
-		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
-		public void FindStringExactMaxException ()
-		{
-			ComboBox cmbbox = new ComboBox ();
-			cmbbox.Items.AddRange(new object[] {"ACBD", "ABDC", "ACBD", "ABCD"});
-			cmbbox.FindStringExact ("Hola", 3);
-		}
-
-		// 2.0 doesn't throw an exception until Item.Count instead of Item.Count - 1 like docs say
-		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		public void FindStringExactMaxExceptionNet20 ()
-		{
-			ComboBox cmbbox = new ComboBox ();
-			cmbbox.Items.AddRange (new object[] { "ACBD", "ABDC", "ACBD", "ABCD" });
-			cmbbox.FindStringExact ("Hola", 4);
-		}
-
 		//
 		// Events
 		//
@@ -404,7 +552,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void SelectedIndextTest ()
+		public void SelectedIndexTest ()
 		{
 			eventFired = false;
 			ComboBox cmbbox = new ComboBox ();
@@ -534,8 +682,113 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(-1, cb.SelectedIndex, "#SSI5");
 			Assert.AreEqual(true, eventFired, "#SSI6");
 		}
- 	}
- 
+
+		[Test]
+		public void Text_DropDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+			ComboBox cmbbox = new ComboBox ();
+			Assert.IsNotNull (cmbbox.Text, "#A1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#A2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#A3");
+
+			cmbbox.Items.Add ("Another");
+			cmbbox.Items.Add ("Bad");
+			cmbbox.Items.Add ("IN");
+			cmbbox.Items.Add ("Combobox");
+			cmbbox.Items.Add ("BAD");
+			cmbbox.Items.Add ("iN");
+			cmbbox.Items.Add ("Bad");
+
+			Assert.IsNotNull (cmbbox.Text, "#B1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#B2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#B3");
+
+			cmbbox.SelectedIndex = 3;
+			Assert.IsNotNull (cmbbox.Text, "#C1");
+			Assert.AreEqual ("Combobox", cmbbox.Text, "#C2");
+			Assert.AreEqual (3, cmbbox.SelectedIndex, "#C3");
+
+			cmbbox.Text = string.Empty;
+			Assert.IsNotNull (cmbbox.Text, "#D1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#D2");
+			Assert.AreEqual (3, cmbbox.SelectedIndex, "#D3");
+
+			cmbbox.SelectedIndex = 1;
+			Assert.IsNotNull (cmbbox.Text, "#E1");
+			Assert.AreEqual ("Bad", cmbbox.Text, "#E2");
+			Assert.AreEqual (1, cmbbox.SelectedIndex, "#E3");
+
+			cmbbox.Text = null;
+			Assert.IsNotNull (cmbbox.Text, "#F1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#F2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#F3");
+
+			cmbbox.SelectedIndex = 0;
+			cmbbox.Text = "Q";
+			Assert.IsNotNull (cmbbox.Text, "#G1");
+			Assert.AreEqual ("Q", cmbbox.Text, "#G2");
+			Assert.AreEqual (0, cmbbox.SelectedIndex, "#G3");
+
+			cmbbox.Text = "B";
+			Assert.IsNotNull (cmbbox.Text, "#H1");
+			Assert.AreEqual ("B", cmbbox.Text, "#H2");
+			Assert.AreEqual (0, cmbbox.SelectedIndex, "#H3");
+
+			cmbbox.Text = "BAD";
+			Assert.IsNotNull (cmbbox.Text, "#I1");
+			Assert.AreEqual ("BAD", cmbbox.Text, "#I2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#I3");
+
+			cmbbox.Text = "BAD";
+			Assert.IsNotNull (cmbbox.Text, "#J1");
+			Assert.AreEqual ("BAD", cmbbox.Text, "#J2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#J3");
+
+			cmbbox.Text = "baD";
+			Assert.IsNotNull (cmbbox.Text, "#K1");
+			Assert.AreEqual ("Bad", cmbbox.Text, "#K2");
+			Assert.AreEqual (1, cmbbox.SelectedIndex, "#K3");
+
+			cmbbox.SelectedIndex = -1;
+			cmbbox.Text = "E";
+			Assert.IsNotNull (cmbbox.Text, "#L1");
+			Assert.AreEqual ("E", cmbbox.Text, "#L2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#L3");
+
+			cmbbox.Text = "iN";
+			Assert.IsNotNull (cmbbox.Text, "#M1");
+			Assert.AreEqual ("iN", cmbbox.Text, "#M2");
+			Assert.AreEqual (5, cmbbox.SelectedIndex, "#M3");
+
+			cmbbox.Text = "In";
+			Assert.IsNotNull (cmbbox.Text, "#N1");
+			Assert.AreEqual ("IN", cmbbox.Text, "#N2");
+			Assert.AreEqual (2, cmbbox.SelectedIndex, "#N3");
+
+			cmbbox.Text = "Badd";
+			Assert.IsNotNull (cmbbox.Text, "#O1");
+			Assert.AreEqual ("Badd", cmbbox.Text, "#O2");
+			Assert.AreEqual (2, cmbbox.SelectedIndex, "#O3");
+
+			cmbbox.SelectedIndex = -1;
+			Assert.IsNotNull (cmbbox.Text, "#P1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#P2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#P3");
+
+			cmbbox.Text = "Something";
+			Assert.IsNotNull (cmbbox.Text, "#Q1");
+			Assert.AreEqual ("Something", cmbbox.Text, "#Q2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#Q3");
+
+			cmbbox.SelectedIndex = -1;
+			Assert.IsNotNull (cmbbox.Text, "#R1");
+			Assert.AreEqual ("Something", cmbbox.Text, "#R2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#R3");
+		}
+	}
+
 	[TestFixture]
 	public class ComboBoxObjectCollectionTest
 	{
@@ -559,6 +812,38 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Add_Null ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			try {
+				col.Add (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("item", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void AddRange_Null ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			try {
+				col.AddRange (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("items", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
 		public void ClearTest ()
 		{
 			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
@@ -579,6 +864,24 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Contains_Null ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			try {
+				col.Contains (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+#endif
+			}
+		}
+
+		[Test]
 		public void IndexOfTest ()
 		{
 			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
@@ -588,13 +891,50 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void IndexOf_Null ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			try {
+				col.IndexOf (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+#endif
+			}
+		}
+
+		[Test]
+		public void Insert_Null ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.Add ("Item1");
+			try {
+				col.Insert (0, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("item", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
 		public void RemoveTest ()
 		{
 			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.Remove ("Item1");
-			Assert.AreEqual (1, col.Count, "#G1");
+			Assert.AreEqual (1, col.Count, "#1");
+			col.Remove (null);
+			Assert.AreEqual (1, col.Count, "#2");
 		}
 
 		[Test]
@@ -609,53 +949,20 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddNullTest ()
-		{
-			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
-			col.Add (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddRangeNullTest ()
-		{
-			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
-			col.AddRange (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ContainsNullTest ()
-		{
-			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
-			col.Contains (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void IndexOfNullTest ()
-		{
-			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
-			col.IndexOf (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void InsertNullTest ()
+		public void Indexer_Null ()
 		{
 			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
 			col.Add ("Item1");
-			col.Insert (0, null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void IndexerNullTest ()
-		{
-			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
-			col.Add ("Item1");
-			col [0] = null;
+			try {
+				col [0] = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
 		}
 	}
 
