@@ -54,7 +54,7 @@ namespace System.Xml.Serialization
 		TypeData mappedType;
 		XmlSchemaPatternFacet facet;
 		bool hasPublicConstructor = true;
-		bool genericNullable;
+		bool nullableOverride;
 
 		public TypeData (Type type, string elementName, bool isPrimitive) :
 			this(type, elementName, isPrimitive, null, null) {}
@@ -225,7 +225,7 @@ namespace System.Xml.Serialization
 		{
 			get
 			{
-				if (genericNullable)
+				if (nullableOverride)
 					return true;
 #if NET_2_0
 				return !IsValueType ||
@@ -236,17 +236,10 @@ namespace System.Xml.Serialization
 				return !IsValueType;
 #endif
 			}
-		}
 
-		public bool IsGenericNullable
-		{
-			get
-			{
-				return genericNullable;
-			}
 			set
 			{
-				genericNullable = value;
+				nullableOverride = true;
 			}
 		}
 

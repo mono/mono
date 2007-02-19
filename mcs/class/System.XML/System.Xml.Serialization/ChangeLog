@@ -1,5 +1,11 @@
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeData.cs, MapCodeGenerator.cs, XmlMemberMapping.cs,
+	  TypeTranslator.cs : removed IsGenericNullable and added
+	  set_IsNullable so that it could be simpler.
+
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationCodeGenerator.cs, XmlMappingAccess.cs,
 	  SerializationCodeGeneratorConfiguration.cs : replaced HookDir with
 	  XmlMappingAccess.

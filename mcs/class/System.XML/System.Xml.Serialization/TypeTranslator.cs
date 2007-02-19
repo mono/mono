@@ -140,7 +140,7 @@ namespace System.Xml.Serialization
 			foreach (DictionaryEntry de in primitiveTypes) {
 				TypeData td = (TypeData) de.Value;
 				TypeData ntd = new TypeData (td.Type, td.XmlType, true);
-				ntd.IsGenericNullable = true;
+				ntd.IsNullable = true;
 				primitiveNullableTypes.Add (de.Key, ntd);
 			}
 #endif
@@ -153,16 +153,12 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetTypeData (Type runtimeType, string xmlDataType)
 		{
-			return GetTypeData (runtimeType, xmlDataType, false);
-		}
-
-		public static TypeData GetTypeData (Type runtimeType, string xmlDataType, bool isNullableRuntimeType)
-		{
 			Type type = runtimeType;
+			bool nullableOverride = false;
 #if NET_2_0
 			// Nullable<T> is serialized as T
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
-				isNullableRuntimeType = true;
+				nullableOverride = true;
 				type = type.GetGenericArguments () [0];
 
 				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
@@ -229,8 +225,8 @@ namespace System.Xml.Serialization
 					name = XmlConvert.EncodeLocalName (type.Name);
 
 				typeData = new TypeData (type, name, false);
-				if (isNullableRuntimeType)
-					typeData.IsGenericNullable = true;
+				if (nullableOverride)
+					typeData.IsNullable = true;
 #if TARGET_JVM
 				dynamicCache[runtimeType] = typeData;
 #else
@@ -274,7 +270,7 @@ namespace System.Xml.Serialization
 			
 			if (primType.SchemaType == SchemaTypes.Primitive)
 			{
-				TypeData newPrim = GetTypeData (primType.Type, null, primType.IsGenericNullable);
+				TypeData newPrim = GetTypeData (primType.Type, null);
 				if (newPrim != primType) return newPrim;
 			}
 			return primType;

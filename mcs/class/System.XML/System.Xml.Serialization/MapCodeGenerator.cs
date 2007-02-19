@@ -615,7 +615,7 @@ namespace System.Xml.Serialization {
 		CodeTypeReference GetDomType (TypeData data)
 		{
 #if NET_2_0
-			if (data.IsGenericNullable)
+			if (data.IsValueType && data.IsNullable)
 				return new CodeTypeReference ("System.Nullable", new CodeTypeReference (data.FullTypeName));
 #endif
 			if (data.SchemaType == SchemaTypes.Array)

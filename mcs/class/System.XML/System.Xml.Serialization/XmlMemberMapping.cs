@@ -131,7 +131,7 @@ namespace System.Xml.Serialization
 		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
 			string ret = codeProvider.CreateValidIdentifier (_mapMember.TypeData.FullTypeName);
-			return _mapMember.TypeData.IsGenericNullable ? 
+			return _mapMember.TypeData.IsValueType && _mapMember.TypeData.IsNullable ? 
 				"System.Nullable`1[" + ret + "]" : ret;
 		}
 #endif
