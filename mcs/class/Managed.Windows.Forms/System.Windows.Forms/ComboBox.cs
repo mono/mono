@@ -1020,8 +1020,8 @@ namespace System.Windows.Forms
 			
 			if (textbox_ctrl != null) {
 				textbox_ctrl.SetSelectable (false);
-				textbox_ctrl.ActivateCaret (true);
 				textbox_ctrl.ShowSelection = true;
+				textbox_ctrl.ActivateCaret (true);
 				textbox_ctrl.SelectAll ();
 			}
 

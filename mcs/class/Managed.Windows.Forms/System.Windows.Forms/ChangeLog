@@ -1,4 +1,10 @@
 2007-02-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	
+	* ComboBox.cs: Switch the order to ShowSelection and ActivateCaret,
+	since the caret won't show up unless ShowSelection is true. 
+	Fixes #80795.
+
+2007-02-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Application.cs: When disabling all forms but the main form, do not
 	  disable any descendants of the main form (such as mdi children or
