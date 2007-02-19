@@ -37,6 +37,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -97,6 +100,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class BulletedListTest
 	{
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
 		[Test]
 		public void BulletedList_DefaultProperties ()
 		{
@@ -315,6 +324,61 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, clicked, "BeforeClick");
 		}
 
+		//PostBack raise event
+		[Test]
+		[Category ("NunitWeb")]
+		public void BulletedList_PostBackEvent ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEvent));
+			string html = t.Run ();
+			if (html.IndexOf ("Test_Item") < 0)
+				Assert.Fail ("BulletedList not created");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "BL";
+			fr.Controls["__EVENTARGUMENT"].Value = "0";
+			t.Request = fr;
+			html = t.Run ();
+			if (t.UserData == null || (string) t.UserData != "list_Click Fired_0")
+				Assert.Fail ("list_Click Not Fired");
+		}
+
+		#region _PostBackEvent_helper
+		public static void _PostBackEvent (Page p)
+		{
+			BulletedList list = new BulletedList ();
+			list.ID = "BL";
+			list.DisplayMode = BulletedListDisplayMode.LinkButton;
+			list.Items.Add (new ListItem ("Test_Item", "Test_Value", true));
+			list.Click += new BulletedListEventHandler (list_Click);
+			p.Controls.Add (list);
+		}
+
+		static void list_Click (object sender, BulletedListEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "list_Click Fired_" + e.Index.ToString();
+		}
+		#endregion
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void VerifyMultiSelectTest ()
+		{
+			VerifyMultiSelectBulletedList list = new VerifyMultiSelectBulletedList ();
+			list.VerifyMultiSelect ();
+		}
+       
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+
+		// Help class for DS creation
 		private void AddListItems (PokerBulletedList b)
 		{
 			ListItem item1 = new ListItem ("Item1", "Item1");
@@ -338,14 +402,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.Items.Add (item9);
 			b.Items.Add (item10);
 		}
-
-        [Test]
-        [ExpectedException(typeof(HttpException))]
-        public void VerifyMultiSelectTest()
-        {
-            VerifyMultiSelectBulletedList list = new VerifyMultiSelectBulletedList();
-            list.VerifyMultiSelect();
-        }
 	}
 }
 

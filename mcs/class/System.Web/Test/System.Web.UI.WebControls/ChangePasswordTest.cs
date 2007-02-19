@@ -42,6 +42,7 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 
 using NUnit.Framework;
+using System.Collections.Specialized;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -566,31 +567,232 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			test.Request = fr;
 			html = test.Run ();
-
-			//
-			// The following fails with the following exception:
-//System.TypeInitializationException: An exception was thrown by the type initializer for System.Web.Security.Membership ---&gt; System.Configuration.ConfigurationErrorsException: Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()
-//  at System.Web.Configuration.ProvidersHelper.InstantiateProvider (System.Configuration.ProviderSettings providerSettings, System.Type providerType) [0x00000]
-//  at System.Web.Configuration.ProvidersHelper.InstantiateProviders (System.Configuration.ProviderSettingsCollection configProviders, System.Configuration.Provider.ProviderCollection providers, System.Type providerType) [0x00000]
-//  at System.Web.Security.Membership..cctor () [0x00000] --- End of inner exception stack trace ---
-//
-//  at &lt;0x00000&gt; &lt;unknown method&gt;
-//  at System.Web.UI.WebControls.ChangePassword.InitMemberShipProvider () [0x00000]
-//  at System.Web.UI.WebControls.ChangePassword.get_MembershipProviderInternal () [0x00000]
-//  at System.Web.UI.WebControls.ChangePassword.ProcessChangePasswordEvent (System.Web.UI.WebControls.CommandEventArgs args) [0x00000]
-//  at System.Web.UI.WebControls.ChangePassword.OnBubbleEvent (System.Object source, System.EventArgs e) [0x00000]
-//  at System.Web.UI.Control.RaiseBubbleEvent (System.Object source, System.EventArgs args) [0x00000]
-//  at System.Web.UI.WebControls.Button.OnCommand (System.Web.UI.WebControls.CommandEventArgs e) [0x00000]
-//  at System.Web.UI.WebControls.Button.RaisePostBackEvent (System.String eventArgument) [0x00000]
-//  at System.Web.UI.WebControls.Button.System.Web.UI.IPostBackEventHandler.RaisePostBackEvent (System.String eventArgument) [0x00000]
-//  at System.Web.UI.Page.RaisePostBackEvent (IPostBackEventHandler sourceControl, System.String eventArgument) [0x00000]
-//  at System.Web.UI.Page.RaisePostBackEvents () [0x00000]
-//  at System.Web.UI.Page.InternalProcessRequest () [0x00000]
-//  at System.Web.UI.Page.ProcessRequest (System.Web.HttpContext context) [0x00000] </pre></code>^M
-//
 			Assert.IsTrue (html.IndexOf ("has been changed") > 0, "GetPassword");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void PostBackEventCancel ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEventCancel));
+			string html = t.Run ();
+			if (html.IndexOf ("Change Your Password") < 0)
+				Assert.Fail ("ChangePassword not created");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CancelPushButton");
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$CancelPushButton"].Value = "Cancel";
+			t.Request = fr;
+			html = t.Run ();
+			if (t.UserData == null || t.UserData.ToString () != "CancelButtonClick")
+				Assert.Fail ("CancelButtonClick event not fired");
+		}
+
+		public static void _PostBackEventCancel (Page p)
+		{
+			ChangePassword w = CreateTestControl (p);
+			w.CancelButtonClick += new EventHandler (w_CancelButtonClick);
+		}
+
+		static void w_CancelButtonClick (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "CancelButtonClick";
+		}
+
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void PostBackEventChanging ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEventChanging));
+			string html = t.Run ();
+			if (html.IndexOf ("Change Your Password") < 0)
+				Assert.Fail ("ChangePassword not created");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
+			
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
+				
+			t.Request = fr;
+			html = t.Run ();
+			if (t.UserData == null || t.UserData.ToString () != "ChangingPassword")
+				Assert.Fail ("ChangingPassword event not fired");
+		}
+
+		public static void _PostBackEventChanging (Page p)
+		{
+			ChangePassword w = CreateTestControl (p);
+			w.DisplayUserName = false;
+			w.ChangingPassword +=new LoginCancelEventHandler(w_ChangingPassword);
+		}
+
+		public static void w_ChangingPassword (object sender, LoginCancelEventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "ChangingPassword";
+			e.Cancel = true;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void PostBackEventError ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEventError));
+			string html = t.Run ();
+			if (html.IndexOf ("Change Your Password") < 0)
+				Assert.Fail ("ChangePassword not created");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$UserName");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
+
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$UserName"].Value = "WrongUser";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
+
+			t.Request = fr;
+			html = t.Run ();
+			if (t.UserData == null || t.UserData.ToString () != "ChangePasswordError")
+				Assert.Fail ("ChangePasswordError event not fired");
+		}
+
+		public static void _PostBackEventError (Page p)
+		{
+			ChangePassword w = CreateTestControl (p);
+			w.ChangePasswordError += new EventHandler (w_ChangePasswordError);
+		}
+
+		public static void w_ChangePasswordError (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "ChangePasswordError";
+		}
+
+		
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void PostBackEventChangedPassword ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEventChangedPassword));
+			string html = t.Run ();
+			if (html.IndexOf ("Change Your Password") < 0)
+				Assert.Fail ("ChangePassword not created");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
+
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
+
+			t.Request = fr;
+			html = t.Run ();
+			if (t.UserData == null || t.UserData.ToString () != "ChangedPassword")
+				Assert.Fail ("ChangedPassword event not fired");
+		}
+
+		public static void _PostBackEventChangedPassword (Page p)
+		{
+			ChangePassword w = CreateTestControl (p);
+			w.DisplayUserName = false;
+			w.ChangedPassword += new EventHandler (w_ChangedPassword);
+		}
+
+		public static void w_ChangedPassword (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "ChangedPassword";
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void PostBackEventContinue ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackEventContinue));
+			string html = t.Run ();
+			if (html.IndexOf ("Change Your Password") < 0)
+				Assert.Fail ("ChangePassword not created");
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
+			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
+
+			t.Request = fr;
+			html = t.Run ();
+			if (html.IndexOf ("Change Password Complete") < 0)
+				Assert.Fail ("Password has not beeb changed!");
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("ChangePassword1$SuccessContainerID$ContinuePushButton");
+			fr.Controls["ChangePassword1$SuccessContainerID$ContinuePushButton"].Value = "Continue";
+
+			t.Request = fr;
+			html = t.Run ();
+
+			if (t.UserData == null || t.UserData.ToString () != "ContinueButtonClick")
+				Assert.Fail ("ContinueButtonClick event not fired");
+		}
+
+		public static void _PostBackEventContinue (Page p)
+		{
+			ChangePassword w = CreateTestControl (p);
+			w.DisplayUserName = false;
+			w.ContinueButtonClick += new EventHandler (w_ContinueButtonClick);
+		}
+
+		public static void w_ContinueButtonClick (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "ContinueButtonClick";
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 	}
 }
 

@@ -145,6 +145,7 @@ System.Web.UI.WebControls/ButtonTest.cs
 System.Web.UI.WebControls/CalendarDayTest.cs
 System.Web.UI.WebControls/CalendarTest.cs
 System.Web.UI.WebControls/CallBackTest.cs
+System.Web.UI.WebControls/ChangePasswordTest.cs
 System.Web.UI.WebControls/CheckBoxFieldTest.cs
 System.Web.UI.WebControls/CheckBoxListTest.cs
 System.Web.UI.WebControls/CheckBoxTest.cs
