@@ -1,0 +1,8 @@
+02-19-2007	Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* IPumaServicesProvider.cs, PumaServicesProvider.cs,
+	  PumaServicesProviderFactory.cs, WPSMembershipProvider.cs,
+	  WPSMembershipUser.cs : Added to the project - implementation of
+	  Web Sphere Portal MembershipProvider and Web Sphere Portal 
+	  MembershipUser - based on PUMA API.
+

@@ -1,0 +1,5 @@
+02-19-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* Created new Mainsoft.Web.J2EE.WAS.csproj project, which will
+	hold all WebSphere specific features. 
+	
