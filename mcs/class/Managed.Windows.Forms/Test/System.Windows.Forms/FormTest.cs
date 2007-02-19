@@ -21,6 +21,191 @@ namespace MonoTests.System.Windows.Forms
 	public class FormTest
 	{
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void FormCreateParamsStyleTest ()
+		{
+			Form frm;
+			
+			using (frm = new Form ()) {
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles) TestHelper.GetCreateParams (frm).Style), "#01-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles) TestHelper.GetCreateParams (frm).ExStyle), "#01-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.AllowDrop = !frm.AllowDrop;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#02-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#02-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.AllowTransparency = !frm.AllowTransparency;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#03-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW | WindowExStyles.WS_EX_LAYERED, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#03-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.Opacity = 0.50;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#04-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW | WindowExStyles.WS_EX_LAYERED, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#04-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.TransparencyKey = Color.Cyan;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#05-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW | WindowExStyles.WS_EX_LAYERED, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#05-ExStyle");
+			}
+			
+			using (frm = new Form ()) {
+				frm.CausesValidation = !frm.CausesValidation;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#06-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#06-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.ControlBox = !frm.ControlBox;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_GROUP | WindowStyles.WS_THICKFRAME | WindowStyles.WS_BORDER | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#07-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#07-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.Enabled = true;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#08-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#08-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.Fixed3D;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_GROUP | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#10-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CLIENTEDGE | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#10-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.FixedDialog;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_GROUP | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#11-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_DLGMODALFRAME | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#11-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.FixedSingle;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_GROUP | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#12-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#12-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_GROUP | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#13-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#13-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.None;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#14-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#14-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.Sizable;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#15-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#15-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#16-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#16-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.HelpButton = !frm.HelpButton;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#17-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#17-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.Icon = null;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#18-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#18-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.Icon = SystemIcons.Asterisk;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#19-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#19-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.IsMdiContainer = !frm.IsMdiContainer;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#20-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#20-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.MaximizeBox = !frm.MaximizeBox;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_GROUP | WindowStyles.WS_THICKFRAME | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#21-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#21-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.MinimizeBox = !frm.MinimizeBox;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_THICKFRAME | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#22-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#22-ExStyle");
+			}
+#if NET_2_0
+			using (frm = new Form ()) {
+				frm.ShowIcon = !frm.ShowIcon;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#23-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_DLGMODALFRAME | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#23-ExStyle");
+			}
+#endif		
+			using (frm = new Form ()) {
+				frm.ShowInTaskbar = !frm.ShowInTaskbar;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#24-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#24-ExStyle");
+			}
+
+
+			using (frm = new Form ()) {
+				frm.TabStop = !frm.TabStop;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#25-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#25-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.TopLevel = !frm.TopLevel;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CHILD, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#26-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#26-ExStyle");
+			}
+
+			using (frm = new Form ()) {
+				frm.Visible = !frm.Visible;
+				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#27-Style");
+				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#27-ExStyle");
+			}
+		}
+		
+		[Test]
+		public void FormParentedTest ()
+		{
+			using (Form frm = new Form ()) {
+				Form frm2 = new Form ();
+				frm2.TopLevel = false;
+				frm.ShowInTaskbar = false;
+				frm2.ShowInTaskbar = false;
+				frm2.Visible = true;
+				frm.Visible = true;
+				
+				EventLogger log = new EventLogger (frm);
+				EventLogger log2 = new EventLogger (frm2);
+				
+				frm.Controls.Add (frm2);
+
+				Assert.IsTrue (log2.EventRaised ("ParentChanged"), "#C1");
+				Assert.IsTrue (log.EventRaised ("ControlAdded"), "#P1");
+				Assert.AreSame (frm, frm2.Parent, "#02");
+			}
+		}
+		
+		[Test]
 		public void FormPropertyTest ()
 		{
 			Form myform = new Form ();
