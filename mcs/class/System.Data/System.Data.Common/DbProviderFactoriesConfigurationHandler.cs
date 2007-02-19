@@ -76,12 +76,15 @@ namespace System.Data.Common {
                        }
                 }
 
-                internal string GetAttributeValue (XmlNode node, string name)
+                internal string GetAttributeValue (XmlNode node, string name, bool required)
                 {
                         XmlAttribute attr = node.Attributes[name];
-                        if (attr == null)
-                                throw new ConfigurationException ("Required Attribute '" + name +
+                        if (attr == null) {
+                                if (!required)
+                                        return null;
+                                throw new ConfigurationErrorsException ("Required Attribute '" + name +
                                                                   "' is  missing!", node);
+                        }
                         string value = attr.Value;
                         if (value == "")
                                 throw new ConfigurationException ("Attribute '" + name + "' cannot be empty!",
@@ -100,22 +103,23 @@ namespace System.Data.Common {
                                 string invariant = "";
                                 string type = "";
                                 string supportedClasses = "";
-                                int support;
+                                int support = 0;
 
-                                name            = GetAttributeValue (addNode, "name");
-                                description     = GetAttributeValue (addNode, "description");
-                                invariant       = GetAttributeValue (addNode, "invariant");
-                                type            = GetAttributeValue (addNode, "type");
-                                supportedClasses = GetAttributeValue (addNode, "support");
-                                
-                                support = int.Parse (supportedClasses, NumberStyles.HexNumber);
+                                name            = GetAttributeValue (addNode, "name", true);
+                                description     = GetAttributeValue (addNode, "description", true);
+                                invariant       = GetAttributeValue (addNode, "invariant", true);
+                                type            = GetAttributeValue (addNode, "type", true);
+                                supportedClasses = GetAttributeValue (addNode, "support", false);
+                                if (supportedClasses != null)
+                                        support = int.Parse (supportedClasses, NumberStyles.HexNumber);
                                         
                                 DataRow row = dt.NewRow ();
                                 row [0] = name;
                                 row [1] = description;
                                 row [2] = invariant;
                                 row [3] = type;
-                                row [4] = support;
+                                if (supportedClasses != null)
+                                        row [4] = support;
                                         
                                 dt.Rows.Add (row);
                         }        
@@ -127,7 +131,7 @@ namespace System.Data.Common {
                                 if (node.NodeType != XmlNodeType.Element)
                                         continue;
                                 
-                                string invariant = GetAttributeValue (node, "invariant");
+                                string invariant = GetAttributeValue (node, "invariant", true);
                                 DataRow row = dt.Rows.Find (invariant);
                                 if (row != null)
                                         row.Delete ();

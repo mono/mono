@@ -1,3 +1,8 @@
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbProviderFactoriesConfigurationHandler.cs : "support" attribute is
+	  optional. Fixed bug #80894.
+
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* DbProviderFactory.cs: Derived class has to implement all the

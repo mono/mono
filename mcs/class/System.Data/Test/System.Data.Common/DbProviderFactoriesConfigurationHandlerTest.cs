@@ -1,5 +1,5 @@
 //
-// System.Data.Common.DbProviderFactoriesConfigurationHandler.cs
+// System.Data.Common.DbProviderFactoriesConfigurationHandlerTest.cs
 //
 // Author:
 //   Sureshkumar T (tsureshkumar@novell.com)
@@ -77,6 +77,12 @@ namespace MonoTests.System.Data.Common {
             Assert.AreEqual ("ProviderTest.AssemblyQualifiedName", r ["AssemblyQualifiedName"].ToString (), "AssemblyQualifiedName column missing");
             Assert.AreEqual (255, (int) r ["SupportedClasses"], "SupportedClasses column missing");
 
+        }
+
+        [Test]
+        public void PopulateFactoriesTest () // bug #80894
+        {
+            DataTable dt = DbProviderFactories.GetFactoryClasses ();
         }
     }
 }
