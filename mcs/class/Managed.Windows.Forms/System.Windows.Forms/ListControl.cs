@@ -183,7 +183,7 @@ namespace System.Windows.Forms
 					PropertyDescriptor prop = col.Find (ValueMember, true);
 										
 					for (int i = 0; i < data_manager.Count; i++) {
-						 if (prop.GetValue (data_manager [i]) == value) {
+						if (value.Equals (prop.GetValue (data_manager [i]))) {
 						 	SelectedIndex = i;
 						 	return;
 						}

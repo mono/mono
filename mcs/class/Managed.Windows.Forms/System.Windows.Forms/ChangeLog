@@ -1,4 +1,10 @@
 2007-02-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ListControl.cs: In SelectedValue use value.Equals to compare for
+	equality instead of ==, otherwise it will fail for strings.
+	Fixes #80794.
+
+2007-02-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 	
 	* ComboBox.cs: Switch the order to ShowSelection and ActivateCaret,
 	since the caret won't show up unless ShowSelection is true. 
