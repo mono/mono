@@ -403,7 +403,7 @@ namespace System.Web {
 		{
 			if (AppGlobalResourcesAssembly == null)
 				throw new MissingManifestResourceException ();
-			return GetResourceObject (classKey, resourceKey, culture, AppGlobalResourcesAssembly);
+			return GetResourceObject ("Resources." + classKey, resourceKey, culture, AppGlobalResourcesAssembly);
 		}
 
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey)

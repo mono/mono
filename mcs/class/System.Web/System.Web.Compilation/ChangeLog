@@ -1,3 +1,7 @@
+2007-02-19  Marek Habersack  <grendello@gmail.com>
+
+	* ResourceExpressionBuilder.cs: Do not prepend the .Resources prefix here
+
 2007-02-16  Marek Habersack  <grendello@gmail.com>
 
 	* CachingCompiler.cs, BaseCompiler.cs: Make sure that no assembly

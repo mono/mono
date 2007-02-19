@@ -1,3 +1,8 @@
+2007-02-19  Marek Habersack  <grendello@gmail.com>
+
+	* HttpContext.cs: Make sure all the global resource objects are
+	sought in the Resources. namespace.
+
 2007-02-18  Eyal Alaluf  <eyala@mainsoft.com>
 
 	* HttpContext.jvm.cs, HttpRequest.jvm.cs: Adapt for tunning under test
