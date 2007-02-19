@@ -193,7 +193,11 @@ namespace System.Data
 			// Consume attributes
 			if (reader.MoveToFirstAttribute ()) {
 				do {
-					if (reader.NamespaceURI == XmlConstants.XmlnsNS)
+					if (reader.NamespaceURI == XmlConstants.XmlnsNS
+#if NET_2_0
+					|| reader.NamespaceURI == XmlConstants.XmlNS
+#endif
+						)
 						continue;
 					ReadElementAttribute (row);
 				} while (reader.MoveToNextAttribute ());

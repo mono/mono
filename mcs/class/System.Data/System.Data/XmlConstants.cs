@@ -49,6 +49,9 @@ internal class XmlConstants
 	public const string SchemaNamespace = "http://www.w3.org/2001/XMLSchema";
 	
 	public const string XmlnsNS = "http://www.w3.org/2000/xmlns/";
+#if NET_2_0
+	public const string XmlNS = "http://www.w3.org/XML/1998/namespace";
+#endif
 	
 	//xs elements and values 
 	//TODO - these must exist somwhere else???

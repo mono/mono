@@ -229,6 +229,9 @@ namespace System.Data {
 			do {
 				switch (reader.NamespaceURI) {
 				case XmlConstants.XmlnsNS:
+#if NET_2_0
+				case XmlConstants.XmlNS:
+#endif
 				case XmlConstants.DiffgrNamespace:
 				case XmlConstants.MsdataNamespace:
 				case XmlConstants.MspropNamespace:

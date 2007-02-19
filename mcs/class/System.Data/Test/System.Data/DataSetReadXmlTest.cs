@@ -669,9 +669,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #80045
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void ColumnOrder ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
@@ -712,7 +709,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #80048
+#if NET_1_1
 		[Category ("NotWorking")]
+#endif
 		public void XmlSpace ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
