@@ -619,8 +619,6 @@ namespace System.Xml.Serialization
 			SetHookVar ("$TYPE", typeMap.TypeData.CSharpName);
 			SetHookVar ("$FULLTYPE", typeMap.TypeData.CSharpFullName);
 			SetHookVar ("$OBJECT", "ob");
-			SetHookVar ("$ELEMENT", "element");
-			SetHookVar ("$NAMESPACE", "namesp");
 			SetHookVar ("$NULLABLE", "isNullable");
 
 			if (GenerateWriteHook (HookType.type, typeMap.TypeData.Type))
@@ -691,7 +689,7 @@ namespace System.Xml.Serialization
 			if (typeMap.TypeData.Type == typeof (object)) {
 				WriteLineInd ("else {");
 				WriteLineInd ("if (ob.GetType().IsArray && typeof(XmlNode).IsAssignableFrom(ob.GetType().GetElementType())) {");
-				WriteLine ("Writer.WriteStartElement ($ELEMENT, $NAMESPACE);");
+				WriteLine ("Writer.WriteStartElement (" + GetLiteral (typeMap.ElementName) + ", " + GetLiteral (typeMap.Namespace) + ");");
 				WriteLineInd ("foreach (XmlNode node in (System.Collections.IEnumerable) ob)");
 				WriteLineUni ("node.WriteTo (Writer);");
 				WriteLineUni ("Writer.WriteEndElement ();");

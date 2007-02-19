@@ -1,3 +1,8 @@
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs : hooks won't work unless they are
+	  set. For WriteStartElement() it could simply embed the names.
+
 2007-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTypeMapMember.cs : don't use readonly [Foo]Specified property
