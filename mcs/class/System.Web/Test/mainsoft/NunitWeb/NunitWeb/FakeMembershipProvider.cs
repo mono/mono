@@ -80,6 +80,8 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override bool ChangePassword (string username, string oldPwd, string newPwd)
 		{
+			if (username == "WrongUser")
+				return false;
 			return true;
 		}
 
@@ -164,7 +166,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("", username, "", "name@email.com", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
+			MembershipUser u = new MembershipUser ("FakeProvider", username, null, "name@email.com", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 
