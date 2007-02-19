@@ -1,5 +1,9 @@
 2007-02-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ComboBox.cs: Removed extra tabs. Changes spaces to tabs.
+
+2007-02-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ComboBox.cs: Setting Text should have no effect if item text of
 	selected item exactly matches value. First lookup text using
 	case-sensitive comparison, and fallback to case-insensitive comparison.
