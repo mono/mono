@@ -709,7 +709,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #80048
-#if NET_1_1
+#if ONLY_1_1
 		[Category ("NotWorking")]
 #endif
 		public void XmlSpace ()
