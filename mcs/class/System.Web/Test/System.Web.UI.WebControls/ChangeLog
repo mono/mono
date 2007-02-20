@@ -1,3 +1,7 @@
+2007-02-20  yonik <yonik@mainsoft.com>
+
+     * GridViewTest.cs: Add new tests for PostbackEvents 
+
 2007-02-19  yonik <yonik@mainsoft.com>
 
      * ChangePasswordTest.cs,BulletedListTest.cs: Add new tests for PostbackEvents 

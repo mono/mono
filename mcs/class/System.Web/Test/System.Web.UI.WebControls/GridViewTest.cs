@@ -305,6 +305,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 
+	
+
+	
+
 	[Serializable]
 	[TestFixture]
 	public class GridViewTest
@@ -393,17 +397,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void GridViewInit ()
 		{
+			
 			myds.Add ("Norway");
 			myds.Add ("Sweden");
 			myds.Add ("France");
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
-#else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
-#endif
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 		}
 
 		[Test]
@@ -2357,35 +2359,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
-		[Test]
-		[Category ("NunitWeb")]
-		public void GridView_PostBackSelect ()
-		{
-			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
-			string pageHTML = t.Run ();
-			Assert.AreEqual (-1, pageHTML.IndexOf ("SelectSuccess"), "BeforeSelect");
-			FormRequest fr = new FormRequest (t.Response, "form1");
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "mygrid";
-			fr.Controls["__EVENTARGUMENT"].Value = "Select$0";
-			t.Request = fr;
-			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
-			pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("SelectSuccess") < 0) {
-				Assert.Fail ("SelectFail");
-			}
-		}
-
 		public void GridView_postback (Page p)
 		{
+
 			PokerGridView b = new PokerGridView ();
 			b.ID = "mygrid";
 			b.PageIndexChanging += new GridViewPageEventHandler (b_PageIndexChanging);
 			b.Sorting += new GridViewSortEventHandler (b_Sorting);
 			b.RowDeleting += new GridViewDeleteEventHandler (b_RowDeleting);
 			b.RowEditing += new GridViewEditEventHandler (b_RowEditing);
-			b.SelectedIndexChanging += new GridViewSelectEventHandler (b_SelectedIndexChanging);
+			
 			ArrayList myds = new ArrayList ();
 			myds.Add ("Norway");
 			myds.Add ("Sweden");
@@ -2404,6 +2387,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.DataSource = myds;
 			b.DataBind ();
 		}
+
+
 
 		public void b_RowEditing (object o, GridViewEditEventArgs e)
 		{
@@ -2432,8 +2417,436 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			((GridView) o).Page.Controls.Add (new LiteralControl ("SelectSuccess"));
 		}
+
+
+		//////// Post back events /////////////
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_PostBackRowEvents ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.UserData = new Hashtable ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackRowEvents));
+			string html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert(t,"RowCreated");
+			CustomEventAssert (t,"RowDataBound");
+			
+			// Remove grid to edit mode (Edit button pressed)			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Edit$0";
+			t.Request = fr;
+			t.UserData = new Hashtable ();
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t,"RowCreated");
+			CustomEventAssert (t,"RowCommand");
+			CustomEventAssert (t,"RowEditing");
+			CustomEventAssert (t,"RowDataBound");
+
+			// Cancel button pressed
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Cancel$0";
+			t.Request = fr;
+			t.UserData = new Hashtable ();
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t,"RowCreated");
+			CustomEventAssert (t,"RowCommand");
+			CustomEventAssert (t,"RowCancelingEdit");
+			CustomEventAssert (t,"RowDataBound");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void GridView_PostBackUpdateEvents ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.UserData = new Hashtable ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackRowEvents));
+			string html = t.Run ();
+
+			// Remove grid to edit mode (Edit button pressed)			
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Edit$0";
+			t.Request = fr;
+			html = t.Run ();
+
+			// Update button pressed
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("Grid$ctl02$ctl02");
+			fr.Controls.Add ("Grid$ctl02$ctl03");
+			fr.Controls.Add ("Grid$ctl02$ctl04");
+
+			fr.Controls["__EVENTTARGET"].Value = "Grid$ctl02$ctl00";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["Grid$ctl02$ctl02"].Value = "1001";
+			fr.Controls["Grid$ctl02$ctl03"].Value = "Mahesh";
+			fr.Controls["Grid$ctl02$ctl04"].Value = "Chand";
+
+			t.Request = fr;
+			t.UserData = new Hashtable ();
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t, "RowCreated");
+			CustomEventAssert (t, "RowCommand");
+			CustomEventAssert (t, "RowUpdating");
+			CustomEventAssert (t, "RowUpdated");
+			CustomEventAssert (t, "RowDataBound");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_PostBackPagingEvents ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.UserData = new Hashtable ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackPagingEvents));
+			string html = t.Run ();
+
+			// Move to page 2
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Page$2";
+			t.Request = fr;
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t, "PageIndexChanging");
+			CustomEventAssert (t, "PageIndexChanged");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_PostBackSortingEvents ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.UserData = new Hashtable ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackSortingEvents));
+			string html = t.Run ();
+
+			// Sort by ID
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Sort$ID";
+			t.Request = fr;
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t, "Sorting");
+			CustomEventAssert (t, "Sorted");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void GridView_PostBackSelectingEvents ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.UserData = new Hashtable ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_PostBackSelectingEvents));
+			string html = t.Run ();
+
+			// Select
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Grid";
+			fr.Controls["__EVENTARGUMENT"].Value = "Select$0";
+			t.Request = fr;
+			html = t.Run ();
+
+			// Check if events done
+			CustomEventAssert (t, "SelectedIndexChanging");
+			CustomEventAssert (t, "SelectedIndexChanged");
+		}
+
+		#region PostBackEvents_helpers
 		
+		private void CustomEventAssert (WebTest t, string c)
+		{
+			Hashtable local = t.UserData as Hashtable;
+			if (local == null)
+				Assert.Fail ("User data not created");
+			if(!local.ContainsValue(c))
+				Assert.Fail (c + " not fired!"); 
+		}
+
+		public static void _PostBackSelectingEvents (Page p)
+		{
+			if (!p.IsPostBack)
+				DataObjects.Reset ();
+
+			GridView grid = new GridView ();
+			ObjectDataSource ds = new ObjectDataSource ();
+			grid.SelectedIndexChanged += new EventHandler (grid_SelectedIndexChanged);
+			grid.SelectedIndexChanging += new GridViewSelectEventHandler (grid_SelectedIndexChanging);
+			ds.ID = "ObjectDataSource2";
+			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataObjects";
+			ds.SelectMethod = "Select";
+			ds.DeleteMethod = "Delete";
+			ds.InsertMethod = "Insert";
+			ds.UpdateMethod = "Update";
+			grid.ID = "Grid";
+			grid.AutoGenerateColumns = true;
+			grid.AutoGenerateSelectButton = true;
+			grid.DataSourceID = "ObjectDataSource2";
+			p.Form.Controls.Add (ds);
+			p.Form.Controls.Add (grid);
+		}
+
+		public static void _PostBackSortingEvents (Page p)
+		{
+			if (!p.IsPostBack)
+				DataObjects.Reset ();
+
+			GridView grid = new GridView ();
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource2";
+			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataObjects";
+			ds.SelectMethod = "Select";
+			ds.DeleteMethod = "Delete";
+			ds.InsertMethod = "Insert";
+			ds.UpdateMethod = "Update";
+
+			grid.Sorted += new EventHandler (grid_Sorted);
+			grid.Sorting += new GridViewSortEventHandler (grid_Sorting);
+			grid.AllowSorting = true;
+			grid.ID = "Grid";
+			grid.AutoGenerateColumns = true;
+			
+			grid.DataSourceID = "ObjectDataSource2";
+			p.Form.Controls.Add (ds);
+			p.Form.Controls.Add (grid);
+		}
+
 		
+		public static void _PostBackPagingEvents (Page p)
+		{
+			if (!p.IsPostBack)
+				DataObjects.Reset ();
+
+			GridView grid = new GridView ();
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource2";
+			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataObjects";
+			ds.SelectMethod = "Select";
+			ds.DeleteMethod = "Delete";
+			ds.InsertMethod = "Insert";
+			ds.UpdateMethod = "Update";
+
+			grid.PageIndexChanged += new EventHandler (grid_PageIndexChanged);
+			grid.PageIndexChanging += new GridViewPageEventHandler (grid_PageIndexChanging);
+			grid.AllowPaging = true;
+			grid.ID = "Grid";
+			grid.AutoGenerateColumns = false;
+			grid.PageSize = 1;
+
+			BoundField field = new BoundField ();
+			field.DataField = "ID";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "FName";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "LName";
+			grid.Columns.Add (field);
+
+			grid.DataSourceID = "ObjectDataSource2";
+			p.Form.Controls.Add (ds);
+			p.Form.Controls.Add (grid);
+		}
+
+		public static void _PostBackRowEvents (Page p)
+		{
+			if (!p.IsPostBack)
+				DataObject.Reset ();
+
+			GridView grid = new GridView ();
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.ID = "ObjectDataSource2";
+			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataObject";
+			ds.SelectMethod = "Select";
+			ds.DeleteMethod = "Delete";
+			ds.InsertMethod = "Insert";
+			ds.UpdateMethod = "Update";
+
+
+			grid.RowCancelingEdit += new GridViewCancelEditEventHandler (grid_RowCancelingEdit);
+			grid.RowCommand += new GridViewCommandEventHandler (grid_RowCommand);
+			grid.RowCreated += new GridViewRowEventHandler (grid_RowCreated);
+			grid.RowDataBound += new GridViewRowEventHandler (grid_RowDataBound);
+			grid.RowEditing += new GridViewEditEventHandler (grid__RowEditing);
+			grid.RowUpdating += new GridViewUpdateEventHandler (grid_RowUpdating);
+			grid.RowUpdated += new GridViewUpdatedEventHandler (grid_RowUpdated);
+			grid.PageIndexChanged += new EventHandler (grid_PageIndexChanged);
+			grid.PageIndexChanging += new GridViewPageEventHandler (grid_PageIndexChanging);
+
+			Parameter p1 = new Parameter ("ID", TypeCode.String);
+			Parameter p2 = new Parameter ("FName", TypeCode.String);
+			Parameter p3 = new Parameter ("LName", TypeCode.String);
+
+			ds.UpdateParameters.Add (p1);
+			ds.UpdateParameters.Add (p2);
+			ds.UpdateParameters.Add (p3);
+
+			grid.ID = "Grid";
+			grid.AutoGenerateEditButton = true;
+
+			grid.AutoGenerateColumns = false;
+
+			BoundField field = new BoundField ();
+			field.DataField = "ID";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "FName";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "LName";
+			grid.Columns.Add (field);
+
+			grid.DataSourceID = "ObjectDataSource2";
+			p.Form.Controls.Add (ds);
+			p.Form.Controls.Add (grid);
+		}
+
+		static void grid_SelectedIndexChanging (object sender, GridViewSelectEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "SelectedIndexChanging");
+			}
+		}
+
+		static void grid_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "SelectedIndexChanged");
+			}
+		}
+
+		static void grid_PageIndexChanging (object sender, GridViewPageEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "PageIndexChanging");
+			}
+		}
+
+		static void grid_PageIndexChanged (object sender, EventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "PageIndexChanged");
+			}
+		}
+
+		public static void grid_RowUpdated (object sender, GridViewUpdatedEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowUpdated");
+			}
+		}
+
+		public static void grid_RowUpdating (object sender, GridViewUpdateEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowUpdating");
+			}
+		}
+
+		public static void grid_RowEditing (object sender, GridViewEditEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowEditing");
+			}
+		}
+
+		public static void grid_RowDataBound (object sender, GridViewRowEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowDataBound");
+			}
+		}
+
+		public static void grid_RowCreated (object sender, GridViewRowEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowCreated");
+			}
+		}
+
+		public static void grid_RowCommand (object sender, GridViewCommandEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowCommand");
+			}
+		}
+
+		public static void grid_RowCancelingEdit (object sender, GridViewCancelEditEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowCancelingEdit");
+			}
+		}
+
+		public static void grid__RowEditing (object sender, GridViewEditEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "RowEditing");
+			}
+		}
+
+		static void grid_Sorting (object sender, GridViewSortEventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "Sorting");
+			}
+		}
+
+		static void grid_Sorted (object sender, EventArgs e)
+		{
+			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
+			if (local != null) {
+				local.Add (local.Count, "Sorted");
+			}
+		}
+
+		#endregion
+
 		/// <summary>
 		/// All possible exceptions what can be thrown 
 		/// </summary>
@@ -2706,6 +3119,103 @@ namespace MonoTests.System.Web.UI.WebControls
 			dtRow["ID"] = 1001;
 			dtRow["FName"] = "Mahesh";
 			dtRow["LName"] = "Chand";
+			aTable.Rows.Add (dtRow);
+
+			aTable.PrimaryKey = new DataColumn[] { aTable.Columns["ID"] };
+			return aTable;
+		}
+	}
+
+	public class DataObjects
+	{
+		public static DataTable ds = CreateDataTable ();
+		public static DataTable Select ()
+		{
+			return ds;
+		}
+
+		public static void Reset ()
+		{
+			ds = CreateDataTable ();
+		}
+
+		public static DataTable Delete (string ID, string FName, string LName)
+		{
+			DataRow dr = ds.Rows.Find (ID);
+			if (dr != null) {
+				ds.Rows.Remove (dr);
+			}
+			return ds;
+		}
+
+		public static DataTable Insert (string ID, string FName, string LName)
+		{
+			DataRow dr = ds.NewRow ();
+			dr["ID"] = ID;
+			dr["FName"] = FName;
+			dr["LName"] = LName;
+			ds.Rows.Add (dr);
+			return ds;
+		}
+
+		public static DataTable Update (string ID, string FName, string LName)
+		{
+			foreach (DataRow row in ds.Rows) {
+				if (row["ID"].ToString () == ID) {
+					row["FName"] = FName;
+					row["LName"] = LName;
+				}
+			}
+			return ds;
+		}
+
+		public static DataTable CreateDataTable ()
+		{
+			DataTable aTable = new DataTable ("A");
+			DataColumn dtCol;
+			DataRow dtRow;
+
+			// Create ID column and add to the DataTable.
+			dtCol = new DataColumn ();
+			dtCol.DataType = Type.GetType ("System.Int32");
+			dtCol.ColumnName = "ID";
+			dtCol.AutoIncrement = true;
+			dtCol.Caption = "ID";
+			dtCol.ReadOnly = true;
+			dtCol.Unique = true;
+			aTable.Columns.Add (dtCol);
+
+			// Create Name column and add to the table
+			dtCol = new DataColumn ();
+			dtCol.DataType = Type.GetType ("System.String");
+			dtCol.ColumnName = "FName";
+			dtCol.AutoIncrement = false;
+			dtCol.Caption = "First Name";
+			dtCol.ReadOnly = false;
+			dtCol.Unique = false;
+			aTable.Columns.Add (dtCol);
+
+			// Create Last Name column and add to the table.
+			dtCol = new DataColumn ();
+			dtCol.DataType = Type.GetType ("System.String");
+			dtCol.ColumnName = "LName";
+			dtCol.AutoIncrement = false;
+			dtCol.Caption = "Last Name";
+			dtCol.ReadOnly = false;
+			dtCol.Unique = false;
+			aTable.Columns.Add (dtCol);
+
+			// Create three rows to the table
+			dtRow = aTable.NewRow ();
+			dtRow["ID"] = 1001;
+			dtRow["FName"] = "Mahesh";
+			dtRow["LName"] = "Chand";
+			aTable.Rows.Add (dtRow);
+
+			dtRow = aTable.NewRow ();
+			dtRow["ID"] = 1002;
+			dtRow["FName"] = "Vadim";
+			dtRow["LName"] = "Popik";
 			aTable.Rows.Add (dtRow);
 
 			aTable.PrimaryKey = new DataColumn[] { aTable.Columns["ID"] };
