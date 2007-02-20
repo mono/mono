@@ -1114,10 +1114,6 @@ namespace System.Web {
 				throw new ArgumentNullException (
 					String.Format ("MapPath: Invalid path '{0}', only virtual paths are accepted", virtualPath));
 
-#if TARGET_J2EE
- 			if (virtualPath.StartsWith(vmw.common.IAppDomainConfig.WAR_ROOT_SYMBOL))			
- 				return 	virtualPath;			
-#endif 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
 			if (baseVirtualDir == null)
 				baseVirtualDir = appVirtualPath;
