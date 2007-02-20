@@ -1,3 +1,6 @@
+2007-02-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* threads.c: Fix #ifdef for dummy_apc function for VS.
 
 Tue Feb 20 11:59:42 CET 2007 Paolo Molaro <lupus@ximian.com>
 
