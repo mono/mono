@@ -33,11 +33,10 @@ namespace System.Data.OleDb
 	using System.Data;
 	using System.Data.Common;
 
-	public class OleDbFactory : DbProviderFactory
+	public sealed class OleDbFactory : DbProviderFactory
 	{
 		#region Fields
-		public static OleDbFactory Instance = null;
-		public static object lockStatic = new object ();
+		public static readonly OleDbFactory Instance = new OleDbFactory ();
 		#endregion //Fields
 
 		#region Constructors
@@ -47,19 +46,11 @@ namespace System.Data.OleDb
 
 		}
 
-		static OleDbFactory ()
-		{
-			lock (lockStatic) {
-				if (Instance == null)
-					Instance = new OleDbFactory ();
-			}
-		}
 		#endregion //Constructors
 
-		[MonoTODO]
 		public override bool CanCreateDataSourceEnumerator
 		{
-			get { throw new NotImplementedException (); }
+			get { false; }
 		}
 
 		#region public overrides

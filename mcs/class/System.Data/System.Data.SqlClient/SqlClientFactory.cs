@@ -33,11 +33,10 @@ namespace System.Data.SqlClient
         using System.Data;
         using System.Data.Common;
         
-        public class SqlClientFactory : DbProviderFactory
+        public sealed class SqlClientFactory : DbProviderFactory
         {
                 #region Fields
-                public static SqlClientFactory Instance = null;
-                public static object lockStatic = new object ();
+			public static readonly SqlClientFactory Instance = new SqlClientFactory ();
                 #endregion //Fields
 
                 #region Constructors
@@ -45,15 +44,6 @@ namespace System.Data.SqlClient
                 private SqlClientFactory ()
                 {
                         
-                }
-
-                static SqlClientFactory ()
-                {
-                        lock (lockStatic) 
-                        {
-                                if (Instance == null)
-                                        Instance = new SqlClientFactory ();
-                        }
                 }
                 #endregion //Constructors
 
