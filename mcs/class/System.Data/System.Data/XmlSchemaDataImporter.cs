@@ -559,6 +559,7 @@ namespace System.Data
 
 			DataTable table = new DataTable (tableName);
 			table.Namespace = el.QualifiedName.Namespace;
+			TableStructure oldTable = currentTable;
 			currentTable = new TableStructure (table);
 
 			dataset.Tables.Add (table);
@@ -616,6 +617,8 @@ namespace System.Data
 				table.Columns.Add ((DataColumn) de.Value);
 			foreach (DataColumn dc in currentTable.NonOrdinalColumns)
 				table.Columns.Add (dc);
+
+			currentTable = oldTable;
 		}
 
 		private DataRelation GenerateRelationship (RelationStructure rs)
@@ -813,7 +816,7 @@ namespace System.Data
 
 			// If the element is not referenced one, the element will be handled later.
 			if (el.RefName == XmlQualifiedName.Empty)
-				targetElements.Add (el);
+				ProcessDataTableElement (el);
 
 		}
 

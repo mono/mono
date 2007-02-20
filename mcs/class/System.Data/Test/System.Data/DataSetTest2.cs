@@ -3345,6 +3345,16 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
+		public void ReadXmlSchema_TableOrder ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/Items.xsd");
+			Assert.AreEqual ("category", ds.Tables [0].TableName, "#1");
+			Assert.AreEqual ("childItemId", ds.Tables [1].TableName, "#2");
+			Assert.AreEqual ("item", ds.Tables [2].TableName, "#3");
+		}
+
+		[Test]
 		public void ReadXml_Diffgram_MissingSchema ()
 		{
 			DataSet ds = new DataSet ();
