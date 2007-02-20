@@ -55,7 +55,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 
-			Assert.IsFalse (project.Build ("1"));
+			Assert.IsFalse (project.Build ("1"), "A1");
 		}
 
 		[Test]
