@@ -139,10 +139,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", sql.FilterExpression, "A26");
 		}
 
-		// WARNING!!!!!! This information will be saved into viewstate only in mono implementation .
-
 		[Test]
-		[Category ("NotDotNet")] // LAME SPEC: MS SqlDataSource does not appear to SaveViewState, even though MSDN says it should!
 		public void ViewState ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -188,39 +185,40 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("hi", sql.FilterExpression, "A26");
 
 			object state = sql.SaveToViewState ();
+			Assert.IsNull (state, "ViewState is null");
 
 			sql = new SqlPoker ();
 			sql.LoadFromViewState (state);
 
-			Assert.AreEqual ("", sql.CacheKeyDependency, "B1"); // Not in ViewState
-			Assert.IsFalse (sql.CancelSelectOnNullParameter, "B2");
-			Assert.AreEqual (ConflictOptions.CompareAllValues, sql.ConflictDetection, "B3");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.DeleteCommandType, "B4");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.InsertCommandType, "B5");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.SelectCommandType, "B6");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.UpdateCommandType, "B7");
-			Assert.AreEqual ("{1}", sql.OldValuesParameterFormatString, "B8");
-			Assert.AreEqual ("", sql.SqlCacheDependency, "B9"); // Not in ViewState
-			Assert.AreEqual ("hi", sql.SortParameterName, "B10");
-			Assert.AreEqual (0, sql.CacheDuration, "B11"); // Not in ViewState
-			Assert.AreEqual (DataSourceCacheExpiry.Absolute, sql.CacheExpirationPolicy, "B12"); // Not in ViewState
-			Assert.IsFalse (sql.EnableCaching, "B13"); // Not in ViewState
-			Assert.AreEqual (SqlDataSourceMode.DataReader, sql.DataSourceMode, "B16");
-			Assert.AreEqual ("DELETE foo", sql.DeleteCommand, "B17");
+			Assert.AreEqual ("", sql.CacheKeyDependency, "B1");
+			Assert.IsTrue (sql.CancelSelectOnNullParameter, "B2");
+			Assert.AreEqual (ConflictOptions.OverwriteChanges, sql.ConflictDetection, "B3");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B4");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.InsertCommandType, "B5");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.SelectCommandType, "B6");
+			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B7");
+			Assert.AreEqual ("{0}", sql.OldValuesParameterFormatString, "B8");
+			Assert.AreEqual ("", sql.SqlCacheDependency, "B9");
+			Assert.AreEqual ("", sql.SortParameterName, "B10");
+			Assert.AreEqual (0, sql.CacheDuration, "B11");
+			Assert.AreEqual (DataSourceCacheExpiry.Absolute, sql.CacheExpirationPolicy, "B12");
+			Assert.IsFalse (sql.EnableCaching, "B13");
+			Assert.AreEqual (SqlDataSourceMode.DataSet, sql.DataSourceMode, "B16");
+			Assert.AreEqual ("", sql.DeleteCommand, "B17");
 			Assert.IsNotNull (sql.DeleteParameters, "B18");
 			Assert.AreEqual (0, sql.DeleteParameters.Count, "B18.1");
 			Assert.IsNotNull (sql.FilterParameters, "B19");
 			Assert.AreEqual (0, sql.FilterParameters.Count, "B19.1");
-			Assert.AreEqual ("INSERT foo", sql.InsertCommand, "B20");
+			Assert.AreEqual ("", sql.InsertCommand, "B20");
 			Assert.IsNotNull (sql.InsertParameters, "B21");
 			Assert.AreEqual (0, sql.InsertParameters.Count, "B21.1");
-			Assert.AreEqual ("SELECT foo", sql.SelectCommand, "B22");
+			Assert.AreEqual ("", sql.SelectCommand, "B22");
 			Assert.IsNotNull (sql.SelectParameters, "B23");
 			Assert.AreEqual (0, sql.SelectParameters.Count, "B23.1");
-			Assert.AreEqual ("UPDATE foo", sql.UpdateCommand, "B24");
+			Assert.AreEqual ("", sql.UpdateCommand, "B24");
 			Assert.IsNotNull (sql.UpdateParameters, "B25");
 			Assert.AreEqual (0, sql.UpdateParameters.Count, "B25.1");
-			Assert.AreEqual ("hi", sql.FilterExpression, "B26");
+			Assert.AreEqual ("", sql.FilterExpression, "B26");
 		}
 
 		// Help parameter for Asserts

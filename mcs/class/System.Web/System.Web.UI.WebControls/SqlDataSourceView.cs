@@ -490,19 +490,17 @@ namespace System.Web.UI.WebControls {
 			if (vs [2] != null) ((IStateManager) insertParameters).LoadViewState (vs [2]);
 			if (vs [3] != null) ((IStateManager) selectParameters).LoadViewState (vs [3]);
 			if (vs [4] != null) ((IStateManager) updateParameters).LoadViewState (vs [4]);
-			if (vs [5] != null) ((IStateManager) ViewState).LoadViewState (vs [5]);
 		}
 
 		protected virtual object SaveViewState ()
 		{
-			object [] vs = new object [6];
+			object [] vs = new object [5];
 			
 			if (deleteParameters != null) vs [0] = ((IStateManager) deleteParameters).SaveViewState ();
 			if (filterParameters != null) vs [1] = ((IStateManager) filterParameters).SaveViewState ();
 			if (insertParameters != null) vs [2] = ((IStateManager) insertParameters).SaveViewState ();
 			if (selectParameters != null) vs [3] = ((IStateManager) selectParameters).SaveViewState ();
 			if (updateParameters != null) vs [4] = ((IStateManager) updateParameters).SaveViewState ();
-			if (viewState != null) vs [5] = ((IStateManager) viewState).SaveViewState ();
 				
 			foreach (object o in vs)
 				if (o != null) return vs;
@@ -513,21 +511,19 @@ namespace System.Web.UI.WebControls {
 		{
 			tracking = true;
 			
-			if (deleteParameters != null) ((IStateManager) deleteParameters).TrackViewState ();
 			if (filterParameters != null) ((IStateManager) filterParameters).TrackViewState ();
-			if (insertParameters != null) ((IStateManager) insertParameters).TrackViewState ();
 			if (selectParameters != null) ((IStateManager) selectParameters).TrackViewState ();
-			if (updateParameters != null) ((IStateManager) updateParameters).TrackViewState ();
-			if (viewState != null) ((IStateManager) viewState).TrackViewState ();
 		}
 		
 		bool IStateManager.IsTrackingViewState {
 			get { return IsTrackingViewState; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private bool cancelSelectOnNullParameter = true;
 		public bool CancelSelectOnNullParameter {
-			get { return ViewState.GetBool ("CancelSelectOnNullParameter", true); }
-			set { ViewState ["CancelSelectOnNullParameter"] = value; }
+			get { return cancelSelectOnNullParameter; }
+			set { cancelSelectOnNullParameter = value; }
 		}
 
 		public override bool CanDelete {
@@ -562,101 +558,125 @@ namespace System.Web.UI.WebControls {
 			get { return UpdateCommand != null && UpdateCommand != ""; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
-			get { return (ConflictOptions) ViewState.GetInt ("ConflictOptions", (int) ConflictOptions.OverwriteChanges); }
-			set { ViewState["ConflictOptions"] = value; }
+			get { return conflictDetection; }
+			set { conflictDetection = value; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string deleteCommand = "";
 		public string DeleteCommand {
-			get { return ViewState.GetString ("DeleteCommand", ""); }
-			set { ViewState ["DeleteCommand"] = value; }
+			get { return deleteCommand; }
+			set { deleteCommand = value; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private SqlDataSourceCommandType deleteCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType DeleteCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("DeleteCommandType", (int)SqlDataSourceCommandType.Text); }
-			set { ViewState ["DeleteCommandType"] = value; }
+			get { return deleteCommandType; }
+			set { deleteCommandType = value; }
 		}
 
 		[DefaultValueAttribute (null)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public ParameterCollection DeleteParameters {
-			get { return GetParameterCollection (ref deleteParameters); }
+			get { return GetParameterCollection (ref deleteParameters, false); }
 		}
-		
+
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string filterExpression = "";
 		public string FilterExpression {
-			get { return ViewState.GetString ("FilterExpression", ""); }
-			set { ViewState ["FilterExpression"] = value; }
+			get { return filterExpression; }
+			set { filterExpression = value; }
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection FilterParameters {
-			get { return GetParameterCollection (ref filterParameters); }
-		}
-		
-		public string InsertCommand {
-			get { return ViewState.GetString ("InsertCommand", ""); }
-			set { ViewState ["InsertCommand"] = value; }
+			get { return GetParameterCollection (ref filterParameters, true); }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string insertCommand = "";
+		public string InsertCommand {
+			get { return insertCommand; }
+			set { insertCommand = value; }
+		}
+
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private SqlDataSourceCommandType insertCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType InsertCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("InsertCommandType", (int) SqlDataSourceCommandType.Text); }
-			set { ViewState ["InsertCommandType"] = value; }
+			get { return insertCommandType; }
+			set { insertCommandType = value; }
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection InsertParameters {
-			get { return GetParameterCollection (ref insertParameters); }
+			get { return GetParameterCollection (ref insertParameters, false); }
 		}
 
 		protected bool IsTrackingViewState {
 			get { return tracking; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string oldValuesParameterFormatString = "{0}";
 		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
-			get { return ViewState.GetString ("OldValuesParameterFormatString", "{0}"); }
-			set { ViewState ["OldValuesParameterFormatString"] = value; }
-		}
-		
-		public string SelectCommand {
-			get { return ViewState.GetString ("SelectCommand", ""); }
-			set { ViewState ["SelectCommand"] = value; }
+			get { return oldValuesParameterFormatString; }
+			set { oldValuesParameterFormatString = value; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string selectCommand = "";
+		public string SelectCommand {
+			get { return selectCommand; }
+			set { selectCommand = value; }
+		}
+
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private SqlDataSourceCommandType selectCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType SelectCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("SelectCommandType", (int) SqlDataSourceCommandType.Text); }
-			set { ViewState ["SelectCommandType"] = value; }
+			get { return selectCommandType; }
+			set { selectCommandType = value; }
 		}
 		
 		public ParameterCollection SelectParameters {
-			get { return GetParameterCollection (ref selectParameters); }
+			get { return GetParameterCollection (ref selectParameters, true); }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string sortParameterName = "";
 		public string SortParameterName {
-			get { return ViewState.GetString ("SortParameterName", ""); }
-			set { ViewState ["SortParameterName"] = value; }
+			get { return sortParameterName; }
+			set { sortParameterName = value; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private string updateCommand = "";
 		public string UpdateCommand {
-			get { return ViewState.GetString ("UpdateCommand", ""); }
-			set { ViewState ["UpdateCommand"] = value; }
+			get { return updateCommand; }
+			set { updateCommand = value; }
 		}
 
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private SqlDataSourceCommandType updateCommandType = SqlDataSourceCommandType.Text;
 		public SqlDataSourceCommandType UpdateCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("UpdateCommandType", (int) SqlDataSourceCommandType.Text); }
-			set { ViewState ["UpdateCommandType"] = value; }
+			get { return updateCommandType; }
+			set { updateCommandType = value; }
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {
-			get { return GetParameterCollection (ref updateParameters); }
+			get { return GetParameterCollection (ref updateParameters, false); }
 		}
 		
 		void ParametersChanged (object source, EventArgs args)
@@ -664,7 +684,7 @@ namespace System.Web.UI.WebControls {
 			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 		
-		ParameterCollection GetParameterCollection (ref ParameterCollection output)
+		ParameterCollection GetParameterCollection (ref ParameterCollection output, bool propagateTrackViewState)
 		{
 			if (output != null)
 				return output;
@@ -672,7 +692,7 @@ namespace System.Web.UI.WebControls {
 			output = new ParameterCollection ();
 			output.ParametersChanged += new EventHandler (ParametersChanged);
 			
-			if (IsTrackingViewState)
+			if (IsTrackingViewState && propagateTrackViewState)
 				((IStateManager) output).TrackViewState ();
 			
 			return output;
@@ -686,20 +706,6 @@ namespace System.Web.UI.WebControls {
 					case "System.Data.OracleClient": return ":";
 				}
 				return "";
-			}
-		}
-
-		StateBag viewState;
-		private StateBag ViewState {
-			get {
-				if (viewState != null)
-					return viewState;
-
-				viewState = new StateBag ();
-				if (IsTrackingViewState)
-					viewState.TrackViewState ();
-
-				return viewState;
 			}
 		}
 
@@ -852,5 +858,4 @@ namespace System.Web.UI.WebControls {
 	
 }
 #endif
-
 

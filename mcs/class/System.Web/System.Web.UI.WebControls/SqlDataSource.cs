@@ -228,35 +228,39 @@ namespace System.Web.UI.WebControls {
 			set { View.FilterExpression = value; }
 		}
 
+		private string providerName = "";
 		[DefaultValueAttribute ("")]
 		[TypeConverterAttribute ("System.Web.UI.Design.WebControls.DataProviderNameConverter, " + Consts.AssemblySystem_Design)]
 		public virtual string ProviderName {
-			get { return ViewState.GetString ("ProviderName", ""); }
+			get { return providerName; }
 			set
 			{
-				ViewState ["ProviderName"] = value;
+				providerName = value;
 				RaiseDataSourceChangedEvent (EventArgs.Empty);
 			}
 		}
 
+		private string connectionString = "";
 		[EditorAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceConnectionStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string ConnectionString {
-			get { return ViewState.GetString ("ConnectionString", ""); }
+			get { return connectionString; }
 			set
 			{
 
-				ViewState ["ConnectionString"] = value;
+				connectionString = value;
 				RaiseDataSourceChangedEvent (EventArgs.Empty);
 			}
 		}
-		
+
+		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
+		private SqlDataSourceMode dataSourceMode = SqlDataSourceMode.DataSet;
 		[DefaultValueAttribute (SqlDataSourceMode.DataSet)]
 		public SqlDataSourceMode DataSourceMode {
-			get { return (SqlDataSourceMode) ViewState.GetInt ("DataSourceMode", (int)SqlDataSourceMode.DataSet); }
+			get { return dataSourceMode; }
 			set
 			{
-				ViewState ["DataSourceMode"] = value;
+				dataSourceMode = value;
 				RaiseDataSourceChangedEvent (EventArgs.Empty);
 			}
 		}
@@ -454,5 +458,6 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 
 

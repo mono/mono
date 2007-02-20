@@ -1,3 +1,8 @@
+2007-02-20 Adar Wesley <adarw@mainsoft.com>
+
+	* SqlDataSource.cs: fixed ViewState behavior to conform to MS.  Added relevant tests.
+	* SqlDataSourceView.cs: fixed ViewState behavior to conform to MS. Added relevant tests.
+
 2007-02-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ChangePassword.cs: fixed:
