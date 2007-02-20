@@ -312,35 +312,19 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override string MapPath (string path) {
-			string appVirtualPath = GetAppPath();
-			if (path.StartsWith(appVirtualPath)) {
-				path = path.Remove(0,appVirtualPath.Length);
-				if (path.StartsWith("/"))
-					path = path.Remove(0,1);
-			}
-			//string realPath = Servlet.getServletContext().getRealPath(path);
-			//			if (Path.IsPathRooted(path))
-			//				return path;
-			//			if (!path.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL)&& 
-			//				!path.StartsWith("/") && !path.StartsWith("\\")&& !Path.IsPathRooted(path))            
-			//				return IAppDomainConfig.WAR_ROOT_SYMBOL + "/" + path;
-			//			else if (!path.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL)&& !Path.IsPathRooted(path))
-			//				return IAppDomainConfig.WAR_ROOT_SYMBOL + path;
-			//			else 
-			//				return path;
+			string appVirtualPath = GetAppPath ();
+			if (path.StartsWith (appVirtualPath))
+				path = path.Remove (0, appVirtualPath.Length);
 
-			if (path.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL)) {
-				return path;
-			}
+			if (path.StartsWith ("/"))
+				path = path.Remove (0, 1);
 
-			string retVal =  IAppDomainConfig.WAR_ROOT_SYMBOL;
-
-			if (!path.StartsWith("/") && !path.StartsWith("\\"))
+			string retVal = J2EEUtils.GetApplicationRealPath (_HttpServlet.getServletConfig ());
+			Path.Combine (retVal, path);
+			if (!retVal.EndsWith ("/") && !retVal.EndsWith ("\\"))
 				retVal += "/";
 
-			retVal += path;
-
-			return retVal;
+			return retVal + path;
 		}
 
 		public override void SendResponseFromFile (IntPtr handle, long offset, long length) {

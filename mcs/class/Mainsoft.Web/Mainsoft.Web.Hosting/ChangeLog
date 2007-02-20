@@ -1,3 +1,8 @@
+2007-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: fixed MapPath, made it able to return
+	real physical path
+
 2007-01-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ServletWorkerRequest.jvm.cs: fixed ctor, welcome file in sub dir
