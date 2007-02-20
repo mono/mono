@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
 
 		public Calendar ()
 		{
-			dateInfo = Thread.CurrentThread.CurrentUICulture.DateTimeFormat;
+			dateInfo = Thread.CurrentThread.CurrentCulture.DateTimeFormat;
 		}
 
 #if NET_2_0

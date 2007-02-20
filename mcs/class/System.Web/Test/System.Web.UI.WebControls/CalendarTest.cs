@@ -28,17 +28,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web.UI.WebControls;
-using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Threading;
+using System.Web.UI.WebControls;
 
-class PokerCalendar : System.Web.UI.WebControls.Calendar {
+using NUnit.Framework;
+
+class PokerCalendar : System.Web.UI.WebControls.Calendar
+{
 	public PokerCalendar ()
 	{
 		TrackViewState ();
@@ -71,19 +73,16 @@ class PokerCalendar : System.Web.UI.WebControls.Calendar {
 
 	protected override Style CreateControlStyle ()
 	{
-		// Console.WriteLine (Environment.StackTrace);
 		cs_called = true;
 		return base.CreateControlStyle ();
 	}
 }
 
-
 namespace MonoTests.System.Web.UI.WebControls
 {
-
 	[TestFixture]
-	public class CalendarTest {
-
+	public class CalendarTest
+	{
 		[Test]
 		public void Calendar_DefaultValues ()
 		{
@@ -125,12 +124,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void NextPrevFormatProperty ()
 		{
-			DateTimeFormatInfo dateInfo = new DateTimeFormatInfo ();
+			DateTimeFormatInfo dateInfo = DateTimeFormatInfo.CurrentInfo;
 			PokerCalendar c = new PokerCalendar ();
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
-			DateTime prevMonth = DateTimeFormatInfo.CurrentInfo.Calendar.AddMonths (DateTime.Today, - 1);
-			DateTime nextMonth = DateTimeFormatInfo.CurrentInfo.Calendar.AddMonths (DateTime.Today, 1);
+			DateTime prevMonth = dateInfo.Calendar.AddMonths (DateTime.Today, -1);
+			DateTime nextMonth = dateInfo.Calendar.AddMonths (DateTime.Today, 1);
 
 			c.NextMonthText = "NextMonthText";	// CustomText
 			c.PrevMonthText = "PrevMonthText";
@@ -143,16 +142,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.NextPrevFormat = NextPrevFormat.FullMonth;	// FullMonth
 			c.RenderControl (tw);
 
-			//Assert.AreEqual (true, sw.ToString().IndexOf (dateInfo.GetMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (prevMonth))) != -1, "NextPrevFormat3");
-			//Assert.AreEqual (true, sw.ToString().IndexOf (dateInfo.GetMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (nextMonth))) != -1, "NextPrevFormat4");
+			Assert.AreEqual (true, sw.ToString ().IndexOf (dateInfo.GetMonthName (dateInfo.Calendar.GetMonth (prevMonth))) != -1, "NextPrevFormat3:" + sw.ToString () + "|||" + dateInfo.GetMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (prevMonth)));
+			Assert.AreEqual (true, sw.ToString ().IndexOf (dateInfo.GetMonthName (dateInfo.Calendar.GetMonth (nextMonth))) != -1, "NextPrevFormat4");
 
 			sw = new StringWriter ();
 			tw = new HtmlTextWriter (sw);
 			c.NextPrevFormat = NextPrevFormat.ShortMonth;	// ShortMonth
 			c.RenderControl (tw);
 
-			//Assert.AreEqual (true, sw.ToString().IndexOf (dateInfo.GetAbbreviatedMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (prevMonth))) != -1, "NextPrevFormat5");
-			//Assert.AreEqual (true, sw.ToString().IndexOf (dateInfo.GetAbbreviatedMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (nextMonth))) != -1, "NextPrevFormat6");
+			Assert.AreEqual (true, sw.ToString ().IndexOf (dateInfo.GetAbbreviatedMonthName (dateInfo.Calendar.GetMonth (prevMonth))) != -1, "NextPrevFormat5");
+			Assert.AreEqual (true, sw.ToString ().IndexOf (dateInfo.GetAbbreviatedMonthName (dateInfo.Calendar.GetMonth (nextMonth))) != -1, "NextPrevFormat6");
 		}
 
 		[Test]
@@ -247,7 +246,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void SelectDateProperty ()
 		{
 			PokerCalendar c = new PokerCalendar ();
@@ -258,7 +257,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #1");
 
 			c.SelectedDate = now;
-			Assert.AreEqual (now, c.SelectedDate, "SelectDateProperty #2");
+			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #2");
 		}
 
 		[Test]
@@ -298,18 +297,18 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void ShowTitleProperty ()
 		{
 			String monthName;
-			DateTimeFormatInfo dateInfo = new DateTimeFormatInfo ();
+			DateTimeFormatInfo dateInfo = DateTimeFormatInfo.CurrentInfo;
 			PokerCalendar c = new PokerCalendar ();
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 			c.NextMonthText = "NextMonthText";
 			c.PrevMonthText = "PrevMonthText";
 			c.RenderControl (tw);
-			monthName = dateInfo.GetMonthName (DateTimeFormatInfo.CurrentInfo.Calendar.GetMonth (DateTime.Today));
+			monthName = dateInfo.GetMonthName (dateInfo.Calendar.GetMonth (DateTime.Today));
 
 			Assert.AreEqual (true, sw.ToString().IndexOf (c.PrevMonthText) != -1, "ShowTitle1");
 			Assert.AreEqual (true, sw.ToString().IndexOf (c.NextMonthText) != -1, "ShowTitle2");
-			//Assert.AreEqual (true, sw.ToString().IndexOf (monthName) != -1, "ShowTitle3");
+			Assert.AreEqual (true, sw.ToString().IndexOf (monthName) != -1, "ShowTitle3");
 
 			c.ShowTitle = false;
 			sw = new StringWriter ();
@@ -318,7 +317,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (true, sw.ToString().IndexOf (c.PrevMonthText) == -1, "ShowTitle4");
 			Assert.AreEqual (true, sw.ToString().IndexOf (c.NextMonthText) == -1, "ShowTitle5");
-			//Assert.AreEqual (true, sw.ToString().IndexOf (monthName) == -1, "ShowTitle6");
+			Assert.AreEqual (true, sw.ToString().IndexOf (monthName) == -1, "ShowTitle6");
 		}
 
 		//
@@ -567,7 +566,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				copy.RenderControl (tw);
 				Assert.AreEqual (true, sw.ToString().ToLower().IndexOf ("brown") != -1, "WeekendDayStyle");
 			}
-
 		}
 
 		string tofind = "";
@@ -655,7 +653,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		*/
 
 		[Test]
-        [Category ("NotWorking")] 
+		[Category ("NotWorking")] 
 		public void HaveBaseAttributes ()
 		{
 			PokerCalendar p = new PokerCalendar ();
