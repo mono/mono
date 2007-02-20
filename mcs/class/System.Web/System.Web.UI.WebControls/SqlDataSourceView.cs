@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (!CanDelete)
 				throw new NotSupportedException("Delete operation is not supported");
-			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
+			if (oldValues == null && ConflictDetection == ConflictOptions.CompareAllValues)
 				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
 
 			InitConnection ();
@@ -87,15 +87,19 @@ namespace System.Web.UI.WebControls {
 			IDictionary oldDataValues;
 			if (ConflictDetection == ConflictOptions.CompareAllValues) {
 				oldDataValues = new Hashtable ();
-				foreach (DictionaryEntry de in keys)
-					oldDataValues [de.Key] = de.Value;
-				foreach (DictionaryEntry de in oldValues)
-					oldDataValues [de.Key] = de.Value;
+				if (keys != null) {
+					foreach (DictionaryEntry de in keys)
+						oldDataValues [de.Key] = de.Value;
+				}
+				if (oldValues != null) {
+					foreach (DictionaryEntry de in oldValues)
+						oldDataValues [de.Key] = de.Value;
+				}
 			}
 			else
 				oldDataValues = keys;
 			
-			InitializeParameters (command, DeleteParameters, null, oldDataValues);
+			InitializeParameters (command, DeleteParameters, null, oldDataValues, false);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnDeleting (args);
@@ -119,10 +123,13 @@ namespace System.Web.UI.WebControls {
 
 			OnDataSourceViewChanged (EventArgs.Empty);
 
-			OnDeleted (new SqlDataSourceStatusEventArgs (command, result, exception));
+			SqlDataSourceStatusEventArgs deletedArgs =
+				new SqlDataSourceStatusEventArgs (command, result, exception);
+			OnDeleted (deletedArgs);
 
-			if (exception != null)
+			if (exception != null && !deletedArgs.ExceptionHandled)
 				throw exception;
+
 			return result;
 		}
 		
@@ -146,7 +153,7 @@ namespace System.Web.UI.WebControls {
 			else
 				command.CommandType = CommandType.StoredProcedure;
 
-			InitializeParameters (command, InsertParameters, values, null);
+			InitializeParameters (command, InsertParameters, values, null, true);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnInserting (args);
@@ -210,7 +217,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (SelectParameters.Count > 0)
-				InitializeParameters (command, SelectParameters, null, null);
+				InitializeParameters (command, SelectParameters, null, null, true);
 
 			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
@@ -220,7 +227,11 @@ namespace System.Web.UI.WebControls {
 					dataView = (DataView) owner.Cache.GetCachedObject (SelectCommand, SelectParameters);
 
 				if (dataView == null) {
-					OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
+					SqlDataSourceSelectingEventArgs selectingArgs = new SqlDataSourceSelectingEventArgs (command, arguments);
+					OnSelecting (selectingArgs);
+					if (selectingArgs.Cancel) {
+						return null;
+					}
 					try {
 						DbDataAdapter adapter = factory.CreateDataAdapter ();
 						DataSet dataset = new DataSet ();
@@ -236,10 +247,10 @@ namespace System.Web.UI.WebControls {
 						exception = e;
 					}
 					int rowsAffected = (dataView == null) ? 0 : dataView.Count;
-					SqlDataSourceStatusEventArgs args = new SqlDataSourceStatusEventArgs (command, rowsAffected, exception);
-					OnSelected (args);
+					SqlDataSourceStatusEventArgs selectedArgs = new SqlDataSourceStatusEventArgs (command, rowsAffected, exception);
+					OnSelected (selectedArgs);
 
-					if (exception != null && !args.ExceptionHandled)
+					if (exception != null && !selectedArgs.ExceptionHandled)
 						throw exception;
 
 					if (owner.EnableCaching)
@@ -266,7 +277,11 @@ namespace System.Web.UI.WebControls {
 				return dataView;
 			}
 			else {
-				OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
+				SqlDataSourceSelectingEventArgs selectingArgs = new SqlDataSourceSelectingEventArgs (command, arguments);
+				OnSelecting (selectingArgs);
+				if (selectingArgs.Cancel) {
+					return null;
+				}
 
 				DbDataReader reader = null;
 				bool closed = connection.State == ConnectionState.Closed;
@@ -279,8 +294,10 @@ namespace System.Web.UI.WebControls {
 				catch (Exception e) {
 					exception = e;
 				}
-				OnSelected (new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception));
-				if (exception != null)
+				SqlDataSourceStatusEventArgs selectedArgs =
+					new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception);
+				OnSelected (selectedArgs);
+				if (exception != null && !selectedArgs.ExceptionHandled)
 					throw exception;
 
 				return reader;
@@ -296,7 +313,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (!CanUpdate)
 				throw new NotSupportedException ("Update operation is not supported");
-			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
+			if (oldValues == null && ConflictDetection == ConflictOptions.CompareAllValues)
 				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
 
 			InitConnection ();
@@ -309,22 +326,25 @@ namespace System.Web.UI.WebControls {
 			else
 				command.CommandType = CommandType.StoredProcedure;
 
-			IDictionary dataValues;
 			IDictionary oldDataValues;
 			if (ConflictDetection == ConflictOptions.CompareAllValues) {
 				oldDataValues = new OrderedDictionary ();
-				dataValues = values;
-				foreach (DictionaryEntry de in keys)
-					oldDataValues [de.Key] = de.Value;
-				foreach (DictionaryEntry de in oldValues)
-					oldDataValues [de.Key] = de.Value;
+				if (keys != null) {
+					foreach (DictionaryEntry de in keys)
+						oldDataValues [de.Key] = de.Value;
+				}
+				if (oldValues != null) {
+					foreach (DictionaryEntry de in oldValues)
+						oldDataValues [de.Key] = de.Value;
+				}
 			}
 			else {
 				oldDataValues = keys;
-				dataValues = values;
 			}
 
-			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues);
+			IDictionary dataValues = values;
+
+			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, ConflictDetection == ConflictOptions.CompareAllValues);
 
 			SqlDataSourceCommandEventArgs args = new SqlDataSourceCommandEventArgs (command);
 			OnUpdating (args);
@@ -348,10 +368,13 @@ namespace System.Web.UI.WebControls {
 
 			OnDataSourceViewChanged (EventArgs.Empty);
 
-			OnUpdated (new SqlDataSourceStatusEventArgs (command, result, exception));
+			SqlDataSourceStatusEventArgs updatedArgs =
+				new SqlDataSourceStatusEventArgs (command, result, exception);
+			OnUpdated (updatedArgs);
 
-			if (exception != null)
+			if (exception != null && !updatedArgs.ExceptionHandled)
 				throw exception;
+
 			return result;
 		}
 
@@ -383,16 +406,24 @@ namespace System.Web.UI.WebControls {
 			return null;
 		}
 
-		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues)
+		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, bool alwaysAddParameters)
 		{
 			foreach (Parameter p in parameters) {
 				object value = FindValueByName (p, values, false);
+				string valueName = p.Name;
 				if (value == null)
 					value = FindValueByName (p, oldValues, true);
+				if (value == null && !alwaysAddParameters) {
+					value = FindValueByName (p, oldValues, false);
+					valueName = FormatOldParameter (p.Name);
+				}
 
 				if (value != null) {
 					object dbValue = p.ConvertValue (value);
-					command.Parameters.Add (CreateDbParameter (p.Name, dbValue, p.Direction, p.Size));
+					DbParameter newParameter = CreateDbParameter (valueName, dbValue, p.Direction, p.Size);
+					if (!command.Parameters.Contains (newParameter.ParameterName)) {
+						command.Parameters.Add (newParameter);
+					}
 				}
 				else {
 					object dbValue = p.GetValue (context, owner);
@@ -494,10 +525,9 @@ namespace System.Web.UI.WebControls {
 			get { return IsTrackingViewState; }
 		}
 
-		bool cancelSelectOnNullParameter = true;
 		public bool CancelSelectOnNullParameter {
-			get { return cancelSelectOnNullParameter; }
-			set { cancelSelectOnNullParameter = value; }
+			get { return ViewState.GetBool ("CancelSelectOnNullParameter", true); }
+			set { ViewState ["CancelSelectOnNullParameter"] = value; }
 		}
 
 		public override bool CanDelete {
@@ -532,10 +562,9 @@ namespace System.Web.UI.WebControls {
 			get { return UpdateCommand != null && UpdateCommand != ""; }
 		}
 
-		ConflictOptions conflictOptions = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
-			get { return conflictOptions; }
-			set { conflictOptions = value; }
+			get { return (ConflictOptions) ViewState.GetInt ("ConflictOptions", (int) ConflictOptions.OverwriteChanges); }
+			set { ViewState["ConflictOptions"] = value; }
 		}
 
 		public string DeleteCommand {
@@ -823,4 +852,5 @@ namespace System.Web.UI.WebControls {
 	
 }
 #endif
+
 

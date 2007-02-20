@@ -41,6 +41,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
+using System.Text;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -98,6 +99,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void SetUp ()
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = null;
+			SqlDataSourceTest.PassedParameters = "";
 		}
 
 		[Test]
@@ -140,7 +142,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		// WARNING!!!!!! This information will be saved into viewstate only in mono implementation .
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // LAME SPEC: MS SqlDataSource does not appear to SaveViewState, even though MSDN says it should!
 		public void ViewState ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -190,44 +192,42 @@ namespace MonoTests.System.Web.UI.WebControls
 			sql = new SqlPoker ();
 			sql.LoadFromViewState (state);
 
-			Assert.AreEqual ("", sql.CacheKeyDependency, "B1");
-			Assert.IsTrue (sql.CancelSelectOnNullParameter, "B2");
-			Assert.AreEqual (ConflictOptions.OverwriteChanges, sql.ConflictDetection, "B3");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B4");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.InsertCommandType, "B5");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.SelectCommandType, "B6");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B7");
-			Assert.AreEqual ("{0}", sql.OldValuesParameterFormatString, "B8");
-			Assert.AreEqual ("", sql.SqlCacheDependency, "B9");
-			Assert.AreEqual ("", sql.SortParameterName, "B10");
-			Assert.AreEqual (0, sql.CacheDuration, "B11");
-			Assert.AreEqual (DataSourceCacheExpiry.Absolute, sql.CacheExpirationPolicy, "B12");
-			Assert.IsFalse (sql.EnableCaching, "B13");
-			Assert.AreEqual ("", sql.ProviderName, "B14");
-			Assert.AreEqual ("", sql.ConnectionString, "B15");
-			Assert.AreEqual (SqlDataSourceMode.DataSet, sql.DataSourceMode, "B16");
-			Assert.AreEqual ("", sql.DeleteCommand, "B17");
+			Assert.AreEqual ("", sql.CacheKeyDependency, "B1"); // Not in ViewState
+			Assert.IsFalse (sql.CancelSelectOnNullParameter, "B2");
+			Assert.AreEqual (ConflictOptions.CompareAllValues, sql.ConflictDetection, "B3");
+			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.DeleteCommandType, "B4");
+			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.InsertCommandType, "B5");
+			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.SelectCommandType, "B6");
+			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.UpdateCommandType, "B7");
+			Assert.AreEqual ("{1}", sql.OldValuesParameterFormatString, "B8");
+			Assert.AreEqual ("", sql.SqlCacheDependency, "B9"); // Not in ViewState
+			Assert.AreEqual ("hi", sql.SortParameterName, "B10");
+			Assert.AreEqual (0, sql.CacheDuration, "B11"); // Not in ViewState
+			Assert.AreEqual (DataSourceCacheExpiry.Absolute, sql.CacheExpirationPolicy, "B12"); // Not in ViewState
+			Assert.IsFalse (sql.EnableCaching, "B13"); // Not in ViewState
+			Assert.AreEqual (SqlDataSourceMode.DataReader, sql.DataSourceMode, "B16");
+			Assert.AreEqual ("DELETE foo", sql.DeleteCommand, "B17");
 			Assert.IsNotNull (sql.DeleteParameters, "B18");
 			Assert.AreEqual (0, sql.DeleteParameters.Count, "B18.1");
 			Assert.IsNotNull (sql.FilterParameters, "B19");
 			Assert.AreEqual (0, sql.FilterParameters.Count, "B19.1");
-			Assert.AreEqual ("", sql.InsertCommand, "B20");
+			Assert.AreEqual ("INSERT foo", sql.InsertCommand, "B20");
 			Assert.IsNotNull (sql.InsertParameters, "B21");
 			Assert.AreEqual (0, sql.InsertParameters.Count, "B21.1");
-			Assert.AreEqual ("", sql.SelectCommand, "B22");
+			Assert.AreEqual ("SELECT foo", sql.SelectCommand, "B22");
 			Assert.IsNotNull (sql.SelectParameters, "B23");
 			Assert.AreEqual (0, sql.SelectParameters.Count, "B23.1");
-			Assert.AreEqual ("", sql.UpdateCommand, "B24");
+			Assert.AreEqual ("UPDATE foo", sql.UpdateCommand, "B24");
 			Assert.IsNotNull (sql.UpdateParameters, "B25");
 			Assert.AreEqual (0, sql.UpdateParameters.Count, "B25.1");
-			Assert.AreEqual ("", sql.FilterExpression, "B26");
+			Assert.AreEqual ("hi", sql.FilterExpression, "B26");
 		}
 
 		// Help parameter for Asserts
 		private static SqlParameterCollection CustomEventParameterCollection;
+		private static string PassedParameters;
 		
 		[Test]
-		[Category("NotWorking")]
 		public void ExecuteSelect ()
 		{
 			SqlPoker sql = new SqlPoker();
@@ -238,13 +238,34 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.SelectCommand = "SELECT * FROM products WHERE ProductID = @ProductID;";
 			view.OldValuesParameterFormatString = "origin_{0}";
 		
-			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
 			view.SelectParameters.Add (new Parameter ("ProductID", TypeCode.Int32, "10"));
+			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
 			view.Select (new DataSourceSelectArguments ());
 			Assert.IsNotNull (CustomEventParameterCollection, "Select event not fired");
 			Assert.AreEqual (1, CustomEventParameterCollection.Count, "Parameter count");
 			Assert.AreEqual ("@ProductID", CustomEventParameterCollection[0].ParameterName, "Parameter name");
 			Assert.AreEqual (10, CustomEventParameterCollection[0].Value, "Parameter value");
+		}
+
+		[Test]
+		public void ExecuteSelect2 () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			sql.DataSourceMode = SqlDataSourceMode.DataReader;
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			view.SelectCommandType = SqlDataSourceCommandType.Text;
+			view.SelectCommand = "SELECT * FROM products WHERE ProductID = @ProductID;";
+			view.OldValuesParameterFormatString = "origin_{0}";
+
+			view.SelectParameters.Add (new Parameter ("ProductID", TypeCode.Int32, "10"));
+			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
+			view.Select (new DataSourceSelectArguments ());
+			Assert.IsNotNull (CustomEventParameterCollection, "Select event not fired");
+			Assert.AreEqual (1, CustomEventParameterCollection.Count, "Parameter count");
+			Assert.AreEqual ("@ProductID", CustomEventParameterCollection [0].ParameterName, "Parameter name");
+			Assert.AreEqual (10, CustomEventParameterCollection [0].Value, "Parameter value");
 		}
 
 		[Test]
@@ -345,7 +366,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteDeleteWithOldValues ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -356,7 +376,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.SelectCommand = "SELECT * FROM products WHERE ProductID = @ProductID;";
 			view.DeleteCommandType = SqlDataSourceCommandType.Text;
 			view.DeleteCommand = "DELETE * FROM products WHERE ProductID = @ProductID;";
-			view.DeleteParameters.Add (new Parameter ("ProductId", TypeCode.Int32, "15"));
+			view.DeleteParameters.Add (new Parameter ("ProductID", TypeCode.Int32, "15"));
 			view.OldValuesParameterFormatString = "origin_{0}";
 			view.ConflictDetection = ConflictOptions.CompareAllValues;
 			view.Deleting += new SqlDataSourceCommandEventHandler (view_Deleting);
@@ -370,7 +390,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteDeleteWithMergedOldValues ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -421,9 +440,133 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("Description", CustomEventParameterCollection[1].Value, "Parameter value#2");
 		}
 
+		[Test]
+		public void ExecuteDelete_KeysAndOldValues_OverwriteChanges () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			IDictionary keys;
+			IDictionary values;
+			IDictionary oldValues;
+			InitializeView (view, out keys, out values, out oldValues);
+
+			view.ConflictDetection = ConflictOptions.OverwriteChanges;
+
+			view.Delete (keys, oldValues);
+
+			Assert.IsNotNull (CustomEventParameterCollection, "KeysAndOldValues_OverwriteChanges");
+			Assert.AreEqual ("String:@origin_ProductID=k_10", PassedParameters, "KeysAndOldValues_OverwriteChanges Values");
+		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void ExecuteDelete_KeysAndOldValues_CompareAllValues () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			IDictionary keys;
+			IDictionary values;
+			IDictionary oldValues;
+			InitializeView (view, out keys, out values, out oldValues);
+
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+
+			view.Delete (keys, oldValues);
+
+			Assert.IsNotNull (CustomEventParameterCollection, "KeysAndOldValues_CompareAllValues");
+			Assert.AreEqual ("String:@origin_ProductID=ov_10, String:@origin_Description=ov_Beautifull, String:@origin_Name=ov_ColorTV", PassedParameters, "KeysAndOldValues_CompareAllValues Values");
+		}
+
+		[Test]
+		public void ExecuteDelete_KeysAndOldValues_CompareAllValues2 () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			IDictionary keys;
+			IDictionary values;
+			IDictionary oldValues;
+			InitializeView (view, out keys, out values, out oldValues);
+			view.DeleteParameters.Add ("origin_ProductID", "po_10");
+
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+
+			view.Delete (keys, oldValues);
+
+			Assert.IsNotNull (CustomEventParameterCollection, "ExecuteDelete_KeysAndOldValues_CompareAllValues2");
+			string [] expectedParams = new string []
+						{ 
+							"String:@origin_ProductID=ov_10", 
+							"String:@origin_Description=ov_Beautifull",
+							"String:@origin_Name=ov_ColorTV" 
+						};
+			string [] actualValues = PassedParameters.Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 expecte '{0}'");
+		}
+
+		private static void ValidatePassedParams (string [] expectedParams, string [] actualValues, string errorMessageFormat) 
+		{
+			foreach (string eps in expectedParams) {
+				bool found = false;
+				foreach (string aps in actualValues) {
+					if (eps == aps) {
+						found = true;
+						break;
+					}
+				}
+				Assert.IsTrue (found, String.Format (errorMessageFormat, eps));
+			}
+		}
+
+		private void InitializeView (CustomSqlDataSourceView view, out IDictionary keys, out IDictionary values, out IDictionary oldValues) 
+		{
+			view.SelectCommandType = SqlDataSourceCommandType.Text;
+			view.SelectCommand = "SELECT * FROM products WHERE ProductID = @ProductID;";
+			view.SelectParameters.Add (new Parameter ("ProductID", TypeCode.String, "p_10"));
+			view.Selecting += new SqlDataSourceSelectingEventHandler (view_Selecting);
+
+			view.DeleteCommandType = SqlDataSourceCommandType.Text;
+			view.DeleteCommand = "DELETE * FROM products WHERE ProductID = @ProductID;";
+			view.DeleteParameters.Add (new Parameter ("ProductID", TypeCode.String, "p_10"));
+			view.Deleting += new SqlDataSourceCommandEventHandler (view_Deleting);
+
+			view.InsertCommandType = SqlDataSourceCommandType.Text;
+			view.InsertCommand = "INSERT INTO products (ProductID, Name, Description) VALUES (@ProductID, @Name, @Description)";
+			view.InsertParameters.Add (new Parameter ("ProductID", TypeCode.String, "p_15"));
+			view.InsertParameters.Add (new Parameter ("Name", TypeCode.String, "p_NewProduct"));
+			view.InsertParameters.Add (new Parameter ("Description", TypeCode.String, "p_Description"));
+			view.Inserting += new SqlDataSourceCommandEventHandler (view_Inserting);
+
+			view.UpdateCommandType = SqlDataSourceCommandType.Text;
+			view.UpdateCommand = "UPDATE products SET Name = @Name, Description = @Description WHERE ProductID = @ProductID";
+			view.UpdateParameters.Add (new Parameter ("ProductID", TypeCode.String, "p_15"));
+			view.UpdateParameters.Add (new Parameter ("Name", TypeCode.String, "p_UpdatedProduct"));
+			view.UpdateParameters.Add (new Parameter ("Description", TypeCode.String, "p_UpdatedDescription"));
+			view.Updating += new SqlDataSourceCommandEventHandler (view_Updating);
+
+			view.OldValuesParameterFormatString = "origin_{0}";
+
+			keys = new Hashtable ();
+			values = new Hashtable ();
+			oldValues = new Hashtable ();
+
+			keys.Add ("ProductID", "k_10");
+
+			values.Add ("ProductID", "n_10");
+			values.Add ("Name", "n_ColorTV");
+			values.Add ("Description", "n_Beautifull");
+
+			oldValues.Add ("ProductID", "ov_10");
+			oldValues.Add ("Name", "ov_ColorTV");
+			oldValues.Add ("Description", "ov_Beautifull");			
+		}
+
+		[Test]
 		public void ExecuteUpdateWithOldValues ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -453,7 +596,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteUpdateWithOverwriteParameters ()
 		{
 			SqlPoker sql = new SqlPoker ();
@@ -509,28 +651,104 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("TestLName", CustomEventParameterCollection[2].Value, "Parameter value#3");
 		}
 
+		[Test]
+		public void ExecuteUpdate_KeysValuesAndOldValues_OverwriteChanges () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			IDictionary keys;
+			IDictionary values;
+			IDictionary oldValues;
+			InitializeView (view, out keys, out values, out oldValues);
+
+			view.ConflictDetection = ConflictOptions.OverwriteChanges;
+
+			view.Update (keys, values, oldValues);
+
+			Assert.IsNotNull (CustomEventParameterCollection, "ExecuteUpdate_KeysValuesAndOldValues_OverwriteChanges");
+			string [] expectedParams = new string []
+						{ 
+							"String:@ProductID=n_10", 
+							"String:@Name=n_ColorTV", 
+							"String:@Description=n_Beautifull",
+							"String:@origin_ProductID=k_10" 
+						};
+			string [] actualValues = PassedParameters.Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 expecte '{0}'");
+		}
+
+		[Test]
+		public void ExecuteUpdate_KeysValuesAndOldValues_CompareAllValues () 
+		{
+			SqlPoker sql = new SqlPoker ();
+			sql.ConnectionString = "Data Source=fake\\SQLEXPRESS;Initial Catalog=Northwind;User ID=sa";
+			sql.ProviderName = "System.Data.SqlClient";
+			CustomSqlDataSourceView view = new CustomSqlDataSourceView (sql, "TestView", null);
+			IDictionary keys;
+			IDictionary values;
+			IDictionary oldValues;
+			InitializeView (view, out keys, out values, out oldValues);
+
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
+
+			view.Update (keys, values, oldValues);
+
+			Assert.IsNotNull (CustomEventParameterCollection, "ExecuteUpdate_KeysValuesAndOldValues_CompareAllValues");
+			string [] expectedParams = new string []
+						{ 
+							"String:@ProductID=n_10", 
+							"String:@Name=n_ColorTV", 
+							"String:@Description=n_Beautifull",
+							"String:@origin_ProductID=ov_10", 
+							"String:@origin_Name=ov_ColorTV", 
+							"String:@origin_Description=ov_Beautifull",
+						};
+			string [] actualValues = PassedParameters.Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ExecuteDelete_KeysAndOldValues_CompareAllValues2 expecte '{0}'");
+		}
+
 		void view_Updating (object sender, SqlDataSourceCommandEventArgs e)
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = (SqlParameterCollection) e.Command.Parameters;
+			SqlDataSourceTest.PassedParameters = FormatParameters (SqlDataSourceTest.CustomEventParameterCollection);
 			e.Cancel = true;
 		}
 
 		void view_Selecting (object sender, SqlDataSourceSelectingEventArgs e)
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = (SqlParameterCollection) e.Command.Parameters;
+			SqlDataSourceTest.PassedParameters = FormatParameters (SqlDataSourceTest.CustomEventParameterCollection);
 			e.Cancel = true;
 		}
 
 		void view_Inserting (object sender, SqlDataSourceCommandEventArgs e)
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = (SqlParameterCollection) e.Command.Parameters;
+			SqlDataSourceTest.PassedParameters = FormatParameters (SqlDataSourceTest.CustomEventParameterCollection);
 			e.Cancel = true;
 		}
 
 		void view_Deleting (object sender, SqlDataSourceCommandEventArgs e)
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = (SqlParameterCollection) e.Command.Parameters;
+			SqlDataSourceTest.PassedParameters = FormatParameters (SqlDataSourceTest.CustomEventParameterCollection);
 			e.Cancel = true;
+		}
+
+		private string FormatParameters (SqlParameterCollection sqlParameterCollection) 
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (SqlParameter p in sqlParameterCollection) {
+				if (sb.Length > 0) {
+					sb.Append (", ");
+				}
+				sb.AppendFormat ("{0}:{1}={2}", p.DbType, p.ParameterName, p.Value);
+			}
+			return sb.ToString ();
 		}
 
 		//exceptions 

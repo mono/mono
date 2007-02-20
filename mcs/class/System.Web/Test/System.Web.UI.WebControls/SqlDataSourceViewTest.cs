@@ -61,7 +61,8 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 
 	[TestFixture]
-	public class SqlDataSourceViewTest {
+	public class SqlDataSourceViewTest 
+	{
 		[Test]
 		public void Defaults ()
 		{
@@ -100,7 +101,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotDotNet")] // LAME SPEC: MS SqlDataSourceView does not appear to save view state despite MSDN stating that it should!
         public void ViewState ()
 		{
 			SqlDataSource ds = new SqlDataSource ();
@@ -141,32 +142,32 @@ namespace MonoTests.System.Web.UI.WebControls
 			sql = new SqlViewPoker (ds, "DefaultView", null);
 			sql.LoadFromViewState (state);
 
-            Assert.IsTrue(sql.CancelSelectOnNullParameter, "B1");
-            Assert.IsFalse(sql.CanDelete, "B2");
-            Assert.IsFalse(sql.CanInsert, "B3");
+            Assert.IsFalse(sql.CancelSelectOnNullParameter, "B1");
+            Assert.IsTrue(sql.CanDelete, "B2");
+            Assert.IsTrue(sql.CanInsert, "B3");
             Assert.IsFalse(sql.CanPage, "B4");
             Assert.IsFalse(sql.CanRetrieveTotalRowCount, "B5");
             Assert.IsTrue(sql.CanSort, "B6");
-            Assert.IsFalse(sql.CanUpdate, "B7");
-            Assert.AreEqual(ConflictOptions.OverwriteChanges, sql.ConflictDetection, "B8");
-            Assert.AreEqual("", sql.DeleteCommand, "B9");
+            Assert.IsTrue(sql.CanUpdate, "B7");
+            Assert.AreEqual(ConflictOptions.CompareAllValues, sql.ConflictDetection, "B8");
+			Assert.AreEqual ("delete command", sql.DeleteCommand, "B9");
             Assert.AreEqual(SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B10");
             Assert.IsNotNull(sql.DeleteParameters, "B11");
             Assert.AreEqual(0, sql.DeleteParameters.Count, "B12");
-            Assert.AreEqual("", sql.FilterExpression, "B13");
+			Assert.AreEqual ("filter expression", sql.FilterExpression, "B13");
             Assert.IsNotNull(sql.FilterParameters, "B14");
             Assert.AreEqual(0, sql.FilterParameters.Count, "B15");
-            Assert.AreEqual("", sql.InsertCommand, "B16");
+			Assert.AreEqual ("insert command", sql.InsertCommand, "B16");
             Assert.AreEqual(SqlDataSourceCommandType.Text, sql.InsertCommandType, "B17");
             Assert.IsNotNull(sql.InsertParameters, "B18");
             Assert.AreEqual(0, sql.InsertParameters.Count, "B19");
-            Assert.AreEqual("{0}", sql.OldValuesParameterFormatString, "B20");
-            Assert.AreEqual("", sql.SelectCommand, "B21");
+			Assert.AreEqual ("{1}", sql.OldValuesParameterFormatString, "B20");
+			Assert.AreEqual ("select command", sql.SelectCommand, "B21");
             Assert.AreEqual(SqlDataSourceCommandType.Text, sql.SelectCommandType, "B22");
             Assert.IsNotNull(sql.SelectParameters, "B23");
             Assert.AreEqual(0, sql.SelectParameters.Count, "B24");
-            Assert.AreEqual("", sql.SortParameterName, "B25");
-            Assert.AreEqual("", sql.UpdateCommand, "B26");
+			Assert.AreEqual ("sort parameter", sql.SortParameterName, "B25");
+			Assert.AreEqual ("update command", sql.UpdateCommand, "B26");
             Assert.AreEqual(SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B27");
             Assert.IsNotNull(sql.UpdateParameters, "B28");
             Assert.AreEqual(0, sql.UpdateParameters.Count, "B29");

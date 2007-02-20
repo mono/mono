@@ -1,19 +1,24 @@
-2006-02-19 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-20 Adar Wesley <adarw@mainsoft.com>
+
+	* SqlDataSourceView.cs: Fixed parameter merging logic and some bug fixing.
+	Added more tests.
+
+2007-02-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CheckBox.cs:
 	* ListControl.cs:
 	* TextBox.cs:
 	implemented Form.SubmitDisabledControls feature.			
 
-2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: IsBindableType for decimal returns true.
 
-2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.js: client script: support IE6.
 
-2006-02-18 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed: considers item.ToolTip, render image inside 'a' tag.
 
