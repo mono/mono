@@ -106,9 +106,9 @@ class MonoServiceRunner : MarshalByRefObject
 		if (lfp<0)  {
 		        // Provide some useful info
 			if (File.Exists (lockfile))
-				error (logname, String.Format ("Log file already exists: {0}", lockfile));
+				error (logname, String.Format ("Lock file already exists: {0}", lockfile));
 			else 
-				error (logname, String.Format ("Cannot open/create log file exclusively: {0}", lockfile));
+				error (logname, String.Format ("Cannot open/create lock file exclusively: {0}", lockfile));
 			return 1;
 		}
 	
