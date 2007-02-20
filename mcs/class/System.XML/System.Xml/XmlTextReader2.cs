@@ -580,7 +580,7 @@ namespace System.Xml
 		public void ResetState ()
 		{
 			if (entity != null)
-				entity.ResetState ();
+				CloseEntity ();
 			source.ResetState ();
 		}
 

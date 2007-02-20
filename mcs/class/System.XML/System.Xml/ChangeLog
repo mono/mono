@@ -1,5 +1,10 @@
 2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextReader.cs, XmlTextReader2.cs : Reset() should work now.
+	  Closing bug #80849.
+
+2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTDValidatingReader2.cs, XmlTextReader.cs, XmlNodeReaderImpl.cs:
 	  Read() silently returns false when it is closed. Fixed bug #80848.
 

@@ -144,6 +144,7 @@ namespace System.Xml
 			fragType,
 			context)
 		{
+			disallowReset = true;
 		}
 
 		internal XmlTextReader (string baseURI, TextReader xmlFragment, XmlNodeType fragType)
@@ -167,6 +168,7 @@ namespace System.Xml
 				fragType,
 				context)
 		{
+			disallowReset = true;
 		}
 
 		internal XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
@@ -681,8 +683,9 @@ namespace System.Xml
 
 		public void ResetState ()
 		{
-			throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");
-			Init ();
+			if (disallowReset)
+				throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");
+			Clear ();
 		}
 
 		public override void ResolveEntity ()
@@ -862,6 +865,7 @@ namespace System.Xml
 		private XmlParserContext parserContext;
 
 		private ReadState readState;
+		private bool disallowReset;
 
 		private int depth;
 		private int elementDepth;
@@ -951,34 +955,22 @@ namespace System.Xml
 
 		private void Init ()
 		{
-			currentToken = new XmlTokenInfo (this);
-			cursorToken = currentToken;
-			currentAttribute = -1;
-			currentAttributeValue = -1;
-			attributeCount = 0;
-
-			readState = ReadState.Initial;
 			allowMultipleRoot = false;
-
-			depth = 0;
-			elementDepth = 0;
-			depthUp = false;
-
-			popScope = allowMultipleRoot = false;
 			elementNames = new TagName [10];
-			elementNameStackPos = 0;
-
-			isStandalone = false;
-			returnEntityReference = false;
-			entityReferenceName = String.Empty;
-
+			valueBuffer = new StringBuilder ();
+			binaryCharGetter = new XmlReaderBinarySupport.CharGetter (ReadChars);
 #if USE_NAME_BUFFER
 			nameBuffer = new char [initialNameCapacity];
-			nameLength = 0;
-			nameCapacity = initialNameCapacity;
 #endif
 
-			valueBuffer = new StringBuilder ();
+			checkCharacters = true;
+#if NET_2_0
+			if (Settings != null)
+				checkCharacters = Settings.CheckCharacters;
+#endif
+			prohibitDtd = false;
+			closeInput = true;
+			entityHandling = EntityHandling.ExpandCharEntities;
 
 			peekCharsIndex = 0;
 			if (peekChars == null)
@@ -990,21 +982,40 @@ namespace System.Xml
 			column = 1;
 
 			currentLinkedNodeLineNumber = currentLinkedNodeLinePosition = 0;
+
+			Clear ();
+		}
+
+		private void Clear ()
+		{
+			currentToken = new XmlTokenInfo (this);
+			cursorToken = currentToken;
+			currentAttribute = -1;
+			currentAttributeValue = -1;
+			attributeCount = 0;
+
+			readState = ReadState.Initial;
+
+			depth = 0;
+			elementDepth = 0;
+			depthUp = false;
+
+			popScope = allowMultipleRoot = false;
+			elementNameStackPos = 0;
+
+			isStandalone = false;
+			returnEntityReference = false;
+			entityReferenceName = String.Empty;
+
+#if USE_NAME_BUFFER
+			nameLength = 0;
+			nameCapacity = initialNameCapacity;
+#endif
 			useProceedingLineInfo = false;
 
 			currentState = XmlNodeType.None;
 
 			readCharsInProgress = false;
-			binaryCharGetter = new XmlReaderBinarySupport.CharGetter (ReadChars);
-
-			checkCharacters = true;
-#if NET_2_0
-			if (Settings != null)
-				checkCharacters = Settings.CheckCharacters;
-#endif
-			prohibitDtd = false;
-			closeInput = true;
-			entityHandling = EntityHandling.ExpandCharEntities;
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
