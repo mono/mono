@@ -40,6 +40,7 @@ using com.ibm.portal.um;
 
 namespace Mainsoft.Web.Security
 {
+
     public class WPSMembershipProvider : MembershipProvider
     {
         private static readonly string PROVIDER_DESCRIPTION = "WebSphere Portal Membership Provider";
@@ -162,17 +163,10 @@ namespace Mainsoft.Web.Security
             java.util.List principles = 
                 pumaServices.PumaLocator.findUsersByAttribute("ibm-primaryEmail", emailToMatch);
 
+
             MembershipUserCollection resCollection = new MembershipUserCollection();
             SliceRange sr = new SliceRange(pageSize, pageIndex);
-            if (sr.start < principles.size() && sr.end >= principles.size())
-            {
-                for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
-                    resCollection.Add(new WPSMembershipUser((User)iter.next()));
-            }
-            else
-            {
-                CopyToMembershipUserCollection(principles, resCollection, sr);
-            }
+            CopyToMembershipUserCollection(principles, resCollection, sr);
 
             //Should contain total records recieved.
             totalRecords = principles.size();
@@ -200,15 +194,9 @@ namespace Mainsoft.Web.Security
 
             MembershipUserCollection resCollection = new MembershipUserCollection();
             SliceRange sr = new SliceRange(pageSize, pageIndex);
-            if (sr.start < principles.size() && sr.end >= principles.size())
-            {
-                for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
-                    resCollection.Add(new WPSMembershipUser((User)iter.next()));
-            }
-            else
-            {
-                CopyToMembershipUserCollection(principles, resCollection, sr);
-            }
+
+            CopyToMembershipUserCollection(principles, resCollection, sr);
+            
 
             //Should contain total records recieved.
             totalRecords = principles.size();
@@ -233,15 +221,8 @@ namespace Mainsoft.Web.Security
 
             MembershipUserCollection resCollection = new MembershipUserCollection();
             SliceRange sr = new SliceRange(pageSize, pageIndex);
-            if (sr.start < principles.size() && sr.end >= principles.size())
-            {
-                for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
-                    resCollection.Add(new WPSMembershipUser((User)iter.next()));
-            }
-            else
-            {
-                CopyToMembershipUserCollection(principles, resCollection, sr);
-            }
+            CopyToMembershipUserCollection(principles, resCollection, sr);
+            
 
             //Should contain total records recieved.
             totalRecords = principles.size();
@@ -297,19 +278,21 @@ namespace Mainsoft.Web.Security
         #region Helper Methods
         internal void CopyToMembershipUserCollection(java.util.List principles,
             MembershipUserCollection resCollection, SliceRange sr)
-        {
+        {            
             if (sr.start >= principles.size())
                 return;
-
+         
             java.util.ArrayList sortedList = new java.util.ArrayList(principles.size());
             for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
                 sortedList.add(new WPSMembershipUser((User)iter.next()));
+            
             java.util.Collections.sort(sortedList, WPSMembershipUser.UserNameComparator);
 
             int sortedListSize = sortedList.size();
-
+            
             for (int i = sr.start; i < sortedListSize && i < sr.end; i++)
                 resCollection.Add((MembershipUser)sortedList.get(i));
+            
         }
         #endregion
 
@@ -394,3 +377,4 @@ namespace Mainsoft.Web.Security
         #endregion
     }
 }
+
