@@ -3,12 +3,15 @@
 //
 // Author:
 //	Gert Driesen (drieseng@users.sourceforge.net)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-//  (C) 2006 Novell
+//  (C) 2006 Gert Driesen
+//  Copyright (C) 2007 Novell, Inc.
 // 
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml.Serialization;
 
 using NUnit.Framework;
@@ -117,6 +120,27 @@ namespace MonoTests.System.XmlSerialization
 		public void TestToEnum_Null_Values ()
 		{
 			ToEnum ("", (Hashtable) null, "DoesNotMatter");
+		}
+
+		[Test]
+		public void HandleOutAttributeParameters ()
+		{
+			XmlReflectionMember m = new XmlReflectionMember ();
+			m.MemberName = "hooray";
+			m.MemberType = typeof (string);
+			m.XmlAttributes = new XmlAttributes ();
+			m.XmlAttributes.XmlAttribute = new XmlAttributeAttribute ();
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			XmlMembersMapping map = imp.ImportMembersMapping (
+				"elem", "urn:x", new XmlReflectionMember [] {m}, true);
+			XmlSerializer ser = XmlSerializer.FromMappings (
+				new XmlMapping [] {map}) [0];
+			string xml = "<elem xmlns='urn:x' hooray='doh' />";
+			object [] arr = ser.Deserialize (new StringReader (xml))
+				as object [];
+			Assert.IsNotNull (arr, "#1");
+			Assert.AreEqual (1, arr.Length, "#2");
+			Assert.AreEqual ("doh", arr [0], "#3");
 		}
 	}
 

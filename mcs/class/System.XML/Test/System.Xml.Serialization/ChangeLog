@@ -1,5 +1,10 @@
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializationReaderTests.cs : added test for out attribute
+	  parameters. It also tests empty root element.
+
+2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReflectionImporterTests.cs : added another test for nullable
 	  container.
 

@@ -137,12 +137,19 @@ namespace System.Xml.Serialization
 					}
 				}
 
-				while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+				while (Reader.NodeType != System.Xml.XmlNodeType.EndElement &&
+				       // it could be an empty root element
+				       Reader.ReadState == ReadState.Interactive)
 				{
 					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace) 
 					    || _format == SerializationFormat.Encoded)  
 					{
-						if (Reader.IsEmptyElement) { Reader.Skip(); Reader.MoveToContent(); continue; }
+						if (Reader.IsEmptyElement) {
+							ReadAttributeMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
+							Reader.Skip();
+							Reader.MoveToContent();
+							continue;
+						}
 						Reader.ReadStartElement();
 						ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true, false);
 						ReadEndElement();
@@ -233,20 +240,8 @@ namespace System.Xml.Serialization
 			ReadMembers ((ClassMap) typeMap.ObjectMap, ob, false, false);
 		}
 
-		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
+		void ReadAttributeMembers (ClassMap map, object ob, bool isValueList)
 		{
-			// Set the default values of the members
-			if (map.MembersWithDefault != null)
-			{
-				ArrayList members = map.MembersWithDefault;
-				for (int n=0; n<members.Count; n++) {
-					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
-					SetMemberValueFromAttr (mem, ob, mem.DefaultValue, isValueList);
-				}
-			}
-			
-			// Reads attributes
-
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
 			int anyAttributeIndex = 0;
 			object anyAttributeArray = null;
@@ -291,7 +286,23 @@ namespace System.Xml.Serialization
 				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
 				SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 			}
+		}
+
+		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
+		{
+			// Set the default values of the members
+			if (map.MembersWithDefault != null)
+			{
+				ArrayList members = map.MembersWithDefault;
+				for (int n=0; n<members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
+					SetMemberValueFromAttr (mem, ob, mem.DefaultValue, isValueList);
+				}
+			}
 			
+			// Reads attributes
+			ReadAttributeMembers (map, ob, isValueList);
+
 			if (!isValueList)
 			{
 				Reader.MoveToElement();

@@ -1,3 +1,12 @@
+2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  XmlSerializationReaderInterpreter.cs :
+	  Handle empty root element.
+	  Read out attribute parameters. To do that, split attribute
+	  reader part from ReadMembers(), as it isn't invoked when the
+	  element is empty.
+
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTypeMapElementInfo.cs : set nullable if the type is Nullable<T>.

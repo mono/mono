@@ -1416,6 +1416,7 @@ namespace System.Xml.Serialization
 					WriteLineInd ("{");
 					WriteLineInd ("if (Reader.IsEmptyElement) {");
 					WriteLine ("Reader.Skip();");
+					WriteLine ("Reader.MoveToContent();");
 					WriteLineUni ("}");
 					WriteLineInd ("else {");
 					WriteLine ("Reader.ReadStartElement();");
@@ -1439,11 +1440,16 @@ namespace System.Xml.Serialization
 								"new " + mem.TypeData.FullTypeName + "()", true);
 					}
 
-					WriteLine ("while (Reader.NodeType != System.Xml.XmlNodeType.EndElement)");
+					WriteLine ("while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.ReadState == ReadState.Interactive)");
 					WriteLineInd ("{");
 					WriteLine ("if (Reader.IsStartElement(" + GetLiteral(typeMap.ElementName) + ", " + GetLiteral(typeMap.Namespace) + "))");
 					WriteLineInd ("{");
-					WriteLine ("if (Reader.IsEmptyElement) { Reader.Skip(); Reader.MoveToContent(); continue; }");
+					WriteLine ("if (Reader.IsEmptyElement)");
+					WriteLineInd ("{");
+					bool dummy = false;
+					GenerateReadAttributeMembers (typeMap, (ClassMap)typeMap.ObjectMap, "parameters", true, ref dummy);
+					WriteLine ("Reader.Skip(); Reader.MoveToContent(); continue;");
+					WriteLineUni ("}");
 					WriteLine ("Reader.ReadStartElement();");
 					GenerateReadMembers (typeMap, (ClassMap)typeMap.ObjectMap, "parameters", true, false);
 					WriteLine ("ReadEndElement();");
@@ -1602,90 +1608,9 @@ namespace System.Xml.Serialization
 				}
 			}
 			
-			// A value list cannot have attributes
-
-			bool first;
-			if (!isValueList && !GenerateReadHook (HookType.attributes, xmlMapType))
-			{
-				// Reads attributes
-				
-				XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
-				
-				if (anyAttrMember != null)
-				{
-					WriteLine ("int anyAttributeIndex = 0;");
-					WriteLine (anyAttrMember.TypeData.CSharpFullName + " anyAttributeArray = null;");
-				}
-				
-				WriteLine ("while (Reader.MoveToNextAttribute())");
-				WriteLineInd ("{");
-				first = true;
-				if (map.AttributeMembers != null) {
-					foreach (XmlTypeMapMemberAttribute at in map.AttributeMembers)
-					{
-						WriteLineInd ((first?"":"else ") + "if (Reader.LocalName == " + GetLiteral (at.AttributeName) + " && Reader.NamespaceURI == " + GetLiteral (at.Namespace) + ") {");
-						if (!GenerateReadMemberHook (xmlMapType, at)) {
-							GenerateSetMemberValue (at, ob, GenerateGetValueFromXmlString ("Reader.Value", at.TypeData, at.MappedType), isValueList);
-							GenerateEndHook ();
-						}
-						WriteLineUni ("}");
-						first = false;
-					}
-				}
-				WriteLineInd ((first?"":"else ") + "if (IsXmlnsAttribute (Reader.Name)) {");
-
-				// If the map has NamespaceDeclarations,
-				// then store this xmlns to the given member.
-				// If the instance doesn't exist, then create.
-				
-				if (map.NamespaceDeclarations != null) {
-					if (!GenerateReadMemberHook (xmlMapType, map.NamespaceDeclarations)) {
-						string nss = ob + ".@" + map.NamespaceDeclarations.Name;
-						WriteLine ("if (" + nss + " == null) " + nss + " = new XmlSerializerNamespaces ();");
-						WriteLineInd ("if (Reader.Prefix == \"xmlns\")");
-						WriteLine (nss + ".Add (Reader.LocalName, Reader.Value);");
-						Unindent ();
-						WriteLineInd ("else");
-						WriteLine (nss + ".Add (\"\", Reader.Value);");
-						Unindent ();
-						GenerateEndHook ();
-					}
-				}
-				
-				WriteLineUni ("}");
-				WriteLineInd ("else {");
-
-				if (anyAttrMember != null) 
-				{
-					if (!GenerateReadArrayMemberHook (xmlMapType, anyAttrMember, "anyAttributeIndex")) {
-						WriteLine ("System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);");
-						if (typeof(System.Xml.Schema.XmlSchemaAnnotated).IsAssignableFrom (xmlMapType)) 
-							WriteLine ("ParseWsdlArrayType (attr);");
-						GenerateAddListValue (anyAttrMember.TypeData, "anyAttributeArray", "anyAttributeIndex", GetCast (anyAttrMember.TypeData.ListItemTypeData, "attr"), true);
-						GenerateEndHook ();
-					}
-					WriteLine ("anyAttributeIndex++;");
-				}
-				else {
-					if (!GenerateReadHook (HookType.unknownAttribute, xmlMapType)) {
-						WriteLine ("UnknownNode (" + ob + ");");
-						GenerateEndHook ();
-					}
-				}
-
-				WriteLineUni ("}");
-				WriteLineUni ("}");
-
-				if (anyAttrMember != null && !MemberHasReadReplaceHook (xmlMapType, anyAttrMember))
-				{
-					WriteLine ("");
-					WriteLine("anyAttributeArray = (" + anyAttrMember.TypeData.CSharpFullName + ") ShrinkArray (anyAttributeArray, anyAttributeIndex, " + GetTypeOf(anyAttrMember.TypeData.Type.GetElementType()) + ", true);");
-					GenerateSetMemberValue (anyAttrMember, ob, "anyAttributeArray", isValueList);
-				}
-				WriteLine ("");
-	
-				GenerateEndHook ();
-			}
+			bool first = false;
+			// Read attributes
+			GenerateReadAttributeMembers (xmlMap, map, ob, isValueList, ref first);
 
 			if (!isValueList)
 			{
@@ -2052,6 +1977,92 @@ namespace System.Xml.Serialization
 				WriteLine ("");
 				WriteLine ("ReadEndElement();");
 			}
+		}
+
+		void GenerateReadAttributeMembers (XmlMapping xmlMap, ClassMap map, string ob, bool isValueList, ref bool first)
+		{
+			XmlTypeMapping typeMap = xmlMap as XmlTypeMapping;
+			Type xmlMapType = (typeMap != null) ? typeMap.TypeData.Type : typeof(object[]);
+
+			if (GenerateReadHook (HookType.attributes, xmlMapType))
+				return;
+
+			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+			
+			if (anyAttrMember != null)
+			{
+				WriteLine ("int anyAttributeIndex = 0;");
+				WriteLine (anyAttrMember.TypeData.CSharpFullName + " anyAttributeArray = null;");
+			}
+			
+			WriteLine ("while (Reader.MoveToNextAttribute())");
+			WriteLineInd ("{");
+			first = true;
+			if (map.AttributeMembers != null) {
+				foreach (XmlTypeMapMemberAttribute at in map.AttributeMembers)
+				{
+					WriteLineInd ((first?"":"else ") + "if (Reader.LocalName == " + GetLiteral (at.AttributeName) + " && Reader.NamespaceURI == " + GetLiteral (at.Namespace) + ") {");
+					if (!GenerateReadMemberHook (xmlMapType, at)) {
+						GenerateSetMemberValue (at, ob, GenerateGetValueFromXmlString ("Reader.Value", at.TypeData, at.MappedType), isValueList);
+						GenerateEndHook ();
+					}
+					WriteLineUni ("}");
+					first = false;
+				}
+			}
+			WriteLineInd ((first?"":"else ") + "if (IsXmlnsAttribute (Reader.Name)) {");
+
+			// If the map has NamespaceDeclarations,
+			// then store this xmlns to the given member.
+			// If the instance doesn't exist, then create.
+			
+			if (map.NamespaceDeclarations != null) {
+				if (!GenerateReadMemberHook (xmlMapType, map.NamespaceDeclarations)) {
+					string nss = ob + ".@" + map.NamespaceDeclarations.Name;
+					WriteLine ("if (" + nss + " == null) " + nss + " = new XmlSerializerNamespaces ();");
+					WriteLineInd ("if (Reader.Prefix == \"xmlns\")");
+					WriteLine (nss + ".Add (Reader.LocalName, Reader.Value);");
+					Unindent ();
+					WriteLineInd ("else");
+					WriteLine (nss + ".Add (\"\", Reader.Value);");
+					Unindent ();
+					GenerateEndHook ();
+				}
+			}
+			
+			WriteLineUni ("}");
+			WriteLineInd ("else {");
+
+			if (anyAttrMember != null) 
+			{
+				if (!GenerateReadArrayMemberHook (xmlMapType, anyAttrMember, "anyAttributeIndex")) {
+					WriteLine ("System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);");
+					if (typeof(System.Xml.Schema.XmlSchemaAnnotated).IsAssignableFrom (xmlMapType)) 
+						WriteLine ("ParseWsdlArrayType (attr);");
+					GenerateAddListValue (anyAttrMember.TypeData, "anyAttributeArray", "anyAttributeIndex", GetCast (anyAttrMember.TypeData.ListItemTypeData, "attr"), true);
+					GenerateEndHook ();
+				}
+				WriteLine ("anyAttributeIndex++;");
+			}
+			else {
+				if (!GenerateReadHook (HookType.unknownAttribute, xmlMapType)) {
+					WriteLine ("UnknownNode (" + ob + ");");
+					GenerateEndHook ();
+				}
+			}
+
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+
+			if (anyAttrMember != null && !MemberHasReadReplaceHook (xmlMapType, anyAttrMember))
+			{
+				WriteLine ("");
+				WriteLine("anyAttributeArray = (" + anyAttrMember.TypeData.CSharpFullName + ") ShrinkArray (anyAttributeArray, anyAttributeIndex, " + GetTypeOf(anyAttrMember.TypeData.Type.GetElementType()) + ", true);");
+				GenerateSetMemberValue (anyAttrMember, ob, "anyAttributeArray", isValueList);
+			}
+			WriteLine ("");
+
+			GenerateEndHook ();
 		}
 		
 		void GenerateSetListMembersDefaults (XmlTypeMapping typeMap, ClassMap map, string ob, bool isValueList)
