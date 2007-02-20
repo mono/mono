@@ -741,7 +741,7 @@ namespace System.Web.UI.WebControls
 		private void InitMemberShipProvider ()
 		{
 			string mp = MembershipProvider;
-			_provider = (mp.Length == 0) ? _provider = Membership.Provider : Membership.Providers [mp];
+			_provider = (mp.Length == 0) ? Membership.Provider : Membership.Providers [mp];
 			if (_provider == null)
 				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
 		}
