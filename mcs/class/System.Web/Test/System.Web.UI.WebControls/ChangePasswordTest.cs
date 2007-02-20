@@ -131,13 +131,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-			WebTest.CopyResource (GetType (), "WebControl.config", "Web.config");
-		}
-
-		[SetUp]
-		public void TestSetup ()
-		{
-			Thread.Sleep (150);
 		}
 
 		[Test]
@@ -340,7 +333,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ChangePassword w = new ChangePassword ();
 			w.ID = "ChangePassword1";
 			w.DisplayUserName = true;
-
+			w.MembershipProvider = "FakeProvider";
 			p.Form.Controls.Add (lcb);
 			p.Form.Controls.Add (w);
 			p.Form.Controls.Add (lce);
@@ -544,7 +537,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		[Category ("NotDotNet")]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]
 		public void ChngPasswordTest ()
 		{
 			PageInvoker pi = PageInvoker.CreateOnLoad (new PageDelegate (StylesRenderTestInit));
@@ -571,7 +563,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void PostBackEventCancel ()
 		{
@@ -586,8 +577,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
+#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CancelPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CancelPushButton"].Value = "Cancel";
+#else
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CancelButton");
+			fr.Controls ["ChangePassword1$ChangePasswordContainerID$CancelButton"].Value = "Cancel";
+#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "CancelButtonClick")
@@ -607,7 +603,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void PostBackEventChanging ()
 		{
@@ -623,13 +618,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
+#if DOT_NET
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-				
+#else
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
+			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
+#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangingPassword")
@@ -650,7 +649,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void PostBackEventError ()
 		{
@@ -667,14 +665,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$UserName"].Value = "WrongUser";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "a";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "1";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "1";
+#if DOT_NET
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-
+#else
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
+			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
+#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangePasswordError")
@@ -694,7 +696,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void PostBackEventChangedPassword ()
 		{
@@ -710,13 +711,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
+#if DOT_NET
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
-
+#else
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
+			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
+#endif
 			t.Request = fr;
 			html = t.Run ();
 			if (t.UserData == null || t.UserData.ToString () != "ChangedPassword")
@@ -737,7 +742,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PostBackEventContinue ()
 		{
 			WebTest t = new WebTest ();
@@ -752,11 +756,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$CurrentPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$NewPassword");
 			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword");
-			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$CurrentPassword"].Value = "p@ssword";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$NewPassword"].Value = "123456?";
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ConfirmNewPassword"].Value = "123456?";
+#if DOT_NET
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton");
 			fr.Controls["ChangePassword1$ChangePasswordContainerID$ChangePasswordPushButton"].Value = "Change+Password";
+#else
+			fr.Controls.Add ("ChangePassword1$ChangePasswordContainerID$ChangePasswordButton");
+			fr.Controls ["ChangePassword1$ChangePasswordContainerID$ChangePasswordButton"].Value = "Change+Password";
+#endif
 
 			t.Request = fr;
 			html = t.Run ();
@@ -766,8 +775,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$SuccessContainerID$ContinuePushButton");
 			fr.Controls["ChangePassword1$SuccessContainerID$ContinuePushButton"].Value = "Continue";
+#else
+			fr.Controls.Add ("ChangePassword1$SuccessContainerID$ContinueButton");
+			fr.Controls ["ChangePassword1$SuccessContainerID$ContinueButton"].Value = "Continue";
+#endif
 
 			t.Request = fr;
 			html = t.Run ();

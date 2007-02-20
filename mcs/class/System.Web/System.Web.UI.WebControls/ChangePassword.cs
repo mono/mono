@@ -756,8 +756,7 @@ namespace System.Web.UI.WebControls
 			if (loginCancelEventArgs.Cancel)
 				return;
 
-			if (UserName != null && UserName.Length > 0 
-				&& MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword)) {
+			if (MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword)) {
 
 				OnChangedPassword (args);
 				_showContinue = true;
@@ -1109,6 +1108,7 @@ namespace System.Web.UI.WebControls
 			public BaseChangePasswordContainer (ChangePassword owner)
 			{
 				_owner = owner;
+				SetBindingContainer (false);
 				InitTable ();
 			}
 
@@ -1142,6 +1142,7 @@ namespace System.Web.UI.WebControls
 		{
 			public ChangePasswordContainer (ChangePassword owner) : base (owner)
 			{
+				ID = "ChangePasswordContainerID";
 			}
 
 			// Requried controls
@@ -1526,6 +1527,7 @@ namespace System.Web.UI.WebControls
 		{
 			public SuccessContainer (ChangePassword owner) : base (owner)
 			{
+				ID = "SuccessContainerID";
 			}
 			public Control ChangePasswordButton
 			{
