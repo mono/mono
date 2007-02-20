@@ -48,7 +48,7 @@ namespace Microsoft.VisualBasic
 	internal class VBCodeCompiler : VBCodeGenerator, ICodeCompiler
 	{
 		static string windowsMonoPath;
-		static string windowsMbasPath;
+		static string windowsvbncPath;
 		static VBCodeCompiler ()
 		{
 			if (Path.DirectorySeparatorChar == '\\') {
@@ -66,11 +66,11 @@ namespace Microsoft.VisualBasic
 							Path.GetDirectoryName (p)),
 						"bin\\mono.exe");
 #if NET_2_0
-				windowsMbasPath =
-					Path.Combine (p, "2.0\\mbas.exe");
+				windowsvbncPath =
+					Path.Combine (p, "2.0\\vbnc.exe");
 #else
-				windowsMbasPath =
-					Path.Combine (p, "1.0\\mbas.exe");
+				windowsvbncPath =
+					Path.Combine (p, "1.0\\vbnc.exe");
 #endif
 			}
 		}
@@ -173,9 +173,9 @@ namespace Microsoft.VisualBasic
 			if (options.CompilerOptions != null) {
 				args.Append (options.CompilerOptions);
 			}
-			
-			args.Append (" -- "); // makes mbas not try to process filenames as options
-
+			/* Disabled, vbnc does not support this.
+			args.Append (" -- "); // makes vbnc not try to process filenames as options
+			*/
 			foreach (string source in fileNames)
 				args.AppendFormat ("\"{0}\" ", source);
 
@@ -235,33 +235,33 @@ namespace Microsoft.VisualBasic
 			}
 
 			CompilerResults results = new CompilerResults (options.TempFiles);
-			Process mbas = new Process ();
+			Process vbnc = new Process ();
 
-			string mbas_output = "";
-			string[] mbas_output_lines;
+			string vbnc_output = "";
+			string[] vbnc_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
-				mbas.StartInfo.FileName = windowsMonoPath;
-				mbas.StartInfo.Arguments = windowsMbasPath + ' ' + BuildArgs (options, fileNames);
+				vbnc.StartInfo.FileName = windowsMonoPath;
+				vbnc.StartInfo.Arguments = windowsvbncPath + ' ' + BuildArgs (options, fileNames);
 			} else {
-				mbas.StartInfo.FileName = "mbas";
-				mbas.StartInfo.Arguments = BuildArgs (options, fileNames);
+				vbnc.StartInfo.FileName = "vbnc";
+				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
 			}
-			mbas.StartInfo.CreateNoWindow = true;
-			mbas.StartInfo.UseShellExecute = false;
-			mbas.StartInfo.RedirectStandardOutput = true;
+			vbnc.StartInfo.CreateNoWindow = true;
+			vbnc.StartInfo.UseShellExecute = false;
+			vbnc.StartInfo.RedirectStandardOutput = true;
 			try {
-				mbas.Start ();
-				mbas_output = mbas.StandardOutput.ReadToEnd ();
-				mbas.WaitForExit ();
+				vbnc.Start ();
+				vbnc_output = vbnc.StandardOutput.ReadToEnd ();
+				vbnc.WaitForExit ();
 			} finally {
-				results.NativeCompilerReturnValue = mbas.ExitCode;
-				mbas.Close ();
+				results.NativeCompilerReturnValue = vbnc.ExitCode;
+				vbnc.Close ();
 			}
 
-			mbas_output_lines = mbas_output.Split (Environment.NewLine.ToCharArray ());
+			vbnc_output_lines = vbnc_output.Split (Environment.NewLine.ToCharArray ());
 			bool loadIt = true;
-			foreach (string error_line in mbas_output_lines) {
+			foreach (string error_line in vbnc_output_lines) {
 				CompilerError error = CreateErrorFromString (error_line);
 				if (null != error) {
 					results.Errors.Add (error);
