@@ -1,5 +1,9 @@
 2007-02-20  Marek Habersack  <grendello@gmail.com>
 
+	* SQLite3.cs: handle sqlite3_prepare_v2 absent from the library,
+	it's a new API, added in Nov 2006 to sqlite3 upstream, so it's
+	likely it won't be found on many systems.
+
 	* SQLiteCommand.cs: Added a backward compatibility method.
 
 2007-02-16  Marek Habersack  <grendello@gmail.com>

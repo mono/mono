@@ -231,7 +231,12 @@ namespace Mono.Data.SqliteClient
       {
         while (n == 17 && retries < 3)
         {
-          n = UnsafeNativeMethods.sqlite3_prepare_v2(_sql, psql, b.Length - 1, out stmt, out ptr);
+		try {
+			n = UnsafeNativeMethods.sqlite3_prepare_v2(_sql, psql, b.Length - 1, out stmt, out ptr);
+		} catch (EntryPointNotFoundException) {
+			n = UnsafeNativeMethods.sqlite3_prepare (_sql, psql, b.Length - 1, out stmt, out ptr);
+		}
+		
           retries++;
 
           if (n == 1)

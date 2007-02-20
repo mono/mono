@@ -89,6 +89,9 @@ namespace Mono.Data.SqliteClient
     internal static extern int sqlite3_prepare_v2(IntPtr db, IntPtr pSql, int nBytes, out IntPtr stmt, out IntPtr ptrRemain);
 
     [DllImport(SQLITE_DLL)]
+    internal static extern int sqlite3_prepare(IntPtr db, IntPtr pSql, int nBytes, out IntPtr stmt, out IntPtr ptrRemain);
+	  
+    [DllImport(SQLITE_DLL)]
     internal static extern int sqlite3_bind_blob(IntPtr stmt, int index, Byte[] value, int nSize, IntPtr nTransient);
 
     [DllImport(SQLITE_DLL)]
