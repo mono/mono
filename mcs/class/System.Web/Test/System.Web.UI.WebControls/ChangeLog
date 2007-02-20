@@ -1,3 +1,7 @@
+2007-02-20 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ChangePasswordTest.cs: new test
+
 2007-02-20  yonik <yonik@mainsoft.com>
 
      * GridViewTest.cs: Add new tests for PostbackEvents 

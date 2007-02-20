@@ -43,6 +43,7 @@ using MonoTests.stand_alone.WebHarness;
 
 using NUnit.Framework;
 using System.Collections.Specialized;
+using System.Web.Configuration;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -800,6 +801,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void w_ContinueButtonClick (object sender, EventArgs e)
 		{
 			WebTest.CurrentTest.UserData = "ContinueButtonClick";
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void DefaultProvider ()
+		{
+			WebTest t = new WebTest ();
+			t.Invoker = PageInvoker.CreateOnInit (new PageDelegate (_DefaultProvider));
+			string html = t.Run ();
+		}
+		
+		public static void _DefaultProvider (Page p)
+		{
+			MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
+			Assert.AreEqual (section.DefaultProvider, "FakeProvider", "section.DefaultProvider");
+			Assert.AreEqual (Membership.Provider.GetType (), typeof (FakeMembershipProvider), "Membership.Provider.GetType ()");
 		}
 
 		[TestFixtureTearDown]
