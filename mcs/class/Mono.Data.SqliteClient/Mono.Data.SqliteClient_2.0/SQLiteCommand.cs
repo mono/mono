@@ -647,6 +647,13 @@ namespace Mono.Data.SqliteClient
     {
       return new SqliteCommand(this);
     }
+
+#if MONO_BACKWARD_COMPAT
+    public int LastInsertRowID ()
+    {
+	    return _cnn.LastInsertRowId;
+    }
+#endif
   }
 }
 #endif
