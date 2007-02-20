@@ -215,19 +215,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", ods.TypeName, "TypeName");
 			Assert.AreEqual ("", ods.UpdateMethod, "UpdateMethod ");
 			Assert.AreEqual (typeof (ParameterCollection), ods.UpdateParameters.GetType (), "UpdateParameters");
-			
-		}
-
-		[Test]
-		public void ObjectDataSource_NotWorkingDefaultProperties ()
-		{
-			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
 			Assert.AreEqual (0, ods.CacheDuration, "CacheDuration");
 			Assert.AreEqual (DataSourceCacheExpiry.Absolute, ods.CacheExpirationPolicy, "CacheExpirationPolicy");
 			Assert.AreEqual ("", ods.CacheKeyDependency, "CacheKeyDependency");
 			Assert.AreEqual (false, ods.ConvertNullToDBNull, "ConvertNullToDBNull ");
 			Assert.AreEqual (false, ods.EnableCaching, "EnableCaching ");
 			Assert.AreEqual ("", ods.SqlCacheDependency, "SqlCacheDependency");
+			
 		}
 
 		//Non default properties values
@@ -296,20 +290,34 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			ObjectDataSourcePoker  ods = new ObjectDataSourcePoker ();
 			//InitObjectDataSource (ods,"");	
-			ObjectDataSourcePoker copy = new ObjectDataSourcePoker ();
-			FormParameter p = new FormParameter ("ID", "TextBox1");
-			p.DefaultValue = "1002";
-			ods.FilterParameters.Add (p);
-			Parameter p1 = new Parameter ("ID", TypeCode.String, "1001");
-			Parameter p2 = new Parameter ("FName", TypeCode.String, "Mahesh");		
-			ods.SelectParameters.Add (p1);
-			ods.SelectParameters.Add (p2); 
+
+			ods.CacheDuration = 1;
+			ods.CacheExpirationPolicy = DataSourceCacheExpiry.Sliding;
+			ods.CacheKeyDependency = "key";
+			ods.ConflictDetection = ConflictOptions.CompareAllValues;
+			ods.ConvertNullToDBNull = true;
+			ods.DataObjectTypeName = "DataObjectType";
+			ods.DeleteMethod = "deleteMethod";
+			ods.EnableCaching = true;
+			ods.EnablePaging = true;
+			ods.FilterExpression = "filter expression";
+			ods.InsertMethod = "insertMethod";
+			ods.MaximumRowsParameterName = "maxRows";
+			ods.OldValuesParameterFormatString = "old_{0}";
+			ods.SelectCountMethod = "selectCountMethod";
+			ods.SelectMethod = "selectMethod";
+			ods.SortParameterName = "sortParamName";
+			ods.SqlCacheDependency = "cacheDependency";
+			ods.StartRowIndexParameterName = "startRow";
+			ods.TypeName = "TypeName";
+			ods.UpdateMethod = "updateMethod";
+
 			object state = ods.SaveState ();
+			Assert.IsNull (state, "ViewState is null");
+
+			ObjectDataSourcePoker copy = new ObjectDataSourcePoker ();
 			copy.LoadState (state);
-			Assert.AreEqual ("ID", copy.FilterParameters [0].Name, "ViewStateFilterParameters1");
-			Assert.AreEqual ("1002", copy.FilterParameters [0].DefaultValue, "ViewStateFilterParameters2");
-			Assert.AreEqual ("1001", copy.SelectParameters[0].DefaultValue, "ViewStateSelectParameters1");
-			Assert.AreEqual (2, copy.SelectParameters.Count , "ViewStateSelectParameters2");
+
 		}
 
 		//Properties functionality

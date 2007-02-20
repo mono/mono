@@ -190,13 +190,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", sql.TypeName, "TypeName");
 			Assert.AreEqual ("", sql.UpdateMethod, "UpdateMethod");
 			Assert.AreEqual (true, sql.IsTrackingViewState (), "IsTrackingViewState");
-		}
-
-		[Test]
-		public void DefaultsNotWorking ()
-		{
-			ObjectDataSource ds = new ObjectDataSource ();
-			ObjectViewPoker sql = new ObjectViewPoker (ds, "DefaultView", null);
 			Assert.IsTrue (sql.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount");
 		}
 
@@ -254,6 +247,58 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void ViewStateSupport () 
+		{
+			ObjectDataSourceView view;
+			MyDataSource ds = new MyDataSource ();
+
+			ds.ID = "ObjectDataSource2";
+			ds.TypeName = "MonoTests.System.Web.UI.WebControls.DataSourceObject";
+			ds.SelectMethod = "Select";
+			ds.SelectCountMethod = "SelectCount";
+
+			view = (ObjectDataSourceView) ds.DoGetView ("DefaultView");
+			((IStateManager) view).TrackViewState ();
+
+			Parameter p1 = new Parameter ("test", TypeCode.String);
+
+			Assert.IsTrue (((IStateManager) view).IsTrackingViewState, "IsTrackingViewState");
+			Assert.IsTrue (((IStateManager) view.FilterParameters).IsTrackingViewState, "FilterParameters.IsTrackingViewState");
+			Assert.IsTrue (((IStateManager) view.SelectParameters).IsTrackingViewState, "SelecteParameters.IsTrackingViewState");
+			Assert.IsFalse (((IStateManager) view.DeleteParameters).IsTrackingViewState, "DeleteParameters.IsTrackingViewState");
+			Assert.IsFalse (((IStateManager) view.InsertParameters).IsTrackingViewState, "InsertParameters.IsTrackingViewState");
+			Assert.IsFalse (((IStateManager) view.UpdateParameters).IsTrackingViewState, "UpdateParameters.IsTrackingViewState");
+
+			object state = ((IStateManager) view).SaveViewState ();
+			Assert.IsNull (state, "view ViewState not null");
+
+			view.DeleteParameters.Add (p1);
+			view.InsertParameters.Add (p1);
+			//view.UpdateParameters.Add (p1);
+
+			state = ((IStateManager) view).SaveViewState ();
+			Assert.IsNull (state, "view ViewState not null");
+
+			view.FilterParameters.Add (p1);
+			//view.SelectParameters.Add (p1);
+
+			state = ((IStateManager) view).SaveViewState ();
+			Assert.IsNotNull (state, "view ViewState not null");
+
+			state = ((IStateManager) view.FilterParameters).SaveViewState ();
+			Assert.IsNotNull (state, "FilterParamenters ViewState not null");
+			state = ((IStateManager) view.SelectParameters).SaveViewState ();
+			Assert.IsNull (state, "SelectParameters ViewState not null");
+
+			state = ((IStateManager) view.DeleteParameters).SaveViewState ();
+			Assert.IsNotNull (state, "DeleteParameters ViewState not null");
+			state = ((IStateManager) view.InsertParameters).SaveViewState ();
+			Assert.IsNotNull (state, "InsertParameters ViewState not null");
+			state = ((IStateManager) view.UpdateParameters).SaveViewState ();
+			Assert.IsNull (state, "UpdateParameters ViewState not null");
+		}
+
+		[Test]
 		public void ViewState ()
 		{
 			// Note :
@@ -268,11 +313,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			ds.SelectMethod = "Select";
 			ds.SelectCountMethod = "SelectCount";
 
-			Parameter p1 = new Parameter ("test", TypeCode.String);
-			ds.SelectParameters.Add (p1);
-			ds.FilterParameters.Add (p1);
-
 			view = (ObjectDataSourceView) ds.DoGetView ("DefaultView");
+			((IStateManager) view).TrackViewState ();
+
 			view.ConflictDetection = ConflictOptions.CompareAllValues;
 			view.ConvertNullToDBNull = true;
 			view.DataObjectTypeName = "test";
@@ -288,13 +331,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.TypeName = "test";
 			view.UpdateMethod = "test";
 
-			((IStateManager) view).TrackViewState ();
 			object state = ((IStateManager) view).SaveViewState ();
+			Assert.IsNull (state, "ViewState#1");
 
 			ObjectDataSourceView copy = new ObjectDataSourceView (ds, "DefaultView", null);
 			((IStateManager) copy).LoadViewState (state);
 
-			Assert.AreEqual (null, state, "ViewState#1");
 		}
 
 		[Test]

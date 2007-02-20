@@ -63,8 +63,8 @@ namespace System.Web.UI.WebControls
 		string typeName = null;
 		string updateMethod = null;
 		private static string privateBinPath = null;
-		
-		StateBag viewState = new StateBag ();
+
+		bool isTrackingViewState = false;
 		ParameterCollection selectParameters;
 		ParameterCollection updateParameters;
 		ParameterCollection deleteParameters;
@@ -261,10 +261,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		StateBag ViewState {
-			get { return viewState; }
-		}
-		
 		public override bool CanDelete {
 			get { return DeleteMethod.Length > 0; }
 		}
@@ -293,15 +289,12 @@ namespace System.Web.UI.WebControls
 		public override bool CanUpdate {
 			get { return UpdateMethod.Length > 0; }
 		}
-		
+
+		// LAME SPEC: MSDN says value should be stored in ViewState but tests show otherwise.
+		private ConflictOptions conflictDetection = ConflictOptions.OverwriteChanges;
 		public ConflictOptions ConflictDetection {
-			get {
-				object ret = ViewState ["ConflictDetection"];
-				return ret != null ? (ConflictOptions)ret : ConflictOptions.OverwriteChanges;
-			}
-			set {
-				ViewState ["ConflictDetection"] = value;
-			}
+			get { return conflictDetection; }
+			set { conflictDetection = value; }
 		}
 
 		public bool ConvertNullToDBNull	{
@@ -332,8 +325,6 @@ namespace System.Web.UI.WebControls
 				if (deleteParameters == null) {
 					deleteParameters = new ParameterCollection ();
 					deleteParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (IsTrackingViewState)
-						((IStateManager)deleteParameters).TrackViewState ();
 				}
 				return deleteParameters;
 			}
@@ -383,8 +374,6 @@ namespace System.Web.UI.WebControls
 				if (insertParameters == null) {
 					insertParameters = new ParameterCollection ();
 					insertParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (IsTrackingViewState)
-						((IStateManager)insertParameters).TrackViewState ();
 				}
 				return insertParameters;
 			}
@@ -480,8 +469,6 @@ namespace System.Web.UI.WebControls
 				if (updateParameters == null) {
 					updateParameters = new ParameterCollection ();
 					updateParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
-					if (IsTrackingViewState)
-						((IStateManager)updateParameters).TrackViewState ();
 				}
 				return updateParameters;
 			}
@@ -1142,7 +1129,6 @@ namespace System.Web.UI.WebControls
 		protected virtual void LoadViewState (object savedState)
 		{
 			object[] state = (savedState == null) ? new object [6] : (object[]) savedState;
-			viewState.LoadViewState (state[0]);
 			((IStateManager)SelectParameters).LoadViewState (state[1]); 
 			((IStateManager)UpdateParameters).LoadViewState (state[2]); 
 			((IStateManager)DeleteParameters).LoadViewState (state[3]); 
@@ -1152,19 +1138,18 @@ namespace System.Web.UI.WebControls
 
 		protected virtual object SaveViewState()
 		{
-			object[] state = new object [6];
-			state [0] = viewState.SaveViewState ();
+			object[] state = new object [5];
 			
 			if (selectParameters != null)
-				state [1] = ((IStateManager)selectParameters).SaveViewState ();
+				state [0] = ((IStateManager)selectParameters).SaveViewState ();
 			if (updateParameters != null)
-				state [2] = ((IStateManager)updateParameters).SaveViewState ();
+				state [1] = ((IStateManager)updateParameters).SaveViewState ();
 			if (deleteParameters != null)
-				state [3] = ((IStateManager)deleteParameters).SaveViewState ();
+				state [2] = ((IStateManager)deleteParameters).SaveViewState ();
 			if (insertParameters != null)
-				state [4] = ((IStateManager)insertParameters).SaveViewState ();
+				state [3] = ((IStateManager)insertParameters).SaveViewState ();
 			if (filterParameters != null)
-				state [5] = ((IStateManager)filterParameters).SaveViewState ();
+				state [4] = ((IStateManager)filterParameters).SaveViewState ();
 			
 			foreach (object ob in state)
 				if (ob != null) return state;
@@ -1174,17 +1159,15 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void TrackViewState()
 		{
-			viewState.TrackViewState ();
+			isTrackingViewState = true;
+
 			if (selectParameters != null) ((IStateManager)selectParameters).TrackViewState ();
-			if (updateParameters != null) ((IStateManager)updateParameters).TrackViewState ();
-			if (deleteParameters != null) ((IStateManager)deleteParameters).TrackViewState ();
-			if (insertParameters != null) ((IStateManager)insertParameters).TrackViewState ();
 			if (filterParameters != null) ((IStateManager)filterParameters).TrackViewState ();
 		}
 		
 		protected bool IsTrackingViewState
 		{
-			get { return viewState.IsTrackingViewState; }
+			get { return isTrackingViewState; }
 		}
 		
 		
@@ -1210,6 +1193,7 @@ namespace System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 

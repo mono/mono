@@ -1,3 +1,7 @@
+2007-02-20  Adar Wesley <adarw@mainsoft.com>
+
+	* ObjectDataSourceView.cs: fixed ViewState behavior to match MS.  Added relevant tests.
+
 2007-02-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Calendar.cs: Fixed bug #80881 by using Thread's CurrentCulture
