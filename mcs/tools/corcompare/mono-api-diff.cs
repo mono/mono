@@ -4,6 +4,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Marek Safar				(marek.safar@gmail.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
@@ -920,6 +921,7 @@ namespace Mono.AssemblyCompare
 		bool isUnsafe;
 		bool isOptional;
 		string defaultValue;
+		XMLAttributes attributes;
 
 		public override void LoadData (XmlNode node)
 		{
@@ -940,6 +942,16 @@ namespace Mono.AssemblyCompare
 				isOptional = bool.Parse (node.Attributes["optional"].Value);
 			if (node.Attributes["defaultValue"] != null)
 				defaultValue = node.Attributes["defaultValue"].Value;
+
+			XmlNode child = node.FirstChild;
+			if (child == null)
+				return;
+
+			if (child.Name == "attributes") {
+				attributes = new XMLAttributes ();
+				attributes.LoadData (child);
+				child = child.NextSibling;
+			}
 		}
 
 		public override void CompareTo (XmlDocument doc, XmlNode parent, object other)
@@ -965,6 +977,22 @@ namespace Mono.AssemblyCompare
 
 			if (defaultValue != oparm.defaultValue)
 				AddWarning (parent, "Parameter default value wrong: {0} != {1}", (defaultValue == null) ? "(no default value)" : defaultValue, (oparm.defaultValue == null) ? "(no default value)" : oparm.defaultValue);
+
+			if (attributes != null || oparm.attributes != null) {
+				if (attributes == null)
+					attributes = new XMLAttributes ();
+
+				attributes.CompareTo (doc, parent, oparm.attributes);
+				counters.AddPartialToPartial (attributes.Counters);
+				if (oparm.attributes != null && oparm.attributes.IsTodo) {
+					counters.Todo++;
+					counters.TodoTotal++;
+					counters.ErrorTotal++;
+					AddAttribute (parent, "error", "todo");
+					if (oparm.attributes.Comment != null)
+						AddAttribute (parent, "comment", oparm.attributes.Comment);
+				}
+			}
 		}
 
 		public string Name {
