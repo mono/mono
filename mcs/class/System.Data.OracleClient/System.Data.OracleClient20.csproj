@@ -134,6 +134,7 @@
     <Compile Include="System.Data.OracleClient.jvm\OracleParameterCollection.cs" />
     <Compile Include="System.Data.OracleClient.jvm\OracleTransaction.cs" />
     <Compile Include="System.Data.OracleClient.jvm\Regex.cs" />
+    <Compile Include="System.Data.OracleClient\OracleClientFactory.cs" />
     <Compile Include="System.Data.OracleClient\OracleDataAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
