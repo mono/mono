@@ -1,4 +1,9 @@
 2007-02-20  Andreia Gaita  <avidigal@novell.com>
+
+	* PrintingServicesUnix.cs: Fix leak caused by not calling cupsFreeDests
+	on certain codepaths. Fix return value of cupsFreeDests to void.
+	
+2007-02-20  Andreia Gaita  <avidigal@novell.com>
 	
 	* PrintingServicesUnix.cs: Correct missing static initialization
 	of loaded printers hashtable, unit tests were failing (oops :p)
