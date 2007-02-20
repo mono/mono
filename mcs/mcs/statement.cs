@@ -1213,7 +1213,7 @@ namespace Mono.CSharp {
 				ec.DefineLocalVariable (name, builder);
 		}
 
-		public bool IsThisAssigned (EmitContext ec, Location loc)
+		public bool IsThisAssigned (EmitContext ec)
 		{
 			if (VariableInfo == null)
 				throw new Exception ();
@@ -1221,7 +1221,7 @@ namespace Mono.CSharp {
 			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
-			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, loc);
+			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, ec.loc);
 		}
 
 		public bool IsAssigned (EmitContext ec)
@@ -2735,7 +2735,7 @@ namespace Mono.CSharp {
 
 		public bool IsThisAssigned (EmitContext ec)
 		{
-			return this_variable == null || this_variable.IsThisAssigned (ec, loc);
+			return this_variable == null || this_variable.IsThisAssigned (ec);
 		}
 
 		public bool ResolveMeta (EmitContext ec, Parameters ip)

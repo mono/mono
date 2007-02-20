@@ -4,6 +4,7 @@
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
 //          Ravi Pratap     (ravi@ximian.com)
+//          Marek Safar		(marek.safar@gmail.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -2285,6 +2286,18 @@ constructor_declaration
 	;
 
 constructor_declarator
+	: constructor_header
+	  {
+		$$ = $1;
+	  }
+	| constructor_header constructor_initializer
+	  {
+		((Constructor)$1).Initializer = (ConstructorInitializer) $2;
+		$$ = $1;
+	  }
+	;
+
+constructor_header
 	: IDENTIFIER
 	  {
 		if (RootContext.Documentation != null) {
@@ -2295,25 +2308,20 @@ constructor_declarator
 	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
 		current_local_parameters = (Parameters) $4;
-	  }
-	  opt_constructor_initializer
-	  {
+		current_block = top_current_block = new ToplevelBlock (null,
+			current_local_parameters, null, Location.Null);
+			
 		LocatedToken lt = (LocatedToken) $1;
-		$$ = new Constructor (current_class, lt.Value, 0, (Parameters) $4,
-				      (ConstructorInitializer) $7, lt.Location);
+		$$ = new Constructor (current_class, lt.Value, 0, current_local_parameters,
+				      null, lt.Location);
 
 		anonymous_host = (IAnonymousHost) $$;
 	  }
 	;
 
 constructor_body
-	: block
-	| SEMICOLON 		{ $$ = null; }
-	;
-
-opt_constructor_initializer
-	: /* empty */			{ $$ = null; }
-	| constructor_initializer
+	: block_prepared
+	| SEMICOLON 		{ current_block = top_current_block = null; $$ = null; }
 	;
 
 constructor_initializer
@@ -3518,7 +3526,7 @@ anonymous_method_signature
 	;
 
 opt_anonymous_method_parameter_list
-	: /* empty */	{ $$ = null; } 
+	: /* empty */	                   { $$ = null; } 
 	| anonymous_method_parameter_list  { $$ = $1; }
 	;
 
@@ -4189,6 +4197,14 @@ block
 	  opt_statement_list CLOSE_BRACE 
 	  { 
 		$$ = end_block ((Location) $4);
+	  }
+	;
+
+block_prepared
+	: OPEN_BRACE 
+	  opt_statement_list CLOSE_BRACE 
+	  { 
+		$$ = end_block ((Location) $3);
 	  }
 	;
 

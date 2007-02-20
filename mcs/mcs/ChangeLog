@@ -1,3 +1,12 @@
+2007-02-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80650
+	* cs-parser.jay: Anonymous container starts at constructor declaration
+	and not at block beginning because it has to be usable in constructor
+	initializer.
+
+	* statement.cs: Use context location and not block one for error reporting.
+
 2007-02-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #78712
