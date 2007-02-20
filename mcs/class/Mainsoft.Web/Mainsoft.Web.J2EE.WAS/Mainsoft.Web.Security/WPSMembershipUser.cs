@@ -12,7 +12,6 @@ namespace Mainsoft.Web.Security
     {
         private User _wpsUser;
         private string _userName;
-        private string _email;
 
         private object _providerKey;
 
