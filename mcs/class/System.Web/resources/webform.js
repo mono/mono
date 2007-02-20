@@ -291,34 +291,41 @@ function WebForm_FireDefaultButton(event, target)
 	return true;
 }
 
-function WebForm_SaveScrollPositionSubmit() {
-    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
-    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
-    if ((typeof(this.oldSubmit) != "undefined") && (this.oldSubmit != null)) {
-        return this.oldSubmit();
-    }
-    return true;
+function WebForm_SaveScrollPositionSubmit()
+{
+	var pos = WebForm_GetElementPosition(this);
+	this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX() - pos.x;
+	this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY() - pos.y;
+	if ((typeof(this.oldSubmit) != "undefined") && (this.oldSubmit != null)) {
+		return this.oldSubmit();
+	}
+	return true;
 }
 
-function WebForm_SaveScrollPositionOnSubmit() {
-    this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX();
-    this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY();
-    if ((typeof(this.oldOnSubmit) != "undefined") && (this.oldOnSubmit != null)) {
-        return this.oldOnSubmit();
-    }
-    return true;
+function WebForm_SaveScrollPositionOnSubmit()
+{
+	var pos = WebForm_GetElementPosition(this);
+	this.elements['__SCROLLPOSITIONX'].value = WebForm_GetScrollX() - pos.x;
+	this.elements['__SCROLLPOSITIONY'].value = WebForm_GetScrollY() - pos.y;
+	if ((typeof(this.oldOnSubmit) != "undefined") && (this.oldOnSubmit != null)) {
+		return this.oldOnSubmit();
+	}
+	return true;
 }
 
-function WebForm_RestoreScrollPosition(currForm) {
+function WebForm_RestoreScrollPosition(currForm)
+{
 	currForm = currForm || theForm;
-	var ScrollX = currForm.elements['__SCROLLPOSITIONX'].value;
-	var ScrollY = currForm.elements['__SCROLLPOSITIONY'].value;
-	if (ScrollX != "" || ScrollY != "")
-    	window.scrollTo(ScrollX, ScrollY);
-    if ((typeof(this.oldOnLoad) != "undefined") && (this.oldOnLoad != null)) {
-        return this.oldOnLoad();
-    }
-    return true;
+	var pos = WebForm_GetElementPosition(currForm);
+	var ScrollX = parseInt(currForm.elements['__SCROLLPOSITIONX'].value);
+	var ScrollY = parseInt(currForm.elements['__SCROLLPOSITIONY'].value);
+	ScrollX = (isNaN(ScrollX)) ? pos.x : (ScrollX + pos.x);
+	ScrollY = (isNaN(ScrollY)) ? pos.y : (ScrollY + pos.y);
+	window.scrollTo(ScrollX, ScrollY);
+	if ((typeof(this.oldOnLoad) != "undefined") && (this.oldOnLoad != null)) {
+		return this.oldOnLoad();
+	}
+	return true;
 }
 
 function WebForm_GetScrollX() {
@@ -347,5 +354,24 @@ function WebForm_GetScrollY() {
     return 0;
 }
 
+function WebForm_GetElementPosition(element)
+{
+	var result = new Object();
+	result.x = 0;
+	result.y = 0;
+	result.width = 0;
+	result.height = 0;
+	result.x = element.offsetLeft;
+	result.y = element.offsetTop;
+	var parent = element.offsetParent;
+	while (parent) {
+		result.x += parent.offsetLeft;
+		result.y += parent.offsetTop;
+		parent = parent.offsetParent;
+	}
+	result.width = element.offsetWidth;
+	result.height = element.offsetHeight;
+	return result;
+}
 
 
