@@ -1,3 +1,9 @@
+200702-20	Boris Kirzner <borisk@mainsoft.com>
+
+	* Mscorlib.Test20.sln, Mscorlib.Test20.vmwcsproj, 
+	Mscorlib.Test20.csproj: convert TARGET_JVM solution and 
+	project files.
+
 2006-01-25	Bors Kirzner <borisk@mainsoft.com>
 
 	* Mscorlib.Test20.vmwcsproj: add System.IO tests for TARGET_JVM.

@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "Mscorlib.Test20", "Mscorlib.Test20.vmwcsproj", "{FCE3E281-0E07-43EE-8611-18C14A180B85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mscorlib.Test20", "Mscorlib.Test20.csproj", "{FCE3E281-0E07-43EE-8611-18C14A180B85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

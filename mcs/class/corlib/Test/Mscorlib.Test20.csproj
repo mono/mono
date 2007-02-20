@@ -14,6 +14,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RootNamespace>Mscorlib.Test20</RootNamespace>
     <jarserver>ipa</jarserver>
+    <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -449,7 +450,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-system-runtime-remoting="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Runtime.Remoting.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Runtime.Serialization.Formatters.Soap.jar" />
+      <UserProperties REFS-JarPath-system-runtime-remoting="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Runtime.Remoting.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Runtime.Serialization.Formatters.Soap.jar" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
