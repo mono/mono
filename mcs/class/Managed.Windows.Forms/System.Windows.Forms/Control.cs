@@ -3141,7 +3141,12 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public IAsyncResult BeginInvoke (Delegate method, object[] args) {
+#if NET_2_0
+		public IAsyncResult BeginInvoke (Delegate method, params object[] args)
+#else
+		public IAsyncResult BeginInvoke (Delegate method, object[] args)
+#endif
+		{
 			return BeginInvokeInternal (method, args, false);
 		}
 

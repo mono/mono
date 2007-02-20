@@ -1,3 +1,8 @@
+2007-02-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Control.cs: Fix BeginInvoke signature for 2.0 profile.
+	Seems like the class status pages doesn't catch params differences.
+
 2007-02-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBox.cs: Removed extra tabs. Changes spaces to tabs.
