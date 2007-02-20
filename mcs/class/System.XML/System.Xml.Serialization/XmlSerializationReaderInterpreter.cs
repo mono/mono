@@ -144,8 +144,8 @@ namespace System.Xml.Serialization
 					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace) 
 					    || _format == SerializationFormat.Encoded)  
 					{
+						ReadAttributeMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
 						if (Reader.IsEmptyElement) {
-							ReadAttributeMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
 							Reader.Skip();
 							Reader.MoveToContent();
 							continue;
@@ -286,6 +286,7 @@ namespace System.Xml.Serialization
 				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
 				SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 			}
+			Reader.MoveToElement ();
 		}
 
 		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)

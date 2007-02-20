@@ -1444,10 +1444,10 @@ namespace System.Xml.Serialization
 					WriteLineInd ("{");
 					WriteLine ("if (Reader.IsStartElement(" + GetLiteral(typeMap.ElementName) + ", " + GetLiteral(typeMap.Namespace) + "))");
 					WriteLineInd ("{");
-					WriteLine ("if (Reader.IsEmptyElement)");
-					WriteLineInd ("{");
 					bool dummy = false;
 					GenerateReadAttributeMembers (typeMap, (ClassMap)typeMap.ObjectMap, "parameters", true, ref dummy);
+					WriteLine ("if (Reader.IsEmptyElement)");
+					WriteLineInd ("{");
 					WriteLine ("Reader.Skip(); Reader.MoveToContent(); continue;");
 					WriteLineUni ("}");
 					WriteLine ("Reader.ReadStartElement();");
@@ -2061,6 +2061,7 @@ namespace System.Xml.Serialization
 				GenerateSetMemberValue (anyAttrMember, ob, "anyAttributeArray", isValueList);
 			}
 			WriteLine ("");
+			WriteLine ("Reader.MoveToElement ();");
 
 			GenerateEndHook ();
 		}

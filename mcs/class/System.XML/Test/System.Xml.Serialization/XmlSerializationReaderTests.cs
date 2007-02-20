@@ -141,6 +141,12 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsNotNull (arr, "#1");
 			Assert.AreEqual (1, arr.Length, "#2");
 			Assert.AreEqual ("doh", arr [0], "#3");
+
+			xml = "<elem xmlns='urn:x' hooray='doh'></elem>";
+			arr = ser.Deserialize (new StringReader (xml)) as object [];
+			Assert.IsNotNull (arr, "#4");
+			Assert.AreEqual (1, arr.Length, "#5");
+			Assert.AreEqual ("doh", arr [0], "#6");
 		}
 	}
 

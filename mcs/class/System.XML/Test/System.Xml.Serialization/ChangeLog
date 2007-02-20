@@ -1,4 +1,8 @@
-2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationReaderTests.cs : test non-empty element as well.
+
+2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationReaderTests.cs : added test for out attribute
 	  parameters. It also tests empty root element.

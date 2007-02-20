@@ -2,6 +2,12 @@
 
 	* SerializationCodeGenerator.cs,
 	  XmlSerializationReaderInterpreter.cs :
+	  Handle attributes on non-empty elements as well. Fixed bug #80131.
+
+2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  XmlSerializationReaderInterpreter.cs :
 	  Handle empty root element.
 	  Read out attribute parameters. To do that, split attribute
 	  reader part from ReadMembers(), as it isn't invoked when the
