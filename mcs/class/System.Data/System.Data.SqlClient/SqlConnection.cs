@@ -184,6 +184,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the connection string. ")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(true)]
 		public 
 #if NET_2_0
 		override

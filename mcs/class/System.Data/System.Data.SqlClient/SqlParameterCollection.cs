@@ -204,6 +204,7 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public  
 #if NET_2_0
 		override
@@ -227,6 +228,8 @@ namespace System.Data.SqlClient {
 			return value;
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Obsolete ("Do not call this method.")]
 		public SqlParameter Add (string parameterName, object value)
 		{
 			return Add (new SqlParameter (parameterName, value));

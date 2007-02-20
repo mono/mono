@@ -1,3 +1,30 @@
+2007-02-16  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
+
+	* SqlParameter.cs (CompareInfo): Implemented the property
+	CompareInfo.
+
+2007-02-15  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
+
+	* SqlCommand.cs: Added some attributes which were not implemented
+	for .NET 2.0 and removed extra attribute which are not there in
+	.NET 2.0.
+
+	* SqlCommandBuilder.cs: Added some attributes that were not 
+	implemented for .NET 2.0.
+
+	* SqlParameterCollection.cs: Added some attributes that were 
+	not implemented for .NET 2.0.
+
+	* SqlConnectionStringBuilder.cs: Added some attributes that
+	 were not implemented for .NET 2.0.
+	
+	* SqlConnection.cs: Added attribute that was not implemented
+	for .NET 2.0.
+
+	* SqlParameter.cs: Added some attributes which were not
+	implemented for .NET 2.0 and removed some extra attributes which
+	are not there in .NET 2.0
+
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* SqlConnection.cs (SetConnectionString): Fixes bug # 80712. A

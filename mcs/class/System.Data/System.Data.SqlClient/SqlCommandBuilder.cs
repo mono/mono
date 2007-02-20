@@ -122,6 +122,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public 
 #if NET_2_0
 		override
@@ -140,6 +141,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters. ")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public 
 #if NET_2_0
 		override
@@ -154,19 +156,34 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
 		[DefaultValue (".")]
+#endif
 		public override string CatalogSeparator {
 			get { return _catalogSeperator; }
 			set { if (value != null) _catalogSeperator = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
 		[DefaultValue (".")]
+#endif
 		public override string SchemaSeparator {
 			get { return _schemaSeperator; }
 			set {  if (value != null) _schemaSeperator = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if !NET_2_0
 		[DefaultValue (CatalogLocation.Start)]
+#endif
 		public override CatalogLocation CatalogLocation {
 			get { return _catalogLocation; }
 			set { _catalogLocation = value; }

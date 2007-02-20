@@ -67,6 +67,7 @@ namespace System.Data.SqlClient {
 		SqlDbType sqlDbType;
 		string sourceColumn;
 		DataRowVersion sourceVersion;
+		SqlCompareOptions compareInfo;
 
 		#endregion // Fields
 
@@ -177,7 +178,7 @@ namespace System.Data.SqlClient {
 					throw new Exception ("all variable length parameters to have an explicitly set non-zero Size");
 			}
 		}
-
+	
 #if ONLY_1_0 || ONLY_1_1	
 		[Browsable (false)]
 		[DataSysDescription ("The parameter generic type.")]
@@ -275,25 +276,21 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+		[DefaultValue (0)]
 #if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-		[DefaultValue (0)]
-#endif
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif		
+#endif
 		public byte Precision {
 			get { return metaParameter.Precision; }
 			set { metaParameter.Precision = value; }
 		}
 
 		[DataCategory ("Data")]
+		[DefaultValue (0)]
 #if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-		[DefaultValue (0)]
-#endif
-#if NET_2_0
 		[Browsable (false)]
                 [EditorBrowsable (EditorBrowsableState.Never)]
 #endif
@@ -383,10 +380,15 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-//#if NET_2_0
-//		public SqlCompareOptions CompareInfo{
+#if NET_2_0
+		public SqlCompareOptions CompareInfo {
+		 	get{ return compareInfo; } 
+			set{
+				compareInfo = value;
+			}
+		}
+#endif
 
-//#endif
 #if NET_2_0
 		public override bool SourceColumnNullMapping {
 			get { return false ; }

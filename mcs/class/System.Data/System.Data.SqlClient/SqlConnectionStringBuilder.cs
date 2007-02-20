@@ -32,11 +32,14 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
+
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
 namespace System.Data.SqlClient
 {
+	[DefaultPropertyAttribute ("DataSource")]
 	public sealed class SqlConnectionStringBuilder : DbConnectionStringBuilder
 	{
 
@@ -155,6 +158,8 @@ namespace System.Data.SqlClient
 		#endregion // Constructors
 
 		#region Properties
+		[DisplayNameAttribute ("Application Name")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string ApplicationName { 
 			get { return _applicationName; }
 			set { 
@@ -163,6 +168,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Asynchronous Processing")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool AsynchronousProcessing { 
 			get { return _asynchronousProcessing; }
 			set { 
@@ -171,6 +178,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("AttachDbFilename")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string AttachDBFilename { 
 			get { return _attachDBFilename; }
 			set { 
@@ -178,7 +187,9 @@ namespace System.Data.SqlClient
 				_attachDBFilename = value; 
 			}
 		}
-
+		
+		[DisplayNameAttribute ("Connection Reset")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool ConnectionReset { 
 			get { return _connectionReset; }
 			set { 
@@ -186,7 +197,9 @@ namespace System.Data.SqlClient
 				_connectionReset = value; 
 			}
 		}
-
+		
+		[DisplayNameAttribute ("Connect Timeout")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public int ConnectTimeout { 
 			get { return _connectTimeout; }
 			set { 
@@ -195,6 +208,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Current Language")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string CurrentLanguage { 
 			get { return _currentLanguage; }
 			set { 
@@ -203,6 +218,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Data Source")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string DataSource { 
 			get { return _dataSource; }
 			set { 
@@ -211,6 +228,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Encrypt")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool Encrypt { 
 			get { return _encrypt; }
 			set { 
@@ -219,6 +238,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Enlist")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool Enlist { 
 			get { return _enlist; }
 			set { 
@@ -227,6 +248,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Failover Partner")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string FailoverPartner { 
 			get { return _failoverPartner; }
 			set { 
@@ -235,6 +258,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Initial Catalog")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string InitialCatalog { 
 			get { return _initialCatalog; }
 			set { 
@@ -243,6 +268,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Integrated Security")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool IntegratedSecurity { 
 			get { return _integratedSecurity; }
 			set { 
@@ -267,6 +294,8 @@ namespace System.Data.SqlClient
 			get { return base.Keys; }
 		}
 
+		[DisplayNameAttribute ("Load Balance Timeout")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public int LoadBalanceTimeout { 
 			get { return _loadBalanceTimeout; }
 			set { 
@@ -275,6 +304,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Max Pool Size")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public int MaxPoolSize { 
 			get { return _maxPoolSize; }
 			set { 
@@ -283,6 +314,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Min Pool Size")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public int MinPoolSize { 
 			get { return _minPoolSize; }
 			set {
@@ -291,6 +324,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("MultipleActiveResultSets")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool MultipleActiveResultSets { 
 			get { return _multipleActiveResultSets; }
 			set { 
@@ -299,6 +334,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Network Library")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string NetworkLibrary { 
 			get { return _networkLibrary; }
 			set { 
@@ -307,6 +344,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Packet Size")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public int PacketSize { 
 			get { return _packetSize; }
 			set { 
@@ -315,6 +354,9 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Password")]
+		[PasswordPropertyTextAttribute (true)]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string Password { 
 			get { return _password; }
 			set { 
@@ -323,6 +365,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Persist Security Info")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool PersistSecurityInfo { 
 			get { return _persistSecurityInfo; }
 			set {
@@ -330,7 +374,9 @@ namespace System.Data.SqlClient
 				_persistSecurityInfo = value; 
 			}
 		}
-
+		
+		[DisplayNameAttribute ("Pooling")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool Pooling { 
 			get { return _pooling; }
 			set {
@@ -339,6 +385,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("Replication")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public bool Replication { 
 			get { return _replication; }
 			set { 
@@ -347,6 +395,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[DisplayNameAttribute ("User ID")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string UserID { 
 			get { return _userID; }
 			set { 
@@ -359,6 +409,8 @@ namespace System.Data.SqlClient
 			get { return base.Values; }
 		}
 
+		[DisplayNameAttribute ("Workstation ID")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string WorkstationID { 
 			get { return _workstationID; }
 			set { 

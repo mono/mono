@@ -50,6 +50,7 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
+	[DefaultEventAttribute ("RecordsAffected")]
 #if NET_2_0
 	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
 #else
@@ -145,8 +146,8 @@ namespace System.Data.SqlClient {
 
 #if !NET_2_0
 		[DataSysDescription ("Time to wait for command to execute.")]
-#endif
 		[DefaultValue (30)]
+#endif
 		public 
 #if NET_2_0
                 override
@@ -205,6 +206,7 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[DesignOnly (true)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public 
 #if NET_2_0
                 override
