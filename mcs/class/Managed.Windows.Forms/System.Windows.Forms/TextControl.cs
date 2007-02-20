@@ -1871,8 +1871,6 @@ namespace System.Windows.Forms {
 			Brush hilight;
 			Brush hilight_text;
 
-			RecalculateAlignments ();
-			
 			// First, figure out from what line to what line we need to draw
 
 			if (multiline) {
@@ -4352,7 +4350,7 @@ namespace System.Windows.Forms {
 		public float X {
 			get {
 				if (start == 0)
-					return line.X + line.indent;
+					return line.X;
 				return line.X + line.widths [start - 1];
 			}
 		}
@@ -4396,7 +4394,8 @@ namespace System.Windows.Forms {
 			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 
-		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text) {
+		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
+		{
 			dc.DrawString (text.Substring (start, end), font, brush, x, y, StringFormat.GenericTypographic);
 		}
 

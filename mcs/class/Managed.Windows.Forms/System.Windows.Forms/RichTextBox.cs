@@ -61,6 +61,7 @@ namespace System.Windows.Forms {
 		private int		rtf_cursor_x;
 		private int		rtf_cursor_y;
 		private int		rtf_chars;
+		private int rtf_par_line_left_indent;
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -313,7 +314,7 @@ namespace System.Windows.Forms {
 				return GenerateRTF(document.selection_start.line, document.selection_start.pos, document.selection_end.line, document.selection_end.pos).ToString();
 			}
 
-			set {
+			set {				
 				MemoryStream	data;
 				int		x;
 				int		y;
@@ -1354,6 +1355,15 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+			case RTF.Major.ParAttr: {
+				switch (rtf.Minor) {
+				case Minor.LeftIndent:
+					rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * CreateGraphics ().DpiX + 0.5F);
+					break;
+				}
+				break;
+			}
+				
 				case RTF.Major.SpecialChar: {
 					//Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
 					SpecialChar(rtf);
@@ -1494,10 +1504,15 @@ namespace System.Windows.Forms {
 
 			if (rtf_cursor_x == 0) {
 				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color);
+				if (rtf_par_line_left_indent != 0) {
+					Line line = document.GetLine (rtf_cursor_y);
+					line.indent = rtf_par_line_left_indent;
+				}
 			} else {
 				Line	line;
 
 				line = document.GetLine(rtf_cursor_y);
+				line.indent = rtf_par_line_left_indent;
 				if (rtf_line.Length > 0) {
 					document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
 					document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color, null, FormatSpecified.Font | FormatSpecified.Color); // FormatText is 1-based
