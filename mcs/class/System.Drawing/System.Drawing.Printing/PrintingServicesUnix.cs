@@ -54,10 +54,10 @@ namespace System.Drawing.Printing
 		#region Constructor
 
 		internal PrintingServicesUnix () {
-			installed_printers = new Hashtable ();
 		}
 		
 		static PrintingServicesUnix () {
+			installed_printers = new Hashtable ();
 			CheckCupsInstalled ();
 		}
 		
@@ -240,7 +240,7 @@ namespace System.Drawing.Printing
 			
 			ClosePrinter(ppd_handle);
 			
-			installed_printers.Add (printer, settings);
+			((SysPrn.Printer)installed_printers[printer]).Settings = settings;
 		}
 		
 		/// <summary>
