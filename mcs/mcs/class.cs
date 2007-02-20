@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 					try {
 						mc.Define ();
 					} catch (Exception e) {
-						throw new InternalErrorException (mc.Location, mc.GetSignatureForError (), e);
+						throw new InternalErrorException (mc, e);
 					}
 				}
 			}
@@ -2271,7 +2271,12 @@ namespace Mono.CSharp {
 				bool has_compliant_args = false;
 
 				foreach (Constructor c in instance_constructors) {
-					c.Emit ();
+					try {
+						c.Emit ();
+					}
+					catch (Exception e) {
+						throw new InternalErrorException (c, e);
+					}
 
 					if (has_compliant_args)
 						continue;
@@ -2281,8 +2286,14 @@ namespace Mono.CSharp {
 				if (!has_compliant_args)
 					Report.Error (3015, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
 			} else {
-				foreach (Constructor c in instance_constructors)
-					c.Emit ();
+				foreach (Constructor c in instance_constructors) {
+					try {
+						c.Emit ();
+					}
+					catch (Exception e) {
+						throw new InternalErrorException (c, e);
+					}
+				}
 			}
 		}
 

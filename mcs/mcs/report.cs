@@ -653,8 +653,8 @@ namespace Mono.CSharp {
 	}
 
 	public class InternalErrorException : Exception {
-		public InternalErrorException (Location loc, string text, Exception e)
-			: base (loc + " " + text, e)
+		public InternalErrorException (MemberCore mc, Exception e)
+			: base (mc.Location + " " + mc.GetSignatureForError (), e)
 		{
 		}
 
