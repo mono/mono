@@ -1496,6 +1496,20 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#3", "urn:foo", reader.LookupNamespace ("x"));
 		}
 
+		[Test]
+		public void ReadClosedReader ()
+		{
+			string xml = "<fin>aaa</fin>";
+			RunTest (xml, new TestMethod (ReadClosedReader));
+		}
+
+		void ReadClosedReader (XmlReader reader)
+		{
+			reader.Read ();
+			reader.Close();
+			reader.Read (); // silently returns false
+		}
+
 #if NET_2_0
 		[Test]
 		public void CreateSimple ()

@@ -414,8 +414,12 @@ namespace Mono.Xml
 
 		private bool ReadContent ()
 		{
-			if (reader.EOF)
+			switch (reader.ReadState) {
+			case ReadState.Closed:
+			case ReadState.Error:
+			case ReadState.EndOfFile:
 				return false;
+			}
 			if (popScope) {
 				nsmgr.PopScope ();
 				popScope = false;

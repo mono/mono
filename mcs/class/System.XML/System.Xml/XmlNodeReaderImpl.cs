@@ -687,8 +687,12 @@ namespace System.Xml
 		{
 			// FIXME: at some stage inlining might work effectively.
 			// if (EOF)
-			if (state == ReadState.EndOfFile || state == ReadState.Error)
+			switch (state) {
+			case ReadState.EndOfFile:
+			case ReadState.Error:
+			case ReadState.Closed:
 				return false;
+			}
 
 #if NET_2_0
 			if (Binary != null)

@@ -559,6 +559,8 @@ namespace System.Xml
 
 		public override bool Read ()
 		{
+			if (readState == ReadState.Closed)
+				return false;
 			curNodePeekIndex = peekCharsIndex;
 			preserveCurrentTag = true;
 			nestLevel = 0;
