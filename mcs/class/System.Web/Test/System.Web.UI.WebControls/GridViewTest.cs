@@ -404,8 +404,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+#else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+#endif
 		}
 
 		[Test]
@@ -2468,7 +2473,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackUpdateEvents ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");
@@ -2489,15 +2493,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
 			fr.Controls.Add ("Grid$ctl02$ctl02");
 			fr.Controls.Add ("Grid$ctl02$ctl03");
 			fr.Controls.Add ("Grid$ctl02$ctl04");
-
+#else
+			fr.Controls.Add ("Grid$ctl02$ctl03");
+			fr.Controls.Add ("Grid$ctl02$ctl04");
+			fr.Controls.Add ("Grid$ctl02$ctl05");
+#endif
 			fr.Controls["__EVENTTARGET"].Value = "Grid$ctl02$ctl00";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
+#if DOT_NET
 			fr.Controls["Grid$ctl02$ctl02"].Value = "1001";
 			fr.Controls["Grid$ctl02$ctl03"].Value = "Mahesh";
 			fr.Controls["Grid$ctl02$ctl04"].Value = "Chand";
+#else
+			fr.Controls ["Grid$ctl02$ctl03"].Value = "1001";
+			fr.Controls ["Grid$ctl02$ctl04"].Value = "Mahesh";
+			fr.Controls ["Grid$ctl02$ctl05"].Value = "Chand";
+#endif
 
 			t.Request = fr;
 			t.UserData = new Hashtable ();
