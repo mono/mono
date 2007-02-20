@@ -112,42 +112,60 @@ namespace Microsoft.Build.BuildEngine {
 		// FIXME: log errors instead of throwing exceptions
 		internal bool Build ()
 		{
-			bool result = true;
-		
+			bool deps;
+			bool result;
+
+			// log that target is being skipped
+			if (!ConditionParser.ParseAndEvaluate (Condition, Project))
+				return true;
+
 			try {
 				buildState = BuildState.Started;
+				deps = BuildDependencies (GetDependencies ());
 
-				if (DependsOnTargets != String.Empty) {
-					Expression dependencies = new Expression ();
-					dependencies.Parse (DependsOnTargets, true);
-					
-					string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (Project, typeof (string[]));
-					foreach (string target in targetsToBuildFirst) {
-						string trimmed = target.Trim ();
-						Target t = (Target) project.Targets [trimmed];
-						if (t == null)
-							throw new InvalidProjectFileException (String.Format ("Target {0} not found.", trimmed));
-						if (t.BuildState == BuildState.NotStarted) {
-							if (!t.Build ()) {
-								result = false;
-								break;
-							}
+				result = deps ? DoBuild () : false;
 
-						}
-						if (t.BuildState == BuildState.Started)
-							throw new InvalidProjectFileException ("Cycle in target dependencies detected.");
-					}
-				}
-			
-				if (result)
-					result = DoBuild ();
-			} catch (Exception) {
-				return false;
-			} finally {
 				buildState = BuildState.Finished;
+			// FIXME: log it 
+			} catch (Exception e) {
+				return false;
 			}
-			
+
 			return result;
+		}
+
+		List <Target> GetDependencies ()
+		{
+			List <Target> list = new List <Target> ();
+			Target t;
+			string [] targetNames;
+			Expression deps;
+
+			if (DependsOnTargets != String.Empty) {
+				deps = new Expression ();
+				deps.Parse (DependsOnTargets, true);
+				targetNames = (string []) deps.ConvertTo (Project, typeof (string []));
+				foreach (string name in targetNames) {
+					t = project.Targets [name.Trim ()];
+					if (t == null)
+						throw new InvalidProjectFileException (String.Format ("Target '{0}' not found.", name.Trim ()));
+					list.Add (t);
+				}
+			}
+			return list;
+		}
+
+		bool BuildDependencies (List <Target> deps)
+		{
+			foreach (Target t in deps) {
+				if (t.BuildState == BuildState.NotStarted)
+					if (!t.Build ())
+						return false;
+				if (t.BuildState == BuildState.Started)
+					throw new InvalidProjectFileException ("Cycle in target dependencies detected");
+			}
+
+			return true;
 		}
 		
 		bool DoBuild ()
