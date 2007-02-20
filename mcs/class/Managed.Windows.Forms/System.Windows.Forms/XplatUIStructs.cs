@@ -235,9 +235,9 @@ namespace System.Windows.Forms {
 		WM_UNINITMENUPOPUP        = 0x0125,
 		WM_MENUCOMMAND            = 0x0126,
 		
-		WM_CHANGEUISTATE          = 0x0127;
-		WM_UPDATEUISTATE          = 0x0128;
-		WM_QUERYUISTATE           = 0x0129;
+		WM_CHANGEUISTATE          = 0x0127,
+		WM_UPDATEUISTATE          = 0x0128,
+		WM_QUERYUISTATE           = 0x0129,
 
 		//              public const uint WM_LBTRACKPOINT     = 0x0131;
 		WM_CTLCOLORMSGBOX         = 0x0132,
