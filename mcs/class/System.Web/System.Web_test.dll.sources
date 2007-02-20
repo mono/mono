@@ -194,7 +194,6 @@ System.Web.UI.WebControls/GridViewTest.cs
 System.Web.UI.WebControls/GridViewRowCollectionTest.cs
 System.Web.UI.WebControls/GridViewRowTest.cs
 System.Web.UI.WebControls/HyperLinkColumnTest.cs
-System.Web.UI.WebControls/ImageFieldTest.cs
 System.Web.UI.WebControls/HotSpotCollectionTest.cs
 System.Web.UI.WebControls/HotSpotTest.cs
 System.Web.UI.WebControls/HyperLinkFieldTest.cs
