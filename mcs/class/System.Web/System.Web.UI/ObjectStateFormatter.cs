@@ -854,9 +854,17 @@ namespace System.Web.UI {
 		}
 		
 		class SingleRankArrayFormatter : ObjectFormatter {
+
+			readonly BinaryFormatter _binaryFormatter = new BinaryFormatter ();
+
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Array val = (Array) o;
+				if (val.GetType ().GetElementType ().IsPrimitive) {
+					w.Write (SecondaryId);
+					_binaryFormatter.Serialize (w.BaseStream, o);
+					return;
+				}
 				
 				w.Write (PrimaryId);
 				WriteObject (w, val.GetType ().GetElementType (), ctx);
@@ -868,6 +876,9 @@ namespace System.Web.UI {
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
+				if (token == SecondaryId) {
+					return _binaryFormatter.Deserialize (r.BaseStream);
+				}
 				Type t = (Type) ReadObject (r, ctx);
 				int len = Read7BitEncodedInt (r);
 				Array val = Array.CreateInstance (t, len);
@@ -880,6 +891,10 @@ namespace System.Web.UI {
 			
 			protected override Type Type {
 				get { return typeof (Array); }
+			}
+
+			protected override int NumberOfIds {
+				get { return 2; }
 			}
 		}
 		
