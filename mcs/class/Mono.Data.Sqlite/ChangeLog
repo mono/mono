@@ -1,3 +1,12 @@
+2007-02-21  Marek Habersack  <grendello@gmail.com>
+
+	* Copied from Mono.Data.SqliteClient
+	* Renamed the namespace to Mono.Data.Sqlite
+	* Changed all occurrences of Mono.Data.SqliteClient
+	to Mono.Data.Sqlite
+	* Updated all the relevant files to account for the new namespace
+	name
+
 2007-01-16  Marek Habersack  <grendello@gmail.com>
 
 	* Mono.Data.SqliteClient.dll.sources: Added
@@ -21,7 +30,7 @@
 
 2006-01-02  Joshua Tauberer  <tauberer@for.net>
 
-	* Added Mono.Data.SqliteClient/SqliteExceptions.cs to
+	* Added Mono.Data.Sqlite/SqliteExceptions.cs to
 	  the sources files.
 
 2005-10-06  Chris Lahey  <clahey@localhost.localdomain>
@@ -34,46 +43,46 @@
 	* Makefile:
 	- Test suite started.
 	- Create sqlite3 db testdb from script Test/test.sql.
-	* Mono.Data.SqliteClient_test.dll.sources: Added. Test files.
+	* Mono.Data.Sqlite_test.dll.sources: Added. Test files.
 
 2004-11-17  Geoff Norton  <gnorton@customerdna.com>
 
-	* Mono.Data.SqliteClient/Sqlite.cs:
-	  Mono.Data.SqliteClient/SqliteCommand.cs:
+	* Mono.Data.Sqlite/Sqlite.cs:
+	  Mono.Data.Sqlite/SqliteCommand.cs:
   	  Remove sqlite3Free as this doesn't exist and isn't used by sqlite3.
 
 2004-11-14  Geoff Norton  <gnorton@customerdna.com>
 
-	* Mono.Data.SqliteClient/SqliteConnection.cs:  Default to v2 not v3 if version
+	* Mono.Data.Sqlite/SqliteConnection.cs:  Default to v2 not v3 if version
 	isn't specified in the connection string.  Fixes a bug in F-Spot reported by Miguel
 
 2004-11-11  Geoff Norton  <gnorton@customerdna.com>
 
-	* Mono.Data.SqliteClient/Sqlite.cs
-	  Mono.Data.SqliteClient/SqliteConnection.cs
-	  Mono.Data.SqliteClient/SqliteCommand.cs
-	  Mono.Data.SqliteClient/SqliteDataReader.cs:
+	* Mono.Data.Sqlite/Sqlite.cs
+	  Mono.Data.Sqlite/SqliteConnection.cs
+	  Mono.Data.Sqlite/SqliteCommand.cs
+	  Mono.Data.Sqlite/SqliteDataReader.cs:
 	  Initial sqlite v3 support.  Move sqlite v2 to using sqlite_step
-	  instead of sqlite_exec, this makes Mono.Data.SqliteClient work on 
+	  instead of sqlite_exec, this makes Mono.Data.Sqlite work on 
 	  windows.
 
 2004-05-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Mono.Data.SqliteClient.dll.sources: added SqliteTransaction.cs
 
-	* Mono.Data.SqliteClient/SqliteConnection.cs:
-	* Mono.Data.SqliteClient/SqliteTransaction.cs: patch from
+	* Mono.Data.Sqlite/SqliteConnection.cs:
+	* Mono.Data.Sqlite/SqliteTransaction.cs: patch from
 	grompf@sublimeintervention.com that adds transactions support.
 
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Mono.Data.SqliteClient/SqliteCommand.cs: implement LastInsertRowId.
-	* Mono.Data.SqliteClient/SqliteDataReader.cs: remove dangling ^Ms.
+	* Mono.Data.Sqlite/SqliteCommand.cs: implement LastInsertRowId.
+	* Mono.Data.Sqlite/SqliteDataReader.cs: remove dangling ^Ms.
 	Patch by Philipp <pixelpapst@users.sourceforge.net>.
 
 2003-10-17  Ettore Perazzoli  <ettore@ximian.com>
 
-	* Mono.Data.SqliteClient/SqliteConnection.cs
+	* Mono.Data.Sqlite/SqliteConnection.cs
 	(SqliteConnection.LastInsertRowId): New property to bind the
 	sqlite_last_insert_rowid() call.
 
@@ -89,13 +98,13 @@
 
 2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
 
-	* Mono.Data.SqliteClient/SqliteDataReader.cs: redid the
+	* Mono.Data.Sqlite/SqliteDataReader.cs: redid the
 	implementation for GetSchemaTable() and
 	implemented IEnumerator IEnumerable.GetEnumerator ()
 
 2002-10-16  Miguel de Icaza  <miguel@ximian.com>
 
-	* Mono.Data.SqliteClient/SqliteCommand.cs: Reworked to return the
+	* Mono.Data.Sqlite/SqliteCommand.cs: Reworked to return the
 	error from SqlLite.
 
 2002-10-12  Vladimir Vukicevic  <vladimir@pobox.com>
@@ -105,17 +114,17 @@
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test: added new directory to hold
-	tests for Mono.Data.SqliteClient
+	tests for Mono.Data.Sqlite
 	
 	* Test/SqliteTest.cs: added file
 	to test Mono.Data.SqliteClient.  
 
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
-	* Mono.Data.SqliteClient: add file
+	* Mono.Data.Sqlite: add file
 	to build on Windows
 	
-	* Mono.Data.SqliteClient/SqliteCommand.cs: modified
+	* Mono.Data.Sqlite/SqliteCommand.cs: modified
 	added unsafe { } around call to sqlite_exec() which calls
 	an unsafe method SqliteCallbackFunction
 

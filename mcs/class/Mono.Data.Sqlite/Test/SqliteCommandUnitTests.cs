@@ -1,4 +1,4 @@
-// SqliteDataAdapterUnitTests.cs - NUnit Test Cases for Mono.Data.SqliteClient.SqliteDataAdapter
+// SqliteDataAdapterUnitTests.cs - NUnit Test Cases for Mono.Data.Sqlite.SqliteDataAdapter
 //
 // Author(s):	Thomas Zoechling <thomas.zoechling@gmx.at>
 
@@ -7,10 +7,10 @@ using System;
 using System.Data;
 using System.IO;
 using System.Text;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Data.SqliteClient
+namespace MonoTests.Mono.Data.Sqlite
 {
 	
 	[TestFixture]

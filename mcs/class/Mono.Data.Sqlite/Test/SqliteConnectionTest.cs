@@ -30,11 +30,11 @@
 
 using System;
 using System.Data;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Data.SqliteClient
+namespace MonoTests.Mono.Data.Sqlite
 {
         [TestFixture]
         public class SqliteConnectionTest

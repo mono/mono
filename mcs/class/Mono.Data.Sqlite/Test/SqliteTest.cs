@@ -1,5 +1,5 @@
 //
-// SqliteTest.cs - Test for the Sqlite ADO.NET Provider in Mono.Data.SqliteClient
+// SqliteTest.cs - Test for the Sqlite ADO.NET Provider in Mono.Data.Sqlite
 //                 This provider works on Linux and Windows and uses the native
 //                 sqlite.dll or sqlite.so library.
 //
@@ -11,7 +11,7 @@
 // There are binaries for Windows and Linux.
 //
 // To compile:
-//  mcs SqliteTest.cs -r System.Data.dll -r Mono.Data.SqliteClient.dll
+//  mcs SqliteTest.cs -r System.Data.dll -r Mono.Data.Sqlite.dll
 //
 // Author:
 //     Daniel Morgan <danmorg@sc.rr.com>
@@ -19,9 +19,9 @@
 
 using System;
 using System.Data;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 
-namespace Test.Mono.Data.SqliteClient
+namespace Test.Mono.Data.Sqlite
 {
 	class SqliteTest
 	{

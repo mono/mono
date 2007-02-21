@@ -1,4 +1,4 @@
-thisdir = class/Mono.Data.SqliteClient
+thisdir = class/Mono.Data.Sqlite
 SUBDIRS =
 include ../../build/rules.make
 
@@ -10,7 +10,7 @@ RESX_RESOURCES = resources/SR.resources
 RESOURCES = $(RESX_RESOURCES)
 endif
 
-LIBRARY = Mono.Data.SqliteClient.dll
+LIBRARY = Mono.Data.Sqlite.dll
 LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll $(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RESOURCES:%=-resource:%) -d:MONO_BACKWARD_COMPAT
 
