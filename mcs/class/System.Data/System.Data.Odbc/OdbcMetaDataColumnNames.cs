@@ -1,14 +1,17 @@
 //
-// System.Data.Odbc.OdbcInfoMessageEventArgs
+// System.Data.Odbc.OdbcMetaDataColumnNames
 //
-// Author:
-//   Umadevi S (sumadevi@novell.com)
+// Author: Nidhi Rawal (rawalnidhi_rawal@yahoo.com)
+//  
+//  
+//  
 //
-// Copyright (C) Novell Inc, 2004
+// Copyright (C) Brian Ritchie, 2007
+// Copyright (C) Daniel Morgan, 2007
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,43 +33,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcInfoMessageEventArgs : EventArgs
+	public static class OdbcMetaDataColumnNames
 	{
-		#region Constructors
+		#region Fields
 
-		internal OdbcInfoMessageEventArgs() {
-		}
+		public static readonly string BooleanFalseLiteral;
+		public static readonly string BooleanTrueLiteral;
+		public static readonly string SQLType;
 
-		#endregion Constructors
-
-		#region Properties
-
-
-		public OdbcErrorCollection Errors {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		public string Message {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		#endregion // Properties
+		#endregion
 
 		#region Methods
-
-		
-		public override string ToString ()
+        
+		public static bool ReferenceEquals(Object o1, Object o2)
 		{
-			return GetType ().FullName;
+			return o1 == o2;
 		}
 
-		#endregion // Methods
+		#endregion
 	}
 }

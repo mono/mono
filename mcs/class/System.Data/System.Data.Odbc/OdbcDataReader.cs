@@ -318,14 +318,13 @@ namespace System.Data.Odbc
                         return returnVal;
 		}
 		
-		[MonoTODO]
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
 		char GetChar (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (char) GetValue (ordinal);
 		}
 
 		[MonoTODO]
@@ -709,6 +708,11 @@ namespace System.Data.Odbc
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb1.ToString ();
+					break;
+				case OdbcType.Char:
+					char charData = ' ';
+					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref charData, 0, ref outsize);
+					DataValue = charData;
 					break;
 				case OdbcType.Real:
 					float float_data = 0;

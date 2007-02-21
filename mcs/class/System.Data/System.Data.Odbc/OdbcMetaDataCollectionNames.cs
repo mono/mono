@@ -1,14 +1,14 @@
 //
-// System.Data.Odbc.OdbcInfoMessageEventArgs
+// System.Data.Odbc.OdbcMetaDataCollectionNames
 //
 // Author:
-//   Umadevi S (sumadevi@novell.com)
+//   Amit Biswas (amit@amitbiswas.com)
 //
-// Copyright (C) Novell Inc, 2004
+// Copyright (C) Novell Inc, 2007
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,43 +30,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Text;
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcInfoMessageEventArgs : EventArgs
+	/// <summary>
+	/// Provides a list of constants which can be used with the GetSchema method to retrieve metadata collections.
+	/// </summary>
+	/// 
+
+#if NET_2_0
+	public static class OdbcMetaDataCollectionNames
 	{
-		#region Constructors
+	#region Fields
 
-		internal OdbcInfoMessageEventArgs() {
-		}
+		#endregion // Fields
 
-		#endregion Constructors
-
-		#region Properties
-
-
-		public OdbcErrorCollection Errors {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		public string Message {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		#endregion // Properties
 
 		#region Methods
 
-		
-		public override string ToString ()
+		public virtual bool Equals (Object obj)
 		{
-			return GetType ().FullName;
+			return (this == obj);
+		}
+
+		public static bool Equals (Object o1, Object o2)
+		{
+			if (o1 == o2 || (o1 != null && o1.Equals (o2) == true))
+				return true;
+			else
+				return false;
 		}
 
 		#endregion // Methods
 	}
+#endif // NET_2_0
+
 }

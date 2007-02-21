@@ -92,10 +92,10 @@ namespace System.Data.Odbc
                 }
                 
                 
-//                 public override DbConnectionStringBuilder CreateConnectionStringBuilder()
-//                 {
-//                         throw new NotImplementedException ();
-//                 }
+                 public override DbConnectionStringBuilder CreateConnectionStringBuilder()
+                 {
+                         return new OdbcConnectionStringBuilder () as DbConnectionStringBuilder;
+                 }
                 
                 public override DbDataAdapter CreateDataAdapter()
                 {

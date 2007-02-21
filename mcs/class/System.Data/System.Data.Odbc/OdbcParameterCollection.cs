@@ -286,6 +286,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void Insert (int index, object value)
                 {
+			if (index > list.Count || index < 0)
+				throw new ArgumentOutOfRangeException("index", "The index must be non-negative and less than or equal to size of the collection");
                         list.Insert (index, value);
                 }
                                                                                                     
@@ -319,6 +321,7 @@ namespace System.Data.Odbc
                 }
 
 
+
 #if NET_2_0
 		[MonoTODO]
 		protected override DbParameter GetParameter (string name)
@@ -344,13 +347,89 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+
 		public override void AddRange (Array values)
 		{
-			throw new NotImplementedException ();
+			if (values == null)
+				throw new ArgumentNullException ("Value cannot be null");
+			foreach (OdbcParameter p in values) {
+				if (p == null)
+					throw new ArgumentNullException ("The OdbcParameterCollection only accepts non-null OdbcParameter type objects");
+				for (int j = 0; j < list.Count; j++) {
+					if (p.Equals (list [j]))
+						throw new ArgumentException ("The OdbcParameter is already contained by another OdbcParameterCollection");
+				}
+				Insert (list.Count, p);
+			}
+		}
+
+		public void AddRange (OdbcParameter [] values)
+		{
+			if (values == null)
+				throw new ArgumentNullException ("Value cannot be null");
+			for (int i = 0; i < values.Length; i++) {
+				if (values [i] == null)
+					throw new ArgumentNullException ("The OdbcParameterCollection only accepts non-null OdbcParameter type objects");
+				for (int j = 0; j < list.Count; j++) {
+					if (values [i].Equals (list [j]))
+						throw new ArgumentException ("The OdbcParameter is already contained by another OdbcParameterCollection");
+				}
+				Insert (list.Count, values [i]);
+			}
+		}
+
+		public void Insert (int index, OdbcParameter value)
+		{
+			if (index > list.Count || index < 0)
+				throw new ArgumentOutOfRangeException ("index", "The index must be non-negative and less than or equal to size of the collection");
+			list.Insert (index, value);
+		}
+
+		public OdbcParameter AddWithValue (string parameterName, Object value)
+		{
+			if (parameterName == null || value == null)
+				throw new ArgumentNullException ("Argument cannot be null");
+			return Add (new OdbcParameter (parameterName, value));
+		}
+
+		public void Remove (OdbcParameter value)
+		{
+			if (value == null)
+				throw new ArgumentNullException("Value cannot be null");
+			value.Container = null;
+			list.Remove (value);
+		}
+
+		public bool Contains (OdbcParameter value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("Value cannot be null");
+			return Contains (value.ParameterName);
+		}
+
+		public int IndexOf (OdbcParameter value)
+		{
+			if (value == null)
+				throw new ArgumentNullException("Value cannot be null");
+			return list.IndexOf ((object) value);
+		}
+
+		public void CopyTo (OdbcParameter [] array, int index)
+		{
+			if (array == null)
+				throw new NullReferenceException ("Object reference not set to an instance of an object");
+			if (array.Rank != 1)
+				throw new ArgumentException ("Only single dimensional arrays are supported for the requested action");
+			if (index < array.GetLowerBound (0))
+				throw new ArgumentOutOfRangeException ("index", "The specified number is less than the array's lower bound in the first dimension");
+			if (index > array.GetUpperBound (0) || index + list.Count > array.Length)
+				throw new ArgumentException ("The destination array was not long enough, check destination array index, length and lower bounds");
+			foreach (OdbcParameter p in list) {
+				array [index++] = p;
+			}
 		}
 #endif
 		#endregion // Methods
 
-	}
+			}
 }

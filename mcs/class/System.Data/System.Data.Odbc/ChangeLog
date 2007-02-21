@@ -1,3 +1,32 @@
+2007-02-02  Amit Biswas <amit@amitbiswas.com>
+
+	* OdbcInfoMessageEventArgs.cs (ToString): Implemented new method.
+
+	* OdbcParameterCollection.cs (AddRange, Insert, AddWithValue)
+	(Remove, Contains, CopyTo): Implemented missing .NET 2.0 methods.
+
+	* OdbcMetaDataCollectionNames.cs: Added new class for .NET 2.0
+	profile.
+
+	* OdbcMetaDataCollectionNames.cs (Equals): Implemented overloads
+	methods.
+
+2007-02-02  Nidhi Rawal  <rawalnidhi_rawal@yahoo.com>
+
+	* libodbc.cs: Imported a dll file for char datatype.
+	
+	* OdbcDataReader.cs (GetChar): Implemented the method and wrote
+	a switch case for char data type in GetValue method..
+	(GetDecimal): Implemented the method.
+	
+	* OdbcConnectionStringBuilder.cs: Written the new class.
+
+	* OdbcMetaDataColumnNames.cs: Written the new class.
+
+	* OdbcFactory.cs (CreateConnectionStringBuilder): Implemented the method.
+
+	* OdbcParameterCollection.cs (IndexOf): Implemented the method.
+
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* OdbcDataReader.cs (GetDecimal): Implemented new API.
