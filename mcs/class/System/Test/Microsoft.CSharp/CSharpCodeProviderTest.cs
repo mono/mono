@@ -25,8 +25,9 @@ namespace MonoTests.Microsoft.CSharp
 		private string _tempDir;
 		private CodeDomProvider _codeProvider;
 
-		private static readonly string _sourceTest1 = "public class Test1 {}";
-		private static readonly string _sourceTest2 = "public class Test2 {}";
+		private static readonly string _sourceLibrary1 = "public class Test1 {}";
+		private static readonly string _sourceLibrary2 = "public class Test2 {}";
+		private static readonly string _sourceExecutable = "public class Program { static void Main () { } }";
 
 		[SetUp]
 		public void SetUp ()
@@ -95,7 +96,7 @@ namespace MonoTests.Microsoft.CSharp
 			string sourceFile = Path.Combine (_tempDir, "file." + _codeProvider.FileExtension);
 			using (FileStream f = new FileStream (sourceFile, FileMode.Create)) {
 				using (StreamWriter s = new StreamWriter (f)) {
-					s.Write (_sourceTest1);
+					s.Write (_sourceLibrary1);
 					s.Close ();
 				}
 				f.Close ();
@@ -144,13 +145,13 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		public void CompileFromFileBatch_InMemory ()
+		public void CompileFromFileBatch_Executable_InMemory ()
 		{
 			// create source file
 			string sourceFile1 = Path.Combine (_tempDir, "file1." + _codeProvider.FileExtension);
 			using (FileStream f = new FileStream (sourceFile1, FileMode.Create)) {
 				using (StreamWriter s = new StreamWriter (f)) {
-					s.Write (_sourceTest1);
+					s.Write (_sourceLibrary1);
 					s.Close ();
 				}
 				f.Close ();
@@ -159,7 +160,99 @@ namespace MonoTests.Microsoft.CSharp
 			string sourceFile2 = Path.Combine (_tempDir, "file2." + _codeProvider.FileExtension);
 			using (FileStream f = new FileStream (sourceFile2, FileMode.Create)) {
 				using (StreamWriter s = new StreamWriter (f)) {
-					s.Write (_sourceTest2);
+					s.Write (_sourceExecutable);
+					s.Close ();
+				}
+				f.Close ();
+			}
+
+			CompilerParameters options = new CompilerParameters ();
+			options.GenerateExecutable = true;
+			options.GenerateInMemory = true;
+			options.OutputAssembly = string.Empty;
+			options.TempFiles = new TempFileCollection (_tempDir);
+#if NET_2_0
+			options.EmbeddedResources.Add (sourceFile1);
+			options.LinkedResources.Add (sourceFile2);
+#endif
+
+			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
+			CompilerResults results = compiler.CompileAssemblyFromFileBatch (options,
+				new string [] { sourceFile1, sourceFile2 });
+
+			// verify compilation was successful
+			AssertCompileResults (results, true);
+
+			Assembly compiledAssembly = results.CompiledAssembly;
+
+			Assert.IsNotNull (compiledAssembly, "#A1");
+			Assert.AreEqual (string.Empty, compiledAssembly.Location, "#A2");
+			Assert.IsNull (results.PathToAssembly, "#A3");
+			Assert.IsNotNull (options.OutputAssembly, "#A4");
+			Assert.AreEqual (".exe", Path.GetExtension (options.OutputAssembly), "#A5");
+			Assert.AreEqual (_tempDir, Path.GetDirectoryName (options.OutputAssembly), "#A6");
+			Assert.IsFalse (File.Exists (options.OutputAssembly), "#A7");
+
+			Assert.IsNotNull (compiledAssembly.GetType ("Test1"), "#B1");
+			Assert.IsNotNull (compiledAssembly.GetType ("Program"), "#B2");
+
+			// verify we don't cleanup files in temp directory too agressively
+			string [] tempFiles = Directory.GetFiles (_tempDir);
+			Assert.AreEqual (2, tempFiles.Length, "#C1");
+			Assert.IsTrue (File.Exists (sourceFile1), "#C2");
+			Assert.IsTrue (File.Exists (sourceFile2), "#C3");
+
+#if NET_2_0
+			string[] resources = compiledAssembly.GetManifestResourceNames();
+			Assert.IsNotNull (resources, "#D1");
+			Assert.AreEqual (2, resources.Length, "#D2");
+
+			Assert.AreEqual ("file1.cs", resources[0], "#E1");
+			Assert.IsNull (compiledAssembly.GetFile ("file1.cs"), "#E2");
+			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file1.cs"), "#E3");
+			ManifestResourceInfo info = compiledAssembly.GetManifestResourceInfo ("file1.cs");
+			Assert.IsNotNull (info, "#E4");
+			Assert.IsNull (info.FileName, "#E5");
+			Assert.IsNull (info.ReferencedAssembly, "#E6");
+			Assert.AreEqual ((ResourceLocation.Embedded | ResourceLocation.ContainedInManifestFile), info.ResourceLocation, "#E7");
+
+			Assert.AreEqual ("file2.cs", resources[1], "#F1");
+			try {
+				compiledAssembly.GetFile ("file2.cs");
+				Assert.Fail ("#F2");
+			} catch (FileNotFoundException) {
+			}
+			try {
+				compiledAssembly.GetManifestResourceStream  ("file2.cs");
+				Assert.Fail ("#F3");
+			} catch (FileNotFoundException) {
+			}
+			info = compiledAssembly.GetManifestResourceInfo ("file2.cs");
+			Assert.IsNotNull (info, "#F4");
+			Assert.IsNotNull (info.FileName, "#F5");
+			Assert.AreEqual ("file2.cs", info.FileName, "#F6");
+			Assert.IsNull (info.ReferencedAssembly, "#F7");
+			Assert.AreEqual ((ResourceLocation) 0, info.ResourceLocation, "#F8");
+#endif
+		}
+
+		[Test]
+		public void CompileFromFileBatch_Library_InMemory ()
+		{
+			// create source file
+			string sourceFile1 = Path.Combine (_tempDir, "file1." + _codeProvider.FileExtension);
+			using (FileStream f = new FileStream (sourceFile1, FileMode.Create)) {
+				using (StreamWriter s = new StreamWriter (f)) {
+					s.Write (_sourceLibrary1);
+					s.Close ();
+				}
+				f.Close ();
+			}
+
+			string sourceFile2 = Path.Combine (_tempDir, "file2." + _codeProvider.FileExtension);
+			using (FileStream f = new FileStream (sourceFile2, FileMode.Create)) {
+				using (StreamWriter s = new StreamWriter (f)) {
+					s.Write (_sourceLibrary2);
 					s.Close ();
 				}
 				f.Close ();
@@ -176,57 +269,61 @@ namespace MonoTests.Microsoft.CSharp
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromFileBatch (options,
-				new string[] { sourceFile1, sourceFile2 });
+				new string [] { sourceFile1, sourceFile2 });
 
 			// verify compilation was successful
 			AssertCompileResults (results, true);
 
 			Assembly compiledAssembly = results.CompiledAssembly;
 
-			Assert.IsNotNull (compiledAssembly, "#1");
-			Assert.AreEqual (string.Empty, compiledAssembly.Location, "#2");
-			Assert.IsNull (results.PathToAssembly, "#3");
+			Assert.IsNotNull (compiledAssembly, "#A1");
+			Assert.AreEqual (string.Empty, compiledAssembly.Location, "#A2");
+			Assert.IsNull (results.PathToAssembly, "#A3");
+			Assert.IsNotNull (options.OutputAssembly, "#A4");
+			Assert.AreEqual (".dll", Path.GetExtension (options.OutputAssembly), "#A5");
+			Assert.AreEqual (_tempDir, Path.GetDirectoryName (options.OutputAssembly), "#A6");
+			Assert.IsFalse (File.Exists (options.OutputAssembly), "#A7");
 
-			Assert.IsNotNull (compiledAssembly.GetType ("Test1"), "#4");
-			Assert.IsNotNull (compiledAssembly.GetType ("Test2"), "#5");
+			Assert.IsNotNull (compiledAssembly.GetType ("Test1"), "#B1");
+			Assert.IsNotNull (compiledAssembly.GetType ("Test2"), "#B2");
 
 			// verify we don't cleanup files in temp directory too agressively
-			string[] tempFiles = Directory.GetFiles (_tempDir);
-			Assert.AreEqual (2, tempFiles.Length, "#6");
-			Assert.IsTrue (File.Exists (sourceFile1), "#7");
-			Assert.IsTrue (File.Exists (sourceFile2), "#8");
+			string [] tempFiles = Directory.GetFiles (_tempDir);
+			Assert.AreEqual (2, tempFiles.Length, "#C1");
+			Assert.IsTrue (File.Exists (sourceFile1), "#C2");
+			Assert.IsTrue (File.Exists (sourceFile2), "#C3");
 
 #if NET_2_0
 			string[] resources = compiledAssembly.GetManifestResourceNames();
-			Assert.IsNotNull (resources, "#9");
-			Assert.AreEqual (2, resources.Length, "#10");
+			Assert.IsNotNull (resources, "#D1");
+			Assert.AreEqual (2, resources.Length, "#D2");
 
-			Assert.AreEqual ("file1.cs", resources[0], "#A1");
-			Assert.IsNull (compiledAssembly.GetFile ("file1.cs"), "#A2");
-			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file1.cs"), "#A3");
+			Assert.AreEqual ("file1.cs", resources[0], "#E1");
+			Assert.IsNull (compiledAssembly.GetFile ("file1.cs"), "#E2");
+			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file1.cs"), "#E3");
 			ManifestResourceInfo info = compiledAssembly.GetManifestResourceInfo ("file1.cs");
-			Assert.IsNotNull (info, "#A4");
-			Assert.IsNull (info.FileName, "#A5");
-			Assert.IsNull (info.ReferencedAssembly, "#A6");
-			Assert.AreEqual ((ResourceLocation.Embedded | ResourceLocation.ContainedInManifestFile), info.ResourceLocation, "#A7");
+			Assert.IsNotNull (info, "#E4");
+			Assert.IsNull (info.FileName, "#E5");
+			Assert.IsNull (info.ReferencedAssembly, "#E6");
+			Assert.AreEqual ((ResourceLocation.Embedded | ResourceLocation.ContainedInManifestFile), info.ResourceLocation, "#E7");
 
-			Assert.AreEqual ("file2.cs", resources[1], "#B1");
+			Assert.AreEqual ("file2.cs", resources[1], "#F1");
 			try {
 				compiledAssembly.GetFile ("file2.cs");
-				Assert.Fail ("#B2");
+				Assert.Fail ("#F2");
 			} catch (FileNotFoundException) {
 			}
 			try {
 				compiledAssembly.GetManifestResourceStream  ("file2.cs");
-				Assert.Fail ("#B3");
+				Assert.Fail ("#F3");
 			} catch (FileNotFoundException) {
 			}
 			info = compiledAssembly.GetManifestResourceInfo ("file2.cs");
-			Assert.IsNotNull (info, "#B4");
-			Assert.IsNotNull (info.FileName, "#B5");
-			Assert.AreEqual ("file2.cs", info.FileName, "#B6");
-			Assert.IsNull (info.ReferencedAssembly, "#B7");
-			Assert.AreEqual ((ResourceLocation) 0, info.ResourceLocation, "#B8");
+			Assert.IsNotNull (info, "#F4");
+			Assert.IsNotNull (info.FileName, "#F5");
+			Assert.AreEqual ("file2.cs", info.FileName, "#F6");
+			Assert.IsNull (info.ReferencedAssembly, "#F7");
+			Assert.AreEqual ((ResourceLocation) 0, info.ResourceLocation, "#F8");
 #endif
 		}
 
@@ -247,7 +344,7 @@ namespace MonoTests.Microsoft.CSharp
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromSource (options,
-				_sourceTest1);
+				_sourceLibrary1);
 
 			// verify compilation was successful
 			AssertCompileResults (results, true);
@@ -272,28 +369,35 @@ namespace MonoTests.Microsoft.CSharp
 				fs.Close ();
 			}
 
+			string outputAssembly = Path.Combine (_tempDir, "sourcebatch.dll");
+
 			CompilerParameters options = new CompilerParameters ();
 			options.GenerateExecutable = false;
 			options.GenerateInMemory = true;
+			options.OutputAssembly = outputAssembly;
 			options.TempFiles = new TempFileCollection (_tempDir);
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromSourceBatch (options,
-				new string[] { _sourceTest1, _sourceTest2 });
+				new string [] { _sourceLibrary1, _sourceLibrary2 });
 
 			// verify compilation was successful
 			AssertCompileResults (results, true);
 
-			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
-			Assert.IsNull (results.PathToAssembly, "#2");
+			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#A1");
+			Assert.IsNull (results.PathToAssembly, "#A2");
+			Assert.IsNotNull (options.OutputAssembly, "#A3");
+			Assert.AreEqual (outputAssembly, options.OutputAssembly, "#A4");
+			Assert.IsTrue (File.Exists (outputAssembly), "#A5");
 
-			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test1"), "#3");
-			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test2"), "#4");
+			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test1"), "#B1");
+			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test2"), "#B2");
 
 			// verify we don't cleanup files in temp directory too agressively
 			string[] tempFiles = Directory.GetFiles (_tempDir);
-			Assert.AreEqual (1, tempFiles.Length, "#5");
-			Assert.AreEqual (tempFile, tempFiles[0], "#6");
+			Assert.AreEqual (2, tempFiles.Length, "#C1");
+			Assert.AreEqual (tempFile, tempFiles[0], "#C2");
+			Assert.AreEqual (outputAssembly, tempFiles [1], "#C3");
 		}
 
 		[Test]

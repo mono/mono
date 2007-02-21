@@ -257,8 +257,11 @@ namespace Mono.CSharp
 			if (options.WarningLevel >= 0)
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
-			if (options.OutputAssembly==null)
-				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll", !options.GenerateInMemory);
+			if (options.OutputAssembly == null || options.OutputAssembly.Length == 0) {
+				string extension = (options.GenerateExecutable ? "exe" : "dll");
+				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, extension,
+					!options.GenerateInMemory);
+			}
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 
 			foreach (string import in options.ReferencedAssemblies) {

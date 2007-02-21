@@ -1,3 +1,9 @@
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeProviderTest.cs: Added test for generating executable.
+	Modified existing test to use zero-length OutputAssembly, and verify
+	expected OutputAssembly after generating assembly.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeGeneratorFromTypeTest.cs :

@@ -1,3 +1,9 @@
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeCompiler.cs: Also generate temp filename for OutputAssembly
+	if its a zero-length string. Fixed bug #80920. Set extension to exe or
+	dll depending on whether we're generating an executable or not.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs : for GenericTypeParameter, GetTypeOutput()
