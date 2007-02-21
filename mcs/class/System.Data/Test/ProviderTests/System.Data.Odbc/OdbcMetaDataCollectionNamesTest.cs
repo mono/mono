@@ -68,6 +68,5 @@ namespace MonoTests.System.Data
             TestObj2 = null;
             Assert.AreEqual(true, OdbcMetaDataCollectionNames.Equals(TestObj1, TestObj2), "#5 null to null");
         }
-
     }
 }
