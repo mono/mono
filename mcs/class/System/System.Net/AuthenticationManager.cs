@@ -31,6 +31,9 @@
 
 using System.Collections;
 using System.Configuration;
+#if NET_2_0
+using System.Net.Configuration;
+#endif
 
 namespace System.Net
 {
@@ -50,7 +53,22 @@ namespace System.Net
 					return;
 				
 				modules = new ArrayList ();
+#if NET_2_0 && CONFIGURATION_DEP
+				object cfg = ConfigurationManager.GetSection ("system.net/authenticationModules");
+				AuthenticationModulesSection s = cfg as AuthenticationModulesSection;
+				if (s != null) {
+					foreach (AuthenticationModuleElement element in s.AuthenticationModules) {
+						IAuthenticationModule module = null;
+						try {
+							Type type = Type.GetType (element.Type, true);
+							module = (IAuthenticationModule) Activator.CreateInstance (type);
+						} catch {}
+						modules.Add (module);
+					}
+				}
+#else
 				ConfigurationSettings.GetConfig ("system.net/authenticationModules");
+#endif
 			}
 		}
 		

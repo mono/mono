@@ -1,3 +1,8 @@
+2007-02-18  Geoff Norton  <gnorton@customerdna.com>
+
+	* AuthenticationManager.cs: Register the modules in the 2.0 profile
+	when we create the ArrayList.
+
 2007-02-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebProxy.cs: In IsBypassed, move address check back to satify unit
