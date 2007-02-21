@@ -36,6 +36,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Web.Profile;
 using System.Web.Configuration;
+using System.Configuration.Provider;
 using System.Collections.Specialized;
 using System.Text;
 using System.IO;
@@ -47,7 +48,8 @@ namespace Mainsoft.Web.Profile
 	public class DerbyProfileProvider : ProfileProvider
 	{
 		ConnectionStringSettings _connectionString;
-		string _applicationName = "";
+		string _connectionStringName = string.Empty;
+		string _applicationName = string.Empty;
 
 		public DerbyProfileProvider ()
 		{
@@ -61,6 +63,9 @@ namespace Mainsoft.Web.Profile
 
 		DbConnection CreateConnection ()
 		{
+			if (_connectionString == null)
+				throw new ProviderException (String.Format ("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", _connectionStringName));
+			
 			DerbyDBSchema.CheckSchema (_connectionString.ConnectionString);
 
 			OleDbConnection connection = new OleDbConnection (_connectionString.ConnectionString);
@@ -307,10 +312,17 @@ namespace Mainsoft.Web.Profile
 			_applicationName = GetStringConfigValue (config, "applicationName", "/");
 
 			ProfileSection profileSection = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
-			string connectionStringName = config ["connectionStringName"];
-			_connectionString = WebConfigurationManager.ConnectionStrings [connectionStringName];
+			_connectionStringName = config ["connectionStringName"];
+			
+			if (_applicationName.Length > 256)
+				throw new ProviderException ("The ApplicationName attribute must be 256 characters long or less.");
+			if (_connectionStringName == null || _connectionStringName.Length == 0)
+				throw new ProviderException ("The ConnectionStringName attribute must be present and non-zero length.");
 
-			DerbyDBSchema.RegisterUnloadHandler (_connectionString.ConnectionString);
+			_connectionString = WebConfigurationManager.ConnectionStrings [_connectionStringName];
+
+			if (_connectionString != null)
+				DerbyDBSchema.RegisterUnloadHandler (_connectionString.ConnectionString);
 		}
 
 		private ProfileInfoCollection BuildProfileInfoCollection (DbDataReader reader, int pageIndex, int pageSize, out int totalRecords)

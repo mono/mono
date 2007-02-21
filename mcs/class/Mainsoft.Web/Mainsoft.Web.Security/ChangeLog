@@ -1,3 +1,8 @@
+2007-02-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyMembershipProvider.cs: fixed Initialize, throw exception if no
+	connection string present
+
 2007-01-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DerbyDBSchema.cs: added traces to unload handler
