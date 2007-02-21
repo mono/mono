@@ -233,9 +233,14 @@ namespace Mainsoft.Web.Security
         //the userIsOnline ignored
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            if (username == null || username.Trim().Length == 0 || username.Length > 256)
-                throw new ArgumentException("The user could not be null or an empty string", username);
-
+            if (username.Length > 256)
+                throw new ArgumentException("The username is too long", username);
+            if (username == null || username == String.Empty)
+            {
+                com.ibm.portal.um.User user = 
+                    PumaServicesProviderFactory.CreateProvider().PumaProfile.getCurrentUser();
+                return new WPSMembershipUser(user);
+            }
             java.util.List principles = 
                 PumaServicesProviderFactory.CreateProvider().PumaLocator.findUsersByAttribute("uid", username);
             MembershipUser result = null;
