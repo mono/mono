@@ -110,21 +110,52 @@ namespace System.Drawing.Printing
 		/// Open the printer's PPD file
 		/// </summary>
 		/// <param name="printer">Printer name, returned from cupsGetDests</param>
-		private IntPtr OpenPrinter(string printer)
+		private IntPtr OpenPrinter (string printer)
 		{
-			IntPtr ptr = cupsGetPPD (printer);
-			string ppd_filename = Marshal.PtrToStringAnsi (ptr);
-			IntPtr ppd_handle = ppdOpenFile (ppd_filename);
-			return ppd_handle;
+			try {
+				IntPtr ptr = cupsGetPPD (printer);
+				string ppd_filename = Marshal.PtrToStringAnsi (ptr);
+				IntPtr ppd_handle = ppdOpenFile (ppd_filename);
+				return ppd_handle;
+			}
+			catch {
+			}
+			return IntPtr.Zero;
 		}
 
 		/// <summary>
 		/// Close the printer file
 		/// </summary>
 		/// <param name="handle">PPD handle</param>
-		private void ClosePrinter(IntPtr handle)
+		private void ClosePrinter (ref IntPtr handle)
 		{
-			ppdClose (handle);
+			try {
+				if (handle != IntPtr.Zero)
+					ppdClose (handle);
+			}
+			finally {
+				handle = IntPtr.Zero;
+			}
+		}
+
+		private static int OpenDests (ref IntPtr ptr) {
+			try {
+				return cupsGetDests (ref ptr);
+			}
+			catch {
+				ptr = IntPtr.Zero;
+			}
+			return 0;
+		}
+
+		private static void CloseDests (ref IntPtr ptr, int count) {
+			try {
+				if (ptr != IntPtr.Zero)
+					cupsFreeDests (count, ptr);
+			}
+			finally {
+				ptr = IntPtr.Zero;
+			}
 		}
 
 		/// <summary>
@@ -160,7 +191,7 @@ namespace System.Drawing.Printing
 				return;
 
 			if (installed_printers.Count == 0)
-				LoadPrinters();
+				LoadPrinters ();
 
 			if (((SysPrn.Printer)installed_printers[printer]).Settings != null) {
 				SysPrn.Printer p = (SysPrn.Printer) installed_printers[printer];
@@ -176,7 +207,7 @@ namespace System.Drawing.Printing
 				return;
 			}
 
-			settings.PrinterCapabilities.Clear();
+			settings.PrinterCapabilities.Clear ();
 
 			IntPtr dests = IntPtr.Zero, ptr = IntPtr.Zero, ptr_printer, ppd_handle = IntPtr.Zero;
 			string name = String.Empty;
@@ -186,14 +217,17 @@ namespace System.Drawing.Printing
 			NameValueCollection options, paper_names, paper_sources;
 
 			try {
-				ret = cupsGetDests(ref dests);
-				cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
+				ret = OpenDests (ref dests);
+				if (ret == 0)
+					return;
+
+				cups_dests_size = Marshal.SizeOf (typeof(CUPS_DESTS));
 				ptr = dests;
 				for (int i = 0; i < ret; i++) {
 					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr);
 					if (Marshal.PtrToStringAnsi (ptr_printer).Equals(printer)) {
 						name = printer;
-						Marshal.FreeHGlobal(ptr_printer);
+						Marshal.FreeHGlobal (ptr_printer);
 						break;
 					}
 					Marshal.FreeHGlobal(ptr_printer);
@@ -233,13 +267,12 @@ namespace System.Drawing.Printing
 				settings.supports_color = (ppd.color_device == 0) ? false : true;
 				settings.can_duplex = options["Duplex"] != null;
 			
-				ClosePrinter(ppd_handle);
+				ClosePrinter (ref ppd_handle);
 			
 				((SysPrn.Printer)installed_printers[printer]).Settings = settings;
 			}
 			finally {
-				if (dests != IntPtr.Zero)
-					cupsFreeDests(ret, dests);
+				CloseDests (ref dests, ret);
 			}
 		}
 		
@@ -276,8 +309,8 @@ namespace System.Drawing.Printing
 				options = (IntPtr) ((long)options + cups_size);
 			}
 			
-			LoadOptionList(ppd, "PageSize", paper_names);
-			LoadOptionList(ppd, "InputSlot", paper_sources);
+			LoadOptionList (ppd, "PageSize", paper_names);
+			LoadOptionList (ppd, "InputSlot", paper_sources);
 		}
 		
 		/// <summary>
@@ -439,54 +472,55 @@ namespace System.Drawing.Printing
 			
 			IntPtr dests = IntPtr.Zero, ptr_printers;
 			CUPS_DESTS printer;
-		  	int n_printers;
+		  	int n_printers = 0;
 			int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
 			string name, first, type, status, comment;
 			first = type = status = comment = String.Empty;
 			int state = 0;
 			
-			n_printers = cupsGetDests (ref dests);
+			try {
+				n_printers = OpenDests (ref dests);
 
-			ptr_printers = dests;
-			for (int i = 0; i < n_printers; i++) {
-				printer = (CUPS_DESTS) Marshal.PtrToStructure (ptr_printers, typeof (CUPS_DESTS));
-				name = Marshal.PtrToStringAnsi (printer.name);
+				ptr_printers = dests;
+				for (int i = 0; i < n_printers; i++) {
+					printer = (CUPS_DESTS) Marshal.PtrToStructure (ptr_printers, typeof (CUPS_DESTS));
+					name = Marshal.PtrToStringAnsi (printer.name);
 
-				if (printer.is_default == 1)
-					default_printer = name;
+					if (printer.is_default == 1)
+						default_printer = name;
 				
-				if (first.Equals (String.Empty))
-					first = name;
+					if (first.Equals (String.Empty))
+						first = name;
 			
-				NameValueCollection options = LoadPrinterOptions(printer.options, printer.num_options);
+					NameValueCollection options = LoadPrinterOptions(printer.options, printer.num_options);
 				
-				if (options["printer-state"] != null)
-					state = Int32.Parse(options["printer-state"]);
+					if (options["printer-state"] != null)
+						state = Int32.Parse(options["printer-state"]);
 				
-				if (options["printer-comment"] != null)
-					comment = options["printer-state"];
+					if (options["printer-comment"] != null)
+						comment = options["printer-state"];
 
-				switch(state)
-				{
-					case 4:
-						status = "Printing";
-					break;
-					case 5:
-						status = "Stopped";
-					break;
-					default:
-						status =  "Ready";
-					break;
+					switch(state) {
+						case 4:
+							status = "Printing";
+							break;
+						case 5:
+							status = "Stopped";
+							break;
+						default:
+							status =  "Ready";
+							break;
+					}
+				
+					installed_printers.Add (name, new SysPrn.Printer (String.Empty, type, status, comment));
+
+					ptr_printers = (IntPtr) ((long)ptr_printers + cups_dests_size);
 				}
-				
-				installed_printers.Add (name, new SysPrn.Printer (String.Empty, type, status, comment));
-
-				ptr_printers = (IntPtr) ((long)ptr_printers + cups_dests_size);
-			}
 			
-			if (dests != IntPtr.Zero)
-				cupsFreeDests(n_printers, dests);
-					
+			}
+			finally {
+				CloseDests (ref dests, n_printers);
+			}
 			
 			if (default_printer.Equals (String.Empty))
 				default_printer = first;
@@ -511,9 +545,9 @@ namespace System.Drawing.Printing
 				return;
 
 			try {
-				count = cupsGetDests (ref dests);
+				count = OpenDests (ref dests);
 
-				if (dests == IntPtr.Zero)
+				if (count == 0)
 					return;
 
 				ptr_printers = dests;
@@ -553,8 +587,7 @@ namespace System.Drawing.Printing
 				}
 			}
 			finally {
-				if (dests != IntPtr.Zero)
-					cupsFreeDests(count, dests);
+				CloseDests (ref dests, count);
 			}
 		}
 
