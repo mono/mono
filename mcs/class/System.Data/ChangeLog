@@ -3,11 +3,6 @@
 	* System.Data_test.dll.sources: Added
 	System.Data.OleDb/OleDbParameterCollectionTest.cs
 
-	* System.Data.dll.sources: Added
-	System.Data.Odbc/OdbcConnectionStringBuilder.cs,
-	System.Data.Odbc/OdbcMetaDataCollectionNames.cs,
-	System.Data.Odbc/OdbcMetaDataColumnNames.cs
-
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* System.Data_test.dll.sources: Added
