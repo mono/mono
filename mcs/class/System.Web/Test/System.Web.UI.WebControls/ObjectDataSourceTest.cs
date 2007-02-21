@@ -347,7 +347,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			catch (Exception ex) {
 				Assert.AreEqual (true,
 					ex.Message.Contains ("type 'System.DBNull' cannot be converted to type 'System.String'") || // dotnet
-					ex.Message.Equals ("parameters"), "ConvertNullToDBNull"); // mono
+					ex.Message.Contains ("parameters"), "ConvertNullToDBNull"); // mono
 				dbnull = true;
 			}
 			Assert.AreEqual (true, dbnull, "ConvertNullToDBNull2");
