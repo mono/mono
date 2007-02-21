@@ -238,9 +238,6 @@ namespace System.Drawing.Printing
 				((SysPrn.Printer)installed_printers[printer]).Settings = settings;
 			}
 			finally {
-				if (ppd_handle != IntPtr.Zero)
-					ppdClose(ppd_handle);
-
 				if (dests != IntPtr.Zero)
 					cupsFreeDests(ret, dests);
 			}
