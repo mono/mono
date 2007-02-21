@@ -1,3 +1,7 @@
+2007-02-20  Frederik Carlier <frederik.carlier@carlier-online.be>
+
+	* OleDbParameterCollection.cs: Added AddWithValue method.
+
 2007-01-08  Nagappan A  <anagappan@novell.com>
 
 	* OleDbCommand.cs: Fixed compilation warning.

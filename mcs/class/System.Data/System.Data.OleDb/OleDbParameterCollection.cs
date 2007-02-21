@@ -155,10 +155,20 @@ namespace System.Data.OleDb
                         return parameter;
 		}
 
+#if NET_2_0
+		[Obsolete("OleDbParameterCollection.Add(string, value) is now obsolete. Use OleDbParameterCollection.AddWithValue(string, object) instead.")]
+#endif
 		public OleDbParameter Add (string name, object value)
 		{
 			return Add (new OleDbParameter (name, value));	
 		}
+
+#if NET_2_0
+                public OleDbParameter AddWithValue (string parameterName, object value)
+                {
+                        return Add (parameterName, value);
+		}
+#endif // NET_2_0
 
 		public OleDbParameter Add (string name, OleDbType type)
 	        {
