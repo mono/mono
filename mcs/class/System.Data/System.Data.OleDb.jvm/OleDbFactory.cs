@@ -50,7 +50,7 @@ namespace System.Data.OleDb
 
 		public override bool CanCreateDataSourceEnumerator
 		{
-			get { false; }
+			get { return false; }
 		}
 
 		#region public overrides
