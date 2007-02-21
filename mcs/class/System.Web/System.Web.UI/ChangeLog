@@ -1,3 +1,8 @@
+2007-02-21 Konstantin Triger <kostat@mainsoft.com>
+
+	* TemplateParser.cs: remove CodeGenerator.IsValidLanguageIndependentIdentifier
+		check from Global.asax inherits attribute to let inherits="A.B" construct.
+
 2007-02-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ObjectStateFormatter.cs:

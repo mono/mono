@@ -540,11 +540,6 @@ namespace System.Web.UI {
 				if (!File.Exists (realPath))
 					ThrowParseException ("File " + src + " not found");
 
-				// Verify that the inherits is a valid identify not a
-				// fully-qualified name.
-				if (!CodeGenerator.IsValidLanguageIndependentIdentifier (inherits))
-					ThrowParseException (String.Format ("'{0}' is not valid for 'inherits'", inherits));
-
 				// We are going to create a partial class that shares
 				// the same name as the inherits tag, so reset the
 				// name. The base type is changed because it is the
