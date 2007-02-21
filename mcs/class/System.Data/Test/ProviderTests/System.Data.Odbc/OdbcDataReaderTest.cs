@@ -92,5 +92,168 @@ namespace MonoTests.System.Data
 				conn.Close ();
 			}
 		}
+
+		[Test]
+		public void GetDataTypeNameTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				Assert.AreEqual ("integer", reader.GetDataTypeName (0), "#1 Column id");
+				Assert.AreEqual ("varchar", reader.GetDataTypeName (2), "#2 Column lname");
+				Assert.AreEqual ("datetime", reader.GetDataTypeName (4), "#3 Column doj");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void GetDataTypeNameIndexOutOfRangeExceptionTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				string tmp = reader.GetDataTypeName (6);
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetOrdinalTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				Assert.AreEqual (0, reader.GetOrdinal ("id"), "#1 First column = id");
+				Assert.AreEqual (1, reader.GetOrdinal ("fname"), "#2 Second column = fname");
+				Assert.AreEqual (2, reader.GetOrdinal ("lname"), "#3 Third column = lname");
+				Assert.AreEqual (3, reader.GetOrdinal ("dob"), "#4 Fourth column = dob");
+				Assert.AreEqual (4, reader.GetOrdinal ("doj"), "#5 Fifth column = doj");
+				Assert.AreEqual (5, reader.GetOrdinal ("email"), "#6 Sixth column = email");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void GetOrdinalIndexOutOfRangeExceptionTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				int ord = reader.GetOrdinal ("non_existing_column");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+
+		[Test]
+		public void GetFieldTypeTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				Assert.AreEqual ("System.Int32", reader.GetFieldType (0).ToString (), "#1 Integer");
+				Assert.AreEqual ("System.String", reader.GetFieldType (2).ToString (), "#2 Varchar");
+				Assert.AreEqual ("System.DateTime", reader.GetFieldType (4).ToString (), "#3 DateTime");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void GetFieldTypeIndexOutOfRangeExceptionTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				String tmp = reader.GetFieldType (6).ToString ();
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetNameTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				Assert.AreEqual ("id", reader.GetName (0), "#1 First column = id");
+				Assert.AreEqual ("fname", reader.GetName (1), "#2 Second column = fname");
+				Assert.AreEqual ("lname", reader.GetName (2), "#3 Third column = lname");
+				Assert.AreEqual ("dob", reader.GetName (3), "#4 Fourth column = dob");
+				Assert.AreEqual ("doj", reader.GetName (4), "#5 Fifth column = doj");
+				Assert.AreEqual ("email", reader.GetName (5), "#6 Sixth column = email");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void GetNameIndexOutOfRangeExceptionTest ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = OdbcCmd.ExecuteReader ();
+				String tmp = reader.reader.GetName (6);
+			} finally {
+				if (reader != null)
+					reader.Close ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 	}
 }
