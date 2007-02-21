@@ -37,8 +37,8 @@ namespace MonoTests.System.Drawing {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class ColorConverterFixture
-	{
+	public class ColorConverterTest {
+
 		Color col;
 		Color colnamed;
 		ColorConverter colconv;

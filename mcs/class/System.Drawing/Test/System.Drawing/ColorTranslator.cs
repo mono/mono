@@ -32,7 +32,7 @@ namespace MonoTests.System.Drawing {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class ColorTranslatorFixture {
+	public class ColorTranslatorTest {
 
 		[Test]
 		public void FromHtml_Null ()
