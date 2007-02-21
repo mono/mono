@@ -32,8 +32,7 @@ namespace MonoTests.Microsoft.VisualBasic
 	}
 
 	[TestFixture]
-	// mbas no longer exists
-	[Category ("NotWorking")]
+	[Category ("NotWorking")] // we cannot rely on vbnc being available
 	public class VBCodeProviderTest
 	{
 		private string _tempDir;
@@ -115,10 +114,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CreateCompiler ()
 		{
 			// Prepare the compilation
@@ -193,10 +189,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromFile_InMemory ()
 		{
 			// create vb source file
@@ -247,10 +240,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromFileBatch_InMemory ()
 		{
 			// create vb source file
@@ -338,10 +328,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromSource_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -374,10 +361,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromSourceBatch_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -412,10 +396,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromDom_NotInMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -445,10 +426,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromDomBatch_NotInMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -478,10 +456,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromDom_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -512,10 +487,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if NET_2_0
-		// there's not yet an mbas for the 2.0 profile
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorking")] // we cannot rely on vbnc being available
 		public void CompileFromDomBatch_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing

@@ -1,3 +1,8 @@
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VBCodeProviderTest.cs: Mark tests that rely on vbnc as NotWorking,
+	and remove comment about mbas.
+
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* VBCodeProviderTest.cs: Mark this as NotWorking since mbas is no more.
