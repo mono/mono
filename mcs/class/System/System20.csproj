@@ -14,7 +14,6 @@
     <MergeExternal>..\lib\apache_http_client.jar</MergeExternal>
     <Version>2.0</Version>
     <RootNamespace>System</RootNamespace>
-    <jarserver>iap2</jarserver>
     <StartupObject>
     </StartupObject>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
@@ -338,6 +337,7 @@
     <Compile Include="System.ComponentModel\Container.cs" />
     <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
     <Compile Include="System.ComponentModel\DataObjectAttribute.cs" />
+    <Compile Include="System.ComponentModel\DataObjectFieldAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectMethodType.cs" />
     <Compile Include="System.ComponentModel\DateTimeConverter.cs" />
