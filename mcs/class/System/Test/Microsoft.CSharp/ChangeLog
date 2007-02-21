@@ -1,5 +1,11 @@
 2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CSharpCodeProviderTest.cs: No longer use Assert class in separate
+	AppDomain since it will only work if nunit.framework assembly is in
+	the GAC.
+
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CSharpCodeProviderTest.cs: Added test for generating executable.
 	Modified existing test to use zero-length OutputAssembly, and verify
 	expected OutputAssembly after generating assembly.

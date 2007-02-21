@@ -1,5 +1,12 @@
 2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* VBCodeProviderTest.cs: Modified tests to also cover fix for bug
+	#80920. No longer use Assert class in separate AppDomain since it
+	will only work if nunit.framework assembly is in the GAC.
+	* CodeGeneratorFromTypeTest.cs: Fixed tests to pass on MS.
+
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* VBCodeProviderTest.cs: Mark tests that rely on vbnc as NotWorking,
 	and remove comment about mbas.
 

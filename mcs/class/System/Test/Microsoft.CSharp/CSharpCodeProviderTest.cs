@@ -556,7 +556,7 @@ namespace MonoTests.Microsoft.CSharp
 					continue;
 				}
 
-				Assert.Fail (compilerError.ToString ());
+				throw new Exception (compilerError.ToString ());
 			}
 		}
 
@@ -576,6 +576,8 @@ namespace MonoTests.Microsoft.CSharp
 				CultureInfo.InvariantCulture, new object[0], domain.Evidence);
 		}
 
+		// do not use the Assert class as this will introduce failures if the
+		// nunit.framework assembly is not in the GAC
 		private class CrossDomainTester : MarshalByRefObject
 		{
 			public string CompileAssemblyFromDom (string tempDir)
@@ -592,9 +594,10 @@ namespace MonoTests.Microsoft.CSharp
 				// verify compilation was successful
 				AssertCompileResults (results, true);
 
-				Assert.IsTrue (results.CompiledAssembly.Location.Length != 0,
-					"Location should not be empty string");
-				Assert.IsNotNull (results.PathToAssembly, "PathToAssembly should not be null");
+				if (results.CompiledAssembly.Location.Length == 0)
+					throw new Exception ("Location should not be empty string");
+				if (results.PathToAssembly == null)
+					throw new Exception ("PathToAssembly should not be null");
 
 				return results.PathToAssembly;
 			}
@@ -613,9 +616,10 @@ namespace MonoTests.Microsoft.CSharp
 				// verify compilation was successful
 				AssertCompileResults (results, true);
 
-				Assert.IsTrue (results.CompiledAssembly.Location.Length != 0,
-					"Location should not be empty string");
-				Assert.IsNotNull (results.PathToAssembly, "PathToAssembly should not be null");
+				if (results.CompiledAssembly.Location.Length == 0)
+					throw new Exception ("Location should not be empty string");
+				if (results.PathToAssembly == null)
+					throw new Exception ("PathToAssembly should not be null");
 
 				return results.PathToAssembly;
 			}
