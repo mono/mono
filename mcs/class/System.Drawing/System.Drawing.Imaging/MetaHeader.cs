@@ -34,58 +34,73 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
+	[StructLayout (LayoutKind.Sequential, Pack=2)]
+	internal struct WmfMetaHeader {
+		// field order match: http://wvware.sourceforge.net/caolan/ora-wmf.html
+		// for WMFHEAD structure
+		public short file_type;
+		public short header_size;
+		public short version;
+		public int file_size;
+		public short num_of_objects;
+		public int max_record_size;
+		public short num_of_params;
+	}
+
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed class MetaHeader {
 
-		// field order match: http://wvware.sourceforge.net/caolan/ora-wmf.html
-		// for WMFHEAD structure
-		private short file_type;
-		private short header_size;
-		private short version;
-		private int file_size;
-		private short num_of_objects;
-		private int max_record_size;
-		private short num_of_params;
-
+		private WmfMetaHeader wmf;
 
 		public MetaHeader ()
 		{
 		}
 
+		internal MetaHeader (WmfMetaHeader header)
+		{
+			wmf.file_type = header.file_type;
+			wmf.header_size = header.header_size;
+			wmf.version = header.version;
+			wmf.file_size = header.file_size;
+			wmf.num_of_objects = header.num_of_objects;
+			wmf.max_record_size = header.max_record_size;
+			wmf.num_of_params = header.num_of_params;
+		}
+
 
 		public short HeaderSize {
-			get { return header_size; }
-			set { header_size = value; }
+			get { return wmf.header_size; }
+			set { wmf.header_size = value; }
 		}
 		
 		public int MaxRecord {
-			get { return max_record_size; }
-			set { max_record_size = value; }
+			get { return wmf.max_record_size; }
+			set { wmf.max_record_size = value; }
 		}
 		
 		public short NoObjects {
-			get { return num_of_objects; }
-			set { num_of_objects = value; }
+			get { return wmf.num_of_objects; }
+			set { wmf.num_of_objects = value; }
 		}
 		
 		public short NoParameters {
-			get { return num_of_params; }
-			set { num_of_params = value; }
+			get { return wmf.num_of_params; }
+			set { wmf.num_of_params = value; }
 		}
 		
 		public int Size {
-			get { return file_size; }
-			set { file_size = value; }
+			get { return wmf.file_size; }
+			set { wmf.file_size = value; }
 		}
 
 		public short Type {
-			get { return file_type; }
-			set { file_type = value; }
+			get { return wmf.file_type; }
+			set { wmf.file_type = value; }
 		}
 
 		public short Version {
-			get { return version; }
-			set { version = value; }
+			get { return wmf.version; }
+			set { wmf.version = value; }
 		}
 	}
 }

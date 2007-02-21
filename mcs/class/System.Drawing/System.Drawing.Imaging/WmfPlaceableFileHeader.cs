@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
-	[StructLayout (LayoutKind.Sequential)]
+	[StructLayout (LayoutKind.Sequential, Pack=2)]
 	public sealed class WmfPlaceableFileHeader {
 
 		// field order match: http://wvware.sourceforge.net/caolan/ora-wmf.html

@@ -1,3 +1,10 @@
+2007-02-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Metafile.cs: Implement a few cases required to playback metafiles.
+	* MetafileHeader.cs: Implemented.
+	* MetaHeader.cs: Implemented.
+	* WmfPlaceableFileHeader.cs: Adjust packing.
+
 2007-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttribute.cs: Reuse code in SetColorMatrix overloads.

@@ -1,12 +1,13 @@
 //
 // System.Drawing.Imaging.Metafile.cs
 //
-// Author: Christian Meyer
-// eMail: Christian.Meyer@cs.tum.edu
-// Dennis Hayes (dennish@raytek.com)
+// Authors:
+//	Christian Meyer, eMail: Christian.Meyer@cs.tum.edu
+//	Dennis Hayes (dennish@raytek.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,19 +46,46 @@ namespace System.Drawing.Imaging {
 
 		// constructors
 
+		internal Metafile (IntPtr ptr)
+		{
+			nativeObject = ptr;
+		}
+
 		public Metafile (Stream stream) 
 		{
-			throw new NotImplementedException ();
+			if (stream == null)
+				throw new ArgumentException ("stream");
+
+			Status status;
+			if (GDIPlus.RunningOnUnix ()) {
+				// With libgdiplus we use a custom API for this, because there's no easy way
+				// to get the Stream down to libgdiplus. So, we wrap the stream with a set of delegates.
+				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+				status = GDIPlus.GdipCreateMetafileFromDelegate_linux (sh.GetHeaderDelegate, sh.GetBytesDelegate, 
+					sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, out nativeObject);
+			} else {
+				status = GDIPlus.GdipCreateMetafileFromStream (new ComIStreamWrapper (stream), out nativeObject);
+			}
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (string filename) 
 		{
-			throw new NotImplementedException ();
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+			if (filename.Length == 0)
+				throw new ArgumentException ("filename");
+
+			Status status = GDIPlus.GdipCreateMetafileFromFile (filename, out nativeObject);
+			if (status == Status.GenericError)
+				throw new ExternalException ("Couldn't load specified file.");
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr henhmetafile, bool deleteEmf) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipCreateMetafileFromEmf (henhmetafile, deleteEmf, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (IntPtr referenceHtc, EmfType emfType) 
@@ -77,7 +105,8 @@ namespace System.Drawing.Imaging {
 
 		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipCreateMetafileFromEmf (hmetafile, false, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHtc) 
@@ -107,7 +136,8 @@ namespace System.Drawing.Imaging {
 
 		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf) 
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipCreateMetafileFromEmf (hmetafile, deleteWmf, out nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, EmfType type) 
@@ -248,37 +278,101 @@ namespace System.Drawing.Imaging {
 
 		public IntPtr GetHenhmetafile ()
 		{
-			throw new NotImplementedException ();
+			return nativeObject;
 		}
 
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
 		public MetafileHeader GetMetafileHeader ()
 		{
-			return GetMetafileHeader (GetHenhmetafile () );
+			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
+			try {
+				Status status = GDIPlus.GdipGetMetafileHeaderFromMetafile (nativeObject, header);
+				GDIPlus.CheckStatus (status);
+				return new MetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
 		}
 
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile)
 		{
-			throw new NotImplementedException ();
+			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
+			try {
+				Status status = GDIPlus.GdipGetMetafileHeaderFromEmf (henhmetafile, header);
+				GDIPlus.CheckStatus (status);
+				return new MetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
 		}
 
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (Stream stream)
 		{
-			throw new NotImplementedException ();
+			if (stream == null)
+				throw new NullReferenceException ("stream");
+
+			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
+			try {
+				Status status;
+
+				if (GDIPlus.RunningOnUnix ()) {
+					// With libgdiplus we use a custom API for this, because there's no easy way
+					// to get the Stream down to libgdiplus. So, we wrap the stream with a set of delegates.
+					GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+					status = GDIPlus.GdipGetMetafileHeaderFromDelegate_linux (sh.GetHeaderDelegate, 
+						sh.GetBytesDelegate, sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, 
+						sh.SizeDelegate, header);
+				} else {
+					status = GDIPlus.GdipGetMetafileHeaderFromStream (new ComIStreamWrapper (stream), header);
+				}
+				GDIPlus.CheckStatus (status);
+				return new MetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
 		}
 
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (string fileName)
 		{
-			throw new NotImplementedException ();
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+
+			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
+			try {
+				Status status = GDIPlus.GdipGetMetafileHeaderFromFile (fileName, header);
+				GDIPlus.CheckStatus (status);
+				return new MetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
 		}
 
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile, WmfPlaceableFileHeader wmfHeader)
 		{
-			throw new NotImplementedException ();
+			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
+			try {
+				Status status = GDIPlus.GdipGetMetafileHeaderFromEmf (henhmetafile, header);
+				GDIPlus.CheckStatus (status);
+				return new MetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
 		}
 
-		public void PlayRecord (EmfPlusRecordType recordType, int flags, int dataSize, byte[] datawmfHeader)
+		[MonoLimitation ("Metafiles aren't supported by libgdiplus.")]
+		public void PlayRecord (EmfPlusRecordType recordType, int flags, int dataSize, byte[] data)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipPlayMetafileRecord (nativeObject, recordType, flags, dataSize, data);
+			GDIPlus.CheckStatus (status);
 		}
 	}
 }
