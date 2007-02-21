@@ -786,6 +786,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (cmbbox.Text, "#R1");
 			Assert.AreEqual ("Something", cmbbox.Text, "#R2");
 			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#R3");
+
+			cmbbox.Text = null;
+			Assert.IsNotNull (cmbbox.Text, "#S1");
+			Assert.AreEqual (string.Empty, cmbbox.Text, "#S2");
+			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#S3");
 		}
 	}
 

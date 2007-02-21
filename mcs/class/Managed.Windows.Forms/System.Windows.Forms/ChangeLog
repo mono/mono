@@ -1,3 +1,13 @@
+2007-02-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBox.cs: Removed unnecessary initializations. Marked items field
+	private. Clear textbox when Text is set to null and SelectedIndex is
+	already -1.
+	* FileDialog.cs: Removed unnecessary initializations. Removed 
+	workarounds for ComboBox bugs that are now fixed. Modified
+	DefaultExt, InitialDirectory and Title property to change null to
+	zero-length string in getters. Avoid directly accessing fields.
+
 2007-02-20  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Remove RecalAlignments call, that was some

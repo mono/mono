@@ -52,18 +52,18 @@ namespace System.Windows.Forms {
 		}
 		
 		private bool addExtension = true;
-		private bool checkFileExists = false;
+		private bool checkFileExists;
 		private bool checkPathExists = true;
-		private string defaultExt = String.Empty;
+		private string defaultExt;
 		private bool dereferenceLinks = true;
 		private string[] fileNames;
 		private string filter = "";
 		private int filterIndex = 1;
 		private int setFilterIndex = 1;
-		private string initialDirectory = String.Empty;
-		private bool restoreDirectory = false;
-		private bool showHelp = false;
-		private string title = String.Empty;
+		private string initialDirectory;
+		private bool restoreDirectory;
+		private bool showHelp;
+		private string title;
 		private bool validateNames = true;
 #if NET_2_0
 		private bool checkForIllegalChars = true;
@@ -89,17 +89,17 @@ namespace System.Windows.Forms {
 		private ImageList imageListTopToolbar;
 		private CheckBox readonlyCheckBox;
 		
-		private bool multiSelect = false;
+		private bool multiSelect;
 		
 		private string restoreDirectoryString = String.Empty;
 		
 		internal FileDialogType fileDialogType;
 		
-		private bool do_not_call_OnSelectedIndexChangedFileTypeComboBox = false;
+		private bool do_not_call_OnSelectedIndexChangedFileTypeComboBox;
 		
-		private bool showReadOnly = false;
-		private bool readOnlyChecked = false;
-		internal bool createPrompt = false;
+		private bool showReadOnly;
+		private bool readOnlyChecked;
+		internal bool createPrompt;
 		internal bool overwritePrompt = true;
 		
 		internal FileFilter fileFilter;
@@ -240,11 +240,8 @@ namespace System.Windows.Forms {
 			fileNameComboBox.Size = new Size (245, 21);
 			fileNameComboBox.TabIndex = 1;
 			fileNameComboBox.MaxDropDownItems = MaxFileNameItems;
-			fileNameComboBox.Items.Add (" ");
 			
 			if (configFileNames != null) {
-				fileNameComboBox.Items.Clear ();
-				
 				foreach (string configFileName in configFileNames) {
 					if (configFileName == null || configFileName.Trim ().Length == 0)
 						continue;
@@ -254,7 +251,6 @@ namespace System.Windows.Forms {
 					fileNameComboBox.Items.Add (configFileName);
 				}
 			}
-			
 			
 			// fileTypeLabel
 			fileTypeLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
@@ -418,18 +414,17 @@ namespace System.Windows.Forms {
 		[DefaultValue("")]
 		public string DefaultExt {
 			get {
+				if (defaultExt == null)
+					return string.Empty;
 				return defaultExt;
 			}
-
 			set {
 				if (value != null && value.Length > 0) {
 					// remove leading dot
 					if (value [0] == '.')
 						value = value.Substring (1);
-					defaultExt = value;
-				} else {
-					defaultExt = string.Empty;
 				}
+				defaultExt = value;
 			}
 		}
 		
@@ -564,15 +559,12 @@ namespace System.Windows.Forms {
 		[DefaultValue("")]
 		public string InitialDirectory {
 			get {
+				if (initialDirectory == null)
+					return string.Empty;
 				return initialDirectory;
 			}
-			
 			set {
-				if (value == null) {
-					initialDirectory = string.Empty;
-				} else {
-					initialDirectory = value;
-				}
+				initialDirectory = value;
 			}
 		}
 		
@@ -603,15 +595,12 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public string Title {
 			get {
+				if (title == null)
+					return string.Empty;
 				return title;
 			}
-			
 			set {
-				if (value == null) {
-					title = string.Empty;
-				} else {
-					title = value;
-				}
+				title = value;
 			}
 		}
 		
@@ -642,15 +631,15 @@ namespace System.Windows.Forms {
 			addExtension = true;
 			checkFileExists = false;
 			checkPathExists = true;
-			defaultExt = String.Empty;
+			DefaultExt = null;
 			dereferenceLinks = true;
 			FileName = null;
 			Filter = String.Empty;
 			FilterIndex = 1;
-			initialDirectory = String.Empty;
+			InitialDirectory = null;
 			restoreDirectory = false;
 			ShowHelp = false;
-			Title = String.Empty;
+			Title = null;
 			validateNames = true;
 			
 			UpdateFilters ();
@@ -809,7 +798,7 @@ namespace System.Windows.Forms {
 				}
 			} else {
 				mwfFileView.ChangeDirectory (null, lastFolder);
-				fileNameComboBox.Text = " ";
+				fileNameComboBox.Text = null;
 			}
 		}
 		
@@ -870,7 +859,7 @@ namespace System.Windows.Forms {
 						DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
 						if (dirInfo.Exists) {
 							mwfFileView.ChangeDirectory (null, dirInfo.FullName);
-							fileNameComboBox.Text = " ";
+							fileNameComboBox.Text = null;
 							return;
 						} else {
 							internalfullfilename = fileFromComboBox;
@@ -935,8 +924,8 @@ namespace System.Windows.Forms {
 						if (filter_exentsion != String.Empty)
 							extension_to_use = filter_exentsion;
 						else
-						if (defaultExt != String.Empty)
-							extension_to_use = "." + defaultExt;
+							if (DefaultExt.Length > 0)
+								extension_to_use = "." + DefaultExt;
 						
 						if (!internalfullfilename.EndsWith (extension_to_use))
 							internalfullfilename += extension_to_use;
@@ -975,12 +964,11 @@ namespace System.Windows.Forms {
 				if (!Directory.Exists (mwfFileView.CurrentRealFolder)) {
 					string message = "\"" + mwfFileView.CurrentRealFolder + "\" doesn't exist. Please verify that you have entered the correct directory name.";
 					MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					
-					if (initialDirectory == String.Empty || !Directory.Exists (initialDirectory))
+
+					if (InitialDirectory.Length == 0 || !Directory.Exists (InitialDirectory))
 						mwfFileView.ChangeDirectory (null, lastFolder);
 					else
-						mwfFileView.ChangeDirectory (null, initialDirectory);
-					
+						mwfFileView.ChangeDirectory (null, InitialDirectory);
 					return;
 				}
 			}
@@ -1195,8 +1183,8 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			if (initialDirectory != String.Empty && Directory.Exists (initialDirectory))
-				lastFolder = initialDirectory;
+			if (InitialDirectory.Length > 0 && Directory.Exists (InitialDirectory))
+				lastFolder = InitialDirectory;
 			else
 				if (lastFolder == null || lastFolder.Length == 0)
 					lastFolder = Environment.CurrentDirectory;

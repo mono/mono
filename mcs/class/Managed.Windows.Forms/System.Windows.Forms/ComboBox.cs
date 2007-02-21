@@ -47,10 +47,10 @@ namespace System.Windows.Forms
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode = DrawMode.Normal;
-		private ComboBoxStyle dropdown_style = (ComboBoxStyle)(-1);
+		private ComboBoxStyle dropdown_style;
 		private int dropdown_width = -1;
 		private int selected_index = -1;
-		internal ObjectCollection items = null;
+		private ObjectCollection items;
 		private bool suspend_ctrlupdate;
 		private int maxdrop_items = 8;
 		private bool integral_height = true;
@@ -59,11 +59,11 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;
 		private ComboTextBox textbox_ctrl;
 		private bool process_textchanged_event = true;
-		private bool item_height_specified = false;
+		private bool item_height_specified;
 		private int item_height;
 		private int requested_height = -1;
 		private Hashtable item_heights;
-		private bool show_dropdown_button = false;
+		private bool show_dropdown_button;
 		private ButtonState button_state = ButtonState.Normal;
 		private bool dropped_down;
 		private Rectangle text_area;
@@ -747,7 +747,12 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value == null) {
-					SelectedIndex = -1;
+					if (SelectedIndex == -1) {
+						if (dropdown_style != ComboBoxStyle.DropDownList)
+							SetControlText ("");
+					} else {
+						SelectedIndex = -1;
+					}
 					return;
 				}
 
