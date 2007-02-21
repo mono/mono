@@ -176,7 +176,7 @@ namespace System.Web {
 		
 		public static string BinDirectory {
 			get {
-				string dirname = Path.Combine (AppDomainAppPath, "bin");
+				string dirname = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
 				}

@@ -438,11 +438,12 @@ namespace System.Web {
 				factory.InitType (context);
 				lock (factory) {
 					if (factory.app_start_needed) {
-						WatchLocationForRestart("bin", "*.dll");
+						WatchLocationForRestart (AppDomain.CurrentDomain.SetupInformation.PrivateBinPath,
+									 "*.dll");
 #if NET_2_0
-			                        WatchLocationForRestart("App_Code", "");
-			                        WatchLocationForRestart("App_Browsers", "");
-			                        WatchLocationForRestart("App_GlobalResources", "");
+			                        WatchLocationForRestart ("App_Code", "");
+			                        WatchLocationForRestart ("App_Browsers", "");
+			                        WatchLocationForRestart ("App_GlobalResources", "");
 #endif
 			                        app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;

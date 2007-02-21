@@ -73,6 +73,15 @@ namespace System.Web.Hosting {
 #endif
 		}
 
+		static string GetBinPath (string physicalDir)
+		{
+			string ret = Path.Combine (physicalDir, "Bin");
+			if (Directory.Exists (ret))
+				return ret;
+			ret = Path.Combine (physicalDir, "bin");
+			return ret;
+		}
+		
 		//
 		// For further details see `Hosting the ASP.NET runtime'
 		//
@@ -112,7 +121,7 @@ namespace System.Web.Hosting {
 			setup.ApplicationName = domain_id;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
-			string bin_path = Path.Combine (physicalDir, "bin");
+			string bin_path = GetBinPath (physicalDir);
 			setup.PrivateBinPath = bin_path;
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";

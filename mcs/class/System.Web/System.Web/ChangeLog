@@ -1,3 +1,11 @@
+2007-02-21  Marek Habersack  <grendello@gmail.com>
+
+	* HttpRuntime.cs: BinDirectory returns the bin directory
+	determined by the application host on the application startup.
+
+	* HttpApplicationFactory.cs: Watch the bin directory determined by
+	the application host on the application startup.
+
 2007-02-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.cs: fixed MapPath, removed TARGET_J2EE block that checks

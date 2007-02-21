@@ -1,3 +1,8 @@
+2007-02-21  Marek Habersack  <grendello@gmail.com>
+
+	* ApplicationHost.cs: support both Bin and bin directories, prefer
+	the former.
+
 2007-02-19  Marek Habersack  <grendello@gmail.com>
 
 	* ApplicationHost.cs: Use a deterministic application name, so
