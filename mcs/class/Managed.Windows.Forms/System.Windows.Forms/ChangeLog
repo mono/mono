@@ -1,3 +1,9 @@
+2007-02-20  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (WaitForHwndMessage): we need to loop until we get
+	the message we need.  PeekMessage returning false should not be a
+	condition under which we exit the loop.
+
 2007-02-15  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (Refresh): only refresh if we've got a handle and are

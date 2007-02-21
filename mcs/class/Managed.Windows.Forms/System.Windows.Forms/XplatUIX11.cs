@@ -1274,13 +1274,18 @@ namespace System.Windows.Forms {
 
 			queue.DispatchIdle = false;
 
-			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-				bool done = (msg.hwnd == hwnd.Handle) && (Msg)msg.message == message;
-				TranslateMessage (ref msg);
-				DispatchMessage (ref msg);
-				if (done)
+			bool done = false;
+			do {
+				if (ThreadQueue(Thread.CurrentThread).PostQuitState)
 					break;
-			}
+
+				if (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+					Console.WriteLine ("got message {0}", (Msg)msg.message);
+					done = (msg.hwnd == hwnd.Handle) && (Msg)msg.message == message;
+					TranslateMessage (ref msg);
+					DispatchMessage (ref msg);
+				}
+			} while (!done);
 
 			queue.DispatchIdle = true;
 
