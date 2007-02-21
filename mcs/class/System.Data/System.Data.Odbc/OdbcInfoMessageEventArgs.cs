@@ -35,7 +35,7 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcInfoMessageEventArgs : EventArgs
+	public sealed class OdbcInfoMessageEventArgs : EventArgs 
 	{
 		#region Constructors
 
@@ -61,10 +61,10 @@ namespace System.Data.Odbc
 
 		#region Methods
 
-		
+		[MonoTODO]
 		public override string ToString ()
 		{
-			return GetType ().FullName;
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods
