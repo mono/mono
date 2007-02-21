@@ -1,5 +1,9 @@
 2007-02-21  Andreia Gaita  <avidigal@novell.com>
 
+	* PrintingServicesUnix.cs: don't free up pointers unnecessarily (doh)
+
+2007-02-21  Andreia Gaita  <avidigal@novell.com>
+
 	* PrintingServicesUnix.cs: add checks and try blocks to make sure
 	things don't blow up if we try to double free anything (not that
 	we're trying to do anything like that :p )

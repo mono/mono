@@ -227,10 +227,8 @@ namespace System.Drawing.Printing
 					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr);
 					if (Marshal.PtrToStringAnsi (ptr_printer).Equals(printer)) {
 						name = printer;
-						Marshal.FreeHGlobal (ptr_printer);
 						break;
 					}
-					Marshal.FreeHGlobal(ptr_printer);
 					ptr = (IntPtr) ((long)ptr + cups_dests_size);
 				}
 			
@@ -801,7 +799,7 @@ namespace System.Drawing.Printing
 		static extern void cupsGetDest (string name, string instance, int num_dests, ref IntPtr dests);
 
 		[DllImport("libcups")]
-		static extern int cupsFreeDests (int num_dests, IntPtr dests);
+		static extern void cupsFreeDests (int num_dests, IntPtr dests);
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
 		static extern IntPtr cupsTempFile (StringBuilder sb, int len);
