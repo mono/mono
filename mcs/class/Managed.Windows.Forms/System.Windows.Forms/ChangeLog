@@ -1,3 +1,8 @@
+2007-02-21  Chris Toshok  <toshok@ximian.com>
+
+	* Application.cs (CloseForms): rewrite this so that we don't
+	modify the list while we're traversing it.
+
 2007-02-20  Chris Toshok  <toshok@ximian.com>
 
 	* ListBox.cs (.ctor): move the Control.AddImplicits here instead

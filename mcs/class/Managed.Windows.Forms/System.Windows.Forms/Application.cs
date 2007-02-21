@@ -156,31 +156,23 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 		private static void CloseForms(Thread thread) {
-			Form		f;
-			IEnumerator	control;
-			bool		all;
-
 			#if DebugRunLoop
 				Console.WriteLine("   CloseForms({0}) called", thread);
 			#endif
-			if (thread == null) {
-				all = true;
-			} else {
-				all = false;
-			}
+
+			ArrayList forms_to_close = new ArrayList ();
 
 			lock (forms) {
-				control = forms.GetEnumerator();
+				foreach (Form f in forms) {
+					if (thread == null || thread == f.creator_thread)
+						forms_to_close.Add (f);
+				}
 
-				while (control.MoveNext()) {
-					f = (Form)control.Current;
-					
-					if (all || (thread == f.creator_thread)) {
-						#if DebugRunLoop
-							Console.WriteLine("      Closing form {0}", f);
-						#endif
-						f.Dispose ();
-					}
+				foreach (Form f in forms_to_close) {
+					#if DebugRunLoop
+						Console.WriteLine("      Closing form {0}", f);
+					#endif
+					f.Dispose ();
 				}
 			}
 		}
