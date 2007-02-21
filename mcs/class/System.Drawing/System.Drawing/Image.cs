@@ -171,22 +171,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal static Image CreateFromHandle (IntPtr handle)
 	{
-		Image img = null;
-
 		ImageType type;
 		GDIPlus.CheckStatus (GDIPlus.GdipGetImageType (handle, out type));
 		switch (type) {
 		case ImageType.Bitmap:
-			img = new Bitmap (handle);
-			break;
+			return new Bitmap (handle);
 		case ImageType.Metafile:
-			img = new Metafile (handle, false);
-			break;
+			return new Metafile (handle);
 		default:
 			throw new NotSupportedException (Locale.GetText ("Unknown image type."));
 		}
-
-		return img;
 	}
 
 	public static int GetPixelFormatSize(PixelFormat pixfmt)
@@ -818,7 +812,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (this is Bitmap)
 			return new Bitmap (newimage);
 		else
-			return new Metafile (newimage, true);
+			return new Metafile (newimage);
 	}
 }
 
