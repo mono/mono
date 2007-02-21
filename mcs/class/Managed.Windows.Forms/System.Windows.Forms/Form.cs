@@ -2009,11 +2009,6 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				case Msg.WM_CLOSE_INTERNAL: {
-					DestroyHandle();
-					break;
-				}
-
 				case Msg.WM_CLOSE: {
 					Form act = Form.ActiveForm;
 					if (act != null && act != this && act.Modal == true) {

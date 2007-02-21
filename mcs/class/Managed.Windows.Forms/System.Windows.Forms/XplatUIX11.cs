@@ -1280,8 +1280,7 @@ namespace System.Windows.Forms {
 					break;
 
 				if (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-					Console.WriteLine ("got message {0}", (Msg)msg.message);
-					done = (msg.hwnd == hwnd.Handle) && (Msg)msg.message == message;
+					done = (msg.hwnd == hwnd.Handle) && ((Msg)msg.message == message || (Msg)msg.message == Msg.WM_DESTROY);
 					TranslateMessage (ref msg);
 					DispatchMessage (ref msg);
 				}
@@ -1300,7 +1299,8 @@ namespace System.Windows.Forms {
 				if ((windows & WindowType.Client) != 0) {
 					XMapWindow(DisplayHandle, hwnd.client_window);
 
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+					if (Control.FromHandle(hwnd.Handle) is Form)
+						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 				}
 			}
 		}
@@ -1314,7 +1314,8 @@ namespace System.Windows.Forms {
 				if ((windows & WindowType.Client) != 0) {
 					XUnmapWindow(DisplayHandle, hwnd.client_window);
 
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+					if (Control.FromHandle(hwnd.Handle) is Form)
+						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 				}
 			}
 		}
@@ -2478,8 +2479,10 @@ namespace System.Windows.Forms {
 			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
 
 			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
-				MapWindow(hwnd, WindowType.Both);
 				hwnd.visible = true;
+				MapWindow(hwnd, WindowType.Both);
+				if (!(Control.FromHandle(hwnd.Handle) is Form))
+					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 			}
 
 			return hwnd.Handle;

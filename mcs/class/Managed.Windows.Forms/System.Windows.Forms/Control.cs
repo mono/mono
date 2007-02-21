@@ -4206,12 +4206,12 @@ namespace System.Windows.Forms
 			if (value != is_visible) {
 				is_visible = value;
 				
-				if (value && ((window.Handle == IntPtr.Zero) || !is_created)) {
+				if (is_visible && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 				}
 
 				if (IsHandleCreated) {
-					XplatUI.SetVisible(Handle, value, true);
+					XplatUI.SetVisible(Handle, is_visible, true);
 					// Explicitly move Toplevel windows to where we want them;
 					// apparently moving unmapped toplevel windows doesn't work
 					if (is_visible && (this is Form)) {

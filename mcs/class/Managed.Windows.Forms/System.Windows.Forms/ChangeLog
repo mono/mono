@@ -1,5 +1,31 @@
 2007-02-20  Chris Toshok  <toshok@ximian.com>
 
+	* ListBox.cs (.ctor): move the Control.AddImplicits here instead
+	of OnHandleCreated.
+	(HorizontalScrollEvent): only call XplatUI.ScrollWindow if the
+	handle is created.  otherwise we'll create it here.
+	(VerticalScrollEvent): same here.
+
+	* Application.cs (CloseForms): call Form.Dispose, don't post
+	WM_CLOSE_INTERNAL.
+
+	* Form.cs (WndProc): we don't need to use CLOSE_INTERNAL
+	here. Application should Dispose() of the Form's.
+
+	* XplatUIX11.cs (WaitForHwndMessage): break out of the loop on
+	WM_DESTROY as well.
+	(MapWindow,UnmapWindow): only actually do the waiting for
+	SHOWWINDOW if the control we're dealing with is a Form.
+	(CreateWindow): if the control isn't a form, SendMessage
+	WM_SHOWWINDOW here (if the WS_VISIBLE style is set).
+
+	* Control.cs (SetVisibleCore): always use is_visible here, not
+	value.  If we use value, we can end up re-setting something
+	visible if, for instance, you do Control.Hide() in a delegate
+	attached to VisibleChanged as we do in FormTest.ShowDialogTest.
+
+2007-02-20  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (WaitForHwndMessage): we need to loop until we get
 	the message we need.  PeekMessage returning false should not be a
 	condition under which we exit the loop.

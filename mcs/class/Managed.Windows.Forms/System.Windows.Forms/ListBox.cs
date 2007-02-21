@@ -120,6 +120,9 @@ namespace System.Windows.Forms
 			hscrollbar.Visible = false;
 			hscrollbar.ValueChanged += new EventHandler (HorizontalScrollEvent);
 
+			Controls.AddImplicit (vscrollbar);
+			Controls.AddImplicit (hscrollbar);
+
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
 			MouseMove += new MouseEventHandler (OnMouseMoveLB);
@@ -854,12 +857,6 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-
-			SuspendLayout ();
-			Controls.AddImplicit (vscrollbar);
-			Controls.AddImplicit (hscrollbar);
-			ResumeLayout ();
-			LayoutListBox ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1145,7 +1142,8 @@ namespace System.Windows.Forms
 				if (hbar_offset < 0)
 					hbar_offset = 0;
 
-				XplatUI.ScrollWindow (Handle, items_area, old_offset - hbar_offset, 0, false);
+				if (IsHandleCreated)
+					XplatUI.ScrollWindow (Handle, items_area, old_offset - hbar_offset, 0, false);
 			}
 		}
 
@@ -1215,7 +1213,8 @@ namespace System.Windows.Forms
 				else
 					vscrollbar.Value = top_index;
 				Scroll (vscrollbar, vscrollbar.Value - top_index);
-				XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * (val - vscrollbar.Value), false);
+				if (IsHandleCreated)
+					XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * (val - vscrollbar.Value), false);
 			}
 		}
 		
@@ -1927,7 +1926,8 @@ namespace System.Windows.Forms
 
 			int diff = top_item - top_index;
 
-			XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * diff, false);
+			if (IsHandleCreated)
+				XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * diff, false);
 		}
 
 		#endregion Private Methods

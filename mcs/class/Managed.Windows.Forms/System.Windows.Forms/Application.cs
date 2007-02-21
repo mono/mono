@@ -176,12 +176,10 @@ namespace System.Windows.Forms {
 					f = (Form)control.Current;
 					
 					if (all || (thread == f.creator_thread)) {
-						if (f.IsHandleCreated) {
-							XplatUI.PostMessage(f.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
-						}
 						#if DebugRunLoop
 							Console.WriteLine("      Closing form {0}", f);
 						#endif
+						f.Dispose ();
 					}
 				}
 			}
