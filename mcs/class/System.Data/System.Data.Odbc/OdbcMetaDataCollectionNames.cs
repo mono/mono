@@ -52,12 +52,7 @@ namespace System.Data.Odbc
 
 		#region Methods
 
-		public virtual bool Equals (Object obj)
-		{
-			return (this == obj);
-		}
-
-		public static bool Equals (Object o1, Object o2)
+		public static new bool Equals (Object o1, Object o2)
 		{
 			if (o1 == o2 || (o1 != null && o1.Equals (o2) == true))
 				return true;

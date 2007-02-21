@@ -3,14 +3,6 @@
 //
 // Author: Nidhi Rawal (rawalnidhi_rawal@yahoo.com)
 //  
-//  
-//  
-//
-// Copyright (C) Brian Ritchie, 2007
-// Copyright (C) Daniel Morgan, 2007
-//
-
-//
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if NET_2_0
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -53,7 +45,7 @@ namespace System.Data.Odbc
 
 		#region Methods
         
-		public static bool ReferenceEquals(Object o1, Object o2)
+		public static new bool ReferenceEquals (Object o1, Object o2)
 		{
 			return o1 == o2;
 		}
@@ -61,3 +53,4 @@ namespace System.Data.Odbc
 		#endregion
 	}
 }
+#endif
