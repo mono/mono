@@ -1,3 +1,9 @@
+2007-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (type_from_op): Convert CEE_CONV_U to OP_LCONV_TO_U when the argument is
+	a pointer on 64 bit systems. Fixes #80190.
+
+	* iltests.il: Add new regression test.
 
 Tue Feb 20 11:33:28 CET 2007 Paolo Molaro <lupus@ximian.com>
 
