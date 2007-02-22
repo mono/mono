@@ -1018,13 +1018,14 @@ namespace Mono.CSharp {
 			while (p.IsArray || p.IsPointer || p.IsByRef)
 				p = TypeManager.GetElementType (p);
 
+#if GMCS_SOURCE
 			if (TypeManager.IsGenericType (p)) {
 				foreach (Type t in p.GetGenericArguments ()) {
 					if (!AsAccessible (t, flags))
 						return false;
 				}
 			}
-
+#endif
 			AccessLevel pAccess = TypeEffectiveAccessLevel (p);
 			AccessLevel mAccess = this.EffectiveAccessLevel &
 				GetAccessLevelFromModifiers (flags);
