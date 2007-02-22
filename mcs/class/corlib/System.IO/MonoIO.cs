@@ -117,6 +117,10 @@ namespace System.IO
 
 			case MonoIOError.ERROR_ENCRYPTION_FAILED:
 				return new IOException ("Encryption failed", unchecked((int)0x80070000) | (int)error);
+
+			case MonoIOError.ERROR_CANNOT_MAKE:
+				message = String.Format ("Path {0} is a directory", path);
+				return new IOException (message, unchecked((int)0x80070000) | (int)error);
 				
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);

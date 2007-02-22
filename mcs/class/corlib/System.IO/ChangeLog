@@ -1,3 +1,8 @@
+2007-02-22  Dick Porter  <dick@ximian.com>
+
+	* MonoIOError.cs: 
+	* MonoIO.cs: Handle ERROR_CANNOT_MAKE.
+
 2007-02-19	Eyal Alaluf <eyala@mainsoft.com>
 
 	* DirectoryInfo.cs, Directory.cs: Use MonoNotSupported & MonoLimitation
