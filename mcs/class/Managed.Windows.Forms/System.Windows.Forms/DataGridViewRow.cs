@@ -161,7 +161,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				if (height != value) {
-					if (height < minimumHeight) {
+					if (value < minimumHeight) {
 						throw new ArgumentOutOfRangeException("Height can't be less than MinimumHeight.");
 					}
 					height = value;
