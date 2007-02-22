@@ -95,6 +95,15 @@ namespace System.Web.UI {
 			get { return true; }
 		}
 
+#if NET_2_0
+		
+		[MonoTODO ("NotImplementedException")]
+		public string AppRelativeVirtualPath {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
 		#endregion
 
 		#region Methods
