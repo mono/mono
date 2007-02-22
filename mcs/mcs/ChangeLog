@@ -1,5 +1,9 @@
 2007-02-22  Marek Safar  <marek.safar@gmail.com>
 
+	* attribute.cs: Enable ExtensionAttribute presence test.
+
+2007-02-22  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs: Warn about missing GetHashCode only when Equals is override.
 
 	* decl.cs: Check accessibility of type arguments.

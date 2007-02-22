@@ -189,7 +189,7 @@ namespace Mono.CSharp {
 
 		public void Error_MisusedExtensionAttribute ()
 		{
-			//Report.Error (1112, Location, "Do not use `{0}' directly. Use parameter modifier `this' instead", GetSignatureForError ());
+			Report.Error (1112, Location, "Do not use `{0}' directly. Use parameter modifier `this' instead", GetSignatureForError ());
 		}
 
 		/// <summary>
