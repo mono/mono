@@ -27,7 +27,6 @@
 //
 // TODO:
 //   - Feedback for item activation, change in cursor types as mouse moves.
-//   - LabelEdit
 //   - Drag and drop
 
 
@@ -58,25 +57,25 @@ namespace System.Windows.Forms
 	{
 		private ItemActivation activation = ItemActivation.Standard;
 		private ListViewAlignment alignment = ListViewAlignment.Top;
-		private bool allow_column_reorder = false;
+		private bool allow_column_reorder;
 		private bool auto_arrange = true;
-		private bool check_boxes = false;
+		private bool check_boxes;
 		private readonly CheckedIndexCollection checked_indices;
 		private readonly CheckedListViewItemCollection checked_items;
 		private readonly ColumnHeaderCollection columns;
 		internal ListViewItem focused_item;
-		private bool full_row_select = false;
-		private bool grid_lines = false;
+		private bool full_row_select;
+		private bool grid_lines;
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
 		private bool hide_selection = true;
-		private bool hover_selection = false;
+		private bool hover_selection;
 		private IComparer item_sorter;
 		private readonly ListViewItemCollection items;
 #if NET_2_0
 		private readonly ListViewGroupCollection groups;
-        	private bool show_groups = true;
+		private bool show_groups = true;
 #endif
-		private bool label_edit = false;
+		private bool label_edit;
 		private bool label_wrap = true;
 		private bool multiselect = true;
 		private bool scrollable = true;
@@ -84,11 +83,10 @@ namespace System.Windows.Forms
 		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
 		private ImageList state_image_list;
-		private bool updating = false;
+		private bool updating;
 		private View view = View.LargeIcon;
 		private int layout_wd;    // We might draw more than our client area
 		private int layout_ht;    // therefore we need to have these two.
-		//private TextBox editor;   // Used for editing an item text
 		HeaderControl header_control;
 		internal ItemControl item_control;
 		internal ScrollBar h_scroll; // used for scrolling horizontally
@@ -264,7 +262,7 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format
 						("Enum argument value '{0}' is not valid for Activation", value));
 				}
-				  
+				
 				activation = value;
 			}
 		}
@@ -283,8 +281,7 @@ namespace System.Windows.Forms
 				if (this.alignment != value) {
 					alignment = value;
 					// alignment does not matter in Details/List views
-					if (this.view == View.LargeIcon ||
-					    this.View == View.SmallIcon)
+					if (this.view == View.LargeIcon || this.View == View.SmallIcon)
 						this.Redraw (true);
 				}
 			}
@@ -452,7 +449,7 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
-		[MergableProperty (false)]		
+		[MergableProperty (false)]
 		public ListViewItemCollection Items {
 			get { return items; }
 		}
@@ -530,13 +527,11 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-        	[DefaultValue(true)]
+		[DefaultValue(true)]
 		public bool ShowGroups {
 			get { return show_groups; }
-			set 
-			{
-                		if (show_groups != value)
-                		{
+			set {
+				if (show_groups != value) {
 					show_groups = value;
 					Redraw(true);
 				}
@@ -547,7 +542,7 @@ namespace System.Windows.Forms
 		[MergableProperty (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ListViewGroupCollection Groups {
-			get { return groups;	}
+			get { return groups; }
 		}
 #endif
 
@@ -719,9 +714,9 @@ namespace System.Windows.Forms
 				// there is no item
 				if (this.items.Count == 0)
 					return 0;
-									
+				
 				if (h_marker == 0 && v_marker == 0)
-					return 0;					
+					return 0;
 				
 				foreach (ListViewItem item in this.items) {
 					if (item.Bounds.Right >= 0 && item.Bounds.Bottom >= 0)
@@ -733,15 +728,15 @@ namespace System.Windows.Forms
 		}
 
 		
-		internal int LastVisibleIndex {			
-			get {							
+		internal int LastVisibleIndex {
+			get {
 				for (int i = FirstVisibleIndex; i < Items.Count; i++) {
 					if (View == View.List || Alignment == ListViewAlignment.Left) {
 						if (Items[i].Bounds.X > item_control.ClientRectangle.Right)
-							return i - 1;					
+							return i - 1;
 					} else {
 						if (Items[i].Bounds.Y > item_control.ClientRectangle.Bottom)
-							return i - 1;					
+							return i - 1;
 					}
 				}
 				
@@ -784,7 +779,7 @@ namespace System.Windows.Forms
 
 			if (col.Width == -2) { // autosize = max(items, columnheader)
 				Size size = Size.Ceiling (this.DeviceContext.MeasureString
-							  (col.Text, this.Font));
+					(col.Text, this.Font));
 				size.Width += text_padding;
 				ret_size = BiggestItem (index);
 				if (size.Width > ret_size.Width)
@@ -828,7 +823,7 @@ namespace System.Windows.Forms
 					continue;
 
 				temp = Size.Ceiling (this.DeviceContext.MeasureString
-						     (item.SubItems [col].Text, this.Font));
+							(item.SubItems [col].Text, this.Font));
 				if (temp.Width > ret_size.Width)
 					ret_size = temp;
 			}
@@ -844,7 +839,7 @@ namespace System.Windows.Forms
 
 		// Sets the size of the biggest item text as per the view
 		private void CalcTextSize ()
-		{			
+		{
 			// clear the old value
 			text_size = Size.Empty;
 
@@ -925,14 +920,14 @@ namespace System.Windows.Forms
 				return;
 
 			// making a scroll bar visible might make
-			// other scroll bar visible			
+			// other scroll bar visible
 			if (layout_wd > client_area.Right) {
 				h_scroll.Visible = true;
 				if ((layout_ht + h_scroll.Height) > client_area.Bottom)
-					v_scroll.Visible = true;					
+					v_scroll.Visible = true;
 				else
 					v_scroll.Visible = false;
-			} else if (layout_ht > client_area.Bottom) {				
+			} else if (layout_ht > client_area.Bottom) {
 				v_scroll.Visible = true;
 				if ((layout_wd + v_scroll.Width) > client_area.Right)
 					h_scroll.Visible = true;
@@ -941,7 +936,7 @@ namespace System.Windows.Forms
 			} else {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
-			}			
+			}
 
 			item_control.Height = ClientRectangle.Height - header_control.Height;
 
@@ -959,7 +954,7 @@ namespace System.Windows.Forms
 					h_scroll.Maximum = layout_wd;
 					h_scroll.Width = client_area.Width;
 				}
-   
+
 				h_scroll.LargeChange = client_area.Width;
 				h_scroll.SmallChange = Font.Height;
 				item_control.Height -= h_scroll.Height;
@@ -1158,7 +1153,7 @@ namespace System.Windows.Forms
 		{
 			int x = 0;
 			for (int i = 0; i < Columns.Count; i++) {
-			       	ColumnHeader col = GetReorderedColumn (i);
+				ColumnHeader col = GetReorderedColumn (i);
 				col.X = x;
 				col.Y = 0;
 				col.CalcColumnHeader ();
@@ -1223,8 +1218,8 @@ namespace System.Windows.Forms
 
 			case View.LargeIcon:
 				LayoutIcons (LargeIconItemSize, alignment == ListViewAlignment.Left,
-					     ThemeEngine.Current.ListViewHorizontalSpacing,
-					     ThemeEngine.Current.ListViewVerticalSpacing);
+					ThemeEngine.Current.ListViewHorizontalSpacing,
+					ThemeEngine.Current.ListViewVerticalSpacing);
 				break;
 
 			case View.List:
@@ -1239,7 +1234,7 @@ namespace System.Windows.Forms
 #endif
 			}
 
-                        CalculateScrollBars ();
+			CalculateScrollBars ();
 		}
 
 		private bool KeySearchString (KeyEventArgs ke)
@@ -1262,7 +1257,7 @@ namespace System.Windows.Forms
 					EnsureVisible (i);
 					break;
 				}
-				i = (i + 1  < Items.Count) ? i+1 : 0;
+				i = (i + 1 < Items.Count) ? i+1 : 0;
 
 				if (i == start)
 					break;
@@ -1329,7 +1324,7 @@ namespace System.Windows.Forms
 				if (col == (cols - 1))
 					return -1;
 				while (item_matrix [row, col + 1] == null) {
-					row--;	
+					row--;
 					if (row < 0)
 						return -1;
 				}
@@ -1344,7 +1339,7 @@ namespace System.Windows.Forms
 				if (row == (rows - 1) || row == Items.Count - 1)
 					return -1;
 				while (item_matrix [row + 1, col] == null) {
-					col--;	
+					col--;
 					if (col < 0)
 						return -1;
 				}
@@ -1394,12 +1389,12 @@ namespace System.Windows.Forms
 					int bottom = Math.Max (items [start].row, items [end].row);
 					foreach (ListViewItem curr in items)
 						if (curr.row >= top && curr.row <= bottom && 
-						    curr.col >= left && curr.col <= right)
+							curr.col >= left && curr.col <= right)
 							list.Add (curr);
 				}
 				if (SelectItems (list))
 					OnSelectedIndexChanged (EventArgs.Empty);
-			} else  if (ctrl_pressed) {
+			} else if (ctrl_pressed) {
 				item.Selected = !item.Selected;
 				selection_start = item;
 				OnSelectedIndexChanged (EventArgs.Empty);
@@ -1434,13 +1429,13 @@ namespace System.Windows.Forms
 				SelectIndex (Items.Count - 1);
 				break;
 
-			case Keys.Home:			
+			case Keys.Home:
 				SelectIndex (0);
 				break;
 
 			case Keys.Left:
 			case Keys.Right:
-			case Keys.Up:				
+			case Keys.Up:
 			case Keys.Down:
 			case Keys.PageUp:
 			case Keys.PageDown:
@@ -1466,12 +1461,12 @@ namespace System.Windows.Forms
 				OnSelectedIndexChanged (EventArgs.Empty);
 			}
 
-			SetFocusedItem (items [index]);				
+			SetFocusedItem (items [index]);
 			EnsureVisible (index);
 		}
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
-		{			
+		{
 			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
 				return;
 
@@ -1630,9 +1625,9 @@ namespace System.Windows.Forms
 
 			private void ToggleCheckState (ListViewItem item)
 			{
-				CheckState curr_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+				CheckState curr_state = item.Checked ? CheckState.Checked : CheckState.Unchecked;
 				item.Checked = !item.Checked;
-				CheckState new_state = item.Checked ?  CheckState.Checked : CheckState.Unchecked;
+				CheckState new_state = item.Checked ? CheckState.Checked : CheckState.Unchecked;
 
 				ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
 				owner.OnItemCheck (ice);
@@ -2094,7 +2089,7 @@ namespace System.Windows.Forms
 		internal override void OnPaintInternal (PaintEventArgs pe)
 		{
 			if (updating)
-				return;	
+				return;
 				
 			CalculateScrollBars ();
 		}
@@ -2126,7 +2121,7 @@ namespace System.Windows.Forms
 				Scroll (v_scroll, -Items [0].Bounds.Height * SystemInformation.MouseWheelScrollLines * lines);
 				break;
 			case View.LargeIcon:
-				Scroll (v_scroll, -(Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
+				Scroll (v_scroll, -(Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing) * lines);
 				break;
 			case View.List:
 				Scroll (h_scroll, -Items [0].Bounds.Width * lines);
@@ -2158,7 +2153,7 @@ namespace System.Windows.Forms
 			// kept pressed at the end
 			if (h_marker != h_scroll.Value) {
 				
-				int pixels =  h_marker - h_scroll.Value;
+				int pixels = h_marker - h_scroll.Value;
 				
 				h_marker = h_scroll.Value;
 				if (header_control.Visible)
@@ -2175,7 +2170,7 @@ namespace System.Windows.Forms
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
 			if (v_marker != v_scroll.Value) {
-				int pixels =  v_marker - v_scroll.Value;
+				int pixels = v_marker - v_scroll.Value;
 				Rectangle area = item_control.ClientRectangle;
 				v_marker = v_scroll.Value;
 				XplatUI.ScrollWindow (item_control.Handle, area, 0, pixels, false);
@@ -2192,8 +2187,8 @@ namespace System.Windows.Forms
 		}
 
 		protected override void Dispose (bool disposing)
-		{			
-			if (disposing) {			
+		{
+			if (disposing) {
 				h_scroll.Dispose ();
 				v_scroll.Dispose ();
 				
@@ -2387,7 +2382,7 @@ namespace System.Windows.Forms
 		public void Clear ()
 		{
 			columns.Clear ();
-			items.Clear ();	// Redraw (true) called here			
+			items.Clear ();	// Redraw (true) called here
 		}
 
 		public void EndUpdate ()
@@ -2608,7 +2603,7 @@ namespace System.Windows.Forms
 			{
 				Point pt = new Point (me.X + owner.h_marker, me.Y);
 
-				if (column_resize_active)  {
+				if (column_resize_active) {
 					int width = pt.X - resize_column.X;
 					if (width < 0)
 						width = 0;
@@ -2706,7 +2701,7 @@ namespace System.Windows.Forms
 			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
 				if (owner.updating)
-					return;	
+					return;
 				
 				Theme theme = ThemeEngine.Current;
 				theme.DrawListViewHeader (pe.Graphics, pe.ClipRectangle, this.owner);
@@ -3145,7 +3140,7 @@ namespace System.Windows.Forms
 			public virtual ColumnHeader Add (string str, int width, HorizontalAlignment textAlign)
 			{
 				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
-				this.Add (colHeader);									
+				this.Add (colHeader);
 				return colHeader;
 			}
 
@@ -3710,7 +3705,7 @@ namespace System.Windows.Forms
 				bool selection_changed = owner.SelectedItems.Contains (item);
 				list.Remove (item);
 				OnChange ();
-				owner.Redraw (true);				
+				owner.Redraw (true);
 				if (selection_changed)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}

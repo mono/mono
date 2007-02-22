@@ -1,5 +1,10 @@
 2007-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ListView.cs: Removed TODO for LabelEdit. Removed extra tabs and
+	spaces. Changed spaces to tabs. Removed unnecessary init of bools.
+
+2007-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FileDialog.cs: LabelEditEventArgs.Label now returns null when user
 	did not modify label.
 	* ListView.cs: Only set LabelEditEventArgs.Label if user actually
