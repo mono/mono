@@ -2625,7 +2625,7 @@ namespace System.Windows.Forms {
 			base.OnAfterLabelEdit (e);
 
 			// no changes were made
-			if (Items [e.Item].Text == e.Label)
+			if (e.Label == null || Items [e.Item].Text == e.Label)
 				return;
 
 			string folder;

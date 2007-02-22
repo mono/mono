@@ -1796,9 +1796,23 @@ namespace System.Windows.Forms
 				owner.OnMouseUp (owner.TranslateMouseEventArgs (me));
 			}
 			
-			internal void LabelEditFinished (object sender, EventArgs e)
+			private void LabelEditFinished (object sender, EventArgs e)
 			{
 				EndEdit (edit_item);
+				owner.Focus ();
+			}
+
+			private void LabelEditCancelled (object sender, EventArgs e)
+			{
+				edit_args.SetLabel (null);
+				EndEdit (edit_item);
+				owner.Focus ();
+			}
+
+			private void LabelTextChanged (object sender, EventArgs e)
+			{
+				if (edit_args != null)
+					edit_args.SetLabel (edit_text_box.Text);
 			}
 
 			internal void BeginEdit (ListViewItem item)
@@ -1809,7 +1823,9 @@ namespace System.Windows.Forms
 				if (edit_text_box == null) {
 					edit_text_box = new ListViewLabelEditTextBox ();
 					edit_text_box.BorderStyle = BorderStyle.FixedSingle;
+					edit_text_box.EditingCancelled += new EventHandler (LabelEditCancelled);
 					edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
+					edit_text_box.TextChanged += new EventHandler (LabelTextChanged);
 					edit_text_box.Visible = false;
 					Controls.Add (edit_text_box);
 				}
@@ -1859,8 +1875,6 @@ namespace System.Windows.Forms
 			internal void EndEdit (ListViewItem item)
 			{
 				if (edit_item != null && edit_item == item) {
-
-					edit_args.SetLabel (edit_text_box.Text);
 					owner.OnAfterLabelEdit (edit_args);
 
 					if (!edit_args.CancelEdit && edit_args.Label != null)
@@ -1992,9 +2006,18 @@ namespace System.Windows.Forms
 			
 			protected override void OnKeyDown (KeyEventArgs e)
 			{
-				if (e.KeyCode == Keys.Return && Visible) {
+				if (!Visible)
+					return;
+
+				switch (e.KeyCode) {
+				case Keys.Return:
 					Visible = false;
 					OnEditingFinished (e);
+					break;
+				case Keys.Escape:
+					Visible = false;
+					OnEditingCancelled (e);
+					break;
 				}
 			}
 			
@@ -2003,6 +2026,13 @@ namespace System.Windows.Forms
 				if (Visible) {
 					OnEditingFinished (e);
 				}
+			}
+
+			protected void OnEditingCancelled (EventArgs e)
+			{
+				EventHandler eh = (EventHandler)(Events [EditingCancelledEvent]);
+				if (eh != null)
+					eh (this, e);
 			}
 			
 			protected void OnEditingFinished (EventArgs e)
@@ -2047,7 +2077,13 @@ namespace System.Windows.Forms
 				
 				Size = DefaultSize;
 			}
-			
+
+			static object EditingCancelledEvent = new object ();
+			public event EventHandler EditingCancelled {
+				add { Events.AddHandler (EditingCancelledEvent, value); }
+				remove { Events.RemoveHandler (EditingCancelledEvent, value); }
+			}
+
 			static object EditingFinishedEvent = new object ();
 			public event EventHandler EditingFinished {
 				add { Events.AddHandler (EditingFinishedEvent, value); }
@@ -2185,7 +2221,7 @@ namespace System.Windows.Forms
 			case Keys.Right:
 			case Keys.Left:
 			case Keys.End:
-			case Keys.Home:				
+			case Keys.Home:
 				return true;
 
 			default:
