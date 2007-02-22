@@ -25,6 +25,8 @@ scripts_1_0 = \
 	mjs			\
 	mkbundle		\
 	monop			\
+	mono-api-diff 		\
+	mono-api-info 		\
 	mono-shlib-cop 		\
 	mono-xmltool		\
 	mozroots		\
@@ -49,6 +51,7 @@ scripts_2_0 = \
 	httpcfg			\
 	ilasm2			\
 	mkbundle2		\
+	mono-api-info2 		\
 	monop2 			\
 	resgen2			\
 	wsdl2			\
