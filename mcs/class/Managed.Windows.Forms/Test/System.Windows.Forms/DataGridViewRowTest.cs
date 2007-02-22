@@ -56,6 +56,36 @@ namespace MonoTests.System.Windows.Forms {
 			grid.Rows.Add(row);
 			row.Visible = false;
 		}
+
+		[Test]
+		public void Height ()
+		{
+			DataGridViewRow row = new DataGridViewRow();
+			Assert.IsTrue (row.Height > 5, "#1");
+			row.Height = 70;
+			Assert.AreEqual (70, row.Height, "#2");
+			row.Height = 40;
+			Assert.AreEqual (40, row.Height, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MinimumHeight ()
+		{
+			DataGridViewRow row = new DataGridViewRow();
+			Assert.IsTrue (row.MinimumHeight > 0, "#A1");
+			Assert.IsFalse (row.Height > row.MinimumHeight, "#A2");
+			row.MinimumHeight = 40;
+			row.Height = 50;
+			Assert.AreEqual (40, row.MinimumHeight, "#B1");
+			Assert.AreEqual (50, row.Height, "#B2");
+			row.MinimumHeight = 20;
+			Assert.AreEqual (20, row.MinimumHeight, "#C1");
+			Assert.AreEqual (20, row.Height, "#C2");
+			row.MinimumHeight = 40;
+			Assert.AreEqual (40, row.MinimumHeight, "#D1");
+			Assert.AreEqual (40, row.Height, "#D2");
+		}
 	}
 }
 #endif
