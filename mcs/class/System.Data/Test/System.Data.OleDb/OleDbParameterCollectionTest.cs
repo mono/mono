@@ -54,6 +54,6 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual(1, parameters.Count);
 			Assert.AreEqual(parameter, parameters[0]);	
 		}
-	}
 #endif
+	}
 }
