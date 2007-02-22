@@ -246,6 +246,7 @@ namespace MonoTests.System.Web.Services.Description
 		{
 		}
 
+#if NET_2_0
 		public class NullableContainer
 		{
 			[WebMethod (Description="Test nullables")]
@@ -254,5 +255,6 @@ namespace MonoTests.System.Web.Services.Description
 				return null;
 			}
 		}
+#endif
 	}
 }
