@@ -1,5 +1,10 @@
 2007-02-22  Jackson Harper  <jackson@ximian.com>
 
+	* TreeNode.cs: When a node is expanded, set its is_expanded flag
+	even if it doesn't have any children.
+
+2007-02-22  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Calculate the top node 'on the fly', this
 	eliminates issues where you need to click on the tree before
 	scrolling it to get the top node computed correctly.

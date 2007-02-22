@@ -355,7 +355,7 @@ namespace System.Windows.Forms {
 
 		public bool IsVisible {
 			get {
-				if (TreeView == null)
+				if (TreeView == null || visible_order < 0)
 					return false;
 
 				Rectangle bounds = Bounds;
@@ -653,8 +653,10 @@ namespace System.Windows.Forms {
 
 		private void Expand (bool byInternal)
 		{
-			if (is_expanded || nodes.Count < 1)
+			if (is_expanded || nodes.Count < 1) {
+				is_expanded = true;
 				return;
+			}
 
 			bool cancel = false;
 			TreeView tree_view = TreeView;
