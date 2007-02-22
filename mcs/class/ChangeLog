@@ -1,3 +1,7 @@
+2007-02-22  Marek Habersack  <grendello@gmail.com>
+
+	* Makefile: Added Mono.Data.Sqlite to build.
+
 2007-02-05  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add System.Core to build.

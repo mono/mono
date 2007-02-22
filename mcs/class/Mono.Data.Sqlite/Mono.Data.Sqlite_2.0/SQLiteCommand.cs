@@ -52,7 +52,7 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
   [Designer("Sqlite.Designer.SqliteCommandDesigner, Sqlite.Designer, Version=1.0.31.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
 #endif
-  public class SqliteCommand : DbCommand, ICloneable
+  public sealed class SqliteCommand : DbCommand, ICloneable
   {
     /// <summary>
     /// The command text this command is based on

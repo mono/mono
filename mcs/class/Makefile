@@ -59,6 +59,7 @@ common_dirs := \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
+	Mono.Data.Sqlite		\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\

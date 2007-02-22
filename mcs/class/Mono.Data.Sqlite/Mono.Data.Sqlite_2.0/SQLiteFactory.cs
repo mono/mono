@@ -47,7 +47,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// Sqlite implementation of DbProviderFactory.
   /// </summary>
-  public class SqliteFactory : DbProviderFactory
+  public sealed class SqliteFactory : DbProviderFactory
   {
     /// <summary>
     /// Static instance member which returns an instanced SqliteFactory class.

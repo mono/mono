@@ -121,7 +121,7 @@ namespace Mono.Data.Sqlite
   /// </item>
   /// </list>
   /// </remarks>
-  public class SqliteConnection : DbConnection, ICloneable
+  public sealed class SqliteConnection : DbConnection, ICloneable
   {
     private const string _dataDirectory = "|DataDirectory|";
 
