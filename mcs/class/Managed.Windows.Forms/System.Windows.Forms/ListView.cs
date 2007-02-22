@@ -1862,9 +1862,11 @@ namespace System.Windows.Forms
 				edit_item = item;
 				edit_args = new LabelEditEventArgs (owner.Items.IndexOf(edit_item));
 				owner.OnBeforeLabelEdit (edit_args);
-				
-				if (edit_args.CancelEdit)
+
+				if (edit_args.CancelEdit) {
 					EndEdit (item);
+					owner.Focus ();
+				}
 			}
 			
 			internal void EndEdit (ListViewItem item)
@@ -1993,6 +1995,8 @@ namespace System.Windows.Forms
 				if ((key_data & Keys.Alt) == 0) {
 					switch (key_data & Keys.KeyCode) {
 						case Keys.Enter:
+							return true;
+						case Keys.Escape:
 							return true;
 					}
 				}

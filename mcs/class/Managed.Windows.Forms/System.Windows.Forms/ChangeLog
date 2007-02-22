@@ -1,5 +1,11 @@
 2007-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FileDialog.cs: Fixed support for renaming files and directories.
+	* ListView.cs: Do not lose focus when edit is canceled. Process
+	Escape as regular key (to prevent closing of dialogs).
+
+2007-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ListView.cs: Removed TODO for LabelEdit. Removed extra tabs and
 	spaces. Changed spaces to tabs. Removed unnecessary init of bools.
 

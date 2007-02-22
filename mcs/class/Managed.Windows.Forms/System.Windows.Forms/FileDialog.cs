@@ -22,21 +22,24 @@
 // Authors:
 //
 //  Alexander Olk	alex.olk@googlemail.com
+//  Gert Driesen (drieseng@users.sourceforge.net)
 //
-
-// NOT COMPLETE - work in progress
+// TODO:
+// Keyboard shortcuts (DEL, F5, F2)
+// ??
 
 using System;
-using System.Drawing;
-using System.ComponentModel;
-using System.Resources;
-using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Xml;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Resources;
 using System.Threading;
+using System.Xml;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
 	#region FileDialog
 	[DefaultProperty ("FileName")]
 	[DefaultEvent ("FileOk")]
@@ -2619,7 +2622,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		
+		protected override void OnBeforeLabelEdit (LabelEditEventArgs e)
+		{
+			FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
+			FSEntry fsEntry = listViewItem.FSEntry;
+
+			// only allow editing of files or directories
+			if (fsEntry.FileType != FSEntry.FSEntryType.Directory &&
+				fsEntry.FileType != FSEntry.FSEntryType.File)
+				e.CancelEdit = true;
+
+			base.OnBeforeLabelEdit (e);
+		}
+
 		protected override void OnAfterLabelEdit (LabelEditEventArgs e)
 		{
 			base.OnAfterLabelEdit (e);
@@ -2628,17 +2643,27 @@ namespace System.Windows.Forms {
 			if (e.Label == null || Items [e.Item].Text == e.Label)
 				return;
 
-			string folder;
-			
-			if (currentFolderFSEntry.RealName != null)
-				folder = currentFolderFSEntry.RealName;
-			else
-				folder = currentFolder;
-			folder = Path.Combine (folder, e.Label);
+			FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
+			FSEntry fsEntry = listViewItem.FSEntry;
 
-			if (!vfs.CreateFolder (folder)) {
-				e.CancelEdit = true;
-				// We should really attempt to restart editing here
+			string folder = (currentFolderFSEntry.RealName != null) ?
+				currentFolderFSEntry.RealName : currentFolder;
+
+			switch (fsEntry.FileType) {
+			case FSEntry.FSEntryType.Directory:
+				string sourceDir = (fsEntry.RealName != null) ? fsEntry.RealName : fsEntry.FullName;
+				string destDir = Path.Combine (folder, e.Label);
+				if (!vfs.MoveFolder (sourceDir, destDir)) {
+					e.CancelEdit = true;
+				}
+				break;
+			case FSEntry.FSEntryType.File:
+				string sourceFile = (fsEntry.RealName != null) ? fsEntry.RealName : fsEntry.FullName;
+				string destFile = Path.Combine (folder, e.Label);
+				if (!vfs.MoveFile (sourceFile, destFile)) {
+					e.CancelEdit = true;
+				}
+				break;
 			}
 		}
 
@@ -2991,7 +3016,8 @@ namespace System.Windows.Forms {
 			try {
 				if (Directory.Exists (new_folder)) {
 					string message = "Folder \"" + new_folder + "\" already exists.";
-					MessageBox.Show (message, new_folder, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show (message, new_folder, MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
 					return false;
 				} else
 					Directory.CreateDirectory (new_folder);
@@ -3002,7 +3028,49 @@ namespace System.Windows.Forms {
 			
 			return true;
 		}
-		
+
+		public bool MoveFolder (string sourceDirName, string destDirName)
+		{
+			try {
+				if (Directory.Exists (destDirName)) {
+					string message = "Cannot rename " + Path.GetFileName (sourceDirName)
+						+ ": A folder with the name you specified already exists."
+						+ " Specify a different folder name.";
+					MessageBox.Show (message, "Error Renaming Folder", MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+					return false;
+				} else
+					Directory.Move (sourceDirName, destDirName);
+			} catch (Exception e) {
+				MessageBox.Show (e.Message, "Error Renaming Folder", 
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool MoveFile (string sourceFileName, string destFileName)
+		{
+			try {
+				if (File.Exists (destFileName)) {
+					string message = "Cannot rename " + Path.GetFileName (sourceFileName)
+						+ ": A file with the name you specified already exists."
+						+ " Specify a different file name.";
+					MessageBox.Show (message, "Error Renaming File",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return false;
+				} else
+					File.Move (sourceFileName, destFileName);
+			} catch (Exception e) {
+				MessageBox.Show (e.Message, "Error Renaming Folder",
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+
+			return true;
+		}
+
 		public string GetParent ()
 		{
 			return fileSystem.GetParent ();
@@ -4761,5 +4829,3 @@ namespace System.Windows.Forms {
 	}
 	#endregion
 }
-
-
