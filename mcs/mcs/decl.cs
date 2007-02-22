@@ -1018,8 +1018,12 @@ namespace Mono.CSharp {
 			while (p.IsArray || p.IsPointer || p.IsByRef)
 				p = TypeManager.GetElementType (p);
 
-			if (TypeManager.IsGenericParameter(p))
-				return true; // FIXME
+			if (TypeManager.IsGenericType (p)) {
+				foreach (Type t in p.GetGenericArguments ()) {
+					if (!AsAccessible (t, flags))
+						return false;
+				}
+			}
 
 			AccessLevel pAccess = TypeEffectiveAccessLevel (p);
 			AccessLevel mAccess = this.EffectiveAccessLevel &

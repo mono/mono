@@ -623,13 +623,6 @@ namespace Mono.CSharp {
 		if (t == typeof(NullType))
 			return "null";
 
-#if GMCS_SOURCE 
-		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
-			t = GetTypeArguments (t) [0];
-			return CSharpName (t) + "?";
-		}
-#endif
-
 		string name = GetFullName (t);
 
 		return Regex.Replace (name, 
@@ -732,8 +725,18 @@ namespace Mono.CSharp {
 		return pos;
 	}
 
-	public static string GetFullName (Type t)
+	static string GetFullName (Type t)
 	{
+		if (t.IsArray) {
+			string dimension = t.Name.Substring (t.Name.LastIndexOf ('['));
+			return GetFullName (t.GetElementType ()) + dimension;
+		}
+
+		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
+			t = GetTypeArguments (t)[0];
+			return CSharpName (t) + "?";
+		}
+
 		if (t.IsGenericParameter)
 			return t.Name;
 		if (!t.IsGenericType)

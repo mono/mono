@@ -3838,9 +3838,8 @@ namespace Mono.CSharp {
 						"accessible than operator `" + GetSignatureForError () + "'");
 				else
 					Report.Error (51, Location,
-						"Inconsistent accessibility: parameter type `" +
-						TypeManager.CSharpName (partype) + "' is less " +
-						"accessible than method `" + GetSignatureForError () + "'");
+						"Inconsistent accessibility: parameter type `{0}' is less accessible than method `{1}'",
+						TypeManager.CSharpName (partype), GetSignatureForError ());
 				error = true;
 			}
 
@@ -4506,7 +4505,7 @@ namespace Mono.CSharp {
 				Report.Warning (465, 1, Location, "Introducing a 'Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
-			if (base_method != null) {
+			if (base_method != null && (ModFlags & Modifiers.NEW) == 0) {
 				if (Parameters.Count == 1 && ParameterTypes [0] == TypeManager.object_type && Name == "Equals")
 					Parent.PartialContainer.Mark_HasEquals ();
 				else if (Parameters.Empty && Name == "GetHashCode")
@@ -5265,7 +5264,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					method_name = TypeManager.GetFullName (member.InterfaceType) +
+					method_name = member.InterfaceType.FullName + 
 						'.' + method_name;
 				} else {
 					if (implementing != null) {
