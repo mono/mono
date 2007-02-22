@@ -118,7 +118,11 @@ namespace System.Drawing.Printing
 				IntPtr ppd_handle = ppdOpenFile (ppd_filename);
 				return ppd_handle;
 			}
-			catch {
+			catch (Exception ex) {
+				Console.WriteLine ("There was an error opening the printer {0}. Please check your cups installation.");
+#if DEBUG
+				Console.WriteLine (ex.Message);
+#endif
 			}
 			return IntPtr.Zero;
 		}
@@ -236,7 +240,9 @@ namespace System.Drawing.Printing
 					return;
 				}
 
-				ppd_handle = OpenPrinter (printer);			
+				ppd_handle = OpenPrinter (printer);
+				if (ppd_handle == IntPtr.Zero)
+					return;
 
 				printer_dest = (CUPS_DESTS) Marshal.PtrToStructure (ptr, typeof (CUPS_DESTS));
 				options = new NameValueCollection();

@@ -1,4 +1,9 @@
 2007-02-21  Andreia Gaita  <avidigal@novell.com>
+	
+	* PrintingServicesUnix.cs: Report an error in the console if there is
+	a problem opening the printer.
+
+2007-02-21  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintingServicesUnix.cs: don't free up pointers unnecessarily (doh)
 
