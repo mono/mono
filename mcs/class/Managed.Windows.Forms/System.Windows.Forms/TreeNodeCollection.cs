@@ -189,8 +189,6 @@ namespace System.Windows.Forms {
 			TreeView tree_view = null;
 			if (owner != null) {
 				tree_view = owner.TreeView;
-				if (owner.IsRoot)
-					tree_view.top_node = null;
 				if (tree_view != null) {
 					tree_view.UpdateBelow (owner);
 					tree_view.RecalculateVisibleOrder (owner);
@@ -284,25 +282,7 @@ namespace System.Windows.Forms {
 
 			if (tree_view != null) {
 				tree_view.RecalculateVisibleOrder (prev);
-				if (removed == tree_view.top_node) {
 
-					if (removed.IsRoot) {
-						tree_view.top_node = null;
-					} else {
-						OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
-						if (oe.MovePrevious () && oe.MovePrevious ()) {
-							tree_view.top_node = oe.CurrentNode;
-						} else {
-							removed.is_expanded = false;
-							oe = new OpenTreeNodeEnumerator (removed);
-							if (oe.MoveNext () && oe.MoveNext ()) {
-								tree_view.top_node = oe.CurrentNode;
-							} else {
-								tree_view.top_node = null;
-							}
-						}
-					}
-				}
 				if (removed == tree_view.selected_node) {
 					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
 					if (oe.MoveNext () && oe.MoveNext ()) {
@@ -356,9 +336,6 @@ namespace System.Windows.Forms {
 
 			if (tree_view != null) {
 				TreeNode prev = GetPrevNode (node);
-
-				if (tree_view.top_node == null)
-					tree_view.top_node = node;
 
 				if (node.IsVisible)
 					tree_view.RecalculateVisibleOrder (prev);

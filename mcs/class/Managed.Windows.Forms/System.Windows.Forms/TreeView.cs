@@ -40,7 +40,6 @@ namespace System.Windows.Forms {
 		private string path_separator = "\\";
 		private int item_height = -1;
 		private bool sorted;
-		internal TreeNode top_node;
 		internal TreeNode root_node;
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;
@@ -426,7 +425,6 @@ namespace System.Windows.Forms {
 					sorted = value;
 				if (sorted) {
 					Nodes.Sort ();
-					top_node = root_node;
 					RecalculateVisibleOrder (root_node);
 					UpdateScrollBars ();
 					Invalidate ();
@@ -445,7 +443,15 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TreeNode TopNode {
-			get { return top_node; }
+			get {
+				if (root_node.FirstNode == null)
+					return null;
+				OpenTreeNodeEnumerator one = new OpenTreeNodeEnumerator (root_node.FirstNode);
+				one.MoveNext ();
+				for (int i = 0; i < skipped_nodes; i++)
+					one.MoveNext ();
+				return one.CurrentNode;
+			}
 		}
 
 		[Browsable(false)]
@@ -487,8 +493,8 @@ namespace System.Windows.Forms {
 				if (update_needed) {
 					RecalculateVisibleOrder (root_node);
 					UpdateScrollBars ();
-					if (SelectedNode != null)
-						SelectedNode.EnsureVisible ();
+					//	if (SelectedNode != null)
+					//		SelectedNode.EnsureVisible ();
 					Invalidate (ViewportRectangle);
 					update_needed = false;
 				}
@@ -508,16 +514,13 @@ namespace System.Windows.Forms {
 			while (walk.MoveNext ())
 			{ }
 
-			for (int i = 0; i < VisibleCount - 1; i++)
-				walk.MovePrevious ();
-
-			SetTop (walk.CurrentNode);
+			walk.CurrentNode.EnsureVisible ();
 		}
 
 		
 		public void CollapseAll ()
 		{
-			TreeNode walk = top_node;
+			TreeNode walk = TopNode;
 			
 			while (walk.parent != root_node)
 				walk = walk.parent;
@@ -855,9 +858,6 @@ namespace System.Windows.Forms {
 			if (nodes.Count <= 0)
 				return null;
 
-			if (top_node == null)
-				top_node = nodes [0];
-
 			OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (TopNode);
 			int move = y / ActualItemHeight;
 			for (int i = -1; i < move; i++) {
@@ -930,6 +930,8 @@ namespace System.Windows.Forms {
 			} else
 				order = start.visible_order;
 
+			
+			
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (start);
 			while (walk.MoveNext ()) {
 				walk.CurrentNode.visible_order = order;
@@ -1367,7 +1369,6 @@ namespace System.Windows.Forms {
 				vbar.Visible = true;
 			} else {
 				skipped_nodes = 0;
-				top_node = root_node.FirstNode;
 				RecalculateVisibleOrder (root_node);
 				vbar.Visible = false;
 				vbar_bounds_set = false;
@@ -1428,16 +1429,16 @@ namespace System.Windows.Forms {
 			if (skipped_nodes == pos)
 				return;
 
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
+
 			int old_skip = skipped_nodes;
 			skipped_nodes = pos;
 			int diff = old_skip - skipped_nodes;
 
 			// Determine the new top node if we have to
 			if (new_top == null) {
-				if (top_node == null)
-					top_node = nodes [0];
 
-				OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
+				
 				if (diff < 0) {
 					for (int i = diff; i <= 0; i++)
 						walk.MoveNext ();
@@ -1449,7 +1450,6 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			top_node = new_top;
 			int y_move = diff * ActualItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
@@ -1462,7 +1462,6 @@ namespace System.Windows.Forms {
 			while (walk.MoveNext () && walk.CurrentNode != new_top)
 				skipped_nodes++;
 
-			top_node = new_top;
 			vbar.Value = skipped_nodes;
 		}
 
@@ -1544,7 +1543,12 @@ namespace System.Windows.Forms {
 
 		private void FontChangedHandler (object sender, EventArgs e)
 		{
-			InvalidateNodeWidthRecursive (root_node);
+			if (IsHandleCreated) {
+				TreeNode top = TopNode;
+				InvalidateNodeWidthRecursive (root_node);
+
+				SetTop (top);
+			}
 		}
 
 		private void InvalidateNodeWidthRecursive (TreeNode node)
@@ -1558,7 +1562,7 @@ namespace System.Windows.Forms {
 		private void GotFocusHandler (object sender, EventArgs e)
 		{
 			if (selected_node == null)
-				SelectedNode = top_node;
+				SelectedNode = TopNode;
 			else
 				UpdateNode (selected_node);
 		}
