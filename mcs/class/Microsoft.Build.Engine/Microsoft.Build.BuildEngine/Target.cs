@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Target : IEnumerable {
@@ -127,7 +128,7 @@ namespace Microsoft.Build.BuildEngine {
 
 				buildState = BuildState.Finished;
 			// FIXME: log it 
-			} catch (Exception e) {
+			} catch (Exception) {
 				return false;
 			}
 
@@ -220,7 +221,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			TargetStartedEventArgs tsea;
 			string projectFile = project.FullFileName;
-			tsea = new TargetStartedEventArgs ("Target " + name + " started.", null, name, projectFile, null);
+			tsea = new TargetStartedEventArgs (String.Format ("Target {0} started.", name), null, name, projectFile, null);
 			engine.EventSource.FireTargetStarted (this, tsea);
 		}
 		
@@ -228,7 +229,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			TargetFinishedEventArgs tfea;
 			string projectFile = project.FullFileName;
-			tfea = new TargetFinishedEventArgs ("Target " + name + " finished.", null, name, projectFile, null, succeeded);
+			tfea = new TargetFinishedEventArgs (String.Format ("Target {0} finished.", name), null, name, projectFile, null, succeeded);
 			engine.EventSource.FireTargetFinished (this, tfea);
 		}
 	
@@ -256,6 +257,24 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal BuildState BuildState {
 			get { return buildState; }
+		}
+
+		// FIXME: implement batching
+		internal ITaskItem [] Outputs {
+			get {
+				string outputs = targetElement.GetAttribute ("Outputs");
+				if (outputs == String.Empty)
+					return new ITaskItem [0];
+
+				Expression e = new Expression ();
+				e.Parse (outputs, true);
+
+				string [] outputFiles = (string []) e.ConvertTo (project, typeof (string []));
+				ITaskItem [] outputItems = new ITaskItem [outputFiles.Length];
+				for (int i = 0; i < outputFiles.Length; i++)
+					outputItems [i] = new TaskItem (outputFiles [i]);
+				return outputItems;
+			}
 		}
 	}
 	
