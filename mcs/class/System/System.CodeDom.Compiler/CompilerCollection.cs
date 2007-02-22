@@ -117,7 +117,7 @@ namespace System.CodeDom.Compiler
 		public CompilerInfo GetCompilerInfoForLanguage (string language)
 		{
 			foreach (CompilerInfo ci in compiler_infos)
-				if (ci.Languages.IndexOf (language) != -1)
+				if (ci.Languages.IndexOf (language, StringComparison.InvariantCultureIgnoreCase) != -1)
 					return ci;
 			return null;
 		}
@@ -125,7 +125,7 @@ namespace System.CodeDom.Compiler
 		public CompilerInfo GetCompilerInfoForExtension (string extension)
 		{
 			foreach (CompilerInfo ci in compiler_infos)
-				if (ci.Extensions.IndexOf (extension) != -1)
+				if (ci.Extensions.IndexOf (extension, StringComparison.InvariantCultureIgnoreCase) != -1)
 					return ci;
 			return null;
 		}
