@@ -45,6 +45,35 @@
     <AdditionalClassPath>
     </AdditionalClassPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;JAVA;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\build\common\Locale.cs">
       <Link>Locale.cs</Link>
@@ -62,22 +91,25 @@
   <ItemGroup>
     <Reference Include="j2ee, Version=0.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\websphereportal\j2ee.dll</HintPath>
+      <HintPath>..\..\lib\j2ee.dll</HintPath>
     </Reference>
     <Reference Include="J2EE.Helpers, Version=0.0.0.0, Culture=neutral">
       <Private>False</Private>
     </Reference>
     <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral">
+      <HintPath>..\..\lib\J2SE.Helpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="portlet-api, Version=0.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\websphereportal\portlet-api.dll</HintPath>
+      <HintPath>..\..\lib\portlet-api.dll</HintPath>
     </Reference>
     <Reference Include="Portlet.Helpers, Version=0.0.0.0, Culture=neutral">
+      <HintPath>..\..\lib\Portlet.Helpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+      <HintPath>..\..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
