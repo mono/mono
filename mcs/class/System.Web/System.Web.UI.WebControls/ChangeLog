@@ -1,3 +1,8 @@
+2007-02-22  Marek Habersack  <grendello@gmail.com>
+
+	* LoginStatus.cs: Hanlde OnLoggedOut properly. Patch from
+	dban@dako.ro.
+
 2007-02-20  Adar Wesley <adarw@mainsoft.com>
 
 	* ObjectDataSourceView.cs: fixed ViewState behavior to match MS.  Added relevant tests.

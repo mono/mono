@@ -283,6 +283,7 @@ namespace System.Web.UI.WebControls {
 				return;
 
 			FormsAuthentication.SignOut ();
+			OnLoggedOut (e);
 
 			switch (LogoutAction) {
 			case LogoutAction.Refresh:
@@ -298,8 +299,6 @@ namespace System.Web.UI.WebControls {
 				HttpContext.Current.Response.Redirect (url);
 				break;
 			}
-
-			OnLoggedOut (e);
 		}
 
 		private void LoginClick (object sender, CommandEventArgs e)
