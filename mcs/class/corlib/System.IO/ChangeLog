@@ -1,3 +1,8 @@
+2007-02-19	Eyal Alaluf <eyala@mainsoft.com>
+
+	* DirectoryInfo.cs, Directory.cs: Use MonoNotSupported & MonoLimitation
+	  attribute to tag that DirectorySecurity is not supported.
+
 2007-02-19	Boris Kirzner <borisk@mainsoft.com>
 
 	* Path.cs: fix order of InvalidPathChars on windows.

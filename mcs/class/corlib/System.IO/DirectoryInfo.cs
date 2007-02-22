@@ -273,7 +273,7 @@ namespace System.IO {
 
 		// access control methods
 
-		[MonoTODO ("DirectorySecurity isn't implemented")]
+		[MonoLimitation ("DirectorySecurity isn't implemented")]
 		public void Create (DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
@@ -281,7 +281,7 @@ namespace System.IO {
 			Create ();
 		}
 
-		[MonoTODO ("Mono provides no support for DirectorySecurity")]
+		[MonoLimitation ("DirectorySecurity isn't implemented")]
 		public DirectoryInfo CreateSubdirectory (string name, DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
@@ -289,19 +289,19 @@ namespace System.IO {
 			return CreateSubdirectory (name);
 		}
 
-		[MonoTODO ("Mono provides no support for this")]
+		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public DirectorySecurity GetAccessControl ()
 		{
 			throw new UnauthorizedAccessException ();
 		}
 
-		[MonoTODO ("Mono provides no support for this")]
+		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public DirectorySecurity GetAccessControl (AccessControlSections includeSections)
 		{
 			throw new UnauthorizedAccessException ();
 		}
 
-		[MonoTODO ("Mono provides no support for this")]
+		[MonoLimitation ("DirectorySecurity isn't implemented")]
 		public void SetAccessControl (DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)

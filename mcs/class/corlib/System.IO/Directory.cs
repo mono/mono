@@ -511,13 +511,13 @@ namespace System.IO
 		}
 
 #if NET_2_0
-		[MonoLimitation ("Mono always throws PlatformNotSupported regardless of the platform")]
+		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		[MonoLimitation ("Mono always throws PlatformNotSupported regardless of the platform")]
+		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path)
 		{
 			throw new PlatformNotSupportedException ();
