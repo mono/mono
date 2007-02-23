@@ -1,5 +1,8 @@
 2007-02-23  Nagappan A  <anagappan@novell.com>
 
+	* DataRowTest2.cs (DataRowExpressionDefaultValueTest): Added new
+	test-case for bug # 80505.
+
 	* TrailingSpaceTest.cs: Added new test-case for bug # 79695.
 
 	* TestReadXml1.xml: Added new XML for bug # 80596.

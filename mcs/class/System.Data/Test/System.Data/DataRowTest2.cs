@@ -1781,5 +1781,36 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(row.RowState, DataRowState.Unchanged, "#3");
 		}
 #endif
+		[Test]
+		public void DataRowExpressionDefaultValueTest ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable custTable = ds.Tables.Add ("CustTable");
+
+			DataColumn column = new DataColumn ("units", typeof (int));
+			column.AllowDBNull = false;
+			column.Caption = "Units";
+			column.DefaultValue = 1;
+			custTable.Columns.Add (column);
+
+			column = new DataColumn ("price", typeof (decimal));
+			column.AllowDBNull = false;
+			column.Caption = "Price";
+			column.DefaultValue = 25;
+			custTable.Columns.Add (column);
+
+			column = new DataColumn ("total", typeof (string));
+			column.Caption = "Total";
+			column.Expression = "price*units";
+			custTable.Columns.Add (column);
+
+			DataRow row = custTable.NewRow ();
+
+			Assert.AreEqual (DBNull.Value, row["Total"] , "#1 Should be System.DBNull");
+			custTable.Rows.Add (row);
+
+			Assert.AreEqual ("25", row["Total"] , "#2 Should not be emptry string");
+		}
+
 	}
 }
