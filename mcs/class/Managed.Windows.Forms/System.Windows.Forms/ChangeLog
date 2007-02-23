@@ -1,3 +1,8 @@
+2007-02-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextRenderer.cs: Don't add padding on MeasureText if we were
+	sent the NoPadding flag.
+
 2007-02-23  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Invert order of drawing operation with DrawImage

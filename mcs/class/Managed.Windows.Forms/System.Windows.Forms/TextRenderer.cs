@@ -215,7 +215,7 @@ namespace System.Windows.Forms
 				// just makes something up as well.  This will require lots of tweaking to match MS.  :(
 				Size retval = r.ToRectangle ().Size;
 
-				if (retval.Width > 0) {
+				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == TextFormatFlags.NoPadding) {
 					retval.Width += 6;
 					retval.Width += (int)retval.Height / 8;
 				}
@@ -227,8 +227,8 @@ namespace System.Windows.Forms
 
 				Size retval = g.MeasureString (text, font).ToSize ();
 
-				if (retval.Width > 0)
-					retval.Width += 6;
+				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == TextFormatFlags.NoPadding)
+					retval.Width += 9;
 
 				return retval;
 			}
