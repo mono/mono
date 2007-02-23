@@ -31,8 +31,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.Security;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text;
+using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {
@@ -44,6 +46,7 @@ namespace System.Web.UI.WebControls
 		private string _confirmPassword = "";
 		private MembershipProvider _provider = null;
 		private ITextControl _errorMessageLabel = null;
+		private MailDefinition _mailDefinition = null;
 
 		private Style _textBoxStyle = null;
 		private Style _validatorTextStyle = null;
@@ -746,12 +749,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		//[MonoTODO ("Sending mail functionality is not implemented")]
-		//[ThemeableAttribute (false)]
-		//public MailDefinition MailDefinition
-		//{
-		//	get { throw new NotImplementedException (); }
-		//}
+		[ThemeableAttribute (false)]
+		public MailDefinition MailDefinition {
+			get {
+				if (this._mailDefinition == null) {
+					this._mailDefinition = new MailDefinition();
+					if (IsTrackingViewState)
+						((IStateManager) _mailDefinition).TrackViewState ();
+				}
+				return _mailDefinition;
+			}
+		}
 
 		[ThemeableAttribute (false)]
 		public virtual string MembershipProvider
@@ -1384,13 +1392,15 @@ namespace System.Web.UI.WebControls
 				((IStateManager) CreateUserButtonStyle).LoadViewState (states [10]);
 			if (states [11] != null)
 				((IStateManager) ContinueButtonStyle).LoadViewState (states [11]);
+			if (states [12] != null)
+				((IStateManager) MailDefinition).LoadViewState (states [12]);
 
 			((CreateUserStepContainer) CreateUserStep.ContentTemplateContainer).EnsureValidatorsState ();
 		}
 
 		protected override object SaveViewState ()
 		{
-			object [] state = new object [12];
+			object [] state = new object [13];
 			state [0] = base.SaveViewState ();
 
 			if (_textBoxStyle != null)
@@ -1415,6 +1425,8 @@ namespace System.Web.UI.WebControls
 				state [10] = ((IStateManager) _createUserButtonStyle).SaveViewState ();
 			if (_continueButtonStyle != null)
 				state [11] = ((IStateManager) _continueButtonStyle).SaveViewState ();
+			if (_mailDefinition != null)
+				state [12] = ((IStateManager) _mailDefinition).SaveViewState ();
 
 			for (int n = 0; n < state.Length; n++)
 				if (state [n] != null)
@@ -1454,6 +1466,8 @@ namespace System.Web.UI.WebControls
 				((IStateManager) _createUserButtonStyle).TrackViewState ();
 			if (_continueButtonStyle != null)
 				((IStateManager) _continueButtonStyle).TrackViewState ();
+			if (_mailDefinition != null)
+				((IStateManager) _mailDefinition).TrackViewState ();
 		}
 
 		#endregion
@@ -1518,6 +1532,7 @@ namespace System.Web.UI.WebControls
 
 			if ((newUser != null) && (status == MembershipCreateStatus.Success)) {
 				OnCreatedUser (new EventArgs ());
+				SendPasswordByMail(UserName, Password);
 				return true;
 			}
 
@@ -1559,6 +1574,42 @@ namespace System.Web.UI.WebControls
 			OnCreateUserError (new CreateUserErrorEventArgs (status));
 
 			return false;
+		}
+
+		private void SendPasswordByMail (string username, string password)
+		{
+			MembershipUser user = MembershipProviderInternal.GetUser (UserName, false);
+			if (user == null)
+				return;
+			
+			string messageText = "A new account has been created for you. Please go to the site and log in using the following information.\nUser Name: <%USERNAME%>\nPassword: <%PASSWORD%>";
+
+			ListDictionary dictionary = new ListDictionary ();
+			dictionary.Add ("<%USERNAME%>", username);
+			dictionary.Add ("<%PASSWORD%>", password);
+
+			MailMessage message = null;
+			
+			if (MailDefinition.BodyFileName.Length == 0)
+				message = MailDefinition.CreateMailMessage (user.Email, dictionary, messageText, this);
+			else
+				message = MailDefinition.CreateMailMessage (user.Email, dictionary, this);
+
+			if (string.IsNullOrEmpty (message.Subject))
+				message.Subject = "Account information";
+
+			MailMessageEventArgs args = new MailMessageEventArgs (message);
+			OnSendingMail (args);
+
+			SmtpClient smtpClient = new SmtpClient ();
+			try {
+				smtpClient.Send (message);
+			} catch (Exception e) {
+				SendMailErrorEventArgs mailArgs = new SendMailErrorEventArgs (e);
+				OnSendMailError (mailArgs);
+				if (!mailArgs.Handled)
+					throw e;
+			}
 		}
 
 		private void Login ()
