@@ -1369,7 +1369,7 @@ namespace System.Windows.Forms
 			return changed;
 		}
 
-		private void UpdateMultiSelection (int index)
+		private void UpdateMultiSelection (int index, bool reselect)
 		{
 			bool shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
 			bool ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
@@ -1392,17 +1392,23 @@ namespace System.Windows.Forms
 							curr.col >= left && curr.col <= right)
 							list.Add (curr);
 				}
-				if (SelectItems (list))
-					OnSelectedIndexChanged (EventArgs.Empty);
+				SelectItems (list);
 			} else if (ctrl_pressed) {
 				item.Selected = !item.Selected;
 				selection_start = item;
-				OnSelectedIndexChanged (EventArgs.Empty);
 			} else {
-				SelectedItems.Clear ();
-				item.Selected = true;
+				if (!reselect) {
+					// do not unselect, and reselect the item
+					foreach (int itemIndex in SelectedIndices) {
+						if (index == itemIndex)
+							continue;
+						items [itemIndex].Selected = false;
+					}
+				} else {
+					SelectedItems.Clear ();
+					item.Selected = true;
+				}
 				selection_start = item;
-				OnSelectedIndexChanged (EventArgs.Empty);
 			}
 		}
 
@@ -1455,11 +1461,9 @@ namespace System.Windows.Forms
 				return;
 
 			if (MultiSelect)
-				UpdateMultiSelection (index);
-			else if (!items [index].Selected) {
+				UpdateMultiSelection (index, true);
+			else if (!items [index].Selected)
 				items [index].Selected = true;
-				OnSelectedIndexChanged (EventArgs.Empty);
-			}
 
 			SetFocusedItem (items [index]);
 			EnsureVisible (index);
@@ -1666,13 +1670,13 @@ namespace System.Windows.Forms
 				if (clicked_item != null) {
 					owner.SetFocusedItem (clicked_item);
 					bool changed = !clicked_item.Selected;
-					if (owner.MultiSelect)
-						owner.UpdateMultiSelection (clicked_item.Index);
-					else
+
+					if (owner.MultiSelect) {
+						bool reselect = (!owner.LabelEdit || changed);
+						owner.UpdateMultiSelection (clicked_item.Index, reselect);
+					} else {
 						clicked_item.Selected = true;
-				
-					if (changed)
-						owner.OnSelectedIndexChanged (EventArgs.Empty);
+					}
 
 					// Raise double click if the item was clicked. On MS the
 					// double click is only raised if you double click an item
@@ -1698,7 +1702,6 @@ namespace System.Windows.Forms
 						prev_selection = owner.SelectedItems.List;
 					} else if (owner.SelectedItems.Count > 0) {
 						owner.SelectedItems.Clear ();
-						owner.OnSelectedIndexChanged (EventArgs.Empty);
 					}
 				}
 
@@ -1738,7 +1741,6 @@ namespace System.Windows.Forms
 					return;
 
 				item.Selected = true;
-				owner.OnSelectedIndexChanged (new EventArgs ());
 			}
 
 			private void ItemsMouseUp (object sender, MouseEventArgs me)
@@ -1779,7 +1781,6 @@ namespace System.Windows.Forms
 				} else if (!checking && owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty) {
 					// Need this to clean up background clicks
 					owner.SelectedItems.Clear ();
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
 				}
 
 				clicked_item = null;
@@ -1868,19 +1869,20 @@ namespace System.Windows.Forms
 					owner.Focus ();
 				}
 			}
-			
+
 			internal void EndEdit (ListViewItem item)
 			{
-				if (edit_item != null && edit_item == item) {
-					owner.OnAfterLabelEdit (edit_args);
+				// do nothing if there's no item being edited, or if the
+				// item being edited if not the one passed in
+				if (edit_item == null || edit_item != item)
+					return;
 
-					if (!edit_args.CancelEdit && edit_args.Label != null)
-						edit_item.Text = edit_text_box.Text;
-				}
+				owner.OnAfterLabelEdit (edit_args);
+				if (!edit_args.CancelEdit && edit_args.Label != null)
+					edit_item.Text = edit_text_box.Text;
 
-				if (edit_text_box != null && edit_text_box.Visible) {
+				if (edit_text_box != null && edit_text_box.Visible)
 					edit_text_box.Visible = false;
-				}
 
 				edit_item = null;
 			}
