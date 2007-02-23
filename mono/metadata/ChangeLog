@@ -1,3 +1,9 @@
+
+Fri Feb 23 15:06:57 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: allow case-insensitive matching of the dll name
+	in dllmap handling when prefixed with "i:".
+
 2007-02-20  Jonathan Chambers  <joncham@gmail.com>
 
 	* threads.c: Fix #ifdef for dummy_apc function for VS.
