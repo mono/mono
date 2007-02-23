@@ -1873,7 +1873,7 @@ namespace System.Windows.Forms
 			internal void EndEdit (ListViewItem item)
 			{
 				// do nothing if there's no item being edited, or if the
-				// item being edited if not the one passed in
+				// item being edited is not the one passed in
 				if (edit_item == null || edit_item != item)
 					return;
 
