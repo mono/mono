@@ -1,3 +1,8 @@
+2007-02-22  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: Move files from EXTRA_DISTFILES to DISTFILES so they
+	get included in 'make dist'
+
 2007-02-20  Marek Safar <marek.safar@gmail.com>
 
 	* mono-api-diff.cs : Report difference between parameter attributes.

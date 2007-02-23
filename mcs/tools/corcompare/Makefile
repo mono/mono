@@ -8,7 +8,6 @@ ifeq (default, $(PROFILE))
 ALL_PROGRAMS += CorCompare.exe mono-api-info.exe mono-api-diff.exe
 endif
 
-EXTRA_DISTFILES = cormissing.xsl TODO transform.js mono-api.xsl
 CORCOMPARE_SOURCES = \
 	CompletionInfo.cs \
 	CorCompare.cs \
@@ -31,7 +30,7 @@ PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 APIINFO_SOURCES = mono-api-info.cs
 APIDIFF_SOURCES = mono-api-diff.cs
 
-DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES)
+DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl TODO mono-api.xsl
 
 all-local: $(ALL_PROGRAMS)
 
