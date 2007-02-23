@@ -2655,6 +2655,11 @@ namespace System.Windows.Forms
 				string destDir = Path.Combine (folder, e.Label);
 				if (!vfs.MoveFolder (sourceDir, destDir)) {
 					e.CancelEdit = true;
+				} else {
+					if (fsEntry.RealName != null)
+						fsEntry.RealName = destDir;
+					else
+						fsEntry.FullName = destDir;
 				}
 				break;
 			case FSEntry.FSEntryType.File:
@@ -2662,6 +2667,11 @@ namespace System.Windows.Forms
 				string destFile = Path.Combine (folder, e.Label);
 				if (!vfs.MoveFile (sourceFile, destFile)) {
 					e.CancelEdit = true;
+				} else {
+					if (fsEntry.RealName != null)
+						fsEntry.RealName = destFile;
+					else
+						fsEntry.FullName = destFile;
 				}
 				break;
 			}
