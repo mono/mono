@@ -1,3 +1,13 @@
+2007-02-23  Nagappan A  <anagappan@novell.com>
+
+	* TestReadXml1.xml: Added new XML for bug # 80596.
+
+	* TestReadXmlSchema1.xml: Added new XML schema for bug # 80596.
+
+	* XmlDataLoaderTest.cs: Added new test-case for bug # 80596.
+
+	* XmlDataReaderTest.cs: Added new test-case for bug # 80596.
+
 2007-02-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataSetReadXmlTest.cs: Enable test for bug #80048 on 2.0 profile.
