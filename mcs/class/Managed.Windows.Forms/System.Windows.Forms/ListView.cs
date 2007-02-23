@@ -1795,14 +1795,12 @@ namespace System.Windows.Forms
 			private void LabelEditFinished (object sender, EventArgs e)
 			{
 				EndEdit (edit_item);
-				owner.Focus ();
 			}
 
 			private void LabelEditCancelled (object sender, EventArgs e)
 			{
 				edit_args.SetLabel (null);
 				EndEdit (edit_item);
-				owner.Focus ();
 			}
 
 			private void LabelTextChanged (object sender, EventArgs e)
@@ -1853,21 +1851,30 @@ namespace System.Windows.Forms
 						edit_text_box.Multiline = true;
 						break;
 				}
-				
+
+				edit_item = item;
+				edit_args = new LabelEditEventArgs (owner.Items.IndexOf (edit_item));
+				owner.OnBeforeLabelEdit (edit_args);
+
 				edit_text_box.Text = item.Text;
 				edit_text_box.Font = item.Font;
 				edit_text_box.Visible = true;
 				edit_text_box.Focus ();
 				edit_text_box.SelectAll ();
 
-				edit_item = item;
-				edit_args = new LabelEditEventArgs (owner.Items.IndexOf(edit_item));
-				owner.OnBeforeLabelEdit (edit_args);
-
-				if (edit_args.CancelEdit) {
+				if (edit_args.CancelEdit)
 					EndEdit (item);
-					owner.Focus ();
-				}
+			}
+
+			internal void CancelEdit (ListViewItem item)
+			{
+				// do nothing if there's no item being edited, or if the
+				// item being edited is not the one passed in
+				if (edit_item == null || edit_item != item)
+					return;
+
+				edit_args.SetLabel (null);
+				EndEdit (item);
 			}
 
 			internal void EndEdit (ListViewItem item)
@@ -1881,8 +1888,12 @@ namespace System.Windows.Forms
 				if (!edit_args.CancelEdit && edit_args.Label != null)
 					edit_item.Text = edit_text_box.Text;
 
-				if (edit_text_box != null && edit_text_box.Visible)
-					edit_text_box.Visible = false;
+				if (edit_text_box != null) {
+					if (edit_text_box.Visible)
+						edit_text_box.Visible = false;
+					// ensure listview gets focus
+					owner.Focus ();
+				}
 
 				edit_item = null;
 			}
@@ -3550,6 +3561,8 @@ namespace System.Windows.Forms
 			{
 				owner.SetFocusedItem (null);
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
+				foreach (ListViewItem item in list)
+					owner.item_control.CancelEdit (item);
 				list.Clear ();
 				OnChange ();
 				owner.Redraw (true);
@@ -3711,6 +3724,7 @@ namespace System.Windows.Forms
 				bool selection_changed = owner.SelectedItems.Contains (item);
 				list.Remove (item);
 				OnChange ();
+				owner.item_control.CancelEdit (item);
 				owner.Redraw (true);
 				if (selection_changed)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
@@ -3720,12 +3734,8 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
-				bool selection_changed = owner.SelectedIndices.Contains (index);
-				list.RemoveAt (index);
-				OnChange ();
-				owner.Redraw (false);
-				if (selection_changed)
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				ListViewItem item = (ListViewItem) list [index];
+				Remove (item);
 			}
 
 #if NET_2_0

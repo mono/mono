@@ -1,5 +1,17 @@
 2007-02-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ListViewItem.cs: Cancel label edit when item is removed from 
+	ListView.
+	* ListView.cs: Move setting of focus to EndEdit. Fire BeforeLabelEdit
+	event before the edit textbox is displayed.  Added CancelEdit method
+	which is used end to editing while ignoring the value set by the
+	user. In EndEdit, set focus to ListView to avoid losing focus to
+	other controls. In ListViewItemCollection.Clear, cancel editing of
+	any of the items.  In Remove, cancel editing of item being removed.
+	Avoid udplicate code by modifing RemoveAt to invoke Remove.
+
+2007-02-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FileDialog.cs: Update FSEntry when move is successful. Fixes
 	bug #80948.  
 

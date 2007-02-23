@@ -24,8 +24,6 @@
 //      Mike Kestner <mkestner@novell.com>
 //      Daniel Nauck (dna(at)mono-project(dot)de)
 
-
-
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -603,8 +601,11 @@ namespace System.Windows.Forms
 
 		public virtual void Remove ()
 		{
-			if (owner != null)
-				owner.Items.Remove (this);
+			if (owner == null)
+				return;
+
+			owner.item_control.CancelEdit (this);
+			owner.Items.Remove (this);
 			owner = null;
 		}
 
