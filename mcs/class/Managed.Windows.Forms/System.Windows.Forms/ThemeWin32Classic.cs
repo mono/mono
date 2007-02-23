@@ -143,12 +143,12 @@ namespace System.Windows.Forms
 		#region ButtonBase
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button)
 		{
-			// First, draw the image
-			if (button.FlatStyle != FlatStyle.System && ((button.image != null) || (button.image_list != null)))
-				ButtonBase_DrawImage(button, dc);
-			
 			// Draw the button: Draw border, etc.
 			ButtonBase_DrawButton(button, dc);
+
+			// Draw the image
+			if (button.FlatStyle != FlatStyle.System && ((button.image != null) || (button.image_list != null)))
+				ButtonBase_DrawImage(button, dc);
 			
 			// Draw the focus rectangle
 			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled)
@@ -342,12 +342,14 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			if (button.Enabled) {
-				dc.DrawImage(i, image_x, image_y, image_width, image_height); 
-			}
-			else {
-				CPDrawImageDisabled(dc, i, image_x, image_y, ColorControl);
-			}
+			dc.SetClip (new Rectangle(3, 3, width - 5, height - 5));
+
+			if (button.Enabled)
+				dc.DrawImage (i, image_x, image_y, image_width, image_height);
+			else
+				CPDrawImageDisabled (dc, i, image_x, image_y, ColorControl);
+
+			dc.ResetClip ();
 		}
 		
 		protected virtual void ButtonBase_DrawFocus(ButtonBase button, Graphics dc)
