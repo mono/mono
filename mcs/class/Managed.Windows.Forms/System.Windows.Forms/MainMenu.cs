@@ -99,18 +99,20 @@ namespace System.Windows.Forms
 		
 		#region Private Methods
 
-		internal void Draw () {
+		internal void Draw () 
+		{
 			Draw (Rect);
 		}
 
-		internal void Draw (Rectangle clip_rect) {
-			PaintEventArgs pe;
-
+		internal void Draw (Rectangle rect) 
+		{
 			if (Wnd.IsHandleCreated) {
-				pe = XplatUI.PaintEventStart(Wnd.window.Handle, false);
-				pe.Graphics.Clip = new Region (clip_rect);
-				Draw (pe, Rect);
-				XplatUI.PaintEventEnd(Wnd.window.Handle, false);
+				Point pt = XplatUI.GetMenuOrigin (Wnd.window.Handle);
+				
+				PaintEventArgs pevent = XplatUI.PaintEventStart (Wnd.window.Handle, false);
+				pevent.Graphics.SetClip (new Rectangle (rect.X + pt.X, rect.Y + pt.Y, rect.Width, rect.Height));
+				Draw (pevent, Rect);
+				XplatUI.PaintEventEnd (Wnd.window.Handle, false);
 			}
 		}
 
