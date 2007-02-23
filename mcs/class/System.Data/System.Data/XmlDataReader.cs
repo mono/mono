@@ -371,6 +371,7 @@ namespace System.Data
 			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
 			if (type == typeof (Guid)) return XmlConvert.ToGuid (value);
 			if (type == typeof (byte[])) return Convert.FromBase64String (value);
+			if (type == typeof (System.Type)) return System.Type.GetType (value);
 
 			return Convert.ChangeType (value, type);
 		}
