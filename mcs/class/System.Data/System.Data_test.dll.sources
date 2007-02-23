@@ -73,6 +73,8 @@ System.Data/ReadOnlyExceptionTest.cs
 System.Data/SyntaxErrorExceptionTest.cs
 System.Data/RowNotInTableExceptionTest.cs
 System.Data/VersionNotFoundException.cs
+System.Data/XmlDataLoaderTest.cs
+System.Data/XmlDataReaderTest.cs
 System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs
 System.Data.Common/ConnectionStringsSectionTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs
