@@ -227,7 +227,7 @@ namespace System.Security {
 			bool call_cas_only = this.IsUnrestricted ();
 			// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
 			for (int i = 0; i < n; i++) {
-				CodeAccessPermission p = (CodeAccessPermission) list [i];
+				IPermission p = (IPermission) list [i];
 				Type t = p.GetType ();
 				if (t.IsSubclassOf (typeof (CodeAccessPermission))) {
 					_ignored [i] = false;

@@ -1,3 +1,8 @@
+2007-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSet.cs: Fix InvalidCastException on non-CAS permissions.
+	Fix bug #80936.
+
 2006-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContext.cs: Don't skip the calling callBack if we don't call
