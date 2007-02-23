@@ -133,8 +133,24 @@ namespace System.Windows.Forms
 				Rectangle new_bounds = PadRectangle (bounds, flags);
 				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX, (int)(dc as Graphics).Transform.OffsetY);
 
-				IntPtr hdc = dc.GetHdc ();
-
+				IntPtr hdc = IntPtr.Zero;
+			
+				// If we need to use the graphics clipping region, add it to our hdc
+				if ((flags & TextFormatFlags.PreserveGraphicsClipping) == TextFormatFlags.PreserveGraphicsClipping) {
+					Graphics graphics = (Graphics)dc;
+					Region clip_region = graphics.Clip;
+					
+					if (!clip_region.IsInfinite (graphics)) {
+						IntPtr hrgn = clip_region.GetHrgn (graphics);
+						hdc = dc.GetHdc ();
+						SelectClipRgn (hdc, hrgn);
+						clip_region.ReleaseHrgn (hrgn);
+					}
+				}
+				
+				if (hdc == IntPtr.Zero)
+					hdc = dc.GetHdc ();
+					
 				// Set the fore color
 				if (foreColor != Color.Empty)
 					SetTextColor (hdc, ColorTranslator.ToWin32 (foreColor));
@@ -433,6 +449,9 @@ namespace System.Windows.Forms
 
 		[DllImport ("gdi32")]
 		static extern bool DeleteObject (IntPtr objectHandle);
+
+		[DllImport("gdi32")]
+		static extern bool SelectClipRgn(IntPtr hdc, IntPtr hrgn);
 		#endregion
 	}
 }
