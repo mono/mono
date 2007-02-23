@@ -1821,15 +1821,14 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			Console.Write("*");
 			if (base.ProcessCmdKey (ref msg, keyData)) {
 				return true;
-			}Console.Write("!");
+			}
 
 			// Give our menu a shot
 			if (ActiveMenu != null) {
 				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
-			}Console.Write("@");
+			}
 
 			if (IsMdiChild) {
 				switch (keyData)
