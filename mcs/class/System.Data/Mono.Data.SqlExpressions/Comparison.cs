@@ -66,6 +66,9 @@ namespace Mono.Data.SqlExpressions {
 			
 		}
 			
+		// certain trailing whitespace chars (including space) are ignored by .NET when comparing strings. See bug #79695.  
+		private static readonly char[] IgnoredTrailingChars = { (char) 0x20, (char) 0x3000, (char) 0xFEFF };
+
 		internal static int Compare (IComparable o1, IComparable o2, bool caseSensitive)
 		{
 			//TODO: turn this "conversion pipeline" into something nicer
@@ -83,9 +86,13 @@ namespace Mono.Data.SqlExpressions {
 				throw new EvaluateException (String.Format ("Cannot perform compare operation on {0} and {1}.", o1.GetType(), o2.GetType()));
 			}
 
-			if (o1 is string && o2 is string && !caseSensitive) {
-				o1 = ((string)o1).ToLower();
-				o2 = ((string)o2).ToLower();
+			if (o1 is string && o2 is string) {
+				o1 = ((string) o1).TrimEnd (IgnoredTrailingChars);
+				o2 = ((string) o2).TrimEnd (IgnoredTrailingChars);
+				if (!caseSensitive) {
+					o1 = ((string) o1).ToLower ();
+					o2 = ((string) o2).ToLower ();
+				}
 			}
 			
 			if (o1.GetType () != o2.GetType ())
