@@ -1,3 +1,8 @@
+2007-02-23  Raja R Harinath  <rharinath@novell.com>
+
+	Fix compilation error
+	* DataGridViewRowTest.cs (System.ComponentModel): Remove unused 'using'.
+
 2007-02-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewRowTest.cs: Added tests for Height and MinimumHeight.
