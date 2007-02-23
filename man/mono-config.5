@@ -38,7 +38,9 @@ The
 element takes two attributes:
 .TP
 .I dll
-This should be the same string used in the DllImport attribute
+This should be the same string used in the DllImport attribute, optionally
+prefixed with "i:" to indicate that the string must be matched in a
+case-insensitive way
 .TP
 .I target
 This should be the name of the library where the function can be found: 
@@ -94,8 +96,16 @@ The following example maps references to the `cygwin1.dll' shared
 library to the `libc.so.6' file.  
 .nf
 <configuration>
-	<dllmap dll="cygwin1.dll" target="libc.so.6"/>
+	<dllmap dll="i:cygwin1.dll" target="libc.so.6"/>
 </configuration>
+.fi
+The library name in the DllImport attribute is allowed to be in any
+case variant, like the following examples:
+.nf
+.nf
+	[DllImport ("cygwin1.dll")]
+	[DllImport ("Cygwin1.dll")]
+	[DllImport ("cygwiN1.Dll")]
 .fi
 .PP
 This one maps the following C# method:
