@@ -1821,14 +1821,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			Console.Write("*");
 			if (base.ProcessCmdKey (ref msg, keyData)) {
 				return true;
-			}
+			}Console.Write("!");
 
 			// Give our menu a shot
 			if (ActiveMenu != null) {
 				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
-			}
+			}Console.Write("@");
 
 			if (IsMdiChild) {
 				switch (keyData)
@@ -2115,18 +2116,17 @@ namespace System.Windows.Forms {
 
 				// Menu drawing
                 case Msg.WM_NCHITTEST: {
-                    if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
-                        
-                        int x = LowOrder ((int)m.LParam.ToInt32 ());
-                        int y = HighOrder ((int)m.LParam.ToInt32 ());
+					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
+						int x = LowOrder ((int)m.LParam.ToInt32 ());
+						int y = HighOrder ((int)m.LParam.ToInt32 ());
 
-                        XplatUI.ScreenToMenu (ActiveMenu.Wnd.window.Handle, ref x, ref y);
+						XplatUI.ScreenToMenu (ActiveMenu.Wnd.window.Handle, ref x, ref y);
 
-                        // If point is under menu return HTMENU, it prevents Win32 to return HTMOVE.
-                        if ((x > 0) && (y > 0) && (x < ActiveMenu.Rect.Width) && (y < ActiveMenu.Rect.Height)) {
-                            m.Result = new IntPtr ((int)HitTest.HTMENU);
-                            return;
-                        }
+						// If point is under menu return HTMENU, it prevents Win32 to return HTMOVE.
+						if ((x > 0) && (y > 0) && (x < ActiveMenu.Rect.Width) && (y < ActiveMenu.Rect.Height)) {
+							m.Result = new IntPtr ((int)HitTest.HTMENU);
+							return;
+						}
 					}
 
 					base.WndProc (ref m);
