@@ -1,3 +1,10 @@
+2007-02-23  Everaldo Canuto  <everaldo@simios.org>
+
+	* FolderBrowserDialog.cs: Use ClientSize instead of Size to specify 
+	window size, it fix problem when you run under win32 that theres
+	Size diferent than ClientSize. Also fix controls size and positions
+	to mimic Win32. Fixes #80837.
+
 2007-02-22  Everaldo Canuto  <everaldo@simios.org>
 
 	* Form.cs: Handle WM_NCHITTEST and return HTMENU when point is on 

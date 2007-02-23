@@ -90,8 +90,8 @@ namespace System.Windows.Forms {
 			form.CancelButton = cancelButton;
 			
 			form.SuspendLayout ();
-			form.Size =  new Size (322, 288);
-			form.MinimumSize = new Size (322, 288);
+			form.ClientSize = new Size (322, 324);
+			form.MinimumSize = new Size (310, 254);
 			form.Text = "Search Folder";
 			form.SizeGripStyle = SizeGripStyle.Show;
 
@@ -101,8 +101,8 @@ namespace System.Windows.Forms {
 			// descriptionLabel
 			descriptionLabel.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
 				| AnchorStyles.Right)));
-			descriptionLabel.Location = new Point (17, 14);
-			descriptionLabel.Size = new Size (290, 40);
+			descriptionLabel.Location = new Point (15, 14);
+			descriptionLabel.Size = new Size (292, 40);
 			descriptionLabel.TabIndex = 0;
 			descriptionLabel.Text = "";
 			
@@ -111,9 +111,9 @@ namespace System.Windows.Forms {
 				| AnchorStyles.Left)
 				| AnchorStyles.Right)));
 			folderBrowserTreeView.ImageIndex = -1;
-			folderBrowserTreeView.Location = new Point (20, 61);
+			folderBrowserTreeView.Location = new Point (15, 60);
 			folderBrowserTreeView.SelectedImageIndex = -1;
-			folderBrowserTreeView.Size = new Size (278, 153);
+			folderBrowserTreeView.Size = new Size (292, 212);
 			folderBrowserTreeView.TabIndex = 1;
 			folderBrowserTreeView.ShowLines = false;
 			folderBrowserTreeView.ShowPlusMinus = true;
@@ -125,8 +125,8 @@ namespace System.Windows.Forms {
 			// newFolderButton
 			newFolderButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 			newFolderButton.FlatStyle = FlatStyle.System;
-			newFolderButton.Location = new Point (14, 230);
-			newFolderButton.Size = new Size (125, 23);
+			newFolderButton.Location = new Point (15, 285);
+			newFolderButton.Size = new Size (105, 23);
 			newFolderButton.TabIndex = 2;
 			newFolderButton.Text = "New Folder";
 			newFolderButton.Enabled = true;
@@ -134,7 +134,7 @@ namespace System.Windows.Forms {
 			// okButton
 			okButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			okButton.FlatStyle = FlatStyle.System;
-			okButton.Location = new Point (142, 230);
+			okButton.Location = new Point (142, 285);
 			okButton.Size = new Size (80, 23);
 			okButton.TabIndex = 3;
 			okButton.Text = "OK";
@@ -143,7 +143,7 @@ namespace System.Windows.Forms {
 			cancelButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			cancelButton.DialogResult = DialogResult.Cancel;
 			cancelButton.FlatStyle = FlatStyle.System;
-			cancelButton.Location = new Point (226, 230);
+			cancelButton.Location = new Point (227, 285);
 			cancelButton.Size = new Size (80, 23);
 			cancelButton.TabIndex = 4;
 			cancelButton.Text = "Cancel";
