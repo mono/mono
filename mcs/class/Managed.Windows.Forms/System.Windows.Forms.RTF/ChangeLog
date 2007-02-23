@@ -1,3 +1,8 @@
+2007-02-23  Jackson Harper  <jackson@ximian.com>
+
+	* RTF.cs: Pull pict groups out of opt dests. Don't handle the pict
+	group unless there was data found.
+
 2007-02-15  Jackson Harper  <jackson@ximian.com>
 
 	* KeysInit.cs:

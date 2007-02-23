@@ -587,7 +587,20 @@ SkipCRLF:
 
 		private void HandleOptDest (RTF rtf)
 		{
-			rtf.SkipGroup ();
+			while (true) {
+				GetToken ();
+
+				if (rtf.CheckCM (TokenClass.Group, Major.EndGroup))
+					break;
+
+				//
+				// We don't want to skip all optional dests
+				//
+				if (rtf.CheckCMM (TokenClass.Control, Major.Destination, Minor.Pict)) {
+					ReadPictGroup (rtf);
+					return;
+				}
+			}
 		}
 
 		private void ReadFontTbl(RTF rtf) {
@@ -957,7 +970,7 @@ SkipCRLF:
 				}
 			}
 
-			if (image_type != Minor.Undefined)
+			if (image_type != Minor.Undefined && !read_image_data)
 				SetToken (TokenClass.Control, Major.PictAttr, image_type, 0, String.Empty);
 		}
 
