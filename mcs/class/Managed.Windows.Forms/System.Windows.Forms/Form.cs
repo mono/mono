@@ -2114,7 +2114,26 @@ namespace System.Windows.Forms {
 				}
 
 				// Menu drawing
-				case Msg.WM_NCLBUTTONDOWN: {
+                case Msg.WM_NCHITTEST: {
+                    if (XplatUI.IsEnabled (Handle) && ActiveMenu != null && PointUnderMenu() ) {
+                        
+                        int x = LowOrder ((int)m.LParam.ToInt32 ());
+                        int y = HighOrder ((int)m.LParam.ToInt32 ());
+
+                        XplatUI.ScreenToMenu (ActiveMenu.Wnd.window.Handle, ref x, ref y);
+
+                        // If point is under menu return HTMENU, it prevents Win32 to return HTMOVE.
+                        if ((x > 0) && (y > 0) && (x < ActiveMenu.Rect.Width) && (y < ActiveMenu.Rect.Height)) {
+                            m.Result = new IntPtr ((int)HitTest.HTMENU);
+                            return;
+                        }
+					}
+
+					base.WndProc (ref m);
+					return;
+				}
+
+                case Msg.WM_NCLBUTTONDOWN: {
 					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
 						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
 					}
@@ -2131,7 +2150,8 @@ namespace System.Windows.Forms {
 					base.WndProc(ref m);
 					return;
 				}
-				case Msg.WM_NCLBUTTONUP: {
+
+                case Msg.WM_NCLBUTTONUP: {
 					if (ActiveMaximizedMdiChild != null) {
 						ActiveMaximizedMdiChild.HandleMenuMouseUp (ActiveMenu,
 								LowOrder ((int)m.LParam.ToInt32 ()),
