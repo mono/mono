@@ -1,3 +1,8 @@
+2007-02-23  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80878
+	* class.cs, cs-parser.jay: Event property can host anonymous methods.
+
 2007-02-22  Marek Safar  <marek.safar@gmail.com>
 
 	* attribute.cs: Enable ExtensionAttribute presence test.

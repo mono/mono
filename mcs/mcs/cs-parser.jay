@@ -2335,11 +2335,19 @@ add_accessor_declaration
 		
 		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
+		
+		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
-          block
+      block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
+		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
 		lexer.EventParsing = true;
+		
+		current_local_parameters = null;
+		SimpleAnonymousHost.Simple.Propagate (accessor);
+		anonymous_host = null;
+		
+		$$ = accessor;
 	  }
 	| opt_attributes ADD error {
 		Report.Error (73, (Location) $2, "An add or remove accessor must have a body");

@@ -1362,6 +1362,15 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (events != null) {
+				foreach (Event e in events) {
+					if (!e.Add.ResolveMembers ())
+						return false;
+					if (!e.Remove.ResolveMembers ())
+						return false;
+				}
+			}
+
 			return true;
 		}
 
@@ -6389,6 +6398,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public virtual bool ResolveMembers ()
+		{
+			return true;
+		}
+
 		//
 		//   Represents header string for documentation comment.
 		//
@@ -6566,7 +6580,7 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public bool ResolveMembers ()
+			public override bool ResolveMembers ()
 			{
 				if (yields) {
 					iterator = Iterator.CreateIterator (this, Parent, null, ModFlags);
@@ -7114,9 +7128,12 @@ namespace Mono.CSharp {
 	public class EventProperty: Event {
 		abstract class AEventPropertyAccessor : AEventAccessor
 		{
+			readonly ArrayList anonymous_methods;
+
 			public AEventPropertyAccessor (Event method, Accessor accessor, string prefix):
 				base (method, accessor, prefix)
 			{
+				this.anonymous_methods = accessor.AnonymousMethods;
 			}
 
 			public override MethodBuilder Define (DeclSpace ds)
@@ -7124,6 +7141,20 @@ namespace Mono.CSharp {
 				method.CheckAbstractAndExtern (block != null);
 				return base.Define (ds);
 			}
+
+			public override bool ResolveMembers ()
+			{
+				if (anonymous_methods == null)
+					return true;
+
+				foreach (AnonymousMethodExpression ame in anonymous_methods) {
+					if (!ame.CreateAnonymousHelpers ())
+						return false;
+				}
+
+				return true;
+			}
+
 		}
 
 		sealed class AddDelegateMethod: AEventPropertyAccessor
