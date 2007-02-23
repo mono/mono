@@ -1,5 +1,12 @@
 2007-02-23  Nagappan A  <anagappan@novell.com>
 
+	* DataRow.cs (Item): Checks whether this DataRow exist in the
+	DataRowCollection, then compute the expression. Fixes bug #
+	80505.
+
+	* DataRowCollection.cs (IndexOf): Modified as internal method for
+	1.0 profile.
+
 	* XmlDataReader.cs (StringToObject): DataTables containing
 	System.Type throw exception on deserializing. Fixes bug # 80596.
 

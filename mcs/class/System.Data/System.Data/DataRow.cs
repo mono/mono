@@ -255,7 +255,7 @@ namespace System.Data {
 				DataColumn column = _table.Columns[columnIndex];
 				int recordIndex = IndexFromVersion(version);
 
-				if (column.Expression != String.Empty) {
+				if (column.Expression != String.Empty && _table.Rows.IndexOf (this) != -1) {
 					object o = column.CompiledExpression.Eval (this);
 					if (o != null && o != DBNull.Value) {
 						o = Convert.ChangeType (o, column.DataType);

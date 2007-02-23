@@ -119,7 +119,11 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public int IndexOf (DataRow row) 
+		public
+#else
+		internal
+#endif
+		int IndexOf (DataRow row) 
 		{
 			if (row == null)
 				return -1;
@@ -134,7 +138,7 @@ namespace System.Data
 
 			return -1;
 		}
-#endif
+
 		internal void AddInternal (DataRow row) {
 			AddInternal (row, DataRowAction.Add);
 		}
