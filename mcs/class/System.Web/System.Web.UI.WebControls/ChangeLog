@@ -1,5 +1,7 @@
 2007-02-23  Marek Habersack  <grendello@gmail.com>
 
+	* ObjectDataSourceView.cs: Fix saving/restoring the view state.
+
 	* CreateUserWizard.cs: support for sending mail when a new user is
 	created. Patch from dban@dako.ro.
 

@@ -1128,12 +1128,12 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void LoadViewState (object savedState)
 		{
-			object[] state = (savedState == null) ? new object [6] : (object[]) savedState;
-			((IStateManager)SelectParameters).LoadViewState (state[1]); 
-			((IStateManager)UpdateParameters).LoadViewState (state[2]); 
-			((IStateManager)DeleteParameters).LoadViewState (state[3]); 
-			((IStateManager)InsertParameters).LoadViewState (state[4]); 
-			((IStateManager)FilterParameters).LoadViewState (state[5]); 
+			object[] state = (savedState == null) ? new object [5] : (object[]) savedState;
+			((IStateManager)SelectParameters).LoadViewState (state[0]); 
+			((IStateManager)UpdateParameters).LoadViewState (state[1]); 
+			((IStateManager)DeleteParameters).LoadViewState (state[2]); 
+			((IStateManager)InsertParameters).LoadViewState (state[3]); 
+			((IStateManager)FilterParameters).LoadViewState (state[4]); 
 		}
 
 		protected virtual object SaveViewState()
