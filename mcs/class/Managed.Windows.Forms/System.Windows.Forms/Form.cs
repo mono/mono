@@ -2115,7 +2115,7 @@ namespace System.Windows.Forms {
 
 				// Menu drawing
                 case Msg.WM_NCHITTEST: {
-                    if (XplatUI.IsEnabled (Handle) && ActiveMenu != null && PointUnderMenu() ) {
+                    if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
                         
                         int x = LowOrder ((int)m.LParam.ToInt32 ());
                         int y = HighOrder ((int)m.LParam.ToInt32 ());
