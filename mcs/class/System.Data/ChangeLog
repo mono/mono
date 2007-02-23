@@ -3,6 +3,7 @@
 	* System.Data_test.dll.sources: Added
 	System.Data/XmlDataLoaderTest.cs, System.Data/XmlDataReaderTest.cs
 	tests for bug # 80596.
+	Added System.Data/TrailingSpaceTest.cs test for bug # 79695.
 
 2007-02-21  Nagappan A  <anagappan@novell.com>
 

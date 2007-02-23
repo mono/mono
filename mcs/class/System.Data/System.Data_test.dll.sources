@@ -71,6 +71,7 @@ System.Data/MissingPrimaryKeyExceptionTest.cs
 System.Data/NoNullAllowedExceptionTest.cs
 System.Data/ReadOnlyExceptionTest.cs
 System.Data/SyntaxErrorExceptionTest.cs
+System.Data/TrailingSpaceTest.cs
 System.Data/RowNotInTableExceptionTest.cs
 System.Data/VersionNotFoundException.cs
 System.Data/XmlDataLoaderTest.cs
