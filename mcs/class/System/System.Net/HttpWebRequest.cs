@@ -400,8 +400,10 @@ namespace System.Net
 			get { return proxy; }
 			set { 
 				CheckRequestStarted ();
+#if ONLY_1_1
 				if (value == null)
 					throw new ArgumentNullException ("value");
+#endif
 
 				proxy = value;
 				servicePoint = null; // we may need a new one

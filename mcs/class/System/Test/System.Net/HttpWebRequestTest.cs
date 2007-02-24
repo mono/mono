@@ -33,6 +33,28 @@ namespace MonoTests.System.Net
 	public class HttpWebRequestTest
 	{
 		[Test]
+		public void Proxy_Null ()
+		{
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
+			Assert.IsNotNull (req.Proxy, "#1");
+#if NET_2_0
+			req.Proxy = null;
+			Assert.IsNull (req.Proxy, "#2");
+#else
+			try {
+				req.Proxy = null;
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("value", ex.ParamName, "#7");
+			}
+#endif
+		}
+
+		[Test]
 		[Category("InetAccess")] 
 #if TARGET_JVM
 		[Ignore ("NMA - wrong cookies number returned")]
