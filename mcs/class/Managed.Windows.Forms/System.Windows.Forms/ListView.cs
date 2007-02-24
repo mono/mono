@@ -97,6 +97,9 @@ namespace System.Windows.Forms
 		private string keysearch_text;
 		static private readonly int keysearch_keydelay = 1000;
 		private int[] reordered_column_indices;
+		private Point [] items_location;
+		private ItemMatrixLocation [] items_matrix_location;
+		private Size item_size; // used for caching item size
 #if NET_2_0
 		private Size tile_size;
 #endif
@@ -187,6 +190,8 @@ namespace System.Windows.Forms
 			foreground_color = SystemColors.WindowText;
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedListViewItemCollection (this);
+			items_location = new Point [16];
+			items_matrix_location = new ItemMatrixLocation [16];
 
 			border_style = BorderStyle.Fixed3D;
 
@@ -237,6 +242,23 @@ namespace System.Windows.Forms
 						return ThemeEngine.Current.ListViewCheckBoxSize;
 				}
 				return Size.Empty;
+			}
+		}
+
+		internal Size ItemSize {
+			get {
+				if (view != View.Details)
+					return item_size;
+
+				Size size = new Size ();
+				size.Height = item_size.Height;
+				for (int i = 0; i < columns.Count; i++)
+					size.Width += columns [i].Wd;
+
+				return size;
+			}
+			set {
+				item_size = value;
 			}
 		}
 
@@ -655,9 +677,10 @@ namespace System.Windows.Forms
 					return this.items [0];
 				// do a hit test for the scrolled position
 				else {
-					foreach (ListViewItem item in this.items) {
-						if (item.Bounds.X >= 0 && item.Bounds.Y >= 0)
-							return item;
+					for (int i = 0; i < items.Count; i++) {
+						Point item_loc = GetItemLocation (i);
+						if (item_loc.X >= 0 && item_loc.Y >= 0)
+							return items [i];
 					}
 					return null;
 				}
@@ -718,12 +741,14 @@ namespace System.Windows.Forms
 				if (h_marker == 0 && v_marker == 0)
 					return 0;
 				
-				foreach (ListViewItem item in this.items) {
-					if (item.Bounds.Right >= 0 && item.Bounds.Bottom >= 0)
-						return item.Index;
+				Size item_size = ItemSize;
+				for (int i = 0; i < items.Count; i++) {
+					Rectangle item_rect = new Rectangle (GetItemLocation (i), item_size);
+					if (item_rect.Right >= 0 && item_rect.Bottom >= 0)
+						return i;
 				}
-				return 0;
 
+				return 0;
 			}
 		}
 
@@ -732,10 +757,10 @@ namespace System.Windows.Forms
 			get {
 				for (int i = FirstVisibleIndex; i < Items.Count; i++) {
 					if (View == View.List || Alignment == ListViewAlignment.Left) {
-						if (Items[i].Bounds.X > item_control.ClientRectangle.Right)
+						if (GetItemLocation (i).X > item_control.ClientRectangle.Right)
 							return i - 1;
 					} else {
-						if (Items[i].Bounds.Y > item_control.ClientRectangle.Bottom)
+						if (GetItemLocation (i).Y > item_control.ClientRectangle.Bottom)
 							return i - 1;
 					}
 				}
@@ -761,7 +786,7 @@ namespace System.Windows.Forms
 		internal void Redraw (bool recalculate)
 		{
 			// Avoid calculations when control is being updated
-			if (this.updating)
+			if (updating)
 				return;
 
 			if (recalculate)
@@ -1082,18 +1107,46 @@ namespace System.Windows.Forms
 					int image_h = LargeImageList == null ? 0 : LargeImageList.ImageSize.Height;
 					int w = (int)Font.Size * ThemeEngine.Current.ListViewTileWidthFactor + image_w + 4;
 					int h = Math.Max ((int)Font.Size * ThemeEngine.Current.ListViewTileHeightFactor, image_h);
-
+				
 					tile_size = new Size (w, h);
 				}
-
+			
 				return tile_size;
 			}
 		}
 #endif
 
+		int GetDetailsItemHeight ()
+		{
+			int item_height;
+			int checkbox_height = CheckBoxes ? CheckBoxSize.Height : 0;
+			int small_image_height = SmallImageList == null ? 0 : SmallImageList.ImageSize.Height;
+			item_height = Math.Max (checkbox_height, text_size.Height);
+			item_height = Math.Max (item_height, small_image_height);
+			return item_height;
+		}
+
+
+		void SetItemLocation (int index, int x, int y, int row, int col)
+		{
+			Point old_location = items_location [index];
+			if (old_location.X == x && old_location.Y == y)
+				return;
+
+			Size item_size = ItemSize;
+			Rectangle old_rect = new Rectangle (GetItemLocation (index), item_size);
+
+			items_location [index] = new Point (x, y);
+			items_matrix_location [index] = new ItemMatrixLocation (row, col);
+
+			// Invalidate both previous and new bounds
+			item_control.Invalidate (old_rect);
+			item_control.Invalidate (new Rectangle (GetItemLocation (index), item_size));
+		}
+
 		int rows;
 		int cols;
-		ListViewItem[,] item_matrix;
+		int[,] item_index_matrix;
 
 		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
@@ -1101,6 +1154,7 @@ namespace System.Windows.Forms
 			header_control.Size = Size.Empty;
 			item_control.Visible = true;
 			item_control.Location = Point.Empty;
+			ItemSize = item_size; // Cache item size
 
 			if (items.Count == 0)
 				return;
@@ -1122,17 +1176,15 @@ namespace System.Windows.Forms
 
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
-			item_matrix = new ListViewItem [rows, cols];
+			item_index_matrix = new int [rows, cols];
 			int row = 0;
 			int col = 0;
-			foreach (ListViewItem item in items) {
+			for (int i = 0; i < items.Count; i++) {
 				int x = col * (sz.Width + x_spacing);
 				int y = row * (sz.Height + y_spacing);
-				item.Location = new Point (x, y);
-				item.Layout ();
-				item.row = row;
-				item.col = col;
-				item_matrix [row, col] = item;
+				SetItemLocation (i, x, y, row, col);
+				item_index_matrix [row, col] = i;
+				items [i].Layout ();
 				if (left_aligned) {
 					if (++row == rows) {
 						row = 0;
@@ -1186,12 +1238,15 @@ namespace System.Windows.Forms
 			item_control.Visible = true;
 			item_control.Location = new Point (0, header_control.Height);
 
+			int item_height = GetDetailsItemHeight ();
+			ItemSize = new Size (0, item_height); // We only cache Height for details view
+
 			int y = 0; 
 			if (items.Count > 0) {
-				foreach (ListViewItem item in items) {
-					item.Layout ();
-					item.Location = new Point (0, y);
-					y += item.Bounds.Height + 2;
+				for (int i = 0; i < items.Count; i++) {
+					SetItemLocation (i, 0, y, 0, 0);
+					items [i].Layout ();
+					y += item_height + 2;
 				}
 
 				// some space for bottom gridline
@@ -1203,9 +1258,22 @@ namespace System.Windows.Forms
 			layout_ht = y + header_control.Height;
 		}
 
+		private void AdjustItemsPositionArray (int count)
+		{
+			if (items_location.Length >= count)
+				return;
+
+			// items_location and items_matrix_location must keep the same length
+			count = Math.Max (count, items_location.Length * 2);
+			items_location = new Point [count];
+			items_matrix_location = new ItemMatrixLocation [count];
+		}
+
 		private void CalculateListView (ListViewAlignment align)
 		{
 			CalcTextSize ();
+
+			AdjustItemsPositionArray (items.Count);
 
 			switch (view) {
 			case View.Details:
@@ -1235,6 +1303,15 @@ namespace System.Windows.Forms
 			}
 
 			CalculateScrollBars ();
+		}
+
+		internal Point GetItemLocation (int index)
+		{
+			Point loc = items_location [index];
+			loc.X -= h_marker; // Adjust to scroll
+			loc.Y -= v_marker;
+
+			return loc;
 		}
 
 		private bool KeySearchString (KeyEventArgs ke)
@@ -1281,11 +1358,12 @@ namespace System.Windows.Forms
 					break;
 				case Keys.PageDown:
 					int last_index = LastVisibleIndex;
-					if (Items [last_index].Bounds.Bottom > item_control.ClientRectangle.Bottom)
+					Rectangle item_rect = new Rectangle (GetItemLocation (last_index), ItemSize);
+					if (item_rect.Bottom > item_control.ClientRectangle.Bottom)
 						last_index--;
 					if (FocusedItem.Index == last_index) {
 						if (FocusedItem.Index < Items.Count - 1) {
-							int page_size = item_control.Height / items [0].Bounds.Height - 1;
+							int page_size = item_control.Height / ItemSize.Height - 1;
 							result = FocusedItem.Index + page_size - 1;
 							if (result >= Items.Count)
 								result = Items.Count - 1;
@@ -1295,11 +1373,11 @@ namespace System.Windows.Forms
 					break;
 				case Keys.PageUp:
 					int first_index = FirstVisibleIndex;
-					if (Items [first_index].Bounds.Y < 0)
+					if (GetItemLocation (first_index).Y < 0)
 						first_index++;
 					if (FocusedItem.Index == first_index) {
 						if (first_index > 0) {
-							int page_size = item_control.Height / items [0].Bounds.Height - 1;
+							int page_size = item_control.Height / ItemSize.Height - 1;
 							result = first_index - page_size + 1;
 							if (result < 0)
 								result = 0;
@@ -1311,39 +1389,40 @@ namespace System.Windows.Forms
 				return result;
 			}
 
-			int row = FocusedItem.row;
-			int col = FocusedItem.col;
+			ItemMatrixLocation item_matrix_location = items_matrix_location [FocusedItem.Index];
+			int row = item_matrix_location.Row;
+			int col = item_matrix_location.Col;
 
 			switch (key) {
 			case Keys.Left:
 				if (col == 0)
 					return -1;
-				return item_matrix [row, col - 1].Index;
+				return item_index_matrix [row, col - 1];
 
 			case Keys.Right:
 				if (col == (cols - 1))
 					return -1;
-				while (item_matrix [row, col + 1] == null) {
+				while (item_index_matrix [row, col + 1] == 0) {
 					row--;
 					if (row < 0)
 						return -1;
 				}
-				return item_matrix [row, col + 1].Index;
+				return item_index_matrix [row, col + 1];
 
 			case Keys.Up:
 				if (row == 0)
 					return -1;
-				return item_matrix [row - 1, col].Index;
+				return item_index_matrix [row - 1, col];
 
 			case Keys.Down:
 				if (row == (rows - 1) || row == Items.Count - 1)
 					return -1;
-				while (item_matrix [row + 1, col] == null) {
+				while (item_index_matrix [row + 1, col] == 0) {
 					col--;
 					if (col < 0)
 						return -1;
 				}
-				return item_matrix [row + 1, col].Index;
+				return item_index_matrix [row + 1, col];
 
 			default:
 				return -1;
@@ -1377,20 +1456,27 @@ namespace System.Windows.Forms
 
 			if (shift_pressed && selection_start != null) {
 				ArrayList list = new ArrayList ();
-				int start = Math.Min (selection_start.Index, index);
-				int end = Math.Max (selection_start.Index, index);
+				int start_index = selection_start.Index;
+				int start = Math.Min (start_index, index);
+				int end = Math.Max (start_index, index);
 				if (View == View.Details) {
 					for (int i = start; i <= end; i++)
 						list.Add (items [i]);
 				} else {
-					int left = Math.Min (items [start].col, items [end].col);
-					int right = Math.Max (items [start].col, items [end].col);
-					int top = Math.Min (items [start].row, items [end].row);
-					int bottom = Math.Max (items [start].row, items [end].row);
-					foreach (ListViewItem curr in items)
-						if (curr.row >= top && curr.row <= bottom && 
-							curr.col >= left && curr.col <= right)
-							list.Add (curr);
+					ItemMatrixLocation start_item_matrix_location = items_matrix_location [start];
+					ItemMatrixLocation end_item_matrix_location = items_matrix_location [end];
+					int left = Math.Min (start_item_matrix_location.Col, end_item_matrix_location.Col);
+					int right = Math.Max (start_item_matrix_location.Col, end_item_matrix_location.Col);
+					int top = Math.Min (start_item_matrix_location.Row, end_item_matrix_location.Row);
+					int bottom = Math.Max (start_item_matrix_location.Row, end_item_matrix_location.Row);
+
+					for (int i = 0; i < items.Count; i++) {
+						ItemMatrixLocation item_matrix_loc = items_matrix_location [i];
+
+						if (item_matrix_loc.Row >= top && item_matrix_loc.Row <= bottom &&
+								item_matrix_loc.Col >= left && item_matrix_loc.Col <= right)
+							list.Add (items [i]);
+					}
 				}
 				SelectItems (list);
 			} else if (ctrl_pressed) {
@@ -1568,14 +1654,15 @@ namespace System.Windows.Forms
 			ArrayList BoxSelectedItems {
 				get {
 					ArrayList result = new ArrayList ();
-					foreach (ListViewItem item in owner.Items) {
-						Rectangle r = item.Bounds;
+					Size item_size = owner.ItemSize;
+					for (int i = 0; i < owner.Items.Count; i++) {
+						Rectangle r = new Rectangle (owner.GetItemLocation (i), item_size);
 						r.X += r.Width / 4;
 						r.Y += r.Height / 4;
 						r.Width /= 2;
 						r.Height /= 2;
 						if (BoxSelectRectangle.IntersectsWith (r))
-							result.Add (item);
+							result.Add (owner.Items [i]);
 					}
 					return result;
 				}
@@ -1644,26 +1731,27 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				Size item_size = owner.ItemSize;
 				Point pt = new Point (me.X, me.Y);
-				foreach (ListViewItem item in owner.items) {
-					if (me.Clicks == 1 && item.CheckRectReal.Contains (pt)) {
+				for (int i = 0; i < owner.items.Count; i++) {
+					Rectangle item_rect = new Rectangle (owner.GetItemLocation (i), item_size);
+					if (!item_rect.Contains (pt))
+						continue;
+
+					if (me.Clicks == 1 && owner.items [i].CheckRectReal.Contains (pt)) {
 						checking = true;
-						ToggleCheckState (item);
+						ToggleCheckState (owner.items [i]);
 						owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
 						return;
 					}
 
 					if (owner.View == View.Details && !owner.FullRowSelect) {
-						if (item.GetBounds (ItemBoundsPortion.Label).Contains (pt)) {
-							clicked_item = item;
+						if (owner.items [i].GetBounds (ItemBoundsPortion.Label).Contains (pt)) {
+							clicked_item = owner.items [i];
 							break;
 						}
-					} else {
-						if (item.Bounds.Contains (pt)) {
-							clicked_item = item;
-							break;
-						}
-					}
+					} else
+						clicked_item = owner.items [i];
 				}
 
 
@@ -2135,13 +2223,13 @@ namespace System.Windows.Forms
 			switch (View) {
 			case View.Details:
 			case View.SmallIcon:
-				Scroll (v_scroll, -Items [0].Bounds.Height * SystemInformation.MouseWheelScrollLines * lines);
+				Scroll (v_scroll, -ItemSize.Height * SystemInformation.MouseWheelScrollLines * lines);
 				break;
 			case View.LargeIcon:
-				Scroll (v_scroll, -(Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing) * lines);
+				Scroll (v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
 				break;
 			case View.List:
-				Scroll (h_scroll, -Items [0].Bounds.Width * lines);
+				Scroll (h_scroll, -ItemSize.Width * lines);
 				break;
 			}
 		}
@@ -2417,7 +2505,7 @@ namespace System.Windows.Forms
 				return;
 
 			Rectangle view_rect = item_control.ClientRectangle;
-			Rectangle bounds = items [index].Bounds;
+			Rectangle bounds = new Rectangle (GetItemLocation (index), ItemSize);
 
 			if (view_rect.Contains (bounds))
 				return;
@@ -2481,10 +2569,14 @@ namespace System.Windows.Forms
 		
 		public ListViewItem GetItemAt (int x, int y)
 		{
-			foreach (ListViewItem item in items) {
-				if (item.Bounds.Contains (x, y))
-					return item;
+			Size item_size = ItemSize;
+			for (int i = 0; i < items.Count; i++) {
+				Point item_location = GetItemLocation (i);
+				Rectangle item_rect = new Rectangle (item_location, item_size);
+				if (item_rect.Contains (x, y))
+					return items [i];
 			}
+
 			return null;
 		}
 
@@ -4129,6 +4221,38 @@ namespace System.Windows.Forms
 		}	// SelectedListViewItemCollection
 
 		internal delegate void CollectionChangedHandler ();
+
+		struct ItemMatrixLocation
+		{
+			int row;
+			int col;
+
+			public ItemMatrixLocation (int row, int col)
+			{
+				this.row = row;
+				this.col = col;
+		
+			}
+		
+			public int Col {
+				get {
+					return col;
+				}
+				set {
+					col = value;
+				}
+			}
+
+			public int Row {
+				get {
+					return row;
+				}
+				set {
+					row = value;
+				}
+			}
+	
+		}
 
 		#endregion // Subclasses
 #if NET_2_0
