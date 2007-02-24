@@ -1,3 +1,20 @@
+2007-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	This is a first set of changes to make the Virtual mode works,
+	by avoiding the retrieval of ListViewItem instances until
+	draw time.
+
+	* ListView.cs: Store item position in the ListView instead of the
+	ListViewItem, this way we don't request the Bounds property of
+	ListViewItem inside the ListView calculations, as well as cache the item
+	size in item_size field. Store indexes instead of ListViewItem
+	instances in the matrix used by icon view. Add a ItemMatrixLocation
+	struct to hold the row and col info of the matrix info.
+
+	* ListViewItem.cs: Don't store the location anymore, and only cache
+	the rectangles for GetBounds. Use the ListView.GetItemLocation
+	method to retrieve the actual location.
+
 2007-02-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: Add clipping support, thanks to George.

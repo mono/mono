@@ -581,16 +581,15 @@ namespace System.Windows.Forms
 
 			case ItemBoundsPortion.Entire:
 				rect = bounds;
-				rect.X -= owner.h_marker;
-				rect.Y -= owner.v_marker;
-				return rect;
+				break;
 
 			default:
 				throw new ArgumentException ("Invalid value for portion.");
 			}
 
-			rect.X += bounds.X - owner.h_marker;
-			rect.Y += bounds.Y - owner.v_marker;
+			Point item_loc = owner.GetItemLocation (Index);
+			rect.X += item_loc.X;
+			rect.Y += item_loc.Y;
 			return rect;
 		}
 
@@ -631,37 +630,19 @@ namespace System.Windows.Forms
 		internal Rectangle CheckRectReal {
 			get {
 				Rectangle rect = checkbox_rect;
-				rect.X += bounds.X - owner.h_marker;
-				rect.Y += bounds.Y - owner.v_marker;
+				Point item_loc = owner.GetItemLocation (Index);
+				rect.X += item_loc.X;
+				rect.Y += item_loc.Y;
 				return rect;
 			}
 		}
 		
-		internal Point Location {
-			set {
-				if (bounds.X == value.X && bounds.Y == value.Y)
-					return;
-
-				Rectangle prev = Bounds;
-				bounds.X = value.X;
-				bounds.Y = value.Y;
-				if (owner != null) {
-					if (prev != Rectangle.Empty)
-						owner.item_control.Invalidate (prev);
-					owner.item_control.Invalidate (Bounds);
-				}
-			}
-		}
-
 		internal ListView Owner {
 			set {
 				if (owner == value)
 					return;
 
 				owner = value;
-				if (owner != null)
-					Layout ();
-				Invalidate ();
 			}
 		}
 
@@ -693,12 +674,10 @@ namespace System.Windows.Forms
 
 				icon_rect = label_rect = Rectangle.Empty;
 				icon_rect.X = checkbox_rect.Width + 2;
-				item_ht = Math.Max (owner.CheckBoxSize.Height, text_size.Height);
+				item_ht = owner.ItemSize.Height;
 
-				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height);
+				if (owner.SmallImageList != null)
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
-				}
 
 				label_rect.Height = icon_rect.Height = item_ht;
 				checkbox_rect.Y = item_ht - checkbox_rect.Height;
@@ -1006,6 +985,12 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			internal int Height {
+				get {
+					return bounds.Height;
+				}
+			}
+
 			internal void SetBounds (int x, int y, int width, int height)
 			{
 				bounds = new Rectangle (x, y, width, height);
