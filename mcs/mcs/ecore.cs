@@ -628,8 +628,8 @@ namespace Mono.CSharp {
 
 			if (mi.Length > 1) {
 				bool is_interface = qualifier_type != null && qualifier_type.IsInterface;
-				MemberInfo non_method = null;
 				ArrayList methods = new ArrayList (2);
+				ArrayList non_methods = null;
 
 				foreach (MemberInfo m in mi) {
 					if (m is MethodBase) {
@@ -637,24 +637,29 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (non_method == null) {
-						non_method = m;
+					if (non_methods == null) {
+						non_methods = new ArrayList (2);
+						non_methods.Add (m);
 						continue;
 					}
 
-					Report.SymbolRelatedToPreviousError (m);
-					Report.SymbolRelatedToPreviousError (non_method);
-					Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
-						TypeManager.GetFullNameSignature (m), TypeManager.GetFullNameSignature (non_method));
-					return null;
+					foreach (MemberInfo n_m in non_methods) {
+						if (m.DeclaringType.IsInterface && TypeManager.ImplementsInterface (m.DeclaringType, n_m.DeclaringType))
+							continue;
+
+						Report.SymbolRelatedToPreviousError (m);
+						Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+							TypeManager.GetFullNameSignature (m), TypeManager.GetFullNameSignature (n_m));
+						return null;
+					}
 				}
 
 				if (methods.Count == 0)
-					return null;
+					return ExprClassFromMemberInfo (container_type, (MemberInfo)non_methods [0], loc);
 
-				if (non_method != null) {
+				if (non_methods != null) {
 					MethodBase method = (MethodBase) methods [0];
-
+					MemberInfo non_method = (MemberInfo) non_methods [0];
 					if (method.DeclaringType == non_method.DeclaringType) {
 						// Cannot happen with C# code, but is valid in IL
 						Report.SymbolRelatedToPreviousError (method);
