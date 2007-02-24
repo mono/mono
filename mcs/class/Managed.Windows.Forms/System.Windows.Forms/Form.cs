@@ -1600,8 +1600,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
+#if NET_2_0
 			if (this.ShowWithoutActivation)
 				Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
+#endif
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
 			if ((FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {

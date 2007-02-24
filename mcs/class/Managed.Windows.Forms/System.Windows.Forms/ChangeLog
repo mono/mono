@@ -1,3 +1,7 @@
+2007-02-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Wrap checking ShowWithoutActivation in a NET_2_0 block.
+
 2007-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: I forgot to commit the changes for ListView 
