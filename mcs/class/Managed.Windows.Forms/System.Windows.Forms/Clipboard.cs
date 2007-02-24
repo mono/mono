@@ -241,6 +241,19 @@ namespace System.Windows.Forms {
 		}
 		
 #if NET_2_0
+		[MonoTODO ("Actually respect retryTimes, retryDelay.")]
+		public static void SetDataObject (object data, bool copy, int retryTimes, int retryDelay)
+		{
+			if (data == null)
+				throw new ArgumentNullException("data");
+			if (retryTimes < 0)
+				throw new ArgumentOutOfRangeException("retryTimes");
+			if (retryDelay < 0)
+				throw new ArgumentOutOfRangeException("retryDelay");
+				
+			SetDataObject(data, copy);
+		}
+
 		[MonoInternalNote ("Needs additional checks for valid paths, see MSDN")]
 		public static void SetFileDropList (StringCollection filePaths)
 		{

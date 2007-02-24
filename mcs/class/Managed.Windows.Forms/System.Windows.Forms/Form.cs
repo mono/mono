@@ -1281,6 +1281,12 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+#if NET_2_0
+		[MonoTODO ("Implemented for Win32, needs X11 implementation")]
+		protected virtual bool ShowWithoutActivation {
+			get { return false; }
+		}
+#endif
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
@@ -1593,6 +1599,9 @@ namespace System.Windows.Forms {
 					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
 				}
 			}
+
+			if (this.ShowWithoutActivation)
+				Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
 			if ((FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {

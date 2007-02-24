@@ -1718,7 +1718,7 @@ namespace System.Windows.Forms {
 					}
 					
 					if (Hwnd.ObjectFromHandle (handle).no_activate)
-						flags |= WindowPlacementFlags.SW_SHOWNOACTIVATE;
+						flags = WindowPlacementFlags.SW_SHOWNOACTIVATE;
 						
 					Win32ShowWindow (handle, flags);
 				}
