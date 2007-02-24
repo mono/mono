@@ -134,7 +134,8 @@ namespace System.Windows.Forms
 				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX, (int)(dc as Graphics).Transform.OffsetY);
 
 				IntPtr hdc = IntPtr.Zero;
-			
+				bool clear_clip_region = false;
+				
 				// If we need to use the graphics clipping region, add it to our hdc
 				if ((flags & TextFormatFlags.PreserveGraphicsClipping) == TextFormatFlags.PreserveGraphicsClipping) {
 					Graphics graphics = (Graphics)dc;
@@ -145,6 +146,7 @@ namespace System.Windows.Forms
 						hdc = dc.GetHdc ();
 						SelectClipRgn (hdc, hrgn);
 						clip_region.ReleaseHrgn (hrgn);
+						clear_clip_region = true;
 					}
 				}
 				
@@ -177,6 +179,9 @@ namespace System.Windows.Forms
 				else {
 					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
 				}
+
+				if (clear_clip_region)
+					SelectClipRgn (hdc, IntPtr.Zero);
 
 				dc.ReleaseHdc ();
 			}

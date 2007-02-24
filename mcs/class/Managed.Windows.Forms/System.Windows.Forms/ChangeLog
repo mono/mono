@@ -1,3 +1,8 @@
+2007-02-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextRenderer.cs: If we set a GDI clip region, we need to clear
+	it when we are done.  [Fixes bug #80949]
+
 2007-02-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Wrap checking ShowWithoutActivation in a NET_2_0 block.
