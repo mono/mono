@@ -2425,9 +2425,8 @@ namespace Mono.CSharp {
 				//
 //				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
 //				Console.WriteLine (e.Message);
-			} catch {
-				Console.WriteLine ("In type: " + Name);
-				throw;
+			} catch (Exception e) {
+				throw new InternalErrorException (this, e);
 			}
 			
 			if (Enums != null)
@@ -3566,6 +3565,8 @@ namespace Mono.CSharp {
 		//
 		public bool IsExplicitImpl;
 
+		protected bool is_external_implementation;
+
 		//
 		// The interface type we are explicitly implementing
 		//
@@ -3924,6 +3925,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override void Emit()
+		{
+			// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
+			// We are more strict than Microsoft and report CS0626 as error
+			if ((ModFlags & Modifiers.EXTERN) != 0 && !is_external_implementation) {
+				Report.Error (626, Location,
+					"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
+					GetSignatureForError ());
+			}
+
+			base.Emit ();
+		}
+
 		protected void Error_CannotChangeAccessModifiers (MemberInfo base_method, MethodAttributes ma, string suffix)
 		{
 			Report.SymbolRelatedToPreviousError (base_method);
@@ -4020,9 +4034,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.methodimpl_attr_type &&
-				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
+			if (a.IsInternalMethodImplAttribute) {
 				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+				is_external_implementation = true;
 			}
 
 			if (a.Type == TypeManager.dllimport_type) {
@@ -4030,8 +4044,7 @@ namespace Mono.CSharp {
 				if ((ModFlags & extern_static) != extern_static) {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
-
-				return;
+				is_external_implementation = true;
 			}
 
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
@@ -4173,7 +4186,7 @@ namespace Mono.CSharp {
 		public CallingConventions CallingConventions {
 			get {
 				CallingConventions cc = Parameters.CallingConvention;
-				if (Parameters.HasArglist)
+				if (Parameters.HasArglist && block != null)
 					block.HasVarargs = true;
 
 				if (!IsInterface)
@@ -4828,9 +4841,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.methodimpl_attr_type &&
-				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
+			if (a.IsInternalMethodImplAttribute) {
 				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+				is_external_implementation = true;
 			}
 
 			ConstructorBuilder.SetCustomAttribute (cb);
@@ -5431,30 +5444,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		void DefineMethodBuilder (TypeContainer container, string method_name, Type[] ParameterTypes)
 		{
-			if ((modifiers & Modifiers.EXTERN) != 0) {
-				if (method.OptAttributes != null) {
-					Attribute dllimport_attribute = method.OptAttributes.Search (TypeManager.dllimport_type);
-					if (dllimport_attribute != null) {
-						flags |= MethodAttributes.PinvokeImpl;
-						builder = dllimport_attribute.DefinePInvokeMethod (
-							container.TypeBuilder, method_name, flags,
-							method, ParameterTypes);
-
-						return;
-					}
-				}
-
-				// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
-				// We are more strict than Microsoft and report CS0626 like error
-				if (method.OptAttributes == null ||
-					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type)) {
-					Report.Error (626, method.Location,
-						"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
-						member.GetSignatureForError ());
-					return;
-				}
-			}
-
 			if (builder == null) {
 				builder = container.TypeBuilder.DefineMethod (
 					method_name, flags, method.CallingConventions,
@@ -5474,8 +5463,10 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (DeclSpace parent)
 		{
+			ToplevelBlock block = method.Block;
+
 			EmitContext ec;
-			if ((flags & MethodAttributes.PinvokeImpl) == 0)
+			if (block != null)
 				ec = method.CreateEmitContext (parent, builder.GetILGenerator ());
 			else
 				ec = method.CreateEmitContext (parent, null);
@@ -5484,8 +5475,6 @@ namespace Mono.CSharp {
 
 			if (GenericMethod != null)
 				GenericMethod.EmitAttributes ();
-
-			ToplevelBlock block = method.Block;
 			
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
@@ -6569,6 +6558,16 @@ namespace Mono.CSharp {
 				get { return iterator; }
 			}
 
+			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+			{
+				if (a.IsInternalMethodImplAttribute) {
+					method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+					method.is_external_implementation = true;
+				}
+
+				base.ApplyAttributeBuilder (a, cb);
+			}
+
 			public override AttributeTargets AttributeTargets {
 				get {
 					return AttributeTargets.Method;
@@ -7381,6 +7380,16 @@ namespace Mono.CSharp {
 
 			public override Iterator Iterator {
 				get { return null; }
+			}
+
+			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+			{
+				if (a.IsInternalMethodImplAttribute) {
+					method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+					method.is_external_implementation = true;
+				}
+
+				base.ApplyAttributeBuilder (a, cb);
 			}
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)

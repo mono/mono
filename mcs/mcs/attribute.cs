@@ -85,7 +85,7 @@ namespace Mono.CSharp {
 		public readonly string Identifier;
 
 		readonly ArrayList PosArguments;
-		readonly ArrayList NamedArguments;
+		ArrayList NamedArguments;
 
 		public readonly Location Location;
 
@@ -308,6 +308,29 @@ namespace Mono.CSharp {
 				t == TypeManager.type_type;
 		}
 
+		[Conditional ("GMCS_SOURCE")]
+		void ApplyModuleCharSet ()
+		{
+			if (Type != TypeManager.dllimport_type)
+				return;
+
+			if (!CodeGen.Module.HasDefaultCharSet)
+				return;
+
+			const string CharSetEnumMember = "CharSet";
+			if (NamedArguments == null) {
+				NamedArguments = new ArrayList (1);
+			} else {
+				foreach (DictionaryEntry de in NamedArguments) {
+					if ((string)de.Key == CharSetEnumMember)
+						return;
+				}
+			}
+			
+			NamedArguments.Add (new DictionaryEntry (CharSetEnumMember,
+				new Argument (Constant.CreateConstant (typeof (CharSet), CodeGen.Module.DefaultCharSet, Location))));
+ 		}
+
 		public CustomAttributeBuilder Resolve ()
 		{
 			if (resolve_error)
@@ -354,8 +377,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			CustomAttributeBuilder cb;
+			ApplyModuleCharSet ();
 
+			CustomAttributeBuilder cb;
 			try {
 				if (NamedArguments == null) {
 					cb = new CustomAttributeBuilder (ctor, pos_values);
@@ -1110,11 +1134,19 @@ namespace Mono.CSharp {
 			return (CharSet)System.Enum.Parse (typeof (CharSet), pos_values [0].ToString ());
 		}
 
-		public MethodImplOptions GetMethodImplOptions ()
-		{
-			if (pos_values [0].GetType () != typeof (MethodImplOptions))
-				return (MethodImplOptions)System.Enum.ToObject (typeof (MethodImplOptions), pos_values [0]);
-			return (MethodImplOptions)pos_values [0];
+		public bool IsInternalMethodImplAttribute {
+			get {
+				if (Type != TypeManager.methodimpl_attr_type)
+					return false;
+
+				MethodImplOptions options;
+				if (pos_values[0].GetType () != typeof (MethodImplOptions))
+					options = (MethodImplOptions)System.Enum.ToObject (typeof (MethodImplOptions), pos_values[0]);
+				else
+					options = (MethodImplOptions)pos_values[0];
+
+				return (options & MethodImplOptions.InternalCall) != 0;
+			}
 		}
 
 		public LayoutKind GetLayoutKindValue ()
@@ -1216,121 +1248,6 @@ namespace Mono.CSharp {
 						return;
 					}
 				}
-			}
-		}
-		
-		public MethodBuilder DefinePInvokeMethod (TypeBuilder builder, string name,
-							  MethodAttributes flags, IMethodData method, Type [] param_types)
-		{
-			if (pos_values == null)
-				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
-				// But because a lot of attribute class code must be rewritten will be better to wait...
-				Resolve ();
-
-			if (resolve_error)
-				return null;
-			
-			string dll_name = (string)pos_values [0];
-
-			// Default settings
-			CallingConvention cc = CallingConvention.Winapi;
-			CharSet charset = CodeGen.Module.DefaultCharSet;
-			bool preserve_sig = true;
-			string entry_point = name;
-			bool best_fit_mapping = false;
-			bool throw_on_unmappable = false;
-			bool exact_spelling = false;
-			bool set_last_error = false;
-
-			bool best_fit_mapping_set = false;
-			bool throw_on_unmappable_set = false;
-			bool exact_spelling_set = false;
-			bool set_last_error_set = false;
-
-			MethodInfo set_best_fit = null;
-			MethodInfo set_throw_on = null;
-			MethodInfo set_exact_spelling = null;
-			MethodInfo set_set_last_error = null;
-
-			if (field_info_arr != null) {
-				
-				for (int i = 0; i < field_info_arr.Length; i++) {
-					switch (field_info_arr [i].Name) {
-					case "BestFitMapping":
-						best_fit_mapping = (bool) field_values_arr [i];
-						best_fit_mapping_set = true;
-						break;
-					case "CallingConvention":
-						cc = (CallingConvention) field_values_arr [i];
-						break;
-					case "CharSet":
-						charset = (CharSet) field_values_arr [i];
-						break;
-					case "EntryPoint":
-						entry_point = (string) field_values_arr [i];
-						break;
-					case "ExactSpelling":
-						exact_spelling = (bool) field_values_arr [i];
-						exact_spelling_set = true;
-						break;
-					case "PreserveSig":
-						preserve_sig = (bool) field_values_arr [i];
-						break;
-					case "SetLastError":
-						set_last_error = (bool) field_values_arr [i];
-						set_last_error_set = true;
-						break;
-					case "ThrowOnUnmappableChar":
-						throw_on_unmappable = (bool) field_values_arr [i];
-						throw_on_unmappable_set = true;
-						break;
-					default: 
-						throw new InternalErrorException (field_info_arr [i].ToString ());
-					}
-				}
-			}
-			
-			if (throw_on_unmappable_set || best_fit_mapping_set || exact_spelling_set || set_last_error_set) {
-				set_best_fit = typeof (MethodBuilder).
-					GetMethod ("set_BestFitMapping", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_throw_on = typeof (MethodBuilder).
-					GetMethod ("set_ThrowOnUnmappableChar", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_exact_spelling = typeof (MethodBuilder).
-					GetMethod ("set_ExactSpelling", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_set_last_error = typeof (MethodBuilder).
-					GetMethod ("set_SetLastError", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-				if ((set_best_fit == null) || (set_throw_on == null) ||
-				    (set_exact_spelling == null) || (set_set_last_error == null)) {
-					Report.Error (-1, Location,
-								  "The ThrowOnUnmappableChar, BestFitMapping, SetLastError, " +
-						      "and ExactSpelling attributes can only be emitted when running on the mono runtime.");
-					return null;
-				}
-			}
-
-			try {
-				MethodBuilder mb = builder.DefinePInvokeMethod (
-					name, dll_name, entry_point, flags | MethodAttributes.HideBySig | MethodAttributes.PinvokeImpl,
-					method.ParameterInfo.CallingConvention, method.ReturnType, param_types, cc, charset);
-
-				if (preserve_sig)
-					mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
-
-				if (throw_on_unmappable_set)
-					set_throw_on.Invoke (mb, 0, null, new object [] { throw_on_unmappable }, null);
-				if (best_fit_mapping_set)
-					set_best_fit.Invoke (mb, 0, null, new object [] { best_fit_mapping }, null);
-				if (exact_spelling_set)
-					set_exact_spelling.Invoke  (mb, 0, null, new object [] { exact_spelling }, null);
-				if (set_last_error_set)
-					set_set_last_error.Invoke  (mb, 0, null, new object [] { set_last_error }, null);
-			
-				return mb;
-			}
-			catch (ArgumentException e) {
-				Error_AttributeEmitError (e.Message);
-				return null;
 			}
 		}
 

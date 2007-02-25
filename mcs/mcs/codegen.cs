@@ -1415,6 +1415,7 @@ namespace Mono.CSharp {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;
+		bool has_default_charset;
 
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
@@ -1468,6 +1469,12 @@ namespace Mono.CSharp {
 			Builder.SetCustomAttribute (customBuilder);
 		}
 
+		public bool HasDefaultCharSet {
+			get {
+				return has_default_charset;
+			}
+		}
+
 		/// <summary>
 		/// It is called very early therefore can resolve only predefined attributes
 		/// </summary>
@@ -1482,6 +1489,7 @@ namespace Mono.CSharp {
 
 			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
 			if (a != null) {
+				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();
 				switch (DefaultCharSet) {
 					case CharSet.Ansi:

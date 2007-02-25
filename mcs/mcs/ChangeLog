@@ -1,3 +1,15 @@
+2007-02-25  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs: Replaced DefinePInvoke in favor of S.R.E implementation
+	(Fixes #80455)
+
+	* class.cs (InterfaceMemberBase): Share common `extern' modifier checks
+	here.
+	Check property and event extern attributes.
+
+	* codegen.cs (ModuleClass): HasDefaultCharSet when module defined global
+	charset.
+
 2007-02-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80407
