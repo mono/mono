@@ -214,7 +214,9 @@ namespace System.Web
 		public virtual bool IsReadOnly {
 			get { return list != null && list.IsReadOnly; }
 		}
-		
+
+		#region IList Members
+
 		object IList.this [int index] {
 			get { return List [index]; }
 			set { OnValidate (value); List [index] = value; }
@@ -252,6 +254,57 @@ namespace System.Web
 		{
 			List.CopyTo (array, index);
 		}
+
+		void IList.Clear () {
+			Clear ();
+		}
+
+		bool IList.IsFixedSize {
+			get { return IsFixedSize; }
+		}
+
+		bool IList.IsReadOnly {
+			get { return IsReadOnly; }
+		}
+
+		void IList.RemoveAt (int index) {
+			RemoveAt (index);
+		}
+
+		#endregion
+
+		#region ICollection Members
+
+
+		int ICollection.Count {
+			get { return Count; }
+		}
+
+		bool ICollection.IsSynchronized {
+			get { return IsSynchronized; }
+		}
+
+		object ICollection.SyncRoot {
+			get { return SyncRoot; }
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		IEnumerator IEnumerable.GetEnumerator () {
+			return GetEnumerator ();
+		}
+
+		#endregion
+
+		#region IHierarchicalEnumerable Members
+
+		IHierarchyData IHierarchicalEnumerable.GetHierarchyData (object enumeratedItem) {
+			return GetHierarchyData (enumeratedItem);
+		}
+
+		#endregion
 	}
 }
 #endif
