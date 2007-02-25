@@ -316,15 +316,11 @@ namespace Mainsoft.Web.Hosting {
 			if (path.StartsWith (appVirtualPath))
 				path = path.Remove (0, appVirtualPath.Length);
 
-			if (path.StartsWith ("/"))
+			if (path.Length > 0 && path[0] == '/')
 				path = path.Remove (0, 1);
 
 			string retVal = J2EEUtils.GetApplicationRealPath (_HttpServlet.getServletConfig ());
-			Path.Combine (retVal, path);
-			if (!retVal.EndsWith ("/") && !retVal.EndsWith ("\\"))
-				retVal += "/";
-
-			return retVal + path;
+			return Path.Combine (retVal, path);
 		}
 
 		public override void SendResponseFromFile (IntPtr handle, long offset, long length) {
