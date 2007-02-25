@@ -1,3 +1,7 @@
+02-25-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* Changed assembly name in project file to Mainsoft.Web.WebShpere
+
 02-19-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* Created new Mainsoft.Web.J2EE.WAS.csproj project, which will

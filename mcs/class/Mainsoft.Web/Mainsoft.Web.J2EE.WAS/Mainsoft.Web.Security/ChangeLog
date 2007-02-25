@@ -1,3 +1,9 @@
+02-25-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* WPSGroupsRoleProvider.cs: added
+	* WPSMembershipProvider.cs, WPSMembershipUser.cs: added NET_2_0
+	directives.
+
 02-21-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* WPSMembershipProvider.cs: fixed 'null' case in GetUser methods - 

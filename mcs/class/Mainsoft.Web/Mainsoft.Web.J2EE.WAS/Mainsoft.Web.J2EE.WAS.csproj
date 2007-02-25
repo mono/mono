@@ -8,7 +8,7 @@
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Mainsoft.Web.J2EE.WAS</AssemblyName>
+    <AssemblyName>Mainsoft.Web.WebSphere</AssemblyName>
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
@@ -68,8 +68,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>false</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
     </AdditionalClassPath>
@@ -84,6 +84,7 @@
     <Compile Include="Mainsoft.Web.Security\IPumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProviderFactory.cs" />
+    <Compile Include="Mainsoft.Web.Security\WPSGroupsRoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mainsoft.Web.Security\WPSMembershipProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\WPSMembershipUser.cs" />
@@ -133,7 +134,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-portlet-helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\Portlet.Helpers.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-configuration="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-j2ee-helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2EE.Helpers.jar" />
+      <UserProperties REFS-JarPath-j2ee-helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2EE.Helpers.jar" REFS-JarPath-system-configuration="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-portlet-helpers="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\Portlet.Helpers.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

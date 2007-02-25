@@ -11,13 +11,13 @@ namespace Mainsoft.Web.Security
     /// com.ibm.portal.um.PumaAdminHome API and according to configuration to choose provider, we
     /// are providing the place where those operation could be done (yes it is here - see CreateProvider)
     /// </summary>
-    internal class PumaServicesProviderFactory
+    public class PumaServicesProviderFactory
     {
         private PumaServicesProviderFactory()
         {
         }
 
-        internal static IPumaServicesProvider CreateProvider()
+        public static IPumaServicesProvider CreateProvider()
         {
             return new PumaServicesProvider();
         }

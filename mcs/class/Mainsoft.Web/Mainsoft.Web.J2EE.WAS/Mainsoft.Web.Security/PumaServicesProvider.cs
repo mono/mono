@@ -17,6 +17,8 @@ using com.ibm.portal.um.portletservice;
 
 using com.ibm.portal.portlet.service;
 
+using vmw.portlet;
+
 namespace Mainsoft.Web.Security
 {
     /// <summary>
@@ -165,6 +167,11 @@ namespace Mainsoft.Web.Security
             return ConvertToIDictionary(map);
         }
 
+        public string GetConfigAttribute(string attribName)
+        {
+            return _pumaHome.GetConfigAttribute(attribName);
+        }
+
         #endregion
 
         #region Convert Java <-> .Net collection helper methods
@@ -258,11 +265,19 @@ namespace Mainsoft.Web.Security
                 }
             }
 
-            private ServletRequest CurrentServletRequest
+            public string GetConfigAttribute(string attribute)
+            {
+                if (IsPortletPumaHome)
+                    return PortletUtils.getGenericPortlet().getPortletConfig().getInitParameter(attribute);
+                
+                return CurrentServletRequest.getSession(true).getServletContext().getInitParameter(attribute);
+            }
+
+            private HttpServletRequest CurrentServletRequest
             {
                 get
                 {
-                    ServletRequest request = (ServletRequest)vmw.j2ee.J2EEUtils.getHttpServletRequest();
+                    HttpServletRequest request = vmw.j2ee.J2EEUtils.getHttpServletRequest();
                     if (request == null)
                         throw new ApplicationException("Cannot retieve servlet request");
                     return request;

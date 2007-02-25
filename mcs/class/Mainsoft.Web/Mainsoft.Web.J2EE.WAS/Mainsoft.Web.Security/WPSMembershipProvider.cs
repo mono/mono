@@ -236,14 +236,12 @@ namespace Mainsoft.Web.Security
         {
             if (username.Length > 256)
                 throw new ArgumentException("The username is too long", username);
+            IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
+            
             if (username == null || username == String.Empty)
-            {
-                com.ibm.portal.um.User user = 
-                    PumaServicesProviderFactory.CreateProvider().PumaProfile.getCurrentUser();
-                return new WPSMembershipUser(user);
-            }
-            java.util.List principles = 
-                PumaServicesProviderFactory.CreateProvider().PumaLocator.findUsersByAttribute("uid", username);
+                return new WPSMembershipUser(provider.CurrentUser);
+
+            java.util.List principles =  provider.PumaLocator.findUsersByAttribute("uid", username);
             MembershipUser result = null;
             if (principles.size() > 0)
                 result = new WPSMembershipUser((com.ibm.portal.um.User)principles.get(0));
@@ -338,8 +336,6 @@ namespace Mainsoft.Web.Security
         {
             throw new NotImplementedException("The method or operation is not implemented.");
         }
-
-       
 
         public override string ResetPassword(string username, string answer)
         {

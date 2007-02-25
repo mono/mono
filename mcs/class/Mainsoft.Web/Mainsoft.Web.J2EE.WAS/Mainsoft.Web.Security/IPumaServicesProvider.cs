@@ -97,6 +97,8 @@ namespace Mainsoft.Web.Security
         /// <returns></returns>
         IDictionary GetAttributes(Principal p, params string[] attibs);
 
+        string GetConfigAttribute(string attribName);
+
         
         
     }
