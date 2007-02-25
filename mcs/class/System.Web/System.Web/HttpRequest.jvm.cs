@@ -67,14 +67,10 @@ namespace System.Web
 			for (java.util.Enumeration e = servletReq.getParameterNames(); e.hasMoreElements() ;) {
 				string key = (string) e.nextElement();
 				string [] qvalue = QueryString.GetValues (key);
+				string [] qfvalue = servletReq.getParameterValues (key);
 
-				if (qvalue == null)
-					form.Add (key, servletReq.getParameter (key));
-				else {
-					string [] qfvalue = servletReq.getParameterValues (key);
-					for (int i = qvalue.Length; i < qfvalue.Length; i++)
-						form.Add (key, qfvalue [i]);
-				}
+				for (int i = (qvalue != null) ? qvalue.Length : 0; i < qfvalue.Length; i++)
+					form.Add (key, qfvalue [i]);
 			}
 		}
 
