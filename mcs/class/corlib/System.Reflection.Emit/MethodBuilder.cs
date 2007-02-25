@@ -341,6 +341,9 @@ namespace System.Reflection.Emit {
 				 */
 
 				pi_dll = (string)attr.ctorArgs [0];
+				if (pi_dll == null || pi_dll.Length == 0)
+					throw new ArgumentException ("DllName cannot be empty");
+				
 				native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
 
 				for (int i = 0; i < attr.namedParamNames.Length; ++i) {
