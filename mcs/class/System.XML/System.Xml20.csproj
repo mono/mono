@@ -27,6 +27,7 @@
     <KeepIntermediate>false</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
+	<NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
@@ -78,6 +79,7 @@
     <KeepIntermediate>False</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
+	<NoWarn>67,169,612,618,649,3021</NoWarn>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <ApplicationServerType>
