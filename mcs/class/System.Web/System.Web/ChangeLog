@@ -1,3 +1,8 @@
+2007-02-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.jvm.cs: fixed LoadWwwForm, should distinguish between
+	query string and form values
+
 2007-02-21  Marek Habersack  <grendello@gmail.com>
 
 	* HttpRuntime.cs: BinDirectory returns the bin directory
