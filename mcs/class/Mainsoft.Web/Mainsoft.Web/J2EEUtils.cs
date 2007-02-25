@@ -47,50 +47,48 @@ namespace Mainsoft.Web
 			return config.getServletContext().getInitParameter(name);
 		}
 
-		public static string GetApplicationRealPath (ServletConfig config)
+		public static string GetApplicationRealPath (ServletConfig config) {
+			return GetApplicationRealPath (config, "/");
+		}
+
+		public static string GetApplicationRealPath (ServletConfig config, string appVirtualPath)
 		{
 			string realFs = GetInitParameterByHierarchy (config, J2EEConsts.FILESYSTEM_ACCESS);
 			if (realFs == null || realFs == J2EEConsts.ACCESS_FULL) {
 				try {
-					if (Path.IsPathRooted (config.getServletContext ().getRealPath ("")))
-						return config.getServletContext ().getRealPath ("").Replace ("\\", "/").TrimEnd ('/');
-				}
-				catch (ArgumentException e) {
-					Console.WriteLine (e.Message);
+					string realPath = config.getServletContext ().getRealPath (appVirtualPath);
+					if (realPath != null)
+						return realPath;
 				}
 				catch (Exception e) {
-					Console.WriteLine (e.Message);
+#if TRACE
+					Console.WriteLine (e.ToString());
+#endif
 				}
 			}
-			return IAppDomainConfig.WAR_ROOT_SYMBOL;
+			return IAppDomainConfig.WAR_ROOT_SYMBOL + appVirtualPath;
 		}
 
 		public static string GetApplicationPhysicalPath (ServletConfig config) {
-			string path = "";
+			string path = String.Empty;
+
 			ServletContext context = config.getServletContext ();
 			string appDir = GetInitParameterByHierarchy (config, IAppDomainConfig.APP_DIR_NAME);
-			//			Console.WriteLine("appdir = {0}", appDir);
 			if (appDir != null) {
 				try {
-					java.io.File f = new java.io.File (appDir);
-					if (f.exists ()) {
-						//						Console.WriteLine("Physical path= {0}", appDir);
+					if (Directory.Exists(appDir))
 						path = appDir;
-					}
 				}
 				catch (Exception e) {
+#if TRACE
 					Console.WriteLine (e.Message + appDir + "is invalid or unaccessible." +
 						" If " + appDir + " really exists, check your security permissions");
-				};
+#endif
+				}
 			}
-			if (path == "") {
+			if (path.Length == 0)
 				path = GetApplicationRealPath (config);
-			}
 
-			if (!path.EndsWith ("/") && !path.EndsWith ("\\"))
-				path += "/";
-
-			//			Console.WriteLine("Physical path= {0}", path); 
 			return path;
 		}
 	}

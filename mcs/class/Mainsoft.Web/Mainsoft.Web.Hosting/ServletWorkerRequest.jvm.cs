@@ -311,16 +311,33 @@ namespace Mainsoft.Web.Hosting {
 			return IntPtr.Zero;
 		}
 
-		public override string MapPath (string path) {
-			string appVirtualPath = GetAppPath ();
-			if (path.StartsWith (appVirtualPath))
-				path = path.Remove (0, appVirtualPath.Length);
+		public override string MapPath (string virtualPath) {
+			if (virtualPath == null)
+				throw new ArgumentNullException ("virtualPath");
+			int appVirtualPathIndex = virtualPath.IndexOf ('/', 1);
+			string appVirtualPath;
+			if (appVirtualPathIndex < 0) {
+				appVirtualPathIndex = virtualPath.Length;
+				appVirtualPath = String.Empty;
+			}
+			else
+				appVirtualPath = virtualPath.Substring(appVirtualPathIndex);
 
-			if (path.Length > 0 && path[0] == '/')
-				path = path.Remove (0, 1);
+			ServletConfig config = _HttpServlet.getServletConfig ();			
 
-			string retVal = J2EEUtils.GetApplicationRealPath (_HttpServlet.getServletConfig ());
-			return Path.Combine (retVal, path);
+			string contextPath = GetAppPath ();
+			if (contextPath.Length != appVirtualPathIndex ||
+				string.CompareOrdinal (contextPath, 0, virtualPath, 0, appVirtualPathIndex) != 0) {
+
+				ServletContext context = config.getServletContext ().getContext (virtualPath.Remove (appVirtualPathIndex));
+				string retVal;
+				if (context == null || ((retVal = context.getRealPath (appVirtualPath)) == null))
+					throw new HttpException ("MapPath: Mapping across applications not allowed");
+
+				return retVal;
+			}
+			else
+				return J2EEUtils.GetApplicationRealPath (config, appVirtualPath);
 		}
 
 		public override void SendResponseFromFile (IntPtr handle, long offset, long length) {
