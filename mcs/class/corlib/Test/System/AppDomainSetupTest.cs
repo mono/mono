@@ -33,6 +33,47 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void ConfigurationFile_Relative_ApplicationBase ()
+		{
+			string fileName = "blar.config";
+			AppDomainSetup setup = new AppDomainSetup();
+			string dir = "app_base";
+			setup.ApplicationBase = dir;
+			setup.ConfigurationFile = fileName;
+			string baseDir = Path.GetFullPath(dir);
+			string configFile = Path.Combine(baseDir, fileName);
+			Assert.AreEqual(configFile, setup.ConfigurationFile, "Check relative to ApplicationBase");
+		}
+
+		[Test]
+		public void ConfigurationFile_Null ()
+		{
+			AppDomainSetup setup = new AppDomainSetup();
+			Assert.IsNull(setup.ConfigurationFile);
+		}
+
+		[Test]
+		[ExpectedException (typeof (MemberAccessException))] // The ApplicationBase must be set before retrieving this property
+		public void ConfigurationFile_Relative_NoApplicationBase ()
+		{
+			AppDomainSetup setup = new AppDomainSetup();
+			setup.ConfigurationFile = "blar.config";
+			string configFile = setup.ConfigurationFile;
+			if (configFile == null) {
+				// avoid compiler warning
+			}
+		}
+
+		[Test]
+		public void ConfigurationFile_Absolute_NoApplicationBase ()
+		{
+			AppDomainSetup setup = new AppDomainSetup();
+			string configFile = Path.GetFullPath("blar.config");
+			setup.ConfigurationFile = configFile;
+			Assert.AreEqual(configFile, setup.ConfigurationFile);
+		}
+
+		[Test]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");

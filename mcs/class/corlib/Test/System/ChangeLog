@@ -1,3 +1,8 @@
+2007-02-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomainSetupTest.cs: Added tests for bug #80934.
+	* AppDomainTest.cs: Added tests for bug #80934.
+
 2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : test for copying Kind property.

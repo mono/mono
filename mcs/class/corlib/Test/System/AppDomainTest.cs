@@ -70,6 +70,156 @@ namespace MonoTests.System
 			files.Clear ();
 		}
 
+		[Test] // bug #80934
+		public void ConfigurationFile_Relative ()
+		{
+			// Note:
+			// We use Environment.GetCommandLineArgs () to get the location of
+			// the entry assembly in the default domain (since the default domain
+			// is not exposed by any API)
+			// 
+			// MS returns a lower-case path in Environment.GetCommandLineArgs ()
+			// and hence we need to perform a case-insensitive comparison
+			// if the Assert involves that path
+
+			string configFile = "test.config";
+			string appBase = null;
+			string expectedConfigFile = null;
+			string expectedAppBase = null;
+
+			// do not set ApplicationBase
+			appBase = Path.GetDirectoryName (Environment.GetCommandLineArgs () [0]);
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			expectedConfigFile = Path.Combine (appBase, configFile);
+			AppDomainSetup setup = new AppDomainSetup();
+			setup.ConfigurationFile = configFile;
+			ad = CreateTestDomain (setup, true);
+			CrossDomainTester cdt = CreateCrossDomainTester (ad);
+			if (RunningOnUnix) {
+				Assert.AreEqual (expectedConfigFile, cdt.GetConfigurationFile (), "#A1");
+				Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#A2");
+			} else {
+				Assert.IsTrue (string.Compare (expectedConfigFile, cdt.GetConfigurationFile (), true) == 0, "#A1");
+				Assert.IsTrue (string.Compare (expectedAppBase, cdt.GetApplicationBase (), true) == 0, "#A2");
+			}
+			AppDomain.Unload (ad);
+
+			// set ApplicationBase
+			appBase = Path.GetTempPath ();
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			expectedConfigFile = Path.Combine (appBase, configFile);
+			setup = new AppDomainSetup ();
+			setup.ApplicationBase = appBase;
+			setup.ConfigurationFile = configFile;
+			ad = CreateTestDomain (setup, true);
+			cdt = CreateCrossDomainTester (ad);
+			Assert.AreEqual (expectedConfigFile, cdt.GetConfigurationFile (), "#B1");
+			Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#B2");
+			AppDomain.Unload (ad);
+		}
+
+		[Test] // bug #80934
+		public void ConfigurationFile_Absolute ()
+		{
+			// Note:
+			// We use Environment.GetCommandLineArgs () to get the location of
+			// the entry assembly in the default domain (since the default domain
+			// is not exposed by any API)
+			// 
+			// MS returns a lower-case path in Environment.GetCommandLineArgs ()
+			// and hence on Windows we need to perform a case-insensitive 
+			// comparison if the Assert involves that path
+
+			string configFile = Path.Combine (tempDir, "test.config");
+			string appBase = null;
+			string expectedAppBase = null;
+
+			// do not set ApplicationBase
+			appBase = Path.GetDirectoryName (Environment.GetCommandLineArgs () [0]);
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ConfigurationFile = configFile;
+			ad = CreateTestDomain (setup, true);
+			CrossDomainTester cdt = CreateCrossDomainTester (ad);
+			Assert.AreEqual (configFile, cdt.GetConfigurationFile (), "#A1");
+			if (RunningOnUnix) {
+				Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#A2");
+			} else {
+				Assert.IsTrue (string.Compare (expectedAppBase, cdt.GetApplicationBase (), true) == 0, "#A2");
+			}
+			AppDomain.Unload (ad);
+
+			// set ApplicationBase
+			appBase = Path.GetTempPath ();
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			setup = new AppDomainSetup ();
+			setup.ApplicationBase = appBase;
+			setup.ConfigurationFile = configFile;
+			ad = CreateTestDomain (setup, true);
+			cdt = CreateCrossDomainTester (ad);
+			Assert.AreEqual (configFile, cdt.GetConfigurationFile (), "#B1");
+			Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#B2");
+			AppDomain.Unload (ad);
+		}
+
+		[Test] // bug #80934
+		//[Category ("NotWorking")]
+		public void ConfigurationFile_Null ()
+		{
+			// Note:
+			// We use Environment.GetCommandLineArgs () to get the location of
+			// the entry assembly in the default domain (since the default domain
+			// is not exposed by any API)
+			// 
+			// MS returns a lower-case path in Environment.GetCommandLineArgs ()
+			// and hence we need to perform a case-insensitive comparison
+			// if the Assert involves that path
+
+			string appBase = null;
+			string expectedAppBase = null;
+			string expectedConfigFile = null;
+
+			// do not set ApplicationBase
+			appBase = Path.GetDirectoryName (Environment.GetCommandLineArgs () [0]);
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			expectedConfigFile = Environment.GetCommandLineArgs () [0] + ".config";
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ConfigurationFile = null;
+			ad = CreateTestDomain (setup, true);
+			CrossDomainTester cdt = CreateCrossDomainTester (ad);
+			if (RunningOnUnix) {
+				Assert.AreEqual (expectedConfigFile, cdt.GetConfigurationFile (), "#A1");
+				Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#A2");
+			} else {
+				Assert.IsTrue (string.Compare (expectedConfigFile, cdt.GetConfigurationFile (), true) == 0, "#A1");
+				Assert.IsTrue (string.Compare (expectedAppBase, cdt.GetApplicationBase (), true) == 0, "#A2");
+			}
+			AppDomain.Unload (ad);
+
+			// set ApplicationBase
+			appBase = Path.GetTempPath ();
+			expectedAppBase = appBase [appBase.Length - 1] == Path.DirectorySeparatorChar ?
+				appBase : appBase + Path.DirectorySeparatorChar;
+			expectedConfigFile = Path.Combine (appBase, Path.GetFileName (Environment.GetCommandLineArgs () [0]) + ".config");
+			setup = new AppDomainSetup ();
+			setup.ApplicationBase = appBase;
+			setup.ConfigurationFile = null;
+			ad = CreateTestDomain (setup, true);
+			cdt = CreateCrossDomainTester (ad);
+			if (RunningOnUnix) {
+				Assert.AreEqual (expectedConfigFile, cdt.GetConfigurationFile (), "#B1");
+			} else {
+				Assert.IsTrue (string.Compare (expectedConfigFile, cdt.GetConfigurationFile (), true) == 0, "#B1");
+			}
+			Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#B2");
+			AppDomain.Unload (ad);
+		}
+
 		[Test]
 		public void SetThreadPrincipal ()
 		{
@@ -1280,7 +1430,11 @@ namespace MonoTests.System
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = baseDirectory;
 			setup.ApplicationName = "testdomain";
+			return CreateTestDomain (setup, assemblyResolver);
+		}
 
+		private static AppDomain CreateTestDomain (AppDomainSetup setup, bool assemblyResolver)
+		{
 			AppDomain ad = AppDomain.CreateDomain ("testdomain",
 				AppDomain.CurrentDomain.Evidence, setup);
 
@@ -1299,6 +1453,7 @@ namespace MonoTests.System
 
 			return ad;
 		}
+
 
 		private static CrossDomainTester CreateCrossDomainTester (AppDomain domain)
 		{
@@ -1321,6 +1476,15 @@ namespace MonoTests.System
 			}
 		}
 
+		private bool RunningOnUnix {
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
+		}
+
 		private class CrossDomainTester : MarshalByRefObject
 		{
 			public void GenerateAssembly (AssemblyName aname, string path)
@@ -1334,6 +1498,16 @@ namespace MonoTests.System
 				get {
 					return AppDomain.CurrentDomain.GetAssemblies ().Length;
 				}
+			}
+
+			public string GetApplicationBase ()
+			{
+				return AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+			}
+
+			public string GetConfigurationFile ()
+			{
+				return AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 			}
 
 			public void Load (AssemblyName assemblyRef)

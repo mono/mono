@@ -153,7 +153,13 @@ namespace System
 
 		public string ConfigurationFile {
 			get {
-				return configuration_file;
+				if (configuration_file == null)
+					return null;
+				if (Path.IsPathRooted(configuration_file))
+					return configuration_file;
+				if (ApplicationBase == null)
+					throw new MemberAccessException("The ApplicationBase must be set before retrieving this property.");
+				return Path.Combine(ApplicationBase, configuration_file);
 			}
 			set {
 				configuration_file = value;

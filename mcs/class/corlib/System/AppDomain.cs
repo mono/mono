@@ -725,8 +725,13 @@ namespace System {
 
 			// todo: allow setup in the other domain
 			if (def != null) {
-				if (!info.Equals (def.SetupInformation) && info.ConfigurationFile == null)
-					info.ConfigurationFile = def.SetupInformation.ConfigurationFile;
+				if (!info.Equals (def.SetupInformation)) {
+					// If not specified use default domain's app base.
+					if (info.ApplicationBase == null)
+						info.ApplicationBase = def.SetupInformation.ApplicationBase;
+					if (info.ConfigurationFile == null)
+						info.ConfigurationFile = Path.GetFileName (def.SetupInformation.ConfigurationFile);
+				}
 			} else if (info.ConfigurationFile == null)
 				info.ConfigurationFile = "[I don't have a config file]";
 
