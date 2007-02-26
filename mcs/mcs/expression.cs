@@ -3865,6 +3865,8 @@ namespace Mono.CSharp {
 			ArgList
 		};
 
+		public static readonly Argument[] Empty = new Argument [0];
+
 		public readonly AType ArgType;
 		public Expression Expr;
 		
@@ -6328,6 +6330,11 @@ namespace Mono.CSharp {
 	public class Arglist : Expression
 	{
 		public Argument[] Arguments;
+
+		public Arglist (Location loc)
+			: this (Argument.Empty, loc)
+		{
+		}
 
 		public Arglist (Argument[] args, Location l)
 		{

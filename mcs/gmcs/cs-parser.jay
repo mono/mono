@@ -3214,6 +3214,10 @@ non_simple_argument
 		Expression expr = new Arglist (args, (Location) $1);
 		$$ = new Argument (expr, Argument.AType.Expression);
 	  }
+	| ARGLIST OPEN_PARENS CLOSE_PARENS
+	  {
+		$$ = new Argument (new Arglist ((Location) $1), Argument.AType.Expression);
+	  }	  
 	| ARGLIST
 	  {
 		$$ = new Argument (new ArglistAccess ((Location) $1), Argument.AType.ArgList);
