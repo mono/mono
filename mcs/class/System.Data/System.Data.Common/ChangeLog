@@ -1,3 +1,8 @@
+2007-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbProviderFactoriesConfigurationHandler.cs : remove "support"
+	  attribute check, as it does not really do anything.
+
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbProviderFactoriesConfigurationHandler.cs : "support" attribute is

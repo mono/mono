@@ -102,24 +102,17 @@ namespace System.Data.Common {
                                 string description = "";
                                 string invariant = "";
                                 string type = "";
-                                string supportedClasses = "";
-                                int support = 0;
 
                                 name            = GetAttributeValue (addNode, "name", true);
                                 description     = GetAttributeValue (addNode, "description", true);
                                 invariant       = GetAttributeValue (addNode, "invariant", true);
                                 type            = GetAttributeValue (addNode, "type", true);
-                                supportedClasses = GetAttributeValue (addNode, "support", false);
-                                if (supportedClasses != null)
-                                        support = int.Parse (supportedClasses, NumberStyles.HexNumber);
                                         
                                 DataRow row = dt.NewRow ();
                                 row [0] = name;
                                 row [1] = description;
                                 row [2] = invariant;
                                 row [3] = type;
-                                if (supportedClasses != null)
-                                        row [4] = support;
                                         
                                 dt.Rows.Add (row);
                         }        
