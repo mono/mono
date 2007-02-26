@@ -2234,9 +2234,7 @@ namespace MonoTests_System.Data
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-#if !TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Select_StringString_2()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();

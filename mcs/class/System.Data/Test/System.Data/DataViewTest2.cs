@@ -1278,6 +1278,9 @@ namespace MonoTests_System.Data
 		}
 		
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7423")]
+#endif
 		public void ToTableTest_DataValidity ()
 		{              
 			DataTable table = new DataTable();
