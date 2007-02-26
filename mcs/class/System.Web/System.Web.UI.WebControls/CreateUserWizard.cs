@@ -1532,7 +1532,7 @@ namespace System.Web.UI.WebControls
 
 			if ((newUser != null) && (status == MembershipCreateStatus.Success)) {
 				OnCreatedUser (new EventArgs ());
-				SendPasswordByMail(UserName, Password);
+				SendPasswordByMail (newUser, Password);
 				return true;
 			}
 
@@ -1576,16 +1576,18 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		private void SendPasswordByMail (string username, string password)
+		private void SendPasswordByMail (MembershipUser user, string password)
 		{
-			MembershipUser user = MembershipProviderInternal.GetUser (UserName, false);
 			if (user == null)
+				return;
+			
+			if (_mailDefinition == null)
 				return;
 			
 			string messageText = "A new account has been created for you. Please go to the site and log in using the following information.\nUser Name: <%USERNAME%>\nPassword: <%PASSWORD%>";
 
 			ListDictionary dictionary = new ListDictionary ();
-			dictionary.Add ("<%USERNAME%>", username);
+			dictionary.Add ("<%USERNAME%>", user.UserName);
 			dictionary.Add ("<%PASSWORD%>", password);
 
 			MailMessage message = null;
