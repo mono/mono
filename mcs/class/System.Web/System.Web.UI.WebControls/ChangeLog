@@ -1,5 +1,11 @@
 2007-02-26 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* LoginView.cs: fixed: 
+	ViewChanging and ViewChanged are fired.
+	optimized Save/Load control state. 	
+
+2007-02-26 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CreateUserWizard.cs: fixed: does not attempt to send email if 
 	MailDefinition is not defined.
 

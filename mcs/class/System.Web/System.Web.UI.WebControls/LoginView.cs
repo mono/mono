@@ -114,10 +114,17 @@ namespace System.Web.UI.WebControls {
 
 		bool IsAuthenticated {
 			get {
-				if (Page != null)
-					isAuthenticated = Page.Request.IsAuthenticated;
-
 				return isAuthenticated;
+			}
+			set {
+				if (value == isAuthenticated)
+					return;
+				
+				isAuthenticated = value;
+
+				OnViewChanging (EventArgs.Empty);
+				CreateChildControls();
+				OnViewChanged (EventArgs.Empty);
 			}
 		}
 
@@ -155,14 +162,10 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override void LoadControlState (object savedState)
 		{
-			if (savedState == null) {
-				base.LoadControlState (savedState);
+			if (savedState == null)
 				return;
-			}
 
-			Pair pair = (Pair)savedState;
-			base.LoadControlState (pair.First);
-			isAuthenticated = (bool)pair.Second;
+			isAuthenticated = (bool) savedState;
 		}
 
 		protected internal override void OnInit (EventArgs e)
@@ -175,8 +178,8 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			isAuthenticated = IsAuthenticated;
-			EnsureChildControls ();
+			if (Page != null)
+				IsAuthenticated = Page.Request.IsAuthenticated;
 		}
 
 		protected virtual void OnViewChanged (EventArgs e)
@@ -200,11 +203,10 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override object SaveControlState ()
 		{
-			object baseState = base.SaveControlState ();
 			if (isAuthenticated)
-				return new Pair (baseState, isAuthenticated);
+				return isAuthenticated;
 
-			return baseState;
+			return null;
 		}
 
 		[MonoTODO ("for design-time usage - no more details available")]
