@@ -174,7 +174,7 @@ namespace System.Web.UI
 		public string AppRelativeTemplateSourceDirectory 
 		{
 			get {
-				if (_appRelativeTemplateSourceDirectory != null)
+				if (_appRelativeTemplateSourceDirectory != null && !(this is MasterPage))
 					return _appRelativeTemplateSourceDirectory;
 
 				if (Parent != null)
