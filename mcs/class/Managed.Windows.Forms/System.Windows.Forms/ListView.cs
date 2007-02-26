@@ -1941,14 +1941,15 @@ namespace System.Windows.Forms
 				}
 
 				edit_item = item;
-				edit_args = new LabelEditEventArgs (owner.Items.IndexOf (edit_item));
-				owner.OnBeforeLabelEdit (edit_args);
 
 				edit_text_box.Text = item.Text;
 				edit_text_box.Font = item.Font;
 				edit_text_box.Visible = true;
 				edit_text_box.Focus ();
 				edit_text_box.SelectAll ();
+
+				edit_args = new LabelEditEventArgs (owner.Items.IndexOf (edit_item));
+				owner.OnBeforeLabelEdit (edit_args);
 
 				if (edit_args.CancelEdit)
 					EndEdit (item);
@@ -2112,10 +2113,12 @@ namespace System.Windows.Forms
 				switch (e.KeyCode) {
 				case Keys.Return:
 					Visible = false;
+					e.Handled = true;
 					OnEditingFinished (e);
 					break;
 				case Keys.Escape:
 					Visible = false;
+					e.Handled = true;
 					OnEditingCancelled (e);
 					break;
 				}
@@ -3307,6 +3310,8 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				foreach (ColumnHeader col in list)
+					col.SetListView (null);
 				list.Clear ();
 				owner.Redraw (true);
 			}
@@ -3461,6 +3466,7 @@ namespace System.Windows.Forms
 			{
 				// TODO: Update Column internal index ?
 				list.Remove (column);
+				column.SetListView (null);
 				owner.Redraw (true);
 			}
 
@@ -3478,9 +3484,8 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				// TODO: Update Column internal index ?
-				list.RemoveAt (index);
-				owner.Redraw (true);
+				ColumnHeader col = (ColumnHeader) list [index];
+				Remove (col);
 			}
 			#endregion	// Public Methods
 			
@@ -3653,8 +3658,10 @@ namespace System.Windows.Forms
 			{
 				owner.SetFocusedItem (null);
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
-				foreach (ListViewItem item in list)
+				foreach (ListViewItem item in list) {
 					owner.item_control.CancelEdit (item);
+					item.Owner = null;
+				}
 				list.Clear ();
 				OnChange ();
 				owner.Redraw (true);
@@ -3817,6 +3824,7 @@ namespace System.Windows.Forms
 				list.Remove (item);
 				OnChange ();
 				owner.item_control.CancelEdit (item);
+				item.Owner = null;
 				owner.Redraw (true);
 				if (selection_changed)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);

@@ -1,3 +1,12 @@
+2007-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListView.cs: Initialize LabelEditEventArgs after setting Text of
+	edit box since otherwise the Label would immediately be set (even if
+	the user did not modify the label). In OnKeyDown set Handled to true
+	if Return or Escape was pressed. In ColumnHeaderCollection unlink
+	columns that are to be removed. In ListViewItemCollection unlink items
+	that are to be removed.
+
 2007-02-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: If we set a GDI clip region, we need to clear

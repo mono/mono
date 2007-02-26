@@ -56,33 +56,96 @@ namespace MonoTests.System.Windows.Forms
 		public void ColumnHeaderCollectionTest_AddTest ()
 		{
 			ListView listview = new ListView ();
+			ColumnHeader colA = new ColumnHeader ();
+			ColumnHeader colB = new ColumnHeader ();
 
 			// Duplicated elements with same text added
-			listview.Columns.Add (new ColumnHeader ());
-			listview.Columns.Add (new ColumnHeader ());
-			Assert.AreEqual (2, listview.Columns.Count, "ColumnHeaderCollectionTest_AddTest#1");
-			Assert.AreEqual ("ColumnHeader", listview.Columns[0].Text, "ColumnHeaderCollectionTest_AddTest#2");
+			listview.Columns.Add (colA);
+			listview.Columns.Add (colB);
+			Assert.AreEqual (2, listview.Columns.Count, "#1");
+			Assert.AreEqual ("ColumnHeader", listview.Columns[0].Text, "#2");
+			Assert.AreSame (listview, colA.ListView, "#3");
+			Assert.AreSame (listview, colB.ListView, "#4");
 		}
 
 		[Test]
 		public void ColumnHeaderCollectionTest_ClearTest ()
 		{
 			ListView listview = new ListView ();
-
-			// Duplicated elements with same text added
-			listview.Columns.Add (new ColumnHeader ());
+			ColumnHeader colA = new ColumnHeader ();
+			ColumnHeader colB = new ColumnHeader ();
+			listview.Columns.Add (colA);
+			listview.Columns.Add (colB);
 			listview.Columns.Clear ();
-			Assert.AreEqual (0, listview.Columns.Count, "ColumnHeaderCollectionTest_ClearTest#1");
+			Assert.AreEqual (0, listview.Columns.Count, "#1");
+			Assert.IsNull (colA.ListView, "#2");
+			Assert.IsNull (colB.ListView, "#3");
 		}
 
-		// Exceptions
-		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
-		public void ColumnHeaderCollectionTest_GetItem_ExceptionTest ()
+		[Test]
+		public void ColumnHeaderCollectionTest_Remove ()
 		{
-			// Duplicated elements not added
 			ListView listview = new ListView ();
-			ColumnHeader item = listview.Columns[5];
-			Assert.Fail ("#1: " + item.Text); // avoid CS0219 warning
+			ColumnHeader colA = new ColumnHeader ();
+			ColumnHeader colB = new ColumnHeader ();
+			ColumnHeader colC = new ColumnHeader ();
+			listview.Columns.Add (colA);
+			listview.Columns.Add (colB);
+			listview.Columns.Add (colC);
+
+			listview.Columns.Remove (colB);
+			Assert.AreEqual (2, listview.Columns.Count, "#A1");
+			Assert.AreSame (colA, listview.Columns [0], "#A2");
+			Assert.AreSame (colC, listview.Columns [1], "#A3");
+			Assert.AreSame (listview, colA.ListView, "#A4");
+			Assert.IsNull (colB.ListView, "#A5");
+			Assert.AreSame (listview, colC.ListView, "#A6");
+
+			listview.Columns.Remove (colC);
+			Assert.AreEqual (1, listview.Columns.Count, "#B1");
+			Assert.AreSame (colA, listview.Columns [0], "#B2");
+			Assert.AreSame (listview, colA.ListView, "#B3");
+			Assert.IsNull (colB.ListView, "#B4");
+			Assert.IsNull (colC.ListView, "#B5");
+
+			listview.Columns.Remove (colA);
+			Assert.AreEqual (0, listview.Columns.Count, "#C1");
+			Assert.IsNull (colA.ListView, "#C2");
+			Assert.IsNull (colB.ListView, "#C3");
+			Assert.IsNull (colC.ListView, "#C4");
+		}
+
+		[Test]
+		public void ColumnHeaderCollectionTest_RemoveAt ()
+		{
+			ListView listview = new ListView ();
+			ColumnHeader colA = new ColumnHeader ();
+			ColumnHeader colB = new ColumnHeader ();
+			ColumnHeader colC = new ColumnHeader ();
+			listview.Columns.Add (colA);
+			listview.Columns.Add (colB);
+			listview.Columns.Add (colC);
+
+			listview.Columns.RemoveAt (1);
+			Assert.AreEqual (2, listview.Columns.Count, "#A1");
+			Assert.AreSame (colA, listview.Columns [0], "#A2");
+			Assert.AreSame (colC, listview.Columns [1], "#A3");
+			Assert.AreSame (listview, colA.ListView, "#A4");
+			Assert.IsNull (colB.ListView, "#A5");
+			Assert.AreSame (listview, colC.ListView, "#A6");
+
+			listview.Columns.RemoveAt (0);
+			Assert.AreEqual (1, listview.Columns.Count, "#B1");
+			Assert.AreSame (colC, listview.Columns [0], "#B2");
+			Assert.IsNull (colA.ListView, "#B3");
+			Assert.IsNull (colB.ListView, "#B4");
+			Assert.AreSame (listview, colC.ListView, "#B5");
+
+			listview.Columns.RemoveAt (0);
+			Assert.AreEqual (0, listview.Columns.Count, "#C1");
+			Assert.IsNull (colA.ListView, "#C2");
+			Assert.IsNull (colB.ListView, "#C3");
+			Assert.IsNull (colC.ListView, "#C4");
 		}
 
 		/*
@@ -838,9 +901,8 @@ namespace MonoTests.System.Windows.Forms
 			ListViewItem item1 = new ListViewItem ("Item1");
 			ListViewItem item2 = new ListViewItem ("Item2");
 			ListViewItem item3 = new ListViewItem ("Item3");
-
 			lv1.Items.AddRange (new ListViewItem[] { item1, item2, item3 });
-            
+
 			Assert.AreSame (item1, lv1.Items[0], "#A1");
 			Assert.AreEqual (0, item1.Index, "#A2");
 			Assert.AreSame (lv1, item1.ListView, "#A3");
@@ -897,6 +959,24 @@ namespace MonoTests.System.Windows.Forms
 			ListView lv1 = new ListView ();
 			ListViewItem item1 = lv1.Items.Add ("Item1");
 			lv1.Items.Add (item1);
+		}
+
+		[Test]
+		public void ListViewItemCollectionTest_Clear ()
+		{
+			ListView lvw = new ListView ();
+			ListViewItem itemA = lvw.Items.Add ("A");
+			ListViewItem itemB = lvw.Items.Add ("B");
+
+			Assert.AreEqual (2, lvw.Items.Count, "#A1");
+			Assert.AreSame (lvw, itemA.ListView, "#A2");
+			Assert.AreSame (lvw, itemB.ListView, "#A3");
+
+			lvw.Items.Clear ();
+
+			Assert.AreEqual (0, lvw.Items.Count, "#B1");
+			Assert.IsNull (itemA.ListView, "#B2");
+			Assert.IsNull (itemB.ListView, "#B3");
 		}
 
 		[Test]
@@ -1033,6 +1113,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvw.CheckedItems.Count, "#E4");
 			Assert.AreEqual (itemD, lvw.CheckedItems [0], "#E5");
 
+			Assert.IsNull (itemA.ListView, "#F1");
+			Assert.IsNull (itemB.ListView, "#F2");
+			Assert.AreSame (lvw, itemD.ListView, "#F3");
+
 			form.Dispose ();
 		}
 
@@ -1045,10 +1129,11 @@ namespace MonoTests.System.Windows.Forms
 			form.Controls.Add (lvw);
 			lvw.MultiSelect = true;
 			lvw.CheckBoxes = true;
-			lvw.Items.Add ("A");
-			lvw.Items.Add ("B");
-			lvw.Items.Add ("C");
-			lvw.Items.Add ("D");
+
+			ListViewItem itemA = lvw.Items.Add ("A");
+			ListViewItem itemB = lvw.Items.Add ("B");
+			ListViewItem itemC = lvw.Items.Add ("C");
+			ListViewItem itemD = lvw.Items.Add ("D");
 
 			form.Show ();
 
@@ -1089,6 +1174,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("D", lvw.SelectedItems [0].Text, "#E3");
 			Assert.AreEqual (1, lvw.CheckedItems.Count, "#E4");
 			Assert.AreEqual ("D", lvw.CheckedItems [0].Text, "#E5");
+
+			Assert.IsNull (itemA.ListView, "#F1");
+			Assert.IsNull (itemB.ListView, "#F2");
+			Assert.AreSame (lvw, itemC.ListView, "#F3");
+			Assert.AreSame (lvw, itemD.ListView, "#F4");
 
 			form.Dispose ();
 		}
@@ -1134,6 +1224,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, lvw.Items.Count, "#E1");
 			Assert.AreSame (lvi4, lvw.Items [0], "#E2");
 			Assert.AreSame (lvi5, lvw.Items [1], "#E3");
+
+			Assert.IsNull (lvi1.ListView, "#F1");
+			Assert.IsNull (lvi2.ListView, "#F2");
+			Assert.IsNull (lvi3.ListView, "#F3");
+			Assert.AreSame (lvw, lvi4.ListView, "#F4");
+			Assert.AreSame (lvw, lvi5.ListView, "#F5");
 		}
 
 		[Test]

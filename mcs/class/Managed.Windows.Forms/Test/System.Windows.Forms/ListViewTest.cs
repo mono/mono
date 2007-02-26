@@ -141,15 +141,19 @@ namespace MonoTests.System.Windows.Forms
 			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			ListView mylistview = new ListView ();
-			mylistview.Items.Add ("A");
-			mylistview.Columns.Add ("Item Column", -2, HorizontalAlignment.Left);
+			ListViewItem itemA = mylistview.Items.Add ("A");
+			ColumnHeader colA = mylistview.Columns.Add ("Item Column", -2, HorizontalAlignment.Left);
+			Assert.AreSame (mylistview, itemA.ListView, "#1");
+			Assert.AreSame (mylistview, colA.ListView, "#2");
 			mylistview.Visible = true;
 			myform.Controls.Add (mylistview);
-			Assert.AreEqual (1, mylistview.Columns.Count, "#31");
-			Assert.AreEqual (1, mylistview.Items.Count, "#32");
+			Assert.AreEqual (1, mylistview.Columns.Count, "#3");
+			Assert.AreEqual (1, mylistview.Items.Count, "#4");
 			mylistview.Clear ();
-			Assert.AreEqual (0, mylistview.Columns.Count, "#33");
-			Assert.AreEqual (0, mylistview.Items.Count, "#34");
+			Assert.AreEqual (0, mylistview.Columns.Count, "#5");
+			Assert.AreEqual (0, mylistview.Items.Count, "#6");
+			Assert.IsNull (itemA.ListView, "#7");
+			Assert.IsNull (colA.ListView, "#8");
 			myform.Dispose ();
 		}
 
