@@ -187,6 +187,10 @@ class Class1
 		if (result != 21)
 			return 8;
 
+		result = s.InstAddABunchOfInts (__arglist ( ));
+		if (result != 0)
+			return 9;
+		
 		return 0;
 	}
 }
