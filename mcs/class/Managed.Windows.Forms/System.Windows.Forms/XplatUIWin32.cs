@@ -89,16 +89,57 @@ namespace System.Windows.Forms {
 			internal int		top;
 			internal int		right;
 			internal int		bottom;
-			public override string ToString() {
-				return String.Format("RECT left={0}, top={1}, right={2}, bottom={3}, width={4}, height={5}", left, top, right, bottom, right-left, bottom-top);
+
+			public RECT (int left, int top, int right, int bottom)
+			{
+				this.left = left;
+				this.top = top;
+				this.right = right;
+				this.bottom = bottom;
 			}
 
-		}
+			#region Instance Properties
+			public int Height { get { return bottom - top + 1; } }
+			public int Width { get { return right - left + 1; } }
+			public Size Size { get { return new Size (Width, Height); } }
+			public Point Location { get { return new Point (left, top); } }
+			#endregion
 
-		[StructLayout(LayoutKind.Sequential)]
-		internal struct POINT {
-			internal int		x;
-			internal int		y;
+			#region Instance Methods
+			public Rectangle ToRectangle ()
+			{
+				return Rectangle.FromLTRB (left, top, right, bottom);
+			}
+
+			public static RECT FromRectangle (Rectangle rectangle)
+			{
+				return new RECT (rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+			}
+
+			public override int GetHashCode ()
+			{
+				return left ^ ((top << 13) | (top >> 0x13))
+				  ^ ((Width << 0x1a) | (Width >> 6))
+				  ^ ((Height << 7) | (Height >> 0x19));
+			}
+			
+			public override string ToString ()
+			{
+				return String.Format("RECT left={0}, top={1}, right={2}, bottom={3}, width={4}, height={5}", left, top, right, bottom, right-left, bottom-top);
+			}
+			#endregion
+
+			#region Operator overloads
+			public static implicit operator Rectangle (RECT rect)
+			{
+				return Rectangle.FromLTRB (rect.left, rect.top, rect.right, rect.bottom);
+			}
+
+			public static implicit operator RECT (Rectangle rect)
+			{
+				return new RECT (rect.Left, rect.Top, rect.Right, rect.Bottom);
+			}
+			#endregion
 		}
 
 		internal enum SPIAction {

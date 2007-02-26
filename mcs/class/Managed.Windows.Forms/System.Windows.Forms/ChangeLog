@@ -1,3 +1,10 @@
+2007-02-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIStructs.cs: Add some convenience methods for POINT structure.
+	* XplatUIWin32.cs: Add some convenience methods for RECT structure,
+	delete POINT structure, duplicate of one in XplatUIStructs.
+	* TextRenderer.cs: Use XplatUIWin32.RECT instead of UXTheme.RECT.
+
 2007-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListView.cs: Initialize LabelEditEventArgs after setting Text of

@@ -31,6 +31,7 @@
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 namespace System.Windows.Forms.VisualStyles
 {
@@ -42,29 +43,29 @@ namespace System.Windows.Forms.VisualStyles
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 DrawThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId,
-		   int iStateId, ref RECT pRect, ref RECT pClipRect);
+		   int iStateId, ref XplatUIWin32.RECT pRect, ref XplatUIWin32.RECT pClipRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 DrawThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId,
-		   int iStateId, ref RECT pRect, IntPtr pClipRect);
+		   int iStateId, ref XplatUIWin32.RECT pRect, IntPtr pClipRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 DrawThemeEdge (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pDestRect, uint egde, uint flags, out RECT pRect);
+		public extern static Int32 DrawThemeEdge (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pDestRect, uint egde, uint flags, out XplatUIWin32.RECT pRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 DrawThemeEdge (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pDestRect, uint edge, uint flags, int pRect);
+		public extern static Int32 DrawThemeEdge (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pDestRect, uint edge, uint flags, int pRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 DrawThemeIcon (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pRect, IntPtr himl, int iImageIndex);
+		public extern static Int32 DrawThemeIcon (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pRect, IntPtr himl, int iImageIndex);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 DrawThemeParentBackground (IntPtr hWnd, IntPtr hdc, ref RECT pRect);
+		public extern static Int32 DrawThemeParentBackground (IntPtr hWnd, IntPtr hdc, ref XplatUIWin32.RECT pRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 DrawThemeParentBackground (IntPtr hWnd, IntPtr hdc, int pRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 DrawThemeText (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, UInt32 textFlags, UInt32 textFlags2, ref RECT pRect);
+		public extern static Int32 DrawThemeText (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, UInt32 textFlags, UInt32 textFlags2, ref XplatUIWin32.RECT pRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 EnableTheming (int fEnable);
@@ -73,13 +74,13 @@ namespace System.Windows.Forms.VisualStyles
 		public static extern IntPtr OpenThemeData (IntPtr hWnd, String classList);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeBackgroundContentRect (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pBoundingRect, out RECT pContentRect);
+		public extern static Int32 GetThemeBackgroundContentRect (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pBoundingRect, out XplatUIWin32.RECT pContentRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeBackgroundExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pRect, ref RECT pClipRect);
+		public extern static Int32 GetThemeBackgroundExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pRect, ref XplatUIWin32.RECT pClipRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeBackgroundRegion (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pRect, out IntPtr pRegion);
+		public extern static Int32 GetThemeBackgroundRegion (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pRect, out IntPtr pRegion);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 GetThemeBool (IntPtr hTheme, int iPartId, int iStateId, int iPropId, out int pfVal);
@@ -103,10 +104,10 @@ namespace System.Windows.Forms.VisualStyles
 		public extern static Int32 GetThemeInt (IntPtr hTheme, int iPartId, int iStateId, int iPropId, out int piVal);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeMargins (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, int iPropId, out RECT prc, out MARGINS pMargins);
+		public extern static Int32 GetThemeMargins (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, int iPropId, out XplatUIWin32.RECT prc, out MARGINS pMargins);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pRect, int eSize, out SIZE size);
+		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pRect, int eSize, out SIZE size);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, int pRect, int eSize, out SIZE size);
@@ -118,16 +119,16 @@ namespace System.Windows.Forms.VisualStyles
 		public extern static Int32 GetThemeString (IntPtr hTheme, int iPartId, int iStateId, int iPropId, [MarshalAs (UnmanagedType.LPWStr)] Text.StringBuilder themeString, int themeStringLength);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeTextExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, int textFlags, ref RECT boundingRect, out RECT extentRect);
+		public extern static Int32 GetThemeTextExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, int textFlags, ref XplatUIWin32.RECT boundingRect, out XplatUIWin32.RECT extentRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeTextExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, int textFlags, int boundingRect, out RECT extentRect);
+		public extern static Int32 GetThemeTextExtent (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, String text, int textLength, int textFlags, int boundingRect, out XplatUIWin32.RECT extentRect);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemeTextMetrics (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, out TEXTMETRIC textMetric);
+		public extern static Int32 GetThemeTextMetrics (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, out XplatUIWin32.TEXTMETRIC textMetric);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 HitTestThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, UInt32 dwOptions, ref RECT pRect, IntPtr hrgn, POINT ptTest, out HitTestCode code);
+		public extern static Int32 HitTestThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, UInt32 dwOptions, ref XplatUIWin32.RECT pRect, IntPtr hrgn, POINT ptTest, out HitTestCode code);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static int IsThemeBackgroundPartiallyTransparent (IntPtr hTheme, int iPartId, int iStateId);
@@ -142,7 +143,7 @@ namespace System.Windows.Forms.VisualStyles
 		public extern static bool IsAppThemed ();
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 HitTestThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, UInt32 dwOptions, ref RECT pRect, IntPtr hrgn, POINT ptTest, out int code);
+		public extern static Int32 HitTestThemeBackground (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, UInt32 dwOptions, ref XplatUIWin32.RECT pRect, IntPtr hrgn, POINT ptTest, out int code);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 GetThemeDocumentationProperty (String stringThemeName, String stringPropertyName, StringBuilder stringValue, int lengthValue);
@@ -158,63 +159,6 @@ namespace System.Windows.Forms.VisualStyles
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static int GetThemeSysBool (IntPtr hTheme, int iBoolId);
-		#endregion
-		
-		#region RECT Type
-		[Serializable, StructLayout (LayoutKind.Sequential)]
-		public struct RECT
-		{
-			public int Left;
-			public int Top;
-			public int Right;
-			public int Bottom;
-
-			public RECT (int left, int top, int right, int bottom)
-			{
-				this.Left = left;
-				this.Top = top;
-				this.Right = right;
-				this.Bottom = bottom;
-			}
-
-			#region Instance Properties
-			public int Height { get { return Bottom - Top + 1; } }
-			public int Width { get { return Right - Left + 1; } }
-			public Size Size { get { return new Size (Width, Height); } }
-			public Point Location { get { return new Point (Left, Top); } }
-			#endregion
-
-			#region Instance Methods
-			public Rectangle ToRectangle ()
-			{
-				return Rectangle.FromLTRB (Left, Top, Right, Bottom);
-			}
-
-			public static RECT FromRectangle (Rectangle rectangle)
-			{
-				return new RECT (rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
-			}
-
-			public override int GetHashCode ()
-			{
-				return Left ^ ((Top << 13) | (Top >> 0x13))
-				  ^ ((Width << 0x1a) | (Width >> 6))
-				  ^ ((Height << 7) | (Height >> 0x19));
-			}
-			#endregion
-
-			#region Operator overloads
-			public static implicit operator Rectangle (RECT rect)
-			{
-				return Rectangle.FromLTRB (rect.Left, rect.Top, rect.Right, rect.Bottom);
-			}
-
-			public static implicit operator RECT (Rectangle rect)
-			{
-				return new RECT (rect.Left, rect.Top, rect.Right, rect.Bottom);
-			}
-			#endregion
-		}
 		#endregion
 
 		#region LOGFONT Type
@@ -266,63 +210,6 @@ namespace System.Windows.Forms.VisualStyles
 			{
 				return new Size (cx, cy);
 			}
-		}
-		#endregion
-		
-		#region POINT Type
-		[StructLayout (LayoutKind.Sequential)]
-		public struct POINT
-		{
-			public int X;
-			public int Y;
-
-			public POINT (int x, int y)
-			{
-				this.X = x;
-				this.Y = y;
-			}
-
-			public Point ToPoint ()
-			{
-				return new Point (X, Y);
-			}
-
-			public static implicit operator System.Drawing.Point (POINT p)
-			{
-				return new System.Drawing.Point (p.X, p.Y);
-			}
-
-			public static implicit operator POINT (System.Drawing.Point p)
-			{
-				return new POINT (p.X, p.Y);
-			}
-		}
-		#endregion
-		
-		#region TEXTMETRIC Type
-		[Serializable, StructLayout (LayoutKind.Sequential, CharSet = CharSet.Auto)]
-		public struct TEXTMETRIC
-		{
-			public int tmHeight;
-			public int tmAscent;
-			public int tmDescent;
-			public int tmInternalLeading;
-			public int tmExternalLeading;
-			public int tmAveCharWidth;
-			public int tmMaxCharWidth;
-			public int tmWeight;
-			public int tmOverhang;
-			public int tmDigitizedAspectX;
-			public int tmDigitizedAspectY;
-			public char tmFirstChar;
-			public char tmLastChar;
-			public char tmDefaultChar;
-			public char tmBreakChar;
-			public byte tmItalic;
-			public byte tmUnderlined;
-			public byte tmStruckOut;
-			public byte tmPitchAndFamily;
-			public byte tmCharSet;
 		}
 		#endregion
 	}

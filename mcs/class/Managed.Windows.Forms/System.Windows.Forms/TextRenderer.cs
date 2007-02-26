@@ -166,7 +166,7 @@ namespace System.Windows.Forms
 					SetBkMode (hdc, 1);	//1-Transparent, 2-Opaque
 				}
 
-				UXTheme.RECT r = UXTheme.RECT.FromRectangle (new_bounds);
+				XplatUIWin32.RECT r = XplatUIWin32.RECT.FromRectangle (new_bounds);
 
 				IntPtr prevobj;
 
@@ -216,7 +216,7 @@ namespace System.Windows.Forms
 
 				IntPtr hdc = dc.GetHdc ();
 
-				UXTheme.RECT r = UXTheme.RECT.FromRectangle (new Rectangle (Point.Empty, proposedSize));
+				XplatUIWin32.RECT r = XplatUIWin32.RECT.FromRectangle (new Rectangle (Point.Empty, proposedSize));
 
 				IntPtr prevobj;
 
@@ -256,7 +256,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
-		#region Internal Methods That Are Just Overloads
+#region Internal Methods That Are Just Overloads
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, bool useDrawString)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, TextFormatFlags.Default, useDrawString);
@@ -317,9 +317,9 @@ namespace System.Windows.Forms
 		{
 			return MeasureTextInternal (Graphics.FromImage (measure_bitmap), text, font, proposedSize, flags, useMeasureString);
 		}
-		#endregion
+#endregion
 
-		#region Private Methods
+#region Private Methods
 		private static StringFormat FlagsToStringFormat (TextFormatFlags flags)
 		{
 			StringFormat sf = new StringFormat ();
@@ -434,11 +434,11 @@ namespace System.Windows.Forms
 
 			return r;
 		}
-		#endregion
+#endregion
 
-		#region DllImports (Windows)
+#region DllImports (Windows)
 		[DllImport ("user32", CharSet = CharSet.Unicode, EntryPoint = "DrawText")]
-		static extern int Win32DrawText (IntPtr hdc, string lpStr, int nCount, ref UXTheme.RECT lpRect, int wFormat);
+		static extern int Win32DrawText (IntPtr hdc, string lpStr, int nCount, ref XplatUIWin32.RECT lpRect, int wFormat);
 
 		[DllImport ("gdi32")]
 		static extern int SetTextColor (IntPtr hdc, int crColor);
@@ -457,7 +457,7 @@ namespace System.Windows.Forms
 
 		[DllImport("gdi32")]
 		static extern bool SelectClipRgn(IntPtr hdc, IntPtr hrgn);
-		#endregion
+#endregion
 	}
 }
 #endif

@@ -92,7 +92,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 
 			last_hresult = UXTheme.DrawThemeBackground (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, IntPtr.Zero);
 			dc.ReleaseHdc ();
@@ -103,8 +103,8 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
-			UXTheme.RECT ClipRect = UXTheme.RECT.FromRectangle (clipRectangle);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT ClipRect = XplatUIWin32.RECT.FromRectangle (clipRectangle);
 
 			last_hresult = UXTheme.DrawThemeBackground (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, ref ClipRect);
 			dc.ReleaseHdc ();
@@ -115,8 +115,8 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
-			UXTheme.RECT retval;
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT retval;
 
 			last_hresult = UXTheme.DrawThemeEdge (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, (uint)style, (uint)edges + (uint)effects, out retval);
 			dc.ReleaseHdc ();
@@ -150,7 +150,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 
 			using (Graphics g = Graphics.FromHwnd (childControl.Handle)) {
 				last_hresult = UXTheme.DrawThemeParentBackground (childControl.Handle, g.GetHdc (), ref BoundsRect);
@@ -163,7 +163,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 
 			last_hresult = UXTheme.DrawThemeText (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (uint)flags, 0, ref BoundsRect);
 			dc.ReleaseHdc ();
@@ -184,8 +184,8 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
-			UXTheme.RECT retval;
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT retval;
 
 			last_hresult = UXTheme.GetThemeBackgroundContentRect (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, out retval);
 			dc.ReleaseHdc ();
@@ -198,8 +198,8 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (contentBounds);
-			UXTheme.RECT retval = new UXTheme.RECT ();
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (contentBounds);
+			XplatUIWin32.RECT retval = new XplatUIWin32.RECT ();
 
 			last_hresult = UXTheme.GetThemeBackgroundExtent (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, ref retval);
 			dc.ReleaseHdc ();
@@ -213,7 +213,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (contentBounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (contentBounds);
 			IntPtr retval;
 
 			last_hresult = UXTheme.GetThemeBackgroundRegion (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, out retval);
@@ -307,7 +307,7 @@ namespace System.Windows.Forms.VisualStyles
 
 
 			UXTheme.MARGINS retval = new UXTheme.MARGINS ();
-			UXTheme.RECT BoundsRect;
+			XplatUIWin32.RECT BoundsRect;
 
 			last_hresult = UXTheme.GetThemeMargins (theme, dc.GetHdc (), this.part, this.state, (int)prop, out BoundsRect, out retval);
 			dc.ReleaseHdc ();
@@ -322,7 +322,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (ThemeSizeType), type))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)type, typeof (ThemeSizeType));
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 			UXTheme.SIZE retval;
 
 			last_hresult = UXTheme.GetThemePartSize (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, (int)type, out retval);
@@ -351,7 +351,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (PointProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (PointProperty));
 
-			UXTheme.POINT retval;
+			POINT retval;
 			last_hresult = UXTheme.GetThemePosition (theme, this.part, this.state, (int)prop, out retval);
 
 			return retval.ToPoint();
@@ -374,8 +374,8 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (bounds);
-			UXTheme.RECT retval;
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
+			XplatUIWin32.RECT retval;
 			
 			last_hresult = UXTheme.GetThemeTextExtent (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (int)flags, ref BoundsRect, out retval);
 			dc.ReleaseHdc ();
@@ -388,7 +388,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT retval;
+			XplatUIWin32.RECT retval;
 			
 			last_hresult = UXTheme.GetThemeTextExtent (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (int)flags, 0, out retval);
 			dc.ReleaseHdc ();
@@ -401,7 +401,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc", "dc cannot be null.");
 
-			UXTheme.TEXTMETRIC metrics;
+			XplatUIWin32.TEXTMETRIC metrics;
 			
 			last_hresult = UXTheme.GetThemeTextMetrics (theme, dc.GetHdc (), this.part, this.state, out metrics);
 			dc.ReleaseHdc ();
@@ -409,18 +409,18 @@ namespace System.Windows.Forms.VisualStyles
 			TextMetrics retval = new TextMetrics ();
 			retval.Ascent = metrics.tmAscent;
 			retval.AverageCharWidth = metrics.tmAveCharWidth;
-			retval.BreakChar = metrics.tmBreakChar;
+			retval.BreakChar =(char)metrics.tmBreakChar;
 			retval.CharSet = (TextMetricsCharacterSet)metrics.tmCharSet;
-			retval.DefaultChar = metrics.tmDefaultChar;
+			retval.DefaultChar = (char)metrics.tmDefaultChar;
 			retval.Descent = metrics.tmDescent;
 			retval.DigitizedAspectX = metrics.tmDigitizedAspectX;
 			retval.DigitizedAspectY = metrics.tmDigitizedAspectY;
 			retval.ExternalLeading = metrics.tmExternalLeading;
-			retval.FirstChar = metrics.tmFirstChar;
+			retval.FirstChar = (char)metrics.tmFirstChar;
 			retval.Height = metrics.tmHeight;
 			retval.InternalLeading = metrics.tmInternalLeading;
 			retval.Italic = metrics.tmItalic == 0 ? false : true;
-			retval.LastChar = metrics.tmLastChar;
+			retval.LastChar = (char)metrics.tmLastChar;
 			retval.MaxCharWidth = metrics.tmMaxCharWidth;
 			retval.Overhang = metrics.tmOverhang;
 			retval.PitchAndFamily = (TextMetricsPitchAndFamilyValues)metrics.tmPitchAndFamily;
@@ -436,10 +436,10 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			UXTheme.RECT BoundsRect = UXTheme.RECT.FromRectangle (backgroundRectangle);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (backgroundRectangle);
 			int retval;
 
-			last_hresult = UXTheme.HitTestThemeBackground (theme, dc.GetHdc (), this.part, this.state, (uint)options, ref BoundsRect, hRgn, new UXTheme.POINT(pt.X, pt.Y), out retval);
+			last_hresult = UXTheme.HitTestThemeBackground (theme, dc.GetHdc (), this.part, this.state, (uint)options, ref BoundsRect, hRgn, new POINT(pt.X, pt.Y), out retval);
 			dc.ReleaseHdc ();
 
 			return (HitTestCode)retval;
