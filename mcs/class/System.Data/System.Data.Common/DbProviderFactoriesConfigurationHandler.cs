@@ -113,6 +113,7 @@ namespace System.Data.Common {
                                 row [1] = description;
                                 row [2] = invariant;
                                 row [3] = type;
+                                row [4] = 255;
                                         
                                 dt.Rows.Add (row);
                         }        
