@@ -1451,7 +1451,8 @@ namespace System.Drawing
 		internal static extern IntPtr CreateIconIndirect ([In] ref IconInfo piconinfo);
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, SetLastError=true)]
 		internal static extern bool DestroyIcon (IntPtr hIcon);
- 
+		[DllImport("gdi32.dll")]
+		internal static extern bool DeleteObject (IntPtr hObject);
 		[DllImport("user32.dll")]
 		internal static extern IntPtr GetDesktopWindow ();
 

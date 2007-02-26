@@ -642,13 +642,22 @@ namespace System.Drawing
 			}
 		}
 #if NET_2_0
+		// why is this a instance method ? and not static ?
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHrgn (IntPtr regionHandle)		
 		{
 			if (regionHandle == IntPtr.Zero) 
 				throw new ArgumentNullException ("regionHandle");
 
-			Status status = GDIPlus.GdipDeleteRegion (regionHandle);
+			Status status = Status.Ok;
+			if (GDIPlus.RunningOnUnix ()) {
+				// for libgdiplus HRGN == GpRegion* 
+				status = GDIPlus.GdipDeleteRegion (regionHandle);
+			} else {
+				// ... but on Windows HRGN are (old) GDI objects
+				if (!GDIPlus.DeleteObject (regionHandle))
+					status = Status.InvalidParameter;
+			}
 			GDIPlus.CheckStatus (status);
 		}
 #endif

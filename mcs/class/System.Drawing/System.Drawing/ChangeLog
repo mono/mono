@@ -1,3 +1,9 @@
+2007-02-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Add p/invoke signature for GDI DeleteObject.
+	* Region.cs: Under Windows use DeleteObject when calling ReleaseHrgn.
+	Fix bug #80956.
+
 2007-02-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Image.cs: Fix Metefile.ctor usage (to avoid creating, and leaking,
