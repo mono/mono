@@ -1,3 +1,9 @@
+2007-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodBuilderTest.cs: Move from Assertion to Assert. Added tests
+	for zero-length and null dll name for DllImport.  Enabled extra tests
+	in TestDynamicParams.
+
 2007-01-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* EnumBuilderTest.cs: Created test for #80396.
