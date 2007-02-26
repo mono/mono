@@ -1,3 +1,12 @@
+02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* WPS*.cs : renamed to WP*.cs files and respective classes.
+	* WPGroupsRoleProvider.cs: small fixes in implemented read-only
+	features
+	* PumaServicesProvider.cs: changed implementation of obtaining
+	configuration properties - use JNDI repository and cache it in
+	portlet/servlet session.
+
 02-25-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* WPSGroupsRoleProvider.cs: added

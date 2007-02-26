@@ -84,10 +84,10 @@
     <Compile Include="Mainsoft.Web.Security\IPumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProviderFactory.cs" />
-    <Compile Include="Mainsoft.Web.Security\WPSGroupsRoleProvider.cs" />
+    <Compile Include="Mainsoft.Web.Security\WPGroupsRoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mainsoft.Web.Security\WPSMembershipProvider.cs" />
-    <Compile Include="Mainsoft.Web.Security\WPSMembershipUser.cs" />
+    <Compile Include="Mainsoft.Web.Security\WPMembershipProvider.cs" />
+    <Compile Include="Mainsoft.Web.Security\WPMembershipUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="j2ee, Version=0.0.0.0, Culture=neutral">

@@ -10,9 +10,13 @@ using System.Configuration.Provider;
 
 namespace Mainsoft.Web.Security
 {
-    public class WPSGroupsRoleProvider : RoleProvider 
+    public class WPGroupsRoleProvider : RoleProvider 
     {
-        public static readonly string GROUP_NAMESPACE_ATTRIBUTE = "WP_GROUP_NAMESPACE";
+        public static readonly string GROUP_NAMESPACE_ATTRIBUTE = "WPGroupsRoleNamespace";
+        
+        private static readonly string PROVIDER_NAME = "WPGroupsRoleProvider";
+        private static readonly string DESCRIPTION = "WebSphere Groups Role provider";
+
         private string applicationName;
 
         public override void Initialize(string name, NameValueCollection config)
@@ -25,12 +29,29 @@ namespace Mainsoft.Web.Security
             applicationName = config["applicationName"];
         }
 
+        public override string Name
+        {
+            get
+            {
+                return PROVIDER_NAME;
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return DESCRIPTION;
+            }
+        }
         public override string ApplicationName
         {
             get { return applicationName; }
             set { applicationName = value; }
         }
-        
+
+        #region NOT IMPLEMENTED METHODS
+
         [MonoTODO]
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
@@ -54,6 +75,7 @@ namespace Mainsoft.Web.Security
         {
             throw new NotImplementedException("The method or operation is not implemented.");
         }
+        #endregion
 
 
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)
@@ -202,8 +224,6 @@ namespace Mainsoft.Web.Security
             }
             return false;
         }
-
-        
 
         public override bool RoleExists(string roleName)
         {

@@ -1,5 +1,5 @@
 //
-// Mainsoft.Web.Security.WPSMembershipProvider
+// Mainsoft.Web.Security.WPMembershipProvider
 //
 // Authors:
 //	Ilya Kharmatsky (ilyak at mainsoft.com)
@@ -42,10 +42,10 @@ using com.ibm.portal.um;
 namespace Mainsoft.Web.Security
 {
 
-    public class WPSMembershipProvider : MembershipProvider
+    public class WPMembershipProvider : MembershipProvider
     {
         private static readonly string PROVIDER_DESCRIPTION = "WebSphere Portal Membership Provider";
-        internal static readonly string PROVIDER_NAME = "WPSMembershipProvider";
+        internal static readonly string PROVIDER_NAME = "WPMembershipProvider";
 
         private string applicationName;
 
@@ -239,12 +239,12 @@ namespace Mainsoft.Web.Security
             IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
             
             if (username == null || username == String.Empty)
-                return new WPSMembershipUser(provider.CurrentUser);
+                return new WPMembershipUser(provider.CurrentUser);
 
             java.util.List principles =  provider.PumaLocator.findUsersByAttribute("uid", username);
             MembershipUser result = null;
             if (principles.size() > 0)
-                result = new WPSMembershipUser((com.ibm.portal.um.User)principles.get(0));
+                result = new WPMembershipUser((com.ibm.portal.um.User)principles.get(0));
 
             return result;
 
@@ -288,9 +288,9 @@ namespace Mainsoft.Web.Security
          
             java.util.ArrayList sortedList = new java.util.ArrayList(principles.size());
             for (java.util.Iterator iter = principles.iterator(); iter.hasNext(); )
-                sortedList.add(new WPSMembershipUser((User)iter.next()));
+                sortedList.add(new WPMembershipUser((User)iter.next()));
             
-            java.util.Collections.sort(sortedList, WPSMembershipUser.UserNameComparator);
+            java.util.Collections.sort(sortedList, WPMembershipUser.UserNameComparator);
 
             int sortedListSize = sortedList.size();
             

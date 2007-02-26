@@ -9,14 +9,14 @@ using com.ibm.portal.um;
 
 namespace Mainsoft.Web.Security
 {
-    public class WPSMembershipUser : MembershipUser
+    public class WPMembershipUser : MembershipUser
     {
         private User _wpsUser;
         private string _userName;
 
         private object _providerKey;
 
-        internal WPSMembershipUser(User user)
+        internal WPMembershipUser(User user)
             : base()
         {
             if (user == null)
@@ -26,7 +26,7 @@ namespace Mainsoft.Web.Security
             InitAspNetProperties();
         }
 
-        internal WPSMembershipUser(User user, object providerKye)
+        internal WPMembershipUser(User user, object providerKye)
             : this(user)
         {
             _providerKey = providerKye;
@@ -58,7 +58,7 @@ namespace Mainsoft.Web.Security
         {
             get
             {
-                return WPSMembershipProvider.PROVIDER_NAME;
+                return WPMembershipProvider.PROVIDER_NAME;
             }
         }
 
@@ -85,8 +85,8 @@ namespace Mainsoft.Web.Security
 
             public int compare(object p1, object p2)
             {
-                WPSMembershipUser u1 = (WPSMembershipUser)p1;
-                WPSMembershipUser u2 = (WPSMembershipUser)p2;
+                WPMembershipUser u1 = (WPMembershipUser)p1;
+                WPMembershipUser u2 = (WPMembershipUser)p2;
 
                 return u1.UserName.CompareTo(u2.UserName);
             }

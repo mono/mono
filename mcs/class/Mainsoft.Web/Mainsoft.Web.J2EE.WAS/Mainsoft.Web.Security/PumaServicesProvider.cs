@@ -267,10 +267,44 @@ namespace Mainsoft.Web.Security
 
             public string GetConfigAttribute(string attribute)
             {
+                //optimization - instead of retrieving the attribute from JNDI each time
+                //lazy store it into session
                 if (IsPortletPumaHome)
-                    return PortletUtils.getGenericPortlet().getPortletConfig().getInitParameter(attribute);
-                
-                return CurrentServletRequest.getSession(true).getServletContext().getInitParameter(attribute);
+                {
+                    PortletSession pSession = CurrentPortletRequest.getPortletSession();
+                    if (pSession != null)
+                    {
+                        string attribValue = (string)pSession.getAttribute(attribute);
+                        if (attribValue == null)
+                        {
+                            attribValue = (string)ReadValueFromJNDI(attribute);
+                            pSession.setAttribute(attribute, attribValue);
+                        }
+                        return attribValue;
+                    }
+                }
+                else
+                {
+                    HttpSession hSession = CurrentServletRequest.getSession();
+                    if (hSession != null)
+                    {
+                        string attribValue = (string) hSession.getAttribute(attribute);
+                        if (attribValue == null)
+                        {
+                            attribValue = (string)ReadValueFromJNDI(attribute);
+                            hSession.setAttribute(attribute, attribValue);
+                        }
+                        return attribValue;
+                    }
+                }
+                //case when session (portlet or http) is not available
+                return (string)ReadValueFromJNDI(attribute);
+            }
+
+            private object ReadValueFromJNDI(string attribName)
+            {
+                Context env = (Context)new InitialContext().lookup("java:comp/env");
+                return env.lookup(attribName);
             }
 
             private HttpServletRequest CurrentServletRequest
