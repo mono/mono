@@ -77,7 +77,7 @@ namespace System.Data.SqlClient
 			if(Types.TIMESTAMP == jdbcType) return SqlDbType.DateTime;
 			if(Types.TINYINT == jdbcType) return SqlDbType.TinyInt;
 			if(Types.VARBINARY == jdbcType) return SqlDbType.VarBinary;
-			if(Types.VARCHAR == jdbcType) return SqlDbType.VarChar;
+			if(Types.VARCHAR == jdbcType) return SqlDbType.NVarChar;
 			return SqlDbType.Variant;
 		}
 
@@ -108,7 +108,7 @@ namespace System.Data.SqlClient
 				}
 				case TypeCode.SByte: return SqlDbType.TinyInt;
 				case TypeCode.Single: return SqlDbType.Float;
-				case TypeCode.String: return SqlDbType.VarChar;
+				case TypeCode.String: return SqlDbType.NVarChar;
 				case TypeCode.UInt16: return SqlDbType.SmallInt;
 				case TypeCode.UInt32: return SqlDbType.Int;
 				case TypeCode.UInt64: return SqlDbType.BigInt;
