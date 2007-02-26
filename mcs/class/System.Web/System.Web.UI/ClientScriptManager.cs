@@ -712,12 +712,14 @@ return true;
 #endif
 		}
 		
+		[MonoTODO ("optimize s.Replace")]
 		internal static string GetScriptLiteral (object ob)
 		{
 			if (ob == null)
 				return "null";
 			else if (ob is string) {
 				string s = (string)ob;
+				s = s.Replace ("\\", "\\\\");
 				s = s.Replace ("\"", "\\\"");
 				return "\"" + s + "\"";
 			} else if (ob is bool) {
