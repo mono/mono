@@ -1,5 +1,10 @@
 02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
+	* Added comments, NET_2_0 derective to all classes under this
+	directory.
+
+02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
 	* WPS*.cs : renamed to WP*.cs files and respective classes.
 	* WPGroupsRoleProvider.cs: small fixes in implemented read-only
 	features
