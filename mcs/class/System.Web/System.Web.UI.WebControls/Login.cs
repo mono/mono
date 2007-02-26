@@ -1272,19 +1272,25 @@ namespace System.Web.UI.WebControls {
 				OnLoggedIn (EventArgs.Empty);
 
 				string url = DestinationPageUrl;
-				if (Page.Request.Path.ToLower ().StartsWith (FormsAuthentication.LoginUrl.ToLower ()) &&
-					FormsAuthentication.ReturnUrl != null && 
-					FormsAuthentication.ReturnUrl.Length > 0)
-					Redirect (FormsAuthentication.ReturnUrl);
-				if (url.Length == 0 && FormsAuthentication.DefaultUrl != null)
-					url = FormsAuthentication.DefaultUrl;
-				if (url.Length == 0) {
-					Redirect (FormsAuthentication.LoginUrl);
-				} else {
+				if (Page.Request.Path.ToLower ().StartsWith (FormsAuthentication.LoginUrl.ToLower ())) {
+					if (!String.IsNullOrEmpty (FormsAuthentication.ReturnUrl))
+						Redirect (FormsAuthentication.ReturnUrl);
+					else if (!String.IsNullOrEmpty (DestinationPageUrl))
+						Redirect (url);
+					else if (!String.IsNullOrEmpty (FormsAuthentication.DefaultUrl))
+						Redirect (FormsAuthentication.DefaultUrl);
+					else if (url.Length == 0)
+						Refresh ();
+				}
+				else if (!String.IsNullOrEmpty (DestinationPageUrl)) {
 					Redirect (url);
 				}
+				else {
+					Refresh ();
+				}
 				return true;
-			} else {
+			}
+			else {
 				OnLoginError (EventArgs.Empty);
 				if (FailureAction == LoginFailureAction.RedirectToLoginPage) {
 					// login page is defined in web.config
@@ -1325,6 +1331,11 @@ namespace System.Web.UI.WebControls {
 		{
 			if ((Page != null) && (Page.Response != null))
 				Page.Response.Redirect (url);
+		}
+		
+		private void Refresh () {
+			if ((Page != null) && (Page.Response != null))
+				Page.Response.Redirect (Page.Request.RawUrl);
 		}
 
 		private void UserName_TextChanged (object sender, EventArgs e)
