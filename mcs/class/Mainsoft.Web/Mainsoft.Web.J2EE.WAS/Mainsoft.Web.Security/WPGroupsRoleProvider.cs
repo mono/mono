@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -153,37 +154,18 @@ namespace Mainsoft.Web.Security
             return GroupsToStringArray(pumaServices, groups);
         }
 
-        private static string[] GroupsToStringArray(IPumaServicesProvider pumaServices, java.util.List groups)
-        {
-            java.util.ArrayList res = new java.util.ArrayList(groups.size());
-            string groupNamespace = pumaServices.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
-
-            java.util.ArrayList groupAttribs = new java.util.ArrayList();
-            groupAttribs.add("cn");
-
-            for (java.util.Iterator iter = groups.iterator(); iter.hasNext(); )
-            {
-                java.util.Map dic = pumaServices.PumaProfile.getAttributes((com.ibm.portal.um.Group)iter.next(), groupAttribs);                
-                string currentGroup = (string) dic.get("cn");
-
-                if (currentGroup != null && currentGroup != String.Empty)
-                {
-                    if (groupNamespace == null)
-                        res.add(currentGroup);
-                    else if (currentGroup.StartsWith(groupNamespace))
-                        res.add(currentGroup.Substring(groupNamespace.Length));
-                }
-            }
-            return (string[]) res.toArray(new string[res.size()]);
-        }
 
         public override string[] GetRolesForUser(string username)
         {
+            if (username == null || username == String.Empty)
+                throw new ProviderException("The username cannot be null or empty string");
+
             IPumaServicesProvider pumaServices = PumaServicesProviderFactory.CreateProvider();
             java.util.List users = pumaServices.PumaLocator.findUsersByAttribute("uid", username);
-            if(users == null || users.isEmpty())
+
+            if (users == null || users.isEmpty())
                 return new string[0];
-            
+
             com.ibm.portal.um.User user = (com.ibm.portal.um.User) users.get(0);
 
             java.util.List groups = pumaServices.PumaLocator.findGroupsByPrincipal(user, true);
@@ -256,10 +238,25 @@ namespace Mainsoft.Web.Security
         public override bool RoleExists(string roleName)
         {
             java.util.List groups = GetGroupsByRoleName(roleName);
-            return groups != null && groups.size() > 0;
+            if (groups == null || groups.isEmpty())
+                return false;
+            java.util.ArrayList attribute = new java.util.ArrayList(1);
+            attribute.add("cn");
+
+            IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
+            roleName = NormalizeRoleName(provider, roleName);
+
+            for (java.util.Iterator iter = groups.iterator(); iter.hasNext(); )
+            {
+                com.ibm.portal.um.Group group = (com.ibm.portal.um.Group)iter.next();
+                java.util.Map m = provider.PumaProfile.getAttributes(group, attribute);
+                if (m.get("cn").Equals(roleName))
+                    return true;
+            }
+            return false;
         }
 
-        #region helper methods 
+        #region helper methods
         private java.util.List GetGroupsByRoleName(string roleName)
         {
             if (roleName == null || roleName == String.Empty)
@@ -284,7 +281,34 @@ namespace Mainsoft.Web.Security
             string groupNamespace = provider.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
             if (groupNamespace == null)
                 return groupName;
-            return groupName.Substring(groupNamespace.Length);
+            if (groupName.StartsWith(groupNamespace))
+                return groupName.Substring(groupNamespace.Length);
+            else
+                return groupName;
+        }
+
+        private static string[] GroupsToStringArray(IPumaServicesProvider pumaServices, java.util.List groups)
+        {
+            java.util.ArrayList res = new java.util.ArrayList(groups.size());
+            string groupNamespace = pumaServices.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
+
+            java.util.ArrayList groupAttribs = new java.util.ArrayList();
+            groupAttribs.add("cn");
+
+            for (java.util.Iterator iter = groups.iterator(); iter.hasNext(); )
+            {
+                java.util.Map dic = pumaServices.PumaProfile.getAttributes((com.ibm.portal.um.Group)iter.next(), groupAttribs);
+                string currentGroup = (string)dic.get("cn");
+
+                if (currentGroup != null && currentGroup != String.Empty)
+                {
+                    if (groupNamespace == null)
+                        res.add(currentGroup);
+                    else if (currentGroup.StartsWith(groupNamespace))
+                        res.add(currentGroup.Substring(groupNamespace.Length));
+                }
+            }
+            return (string[])res.toArray(new string[res.size()]);
         }
         #endregion
     }

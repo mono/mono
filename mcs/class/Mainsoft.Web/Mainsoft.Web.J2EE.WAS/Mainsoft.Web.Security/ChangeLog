@@ -1,4 +1,9 @@
 02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+	
+	* WPGroupsRoleProvider.cs: fixed RoleExists method - in case when
+	wildcard used in roleName parameter.
+
+02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* Added comments, NET_2_0 derective to all classes under this
 	directory.
