@@ -286,6 +286,18 @@ namespace System.Web.UI.WebControls
 				ViewState ["ShowCheckBox"] = value;
 			}
 		}
+
+		internal bool ShowCheckBoxInternal {
+			get {
+				if (ShowCheckBox.HasValue)
+					return ShowCheckBox.Value;
+				else
+					return (Tree.ShowCheckBoxes == TreeNodeTypes.All) ||
+						 ((Tree.ShowCheckBoxes & TreeNodeTypes.Leaf) > 0 && IsLeafNode) ||
+						 ((Tree.ShowCheckBoxes & TreeNodeTypes.Parent) > 0 && IsParentNode && Parent != null) ||
+						 ((Tree.ShowCheckBoxes & TreeNodeTypes.Root) > 0 && Parent == null && ChildNodes.Count > 0);
+			}
+		}
 		
 		[DefaultValue ("")]
 		public string Target {

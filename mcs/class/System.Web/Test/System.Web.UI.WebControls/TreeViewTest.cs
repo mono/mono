@@ -1866,7 +1866,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // Implementation details for mono  
 		public void TreeView_PostBackFireEvents_2 ()
 		{
 			WebTest t = new WebTest ("NoEventValidation.aspx");

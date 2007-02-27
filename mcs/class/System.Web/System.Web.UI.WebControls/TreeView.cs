@@ -1016,11 +1016,8 @@ namespace System.Web.UI.WebControls
 				res = true;
 			}
 
-			if (ShowCheckBoxes != TreeNodeTypes.None) {
-				UnsetCheckStates (Nodes, postCollection);
-				SetCheckStates (postCollection);
-				res = true;
-			}
+			UnsetCheckStates (Nodes, postCollection);
+			SetCheckStates (postCollection);
 			
 			if (EnableClientScript) {
 				string states = postCollection [ClientID + "_ExpandStates"];
@@ -1409,16 +1406,7 @@ namespace System.Web.UI.WebControls
 			
 			// Checkbox
 			
-			bool showChecks;
-			if (node.ShowCheckBox.HasValue)
-				showChecks = node.ShowCheckBox.Value;
-			else
-				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
-							 ((ShowCheckBoxes & TreeNodeTypes.Leaf) > 0 && node.IsLeafNode) ||
-							 ((ShowCheckBoxes & TreeNodeTypes.Parent) > 0 && node.IsParentNode && node.Parent != null) ||
-							 ((ShowCheckBoxes & TreeNodeTypes.Root) > 0 && node.Parent == null && node.ChildNodes.Count > 0);
-
-			if (showChecks) {
+			if (node.ShowCheckBoxInternal) {
 				writer.AddAttribute ("name", ClientID + "_cs_" + node.Path);
 				writer.AddAttribute ("type", "checkbox");
 				writer.AddAttribute ("title", node.Text);
@@ -1780,9 +1768,9 @@ namespace System.Web.UI.WebControls
 		void UnsetCheckStates (TreeNodeCollection col, NameValueCollection states)
 		{
 			foreach (TreeNode node in col) {
-				if (node.Checked) {
-					string val = states [ClientID + "_cs_" + node.Path];
-					if (val != "on") node.Checked = false;
+				if (node.ShowCheckBoxInternal && node.Checked) {
+					if (states == null || states [ClientID + "_cs_" + node.Path] == null)
+						node.Checked = false;
 				}
 				if (node.HasChildData)
 					UnsetCheckStates (node.ChildNodes, states);
@@ -1791,13 +1779,16 @@ namespace System.Web.UI.WebControls
 		
 		void SetCheckStates (NameValueCollection states)
 		{
+			if (states == null)
+				return;
+
 			string keyPrefix = ClientID + "_cs_";
 			foreach (string key in states) {
 				if (key.StartsWith (keyPrefix)) {
 					string id = key.Substring (keyPrefix.Length);
 					TreeNode node = FindNodeByPos (id);
-					if (node != null)
-						node.Checked = (Context.Request.Form [key] == "on");
+					if (node != null && !node.Checked)
+						node.Checked = true;
 				}
 			}
 		}
