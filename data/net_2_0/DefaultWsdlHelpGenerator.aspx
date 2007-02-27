@@ -364,6 +364,7 @@ string GetTestResult ()
 		    req = WebRequest.Create (url);
 		    req.Method="POST";
 		    if (!String.IsNullOrEmpty (qs)) {
+		    	req.ContentType = "application/x-www-form-urlencoded";
 		        byte [] postBuffer = Encoding.UTF8.GetBytes (qs);
 		        req.ContentLength = postBuffer.Length;
 		        using (Stream requestStream = req.GetRequestStream())
