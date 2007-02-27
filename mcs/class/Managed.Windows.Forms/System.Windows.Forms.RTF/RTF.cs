@@ -903,7 +903,7 @@ SkipCRLF:
 		{
 			Minor image_type = Minor.Undefined;
 			bool read_image_data = false;
-			
+
 			while (true) {
 				rtf.GetToken ();
 
@@ -967,6 +967,7 @@ SkipCRLF:
 
 					read_image_data = false;
 					Image = (byte []) image_data.ToArray (typeof (byte));
+					break;
 				}
 			}
 
