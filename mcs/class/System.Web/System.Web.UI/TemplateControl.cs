@@ -47,7 +47,7 @@ namespace System.Web.UI {
 #else
 	public abstract class TemplateControl : Control, INamingContainer {
 #endif
-		static Assembly _System_Web_Assembly = typeof (TemplateControl).Assembly;
+		static readonly Assembly _System_Web_Assembly = typeof (TemplateControl).Assembly;
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();

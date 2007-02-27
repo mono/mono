@@ -1,3 +1,10 @@
+2007-02-26 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TemplateControl.cs:
+	* TemplateControl.jvm.cs: fixed: AutoEventWireup feature: 
+	Method 'Page_XXX' is declared in the base class must be 
+	called even is private.
+
 2007-02-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: fixed AppRelativeTemplateSourceDirectory property, should

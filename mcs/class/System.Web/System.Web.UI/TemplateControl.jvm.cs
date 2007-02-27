@@ -38,6 +38,7 @@ namespace System.Web.UI {
 
 	public abstract class TemplateControl : Control, INamingContainer
 	{
+		static readonly Assembly _System_Web_Assembly = typeof (TemplateControl).Assembly;
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();
@@ -161,9 +162,14 @@ namespace System.Web.UI {
 			if (!SupportAutoEvents || !AutoEventWireup)
 				return;
 
-			Type type = GetType ();
 			foreach (string methodName in methodNames) {
-				MethodInfo method = type.GetMethod (methodName, bflags);
+				MethodInfo method = null;
+				Type type;
+				for (type = GetType (); type.Assembly != _System_Web_Assembly; type = type.BaseType) {
+					method = type.GetMethod (methodName, bflags);
+					if (method != null)
+						break;
+				}
 				if (method == null)
 					continue;
 
