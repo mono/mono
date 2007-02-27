@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[DefaultBindingProperty ("CheckState")]
+	[ToolboxItem ("")]
 #endif
 	public class CheckBox : ButtonBase {
 		#region Local Variables
@@ -94,6 +95,15 @@ namespace System.Windows.Forms {
 				}
 			}
 			#endregion	// CheckBoxAccessibleObject Properties
+
+#if NET_2_0
+			#region CheckBoxAccessibleObject Methods
+			public override void DoDefaultAction ()
+			{
+				owner.Checked = !owner.Checked;
+			}
+			#endregion	// CheckBoxAccessibleObject Methods
+#endif
 		}
 		#endregion	// CheckBoxAccessibleObject Sub-class
 
@@ -320,6 +330,13 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
+#if NET_2_0
+		protected override void OnKeyDown (KeyEventArgs kevent)
+		{
+			base.OnKeyDown (kevent);
+		}
+#endif
+
 		protected override void OnMouseUp(MouseEventArgs mevent) {
 			base.OnMouseUp (mevent);
 		}
@@ -354,6 +371,13 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (CheckStateChangedEvent, value); }
 			remove { Events.RemoveHandler (CheckStateChangedEvent, value); }
 		}
+		
+#if NET_2_0
+		public event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+#endif
 		#endregion	// Events
 
 		#region Events
