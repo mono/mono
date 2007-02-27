@@ -50,10 +50,7 @@ namespace System.Web.Compilation {
 
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
 								  ExpressionBuilderContext context)
-		{
-			Console.WriteLine ("{0}.GetCodeExpression: parsedData == {1} ({2})",
-					   this, parsedData, parsedData != null ? parsedData.GetType ().ToString () : "<null>");
-			
+		{			
 			Pair connString = parsedData as Pair;
 			return new CodeMethodInvokeExpression (
 				new CodeTypeReferenceExpression (typeof (ConnectionStringsExpressionBuilder)),
