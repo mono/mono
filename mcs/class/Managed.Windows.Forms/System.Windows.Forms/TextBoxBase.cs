@@ -1840,7 +1840,8 @@ namespace System.Windows.Forms {
 
 			if (canvas_width < 1 || canvas_height < 1)
 				return;
-			
+
+  			document.MoveCaretToTextTag ();
 			pos = document.Caret;
 
 			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
