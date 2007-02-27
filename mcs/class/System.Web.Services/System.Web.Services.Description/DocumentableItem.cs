@@ -64,7 +64,7 @@ namespace System.Web.Services.Description {
 			}
 			
 			set {
-				if (value == null)
+				if (value == null || value.Length == 0)
 					docElement = null;
 				else {
 					XmlDocument doc = new XmlDocument ();
