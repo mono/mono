@@ -1,3 +1,8 @@
+2007-02-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Try to never let the caret stay in a non-text
+	tag.
+
 2007-02-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIStructs.cs: Add some convenience methods for POINT structure.

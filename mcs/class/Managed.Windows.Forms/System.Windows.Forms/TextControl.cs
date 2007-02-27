@@ -334,14 +334,19 @@ namespace System.Windows.Forms {
 			current = this.tags;
 			next = current.next;
 
+			//
 			// Catch what the loop below wont; eliminate 0 length 
 			// tags, but only if there are other tags after us
-			while ((current.length == 0) && (next != null)) {
+			// We only eliminate text tags if there is another text tag
+			// after it.  Otherwise we wind up trying to type on image tags
+			//
+			while ((current.length == 0) && (next != null) && (next.IsTextTag)) {
 				tags = next;
 				tags.previous = null;
 				current = next;
 				next = current.next;
 			}
+			
 
 			if (next == null) {
 				return;
@@ -349,7 +354,7 @@ namespace System.Windows.Forms {
 
 			while (next != null) {
 				// Take out 0 length tags unless it's the last tag in the document
-				if (next.length == 0) {
+				if (current.IsTextTag && next.length == 0 && next.IsTextTag) {
 					if ((next.next != null) || (line_no != lines)) {
 						current.next = next.next;
 						if (current.next != null) {
@@ -1453,7 +1458,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(Line line, int pos) {
-			caret.tag = line.FindTag(pos);
+			caret.tag = line.FindTag (pos);
+
+			MoveCaretToTextTag ();
+
 			caret.line = line;
 			caret.pos = pos;
 
@@ -1479,6 +1487,9 @@ namespace System.Windows.Forms {
 			}
 
 			caret.tag = FindCursor(x, y, out caret.pos);
+
+			MoveCaretToTextTag ();
+			
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
 
@@ -1515,7 +1526,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			caret.tag = LineTag.FindTag(caret.line, caret.pos);
+			caret.tag = LineTag.FindTag (caret.line, caret.pos);
+
+			MoveCaretToTextTag ();
+
 			caret.height = caret.tag.height;
 
 			if (owner.Focused) {
@@ -1531,6 +1545,8 @@ namespace System.Windows.Forms {
 			if (!owner.IsHandleCreated || caret.tag == null) {
 				return;
 			}
+
+			MoveCaretToTextTag ();
 
 			if (caret.tag.height != caret.height) {
 				caret.height = caret.tag.height;
@@ -1563,6 +1579,21 @@ namespace System.Windows.Forms {
 
 			if (owner.Focused) {
 				XplatUI.CaretVisible(owner.Handle, false);
+			}
+		}
+
+		
+		internal void MoveCaretToTextTag ()
+		{
+			if (caret.tag == null || caret.tag.IsTextTag)
+				return;
+
+			
+
+			if (caret.pos < caret.tag.start) {
+				caret.tag = caret.tag.previous;
+			} else {
+				caret.tag = caret.tag.next;
 			}
 		}
 
@@ -1606,6 +1637,7 @@ namespace System.Windows.Forms {
 				case CaretDirection.CharBack: {
 					if (caret.pos > 0) {
 						// caret.pos--; // folded into the if below
+						
 						if (--caret.pos > 0) {
 							if (caret.tag.start > caret.pos) {
 								caret.tag = caret.tag.previous;
@@ -1849,7 +1881,7 @@ namespace System.Windows.Forms {
 				while (tag != null) {
 					Console.Write ("\t<tag type='{0}' span='{1}->{2}'>", tag.GetType (), tag.start, tag.length);
 					Console.Write (tag.Text ());
-					Console.WriteLine ("\t</tag>");
+					Console.WriteLine ("</tag>");
 					tag = tag.next;
 				}
 				Console.WriteLine ("</line>");
@@ -2161,7 +2193,6 @@ namespace System.Windows.Forms {
 
 			line = tag.line;
 			line.text.Insert(pos, ch);
-			//	tag.length++;
 
 			tag = tag.next;
 			while (tag != null) {
@@ -2217,25 +2248,24 @@ namespace System.Windows.Forms {
 			// Just a place holder basically
 			line.text.Insert (pos, "I");
 
-			ImageTag image_tag = new ImageTag (line, pos, image);
-			if (pos != 0) {
-				tag = LineTag.FindTag (line, pos);
-				next_tag = tag.Break (pos);
-				image_tag.CopyFormattingFrom (tag);
-				tag.next = image_tag;
-			} else {
-				tag = null;
-				next_tag = LineTag.FindTag (line, pos);
-				image_tag.CopyFormattingFrom (next_tag);
-				image_tag.next = next_tag;
-				next_tag.previous = image_tag;
-				line.tags = image_tag;
+			ImageTag image_tag = new ImageTag (line, pos + 1, image);
+
+			tag = LineTag.FindTag (line, pos);
+			image_tag.CopyFormattingFrom (tag);
+			next_tag = tag.Break (pos + 1);
+			image_tag.previous = tag;
+			image_tag.next = tag.next;
+			tag.next = image_tag;
+
+			//
+			// Images tags need to be surrounded by text tags
+			//
+			if (image_tag.next == null) {
+				image_tag.next = new LineTag (line, pos + 1);
+				image_tag.next.CopyFormattingFrom (tag);
+				image_tag.next.previous = image_tag;
 			}
 
-			image_tag.next = next_tag;
-			image_tag.previous = tag;
-			
-			
 			tag = image_tag.next;
 			while (tag != null) {
 				tag.start += len;
@@ -3713,12 +3743,12 @@ namespace System.Windows.Forms {
 
 					end = tag.end;
 
-					for (int pos = tag.start; pos < end; pos++) {
+					for (int pos = tag.start - 1; pos < end; pos++) {
 						// When clicking on a character, we position the cursor to whatever edge
 						// of the character the click was closer
 						if (x < (line.X + line.widths[pos] + ((line.widths[pos+1]-line.widths[pos])/2))) {
 							index = pos;
-							return tag;
+							return LineTag.GetFinalTag (tag);
 						}
 					}
 					index=end;
@@ -4286,6 +4316,10 @@ namespace System.Windows.Forms {
 			this.image = image;
 		}
 
+		public override bool IsTextTag {
+			get { return false; }
+		}
+
 		internal override SizeF SizeOfPosition (Graphics dc, int pos)
 		{
 			return image.Size;
@@ -4377,6 +4411,10 @@ namespace System.Windows.Forms {
 
 				return res > 0 ? res : 0;
 			}
+		}
+
+		public virtual bool IsTextTag {
+			get { return true; }
 		}
 
 		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
@@ -4636,8 +4674,9 @@ namespace System.Windows.Forms {
 		{
 			LineTag res = tag;
 
-			while (res.next != null && res.next.length == 0)
+			while (res.length == 0 && res.next != null && res.next.length == 0)
 				res = res.next;
+
 			return res;
 		}
 
@@ -4692,6 +4731,9 @@ namespace System.Windows.Forms {
 
 			other = (LineTag)obj;
 
+			if (other.IsTextTag != IsTextTag)
+				return false;
+
 			if (this.font.Equals(other.font) && this.color.Equals(other.color)) {	// FIXME add checking for things like link or type later
 				return true;
 			}
@@ -4705,7 +4747,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString() {
 			if (length > 0)
-				return "Tag starts at index " + this.start + " length " + this.length + " text: " + Text () + "Font " + this.font.ToString();
+				return GetType () + " Tag starts at index " + this.start + " length " + this.length + " text: " + Text () + "Font " + this.font.ToString();
 			return "Zero Lengthed tag at index " + this.start;
 		}
 
