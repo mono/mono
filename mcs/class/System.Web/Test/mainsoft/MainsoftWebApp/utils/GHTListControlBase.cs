@@ -167,6 +167,7 @@ namespace GHTTests
 
 			#endregion
 			#region "Non existing table in a dataset"
+#if !NET_2_0
 			GHTListContorlSubTestBegin(ctrlType, "Non existing table in a dataset");
 			
 			try
@@ -184,6 +185,7 @@ namespace GHTTests
 			{
 				GHTSubTestUnexpectedExceptionCaught(ex);
 			}
+#endif
 			#endregion
 			#region "DataSource is not a dataset - set"
 			GHTListContorlSubTestBegin(ctrlType, "DataSource is not a dataset");

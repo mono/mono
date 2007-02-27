@@ -89,6 +89,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				this.GHTSubTestUnexpectedExceptionCaught(exception4);
 			}
 			this.GHTSubTestEnd();
+#if !NET_2_0
 			try
 			{
 				this.GHTSubTestBegin("BaseDataList_" + CtlType.Name + "_DataMember1");
@@ -109,6 +110,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				this.GHTSubTestUnexpectedExceptionCaught(exception6);
 			}
 			this.GHTSubTestEnd();
+#endif
 		}
  
 	}

@@ -185,7 +185,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 			{
 				GHTSubTestUnexpectedExceptionCaught(ex);
 			}
-
+#if !NET_2_0
 			GHTActiveSubTest = GHTSubTest9;
 			try 
 			{
@@ -203,7 +203,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 			{
 				GHTSubTestUnexpectedExceptionCaught(ex);
 			}
-
+#endif
 			GHTTestEnd();
 		}
 	}

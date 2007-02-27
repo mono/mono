@@ -185,6 +185,12 @@ namespace GHTTests.System_Web_dll.System_Web_UI
 					this.GHTSubTestAddResult(label1.Font.Bold.ToString());
 				}
 			}
+#if NET_2_0
+			catch (IndexOutOfRangeException exception52)
+			{
+				this.GHTSubTestAddResult("Test passed");
+			}
+#else
 			catch (Exception exception52)
 			{
 				// ProjectData.SetProjectError(exception52);
@@ -192,6 +198,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI
 				this.GHTSubTestAddResult("Unxpected " + exception4.GetType().Name + " exception was caught-" + exception4.Message);
 				// ProjectData.ClearProjectError();
 			}
+#endif
 			this.GHTSubTestEnd();
 			this.GHTSubTestBegin("Control.Visible");
 			try
