@@ -640,15 +640,13 @@ namespace System.Web.Compilation
 						builderType));
 
 			System.Web.Compilation.ExpressionBuilder eb = null;
-			ResourceExpressionFields fields;
+			object parsedData;
 			ExpressionBuilderContext ctx;
 			
 			try {
 				eb = Activator.CreateInstance (t) as System.Web.Compilation.ExpressionBuilder;
 				ctx = new ExpressionBuilderContext (HttpContext.Current.Request.FilePath);
-				fields = eb.ParseExpression (expr.Substring (colon + 1).Trim (),
-							     type,
-							     ctx) as ResourceExpressionFields;
+				parsedData = eb.ParseExpression (expr.Substring (colon + 1).Trim (), type, ctx);
 			} catch (Exception e) {
 				throw new HttpException (
 					String.Format ("Failed to create an instance of type `{0}'", builderType), e);
@@ -658,7 +656,11 @@ namespace System.Web.Compilation
 			convert.Method = new CodeMethodReferenceExpression (
 				new CodeTypeReferenceExpression (typeof(Convert)),
 				"ToString");
-			convert.Parameters.Add (eb.GetCodeExpression (null, fields, ctx));
+			convert.Parameters.Add (eb.GetCodeExpression (null, parsedData, ctx));
+			convert.Parameters.Add (
+				new CodeFieldReferenceExpression (
+					new CodeTypeReferenceExpression ("System.Globalization.CultureInfo"),
+					"CurrentCulture"));
 			assign.Right = convert;
 			
 			method.Statements.Add (assign);

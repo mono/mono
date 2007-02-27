@@ -42,14 +42,24 @@ namespace System.Web.Compilation {
 	[ExpressionPrefix("ConnectionStrings")]
 	public class ConnectionStringsExpressionBuilder : ExpressionBuilder {
 
-		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
+		public override object EvaluateExpression (object target, BoundPropertyEntry entry,
+							   object parsedData, ExpressionBuilderContext context)
 		{
 			return GetConnectionString (entry.Expression.Trim());
 		}
 
-		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
+		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData,
+								  ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine ("{0}.GetCodeExpression: parsedData == {1} ({2})",
+					   this, parsedData, parsedData != null ? parsedData.GetType ().ToString () : "<null>");
+			
+			Pair connString = parsedData as Pair;
+			return new CodeMethodInvokeExpression (
+				new CodeTypeReferenceExpression (typeof (ConnectionStringsExpressionBuilder)),
+				"GetConnectionString",
+				new CodeExpression [] {new CodePrimitiveExpression (connString.First)}
+			);
 		}
 
 		public static string GetConnectionString (string connectionStringName)
@@ -70,10 +80,9 @@ namespace System.Web.Compilation {
 				return conn.ProviderName;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public override	object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			return new Pair (expression, GetConnectionString (expression));
 		}
 
 		public override bool SupportsEvaluate {
