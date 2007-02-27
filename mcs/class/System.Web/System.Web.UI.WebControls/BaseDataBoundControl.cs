@@ -68,7 +68,8 @@ namespace System.Web.UI.WebControls {
 				return dataSource;
 			}
 			set {
-				ValidateDataSource (value);
+				if(value!=null)
+					ValidateDataSource (value);
 				dataSource = value;
 				OnDataPropertyChanged ();
 			}
@@ -160,4 +161,5 @@ namespace System.Web.UI.WebControls {
 }
 
 #endif
+
 

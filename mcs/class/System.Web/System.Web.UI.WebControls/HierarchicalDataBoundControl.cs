@@ -141,11 +141,12 @@ namespace System.Web.UI.WebControls
 		
 		protected override void ValidateDataSource (object dataSource)
 		{
-			if (dataSource is IHierarchicalDataSource || dataSource is IHierarchicalEnumerable)
+			if (dataSource == null || dataSource is IHierarchicalDataSource || dataSource is IHierarchicalEnumerable)
 				return;
 			throw new InvalidOperationException ("Invalid data source");
 		}
 	}
 }
 #endif
+
 
