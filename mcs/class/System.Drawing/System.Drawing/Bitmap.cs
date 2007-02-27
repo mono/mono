@@ -58,7 +58,6 @@ namespace System.Drawing
 
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 		{
-			
 		}
 
 		public Bitmap (int width, int height, Graphics g)
@@ -86,17 +85,6 @@ namespace System.Drawing
 
 		public Bitmap (Image original, Size newSize)  : this(original, newSize.Width, newSize.Height) {}
 		
-		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
-		{			
-			nativeObject = bmp;						
-		}
-		
-		internal Bitmap (float width, float height, PixelFormat pixel, IntPtr bmp)
-		{			
-			nativeObject = bmp;			
-			
-		}
-
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			// false: stream is owned by user code
@@ -171,47 +159,38 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (s);
 		}
 
-		public Bitmap Clone (Rectangle rect,PixelFormat format)
+		public Bitmap Clone (Rectangle rect, PixelFormat format)
 		{				
 			IntPtr bmp;			
-   			Status status = GDIPlus.GdipCloneBitmapAreaI(rect.X, rect.Top, rect.Width, rect.Height,
-                               format, nativeObject,  out bmp);
-                               
+			Status status = GDIPlus.GdipCloneBitmapAreaI (rect.X, rect.Y, rect.Width, rect.Height,
+				format, nativeObject, out bmp);
 			GDIPlus.CheckStatus (status);
-
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  format, bmp);
-       			return bmpnew;
+			return new Bitmap (bmp);
        		}
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat format)
 		{
 			IntPtr bmp;			
-   			Status status = GDIPlus.GdipCloneBitmapArea (rect.X, rect.Top, rect.Width, rect.Height,
-                               format, nativeObject,  out bmp);
+			Status status = GDIPlus.GdipCloneBitmapArea (rect.X, rect.Y, rect.Width, rect.Height,
+				format, nativeObject, out bmp);
 			GDIPlus.CheckStatus (status);
-
-			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  format, bmp);
-	       		return bmpnew;
+			return new Bitmap (bmp);
 		}
 
-		public static Bitmap FromHicon (IntPtr hicon)	//TODO: Untested
+		public static Bitmap FromHicon (IntPtr hicon)
 		{	
 			IntPtr bitmap;	
-				
 			Status status = GDIPlus.GdipCreateBitmapFromHICON (hicon, out bitmap);
 			GDIPlus.CheckStatus (status);
-
-			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap);	// FIXME
+			return new Bitmap (bitmap);
 		}
 
 		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TODO: Untested
 		{
 			IntPtr bitmap;	
-				
 			Status status = GDIPlus.GdipCreateBitmapFromResource (hinstance, bitmapName, out bitmap);
 			GDIPlus.CheckStatus (status);
-
-			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap); // FIXME
+			return new Bitmap (bitmap);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

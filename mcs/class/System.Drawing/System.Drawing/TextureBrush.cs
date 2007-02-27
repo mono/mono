@@ -7,7 +7,7 @@
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,30 +37,24 @@ namespace System.Drawing {
 
 	public sealed class TextureBrush : Brush {
 
-		internal TextureBrush (IntPtr ptr) : base (ptr)
+		internal TextureBrush (IntPtr ptr) :
+			base (ptr)
 		{
 		}
 
-		public TextureBrush (Image image) : this (image, WrapMode.Tile)
+		public TextureBrush (Image image) :
+			this (image, WrapMode.Tile)
 		{
 		}
 
-		public TextureBrush (Image image, Rectangle dstRect)
+		public TextureBrush (Image image, Rectangle dstRect) :
+			this (image, WrapMode.Tile, dstRect)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-
-			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			GDIPlus.CheckStatus (status);			
 		}
 
-		public TextureBrush (Image image, RectangleF dstRect)
+		public TextureBrush (Image image, RectangleF dstRect) :
+			this (image, WrapMode.Tile, dstRect)
 		{
-			if (image == null)
-				throw new ArgumentNullException ("image");
-
-			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode)
@@ -74,23 +68,27 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}
 
+		[MonoLimitation ("ImageAttributes are ignored when using libgdiplus")]
 		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
 			IntPtr attr = imageAttr == null ? IntPtr.Zero : imageAttr.NativeObject;
-			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, attr, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, attr, dstRect.X, dstRect.Y, 
+				dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
+		[MonoLimitation ("ImageAttributes are ignored when using libgdiplus")]
 		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr)
 		{	
 			if (image == null)
 				throw new ArgumentNullException ("image");
 
 			IntPtr attr = imageAttr == null ? IntPtr.Zero : imageAttr.NativeObject;
-			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, attr, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, attr, dstRect.X, dstRect.Y, 
+				dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);			
 		}
 
@@ -101,7 +99,8 @@ namespace System.Drawing {
 			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
 				throw new InvalidEnumArgumentException ("WrapMode");
 
-			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, 
+				dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -112,7 +111,8 @@ namespace System.Drawing {
 			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
 				throw new InvalidEnumArgumentException ("WrapMode");
 
-			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, 
+				dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 

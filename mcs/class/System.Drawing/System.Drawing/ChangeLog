@@ -1,3 +1,11 @@
+2007-02-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Removed unrequired ctors.
+	* TextureBrush.cs: Change which GDI+ calls is used to create the 
+	brush (to better match what you expect from libgdiplus source). Add
+	[MonoLimitation] to ctors accepting ImageAttributes (not supported
+	by libgdiplus). Split some long lines into two lines.
+
 2007-02-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Add p/invoke signature for GDI DeleteObject.
