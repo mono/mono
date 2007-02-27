@@ -339,6 +339,7 @@ System.ComponentModel/ListSortDescription.cs
 System.ComponentModel/ListSortDirection.cs
 System.ComponentModel/LocalizableAttribute.cs
 System.ComponentModel/MarshalByValueComponent.cs
+System.ComponentModel/MaskedTextProvider.cs
 System.ComponentModel/MaskedTextResultHint.cs
 System.ComponentModel/MemberDescriptor.cs
 System.ComponentModel/MergablePropertyAttribute.cs
