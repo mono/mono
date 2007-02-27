@@ -86,7 +86,10 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool HasFile {
-			get { return PostedFile != null; }
+			get {
+				HttpPostedFile pf = PostedFile;
+				return (pf != null && !String.IsNullOrEmpty (pf.FileName));
+			}
 		}
 
 		[Browsable (false)]
