@@ -376,14 +376,43 @@ namespace MonoTests.stand_alone.WebHarness
 							{
 								if (tmpXmlElement.Attributes[tmpIgnoreAttr.Name] != null )
 								{
-									if (tmpXmlElement.Attributes[tmpIgnoreAttr.Name].Value.ToLower().IndexOf("javascript") >= 0 )
-									{
-										tmpXmlElement.SetAttribute(tmpIgnoreAttr.Name, "");
+									if ((tmpXmlElement.Attributes [tmpIgnoreAttr.Name].Value.ToLower ().IndexOf ("javascript") >= 0) ||
+									(tmpXmlElement.Attributes [tmpIgnoreAttr.Name].Value.ToLower ().IndexOf ("dopostback") >= 0)) {
+										tmpXmlElement.SetAttribute (tmpIgnoreAttr.Name, "");
 									}
 								}
 							}
 						}
 					}
+				}
+			}
+			// remove whole tags
+			ArrayList tagsToRemove = new ArrayList ();
+			xmlIgnoreEnum = _xmlIgnoreList.SelectSingleNode ("Almost/RemoveTags").GetEnumerator (); //FirstChild.GetEnumerator
+			while (xmlIgnoreEnum.MoveNext())
+			{
+				XmlIgnoreNode = (XmlNode)xmlIgnoreEnum.Current;
+				XmlNodeList DocNodeList;
+				//clean Java Script attribute values
+				DocNodeList = xmlDocument.GetElementsByTagName("*");
+				if (DocNodeList != null)
+				{
+					foreach (XmlElement tmpXmlElement in DocNodeList)
+					{
+						if (tmpXmlElement.Name.ToLower() == XmlIgnoreNode.Name.ToLower()) 
+						{
+							tagsToRemove.Add (tmpXmlElement);
+							//tmpXmlElement.ParentNode.RemoveChild (tmpXmlElement);
+						}
+					}
+				}
+			}
+			if (tagsToRemove.Count > 0) {
+				foreach (XmlElement el in tagsToRemove) {
+					try {
+						el.ParentNode.RemoveChild (el);
+					}
+					catch { }
 				}
 			}
 		}

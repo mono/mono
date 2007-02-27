@@ -25,10 +25,16 @@
 	<CleanJavaScriptValueList>
 		<a href=""/>
 		<a onclick=""/>
+		<input onclick=""/>
 	</CleanJavaScriptValueList>
 
 	<!--remove tags by attribute Id or name-->
 	<RemoveById>
 		<input id="__VIEWSTATE" name="__VIEWSTATE"/>
 	</RemoveById>
+
+	<!--remove tags-->
+	<RemoveTags>
+	</RemoveTags>
+
 </Almost>

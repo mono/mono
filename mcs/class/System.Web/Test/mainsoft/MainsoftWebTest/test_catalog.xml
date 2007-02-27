@@ -85,18 +85,18 @@
   <TestCase url="/System_Web_UI_HtmlControls/HtmlControl/HtmlControl_Disabled.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_HtmlControls/HtmlControl/HtmlControl_Style.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_HtmlControls/HtmlControl/HtmlControl_TagName.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype1.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype2.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method1.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method2.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name1.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name2.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target1.aspx" name="" Exclude="N" />
-  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target2.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype1.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Enctype2.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method1.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Method2.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name1.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Name2.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target1.aspx" name="" Exclude="Y" />
+  <TestCase url="/System_Web_UI_HtmlControls/HtmlForm/HtmlForm_Target2.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web_UI_HtmlControls/HtmlGenericControl/HtmlGenericControl_ctor_.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_HtmlControls/HtmlGenericControl/HtmlGenericControl_ctor_S.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web_UI_HtmlControls/HtmlGenericControl/HtmlGenericControl_TagName.aspx" name="" Exclude="N" />

@@ -5,6 +5,7 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D4465041-A56A-476B-9C71-E71CDAF0ACC2}</ProjectGuid>
+    <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SystemWebTest</RootNamespace>
@@ -14,6 +15,7 @@
     <Version>2.0</Version>
     <ApplicationIcon>
     </ApplicationIcon>
+    <jarserver>ipa</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,7 +128,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-nunit-core="..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.core.jar" REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-mscorlib="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-web-services="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.Services.jar" />
+      <UserProperties REFS-JarPath-system-web-services="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.Services.jar" REFS-JarPath-rt="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-mscorlib="..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-nunit-core="..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.core.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
