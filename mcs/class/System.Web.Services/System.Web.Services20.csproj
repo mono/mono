@@ -379,7 +379,7 @@ cd ..\..\%25td%25
 
 echo Unzipping System.Web.Services.jar...
 set jar=$(TargetDir)$(TargetName).jar
-jar xf "%25jar%25"
+%25JAVA_HOME%25\bin\jar xf "%25jar%25"
 echo Repackaging...
 jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
 
