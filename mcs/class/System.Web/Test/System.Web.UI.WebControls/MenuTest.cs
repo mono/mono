@@ -128,7 +128,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if DOT_NET
+#if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
 #else
@@ -1349,7 +1349,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // implementation specific
 		public void Menu_PostBackFireEvents_1 ()
 		{
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
@@ -1358,7 +1357,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "Menu1";
+#if DOT_NET
 			fr.Controls["__EVENTARGUMENT"].Value = "root";  // "0_1";
+#else
+			fr.Controls ["__EVENTARGUMENT"].Value = "0";  // "0_1";
+#endif
 			t.Request = fr;
 			str = t.Run ();
 			Assert.AreEqual ("MenuItemClick", t.UserData.ToString (), "PostBackEvent");
@@ -1366,7 +1369,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // implementation specific
 		public void Menu_PostBackFireEvents_2 ()
 		{
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
@@ -1389,6 +1391,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static XmlDataSource LoadXml ()
 		{
 			XmlDataSource ds = new XmlDataSource ();
+			ds.EnableCaching = false;
 			#region xml_doc
 			String xml_text = @"<siteMapNode url=""1"" title=""root""  description="""">
 						<siteMapNode url=""~/MyPage.aspx"" title=""node1""  description="""" />
