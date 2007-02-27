@@ -1,0 +1,5 @@
+02-27-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+	
+	* WPProfileProvider.cs: added skeleton implementation of WebSphere
+	Portal Provider.
+

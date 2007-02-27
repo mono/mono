@@ -1,3 +1,8 @@
+02-27-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* Mainsoft.Web.Profile: added directory for respective namespace - 
+	for custom implementation of System.Web.Profile API(s)
+
 02-26-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* Mainsoft.Web.J2EE.WAS.csproj: changed names of file WPS*.cs to
