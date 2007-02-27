@@ -1,3 +1,7 @@
+2007-02-26 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseDataList.cs: fixed: data-binding flow for 2.0 features.
+
 2007-02-27  Marek Habersack  <grendello@gmail.com>
 
 	* FileUpload.cs: HasFile is true only if PostedFile is not null

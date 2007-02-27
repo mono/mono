@@ -177,8 +177,7 @@ namespace System.Web.UI.WebControls {
 				else
 					ViewState ["DataMember"] = value;
 #if NET_2_0
-				if (!Initialized)
-					OnDataPropertyChanged ();
+				OnDataPropertyChanged ();
 #endif
 			}
 		}
@@ -203,8 +202,7 @@ namespace System.Web.UI.WebControls {
 
 					source = value;
 
-					if (!Initialized)
-						OnDataPropertyChanged ();
+					OnDataPropertyChanged ();
 #else
 					source = value;
 #endif
@@ -264,8 +262,7 @@ namespace System.Web.UI.WebControls {
 
 				ViewState ["DataSourceID"] = value;
 
-				if (!Initialized)
-					OnDataPropertyChanged ();
+				OnDataPropertyChanged ();
 			}
 		}
 
@@ -313,11 +310,18 @@ namespace System.Web.UI.WebControls {
 		{
 			// We are recreating the children from viewstate
 			if (HasControls ())
-				Controls.Clear();
+				base.Controls.Clear();
 
+#if NET_2_0
+			if (IsDataBound)
+				CreateControlHierarchy (false);
+			else if (RequiresDataBinding)
+				EnsureDataBound ();
+#else
 			// If presents, build the children from the viewstate
 			if (ViewState ["Items"] != null)
 				CreateControlHierarchy (false);
+#endif
 		}
 
 		protected abstract void CreateControlHierarchy (bool useDataSource);
@@ -342,6 +346,10 @@ namespace System.Web.UI.WebControls {
 			// Indicate that child controls have been created, preventing
 			// CreateChildControls from getting called.
 			ChildControlsCreated = true;    
+#if NET_2_0
+			RequiresDataBinding = false;
+			IsDataBound = true;
+#endif
 		}
 #if NET_2_0
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
@@ -373,6 +381,16 @@ namespace System.Web.UI.WebControls {
 			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
 			return data;
 		}
+
+		bool IsDataBound {
+			get {
+				return ViewState.GetBool ("_DataBound", false);
+			}
+			set {
+				ViewState ["_DataBound"] = value;
+			}
+		}
+
 #endif
 
 		protected override void OnDataBinding (EventArgs e)
@@ -382,6 +400,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		protected virtual void OnDataPropertyChanged ()
 		{
+			if (Initialized)
+				RequiresDataBinding = true;
 		}
 
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
@@ -392,18 +412,38 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-		}
+			if (Page != null) {
+				Page.PreLoad += new EventHandler (OnPagePreLoad);
 
+				if (!IsViewStateEnabled && Page.IsPostBack)
+					RequiresDataBinding = true;
+			}
+		}
+		
+		protected virtual void OnPagePreLoad (object sender, EventArgs e)
+		{
+			Initialize ();
+		}
+		
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if ((Page != null) && !Page.IsPostBack)
-				RequiresDataBinding = true;
+			if (!Initialized)
+				Initialize ();
+
+			base.OnLoad (e);
+		}
+		
+		private void Initialize ()
+		{
+			if (Page != null) {
+				if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
+					RequiresDataBinding = true;
+			}
 
 			if (IsBoundUsingDataSourceID)
 				ConnectToDataSource ();
 
 			initialized = true;
-			base.OnLoad (e);
 		}
 
 		protected internal override void OnPreRender (EventArgs e)
