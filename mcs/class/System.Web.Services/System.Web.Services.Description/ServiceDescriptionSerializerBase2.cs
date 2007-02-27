@@ -1573,6 +1573,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o61 = ob.@DocumentationElement;
 				if (o61 is XmlElement) {
+				if ((o61.Name == "documentation" && o61.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o61.WriteTo (Writer);
 					WriteElementLiteral (o61, "", "", false, true);
 				}
 				else
@@ -1645,6 +1648,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o69 = ob.@DocumentationElement;
 				if (o69 is XmlElement) {
+				if ((o69.Name == "documentation" && o69.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o69.WriteTo (Writer);
 					WriteElementLiteral (o69, "", "", false, true);
 				}
 				else
@@ -1688,6 +1694,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o72 = ob.@DocumentationElement;
 				if (o72 is XmlElement) {
+				if ((o72.Name == "documentation" && o72.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o72.WriteTo (Writer);
 					WriteElementLiteral (o72, "", "", false, true);
 				}
 				else
@@ -1738,6 +1747,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o76 = ob.@DocumentationElement;
 				if (o76 is XmlElement) {
+				if ((o76.Name == "documentation" && o76.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o76.WriteTo (Writer);
 					WriteElementLiteral (o76, "", "", false, true);
 				}
 				else
@@ -1788,6 +1800,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o80 = ob.@DocumentationElement;
 				if (o80 is XmlElement) {
+				if ((o80.Name == "documentation" && o80.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o80.WriteTo (Writer);
 					WriteElementLiteral (o80, "", "", false, true);
 				}
 				else
@@ -1839,6 +1854,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o84 = ob.@DocumentationElement;
 				if (o84 is XmlElement) {
+				if ((o84.Name == "documentation" && o84.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o84.WriteTo (Writer);
 					WriteElementLiteral (o84, "", "", false, true);
 				}
 				else
@@ -1889,6 +1907,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o88 = ob.@DocumentationElement;
 				if (o88 is XmlElement) {
+				if ((o88.Name == "documentation" && o88.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o88.WriteTo (Writer);
 					WriteElementLiteral (o88, "", "", false, true);
 				}
 				else
@@ -1946,6 +1967,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o92 = ob.@DocumentationElement;
 				if (o92 is XmlElement) {
+				if ((o92.Name == "documentation" && o92.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o92.WriteTo (Writer);
 					WriteElementLiteral (o92, "", "", false, true);
 				}
 				else
@@ -1994,6 +2018,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o95 = ob.@DocumentationElement;
 				if (o95 is XmlElement) {
+				if ((o95.Name == "documentation" && o95.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o95.WriteTo (Writer);
 					WriteElementLiteral (o95, "", "", false, true);
 				}
 				else
@@ -2056,6 +2083,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o100 = ob.@DocumentationElement;
 				if (o100 is XmlElement) {
+				if ((o100.Name == "documentation" && o100.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o100.WriteTo (Writer);
 					WriteElementLiteral (o100, "", "", false, true);
 				}
 				else
@@ -2109,6 +2139,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o104 = ob.@DocumentationElement;
 				if (o104 is XmlElement) {
+				if ((o104.Name == "documentation" && o104.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o104.WriteTo (Writer);
 					WriteElementLiteral (o104, "", "", false, true);
 				}
 				else
@@ -2155,6 +2188,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o107 = ob.@DocumentationElement;
 				if (o107 is XmlElement) {
+				if ((o107.Name == "documentation" && o107.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o107.WriteTo (Writer);
 					WriteElementLiteral (o107, "", "", false, true);
 				}
 				else
@@ -2201,6 +2237,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o110 = ob.@DocumentationElement;
 				if (o110 is XmlElement) {
+				if ((o110.Name == "documentation" && o110.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o110.WriteTo (Writer);
 					WriteElementLiteral (o110, "", "", false, true);
 				}
 				else
@@ -2247,6 +2286,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o113 = ob.@DocumentationElement;
 				if (o113 is XmlElement) {
+				if ((o113.Name == "documentation" && o113.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o113.WriteTo (Writer);
 					WriteElementLiteral (o113, "", "", false, true);
 				}
 				else
@@ -2292,6 +2334,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o116 = ob.@DocumentationElement;
 				if (o116 is XmlElement) {
+				if ((o116.Name == "documentation" && o116.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o116.WriteTo (Writer);
 					WriteElementLiteral (o116, "", "", false, true);
 				}
 				else
@@ -2337,6 +2382,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o119 = ob.@DocumentationElement;
 				if (o119 is XmlElement) {
+				if ((o119.Name == "documentation" && o119.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o119.WriteTo (Writer);
 					WriteElementLiteral (o119, "", "", false, true);
 				}
 				else
@@ -2382,6 +2430,9 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o122 = ob.@DocumentationElement;
 				if (o122 is XmlElement) {
+				if ((o122.Name == "documentation" && o122.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o122.WriteTo (Writer);
 					WriteElementLiteral (o122, "", "", false, true);
 				}
 				else

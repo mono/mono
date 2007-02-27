@@ -313,16 +313,6 @@ namespace System.Web.Services.Description {
 			binding = new Binding ();
 			binding.Name = name;
 			binding.Type = new XmlQualifiedName (binding.Name, binfo.Namespace);
-#if NET_2_0
-			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.EmitConformanceClaims) {
-				XmlDocument doc = new XmlDocument ();
-				XmlElement docElement = doc.CreateElement ("wsdl", "documentation", "http://schemas.xmlsoap.org/wsdl/");
-				XmlElement claimsElement = doc.CreateElement ("wsi", "Claim", "http://ws-i.org/schemas/conformanceClaim/");
-				claimsElement.Attributes.Append (doc.CreateAttribute ("conformsTo")).Value = "http://ws-i.org/profiles/basic/1.1";
-				docElement.AppendChild (claimsElement);
-				binding.DocumentationElement = docElement;
-			}
-#endif
 			
 			portType = new PortType ();
 			portType.Name = binding.Name;
