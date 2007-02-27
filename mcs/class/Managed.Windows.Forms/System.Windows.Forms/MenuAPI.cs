@@ -185,8 +185,8 @@ namespace System.Windows.Forms {
 								
 				DeselectItem (old_item);
 			} else {
-				SelectItem (item.Parent, item, active && item.IsPopup && popup_active && (CurrentMenu.SelectedItem != item));
 				keynav_state = KeyNavState.Idle;
+				SelectItem (item.Parent, item, active && item.IsPopup && popup_active && (CurrentMenu.SelectedItem != item));
 			}
 		}
 
