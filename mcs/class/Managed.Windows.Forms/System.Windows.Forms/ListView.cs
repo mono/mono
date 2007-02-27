@@ -3579,21 +3579,8 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual ListViewItem Add (ListViewItem value)
 			{
-				if (list.Contains (value))
-					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
-
-				if (value.ListView != null && value.ListView != owner)
-					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
-
-				value.Owner = owner;
-				list.Add (value);
-
-				if (this.owner != null)
-				{
-					owner.Sort (false);
-					OnChange ();
-					owner.Redraw (true);
-				}
+				AddItem (value);
+				CollectionChanged (true);
 
 				return value;
 			}
@@ -3637,9 +3624,10 @@ namespace System.Windows.Forms
 				if (values == null)
 					throw new ArgumentNullException ("Argument cannot be null!", "values");
 
-				foreach (ListViewItem item in values) {
-					this.Add (item);
-				}
+				foreach (ListViewItem item in values)
+					AddItem (item);
+
+				CollectionChanged (true);
 			}
 
 #if NET_2_0
@@ -3663,8 +3651,7 @@ namespace System.Windows.Forms
 					item.Owner = null;
 				}
 				list.Clear ();
-				OnChange ();
-				owner.Redraw (true);
+				CollectionChanged (false);
 			}
 
 			public bool Contains (ListViewItem item)
@@ -3728,8 +3715,7 @@ namespace System.Windows.Forms
 
 				li.Owner = owner;
 				result = list.Add (li);
-				OnChange ();
-				owner.Redraw (true);
+				CollectionChanged (true);
 
 				return result;
 			}
@@ -3791,8 +3777,7 @@ namespace System.Windows.Forms
 
 				item.Owner = owner;
 				list.Insert (index, item);
-				OnChange ();
-				owner.Redraw (true);
+				CollectionChanged (true);
 				return item;
 			}
 
@@ -3821,11 +3806,10 @@ namespace System.Windows.Forms
 					return;
 	 				
 				bool selection_changed = owner.SelectedItems.Contains (item);
-				list.Remove (item);
-				OnChange ();
 				owner.item_control.CancelEdit (item);
+				list.Remove (item);
 				item.Owner = null;
-				owner.Redraw (true);
+				CollectionChanged (false);
 				if (selection_changed)
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
@@ -3848,6 +3832,28 @@ namespace System.Windows.Forms
 #endif
 
 			#endregion	// Public Methods
+
+			void AddItem (ListViewItem value)
+			{
+				if (list.Contains (value))
+					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+
+				if (value.ListView != null && value.ListView != owner)
+					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
+				value.Owner = owner;
+				list.Add (value);
+			}
+
+			void CollectionChanged (bool sort)
+			{
+				if (owner != null) {
+					if (sort)
+						owner.Sort (false);
+
+					OnChange ();
+					owner.Redraw (true);
+				}
+			}
 
 			internal event CollectionChangedHandler Changed;
 

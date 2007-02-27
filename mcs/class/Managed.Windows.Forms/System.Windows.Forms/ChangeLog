@@ -1,3 +1,12 @@
+2007-02-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Refactor Add and AddRange methods of
+	ListViewItemCollection, to not update the ListView
+	everytime an item is added in AddRange. Also move the update
+	code to a new CollectionChanged method, and call it
+	from other methods that need it as well (this should also fix some
+	bugs when Sorting is used).
+
 2007-02-27  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Try to never let the caret stay in a non-text
