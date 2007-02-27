@@ -62,15 +62,21 @@ namespace Mono.Tools {
 					return null;
 				}
 
-				PrivateKey pvk = PrivateKey.CreateFromFile (keyfile);
-				if (pvk.Encrypted) {
+				try {
+					PrivateKey pvk = PrivateKey.CreateFromFile (keyfile);
+					rsa = pvk.RSA;
+				}
+				catch (CryptographicException) {
 					Console.WriteLine ("Enter password for {0}: ", keyfile);
 					string password = Console.ReadLine ();
-					pvk = PrivateKey.CreateFromFile (keyfile, password);
-					if (pvk.RSA == null)
+					try {
+						PrivateKey pvk = PrivateKey.CreateFromFile (keyfile, password);
+						rsa = pvk.RSA;
+					}
+					catch (CryptographicException) {
 						Console.WriteLine ("Invalid password!");
+					}
 				}
-				rsa = pvk.RSA;
 			}
 			else {
 				rsa = new RSACryptoServiceProvider (csp);
