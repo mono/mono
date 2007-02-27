@@ -7,29 +7,12 @@ if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre5)
 set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
 
 rem =================================================
-echo Hiding svn...
 pushd MainsoftWebApp
-FOR /R %%f IN (.svn) DO IF EXIST "%%f" ( 
-ATTRIB -h "%%f" 
-RENAME "%%f" _svn 
-) 
-
-rem =================================================
 echo Building Tomcat web project...
-msbuild MainsoftWebApp20.Tomcat.vmwcsproj /t:rebuild /p:Configuration=Debug_Java
-
-IF NOT ERRORLEVEL==0 (set BUILD_FAILED=TRUE)
-
-rem =================================================
-echo Restoring svn...
-FOR /R %%f IN (_svn) DO IF EXIST "%%f" ( 
-RENAME "%%f" .svn 
-ATTRIB +h "%%~pf\.svn" 
-) 
+msbuild MainsoftWebApp20.Tomcat.csproj /t:rebuild /p:Configuration=Debug_Java
 popd
 
-rem =================================================
-IF "%BUILD_FAILED%"=="TRUE" GOTO FAILURE
+IF NOT ERRORLEVEL==0 GOTO FAILURE
 
 rem =================================================
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
@@ -47,7 +30,7 @@ set NUNIT_BUILD=DONE
 rem =================================================
 echo Build System.Web test client side...
 pushd MainsoftWebTest
-msbuild SystemWebTest20.vmwcsproj /t:build /p:Configuration=Debug_Java_Nunit
+msbuild SystemWebTest20.J2EE.csproj /t:build /p:Configuration=Debug_Java_Nunit
 popd
 
 
@@ -63,7 +46,7 @@ copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar Mainsoft
 rem =================================================
 echo Buildinig xmltool...
 pushd ..\..\..\..\tools\mono-xmltool
-msbuild XmlTool20.sln /t:build /p:Configuration=Debug
+msbuild XmlTool20.csproj /p:Configuration=Debug_Java20
 popd
 copy ..\..\..\..\tools\mono-xmltool\bin\Debug_Java\xmltool.exe MainsoftWebTest\bin\xmltool.exe 
 copy ..\..\..\..\tools\mono-xmltool\nunit_transform.xslt MainsoftWebTest\bin\nunit_transform.xslt 
