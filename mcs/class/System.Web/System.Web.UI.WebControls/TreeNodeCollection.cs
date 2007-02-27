@@ -122,7 +122,9 @@ namespace System.Web.UI.WebControls
 				}
 			}
 			items.Clear ();
-			dirty = true;
+			if (marked) {
+				dirty = true;
+			}
 		}
 		
 		public bool Contains (TreeNode child)
@@ -152,7 +154,9 @@ namespace System.Web.UI.WebControls
 			items.RemoveAt (i);
 			if (tree != null)
 				node.Tree = null;
-			dirty = true;
+			if (marked) {
+				dirty = true;
+			}
 		}
 		
 		public void RemoveAt (int index)
@@ -161,7 +165,9 @@ namespace System.Web.UI.WebControls
 			items.RemoveAt (index);
 			if (tree != null)
 				node.Tree = null;
-			dirty = true;
+			if (marked) {
+				dirty = true;
+			}
 		}
 		
 		public int Count {
