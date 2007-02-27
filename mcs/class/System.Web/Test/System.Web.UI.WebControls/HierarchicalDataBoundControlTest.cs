@@ -90,6 +90,11 @@ namespace MonoTests.System.Web.UI.WebControls
 				base.OnDataBound (e);
 				dataBindTrace.Append ("[End OnDataBound]");
 			}
+
+			internal void DoValidateDataSource (object dataSource)
+			{
+				ValidateDataSource (dataSource);
+			}
 		}
 
 		[Test]
@@ -100,6 +105,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			hc.DataBind ();
 			string expected = "[Start DataBind][Start PerformSelect][Start OnDataBinding][End OnDataBinding][Start PerformDataBinding][End PerformDataBinding][Start OnDataBound][End OnDataBound][End PerformSelect][End DataBind]";
 			Assert.AreEqual (expected, hc.DataBindTrace, "DataBindFlow");
+		}
+
+		[Test]
+		public void HierarchicalDataBoundControl_ValidateDataSource_Null ()
+		{
+			MyHierarchicalDataBoundControl hc = new MyHierarchicalDataBoundControl ();
+			hc.DoValidateDataSource (null);
 		}
 
 	}

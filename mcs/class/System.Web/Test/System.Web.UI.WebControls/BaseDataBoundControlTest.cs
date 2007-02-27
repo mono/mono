@@ -44,6 +44,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		class Poker : BaseDataBoundControl {
 			
 			public bool OnDataPropertyChangedCalled;
+			public bool ValidateDataSourceCalled;
 
 			public Poker () {
 				TrackViewState ();
@@ -65,6 +66,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			protected override void ValidateDataSource (object dataSource)
 			{
+				ValidateDataSourceCalled = true;
 				//Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
 			}
 
@@ -169,6 +171,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.SetRequiresDataBinding (true);
 			p.DoEnsureDataBound ();
 		}
+
+		[Test]
+		public void DataSource_ValidateDataSource ()
+		{
+			Poker p = new Poker ();
+			p.DataSource = null;
+			Assert.AreEqual (false, p.ValidateDataSourceCalled);
+			p.DataSource = new Object();
+			Assert.AreEqual (true, p.ValidateDataSourceCalled);
+		}
+
 	}
 }
 #endif
