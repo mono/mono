@@ -289,11 +289,10 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Not implemented")]
 		public bool HasAttributes 
 		{
 			get {
-				throw new NotImplementedException ();
+				return (attributes != null && attributes.Count > 0);
 			}
 		}
 #endif		
@@ -404,11 +403,19 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		protected internal bool IsEnabled 
 		{
 			get {
-				throw new NotImplementedException ();
+				if (Enabled)
+					return true;
+				if(!HasControls())
+					return false;
+				for (int i = 0; i < Controls.Count; i++) {
+					WebControl wc = Controls [i] as WebControl;
+					if (wc != null && wc.IsEnabled)
+						return true;
+				}
+				return false;
 			}
 		}
 #endif		

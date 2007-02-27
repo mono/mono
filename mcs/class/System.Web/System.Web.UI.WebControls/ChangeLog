@@ -1,4 +1,8 @@
-2007-02-26 Igor Zelmanovich <igorz@mainsoft.com>
+2007-02-27 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebControl.cs: implemented IsEnabled and HasAttributes.
+
+2007-02-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseDataList.cs: fixed: data-binding flow for 2.0 features.
 
