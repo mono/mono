@@ -1738,7 +1738,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Wizard_PostBackFireEvents_3 ()
 		{
@@ -1761,7 +1760,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 
-			fr.Controls ["__EVENTTARGET"].Value = "Wizard1:_ctl1c:SideBarList:_ctl0:SideBarButton";
+			fr.Controls ["__EVENTTARGET"].Value = "Wizard1$SideBarContainer$SideBarList$ctl01$SideBarButton";
 			fr.Controls ["__EVENTARGUMENT"].Value = "";
 #endif
 			t.Request = fr;
