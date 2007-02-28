@@ -1,5 +1,10 @@
 2007-02-28 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* MenuItemCollection.cs:
+	fixed Save/Load viewstate. 
+
+2007-02-28 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CreateUserWizard.cs:
 	* Wizard.cs:
 	fixed CausesValidaion and ValidationGroup for navigation buttons. 

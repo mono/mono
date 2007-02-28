@@ -1405,6 +1405,145 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.CurrentTest.UserData = "MenuItemDataBound"; 
 		}
+
+		[Test]
+		public void MenuItemCollection1 ()
+		{
+			Menu m = new Menu ();
+			fillMenu (m);
+
+			((IStateManager) m.Items).TrackViewState ();
+			m.Items [0].Text = "root";
+			m.Items [0].ChildItems [0].Text = "node";
+			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
+			object state = ((IStateManager) m.Items).SaveViewState ();
+
+			Menu copy = new Menu ();
+			fillMenu (copy);
+			((IStateManager) copy.Items).TrackViewState ();
+			((IStateManager) copy.Items).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Items.Count);
+			Assert.AreEqual (2, copy.Items [0].ChildItems.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems [0].ChildItems.Count);
+
+			Assert.AreEqual ("root", copy.Items [0].Text);
+			Assert.AreEqual ("node", copy.Items [0].ChildItems [0].Text);
+			Assert.AreEqual ("subnode", copy.Items [0].ChildItems [0].ChildItems [0].Text);
+		}
+		
+		[Test]
+		public void MenuItemCollection2 ()
+		{
+			Menu m = new Menu ();
+			fillMenu (m);
+
+			((IStateManager) m.Items).TrackViewState ();
+			m.Items [0].Text = "root";
+			m.Items [0].ChildItems [0].Text = "node";
+			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
+			m.Items.Add (new MenuItem ("root 2"));
+			object state = ((IStateManager) m.Items).SaveViewState ();
+
+			Menu copy = new Menu ();
+			fillMenu (copy);
+			((IStateManager) copy.Items).TrackViewState ();
+			((IStateManager) copy.Items).LoadViewState (state);
+
+			Assert.AreEqual (2, copy.Items.Count);
+			Assert.AreEqual (2, copy.Items [0].ChildItems.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems [0].ChildItems.Count);
+
+			Assert.AreEqual ("root", copy.Items [0].Text);
+			Assert.AreEqual ("node", copy.Items [0].ChildItems [0].Text);
+			Assert.AreEqual ("subnode", copy.Items [0].ChildItems [0].ChildItems [0].Text);
+			Assert.AreEqual ("root 2", copy.Items [1].Text);
+		}
+
+		[Test]
+		public void MenuItemCollection3 ()
+		{
+			Menu m = new Menu ();
+			fillMenu (m);
+			m.Items.Add (new MenuItem ("root 2"));
+
+			((IStateManager) m.Items).TrackViewState ();
+			m.Items [0].Text = "root";
+			m.Items [0].ChildItems [0].Text = "node";
+			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
+			m.Items.RemoveAt (1);
+			object state = ((IStateManager) m.Items).SaveViewState ();
+
+			Menu copy = new Menu ();
+			fillMenu (copy);
+			copy.Items.Add (new MenuItem ("root 2"));
+			((IStateManager) copy.Items).TrackViewState ();
+			((IStateManager) copy.Items).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Items.Count);
+			Assert.AreEqual (2, copy.Items [0].ChildItems.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems [0].ChildItems.Count);
+
+			Assert.AreEqual ("root", copy.Items [0].Text);
+			Assert.AreEqual ("node", copy.Items [0].ChildItems [0].Text);
+			Assert.AreEqual ("subnode", copy.Items [0].ChildItems [0].ChildItems [0].Text);
+		}
+		
+		[Test]
+		public void MenuItemCollection4 ()
+		{
+			Menu m = new Menu ();
+			fillMenu (m);
+			m.Items.Add (new MenuItem ("root 2"));
+			m.Items [0].ChildItems.RemoveAt (1);
+
+			((IStateManager) m.Items).TrackViewState ();
+			m.Items [0].Text = "root";
+			m.Items [0].ChildItems [0].Text = "node";
+			m.Items [0].ChildItems [0].ChildItems [0].Text = "subnode";
+			object state = ((IStateManager) m.Items).SaveViewState ();
+
+			Menu copy = new Menu ();
+			fillMenu (copy);
+			copy.Items.Add (new MenuItem ("root 2"));
+			copy.Items [0].ChildItems.RemoveAt (1);
+			((IStateManager) copy.Items).TrackViewState ();
+			((IStateManager) copy.Items).LoadViewState (state);
+
+			Assert.AreEqual (2, copy.Items.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems [0].ChildItems.Count);
+
+			Assert.AreEqual ("root", copy.Items [0].Text);
+			Assert.AreEqual ("node", copy.Items [0].ChildItems [0].Text);
+			Assert.AreEqual ("subnode", copy.Items [0].ChildItems [0].ChildItems [0].Text);
+		}
+
+		[Test]
+		public void MenuItemCollection5 ()
+		{
+			Menu m = new Menu ();
+			((IStateManager) m.Items).TrackViewState ();
+			fillMenu (m);
+
+			object state = ((IStateManager) m.Items).SaveViewState ();
+
+			Menu copy = new Menu ();
+			((IStateManager) copy.Items).TrackViewState ();
+			((IStateManager) copy.Items).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Items.Count);
+			Assert.AreEqual (2, copy.Items [0].ChildItems.Count);
+			Assert.AreEqual (1, copy.Items [0].ChildItems [0].ChildItems.Count);
+		}
+
+		private static void fillMenu (Menu m) {
+			m.Items.Clear ();
+			m.Items.Add (new MenuItem ());
+			m.Items [0].ChildItems.Add (new MenuItem ());
+			m.Items [0].ChildItems.Add (new MenuItem ());
+			m.Items [0].ChildItems [0].ChildItems.Add (new MenuItem ());
+		}
 	}
 }
 #endif

@@ -1,3 +1,7 @@
+2007-02-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuTest.cs: new tests
+
 2007-02-20  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* CalendarTest.cs: Enabled tests for bug #80881. Fixed NotWorking
