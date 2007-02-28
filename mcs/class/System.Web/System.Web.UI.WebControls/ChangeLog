@@ -1,3 +1,9 @@
+2007-02-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CreateUserWizard.cs:
+	* Wizard.cs:
+	fixed CausesValidaion and ValidationGroup for navigation buttons. 
+
 2007-02-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNode.cs:

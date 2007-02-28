@@ -962,7 +962,7 @@ namespace System.Web.UI.WebControls
 				TableRow row;
 				AddNavButtonsTable (_startNavContainer, out row);
 				AddButtonCell (row, CreateButtonSet (StartNextButtonID, MoveNextCommandName));
-				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName, false));
 				_startNavContainer.ConfirmDefaultTemplate ();
 			}
 			buttonBarCell.Controls.Add (_startNavContainer);
@@ -978,9 +978,9 @@ namespace System.Web.UI.WebControls
 			else {
 				TableRow row;
 				AddNavButtonsTable (_stepNavContainer, out row);
-				AddButtonCell (row, CreateButtonSet (StepPreviousButtonID, MovePreviousCommandName));
+				AddButtonCell (row, CreateButtonSet (StepPreviousButtonID, MovePreviousCommandName, false));
 				AddButtonCell (row, CreateButtonSet (StepNextButtonID, MoveNextCommandName));
-				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName, false));
 				_stepNavContainer.ConfirmDefaultTemplate ();
 			}
 			buttonBarCell.Controls.Add (_stepNavContainer);
@@ -996,9 +996,9 @@ namespace System.Web.UI.WebControls
 			else {
 				TableRow row;
 				AddNavButtonsTable (_finishNavContainer, out row);
-				AddButtonCell (row, CreateButtonSet (FinishPreviousButtonID, MovePreviousCommandName));
+				AddButtonCell (row, CreateButtonSet (FinishPreviousButtonID, MovePreviousCommandName, false));
 				AddButtonCell (row, CreateButtonSet (FinishButtonID, MoveCompleteCommandName));
-				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName));
+				AddButtonCell (row, CreateButtonSet (CancelButtonID, CancelCommandName, false));
 				_finishNavContainer.ConfirmDefaultTemplate ();
 			}
 			buttonBarCell.Controls.Add (_finishNavContainer);
@@ -1014,21 +1014,26 @@ namespace System.Web.UI.WebControls
 			container.Controls.Add (t);
 		}
 
-		internal Control [] CreateButtonSet (string id, string command)
+		Control [] CreateButtonSet (string id, string command)
 		{
-			return CreateButtonSet (id, command, true);
+			return CreateButtonSet (id, command, true, null);
 		}
 
-		internal Control [] CreateButtonSet (string id, string command, bool causesValidation)
+		Control [] CreateButtonSet (string id, string command, bool causesValidation)
+		{
+			return CreateButtonSet (id, command, causesValidation, null);
+		}
+
+		internal Control [] CreateButtonSet (string id, string command, bool causesValidation, string validationGroup)
 		{
 			return new Control [] { 
-				CreateButton ( id + ButtonType.Button,  command, ButtonType.Button, causesValidation),
-				CreateButton ( id + ButtonType.Image,  command, ButtonType.Image, causesValidation),
-				CreateButton ( id + ButtonType.Link,  command, ButtonType.Link, causesValidation)
+				CreateButton ( id + ButtonType.Button,  command, ButtonType.Button, causesValidation, validationGroup),
+				CreateButton ( id + ButtonType.Image,  command, ButtonType.Image, causesValidation, validationGroup),
+				CreateButton ( id + ButtonType.Link,  command, ButtonType.Link, causesValidation, validationGroup)
 				};
 		}
 
-		Control CreateButton (string id, string command, ButtonType type, bool causesValidation)
+		Control CreateButton (string id, string command, ButtonType type, bool causesValidation, string validationGroup)
 		{
 			WebControl b;
 			switch (type) {
@@ -1048,8 +1053,9 @@ namespace System.Web.UI.WebControls
 			b.ID = id;
 			b.EnableTheming = false;
 			((IButtonControl) b).CommandName = command;
-			((IButtonControl) b).ValidationGroup = ID;
 			((IButtonControl) b).CausesValidation = causesValidation;
+			if(!String.IsNullOrEmpty(validationGroup))
+				((IButtonControl) b).ValidationGroup = validationGroup;
 
 			RegisterApplyStyle (b, NavigationButtonStyle);
 

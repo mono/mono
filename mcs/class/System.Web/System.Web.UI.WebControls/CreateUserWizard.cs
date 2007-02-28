@@ -1718,9 +1718,9 @@ namespace System.Web.UI.WebControls
 				t.Height = Unit.Percentage (100);
 				TableRow row = new TableRow ();
 
-				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepPreviousButtonID, Wizard.MovePreviousCommandName, false));
-				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepNextButtonID, Wizard.MoveNextCommandName));
-				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.CancelButtonID, Wizard.CancelCommandName, false));
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepPreviousButtonID, Wizard.MovePreviousCommandName, false, _createUserWizard.ID));
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.StepNextButtonID, Wizard.MoveNextCommandName, true, _createUserWizard.ID));
+				AddButtonCell (row, _createUserWizard.CreateButtonSet (Wizard.CancelButtonID, Wizard.CancelCommandName, false, _createUserWizard.ID));
 				
 				t.Rows.Add (row);
 				container.Controls.Add (t);
@@ -2315,7 +2315,7 @@ namespace System.Web.UI.WebControls
 				cell20.ColumnSpan = 2;
 				row2.Cells.Add (cell20);
 
-				Control[] b = _createUserWizard.CreateButtonSet ("ContinueButton", CreateUserWizard.ContinueButtonCommandName);
+				Control [] b = _createUserWizard.CreateButtonSet ("ContinueButton", CreateUserWizard.ContinueButtonCommandName, false, _createUserWizard.ID);
 				for (int i = 0; i < b.Length; i++)
 					cell20.Controls.Add (b [i]);
 
