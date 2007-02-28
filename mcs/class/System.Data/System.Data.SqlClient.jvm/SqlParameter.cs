@@ -223,7 +223,7 @@ namespace System.Data.SqlClient
 				return value;
 			}
 			// .NET throws an exception to the user.
-			object convertedValue = Convert.ChangeType(value,SqlConvert.SqlDbTypeToValueType(SqlDbType));
+			object convertedValue = value is IConvertible ? Convert.ChangeType(value,SqlConvert.SqlDbTypeToValueType(SqlDbType)) : value;
 			return convertedValue;
 		}
 
