@@ -1,3 +1,10 @@
+2007-02-28  Andreia Gaita  <avidigal@novell.com>
+
+	* SqlRoleProvider.cs: Fix parameter binding to stored procedures.
+	* SqlMembershipProvider.cs: Fix parameter binding to stored procedures.
+	CreateUser() doesn't use transactions in MS asp.net, so removed the 
+	transaction calls.
+
 2007-02-19 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* RoleManagerModule.cs: fixed role chaching in OnEndRequest and

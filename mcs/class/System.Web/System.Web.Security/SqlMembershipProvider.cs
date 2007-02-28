@@ -84,6 +84,17 @@ namespace System.Web.Security {
 			return dbp;
 		}
 
+		DbParameter AddParameter (DbCommand command, string parameterName, ParameterDirection direction, DbType type, object parameterValue)
+		{
+			DbParameter dbp = command.CreateParameter ();
+			dbp.ParameterName = parameterName;
+			dbp.Value = parameterValue;
+			dbp.Direction = direction;
+			dbp.DbType = type;
+			command.Parameters.Add (dbp);
+			return dbp;
+		}
+
 		static int GetReturnValue (DbParameter returnValue)
 		{
 			object value = returnValue.Value;
@@ -120,13 +131,13 @@ namespace System.Web.Security {
 					command.CommandText = @"aspnet_Membership_SetPassword";
 					command.CommandType = CommandType.StoredProcedure;
 
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "NewPassword", db_password);
-					AddParameter (command, "PasswordFormat", pi.PasswordFormat);
-					AddParameter (command, "PasswordSalt", pi.PasswordSalt);
-					AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-					DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+					AddParameter (command, "@ApplicationName", ApplicationName);
+					AddParameter (command, "@UserName", username);
+					AddParameter (command, "@NewPassword", db_password);
+					AddParameter (command, "@PasswordFormat", pi.PasswordFormat);
+					AddParameter (command, "@PasswordSalt", pi.PasswordSalt);
+					AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 					command.ExecuteNonQuery ();
 
@@ -162,11 +173,11 @@ namespace System.Web.Security {
 					command.CommandType = CommandType.StoredProcedure;
 					command.CommandText = @"aspnet_Membership_ChangePasswordQuestionAndAnswer";
 
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "NewPasswordQuestion", newPwdQuestion);
-					AddParameter (command, "NewPasswordAnswer", db_passwordAnswer);
-					DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+					AddParameter (command, "@ApplicationName", ApplicationName);
+					AddParameter (command, "@UserName", username);
+					AddParameter (command, "@NewPasswordQuestion", newPwdQuestion);
+					AddParameter (command, "@NewPasswordAnswer", db_passwordAnswer);
+					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 					command.ExecuteNonQuery ();
 
@@ -263,34 +274,31 @@ namespace System.Web.Security {
 			status = MembershipCreateStatus.Success;
 
 			using (DbConnection connection = CreateConnection ()) {
-				DbTransaction trans = connection.BeginTransaction ();
 
 				try {
 					DbCommand command = factory.CreateCommand ();
-					command.Transaction = trans;
 					command.Connection = connection;
 					command.CommandText = @"aspnet_Membership_CreateUser";
 					command.CommandType = CommandType.StoredProcedure;
 
 					DateTime Now = DateTime.UtcNow;
 
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "Password", password);
-					AddParameter (command, "PasswordSalt", passwordSalt);
-					AddParameter (command, "Email", email);
-					AddParameter (command, "PasswordQuestion", pwdQuestion);
-					AddParameter (command, "PasswordAnswer", pwdAnswer);
-					AddParameter (command, "IsApproved", isApproved);
-					AddParameter (command, "CurrentTimeUtc", Now);
-					AddParameter (command, "CreateDate", Now);
-					AddParameter (command, "UniqueEmail", RequiresUniqueEmail);
-					AddParameter (command, "PasswordFormat", PasswordFormat);
-					AddParameter (command, "UserId", ParameterDirection.InputOutput, providerUserKey);
-					DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+					AddParameter (command, "@ApplicationName", ApplicationName);
+					AddParameter (command, "@UserName", username);
+					AddParameter (command, "@Password", password);
+					AddParameter (command, "@PasswordSalt", passwordSalt);
+					AddParameter (command, "@Email", email);
+					AddParameter (command, "@PasswordQuestion", pwdQuestion);
+					AddParameter (command, "@PasswordAnswer", pwdAnswer);
+					AddParameter (command, "@IsApproved", isApproved);
+					AddParameter (command, "@CurrentTimeUtc", Now);
+					AddParameter (command, "@CreateDate", Now);
+					AddParameter (command, "@UniqueEmail", RequiresUniqueEmail);
+					AddParameter (command, "@PasswordFormat", PasswordFormat);
+					AddParameter (command, "@UserId", ParameterDirection.InputOutput, providerUserKey);
+					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 					command.ExecuteNonQuery ();
-					trans.Commit ();
 
 					int st = GetReturnValue (returnValue);
 
@@ -309,7 +317,6 @@ namespace System.Web.Security {
 				}
 				catch (Exception) {
 					status = MembershipCreateStatus.ProviderError;
-					trans.Rollback ();
 					return null;
 				}
 			}
@@ -349,11 +356,11 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Users_DeleteUser";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "TablesToDeleteFrom", (int) deleteBitmask);
-				AddParameter (command, "NumTablesDeletedFrom", ParameterDirection.Output, 0);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@TablesToDeleteFrom", (int) deleteBitmask);
+				AddParameter (command, "@NumTablesDeletedFrom", ParameterDirection.Output, 0);
+				DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 
@@ -390,12 +397,12 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_FindUsersByEmail";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "PageIndex", pageIndex);
-				AddParameter (command, "PageSize", pageSize);
-				AddParameter (command, "EmailToMatch", emailToMatch);
-				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "@PageIndex", pageIndex);
+				AddParameter (command, "@PageSize", pageSize);
+				AddParameter (command, "@EmailToMatch", emailToMatch);
+				AddParameter (command, "@ApplicationName", ApplicationName);
 				// return value
-				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -421,12 +428,12 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_FindUsersByName";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "PageIndex", pageIndex);
-				AddParameter (command, "PageSize", pageSize);
-				AddParameter (command, "UserNameToMatch", nameToMatch);
-				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "@PageIndex", pageIndex);
+				AddParameter (command, "@PageSize", pageSize);
+				AddParameter (command, "@UserNameToMatch", nameToMatch);
+				AddParameter (command, "@ApplicationName", ApplicationName);
 				// return value
-				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -449,11 +456,11 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_GetAllUsers";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "PageIndex", pageIndex);
-				AddParameter (command, "PageSize", pageSize);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@PageIndex", pageIndex);
+				AddParameter (command, "@PageSize", pageSize);
 				// return value
-				AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -493,10 +500,10 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_GetNumberOfUsersOnline";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "CurrentTimeUtc", now.ToString ());
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "MinutesSinceLastInActive", userIsOnlineTimeWindow.Minutes);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@CurrentTimeUtc", now.ToString ());
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@MinutesSinceLastInActive", userIsOnlineTimeWindow.Minutes);
+				DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteScalar ();
 				return GetReturnValue (returnValue);
@@ -525,13 +532,13 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_GetPassword";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
-				AddParameter (command, "PasswordAttemptWindow", PasswordAttemptWindow);
-				AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-				AddParameter (command, "PasswordAnswer", user_answer);
-				DbParameter retValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
+				AddParameter (command, "@PasswordAttemptWindow", PasswordAttemptWindow);
+				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+				AddParameter (command, "@PasswordAnswer", user_answer);
+				DbParameter retValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				DbDataReader reader = command.ExecuteReader ();
 
@@ -614,10 +621,10 @@ namespace System.Web.Security {
 			command.CommandText = @"aspnet_Membership_GetUserByName";
 			command.CommandType = CommandType.StoredProcedure;
 
-			AddParameter (command, "UserName", username);
-			AddParameter (command, "ApplicationName", ApplicationName);
-			AddParameter (command, "CurrentTimeUtc", DateTime.Now);
-			AddParameter (command, "UpdateLastActivity", userIsOnline);
+			AddParameter (command, "@UserName", username);
+			AddParameter (command, "@ApplicationName", ApplicationName);
+			AddParameter (command, "@CurrentTimeUtc", DateTime.Now);
+			AddParameter (command, "@UpdateLastActivity", userIsOnline);
 
 			MembershipUser u = BuildMembershipUser (command, username, null);
 
@@ -630,9 +637,9 @@ namespace System.Web.Security {
 			command.CommandText = @"aspnet_Membership_GetUserByUserId";
 			command.CommandType = CommandType.StoredProcedure;
 
-			AddParameter (command, "UserId", providerUserKey);
-			AddParameter (command, "CurrentTimeUtc", DateTime.Now);
-			AddParameter (command, "UpdateLastActivity", userIsOnline);
+			AddParameter (command, "@UserId", providerUserKey);
+			AddParameter (command, "@CurrentTimeUtc", DateTime.Now);
+			AddParameter (command, "@UpdateLastActivity", userIsOnline);
 
 			MembershipUser u = BuildMembershipUser (command, string.Empty, providerUserKey);
 			return u;
@@ -649,8 +656,8 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_GetUserByEmail";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "Email", email);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@Email", email);
 
 				DbDataReader reader = command.ExecuteReader ();
 				string rv = null;
@@ -791,16 +798,16 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_ResetPassword";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "NewPassword", db_password);
-				AddParameter (command, "MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
-				AddParameter (command, "PasswordAttemptWindow", PasswordAttemptWindow);
-				AddParameter (command, "PasswordSalt", pi.PasswordSalt);
-				AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-				AddParameter (command, "PasswordFormat", pi.PasswordFormat);
-				AddParameter (command, "PasswordAnswer", db_answer);
-				DbParameter retValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@NewPassword", db_password);
+				AddParameter (command, "@MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
+				AddParameter (command, "@PasswordAttemptWindow", PasswordAttemptWindow);
+				AddParameter (command, "@PasswordSalt", pi.PasswordSalt);
+				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+				AddParameter (command, "@PasswordFormat", pi.PasswordFormat);
+				AddParameter (command, "@PasswordAnswer", db_answer);
+				DbParameter retValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 
@@ -841,16 +848,16 @@ namespace System.Web.Security {
 				command.CommandText = @"aspnet_Membership_UpdateUser";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "UserName", user.UserName);
-				AddParameter (command, "Email", user.Email == null ? (object) DBNull.Value : (object) user.Email);
-				AddParameter (command, "Comment", user.Comment == null ? (object) DBNull.Value : (object) user.Comment);
-				AddParameter (command, "IsApproved", user.IsApproved);
-				AddParameter (command, "LastLoginDate", DateTime.UtcNow);
-				AddParameter (command, "LastActivityDate", DateTime.UtcNow);
-				AddParameter (command, "UniqueEmail", RequiresUniqueEmail);
-				AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-				DbParameter retValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", user.UserName);
+				AddParameter (command, "@Email", user.Email == null ? (object) DBNull.Value : (object) user.Email);
+				AddParameter (command, "@Comment", user.Comment == null ? (object) DBNull.Value : (object) user.Comment);
+				AddParameter (command, "@IsApproved", user.IsApproved);
+				AddParameter (command, "@LastLoginDate", DateTime.UtcNow);
+				AddParameter (command, "@LastActivityDate", DateTime.UtcNow);
+				AddParameter (command, "@UniqueEmail", RequiresUniqueEmail);
+				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+				DbParameter retValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 
@@ -894,9 +901,9 @@ namespace System.Web.Security {
 					command.CommandText = @"aspnet_Membership_UnlockUser"; ;
 					command.CommandType = CommandType.StoredProcedure;
 
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "UserName", username);
-					DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+					AddParameter (command, "@ApplicationName", ApplicationName);
+					AddParameter (command, "@UserName", username);
+					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 					command.ExecuteNonQuery ();
 					if (GetReturnValue (returnValue) != 0)
@@ -920,16 +927,16 @@ namespace System.Web.Security {
 					command.CommandText = @"aspnet_Membership_UpdateUserInfo"; ;
 					command.CommandType = CommandType.StoredProcedure;
 
-					AddParameter (command, "ApplicationName", ApplicationName);
-					AddParameter (command, "UserName", username);
-					AddParameter (command, "IsPasswordCorrect", isPasswordCorrect);
-					AddParameter (command, "UpdateLastLoginActivityDate", updateLoginActivity);
-					AddParameter (command, "MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
-					AddParameter (command, "PasswordAttemptWindow", PasswordAttemptWindow);
-					AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-					AddParameter (command, "LastLoginDate", pi.LastLoginDate);
-					AddParameter (command, "LastActivityDate", pi.LastActivityDate);
-					DbParameter retValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+					AddParameter (command, "@ApplicationName", ApplicationName);
+					AddParameter (command, "@UserName", username);
+					AddParameter (command, "@IsPasswordCorrect", isPasswordCorrect);
+					AddParameter (command, "@UpdateLastLoginActivityDate", updateLoginActivity);
+					AddParameter (command, "@MaxInvalidPasswordAttempts", MaxInvalidPasswordAttempts);
+					AddParameter (command, "@PasswordAttemptWindow", PasswordAttemptWindow);
+					AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+					AddParameter (command, "@LastLoginDate", pi.LastLoginDate);
+					AddParameter (command, "@LastActivityDate", pi.LastActivityDate);
+					DbParameter retValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 					command.ExecuteNonQuery ();
 
@@ -977,12 +984,12 @@ namespace System.Web.Security {
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandText = @"aspnet_Membership_GetPasswordWithFormat";
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "UpdateLastLoginActivityDate", false);
-				AddParameter (command, "CurrentTimeUtc", DateTime.Now);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@UpdateLastLoginActivityDate", false);
+				AddParameter (command, "@CurrentTimeUtc", DateTime.Now);
 				// return value
-				AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				DbDataReader reader = command.ExecuteReader ();
 				if (!reader.Read ())

@@ -73,6 +73,17 @@ namespace System.Web.Security
 			return dbp;
 		}
 
+		static DbParameter AddParameter (DbCommand command, string parameterName, ParameterDirection direction, DbType type, object parameterValue)
+		{
+			DbParameter dbp = command.CreateParameter ();
+			dbp.ParameterName = parameterName;
+			dbp.Value = parameterValue = parameterValue;
+			dbp.Direction = direction;
+			dbp.DbType = type;
+			command.Parameters.Add (dbp);
+			return dbp;
+		}
+
 		public override void AddUsersToRoles (string [] usernames, string [] rolenames)
 		{
 			Hashtable h = new Hashtable ();
@@ -105,11 +116,11 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "RoleNames", String.Join (",", rolenames));
-				AddParameter (command, "UserNames", String.Join (",", usernames));
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "CurrentTimeUtc", DateTime.UtcNow);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@RoleNames", String.Join (",", rolenames));
+				AddParameter (command, "@UserNames", String.Join (",", usernames));
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 
@@ -139,9 +150,9 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 				
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "RoleName", rolename);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@RoleName", rolename);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int) dbpr.Value;
@@ -167,10 +178,10 @@ namespace System.Web.Security
 				command.CommandText = @"dbo.aspnet_Roles_DeleteRole";
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "RoleName", rolename);
-				AddParameter (command, "DeleteOnlyIfRoleIsEmpty", throwOnPopulatedRole);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@DeleteOnlyIfRoleIsEmpty", throwOnPopulatedRole);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int)dbpr.Value;
@@ -203,9 +214,9 @@ namespace System.Web.Security
 				command.CommandText = @"dbo.aspnet_UsersInRoles_FindUsersInRole";
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "RoleName", roleName);
-				AddParameter (command, "UsernameToMatch", usernameToMatch);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@RoleName", roleName);
+				AddParameter (command, "@UsernameToMatch", usernameToMatch);
 
 				DbDataReader reader = command.ExecuteReader ();
 				ArrayList userList = new ArrayList ();
@@ -225,7 +236,7 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "@ApplicationName", ApplicationName);
 
 				DbDataReader reader = command.ExecuteReader ();
 				ArrayList roleList = new ArrayList ();
@@ -245,8 +256,8 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@ApplicationName", ApplicationName);
 
 				DbDataReader reader = command.ExecuteReader ();
 				ArrayList roleList = new ArrayList ();
@@ -266,8 +277,8 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "RoleName", rolename);
-				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@ApplicationName", ApplicationName);
 
 				DbDataReader reader = command.ExecuteReader ();
 				ArrayList userList = new ArrayList ();
@@ -321,10 +332,10 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "RoleName", rolename);
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@UserName", username);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int) dbpr.Value;
@@ -367,10 +378,10 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "UserNames", String.Join (",", usernames));
-				AddParameter (command, "RoleNames", String.Join (",", rolenames));
-				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@UserNames", String.Join (",", usernames));
+				AddParameter (command, "@RoleNames", String.Join (",", rolenames));
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int) dbpr.Value;
@@ -397,9 +408,9 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "ApplicationName", ApplicationName);
-				AddParameter (command, "RoleName", rolename);
-				DbParameter dbpr = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				AddParameter (command, "@ApplicationName", ApplicationName);
+				AddParameter (command, "@RoleName", rolename);
+				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int) dbpr.Value;
