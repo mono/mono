@@ -1,3 +1,8 @@
+2007-02-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SystemFontsTest.cs: Add more tests cases including disposing the
+	font instance returned by the SystemFonts class.
+
 2007-02-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestRegion.cs: Add test cases for ReleaseHrgn and fix GetHrgn tests

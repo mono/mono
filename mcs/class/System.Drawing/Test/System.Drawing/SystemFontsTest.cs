@@ -1,10 +1,11 @@
 //
-// Tests for System.Drawing.SystemFontsTest.cs 
+// Tests for System.Drawing.SystemFontsTest
 //
 // Authors:
 //	Gert Driesen  <drieseng@users.sourceforge.net>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,16 +28,17 @@
 //
 
 #if NET_2_0
+
 using System;
 using System.Drawing;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Drawing
-{
+namespace MonoTests.System.Drawing {
+
 	[TestFixture]
-	public class SystemFontsTest
-	{
+	public class SystemFontsTest {
+
 		[Test]
 		public void DefaultFont ()
 		{
@@ -60,6 +62,70 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual ("Microsoft Sans Serif", f.FontFamily.Name, "#1");
 			Assert.AreEqual ("Microsoft Sans Serif", f.Name, "#2");
 		}
+
+		[Test]
+		public void SystemFontName ()
+		{
+			Assert.AreEqual ("CaptionFont", SystemFonts.CaptionFont.SystemFontName, "CaptionFont");
+			Assert.AreEqual ("DefaultFont", SystemFonts.DefaultFont.SystemFontName, "DefaultFont");
+			Assert.AreEqual ("DialogFont", SystemFonts.DialogFont.SystemFontName, "DialogFont");
+			Assert.AreEqual ("IconTitleFont", SystemFonts.IconTitleFont.SystemFontName, "IconTitleFont");
+			Assert.AreEqual ("MenuFont", SystemFonts.MenuFont.SystemFontName, "MenuFont");
+			Assert.AreEqual ("MessageBoxFont", SystemFonts.MessageBoxFont.SystemFontName, "MessageBoxFont");
+			Assert.AreEqual ("SmallCaptionFont", SystemFonts.SmallCaptionFont.SystemFontName, "SmallCaptionFont");
+			Assert.AreEqual ("StatusFont", SystemFonts.StatusFont.SystemFontName, "StatusFont");
+		}
+
+		[Test]
+		public void GetFontByName ()
+		{
+			Assert.AreEqual ("CaptionFont", SystemFonts.GetFontByName ("CaptionFont").SystemFontName, "CaptionFont");
+			Assert.AreEqual ("DefaultFont", SystemFonts.GetFontByName ("DefaultFont").SystemFontName, "DefaultFont");
+			Assert.AreEqual ("DialogFont", SystemFonts.GetFontByName ("DialogFont").SystemFontName, "DialogFont");
+			Assert.AreEqual ("IconTitleFont", SystemFonts.GetFontByName ("IconTitleFont").SystemFontName, "IconTitleFont");
+			Assert.AreEqual ("MenuFont", SystemFonts.GetFontByName ("MenuFont").SystemFontName, "MenuFont");
+			Assert.AreEqual ("MessageBoxFont", SystemFonts.GetFontByName ("MessageBoxFont").SystemFontName, "MessageBoxFont");
+			Assert.AreEqual ("SmallCaptionFont", SystemFonts.GetFontByName ("SmallCaptionFont").SystemFontName, "SmallCaptionFont");
+			Assert.AreEqual ("StatusFont", SystemFonts.GetFontByName ("StatusFont").SystemFontName, "StatusFont");
+		}
+
+		[Test]
+		public void GetFontByName_Invalid ()
+		{
+			Assert.IsNull (SystemFonts.GetFontByName (null), "null");
+			Assert.IsNull (SystemFonts.GetFontByName (String.Empty), "Empty");
+			Assert.IsNull (SystemFonts.GetFontByName ("defaultfont"), "lowercase");
+			Assert.IsNull (SystemFonts.GetFontByName ("DEFAULTFONT"), "UPPERCASE");
+		}
+
+		[Test]
+		public void Same ()
+		{
+			Font f1 = SystemFonts.CaptionFont;
+			Font f2 = SystemFonts.CaptionFont;
+			Assert.IsFalse (Object.ReferenceEquals (f1, f2), "property-property");
+			f2 = SystemFonts.GetFontByName ("CaptionFont");
+			Assert.IsFalse (Object.ReferenceEquals (f1, f2), "property-GetFontByName");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Dispose_Instance ()
+		{
+			Font f1 = SystemFonts.CaptionFont;
+			float height = f1.GetHeight (72f);
+			f1.Dispose ();
+			f1.GetHeight (72f), "hfont");
+		}
+
+		[Test]
+		public void Dispose_Property ()
+		{
+			float height = SystemFonts.CaptionFont.GetHeight (72f);
+			SystemFonts.CaptionFont.Dispose ();
+			Assert.AreEqual (height, SystemFonts.CaptionFont.GetHeight (72f), "height");
+		}
 	}
 }
+
 #endif
