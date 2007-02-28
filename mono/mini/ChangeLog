@@ -14,6 +14,18 @@
 
 	* method-to-ir.c (mini_emit_class_check): New helper function.
 
+	* mini-amd64.c (peephole_pass): Optimize code common in initlocals blocks.
+
+	* mini.h (NULLIFY_INS): New macro.
+
+Tue Jan 30 16:33:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: statistical profiler fix for windows, patch
+	from Tor Lillqvist (tml@novell.com).
+
+2007-01-30  Massimiliano Mantione  <massi@ximian.com>
+	* local-propagation.c: Fix bug 80591.
+
 Mon Jan 29 12:14:34 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: put back the --export-dynamic option as with
