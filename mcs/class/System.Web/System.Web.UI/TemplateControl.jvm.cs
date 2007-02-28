@@ -165,7 +165,7 @@ namespace System.Web.UI {
 			foreach (string methodName in methodNames) {
 				MethodInfo method = null;
 				Type type;
-				for (type = GetType (); type.Assembly != _System_Web_Assembly; type = type.BaseType) {
+				for (type = GetType (); type != null && type.Assembly != _System_Web_Assembly; type = type.BaseType) {
 					method = type.GetMethod (methodName, bflags);
 					if (method != null)
 						break;
