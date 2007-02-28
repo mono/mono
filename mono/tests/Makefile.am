@@ -107,6 +107,7 @@ TEST_CS_SRC=			\
 	vtype.cs		\
 	isvaluetype.cs		\
 	iface6.cs		\
+	iface7.cs		\
 	ipaddress.cs		\
 	array-vt.cs		\
 	interface1.cs		\
@@ -202,6 +203,7 @@ TEST_CS_SRC=			\
 	bug-46781.cs		\
 	bug-48015.cs		\
 	bug-42136.cs		\
+	bug-59286.cs		\
 	bug-70561.cs		\
 	bug-78311.cs		\
 	bug-78653.cs		\
@@ -225,7 +227,8 @@ TEST_CS_SRC=			\
 	subthread-exit.cs	\
 	desweak.cs		\
 	cominterop.cs		\
-	exists.cs
+	exists.cs		\
+	handleref.cs
 
 if X86
 # bug #71274
@@ -275,6 +278,7 @@ TEST_CS2_SRC = \
 	catch-generics.2.cs	\
 	event-get.2.cs		\
 	safehandle.2.cs		\
+	stackframes-async.2.cs		\
 	module-cctor-loader.2.cs	\
 	bug-80392.2.cs
 

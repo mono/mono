@@ -13,7 +13,7 @@
 
 #include "private/gc_priv.h" /* For GC_compare_and_exchange, GC_memory_barrier */
 
-#if defined(GC_LINUX_THREADS)
+#if defined(GC_LINUX_THREADS) || defined(GC_NETBSD_THREADS)
 
 #include "private/specific.h"
 

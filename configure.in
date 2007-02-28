@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.2)
+AM_INIT_AUTOMAKE(mono,1.2.3)
 AM_MAINTAINER_MODE
 
 API_VER=1.0
@@ -83,14 +83,15 @@ case "$host" in
 		;;
 	*-*-*netbsd*)
 		platform_win32=no
-		CPPFLAGS="$CPPFLAGS -D_REENTRANT"
+		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DGC_NETBSD_THREADS -D_GNU_SOURCE"
 		libmono_cflags="-D_REENTRANT"
 		LDFLAGS="$LDFLAGS -pthread"
 		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD"
 		libmono_ldflags="-pthread"
 		need_link_unlink=yes
-		libdl=
-		libgc_threads=no
+		libdl="-ldl"
+		libgc_threads=pthreads
+		with_sigaltstack=no
 		;;
 # these flags will work for all versions of -STABLE
 #
@@ -1422,6 +1423,7 @@ else
 	AC_CHECK_LIB(ws2_32, main, LIBS="$LIBS -lws2_32", AC_ERROR(bad mingw install?))
 	AC_CHECK_LIB(psapi, main, LIBS="$LIBS -lpsapi", AC_ERROR(bad mingw install?))
 	AC_CHECK_LIB(ole32, main, LIBS="$LIBS -lole32", AC_ERROR(bad mingw install?))
+	AC_CHECK_LIB(winmm, main, LIBS="$LIBS -lwinmm", AC_ERROR(bad mingw install?))
 	AC_CHECK_LIB(oleaut32, main, LIBS="$LIBS -loleaut32", AC_ERROR(bad mingw install?))
 
 	dnl *********************************
@@ -1620,7 +1622,6 @@ case "$host" in
 			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
 			have_visibility_hidden=no
 
-			libmono_ldflags="$libmono_ldflags $LIBS"
 		esac
 		;;
 	x86_64-*-* | amd64-*-*)
@@ -1654,7 +1655,6 @@ case "$host" in
 		  *)
 			LIBC="libc.so"
 			INTL="libintl.so"
-			libmono_ldflags="$libmono_ldflags $LIBS"
 		esac
 		jit_wanted=true
 		if test x"$GCC" = xyes; then
@@ -1910,6 +1910,8 @@ AC_ARG_WITH(preview, [ --with-preview=yes,no     If you want to install the 2.0 
 	      PREVIEW=no
 	fi
 ])
+
+libmono_ldflags="$libmono_ldflags $LIBS"
 
 AM_CONDITIONAL(INSTALL_2_0, test x$PREVIEW = xyes)
 

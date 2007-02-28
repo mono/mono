@@ -1533,8 +1533,12 @@ type_from_op (MonoInst *ins) {
 		ins->type = STACK_PTR;
 		switch (ins->inst_i0->type) {
 		case STACK_I4:
+			break;
 		case STACK_PTR:
 		case STACK_MP:
+#if SIZEOF_VOID_P == 8
+			ins->opcode = OP_LCONV_TO_U;
+#endif
 			break;
 		case STACK_I8:
 			ins->opcode = OP_LCONV_TO_U;
@@ -3627,6 +3631,15 @@ mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		if (cmethod->name [0] == 'B' && strcmp (cmethod->name, "Break") == 0
 				&& strcmp (cmethod->klass->name, "Debugger") == 0) {
 			MONO_INST_NEW (cfg, ins, CEE_BREAK);
+			return ins;
+		}
+		if (cmethod->name [0] == 'g' && strcmp (cmethod->name, "get_IsRunningOnWindows") == 0
+				&& strcmp (cmethod->klass->name, "Environment") == 0) {
+#ifdef PLATFORM_WIN32
+	                NEW_ICONST (cfg, ins, 1);
+#else
+	                NEW_ICONST (cfg, ins, 0);
+#endif
 			return ins;
 		}
 	}
@@ -11309,6 +11322,15 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		
 		g_list_free (regs);
 	}
+
+	/* todo: remove code when we have verified that the liveness for try/catch blocks
+	 * works perfectly 
+	 */
+	/* 
+	 * Currently, this can't be commented out since exception blocks are not
+	 * processed during liveness analysis.
+	 */
+	mono_liveness_handle_exception_clauses (cfg);
 
 	if (cfg->opt & MONO_OPT_LINEARS) {
 		GList *vars, *regs;

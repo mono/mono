@@ -1,4 +1,98 @@
-2007-02-15  Zoltan Varga  <vargaz@gmail.com>
+2007-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (type_from_op): Convert CEE_CONV_U to OP_LCONV_TO_U when the argument is
+	a pointer on 64 bit systems. Fixes #80190.
+
+	* iltests.il: Add new regression test.
+
+Tue Feb 20 11:33:28 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: inline a constant for Environment.IsRunningOnWindows.
+
+2007-02-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* trace.c: Remove an erroneous alignemnt check when tracing.
+	  Fixes --trace on OSX86.
+
+Wed Feb 14 19:45:56 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-$(arch).h: initialize SP in context for all the archs.
+
+2007-02-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mini-x86.h: Initialize SP in MONO_INIT_CONTEXT_FROM_FUNC. Fix CAS
+	regressions in the thread tests.
+
+2007-02-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* *-alpha.*: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>:
+	- fixed implementation of LOCALLOC opcode
+	- implemented non-un compare for floats
+	- code cleanup
+	- implementation of FDIV and CKFINITE opcodes
+	- fixes for latest mono updates
+	- additional arch opcodes
+
+Mon Feb 12 11:54:16 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: simplify and merge rules for cross-compilation.
+
+2007-02-07  Massimiliano Mantione  <massi@ximian.com>
+
+	* local-propagation.c: Actually *apply* the fix for bug 80591...
+
+Tue Feb 6 19:03:19 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: backuot part of the last change
+	(fixes cas tests on amd64 related to GetExecutingAssembly ()).
+
+2007-02-06  Massimiliano Mantione  <massi@ximian.com>
+	* inssel.brg: Fix bug 59286.
+
+
+Tue Feb 6 12:23:50 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: patch from Zoltan to correctly check for
+	stack boundaries (using the stack register, not the frame register),
+	fixes bugs #80724, #79717.
+
+2007-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c inssel-sparc.brg mini-sparc.c cpu-sparc.md: Get rid of OP_SETREG/
+	OP_SETREGIMM, use OP_MOVE/OP_ICONST instead.
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix ATOMIC_EXCHANGE in the
+	presence of frame pointer elimination.
+
+2007-02-01  Geoff Norton  <gnorton@customerdna.com>
+        
+	* mini-x86.h: NetBSD UCONTEX_REG defines.
+
+2007-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-amd64.brg: Fix amd64 build.
+
+Thu Feb 1 14:02:09 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: remove extern to workaround what looks likes gcc bug 26905
+	on amd64.
+
+2007-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_is_regsize_var): New helper function usable by the back
+	ends.
+
+	* mini-<ARCH>.c: Use mono_is_regsize_var ().
+
+2007-01-30 Mark Mason <mason@broadcom.com>
+
+	   * exceptions-mips.c: Lots of exception handling fixes, LMFs now work, some cleanups.
+	   * mini-mips.h: Add LMF magic numbers, and fix context set/get macros.
+	   * mini-mips.c: Cleanups, LMF handling now works, optimize store of zero, implement localloc
+	   beginning support for CEE_JMP [not quite working yet]
+	   * tramp-mips.c: LMF handling now works
+	
+2007-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (emit_load_volatile_arguments): Fix another merge problem.
 

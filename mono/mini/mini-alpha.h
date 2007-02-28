@@ -114,6 +114,7 @@ struct MonoLMF
    mono_arch_flush_register_windows ();    \
    MONO_CONTEXT_SET_IP ((ctx), (start_func));      \
    MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0)); \
+   MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0)); \
 } while (0)
 
 #define MONO_ARCH_USE_SIGACTION 1
@@ -300,7 +301,7 @@ unw_dyn_region_info_t* mono_ia64_create_unwind_region (Ia64CodegenState *code);
 
 #define MONO_ARCH_EMULATE_CONV_R8_UN     1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
-#define MONO_ARCH_EMULATE_LCONV_TO_R8    1
+//#define MONO_ARCH_EMULATE_LCONV_TO_R8    1
 #define MONO_ARCH_EMULATE_FREM           1
 #define MONO_ARCH_EMULATE_MUL_DIV        1
 #define MONO_ARCH_EMULATE_LONG_MUL_OPTS  1

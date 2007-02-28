@@ -1025,6 +1025,7 @@ gint32    mono_get_lmf_addr_tls_offset      (void) MONO_INTERNAL;
 GList    *mono_varlist_insert_sorted        (MonoCompile *cfg, GList *list, MonoMethodVar *mv, gboolean sort_end) MONO_INTERNAL;
 GList    *mono_varlist_sort                 (MonoCompile *cfg, GList *list, int sort_type) MONO_INTERNAL;
 void      mono_analyze_liveness             (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_liveness_handle_exception_clauses (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_linear_scan                  (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_mask) MONO_INTERNAL;
 void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks) MONO_INTERNAL;
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options) MONO_INTERNAL;
@@ -1094,9 +1095,10 @@ gint32*           mono_allocate_stack_slots_full (MonoCompile *cfg, gboolean bac
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_size, guint32 *stack_align) MONO_INTERNAL;
 void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname) MONO_INTERNAL;
-void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
-CompRelation      mono_opcode_to_cond (int opcode);
-CompType          mono_opcode_to_type (int opcode, int cmp_opcode);
+gboolean          mono_is_regsize_var (MonoType *t) MONO_INTERNAL;
+void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align) MONO_INTERNAL;
+CompRelation      mono_opcode_to_cond (int opcode) MONO_INTERNAL;
+CompType          mono_opcode_to_type (int opcode, int cmp_opcode) MONO_INTERNAL;
 
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);
@@ -1258,8 +1260,8 @@ mono_local_deadce (MonoCompile *cfg);
 MonoSecurityFrame* ves_icall_System_Security_SecurityFrame_GetSecurityFrame (gint32 skip) MONO_INTERNAL;
 MonoArray* ves_icall_System_Security_SecurityFrame_GetSecurityStack (gint32 skip) MONO_INTERNAL;
 
-extern int mini_wapi_hps     (int argc, char **argv) MONO_INTERNAL;
-extern int mini_wapi_semdel  (int argc, char **argv) MONO_INTERNAL;
-extern int mini_wapi_seminfo (int argc, char **argv) MONO_INTERNAL;
+int mono_wapi_hps     (int argc, char **argv) MONO_INTERNAL;
+int mono_wapi_semdel  (int argc, char **argv) MONO_INTERNAL;
+int mono_wapi_seminfo (int argc, char **argv) MONO_INTERNAL;
 
 #endif /* __MONO_MINI_H__ */

@@ -1,3 +1,24 @@
+2007-02-19  Massimiliano Mantione  <massi@ximian.com>
+	* iface7.cs, Makefile.am: Added test for bug 75903.
+
+2007-02-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* libtest.c: Add tests for COM Callable Wrapper marshalling.
+	* cominterop.cs: Add tests for COM Callable Wrapper marshalling.
+	
+	Code is contributed under MIT/X11 license.
+	
+2007-02-06  Massimiliano Mantione  <massi@ximian.com>
+	* bug-59286.cs, Makefile.am: Added test for bug 59286.
+
+2007-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
+
+	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
+
+	* interlocked.cs: Fix return values.
+	
 2007-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (bug-80307.exe): Fix srcdir != builddir.

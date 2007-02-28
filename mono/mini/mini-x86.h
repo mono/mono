@@ -43,7 +43,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 
 #endif /* PLATFORM_WIN32 */
 
-#if defined( __linux__) || defined(__sun)
+#if defined( __linux__) || defined(__sun) || defined(__APPLE__) || defined(__NetBSD__)
 #define MONO_ARCH_USE_SIGACTION
 #endif
 
@@ -127,6 +127,52 @@ struct MonoLMF {
 
 typedef void* MonoCompileArch;
 
+#if defined(__FreeBSD__) || defined(__APPLE__)
+#include <ucontext.h>
+#endif 
+
+#if defined(__FreeBSD__)
+	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext.mc_eax)
+	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext.mc_ebx)
+	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext.mc_ecx)
+	#define UCONTEXT_REG_EDX(ctx) ((ctx)->uc_mcontext.mc_edx)
+	#define UCONTEXT_REG_EBP(ctx) ((ctx)->uc_mcontext.mc_ebp)
+	#define UCONTEXT_REG_ESP(ctx) ((ctx)->uc_mcontext.mc_esp)
+	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext.mc_esi)
+	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext.mc_edi)
+	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext.mc_eip)
+#elif defined(__APPLE__)
+	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext->ss.eax)
+	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext->ss.ebx)
+	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext->ss.ecx)
+	#define UCONTEXT_REG_EDX(ctx) ((ctx)->uc_mcontext->ss.edx)
+	#define UCONTEXT_REG_EBP(ctx) ((ctx)->uc_mcontext->ss.ebp)
+	#define UCONTEXT_REG_ESP(ctx) ((ctx)->uc_mcontext->ss.esp)
+	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext->ss.esi)
+	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext->ss.edi)
+	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext->ss.eip)
+#elif defined(__NetBSD__)
+	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EAX])
+	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EBX])
+	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext.__gregs [_REG_ECX])
+	#define UCONTEXT_REG_EDX(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EDX])
+	#define UCONTEXT_REG_EBP(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EBP])
+	#define UCONTEXT_REG_ESP(ctx) ((ctx)->uc_mcontext.__gregs [_REG_ESP])
+	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext.__gregs [_REG_ESI])
+	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EDI])
+	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext.__gregs [_REG_EIP])
+#else
+	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext.gregs [REG_EAX])
+	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext.gregs [REG_EBX])
+	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext.gregs [REG_ECX])
+	#define UCONTEXT_REG_EDX(ctx) ((ctx)->uc_mcontext.gregs [REG_EDX])
+	#define UCONTEXT_REG_EBP(ctx) ((ctx)->uc_mcontext.gregs [REG_EBP])
+	#define UCONTEXT_REG_ESP(ctx) ((ctx)->uc_mcontext.gregs [REG_ESP])
+	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext.gregs [REG_ESI])
+	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext.gregs [REG_EDI])
+	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext.gregs [REG_EIP])
+#endif
+
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
 # define SC_EAX sc_eax
 # define SC_EBX sc_ebx
@@ -179,6 +225,7 @@ typedef struct {
     } \
 	MONO_CONTEXT_SET_IP ((ctx), (start_func)); \
 	MONO_CONTEXT_SET_BP ((ctx), stackptr); \
+	MONO_CONTEXT_SET_SP ((ctx), stackptr); \
 } while (0)
 
 #else
@@ -187,6 +234,7 @@ typedef struct {
 		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
+		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 	} while (0)
 
 #endif

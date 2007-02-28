@@ -685,41 +685,6 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 	return cinfo;
 }
 
-static gboolean
-is_regsize_var (MonoType *t) {
-	if (t->byref)
-		return TRUE;
-	switch (mono_type_get_underlying_type (t)->type) {
-	case MONO_TYPE_BOOLEAN:
-	case MONO_TYPE_CHAR:
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return TRUE;
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:
-		return TRUE;
-	case MONO_TYPE_VALUETYPE:
-		return FALSE;
-#ifdef SPARCV9
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return TRUE;
-#endif
-	}
-	return FALSE;
-}
-
 GList *
 mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 {
@@ -743,7 +708,7 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 		if (ins->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT) || (ins->opcode == OP_REGVAR) || (ins->opcode == OP_ARG))
 			continue;
 
-		if (is_regsize_var (ins->inst_vtype)) {
+		if (mono_is_regsize_var (ins->inst_vtype)) {
 			g_assert (MONO_VARINFO (cfg, i)->reg == -1);
 			g_assert (i == vmv->idx);
 
@@ -3102,7 +3067,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (ins, sparc_bne, "OverflowException", TRUE, sparc_icc_short);
 			break;
 		case OP_ICONST:
-		case OP_SETREGIMM:
 			sparc_set (code, ins->inst_c0, ins->dreg);
 			break;
 		case OP_I8CONST:
@@ -3119,7 +3083,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			if (ins->sreg1 != ins->dreg)
 				sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
 			break;
@@ -4694,7 +4657,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *call, int this_re
 	if (vt_reg != -1) {
 #ifdef SPARCV9
 		MonoInst *ins;
-		MONO_INST_NEW (cfg, ins, OP_SETREG);
+		MONO_INST_NEW (cfg, ins, OP_MOVE);
 		ins->sreg1 = vt_reg;
 		ins->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, ins);
@@ -4711,7 +4674,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *call, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type = this_type;
 		this->sreg1 = this_reg;
 		this->dreg = mono_regstate_next_int (cfg->rs);

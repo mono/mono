@@ -1478,10 +1478,15 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->type = STACK_PTR;
 		switch (src1->type) {
 		case STACK_I4:
-			ins->opcode = OP_ICONV_TO_U;
+			ins->opcode = OP_MOVE;
+			break;
 		case STACK_PTR:
 		case STACK_MP:
+#if SIZEOF_VOID_P == 8
+			ins->opcode = OP_LCONV_TO_U;
+#else
 			ins->opcode = OP_MOVE;
+#endif
 			break;
 		case STACK_I8:
 			ins->opcode = OP_LCONV_TO_U;
@@ -3797,6 +3802,22 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 		if (ins)
 			return ins;
+	} else if (cmethod->klass->image == mono_defaults.corlib) {
+		if (cmethod->name [0] == 'B' && strcmp (cmethod->name, "Break") == 0
+				&& strcmp (cmethod->klass->name, "Debugger") == 0) {
+			MONO_INST_NEW (cfg, ins, OP_BREAK);
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
+		}
+		if (cmethod->name [0] == 'g' && strcmp (cmethod->name, "get_IsRunningOnWindows") == 0
+				&& strcmp (cmethod->klass->name, "Environment") == 0) {
+#ifdef PLATFORM_WIN32
+	                EMIT_NEW_ICONST (cfg, ins, 1);
+#else
+	                EMIT_NEW_ICONST (cfg, ins, 0);
+#endif
+			return ins;
+		}
 	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
@@ -10027,7 +10048,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 72000.
+ * - LAST MERGE: 73553.
  */
 
 /*

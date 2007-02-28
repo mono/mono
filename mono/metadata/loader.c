@@ -329,6 +329,19 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	/* we may want to check the signature here... */
 
 	switch (class) {
+	case MONO_MEMBERREF_PARENT_TYPEDEF:
+		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | nindex);
+		if (!klass) {
+			char *name = mono_class_name_from_token (image, MONO_TOKEN_TYPE_REF | nindex);
+			g_warning ("Missing field %s in class %s (typeref index %d)", fname, name, nindex);
+			g_free (name);
+			return NULL;
+		}
+		mono_class_init (klass);
+		if (retklass)
+			*retklass = klass;
+		field = mono_class_get_field_from_name (klass, fname);
+		break;
 	case MONO_MEMBERREF_PARENT_TYPEREF:
 		klass = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
 		if (!klass) {
@@ -912,20 +925,19 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	return inflated;
 }
 
-typedef struct MonoDllMap MonoDllMap;
-
-struct MonoDllMap {
-	char *name;
-	char *target;
+struct _MonoDllMap {
 	char *dll;
+	char *target;
+	char *func;
+	char *target_func;
 	MonoDllMap *next;
 };
 
-static GHashTable *global_dll_map;
+static MonoDllMap *global_dll_map;
 
 static int 
-mono_dllmap_lookup_hash (GHashTable *dll_map, const char *dll, const char* func, const char **rdll, const char **rfunc) {
-	MonoDllMap *map, *tmp;
+mono_dllmap_lookup_list (MonoDllMap *dll_map, const char *dll, const char* func, const char **rdll, const char **rfunc) {
+	int found = 0;
 
 	*rdll = dll;
 
@@ -934,25 +946,33 @@ mono_dllmap_lookup_hash (GHashTable *dll_map, const char *dll, const char* func,
 
 	mono_loader_lock ();
 
-	map = g_hash_table_lookup (dll_map, dll);
-	if (!map) {
-		mono_loader_unlock ();
-		return 0;
-	}
-	*rdll = map->target? map->target: dll;
-
-	for (tmp = map->next; tmp; tmp = tmp->next) {
-		if (strcmp (func, tmp->name) == 0) {
-			*rfunc = tmp->name;
-			if (tmp->dll)
-				*rdll = tmp->dll;
-			mono_loader_unlock ();
-			return 1;
+	/* 
+	 * we use the first entry we find that matches, since entries from
+	 * the config file are prepended to the list and we document that the
+	 * later entries win.
+	 */
+	for (; dll_map; dll_map = dll_map->next) {
+		if (dll_map->dll [0] == 'i' && dll_map->dll [1] == ':') {
+			if (g_ascii_strcasecmp (dll_map->dll + 2, dll))
+				continue;
+		} else if (strcmp (dll_map->dll, dll)) {
+			continue;
+		}
+		if (!found && dll_map->target) {
+			*rdll = dll_map->target;
+			found = 1;
+			/* we don't quit here, because we could find a full
+			 * entry that matches also function and that has priority.
+			 */
+		}
+		if (dll_map->func && strcmp (dll_map->func, func) == 0) {
+			*rfunc = dll_map->target_func;
+			break;
 		}
 	}
-	*rfunc = func;
+
 	mono_loader_unlock ();
-	return 1;
+	return found;
 }
 
 static int 
@@ -960,47 +980,36 @@ mono_dllmap_lookup (MonoImage *assembly, const char *dll, const char* func, cons
 {
 	int res;
 	if (assembly && assembly->dll_map) {
-		res = mono_dllmap_lookup_hash (assembly->dll_map, dll, func, rdll, rfunc);
+		res = mono_dllmap_lookup_list (assembly->dll_map, dll, func, rdll, rfunc);
 		if (res)
 			return res;
 	}
-	return mono_dllmap_lookup_hash (global_dll_map, dll, func, rdll, rfunc);
+	return mono_dllmap_lookup_list (global_dll_map, dll, func, rdll, rfunc);
 }
 
 void
 mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc) {
-	MonoDllMap *map, *entry;
-	GHashTable *dll_map = NULL;
+	MonoDllMap *entry;
 
 	mono_loader_lock ();
 
 	if (!assembly) {
-		if (!global_dll_map)
-			global_dll_map = g_hash_table_new (g_str_hash, g_str_equal);
-		dll_map = global_dll_map;
+		entry = g_malloc0 (sizeof (MonoDllMap));
+		entry->dll = dll? g_strdup (dll): NULL;
+		entry->target = tdll? g_strdup (tdll): NULL;
+		entry->func = func? g_strdup (func): NULL;
+		entry->target_func = tfunc? g_strdup (tfunc): NULL;
+		entry->next = global_dll_map;
+		global_dll_map = entry;
 	} else {
-		if (!assembly->dll_map)
-			assembly->dll_map = g_hash_table_new (g_str_hash, g_str_equal);
-		dll_map = assembly->dll_map;
-	}
-
-	map = g_hash_table_lookup (dll_map, dll);
-	if (!map) {
-		map = g_new0 (MonoDllMap, 1);
-		map->dll = g_strdup (dll);
-		if (tdll)
-			map->target = g_strdup (tdll);
-		g_hash_table_insert (dll_map, map->dll, map);
-	}
-	if (func) {
-		entry = g_new0 (MonoDllMap, 1);
-		entry->name = g_strdup (func);
-		if (tfunc)
-			entry->target = g_strdup (tfunc);
-		if (tdll && map->target && strcmp (map->target, tdll))
-			entry->dll = g_strdup (tdll);
-		entry->next = map->next;
-		map->next = entry;
+		MonoMemPool *mpool = assembly->mempool;
+		entry = mono_mempool_alloc0 (mpool, sizeof (MonoDllMap));
+		entry->dll = dll? mono_mempool_strdup (mpool, dll): NULL;
+		entry->target = tdll? mono_mempool_strdup (mpool, tdll): NULL;
+		entry->func = func? mono_mempool_strdup (mpool, func): NULL;
+		entry->target_func = tfunc? mono_mempool_strdup (mpool, tfunc): NULL;
+		entry->next = assembly->dll_map;
+		assembly->dll_map = entry;
 	}
 
 	mono_loader_unlock ();

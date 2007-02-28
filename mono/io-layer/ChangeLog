@@ -1,3 +1,12 @@
+
+Mon Feb 12 15:50:24 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: exit if semaphores can't be created (bug #80616).
+
+2007-02-01  Geoff Norton  <gnorton@customerdna.com>
+
+	* collection.c: NetBSD doesn't define PTHREAD_STACK_MIN.
+
 2007-01-26  Dick Porter  <dick@ximian.com>
 
 	* socket-private.h: 

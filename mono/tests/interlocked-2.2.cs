@@ -49,7 +49,6 @@ public class InterlockTest
 
 		la = 1;
 		lc = Interlocked.Exchange (ref la, 2);
-		Console.WriteLine ("A: " + lc);
 		if (lc != 1)
 			return 10;
 

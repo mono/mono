@@ -1,4 +1,99 @@
 
+Fri Feb 23 15:06:57 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: allow case-insensitive matching of the dll name
+	in dllmap handling when prefixed with "i:".
+
+2007-02-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* threads.c: Fix #ifdef for dummy_apc function for VS.
+
+Tue Feb 20 11:59:42 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: don't throw in MemoryBarrier (), use lock/unlock.
+
+2007-02-19  Massimiliano Mantione  <massi@ximian.com>
+	* class.c (mono_class_setup_vtable_general): Fix bug 75903,
+	giving precedence to the methods with a fully qualified name
+	(InterfaceName.MethodName) when building the interface sections
+	of the vtable.
+
+2007-02-16  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (append_job): Fix fast-path array handling, so it's
+	less likely the array will grow exponentially when the load is
+	heavy.
+
+Fri Feb 16 19:17:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* metadata-internals.h, loader.c: fix dllmap lookup order
+	for non-function maps, too, and prepare for fallback code.
+
+2007-02-12  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.c, marshal.h, icall-def.h: rename mono_marshal_realloc
+	to ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal
+	and use GlobalReAlloc on WIN32 to be in sync with GlobalAlloc,
+	GlobalFree. Fixes a part of bug #77075.
+
+Mon Feb 12 21:10:07 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: implemented typedef parent in field memberref.
+
+2007-02-11  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Fix warnings and remember to call Release on
+	IUnknown of RCW.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-02-10  Miguel de Icaza  <miguel@novell.com>
+
+	* class-internals.h: Add MonoHandleRef definition, and
+	handleref_class to mono_defaults. 
+
+	* metadata.c (mono_type_to_unmanaged): If we find HandleRefs in a
+	structure, use new conversion MONO_MARSHAL_CONV_HANDLEREF.
+
+	* marshal.c (emit_ptr_to_object_conv): Add support for HandleRefs
+	(do nothing on this stage)
+	(emit_object_to_ptr_conv): Extract the handle from the HandleRef.  
+	(emit_marshal_handleref): New method, used for argument handling
+	of HandleRefs. 
+
+2007-02-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* class.c (mono_class_setup_parent): Lazily init com types.
+	* domain.c (mono_init_internal, mono_init_com_types): Lazily 
+	init com types.
+	* object.c (mono_remote_class_vtable): Lazily init com types.
+	* class-internals.h: Add iunknown and idispatch to MonoDefaults.
+	* object-internals.h: Add MonoComInteropProxy and MonoReflectionGuidAttribute.
+	* domain-internals.h: Expose mono_init_com_types.
+	* icall-def.h: Add icalls for ComInteropProxy, __ComObject, and Marshal.
+	* marshal.c: Add mutex for cominterop use. Init locals for wrapper methods.
+	Add support for COM Callable Wrapper marshalling.
+	* marshal.h: Add icall definitions.
+	* gc.c: Handle freeing of CCWs in finalizer code.
+	
+	Code is contributed under MIT/X11 license.
+
+Thu Feb 8 12:46:18 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: changed all the signature encoding code to use
+	a variable-sized buffer.
+
+Wed Feb 7 20:37:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: locking fixes: never take the loader lock
+	or other runtime locks when holding the marshal lock
+	(fixes bug#80664).
+
+Wed Feb 7 18:49:10 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make the delegate function pointer mapping
+	work for the moving GC.
+
 Mon Jan 29 11:30:46 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: fix from Robert Jordan (robertj@gmx.net)

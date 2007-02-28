@@ -1956,7 +1956,7 @@ void GC_err_puts GC_PROTO((GC_CONST char *s));
   /* in Linux glibc, but it's not exported.)  Thus we continue to use	*/
   /* the same hard-coded signals we've always used.			*/
 #  if !defined(SIG_SUSPEND)
-#   if defined(GC_LINUX_THREADS) || defined(GC_DGUX386_THREADS)
+#   if defined(GC_LINUX_THREADS) || defined(GC_DGUX386_THREADS) || defined(GC_NETBSD_THREADS)
 #    if defined(SPARC) && !defined(SIGPWR)
        /* SPARC/Linux doesn't properly define SIGPWR in <signal.h>.
         * It is aliased to SIGLOST in asm/signal.h, though.		*/
