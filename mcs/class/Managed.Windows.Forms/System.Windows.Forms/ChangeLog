@@ -1,3 +1,43 @@
+2007-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* ApplicationContext.cs: Add a flag to make sure we only raise the
+	ThreadExit event once (ExitThreadCore can be indirectly called
+	from a few places.)  I don't like the additional flag, but it
+	makes the event ordering/count correct.
+
+	* Application.cs (MWFThread.LoopCount): don't use an enumerator
+	without locking the collection.  An enumerator doesn't give us any
+	protection from modification anyway.  Lock the thread hash and
+	replace the complicated enumerator loop with a foreach.
+	(Application.CloseForms): make internal so it can be called from
+	ApplicationContext.  This should probably be moved to MWFThread.
+	(Application.ExitThread): don't call MWFThread.Current.Exit()
+	here.  just call XplatUI.PostQuitMessage.  We'll exit the thread
+	when the runloop exits (in response to WM_QUIT.)
+	(Application.RunLoop): add a comment (and check) for
+	context.MainForm being null after setting context.MainForm.Visible
+	= true.  This is because you're perfectly free to dispose of a
+	form in VisibilityChanged.  Chalk this up to another case where we
+	need to synchronously generate WM_ACTIVATE from Control.Show.
+	Also, add handling for WM_QUIT here so we'll exit the loop.
+	
+	* XplatUIX11.cs: clean up MapWindow and UnmapWindow a bit.  The
+	fact that we don't wait if we're only unmapping the whole_window
+	makes me a bit nervous, but it doesn't seem to cause any problems
+	yet.
+
+	also, add a comment about the stupid, broken and wrong resetting
+	of PostQuitState to false in GetMessage().
+
+	In PostQuitMessage, we need to add a WM_QUIT message to the
+	thread's queue.  We use the FosterParent to get the right
+	handle/hwnd/queue.
+
+	Lastly, in SetVisible, we need to unmap both windows, since the
+	waiting only happens when we're unmapping the client window.  So
+	now, the *only* time we unmap just the whole_window is in the hack
+	for resizing a control to 0,0.
+	
 2007-02-21  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs (CloseForms): rewrite this so that we don't

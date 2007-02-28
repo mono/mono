@@ -36,6 +36,8 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		object tag;
 #endif
+		bool thread_exit_raised;
+
 		#endregion	// Local Variables
 
 		#region Public Constructors & Destructors
@@ -104,7 +106,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void ExitThreadCore() {
-			if (ThreadExit!=null) {
+			XplatUI.PostQuitMessage(0);
+			if (!thread_exit_raised && ThreadExit != null) {
+				thread_exit_raised = true;
 				ThreadExit(this, EventArgs.Empty);
 			}
 		}

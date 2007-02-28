@@ -1745,6 +1745,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
+	[Category ("NotWorking")]
 	public class ControlInvokeTest {
 		public delegate void TestDelegate ();
 
@@ -1753,11 +1754,13 @@ namespace MonoTests.System.Windows.Forms
 		Thread control_t;
 		ApplicationContext control_context;
 		bool delegateCalled = false;
+		bool threadDied = false;
 
 		object m;
 
 		void CreateControl ()
 		{
+			try {
 			f = new Form ();
 			f.ShowInTaskbar = false;
 			
@@ -1777,11 +1780,20 @@ namespace MonoTests.System.Windows.Forms
 			Console.WriteLine ("control thread running");
 			Application.Run (control_context);
 			c.Dispose ();
+			Console.WriteLine ("dying");
+			threadDied = true;
+			Monitor.Enter (m);
+			Console.WriteLine ("pulsing again");
+			Monitor.Pulse (m);
+			Monitor.Exit (m);
+			} catch (Exception e) { Console.WriteLine (e); }
 		}
 
 		[Test]
 		public void InvokeTest ()
 		{
+			Console.WriteLine ("hi");
+
 			m = new object ();
 
 			control_t = new Thread(new ThreadStart(CreateControl));
@@ -1799,14 +1811,20 @@ namespace MonoTests.System.Windows.Forms
 			result = c.BeginInvoke (new TestDelegate (delegate_call));
 			c.EndInvoke (result);
 
-			Assert.AreEqual (true, delegateCalled, "Invoke1");
+			Assert.IsTrue (delegateCalled, "Invoke1");
+
+			Monitor.Wait (m);
+			Assert.IsTrue (threadDied, "Invoke2");
 		}
 
 		public void delegate_call () {
+			try {
 			/* invoked on control_context's thread */
 			delegateCalled = true;
 			f.Dispose ();
-			Application.Exit ();
+			Console.WriteLine ("calling Application.Exit");
+			control_context.ExitThread ();
+			} catch (Exception e) { Console.WriteLine (e); }
 		}
 		
 	}

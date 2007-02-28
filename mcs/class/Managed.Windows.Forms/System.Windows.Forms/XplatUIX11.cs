@@ -1292,31 +1292,41 @@ namespace System.Windows.Forms {
 
 		private void MapWindow(Hwnd hwnd, WindowType windows) {
 			if (!hwnd.mapped) {
-				hwnd.mapped = true;
+				bool need_to_wait = false;
+
 				if ((windows & WindowType.Whole) != 0) {
 					XMapWindow(DisplayHandle, hwnd.whole_window);
 				}
 				if ((windows & WindowType.Client) != 0) {
 					XMapWindow(DisplayHandle, hwnd.client_window);
 
-					if (Control.FromHandle(hwnd.Handle) is Form)
-						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+					need_to_wait = true;
 				}
+
+				hwnd.mapped = true;
+
+				if (need_to_wait && Control.FromHandle(hwnd.Handle) is Form)
+					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 			}
 		}
 
 		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
 			if (hwnd.mapped) {
-				hwnd.mapped = false;
-				if ((windows & WindowType.Whole) != 0) {
-					XUnmapWindow(DisplayHandle, hwnd.whole_window);
-				}
+				bool need_to_wait = false;
+
 				if ((windows & WindowType.Client) != 0) {
 					XUnmapWindow(DisplayHandle, hwnd.client_window);
 
-					if (Control.FromHandle(hwnd.Handle) is Form)
-						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+					need_to_wait = true;
 				}
+				if ((windows & WindowType.Whole) != 0) {
+					XUnmapWindow(DisplayHandle, hwnd.whole_window);
+				}
+
+				hwnd.mapped = false;
+
+				if (need_to_wait && Control.FromHandle(hwnd.Handle) is Form)
+					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 			}
 		}
 
@@ -3269,6 +3279,14 @@ namespace System.Windows.Forms {
 					}
 
 					// We reset ourselves so GetMessage can be called again
+
+					// XXX this is *so* wrong.  if
+					// we've posted the quit
+					// message we shouldn't *be*
+					// called again.  Removing it,
+					// however, makes many of the
+					// ListView unit tests fail.
+					// should investigate why.
 					ThreadQueue(Thread.CurrentThread).PostQuitState = false;
 
 					return false;
@@ -4293,7 +4311,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void PostQuitMessage(int exitCode) {
-			
+			PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
 			XFlush(DisplayHandle);
 			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
@@ -4858,7 +4876,7 @@ namespace System.Windows.Forms {
 					SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 				}
 				else {
-					UnmapWindow(hwnd, WindowType.Whole);
+					UnmapWindow(hwnd, WindowType.Both);
 				}
 			}
 			return true;

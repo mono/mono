@@ -1,3 +1,13 @@
+2007-02-28  Chris Toshok  <toshok@ximian.com>
+
+	* ControlTest.cs: Flesh out ControlInvokeTest to make sure that
+	the Control thread dies (that Application.Run returns, basically).
+	This works in isolation, but for some reason it isn't exiting when
+	run in concert with other tests (this test is the cause of the
+	hangs running the unit tests.)  Marking NotWorking for the time
+	being.  This needs to be fixed before merging back to the
+	mainline, imo.
+
 2007-02-12  Everaldo Canuto  <everaldo@simios.org>
 
 	* LabelTest.cs: Rename PreferredSize test to PreferredWidth and
