@@ -1,3 +1,9 @@
+
+Wed Feb 28 16:53:40 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c, null-gc.c, object.h, object.c: sgen gc fixes
+	for clone operations.
+
 2007-02-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Fix warnings.
