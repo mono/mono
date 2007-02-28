@@ -1,3 +1,8 @@
+2007-02-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionSerializeBase2.cs : regenerated with the latest
+	  genxs.
+
 2007-02-28  Konstantin Triger <kostat@mainsoft.com>
 
 	* ProtocolReflector.cs: emit conformance claims when required.
