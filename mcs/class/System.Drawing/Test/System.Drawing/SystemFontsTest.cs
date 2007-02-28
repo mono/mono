@@ -115,7 +115,7 @@ namespace MonoTests.System.Drawing {
 			Font f1 = SystemFonts.CaptionFont;
 			float height = f1.GetHeight (72f);
 			f1.Dispose ();
-			f1.GetHeight (72f), "hfont");
+			f1.GetHeight (72f);
 		}
 
 		[Test]
