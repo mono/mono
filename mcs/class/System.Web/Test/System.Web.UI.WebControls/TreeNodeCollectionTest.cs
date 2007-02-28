@@ -247,6 +247,146 @@ namespace MonoTests.System.Web.UI.WebControls {
 			R.ChildNodes.Add (N2);
 			tv.Nodes.Add (R);
 		}
+		[Test]
+		public void ViewState1 ()
+		{
+			TreeView m = new TreeView ();
+			fillTree (m);
+
+			((IStateManager) m.Nodes).TrackViewState ();
+			m.Nodes [0].Text = "root";
+			m.Nodes [0].ChildNodes [0].Text = "node";
+			m.Nodes [0].ChildNodes [0].ChildNodes [0].Text = "subnode";
+			object state = ((IStateManager) m.Nodes).SaveViewState ();
+
+			TreeView copy = new TreeView ();
+			fillTree (copy);
+			((IStateManager) copy.Nodes).TrackViewState ();
+			((IStateManager) copy.Nodes).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Nodes.Count);
+			Assert.AreEqual (2, copy.Nodes [0].ChildNodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes [0].ChildNodes.Count);
+
+			Assert.AreEqual ("root", copy.Nodes [0].Text);
+			Assert.AreEqual ("node", copy.Nodes [0].ChildNodes [0].Text);
+			Assert.AreEqual ("subnode", copy.Nodes [0].ChildNodes [0].ChildNodes [0].Text);
+		}
+
+		[Test]
+		public void ViewState2 ()
+		{
+			TreeView m = new TreeView ();
+			fillTree (m);
+
+			((IStateManager) m.Nodes).TrackViewState ();
+			m.Nodes [0].Text = "root";
+			m.Nodes [0].ChildNodes [0].Text = "node";
+			m.Nodes [0].ChildNodes [0].ChildNodes [0].Text = "subnode";
+			m.Nodes.Add (new TreeNode ("root 2"));
+			object state = ((IStateManager) m.Nodes).SaveViewState ();
+
+			TreeView copy = new TreeView ();
+			fillTree (copy);
+			((IStateManager) copy.Nodes).TrackViewState ();
+			((IStateManager) copy.Nodes).LoadViewState (state);
+
+			Assert.AreEqual (2, copy.Nodes.Count);
+			Assert.AreEqual (2, copy.Nodes [0].ChildNodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes [0].ChildNodes.Count);
+
+			Assert.AreEqual ("root", copy.Nodes [0].Text);
+			Assert.AreEqual ("node", copy.Nodes [0].ChildNodes [0].Text);
+			Assert.AreEqual ("subnode", copy.Nodes [0].ChildNodes [0].ChildNodes [0].Text);
+			Assert.AreEqual ("root 2", copy.Nodes [1].Text);
+		}
+
+		[Test]
+		public void ViewState3 ()
+		{
+			TreeView m = new TreeView ();
+			fillTree (m);
+			m.Nodes.Add (new TreeNode ("root 2"));
+
+			((IStateManager) m.Nodes).TrackViewState ();
+			m.Nodes [0].Text = "root";
+			m.Nodes [0].ChildNodes [0].Text = "node";
+			m.Nodes [0].ChildNodes [0].ChildNodes [0].Text = "subnode";
+			m.Nodes.RemoveAt (1);
+			object state = ((IStateManager) m.Nodes).SaveViewState ();
+
+			TreeView copy = new TreeView ();
+			fillTree (copy);
+			copy.Nodes.Add (new TreeNode ("root 2"));
+			((IStateManager) copy.Nodes).TrackViewState ();
+			((IStateManager) copy.Nodes).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Nodes.Count);
+			Assert.AreEqual (2, copy.Nodes [0].ChildNodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes [0].ChildNodes.Count);
+
+			Assert.AreEqual ("root", copy.Nodes [0].Text);
+			Assert.AreEqual ("node", copy.Nodes [0].ChildNodes [0].Text);
+			Assert.AreEqual ("subnode", copy.Nodes [0].ChildNodes [0].ChildNodes [0].Text);
+		}
+
+		[Test]
+		public void ViewState4 ()
+		{
+			TreeView m = new TreeView ();
+			fillTree (m);
+			m.Nodes.Add (new TreeNode ("root 2"));
+			m.Nodes [0].ChildNodes.RemoveAt (1);
+
+			((IStateManager) m.Nodes).TrackViewState ();
+			m.Nodes [0].Text = "root";
+			m.Nodes [0].ChildNodes [0].Text = "node";
+			m.Nodes [0].ChildNodes [0].ChildNodes [0].Text = "subnode";
+			object state = ((IStateManager) m.Nodes).SaveViewState ();
+
+			TreeView copy = new TreeView ();
+			fillTree (copy);
+			copy.Nodes.Add (new TreeNode ("root 2"));
+			copy.Nodes [0].ChildNodes.RemoveAt (1);
+			((IStateManager) copy.Nodes).TrackViewState ();
+			((IStateManager) copy.Nodes).LoadViewState (state);
+
+			Assert.AreEqual (2, copy.Nodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes [0].ChildNodes.Count);
+
+			Assert.AreEqual ("root", copy.Nodes [0].Text);
+			Assert.AreEqual ("node", copy.Nodes [0].ChildNodes [0].Text);
+			Assert.AreEqual ("subnode", copy.Nodes [0].ChildNodes [0].ChildNodes [0].Text);
+		}
+
+		[Test]
+		public void ViewState5 ()
+		{
+			TreeView m = new TreeView ();
+			((IStateManager) m.Nodes).TrackViewState ();
+			fillTree (m);
+
+			object state = ((IStateManager) m.Nodes).SaveViewState ();
+
+			TreeView copy = new TreeView ();
+			((IStateManager) copy.Nodes).TrackViewState ();
+			((IStateManager) copy.Nodes).LoadViewState (state);
+
+			Assert.AreEqual (1, copy.Nodes.Count);
+			Assert.AreEqual (2, copy.Nodes [0].ChildNodes.Count);
+			Assert.AreEqual (1, copy.Nodes [0].ChildNodes [0].ChildNodes.Count);
+		}
+
+		private static void fillTree (TreeView tv)
+		{
+			tv.Nodes.Clear ();
+			tv.Nodes.Add (new TreeNode ());
+			tv.Nodes [0].ChildNodes.Add (new TreeNode ());
+			tv.Nodes [0].ChildNodes.Add (new TreeNode ());
+			tv.Nodes [0].ChildNodes [0].ChildNodes.Add (new TreeNode ());
+		}
+
 	}
 }
 

@@ -87,8 +87,7 @@ namespace System.Web.UI.WebControls
 			child.Tree = tree;
 			if (marked) {
 				((IStateManager)child).TrackViewState ();
-				child.SetDirty ();
-				dirty = true;
+				SetDirty ();
 			}
 		}
 		
@@ -102,8 +101,7 @@ namespace System.Web.UI.WebControls
 				((TreeNode)items[n]).Index = n;
 			if (marked) {
 				((IStateManager)child).TrackViewState ();
-				child.SetDirty ();
-				dirty = true;
+				SetDirty ();
 			}
 		}
 
@@ -155,7 +153,7 @@ namespace System.Web.UI.WebControls
 			if (tree != null)
 				node.Tree = null;
 			if (marked) {
-				dirty = true;
+				SetDirty ();
 			}
 		}
 		
@@ -166,7 +164,7 @@ namespace System.Web.UI.WebControls
 			if (tree != null)
 				node.Tree = null;
 			if (marked) {
-				dirty = true;
+				SetDirty ();
 			}
 		}
 		
@@ -194,20 +192,26 @@ namespace System.Web.UI.WebControls
 			
 			dirty = (bool)its [0];
 			
-			if (dirty)
+			if (dirty) {
 				items.Clear ();
 
-			for (int n=1; n<its.Length; n++) {
-				Pair pair = (Pair) its [n];
-				int oi = (int) pair.First;
-				TreeNode node;
-				if (oi != -1)
-					node = (TreeNode) items [oi];
-				else
-					node = new TreeNode ();
-				if (dirty) Add (node);
-				((IStateManager)node).LoadViewState (pair.Second);
+				for (int n = 1; n < its.Length; n++) {
+					TreeNode item = new TreeNode ();
+					Add (item);
+					object ns = its [n];
+					if (ns != null)
+						((IStateManager) item).LoadViewState (ns);
+				}
 			}
+			else {
+				for (int n = 1; n < its.Length; n++) {
+					Pair pair = (Pair) its [n];
+					int oi = (int) pair.First;
+					TreeNode node = (TreeNode) items [oi];
+					((IStateManager) node).LoadViewState (pair.Second);
+				}
+			}
+
 		}
 		
 		object IStateManager.SaveViewState ()
@@ -216,13 +220,15 @@ namespace System.Web.UI.WebControls
 			bool hasData = false;
 			
 			if (dirty) {
-				state = new object [items.Count + 1];
-				state [0] = true;
-				for (int n=0; n<items.Count; n++) {
-					TreeNode node = items[n] as TreeNode;
-					object ns = ((IStateManager)node).SaveViewState ();
-					if (ns != null) hasData = true;
-					state [n + 1] = new Pair (-1, ns);
+				if (items.Count > 0) {
+					hasData = true;
+					state = new object [items.Count + 1];
+					state [0] = true;
+					for (int n = 0; n < items.Count; n++) {
+						TreeNode node = items [n] as TreeNode;
+						object ns = ((IStateManager) node).SaveViewState ();
+						state [n + 1] = ns;
+					}
 				}
 			} else {
 				ArrayList list = new ArrayList ();
