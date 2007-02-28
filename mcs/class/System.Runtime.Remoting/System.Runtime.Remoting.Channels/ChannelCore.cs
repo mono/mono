@@ -58,6 +58,8 @@ namespace System.Runtime.Remoting.Channels
 			
 			// Try using the simple name
 			asm = Assembly.LoadWithPartialName (assemblyName);
+			if (asm == null)
+				return null;
 			return asm.GetType (typeName, true);
 		}
 	}

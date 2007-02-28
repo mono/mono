@@ -1,3 +1,8 @@
+2007-28-02  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ChannelCore.cs: Added missing null check. LoadWithPartialName can
+	return null.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SoapMessageFormatter.cs: FieldSetter and FieldGetter methods need
