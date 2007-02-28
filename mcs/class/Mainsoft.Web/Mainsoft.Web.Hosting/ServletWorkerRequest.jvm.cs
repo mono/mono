@@ -327,7 +327,7 @@ namespace Mainsoft.Web.Hosting {
 
 			string contextPath = GetAppPath ();
 			if (contextPath.Length != appVirtualPathIndex ||
-				string.CompareOrdinal (contextPath, 0, virtualPath, 0, appVirtualPathIndex) != 0) {
+				string.Compare (contextPath, 0, virtualPath, 0, appVirtualPathIndex, StringComparison.InvariantCultureIgnoreCase) != 0) {
 
 				ServletContext context = config.getServletContext ().getContext (virtualPath.Remove (appVirtualPathIndex));
 				string retVal;
