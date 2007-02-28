@@ -552,7 +552,7 @@ namespace System.Windows.Forms
 			return rv;
 		}
 
-		private void CalcMeasurementFactor ()
+		internal Rectangle CalcTrimRectangle ()
 		{
 			const string text = "X";
 			
@@ -568,7 +568,7 @@ namespace System.Windows.Forms
 			// Calculate diference.
 			RectangleF rectf = regions [0].GetBounds (DeviceContext);
 			
-			factor = new Rectangle ((int) rectf.X, (int) rectf.Y, 
+			return new Rectangle ((int) rectf.X, (int) rectf.Y, 
 							rect.Width - (int) rectf.Width - ((int) rectf.X * 2), 
 							rect.Height - (int) rectf.Height - ((int) rectf.Y * 2));
 		}
@@ -637,7 +637,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < pieces.Length; i ++)
 				pieces[i].region = regions[i];
 
-			CalcMeasurementFactor ();
+			factor = CalcTrimRectangle ();
 			Invalidate ();
 		}
 
