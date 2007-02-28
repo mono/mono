@@ -1,3 +1,8 @@
+2007-01-28  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: Added security to net_2_0_SUBDIRS (so httpcfg.exe
+	gets installed)
+
 2007-01-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Makefile: Added al to net_2_0_SUBDIRS.
