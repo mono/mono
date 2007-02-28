@@ -364,7 +364,13 @@ namespace System.Drawing
 		{
 			CreateFont(familyName, emSize, style, unit, charSet, isVertical);
 		}
-
+#if NET_2_0
+		internal Font (string familyName, float emSize, string systemName)
+			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, DefaultCharSet, false)
+		{
+			systemFontName = systemName;
+		}
+#endif
 		public object Clone ()
 		{
 			return new Font (this, Style);
@@ -375,14 +381,6 @@ namespace System.Drawing
 				return fontObject;
 			}
 		}
-
-#if NET_2_0
-		internal string SysFontName {
-			set {
-				systemFontName = value;
-			}
-		}
-#endif
 
 		private bool _bold;
 

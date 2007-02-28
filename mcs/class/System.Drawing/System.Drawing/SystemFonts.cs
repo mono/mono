@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -21,39 +21,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Authors:
-//
-//   Jordi Mas i Hernandez <jordimash@gmail.com>
-//
+//	Jordi Mas i Hernandez <jordimash@gmail.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
 #if NET_2_0
 
-using System;
-using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
+namespace System.Drawing {
 
-namespace System.Drawing
-{
-	public sealed class SystemFonts
-	{
-		private static Font caption = null;
-		private static Font defaultfnt = null;
-		private static Font dialog = null;
-		private static Font icon = null;
-		private static Font menu = null;
-		private static Font message = null;
-		private static Font smallcaption = null;
-		private static Font status = null;
+	public sealed class SystemFonts {
 		
 		static SystemFonts ()
 		{
-
 		}
 
 		private SystemFonts()
 		{
-
 		}
 
 		public static Font GetFontByName (string name)
@@ -86,83 +69,35 @@ namespace System.Drawing
 		}
 
 		public static Font CaptionFont { 
-			get {
-				if (caption == null) {
-					caption = new Font ("Microsoft Sans Serif", 11);
-					caption.SysFontName = "CaptionFont";
-				}
-				return caption;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "CaptionFont"); }
 		}
 
 		public static Font DefaultFont  { 
-			get {
-				if (defaultfnt == null) {
-					defaultfnt = new Font ("Microsoft Sans Serif", 8.25f);
-					defaultfnt.SysFontName = "DefaultFont";
-				}
-				return defaultfnt;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 8.25f, "DefaultFont"); }
 		}
 
 		public static Font DialogFont  { 
-			get {
-				if (dialog == null) {
-					dialog = new Font ("Tahoma", 8);
-					dialog.SysFontName = "DialogFont";
-				}
-				return dialog;
-			}			
+			get { return new Font ("Tahoma", 8, "DialogFont"); }
 		}
 
 		public static Font IconTitleFont  { 
-			get {
-				if (icon == null) {
-					icon = new Font ("Microsoft Sans Serif", 11);	
-					icon.SysFontName = "IconTitleFont";
-				}
-				return icon;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "IconTitleFont"); }
 		}
 
 		public static Font MenuFont  { 
-			get {
-				if (menu == null) {
-					menu = new Font ("Microsoft Sans Serif", 11);
-					menu.SysFontName = "MenuFont";
-				}
-				return menu;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "MenuFont"); }
 		}
 
 		public static Font MessageBoxFont  { 
-			get {
-				if (message == null) {
-					message = new Font ("Microsoft Sans Serif", 11);
-					message.SysFontName = "MessageBoxFont";
-				}
-				return message;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "MessageBoxFont"); }
 		}
 
 		public static Font SmallCaptionFont  { 
-			get {
-				if (smallcaption == null) {
-					smallcaption = new Font ("Microsoft Sans Serif", 11);
-					smallcaption.SysFontName = "SmallCaptionFont";
-				}
-				return smallcaption;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "SmallCaptionFont"); }
 		}
 
 		public static Font StatusFont  { 
-			get {
-				if (status == null) {
-					status = new Font ("Microsoft Sans Serif", 11);
-					status.SysFontName = "StatusFont";
-				}
-				return status;
-			}			
+			get { return new Font ("Microsoft Sans Serif", 11, "StatusFont"); }
 		}	      
 	}
 }
