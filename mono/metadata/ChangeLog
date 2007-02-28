@@ -1,5 +1,8 @@
 2007-02-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (emit_object_to_ptr_conv): Emit valid IL for handling HandleRefs.
+	(emit_marshal_handleref): Ditto.
+
 	* profiler.c: Applied patch from Tor Lillqvist (tml@novell.com) to fix output
 	on Visual C++. Fixes #80671.
 
