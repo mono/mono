@@ -517,6 +517,7 @@ System.Windows.Forms/QuestionEventHandler.cs
 System.Windows.Forms/RadioButton.cs
 System.Windows.Forms/RadioButtonRenderer.cs
 System.Windows.Forms/RelatedCurrencyManager.cs
+System.Windows.Forms/RelatedImageListAttribute.cs
 System.Windows.Forms/RelatedPropertyManager.cs
 System.Windows.Forms/RetrieveVirtualItemEventArgs.cs
 System.Windows.Forms/RetrieveVirtualItemEventHandler.cs

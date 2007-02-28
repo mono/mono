@@ -35,6 +35,7 @@ namespace System.Windows.Forms {
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 	[DefaultBindingProperty ("Checked")]
+	[ToolboxItem ("")]
 #endif
 	public class RadioButton : ButtonBase {
 		#region Local Variables
@@ -336,6 +337,13 @@ namespace System.Windows.Forms {
 			add { base.DoubleClick += value; }
 			remove { base.DoubleClick -= value; }
 		}
+		
+#if NET_2_0
+		public new event MouseEventHandler MouseDoubleClick { 
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+#endif
 		#endregion	// Events
 	}
 }
