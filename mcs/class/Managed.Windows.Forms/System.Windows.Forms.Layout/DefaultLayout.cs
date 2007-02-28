@@ -35,7 +35,7 @@ namespace System.Windows.Forms.Layout
 	{
 		void LayoutDockedChildren (Control parent, Control[] controls)
 		{
-			Rectangle space = parent.DisplayRectangle;
+			Rectangle space = parent.ClientRectangle;
 			MdiClient mdi = null;
 			
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
@@ -92,7 +92,7 @@ namespace System.Windows.Forms.Layout
 
 		void LayoutAnchoredChildren (Control parent, Control[] controls)
 		{
-			Rectangle space = parent.DisplayRectangle;
+			Rectangle space = parent.ClientRectangle;
 
 			for (int i = 0; i < controls.Length; i++) {
 				int left;

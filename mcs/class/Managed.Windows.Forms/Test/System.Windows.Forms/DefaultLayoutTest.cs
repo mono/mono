@@ -372,6 +372,31 @@ namespace MonoTests.System.Windows.Forms
 		{
 			event_raised += "DockStyleChanged";
 		}
+
+		[Test]	// bug #80917
+		public void BehaviorOverriddenDisplayRectangle ()
+		{
+			Control c = new Control ();
+			c.Anchor |= AnchorStyles.Bottom;
+			c.Size = new Size (100, 100);
+
+			Form f = new DisplayRectangleForm ();
+			f.Controls.Add (c);
+			f.ShowInTaskbar = false;
+			f.Show ();
+			
+			Assert.AreEqual (new Size (100, 100), c.Size, "A1");
+			
+			f.Dispose ();
+		}
+
+		private class DisplayRectangleForm : Form
+		{
+			public override Rectangle DisplayRectangle
+			{
+				get { return Rectangle.Empty; }
+			}
+		}
 	}
 
 	[TestFixture]	
@@ -424,6 +449,7 @@ namespace MonoTests.System.Windows.Forms
 		public void TestDockFillFirst ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 
 			Panel b1 = new Panel ();
 			Panel b2 = new Panel ();
@@ -444,6 +470,7 @@ namespace MonoTests.System.Windows.Forms
 		public void TestDockFillLast ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 
 			Panel b1 = new Panel ();
 			Panel b2 = new Panel ();
