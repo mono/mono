@@ -10,6 +10,7 @@ System.Drawing/PenTest.cs
 System.Drawing/RegionDataTest.cs
 System.Drawing/RegionNonRectTest.cs
 System.Drawing/SolidBrushTest.cs
+System.Drawing/SystemFontsTest.cs
 System.Drawing/SystemIconsTest.cs
 System.Drawing/TestBitmap.cs
 System.Drawing/TestBrushes.cs
