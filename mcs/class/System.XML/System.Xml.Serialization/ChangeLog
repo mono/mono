@@ -1,3 +1,8 @@
+2007-02-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs : fix wrong name comparison:
+	  Name->LocalName. Add hacky TARGET_JVM support (hope it is harmless).
+
 2007-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs,

@@ -153,6 +153,7 @@ namespace System.Xml.Serialization
 			_writer = writer;
 			_results = new GenerationResult [_xmlMaps.Length];
 			
+			WriteLine ("// It is automatically generated");
 			WriteLine ("using System;");
 			WriteLine ("using System.Xml;");
 			WriteLine ("using System.Xml.Schema;");
@@ -347,6 +348,7 @@ namespace System.Xml.Serialization
 				WriteLine ("");
 			}
 
+			WriteLine ("#if !TARGET_JVM"); // does it make sense? ;-)
 			WriteLine (access_mod + " class " + main.ImplementationClassName + " : System.Xml.Serialization.XmlSerializerImplementation");
 			WriteLineInd ("{");
 			
@@ -436,6 +438,7 @@ namespace System.Xml.Serialization
 			
 			WriteLineUni ("}");
 			WriteLine ("");
+			WriteLine ("#endif");
 		}
 #endif
 
@@ -984,7 +987,7 @@ namespace System.Xml.Serialization
 			if (!member.IsDefaultAny) {
 				for (int n=0; n<member.ElementInfo.Count; n++) {
 					XmlTypeMapElementInfo info = (XmlTypeMapElementInfo)member.ElementInfo[n];
-					string txt = "(" + elem + ".Name == " + GetLiteral(info.ElementName) + " && " + elem + ".NamespaceURI == " + GetLiteral(info.Namespace) + ")";
+					string txt = "(" + elem + ".LocalName == " + GetLiteral(info.ElementName) + " && " + elem + ".NamespaceURI == " + GetLiteral(info.Namespace) + ")";
 					if (n == member.ElementInfo.Count-1) txt += ") {";
 					if (n == 0) WriteLineInd ("if (" + txt);
 					else WriteLine ("|| " + txt);
