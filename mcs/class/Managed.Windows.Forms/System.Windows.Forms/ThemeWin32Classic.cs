@@ -1687,6 +1687,12 @@ namespace System.Windows.Forms
 				if (link != null && link.Focused)
 					CPDrawFocusRectangle (dc, rect, label.ForeColor, label.BackColor);
 
+				// To adjust diference between measurement and draw string.
+				rect.X      -= label.factor.X;
+				rect.Y      -= label.factor.Y;
+				rect.Width  += label.factor.Width;
+				rect.Height += label.factor.Height;
+
 				dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (label.GetPieceColor (label.pieces[i], i)),
 					       rect, label.string_format);
 

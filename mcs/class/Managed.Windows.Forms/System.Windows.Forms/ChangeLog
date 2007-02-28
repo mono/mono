@@ -1,3 +1,13 @@
+2007-02-28  Everaldo Canuto  <everaldo@simios.org>
+
+	* LinkLabel.cs: Theres some diferences between rectangle return from 
+	MeasureCharacterRanges and the area used for DrawString to fix this 
+	CalcMeasurementFactor method was created, it calcules the diferences
+	to be use later to adjust rectangle in draw operations. Fixes #80473.
+	
+	* ThemeWin32Classic.cs: Use factor calculated by CalcMeasurementFactor
+	to adjust draw rectangle.
+
 2007-02-27  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: In DrawLinkLabel draw focus rectangle before draw

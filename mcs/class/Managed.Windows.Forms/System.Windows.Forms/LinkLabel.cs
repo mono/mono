@@ -74,6 +74,7 @@ namespace System.Windows.Forms
 		internal Font link_font;
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
+		internal Rectangle factor;
 
 		private Link active_link;
 		private Link hovered_link;
@@ -99,6 +100,8 @@ namespace System.Windows.Forms
 			link_font = null;			
 			focused_index = -1;
 
+			string_format.FormatFlags = StringFormatFlags.NoClip;
+			
 			ActiveLinkColor = Color.Red;
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
 			LinkColor = Color.FromArgb (255, 0, 0, 255);
@@ -549,6 +552,27 @@ namespace System.Windows.Forms
 			return rv;
 		}
 
+		private void CalcMeasurementFactor ()
+		{
+			const string text = "X";
+			
+			// Measure total area including padding area.
+			SizeF size = DeviceContext.MeasureString (text, link_font);
+			Rectangle rect = new Rectangle (0, 0, (int) size.Width, (int) size.Height);
+			
+			// Measure only font area without padding area.
+			CharacterRange[] ranges = { new CharacterRange(0, 1) };
+			string_format.SetMeasurableCharacterRanges (ranges);
+			Region[] regions = DeviceContext.MeasureCharacterRanges (text, link_font, rect, string_format);
+			
+			// Calculate diference.
+			RectangleF rectf = regions [0].GetBounds (DeviceContext);
+			
+			factor = new Rectangle ((int) rectf.X, (int) rectf.Y, 
+							rect.Width - (int) rectf.Width - ((int) rectf.X * 2), 
+							rect.Height - (int) rectf.Height - ((int) rectf.Y * 2));
+		}
+
 		private void CreateLinkPieces ()
 		{
 			if (Text.Length == 0) {
@@ -603,7 +627,6 @@ namespace System.Windows.Forms
 			for(int i = 0; i < pieces.Length; i++)
 				ranges[i] = new CharacterRange (pieces[i].start, pieces[i].length);
 
-			string_format.FormatFlags = StringFormatFlags.NoClip;
 			string_format.SetMeasurableCharacterRanges (ranges);
 
 			Region[] regions = DeviceContext.MeasureCharacterRanges (Text,
@@ -614,6 +637,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < pieces.Length; i ++)
 				pieces[i].region = regions[i];
 
+			CalcMeasurementFactor ();
 			Invalidate ();
 		}
 
