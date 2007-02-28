@@ -1669,7 +1669,7 @@ namespace System.Windows.Forms
 		#endregion	// Label
 
 		#region LinkLabel
-		public  override void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
+		public override void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
 			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
 
@@ -1677,22 +1677,19 @@ namespace System.Windows.Forms
 				return;
 
 			for (int i = 0; i < label.pieces.Length; i ++) {
-				RectangleF clipf = new RectangleF (clip_rectangle.X, clip_rectangle.Y,
-								   clip_rectangle.Width, clip_rectangle.Height);
-				RectangleF rectf = label.pieces[i].region.GetBounds (dc);
+				
+				Rectangle rect = Rectangle.Round (label.pieces[i].region.GetBounds (dc));
 
-				if (!clipf.IntersectsWith (rectf))
+				if (!clip_rectangle.IntersectsWith (rect))
 					continue;
 
-				dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (label.GetPieceColor (label.pieces[i], i)),
-					       rectf, label.string_format);
-
 				LinkLabel.Link link = label.pieces[i].link;
-				if (link != null && link.Focused) {
-					Rectangle rect = new Rectangle ((int)rectf.X, (int)rectf.Y,
-									(int)rectf.Width, (int)rectf.Height);
+				if (link != null && link.Focused)
 					CPDrawFocusRectangle (dc, rect, label.ForeColor, label.BackColor);
-				}
+
+				dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (label.GetPieceColor (label.pieces[i], i)),
+					       rect, label.string_format);
+
 			}
 		}
 		#endregion	// LinkLabel

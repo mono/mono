@@ -1,3 +1,8 @@
+2007-02-27  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: In DrawLinkLabel draw focus rectangle before draw
+	text and some other changes to reduce and optimize source code.
+
 2007-02-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* RadioButton.cs: Implement 2.0 event.
