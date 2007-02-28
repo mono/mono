@@ -1,4 +1,9 @@
 
+Mon Jan 29 11:30:46 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix from Robert Jordan (robertj@gmx.net)
+	for bug #80618.
+
 Fri Jan 26 12:49:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* image.h, loader.c, metadata-internals.h: use mono-dl instead of

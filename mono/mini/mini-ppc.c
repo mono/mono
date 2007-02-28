@@ -1820,8 +1820,8 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	rs->ffree_mask = PPC_CALLER_FREGS;
 =======
 	/* setup the virtual reg allocator */
-	if (bb->max_ireg > cfg->rs->next_vireg)
-		cfg->rs->next_vireg = bb->max_ireg;
+	if (bb->max_vreg > cfg->rs->next_vreg)
+		cfg->rs->next_vreg = bb->max_vreg;
 >>>>>>> .merge-right.r66840
 
 	ins = bb->code;
@@ -2124,7 +2124,7 @@ loop_start:
 	cfg->max_vreg = MAX (cfg->max_vreg, rs->max_vreg);
 =======
 	bb->last_ins = last_ins;
-	bb->max_ireg = cfg->rs->next_vireg;
+	bb->max_vreg = cfg->rs->next_vreg;
 	
 >>>>>>> .merge-right.r66840
 }

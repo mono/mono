@@ -1487,7 +1487,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
    /* Save (global) regs */
    offset = cfg->arch.reg_save_area_offset;
 
-   for (i = 0; i < MONO_MAX_IREGS; ++i)
+   for (i = 0; i < MONO_MAX_VREGS; ++i)
      if (ALPHA_IS_CALLEE_SAVED_REG (i) &&
          (cfg->used_int_regs & (1 << i)) &&
          !( ALPHA_ARGS_REGS & (1 << i)) )
@@ -1584,7 +1584,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
    offset = cfg->arch.reg_save_area_offset;
 
    /*   
-   for (i = 0; i < MONO_MAX_IREGS; ++i)
+   for (i = 0; i < MONO_MAX_VREGS; ++i)
      if (ALPHA_IS_CALLEE_SAVED_REG (i) &&
 	 (cfg->used_int_regs & (1 << i)) &&
 	 !( ALPHA_ARGS_REGS & (1 << i)) )
@@ -1818,7 +1818,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
   // Restore saved regs
   offset = cfg->arch.reg_save_area_offset;
    
-  for (i = 0; i < MONO_MAX_IREGS; ++i)
+  for (i = 0; i < MONO_MAX_VREGS; ++i)
     if (ALPHA_IS_CALLEE_SAVED_REG (i) &&
 	(cfg->used_int_regs & (1 << i)) &&
 	!( ALPHA_ARGS_REGS & (1 << i)) )
@@ -5671,7 +5671,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
    CFG_DEBUG(3) g_print ("ALPHA: reg_save_area_offset at %d(%x)\n", offset, offset);
    
    // Reserve space for caller saved registers 
-   for (i = 0; i < MONO_MAX_IREGS; ++i)
+   for (i = 0; i < MONO_MAX_VREGS; ++i)
      if ((ALPHA_IS_CALLEE_SAVED_REG (i)) &&
 	 (cfg->used_int_regs & (1 << i)))
        {

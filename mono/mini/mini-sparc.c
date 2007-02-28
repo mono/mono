@@ -1959,7 +1959,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 #endif
-		case OP_LOADU1_MEMBASE:
 		case OP_LOADI1_MEMBASE:
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
@@ -1975,7 +1974,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
-		case OP_LOADU2_MEMBASE:
 		case OP_LOADI2_MEMBASE:
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&

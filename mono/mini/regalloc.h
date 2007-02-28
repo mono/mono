@@ -36,7 +36,6 @@ typedef struct {
 	int isymbolic [MONO_MAX_IREGS];
 	int fsymbolic [MONO_MAX_FREGS];
 
-	int max_vreg;
 	int ispills;
 
 	int vassign_size;
@@ -50,10 +49,5 @@ MonoRegState* mono_regstate_new (void) MONO_INTERNAL;
 
 void          mono_regstate_free      (MonoRegState *rs) MONO_INTERNAL;
 void          mono_regstate_reset     (MonoRegState *rs) MONO_INTERNAL;
-void          mono_regstate_assign    (MonoRegState *rs) MONO_INTERNAL;
-int           mono_regstate_alloc_int   (MonoRegState *rs, regmask_t allow) MONO_INTERNAL;
-void          mono_regstate_free_int  (MonoRegState *rs, int reg) MONO_INTERNAL;
-int           mono_regstate_alloc_float (MonoRegState *rs, regmask_t allow) MONO_INTERNAL;
-void          mono_regstate_free_float  (MonoRegState *rs, int reg) MONO_INTERNAL;
 inline int    mono_regstate_next_long (MonoRegState *rs) MONO_INTERNAL;
 
