@@ -16,6 +16,7 @@
 		<p visible=""/>
 		<form visible=""/>
 		<label for=""/>
+		<td colspan=""/>
 		<select language="" onchange=""/>
 		<input language="" onchange=""/>
 		<table bordercolor=""/>
