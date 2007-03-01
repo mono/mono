@@ -533,38 +533,38 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-			Page.PreLoad += new EventHandler (OnPagePreLoad);
+			if (Page != null) {
+				Page.PreLoad += new EventHandler (OnPagePreLoad);
 
-			if (!IsViewStateEnabled && Page != null && Page.IsPostBack)
-				RequiresDataBinding = true;
+				if (!IsViewStateEnabled && Page.IsPostBack)
+					RequiresDataBinding = true;
+			}
 		}
 
 		protected virtual void OnPagePreLoad (object sender, EventArgs e) 
 		{
-			ConfirmInitState ();
-		}
-
-		void ConfirmInitState () 
-		{
-			initialized = true;
+			Initialize ();
 		}
 
 		protected internal override void OnLoad (EventArgs e)
 		{
-			Initialize ();
-
-			ConfirmInitState ();
+			if (!Initialized)
+				Initialize ();
 
 			base.OnLoad (e);
-
-			if (IsBoundUsingDataSourceID)
-				ConnectToDataSource ();
 		}
 
 		private void Initialize () 
 		{
-			if ((Page != null) && !Page.IsPostBack)
-				RequiresDataBinding = true;
+			if (Page != null) {
+				if (!Page.IsPostBack || (IsViewStateEnabled && (ViewState ["Items"] == null)))
+					RequiresDataBinding = true;
+			}
+			
+			if (IsBoundUsingDataSourceID)
+				ConnectToDataSource ();
+		
+			initialized = true;
 		}
 
 		protected internal override void OnPreRender (EventArgs e)

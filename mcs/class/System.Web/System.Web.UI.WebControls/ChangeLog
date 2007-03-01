@@ -1,5 +1,9 @@
 2007-03-01 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Repeater.cs: fixed: data-binding flow for 2.0 features.
+
+2007-03-01 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Parameter.cs:
 	* ParameterCollection.cs:	
 	fixed GetValue/s  and UpdateValue/s. 
