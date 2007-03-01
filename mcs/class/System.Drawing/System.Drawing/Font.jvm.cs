@@ -19,7 +19,7 @@ namespace System.Drawing {
 		private readonly byte _charset;
 
 #if NET_2_0
-		private string systemFontName;
+		private readonly string _systemFontName;
 #endif
 
 		#endregion
@@ -121,6 +121,13 @@ namespace System.Drawing {
 		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 			: this (GetFontFamily (familyName), emSize, style, unit, charSet, isVertical) {
 		}
+
+#if NET_2_0
+		internal Font (string familyName, float emSize, string systemName)
+			: this (familyName, emSize) {
+			_systemFontName = systemName;
+		}
+#endif
 
 		static FontFamily GetFontFamily (string familyName) {
 #if ONLY_1_1
@@ -271,23 +278,14 @@ namespace System.Drawing {
 		[Browsable (false)]
 		public bool IsSystemFont {
 			get {
-				if (systemFontName == null)
-					return false;
-
-				return StringComparer.InvariantCulture.Compare (systemFontName, string.Empty) != 0;
+				return !string.IsNullOrEmpty (_systemFontName);
 			}
 		}
 
 		[Browsable (false)]
 		public string SystemFontName {
 			get {
-				return systemFontName;
-			}
-		}
-
-		internal string SysFontName {
-			set {
-				systemFontName = value;
+				return _systemFontName;
 			}
 		}
 #endif
