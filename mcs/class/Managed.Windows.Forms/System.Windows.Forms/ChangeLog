@@ -1,9 +1,8 @@
-2007-02-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2007-03-01  Everaldo Canuto  <everaldo@simios.org>
 
-	* ListView.cs: First patch to add support for virtual mode:
-	Add checks for ListViewItemCollection, add the RetrieveVirtualItem
-	and CacheVirtualItems 2.0 events, VirtualMode and VirtualSize
-	properties, as well as other checks in our implementation.
+	* LinkLabel.cs: Improve CalcTrimRectangle.
+	
+	* ThemeWin32Classic.cs: Fix some compilation problem under VS 2003.
 
 2007-02-28  Everaldo Canuto  <everaldo@simios.org>
 

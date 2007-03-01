@@ -554,22 +554,22 @@ namespace System.Windows.Forms
 
 		internal Rectangle CalcTrimRectangle ()
 		{
-			const string text = "X";
+			const string text = "X12"; // Magic
 			
 			// Measure total area including padding area.
 			SizeF size = DeviceContext.MeasureString (text, link_font);
 			Rectangle rect = new Rectangle (0, 0, (int) size.Width, (int) size.Height);
 			
 			// Measure only font area without padding area.
-			CharacterRange[] ranges = { new CharacterRange(0, 1) };
+			CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
 			string_format.SetMeasurableCharacterRanges (ranges);
 			Region[] regions = DeviceContext.MeasureCharacterRanges (text, link_font, rect, string_format);
 			
 			// Calculate diference.
 			RectangleF rectf = regions [0].GetBounds (DeviceContext);
 			
-			return new Rectangle ((int) rectf.X, (int) rectf.Y, 
-							rect.Width - (int) rectf.Width - ((int) rectf.X * 2), 
+			return new Rectangle ((int) rectf.X, (int) rectf.Y,
+							rect.Width - (int) rectf.Width - ((int) rectf.X * 2),
 							rect.Height - (int) rectf.Height - ((int) rectf.Y * 2));
 		}
 
