@@ -247,20 +247,28 @@ namespace System.Web.UI.WebControls {
 		{
 			return null;
 		}
-		
-		internal object GetValue (HttpContext context, Control control)
+
+		internal void UpdateValue (HttpContext context, Control control)
 		{
 			object oldValue = ViewState ["ParameterValue"];
-			
-			object newValue = ConvertValue (Evaluate (context, control));
-			if (newValue == null)
-				newValue = ConvertValue (DefaultValue);
+
+			object newValue = Evaluate (context, control);
 
 			if (!object.Equals (oldValue, newValue)) {
 				ViewState ["ParameterValue"] = newValue;
 				OnParameterChanged ();
 			}
-			return newValue;
+		}
+
+		internal object GetValue (HttpContext context, Control control)
+		{
+			UpdateValue (context, control);
+
+			object value = ConvertValue (ViewState ["ParameterValue"]);
+			if (value == null)
+				value = ConvertValue (DefaultValue);
+
+			return value;
 		}
 		
 		internal object ConvertValue (object val)

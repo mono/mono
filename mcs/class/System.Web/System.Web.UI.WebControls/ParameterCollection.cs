@@ -106,7 +106,7 @@ namespace System.Web.UI.WebControls
 		public void UpdateValues (HttpContext context, Control control)
 		{
 			foreach (Parameter param in this)
-				param.GetValue (context, control);
+				param.UpdateValue (context, control);
 		}
 		
 		public void Insert (int idx, Parameter param)
