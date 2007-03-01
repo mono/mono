@@ -102,6 +102,8 @@ namespace System.Windows.Forms
 		private Size item_size; // used for caching item size
 #if NET_2_0
 		private Size tile_size;
+		private bool virtual_mode;
+		private int virtual_list_size;
 #endif
 
 		// internal variables
@@ -117,6 +119,10 @@ namespace System.Windows.Forms
 		static object ItemCheckEvent = new object ();
 		static object ItemDragEvent = new object ();
 		static object SelectedIndexChangedEvent = new object ();
+#if NET_2_0
+		static object CacheVirtualItemsEvent = new object ();
+		static object RetrieveVirtualItemEvent = new object ();
+#endif
 
 		public event LabelEditEventHandler AfterLabelEdit {
 			add { Events.AddHandler (AfterLabelEditEvent, value); }
@@ -173,6 +179,18 @@ namespace System.Windows.Forms
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
+
+#if NET_2_0
+		public event CacheVirtualItemsEventHandler CacheVirtualItems {
+			add { Events.AddHandler (CacheVirtualItemsEvent, value); }
+			remove { Events.RemoveHandler (CacheVirtualItemsEvent, value); }
+		}
+
+		public event RetrieveVirtualItemEventHandler RetrieveVirtualItem {
+			add { Events.AddHandler (RetrieveVirtualItemEvent, value); }
+			remove { Events.RemoveHandler (RetrieveVirtualItemEvent, value); }
+		}
+#endif
 
 		#endregion // Events
 
@@ -591,6 +609,11 @@ namespace System.Windows.Forms
 
 				sort_order = value;
 
+#if NET_2_0
+				if (virtual_mode) // Sorting is not allowed in virtual mode
+					return;
+#endif
+
 				if (value == SortOrder.None) {
 					if (item_sorter != null) {
 						// ListViewItemSorter should never be reset for SmallIcon
@@ -728,6 +751,41 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+#if NET_2_0
+		public bool VirtualMode {
+			get {
+				return virtual_mode;
+			}
+			set {
+				if (virtual_mode == value)
+					return;
+
+				if (!virtual_mode && items.Count > 0)
+					throw new InvalidOperationException ();
+
+				virtual_mode = value;
+				Redraw (true);
+			}
+		}
+
+		public int VirtualListSize {
+			get {
+				return virtual_list_size;
+			}
+			set {
+				if (value < 0)
+					throw new ArgumentException ("value");
+
+				if (virtual_list_size == value)
+					return;
+
+				virtual_list_size = value;
+				if (virtual_mode)
+					Redraw (true);
+			}
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Internal Methods Properties
@@ -788,6 +846,12 @@ namespace System.Windows.Forms
 			// Avoid calculations when control is being updated
 			if (updating)
 				return;
+#if NET_2_0
+			// VirtualMode doesn't do any calculations until handle is created
+			if (virtual_mode && !IsHandleCreated)
+				return;
+#endif
+
 
 			if (recalculate)
 				CalculateListView (this.alignment);
@@ -840,18 +904,29 @@ namespace System.Windows.Forms
 			Size temp = Size.Empty;
 			Size ret_size = Size.Empty;
 
-			// 0th column holds the item text, we check the size of
-			// the various subitems falling in that column and get
-			// the biggest one's size.
-			foreach (ListViewItem item in items) {
-				if (col >= item.SubItems.Count)
-					continue;
+#if NET_2_0
+			// VirtualMode uses the first item text size
+			if (virtual_mode && items.Count > 0) {
+				ListViewItem item = items [0];
+				ret_size = Size.Ceiling (DeviceContext.MeasureString (item.SubItems [col].Text,
+							Font));
+			} else {
+#endif
+				// 0th column holds the item text, we check the size of
+				// the various subitems falling in that column and get
+				// the biggest one's size.
+				foreach (ListViewItem item in items) {
+					if (col >= item.SubItems.Count)
+						continue;
 
-				temp = Size.Ceiling (this.DeviceContext.MeasureString
-							(item.SubItems [col].Text, this.Font));
-				if (temp.Width > ret_size.Width)
-					ret_size = temp;
+					temp = Size.Ceiling (DeviceContext.MeasureString
+								(item.SubItems [col].Text, Font));
+					if (temp.Width > ret_size.Width)
+						ret_size = temp;
+				}
+#if NET_2_0
 			}
+#endif
 
 			// adjustment for space
 			if (!ret_size.IsEmpty)
@@ -1184,7 +1259,11 @@ namespace System.Windows.Forms
 				int y = row * (sz.Height + y_spacing);
 				SetItemLocation (i, x, y, row, col);
 				item_index_matrix [row, col] = i;
-				items [i].Layout ();
+#if NET_2_0
+				if (!virtual_mode) // Virtual mode sets Layout until draw time
+#endif
+					items [i].Layout ();
+
 				if (left_aligned) {
 					if (++row == rows) {
 						row = 0;
@@ -1245,7 +1324,11 @@ namespace System.Windows.Forms
 			if (items.Count > 0) {
 				for (int i = 0; i < items.Count; i++) {
 					SetItemLocation (i, 0, y, 0, 0);
-					items [i].Layout ();
+#if NET_2_0
+					if (!virtual_mode) // Virtual mode sets Layout until draw time
+#endif
+						items [i].Layout ();
+
 					y += item_height + 2;
 				}
 
@@ -2307,8 +2390,11 @@ namespace System.Windows.Forms
 				foreach (ColumnHeader col in columns)
 					col.SetListView (null);
 
-				foreach (ListViewItem item in items)
-					item.Owner = null;
+#if NET_2_0
+				if (!virtual_mode) // In virtual mode we don't save the items
+#endif
+					foreach (ListViewItem item in items)
+						item.Owner = null;
 			}
 			
 			base.Dispose (disposing);
@@ -2369,7 +2455,11 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			Sort ();
+			CalculateListView (alignment);
+#if NET_2_0
+			if (!virtual_mode) // Sorting is not allowed in virtual mode
+#endif
+				Sort ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -2409,6 +2499,22 @@ namespace System.Windows.Forms
 		{
 			base.OnSystemColorsChanged (e);
 		}
+
+#if NET_2_0
+		protected virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs args)
+		{
+			EventHandler eh = (EventHandler)Events [CacheVirtualItemsEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+
+		protected virtual void OnRetrieveVirtualItem (RetrieveVirtualItemEventArgs args)
+		{
+			RetrieveVirtualItemEventHandler eh = (RetrieveVirtualItemEventHandler)Events [RetrieveVirtualItemEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+#endif
 
 		protected void RealizeProperties ()
 		{
@@ -2598,6 +2704,11 @@ namespace System.Windows.Forms
 
 		public void Sort ()
 		{
+#if NET_2_0
+			if (virtual_mode)
+				throw new InvalidOperationException ();
+#endif
+
 			Sort (true);
 		}
 
@@ -3500,7 +3611,7 @@ namespace System.Windows.Forms
 			#region Public Constructor
 			public ListViewItemCollection (ListView owner)
 			{
-				list = new ArrayList ();
+				list = new ArrayList (0);
 				this.owner = owner;
 			}
 			#endregion	// Public Constructor
@@ -3508,7 +3619,14 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return list.Count; }
+				get {
+#if NET_2_0
+					if (owner != null && owner.VirtualMode)
+						return owner.VirtualListSize;
+#endif
+
+					return list.Count; 
+				}
 			}
 
 			public bool IsReadOnly {
@@ -3517,14 +3635,24 @@ namespace System.Windows.Forms
 
 			public virtual ListViewItem this [int displayIndex] {
 				get {
-					if (displayIndex < 0 || displayIndex >= list.Count)
+					if (displayIndex < 0 || displayIndex >= Count)
 						throw new ArgumentOutOfRangeException ("displayIndex");
+
+#if NET_2_0
+					if (owner != null && owner.VirtualMode)
+						return RetrieveVirtualItemFromOwner (displayIndex);
+#endif
 					return (ListViewItem) list [displayIndex];
 				}
 
 				set {
-					if (displayIndex < 0 || displayIndex >= list.Count)
+					if (displayIndex < 0 || displayIndex >= Count)
 						throw new ArgumentOutOfRangeException ("displayIndex");
+
+#if NET_2_0
+					if (owner != null && owner.VirtualMode)
+						throw new InvalidOperationException ();
+#endif
 
 					if (list.Contains (value))
 						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
@@ -3547,7 +3675,7 @@ namespace System.Windows.Forms
 					if (idx == -1)
 						return null;
 
-					return (ListViewItem) list [idx];
+					return this [idx];
 				}
 			}
 #endif
@@ -3579,6 +3707,11 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual ListViewItem Add (ListViewItem value)
 			{
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
+
 				AddItem (value);
 				CollectionChanged (true);
 
@@ -3623,6 +3756,10 @@ namespace System.Windows.Forms
 			{
 				if (values == null)
 					throw new ArgumentNullException ("Argument cannot be null!", "values");
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 
 				foreach (ListViewItem item in values)
 					AddItem (item);
@@ -3644,6 +3781,10 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				owner.SetFocusedItem (null);
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
 				foreach (ListViewItem item in list) {
@@ -3656,7 +3797,7 @@ namespace System.Windows.Forms
 
 			public bool Contains (ListViewItem item)
 			{
-				return list.Contains (item);
+				return IndexOf (item) != -1;
 			}
 
 #if NET_2_0
@@ -3694,6 +3835,11 @@ namespace System.Windows.Forms
 
 			public IEnumerator GetEnumerator ()
 			{
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
+				
 				return list.GetEnumerator ();
 			}
 
@@ -3701,6 +3847,11 @@ namespace System.Windows.Forms
 			{
 				int result;
 				ListViewItem li;
+
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 
 				if (item is ListViewItem) {
 					li = (ListViewItem) item;
@@ -3722,12 +3873,12 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object item)
 			{
-				return list.Contains (item);
+				return Contains ((ListViewItem) item);
 			}
 
 			int IList.IndexOf (object item)
 			{
-				return list.IndexOf (item);
+				return IndexOf ((ListViewItem) item);
 			}
 
 			void IList.Insert (int index, object item)
@@ -3745,6 +3896,16 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
+#if NET_2_0
+				if (owner != null && owner.VirtualMode) {
+					for (int i = 0; i < Count; i++)
+						if (RetrieveVirtualItemFromOwner (i) == item)
+							return i;
+
+					return -1;
+				}
+#endif
+				
 				return list.IndexOf (item);
 			}
 
@@ -3754,8 +3915,8 @@ namespace System.Windows.Forms
 				if (key == null || key.Length == 0)
 					return -1;
 
-				for (int i = 0; i < list.Count; i++) {
-					ListViewItem lvi = (ListViewItem) list [i];
+				for (int i = 0; i < Count; i++) {
+					ListViewItem lvi = this [i];
 					if (String.Compare (key, lvi.Name, true) == 0)
 						return i;
 				}
@@ -3768,6 +3929,11 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("index");
+
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 
 				if (list.Contains (item))
 					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
@@ -3802,6 +3968,10 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (ListViewItem item)
 			{
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
 				if (!list.Contains (item))
 					return;
 	 				
@@ -3854,6 +4024,19 @@ namespace System.Windows.Forms
 					owner.Redraw (true);
 				}
 			}
+
+#if NET_2_0
+			ListViewItem RetrieveVirtualItemFromOwner (int displayIndex)
+			{
+				RetrieveVirtualItemEventArgs args = new RetrieveVirtualItemEventArgs (displayIndex);
+
+				owner.OnRetrieveVirtualItem (args);
+				ListViewItem retval = args.Item;
+				retval.Owner = owner; // NullReferenceException if Item is null
+
+				return retval;
+			}
+#endif
 
 			internal event CollectionChangedHandler Changed;
 
@@ -4213,7 +4396,8 @@ namespace System.Windows.Forms
 				get {
 					if (list == null) {
 						list = new ArrayList ();
-						foreach (ListViewItem item in owner.Items) {
+						for (int i = 0; i < owner.Items.Count; i++) {
+							ListViewItem item = owner.Items [i];
 							if (item.Selected)
 								list.Add (item);
 						}

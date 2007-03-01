@@ -1,3 +1,10 @@
+2007-02-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: First patch to add support for virtual mode:
+	Add checks for ListViewItemCollection, add the RetrieveVirtualItem
+	and CacheVirtualItems 2.0 events, VirtualMode and VirtualSize
+	properties, as well as other checks in our implementation.
+
 2007-02-28  Everaldo Canuto  <everaldo@simios.org>
 
 	* LinkLabel.cs: Rename CalcMeasurementFactor as CalcTrimRectangle and
