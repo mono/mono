@@ -1,3 +1,8 @@
+2007-03-01  Alp Toker  <alp@atoker.com>
+
+	* MethodBase.cs: Add missing ComVisible attr.
+	Add GetMethodFromHandle() 2.0 overload stub (NotImplemented).
+
 2006-12-30  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoProperty.cs: Cache frequently used properties.

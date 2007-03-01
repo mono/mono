@@ -53,6 +53,12 @@ namespace System.Reflection {
 			return GetMethodFromHandleInternal (handle.Value);
 		}
 
+#if NET_2_0
+		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public abstract MethodImplAttributes GetMethodImplementationFlags();
 
 		public abstract ParameterInfo[] GetParameters();
@@ -178,6 +184,7 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		[ComVisible (true)]
 		public virtual Type [] GetGenericArguments ()
 		{
 			throw new NotSupportedException ();
