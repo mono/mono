@@ -240,6 +240,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7464")]
+#endif
 		public void TestSerializeChar ()
 		{
 			Serialize ('A');
@@ -754,6 +757,9 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // MS bug
+#if TARGET_JVM
+		[Ignore ("TD #7458")]
+#endif
 		public void TestSerializeField_Encoded ()
 		{
 			Field_Encoded f = new Field_Encoded ();
@@ -860,6 +866,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("JVM returns fields in different order")]
+#endif
 		public void TestSerializeGroup ()
 		{
 			Group myGroup = new Group ();
@@ -1868,6 +1877,9 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7475")]
+#endif
 		public void TestSerializeChoice ()
 		{
 			Choices ch = new Choices ();
@@ -2155,6 +2167,9 @@ namespace MonoTests.System.XmlSerialization
 
 #if NET_2_0
 		[Test]
+#if TARGET_JVM
+		[Ignore("XmlSerializer.GenerateSerializer is not supported")]
+#endif
 		public void GenerateSerializerGenerics ()
 		{
 			XmlReflectionImporter imp = new XmlReflectionImporter ();

@@ -23,6 +23,9 @@ namespace MonoTests.System.XmlSerialization
 	{
 		[Test]
 		[NUnit.Framework.Category("NotDotNet")] // FDBK50639 
+#if TARGET_JVM
+		[Ignore ("JVM returns fields in different order")]
+#endif
 		public void WriteLiteral ()
 		{
 			Test data = BuildTestObject ();
@@ -44,6 +47,9 @@ namespace MonoTests.System.XmlSerialization
 		
 		[Test]
 		[NUnit.Framework.Category("NotDotNet")]
+#if TARGET_JVM
+		[Ignore ("TD #7463")]
+#endif
 		public void ReadLiteral ()
 		{
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());

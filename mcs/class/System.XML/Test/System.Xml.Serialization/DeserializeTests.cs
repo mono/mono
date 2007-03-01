@@ -1062,6 +1062,9 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotDotNet")] // MS.NET does not allow SoapAttribute backed by enum ??
+#if TARGET_JVM
+		[Ignore ("TD #7458")]
+#endif
 		public void TestDeserialize_Field_Encoded ()
 		{
 			Field_Encoded f = null;
