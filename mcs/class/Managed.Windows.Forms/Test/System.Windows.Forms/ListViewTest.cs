@@ -427,6 +427,110 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
+
+		const int item_count = 3;
+		ListViewItem [] items = new ListViewItem [item_count];
+
+		[Test]
+		public void VirtualMode ()
+		{
+			ListView lvw = new ListView ();
+			lvw.VirtualListSize = item_count;
+			lvw.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			lvw.VirtualMode = true;
+
+			CreateListViewItems (item_count);
+			items [0].Name = "A";
+			items [1].Name = "B";
+			items [2].Name = "C";
+
+			Assert.AreEqual (item_count, lvw.Items.Count, "#A1");
+			Assert.AreEqual (true, lvw.VirtualMode, "#A2");
+
+			Assert.AreEqual (items [0], lvw.Items [0], "#B1");
+			Assert.AreEqual (items [1], lvw.Items [1], "#B2");
+			Assert.AreEqual (items [2], lvw.Items [2], "#B3");
+
+			Assert.AreEqual (items [0], lvw.Items ["A"], "#C1");
+			Assert.AreEqual (items [1], lvw.Items ["B"], "#C2");
+			Assert.AreEqual (items [2], lvw.Items ["C"], "#C3");
+			Assert.IsNull (lvw.Items ["Invalid key"], "#C4");
+			Assert.IsNull (lvw.Items [String.Empty], "#C5");
+
+			Assert.AreEqual (false, lvw.Items.ContainsKey (String.Empty), "#D1");
+			Assert.AreEqual (false, lvw.Items.ContainsKey (null), "#D2");
+			Assert.AreEqual (true, lvw.Items.ContainsKey ("A"), "#D3");
+			Assert.AreEqual (true, lvw.Items.ContainsKey ("a"), "#D4");
+			Assert.AreEqual (true, lvw.Items.ContainsKey ("B"), "#D5");
+		}
+
+		void ListViewRetrieveVirtualItemHandler (object o, RetrieveVirtualItemEventArgs args)
+		{
+			args.Item = items [args.ItemIndex];
+		}
+
+		void CreateListViewItems(int count)
+		{
+			items = new ListViewItem [count];
+
+			for (int i = 0; i < count; i++)
+				items [i] = new ListViewItem (String.Empty);
+		}
+
+		[Test]
+		public void VirtualMode_Exceptions()
+		{
+			ListView lvw = new ListView ();
+
+			lvw.Items.Add ("Simple item");
+			try {
+				lvw.VirtualMode = true;
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.Items.Clear();
+			lvw.VirtualMode = true;
+			lvw.VirtualListSize = 1;
+
+			lvw.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+			CreateListViewItems (1);
+
+			try {
+				lvw.Sort ();
+				Assert.Fail ("#A3");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void VirtualListSize ()
+		{
+			ListView lvw = new ListView ();
+
+			lvw.VirtualListSize = item_count;
+			Assert.AreEqual (item_count, lvw.VirtualListSize, "#A1");
+			Assert.AreEqual (0, lvw.Items.Count, "#A2");
+
+			lvw.VirtualMode = true;
+			Assert.AreEqual (item_count, lvw.VirtualListSize, "#B1");
+			Assert.AreEqual (item_count, lvw.Items.Count, "#B2");
+
+			lvw.VirtualMode = false;
+			Assert.AreEqual (item_count, lvw.VirtualListSize, "#C1");
+			Assert.AreEqual (0, lvw.Items.Count, "#C2");
+		}
+
+		[Test]
+		public void VirtualListSize_Exceptions ()
+		{
+			ListView lvw = new ListView ();
+			try {
+				lvw.VirtualListSize = -1;
+				Assert.Fail ("#A1");
+			} catch (ArgumentException) {
+			}
+		}
 #endif
 
 		[Test]
