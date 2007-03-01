@@ -251,6 +251,12 @@ namespace GHTTests
 				m_lcToTest.DataBind();
 				GHTSubTestExpectedExceptionNotCaught("ArgumentException");
 			}
+#if NET_2_0
+			catch (InvalidOperationException ex)
+			{
+				GHTSubTestExpectedExceptionCaught(ex);
+			}
+#endif
 			catch (ArgumentException ex)
 			{
 				GHTSubTestExpectedExceptionCaught(ex);

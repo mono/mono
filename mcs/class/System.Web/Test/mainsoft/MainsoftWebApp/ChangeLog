@@ -1,3 +1,12 @@
+2007-03-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System_Web_SessionState/HttpSessionState/
+		HttpSessionState_CodePage.aspx.cs
+	* System_Web_UI_HtmlControls/HtmlInputImage/
+		HtmlInputImage_Src.aspx.cs
+	* utils/GHTListControlBase.cs:
+	Added NET_2_0 for ASP 2.0 support
+
 2007-02-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* MainsoftWebApp20.Tomcat.vmwcsproj: converted to csproj

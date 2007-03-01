@@ -86,7 +86,7 @@ namespace GHTTests.System_Web_dll.System_Web_SessionState
 			 this.GHTSubTestExpectedExceptionCaught(exception2);
 			 // ProjectData.ClearProjectError();
 		 }
-#else
+#endif
 		 catch (ArgumentException exception7)
 		 {
 			 // ProjectData.SetProjectError(exception7);
@@ -94,7 +94,7 @@ namespace GHTTests.System_Web_dll.System_Web_SessionState
 			 this.GHTSubTestExpectedExceptionCaught(exception2);
 			 // ProjectData.ClearProjectError();
 		 }
-#endif
+
 		 catch (Exception exception8)
 		 {
 			 // ProjectData.SetProjectError(exception8);

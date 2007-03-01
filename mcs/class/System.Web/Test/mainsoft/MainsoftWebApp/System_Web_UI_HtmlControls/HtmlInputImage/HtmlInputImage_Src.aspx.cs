@@ -88,7 +88,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_HtmlControls
 			GHTActiveSubTest = GHTSubTest4;
 			try 
 			{
-				Image4.Src = "123";
+				Image4.Src = "/123";
 				GHTSubTestAddResult(Image4.Src);
 			}
 			catch (Exception ex) 
