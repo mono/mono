@@ -5,14 +5,20 @@ include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib/$(PROFILE) -r:Mono.Security.dll
 
-ifeq (default, $(PROFILE))
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe makecert.exe chktrust.exe \
 	signcode.exe setreg.exe certmgr.exe caspol.exe permview.exe mozroots.exe
-else
-SECURITY_PROGRAMS = httpcfg.exe
-endif
+SECURITY_PROGRAMS_2_0 = httpcfg.exe
 
-SECURITY_SOURCES = AssemblyInfo.cs $(topdir)/build/common/Consts.cs StrongNameManager.cs $(SECURITY_PROGRAMS:.exe=.cs)
+HELPER_SOURCES = AssemblyInfo.cs $(topdir)/build/common/Consts.cs
+SN_SOURCES = sn.cs StrongNameManager.cs $(HELPER_SOURCES)
+
+SECURITY_SOURCES = $(HELPER_SOURCES) $(SN_SOURCES) $(SECURITY_PROGRAMS:.exe=.cs) $(SECURITY_PROGRAMS_2_0:.exe=.cs)
+
+ifeq (default, $(PROFILE))
+SECURITY_TARGETS = $(SECURITY_PROGRAMS)
+else
+SECURITY_TARGETS = $(SECURITY_PROGRAMS_2_0)
+endif
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
@@ -21,22 +27,22 @@ DISTFILES = README TESTS $(SECURITY_SOURCES)
 ifeq (net_1_1_bootstrap, $(PROFILE))
 all-local: $(topdir)/class/lib/$(PROFILE)/sn.exe
 else
-all-local: $(SECURITY_PROGRAMS)
+all-local: $(SECURITY_TARGETS)
 endif
 
 install-local: all-local
 uninstall-local:
 
 ifndef NO_INSTALL
-install-local: $(SECURITY_PROGRAMS)
+install-local: $(SECURITY_TARGETS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	for p in $(SECURITY_PROGRAMS) ; do \
+	for p in $(SECURITY_TARGETS) ; do \
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	    test ! -f $$p.mdb || $(INSTALL_BIN) $$p.mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
-	for p in $(SECURITY_PROGRAMS) ; do \
+	for p in $(SECURITY_TARGETS) ; do \
 	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$p* ; \
 	done
 endif
@@ -51,9 +57,8 @@ clean-local:
 
 dist-local: dist-default
 
-sn_sources = sn.cs StrongNameManager.cs AssemblyInfo.cs $(topdir)/build/common/Consts.cs
-sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(sn_sources)
-	$(CSCOMPILE) /out:$@ $(sn_sources)
+sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(SN_SOURCES)
+	$(CSCOMPILE) /out:$@ $(SN_SOURCES)
 
-%.exe: %.cs AssemblyInfo.cs $(topdir)/build/common/Consts.cs
+%.exe: %.cs $(HELPER_SOURCES)
 	$(CSCOMPILE) $^

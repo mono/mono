@@ -1,5 +1,11 @@
 2007-02-28  Wade Berrier  <wberrier@novell.com>
 
+	* Makefile: Consolidate more lists and make some
+	2.0 friendly vars (ultimately to include httpcfg.cs in
+	make dist)
+
+2007-02-28  Wade Berrier  <wberrier@novell.com>
+
 	* Makefile: install httpcfg.exe in the 2.0 profile
 	and keep old list of programs for 1.0 profile
 
