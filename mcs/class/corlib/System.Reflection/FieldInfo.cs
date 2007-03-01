@@ -156,6 +156,13 @@ namespace System.Reflection {
 			return internal_from_handle (handle.Value);
 		}
 
+#if NET_2_0
+		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		//
 		// Note: making this abstract imposes an implementation requirement
 		//       on any class that derives from it.  However, since it's also
