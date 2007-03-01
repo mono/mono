@@ -9,3 +9,4 @@ REM ********************************************************
 
 call run-W3C-tests.bat rebuild
 call run-XSLT-tests.bat rebuild
+call run-tests.api.bat rebuild
