@@ -1,3 +1,8 @@
+2007-03-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewCollectionsTest.cs: Added ColumnHeader.Index tests.
+	* ColumnHeaderTest.cs: Added more DisplayIndex tests.
+
 2007-02-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewTest.cs: Add test for VirtualMode and VirtualSize,

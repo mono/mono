@@ -1099,7 +1099,7 @@ namespace System.Windows.Forms
 			return -1;
 		}
 #endif
-		
+
 		internal ColumnHeader GetReorderedColumn (int index)
 		{
 			if (reordered_column_indices == null)
@@ -1108,24 +1108,28 @@ namespace System.Windows.Forms
 				return Columns [reordered_column_indices [index]];
 		}
 
-		internal void ReorderColumn (ColumnHeader col, int index)
+		internal void ReorderColumn (ColumnHeader col, int index, bool fireEvent)
 		{
 #if NET_2_0
-			ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
-			if (eh != null){
-				ColumnReorderedEventArgs args = new ColumnReorderedEventArgs (col.Index, index, col);
+			if (fireEvent) {
+				ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
+				if (eh != null){
+					ColumnReorderedEventArgs args = new ColumnReorderedEventArgs (col.Index, index, col);
 
-				eh (this, args);
-				if (args.Cancel){
-					header_control.Invalidate ();
-					item_control.Invalidate ();
-					return;
+					eh (this, args);
+					if (args.Cancel) {
+						header_control.Invalidate ();
+						item_control.Invalidate ();
+						return;
+					}
 				}
 			}
 #endif
+			int column_count = Columns.Count;
+
 			if (reordered_column_indices == null) {
-				reordered_column_indices = new int [Columns.Count];
-				for (int i = 0; i < Columns.Count; i++)
+				reordered_column_indices = new int [column_count];
+				for (int i = 0; i < column_count; i++)
 					reordered_column_indices [i] = i;
 			}
 
@@ -1133,10 +1137,10 @@ namespace System.Windows.Forms
 				return;
 
 			int[] curr = reordered_column_indices;
-			int[] result = new int [Columns.Count];
+			int [] result = new int [column_count];
 			int curr_idx = 0;
-			for (int i = 0; i < Columns.Count; i++) {
-				if (curr_idx < Columns.Count && curr [curr_idx] == col.Index)
+			for (int i = 0; i < column_count; i++) {
+				if (curr_idx < column_count && curr [curr_idx] == col.Index)
 					curr_idx++;
 
 				if (i == index)
@@ -1145,13 +1149,49 @@ namespace System.Windows.Forms
 					result [i] = curr [curr_idx++];
 			}
 
-			reordered_column_indices = result;
-			LayoutDetails ();
-			header_control.Invalidate ();
-			item_control.Invalidate ();
+			ReorderColumns (result, true);
 		}
 
-		Size LargeIconItemSize {
+		internal void ReorderColumns (int [] display_indices, bool redraw)
+		{
+			reordered_column_indices = display_indices;
+			for (int i = 0; i < Columns.Count; i++) {
+				ColumnHeader col = Columns [i];
+				col.InternalDisplayIndex = reordered_column_indices [i];
+			}
+			if (redraw && view == View.Details && IsHandleCreated) {
+				LayoutDetails ();
+				header_control.Invalidate ();
+				item_control.Invalidate ();
+			}
+		}
+
+		internal void AddColumn (ColumnHeader newCol, int index, bool redraw)
+		{
+			int column_count = Columns.Count;
+			newCol.SetListView (this);
+
+			int [] display_indices = new int [column_count];
+			for (int i = 0; i < column_count; i++) {
+				ColumnHeader col = Columns [i];
+				if (i == index) {
+					display_indices [i] = index;
+				} else {
+					int display_index = col.InternalDisplayIndex;
+					if (display_index < index) {
+						display_indices [i] = display_index;
+					} else {
+						display_indices [i] = (display_index + 1);
+					}
+				}
+			}
+
+			ReorderColumns (display_indices, redraw);
+			Invalidate ();
+		}
+
+		Size LargeIconItemSize
+		{
 			get {
 				int image_w = LargeImageList == null ? 12 : LargeImageList.ImageSize.Width;
 				int image_h = LargeImageList == null ? 2 : LargeImageList.ImageSize.Height;
@@ -2913,7 +2953,7 @@ namespace System.Windows.Forms
 					if (drag_to_index > GetReorderedIndex (clicked_column))
 						drag_to_index--;
 					if (owner.GetReorderedColumn (drag_to_index) != clicked_column)
-						owner.ReorderColumn (clicked_column, drag_to_index);
+						owner.ReorderColumn (clicked_column, drag_to_index, true);
 					drag_to_index = -1;
 					Invalidate ();
 				}
@@ -3351,12 +3391,8 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual int Add (ColumnHeader value)
 			{
-				int idx;
-				value.SetListView (this.owner);
-				idx = list.Add (value);
-				if (owner.IsHandleCreated) {
-					owner.Redraw (true); 
-				}
+				int idx = list.Add (value);
+				owner.AddColumn (value, idx, true);
 				return idx;
 			}
 
@@ -3412,11 +3448,11 @@ namespace System.Windows.Forms
 			public virtual void AddRange (ColumnHeader [] values)
 			{
 				foreach (ColumnHeader colHeader in values) {
-					colHeader.SetListView (this.owner);
-					Add (colHeader);
+					int idx = list.Add (colHeader);
+					owner.AddColumn (colHeader, idx, false);
 				}
 				
-				owner.Redraw (true); 
+				owner.Redraw (true);
 			}
 
 			public virtual void Clear ()
@@ -3424,7 +3460,7 @@ namespace System.Windows.Forms
 				foreach (ColumnHeader col in list)
 					col.SetListView (null);
 				list.Clear ();
-				owner.Redraw (true);
+				owner.ReorderColumns (new int [0], true);
 			}
 
 			public bool Contains (ColumnHeader value)
@@ -3522,9 +3558,8 @@ namespace System.Windows.Forms
 				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				value.SetListView (owner);
 				list.Insert (index, value);
-				owner.Redraw (true);
+				owner.AddColumn (value, index, true);
 			}
 
 #if NET_2_0
@@ -3575,10 +3610,26 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (ColumnHeader column)
 			{
-				// TODO: Update Column internal index ?
+				if (!Contains (column))
+					return;
+
 				list.Remove (column);
 				column.SetListView (null);
-				owner.Redraw (true);
+
+				int rem_display_index = column.InternalDisplayIndex;
+				int [] display_indices = new int [list.Count];
+				for (int i = 0; i < display_indices.Length; i++) {
+					ColumnHeader col = (ColumnHeader) list [i];
+					int display_index = col.InternalDisplayIndex;
+					if (display_index < rem_display_index) {
+						display_indices [i] = display_index;
+					} else {
+						display_indices [i] = (display_index - 1);
+					}
+				}
+
+				column.InternalDisplayIndex = -1;
+				owner.ReorderColumns (display_indices, true);
 			}
 
 #if NET_2_0

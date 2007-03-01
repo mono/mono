@@ -33,6 +33,14 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ColumnHeaderTest
 	{
+#if NET_2_0
+		[SetUp]
+		public void SetUp ()
+		{
+			columnReordered = 0;
+		}
+#endif
+
 		[Test]
 		public void DefaultValuesTest ()
 		{
@@ -54,31 +62,66 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test]
-		public void DisplayIndexTest ()
+		public void DisplayIndex_ListView_Created ()
 		{
-			ColumnHeader col = new ColumnHeader ();
-			col.DisplayIndex = -66;
-			col.DisplayIndex = 66;
+			ColumnHeader colA = new ColumnHeader ();
+			ColumnHeader colB = new ColumnHeader ();
+			ColumnHeader colC = new ColumnHeader ();
+			ColumnHeader colD = new ColumnHeader ();
+			colA.DisplayIndex = 2;
+			colD.DisplayIndex = 0;
+			colB.DisplayIndex = 3;
+			colC.DisplayIndex = 1;
 
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lv = new ListView ();
-			lv.Columns.Add (col);
+			lv.ColumnReordered += new ColumnReorderedEventHandler (ColumnReordered);
+			lv.View = View.Details;
+			lv.Columns.Add (colA);
+			lv.Columns.Add (colB);
+			lv.Columns.Add (colC);
+			form.Controls.Add (lv);
+			form.Show ();
 
-			try {
-				col.DisplayIndex = -1;
-				Assert.Fail ("1");
-			} catch (ArgumentOutOfRangeException) {
-			}
+			Assert.AreEqual (0, colA.DisplayIndex, "#A1");
+			Assert.AreEqual (1, colB.DisplayIndex, "#A2");
+			Assert.AreEqual (2, colC.DisplayIndex, "#A3");
+			Assert.AreEqual (0, colD.DisplayIndex, "#A4");
+			Assert.AreEqual (0, columnReordered, "#A5");
 
-			try {
-				col.DisplayIndex = lv.Columns.Count;
-				Assert.Fail ("2");
-			} catch (ArgumentOutOfRangeException) {
-			}
+			colC.DisplayIndex = 0;
+			Assert.AreEqual (1, colA.DisplayIndex, "#B1");
+			Assert.AreEqual (2, colB.DisplayIndex, "#B2");
+			Assert.AreEqual (0, colC.DisplayIndex, "#B3");
+			Assert.AreEqual (0, colD.DisplayIndex, "#B4");
+			Assert.AreEqual (0, columnReordered, "#B5");
 
-			Assert.AreEqual (0, col.DisplayIndex, "3");
+			colC.DisplayIndex = 2;
+			Assert.AreEqual (0, colA.DisplayIndex, "#C1");
+			Assert.AreEqual (1, colB.DisplayIndex, "#C2");
+			Assert.AreEqual (2, colC.DisplayIndex, "#C3");
+			Assert.AreEqual (0, colD.DisplayIndex, "#C4");
+			Assert.AreEqual (0, columnReordered, "#C5");
+
+			colB.DisplayIndex = 2;
+			Assert.AreEqual (0, colA.DisplayIndex, "#D1");
+			Assert.AreEqual (2, colB.DisplayIndex, "#D2");
+			Assert.AreEqual (1, colC.DisplayIndex, "#D3");
+			Assert.AreEqual (0, colD.DisplayIndex, "#D4");
+			Assert.AreEqual (0, columnReordered, "#D5");
+
+			colD.DisplayIndex = 1;
+			lv.Columns.Add (colD);
+
+			Assert.AreEqual (0, colA.DisplayIndex, "#E1");
+			Assert.AreEqual (2, colB.DisplayIndex, "#E2");
+			Assert.AreEqual (1, colC.DisplayIndex, "#E3");
+			Assert.AreEqual (3, colD.DisplayIndex, "#E4");
+			Assert.AreEqual (0, columnReordered, "#E5");
 		}
 
-		[Test] 
+		[Test]
 		public void DisplayIndex_ListView_Disposed ()
 		{
 			ListView lv = new ListView ();
@@ -87,10 +130,73 @@ namespace MonoTests.System.Windows.Forms
 			lv.Columns.Add (colA);
 			ColumnHeader colB = new ColumnHeader ();
 			lv.Columns.Add (colB);
+			ColumnHeader colC = new ColumnHeader ();
+			lv.Columns.Add (colC);
+			Assert.AreEqual (0, colA.DisplayIndex, "#A1");
+			Assert.AreEqual (1, colB.DisplayIndex, "#A2");
+			Assert.AreEqual (2, colC.DisplayIndex, "#A3");
+			colA.DisplayIndex = 2;
+			lv.Columns.Remove (colB);
 			lv.Dispose ();
-			colA.DisplayIndex = 1;
-			Assert.AreEqual (1, colA.DisplayIndex, "#1");
-			Assert.AreEqual (1, colB.DisplayIndex, "#2");
+			Assert.AreEqual (1, colA.DisplayIndex, "#B1");
+			Assert.AreEqual (-1, colB.DisplayIndex, "#B2");
+			Assert.AreEqual (0, colC.DisplayIndex, "#B3");
+			colA.DisplayIndex = 255;
+			Assert.AreEqual (255, colA.DisplayIndex, "#C1");
+			Assert.AreEqual (-1, colB.DisplayIndex, "#C2");
+			Assert.AreEqual (0, colC.DisplayIndex, "#C3");
+		}
+
+		[Test]
+		public void DisplayIndex_ListView_NotCreated ()
+		{
+			ColumnHeader colA = new ColumnHeader ();
+			colA.DisplayIndex = -66;
+			Assert.AreEqual (-66, colA.DisplayIndex, "#A1");
+			colA.DisplayIndex = 66;
+			Assert.AreEqual (66, colA.DisplayIndex, "#A2");
+
+			ColumnHeader colB = new ColumnHeader ();
+			colB.DisplayIndex = 0;
+			Assert.AreEqual (0, colB.DisplayIndex, "#A3");
+
+			ColumnHeader colC = new ColumnHeader ();
+			colC.DisplayIndex = 1;
+			Assert.AreEqual (1, colC.DisplayIndex, "#A4");
+
+			ListView lv = new ListView ();
+			lv.ColumnReordered += new ColumnReorderedEventHandler (ColumnReordered);
+			lv.View = View.Details;
+			lv.Columns.Add (colA);
+			lv.Columns.Add (colB);
+			lv.Columns.Add (colC);
+
+			try {
+				colA.DisplayIndex = -1;
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("DisplayIndex", ex.ParamName, "#B6");
+			}
+
+			try {
+				colA.DisplayIndex = lv.Columns.Count;
+				Assert.Fail ("#C1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("DisplayIndex", ex.ParamName, "#C6");
+			}
+
+			Assert.AreEqual (0, colA.DisplayIndex, "#D1");
+			Assert.AreEqual (1, colB.DisplayIndex, "#D2");
+			Assert.AreEqual (2, colC.DisplayIndex, "#D3");
+			Assert.AreEqual (0, columnReordered, "#D4");
 		}
 
 		[Test]
@@ -292,5 +398,14 @@ namespace MonoTests.System.Windows.Forms
 			col.Width = 10;
 			Assert.AreEqual (10, col.Width);
 		}
+
+#if NET_2_0
+		public void ColumnReordered (object sender, ColumnReorderedEventArgs  e)
+		{
+			columnReordered++;
+		}
+
+		private int columnReordered;
+#endif
 	}
 }

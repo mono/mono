@@ -100,6 +100,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (listview, colA.ListView, "#A4");
 			Assert.IsNull (colB.ListView, "#A5");
 			Assert.AreSame (listview, colC.ListView, "#A6");
+			Assert.AreEqual (0, colA.Index, "#A7");
+			Assert.AreEqual (-1, colB.Index, "#A8");
+			Assert.AreEqual (1, colC.Index, "#A9");
 
 			listview.Columns.Remove (colC);
 			Assert.AreEqual (1, listview.Columns.Count, "#B1");
@@ -107,12 +110,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (listview, colA.ListView, "#B3");
 			Assert.IsNull (colB.ListView, "#B4");
 			Assert.IsNull (colC.ListView, "#B5");
+			Assert.AreEqual (0, colA.Index, "#B6");
+			Assert.AreEqual (-1, colB.Index, "#B7");
+			Assert.AreEqual (-1, colC.Index, "#B8");
 
 			listview.Columns.Remove (colA);
 			Assert.AreEqual (0, listview.Columns.Count, "#C1");
 			Assert.IsNull (colA.ListView, "#C2");
 			Assert.IsNull (colB.ListView, "#C3");
 			Assert.IsNull (colC.ListView, "#C4");
+			Assert.AreEqual (-1, colA.Index, "#C5");
+			Assert.AreEqual (-1, colB.Index, "#C6");
+			Assert.AreEqual (-1, colC.Index, "#C7");
 		}
 
 		[Test]

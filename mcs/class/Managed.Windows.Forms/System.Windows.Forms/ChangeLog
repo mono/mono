@@ -1,3 +1,19 @@
+2007-03-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListView.cs: Add fireEvent argument to ReorderColumn since the
+	ColumnReordered event must not be signaled when modifying DisplayIndex
+	of a ColumnHeader. Added internal ReorderColumns method which takes
+	care of drawing, and updating the internal DisplayIndex of the
+	ColumnHeader. Added AddColumn method which is invoked from
+	ColumnHeaderCollection when adding or inserting columns, and which
+	ensures that reorder_columns_indices is kept in sync. Avoid redrawing
+	after adding each ColumnHeader in ColumnHeaderCollection.AddRange.
+	Recalculated dispay indices after removing a ColumnHeader.
+	* ColumnHeader.cs: Save DisplayIndex separately from ListView to
+	match MS. Allows last display index to be returned after ListView
+	is disposed. Update actual location of ColumnHeader when DisplayIndex
+	is modified.
+
 2007-03-01  Everaldo Canuto  <everaldo@simios.org>
 
 	* LinkLabel.cs: Improve CalcTrimRectangle.

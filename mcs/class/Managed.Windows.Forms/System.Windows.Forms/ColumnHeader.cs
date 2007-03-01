@@ -51,6 +51,7 @@ namespace System.Windows.Forms
 		private string name = String.Empty;
 		private object tag;
 #endif
+		private int display_index = -1;
 
 		// internal variables
 		Rectangle column_rect = Rectangle.Empty;
@@ -132,8 +133,13 @@ namespace System.Windows.Forms
 			get { return format; }
 		}
 
+		internal int InternalDisplayIndex {
+			get { return display_index; }
+			set { display_index = value; }
+		}
+
 		internal void CalcColumnHeader ()
-		{			
+		{
 			if (text_alignment == HorizontalAlignment.Center)
 				format.Alignment = StringAlignment.Center;
 			else if (text_alignment == HorizontalAlignment.Right)
@@ -167,23 +173,26 @@ namespace System.Windows.Forms
 		#endregion	// Private Internal Methods Properties
 
 		#region Public Instance Properties
+
 #if NET_2_0
 		[Localizable (true)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public int DisplayIndex {
 			get {
 				if (owner == null)
-					return -1;
+					return display_index;
 					
 				return owner.GetReorderedColumnIndex (this);
-		       	}
+			}
 			set {
-				if (owner == null)
+				if (owner == null) {
+					display_index = value;
 					return;
+				}
 				if (value < 0 || value >= owner.Columns.Count)
-					throw new ArgumentOutOfRangeException ("value");
+					throw new ArgumentOutOfRangeException ("DisplayIndex");
 
-				owner.ReorderColumn (this, value);
+				owner.ReorderColumn (this, value, false);
 			}
 		}
 
