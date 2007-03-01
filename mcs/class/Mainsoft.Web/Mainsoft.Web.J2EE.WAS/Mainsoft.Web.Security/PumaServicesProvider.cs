@@ -266,10 +266,17 @@ namespace Mainsoft.Web.Security
             {
                 get
                 {
-                    if (_isPortletPumaHome) //TODO: FIX ME - Check what is ActionRequest
-                        return _portletPumaHome.getController(null);
+                    if (_isPortletPumaHome)
+                    {
+                        ActionRequest ar = CurrentPortletRequest as ActionRequest;
+                        if (ar == null)
+                            throw new ApplicationException("The page is not in process action phase");
+                        return _portletPumaHome.getController(ar);
+                    }
                     else
+                    {
                         return _servletPumaHome.getController(CurrentServletRequest);
+                    }
                 }
             }
 

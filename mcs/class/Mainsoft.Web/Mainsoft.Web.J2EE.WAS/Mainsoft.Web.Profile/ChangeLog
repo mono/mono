@@ -1,3 +1,8 @@
+03-01-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* WPUserProfile.cs: added the class which is represents the JSR-168
+	user-info properties.
+
 02-27-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* WPProfileProvider.cs: added skeleton implementation of WebSphere

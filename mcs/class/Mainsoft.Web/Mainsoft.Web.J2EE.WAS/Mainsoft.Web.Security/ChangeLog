@@ -1,3 +1,8 @@
+03-01-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* PumaServicesProvider.cs: fixed PumaController property (proper
+	handling process action phace)
+
 02-26-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* WPGroupsRoleProvider.cs: fixed RoleExists method - in case when

@@ -82,6 +82,7 @@
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
     <Compile Include="Mainsoft.Web.Profile\WPProfileProvider.cs" />
+    <Compile Include="Mainsoft.Web.Profile\WPUserProfile.cs" />
     <Compile Include="Mainsoft.Web.Security\IPumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\PumaServicesProviderFactory.cs" />

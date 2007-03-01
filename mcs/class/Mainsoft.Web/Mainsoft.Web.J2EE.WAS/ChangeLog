@@ -1,3 +1,8 @@
+03-01-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* Mainsoft.Web.Profile: added file
+	Mainsoft.Web.Profile/WPUserProfile.cs
+
 02-27-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* Mainsoft.Web.Profile: added directory for respective namespace - 
