@@ -25,7 +25,6 @@
 // Author:
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
 
-#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -34,7 +33,10 @@ using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
-	public class FlatButtonAppearance
+#if NET_2_0
+	public 
+#endif
+	class FlatButtonAppearance
 	{
 		private Color borderColor = Color.Empty;
 		private int borderSize = 1;
@@ -142,4 +144,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-#endif

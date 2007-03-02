@@ -54,6 +54,34 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
+		
+#if NET_2_0
+		internal override void Draw (PaintEventArgs pevent)
+		{
+			// System style does not use any of the new 2.0 stuff
+			if (this.FlatStyle == FlatStyle.System) {
+				base.Draw (pevent);
+				return;
+			}
+
+			// FIXME: This should be called every time something that can affect it
+			// is changed, not every paint.  Can only change so many things at a time.
+
+			// Figure out where our text and image should go
+			Rectangle text_rectangle;
+			Rectangle image_rectangle;
+
+			ThemeEngine.Current.CalculateButtonTextAndImageLayout (this, out text_rectangle, out image_rectangle);
+
+			// Draw our button
+			if (this.FlatStyle == FlatStyle.Standard)
+				ThemeEngine.Current.DrawButton (pevent.Graphics, this, text_rectangle, image_rectangle, pevent.ClipRectangle);
+			else if (this.FlatStyle == FlatStyle.Flat)
+				ThemeEngine.Current.DrawFlatButton (pevent.Graphics, this, text_rectangle, image_rectangle, pevent.ClipRectangle);
+			else if (this.FlatStyle == FlatStyle.Popup)
+				ThemeEngine.Current.DrawPopupButton (pevent.Graphics, this, text_rectangle, image_rectangle, pevent.ClipRectangle);
+		}
+#endif
 		#endregion	// Internal methods
 
 		#region Public Instance Properties
@@ -108,7 +136,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
-			if (IsMnemonic(charCode, Text) == true) {
+			if (this.UseMnemonic && IsMnemonic(charCode, Text) == true) {
 				PerformClick();
 				return true;
 			}
@@ -134,8 +162,21 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (DoubleClickEvent, value); }
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }
 		}
-		#endregion	// Events
+		
 #if NET_2_0
+		public new event MouseEventHandler MouseDoubleClick {
+			add { base.MouseDoubleClick += value; }
+			remove { base.MouseDoubleClick -= value; }
+		}
+#endif
+		#endregion	// Events
+		
+#if NET_2_0
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+		}
+		
 		protected override void OnMouseEnter (EventArgs e)
 		{
 			base.OnMouseEnter (e);

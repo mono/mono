@@ -1,3 +1,14 @@
+2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ButtonBase.cs: Add 2.0 properties.
+	* Button.cs: Override Draw for 2.0.
+	* Control.cs: Add Entered and Selected properties.
+	* FlatButtonAppearance.cs, TextFormatFlags.cs, TextImageRelation.cs,
+	TextRenderer.cs: Make internal for 1.1 to unify drawing code.
+	* Theme.cs: New abstract functions for drawing Standard, Flat, Popup
+	buttons.
+	* ThemeWin32Classic.cs: Implement layout calculations for 2.0 buttons.
+
 2007-03-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIWin32.cs: Don't use 2.0 methods in 1.1 code.  :/

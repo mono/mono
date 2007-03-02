@@ -1,3 +1,8 @@
+2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add ThemeElements.cs,
+	ThemeElementsDefault.cs.
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* System.Windows.Forms.dll.sources: Added FormWindowManager.cs and
@@ -340,7 +345,7 @@
 	* resources/, System.Windows.Forms.dll.resources, Makefile:
 	  Add user-home Tango icon in various sizes.
 
-2006-09-05  Kornél Pál  <kornelpal@hotmail.com>
+2006-09-05  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
 
 	* Makefile: Removed CODEPAGE as now UTF-8 is the default.
 
@@ -503,7 +508,7 @@
 
 	* System.Windows.Forms_test.dll.sources: Added System.Resources/CultureTest.cs
 
-2005-11-12  Pedro Martínez Juliá  <pedromj@gmail.com>
+2005-11-12  Pedro MartÃ­nez JuliÃ¡  <pedromj@gmail.com>
 
 	* System.Windows.Forms_test.dll.sources: Added DataGridViewElementTest.cs
 	DataGridViewBandTest.cs DataGridViewCellTest.cs
@@ -551,7 +556,7 @@
 
 	* System.Windows.Forms_test.dll.sources : Added Common.cs
 
-2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+2005-09-27  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
 
 	* Makefile: Replaced /codepage with CODEPAGE.
 

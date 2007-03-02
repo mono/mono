@@ -759,6 +759,8 @@ System.Windows.Forms.Layout/DefaultLayout.cs
 System.Windows.Forms.Layout/FlowLayout.cs
 System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs
+System.Windows.Forms.Theming/ThemeElements.cs
+System.Windows.Forms.Theming/ThemeElementsDefault.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs

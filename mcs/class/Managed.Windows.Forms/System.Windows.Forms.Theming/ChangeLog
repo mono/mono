@@ -1,0 +1,6 @@
+2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeElements.cs: Driver code to theme class that actually draws 
+	theme elements.
+	* ThemeElementsDefault.cs: Default [win32 style] implementation of 
+	Standard, Flat, Popup buttons.

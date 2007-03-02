@@ -24,12 +24,14 @@
 //
 
 
-#if NET_2_0
 
 namespace System.Windows.Forms {
 	
 	[FlagsAttribute()]
-	public enum TextFormatFlags {
+#if NET_2_0
+	public 
+#endif
+	enum TextFormatFlags {
 		Left = 0,
 		Top = 0,
 		Default = 0,
@@ -59,7 +61,4 @@ namespace System.Windows.Forms {
 		NoPadding = 268435456,
 		LeftAndRightPadding = 536870912
 	}
-
 }
-
-#endif

@@ -35,6 +35,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Text;
+using System.Windows.Forms.Theming;
 
 namespace System.Windows.Forms
 {
@@ -139,6 +140,430 @@ namespace System.Windows.Forms
 				CPDrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
 		}
 		#endregion	// OwnerDraw Support
+
+		#region Button
+		#region Standard Button Style
+		public override void DrawButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		{
+			// Draw Button Background
+			DrawButtonBackground (g, b, clipRectangle);
+
+			// If we have an image, draw it
+			if (imageBounds.Size != Size.Empty)
+				DrawButtonImage (g, b, imageBounds);
+
+			// If we're focused, draw a focus rectangle
+			if (b.Focused && b.Enabled)
+				DrawButtonFocus (g, b);
+
+			// If we have text, draw it
+			if (textBounds != Rectangle.Empty)
+				DrawButtonText (g, b, textBounds);
+		}
+
+		public virtual void DrawButtonBackground (Graphics g, Button button, Rectangle clipArea) 
+		{
+			if (button.Pressed)
+				ThemeElements.DrawButton (g, button.ClientRectangle, ButtonThemeState.Pressed, button.BackColor, button.ForeColor);
+			else if (button.InternalSelected)
+				ThemeElements.DrawButton (g, button.ClientRectangle, ButtonThemeState.Default, button.BackColor, button.ForeColor);
+			else if (button.Entered)
+				ThemeElements.DrawButton (g, button.ClientRectangle, ButtonThemeState.Entered, button.BackColor, button.ForeColor);
+			else if (!button.Enabled)
+				ThemeElements.DrawButton (g, button.ClientRectangle, ButtonThemeState.Disabled, button.BackColor, button.ForeColor);
+			else
+				ThemeElements.DrawButton (g, button.ClientRectangle, ButtonThemeState.Normal, button.BackColor, button.ForeColor);
+		}
+
+		public virtual void DrawButtonFocus (Graphics g, Button button)
+		{
+			ControlPaint.DrawFocusRectangle (g, Rectangle.Inflate (button.ClientRectangle, -4, -4));
+		}
+
+		public virtual void DrawButtonImage (Graphics g, Button button, Rectangle imageBounds)
+		{
+			if (button.Enabled)
+				g.DrawImage (button.Image, imageBounds);
+			else
+				CPDrawImageDisabled (g, button.Image, imageBounds.Left, imageBounds.Top, ColorControl);
+		}
+
+		public virtual void DrawButtonText (Graphics g, Button button, Rectangle textBounds)
+		{
+			if (button.Pressed)
+				textBounds.Offset (1, 1);
+							
+			if (button.Enabled)
+				TextRenderer.DrawTextInternal (g, button.Text, button.Font, textBounds, button.ForeColor, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			else
+				DrawStringDisabled20 (g, button.Text, button.Font, textBounds, button.BackColor, button.TextFormatFlags, button.UseCompatibleTextRendering);
+		}
+		#endregion
+
+		#region FlatStyle Button Style
+		public override void DrawFlatButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		{
+			// Draw Button Background
+			DrawFlatButtonBackground (g, b, clipRectangle);
+
+			// If we have an image, draw it
+			if (imageBounds.Size != Size.Empty)
+				DrawFlatButtonImage (g, b, imageBounds);
+
+			// If we're focused, draw a focus rectangle
+			if (b.Focused && b.Enabled)
+				DrawFlatButtonFocus (g, b);
+
+			// If we have text, draw it
+			if (textBounds != Rectangle.Empty)
+				DrawFlatButtonText (g, b, textBounds);
+		}
+
+		public virtual void DrawFlatButtonBackground (Graphics g, Button button, Rectangle clipArea)
+		{
+			if (button.Pressed)
+				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Pressed, button.BackColor, button.ForeColor, button.FlatAppearance);
+			else if (button.InternalSelected)
+				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Default, button.BackColor, button.ForeColor, button.FlatAppearance);
+			else if (button.Entered)
+				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Entered, button.BackColor, button.ForeColor, button.FlatAppearance);
+			else if (!button.Enabled)
+				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Disabled, button.BackColor, button.ForeColor, button.FlatAppearance);
+			else
+				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Normal, button.BackColor, button.ForeColor, button.FlatAppearance);
+		}
+
+		public virtual void DrawFlatButtonFocus (Graphics g, Button button)
+		{
+			if (!button.Pressed) {
+				Color focus_color = ControlPaint.Light(button.BackColor);
+				g.DrawRectangle (ResPool.GetPen (focus_color), new Rectangle (button.ClientRectangle.Left + 4, button.ClientRectangle.Top + 4, button.ClientRectangle.Width - 9, button.ClientRectangle.Height - 9));
+			}
+		}
+
+		public virtual void DrawFlatButtonImage (Graphics g, Button button, Rectangle imageBounds)
+		{
+			// No changes from Standard for image for this theme
+			DrawButtonImage (g, button, imageBounds);
+		}
+
+		public virtual void DrawFlatButtonText (Graphics g, Button button, Rectangle textBounds)
+		{
+			// No changes from Standard for image for this theme
+			DrawButtonText (g, button, textBounds);
+		}
+		#endregion
+
+		#region Popup Button Style
+		public override void DrawPopupButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		{
+			// Draw Button Background
+			DrawPopupButtonBackground (g, b, clipRectangle);
+
+			// If we have an image, draw it
+			if (imageBounds.Size != Size.Empty)
+				DrawPopupButtonImage (g, b, imageBounds);
+
+			// If we're focused, draw a focus rectangle
+			if (b.Focused && b.Enabled)
+				DrawPopupButtonFocus (g, b);
+
+			// If we have text, draw it
+			if (textBounds != Rectangle.Empty)
+				DrawPopupButtonText (g, b, textBounds);
+		}
+
+		public virtual void DrawPopupButtonBackground (Graphics g, Button button, Rectangle clipArea)
+		{
+			if (button.Pressed)
+				ThemeElements.DrawPopupButton (g, button.ClientRectangle, ButtonThemeState.Pressed, button.BackColor, button.ForeColor);
+			else if (button.Entered)
+				ThemeElements.DrawPopupButton (g, button.ClientRectangle, ButtonThemeState.Entered, button.BackColor, button.ForeColor);
+			else if (button.InternalSelected)
+				ThemeElements.DrawPopupButton (g, button.ClientRectangle, ButtonThemeState.Default, button.BackColor, button.ForeColor);
+			else if (!button.Enabled)
+				ThemeElements.DrawPopupButton (g, button.ClientRectangle, ButtonThemeState.Disabled, button.BackColor, button.ForeColor);
+			else
+				ThemeElements.DrawPopupButton (g, button.ClientRectangle, ButtonThemeState.Normal, button.BackColor, button.ForeColor);
+		}
+
+		public virtual void DrawPopupButtonFocus (Graphics g, Button button)
+		{
+			// No changes from Standard for image for this theme
+			DrawButtonFocus (g, button);
+		}
+
+		public virtual void DrawPopupButtonImage (Graphics g, Button button, Rectangle imageBounds)
+		{
+			// No changes from Standard for image for this theme
+			DrawButtonImage (g, button, imageBounds);
+		}
+
+		public virtual void DrawPopupButtonText (Graphics g, Button button, Rectangle textBounds)
+		{
+			// No changes from Standard for image for this theme
+			DrawButtonText (g, button, textBounds);
+		}
+		#endregion
+
+		#region Button Layout Calculations
+		public override void CalculateButtonTextAndImageLayout (Button button, out Rectangle textRectangle, out Rectangle imageRectangle)
+		{
+			Image image = button.Image;
+			string text = button.Text;
+			Rectangle content_rect = button.ClientRectangle;
+			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			Size image_size = image == null ? Size.Empty : image.Size;
+
+			textRectangle = Rectangle.Empty;
+			imageRectangle = Rectangle.Empty;
+			
+			switch (button.TextImageRelation) {
+				case TextImageRelation.Overlay:
+					// Overlay is easy, text always goes here
+					textRectangle = Rectangle.Inflate (content_rect, -4, -4);
+
+					if (button.Pressed)
+						textRectangle.Offset (1, 1);
+						
+					// Image is dependent on ImageAlign
+					if (image == null)
+						return;
+						
+					int image_x = 0;
+					int image_y = 0;
+					int image_height = image.Height;
+					int image_width = image.Width;
+					
+					switch (button.ImageAlign) {
+						case System.Drawing.ContentAlignment.TopLeft:
+							image_x = 5;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.TopCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.TopRight:
+							image_x = content_rect.Width - image_width - 5;
+							image_y = 5;
+							break;
+						case System.Drawing.ContentAlignment.MiddleLeft:
+							image_x = 5;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.MiddleCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.MiddleRight:
+							image_x = content_rect.Width - image_width - 4;
+							image_y = (content_rect.Height - image_height) / 2;
+							break;
+						case System.Drawing.ContentAlignment.BottomLeft:
+							image_x = 5;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						case System.Drawing.ContentAlignment.BottomCenter:
+							image_x = (content_rect.Width - image_width) / 2;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						case System.Drawing.ContentAlignment.BottomRight:
+							image_x = content_rect.Width - image_width - 4;
+							image_y = content_rect.Height - image_height - 4;
+							break;
+						default:
+							image_x = 5;
+							image_y = 5;
+							break;
+					}
+					
+					imageRectangle = new Rectangle (image_x, image_y, image_width, image_height);
+					break;
+				case TextImageRelation.ImageAboveText:
+					content_rect.Inflate (-4, -4);
+					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.TextAboveImage:
+					content_rect.Inflate (-4, -4);
+					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.ImageBeforeText:
+					content_rect.Inflate (-4, -4);
+					LayoutTextBeforeOrAfterImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+				case TextImageRelation.TextBeforeImage:
+					content_rect.Inflate (-4, -4);
+					LayoutTextBeforeOrAfterImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					break;
+			}
+		}
+
+		private void LayoutTextBeforeOrAfterImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
+		{
+			int element_spacing = 0;	// Spacing between the Text and the Image
+			int total_width = textSize.Width + element_spacing + imageSize.Width;
+			
+			if (!textFirst)
+				element_spacing += 2;
+				
+			// If the text is too big, chop it down to the size we have available to it
+			if (total_width > totalArea.Width) {
+				textSize.Width = totalArea.Width - element_spacing - imageSize.Width;
+				total_width = totalArea.Width;
+			}
+			
+			int excess_width = totalArea.Width - total_width;
+			int offset = 0;
+
+			Rectangle final_text_rect;
+			Rectangle final_image_rect;
+
+			HorizontalAlignment h_text = GetHorizontalAlignment (textAlign);
+			HorizontalAlignment h_image = GetHorizontalAlignment (imageAlign);
+
+			if (h_image == HorizontalAlignment.Left)
+				offset = 0;
+			else if (h_image == HorizontalAlignment.Right && h_text == HorizontalAlignment.Right)
+				offset = excess_width;
+			else if (h_image == HorizontalAlignment.Center && (h_text == HorizontalAlignment.Left || h_text == HorizontalAlignment.Center))
+				offset += (int)(excess_width / 3);
+			else
+				offset += (int)(2 * (excess_width / 3));
+
+			if (textFirst) {
+				final_text_rect = new Rectangle (totalArea.Left + offset, AlignInRectangle (totalArea, textSize, textAlign).Top, textSize.Width, textSize.Height);
+				final_image_rect = new Rectangle (final_text_rect.Right + element_spacing, AlignInRectangle (totalArea, imageSize, imageAlign).Top, imageSize.Width, imageSize.Height);
+			}
+			else {
+				final_image_rect = new Rectangle (totalArea.Left + offset, AlignInRectangle (totalArea, imageSize, imageAlign).Top, imageSize.Width, imageSize.Height);
+				final_text_rect = new Rectangle (final_image_rect.Right + element_spacing, AlignInRectangle (totalArea, textSize, textAlign).Top, textSize.Width, textSize.Height);
+			}
+
+			textRect = final_text_rect;
+			imageRect = final_image_rect;
+		}
+
+		private void LayoutTextAboveOrBelowImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
+		{
+			int element_spacing = 0;	// Spacing between the Text and the Image
+			int total_height = textSize.Height + element_spacing + imageSize.Height;
+
+			if (textFirst)
+				element_spacing += 2;
+
+			if (textSize.Width > totalArea.Width)
+				textSize.Width = totalArea.Width;
+				
+			// If the there isn't enough room and we're text first, cut out the image
+			if (total_height > totalArea.Height && textFirst) {
+				imageSize = Size.Empty;
+				total_height = totalArea.Height;
+			}
+
+			int excess_height = totalArea.Height - total_height;
+			int offset = 0;
+
+			Rectangle final_text_rect;
+			Rectangle final_image_rect;
+
+			VerticalAlignment v_text = GetVerticalAlignment (textAlign);
+			VerticalAlignment v_image = GetVerticalAlignment (imageAlign);
+
+			if (v_image == VerticalAlignment.Top)
+				offset = 0;
+			else if (v_image == VerticalAlignment.Bottom && v_text == VerticalAlignment.Bottom)
+				offset = excess_height;
+			else if (v_image == VerticalAlignment.Center && (v_text == VerticalAlignment.Top || v_text == VerticalAlignment.Center))
+				offset += (int)(excess_height / 3);
+			else
+				offset += (int)(2 * (excess_height / 3));
+
+			if (textFirst) {
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, totalArea.Top + offset, textSize.Width, textSize.Height);
+				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, final_text_rect.Bottom + element_spacing, imageSize.Width, imageSize.Height);
+			}
+			else {
+				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, totalArea.Top + offset, imageSize.Width, imageSize.Height);
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textSize.Height);
+				
+				if (final_text_rect.Bottom > totalArea.Bottom)
+					final_text_rect.Y = totalArea.Top;
+			}
+
+			textRect = final_text_rect;
+			imageRect = final_image_rect;
+		}
+		
+		private HorizontalAlignment GetHorizontalAlignment (System.Drawing.ContentAlignment align)
+		{
+			switch (align) {
+				case System.Drawing.ContentAlignment.BottomLeft:
+				case System.Drawing.ContentAlignment.MiddleLeft:
+				case System.Drawing.ContentAlignment.TopLeft:
+					return HorizontalAlignment.Left;
+				case System.Drawing.ContentAlignment.BottomCenter:
+				case System.Drawing.ContentAlignment.MiddleCenter:
+				case System.Drawing.ContentAlignment.TopCenter:
+					return HorizontalAlignment.Center;
+				case System.Drawing.ContentAlignment.BottomRight:
+				case System.Drawing.ContentAlignment.MiddleRight:
+				case System.Drawing.ContentAlignment.TopRight:
+					return HorizontalAlignment.Right;
+			}
+
+			return HorizontalAlignment.Left;
+		}
+
+		private enum VerticalAlignment
+		{
+			Top = 0,
+			Center = 1,
+			Bottom = 2
+		}
+		
+		private VerticalAlignment GetVerticalAlignment (System.Drawing.ContentAlignment align)
+		{
+			switch (align) {
+				case System.Drawing.ContentAlignment.TopLeft:
+				case System.Drawing.ContentAlignment.TopCenter:
+				case System.Drawing.ContentAlignment.TopRight:
+					return VerticalAlignment.Top;
+				case System.Drawing.ContentAlignment.MiddleLeft:
+				case System.Drawing.ContentAlignment.MiddleCenter:
+				case System.Drawing.ContentAlignment.MiddleRight:
+					return VerticalAlignment.Center;
+				case System.Drawing.ContentAlignment.BottomLeft:
+				case System.Drawing.ContentAlignment.BottomCenter:
+				case System.Drawing.ContentAlignment.BottomRight:
+					return VerticalAlignment.Bottom;
+			}
+
+			return VerticalAlignment.Top;
+		}
+
+		internal Rectangle AlignInRectangle (Rectangle outer, Size inner, System.Drawing.ContentAlignment align)
+		{
+			int x = 0;
+			int y = 0;
+
+			if (align == System.Drawing.ContentAlignment.BottomLeft || align == System.Drawing.ContentAlignment.MiddleLeft || align == System.Drawing.ContentAlignment.TopLeft)
+				x = outer.X;
+			else if (align == System.Drawing.ContentAlignment.BottomCenter || align == System.Drawing.ContentAlignment.MiddleCenter || align == System.Drawing.ContentAlignment.TopCenter)
+				x = Math.Max (outer.X + ((outer.Width - inner.Width) / 2), outer.Left);
+			else if (align == System.Drawing.ContentAlignment.BottomRight || align == System.Drawing.ContentAlignment.MiddleRight || align == System.Drawing.ContentAlignment.TopRight)
+				x = outer.Right - inner.Width;
+			if (align == System.Drawing.ContentAlignment.TopCenter || align == System.Drawing.ContentAlignment.TopLeft || align == System.Drawing.ContentAlignment.TopRight)
+				y = outer.Y;
+			else if (align == System.Drawing.ContentAlignment.MiddleCenter || align == System.Drawing.ContentAlignment.MiddleLeft || align == System.Drawing.ContentAlignment.MiddleRight)
+				y = outer.Y + (outer.Height - inner.Height) / 2;
+			else if (align == System.Drawing.ContentAlignment.BottomCenter || align == System.Drawing.ContentAlignment.BottomRight || align == System.Drawing.ContentAlignment.BottomLeft)
+				y = outer.Bottom - inner.Height;
+
+			return new Rectangle (x, y, Math.Min (inner.Width, outer.Width), Math.Min (inner.Height, outer.Height));
+		}
+		#endregion
+		#endregion
 
 		#region ButtonBase
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button)
@@ -272,7 +697,7 @@ namespace System.Windows.Forms
 			int height = button.ClientSize.Height;
 
 			if (button.ImageIndex != -1) {	 // We use ImageIndex instead of image_index since it will return -1 if image_list is null
-				i = button.image_list.Images[button.image_index];
+				i = button.image_list.Images[button.ImageIndex];
 			} else {
 				i = button.image;
 			}
@@ -280,7 +705,7 @@ namespace System.Windows.Forms
 			image_width = i.Width;
 			image_height = i.Height;
 			
-			switch (button.image_alignment) {
+			switch (button.ImageAlign) {
 				case ContentAlignment.TopLeft: {
 					image_x = 5;
 					image_y = 5;
@@ -5993,6 +6418,17 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen_dark, bounds.X + i + 1, bounds.Bottom - 2, bounds.Right - 1, bounds.Y + i);
 				dc.DrawLine (pen_dark, bounds.X + i + 2, bounds.Bottom - 2, bounds.Right - 1, bounds.Y + i + 1);
 			}
+		}
+
+		private void DrawStringDisabled20 (Graphics g, string s, Font font, Rectangle layoutRectangle, Color color, TextFormatFlags flags, bool useDrawString)
+		{
+			CPColor cpcolor = ResPool.GetCPColor (color);
+
+			layoutRectangle.Offset (1, 1);
+			TextRenderer.DrawTextInternal (g, s, font, layoutRectangle, cpcolor.LightLight, flags, useDrawString);
+
+			layoutRectangle.Offset (-1, -1);
+			TextRenderer.DrawTextInternal (g, s, font, layoutRectangle, cpcolor.Dark, flags, useDrawString);
 		}
 
 		public  override void CPDrawStringDisabled (Graphics dc, string s, Font font, Color color, RectangleF layoutRectangle, StringFormat format)

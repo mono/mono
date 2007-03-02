@@ -127,6 +127,7 @@ namespace System.Windows.Forms
 		BindingContext          binding_context;
 		RightToLeft             right_to_left; // drawing direction for control
 		ContextMenu             context_menu; // Context menu associated with the control
+		internal bool		use_compatible_text_rendering;
 
 		// double buffering
 		DoubleBuffer            backbuffer;
@@ -138,7 +139,6 @@ namespace System.Windows.Forms
 		ControlBindingsCollection data_bindings;
 
 #if NET_2_0
-		internal bool use_compatible_text_rendering;
 		static bool verify_thread_handle;
 		Padding padding;
 		ImageLayout backgroundimage_layout;
@@ -936,6 +936,7 @@ namespace System.Windows.Forms
 			dist_bottom = 0;
 			tab_stop = true;
 			ime_mode = ImeMode.Inherit;
+			use_compatible_text_rendering = true;
 
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
@@ -1036,6 +1037,26 @@ namespace System.Windows.Forms
 		#endregion 	// Public Constructors
 
 		#region Internal Properties
+		// Control is currently selected, like Focused, except maintains state
+		// when Form loses focus
+		internal bool InternalSelected {
+		        get {
+		        	IContainerControl container;
+			
+				container = GetContainerControl();
+				
+				if (container != null && container.ActiveControl == this)
+					return true;
+					
+				return false;
+			}
+		}
+		
+		// Mouse is currently within the control's bounds
+		internal bool Entered {
+			get { return this.is_entered; }
+		}
+
 		internal bool VisibleInternal {
 			get { return is_visible; }
 		}

@@ -39,21 +39,26 @@ namespace System.Windows.Forms {
 	public abstract class ButtonBase : Control
 	{
 		#region Local Variables
-		FlatStyle flat_style;
-		internal int			image_index;
+		private FlatStyle		flat_style;
+		private int			image_index;
 		internal Image			image;
 		internal ImageList		image_list;
-		internal ContentAlignment	image_alignment;
+		private ContentAlignment	image_alignment;
 		internal ContentAlignment	text_alignment;
 		private bool			is_default;
 		internal bool			is_pressed;
-		internal bool			enter_state;
+		private bool			enter_state;
 		internal StringFormat		text_format;
 		internal bool 			paint_as_acceptbutton;
-#if NET_2_0
+		
+		// Properties are 2.0, but variables used in 1.1 for common drawing code
+		private bool			auto_ellipsis;
+		private FlatButtonAppearance	flat_button_appearance;
+		private string			image_key;
+		private TextImageRelation	text_image_relation;
+		private TextFormatFlags		text_format_flags;
+		private bool			use_mnemonic;
 		private bool			use_visual_style_back_color;
-		private FlatButtonAppearance flat_button_appearance;
-#endif
 		#endregion	// Local Variables
 
 		#region ButtonBaseAccessibleObject sub-class
@@ -139,6 +144,9 @@ namespace System.Windows.Forms {
 			flat_style	= FlatStyle.Standard;
 #if NET_2_0
 			flat_button_appearance = new FlatButtonAppearance (this);
+			this.image_key = string.Empty;
+			this.text_image_relation = TextImageRelation.Overlay;
+			this.use_mnemonic = true;
 #endif
 			image_index	= -1;
 			image		= null;
@@ -153,6 +161,10 @@ namespace System.Windows.Forms {
 			text_format.LineAlignment = StringAlignment.Center;
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
+			text_format_flags = TextFormatFlags.HorizontalCenter;
+			text_format_flags |= TextFormatFlags.VerticalCenter;
+			text_format_flags |= TextFormatFlags.WordBreak;
+		
 			TextChanged+=new System.EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);
 
@@ -184,25 +196,45 @@ namespace System.Windows.Forms {
 				Invalidate();
 			}
 		}
-#if NET_2_0
-		[MonoTODO("FlatAppearance is currently ignored on drawing.")]
+
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[Browsable(true)]
-		public FlatButtonAppearance FlatAppearance
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		FlatButtonAppearance FlatAppearance
 		{
 			get { return flat_button_appearance; }
 		}
-#endif		
+
 		[Localizable(true)]
 		[MWFDescription("Sets image to be displayed on button face"), MWFCategory("Appearance")]
 		public Image Image {
 			get {
-				return image;
-			}
+				if (this.image != null)
+					return this.image;
 
+				if (this.image_index >= 0)
+					if (this.image_list != null)
+						return this.image_list.Images[this.image_index];
+
+#if NET_2_0
+				if (!string.IsNullOrEmpty (this.image_key))
+					if (this.image_list != null)
+						return this.image_list.Images[this.image_key];
+#endif
+				return null;
+			}
 			set {
-				image = value;
-				Invalidate();
+				if (this.image != value) {
+					this.image = value;
+					this.image_index = -1;
+					this.image_key = string.Empty;
+					this.image_list = null;
+					Invalidate();
+				}
 			}
 		}
 
@@ -237,8 +269,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				image_index=value;
-				Invalidate();
+				if (this.image_index != value) {
+					this.image_index = value;
+					this.image = null;
+					this.image_key = string.Empty;
+					Invalidate();
+				}
 			}
 		}
 
@@ -281,6 +317,14 @@ namespace System.Windows.Forms {
 			set {
 				if (text_alignment != value) {
 					text_alignment = value;
+
+					text_format_flags &= ~TextFormatFlags.Bottom;
+					text_format_flags &= ~TextFormatFlags.Top;
+					text_format_flags &= ~TextFormatFlags.Left;
+					text_format_flags &= ~TextFormatFlags.Right;
+					text_format_flags &= ~TextFormatFlags.HorizontalCenter;
+					text_format_flags &= ~TextFormatFlags.VerticalCenter;
+					
 					switch(text_alignment) {
 					case ContentAlignment.TopLeft:
 						text_format.Alignment=StringAlignment.Near;
@@ -290,41 +334,49 @@ namespace System.Windows.Forms {
 					case ContentAlignment.TopCenter:
 						text_format.Alignment=StringAlignment.Center;
 						text_format.LineAlignment=StringAlignment.Near;
+						text_format_flags |= TextFormatFlags.HorizontalCenter;
 						break;
 
 					case ContentAlignment.TopRight:
 						text_format.Alignment=StringAlignment.Far;
 						text_format.LineAlignment=StringAlignment.Near;
+						text_format_flags |= TextFormatFlags.Right;
 						break;
 
 					case ContentAlignment.MiddleLeft:
 						text_format.Alignment=StringAlignment.Near;
 						text_format.LineAlignment=StringAlignment.Center;
+						text_format_flags |= TextFormatFlags.VerticalCenter;
 						break;
 
 					case ContentAlignment.MiddleCenter:
 						text_format.Alignment=StringAlignment.Center;
 						text_format.LineAlignment=StringAlignment.Center;
+						text_format_flags |= TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
 						break;
 
 					case ContentAlignment.MiddleRight:
 						text_format.Alignment=StringAlignment.Far;
 						text_format.LineAlignment=StringAlignment.Center;
+						text_format_flags |= TextFormatFlags.VerticalCenter | TextFormatFlags.Right;
 						break;
 
 					case ContentAlignment.BottomLeft:
 						text_format.Alignment=StringAlignment.Near;
 						text_format.LineAlignment=StringAlignment.Far;
+						text_format_flags |= TextFormatFlags.Bottom;
 						break;
 
 					case ContentAlignment.BottomCenter:
 						text_format.Alignment=StringAlignment.Center;
 						text_format.LineAlignment=StringAlignment.Far;
+						text_format_flags |= TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom;
 						break;
 
 					case ContentAlignment.BottomRight:
 						text_format.Alignment=StringAlignment.Far;
 						text_format.LineAlignment=StringAlignment.Far;
+						text_format_flags |= TextFormatFlags.Bottom | TextFormatFlags.Right;
 						break;
 					}
 					Invalidate();
@@ -531,7 +583,17 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
-
+		#region Internal Instance Properties
+		internal bool Pressed {
+			get { return this.is_pressed; }
+		}
+		
+		// The flags to be used for MeasureText and DrawText
+		internal TextFormatFlags TextFormatFlags {
+			get { return this.text_format_flags; }
+		}
+		#endregion
+		
 		#region Internal Methods
 		private void PerformClick() {
 			OnClick(EventArgs.Empty);
@@ -539,6 +601,13 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 
 		#region	Events
+#if NET_2_0
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged {
@@ -549,23 +618,120 @@ namespace System.Windows.Forms {
 
 
 		#region .NET 2.0 Public Instance Properties
+		[DefaultValue (false)]
 #if NET_2_0
-		public bool UseVisualStyleBackColor {
+		public 
+#else
+		internal
+#endif
+		bool AutoEllipsis {
+			get { return this.auto_ellipsis; }
+			set {
+				if (this.auto_ellipsis != value) {
+					this.auto_ellipsis = value;
+					
+					if (this.auto_ellipsis) {
+						text_format_flags |= TextFormatFlags.EndEllipsis;
+						text_format_flags &= ~TextFormatFlags.WordBreak;
+					}
+					else {
+						text_format_flags &= ~TextFormatFlags.EndEllipsis;
+						text_format_flags |= TextFormatFlags.WordBreak;
+					}
+						
+					this.Invalidate ();
+				}
+			}
+		}
+
+#if NET_2_0
+		[DefaultValue (true)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		public override Color BackColor {
+			get { return base.BackColor; }
+			set { base.BackColor = value; }
+		}
+		
+		[Localizable (true)]
+		public string ImageKey {
+			get { return this.image_key; }
+			set {
+				if (this.image_key != value) {
+					this.image = null;
+					this.image_index = -1;
+					this.image_key = value;
+					this.Invalidate ();
+				}
+			}
+		}
+		
+		[Localizable (true)]
+		[DefaultValue (TextImageRelation.Overlay)]
+		public 
+#else
+		internal
+#endif
+		TextImageRelation TextImageRelation {
+			get { return this.text_image_relation; }
+			set {
+				if (!Enum.IsDefined (typeof (TextImageRelation), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextImageRelation", value));
+
+				if (this.text_image_relation != value) {
+					this.text_image_relation = value;
+					this.Invalidate ();
+				}
+			}
+		}
+		
+		[DefaultValue (true)]
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		bool UseMnemonic {
+			get { return this.use_mnemonic; }
+			set {
+				if (this.use_mnemonic != value) {
+					this.use_mnemonic = value;
+
+					if (this.use_mnemonic)
+						text_format_flags &= ~TextFormatFlags.NoPrefix;
+					else
+						text_format_flags |= TextFormatFlags.NoPrefix;
+					
+					this.Invalidate ();
+				}
+			}
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		bool UseVisualStyleBackColor {
 			get { return use_visual_style_back_color; }
 			set { use_visual_style_back_color = value; }
 		}
 
 		[DefaultValue (false)]
-		public bool UseCompatibleTextRendering {
-			get {
-				return use_compatible_text_rendering;
-			}
-
-			set {
-				use_compatible_text_rendering = value;
-			}
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		bool UseCompatibleTextRendering {
+			get { return use_compatible_text_rendering; }
+			set { use_compatible_text_rendering = value; }
 		}
 
+#if NET_2_0
 		[SettingsBindable (true)]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]

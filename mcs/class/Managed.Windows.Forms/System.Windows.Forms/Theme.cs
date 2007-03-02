@@ -692,6 +692,10 @@ namespace System.Windows.Forms
 		#endregion	// OwnerDraw Support
 
 		#region Button
+		public abstract void CalculateButtonTextAndImageLayout (Button b, out Rectangle textRectangle, out Rectangle imageRectangle);
+		public abstract void DrawButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
+		public abstract void DrawFlatButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
+		public abstract void DrawPopupButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		#endregion	// Button
 
 		#region ButtonBase

@@ -27,10 +27,12 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public enum TextImageRelation
+#if NET_2_0
+	public 
+#endif
+	enum TextImageRelation
 	{
 		Overlay = 0,
 		ImageAboveText = 1,
@@ -39,4 +41,3 @@ namespace System.Windows.Forms
 		TextBeforeImage = 8
 	}
 }
-#endif
