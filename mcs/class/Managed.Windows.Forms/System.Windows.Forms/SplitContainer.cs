@@ -477,7 +477,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return new SplitContainerTypedControlCollection (this);
@@ -524,7 +524,7 @@ namespace System.Windows.Forms
 			base.OnMouseLeave (e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 			base.OnMouseMove (e);
@@ -540,7 +540,7 @@ namespace System.Windows.Forms
 			base.OnPaint (e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);

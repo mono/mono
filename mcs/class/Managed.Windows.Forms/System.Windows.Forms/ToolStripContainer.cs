@@ -151,7 +151,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public override ContextMenuStrip ContextMenuStrip {
+		public new ContextMenuStrip ContextMenuStrip {
 			get { return base.ContextMenuStrip; }
 			set { base.ContextMenuStrip = value; }
 		}

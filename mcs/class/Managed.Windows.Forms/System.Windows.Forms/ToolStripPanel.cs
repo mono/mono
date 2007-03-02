@@ -105,9 +105,9 @@ namespace System.Windows.Forms
 			get { return new Layout.FlowLayout (); }
 		}
 
+		[Browsable (false)]
 		[DefaultValue (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool Locked {
 			get { return this.locked; }
 			set { this.locked = value; }
@@ -279,7 +279,7 @@ namespace System.Windows.Forms
 			this.Invalidate (FindBackgroundRegion ());
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Always)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
@@ -374,10 +374,10 @@ namespace System.Windows.Forms
 		
 		private Region FindBackgroundRegion ()
 		{
-			Region r = new Region (this.bounds);
+			Region r = new Region (this.Bounds);
 
 			foreach (Control c in this.Controls)
-				r.Exclude (c.bounds);
+				r.Exclude (c.Bounds);
 
 			return r;
 		}

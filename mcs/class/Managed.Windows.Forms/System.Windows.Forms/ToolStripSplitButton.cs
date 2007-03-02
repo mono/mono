@@ -172,7 +172,7 @@ namespace System.Windows.Forms
 				this.OnButtonClick (EventArgs.Empty);
 		}
 		
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetDropDownButtonWidth ()
 		{
 			this.DropDownButtonWidth = 11;

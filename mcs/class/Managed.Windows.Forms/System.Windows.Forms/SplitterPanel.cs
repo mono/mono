@@ -190,7 +190,6 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }

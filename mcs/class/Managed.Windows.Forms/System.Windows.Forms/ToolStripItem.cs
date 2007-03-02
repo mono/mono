@@ -207,15 +207,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		[DefaultValue (AnchorStyles.Top | AnchorStyles.Left)]
-		public AnchorStyles Anchor {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public AnchorStyles Anchor
+		{
 			get { return this.anchor; }
 			set { this.anchor = value; }
 		}
 			
 		[Localizable (true)]
 		[DefaultValue (true)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoSize {
 			get { return this.auto_size; }
@@ -440,8 +443,7 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[Browsable (false)]
-		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		[TypeConverter (typeof (ImageIndexConverter))]
+		[RelatedImageList ("Owner.ImageList")]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public int ImageIndex {
 			get { return this.image_index; }
@@ -461,7 +463,11 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		public string ImageKey {
+		[Browsable (false)]
+		[RelatedImageList ("Owner.ImageList")]
+		[RefreshProperties (RefreshProperties.Repaint)]
+		public string ImageKey
+		{
 			get { return this.image_key; }
 			set { 
 				if (this.image_key != value) {
@@ -502,6 +508,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsOnOverflow {
 			get { return this.placement == ToolStripItemPlacement.Overflow; }
 		}
@@ -565,6 +572,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public ToolStripItemPlacement Placement {
 			get { return this.placement; }
 		}
@@ -575,7 +583,6 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Stub, not implemented")]
 		[Localizable (true)]
-		[DefaultValue (RightToLeft.Inherit)]
 		public virtual RightToLeft RightToLeft {
 			get { return this.right_to_left; }
 			set { this.right_to_left = value; }

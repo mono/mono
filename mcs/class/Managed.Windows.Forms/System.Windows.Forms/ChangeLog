@@ -1,3 +1,12 @@
+2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SplitContainer.cs, SplitterPanel.cs, StatusStrip.cs, TableLayoutPanel.cs,
+	ToolStrip.cs, ToolStripContainer.cs, ToolStripContentPanel.cs,
+	ToolStripControlHost.cs, ToolStripDropDownItems.cs, ToolStripItem.cs,
+	ToolStripMenuItem.cs, ToolStripOverflowButton.cs, ToolStripPanel.cs,
+	ToolStripPanelRow.cs, ToolStripProfessionalRenderer.cs, ToolStripSplitButton.cs,
+	ToolStripStatusLabel.cs, ToolStripTextBox.cs: Corcompare work.
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUI.cs: Fixed returning driver.KeyboardSpeed instead of

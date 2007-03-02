@@ -224,7 +224,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.CheckBackground), e.ImageRectangle);
+				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.CheckSelectedBackground), e.ImageRectangle);
 				e.Graphics.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.ButtonSelectedBorder), e.ImageRectangle);
 			}
 			if (e.Item.Image == null)

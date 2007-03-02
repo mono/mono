@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 	[ProvideProperty ("Row", typeof (Control))]
 	[ProvideProperty ("RowSpan", typeof (Control))]
 	[DefaultProperty ("ColumnCount")]
-	[Docking (DockingBehavior.Ask)]
+	[Docking (DockingBehavior.Never)]
 	public class TableLayoutPanel : Panel, IExtenderProvider
 	{
 		private TableLayoutSettings settings;
@@ -89,13 +89,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[DisplayName ("Columns")]
+		[MergableProperty (false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public TableLayoutColumnStyleCollection ColumnStyles {
 			get { return settings.ColumnStyles; }
 		}
 
 		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		new public TableLayoutControlCollection Controls {
 			get { return (TableLayoutControlCollection) base.Controls; }
 		}
@@ -127,6 +128,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[DisplayName ("Rows")]
+		[MergableProperty (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public TableLayoutRowStyleCollection RowStyles {
 			get { return settings.RowStyles; }
@@ -158,7 +160,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int[] GetColumnWidths ()
 		{
 			return this.column_widths;
@@ -197,7 +199,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int[] GetRowHeights ()
 		{
 			return this.row_heights;
@@ -242,7 +244,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return new TableLayoutControlCollection (this);
@@ -255,7 +257,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 			base.OnLayout (levent);

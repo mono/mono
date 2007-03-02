@@ -422,7 +422,7 @@ namespace System.Windows.Forms
 			protected override void OnPaint (PaintEventArgs e)
 			{
 				base.OnPaint (e);
-				if (this.Focused || is_entered || this.border_style == BorderStyle.FixedSingle) {
+				if (this.Focused || this.Entered || this.border_style == BorderStyle.FixedSingle) {
 					ToolStripRenderer tsr = (this.Parent as ToolStrip).Renderer;
 
 					if (tsr is ToolStripProfessionalRenderer)

@@ -31,9 +31,11 @@ using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.None)]
 	public class ToolStripOverflowButton : ToolStripDropDownButton
 	{
 		#region Internal Constructor

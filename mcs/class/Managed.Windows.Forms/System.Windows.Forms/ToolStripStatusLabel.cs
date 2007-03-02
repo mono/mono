@@ -95,7 +95,6 @@ namespace System.Windows.Forms
 			set { this.border_style = value; }
 		}
 		
-		[MonoTODO ("Stub, doesn't affect sizing yet")]
 		[DefaultValue (false)]
 		public bool Spring {
 			get { return this.spring; }

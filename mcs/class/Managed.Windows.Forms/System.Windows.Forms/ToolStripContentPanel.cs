@@ -38,7 +38,7 @@ namespace System.Windows.Forms
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[DefaultEvent ("Load")]
 	[ToolboxItem (false)]
-	[Docking (DockingBehavior.AutoDock)]
+	[Docking (DockingBehavior.Never)]
 	[InitializationEvent ("Load")]
 	public class ToolStripContentPanel : Panel
 	{
@@ -203,7 +203,7 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Always)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnLoad (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [LoadEvent]);
@@ -211,7 +211,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Always)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);

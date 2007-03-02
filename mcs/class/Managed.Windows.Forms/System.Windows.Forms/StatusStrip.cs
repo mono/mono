@@ -58,6 +58,7 @@ namespace System.Windows.Forms
 			set { base.Dock = value; }
 		}
 
+		[Browsable (false)]
 		[DefaultValue (false)]
 		public new bool CanOverflow {
 			get { return base.CanOverflow; }
@@ -157,7 +158,7 @@ namespace System.Windows.Forms
 
 			ToolStripItemOverflow[] overflow = new ToolStripItemOverflow[this.Items.Count];
 			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[this.Items.Count];
-			Size proposedSize = new Size (0, bounds.Height);
+			Size proposedSize = new Size (0, Bounds.Height);
 			int[] widths = new int[this.Items.Count];
 			int total_width = 0;
 			int toolstrip_width = DisplayRectangle.Width;

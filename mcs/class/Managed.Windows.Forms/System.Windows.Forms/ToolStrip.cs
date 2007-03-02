@@ -148,6 +148,8 @@ namespace System.Windows.Forms
 			set { base.CausesValidation = value; }
 		}
 		
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ControlCollection Controls {
 			get { return base.Controls; }
 		}
@@ -159,6 +161,7 @@ namespace System.Windows.Forms
 			set { base.Cursor = value; }
 		}
 		
+		[Browsable (false)]
 		public virtual ToolStripDropDownDirection DefaultDropDownDirection {
 			get { return this.default_drop_down_direction; }
 			set { 
@@ -269,6 +272,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool HasChildren {
 			get { return base.HasChildren; }
@@ -289,7 +293,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Always returns false, dragging not implemented yet.")]
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool IsCurrentlyDragging {
 			get { return false; }
 		}
@@ -304,23 +308,24 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual ToolStripItemCollection Items {
 			get { return this.items; }
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override LayoutEngine LayoutEngine {
 			get { return this.layout_engine;; }
 		}
 
 		[Browsable (false)]
 		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LayoutSettings LayoutSettings {
 			get { return this.layout_settings; }
 			set { this.layout_settings = value; }
 		}
 		
+		[AmbientValue (ToolStripLayoutStyle.StackWithOverflow)]
 		public ToolStripLayoutStyle LayoutStyle {
 			get { return layout_style; }
 			set {
@@ -350,6 +355,8 @@ namespace System.Windows.Forms
 			get { return this.orientation; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public ToolStripOverflowButton OverflowButton {
 			get { return this.overflow_button; }
 		}

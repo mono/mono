@@ -79,6 +79,7 @@ namespace System.Windows.Forms
 			get { return control.CanSelect; }
 		}
 
+		[DefaultValue (true)]
 		public bool CausesValidation {
 			get { return control.CausesValidation; }
 			set { control.CausesValidation = value; }

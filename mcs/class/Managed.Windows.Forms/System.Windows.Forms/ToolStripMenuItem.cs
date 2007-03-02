@@ -46,32 +46,32 @@ namespace System.Windows.Forms
 
 		#region Public Constructors
 		public ToolStripMenuItem ()
-			: base ()
+			: this (null, null, null, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (Image image)
-			: base (string.Empty, image, null, string.Empty)
+			: this (null, image, null, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (string text)
-			: base (text, null, null, string.Empty)
+			: this (text, null, null, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (string text, Image image)
-			: base (text, image, null, string.Empty)
+			: this (text, image, null, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (string text, Image image, EventHandler onClick)
-			: base (text, image, onClick, string.Empty)
+			: this (text, image, onClick, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (string text, Image image, params ToolStripItem[] dropDownItems)
-			: base (text, image, null, string.Empty)
+			: this (text, image, null, string.Empty)
 		{
 			if (dropDownItems != null)
 				foreach (ToolStripItem tsi in dropDownItems)
@@ -79,20 +79,21 @@ namespace System.Windows.Forms
 		}
 
 		public ToolStripMenuItem (string text, Image image, EventHandler onClick, Keys shortcutKeys)
-			: base (text, image, onClick, string.Empty)
+			: this (text, image, onClick, string.Empty)
 		{
 		}
 
 		public ToolStripMenuItem (string text, Image image, EventHandler onClick, string name)
 			: base (text, image, onClick, name)
 		{
+			base.Overflow = ToolStripItemOverflow.Never;
 		}
 		#endregion
 
 		#region Public Properties
 		[Bindable (true)]
 		[DefaultValue (false)]
-		[RefreshProperties (RefreshProperties.Repaint)]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool Checked {
 			get {
 				switch (this.checked_state) {
@@ -121,7 +122,7 @@ namespace System.Windows.Forms
 
 		[Bindable (true)]
 		[DefaultValue (CheckState.Unchecked)]
-		[RefreshProperties (RefreshProperties.Repaint)]
+		[RefreshProperties (RefreshProperties.All)]
 		public CheckState CheckState {
 			get { return this.checked_state; }
 			set
@@ -145,8 +146,15 @@ namespace System.Windows.Forms
 			get { return this.mdi_client_form != null; }
 		}
 		
+		[DefaultValue (ToolStripItemOverflow.Never)]
+		public new ToolStripItemOverflow Overflow {
+			get { return base.Overflow; }
+			set { base.Overflow = value; }
+		}
+		
 		[MonoTODO ("Renderer doesn't support shortcut keys yet, they will never show.")]
 		[Localizable (true)]
+		[DefaultValue (true)]
 		public bool ShowShortcutKeys {
 			get { return this.show_shortcut_keys; }
 			set { this.show_shortcut_keys = value; }
@@ -154,6 +162,7 @@ namespace System.Windows.Forms
 		
 		[MonoTODO ("Keyboard navigation not implemented.")]
 		[Localizable (true)]
+		[DefaultValue (null)]
 		public string ShortcutKeyDisplayString {
 			get { return this.shortcut_display_string; }
 			set { this.shortcut_display_string = value; }
@@ -161,6 +170,7 @@ namespace System.Windows.Forms
 		
 		[MonoTODO ("Keyboard navigation not implemented.")]
 		[Localizable (true)]
+		[DefaultValue (Keys.None)]
 		public Keys ShortcutKeys {
 			get { return this.shortcut_keys; }
 			set { this.shortcut_keys = value; }

@@ -34,7 +34,7 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty ("Click")]
+	[DefaultProperty ("DropDownItems")]
 	public abstract class ToolStripDropDownItem : ToolStripItem
 	{
 		private ToolStripDropDown drop_down;
