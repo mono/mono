@@ -219,6 +219,7 @@ namespace System.Web.Compilation
 			if (results.Errors.Count == 0) {
 				BuildManager.CodeAssemblies.Add (results.PathToAssembly);
 				BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
+				HttpRuntime.WritePreservationFile (results.CompiledAssembly, name);
 			} else {
 				if (HttpContext.Current.IsCustomErrorEnabled)
 					throw new HttpException ("An error occurred while initializing application.");
