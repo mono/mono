@@ -1,3 +1,9 @@
+2007-03-02  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: Correctly process App_Code directories which
+	have no compilable files in the top-level directory. Fixes bug
+	#80998.
+
 2007-03-01  Marek Habersack  <grendello@gmail.com>
 
 	* AspParser.cs: fix GetVerbatim for cases when the end is

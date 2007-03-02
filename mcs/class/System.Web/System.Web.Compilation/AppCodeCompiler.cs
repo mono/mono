@@ -602,7 +602,8 @@ namespace System.Web.Compilation
 						curaca = a;
 						break;
 					}
-				CollectFiles (d, curaca);
+				if (CollectFiles (d, curaca))
+					haveFiles = true;
 				curaca = aca;
 			}
 			return haveFiles;
