@@ -232,7 +232,7 @@ namespace System.Net
 			int cLength = (int) response.ContentLength;
 			int length = (cLength <= -1 || cLength > 8192) ? 8192 : cLength;
 			byte [] buffer = new byte [length];
-			FileStream f = new FileStream (fileName, FileMode.CreateNew);
+			FileStream f = new FileStream (fileName, FileMode.CreateNew | FileMode.Truncate);
 
 			int nread = 0;
 			while ((nread = st.Read (buffer, 0, length)) != 0)
