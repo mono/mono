@@ -1479,6 +1479,68 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (si5, lvi.SubItems ["E name"], "#B1");
 		}
 
+		static ListViewItem [] items;
+
+		[Test]
+		public void ListViewItemCollectionTest_VirtualMode_Exceptions ()
+		{
+			ListView lvw = new ListView ();
+			lvw.VirtualMode = true;
+			lvw.VirtualListSize = 1;
+			lvw.RetrieveVirtualItem += ListViewRetrieveVirtualItemHandler;
+
+			ListViewItem item = new ListViewItem ("Item 1");
+			item.Name = "A";
+			items = new ListViewItem [1];
+			items [0] = item;
+
+			try {
+				lvw.Items.Add ("Item 2");
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				lvw.Items.AddRange (new ListViewItem [0]);
+				Assert.Fail ("#A2");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				lvw.Items.Insert (0, new ListViewItem ("Item 1"));
+				Assert.Fail ("#A3");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				lvw.Items.Remove (new ListViewItem ("Item 99"));
+				Assert.Fail ("#A4");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				lvw.Items.RemoveAt (0);
+				Assert.Fail ("#A5");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				lvw.Items.RemoveByKey ("A");
+				Assert.Fail ("#A6");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				IEnumerator enumerator = lvw.Items.GetEnumerator ();
+				Assert.Fail ("#A7");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		void ListViewRetrieveVirtualItemHandler (object o, RetrieveVirtualItemEventArgs args)
+		{
+			args.Item = items [args.ItemIndex];
+		}
 #endif
 
 	}

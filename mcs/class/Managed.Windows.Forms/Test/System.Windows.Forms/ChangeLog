@@ -1,3 +1,8 @@
+2007-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewCollectionsTest.cs: Added tests for the exceptions thrown
+	by ListViewItemCollection when virtual mode is used.
+
 2007-03-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewCollectionsTest.cs: Added ColumnHeader.Index tests.
