@@ -16,8 +16,53 @@
 
 	* XplatUI.cs: Fixed returning driver.KeyboardSpeed instead of
 	  driver.KeyboardDelay from XplatUI.KeyboardDelay 
-	* XplatUIWin32.cs: Implemented KeyboardSpeed/KeyboardDelay properties
+	* XplatUIW	in32.cs: Implemented KeyboardSpeed/KeyboardDelay properties
 	  (patch by Sergey Volk)
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ToolWindowManager.cs: Added, contains logic for
+	  tool windows.
+	* CreateParams.cs: Add a few helper methods and an
+	  internal variable to know which control the CreateParams belongs
+	  to.
+	* Control.cs: Call Form.ChangingParent when the
+	  parent is about to be changed.
+	* XplatUIX11.cs: DeriveStyles (): Set
+	  caption_height for all windows that have captions and are children.
+	  Update to use ToolWindowManager instead of InternalWindowManager
+	  for ToolWindows.
+	* XplatUIWin32.cs: Set fake window styles for all
+	  windows that have window managers.
+	* MdiWindowManager.cs: Added MaximizedTitleButtons (buttons are
+	  now duplicated for mdi windows when they are
+	  maximized, first for the buttons the window itself has, then for
+	  the buttons that appear in the menu bar. Makes things a little
+	  easier). Updated UpdateWindowDecorations, SetWindowState and the
+	  mouse eventhandlers accordingly.
+	* Form.cs: Add ChangingParent (), contains the
+	  logic of what should happen when the parent changes. In MdiParent
+	  don't set things that ChangingParent () is doing. When handling
+	  WM_CLOSE, we can close the form if there are any other modal forms
+	  and the current form is a descendent of the modal form.
+	* InternalWindowManager.cs: A lot of refactoring,
+	  the title buttons are now extracted to a separate container class
+	  that takes care of all button code (clicks, tooltips, etc). Moved
+	  Iconic|Maximized|Normal Bounds properties to this class from
+	  MdiWindowManager, so that the window state logic can succeed for
+	  other than mdi wm's. Implemented general window state change logic.
+	  Moved CreateButtons to ThemeWin32Classic, since the theme might
+	  override which buttons are available when as well as the exact
+	  location.
+	* FormWindowManager.cs: Added, contains logic for
+	  normal forms.
+	* ThemeWin32Classic.cs: ManagedWindowSetButtonLocations now decides
+	  which buttons go where (and if they are at all visible). 
+	  Removed special handling of maximized windows, since they aren't special. 
+	  In DrawManagedWindowDecorations don't try to draw the text if it is
+	  empty.
+	* MdiClient.cs: ArrangeIconicWindows: Don't  calculate any sizes, 
+	  use whatever the wm gives us.
 
 2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
 
