@@ -134,7 +134,7 @@ namespace System.Web.Security {
 					AddParameter (command, "@ApplicationName", ApplicationName);
 					AddParameter (command, "@UserName", username);
 					AddParameter (command, "@NewPassword", db_password);
-					AddParameter (command, "@PasswordFormat", pi.PasswordFormat);
+					AddParameter (command, "@PasswordFormat", (int) pi.PasswordFormat);
 					AddParameter (command, "@PasswordSalt", pi.PasswordSalt);
 					AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
 					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
@@ -294,7 +294,7 @@ namespace System.Web.Security {
 					AddParameter (command, "@CurrentTimeUtc", Now);
 					AddParameter (command, "@CreateDate", Now);
 					AddParameter (command, "@UniqueEmail", RequiresUniqueEmail);
-					AddParameter (command, "@PasswordFormat", PasswordFormat);
+					AddParameter (command, "@PasswordFormat", (int) PasswordFormat);
 					AddParameter (command, "@UserId", ParameterDirection.InputOutput, providerUserKey);
 					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
@@ -805,7 +805,7 @@ namespace System.Web.Security {
 				AddParameter (command, "@PasswordAttemptWindow", PasswordAttemptWindow);
 				AddParameter (command, "@PasswordSalt", pi.PasswordSalt);
 				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
-				AddParameter (command, "@PasswordFormat", pi.PasswordFormat);
+				AddParameter (command, "@PasswordFormat", (int) pi.PasswordFormat);
 				AddParameter (command, "@PasswordAnswer", db_answer);
 				DbParameter retValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
