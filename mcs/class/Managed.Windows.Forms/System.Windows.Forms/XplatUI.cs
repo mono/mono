@@ -165,7 +165,7 @@ namespace System.Windows.Forms {
 
 		static public int KeyboardDelay {
 			get {
-				return driver.KeyboardSpeed;
+				return driver.KeyboardDelay;
 			}
 		}
 

@@ -1,3 +1,10 @@
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUI.cs: Fixed returning driver.KeyboardSpeed instead of
+	  driver.KeyboardDelay from XplatUI.KeyboardDelay 
+	* XplatUIWin32.cs: Implemented KeyboardSpeed/KeyboardDelay properties
+	  (patch by Sergey Volk)
+
 2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ButtonBase.cs: Add 2.0 properties.

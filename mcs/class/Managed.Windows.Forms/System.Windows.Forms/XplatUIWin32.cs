@@ -143,6 +143,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal enum SPIAction {
+			SPI_GETKEYBOARDSPEED	= 0x000A,
+			SPI_GETKEYBOARDDELAY	= 0x0016,
 			SPI_GETWORKAREA		= 0x0030,
 			SPI_GETMOUSEHOVERWIDTH	= 0x0062,
 			SPI_GETMOUSEHOVERHEIGHT	= 0x0064,
@@ -2670,24 +2672,24 @@ namespace System.Windows.Forms {
 
 		internal override int KeyboardSpeed {
 			get {
-				Console.WriteLine ("KeyboardSpeed: need to query Windows");
-
+				int speed = 0;
+				Win32SystemParametersInfo(SPIAction.SPI_GETKEYBOARDSPEED, 0, ref speed, 0);
 				//
 				// Return values range from 0 to 31 which map to 2.5 to 30 repetitions per second.
 				//
-				return 0;
+				return speed;
 			}
 		}
 
 		internal override int KeyboardDelay {
 			get {
-				Console.WriteLine ("KeyboardDelay: need to query Windows");
-
+				int delay = 1;
+				Win32SystemParametersInfo(SPIAction.SPI_GETKEYBOARDDELAY, 0, ref delay, 0);
 				//
 				// Return values must range from 0 to 4, 0 meaning 250ms,
 				// and 4 meaning 1000 ms.
 				//
-				return 1;
+				return delay;
 			}
 		}
 
