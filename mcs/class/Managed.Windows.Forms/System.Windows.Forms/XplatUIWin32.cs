@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 		private static int		scroll_height;
 		private static Hashtable	wm_nc_registered;
 		private static RECT		clipped_cursor_rect;
-
+		private Hashtable		registered_classes;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -282,7 +282,9 @@ namespace System.Windows.Forms {
 			CS_BYTEALIGNCLIENT		= 0x00001000,
 			CS_BYTEALIGNWINDOW		= 0x00002000,
 			CS_GLOBALCLASS			= 0x00004000,
-			CS_IME				= 0x00010000
+			CS_IME				= 0x00010000,
+			// Windows XP+
+			CS_DROPSHADOW			= 0x00020000
 		}
 
 		internal enum SetWindowPosZOrder {
@@ -747,9 +749,6 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		private XplatUIWin32() {
-			WNDCLASS	wndClass;
-			bool		result;
-
 			// Handle singleton stuff first
 			ref_count=0;
 
@@ -760,23 +759,7 @@ namespace System.Windows.Forms {
 
 			themes_enabled = false;
 
-			// Prepare 'our' window class
 			wnd_proc = new WndProc(NativeWindow.WndProc);
-			wndClass.style = (int)(ClassStyle.CS_OWNDC | ClassStyle.CS_DBLCLKS);
-			wndClass.lpfnWndProc = wnd_proc;
-			wndClass.cbClsExtra = 0;
-			wndClass.cbWndExtra = 0;
-			wndClass.hbrBackground = IntPtr.Zero;
-			wndClass.hCursor = Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);
-			wndClass.hIcon = IntPtr.Zero;
-			wndClass.hInstance = IntPtr.Zero;
-			wndClass.lpszClassName = XplatUI.DefaultClassName;
-			wndClass.lpszMenuName = "";
-
-			result=Win32RegisterClass(ref wndClass);
-			if (result==false) {
-				Win32MessageBox(IntPtr.Zero, "Could not register the "+XplatUI.DefaultClassName+" window class, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
-			}
 
 			FosterParent=Win32CreateWindow((int)WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
@@ -788,10 +771,47 @@ namespace System.Windows.Forms {
 			scroll_width = Win32GetSystemMetrics(SystemMetrics.SM_CXVSCROLL);
 
 			timer_list = new Hashtable ();
+			registered_classes = new Hashtable ();
 		}
 		#endregion	// Constructor & Destructor
 
 		#region Private Support Methods
+
+		private string RegisterWindowClass (int classStyle)
+		{
+			string class_name;
+
+			lock (registered_classes) {
+				class_name = (string)registered_classes[classStyle];
+
+				if (!string.IsNullOrEmpty (class_name))
+					return class_name;
+
+				class_name = string.Format ("Mono.WinForms.{0}.{1}", System.Threading.Thread.GetDomainID ().ToString (), classStyle);
+
+				WNDCLASS wndClass;
+
+				wndClass.style = classStyle;
+				wndClass.lpfnWndProc = wnd_proc;
+				wndClass.cbClsExtra = 0;
+				wndClass.cbWndExtra = 0;
+				wndClass.hbrBackground = (IntPtr)(GetSysColorIndex.COLOR_WINDOW + 1);
+				wndClass.hCursor = Win32LoadCursor (IntPtr.Zero, LoadCursorType.IDC_ARROW);
+				wndClass.hIcon = IntPtr.Zero;
+				wndClass.hInstance = IntPtr.Zero;
+				wndClass.lpszClassName = class_name;
+				wndClass.lpszMenuName = "";
+
+				bool result = Win32RegisterClass (ref wndClass);
+
+				if (result == false)
+					Win32MessageBox (IntPtr.Zero, "Could not register the window class, win32 error " + Win32GetLastError ().ToString (), "Oops", 0);
+
+				registered_classes[classStyle] = class_name;
+			}
+			
+			return class_name;
+		}
 
 		private static bool RetrieveMessage(ref MSG msg) {
 			MSG	message;
@@ -1228,7 +1248,9 @@ namespace System.Windows.Forms {
 				SetMdiStyles (cp);
 			}
 
-			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			string class_name = RegisterWindowClass (cp.ClassStyle);
+
+			WindowHandle = Win32CreateWindow ((uint)cp.ExStyle, class_name, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (WindowHandle==IntPtr.Zero) {
 				uint error = Win32GetLastError();

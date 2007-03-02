@@ -1,3 +1,10 @@
+2007-03-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIWin32.cs: Register a new class with Windows each time we get
+	a new ClassStyle.  [Fixes bugs #79432, #80817]
+	* Controls.cs: Set the correct ClassStyle in CreateParams.
+	* ToolStripDropDown.cs: Don't request an invalid ClassStyle.
+
 2007-03-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListView.cs: Add fireEvent argument to ReorderColumn since the

@@ -77,6 +77,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
 			set { base.Anchor = value; }
@@ -204,7 +205,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Browsable (true)]
+		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new Region Region {
 			get { return base.Region; }
@@ -241,9 +242,9 @@ namespace System.Windows.Forms
 			set { SetTopLevel (value); }
 		}
 		
-		[Localizable (true)]
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Localizable (true)]
+		[DefaultValue (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool Visible {
 			get { return base.Visible; }
@@ -257,7 +258,7 @@ namespace System.Windows.Forms
 				CreateParams cp = base.CreateParams;
 
 				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN));
-				cp.ClassStyle = unchecked ((int)0x82000000);
+				cp.ClassStyle |= (int)XplatUIWin32.ClassStyle.CS_DROPSHADOW;
 				cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);
 
 				if (Opacity < 1.0 && allow_transparency)
@@ -328,8 +329,8 @@ namespace System.Windows.Forms
 			this.OnClosed (new ToolStripDropDownClosedEventArgs (reason));
 		}
 
-		[Browsable (true)]
-		[EditorBrowsable (EditorBrowsableState.Always)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void Show ()
 		{
 			CancelEventArgs e = new CancelEventArgs ();
@@ -524,7 +525,7 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override bool ProcessDialogChar (char charCode)
 		{
 			return base.ProcessDialogChar (charCode);
@@ -596,7 +597,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event UICuesEventHandler ChangeUICues {
 			add { base.ChangeUICues += value; }
 			remove { base.ChangeUICues -= value; }
@@ -641,7 +642,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler FontChanged {
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
@@ -662,42 +663,42 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event HelpEventHandler HelpRequested {
 			add { base.HelpRequested += value; }
 			remove { base.HelpRequested -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler ImeModeChanged {
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event KeyEventHandler KeyDown {
 			add { base.KeyDown += value; }
 			remove { base.KeyDown -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event KeyPressEventHandler KeyPress {
 			add { base.KeyPress += value; }
 			remove { base.KeyPress -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event KeyEventHandler KeyUp {
 			add { base.KeyUp += value; }
 			remove { base.KeyUp -= value; }
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler Leave {
 			add { base.Leave += value; }
 			remove { base.Leave -= value; }
@@ -728,7 +729,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
 		public new event EventHandler StyleChanged {
 			add { base.StyleChanged += value; }
 			remove { base.StyleChanged -= value; }

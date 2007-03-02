@@ -2976,7 +2976,7 @@ namespace System.Windows.Forms
 
 
 				create_params.ClassName = XplatUI.DefaultClassName;
-				create_params.ClassStyle = 0;
+				create_params.ClassStyle = (int)(XplatUIWin32.ClassStyle.CS_OWNDC | XplatUIWin32.ClassStyle.CS_DBLCLKS);
 				create_params.ExStyle = 0;
 				create_params.Param = 0;
 
