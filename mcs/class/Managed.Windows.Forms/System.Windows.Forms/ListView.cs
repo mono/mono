@@ -4039,6 +4039,12 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
+
+#if NET_2_0
+				if (owner != null && owner.VirtualMode)
+					throw new InvalidOperationException ();
+#endif
+
 				ListViewItem item = (ListViewItem) list [index];
 				Remove (item);
 			}
