@@ -185,6 +185,25 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		internal void ChangingParent (Control new_parent)
+		{
+			if (IsMdiChild) {
+				return;
+			}
+			
+			if (new_parent == null) {
+			window_manager = null;
+			} else if (new_parent is MdiClient) {
+				window_manager = new MdiWindowManager (this, (MdiClient) new_parent);
+			} else {
+				window_manager = new FormWindowManager (this);
+				RecreateHandle ();
+			}
+		
+			if (window_manager != null) {
+				window_manager.UpdateWindowState (window_state, window_state, true);
+			}
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -670,13 +689,14 @@ namespace System.Windows.Forms {
 
 				if (value != null) {
 					mdi_parent = value;
-					window_manager = new MdiWindowManager (this,
-							mdi_parent.MdiContainer);
+					if (window_manager == null) {
+						window_manager = new MdiWindowManager (this, mdi_parent.MdiContainer);
+					}
+					
 					mdi_parent.MdiContainer.Controls.Add (this);
 					mdi_parent.MdiContainer.Controls.SetChildIndex (this, 0);
-
+					
 					RecreateHandle ();
-
 				} else if (mdi_parent != null) {
 					mdi_parent = null;
 
@@ -1116,10 +1136,11 @@ namespace System.Windows.Forms {
 				cp.Param = 0;
 				cp.Parent = IntPtr.Zero;
 				cp.menu = ActiveMenu;
+				cp.control = this;
 
-				if (start_position == FormStartPosition.WindowsDefaultLocation && !IsMdiChild) {
-					cp.X = unchecked((int)0x80000000);
-					cp.Y = unchecked((int)0x80000000);
+				if (start_position == FormStartPosition.WindowsDefaultLocation && !IsMdiChild && Parent == null) {
+					cp.X = unchecked ((int)0x80000000);
+					cp.Y = unchecked ((int)0x80000000);
 				} else {
 					cp.X = Left;
 					cp.Y = Top;
@@ -1590,6 +1611,10 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle() {
 			base.CreateHandle ();
 
+			if (!IsHandleCreated) {
+				return;
+			}
+			
 			Application.AddForm (this);
 			
 			UpdateBounds();
@@ -2012,7 +2037,7 @@ namespace System.Windows.Forms {
 			Console.WriteLine(DateTime.Now.ToLongTimeString () + " Form {0} ({2}) received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), m.ToString (), Text);
 #endif
 
-			if (window_manager != null && window_manager.HandleMessage (ref m)) {
+			if (window_manager != null && window_manager.WndProc (ref m)) {
 				return;
 			}
 
@@ -2032,8 +2057,17 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_CLOSE: {
 					Form act = Form.ActiveForm;
+					// Don't close this form if there's another modal form visible.
 					if (act != null && act != this && act.Modal == true) {
-						return;
+						// Check if any of the parents up the tree is the modal form, 
+						// in which case we can still close this form.
+						Control current = this;
+						while (current != null && current.Parent != act) {
+							current = current.Parent;
+						}
+						if (current == null || current.Parent != act) {
+							return;
+						}
 					}
 
 					if (mdi_container != null) {

@@ -4849,24 +4849,78 @@ namespace System.Windows.Forms
 
 		public override void ManagedWindowSetButtonLocations (InternalWindowManager wm)
 		{
+			TitleButtons buttons = wm.TitleButtons;
+			Form form = wm.form;
+			
+			buttons.HelpButton.Visible = form.HelpButton;
+			
+			switch (form.FormBorderStyle) {
+			case FormBorderStyle.None:
+				if (form.WindowState != FormWindowState.Normal)
+					goto case FormBorderStyle.Sizable;
+				break;
+			case FormBorderStyle.FixedToolWindow:
+			case FormBorderStyle.SizableToolWindow:
+				buttons.CloseButton.Visible = true;
+				if (form.WindowState != FormWindowState.Normal)
+					goto case FormBorderStyle.Sizable;
+				break;
+			case FormBorderStyle.FixedSingle:
+			case FormBorderStyle.Fixed3D:
+			case FormBorderStyle.FixedDialog:
+			case FormBorderStyle.Sizable:
+				switch (form.WindowState) {
+					case FormWindowState.Normal:
+						buttons.MinimizeButton.Visible = true;
+						buttons.MaximizeButton.Visible = true;
+						buttons.RestoreButton.Visible = false;
+						break;
+					case FormWindowState.Maximized:
+						buttons.MinimizeButton.Visible = true;
+						buttons.MaximizeButton.Visible = false;
+						buttons.RestoreButton.Visible = true;
+						break;
+					case FormWindowState.Minimized:
+						buttons.MinimizeButton.Visible = false;
+						buttons.MaximizeButton.Visible = true;
+						buttons.RestoreButton.Visible = true;
+						break;
+				}
+				buttons.CloseButton.Visible = true;
+				break;
+			}
+
 			int bw = ManagedWindowBorderWidth (wm);
 			Size btsize = ManagedWindowButtonSize (wm);
 			int btw = btsize.Width;
 			int bth = btsize.Height;
-
+			int top = bw + 2;
+			int left = form.Width - bw - btw - 2;
+			TitleButton previous;
+			
 			if ((!wm.IsToolWindow || wm.IsMinimized) && wm.HasBorders) {
-				if (!wm.IsMaximized) {
-					wm.close_button.Rectangle = new Rectangle (wm.Form.Width - bw - btw - 2,
-							bw + 2, btw, bth);
-					wm.maximize_button.Rectangle = new Rectangle (wm.close_button.Rectangle.Left - 2 - btw,
-							bw + 2, btw, bth);
-					wm.minimize_button.Rectangle = new Rectangle (wm.maximize_button.Rectangle.Left - btw,
-							bw + 2, btw, bth);
-				} else {
-					// Maximized
+				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth);
+				previous = buttons.CloseButton;
+				left -= 2 + btw;
+				
+				if (buttons.MaximizeButton.Visible) {
+					buttons.MaximizeButton.Rectangle = new Rectangle (left, top, btw, bth);
+					previous = buttons.MaximizeButton;
+					left -= 2 + btw;
+				} 
+				if (buttons.RestoreButton.Visible) {
+					buttons.RestoreButton.Rectangle = new Rectangle (left, top, btw, bth);
+					previous = buttons.RestoreButton;
+					left -= 2 + btw;
 				}
+
+				buttons.MinimizeButton.Rectangle = new Rectangle (left, top, btw, bth); ;
+				previous = buttons.MinimizeButton;
+				left -= 2 + btw;
 			} else if (wm.IsToolWindow) {
-				wm.close_button.Rectangle = new Rectangle (wm.Form.Width - bw - 2 - btw, bw + 2, btw, bth);
+				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth); ;
+				previous = buttons.CloseButton;
+				left -= 2 + btw;
 			}
 		}
 
@@ -4881,7 +4935,8 @@ namespace System.Windows.Forms
 			Color color2 = Color.FromArgb (255, 192, 192, 192);
 
 #if debug
-				dc.FillRectangle (Brushes.Black, clip);
+			Console.WriteLine (DateTime.Now.ToLongTimeString () + " DrawManagedWindowDecorations");
+			dc.FillRectangle (Brushes.Black, clip);
 #endif
 			
 			if (wm.HasBorders) {
@@ -4896,7 +4951,14 @@ namespace System.Windows.Forms
 				}				
 			}
 
-			if (wm.IsActive () && !wm.IsMaximized) {
+
+			bool draw_titlebar_enabled = false;
+			if (wm.Form.Parent != null && wm.Form.Parent is Form) {
+				draw_titlebar_enabled = false;
+			} else if (wm.IsActive && !wm.IsMaximized) {
+				draw_titlebar_enabled = true;
+			}
+			if (draw_titlebar_enabled) {
 				color = titlebar_color;
 				color2 = titlebar_color2;
 			}
@@ -4904,8 +4966,6 @@ namespace System.Windows.Forms
 			Rectangle tb = new Rectangle (bdwidth, bdwidth, form.Width - (bdwidth * 2), tbheight - 1);
 
 			// HACK: For now always draw the titlebar until we get updates better
-			// Rectangle vis = Rectangle.Intersect (tb, pe.ClipRectangle);	
-			//if (vis != Rectangle.Empty)
 			if (tb.Width > 0 && tb.Height > 0) {
 				using (System.Drawing.Drawing2D.LinearGradientBrush gradient = new LinearGradientBrush (tb, color, color2, LinearGradientMode.Horizontal))
 				{
@@ -4923,7 +4983,7 @@ namespace System.Windows.Forms
 				tb.Width = (form.Width - 62) - tb.X;
 			}
 
-			if (form.Text != null) {
+			if (form.Text != null && form.Text != string.Empty) {
 				StringFormat format = new StringFormat ();
 				format.FormatFlags = StringFormatFlags.NoWrap;
 				format.Trimming = StringTrimming.EllipsisCharacter;
@@ -4936,21 +4996,21 @@ namespace System.Windows.Forms
 			}
 
 			if (wm.HasBorders) {
-				if (!wm.IsToolWindow && form.Icon != null) {
+				bool draw_icon = false;
+#if NET_2_0
+				draw_icon = !wm.IsToolWindow && form.Icon != null && form.ShowIcon;
+#else
+				draw_icon = !wm.IsToolWindow && form.Icon != null;
+#endif
+				if (draw_icon) {
 					Rectangle icon = new Rectangle (bdwidth + 3,
 							bdwidth + 2, wm.IconWidth, wm.IconWidth);
 					if (icon.IntersectsWith (clip))
 						dc.DrawIcon (form.Icon, icon);
 				}
-
-				if (!wm.IsMaximized) {
-					if (!wm.IsToolWindow || wm.IsMinimized) {
-						DrawTitleButton (dc, wm.minimize_button, clip);
-						DrawTitleButton (dc, wm.maximize_button, clip);
-					}
-					DrawTitleButton (dc, wm.close_button, clip);
-				} else {
-					//	DrawMaximizedButtons (pe, form.ActiveMenu);
+				
+				foreach (TitleButton button in wm.TitleButtons.AllButtons) {
+					DrawTitleButton (dc, button, clip);
 				}
 			}
 		}
@@ -4971,8 +5031,12 @@ namespace System.Windows.Forms
 					height - 5);
 		}
 
-		private void DrawTitleButton (Graphics dc, InternalWindowManager.TitleButton button, Rectangle clip)
+		private void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
 		{
+			if (!button.Visible) {
+				return;
+			}
+			
 			if (!button.Rectangle.IntersectsWith (clip))
 				return;
 

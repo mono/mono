@@ -32,42 +32,21 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	internal class InternalWindowManager {
+	internal abstract class InternalWindowManager {
 		private Size MinTitleBarSize = new Size (115, 25);
-
+		private TitleButtons title_buttons;
 		internal Form form;
 
-		internal TitleButton close_button;
-		internal TitleButton maximize_button;
-		internal TitleButton minimize_button;
-		
-		private ToolTip.ToolTipWindow tooltip;
-		private Timer tooltip_timer;
-		private TitleButton tooltip_hovered_button;
-		private TitleButton tooltip_hidden_button;
-		private const int tooltip_hide_interval = 3000;
-		private const int tooltip_show_interval = 1000;
-		private TitleButton [] title_buttons = new TitleButton [3];
-		
 		// moving windows
 		internal Point start;
 		internal State state;
 		protected Point clicked_point;
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
-		
-		public class TitleButton {
-			public Rectangle Rectangle;
-			public ButtonState State;
-			public CaptionButton Caption;
-			public EventHandler Clicked;
 
-			public TitleButton (CaptionButton caption, EventHandler clicked)
-			{
-				Caption = caption;
-				Clicked = clicked;
-			}
-		}
+		private Rectangle normal_bounds;
+		private Rectangle iconic_bounds;
+		
 
 		public enum State {
 			Idle,
@@ -101,27 +80,99 @@ namespace System.Windows.Forms {
 
 			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
 
-			CreateButtons ();
+			title_buttons = new TitleButtons (form);
+			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
 		public Form Form {
 			get { return form; }
-		}
-
-		public bool AnyPushedTitleButtons {
-			get {
-				return (minimize_button != null && minimize_button.State == ButtonState.Pushed) ||
-					(maximize_button != null && maximize_button.State == ButtonState.Pushed) ||
-					(close_button != null && close_button.State == ButtonState.Pushed);
-			}
 		}
 		
 		public int IconWidth {
 			get { return TitleBarHeight - 5; }
 		}
 
-		public virtual bool HandleMessage (ref Message m)
+		public TitleButtons TitleButtons {
+			get {
+				return title_buttons;
+			}
+		}
+		internal Rectangle NormalBounds {
+			get {
+				return normal_bounds;
+			}
+			set {
+				normal_bounds = value;
+			}
+		}
+		internal Size IconicSize {
+			get {
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+				return new Size (152 + bw * 2, TitleBarHeight + bw * 2);
+			}
+		}
+		
+		internal Rectangle IconicBounds {
+			get {
+				if (iconic_bounds == Rectangle.Empty)
+					return Rectangle.Empty;
+				Rectangle result = iconic_bounds;
+				result.Y = Form.Parent.ClientRectangle.Bottom - iconic_bounds.Y;
+				return result;
+			}
+			set {
+				iconic_bounds = value;
+				iconic_bounds.Y = Form.Parent.ClientRectangle.Bottom - iconic_bounds.Y;
+			}
+		}
+
+		internal virtual Rectangle MaximizedBounds {
+			get {
+				return Form.Parent.ClientRectangle;
+			}
+		}
+				
+		public virtual void UpdateWindowState (FormWindowState old_window_state, FormWindowState new_window_state, bool force)
 		{
+			if (old_window_state == FormWindowState.Normal) {
+				NormalBounds = form.Bounds;
+			} else if (old_window_state == FormWindowState.Minimized) {
+				IconicBounds = form.Bounds;
+			}
+
+			switch (new_window_state) {
+			case FormWindowState.Minimized:
+				if (IconicBounds == Rectangle.Empty) {
+					Size size = IconicSize;
+					Point location = new Point (0, Form.Parent.ClientSize.Height - size.Height);
+					IconicBounds = new Rectangle (location, size);
+				}
+				form.Bounds = IconicBounds;
+				break;
+			case FormWindowState.Maximized:
+				form.Bounds = MaximizedBounds;
+				break;
+			case FormWindowState.Normal:
+				form.Bounds = NormalBounds;
+				break;
+			}
+
+			UpdateWindowDecorations (new_window_state);
+			form.ResetCursor ();
+		}
+		
+		public virtual void UpdateWindowDecorations (FormWindowState window_state)
+		{
+			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
+			XplatUI.RequestNCRecalc (form.Handle);
+		}
+		
+		public virtual bool WndProc (ref Message m)
+		{
+#if debug
+			Console.WriteLine(DateTime.Now.ToLongTimeString () + " " + this.GetType () .Name + " (Handle={0},Text={1}) received message {2}", form.IsHandleCreated ? form.Handle : IntPtr.Zero,  form.Text, m.ToString ());
+#endif
+
 			switch ((Msg)m.Msg) {
 
 
@@ -225,13 +276,13 @@ namespace System.Windows.Forms {
 					ncp.rgrc1.right -= bw;
 				}
 
-				// This is necessary for Linux, can't handle 0-sized 
+				// This is necessary for Linux, can't handle <= 0-sized 
 				// client areas correctly.
-				if (ncp.rgrc1.right == ncp.rgrc1.left) {
-					ncp.rgrc1.right++;
+				if (ncp.rgrc1.right <= ncp.rgrc1.left) {
+					ncp.rgrc1.right += ncp.rgrc1.left - ncp.rgrc1.right + 1;
 				}	
-				if (ncp.rgrc1.top == ncp.rgrc1.bottom) {
-					ncp.rgrc1.bottom++;
+				if (ncp.rgrc1.top >= ncp.rgrc1.bottom) {
+					ncp.rgrc1.bottom += ncp.rgrc1.top - ncp.rgrc1.bottom + 1;
 				}
 				
 				Marshal.StructureToPtr (ncp, m.LParam, true);
@@ -297,86 +348,14 @@ namespace System.Windows.Forms {
 				return;
 			}
 				
-			CreateButtons ();
+			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
-		#region ToolTip helpers
-		// Called from MouseMove if mouse is over a button
-		private void ToolTipStart (TitleButton button)
-		{
-			tooltip_hovered_button = button;
-			
-			if (tooltip_hovered_button == tooltip_hidden_button)
-				return;
-			tooltip_hidden_button = null;
-			
-			if (tooltip != null && tooltip.Visible)
-				ToolTipShow (true);
-				
-			if (tooltip_timer == null) {
-					
-				tooltip_timer = new Timer ();
-				tooltip_timer.Tick += new EventHandler (ToolTipTimerTick);
-			}
-				
-			tooltip_timer.Interval = tooltip_show_interval;
-			tooltip_timer.Start ();
-			tooltip_hovered_button = button;
-		}
 		
-		private void ToolTipTimerTick (object sender, EventArgs e)
-		{
-			if (tooltip_timer.Interval == tooltip_hide_interval) {
-				tooltip_hidden_button = tooltip_hovered_button;
-				ToolTipHide (false);
-			} else {
-				ToolTipShow (false);
-			}
-		}
-		// Called from timer (with only_refresh = false)
-		// Called from ToolTipStart if tooltip is already shown (with only_refresh = true)
-		private void ToolTipShow (bool only_refresh)
-		{
-			string text = Locale.GetText (tooltip_hovered_button.Caption.ToString ());
-			
-			tooltip_timer.Interval = tooltip_hide_interval;
-			tooltip_timer.Enabled = true;
-			
-			if (only_refresh && (tooltip == null || !tooltip.Visible )) {
-				return;
-			}
-				
-			if (tooltip == null)
-				tooltip = new ToolTip.ToolTipWindow ();
-			else if (tooltip.Text == text && tooltip.Visible)
-				return;
-			else if (tooltip.Visible)
-				tooltip.Visible = false;
-
-			if (form.WindowState == FormWindowState.Maximized)
-				tooltip.Present (form.MdiParent, text);
-			else
-				tooltip.Present (form, text);
-			
-		}
-		
-		// Called from MouseLeave (with reset_hidden_button = true)
-		// Called from MouseDown  (with reset_hidden_button = false)
-		// Called from MouseMove if mouse isn't over any button (with reset_hidden_button = false)
-		// Called from Timer if hiding (with reset_hidden_button = false)
-		private void ToolTipHide (bool reset_hidden_button)
-		{
-			if (tooltip_timer != null)
-				tooltip_timer.Enabled = false;
-			if (tooltip != null && tooltip.Visible)
-				tooltip.Visible = false;
-			if (reset_hidden_button)
-				tooltip_hidden_button = null;
-		}
-		#endregion
 		
 		public virtual void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
+			UpdateWindowState (old_state, window_state, false);
 		}
 
 		public virtual FormWindowState GetWindowState ()
@@ -411,14 +390,25 @@ namespace System.Windows.Forms {
 			return style != FormBorderStyle.FixedToolWindow && style != FormBorderStyle.SizableToolWindow;
 		}
 
+		public bool IconRectangleContains (int x, int y)
+		{
+			if (form.Icon == null)
+				return false;
+
+			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			Rectangle icon = new Rectangle (bw + 3, bw + 2, IconWidth, IconWidth);
+			return icon.Contains (x, y);
+		}
+
 		protected virtual void Activate ()
 		{
 			form.Refresh ();
 		}
 
-		public virtual bool IsActive ()
-		{
-			return true;
+		public virtual bool IsActive {
+			get {
+				return true;
+			}
 		}
 
 
@@ -426,39 +416,6 @@ namespace System.Windows.Forms {
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 			XplatUI.InvalidateNC (form.Handle);
-		}
-
-		protected void CreateButtons ()
-		{
-			switch (form.FormBorderStyle) {
-			case FormBorderStyle.None:
-				close_button = null;
-				minimize_button = null;
-				maximize_button = null;
-				if (IsMaximized || IsMinimized)
-					goto case FormBorderStyle.Sizable;
-				break;
-			case FormBorderStyle.FixedToolWindow:
-			case FormBorderStyle.SizableToolWindow:
-				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
-				if (IsMaximized || IsMinimized)
-					goto case FormBorderStyle.Sizable;
-				break;
-			case FormBorderStyle.FixedSingle:
-			case FormBorderStyle.Fixed3D:
-			case FormBorderStyle.FixedDialog:
-			case FormBorderStyle.Sizable:
-				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
-				minimize_button = new TitleButton (CaptionButton.Minimize, new EventHandler (MinimizeClicked));
-				maximize_button = new TitleButton (CaptionButton.Maximize, new EventHandler (MaximizeClicked));
-				break;
-			}
-
-			title_buttons [0] = close_button;
-			title_buttons [1] = minimize_button;
-			title_buttons [2] = maximize_button;
-
-			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
 		}
 
 		protected virtual bool HandleRButtonDown (ref Message m)
@@ -565,79 +522,36 @@ namespace System.Windows.Forms {
 		
 		protected virtual void HandleTitleBarLeave (int x, int y)
 		{
-			foreach (TitleButton button in title_buttons) {
-				if (button != null) {
-					button.State = ButtonState.Normal;
-				}
-			}
-			ToolTipHide (true);
-			return;
+			title_buttons.MouseLeave (x, y);
 		}
 		
 		protected virtual void HandleTitleBarMouseMove (int x, int y)
 		{
 			bool any_change = false;
 			bool any_tooltip = false;
-			bool any_pushed_buttons = AnyPushedTitleButtons;
 			
-			foreach (TitleButton button in title_buttons) {
-				if (button == null)
-					continue;
-				
-				if (button.Rectangle.Contains (x, y)) {
-					if (any_pushed_buttons) {
-						any_change |= button.State != ButtonState.Pushed;
-						button.State = ButtonState.Pushed;
-					}
-					ToolTipStart (button);
-					any_tooltip = true;
-				} else {
-					if (any_pushed_buttons) {
-						any_change |= button.State != ButtonState.Normal;
-						button.State = ButtonState.Normal;
-					}
-				}
-			}
+			any_change = title_buttons.MouseMove (x, y);
+			
 			if (any_change) {
 				if (IsMaximized && form.IsMdiChild)
 					XplatUI.InvalidateNC (form.MdiParent.Handle);
 				else
 					XplatUI.InvalidateNC (form.Handle);
 			}
-			if (!any_tooltip)
-				ToolTipHide (false);
 		}
 		
 		protected virtual void HandleTitleBarUp (int x, int y)
 		{
-			foreach (TitleButton button in title_buttons) {
-				if (button == null)
-					continue;
-					
-				button.State = ButtonState.Normal;
-				if (button.Rectangle.Contains (x, y)) {
-					button.Clicked (this, EventArgs.Empty);
-				} 
-			}
+			title_buttons.MouseUp (x, y);
 
 			return;
 		}
 		
 		protected virtual void HandleTitleBarDown (int x, int y)
 		{
-			ToolTipHide (false);
-			
-			foreach (TitleButton button in title_buttons) {
-				if (button != null) {
-					if (button.Rectangle.Contains (x, y)) {
-						button.State = ButtonState.Pushed;
-					} else {
-						button.State = ButtonState.Normal;
-					}
-				}
-			}
-			
-			if (!AnyPushedTitleButtons && !IsMaximized){
+			title_buttons.MouseDown (x, y);
+
+			if (!TitleButtons.AnyPushedTitleButtons && !IsMaximized) {
 				state = State.Moving;
 				clicked_point = new Point (x, y);
 				if (form.IsMdiChild) {
@@ -832,29 +746,6 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		protected virtual void CloseClicked (object sender, EventArgs e)
-		{
-			form.Close ();
-		}
-
-		private void MinimizeClicked (object sender, EventArgs e)
-		{
-			if (GetWindowState () != FormWindowState.Minimized) {
-				form.WindowState = FormWindowState.Minimized;
-			} else {
-				form.WindowState = FormWindowState.Normal;
-			}
-		}
-
-		private void MaximizeClicked (object sender, EventArgs e)
-		{
-			if (GetWindowState () != FormWindowState.Maximized) {
-				form.WindowState = FormWindowState.Maximized;
-			} else {
-				form.WindowState = FormWindowState.Normal;
-			}
-		}
-
 		protected Point MouseMove (Message m)
 		{
 			Point cp = Cursor.Position;
@@ -931,6 +822,290 @@ namespace System.Windows.Forms {
 			}
 			
 			return FormPos.None;
+		}
+	}
+	public class TitleButton
+	{
+		public Rectangle Rectangle;
+		public ButtonState State;
+		public CaptionButton Caption;
+		private EventHandler Clicked;
+		public bool Visible;
+
+		public TitleButton (CaptionButton caption, EventHandler clicked)
+		{
+			Caption = caption;
+			Clicked = clicked;
+		}
+		
+		public void OnClick ()
+		{
+			if (Clicked != null) {
+				Clicked (this, EventArgs.Empty);
+			}
+		}
+	}
+
+	public class TitleButtons : System.Collections.IEnumerable
+	{
+		public TitleButton MinimizeButton;
+		public TitleButton MaximizeButton;
+		public TitleButton RestoreButton;
+		public TitleButton CloseButton;
+		public TitleButton HelpButton;
+
+		public TitleButton [] AllButtons;
+		public bool Visible;
+
+		private ToolTip.ToolTipWindow tooltip;
+		private Timer tooltip_timer;
+		private TitleButton tooltip_hovered_button;
+		private TitleButton tooltip_hidden_button;
+		private const int tooltip_hide_interval = 3000;
+		private const int tooltip_show_interval = 1000;
+		private Form form;
+		
+		public TitleButtons (Form frm)
+		{
+			this.form = frm;
+			this.Visible = true;
+			
+			MinimizeButton = new TitleButton (CaptionButton.Minimize, new EventHandler (ClickHandler));
+			MaximizeButton = new TitleButton (CaptionButton.Maximize, new EventHandler (ClickHandler));
+			RestoreButton = new TitleButton (CaptionButton.Restore, new EventHandler (ClickHandler));
+			CloseButton = new TitleButton (CaptionButton.Close, new EventHandler (ClickHandler));
+			HelpButton = new TitleButton (CaptionButton.Help, new EventHandler (ClickHandler));
+
+			AllButtons = new TitleButton [] { MinimizeButton, MaximizeButton, RestoreButton, CloseButton, HelpButton };
+		}
+		
+		private void ClickHandler (object sender, EventArgs e)
+		{
+			if (!Visible) {
+				return;
+			}
+			
+			TitleButton button = (TitleButton) sender;
+			
+			switch (button.Caption) {
+				case CaptionButton.Close: 
+					form.Close ();
+					break;
+				case CaptionButton.Help:
+					Console.WriteLine ("Help not implemented.");
+					break;
+				case CaptionButton.Maximize:
+					form.WindowState = FormWindowState.Maximized;
+					break;
+				case CaptionButton.Minimize:
+					form.WindowState = FormWindowState.Minimized;
+					break;
+				case CaptionButton.Restore:
+					form.WindowState = FormWindowState.Normal;
+					break;
+			}
+		}
+		
+		public TitleButton FindButton (int x, int y)
+		{
+			if (!Visible) {
+				return null;
+			}
+			
+			foreach (TitleButton button in AllButtons) {
+				if (button.Visible && button.Rectangle.Contains (x, y)) {
+					return button;
+				}
+			}
+			return null;
+		}
+		
+		public bool AnyPushedTitleButtons {
+			get {
+				if (!Visible) {
+					return false;
+				}
+				
+				foreach (TitleButton button in AllButtons) {
+					if (button.Visible && button.State == ButtonState.Pushed) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+
+		#region IEnumerable Members
+
+		public System.Collections.IEnumerator GetEnumerator ()
+		{
+			return AllButtons.GetEnumerator ();
+		}
+		#endregion
+
+		#region ToolTip helpers
+		// Called from MouseMove if mouse is over a button
+		public void ToolTipStart (TitleButton button)
+		{
+			tooltip_hovered_button = button;
+
+			if (tooltip_hovered_button == tooltip_hidden_button)
+				return;
+			tooltip_hidden_button = null;
+
+			if (tooltip != null && tooltip.Visible)
+				ToolTipShow (true);
+
+			if (tooltip_timer == null) {
+
+				tooltip_timer = new Timer ();
+				tooltip_timer.Tick += new EventHandler (ToolTipTimerTick);
+			}
+
+			tooltip_timer.Interval = tooltip_show_interval;
+			tooltip_timer.Start ();
+			tooltip_hovered_button = button;
+		}
+
+		public void ToolTipTimerTick (object sender, EventArgs e)
+		{
+			if (tooltip_timer.Interval == tooltip_hide_interval) {
+				tooltip_hidden_button = tooltip_hovered_button;
+				ToolTipHide (false);
+			} else {
+				ToolTipShow (false);
+			}
+		}
+		// Called from timer (with only_refresh = false)
+		// Called from ToolTipStart if tooltip is already shown (with only_refresh = true)
+		public void ToolTipShow (bool only_refresh)
+		{
+			string text = Locale.GetText (tooltip_hovered_button.Caption.ToString ());
+
+			tooltip_timer.Interval = tooltip_hide_interval;
+			tooltip_timer.Enabled = true;
+
+			if (only_refresh && (tooltip == null || !tooltip.Visible)) {
+				return;
+			}
+
+			if (tooltip == null)
+				tooltip = new ToolTip.ToolTipWindow ();
+			else if (tooltip.Text == text && tooltip.Visible)
+				return;
+			else if (tooltip.Visible)
+				tooltip.Visible = false;
+
+			if (form.WindowState == FormWindowState.Maximized && form.MdiParent != null)
+				tooltip.Present (form.MdiParent, text);
+			else
+				tooltip.Present (form, text);
+			
+		}
+		
+		// Called from MouseLeave (with reset_hidden_button = true)
+		// Called from MouseDown  (with reset_hidden_button = false)
+		// Called from MouseMove if mouse isn't over any button (with reset_hidden_button = false)
+		// Called from Timer if hiding (with reset_hidden_button = false)
+		public void ToolTipHide (bool reset_hidden_button)
+		{
+			if (tooltip_timer != null)
+				tooltip_timer.Enabled = false;
+			if (tooltip != null && tooltip.Visible)
+				tooltip.Visible = false;
+			if (reset_hidden_button)
+				tooltip_hidden_button = null;
+		}
+		#endregion
+		
+		public bool MouseMove (int x, int y)
+		{
+			if (!Visible) {
+				return false;
+			}
+
+			bool any_change = false;
+			bool any_pushed_buttons = AnyPushedTitleButtons;
+			bool any_tooltip = false;
+			TitleButton over_button = FindButton (x, y);
+
+			foreach (TitleButton button in this) {
+				if (button == null)
+					continue;
+
+				if (button == over_button) {
+					if (any_pushed_buttons) {
+						any_change |= button.State != ButtonState.Pushed;
+						button.State = ButtonState.Pushed;
+					}
+					ToolTipStart (button);
+					any_tooltip = true;
+				} else {
+					if (any_pushed_buttons) {
+						any_change |= button.State != ButtonState.Normal;
+						button.State = ButtonState.Normal;
+					}
+				}
+			}
+
+			if (!any_tooltip)
+				ToolTipHide (false);
+
+			return any_change;
+		}
+
+		public void MouseDown (int x, int y)
+		{
+			if (!Visible) {
+				return;
+			}
+
+			ToolTipHide (false);
+
+			foreach (TitleButton button in this) {
+				if (button != null) {
+					button.State = ButtonState.Normal;
+				}
+			}
+			TitleButton clicked_button = FindButton (x, y);
+			if (clicked_button != null) {
+				clicked_button.State = ButtonState.Pushed;
+			}
+		}
+
+		public void MouseUp (int x, int y)
+		{
+			if (!Visible) {
+				return;
+			}
+			
+			TitleButton clicked_button = FindButton (x, y);
+			if (clicked_button != null) {
+				clicked_button.OnClick ();
+			}
+
+			foreach (TitleButton button in this) {
+				if (button == null)
+					continue;
+
+				button.State = ButtonState.Normal;
+			}
+		}
+
+		internal void MouseLeave (int x, int y)
+		{
+			if (!Visible) {
+				return;
+			}
+			
+			foreach (TitleButton button in this) {
+				if (button == null)
+					continue;
+
+				button.State = ButtonState.Normal;
+			}
+			
+			ToolTipHide (true);
 		}
 	}
 }

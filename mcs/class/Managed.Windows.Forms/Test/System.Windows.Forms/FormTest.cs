@@ -21,6 +21,21 @@ namespace MonoTests.System.Windows.Forms
 	public class FormTest
 	{
 		[Test]
+		public void MaximizedParentedFormTest ()
+		{
+			using (Form Main = new Form ()) {
+				Form Child = new Form ();
+				Child.TopLevel = false;
+				Main.Controls.Add (Child);
+				Main.ShowInTaskbar = false;
+				Main.Show ();
+				
+				Child.WindowState = FormWindowState.Maximized;
+				// The exact negative value depends on the border with, but it should always be < 0.
+				Assert.IsTrue (Child.Location.X < 0 && Child.Location.Y < 0, "#A1");
+			}
+		}
+		[Test]
 		[NUnit.Framework.Category ("NotWorking")]
 		public void FormCreateParamsStyleTest ()
 		{

@@ -547,10 +547,7 @@ namespace System.Windows.Forms {
 
 		internal void ArrangeIconicWindows (bool rearrange_all)
 		{
-			int xspacing = 160;
-			int yspacing = 27;
-
-			Rectangle rect = new Rectangle (0, 0, xspacing, yspacing);
+			Rectangle rect = Rectangle.Empty;
 
 			lock_sizing = true;
 			foreach (Form form in Controls) {
@@ -565,24 +562,19 @@ namespace System.Windows.Forms {
 					continue;
 				}
 				
-				// Need to get the width in the loop cause some themes might have
-				// different widths for different styles
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (wm);
-				
-				int height = wm.TitleBarHeight + (bw * 2);
-				
 				bool success = true;
 				int startx, starty, currentx, currenty;
+
+				rect.Size = wm.IconicSize;
 				
 				startx = 0;
-				starty = ClientSize.Height - yspacing;
+				starty = ClientSize.Height - rect.Height;
 				currentx = startx;
 				currenty = starty;
 				
 				do {
 					rect.X = currentx;
 					rect.Y = currenty;
-					rect.Height = height;
 					success = true;
 					foreach (Form form2 in Controls) {
 						if (form2 == form || form2.window_state != FormWindowState.Minimized)
@@ -594,10 +586,10 @@ namespace System.Windows.Forms {
 						}
 					}
 					if (!success) {	
-						currentx += xspacing;
-						if (currentx + xspacing > Right) {
+						currentx += rect.Width;
+						if (currentx + rect.Width > Right) {
 							currentx = startx;
-							currenty -= Math.Max(yspacing, height);
+							currenty -= rect.Height;
 						} 
 					}
 				} while (!success);
@@ -726,7 +718,7 @@ namespace System.Windows.Forms {
 			if (!form.Visible)
 				return false;
 			
-			bool is_active = wm.IsActive();
+			bool is_active = wm.IsActive;
 			bool maximize_this = false;
 			
 			if (!is_active){
@@ -788,7 +780,7 @@ namespace System.Windows.Forms {
 
 			MdiWindowManager wm = (MdiWindowManager) form.window_manager;
 
-			if (!is_activating_child && new_window_state == FormWindowState.Maximized && !wm.IsActive ()) {
+			if (!is_activating_child && new_window_state == FormWindowState.Maximized && !wm.IsActive) {
 				ActivateChild (form);
 				return;
 			}

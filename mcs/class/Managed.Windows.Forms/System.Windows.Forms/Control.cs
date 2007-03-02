@@ -1622,7 +1622,7 @@ namespace System.Windows.Forms
 				XplatUI.SetParent(Handle,
 						  (new_parent == null || !new_parent.IsHandleCreated) ? IntPtr.Zero : new_parent.Handle);
 				if (this is Form ) {
-					XplatUI.SetWindowStyle (Handle, CreateParams);
+					((Form) this).ChangingParent (new_parent);
 				}
 			}
 

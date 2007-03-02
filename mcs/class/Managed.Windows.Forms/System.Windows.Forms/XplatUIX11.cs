@@ -755,7 +755,6 @@ namespace System.Windows.Forms {
 
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
-			// Only MDI windows get caption_heights
 			caption_height = 0;
 			tool_caption_height = 19;
 			border_static = false;
@@ -772,17 +771,18 @@ namespace System.Windows.Forms {
 					border_style = FormBorderStyle.FixedSingle;
 				}
 				title_style = TitleStyle.None;
+				
+				if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+					caption_height = 19;
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						title_style = TitleStyle.Tool;
+					} else {
+						title_style = TitleStyle.Normal;
+					}
+				}
 
 				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_MDICHILD)) {
 					caption_height = 19;
-
-					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
-						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-							title_style = TitleStyle.Tool;
-						} else {
-							title_style = TitleStyle.Normal;
-						}
-					}
 
 					if (StyleSet (Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
 					    ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
@@ -845,8 +845,8 @@ namespace System.Windows.Forms {
 			int			atom_count;
 			Rectangle		client_rect;
 
-			// Child windows don't need WM window styles
-			if (StyleSet (cp.Style, WindowStyles.WS_CHILDWINDOW)) {
+			// Windows we manage ourselves don't need WM window styles.
+			if (cp.HasWindowManager) {
 				return;
 			}
 
@@ -4506,7 +4506,7 @@ namespace System.Windows.Forms {
 			Form form = Control.FromHandle (handle) as Form;
 			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
 					border_style == FormBorderStyle.SizableToolWindow)) {
-				form.window_manager = new InternalWindowManager (form);
+				form.window_manager = new ToolWindowManager (form);
 			}
 			
 			RequestNCRecalc(handle);

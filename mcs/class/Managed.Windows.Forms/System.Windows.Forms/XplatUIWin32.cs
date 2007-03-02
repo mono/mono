@@ -1243,10 +1243,7 @@ namespace System.Windows.Forms {
 				ParentHandle = FosterParent;
 			}
 
-			// Since we fake MDI dont tell Windows that this is a real MDI window
-			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
-				SetMdiStyles (cp);
-			}
+			FakeStyles (cp);
 
 			string class_name = RegisterWindowClass (cp.ClassStyle);
 
@@ -1330,9 +1327,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 
-			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
-				SetMdiStyles (cp);
-			}
+			FakeStyles (cp);
 
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
@@ -2099,13 +2094,15 @@ namespace System.Windows.Forms {
 				timer_list.Remove(index);
 			}
 		}
-
-		private void SetMdiStyles (CreateParams cp)
+		
+		private void FakeStyles (CreateParams cp)
 		{
-			cp.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
-			cp.ExStyle = 0;
+			if (cp.HasWindowManager) {
+				cp.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+				cp.ExStyle = 0;
+			}
 		}
-	
+		
 		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
 			Win32CreateCaret(hwnd, IntPtr.Zero, width, height);
 			caret_visible = false;

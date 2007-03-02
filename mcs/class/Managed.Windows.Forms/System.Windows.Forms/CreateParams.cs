@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 		private object	param;
 		private IntPtr	parent;
 		internal Menu	menu;
+		internal Control	control;
 		#endregion 	// Local variables
 
 		#region Public Constructors
@@ -107,6 +108,40 @@ namespace System.Windows.Forms {
 			set { parent = value; }
 		}
 		#endregion	// Public Instance Properties
+
+		#region Internal Instance Methods
+		internal bool IsSet (WindowStyles Style) {
+			return (this.style & (int) Style) != 0;
+		}
+		
+		internal bool IsSet (WindowExStyles ExStyle) {
+			return (this.ex_style & (int)ExStyle) != 0;
+		}
+		
+		internal bool HasWindowManager {
+			get {
+				return control != null && control is Form && ((Form) control).window_manager != null;
+			}
+		}
+		internal WindowExStyles WindowExStyle {
+			get {
+				return (WindowExStyles) ex_style;
+			}
+			set
+			{
+				ex_style = (int)value;
+			}
+		}
+		
+		internal WindowStyles WindowStyle {
+			get {
+				return (WindowStyles) style;
+			}
+			set {
+				style = (int) value;
+			}
+		}
+		#endregion
 
 		#region Public Instance Methods
 		public override string ToString() {

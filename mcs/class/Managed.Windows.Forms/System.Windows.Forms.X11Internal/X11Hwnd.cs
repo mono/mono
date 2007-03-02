@@ -1193,7 +1193,7 @@ namespace System.Windows.Forms.X11Internal {
 			Form form = Control.FromHandle (Handle) as Form;
 			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
 									    border_style == FormBorderStyle.SizableToolWindow)) {
-				form.window_manager = new InternalWindowManager (form);
+				form.window_manager = new ToolWindowManager (form);
 			}
 			
 			BorderStyle = border_style;

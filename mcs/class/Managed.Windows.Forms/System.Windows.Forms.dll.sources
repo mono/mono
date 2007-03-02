@@ -313,6 +313,7 @@ System.Windows.Forms/FormClosingEventArgs.cs
 System.Windows.Forms/FormClosingEventHandler.cs
 System.Windows.Forms/FormCollection.cs
 System.Windows.Forms/FormStartPosition.cs
+System.Windows.Forms/FormWindowManager.cs
 System.Windows.Forms/FormWindowState.cs
 System.Windows.Forms/FrameStyle.cs
 System.Windows.Forms/GetChildAtPointSkip.cs
@@ -697,6 +698,7 @@ System.Windows.Forms/ToolStripTextBox.cs
 System.Windows.Forms/ToolStripTextDirection.cs
 System.Windows.Forms/ToolTip.cs
 System.Windows.Forms/ToolTipIcon.cs
+System.Windows.Forms/ToolWindowManager.cs
 System.Windows.Forms/TrackBar.cs
 System.Windows.Forms/TrackBarRenderer.cs
 System.Windows.Forms/TreeNode.cs

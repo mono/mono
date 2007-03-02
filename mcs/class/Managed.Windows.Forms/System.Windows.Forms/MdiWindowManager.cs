@@ -45,14 +45,26 @@ namespace System.Windows.Forms {
 		
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
-		private Rectangle normal_bounds;
-		private Rectangle iconic_bounds;
 
 		private Point icon_clicked;
 		private DateTime icon_clicked_time;
 		private bool icon_dont_show_popup;
+
+		private TitleButtons maximized_title_buttons;
 		
-		internal Rectangle MaximizedBounds {
+		private TitleButtons MaximizedTitleButtons {
+			get {
+				if (maximized_title_buttons == null) {
+					maximized_title_buttons = new TitleButtons (this.Form);
+					maximized_title_buttons.CloseButton.Visible = true;
+					maximized_title_buttons.RestoreButton.Visible = true;
+					maximized_title_buttons.MinimizeButton.Visible = true;
+				}
+				return maximized_title_buttons;
+			}
+		}
+		
+		internal override Rectangle MaximizedBounds {
 			get {
 				Rectangle pb = mdi_container.ClientRectangle;
 				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
@@ -66,34 +78,14 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal Rectangle NormalBounds {
-			get {
-				return normal_bounds;
-			}
-			set {
-				normal_bounds = value;
-			}
-		}
 		
-		internal Rectangle IconicBounds {
-			get {
-				if (iconic_bounds == Rectangle.Empty)
-					return Rectangle.Empty;
-				Rectangle result = iconic_bounds;
-				result.Y = mdi_container.ClientRectangle.Bottom - iconic_bounds.Y;
-				return result;
-			}
-			set {
-				iconic_bounds = value;
-				iconic_bounds.Y = mdi_container.ClientRectangle.Bottom - iconic_bounds.Y;
-			}
-		}
 		
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{
 			this.mdi_container = mdi_container;
-			if (form.WindowState == FormWindowState.Normal)
-				normal_bounds = form.Bounds;
+			if (form.WindowState == FormWindowState.Normal) {
+				NormalBounds = form.Bounds;
+			}
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
 			form.TextChanged += new EventHandler (FormTextChangedHandler);
@@ -324,28 +316,23 @@ namespace System.Windows.Forms {
 			XplatUI.ClientToScreen (mdi_container.Handle, ref x, ref y);
 		}
 
-		public void UpdateWindowDecorations (FormWindowState window_state)
-		{
-			CreateButtons ();
-			
+		public override void UpdateWindowDecorations (FormWindowState window_state)
+		{			
 			switch (window_state) {
 			case FormWindowState.Minimized:
-				maximize_button.Caption = CaptionButton.Maximize;
-				minimize_button.Caption = CaptionButton.Restore;
+			case FormWindowState.Normal:
 				MaximizedMenu.Paint -= draw_maximized_buttons;
+				MaximizedTitleButtons.Visible = false;
+				TitleButtons.Visible = true;
 				break;
 			case FormWindowState.Maximized:
-				maximize_button.Caption = CaptionButton.Restore;
-				minimize_button.Caption = CaptionButton.Minimize;
 				MaximizedMenu.Paint += draw_maximized_buttons;
-				break;
-			case FormWindowState.Normal:
-				maximize_button.Caption = CaptionButton.Maximize;
-				minimize_button.Caption = CaptionButton.Minimize;
-				MaximizedMenu.Paint -= draw_maximized_buttons;
+				MaximizedTitleButtons.Visible = true;
+				TitleButtons.Visible = false;
 				break;
 			}
-			XplatUI.RequestNCRecalc (form.Handle);
+			
+			base.UpdateWindowDecorations (window_state);
 		}
 
 		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
@@ -368,41 +355,35 @@ namespace System.Windows.Forms {
 			Size bs = ThemeEngine.Current.ManagedWindowButtonSize (this);
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+			TitleButtons buttons = MaximizedTitleButtons;
 			
-			close_button.Rectangle = new Rectangle (mdi_container.ParentForm.Size.Width - 1 - bw - bs.Width - 2,
+			buttons.Visible = true;
+			TitleButtons.Visible = false;
+			
+			buttons.CloseButton.Rectangle = new Rectangle (mdi_container.ParentForm.Size.Width - 1 - bw - bs.Width - 2,
 					pnt.Y + 2, bs.Width, bs.Height);
 
-			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,
-					pnt.Y + 2, bs.Width, bs.Height);
-				
-			minimize_button.Rectangle = new Rectangle (maximize_button.Rectangle.Left - bs.Width,
+			buttons.RestoreButton.Rectangle = new Rectangle (buttons.CloseButton.Rectangle.Left - 2 - bs.Width,
 					pnt.Y + 2, bs.Width, bs.Height);
 
-			DrawTitleButton (pe.Graphics, minimize_button, pe.ClipRectangle);
-			DrawTitleButton (pe.Graphics, maximize_button, pe.ClipRectangle);
-			DrawTitleButton (pe.Graphics, close_button, pe.ClipRectangle);
+			buttons.MinimizeButton.Rectangle = new Rectangle (buttons.RestoreButton.Rectangle.Left - bs.Width,
+					pnt.Y + 2, bs.Width, bs.Height);
 
-			minimize_button.Rectangle.Y -= pnt.Y;
-			maximize_button.Rectangle.Y -= pnt.Y;
-			close_button.Rectangle.Y -= pnt.Y;
+			DrawTitleButton (pe.Graphics, buttons.MinimizeButton, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, buttons.RestoreButton, pe.ClipRectangle);
+			DrawTitleButton (pe.Graphics, buttons.CloseButton, pe.ClipRectangle);
+
+			buttons.MinimizeButton.Rectangle.Y -= pnt.Y;
+			buttons.RestoreButton.Rectangle.Y -= pnt.Y;
+			buttons.CloseButton.Rectangle.Y -= pnt.Y;
 		}
 		
-		private bool IconRectangleContains (int x, int y)
-		{
-			if (form.Icon == null)
-				return false;
-
-			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			Rectangle icon = new Rectangle (bw + 3, bw + 2, IconWidth, IconWidth);
-			return icon.Contains (x, y);
-		}
-
 		public bool HandleMenuMouseDown (MainMenu menu, int x, int y)
 		{
 			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
 
 			HandleTitleBarDown (pt.X, pt.Y);
-			return AnyPushedTitleButtons;
+			return TitleButtons.AnyPushedTitleButtons;
 		}
 
 		public void HandleMenuMouseUp (MainMenu menu, int x, int y)
@@ -431,6 +412,10 @@ namespace System.Windows.Forms {
 		{
 			base.HandleTitleBarLeave (x, y);
 
+			if (maximized_title_buttons != null) {
+				maximized_title_buttons.MouseLeave (x, y);
+			}
+			
 			if (IsMaximized)
 				XplatUI.InvalidateNC (form.MdiParent.Handle);
 		}
@@ -449,7 +434,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
+			bool was_maximized = IsMaximized;
 			base.HandleTitleBarUp (x, y);
+			if (maximized_title_buttons != null && was_maximized) {
+				maximized_title_buttons.MouseUp (x, y);
+			}
 
 			if (IsMaximized)
 				XplatUI.InvalidateNC (mdi_container.Parent.Handle);
@@ -480,10 +469,22 @@ namespace System.Windows.Forms {
 			}
 
 			base.HandleTitleBarDown (x, y);
-			
+
+			if (maximized_title_buttons != null) {
+				maximized_title_buttons.MouseDown (x, y);
+			}
 			
 			if (IsMaximized) {
 				XplatUI.InvalidateNC (mdi_container.Parent.Handle);
+			}
+		}
+
+		protected override void HandleTitleBarMouseMove (int x, int y)
+		{
+			base.HandleTitleBarMouseMove (x, y);
+
+			if (maximized_title_buttons != null) {
+				maximized_title_buttons.MouseMove (x, y);
 			}
 		}
 
@@ -528,11 +529,6 @@ namespace System.Windows.Forms {
 			return base.HandleLButtonDown (ref m);
 		}
 
-		protected override bool HandleNCLButtonDown (ref Message m)
-		{
-			return base.HandleNCLButtonDown (ref m);
-		}
-		
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{
 			return false;
@@ -588,9 +584,10 @@ namespace System.Windows.Forms {
 			form.Refresh ();
 		}
 
-		public override bool IsActive ()
-		{
-			return mdi_container.ActiveMdiChild == form;
+		public override bool IsActive {
+			get {
+				return mdi_container.ActiveMdiChild == form;
+			}
 		}
 
 		protected override void Activate ()
