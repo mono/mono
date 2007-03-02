@@ -1,3 +1,11 @@
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ThemeWin32Classic.cs: ManagedWindowSetButtonLocations: Make all
+	  buttons invisible before deciding which ones should be visible
+	  (fixes minimize/maximize buttons showing up in toolwindows). Remove
+	  an unused variable.
+	* InternalWindowManager.cs: Remove warning.
+
 2007-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add a check in ListViewItemCollection.RemoveAt

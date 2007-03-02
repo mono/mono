@@ -528,7 +528,6 @@ namespace System.Windows.Forms {
 		protected virtual void HandleTitleBarMouseMove (int x, int y)
 		{
 			bool any_change = false;
-			bool any_tooltip = false;
 			
 			any_change = title_buttons.MouseMove (x, y);
 			

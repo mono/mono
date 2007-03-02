@@ -5279,6 +5279,10 @@ namespace System.Windows.Forms
 			
 			buttons.HelpButton.Visible = form.HelpButton;
 			
+			foreach (TitleButton button in buttons) {
+				button.Visible = false;
+			}
+			
 			switch (form.FormBorderStyle) {
 			case FormBorderStyle.None:
 				if (form.WindowState != FormWindowState.Normal)
@@ -5321,30 +5325,24 @@ namespace System.Windows.Forms
 			int bth = btsize.Height;
 			int top = bw + 2;
 			int left = form.Width - bw - btw - 2;
-			TitleButton previous;
 			
 			if ((!wm.IsToolWindow || wm.IsMinimized) && wm.HasBorders) {
 				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth);
-				previous = buttons.CloseButton;
 				left -= 2 + btw;
 				
 				if (buttons.MaximizeButton.Visible) {
 					buttons.MaximizeButton.Rectangle = new Rectangle (left, top, btw, bth);
-					previous = buttons.MaximizeButton;
 					left -= 2 + btw;
 				} 
 				if (buttons.RestoreButton.Visible) {
 					buttons.RestoreButton.Rectangle = new Rectangle (left, top, btw, bth);
-					previous = buttons.RestoreButton;
 					left -= 2 + btw;
 				}
 
-				buttons.MinimizeButton.Rectangle = new Rectangle (left, top, btw, bth); ;
-				previous = buttons.MinimizeButton;
+				buttons.MinimizeButton.Rectangle = new Rectangle (left, top, btw, bth);
 				left -= 2 + btw;
 			} else if (wm.IsToolWindow) {
-				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth); ;
-				previous = buttons.CloseButton;
+				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth);
 				left -= 2 + btw;
 			}
 		}
