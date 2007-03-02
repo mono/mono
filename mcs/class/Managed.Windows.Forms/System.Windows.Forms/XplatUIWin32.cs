@@ -784,7 +784,7 @@ namespace System.Windows.Forms {
 			lock (registered_classes) {
 				class_name = (string)registered_classes[classStyle];
 
-				if (!string.IsNullOrEmpty (class_name))
+				if (class_name != null)
 					return class_name;
 
 				class_name = string.Format ("Mono.WinForms.{0}.{1}", System.Threading.Thread.GetDomainID ().ToString (), classStyle);

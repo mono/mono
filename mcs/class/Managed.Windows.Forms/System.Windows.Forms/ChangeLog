@@ -1,5 +1,9 @@
 2007-03-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUIWin32.cs: Don't use 2.0 methods in 1.1 code.  :/
+
+2007-03-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUIWin32.cs: Register a new class with Windows each time we get
 	a new ClassStyle.  [Fixes bugs #79432, #80817]
 	* Controls.cs: Set the correct ClassStyle in CreateParams.
