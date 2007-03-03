@@ -20,6 +20,7 @@
 generic.cs
 ../mcs/iterators.cs
 ../mcs/lambda.cs
+linq.cs
 ../mcs/literal.cs
 ../mcs/location.cs
 ../mcs/modifiers.cs
