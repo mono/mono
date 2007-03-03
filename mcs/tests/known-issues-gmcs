@@ -12,3 +12,5 @@ test-562.cs
 
 gtest-230.cs
 gtest-291.cs IGNORE
+
+gtest-linq-01.cs IGNORE
