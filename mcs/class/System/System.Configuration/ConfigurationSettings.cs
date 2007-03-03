@@ -83,7 +83,11 @@ namespace System.Configuration
 #endif
 		public static object GetConfig (string sectionName)
 		{
+#if NET_2_0 && CONFIGURATION_DEP
+			return ConfigurationManager.GetSection (sectionName);
+#else
 			return config.GetConfig (sectionName);
+#endif
 		}
 
 #if NET_2_0

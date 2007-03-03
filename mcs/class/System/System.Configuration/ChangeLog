@@ -1,3 +1,8 @@
+2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationSettings.cs: On 2.0 profile, use ConfigurationManager
+	to retrieve config section. Fixes bug #81020.
+
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* SettingsBase.cs: Removed a NotImplementedException, it provides
