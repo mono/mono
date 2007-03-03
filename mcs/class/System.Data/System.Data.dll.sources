@@ -126,7 +126,6 @@ System.Data/XmlConstants.cs
 System.Data/XmlDiffLoader.cs
 System.Data.Common/CatalogLocation.cs
 System.Data.Common/ComparerFactory.cs
-System.Data.Common/ConnectionStringsSectionHandler.cs
 System.Data.Common/DataAdapter.cs
 System.Data.Common/DataColumnMappingCollection.cs
 System.Data.Common/DataColumnMapping.cs

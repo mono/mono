@@ -1,3 +1,9 @@
+2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbProviderFactoriesConfigurationHandlerTest.cs: Fixed tests to
+	pass on MS. Added NotWorking test to check whether DbProviderFactories
+	that are defined on machine config are available.
+
 2007-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbProviderFactoriesConfigurationHandlerTest.cs : test for #80894.

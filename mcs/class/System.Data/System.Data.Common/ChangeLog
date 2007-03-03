@@ -1,3 +1,17 @@
+2007-03-03  Gert driesen  <drieseng@users.sourceforge.net>
+
+	* ConnectionStringsSectionHandler.cs: Removed since the 2.0 config
+	API is in place.
+	* DbProviderFactoriesConfigurationHandler.cs: Fixed name of DataSet
+	to match MS. Removed SupportedClasses column since this is no longer
+	part of 2.0 profile (removed during beta). Throw 
+	ConfigurationErrorsException for unrecognized elements. Mark methods
+	private, and refactor them. Added FIXMEs for missing checks for
+	unrecognized attributes.
+	* DbProviderFactories.cs: Marked constants internal. Replaced spaces
+	with tabs. Use ConfigurationManager.GetSection instead of deprecated
+	ConfigurationSettings.GetConfig.
+
 2007-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbProviderFactoriesConfigurationHandler.cs : there was a config

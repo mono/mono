@@ -38,7 +38,8 @@ using System.Xml;
 using System.Globalization;
 using System.Configuration;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	public class DbProviderFactoriesConfigurationHandler : IConfigurationSectionHandler
 	{
 		#region Constructors
@@ -53,85 +54,93 @@ namespace System.Data.Common {
 
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
-                        DataSet ds = new DataSet ("DbProviderFactories");
-                        CreateDataTables (ds, section);
-                        return ds;
+			DataSet ds = new DataSet (DbProviderFactories.CONFIG_SECTION_NAME);
+			CreateDataTables (ds, section);
+			return ds;
 		}
 
-                internal virtual void CreateDataTables (DataSet ds, XmlNode section) 
-                {                        
-                        DataTable dt = ds.Tables.Add ("DbProviderFactories");
-                        DataColumn [] columns = new DataColumn [5];
-                        columns [0] = new DataColumn ("Name", typeof (string));
-                        columns [1] = new DataColumn ("Description", typeof (string));
-                        columns [2] = new DataColumn ("InvariantName", typeof (string));
-                        columns [3] = new DataColumn ("AssemblyQualifiedName", typeof (string));
-                        columns [4] = new DataColumn ("SupportedClasses", typeof (int));
-                        dt.Columns.AddRange (columns);
-                        dt.PrimaryKey = new DataColumn [] {columns [2]};
-                                
-                        foreach (XmlNode node in section.SelectNodes (".//DbProviderFactories")) {
-                                AddRows (dt, node);
-                                RemoveRows (dt, node);
-                       }
-                }
+		internal virtual void CreateDataTables (DataSet ds, XmlNode section)
+		{
+			DataTable dt = ds.Tables.Add (DbProviderFactories.CONFIG_SEC_TABLE_NAME);
+			DataColumn [] columns = new DataColumn [4];
+			columns [0] = new DataColumn ("Name", typeof (string));
+			columns [1] = new DataColumn ("Description", typeof (string));
+			columns [2] = new DataColumn ("InvariantName", typeof (string));
+			columns [3] = new DataColumn ("AssemblyQualifiedName", typeof (string));
+			dt.Columns.AddRange (columns);
+			dt.PrimaryKey = new DataColumn [] { columns [2] };
 
-                internal string GetAttributeValue (XmlNode node, string name, bool required)
-                {
-                        XmlAttribute attr = node.Attributes[name];
-                        if (attr == null) {
-                                if (!required)
-                                        return null;
-                                throw new ConfigurationErrorsException ("Required Attribute '" + name +
-                                                                  "' is  missing!", node);
-                        }
-                        string value = attr.Value;
-                        if (value == "")
-                                throw new ConfigurationException ("Attribute '" + name + "' cannot be empty!",
-                                                                  node);
-                        return value;
-                }
+			foreach (XmlNode node in section.ChildNodes) {
+				if (node.NodeType != XmlNodeType.Element)
+					continue;
 
-                internal virtual void AddRows (DataTable dt, XmlNode factoriesNode)
-                {
-                        foreach (XmlNode addNode in factoriesNode.SelectNodes (".//add")) {
-                                if (addNode.NodeType != XmlNodeType.Element)
-                                        continue;
-                                
-                                string name = "";
-                                string description = "";
-                                string invariant = "";
-                                string type = "";
+				if (node.Name == DbProviderFactories.CONFIG_SEC_TABLE_NAME) {
+					foreach (XmlNode factoryNode in node.ChildNodes) {
+						if (factoryNode.NodeType != XmlNodeType.Element)
+							continue;
 
-                                name            = GetAttributeValue (addNode, "name", true);
-                                description     = GetAttributeValue (addNode, "description", true);
-                                invariant       = GetAttributeValue (addNode, "invariant", true);
-                                type            = GetAttributeValue (addNode, "type", true);
-                                        
-                                DataRow row = dt.NewRow ();
-                                row [0] = name;
-                                row [1] = description;
-                                row [2] = invariant;
-                                row [3] = type;
-                                row [4] = 255;
-                                        
-                                dt.Rows.Add (row);
-                        }        
-                }
+						switch (factoryNode.Name) {
+						case "add":
+							AddRow (dt, factoryNode);
+							break;
+						case "remove":
+							RemoveRow (dt, factoryNode);
+							break;
+						default:
+							throw new ConfigurationErrorsException (
+								"Unrecognized element.", factoryNode);
+						}
+					}
+				}
+			}
+		}
 
-                internal virtual void RemoveRows (DataTable dt, XmlNode removeNode)
-                {
-                        foreach (XmlNode node in removeNode.SelectNodes (".//remove")) {
-                                if (node.NodeType != XmlNodeType.Element)
-                                        continue;
-                                
-                                string invariant = GetAttributeValue (node, "invariant", true);
-                                DataRow row = dt.Rows.Find (invariant);
-                                if (row != null)
-                                        row.Delete ();
-                        }
-                }
-                
+		string GetAttributeValue (XmlNode node, string name, bool required)
+		{
+			XmlAttribute attr = node.Attributes [name];
+			if (attr == null) {
+				if (!required)
+					return null;
+				throw new ConfigurationErrorsException ("Required Attribute '" 
+					+ name + "' is  missing!", node);
+			}
+			string value = attr.Value;
+			if (value == "")
+				throw new ConfigurationException ("Attribute '" + name 
+					+ "' cannot be empty!", node);
+			return value;
+		}
+
+		void AddRow (DataTable dt, XmlNode addNode)
+		{
+			string name = GetAttributeValue (addNode, "name", true);
+			string description = GetAttributeValue (addNode, "description", true);
+			string invariant = GetAttributeValue (addNode, "invariant", true);
+			string type = GetAttributeValue (addNode, "type", true);
+
+			// FIXME: throw ConfigurationErrorsException for unrecognized
+			// attributes. Consider "supports" valid although we're not using
+			// it
+
+			DataRow row = dt.NewRow ();
+			row [0] = name;
+			row [1] = description;
+			row [2] = invariant;
+			row [3] = type;
+
+			dt.Rows.Add (row);
+		}
+
+		void RemoveRow (DataTable dt, XmlNode removeNode)
+		{
+			// FIXME: throw ConfigurationErrorsException for unrecognized
+			// attributes.
+
+			string invariant = GetAttributeValue (removeNode, "invariant", true);
+			DataRow row = dt.Rows.Find (invariant);
+			if (row != null)
+				row.Delete ();
+		}
 
 		#endregion // Methods
 	}

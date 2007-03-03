@@ -43,66 +43,66 @@ namespace System.Data.Common {
 	{
 		private static object configEntries = null; // DataSet
 
-                private const string CONFIG_SECTION_NAME        = "system.data";
-                private const string CONFIG_SEC_TABLE_NAME      = "DbProviderFactories";
-                
+		internal const string CONFIG_SECTION_NAME        = "system.data";
+		internal const string CONFIG_SEC_TABLE_NAME      = "DbProviderFactories";
+
 		#region Methods
 
 		public static DbProviderFactory GetFactory (DataRow providerRow)
 		{
-                        string assemblyType = (string) providerRow ["AssemblyQualifiedName"];
+			string assemblyType = (string) providerRow ["AssemblyQualifiedName"];
 #if TARGET_JVM // case insensitive GetType is not supported
-                        Type type = Type.GetType (assemblyType, false);
+			Type type = Type.GetType (assemblyType, false);
 #else
-                        Type type = Type.GetType (assemblyType, false, true);
+			Type type = Type.GetType (assemblyType, false, true);
 #endif
-                        if (type != null && type.IsSubclassOf (typeof (DbProviderFactory))) {
-                                // Provider factories are singletons with Instance field having
-                                // the sole instance
-                                FieldInfo field = type.GetField ("Instance", BindingFlags.Public |
-                                                                 BindingFlags.Static);
-                                if (field != null) {
-                                        return field.GetValue (null) as DbProviderFactory;
-                                }
-                                
-                        }
-                        
-                        throw new ConfigurationException("DataProvider is missing!");
+			if (type != null && type.IsSubclassOf (typeof (DbProviderFactory))) {
+				// Provider factories are singletons with Instance field having
+				// the sole instance
+				FieldInfo field = type.GetField ("Instance", BindingFlags.Public |
+					BindingFlags.Static);
+				if (field != null) {
+					return field.GetValue (null) as DbProviderFactory;
+				}
+			}
+
+			throw new ConfigurationException("DataProvider is missing!");
 		}
 
 		public static DbProviderFactory GetFactory (string providerInvariantName)
 		{
-                        DataTable table = GetFactoryClasses ();
-                        if (table != null) {
-                                DataRow row = table.Rows.Find (providerInvariantName);
-                                if (row != null)
-                                        return GetFactory (row);
-                        }
-                        throw new ConfigurationException ("DataProvider is not found!");
+			DataTable table = GetFactoryClasses ();
+			if (table != null) {
+				DataRow row = table.Rows.Find (providerInvariantName);
+				if (row != null)
+					return GetFactory (row);
+			}
+			throw new ConfigurationException ("DataProvider is not found!");
 		}
 
 		public static DataTable GetFactoryClasses ()
 		{
-                        DataSet ds = GetConfigEntries ();
-                        DataTable table = ds != null ? ds.Tables [CONFIG_SEC_TABLE_NAME] : null;
-                        if (table != null)
-                                table = table.Copy (); // avoid modifications by user
-                        return table;
+				DataSet ds = GetConfigEntries ();
+				DataTable table = ds != null ? ds.Tables [CONFIG_SEC_TABLE_NAME] : null;
+				if (table != null)
+					table = table.Copy (); // avoid modifications by user
+				return table;
 		}
 
 		#endregion // Methods
 
 		#region Internal Methods
+
 		internal static DataSet GetConfigEntries ()
 		{
-                        
-                        if (configEntries != null)
-                                return configEntries as DataSet;
-                        
-                        DataSet ds = (DataSet) ConfigurationSettings.GetConfig (CONFIG_SECTION_NAME);
-                        Interlocked.CompareExchange (ref configEntries, ds, null);
-                        return configEntries as DataSet;
+			if (configEntries != null)
+				return configEntries as DataSet;
+
+			DataSet ds = (DataSet) ConfigurationManager.GetSection (CONFIG_SECTION_NAME);
+			Interlocked.CompareExchange (ref configEntries, ds, null);
+			return configEntries as DataSet;
 		}
+
 		#endregion Internal Methods
 	}
 }
