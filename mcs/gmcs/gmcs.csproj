@@ -81,6 +81,9 @@
     <Compile Include="..\mcs\convert.cs">
       <Link>convert.cs</Link>
     </Compile>
+    <Compile Include="..\mcs\lambda.cs">
+      <Link>lambda.cs</Link>
+    </Compile>
     <Compile Include="cs-parser.cs" />
     <Compile Include="..\mcs\cs-tokenizer.cs">
       <Link>cs-tokenizer.cs</Link>
@@ -152,6 +155,7 @@
     <Compile Include="..\mcs\typemanager.cs">
       <Link>typemanager.cs</Link>
     </Compile>
+    <Compile Include="linq.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
