@@ -1,3 +1,9 @@
+2007-03-03  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Implemented basic linq grammar.
+
+	* driver.cs: Set linq lang version on demand.
+
 2007-02-26  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay, expression.cs: Compile empty __arglist correctly.

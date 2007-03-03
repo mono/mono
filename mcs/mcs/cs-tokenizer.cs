@@ -40,10 +40,12 @@ namespace Mono.CSharp
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
-		bool linq;
+		bool query_parsing;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
+
+		static bool linq;
 
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -160,6 +162,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public static bool LinqEnabled {
+			set {
+				linq = value;
+			}
+		}
+
 		public bool TypeOfParsing {
 			get {
 				return handle_typeof;
@@ -167,6 +175,12 @@ namespace Mono.CSharp
 
 			set {
 				handle_typeof = value;
+			}
+		}
+
+		public bool QueryParsing {
+			set {
+				query_parsing = value;
 			}
 		}
 
@@ -193,7 +207,7 @@ namespace Mono.CSharp
 		// Class variables
 		// 
 		static CharArrayHashtable[] keywords;
-		static Hashtable keywordStrings = new Hashtable ();
+		static Hashtable keywordStrings;
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
@@ -308,7 +322,8 @@ namespace Mono.CSharp
 			position_stack.Pop ();
 		}
 		
-		static void AddKeyword (string kw, int token) {
+		static void AddKeyword (string kw, int token)
+		{
 			keywordStrings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
 				keywords [kw.Length] = new CharArrayHashtable (kw.Length);
@@ -318,6 +333,7 @@ namespace Mono.CSharp
 
 		static void InitTokens ()
 		{
+			keywordStrings = new Hashtable ();
 			keywords = new CharArrayHashtable [64];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
@@ -406,6 +422,21 @@ namespace Mono.CSharp
 			AddKeyword ("partial", Token.PARTIAL);
 #if GMCS_SOURCE
 			AddKeyword ("where", Token.WHERE);
+
+			if (linq) {
+				AddKeyword ("from", Token.FROM);
+				AddKeyword ("join", Token.JOIN);
+				AddKeyword ("on", Token.ON);
+				AddKeyword ("equals", Token.EQUALS);
+				AddKeyword ("select", Token.SELECT);
+				AddKeyword ("group", Token.GROUP);
+				AddKeyword ("by", Token.BY);
+				AddKeyword ("let", Token.LET);
+				AddKeyword ("orderby", Token.ORDERBY);
+				AddKeyword ("ascending", Token.ASCENDING);
+				AddKeyword ("descending", Token.DESCENDING);
+				AddKeyword ("into", Token.INTO);
+			}
 #endif
 		}
 
@@ -414,10 +445,15 @@ namespace Mono.CSharp
 		// 
 		static Tokenizer ()
 		{
+			Reset ();
+		}
+
+		public static void Reset ()
+		{
 			InitTokens ();
 			csharp_format_info = NumberFormatInfo.InvariantInfo;
 			styles = NumberStyles.Float;
-			
+
 			string_builder = new System.Text.StringBuilder ();
 		}
 
@@ -444,7 +480,21 @@ namespace Mono.CSharp
 			if (handle_assembly == false && res == Token.ASSEMBLY)
 				return -1;
 #if GMCS_SOURCE
-			if (handle_constraints == false && res == Token.WHERE)
+			if (linq) {
+				if (res == Token.FROM &&
+					(current_token == Token.ASSIGN || current_token == Token.OPEN_BRACKET ||
+					 current_token == Token.RETURN || current_token == Token.IN)) {
+					query_parsing = true;
+					return res;
+				}
+
+				if (!query_parsing && res > Token.QUERY_FIRST_TOKEN && res < Token.QUERY_LAST_TOKEN)
+					return -1;
+
+				return res;
+			}
+
+			if (!handle_constraints && res == Token.WHERE)
 				return -1;
 #endif
 			return res;
@@ -469,7 +519,6 @@ namespace Mono.CSharp
 		{
 			this.ref_name = file;
 			this.file_name = file;
-			linq = RootContext.Version == LanguageVersion.LINQ;
 			reader = input;
 			
 			putback_char = -1;

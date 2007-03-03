@@ -1430,6 +1430,7 @@ namespace Mono.CSharp
 					
 				case "linq":
 					RootContext.Version = LanguageVersion.LINQ;
+					Tokenizer.LinqEnabled = true;
 					return true;
 				}
 				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1' or `Default'", value);
@@ -2045,6 +2046,7 @@ namespace Mono.CSharp
 		static void Reset ()
 		{
 			Driver.Reset ();
+			Tokenizer.Reset ();
 			Location.Reset ();
 			RootContext.Reset ();
 			Report.Reset ();
