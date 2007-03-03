@@ -1,3 +1,12 @@
+2007-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: Added support for setting the
+	MaintainScrollPositionOnPostBack property if the corresponding
+	page directive attribute is found.
+
+	* Directive.cs: added the MaintainScrollPositionOnPostBack and
+	LinePragmas directives.
+
 2007-03-02  Marek Habersack  <grendello@gmail.com>
 
 	* AppCodeCompiler.cs: Correctly process App_Code directories which

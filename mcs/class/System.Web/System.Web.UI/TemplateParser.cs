@@ -64,6 +64,7 @@ namespace System.Web.UI {
 		string language;
 		bool strictOn = false;
 		bool explicitOn = false;
+		bool linePragmasOn = false;
 		bool output_cache;
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
@@ -518,13 +519,19 @@ namespace System.Web.UI {
 			atts.Remove ("CodeBehind");  // ignored
 #endif
 			atts.Remove ("AspCompat"); // ignored
-
+#if NET_2_0
+			// these two are ignored for the moment
+			atts.Remove ("Async");
+			atts.Remove ("AsyncTimeOut");
+#endif
+			
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
-
+			linePragmasOn = GetBool (atts, "LinePragmas", false);
+			
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
 			// In ASP 2, the source file is actually integrated with

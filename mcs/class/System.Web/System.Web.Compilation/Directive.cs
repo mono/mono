@@ -42,7 +42,7 @@ namespace System.Web.Compilation
 						"CompilerOptions", "ContentType", "Culture", "Debug",
 						"Description",
 #if NET_2_0
-						"EnableEventValidation", 
+						"EnableEventValidation", "MaintainScrollPositionOnPostBack",
 #endif
 						"EnableSessionState", "EnableViewState",
 						"EnableViewStateMac", "ErrorPage", "Explicit",
@@ -54,7 +54,7 @@ namespace System.Web.Compilation
 		static string [] control_atts = { "AutoEventWireup", "ClassName", "CompilerOptions",
 						  "Debug", "Description", "EnableViewState",
 						  "Explicit", "Inherits", "Language", "Strict", "Src",
-						  "WarningLevel", "CodeBehind", "TargetSchema" };
+						  "WarningLevel", "CodeBehind", "TargetSchema", "LinePragmas" };
 
 		static string [] import_atts = { "namespace" };
 		static string [] implements_atts = { "interface" };

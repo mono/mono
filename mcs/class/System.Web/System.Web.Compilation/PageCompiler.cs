@@ -246,6 +246,15 @@ namespace System.Web.Compilation
 				stmt.Right = new CodePrimitiveExpression (pageParser.EnableEventValidation);
 				method.Statements.Add (stmt);
 			}
+
+			if (pageParser.MaintainScrollPositionOnPostBack) {
+				CodeAssignStatement stmt = new CodeAssignStatement ();
+				CodePropertyReferenceExpression prop;
+                                prop = new CodePropertyReferenceExpression (thisRef, "MaintainScrollPositionOnPostBack");
+				stmt.Left = prop;
+				stmt.Right = new CodePrimitiveExpression (pageParser.MaintainScrollPositionOnPostBack);
+				method.Statements.Add (stmt);
+			}
 #endif
                         
 			base.AppendStatementsToFrameworkInitialize (method);

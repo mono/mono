@@ -67,6 +67,7 @@ namespace System.Web.UI
 		string theme;
 		string styleSheetTheme;
 		bool enable_event_validation;
+		bool maintainScrollPositionOnPostBack;
 #endif
 
 		public PageParser ()
@@ -294,6 +295,7 @@ namespace System.Web.UI
 			theme = GetString (atts, "Theme", null);
 			styleSheetTheme = GetString (atts, "StyleSheetTheme", null);
 			enable_event_validation = GetBool (atts, "EnableEventValidation", true);
+			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", true);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -436,6 +438,10 @@ namespace System.Web.UI
 
 		internal bool EnableEventValidation {
 			get { return enable_event_validation; }
+		}
+
+		internal bool MaintainScrollPositionOnPostBack {
+			get { return maintainScrollPositionOnPostBack; }
 		}
 #endif
 	}
