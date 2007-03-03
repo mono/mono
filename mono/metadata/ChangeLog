@@ -1,3 +1,10 @@
+2007-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c: implement MS .Net style shadow copying. Copies of
+	the assemblies are made in a subdirectory of the dynamic base
+	directory, the assembly names are preserved.
+	Copy .mdb and .config files along with the assemblies being shadowed.
+
 2007-02-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_object_to_ptr_conv): Emit valid IL for handling HandleRefs.
