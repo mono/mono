@@ -74,12 +74,19 @@ namespace MonoTests.System.Data.Common
 			object o = ConfigurationSettings.GetConfig (configSection);
 			DataSet ds = o as DataSet;
 			DataTable dt = ds.Tables [0];
-			Assert.AreEqual (1, dt.Rows.Count, "#A1");
+			Assert.AreEqual (2, dt.Rows.Count, "#A1");
+
 			DataRow r = dt.Rows.Find ("ProviderTest.InvariantName");
-			Assert.AreEqual ("ProviderTest.Name", r ["Name"].ToString (), "#A2");
-			Assert.AreEqual ("ProviderTest.Description", r ["Description"].ToString (), "#A3");
-			Assert.AreEqual ("ProviderTest.InvariantName", r ["InvariantName"].ToString (), "#A4");
-			Assert.AreEqual ("ProviderTest.AssemblyQualifiedName", r ["AssemblyQualifiedName"].ToString (), "#A5");
+			Assert.AreEqual ("ProviderTest.Name", r ["Name"].ToString (), "#B2");
+			Assert.AreEqual ("ProviderTest.Description", r ["Description"].ToString (), "#B3");
+			Assert.AreEqual ("ProviderTest.InvariantName", r ["InvariantName"].ToString (), "#B4");
+			Assert.AreEqual ("ProviderTest.AssemblyQualifiedName", r ["AssemblyQualifiedName"].ToString (), "#B5");
+
+			r = dt.Rows.Find ("ProviderTest4.InvariantName");
+			Assert.AreEqual ("ProviderTest4.Name", r ["Name"].ToString (), "#A2");
+			Assert.AreEqual ("ProviderTest4.Description", r ["Description"].ToString (), "#A3");
+			Assert.AreEqual ("ProviderTest4.InvariantName", r ["InvariantName"].ToString (), "#A4");
+			Assert.AreEqual ("ProviderTest4.AssemblyQualifiedName", r ["AssemblyQualifiedName"].ToString (), "#A5");
 		}
 
 		[Test]

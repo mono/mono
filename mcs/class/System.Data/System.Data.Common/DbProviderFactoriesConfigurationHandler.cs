@@ -83,6 +83,9 @@ namespace System.Data.Common
 						case "add":
 							AddRow (dt, factoryNode);
 							break;
+						case "clear":
+							dt.Rows.Clear ();
+							break;
 						case "remove":
 							RemoveRow (dt, factoryNode);
 							break;

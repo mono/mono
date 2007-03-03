@@ -1,3 +1,8 @@
+2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbProviderFactoriesConfigurationHandler.cs: Added support for
+	clear node.
+
 2007-03-03  Gert driesen  <drieseng@users.sourceforge.net>
 
 	* ConnectionStringsSectionHandler.cs: Removed since the 2.0 config

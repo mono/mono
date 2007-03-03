@@ -1,5 +1,10 @@
 2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* app_test_2.0.config: Modified DbProviderFactories to allow testing
+	of clear and remove nodes.
+
+2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* app_test_2.0.config: Fixed assembly qualified names of config
 	handler. Removed usage of ConnectionStringsSectionHandler, since
 	this is now handled by 2.0 config system. Spaces to tabs.

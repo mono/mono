@@ -1,5 +1,10 @@
 2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DbProviderFactoriesConfigurationHandlerTest.cs: Changed test to also
+	verify behavior for clear and remove nodes.
+
+2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DbProviderFactoriesConfigurationHandlerTest.cs: Fixed tests to
 	pass on MS. Added NotWorking test to check whether DbProviderFactories
 	that are defined on machine config are available.
