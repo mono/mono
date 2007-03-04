@@ -719,7 +719,7 @@ public class DateTimeTest : Assertion
 
 		DateTime.Parse (s, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces);
 		DateTime.Parse (s, new CultureInfo ("ja-JP"), DateTimeStyles.AllowWhiteSpaces);
-//		DateTime.Parse (s, null); currently am not sure if it works for _every_ culture.
+		//DateTime.Parse (s, null); currently am not sure if it works for _every_ culture.
 	}
 
 

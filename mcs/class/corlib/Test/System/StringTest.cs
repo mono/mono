@@ -1149,8 +1149,10 @@ public class StringTest : Assertion
 			     -1, s1.LastIndexOf("translator", 2));
 		AssertEquals("stepped string index #5",
 			     0, "".LastIndexOf("", 0));
+#if !TARGET_JVM
 		AssertEquals("stepped string index #6",
 			     -1, "".LastIndexOf("A", -1));
+#endif
 		AssertEquals("stepped limited string index #1",
 			     10, s1.LastIndexOf("rig", s1.Length-1, 10));
 		AssertEquals("stepped limited string index #2",
@@ -1428,8 +1430,11 @@ public class StringTest : Assertion
 		AssertEquals ("..aaaaaaa.bbbbbbbbb,......ccccccc.u..", s2.Replace("..", "."));
 
 		// Test replacing null characters (bug #67395)
+#if !TARGET_JVM //bug #7276
 		AssertEquals ("should not strip content after nullchar",
 			"is this ok ?", "is \0 ok ?".Replace ("\0", "this"));
+#endif
+
 	}
 
 	public void TestSplit() {
