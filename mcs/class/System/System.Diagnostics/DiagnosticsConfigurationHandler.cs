@@ -85,6 +85,7 @@ namespace System.Diagnostics
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
 #if NET_2_0
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
+			elementHandlers ["sharedListeners"] = new ElementHandler (AddSharedListenersNode);
 #endif
 		}
 
@@ -157,6 +158,7 @@ namespace System.Diagnostics
 		// them
 		private void AddSwitchesNode (IDictionary d, XmlNode node)
 		{
+#if !TARGET_JVM
 			// There are no attributes on <switch/>
 			ValidateInvalidAttributes (node.Attributes, node);
 
@@ -195,6 +197,7 @@ namespace System.Diagnostics
 			}
 
 			d [node.Name] = newNodes;
+#endif
 		}
 
 		private static int ValidateIntegralValue (string name, string value)
@@ -264,6 +267,11 @@ namespace System.Diagnostics
 
 #if NET_2_0
 		static readonly Hashtable static_sources = new Hashtable ();
+
+		[MonoTODO]
+		private void AddSharedListenersNode (IDictionary d, XmlNode node)
+		{
+		}
 
 		private void AddSourcesNode (IDictionary d, XmlNode node)
 		{
@@ -342,6 +350,7 @@ namespace System.Diagnostics
 		// for add, "name" and "type" are required; initializeData is optional
 		private void AddTraceListeners (XmlNode listenersNode)
 		{
+#if !TARGET_JVM
 			// There are no attributes on <listeners/>
 			ValidateInvalidAttributes (listenersNode.Attributes, listenersNode);
 
@@ -377,6 +386,7 @@ namespace System.Diagnostics
 				else
 					ThrowUnrecognizedNode (child);
 			}
+#endif
 		}
 
 		private void AddTraceListener (string name, string type, string initializeData)
