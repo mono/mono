@@ -1,3 +1,9 @@
+03-04-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* WPUserProfile.cs: refactored.
+	* WPProfileProvider.cs: added integration with
+	javax.portal.PortalPreferences API (see Get/SetPropertyValues methods)
+
 03-01-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* WPUserProfile.cs: added the class which is represents the JSR-168

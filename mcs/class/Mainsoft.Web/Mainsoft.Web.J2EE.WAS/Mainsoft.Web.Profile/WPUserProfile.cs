@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.Profile;
 using System.Text;
 
 using java.util;
@@ -39,7 +40,7 @@ using vmw.portlet;
 
 namespace Mainsoft.Web.Profile
 {
-    public class WPUserProfile
+    public class WPUserProfile : ProfileBase
     {
         private WPUser _user;
 
@@ -48,7 +49,7 @@ namespace Mainsoft.Web.Profile
             _user = new WPUser();
         }
 
-        public WPUser user
+        public virtual WPUser user
         {
             get { return _user; }
         }
@@ -94,32 +95,32 @@ namespace Mainsoft.Web.Profile
             return (string)userInfo.get(attribName);
         }
 
-        public string bdate
+        public virtual string bdate
         {
             get { return GetValue("user.bdate"); }
         }
 
-        public string gender
+        public virtual string gender
         {
             get { return GetValue("user.gender"); }
         }
 
-        public string employer
+        public virtual string employer
         {
             get { return GetValue("user.employer"); }
         }
 
-        public string department
+        public virtual string department
         {
             get { return GetValue("user.department"); }
         }
 
-        public string jobtitle
+        public virtual string jobtitle
         {
             get { return GetValue("user.jobtitle"); }
         }
 
-        public UserName name
+        public virtual UserName name
         {
             get { return _name; }
         }
@@ -129,7 +130,7 @@ namespace Mainsoft.Web.Profile
         /// .Net doesn't allow usage of '-' character in names of properties, we are replacing
         /// it with '_'
         /// </summary>
-        public HomeInfo home_info
+        public virtual HomeInfo home_info
         {
             get { return _homeInfo; }
         }
@@ -139,7 +140,7 @@ namespace Mainsoft.Web.Profile
         /// .Net doesn't allow usage of '-' character in names of properties, we are replacing
         /// it with '_'
         /// </summary>
-        public BusinessInfo business_info
+        public virtual BusinessInfo business_info
         {
             get { return _businessInfo; }
         }
@@ -147,225 +148,24 @@ namespace Mainsoft.Web.Profile
         #region user.home-info class
         public class HomeInfo
         {
-            Postal _postal = new Postal();
-            Telecom _telecom = new Telecom();
-            Online _online = new Online();
+            Postal _postal = new Postal("user.home-info.postal.");
+            Telecom _telecom = new Telecom("user.home-info.telecom.");
+            Online _online = new Online("user.home-info.online.");
 
-            public Postal postal
+            public virtual Postal postal
             {
                 get { return _postal; }
             }
 
-            public Telecom telecom
+            public virtual Telecom telecom
             {
                 get { return _telecom; }
             }
 
-            public Online online
+            public virtual Online online
             {
                 get { return _online; }
             }
-
-            #region user.home-info.postal class
-            public class Postal
-            {
-                public string name
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.name"); }
-                }
-
-                public string street
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.street"); }
-                }
-
-                public string city
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.city"); }
-                }
-
-                public string stateprov
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.stateprov"); }
-                }
-
-                public string postalcode
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.postalcode"); }
-                }
-
-                public string country
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.country"); }
-                }
-
-                public string organization
-                {
-                    get { return WPUser.GetValue("user.home-info.postal.organization"); }
-                }
-            }
-            #endregion
-
-            #region user.home-info.telecom class
-            public class Telecom
-            {
-                private Telephone _telephone = new Telephone();
-                private Fax _fax = new Fax();
-                private Mobile _mobile = new Mobile();
-                private Pager _pager = new Pager();
-
-                public Telephone telephone 
-                {
-                    get { return _telephone;}
-                }
-
-                public Fax fax 
-                {
-                    get { return _fax;}
-                }
-
-                public Mobile mobile
-                {
-                    get { return _mobile;}
-                }
-
-                public Pager pager 
-                {
-                    get { return _pager;}
-                }
-
-                #region user.home-info.telecom.telephone class
-                public class Telephone 
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.telephone.intcode");}
-                    }
-                    
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.telephone.loccode");}
-                    }
-                    
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.telephone.number");}
-                    }
-
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.telephone.ext");}
-                    }
-
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.telephone.comment");}
-                    }
-                }
-                #endregion
-
-                #region user.home-info.telecom.fax class
-                public class Fax 
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.fax.intcode");}
-                    }
-                    
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.fax.loccode");}
-                    }
-                    
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.fax.number");}
-                    }
-
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.fax.ext");}
-                    }
-        
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.fax.comment");}
-                    }
-                }
-                #endregion
-
-                #region user.home-info.telecom.mobile class
-                public class Mobile 
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.mobile.intcode");}
-                    }
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.mobile.loccode");}
-                    }
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.mobile.number");}
-                    }
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.mobile.ext");}
-                    }
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.home-info.telecom.mobile.comment");}
-                    }
-                }
-                #endregion
-
-                #region user.home-info.telecom.pager class
-                public class Pager 
-                {
-                    public string intcode 
-                    {
-                        get {return WPUser.GetValue("user.home-info.telecom.pager.intcode");}
-                    }
-
-                    public string loccode 
-                    {
-                        get {return WPUser.GetValue("user.home-info.telecom.pager.loccode");}
-                    }
-
-                    public string number 
-                    {
-                        get {return WPUser.GetValue("user.home-info.telecom.pager.number");}
-                    }
-
-                    public string ext 
-                    {
-                        get {return WPUser.GetValue("user.home-info.telecom.pager.ext");}
-                    }
-
-                    public string comment
-                    {
-                        get {return WPUser.GetValue("user.home-info.telecom.pager.comment");}
-                    }
-                }
-                #endregion
-            }
-            #endregion
-
-            #region user.home-info.online class
-            public class Online
-            {
-                public string email
-                {
-                    get { return WPUser.GetValue("user.home-info.online.email");}
-                }
-
-                public string uri
-                {
-                    get { return WPUser.GetValue("user.home-info.online.uri"); }
-                }
-            }
-            #endregion
         }
         #endregion
 
@@ -373,242 +173,225 @@ namespace Mainsoft.Web.Profile
         public class BusinessInfo
         {
 
-            Postal _postal = new Postal();
-            Telecom _telecom = new Telecom();
-            Online _online = new Online();
+            Postal _postal = new Postal("user.business-info.postal.");
+            Telecom _telecom = new Telecom("user.business-info.telecom.");
+            Online _online = new Online("user.business-info.online.");
 
-            public Postal postal
+            public virtual Postal postal
             {
                 get { return _postal; }
             }
 
-            public Telecom telecom
+            public virtual Telecom telecom
             {
                 get { return _telecom; }
             }
 
-            public Online online
+            public virtual Online online
             {
                 get { return _online; }
             }
-
-            #region user.business-info.postal class
-            public class Postal
-            {
-                public string name 
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.name");}
-                }
-                
-                public string street
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.street");}
-                }
-
-                public string city
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.city");}
-                }
-                
-                public string stateprov
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.stateprov");}
-                }
-                
-                public string postalcode
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.postalcode");}
-                }
-                
-                public string country
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.country");}
-                }
-
-                public string organization
-                {
-                    get { return WPUser.GetValue("user.business-info.postal.organization");}
-                }
-
-            }
-            #endregion
-
-            #region user.business-info.telecom
-            public class Telecom
-            {
-                private Pager _pager = new Pager();
-                private Telephone _telephone = new Telephone();
-                private Fax _fax = new Fax();
-                private Mobile _mobile = new Mobile();
-
-
-                public Pager pager { get { return _pager; } }
-                public Telephone telephone { get { return _telephone; } }
-                public Fax fax { get { return _fax; } }
-                public Mobile mobile { get { return _mobile; } }
-
-                public class Pager
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.pager.intcode"); }
-                    }
-
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.pager.loccode"); }
-                    }
-
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.pager.number"); }
-                    }
-
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.pager.ext"); }
-                    }
-
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.pager.comment"); }
-                    }
-                }
-
-                public class Mobile
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.mobile.intcode"); }
-                    }
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.mobile.loccode"); }
-                    }
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.mobile.number"); }
-                    }
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.mobile.ext"); }
-                    }
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.mobile.comment"); }
-                    }
-                }
-
-                public class Telephone
-                {
-                    public string intcode 
-                    {
-                        get {return WPUser.GetValue("user.business-info.telecom.telephone.intcode");}
-                    }
-
-                    public string loccode 
-                    {
-                        get {return WPUser.GetValue("user.business-info.telecom.telephone.loccode");}
-                    }
-                    
-                    public string number
-                    {
-                        get {return WPUser.GetValue("user.business-info.telecom.telephone.number");}
-                    }
-
-                    public string ext
-                    {
-                        get {return WPUser.GetValue("user.business-info.telecom.telephone.ext");}
-                    }
-
-                    public string comment
-                    {
-                        get {return WPUser.GetValue("user.business-info.telecom.telephone.comment");}
-                    }     
-                }
-
-                public class Fax
-                {
-                    public string intcode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.fax.intcode"); }
-                    }
-
-                    public string loccode
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.fax.loccode"); }
-                    }
-
-                    public string number
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.fax.number"); }
-                    }
-
-                    public string ext
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.fax.ext"); }
-                    }
-
-                    public string comment
-                    {
-                        get { return WPUser.GetValue("user.business-info.telecom.fax.comment"); }
-                    }
-                }
-            }
-            #endregion
-
-            #region user.business-info.online
-            public class Online
-            {
-                public string email
-                {
-                    get { return WPUser.GetValue("user.business-info.online.email"); }
-                }
-
-                public string uri
-                {
-                    get { return WPUser.GetValue("user.business-info.online.uri"); }
-                }
-            }
-            #endregion
-
         }
         #endregion
 
         #region user.name class
         public class UserName
         {
-            public string prefix
+            public virtual string prefix
             {
                 get { return WPUser.GetValue("user.name.prefix"); }
             }
 
-            public string given
+            public virtual string given
             {
                 get { return WPUser.GetValue("user.name.given"); }
             }
 
-            public string family
+            public virtual string family
             {
                 get { return WPUser.GetValue("user.name.family"); }
             }
 
-            public string middle
+            public virtual string middle
             {
                 get { return WPUser.GetValue("user.name.middle"); }
             }
 
-            public string suffix
+            public virtual string suffix
             {
                 get { return WPUser.GetValue("user.name.suffix"); }
             }
 
-            public string nickName
+            public virtual string nickName
             {
                 get { return WPUser.GetValue("user.name.nickName"); }
             }
         }
         #endregion
+    }
+    #endregion
+
+    #region TelecomInfo class (contains telecom devices specific info)
+    public class TelecomInfo
+    {
+
+        private string _intcode;
+        private string _loccode;
+        private string _number;
+        private string _ext;
+        private string _comment;
+
+        public TelecomInfo(string prefix)
+        {
+            if(prefix == null)
+                throw new ArgumentNullException("prefix");
+
+            _intcode = prefix + "intcode";
+            _loccode = prefix + "loccode";
+            _number  = prefix + "number";
+            _ext = prefix + "ext";
+            _comment = prefix + "comment";
+        }
+
+        public virtual string intcode
+        {
+            get { return WPUser.GetValue(_intcode); }
+        }
+
+        public virtual string loccode
+        {
+            get { return WPUser.GetValue(_loccode); }
+        }
+
+        public virtual string number
+        {
+            get { return WPUser.GetValue(_number); }
+        }
+
+        public virtual string ext
+        {
+            get { return WPUser.GetValue(_ext); }
+        }
+
+        public virtual string comment
+        {
+            get { return WPUser.GetValue(_comment); }
+        }
+    }
+    #endregion
+
+    #region Postal class (contains ground postal info)
+    public class Postal
+    {
+        
+        private string _name;
+        private string _street;
+        private string _city;
+        private string _stateprov;
+        private string _postalcode;
+        private string _country;
+        private string _organization;
+
+
+        public Postal(string prefix)
+        {
+            if (prefix == null)
+                throw new ArgumentNullException("prefix");
+
+            _name   = prefix + "name";
+            _street = prefix + "street";
+            _city = prefix + "city";
+            _stateprov = prefix + "stateprov";
+            _postalcode = prefix + "postalcode";
+            _country = prefix + "country";
+            _organization = prefix + "organization";
+        }
+
+        public virtual string name
+        {
+            get { return WPUser.GetValue(_name); }
+        }
+
+        public virtual string street
+        {
+            get { return WPUser.GetValue(_organization); }
+        }
+
+        public virtual string city
+        {
+            get { return WPUser.GetValue(_city); }
+        }
+
+        public virtual string stateprov
+        {
+            get { return WPUser.GetValue(_stateprov); }
+        }
+
+        public virtual string postalcode
+        {
+            get { return WPUser.GetValue(_postalcode); }
+        }
+
+        public virtual string country
+        {
+            get { return WPUser.GetValue(_country); }
+        }
+
+        public virtual string organization
+        {
+            get { return WPUser.GetValue(_organization); }
+        }
+
+    }
+    #endregion
+
+    #region Online class (contains on-line info)
+    public class Online
+    {
+        private string namespacePrefix;
+
+        public Online(string prefix)
+        {
+            namespacePrefix = prefix;
+        }
+        public virtual string email
+        {
+            get { return WPUser.GetValue(namespacePrefix + "email"); }
+        }
+
+        public virtual string uri
+        {
+            get { return WPUser.GetValue(namespacePrefix + "uri"); }
+        }
+    }
+    #endregion
+
+    #region Telecom class (contains telecom info - see TelecomInfo)
+    public class Telecom
+    {
+        private string namespacePrefix;
+
+
+
+        private TelecomInfo _pager;
+        private TelecomInfo _telephone;
+        private TelecomInfo _fax;
+        private TelecomInfo _mobile;
+
+        public Telecom(string prefix)
+        {
+            namespacePrefix = prefix;
+            _pager = new TelecomInfo(namespacePrefix + "pager.");
+            _telephone = new TelecomInfo(namespacePrefix + "telephone.");
+            _fax = new TelecomInfo(namespacePrefix + "fax.");
+            _mobile = new TelecomInfo(namespacePrefix + "mobile.");
+        }
+
+        public virtual TelecomInfo pager { get { return _pager; } }
+        public virtual TelecomInfo telephone { get { return _telephone; } }
+        public virtual TelecomInfo fax { get { return _fax; } }
+        public virtual TelecomInfo mobile { get { return _mobile; } }
+
     }
     #endregion
 }

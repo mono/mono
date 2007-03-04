@@ -35,14 +35,23 @@ using System.Text;
 using System.Web.Profile;
 using System.Configuration;
 
+using java.util;
+using javax.portlet;
+
 using Mainsoft.Web.Security;
+using vmw.portlet;
+
+
 
 namespace Mainsoft.Web.Profile
 {
     public class WPProfileProvider : ProfileProvider
     {
-        private static readonly string DESCRIPTION = "WebSphere Portal Profile Provider";
-        private static readonly string NAME = "WPProfileProvider";
+        internal static readonly string DESCRIPTION = "WebSphere Portal Profile Provider";
+        internal static readonly string NAME = "WPProfileProvider";
+
+        private static readonly string BIN_SERIALIZATION_PREFIX = "VMW_BIN_PREFIX:";
+        private static readonly string BIN_SERIALIZATION_NULL = "#_NULL_#";
 
         private string _applicationName = String.Empty;
 
@@ -84,14 +93,158 @@ namespace Mainsoft.Web.Profile
             }
         }
 
-        public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection collection)
+        public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            
+            SettingsPropertyValueCollection settings = new SettingsPropertyValueCollection();
+            PortletRequest pr = null;
+            if (properties.Count == 0)
+                return settings;
+
+            PortletPreferences pp = PortletPreferences;
+            if (pp == null)
+            {
+#if DEBUG
+                Console.WriteLine("Cannot obtain PortletPreferences");
+#endif
+                return settings;
+            }
+            if (!IsInActionPhase)
+            {
+//                throw new ApplicationException("The portlet is not in the process action phase");
+                pr = PortletUtils.getPortletRequest();
+                if (pr != null)
+                {
+                    SettingsPropertyValueCollection storedValues = 
+                        (SettingsPropertyValueCollection)pr.getAttribute("VMW_PROPERTY_VALUES");
+                    if (storedValues != null)
+                        return storedValues;
+                }
+                return settings;
+            }
+
+            foreach (SettingsProperty property in properties)
+            {
+                if (property.SerializeAs == SettingsSerializeAs.ProviderSpecific)
+                    if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
+                        property.SerializeAs = SettingsSerializeAs.String;
+                    else
+                        property.SerializeAs = SettingsSerializeAs.Xml;
+
+                settings.Add(new SettingsPropertyValue(property));
+            }
+
+            Map portletPreferencesMap = pp.getMap();
+            for (Iterator iter = portletPreferencesMap.keySet().iterator(); iter.hasNext(); )
+            {
+                string name = (string)iter.next();
+                string value = (string)portletPreferencesMap.get(name);
+
+                SettingsPropertyValue property = settings[name];
+                
+                if (property == null)
+                    continue;
+
+                if (value == null)
+                {
+                    property.IsDirty = false;
+                    property.Deserialized = true;
+                    property.PropertyValue = null;
+                }
+                else if (value.StartsWith(BIN_SERIALIZATION_PREFIX))
+                {
+                    if (value.StartsWith(BIN_SERIALIZATION_PREFIX + BIN_SERIALIZATION_NULL))
+                    {
+                        property.SerializedValue = null;
+                    }
+                    else
+                    {
+                        string base64 = value.Substring(BIN_SERIALIZATION_PREFIX.Length);
+                        byte[] serializedData = Convert.FromBase64String(base64);
+                        property.SerializedValue = serializedData;
+                    }
+                }
+                else
+                {
+                    property.SerializedValue = value;
+                }
+            }
+
+            pr = (pr == null) ? PortletUtils.getPortletRequest() : pr;
+            if (pr != null)
+            {
+                pr.setAttribute("VMW_PROPERTY_VALUES", settings);
+            }
+            return settings;
+
         }
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection collection)
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            PortletPreferences pp = PortletPreferences;
+            if (pp == null)
+            {
+#if DEBUG
+                Console.WriteLine("Cannot obtain PortletPreferences");
+#endif
+                return;
+            }
+            if (!IsInActionPhase)
+            {
+#if DEBUG
+                Console.WriteLine("The portlet not in the process action phace");
+#endif
+                throw new ApplicationException("The portlet is not in the process action phase");
+            }
+            try
+            {
+                string username = (string)context["UserName"];
+                bool authenticated = (bool)context["IsAuthenticated"];
+#if DEBUG
+                Console.WriteLine("The username is : " + username + " and he is authenticated: " + authenticated);
+#endif
+                foreach (SettingsPropertyValue spv in collection)
+                {
+                    if (!authenticated && !(bool)spv.Property.Attributes["AllowAnonymous"])
+                        continue;
+
+                    if (!spv.IsDirty && spv.UsingDefaultValue)
+                        continue;
+
+                    
+                    string storeValue = null;
+
+                    if (spv.Deserialized && spv.PropertyValue == null)
+                    {
+                        pp.setValue(spv.Name, null);
+                        continue;
+                    }
+
+                    object serialized = spv.SerializedValue;
+                    if (serialized == null)
+                    {
+                        pp.setValue(spv.Name, BIN_SERIALIZATION_PREFIX + BIN_SERIALIZATION_NULL);
+                        continue;
+                    }
+                    
+                    if (serialized is string)
+                    {
+                        storeValue = (string)serialized;
+                    }
+                    else
+                    {
+                        string encodedValue = Convert.ToBase64String((byte[])serialized);
+                        storeValue = BIN_SERIALIZATION_PREFIX + encodedValue;
+                    }
+                    
+                    pp.setValue(spv.Name, storeValue);
+
+                }
+            }
+            finally
+            {
+                pp.store();
+            }
         }
 
         #region Not Implemented Methods
@@ -143,6 +296,30 @@ namespace Mainsoft.Web.Profile
         {
             throw new NotImplementedException("The method or operation is not implemented.");
         }
+        #endregion
+
+        #region Helper Methods
+
+        private PortletPreferences PortletPreferences
+        {
+            get
+            {
+                PortletRequest pr = PortletUtils.getPortletRequest();
+                if (pr == null)
+                    return null;
+                return pr.getPreferences();
+            }
+        }
+
+        private bool IsInActionPhase
+        {
+            get
+            {
+                PortletRequest pr = PortletUtils.getPortletRequest();
+                return pr is ActionRequest;
+            }
+        }
+
         #endregion
     }
 }
