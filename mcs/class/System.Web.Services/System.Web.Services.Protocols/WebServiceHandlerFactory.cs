@@ -115,7 +115,9 @@ namespace System.Web.Services.Protocols
 				switch (protocol) {
 					case WSProtocol.HttpSoap12:
 					case WSProtocol.HttpSoap:
-						supported = WSConfig.IsSupported (WSProtocol.HttpSoap12);
+						bool anySupported = WSConfig.IsSupported (WSProtocol.AnyHttpSoap);
+						if (anySupported)
+							throw new InvalidOperationException ("Possible SOAP version mismatch.");
 						break;
 					case WSProtocol.HttpPost:
 						if (WSConfig.IsSupported (WSProtocol.HttpPostLocalhost)) {
