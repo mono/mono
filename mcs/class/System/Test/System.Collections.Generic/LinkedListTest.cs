@@ -118,7 +118,7 @@ namespace MonoTests.System.Collections.Generic
 			for (LinkedListNode <int> current = intlist.First; current != null; current = current.Next )
 				Assert.AreSame (intlist, current.List);
 		}
-#if !TARGET_JVM
+
 		[Test]
 		public void CopyToTest ()
 		{
@@ -128,7 +128,7 @@ namespace MonoTests.System.Collections.Generic
 			for (int i = 0; i < 3; i++)
 				Assert.AreEqual (values [i], output [i]);
 		}
-#endif
+
 		[Test]
 		public void FindTest ()
 		{

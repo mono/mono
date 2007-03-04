@@ -50,9 +50,6 @@ namespace System.Collections.Generic
 
 		public Stack ()
 		{
-#if TARGET_JVM //to work around resize (null) bug
-			data = new T [INITIAL_SIZE];
-#endif
 			defaultCapacity = INITIAL_SIZE;
 		}
 		

@@ -80,7 +80,7 @@ namespace MonoTests.System.Collections.Generic
 		public void ItemMissingKey () {
 			string s = list [99];
 		}
-#if !TARGET_JVM
+
 		[Test]
 		public void Keys () {
 			IList<int> keys = list.Keys;
@@ -112,7 +112,7 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual (2, arr [1]);
 			Assert.AreEqual (5, arr [2]);
 		}
-#endif
+
 		[Test]
 		public void KeysNonGeneric () {
 			ICollection keys = ((IDictionary)list).Keys;

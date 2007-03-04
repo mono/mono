@@ -85,7 +85,7 @@ namespace MonoTests.System.Collections.Generic {
 			AssertEquals (s.Contains (1), true);
 			AssertEquals (s.Contains (0), false);
 		}
-#if !TARGET_JVM
+
 		[Test]
 		public void TestCopyTo ()
 		{
@@ -100,7 +100,7 @@ namespace MonoTests.System.Collections.Generic {
 			AssertEquals (x [1], 1);
 			AssertEquals (x [2], 2);
 		}
-#endif
+
 		[Test]
 		public void TestPeek ()
 		{
@@ -173,9 +173,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD BUG ID: 7204")]
-#endif		
 		public void TestToArray ()
 		{
 			Queue <int> s = new Queue <int> ();
