@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls
 		protected virtual IHierarchicalDataSource GetDataSource ()
 		{
 			if (DataSourceID != "")
-				return NamingContainer.FindControl (DataSourceID) as IHierarchicalDataSource;
+				return BaseDataBoundControl.FindDataSource (this, DataSourceID);
 			
 			return DataSource as IHierarchicalDataSource;
 		}

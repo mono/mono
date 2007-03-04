@@ -1,3 +1,13 @@
+2007-03-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HierarchicalDataBoundControl.cs: Use the method described below
+	to get the data source named in DataSourceID.
+
+	* BaseDataBoundControl.cs: add an internal method to find a data
+	source control within all the naming containers above a given
+	control. The method makes it possible to find controls that reside
+	in master pages.
+
 2007-03-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Repeater.cs: fixed: data-binding flow for 2.0 features.

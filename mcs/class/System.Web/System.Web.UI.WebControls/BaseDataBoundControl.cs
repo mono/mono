@@ -152,6 +152,22 @@ namespace System.Web.UI.WebControls {
 			EnsureDataBound ();
 			base.OnPreRender (e);
 		}
+
+		internal static IHierarchicalDataSource FindDataSource (Control start, string id)
+		{
+			if (start == null || String.IsNullOrEmpty (id))
+				return null;
+			
+			Control ret = null;
+			Control nc = start;
+
+			while (ret == null && nc != start.Page) {
+				nc = nc.NamingContainer;
+				ret = nc.FindControl (id);
+			}
+
+			return ret as IHierarchicalDataSource;
+		}
 		
 		protected abstract void PerformSelect ();
 		
