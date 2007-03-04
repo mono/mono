@@ -29,14 +29,14 @@
 using System;
 using System.Drawing;
 
-namespace System.Windows.Forms {
-	public class SystemInformation {
-		#region Constructor
-		internal SystemInformation() {
+namespace System.Windows.Forms
+{
+	public class SystemInformation
+	{
+		private SystemInformation ()
+		{
 		}
-		#endregion
 
-		#region Public Static Properties
 		public static ArrangeDirection ArrangeDirection {
 			get {
 				return ThemeEngine.Current.ArrangeDirection;
@@ -181,6 +181,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static int KeyboardDelay {
+			get {
+				return XplatUI.KeyboardDelay;
+			}
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static int KeyboardSpeed {
+			get {
+				return XplatUI.KeyboardSpeed;
+			}
+		}
+
 		public static Size MaxWindowTrackSize {
 			get {
 				return XplatUI.MaxWindowTrackSize;
@@ -188,10 +210,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public static bool MenuAccessKeysUnderlined {
+		public
 #else
-		internal static bool MenuAccessKeysUnderlined {
+		internal
 #endif
+		static bool MenuAccessKeysUnderlined {
 			get {
 				return ThemeEngine.Current.MenuAccessKeysUnderlined;
 			}
@@ -348,7 +371,7 @@ namespace System.Windows.Forms {
 
 		public static bool Secure {
 			get {
-				return true;		// FIXME - figure out if we're running 98/Me and return false
+				return true;
 			}
 		}
 
@@ -423,20 +446,5 @@ namespace System.Windows.Forms {
 				return XplatUI.WorkingArea;
 			}
 		}
-		#endregion	// Public Static Properties
-
-		#region Internal Static Properties
-		internal static int KeyboardSpeed {
-			get {
-				return XplatUI.KeyboardSpeed;
-			}
-		}
-	
-		internal static int KeyboardDelay {
-			get {
-				return XplatUI.KeyboardDelay;
-			}
-		}
-		#endregion	// Internal Static Properties
 	}
 }

@@ -1,3 +1,8 @@
+2007-03-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SystemInformation.cs: Marked KeyboardDelay and KeyboardSpeed public
+	on 2.0 profile. Fixes bug #81018. Small code formatting fixes.
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ThemeWin32Classic.cs: ManagedWindowSetButtonLocations: Make all
