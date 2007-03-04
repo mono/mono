@@ -1468,6 +1468,9 @@ namespace MonoTests.System.XmlSerialization
 
 		// test DefaultValue /////////////////////////////////////////////////////
 		[Test]
+#if TARGET_JVM
+		[Ignore ("TD #7458")]
+#endif
 		public void TestSerializeDefaultValueAttribute ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
