@@ -45,6 +45,7 @@ namespace System.Web.Services.Configuration
 #if NET_1_1
 		HttpSoap12 = 1 << 4,
 		HttpPostLocalhost = 1 << 5,
+		AnyHttpSoap = HttpSoap | HttpSoap12,
 #endif
 		All = 0xFF
 	}
