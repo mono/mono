@@ -263,7 +263,7 @@ namespace Mono.Security.Cryptography {
 
 		private bool KeepLastBlock {
 			get {
-				return ((!encrypt) && (algo.Mode != CipherMode.ECB) && (algo.Padding != PaddingMode.None));
+				return ((!encrypt) && (algo.Padding != PaddingMode.None) && (algo.Padding != PaddingMode.Zeros));
 			}
 		}
 
