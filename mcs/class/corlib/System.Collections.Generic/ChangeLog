@@ -1,3 +1,7 @@
+2007-03-05  David Mitchell <dmitchell@logos.com>
+
+	* List.cs: Fix InsertRange bug (80930).
+
 2006-09-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* List.cs: Fixed binary serialization compatibility with MS.NET.

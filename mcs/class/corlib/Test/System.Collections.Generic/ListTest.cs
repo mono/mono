@@ -141,6 +141,27 @@ namespace MonoTests.System.Collections.Generic {
 			newRange.InsertRange (newRange.Count, li);
 			Assert.AreEqual (2, newRange.Count);
 		}
+		
+		[Test]
+		public void InsertSelfTest()
+		{
+			List <int> range = new List <int> (5);
+			for (int i = 0; i < 5; ++ i)
+				range.Add (i);
+			
+			range.InsertRange(2, range);
+			Assert.AreEqual (10, range.Count);
+			Assert.AreEqual (0, range [0]);
+			Assert.AreEqual (1, range [1]);
+			Assert.AreEqual (0, range [2]);
+			Assert.AreEqual (1, range [3]);
+			Assert.AreEqual (2, range [4]);
+			Assert.AreEqual (3, range [5]);
+			Assert.AreEqual (4, range [6]);
+			Assert.AreEqual (2, range [7]);
+			Assert.AreEqual (3, range [8]);
+			Assert.AreEqual (4, range [9]);
+		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void InsertRangeNullTest ()

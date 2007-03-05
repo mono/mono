@@ -372,11 +372,19 @@ namespace System.Collections.Generic {
 		{
 			CheckCollection (collection);
 			CheckIndex (index);
-			ICollection <T> c = collection as ICollection <T>;
-			if (c != null)
-				InsertCollection (index, c);
-			else
-				InsertEnumeration (index, collection);
+			if (collection == this) {
+				T[] buffer = new T[_size];
+				CopyTo (buffer, 0);
+				GrowIfNeeded (_size);
+				Shift (index, buffer.Length);
+				Array.Copy (buffer, 0, _items, index, buffer.Length);
+			} else {
+				ICollection <T> c = collection as ICollection <T>;
+				if (c != null)
+					InsertCollection (index, c);
+				else
+					InsertEnumeration (index, collection);
+			}
 			_version++;
 		}
 
