@@ -161,7 +161,7 @@ namespace System.Web.UI.WebControls {
 			return base.CreateControlCollection();
 		}
 
-#if !NET_2_0
+#if ONLY_1_1
 		protected override void RenderContents(HtmlTextWriter writer) {
 			int		count;
 			ListItem	item;

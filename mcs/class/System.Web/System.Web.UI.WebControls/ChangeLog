@@ -1,5 +1,11 @@
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DropDownList.cs:
+	* ListBox.cs:
+	used "ONLY_1_1" instead "!NET_2_0"	
+
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseDataBoundControl.cs:
 	* DataBoundControl.cs:
 	* HierarchicalDataBoundControl.cs:
