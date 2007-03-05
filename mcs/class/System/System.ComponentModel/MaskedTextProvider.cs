@@ -439,7 +439,7 @@ namespace System.ComponentModel {
 			return result;
 		}
 
-		public bool AddInternal (string str_input, out int testPosition, out MaskedTextResultHint resultHint, bool only_test)
+		private bool AddInternal (string str_input, out int testPosition, out MaskedTextResultHint resultHint, bool only_test)
 		{
 			EditPosition [] edit_positions;
 			
@@ -630,7 +630,7 @@ namespace System.ComponentModel {
 			return true;
 		}
 
-		public bool VerifyCharInternal (char input, int position, out MaskedTextResultHint hint, bool only_test)
+		private bool VerifyCharInternal (char input, int position, out MaskedTextResultHint hint, bool only_test)
 		{
 			hint = MaskedTextResultHint.Unknown;
 
