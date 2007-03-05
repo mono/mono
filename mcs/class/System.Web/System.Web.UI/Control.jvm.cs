@@ -43,7 +43,7 @@ namespace System.Web.UI
 			{
 				int location = 0;
 				if (_templateSourceDir == null) {
-					string tempSrcDir = _appRelativeTemplateSourceDirectory;
+					string tempSrcDir = AppRelativeTemplateSourceDirectory;
 					if (tempSrcDir == null && Parent != null)
 						tempSrcDir = Parent.TemplateSourceDirectory;
 					if (tempSrcDir != null && tempSrcDir.Length > 1) {
