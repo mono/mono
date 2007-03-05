@@ -13,7 +13,6 @@
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
-    <jarserver>iap2</jarserver>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
@@ -264,23 +263,14 @@
     </Compile>
     <Compile Include="System.Data.SqlClient.jvm\SqlConnectionPool.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlConvert.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlDataAdapter.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="System.Data.SqlClient.jvm\SqlDataReader.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlError.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlErrorCollection.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlException.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlInfoMessageEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlInfoMessageEventHandler.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlParameter.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlParameterCollection.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlParameterConverter.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlResultSet.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlRowUpdatedEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlRowUpdatedEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlRowUpdatingEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient.jvm\SqlRowUpdatingEventHandler.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlTransaction.cs" />
     <Compile Include="System.Data.SqlClient.jvm\SqlXmlTextReader.cs" />
     <Compile Include="System.Data.SqlTypes\INullable.cs" />
@@ -456,6 +446,25 @@
     <Compile Include="..\..\build\common\Consts.cs.in">
       <Link>Assembly\Consts.cs.in</Link>
     </Compile>
+    <Compile Include="System.Data.SqlClient.jvm\SqlInfoMessageEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Data.SqlClient\SqlAsyncResult.cs" />
+    <Compile Include="System.Data.SqlClient\SqlAsyncState.cs" />
+    <Compile Include="System.Data.SqlClient\SqlBulkCopyColumnMapping.cs" />
+    <Compile Include="System.Data.SqlClient\SqlBulkCopyOptions.cs" />
+    <Compile Include="System.Data.SqlClient\SqlClientMetaDataCollectionNames.cs" />
+    <Compile Include="System.Data.SqlClient\SqlConnectionStringBuilder.cs" />
+    <Compile Include="System.Data.SqlClient\SqlDataAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Data.SqlClient\SqlInfoMessageEventHandler.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowsCopiedEventArgs.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowsCopiedEventHandler.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowUpdatedEventArgs.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowUpdatedEventHandler.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventArgs.cs" />
+    <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventHandler.cs" />
     <None Include="Mono.Data.SqlExpressions\Parser.jay" />
   </ItemGroup>
   <ItemGroup>
