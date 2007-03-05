@@ -1,5 +1,9 @@
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CheckBoxList.cs: in 2.0 access key attribute is rendered in 'input' tags.
+
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBoxList.cs:
 	* BulletedList.cs:
 	* ListControl.cs:

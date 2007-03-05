@@ -196,11 +196,19 @@ namespace System.Web.UI.WebControls {
 				ti = TabIndex;
 				TabIndex = 0;
 			}
+#if NET_2_0
+			string ak = AccessKey;
+			check_box.AccessKey = ak;
+			this.AccessKey = null;
+#endif
 
 			ri.RenderRepeater (writer, this, TableStyle, this);
 
 			if (ti != 0)
 				TabIndex = ti;
+#if NET_2_0
+			this.AccessKey = ak;
+#endif
 		}
 
 #if NET_2_0
