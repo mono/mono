@@ -823,7 +823,7 @@ namespace System.Windows.Forms {
 			return FormPos.None;
 		}
 	}
-	public class TitleButton
+	internal class TitleButton
 	{
 		public Rectangle Rectangle;
 		public ButtonState State;
@@ -845,7 +845,7 @@ namespace System.Windows.Forms {
 		}
 	}
 
-	public class TitleButtons : System.Collections.IEnumerable
+	internal class TitleButtons : System.Collections.IEnumerable
 	{
 		public TitleButton MinimizeButton;
 		public TitleButton MaximizeButton;
