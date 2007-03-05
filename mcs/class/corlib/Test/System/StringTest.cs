@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.Text;
 using System.Globalization;
+using System.Reflection;
 
 namespace MonoTests.System
 {
@@ -1797,6 +1798,14 @@ public class StringTest : Assertion
 		string mono = "Mono";
                 char [] k = { 'M' };
                 mono.LastIndexOfAny (k, mono.Length, 1);
+	}
+
+	[Test]
+	public void StringProperties()
+	{
+		PropertyInfo[] props = typeof(String).GetProperties();
+		AssertEquals(props[0].Name, "Chars");
+		AssertEquals(props[1].Name, "Length");
 	}
 
 #if NET_2_0

@@ -1,3 +1,7 @@
+﻿200703-05	Roei Erez <roeie@mainsoft.com>
+
+	* StringTest.cs: add test for string properties.
+
 200702-20	Boris Kirzner <borisk@mainsoft.com>
 
 	* Mscorlib.Test20.sln, Mscorlib.Test20.vmwcsproj, 
