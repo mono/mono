@@ -14,6 +14,7 @@
     <Version>2.0</Version>
     <RootNamespace>MainsoftWebApp</RootNamespace>
     <ApplicationServerType>tomcat</ApplicationServerType>
+    <jarserver>ipa</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -666,6 +667,90 @@
     <Compile Include="System_Web\HttpValidationStatus\HttpValidationStatus_Enum.aspx.cs">
       <DependentUpon>HttpValidationStatus_Enum.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Controls1\UserControl1.ascx.cs">
+      <DependentUpon>UserControl1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Controls1\UserControl1.ascx.designer.cs">
+      <DependentUpon>UserControl1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Controls2\UserControl2.ascx.cs">
+      <DependentUpon>UserControl2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Controls2\UserControl2.ascx.designer.cs">
+      <DependentUpon>UserControl2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl4.aspx.cs">
+      <DependentUpon>PageWControl4.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl4.aspx.designer.cs">
+      <DependentUpon>PageWControl4.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserMaster.Master.cs">
+      <DependentUpon>UserMaster.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserMaster.Master.designer.cs">
+      <DependentUpon>UserMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\MasterPages\SubMaster.Master.cs">
+      <DependentUpon>SubMaster.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\MasterPages\SubMaster.Master.designer.cs">
+      <DependentUpon>SubMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl1.aspx.cs">
+      <DependentUpon>PageWControl1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl1.aspx.designer.cs">
+      <DependentUpon>PageWControl1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl2.aspx.cs">
+      <DependentUpon>PageWControl2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl2.aspx.designer.cs">
+      <DependentUpon>PageWControl2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl3.aspx.cs">
+      <DependentUpon>PageWControl3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWControl3.aspx.designer.cs">
+      <DependentUpon>PageWControl3.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWMaster.aspx.cs">
+      <DependentUpon>PageWMaster.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWMaster.aspx.designer.cs">
+      <DependentUpon>PageWMaster.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWOMaster.aspx.cs">
+      <DependentUpon>PageWOMaster.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageWOMaster.aspx.designer.cs">
+      <DependentUpon>PageWOMaster.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserControl.ascx.cs">
+      <DependentUpon>UserControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserControl.ascx.designer.cs">
+      <DependentUpon>UserControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserPage.aspx.cs">
+      <DependentUpon>UserPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\UserPage.aspx.designer.cs">
+      <DependentUpon>UserPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="System_Web\ProcessShutdownReason\ProcessShutdownReason_Enum.aspx.cs">
       <DependentUpon>ProcessShutdownReason_Enum.aspx</DependentUpon>
@@ -2536,6 +2621,7 @@
     <Compile Include="utils\GHTWebControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="utils\UrlTestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="j2ee, Version=0.0.0.0, Culture=neutral">
@@ -2553,6 +2639,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="System_Web\PageDirectories\Controls1\UserControl1.ascx" />
+    <Content Include="System_Web\PageDirectories\Controls2\UserControl2.ascx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWControl4.aspx" />
+    <Content Include="System_Web\PageDirectories\UserMaster.Master" />
+    <Content Include="System_Web\PageDirectories\MasterPages\SubMaster.Master" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWControl1.aspx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWControl2.aspx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWControl3.aspx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWMaster.aspx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageWOMaster.aspx" />
+    <Content Include="System_Web\PageDirectories\UserControl.ascx" />
+    <Content Include="System_Web\PageDirectories\UserPage.aspx" />
     <None Include="System_Web_UI_WebControls\HyperLinkColumn\ChangeLog" />
   </ItemGroup>
   <ItemGroup>
@@ -2580,7 +2678,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-configuration="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-drawing="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-web="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-web-services="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.Services.jar" REFS-JarPath-system-xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-j2ee="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jakarta-tomcat\server\lib\catalina.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jakarta-tomcat\common\lib\servlet-api.jar" REFS-JarPath-rt="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-j2ee="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jakarta-tomcat\server\lib\catalina.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jakarta-tomcat\common\lib\servlet-api.jar" REFS-JarPath-system-xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-web-services="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.Services.jar" REFS-JarPath-system-web="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-drawing="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-configuration="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

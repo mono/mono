@@ -45,7 +45,7 @@ namespace GHTTests
     /// </summary>
     public class GHTBaseWeb : System.Web.UI.Page
     {
-        public HtmlForm GHTActiveForm;
+        public Control GHTActiveForm;
         public Control GHTActiveSubTest;
         public int GHTActiveSubTestId = 0;
 
@@ -57,7 +57,7 @@ namespace GHTTests
         /// <summary>
         /// Save a reference to the Form.
         /// </summary>
-        public virtual void GHTTestBegin(HtmlForm theForm)
+        public virtual void GHTTestBegin(Control theForm)
         {
             GHTActiveForm = theForm;
         }
@@ -181,7 +181,7 @@ namespace GHTTests
         {
             return GHTSubTestCreateNew(GHTActiveForm, Description);
         }
-        protected GHTWebControls.GHTSubTest GHTSubTestCreateNew(HtmlForm theForm, string Description)
+        protected GHTWebControls.GHTSubTest GHTSubTestCreateNew(Control theForm, string Description)
         {
 			if (GHTActiveSubTestId == 0)
 			{

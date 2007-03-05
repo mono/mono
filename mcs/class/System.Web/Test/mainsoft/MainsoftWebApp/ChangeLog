@@ -1,5 +1,10 @@
 2007-03-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* System_Web/PageDirectories/*: Added new tests for ResolveUrl,
+	TemplateSourceDirectory, etc
+
+2007-03-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* System_Web_SessionState/HttpSessionState/
 		HttpSessionState_CodePage.aspx.cs
 	* System_Web_UI_HtmlControls/HtmlInputImage/
