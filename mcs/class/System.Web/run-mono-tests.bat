@@ -46,7 +46,7 @@ REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
 set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
-set JAVA_HOME=%VMW_HOME%\jre5
+set JAVA_HOME=%VMW_HOME%\jre6
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
