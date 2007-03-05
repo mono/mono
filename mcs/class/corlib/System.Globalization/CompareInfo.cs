@@ -117,6 +117,14 @@ namespace System.Globalization
 
 		public virtual int Compare (string string1, string string2)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+				
 			/* Short cut... */
 			if(string1.Length == 0 && string2.Length == 0)
 				return(0);
@@ -129,6 +137,14 @@ namespace System.Globalization
 		public virtual int Compare (string string1, string string2,
 					    CompareOptions options)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+
 			/* Short cut... */
 			if(string1.Length == 0 && string2.Length == 0)
 				return(0);
@@ -141,6 +157,14 @@ namespace System.Globalization
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+
 			/* Not in the spec, but ms does these short
 			 * cuts before checking the offsets (breaking
 			 * the offset >= string length specified check
@@ -173,6 +197,14 @@ namespace System.Globalization
 					    string string2, int offset2,
 					    CompareOptions options)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+
 			/* Not in the spec, but ms does these short
 			 * cuts before checking the offsets (breaking
 			 * the offset >= string length specified check
@@ -205,6 +237,14 @@ namespace System.Globalization
 					    int length1, string string2,
 					    int offset2, int length2)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+
 			/* Not in the spec, but ms does these short
 			 * cuts before checking the offsets (breaking
 			 * the offset >= string length specified check
@@ -249,6 +289,14 @@ namespace System.Globalization
 					    int offset2, int length2,
 					    CompareOptions options)
 		{
+			if (string1 == null) {
+				if (string2 == null)
+					return 0;
+				return -1;
+			}
+			if (string2 == null)
+				return 1;
+
 			/* Not in the spec, but ms does these short
 			 * cuts before checking the offsets (breaking
 			 * the offset >= string length specified check
