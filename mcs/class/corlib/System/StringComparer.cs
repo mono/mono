@@ -39,6 +39,7 @@ namespace System
 	[Serializable, ComVisible(true)]
 	public abstract class StringComparer : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
 	{
+		[Serializable]
 		class StringCultureComparer: StringComparer
 		{
 			CompareOptions co;
@@ -69,6 +70,7 @@ namespace System
 			}
 		}
 
+		[Serializable]
 		class OrdinalComparer : StringComparer
 		{
 			public OrdinalComparer ()
@@ -91,6 +93,7 @@ namespace System
 			}
 		}
 
+		[Serializable]
 		class OrdinalIgnoreCaseComparer : StringComparer
 		{
 			public OrdinalIgnoreCaseComparer ()
