@@ -1,4 +1,3 @@
-#if NET_2_0
 // This test is designed to find exactly what conditions cause the control's
 // Handle to be created.
 using System;
@@ -71,9 +70,11 @@ namespace MonoTests.System.Windows.Forms
 			c.AutoScrollOffset = new Point (40, 40);
 			Assert.IsFalse (c.IsHandleCreated, "A7");
 #endif
+#if NET_2_0
 			o = c.AutoSize;
 			c.AutoSize = true;
 			Assert.IsFalse (c.IsHandleCreated, "A8");
+#endif
 		
 			// B
 			o = c.BackColor;
@@ -82,9 +83,11 @@ namespace MonoTests.System.Windows.Forms
 			o = c.BackgroundImage;
 			c.BackgroundImage = new Bitmap (1, 1);
 			Assert.IsFalse (c.IsHandleCreated, "A10");
+#if NET_2_0
 			o = c.BackgroundImageLayout;
 			c.BackgroundImageLayout = ImageLayout.Stretch;
 			Assert.IsFalse (c.IsHandleCreated, "A11");
+#endif
 			o = c.BindingContext;
 			c.BindingContext = new BindingContext ();
 			Assert.IsFalse (c.IsHandleCreated, "A12");
@@ -121,9 +124,11 @@ namespace MonoTests.System.Windows.Forms
 			o = c.ContextMenu;
 			c.ContextMenu = new ContextMenu ();
 			Assert.IsFalse (c.IsHandleCreated, "A24");
+#if NET_2_0
 			o = c.ContextMenuStrip;
 			c.ContextMenuStrip = new ContextMenuStrip ();
 			Assert.IsFalse (c.IsHandleCreated, "A25");
+#endif
 			o = c.Controls;
 			Assert.IsFalse (c.IsHandleCreated, "A26");
 			o = c.Created;
@@ -179,8 +184,10 @@ namespace MonoTests.System.Windows.Forms
 			o = c.IsMirrored;
 			Assert.IsFalse (c.IsHandleCreated, "A44");
 #endif
+#if NET_2_0
 			o = c.LayoutEngine;
 			Assert.IsFalse (c.IsHandleCreated, "A45");
+#endif
 			o = c.Left;
 			c.Left = 15;
 			Assert.IsFalse (c.IsHandleCreated, "A46");
@@ -189,6 +196,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A47");
 
 			// M - N
+#if NET_2_0
 			o = c.Margin;
 			c.Margin = new Padding (6);
 			Assert.IsFalse (c.IsHandleCreated, "A48");
@@ -198,19 +206,24 @@ namespace MonoTests.System.Windows.Forms
 			o = c.MinimumSize;
 			c.MinimumSize = new Size (100, 100);
 			Assert.IsFalse (c.IsHandleCreated, "A50");
+#endif
 			o = c.Name;
 			c.Name = "web";
 			Assert.IsFalse (c.IsHandleCreated, "A51");
 			
 			// P - R
+#if NET_2_0
 			o = c.Padding;
 			c.Padding = new Padding (4);
 			Assert.IsFalse (c.IsHandleCreated, "A52");
+#endif
 			o = c.Parent;
 			c.Parent = new Control ();
 			Assert.IsFalse (c.IsHandleCreated, "A53");
+#if NET_2_0
 			o = c.PreferredSize;
 			Assert.IsFalse (c.IsHandleCreated, "A54");
+#endif
 			o = c.ProductName;
 			Assert.IsFalse (c.IsHandleCreated, "A55");
 			o = c.ProductVersion;
@@ -275,10 +288,13 @@ namespace MonoTests.System.Windows.Forms
 #endif
 			o = c.PublicCreateParams;
 			Assert.IsFalse (c.IsHandleCreated, "A2");
+#if NET_2_0
 			o = c.PublicDefaultCursor;
 			Assert.IsFalse (c.IsHandleCreated, "A3");
+#endif
 			o = c.PublicDefaultImeMode;
 			Assert.IsFalse (c.IsHandleCreated, "A4");
+#if NET_2_0
 			o = c.PublicDefaultMargin;
 			Assert.IsFalse (c.IsHandleCreated, "A5");
 			o = c.PublicDefaultMaximumSize;
@@ -292,6 +308,7 @@ namespace MonoTests.System.Windows.Forms
 			o = c.PublicDoubleBuffered;
 			c.PublicDoubleBuffered = !c.PublicDoubleBuffered;
 			Assert.IsFalse (c.IsHandleCreated, "A10");
+#endif
 			o = c.PublicFontHeight;
 			c.PublicFontHeight = c.PublicFontHeight + 1;
 			Assert.IsFalse (c.IsHandleCreated, "A11");
@@ -359,8 +376,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A11");
 			c.GetNextControl (new Control (), true);
 			Assert.IsFalse (c.IsHandleCreated, "A12");
+#if NET_2_0
 			c.GetPreferredSize (Size.Empty);
 			Assert.IsFalse (c.IsHandleCreated, "A13");
+#endif
 			c.Hide ();
 			Assert.IsFalse (c.IsHandleCreated, "A14");
 			c.Invalidate ();
@@ -405,8 +424,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A31");
 			c.ResumeLayout ();
 			Assert.IsFalse (c.IsHandleCreated, "A32");
+#if NET_2_0
 			c.Scale (new SizeF (1.5f, 1.5f));
 			Assert.IsFalse (c.IsHandleCreated, "A33");
+#endif
 			c.Select ();
 			Assert.IsFalse (c.IsHandleCreated, "A34");
 			c.SelectNextControl (new Control (), true, true, true, true);
@@ -444,14 +465,18 @@ namespace MonoTests.System.Windows.Forms
 			public bool PublicCanRaiseEvents { get { return base.CanRaiseEvents; } }
 #endif
 			public CreateParams PublicCreateParams { get { return base.CreateParams; } }
+#if NET_2_0
 			public Cursor PublicDefaultCursor { get { return base.DefaultCursor; } }
+#endif
 			public ImeMode PublicDefaultImeMode { get { return base.DefaultImeMode; } }
+#if NET_2_0
 			public Padding PublicDefaultMargin { get { return base.DefaultMargin; } }
 			public Size PublicDefaultMaximumSize { get { return base.DefaultMaximumSize; } }
 			public Size PublicDefaultMinimumSize { get { return base.DefaultMinimumSize; } }
 			public Padding PublicDefaultPadding { get { return base.DefaultPadding; } }
 			public Size PublicDefaultSize { get { return base.DefaultSize; } }
 			public bool PublicDoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
+#endif
 			public int PublicFontHeight { get { return base.FontHeight; } set { base.FontHeight = value; } }
 			public bool PublicRenderRightToLeft { get { return base.RenderRightToLeft; } }
 			public bool PublicResizeRedraw { get { return base.ResizeRedraw; } set { base.ResizeRedraw = value; } }
@@ -473,7 +498,11 @@ namespace MonoTests.System.Windows.Forms
 			ProtectedMethodsControl c = new ProtectedMethodsControl ();
 			
 			c.PublicAccessibilityNotifyClients (AccessibleEvents.Focus, 0);
+#if NET_2_0
 			Assert.IsFalse (c.IsHandleCreated, "A1");
+#else
+			Assert.IsTrue (c.IsHandleCreated, "A1");
+#endif
 			c.PublicCreateAccessibilityInstance ();
 			Assert.IsTrue (c.IsHandleCreated, "A2");
 			c = new ProtectedMethodsControl (); 
@@ -485,8 +514,10 @@ namespace MonoTests.System.Windows.Forms
 			c.PublicDestroyHandle ();
 			Assert.IsFalse (c.IsHandleCreated, "A5");
 			c = new ProtectedMethodsControl ();
+#if NET_2_0
 			c.PublicGetAccessibilityObjectById (0);
 			Assert.IsFalse (c.IsHandleCreated, "A6");
+#endif
 #if !__MonoCS__
 			c.PublicGetAutoSizeMode ();
 			Assert.IsFalse (c.IsHandleCreated, "A7");
@@ -518,7 +549,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A19");
 			Form f = new Form ();
 			f.Controls.Add (c);
-			c.OnVisibleChanged (EventArgs.Empty);
+			c.PublicOnVisibleChanged (EventArgs.Empty);
 			Assert.IsFalse (c.IsHandleCreated, "A20");
 			c = new ProtectedMethodsControl ();
 			c.PublicRaiseDragEvent (null, null);
@@ -564,8 +595,10 @@ namespace MonoTests.System.Windows.Forms
 			c = new ProtectedMethodsControl ();
 			c.PublicSetVisibleCore (true);
 			Assert.IsFalse (c.IsHandleCreated, "A39");
+#if NET_2_0
 			c.PublicSizeFromClientSize (new Size (160, 160));
 			Assert.IsFalse (c.IsHandleCreated, "A40");
+#endif
 			c.PublicUpdateBounds ();
 			Assert.IsFalse (c.IsHandleCreated, "A41");
 			c.PublicUpdateStyles ();
@@ -581,7 +614,9 @@ namespace MonoTests.System.Windows.Forms
 			public void PublicCreateControlsInstance () { base.CreateControlsInstance (); }
 			public void PublicCreateHandle () { base.CreateHandle (); }
 			public void PublicDestroyHandle () { base.DestroyHandle (); }
+#if NET_2_0
 			public AccessibleObject PublicGetAccessibilityObjectById (int objectId) { return base.GetAccessibilityObjectById (objectId); }
+#endif
 #if !__MonoCS__
 			public AutoSizeMode PublicGetAutoSizeMode () { return base.GetAutoSizeMode (); }
 			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified) { return base.GetScaledBounds (bounds, factor, specified); }
@@ -597,7 +632,7 @@ namespace MonoTests.System.Windows.Forms
 			public bool PublicIsInputChar (char charCode) { return base.IsInputChar (charCode); }
 			public bool PublicIsInputKey (Keys keyData) { return base.IsInputKey (keyData); }
 			public void PublicNotifyInvalidate (Rectangle invalidatedArea) { base.NotifyInvalidate (invalidatedArea); }
-			public void OnVisibleChanged (EventArgs e) { base.OnVisibleChanged (e); }
+			public void PublicOnVisibleChanged (EventArgs e) { base.OnVisibleChanged (e); }
 			public void PublicRaiseDragEvent (Object key, DragEventArgs e) { base.RaiseDragEvent (key, e); }
 			public void PublicRaiseKeyEvent (Object key, KeyEventArgs e) { base.RaiseKeyEvent (key, e); }
 			public void PublicRaiseMouseEvent (Object key, MouseEventArgs e) { base.RaiseMouseEvent (key, e); }
@@ -621,11 +656,12 @@ namespace MonoTests.System.Windows.Forms
 			public void PublicSetStyle (ControlStyles flag, bool value) { base.SetStyle (flag, value); }
 			public void PublicSetTopLevel (bool value) { base.SetTopLevel (value); }
 			public void PublicSetVisibleCore (bool value) { base.SetVisibleCore (value); }
+#if NET_2_0
 			public Size PublicSizeFromClientSize (Size clientSize) { return base.SizeFromClientSize (clientSize); }
+#endif
 			public void PublicUpdateBounds () { base.UpdateBounds (); }
 			public void PublicUpdateStyles () { base.UpdateStyles (); }
 			public void PublicUpdateZOrder () { base.UpdateZOrder (); }
 		}
 	}
 }
-#endif

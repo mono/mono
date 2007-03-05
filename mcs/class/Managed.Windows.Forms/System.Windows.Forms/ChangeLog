@@ -1,3 +1,8 @@
+2007-03-05  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (AccessibilityNotifyClients): turns out in 1.1 this
+	causes handle creation.
+
 2007-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* ApplicationContext.cs: Add a flag to make sure we only raise the

@@ -3733,6 +3733,21 @@ namespace System.Windows.Forms
 		#region Protected Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void AccessibilityNotifyClients(AccessibleEvents accEvent, int childID) {
+			// turns out this method causes handle
+			// creation in 1.1.  at first I thought this
+			// would be accomplished just by using
+			// get_AccessibilityObject, which would route
+			// through CreateAccessibilityInstance, which
+			// calls CreateControl.  This isn't the case,
+			// though (as overriding
+			// CreateAccessibilityInstance and adding a
+			// CWL shows nothing.  So we fudge it and put
+			// a CreateHandle here.
+
+#if ONLY_1_1
+			CreateHandle ();
+#endif
+
 			if (accessibility_object != null && accessibility_object is ControlAccessibleObject)
 				((ControlAccessibleObject)accessibility_object).NotifyClients (accEvent, childID);
 		}
