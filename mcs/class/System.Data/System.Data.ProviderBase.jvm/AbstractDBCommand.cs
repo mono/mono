@@ -324,7 +324,7 @@ namespace System.Data.ProviderBase
 
 		public override object ExecuteScalar ()
 		{
-			IDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SequentialAccess);
+			IDataReader reader = ExecuteReader(CommandBehavior.SequentialAccess);
 			
 			try {
 				do {
@@ -833,7 +833,7 @@ namespace System.Data.ProviderBase
 
 					// FIXME: this causes SP in MS Sql Server to create no mor than one row.
 					if ((Behavior & CommandBehavior.SingleRow) != 0) {
-						_statement.setFetchSize(1);
+						_statement.setMaxRows (1);
 					}
 				
 					if(_statement is PreparedStatement) {

@@ -78,6 +78,26 @@ namespace MonoTests.System.Data.OleDb
 		}
 
 		[Test]
+		public void CommandBehaviorSingleRow ()
+		{
+			Exception exp = null;
+
+			cmd.CommandText = "Select * From Employees";
+			OleDbDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow);
+
+			try
+			{
+				BeginCase ("CommandBehaviorSingleRow");
+				int i = 0;
+				while (rdr.Read ())
+					i++;
+				Compare(i, 1);
+			} 
+			catch(Exception ex){exp = ex;}
+			finally{EndCase(exp); exp = null;}
+		}
+
+		[Test]
 		public void run()
 		{
 			Exception exp = null;
