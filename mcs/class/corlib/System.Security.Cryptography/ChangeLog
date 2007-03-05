@@ -1,3 +1,8 @@
+2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStream.cs: Rework Write to buffer the last block correctly.
+	The new code also reduce memory allocations. Fix for #81008.
+
 2007-02-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HMAC.cs: Handle BlockSizeValue correctly.

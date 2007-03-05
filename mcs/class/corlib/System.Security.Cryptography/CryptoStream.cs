@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -172,7 +172,7 @@ namespace System.Security.Cryptography {
 					int transformed = 0;
 
 					// load a new block
-					_workingCount = _stream.Read (_workingBlock, 0, _workingBlock.Length);
+					_workingCount = _stream.Read (_workingBlock, 0, _transform.InputBlockSize);
 					_endOfStream = (_workingCount < _transform.InputBlockSize);
 
 					if (!_endOfStream) {
@@ -252,6 +252,9 @@ namespace System.Security.Cryptography {
 					Locale.GetText ("buffer overflow"));
 			}
 
+			if (_stream == null)
+				throw new ArgumentNullException ("inner stream was diposed");
+
 			// partial block (in progress)
 			if ((_partialCount > 0) && (_partialCount != _transform.InputBlockSize)) {
 				int remainder = _transform.InputBlockSize - _partialCount;
@@ -273,25 +276,23 @@ namespace System.Security.Cryptography {
 				}
 
 				if (_transform.CanTransformMultipleBlocks) {
-					// transform all except the last block (which may be the last block
-					// of the stream and require TransformFinalBlock)
-					int numBlock = ((_partialCount + count) / _transform.InputBlockSize);
-					int multiSize = (numBlock * _transform.InputBlockSize);
-					if (numBlock > 0) {
-						byte[] multiBlocks = new byte [multiSize];
-						int len = _transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
-						_stream.Write (multiBlocks, 0, len); 
-						// copy last block into _currentBlock
-						_partialCount = count - multiSize;
-						Buffer.BlockCopy (buffer, offset + multiSize, _workingBlock, 0, _partialCount);
+					// get the biggest multiple of InputBlockSize in count (without mul or div)
+					int size = (count & ~(_transform.OutputBlockSize - 1));
+					int rem = (count & (_transform.OutputBlockSize - 1));
+					// avoid reallocating memory at each call (reuse same buffer whenever possible)
+					if (_workingBlock.Length < size) {
+						Array.Clear (_workingBlock, 0, _workingBlock.Length);
+						_workingBlock = new byte [size];
 					}
-					else {
-						Buffer.BlockCopy (buffer, offset, _workingBlock, _partialCount, count);
-						_partialCount += count;
-					}
+
+					int len = _transform.TransformBlock (buffer, offset, size, _workingBlock, 0);
+					_stream.Write (_workingBlock, 0, len);
+
+					if (rem > 0)
+						Buffer.BlockCopy (buffer, buffer.Length - rem, _workingBlock, 0, rem);
+					_partialCount = rem;
 					count = 0; // the last block, if any, is in _workingBlock
-				}
-				else {
+				} else {
 					int len = Math.Min (_transform.InputBlockSize - _partialCount, count);
 					Buffer.BlockCopy (buffer, bufferPos, _workingBlock, _partialCount, len);
 					bufferPos += len;
