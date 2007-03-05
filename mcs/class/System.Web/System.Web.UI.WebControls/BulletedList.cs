@@ -179,6 +179,9 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 				if (havePage)
 					Page.ClientScript.RegisterForEventValidation (this.UniqueID, i.Value.ToString ());
+
+				if (i.HasAttributes)
+					i.Attributes.AddAttributes (writer);
 #endif
 				writer.RenderBeginTag (HtmlTextWriterTag.Li);
 				this.RenderBulletText (i, idx ++, writer);

@@ -230,6 +230,10 @@ namespace System.Web.UI.WebControls {
 			get { return enabled; }
 			set { enabled = value; }
 		}
+
+		internal bool HasAttributes {
+			get { return attrs != null && attrs.Count > 0; }
+		}
 #endif
 
 		string text;

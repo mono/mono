@@ -350,6 +350,10 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			check_box.ValidationGroup = ValidationGroup;
 			check_box.CausesValidation = CausesValidation;
+			if (check_box.HasAttributes)
+				check_box.Attributes.Clear ();
+			if (item.HasAttributes)
+				check_box.Attributes.CopyFrom (item.Attributes);
 #endif
 			check_box.RenderControl (writer);
 		}

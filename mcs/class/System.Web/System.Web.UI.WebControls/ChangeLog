@@ -1,5 +1,14 @@
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CheckBoxList.cs:
+	* BulletedList.cs:
+	* ListControl.cs:
+	* ListItem.cs:
+	* RadioButtonList.cs:
+	fixed: list controls consider ListItem.Attributes property on render. 
+
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBox.cs: fixed: 'span' tag is not rendered if all attributes 
 	are rendered in 'input' tag. 
 

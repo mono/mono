@@ -490,6 +490,9 @@ namespace System.Web.UI.WebControls {
 				}
 				writer.WriteAttribute ("value", item.Value, true);
 
+				if (item.HasAttributes)
+					item.Attributes.Render (writer);
+
 				writer.Write (">");
 				string encoded = HttpUtility.HtmlEncode (item.Text);
 				writer.Write (encoded);
@@ -639,6 +642,7 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 
 
 

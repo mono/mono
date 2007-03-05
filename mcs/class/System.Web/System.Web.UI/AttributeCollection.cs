@@ -110,5 +110,16 @@ namespace System.Web.UI {
 					writer.WriteAttribute (key, value, true);
 			}
 		}
+
+#if NET_2_0
+		internal void CopyFrom (AttributeCollection attributeCollection)
+		{
+			if (attributeCollection == null || attributeCollection.Count == 0)
+				return;
+
+			foreach (string key in attributeCollection.bag.Keys)
+				this.Add (key, attributeCollection [key]);
+		}
+#endif
 	}
 }

@@ -244,20 +244,26 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
+			ListItem item = Items [repeatIndex];
+
 			RadioButton radio = new RadioButton ();
-			radio.Text = Items [repeatIndex].Text;
+			radio.Text = item.Text;
 			radio.ID = ClientID + "_"  + repeatIndex;
 			radio.TextAlign = TextAlign;
 			radio.GroupName = UniqueID;
 			radio.Page = Page;
-			radio.Checked = Items [repeatIndex].Selected;
-			radio.ValueAttribute = Items [repeatIndex].Value;
+			radio.Checked = item.Selected;
+			radio.ValueAttribute = item.Value;
 			radio.AutoPostBack = AutoPostBack;
 			radio.Enabled = Enabled;
 			radio.TabIndex = tabIndex;
 #if NET_2_0
 			radio.ValidationGroup = ValidationGroup;
 			radio.CausesValidation = CausesValidation;
+			if (radio.HasAttributes)
+				radio.Attributes.Clear ();
+			if (item.HasAttributes)
+				radio.Attributes.CopyFrom (item.Attributes);
 #endif
 			radio.RenderControl (writer);
 		}
@@ -359,6 +365,7 @@ namespace System.Web.UI.WebControls {
 	}
 
 }
+
 
 
 
