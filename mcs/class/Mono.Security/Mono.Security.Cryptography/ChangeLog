@@ -1,3 +1,8 @@
+2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fix KeepLastBlock to be true for decryption 
+	with no padding or zero padding. Part of the fix for #81008.
+
 2007-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fix #80439 again. This time we have tests for
