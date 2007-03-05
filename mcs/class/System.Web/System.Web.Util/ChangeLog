@@ -1,3 +1,8 @@
+2007-03-05  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlUtils.cs: Make sure GetDirectory returns a directory with the
+	trailing slash.
+
 2007-01-30  Adar Wesley <adarw@mainsoft.com>
 
 	* UrlUtils.cs: fixed GetFile to throw right exception

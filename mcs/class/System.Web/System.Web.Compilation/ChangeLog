@@ -1,3 +1,13 @@
+2007-03-05  Marek Habersack  <mhabersack@novell.com>
+
+	* PageThemeCompiler.cs: Use correct theme path for
+	AppRelativeTemplateSourceDirectory.
+	Do not process builders of type CodeRenderBuilder.
+	Make sure builder.ControlType is not null before depending on it.
+
+	* ThemeDirectoryCompiler.cs: theme parser should be passed the
+	virtual directory of the theme.
+
 2007-03-03  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: Added support for setting the

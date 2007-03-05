@@ -183,6 +183,8 @@ namespace System.Web.Util {
 			int last = url.LastIndexOf ('/');
 
 			if (last > 0) {
+				if (last + 1 == url.Length)
+					last++;
 #if NET_2_0
 				return RemoveDoubleSlashes (url.Substring (0, last));
 #else
