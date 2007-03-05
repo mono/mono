@@ -206,6 +206,27 @@
     <Compile Include="System.Data.OleDb.jvm\OleDbParameter\OleDbParameter_ctor_SOtype.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbParameter\OleDbParameter_ctor_SOtypeI.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbParameter\OleDbParameter_ctor_SOtype_IS.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_Begin.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_Commit.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_Connection.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_ctor.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_IsolationLevel.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbTransaction\OleDbTransaction_Rollback.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbType\OleDbType.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbType\OleDbType_Date.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlCommandBuilder\SqlCommandBuilder_DeriveParameters_S.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_ExecuteReader_.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_ExecuteXmlReader_.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlCommand\SqlCommand_Parameters.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_BeginTransaction_S.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_InfoMessage.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlConnection\SqlConnection_StateChange.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlDataAdapter\SqlDataAdapter_RowUpdated.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlDataAdapter\SqlDataAdapter_RowUpdating.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_ctor_SO.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_Direction.cs" />
+    <Compile Include="System.Data.SqlClient.jvm\SqlParameter\SqlParameter_set_DbType_D.cs" />
+    <Compile Include="System.Data.SqlClient\SqlConnectionStringBuilderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj">
