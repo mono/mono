@@ -132,7 +132,6 @@
     <Compile Include="Mono.Data.SqlExpressions\Tokenizer.cs" />
     <Compile Include="System.Data.Common\CatalogLocation.cs" />
     <Compile Include="System.Data.Common\ComparerFactory.cs" />
-    <Compile Include="System.Data.Common\ConnectionStringsSectionHandler.cs" />
     <Compile Include="System.Data.Common\DataAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
