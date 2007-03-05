@@ -68,8 +68,16 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual IHierarchicalDataSource GetDataSource ()
 		{
-			if (DataSourceID != "")
-				return BaseDataBoundControl.FindDataSource (this, DataSourceID);
+			if (IsBoundUsingDataSourceID) {
+				
+				Control ctrl = FindDataSource ();
+
+				if (ctrl == null)
+					throw new HttpException (string.Format ("A control with ID '{0}' could not be found.", DataSourceID));
+				if (!(ctrl is IHierarchicalDataSource))
+					throw new HttpException (string.Format ("The control with ID '{0}' is not a control of type IHierarchicalDataSource.", DataSourceID));
+				return (IHierarchicalDataSource) ctrl;
+			}
 			
 			return DataSource as IHierarchicalDataSource;
 		}

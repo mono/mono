@@ -153,20 +153,19 @@ namespace System.Web.UI.WebControls {
 			base.OnPreRender (e);
 		}
 
-		internal static IHierarchicalDataSource FindDataSource (Control start, string id)
+		internal Control FindDataSource ()
 		{
-			if (start == null || String.IsNullOrEmpty (id))
-				return null;
-			
-			Control ret = null;
-			Control nc = start;
+			Control ctrl = null;
+			Control namingContainer = NamingContainer;
 
-			while (ret == null && nc != start.Page) {
-				nc = nc.NamingContainer;
-				ret = nc.FindControl (id);
+			while (namingContainer != null) {
+				ctrl = namingContainer.FindControl (DataSourceID);
+				if (ctrl != null)
+					break;
+				namingContainer = namingContainer.NamingContainer;
 			}
 
-			return ret as IHierarchicalDataSource;
+			return ctrl;
 		}
 		
 		protected abstract void PerformSelect ();

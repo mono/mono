@@ -1,3 +1,11 @@
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseDataBoundControl.cs:
+	* DataBoundControl.cs:
+	* HierarchicalDataBoundControl.cs:
+	refactoring: DataBoundControl and HierarchicalDataBoundControl use internal
+	method in BaseDataBoundControl to find a data source control.
+
 2007-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Unit.cs: Support parsing of units in the form ".9em" etc.
