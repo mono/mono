@@ -553,7 +553,7 @@ namespace System.Windows.Forms {
 			if (!TitleButtons.AnyPushedTitleButtons && !IsMaximized) {
 				state = State.Moving;
 				clicked_point = new Point (x, y);
-				if (form.IsMdiChild) {
+				if (form.Parent != null) {
 					form.CaptureWithConfine (form.Parent);
 				} else {
 					form.Capture = true;

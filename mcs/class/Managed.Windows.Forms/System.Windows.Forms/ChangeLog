@@ -1,3 +1,9 @@
+2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* InternalWindowManager.cs: All windows that have a parent
+	are confined to their parent when they're being moved.
+	Fixes #80822.
+
 2007-03-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SystemInformation.cs: Marked KeyboardDelay and KeyboardSpeed public
