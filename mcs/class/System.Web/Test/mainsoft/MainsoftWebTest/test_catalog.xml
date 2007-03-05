@@ -29,6 +29,13 @@
   <TestCase url="/System_Web/HttpRuntime/HttpRuntime_AppDomainAppPath.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpRuntime/HttpRuntime_AppDomainAppPath_MapPath.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpValidationStatus/HttpValidationStatus_Enum.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/UserPage.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWControl1.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWControl2.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWControl3.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWControl4.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWMaster.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageWOMaster.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/ProcessShutdownReason/ProcessShutdownReason_Enum.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/ProcessStatus/ProcessStatus_Enum.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/TraceMode/TraceMode_Enum.aspx" name="" Exclude="N" />
