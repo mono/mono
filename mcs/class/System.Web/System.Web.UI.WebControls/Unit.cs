@@ -73,6 +73,10 @@ namespace System.Web.UI.WebControls {
 				return;
 			}
 
+			// KLUDGE: the parser below should be rewritten
+			if (value [0] == sep)
+				value = "0" + value;
+			
 			int count = value.Length;
 			int i = 0;
 			int sign = 1;
