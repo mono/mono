@@ -130,6 +130,7 @@ namespace Microsoft.Build.BuildEngine {
 					throw new Exception ("This is not output property.");
 				
 				o = propertyInfo.GetValue (task, null);
+				// FIXME: maybe we should throw an exception here?
 				if (o == null)
 					continue;
 				
@@ -146,11 +147,20 @@ namespace Microsoft.Build.BuildEngine {
 			propertyInfo.SetValue (task, value, null);
 		}
 
+		void PublishProperty (PropertyInfo propertyInfo,
+					      object o,
+					      string propertyName)
+		{
+			BuildProperty bp = ChangeType.ToBuildProperty (o, propertyInfo.PropertyType, propertyName);
+			parentProject.EvaluatedProperties.AddProperty (bp);
+		}
+
+		// FIXME: cleanup + test
 		void PublishItemGroup (PropertyInfo propertyInfo,
 					       object o,
 					       string itemName)
 		{
-			BuildItemGroup newItems = CollectItemGroup (propertyInfo, o, itemName);
+			BuildItemGroup newItems = ChangeType.ToBuildItemGroup (o, propertyInfo.PropertyType, itemName);
 			
 			if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
 				BuildItemGroup big = parentProject.EvaluatedItemsByName [itemName];
@@ -162,72 +172,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			foreach (BuildItem bi in newItems)
 				parentProject.EvaluatedItems.AddItem (bi);
-		}
-		
-		void PublishProperty (PropertyInfo propertyInfo,
-					      object o,
-					      string propertyName)
-		{
-			BuildProperty bp = CollectProperty (propertyInfo, o, propertyName);
-			parentProject.EvaluatedProperties.AddProperty (bp);
-		}
-		
-		BuildProperty CollectProperty (PropertyInfo propertyInfo, object o, string name)
-		{
-			string output = null;
-			BuildProperty bp;
-			
-			if (propertyInfo == null)
-				throw new ArgumentNullException ("propertyInfo");
-			if (o == null)
-				throw new ArgumentNullException ("o");
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			
-			if (propertyInfo.PropertyType == typeof (ITaskItem)) {
-				ITaskItem item = (ITaskItem) o;
-				bp = ChangeType.TransformToBuildProperty (name, item);
-			} else if (propertyInfo.PropertyType == typeof (ITaskItem[])) {
-				ITaskItem[] items = (ITaskItem[]) o;
-				bp = ChangeType.TransformToBuildProperty (name, items);
-			} else {
-				if (propertyInfo.PropertyType.IsArray == true) {
-					output = ChangeType.TransformToString ((object[])o, propertyInfo.PropertyType);
-			} else {
-					output = ChangeType.TransformToString (o, propertyInfo.PropertyType);
-				}
-				bp = ChangeType.TransformToBuildProperty (name, output);
-			}
-			return bp;
-		}
-		
-		BuildItemGroup CollectItemGroup (PropertyInfo propertyInfo, object o, string name)
-		{
-			BuildItemGroup big;
-			string temp;
-			
-			if (propertyInfo == null)
-				throw new ArgumentNullException ("propertyInfo");
-			if (o == null)
-				throw new ArgumentNullException ("o");
-			if (name == null)
-				throw new ArgumentNullException ("name");
-				
-			if (propertyInfo.PropertyType == typeof (ITaskItem)) {
-				ITaskItem item = (ITaskItem) o;
-				big = ChangeType.TransformToBuildItemGroup (name, item);
-			} else if (propertyInfo.PropertyType == typeof (ITaskItem[])) {
-				ITaskItem[] items = (ITaskItem[]) o;
-				big = ChangeType.TransformToBuildItemGroup (name, items);
-			} else {
-				if (propertyInfo.PropertyType.IsArray == true) {
-					temp = ChangeType.TransformToString ((object[]) o, propertyInfo.PropertyType);
-				} else {
-					temp = ChangeType.TransformToString (o, propertyInfo.PropertyType);
-				}
-				big = ChangeType.TransformToBuildItemGroup (name, temp);
-			}
-			return big;	
 		}
 				
 		object GetObjectFromString (string raw, Type type)

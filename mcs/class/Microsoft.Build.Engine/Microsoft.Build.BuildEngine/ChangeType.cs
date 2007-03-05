@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -36,11 +37,14 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class ChangeType {
-	
-		static string TemporaryTransform (object o, Type type)
+		//removed Type type
+		// FIXME throw exception here
+		static string ToString (object o)
 		{
 			string output = null;
+			Type type = o.GetType ();
 
+			// FIXME: there are more types
 			if (type == typeof (string))
 				output = (string) o;
 			else if (type == typeof (bool) ||
@@ -70,14 +74,10 @@ namespace Microsoft.Build.BuildEngine {
 			}*/
 			return output;
 		}
-		
-		public static string TransformToString (object o, Type type)
+
+		static string ToString (object [] o, Type type)
 		{
-			return TemporaryTransform (o, type);
-		}
-		
-		public static string TransformToString (object[] o, Type type)
-		{
+		/*
 			ArrayList al = new ArrayList ();
 			foreach (object obj in o ) {
 				if (type == typeof (bool[])) {
@@ -98,64 +98,62 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (string s in al)
 				output [i++] = s;
 			return String.Join (";", output);
+			*/
+
+			List <string> list = new List <string> ();
+			foreach (object obj in o)
+				list.Add (ToString (obj));
+			return String.Join (";", list.ToArray ());
 		}
-		
-		public static BuildProperty TransformToBuildProperty (string name, string items)
+
+		public static BuildProperty ToBuildProperty (object o, Type t, string name)
 		{
-			return new BuildProperty (name, items);
+			if (t == typeof (ITaskItem)) {
+				return new BuildProperty (name, ((ITaskItem) o).ItemSpec);
+			} else if (t ==  typeof (ITaskItem [])) {
+			// FIXME move Tostring here
+				return new BuildProperty (name, ToString ((ITaskItem []) o));
+			} else if (t.IsArray) {
+				return new BuildProperty (name, ToString ((object []) o, t));
+			} else {
+				return new BuildProperty (name, ToString (o));
+			}
 		}
-		
-		public static BuildProperty TransformToBuildProperty (string name, ITaskItem[] items)
+
+		public static BuildItemGroup ToBuildItemGroup (object o, Type t, string name)
 		{
-			BuildProperty buildProperty;
-			buildProperty = new BuildProperty (name, TransformToString (items));
-			return buildProperty;
-		}
-		
-		public static BuildProperty TransformToBuildProperty (string name, ITaskItem item)
-		{
-			BuildProperty buildProperty;
-			buildProperty = new BuildProperty (name, TransformToString (item));
-			return buildProperty;
-		}
-		
-		public static BuildItemGroup TransformToBuildItemGroup (string name, string items)
-		{
-			string[] splittedItems = items.Split (';');
 			BuildItemGroup big = new BuildItemGroup ();
-			foreach (string item in splittedItems)
+
+			if (t == typeof (ITaskItem)) {
+				big.AddItem (name, (ITaskItem) o);
+			} else if (t ==  typeof (ITaskItem [])) {
+				foreach (ITaskItem i in (ITaskItem []) o)
+					big.AddItem (name, i);
+			} else if (t.IsArray) {
+				return ToBuildItemGroup (name, ToString ((object []) o, t));
+			} else {
+				return ToBuildItemGroup (name, ToString (o));
+			}
+
+			return big;
+		}
+		
+		static BuildItemGroup ToBuildItemGroup (string name, string items)
+		{
+			string [] splitItems = items.Split (';');
+			BuildItemGroup big = new BuildItemGroup ();
+			foreach (string item in splitItems)
 				big.AddItem (name, new TaskItem (item));
 			return big;
 		}
 		
-		public static BuildItemGroup TransformToBuildItemGroup (string name, ITaskItem[] items)
+		static string ToString (ITaskItem [] items)
 		{
-			BuildItemGroup big = new BuildItemGroup ();
-			foreach (ITaskItem item in items) {
-				big.AddItem (name, item);
-			}
-			return big;
-		}
-		
-		public static BuildItemGroup TransformToBuildItemGroup (string name, ITaskItem item)
-		{
-			BuildItemGroup big = new BuildItemGroup ();
-			big.AddItem (name, item);
-			return big;
-		}
-		
-		static string TransformToString (ITaskItem [] items)
-		{
-			string[] text = new string [items.Length];
+			string [] text = new string [items.Length];
 			int i = 0;
 			foreach (ITaskItem item in items)
 				text [i++] = item.ItemSpec;
 			return String.Join (";", text);
-		}
-		
-		static string TransformToString (ITaskItem item)
-		{
-			return item.ItemSpec;
 		}
 	}
 }
