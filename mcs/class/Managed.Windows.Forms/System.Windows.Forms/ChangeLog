@@ -1,5 +1,9 @@
 2007-03-05  Jackson Harper  <jackson@ximian.com>
 
+	* TreeViewHitTestInfo.cs: implement.
+
+2007-03-05  Jackson Harper  <jackson@ximian.com>
+
 	* InternalWindowManager.cs: class status fix.
 
 2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 

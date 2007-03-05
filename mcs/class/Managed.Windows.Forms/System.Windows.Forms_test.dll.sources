@@ -113,6 +113,7 @@ System.Windows.Forms/ToolTipTest.cs
 System.Windows.Forms/TrackBarTest.cs
 System.Windows.Forms/TreeNodeCollectionTest.cs
 System.Windows.Forms/TreeNodeTest.cs
+System.Windows.Forms/TreeViewHitTestInfoTest.cs
 System.Windows.Forms/TreeViewTest.cs
 System.Windows.Forms/UpDownTest.cs
 System.Windows.Forms/UserControlTest.cs

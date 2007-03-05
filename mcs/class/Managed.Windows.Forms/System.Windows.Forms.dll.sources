@@ -716,6 +716,7 @@ System.Windows.Forms/TreeViewCancelEventHandler.cs
 System.Windows.Forms/TreeViewDrawMode.cs
 System.Windows.Forms/TreeViewEventArgs.cs
 System.Windows.Forms/TreeViewEventHandler.cs
+System.Windows.Forms/TreeViewHitTestInfo.cs
 System.Windows.Forms/TreeViewHitTestLocations.cs
 System.Windows.Forms/TreeViewImageIndexConverter.cs
 System.Windows.Forms/TypeValidationEventArgs.cs
