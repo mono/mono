@@ -533,6 +533,104 @@ namespace MonoTests.System.Security.Cryptography {
 			DontDecryptMultipleBlock_Final (CipherMode.ECB, PaddingMode.ISO10126);
 		}
 #endif
+
+		private void TransformBlock_One (string msg, ICryptoTransform ct, int expected)
+		{
+			byte[] data = new byte[ct.InputBlockSize];
+			Assert.AreEqual (expected, ct.TransformBlock (data, 0, ct.InputBlockSize, data, 0), msg);
+		}
+
+		[Test]
+		public void CreateEncryptor_TransformBlock_One ()
+		{
+			SymmetricAlgorithm sa = Algorithm;
+			sa.Padding = PaddingMode.PKCS7;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("PKCS7-ECB", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("PKCS7-CBC", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("PKCS7-CFB", sa.CreateEncryptor (), BlockSize);
+
+			sa.Padding = PaddingMode.Zeros;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("Zeros-ECB", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("Zeros-CBC", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("Zeros-CFB", sa.CreateEncryptor (), BlockSize);
+
+			sa.Padding = PaddingMode.None;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("None-ECB", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("None-CBC", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("None-CFB", sa.CreateEncryptor (), BlockSize);
+#if NET_2_0
+			sa.Padding = PaddingMode.ANSIX923;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("ANSIX923-ECB", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("ANSIX923-CBC", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("ANSIX923-CFB", sa.CreateEncryptor (), BlockSize);
+
+			sa.Padding = PaddingMode.ISO10126;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("ISO10126-ECB", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("ISO10126-CBC", sa.CreateEncryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("ISO10126-CFB", sa.CreateEncryptor (), BlockSize);
+#endif
+		}
+
+		[Test]
+		public void CreateDecryptor_TransformBlock_One ()
+		{
+			SymmetricAlgorithm sa = Algorithm;
+			sa.Padding = PaddingMode.PKCS7;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("PKCS7-ECB", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("PKCS7-CBC", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("PKCS7-CFB", sa.CreateDecryptor (), 0);
+
+			sa.Padding = PaddingMode.Zeros;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("Zeros-ECB", sa.CreateDecryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("Zeros-CBC", sa.CreateDecryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("Zeros-CFB", sa.CreateDecryptor (), BlockSize);
+
+			sa.Padding = PaddingMode.None;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("None-ECB", sa.CreateDecryptor (), BlockSize);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("None-CBC", sa.CreateDecryptor (), BlockSize);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("None-CFB", sa.CreateDecryptor (), BlockSize);
+#if NET_2_0
+			sa.Padding = PaddingMode.ANSIX923;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("ANSIX923-ECB", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("ANSIX923-CBC", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("ANSIX923-CFB", sa.CreateDecryptor (), 0);
+
+			sa.Padding = PaddingMode.ISO10126;
+			sa.Mode = CipherMode.ECB;
+			TransformBlock_One ("ISO10126-ECB", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CBC;
+			TransformBlock_One ("ISO10126-CBC", sa.CreateDecryptor (), 0);
+			sa.Mode = CipherMode.CFB;
+			TransformBlock_One ("ISO10126-CFB", sa.CreateDecryptor (), 0);
+#endif
+		}
 	}
 
 	[TestFixture]

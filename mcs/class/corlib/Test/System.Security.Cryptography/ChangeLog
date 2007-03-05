@@ -1,3 +1,9 @@
+2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricAlgorithmTransformTest.cs: Add test cases for #81008 by
+	looking at the encrypted/decrypted block length when TransformBlock is
+	called with different MoO and paddings.
+
 2007-02-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HashAlgorithmTest.cs: Convert to NUnit 2.2 format.
