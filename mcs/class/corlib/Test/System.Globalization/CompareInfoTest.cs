@@ -46,6 +46,10 @@ public class CompareInfoTest : Assertion
 		AssertEquals ("Compare two strings, with first length zero", -1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, 0, s1, 0, s1.Length));
 		AssertEquals ("Compare strings, with second length zero", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1.Length, s1, 0, 0));
 		
+		AssertEquals ("Compare two null references", 0, CultureInfo.InvariantCulture.CompareInfo.Compare (null, null));
+		AssertEquals ("Compare a string to a null reference", 1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", null));
+		AssertEquals ("Compare a null reference to a string", -1, CultureInfo.InvariantCulture.CompareInfo.Compare (null, ""));
+		
 	}
 
 	// Culture-sensitive collation tests
