@@ -87,6 +87,7 @@ namespace System.Collections.Generic {
 		}
 	}
 	
+	[Serializable]
 	class IComparableOfTComparer <T> : Comparer <T> where T : IComparable<T> {
 		public override int Compare (T x, T y)
 		{
