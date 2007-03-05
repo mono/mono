@@ -13,7 +13,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
 using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -117,6 +119,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
+#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -139,6 +142,7 @@ namespace MonoTests.System {
 		{
 			Activator.CreateInstance (typeof (ArgIterator), null);
 		}
+#endif // TARGET_JVM
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -147,12 +151,14 @@ namespace MonoTests.System {
 			Activator.CreateInstance (typeof (void), null);
 		}
 
+#if !TARGET_JVM // RuntimeArgumentHandle not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CreateInstance_RuntimeArgumentHandle ()
 		{
 			Activator.CreateInstance (typeof (RuntimeArgumentHandle), null);
 		}
+#endif // TARGET_JVM
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]

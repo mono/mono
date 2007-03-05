@@ -698,6 +698,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
+#if !TARGET_JVM // No support IntPtr file handles under TARGET_JVM
 		[Test, ExpectedException (typeof (IOException))]
 		public void CtorIOException2 ()
 		{
@@ -709,6 +710,7 @@ namespace MonoTests.System.IO
 					stream.Close ();
 			}
 		}
+#endif // TARGET_JVM
 
 		[Test, ExpectedException (typeof (IOException))]
 		public void CtorIOException ()
@@ -1260,6 +1262,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
+#if !TARGET_JVM // No support IntPtr file handles under TARGET_JVM
 		// Check that the stream is flushed even when it doesn't own the
 		// handle
 		[Test]
@@ -1279,6 +1282,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual ((int) '1', s.ReadByte ());
 			s.Close ();
 		}
+#endif // TARGET_JVM
 
 		private void DeleteFile (string path)
 		{
@@ -1394,12 +1398,14 @@ namespace MonoTests.System.IO
 			}
 		}
 
+#if !TARGET_JVM // No support IntPtr file handles under TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_InvalidFileHandle ()
 		{
 			new FileStream ((IntPtr) (-1L), FileAccess.Read);
 		}
+#endif // TARGET_JVM
 
 		[Test]
 		public void PositionAfterSetLength ()

@@ -35,7 +35,9 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+#if !TARGET_JVM
 using System.Reflection.Emit;
+#endif
 using System.Runtime.Serialization;
 using System.Security;
 
@@ -83,16 +85,18 @@ namespace MonoTests.System.Reflection
 			string fname = AppDomain.CurrentDomain.FriendlyName;
 			if (fname.EndsWith (".dll")) { // nunit-console
 				Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM // IsDefaultAppDomain not supported for TARGET_JVM
 				Assert.IsFalse (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 #endif
 			} else { // gnunit
 				Assert.IsNotNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM // IsDefaultAppDomain not supported for TARGET_JVM
 				Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 #endif
 			}
 		}
+
+#if !TARGET_JVM // ManifestModule not supported under TARGET_JVM.
 #if NET_2_0
 		[Category ("NotWorking")]
 #endif
@@ -141,6 +145,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("v1.1.4322", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
 #endif
 		}
+#endif
 
 		[Test]
 		public void GetAssembly ()
@@ -251,6 +256,7 @@ namespace MonoTests.System.Reflection
 			Assertion.Fail ("Was not able to load any corlib test");
 		}
 
+#if !TARGET_JVM // GetObjectData currently not implemented for Assembly.
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObjectData_Null ()
@@ -258,6 +264,7 @@ namespace MonoTests.System.Reflection
 			Assembly corlib = typeof (int).Assembly;
 			corlib.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 		}
+#endif // TARGET_JVM
 
 		[Test]
 		public void GetReferencedAssemblies ()
@@ -279,6 +286,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+#if !TARGET_JVM // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -897,6 +905,7 @@ namespace MonoTests.System.Reflection
 
 			Directory.Delete (outdir, true);
 		}
+#endif // TARGET_JVM
 
 		[Serializable ()]
 		private class AssemblyResolveHandler

@@ -1,4 +1,8 @@
-﻿200703-05	Roei Erez <roeie@mainsoft.com>
+﻿200703-05	Eyal Alaluf <eyala@mainsoft.com>
+
+	* Port tests to run under TARGET_JVM.
+
+200703-05	Roei Erez <roeie@mainsoft.com>
 
 	* StringTest.cs: add test for string properties.
 

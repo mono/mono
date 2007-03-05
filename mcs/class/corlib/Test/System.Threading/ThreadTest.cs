@@ -23,7 +23,9 @@ namespace MonoTests.System.Threading {
 
 		public static void NoPrincipal () 
 		{
+#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.NoPrincipal);
+#endif
 			IPrincipal p = Thread.CurrentPrincipal;
 			AssertNull ("Thread.CurrentPrincipal-1", p);
 
@@ -35,6 +37,7 @@ namespace MonoTests.System.Threading {
 			// in this case we can return to null
 		}
 
+#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 		public static void UnauthenticatedPrincipal () 
 		{
 			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.UnauthenticatedPrincipal);
@@ -71,6 +74,7 @@ namespace MonoTests.System.Threading {
 			AssertNotNull ("Thread.CurrentPrincipal-3", Thread.CurrentPrincipal);
 			// in this case we can't return to null
 		}
+#endif // TARGET_JVM
 
 		public static void CopyOnNewThread ()
 		{
@@ -491,6 +495,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 		[Test]
 		[Ignore ("see comment below.")]
 		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
@@ -521,6 +526,7 @@ namespace MonoTests.System.Threading {
 				t.Abort ();
 			}
 		}
+#endif // TARGET_JVM
 		
 		[Test]
 		public void IPrincipal_CopyOnNewThread () 

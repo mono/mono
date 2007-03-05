@@ -24,6 +24,7 @@
     <DefineConstants>TRACE;DEBUG;JAVA;NET_2_0;NET_1_1;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>67, 169, 168, 219, 414, 618, 628, 649, 672, 688</NoWarn>
     <BaseAddress>285212672</BaseAddress>
     <SkipValidation>True</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
@@ -38,6 +39,7 @@
     <DefineConstants>TRACE;JAVA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>67, 169, 168, 219, 414, 618, 628, 649, 672, 688</NoWarn>
     <BaseAddress>285212672</BaseAddress>
     <SkipValidation>false</SkipValidation>
     <KeepIntermediate>false</KeepIntermediate>
@@ -86,34 +88,21 @@
     <Compile Include="System.Collections\ReadOnlyCollectionBaseTest.cs" />
     <Compile Include="System.Collections\SortedListTest.cs" />
     <Compile Include="System.Collections\StackTest.cs" />
-    <Compile Include="System.Diagnostics\DebugTest.cs" />
-    <Compile Include="System.Diagnostics\StackFrameCas.cs" />
-    <Compile Include="System.Diagnostics\StackFrameTest.cs" />
-    <Compile Include="System.Diagnostics\StackTraceCas.cs" />
-    <Compile Include="System.Diagnostics\StackTraceTest.cs" />
-    <Compile Include="System.Diagnostics\TextWriterTraceListenerTest.cs" />
     <Compile Include="System.Globalization\CalendarTest.cs" />
     <Compile Include="System.Globalization\CompareInfoTest.cs" />
     <Compile Include="System.Globalization\CultureInfoTest.cs" />
     <Compile Include="System.Globalization\DateTimeFormatInfoTest.cs" />
     <Compile Include="System.Globalization\DaylightTimeTest.cs" />
     <Compile Include="System.Globalization\TextInfoTest.cs" />
-    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileCas.cs" />
-    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileStreamCas.cs" />
-    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileStreamTest.cs" />
-    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageFileTest.cs" />
-    <Compile Include="System.IO.IsolatedStorage\IsolatedStorageTest.cs" />
     <Compile Include="System.IO\BinaryReaderTest.cs" />
     <Compile Include="System.IO\BinaryWriterTest.cs" />
     <Compile Include="System.IO\BufferedStreamTest.cs" />
-    <Compile Include="System.IO\DirectoryCas.cs" />
     <Compile Include="System.IO\DirectoryInfoTest.cs" />
     <Compile Include="System.IO\DirectoryTest.cs" />
     <Compile Include="System.IO\FileInfoTest.cs" />
     <Compile Include="System.IO\FileLoadExceptionCas.cs" />
     <Compile Include="System.IO\FileNotFoundExceptionCas.cs" />
     <Compile Include="System.IO\FileNotFoundExceptionTest.cs" />
-    <Compile Include="System.IO\FileStreamCas.cs" />
     <Compile Include="System.IO\FileStreamTest.cs" />
     <Compile Include="System.IO\FileSystemInfoTest.cs" />
     <Compile Include="System.IO\FileTest.cs" />
@@ -127,40 +116,12 @@
     <Compile Include="System.IO\StringReaderTest.cs" />
     <Compile Include="System.IO\StringWriterTest.cs" />
     <Compile Include="System.IO\TextWriterTest.cs" />
-    <Compile Include="System.IO\UnmanagedMemoryStreamTest.cs" />
-    <Compile Include="System.Reflection.Emit\AssemblyBuilderAccessTest.cs" />
-    <Compile Include="System.Reflection.Emit\AssemblyBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\ConstructorBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\CustomAttributeBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\DynamicMethodTest.cs" />
-    <Compile Include="System.Reflection.Emit\EnumBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\EventBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\FieldBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\ILGeneratorTest.cs" />
-    <Compile Include="System.Reflection.Emit\MethodBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\MethodRentalCas.cs" />
-    <Compile Include="System.Reflection.Emit\MethodRentalTest.cs" />
-    <Compile Include="System.Reflection.Emit\ModuleBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\PropertyBuilderTest.cs" />
-    <Compile Include="System.Reflection.Emit\TypeBuilderTest.cs" />
-    <Compile Include="System.Reflection\AssemblyAlgorithmIdAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyCas.cs" />
-    <Compile Include="System.Reflection\AssemblyConfigurationAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyCopyrightAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyCultureAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyDelaySignAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyDescriptionAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyFileVersionAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyInformationalVersionAttributeTest.cs" />
-    <Compile Include="System.Reflection\AssemblyNameCas.cs" />
     <Compile Include="System.Reflection\AssemblyNameTest.cs" />
     <Compile Include="System.Reflection\AssemblyTest.cs" />
     <Compile Include="System.Reflection\BinderTests.cs" />
     <Compile Include="System.Reflection\EventInfoTest.cs" />
     <Compile Include="System.Reflection\FieldInfoTest.cs" />
     <Compile Include="System.Reflection\MethodInfoTest.cs" />
-    <Compile Include="System.Reflection\ModuleCas.cs" />
-    <Compile Include="System.Reflection\ModuleTest.cs" />
     <Compile Include="System.Reflection\ParameterInfoTest.cs" />
     <Compile Include="System.Reflection\PropertyInfoTest.cs" />
     <Compile Include="System.Reflection\ReflectedTypeTest.cs" />
@@ -171,14 +132,6 @@
     <Compile Include="System.Resources\ResourceReaderCas.cs" />
     <Compile Include="System.Resources\ResourceReaderTest.cs" />
     <Compile Include="System.Resources\ResourceSetCas.cs" />
-    <Compile Include="System.Runtime.CompilerServices\RuntimeHelpersTest.cs" />
-    <Compile Include="System.Runtime.CompilerServices\RuntimeWrappedExceptionCas.cs" />
-    <Compile Include="System.Runtime.CompilerServices\RuntimeWrappedExceptionTest.cs" />
-    <Compile Include="System.Runtime.InteropServices\GCHandleTest.cs" />
-    <Compile Include="System.Runtime.InteropServices\MarshalTest.cs" />
-    <Compile Include="System.Runtime.InteropServices\RuntimeEnvironmentCas.cs" />
-    <Compile Include="System.Runtime.InteropServices\RuntimeEnvironmentTest.cs" />
-    <Compile Include="System.Runtime.InteropServices\SafeHandleTest.cs" />
     <Compile Include="System.Runtime.Remoting.Contexts\SynchronizationAttributeTest.cs" />
     <Compile Include="System.Runtime.Remoting\ContextTest.cs" />
     <Compile Include="System.Runtime.Remoting\RemotingConfigurationTest.cs" />
@@ -213,10 +166,6 @@
     <Compile Include="System.Text\UTF7EncodingTest.cs" />
     <Compile Include="System.Text\UTF8EncodingTest.cs" />
     <Compile Include="System.Threading\AutoResetEventTest.cs" />
-    <Compile Include="System.Threading\CompressedStackCas.cs" />
-    <Compile Include="System.Threading\CompressedStackTest.cs" />
-    <Compile Include="System.Threading\ExecutionContextCas.cs" />
-    <Compile Include="System.Threading\ExecutionContextTest.cs" />
     <Compile Include="System.Threading\InterlockedTest.cs" />
     <Compile Include="System.Threading\MonitorTest.cs" />
     <Compile Include="System.Threading\MutexCas.cs" />
@@ -229,16 +178,7 @@
     <Compile Include="System\ActivatorTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System\AppDomainCas.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System\AppDomainSetupTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\AppDomainTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\ApplicationIdentityTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\ApplicationIdTest.cs">
@@ -311,9 +251,6 @@
     <Compile Include="System\EnumTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System\EnvironmentCas.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System\EnvironmentTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -341,16 +278,10 @@
     <Compile Include="System\IntegerFormatterTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System\IntPtrTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System\MarshalByRefObjectCas.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\MathTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\ModuleHandleTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\MulticastDelegate.cs">
@@ -389,9 +320,6 @@
     <Compile Include="System\TimeZoneTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System\TypedReferenceCas.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System\TypeTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -402,9 +330,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\UInt64Test.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\UIntPtrTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System\ValueTypeTest.cs">

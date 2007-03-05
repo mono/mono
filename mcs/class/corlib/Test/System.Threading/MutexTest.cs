@@ -25,11 +25,11 @@ namespace MonoTests.System.Threading
 				this.id = id;
 				this.mut = mut;
 			}
-			public void wait()
+			public void Wait()
 			{
 				mut.WaitOne();
 			}
-			public void signal()
+			public void Signal()
 			{
 				mut.ReleaseMutex();
 			}
@@ -47,7 +47,7 @@ namespace MonoTests.System.Threading
 			public void WithoutWait()
 			{
 				this.marker = this.id;
-				this.signal();
+				this.Signal();
 			}
 
 
@@ -55,15 +55,15 @@ namespace MonoTests.System.Threading
 			{
 				while (this.marker<100)
 				{
-					this.wait();
+					this.Wait();
 					this.marker++;
-					this.signal();
+					this.Signal();
 				}
 			}
 
 			public void WaitAndForget()
 			{
-				this.wait();
+				this.Wait();
 				this.marker = id;
 			}
 			public void WaitAndWait()

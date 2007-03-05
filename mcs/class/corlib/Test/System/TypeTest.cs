@@ -217,6 +217,7 @@ namespace MonoTests.System
 			Assert.AreEqual (1, typeof (Derived1).GetProperties ().Length, "#03");
 		}
 
+#if !TARGET_JVM // StructLayout not supported for TARGET_JVM
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1 {
 		}
@@ -241,6 +242,7 @@ namespace MonoTests.System
 			Assert.AreEqual (CharSet.Unicode, attr3.CharSet);
 		}
 #endif
+#endif // TARGET_JVM
 
 		[Test]
 		public void Namespace () {

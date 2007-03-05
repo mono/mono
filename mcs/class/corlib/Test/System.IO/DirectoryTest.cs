@@ -250,6 +250,7 @@ public class DirectoryTest
 		Assert.IsFalse (Directory.Exists (null as string));
 	}
 
+#if !TARGET_JVM // We don't support yet the Process class.
 	[Test]
 	[Category("NotDotNet")]
 	public void ExistsAccessDenied ()
@@ -270,6 +271,7 @@ public class DirectoryTest
 			Directory.Delete (path);
 		}
 	}
+#endif
 	
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]

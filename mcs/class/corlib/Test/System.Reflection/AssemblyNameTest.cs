@@ -13,7 +13,9 @@ using System;
 using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
+#if !TARGET_JVM
 using System.Reflection.Emit;
+#endif
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Globalization;
@@ -296,6 +298,7 @@ public class AssemblyNameTest {
 		return assemblyName;
 	}
 
+#if !TARGET_JVM // Reflection.Emit is not supported for TARGET_JVM.
 	private Assembly GenerateAssembly (AssemblyName name) 
 	{
 		AssemblyBuilder ab = domain.DefineDynamicAssembly (
@@ -379,6 +382,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual ("1.2.65535.65535", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
 #endif
 	}
+#endif // TARGET_JVM
 
 	[Test]
 	public void HashAlgorithm ()
@@ -469,6 +473,7 @@ public class AssemblyNameTest {
 		AssertEqualsByteArrays ("PublicToken", an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken ());
 	}
 
+#if !TARGET_JVM // Assemblyname.GetObjectData not implemented yet for TARGET_JVM
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void GetObjectData_Null ()
@@ -476,6 +481,7 @@ public class AssemblyNameTest {
 		AssemblyName an = new AssemblyName ();
 		an.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
+#endif // TARGET_JVM
 
 	[Test]
 #if NET_2_0

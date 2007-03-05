@@ -151,6 +151,7 @@ namespace MonoTests.System {
 			Environment.GetEnvironmentVariables ((EnvironmentVariableTarget)Int32.MinValue);
 		}
 
+#if !TARGET_JVM // Environment.SetEnvironmentVariable not supported under TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetEnvironmentVariable_Target ()
@@ -202,6 +203,7 @@ namespace MonoTests.System {
 			Environment.SetEnvironmentVariable ("A3", "\0");
 			Assert.AreEqual (Environment.GetEnvironmentVariables ()["A3"], null);
 		}
+#endif // TARGET_JVM
 #endif
 	}
 }

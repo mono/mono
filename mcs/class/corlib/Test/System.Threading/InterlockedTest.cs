@@ -38,9 +38,11 @@ namespace MonoTests.System.Threading
 		readonly object obj_1 = "obj_1";
 		readonly object obj_2 = "obj_2";
 		readonly object obj_3 = "obj_3";
+#if !TARGET_JVM // No support for exchanging two IntPtrs
 		readonly IntPtr iptr_1 = (IntPtr)int32_1;
 		readonly IntPtr iptr_2 = (IntPtr)int32_2;
 		readonly IntPtr iptr_3 = (IntPtr)int32_3;
+#endif // TARGET_JVM
 
 		[Test]
 		public void TestExchange_Int32 ()
@@ -83,6 +85,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(dbl_2, dbl);
 		}
 
+#if !TARGET_JVM // No support for exchanging two IntPtrs
 		[Test]
 		public void TestExchange_Iptr ()
 		{
@@ -90,6 +93,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.Exchange(ref iptr, iptr_2));
 			Assert.AreEqual(iptr_2, iptr);
 		}
+#endif // TARGET_JVM
 #endif
 
 		[Test]
@@ -133,6 +137,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(dbl_2, dbl);
 		}
 
+#if !TARGET_JVM // No support for compare exchanging two IntPtrs
 		[Test]
 		public void TestCompareExchange_Iptr ()
 		{
@@ -140,6 +145,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_1));
 			Assert.AreEqual(iptr_2, iptr);
 		}
+#endif // TARGET_JVM
 #endif
 
 		[Test]
@@ -183,6 +189,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(dbl_1, dbl);
 		}
 
+#if !TARGET_JVM // No support for compare exchanging two IntPtrs
 		[Test]
 		public void TestCompareExchange_Failed_Iptr ()
 		{
@@ -190,6 +197,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_3));
 			Assert.AreEqual(iptr_1, iptr);
 		}
+#endif // TARGET_JVM
 #endif
 
 		[Test]

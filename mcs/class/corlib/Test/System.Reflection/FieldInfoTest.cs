@@ -29,7 +29,9 @@
 using System;
 using System.Threading;
 using System.Reflection;
+#if !TARGET_JVM
 using System.Reflection.Emit;
+#endif // TARGET_JVM
 using System.Runtime.InteropServices;
 
 using NUnit.Framework;
@@ -96,6 +98,7 @@ public class FieldInfoTest : Assertion
 		*/
 	}
 
+#if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
 	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]
 	public void GetValueOnRefOnlyAssembly ()
@@ -117,6 +120,7 @@ public class FieldInfoTest : Assertion
 
 		f.SetValue (null, 8);
 	}
+#endif // TARGET_JVM
 
 	const int literal = 42;
 
@@ -152,6 +156,7 @@ public class FieldInfoTest : Assertion
 		AssertEquals (null, fi2.GetValue (t));
 	}
 	
+#if !TARGET_JVM // TypeBuilder not supported for TARGET_JVM
 	[Test]
 	public void NonPublicTests ()
 	{		
@@ -169,6 +174,7 @@ public class FieldInfoTest : Assertion
 		FieldInfo f = TypeBuilder.GetField (t, fi);
 		AssertNotNull (f);	
 	}
+#endif // TARGET_JVM
 	
 #endif
 }		
