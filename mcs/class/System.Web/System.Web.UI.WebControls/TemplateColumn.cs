@@ -46,11 +46,15 @@ namespace System.Web.UI.WebControls {
 			case ListItemType.AlternatingItem:
 			case ListItemType.SelectedItem:
 				t = ItemTemplate;
+				if (t == null)
+					cell.Text = "&nbsp;";
 				break;
 			case ListItemType.EditItem:
 				t = EditItemTemplate;
 				if (t == null)
 					t = ItemTemplate;
+				if (t == null)
+					cell.Text = "&nbsp;";
 				break;
 			}
 			
