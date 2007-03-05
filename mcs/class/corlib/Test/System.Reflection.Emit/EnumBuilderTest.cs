@@ -17,9 +17,10 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Reflection.Emit {
+namespace MonoTests.System.Reflection.Emit
+{
 	[TestFixture]
-	public class EnumBuilderTest : Assertion {
+	public class EnumBuilderTest  {
 		private static string _assemblyName = "MonoTests.System.Reflection.Emit.EnumBuilder";
 		private static string _moduleName = "EmittedModule";
 		private static string _enumNamespace = "MyNameSpace";
@@ -34,41 +35,56 @@ namespace MonoTests.System.Reflection.Emit {
 			EnumBuilder enumBuilder = GenerateEnum ();
 			VerifyType (enumBuilder);
 
-			AssertNotNull (enumBuilder.TypeToken);
-			AssertNotNull (enumBuilder.UnderlyingField);
-			AssertNull ("type.DeclaringType of toplevel type should be null", enumBuilder.DeclaringType);
-			AssertNull ("type.ReflectedType should be null", enumBuilder.ReflectedType);
-			AssertEquals (_enumType, enumBuilder.UnderlyingSystemType);
+			Assert.IsNotNull (enumBuilder.TypeToken, "#1");
+			Assert.IsNotNull (enumBuilder.UnderlyingField, "#2");
+			Assert.IsNull (enumBuilder.DeclaringType, "#3");
+			Assert.IsNull (enumBuilder.ReflectedType, "#4");
+			Assert.AreEqual (_enumType, enumBuilder.UnderlyingSystemType, "#5");
 		}
 
-		[Test][Category("ValueAdd")]
+		[Test]
+		[Category("ValueAdd")]
 		public void TestEnumBuilder_NotInMono ()
 		{
 			// If we decide to fix this (I dont see why we should),
 			// move to the routine above
 			
 			EnumBuilder enumBuilder = GenerateEnum ();
-			AssertEquals ("Comparing the IsSerializable field", false, enumBuilder.IsSerializable);
+			Assert.IsFalse (enumBuilder.IsSerializable);
 		}
 
-
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#else
 		[ExpectedException (typeof(NotSupportedException))]
+#endif
 		public void TestHasElementTypeEnumBuilderIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			bool hasElementType = enumBuilder.HasElementType;
+#if NET_2_0
+			Assert.IsFalse (hasElementType);
+#else
+			Assert.Fail ("Should have failed: " + hasElementType);
+#endif
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
-		[Category("ValueAdd")]
-		// Is this worth fixing, or is this considered, "extra value"?
+#if ONLY_1_1
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("ValueAdd")] // Is this worth fixing, or is this considered, "extra value"?
+#endif
 		public void TestHasElementTypeEnumBuilderComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
 			bool hasElementType = enumBuilder.HasElementType;
+#if NET_2_0
+			Assert.IsFalse (hasElementType);
+#else
+			Assert.Fail ("Should have failed: " + hasElementType);
+#endif
 		}
 
 		[Test]
@@ -79,7 +95,7 @@ namespace MonoTests.System.Reflection.Emit {
 			Type enumType = enumBuilder.CreateType ();
 			// you should not be able to define literal after type 
 			// has been created
-			FieldBuilder fieldBuilder = enumBuilder.DefineLiteral (_fieldName, _fieldValue);
+			enumBuilder.DefineLiteral (_fieldName, _fieldValue);
 		}
 
 		[Test]
@@ -89,12 +105,20 @@ namespace MonoTests.System.Reflection.Emit {
 			FieldBuilder fieldBuilder = enumBuilder.DefineLiteral (_fieldName, _fieldValue);
 			Type enumType = enumBuilder.CreateType ();
 
-			AssertEquals (enumType, fieldBuilder.DeclaringType);
-			AssertEquals (_enumType, fieldBuilder.FieldType);
-			AssertEquals (true, fieldBuilder.IsPublic);
-			AssertEquals (true, fieldBuilder.IsStatic);
-			AssertEquals (true, fieldBuilder.IsLiteral);
-			AssertEquals (_fieldName, fieldBuilder.Name);
+			Assert.IsTrue (fieldBuilder.IsPublic, "#1");
+			Assert.IsTrue (fieldBuilder.IsStatic, "#2");
+			Assert.IsTrue (fieldBuilder.IsLiteral, "#3");
+			Assert.AreEqual (_fieldName, fieldBuilder.Name, "#4");
+#if NET_2_0
+			Assert.IsFalse (enumType == fieldBuilder.DeclaringType, "#5");
+			Assert.IsFalse (enumBuilder == fieldBuilder.DeclaringType, "#6");
+			Assert.AreEqual (enumType.FullName, fieldBuilder.DeclaringType.FullName, "#7");
+			Assert.IsFalse (enumType == fieldBuilder.FieldType, "#8");
+			Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#9");
+#else
+			Assert.AreEqual (enumType, fieldBuilder.DeclaringType, "#5");
+			Assert.AreEqual (_enumType, fieldBuilder.FieldType, "#6");
+#endif
 		}
 
 		[Test]
@@ -125,7 +149,7 @@ namespace MonoTests.System.Reflection.Emit {
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
-			Assert (enumBuilder.GUID != Guid.Empty);
+			Assert.IsTrue (enumBuilder.GUID != Guid.Empty);
 		}
 
 		[Test]
@@ -139,11 +163,12 @@ namespace MonoTests.System.Reflection.Emit {
 			Type enumType = assemblyBuilder.GetType (_enumNamespace + "." + _enumName, true);
 
 			// Tested in above test: Assert (enumType.GUID != Guid.Empty);
-			AssertNull ("type.DeclaringType of toplevel type should be null", enumType.DeclaringType);
+			Assert.IsNull (enumType.DeclaringType);
 		}
 
 		[Test]
-		public void TestFieldProperties() {
+		public void TestFieldProperties()
+		{
 			AssemblyBuilder assemblyBuilder = GenerateAssembly ();
 			ModuleBuilder modBuilder = GenerateModule (assemblyBuilder);
 			EnumBuilder enumBuilder = GenerateEnum (modBuilder);
@@ -154,10 +179,30 @@ namespace MonoTests.System.Reflection.Emit {
 			FieldInfo fi = enumType.GetField (_fieldName);
 			Object o = fi.GetValue(enumType);
 
-			AssertEquals ("Checking the value of the Field to be 1", _fieldValue, fi.GetValue (enumType));
-			AssertEquals ("Checking if the field is a Literal", true, fi.IsLiteral);
-			AssertEquals ("Checking if the field is Public", true, fi.IsPublic);
-			AssertEquals ("Checking if the field is Static", true, fi.IsStatic);
+			Assert.IsTrue (fi.IsLiteral, "#1");
+			Assert.IsTrue (fi.IsPublic, "#2");
+			Assert.IsTrue (fi.IsStatic, "#3");
+			// bug81037: Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#4");
+			Assert.IsFalse (enumType == fieldBuilder.FieldType, "#5");
+#if NET_2_0
+			Assert.AreEqual (enumType.FullName, fieldBuilder.FieldType.FullName, "#6");
+			Assert.IsFalse (_enumType == fieldBuilder.FieldType, "#7");
+#else
+			Assert.IsFalse (enumType.FullName == fieldBuilder.FieldType.FullName, "#6");
+			Assert.AreEqual (_enumType, fieldBuilder.FieldType, "#7");
+#endif
+
+			object fieldValue = fi.GetValue (enumType);
+#if NET_2_0
+			Assert.IsFalse (_fieldValue == fieldValue, "#8");
+			Assert.IsTrue (fieldValue.GetType ().IsEnum, "#9");
+			Assert.AreEqual (enumType, fieldValue.GetType (), "#10");
+#else
+			Assert.AreEqual (_fieldValue, fieldValue, "#8");
+			Assert.IsFalse (fieldValue.GetType ().IsEnum, "#9");
+			Assert.AreEqual (_enumType, fieldValue.GetType (), "#10");
+#endif
+			Assert.AreEqual (_fieldValue, (int) fieldValue, "#11");
 		}
 
 		[Test]
@@ -168,7 +213,7 @@ namespace MonoTests.System.Reflection.Emit {
 			Type[] interfaces = enumBuilder.FindInterfaces (
 				new TypeFilter (MyInterfaceFilter), 
 				"System.Collections.IEnumerable");
-			AssertEquals (0, interfaces.Length);
+			Assert.AreEqual (0, interfaces.Length);
 		}
 
 		[Test]
@@ -196,13 +241,13 @@ namespace MonoTests.System.Reflection.Emit {
 				MemberTypes.Field, BindingFlags.Static |
 				BindingFlags.Public, new MemberFilter (MemberNameFilter),
 				_fieldName);
-			AssertEquals (1, members.Length);
+			Assert.AreEqual (1, members.Length, "#1");
 
 			members = enumBuilder.FindMembers (
 				MemberTypes.Field, BindingFlags.Static |
 				BindingFlags.Public, new MemberFilter (MemberNameFilter),
 				"doesntmatter");
-			AssertEquals (0, members.Length);
+			Assert.AreEqual (0, members.Length, "#2");
 		}
 
 		[Test]
@@ -223,7 +268,7 @@ namespace MonoTests.System.Reflection.Emit {
 			ConstructorInfo ctor = enumBuilder.GetConstructor (
 				BindingFlags.Public, null, CallingConventions.Any,
 				Type.EmptyTypes, new ParameterModifier[0]);
-			AssertNull (ctor);
+			Assert.IsNull (ctor);
 		}
 
 		[Test]
@@ -258,7 +303,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 			ConstructorInfo[] ctors = enumBuilder.GetConstructors (
 				BindingFlags.Instance | BindingFlags.Public);
-			AssertEquals (0, ctors.Length);
+			Assert.AreEqual (0, ctors.Length);
 		}
 
 		[Test]
@@ -269,7 +314,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 			ConstructorInfo[] ctors = enumBuilder.GetConstructors (
 				BindingFlags.Instance | BindingFlags.Public);
-			AssertEquals (0, ctors.Length);
+			Assert.AreEqual (0, ctors.Length);
 		}
 		
 		[Test]
@@ -278,52 +323,55 @@ namespace MonoTests.System.Reflection.Emit {
 			EnumBuilder enumBuilder = GenerateEnum ();
 			Type enumType = enumBuilder.CreateType ();
 			FieldInfo value = enumType.GetField ("value__", BindingFlags.Instance | BindingFlags.NonPublic);
-			AssertEquals ("value__ must have FieldAttributes.RTSpecialName set", FieldAttributes.RTSpecialName, value.Attributes & FieldAttributes.RTSpecialName);
+			Assert.AreEqual (FieldAttributes.RTSpecialName, value.Attributes & FieldAttributes.RTSpecialName);
 		}
 
 		private static void VerifyType (Type type)
 		{
-			AssertNotNull ("type.Assembly should not be null", type.Assembly);
-			AssertNotNull ("type.AssemblyQualifiedName should not be null", type.AssemblyQualifiedName);
-			AssertNotNull ("type.BaseType should not be null", type.BaseType);
-			AssertNotNull ("type.FullName should not be null", type.FullName);
-			AssertNotNull ("type.Module should not be null", type.Module);
-			AssertNotNull ("type.Name should not be null", type.Name);
-			AssertNotNull ("type.Namespace should not be null", type.Namespace);
-			AssertNotNull ("type.UnderlyingSystemType should not be null", type.UnderlyingSystemType);
+			Assert.IsNotNull (type.Assembly, "#V1");
+			Assert.IsNotNull (type.AssemblyQualifiedName, "#V2");
+			Assert.IsNotNull (type.BaseType, "#V3");
+			Assert.IsNotNull (type.FullName, "#V4");
+			Assert.IsNotNull (type.Module, "#V5");
+			Assert.IsNotNull (type.Name, "#V6");
+			Assert.IsNotNull (type.Namespace, "#V7");
+			Assert.IsNotNull (type.UnderlyingSystemType, "#V8");
 
-			AssertEquals (_moduleName, type.Module.Name);
-			AssertEquals (_enumNamespace, type.Namespace);
-			AssertEquals (_enumName, type.Name);
-			AssertEquals (typeof(Enum), type.BaseType);
-			AssertEquals (MemberTypes.TypeInfo, type.MemberType);
-			AssertEquals (typeof(int), Enum.GetUnderlyingType (type));
+#if ONLY_1_1
+			// on .NET 2.0, module is name is fixed to 
+			Assert.AreEqual (_moduleName, type.Module.Name, "#V9");
+#endif
+			Assert.AreEqual (_enumNamespace, type.Namespace, "#V10");
+			Assert.AreEqual (_enumName, type.Name, "#V11");
+			Assert.AreEqual (typeof (Enum), type.BaseType, "#V12");
+			Assert.AreEqual (MemberTypes.TypeInfo, type.MemberType, "#V13");
+			Assert.AreEqual (typeof (int), Enum.GetUnderlyingType (type), "#V14");
 
-			AssertEquals ("Comparing the IsArray field", false, type.IsArray);
-			AssertEquals ("Comparing the IsAutoClass field", false, type.IsAutoClass);
-			AssertEquals ("Comparing the IsAutoLayout field", true, type.IsAutoLayout);
-			AssertEquals ("Comparing the IsByRef field", false, type.IsByRef);
-			AssertEquals ("Comparing the IsClass field", false, type.IsClass);
-			AssertEquals ("Comparing the IsComObject field", false, type.IsCOMObject);
-			AssertEquals ("Comparing the IsContextful field", false, type.IsContextful);
-			AssertEquals ("Comparing the IsEnum field", true, type.IsEnum);
-			AssertEquals ("Comparing the IsExplicitLayout field", false, type.IsExplicitLayout);
-			AssertEquals ("Comparing the IsImport field", false, type.IsImport);
-			AssertEquals ("Comparing the IsInterface field", false, type.IsInterface);
-			AssertEquals ("Comparing the IsLayoutSequential field", false, type.IsLayoutSequential);
-			AssertEquals ("Comparing the IsMarshalByRef field", false, type.IsMarshalByRef);
-			AssertEquals ("Comparing the IsNestedAssembly field", false, type.IsNestedAssembly);
-			AssertEquals ("Comparing the IsNestedFamily field", false, type.IsNestedFamily);
-			AssertEquals ("Comparing the IsNestedPublic field", false, type.IsNestedPublic);
-			AssertEquals ("Comparing the IsNestedPrivate field", false, type.IsNestedPrivate);
-			AssertEquals ("Comparing the IsNotPublic field", false, type.IsNotPublic);
-			AssertEquals ("Comparing the IsPrimitive field", false, type.IsPrimitive);
-			AssertEquals ("Comparing the IsPointer field", false, type.IsPointer);
-			AssertEquals ("Comparing the IsPublic field", true, type.IsPublic);
-			AssertEquals ("Comparing the IsSealed field", true, type.IsSealed);
-			AssertEquals ("Comparing the IsUnicode field", false, type.IsUnicodeClass);
-			AssertEquals ("Comparing the requires special handling field", false, type.IsSpecialName);
-			AssertEquals ("Comparing the IsValueType field", true, type.IsValueType);
+			Assert.IsFalse (type.IsArray, "#V15");
+			Assert.IsFalse (type.IsAutoClass, "#V16");
+			Assert.IsTrue (type.IsAutoLayout, "#V17");
+			Assert.IsFalse (type.IsByRef, "#V18");
+			Assert.IsFalse (type.IsClass, "#V19");
+			Assert.IsFalse (type.IsCOMObject, "#V20");
+			Assert.IsFalse (type.IsContextful, "#V21");
+			Assert.IsTrue (type.IsEnum, "#V22");
+			Assert.IsFalse (type.IsExplicitLayout, "#V23");
+			Assert.IsFalse (type.IsImport, "#V24");
+			Assert.IsFalse (type.IsInterface, "#V25");
+			Assert.IsFalse (type.IsLayoutSequential, "#V26");
+			Assert.IsFalse (type.IsMarshalByRef, "#V27");
+			Assert.IsFalse (type.IsNestedAssembly, "#V28");
+			Assert.IsFalse (type.IsNestedFamily, "#V29");
+			Assert.IsFalse (type.IsNestedPublic, "#V30");
+			Assert.IsFalse (type.IsNestedPrivate, "#V31");
+			Assert.IsFalse (type.IsNotPublic, "#V32");
+			Assert.IsFalse (type.IsPrimitive, "#V33");
+			Assert.IsFalse (type.IsPointer, "#V34");
+			Assert.IsTrue (type.IsPublic, "#V35");
+			Assert.IsTrue (type.IsSealed, "#V36");
+			Assert.IsFalse (type.IsUnicodeClass, "#V37");
+			Assert.IsFalse (type.IsSpecialName, "#V38");
+			Assert.IsTrue (type.IsValueType, "#V39");
 		}
 
 		public static bool MyInterfaceFilter (Type t, object filterCriteria)

@@ -159,8 +159,13 @@ namespace System.Reflection.Emit {
 
 		public FieldBuilder DefineLiteral (string literalName, object literalValue)
 		{
+#if NET_2_0
+			Type fieldType = this;
+#else
+			Type fieldType = _underlyingType;
+#endif
 			FieldBuilder fieldBuilder = _tb.DefineField (literalName, 
-				_underlyingType, (FieldAttributes.Literal | 
+				fieldType, (FieldAttributes.Literal | 
 				(FieldAttributes.Static | FieldAttributes.Public)));
 			fieldBuilder.SetConstant (literalValue);
 			return fieldBuilder;

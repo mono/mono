@@ -1,3 +1,9 @@
+2007-03-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumBuilderTest.cs: Added tests for bug #81007. Use Assert instead
+	of deriving from Assertion. Marked HasElementType test NotWorking on
+	2.0 profile.
+
 2007-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodBuilderTest.cs: Move from Assertion to Assert. Added tests
