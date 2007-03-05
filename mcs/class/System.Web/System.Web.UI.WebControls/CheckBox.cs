@@ -343,7 +343,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		void AddAttributesForSpan (HtmlTextWriter writer)
+		bool AddAttributesForSpan (HtmlTextWriter writer)
 		{
 			ICollection k = Attributes.Keys;
 			string [] keys = new string [k.Count];
@@ -356,7 +356,11 @@ namespace System.Web.UI.WebControls {
 				common_attrs [key] = Attributes [key];
 				Attributes.Remove (key);
 			}
-			Attributes.AddAttributes (writer);
+			if (Attributes.Count > 0) {
+				Attributes.AddAttributes (writer);
+				return true;
+			}
+			return false;
 		}
 #if NET_2_0
 		protected internal
@@ -387,10 +391,8 @@ namespace System.Web.UI.WebControls {
 				need_span = true;
 			}
 
-			if (Attributes.Count > 0){
-				AddAttributesForSpan (w);
+			if (Attributes.Count > 0 && AddAttributesForSpan (w))
 				need_span = true;
-			}
 
 			if (need_span)
 				w.RenderBeginTag (HtmlTextWriterTag.Span);

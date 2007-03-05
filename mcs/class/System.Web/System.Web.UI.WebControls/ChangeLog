@@ -1,5 +1,10 @@
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CheckBox.cs: fixed: 'span' tag is not rendered if all attributes 
+	are rendered in 'input' tag. 
+
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DropDownList.cs:
 	* ListBox.cs:
 	used "ONLY_1_1" instead "!NET_2_0"	
