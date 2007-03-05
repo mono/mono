@@ -48,7 +48,6 @@ public class OracleConnection_ConnectionTimeout : GHTBase
 	}
 
 	[Test]
-	[Category("NotWorking")]
 	public void run()
 	{
 		Exception exp = null;

@@ -75,9 +75,6 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test]
-#if JAVA
-		[Category("NotWorking")]
-#endif
 		public void run()
 		{
 			Exception exp = null;
