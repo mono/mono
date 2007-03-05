@@ -1,5 +1,10 @@
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DropDownList.cs: in 2.0 first item is rendered with selected attribute
+	is Enabled=false and no selected items.
+
+2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBoxList.cs: in 2.0 access key attribute is rendered in 'input' tags.
 
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
