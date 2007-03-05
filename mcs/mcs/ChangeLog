@@ -1,3 +1,10 @@
+2007-03-05  David Mitchell  <dmitchell@logos.com>
+
+	* convert.cs: Implement From System.Collecitons.Generic.IList<T>
+	and its base interfaces to a one-dimensional array type S[],
+	provided there is an implicit or explicit reference conversion
+	from S to T.
+
 2007-03-03  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Implemented basic linq grammar.

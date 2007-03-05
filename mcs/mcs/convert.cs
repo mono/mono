@@ -86,6 +86,33 @@ namespace Mono.CSharp {
 			return false;
 #endif
 		}
+		
+		static bool IList_To_Array(Type list, Type array)
+		{
+# if GMCS_SOURCE
+			if (!list.IsGenericType || !array.IsArray || array.GetArrayRank() != 1)
+				return false;
+			
+			Type gt = list.GetGenericTypeDefinition();
+			if (gt != TypeManager.generic_ilist_type &&
+				gt != TypeManager.generic_icollection_type &&
+				gt != TypeManager.generic_ienumerable_type)
+				return false;
+			
+			Type arg_type = TypeManager.GetTypeArguments(list)[0];
+			Type element_type = TypeManager.GetElementType(array);
+			
+			if (element_type == arg_type)
+				return true;
+			
+			if (MyEmptyExpr == null)
+				MyEmptyExpr = new EmptyExpression();
+			MyEmptyExpr.SetType(element_type);
+			return ImplicitReferenceConversionExists(MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists(element_type, arg_type);
+#else
+			return false;
+#endif
+		}
 
 		static Expression ImplicitTypeParameterConversion (Expression expr,
 								   Type target_type)
@@ -1813,6 +1840,13 @@ namespace Mono.CSharp {
 					else
 						return new UnboxCast (source, target_type);
 				}
+
+				//
+				// From System.Collecitons.Generic.IList<T> and its base interfaces to a one-dimensional
+				// array type S[], provided there is an implicit or explicit reference conversion from S to T.
+				//
+				if (IList_To_Array(source_type, target_type))
+					return new EmptyCast(source, target_type);
 
 				return null;
 			}
