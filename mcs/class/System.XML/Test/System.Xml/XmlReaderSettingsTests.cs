@@ -373,6 +373,34 @@ namespace MonoTests.System.Xml
 				r.Read ();
 			}
 		}
+
+		[Test]
+		public void ResolveEntities () // bug #81000
+		{
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ProhibitDtd = false;
+			s.XmlResolver = new XmlResolver81000 ();
+
+			string xml = "<!DOCTYPE root SYSTEM \"foo.dtd\"><root>&alpha;</root>";
+			XmlReader r = XmlReader.Create (new StringReader (xml), s);
+			r.Read ();
+			r.Read ();
+			r.Read ();
+			// not EntityReference but Text
+			AssertEquals ("#1", XmlNodeType.Text, r.NodeType);
+			r.Read ();
+			AssertEquals ("#2", XmlNodeType.EndElement, r.NodeType);
+		}
+
+		public class XmlResolver81000 : XmlResolver
+		{
+			public override ICredentials Credentials { set {} }
+
+			public override object GetEntity (Uri uri, string role, Type type)
+			{
+				return new MemoryStream (Encoding.UTF8.GetBytes ("<!ENTITY alpha \"bravo\">"));
+			}
+		}
 	}
 }
 #endif

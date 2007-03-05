@@ -1,3 +1,7 @@
+2007-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderSettingsTests.cs : added test for bug #81000.
+
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : added test for bug #80848.

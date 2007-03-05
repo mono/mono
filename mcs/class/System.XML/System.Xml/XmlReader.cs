@@ -337,6 +337,7 @@ namespace System.Xml
 			reader.XmlResolver = settings.XmlResolver;
 			// Normalization is set true by default.
 			reader.Normalization = true;
+			reader.EntityHandling = EntityHandling.ExpandEntities;
 
 			if (settings.ProhibitDtd)
 				reader.ProhibitDtd = true;
