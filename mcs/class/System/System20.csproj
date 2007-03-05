@@ -91,6 +91,92 @@
     <GHProjectKind>framework</GHProjectKind>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_Prepare|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20_Prepare\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;NET_2_0;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <GHProjectKind>framework</GHProjectKind>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_Prepare|AnyCPU' ">
+    <OutputPath>bin\Release_Java20_Prepare\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_Prepare1|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20_Prepare1\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;NET_2_0;XML_DEP;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <GHProjectKind>framework</GHProjectKind>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_Prepare1|AnyCPU' ">
+    <OutputPath>bin\Release_Java20_Prepare1\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0;XML_DEP;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
   <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -420,6 +506,7 @@
     <Compile Include="System.ComponentModel\MergablePropertyAttribute.cs" />
     <Compile Include="System.ComponentModel\NotifyParentPropertyAttribute.cs" />
     <Compile Include="System.ComponentModel\ParenthesizePropertyNameAttribute.cs" />
+    <Compile Include="System.ComponentModel\PasswordPropertyTextAttribute.cs" />
     <Compile Include="System.ComponentModel\ProgressChangedEventArgs.cs" />
     <Compile Include="System.ComponentModel\ProgressChangedEventHandler.cs" />
     <Compile Include="System.ComponentModel\PropertyChangedEventArgs.cs" />
