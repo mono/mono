@@ -1,5 +1,15 @@
 2007-03-05  David Mitchell <dmitchell@logos.com>
 
+	* Dictionary.cs: An instance of Dictionary<TKey,TValue> is
+	supposed to throw a KeyNotFoundException when 
+	the user attempts to retrieve the value associated with a key that
+	is not in the dictionary.
+
+	On the other hand, an instance of IDictionary is supposed to
+	return null in similar circumstances.
+
+2007-03-05  David Mitchell <dmitchell@logos.com>
+
 	* List.cs: Fix InsertRange bug (80930).
 
 2006-09-15  Gert Driesen  <drieseng@users.sourceforge.net>

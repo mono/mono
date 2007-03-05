@@ -446,7 +446,11 @@ namespace System.Collections.Generic {
 		}
 
 		object IDictionary.this [object key] {
-			get { return this [ToTKey (key)]; }
+			get {
+				if (key is TKey && ContainsKey((TKey) key))
+					return this [ToTKey (key)];
+				return null;
+			}
 			set { this [ToTKey (key)] = ToTValue (value); }
 		}
 

@@ -681,6 +681,15 @@ namespace MonoTests.System.Collections.Generic {
 			IDictionary d = new Dictionary<int, int> ();
 			d.Remove (null);
 		}
+		
+		[Test]
+		public void IDictionary_IndexerGetNonExistingTest ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add(1, 2);
+			Assert.IsNull(d[2]);
+			Assert.IsNull(d["foo"]);
+		}
 	}
 }
 
