@@ -1,5 +1,12 @@
 2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Style.cs: fixed:
+	when AddAttributesToRender(System.Web.UI.HtmlTextWriter, WebControl) 
+	is called, WebControl parameter is passed as argument to 
+	FillStyleAttributes (CssStyleCollection, IUrlResolutionService) method.
+
+2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataList.cs:
 	* DataListItem.cs:
 	fixed applying styles if ExtractTemplateRows=true.

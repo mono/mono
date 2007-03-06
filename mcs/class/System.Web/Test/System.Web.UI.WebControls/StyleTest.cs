@@ -731,5 +731,36 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.AddAttributesToRender(writer);
 			// Figure out an order-independent way to verify rendered results
 		}
+#if NET_2_0
+		class PokerStyle : Style
+		{
+			public IUrlResolutionService UrlResolver;
+
+			protected override void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
+			{
+				UrlResolver = urlResolver;
+				base.FillStyleAttributes (attributes, urlResolver);
+			}
+		}
+		
+		class PokerWebControl : WebControl
+		{
+			protected override Style CreateControlStyle ()
+			{
+				return new PokerStyle ();
+			}
+		}
+
+		[Test]
+		public void FillStyleAttributes_UrlResolver ()
+		{
+			PokerWebControl c = new PokerWebControl ();
+			c.BackColor = Color.AliceBlue;
+			c.RenderControl (new HtmlTextWriter (new StringWriter ()));
+
+			Assert.AreEqual (c, ((PokerStyle) c.ControlStyle).UrlResolver);
+		}
+
+#endif
 	}
 }

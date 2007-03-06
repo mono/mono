@@ -411,19 +411,21 @@ namespace System.Web.UI.WebControls {
 			{
 				if (CssClass.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass);
+#if NET_2_0
+				CssStyleCollection col = new CssStyleCollection (new StateBag ());
+				FillStyleAttributes (col, owner);
+				foreach (string key in col.Keys) {
+					writer.AddStyleAttribute (key, col [key]);
+				}
+#else
 				WriteStyleAttributes (writer);
+#endif
 			}
 		}
 
+#if ONLY_1_1
 		void WriteStyleAttributes (HtmlTextWriter writer) 
 		{
-#if NET_2_0
-			CssStyleCollection col = new CssStyleCollection (new StateBag ());
-			FillStyleAttributes (col, null);
-			foreach (string key in col.Keys) {
-				writer.AddStyleAttribute (key, col [key]);
-			}
-#else
 			string s;
 			Color		color;
 			BorderStyle	bs;
@@ -515,11 +517,11 @@ namespace System.Web.UI.WebControls {
 				if (s != "")
 					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
 			}
-#endif
 		}
+#endif
 
 #if NET_2_0
-		void FillStyleAttributes (CssStyleCollection attributes) 
+		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
 			Color		color;
 			BorderStyle	bs;
@@ -804,11 +806,6 @@ namespace System.Web.UI.WebControls {
 		#endregion	// IStateManager Properties & Methods
 
 #if NET_2_0
-		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
-		{
-			FillStyleAttributes (attributes);
-		}
-
 		internal void SetRegisteredCssClass (string name)
 		{
 			registered_class = name;
