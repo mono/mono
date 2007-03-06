@@ -346,6 +346,11 @@ namespace System.Web.SessionState
 		}
 
 		HttpSessionStateContainer CreateContainer (string sessionId, SessionStateStoreData data, bool isNew, bool isReadOnly) {
+			if (data == null)
+				return new HttpSessionStateContainer (
+					sessionId, null, null, 0, isNew,
+					config.Cookieless, config.Mode, isReadOnly);
+			
 			return new HttpSessionStateContainer (
 				sessionId,
 				data.Items,
