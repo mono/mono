@@ -1213,6 +1213,7 @@
     <Compile Include="System.Web.UI\Page.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\PageAsyncTask.cs" />
     <Compile Include="System.Web.UI\PageParser.jvm.cs" />
     <Compile Include="System.Web.UI\TemplateControl.jvm.cs" />
     <Compile Include="System.Web.UI\UserControlControlBuilder.cs">
