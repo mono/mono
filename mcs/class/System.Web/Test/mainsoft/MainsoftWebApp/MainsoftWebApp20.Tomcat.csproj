@@ -682,6 +682,13 @@
     <Compile Include="System_Web\PageDirectories\Controls2\UserControl2.ascx.designer.cs">
       <DependentUpon>UserControl2.ascx</DependentUpon>
     </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageHyperLink.aspx.cs">
+      <DependentUpon>PageHyperLink.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System_Web\PageDirectories\Pages\PageHyperLink.aspx.designer.cs">
+      <DependentUpon>PageHyperLink.aspx</DependentUpon>
+    </Compile>
     <Compile Include="System_Web\PageDirectories\Pages\PageWControl4.aspx.cs">
       <DependentUpon>PageWControl4.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2641,6 +2648,7 @@
   <ItemGroup>
     <Content Include="System_Web\PageDirectories\Controls1\UserControl1.ascx" />
     <Content Include="System_Web\PageDirectories\Controls2\UserControl2.ascx" />
+    <Content Include="System_Web\PageDirectories\Pages\PageHyperLink.aspx" />
     <Content Include="System_Web\PageDirectories\Pages\PageWControl4.aspx" />
     <Content Include="System_Web\PageDirectories\UserMaster.Master" />
     <Content Include="System_Web\PageDirectories\MasterPages\SubMaster.Master" />

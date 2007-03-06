@@ -1,4 +1,8 @@
-2007-03-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+2007-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System_Web/PageDirectories: net test case added
+
+2007-03-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System_Web/PageDirectories/*: Added new tests for ResolveUrl,
 	TemplateSourceDirectory, etc

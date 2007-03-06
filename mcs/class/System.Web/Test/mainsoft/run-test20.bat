@@ -3,13 +3,32 @@
 rem =================================================
 if "%GH_HOME%" == "" (set GH_HOME=c:\Program Files\Mainsoft\Visual MainWin for J2EE V2)
 if "%VMW_HOME%" == "" (set VMW_HOME=%GH_HOME%) 
-if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre5) 
+if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre6) 
 set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
+
+rem =================================================
+set startDate=%date%
+set startTime=%time%
+set sdy=%startDate:~10%
+set /a sdm=1%startDate:~4,2% - 100
+set /a sdd=1%startDate:~7,2% - 100
+set /a sth=%startTime:~0,2%
+set /a stm=1%startTime:~3,2% - 100
+set /a sts=1%startTime:~6,2% - 100
+set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
+
+set OUTPUT_FILE_PREFIX=System_Web_Services
+set RUNNING_FIXTURE=System.Web.Services
+
+set COMMON_PREFIX=%cd%\%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
+set BUILD_LOG=%COMMON_PREFIX%.build.log
+set RUN_LOG=%COMMON_PREFIX%.run.log
 
 rem =================================================
 pushd MainsoftWebApp
 echo Building Tomcat web project...
-msbuild MainsoftWebApp20.Tomcat.csproj /t:rebuild /p:Configuration=Debug_Java
+msbuild MainsoftWebApp20.Tomcat.csproj /t:deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
 popd
 
 IF NOT ERRORLEVEL==0 GOTO FAILURE
@@ -18,7 +37,7 @@ rem =================================================
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 echo Build NUnit...
 pushd ..\..\..\..\nunit20\
-msbuild nunit20.java.sln /t:build /p:Configuration=Debug_Java20
+msbuild nunit20.java.sln /t:build /p:Configuration=Debug_Java20 >>%BUILD_LOG% 2<&1
 popd
 
 goto NUNITREADY
@@ -30,7 +49,7 @@ set NUNIT_BUILD=DONE
 rem =================================================
 echo Build System.Web test client side...
 pushd MainsoftWebTest
-msbuild SystemWebTest20.J2EE.csproj /t:build /p:Configuration=Debug_Java_Nunit
+msbuild SystemWebTest20.J2EE.csproj /t:build /p:Configuration=Debug_Java_Nunit >>%BUILD_LOG% 2<&1
 popd
 
 
@@ -46,7 +65,7 @@ copy ..\..\..\..\nunit20\nunit-console\bin\Debug_Java\nunit-console.jar Mainsoft
 rem =================================================
 echo Buildinig xmltool...
 pushd ..\..\..\..\tools\mono-xmltool
-msbuild XmlTool20.csproj /p:Configuration=Debug_Java20
+msbuild XmlTool20.csproj /p:Configuration=Debug_Java20 >>%BUILD_LOG% 2<&1
 popd
 copy ..\..\..\..\tools\mono-xmltool\bin\Debug_Java\xmltool.exe MainsoftWebTest\bin\xmltool.exe 
 copy ..\..\..\..\tools\mono-xmltool\nunit_transform.xslt MainsoftWebTest\bin\nunit_transform.xslt 
@@ -67,16 +86,13 @@ set GH_CP=%GH_CP%;nunit.framework.jar
 set GH_CP=%GH_CP%;nunit.util.jar
 set GH_CP=%GH_CP%;nunit-console.jar
 
-set ghlogfile=logfile.xml
-set monologfile=mono.xml
-
 pushd MainsoftWebTest\bin
 
 echo Running Mainsoft tests...
-"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%ghlogfile% /fixture:MonoTests.stand_alone.WebHarness.Harness
+"%JAVA_HOME%\bin\java.exe" -cp .;"%GH_CP%" NUnit.Console.ConsoleUi SystemWebTest.jar /xml=%GH_OUTPUT_XML% /fixture:MonoTests.stand_alone.WebHarness.Harness >>%RUN_LOG% 2<&1
 
 echo Finished...
-xmltool.exe --transform nunit_transform.xslt %ghlogfile%
+xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 
 popd
 

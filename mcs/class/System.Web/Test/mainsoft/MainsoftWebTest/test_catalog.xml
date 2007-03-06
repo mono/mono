@@ -30,6 +30,7 @@
   <TestCase url="/System_Web/HttpRuntime/HttpRuntime_AppDomainAppPath_MapPath.aspx" name="" Exclude="Y" />
   <TestCase url="/System_Web/HttpValidationStatus/HttpValidationStatus_Enum.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/PageDirectories/UserPage.aspx" name="" Exclude="N" />
+  <TestCase url="/System_Web/PageDirectories/Pages/PageHyperLink.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/PageDirectories/Pages/PageWControl1.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/PageDirectories/Pages/PageWControl2.aspx" name="" Exclude="N" />
   <TestCase url="/System_Web/PageDirectories/Pages/PageWControl3.aspx" name="" Exclude="N" />
