@@ -1,3 +1,8 @@
+2007-03-06  Miguel de Icaza  <miguel@novell.com>
+
+	* convert.cs (ExplicitReferenceConversionExists): Sync this method
+	with the changes from David, fixes the build.
+
 2007-03-05  David Mitchell  <dmitchell@logos.com>
 
 	* convert.cs: Implement From System.Collecitons.Generic.IList<T>

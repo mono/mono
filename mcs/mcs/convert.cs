@@ -1719,6 +1719,9 @@ namespace Mono.CSharp {
 				return true;
 
 
+			if (source_type.IsInterface && IList_To_Array (source_type, target_type))
+				return true;
+
 			// From an array type S with an element type Se to an array type T with an
 			// element type Te provided all the following are true:
 			//     * S and T differe only in element type, in other words, S and T
