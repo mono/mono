@@ -171,7 +171,8 @@ namespace System.Net
 		internal bool InternalAllowBuffering {
 			get {
 				return (allowBuffering && (method != "HEAD" && method != "GET" &&
-							method != "MKCOL" && method != "CONNECT"));
+							method != "MKCOL" && method != "CONNECT" &&
+							method != "DELETE" && method != "TRACE"));
 			}
 		}
 		
@@ -581,7 +582,8 @@ namespace System.Net
 			if (aborted)
 				throw new WebException ("The request was previosly aborted.");
 
-			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD");
+			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
+					method == "TRACE" || method == "DELETE");
 			if (method == null || !send)
 				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
 
@@ -1002,7 +1004,7 @@ namespace System.Net
 				writeStream.Write (bodyBuffer, 0, bodyBufferLength);
 				bodyBuffer = null;
 				writeStream.Close ();
-			} else if (method == "PUT" || method == "POST") {
+			} else if (method == "PUT" || method == "POST" || method == "OPTIONS") {
 				if (getResponseCalled && !writeStream.RequestWritten)
 					writeStream.WriteRequest ();
 			}

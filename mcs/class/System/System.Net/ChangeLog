@@ -1,3 +1,8 @@
+2007-03-05 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* HttpWebRequest.cs: properly handle OPTIONS, which may or may not
+	have a request body. Fixes bug #80686.
+
 2007-03-02  Marek Habersack  <mhabersack@novell.com>
 
 	* WebClient.cs: Overwrite existing files on download, as
