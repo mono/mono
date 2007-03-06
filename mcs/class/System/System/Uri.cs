@@ -754,31 +754,32 @@ namespace System {
 		}
 
 		// Assumes: uri != null
-		// FIXME: Should we have a different implementation for NET_2_0?
 		bool InternalEquals (Uri uri)
 		{
+#if NET_2_0
+			if (this.isAbsoluteUri != uri.isAbsoluteUri)
+				return false;
+			if (!this.isAbsoluteUri)
+				return this.source == uri.source;
+#endif
+
 			CultureInfo inv = CultureInfo.InvariantCulture;
-			return ((this.scheme.ToLower (inv) == uri.scheme.ToLower (inv)) &&
-				(this.host.ToLower (inv) == uri.host.ToLower (inv)) &&
-				(this.port == uri.port) &&
-				(this.path == uri.path) &&
-				(this.query.ToLower (inv) == uri.query.ToLower (inv)));
-		}		
+			return this.scheme.ToLower (inv) == uri.scheme.ToLower (inv)
+				&& this.host.ToLower (inv) == uri.host.ToLower (inv)
+				&& this.port == uri.port
+#if NET_2_0
+				&& this.query == uri.query
+#else
+				// Note: MS.NET 1.x has bug - ignores query check altogether
+				&& this.query.ToLower (inv) == uri.query.ToLower (inv)
+#endif
+				&& this.path == uri.path;
+		}
 
 #if NET_2_0
 		public static bool operator == (Uri u1, Uri u2)
 		{
-			if ((object) u1 == null)
-				return (object) u2 == null;
-			else if ((object) u2 == null)
-				return false;
-
-			return u1.scheme == u2.scheme &&
-				u1.userinfo == u2.userinfo &&
-				u1.host == u2.host &&
-				u1.port == u2.port &&
-				u1.path == u2.path &&
-				u1.query == u2.query;
+			return object.Equals(u1, u2);
 		}
 
 		public static bool operator != (Uri u1, Uri u2)
@@ -789,14 +790,24 @@ namespace System {
 
 		public override int GetHashCode () 
 		{
-			if (cachedHashCode == 0)			
-				cachedHashCode = scheme.GetHashCode ()
-				               + userinfo.GetHashCode ()
-					       + host.GetHashCode ()
-					       + port
-					       + path.GetHashCode ()
-					       + query.GetHashCode ();			           
-			return cachedHashCode;				
+			if (cachedHashCode == 0) {
+				CultureInfo inv = CultureInfo.InvariantCulture;
+				if (isAbsoluteUri) {
+					cachedHashCode = scheme.ToLower (inv).GetHashCode ()
+						^ host.ToLower (inv).GetHashCode ()
+						^ port
+#if NET_2_0
+						^ query.GetHashCode ()
+#else
+						^ query.ToLower (inv).GetHashCode ()
+#endif
+						^ path.GetHashCode ();
+				}
+				else {
+					cachedHashCode = source.GetHashCode ();
+				}
+			}
+			return cachedHashCode;
 		}
 		
 		public string GetLeftPart (UriPartial part) 

@@ -1153,7 +1153,38 @@ namespace MonoTests.System
 			uri2 = new Uri ("http://www.contoso.com:8080/index.htm");
 			Assert ("#4", uri1.GetHashCode () != uri2.GetHashCode ());			
 		}
-		
+
+#if NET_2_0
+		[Test]
+		public void RelativeEqualsTest()
+		{
+			Uri uri1 = new Uri ("foo/bar", UriKind.Relative);
+			Uri uri2 = new Uri ("foo/bar", UriKind.Relative);
+			Uri uri3 = new Uri ("bar/man", UriKind.Relative);
+			Uri uri4 = new Uri ("BAR/MAN", UriKind.Relative);
+			Assert ("#1a", uri1 == uri2);
+			Assert ("#1b", uri1.Equals(uri2));
+			Assert ("#2a", uri1 != uri3);
+			Assert ("#2b", !uri1.Equals(uri3));
+			Assert ("#3a", uri1 == uri2);
+			Assert ("#3b", uri1.Equals(uri2));
+			Assert ("#4a", uri1 != uri3);
+			Assert ("#4b", !uri1.Equals(uri3));
+			Assert ("#5a", uri3 != uri4);
+			Assert ("#5b", !uri3.Equals(uri4));
+		}
+
+		[Test]
+		public void RelativeGetHashCodeTest()
+		{
+			Uri uri1 = new Uri ("foo/bar", UriKind.Relative);
+			Uri uri2 = new Uri ("foo/bar", UriKind.Relative);
+			Uri uri3 = new Uri ("bar/man", UriKind.Relative);
+			AssertEquals ("#1", uri1.GetHashCode(), uri2.GetHashCode());
+			Assert ("#2", uri1.GetHashCode() != uri3.GetHashCode());
+		}
+#endif
+
 		[Test]
 		public void MakeRelative ()
 		{

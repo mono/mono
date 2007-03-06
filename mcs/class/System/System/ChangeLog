@@ -1,3 +1,16 @@
+2007-03-05  Peter Dettman  <peter.dettman@iinet.net.au>
+
+	* Uri.cs: This patch straightens out Equals/GetHashCode for the
+	Uri class: 
+
+	- GetHashCode gives sensible values for relative Uri's.
+	- Uri's that compare equal will give same hashcode.  
+	- operator == now uses Equals.
+
+	All existing tests still pass, and I have added some extra test
+	cases specifically for Equals/GetHashCode on relative Uri's
+	(included in patch).
+
 2007-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs (MakeRelativeUri): implement, copy most of the code from
