@@ -351,14 +351,10 @@ namespace Microsoft.Win32 {
 		}
 
 #if NET_2_0
-		public
-#else
-		internal
-#endif
 		//
 		// This version has to do argument validation based on the valueKind
 		//
-		void SetValue (string name, object value, RegistryValueKind valueKind)
+		public void SetValue (string name, object value, RegistryValueKind valueKind)
 		{
 			SetDirty ();
 			switch (valueKind){
@@ -417,6 +413,7 @@ namespace Microsoft.Win32 {
 			}
 			throw new ArgumentException ("Value could not be converted to specified type", "valueKind");
 		}
+#endif
 
 		void SetDirty ()
 		{
@@ -636,17 +633,14 @@ namespace Microsoft.Win32 {
 		}
 
 #if NET_2_0
-		public 
-#else
-		internal
-#endif
-		void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
+		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
 			if (self == null)
 				throw RegistryKey.CreateMarkedForDeletionException ();
 			self.SetValue (name, value, valueKind);
 		}
+#endif
 
 		public int SubKeyCount (RegistryKey rkey)
 		{

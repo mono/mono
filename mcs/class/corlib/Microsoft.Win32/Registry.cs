@@ -59,6 +59,7 @@ namespace Microsoft.Win32
 		public static readonly RegistryKey Users = new RegistryKey (
 				RegistryHive.Users);
 
+#if NET_2_0
 		static RegistryKey ToKey (string keyName, bool setting)
 		{
 			if (keyName == null)
@@ -105,12 +106,7 @@ namespace Microsoft.Win32
 			return key;
 		}
 		
-#if NET_2_0
-		public
-#else
-		internal 
-#endif
-		static void SetValue (string keyName, string valueName, object value)
+		public static void SetValue (string keyName, string valueName, object value)
 		{
 			RegistryKey key = ToKey (keyName, true);
 			if (valueName.Length > 255)
@@ -122,12 +118,7 @@ namespace Microsoft.Win32
 			key.SetValue (valueName, value);
 		}
 
-#if NET_2_0
-		public
-#else
-		internal 
-#endif
-		static void SetValue (string keyName, string valueName, object value, RegistryValueKind valueKind)
+		public static void SetValue (string keyName, string valueName, object value, RegistryValueKind valueKind)
 		{
 			RegistryKey key = ToKey (keyName, true);
 			if (valueName.Length > 255)
@@ -139,12 +130,7 @@ namespace Microsoft.Win32
 			key.SetValue (valueName, value, valueKind);
 		}
 		
-#if NET_2_0
-		public
-#else
-		internal 
-#endif
-		static object GetValue (string keyName, string valueName, object defaultValue)
+		public static object GetValue (string keyName, string valueName, object defaultValue)
 		{
 			RegistryKey key = ToKey (keyName, false);
 			if (key == null)
@@ -152,5 +138,6 @@ namespace Microsoft.Win32
 			
 			return key.GetValue (valueName, defaultValue);
 		}
+#endif
 	}
 }

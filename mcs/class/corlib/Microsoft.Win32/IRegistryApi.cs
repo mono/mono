@@ -54,8 +54,10 @@ namespace Microsoft.Win32 {
 		string [] GetSubKeyNames (RegistryKey rkey);
 		string [] GetValueNames (RegistryKey rkey);
 		string ToString (RegistryKey rkey);
-		
+
+#if NET_2_0
 		void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind);
+#endif
 	}
 }
 

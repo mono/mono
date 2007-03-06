@@ -195,11 +195,7 @@ namespace Microsoft.Win32
 
 #if NET_2_0
 		[ComVisible (false)]
-		public 
-#else
-		internal
-#endif
-		void SetValue (string name, object value, RegistryValueKind valueKind)
+		public void SetValue (string name, object value, RegistryValueKind valueKind)
 		{
 			AssertKeyStillValid ();
 			
@@ -211,6 +207,7 @@ namespace Microsoft.Win32
 
 			RegistryApi.SetValue (this, name, value, valueKind);
 		}
+#endif
 
 		/// <summary>
 		///	Open the sub key specified, for read access.
@@ -255,16 +252,13 @@ namespace Microsoft.Win32
 
 #if NET_2_0
 		[ComVisible (false)]
-		public 
-#else
-		internal
-#endif
-		object GetValue (string name, object defaultValue, RegistryValueOptions options)
+		public object GetValue (string name, object defaultValue, RegistryValueOptions options)
 		{
 			AssertKeyStillValid ();
 
 			return RegistryApi.GetValue (this, name, defaultValue, options);
 		}
+#endif
 
 		/// <summary>
 		///	Create a sub key.
