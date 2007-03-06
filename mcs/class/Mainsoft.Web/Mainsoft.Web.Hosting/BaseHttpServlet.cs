@@ -217,6 +217,9 @@ namespace Mainsoft.Web.Hosting
 
 				servletDomain.SetData ("DataDirectory", dataDirectory);
 
+				if (config.getServletContext ().getRealPath ("/") == null)
+					servletDomain.SetData(".appStartTime", DateTime.UtcNow);
+
 				// The BaseDir is the full path to the physical dir of the app
 				// and allows the application to modify files in the case of
 				// open deployment.
