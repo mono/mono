@@ -211,6 +211,9 @@ namespace Mainsoft.Data.Jdbc.Providers
 
 				if (driver != null && driver.Length != 0) {
 					try {
+						java.lang.ClassLoader contextLoader = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
+						if (contextLoader != null)
+							return (Driver) contextLoader.loadClass (driver).newInstance ();
 						return (Driver) java.lang.Class.forName (driver).newInstance ();
 					}
 					catch (java.lang.ClassNotFoundException e) {
