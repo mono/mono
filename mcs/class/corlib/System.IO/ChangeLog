@@ -1,3 +1,11 @@
+2007-03-05  Miguel de Icaza  <miguel@novell.com>
+
+	* Path.cs: Manually call FileStream and pass the new internal
+	FileOptions.1 flag that means "This is a temporary file, use 600
+	permissions". 
+
+	* FileOptions.cs: Document the new private enum value.
+
 2007-02-22  Dick Porter  <dick@ximian.com>
 
 	* MonoIOError.cs: 

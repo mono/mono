@@ -361,7 +361,8 @@ namespace System.IO {
 				path = Path.Combine (GetTempPath(), "tmp" + num.ToString("x") + ".tmp");
 
 				try {
-					f = new FileStream (path, FileMode.CreateNew);
+					f = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
+							    8192, false, (FileOptions) 1);
 				}
 				catch (SecurityException) {
 					// avoid an endless loop
