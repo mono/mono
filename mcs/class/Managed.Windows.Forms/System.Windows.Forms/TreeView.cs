@@ -55,6 +55,9 @@ namespace System.Windows.Forms {
 		private int image_index = -1;
 		private int selected_image_index = -1;
 
+#if NET_2_0
+		private string image_key;
+#endif
 		private bool full_row_select;
 		private bool hot_tracking;
 		private int indent = 19;
@@ -502,6 +505,20 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+#if NET_2_0
+		[Localizable (true)]
+		public string ImageKey {
+			get { return image_key; }
+			set {
+				if (image_key == value)
+					return;
+				image_index = -1;
+				image_key = value;
+				Invalidate ();
+			}
+		}
+#endif
+
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -1230,6 +1247,16 @@ namespace System.Windows.Forms {
 			} else if (ImageIndex > -1 && ImageIndex < ImageList.Images.Count) {
 				use_index = ImageIndex;
 			}
+
+#if NET_2_0
+			if (use_index == -1 && !String.IsNullOrEmpty (node.ImageKey)) {
+				use_index = image_list.Images.IndexOfKey (node.ImageKey);
+			}
+
+			if (use_index == -1 && !String.IsNullOrEmpty (ImageKey)) {
+				use_index = image_list.Images.IndexOfKey (ImageKey);
+			}
+#endif
 
 			if (use_index == -1 && ImageList.Images.Count > 0) {
 				use_index = 0;

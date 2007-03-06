@@ -10,6 +10,7 @@
 	- Implement 2.0 LineColors property.  Lets you change the color of
 	the lines in the tree. Terribly useful for creating non cohesive
 	desktops.
+	- Implement 2.0 image key feature.
 
 2007-03-06  Jackson Harper  <jackson@ximian.com>
 
