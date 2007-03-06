@@ -1,3 +1,12 @@
+2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
+
+	* Enum.cs: The above patch makes the formatting for specifiers 'x'
+	and 'X' behave like MS.NET, including the correct length for each
+	possible underlying type, and correctly using capital letters for
+	the 'X' case.
+
+	Patch also includes some more test cases in EnumTests.cs.
+
 2007-02-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppDomainSetup.cs: If configuration file is not an absolute path,

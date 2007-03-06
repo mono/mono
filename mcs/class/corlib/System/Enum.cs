@@ -470,34 +470,25 @@ namespace System
 			return v.GetHashCode ();
 		}
 
-		private static string FormatSpecifier_X (Type enumType, object value)
+		private static string FormatSpecifier_X (Type enumType, object value, bool upper)
 		{
-			// FIXME: Not sure if padding should always be with precision
-			// 8, if it's culture specific, or what.  This works for me.
-			const string format = "x8";
-
 			switch (Type.GetTypeCode (enumType)) {
-				case TypeCode.Char:
-					// Char doesn't support ToString(format), so convert to an int and
-					// use that...
-					char v = (char) value;
-					return Convert.ToInt32 (v).ToString(format);
 				case TypeCode.SByte:
-					return ((sbyte)value).ToString (format);
+					return ((sbyte)value).ToString (upper ? "X2" : "x2");
 				case TypeCode.Byte:
-					return ((byte)value).ToString (format);
+					return ((byte)value).ToString (upper ? "X2" : "x2");
 				case TypeCode.Int16:
-					return ((short)value).ToString (format);
+					return ((short)value).ToString (upper ? "X4" : "x4");
 				case TypeCode.UInt16:
-					return ((ushort)value).ToString (format);
+					return ((ushort)value).ToString (upper ? "X4" : "x4");
 				case TypeCode.Int32:
-					return ((int)value).ToString (format);
+					return ((int)value).ToString (upper ? "X8" : "x8");
 				case TypeCode.UInt32:
-					return ((uint)value).ToString (format);
+					return ((uint)value).ToString (upper ? "X8" : "x8");
 				case TypeCode.Int64:
-					return ((long)value).ToString (format);
+					return ((long)value).ToString (upper ? "X16" : "x16");
 				case TypeCode.UInt64:
-					return ((ulong)value).ToString (format);
+					return ((ulong)value).ToString (upper ? "X16" : "x16");
 				default:
 					throw new Exception ("Invalid type code for enumeration.");
 			}
@@ -705,8 +696,10 @@ namespace System
 			retVal = String.Empty;
 			switch (formatChar) {
 			case 'X':
+				retVal = FormatSpecifier_X (enumType, value, true);
+				break;
 			case 'x':
-				retVal = FormatSpecifier_X (enumType, value);
+				retVal = FormatSpecifier_X (enumType, value, false);
 				break;
 			case 'D':
 			case 'd':

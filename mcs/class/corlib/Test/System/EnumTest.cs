@@ -29,6 +29,9 @@ public class EnumTest : TestCase
 	enum TestingEnum {This, Is, A, Test};
 	enum TestingEnum2 {This, Is, A, Test};
 	enum TestingEnum3: ulong {This, Is, A, Test = ulong.MaxValue };
+	enum TestingEnum4: byte { This, Is, A, Test = byte.MaxValue }
+	enum TestingEnum5: short { This, Is, A, Test = short.MaxValue }
+	enum TestingEnum6 { This, Is, A, Test = int.MaxValue }
 
 	public void TestCompareTo() {
 		Enum e1 = new TestingEnum();
@@ -192,6 +195,26 @@ public class EnumTest : TestCase
 		AssertEquals ("#F_FS:f", fFormatOutput, fOutput);
 		string xOutput = Enum.Format (pa.GetType(), pa, "x");
 		AssertEquals ("#F_FS:x", xFormatOutput, xOutput);
+
+		AssertEquals ("#F_FSX:01", "00", TestingEnum4.This.ToString("x"));
+		AssertEquals ("#F_FSX:02", "00", TestingEnum4.This.ToString("X"));
+		AssertEquals ("#F_FSX:03", "ff", TestingEnum4.Test.ToString("x"));
+		AssertEquals ("#F_FSX:04", "FF", TestingEnum4.Test.ToString("X"));
+
+		AssertEquals ("#F_FSX:05", "0000", TestingEnum5.This.ToString("x"));
+		AssertEquals ("#F_FSX:06", "0000", TestingEnum5.This.ToString("X"));
+		AssertEquals ("#F_FSX:07", "7fff", TestingEnum5.Test.ToString("x"));
+		AssertEquals ("#F_FSX:08", "7FFF", TestingEnum5.Test.ToString("X"));
+
+		AssertEquals ("#F_FSX:09", "00000000", TestingEnum6.This.ToString("x"));
+		AssertEquals ("#F_FSX:10", "00000000", TestingEnum6.This.ToString("X"));
+		AssertEquals ("#F_FSX:11", "7fffffff", TestingEnum6.Test.ToString("x"));
+		AssertEquals ("#F_FSX:12", "7FFFFFFF", TestingEnum6.Test.ToString("X"));
+
+		AssertEquals ("#F_FSX:13", "0000000000000000", TestingEnum3.This.ToString("x"));
+		AssertEquals ("#F_FSX:14", "0000000000000000", TestingEnum3.This.ToString("X"));
+		AssertEquals ("#F_FSX:15", "ffffffffffffffff", TestingEnum3.Test.ToString("x"));
+		AssertEquals ("#F_FSX:16", "FFFFFFFFFFFFFFFF", TestingEnum3.Test.ToString("X"));
 	}
 
 	public void TestGetHashCode() {
