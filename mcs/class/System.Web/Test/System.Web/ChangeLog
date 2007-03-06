@@ -1,3 +1,7 @@
+2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* StaticSiteMapProviderTest.cs: removed NotWorking attributes..
+
 2007-01-15 Ilya Kharmatsky  <ilya -at- decode-systems.com>
 
 	* VirtualPathUtilityTest.cs: fixed introduced by previous patch

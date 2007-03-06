@@ -163,7 +163,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]
 		public void IsAccessibleFrom1 ()
 		{
 			new WebTest (PageInvoker.CreateOnLoad (IsAccessibleFrom1_delegate)).Run ();
