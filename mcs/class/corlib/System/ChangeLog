@@ -8,7 +8,8 @@
 2007-03-05 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* TermInfoDriver.cs: adjust buffer indexes after *every* read. Fixes
-	bug #80329.
+	bug #80329. Robert Jordan attached a similar patch to the bug report
+	but I didn't see it until after my commit...
 
 2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
 
