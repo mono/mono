@@ -17,6 +17,7 @@
 <%@ Import Namespace="System.Web.Services" %>
 <%@ Import Namespace="System.Web.Services.Description" %>
 <%@ Import Namespace="System.Web.Services.Configuration" %>
+<%@ Import Namespace="System.Web.Configuration" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Globalization" %>
@@ -91,7 +92,9 @@ void Page_Load(object sender, EventArgs e)
 	Page.DataBind();
 	
 	ProfileViolations = new BasicProfileViolationCollection ();
-	WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, descriptions, ProfileViolations);
+	foreach (WsiProfilesElement claims in ((WebServicesSection) WebConfigurationManager.GetSection("system.web/webServices")).ConformanceWarnings)
+		if (claims.Name != WsiProfiles.None)
+			WebServicesInteroperability.CheckConformance (claims.Name, descriptions, ProfileViolations);
 }
 
 void BuildOperationInfo ()
