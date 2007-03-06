@@ -31,7 +31,7 @@ using System;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ConditionNotExpression : ConditionExpression {
+	internal sealed class ConditionNotExpression : ConditionExpression {
 	
 		readonly ConditionExpression expression;
 		

@@ -32,7 +32,7 @@ using System.Collections;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ConditionRelationalExpression : ConditionExpression {
+	internal sealed class ConditionRelationalExpression : ConditionExpression {
 	
 		readonly ConditionExpression left;
 		readonly ConditionExpression right;

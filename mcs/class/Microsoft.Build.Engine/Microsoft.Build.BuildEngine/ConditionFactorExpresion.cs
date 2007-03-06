@@ -34,7 +34,7 @@ using System.Globalization;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ConditionFactorExpression : ConditionExpression {
+	internal sealed class ConditionFactorExpression : ConditionExpression {
 	
 		readonly Token token;
 		

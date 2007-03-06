@@ -93,53 +93,28 @@ namespace Microsoft.Build.BuildEngine {
 
 		object ConvertToArray (Project project, Type type)
 		{
-			string[] rawTable = ConvertToString (project).Split (';');
-			int i = 0;
-			
-			if (type == typeof (bool[])) {
-				bool[] array = new bool [rawTable.Length];
-				foreach (string raw in rawTable)
-					array [i++] = (bool) ConvertToObject (raw, type.GetElementType ());
-				return array;
-			} else if (type == typeof (string[])) {
-				string[] array = new string [rawTable.Length];
-				foreach (string raw in rawTable)
-					array [i++] = (string) ConvertToObject (raw, type.GetElementType ());
-				return array;
-			} else if (type == typeof (int[])) {
-				int[] array = new int [rawTable.Length];
-				foreach (string raw in rawTable)
-					array [i++] = (int) ConvertToObject (raw, type.GetElementType ());
-				return array;
-			} else if (type == typeof (uint[])) {
-				uint[] array = new uint [rawTable.Length];
-				foreach (string raw in rawTable)
-					array [i++] = (uint) ConvertToObject (raw, type.GetElementType ());
-				return array;
-			} else if (type == typeof (DateTime[])) {
-				DateTime[] array = new DateTime [rawTable.Length];
-				foreach (string raw in rawTable)
-					array [i++] = (DateTime) ConvertToObject (raw, type.GetElementType ());
-				return array;
-			} else
-				throw new Exception ("Invalid type");
+			string [] rawTable = ConvertToString (project).Split (';');
+
+			Array arr = Array.CreateInstance (type.GetElementType (), rawTable.Length);
+			for (int i = 0; i < arr.Length; i++)
+				arr.SetValue (ConvertToObject (rawTable [i], type.GetElementType ()), i);
+			return arr;
 		}
 		
 		object ConvertToObject (string raw, Type type)
 		{
-			if (type == typeof (bool)) {
+			if (type == typeof (bool))
 				return Boolean.Parse (raw);
-			} else if (type == typeof (string)) {
+			else if (type == typeof (string))
 				return raw;
-			} else if (type == typeof (int)) {
+			else if (type == typeof (int))
 				return Int32.Parse (raw);
-			} else if (type == typeof (uint)) {
+			else if (type == typeof (uint))
 				return UInt32.Parse (raw);
-			} else if (type == typeof (DateTime)) {
+			else if (type == typeof (DateTime))
 				return DateTime.Parse (raw);
-			} else {
+			else
 				throw new Exception (String.Format ("Unknown type: {0}", type.ToString ()));
-			}
 		}
 		string ConvertToString (Project project)
 		{

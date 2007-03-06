@@ -34,7 +34,7 @@ using System.Reflection;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ConditionFunctionExpression : ConditionExpression {
+	internal sealed class ConditionFunctionExpression : ConditionExpression {
 	
 		List <ConditionFactorExpression> 	args;
 		string					name;

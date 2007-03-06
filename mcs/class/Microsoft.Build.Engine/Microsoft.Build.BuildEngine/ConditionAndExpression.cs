@@ -31,7 +31,7 @@ using System;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ConditionAndExpression : ConditionExpression {
+	internal sealed class ConditionAndExpression : ConditionExpression {
 	
 		readonly ConditionExpression left;
 		readonly ConditionExpression right;
