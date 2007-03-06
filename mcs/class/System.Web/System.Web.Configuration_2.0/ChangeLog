@@ -1,3 +1,12 @@
+2007-02-20  Marek Habersack  <grendello@gmail.com>
+
+	* Patch from Gert Driesen  <drieseng@users.sourceforge.net>
+	* PagesSection.cs: Process value of EnableSessionState attribute
+	case-sensitive, and perform check in getter. Fix for bug #80913.
+	* PageParser.cs: Added note on difference in behaviour between page
+	level attribute and configuration attribute for enableSessionState.
+	* PagesConfiguration.cs: Fixed compiler warning.
+
 2007-02-22  Marek Habersack  <grendello@gmail.com>
 
 	* CompilerCollection.cs: Optimize language lookup a bit.

@@ -64,7 +64,6 @@ namespace System.Web.Configuration
 
 		static public PagesConfiguration GetInstance (HttpContext context)
 		{
-			PagesConfiguration config;
 			if (context == null)
 				context = HttpContext.Current;
 			return context.GetConfig ("system.web/pages") as PagesConfiguration;

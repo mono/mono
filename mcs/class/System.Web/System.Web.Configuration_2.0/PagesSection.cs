@@ -75,7 +75,7 @@ namespace System.Web.Configuration
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
 								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
-			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), PagesEnableSessionState.True);
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (string), "true");
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
 			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
@@ -168,8 +168,33 @@ namespace System.Web.Configuration
 
 		[ConfigurationProperty ("enableSessionState", DefaultValue = "true")]
 		public PagesEnableSessionState EnableSessionState {
-			get { return (PagesEnableSessionState) base[enableSessionStateProp]; }
-			set { base[enableSessionStateProp] = value; }
+			get {
+				string enableSessionState = (string) base [enableSessionStateProp];
+				switch (enableSessionState) {
+				case "true":
+					return PagesEnableSessionState.True;
+				case "false":
+					return PagesEnableSessionState.False;
+				case "ReadOnly":
+					return PagesEnableSessionState.ReadOnly;
+				}
+				throw new ConfigurationErrorsException ("The 'enableSessionState'"
+					+ " attribute must be one of the following values: true,"
+					+ "false, ReadOnly.");
+			}
+			set {
+				switch (value) {
+				case PagesEnableSessionState.False:
+					base [enableSessionStateProp] = "false";
+					break;
+				case PagesEnableSessionState.ReadOnly:
+					base [enableSessionStateProp] = "ReadOnly";
+					break;
+				default:
+					base [enableSessionStateProp] = "true";
+					break;
+				}
+			}
 		}
 
 		[ConfigurationProperty ("enableViewState", DefaultValue = "True")]

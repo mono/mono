@@ -1,4 +1,4 @@
-//
+//	
 // System.Web.UI.PageParser
 //
 // Authors:
@@ -105,6 +105,9 @@ namespace System.Web.UI
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
+			// note: the 'enableSessionState' configuration property is
+			// processed in a case-sensitive manner while the page-level
+			// attribute is processed case-insensitive
 			string enabless = GetString (atts, "EnableSessionState",
 #if NET_2_0
 						     PagesConfig.EnableSessionState.ToString()
@@ -119,7 +122,7 @@ namespace System.Web.UI
 				} else if (String.Compare (enabless, "false", true) == 0) {
 					enableSessionState = false;
 				} else {
-					ThrowParseException ("Invalid value for EnableSessionState: " + enabless);
+					ThrowParseException ("Invalid value for enableSessionState: " + enabless);
 				}
 			}
 
