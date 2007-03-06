@@ -846,7 +846,7 @@ namespace System.Windows.Forms {
 			Rectangle		client_rect;
 
 			// Windows we manage ourselves don't need WM window styles.
-			if (cp.HasWindowManager) {
+			if (cp.HasWindowManager && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
 				return;
 			}
 
