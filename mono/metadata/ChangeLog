@@ -1,3 +1,9 @@
+
+Tue Mar 6 15:39:48 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, class.c, metadata.c, reflection.c: removed unused
+	(and incorrectly set) is_reference field from MonoGenericInst.
+
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_from_full): Call mono_assemblies_unlock ()
