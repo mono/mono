@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Xml;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -39,7 +40,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		BuildProperty	bp;
 		Engine		engine;
 		Project		project;
-		
+
+		BuildProperty [] GetProperties (BuildPropertyGroup bpg)
+		{
+			BuildProperty [] arr = new BuildProperty [bpg.Count];
+			int i = 0;
+			foreach (BuildProperty bp in bpg)
+				arr [i++] = bp;
+			return arr;
+		}
+
 		[Test]
 		public void TestCtor1 ()
 		{
@@ -278,9 +288,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("a;b", bp.ToString ());
 		}
 
-		public void TestValue ()
+		[Test]
+		public void TestValue1 ()
 		{
 			BuildProperty a;
+			BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];
+			BuildProperty [] props;
 
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -298,6 +311,41 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			a = project.EvaluatedProperties ["Name"];
 			a.Value = "$(something)";
 			Assert.AreEqual ("$(something)", a.Value, "A1");
+
+			project.PropertyGroups.CopyTo (bpgs, 0);
+			props = GetProperties (bpgs [0]);
+			Assert.AreEqual ("Value", props [0].Value, "A2");
+		}
+
+		[Test]
+		public void TestValue2 ()
+		{
+			BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];
+			BuildProperty [] props;
+			XmlDocument xd;
+			XmlNode node;
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                	<PropertyGroup>
+                                		<Name>Value</Name>
+                                	</PropertyGroup>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			
+			project.PropertyGroups.CopyTo (bpgs, 0);
+			props = GetProperties (bpgs [0]);
+			props [0].Value = "AnotherValue";
+
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
+			node = xd.SelectSingleNode ("tns:Project/tns:PropertyGroup/tns:Name", TestNamespaceManager.NamespaceManager);
+			Assert.AreEqual ("AnotherValue", node.InnerText, "A1");
 		}
 	}
 }

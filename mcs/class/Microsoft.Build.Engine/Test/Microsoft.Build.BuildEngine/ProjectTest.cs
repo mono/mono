@@ -294,7 +294,44 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void TestBuild0 ()
+		{
+			Engine engine;
+			Project project;
+			IDictionary hashtable = new Hashtable ();
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target 
+						Name='Main'
+						Inputs='a;b;c'
+						Outputs='d;e;f'
+					>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (true, project.Build (new string [] { "Main" }, hashtable), "A1");
+			Assert.AreEqual (1, hashtable.Count, "A2");
+
+			IDictionaryEnumerator e = hashtable.GetEnumerator ();
+			e.MoveNext ();
+
+			string name = (string) e.Key;
+			Assert.AreEqual ("Main", name, "A3");
+			ITaskItem [] arr = (ITaskItem []) e.Value;
+
+			Assert.AreEqual (3, arr.Length, "A4");
+			Assert.AreEqual ("d", arr [0].ItemSpec, "A5");
+			Assert.AreEqual ("e", arr [1].ItemSpec, "A6");
+			Assert.AreEqual ("f", arr [2].ItemSpec, "A7");
+		}
+
+		[Test]
 		public void TestBuild1 ()
 		{
 			Engine engine;
@@ -315,6 +352,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual (true, project.Build (new string[] { "Main" }, hashtable), "A1");
 			Assert.AreEqual (1, hashtable.Count, "A2");
+
+			IDictionaryEnumerator e = hashtable.GetEnumerator ();
+			e.MoveNext ();
+
+			string name = (string) e.Key;
+			Assert.AreEqual ("Main", name, "A3");
+			Assert.IsNotNull ((ITaskItem []) e.Value, "A4");
 		}
 
 		[Test]
