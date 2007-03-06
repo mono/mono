@@ -1,3 +1,9 @@
+2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataList.cs:
+	* DataListItem.cs:
+	fixed applying styles if ExtractTemplateRows=true.
+
 2007-03-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DropDownList.cs: in 2.0 first item is rendered with selected attribute

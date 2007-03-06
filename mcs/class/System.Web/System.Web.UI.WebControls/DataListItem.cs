@@ -105,8 +105,8 @@ namespace System.Web.UI.WebControls {
 						if (t != null) {
 							table = true;
 							foreach (TableRow tr in t.Rows) {
-								if (ControlStyleCreated) {
-									ControlStyle.AddAttributesToRender (writer);
+								if (ControlStyleCreated && !ControlStyle.IsEmpty) {
+									tr.ControlStyle.MergeWith (ControlStyle);
 								}
 								tr.RenderControl (writer);
 							}

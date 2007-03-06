@@ -752,36 +752,16 @@ namespace System.Web.UI.WebControls {
 				updateCommand (this, e);
 		}
 
-		void ApplyControlStyle (Control ctrl, Style style, bool apply_to_rows)
-		{
-			if (style == null || false == ctrl.HasControls ())
-				return;
-
-			foreach (Control c in ctrl.Controls) {
-				if (c is Table) {
-					Table tbl = (Table) c;
-					if (apply_to_rows) {
-						foreach (TableRow row in tbl.Rows)
-							row.MergeStyle (style);
-					} else {
-						tbl.MergeStyle (style);
-					}
-				}
-			}
-		}
-
 		protected override void PrepareControlHierarchy ()
 		{
 			if (!HasControls () || Controls.Count == 0)
 				return; // No one called CreateControlHierarchy() with DataSource != null
 
 			Style alt = null;
-			bool apply_to_rows = ExtractTemplateRows;
 			foreach (DataListItem item in Controls) {
 				switch (item.ItemType) {
 				case ListItemType.Item:
 					item.MergeStyle (itemStyle);
-					ApplyControlStyle (item, itemStyle, apply_to_rows);
 					break;
 				case ListItemType.AlternatingItem:
 					if (alt == null) {
@@ -795,15 +775,12 @@ namespace System.Web.UI.WebControls {
 					}
 
 					item.MergeStyle (alt);
-					ApplyControlStyle (item, alt, apply_to_rows);
 					break;
 				case ListItemType.EditItem:
 					if (editItemStyle != null) {
 						item.MergeStyle (editItemStyle);
-						ApplyControlStyle (item, editItemStyle, apply_to_rows);
 					} else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Footer:
@@ -813,7 +790,6 @@ namespace System.Web.UI.WebControls {
 					}
 					if (footerStyle != null) {
 						item.MergeStyle (footerStyle);
-						ApplyControlStyle (item, footerStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Header:
@@ -823,26 +799,21 @@ namespace System.Web.UI.WebControls {
 					}
 					if (headerStyle != null) {
 						item.MergeStyle (headerStyle);
-						ApplyControlStyle (item, headerStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.SelectedItem:
 					if (selectedItemStyle != null) {
 						item.MergeStyle (selectedItemStyle);
-						ApplyControlStyle (item, selectedItemStyle, apply_to_rows);
 					} else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Separator:
 					if (separatorStyle != null) {
 						item.MergeStyle(separatorStyle);
-						ApplyControlStyle (item, separatorStyle, apply_to_rows);
 					}
 					else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				}
