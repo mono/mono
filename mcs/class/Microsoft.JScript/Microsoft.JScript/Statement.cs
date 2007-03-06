@@ -350,7 +350,10 @@ namespace Microsoft.JScript {
 			bool r = true;
 
 			if (stm != null)
-				r &= stm.Resolve (env);
+				if (stm is Exp)
+					r &= ((Exp) stm).Resolve (env, true);
+				else
+					r &= stm.Resolve (env);
 			if (exp != null)
 				r &= exp.Resolve (env);
 			return r;
@@ -421,7 +424,10 @@ namespace Microsoft.JScript {
 				else 
 					r &= exp.Resolve (env);
 			if (stm != null)
-				r &= stm.Resolve (env);
+				if (stm is Exp)
+					r &= ((Exp) stm).Resolve (env, true);
+				else
+					r &= stm.Resolve (env);
 			return r;
 		}
 
@@ -498,8 +504,14 @@ namespace Microsoft.JScript {
 		{
 			bool r = true;
 
-			foreach (AST ast in exprs)
-				r &= ast.Resolve (env);
+			for (int i = 0; i < 3; ++i) {
+				AST e = exprs[i];
+				if (e is Exp)
+					r &= ((Exp) e).Resolve (env, i != 1);
+				else
+					r &= e.Resolve (env);
+			}
+
 			if (stms != null)
 				r &= stms.Resolve (env);
 			return true;
@@ -630,8 +642,12 @@ namespace Microsoft.JScript {
 				foreach (Clause c in case_clauses)
 					r &= c.Resolve (env);
 			if (default_clauses != null)
-				foreach (AST dc in default_clauses)
-					r &= dc.Resolve (env);
+				foreach (AST dc in default_clauses) {
+					if (dc is Exp)
+						r &= ((Exp) dc).Resolve (env, true);
+					else
+						r &= dc.Resolve (env);
+				}
 			if (sec_case_clauses != null)
 				foreach (Clause sc in sec_case_clauses)
 					r &= sc.Resolve (env);
@@ -724,8 +740,12 @@ namespace Microsoft.JScript {
 			bool r = true;
 			if (exp != null)
 				r &= exp.Resolve (env);
-			foreach (AST ast in stm_list)
-				r &= ast.Resolve (env);
+			foreach (AST ast in stm_list) {
+				if (ast is Exp)
+					r &= ((Exp) ast).Resolve (env, true);
+				else
+					r &= ast.Resolve (env);
+			}
 			return r;			
 		}
 

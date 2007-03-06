@@ -1759,6 +1759,9 @@ namespace Microsoft.JScript {
 			bool strong_type = BoundToMethod is MethodInfo;
 			ParameterInfo [] parameters = null;
 
+			// We may be called more than once, so avoid modifying fields
+			int expected_args = this.expected_args;
+
 			if (!BoundToDeclaredFunction) {
 				if (has_this)
 					expected_args--;
@@ -1964,28 +1967,17 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (Environment env)
 		{
-			int i, n;
-			object e;
+			int n = exprs.Count - 1;
 			bool r = true;
-			
-			n = exprs.Count - 1;
+			object e;
 
-			for (i = 0; i < n; i++) {
+			for (int i = 0; i <= n; i++) {
 				e = exprs [i];
 				if (e is Exp)
-					if (e is Assign)
-						r &= ((Assign) e).Resolve (env);
-					else
-						r &= ((Exp) e).Resolve (env, true);
-			}
-			e = exprs [n];
-			if (e is Exp)
-				if (e is Assign)
-					r &= ((Assign) e).Resolve (env);
+					r &= ((Exp) e).Resolve (env, i < n || no_effect);
 				else
-					r &= ((Exp) e).Resolve (env, no_effect);
-			else 
-				((AST) e).Resolve (env);
+					r &= ((AST) e).Resolve (env);
+			}
 
 			return r;
 		}
@@ -1998,13 +1990,27 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			int i, n = exprs.Count;
+			int i, n = exprs.Count - 1;
 			AST exp;
 
 			for (i = 0; i < n; i++) {
 				exp = (AST) exprs [i];
 				exp.Emit (ec);
-				CodeGenerator.EmitBox (ec.ig, exp);
+			}
+			if (n >= 0)
+			{
+				exp = (AST) exprs [n];
+				if (exp is Assign) {
+					if (no_effect)
+						exp.Emit (ec);
+					else
+						CodeGenerator.EmitAssignAsExp (ec, exp);
+				}
+				else {
+					exp.Emit (ec);
+					if (!no_effect)
+						CodeGenerator.EmitBox (ec.ig, exp);
+				}
 			}
 		}
 	}

@@ -84,8 +84,12 @@ namespace Microsoft.JScript {
 			if (obj != null)
 				r &= obj.Resolve (env);
 
-			if (body != null)
-				r &= body.Resolve (env);
+			if (body != null) {
+				if (body is Exp)
+					r &= ((Exp) body).Resolve (env, true);
+				else
+					r &= body.Resolve (env);
+			}
 			return r;
 		}
 

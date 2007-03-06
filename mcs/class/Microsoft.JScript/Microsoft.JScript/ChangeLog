@@ -1,3 +1,12 @@
+2007-03-01  Peter Dettman  <peter.dettman@iinet.net.au>
+
+	* expression.cs: Expression.Emit changed to correctly leave a value on the
+	stack or not according to the 'no_effect' field, including the case where
+	the final AST in the list is an Assign. Fixed a reentrancy bug in Args.Emit.
+
+	* Block.cs, ForIn.cs, Statement.cs: Correctly resolve child expressions with
+	"no effect" where they should behave as statements.
+
 2006-10-21  Miguel de Icaza  <miguel@novell.com>
 
 	* JScriptCodeCompiler.cs: Ifdefed out unused code.

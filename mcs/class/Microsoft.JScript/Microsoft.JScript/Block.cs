@@ -108,21 +108,13 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (Environment env)
 		{
 			AST e;
-			bool no_effect;
 			bool r = true;
 			int i, n = elems.Count;
 
-			if (parent == null || parent is FunctionDeclaration)
-				no_effect = true;
-			else
-				no_effect = false;
-			
-			n = elems.Count;
-			
 			for (i = 0; i < n; i++) {
 				e = (AST) elems [i];
 				if (e is Exp) 
-					r &= ((Exp) e).Resolve (env, no_effect);
+					r &= ((Exp) e).Resolve (env, true);
 				else 
 					r &= e.Resolve (env);
 			}
