@@ -1,3 +1,12 @@
+2007-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Call mono_assemblies_unlock ()
+	a little earlier.
+
+	* icall.c (ves_icall_type_Equals): Rename this to ves_icall_System_Type_EqualsInternal.
+
+	* icall-def.h: Rename Type:Equals to Type:EqualsInternal.
+
 2007-03-05  Miguel de Icaza  <miguel@novell.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Open): Use the new
