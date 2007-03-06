@@ -58,6 +58,11 @@ namespace System.Configuration
 			return (string)BaseGet (name);
 		}
 
+		public override string Get (int index)
+		{
+			return (string)BaseGet (index);
+		}
+
 			/*
 
 		public virtual string Get( int index )
