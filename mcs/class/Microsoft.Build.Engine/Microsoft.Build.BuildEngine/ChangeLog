@@ -1,5 +1,9 @@
 2007-03-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* Project.cs (Build): Add outputs to targetOutputs.
+
+2007-03-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* ExpressionCollection.cs (ConvertToArray): Simplify.
 
 2007-03-05  Marek Sieradzki  <marek.sieradzki@gmail.com>

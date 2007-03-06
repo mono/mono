@@ -230,20 +230,20 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		[MonoTODO ("Not tested")]
-		public bool Build (string[] targetNames)
+		public bool Build (string [] targetNames)
 		{
 			return Build (targetNames, null);
 		}
 		
 		[MonoTODO ("Not tested")]
-		public bool Build (string[] targetNames,
+		public bool Build (string [] targetNames,
 				   IDictionary targetOutputs)
 		{
 			return Build (targetNames, targetOutputs, BuildSettings.None);
 		}
 		
 		[MonoTODO ("Not tested")]
-		public bool Build (string[] targetNames,
+		public bool Build (string [] targetNames,
 				   IDictionary targetOutputs,
 				   BuildSettings buildFlags)
 		
@@ -268,13 +268,16 @@ namespace Microsoft.Build.BuildEngine {
 				
 				if (!targets [target].Build ())
 					return false;
+
+				if (targetOutputs != null)
+					targetOutputs.Add (target, targets [target].Outputs);
 			}
 				
 			return true;
 		}
 
 		[MonoTODO]
-		public string[] GetConditionedPropertyValues (string propertyName)
+		public string [] GetConditionedPropertyValues (string propertyName)
 		{
 			if (conditionedProperties.ContainsKey (propertyName))
 				return conditionedProperties [propertyName].ToArray ();
