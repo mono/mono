@@ -2100,7 +2100,10 @@ namespace System.Windows.Forms {
 		private void FakeStyles (CreateParams cp)
 		{
 			if (cp.HasWindowManager) {
-				cp.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+				// Remove all styles but WS_VISIBLE.
+				cp.WindowStyle &= WindowStyles.WS_VISIBLE;
+				// Set styles that enables us to use the window manager.
+				cp.WindowStyle |= WindowStyles.WS_CHILD | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS;
 				cp.ExStyle = 0;
 			}
 		}

@@ -33,9 +33,19 @@ namespace System.Windows.Forms
 {
 	internal class FormWindowManager : InternalWindowManager
 	{
+		private bool pending_activation;
 		public FormWindowManager (Form form)  : base (form)
 		{
-			
+
+			form.MouseCaptureChanged += new EventHandler (HandleCaptureChanged);
+		}
+
+		void HandleCaptureChanged (object sender, EventArgs e)
+		{
+			if (pending_activation && !form.Capture) {
+				form.BringToFront ();
+				pending_activation = false;
+			}
 		}
 
 		public override void PointToClient (ref int x, ref int y)
@@ -43,10 +53,22 @@ namespace System.Windows.Forms
 			XplatUI.ScreenToClient (Form.Parent.Handle, ref x, ref y);
 		}
 
+
+		protected override bool HandleNCLButtonDown (ref Message m)
+		{
+			// MS seems to be doing this on mouse up, but we don't get WM_NCLBUTTONUP when anything is captured
+			// so work around this using MouseCaptureChanged.
+			pending_activation = true;
+			
+			return base.HandleNCLButtonDown (ref m);
+		}
+
 		protected override void HandleTitleBarDoubleClick (int x, int y)
 		{
 			if (IconRectangleContains (x, y)) {
 				form.Close ();
+			} else if (form.WindowState == FormWindowState.Maximized) {
+				form.WindowState = FormWindowState.Normal;
 			} else {
 				form.WindowState = FormWindowState.Maximized;
 			}

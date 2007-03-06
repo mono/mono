@@ -1,5 +1,16 @@
 2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* XplatUIWin32.cs: When faking styles don't remove the WS_VISIBLE flag.
+	* Form.cs: Don't recreate handle when creating FormWindowManager, just
+	  update window styles. In CreateParams us VisibleInternal instead of
+	  VIsible to get the actual visible flag set for this form.
+	* FormWindowManager.cs: Activate the form whenever the mouse clicks on
+	  the nc area. Fixes #81042. Also fix HandleTitleBarDoubleClick to
+	  handle the case when the form is already maximized, in which case
+	  it should be restored. Fixes #81043.
+
+2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* XplatUIX11.cs: Tool windows still get wm styles. Fixes toolwindows showing up with double decorations.
 
 2007-03-05  Jackson Harper  <jackson@ximian.com>

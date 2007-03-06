@@ -192,12 +192,14 @@ namespace System.Windows.Forms {
 			}
 			
 			if (new_parent == null) {
-			window_manager = null;
+				window_manager = null;
 			} else if (new_parent is MdiClient) {
 				window_manager = new MdiWindowManager (this, (MdiClient) new_parent);
 			} else {
 				window_manager = new FormWindowManager (this);
-				RecreateHandle ();
+				if (IsHandleCreated) {
+					XplatUI.SetWindowStyle (Handle, CreateParams);
+				}
 			}
 		
 			if (window_manager != null) {
@@ -1259,7 +1261,7 @@ namespace System.Windows.Forms {
 					cp.ExStyle |= (int)WindowExStyles.WS_EX_CONTEXTHELP;
 				}
 				
-				if (Visible)
+				if (VisibleInternal)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				if (opacity < 1.0 || TransparencyKey != Color.Empty) {
