@@ -1,8 +1,11 @@
 2007-03-05  Miguel de Icaza  <miguel@novell.com>
 
-	* io.c (MoveFile): Use errno_copy here, just to avoid a potential
-	errno-changing code in the future from g_free. 
+	* io.c (CreateFile): Use FILE_ATTRIBUTE_TEMPORARY to mean 0600
+	permissions.  For 80688
 
+	(MoveFile): Use errno_copy here, just to avoid a potential
+	errno-changing code in the future from g_free. 
+	
 	Also, ignore EXDEV errors as they are handled immediately after
 	(avoid printing out an error). 
 

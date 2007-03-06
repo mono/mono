@@ -1,3 +1,11 @@
+2007-03-05  Miguel de Icaza  <miguel@novell.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_Open): Use the new
+	FileOptions.1 value to mean "temporary", map that to
+	FILE_ATTRIBUTE_TEMPORARY and use that to signal 600 permissions.
+
+	Fixes 80688
+
 2007-03-03  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c: implement MS .Net style shadow copying. Copies of
