@@ -1,3 +1,7 @@
+2007-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Add a workaround for bug #80733.
+
 2007-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (type_from_op): Convert CEE_CONV_U to OP_LCONV_TO_U when the argument is
