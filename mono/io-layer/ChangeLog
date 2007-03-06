@@ -1,3 +1,8 @@
+2007-03-05  Wade Berrier  <wberrier@novell.com>
+
+	* atomic.h: atomic fixes from Michael Matz for for s390 
+	and s390x ( bnc #237611 and bxc #80892 )
+
 2007-03-05  Miguel de Icaza  <miguel@novell.com>
 
 	* io.c (CreateFile): Use FILE_ATTRIBUTE_TEMPORARY to mean 0600
