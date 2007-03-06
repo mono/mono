@@ -1800,14 +1800,6 @@ public class StringTest : Assertion
                 mono.LastIndexOfAny (k, mono.Length, 1);
 	}
 
-	[Test]
-	public void StringProperties()
-	{
-		PropertyInfo[] props = typeof(String).GetProperties();
-		AssertEquals(props[0].Name, "Chars");
-		AssertEquals(props[1].Name, "Length");
-	}
-
 #if NET_2_0
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
