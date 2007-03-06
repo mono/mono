@@ -764,10 +764,22 @@ namespace System {
 
 		void AddToBuffer (int b)
 		{
-			if (buffer == null)
+			if (buffer == null) {
 				buffer = new byte [1024];
+			} else if (writepos >= buffer.Length) {
+				byte [] newbuf = new byte [buffer.Length * 2];
+				Buffer.BlockCopy (buffer, 0, newbuf, 0, buffer.Length);
+				buffer = newbuf;
+			}
 
 			buffer [writepos++] = (byte) b;
+		}
+
+		void AdjustBuffer ()
+		{
+			if (readpos >= writepos) {
+				readpos = writepos = 0;
+			}
 		}
 
 		ConsoleKeyInfo CreateKeyInfoFromInt (int n)
@@ -808,6 +820,7 @@ namespace System {
 			int next = buffer [readpos];
 			if (!cooked || !rootmap.StartsWith (next)) {
 				readpos++;
+				AdjustBuffer ();
 				return CreateKeyInfoFromInt (next);
 			}
 
@@ -821,13 +834,12 @@ namespace System {
 				key = (ConsoleKeyInfo) keymap [str];
 			} else {
 				readpos++;
+				AdjustBuffer ();
 				return CreateKeyInfoFromInt (next);
 			}
 
 			readpos += used;
-			if (readpos >= writepos)
-				readpos = writepos = 0;
-
+			AdjustBuffer ();
 			return key;
 		}
 

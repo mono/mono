@@ -1,3 +1,8 @@
+2007-03-05 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* TermInfoDriver.cs: adjust buffer indexes after *every* read. Fixes
+	bug #80329.
+
 2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
 
 	* Enum.cs: The above patch makes the formatting for specifiers 'x'
