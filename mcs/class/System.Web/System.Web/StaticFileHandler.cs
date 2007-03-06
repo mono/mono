@@ -62,9 +62,13 @@ namespace System.Web
 					} 
 					catch (NotSupportedException) 
 					{
-						// The file is in a WAR, it was not modified.
-						response.StatusCode = 304;
-						return;
+						// The file is in a WAR, it might be modified with last redeploy.
+						try {
+							ftime = (DateTime) AppDomain.CurrentDomain.GetData (".appStartTime");
+						}
+						catch {
+							ftime = DateTime.MaxValue;
+						}
 					}
 #else
 					ftime = fi.LastWriteTime.ToUniversalTime ();

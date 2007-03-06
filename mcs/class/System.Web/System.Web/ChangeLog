@@ -1,3 +1,8 @@
+2007-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* StaticFileHandler.cs: fixed ProcessRequest TARGET_JVM path,
+	if_modified_since fixed in WAR mode
+
 2007-02-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpRequest.jvm.cs: fixed LoadWwwForm, should distinguish between
