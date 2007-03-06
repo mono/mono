@@ -712,6 +712,7 @@ namespace MonoTests.System.IO
 		}
 #endif // TARGET_JVM
 
+		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
 		[Test, ExpectedException (typeof (IOException))]
 		public void CtorIOException ()
 		{
@@ -759,41 +760,49 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
 		[ExpectedException (typeof (IOException))]
 		public void CtorAccess1Read2Write ()
 		{
 			string fn = Path.Combine (TempFolder, "temp");
-			FileStream fs = null;
+			FileStream fs1 = null;
+			FileStream fs2 = null;
 			try {
 				if (!File.Exists (fn)) {
 					using (TextWriter tw = File.CreateText (fn)) {
 						tw.Write ("FOO");
 					}
 				}
-				fs = new FileStream (fn, FileMode.Open, FileAccess.Read);
-				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
+				fs1 = new FileStream (fn, FileMode.Open, FileAccess.Read);
+				fs2 = new FileStream (fn, FileMode.Create, FileAccess.Write);
 			} finally {
-				if (fs != null)
-					fs.Close ();
+				if (fs1 != null)
+					fs1.Close ();
+				if (fs2 != null)
+					fs2.Close ();
 				if (File.Exists (fn))
 					File.Delete (fn);
 			}
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
 		[ExpectedException (typeof (IOException))]
 		public void CtorAccess1Write2Write ()
 		{
 			string fn = Path.Combine (TempFolder, "temp");
-			FileStream fs = null;
+			FileStream fs1 = null;
+			FileStream fs2 = null;
 			try {
 				if (File.Exists (fn))
 					File.Delete (fn);
-				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
-				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
+				fs1 = new FileStream (fn, FileMode.Create, FileAccess.Write);
+				fs2 = new FileStream (fn, FileMode.Create, FileAccess.Write);
 			} finally {
-				if (fs != null)
-					fs.Close ();
+				if (fs1 != null)
+					fs1.Close ();
+				if (fs2 != null)
+					fs2.Close ();
 				if (File.Exists (fn))
 					File.Delete (fn);
 			}
@@ -974,6 +983,9 @@ namespace MonoTests.System.IO
 			DeleteFile (path);
 		}
 
+#if TARGET_JVM // File locking is not implemented.
+		[Category ("NotWorking")]
+#endif
 		public void TestLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";
@@ -1444,6 +1456,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // Async IO not supported for TARGET_JVM
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void BeginRead_Disposed ()
 		{
@@ -1455,6 +1468,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // Async IO not supported for TARGET_JVM
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void BeginWrite_Disposed ()
 		{
@@ -1466,6 +1480,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // File locking not supported for TARGET_JVM
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Lock_Disposed ()
 		{
@@ -1477,6 +1492,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // File locking not supported for TARGET_JVM
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Unlock_Disposed ()
 		{
@@ -1540,6 +1556,7 @@ namespace MonoTests.System.IO
 		}
 
 #if NET_2_0
+		[Category("TargetJvmNotSupported")] // FileOptions.DeleteOnClose not supported for TARGET_JVM
 		[Test] public void DeleteOnClose ()
 		{
 			string path = TempFolder + DSC + "created.txt";
