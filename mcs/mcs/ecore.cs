@@ -3529,7 +3529,7 @@ namespace Mono.CSharp {
 						continue;
 
 #if GMCS_SOURCE
-					if (!TypeManager.InferTypeArguments (Arguments, ref c))
+					if (!TypeManager.InferTypeArguments (ec, Arguments, ref c))
 						continue;
 					if (TypeManager.IsGenericMethodDefinition (c))
 						continue;
@@ -3538,10 +3538,12 @@ namespace Mono.CSharp {
 					Invocation.VerifyArgumentsCompat (ec, Arguments, arg_count,
 						c, false, null, may_fail, loc);
 
-					if (!may_fail && errors == Report.Errors)
+					if (!may_fail && errors == Report.Errors){
+						
 						throw new InternalErrorException (
 							"VerifyArgumentsCompat and IsApplicable do not agree; " +
 							"likely reason: ImplicitConversion and ImplicitConversionExists have gone out of sync");
+					}
 
 					break;
 				}
@@ -3562,7 +3564,7 @@ namespace Mono.CSharp {
 						if (pd.Count != arg_count)
 							continue;
 
-						if (TypeManager.InferTypeArguments (Arguments, ref c))
+						if (TypeManager.InferTypeArguments (ec, Arguments, ref c))
 							continue;
 
 						Report.Error (

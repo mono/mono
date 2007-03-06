@@ -4194,7 +4194,7 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE
 			if (!me.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (arguments, ref candidate))
+			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
 				return false;
 
 			if (TypeManager.IsGenericMethodDefinition (candidate))

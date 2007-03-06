@@ -34,6 +34,18 @@ namespace Mono.CSharp {
 				Parameters = new Parameters (new Parameter [0]);
 		}
 
+		public bool HasImplicitParameters {
+			get {
+				return !explicit_parameters;
+			}
+		}
+
+		public bool HasExplicitParameters {
+			get {
+				return explicit_parameters;
+			}
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
