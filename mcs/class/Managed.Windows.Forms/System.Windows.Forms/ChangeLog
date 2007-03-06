@@ -1,3 +1,7 @@
+2007-03-06  Andreia Gaita  <avidigal@novell.com>
+
+	* Label.cs: Implement AutoEllipsis (2.0)
+
 2007-03-06  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Implement 2.0 TopNode setter property.

@@ -47,6 +47,9 @@ namespace System.Windows.Forms
 	public class Label : Control
 	{
 		private bool autosize;
+#if NET_2_0
+		private bool auto_ellipsis;
+#endif
 		private Image image;
 		private bool render_transparent;
 		private FlatStyle flat_style;
@@ -150,6 +153,30 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Properties
+
+#if NET_2_0
+		[DefaultValue (false)]
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public bool AutoEllipsis
+		{
+			get { return this.auto_ellipsis; }
+			set
+			{
+				if (this.auto_ellipsis != value) {
+					this.auto_ellipsis = value;
+
+					if (this.auto_ellipsis)
+						string_format.Trimming = StringTrimming.EllipsisCharacter;
+					else
+						string_format.Trimming = StringTrimming.Character;
+
+					this.Invalidate ();
+				}
+			}
+		}
+#endif
+
 		[DefaultValue(false)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.All)]
