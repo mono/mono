@@ -83,6 +83,7 @@ namespace System.Windows.Forms {
 		private bool update_needed;
 		
 		private Pen dash;
+		private Color line_color;
 		private StringFormat string_format;
 
 		private int drag_begin_x = 0;
@@ -142,7 +143,12 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		public override Color BackColor {
 			get { return base.BackColor;}
-			set { base.BackColor = value; }
+			set {
+				base.BackColor = value;
+
+				CreateDashPen ();
+				Invalidate ();
+			}
 		}
 
 
@@ -464,6 +470,38 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		/// According to MSDN this property has no effect on the treeview
+		private bool double_buffered;
+		protected override bool DoubleBuffered {
+			get { return double_buffered; }
+			set { double_buffered = value; }
+		}
+#endif
+
+#if NET_2_0
+		public
+#else
+		private
+#endif
+		Color LineColor {
+			get {
+				if (line_color == Color.Empty) {
+					Color res = ControlPaint.Dark (BackColor);
+					if (res == BackColor)
+						res = ControlPaint.Light (BackColor);
+					return res;
+				}
+				return line_color;
+			}
+			set {
+				line_color = value;
+				if (show_lines) {
+					CreateDashPen ();
+					Invalidate ();
+				}
+			}
+		}
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -1065,15 +1103,18 @@ namespace System.Windows.Forms {
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 
+		internal void CreateDashPen ()
+		{
+			dash = new Pen (LineColor, 1);
+			dash.DashStyle = DashStyle.Dot;
+		}
+
 		private void Draw (Rectangle clip, Graphics dc)
 		{
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
 
-			Color dash_color = ControlPaint.Dark (BackColor);
-			if (dash_color == BackColor)
-				dash_color = ControlPaint.Light (BackColor);
-			dash = new Pen (dash_color, 1);
-			dash.DashStyle = DashStyle.Dot;
+			if (dash == null)
+				CreateDashPen ();
 
 			Rectangle viewport = ViewportRectangle;
 			Rectangle original_clip = clip;

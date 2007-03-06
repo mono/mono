@@ -6,6 +6,10 @@
 	valuechanged handler checks if skipped_nodes is equal to the new
 	value.
 	- Implement 2.0 Sort method.
+	- Add useless 2.0 DoubleBuffer property
+	- Implement 2.0 LineColors property.  Lets you change the color of
+	the lines in the tree. Terribly useful for creating non cohesive
+	desktops.
 
 2007-03-06  Jackson Harper  <jackson@ximian.com>
 
