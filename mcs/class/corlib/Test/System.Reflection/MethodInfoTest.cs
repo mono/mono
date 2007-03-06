@@ -175,7 +175,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 		}
 
-#if !TARGET_JVM // MethodBody not supported for TARGET_JVM
 #if NET_2_0
 		[Test]
 		public void GetMethodBody_Abstract () {
@@ -232,7 +231,6 @@ namespace MonoTests.System.Reflection
 			else
 				Assert.AreEqual (false, locals [1].IsPinned, "#6");
 		}
-#endif // TARGET_JVM
 
 		public int return_parameter_test () {
 			return 0;
@@ -248,7 +246,6 @@ namespace MonoTests.System.Reflection
 			//Assert.AreEqual (True, pi.IsRetval);
 		}
 
-#if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void InvokeOnRefOnlyAssembly ()
@@ -259,7 +256,6 @@ namespace MonoTests.System.Reflection
 			
 			m.Invoke (null, new object [0]);
 		}
-#endif // TARGET_JVM
 
 		[Test]
 		public void InvokeGenericVtype ()
@@ -281,7 +277,7 @@ namespace MonoTests.System.Reflection
         }
 
 		public void MakeGenericMethodArgsMismatchFoo<T> () {}
-
+	    
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MakeGenericMethodArgsMismatch ()
