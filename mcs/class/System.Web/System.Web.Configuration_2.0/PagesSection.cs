@@ -75,7 +75,7 @@ namespace System.Web.Configuration
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
 								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
-			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (string), "true");
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), PagesEnableSessionState.@true);
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
 			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
@@ -137,19 +137,19 @@ namespace System.Web.Configuration
 			set { base [asyncTimeoutProp] = value; }
 		}
 
-		[ConfigurationProperty ("autoEventWireup", DefaultValue = "True")]
+		[ConfigurationProperty ("autoEventWireup", DefaultValue = true)]
 		public bool AutoEventWireup {
 			get { return (bool) base [autoEventWireupProp]; }
 			set { base [autoEventWireupProp] = value; }
 		}
 
-		[ConfigurationProperty ("buffer", DefaultValue = "True")]
+		[ConfigurationProperty ("buffer", DefaultValue = true)]
 		public bool Buffer {
 			get { return (bool) base [bufferProp]; }
 			set { base [bufferProp] = value; }
 		}
 
-		[ConfigurationProperty ("compilationMode", DefaultValue = "Always")]
+		[ConfigurationProperty ("compilationMode", DefaultValue = CompilationMode.Always)]
 		public CompilationMode CompilationMode {
 			get { return (CompilationMode) base [modeProp]; }
 			set { base [modeProp] = value; }
@@ -160,56 +160,39 @@ namespace System.Web.Configuration
 			get { return (TagPrefixCollection) base[controlsProp]; }
 		}
 
-		[ConfigurationProperty ("enableEventValidation", DefaultValue = "True")]
+		[ConfigurationProperty ("enableEventValidation", DefaultValue = true)]
 		public bool EnableEventValidation {
 			get { return (bool) base[enableEventValidationProp]; }
 			set { base[enableEventValidationProp] = value; }
 		}
 
-		[ConfigurationProperty ("enableSessionState", DefaultValue = "true")]
-		public PagesEnableSessionState EnableSessionState {
+		[ConfigurationProperty ("enableSessionState", DefaultValue = System.Web.Configuration.PagesEnableSessionState.True)]
+		public System.Web.Configuration.PagesEnableSessionState EnableSessionState {
 			get {
-				string enableSessionState = (string) base [enableSessionStateProp];
-				switch (enableSessionState) {
-				case "true":
-					return PagesEnableSessionState.True;
-				case "false":
-					return PagesEnableSessionState.False;
-				case "ReadOnly":
-					return PagesEnableSessionState.ReadOnly;
-				}
-				throw new ConfigurationErrorsException ("The 'enableSessionState'"
-					+ " attribute must be one of the following values: true,"
-					+ "false, ReadOnly.");
+				PagesEnableSessionState state = (PagesEnableSessionState) base [enableSessionStateProp];
+				int tmpState = (int) state;
+				return (System.Web.Configuration.PagesEnableSessionState) tmpState;
 			}
 			set {
-				switch (value) {
-				case PagesEnableSessionState.False:
-					base [enableSessionStateProp] = "false";
-					break;
-				case PagesEnableSessionState.ReadOnly:
-					base [enableSessionStateProp] = "ReadOnly";
-					break;
-				default:
-					base [enableSessionStateProp] = "true";
-					break;
-				}
+				int tmpState = (int) value;
+				PagesEnableSessionState state = (PagesEnableSessionState) tmpState;
+				base [enableSessionStateProp] = state; 
 			}
 		}
 
-		[ConfigurationProperty ("enableViewState", DefaultValue = "True")]
+		[ConfigurationProperty ("enableViewState", DefaultValue = true)]
 		public bool EnableViewState {
 			get { return (bool) base[enableViewStateProp]; }
 			set { base[enableViewStateProp] = value; }
 		}
 
-		[ConfigurationProperty ("enableViewStateMac", DefaultValue = "True")]
+		[ConfigurationProperty ("enableViewStateMac", DefaultValue = true)]
 		public bool EnableViewStateMac {
 			get { return (bool) base[enableViewStateMacProp]; }
 			set { base[enableViewStateMacProp] = value; }
 		}
 
-		[ConfigurationProperty ("maintainScrollPositionOnPostBack", DefaultValue = "False")]
+		[ConfigurationProperty ("maintainScrollPositionOnPostBack", DefaultValue = false)]
 		public bool MaintainScrollPositionOnPostBack {
 			get { return (bool) base[maintainScrollPositionOnPostBackProp]; }
 			set { base [maintainScrollPositionOnPostBackProp] = value; }
@@ -221,7 +204,7 @@ namespace System.Web.Configuration
 			set { base[masterPageFileProp] = value; }
 		}
 
-		[ConfigurationProperty ("maxPageStateFieldLength", DefaultValue = "-1")]
+		[ConfigurationProperty ("maxPageStateFieldLength", DefaultValue = -1)]
 		public int MaxPageStateFieldLength {
 			get { return (int) base[maxPageStateFieldLengthProp]; }
 			set { base[maxPageStateFieldLengthProp] = value; }
@@ -244,7 +227,7 @@ namespace System.Web.Configuration
 			set { base [pageParserFilterTypeProp] = value; }
 		}
 
-		[ConfigurationProperty ("smartNavigation", DefaultValue = "False")]
+		[ConfigurationProperty ("smartNavigation", DefaultValue = false)]
 		public bool SmartNavigation {
 			get { return (bool) base[smartNavigationProp]; }
 			set { base[smartNavigationProp] = value; }
@@ -273,13 +256,13 @@ namespace System.Web.Configuration
 			set { base[userControlBaseTypeProp] = value; }
 		}
 
-		[ConfigurationProperty ("validateRequest", DefaultValue = "True")]
+		[ConfigurationProperty ("validateRequest", DefaultValue = true)]
 		public bool ValidateRequest {
 			get { return (bool) base[validateRequestProp]; }
 			set { base[validateRequestProp] = value; }
 		}
 
-		[ConfigurationProperty ("viewStateEncryptionMode", DefaultValue = "Auto")]
+		[ConfigurationProperty ("viewStateEncryptionMode", DefaultValue = ViewStateEncryptionMode.Auto)]
 		public ViewStateEncryptionMode ViewStateEncryptionMode {
 			get { return (ViewStateEncryptionMode) base [viewStateEncryptionModeProp]; }
 			set { base [viewStateEncryptionModeProp] = value; }
@@ -294,6 +277,13 @@ namespace System.Web.Configuration
 			base.DeserializeSection (reader);
 
 			/* XXX more here?.. */
+		}
+
+		private enum PagesEnableSessionState
+		{
+			@false = 0,
+			ReadOnly = 1,
+			@true = 2
 		}
 	}
 }
