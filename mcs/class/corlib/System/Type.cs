@@ -414,15 +414,18 @@ namespace System {
 			if (o == null)
 				return false;
 			
-			// TODO: return UnderlyingSystemType == o.UnderlyingSystemType;
 			Type cmp = o as Type;
 			if (cmp == null)
 				return false;
 			return Equals (cmp);
 		}
 
+		public bool Equals (Type type) {
+			return UnderlyingSystemType.EqualsInternal (type.UnderlyingSystemType);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern bool Equals (Type type);
+		internal extern bool EqualsInternal (Type type);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type internal_from_handle (IntPtr handle);
