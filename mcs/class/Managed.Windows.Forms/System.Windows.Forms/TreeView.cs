@@ -1630,15 +1630,19 @@ namespace System.Windows.Forms {
 
 			Rectangle invalid;
 			if (!ce.Cancel) {
-				if (focused_node != null) {
-					invalid = Rectangle.Union (Bloat (focused_node.Bounds),
-							Bloat (highlighted_node.Bounds));
-				} else {
-					invalid = Bloat (highlighted_node.Bounds);
-				}
+				TreeNode prev_focused_node = focused_node;
+				TreeNode prev_highlighted_node = highlighted_node;
+				
 				selected_node = highlighted_node;
 				focused_node = highlighted_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
+
+				if (prev_focused_node != null) {
+					invalid = Rectangle.Union (Bloat (prev_focused_node.Bounds),
+							Bloat (prev_highlighted_node.Bounds));
+				} else {
+					invalid = Bloat (prev_highlighted_node.Bounds);
+				}
 
 				Invalidate (invalid);
 			} else {

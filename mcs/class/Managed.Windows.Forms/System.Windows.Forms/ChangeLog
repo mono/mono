@@ -1,3 +1,9 @@
+2007-03-06  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: We can't get the bounds of the nodes before raising
+	the AfterSelect event, because that event could change the node's
+	bounds (scrolling, font change, etc).
+
 2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* XplatUIWin32.cs: When faking styles don't remove the WS_VISIBLE flag.
