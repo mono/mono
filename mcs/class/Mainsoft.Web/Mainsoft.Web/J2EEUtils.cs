@@ -57,8 +57,14 @@ namespace Mainsoft.Web
 			if (realFs == null || realFs == J2EEConsts.ACCESS_FULL) {
 				try {
 					string realPath = config.getServletContext ().getRealPath (appVirtualPath);
-					if (realPath != null)
+					if (!String.IsNullOrEmpty (realPath)) {
+						if (!String.IsNullOrEmpty (appVirtualPath) &&
+							appVirtualPath [appVirtualPath.Length - 1] == '/')
+							if (realPath [realPath.Length - 1] != Path.DirectorySeparatorChar)
+								realPath += Path.DirectorySeparatorChar;
+
 						return realPath;
+					}
 				}
 				catch (Exception e) {
 #if TRACE
