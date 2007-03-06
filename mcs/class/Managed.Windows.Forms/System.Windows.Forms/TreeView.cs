@@ -424,10 +424,7 @@ namespace System.Windows.Forms {
 				if (sorted != value)
 					sorted = value;
 				if (sorted) {
-					Nodes.Sort ();
-					RecalculateVisibleOrder (root_node);
-					UpdateScrollBars ();
-					Invalidate ();
+					Sort ();
 				}
 			}
 		}
@@ -504,6 +501,19 @@ namespace System.Windows.Forms {
 					update_needed = false;
 				}
 			}
+		}
+
+#if NET_2_0
+		public
+#else
+		private
+#endif
+		void Sort ()
+		{
+			Nodes.Sort ();
+			RecalculateVisibleOrder (root_node);
+			UpdateScrollBars ();
+			Invalidate ();
 		}
 
 		public void ExpandAll ()

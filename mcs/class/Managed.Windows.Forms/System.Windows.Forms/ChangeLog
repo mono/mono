@@ -5,6 +5,7 @@
 	how many nodes to skip.  Otherwise we won't scroll because the
 	valuechanged handler checks if skipped_nodes is equal to the new
 	value.
+	- Implement 2.0 Sort method.
 
 2007-03-06  Jackson Harper  <jackson@ximian.com>
 
