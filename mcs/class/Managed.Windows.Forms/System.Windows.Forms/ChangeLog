@@ -1,5 +1,13 @@
 2007-03-06  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Implement 2.0 TopNode setter property.
+	- Use a local var instead of the skipped_nodes field for computing
+	how many nodes to skip.  Otherwise we won't scroll because the
+	valuechanged handler checks if skipped_nodes is equal to the new
+	value.
+
+2007-03-06  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: We can't get the bounds of the nodes before raising
 	the AfterSelect event, because that event could change the node's
 	bounds (scrolling, font change, etc).

@@ -452,6 +452,11 @@ namespace System.Windows.Forms {
 					one.MoveNext ();
 				return one.CurrentNode;
 			}
+#if NET_2_0
+			set {
+				SetTop (value);
+			}
+#endif
 		}
 
 		[Browsable(false)]
@@ -1458,11 +1463,11 @@ namespace System.Windows.Forms {
 		{
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 
-			skipped_nodes = -1;
+			int skip_nodes = -1;
 			while (walk.MoveNext () && walk.CurrentNode != new_top)
-				skipped_nodes++;
+				skip_nodes++;
 
-			vbar.Value = skipped_nodes;
+			vbar.Value = skip_nodes;
 		}
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
