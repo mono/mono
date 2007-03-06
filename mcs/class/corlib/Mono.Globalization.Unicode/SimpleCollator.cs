@@ -805,6 +805,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		bool QuickCheckPossible (string s1, int idx1, int end1,
 			string s2, int idx2, int end2)
 		{
+#if true
+			// looks like it is buggy and inefficient, so just disable it.
+			return false;
+#else
 			if (QuickCheckDisabled)
 				return false;
 //			if (s1.Length > 100 || s2.Length > 100)
@@ -816,6 +820,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (s2 [i] < 0x20 && (s2 [i] < '\x9' || s2 [i] > '\xD') || s2 [i] >= 0x80 || s2 [i] == '-' || s2 [i] == '\'')
 					return false;
 			return true;
+#endif
 		}
 
 		unsafe int CompareInternal (string s1, int idx1, int len1, string s2,

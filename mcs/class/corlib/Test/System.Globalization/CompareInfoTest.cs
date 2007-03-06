@@ -774,6 +774,8 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#25", -1, "+-+-)", "-+-+)");
 		AssertCompare ("#26", -1, "+-+)", "-+-+)");
 		AssertCompare ("#27", -1, "++)", "-+-+)");
+		// bug #79714
+		AssertCompare ("#28", 1, "aa ", "A");
 	}
 
 	[Test]
