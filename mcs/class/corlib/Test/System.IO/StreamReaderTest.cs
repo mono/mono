@@ -19,6 +19,7 @@ public class StreamReaderTest
 {
 	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+	private const string TestString = "Hello World!";
 
 	[SetUp]
 	public void SetUp ()
@@ -716,6 +717,38 @@ public class StreamReaderTest
 		Assert.AreEqual (24, reader.Read (new char[24], 0, 24));
 	}
 
+	[Test]
+	public void EncodingDetection()
+	{
+		if (!CheckEncodingDetected(Encoding.UTF8))
+			Assert.Fail ("Failed to detect UTF8 encoded string");
+		if (!CheckEncodingDetected(Encoding.Unicode))
+			Assert.Fail ("Failed to detect UTF16LE encoded string");
+		if (!CheckEncodingDetected(Encoding.BigEndianUnicode))
+			Assert.Fail ("Failed to detect UTF16BE encoded string");
+#if NET_2_0
+		if (!CheckEncodingDetected(Encoding.UTF32))
+			Assert.Fail ("Failed to detect UTF32LE encoded string");
+		if (!CheckEncodingDetected(new UTF32Encoding(true, true)))
+			Assert.Fail ("Failed to detect UTF32BE encoded string");
+#endif
+	}
+
+	private bool CheckEncodingDetected(Encoding encoding)
+	{
+		MemoryStream outStream = new MemoryStream();
+		using (StreamWriter outWriter = new StreamWriter(outStream, encoding))
+		{
+			outWriter.Write(TestString);
+		}
+		byte[] testBytes = outStream.ToArray();
+
+		StreamReader inReader = new StreamReader(new MemoryStream(testBytes, false));
+		string decodedString = inReader.ReadToEnd();
+
+		return decodedString == TestString;
+	}
+    
 	[Test]
 	public void bug75526 ()
 	{

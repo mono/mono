@@ -309,10 +309,10 @@ public sealed class UTF32Encoding : Encoding
 	public override byte[] GetPreamble ()
 	{
 		if (byteOrderMark) {
-			byte[] preamble = new byte[2];
+			byte[] preamble = new byte[4];
 			if (bigEndian) {
-				preamble[0] = (byte)0xFE;
-				preamble[1] = (byte)0xFF;
+				preamble[2] = (byte)0xFE;
+				preamble[3] = (byte)0xFF;
 			} else {
 				preamble[0] = (byte)0xFF;
 				preamble[1] = (byte)0xFE;

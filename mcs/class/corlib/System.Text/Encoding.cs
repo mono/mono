@@ -1046,7 +1046,7 @@ public abstract class Encoding
 	}
 
 	// Get the standard big-endian UTF-32 encoding object.
-	private static Encoding BigEndianUTF32
+	internal static Encoding BigEndianUTF32
 	{
 		get {
 			if (bigEndianUTF32Encoding == null) {

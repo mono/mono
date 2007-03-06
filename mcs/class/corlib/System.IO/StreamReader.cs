@@ -259,13 +259,15 @@ namespace System.IO {
 				if (count < 2)
 					return 0;
 
-				if (input_buffer [0] == 0xfe && input_buffer [1] == 0xff){
-					this.encoding = Encoding.BigEndianUnicode;
-					return 2;
-				}
-
+#if !NET_2_0
 				if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe){
 					this.encoding = Encoding.Unicode;
+					return 2;
+				}
+#endif
+
+				if (input_buffer [0] == 0xfe && input_buffer [1] == 0xff){
+					this.encoding = Encoding.BigEndianUnicode;
 					return 2;
 				}
 
@@ -276,6 +278,33 @@ namespace System.IO {
 					this.encoding = Encoding.UTF8Unmarked;
 					return 3;
 				}
+
+#if NET_2_0
+				if (count < 4) {
+					if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe && input_buffer [2] != 0) {
+						this.encoding = Encoding.Unicode;
+						return 2;
+					}
+					return 0;
+				}
+
+				if (input_buffer [0] == 0 && input_buffer [1] == 0
+					&& input_buffer [2] == 0xfe && input_buffer [3] == 0xff)
+				{
+					this.encoding = Encoding.BigEndianUTF32;
+					return 4;
+				}
+
+				if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe) {
+					if (input_buffer [2] == 0 && input_buffer[3] == 0) {
+						this.encoding = Encoding.UTF32;
+						return 4;
+					}
+
+					this.encoding = Encoding.Unicode;
+					return 2;
+				}
+#endif
 			}
 
 			return 0;
