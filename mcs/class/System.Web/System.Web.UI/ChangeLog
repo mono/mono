@@ -1,3 +1,16 @@
+2007-03-06  Adar Wesley <adarw@mainsoft.com>
+
+	* Page.cs: initial implementation of support for Async=true.  Added 
+	initial support for ViewStateEncryption.  Implemented 
+	CreateHtmlTextWriterFromType.
+	
+	* PageAsyncTask.cs: Created class to support Async pages.
+
+	* ObjectStateFormatter.cs: Added support for ViewState encryption.
+
+	* HtmlTextWriter.cs: Fixed constructor to accept null TextWriter
+	to conform to MS behavior.
+
 2007-03-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.jvm.cs: fixed TemplateSourceDirectory property

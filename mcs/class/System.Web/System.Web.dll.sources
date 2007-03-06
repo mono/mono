@@ -604,6 +604,7 @@ System.Web.UI/ObjectTag.cs
 System.Web.UI/OutputCacheLocation.cs
 System.Web.UI/OutputCacheParameters.cs
 System.Web.UI/Page.cs
+System.Web.UI/PageAsyncTask.cs
 System.Web.UI/PageHandlerFactory.cs
 System.Web.UI/PageLifeCycle.cs
 System.Web.UI/PageParser.cs

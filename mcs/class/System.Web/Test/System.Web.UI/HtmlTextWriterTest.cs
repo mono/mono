@@ -62,6 +62,14 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		public void NullWriter () 
+		{
+			HtmlTextWriter htw = new HtmlTextWriter (null);
+			Assert.IsNotNull (htw, "NullWriter");
+			Assert.IsNull (htw.InnerWriter, "InnerWriter");
+		}
+
+		[Test]
 		public void WriteAttributes_NullValue ()
 		{
 			w.WriteAttribute ("name", null);
@@ -313,6 +321,27 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("<div style=\"background-image:http://www.go-mono.com/;\">\n\n</div>", sw.ToString ());
 #endif
 		}
+		
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void WriteStyleAttribute_BackgroundImage () 
+		{
+			w.WriteStyleAttribute ("background-image", "http://www.mainsoft.com/space here?a=b&c=d");
+			Assert.AreEqual ("background-image:http://www.mainsoft.com/space here?a=b&c=d;", sw.ToString ());
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void AddStyleAttribute_BackgroundImage () 
+		{
+			w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.mainsoft.com/space here?a=b&c=d");
+			w.RenderBeginTag ("div");
+			w.RenderEndTag ();
+
+			Assert.AreEqual ("<div style=\"background-image:url(http://www.mainsoft.com/space%20here?a=b&amp;c=d);\">\n\n</div>", sw.ToString ());
+		}
+#endif
 
 		[Test]
 		public void AddStyleAttribute2 ()

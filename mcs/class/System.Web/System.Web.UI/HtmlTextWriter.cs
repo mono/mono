@@ -46,9 +46,6 @@ namespace System.Web.UI {
 	
 		public HtmlTextWriter (TextWriter writer, string tabString)
 		{
-			if (writer == null)
-				throw new ArgumentNullException ();
-
 			b = writer;
 			tab_string = tabString;
 		}

@@ -157,7 +157,16 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("inputString");
 			if (page != null && EnableMac)
 				length = ValidateInput (GetAlgo (), buffer, 0, length);
-			return Deserialize (new MemoryStream (buffer, 0, length, false, false));
+#if NET_2_0
+			bool isEncrypted = ((int)buffer [--length] == 1)? true : false;
+#endif
+			Stream ms = new MemoryStream (buffer, 0, length, false, false);
+#if NET_2_0
+			if (isEncrypted) {
+				ms = new CryptoStream (ms, page.GetCryptoTransform (CryptoStreamMode.Read), CryptoStreamMode.Read);
+			}
+#endif
+			return Deserialize (ms);
 		}
 		
 		public string Serialize (object stateGraph)
@@ -166,7 +175,17 @@ namespace System.Web.UI {
 				return "";
 			
 			MemoryStream ms = new MemoryStream ();
-			Serialize (ms, stateGraph);
+			Stream output = ms;
+#if NET_2_0
+			bool needEncryption = page.NeedViewStateEncryption;
+			if (needEncryption){
+				output = new CryptoStream (output, page.GetCryptoTransform (CryptoStreamMode.Write), CryptoStreamMode.Write);
+			}
+#endif
+			Serialize (output, stateGraph);
+#if NET_2_0
+			ms.WriteByte((byte)(needEncryption? 1 : 0));
+#endif
 			
 			#if TRACE
 				ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));

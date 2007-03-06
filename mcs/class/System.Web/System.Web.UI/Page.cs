@@ -51,6 +51,8 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 #if NET_2_0
 using System.Web.UI.Adapters;
+using System.Collections.Generic;
+using System.Reflection;
 #endif
 
 namespace System.Web.UI
@@ -70,6 +72,7 @@ namespace System.Web.UI
 #endif
 public partial class Page : TemplateControl, IHttpHandler
 {
+	static string machineKeyConfigPath = "system.web/machineKey";
 #if NET_2_0
 	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
 	private bool _eventValidation = true;
@@ -130,7 +133,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
-	
+
 	HtmlHead htmlHeader;
 	
 	MasterPage masterPage;
@@ -150,6 +153,15 @@ public partial class Page : TemplateControl, IHttpHandler
 	Hashtable items;
 
 	bool _maintainScrollPositionOnPostBack;
+
+	private bool asyncMode = false;
+	private TimeSpan asyncTimeout;
+	private const double DefaultAsyncTimeout = 45.0;
+	private List<PageAsyncTask> parallelTasks;
+	private List<PageAsyncTask> serialTasks;
+
+	private ViewStateEncryptionMode viewStateEncryptionMode;
+	private bool controlRegisteredForViewStateEncryption = false;
 #endif
 
 	#region Constructor
@@ -158,6 +170,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager = new ClientScriptManager (this);
 		Page = this;
 		ID = "__Page";
+#if NET_2_0
+		asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
+		viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
+#endif
 	}
 
 	#endregion		
@@ -1196,6 +1212,65 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 	
 #if NET_2_0
+	delegate void ProcessRequestDelegate (HttpContext context);
+
+	private sealed class DummyAsyncResult : IAsyncResult
+	{
+		readonly object state;
+		readonly WaitHandle asyncWaitHandle;
+		readonly bool completedSynchronously;
+		readonly bool isCompleted;
+
+		public DummyAsyncResult (bool isCompleted, bool completedSynchronously, object state) 
+		{
+			this.isCompleted = isCompleted;
+			this.completedSynchronously = completedSynchronously;
+			this.state = state;
+			if (isCompleted) {
+				asyncWaitHandle = new ManualResetEvent (true);
+			}
+			else {
+				asyncWaitHandle = new ManualResetEvent (false);
+			}
+		}
+
+		#region IAsyncResult Members
+
+		public object AsyncState {
+			get { return state; }
+		}
+
+		public WaitHandle AsyncWaitHandle {
+			get { return asyncWaitHandle; }
+		}
+
+		public bool CompletedSynchronously {
+			get { return completedSynchronously; }
+		}
+
+		public bool IsCompleted {
+			get { return isCompleted; }
+		}
+
+		#endregion
+	}
+
+	protected IAsyncResult AsyncPageBeginProcessRequest (HttpContext context, AsyncCallback callback, object extraData) 
+	{
+		ProcessRequest (context);
+		DummyAsyncResult asyncResult = new DummyAsyncResult (true, true, extraData);
+
+		if (callback != null) {
+			callback (asyncResult);
+		}
+		
+		return asyncResult;
+	}
+
+	protected void AsyncPageEndProcessRequest (IAsyncResult result) 
+	{
+	}
+
 	internal void ProcessCrossPagePostBack (HttpContext context)
 	{
 		isCrossPagePostBack = true;
@@ -1309,6 +1384,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End PreRender");
 		
 #if NET_2_0
+		ExecuteRegisteredAsyncTasks ();
+
 		_lifeCycle = PageLifeCycle.PreRenderComplete;
 		OnPreRenderComplete (EventArgs.Empty);
 #endif
@@ -1936,31 +2013,18 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[MonoTODO("Not Implemented")]
 	protected bool AsyncMode {
-		get {
-			throw new NotImplementedException ();
-		}
-		set {
-			throw new NotImplementedException ();
-		}
+		get { return asyncMode; }
+		set { asyncMode = value; }
 	}
 
-	[MonoTODO ("Not Implemented")]
 	public TimeSpan AsyncTimeout {
-		get {
-			throw new NotImplementedException ();
-		}
-		set {
-			throw new NotImplementedException ();
-		}
+		get { return asyncTimeout; }
+		set { asyncTimeout = value; }
 	}
 
-	[MonoTODO ("Not Implemented")]
 	public bool IsAsync {
-		get {
-			throw new NotImplementedException ();
-		}
+		get { return AsyncMode; }
 	}
 	
 	[MonoTODO ("Not Implemented")]
@@ -1980,44 +2044,233 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[MonoTODO ("Not Implemented")]
-	public ViewStateEncryptionMode ViewStateEncryptionMode {
-		get {
-			throw new NotImplementedException ();
-		}
-		set {
-			throw new NotImplementedException ();
-		}
-	}
-
-	[MonoTODO ("Not Implemented")]
 	public void AddOnPreRenderCompleteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler)
 	{
-		throw new NotImplementedException ();
+		AddOnPreRenderCompleteAsync (beginHandler, endHandler, null);
 	}
 
-	[MonoTODO ("Not Implemented")]
 	public void AddOnPreRenderCompleteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, Object state)
 	{
-		throw new NotImplementedException ();
+		if (!IsAsync) {
+			throw new InvalidOperationException ("AddOnPreRenderCompleteAsync called and Page.IsAsync == false");
+		}
+
+		if (_lifeCycle >= PageLifeCycle.PreRender) {
+			throw new InvalidOperationException ("AddOnPreRenderCompleteAsync can only be called before PreRender.");
+		}
+
+		if (beginHandler == null) {
+			throw new ArgumentNullException ("beginHandler");
+		}
+
+		if (endHandler == null) {
+			throw new ArgumentNullException ("endHandler");
+		}
+
+		RegisterAsyncTask (new PageAsyncTask (beginHandler, endHandler, null, state, false));
 	}
 
-	[MonoTODO ("Not Implemented")]
+	private List<PageAsyncTask> ParallelTasks {
+		get
+		{
+			if (parallelTasks == null) {
+				parallelTasks = new List<PageAsyncTask>();
+			}
+			return parallelTasks;
+		}
+	}
+
+	private List<PageAsyncTask> SerialTasks {
+		get {
+			if (serialTasks == null) {
+				serialTasks = new List<PageAsyncTask> ();
+			}
+			return serialTasks;
+		}
+	}
+
+	public void RegisterAsyncTask (PageAsyncTask task) 
+	{
+		if (task == null) {
+			throw new ArgumentNullException ("task");
+		}
+
+		if (task.ExecuteInParallel) {
+			ParallelTasks.Add (task);
+		}
+		else {
+			SerialTasks.Add (task);
+		}
+	}
+
 	public void ExecuteRegisteredAsyncTasks ()
 	{
-		throw new NotImplementedException ();
+		if ((parallelTasks == null || parallelTasks.Count == 0) &&
+			(serialTasks == null || serialTasks.Count == 0)){
+			return;
+		}
+
+		if (parallelTasks != null) {
+			DateTime startExecution = DateTime.Now;
+			List<PageAsyncTask> localParallelTasks = parallelTasks;
+			parallelTasks = null; // Shouldn't execute tasks twice
+			WaitHandle [] waitArray = new WaitHandle [localParallelTasks.Count];
+			IAsyncResult [] asyncResults = new IAsyncResult [localParallelTasks.Count];
+			int i = 0;
+			foreach (PageAsyncTask parallelTask in localParallelTasks) {
+				asyncResults[i] = parallelTask.BeginHandler (this, null, new AsyncCallback(EndAsyncTaskCallback), parallelTask.State);
+				waitArray [i] = asyncResults[i].AsyncWaitHandle;
+				i++;
+			}
+
+			bool allSignalled = WaitHandle.WaitAll (waitArray, AsyncTimeout, false);
+			if (!allSignalled) {
+				for (i = 0; i < asyncResults.Length; i++) {
+					if (!asyncResults [i].IsCompleted) {
+						localParallelTasks [i].TimeoutHandler (asyncResults [i]);
+					}
+				}
+			}
+			DateTime endWait = DateTime.Now;
+			TimeSpan elapsed = endWait - startExecution;
+			if (elapsed <= AsyncTimeout) {
+				AsyncTimeout -= elapsed;
+			}
+			else {
+				AsyncTimeout = TimeSpan.FromTicks(0);
+			}
+		}
+
+		if (serialTasks != null) {
+			foreach (PageAsyncTask serialTask in serialTasks) {
+				DateTime startExecution = DateTime.Now;
+
+				IAsyncResult result = serialTask.BeginHandler (this, null, new AsyncCallback (EndAsyncTaskCallback), serialTask);
+				bool done = result.AsyncWaitHandle.WaitOne (AsyncTimeout, false);
+				if (!done && !result.IsCompleted) {
+					serialTask.TimeoutHandler (result);
+				}
+
+				DateTime endWait = DateTime.Now;
+				TimeSpan elapsed = endWait - startExecution;
+				if (elapsed <= AsyncTimeout) {
+					AsyncTimeout -= elapsed;
+				}
+				else {
+					AsyncTimeout = TimeSpan.FromTicks (0);
+				}
+			}
+		}
+		AsyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
 	}
 
-	[MonoTODO ("Not Implemented")]
+	void EndAsyncTaskCallback (IAsyncResult result) 
+	{
+		PageAsyncTask task = (PageAsyncTask)result.AsyncState;
+		task.EndHandler (result);
+	}
+
 	public static HtmlTextWriter CreateHtmlTextWriterFromType (TextWriter tw, Type writerType)
 	{
-		throw new NotImplementedException ();
+		Type htmlTextWriterType = typeof (HtmlTextWriter);
+		
+		if (!htmlTextWriterType.IsAssignableFrom (writerType)) {
+			throw new HttpException (String.Format ("Type '{0}' cannot be assigned to HtmlTextWriter", writerType.FullName));
+		}
+
+		ConstructorInfo constructor = writerType.GetConstructor (new Type [] { typeof (TextWriter) });
+		if (constructor == null) {
+			throw new HttpException (String.Format ("Type '{0}' does not have a consturctor that takes a TextWriter as parameter", writerType.FullName));
+		}
+
+		return (HtmlTextWriter) Activator.CreateInstance(writerType, tw);
 	}
 
-	[MonoTODO ("Not Implemented")]
+	public ViewStateEncryptionMode ViewStateEncryptionMode {
+		get { return viewStateEncryptionMode; }
+		set { viewStateEncryptionMode = value; }
+	}
+
 	public void RegisterRequiresViewStateEncryption ()
 	{
-		throw new NotImplementedException ();
+		controlRegisteredForViewStateEncryption = true;
+	}
+
+	private static byte [] AES_IV = null;
+	private static byte [] TripleDES_IV = null;
+	private static object locker = new object ();
+	private static bool isEncryptionInitialized = false;
+
+	private static void InitializeEncryption () 
+	{
+		if (isEncryptionInitialized) {
+			return;
+		}
+
+		lock (locker) {
+			if (isEncryptionInitialized) {
+				return;
+			}
+
+			string iv_string = "0BA48A9E-736D-40f8-954B-B2F62241F282";
+			AES_IV = new byte [16];
+			TripleDES_IV = new byte [8];
+
+			int i;
+			for (i = 0; i < AES_IV.Length; i++) {
+				AES_IV [i] = (byte) iv_string [i];
+			}
+
+			for (i = 0; i < TripleDES_IV.Length; i++) {
+				TripleDES_IV [i] = (byte) iv_string [i];
+			}
+
+			isEncryptionInitialized = true;
+		}
+	}
+
+	internal ICryptoTransform GetCryptoTransform (CryptoStreamMode cryptoStreamMode) 
+	{
+		ICryptoTransform transform = null;
+		MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetSection (machineKeyConfigPath);
+		byte [] vk = config.ValidationKeyBytes;
+
+		switch (config.Validation) {
+		case MachineKeyValidation.SHA1:
+			transform = SHA1.Create ();
+			break;
+
+		case MachineKeyValidation.MD5:
+			transform = MD5.Create ();
+			break;
+
+		case MachineKeyValidation.AES:
+			if (cryptoStreamMode == CryptoStreamMode.Read){
+				transform = Rijndael.Create().CreateDecryptor(vk, AES_IV);
+			} else {
+				transform = Rijndael.Create().CreateEncryptor(vk, AES_IV);
+			}
+			break;
+
+		case MachineKeyValidation.TripleDES:
+			if (cryptoStreamMode == CryptoStreamMode.Read){
+				transform = TripleDES.Create().CreateDecryptor(vk, TripleDES_IV);
+			} else {
+				transform = TripleDES.Create().CreateEncryptor(vk, TripleDES_IV);
+			}
+			break;
+		}
+
+		return transform;
+	}
+
+	internal bool NeedViewStateEncryption {
+		get {
+			return (ViewStateEncryptionMode == ViewStateEncryptionMode.Always ||
+					(ViewStateEncryptionMode == ViewStateEncryptionMode.Auto &&
+					 controlRegisteredForViewStateEncryption));
+
+		}
 	}
 
 	void ApplyMasterPage ()
@@ -2253,7 +2506,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[MonoTODO ("Not implemented.  Only used by .net aspx parser")]
 	protected object GetWrappedFileDependencies (string [] list)
 	{
-		return null;
+		return list;
 	}
 
 	[MonoTODO ("Does nothing.  Used by .net aspx parser")]
