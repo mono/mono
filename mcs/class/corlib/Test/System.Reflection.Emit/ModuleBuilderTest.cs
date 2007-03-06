@@ -148,6 +148,24 @@ public class ModuleBuilderTest : Assertion
 							  SymLanguageType.ILAssembly,SymLanguageVendor.Microsoft);
 	}
 	
+	[Test] // Test case for #80435.
+	public void GetArrayMethodToStringTest ()
+	{
+		AssemblyName name = new AssemblyName ();
+		name.Name = "a";
+		AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (name, AssemblyBuilderAccess.RunAndSave);
+
+		ModuleBuilder module = assembly.DefineDynamicModule ("m", "test.dll");
+
+		Type [] myArrayClass = new Type [1];
+		Type [] parameterTypes = { typeof (Array) };
+		MethodInfo myMethodInfo = module.GetArrayMethod (myArrayClass.GetType (), "Sort", CallingConventions.Standard, null, parameterTypes);
+
+		string str = myMethodInfo.ToString ();
+		// Don't compare string, since MS returns System.Reflection.Emit.SymbolMethod here 
+		// (they do not provide an implementation of ToString).
+	}
+	
     private static void AssertArrayEqualsSorted (Array o1, Array o2) {
 		Array s1 = (Array)o1.Clone ();
 		Array s2 = (Array)o2.Clone ();

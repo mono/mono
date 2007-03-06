@@ -1,3 +1,7 @@
+2007-03-06  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ModuleBuilderTest.cs: Added GetArrayMethodToStringTest () -#80435.
+
 2007-03-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumBuilderTest.cs: Added tests for bug #81007. Use Assert instead

@@ -130,7 +130,10 @@ namespace System.Reflection {
 					parms = parms + ", ";
 				parms = parms + p [i].ParameterType.Name;
 			}
-			return ReturnType.Name+" "+Name+"("+parms+")";
+			if (ReturnType != null)
+				return ReturnType.Name+" "+Name+"("+parms+")";
+			else
+				return "void "+Name+"("+parms+")";
 		}
 	}
 }
