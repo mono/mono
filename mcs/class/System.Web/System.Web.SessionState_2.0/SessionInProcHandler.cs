@@ -324,8 +324,19 @@ namespace System.Web.SessionState
 
 		void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
                 {
-			if (expireCallback != null)
-				expireCallback (key, value as SessionStateStoreData);
+			if (expireCallback != null) {
+				if (value is SessionStateStoreData)
+					expireCallback (key, (SessionStateStoreData)value);
+				else if (value is InProcSessionItem) {
+					InProcSessionItem item = (InProcSessionItem)value;
+					expireCallback (key,
+							new SessionStateStoreData (
+								item.items,
+								SessionStateUtility.GetSessionStaticObjects (HttpContext.Current),
+								item.timeout));
+				} else
+					expireCallback (key, null);
+			}
                 }
 	}
 }

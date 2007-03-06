@@ -1,5 +1,8 @@
 2007-03-06  Marek Habersack  <mhabersack@novell.com>
 
+	* SessionInProcHandler.cs: gracefully handle different value types
+	in the session removal handler.
+
 	* SessionStateModule.cs: create an empty container if session data
 	is null. Fixes bug 80682
 
