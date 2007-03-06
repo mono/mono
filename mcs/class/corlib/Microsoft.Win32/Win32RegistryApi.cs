@@ -198,11 +198,15 @@ namespace Microsoft.Win32
 		}
 
 #if NET_2_0
+		public 
+#else
+		internal
+#endif
 		//
 		// This version has to do extra checking, make sure that the requested
 		// valueKind matches the type of the value being stored
 		//
-		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
+		void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
 		{
 			Type type = value.GetType ();
 			int result;
@@ -245,7 +249,6 @@ namespace Microsoft.Win32
 				GenerateException (result);
 			}
 		}
-#endif
 	
 		public void SetValue (RegistryKey rkey, string name, object value)
 		{

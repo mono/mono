@@ -12,7 +12,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 
 class NoNamespaceClass {
@@ -549,25 +548,6 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			MethodInfo i = typeof (Bug77367).GetMethod ("Run", Type.EmptyTypes);
 			Assert.IsNull (i);
-		}
-
-		[Test]
-		public void EqualsUnderlyingType ()
-		{
-			AssemblyBuilderAccess access = AssemblyBuilderAccess.RunAndSave;
-			TypeAttributes attribs = TypeAttributes.Public;
-
-			AssemblyName name = new AssemblyName ();
-			name.Name = "enumtest";
-			AssemblyBuilder assembly = 
-				AppDomain.CurrentDomain.DefineDynamicAssembly (
-															   name, access);
-
-			ModuleBuilder module = assembly.DefineDynamicModule 
-				("m", "enumtest.dll");
-			EnumBuilder e = module.DefineEnum ("E", attribs, typeof (int));
-
-			Assert.IsTrue (typeof (int).Equals (e));
 		}
 
 #if NET_2_0
