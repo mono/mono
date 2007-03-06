@@ -1,5 +1,7 @@
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* Type.cs (Equals): Remove a useless check.
+	
 	* Type.cs: Rename Type:Equals(Type) to EqualsInternal, and add support for checking
 	UnderlyingSystemType. Fixes #81037.
 

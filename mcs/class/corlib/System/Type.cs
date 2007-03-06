@@ -421,11 +421,7 @@ namespace System {
 		}
 
 		public bool Equals (Type type) {
-			// Avoid recursion
-			if (Object.ReferenceEquals (UnderlyingSystemType, this))
-				return EqualsInternal (type.UnderlyingSystemType);
-			else
-				return UnderlyingSystemType.EqualsInternal (type.UnderlyingSystemType);
+			return UnderlyingSystemType.EqualsInternal (type.UnderlyingSystemType);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
