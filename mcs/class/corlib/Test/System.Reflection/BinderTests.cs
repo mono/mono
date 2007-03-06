@@ -372,6 +372,27 @@ namespace MonoTests.System.Reflection
 		public class Bug77079C : Bug77079B
 		{
 		}
+
+		[Test] // bug #76083
+		public void GetMethodAvoidAmbiguity3 ()
+		{
+			Type[] types = new Type[] { typeof (Bug76083ArgDerived) };
+			MethodInfo m = typeof (Bug76083Derived).GetMethod ("Foo", types);
+			Assert.AreEqual (typeof (Bug76083Derived), m.DeclaringType);
+		}
+
+		public class Bug76083ArgBase {}
+		public class Bug76083ArgDerived : Bug76083ArgBase {}
+
+		public class Bug76083Base
+		{
+			public void Foo (Bug76083ArgBase a) {}
+		}
+
+		public class Bug76083Derived : Bug76083Base
+		{
+			public new void Foo (Bug76083ArgBase a) {}
+		}
 	}
 }
 

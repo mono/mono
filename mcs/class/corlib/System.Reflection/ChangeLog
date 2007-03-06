@@ -1,3 +1,11 @@
+2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
+
+	* Binder.cs: The patch changes Binder.Default.GetBetterMethod to
+	prefer methods in subclasses if the arg types can't disambiguate
+	them.
+
+	Also fixes a typo in the CallingConventions comparison.
+
 2007-03-01  Alp Toker  <alp@atoker.com>
 
 	* FieldInfo.cs:

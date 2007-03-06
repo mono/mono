@@ -384,8 +384,17 @@ namespace System.Reflection
 				if (prev != 0)
 					return prev > 0 ? m2 : m1;
 
+				Type dt1 = m1.DeclaringType;
+				Type dt2 = m2.DeclaringType;
+				if (dt1 != dt2) {
+					if (dt1.IsSubclassOf(dt2))
+						return m1;
+					if (dt2.IsSubclassOf(dt1))
+						return m2;
+				}
+
 				bool va1 = (m1.CallingConvention & CallingConventions.VarArgs) != 0;
-				bool va2 = (m1.CallingConvention & CallingConventions.VarArgs) != 0;
+				bool va2 = (m2.CallingConvention & CallingConventions.VarArgs) != 0;
 				if (va1 && !va2)
 					return m2;
 				if (va2 && !va1)
