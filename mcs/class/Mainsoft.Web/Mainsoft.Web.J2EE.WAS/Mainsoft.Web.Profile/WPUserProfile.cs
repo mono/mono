@@ -44,6 +44,7 @@ namespace Mainsoft.Web.Profile
     {
         private WPUser _user;
 
+        
         public WPUserProfile()
         {
             _user = new WPUser();
@@ -52,6 +53,52 @@ namespace Mainsoft.Web.Profile
         public virtual WPUser user
         {
             get { return _user; }
+        }
+
+        public override object this[string propertyName]
+        {
+            get
+            {
+                
+                    if(Properties[propertyName] != null)
+                        return base[propertyName];
+                    return GetFromPortletPreferences(propertyName);              
+            }
+            set
+            {
+                    if (Properties[propertyName] != null)
+                        base[propertyName] = value;
+                    else
+                        SetInPortletPreferences(propertyName, value);
+            }
+        }
+
+        private object GetFromPortletPreferences(string propertyName)
+        {
+
+            javax.portlet.PortletPreferences prefs = Preferences;
+            if (prefs == null)
+                return null;
+
+            return prefs.getValue(propertyName, "NOT FOUND");
+        }
+
+        private void SetInPortletPreferences(string propName, object val)
+        {
+            javax.portlet.PortletPreferences prefs = Preferences;
+            prefs.setValue(propName, val.ToString());
+            prefs.store();
+        }
+
+        private javax.portlet.PortletPreferences Preferences
+        {
+            get
+            {
+                javax.portlet.PortletRequest pr = PortletUtils.getPortletRequest();
+                if (pr == null || !(pr is javax.portlet.ActionRequest))
+                    return null;
+                return pr.getPreferences();
+            }
         }
     }
 

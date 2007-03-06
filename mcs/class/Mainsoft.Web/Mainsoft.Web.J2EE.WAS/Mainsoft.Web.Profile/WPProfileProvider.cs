@@ -95,9 +95,7 @@ namespace Mainsoft.Web.Profile
 
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
         {
-            
             SettingsPropertyValueCollection settings = new SettingsPropertyValueCollection();
-            PortletRequest pr = null;
             if (properties.Count == 0)
                 return settings;
 
@@ -107,19 +105,6 @@ namespace Mainsoft.Web.Profile
 #if DEBUG
                 Console.WriteLine("Cannot obtain PortletPreferences");
 #endif
-                return settings;
-            }
-            if (!IsInActionPhase)
-            {
-//                throw new ApplicationException("The portlet is not in the process action phase");
-                pr = PortletUtils.getPortletRequest();
-                if (pr != null)
-                {
-                    SettingsPropertyValueCollection storedValues = 
-                        (SettingsPropertyValueCollection)pr.getAttribute("VMW_PROPERTY_VALUES");
-                    if (storedValues != null)
-                        return storedValues;
-                }
                 return settings;
             }
 
@@ -134,16 +119,16 @@ namespace Mainsoft.Web.Profile
                 settings.Add(new SettingsPropertyValue(property));
             }
 
-            Map portletPreferencesMap = pp.getMap();
-            for (Iterator iter = portletPreferencesMap.keySet().iterator(); iter.hasNext(); )
+            for(java.util.Enumeration enumer = pp.getNames(); enumer.hasMoreElements();)
             {
-                string name = (string)iter.next();
-                string value = (string)portletPreferencesMap.get(name);
+                string name = (string)enumer.nextElement();
 
                 SettingsPropertyValue property = settings[name];
                 
                 if (property == null)
                     continue;
+
+                string value = pp.getValue(name, null);
 
                 if (value == null)
                 {
@@ -169,18 +154,19 @@ namespace Mainsoft.Web.Profile
                     property.SerializedValue = value;
                 }
             }
-
-            pr = (pr == null) ? PortletUtils.getPortletRequest() : pr;
-            if (pr != null)
-            {
-                pr.setAttribute("VMW_PROPERTY_VALUES", settings);
-            }
             return settings;
 
         }
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection collection)
         {
+            if (!IsInActionPhase)
+            {
+#if DEBUG
+                Console.WriteLine("The portlet not in the process action phase");
+#endif
+                return;
+            }
             PortletPreferences pp = PortletPreferences;
             if (pp == null)
             {
@@ -189,13 +175,7 @@ namespace Mainsoft.Web.Profile
 #endif
                 return;
             }
-            if (!IsInActionPhase)
-            {
-#if DEBUG
-                Console.WriteLine("The portlet not in the process action phace");
-#endif
-                throw new ApplicationException("The portlet is not in the process action phase");
-            }
+            
             try
             {
                 string username = (string)context["UserName"];

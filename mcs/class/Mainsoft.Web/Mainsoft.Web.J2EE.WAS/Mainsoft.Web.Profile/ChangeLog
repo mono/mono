@@ -1,3 +1,9 @@
+03-06-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+	
+	* WPUserProfile.cs: added support for PortalPreferences (defined in
+	portlet.xml and not defined in Web.config)
+	* WPProfileProvider.cs: fixed action/render phases related code.
+
 03-04-2007    Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* WPUserProfile.cs: refactored.
