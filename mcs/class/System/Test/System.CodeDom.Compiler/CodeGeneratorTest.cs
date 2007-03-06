@@ -70,6 +70,27 @@ namespace CodeGeneratorTest
 			Assert.AreEqual (true, codeGenerator.IsCurrentStruct, "#F5");
 		}
 
+		[Test]
+		public void IsValidLanguageIndependentIdentifierTest ()
+		{
+			Assert.AreEqual (true,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("hello"), "#G1");
+			Assert.AreEqual (true,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("good1"), "#G2");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("2bad"), "#G3");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("@start"), "#G4");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("not@start"), "#G5");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier(" spaceatstart"), "#G6");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("spaceatend "), "#G7");
+			Assert.AreEqual (false,
+				CodeGenerator.IsValidLanguageIndependentIdentifier("a spacein2ndplace"), "#G8");
+		}
+
 		private CodeTypeDeclaration GetClassType ()
 		{
 			return new CodeTypeDeclaration ();

@@ -1215,8 +1215,22 @@ namespace System.CodeDom.Compiler {
 				return false;
 			if (value.Equals (string.Empty))
 				return false;
-			switch (char.GetUnicodeCategory (value[0]))
-			{
+
+			switch (char.GetUnicodeCategory (value[0])) {
+			case UnicodeCategory.LetterNumber:
+			case UnicodeCategory.LowercaseLetter:
+			case UnicodeCategory.TitlecaseLetter:
+			case UnicodeCategory.UppercaseLetter:
+			case UnicodeCategory.OtherLetter:
+			case UnicodeCategory.ModifierLetter:
+			case UnicodeCategory.ConnectorPunctuation:
+				break;
+			default:
+				return false;
+			}
+
+			for (int x = 1; x < value.Length; ++x) {
+				switch (char.GetUnicodeCategory (value[x])) {
 				case UnicodeCategory.LetterNumber:
 				case UnicodeCategory.LowercaseLetter:
 				case UnicodeCategory.TitlecaseLetter:
@@ -1224,33 +1238,17 @@ namespace System.CodeDom.Compiler {
 				case UnicodeCategory.OtherLetter:
 				case UnicodeCategory.ModifierLetter:
 				case UnicodeCategory.ConnectorPunctuation:
-					if (value.Length > 1)
-					{
-						for (int x = 0; x < value.Length; x++)
-						{
-							switch (char.GetUnicodeCategory (value[x]))
-							{
-								case UnicodeCategory.LetterNumber:
-								case UnicodeCategory.LowercaseLetter:
-								case UnicodeCategory.TitlecaseLetter:
-								case UnicodeCategory.UppercaseLetter:
-								case UnicodeCategory.OtherLetter:
-								case UnicodeCategory.ModifierLetter:
-								case UnicodeCategory.ConnectorPunctuation:
-								case UnicodeCategory.DecimalDigitNumber:
-								case UnicodeCategory.NonSpacingMark:
-								case UnicodeCategory.SpacingCombiningMark:
-								case UnicodeCategory.Format:
-									return true;
-							}
-							return false;
-						}
-					}
-					else
-						return true;
+				case UnicodeCategory.DecimalDigitNumber:
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.SpacingCombiningMark:
+				case UnicodeCategory.Format:
 					break;
+				default:
+					return false;
+				}
 			}
-			return false;
+
+			return true;
 		}
 
 		protected abstract bool Supports (GeneratorSupport supports);

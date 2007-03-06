@@ -1,3 +1,18 @@
+2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
+
+	* Codegenerator.cs: I noticed an `unreachable code' warning while
+	building Mono:
+
+	System.CodeDom.Compiler/CodeGenerator.cs(1229,42): warning CS0162:
+	Unreachable code detected
+
+	This turned out to be in the method
+	CodeGenerator.IsValidLanguageIndependentIdentifier, which was
+	broken.
+
+	The following patch contains a unit test to demonstrate the
+	problem (checked against MS.NET), and a fix to CodeGenerator.cs.
+
 2007-02-22  Marek Habersack  <grendello@gmail.com>
 
 	* CompilerCollection.cs: be case-insensitive with languages and
