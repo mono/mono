@@ -1,5 +1,10 @@
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
 
+	* DataGridView.cs: Add rows when DataSource is System.Data.DataView
+	and a new row is added to it.
+
+2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
+
 	* DataGridView.cs: Add columns when DataSource is en empty list but
 	is a System.Data.DataView (from a System.Data.DataTable).
 

@@ -592,6 +592,9 @@ namespace System.Windows.Forms {
 					if (!(value is IList) && !(value is IListSource) && !(value is IBindingList) && !(value is IBindingListView)) {
 						throw new NotSupportedException("Type cant be binded.");
 					}
+					if (dataSource != null && dataSource is DataView) {
+						(dataSource as DataView).ListChanged -= OnListChanged;
+					}
 					dataSource = value;
 					OnDataSourceChanged(EventArgs.Empty);
 					// DataBinding
@@ -3067,7 +3070,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs e) {
 			base.OnPaint(e);
-			//Console.WriteLine(e.ClipRectangle);
+			Console.WriteLine("DataGridView.OnPaint-ClipRectangle: {0};", e.ClipRectangle);
 			Rectangle bounds = ClientRectangle; //e.ClipRectangle;
 			e.Graphics.FillRectangle(new SolidBrush(backgroundColor), bounds);
 			Pen pen = new Pen(gridColor);
@@ -3167,7 +3170,7 @@ namespace System.Windows.Forms {
 				if (horizontalScrollBar.Visible && (gridHeight + horizontalScrollBar.Height) > Size.Height) {
 					verticalScrollBar.Visible = true;
 				}
-				if (verticalScrollBar.Visible && (gridWidth + horizontalScrollBar.Width) > Size.Width) {
+				if (verticalScrollBar.Visible && (gridWidth + verticalScrollBar.Width) > Size.Width) {
 					horizontalScrollBar.Visible = true;
 				}
 				if (horizontalScrollBar.Visible) {
@@ -3654,7 +3657,8 @@ namespace System.Windows.Forms {
 
 		private void BindIList (IList list) {
 			if (list is DataView) {
-				DataTable table = (list as DataView).Table;
+				DataView dataView = (DataView) list;
+				DataTable table = dataView.Table;
 				DataGridViewCell template = new DataGridViewTextBoxCell();
 				foreach (DataColumn dataColumn in table.Columns) {
 					DataGridViewColumn col = new DataGridViewColumn(template);
@@ -3662,6 +3666,7 @@ namespace System.Windows.Forms {
 					col.ValueType = dataColumn.DataType;
 					columns.Add(col);
 				}
+				dataView.ListChanged += OnListChanged;
 			}
 			else if (list.Count > 0) {
 				DataGridViewCell template = new DataGridViewTextBoxCell();
@@ -3694,6 +3699,24 @@ namespace System.Windows.Forms {
 
 		private void BindIBindingListView (IBindingListView list) {
 			BindIList(list);
+		}
+
+		private void OnListChanged (object sender, ListChangedEventArgs args) {
+			if (args.OldIndex >= 0) {
+			}
+			if (args.NewIndex >= 0) {
+				object element = (sender as DataView)[args.NewIndex];
+				DataGridViewRow row = new DataGridViewRow();
+				rows.InternalAdd(row);
+				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(element);
+				foreach (PropertyDescriptor property in properties) {
+					DataGridViewTextBoxCell cell = new DataGridViewTextBoxCell();
+					cell.Value = property.GetValue(element);
+					cell.ValueType = property.PropertyType;
+					row.Cells.Add(cell);
+				}
+				Invalidate();
+			}
 		}
 
 		public sealed class HitTestInfo {
