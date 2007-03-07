@@ -191,17 +191,26 @@ namespace MonoTests.System.Drawing {
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Ignore ("Bitmap.LockBits is not implemented")]
+#endif
 		public void LockBits_BitmapData_Null ()
 		{
+#if !TARGET_JVM
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
 				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb, null);
 			}
+#endif
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Bitmap.LockBits is not implemented")]
+#endif
 		public void LockBits_32_32_BitmapData ()
 		{
+#if !TARGET_JVM
 			BitmapData data = new BitmapData ();
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
@@ -212,12 +221,16 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (100, data.Width, "Width");
 				bmp.UnlockBits (data);
 			}
+#endif
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if TARGET_JVM
+		[Ignore ("Bitmap.LockBits is not implemented")]
+#endif
 		public void LockBits_32_24_BitmapData ()
 		{
+#if !TARGET_JVM
 			BitmapData data = new BitmapData ();
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
@@ -228,12 +241,16 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (100, data.Width, "Width");
 				bmp.UnlockBits (data);
 			}
+#endif
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+#if TARGET_JVM
+		[Ignore ("Bitmap.LockBits is not implemented")]
+#endif
 		public void LockBits_24_24_BitmapData ()
 		{
+#if !TARGET_JVM
 			BitmapData data = new BitmapData ();
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
@@ -244,11 +261,16 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (100, data.Width, "Width");
 				bmp.UnlockBits (data);
 			}
+#endif
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Ignore ("Bitmap.LockBits is not implemented")]
+#endif
 		public void LockBits_24_32_BitmapData ()
 		{
+#if !TARGET_JVM
 			BitmapData data = new BitmapData ();
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
@@ -259,6 +281,7 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (100, data.Width, "Width");
 				bmp.UnlockBits (data);
 			}
+#endif
 		}
 #endif
 
@@ -1226,7 +1249,7 @@ namespace MonoTests.System.Drawing {
 	[Ignore ("Unsafe code is not supported")]
 #endif
 	public class BitmapFullTrustTest {
-
+#if !TARGET_JVM
 		// BitmapFromHicon## is *almost* the same as IconTest.Icon##ToBitmap except
 		// for the Flags property
 
@@ -1381,6 +1404,7 @@ namespace MonoTests.System.Drawing {
 				Assert.IsTrue (image2.RawFormat.Equals (ImageFormat.MemoryBmp), "2.RawFormat");
 			}
 		}
+#endif
 	}
 }
 

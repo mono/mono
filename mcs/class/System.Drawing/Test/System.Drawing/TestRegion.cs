@@ -1527,11 +1527,11 @@ namespace MonoTests.System.Drawing
 
 	[TestFixture]
 #if TARGET_JVM
-	[Category ("NotWorking")]
+	[Ignore ("Unsafe code is not supported")]
 #endif
 	// the test cases in this fixture aren't restricted wrt running unmanaged code
 	public class RegionTestUnmanaged {
-
+#if !TARGET_JVM
 		private Bitmap bitmap;
 		private Graphics graphic;
 
@@ -1634,6 +1634,7 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (IntPtr.Zero == ptr, "ptr");
 			r.ReleaseHrgn (ptr);
 		}
+#endif
 #endif
 	}
 }

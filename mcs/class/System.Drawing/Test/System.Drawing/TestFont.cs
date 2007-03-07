@@ -492,10 +492,12 @@ namespace MonoTests.System.Drawing{
 #endif
 		public void Dispose_ToLogFont ()
 		{
+#if !TARGET_JVM
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			LOGFONT	lf = new LOGFONT();
 			f.ToLogFont (lf);
+#endif
 		}
 
 		[Test]
@@ -504,6 +506,7 @@ namespace MonoTests.System.Drawing{
 #endif
 		public void Dispose_ToLogFont_LoopCharSet ()
 		{
+#if !TARGET_JVM
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			LOGFONT lf = new LOGFONT ();
@@ -548,6 +551,7 @@ namespace MonoTests.System.Drawing{
 					Assert.Fail ("Unexcepted exception {0} at iteration {1}", e, i);
 				}
 			}
+#endif
 		}
 
 		[Test]
@@ -557,9 +561,11 @@ namespace MonoTests.System.Drawing{
 #endif
 		public void Dispose_ToHFont ()
 		{
+#if !TARGET_JVM
 			Font f = new Font (name, 12.5f);
 			f.Dispose ();
 			f.ToHfont ();
+#endif
 		}
 	}
 }

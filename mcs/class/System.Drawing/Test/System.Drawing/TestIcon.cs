@@ -189,7 +189,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void Constructor_StreamNull_Size ()
 		{
+#if !TARGET_JVM
 			new Icon ((Stream) null, new Size (32, 32));
+#endif
 		}
 
 		[Test]
@@ -199,7 +201,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void Constructor_StringNull_Size ()
 		{
+#if !TARGET_JVM
 			new Icon ((string) null, new Size (32, 32));
+#endif
 		}
 
 		[Test]
@@ -209,7 +213,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void Constructor_StringNull_Int_Int ()
 		{
+#if !TARGET_JVM
 			new Icon ((string) null, 32, 32);
+#endif
 		}
 #endif
 
@@ -443,7 +449,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void ExtractAssociatedIcon_Null ()
 		{
+#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon (null);
+#endif
 		}
 
 		[Test]
@@ -453,7 +461,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void ExtractAssociatedIcon_Empty ()
 		{
+#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon (String.Empty);
+#endif
 		}
 
 		[Test]
@@ -463,7 +473,9 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void ExtractAssociatedIcon_DoesNotExists ()
 		{
+#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon ("does-not-exists.png");
+#endif
 		}
 #endif
 	}
@@ -473,6 +485,7 @@ namespace MonoTests.System.Drawing {
 	[Ignore ("Unsafe code is not supported")]
 #endif	
 	public class IconFullTrustTest {
+#if !TARGET_JVM
 #if NET_2_0
 		[Test]
 		public void ExtractAssociatedIcon ()
@@ -572,5 +585,6 @@ namespace MonoTests.System.Drawing {
 				IconTest.SaveAndCompare ("HICON", icon3, false);
 			}
 		}
+#endif
 	}
 }
