@@ -44,6 +44,34 @@ namespace System.Web.J2EE
 		private static readonly object LOCK_GETASSEMBLIESCACHEDDOCUMENT = new object();
 		private static readonly object LOCK_GETFROMMAPPATHCACHE = new object();
 
+		static PageMapper ()
+		{
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler (CurrentDomain_AssemblyResolve);
+			try
+			{
+				//Try to load the  global resources
+				HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly ("app_globalresources");
+			}
+			catch
+			{
+			}
+		}
+
+
+		static Assembly CurrentDomain_AssemblyResolve (object sender, ResolveEventArgs args)
+		{
+			Assembly resolvedAssembly = null;
+			try
+			{
+				resolvedAssembly = GetCachedAssembly (args.Name);
+			}
+			catch
+			{
+				resolvedAssembly = null;
+			}
+
+			return resolvedAssembly;
+		}
 		public static string GetFromMapPathCache(string key)
 		{
 			Hashtable answer = null;
@@ -241,6 +269,7 @@ namespace System.Web.J2EE
 			//spivak.December 07 2006
 			public MetaProvider GetMetaByURL(string url)
 			{
+
 #if !NO_GLOBAL_LOCK_ON_COMPILE
 				string lwUrl = url.ToLower();
 				lock (_table)
