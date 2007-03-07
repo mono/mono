@@ -47,7 +47,6 @@ namespace System.Windows.Forms {
 		private float fillWeight;
 		private bool frozen;
 		private DataGridViewColumnHeaderCell headerCell;
-		private string headerText = "";
 		private DataGridViewAutoSizeColumnMode inheritedAutoSizeMode;
 		private bool isDataBound;
 		private int minimumWidth = 5;
@@ -222,8 +221,13 @@ Example */
 
 		[Localizable (true)]
 		public string HeaderText {
-			get { return headerText; }
-			set { headerText = value; }
+			get {
+				if (headerCell.Value == null) {
+					return String.Empty;
+				}
+				return (string) headerCell.Value;
+			}
+			set { headerCell.Value = value; }
 		}
 
 		[Browsable (false)]

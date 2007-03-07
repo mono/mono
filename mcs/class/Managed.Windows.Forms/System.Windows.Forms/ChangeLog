@@ -1,5 +1,9 @@
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
 
+	* DataGridViewColumn.cs: Fix HeaderText behaviour (Bug #80746).
+
+2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
+
 	* DataGridView.cs: Change DataSource will clear column and row
 	lists. Call Invalidate() to reflect DataSource change.
 
