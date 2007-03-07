@@ -93,6 +93,8 @@ namespace System.Windows.Forms {
 		private int drag_begin_y = 0;
 		private long handle_count = 1;
 
+		private TreeViewDrawMode draw_mode;
+
 		#endregion	// Fields
 
 		#region Public Constructors	
@@ -366,7 +368,7 @@ namespace System.Windows.Forms {
 				selected_node = value;
 				focused_node = value;
 
-				if (full_row_select) {
+				if (full_row_select || draw_mode != TreeViewDrawMode.Normal) {
 					invalid.X = 0;
 					invalid.Width = ViewportRectangle.Width;
 				}
@@ -475,10 +477,9 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		/// According to MSDN this property has no effect on the treeview
-		private bool double_buffered;
 		protected override bool DoubleBuffered {
-			get { return double_buffered; }
-			set { double_buffered = value; }
+			get { return true; }
+			set { /* whatever */ }
 		}
 #endif
 
@@ -519,6 +520,19 @@ namespace System.Windows.Forms {
 		}
 #endif
 
+#if NET_2_0
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+
+#if NET_2_0
+		public TreeViewDrawMode DrawMode {
+			get { return draw_mode; }
+			set { draw_mode = value; }
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
@@ -801,6 +815,14 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, e);
 		}
+
+#if NET_2_0
+		protected virtual void OnDrawNode(DrawTreeNodeEventArgs e) {
+			DrawTreeNodeEventHandler eh = (DrawTreeNodeEventHandler)(Events[DrawNodeEvent]);
+			if (eh != null)
+				eh(this, e);
+		}
+#endif
 
 		protected internal virtual void OnAfterCheck (TreeViewEventArgs e) {
 			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterCheckEvent]);
@@ -1150,7 +1172,7 @@ namespace System.Windows.Forms {
 				if (current.GetY () > clip.Bottom)
 					break;
 
-				DrawNode (current, dc, clip);
+				DrawTreeNode (current, dc, clip);
 			}
 
 			if (hbar.Visible && vbar.Visible) {
@@ -1163,7 +1185,7 @@ namespace System.Windows.Forms {
 
 		private void DrawNodePlusMinus (TreeNode node, Graphics dc, int x, int middle)
 		{
-			dc.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
+			dc.DrawRectangle (SystemPens.ControlDarkDark, x, middle - 4, 8, 8);
 
 			if (node.IsExpanded) {
 				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
@@ -1338,7 +1360,10 @@ namespace System.Windows.Forms {
 			if (Focused && focused_node == node) {
 				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 			}
-			r.Inflate(-1, -1);
+			if (draw_mode != TreeViewDrawMode.Normal)
+				return;
+
+			r.Inflate (-1, -1);
 			if (Focused && node == highlighted_node) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), r);
 			} else if (!hide_selection && node == highlighted_node) {
@@ -1353,17 +1378,20 @@ namespace System.Windows.Forms {
 			if (!full_row_select)
 				DrawSelectionAndFocus(node, dc, node.Bounds);
 
+			
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
 				font = Font;
 			Color text_color = (Focused && node == highlighted_node ?
 					ThemeEngine.Current.ColorHighlightText : node.ForeColor);
+			if (text_color.IsEmpty)
+				text_color = ForeColor;
 			dc.DrawString (node.Text, font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
 					node.Bounds, string_format);
 		}
 
-		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip)
+		private void DrawTreeNode (TreeNode node, Graphics dc, Rectangle clip)
 		{
 			int child_count = node.nodes.Count;
 			int y = node.GetY ();
@@ -1374,17 +1402,47 @@ namespace System.Windows.Forms {
 				DrawSelectionAndFocus (node, dc, r);
 			}
 
-			if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0)
-				DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
+			if (draw_mode == TreeViewDrawMode.Normal || draw_mode == TreeViewDrawMode.OwnerDrawText) {
+				if ((show_root_lines || node.Parent != null) && show_plus_minus && child_count > 0)
+					DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
 
-			if (checkboxes)
-				DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
+				if (checkboxes)
+					DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
 
-			if (show_lines)
-				DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
+				if (show_lines)
+					DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
 
-			if (ImageList != null)
-                                DrawNodeImage (node, dc, clip, node.GetImageX (), y);
+				if (ImageList != null)
+					DrawNodeImage (node, dc, clip, node.GetImageX (), y);
+			}
+
+			
+#if NET_2_0
+			if (draw_mode != TreeViewDrawMode.Normal) {
+				dc.FillRectangle (Brushes.White, node.Bounds);
+				TreeNodeStates tree_node_state = TreeNodeStates.Default;;
+				if (node.IsSelected)
+					tree_node_state = TreeNodeStates.Selected;
+				if (node.Checked)
+					tree_node_state |= TreeNodeStates.Checked;
+				if (node == focused_node)
+					tree_node_state |= TreeNodeStates.Focused;
+				Rectangle node_bounds = node.Bounds;
+				if (draw_mode == TreeViewDrawMode.OwnerDrawText) {
+					node_bounds.X += 3;
+					node_bounds.Y += 1;
+				} else {
+					node_bounds.X = 0;
+					node_bounds.Width = Width;
+				}
+
+				DrawTreeNodeEventArgs e = new DrawTreeNodeEventArgs (dc, node, node_bounds, tree_node_state);
+
+				OnDrawNode (e);				
+				if (!e.DrawDefault)
+					return;
+			}
+#endif
 
 			if (!node.IsEditing)
 				DrawStaticNode (node, dc);
@@ -1800,6 +1858,9 @@ namespace System.Windows.Forms {
 		static object BeforeExpandEvent = new object ();
 		static object BeforeLabelEditEvent = new object ();
 		static object BeforeSelectEvent = new object ();
+#if NET_2_0
+		static object DrawNodeEvent = new object();
+#endif
 
 		public event ItemDragEventHandler ItemDrag {
 			add { Events.AddHandler (ItemDragEvent, value); }
@@ -1855,6 +1916,13 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (BeforeSelectEvent, value); }
 			remove { Events.RemoveHandler (BeforeSelectEvent, value); }
 		}
+
+#if NET_2_0
+		public event DrawTreeNodeEventHandler DrawNode {
+			add { Events.AddHandler (DrawNodeEvent, value); }
+			remove { Events.RemoveHandler (DrawNodeEvent, value); }
+		}
+#endif
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]	

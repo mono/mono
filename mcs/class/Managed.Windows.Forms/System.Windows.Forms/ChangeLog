@@ -1,3 +1,10 @@
+2007-03-07  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Implement owner draw tree nodes.  And a couple more
+	2.0 properties
+	* DrawTreeNodeEventHandler.cs: Add
+	* DrawTreeNodeEventArgs.cs: Correct default value.
+	
 2007-03-07  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIWin32.cs: create InternalWndProc so that we're guaranteed

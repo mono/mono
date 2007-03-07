@@ -291,6 +291,7 @@ System.Windows.Forms/DrawItemEventHandler.cs
 System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/DrawMode.cs
 System.Windows.Forms/DrawTreeNodeEventArgs.cs
+System.Windows.Forms/DrawTreeNodeEventHandler.cs
 System.Windows.Forms/ErrorBlinkStyle.cs
 System.Windows.Forms/ErrorIconAlignment.cs
 System.Windows.Forms/ErrorProvider.cs

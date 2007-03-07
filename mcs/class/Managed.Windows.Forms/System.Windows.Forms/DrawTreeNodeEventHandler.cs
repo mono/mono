@@ -17,65 +17,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2006 Jonathan Chambers
+// Copyright (c) 2007 Novell, Inc.
 //
 // Authors:
-//	Jonathan Chambers (joncham@gmail.com)
+//	Jackson Harper (jackson@ximian.com)
 //
 
-
 #if NET_2_0
-using System.Drawing;
 
-namespace System.Windows.Forms
-{
-	public class DrawTreeNodeEventArgs : EventArgs
-	{
-		private Rectangle bounds;
-		private bool draw_default;
-		private Graphics graphics;
-		private TreeNode node;
-		private TreeNodeStates state;
+using System;
 
-		#region Public Constructors
-		public DrawTreeNodeEventArgs (Graphics graphics, TreeNode node,
-			Rectangle bounds, TreeNodeStates state)
-		{
-			this.bounds = bounds;
-			this.draw_default = false;
-			this.graphics = graphics;
-			this.node = node;
-			this.state = state;
-		}
-		#endregion // Public Constructors
+namespace System.Windows.Forms {
 
-		#region Public Instance Properties
-		public Rectangle Bounds
-		{
-			get { return bounds; }
-		}
+	public delegate void DrawTreeNodeEventHandler (object sender, DrawTreeNodeEventArgs e);
 
-		public bool DrawDefault
-		{
-			get { return draw_default; }
-			set { draw_default = value; }
-		}
-
-		public Graphics Graphics
-		{
-			get { return graphics; }
-		}
-
-		public TreeNode Node
-		{
-			get { return node; }
-		}
-
-		public TreeNodeStates State
-		{
-			get { return state; }
-		}
-		#endregion // Public Instance Properties
-	}
 }
+
+
 #endif
