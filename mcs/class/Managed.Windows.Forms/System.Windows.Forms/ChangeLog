@@ -1,5 +1,10 @@
 2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeViewDrawMode.cs: Make internal for 1.1 to allow for consolidated
+	TreeView code.
+
+2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUIWin32.cs: The no_activate stuff was forcing us to create a
 	Handle before we were supposed to.  Now checks ActivateOnShow property
 	in Control.

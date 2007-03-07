@@ -27,14 +27,15 @@
 //
 
 
-#if NET_2_0
 namespace System.Windows.Forms
 {
-	public enum TreeViewDrawMode
+#if NET_2_0
+	public 
+#endif
+	enum TreeViewDrawMode
 	{
 		Normal = 0,
 		OwnerDrawText = 1,
 		OwnerDrawAll = 2
 	}
 }
-#endif
