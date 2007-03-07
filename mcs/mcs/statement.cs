@@ -2305,6 +2305,9 @@ namespace Mono.CSharp {
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
 				      ec.CurrentBranching, statement_count, num_statements);
 
+			if (!ok)
+				return false;
+
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
 
