@@ -1,3 +1,22 @@
+2007-03-05  Chris Toshok  <toshok@ximian.com>
+
+	[merge -r72718:73765 from mwf-handle-branch]
+
+	2007-03-05  Chris Toshok  <toshok@ximian.com>
+
+		* ControlHandleTest.cs: make this build on both 1.1 and 2.0
+		profiles.
+
+	2007-02-28  Chris Toshok  <toshok@ximian.com>
+
+		* ControlTest.cs: Flesh out ControlInvokeTest to make sure that
+		the Control thread dies (that Application.Run returns, basically).
+		This works in isolation, but for some reason it isn't exiting when
+		run in concert with other tests (this test is the cause of the
+		hangs running the unit tests.)  Marking NotWorking for the time
+		being.  This needs to be fixed before merging back to the
+		mainline, imo.
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormTest.cs: Added MaximizedParentedFormTest.

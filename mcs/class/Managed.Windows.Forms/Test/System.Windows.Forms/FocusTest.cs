@@ -980,6 +980,10 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void EnterLeaveFocusEventTest ()
 		{
+			if (RunningOnUnix) {
+				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+			}
+
 			Form f = new Form();
 			f.ShowInTaskbar = false;
 

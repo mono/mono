@@ -31,6 +31,7 @@
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Collections;
 using System.Diagnostics;
 
@@ -39,6 +40,9 @@ namespace System.Windows.Forms
 	public class NativeWindow : MarshalByRefObject {
 		internal IntPtr			window_handle;
 		static internal Hashtable	window_collection = new Hashtable();
+
+		[ThreadStatic]
+		static NativeWindow WindowCreating;
 
 		#region Public Constructors
 		public NativeWindow()
@@ -88,9 +92,8 @@ namespace System.Windows.Forms
 		public void AssignHandle(IntPtr handle)
 		{
 			lock (window_collection) {
-				if (window_handle != IntPtr.Zero) {
+				if (window_handle != IntPtr.Zero)
 					window_collection.Remove(window_handle);
-				}
 				window_handle=handle;
 				window_collection.Add(window_handle, this);
 			}
@@ -100,14 +103,19 @@ namespace System.Windows.Forms
 		public virtual void CreateHandle(CreateParams create_params)
 		{
 			if (create_params != null) {
+				WindowCreating = this;
+
 				window_handle=XplatUI.CreateWindow(create_params);
+
+				WindowCreating = null;
 
 				if (window_handle != IntPtr.Zero) {
 					lock (window_collection) {
-						window_collection.Add(window_handle, this);
+						window_collection[window_handle] = this;
 					}
 				}
 			}
+
 		}
 
 		public void DefWndProc(ref Message m)
@@ -169,6 +177,17 @@ namespace System.Windows.Forms
 
 				if (window != null)
 					window.WndProc(ref m);
+				else if (WindowCreating != null) {
+					// we need to do this AssignHandle here instead of relying on
+					// Control.WndProc to do it, because subclasses can override
+					// WndProc, install their own WM_CREATE block, and look at
+					// this.Handle, and it needs to be set.  Otherwise, we end up
+					// recursively creating windows and emitting WM_CREATE.
+					if (WindowCreating.window_handle == IntPtr.Zero)
+						WindowCreating.AssignHandle (hWnd);
+
+					WindowCreating.WndProc (ref m);
+				}
 				else
 					m.Result=XplatUI.DefWndProc(ref m);
 			}

@@ -1,3 +1,199 @@
+2007-03-07  Chris Toshok  <toshok@ximian.com>
+
+	[merge -r72718:73765 from mwf-handle-branch, and include 2 changes
+	to make the rest of the world happy]
+
+	* Control.cs (CreateHandle): there's no need to call
+	XplatUI.SetVisible here, it's effectively done by
+	XplatUI.CreateWindow on X now, and always was on windows.
+
+	* XplatUIX11.cs (WaitForHwndMessage): only use the PostQuitState
+	shortcircuit out of the loop if we have a message loop running on
+	this thread.
+
+	[Changelog from merge]
+
+	2007-03-05  Chris Toshok  <toshok@ximian.com>
+
+		* Control.cs (AccessibilityNotifyClients): turns out in 1.1 this
+		causes handle creation.
+
+	2007-02-28  Chris Toshok  <toshok@ximian.com>
+
+		* ApplicationContext.cs: Add a flag to make sure we only raise the
+		ThreadExit event once (ExitThreadCore can be indirectly called
+		from a few places.)  I don't like the additional flag, but it
+		makes the event ordering/count correct.
+
+		* Application.cs (MWFThread.LoopCount): don't use an enumerator
+		without locking the collection.  An enumerator doesn't give us any
+		protection from modification anyway.  Lock the thread hash and
+		replace the complicated enumerator loop with a foreach.
+		(Application.CloseForms): make internal so it can be called from
+		ApplicationContext.  This should probably be moved to MWFThread.
+		(Application.ExitThread): don't call MWFThread.Current.Exit()
+		here.  just call XplatUI.PostQuitMessage.  We'll exit the thread
+		when the runloop exits (in response to WM_QUIT.)
+		(Application.RunLoop): add a comment (and check) for
+		context.MainForm being null after setting context.MainForm.Visible
+		= true.  This is because you're perfectly free to dispose of a
+		form in VisibilityChanged.  Chalk this up to another case where we
+		need to synchronously generate WM_ACTIVATE from Control.Show.
+		Also, add handling for WM_QUIT here so we'll exit the loop.
+		
+		* XplatUIX11.cs: clean up MapWindow and UnmapWindow a bit.  The
+		fact that we don't wait if we're only unmapping the whole_window
+		makes me a bit nervous, but it doesn't seem to cause any problems
+		yet.
+
+		also, add a comment about the stupid, broken and wrong resetting
+		of PostQuitState to false in GetMessage().
+
+		In PostQuitMessage, we need to add a WM_QUIT message to the
+		thread's queue.  We use the FosterParent to get the right
+		handle/hwnd/queue.
+
+		Lastly, in SetVisible, we need to unmap both windows, since the
+		waiting only happens when we're unmapping the client window.  So
+		now, the *only* time we unmap just the whole_window is in the hack
+		for resizing a control to 0,0.
+		
+	2007-02-21  Chris Toshok  <toshok@ximian.com>
+
+		* Application.cs (CloseForms): rewrite this so that we don't
+		modify the list while we're traversing it.
+
+	2007-02-20  Chris Toshok  <toshok@ximian.com>
+
+		* ListBox.cs (.ctor): move the Control.AddImplicits here instead
+		of OnHandleCreated.
+		(HorizontalScrollEvent): only call XplatUI.ScrollWindow if the
+		handle is created.  otherwise we'll create it here.
+		(VerticalScrollEvent): same here.
+
+		* Application.cs (CloseForms): call Form.Dispose, don't post
+		WM_CLOSE_INTERNAL.
+
+		* Form.cs (WndProc): we don't need to use CLOSE_INTERNAL
+		here. Application should Dispose() of the Form's.
+
+		* XplatUIX11.cs (WaitForHwndMessage): break out of the loop on
+		WM_DESTROY as well.
+		(MapWindow,UnmapWindow): only actually do the waiting for
+		SHOWWINDOW if the control we're dealing with is a Form.
+		(CreateWindow): if the control isn't a form, SendMessage
+		WM_SHOWWINDOW here (if the WS_VISIBLE style is set).
+
+		* Control.cs (SetVisibleCore): always use is_visible here, not
+		value.  If we use value, we can end up re-setting something
+		visible if, for instance, you do Control.Hide() in a delegate
+		attached to VisibleChanged as we do in FormTest.ShowDialogTest.
+
+	2007-02-20  Chris Toshok  <toshok@ximian.com>
+
+		* XplatUIX11.cs (WaitForHwndMessage): we need to loop until we get
+		the message we need.  PeekMessage returning false should not be a
+		condition under which we exit the loop.
+
+	2007-02-15  Chris Toshok  <toshok@ximian.com>
+
+		* Control.cs (Refresh): only refresh if we've got a handle and are
+		visible.
+		(CreateAccessibilityInstance): CreateControl() here.
+		(UpdateChildrenZOrder): complicate the code loop even more by
+		taking into account controls that haven't had their handle
+		created, and those that aren't visible.  But on the flip side,
+		simplify the code by splitting it into two loops.  one which
+		builds up the list of child controls we're interested in, and the
+		other that sets the z order of those children.
+
+	2007-02-14  Chris Toshok  <toshok@ximian.com>
+
+		* Control.cs: Control.AccessibilityObject causes the control to be
+		created, not just the handle.
+
+	2007-02-14  Chris Toshok  <toshok@ximian.com>
+
+		* Control.cs: rework UpdateChildrenZOrder to correctly handle the
+		problem on X where a window might have its handle created (and be
+		visible) while the window is unmapped.  calling XConfigureWindow
+		on an unmapped window is bad, and generates X errors.
+
+	2007-02-13  Chris Toshok  <toshok@ximian.com>
+
+		* Control.cs (CreateHandle): don't loop over our children setting
+		their parent here.  do it when in WndProc when we're shown.
+		(UpdateChildrenZOrder): make this internal so we can call it from
+		ScrollableControl.
+		(WndProc): for WM_SHOWWINDOW, reparent the child control after
+		creating its handle.  Also, remove the calls to PerformLayout from
+		here.  they're done in ScrollableControl.OnVisibleChanged.  Also,
+		OnVisibleChanged only seems to be called directly here for the
+		toplevel control.  It's propagated down the window hierarchy by
+		calls to child.OnParentVisibleChanged.
+		(OnVisibleChanged): don't do layout here - it's done (oddly
+		enough, according to a glance at stack traces on ms.net..) in
+		ScrollableControl.
+		
+		* ScrollableControl.cs (OnVisibleChanged): make sure we update the
+		z order of our children before calling PerformLayout.
+
+	2007-02-12  Chris Toshok  <toshok@ximian.com>
+
+		[big change, fixes #80020]
+		
+		* AccessibleObject.cs: we need to make owner internal again to fix
+		some of ControlAccessibleObject.
+
+		* Control.cs: lots of changes here.  add support for WM_CREATE,
+		for which we generate OnHandleCreated.  Remove the OnHandleCreated
+		call from CreateHandle.  Also add support for WM_SHOWWINDOW where
+		we create child controls.  leave the MonoTODO's for the
+		accessibility calls, but fix the exceptions so the tests pass.
+
+		Add the InvalidOperationExceptions to Invoke methods, and remove a
+		couple of InvokeInternal methods we aren't using.
+		
+		Also, add a couple of CreateHandle calls in places where we know
+		the handles are being created but our code doesn't reference
+		.Handle.
+
+		Make SetVisibleCore call OnVisibleChange if the handle isn't
+		created.  If the handle is created, we rely on XplatUI.SetVisible
+		generating the event synchronously.
+		
+		Lastly, make sure we don't use this.Handle inside CreateHandle,
+		because we can call back into client (and that code can dispose of
+		the control).
+
+		* XplatUIStructs.cs: misc/cleanup.
+
+		* XplatUIX11.cs: Map/Unmap X events correspond to WM_SHOWWINDOW,
+		although we don't populate the wParam properly.
+		(CreateWindow): generate WM_CREATE.
+		(MapWindow,UnmapWindow): make these calls synchronous, at great
+		performance expense (particularly in the unmap case), to match
+		win32 behavior.
+
+		* Form.cs (.ctor): remove the call to UpdateBounds. we don't need
+		to call it.
+		(set_MdiParent): don't recreate the handle unless it's been
+		created already.
+		
+		* MdiClient.cs (OnResize): don't InvalidateNC Parent.Handle unless
+		it's created.
+
+		* NativeWindow.cs: this is probably the weirdest part of the
+		patch.  We need a way to link up the window being created to the
+		WM_CREATE message.  Since we can only be creating one window at a
+		time on a given thread, we keep track of a per-thread reference so
+		we can dispatch it properly.  We also need to keep track of the
+		Hwnd currently being created so that the win32 backend doesn't
+		have problems.
+		
+		* XplatUIWin32.cs: a similar change to the one we made in
+		NativeWindow.cs.
+
 2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Make CalculatePreferredSize virtual.

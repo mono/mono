@@ -80,21 +80,16 @@ namespace System.Windows.Forms {
 
 			public static int LoopCount {
 				get {
-					IEnumerator	e;
-					int		loops;
-					MWFThread	thread;
+					lock (threads) {
+						int loops = 0;
 
-					e = threads.Values.GetEnumerator();
-					loops = 0;
-
-					while (e.MoveNext()) {
-						thread = (MWFThread)e.Current;
-						if (thread != null && thread.messageloop_started) {
-							loops++;
+						foreach (MWFThread thread in threads.Values) {
+							if (thread.messageloop_started)
+								loops++;
 						}
-					}
 
-					return loops;
+						return loops;
+					}
 				}
 			}
 
@@ -133,9 +128,8 @@ namespace System.Windows.Forms {
 						Application.ApplicationExit(null, EventArgs.Empty);
 					}
 				}
-				lock (threads) {
-					threads[thread_id] = null;
-				}
+
+				((MWFThread)threads[thread_id]).MessageLoop = false;
 			}
 			#endregion	// Methods
 		}
@@ -155,34 +149,24 @@ namespace System.Windows.Forms {
 		}
 
 		#region Private Methods
-		private static void CloseForms(Thread thread) {
-			Form		f;
-			IEnumerator	control;
-			bool		all;
-
+		internal static void CloseForms(Thread thread) {
 			#if DebugRunLoop
 				Console.WriteLine("   CloseForms({0}) called", thread);
 			#endif
-			if (thread == null) {
-				all = true;
-			} else {
-				all = false;
-			}
+
+			ArrayList forms_to_close = new ArrayList ();
 
 			lock (forms) {
-				control = forms.GetEnumerator();
+				foreach (Form f in forms) {
+					if (thread == null || thread == f.creator_thread)
+						forms_to_close.Add (f);
+				}
 
-				while (control.MoveNext()) {
-					f = (Form)control.Current;
-					
-					if (all || (thread == f.creator_thread)) {
-						if (f.IsHandleCreated) {
-							XplatUI.PostMessage(f.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
-						}
-						#if DebugRunLoop
-							Console.WriteLine("      Closing form {0}", f);
-						#endif
-					}
+				foreach (Form f in forms_to_close) {
+					#if DebugRunLoop
+						Console.WriteLine("      Closing form {0}", f);
+					#endif
+					f.Dispose ();
 				}
 			}
 		}
@@ -459,19 +443,14 @@ namespace System.Windows.Forms {
 #endif
 
 		public static void Exit() {
+			XplatUI.PostQuitMessage(0);
 			CloseForms(null);
-
-			// FIXME - this needs to be fired when they're all closed
-			// But CloseForms uses PostMessage, so it gets fired before
-			// We need to wait on something...
-			if (ApplicationExit != null) {
-				ApplicationExit(null, EventArgs.Empty);
-			}
 		}
 
 		public static void ExitThread() {
 			CloseForms(Thread.CurrentThread);
-			MWFThread.Current.Exit();
+			// this might not be right - need to investigate (somehow) if a WM_QUIT message is generated here
+			XplatUI.PostQuitMessage(0);
 		}
 
 		public static ApartmentState OleRequired() {
@@ -531,7 +510,6 @@ namespace System.Windows.Forms {
 			Object		queue_id;
 			MWFThread	thread;
 
-
 			thread = MWFThread.Current;
 
 			msg = new MSG();
@@ -547,9 +525,9 @@ namespace System.Windows.Forms {
 				context.MainForm.context = context;
 				context.MainForm.closing = false;
 				context.MainForm.Visible = true;	// Cannot use Show() or scaling gets confused by menus
-				// FIXME - do we need this?
-				//context.MainForm.PerformLayout();
-				context.MainForm.Activate();
+				// XXX the above line can be used to close the form. another problem with our handling of Show/Activate.
+				if (context.MainForm != null)
+					context.MainForm.Activate();
 			}
 
 			#if DebugRunLoop
@@ -612,7 +590,9 @@ namespace System.Windows.Forms {
 			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
 			thread.MessageLoop = true;
 
-			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
+			bool quit = false;
+
+			while (!quit && XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 				lock (message_filters) {
 					if (message_filters.Count > 0) {
 						Message	m;
@@ -648,6 +628,9 @@ namespace System.Windows.Forms {
 					if ((c != null) && !c.PreProcessMessage(ref m)) {
 						goto default;
 					}
+					break;
+				case Msg.WM_QUIT:
+					quit = true; // make sure we exit
 					break;
 				default:
 					XplatUI.TranslateMessage(ref msg);

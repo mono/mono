@@ -267,9 +267,6 @@ namespace System.Windows.Forms {
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
 
-			// FIXME: this should disappear just as soon as the handle creation is done in the right place (here is too soon()
-			UpdateBounds();
-
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -698,7 +695,8 @@ namespace System.Windows.Forms {
 					mdi_parent.MdiContainer.Controls.Add (this);
 					mdi_parent.MdiContainer.Controls.SetChildIndex (this, 0);
 					
-					RecreateHandle ();
+					if (IsHandleCreated)
+						RecreateHandle ();
 				} else if (mdi_parent != null) {
 					mdi_parent = null;
 
@@ -706,7 +704,8 @@ namespace System.Windows.Forms {
 					window_manager = null;
 					FormBorderStyle = form_border_style;
 
-					RecreateHandle ();
+					if (IsHandleCreated)
+						RecreateHandle ();
 				}
 			}
 		}
@@ -2014,7 +2013,8 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected override void SetVisibleCore(bool value) {
+		protected override void SetVisibleCore(bool value)
+		{
 			is_changing_visible_state = true;
 			has_been_visible = value || has_been_visible;
 			base.SetVisibleCore (value);
@@ -2050,11 +2050,6 @@ namespace System.Windows.Forms {
 						this.closing = true;
 					}
 					return;
-				}
-
-				case Msg.WM_CLOSE_INTERNAL: {
-					DestroyHandle();
-					break;
 				}
 
 				case Msg.WM_CLOSE: {
