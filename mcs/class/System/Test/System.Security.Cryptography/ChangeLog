@@ -1,3 +1,9 @@
+2007-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AsnEncodedDataTest.cs, OidCollectionTest.cs, OidEnumeratorTest.cs,
+	OidTest.cs: removed not supported calls for TARGET_JVM because of
+	validation failures
+
 2006-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OidTest.cs,

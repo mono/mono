@@ -1749,6 +1749,7 @@ namespace MonoTests.System.Net.Sockets
 		
 		private static void BADCallback (IAsyncResult asyncResult)
 		{
+#if !TARGET_JVM
 			Socket sock = (Socket)asyncResult.AsyncState;
 			
 			BADSocket = sock.EndAccept (out BADBytes,
@@ -1757,6 +1758,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			BADAccepted = true;
 			BADCalledBack.Set ();
+#endif
 		}
 
 		[Test]
@@ -2373,12 +2375,14 @@ namespace MonoTests.System.Net.Sockets
 		
 		private static void BDCallback (IAsyncResult asyncResult)
 		{
+#if !TARGET_JVM
 			Socket sock = (Socket)asyncResult.AsyncState;
 			
 			sock.EndDisconnect (asyncResult);
 			BDDisconnected = true;
 			
 			BDCalledBack.Set ();
+#endif
 		}
 		
 		[Test]
@@ -2388,6 +2392,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void BeginDisconnect ()
 		{
+#if !TARGET_JVM
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
@@ -2423,6 +2428,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Close ();
 			listen.Close ();
+#endif
 		}
 		
 		[Test]
@@ -2846,6 +2852,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void Disconnect ()
 		{
+#if !TARGET_JVM
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
@@ -2872,6 +2879,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Close ();
 			listen.Close ();
+#endif
 		}
 		
 		[Test]

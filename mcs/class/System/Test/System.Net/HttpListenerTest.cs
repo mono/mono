@@ -38,6 +38,7 @@ namespace MonoTests.System.Net {
 	[Ignore ("The class HttpListener is not implemented")]
 #endif
 	public class HttpListenerTest {
+#if !TARGET_JVM
 		[Test]
 		public void DefaultProperties ()
 		{
@@ -387,6 +388,7 @@ namespace MonoTests.System.Net {
 				Event.Close ();
 			}
 		}
+#endif
 	}
 }
 #endif

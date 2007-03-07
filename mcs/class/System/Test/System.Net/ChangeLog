@@ -1,3 +1,8 @@
+2007-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpListenerPrefixCollectionTest.cs, HttpListenerTest.cs: removed not
+	supported calls for TARGET_JVM because of validation failures
+
 2007-02-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Added test for bug #80944.

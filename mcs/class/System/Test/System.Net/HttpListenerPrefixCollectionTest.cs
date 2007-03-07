@@ -38,6 +38,7 @@ namespace MonoTests.System.Net {
 	[Ignore ("The class System.Net.HttpListenerPrefixCollection - is not supported")]
 #endif
 	public class HttpListenerPrefixCollectionTest {
+#if !TARGET_JVM
 		// NL -> Not listening -> tests when listener.IsListening == false
 		[Test]
 		public void NL_DefaultProperties ()
@@ -249,6 +250,7 @@ namespace MonoTests.System.Net {
 			}
 			Assert.AreEqual (items, 1);
 		}
+#endif
 	}
 }
 #endif
