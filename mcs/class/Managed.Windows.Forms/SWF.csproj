@@ -1709,6 +1709,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\FormWindowManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\FormWindowState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2729,6 +2734,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\RelatedImageListAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\RelatedPropertyManager.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3624,6 +3634,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolWindowManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TrackBar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3705,6 +3720,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TreeViewEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TreeViewHitTestInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3920,6 +3940,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\ThemeElements.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\ThemeElementsDefault.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -456,6 +456,7 @@
     <Compile Include="System.Windows.Forms\FormClosingEventHandler.cs" />
     <Compile Include="System.Windows.Forms\FormCollection.cs" />
     <Compile Include="System.Windows.Forms\FormStartPosition.cs" />
+    <Compile Include="System.Windows.Forms\FormWindowManager.cs" />
     <Compile Include="System.Windows.Forms\FormWindowState.cs" />
     <Compile Include="System.Windows.Forms\FrameStyle.cs" />
     <Compile Include="System.Windows.Forms\GetChildAtPointSkip.cs" />
@@ -660,6 +661,7 @@
     <Compile Include="System.Windows.Forms\RadioButton.cs" />
     <Compile Include="System.Windows.Forms\RadioButtonRenderer.cs" />
     <Compile Include="System.Windows.Forms\RelatedCurrencyManager.cs" />
+    <Compile Include="System.Windows.Forms\RelatedImageListAttribute.cs" />
     <Compile Include="System.Windows.Forms\RelatedPropertyManager.cs" />
     <Compile Include="System.Windows.Forms\RetrieveVirtualItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\RetrieveVirtualItemEventHandler.cs" />
@@ -839,6 +841,7 @@
     <Compile Include="System.Windows.Forms\ToolStripTextDirection.cs" />
     <Compile Include="System.Windows.Forms\ToolTip.cs" />
     <Compile Include="System.Windows.Forms\ToolTipIcon.cs" />
+    <Compile Include="System.Windows.Forms\ToolWindowManager.cs" />
     <Compile Include="System.Windows.Forms\TrackBar.cs" />
     <Compile Include="System.Windows.Forms\TrackBarRenderer.cs" />
     <Compile Include="System.Windows.Forms\TreeNode.cs" />
@@ -856,6 +859,7 @@
     <Compile Include="System.Windows.Forms\TreeViewDrawMode.cs" />
     <Compile Include="System.Windows.Forms\TreeViewEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TreeViewEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\TreeViewHitTestInfo.cs" />
     <Compile Include="System.Windows.Forms\TreeViewHitTestLocations.cs" />
     <Compile Include="System.Windows.Forms\TreeViewImageIndexConverter.cs" />
     <Compile Include="System.Windows.Forms\TypeValidationEventArgs.cs" />
@@ -899,6 +903,8 @@
     <Compile Include="System.Windows.Forms.Layout\FlowLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElements.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElementsDefault.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />
