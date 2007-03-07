@@ -14,6 +14,19 @@ Mono Ahead Of Time Compiler
 	assembly, while the -O=all flag instructs Mono to use all the
 	available optimizations.
 
+* Caching metadata
+------------------
+
+	Besides code, the AOT file also contains cached metadata information which allows
+	the runtime to avoid certain computations at runtime, like the computation of
+	generic vtables. This reduces both startup time, and memory usage. It is possible
+	to create an AOT image which contains only this cached information and no code by
+	using the 'metadata-only' option during compilation:
+
+	   mono --aot=metadata-only assembly.exe
+
+	This works even on platforms where AOT is not normally supported.
+
 * Position Independent Code
 ---------------------------
 
@@ -125,10 +138,44 @@ Mono Ahead Of Time Compiler
 	
 			A list of assemblies referenced by this AOT
 			module.
-	
+
+		methods
+			
+			The precompiled code itself.
+			
 		method_offsets
 	
-			The equivalent to a procedure linkage table. 
+			Maps method indexes to offsets in the methods array.
+
+		ex_info
+
+			Contains information about methods which is rarely used during normal execution, 
+			like exception and debug info.
+
+		ex_info_offsets
+
+			Maps method indexes to offsets in the ex_info array.
+
+		class_info
+
+			Contains precomputed metadata used to speed up various runtime functions.
+
+		class_info_offsets
+
+			Maps class indexes to offsets in the class_info array.
+
+		class_name_table
+
+			A hash table mapping class names to class indexes. Used to speed up 
+			mono_class_from_name ().
+
+		plt
+
+			The Program Linkage Table
+
+		plt_info
+
+			Contains information needed to find the method belonging to a given PLT entry.
 	
 * Performance considerations
 ----------------------------
