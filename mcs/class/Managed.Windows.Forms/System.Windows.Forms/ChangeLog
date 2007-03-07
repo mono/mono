@@ -1,3 +1,13 @@
+2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIWin32.cs: The no_activate stuff was forcing us to create a
+	Handle before we were supposed to.  Now checks ActivateOnShow property
+	in Control.
+	* Control.cs: Add internal ActivateOnShow property.
+	* ComboBox.cs, Form.cs, MenuAPI.cs, ToolStripDropDown.cs: Return false
+	for ActivateOnShow.
+	* Hwnd.cs Remove no longer needed no_activate field.
+
 2007-03-07  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Implement owner draw tree nodes.  And a couple more

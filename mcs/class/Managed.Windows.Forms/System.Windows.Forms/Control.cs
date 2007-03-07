@@ -1101,6 +1101,8 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+		
+		internal virtual bool ActivateOnShow { get { return true; } }
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods

@@ -1967,7 +1967,6 @@ namespace System.Windows.Forms
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 
 				this.is_visible = false;
-				Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
 
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					InternalBorderStyle = BorderStyle.Fixed3D;
@@ -2003,6 +2002,7 @@ namespace System.Windows.Forms
 				}
 			}
 
+			internal override bool ActivateOnShow { get { return false; } }
 			#region Private Methods
 
 			// Calcs the listbox area

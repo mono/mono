@@ -51,7 +51,6 @@ namespace System.Windows.Forms
 
 			this.auto_close = true;
 			is_visible = false;
-			Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 		}
 		#endregion
@@ -68,10 +67,12 @@ namespace System.Windows.Forms
 				if ((XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0) {
 					allow_transparency = value;
 
-					if (value) 
-						XplatUI.SetWindowTransparency (Handle, Opacity, Color.Empty);
-					else
-						UpdateStyles (); // Remove the WS_EX_LAYERED style
+					if (this.IsHandleCreated) {
+						if (value) 
+							XplatUI.SetWindowTransparency (Handle, Opacity, Color.Empty);
+						else
+							UpdateStyles (); // Remove the WS_EX_LAYERED style
+					}
 				}
 			}
 		}
@@ -182,14 +183,16 @@ namespace System.Windows.Forms
 		public double Opacity {
 			get { return this.opacity; }
 			set {
-				if (this.opacity == value)
-					return;
+					if (this.opacity == value)
+						return;
+						
+					this.opacity = value;
+					this.allow_transparency = true;
 					
-				this.opacity = value;
-				this.allow_transparency = true;
-
-				UpdateStyles ();
-				XplatUI.SetWindowTransparency (Handle, opacity, Color.Empty);
+					if (this.IsHandleCreated) {
+						UpdateStyles ();
+						XplatUI.SetWindowTransparency (Handle, opacity, Color.Empty);
+					}
 			}
 		}
 
@@ -781,6 +784,10 @@ namespace System.Windows.Forms
 		{
 			this.Close (ToolStripDropDownCloseReason.AppClicked);
 		}
+		#endregion
+
+		#region Internal Properties
+		internal override bool ActivateOnShow { get { return false; } }
 		#endregion
 	}
 }

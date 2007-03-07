@@ -78,7 +78,6 @@ namespace System.Windows.Forms {
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 		internal static Graphics bmp_g = Graphics.FromImage (bmp);
 		internal XEventQueue	queue;
-		internal bool		no_activate;	// For Win32, popup windows will not steal focus
 		internal WindowExStyles	initial_ex_style;
 		#endregion	// Local Variables
 

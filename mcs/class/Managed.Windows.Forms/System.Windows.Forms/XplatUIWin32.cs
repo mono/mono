@@ -1778,7 +1778,8 @@ namespace System.Windows.Forms {
 		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			if (visible) {
-				if (Control.FromHandle (handle) is Form) {
+				Control c = Control.FromHandle (handle);
+				if (c is Form) {
 					Form f;
 
 					f = (Form)Control.FromHandle (handle);
@@ -1789,16 +1790,16 @@ namespace System.Windows.Forms {
 						case FormWindowState.Maximized: flags = WindowPlacementFlags.SW_MAXIMIZE; break;
 					}
 					
-					if (Hwnd.ObjectFromHandle (handle).no_activate)
+					if (!f.ActivateOnShow)
 						flags = WindowPlacementFlags.SW_SHOWNOACTIVATE;
 						
 					Win32ShowWindow (handle, flags);
 				}
 				else {
-					if (Hwnd.ObjectFromHandle (handle).no_activate)
-						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNOACTIVATE);
-					else
+					if (c.ActivateOnShow)
 						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNORMAL);
+					else
+						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNOACTIVATE);
 				}
 			}
 			else {
