@@ -1,3 +1,8 @@
+2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ModuleBuilderTest.cs: Avoid compiler warning in test for bug #80435.
+	Use Assert instead of deprecated Assertion class. Number tests.
+
 2007-03-06  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ModuleBuilderTest.cs: Added GetArrayMethodToStringTest () -#80435.
