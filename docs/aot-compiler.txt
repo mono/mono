@@ -89,6 +89,18 @@ Mono Ahead Of Time Compiler
 	
 	svn diff -r 37739:38213 mini-x86.c 
 
+	* The Program Linkage Table
+
+	As in ELF, calls made from AOT code do not go through the GOT. Instead, a direct call is
+	made to an entry in the Program Linkage Table (PLT). This is based on the fact that on
+	most architectures, call instructions use a displacement instead of an absolute address, so
+	they are already position independent. An PLT entry is usually a jump instruction, which
+	initially points to some trampoline code which transfers control to the AOT loader, which
+	will compile the called method, and patch the PLT entry so that further calls are made
+	directly to the called method.
+	If the called method is in the same assembly, and does not need initialization (i.e. it
+    doesn't have GOT slots etc), then the call is made directly, bypassing the PLT.
+
 * The Precompiled File Format
 -----------------------------
 	
