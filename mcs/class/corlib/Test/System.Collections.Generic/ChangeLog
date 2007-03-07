@@ -1,3 +1,7 @@
+2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IListTest.cs: Added test for bug #80260.
+
 2006-09-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListTest.cs: Added tests for binary serialization, and Enumerator
