@@ -443,25 +443,41 @@ namespace System.Data.SqlClient {
 
 		public 
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                object ExecuteScalar ()
+		object ExecuteScalar ()
 		{
-			ValidateCommand ("ExecuteScalar");
-                        behavior = CommandBehavior.Default;
 			try {
-				Execute (CommandBehavior.Default, true);
-			}
-			catch (TdsTimeoutException e) {
-				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			}
+				ValidateCommand ("ExecuteScalar");
+				behavior = CommandBehavior.Default;
+				try {
+					Execute (CommandBehavior.Default, true);
+				}
+				catch (TdsTimeoutException e) {
+					throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+				}
 
-			if (!Connection.Tds.NextResult () || !Connection.Tds.NextRow ())
-				return null;
+				if (commandType == CommandType.StoredProcedure) {
+					while (Connection.Tds.NextResult ()) { }
+					if (Connection.Tds.OutputParameters.Count > 0) {
+						int i = 0;
+						foreach (SqlParameter p in Parameters)
+							if (p.Direction == ParameterDirection.Output && i < Connection.Tds.OutputParameters.Count)
+								p.Value = Connection.Tds.OutputParameters[i++];
+						return Connection.Tds.OutputParameters[0];
+					}
+					return null;
+				}
+				else
+					if (!Connection.Tds.NextResult () || !Connection.Tds.NextRow ())
+						return null;
 
-			object result = Connection.Tds.ColumnValues [0];
-			CloseDataReader (true);
-			return result;
+				object result = Connection.Tds.ColumnValues[0];
+				return result;
+			}
+			finally {
+				CloseDataReader (true);
+			}
 		}
 
 		public XmlReader ExecuteXmlReader ()
