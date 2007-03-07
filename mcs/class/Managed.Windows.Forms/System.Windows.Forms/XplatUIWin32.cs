@@ -763,7 +763,7 @@ namespace System.Windows.Forms {
 
 			themes_enabled = false;
 
-			wnd_proc = new WndProc(NativeWindow.WndProc);
+			wnd_proc = new WndProc(InternalWndProc);
 
 			FosterParent=Win32CreateWindow((int)WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
@@ -1535,9 +1535,14 @@ namespace System.Windows.Forms {
 					  SetWindowPosFlags.SWP_DRAWFRAME);
 		}
 
+		private IntPtr InternalWndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
+		{
+			if (HwndCreating != null && HwndCreating.ClientWindow == IntPtr.Zero)
+				HwndCreating.ClientWindow = hWnd;
+			return NativeWindow.WndProc (hWnd, msg, wParam, lParam);
+		}
+
 		internal override IntPtr DefWndProc(ref Message msg) {
-			if (HwndCreating != null && HwndCreating.ClientWindow != IntPtr.Zero)
-				HwndCreating.ClientWindow = msg.HWnd;
 			msg.Result=Win32DefWindowProc(msg.HWnd, (Msg)msg.Msg, msg.WParam, msg.LParam);
 			return msg.Result;
 		}

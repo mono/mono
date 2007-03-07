@@ -1,3 +1,9 @@
+2007-03-07  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIWin32.cs: create InternalWndProc so that we're guaranteed
+	to be called before NativeWindow.WndProc.  Put the HwndCreating
+	magic there to hook up our Hwnd's to handles.
+
 2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridView.cs: Comment out debug code.
