@@ -1,5 +1,10 @@
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
 
+	* DataGridView.cs: Change DataSource will clear column and row
+	lists. Call Invalidate() to reflect DataSource change.
+
+2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
+
 	* DataGridView.cs: Add rows when DataSource is System.Data.DataView
 	and a new row is added to it.
 

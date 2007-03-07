@@ -589,29 +589,36 @@ namespace System.Windows.Forms {
 					 - the System.ComponentModel.IBindingList interface, such as the System.ComponentModel.Collections.BindingList<> class.
 					 - the System.ComponentModel.IBindingListView interface, such as the System.Windows.Forms.BindingSource class.
 					*/
-					if (!(value is IList) && !(value is IListSource) && !(value is IBindingList) && !(value is IBindingListView)) {
+					if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView)) {
 						throw new NotSupportedException("Type cant be binded.");
 					}
-					if (dataSource != null && dataSource is DataView) {
-						(dataSource as DataView).ListChanged -= OnListChanged;
+					if (dataSource != null) {
+						columns.Clear();
+						rows.Clear();
+						if (dataSource is DataView) {
+							(dataSource as DataView).ListChanged -= OnListChanged;
+						}
 					}
 					dataSource = value;
 					OnDataSourceChanged(EventArgs.Empty);
-					// DataBinding
-					if (value is IList) {
-						BindIList(value as IList);
+					if (dataSource != null) {
+						// DataBinding
+						if (value is IList) {
+							BindIList(value as IList);
+						}
+						else if (value is IListSource) {
+							BindIListSource(value as IListSource);
+						}
+						else if (value is IBindingList) {
+							BindIBindingList(value as IBindingList);
+						}
+						else if (value is IBindingListView) {
+							BindIBindingListView(value as IBindingListView);
+							//bool cosa = ((value as IBindingListView).SortDescriptions as IList).IsFixedSize;
+						}
+						OnDataBindingComplete(new DataGridViewBindingCompleteEventArgs(ListChangedType.Reset));
 					}
-					else if (value is IListSource) {
-						BindIListSource(value as IListSource);
-					}
-					else if (value is IBindingList) {
-						BindIBindingList(value as IBindingList);
-					}
-					else if (value is IBindingListView) {
-						BindIBindingListView(value as IBindingListView);
-						//bool cosa = ((value as IBindingListView).SortDescriptions as IList).IsFixedSize;
-					}
-					OnDataBindingComplete(new DataGridViewBindingCompleteEventArgs(ListChangedType.Reset));
+					Invalidate();
 				}
 			}
 		}
