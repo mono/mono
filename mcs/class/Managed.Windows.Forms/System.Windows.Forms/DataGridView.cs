@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
+using System.Data;
 
 namespace System.Windows.Forms {
 
@@ -3652,7 +3653,17 @@ namespace System.Windows.Forms {
 		}
 
 		private void BindIList (IList list) {
-			if (list.Count > 0) {
+			if (list is DataView) {
+				DataTable table = (list as DataView).Table;
+				DataGridViewCell template = new DataGridViewTextBoxCell();
+				foreach (DataColumn dataColumn in table.Columns) {
+					DataGridViewColumn col = new DataGridViewColumn(template);
+					col.Name = dataColumn.ColumnName;
+					col.ValueType = dataColumn.DataType;
+					columns.Add(col);
+				}
+			}
+			else if (list.Count > 0) {
 				DataGridViewCell template = new DataGridViewTextBoxCell();
 				foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(list[0])) {
 					DataGridViewColumn col = new DataGridViewColumn(template);

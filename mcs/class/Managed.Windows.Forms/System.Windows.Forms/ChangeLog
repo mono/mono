@@ -1,3 +1,8 @@
+2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
+
+	* DataGridView.cs: Add columns when DataSource is en empty list but
+	is a System.Data.DataView (from a System.Data.DataTable).
+
 2007-03-06  Andreia Gaita  <avidigal@novell.com>
 
 	* Label.cs: Implement AutoEllipsis (2.0)
