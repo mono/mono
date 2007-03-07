@@ -1,5 +1,7 @@
 2007-03-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_class_from_name): Add a cache.
+
 	* aot-compiler.c (encode_patch): Remove an obsolete comment.
 
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
