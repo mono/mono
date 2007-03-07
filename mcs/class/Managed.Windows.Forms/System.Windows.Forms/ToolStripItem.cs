@@ -1164,7 +1164,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal Size CalculatePreferredSize (Size constrainingSize)
+		internal virtual Size CalculatePreferredSize (Size constrainingSize)
 		{
 			if (!this.auto_size)
 				return this.explicit_size;

@@ -1,3 +1,9 @@
+2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Make CalculatePreferredSize virtual.
+	* ToolStripMenuItem.cs: Modify CalculatePreferredSize and OnPaint
+	to draw the menu shortcut string.
+
 2007-03-07  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Add the 2.0 collapse method.

@@ -337,6 +337,15 @@ namespace System.Windows.Forms
 				if (text_layout_rect != Rectangle.Empty)
 					this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
 
+				string key_string = GetShortcutDisplayString ();
+				
+				if (!string.IsNullOrEmpty (key_string) && !this.HasDropDownItems) {
+					int offset = 15;
+					Size key_string_size = TextRenderer.MeasureText (key_string, this.Font);
+					Rectangle key_string_rect = new Rectangle (this.ContentRectangle.Right - key_string_size.Width - offset, text_layout_rect.Top, key_string_size.Width, text_layout_rect.Height);
+					this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, key_string, key_string_rect, font_color, this.Font, this.TextAlign));
+				}
+					
 				if (image_layout_rect != Rectangle.Empty)
 					this.Owner.Renderer.DrawItemImage (new System.Windows.Forms.ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
 
@@ -371,6 +380,39 @@ namespace System.Windows.Forms
 		internal Form MdiClientForm {
 			get { return this.mdi_client_form; }
 			set { this.mdi_client_form = value; }
+		}
+		#endregion
+
+		#region Internal Methods
+		internal override Size CalculatePreferredSize (Size constrainingSize)
+		{
+			Size base_size = base.CalculatePreferredSize (constrainingSize);
+			
+			string key_string = GetShortcutDisplayString ();
+			
+			if (string.IsNullOrEmpty (key_string))
+				return base_size;
+			
+			Size text_size = TextRenderer.MeasureText (key_string, this.Font);
+			
+			return new Size (base_size.Width + text_size.Width - 25, base_size.Height);
+		}
+		
+		internal string GetShortcutDisplayString ()
+		{
+			if (this.show_shortcut_keys == false || this.shortcut_keys == Keys.None)
+				return string.Empty;
+
+			string key_string;
+
+			if (!string.IsNullOrEmpty (this.shortcut_display_string))
+				key_string = this.shortcut_display_string;
+			else {
+				KeysConverter kc = new KeysConverter ();
+				key_string = kc.ConvertToString (this.shortcut_keys);
+			}
+			
+			return key_string;
 		}
 		#endregion
 	}
