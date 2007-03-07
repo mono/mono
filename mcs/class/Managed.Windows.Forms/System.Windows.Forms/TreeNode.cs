@@ -553,9 +553,18 @@ namespace System.Windows.Forms {
 		}
 
 		public void Collapse () {
-			Collapse(false);
+			CollapseInternal (false);
 		}
 
+#if NET_2_0
+		public void Collapse (bool ignore_children)
+		{
+			if (ignore_children)
+				Collapse ();
+			else
+				CollapseRecursive (this);
+		}
+#endif
 		public void EndEdit (bool cancel) {
 			TreeView tv = TreeView;
 			if (!cancel && tv != null)
@@ -684,7 +693,7 @@ namespace System.Windows.Forms {
 			
 		}
 
-		private void Collapse (bool byInternal)
+		private void CollapseInternal (bool byInternal)
 		{
 			if (!is_expanded || nodes.Count < 1)
 				return;

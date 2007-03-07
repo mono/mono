@@ -1,3 +1,7 @@
+2007-03-07  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Add the 2.0 collapse method.
+
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
 
 	* DataGridViewColumn.cs: Fix HeaderText behaviour (Bug #80746).
