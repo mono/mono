@@ -20,17 +20,18 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection.Emit
 {
 	[TestFixture]
-	public class EnumBuilderTest  {
+	public class EnumBuilderTest
+	{
 		private static string _assemblyName = "MonoTests.System.Reflection.Emit.EnumBuilder";
 		private static string _moduleName = "EmittedModule";
 		private static string _enumNamespace = "MyNameSpace";
 		private static string _enumName = "MyEnum";
-		private static Type _enumType = typeof(Int32);
+		private static Type _enumType = typeof (Int32);
 		private static string _fieldName = "MyField";
 		private static object _fieldValue = 1;
 
 		[Test]
-		public void TestEnumBuilder()
+		public void TestEnumBuilder ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			VerifyType (enumBuilder);
@@ -43,12 +44,12 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category("ValueAdd")]
+		[Category ("ValueAdd")]
 		public void TestEnumBuilder_NotInMono ()
 		{
 			// If we decide to fix this (I dont see why we should),
 			// move to the routine above
-			
+
 			EnumBuilder enumBuilder = GenerateEnum ();
 			Assert.IsFalse (enumBuilder.IsSerializable);
 		}
@@ -57,7 +58,7 @@ namespace MonoTests.System.Reflection.Emit
 #if NET_2_0
 		[Category ("NotWorking")]
 #else
-		[ExpectedException (typeof(NotSupportedException))]
+		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void TestHasElementTypeEnumBuilderIncomplete ()
 		{
@@ -88,7 +89,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof(InvalidOperationException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestDefineLiteralTypeComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -122,7 +123,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestEnumType()
+		public void TestEnumType ()
 		{
 			AssemblyBuilder assemblyBuilder = GenerateAssembly ();
 
@@ -136,15 +137,15 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
+		[ExpectedException (typeof (NotSupportedException))]
 		public void TestEnumBuilderGUIDIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
-			Guid guid =  enumBuilder.GUID;
+			Guid guid = enumBuilder.GUID;
 		}
 
 		[Test]
-		[Category("NotWorking")] // Bug:71299
+		[Category ("NotWorking")] // Bug:71299
 		public void TestEnumBuilderGUIDComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -167,7 +168,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestFieldProperties()
+		public void TestFieldProperties ()
 		{
 			AssemblyBuilder assemblyBuilder = GenerateAssembly ();
 			ModuleBuilder modBuilder = GenerateModule (assemblyBuilder);
@@ -177,12 +178,12 @@ namespace MonoTests.System.Reflection.Emit
 
 			Type enumType = assemblyBuilder.GetType (_enumNamespace + "." + _enumName, true);
 			FieldInfo fi = enumType.GetField (_fieldName);
-			Object o = fi.GetValue(enumType);
+			Object o = fi.GetValue (enumType);
 
 			Assert.IsTrue (fi.IsLiteral, "#1");
 			Assert.IsTrue (fi.IsPublic, "#2");
 			Assert.IsTrue (fi.IsStatic, "#3");
-			// bug81037: Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#4");
+			Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#4");
 			Assert.IsFalse (enumType == fieldBuilder.FieldType, "#5");
 #if NET_2_0
 			Assert.AreEqual (enumType.FullName, fieldBuilder.FieldType.FullName, "#6");
@@ -210,21 +211,21 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 
-			Type[] interfaces = enumBuilder.FindInterfaces (
-				new TypeFilter (MyInterfaceFilter), 
+			Type [] interfaces = enumBuilder.FindInterfaces (
+				new TypeFilter (MyInterfaceFilter),
 				"System.Collections.IEnumerable");
 			Assert.AreEqual (0, interfaces.Length);
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
-		[Category("ValueAdd")]
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("ValueAdd")]
 		public void TestFindMembersIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			GenerateField (enumBuilder);
 
-			MemberInfo[] members = enumBuilder.FindMembers (
+			MemberInfo [] members = enumBuilder.FindMembers (
 				MemberTypes.All, BindingFlags.Static |
 				BindingFlags.Public, new MemberFilter (MemberNameFilter),
 				_fieldName);
@@ -237,7 +238,7 @@ namespace MonoTests.System.Reflection.Emit
 			GenerateField (enumBuilder);
 			enumBuilder.CreateType ();
 
-			MemberInfo[] members = enumBuilder.FindMembers (
+			MemberInfo [] members = enumBuilder.FindMembers (
 				MemberTypes.Field, BindingFlags.Static |
 				BindingFlags.Public, new MemberFilter (MemberNameFilter),
 				_fieldName);
@@ -251,13 +252,13 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
-		[Category("ValueAdd")]
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("ValueAdd")]
 		public void TestGetConstructorIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.GetConstructor (BindingFlags.Public, null,
-				CallingConventions.Any, Type.EmptyTypes, new ParameterModifier[0]);
+				CallingConventions.Any, Type.EmptyTypes, new ParameterModifier [0]);
 		}
 
 		[Test]
@@ -267,41 +268,41 @@ namespace MonoTests.System.Reflection.Emit
 			enumBuilder.CreateType ();
 			ConstructorInfo ctor = enumBuilder.GetConstructor (
 				BindingFlags.Public, null, CallingConventions.Any,
-				Type.EmptyTypes, new ParameterModifier[0]);
+				Type.EmptyTypes, new ParameterModifier [0]);
 			Assert.IsNull (ctor);
 		}
 
 		[Test]
-		[ExpectedException (typeof(ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestGetConstructorNullTypes ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
 			ConstructorInfo ctor = enumBuilder.GetConstructor (
 				BindingFlags.Public, null, CallingConventions.Any,
-				null, new ParameterModifier[0]);
+				null, new ParameterModifier [0]);
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		[ExpectedException (typeof(ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestGetConstructorNullElementType ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
 			ConstructorInfo ctor = enumBuilder.GetConstructor (
 				BindingFlags.Public, null, CallingConventions.Any,
-				new Type[] { null }, new ParameterModifier[0]);
+				new Type [] { null }, new ParameterModifier [0]);
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
-		[Category("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		[Category ("NotWorking")]
 		public void TestGetConstructorsIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 
-			ConstructorInfo[] ctors = enumBuilder.GetConstructors (
+			ConstructorInfo [] ctors = enumBuilder.GetConstructors (
 				BindingFlags.Instance | BindingFlags.Public);
 			Assert.AreEqual (0, ctors.Length);
 		}
@@ -312,11 +313,11 @@ namespace MonoTests.System.Reflection.Emit
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
 
-			ConstructorInfo[] ctors = enumBuilder.GetConstructors (
+			ConstructorInfo [] ctors = enumBuilder.GetConstructors (
 				BindingFlags.Instance | BindingFlags.Public);
 			Assert.AreEqual (0, ctors.Length);
 		}
-		
+
 		[Test]
 		public void TestIsValue__SpecialName ()
 		{

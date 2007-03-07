@@ -1,5 +1,7 @@
 2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EnumBuilderTest.cs: Enabled test that failed due to bug #81037.
+	Coding style fixes.
 	* ModuleBuilderTest.cs: Avoid compiler warning in test for bug #80435.
 	Use Assert instead of deprecated Assertion class. Number tests.
 
