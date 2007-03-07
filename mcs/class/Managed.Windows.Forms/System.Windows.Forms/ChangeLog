@@ -1,3 +1,7 @@
+2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridView.cs: Comment out debug code.
+
 2007-03-07  Chris Toshok  <toshok@ximian.com>
 
 	[merge -r72718:73765 from mwf-handle-branch, and include 2 changes

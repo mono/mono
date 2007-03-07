@@ -3077,7 +3077,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs e) {
 			base.OnPaint(e);
-			Console.WriteLine("DataGridView.OnPaint-ClipRectangle: {0};", e.ClipRectangle);
+			//Console.WriteLine("DataGridView.OnPaint-ClipRectangle: {0};", e.ClipRectangle);
 			Rectangle bounds = ClientRectangle; //e.ClipRectangle;
 			e.Graphics.FillRectangle(new SolidBrush(backgroundColor), bounds);
 			Pen pen = new Pen(gridColor);
