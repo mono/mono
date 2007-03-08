@@ -1,3 +1,8 @@
+
+Thu Mar 8 19:42:17 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* shared.c: partial support for MONO_DISABLE_SHM env var.
+
 2007-03-05  Wade Berrier  <wberrier@novell.com>
 
 	* atomic.h: atomic fixes from Michael Matz for for s390 
