@@ -1373,10 +1373,10 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintColumnHeaders (Graphics g, Rectangle clip, DataGrid grid)
 		{
-			Rectangle columns_area = grid.columnhdrs_area;
+			Rectangle columns_area = grid.column_headers_area;
 
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) { // Paint corner shared between row and column header
-				Rectangle rect_bloc = grid.columnhdrs_area;
+				Rectangle rect_bloc = grid.column_headers_area;
 				rect_bloc.Width = grid.RowHeaderWidth;
 				if (clip.IntersectsWith (rect_bloc)) {
 					if (grid.VisibleColumnCount > 0)
@@ -1390,11 +1390,11 @@ namespace System.Windows.Forms
 			}
 
 			// Set unused area
-			Rectangle columnhdrs_area_complete = columns_area;
-			columnhdrs_area_complete.Width = grid.columnhdrs_maxwidth;
+			Rectangle column_headers_area_complete = columns_area;
+			column_headers_area_complete.Width = grid.column_headers_max_width;
 			
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
-				columnhdrs_area_complete.Width -= grid.RowHeaderWidth;
+				column_headers_area_complete.Width -= grid.RowHeaderWidth;
 			}		
 
 			// Set column painting
@@ -1429,7 +1429,7 @@ namespace System.Windows.Forms
 
 			g.Clip = prev_clip;
 				
-			Rectangle not_usedarea = columnhdrs_area_complete;				
+			Rectangle not_usedarea = column_headers_area_complete;				
 			not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
 			not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;		
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
@@ -1444,7 +1444,7 @@ namespace System.Windows.Forms
 			rect_row.Width = grid.ParentRowsArea.Width;
 			rect_row.Height = (grid.CaptionFont.Height + 3);
 
-			object[] parentRows = grid.dataSourceStack.ToArray();
+			object[] parentRows = grid.data_source_stack.ToArray();
 			
 			Region current_clip;
 			Region prev_clip = g.Clip;

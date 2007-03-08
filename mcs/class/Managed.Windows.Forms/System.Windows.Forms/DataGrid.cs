@@ -195,23 +195,23 @@ namespace System.Windows.Forms
 		static readonly Color	def_background_color = ThemeEngine.Current.DataGridBackgroundColor;
 		static readonly Color	def_caption_backcolor = ThemeEngine.Current.DataGridCaptionBackColor;
 		static readonly Color	def_caption_forecolor = ThemeEngine.Current.DataGridCaptionForeColor;
-		static readonly Color	def_parentrowsback_color = ThemeEngine.Current.DataGridParentRowsBackColor;
-		static readonly Color	def_parentrowsfore_color = ThemeEngine.Current.DataGridParentRowsForeColor;
+		static readonly Color	def_parent_rows_backcolor = ThemeEngine.Current.DataGridParentRowsBackColor;
+		static readonly Color	def_parent_rows_forecolor = ThemeEngine.Current.DataGridParentRowsForeColor;
 
 		/* colors */
 		// XXX this needs addressing. Control.background_color should not be internal.
 		new Color background_color;
 		Color caption_backcolor;
 		Color caption_forecolor;
-		Color parentrowsback_color;
-		Color parentrowsfore_color;
+		Color parent_rows_backcolor;
+		Color parent_rows_forecolor;
 
 		/* flags to determine which areas of the datagrid are shown */
 		bool caption_visible;
-		bool parentrows_visible;
+		bool parent_rows_visible;
 
 		GridTableStylesCollection styles_collection;
-		DataGridParentRowsLabelStyle parentrowslabel_style;
+		DataGridParentRowsLabelStyle parent_rows_label_style;
 		DataGridTableStyle default_style;
 		DataGridTableStyle grid_style;
 		DataGridTableStyle current_style;
@@ -223,10 +223,10 @@ namespace System.Windows.Forms
 
 		/* layout/rendering */
 		bool allow_navigation;
-		int first_visiblerow;
-		int first_visiblecolumn;
-		int visiblerow_count;
-		int visiblecolumn_count;
+		int first_visible_row;
+		int first_visible_column;
+		int visible_row_count;
+		int visible_column_count;
 		Font caption_font;
 		string caption_text;
 		bool flatmode;
@@ -272,7 +272,7 @@ namespace System.Windows.Forms
 		bool is_editing;		// Current cell is edit mode
 		bool is_changing;
 
-		internal Stack dataSourceStack;
+		internal Stack data_source_stack;
 
 		#endregion // Local Variables
 
@@ -287,11 +287,11 @@ namespace System.Windows.Forms
 			caption_text = string.Empty;
 			caption_visible = true;
 			datamember = string.Empty;
-			parentrowsback_color = def_parentrowsback_color;
-			parentrowsfore_color = def_parentrowsfore_color;
-			parentrows_visible = true;
+			parent_rows_backcolor = def_parent_rows_backcolor;
+			parent_rows_forecolor = def_parent_rows_forecolor;
+			parent_rows_visible = true;
 			current_cell = new DataGridCell ();
-			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
+			parent_rows_label_style = DataGridParentRowsLabelStyle.Both;
 			selected_rows = new Hashtable ();
 			selection_start = -1;
 			rows = new DataGridRelationshipRow [0];
@@ -311,7 +311,7 @@ namespace System.Windows.Forms
 
 			SetStyle (ControlStyles.UserMouse, true);
 
-			dataSourceStack = new Stack ();
+			data_source_stack = new Stack ();
 
 			back_button_image = ResourceImageLoader.Get ("go-previous.png");
 			//back_button_image.MakeTransparent (Color.Transparent);
@@ -616,7 +616,7 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		public int FirstVisibleColumn {
-			get { return first_visiblecolumn; }
+			get { return first_visible_column; }
 		}
 
 		[DefaultValue(false)]
@@ -733,11 +733,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color ParentRowsBackColor {
-			get { return parentrowsback_color; }
+			get { return parent_rows_backcolor; }
 			set {
-				if (parentrowsback_color != value) {
-					parentrowsback_color = value;
-					if (parentrows_visible) {
+				if (parent_rows_backcolor != value) {
+					parent_rows_backcolor = value;
+					if (parent_rows_visible) {
 						Refresh ();
 					}
 				}
@@ -745,11 +745,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color ParentRowsForeColor {
-			get { return parentrowsfore_color; }
+			get { return parent_rows_forecolor; }
 			set {
-				if (parentrowsfore_color != value) {
-					parentrowsfore_color = value;
-					if (parentrows_visible) {
+				if (parent_rows_forecolor != value) {
+					parent_rows_forecolor = value;
+					if (parent_rows_visible) {
 						Refresh ();
 					}
 				}
@@ -759,11 +759,11 @@ namespace System.Windows.Forms
 		[DefaultValue(DataGridParentRowsLabelStyle.Both)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridParentRowsLabelStyle ParentRowsLabelStyle {
-			get { return parentrowslabel_style; }
+			get { return parent_rows_label_style; }
 			set {
-				if (parentrowslabel_style != value) {
-					parentrowslabel_style = value;
-					if (parentrows_visible) {
+				if (parent_rows_label_style != value) {
+					parent_rows_label_style = value;
+					if (parent_rows_visible) {
 						Refresh ();
 					}
 
@@ -774,10 +774,10 @@ namespace System.Windows.Forms
 
 		[DefaultValue(true)]
 		public bool ParentRowsVisible {
-			get { return parentrows_visible; }
+			get { return parent_rows_visible; }
 			set {
-				if (parentrows_visible != value) {
-					parentrows_visible = value;
+				if (parent_rows_visible != value) {
+					parent_rows_visible = value;
 					CalcAreasAndInvalidate ();
 					OnParentRowsVisibleChanged (EventArgs.Empty);
 				}
@@ -867,12 +867,12 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		public int VisibleColumnCount {
-			get { return visiblecolumn_count; }
+			get { return visible_column_count; }
 		}
 
 		[Browsable(false)]
 		public int VisibleRowCount {
-			get { return visiblerow_count; }
+			get { return visible_row_count; }
 		}
 
 		#endregion	// Public Instance Properties
@@ -897,7 +897,7 @@ namespace System.Windows.Forms
 		}
 
 		internal int FirstVisibleRow {
-			get { return first_visiblerow; }
+			get { return first_visible_row; }
 		}
 		
 		internal int RowsCount {
@@ -923,7 +923,7 @@ namespace System.Windows.Forms
 		}
 		
 		internal bool ShowParentRows {
-			get { return ParentRowsVisible && dataSourceStack.Count > 0; }
+			get { return ParentRowsVisible && data_source_stack.Count > 0; }
 		}
 		
 		#endregion Private Instance Properties
@@ -1137,18 +1137,18 @@ namespace System.Windows.Forms
 
 		protected virtual void GridVScrolled (object sender, ScrollEventArgs se)
 		{
-			int old_first_visiblerow = first_visiblerow;
-			first_visiblerow = se.NewValue;
+			int old_first_visible_row = first_visible_row;
+			first_visible_row = se.NewValue;
 
-			if (first_visiblerow == old_first_visiblerow)
+			if (first_visible_row == old_first_visible_row)
 				return;
 
 			UpdateVisibleRowCount ();
 
-			if (first_visiblerow == old_first_visiblerow)
+			if (first_visible_row == old_first_visible_row)
 				return;
 			
-			ScrollToRow (old_first_visiblerow, first_visiblerow);
+			ScrollToRow (old_first_visible_row, first_visible_row);
 		}
 
 		public HitTestInfo HitTest (Point position)
@@ -1162,7 +1162,7 @@ namespace System.Windows.Forms
 		// From Point to Cell
 		public HitTestInfo HitTest (int x, int y)
 		{
-			if (columnhdrs_area.Contains (x, y)) {
+			if (column_headers_area.Contains (x, y)) {
 				int offset_x = x + horiz_pixeloffset;
 				int column_x;
 				int column_under_mouse = FromPixelToColumn (offset_x, out column_x);
@@ -1177,7 +1177,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (rowhdrs_area.Contains (x, y)) {
+			if (row_headers_area.Contains (x, y)) {
 				int posy;
 				int rcnt = FirstVisibleRow + VisibleRowCount;
 				for (int r = FirstVisibleRow; r < rcnt; r++) {
@@ -1208,9 +1208,9 @@ namespace System.Windows.Forms
 				pos_y = cells_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
 				if (y <= pos_y + rows[row].Height) {
 					int col_pixel;
-					int column_cnt = first_visiblecolumn + visiblecolumn_count;
+					int column_cnt = first_visible_column + visible_column_count;
 					if (column_cnt > 0) {
-						for (int column = first_visiblecolumn; column < column_cnt; column++) {
+						for (int column = first_visible_column; column < column_cnt; column++) {
 							if (CurrentTableStyle.GridColumnStyles[column].bound == false)
 								continue;
 							col_pixel = GetColumnStartingPixel (column);
@@ -1248,10 +1248,10 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public void NavigateBack ()
 		{
-			if (dataSourceStack.Count == 0)
+			if (data_source_stack.Count == 0)
 				return;
 
-			DataGridDataSource source = (DataGridDataSource)dataSourceStack.Pop ();
+			DataGridDataSource source = (DataGridDataSource)data_source_stack.Pop ();
 			list_manager = source.list_manager;
 			rows = source.Rows;
 			selected_rows = source.SelectedRows;
@@ -1272,7 +1272,7 @@ namespace System.Windows.Forms
 			previous_source.SelectedRows = selected_rows;
 			previous_source.SelectionStart = selection_start;
 
-			dataSourceStack.Push (previous_source);
+			data_source_stack.Push (previous_source);
 
 			rows = null;
 			selected_rows = new Hashtable ();
@@ -1454,7 +1454,7 @@ namespace System.Windows.Forms
 			case HitTestType.RowHeader:
 				bool expansion_click = false;
 				if (CurrentTableStyle.HasRelations) {
-					if (e.X > rowhdrs_area.X + rowhdrs_area.Width / 2) {
+					if (e.X > row_headers_area.X + row_headers_area.Width / 2) {
 						/* it's in the +/- space */
 						if (IsExpanded (testinfo.Row))
 							Collapse (testinfo.Row);
@@ -2126,12 +2126,12 @@ namespace System.Windows.Forms
 
 		protected virtual bool ShouldSerializeParentRowsBackColor ()
 		{
-			return parentrowsback_color != def_parentrowsback_color;
+			return parent_rows_backcolor != def_parent_rows_backcolor;
 		}
 
 		protected virtual bool ShouldSerializeParentRowsForeColor ()
 		{
-			return parentrowsback_color != def_parentrowsback_color;
+			return parent_rows_backcolor != def_parent_rows_backcolor;
 		}
 
 		protected bool ShouldSerializePreferredRowHeight ()
@@ -2240,32 +2240,32 @@ namespace System.Windows.Forms
 
 		private void EnsureCellVisibility (DataGridCell cell)
 		{
-			if (cell.ColumnNumber <= first_visiblecolumn ||
-				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
+			if (cell.ColumnNumber <= first_visible_column ||
+				cell.ColumnNumber + 1 >= first_visible_column + visible_column_count) {			
 
-				first_visiblecolumn = GetFirstColumnForColumnVisibility (first_visiblecolumn, cell.ColumnNumber);
-                                int pixel = GetColumnStartingPixel (first_visiblecolumn);
+				first_visible_column = GetFirstColumnForColumnVisibility (first_visible_column, cell.ColumnNumber);
+                                int pixel = GetColumnStartingPixel (first_visible_column);
 				ScrollToColumnInPixels (pixel);
 				horiz_scrollbar.Value = pixel;
 				Update();
 			}
 
-			if (cell.RowNumber < first_visiblerow ||
-			    cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
+			if (cell.RowNumber < first_visible_row ||
+			    cell.RowNumber + 1 >= first_visible_row + visible_row_count) {
 
-                                if (cell.RowNumber + 1 >= first_visiblerow + visiblerow_count) {
-					int old_first_visiblerow = first_visiblerow;
-					first_visiblerow = 1 + cell.RowNumber - visiblerow_count;
+                                if (cell.RowNumber + 1 >= first_visible_row + visible_row_count) {
+					int old_first_visible_row = first_visible_row;
+					first_visible_row = 1 + cell.RowNumber - visible_row_count;
 					UpdateVisibleRowCount ();
-					ScrollToRow (old_first_visiblerow, first_visiblerow);
+					ScrollToRow (old_first_visible_row, first_visible_row);
 				} else {
-					int old_first_visiblerow = first_visiblerow;
-					first_visiblerow = cell.RowNumber;
+					int old_first_visible_row = first_visible_row;
+					first_visible_row = cell.RowNumber;
 					UpdateVisibleRowCount ();
-					ScrollToRow (old_first_visiblerow, first_visiblerow);
+					ScrollToRow (old_first_visible_row, first_visible_row);
 				}
 
-				vert_scrollbar.Value = first_visiblerow;
+				vert_scrollbar.Value = first_visible_row;
 			}
 		}
 
@@ -2318,12 +2318,12 @@ namespace System.Windows.Forms
 			if (old_lm != list_manager) {
 				BindColumns ();
 
-				/* reset first_visiblerow to 0 here before
+				/* reset first_visible_row to 0 here before
 				 * doing anything that'll requires us to
 				 * figure out if we need a scrollbar. */
 				vert_scrollbar.Value = 0;
 				horiz_scrollbar.Value = 0;
-				first_visiblerow = 0;
+				first_visible_row = 0;
 
 				if (recreate_rows)
 					RecreateDataGridRows (false);
@@ -2592,7 +2592,7 @@ namespace System.Windows.Forms
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
 
 			/* if the row is still */
-			if (CurrentRow >= first_visiblerow && CurrentRow < first_visiblerow + visiblerow_count)
+			if (CurrentRow >= first_visible_row && CurrentRow < first_visible_row + visible_row_count)
 				Edit ();
 		}
 
@@ -2725,9 +2725,9 @@ namespace System.Windows.Forms
 		int width_of_all_columns;
 
 		internal Rectangle caption_area;
-		internal Rectangle columnhdrs_area;	// Used columns header area
-		internal int columnhdrs_maxwidth; 	// Total width (max width) for columns headrs
-		internal Rectangle rowhdrs_area;	// Used Headers rows area
+		internal Rectangle column_headers_area;	// Used columns header area
+		internal int column_headers_max_width; 	// Total width (max width) for columns headrs
+		internal Rectangle row_headers_area;	// Used Headers rows area
 		internal Rectangle cells_area;
 		#endregion // Local Variables
 
@@ -2760,8 +2760,8 @@ namespace System.Windows.Forms
 				return 0;
 				
 			if (CurrentTableStyle.CurrentRowHeadersVisible) {
-				width += rowhdrs_area.X + rowhdrs_area.Width;
-				column_x += rowhdrs_area.X + rowhdrs_area.Width;
+				width += row_headers_area.X + row_headers_area.Width;
+				column_x += row_headers_area.X + row_headers_area.Width;
 			}
 
 			for (int col = 0; col < cnt; col++) {
@@ -2799,12 +2799,12 @@ namespace System.Windows.Forms
 		}
 		
 		// Which column has to be the first visible column to ensure a column visibility
-		int GetFirstColumnForColumnVisibility (int current_first_visiblecolumn, int column)
+		int GetFirstColumnForColumnVisibility (int current_first_visible_column, int column)
 		{
 			int new_col = column;
 			int width = 0;
 			
-			if (column > current_first_visiblecolumn) { // Going forward
+			if (column > current_first_visible_column) { // Going forward
 				for (new_col = column; new_col >= 0; new_col--){
 					if (CurrentTableStyle.GridColumnStyles[new_col].bound == false)
 						continue;
@@ -2865,7 +2865,7 @@ namespace System.Windows.Forms
 				UpdateVisibleRowCount ();
 
 				needHoriz = (width_of_all_columns > visible_cells_width);
-				needVert = (allrows > visiblerow_count);
+				needVert = (allrows > visible_row_count);
 			}
 
 			int horiz_scrollbar_width = ClientRectangle.Width;
@@ -2887,8 +2887,8 @@ namespace System.Windows.Forms
 					parent_rows.Width -= vert_scrollbar.Width;
 
 				if (!ShowingColumnHeaders) {
-					if (columnhdrs_area.X + columnhdrs_area.Width > vert_scrollbar.Location.X) {
-						columnhdrs_area.Width -= vert_scrollbar.Width;
+					if (column_headers_area.X + column_headers_area.Width > vert_scrollbar.Location.X) {
+						column_headers_area.Width -= vert_scrollbar.Width;
 					}
 				}
 
@@ -2897,8 +2897,8 @@ namespace System.Windows.Forms
 			}
 
 			if (needVert) {
-				if (rowhdrs_area.Y + rowhdrs_area.Height > ClientRectangle.Y + ClientRectangle.Height) {
-					rowhdrs_area.Height -= horiz_scrollbar.Height;
+				if (row_headers_area.Y + row_headers_area.Height > ClientRectangle.Y + ClientRectangle.Height) {
+					row_headers_area.Height -= horiz_scrollbar.Height;
 				}
 
 				vert_scrollbar.Size = new Size (vert_scrollbar.Width,
@@ -2949,8 +2949,8 @@ namespace System.Windows.Forms
 
 		void CalcCellsArea ()
 		{
-			cells_area.X = ClientRectangle.X + rowhdrs_area.Width;
-			cells_area.Y = columnhdrs_area.Y + columnhdrs_area.Height;
+			cells_area.X = ClientRectangle.X + row_headers_area.Width;
+			cells_area.Y = column_headers_area.Y + column_headers_area.Height;
 			cells_area.Width = ClientRectangle.X + ClientRectangle.Width - cells_area.X;
 			if (cells_area.Width < 0)
 				cells_area.Width = 0;
@@ -2963,29 +2963,29 @@ namespace System.Windows.Forms
 		{
 			int max_width_cols;
 
-			columnhdrs_area.X = ClientRectangle.X;
-			columnhdrs_area.Y = parent_rows.Y + parent_rows.Height;
+			column_headers_area.X = ClientRectangle.X;
+			column_headers_area.Y = parent_rows.Y + parent_rows.Height;
 
 			// TODO: take into account Scrollbars
-			columnhdrs_maxwidth = ClientRectangle.X + ClientRectangle.Width - columnhdrs_area.X;
-			max_width_cols = columnhdrs_maxwidth;
+			column_headers_max_width = ClientRectangle.X + ClientRectangle.Width - column_headers_area.X;
+			max_width_cols = column_headers_max_width;
 
 			if (CurrentTableStyle.CurrentRowHeadersVisible)
 				max_width_cols -= RowHeaderWidth;
 
 			if (width_of_all_columns > max_width_cols) {
-				columnhdrs_area.Width = columnhdrs_maxwidth;
+				column_headers_area.Width = column_headers_max_width;
 			} else {
-				columnhdrs_area.Width = width_of_all_columns;
+				column_headers_area.Width = width_of_all_columns;
 
 				if (CurrentTableStyle.CurrentRowHeadersVisible)
-					columnhdrs_area.Width += RowHeaderWidth;
+					column_headers_area.Width += RowHeaderWidth;
 			}
 
 			if (ShowingColumnHeaders)
-				columnhdrs_area.Height = CurrentTableStyle.HeaderFont.Height + 6;
+				column_headers_area.Height = CurrentTableStyle.HeaderFont.Height + 6;
 			else
-				columnhdrs_area.Height = 0;
+				column_headers_area.Height = 0;
 		}
 
 		void CalcParentRows ()
@@ -2994,14 +2994,14 @@ namespace System.Windows.Forms
 			parent_rows.Y = caption_area.Y + caption_area.Height;
 			parent_rows.Width = ClientRectangle.Width;
 			if (ShowParentRows)
-				parent_rows.Height = (CaptionFont.Height + 3) * dataSourceStack.Count;
+				parent_rows.Height = (CaptionFont.Height + 3) * data_source_stack.Count;
 			else
 				parent_rows.Height = 0;
 		}
 
 		void CalcParentButtons ()
 		{
-			if (dataSourceStack.Count > 0 && CaptionVisible) {
+			if (data_source_stack.Count > 0 && CaptionVisible) {
 				back_button_rect = new Rectangle (ClientRectangle.X + ClientRectangle.Width - 2 * (caption_area.Height - 2) - 8,
 								  caption_area.Height / 2 - back_button_image.Height / 2,
 								  back_button_image.Width, back_button_image.Height);
@@ -3016,14 +3016,14 @@ namespace System.Windows.Forms
 
 		void CalcRowHeaders ()
 		{
-			rowhdrs_area.X = ClientRectangle.X;
-			rowhdrs_area.Y = columnhdrs_area.Y + columnhdrs_area.Height;
-			rowhdrs_area.Height = ClientRectangle.Height + ClientRectangle.Y - rowhdrs_area.Y;
+			row_headers_area.X = ClientRectangle.X;
+			row_headers_area.Y = column_headers_area.Y + column_headers_area.Height;
+			row_headers_area.Height = ClientRectangle.Height + ClientRectangle.Y - row_headers_area.Y;
 
 			if (CurrentTableStyle.CurrentRowHeadersVisible)
-				rowhdrs_area.Width = RowHeaderWidth;
+				row_headers_area.Width = RowHeaderWidth;
 			else
-				rowhdrs_area.Width = 0;
+				row_headers_area.Width = 0;
 		}
 
 		int GetVisibleRowCount (int visibleHeight)
@@ -3045,7 +3045,7 @@ namespace System.Windows.Forms
 		void UpdateVisibleColumn ()
 		{
 			if (CurrentTableStyle.GridColumnStyles.Count == 0) {
-				visiblecolumn_count = 0;
+				visible_column_count = 0;
 				return;	
 			}
 			
@@ -3053,26 +3053,26 @@ namespace System.Windows.Forms
 			int max_pixel = horiz_pixeloffset + cells_area.Width;
 			int unused;
 
-			first_visiblecolumn = FromPixelToColumn (horiz_pixeloffset, out unused);
+			first_visible_column = FromPixelToColumn (horiz_pixeloffset, out unused);
 
 			col = FromPixelToColumn (max_pixel, out unused);
 			
-			visiblecolumn_count = 1 + col - first_visiblecolumn;
+			visible_column_count = 1 + col - first_visible_column;
 
-			visiblecolumn_count = 0;
-			for (int i = first_visiblecolumn; i <= col; i ++) {
+			visible_column_count = 0;
+			for (int i = first_visible_column; i <= col; i ++) {
 				if (CurrentTableStyle.GridColumnStyles[i].bound)
-					visiblecolumn_count++;
+					visible_column_count++;
 			}
 
-			if (first_visiblecolumn + visiblecolumn_count < CurrentTableStyle.GridColumnStyles.Count) { 
-				visiblecolumn_count++; // Partially visible column
+			if (first_visible_column + visible_column_count < CurrentTableStyle.GridColumnStyles.Count) { 
+				visible_column_count++; // Partially visible column
 			}
 		}
 
 		void UpdateVisibleRowCount ()
 		{
-			visiblerow_count = GetVisibleRowCount (cells_area.Height);
+			visible_row_count = GetVisibleRowCount (cells_area.Height);
 
 			CalcRowHeaders (); // Height depends on num of visible rows
 		}
@@ -3105,10 +3105,10 @@ namespace System.Windows.Forms
 		void InvalidateRowHeader (int row)
 		{
 			Rectangle rect_rowhdr = new Rectangle ();
-			rect_rowhdr.X = rowhdrs_area.X;
-			rect_rowhdr.Width = rowhdrs_area.Width;
+			rect_rowhdr.X = row_headers_area.X;
+			rect_rowhdr.Width = row_headers_area.Width;
 			rect_rowhdr.Height = rows[row].Height;
-			rect_rowhdr.Y = rowhdrs_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
+			rect_rowhdr.Y = row_headers_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
 			Invalidate (rect_rowhdr);
 		}
 
@@ -3181,7 +3181,7 @@ namespace System.Windows.Forms
 		// Returns the ColumnHeaders area excluding the rectangle shared with RowHeaders
 		internal Rectangle ColumnHeadersArea {
 			get {
-				Rectangle columns_area = columnhdrs_area;
+				Rectangle columns_area = column_headers_area;
 
 				if (CurrentTableStyle.CurrentRowHeadersVisible) {
 					columns_area.X += RowHeaderWidth;
@@ -3196,7 +3196,7 @@ namespace System.Windows.Forms
 		}
 
 		internal Rectangle RowHeadersArea {
-			get { return rowhdrs_area; }
+			get { return row_headers_area; }
 		}
 
 		internal Rectangle ParentRowsArea {
