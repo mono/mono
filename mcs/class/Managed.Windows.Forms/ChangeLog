@@ -1,3 +1,7 @@
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Don't show obsolete warnings when compiling tests.
+
 2007-03-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Add ThemeElements.cs,

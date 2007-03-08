@@ -81,7 +81,7 @@ EXTRA_DISTFILES = \
 	$(TEST_DISTFILES)
 
 TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll \
-	-resource:Test/resources/a.cur,a.cur
+	-resource:Test/resources/a.cur,a.cur -nowarn:618,612
 
 SWF.csproj: System.Windows.Forms.dll.sources System.Windows.Forms.dll.resources build-csproj
 	./build-csproj
