@@ -106,7 +106,6 @@
     <Compile Include="HtmlAgilityPack\HtmlEntity.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNode.cs" />
     <Compile Include="HtmlAgilityPack\HtmlNodeNavigator.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlWeb.cs" />
     <Compile Include="HtmlAgilityPack\MixedCodeDocument.cs" />
     <Compile Include="HtmlAgilityPack\ParseReader.cs" />
     <Compile Include="HtmlAgilityPack\tools.cs" />
