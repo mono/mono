@@ -651,10 +651,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
 		internal void SetIndex (int index)
 		{
 			this.index = index;
 		}
+#endif
 
 		private void Invalidate ()
 		{

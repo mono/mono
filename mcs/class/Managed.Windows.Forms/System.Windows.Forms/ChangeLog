@@ -1,3 +1,7 @@
+2007-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListVieItem.cs: SetIndex is only valid for 2.0 profile by now.
+
 2007-03-08  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Show the correct image for selected node (this used
