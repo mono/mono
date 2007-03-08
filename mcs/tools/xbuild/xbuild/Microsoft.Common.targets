@@ -36,12 +36,42 @@
 		</ResolveAssemblyReference>
 	</Target>
 
+	<Target
+		Name="ResolveProjectReferences"
+		Condition=" '@(ProjectReference)' != ''"
+		Inputs="@(ProjectReference)"
+		Outputs="@(ChildProjectReferences)"
+	>
+		<MSBuild
+			Projects="@(ProjectReference)"
+			Targets="Build"
+			RebaseOutputs="true"
+		>
+			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
+		</MSBuild>
+	</Target>
+
+<!--
+	Not needed at the moment
 	<Target Name="_ComputeNonExistentFileProperty" Condition='false'>
 		<CreateProperty Value="__NonExistentSubDir__\__NonExistentFile__">
 			<Output TaskParameter="Value" PropertyName="NonExistentFile"/>
 		</CreateProperty>
 	</Target>
+-->
 
-	<Target Name="Build" DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences;CoreCompile"/>
+	<Target
+		Name="Build"
+		DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences;ResolveProjectReferences;CoreCompile"
+		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
+	/>
+
+<!--
+	Doesn't work because it treats every property in Delete.Files as separate ITaskItem
+	<Target Name="Clean">
+		<Message Text="Trying to delete $(OutputPath)$(AssemblyName)$(TargetExt)"/>
+		<Delete Files="$(OutputPath)$(AssemblyName)$(TargetExt)" />
+	</Target>
+-->
 
 </Project>

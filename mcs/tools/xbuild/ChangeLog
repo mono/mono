@@ -1,3 +1,10 @@
+2007-03-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.CSharp.targets: Add @(ChildProjectReferences) to
+	References.
+
+	* Microsoft.Common.targets: Add ResolveProjectReferences target.
+
 2007-01-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile: Removed hack.

@@ -47,7 +47,7 @@
 			OutputAssembly="$(OutputPath)$(AssemblyName)$(TargetExt)"
 			PdbFile="$(PdbFile)" 
 			Platform="$(PlatformTarget)"
-		 	References="@(ResolvedFiles)"
+		 	References="@(ResolvedFiles);@(ChildProjectReferences)"
 			ResponseFiles="$(CompilerResponseFile)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
