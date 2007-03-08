@@ -1831,7 +1831,7 @@ namespace System.Windows.Forms {
 
 		internal override  Size FrameBorderSize { 
 			get {
-				throw new NotImplementedException(); 
+				return new Size (4, 4);
 			}
 		}
 

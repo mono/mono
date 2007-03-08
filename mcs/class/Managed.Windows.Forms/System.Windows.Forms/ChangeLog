@@ -1,3 +1,7 @@
+2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIX11.cs: Hardcode FrameBorderSize value temporarily to fix MWF.
+
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
 
 	* DataGridView.cs: Remove event handler from DataView when a
