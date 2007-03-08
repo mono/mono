@@ -1,5 +1,9 @@
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* corlib_test.dll.sources: Added StringComparerTest.cs.
+
+2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* corlib_test.dll.sources: Added ComparerTest.cs.
 
 2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>

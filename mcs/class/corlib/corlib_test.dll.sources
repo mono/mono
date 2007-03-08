@@ -293,6 +293,7 @@ System.Security/SecurityManagerTest.cs
 System.Security/SecurityTransparentAttributeTest.cs
 System/SingleTest.cs
 System/SingleFormatterTest.cs
+System/StringComparerTest.cs
 System/StringTest.cs
 System.Text/ASCIIEncodingTest.cs
 System.Text/DecoderReplacementFallbackTest.cs
