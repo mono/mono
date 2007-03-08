@@ -1,5 +1,11 @@
 2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Don't return the explicit_size if we are using 
+	AutoSize.  Fixes invalidation issue when user has explicitly set a
+	size and has AutoSize = true.
+
+2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUIX11.cs: Hardcode FrameBorderSize value temporarily to fix MWF.
 
 2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>

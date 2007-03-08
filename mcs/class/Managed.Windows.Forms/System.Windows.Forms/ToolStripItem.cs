@@ -595,7 +595,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public virtual Size Size {
 			get { 
-				if (this.explicit_size != Size.Empty) 
+				if (!this.AutoSize && this.explicit_size != Size.Empty) 
 					return this.explicit_size; 
 					
 				return this.bounds.Size; 
