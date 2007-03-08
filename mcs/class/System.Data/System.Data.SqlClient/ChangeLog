@@ -1,3 +1,8 @@
+2007-03-08  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs (CloseDataReader): Checks whether the SQL
+	connection is created or not.
+
 2007-03-07  Andreia Gaita <avidigal@novell.com>
 
 	* SqlCommand.cs (ExecuteScalar): when calling stored procedures,

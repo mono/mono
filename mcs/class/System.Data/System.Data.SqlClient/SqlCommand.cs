@@ -307,7 +307,8 @@ namespace System.Data.SqlClient {
 
 			// Reset the behavior
 			behavior = CommandBehavior.Default;
-			Tds.SequentialAccess = false;
+			if (Tds != null)
+				Tds.SequentialAccess = false;
 		}
 
 		public new SqlParameter CreateParameter () 
