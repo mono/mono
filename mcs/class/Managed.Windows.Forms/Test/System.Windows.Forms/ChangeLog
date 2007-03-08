@@ -1,3 +1,7 @@
+2007-03-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SendKeysTest.cs: Fixed to not hang keyboard on Windows.
+
 2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Add tests for bugs #80574, #80791.

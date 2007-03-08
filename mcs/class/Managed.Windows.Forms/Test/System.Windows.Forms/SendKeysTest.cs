@@ -94,6 +94,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		private void SendKeysTest1_tick(object sender, EventArgs e) {
+			if (f.InvokeRequired) {
+				f.Invoke (new EventHandler (SendKeysTest1_tick), new object [] { sender, e });
+				return;
+			}
 			t.Stop();
 			Assert.AreEqual(2, keys.Count, "#A1");
 			Keys k = (Keys)keys.Dequeue();
@@ -111,7 +115,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual("A", k.key, "#A6");
 			
 			t.Dispose();
-			Application.Exit();
+			f.Close ();
 		}
 
 		[SetUp]
@@ -143,6 +147,10 @@ namespace MonoTests.System.Windows.Forms
 
 		private void SendKeysTest2_tick(object sender, EventArgs e) {
 			t.Stop();
+			if (f.InvokeRequired) {
+				f.Invoke (new EventHandler (SendKeysTest2_tick), new object [] {sender, e});
+				return;
+			}
 			Assert.AreEqual(12, keys.Count, "#A1");
 
 			Keys k = (Keys)keys.Dequeue();
@@ -233,7 +241,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual("A", c.Text, "#e1");
 
 			t.Dispose();
-			Application.Exit();
+			f.Close ();
 		}
 
 	}
