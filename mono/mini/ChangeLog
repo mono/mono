@@ -1,3 +1,9 @@
+
+Thu Mar 8 19:36:13 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: more precise tracking of types in the eval stack
+	(part of fix for bug #81044).
+
 2007-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_class_from_name): Add a cache.
