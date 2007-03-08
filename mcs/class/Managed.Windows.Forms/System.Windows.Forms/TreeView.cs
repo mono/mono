@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		private string image_key;
+		private string selected_image_key;
 #endif
 		private bool full_row_select;
 		private bool hot_tracking;
@@ -516,6 +517,17 @@ namespace System.Windows.Forms {
 				image_index = -1;
 				image_key = value;
 				Invalidate ();
+			}
+		}
+
+		public string SelectedImageKey {
+			get { return selected_image_key; }
+			set {
+				if (selected_image_key == value)
+					return;
+				selected_image_index = -1;
+				selected_image_key = value;
+				UpdateNode (SelectedNode);
 			}
 		}
 #endif
@@ -1264,19 +1276,39 @@ namespace System.Windows.Forms {
 				return;
 
 			int use_index = -1;
-			if (node.ImageIndex > -1 && node.ImageIndex < ImageList.Images.Count) {
-				use_index = node.ImageIndex;
-			} else if (ImageIndex > -1 && ImageIndex < ImageList.Images.Count) {
-				use_index = ImageIndex;
+
+			if (!node.IsSelected) {
+				if (node.ImageIndex > -1 && node.ImageIndex < ImageList.Images.Count) {
+					use_index = node.ImageIndex;
+				} else if (ImageIndex > -1 && ImageIndex < ImageList.Images.Count) {
+					use_index = ImageIndex;
+				}
+			} else {
+				if (node.SelectedImageIndex > -1 && node.SelectedImageIndex < ImageList.Images.Count) {
+					use_index = node.SelectedImageIndex;
+				} else if (SelectedImageIndex > -1 && SelectedImageIndex < ImageList.Images.Count) {
+					use_index = SelectedImageIndex;
+				}
 			}
 
 #if NET_2_0
-			if (use_index == -1 && !String.IsNullOrEmpty (node.ImageKey)) {
-				use_index = image_list.Images.IndexOfKey (node.ImageKey);
-			}
 
-			if (use_index == -1 && !String.IsNullOrEmpty (ImageKey)) {
-				use_index = image_list.Images.IndexOfKey (ImageKey);
+			if (!node.IsSelected) {
+				if (use_index == -1 && !String.IsNullOrEmpty (node.ImageKey)) {
+					use_index = image_list.Images.IndexOfKey (node.ImageKey);
+				}
+
+				if (use_index == -1 && !String.IsNullOrEmpty (ImageKey)) {
+					use_index = image_list.Images.IndexOfKey (ImageKey);
+				}
+			} else {
+				if (use_index == -1 && !String.IsNullOrEmpty (node.SelectedImageKey)) {
+					use_index = image_list.Images.IndexOfKey (node.SelectedImageKey);
+				}
+
+				if (use_index == -1 && !String.IsNullOrEmpty (SelectedImageKey)) {
+					use_index = image_list.Images.IndexOfKey (SelectedImageKey);
+				}
 			}
 #endif
 

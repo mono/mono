@@ -1,3 +1,9 @@
+2007-03-08  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Show the correct image for selected node (this used
+	to work, not sure how the code got deleted). Also implemented 2.0 feature
+	SelectedImageKey.
+
 2007-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:
