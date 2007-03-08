@@ -2151,11 +2151,11 @@ constructor_header
 	  }
 	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
+		LocatedToken lt = (LocatedToken) $1;
 		current_local_parameters = (Parameters) $4;
 		current_block = top_current_block = new ToplevelBlock (null,
-			current_local_parameters, null, Location.Null);
-			
-		LocatedToken lt = (LocatedToken) $1;
+			current_local_parameters, null, lt.Location);
+
 		$$ = new Constructor (current_class, lt.Value, 0, current_local_parameters,
 				      null, lt.Location);
 				      

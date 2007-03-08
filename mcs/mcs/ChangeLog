@@ -1,3 +1,8 @@
+2007-03-08  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (constructor_header): Pass the location to the
+	newly created TopLevelBlock.
+
 2007-03-07  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Resolve): Don't crash on error; bug #80715.
