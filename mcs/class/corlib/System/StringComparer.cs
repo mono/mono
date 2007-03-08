@@ -39,109 +39,10 @@ namespace System
 	[Serializable, ComVisible(true)]
 	public abstract class StringComparer : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
 	{
-		[Serializable]
-		class StringCultureComparer: StringComparer
-		{
-			CompareOptions co;
-			CompareInfo ci;
-
-			public StringCultureComparer (CultureInfo ci, bool ignore_case)
-			{
-				this.ci = ci.CompareInfo;
-				co = ignore_case ? CompareOptions.IgnoreCase : CompareOptions.None;
-			}
-
-			public override int Compare (string x, string y)
-			{
-				return ci.Compare (x, y, co);
-			}
-
-			public override bool Equals (string x, string y)
-			{
-				return Compare (x, y) == 0;
-			}
-
-			public override int GetHashCode (string s)
-			{
-				if (s == null)
-					throw new ArgumentNullException("s");
-
-				return ci.GetSortKey (s, co).GetHashCode ();
-			}
-		}
-
-		[Serializable]
-		class OrdinalComparer : StringComparer
-		{
-			public OrdinalComparer ()
-			{
-			}
-
-			public override int Compare (string x, string y)
-			{
-				return String.CompareOrdinal (x, y);
-			}
-
-			public override bool Equals (string x, string y)
-			{
-				return x == y;
-			}
-
-			public override int GetHashCode (string s)
-			{
-				return s.GetHashCode ();
-			}
-		}
-
-		[Serializable]
-		class OrdinalIgnoreCaseComparer : StringComparer
-		{
-			public OrdinalIgnoreCaseComparer ()
-			{
-			}
-
-			public override int Compare (string x, string y)
-			{
-				// copied from String.CompareOrdinal()
-				if (x == null) {
-					if (y == null)
-						return 0;
-					else
-						return -1;
-				}
-				else if (y == null) {
-					return 1;
-				}
-
-				int max = x.Length > y.Length ? y.Length : x.Length;
-				for (int i = 0; i < max; i++) {
-					if (x [i] == y [i])
-						continue;
-					char xc = Char.ToUpperInvariant (x [i]);
-					char yc = Char.ToUpperInvariant (y [i]);
-					if (xc != yc)
-						return xc - yc;
-				}
-				return max < x.Length ? -1 :
-					max == y.Length ? 0 : 1;
-			}
-
-			public override bool Equals (string x, string y)
-			{
-				return Compare (x, y) == 0;
-			}
-
-			public override int GetHashCode (string s)
-			{
-				return s.GetCaseInsensitiveHashCode ();
-			}
-		}
-
-		static StringComparer invariantCultureIgnoreCase = new StringCultureComparer (CultureInfo.InvariantCulture, true);
-		static StringComparer invariantCulture = new StringCultureComparer (CultureInfo.InvariantCulture, false);
-		static StringComparer ordinalIgnoreCase =
-			new OrdinalIgnoreCaseComparer ();
-		static StringComparer ordinal = new OrdinalComparer ();
+		static StringComparer invariantCultureIgnoreCase = new CultureAwareComparer (CultureInfo.InvariantCulture, true);
+		static StringComparer invariantCulture = new CultureAwareComparer (CultureInfo.InvariantCulture, false);
+		static StringComparer ordinalIgnoreCase = new OrdinalComparer (true);
+		static StringComparer ordinal = new OrdinalComparer (false);
 
 		// Constructors
 		protected StringComparer ()
@@ -151,13 +52,13 @@ namespace System
 		// Properties
 		public static StringComparer CurrentCulture {
 			get {
-				return new StringCultureComparer (CultureInfo.CurrentCulture, false);
+				return new CultureAwareComparer (CultureInfo.CurrentCulture, false);
 			}
 		}
 
 		public static StringComparer CurrentCultureIgnoreCase {
 			get {
-				return new StringCultureComparer (CultureInfo.CurrentCulture, true);
+				return new CultureAwareComparer (CultureInfo.CurrentCulture, true);
 			}
 		}
 
@@ -184,7 +85,7 @@ namespace System
 		// Methods
 		public static StringComparer Create (CultureInfo culture, bool ignoreCase)
 		{
-			return new StringCultureComparer (culture, ignoreCase);
+			return new CultureAwareComparer (culture, ignoreCase);
 		}
 
 		public int Compare (object x, object y)
@@ -238,6 +139,96 @@ namespace System
 		public abstract int Compare (string x, string y);
 		public abstract bool Equals (string x, string y);
 		public abstract int GetHashCode (string s);
+	}
+
+	[Serializable]
+	class CultureAwareComparer : StringComparer
+	{
+		readonly bool _ignoreCase;
+		readonly CompareInfo _compareInfo;
+
+		public CultureAwareComparer (CultureInfo ci, bool ignore_case)
+		{
+			_compareInfo = ci.CompareInfo;
+			_ignoreCase = ignore_case;
+		}
+
+		public override int Compare (string x, string y)
+		{
+			CompareOptions co = _ignoreCase ? CompareOptions.IgnoreCase : 
+				CompareOptions.None;
+			return _compareInfo.Compare (x, y, co);
+		}
+
+		public override bool Equals (string x, string y)
+		{
+			return Compare (x, y) == 0;
+		}
+
+		public override int GetHashCode (string s)
+		{
+			if (s == null)
+				throw new ArgumentNullException("s");
+
+			CompareOptions co = _ignoreCase ? CompareOptions.IgnoreCase : 
+				CompareOptions.None;
+			return _compareInfo.GetSortKey (s, co).GetHashCode ();
+		}
+	}
+
+	[Serializable]
+	internal class OrdinalComparer : StringComparer
+	{
+		public OrdinalComparer (bool ignoreCase)
+		{
+			_ignoreCase = ignoreCase;
+		}
+
+		public override int Compare (string x, string y)
+		{
+			if (!_ignoreCase)
+				return String.CompareOrdinal (x, y);
+
+			// copied from String.CompareOrdinal()
+			if (x == null) {
+				if (y == null)
+					return 0;
+				else
+					return -1;
+			}
+			else if (y == null) {
+				return 1;
+			}
+
+			int max = x.Length > y.Length ? y.Length : x.Length;
+			for (int i = 0; i < max; i++) {
+				if (x [i] == y [i])
+					continue;
+				char xc = Char.ToUpperInvariant (x [i]);
+				char yc = Char.ToUpperInvariant (y [i]);
+				if (xc != yc)
+					return xc - yc;
+			}
+			return max < x.Length ? -1 :
+				max == y.Length ? 0 : 1;
+		}
+
+		public override bool Equals (string x, string y)
+		{
+			if (!_ignoreCase)
+				return x == y;
+			return Compare (x, y) == 0;
+		}
+
+		public override int GetHashCode (string s)
+		{
+			if (!_ignoreCase)
+				return s.GetHashCode ();
+
+			return s.GetCaseInsensitiveHashCode ();
+		}
+
+		readonly bool _ignoreCase;
 	}
 }
 

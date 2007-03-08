@@ -1,3 +1,9 @@
+2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StringComparer.cs: Renamed StringComparer classes and promoted them
+	to top-level classes. Merged Ordinal and OrdinalIgnoreCase comparers.
+	Fixes binary serialization compatibility with MS.
+
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
   
 	* Type.cs (Equals): Remove a useless check.

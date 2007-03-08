@@ -1,6 +1,7 @@
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* StringComparerTest.cs: Added tests for bug #80928.
+	* StringComparerTest.cs: Added tests for bug #80928. Added binary
+	serialization compatibility tests.
 
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
 
