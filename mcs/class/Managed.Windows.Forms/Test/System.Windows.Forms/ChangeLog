@@ -1,3 +1,7 @@
+2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FormTest.cs: Added tests for bug #80791 and #80574.
+
 2007-03-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SendKeysTest.cs: Fixed to not hang keyboard on Windows.

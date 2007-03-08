@@ -22,6 +22,40 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class FormTest
 	{
+		[Test] // bug #80791
+		public void ClientSizeTest ()
+		{
+			Form form = new Form ();
+			Assert.IsFalse (form.ClientSize == form.Size);
+		}
+
+		[Test] // bug #80574
+		public void FormBorderStyleTest ()
+		{
+			Form form = new Form ();
+			Rectangle boundsBeforeBorderStyleChange = form.Bounds;
+			Rectangle clientRectangleBeforeBorderStyleChange = form.ClientRectangle;
+			form.FormBorderStyle = FormBorderStyle.None;
+			Assert.AreEqual (form.Bounds, boundsBeforeBorderStyleChange, "#A1");
+			Assert.AreEqual (form.ClientRectangle, clientRectangleBeforeBorderStyleChange, "#A2");
+
+			form.Visible = true;
+			form.FormBorderStyle = FormBorderStyle.Sizable;
+			boundsBeforeBorderStyleChange = form.Bounds;
+			clientRectangleBeforeBorderStyleChange = form.ClientRectangle;
+			form.FormBorderStyle = FormBorderStyle.None;
+			Assert.IsFalse (form.Bounds == boundsBeforeBorderStyleChange, "#B1");
+			Assert.AreEqual (form.ClientRectangle, clientRectangleBeforeBorderStyleChange, "#B2");
+
+			form.Visible = false;
+			form.FormBorderStyle = FormBorderStyle.Sizable;
+			boundsBeforeBorderStyleChange = form.Bounds;
+			clientRectangleBeforeBorderStyleChange = form.ClientRectangle;
+			form.FormBorderStyle = FormBorderStyle.None;
+			Assert.IsFalse (form.Bounds == boundsBeforeBorderStyleChange, "#C1");
+			Assert.AreEqual (form.ClientRectangle, clientRectangleBeforeBorderStyleChange, "#C2");
+		}
+
 		[Test]
 		public void MaximizedParentedFormTest ()
 		{
