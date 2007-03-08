@@ -387,6 +387,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public static bool TerminalServerSession {
+			get {
+				return false;
+			}
+		}
+#endif
+
 		public static Size ToolWindowCaptionButtonSize {
 			get {
 				return ThemeEngine.Current.ToolWindowCaptionButtonSize;

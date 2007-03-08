@@ -1,3 +1,7 @@
+2007-03-08  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* SystemInformation.cs: Add TerminalServerSession.
+
 2007-03-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeViewDrawMode.cs: Make internal for 1.1 to allow for consolidated
