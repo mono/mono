@@ -1,3 +1,11 @@
+2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Create internal setter for client_size to allow it to be
+	set without triggering resizing code.
+	* Form.cs: Calculate client_size in constructor, only change client_size
+	in FormBorderStyle property if Handle has been created.
+	[Fixes #80574, #80791]
+
 2007-03-08  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* SystemInformation.cs: Add TerminalServerSession.

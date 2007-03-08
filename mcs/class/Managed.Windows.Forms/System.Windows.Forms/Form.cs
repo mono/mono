@@ -266,7 +266,7 @@ namespace System.Windows.Forms {
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
-
+			InternalClientSize = new Size (this.Width - (SystemInformation.FrameBorderSize.Width * 2), this.Height - (SystemInformation.FrameBorderSize.Height * 2) - SystemInformation.CaptionHeight);
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -496,12 +496,12 @@ namespace System.Windows.Forms {
 					window_manager.UpdateBorderStyle (value);
 				}
 
-				UpdateStyles();
+				Size current_client_size = ClientSize;
 				
-				if (this.Visible) 
-					this.Size = SizeFromClientSize (this.ClientSize);
-				else
-					XplatUI.InvalidateNC (this.Handle);
+				if (this.IsHandleCreated) {
+					UpdateStyles();
+					this.Size = SizeFromClientSize (current_client_size);
+				}
 			}
 		}
 

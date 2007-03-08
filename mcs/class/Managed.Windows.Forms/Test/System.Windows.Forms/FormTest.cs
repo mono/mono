@@ -968,37 +968,63 @@ namespace MonoTests.System.Windows.Forms
 			f.Show (f);
 		}
 		
-		[Test]	// Bug #79959
+		[Test]	// Bug #79959, #80574, #80791
 		[Category ("NotWorking")]
 		public void BehaviorResizeOnBorderStyleChanged ()
 		{
-			// Marked NotWorking because the ClientSize is probably dependent on the WM.
-			// The values below match .Net to make sure our behavior is the same.
+			// Marked NotWorking because the ClientSize is dependent on the WM.
+			// The values below match XP Luna to make sure our behavior is the same.
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.Show ();
+
+			Assert.AreEqual (true, f.IsHandleCreated, "A0");
 
 			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A2");
 
-			f.FormBorderStyle = FormBorderStyle.FixedSingle;
-			Assert.AreEqual (new Size (298, 298), f.Size, "A3");
+			f.FormBorderStyle = FormBorderStyle.Fixed3D;
+			Assert.AreEqual (new Size (302, 302), f.Size, "A3");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
 
-			f.FormBorderStyle = FormBorderStyle.Sizable;
-			Assert.AreEqual (new Size (300, 300), f.Size, "A5");
+			f.FormBorderStyle = FormBorderStyle.FixedDialog;
+			Assert.AreEqual (new Size (298, 298), f.Size, "A5");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A6");
+
+			f.FormBorderStyle = FormBorderStyle.FixedSingle;
+			Assert.AreEqual (new Size (298, 298), f.Size, "A7");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A8");
+
+			f.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+			Assert.AreEqual (new Size (298, 290), f.Size, "A9");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A0");
+
+			f.FormBorderStyle = FormBorderStyle.None;
+			Assert.AreEqual (new Size (292, 266), f.Size, "A11");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A12");
+
+			f.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			Assert.AreEqual (new Size (300, 292), f.Size, "A13");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A14");
+
+			f.FormBorderStyle = FormBorderStyle.Sizable;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A15");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A16");
 			
 			f.Close ();
 		}
-		
-		[Test]	// bug #80574
+
+		[Test]  // Bug #80574, #80791
 		[Category ("NotWorking")]
 		public void BehaviorResizeOnBorderStyleChangedNotVisible ()
 		{
-			// Marked NotWorking because the ClientSize is probably dependent on the WM.
-			// The values below match .Net to make sure our behavior is the same.
+			// Marked NotWorking because the ClientSize is dependent on the WM.
+			// The values below match XP Luna to make sure our behavior is the same.
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 
+			Assert.AreEqual (false, f.IsHandleCreated, "A0");
+			
 			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A2");
 
@@ -1029,6 +1055,28 @@ namespace MonoTests.System.Windows.Forms
 			f.FormBorderStyle = FormBorderStyle.Sizable;
 			Assert.AreEqual (new Size (300, 300), f.Size, "A15");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A16");
+		}
+
+		[Test]  // Bug #80574, #80791
+		[Category ("NotWorking")]
+		public void MoreBehaviorResizeOnBorderStyleChangedNotVisible ()
+		{
+			// Marked NotWorking because the ClientSize is dependent on the WM.
+			// The values below match XP Luna to make sure our behavior is the same.
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+			f.Hide ();
+
+			Assert.AreEqual (true, f.IsHandleCreated, "A0");
+
+			f.FormBorderStyle = FormBorderStyle.Sizable;
+			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A2");
+			f.FormBorderStyle = FormBorderStyle.None;
+			Assert.AreEqual (new Size (292, 266), f.Size, "A3");
+			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
 		}
 #endif
 

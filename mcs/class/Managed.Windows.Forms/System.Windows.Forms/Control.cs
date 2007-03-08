@@ -1102,6 +1102,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
 		#endregion	// Internal Properties
 
