@@ -1,3 +1,8 @@
+2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Comparer.cs: Renamed IComparableOfTComparer<T> to GenericComparer<T>
+	to fix binary serialization compatibility with MS.
+
 2007-03-05  David Mitchell <dmitchell@logos.com>
 
 	* Dictionary.cs: An instance of Dictionary<TKey,TValue> is

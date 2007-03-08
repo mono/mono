@@ -31,6 +31,7 @@ System.Collections/QueueTest.cs
 System.Collections/ReadOnlyCollectionBaseTest.cs
 System.Collections/SortedListTest.cs
 System.Collections/StackTest.cs
+System.Collections.Generic/ComparerTest.cs
 System.Collections.Generic/DictionaryTest.cs
 System.Collections.Generic/IListTest.cs
 System.Collections.Generic/ListTest.cs

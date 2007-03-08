@@ -37,11 +37,10 @@ namespace System.Collections.Generic {
 		static Comparer ()
 		{
 			if (typeof (IComparable<T>).IsAssignableFrom (typeof (T)))
-				_default = (Comparer<T>) Activator.CreateInstance (typeof (IComparableOfTComparer <>).MakeGenericType (typeof (T)));
+				_default = (Comparer<T>) Activator.CreateInstance (typeof (GenericComparer <>).MakeGenericType (typeof (T)));
 			else
 				_default = new DefaultComparer ();
 		}
-		
 		
 		public abstract int Compare (T x, T y);
 	
@@ -88,7 +87,7 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
-	class IComparableOfTComparer <T> : Comparer <T> where T : IComparable<T> {
+	class GenericComparer <T> : Comparer <T> where T : IComparable<T> {
 		public override int Compare (T x, T y)
 		{
 			// `null' is less than any other ref type

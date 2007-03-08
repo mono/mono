@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Collections.Generic.Test.DictionaryTest
+// MonoTests.System.Collections.Generic.Test.IListTest
 //
 // Authors:
 //      Gert Driesen (drieseng@users.sourceforge.net)
