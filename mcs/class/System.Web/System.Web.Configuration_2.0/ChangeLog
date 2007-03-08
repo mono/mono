@@ -1,3 +1,8 @@
+2007-03-08  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* PagesSection.cs: Revert part of Adar's patch that regresses
+	bug #80913.
+
 2007-03-06  Adar Wesley <adarw@mainsoft.com>
 
 	* PagesSection.cs: improve Enum parsing and strongly typed default values.

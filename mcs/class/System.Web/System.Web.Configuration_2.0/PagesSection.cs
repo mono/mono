@@ -75,7 +75,7 @@ namespace System.Web.Configuration
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null,
 								  null, null, ConfigurationPropertyOptions.None);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
-			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), PagesEnableSessionState.@true);
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (string), "true");
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
 			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
@@ -166,17 +166,34 @@ namespace System.Web.Configuration
 			set { base[enableEventValidationProp] = value; }
 		}
 
-		[ConfigurationProperty ("enableSessionState", DefaultValue = System.Web.Configuration.PagesEnableSessionState.True)]
-		public System.Web.Configuration.PagesEnableSessionState EnableSessionState {
+		[ConfigurationProperty ("enableSessionState", DefaultValue = "true")]
+		public PagesEnableSessionState EnableSessionState {
 			get {
-				PagesEnableSessionState state = (PagesEnableSessionState) base [enableSessionStateProp];
-				int tmpState = (int) state;
-				return (System.Web.Configuration.PagesEnableSessionState) tmpState;
+				string enableSessionState = (string) base [enableSessionStateProp];
+				switch (enableSessionState) {
+				case "true":
+					return PagesEnableSessionState.True;
+				case "false":
+					return PagesEnableSessionState.False;
+				case "ReadOnly":
+					return PagesEnableSessionState.ReadOnly;
+				}
+				throw new ConfigurationErrorsException ("The 'enableSessionState'"
+					+ " attribute must be one of the following values: true,"
+					+ "false, ReadOnly.");
 			}
 			set {
-				int tmpState = (int) value;
-				PagesEnableSessionState state = (PagesEnableSessionState) tmpState;
-				base [enableSessionStateProp] = state; 
+				switch (value) {
+				case PagesEnableSessionState.False:
+					base [enableSessionStateProp] = "false";
+					break;
+				case PagesEnableSessionState.ReadOnly:
+					base [enableSessionStateProp] = "ReadOnly";
+					break;
+				default:
+					base [enableSessionStateProp] = "true";
+					break;
+				}
 			}
 		}
 
@@ -277,13 +294,6 @@ namespace System.Web.Configuration
 			base.DeserializeSection (reader);
 
 			/* XXX more here?.. */
-		}
-
-		private enum PagesEnableSessionState
-		{
-			@false = 0,
-			ReadOnly = 1,
-			@true = 2
 		}
 	}
 }
