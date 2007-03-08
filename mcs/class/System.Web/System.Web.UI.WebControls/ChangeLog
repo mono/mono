@@ -1,5 +1,10 @@
 2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataGrid.cs: fixed: 
+	Auto-generated columns are restored properly on postback from view state.
+
+2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Style.cs: fixed:
 	when AddAttributesToRender(System.Web.UI.HtmlTextWriter, WebControl) 
 	is called, WebControl parameter is passed as argument to 

@@ -427,24 +427,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void CreateRenderColumns (PagedDataSource paged, bool useDataSource)
-		{
-			if (useDataSource) {
-				ArrayList columns_list = CreateColumnSet (paged, useDataSource);
-				render_columns = new DataGridColumn [columns_list.Count];
-
-				for (int c = 0; c < render_columns.Length; c++) {
-					DataGridColumn col = (DataGridColumn) columns_list [c];
-					col.Set_Owner (this);
-					col.Initialize ();
-					render_columns [c] = col;
-				}
-			} else {
-				render_columns = new DataGridColumn [Columns.Count];
-				Columns.CopyTo (render_columns, 0);
-			}
-		}
-
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("")]
@@ -927,7 +909,18 @@ namespace System.Web.UI.WebControls {
 			if ((pds.IsPagingEnabled) && (pds.PageCount < pds.CurrentPageIndex))
 				throw new HttpException ("Invalid DataGrid PageIndex");
 				
-			CreateRenderColumns (paged_data_source, useDataSource);
+			ArrayList cList = CreateColumnSet (paged_data_source, useDataSource);
+			if (cList.Count == 0)
+				return;
+
+			render_columns = new DataGridColumn [cList.Count];
+			for (int c = 0; c < cList.Count; c++) {
+				DataGridColumn col = (DataGridColumn) cList [c];
+				col.Set_Owner (this);
+				col.Initialize ();
+				render_columns [c] = col;
+			}
+
 			if (useDataSource) {
 				if (DataSource != null)
 					Controls.Add (RenderTable);
