@@ -1,3 +1,8 @@
+2007-03-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MSBuild.cs (Execute): Copy referenced project's dlls to output
+	directory.
+
 2007-02-18  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* AssemblyResolver.cs: Resolve HintPath correctly.

@@ -29,6 +29,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -37,13 +39,13 @@ namespace Microsoft.Build.Tasks {
 	[MonoTODO]
 	public class MSBuild : TaskExtension {
 	
-		ITaskItem[]	projects;
-		string[]		properties;
+		ITaskItem []	projects;
+		string []	properties;
 		bool		rebaseOutputs;
 		bool		runEachTargetSeparately;
 		bool		stopOnFirstFailure;
-		ITaskItem[]	targetOutputs;
-		string[]	targets;
+		ITaskItem []	targetOutputs;
+		string []	targets;
 	
 		public MSBuild ()
 		{
@@ -54,80 +56,77 @@ namespace Microsoft.Build.Tasks {
 			string filename;
 			bool result = true;
 			stopOnFirstFailure = false;
+			List <ITaskItem > outputItems = new List <ITaskItem> ();
+			string currentDirectory = Environment.CurrentDirectory;
+			Hashtable outputs;
 		
 			foreach (ITaskItem project in projects) {
 				filename = project.GetMetadata ("FullPath");
-				
-				result = BuildEngine.BuildProjectFile (filename, targets, new Hashtable (), new Hashtable ());
-				if (result == false) {
+
+				Directory.SetCurrentDirectory (Path.GetDirectoryName (filename));
+				outputs = new Hashtable ();
+
+				result = BuildEngine.BuildProjectFile (filename, targets, null, outputs);
+
+				if (result) {
+					foreach (DictionaryEntry de in outputs) {
+						ITaskItem [] array = (ITaskItem []) de.Value;
+						foreach (ITaskItem item in array) {
+							outputItems.Add (item);
+							if (rebaseOutputs)
+								File.Copy (item.ItemSpec, Path.Combine (currentDirectory, item.ItemSpec), true);
+						}
+					}
+				} else {
 					Log.LogError ("Error while building {0}", filename);
 					if (stopOnFirstFailure)
 						break;
 				}
 			}
+
+			if (result)
+				targetOutputs = outputItems.ToArray ();
+
+			Directory.SetCurrentDirectory (currentDirectory);
 			return result;
 		}
 
 		[Required]
-		public ITaskItem[] Projects {
-			get {
-				return projects;
-			}
-			set {
-				projects = value;
-			}
+		public ITaskItem [] Projects {
+			get { return projects; }
+			set { projects = value; }
 		}
 
-		public string[] Properties {
-			get {
-				return properties;
-			}
-			set {
-				properties = value;
-			}
+		[MonoTODO]
+		public string [] Properties {
+			get { return properties; }
+			set { properties = value; }
 		}
 
 		public bool RebaseOutputs {
-			get {
-				return rebaseOutputs;
-			}
-			set {
-				rebaseOutputs = value;
-			}
+			get { return rebaseOutputs; }
+			set { rebaseOutputs = value; }
 		}
 
+		[MonoTODO]
 		public bool RunEachTargetSeparately {
-			get {
-				return runEachTargetSeparately;
-			}
-			set {
-				runEachTargetSeparately = value;
-			}
+			get { return runEachTargetSeparately; }
+			set { runEachTargetSeparately = value; }
 		}
 
 		public bool StopOnFirstFailure {
-			get {
-				return stopOnFirstFailure;
-			}
-			set {
-				stopOnFirstFailure = value;
-			}
+			get { return stopOnFirstFailure; }
+			set { stopOnFirstFailure = value; }
 		}
 
 		[Output]
-		public ITaskItem[] TargetOutputs {
-			get {
-				return targetOutputs;
-			}
+		public ITaskItem [] TargetOutputs {
+			get { return targetOutputs; }
 		}
 
-		public string[] Targets {
-			get {
-				return targets;
-			}
-			set {
-				targets = value;
-			}
+		public string [] Targets {
+			get { return targets; }
+			set { targets = value; }
 		}
 	}
 }
