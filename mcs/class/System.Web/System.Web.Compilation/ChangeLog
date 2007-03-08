@@ -1,3 +1,8 @@
+2007-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* ThemeDirectoryCompiler.cs: make compiled themes depend on the
+	.skin and .css files composing the theme.
+
 2007-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* PageThemeCompiler.cs: Use correct theme path for
