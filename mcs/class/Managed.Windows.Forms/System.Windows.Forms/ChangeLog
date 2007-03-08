@@ -1,3 +1,8 @@
+2007-03-07  Pedro Martínez Juliá  <pedromj@gmail.com>
+
+	* DataGridView.cs: Remove event handler from DataView when a
+	DataTable is used as DataSource.
+
 2007-03-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Create internal setter for client_size to allow it to be

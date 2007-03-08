@@ -598,6 +598,9 @@ namespace System.Windows.Forms {
 						if (dataSource is DataView) {
 							(dataSource as DataView).ListChanged -= OnListChanged;
 						}
+						if (dataSource is DataTable) {
+							((dataSource as IListSource).GetList() as DataView).ListChanged -= OnListChanged;
+						}
 					}
 					dataSource = value;
 					OnDataSourceChanged(EventArgs.Empty);
