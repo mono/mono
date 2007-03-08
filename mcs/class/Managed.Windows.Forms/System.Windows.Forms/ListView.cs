@@ -4089,7 +4089,8 @@ namespace System.Windows.Forms
 
 				owner.OnRetrieveVirtualItem (args);
 				ListViewItem retval = args.Item;
-				retval.Owner = owner; // NullReferenceException if Item is null
+				retval.Owner = owner;
+				retval.SetIndex (displayIndex);
 
 				return retval;
 			}

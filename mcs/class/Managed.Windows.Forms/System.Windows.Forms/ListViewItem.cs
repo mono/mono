@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 		private ListViewGroup group = null;
 		private string name = String.Empty;
 		private string image_key = String.Empty;
+		int index;			// cached index for VirtualMode
 #endif
 		Rectangle bounds;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
@@ -371,6 +372,10 @@ namespace System.Windows.Forms
 			get {
 				if (owner == null)
 					return -1;
+#if NET_2_0
+				if (owner.VirtualMode)
+					return index;
+#endif
 				else
 					return owner.Items.IndexOf (this);
 			}
@@ -644,6 +649,11 @@ namespace System.Windows.Forms
 
 				owner = value;
 			}
+		}
+
+		internal void SetIndex (int index)
+		{
+			this.index = index;
 		}
 
 		private void Invalidate ()
