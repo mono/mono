@@ -186,6 +186,29 @@ namespace MonoTests.System.Collections.Generic {
 
 			Assert.AreEqual (1, l.IndexOf (200), "Could not find value");
 		}
+		
+		[Test, ExpectedException(typeof (ArgumentException))]
+		public void IList_InsertInvalidType ()
+		{
+			IList list = _list1 as IList;
+			list.Insert(0, new object());
+		}
+		
+		[Test, ExpectedException(typeof (ArgumentException))]
+		public void IList_AddInvalidType()
+		{
+			IList list = _list1 as IList;
+			list.Add(new object());
+		}
+		
+		[Test]
+		public void IList_RemoveInvalidType()
+		{
+			IList list = _list1 as IList;
+			int nCount = list.Count;
+			list.Remove(new object());
+			Assert.AreEqual(nCount, list.Count);
+		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void IndexOfOutOfRangeTest ()
@@ -1052,6 +1075,22 @@ namespace MonoTests.System.Collections.Generic {
 			l.Sort ();
 			// two element -> sort -> exception!
 		}
+		
+		[Test]
+		void IList_Contains_InvalidType()
+		{
+			List<string> list = new List<string>();
+			list.Add("foo");
+			Assert.IsFalse (((IList)list).Contains(new object()));
+		}
+		
+		[Test]
+		void IList_IndexOf_InvalidType()
+		{
+			List<string> list = new List<string>();
+			list.Add("foo");
+			Assert.AreEqual (-1, ((IList)list).IndexOf(new object()));
+		}
 
 		// for bug #77277 test case
 		[Test]
@@ -1071,6 +1110,22 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (0, list.IndexOf (new EquatableClass (0)), "#3");
 			Assert.AreEqual (2, list.LastIndexOf (item0), "#4");
 			Assert.AreEqual (2, list.LastIndexOf (new EquatableClass (0)), "#5");
+		}
+		
+		[Test]
+		[Expected Exception (typeof (ArugmentOutOfRangeException))]
+		public void SetItem_OutOfRange()
+		{
+			List<string> list = new List<string>();
+			list[0] = "foo";
+		}
+		
+		[Test]
+		[Expected Exception (typeof (ArugmentOutOfRangeException))]
+		public void SetItem_IList_OutOfRange()
+		{
+			IList<string> list = new List<string>();
+			list[0] = "foo";
 		}
 
 		public class EquatableClass : IEquatable<EquatableClass>

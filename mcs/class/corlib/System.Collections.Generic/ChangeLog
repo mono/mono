@@ -1,3 +1,14 @@
+2007-03-08  David Mitchell <dmitchell@logos.com>
+
+	* List.cs: Fix the case where List.set_Item(int index) throws
+	inappropriate exception when index is equal to List.Count
+
+	List.IndexOf(object item) and IList.Contains(object item) throw
+	exceptions when given invalid types.
+
+	IList.Add(object item) throws InvalidCastException when item is
+	not of the correct type.
+
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Comparer.cs: Renamed IComparableOfTComparer<T> to GenericComparer<T>

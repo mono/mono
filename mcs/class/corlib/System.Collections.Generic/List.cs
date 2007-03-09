@@ -554,6 +554,8 @@ namespace System.Collections.Generic {
 			}
 			set {
 				CheckIndex (index);
+				if ((uint) index == (uint) _size)
+					throw new ArgumentOutOfRangeException ("index");
 				_items [index] = value;
 			}
 		}
@@ -576,28 +578,57 @@ namespace System.Collections.Generic {
 		
 		int IList.Add (object item)
 		{
-			Add ((T) item);
+			try {
+				Add ((T) item);
+			} catch (InvalidCastException) {
+				throw new ArgumentException("item");
+			}
 			return _size - 1;
 		}
 		
 		bool IList.Contains (object item)
 		{
-			return Contains ((T) item);
+			try {
+				return Contains ((T) item);
+			} catch (InvalidCastException) {
+				return false;
+			}
 		}
 		
 		int IList.IndexOf (object item)
 		{
-			return IndexOf ((T) item);
+			try {
+				return IndexOf((T) item);
+			} catch (InvalidCastException) {
+				return -1;
+			}
 		}
 		
 		void IList.Insert (int index, object item)
 		{
-			Insert (index, (T) item);
+			// We need to check this first because, even if the
+			// item is null or not the correct type, we need to
+			// return an ArgumentOutOfRange exception if the
+			// index is out of range
+			CheckIndex (index);
+			try {
+				Insert (index, (T) item);
+			} catch (InvalidCastException) {
+				throw new ArgumentException("item");
+			}
 		}
 		
 		void IList.Remove (object item)
 		{
-			Remove ((T) item);
+			try {
+				Remove ((T) item);
+			} catch (InvalidCastException) {
+				// Swallow the exception--if we
+				// can't cast to the correct type
+				// then we've already "succeeded"
+				// in removing the item from the
+				// List.
+			}
 		}
 		
 		bool ICollection <T>.IsReadOnly {
