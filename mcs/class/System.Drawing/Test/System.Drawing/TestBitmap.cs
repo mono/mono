@@ -227,6 +227,8 @@ namespace MonoTests.System.Drawing {
 		[Test]
 #if TARGET_JVM
 		[Ignore ("Bitmap.LockBits is not implemented")]
+#else
+		[Category ("NotWorking")]
 #endif
 		public void LockBits_32_24_BitmapData ()
 		{
@@ -247,6 +249,8 @@ namespace MonoTests.System.Drawing {
 		[Test]
 #if TARGET_JVM
 		[Ignore ("Bitmap.LockBits is not implemented")]
+#else
+		[Category ("NotWorking")]
 #endif
 		public void LockBits_24_24_BitmapData ()
 		{
