@@ -598,10 +598,11 @@ namespace System.Windows.Forms {
 						vscrollbar.Value = vscrollbar.Minimum;
 					}
 				} else {
-					if (vscrollbar.Maximum > (vscrollbar.Value + vscrollbar.LargeChange)) {
+					int maximum_scrollbar_value = vscrollbar.Maximum - vscrollbar.LargeChange + 1;
+					if (maximum_scrollbar_value > (vscrollbar.Value + vscrollbar.LargeChange)) {
 						vscrollbar.Value += vscrollbar.LargeChange;
 					} else {
-						vscrollbar.Value = vscrollbar.Maximum;
+						vscrollbar.Value = maximum_scrollbar_value;
 					}
 				}
 			}

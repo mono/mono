@@ -1,3 +1,7 @@
+2007-03-09  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ScrollableControl.cs: Fix mouse wheel scrolling.
+
 2007-03-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Wire up MouseDoubleClick event.
