@@ -1,3 +1,7 @@
+2007-03-09  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* loader.c: Reapply patch for bug #79424.
+
 2007-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_type_to_unmanaged): Only convert object to
