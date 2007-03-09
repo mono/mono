@@ -79,11 +79,11 @@ namespace System.Drawing.Imaging {
 		public WmfMetaHeader	wmf_header;
 		[FieldOffset (40)]
 		public EnhMetafileHeader emf_header;
-		[FieldOffset (124)]
-		public int		emfplus_header_size;
 		[FieldOffset (128)]
-		public int		logical_dpi_x;
+		public int		emfplus_header_size;
 		[FieldOffset (132)]
+		public int		logical_dpi_x;
+		[FieldOffset (136)]
 		public int		logical_dpi_y;
 	}
 
