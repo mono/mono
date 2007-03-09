@@ -1209,5 +1209,271 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
 		}
+
+		// Get the input directory depending on the runtime
+		internal string getInFile (string file)
+		{
+			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
+
+			if (!File.Exists (sRslt))
+				sRslt = "Test/System.Drawing/" + file;
+
+			return sRslt;
+		}
+
+		private void CheckMetafileHeader (MetafileHeader header)
+		{
+			MetafileHeader mh1 = new Metafile (getInFile ("bitmaps/telescope_01.wmf")).GetMetafileHeader ();
+			// compare MetafileHeader
+			Assert.AreEqual (mh1.Bounds.X, header.Bounds.X, "Bounds.X");
+			Assert.AreEqual (mh1.Bounds.Y, header.Bounds.Y, "Bounds.Y");
+			Assert.AreEqual (mh1.Bounds.Width, header.Bounds.Width, "Bounds.Width");
+			Assert.AreEqual (mh1.Bounds.Height, header.Bounds.Height, "Bounds.Height");
+			Assert.AreEqual (mh1.DpiX, header.DpiX, "DpiX");
+			Assert.AreEqual (mh1.DpiY, header.DpiY, "DpiY");
+			Assert.AreEqual (mh1.EmfPlusHeaderSize, header.EmfPlusHeaderSize, "EmfPlusHeaderSize");
+			Assert.AreEqual (mh1.LogicalDpiX, header.LogicalDpiX, "LogicalDpiX");
+			Assert.AreEqual (mh1.LogicalDpiY, header.LogicalDpiY, "LogicalDpiY");
+			Assert.AreEqual (mh1.MetafileSize, header.MetafileSize, "MetafileSize");
+			Assert.AreEqual (mh1.Type, header.Type, "Type");
+			Assert.AreEqual (mh1.Version, header.Version, "Version");
+			// compare MetaHeader
+			MetaHeader mh1h = mh1.WmfHeader;
+			MetaHeader mh2h = header.WmfHeader;
+			Assert.AreEqual (mh1h.HeaderSize, mh2h.HeaderSize, "HeaderSize");
+			Assert.AreEqual (mh1h.MaxRecord, mh2h.MaxRecord, "MaxRecord");
+			Assert.AreEqual (mh1h.NoObjects, mh2h.NoObjects, "NoObjects");
+			Assert.AreEqual (mh1h.NoParameters, mh2h.NoParameters, "NoParameters");
+			Assert.AreEqual (mh1h.Size, mh2h.Size, "Size");
+			Assert.AreEqual (mh1h.Type, mh2h.Type, "Type");
+			Assert.AreEqual (mh1h.Version, mh2h.Version, "Version");
+		}
+
+		[Test]
+		public void Metafile ()
+		{
+			string filename = getInFile ("bitmaps/telescope_01.wmf");
+			IntPtr metafile = IntPtr.Zero;
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateMetafileFromFile (null, out metafile), "GdipCreateMetafileFromFile(null)");
+			Assert.AreEqual (Status.GenericError, GDIPlus.GdipCreateMetafileFromFile ("doesnotexists", out metafile), "GdipCreateMetafileFromFile(doesnotexists)");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMetafileFromFile (filename, out metafile), "GdipCreateMetafileFromFile");
+
+			// looks like it applies to EmfOnly and EmfDual (not EmfPlus or Wmf*)
+			uint limit = UInt32.MaxValue;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileDownLevelRasterizationLimit (IntPtr.Zero, ref limit), "GdipGetMetafileDownLevelRasterizationLimit/null");
+			Assert.AreEqual (Status.WrongState, GDIPlus.GdipGetMetafileDownLevelRasterizationLimit (metafile, ref limit), "GdipGetMetafileDownLevelRasterizationLimit");
+			Assert.AreEqual (UInt32.MaxValue, limit, "DownLevelRasterizationLimit");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetMetafileDownLevelRasterizationLimit (IntPtr.Zero, limit), "GdipSetMetafileDownLevelRasterizationLimit/null");
+			Assert.AreEqual (Status.WrongState, GDIPlus.GdipSetMetafileDownLevelRasterizationLimit (metafile, limit), "GdipSetMetafileDownLevelRasterizationLimit");
+
+			int size = Marshal.SizeOf (typeof (MetafileHeader));
+			IntPtr header = Marshal.AllocHGlobal (size);
+			try {
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromMetafile (IntPtr.Zero, header), "GdipGetMetafileHeaderFromMetafile(null,header)");
+// We get access violation here!
+//				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromMetafile (metafile, IntPtr.Zero), "GdipGetMetafileHeaderFromMetafile(metafile,null)");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetMetafileHeaderFromMetafile (metafile, header), "GdipGetMetafileHeaderFromMetafile(metafile,header)");
+
+				MetafileHeader mh2 = new Metafile (getInFile ("bitmaps/telescope_01.wmf")).GetMetafileHeader ();
+				Marshal.PtrToStructure (header, mh2);
+				CheckMetafileHeader (mh2);
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (metafile), "GdipDisposeImage");
+		}
+
+		[Test]
+		public void Metafile_GetMetafileHeaderFromFile ()
+		{
+			string filename = getInFile ("bitmaps/telescope_01.wmf");
+
+			int size = Marshal.SizeOf (typeof (MetafileHeader));
+			IntPtr ptr = Marshal.AllocHGlobal (size);
+			try {
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromFile ("does-not-exists", ptr), "GdipGetMetafileHeaderFromFile(doesnotexists,ptr)");
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromFile (null, ptr), "GdipGetMetafileHeaderFromFile(null,ptr)");
+// We get access violation here!
+//				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromFile (filename, IntPtr.Zero), "GdipGetMetafileHeaderFromFile(file,null)");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetMetafileHeaderFromFile (filename, ptr), "GdipGetMetafileHeaderFromFile(file,ptr)");
+
+				MetafileHeader header = new Metafile (getInFile ("bitmaps/telescope_01.wmf")).GetMetafileHeader ();
+				Marshal.PtrToStructure (ptr, header);
+				CheckMetafileHeader (header);
+			}
+			finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void Metafile_Hemf ()
+		{
+			string filename = getInFile ("bitmaps/telescope_01.wmf");
+			IntPtr metafile = IntPtr.Zero;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMetafileFromFile (filename, out metafile), "GdipCreateMetafileFromFile");
+
+			IntPtr emf = IntPtr.Zero;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetHemfFromMetafile (IntPtr.Zero, out emf), "GdipGetHemfFromMetafile(null,emf)");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetHemfFromMetafile (metafile, out emf), "GdipGetHemfFromMetafile(metafile,emf)");
+
+			int size = Marshal.SizeOf (typeof (MetafileHeader));
+			IntPtr header = Marshal.AllocHGlobal (size);
+			try {
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromEmf (IntPtr.Zero, header), "GdipGetMetafileHeaderFromEmf(null,header)");
+// We get access violation here!
+//				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromEmf (emf, IntPtr.Zero), "GdipGetMetafileHeaderFromEmf(emf,null)");
+				// the HEMF handle cannot be used here
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMetafileHeaderFromEmf (emf, header), "GdipGetMetafileHeaderFromEmf(emf,header)");
+			}
+			finally {
+				Marshal.FreeHGlobal (header);
+			}
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (metafile), "GdipDisposeImage");
+		}
+
+		private void InImageAPI (IntPtr image)
+		{
+			IntPtr ptr = IntPtr.Zero;
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipGetImageGraphicsContext (image, out ptr), "GdipGetImageGraphicsContext");
+
+			RectangleF bounds;
+			GraphicsUnit unit = GraphicsUnit.Display;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageBounds (image, out bounds, ref unit), "GdipGetImageBounds");
+			Assert.AreEqual (-30, bounds.X, "bounds.X");
+			Assert.AreEqual (-40, bounds.Y, "bounds.Y");
+			Assert.AreEqual (3096, bounds.Width, "bounds.Width");
+			Assert.AreEqual (4127, bounds.Height, "bounds.Height");
+			Assert.AreEqual (GraphicsUnit.Pixel, unit, "uint");
+
+			float width, height;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageDimension (image, out width, out height), "GdipGetImageDimension");
+			Assert.AreEqual (12976.63, width, "GdipGetImageDimension/Width");
+			Assert.AreEqual (17297.99, height, "GdipGetImageDimension/Height");
+
+			ImageType type;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageType (image, out type), "GdipGetImageType");
+			Assert.AreEqual (ImageType.Metafile, type, "Metafile");
+
+			uint w;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageWidth (image, out w), "GdipGetImageWidth");
+			Assert.AreEqual (3096, w, "GdipGetImageWidth/Width");
+
+			uint h;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageHeight (image, out h), "GdipGetImageHeight");
+			Assert.AreEqual (4127, h, "GdipGetImageHeight/Height");
+
+			float horz;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageHorizontalResolution (image, out horz), "GdipGetImageHorizontalResolution");
+			Assert.AreEqual (606, horz, "HorizontalResolution");
+
+			float vert;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageVerticalResolution (image, out vert), "GdipGetImageVerticalResolution");
+			Assert.AreEqual (606, vert, "VerticalResolution");
+
+			int flags;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageFlags (image, out flags), "GdipGetImageFlags");
+			Assert.AreEqual (327683, flags, "Flags");
+
+			Guid format;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageRawFormat (image, out format), "GdipGetImageRawFormat");
+			Assert.AreEqual ("b96b3cad-0728-11d3-9d7b-0000f81ef32e", format.ToString (), "Format");
+
+			PixelFormat pformat;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePixelFormat (image, out pformat), "GdipGetImagePixelFormat");
+			Assert.AreEqual (PixelFormat.Format32bppRgb, pformat, "PixelFormat");
+
+			uint count;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageGetFrameDimensionsCount (image, out count), "GdipImageGetFrameDimensionsCount");
+			Assert.AreEqual (1, count, "FrameDimensionsCount");
+
+			Guid[] dimid = new Guid[1];
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageGetFrameDimensionsList (image, dimid, count), "GdipImageGetFrameDimensionsList");
+			Assert.AreEqual ("7462dc86-6180-4c7e-8e3f-ee7333a7a483", dimid[0].ToString (), "Id[0]");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipImageGetFrameDimensionsList (image, dimid, 0), "GdipImageGetFrameDimensionsList/0");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipImageGetFrameDimensionsList (image, dimid, 2), "GdipImageGetFrameDimensionsList/2");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageGetFrameCount (image, ref dimid[0], out count), "GdipImageGetFrameCount");
+			Assert.AreEqual (1, count, "FrameCount");
+			Guid g = Guid.Empty;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageGetFrameCount (image, ref g, out count), "GdipImageGetFrameCount/Empty");
+			Assert.AreEqual (1, count, "FrameCount/Empty");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageSelectActiveFrame (image, ref dimid[0], 0), "GdipImageSelectActiveFrame");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageSelectActiveFrame (image, ref g, 0), "GdipImageSelectActiveFrame/Empty");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageSelectActiveFrame (image, ref dimid[0], Int32.MinValue), "GdipImageSelectActiveFrame/MinValue");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipImageSelectActiveFrame (image, ref dimid[0], Int32.MaxValue), "GdipImageSelectActiveFrame/MaxValue");
+
+			// woohoo :)
+			foreach (RotateFlipType rft in Enum.GetValues (typeof (RotateFlipType))) {
+				Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipImageRotateFlip (image, rft), rft.ToString ());
+			}
+
+			int size;
+			Assert.AreEqual (Status.GenericError, GDIPlus.GdipGetImagePaletteSize (image, out size), "GdipGetImagePaletteSize");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetImagePalette (image, image, 1024), "GdipGetImagePalette");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipSetImagePalette (image, image), "GdipSetImagePalette");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetPropertyCount (image, out count), "GdipGetPropertyCount");
+			Assert.AreEqual (0, count, "PropertyCount");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetPropertyIdList (image, 0, new int[1]), "GdipGetPropertyIdList");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetPropertyItemSize (image, 0, out size), "GdipGetPropertyItemSize");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetPropertyItem (image, 0, size, image), "GdipGetPropertyItem");
+			int numbers;
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetPropertySize (image, out size, out numbers), "GdipGetPropertySize");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipRemovePropertyItem (image, 0), "GdipRemovePropertyItem");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipSetPropertyItem (image, image), "GdipSetPropertyItem");
+			Assert.AreEqual (Status.NotImplemented, GDIPlus.GdipGetAllPropertyItems (image, 1000, 1, image), "GdipGetAllPropertyItems");
+
+			Guid wmf = ImageFormat.Wmf.Guid;
+			Assert.AreEqual (Status.FileNotFound, GDIPlus.GdipGetEncoderParameterListSize (image, ref wmf, out count), "GdipGetEncoderParameterListSize/wmf");
+			Assert.AreEqual (Status.FileNotFound, GDIPlus.GdipGetEncoderParameterListSize (image, ref g, out count), "GdipGetEncoderParameterListSize/unknown");
+
+			Assert.AreEqual (Status.FileNotFound, GDIPlus.GdipGetEncoderParameterList (image, ref wmf, count, image), "GdipGetEncoderParameterList/wmf");
+			Assert.AreEqual (Status.FileNotFound, GDIPlus.GdipGetEncoderParameterList (image, ref g, count, image), "GdipGetEncoderParameterList/unknown");
+
+			IntPtr clone;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneImage (image, out clone), "GdipCloneImage");
+			try {
+				Assert.IsFalse (image == clone, "Handle");
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (clone), "GdipDisposeImage");
+			}
+		}
+
+		[Test]
+		public void MetafileAsImage_InImageAPI ()
+		{
+			string filename = getInFile ("bitmaps/telescope_01.wmf");
+			IntPtr image = IntPtr.Zero;
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipLoadImageFromFile (filename, out image), "GdipLoadImageFromFile");
+			try {
+				InImageAPI (image);
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+			}
+		}
+
+		[Test]
+		public void Metafile_InImageAPI ()
+		{
+			string filename = getInFile ("bitmaps/telescope_01.wmf");
+			IntPtr metafile = IntPtr.Zero;
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMetafileFromFile (filename, out metafile), "GdipCreateMetafileFromFile");
+			try {
+				InImageAPI (metafile);
+			}
+			finally {
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (metafile), "GdipDisposeImage");
+			}
+		}
 	}
 }

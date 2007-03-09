@@ -221,5 +221,69 @@ namespace MonoTests.System.Drawing{
 		{
 			new XmlSerializer (typeof (Image));
 		}
+
+		private void Wmf (Image img)
+		{
+			Assert.IsFalse (img is Bitmap, "Bitmap");
+			Assert.IsTrue (img is Metafile, "Metafile");
+			// as Image
+			Assert.AreEqual (327683, img.Flags, "Flags");
+			Assert.IsTrue (img.RawFormat.Equals (ImageFormat.Wmf), "Wmf");
+#if NET_2_0
+			Assert.IsNull (img.Tag, "Tag");
+#endif
+		}
+
+		[Test]
+		public void FromFile_Metafile_Wmf ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			using (Image img = Image.FromFile (filename)) {
+				Wmf (img);
+			}
+		}
+
+		[Test]
+		public void FromStream_Metafile_Wmf ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			using (FileStream fs = File.OpenRead (filename)) {
+				using (Image img = Image.FromStream (fs)) {
+					Wmf (img);
+				}
+			}
+		}
+
+		private void Emf (Image img)
+		{
+			Assert.IsFalse (img is Bitmap, "Bitmap");
+			Assert.IsTrue (img is Metafile, "Metafile");
+			// as Image
+			Assert.AreEqual (327683, img.Flags, "Flags");
+			Assert.IsTrue (img.RawFormat.Equals (ImageFormat.Emf), "Emf");
+#if NET_2_0
+			Assert.IsNull (img.Tag, "Tag");
+#endif
+		}
+
+		[Test]
+		public void FromFile_Metafile_Emf ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			using (Image img = Image.FromFile (filename)) {
+				Emf (img);
+			}
+		}
+
+		[Test]
+		public void FromStream_Metafile_Emf ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			using (FileStream fs = File.OpenRead (filename)) {
+				using (Image img = Image.FromStream (fs)) {
+					Emf (img);
+				}
+			}
+		}
 	}
 }

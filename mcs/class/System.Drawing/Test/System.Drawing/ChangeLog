@@ -1,3 +1,8 @@
+2007-03-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add test cases for GDI+ metafile API.
+	* TestImage.cs: Add test cases for loading metafile as Image.
+
 2007-03-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Re-add the 2 NotWorking cases that were removed by 
