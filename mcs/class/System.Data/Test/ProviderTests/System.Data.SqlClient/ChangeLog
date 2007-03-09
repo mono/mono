@@ -1,5 +1,11 @@
 2007-03-09  Andreia Gaita  <avidigal@novell.com>
 
+	* SqlCommandTest.cs: Add new test to check string parameters with 
+	value = null and size 0. Fixed tests for NET 2.0 (different exceptions
+	thrown)
+
+2007-03-09  Andreia Gaita  <avidigal@novell.com>
+
 	* SqlCommandTest.cs: Add parameterized stored procedure call tests
 	to ExecuteScalar and ExecuteNonQuery.
 

@@ -221,6 +221,23 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (return_value, result, "#8 ExecuteScalar Should return 'first column of first rowset'");
 			Assert.AreEqual (int_value * 2, p2.Value, "#9 ExecuteScalar should fill the parameter collection with the outputted values");
 			Assert.AreEqual (string_value, p3.Value, "#10 ExecuteScalar should fill the parameter collection with the outputted values");
+
+			p3.Size = 0;
+			p3.Value = null;
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#11 Query should throw System.InvalidOperationException due to size = 0 and value = null");
+			}
+			catch (AssertionException e) {
+				throw e;
+			}
+			catch (Exception e) {
+				Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
+					"#12 Incorrect Exception : " + e.StackTrace);
+			}
+
+			conn.Close ();
+			
 		}
 
 		[Test]
@@ -546,12 +563,22 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.Connection = null; 
 			try {
 				cmd.Prepare ();
-				Assert.Fail ("#8 InvalidOperation Exception shud be thrown");
-			}catch (AssertionException e) {
+#if NET_2_0
+				Assert.Fail ("#8 NullReferenceException should be thrown");
+#else
+				Assert.Fail ("#8 InvalidOperation Exception should be thrown");
+#endif
+			}
+			catch (AssertionException e) {
 				throw e; 
 			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
+#if NET_2_0
+				Assert.AreEqual (typeof (NullReferenceException), e.GetType (),
 					"#9 Incorrect Exception : " + e.StackTrace);
+#else
+				Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
+					"#9 Incorrect Exception : " + e.StackTrace);
+#endif
 			}
 
 			//Test InvalidOperation Exception is thrown if connection is closed
@@ -590,7 +617,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 		
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof(ArgumentException))]
+#endif
 		public void CommandTypeTest ()
 		{
 			cmd = new SqlCommand ();
@@ -643,7 +674,11 @@ namespace MonoTests.System.Data.SqlClient
 
 		// Need to add more tests
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof(ArgumentException))]
+#endif
 		public void UpdatedRowSourceTest ()
 		{
 			cmd = new SqlCommand ();

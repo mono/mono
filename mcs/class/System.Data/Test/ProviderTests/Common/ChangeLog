@@ -1,3 +1,8 @@
+2007-03-09  Andreia Gaita  <avidigal@novell.com>
+
+	* ConnectionManager.cs: small fix to close the connection if we 
+	mean to change the connection string and open it again
+
 2005-09-16  Senganal T  <tsenganal@novell.com>
 
 	* DataProvider.cs : Provides data for validation

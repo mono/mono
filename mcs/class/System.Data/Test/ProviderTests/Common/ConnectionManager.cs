@@ -75,6 +75,8 @@ namespace MonoTests.System.Data
 		{
 			if (_connection == null)
 				_connection = ProviderFactory.CreateConnectionFromConfig ("ConnString");
+			if (!(_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken))
+				_connection.Close ();
 			_connection.ConnectionString = _connectionString;
 			_connection.Open ();
 		}
