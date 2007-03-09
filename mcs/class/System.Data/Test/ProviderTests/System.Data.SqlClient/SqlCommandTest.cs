@@ -142,7 +142,7 @@ namespace MonoTests.System.Data.SqlClient
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
+				Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
 					"#2 Incorrect Exception : " + e.StackTrace);
 			}
 
@@ -159,7 +159,7 @@ namespace MonoTests.System.Data.SqlClient
 
 			cmd.CommandText = "select id from numeric_family where id=-1";
 			result = cmd.ExecuteScalar ();
-			Assert.IsNull (result, "#5 Null shud be returned if result set is empty");
+			Assert.IsNull (result, "#5 Null should be returned if result set is empty");
 
 			// Check SqlException is thrown for Invalid Query 
 			cmd.CommandText = "select count* from numeric_family";
@@ -172,6 +172,55 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof(SqlException), e.GetType(),
 					"#7 Incorrect Exception : " + e.StackTrace);
 			}
+
+
+			// Parameterized stored procedure calls
+
+			int int_value = 20;
+			string string_value = "output value changed";
+			string return_value = "first column of first rowset";
+			
+			cmd.CommandText = 
+				"create procedure #tmp_executescalar_outparams "+
+				" (@p1 int, @p2 int out, @p3 varchar(200) out) "+
+				"as " +
+				"select '" + return_value + "' as 'col1', @p1 as 'col2' "+
+				"set @p2 = @p2 * 2 "+
+				"set @p3 = N'" + string_value + "' "+
+				"select 'second rowset' as 'col1', 2 as 'col2' "+
+				"return 1";
+			
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#tmp_executescalar_outparams";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.Input;
+			p1.DbType = DbType.Int32;
+			p1.Value = int_value;
+			cmd.Parameters.Add (p1);
+
+			SqlParameter p2 = new SqlParameter ();
+			p2.ParameterName = "@p2";
+			p2.Direction = ParameterDirection.InputOutput;
+			p2.DbType = DbType.Int32;
+			p2.Value = int_value;
+			cmd.Parameters.Add (p2);
+
+			SqlParameter p3 = new SqlParameter ();
+			p3.ParameterName = "@p3";
+			p3.Direction = ParameterDirection.Output;
+			p3.DbType = DbType.String;
+			p3.Size = 200;
+			cmd.Parameters.Add (p3);
+
+			result = cmd.ExecuteScalar ();
+			Assert.AreEqual (return_value, result, "#8 ExecuteScalar Should return 'first column of first rowset'");
+			Assert.AreEqual (int_value * 2, p2.Value, "#9 ExecuteScalar should fill the parameter collection with the outputted values");
+			Assert.AreEqual (string_value, p3.Value, "#10 ExecuteScalar should fill the parameter collection with the outputted values");
 		}
 
 		[Test]
@@ -238,6 +287,53 @@ namespace MonoTests.System.Data.SqlClient
 			}finally {
 				trans.Rollback ();
 			}
+
+
+			// Parameterized stored procedure calls
+
+			int int_value = 20;
+			string string_value = "output value changed";
+
+			cmd.CommandText =
+				"create procedure #tmp_executescalar_outparams " +
+				" (@p1 int, @p2 int out, @p3 varchar(200) out) " +
+				"as " +
+				"select 'test' as 'col1', @p1 as 'col2' " +
+				"set @p2 = @p2 * 2 " +
+				"set @p3 = N'" + string_value + "' " +
+				"select 'second rowset' as 'col1', 2 as 'col2' " +
+				"return 1";
+
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#tmp_executescalar_outparams";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.Input;
+			p1.DbType = DbType.Int32;
+			p1.Value = int_value;
+			cmd.Parameters.Add (p1);
+
+			SqlParameter p2 = new SqlParameter ();
+			p2.ParameterName = "@p2";
+			p2.Direction = ParameterDirection.InputOutput;
+			p2.DbType = DbType.Int32;
+			p2.Value = int_value;
+			cmd.Parameters.Add (p2);
+
+			SqlParameter p3 = new SqlParameter ();
+			p3.ParameterName = "@p3";
+			p3.Direction = ParameterDirection.Output;
+			p3.DbType = DbType.String;
+			p3.Size = 200;
+			cmd.Parameters.Add (p3);
+
+			cmd.ExecuteNonQuery ();
+			Assert.AreEqual (int_value * 2, p2.Value, "#6 ExecuteNonQuery should fill the parameter collection with the outputted values");
+			Assert.AreEqual (string_value, p3.Value, "#7 ExecuteNonQuery should fill the parameter collection with the outputted values");
 		}
 
 		[Test]

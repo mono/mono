@@ -449,6 +449,7 @@ namespace System.Data.SqlClient {
 		object ExecuteScalar ()
 		{
 			try {
+				object result = null;
 				ValidateCommand ("ExecuteScalar");
 				behavior = CommandBehavior.Default;
 				try {
@@ -458,22 +459,14 @@ namespace System.Data.SqlClient {
 					throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 				}
 
+				if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
+					result = Connection.Tds.ColumnValues[0];
+					
 				if (commandType == CommandType.StoredProcedure) {
-					while (Connection.Tds.NextResult ()) { }
-					if (Connection.Tds.OutputParameters.Count > 0) {
-						int i = 0;
-						foreach (SqlParameter p in Parameters)
-							if (p.Direction == ParameterDirection.Output && i < Connection.Tds.OutputParameters.Count)
-								p.Value = Connection.Tds.OutputParameters[i++];
-						return Connection.Tds.OutputParameters[0];
-					}
-					return null;
+					Connection.Tds.SkipToEnd ();
+					GetOutputParameters ();
 				}
-				else
-					if (!Connection.Tds.NextResult () || !Connection.Tds.NextRow ())
-						return null;
 
-				object result = Connection.Tds.ColumnValues[0];
 				return result;
 			}
 			finally {

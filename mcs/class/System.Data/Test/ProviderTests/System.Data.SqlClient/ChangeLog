@@ -1,3 +1,8 @@
+2007-03-09  Andreia Gaita  <avidigal@novell.com>
+
+	* SqlCommandTest.cs: Add parameterized stored procedure call tests
+	to ExecuteScalar and ExecuteNonQuery.
+
 2007-01-08  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommandBuilderTest.cs (GetInsertCommandTest)

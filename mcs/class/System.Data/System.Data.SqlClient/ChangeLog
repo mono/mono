@@ -1,3 +1,9 @@
+2007-03-09  Andreia Gaita  <avidigal@novell.com>
+
+	* SqlCommand.cs (ExecuteScalar): Fix returned value for 
+	stored procedure calls to return the first column of the
+	first row produced by the proc.
+
 2007-03-08  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs (CloseDataReader): Checks whether the SQL
