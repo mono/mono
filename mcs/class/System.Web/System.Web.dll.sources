@@ -328,6 +328,7 @@ System.Web.Management/SessionStateType.cs
 System.Web.Management/SqlFeatures.cs
 System.Web.Management/WebApplicationInformation.cs
 System.Web.Management/WebBaseEvent.cs
+System.Web.Management/WebEventCodes.cs
 System.Web.Management/WebEventFormatter.cs
 System.Web/MimeTypes.cs
 System.Web/NoParamsInvoker.cs

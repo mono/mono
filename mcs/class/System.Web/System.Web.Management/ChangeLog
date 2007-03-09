@@ -1,3 +1,7 @@
+2007-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* WebEventCodes.cs: Implemented.
+
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* SqlFeatures.cs: corcompare work
