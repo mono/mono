@@ -1,4 +1,10 @@
+2007-03-09  Jonathan Chambers  <joncham@gmail.com>
 
+	* io-layer.h:  Remove UNICODE and _UNICODE defines as 
+        these are done by configure.in now.
+	
+	Code is contributed under MIT/X11 license.
+        
 Thu Mar 8 19:42:17 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* shared.c: partial support for MONO_DISABLE_SHM env var.

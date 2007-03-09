@@ -1,3 +1,10 @@
+2007-03-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* appdomain.c:  Fix shadow copy on Windows. Use g_snprintf instead
+	of snprintf as it doesn't exist on Win32 (VS build); also for uniformity.  
+	
+	Code is contributed under MIT/X11 license.
+        
 2007-03-09  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* loader.c: Reapply patch for bug #79424.

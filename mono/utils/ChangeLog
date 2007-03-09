@@ -1,3 +1,9 @@
+2007-03-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* mono-dl.c:  Use Unicode characters for Win32 functions.
+	
+	Code is contributed under MIT/X11 license.
+        
 2007-01-26  Robert Jordan  <robertj@gmx.net>
 
 	* mono-dl.c (w32_find_symbol): Implement in-proc symbol lookup
