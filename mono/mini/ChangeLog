@@ -1,3 +1,7 @@
+2007-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Load all dependent assemblies eagerly since all
+	AOT code depends on this.
 
 Thu Mar 8 19:36:13 CET 2007 Paolo Molaro <lupus@ximian.com>
 
