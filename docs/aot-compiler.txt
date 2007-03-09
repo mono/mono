@@ -217,10 +217,9 @@ depending on a lot of circumstances. Some of these are:
 * Future Work
 -------------
 
-- Currently, the runtime needs to setup some data structures and fill out
-  GOT entries before a method is first called. This means that even calls to
-  a method whose code is in the same AOT image need to go through the GOT,
-  instead of using a direct call.
+- Currently, when an AOT module is loaded, all of its dependent assemblies are also
+  loaded eagerly, and these assemblies need to be exactly the same as the ones loaded 
+  when the AOT module was created ('hard binding'). Non-hard binding should be allowed.
 - On x86, the generated code uses call 0, pop REG, add GOTOFFSET, REG to 
   materialize the GOT address. Newer versions of gcc use a separate function
   to do this, maybe we need to do the same.
