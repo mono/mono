@@ -1,3 +1,8 @@
+2007-03-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MetafileHeader.cs: WmfHeader throws if the metafile isn't a WMF (e.g. 
+	EMF, EMF+ or EMF dual).
+
 2007-03-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MetafileHeader.cs: Fix offset to match correct C definition.

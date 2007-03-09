@@ -186,7 +186,11 @@ namespace System.Drawing.Imaging {
 		// note: this always returns a new instance (where we can change
 		// properties even if they don't seems to affect anything)
 		public MetaHeader WmfHeader {
-			get { return new MetaHeader (header.wmf_header); }
+			get {
+				if (IsWmfPlaceable ())
+					 return new MetaHeader (header.wmf_header);
+				throw new ArgumentException ("WmfHeader only available on WMF files.");
+			}
 		}
 	}
 }
