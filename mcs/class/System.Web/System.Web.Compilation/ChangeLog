@@ -1,3 +1,12 @@
+2007-03-10  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs, BaseCompiler.cs: refactoring: moved the
+	CreateProfileProperty and InternalCreatePageProperty to
+	BaseCompiler from PageCompiler.
+
+	* GlobalAsaxCompiler.cs: generate the Profile property for the
+	Global_asax class.
+
 2007-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: Add the GetProfile method to the

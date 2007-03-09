@@ -89,41 +89,6 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
-#if NET_2_0
-		void InternalCreatePageProperty (string retType, string name, string contextProperty)
-		{
-			CodeMemberProperty property = new CodeMemberProperty ();
-			property.Name = name;
-			property.Type = new CodeTypeReference (retType);
-			property.Attributes = MemberAttributes.Family | MemberAttributes.Final;
-
-			CodeMethodReturnStatement ret = new CodeMethodReturnStatement ();
-			CodeCastExpression cast = new CodeCastExpression ();
-			ret.Expression = cast;
-			
-			CodePropertyReferenceExpression refexp = new CodePropertyReferenceExpression ();
-			refexp.TargetObject = new CodePropertyReferenceExpression (new CodeThisReferenceExpression (), "Context");
-			refexp.PropertyName = contextProperty;
-			
-			cast.TargetType = new CodeTypeReference (retType);
-			cast.Expression = refexp;
-			
-			property.GetStatements.Add (ret);
-			mainClass.Members.Add (property);
-		}
-		
-		void CreateProfileProperty ()
-		{
-			string retType;
-			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
-			if (ps != null && ps.PropertySettings.Count > 0)
-				retType = "ProfileCommon";
-			else
-				retType = "System.Web.Profile.DefaultProfile";
-			InternalCreatePageProperty (retType, "Profile", "Profile");
-		}
-#endif
-
 		static CodeAssignStatement CreatePropertyAssign (CodeExpression expr, string name, object value)
 		{
 			CodePropertyReferenceExpression prop;
