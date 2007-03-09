@@ -3,6 +3,7 @@
 	* TextBox.cs: Don't explicitly set our background colors.
 	* TextControl.cs:
 	* TextBoxBase.cs: Draw readonly text.
+	- Need to invalidate when backcolor or readonly are changed.
 	
 2007-03-09  Jackson Harper  <jackson@ximian.com>
 
