@@ -130,10 +130,10 @@ namespace System.Net
 			totalRead += nbytes;
 			if (nbytes == 0) {
 				contentLength = totalRead;
-				request.SetTransferCompleted ();
 				networkStream.Close ();
+				request.SetTransferCompleted ();
 			}
-			
+
 			return nbytes;
 		}
 
