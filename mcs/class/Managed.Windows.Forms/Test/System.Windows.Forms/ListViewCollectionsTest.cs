@@ -1531,7 +1531,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			try {
-				IEnumerator enumerator = lvw.Items.GetEnumerator ();
+				lvw.Items.GetEnumerator ();
 				Assert.Fail ("#A7");
 			} catch (InvalidOperationException) {
 			}

@@ -1,3 +1,11 @@
+2007-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewTest.cs: Added tests for the ListView and
+	Index properties of ListViewItems in VirtualMode.
+
+	* ListViewCollectionsTest.cs: Remove warning when building
+	tests.
+
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormTest.cs: Added tests for bug #80791 and #80574.

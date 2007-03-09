@@ -440,9 +440,6 @@ namespace MonoTests.System.Windows.Forms
 			lvw.VirtualMode = true;
 
 			CreateListViewItems (item_count);
-			items [0].Name = "A";
-			items [1].Name = "B";
-			items [2].Name = "C";
 
 			Assert.AreEqual (item_count, lvw.Items.Count, "#A1");
 			Assert.AreEqual (true, lvw.VirtualMode, "#A2");
@@ -450,12 +447,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (items [0], lvw.Items [0], "#B1");
 			Assert.AreEqual (items [1], lvw.Items [1], "#B2");
 			Assert.AreEqual (items [2], lvw.Items [2], "#B3");
+			Assert.AreEqual (0, lvw.Items [0].Index, "#B4");
+			Assert.AreEqual (1, lvw.Items [1].Index, "#B5");
+			Assert.AreEqual (2, lvw.Items [2].Index, "#B6");
+			Assert.AreEqual (lvw, lvw.Items [0].ListView, "#B7");
+			Assert.AreEqual (lvw, lvw.Items [1].ListView, "#B8");
+			Assert.AreEqual (lvw, lvw.Items [2].ListView, "#B9");
+
+			// force to re-create the items, because we need a blank state
+			// for our items
+			CreateListViewItems (item_count);
+			items [0].Name = "A";
+			items [1].Name = "B";
+			items [2].Name = "C";
 
 			Assert.AreEqual (items [0], lvw.Items ["A"], "#C1");
 			Assert.AreEqual (items [1], lvw.Items ["B"], "#C2");
 			Assert.AreEqual (items [2], lvw.Items ["C"], "#C3");
-			Assert.IsNull (lvw.Items ["Invalid key"], "#C4");
-			Assert.IsNull (lvw.Items [String.Empty], "#C5");
+			Assert.AreEqual (0, lvw.Items ["A"].Index, "#C4");
+			Assert.AreEqual (1, lvw.Items ["B"].Index, "#C5");
+			Assert.AreEqual (2, lvw.Items ["C"].Index, "#C6");
+			Assert.AreEqual (lvw, lvw.Items ["A"].ListView, "#C7");
+			Assert.AreEqual (lvw, lvw.Items ["B"].ListView, "#C8");
+			Assert.AreEqual (lvw, lvw.Items ["C"].ListView, "#C9");
+			Assert.IsNull (lvw.Items ["Invalid key"], "#C10");
+			Assert.IsNull (lvw.Items [String.Empty], "#C11");
 
 			Assert.AreEqual (false, lvw.Items.ContainsKey (String.Empty), "#D1");
 			Assert.AreEqual (false, lvw.Items.ContainsKey (null), "#D2");
