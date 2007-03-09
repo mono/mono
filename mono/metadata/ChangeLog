@@ -1,3 +1,7 @@
+2007-03-09  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (encode_constant): Add support for MONO_TYPE_GENERICINST.
+
 2007-03-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* appdomain.c:  Fix shadow copy on Windows. Use g_snprintf instead
