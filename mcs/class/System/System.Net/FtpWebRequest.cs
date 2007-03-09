@@ -799,7 +799,7 @@ namespace System.Net
 			}
 
 			if(method != WebRequestMethods.Ftp.UploadFileWithUniqueName)
-				status = SendCommand (method, requestUri.LocalPath);
+				status = SendCommand (method, Uri.UnescapeDataString (requestUri.LocalPath));
 			else
 				status = SendCommand (method);
 
