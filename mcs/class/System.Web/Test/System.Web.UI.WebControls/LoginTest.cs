@@ -800,7 +800,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			string html = t.Run ();
 		}
 
-		public static void _OnBubbleEvent(Page p)
+		public static void DoOnBubbleEvent(Page p, string cmdname)
 		{
 			TestLogin l = new TestLogin ();
 			l.Page = p;
@@ -808,7 +808,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			l.MembershipProvider = "FakeProvider";
 			Button b = (Button)l.FindControl ("LoginButton");
 			Assert.IsNotNull (b, "LoginButton");
-			CommandEventArgs cea = new CommandEventArgs ("Login", null);
+			CommandEventArgs cea = new CommandEventArgs (cmdname, null);
 			l.DoBubbleEvent (b, cea);
 			Assert.IsTrue (l.OnLoggingInCalled, "OnLoggingIn");
 			Assert.IsFalse (l.Cancel, "Cancel");
@@ -817,7 +817,25 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (l.OnLoginErrorCalled, "OnLoginError");
 			Assert.IsFalse (l.OnLoggedInCalled, "OnLoggedIn");
 		}
+		
+		public static void _OnBubbleEvent(Page p)
+		{
+			DoOnBubbleEvent(p, "Login");
+		}
 
+		[Test]
+		[Category ("NunitWeb")]
+		public void OnBubbleEventCaseSensitivity ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEventCaseSensitivity));
+			string html = t.Run ();
+		}
+		
+		public static void _OnBubbleEventCaseSensitivity(Page p)
+		{
+			DoOnBubbleEvent(p, "login");
+		}
+		
 		[Test]
 		public void OnBubbleEvent_Cancel_OnLoggingIn ()
 		{

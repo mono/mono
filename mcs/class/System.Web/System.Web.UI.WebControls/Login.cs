@@ -1095,7 +1095,8 @@ namespace System.Web.UI.WebControls {
 		{
 			// check for submit button
 			CommandEventArgs cea = (e as CommandEventArgs);
-			if ((cea != null) && (cea.CommandName == LoginButtonCommandName)) {
+			if ((cea != null) &&
+			    String.Equals (cea.CommandName, LoginButtonCommandName, StringComparison.InvariantCultureIgnoreCase)) {
 				if (!AuthenticateUser ()) {
 					ITextControl failureText = LoginTemplateContainer.FailureTextLiteral;
 					if (failureText != null)

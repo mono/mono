@@ -1,3 +1,8 @@
+2007-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Login.cs: Make command name comparison case-insensitive in
+	OnBubbleEvent. Patch from Mike Morano <mmorano@mikeandwan.us>
+
 2007-03-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataGrid.cs: fixed: 
