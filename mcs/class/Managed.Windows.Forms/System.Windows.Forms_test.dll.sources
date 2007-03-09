@@ -46,6 +46,7 @@ System.Windows.Forms/DateTimePickerTest.cs
 System.Windows.Forms/DefaultLayoutTest.cs
 System.Windows.Forms/FlowPanelTests.cs
 System.Windows.Forms/FocusTest.cs
+System.Windows.Forms/FormHandleTest.cs
 System.Windows.Forms/FormTest.cs
 System.Windows.Forms/EventArgsTest.cs
 System.Windows.Forms/EventLogger.cs
@@ -65,6 +66,7 @@ System.Windows.Forms/ListViewTest.cs
 System.Windows.Forms/ListViewGroupTest.cs
 System.Windows.Forms/ListViewGroupCollectionTest.cs
 System.Windows.Forms/ListViewItemTest.cs
+System.Windows.Forms/MdiFormHandleTest.cs
 System.Windows.Forms/MdiFormTest.cs
 System.Windows.Forms/MessageTest.cs
 System.Windows.Forms/MenuStripTest.cs
