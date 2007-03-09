@@ -3,7 +3,7 @@ SUBDIRS = \
 	al cilc corcompare ictool mono-xsd security wsdl genxs sqlsharp		\
 	disco soapsuds browsercaps-updater monop gacutil	\
 	resgen macpack mkbundle dtd2rng dtd2xsd mjs prj2make mono-service \
-	mono-shlib-cop compiler-tester mono-xmltool
+	mono-shlib-cop compiler-tester mono-xmltool installvst
 
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen
 net_2_0_bootstrap_SUBDIRS = resgen
