@@ -146,8 +146,10 @@ namespace Microsoft.VisualBasic
 			if (options.TreatWarningsAsErrors)
 				args.Append ("/warnaserror ");
 
+			/* Disabled. vbnc does not support warninglevels.
 			if (options.WarningLevel != -1)
 				args.AppendFormat ("/wlevel:{0} ", options.WarningLevel);
+			*/
 
 			if (options.OutputAssembly == null || options.OutputAssembly.Length == 0) {
 				string ext = (options.GenerateExecutable ? "exe" : "dll");
@@ -168,7 +170,7 @@ namespace Microsoft.VisualBasic
 			
 			// add standard import to Microsoft.VisualBasic if missing
 			if (!Reference2MSVBFound)
-				args.Append ("/r:\"Microsoft.VisualBasic\" ");
+				args.Append ("/r:\"Microsoft.VisualBasic.dll\" ");
 
 			if (options.CompilerOptions != null) {
 				args.Append (options.CompilerOptions);
