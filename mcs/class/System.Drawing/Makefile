@@ -46,6 +46,8 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/32bpp.ico	\
 	Test/System.Drawing/bitmaps/80509.ico	\
 	Test/System.Drawing/bitmaps/non-inverted.bmp	\
+	Test/System.Drawing/bitmaps/milkmateya01.emf	\
+	Test/System.Drawing/bitmaps/telescope_01.wmf	\
 	Assembly/Application.ico	\
 	Assembly/Asterisk.ico		\
 	Assembly/Error.ico		\
