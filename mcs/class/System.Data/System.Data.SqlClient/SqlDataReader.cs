@@ -45,7 +45,7 @@ using System.Data.SqlTypes;
 
 namespace System.Data.SqlClient {
 #if NET_2_0
-	public sealed class SqlDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
+	public class SqlDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
 #else
 	public sealed class SqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 #endif // NET_2_0
@@ -753,7 +753,11 @@ namespace System.Data.SqlClient {
 			return DBNull.Value;
 		}
 
-		public SqlBinary GetSqlBinary (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlBinary GetSqlBinary (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlBinary))
@@ -761,7 +765,11 @@ namespace System.Data.SqlClient {
 			return (SqlBinary) value;
 		}
 
-		public SqlBoolean GetSqlBoolean (int i) 
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlBoolean GetSqlBoolean (int i) 
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlBoolean))
@@ -769,7 +777,11 @@ namespace System.Data.SqlClient {
 			return (SqlBoolean) value;
 		}
 
-		public SqlByte GetSqlByte (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlByte GetSqlByte (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlByte))
@@ -777,7 +789,11 @@ namespace System.Data.SqlClient {
 			return (SqlByte) value;
 		}
 
-		public SqlDateTime GetSqlDateTime (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlDateTime GetSqlDateTime (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDateTime))
@@ -785,7 +801,11 @@ namespace System.Data.SqlClient {
 			return (SqlDateTime) value;
 		}
 
-		public SqlDecimal GetSqlDecimal (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlDecimal GetSqlDecimal (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDecimal))
@@ -793,7 +813,11 @@ namespace System.Data.SqlClient {
 			return (SqlDecimal) value;
 		}
 
-		public SqlDouble GetSqlDouble (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlDouble GetSqlDouble (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDouble))
@@ -801,7 +825,11 @@ namespace System.Data.SqlClient {
 			return (SqlDouble) value;
 		}
 
-		public SqlGuid GetSqlGuid (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlGuid GetSqlGuid (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlGuid))
@@ -809,7 +837,11 @@ namespace System.Data.SqlClient {
 			return (SqlGuid) value;
 		}
 
-		public SqlInt16 GetSqlInt16 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlInt16 GetSqlInt16 (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlInt16))
@@ -817,7 +849,11 @@ namespace System.Data.SqlClient {
 			return (SqlInt16) value;
 		}
 
-		public SqlInt32 GetSqlInt32 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlInt32 GetSqlInt32 (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlInt32))
@@ -825,7 +861,11 @@ namespace System.Data.SqlClient {
 			return (SqlInt32) value;
 		}
 
-		public SqlInt64 GetSqlInt64 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlInt64 GetSqlInt64 (int i)
 		{
 			object value = GetSqlValue (i);
 			// TDS 7.0 returns bigint as decimal(19,0)
@@ -839,7 +879,11 @@ namespace System.Data.SqlClient {
 			return (SqlInt64) value;
 		}
 
-		public SqlMoney GetSqlMoney (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlMoney GetSqlMoney (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlMoney))
@@ -847,7 +891,11 @@ namespace System.Data.SqlClient {
 			return (SqlMoney) value;
 		}
 
-		public SqlSingle GetSqlSingle (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlSingle GetSqlSingle (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlSingle))
@@ -855,7 +903,11 @@ namespace System.Data.SqlClient {
 			return (SqlSingle) value;
 		}
 
-		public SqlString GetSqlString (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SqlString GetSqlString (int i)
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlString))
@@ -863,7 +915,11 @@ namespace System.Data.SqlClient {
 			return (SqlString) value;
 		}
 
-		public object GetSqlValue (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		object GetSqlValue (int i)
 		{
 			SqlDbType type = (SqlDbType) (schemaTable.Rows [i]["ProviderType"]);
 			object value = GetValue (i);
@@ -938,7 +994,11 @@ namespace System.Data.SqlClient {
 			throw new InvalidOperationException ("The type of this column is unknown.");
 		}
 
-		public int GetSqlValues (object[] values)
+		public
+#if NET_2_0
+		virtual
+#endif
+		int GetSqlValues (object[] values)
 		{
 			int count = 0;
 			int columnCount = schemaTable.Rows.Count;
