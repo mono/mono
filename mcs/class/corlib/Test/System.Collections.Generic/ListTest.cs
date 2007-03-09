@@ -1113,7 +1113,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArugmentOutOfRangeException))]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SetItem_OutOfRange()
 		{
 			List<string> list = new List<string>();
@@ -1121,7 +1121,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArugmentOutOfRangeException))]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SetItem_IList_OutOfRange()
 		{
 			IList<string> list = new List<string>();
