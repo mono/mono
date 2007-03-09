@@ -410,6 +410,32 @@ namespace System.Web.Compilation
 			);
 					
 		}
+
+		void AddProfileClassGetProfileMethod (CodeTypeDeclaration profileClass)
+		{
+			CodeMethodReferenceExpression mref = new CodeMethodReferenceExpression (
+				new CodeTypeReferenceExpression (typeof (System.Web.Profile.ProfileBase)),
+				"Create");
+			CodeMethodInvokeExpression minvoke = new CodeMethodInvokeExpression (
+				mref,
+				new CodeExpression[] { new CodeVariableReferenceExpression ("username") }
+			);
+			CodeCastExpression cast = new CodeCastExpression ();
+			cast.TargetType = new CodeTypeReference ("ProfileCommon");
+			cast.Expression = minvoke;
+			
+			CodeMethodReturnStatement ret = new CodeMethodReturnStatement ();
+			ret.Expression = cast;
+			
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "GetProfile";
+			method.ReturnType = new CodeTypeReference ("ProfileCommon");
+			method.Parameters.Add (new CodeParameterDeclarationExpression("System.String", "username"));
+			method.Statements.Add (ret);
+			method.Attributes = MemberAttributes.Public;
+			
+			profileClass.Members.Add (method);
+		}
 		
 		void AddProfileClassProperty (ProfileSection ps, CodeTypeDeclaration profileClass, ProfilePropertySettings pset)
 		{
@@ -485,10 +511,14 @@ namespace System.Web.Compilation
 		}
 		
 		void BuildProfileClass (ProfileSection ps, string className, ProfilePropertySettingsCollection psc,
-					CodeNamespace ns, string baseClass, SortedList <string, string> groupProperties)
+					CodeNamespace ns, string baseClass, bool baseIsGlobal,
+					SortedList <string, string> groupProperties)
 		{
 			CodeTypeDeclaration profileClass = new CodeTypeDeclaration (className);
-			profileClass.BaseTypes.Add (new CodeTypeReference (baseClass));
+			CodeTypeReference cref = new CodeTypeReference (baseClass);
+			if (baseIsGlobal)
+				cref.Options |= CodeTypeReferenceOptions.GlobalReference;
+			profileClass.BaseTypes.Add (cref);
 			profileClass.TypeAttributes = TypeAttributes.Public;
 			ns.Types.Add (profileClass);
 			
@@ -497,6 +527,7 @@ namespace System.Web.Compilation
 			if (groupProperties != null && groupProperties.Count > 0)
 				foreach (KeyValuePair <string, string> group in groupProperties)
 					AddProfileClassGroupProperty (group.Key, group.Value, profileClass);
+			AddProfileClassGetProfileMethod (profileClass);
 		}
 
 		string MakeGroupName (string name)
@@ -531,13 +562,17 @@ namespace System.Web.Compilation
 				groupName = MakeGroupName (pgs.Name);
 				groupProperties.Add (groupName, pgs.Name);
 				BuildProfileClass (ps, groupName, pgs.PropertySettings, ns,
-						   "System.Web.Profile.ProfileGroupBase", null);
+						   "System.Web.Profile.ProfileGroupBase", true, null);
 			}
 			
 			string baseType = ps.Inherits;
-			if (String.IsNullOrEmpty (baseType))
+			bool baseIsGlobal = false;
+			if (String.IsNullOrEmpty (baseType)) {
 				baseType = "System.Web.Profile.ProfileBase";
-			BuildProfileClass (ps, "ProfileCommon", props, ns, baseType, groupProperties);
+				baseIsGlobal = true;
+			}
+			
+			BuildProfileClass (ps, "ProfileCommon", props, ns, baseType, baseIsGlobal, groupProperties);
 			return true;
 		}
 

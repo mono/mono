@@ -1,5 +1,8 @@
 2007-03-09  Marek Habersack  <mhabersack@novell.com>
 
+	* AppCodeCompiler.cs: Add the GetProfile method to the
+	ProfileCommon auto-generated class.
+
 	* AppResourcesCompiler.cs: attempt to load the resource file
 	earlier in the process, to gracefully handle empty files.
 
