@@ -1,3 +1,11 @@
+2007-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWeb/NunitWeb/WebTest.cs: make sure that files timestamp is
+	updated when the target and the source are equal on resource
+	copying. This unbreaks the Themes tests which failed to recompile
+	themes whenever next test from the fixture was ran, since the
+	cache in the test application failed to notice the change.
+
 2006-11-27 Yoni Klain <yonik@mainsoft.com>
 	* add new resources : NoEventValidation.aspx for ImageButtonTest.cs
 

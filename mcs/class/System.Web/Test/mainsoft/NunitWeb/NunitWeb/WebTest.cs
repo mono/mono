@@ -285,14 +285,15 @@ namespace MonoTests.SystemWeb.Framework
 			EnsureWorkingDirectories ();
 			EnsureDirectoryExists (Path.Combine (baseDir,
 				Path.GetDirectoryName (targetUrl)));
+			string targetFile = Path.Combine (baseDir, targetUrl);
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
 					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
 				byte[] array = new byte[source.Length];
 				source.Read (array, 0, array.Length);
 
-				if (File.Exists(Path.Combine (baseDir, targetUrl))) {
-					using (FileStream existing = File.OpenRead(Path.Combine (baseDir, targetUrl))) {
+				if (File.Exists(targetFile)) {
+					using (FileStream existing = File.OpenRead(targetFile)) {
 						bool equal = false;
 						if (array.Length == existing.Length) {
 							byte[] existingArray = new byte[array.Length];
@@ -307,15 +308,18 @@ namespace MonoTests.SystemWeb.Framework
 							}
 						}
 						
-						if (equal)
+						if (equal) {
+							existing.Close ();
+							global::System.IO.File.SetLastWriteTime (targetFile, DateTime.Now);
 							return;
+						}
 						
 					}
 					
 					CheckDomainIsDown ();
 				}
 
-				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.Create)) {
+				using (FileStream target = new FileStream (targetFile, FileMode.Create)) {
 					target.Write (array, 0, array.Length);
 				}
 			}
