@@ -1,3 +1,8 @@
+2007-03-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	
+	* FormHandleTest.cs: Added.
+	* MdiFormHandleTest.cs: Added.
+
 2007-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewTest.cs: Added tests for the ListView and
