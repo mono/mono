@@ -80,6 +80,7 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 
 			this.SuspendLayout ();
+			this.items = new ToolStripItemCollection (this, items);
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
@@ -93,7 +94,6 @@ namespace System.Windows.Forms
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
 			this.image_scaling_size = new Size (16, 16);
-			this.items = new ToolStripItemCollection (this, items);
 			this.layout_engine = new ToolStripSplitStackLayout ();
 			this.layout_style = ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.orientation = Orientation.Horizontal;
@@ -537,6 +537,9 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnItemAdded (ToolStripItemEventArgs e)
 		{
+			this.DoAutoSize ();
+			this.PerformLayout ();
+			
 			ToolStripItemEventHandler eh = (ToolStripItemEventHandler)(Events [ItemAddedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -895,11 +898,14 @@ namespace System.Windows.Forms
 		{
 			if (this.AutoSize == true && this.Dock == DockStyle.None)
 				this.Size = GetPreferredSize (Size.Empty);
+				
+			if (this.AutoSize == true && this.Orientation == Orientation.Horizontal && (this.Dock == DockStyle.Top || this.Dock == DockStyle.Bottom))
+				this.Height = GetPreferredSize (Size.Empty).Height;
 		}
 
 		public override Size GetPreferredSize (Size proposedSize)
 		{
-			Size new_size = Size.Empty;
+			Size new_size = new Size (0, this.Height);
 
 			if (this.orientation == Orientation.Vertical) {
 				foreach (ToolStripItem tsi in this.items)
@@ -910,10 +916,13 @@ namespace System.Windows.Forms
 				new_size.Width = this.Width;
 			} else {
 				foreach (ToolStripItem tsi in this.items) 
-					if (tsi.Available)
-						new_size.Width += tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Left + tsi.Margin.Right;
-
-				new_size.Height = this.Height;
+					if (tsi.Available) {
+						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
+						new_size.Width += tsi_preferred.Width + tsi.Margin.Left + tsi.Margin.Right;
+						
+						if (new_size.Height < (this.Padding.Vertical + tsi_preferred.Height))
+							new_size.Height = (this.Padding.Vertical + tsi_preferred.Height);
+					}
 			}
 
 			new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);

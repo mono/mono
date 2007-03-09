@@ -1,3 +1,12 @@
+2007-03-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Rework AutoSize to adjust height when docked to the
+	top or bottom.
+	* ToolStripItem.cs: Make Image drawing take ImageScaling into account.
+	* ToolStripItemCollection.cs: Don't call owner.PerformLayout when a new
+	item is added.  This logic was moved to ToolStrip.OnItemAdded.
+	[Fixes bug #81090]
+
 2007-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListVieItem.cs: SetIndex is only valid for 2.0 profile by now.

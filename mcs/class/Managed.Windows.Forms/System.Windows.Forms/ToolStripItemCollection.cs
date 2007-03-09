@@ -92,7 +92,6 @@ namespace System.Windows.Forms
 			
 			int index = base.Add (value);
 			
-			owner.PerformLayout ();
 			owner.OnItemAdded (new ToolStripItemEventArgs (value));
 			return index;
 		}

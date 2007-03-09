@@ -1252,13 +1252,13 @@ namespace System.Windows.Forms
 					break;
 				case ToolStripItemDisplayStyle.Image:
 					if (this.Image != null)
-						image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
+						image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
 					break;
 				case ToolStripItemDisplayStyle.ImageAndText:
 					if (this.text != string.Empty && this.Image == null)
 						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
 					else if (this.text == string.Empty && this.Image != null)
-						image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
+						image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
 					else if (this.text == string.Empty && this.Image == null)
 						break;
 					else {
@@ -1268,27 +1268,27 @@ namespace System.Windows.Forms
 						switch (this.text_image_relation) {
 							case TextImageRelation.Overlay:
 								text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (contentRectangle, this.Image.Size, this.image_align);
+								image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
 								break;
 							case TextImageRelation.ImageAboveText:
 								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Bottom - (text_size.Height - 4), contentRectangle.Width, text_size.Height - 4);
 								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, GetImageSize (), this.image_align);
 								break;
 							case TextImageRelation.TextAboveImage:
 								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, text_size.Height - 4);
 								image_area = new Rectangle (contentRectangle.Left, text_area.Bottom, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (image_area, this.Image.Size, this.image_align);
+								image_rect = AlignInRectangle (image_area, GetImageSize (), this.image_align);
 								break;
 							case TextImageRelation.ImageBeforeText:
-								LayoutTextBeforeOrAfterImage (contentRectangle, false, text_size, this.Image.Size, text_align, image_align, out text_rect, out image_rect);
+								LayoutTextBeforeOrAfterImage (contentRectangle, false, text_size, GetImageSize (), text_align, image_align, out text_rect, out image_rect);
 								break;
 							case TextImageRelation.TextBeforeImage:
-								LayoutTextBeforeOrAfterImage (contentRectangle, true, text_size, this.Image.Size, text_align, image_align, out text_rect, out image_rect);
+								LayoutTextBeforeOrAfterImage (contentRectangle, true, text_size, GetImageSize (), text_align, image_align, out text_rect, out image_rect);
 								break;
 						}
 					}
@@ -1350,6 +1350,19 @@ namespace System.Windows.Forms
 			return HorizontalAlignment.Left;
 		}
 		
+		private Size GetImageSize ()
+		{
+			if (this.Image == null)
+				return Size.Empty;
+			
+			if (this.image_scaling == ToolStripItemImageScaling.None)
+				return this.Image.Size;
+				
+			if (this.Parent == null)
+				return Size.Empty;
+				
+			return this.Parent.ImageScalingSize;
+		}
 		internal void FireEvent (EventArgs e, ToolStripItemEventType met)
 		{
 			switch (met) {
