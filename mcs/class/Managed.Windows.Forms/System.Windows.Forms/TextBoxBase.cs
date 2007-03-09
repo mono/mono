@@ -1417,40 +1417,10 @@ namespace System.Windows.Forms {
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
-			Rectangle	rect = ClientRectangle;
-			rect.Width--;
-			rect.Height--;
-			//pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorControlDark), rect);
-
-			#if Debug
-				int		start;
-				int		end;
-				Line		line;
-				int		line_no;
-				Pen		p;
-
-				p = new Pen(Color.Red, 1);
-
-				// First, figure out from what line to what line we need to draw
-				start = document.GetLineByPixel(pevent.ClipRectangle.Top - document.ViewPortY, false).line_no;
-				end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - document.ViewPortY, false).line_no;
-
-				//Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
-				//Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
-
-				line_no = start;
-				while (line_no <= end) {
-					line = document.GetLine(line_no);
-
-					if (draw_lines) {
-						for (int i = 0; i < line.text.Length; i++) {
-							pevent.Graphics.DrawLine(p, (int)line.widths[i] - document.ViewPortX, line.Y - document.ViewPortY, (int)line.widths[i] - document.ViewPortX, line.Y + line.height  - document.ViewPortY);
-						}
-					}
-
-					line_no++;
-				}
-			#endif
+			//
+			// OnPaint does not get raised on MS (see bug #80639)
+			// 
+			pevent.Handled = true;
 		}
 
 		private bool IsDoubleClick (MouseEventArgs e)
