@@ -184,6 +184,7 @@ System.Net/WebHeaderCollectionTest.cs
 System.Net/WebPermissionAttributeTest.cs
 System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
+System.Net/WebClientTest.cs
 System.Net.Configuration/ConnectionManagementSectionTest.cs
 System.Net.Configuration/HttpWebRequestElementTest.cs
 System.Net.Configuration/WebRequestModulesSectionTest.cs
