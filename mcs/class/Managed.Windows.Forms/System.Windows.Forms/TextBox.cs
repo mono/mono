@@ -62,8 +62,6 @@ namespace System.Windows.Forms {
 			scrollbars = RichTextBoxScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
-			this.BackColor = ThemeEngine.Current.ColorWindow;
-			this.ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);

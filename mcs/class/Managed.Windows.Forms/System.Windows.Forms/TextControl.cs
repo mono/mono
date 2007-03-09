@@ -1900,6 +1900,7 @@ namespace System.Windows.Forms {
 			Brush tag_brush;
 			Brush current_brush;
 			Brush disabled_brush;
+			Brush readonly_brush;
 			Brush hilight;
 			Brush hilight_text;
 
@@ -1929,6 +1930,7 @@ namespace System.Windows.Forms {
 			#endif
 
 			disabled_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorGrayText);
+			readonly_brush = ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControlText);
 			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
 			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlightText);
 
@@ -2008,7 +2010,7 @@ namespace System.Windows.Forms {
 
 					tag_brush = tag.color;
 					current_brush = tag_brush;
-					
+
 					if (!owner.is_enabled) {
 						Color a = ((SolidBrush) tag.color).Color;
 						Color b = ThemeEngine.Current.ColorWindowText;
@@ -2016,6 +2018,8 @@ namespace System.Windows.Forms {
 						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
 							tag_brush = disabled_brush;
 						}
+					} else if (owner.read_only && !owner.backcolor_set) {
+						tag_brush = readonly_brush;
 					}
 
 					int tag_pos = tag.start;
@@ -2027,10 +2031,10 @@ namespace System.Windows.Forms {
 							current_brush = hilight_text;
 							tag_pos = Math.Min (tag.end, line_selection_end);
 						} else if (tag_pos < line_selection_start) {
-							current_brush = tag.color;
+							current_brush = tag_brush;
 							tag_pos = Math.Min (tag.end, line_selection_start);
 						} else {
-							current_brush = tag.color;
+							current_brush = tag_brush;
 							tag_pos = tag.end;
 						}
 

@@ -234,11 +234,7 @@ namespace System.Windows.Forms {
 				return base.BackColor;
 			}
 			set {
-				if (value != ThemeEngine.Current.ColorWindow) {
-					backcolor_set = true;
-				} else {
-					backcolor_set = false;
-				}
+				backcolor_set = true;
 				base.BackColor = value;
 			}
 		}
@@ -284,7 +280,7 @@ namespace System.Windows.Forms {
 				// textdocument until the handle is created,
 				// and forecolor is actually a property of the
 				// textdocument.
-				if (this is TextBox && !IsHandleCreated)
+				if (this is TextBox && read_only && !backcolor_set)
 					return;
 				base.ForeColor = value;
 			}
