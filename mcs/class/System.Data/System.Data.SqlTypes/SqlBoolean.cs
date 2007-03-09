@@ -35,6 +35,12 @@
 
 using System;
 using System.Globalization;
+#if NET_2_0
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
+#endif
 
 namespace System.Data.SqlTypes
 {
@@ -42,7 +48,10 @@ namespace System.Data.SqlTypes
 	/// Represents an integer value that is either 1 or 0 
 	/// to be stored in or retrieved from a database.
 	/// </summary>
-	public struct SqlBoolean : INullable, IComparable 
+	public struct SqlBoolean : INullable, IComparable
+#if NET_2_0
+				   , IXmlSerializable
+#endif
 	{
 
 		#region Fields
@@ -164,6 +173,27 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
+#if NET_2_0
+		public static SqlBoolean GreaterThan (SqlBoolean x, SqlBoolean y) 
+		{
+			return (x > y);
+		}
+
+		public static SqlBoolean GreaterThanOrEqual (SqlBoolean x, SqlBoolean y) 
+		{
+			return (x >= y);
+		}
+
+		public static SqlBoolean LessThan (SqlBoolean x, SqlBoolean y) 
+		{
+			return (x < y);
+		}
+
+		public static SqlBoolean LessThanOrEqual (SqlBoolean x, SqlBoolean y) 
+		{
+			return (x <= y);
+		}
+#endif
 		public override int GetHashCode() 
 		{
 			int hash;
@@ -339,6 +369,39 @@ namespace System.Data.SqlTypes
 			return b;
 		}
 
+#if NET_2_0
+		public static SqlBoolean operator > (SqlBoolean x, SqlBoolean y) 
+		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+
+			return new SqlBoolean (Compare (x, y) > 0);
+		}
+
+		public static SqlBoolean operator >= (SqlBoolean x, SqlBoolean y) 
+		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+
+			return new SqlBoolean (Compare (x, y) >= 0);
+		}
+
+		public static SqlBoolean operator < (SqlBoolean x, SqlBoolean y) 
+		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+
+			return new SqlBoolean (Compare (x, y) < 0);
+		}
+
+		public static SqlBoolean operator <= (SqlBoolean x, SqlBoolean y) 
+		{
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+
+			return new SqlBoolean (Compare (x, y) <= 0);
+		}
+#endif
 		// test to see if value is true
 		public static bool operator true (SqlBoolean x) 
 		{
@@ -462,5 +525,45 @@ namespace System.Data.SqlTypes
 		{
 			return new SqlBoolean (x);
 		}
+#if NET_2_0
+		// Helper method to Compare methods and operators.
+		// Returns 0 if x == y
+		//         1 if x > y
+		//        -1 if x < y
+		private static int Compare (SqlBoolean x, SqlBoolean y)
+		{
+			if (x == y)
+				return 0;
+			if (x.IsTrue && y.IsFalse)
+				return 1;
+			if (x.IsFalse && y.IsTrue)
+				return -1;
+			return 0;
+		}
+
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("boolean", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+                                                                                
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+                                                                                
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

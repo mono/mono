@@ -41,7 +41,7 @@ namespace System.Data.SqlTypes
 {
 #if NET_2_0
 	[SerializableAttribute]
-	[XmlSchemaProvider ("GetSchema")]
+	[XmlSchemaProvider ("GetXsdType")]
 #endif
 	public struct SqlSingle : INullable, IComparable
 #if NET_2_0
@@ -423,6 +423,12 @@ namespace System.Data.SqlTypes
 		}
 
 #if NET_2_0
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("float", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

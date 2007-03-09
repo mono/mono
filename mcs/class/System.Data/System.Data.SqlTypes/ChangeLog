@@ -1,3 +1,42 @@
+2007-03-09  Nagappan A  <anagappan@novell.com>
+
+	* SqlBoolean.cs (GreaterThan, GreaterThanOrEqual, LessThan)
+	(LessThanOrEqual, GetXsdType, operator >, >=, <, <=): Implemented
+	missing 2.0 methods.
+
+	* SqlDouble.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlString.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlBinary.cs (Add, GetXsdType): Implemented missing 2.0 methods.
+
+	* SqlByte.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlBytes.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlChars.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlXml.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlGuid.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlInt64.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlInt32.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlInt16.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlNotFilledException.cs: Fixed syntax errors based on class
+	status page.
+
+	* SqlDecimal.cs (GetXsdType): Implemented missing method.
+
+	* SqlDateTime.cs (GetXsdType): Implemented missing method.
+
+	* SqlMoney.cs (GetXsdType): Implemented missing 2.0 method.
+
+	* SqlSingle.cs (GetXsdType): Implemented missing 2.0 method.
+
 2007-02-11  Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlDateTime.cs, SqlDecimal.cs, SqlByte.cs, SqlDouble.cs, SqlBoolean.cs,

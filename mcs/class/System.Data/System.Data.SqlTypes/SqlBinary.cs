@@ -112,6 +112,13 @@ namespace System.Data.SqlTypes
 		#endregion
 
 		#region Methods
+#if NET_2_0
+		public static SqlBinary Add (SqlBinary x, SqlBinary y)
+		{
+			return (x + y);
+		}
+#endif
+
 		public int CompareTo (object value)
 		{
 			if (value == null)
@@ -211,7 +218,6 @@ namespace System.Data.SqlTypes
 
 		#region Operators
 
-		[MonoTODO]
 		public static SqlBinary operator + (SqlBinary x, SqlBinary y) 
 		{
 			byte [] b = new byte [x.Value.Length + y.Value.Length];
@@ -345,6 +351,12 @@ namespace System.Data.SqlTypes
 			return 0;
 		}
 #if NET_2_0
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

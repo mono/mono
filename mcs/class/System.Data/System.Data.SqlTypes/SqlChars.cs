@@ -176,6 +176,12 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("string", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

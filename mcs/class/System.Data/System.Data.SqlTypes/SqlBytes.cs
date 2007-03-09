@@ -203,6 +203,12 @@ namespace System.Data.SqlTypes
 			return new SqlBinary (buffer);
 		}
                                                                                 
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

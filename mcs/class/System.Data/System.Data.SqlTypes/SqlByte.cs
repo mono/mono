@@ -34,10 +34,19 @@
 
 using System;
 using System.Globalization;
+#if NET_2_0
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
+#endif
 
 namespace System.Data.SqlTypes
 {
 	public struct SqlByte : INullable, IComparable
+#if NET_2_0
+				   , IXmlSerializable
+#endif
 	{
 		#region Fields
 
@@ -452,6 +461,31 @@ namespace System.Data.SqlTypes
 			return new SqlByte (x);
 		}
 		
+#if NET_2_0
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
+		[MonoTODO]
+		XmlSchema IXmlSerializable.GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+                                                                                
+		[MonoTODO]
+		void IXmlSerializable.ReadXml (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+                                                                                
+		[MonoTODO]
+		void IXmlSerializable.WriteXml (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion
 	}
 }

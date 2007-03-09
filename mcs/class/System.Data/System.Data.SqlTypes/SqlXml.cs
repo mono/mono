@@ -39,7 +39,7 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 	[SerializableAttribute]
-	public class SqlXml : INullable, IXmlSerializable
+	public sealed class SqlXml : INullable, IXmlSerializable
 	{
 		bool notNull;
 
@@ -79,6 +79,12 @@ namespace System.Data.SqlTypes
 			}
                 }
 
+		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
+		{
+			XmlQualifiedName qualifiedName = new XmlQualifiedName ("anyType", "http://www.w3.org/2001/XMLSchema");
+			return qualifiedName;
+		}
+		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{

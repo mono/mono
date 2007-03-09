@@ -36,7 +36,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes {
 
 	[SerializableAttribute]
-	public class SqlNotFilledException : SqlTypeException, ISerializable
+	public sealed class SqlNotFilledException : SqlTypeException, ISerializable
 	{
 		public SqlNotFilledException()
 			: base (Locale.GetText ("A SqlNotFilled exception has occured."))
