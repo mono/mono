@@ -1,3 +1,8 @@
+2007-03-09  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (WHERE): Move before QUERY_FIRST_TOKEN.  'where'
+	is a valid keyword outside a linq expression too.
+
 2007-03-03  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Implemented basic linq grammar.

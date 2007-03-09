@@ -201,13 +201,13 @@ namespace Mono.CSharp
 %token VIRTUAL	
 %token VOID	
 %token VOLATILE
+%token WHERE
 %token WHILE	
 %token ARGLIST
 %token PARTIAL
 %token ARROW
 %token QUERY_FIRST_TOKEN
 %token FROM
-%token WHERE
 %token JOIN
 %token ON
 %token EQUALS
