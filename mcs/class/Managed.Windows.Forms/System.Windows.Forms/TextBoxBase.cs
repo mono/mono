@@ -279,6 +279,13 @@ namespace System.Windows.Forms {
 				return base.ForeColor;
 			}
 			set {
+				// This is to duplicate a bug on MS (80590)
+				// My guess is that they do not create their
+				// textdocument until the handle is created,
+				// and forecolor is actually a property of the
+				// textdocument.
+				if (this is TextBox && !IsHandleCreated)
+					return;
 				base.ForeColor = value;
 			}
 		}

@@ -1,3 +1,7 @@
+2007-03-09  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Don't set the forecolor until the handle is created.
+
 2007-03-09  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ScrollableControl.cs: Fix mouse wheel scrolling.
