@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
@@ -716,6 +717,14 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			decimal d = decimal.Parse ("9999999999999999999999999999");
 		}
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlDecimal.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("decimal", qualifiedName.Name, "#A01");
+		}
+#endif
         }
 }
 

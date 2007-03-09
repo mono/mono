@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 
 namespace MonoTests.System.Data.SqlTypes
@@ -347,5 +348,13 @@ namespace MonoTests.System.Data.SqlTypes
 			AssertEquals ("#Q01", new SqlGuid("0000c864-0000-0000-0000-000007650000"), 
 				      (SqlGuid)TestGuid);
 		}
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlGuid.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("string", qualifiedName.Name, "#A01");
+		}
+#endif
         }
 }

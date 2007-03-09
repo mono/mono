@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
@@ -559,6 +560,14 @@ namespace MonoTests.System.Data.SqlTypes
        			AssertEquals ("#Q05", 53, Result.Value.Minute);
 			AssertEquals ("#Q06", 4, Result.Value.Second);
 		}
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlDateTime.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("dateTime", qualifiedName.Name, "#A01");
+		}
+#endif
         }
 }
 

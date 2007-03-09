@@ -33,6 +33,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Threading;
@@ -720,10 +721,14 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert.AreEqual ("First TestStringPlainString", (String)(SqlString.Add (Test1, "PlainString")), "#AE02");
                         Assert.IsTrue (SqlString.Add (Test1, null).IsNull, "#AE03");
                 }
+
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlString.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("string", qualifiedName.Name, "#A01");
+		}
 #endif
-
-
-
         }
 }
 

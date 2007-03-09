@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
@@ -582,6 +583,14 @@ namespace MonoTests.System.Data.SqlTypes
                         Single TestSingle64 = 64;
                         Assert.AreEqual ((float)64, ((SqlSingle)TestSingle64).Value, "#Y01");
                 }
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlSingle.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("float", qualifiedName.Name, "#A01");
+		}
+#endif
         }
 }
 

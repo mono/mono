@@ -1,3 +1,33 @@
+2007-03-09  Nagappan A  <anagappan@novell.com>
+
+	* SqlBooleanTest.cs (GetXsdTypeTest, GreaterThanTest)
+	(GreaterThanOrEqualTest, LessThanEqualTest, LessThanOrEqualTest):
+	Added new tests.
+
+	* SqlBinaryTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlByteTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlBytesTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlDateTimeTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlDecimalTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlGuidTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlInt16Test.cs (GetXsdTypeTest): Added new test.
+
+	* SqlInt32Test.cs (GetXsdTypeTest): Added new test.
+
+	* SqlInt64Test.cs (GetXsdTypeTest): Added new test.
+
+	* SqlMoneyTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlSingleTest.cs (GetXsdTypeTest): Added new test.
+
+	* SqlStringTest.cs (GetXsdTypeTest): Added new test.
+
 2007-02-09  Nagappan A  <anagappan@novell.com>
 
 	* SqlBytesTest.cs: Added new tests

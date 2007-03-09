@@ -33,6 +33,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 #if TARGET_JVM
 using DivideByZeroException = System.ArithmeticException;
@@ -659,6 +660,14 @@ namespace MonoTests.System.Data.SqlTypes
                         short TestShort = 14;
                         Assert.AreEqual ((long)14, ((SqlInt64)TestShort).Value, "#G01");
                 }
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlInt64.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("long", qualifiedName.Name, "#A01");
+		}
+#endif
         }
 }
 

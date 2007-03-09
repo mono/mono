@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 
 namespace MonoTests.System.Data.SqlTypes
@@ -299,6 +300,14 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBinary TestBinary = (SqlBinary)TestByteArray;
                         AssertEquals ("#O1", (byte)15, TestBinary [0]);
 		}
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlBinary.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("base64Binary", qualifiedName.Name, "#A01");
+		}
+#endif
 	}
 }
 

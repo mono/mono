@@ -33,6 +33,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data;
 using System.Data.SqlTypes;
 
@@ -454,5 +455,13 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (z.Value, a ^ b, "Xor function does not work correctly");
 		}
 			
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlInt32.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("int", qualifiedName.Name, "#A01");
+		}
+#endif
 	}
 }

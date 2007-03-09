@@ -34,6 +34,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
@@ -913,6 +914,14 @@ namespace MonoTests.System.Data.SqlTypes
 			byte TestByte = 14;
 			Assert.AreEqual ((byte)14, ((SqlByte)TestByte).Value, "ByteToSqlByte" + Error);
 		}
+#if NET_2_0
+		[Test]
+		public void GetXsdTypeTest ()
+		{
+			XmlQualifiedName qualifiedName = SqlByte.GetXsdType (null);
+			NUnit.Framework.Assert.AreEqual ("unsignedByte", qualifiedName.Name, "#A01");
+		}
+#endif
 	}
 }
 
