@@ -359,6 +359,9 @@ namespace System.Web.Compilation
 		void DomFromResource (string resfile, CodeCompileUnit unit, Dictionary <string,bool> assemblies,
 				      CodeDomProvider provider)
 		{
+			if (String.IsNullOrEmpty (resfile))
+				return;
+
 			string fname, nsname, classname;
 
 			fname = Path.GetFileNameWithoutExtension (resfile);
@@ -375,6 +378,14 @@ namespace System.Web.Compilation
 			
 			if (!provider.IsValidIdentifier (nsname) || !provider.IsValidIdentifier (classname))
 				throw new ApplicationException ("Invalid resource file name.");
+
+			ResourceReader res;
+			try {
+				res = new ResourceReader (resfile);
+			} catch (ArgumentException) {
+				// invalid stream, probably empty - ignore silently and abort
+				return;
+			}
 			
 			CodeNamespace ns = new CodeNamespace (nsname);
 			CodeTypeDeclaration cls = new CodeTypeDeclaration (classname);
@@ -415,7 +426,6 @@ namespace System.Web.Compilation
 			// Add the resource properties
 			Dictionary<string,bool> imports = new Dictionary<string,bool> ();
 			try {
-				ResourceReader res = new ResourceReader (resfile);
 				foreach (DictionaryEntry de in res) {
 					Type type = de.Value.GetType ();
 
@@ -435,7 +445,7 @@ namespace System.Web.Compilation
 					cls.Members.Add (cmp);
 				}
 			} catch (Exception ex) {
-				throw new ApplicationException ("Failed to comipile global resources.", ex);
+				throw new ApplicationException ("Failed to compile global resources.", ex);
 			}
 			foreach (KeyValuePair<string,bool> de in imports)
 				ns.Imports.Add (new CodeNamespaceImport(de.Key));
