@@ -1,3 +1,7 @@
+2007-03-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Vbc.cs: Implemented.
+
 2007-03-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MSBuild.cs (Execute): Copy referenced project's dlls to output

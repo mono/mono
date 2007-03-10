@@ -45,6 +45,7 @@ namespace Microsoft.Build.Tasks {
 			base.AddResponseFileCommands (commandLine);
 
 			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
+
 			if (Bag ["AllowUnsafeBlocks"] != null)
 				if (AllowUnsafeBlocks)
 					commandLine.AppendSwitch ("/unsafe+");
