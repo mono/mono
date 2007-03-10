@@ -2,6 +2,7 @@
 //
 // Author:
 // 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//	Ivan N. Zlatev <contact i-nZ.net>
 //
 // (C) Alejandro Sánchez Acosta
 // 
@@ -35,15 +36,29 @@ namespace System.ComponentModel.Design
 	public class DesignerTransactionCloseEventArgs : EventArgs
 	{
 		private bool commit;
-		public DesignerTransactionCloseEventArgs (bool commit) {
+		private bool last_transaction;
+
+#if NET_2_0
+		public
+#endif
+		DesignerTransactionCloseEventArgs (bool commit, bool lastTransaction)
+		{
 			this.commit = commit;
+			last_transaction = lastTransaction;
+		}
+		
+		public DesignerTransactionCloseEventArgs (bool commit) : this (commit, false)
+		{
 		}
 
-		public bool TransactionCommitted 
-		{
-			get {
-				return commit;
-			}
+#if NET_2_0		
+		public bool LastTransaction {
+			get { return last_transaction; }
+		}
+#endif
+
+		public bool TransactionCommitted {
+			get { return commit; }
 		}
 	}
 }

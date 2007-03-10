@@ -1,3 +1,8 @@
+2007-03-09  Chris Toshok  <toshok@ximian.com>
+
+	* System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs:
+	update this to 2.0. massage a patch from Ivan Zlatev.
+
 2007-02-27  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* System_test.dll.sources: Added MaskedTextProviderTest.cs
