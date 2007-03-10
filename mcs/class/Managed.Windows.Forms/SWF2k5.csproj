@@ -434,6 +434,7 @@
     <Compile Include="System.Windows.Forms\DrawItemState.cs" />
     <Compile Include="System.Windows.Forms\DrawMode.cs" />
     <Compile Include="System.Windows.Forms\DrawTreeNodeEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DrawTreeNodeEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ErrorBlinkStyle.cs" />
     <Compile Include="System.Windows.Forms\ErrorIconAlignment.cs" />
     <Compile Include="System.Windows.Forms\ErrorProvider.cs" />

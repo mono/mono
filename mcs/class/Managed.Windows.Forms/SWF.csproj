@@ -1599,6 +1599,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DrawTreeNodeEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ErrorBlinkStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
