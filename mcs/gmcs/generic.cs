@@ -1246,16 +1246,20 @@ namespace Mono.CSharp {
 					ok = false;
 					continue;
 				}
-				if (te is TypeParameterExpr)
-					has_type_args = true;
 
-#if !MS_COMPATIBLE
+				atypes[i] = te.Type;
+
+				if (te is TypeParameterExpr) {
+					has_type_args = true;
+					continue;
+				}
+
 				if (te.Type.IsSealed && te.Type.IsAbstract) {
 					Report.Error (718, Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					return false;
 				}
-#endif
+
 				if (te.Type.IsPointer) {
 					Report.Error (306, Location, "The type `{0}' may not be used " +
 							  "as a type argument", TypeManager.CSharpName (te.Type));
@@ -1266,8 +1270,6 @@ namespace Mono.CSharp {
 					Expression.Error_VoidInvalidInTheContext (Location);
 					return false;
 				}
-
-				atypes [i] = te.Type;
 			}
 			return ok;
 		}

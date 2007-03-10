@@ -1,3 +1,7 @@
+2007-03-10  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs (TypeArguments.Resolve): Avoid redundant checks.
+
 2007-03-09  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay (WHERE): Move before QUERY_FIRST_TOKEN.  'where'
