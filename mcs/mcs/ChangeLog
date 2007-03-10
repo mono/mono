@@ -1,3 +1,7 @@
+2007-03-10  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs, parameter.cs: Unified parameters verification.
+
 2007-03-08  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (constructor_header): Pass the location to the

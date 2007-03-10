@@ -175,6 +175,11 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public override bool CheckAccessibility (InterfaceMemberBase member)
+		{
+			return true;
+		}
+
 		public override bool Resolve (IResolveContext ec)
 		{
 			return true;
@@ -221,6 +226,7 @@ namespace Mono.CSharp {
 		}
 
 #if GMCS_SOURCE
+		public bool IsTypeParameter;
 		GenericConstraints constraints;
 #endif
 		
@@ -297,6 +303,15 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
+		public virtual bool CheckAccessibility (InterfaceMemberBase member)
+		{
+#if GMCS_SOURCE
+			if (IsTypeParameter)
+				return true;
+#endif
+			return member.ds.AsAccessible (parameter_type, member.ModFlags);
+		}
+
 		public override IResolveContext ResolveContext {
 			get {
 				return resolve_context;
@@ -322,6 +337,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			TypeParameterExpr tparam = texpr as TypeParameterExpr;
 			if (tparam != null) {
+				IsTypeParameter = true;
 				constraints = tparam.TypeParameter.Constraints;
 				return true;
 			}
@@ -580,7 +596,7 @@ namespace Mono.CSharp {
 		static readonly Parameter ArgList = new ArglistParameter ();
 
 #if GMCS_SOURCE
-		public readonly TypeParameter[] TypeParameters;
+//		public readonly TypeParameter[] TypeParameters;
 #endif
 
 		private Parameters ()

@@ -3398,21 +3398,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected bool DoDefineParameters ()
-		{
-			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
-
-			// Check if arguments were correct
-			if (!Parameters.Resolve (rc))
-				return false;
-
-			return CheckParameters (Parameters);
-		}
-
 		protected override bool CheckBase ()
 		{
 			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
+			if (!DefineParameters (Parameters))
 				return false;
 
 			if (!base.CheckBase ())
@@ -3822,37 +3811,35 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool CheckParameters (Parameters parameters)
+		protected bool DefineParameters (Parameters parameters)
 		{
+			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
+
+			if (!parameters.Resolve (rc))
+				return false;
+
 			bool error = false;
-
-			foreach (Type partype in parameters.Types){
-				if (partype.IsPointer){
-					if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (partype), Location))
-						error = true;
-				}
-
-				if (ds.AsAccessible (partype, ModFlags))
+			foreach (Parameter p in parameters.FixedParameters) {
+				if (p.CheckAccessibility (this))
 					continue;
 
-				Report.SymbolRelatedToPreviousError (partype);
+				Report.SymbolRelatedToPreviousError (p.ParameterType);
 				if (this is Indexer)
 					Report.Error (55, Location,
 						"Inconsistent accessibility: parameter type `" +
-						TypeManager.CSharpName (partype) + "' is less " +
+						TypeManager.CSharpName (p.ParameterType) + "' is less " +
 						"accessible than indexer `" + GetSignatureForError () + "'");
 				else if (this is Operator)
 					Report.Error (57, Location,
 						"Inconsistent accessibility: parameter type `" +
-						TypeManager.CSharpName (partype) + "' is less " +
+						TypeManager.CSharpName (p.ParameterType) + "' is less " +
 						"accessible than operator `" + GetSignatureForError () + "'");
 				else
 					Report.Error (51, Location,
 						"Inconsistent accessibility: parameter type `{0}' is less accessible than method `{1}'",
-						TypeManager.CSharpName (partype), GetSignatureForError ());
+						TypeManager.CSharpName (p.ParameterType), GetSignatureForError ());
 				error = true;
 			}
-
 			return !error;
 		}
 
@@ -4897,7 +4884,7 @@ namespace Mono.CSharp {
 			}
 
 			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
+			if (!DefineParameters (Parameters))
 				return false;
 
 			if (!CheckForDuplications ())
@@ -7716,10 +7703,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (!parameters.Resolve (ds))
-				return false;
-
-			if (!CheckParameters (parameters))
+			if (!DefineParameters (parameters))
 				return false;
 
 			if (MemberType == TypeManager.void_type) {
