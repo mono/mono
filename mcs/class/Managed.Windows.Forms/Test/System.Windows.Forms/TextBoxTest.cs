@@ -18,11 +18,16 @@ namespace MonoTests.System.Windows.Forms
 	public class TextBoxTest
 	{
 		TextBox textBox;
+		int _invalidated;
+		int _paint;
 
 		[SetUp]
 		public void SetUp()
 		{
 			textBox = new TextBox();
+			textBox.Invalidated += new InvalidateEventHandler (TextBox_Invalidated);
+			textBox.Paint += new PaintEventHandler (TextBox_Paint);
+			Reset ();
 		}
 
 		[Test]
@@ -51,7 +56,6 @@ namespace MonoTests.System.Windows.Forms
 			textBox.ClearUndo ();
 			Assert.AreEqual (false, textBox.CanUndo, "#6c");
 
-			Assert.AreEqual ("WindowText", textBox.ForeColor.Name, "#7");
 			Assert.AreEqual (true, textBox.HideSelection, "#8");
 			Assert.AreEqual (1, textBox.Lines.Length, "#9");
 			Assert.AreEqual (32767, textBox.MaxLength, "#10");
@@ -202,9 +206,34 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void BackColorTest ()
 		{
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#1");
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#A1");
+			textBox.BackColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#A2");
 			textBox.BackColor = Color.White;
-			Assert.AreEqual (Color.White, textBox.BackColor, "#2");
+			Assert.AreEqual (Color.White, textBox.BackColor, "#A3");
+			Assert.AreEqual (0, _invalidated, "#A4");
+			Assert.AreEqual (0, _paint, "#A5");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (textBox);
+			form.Show ();
+
+			Assert.AreEqual (Color.White, textBox.BackColor, "#B1");
+			Assert.AreEqual (0, _invalidated, "#B2");
+			Assert.AreEqual (0, _paint, "#B3");
+			textBox.BackColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#B4");
+			Assert.AreEqual (1, _invalidated, "#B5");
+			Assert.AreEqual (0, _paint, "#B6");
+			textBox.BackColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#B7");
+			Assert.AreEqual (1, _invalidated, "#B8");
+			Assert.AreEqual (0, _paint, "#B9");
+			textBox.BackColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#B10");
+			Assert.AreEqual (2, _invalidated, "#B11");
+			Assert.AreEqual (0, _paint, "#B12");
 		}
 
 		[Test]
@@ -311,6 +340,40 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void ForeColorTest ()
+		{
+			Assert.AreEqual (SystemColors.WindowText, textBox.ForeColor, "#A1");
+			textBox.ForeColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.ForeColor, "#A2");
+			textBox.ForeColor = Color.White;
+			Assert.AreEqual (Color.White, textBox.ForeColor, "#A3");
+			Assert.AreEqual (0, _invalidated, "#A4");
+			Assert.AreEqual (0, _paint, "#A5");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (textBox);
+			form.Show ();
+
+			Assert.AreEqual (Color.White, textBox.ForeColor, "#B1");
+			Assert.AreEqual (0, _invalidated, "#B2");
+			Assert.AreEqual (0, _paint, "#B3");
+			textBox.ForeColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.ForeColor, "#B4");
+			Assert.AreEqual (1, _invalidated, "#B5");
+			Assert.AreEqual (0, _paint, "#B6");
+			textBox.ForeColor = Color.Red;
+			Assert.AreEqual (Color.Red, textBox.ForeColor, "#B7");
+			Assert.AreEqual (1, _invalidated, "#B8");
+			Assert.AreEqual (0, _paint, "#B9");
+			textBox.ForeColor = Color.Blue;
+			Assert.AreEqual (Color.Blue, textBox.ForeColor, "#B10");
+			Assert.AreEqual (2, _invalidated, "#B11");
+			Assert.AreEqual (0, _paint, "#B12");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			Assert.AreEqual ("System.Windows.Forms.TextBox, Text: ", textBox.ToString(), "#35");
@@ -386,6 +449,22 @@ namespace MonoTests.System.Windows.Forms
 
 			textBox.Text = "TEXT";
 			Assert.AreEqual (false, textBox.Modified, "modified-3");
+		}
+
+		void TextBox_Invalidated (object sender, InvalidateEventArgs e)
+		{
+			_invalidated++;
+		}
+
+		void TextBox_Paint (object sender, PaintEventArgs e)
+		{
+			_paint++;
+		}
+
+		void Reset ()
+		{
+			_invalidated = 0;
+			_paint = 0;
 		}
 	}
 }

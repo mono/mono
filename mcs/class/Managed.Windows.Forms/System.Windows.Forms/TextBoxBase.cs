@@ -236,7 +236,6 @@ namespace System.Windows.Forms {
 			set {
 				backcolor_set = true;
 				base.BackColor = value;
-				Invalidate ();
 			}
 		}
 

@@ -1,5 +1,13 @@
 2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FormHandleTest.cs: Fixed build using csc 1.x.
+	* MdiFormHandleTest.cs: Fixed build using csc 1.x. Removed extra tabs.
+	* ControlHandleTest.cs: Fixed build using csc 1.x.
+	* TextBoxTest.cs: Improved test for BackColor. Added test for
+	ForeColor.
+
+2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TextBoxTest.cs: Isolate BackColor tests.
 
 2007-03-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 

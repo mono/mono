@@ -67,7 +67,7 @@ namespace MonoTests.System.Windows.Forms
 			o = c.Anchor;
 			c.Anchor = AnchorStyles.Right;
 			Assert.IsFalse (c.IsHandleCreated, "A6");
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			o = c.AutoScrollOffset;
 			c.AutoScrollOffset = new Point (40, 40);
 			Assert.IsFalse (c.IsHandleCreated, "A7");
@@ -308,7 +308,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A42");
 			o = c.IsDisposed;
 			Assert.IsFalse (c.IsHandleCreated, "A43");
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			o = c.IsMirrored;
 			Assert.IsFalse (c.IsHandleCreated, "A44");
 #endif
@@ -474,7 +474,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A66");
 			o = c.TopLevelControl;
 			Assert.IsFalse (c.IsHandleCreated, "A67");
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			o = c.UseWaitCursor;
 			c.UseWaitCursor = true;
 			Assert.IsFalse (c.IsHandleCreated, "A68");
@@ -539,7 +539,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			o = c.WindowState;
 			c.WindowState = FormWindowState.Maximized;
-			Assert.IsFalse (c.IsHandleCreated, "FW1");	
+			Assert.IsFalse (c.IsHandleCreated, "FW1");
 
 			TestHelper.RemoveWarning (o);
 		}
@@ -552,7 +552,7 @@ namespace MonoTests.System.Windows.Forms
 			ProtectedPropertyForm c = new ProtectedPropertyForm ();
 
 			object o;
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			o = c.PublicCanRaiseEvents;
 			Assert.IsFalse (c.IsHandleCreated, "A1");
 #endif
@@ -587,7 +587,7 @@ namespace MonoTests.System.Windows.Forms
 			o = c.PublicResizeRedraw;
 			c.PublicResizeRedraw = !c.PublicResizeRedraw;
 			Assert.IsFalse (c.IsHandleCreated, "A13");
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			o = c.PublicScaleChildren;
 			Assert.IsFalse (c.IsHandleCreated, "A14");
 #endif
@@ -828,10 +828,15 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Form c = new Form ();
 			Assert.IsFalse (c.IsHandleCreated, "A1");
-			c.HandleCreated += delegate (object sender, EventArgs e) { Console.WriteLine (Environment.StackTrace); };
+			c.HandleCreated += new EventHandler (HandleCreated_WriteStackTrace);
 			c.Show ();
 			Assert.IsTrue (c.IsHandleCreated, "A2");
 			c.Dispose ();
+		}
+
+		void HandleCreated_WriteStackTrace (object sender, EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
 		}
 
 		public delegate void InvokeDelegate ();
@@ -850,7 +855,7 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			public SizeF PublicAutoScaleFactor { get { return base.AutoScaleFactor; } } 
 #endif
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			public bool PublicCanRaiseEvents { get { return base.CanRaiseEvents; } }
 #endif
 			public CreateParams PublicCreateParams { get { return base.CreateParams; } }
@@ -875,7 +880,7 @@ namespace MonoTests.System.Windows.Forms
 			public Rectangle PublicMaximizedBounds { get {return base.MaximizedBounds; } set { base.MaximizedBounds = value; }}
 			public bool PublicRenderRightToLeft { get { return base.RenderRightToLeft; } }
 			public bool PublicResizeRedraw { get { return base.ResizeRedraw; } set { base.ResizeRedraw = value; } }
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			public bool PublicScaleChildren { get { return base.ScaleChildren; } }
 #endif
 			public bool PublicShowFocusCues { get { return base.ShowFocusCues; } }
@@ -920,7 +925,7 @@ namespace MonoTests.System.Windows.Forms
 			c.PublicGetAccessibilityObjectById (0);
 			Assert.IsFalse (c.IsHandleCreated, "A6");
 #endif
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			c.PublicGetAutoSizeMode ();
 			Assert.IsFalse (c.IsHandleCreated, "A7");
 			c.PublicGetScaledBounds (new Rectangle (0, 0, 100, 100), new SizeF (1.5f, 1.5f), BoundsSpecified.All);
@@ -975,7 +980,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A29");
 			c.PublicRtlTranslateLeftRight (LeftRightAlignment.Left);
 			Assert.IsFalse (c.IsHandleCreated, "A30");
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			c.PublicScaleControl (new SizeF (1.5f, 1.5f), BoundsSpecified.All);
 			Assert.IsFalse (c.IsHandleCreated, "A31");
 #endif
@@ -984,7 +989,7 @@ namespace MonoTests.System.Windows.Forms
 			c.PublicSelect ();
 			Assert.IsTrue (c.IsHandleCreated, "A33");
 			c = new ProtectedMethodsForm ();
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			c.PublicSetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			Assert.IsFalse (c.IsHandleCreated, "A34");
 #endif
@@ -1102,7 +1107,7 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			public AccessibleObject PublicGetAccessibilityObjectById (int objectId) { return base.GetAccessibilityObjectById (objectId); }
 #endif
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			public AutoSizeMode PublicGetAutoSizeMode () { return base.GetAutoSizeMode (); }
 			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified) { return base.GetScaledBounds (bounds, factor, specified); }
 #endif
@@ -1138,7 +1143,7 @@ namespace MonoTests.System.Windows.Forms
 			public ContentAlignment PublicRtlTranslateContent (ContentAlignment align) { return base.RtlTranslateContent (align); }
 			public HorizontalAlignment PublicRtlTranslateHorizontal (HorizontalAlignment align) { return base.RtlTranslateHorizontal (align); }
 			public LeftRightAlignment PublicRtlTranslateLeftRight (LeftRightAlignment align) { return base.RtlTranslateLeftRight (align); }
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			public void PublicScaleControl (SizeF factor, BoundsSpecified specified) { base.ScaleControl (factor, specified); }
 #endif
 			public void PublicScaleCore (float dx, float dy) { base.ScaleCore (dx, dy); }
@@ -1148,7 +1153,7 @@ namespace MonoTests.System.Windows.Forms
 			public void PublicSelect () { base.Select (); }
 			public void PublicSelect (bool directed, bool forward) { base.Select (directed, forward); }
 
-#if !__MonoCS__
+#if !__MonoCS__ && NET_2_0
 			public void PublicSetAutoSizeMode (AutoSizeMode mode) { base.SetAutoSizeMode (mode); }
 #endif
 			public void PublicSetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) { base.SetBoundsCore (x, y, width, height, specified); }

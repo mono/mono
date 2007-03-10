@@ -1,3 +1,9 @@
+2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBox.cs: Set for foreground color.
+	* TextBoxBase.cs: Remove Invalidate when setting BackColor, since
+	this is already done in Control.
+
 2007-03-10  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: Set the background color, but reset the

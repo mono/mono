@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 
 			BackColor = SystemColors.Window;
+			ForeColor = SystemColors.WindowText;
 			backcolor_set = false;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
