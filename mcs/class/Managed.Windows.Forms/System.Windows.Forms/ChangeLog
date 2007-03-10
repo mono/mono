@@ -1,5 +1,8 @@
 2007-03-09  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: really remove the call to XplatUI.SetVisible from
+	CreateHandle(), like I said I did when I merged the branch.
+
 	* BindingSource.cs: implement some more of this stuff.
 
 2007-03-09  Jackson Harper  <jackson@ximian.com>

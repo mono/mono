@@ -3761,7 +3761,6 @@ namespace System.Windows.Forms
 				creator_thread = Thread.CurrentThread;
 
 				XplatUI.EnableWindow(window.Handle, is_enabled);
-				XplatUI.SetVisible(window.Handle, is_visible, true);
 
 				if (clip_region != null) {
 					XplatUI.SetClipRegion(window.Handle, clip_region);
