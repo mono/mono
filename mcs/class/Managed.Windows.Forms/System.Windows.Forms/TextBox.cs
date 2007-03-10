@@ -63,6 +63,9 @@ namespace System.Windows.Forms {
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 
+			BackColor = SystemColors.Window;
+			backcolor_set = false;
+
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
 

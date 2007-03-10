@@ -1,3 +1,9 @@
+2007-03-10  Jackson Harper  <jackson@ximian.com>
+
+	* TextBox.cs: Set the background color, but reset the
+	backcolor_set flag which is just for the user setting the
+	background color.
+
 2007-03-09  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: really remove the call to XplatUI.SetVisible from
