@@ -1,3 +1,10 @@
+2007-03-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.Common.tasks: Added Vbc task.
+
+	* xbuild/Microsoft.VisualBasic.targets: Added CoreCompile target for
+	VB.
+
 2007-03-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.CSharp.targets: Add @(ChildProjectReferences) to
