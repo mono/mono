@@ -26,6 +26,9 @@
 
 using System;
 using System.ComponentModel;
+#if NET_2_0
+using System.Drawing;
+#endif
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -79,6 +82,13 @@ namespace System.Resources {
 					buffer = new byte [file.Length];
 					file.Read(buffer, 0, (int) file.Length);
 				}
+
+#if NET_2_0
+				if (type == typeof (Bitmap) && Path.GetExtension (parts [0]) == ".ico") {
+					MemoryStream ms = new MemoryStream (buffer);
+					return new Icon (ms).ToBitmap ();
+				}
+#endif
 
 				return Activator.CreateInstance(type, BindingFlags.CreateInstance
 					| BindingFlags.Public | BindingFlags.Instance, null, 

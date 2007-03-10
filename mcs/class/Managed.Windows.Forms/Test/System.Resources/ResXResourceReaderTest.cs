@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Resources;
@@ -166,6 +167,61 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual (0, fs.Position, "#B1");
 				r.GetEnumerator ();
 				Assert.IsFalse (fs.Position == 0, "#B2");
+			}
+		}
+
+		[Test]
+		public void ExternalFileReference_Icon ()
+		{
+			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
+			WriteEmbeddedResource ("32x32.ico", refFile);
+
+			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
+			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
+				sw.Write (string.Format (CultureInfo.InvariantCulture,
+					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
+					Consts.AssemblySystem_Windows_Forms, refFile,
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+			}
+
+			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
+				IDictionaryEnumerator enumerator = r.GetEnumerator ();
+				enumerator.MoveNext ();
+				Assert.IsNotNull (enumerator.Current, "#A1");
+				Assert.AreEqual ("foo", enumerator.Key, "#A2");
+				Bitmap bitmap = enumerator.Value as Bitmap;
+				Assert.IsNotNull (bitmap, "#A3");
+#if NET_2_0
+				Assert.AreEqual (32, bitmap.Height, "#A4");
+				Assert.AreEqual (32, bitmap.Width, "#A5");
+#else
+				Assert.AreEqual (96, bitmap.Height, "#A4");
+				Assert.AreEqual (96, bitmap.Width, "#A5");
+#endif
+			}
+
+			File.Delete (refFile);
+			File.Delete (resxFile);
+
+			refFile = Path.Combine (_tempDirectory, "32x32.ICO");
+			WriteEmbeddedResource ("32x32.ico", refFile);
+
+			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
+				sw.Write (string.Format (CultureInfo.InvariantCulture,
+					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
+					Consts.AssemblySystem_Windows_Forms, refFile,
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+			}
+
+			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
+				IDictionaryEnumerator enumerator = r.GetEnumerator ();
+				enumerator.MoveNext ();
+				Assert.IsNotNull (enumerator.Current, "#B1");
+				Assert.AreEqual ("foo", enumerator.Key, "#B2");
+				Bitmap bitmap = enumerator.Value as Bitmap;
+				Assert.IsNotNull (bitmap, "#B3");
+				Assert.AreEqual (96, bitmap.Height, "#B4");
+				Assert.AreEqual (96, bitmap.Width, "#B5");
 			}
 		}
 
@@ -1406,6 +1462,25 @@ namespace MonoTests.System.Resources
 					Assert.AreEqual (16, entries, "#Q");
 #endif
 				}
+			}
+		}
+
+		private static void WriteEmbeddedResource (string name, string filename)
+		{
+			const int size = 512;
+			byte [] buffer = new byte [size];
+			int count = 0;
+
+			Stream input = typeof (ResXResourceReaderTest).Assembly.
+				GetManifestResourceStream (name);
+			Stream output = File.Open (filename, FileMode.Create);
+
+			try {
+				while ((count = input.Read (buffer, 0, size)) > 0) {
+					output.Write (buffer, 0, count);
+				}
+			} finally {
+				output.Close ();
 			}
 		}
 

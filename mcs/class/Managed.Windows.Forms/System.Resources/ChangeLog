@@ -1,3 +1,8 @@
+2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXFileRef.cs: On 2.0 profile, special case files with .ico 
+	extension to retain their actual dimension.
+
 2007-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXResourceReader.cs: Add additional checks for validity of reader

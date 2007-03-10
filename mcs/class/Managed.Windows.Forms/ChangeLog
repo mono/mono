@@ -1,7 +1,11 @@
+2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile: Added 32x32 icon.
+
 2007-03-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
-	* System.Windows.Forms_test.dll.sources: Added FormHandleTest and MdiFormHandleTest.
-
+	* System.Windows.Forms_test.dll.sources: Added FormHandleTest and 
+	MdiFormHandleTest.
 
 2007-03-08  Chris Toshok <toshok@ximian.com>
 
