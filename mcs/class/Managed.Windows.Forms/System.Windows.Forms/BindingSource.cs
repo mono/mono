@@ -24,6 +24,7 @@
 
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace System.Windows.Forms {
@@ -48,6 +49,9 @@ namespace System.Windows.Forms {
 
 		bool allow_new_set;
 		bool allow_new;
+		bool suspended;
+
+		int position = -1;
 
 		public BindingSource (IContainer container) : this ()
 		{
@@ -76,18 +80,35 @@ namespace System.Windows.Forms {
 
 		IList GetListFromEnumerable (IEnumerable enumerable)
 		{
-			IList l;
+			IList l = null;
 
 			IEnumerator e = enumerable.GetEnumerator();
 
-			e.MoveNext ();
-
-			object o = e.Current;
-			if (o == null)
-				l = new BindingList<object>();
+			if (enumerable is string) {
+				/* special case this.. seems to be the only one .net special cases? */
+				l = new BindingList<char> ();
+			}
 			else {
-				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { o.GetType() });
-				l = (IList)Activator.CreateInstance (t);
+				/* try to figure out the type based on
+				 * the first element, if there is
+				 * one */
+				object first = null;
+				if (e.MoveNext ()) {
+					first = e.Current;
+				}
+
+				if (first == null) {
+					return null;
+				}
+				else {
+					Type t = typeof (BindingList<>).MakeGenericType (new Type[] { first.GetType() });
+					l = (IList)Activator.CreateInstance (t);
+				}
+			}
+
+			e.Reset ();
+			while (e.MoveNext ()) {
+				l.Add (e.Current);
 			}
 
 			return l;
@@ -105,15 +126,18 @@ namespace System.Windows.Forms {
 				l = (IList)datasource;
 			}
 			else if (datasource is IEnumerable) {
-				l = GetListFromEnumerable ((IEnumerable)datasource);
+				IList new_list = GetListFromEnumerable ((IEnumerable)datasource);
+				l = new_list == null ? list : new_list;
 			}
 			else {
 				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { datasource.GetType() });
 				l = (IList)Activator.CreateInstance (t);
 			}
 
+			// XXX
+			list = l;
+
 			if (datamember != "") {
-				
 			}
 		}
 
@@ -151,12 +175,19 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual bool AllowRemove {
-			get { throw new NotImplementedException (); }
+			get {
+				if (list == null)
+					return false;
+				throw new NotImplementedException (); }
 		}
 
 		[Browsable (false)]
 		public virtual int Count {
-			get { throw new NotImplementedException (); }
+			get {
+				if (list == null)
+					return -1;
+				return list.Count;
+			}
 		}
 
 		[Browsable (false)]
@@ -201,6 +232,8 @@ namespace System.Windows.Forms {
 
 					ResetList ();
 
+					position = 0;
+
 					OnDataSourceChanged (EventArgs.Empty);
 				}
 			}
@@ -214,7 +247,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public bool IsBindingSuspended {
-			get { throw new NotImplementedException (); }
+			get { return suspended; }
 		}
 
 		[Browsable (false)]
@@ -251,8 +284,16 @@ namespace System.Windows.Forms {
 		[DefaultValue (-1)]
 		[Browsable (false)]
 		public int Position {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return position; }
+			set {
+				if (value >= Count) value = Count - 1;
+				if (value < 0) value = 0;
+
+				if (position != value) {
+					position = value;
+					OnPositionChanged (EventArgs.Empty);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -487,22 +528,22 @@ namespace System.Windows.Forms {
 
 		public void MoveFirst ()
 		{
-			throw new NotImplementedException ();
+			Position = 0;
 		}
 
 		public void MoveLast ()
 		{
-			throw new NotImplementedException ();
+			Position = Count - 1;
 		}
 
 		public void MoveNext ()
 		{
-			throw new NotImplementedException ();
+			Position ++;
 		}
 
 		public void MovePrevious ()
 		{
-			throw new NotImplementedException ();
+			Position --;
 		}
 
 		protected virtual void OnAddingNew (AddingNewEventArgs e)
@@ -601,26 +642,31 @@ namespace System.Windows.Forms {
 
 		public void ResetBindings (bool metadataChanged)
 		{
-			throw new NotImplementedException ();
+			if (metadataChanged)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0));
+
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		public void ResetCurrentItem ()
 		{
-			throw new NotImplementedException ();
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, Position, -1));
 		}
 
 		public void ResetItem (int itemIndex)
 		{
-			throw new NotImplementedException ();
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, itemIndex, -1));
 		}
 
 		public void ResumeBinding ()
 		{
+			suspended = false;
 			throw new NotImplementedException ();
 		}
 
 		public void SuspendBinding ()
 		{
+			suspended = true;
 			throw new NotImplementedException ();
 		}
 
