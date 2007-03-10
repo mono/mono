@@ -35,9 +35,6 @@ namespace MonoTests.System.Windows.Forms
 			//	SendKeys.SendWait ("^%");
 			Assert.AreEqual (true, textBox.AcceptsTab, "#1b");
 			Assert.AreEqual (true, textBox.AutoSize, "#2");
-			Assert.AreEqual ("Window", textBox.BackColor.Name, "#3a");
-			textBox.BackColor = Color.White;
-			Assert.AreEqual ("White", textBox.BackColor.Name, "#3b");
 			Assert.AreEqual (null, textBox.BackgroundImage, "#4a");
 			string gif = "M.gif";
 			textBox.BackgroundImage = Image.FromFile (gif);
@@ -200,6 +197,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, textBox.Lines [1], "#B5");
 			Assert.AreEqual ("ho", textBox.Lines [2], "#B6");
 			Assert.AreEqual (string.Empty, textBox.Lines [3], "#B7");
+		}
+
+		[Test]
+		public void BackColorTest ()
+		{
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#1");
+			textBox.BackColor = Color.White;
+			Assert.AreEqual (Color.White, textBox.BackColor, "#2");
 		}
 
 		[Test]
