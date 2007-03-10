@@ -74,24 +74,49 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-		class InfiniteEnumerable : IEnumerable {
-			class InfiniteEnumerator : IEnumerator {
-				public object Current {
-					get { return 5; }
+		class GenericEnumerable : IEnumerable<int> {
+			int length;
+
+			public GenericEnumerable (int length) {
+				this.length = length;
+			}
+
+			class MyEnumerator : IEnumerator<int> {
+				public int count;
+				public int index;
+
+				public int Current {
+					get { return index; }
+				}
+
+				object IEnumerator.Current {
+					get { return Current; }
 				}
 
 				public void Reset () {
-					// nada
+					index = 0;
 				}
 
 				public bool MoveNext () {
-					return true;
+					if (index++ == count)
+						return false;
+					else
+						return true;
 				}
 
+				void IDisposable.Dispose () {
+				}
 			}
 
-			public IEnumerator GetEnumerator () {
-				return new InfiniteEnumerator ();
+			public IEnumerator<int> GetEnumerator () {
+				MyEnumerator e = new MyEnumerator ();
+				e.count = length;
+
+				return e;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator () {
+				return GetEnumerator ();
 			}
 		}
 
@@ -168,34 +193,192 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsTrue (source.List is BindingList<char>, "8");
 			Assert.AreEqual (0, source.List.Count, "9");
 
-			// a non-string IEnumerable type with 0 items
+			// a generic enumerable with no elements.
+			// even though we can figure out the type
+			// through reflection, we shouldn't..
+			source.DataSource = new GenericEnumerable (0);
+			Console.WriteLine (source.List.GetType());
+			Assert.IsTrue (source.List is BindingList<char>, "10");
+			Assert.AreEqual (0, source.List.Count, "11");
+
+			// a non-generic IEnumerable type with 0 items
 			// this doesn't seem to change the type of the
 			// binding source's list, probably because it
 			// can't determine the type of the
 			// enumerable's elements.
 			source.DataSource = new EmptyEnumerable ();
-			Assert.IsTrue (source.List is BindingList<char>, "10");
+			Assert.IsTrue (source.List is BindingList<char>, "12");
 
 			// an enumerable with some elements
 			source.DataSource = new WorkingEnumerable (5);
-			Assert.IsTrue (source.List is BindingList<int>, "11");
-			Assert.AreEqual (5, source.List.Count, "12");
+			Assert.IsTrue (source.List is BindingList<int>, "13");
+			Assert.AreEqual (5, source.List.Count, "14");
 		}
 
-
-#if false
 		[Test]
-		[Ignore ("BindingSource seems to try to get all elements of the enumerator, probably copying them to a propertly typed BindingList")]
-		public void InfiniteEnumeratorTest ()
+		public void ResetItem ()
+		{
+			BindingSource source = new BindingSource ();
+			bool delegate_reached = false;
+			int old_index = 5;
+			int new_index = 5;
+			ListChangedType type = ListChangedType.Reset;
+
+			source.ListChanged += delegate (object sender, ListChangedEventArgs e) {
+				delegate_reached = true;
+				type = e.ListChangedType;
+				old_index = e.OldIndex;
+				new_index = e.NewIndex;
+			};
+
+			source.ResetItem (0);
+
+			Assert.IsTrue (delegate_reached, "1");
+			Assert.AreEqual (-1, old_index, "2");
+			Assert.AreEqual (0, new_index, "3");
+			Assert.AreEqual (ListChangedType.ItemChanged, type, "3");
+		}
+
+		[Test]
+		public void Movement ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new WorkingEnumerable (5);
+
+			int raised = 0;
+			source.PositionChanged += delegate (object sender, EventArgs e) { raised ++; };
+
+			Console.WriteLine ("count = {0}", source.Count);
+			source.Position = 3;
+			Assert.AreEqual (3, source.Position, "1");
+
+			source.MoveFirst ();
+			Assert.AreEqual (0, source.Position, "2");
+
+			source.MoveNext ();
+			Assert.AreEqual (1, source.Position, "3");
+
+			source.MovePrevious ();
+			Assert.AreEqual (0, source.Position, "4");
+
+			source.MoveLast ();
+			Assert.AreEqual (4, source.Position, "5");
+
+			Assert.AreEqual (5, raised, "6");
+		}
+
+		[Test]
+		public void Position ()
 		{
 			BindingSource source = new BindingSource ();
 
-			// an infinite IEnumerable type
-			source.DataSource = new InfiniteEnumerable ();
-			Console.WriteLine (source.List.GetType());
-			Assert.IsTrue (source.List is BindingList<int>, "10");
+			Assert.AreEqual (-1, source.Position, "0");
+
+			source.DataSource = new WorkingEnumerable (5);
+
+			int raised = 0;
+			source.PositionChanged += delegate (object sender, EventArgs e) { raised ++; };
+
+
+			Assert.AreEqual (0, source.Position, "1");
+
+			source.Position = -1;
+			Assert.AreEqual (0, source.Position, "2");
+			Assert.AreEqual (0, raised, "3");
+
+			source.Position = 10;
+			Assert.AreEqual (4, source.Position, "4");
+			Assert.AreEqual (1, raised, "5");
+
+			source.Position = 10;
+			Assert.AreEqual (4, source.Position, "6");
+			Assert.AreEqual (1, raised, "7");
 		}
-#endif
+
+		[Test]
+		public void ResetCurrentItem ()
+		{
+			BindingSource source = new BindingSource ();
+			bool delegate_reached = false;
+			int old_index = 5;
+			int new_index = 5;
+			ListChangedType type = ListChangedType.Reset;
+
+			source.DataSource = new WorkingEnumerable (5);
+			source.Position = 2;
+
+			source.ListChanged += delegate (object sender, ListChangedEventArgs e) {
+				delegate_reached = true;
+				type = e.ListChangedType;
+				old_index = e.OldIndex;
+				new_index = e.NewIndex;
+			};
+
+			source.ResetCurrentItem ();
+
+			Assert.IsTrue (delegate_reached, "1");
+			Assert.AreEqual (-1, old_index, "2");
+			Assert.AreEqual (2, new_index, "3");
+			Assert.AreEqual (ListChangedType.ItemChanged, type, "3");
+		}
+
+		[Test]
+		public void ResetBindings ()
+		{
+			BindingSource source;
+			int event_count = 0;
+
+			ListChangedType[] types = new ListChangedType[2];
+			int[] old_index = new int[2];
+			int[] new_index = new int[2];
+
+			source = new BindingSource ();
+			source.ListChanged += delegate (object sender, ListChangedEventArgs e) {
+				types[event_count] = e.ListChangedType;
+				old_index[event_count] = e.OldIndex;
+				new_index[event_count] = e.NewIndex;
+				event_count ++;
+			};
+
+			event_count = 0;
+			source.ResetBindings (false);
+
+			Assert.AreEqual (1, event_count, "1");
+			Assert.AreEqual (ListChangedType.Reset, types[0], "2");
+			Assert.AreEqual (-1, old_index[0], "3");
+			Assert.AreEqual (-1, new_index[0], "4");
+
+			event_count = 0;
+			source.ResetBindings (true);
+			Assert.AreEqual (2, event_count, "5");
+			Assert.AreEqual (ListChangedType.PropertyDescriptorChanged, types[0], "6");
+			Assert.AreEqual (0, old_index[0], "7");
+			Assert.AreEqual (0, new_index[0], "8");
+
+			Assert.AreEqual (ListChangedType.Reset, types[1], "9");
+			Assert.AreEqual (-1, old_index[1], "10");
+			Assert.AreEqual (-1, new_index[1], "11");
+		}
+
+		[Test]
+		public void AllowRemove ()
+		{
+			BindingSource source = new BindingSource ();
+
+			Assert.IsTrue (source.AllowRemove, "1");
+
+			source.DataSource = "";
+			Assert.IsTrue (source.AllowRemove, "2");
+
+			source.DataSource = new ArrayList ();
+			Assert.IsTrue (source.AllowRemove, "3");
+
+			source.DataSource = new int[10];
+			Assert.IsFalse (source.AllowRemove, "4");
+
+			source.DataSource = new WorkingEnumerable (5);
+			Assert.IsTrue (source.AllowRemove, "5");
+		}
 
 		[Test]
 		public void DataMember_ListRelationship ()
@@ -462,9 +645,6 @@ namespace MonoTests.System.Windows.Forms {
 				throw new Exception ();
 			}
 
-			public void Clear () {
-				throw new Exception ();
-			} 
 			public bool Contains (object value) {
 				throw new Exception ();
 			}
@@ -478,19 +658,12 @@ namespace MonoTests.System.Windows.Forms {
 			public void Remove (object value) {
 				throw new Exception ();
 			}
-			public void RemoveAt (int index) {
-				throw new Exception ();
-			}
 
 			public bool IsFixedSize {
 				get { return false; }
 			}
 			public bool IsReadOnly {
 				get { return true; }
-			}
-			public object this [int index] {
-				get { throw new Exception (); }
-				set { }
 			}
 		}
 
@@ -607,11 +780,6 @@ namespace MonoTests.System.Windows.Forms {
 			{
 			}
 
-			public object AddNew ()
-			{
-				throw new NotImplementedException ();
-			}
-
 			public void ApplySort (PropertyDescriptor property, ListSortDirection direction)
 			{
 			}
@@ -627,18 +795,6 @@ namespace MonoTests.System.Windows.Forms {
 
 			public void RemoveSort ()
 			{
-			}
-
-			public bool AllowEdit {
-				get { throw new NotImplementedException (); }
-			}
-
-			public bool AllowNew {
-				get { throw new NotImplementedException (); }
-			}
-
-			public bool AllowRemove {
-				get { throw new NotImplementedException (); }
 			}
 
 			public bool IsSorted {
@@ -664,8 +820,6 @@ namespace MonoTests.System.Windows.Forms {
 			public bool SupportsSorting {
 				get { return supports_sorting; }
 			}
-
-			public event ListChangedEventHandler ListChanged;
 
 			public bool supports_change_notification;
 			public bool supports_searching;
