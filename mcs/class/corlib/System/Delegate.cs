@@ -98,7 +98,12 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
 
-		public static Delegate CreateDelegate (Type type, MethodInfo method)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -110,7 +115,10 @@ namespace System
 				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
 			if (!method.IsStatic)
-				throw new ArgumentException ("The method should be static.", "method");
+				if (throwOnBindFailure)
+					throw new ArgumentException ("The method should be static.", "method");
+				else
+					return null;
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
@@ -127,14 +135,20 @@ namespace System
 			}
 
 			if (!returnMatch)
-				throw new ArgumentException ("method return type is incompatible");
+				if (throwOnBindFailure)
+					throw new ArgumentException ("method return type is incompatible");
+				else
+					return null;
 #endif
 
 			ParameterInfo[] delargs = invoke.GetParameters ();
 			ParameterInfo[] args = method.GetParameters ();
 
 			if (args.Length != delargs.Length)
-				throw new ArgumentException ("method argument length mismatch");
+				if (throwOnBindFailure)
+					throw new ArgumentException ("method argument length mismatch");
+				else
+					return null;
 			
 			int length = delargs.Length;
 			for (int i = 0; i < length; i++) {
@@ -151,10 +165,17 @@ namespace System
 #endif
 
 				if (!match)
-					throw new ArgumentException ("method arguments are incompatible");
+					if (throwOnBindFailure)
+						throw new ArgumentException ("method arguments are incompatible");
+					else
+						return null;
 			}
 
 			return CreateDelegate_internal (type, null, method);
+		}
+
+		public static Delegate CreateDelegate (Type type, MethodInfo method) {
+			return CreateDelegate (type, method, true);
 		}
 
 #if NET_2_0
@@ -162,7 +183,7 @@ namespace System
 #else
 		internal
 #endif
-		static Delegate CreateDelegate (Type type, object target, MethodInfo method)
+		static Delegate CreateDelegate (Type type, object target, MethodInfo method, bool throwOnBindFailure)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -176,6 +197,12 @@ namespace System
 			return CreateDelegate_internal (type, target, method);
 
 		}
+
+#if NET_2_0
+		public static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
+			return CreateDelegate (type, target, method, true);
+		}
+#endif
 		
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
@@ -215,7 +242,12 @@ namespace System
 			return CreateDelegate_internal (type, null, info);
 		}
 
-		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase, bool throwOnBindFailure)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -247,9 +279,16 @@ namespace System
 			MethodInfo info = target.GetType ().GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
-				throw new ArgumentException ("Couldn't bind to method '" + method + "'.");
+				if (throwOnBindFailure)
+					throw new ArgumentException ("Couldn't bind to method '" + method + "'.");
+				else
+					return null;
 
 			return CreateDelegate_internal (type, target, info);
+		}
+
+		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase) {
+			return CreateDelegate (type, target, method, ignoreCase, true);
 		}
 
 		public object DynamicInvoke (object[] args)
