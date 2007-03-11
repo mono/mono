@@ -228,6 +228,16 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 		public bool IsTypeParameter;
 		GenericConstraints constraints;
+#else
+	    	public bool IsTypeParameter {
+			get {
+				return false;
+			}
+			set {
+				if (value)
+					throw new Exception ("You can not se TypeParameter in MCS");
+			}
+		}
 #endif
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
@@ -305,10 +315,9 @@ namespace Mono.CSharp {
 
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
 		{
-#if GMCS_SOURCE
 			if (IsTypeParameter)
 				return true;
-#endif
+
 			return member.ds.AsAccessible (parameter_type, member.ModFlags);
 		}
 
