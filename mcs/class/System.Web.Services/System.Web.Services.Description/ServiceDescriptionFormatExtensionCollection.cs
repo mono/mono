@@ -100,7 +100,7 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList searchResults = new ArrayList ();
 			foreach (object value in List)
-				if (value.GetType () == type)
+				if (type.IsInstanceOfType(value))
 					searchResults.Add (value);
 			object[] returnValue = new object [searchResults.Count];
 
