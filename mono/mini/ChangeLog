@@ -1,3 +1,10 @@
+2007-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix box+brtrue optimization. Fixes
+	#81102.
+
+	* generics.2.cs: Add regression test.
+
 2007-03-09  Wade berrier  <wberrier@novell.com>
 
 	* mini-ppc.h: Undo typo of MONO_CONTEXT_SET_SP (ppc doesn't define this symbol)
