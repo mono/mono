@@ -1,3 +1,8 @@
+2007-03-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TypeStubManager.cs: fixed BindingInfo.ctor, it does not takes Name
+	property from WebServiceBindingAttribute in .net 2.0
+
 2007-03-04  Konstantin Triger <kostat@mainsoft.com>
 
 	* WebServiceHandlerFactory.cs: throw on protocol version mismatch.

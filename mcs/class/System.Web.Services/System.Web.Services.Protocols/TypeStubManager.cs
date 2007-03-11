@@ -236,7 +236,9 @@ namespace System.Web.Services.Protocols {
 		public BindingInfo (WebServiceBindingAttribute at, string name, string ns)
 		{
 			if (at != null) {
+#if ONLY_1_1
 				Name = at.Name;
+#endif
 				Namespace = at.Namespace;
 				Location = at.Location;
 				WebServiceBindingAttribute = at;
