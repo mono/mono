@@ -125,14 +125,22 @@ namespace System.Web.Services.Description
 		public override void Check (ConformanceCheckContext ctx, Message value)
 		{
 		}
-		
+
+		public override void Check (ConformanceCheckContext ctx, BindingCollection value) {
+			foreach (Binding b in value)
+				foreach (ServiceDescriptionFormatExtension ext in b.Extensions)
+					if (ext.GetType () == typeof (SoapBinding))
+						return;
+
+			ctx.ReportRuleViolation (value, BasicProfileRules.R2401);
+		}
+
 		public override void Check (ConformanceCheckContext ctx, Binding value)
 		{
 			SoapBinding sb = (SoapBinding) value.Extensions.Find (typeof(SoapBinding));
-			if (sb == null) {
-				ctx.ReportRuleViolation (value, BasicProfileRules.R2401);
+			if (sb == null)
 				return;
-			}
+
 			if (sb.Transport == null || sb.Transport == "") {
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2701);
 				return;

@@ -285,8 +285,15 @@ namespace System.Web.Services.Description {
 			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.ConformsTo != WsiProfiles.None && String.IsNullOrEmpty (binfo.WebServiceBindingAttribute.Name)) {
 				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
 				desc.Types.Schemas.Add (Schemas);
-				if (!WebServicesInteroperability.CheckConformance (binfo.WebServiceBindingAttribute.ConformsTo, desc, violations))
-					throw new InvalidOperationException (violations [0].ToString ());
+				ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
+				col.Add (desc);
+				ConformanceCheckContext ctx = new ConformanceCheckContext (col, violations);
+				ConformanceChecker[] checkers = WebServicesInteroperability.GetCheckers (binfo.WebServiceBindingAttribute.ConformsTo);
+				foreach (ConformanceChecker checker in checkers) {
+					WebServicesInteroperability.Check (ctx, checker, binding);
+					if (violations.Count > 0)
+						throw new InvalidOperationException (violations [0].ToString ());
+				}
 			}
 #endif	
 		}

@@ -1,5 +1,10 @@
 2007-03-11  Konstantin Triger <kostat@mainsoft.com>
 
+	* ConformanceChecker.cs, WebServicesInteroperability.cs, ProtocolReflector.cs,
+		BasicProfileChecker.cs: fix validation of the R2401 rule.
+
+2007-03-11  Konstantin Triger <kostat@mainsoft.com>
+
 	* ServiceDescriptionFormatExtensionCollection.cs: make FindAll(Type)
 		consistent with Find(Type).
 

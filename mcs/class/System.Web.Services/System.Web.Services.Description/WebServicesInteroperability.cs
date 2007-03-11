@@ -76,11 +76,32 @@ namespace System.Web.Services.Description
 			return ctx.Violations.Count == 0;
 		}
 		
-		static ConformanceChecker[] GetCheckers (WsiProfiles claims)
+		internal static ConformanceChecker[] GetCheckers (WsiProfiles claims)
 		{
 			if ((claims & WsiProfiles.BasicProfile1_1) != 0)
 				return new ConformanceChecker[] { BasicProfileChecker.Instance };
 			return null;
+		}
+
+		internal static void Check (ConformanceCheckContext ctx, ConformanceChecker checker, Binding b)
+		{
+			checker.Check (ctx, b);
+			CheckExtensions (ctx, checker, b.Extensions);
+
+			foreach (OperationBinding oper in b.Operations) {
+				CheckExtensions (ctx, checker, oper.Extensions);
+
+				foreach (MessageBinding mb in oper.Faults) {
+					checker.Check (ctx, mb);
+					CheckExtensions (ctx, checker, mb.Extensions);
+				}
+
+				checker.Check (ctx, oper.Input);
+				CheckExtensions (ctx, checker, oper.Input.Extensions);
+
+				checker.Check (ctx, oper.Output);
+				CheckExtensions (ctx, checker, oper.Output.Extensions);
+			}
 		}
 		
 		static void Check (ConformanceCheckContext ctx, ConformanceChecker checker, ServiceDescription sd)
@@ -102,27 +123,10 @@ namespace System.Web.Services.Description
 					CheckExtensions (ctx, checker, p.Extensions);
 				}
 			}
-			
+
+			checker.Check (ctx, sd.Bindings);
 			foreach (Binding b in sd.Bindings)
-			{
-				checker.Check (ctx, b);
-				CheckExtensions (ctx, checker, b.Extensions);
-				
-				foreach (OperationBinding oper in b.Operations) {
-					CheckExtensions (ctx, checker, oper.Extensions);
-					
-					foreach (MessageBinding mb in oper.Faults) {
-						checker.Check (ctx, mb);
-						CheckExtensions (ctx, checker, mb.Extensions);
-					}
-					
-					checker.Check (ctx, oper.Input);
-					CheckExtensions (ctx, checker, oper.Input.Extensions);
-					
-					checker.Check (ctx, oper.Output);
-					CheckExtensions (ctx, checker, oper.Output.Extensions);
-				}
-			}
+				Check (ctx, checker, b);
 			
 			foreach (PortType pt in sd.PortTypes)
 			{

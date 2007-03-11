@@ -40,6 +40,7 @@ namespace System.Web.Services.Description
 		public abstract WsiProfiles Claims { get; }
 
 		public virtual void Check (ConformanceCheckContext ctx, Binding value) { }
+		public virtual void Check (ConformanceCheckContext ctx, BindingCollection value) { }
 		public virtual void Check (ConformanceCheckContext ctx, MessageBinding value) { }
 		public virtual void Check (ConformanceCheckContext ctx, Import value) { }
 		public virtual void Check (ConformanceCheckContext ctx, Message value) { }
