@@ -61,12 +61,19 @@ namespace Mainsoft.Web.Security {
 		string passwordStrengthRegularExpression;
 		TimeSpan userIsOnlineTimeWindow;
 		ConnectionStringSettings connectionString;
+		bool schemaChecked = false;
+		DerbyUnloadManager.DerbyShutDownPolicy shutDownPolicy = DerbyUnloadManager.DerbyShutDownPolicy.Default;
 
 		string applicationName;
 
 		DbConnection CreateConnection ()
 		{
-			DerbyDBSchema.CheckSchema (connectionString.ConnectionString);
+			if (!schemaChecked) {
+				DerbyDBSchema.CheckSchema (connectionString.ConnectionString);
+				schemaChecked = true;
+
+				DerbyUnloadManager.RegisterUnloadHandler (connectionString.ConnectionString, shutDownPolicy);
+			}
 
 			OleDbConnection connection = new OleDbConnection (connectionString.ConnectionString);
 			connection.Open ();
@@ -604,7 +611,12 @@ namespace Mainsoft.Web.Security {
 			if (connectionString == null)
 				throw new ProviderException (String.Format ("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", connectionStringName));
 
-			DerbyDBSchema.RegisterUnloadHandler (connectionString.ConnectionString);
+			if (connectionString == null)
+				throw new ProviderException (String.Format ("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", connectionStringName));
+
+			string shutdown = config ["shutdown"];
+			if (!String.IsNullOrEmpty (shutdown))
+				shutDownPolicy = (DerbyUnloadManager.DerbyShutDownPolicy) Enum.Parse (typeof (DerbyUnloadManager.DerbyShutDownPolicy), shutdown, true);
 		}
 
 		public override string ResetPassword (string username, string answer)

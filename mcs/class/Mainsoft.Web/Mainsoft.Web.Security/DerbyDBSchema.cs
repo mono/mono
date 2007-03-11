@@ -33,13 +33,14 @@ using System.Data;
 using System.Data.OleDb;
 using System.Collections.Generic;
 using System.Text;
+using System.Configuration.Provider;
 
 namespace Mainsoft.Web.Security
 {
 	internal class DerbyDBSchema
 	{
 		const string _currentSchemaVersion = "1.0";
-		static object _lock = "DerbyDBSchema";
+		static readonly object _lock = new object ();
 
 		#region schema string array
 		static string [] schemaElements = new string [] {
@@ -171,56 +172,48 @@ namespace Mainsoft.Web.Security
 		};
 		#endregion
 
-		public static void CheckSchema (string connectionString)
-		{
+		public static void CheckSchema (string connectionString) {
 			string schemaVersion = GetSchemaVersion (connectionString);
-			if (schemaVersion != null)
+			if (schemaVersion != null) {
 				if (string.CompareOrdinal (schemaVersion, _currentSchemaVersion) == 0)
 					return;
-				else
-					throw new Exception ("Incorrect aspnetdb schema version.");
-
-			lock (_lock) {
-				if (GetSchemaVersion (connectionString) != _currentSchemaVersion) {
-					InitializeSchema (connectionString);
+			}
+			else {
+				lock (_lock) {
+					schemaVersion = GetSchemaVersion (connectionString);
+					if (schemaVersion == null) {
+						InitializeSchema (connectionString);
+						return;
+					}
 				}
 			}
+
+			throw new ProviderException (String.Format ("Incorrect aspnetdb schema version: found '{0}', expected '{1}'.", schemaVersion, _currentSchemaVersion));
 		}
 
 		static string GetSchemaVersion (string connectionString)
 		{
-			OleDbConnection connection = new OleDbConnection ();
-			connection.ConnectionString = connectionString;
+			OleDbConnection connection = new OleDbConnection (connectionString);
 
-			try {
-				connection.Open ();
-			}
-			catch (Exception) {
-				return null;
-			}
+			connection.Open ();
 
 			using (connection) {
 				OleDbCommand cmd = new OleDbCommand ("SELECT SchemaVersion FROM aspnet_Version", connection);
+
 				try {
 					using (OleDbDataReader reader = cmd.ExecuteReader ()) {
 						if (reader.Read ())
 							return reader.GetString (0);
 					}
 				}
-				catch (Exception) { }
+				catch { }
+
 				return null;
 			}
 		}
 
 		static void InitializeSchema (string connectionString)
 		{
-			if (connectionString.ToLower ().IndexOf ("create=true") < 0) {
-				if (!connectionString.Trim ().EndsWith (";"))
-					connectionString += ";";
-
-				connectionString += "create=true";
-			}
-
 			OleDbConnection connection = new OleDbConnection ();
 			connection.ConnectionString = connectionString;
 
@@ -233,67 +226,87 @@ namespace Mainsoft.Web.Security
 				}
 			}
 		}
-
-		public static void RegisterUnloadHandler (string connectionString)
-		{
-			DerbyUnloadManager derbyMan = new DerbyUnloadManager (connectionString);
-			derbyMan.RegisterUnloadHandler ();
-		}
 	}
 
 	internal class DerbyUnloadManager
 	{
-		private string _releaseString = null;
-
-		public DerbyUnloadManager (string connectionString)
+		public enum DerbyShutDownPolicy
 		{
-			_releaseString = connectionString;
+			Default,
+			Never,
+			Database,
+			System
+		}
 
-			string [] parts = _releaseString.Split (';');
-			bool found = false;
+		readonly string _connectionString;
+		readonly DerbyShutDownPolicy _policy;
 
-			for (int i=0; i<parts.Length; i++)
-			{
-				if (parts[i].ToLower().Trim().StartsWith("create"))
-				{
-					parts[i] = parts[i].ToLower().Trim().Replace("create", "shutdown");
-					found = true;
-					break;
-				}
-			}
-			if (found)
-				_releaseString = string.Join (";", parts);
-			else
-			{
-				if (!_releaseString.Trim ().EndsWith (";"))
-					_releaseString += ";";
+		DerbyUnloadManager (string connectionString, DerbyShutDownPolicy policy) {
+			_connectionString = connectionString;
+			_policy = policy;
+		}
 
-				_releaseString += "shutdown=true";
-			}
+		public static void RegisterUnloadHandler (string connectionString, DerbyShutDownPolicy policy) {
+			if (policy == DerbyShutDownPolicy.Never)
+				return;
+
+			if (connectionString.IndexOf("org.apache.derby.jdbc.EmbeddedDriver", StringComparison.Ordinal) < 0)
+				return;
+
+			DerbyUnloadManager derbyMan = new DerbyUnloadManager (connectionString, policy);
+			AppDomain.CurrentDomain.DomainUnload += new EventHandler (derbyMan.UnloadHandler);
 		}
 
 		public void UnloadHandler (object sender, EventArgs e)
 		{
-			OleDbConnection connection = new OleDbConnection (_releaseString);
+			string shutUrl;
 
-			try {
-				connection.Open ();
+			switch (_policy) {
+			case DerbyShutDownPolicy.Never:
+				return;
+			case DerbyShutDownPolicy.Database:
+				shutUrl = GetConnectionProperty (_connectionString, "JdbcURL");
+				break;
+			case DerbyShutDownPolicy.System:
+				shutUrl = "JdbcURL=jdbc:derby:";
+				break;
+			default:
+			case DerbyShutDownPolicy.Default:
+				java.lang.ClassLoader contextLoader = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData (J2EEConsts.CLASS_LOADER);
+				java.lang.Class klass = contextLoader.loadClass ("org.apache.derby.jdbc.EmbeddedDriver");
+				if (klass == null)
+					return;
+
+				shutUrl = (klass.getClassLoader () == contextLoader) ?
+					"JdbcURL=jdbc:derby:" : GetConnectionProperty (_connectionString, "JdbcURL");
+
+				break;
 			}
-			catch (Exception ex) {
+
+			const string shuttingConnection = "JdbcDriverClassName=org.apache.derby.jdbc.EmbeddedDriver;{0};shutdown=true";
+
+			if (!String.IsNullOrEmpty (shutUrl)) {
+				try {
+					new OleDbConnection (String.Format (shuttingConnection, shutUrl)).Open ();
+				}
+				catch (Exception ex) {
 #if TRACE
-				Console.Write (ex.ToString ());
+					Console.Write (ex.ToString ());
 #endif
+				}
 			}
 		}
 
-		public void RegisterUnloadHandler ()
-		{
-			AppDomain.CurrentDomain.DomainUnload += new EventHandler (UnloadHandler);
-		}
+		static string GetConnectionProperty (string connectionString, string name) {
+			if (String.IsNullOrEmpty (connectionString))
+				return null;
 
-		public void UnregisterUnloadHandler ()
-		{
-			AppDomain.CurrentDomain.DomainUnload -= new EventHandler (UnloadHandler);
+			string [] parts = connectionString.Split (';');
+			foreach (string part in parts)
+				if (part.StartsWith (name, StringComparison.OrdinalIgnoreCase))
+					return part;
+
+			return null;
 		}
 	}
 }

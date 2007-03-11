@@ -36,20 +36,21 @@ using System.Configuration;
 using System.Globalization;
 using System.Web.Profile;
 using System.Web.Configuration;
-using System.Configuration.Provider;
 using System.Collections.Specialized;
 using System.Text;
 using System.IO;
 
 using Mainsoft.Web.Security;
+using System.Configuration.Provider;
 
 namespace Mainsoft.Web.Profile
 {
 	public class DerbyProfileProvider : ProfileProvider
 	{
 		ConnectionStringSettings _connectionString;
-		string _connectionStringName = string.Empty;
 		string _applicationName = string.Empty;
+		bool _schemaChecked = false;
+		DerbyUnloadManager.DerbyShutDownPolicy _shutDownPolicy = DerbyUnloadManager.DerbyShutDownPolicy.Default;
 
 		public DerbyProfileProvider ()
 		{
@@ -63,10 +64,12 @@ namespace Mainsoft.Web.Profile
 
 		DbConnection CreateConnection ()
 		{
-			if (_connectionString == null)
-				throw new ProviderException (String.Format ("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", _connectionStringName));
-			
-			DerbyDBSchema.CheckSchema (_connectionString.ConnectionString);
+			if (!_schemaChecked) {
+				DerbyDBSchema.CheckSchema (_connectionString.ConnectionString);
+				_schemaChecked = true;
+
+				DerbyUnloadManager.RegisterUnloadHandler (_connectionString.ConnectionString, _shutDownPolicy);
+			}
 
 			OleDbConnection connection = new OleDbConnection (_connectionString.ConnectionString);
 			connection.Open ();
@@ -83,9 +86,9 @@ namespace Mainsoft.Web.Profile
 		public override int DeleteProfiles (ProfileInfoCollection profiles)
 		{
 			if (profiles == null)
-				throw new ArgumentNullException ("prfoles");
+				throw new ArgumentNullException ("profiles");
 			if (profiles.Count == 0)
-				throw new ArgumentException ("prfoles");
+				throw new ArgumentException ("profiles");
 
 			string [] usernames = new string [profiles.Count];
 
@@ -312,17 +315,14 @@ namespace Mainsoft.Web.Profile
 			_applicationName = GetStringConfigValue (config, "applicationName", "/");
 
 			ProfileSection profileSection = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
-			_connectionStringName = config ["connectionStringName"];
-			
-			if (_applicationName.Length > 256)
-				throw new ProviderException ("The ApplicationName attribute must be 256 characters long or less.");
-			if (_connectionStringName == null || _connectionStringName.Length == 0)
-				throw new ProviderException ("The ConnectionStringName attribute must be present and non-zero length.");
+			string connectionStringName = config ["connectionStringName"];
+			_connectionString = WebConfigurationManager.ConnectionStrings [connectionStringName];
+			if (_connectionString == null)
+				throw new ProviderException (String.Format ("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", connectionStringName));
 
-			_connectionString = WebConfigurationManager.ConnectionStrings [_connectionStringName];
-
-			if (_connectionString != null)
-				DerbyDBSchema.RegisterUnloadHandler (_connectionString.ConnectionString);
+			string shutdown = config ["shutdown"];
+			if (!String.IsNullOrEmpty (shutdown))
+				_shutDownPolicy = (DerbyUnloadManager.DerbyShutDownPolicy) Enum.Parse (typeof (DerbyUnloadManager.DerbyShutDownPolicy), shutdown, true);
 		}
 
 		private ProfileInfoCollection BuildProfileInfoCollection (DbDataReader reader, int pageIndex, int pageSize, out int totalRecords)
