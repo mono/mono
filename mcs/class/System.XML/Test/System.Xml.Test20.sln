@@ -24,6 +24,7 @@ Global
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
 		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java20|Any CPU.ActiveCfg = Release_Java20|Any CPU
