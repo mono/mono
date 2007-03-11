@@ -113,12 +113,13 @@ namespace System.Web.Services.Protocols
 			supported = WSConfig.IsSupported (protocol);
 			if (!supported) {
 				switch (protocol) {
-					case WSProtocol.HttpSoap12:
-					case WSProtocol.HttpSoap:
-						bool anySupported = WSConfig.IsSupported (WSProtocol.AnyHttpSoap);
-						if (anySupported)
+#if NET_2_0
+					default:
+						if (((protocol & WSProtocol.AnyHttpSoap) != WSProtocol.Unknown) &&
+							(WSConfig.Current.EnabledProtocols & WSProtocol.AnyHttpSoap) != WSProtocol.Unknown)
 							throw new InvalidOperationException ("Possible SOAP version mismatch.");
 						break;
+#endif
 					case WSProtocol.HttpPost:
 						if (WSConfig.IsSupported (WSProtocol.HttpPostLocalhost)) {
 							string localAddr = context.Request.ServerVariables ["LOCAL_ADDR"];
