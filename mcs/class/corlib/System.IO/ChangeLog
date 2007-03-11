@@ -1,3 +1,7 @@
+2007-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* UnmanagedMemoryStream.cs: Fix a warning.
+
 2007-03-05  Miguel de Icaza  <miguel@novell.com>
 
 	* Path.cs: Manually call FileStream and pass the new internal

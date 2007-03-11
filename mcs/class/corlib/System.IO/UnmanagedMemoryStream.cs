@@ -240,7 +240,6 @@ namespace System.IO
 				break;
 			default:
 				throw new ArgumentException("Invalid SeekOrigin option");
-				break;
 			}
 			refpoint =+ (int)offset;
 			if (refpoint < initial_position)
