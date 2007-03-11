@@ -1,3 +1,8 @@
+2007-03-11  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, parameter.cs, typemanager.cs: Another gmcs fix to work with
+	any mscorlib.
+
 2007-03-10  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, parameter.cs: Unified parameters verification.

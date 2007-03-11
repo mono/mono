@@ -1924,6 +1924,10 @@ namespace Mono.CSharp {
 			if (mb is MethodBuilder || mb is ConstructorBuilder)
 				throw new InternalErrorException ("Argument for Method not registered" + mb);
 
+#if MS_COMPATIBLE
+			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition)
+				return GetParameterData (((MethodInfo)mb).GetGenericMethodDefinition ());
+#endif
 			pd = new ReflectionParameters (mb);
 			method_params.Add (mb, pd);
 		}

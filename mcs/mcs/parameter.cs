@@ -400,6 +400,10 @@ namespace Mono.CSharp {
 			get {
 				return parameter_type;
 			}
+			set {
+				parameter_type = value;
+				IsTypeParameter = false;
+			}
 		}
 
 #if GMCS_SOURCE
@@ -577,6 +581,7 @@ namespace Mono.CSharp {
 		{
 			Parameter p = new Parameter (TypeName, Name, ModFlags, attributes, Location);
 			p.parameter_type = parameter_type;
+			p.IsTypeParameter = IsTypeParameter;
 
 			return p;
 		}
@@ -793,6 +798,20 @@ namespace Mono.CSharp {
 			}
 		}
 
+		[System.Diagnostics.Conditional ("MS_COMPATIBLE")]
+		public void InflateTypes (Type[] genTypes)
+		{
+			int pos = 0;
+			for (int i = 0; i < count; ++i) {
+				if (!FixedParameters[i].IsTypeParameter)
+					continue;
+
+				types[i] = genTypes[pos];
+				FixedParameters[i].ParameterType = genTypes[pos];
+				++pos;
+			}
+		}
+
 		public void VerifyClsCompliance ()
 		{
 			foreach (Parameter p in FixedParameters)
@@ -880,7 +899,10 @@ namespace Mono.CSharp {
 			int i = 0;
 			foreach (Parameter p in FixedParameters)
 				parameters_copy [i++] = p.Clone ();
-			return new Parameters (parameters_copy, HasArglist);
+			Parameters ps = new Parameters (parameters_copy, HasArglist);
+			if (types != null)
+				ps.types = (Type[])types.Clone ();
+			return ps;
 		}
 		
 		#endregion

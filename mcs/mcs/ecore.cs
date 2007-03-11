@@ -239,7 +239,7 @@ namespace Mono.CSharp {
 			if (te == null)
 				return null;
 
-			if (!silent) {
+			if (!silent) { // && !(te is TypeParameterExpr)) {
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
 				if (obsolete_attr != null && !ec.IsInObsoleteScope) {
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
@@ -2933,10 +2933,8 @@ namespace Mono.CSharp {
 
 		public MethodGroupExpr (ArrayList list, Location l)
 		{
-			Methods = new MethodBase [list.Count];
-
 			try {
-				list.CopyTo (Methods, 0);
+				Methods = (MethodBase[])list.ToArray (typeof (MethodBase));
 			} catch {
 				foreach (MemberInfo m in list){
 					if (!(m is MethodBase)){
@@ -3776,10 +3774,10 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList ();
 			foreach (MethodBase mb in Methods) {
 				MethodInfo mi = mb as MethodInfo;
-				if ((mi == null) || !mi.IsGenericMethod)
+				if ((mi == null) || !mb.IsGenericMethod)
 					continue;
 
-				Type[] gen_params = mi.GetGenericArguments ();
+				Type[] gen_params = mb.GetGenericArguments ();
 
 				if (first == null) {
 					first = mi;
@@ -3789,7 +3787,16 @@ namespace Mono.CSharp {
 				if (gen_params.Length != atypes.Length)
 					continue;
 
-				list.Add (mi.MakeGenericMethod (atypes));
+				mi = mi.MakeGenericMethod (atypes);
+				list.Add (mi);
+
+#if MS_COMPATIBLE
+				// MS implementation throws NotSupportedException for GetParameters
+				// on unbaked generic method
+				Parameters p = ((Parameters)TypeManager.GetParameterData (mi)).Clone ();
+				p.InflateTypes (atypes);
+				TypeManager.RegisterMethod (mi, p);
+#endif
 			}
 
 			if (list.Count > 0) {
