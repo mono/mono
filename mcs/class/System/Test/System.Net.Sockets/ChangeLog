@@ -1,3 +1,7 @@
+2007-03-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TcpClientTest.cs: Added test for bug #81105.
+
 2007-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SocketTest.jvm.cs: removed not supported calls for TARGET_JVM because

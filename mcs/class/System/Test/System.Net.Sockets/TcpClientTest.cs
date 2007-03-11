@@ -70,7 +70,81 @@ namespace MonoTests.System.Net.Sockets {
 			outClient.Close();
 			lSock.Close();
 			
-		}	
+		}
+
+		[Test] // bub #81105
+		public void CloseTest ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
+			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (CloseRequestHandler))) {
+				sr.Start ();
+
+				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
+				NetworkStream ns = tcpClient.GetStream ();
+				Assert.IsNotNull (ns, "#A1");
+#if NET_2_0
+				Assert.AreEqual (0, tcpClient.Available, "#A2");
+				Assert.IsTrue (tcpClient.Connected, "#A3");
+				// Assert.IsFalse (tcpClient.ExclusiveAddressUse, "#A4");
+#endif
+				tcpClient.Close ();
+#if NET_2_0
+				Assert.IsNotNull (tcpClient.Client, "#A5");
+				try {
+					int available = tcpClient.Available;
+					Assert.Fail ("#A6: " + available);
+				} catch (ObjectDisposedException) {
+				}
+				Assert.IsFalse (tcpClient.Connected, "#A7");
+				// not supported on linux
+				/*
+				try {
+					bool exclusive = tcpClient.ExclusiveAddressUse;
+					Assert.Fail ("#A8: " + exclusive);
+				} catch (ObjectDisposedException) {
+				}
+				*/
+#endif
+			}
+
+			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (CloseRequestHandler))) {
+				sr.Start ();
+
+				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
+#if NET_2_0
+				Assert.AreEqual (0, tcpClient.Available, "#B1");
+				Assert.IsTrue (tcpClient.Connected, "#B2");
+				// Assert.IsFalse (tcpClient.ExclusiveAddressUse, "#B3");
+#endif
+				tcpClient.Close ();
+#if NET_2_0
+				Assert.IsNull (tcpClient.Client, "#B4");
+				try {
+					int available = tcpClient.Available;
+					Assert.Fail ("#B5: " + available);
+				} catch (NullReferenceException) {
+				}
+				try {
+					bool connected = tcpClient.Connected;
+					Assert.Fail ("#B6: " + connected);
+				} catch (NullReferenceException) {
+				}
+				// not supported on linux
+				/*
+				try {
+					bool exclusive = tcpClient.ExclusiveAddressUse;
+					Assert.Fail ("#B7: " + exclusive);
+				} catch (NullReferenceException) {
+				}
+				*/
+#endif
+			}
+		}
+
+		byte [] CloseRequestHandler (Socket socket)
+		{
+			return new byte [0];
+		}
 
 #if NET_2_0
 		[Test]

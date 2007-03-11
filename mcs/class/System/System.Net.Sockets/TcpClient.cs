@@ -276,7 +276,6 @@ namespace System.Net.Sockets
 		{
 			try {
 				client.Connect(remote_end_point);
-				stream = new NetworkStream(client, true);
 				active = true;
 			} finally {
 				CheckDisposed ();
@@ -416,7 +415,7 @@ namespace System.Net.Sockets
 				return;
 			disposed = true;
 
-			if (disposing){
+			if (disposing) {
 				// release managed resources
 				NetworkStream s = stream;
 				stream = null;
@@ -428,8 +427,8 @@ namespace System.Net.Sockets
 					s = null;
 				} else if (client != null){
 					client.Close ();
+					client = null;
 				}
-				client = null;
 			}
 		}
 		
@@ -452,7 +451,7 @@ namespace System.Net.Sockets
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType().FullName);
-		}		
+		}
 	}
 }
 
