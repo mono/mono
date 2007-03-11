@@ -199,10 +199,13 @@ namespace System
 		}
 
 #if NET_2_0
-		public static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
+		public
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
 			return CreateDelegate (type, target, method, true);
 		}
-#endif
 		
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{

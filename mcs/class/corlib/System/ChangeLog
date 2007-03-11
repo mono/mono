@@ -1,3 +1,7 @@
+2007-03-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Delegate.cs: Fixed bootstrap build.
+
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StringComparer.cs: Renamed StringComparer classes and promoted them
