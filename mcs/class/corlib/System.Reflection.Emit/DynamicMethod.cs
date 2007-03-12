@@ -59,6 +59,7 @@ namespace System.Reflection.Emit {
 		private ILGenerator ilgen;
 		private int nrefs;
 		private object[] refs;
+		private IntPtr referenced_by;
 		#endregion
 		private Delegate deleg;
 		private MonoMethod method;

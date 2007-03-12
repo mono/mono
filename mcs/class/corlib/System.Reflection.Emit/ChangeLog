@@ -1,3 +1,7 @@
+2007-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicMethod.cs: Add a field used by unmanaged code.
+
 2007-03-06  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MonoArrayMethod.cs: Use 'void' as return type in ToString when 
