@@ -30,6 +30,12 @@
 	configuration properties - use JNDI repository and cache it in
 	portlet/servlet session.
 
+03-12-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+
+	* PumaServicesProvider.cs: fixed TD BUG: 7489 (the application
+	should not throw an exeption even if no WPGroupsRoleNamespace is not
+	defined in web.xml)
+
 02-25-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 
 	* WPSGroupsRoleProvider.cs: added

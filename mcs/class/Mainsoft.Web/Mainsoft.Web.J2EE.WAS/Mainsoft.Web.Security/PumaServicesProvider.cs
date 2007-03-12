@@ -362,8 +362,18 @@ namespace Mainsoft.Web.Security
 
             private object ReadValueFromJNDI(string attribName)
             {
-                Context env = (Context)new InitialContext().lookup("java:comp/env");
-                return env.lookup(attribName);
+                try
+                {
+                    Context env = (Context)new InitialContext().lookup("java:comp/env");
+                    return env.lookup(attribName);
+                }
+                catch (javax.naming.NamingException ne)
+                {
+#if DEBUG
+                    Console.WriteLine(ne);
+#endif
+                    return null;
+                }
             }
 
             private HttpServletRequest CurrentServletRequest
