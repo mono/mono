@@ -55,7 +55,7 @@ namespace System.Windows.Forms {
 				return (current != null);
 			}
 
-			if (current.IsExpanded && current.Nodes.Count > 0) {
+			if (current.is_expanded && current.Nodes.Count > 0) {
 				current = current.Nodes [0];
 				return true;
 			}
@@ -88,7 +88,7 @@ namespace System.Windows.Forms {
 				TreeNode walk = prev;
 				while (walk != null) {
 					prev = walk;
-					if (!walk.IsExpanded)
+					if (!walk.is_expanded)
 						break;
 					walk = walk.LastNode;
 				}

@@ -604,13 +604,24 @@ namespace System.Windows.Forms {
 
 			EndUpdate ();
 
+			if (IsHandleCreated) {
+				bool found = false;
+				foreach (TreeNode child in Nodes) {
+					if (child.Nodes.Count > 0)
+						found = true;
+				}
+			
+				if (!found)
+					return;
+			}
+
 			// Walk all the way to the end, then walk back visible count
 			//to find the new top node
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 			while (walk.MoveNext ())
 			{ }
 
-			walk.CurrentNode.EnsureVisible ();
+			SetTop (walk.CurrentNode);
 		}
 
 		
@@ -662,7 +673,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override void CreateHandle () {
 			base.CreateHandle ();
-
+			RecalculateVisibleOrder (root_node);
 			UpdateScrollBars ();
 		}
 

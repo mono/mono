@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
         internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 
-		internal int visible_order;
+		internal int visible_order = -1;
 		internal int width = -1;
 		
 		internal bool is_expanded = false;
@@ -342,7 +342,23 @@ namespace System.Windows.Forms {
 		}
 
 		public bool IsExpanded {
-			get { return is_expanded; }
+			get {
+				TreeView tv = TreeView;
+
+				if (tv != null && tv.IsHandleCreated) {
+					// This is ridiculous
+					bool found = false;
+					foreach (TreeNode walk in TreeView.Nodes) {
+						if (walk.Nodes.Count > 0)
+							found = true;
+					}
+
+					if (!found)
+						return false;
+				}
+					
+				return is_expanded;
+			}
 		}
 
 		public bool IsSelected {
@@ -355,16 +371,16 @@ namespace System.Windows.Forms {
 
 		public bool IsVisible {
 			get {
-				if (TreeView == null || visible_order < 0)
+				if (TreeView == null || !TreeView.IsHandleCreated || !TreeView.Visible)
 					return false;
 
-				Rectangle bounds = Bounds;
-				if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
+				
+				if (visible_order < TreeView.skipped_nodes || visible_order - TreeView.skipped_nodes > TreeView.VisibleCount)
 					return false;
 
 				TreeNode parent = Parent;
 				while (parent != null) {
-					if (!parent.IsExpanded)
+					if (!parent.is_expanded)
 						return false;
 					parent = parent.Parent;
 				}

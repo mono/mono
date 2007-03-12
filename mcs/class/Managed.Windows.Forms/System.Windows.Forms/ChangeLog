@@ -1,5 +1,12 @@
 2007-03-12  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs:
+	* TreeNode.cs:
+	* OpenTreeNodeEnumerator: Match MS better for IsVisible and
+	IsExpanded.
+
+2007-03-12  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Now that the handles are being created a little
 	later, we need to make sure that the document is recalculated when
 	the handle is created.
