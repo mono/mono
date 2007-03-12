@@ -1,5 +1,10 @@
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Add a test showing we do not recreate the handle when
+	MinimizeBox or MaximizeBox is changed. [Part of bug #80640]
+
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ControlTest.cs: Add test for bug #80621.
 
 2007-03-11  Everaldo Canuto  <everaldo@simios.org>

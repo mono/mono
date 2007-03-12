@@ -1,3 +1,8 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Don't call RecreateHandle when we change the MinimizeBox
+	or the MaximizeBox properties.  [Part of bug #80640]
+
 2007-03-12  Everaldo Canuto  <everaldo@simios.org>
 
 	* LinkLabel.cs: When calculate pieces make LinkArea empty if theres

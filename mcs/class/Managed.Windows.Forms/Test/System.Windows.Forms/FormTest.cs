@@ -1114,6 +1114,41 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		int create = 0;
+		int destroy = 0;
+		
+		[Test]
+		[NUnit.Framework.Category ("Current")]
+		public void PropertyMinimizeMaximizeBoxHandle ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Show ();
+
+			f.HandleCreated += new EventHandler (f_HandleCreated);
+			f.HandleDestroyed += new EventHandler (f_HandleDestroyed);
+			
+			f.MinimizeBox = false;
+			f.MaximizeBox = false;
+			f.MinimizeBox = true;
+			f.MaximizeBox = true;
+			
+			Assert.AreEqual (0, create, "A1");
+			Assert.AreEqual (0, destroy, "A2");
+			
+			f.Dispose ();
+		}
+
+		void f_HandleDestroyed (object sender, EventArgs e)
+		{
+			destroy++;
+		}
+
+		void f_HandleCreated (object sender, EventArgs e)
+		{
+			create++;
+		}
+		
 		private bool RunningOnUnix {
 			get {
 				// check for Unix platforms - see FAQ for more details
