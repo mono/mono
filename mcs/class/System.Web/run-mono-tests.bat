@@ -102,8 +102,24 @@ popd
 
 msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+REM ********************************************************
+@echo Deploying GH solution to tomcat...
+REM ********************************************************
+IF NOT DEFINED VMW_BUILDER GOTO MSBUILD_DEPLOY
+set CATALINA_HOME=%VMW_HOME%\jakarta-tomcat
+call "%VMW_HOME%\jakarta-tomcat\bin\shutdown.bat"
+echo Waiting 5 sec for tomcat to stop....
+@ping 127.0.0.1 -n 5 -w 1000 > nul
+xcopy /Y Test\mainsoft\MainsoftWebApp20\bin\%PROJECT_CONFIGURATION%\MainsoftWebApp20.war "%VMW_HOME%\jakarta-tomcat\webapps"
+call "%VMW_HOME%\jakarta-tomcat\bin\startup.bat"
+echo Waiting 5 sec for tomcat to start....
+@ping 127.0.0.1 -n 5 -w 1000 > nul
+GOTO AFTER_DEPLOY
+:MSBUILD_DEPLOY
 echo msbuild %DEPLOY_PROJECT% /t:Deploy /p:Configuration=%PROJECT_CONFIGURATION% /p:Platform=AnyCPU >>%BUILD_LOG% 
 msbuild %DEPLOY_PROJECT% /t:Deploy /p:Configuration=%PROJECT_CONFIGURATION% /p:Platform=AnyCPU >>%BUILD_LOG% 2<&1
+:AFTER_DEPLOY
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
