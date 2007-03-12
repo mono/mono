@@ -492,7 +492,6 @@ namespace System.Web.UI.WebControls
 			if (type != null)
 				return type;
 
-#if !TARGET_JVM
 			IList tla;
 			if ((tla = BuildManager.TopLevelAssemblies) != null) {
 				foreach (Assembly asm in tla) {
@@ -503,7 +502,7 @@ namespace System.Web.UI.WebControls
 						return type;
 				}
 			}
-#endif
+
 			if (!Directory.Exists (PrivateBinPath))
 				return null;
 
