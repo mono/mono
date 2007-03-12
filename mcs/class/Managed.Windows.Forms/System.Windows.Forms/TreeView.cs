@@ -604,16 +604,18 @@ namespace System.Windows.Forms {
 
 			EndUpdate ();
 
-			if (IsHandleCreated) {
-				bool found = false;
-				foreach (TreeNode child in Nodes) {
-					if (child.Nodes.Count > 0)
-						found = true;
-				}
-			
-				if (!found)
-					return;
+			///
+			/// This is basically an emulation of a strange bug on MS
+			///
+
+			bool found = false;
+			foreach (TreeNode child in Nodes) {
+				if (child.Nodes.Count > 0)
+					found = true;
 			}
+			
+			if (!found)
+				return;
 
 			// Walk all the way to the end, then walk back visible count
 			//to find the new top node
@@ -1058,21 +1060,12 @@ namespace System.Windows.Forms {
 
 		internal void SetTop (TreeNode node)
 		{
-			if (!vbar.is_visible)
+			if (!vbar.is_visible) {
+				skipped_nodes = node.visible_order;
 				return;
+			}
 
-			TreeNode first = root_node.FirstNode;
-
-			if (first == null)
-				return;  // I don't think its possible for this to happen
-
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (first);
-			int offset = -1;
-			int vc = VisibleCount;
-			while (walk.CurrentNode != node && walk.MoveNext () && offset < vbar.Maximum - vc)
-				offset++;
-
-			SetVScrollTop (walk.CurrentNode);
+			vbar.Value = Math.Min (node.visible_order, vbar.Maximum - VisibleCount);
 		}
 
 		internal void SetBottom (TreeNode node)
@@ -1550,7 +1543,14 @@ namespace System.Windows.Forms {
 					hbar_bounds_set = false;
 				}
 
+				
 				vbar.Visible = true;
+				if (skipped_nodes > 0) {
+					int skip = Math.Min (skipped_nodes, vbar.Maximum - VisibleCount);
+					skipped_nodes = 0;
+					vbar.Value = skip;
+					skipped_nodes = skip;
+				}
 			} else {
 				skipped_nodes = 0;
 				RecalculateVisibleOrder (root_node);
@@ -1613,26 +1613,8 @@ namespace System.Windows.Forms {
 			if (skipped_nodes == pos)
 				return;
 
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
-
-			int old_skip = skipped_nodes;
+			int diff = pos - skipped_nodes;
 			skipped_nodes = pos;
-			int diff = old_skip - skipped_nodes;
-
-			// Determine the new top node if we have to
-			if (new_top == null) {
-
-				
-				if (diff < 0) {
-					for (int i = diff; i <= 0; i++)
-						walk.MoveNext ();
-					new_top = walk.CurrentNode;
-				} else {
-					for (int i = 0; i <= diff; i++)
-						walk.MovePrevious ();
-					new_top = walk.CurrentNode;
-				}
-			}
 
 			int y_move = diff * ActualItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
@@ -1640,13 +1622,7 @@ namespace System.Windows.Forms {
 
 		private void SetVScrollTop (TreeNode new_top)
 		{
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
-
-			int skip_nodes = -1;
-			while (walk.MoveNext () && walk.CurrentNode != new_top)
-				skip_nodes++;
-
-			vbar.Value = skip_nodes;
+			vbar.Value = new_top.visible_order - VisibleCount;
 		}
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
@@ -1744,7 +1720,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void GotFocusHandler (object sender, EventArgs e)
-		{
+		{			
 			if (selected_node == null)
 				SelectedNode = TopNode;
 			else

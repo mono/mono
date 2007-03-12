@@ -1,3 +1,11 @@
+2007-03-12  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Basically emulating some strangness here with
+	exanding nodes and setting node positions when windows aren't
+	created.
+	- Also attempting to walk the node tree less than previously, and
+	just use visible order calculations for determining offsets.
+
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Don't exit the program if RecreateHandle is called on
