@@ -1,3 +1,7 @@
+2007-03-12  Konstantin Triger <kostat@mainsoft.com>
+
+	* SessionStateModule.cs: TARGET_J2EE: support only J2EE sessions.
+
 2007-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionInProcHandler.cs: gracefully handle different value types

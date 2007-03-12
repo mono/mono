@@ -110,11 +110,15 @@ namespace System.Web.SessionState
 				if (settings == null)
 					throw new HttpException (String.Format ("Cannot find '{0}' provider.", config.CustomProvider));
 				break;
+			case SessionStateMode.Off:
+				return;
+#if TARGET_J2EE
+			default:
+				throw new NotSupportedException (String.Format ("The mode '{0}' is not supported. Only Custom mode is supported and maps to J2EE session.", config.Mode));
+#else
 			case SessionStateMode.InProc:
 				settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
 				break;
-			case SessionStateMode.Off:
-				return;
 			case SessionStateMode.SQLServer:
 			//settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
 			//break;
@@ -123,6 +127,7 @@ namespace System.Web.SessionState
 			case SessionStateMode.StateServer:
 				settings = new ProviderSettings (null, typeof (SessionStateServerHandler).AssemblyQualifiedName);
 				break;
+#endif
 			}
 
 			handler = (SessionStateStoreProviderBase) ProvidersHelper.InstantiateProvider (settings, typeof (SessionStateStoreProviderBase));
