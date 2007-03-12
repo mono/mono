@@ -500,7 +500,7 @@ namespace System.Windows.Forms {
 				
 				if (this.IsHandleCreated) {
 					UpdateStyles();
-					this.Size = SizeFromClientSize (current_client_size);
+					this.Size = InternalSizeFromClientSize (current_client_size);
 				}
 			}
 		}

@@ -1705,7 +1705,7 @@ namespace System.Windows.Forms
 		}
 
 		// Sometimes we need to do this calculation without it being virtual (constructor)
-		private Size InternalSizeFromClientSize (Size clientSize)
+		internal Size InternalSizeFromClientSize (Size clientSize)
 		{
 			Rectangle ClientRect;
 			Rectangle WindowRect;
@@ -4175,7 +4175,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetClientSizeCore(int x, int y) {
-			Size NewSize = SizeFromClientSize (new Size (x, y));
+			Size NewSize = InternalSizeFromClientSize (new Size (x, y));
 			
 			if (NewSize != Size.Empty)
 				SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.Size);

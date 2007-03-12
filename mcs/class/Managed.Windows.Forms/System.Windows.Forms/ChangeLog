@@ -1,3 +1,9 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Another place we don't call SizeFromClientSize.
+	* Form.cs: Another place we don't call SizeFromClientSize.
+	[Fixes bug #81125]
+
 2007-03-12  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Basically emulating some strangness here with

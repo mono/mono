@@ -1565,18 +1565,43 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 #if NET_2_0
-		[Test] // bug #80621
-		public void DontCallSizeFromClientSizeInConstructor ()
+		[Test] // bug #80621, #81125
+		public void DontCallSizeFromClientSize ()
 		{
 			SizeControl sc = new SizeControl ();
 			
 			Assert.AreEqual (0, sc.size_from_client_size_count, "A1");
+			
+			sc.ClientSize = new Size (300, 300);
+			Assert.AreEqual (0, sc.size_from_client_size_count, "A2");
+			
+			SizeForm sf = new SizeForm ();
+			sf.ShowInTaskbar = false;
+			sf.Show ();
+			
+			Assert.AreEqual (0, sc.size_from_client_size_count, "A3");
+
+			sc.ClientSize = new Size (300, 300);
+			Assert.AreEqual (0, sc.size_from_client_size_count, "A4");	
+			
+			sf.Dispose ();	
 		}
 		
 		private class SizeControl : Control
 		{
 			public int size_from_client_size_count = 0;
 			
+			protected override Size SizeFromClientSize (Size clientSize)
+			{
+				size_from_client_size_count++;
+				return base.SizeFromClientSize (clientSize);
+			}
+		}
+
+		private class SizeForm : Form
+		{
+			public int size_from_client_size_count = 0;
+
 			protected override Size SizeFromClientSize (Size clientSize)
 			{
 				size_from_client_size_count++;
