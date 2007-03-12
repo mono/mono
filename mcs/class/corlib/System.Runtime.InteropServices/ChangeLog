@@ -1,3 +1,7 @@
+2007-03-12  Raja R Harinath  <rharinath@novell.com>
+
+	* DefaultParameterValueAttribute.cs: Move to System.dll.
+
 2007-02-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs: Throw exceptions for AddRef, Release,

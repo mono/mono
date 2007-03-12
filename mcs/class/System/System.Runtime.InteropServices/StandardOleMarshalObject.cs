@@ -1,13 +1,11 @@
 //
-// System.Runtime.InteropServices.DefaultParameterValueAttribute.cs
+// System.Runtime.InteropServices.StandardOleMarshalObject.cs
 //
-// Author: Zoltan Varga (vargaz@gmail.com)
-//
-// (C) Ximian, Inc.
+// Author: Raja R Harinath <rharinath@novell.com>
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,20 +32,12 @@
 using System;
 
 namespace System.Runtime.InteropServices {
-	[AttributeUsage (AttributeTargets.Parameter)]
-	public sealed class DefaultParameterValueAttribute : Attribute
+	[ComVisible (true)]
+	[MonoLimitation ("The runtime does nothing special apart from what it already does with marshal-by-ref objects")]
+	public class StandardOleMarshalObject : MarshalByRefObject
 	{
-		object value;
-		
-		public DefaultParameterValueAttribute (object value)
+		protected StandardOleMarshalObject ()
 		{
-			this.value = value;
-		}
-
-		public object Value {
-			get {
-				return value;
-			}
 		}
 	}
 }

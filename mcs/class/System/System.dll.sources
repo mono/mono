@@ -929,3 +929,5 @@ System.Net/UploadValuesCompletedEventArgs.cs
 System.Net/UploadValuesCompletedEventHandler.cs
 System.Net/UploadStringCompletedEventHandler.cs
 System.Net/DownloadStringCompletedEventHandler.cs
+System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
+System.Runtime.InteropServices/StandardOleMarshalObject.cs
