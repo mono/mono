@@ -1,3 +1,8 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Don't exit the program if RecreateHandle is called on
+	the main form.
+
 2007-03-12  Chris Toshok  <toshok@ximian.com>
 
 	* XEventQueue.cs: remove the use of PostQuitState.
