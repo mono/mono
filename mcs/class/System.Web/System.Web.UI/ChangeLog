@@ -1,3 +1,11 @@
+2007-03-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HtmlTextWriter.cs: fixed:
+	- Fixed writing background-image style attribute (different behavior in
+	1.1 and 2.0).
+	- Does not encode 'name' attribute.
+	- Always encode style attributes (for 2.0 only).
+
 2007-03-06  Adar Wesley <adarw@mainsoft.com>
 
 	* Page.cs: initial implementation of support for Async=true.  Added 

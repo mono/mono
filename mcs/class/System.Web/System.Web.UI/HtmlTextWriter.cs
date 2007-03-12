@@ -84,7 +84,8 @@ namespace System.Web.UI {
 		
 		public virtual void AddAttribute (HtmlTextWriterAttribute key, string value)
 		{
-			AddAttribute (key, value, true);
+			bool fEncode = key != HtmlTextWriterAttribute.Name;
+			AddAttribute (key, value, fEncode);
 		}
 	
 	
@@ -98,7 +99,8 @@ namespace System.Web.UI {
 		
 		public virtual void AddAttribute (string name, string value)
 		{
-			AddAttribute (name, value, true);
+			bool fEncode = String.Compare ("name", name, true, CultureInfo.InvariantCulture) != 0;
+			AddAttribute (name, value, fEncode);
 		}
 	
 		protected virtual void AddAttribute (string name, string value, HtmlTextWriterAttribute key)
@@ -114,6 +116,9 @@ namespace System.Web.UI {
 		{
 			NextStyleStack ();
 			styles [styles_pos].name = name;
+#if NET_2_0
+			value = HttpUtility.HtmlAttributeEncode (value);
+#endif
 			styles [styles_pos].value = value;
 			styles [styles_pos].key = key;
 		}
@@ -176,8 +181,14 @@ namespace System.Web.UI {
 				
 				for (int i = 0; i <= styles_pos; i ++) {
 					AddedStyle a = styles [i];
-					if (OnStyleAttributeRender (a.name, a.value, a.key))
+					if (OnStyleAttributeRender (a.name, a.value, a.key)) {
+#if NET_2_0
+						if (a.key == HtmlTextWriterStyle.BackgroundImage) {
+							a.value = String.Concat ("url(", HttpUtility.UrlPathEncode (a.value), ")");
+						}
+#endif
 						WriteStyleAttribute (a.name, a.value, false);
+					}
 				}
 
 				Write (style_attr.value);				
@@ -490,16 +501,11 @@ namespace System.Web.UI {
 			
 		public virtual void WriteStyleAttribute (string name, string value)
 		{
-			WriteStyleAttribute (name, value, true);
+			WriteStyleAttribute (name, value, false);
 		}
 
 		public virtual void WriteStyleAttribute (string name, string value, bool fEncode)
 		{
-#if NET_2_0
-			if (name == "background-image") {
-				value = String.Concat ("url(", value, ")");
-			}
-#endif
 			Write (name);
 			Write (StyleEqualsChar);
 			Write (EncodeAttributeValue (value, fEncode));
@@ -586,7 +592,7 @@ namespace System.Web.UI {
 	
 		public virtual void WriteAttribute (string name, string value)
 		{
-			WriteAttribute (name, value, true);
+			WriteAttribute (name, value, false);
 		}
 
 		public override void WriteLine (char value)

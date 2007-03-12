@@ -177,7 +177,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		// Which attrs fall here
-		[Category ("NotWorking")]
 		[Test]
 		public void NoEscapeAttrName ()
 		{
@@ -185,6 +184,75 @@ namespace MonoTests.System.Web.UI {
 			w.RenderBeginTag (HtwTag.Div);
 			w.RenderEndTag ();
 			Assert.AreEqual ("<div name=\"cookies&cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void NoEscapeAttrName2 () {
+			w.AddAttribute ("name", "cookies&cream");
+			w.RenderBeginTag (HtwTag.Div);
+			w.RenderEndTag ();
+			Assert.AreEqual ("<div name=\"cookies&cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void NoEscapeAttrName3 () {
+			w.AddAttribute (HtwAttribute.Name, "cookies&cream", true);
+			w.RenderBeginTag (HtwTag.Div);
+			w.RenderEndTag ();
+			Assert.AreEqual ("<div name=\"cookies&amp;cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void NoEscapeAttrName4 () {
+			w.AddAttribute ("NaMe", "cookies&cream");
+			w.RenderBeginTag (HtwTag.Div);
+			w.RenderEndTag ();
+			Assert.AreEqual ("<div NaMe=\"cookies&cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void EscapeAttribute1 () {
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+
+			w1.AddAttribute ("attr", "cookies&cream");
+			w1.RenderBeginTag (HtwTag.Div);
+			w1.RenderEndTag ();
+
+			Assert.AreEqual ("cookies&amp;cream", w1.AttrValue_At_AddAttribute, "AttrValue_At_AddAttribute");
+			Assert.AreEqual ("cookies&amp;cream", w1.AttrValue_At_OnAttributeRender, "AttrValue_At_OnAttributeRender");
+			Assert.AreEqual ("<div attr=\"cookies&amp;cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void EscapeAttribute2 () {
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+
+			w1.AddAttribute ("attr", "cookies&cream", false);
+			w1.RenderBeginTag (HtwTag.Div);
+			w1.RenderEndTag ();
+			
+			Assert.AreEqual ("cookies&cream", w1.AttrValue_At_AddAttribute, "AttrValue_At_AddAttribute");
+			Assert.AreEqual ("cookies&cream", w1.AttrValue_At_OnAttributeRender, "AttrValue_At_OnAttributeRender");
+			Assert.AreEqual ("<div attr=\"cookies&cream\">\n\n</div>", sw.ToString ());
+		}
+		
+		[Test]
+		public void EscapeAttribute3 () {
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+
+			w1.AddAttribute ("attr", "cookies&cream", true);
+			w1.RenderBeginTag (HtwTag.Div);
+			w1.RenderEndTag ();
+			
+			Assert.AreEqual ("cookies&amp;cream", w1.AttrValue_At_AddAttribute, "AttrValue_At_AddAttribute");
+			Assert.AreEqual ("cookies&amp;cream", w1.AttrValue_At_OnAttributeRender, "AttrValue_At_OnAttributeRender");
+			Assert.AreEqual ("<div attr=\"cookies&amp;cream\">\n\n</div>", sw.ToString ());
 		}	
 
 		[Test]
@@ -267,7 +335,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TagByNameGetsCaseChanged ()
 		{
 			w.RenderBeginTag ("InPuT");
@@ -308,7 +375,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		public void AddStyleAttribute ()
+		public void AddStyleAttribute1 ()
 		{
 			w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.go-mono.com/");
 			w.RenderBeginTag ("div");
@@ -321,26 +388,131 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("<div style=\"background-image:http://www.go-mono.com/;\">\n\n</div>", sw.ToString ());
 #endif
 		}
+
+		[Test]
+		public void AddStyleAttribute3 ()
+		{
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+
+			w1.AddStyleAttribute ("mystyle", "my value&space");
+			w1.RenderBeginTag ("div");
+			w1.RenderEndTag ();
+#if NET_2_0
+			Assert.AreEqual ("my value&space", w1.StyleValue_At_AddStyleAttribute, "StyleValue_At_AddStyleAttribute");
+			Assert.AreEqual ("my value&amp;space", w1.StyleValue_At_OnStyleAttributeRender, "StyleValue_At_OnStyleAttributeRender");
+			Assert.AreEqual ("<div style=\"mystyle:my value&amp;space;\">\n\n</div>", sw.ToString ());
+#else
+			Assert.AreEqual ("<div style=\"mystyle:my value&space;\">\n\n</div>", sw.ToString ());
+#endif
+		}
+
+		[Test]
+		public void WriteAttribute1 ()
+		{
+			w.WriteAttribute ("attr", "my value&space");
+			Assert.AreEqual (" attr=\"my value&space\"", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteAttribute2 ()
+		{
+			w.WriteAttribute ("attr", "my value&space", false);
+			Assert.AreEqual (" attr=\"my value&space\"", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteAttribute3 ()
+		{
+			w.WriteAttribute ("attr", "my value&space", true);
+			Assert.AreEqual (" attr=\"my value&amp;space\"", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteStyleAttribute1 ()
+		{
+			w.WriteStyleAttribute ("mystyle", "my value&space");
+			Assert.AreEqual ("mystyle:my value&space;", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteStyleAttribute2 ()
+		{
+			w.WriteStyleAttribute ("mystyle", "my value&space", false);
+			Assert.AreEqual ("mystyle:my value&space;", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteStyleAttribute3 ()
+		{
+			w.WriteStyleAttribute ("mystyle", "my value&space", true);
+			Assert.AreEqual ("mystyle:my value&amp;space;", sw.ToString ());
+		}
 		
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
-		public void WriteStyleAttribute_BackgroundImage () 
+		public void WriteStyleAttribute_BackgroundImage1 () 
 		{
 			w.WriteStyleAttribute ("background-image", "http://www.mainsoft.com/space here?a=b&c=d");
 			Assert.AreEqual ("background-image:http://www.mainsoft.com/space here?a=b&c=d;", sw.ToString ());
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
-		public void AddStyleAttribute_BackgroundImage () 
+		public void WriteStyleAttribute_BackgroundImage2 ()
 		{
-			w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.mainsoft.com/space here?a=b&c=d");
-			w.RenderBeginTag ("div");
-			w.RenderEndTag ();
+			w.WriteStyleAttribute ("BackGround-Image", "http://www.mainsoft.com/space here?a=b&c=d");
+			Assert.AreEqual ("BackGround-Image:http://www.mainsoft.com/space here?a=b&c=d;", sw.ToString ());
+		}
+		
+		[Test]
+		public void AddStyleAttribute_BackgroundImage1 () 
+		{
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
 
+			w1.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.mainsoft.com/space here?a=b&c=d");
+			w1.RenderBeginTag ("div");
+			w1.RenderEndTag ();
+
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&c=d", w1.StyleValue_At_AddStyleAttribute, "StyleValue_At_AddStyleAttribute");
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&amp;c=d", w1.StyleValue_At_OnStyleAttributeRender, "StyleValue_At_OnStyleAttributeRender");
 			Assert.AreEqual ("<div style=\"background-image:url(http://www.mainsoft.com/space%20here?a=b&amp;c=d);\">\n\n</div>", sw.ToString ());
 		}
+
+		[Test]
+		public void AddStyleAttribute_BackgroundImage2 ()
+		{
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+
+			w1.AddStyleAttribute ("background-image", "http://www.mainsoft.com/space here?a=b&c=d");
+			w1.RenderBeginTag ("div");
+			w1.RenderEndTag ();
+
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&c=d", w1.StyleValue_At_AddStyleAttribute, "StyleValue_At_AddStyleAttribute");
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&amp;c=d", w1.StyleValue_At_OnStyleAttributeRender, "StyleValue_At_OnStyleAttributeRender");
+			Assert.AreEqual ("<div style=\"background-image:url(http://www.mainsoft.com/space%20here?a=b&amp;c=d);\">\n\n</div>", sw.ToString ());
+		}
+
+		[Test]
+		public void AddStyleAttribute_BackgroundImage3 ()
+		{
+			sw = new StringWriter ();
+			sw.NewLine = "\n"; // Keep sanity.
+			Poker w1 = new Poker (sw);
+			
+			w1.AddStyleAttribute ("BackGround-Image", "http://www.mainsoft.com/space here?a=b&c=d");
+			w1.RenderBeginTag ("div");
+			w1.RenderEndTag ();
+
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&c=d", w1.StyleValue_At_AddStyleAttribute, "StyleValue_At_AddStyleAttribute");
+			Assert.AreEqual ("http://www.mainsoft.com/space here?a=b&amp;c=d", w1.StyleValue_At_OnStyleAttributeRender, "StyleValue_At_OnStyleAttributeRender");
+			Assert.AreEqual ("<div style=\"BackGround-Image:url(http://www.mainsoft.com/space%20here?a=b&amp;c=d);\">\n\n</div>", sw.ToString ());
+		}
+
 #endif
 
 		[Test]
@@ -407,6 +579,44 @@ namespace MonoTests.System.Web.UI {
 				return base.OnAttributeRender (name, value, key);
 			}
 	
+		}
+
+		class Poker : HtmlTextWriter
+		{
+			public string StyleValue_At_OnStyleAttributeRender;
+			public string StyleValue_At_AddStyleAttribute;
+			public string AttrValue_At_OnAttributeRender;
+			public string AttrValue_At_AddAttribute;
+
+			public Poker (TextWriter tw)
+				: base (tw)
+			{
+			}
+
+			protected override bool OnAttributeRender (string name, string value, HtmlTextWriterAttribute key)
+			{
+				AttrValue_At_OnAttributeRender = value;
+				return base.OnAttributeRender (name, value, key);
+			}
+			
+			protected override bool OnStyleAttributeRender (string name, string value, HtmlTextWriterStyle key)
+			{
+				StyleValue_At_OnStyleAttributeRender = value;
+				return base.OnStyleAttributeRender (name, value, key);
+			}
+			
+			protected override void AddStyleAttribute (string name, string value, HtmlTextWriterStyle key)
+			{
+				StyleValue_At_AddStyleAttribute = value;
+				base.AddStyleAttribute (name, value, key);
+			}
+
+			protected override void AddAttribute (string name, string value, HtmlTextWriterAttribute key)
+			{
+				AttrValue_At_AddAttribute = value;
+				base.AddAttribute (name, value, key);
+			}
+
 		}
 		
 		[Test]
