@@ -30,12 +30,14 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Configuration;
 using System.Configuration.Provider;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
+using System.Web.Compilation;
 
 namespace System.Web.Configuration {
 
@@ -56,10 +58,29 @@ namespace System.Web.Configuration {
 				}
 			}
 
+			// check App_Code dlls
+			if (settingsType == null) {
+				IList appCode = BuildManager.CodeAssemblies;
+
+				if (appCode != null && appCode.Count > 0) {
+					Assembly asm;
+					foreach (object o in appCode) {
+						asm = o as Assembly;
+						if (asm == null)
+							continue;
+						settingsType = asm.GetType (providerSettings.Type);
+						if (settingsType != null)
+							break;
+					}
+				}
+			}
+
 			if (settingsType == null)
-				throw new ConfigurationErrorsException (String.Format ("Could not find type: {0}", providerSettings.Type));
+				throw new ConfigurationErrorsException (String.Format ("Could not find type: {0}",
+										       providerSettings.Type));
 			if (!providerType.IsAssignableFrom (settingsType))
-				throw new ConfigurationErrorsException (String.Format ("Provider '{0}' must subclass from '{1}'", providerSettings.Name, providerType));
+				throw new ConfigurationErrorsException (String.Format ("Provider '{0}' must subclass from '{1}'",
+										       providerSettings.Name, providerType));
 
 			ProviderBase provider = Activator.CreateInstance (settingsType) as ProviderBase;
 

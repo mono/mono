@@ -1,3 +1,9 @@
+2007-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* ProvidersHelper.cs: support loading custom providers from
+	App_Code assemblies. Fixes bug #81071.
+	Also set eol-style to native.
+
 2007-03-08  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* PagesSection.cs: Revert part of Adar's patch that regresses
