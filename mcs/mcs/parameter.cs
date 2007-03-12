@@ -281,7 +281,7 @@ namespace Mono.CSharp {
 				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
 			}
 
-			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0
+			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0, or if System.dll is not referenced
 			if (a.Type == TypeManager.default_parameter_value_attribute_type) {
 				object val = a.GetParameterDefaultValue ();
 				if (val != null) {

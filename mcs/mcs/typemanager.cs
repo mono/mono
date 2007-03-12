@@ -1053,7 +1053,8 @@ namespace Mono.CSharp {
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
 		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
 #if NET_2_0
-		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute");
+		// this can fail if the user doesn't have an -r:System.dll
+		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", true);
 #endif
 		typed_reference_type = CoreLookupType ("System", "TypedReference");
 		arg_iterator_type    = CoreLookupType ("System", "ArgIterator");

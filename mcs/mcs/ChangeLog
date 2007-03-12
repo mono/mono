@@ -1,3 +1,9 @@
+2007-03-12  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (InitCoreTypes) [NET_2_0]: Allow
+	DefaultParameterValueAttribute to be undefined, say if System.dll
+	is not referenced.
+
 2007-03-11  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, parameter.cs, typemanager.cs: Another gmcs fix to work with
