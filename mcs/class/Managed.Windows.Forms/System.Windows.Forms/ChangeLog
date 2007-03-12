@@ -1,3 +1,9 @@
+2007-03-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileDialog.cs: Use text of File name combobox to determine what
+	files the user selected. Added tokenizer to parse the file names.
+	Fixes bug #81123.
+
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: We can't call SizeFromClientSize in the constructor,

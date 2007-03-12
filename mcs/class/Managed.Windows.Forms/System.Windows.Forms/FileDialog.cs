@@ -35,6 +35,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Resources;
+using System.Text;
 using System.Threading;
 using System.Xml;
 
@@ -835,48 +836,47 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
-			string internalfullfilename = String.Empty;
-			
-			if (!multiSelect) {
-				string fileFromComboBox = fileNameComboBox.Text.Trim ();
-				
-				if (fileFromComboBox.Length > 0) {
-					if (!Path.IsPathRooted (fileFromComboBox)) {
-						// on unix currentRealFolder for "Recently used files" is null,
-						// because recently used files don't get saved as links in a directory
-						// recently used files get saved in a xml file
-						if (mwfFileView.CurrentRealFolder != null)
-							fileFromComboBox = Path.Combine (mwfFileView.CurrentRealFolder, fileFromComboBox);
-						else
+
+			ArrayList files = new ArrayList ();
+			FileNamesTokenizer tokenizer = new FileNamesTokenizer (
+				fileNameComboBox.Text, multiSelect);
+			tokenizer.GetNextFile ();
+			while (tokenizer.CurrentToken != TokenType.EOF) {
+				string fileName = tokenizer.TokenText;
+				string internalfullfilename;
+
+				if (!Path.IsPathRooted (fileName)) {
+					// on unix currentRealFolder for "Recently used files" is null,
+					// because recently used files don't get saved as links in a directory
+					// recently used files get saved in a xml file
+					if (mwfFileView.CurrentRealFolder != null)
+						fileName = Path.Combine (mwfFileView.CurrentRealFolder, fileName);
+					else
 						if (mwfFileView.CurrentFSEntry != null) {
-							fileFromComboBox = mwfFileView.CurrentFSEntry.FullName;
+							fileName = mwfFileView.CurrentFSEntry.FullName;
 						}
-					}
-					
-					FileInfo fileInfo = new FileInfo (fileFromComboBox);
-					
-					if (fileInfo.Exists || fileDialogType == FileDialogType.SaveFileDialog) {
-						internalfullfilename = fileFromComboBox;
+				}
+
+				FileInfo fileInfo = new FileInfo (fileName);
+
+				if (fileInfo.Exists || fileDialogType == FileDialogType.SaveFileDialog) {
+					internalfullfilename = fileName;
+				} else {
+					DirectoryInfo dirInfo = new DirectoryInfo (fileName);
+					if (dirInfo.Exists) {
+						mwfFileView.ChangeDirectory (null, dirInfo.FullName);
+						fileNameComboBox.Text = null;
+						return;
 					} else {
-						DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
-						if (dirInfo.Exists) {
-							mwfFileView.ChangeDirectory (null, dirInfo.FullName);
-							fileNameComboBox.Text = null;
-							return;
-						} else {
-							internalfullfilename = fileFromComboBox;
-						}
+						internalfullfilename = fileName;
 					}
-				} else
-					return;
-				
+				}
+
 				if (fileDialogType == FileDialogType.OpenFileDialog) {
 					if (checkFileExists) {
 						if (!File.Exists (internalfullfilename)) {
 							string message = "\"" + internalfullfilename + "\" doesn't exist. Please verify that you have entered the correct file name.";
 							MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-							
 							return;
 						}
 					}
@@ -885,84 +885,76 @@ namespace System.Windows.Forms
 						if (File.Exists (internalfullfilename)) {
 							string message = "\"" + internalfullfilename + "\" exists. Overwrite ?";
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-							
 							if (dr == DialogResult.Cancel)
 								return;
 						}
 					}
-					
+
 					if (createPrompt) {
 						if (!File.Exists (internalfullfilename)) {
 							string message = "\"" + internalfullfilename + "\" doesn't exist. Create ?";
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-							
 							if (dr == DialogResult.Cancel)
 								return;
 						}
 					}
-				}
-				
-				if (fileDialogType == FileDialogType.SaveFileDialog) {
+
 					if (addExtension) {
 						string extension_to_use = String.Empty;
 						string filter_exentsion = String.Empty;
-						
+
 						if (fileFilter != null) {
-							FilterStruct filterstruct = (FilterStruct)fileFilter.FilterArrayList [filterIndex - 1];
-							
+							FilterStruct filterstruct = (FilterStruct) fileFilter.FilterArrayList [filterIndex - 1];
+
 							for (int i = 0; i < filterstruct.filters.Count; i++) {
 								string extension = filterstruct.filters [i];
-								
+
 								if (extension.StartsWith ("*"))
 									extension = extension.Remove (0, 1);
-								
+
 								if (extension.IndexOf ('*') != -1)
 									continue;
-								
+
 								filter_exentsion = extension;
 								break;
 							}
 						}
-						
+
 						if (filter_exentsion != String.Empty)
 							extension_to_use = filter_exentsion;
 						else
 							if (DefaultExt.Length > 0)
 								extension_to_use = "." + DefaultExt;
-						
+
 						if (!internalfullfilename.EndsWith (extension_to_use))
 							internalfullfilename += extension_to_use;
 					}
 				}
 
-				// do not use the FileName setter internally, as this will 
-				// cause the illegal character check to be skipped, and we
-				// do not want this for filename users have entered
-				fileNames = new string [1] { internalfullfilename };
-				
-				mwfFileView.WriteRecentlyUsed (internalfullfilename);
-			} else // multiSelect = true
-			if (fileDialogType != FileDialogType.SaveFileDialog) {
-				if (mwfFileView.SelectedItems.Count > 0) {
-					// first remove all selected directories
-					ArrayList al = new ArrayList ();
-					
-					foreach (FileViewListViewItem lvi in mwfFileView.SelectedItems) {
-						FSEntry fsEntry = lvi.FSEntry;
-						
-						if (fsEntry.Attributes != FileAttributes.Directory) {
-							al.Add (fsEntry);
-						}
-					}
-					
-					fileNames = new string [al.Count];
-					
-					for (int i = 0; i < al.Count; i++) {
-						fileNames [i] = ((FSEntry)al [i]).FullName;
-					}
-				}
+				files.Add (internalfullfilename);
+				tokenizer.GetNextFile ();
 			}
-			
+
+			if (files.Count > 0) {
+				fileNames = new string [files.Count];
+				for (int i = 0; i < files.Count; i++) {
+					string fileName = (string) files [i];
+					fileNames [i] = fileName;
+					mwfFileView.WriteRecentlyUsed (fileName);
+
+					if (!File.Exists (fileName))
+						// ignore files that do not exist
+						continue;
+
+					if (fileNameComboBox.Items.IndexOf (fileName) == -1)
+						fileNameComboBox.Items.Insert (0, fileName);
+				}
+
+				// remove items above the maximum items that we want to display
+				while (fileNameComboBox.Items.Count > MaxFileNameItems)
+					fileNameComboBox.Items.RemoveAt (MaxFileNameItems);
+			}
+
 			if (checkPathExists && mwfFileView.CurrentRealFolder != null) {
 				if (!Directory.Exists (mwfFileView.CurrentRealFolder)) {
 					string message = "\"" + mwfFileView.CurrentRealFolder + "\" doesn't exist. Please verify that you have entered the correct directory name.";
@@ -975,32 +967,19 @@ namespace System.Windows.Forms
 					return;
 				}
 			}
-			
+
 			if (restoreDirectory) {
-				lastFolder  = restoreDirectoryString;
+				lastFolder = restoreDirectoryString;
 			} else {
 				lastFolder = mwfFileView.CurrentFolder;
 			}
 
-			foreach (string fileName in fileNames) {
-				if (!File.Exists (fileName))
-					// ignore files that do not exist
-					continue;
-
-				if (fileNameComboBox.Items.IndexOf (fileName) == -1)
-					fileNameComboBox.Items.Insert (0, fileName);
-			}
-
-			// remove items above the maximum items that we want to display
-			while (fileNameComboBox.Items.Count > MaxFileNameItems)
-				fileNameComboBox.Items.RemoveAt (MaxFileNameItems);
-			
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
-			
+
 			cancelEventArgs.Cancel = false;
-			
+
 			OnFileOk (cancelEventArgs);
-			
+
 			form.DialogResult = DialogResult.OK;
 		}
 		
@@ -1194,6 +1173,109 @@ namespace System.Windows.Forms
 			
 			if (RestoreDirectory)
 				restoreDirectoryString = lastFolder;
+		}
+
+		class FileNamesTokenizer
+		{
+			public FileNamesTokenizer (string text, bool allowMultiple)
+			{
+				_text = text;
+				_position = 0;
+				_tokenType = TokenType.BOF;
+				_allowMultiple = allowMultiple;
+			}
+
+			public TokenType CurrentToken {
+				get { return _tokenType; }
+			}
+
+			public string TokenText {
+				get { return _tokenText; }
+			}
+
+			public bool AllowMultiple {
+				get { return _allowMultiple; }
+			}
+
+			private int ReadChar ()
+			{
+				if (_position < _text.Length) {
+					return _text [_position++];
+				} else {
+					return -1;
+				}
+			}
+
+			private int PeekChar ()
+			{
+				if (_position < _text.Length) {
+					return _text [_position];
+				} else {
+					return -1;
+				}
+			}
+
+			private void SkipWhitespaceAndQuotes ()
+			{
+				int ch;
+
+				while ((ch = PeekChar ()) != -1) {
+					if ((char) ch != '"' && !char.IsWhiteSpace ((char) ch))
+						break;
+					ReadChar ();
+				}
+			}
+
+			public void GetNextFile ()
+			{
+				if (_tokenType == TokenType.EOF)
+					throw new Exception ("");
+
+				int ch;
+
+				SkipWhitespaceAndQuotes ();
+
+				if (PeekChar () == -1) {
+					_tokenType = TokenType.EOF;
+					return;
+				}
+
+				_tokenType = TokenType.FileName;
+				StringBuilder sb = new StringBuilder ();
+
+				while ((ch = PeekChar ()) != -1) {
+					if ((char) ch == '"') {
+						ReadChar ();
+						if (AllowMultiple)
+							break;
+						int pos = _position;
+
+						SkipWhitespaceAndQuotes ();
+						if (PeekChar () == -1) {
+							break;
+						}
+						_position = ++pos;
+						sb.Append ((char) ch);
+					} else {
+						sb.Append ((char) ReadChar ());
+					}
+				}
+
+				_tokenText = sb.ToString ();
+			}
+
+			private readonly bool _allowMultiple;
+			private int _position;
+			private readonly string _text;
+			private TokenType _tokenType;
+			private string _tokenText;
+		}
+
+		internal enum TokenType
+		{
+			BOF,
+			EOF,
+			FileName,
 		}
 	}
 	#endregion
