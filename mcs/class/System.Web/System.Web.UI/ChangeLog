@@ -1,3 +1,7 @@
+2007-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* RootBuilder.cs: change the error text to be less misleading.
+
 2007-03-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AttributeCollection.cs:
