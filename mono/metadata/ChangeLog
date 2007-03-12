@@ -1,5 +1,8 @@
 2007-03-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_create_dynamic_method): Add support for 
+	circular references among dynamic methods. Fixes #81091.
+
 	* object-internals.h (MonoReflectionDynamicMethod): Add 'referenced_by' field.
 
 2007-03-09  Martin Baulig  <martin@ximian.com>
