@@ -717,6 +717,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override void CreateHandle() {
 			base.CreateHandle ();
+			CalculateDocument();
 			document.AlignCaret();
 			ScrollToCaret();
 		}
