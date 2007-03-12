@@ -1613,7 +1613,7 @@ namespace System.Windows.Forms {
 			if (skipped_nodes == pos)
 				return;
 
-			int diff = pos - skipped_nodes;
+			int diff = skipped_nodes - pos;
 			skipped_nodes = pos;
 
 			int y_move = diff * ActualItemHeight;
@@ -1878,7 +1878,9 @@ namespace System.Windows.Forms {
 		static object BeforeLabelEditEvent = new object ();
 		static object BeforeSelectEvent = new object ();
 #if NET_2_0
-		static object DrawNodeEvent = new object();
+		static object DrawNodeEvent = new object ();
+		static object NodeMouseClick = new object ();
+		static object NodeMouseDoubleClick = new object ();
 #endif
 
 		public event ItemDragEventHandler ItemDrag {
@@ -1940,6 +1942,16 @@ namespace System.Windows.Forms {
 		public event DrawTreeNodeEventHandler DrawNode {
 			add { Events.AddHandler (DrawNodeEvent, value); }
 			remove { Events.RemoveHandler (DrawNodeEvent, value); }
+		}
+
+		public event TreeNodeMouseClickEventHandler NodeMouseClick {
+			add { Events.AddHandler (NodeMouseClickEvent, value); }
+			remove { Events.RemoveHandler (NodeMouseClickEvent); }
+		}
+
+		public event TreeNodeMouseClickEventHandler NodeMouseDoubleClick {
+			add { Events.AddHandler (NodeMouseDoubleClickEvent, value); }
+			remove { Events.RemoveHandler (NodeMouseDoubleClickEvent); }
 		}
 #endif
 

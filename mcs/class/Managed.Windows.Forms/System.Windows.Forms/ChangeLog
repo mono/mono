@@ -5,6 +5,7 @@
 	created.
 	- Also attempting to walk the node tree less than previously, and
 	just use visible order calculations for determining offsets.
+	- oops made scrolling backwards.
 
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
