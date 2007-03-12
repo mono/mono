@@ -142,7 +142,7 @@ namespace System.Web.UI {
 			if (t != null)
 				return t;
 			else if (prefix != "")
-				throw new Exception ("TagPrefix " + prefix + " not registered");
+				throw new Exception ("Unknown server tag '" + tagName + "'");
 			
 			return LookupHtmlControls (tagName, attribs);
 		}
