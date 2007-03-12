@@ -1,5 +1,7 @@
 2007-03-12  Marek Habersack  <mhabersack@novell.com>
 
+	* AspParser.cs: revert r73587 as it breaks more than it	fixes.
+
 	* AspComponentFoundry.cs: try to register foundries from App_Code
 	assemblies if tag prefix and its namespace are defined. Fixes bug
 	#78797.

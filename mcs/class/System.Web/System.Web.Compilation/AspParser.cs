@@ -362,40 +362,38 @@ namespace System.Web.Compilation
 		}
 
 		string GetVerbatim (int token, string end)
-                {
-                        StringBuilder vb_text = new StringBuilder ();
-                        int i = 0, i2 = 0;
+		{
+			StringBuilder vb_text = new StringBuilder ();
+			int i = 0;
 
-                        if (tokenizer.Value.Length > 1){
-                                // May be we have a put_back token that is not a single character
-                                vb_text.Append (tokenizer.Value);
-                                token = tokenizer.get_token ();
-                        }
+			if (tokenizer.Value.Length > 1){
+				// May be we have a put_back token that is not a single character
+				vb_text.Append (tokenizer.Value);
+				token = tokenizer.get_token ();
+			}
 
-                        end = end.ToLower (CultureInfo.InvariantCulture);
-                        while (token != Token.EOF){
-                                if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
-                                        i2++;
-                                        if (++i >= end.Length)
-                                                break;
-                                        token = tokenizer.get_token ();
-                                        continue;
-                                } else if (i > 0) {
-                                        if (i > 1)
-                                                i2 -= i;
-                                        for (int j = 0; j < i2; j++)
-                                                vb_text.Append (end [j]);
-                                        i2 = 0;
-                                }
-                                vb_text.Append ((char) token);
-                                token = tokenizer.get_token ();
-                        } 
+			end = end.ToLower (CultureInfo.InvariantCulture);
+			while (token != Token.EOF){
+				if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
+					if (++i >= end.Length)
+						break;
+					token = tokenizer.get_token ();
+					continue;
+				} else if (i > 0) {
+					for (int j = 0; j < i; j++)
+						vb_text.Append (end [j]);
+					i = 0;
+				}
 
-                        if (token == Token.EOF)
-                                OnError ("Expecting " + end + " and got EOF.");
+				vb_text.Append ((char) token);
+				token = tokenizer.get_token ();
+			} 
 
-                        return RemoveComments (vb_text.ToString ());
-                }
+			if (token == Token.EOF)
+				OnError ("Expecting " + end + " and got EOF.");
+
+			return RemoveComments (vb_text.ToString ());
+		}
 
 		string RemoveComments (string text)
 		{
