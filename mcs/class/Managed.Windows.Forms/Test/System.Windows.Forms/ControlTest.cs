@@ -1637,6 +1637,27 @@ namespace MonoTests.System.Windows.Forms
 			((Control) sender).Tag = false;
 		}
 
+#if NET_2_0
+		[Test] // bug #80621
+		public void DontCallSizeFromClientSizeInConstructor ()
+		{
+			SizeControl sc = new SizeControl ();
+			
+			Assert.AreEqual (0, sc.size_from_client_size_count, "A1");
+		}
+		
+		private class SizeControl : Control
+		{
+			public int size_from_client_size_count = 0;
+			
+			protected override Size SizeFromClientSize (Size clientSize)
+			{
+				size_from_client_size_count++;
+				return base.SizeFromClientSize (clientSize);
+			}
+		}
+#endif
+
 		public class MockControl : Control
 		{
 			public int font_height {

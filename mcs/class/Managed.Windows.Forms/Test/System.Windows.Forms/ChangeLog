@@ -1,3 +1,7 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlTest.cs: Add test for bug #80621.
+
 2007-03-11  Everaldo Canuto  <everaldo@simios.org>
 
 	* LinkLabelTest.cs: LinkLabel tests added.
