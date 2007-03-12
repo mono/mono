@@ -109,7 +109,13 @@ namespace System.Web
 			string siteMapFile = GetNonEmptyOptionalAttribute (xmlNode, "siteMapFile");
 			
 			if (provider != null) {
-				throw new NotImplementedException ();
+				foreach (SiteMapProvider smp in SiteMap.Providers) {
+					if (string.Equals(smp.Name,provider, StringComparison.InvariantCulture)) {
+						smp.ParentProvider = this;
+						return smp.GetRootNodeCore();
+					}
+				}
+				throw new ConfigurationException("Provider with name [" + provider + "] was not found.");
 			} else if (siteMapFile != null) {
 				throw new NotImplementedException ();
 			} else {
