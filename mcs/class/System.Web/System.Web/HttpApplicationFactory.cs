@@ -34,9 +34,8 @@ using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Configuration;
 
-#if !TARGET_J2EE
 using System.Web.Compilation;
-#else
+#if TARGET_J2EE
 using vmw.common;
 #endif
 
@@ -404,12 +403,10 @@ namespace System.Web {
 					needs_init = false;
 #if NET_2_0
 				} catch (Exception) {
-#if !TARGET_J2EE
 					if (BuildManager.CodeAssemblies != null)
 						BuildManager.CodeAssemblies.Clear ();
 					if (BuildManager.TopLevelAssemblies != null)
 						BuildManager.TopLevelAssemblies.Clear ();
-#endif
 					if (WebConfigurationManager.ExtraAssemblies != null)
 						WebConfigurationManager.ExtraAssemblies.Clear ();
 					throw;
