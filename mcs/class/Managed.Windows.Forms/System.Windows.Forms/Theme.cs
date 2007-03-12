@@ -722,6 +722,7 @@ namespace System.Windows.Forms
 		#endregion	// ComboBox
 
 		#region Control
+		public abstract Font GetLinkFont (Control control);
 		#endregion	// Control
 		
 		#region Datagrid

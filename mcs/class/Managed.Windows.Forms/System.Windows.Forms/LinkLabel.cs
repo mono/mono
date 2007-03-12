@@ -71,10 +71,8 @@ namespace System.Windows.Forms
 		internal Link[] sorted_links;
 		private bool link_visited;
 		internal Piece[] pieces;
-		internal Font link_font;
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
-		internal Rectangle factor;
 
 		private Link active_link;
 		private Link hovered_link;
@@ -97,7 +95,6 @@ namespace System.Windows.Forms
 			link_behavior = LinkBehavior.SystemDefault;
 			link_visited = false;
 			pieces = null;
-			link_font = null;			
 			focused_index = -1;
 
 			string_format.FormatFlags = StringFormatFlags.NoClip;
@@ -277,7 +274,6 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-			CreateLinkFont ();
 			CreateLinkPieces ();			
 		}
 
@@ -290,7 +286,6 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			CreateLinkFont ();
 			CreateLinkPieces ();
 		}
 
@@ -510,7 +505,6 @@ namespace System.Windows.Forms
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore (x, y, width, height, specified);
-			CreateLinkFont ();
 			CreateLinkPieces();
 		}
 
@@ -552,44 +546,31 @@ namespace System.Windows.Forms
 			return rv;
 		}
 
-		internal Rectangle CalcTrimRectangle ()
-		{
-			const string text = "X12"; // Magic
-			
-			// Measure total area including padding area.
-			SizeF size = DeviceContext.MeasureString (text, link_font);
-			Rectangle rect = new Rectangle (0, 0, (int) size.Width, (int) size.Height);
-			
-			// Measure only font area without padding area.
-			CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
-			string_format.SetMeasurableCharacterRanges (ranges);
-			Region[] regions = DeviceContext.MeasureCharacterRanges (text, link_font, rect, string_format);
-			
-			// Calculate diference.
-			RectangleF rectf = regions [0].GetBounds (DeviceContext);
-			
-			return new Rectangle ((int) rectf.X, (int) rectf.Y,
-							rect.Width - (int) rectf.Width - ((int) rectf.X * 2),
-							rect.Height - (int) rectf.Height - ((int) rectf.Y * 2));
-		}
-
 		private void CreateLinkPieces ()
 		{
 			if (Text.Length == 0) {
 				SetStyle (ControlStyles.Selectable, false);
+				TabStop = false;
 				return;
 			}
-
-			SetStyle (ControlStyles.Selectable, Links.Count > 0);
-
-			/* don't bother doing the rest if our handle hasn't been created */
-			if (!IsHandleCreated)
-				return;
-
+			
 			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1)
 				Links[0].Length = Text.Length;
 
 			SortLinks ();
+
+			// Set the LinkArea values based on first link.
+			if (Links.Count > 0) {
+				link_area.Start = Links[0].Start;
+				link_area.Length = Links[0].Length;
+			}
+
+			TabStop = (LinkArea.Length > 0);
+			SetStyle (ControlStyles.Selectable, TabStop);
+
+			/* don't bother doing the rest if our handle hasn't been created */
+			if (!IsHandleCreated)
+				return;
 
 			ArrayList pieces_list = new ArrayList ();
 
@@ -630,14 +611,13 @@ namespace System.Windows.Forms
 			string_format.SetMeasurableCharacterRanges (ranges);
 
 			Region[] regions = DeviceContext.MeasureCharacterRanges (Text,
-										 link_font,
+										 ThemeEngine.Current.GetLinkFont (this),
 										 ClientRectangle,
 										 string_format);
 
 			for (int i = 0; i < pieces.Length; i ++)
 				pieces[i].region = regions[i];
 
-			factor = CalcTrimRectangle ();
 			Invalidate ();
 		}
 
@@ -666,65 +646,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal Font GetPieceFont (Piece piece)
-		{
-			if (piece.link == null)
-				return Font;
-
-			switch (link_behavior) {				
-				case LinkBehavior.AlwaysUnderline:
-				case LinkBehavior.SystemDefault: // Depends on IE configuration
-				{
-					return link_font;
-				}				
-				case LinkBehavior.HoverUnderline:
-				{
-					if (piece.link.Hovered) {
-						return link_font;
-					} else {
-						return Font;
-					}								
-				}
-				
-				case LinkBehavior.NeverUnderline:				
-				default:
-					return Font;					
-			}
-			
-		}		
-		
-
-		internal Color GetPieceColor (Piece piece, int i)
-		{
-			Color color;
-
-			if (Enabled == false)
-				return DisabledLinkColor;
-
-			if (piece.link == null)
-				return ForeColor;
-
-			if (!piece.link.Enabled)
-				color = DisabledLinkColor;
-			else if (piece.link.Active)
-				color = ActiveLinkColor;
-			else if ((LinkVisited && i == 0) || piece.link.Visited == true)
-				color = VisitedLinkColor;
-			else
-				color = LinkColor;
-
-			return color;
-		}
-
-		private void CreateLinkFont ()
-		{
-			if (link_font != null)
-				link_font.Dispose ();
-				
-			link_font  = new Font (Font.FontFamily, Font.Size, Font.Style | FontStyle.Underline,
-					       Font.Unit);
-		}
-
 		#endregion // Private Methods
 
 		//

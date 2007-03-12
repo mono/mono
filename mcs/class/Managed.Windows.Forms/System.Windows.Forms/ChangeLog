@@ -1,3 +1,38 @@
+2007-03-11  Everaldo Canuto  <everaldo@simios.org>
+
+	* Theme.cs: GetLinkFont abstract method added.
+	
+	* LinkLabel.cs: 
+	- Remove CalcTrimRectangle, no longer needed.
+	- Factor also remove, position issues must be fixed in libgdiplus.
+	- Move GetPieceColor to ThemeWin32Classic.cs as it is theme related.
+	- GetPieceFont, CreateLinkFont and link_font removed, theme must be 
+	care about font	used to draw links.
+	- Set TabStop to true when control is "Selectable", control is selectable
+	when have one or more links. Fixes #80501 (test case is also added).
+	- Set the LinkArea values after links change, LinkArea values must be
+	based in first link position and size, a test case was created.
+	- Fix ControlStyles.Selectable value, now is based on LinkArea value, 
+	the attribute must be true LinkArea.Length > 0. The same was applied to
+	TabStop.
+	
+	* ThemeWin32Classic.cs: 
+	- LinkLabelGetPieceColor and LinkLabelGetPieceFont created and used 
+	in draw method.
+	- Use CPDrawStringDisabled to draw disabled text instead of hard code 
+	color change.
+	- Draw focus rectangle for every parts focused, including parts that 
+	is on another line, its because regions returns various rectangles
+	and not only one. Needed to mimic W32 look.
+	- Uses Graphics.Clip to delimite region painted, it mean that now 
+	complete text is passed to DrawString, with this we solve layout
+	issues without create another text renderer.
+	- Uses Region.Intersect to fix some flickers problems, now only needed
+	parts will redrawed.
+	- This changes fixes #79614 and some other unreported issues, on Linux 
+	some layout problems still remain, the problem is under 
+	MeasureCharacterRanges but it is an libgdiplus bug.
+
 2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TextBox.cs: Set for foreground color.

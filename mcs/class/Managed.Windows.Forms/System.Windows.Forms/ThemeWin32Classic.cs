@@ -123,6 +123,13 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Internal Methods
 
+		#region Control
+		public override Font GetLinkFont (Control control) 
+		{
+			return new Font (control.Font.FontFamily, control.Font.Size, control.Font.Style | FontStyle.Underline, control.Font.Unit); 
+		}
+		#endregion	// Control
+
 		#region OwnerDraw Support
 		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
 		{
@@ -2094,6 +2101,27 @@ namespace System.Windows.Forms
 		#endregion	// Label
 
 		#region LinkLabel
+
+		private Color LinkLabelGetPieceColor (LinkLabel label, LinkLabel.Piece piece, int i)
+		{
+			if (!label.Enabled)
+				return label.DisabledLinkColor;
+
+			if (piece.link == null)
+				return label.ForeColor;
+
+			if (!piece.link.Enabled)
+				return label.DisabledLinkColor;
+				
+			if (piece.link.Active)
+				return label.ActiveLinkColor;
+				
+			if ((label.LinkVisited && i == 0) || piece.link.Visited)
+				return label.VisitedLinkColor;
+			
+			return label.LinkColor;
+		}
+		
 		public override void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
 			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
@@ -2101,30 +2129,57 @@ namespace System.Windows.Forms
 			if (label.pieces == null)
 				return;
 
+			// Paint all text as disabled.
+			if (!label.Enabled) {
+				dc.SetClip (clip_rectangle);
+				CPDrawStringDisabled (dc, label.Text, label.Font, label.BackColor, label.ClientRectangle, label.string_format);
+				return;
+			}
+
+			Font font, link_font = GetLinkFont (label);
+			
+			Region text_region = new Region (new Rectangle());
+
+			// Draw links.
 			for (int i = 0; i < label.pieces.Length; i ++) {
+				LinkLabel.Piece piece = label.pieces[i];
 				
-				Rectangle rect = Rectangle.Round (label.pieces[i].region.GetBounds (dc));
-
-				if (!clip_rectangle.IntersectsWith (rect))
+				if (piece.link == null) {
+					text_region.Union (piece.region);
 					continue;
+				}
 
-				LinkLabel.Link link = label.pieces[i].link;
-				if (link != null && link.Focused)
-					CPDrawFocusRectangle (dc, rect, label.ForeColor, label.BackColor);
+				Color color = LinkLabelGetPieceColor (label, piece, i);
 
-				// To adjust diference between measurement and draw string.
-				Rectangle rectf = label.factor;
-				rect.X      -= rectf.X;
-				rect.Y      -= rectf.Y;
-				rect.Width  += rectf.Width;
-				rect.Height += rectf.Height;
-
-				dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (label.GetPieceColor (label.pieces[i], i)),
-					       rect, label.string_format);
-
+				if ( (label.LinkBehavior == LinkBehavior.AlwaysUnderline) || 
+					 (label.LinkBehavior == LinkBehavior.SystemDefault) ||
+					 ((label.LinkBehavior == LinkBehavior.HoverUnderline) && piece.link.Hovered) )
+					font = link_font;
+				else
+					font = label.Font;
+				
+				dc.Clip = piece.region;
+				dc.Clip.Intersect (clip_rectangle);
+				dc.DrawString (label.Text, font, ResPool.GetSolidBrush (color), label.ClientRectangle, label.string_format);
+			
+				// Draw focus rectangle
+				if ((piece.link != null) && piece.link.Focused) {
+					foreach (RectangleF rect in piece.region.GetRegionScans (dc.Transform))
+						ControlPaint.DrawFocusRectangle (dc, Rectangle.Round (rect), label.ForeColor, label.BackColor);
+				}
+			}
+			
+			// Draw normal text (without links).
+			if (!text_region.IsEmpty (dc)) {
+				dc.Clip = text_region;
+				dc.Clip.Intersect (clip_rectangle);
+				if (!dc.Clip.IsEmpty (dc))
+					dc.DrawString(label.Text, label.Font, ResPool.GetSolidBrush(label.ForeColor), label.ClientRectangle, label.string_format);
 			}
 		}
+		
 		#endregion	// LinkLabel
+
 		#region ListBox
 
 		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
