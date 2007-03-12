@@ -1,3 +1,9 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: We can't call SizeFromClientSize in the constructor,
+	but we still need to do the same work, so make an internal version.
+	[Fixes bug #80621]
+
 2007-03-12  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs:

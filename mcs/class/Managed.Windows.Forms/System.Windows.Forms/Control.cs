@@ -974,7 +974,7 @@ namespace System.Windows.Forms
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
-			bounds.Size = SizeFromClientSize (client_size);
+			bounds.Size = InternalSizeFromClientSize (client_size);
 			explicit_bounds = bounds;
 		}
 
@@ -1702,6 +1702,22 @@ namespace System.Windows.Forms
 			if ((binding_context == null) && Created) {
 				OnBindingContextChanged(EventArgs.Empty);
 			}
+		}
+
+		// Sometimes we need to do this calculation without it being virtual (constructor)
+		private Size InternalSizeFromClientSize (Size clientSize)
+		{
+			Rectangle ClientRect;
+			Rectangle WindowRect;
+			CreateParams cp;
+
+			ClientRect = new Rectangle (0, 0, clientSize.Width, clientSize.Height);
+			cp = this.CreateParams;
+
+			if (XplatUI.CalculateWindowRect (ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect))
+				return new Size (WindowRect.Width, WindowRect.Height);
+
+			return Size.Empty;
 		}
 
 		private void UpdateDistances() {
@@ -4225,17 +4241,7 @@ namespace System.Windows.Forms
 		internal
 #endif
 		virtual Size SizeFromClientSize (Size clientSize) {
-			Rectangle ClientRect;
-			Rectangle WindowRect;
-			CreateParams cp;
-
-			ClientRect = new Rectangle (0, 0, clientSize.Width, clientSize.Height);
-			cp = this.CreateParams;
-
-			if (XplatUI.CalculateWindowRect (ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect))
-				return new Size (WindowRect.Width, WindowRect.Height);
-				
-			return Size.Empty;
+			return InternalSizeFromClientSize (clientSize);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
