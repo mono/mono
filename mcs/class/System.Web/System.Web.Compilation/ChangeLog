@@ -1,5 +1,9 @@
 2007-03-12  Marek Habersack  <mhabersack@novell.com>
 
+	* AspComponentFoundry.cs: try to register foundries from App_Code
+	assemblies if tag prefix and its namespace are defined. Fixes bug
+	#78797.
+
 	* BuildManager.cs, BaseCompiler.cs: CodeAssemblies is a collection
 	of Assembly instances, not strings.
 

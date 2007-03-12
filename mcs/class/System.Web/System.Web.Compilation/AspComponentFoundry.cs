@@ -73,8 +73,8 @@ namespace System.Web.Compilation
 		}
 
 		public void RegisterFoundry (string foundryName,
-						Assembly assembly,
-						string nameSpace)
+					     Assembly assembly,
+					     string nameSpace)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assembly, nameSpace);
 			InternalRegister (foundryName, foundry);
@@ -110,10 +110,22 @@ namespace System.Web.Compilation
                                 return;
 
 			Dictionary <string, Assembly> assemblyCache = new Dictionary <string, Assembly> ();
+			IList appCode = BuildManager.CodeAssemblies;
+			bool haveCodeAssemblies = appCode != null && appCode.Count > 0;
+			Assembly asm;
                         foreach (TagPrefixInfo tpi in controls) {
                                 if (!String.IsNullOrEmpty (tpi.TagName))
                                         RegisterFoundry (tpi.TagPrefix, tpi.TagName, tpi.Source);
-                                else if (!String.IsNullOrEmpty (tpi.Namespace))
+				else if (String.IsNullOrEmpty (tpi.Assembly)) {
+					if (haveCodeAssemblies) {
+						foreach (object o in appCode) {
+							asm = o as Assembly;
+							if (asm == null)
+								continue;
+							RegisterFoundry (tpi.TagPrefix, asm, tpi.Namespace);
+						}
+					}
+                                } else if (!String.IsNullOrEmpty (tpi.Namespace))
 					RegisterFoundry (tpi.TagPrefix, GetAssemblyByName (assemblyCache, tpi.Assembly), tpi.Namespace);
                         }
 		}
@@ -255,7 +267,9 @@ namespace System.Web.Compilation
 
 			public override Type GetType (string componentName)
 			{
-				return assembly.GetType (nameSpace + "." + componentName, true, true);
+				if (assembly != null)
+					return assembly.GetType (nameSpace + "." + componentName, true, true);
+				return null;
 			}
 		}
 
