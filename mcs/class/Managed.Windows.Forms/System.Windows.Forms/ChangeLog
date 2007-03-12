@@ -1,3 +1,11 @@
+2007-03-12  Chris Toshok  <toshok@ximian.com>
+
+	* XEventQueue.cs: remove the use of PostQuitState.
+
+	* XplatUIX11.cs: remove the use of PostQuitState.  If we get a
+	WM_QUIT message in GetMessage, return false (and if we're in the
+	nested WaitForHwndMessage, repost the WM_QUIT message).
+
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Don't call RecreateHandle when we change the MinimizeBox

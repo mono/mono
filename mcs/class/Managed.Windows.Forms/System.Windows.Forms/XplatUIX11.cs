@@ -1276,17 +1276,18 @@ namespace System.Windows.Forms {
 
 			bool done = false;
 			do {
-				// if the application is exiting exit this loop immediately so the
-				// default application mainloop gets the WM_QUIT message and exits
-				// properly.  Also, only check PostQuitState if the message loop
-				// for this thread is actually running.
-				if (Application.MessageLoop && ThreadQueue(Thread.CurrentThread).PostQuitState)
-					break;
-
 				if (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-					done = (msg.hwnd == hwnd.Handle) && ((Msg)msg.message == message || (Msg)msg.message == Msg.WM_DESTROY);
-					TranslateMessage (ref msg);
-					DispatchMessage (ref msg);
+					if ((Msg)msg.message == Msg.WM_QUIT) {
+						PostQuitMessage (0);
+						done = true;
+					}
+					else {
+						if ((msg.hwnd == hwnd.Handle) &&
+						    ((Msg)msg.message == message || (Msg)msg.message == Msg.WM_DESTROY))
+							done = true;
+						TranslateMessage (ref msg);
+						DispatchMessage (ref msg);
+					}
 				}
 			} while (!done);
 
@@ -3275,24 +3276,9 @@ namespace System.Windows.Forms {
 				} else if (((XEventQueue)queue_id).Paint.Count > 0) {
 					xevent = ((XEventQueue)queue_id).Paint.Dequeue();
 				} else {
-					if (!ThreadQueue(Thread.CurrentThread).PostQuitState) {
-						msg.hwnd= IntPtr.Zero;
-						msg.message = Msg.WM_ENTERIDLE;
-						return true;
-					}
-
-					// We reset ourselves so GetMessage can be called again
-
-					// XXX this is *so* wrong.  if
-					// we've posted the quit
-					// message we shouldn't *be*
-					// called again.  Removing it,
-					// however, makes many of the
-					// ListView unit tests fail.
-					// should investigate why.
-					ThreadQueue(Thread.CurrentThread).PostQuitState = false;
-
-					return false;
+					msg.hwnd= IntPtr.Zero;
+					msg.message = Msg.WM_ENTERIDLE;
+					return true;
 				}
 			}
 
@@ -3686,7 +3672,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ConfigureNotify: {
-					if (ThreadQueue(Thread.CurrentThread).PostQuitState|| !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
@@ -3769,7 +3755,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
-					if (ThreadQueue(Thread.CurrentThread).PostQuitState || !hwnd.Mapped) {
+					if (!hwnd.Mapped) {
 						if (client) {
 							hwnd.expose_pending = false;
 						} else {
@@ -3882,7 +3868,10 @@ namespace System.Windows.Forms {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
 						msg.wParam = xevent.ClientMessageEvent.ptr3;
 						msg.lParam = xevent.ClientMessageEvent.ptr4;
-						return true;
+						if (msg.message == (Msg)Msg.WM_QUIT)
+							return false;
+						else
+							return true;
 					}
 
 					if  (xevent.ClientMessageEvent.message_type == _XEMBED) {
@@ -4316,7 +4305,6 @@ namespace System.Windows.Forms {
 		internal override void PostQuitMessage(int exitCode) {
 			PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
 			XFlush(DisplayHandle);
-			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
 
 		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave)
@@ -5128,7 +5116,6 @@ namespace System.Windows.Forms {
 
 		internal override object StartLoop(Thread thread) {
 			XEventQueue q = ThreadQueue(thread);
-			q.PostQuitState = false;
 			return q;
 		}
 
