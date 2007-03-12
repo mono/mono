@@ -260,6 +260,38 @@ namespace MonoTests.System.Reflection.Emit
 			object objRet = hello.Invoke (null, invokeArgs);
 			Assert.AreEqual (2, objRet, "#3");
 		}
+
+		[Test]
+		public void Circular_Refs () {
+			DynamicMethod m1 = new DynamicMethod("f1", typeof(int), new Type[] { typeof (int) },
+												 typeof(object));
+			DynamicMethod m2 = new DynamicMethod("f2", typeof(int), new Type[] { typeof (int) },
+												 typeof(object));
+
+			ILGenerator il1 = m1.GetILGenerator();
+			ILGenerator il2 = m2.GetILGenerator();
+
+			Label l = il1.DefineLabel ();
+			//il1.EmitWriteLine ("f1");
+			il1.Emit (OpCodes.Ldarg_0);
+			il1.Emit (OpCodes.Ldc_I4_0);
+			il1.Emit (OpCodes.Bne_Un, l);
+			il1.Emit (OpCodes.Ldarg_0);
+			il1.Emit (OpCodes.Ret);
+			il1.MarkLabel (l);
+			il1.Emit (OpCodes.Ldarg_0);
+			il1.Emit (OpCodes.Ldc_I4_1);
+			il1.Emit (OpCodes.Sub);
+			il1.Emit (OpCodes.Call, m2);
+			il1.Emit (OpCodes.Ret);
+
+			//il2.EmitWriteLine("f2");
+			il2.Emit(OpCodes.Ldarg_0);
+			il2.Emit(OpCodes.Call, m1);
+			il2.Emit(OpCodes.Ret);
+
+			m1.Invoke(null, new object[] { 5 });
+		}
 	}
 }
 

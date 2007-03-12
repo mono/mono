@@ -1,3 +1,7 @@
+2007-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicMethodTest.cs: Add a test for circular references.
+
 2007-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumBuilderTest.cs: Enabled test that failed due to bug #81037.
