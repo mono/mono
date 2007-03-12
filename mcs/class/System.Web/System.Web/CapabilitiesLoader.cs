@@ -143,10 +143,51 @@ namespace System.Web
 	
 	class CapabilitiesLoader : MarshalByRefObject
 	{
-		static volatile bool loaded;
-		static ICollection alldata;
+		const int userAgentsCacheSize = 3000;
 		static Hashtable defaultCaps;
 		static readonly object lockobj = new object ();
+
+#if TARGET_JVM
+		static bool loaded {
+			get {
+				return alldata != null;
+			}
+			set {
+				if (alldata == null)
+					alldata = new ArrayList ();
+			}
+		}
+
+ 		const string alldataKey = "System.Web.CapabilitiesLoader.alldata";
+		static ICollection alldata {
+			get {
+				return (ICollection) AppDomain.CurrentDomain.GetData (alldataKey);
+			}
+			set {
+				AppDomain.CurrentDomain.SetData (alldataKey, value);
+			}
+		}
+
+ 		const string userAgentsCacheKey = "System.Web.CapabilitiesLoader.userAgentsCache";
+		static Hashtable userAgentsCache {
+			get {
+				lock (typeof (CapabilitiesLoader)) {
+					Hashtable agentsCache = (Hashtable) AppDomain.CurrentDomain.GetData (userAgentsCacheKey);
+					if (agentsCache == null) {
+						agentsCache = Hashtable.Synchronized (new Hashtable (userAgentsCacheSize + 10));
+						AppDomain.CurrentDomain.SetData (userAgentsCacheKey, agentsCache);
+					}
+
+					return agentsCache;
+				}
+			}
+		}
+#else
+		static volatile bool loaded;
+		static ICollection alldata;
+		static Hashtable userAgentsCache = Hashtable.Synchronized(new Hashtable(userAgentsCacheSize+10));
+#endif
+
 		private CapabilitiesLoader () {}
 
 		static CapabilitiesLoader ()
@@ -165,21 +206,33 @@ namespace System.Web
 			if (alldata == null || userAgent == null || userAgent == "")
 				return defaultCaps;
 
-			foreach (BrowserData bd in alldata) {
-				if (bd.IsMatch (userAgent)) {
-					Hashtable tbl;
+			Hashtable userBrowserCaps = (Hashtable) userAgentsCache [userAgent];
+			if (userBrowserCaps == null) {
+				foreach (BrowserData bd in alldata) {
+					if (bd.IsMatch (userAgent)) {
+						Hashtable tbl;
 #if NET_2_0
-					tbl = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+						tbl = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
 #else
-                        		tbl = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-								CaseInsensitiveComparer.DefaultInvariant);
+						tbl = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+							CaseInsensitiveComparer.DefaultInvariant);
 #endif
-
-					return bd.GetProperties (tbl);
+						userBrowserCaps = bd.GetProperties (tbl);
+						break;
+					}
 				}
+
+				if (userBrowserCaps == null)
+					userBrowserCaps = defaultCaps;
+
+				lock (typeof (CapabilitiesLoader)) {
+					if (userAgentsCache.Count >= userAgentsCacheSize) {
+						userAgentsCache.Clear ();
+					}
+				}
+				userAgentsCache [userAgent] = userBrowserCaps;
 			}
-			
-			return defaultCaps;
+			return userBrowserCaps;
 		}
 
 		static void Init ()

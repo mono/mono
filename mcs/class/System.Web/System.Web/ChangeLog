@@ -1,3 +1,8 @@
+2007-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CapabilitiesLoader.cs: added TARGET_JVM part of static members,
+	added caching to GetCapabilities method for performance improvement
+
 2007-03-12  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: support custom site map providers. Fixes
