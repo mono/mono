@@ -1879,8 +1879,8 @@ namespace System.Windows.Forms {
 		static object BeforeSelectEvent = new object ();
 #if NET_2_0
 		static object DrawNodeEvent = new object ();
-		static object NodeMouseClick = new object ();
-		static object NodeMouseDoubleClick = new object ();
+		static object NodeMouseClickEvent = new object ();
+		static object NodeMouseDoubleClickEvent = new object();
 #endif
 
 		public event ItemDragEventHandler ItemDrag {
@@ -1946,12 +1946,13 @@ namespace System.Windows.Forms {
 
 		public event TreeNodeMouseClickEventHandler NodeMouseClick {
 			add { Events.AddHandler (NodeMouseClickEvent, value); }
-			remove { Events.RemoveHandler (NodeMouseClickEvent); }
+			remove { Events.RemoveHandler (NodeMouseClickEvent, value); }
 		}
+
 
 		public event TreeNodeMouseClickEventHandler NodeMouseDoubleClick {
 			add { Events.AddHandler (NodeMouseDoubleClickEvent, value); }
-			remove { Events.RemoveHandler (NodeMouseDoubleClickEvent); }
+			remove { Events.RemoveHandler (NodeMouseDoubleClickEvent, value); }
 		}
 #endif
 
