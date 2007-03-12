@@ -14,7 +14,7 @@ IF "%1"=="" (
 	set BUILD_OPTION=%1
 )
 
-set OUTPUT_FILE_PREFIX=MonoTests.System
+set OUTPUT_FILE_PREFIX=MonoTests.Corlib
 set RUNNING_FIXTURE=MonoTests.System
 
 call run-tests.test.bat %BUILD_OPTION% %SECURE_MODE% %OUTPUT_FILE_PREFIX% %RUNNING_FIXTURE%

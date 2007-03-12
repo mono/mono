@@ -30,7 +30,7 @@ REM Set parameters
 REM ********************************************************
 
 set BUILD_OPTION=%1
-set OUTPUT_FILE_PREFIX=System_MonoTests
+set OUTPUT_FILE_PREFIX=Corlib_MonoTests
 set RUNNING_FIXTURE=MonoTests.System
 set TEST_SOLUTION=Test\Mscorlib.Test20.sln
 set TEST_ASSEMBLY=Mscorlib.Test20.jar
@@ -53,7 +53,7 @@ REM @echo Set environment
 REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
-set JAVA_HOME=%VMW_HOME%\jre5
+set JAVA_HOME=%VMW_HOME%\jre6
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -131,7 +131,7 @@ set XML_TOOL_PATH=..\..\tools\mono-xmltool
 if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
 
 REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.csproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
