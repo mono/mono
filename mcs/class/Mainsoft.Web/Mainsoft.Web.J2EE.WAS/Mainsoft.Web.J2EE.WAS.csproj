@@ -89,6 +89,7 @@
     <Compile Include="Mainsoft.Web.Security\WPGroupsRoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mainsoft.Web.Security\WPMembershipProvider.cs" />
+    <Compile Include="Mainsoft.Web.Security\WPAuthenticationModule.cs" />
     <Compile Include="Mainsoft.Web.Security\WPMembershipUser.cs" />
   </ItemGroup>
   <ItemGroup>

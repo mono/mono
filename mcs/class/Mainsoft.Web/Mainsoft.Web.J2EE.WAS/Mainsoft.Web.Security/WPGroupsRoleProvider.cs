@@ -173,6 +173,26 @@ namespace Mainsoft.Web.Security
 
         }
 
+        internal protected static string[] GetRolesForUser(com.ibm.portal.um.User user)
+        {
+            if (user == null)
+                return new string[0];
+
+            try
+            {
+                IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
+                java.util.List groups = provider.PumaLocator.findGroupsByPrincipal(user, true);
+                return GroupsToStringArray(provider, groups);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine(e);
+#endif
+                return new string[0];
+            }
+        }
+
         public override string[] GetUsersInRole(string roleName)
         {
             if(roleName == null || roleName == String.Empty) 

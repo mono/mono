@@ -64,6 +64,8 @@ namespace Mainsoft.Web.Security
         
         private PumaHomeWrapper _pumaHome;
 
+        private java.util.List _nameAttributeList;
+
         #region Initialization 
         
         internal PumaServicesProvider()
@@ -80,6 +82,9 @@ namespace Mainsoft.Web.Security
                     throw new ApplicationException("Cannot obtain servlet/portlet request");
                 _pumaHome = GetPumaHomeWrapper(httpReq);
             }
+
+            _nameAttributeList = new java.util.ArrayList(1);
+            _nameAttributeList.add("uid");
         }
 
         /* Needs HttpServletRequest because ServletRequest doesn't contain getSession method*/
@@ -154,6 +159,23 @@ namespace Mainsoft.Web.Security
         public com.ibm.portal.um.User CurrentUser
         {
             get { return _pumaHome.PumaProfile.getCurrentUser(); }
+        }
+
+        public string CurrentUserName
+        {
+            get
+            {
+                com.ibm.portal.um.User user = CurrentUser;
+                string username = null;
+                
+                if (user != null)
+                {
+                    java.util.Map m = PumaProfile.getAttributes(user, _nameAttributeList);
+                    username = (string)m.get("uid");
+                }
+
+                return username;
+            }
         }
 
         public void AddAttribute(com.ibm.portal.um.Principal p, string attributeName, string attributeValue)

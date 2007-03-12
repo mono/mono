@@ -76,6 +76,11 @@ namespace Mainsoft.Web.Security
         /// </summary>
         User CurrentUser { get; }
 
+        /// <summary>
+        /// Returns the human readable name of current user.
+        /// </summary>
+        string CurrentUserName { get;}
+
 
         /// <summary>
         /// Adds attribute for given principal (User or Group)
