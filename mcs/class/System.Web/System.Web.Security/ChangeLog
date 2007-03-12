@@ -1,3 +1,9 @@
+2007-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* RolePrincipal.cs: decrypt the roles ticket properly. Makes role
+	caching in cookies work. Fixes bug #81117. Patch from Mike Morano
+	<mmorano@mikeandwan.us>
+
 2007-03-02  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlMembershipProvider.cs: cast PasswordFormat to int, so that

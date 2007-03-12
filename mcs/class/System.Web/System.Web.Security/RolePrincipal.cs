@@ -235,13 +235,13 @@ namespace System.Web.Security {
 			// expire date
 			_exprireDate = new DateTime (reader.ReadInt64 ());
 
+			// cookie path
+			_cookiePath = reader.ReadString ();
+			
 			// roles
 			string roles = reader.ReadString ();
 			if (!Expired)
 				InitializeRoles (roles);
-
-			// cookie path
-			_cookiePath = reader.ReadString ();
 		}
 
 		private void InitializeRoles (string decryptedRoles)
