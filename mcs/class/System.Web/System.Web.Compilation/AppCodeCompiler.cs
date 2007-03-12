@@ -217,7 +217,7 @@ namespace System.Web.Compilation
 				parameters.ReferencedAssemblies.Add (a.Location);
 			CompilerResults results = abuilder.BuildAssembly (parameters);
 			if (results.Errors.Count == 0) {
-				BuildManager.CodeAssemblies.Add (results.PathToAssembly);
+				BuildManager.CodeAssemblies.Add (results.CompiledAssembly);
 				BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
 				HttpRuntime.WritePreservationFile (results.CompiledAssembly, name);
 			} else {

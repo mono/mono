@@ -248,10 +248,14 @@ namespace System.Web.Compilation
 				}
 			}
 
+			Assembly asm;
 			IList list = BuildManager.CodeAssemblies;
 			if (list != null && list.Count > 0) {
 				foreach (object o in list) {
-					asmName = o as string;
+					asm = o as Assembly;
+					if (asm == null)
+						continue;
+					asmName = asm.Location;
 					if (asmName != null && !refAsm.Contains (asmName))
 						refAsm.Add (asmName);
 				}
@@ -259,8 +263,11 @@ namespace System.Web.Compilation
 			
 			list = BuildManager.TopLevelAssemblies;
 			if (list != null && list.Count > 0) {
-				foreach (Assembly a in list) {
-					asmName = a.Location;
+				foreach (object o in list) {
+					asm = o as Assembly;
+					if (o == null)
+						continue;
+					asmName = asm.Location;
 					if (!refAsm.Contains (asmName))
 						refAsm.Add (asmName);
 				}

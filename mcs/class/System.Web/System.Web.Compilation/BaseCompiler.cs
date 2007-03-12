@@ -135,8 +135,12 @@ namespace System.Web.Compilation
 
 			IList list = BuildManager.CodeAssemblies;
 			if (list != null && list.Count > 0) {
+				Assembly asm;
 				foreach (object o in list) {
-					asmName = o as string;
+					asm = o as Assembly;
+					if (o == null)
+						continue;
+					asmName = asm.Location;
 					if (asmName != null && !refAsm.Contains (asmName))
 						refAsm.Add (asmName);
 				}

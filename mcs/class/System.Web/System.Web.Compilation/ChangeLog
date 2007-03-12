@@ -1,3 +1,17 @@
+2007-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs, BaseCompiler.cs: CodeAssemblies is a collection
+	of Assembly instances, not strings.
+
+	* CachingCompiler.cs: make sure items in the CodeAssemblies and
+	TopLevelAssemblies are really instances of the Assembly class
+	before trying to use them.
+	CodeAssemblies is a collection of Assembly instances, not
+	strings.
+
+	* AppCodeCompiler.cs: on MS.NET CodeAssemblies is a collection of
+	assemblies, not paths to assemblies.
+
 2007-03-10  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs, BaseCompiler.cs: refactoring: moved the
