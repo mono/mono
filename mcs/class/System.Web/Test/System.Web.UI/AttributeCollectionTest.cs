@@ -113,7 +113,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void InitialNoBag10()
 		{
 		    AC ac = new AC(null);
@@ -123,7 +122,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void InitialNoBag11()
 		{
 		    AC ac = new AC(null);
@@ -133,7 +131,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void InitialNoBag12()
 		{
 		    AC ac = new AC(null);
@@ -209,6 +206,67 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("", str, "value2");
 			Assert.AreEqual (1, bag.Count, "count2");
 		}
+		
+		[Test]
+		public void Count1 ()
+		{
+			StateBag bag = new StateBag (true);
+			AC ac = new AC (bag);
+			ac.Add ("style", "padding: 0px; margin: 0px");
+			Assert.AreEqual (1, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (2, ac.CssStyle.Count, "AttributeCollection.Count");
+			
+			ac.Remove ("style");
+			Assert.AreEqual (0, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
+		}
+
+		[Test]
+		public void Count2 ()
+		{
+			StateBag bag = new StateBag (true);
+			AC ac = new AC (bag);
+			ac ["style"] = "padding: 0px; margin: 0px";
+			Assert.AreEqual (1, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (2, ac.CssStyle.Count, "AttributeCollection.Count");
+
+			ac ["style"] = null;
+			Assert.AreEqual (0, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
+		}
+
+		[Test]
+		public void Count3 ()
+		{
+			StateBag bag = new StateBag (true);
+			AC ac = new AC (bag);
+			ac.CssStyle.Add("padding", "0px");
+			ac.CssStyle.Add("margin", "0px");
+			Assert.AreEqual (1, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (2, ac.CssStyle.Count, "AttributeCollection.Count");
+
+			ac.CssStyle.Remove ("padding");
+			ac.CssStyle.Remove ("margin");
+			Assert.AreEqual (0, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
+		}
+
+#if NET_2_0
+		[Test]
+		public void Count4 ()
+		{
+			StateBag bag = new StateBag (true);
+			AC ac = new AC (bag);
+			ac.CssStyle ["padding"] = "0px";
+			ac.CssStyle ["margin"] = "0px";
+			Assert.AreEqual (1, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (2, ac.CssStyle.Count, "AttributeCollection.Count");
+
+			ac.CssStyle.Value = null;
+			Assert.AreEqual (0, ac.Count, "AttributeCollection.Count");
+			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
+		}
+#endif
 	}
 }
 

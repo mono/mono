@@ -43,24 +43,46 @@ namespace System.Web.UI {
 	{
 		StateBag bag;
 		HybridDictionary style;
-
-		internal CssStyleCollection (StateBag bag)
-		{
-			this.bag = bag;
-			if (bag != null)
-				InitFromStyle ();
+		string _value;
+		
+		string ValueInternal {
+			get { return _value; }
+			set {
+				_value = value;
+				if (bag != null) {
+					if (_value == null) {
+						bag.Remove (AttributeCollection.StyleAttribute);
+					}
+					else {
+						bag [AttributeCollection.StyleAttribute] = _value;
+					}
+				}
+			}
 		}
-
-		void InitFromStyle ()
+		
+		internal CssStyleCollection ()
 		{
 #if NET_2_0
 			style = new HybridDictionary (true);
 #else
 			style = new HybridDictionary (false);
 #endif
-			string att = (string) bag ["style"];
-			if (att != null) {
-				FillStyle (att);
+		}
+
+		internal CssStyleCollection (StateBag bag)
+			: this ()
+		{
+			this.bag = bag;
+			if (bag != null)
+				_value = (string) bag [AttributeCollection.StyleAttribute];
+			InitFromStyle ();
+		}
+
+		void InitFromStyle ()
+		{
+			style.Clear ();
+			if (_value != null) {
+				FillStyle (_value);
 			}
 		}
 
@@ -128,7 +150,7 @@ namespace System.Web.UI {
 		public void Add (string key, string value)
 		{
 			style [key] = value;
-			bag ["style"] = BagToString ();
+			ValueInternal = BagToString ();
 		}
 
 #if NET_2_0
@@ -144,7 +166,7 @@ namespace System.Web.UI {
 		public void Clear ()
 		{
 			style.Clear ();
-			bag.Remove ("style");
+			ValueInternal = null;
 		}
 
 		public void Remove (string key)
@@ -152,7 +174,10 @@ namespace System.Web.UI {
 			if (style [key] == null)
 				return;
 			style.Remove (key);
-			bag ["style"] = BagToString ();
+			if (style.Count == 0)
+				ValueInternal = null;
+			else
+				ValueInternal = BagToString ();
 		}
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
@@ -174,9 +199,9 @@ namespace System.Web.UI {
 		internal
 #endif
 		string Value {
-			get { return BagToString (); }
+			get { return ValueInternal; }
 			set {
-				bag ["style"] = value;
+				ValueInternal = value;
 				InitFromStyle ();
 			}
 		}

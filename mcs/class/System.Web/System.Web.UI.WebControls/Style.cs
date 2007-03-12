@@ -412,7 +412,7 @@ namespace System.Web.UI.WebControls {
 				if (CssClass.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass);
 #if NET_2_0
-				CssStyleCollection col = new CssStyleCollection (new StateBag ());
+				CssStyleCollection col = new CssStyleCollection ();
 				FillStyleAttributes (col, owner);
 				foreach (string key in col.Keys) {
 					writer.AddStyleAttribute (key, col [key]);
@@ -813,7 +813,7 @@ namespace System.Web.UI.WebControls {
 
 		public CssStyleCollection GetStyleAttributes (IUrlResolutionService resolver)
 		{
-			CssStyleCollection col = new CssStyleCollection (new StateBag ());
+			CssStyleCollection col = new CssStyleCollection ();
 			FillStyleAttributes (col, resolver);
 			return col;
 		}

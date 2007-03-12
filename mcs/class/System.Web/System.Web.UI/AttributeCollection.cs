@@ -40,6 +40,7 @@ namespace System.Web.UI {
 	{
 		private StateBag bag;
 		private CssStyleCollection styleCollection;
+		internal const string StyleAttribute = "style";
 		
 		public AttributeCollection (StateBag bag)
 		{
@@ -72,7 +73,7 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (key, StyleAttribute, true, CultureInfo.InvariantCulture)) {
 				CssStyle.Value = value;
 				return;
 			}
@@ -95,7 +96,7 @@ namespace System.Web.UI {
 
 		public void Remove (string key)
 		{
-			if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (key, StyleAttribute, true, CultureInfo.InvariantCulture)) {
 				CssStyle.Clear ();
 				return;
 			}

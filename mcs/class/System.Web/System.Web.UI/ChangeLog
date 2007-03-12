@@ -1,5 +1,10 @@
 2007-03-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* AttributeCollection.cs:
+	* CssStyleCollection.cs: fixed: works w/o state bag.	
+
+2007-03-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* HtmlTextWriter.cs: fixed:
 	- Fixed writing background-image style attribute (different behavior in
 	1.1 and 2.0).
