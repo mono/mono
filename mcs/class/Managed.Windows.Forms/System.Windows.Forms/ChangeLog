@@ -1,3 +1,8 @@
+2007-03-12  Everaldo Canuto  <everaldo@simios.org>
+
+	* LinkLabel.cs: When calculate pieces make LinkArea empty if theres
+	no links.
+
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Fix some tests I broke by checking Visible

@@ -563,6 +563,9 @@ namespace System.Windows.Forms
 			if (Links.Count > 0) {
 				link_area.Start = Links[0].Start;
 				link_area.Length = Links[0].Length;
+			} else {
+				link_area.Start = 0;
+				link_area.Length = 0;
 			}
 
 			TabStop = (LinkArea.Length > 0);
