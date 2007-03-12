@@ -1,3 +1,8 @@
+2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Fix some tests I broke by checking Visible
+	instead of visible.
+
 2007-03-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileDialog.cs: Use text of File name combobox to determine what

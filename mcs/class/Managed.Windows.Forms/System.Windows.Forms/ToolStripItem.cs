@@ -392,7 +392,7 @@ namespace System.Windows.Forms
 				this.bounds.Height = value; 
 				this.explicit_size.Height = value;
 				
-				if (this.visible) {
+				if (this.Visible) {
 					this.CalculateAutoSize ();
 					this.OnBoundsChanged ();
 					this.Invalidate (); 
@@ -604,9 +604,10 @@ namespace System.Windows.Forms
 				this.bounds.Size = value; 
 				this.explicit_size = value;
 				
-				if (this.visible) {
-				this.CalculateAutoSize ();
-				OnBoundsChanged (); }
+				if (this.Visible) {
+					this.CalculateAutoSize ();
+					this.OnBoundsChanged (); 
+				}
 			}
 		}
 
@@ -687,7 +688,7 @@ namespace System.Windows.Forms
 				this.bounds.Width = value; 
 				this.explicit_size.Width = value;
 				
-				if (this.visible) {
+				if (this.Visible) {
 					this.CalculateAutoSize ();
 					this.OnBoundsChanged ();
 					this.Invalidate ();
@@ -1158,7 +1159,7 @@ namespace System.Windows.Forms
 			Size final_size = this.CalculatePreferredSize (Size.Empty);
 
 			if (final_size != this.Size) {
-				this.bounds.Size = final_size;
+				this.bounds.Width = final_size.Width;
 				if (this.parent != null)
 					this.parent.PerformLayout ();
 			}
