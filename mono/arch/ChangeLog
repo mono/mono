@@ -1,4 +1,8 @@
 
+Mon Mar 12 17:07:32 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* amd64/amd64-codegen.h: removed some useless size rex prefixes.
+
 Wed Jan 24 21:00:40 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* arm/arm-codegen.h: fixed encoding of short/byte load/store
