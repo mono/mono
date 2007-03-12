@@ -1,3 +1,8 @@
+2007-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServletWorkerRequest.jvm.cs: fixed ctor, adding welcome page to
+	aspnetconfig folder
+
 2007-03-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* BaseHttpServlet.cs: added .appStartTime value to app domain

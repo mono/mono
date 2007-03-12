@@ -116,6 +116,17 @@ namespace Mainsoft.Web.Hosting {
 				int paramNameStart = _requestUri.LastIndexOf('/');
 				_pathInfo = _requestUri.Substring(paramNameStart, _requestUri.Length - paramNameStart);
 			}
+
+			const int aspnetconfigLength = 12; //"aspnetconfig".Length
+			int endingSlash = _requestUri [_requestUri.Length - 1] == '/' ? 1 : 0;
+			if (_requestUri.Length > aspnetconfigLength &&
+				String.CompareOrdinal ("aspnetconfig", 0, _requestUri,
+				_requestUri.Length - aspnetconfigLength - endingSlash, aspnetconfigLength) == 0) {
+
+				if (endingSlash == 0)
+					_requestUri += "/";
+				_requestUri += "Default.aspx";
+			}
 		}
 
 		public object GetService (Type serviceType)
