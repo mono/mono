@@ -628,7 +628,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80604
-		[Category ("NotWorking")]
 		public void VisibleOnLoad ()
 		{
 			MockForm form = new MockForm ();
