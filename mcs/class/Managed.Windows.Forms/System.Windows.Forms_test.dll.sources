@@ -58,6 +58,7 @@ System.Windows.Forms/HelpProviderTest.cs
 System.Windows.Forms/ImageListTest.cs
 System.Windows.Forms/LabelTest.cs
 System.Windows.Forms/LinkAreaTest.cs
+System.Windows.Forms/LinkLabelTest.cs
 System.Windows.Forms/ListControlTest.cs
 System.Windows.Forms/ListBoxEventTest.cs
 System.Windows.Forms/ListBoxTest.cs

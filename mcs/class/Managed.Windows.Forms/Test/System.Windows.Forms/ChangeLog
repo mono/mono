@@ -1,3 +1,7 @@
+2007-03-11  Everaldo Canuto  <everaldo@simios.org>
+
+	* LinkLabelTest.cs: LinkLabel tests added.
+
 2007-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormHandleTest.cs: Fixed build using csc 1.x.
