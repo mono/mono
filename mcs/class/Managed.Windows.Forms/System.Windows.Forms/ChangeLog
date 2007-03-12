@@ -6,6 +6,8 @@
 	- Also attempting to walk the node tree less than previously, and
 	just use visible order calculations for determining offsets.
 	- oops made scrolling backwards.
+	* TreeNode.cs: We need to start nodes with a zero visible order,
+	because the order calcs are based on the first nodes order.
 
 2007-03-12  Jonathan Pobst  <monkey@jpobst.com>
 

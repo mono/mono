@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
         internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 
-		internal int visible_order = -1;
+		internal int visible_order = 0;
 		internal int width = -1;
 		
 		internal bool is_expanded = false;
@@ -374,7 +374,6 @@ namespace System.Windows.Forms {
 				if (TreeView == null || !TreeView.IsHandleCreated || !TreeView.Visible)
 					return false;
 
-				
 				if (visible_order < TreeView.skipped_nodes || visible_order - TreeView.skipped_nodes > TreeView.VisibleCount)
 					return false;
 
