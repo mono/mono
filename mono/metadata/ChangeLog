@@ -1,3 +1,7 @@
+2007-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoReflectionDynamicMethod): Add 'referenced_by' field.
+
 2007-03-09  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (encode_constant): Add support for MONO_TYPE_GENERICINST.
