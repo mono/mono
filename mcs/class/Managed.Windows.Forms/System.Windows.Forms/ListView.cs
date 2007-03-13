@@ -120,6 +120,7 @@ namespace System.Windows.Forms
 		static object ItemDragEvent = new object ();
 		static object SelectedIndexChangedEvent = new object ();
 #if NET_2_0
+		static object ItemCheckedEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
 #endif
@@ -155,6 +156,13 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ItemCheckEvent, value); }
 			remove { Events.RemoveHandler (ItemCheckEvent, value); }
 		}
+
+#if NET_2_0
+		public event ItemCheckedEventHandler ItemChecked {
+			add { Events.AddHandler (ItemCheckedEvent, value); }
+			remove { Events.RemoveHandler (ItemCheckedEvent, value); }
+		}
+#endif
 
 		public event ItemDragEventHandler ItemDrag {
 			add { Events.AddHandler (ItemDragEvent, value); }
@@ -1845,6 +1853,12 @@ namespace System.Windows.Forms
 
 				ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
 				owner.OnItemCheck (ice);
+
+#if NET_2_0
+				// ItemCheckedEvent goes after the checked state has changed
+				ItemCheckedEventArgs icea = new ItemCheckedEventArgs (item);
+				owner.OnItemChecked (icea);
+#endif
 			}
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
@@ -2516,10 +2530,19 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemCheck (ItemCheckEventArgs ice)
 		{
-			EventHandler eh = (EventHandler)(Events [ItemCheckEvent]);
+			ItemCheckEventHandler eh = (ItemCheckEventHandler)(Events [ItemCheckEvent]);
 			if (eh != null)
 				eh (this, ice);
 		}
+
+#if NET_2_0
+		protected virtual void OnItemChecked (ItemCheckedEventArgs icea)
+		{
+			ItemCheckedEventHandler eh = (ItemCheckedEventHandler)(Events [ItemCheckedEvent]);
+			if (eh != null)
+				eh (this, icea);
+		}
+#endif
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
