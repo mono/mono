@@ -108,6 +108,11 @@ namespace System.Drawing.Printing
 			}
 		}
 
+		internal static void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment) 
+		{
+			CreatePrintingService().GetPrintDialogInfo (printer, ref port, ref type, ref status, ref comment);
+		}
+
 		internal class Printer {
 			public readonly string Name;
 			public readonly string Comment;

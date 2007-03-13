@@ -1,3 +1,8 @@
+2007-03-13  Andreia Gaita  <avidigal@novell.com>
+
+	* PrintingServices.cs: Add missing static method SysPrn.GetPrintDialogInfo
+	for SWF to call up printing dialogues.
+
 2007-02-21  Andreia Gaita  <avidigal@novell.com>
 	
 	* PrintingServicesUnix.cs: Report an error in the console if there is
