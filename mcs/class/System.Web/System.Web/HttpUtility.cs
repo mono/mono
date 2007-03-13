@@ -340,7 +340,7 @@ namespace System.Web {
 			if (null == s) 
 				return null;
 	
-			if (s.IndexOf ('&') == -1 && s.IndexOf ('"') == -1)
+			if (s.IndexOf ('&') == -1 && s.IndexOf ('"') == -1 && s.IndexOf ('<') == -1)
 				return s;
 
 			StringBuilder output = new StringBuilder ();
@@ -351,6 +351,9 @@ namespace System.Web {
 					break;
 				case '"' :
 					output.Append ("&quot;");
+					break;
+				case '<':
+					output.Append ("&lt;");
 					break;
 				default:
 					output.Append (c);

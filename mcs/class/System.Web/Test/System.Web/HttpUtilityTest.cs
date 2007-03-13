@@ -40,6 +40,14 @@ namespace MonoTests.System.Web {
 	public class HttpUtilityTest {
 
 		[Test]
+		public void HtmlAttributeEncode ()
+		{
+			Assert.AreEqual ("&lt;script>", HttpUtility.HtmlAttributeEncode ("<script>"));
+			Assert.AreEqual ("&quot;a&amp;b&quot;", HttpUtility.HtmlAttributeEncode ("\"a&b\""));
+			Assert.AreEqual ("'string'", HttpUtility.HtmlAttributeEncode ("'string'"));
+		}
+
+		[Test]
 		public void HtmlEncode_LtGt ()
 		{
 			Assert.AreEqual ("&lt;script&gt;", HttpUtility.HtmlEncode ("<script>"));

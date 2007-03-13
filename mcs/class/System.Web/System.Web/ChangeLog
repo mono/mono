@@ -1,3 +1,8 @@
+2007-03-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpUtility.cs: fixed HttpUtillity.HtmlAttributeEncode
+	 '<' char must be encoded.	
+
 2007-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* CapabilitiesLoader.cs: added TARGET_JVM part of static members,
@@ -2154,7 +2159,7 @@
 
 	* HttpUtility.cs: fix InvalidCastException.
 
-2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+2005-06-05  Korn__l P__l <kornelpal@hotmail.com>
 
 	* HttpWriter.cs: Fixed: _OutputFilter.Close () was called twice.
 
