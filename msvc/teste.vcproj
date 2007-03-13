@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="test-invoke"
-	ProjectGUID="{C5639B3F-288A-4A4B-A4A5-C0D85834221D}"
-	RootNamespace="testinvoke"
+	Name="teste"
+	ProjectGUID="{6FDE4E5E-57D0-432F-A987-6C226A7827E4}"
+	RootNamespace="teste"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -50,9 +50,9 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="true"
 				UsePrecompiledHeader="0"
-				ObjectFile="$(IntDir)/invoke/"
-				ProgramDataBaseFileName="$(IntDir)/invoke/vc80.pdb"
-				XMLDocumentationFileName="$(IntDir)/invoke/"
+				ObjectFile="$(IntDir)/e/"
+				ProgramDataBaseFileName="$(IntDir)/e/vc80.pdb"
+				XMLDocumentationFileName="$(IntDir)/e/"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -210,9 +210,9 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="true"
 				UsePrecompiledHeader="0"
-				ObjectFile="$(IntDir)/invoke/"
-				ProgramDataBaseFileName="$(IntDir)/invoke/vc80.pdb"
-				XMLDocumentationFileName="$(IntDir)/invoke/"
+				ObjectFile="$(IntDir)/e/"
+				ProgramDataBaseFileName="$(IntDir)/e/vc80.pdb"
+				XMLDocumentationFileName="$(IntDir)/e/"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -343,7 +343,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\test-invoke.c"
+			RelativePath="..\samples\embed\teste.c"
 			>
 		</File>
 	</Files>

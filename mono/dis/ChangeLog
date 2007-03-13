@@ -1,5 +1,9 @@
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
+	* monodis.vcproj: Move to msvc directory.
+	
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
 	* monodis.vcproj: Begin Win64 port.
 	
 Fri Jan 26 12:30:22 CET 2007 Paolo Molaro <lupus@ximian.com>

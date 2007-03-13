@@ -477,7 +477,7 @@ void GC_init()
 #if defined(GC_WIN32_THREADS) && !defined(GC_PTHREADS)
     if (!GC_is_initialized) {
       BOOL (WINAPI *pfn) (LPCRITICAL_SECTION, DWORD) = NULL;
-      HMODULE hK32 = GetModuleHandle("kernel32.dll");
+      HMODULE hK32 = GetModuleHandle(_T("kernel32.dll"));
       if (hK32)
           (FARPROC) pfn = GetProcAddress(hK32,
 			  "InitializeCriticalSectionAndSpinCount");

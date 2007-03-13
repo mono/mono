@@ -1,5 +1,9 @@
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
+	* runburg.bat, monoburg.vcproj: Move to msvc directory.
+	
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
 	* runburg.bat:  Run executable that was produced by the current
 	target and sent via an argument.
 	* monoburg.vcproj: Fix	Release build target, add define to remove CRT warnings, 
