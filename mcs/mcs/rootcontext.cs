@@ -606,11 +606,6 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			if (root.Enums != null) {
-				foreach (Enum e in root.Enums)
-					e.Emit ();
-			}
-
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitType ();

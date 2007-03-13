@@ -2504,8 +2504,9 @@ enum_declaration
 
 		EnumMember em = null;
 		foreach (VariableDeclaration ev in (ArrayList) $7) {
-			em = new EnumMember (e, em, (Expression) ev.expression_or_array_initializer,
-				new MemberName (ev.identifier, ev.Location), ev.OptAttributes);
+			em = new EnumMember (
+				e, em, ev.identifier, (Expression) ev.expression_or_array_initializer,
+				ev.OptAttributes, ev.Location);
 
 //			if (RootContext.Documentation != null)
 				em.DocComment = ev.DocComment;

@@ -663,6 +663,7 @@ namespace Mono.CSharp {
 	// Used for error reporting to show symbolic name instead of underlying value
 	public static string CSharpEnumValue (Type t, object value)
 	{
+		t = DropGenericTypeArguments (t);
 		Enum e = LookupDeclSpace (t) as Enum;
 		if (e == null)
 			return System.Enum.GetName (t, value);
@@ -1586,6 +1587,7 @@ namespace Mono.CSharp {
 	
 	public static bool IsEnumType (Type t)
 	{
+		t = DropGenericTypeArguments (t);
 		if (builder_to_declspace [t] is Enum)
 			return true;
 
@@ -2359,6 +2361,7 @@ namespace Mono.CSharp {
 	//
 	public static Type EnumToUnderlying (Type t)
 	{
+		t = DropGenericTypeArguments (t);
 		if (t == TypeManager.enum_type)
 			return t;
 
@@ -2763,8 +2766,14 @@ namespace Mono.CSharp {
 			return IsEqual (a.GetElementType (), b.GetElementType ());
 
 		if (a.IsGenericType && b.IsGenericType) {
-			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
+			Type adef = a.GetGenericTypeDefinition ();
+			Type bdef = b.GetGenericTypeDefinition ();
+
+			if (adef != bdef)
 				return false;
+
+			if (adef.IsEnum && bdef.IsEnum)
+				return true;
 
 			Type[] aargs = a.GetGenericArguments ();
 			Type[] bargs = b.GetGenericArguments ();

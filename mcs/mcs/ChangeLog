@@ -1,3 +1,30 @@
+2007-03-09  Martin Baulig  <martin@ximian.com>
+
+	* enum.cs (Enum): Make this a TypeContainer.
+	(EnumMember): Derive from `Const'.
+
+	* const.cs
+	(Const.DoResolveValue): New protected virtual method; move most of
+	the functionality of ResolveValue() here so we can override it in
+	`EnumMember'.
+	(Const.CreateConstantReference): Make this virtual.
+
+	* class.cs (Kind): Add `Kind.Enum'.
+	(TypeContainer.Emit): Don't emit the enums here; they're already
+	in the `RootContext.typecontainer_resolve_order'.
+
+	* rootcontext.cs (RootContext.EmitCode): Don't emit the enums
+	here; they're already in the `typecontainer_resolve_order'.
+
+	* ecore.cs (EnumConstant.ConvertImplicitly): Add
+	TypeManager.DropGenericTypeArguments().
+
+	* typemanager.cs
+	(TypeManager.CSharpEnumValue): Add DropGenericTypeArguments().
+	(TypeManager.IsEnumType): Likewise.
+	(TypeManager.EnumToUnderlying): Likewise.
+	(TypeManager.IsEqual): Add support for enums.
+
 2007-03-12  Raja R Harinath  <rharinath@novell.com>
 
 	* typemanager.cs (InitCoreTypes) [NET_2_0]: Allow

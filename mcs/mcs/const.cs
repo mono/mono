@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 	}
 
 	public class Const : FieldBase, IConstant {
-		Constant value;
+		protected Constant value;
 		bool in_transit;
 		bool define_called;
 
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 			//	return true;
 
 			while (ttype.IsArray)
-			    ttype = TypeManager.GetElementType (ttype);
+				ttype = TypeManager.GetElementType (ttype);
 
 			FieldAttributes field_attr = FieldAttributes.Static | Modifiers.FieldAttr (ModFlags);
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
@@ -180,27 +180,32 @@ namespace Mono.CSharp {
 
 			in_transit = true;
 			// TODO: IResolveContext here
-			EmitContext ec = new EmitContext (this, Parent, Location, null, MemberType, ModFlags);
-			value = initializer.ResolveAsConstant (ec, this);
+			EmitContext ec = new EmitContext (
+				this, Parent, Location, null, MemberType, ModFlags);
+			ec.InEnumContext = this is EnumMember;
+			value = DoResolveValue (ec);
 			in_transit = false;
+			return value != null;
+		}
 
+		protected virtual Constant DoResolveValue (EmitContext ec)
+		{
+			Constant value = initializer.ResolveAsConstant (ec, this);
 			if (value == null)
-				return false;
+				return null;
 
-			Constant c  = value.ConvertImplicitly (MemberType);
+			Constant c = value.ConvertImplicitly (MemberType);
 			if (c == null) {
 				if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue)
 					Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
 				else
 					value.Error_ValueCannotBeConverted (null, Location, MemberType, false);
-				return false;
 			}
 
-			value = c;
-			return true;
+			return c;
 		}
 
-		public Constant CreateConstantReference (Location loc)
+		public virtual Constant CreateConstantReference (Location loc)
 		{
 			if (value == null)
 				return null;

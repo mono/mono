@@ -1567,12 +1567,16 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertImplicitly (Type type)
 		{
-			if (Type == type) {
+			Type this_type = TypeManager.DropGenericTypeArguments (Type);
+			type = TypeManager.DropGenericTypeArguments (type);
+
+			if (this_type == type) {
 				// This is workaround of mono bug. It can be removed when the latest corlib spreads enough
 				if (TypeManager.IsEnumType (type.UnderlyingSystemType))
 					return this;
 
-				if (type.UnderlyingSystemType != Child.Type)
+				Type child_type = TypeManager.DropGenericTypeArguments (Child.Type);
+				if (type.UnderlyingSystemType != child_type)
 					Child = Child.ConvertImplicitly (type.UnderlyingSystemType);
 				return this;
 			}

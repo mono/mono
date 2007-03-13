@@ -3017,7 +3017,7 @@ namespace Mono.CSharp {
 		//
 		Expression SwitchGoverningType (EmitContext ec, Expression expr)
 		{
-			Type t = expr.Type;
+			Type t = TypeManager.DropGenericTypeArguments (expr.Type);
 
 			if (t == TypeManager.byte_type ||
 			    t == TypeManager.sbyte_type ||

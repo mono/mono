@@ -56,7 +56,8 @@ namespace Mono.CSharp {
 		Root,
 		Struct,
 		Class,
-		Interface
+		Interface,
+		Enum
 	}
 
 	/// <summary>
@@ -1170,22 +1171,25 @@ namespace Mono.CSharp {
 		bool DefineTypeBuilder ()
 		{
 			try {
+				Type default_parent = null;
+				if (Kind == Kind.Struct)
+					default_parent = TypeManager.value_type;
+				else if (Kind == Kind.Enum)
+					default_parent = TypeManager.enum_type;
+
 				if (IsTopLevel){
 					if (TypeManager.NamespaceClash (Name, Location)) {
 						return false;
 					}
 
 					ModuleBuilder builder = CodeGen.Module.Builder;
-					Type default_parent = null;
-					if (Kind == Kind.Struct)
-						default_parent = TypeManager.value_type;
 					TypeBuilder = builder.DefineType (
 						Name, TypeAttr, default_parent, null);
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
 
 					TypeBuilder = builder.DefineNestedType (
-						Basename, TypeAttr, null, null);
+						Basename, TypeAttr, default_parent, null);
 				}
 			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "static classes");
@@ -2385,12 +2389,6 @@ namespace Mono.CSharp {
 			if (delegates != null) {
 				foreach (Delegate d in Delegates) {
 					d.Emit ();
-				}
-			}
-
-			if (enums != null) {
-				foreach (Enum e in enums) {
-					e.Emit ();
 				}
 			}
 
