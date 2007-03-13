@@ -47,6 +47,8 @@ namespace System.Web.Compilation
 {
 	internal class AppResourcesCompiler
 	{
+		public AppResourcesCompiler (string path) { }
+		public Assembly Compile () { return null; }
 		internal static Assembly GetCachedLocalResourcesAssembly (string path)
 		{
 			string localResourcesPath = UrlUtils.Combine (path, "App_LocalResources");
