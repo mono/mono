@@ -208,7 +208,7 @@ namespace System.Web.Compilation
 			int index = 1;
 			for (; index < str.Length; index++) {
 				if (Char.IsWhiteSpace (str [index]))
-					index++;
+					continue;
 				else if (str [index] == '"')
 					break;
 			}

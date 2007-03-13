@@ -1,5 +1,8 @@
 2007-03-13  Marek Habersack  <mhabersack@novell.com>
 
+	* AspParser.cs: fix an off-by-one parsing bug with server-side
+	includes.
+
 	* PageThemeCompiler.cs: let property builders through, stop the
 	builders that have no control type. Fixes bug #81092
 
