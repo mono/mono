@@ -176,6 +176,28 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (fld);
 		}
 
+#if NET_2_0
+		void AssignAppRelativeVirtualPath (CodeConstructor ctor)
+		{
+			Type baseType = parser.BaseType;
+			if (baseType == null)
+				return;
+			if (!baseType.IsSubclassOf (typeof (System.Web.UI.TemplateControl)))
+				return;
+			
+			string arvp = Path.Combine (parser.BaseVirtualDir, Path.GetFileName (parser.InputFile));
+			if (VirtualPathUtility.IsAbsolute (arvp))
+				arvp = "~" + arvp;
+			
+			CodeExpression cast = new CodeCastExpression (baseType, new CodeThisReferenceExpression ());
+			CodePropertyReferenceExpression arvpProp = new CodePropertyReferenceExpression (cast, "AppRelativeVirtualPath");
+			CodeAssignStatement arvpAssign = new CodeAssignStatement ();
+			arvpAssign.Left = arvpProp;
+			arvpAssign.Right = new CodePrimitiveExpression (arvp);
+			ctor.Statements.Add (arvpAssign);
+		}
+#endif
+		
 		protected virtual void CreateConstructor (CodeStatementCollection localVars,
 							  CodeStatementCollection trueStmt)
 		{
@@ -183,6 +205,9 @@ namespace System.Web.Compilation
 			ctor.Attributes = MemberAttributes.Public;
 			mainClass.Members.Add (ctor);
 
+#if NET_2_0
+			AssignAppRelativeVirtualPath (ctor);
+#endif
 			if (localVars != null)
 				ctor.Statements.AddRange (localVars);
 

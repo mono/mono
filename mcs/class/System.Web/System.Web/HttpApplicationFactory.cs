@@ -364,7 +364,7 @@ namespace System.Web {
 #endif
 		
 #if NET_2_0 && !TARGET_J2EE
-					AppResourcesCompiler ac = new AppResourcesCompiler (context, true);
+					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
 				
 					// Todo: Process App_WebResources here

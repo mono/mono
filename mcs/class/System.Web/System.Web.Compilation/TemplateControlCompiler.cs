@@ -685,9 +685,16 @@ namespace System.Web.Compilation
 			} else // should never happen
 				return;
 
-			// __ctrl.Text = System.Convert.ToString(this.GetLocalResourceObject("ButtonResource1.Text"));
-			object obj = HttpContext.GetLocalResourceObject (HttpContext.Current.Request.FilePath,
-									 resname);
+			// __ctrl.Text = System.Convert.ToString(HttpContext.GetLocalResourceObject("ButtonResource1.Text"));
+			string inputFile = parser.InputFile;
+			string physPath = HttpContext.Current.Request.PhysicalApplicationPath;
+	
+			if (StrUtils.StartsWith (inputFile, physPath))
+				inputFile = parser.InputFile.Substring (physPath.Length - 1);
+			 else
+				return;
+			
+			object obj = HttpContext.GetLocalResourceObject (inputFile, resname);
 			if (obj == null)
 				return;
 			
@@ -1335,7 +1342,7 @@ namespace System.Web.Compilation
 			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
 				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
-
+		
 		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();

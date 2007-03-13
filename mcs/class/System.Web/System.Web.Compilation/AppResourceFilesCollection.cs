@@ -96,28 +96,33 @@ namespace System.Web.Compilation
 			get { return files; }
 		}
 		
-		public AppResourceFilesCollection (HttpContext context, bool isGlobal)
+		public AppResourceFilesCollection (HttpContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
 			
-			//this.context = context;
-			this.isGlobal = isGlobal;
+			this.isGlobal = true;
 			this.files = new List <AppResourceFileInfo> ();
 
 			string resourcePath;
-			if (isGlobal)
-				resourcePath = Path.Combine (HttpRuntime.AppDomainAppPath, "App_GlobalResources");
-			else {
-				HttpRequest request = context.Request;
-				resourcePath = Path.Combine (
-					Path.GetDirectoryName (request.MapPath (request.CurrentExecutionFilePath)),
-					"App_LocalResources");
-			}
+			resourcePath = Path.Combine (HttpRuntime.AppDomainAppPath, "App_GlobalResources");
 			if (Directory.Exists (resourcePath))
 				sourceDir = resourcePath;
 		}
 
+		public AppResourceFilesCollection (string parserDir)
+		{
+			if (String.IsNullOrEmpty (parserDir))
+				throw new ArgumentException ("parserDir cannot be empty");
+			this.isGlobal = true;
+			this.files = new List <AppResourceFileInfo> ();
+
+			string resourcePath;
+			resourcePath = Path.Combine (parserDir, "App_LocalResources");
+			if (Directory.Exists (resourcePath))
+				sourceDir = resourcePath;
+		}
+		
 		public void Collect ()
 		{
 			if (String.IsNullOrEmpty (sourceDir))

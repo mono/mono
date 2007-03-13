@@ -1,3 +1,14 @@
+2007-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: resources compiler no longer accepts
+	a boolean parameter.
+
+	* HttpRuntime.cs: Do not compile local resources here anymore.
+
+	* HttpContext.cs: if App_LocalResources assembly corresponding to
+	the virtual path is not found, compile it here.
+	Look up resources in the "Resources." class path.
+
 2007-03-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpUtility.cs: fixed HttpUtillity.HtmlAttributeEncode

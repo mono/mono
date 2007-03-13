@@ -418,10 +418,15 @@ namespace System.Web {
 			
 			string path = Path.GetDirectoryName (virtualPath);
 			Assembly asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
-			if (asm == null)
-				throw new MissingManifestResourceException ("A resource object was not found at the specified virtualPath.");
+			if (asm == null) {
+				AppResourcesCompiler ac = new AppResourcesCompiler (path);
+				asm = ac.Compile ();
+				if (asm == null)
+					throw new MissingManifestResourceException ("A resource object was not found at the specified virtualPath.");
+			}
+			
 			path = Path.GetFileName (virtualPath);
-			return GetResourceObject (path, resourceKey, culture, asm);
+			return GetResourceObject ("Resources." + path, resourceKey, culture, asm);
 		}
 
 		public object GetSection (string name)

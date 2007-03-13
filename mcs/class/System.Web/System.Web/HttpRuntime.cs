@@ -269,14 +269,6 @@ namespace System.Web {
 				HttpContext.Current = null;
 			} else {
 				context.ApplicationInstance = app;
-			
-#if NET_2_0 && !TARGET_JVM
-				//
-				// Compile the local resources, if any
-				//
-				AppResourcesCompiler ac = new AppResourcesCompiler (context, false);
-				ac.Compile ();
-#endif
 				
 				//
 				// Ask application to service the request

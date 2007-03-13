@@ -52,6 +52,7 @@ namespace System.Web.Compilation
 		HttpContext context;
 		AppResourceFilesCollection files;
 		string tempDirectory;
+		string virtualPath;
 		
 		string TempDirectory {
 			get {
@@ -61,26 +62,33 @@ namespace System.Web.Compilation
 			}
 		}
 		
-		public AppResourcesCompiler (HttpContext context, bool isGlobal)
+		public AppResourcesCompiler (HttpContext context)
 		{
 			this.context = context;
-			this.isGlobal = isGlobal;
-			this.files = new AppResourceFilesCollection (context, isGlobal);
+			this.isGlobal = true;
+			this.files = new AppResourceFilesCollection (context);
 		}
 
+		public AppResourcesCompiler (string virtualPath)
+		{
+
+			this.virtualPath = virtualPath;
+			this.isGlobal = false;
+			this.files = new AppResourceFilesCollection (HttpContext.Current.Request.MapPath (virtualPath));
+		}
 		
-		public void Compile ()
+		public Assembly Compile ()
 		{
 			files.Collect ();
 			if (!files.HasFiles)
-				return;
+				return null;
 			if (isGlobal)
-				CompileGlobal ();
+				return CompileGlobal ();
 			else
-				CompileLocal ();
+				return CompileLocal ();
 		}
 
-		void CompileGlobal ()
+		Assembly CompileGlobal ()
 		{
 			string assemblyPath = FileUtils.CreateTemporaryFile (TempDirectory,
 									     "App_GlobalResources",
@@ -105,7 +113,7 @@ namespace System.Web.Compilation
 			
 			List <string>[] fileGroups = GroupGlobalFiles (cp);
 			if (fileGroups == null || fileGroups.Length == 0)
-				return;
+				return null;
 
 			CodeCompileUnit unit = new CodeCompileUnit ();
 			CodeNamespace ns = new CodeNamespace (null);
@@ -130,34 +138,37 @@ namespace System.Web.Compilation
 			abuilder.AddCodeCompileUnit (unit);
 
 			CompilerResults results = abuilder.BuildAssembly (cp);
+			Assembly ret = null;
+			
 			if (results.Errors.Count == 0) {
-				BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
-				HttpContext.AppGlobalResourcesAssembly = results.CompiledAssembly;
+				ret = results.CompiledAssembly;
+				BuildManager.TopLevelAssemblies.Add (ret);
+				HttpContext.AppGlobalResourcesAssembly = ret;
 			} else {
 				if (context.IsCustomErrorEnabled)
 					throw new ApplicationException ("An error occurred while compiling global resources.");
 				throw new CompilationException (null, results.Errors, null);
 			}
-			HttpRuntime.WritePreservationFile (results.CompiledAssembly, "App_GlobalResources");
+			HttpRuntime.WritePreservationFile (ret, "App_GlobalResources");
 			HttpRuntime.EnableAssemblyMapping (true);
+
+			return ret;
 		}
 
-		void CompileLocal ()
+		Assembly CompileLocal ()
 		{
-			string path = Path.GetDirectoryName (VirtualPathUtility.ToAbsolute (context.Request.CurrentExecutionFilePath));
+			if (String.IsNullOrEmpty (virtualPath))
+				return null;
 			
-			if (String.IsNullOrEmpty (path))
-				throw new ApplicationException ("Unable to determine the request virtual path.");
-
-			Assembly cached = GetCachedLocalResourcesAssembly (path);
+			Assembly cached = GetCachedLocalResourcesAssembly (virtualPath);
 			if (cached != null)
-				return;
+				return cached;
 			
 			string prefix;
-			if (path == "/")
+			if (virtualPath == "/")
 				prefix = "App_LocalResources.root";
 			else
-				prefix = "App_LocalResources" + path.Replace ('/', '.');
+				prefix = "App_LocalResources" + virtualPath.Replace ('/', '.');
 			
 			string assemblyPath = FileUtils.CreateTemporaryFile (TempDirectory,
 									     prefix,
@@ -190,15 +201,20 @@ namespace System.Web.Compilation
 			
 			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
 			CompilerResults results = abuilder.BuildAssembly (cp);
+			Assembly ret = null;
+			
 			if (results.Errors.Count == 0) {
-				AddAssemblyToCache (path, results.CompiledAssembly);
+				ret = results.CompiledAssembly;
+				AddAssemblyToCache (virtualPath, ret);
 			} else {
 				if (context.IsCustomErrorEnabled)
 					throw new ApplicationException ("An error occurred while compiling global resources.");
 				throw new CompilationException (null, results.Errors, null);
 			}
-		}
 
+			return ret;
+		}
+		
 		internal static Assembly GetCachedLocalResourcesAssembly (string path)
 		{
 			Dictionary <string, Assembly> cache;
@@ -208,7 +224,7 @@ namespace System.Web.Compilation
 				return null;
 			return cache [path];
 		}
-
+		
 		void AddAssemblyToCache (string path, Assembly asm)
 		{
 			Cache runtimeCache = HttpRuntime.Cache;

@@ -73,6 +73,10 @@ namespace System.Web.UI {
 					    BindingFlags.NonPublic |
 					    BindingFlags.Instance;
 
+#if NET_2_0
+		string _appRelativeVirtualPath;
+#endif
+		
 		#region Constructor
 		protected TemplateControl ()
 		{
@@ -97,11 +101,9 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		
-		[MonoTODO ("NotImplementedException")]
 		public string AppRelativeVirtualPath {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException (); }
+			get { return _appRelativeVirtualPath; }
+			set { _appRelativeVirtualPath = value; }
 		}
 #endif
 
