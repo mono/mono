@@ -570,6 +570,12 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsTrue (typeof (int).Equals (e));
 		}
 
+		[Test]
+		public void GetElementType_Bug63841 ()
+		{
+			Assert.IsNull (typeof (TheEnum).GetElementType (), "#1");
+		}
+
 #if NET_2_0
 		[Test]
 		public void FullNameGenerics ()

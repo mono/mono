@@ -1,3 +1,7 @@
+2007-03-13  Alp Toker  <alp@atoker.com>
+
+	* TypeTest.cs: Add a regression test for #63841.
+
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StringComparerTest.cs: Added tests for bug #80928. Added binary
