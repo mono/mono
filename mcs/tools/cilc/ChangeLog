@@ -1,5 +1,11 @@
 2007-03-13  Alp Toker  <alp@atoker.com>
 
+	* cilc.exe.sources:
+	* cilc.cs:
+	* CodeWriter.cs: Split out CodeWriter class.
+
+2007-03-13  Alp Toker  <alp@atoker.com>
+
 	* cilc.cs: Use String.Empty.
 
 2006-08-23  Alp Toker  <alp@atoker.com>
