@@ -61,8 +61,8 @@
   /* Win64 isn't really supported yet, but this is the first step. And	*/
   /* it might cause error messages to show up in more plausible places.	*/
   /* This needs basetsd.h, which is included by windows.h.	 	*/
-  typedef ULONG_PTR GC_word;
-  typedef LONG_PTR GC_word;
+  typedef unsigned __int64 GC_word;
+  typedef __int64 GC_signed_word;
 #endif
 
 /* Public read-only variables */

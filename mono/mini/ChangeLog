@@ -1,3 +1,8 @@
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* runmdesc.bat:  Run executable that was produced by the current
+	target and sent via an argument.
+	
 2007-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix box+brtrue optimization. Fixes

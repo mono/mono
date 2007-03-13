@@ -1,3 +1,7 @@
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* icall.c:  Fix environ access in VS.  
+	
 2007-03-13  Alp Toker  <alp@atoker.com>
 
 	* icall.c (ves_icall_MonoType_GetElementType): For enums, return null

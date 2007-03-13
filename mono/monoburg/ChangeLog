@@ -1,3 +1,10 @@
+2007-03-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* runburg.bat:  Run executable that was produced by the current
+	target and sent via an argument.
+	* monoburg.vcproj: Fix	Release build target, add define to remove CRT warnings, 
+	structure output folders a bit better, begin WIN64 port.
+	
 2007-02-03  Pekka J Enberg <penberg@cs.helsinki.fi>
 
 	* monoburg.c: Let the Monoburg specification override MBState reg1
