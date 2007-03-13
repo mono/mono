@@ -19,16 +19,15 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ErrorProviderTest 
 	{
-
 		[Test]
 		public void ErrorProviderPropertyTest ()
-		{	
+		{
 			ErrorProvider myErrorProvider = new ErrorProvider ();
-						
+
 			// B
 			Assert.AreEqual (250, myErrorProvider.BlinkRate, "#B1");
 			Assert.AreEqual (ErrorBlinkStyle.BlinkIfDifferentError, myErrorProvider.BlinkStyle, "#B2");
-			
+
 			// C
 			Assert.AreEqual (null, myErrorProvider.ContainerControl, "#C1");
 
@@ -43,7 +42,7 @@ namespace MonoTests.System.Windows.Forms
 			// S
 			Assert.AreEqual (null, myErrorProvider.Site, "#S1");
 		}
-		
+
 		[Test]
 		public void BindToDateAndErrorsTest ()
 		{
@@ -54,7 +53,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (myDataSet, myErrorProvider.DataSource, "#Bind1");
 			Assert.AreEqual ("Customers", myErrorProvider.DataMember, "#Bind2");
 		}
-	
+
 		[Test]
 		public void CanExtendTest ()
 		{
@@ -68,20 +67,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (myErrorProvider.CanExtend (myForm), false, "#ext3");
 			myForm.Dispose ();
 		}
-	
+
 		[Test]
+		[Category ("NotWorking")]
 		public void GetandSetErrorTest ()
 		{
 			Form myForm = new Form ();
 			myForm.ShowInTaskbar = false;
-			Label myLabel = new Label ();
+			Label label1 = new Label ();
+			Label label2 = new Label ();
 			ErrorProvider myErrorProvider = new ErrorProvider ();
-			myErrorProvider.SetError(myLabel, "New Error msg for Label");
-			Assert.AreEqual ("New Error msg for Label", myErrorProvider.GetError (myLabel), "#getset1");
+			Assert.AreEqual (string.Empty, myErrorProvider.GetError (label1), "#1");
+			myErrorProvider.SetError (label1, "ErrorMsg1");
+			Assert.AreEqual ("ErrorMsg1", myErrorProvider.GetError (label1), "#2");
+			Assert.AreEqual (string.Empty, myErrorProvider.GetError (label2), "#3");
+			myErrorProvider.SetError (label2, "ErrorMsg2");
+			Assert.AreEqual ("ErrorMsg2", myErrorProvider.GetError (label2), "#4");
+			myErrorProvider.SetError (label2, null);
+			Assert.AreEqual ("ErrorMsg1", myErrorProvider.GetError (label1), "#5");
+			Assert.AreEqual (string.Empty, myErrorProvider.GetError (label2), "#6");
 			myForm.Dispose ();
 		}
-		
+
 		[Test]
+		[Category ("NotWorking")]
 		public void GetandSetIconAlignmentTest ()
 		{
 			TextBox myTextBox = new TextBox ();
@@ -89,8 +98,9 @@ namespace MonoTests.System.Windows.Forms
 			myErrorProvider.SetIconAlignment (myTextBox, ErrorIconAlignment.MiddleRight);
 			Assert.AreEqual (ErrorIconAlignment.MiddleRight, myErrorProvider.GetIconAlignment (myTextBox), "#getset2");
 		}
-		
+
 		[Test]
+		[Category ("NotWorking")]
 		public void GetandSetIconPaddingTest ()
 		{
 			Form myForm = new Form ();

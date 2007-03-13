@@ -1,3 +1,8 @@
+2007-03-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ErrorProviderTest.cs: Improved GetandSetErrorTest. Marked failing
+	test NotWorking. Removed extra tabs. 
+
 2007-03-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Add test for bug #80773.

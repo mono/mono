@@ -45,6 +45,7 @@ System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
 System.Windows.Forms/DateTimePickerTest.cs
 System.Windows.Forms/DefaultLayoutTest.cs
+System.Windows.Forms/ErrorProviderTest.cs
 System.Windows.Forms/FlowPanelTests.cs
 System.Windows.Forms/FocusTest.cs
 System.Windows.Forms/FormHandleTest.cs
