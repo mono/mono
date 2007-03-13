@@ -80,6 +80,8 @@ namespace System.Web.Compilation
 
 		void CreateField (ControlBuilder builder, bool check)
 		{
+			if (builder == null || builder.ID == null || builder.ControlType == null)
+				return;
 #if NET_2_0
 			if (partialNameOverride [builder.ID] != null)
 				return;
@@ -930,10 +932,15 @@ namespace System.Web.Compilation
 
 		protected void AddChildCall (ControlBuilder parent, ControlBuilder child)
 		{
+			if (parent == null || child == null)
+				return;
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
 
-			object [] atts = child.ControlType.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+			object [] atts = null;
+			
+			if (child.ControlType != null)
+				child.ControlType.GetCustomAttributes (typeof (PartialCachingAttribute), true);
 			if (atts != null && atts.Length > 0) {
 				PartialCachingAttribute pca = (PartialCachingAttribute) atts [0];
 				CodeTypeReferenceExpression cc = new CodeTypeReferenceExpression("System.Web.UI.StaticPartialCachingControl");

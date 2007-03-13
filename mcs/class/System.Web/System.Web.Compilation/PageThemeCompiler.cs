@@ -125,12 +125,12 @@ namespace System.Web.Compilation
 
 			return new CodeArrayCreateExpression (typeof (string), initializers);
 		}
-
+		
 		protected override string HandleUrlProperty (string str, MemberInfo member)
 		{
 			if (str.StartsWith ("~", StringComparison.Ordinal))
 				return str;
-
+			
 			return "~/App_Themes/" + UrlUtils.Combine (
 				System.IO.Path.GetFileName (parser.InputFile), str);
 		}
@@ -171,7 +171,7 @@ namespace System.Web.Compilation
 						continue;
 
 					ControlBuilder b = (ControlBuilder) o;
-					if (b.isProperty)
+					if (b.ControlType == null)
 						continue;
 					
 					if (b is CollectionBuilder) {

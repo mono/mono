@@ -1,5 +1,8 @@
 2007-03-13  Marek Habersack  <mhabersack@novell.com>
 
+	* PageThemeCompiler.cs: let property builders through, stop the
+	builders that have no control type. Fixes bug #81092
+
 	* PageCompiler.cs: interfaces are to be implemented by the parent
 	partial class, not the generated one.
 
@@ -9,6 +12,7 @@
 	* TemplateControlCompiler.cs: request the local resource object
 	with proper virtual path.
 	Put field declarations for controls in the partial class.
+	Make sure builders are in valid state before trying to use them.
 
 	* BaseCompiler.cs: added code to assing AppRelativeVirtualPath
 	property in the page/control constructor.
