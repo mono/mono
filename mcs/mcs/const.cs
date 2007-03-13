@@ -26,6 +26,7 @@ namespace Mono.CSharp {
 	public class Const : FieldBase, IConstant {
 		protected Constant value;
 		bool in_transit;
+		bool resolved;
 		bool define_called;
 
 		public const int AllowedModifiers =
@@ -167,14 +168,15 @@ namespace Mono.CSharp {
 
 		public bool ResolveValue ()
 		{
-			if (value != null)
-				return true;
+			if (resolved)
+				return value != null;
 
 			SetMemberIsUsed ();
 			if (in_transit) {
 				Error_CyclicDeclaration (this);
 				// Suppress cyclic errors
 				value = New.Constantify (MemberType);
+				resolved = true;
 				return false;
 			}
 
@@ -185,6 +187,7 @@ namespace Mono.CSharp {
 			ec.InEnumContext = this is EnumMember;
 			value = DoResolveValue (ec);
 			in_transit = false;
+			resolved = true;
 			return value != null;
 		}
 

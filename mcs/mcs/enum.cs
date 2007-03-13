@@ -97,9 +97,15 @@ namespace Mono.CSharp {
 				return new EnumConstant (c, MemberType);
 			}
 
-			if ((prev_member == null) || (prev_member.value == null)) {
+			if (prev_member == null) {
 				return new EnumConstant (
 					New.Constantify (ParentEnum.UnderlyingType), MemberType);
+			}
+
+			if (!prev_member.ResolveValue ()) {
+				prev_member.value = new EnumConstant (
+					New.Constantify (ParentEnum.UnderlyingType), MemberType);
+				return null;
 			}
 
 			try {
