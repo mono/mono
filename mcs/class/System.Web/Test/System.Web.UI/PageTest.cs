@@ -695,8 +695,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("EndGetAsyncData", eventlist[1], "EndGetAsyncData Failed");
 		}
 
-
-		
 		[Test]
 #if !TARGET_JVM
 		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
@@ -713,6 +711,32 @@ namespace MonoTests.System.Web.UI {
 
 			Assert.AreEqual ("BeginGetAsyncData", eventlist[0], "BeginGetAsyncData Failed");
 			Assert.AreEqual ("EndGetAsyncData", eventlist[1], "EndGetAsyncData Failed");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+#if !TARGET_JVM
+		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
+#endif
+		[ExpectedException (typeof (Exception))]
+		public void AddOnPreRenderCompleteAsyncBeginThrows () 
+		{
+			WebTest t = new WebTest ("AsyncPage.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (AddOnPreRenderCompleteAsyncBeginThrows_Load);
+			string str = t.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+#if !TARGET_JVM
+		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
+#endif
+		[ExpectedException (typeof (Exception))]
+		public void AddOnPreRenderCompleteAsyncEndThrows () 
+		{
+			WebTest t = new WebTest ("AsyncPage.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (AddOnPreRenderCompleteAsyncEndThrows_Load);
+			string str = t.Run ();
 		}
 
 		public static void ExecuteRegisteredAsyncTasks_Load (Page p)
@@ -735,7 +759,29 @@ namespace MonoTests.System.Web.UI {
 			myRequest = WebRequest.Create(address);
 		}
 
-		static IAsyncResult BeginGetAsyncData(Object src, EventArgs args, AsyncCallback cb, Object state)
+		public static void AddOnPreRenderCompleteAsyncBeginThrows_Load (Page p) 
+		{
+			BeginEventHandler bh = new BeginEventHandler (BeginGetAsyncDataThrows);
+			EndEventHandler eh = new EndEventHandler (EndGetAsyncData);
+			p.AddOnPreRenderCompleteAsync (bh, eh);
+
+			// Initialize the WebRequest.
+			string address = "http://MyPage.aspx";
+			myRequest = WebRequest.Create (address);
+		}
+
+		public static void AddOnPreRenderCompleteAsyncEndThrows_Load (Page p) 
+		{
+			BeginEventHandler bh = new BeginEventHandler (BeginGetAsyncData);
+			EndEventHandler eh = new EndEventHandler (EndGetAsyncDataThrows);
+			p.AddOnPreRenderCompleteAsync (bh, eh);
+
+			// Initialize the WebRequest.
+			string address = "http://MyPage.aspx";
+			myRequest = WebRequest.Create (address);
+		}
+
+		static IAsyncResult BeginGetAsyncData (Object src, EventArgs args, AsyncCallback cb, Object state)
 		{
 			if (WebTest.CurrentTest.UserData == null) {
 				ArrayList list = new ArrayList ();
@@ -752,7 +798,24 @@ namespace MonoTests.System.Web.UI {
 			return new Customresult(); // myRequest.BeginGetResponse (cb, state);
 		}
 
-		static void EndGetAsyncData(IAsyncResult ar)
+		static IAsyncResult BeginGetAsyncDataThrows (Object src, EventArgs args, AsyncCallback cb, Object state) 
+		{
+			ArrayList list = null;
+			if (WebTest.CurrentTest.UserData == null) {
+				list = new ArrayList ();
+			}
+			else {
+				list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+			}
+			list.Add ("BeginGetAsyncData");
+			WebTest.CurrentTest.UserData = list;
+
+			throw new Exception ("BeginGetAsyncDataThrows");
+		}
+
+		static void EndGetAsyncData (IAsyncResult ar)
 		{
 			if (WebTest.CurrentTest.UserData == null) {
 				ArrayList list = new ArrayList ();
@@ -766,6 +829,23 @@ namespace MonoTests.System.Web.UI {
 				list.Add ("EndGetAsyncData");
 				WebTest.CurrentTest.UserData = list;
 			}
+		}
+
+		static void EndGetAsyncDataThrows (IAsyncResult ar) 
+		{
+			ArrayList list = null;
+			if (WebTest.CurrentTest.UserData == null) {
+				list = new ArrayList ();
+			}
+			else {
+				list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+			}
+			list.Add ("EndGetAsyncData");
+			WebTest.CurrentTest.UserData = list;
+
+			throw new Exception ("EndGetAsyncDataThrows");
 		}
 
 		[Test]

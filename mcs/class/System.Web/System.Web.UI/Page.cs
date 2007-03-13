@@ -2114,20 +2114,29 @@ public partial class Page : TemplateControl, IHttpHandler
 			DateTime startExecution = DateTime.Now;
 			List<PageAsyncTask> localParallelTasks = parallelTasks;
 			parallelTasks = null; // Shouldn't execute tasks twice
-			WaitHandle [] waitArray = new WaitHandle [localParallelTasks.Count];
-			IAsyncResult [] asyncResults = new IAsyncResult [localParallelTasks.Count];
-			int i = 0;
+			List<IAsyncResult> asyncResults = new List<IAsyncResult>();
 			foreach (PageAsyncTask parallelTask in localParallelTasks) {
-				asyncResults[i] = parallelTask.BeginHandler (this, null, new AsyncCallback(EndAsyncTaskCallback), parallelTask.State);
-				waitArray [i] = asyncResults[i].AsyncWaitHandle;
-				i++;
+				IAsyncResult result = parallelTask.BeginHandler (this, EventArgs.Empty, new AsyncCallback (EndAsyncTaskCallback), parallelTask.State);
+				if (result.CompletedSynchronously) {
+					parallelTask.EndHandler (result);
+				}
+				else {
+					asyncResults.Add (result);
+				}
 			}
 
-			bool allSignalled = WaitHandle.WaitAll (waitArray, AsyncTimeout, false);
-			if (!allSignalled) {
-				for (i = 0; i < asyncResults.Length; i++) {
-					if (!asyncResults [i].IsCompleted) {
-						localParallelTasks [i].TimeoutHandler (asyncResults [i]);
+			if (asyncResults.Count > 0) {
+				WaitHandle [] waitArray = new WaitHandle [asyncResults.Count];
+				int i = 0;
+				for (i = 0; i < asyncResults.Count; i++) {
+					waitArray [i] = asyncResults [i].AsyncWaitHandle;
+				}
+				bool allSignalled = WaitHandle.WaitAll (waitArray, AsyncTimeout, false);
+				if (!allSignalled) {
+					for (i = 0; i < asyncResults.Count; i++) {
+						if (!asyncResults [i].IsCompleted) {
+							localParallelTasks [i].TimeoutHandler (asyncResults [i]);
+						}
 					}
 				}
 			}
@@ -2142,15 +2151,21 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 
 		if (serialTasks != null) {
-			foreach (PageAsyncTask serialTask in serialTasks) {
+			List<PageAsyncTask> localSerialTasks = serialTasks;
+			serialTasks = null; // Shouldn't execute tasks twice
+			foreach (PageAsyncTask serialTask in localSerialTasks) {
 				DateTime startExecution = DateTime.Now;
 
-				IAsyncResult result = serialTask.BeginHandler (this, null, new AsyncCallback (EndAsyncTaskCallback), serialTask);
-				bool done = result.AsyncWaitHandle.WaitOne (AsyncTimeout, false);
-				if (!done && !result.IsCompleted) {
-					serialTask.TimeoutHandler (result);
+				IAsyncResult result = serialTask.BeginHandler (this, EventArgs.Empty, new AsyncCallback (EndAsyncTaskCallback), serialTask);
+				if (result.CompletedSynchronously) {
+					serialTask.EndHandler (result);
 				}
-
+				else {
+					bool done = result.AsyncWaitHandle.WaitOne (AsyncTimeout, false);
+					if (!done && !result.IsCompleted) {
+						serialTask.TimeoutHandler (result);
+					}
+				}
 				DateTime endWait = DateTime.Now;
 				TimeSpan elapsed = endWait - startExecution;
 				if (elapsed <= AsyncTimeout) {
