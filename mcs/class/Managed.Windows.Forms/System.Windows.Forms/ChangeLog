@@ -1,3 +1,8 @@
+2007-03-13  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Calculate the document before the handle is
+	created, so there isn't an extra invalidate called.
+
 2007-03-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Don't set owner in ShowDialog until we are sure
