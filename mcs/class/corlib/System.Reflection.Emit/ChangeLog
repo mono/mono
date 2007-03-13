@@ -1,3 +1,7 @@
+2007-03-13  Miguel de Icaza  <miguel@novell.com>
+
+	* OpCode.cs: Add a couple of operators for jsc.sf.net
+
 2007-03-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* DynamicMethod.cs: Add a field used by unmanaged code.
