@@ -117,7 +117,7 @@ public class cilc
 
 	static bool verbose = false;
 
-	static string extpkgs = "";
+	static string extpkgs = String.Empty;
 	static string[] extsubpkgs = {};
 	static string[] extincludes = {};
 
@@ -136,7 +136,7 @@ public class cilc
 		//string cmd = "gcc";
 		//string args = "-E " + cflags + " " + includedir + "/" + hname;
 
-		string cppincludes = "";
+		string cppincludes = String.Empty;
 		foreach (string include in extincludes)
 			cppincludes += " -include " + include;
 
@@ -242,7 +242,7 @@ public class cilc
 		makefile_defs.WriteLine ("SONAME = " + soname);
 		makefile_defs.WriteLine (@"OBJS = $(shell ls *.c | sed -e 's/\.c/.o/')");
 
-		if (extpkgs != "") {
+		if (extpkgs != String.Empty) {
 			makefile_defs.WriteLine ("EXTRAINCLUDES = $(shell pkg-config --cflags" + extpkgs + ")");
 			makefile_defs.WriteLine ("EXTRALIBS = $(shell pkg-config --libs" + extpkgs + ")");
 		}
@@ -304,7 +304,7 @@ public class cilc
 			if (t.IsEnum)
 				RegisterByVal (t);
 
-			string tns = t.Namespace == null ? "" : t.Namespace;
+			string tns = t.Namespace == null ? String.Empty : t.Namespace;
 
 			if (!ns_types.Contains (tns))
 				ns_types[tns] = new ArrayList ();
@@ -1080,7 +1080,7 @@ public class cilc
 			case "get_type":
 				return "retrieve_type";
 			default:
-			return name;
+				return name;
 		}
 	}
 
@@ -1088,7 +1088,7 @@ public class cilc
 
 	static void FunctionGen (ParameterInfo[] parameters, MethodBase m, Type t, Type ret_type, bool ctor)
 	{
-		string myargs = "";
+		string myargs = String.Empty;
 		bool has_return = !ctor && ret_type != null && ret_type != typeof (void);
 		bool stat = m.IsStatic;
 
@@ -1155,7 +1155,7 @@ public class cilc
 		funcs_done.Add (myname);
 
 		//handle the parameters
-		string mycsargs = "";
+		string mycsargs = String.Empty;
 
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
@@ -1167,7 +1167,7 @@ public class cilc
 			}
 		}
 
-		if (myargs == "")
+		if (myargs == String.Empty)
 			myargs = "void";
 
 		C.WriteLine ();
@@ -1300,7 +1300,7 @@ public class cilc
 	static string NsToC (string s)
 	{
 		if (s == null)
-			return "";
+			return String.Empty;
 
 		s = s.Replace ('.', '_');
 		return CamelToC (s);
@@ -1309,9 +1309,9 @@ public class cilc
 	static string NsToFlat (string s)
 	{
 		if (s == null)
-			return "";
+			return String.Empty;
 
-		s = s.Replace (".", "");
+		s = s.Replace (".", String.Empty);
 		return s;
 	}
 
@@ -1319,7 +1319,7 @@ public class cilc
 	{
 		//converts camel case to c-style
 
-		string o = "";
+		string o = String.Empty;
 
 		bool prev_is_cap = true;
 
@@ -1368,20 +1368,20 @@ class CodeWriter
 	}
 
 	public string Indenter = "  ";
-	string cur_indent = "";
+	string cur_indent = String.Empty;
 	int level = 0;
 
 	public void Indent ()
 	{
 		level++;
-		cur_indent = "";
+		cur_indent = String.Empty;
 		for (int i = 0; i != level ; i++) cur_indent += Indenter;
 	}
 
 	public void Outdent ()
 	{
 		level--;
-		cur_indent = "";
+		cur_indent = String.Empty;
 		for (int i = 0; i != level ; i++) cur_indent += Indenter;
 	}
 
@@ -1412,17 +1412,17 @@ class CodeWriter
 
 	public void WriteLine (string text, CodeWriter cc)
 	{
-		WriteLine (text, "", cc, "");
+		WriteLine (text, String.Empty, cc, String.Empty);
 	}
 
 	public void WriteLine (string text, CodeWriter cc, string suffix)
 	{
-		WriteLine (text, "", cc, suffix);
+		WriteLine (text, String.Empty, cc, suffix);
 	}
 
 	public void WriteLine (string text, string prefix, CodeWriter cc)
 	{
-		WriteLine (text, prefix, cc, "");
+		WriteLine (text, prefix, cc, String.Empty);
 	}
 
 	public void WriteLine (string text, string prefix, CodeWriter cc, string suffix)
@@ -1438,7 +1438,7 @@ class CodeWriter
 
 	public void WriteLine ()
 	{
-		w.WriteLine ("");
+		w.WriteLine (String.Empty);
 	}
 
 	public void Close ()

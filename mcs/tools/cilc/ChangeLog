@@ -1,3 +1,7 @@
+2007-03-13  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs: Use String.Empty.
+
 2006-08-23  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs: Relicense from GPL to MIT License
