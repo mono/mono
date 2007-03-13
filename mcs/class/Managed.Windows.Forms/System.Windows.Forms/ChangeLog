@@ -1,3 +1,8 @@
+2007-03-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Don't set owner in ShowDialog until we are sure
+	that we aren't going to throw an exception.  [Fixes bug #80773]
+
 2007-03-12  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* TreeView.cs: Make it compile.

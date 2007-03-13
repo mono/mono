@@ -1426,15 +1426,15 @@ namespace System.Windows.Forms {
 			bool		confined;
 			IntPtr		capture_window;
 
-			owner = null;
+			Form owner_to_be = null;
 
 			if (ownerWin32 != null) {
 				Control c = Control.FromHandle (ownerWin32.Handle);
 				if (c != null)
-					owner = c.TopLevelControl as Form;
+					owner_to_be = c.TopLevelControl as Form;
 			}
 
-			if (owner == this) {
+			if (owner_to_be == this) {
 				throw new ArgumentException ("Forms cannot own themselves or their owners.", "owner");
 			}
 
@@ -1461,6 +1461,9 @@ namespace System.Windows.Forms {
 					+ " form from any parent form before calling ShowDialog.");
 			}
 
+			if (owner_to_be != null)
+				owner = owner_to_be;
+				
 			#if broken
 			// Can't do this, will screw us in the modal loop
 			form_parent_window.Parent = this.owner;

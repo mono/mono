@@ -1112,6 +1112,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
 		}
 #endif
+		
+		[Test]  // Bug #80773
+		public void DontSetOwnerOnShowDialogException ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			try { f.ShowDialog (f); }
+			catch {	}
+			
+			Assert.AreEqual (null, f.Owner, "H1");
+		}
 
 		private bool RunningOnUnix {
 			get {
