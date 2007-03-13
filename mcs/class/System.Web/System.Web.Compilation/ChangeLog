@@ -1,13 +1,21 @@
 2007-03-13  Marek Habersack  <mhabersack@novell.com>
 
+	* PageCompiler.cs: interfaces are to be implemented by the parent
+	partial class, not the generated one.
+
 	* AppResourceFilesCollection.cs: added separate constructor for
 	local resources handling.
 
 	* TemplateControlCompiler.cs: request the local resource object
 	with proper virtual path.
+	Put field declarations for controls in the partial class.
 
 	* BaseCompiler.cs: added code to assing AppRelativeVirtualPath
 	property in the page/control constructor.
+	Change the generated code model for pages/controls to comply with
+	the way MS.NET does (partial class contains only two properties
+	plus declarations of all the controls, the actual control/page
+	class inherits from the partial class). Fixes bug #81001.
 
 	* AppResourcesCompiler.cs: does not require specifying manually
 	whether it's a global or local resource compiler anymore. New

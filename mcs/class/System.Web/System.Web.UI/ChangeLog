@@ -1,3 +1,9 @@
+2007-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: name generated classes the same way MS.NET
+	does - include the app-relative path to the control/page in the
+	class name.
+
 2007-03-13  Adar Wesley <adarw@mainsoft.com>
 
 	* Page.cs: improved Async Page implementation.

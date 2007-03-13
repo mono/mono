@@ -91,7 +91,12 @@ namespace System.Web.Compilation
 			CodeMemberField field;
 			field = new CodeMemberField (builder.ControlType.FullName, builder.ID);
 			field.Attributes = MemberAttributes.Family;
-			mainClass.Members.Add (field);
+#if NET_2_0
+			if (partialClass != null)
+				partialClass.Members.Add (field);
+			else
+#endif
+				mainClass.Members.Add (field);
 		}
 
 		bool CheckBaseFieldOrProperty (string id, Type type)
@@ -175,14 +180,8 @@ namespace System.Web.Compilation
 			
 			if (childrenAsProperties || builder.ControlType == null) {
 				string typeString;
-				if (builder is RootBuilder) {
-#if NET_2_0
-					if (parser.IsPartial)
-						typeString = parser.PartialClassName;
-					else
-#endif
-						typeString = parser.ClassName;
-				}
+				if (builder is RootBuilder)
+					typeString = parser.ClassName;
 				else {
 					if (builder.ControlType != null && builder.isProperty &&
 					    !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
@@ -1475,6 +1474,11 @@ namespace System.Web.Compilation
 
 			CodeCastExpression cast = new CodeCastExpression (appType.FullName, propRef);
 			prop.GetStatements.Add (new CodeMethodReturnStatement (cast));
+#if NET_2_0
+			if (partialClass != null)
+				partialClass.Members.Add (prop);
+			else
+#endif
 			mainClass.Members.Add (prop);
 		}
 

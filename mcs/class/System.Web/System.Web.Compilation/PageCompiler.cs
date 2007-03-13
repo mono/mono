@@ -71,11 +71,29 @@ namespace System.Web.Compilation
 		protected override void AddInterfaces () 
 		{
 			base.AddInterfaces ();
-			if (pageParser.EnableSessionState)
-				mainClass.BaseTypes.Add (new CodeTypeReference (typeof(IRequiresSessionState)));
-
-			if (pageParser.ReadOnlySessionState)
-				mainClass.BaseTypes.Add (new CodeTypeReference (typeof (IReadOnlySessionState)));
+			CodeTypeReference cref;
+			
+			if (pageParser.EnableSessionState) {
+				cref = new CodeTypeReference (typeof(IRequiresSessionState));
+#if NET_2_0
+				cref.Options |= CodeTypeReferenceOptions.GlobalReference;
+				if (partialClass != null)
+					partialClass.BaseTypes.Add (cref);
+				else
+#endif
+					mainClass.BaseTypes.Add (cref);
+			}
+			
+			if (pageParser.ReadOnlySessionState) {
+				cref = new CodeTypeReference (typeof (IReadOnlySessionState));
+#if NET_2_0
+				cref.Options |= CodeTypeReferenceOptions.GlobalReference;
+				if (partialClass != null)
+					partialClass.BaseTypes.Add (cref);					
+				else
+#endif
+					mainClass.BaseTypes.Add (cref);
+			}
 		}
 
 		void CreateGetTypeHashCode () 

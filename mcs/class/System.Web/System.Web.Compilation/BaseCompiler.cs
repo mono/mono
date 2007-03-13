@@ -57,6 +57,8 @@ namespace System.Web.Compilation
 #if NET_2_0
 		bool isRebuilding = false;
 		protected Hashtable partialNameOverride = new Hashtable();
+		protected CodeTypeDeclaration partialClass;
+		protected CodeTypeReferenceExpression partialClassExpr;
 #endif
 		protected CodeTypeDeclaration mainClass;
 		protected CodeTypeReferenceExpression mainClassExpr;
@@ -82,24 +84,35 @@ namespace System.Web.Compilation
 					classtype = classtype.Substring (dot + 1);
 				}
 				
-				mainNS = new CodeNamespace (ns);
-				mainClass = new CodeTypeDeclaration (classtype);
-				mainClass.IsPartial = true;	
-				mainClassExpr = new CodeTypeReferenceExpression (parser.PartialClassName);
-			} else {
+				CodeNamespace partialNS = new CodeNamespace (ns);
+				partialClass = new CodeTypeDeclaration (classtype);
+				partialClass.IsPartial = true;	
+				partialClassExpr = new CodeTypeReferenceExpression (parser.PartialClassName);
+				
+				unit.Namespaces.Add (partialNS);
+				partialClass.TypeAttributes = TypeAttributes.Public;
+				partialNS.Types.Add (partialClass);
+			}
 #endif
 			mainNS = new CodeNamespace ("ASP");
 			mainClass = new CodeTypeDeclaration (parser.ClassName);
-			CodeTypeReference baseTypeRef = new CodeTypeReference (parser.BaseType.FullName);
+			CodeTypeReference baseTypeRef;
 #if NET_2_0
-			if (parser.BaseTypeIsGlobal)
+			if (partialClass != null) {
+				baseTypeRef = new CodeTypeReference (parser.PartialClassName);
 				baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+			} else {
+				baseTypeRef = new CodeTypeReference (parser.BaseType.FullName);
+				if (parser.BaseTypeIsGlobal)
+					baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+			}
+#else
+			baseTypeRef = new CodeTypeReference (parser.BaseType.FullName);
 #endif
 			mainClass.BaseTypes.Add (baseTypeRef);
+
 			mainClassExpr = new CodeTypeReferenceExpression ("ASP." + parser.ClassName);
-#if NET_2_0
-			}
-#endif
+
 			unit.Namespaces.Add (mainNS);
 			mainClass.TypeAttributes = TypeAttributes.Public;
 			mainNS.Types.Add (mainClass);
@@ -271,7 +284,10 @@ namespace System.Web.Compilation
 			cast.Expression = refexp;
 			
 			property.GetStatements.Add (ret);
-			mainClass.Members.Add (property);
+			if (partialClass == null)
+				mainClass.Members.Add (property);
+			else
+				partialClass.Members.Add (property);
 		}
 		
 		protected void CreateProfileProperty ()

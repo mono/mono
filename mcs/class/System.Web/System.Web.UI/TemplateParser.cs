@@ -570,11 +570,11 @@ namespace System.Web.UI {
 
 			if (inherits != null)
 				SetBaseType (inherits);
-
+#endif
 			className = GetString (atts, "ClassName", null);
 			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
 				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
-#endif
+
 
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
@@ -669,6 +669,15 @@ namespace System.Web.UI {
 				if (className != null)
 					return className;
 
+#if NET_2_0
+				string physPath = HttpContext.Current.Request.PhysicalApplicationPath;
+				
+				if (StrUtils.StartsWith (inputFile, physPath)) {
+					className = inputFile.Substring (physPath.Length).ToLower (CultureInfo.InvariantCulture);
+					className = className.Replace ('.', '_');
+					className = className.Replace ('/', '_').Replace ('\\', '_');
+				} else
+#endif
 				className = Path.GetFileName (inputFile).Replace ('.', '_');
 				className = className.Replace ('-', '_'); 
 				className = className.Replace (' ', '_');
