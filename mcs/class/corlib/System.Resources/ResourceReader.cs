@@ -115,9 +115,8 @@ namespace System.Resources
 			try {
 				int manager_magic = reader.ReadInt32();
 
-				if(manager_magic != ResourceManager.MagicNumber) {
-					throw new ArgumentException("Stream is not a valid .resources file!");
-				}
+				if(manager_magic != ResourceManager.MagicNumber) 
+					throw new ArgumentException(String.Format ("Stream is not a valid .resources file, magic=0x{0:x}", manager_magic));
 
 				int manager_ver = reader.ReadInt32();
 				int manager_len = reader.ReadInt32();
