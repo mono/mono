@@ -57,7 +57,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #B2 fails (and more)
 		public void ExpandAll_Flat_Created ()
 		{
 			TreeView tv = new TreeView ();
@@ -87,7 +86,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #B2 fails (and more)
 		public void ExpandAll_Tree_Created ()
 		{
 			TreeView tv = new TreeView ();
@@ -119,7 +117,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // #B1 fails (and more)
 		public void ExpandAll_Flat_NotCreated ()
 		{
 			TreeView tv = new TreeView ();
@@ -157,7 +154,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80284
-		[Category ("NotWorking")]
 		public void ExpandAll_Tree_NotCreated ()
 		{
 			TreeView tv = new TreeView ();
@@ -264,7 +260,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectBeforeCreationOfHandle ()
 		{
 			TreeView tvw = new TreeView ();
@@ -301,7 +296,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CancelAfterCreationOfHandle ()
 		{
 			TreeView tvw = new TreeView ();
