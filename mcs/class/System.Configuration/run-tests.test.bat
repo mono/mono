@@ -52,7 +52,7 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set JGAC_PATH=%VMW_HOME%\jgac\framework\
 set JAVA_HOME=%VMW_HOME%\jre6
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
@@ -119,9 +119,9 @@ REM ********************************************************
 
 copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
-REM @echo on
+@echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
-REM @echo off
+@echo off
 
 REM ********************************************************
 @echo Build XmlTool
@@ -131,7 +131,7 @@ set XML_TOOL_PATH=..\..\tools\mono-xmltool
 if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
 
 REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.csproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
