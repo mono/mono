@@ -1,3 +1,10 @@
+2007-03-14  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommandTest.cs (ExecuteScalarTest, ExecuteReaderTest)
+	(ExecuteReaderTest, PrepareTest, TransactionTest): Modified
+	expected exception to NullReferenceException as it has to be
+	thrown in 2.0 profile.
+
 2007-03-09  Andreia Gaita  <avidigal@novell.com>
 
 	* SqlCommandTest.cs: Add new test to check string parameters with 

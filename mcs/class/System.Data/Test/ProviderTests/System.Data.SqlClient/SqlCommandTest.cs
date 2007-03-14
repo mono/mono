@@ -142,8 +142,13 @@ namespace MonoTests.System.Data.SqlClient
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
+#if NET_2_0
+				Assert.AreEqual (typeof (NullReferenceException), e.GetType (),
+					"#2 Incorrect Exception : " + e.StackTrace);
+#else
 				Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
 					"#2 Incorrect Exception : " + e.StackTrace);
+#endif
 			}
 
 			// Check the Return value for a Correct Query 
@@ -256,8 +261,13 @@ namespace MonoTests.System.Data.SqlClient
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
+#if NET_2_0
+				Assert.AreEqual (typeof(NullReferenceException), e.GetType(),
+					"#2 Incorrect Exception : " + e);
+#else
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
 					"#2 Incorrect Exception : " + e);
+#endif
 			}
 			
 			// Test Exception is thrown if Query is incorrect 
@@ -366,8 +376,13 @@ namespace MonoTests.System.Data.SqlClient
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
+#if NET_2_0
+				Assert.AreEqual (typeof(NullReferenceException), e.GetType(),
+					"#1 Incorrect Exception");
+#else
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
 					"#1 Incorrect Exception");
+#endif
 			}
 
 			conn.Open ();
@@ -589,8 +604,13 @@ namespace MonoTests.System.Data.SqlClient
 			}catch (AssertionException e) {
 				throw e;
 			}catch (Exception e) {
+#if NET_2_0
+				Assert.AreEqual (typeof(NullReferenceException), e.GetType(),
+					"Incorrect Exception : " + e.StackTrace);
+#else
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
 					"Incorrect Exception : " + e.StackTrace);
+#endif
 			}
 		}
 
@@ -664,8 +684,13 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteNonQuery (); 
 				Assert.Fail ("#2 Connection cannot be different");
 			}catch (Exception e) {
+#if NET_2_0
+				Assert.AreEqual (typeof(NullReferenceException), e.GetType(),
+					"#3 Incorrect Exception : " + e);
+#else
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
 					"#3 Incorrect Exception : " + e);
+#endif
 			}finally {
 				conn1.Close ();
 				conn.Close ();
