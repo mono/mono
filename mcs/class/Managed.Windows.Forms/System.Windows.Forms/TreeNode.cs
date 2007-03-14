@@ -363,7 +363,7 @@ namespace System.Windows.Forms {
 
 		public bool IsSelected {
 			get {
-				if (TreeView == null)
+				if (TreeView == null || !TreeView.IsHandleCreated)
 					return false;
 				return TreeView.SelectedNode == this;
 			}
