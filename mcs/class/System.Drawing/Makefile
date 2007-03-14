@@ -34,6 +34,7 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/almogaver-os2.bmp	\
 	Test/System.Drawing/bitmaps/maketransparent.bmp	\
 	Test/System.Drawing/bitmaps/nature24bits.gif	\
+	Test/System.Drawing/bitmaps/nature24bits87.gif	\
 	Test/System.Drawing/bitmaps/nature24bits.jpg	\
 	Test/System.Drawing/bitmaps/smiley.ico	\
 	Test/System.Drawing/bitmaps/VisualPng1.ico	\

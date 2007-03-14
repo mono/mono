@@ -1,3 +1,7 @@
+2007-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add the new GIF87a test files to the dist.
+
 2007-03-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add metafiles (WMF and EMF) test files to the dist.
