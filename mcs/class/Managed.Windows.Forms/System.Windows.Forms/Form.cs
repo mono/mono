@@ -627,9 +627,6 @@ namespace System.Windows.Forms {
 			set {
 				if (maximize_box != value) {
 					maximize_box = value;
-					if (IsHandleCreated) {
-						RecreateHandle();
-					}
 					UpdateStyles();
 				}
 			}
@@ -814,9 +811,6 @@ namespace System.Windows.Forms {
 			set {
 				if (minimize_box != value) {
 					minimize_box = value;
-					if (IsHandleCreated) {
-						RecreateHandle();
-					}
 					UpdateStyles();
 				}
 			}

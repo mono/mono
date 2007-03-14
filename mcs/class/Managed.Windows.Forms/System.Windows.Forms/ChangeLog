@@ -1,3 +1,13 @@
+2007-03-14  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs: go ahead and remove the RecreateHandles that jpobst
+	removed earlier and I had him add back it.  It turns out metacity
+	*does* in fact handle the MOTIF_WM_HINTS property changing, it
+	just doesn't redraw the window titlebar until you resize the
+	window.  This also means we aren't recreating the entire window
+	hierarchy on X when you change this property.  And it looks better
+	on windows, too.
+
 2007-03-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs:
