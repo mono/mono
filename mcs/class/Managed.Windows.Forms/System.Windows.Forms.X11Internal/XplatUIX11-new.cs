@@ -167,7 +167,7 @@ namespace System.Windows.Forms.X11Internal {
 		} 
 
 		internal override Size FrameBorderSize { 
-			get { throw new NotImplementedException(); }
+			get { return new Size (4, 4); }
 		}
 
 		internal override Size IconSize {
@@ -701,8 +701,8 @@ namespace System.Windows.Forms.X11Internal {
 
 		internal override void PostQuitMessage(int exitCode)
 		{
+			display.PostMessage (display.FosterParent.Handle, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
 			display.Flush ();
-			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
 
 		[MonoTODO]

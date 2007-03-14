@@ -1099,6 +1099,8 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			CleanupCachedWindows (hwnd);
 
+			hwnd.SendParentNotify (Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
+
 			ArrayList windows = new ArrayList ();
 
 			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
@@ -1974,6 +1976,9 @@ namespace System.Windows.Forms.X11Internal {
 						ClickPending.Time = (long)xevent.ButtonEvent.time;
 					}
 
+					if (msg.message == Msg.WM_LBUTTONDOWN || msg.message == Msg.WM_MBUTTONDOWN || msg.message == Msg.WM_RBUTTONDOWN)
+						hwnd.SendParentNotify (msg.message, MousePosition.X, MousePosition.Y);
+
 					return true;
 				}
 
@@ -2191,6 +2196,28 @@ namespace System.Windows.Forms.X11Internal {
 					hwnd.HandleConfigureNotify (xevent);
 					goto ProcessNextMessage;
 
+				case XEventName.MapNotify: {
+					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) { // Ignore events for children (SubstructureNotify) and client areas
+						hwnd.Mapped = true;
+						msg.message = Msg.WM_SHOWWINDOW;
+						msg.wParam = (IntPtr) 1;
+						// XXX we're missing the lParam..
+						break;
+					}
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.UnmapNotify: {
+					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) { // Ignore events for children (SubstructureNotify) and client areas
+						hwnd.Mapped = false;
+						msg.message = Msg.WM_SHOWWINDOW;
+						msg.wParam = (IntPtr) 0;
+						// XXX we're missing the lParam..
+						break;
+					}
+					goto ProcessNextMessage;
+				}
+
 				case XEventName.FocusIn:
 					// We received focus. We use X11 focus only to know if the app window does or does not have focus
 					// We do not track the actual focussed window via it. Instead, this is done via FocusWindow internally
@@ -2234,7 +2261,7 @@ namespace System.Windows.Forms.X11Internal {
 					goto ProcessNextMessage;
 
 				case XEventName.Expose:
-					if (queue.PostQuitState || !hwnd.Mapped) {
+					if (!hwnd.Mapped) {
 						hwnd.PendingExpose = hwnd.PendingNCExpose = false;
 						continue;
 					}
@@ -2329,7 +2356,13 @@ namespace System.Windows.Forms.X11Internal {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
 						msg.wParam = xevent.ClientMessageEvent.ptr3;
 						msg.lParam = xevent.ClientMessageEvent.ptr4;
-						return true;
+
+						// if we posted a WM_QUIT message, make sure we return
+						// false here as well.
+						if (msg.message == (Msg)Msg.WM_QUIT)
+							return false;
+						else
+							return true;
 					}
 
 					if (xevent.ClientMessageEvent.message_type == Atoms._XEMBED) {
@@ -2362,6 +2395,7 @@ namespace System.Windows.Forms.X11Internal {
 							goto ProcessNextMessage;
 						}
 					}
+
 					goto ProcessNextMessage;
 
 				case XEventName.PropertyNotify:
@@ -2371,23 +2405,9 @@ namespace System.Windows.Forms.X11Internal {
 				}
 			} while (true);
 
-#if notyet
-			// XXX need to figure out how to post
-			// WM_ENTERIDLE only in specific conditions
-			// (we've handled some input events)
-			if (!queue.PostQuitState) {
-				msg.hwnd= IntPtr.Zero;
-				msg.message = Msg.WM_ENTERIDLE;
-				return true;
-			}
-#else
-			goto ProcessNextMessage;
-#endif
-
-			// We reset ourselves so GetMessage can be called again
-			queue.PostQuitState = false;
-
-			return false;
+			msg.hwnd= IntPtr.Zero;
+			msg.message = Msg.WM_ENTERIDLE;
+			return true;
 		}
 
 		[MonoTODO("Implement filtering and PM_NOREMOVE")]

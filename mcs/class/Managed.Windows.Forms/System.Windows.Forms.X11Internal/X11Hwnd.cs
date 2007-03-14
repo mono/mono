@@ -95,6 +95,7 @@ namespace System.Windows.Forms.X11Internal {
 			y = cp.Y;
 			width = cp.Width;
 			height = cp.Height;
+			initial_ex_style = (WindowExStyles) cp.ExStyle;
 
 			/* Figure out our parent handle */
 			if (cp.Parent != IntPtr.Zero)
@@ -186,11 +187,6 @@ namespace System.Windows.Forms.X11Internal {
 			if (WholeWindow != ClientWindow)
 				Xlib.XSelectInput (display.Handle, ClientWindow, new IntPtr ((int)SelectInputMask));
 
-			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
-				Map ();
-				Visible = true;
-			}
-
 			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
 				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
 				Xlib.XSetTransientForHint (display.Handle, WholeWindow, display.RootWindow.Handle);
@@ -218,6 +214,16 @@ namespace System.Windows.Forms.X11Internal {
 
 			// Set caption/window title
 			Text = cp.Caption;
+
+			display.SendMessage (Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
+                        SendParentNotify (Msg.WM_CREATE, int.MaxValue, int.MaxValue);
+
+			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
+				visible = true;
+				Map ();
+				if (!(Control.FromHandle(Handle) is Form))
+					display.SendMessage (Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+			}
 		}
 
 		public virtual void DestroyWindow ()
@@ -542,6 +548,14 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
+		public void HandleMapEvent (XEvent xevent)
+		{
+			if (xevent.type == XEventName.MapNotify) {
+			}
+			else {
+			}
+		}
+
 		public void HandleConfigureNotify (XEvent xevent)
 		{
 			configure_pending = false;
@@ -717,20 +731,60 @@ namespace System.Windows.Forms.X11Internal {
 			Xlib.XFreeGC (display.Handle, gc);
 		}
 
+		private void WaitForMessage (Msg message)
+		{
+			MSG msg = new MSG ();
+
+			queue.DispatchIdle = false;
+
+			bool done = false;
+			do {
+				if (display.PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+					if ((Msg)msg.message == Msg.WM_QUIT) {
+						// XXX this should live someplace else
+						XplatUI.PostQuitMessage (0);
+						done = true;
+					}
+					else {
+						if ((msg.hwnd == Handle) &&
+						    ((Msg)msg.message == message || (Msg)msg.message == Msg.WM_DESTROY))
+							done = true;
+						display.TranslateMessage (ref msg);
+						display.DispatchMessage (ref msg);
+					}
+				}
+			} while (!done);
+
+			queue.DispatchIdle = true;
+		}
+
 		public void Map ()
 		{
 			// FIXME why do we set this here and also in the MapNotify event handling?
-			mapped = true;
-			Xlib.XMapWindow (display.Handle, WholeWindow);
-			if (WholeWindow != ClientWindow)
+			if (!mapped) {
+
+				Xlib.XMapWindow (display.Handle, WholeWindow);
 				Xlib.XMapWindow (display.Handle, ClientWindow);
+
+				mapped = true;
+
+				if (Control.FromHandle(Handle) is Form)
+					WaitForMessage (Msg.WM_SHOWWINDOW);
+			}
 		}
 
 		public void Unmap ()
 		{
 			// FIXME why do we set this here and also in the UnmapNotify event handling?
-			mapped = false;
-			Xlib.XUnmapWindow (display.Handle, WholeWindow);
+			if (mapped) {
+				Xlib.XUnmapWindow (display.Handle, ClientWindow);
+				Xlib.XUnmapWindow (display.Handle, WholeWindow);
+
+				mapped = false;
+
+				if (Control.FromHandle(Handle) is Form)
+					WaitForMessage (Msg.WM_SHOWWINDOW);
+			}
 		}
 
 		public void PerformNCCalc ()
@@ -1255,6 +1309,29 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
+		// For WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN
+		//     WM_CREATE and WM_DESTROY causes
+		public void SendParentNotify (Msg cause, int x, int y)
+		{
+			if (Handle == IntPtr.Zero)
+				return;
+
+			if (ExStyleSet ((int) initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY))
+				return;
+
+			if (Parent == null || Parent.Handle == IntPtr.Zero)
+				return;
+
+			if (cause == Msg.WM_CREATE || cause == Msg.WM_DESTROY) {
+				display.SendMessage(Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Handle);
+			} else {
+				display.SendMessage(Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
+			}
+			
+			((X11Hwnd)Parent).SendParentNotify (cause, x, y);
+		}
+
+
 		public void GetPosition (bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height)
 		{
 			x = X;
@@ -1360,24 +1437,23 @@ namespace System.Windows.Forms.X11Internal {
 			Visible = visible;
 
 			if (visible) {
+				Map ();
+
 				if (Control.FromHandle (Handle) is Form) {
 					FormWindowState	s;
 
 					s = ((Form)Control.FromHandle(Handle)).WindowState;
-
-					Map ();
 
 					switch(s) {
 					case FormWindowState.Minimized:	SetWindowState (FormWindowState.Minimized); break;
 					case FormWindowState.Maximized:	SetWindowState (FormWindowState.Maximized); break;
 					}
 
-				} else {
-					Map ();
 				}
 
 				display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-			} else {
+			}
+			else {
 				Unmap ();
 			}
 
