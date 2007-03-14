@@ -38,7 +38,6 @@ namespace System.Web.UI {
 
 	public abstract class TemplateControl : Control, INamingContainer
 	{
-		static readonly Assembly _System_Web_Assembly = typeof (TemplateControl).Assembly;
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();
@@ -165,7 +164,7 @@ namespace System.Web.UI {
 			foreach (string methodName in methodNames) {
 				MethodInfo method = null;
 				Type type;
-				for (type = GetType (); type != null && type.Assembly != _System_Web_Assembly; type = type.BaseType) {
+				for (type = GetType (); type != null && type != typeof(TemplateControl); type = type.BaseType) {
 					method = type.GetMethod (methodName, bflags);
 					if (method != null)
 						break;

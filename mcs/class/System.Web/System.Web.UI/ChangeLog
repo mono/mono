@@ -1,3 +1,8 @@
+2007-03-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: fixed WireupAutomaticEvents, performance
+	optimization
+
 2007-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: name generated classes the same way MS.NET
