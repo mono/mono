@@ -175,10 +175,20 @@ namespace System.Data.SqlClient {
 			get { return commandType; }
 			set { 
 				if (value == CommandType.TableDirect)
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("CommandType.TableDirect is not supported " +
+									       "by the Mono SqlClient Data Provider.");
+#else
 					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
+#endif
 
 				if (!Enum.IsDefined (typeof (CommandType), value))
+#if NET_2_0
+					throw new ArgumentOutOfRangeException (String.Format ("The CommandType enumeration value, {0}, is invalid",
+											      value));
+#else
 					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
+#endif
 				commandType = value; 
 			}
 		}
@@ -195,7 +205,7 @@ namespace System.Data.SqlClient {
 #endif //NET_2_0
                 SqlConnection Connection {
 			get { return connection; }
-			set { 
+			set {
 				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
 					throw new InvalidOperationException ("The Connection property was changed while a transaction was in progress.");
 				transaction = null;
@@ -278,7 +288,12 @@ namespace System.Data.SqlClient {
 			get { return updatedRowSource; }
 			set { 
 				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
+#if NET_2_0
+					throw new ArgumentOutOfRangeException (String.Format ("The UpdateRowSource enumeration value, {0}, is invalid",
+											      value));
+#else
 					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+#endif
 				updatedRowSource = value;
 			}
 		}
@@ -343,8 +358,31 @@ namespace System.Data.SqlClient {
 
 		private void Execute (CommandBehavior behavior, bool wantResults)
 		{
+			int index = 0;
                         Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
+			foreach (TdsMetaParameter param in parms) {
+				bool flag = false;
+				string type = "";
+				if (param.Size == 0) {
+					switch (param.TypeName) {
+					case "nvarchar":
+						type = "String";
+						flag = true;
+						break;
+					case "varbinary":
+						type = "Byte[]";
+						flag = true;
+						break;
+					}
+				}
+				if (flag == true)
+					throw new InvalidOperationException (String.Format ("{0}[{1}]: the Size property should " +
+											    "not be of size 0",
+											    type,
+											    index));
+				index++;
+			}
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
 				bool keyInfo = ((behavior & CommandBehavior.KeyInfo) > 0);
@@ -372,7 +410,6 @@ namespace System.Data.SqlClient {
 						Connection.Tds.Execute (sql2.ToString ());
 					break;
 				case CommandType.Text:
-					//string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
 					string sql;
 					if (sql2.Length > 0) {
 						sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
@@ -565,11 +602,19 @@ namespace System.Data.SqlClient {
 		private void ValidateCommand (string method)
 		{
 			if (Connection == null)
+#if NET_2_0
+				throw new NullReferenceException (String.Format ("{0} requires a Connection object to continue.", method));
+#else
 				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
+#endif
 			if (Connection.Transaction != null && transaction != Connection.Transaction)
 				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
 			if (Connection.State != ConnectionState.Open)
+#if NET_2_0
+				throw new NullReferenceException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
+#else
 				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
+#endif
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			if (Connection.DataReader != null)
