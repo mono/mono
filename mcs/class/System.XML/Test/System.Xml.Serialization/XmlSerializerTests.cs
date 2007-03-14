@@ -1880,9 +1880,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD #7475")]
-#endif
 		public void TestSerializeChoice ()
 		{
 			Choices ch = new Choices ();
@@ -2169,10 +2166,8 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 #if NET_2_0
+#if !TARGET_JVM
 		[Test]
-#if TARGET_JVM
-		[Ignore("XmlSerializer.GenerateSerializer is not supported")]
-#endif
 		public void GenerateSerializerGenerics ()
 		{
 			XmlReflectionImporter imp = new XmlReflectionImporter ();
@@ -2181,6 +2176,7 @@ namespace MonoTests.System.XmlSerialization
 				new Type [] {type},
 				new XmlTypeMapping [] {imp.ImportTypeMapping (type)});
 		}
+#endif
 
 		[Test]
 		public void Nullable ()
