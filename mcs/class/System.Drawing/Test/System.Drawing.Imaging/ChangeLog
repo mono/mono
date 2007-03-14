@@ -1,3 +1,8 @@
+2007-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GifCodecTest.cs: Add test cases for a GIF87a image - which is the 
+	format that GDI+ save GIF files (even if the original was a GIF89a).
+
 2007-03-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetafileTest.cs: New. Metafile unit tests.

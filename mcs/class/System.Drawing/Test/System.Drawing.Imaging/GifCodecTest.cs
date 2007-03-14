@@ -5,7 +5,7 @@
 // 	Jordi Mas i Hernàndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -72,11 +72,10 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		/* Checks bitmap features on a know 1bbp bitmap */
-		[Test]
-		public void Bitmap8bitsFeatures ()
+		/* Checks bitmap features on a know 1bbp bitmap */
+		private void Bitmap8bitsFeatures (string filename)
 		{
-			string sInFile = getInFile ("bitmaps/nature24bits.gif");
-			using (Bitmap bmp = new Bitmap (sInFile)) {
+			using (Bitmap bmp = new Bitmap (filename)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
 
@@ -95,10 +94,20 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		public void Bitmap8bitsPixels ()
+		public void Bitmap8bitsFeatures_Gif89 ()
 		{
-			string sInFile = getInFile ("bitmaps/nature24bits.gif");
-			using (Bitmap bmp = new Bitmap (sInFile)) {
+			Bitmap8bitsFeatures (getInFile ("bitmaps/nature24bits.gif"));
+		}
+
+		[Test]
+		public void Bitmap8bitsFeatures_Gif87 ()
+		{
+			Bitmap8bitsFeatures (getInFile ("bitmaps/nature24bits87.gif"));
+		}
+
+		private void Bitmap8bitsPixels (string filename)
+		{
+			using (Bitmap bmp = new Bitmap (filename)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 32) {
 					for (int y = 0; y < bmp.Height; y += 32)
@@ -124,6 +133,18 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (-12616230, bmp.GetPixel (96, 96).ToArgb (), "96,96");
 #endif
 			}
+		}
+
+		[Test]
+		public void Bitmap8bitsPixels_Gif89 ()
+		{
+			Bitmap8bitsPixels (getInFile ("bitmaps/nature24bits.gif"));
+		}
+
+		[Test]
+		public void Bitmap8bitsPixels_Gif87 ()
+		{
+			Bitmap8bitsPixels (getInFile ("bitmaps/nature24bits87.gif"));
 		}
 
 		[Test]
