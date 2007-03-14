@@ -86,13 +86,14 @@ namespace System.Web.Compilation
 			if (partialNameOverride [builder.ID] != null)
 				return;
 #endif
+			MemberAttributes ma = MemberAttributes.Family;
 			currentLocation = builder.location;
-			if (check && CheckBaseFieldOrProperty (builder.ID, builder.ControlType))
+			if (check && CheckBaseFieldOrProperty (builder.ID, builder.ControlType, ref ma))
 				return; // The field or property already exists in a base class and is accesible.
 
 			CodeMemberField field;
 			field = new CodeMemberField (builder.ControlType.FullName, builder.ID);
-			field.Attributes = MemberAttributes.Family;
+			field.Attributes = ma;
 #if NET_2_0
 			if (partialClass != null)
 				partialClass.Members.Add (field);
@@ -101,7 +102,7 @@ namespace System.Web.Compilation
 				mainClass.Members.Add (field);
 		}
 
-		bool CheckBaseFieldOrProperty (string id, Type type)
+		bool CheckBaseFieldOrProperty (string id, Type type, ref MemberAttributes ma)
 		{
 			FieldInfo fld = parser.BaseType.GetField (id, noCaseFlags);
 
@@ -121,10 +122,15 @@ namespace System.Web.Compilation
 				return false;
 
 			if (!other.IsAssignableFrom (type)) {
+#if NET_2_0
+				ma |= MemberAttributes.New;
+				return false;
+#else
 				string msg = String.Format ("The base class includes the field '{0}', but its " +
 							    "type '{1}' is not compatible with {2}",
 							    id, other, type);
 				throw new ParseException (currentLocation, msg);
+#endif
 			}
 
 			return true;
