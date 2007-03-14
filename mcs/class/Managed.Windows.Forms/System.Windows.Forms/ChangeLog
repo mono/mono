@@ -1,3 +1,8 @@
+2007-03-14  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TreeView.cs: Add TreeViewNodeSorter.
+	* TreeNodeCollection.cs: Add sorter parameter to Sort method.
+
 2007-03-14  Chris Toshok  <toshok@ximian.com>
 
 	* Form.cs: go ahead and remove the RecreateHandles that jpobst

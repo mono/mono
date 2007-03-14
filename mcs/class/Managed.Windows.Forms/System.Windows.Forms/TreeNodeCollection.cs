@@ -409,11 +409,11 @@ namespace System.Windows.Forms {
 		}
 
 		// Would be nice to do this without running through the collection twice
-		internal void Sort () {
-			Array.Sort (nodes, 0, count, new TreeNodeComparer (Application.CurrentCulture.CompareInfo));
+		internal void Sort (IComparer sorter) {
+			Array.Sort (nodes, 0, count, sorter == null ? new TreeNodeComparer (Application.CurrentCulture.CompareInfo) : sorter);
 
 			for (int i = 0; i < count; i++) {
-				nodes [i].Nodes.Sort ();
+				nodes [i].Nodes.Sort (sorter);
 			}
 		}
 

@@ -1,3 +1,7 @@
+2007-03-14  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TreeViewTest.cs: Add TreeViewNodeSorterTest.
+
 2007-03-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ErrorProviderTest.cs: Improved GetandSetErrorTest. Marked failing

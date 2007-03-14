@@ -96,6 +96,9 @@ namespace System.Windows.Forms {
 
 		private TreeViewDrawMode draw_mode;
 
+#if NET_2_0
+		IComparer tree_view_node_sorter;
+#endif
 		#endregion	// Fields
 
 		#region Public Constructors	
@@ -433,11 +436,22 @@ namespace System.Windows.Forms {
 		public bool Sorted {
 			get { return sorted; }
 			set {
+#if NET_2_0
+				if (sorted == value)
+					return;
+				sorted = value;
+				//LAMESPEC: The documentation says that setting this to true should sort alphabetically if TreeViewNodeSorter is set.
+				// There seems to be a bug in the Microsoft implementation.
+				if (sorted && tree_view_node_sorter == null) {
+					Sort (null);
+				}
+#else
 				if (sorted != value)
 					sorted = value;
 				if (sorted) {
-					Sort ();
+					Sort (null);
 				}
+#endif
 			}
 		}
 
@@ -467,6 +481,23 @@ namespace System.Windows.Forms {
 			}
 #endif
 		}
+
+#if NET_2_0
+		public IComparer TreeViewNodeSorter {
+			get {
+				return tree_view_node_sorter;
+			}
+			set {
+				tree_view_node_sorter = value;
+				if (tree_view_node_sorter != null) {
+					Sort();
+					//LAMESPEC: The documentation says that setting this should set Sorted to false.
+					// There seems to be a bug in the Microsoft implementation.
+					sorted = true;
+				}
+			}
+		}
+#endif
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -591,7 +622,16 @@ namespace System.Windows.Forms {
 #endif
 		void Sort ()
 		{
-			Nodes.Sort ();
+#if NET_2_0
+			Sort (Nodes.Count >= 2 ? tree_view_node_sorter : null);
+#else
+			Sort (null);
+#endif
+		}
+
+		void Sort (IComparer sorter) 
+		{
+			Nodes.Sort (sorter);
 			RecalculateVisibleOrder (root_node);
 			UpdateScrollBars ();
 			Invalidate ();

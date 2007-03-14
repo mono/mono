@@ -367,4 +367,88 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (nodeB, tvw.SelectedNode, "#B7");
 		}
 	}
+
+#if NET_2_0
+	[TestFixture]
+	public class TreeViewNodeSorterTest {
+		static bool node_sorter_called;
+
+		[Test]
+		public void SortedAfterTreeViewNodeSorterIsSetToSomething() {
+			TreeView t = new TreeView();
+			t.TreeViewNodeSorter = new NodeSorter();
+			Assert.IsTrue(t.Sorted);
+		}
+
+		[Test]
+		public void SortedAfterTreeViewNodeSorterIsSetToNull() {
+			TreeView t = new TreeView();
+			t.TreeViewNodeSorter = null;
+			Assert.IsFalse(t.Sorted);
+		}
+
+		[Test]
+		public void NormalTreeViewNodeSorter() {
+			TreeView t = new TreeView();
+			t.Nodes.Add("2");
+			t.Nodes.Add("1");
+			node_sorter_called = false;
+			t.TreeViewNodeSorter = new NodeSorter();
+			Assert.IsTrue(node_sorter_called, "Node sorter called");
+			Assert.IsTrue(t.Nodes[0].Text == "2", "Order");
+		}
+
+		[Test]
+		public void NormalSorted() {
+			TreeView t = new TreeView();
+			t.Nodes.Add("2");
+			t.Nodes.Add("1");
+			t.Sorted = true;
+			Assert.IsTrue(t.Nodes[0].Text == "1", "Order");
+		}
+
+		[Test]
+		public void SortedDoesNotSortWhenTreeViewNodeSorterIsSet() {
+			TreeView t = new TreeView();
+			t.Nodes.Add("2");
+			t.Nodes.Add("1");
+			t.TreeViewNodeSorter = new NodeSorter();
+			t.Sorted = false;
+			t.Sorted = true;
+			Assert.IsTrue(t.Nodes[0].Text == "2", "Order");
+		}
+
+		[Test]
+		public void SortedDoesNotSortWhenItIsAlreadyTrue() {
+			TreeView t = new TreeView();
+			t.Nodes.Add("2");
+			t.Nodes.Add("1");
+			t.TreeViewNodeSorter = new NodeSorter();
+			t.TreeViewNodeSorter = null;
+			t.Sorted = true;
+			Assert.IsTrue(t.Nodes[0].Text == "2", "Order");
+		}
+
+		[Test]
+		public void SortedSorts() {
+			TreeView t = new TreeView();
+			t.Nodes.Add("2");
+			t.Nodes.Add("1");
+			t.TreeViewNodeSorter = new NodeSorter();
+			t.TreeViewNodeSorter = null;
+			t.Sorted = false;
+			t.Sorted = true;
+			Assert.IsTrue(t.Nodes[0].Text == "1", "Order");
+		}
+
+		class NodeSorter : IComparer {
+			public int Compare(object x, object y) {
+				node_sorter_called = true;
+				if (x == y)
+					return 0;
+				return ((TreeNode)x).Text == "2" ? -1 : 1;
+			}
+		}
+	}
+#endif
 }
