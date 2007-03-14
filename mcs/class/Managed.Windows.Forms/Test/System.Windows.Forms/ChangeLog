@@ -1,3 +1,7 @@
+2007-03-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ErrorProviderTest.cs: Enabled previously failing tests.
+
 2007-03-14  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControlTest.cs: Add tests for Deselecting, Deselected, 

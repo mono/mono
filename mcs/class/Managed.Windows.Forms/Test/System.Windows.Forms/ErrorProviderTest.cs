@@ -69,7 +69,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetandSetErrorTest ()
 		{
 			Form myForm = new Form ();
@@ -90,7 +89,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetandSetIconAlignmentTest ()
 		{
 			TextBox myTextBox = new TextBox ();
@@ -100,7 +98,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetandSetIconPaddingTest ()
 		{
 			Form myForm = new Form ();

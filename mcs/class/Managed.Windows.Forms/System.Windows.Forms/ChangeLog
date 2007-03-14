@@ -1,3 +1,11 @@
+2007-03-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ErrorProvider.cs: Invoke default ctor from 2.0-only ctor. Fixes bug
+	#80803. Avoid NullReferenceException when Control does not have
+	parent. Fixed different blinkstyle issues. Only subscribe to Tick
+	event a single time. Only draw error icon when control is created and
+	visible. Fixes failing unit tests.
+
 2007-03-14  Andreia Gaita  <avidigal@novell.com>
 
 	* TabControl.cs: Add support for 2.0 Deselecting, Deselected and

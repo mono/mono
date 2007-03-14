@@ -42,7 +42,6 @@ namespace System.Windows.Forms {
 	    , ISupportInitialize
 #endif
 	{
-
 		private class ErrorWindow : UserControl
 		{
 			public ErrorWindow ()
@@ -83,7 +82,7 @@ namespace System.Windows.Forms {
 				if (ep.container != null) {
 					ep.container.Controls.Add(window);
 					ep.container.Controls.SetChildIndex(window, 0);
-				} else {
+				} else if (control.Parent != null) {
 					control.Parent.Controls.Add(window);
 					control.Parent.Controls.SetChildIndex(window, 0);
 				}
@@ -93,6 +92,7 @@ namespace System.Windows.Forms {
 				window.MouseLeave += new EventHandler(window_MouseLeave);
 				control.SizeChanged += new EventHandler(control_SizeLocationChanged);
 				control.LocationChanged += new EventHandler(control_SizeLocationChanged);
+				control.ParentChanged += new EventHandler (control_ParentChanged);
 				// Do we want to block mouse clicks? if so we need a few more events handled
 
 				CalculateAlignment();
@@ -104,19 +104,28 @@ namespace System.Windows.Forms {
 				}
 
 				set {
+					if (value == null)
+						value = string.Empty;
+
+					bool differentError = text != value;
 					text = value;
+
 					if (text != String.Empty) {
 						window.Visible = true;
 					} else {
 						window.Visible = false;
+						return;
 					}
 
-					if (ep.blinkstyle != ErrorBlinkStyle.NeverBlink) {
+					// even if blink style is NeverBlink we need it to allow
+					// the timer to elapse at least once to get the icon to 
+					// display
+					if (differentError || ep.blinkstyle == ErrorBlinkStyle.AlwaysBlink) {
 						if (timer == null) {
 							timer = new System.Windows.Forms.Timer();
+							timer.Tick += tick;
 						}
 						timer.Interval = ep.blinkrate;
-						timer.Tick += tick;
 						blink_count = 0;
 						timer.Enabled = true;
 					}
@@ -244,13 +253,20 @@ namespace System.Windows.Forms {
 				CalculateAlignment();
 			}
 
+			private void control_ParentChanged (object sender, EventArgs e)
+			{
+				if (ep.container != null)
+					return;
+				control.Parent.Controls.Add (window);
+				control.Parent.Controls.SetChildIndex (window, 0);
+			}
+
 			private void window_Tick(object sender, EventArgs e) {
-				if (timer.Enabled) {
+				if (timer.Enabled && control.IsHandleCreated && control.Visible) {
 					Graphics g;
 
 					blink_count++;
 
-					// Dunno why this POS doesn't reliably blink
 					g = window.CreateGraphics();
 					if ((blink_count % 2) == 0) {
 						g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.Parent.BackColor), window.ClientRectangle);
@@ -259,10 +275,20 @@ namespace System.Windows.Forms {
 					}
 					g.Dispose();
 
-					if ((blink_count > 6) && (ep.blinkstyle == ErrorBlinkStyle.BlinkIfDifferentError)) {
-						timer.Stop();
-						blink_count = 0;
+					switch (ep.blinkstyle) {
+					case ErrorBlinkStyle.AlwaysBlink:
+						break;
+					case ErrorBlinkStyle.BlinkIfDifferentError:
+						if (blink_count > 10)
+							timer.Stop();
+						break;
+					case ErrorBlinkStyle.NeverBlink:
+						timer.Stop ();
+						break;
 					}
+
+					if (blink_count == 11)
+						blink_count = 1;
 				}
 			}
 		}
@@ -295,13 +321,13 @@ namespace System.Windows.Forms {
 			tooltip = new ToolTip.ToolTipWindow();
 		}
 
-		public ErrorProvider(ContainerControl parentControl) : this()
+		public ErrorProvider(ContainerControl parentControl) : this ()
 		{
 			container = parentControl;
 		}
 		
 #if NET_2_0
-		public ErrorProvider (IContainer container)
+		public ErrorProvider (IContainer container) : this ()
 		{
 			container.Add (this);
 		}
@@ -468,14 +494,11 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 		private ErrorProperty GetErrorProperty(Control control) {
-			ErrorProperty ep;
-
-			ep = (ErrorProperty)controls[control];
+			ErrorProperty ep = (ErrorProperty)controls[control];
 			if (ep == null) {
 				ep = new ErrorProperty(this, control);
 				controls[control] = ep;
 			}
-
 			return ep;
 		}
 		#endregion	// Private Methods
