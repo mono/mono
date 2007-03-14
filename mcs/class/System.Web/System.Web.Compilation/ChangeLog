@@ -1,3 +1,10 @@
+2007-03-14  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: hadle situations when there exist a
+	control in the page with id matching the name of a field/property
+	in the parent class. In this case we use 'protected new' to
+	override the parent.
+
 2007-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* AspParser.cs: fix an off-by-one parsing bug with server-side
