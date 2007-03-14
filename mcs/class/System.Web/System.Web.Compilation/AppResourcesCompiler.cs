@@ -334,10 +334,11 @@ namespace System.Web.Compilation
 			foreach (List<string> al in groups) {
 				s = al [0];
 				tmp = Path.GetFileNameWithoutExtension (s);
+				if (tmp.StartsWith ("Resources."))
+					tmp = tmp.Substring (10);
 				foreach (AppResourceFileInfo arfi in files) {
 					if (arfi.Seen)
 						continue;
-					
 					s = arfi.Info.FullName;
 					if (s == null)
 						continue;
