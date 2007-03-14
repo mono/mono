@@ -251,15 +251,20 @@ namespace System.Drawing.Design
 				return null;
 
 			//get ITypeResolutionService from host, as we have no other IServiceProvider here
-			ITypeResolutionService typeRes = host.GetService(typeof(ITypeResolutionService)) as ITypeResolutionService;
-			if (typeRes == null)
-				throw new Exception("Host does not provide an ITypeResolutionService");
-
-			//TODO: Using Assembly loader to throw errors. Silent fail and return null?
-			typeRes.GetAssembly(assemblyName, true);
-			if (reference)
-				typeRes.ReferenceAssembly(assemblyName);
-			return typeRes.GetType(typeName, true);
+			ITypeResolutionService typeRes = host.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService;
+			Type type = null;
+			if (typeRes != null) {
+				//TODO: Using Assembly loader to throw errors. Silent fail and return null?
+				typeRes.GetAssembly (assemblyName, true);
+				if (reference)
+					typeRes.ReferenceAssembly (assemblyName);
+				type = typeRes.GetType (typeName, true);
+			} else {
+				Assembly assembly = Assembly.Load (assemblyName);
+				if (assembly != null)
+					type = assembly.GetType (typeName);
+			}
+			return type;
 		}
 
 		// FIXME - Should we be returning empty bitmap, or null?
