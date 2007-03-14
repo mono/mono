@@ -236,23 +236,44 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+#if NET_2_0
+				TabControlCancelEventArgs ret = new TabControlCancelEventArgs (SelectedTab, selected_index, false, TabControlAction.Deselecting);
+				OnDeselecting (ret);
+				if (ret.Cancel)
+					return;
+
+#endif
+				int old_index = selected_index;
+				int new_index = value;
+
+				selected_index = new_index;
+
+#if NET_2_0
+				ret = new TabControlCancelEventArgs (SelectedTab, selected_index, false, TabControlAction.Selecting);
+				OnSelecting (ret);
+				if (ret.Cancel) {
+					selected_index = old_index;
+					return;
+				}
+#endif
+
 				SuspendLayout ();
 
 				Rectangle invalid = Rectangle.Empty;
 				bool refresh = false;
-				
-				if (value != -1 && show_slider && value < slider_pos) {
-					slider_pos = value;
+
+				if (new_index != -1 && show_slider && new_index < slider_pos) {
+					slider_pos = new_index;
 					refresh = true;
 				}
 
-				if (value != -1) {
-					int le = TabPages [value].TabBounds.Right;
+				if (new_index != -1) {
+					int le = TabPages[new_index].TabBounds.Right;
 					int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
 						int i = 0;
 
-						for (i = value; i < TabPages.Count; i++) {
+						for (i = new_index; i < TabPages.Count; i++) {
 							if (TabPages [i].TabBounds.Right > re)
 								break;
 						}
@@ -261,33 +282,29 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				if (selected_index != -1 && value != -1) {
+				if (old_index != -1 && new_index != -1) {
 					if (!refresh)
-						invalid = GetTabRect (selected_index);
-					((TabPage) Controls [selected_index]).SetVisible (false);
+						invalid = GetTabRect (old_index);
+					((TabPage) Controls[old_index]).SetVisible (false);
 				}
-				selected_index = value;
-
-#if NET_2_0
-				OnSelected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Selected));
-#endif
-				OnSelectedIndexChanged (EventArgs.Empty);
 
 				TabPage selected = null;
 
-				if (selected_index != -1) {
-					selected = (TabPage) Controls [selected_index];
-					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
+				if (new_index != -1) {
+					selected = (TabPage) Controls[new_index];
+					invalid = Rectangle.Union (invalid, GetTabRect (new_index));
 					selected.SetVisible (true);
 				}
+
+				OnSelectedIndexChanged (EventArgs.Empty);
 
 				ResumeLayout ();
 
 				if (refresh) {
 					SizeTabs ();
 					Refresh ();
-				} else if (selected_index != -1 && selected.Row != BottomRow) {
-					DropRow (TabPages [selected_index].Row);
+				} else if (new_index != -1 && selected.Row != BottomRow) {
+					DropRow (TabPages[new_index].Row);
 					// calculating what to invalidate here seems to be slower then just
 					// refreshing the whole thing
 					SizeTabs ();
@@ -598,11 +615,44 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		protected virtual void OnDeselecting (TabControlCancelEventArgs e)
+		{
+			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[DeselectingEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (!e.Cancel)
+				OnDeselected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Deselected));
+		}
+
+		protected virtual void OnDeselected (TabControlEventArgs e)
+		{
+			TabControlEventHandler eh = (TabControlEventHandler) (Events[DeselectedEvent]);
+			if (eh != null)
+				eh (this, e);
+
+			if (this.SelectedTab != null)
+				this.SelectedTab.FireLeave ();
+		}
+
+		protected virtual void OnSelecting (TabControlCancelEventArgs e)
+		{
+			TabControlCancelEventHandler eh = (TabControlCancelEventHandler) (Events[SelectingEvent]);
+			if (eh != null)
+				eh (this, e);
+			
+			if (!e.Cancel)
+				OnSelected (new TabControlEventArgs (SelectedTab, selected_index, TabControlAction.Selected));
+		}
+
 		protected virtual void OnSelected (TabControlEventArgs e)
 		{
 			TabControlEventHandler eh = (TabControlEventHandler)(Events[SelectedEvent]);
 			if (eh != null)
 				eh (this, e);
+
+			if (this.SelectedTab != null)
+				this.SelectedTab.FireEnter ();
 		}
 #endif
 
@@ -1123,6 +1173,30 @@ namespace System.Windows.Forms {
 		public event TabControlEventHandler Selected {
 			add { Events.AddHandler (SelectedEvent, value); }
 			remove { Events.RemoveHandler (SelectedEvent, value); }
+		}
+
+		static object DeselectedEvent = new object ();
+
+		public event TabControlEventHandler Deselected
+		{
+			add { Events.AddHandler (DeselectedEvent, value); }
+			remove { Events.RemoveHandler (DeselectedEvent, value); }
+		}
+
+		static object SelectingEvent = new object ();
+
+		public event TabControlCancelEventHandler Selecting
+		{
+			add { Events.AddHandler (SelectingEvent, value); }
+			remove { Events.RemoveHandler (SelectingEvent, value); }
+		}
+
+		static object DeselectingEvent = new object ();
+
+		public event TabControlCancelEventHandler Deselecting
+		{
+			add { Events.AddHandler (DeselectingEvent, value); }
+			remove { Events.RemoveHandler (DeselectingEvent, value); }
 		}
 #endif
 		#endregion	// Events

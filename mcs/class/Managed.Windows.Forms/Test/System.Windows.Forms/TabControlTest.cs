@@ -655,12 +655,18 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Form f = new Form ();
 			TabControl tc = new TabControl ();
-			TabControlEventArgs tcea = new TabControlEventArgs (null, 0, TabControlAction.Deselected);
+			TabControlEventArgs tcea1 = new TabControlEventArgs (null, 0, TabControlAction.Deselected);
+			TabControlEventArgs tcea2 = new TabControlEventArgs (null, 0, TabControlAction.Selected);
+			TabControlCancelEventArgs tccea1 = new TabControlCancelEventArgs (null, 0, false, TabControlAction.Deselecting);
+			TabControlCancelEventArgs tccea2 = new TabControlCancelEventArgs (null, 0, false, TabControlAction.Selecting);
 			
 			f.Controls.Add (tc);
 			string events = string.Empty;
 			tc.SelectedIndexChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("SelectedIndexChanged;"); });
-			tc.Selected += new TabControlEventHandler (delegate (Object obj, TabControlEventArgs e) { events += ("Selected;"); tcea = e; });
+			tc.Deselecting += new TabControlCancelEventHandler (delegate (Object obj, TabControlCancelEventArgs e) { events += ("Deselecting;"); tccea1 = e; });
+			tc.Deselected += new TabControlEventHandler (delegate (Object obj, TabControlEventArgs e) { events += ("Deselected;"); tcea1 = e; });
+			tc.Selecting += new TabControlCancelEventHandler (delegate (Object obj, TabControlCancelEventArgs e) { events += ("Selecting;"); tccea2 = e; });
+			tc.Selected += new TabControlEventHandler (delegate (Object obj, TabControlEventArgs e) { events += ("Selected;"); tcea2 = e; });
 			
 			TabPage tp1 = new TabPage ("One");
 			TabPage tp2 = new TabPage ("Two");
@@ -670,10 +676,13 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Show ();
 			tc.SelectTab (1);
-			Assert.AreEqual ("Selected;SelectedIndexChanged;", events, "A1");
-			Assert.AreEqual (TabControlAction.Selected, tcea.Action, "A2");
-			Assert.AreSame (tp2, tcea.TabPage, "A3");
-			Assert.AreEqual (1, tcea.TabPageIndex, "A4");
+			Assert.AreEqual ("Deselecting;Deselected;Selecting;Selected;SelectedIndexChanged;", events, "A1");
+			Assert.AreEqual (TabControlAction.Deselecting, tccea1.Action, "A2");
+			Assert.AreEqual (TabControlAction.Deselected, tcea1.Action, "A2");
+			Assert.AreEqual (TabControlAction.Selecting, tccea2.Action, "A2");
+			Assert.AreEqual (TabControlAction.Selected, tcea2.Action, "A2");
+			Assert.AreSame (tp2, tcea2.TabPage, "A3");
+			Assert.AreEqual (1, tcea2.TabPageIndex, "A4");
 			f.Close ();
 		}
 #endif

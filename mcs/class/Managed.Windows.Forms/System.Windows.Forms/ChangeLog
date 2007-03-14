@@ -1,3 +1,8 @@
+2007-03-14  Andreia Gaita  <avidigal@novell.com>
+
+	* TabControl.cs: Add support for 2.0 Deselecting, Deselected and
+	Selecting events. Fire Leave and Enter events when changing tabs.
+
 2007-03-14  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* TreeView.cs: Add TreeViewNodeSorter.
