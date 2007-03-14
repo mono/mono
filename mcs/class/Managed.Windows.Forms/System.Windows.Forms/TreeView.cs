@@ -44,12 +44,13 @@ namespace System.Windows.Forms {
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;
 
-		private TreeViewAction selection_action = TreeViewAction.Unknown;
-		internal TreeNode selected_node = null;
-		private TreeNode focused_node = null;
+		private TreeViewAction selection_action;
+		private TreeNode selected_node;
+		private TreeNode pre_selected_node;
+		private TreeNode focused_node;
 		private TreeNode highlighted_node;
-		private Rectangle mouse_rect = Rectangle.Empty;
-		private bool select_mmove = false;
+		private Rectangle mouse_rect;
+		private bool select_mmove;
 
 		private ImageList image_list;
 		private int image_index = -1;
@@ -342,8 +343,17 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TreeNode SelectedNode {
-			get { return selected_node; }
+			get {
+				if (!IsHandleCreated)
+					return pre_selected_node;
+				return selected_node;
+			}
 			set {
+				if (!IsHandleCreated) {
+					pre_selected_node = value;
+					return;
+				}
+
 				if (selected_node == value) {
 					selection_action = TreeViewAction.Unknown;
 					return;
@@ -645,9 +655,14 @@ namespace System.Windows.Forms {
 			EndUpdate ();
 
 			///
-			/// This is basically an emulation of a strange bug on MS
+			/// Everything below this is basically an emulation of a strange bug on MS
+			/// where they don't always scroll to the last node on ExpandAll
 			///
-
+#if NET_2_0
+			if (!IsHandleCreated)
+				return;
+#endif
+			
 			bool found = false;
 			foreach (TreeNode child in Nodes) {
 				if (child.Nodes.Count > 0)
@@ -717,6 +732,9 @@ namespace System.Windows.Forms {
 			base.CreateHandle ();
 			RecalculateVisibleOrder (root_node);
 			UpdateScrollBars ();
+
+			if (pre_selected_node != null)
+				SelectedNode = pre_selected_node;
 		}
 
 		protected override void Dispose (bool disposing) {
@@ -1760,10 +1778,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void GotFocusHandler (object sender, EventArgs e)
-		{			
-			if (selected_node == null)
-				SelectedNode = TopNode;
-			else
+		{
+			if (selected_node == null && pre_selected_node != null)
+				SelectedNode = pre_selected_node;
+			else if (selected_node != null)
 				UpdateNode (selected_node);
 		}
 

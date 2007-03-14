@@ -1,3 +1,8 @@
+2007-03-14  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Some workarounds so that we can match event order a
+	little better.
+
 2007-03-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ErrorProvider.cs: Invoke default ctor from 2.0-only ctor. Fixes bug
