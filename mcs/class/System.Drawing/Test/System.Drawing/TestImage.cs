@@ -32,6 +32,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Xml.Serialization;
 using NUnit.Framework;
@@ -283,6 +284,24 @@ namespace MonoTests.System.Drawing{
 				using (Image img = Image.FromStream (fs)) {
 					Emf (img);
 				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void FromFile_Invalid ()
+		{
+			string filename = Assembly.GetExecutingAssembly ().Location;
+			Image.FromFile (filename);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromStream_Invalid ()
+		{
+			string filename = Assembly.GetExecutingAssembly ().Location;
+			using (FileStream fs = File.OpenRead (filename)) {
+				Image.FromStream (fs);
 			}
 		}
 	}

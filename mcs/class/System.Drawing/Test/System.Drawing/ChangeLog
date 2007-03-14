@@ -1,3 +1,7 @@
+2007-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImage.cs: Add test cases for loading invalid files as an Image.
+
 2007-03-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add test cases for GDI+ metafile API.
