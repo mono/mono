@@ -283,7 +283,7 @@ namespace System.Windows.Forms {
 			if (tree_view != null) {
 				tree_view.RecalculateVisibleOrder (prev);
 
-				if (removed == tree_view.selected_node) {
+				if (removed == tree_view.SelectedNode) {
 					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
 					if (oe.MoveNext () && oe.MoveNext ()) {
 						new_selected = oe.CurrentNode;
