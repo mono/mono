@@ -38,6 +38,9 @@ namespace System.Windows.Forms {
 	[ComplexBindingProperties ("DataSource", "DataMember")]
 #endif
 	public class ErrorProvider : Component, IExtenderProvider
+#if NET_2_0
+	    , ISupportInitialize
+#endif
 	{
 
 		private class ErrorWindow : UserControl
@@ -476,5 +479,15 @@ namespace System.Windows.Forms {
 			return ep;
 		}
 		#endregion	// Private Methods
+
+#if NET_2_0
+		void ISupportInitialize.BeginInit ()
+		{
+		}
+
+		void ISupportInitialize.EndInit ()
+		{
+		}
+#endif
 	}
 }

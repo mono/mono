@@ -1,3 +1,7 @@
+2007-03-13  Miguel de Icaza  <miguel@novell.com>
+
+	* ErrorProvider.cs: Add stubs for ISupportInitialize
+
 2007-03-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Trigger the ItemCheck and ItemChecked events
