@@ -158,7 +158,7 @@
     <Compile Include="System.Xml\XsdValidatingReaderTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.vmwcsproj">
+    <ProjectReference Include="..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj">
       <Project>{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}</Project>
       <Name>nunit.framework.dll20.J2EE</Name>
     </ProjectReference>
@@ -177,7 +177,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.Data.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
