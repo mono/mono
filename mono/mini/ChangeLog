@@ -1,3 +1,8 @@
+2007-03-14  Miguel de Icaza  <miguel@novell.com>
+
+	*  Makefile.am: Add support so the tail tests are not executed on
+	PowerPC as that is a known limitation of the PowerPC port.
+
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* runmdesc.bat:  Move to msvc directory.
