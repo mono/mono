@@ -834,7 +834,7 @@ namespace System.Windows.Forms
 				return Items.Count - 1;
 			}
 		}
-		
+
 		internal void OnSelectedIndexChanged ()
 		{
 			if (IsHandleCreated)
@@ -1847,18 +1847,7 @@ namespace System.Windows.Forms
 
 			private void ToggleCheckState (ListViewItem item)
 			{
-				CheckState curr_state = item.Checked ? CheckState.Checked : CheckState.Unchecked;
 				item.Checked = !item.Checked;
-				CheckState new_state = item.Checked ? CheckState.Checked : CheckState.Unchecked;
-
-				ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index, curr_state, new_state);
-				owner.OnItemCheck (ice);
-
-#if NET_2_0
-				// ItemCheckedEvent goes after the checked state has changed
-				ItemCheckedEventArgs icea = new ItemCheckedEventArgs (item);
-				owner.OnItemChecked (icea);
-#endif
 			}
 
 			private void ItemsMouseDown (object sender, MouseEventArgs me)
@@ -2528,7 +2517,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		protected virtual void OnItemCheck (ItemCheckEventArgs ice)
+		protected internal virtual void OnItemCheck (ItemCheckEventArgs ice)
 		{
 			ItemCheckEventHandler eh = (ItemCheckEventHandler)(Events [ItemCheckEvent]);
 			if (eh != null)
@@ -2536,7 +2525,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected virtual void OnItemChecked (ItemCheckedEventArgs icea)
+		protected internal virtual void OnItemChecked (ItemCheckedEventArgs icea)
 		{
 			ItemCheckedEventHandler eh = (ItemCheckedEventHandler)(Events [ItemCheckedEvent]);
 			if (eh != null)

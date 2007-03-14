@@ -239,14 +239,27 @@ namespace System.Windows.Forms
 				if (is_checked == value)
 					return;
 				
-				is_checked = value;
-
 				if (owner != null) {
-					// force re-population of list
-					owner.CheckedItems.Reset ();
-					Layout ();
-				}			
-				Invalidate ();
+					CheckState current_value = is_checked ? CheckState.Checked : CheckState.Unchecked;
+					CheckState new_value = value ? CheckState.Checked : CheckState.Unchecked;
+
+					ItemCheckEventArgs icea = new ItemCheckEventArgs (Index,
+							new_value, current_value);
+					owner.OnItemCheck (icea);
+
+					if (new_value != current_value) {
+						// force re-population of list
+						owner.CheckedItems.Reset ();
+						is_checked = new_value == CheckState.Checked;
+						Invalidate ();
+
+#if NET_2_0
+						ItemCheckedEventArgs args = new ItemCheckedEventArgs (this);
+						owner.OnItemChecked (args);
+#endif
+					}
+				} else
+					is_checked = value;
 			}
 		}
 
