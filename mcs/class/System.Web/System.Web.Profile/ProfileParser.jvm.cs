@@ -45,26 +45,62 @@ namespace System.Web.Profile
 
 		public static Type GetProfileCommonType (HttpContext context)
 		{
+			if (!ProfileCommonTypeExists)
+				return null;
+
 			Type profileBaseType = Type.GetType ("ProfileCommon");
 			if (profileBaseType == null) {
 				//PageMapper call
 				string virtualPath = "~/App_Code/ProfileCommon";
 				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
 				profileBaseType = PageMapper.GetObjectType (resolvedUrl, false);
+
+				ProfileCommonTypeExists = profileBaseType != null;
 			}
 			return profileBaseType;
 		}
 
 		public static Type GetProfileGroupType (HttpContext context, string groupName)
 		{
+			if (!ProfileGroupTypeExists)
+				return null;
+			
 			Type profileGroupType = Type.GetType ("ProfileGroup" + groupName);
 			if (profileGroupType == null) {
 				//PageMapper call
 				string virtualPath = "~/App_Code/ProfileGroup" + groupName;
 				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
 				profileGroupType = PageMapper.GetObjectType (resolvedUrl, false);
+
+				ProfileGroupTypeExists = profileGroupType != null;
 			}
 			return profileGroupType;
+		}
+
+		const string profileKey = "System.Web.Profile.ProfileCommonType";
+		private static bool ProfileCommonTypeExists
+		{
+			get
+			{
+				object o = AppDomain.CurrentDomain.GetData (profileKey);
+				if (o == null)
+					return true;
+				return (bool) o;
+			}
+			set { AppDomain.CurrentDomain.SetData (profileKey, value); }
+		}
+
+		const string groupKey = "System.Web.Profile.ProfileGroupType";
+		private static bool ProfileGroupTypeExists
+		{
+			get
+			{
+				object o = AppDomain.CurrentDomain.GetData (groupKey);
+				if (o == null)
+					return true;
+				return (bool) o;
+			}
+			set { AppDomain.CurrentDomain.SetData (groupKey, value); }
 		}
 	}
 }
