@@ -187,7 +187,7 @@ namespace System.Drawing.Imaging {
 		// properties even if they don't seems to affect anything)
 		public MetaHeader WmfHeader {
 			get {
-				if (IsWmfPlaceable ())
+				if (IsWmf ())
 					 return new MetaHeader (header.wmf_header);
 				throw new ArgumentException ("WmfHeader only available on WMF files.");
 			}

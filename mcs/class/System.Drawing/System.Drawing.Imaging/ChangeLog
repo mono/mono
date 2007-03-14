@@ -1,3 +1,7 @@
+2007-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MetafileHeader.cs: WmfHeader is available on non-placeable WMF too.
+
 2007-03-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MetafileHeader.cs: WmfHeader throws if the metafile isn't a WMF (e.g. 
