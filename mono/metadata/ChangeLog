@@ -1,5 +1,8 @@
 2007-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_create_dynamic_method): Fix the last change so
+	multiple circular calls made from the same DynamicMethod work. Fixes #81141.
+
 	* image.c (mono_image_lookup_resource): Make this work on big-endian
 	machines.Change API contract so the caller needs to free the return value.
 	
