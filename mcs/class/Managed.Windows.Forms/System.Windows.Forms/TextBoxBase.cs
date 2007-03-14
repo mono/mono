@@ -1263,13 +1263,13 @@ namespace System.Windows.Forms {
 			}
 
 			case Msg.WM_SETFOCUS:
-				document.CaretHasFocus ();
 				base.WndProc(ref m);
+				document.CaretHasFocus ();
 				break;
 
 			case Msg.WM_KILLFOCUS:
-				document.CaretLostFocus ();
 				base.WndProc(ref m);
+				document.CaretLostFocus ();
 				break;
 
 			default:
@@ -1590,6 +1590,7 @@ namespace System.Windows.Forms {
 
 			document.SetSelection (document.caret.line, start, document.caret.line, end);
 			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
+			document.DisplayCaret ();
 		}
 
 		internal void CalculateDocument() {
@@ -1764,8 +1765,7 @@ namespace System.Windows.Forms {
 							ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor),
 							null, FormatSpecified.Font | FormatSpecified.Color);
 				}
-				document.UpdateView (document.GetLine (1), 0);
-				document.ResumeRecalc (true);
+				document.ResumeRecalc (false);
 
 				// Make sure the caret height is matching the new font height
 				document.AlignCaret();

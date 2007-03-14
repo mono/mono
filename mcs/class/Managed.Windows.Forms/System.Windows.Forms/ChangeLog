@@ -1,5 +1,14 @@
 2007-03-14  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs: Need to display the caret after letting the base
+	wndproc handle the focus methods, because the caret display
+	methods check the focus state.
+	- Try to display the caret after updating it's position with SelectWord.
+	- Don't need to do an immediate update on this recalc, since there
+	will be an invalidate anyways.
+
+2007-03-14  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Some workarounds so that we can match event order a
 	little better.
 
