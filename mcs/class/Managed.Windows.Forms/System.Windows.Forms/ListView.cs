@@ -1565,8 +1565,7 @@ namespace System.Windows.Forms
 		private bool SelectItems (ArrayList sel_items)
 		{
 			bool changed = false;
-			ArrayList curr_items = SelectedItems.List;
-			foreach (ListViewItem item in curr_items)
+			foreach (ListViewItem item in SelectedItems)
 				if (!sel_items.Contains (item)) {
 					item.Selected = false;
 					changed = true;
@@ -1818,20 +1817,20 @@ namespace System.Windows.Forms
 
 				case BoxSelect.Control:
 					items = new ArrayList ();
-					foreach (ListViewItem item in prev_selection)
-						if (!box_items.Contains (item))
-							items.Add (item);
+					foreach (int index in prev_selection)
+						if (!box_items.Contains (owner.Items [index]))
+							items.Add (owner.Items [index]);
 					foreach (ListViewItem item in box_items)
-						if (!prev_selection.Contains (item))
+						if (!prev_selection.Contains (item.Index))
 							items.Add (item);
 					break;
 
 				case BoxSelect.Shift:
 					items = box_items;
 					foreach (ListViewItem item in box_items)
-						prev_selection.Remove (item);
-					foreach (ListViewItem item in prev_selection)
-						items.Add (item);
+						prev_selection.Remove (item.Index);
+					foreach (int index in prev_selection)
+						items.Add (owner.Items [index]);
 					break;
 
 				default:
@@ -1913,7 +1912,7 @@ namespace System.Windows.Forms
 						else
 							box_select_mode = BoxSelect.Normal;
 						box_select_start = pt; 
-						prev_selection = owner.SelectedItems.List;
+						prev_selection = owner.SelectedIndices.List;
 					} else if (owner.SelectedItems.Count > 0) {
 						owner.SelectedItems.Clear ();
 					}
@@ -4126,11 +4125,13 @@ namespace System.Windows.Forms
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
+			private ArrayList list;
 
 			#region Public Constructor
 			public SelectedIndexCollection (ListView owner)
 			{
 				this.owner = owner;
+				owner.Items.Changed += new CollectionChangedHandler (ItemsCollection_Changed);
 			}
 			#endregion	// Public Constructor
 
@@ -4138,7 +4139,10 @@ namespace System.Windows.Forms
 			[Browsable (false)]
 			public int Count {
 				get {
-					return owner.SelectedItems.Count;
+					if (!owner.IsHandleCreated)
+						return 0;
+
+					return List.Count;
 				}
 			}
 
@@ -4154,10 +4158,10 @@ namespace System.Windows.Forms
 
 			public int this [int index] {
 				get {
-					int [] indices = GetIndices ();
-					if (index < 0 || index >= indices.Length)
+					if (!owner.IsHandleCreated || index < 0 || index >= List.Count)
 						throw new ArgumentOutOfRangeException ("index");
-					return indices [index];
+
+					return (int) List [index];
 				}
 			}
 
@@ -4196,34 +4200,37 @@ namespace System.Windows.Forms
 				if (!owner.IsHandleCreated)
 					return 0;
 
-				return owner.SelectedItems.Count;
-			}
-
-			public void Clear ()
-			{
-				owner.SelectedItems.Clear ();
+				return List.Count;
 			}
 #endif
+
+#if NET_2_0
+			public 
+#else
+			internal
+#endif	
+			void Clear ()
+			{
+				if (!owner.IsHandleCreated)
+					return;
+
+				foreach (int index in List)
+					owner.Items [index].Selected = false;
+			}
+
 			public bool Contains (int selectedIndex)
 			{
-				int [] indices = GetIndices ();
-				for (int i = 0; i < indices.Length; i++) {
-					if (indices [i] == selectedIndex)
-						return true;
-				}
-				return false;
+				return IndexOf (selectedIndex) != -1;
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
-				int [] indices = GetIndices ();
-				Array.Copy (indices, 0, dest, index, indices.Length);
+				List.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				int [] indices = GetIndices ();
-				return indices.GetEnumerator ();
+				return List.GetEnumerator ();
 			}
 
 			int IList.Add (object value)
@@ -4233,7 +4240,7 @@ namespace System.Windows.Forms
 
 			void IList.Clear ()
 			{
-				throw new NotSupportedException ("Clear operation is not supported.");
+				Clear ();
 			}
 
 			bool IList.Contains (object selectedIndex)
@@ -4267,12 +4274,7 @@ namespace System.Windows.Forms
 
 			public int IndexOf (int selectedIndex)
 			{
-				int [] indices = GetIndices ();
-				for (int i = 0; i < indices.Length; i++) {
-					if (indices [i] == selectedIndex)
-						return i;
-				}
-				return -1;
+				return List.IndexOf (selectedIndex);
 			}
 
 #if NET_2_0
@@ -4286,29 +4288,41 @@ namespace System.Windows.Forms
 #endif
 			#endregion	// Public Methods
 
-			private int [] GetIndices ()
-			{
-				ArrayList selected_items = owner.SelectedItems.List;
-				int [] indices = new int [selected_items.Count];
-				for (int i = 0; i < selected_items.Count; i++) {
-					ListViewItem item = (ListViewItem) selected_items [i];
-					indices [i] = item.Index;
+			internal ArrayList List {
+				get {
+					if (list == null) {
+						list = new ArrayList ();
+						for (int i = 0; i < owner.Items.Count; i++) {
+							if (owner.Items [i].Selected)
+								list.Add (i);
+						}
+					}
+
+					return list;
 				}
-				return indices;
 			}
+
+			internal void Reset ()
+			{
+				// force re-population of list
+				list = null;
+			}
+
+			private void ItemsCollection_Changed ()
+			{
+				Reset ();
+			}
+
 		}	// SelectedIndexCollection
 
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
-			private ArrayList list;
 
 			#region Public Constructor
 			public SelectedListViewItemCollection (ListView owner)
 			{
 				this.owner = owner;
-				this.owner.Items.Changed += new CollectionChangedHandler (
-					ItemsCollection_Changed);
 			}
 			#endregion	// Public Constructor
 
@@ -4316,9 +4330,7 @@ namespace System.Windows.Forms
 			[Browsable (false)]
 			public int Count {
 				get {
-					if (!owner.IsHandleCreated)
-						return 0;
-					return List.Count;
+					return owner.SelectedIndices.Count;
 				}
 			}
 
@@ -4328,10 +4340,11 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					ArrayList selected_items = List;
-					if (!owner.IsHandleCreated || index < 0 || index >= selected_items.Count)
+					if (!owner.IsHandleCreated || index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
-					return (ListViewItem) selected_items [index];
+
+					int item_index = owner.SelectedIndices [index];
+					return owner.Items [item_index];
 				}
 			}
 
@@ -4342,7 +4355,7 @@ namespace System.Windows.Forms
 					if (idx == -1)
 						return null;
 
-					return (ListViewItem) List [idx];
+					return this [idx];
 				}
 			}
 #endif
@@ -4368,18 +4381,12 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public void Clear ()
 			{
-				if (!owner.IsHandleCreated)
-					return;
-
-				foreach (ListViewItem item in List)
-					item.Selected = false;
+				owner.SelectedIndices.Clear ();
 			}
 
 			public bool Contains (ListViewItem item)
 			{
-				if (!owner.IsHandleCreated)
-					return false;
-				return List.Contains (item);
+				return IndexOf (item) != -1;
 			}
 
 #if NET_2_0
@@ -4393,14 +4400,23 @@ namespace System.Windows.Forms
 			{
 				if (!owner.IsHandleCreated)
 					return;
-				List.CopyTo (dest, index);
+				if (index > Count) // Throws ArgumentException instead of IOOR exception
+					throw new ArgumentException ("index");
+
+				for (int i = 0; i < Count; i++)
+					dest.SetValue (this [i], index++);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
 				if (!owner.IsHandleCreated)
 					return (new ListViewItem [0]).GetEnumerator ();
-				return List.GetEnumerator ();
+
+				ListViewItem [] items = new ListViewItem [Count];
+				for (int i = 0; i < Count; i++)
+					items [i] = this [i];
+
+				return items.GetEnumerator ();
 			}
 
 			int IList.Add (object value)
@@ -4441,7 +4457,12 @@ namespace System.Windows.Forms
 			{
 				if (!owner.IsHandleCreated)
 					return -1;
-				return List.IndexOf (item);
+
+				for (int i = 0; i < Count; i++)
+					if (this [i] == item)
+						return i;
+
+				return -1;
 			}
 
 #if NET_2_0
@@ -4450,9 +4471,8 @@ namespace System.Windows.Forms
 				if (!owner.IsHandleCreated || key == null || key.Length == 0)
 					return -1;
 
-				ArrayList selected_items = List;
-				for (int i = 0; i < selected_items.Count; i++) {
-					ListViewItem item = (ListViewItem) selected_items [i];
+				for (int i = 0; i < Count; i++) {
+					ListViewItem item = this [i];
 					if (String.Compare (item.Name, key, true) == 0)
 						return i;
 				}
@@ -4462,30 +4482,6 @@ namespace System.Windows.Forms
 #endif
 			#endregion	// Public Methods
 
-			internal ArrayList List {
-				get {
-					if (list == null) {
-						list = new ArrayList ();
-						for (int i = 0; i < owner.Items.Count; i++) {
-							ListViewItem item = owner.Items [i];
-							if (item.Selected)
-								list.Add (item);
-						}
-					}
-					return list;
-				}
-			}
-
-			internal void Reset ()
-			{
-				// force re-population of list
-				list = null;
-			}
-
-			private void ItemsCollection_Changed ()
-			{
-				Reset ();
-			}
 		}	// SelectedListViewItemCollection
 
 		internal delegate void CollectionChangedHandler ();

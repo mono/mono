@@ -1,3 +1,13 @@
+2007-03-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs:
+	* ListView.cs: Collecting selection information
+	is now done in SelectedIndexCollection rather than in
+	SelectedListViewItemCollection. This is done so we can
+	have the selection information code in one single place
+	(virtual mode selection information entirely depends on
+	SelectedIndexCollection).
+
 2007-03-13  Miguel de Icaza  <miguel@novell.com>
 
 	* ErrorProvider.cs: Add stubs for ISupportInitialize

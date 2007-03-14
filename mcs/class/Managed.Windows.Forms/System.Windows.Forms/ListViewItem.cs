@@ -416,7 +416,9 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
-			get { return selected; }
+			get { 
+				return selected; 
+			}
 			set {
 				if (selected == value)
 					return;
@@ -426,7 +428,7 @@ namespace System.Windows.Forms
 						owner.SelectedItems.Clear ();
 					selected = value;
 					// force re-population of list
-					owner.SelectedItems.Reset ();
+					owner.SelectedIndices.Reset ();
 					Layout ();
 					owner.OnSelectedIndexChanged ();
 				} else {
