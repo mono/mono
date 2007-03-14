@@ -158,9 +158,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (b2 [0], '1', "#3 Should be same");
 		}
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Array.Resize(null) is not supported")]
-#endif
 		public void SqlCharsSetLength ()
 		{
 			char [] b1 = new char [10];
