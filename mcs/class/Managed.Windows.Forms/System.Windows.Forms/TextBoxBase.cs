@@ -443,7 +443,8 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				CalculateDocument ();
+				if (IsHandleCreated)
+					CalculateDocument ();
 			}
 		}
 
@@ -585,7 +586,8 @@ namespace System.Windows.Forms {
 					ScrollToCaret ();
 				} else {
 					document.Empty();
-					CalculateDocument();
+					if (IsHandleCreated)
+						CalculateDocument ();
 				}
 
 				// set the var so OnModifiedChanged is not raised
@@ -1533,7 +1535,8 @@ namespace System.Windows.Forms {
 		}
 
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
-			CalculateDocument();
+			if (IsHandleCreated)
+				CalculateDocument ();
 		}
 
 		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
@@ -1590,13 +1593,11 @@ namespace System.Windows.Forms {
 
 			document.SetSelection (document.caret.line, start, document.caret.line, end);
 			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
-			document.DisplayCaret ();
+			document.DisplayCaret();
 		}
 
 		internal void CalculateDocument() {
-			if (!IsHandleCreated) {
-				return;
-			}
+
 			document.RecalculateDocument(CreateGraphicsInternal());
 			CalculateScrollBars();
 

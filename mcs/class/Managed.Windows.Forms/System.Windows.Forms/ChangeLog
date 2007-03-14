@@ -1,5 +1,11 @@
 2007-03-14  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs: Mess with the creation stuff a little. We need
+	to calculate the document before the handle is created, in some
+	cases. (Actually just one case).
+
+2007-03-14  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Need to display the caret after letting the base
 	wndproc handle the focus methods, because the caret display
 	methods check the focus state.
