@@ -1,3 +1,8 @@
+2007-03-14  Martin Baulig  <martin@ximian.com>
+
+	* debug-helpers.c (mono_type_get_desc): In `MONO_TYPE_ARRAY', use
+	mono_type_get_desc() as well.
+
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* icall.c:  Fix environ access in VS.  
