@@ -177,6 +177,7 @@ namespace MonoTests.System.Reflection
 		}
 
 #if NET_2_0
+#if !TARGET_JVM // MethodBody is not supported for TARGET_JVM
 		[Test]
 		public void GetMethodBody_Abstract () {
 			MethodBody mb = typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
@@ -203,7 +204,7 @@ namespace MonoTests.System.Reflection
 					Assert.IsNull (mb);
 				}
 		}
-#if !TARGET_JVM
+
 		public static void locals_method () {
 			byte[] b = new byte [10];
 
@@ -213,7 +214,7 @@ namespace MonoTests.System.Reflection
 				}
 			}
 		}
-#endif
+
 		[Test]
 		public void GetMethodBody () {
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
@@ -232,6 +233,7 @@ namespace MonoTests.System.Reflection
 			else
 				Assert.AreEqual (false, locals [1].IsPinned, "#6");
 		}
+#endif // TARGET_JVM
 
 		public int return_parameter_test () {
 			return 0;
@@ -247,6 +249,7 @@ namespace MonoTests.System.Reflection
 			//Assert.AreEqual (True, pi.IsRetval);
 		}
 
+#if !TARGET_JVM // ReflectionOnly is not supported yet on TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void InvokeOnRefOnlyAssembly ()
@@ -257,6 +260,7 @@ namespace MonoTests.System.Reflection
 			
 			m.Invoke (null, new object [0]);
 		}
+#endif // TARGET_JVM
 
 		[Test]
 		public void InvokeGenericVtype ()

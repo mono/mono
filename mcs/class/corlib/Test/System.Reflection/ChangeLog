@@ -1,3 +1,7 @@
+2007-03-14  Eyal Alaluf <eyala@mainsoft.com>
+
+	* MethodInfoTest.cs: Disabled tests for TARGET_JVM that use MethodBody.
+
 2006-11-14  Raja R Harinath  <rharinath@novell.com>
 
 	* AssemblyTest.cs (bug79872): New test for #79872.
