@@ -1,3 +1,11 @@
+2007-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_lookup_resource): Make this work on big-endian
+	machines.Change API contract so the caller needs to free the return value.
+	
+	* process.c (process_get_fileversion): Adapt to mono_image_lookup_resource ()
+	API change.
+	
 2007-03-14  Martin Baulig  <martin@ximian.com>
 
 	* debug-helpers.c (mono_type_get_desc): In `MONO_TYPE_ARRAY', use
