@@ -60,7 +60,7 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Configuration.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
-set NUNIT_OPTIONS=/exclude=NotWorking,NotDotNet
+set NUNIT_OPTIONS=/exclude=NotWorking,NotDotNet,TargetJvmNotSupported,TargetJvmNotWorking
 
 if "%GH_VERSION%"=="" (
 	set GH_VERSION=0_0_0_0
@@ -120,7 +120,8 @@ REM ********************************************************
 copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -Djava.io.tmpdir="C:\Temp" -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+"%JAVA_HOME%\bin\java" -server -Xmx1024M -Djava.io.tmpdir="C:\Temp" -classpath %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+REM jdb -server -Xmx1024M -Djava.io.tmpdir="C:\Temp" -classpath %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML%
 REM @echo off
 
 REM ********************************************************
