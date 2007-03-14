@@ -44,7 +44,7 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set JGAC_PATH=%VMW_HOME%\jgac\framework\
 set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
 set JAVA_HOME=%VMW_HOME%\jre6
 
@@ -59,8 +59,10 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\derby.jar
 
+rem ./Test/mainsoft/MainsoftWebTest/bin/Debug_Java20/HtmlCompare.jar
+
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\MainsoftWebTest\bin\Debug_Java20\HtmlCompare.jar
 
 set TOMCAT_CLASSPATH=%TOMCAT_PATH%servlet-api.jar
 set NUNIT_OPTIONS=/exclude=NotWorking

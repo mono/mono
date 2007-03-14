@@ -4,7 +4,7 @@ rem =================================================
 if "%GH_HOME%" == "" (set GH_HOME=c:\Program Files\Mainsoft\Visual MainWin for J2EE V2)
 if "%VMW_HOME%" == "" (set VMW_HOME=%GH_HOME%) 
 if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre6) 
-set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
+set JGAC_PATH=%GH_HOME%\jgac\framework
 
 rem =================================================
 set startDate=%date%
