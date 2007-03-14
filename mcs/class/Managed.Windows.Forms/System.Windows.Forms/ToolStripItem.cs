@@ -948,8 +948,13 @@ namespace System.Windows.Forms
 				this.Invalidate ();
 
 				if (this.IsOnDropDown)
-					if (!(this is ToolStripDropDownItem)|| (this as ToolStripDropDownItem).DropDown.Visible == false)
-						((this.Parent as ToolStripDropDown).OwnerItem as ToolStripDropDownItem).HideDropDown ();;
+					if (!(this is ToolStripDropDownItem) || (this as ToolStripDropDownItem).DropDown.Visible == false) {
+						if ((this.Parent as ToolStripDropDown).OwnerItem != null)
+							((this.Parent as ToolStripDropDown).OwnerItem as ToolStripDropDownItem).HideDropDown ();
+						else
+							(this.Parent as ToolStripDropDown).Hide ();
+					}
+						
 				
 				MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 				if (eh != null)

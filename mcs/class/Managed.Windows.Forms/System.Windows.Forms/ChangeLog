@@ -1,3 +1,9 @@
+2007-03-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: If our OwnerItem is null, we can't use 
+	HideDropDown, use Hide instead to prevent an NRE.
+	[Fixes bug #81147]
+
 2007-03-14  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Mess with the creation stuff a little. We need
