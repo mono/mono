@@ -1,5 +1,7 @@
 2007-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* process.c: Fix endianness issues. Fixes #81126.
+
 	* reflection.c (mono_reflection_create_dynamic_method): Fix the last change so
 	multiple circular calls made from the same DynamicMethod work. Fixes #81141.
 
