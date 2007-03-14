@@ -69,9 +69,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if TARGET_JVM
-            [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeFile ()
 		{
 			string path = TempFolder + DSC + "FSIT.CreationTime.Test";
@@ -124,9 +122,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if TARGET_JVM
-            [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeDirectory ()
 		{
 			string path = TempFolder + DSC + "FSIT.CreationTimeDirectory.Test";
@@ -168,9 +164,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-#if TARGET_JVM
-            [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeNoFileOrDirectory ()
 		{
 			string path = TempFolder + DSC + "FSIT.CreationTimeNoFile.Test";
@@ -220,9 +214,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-#if TARGET_JVM
-            [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 		public void DefaultLastAccessTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.DefaultLastAccessTime.Test";
@@ -246,9 +238,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if TARGET_JVM
-            [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 		public void LastAccessTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.LastAccessTime.Test";
@@ -292,9 +282,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-#if TARGET_JVM
-        [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 		public void DefaultLastWriteTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.DefaultLastWriteTime.Test";

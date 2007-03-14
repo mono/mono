@@ -694,7 +694,7 @@ namespace MonoTests.System {
             Assert(1.2345678901234e-14 == (double)d);
 
             d = new Decimal(1.2342278901234e-25);
-            Assert((decimal)d == 1.234e-25m);
+            AssertEquals("A10", d, 1.234e-25m);
 
             // test exceptions
             try

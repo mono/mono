@@ -411,9 +411,6 @@ public class BinaryWriterTest : Assertion {
 	}
 	
 	[Test]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
 	public void WriteFloat ()
 	{
 		MemoryStream stream = new MemoryStream ();

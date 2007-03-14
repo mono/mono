@@ -64,8 +64,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#4");
 			Assert.AreEqual ("message", bif.Message, "#5");
 			Assert.IsNull (bif.FusionLog, "#6");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName + ": message"), "#7");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": message",
 				bif.ToString (), "#7");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -81,8 +85,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#4");
 			Assert.AreEqual (string.Empty, bif.Message, "#5");
 			Assert.IsNull (bif.FusionLog, "#6");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": "), "#7");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": ",
 				bif.ToString (), "#7");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -127,8 +135,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#5");
 			Assert.AreEqual ("message", bif.Message, "#6");
 			Assert.IsNull (bif.FusionLog, "#7");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().IndexOf (ame.GetType ().FullName + ": something") != -1, "#8");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": message ---> "
 				+ ame.GetType ().FullName + ": something", bif.ToString (), "#8");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -146,8 +158,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#5");
 			Assert.AreEqual (string.Empty, bif.Message, "#6");
 			Assert.IsNull (bif.FusionLog, "#7");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().IndexOf (ame.GetType ().FullName + ": something") != -1, "#8");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ":  ---> "
 				+ ame.GetType ().FullName + ": something", bif.ToString (), "#8");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -172,7 +188,9 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#8");
 			Assert.IsTrue (bif.ToString ().IndexOf ("---> " + ame.GetType ().FullName) != -1, "#9");
+#if !TARGET_JVM // ToString always has a stack trace under TARGET_JVM
 			Assert.IsFalse (bif.ToString ().IndexOf (Environment.NewLine) != -1, "#10");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -189,8 +207,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#4");
 			Assert.AreEqual ("message", bif.Message, "#5");
 			Assert.IsNull (bif.FusionLog, "#6");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": message"), "#7");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": message",
 				bif.ToString (), "#7");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -234,8 +256,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#5");
 			Assert.AreEqual ("message", bif.Message, "#6");
 			Assert.IsNull (bif.FusionLog, "#7");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": message"), "#8");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": message",
 				bif.ToString (), "#8");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -252,8 +278,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#A4");
 			Assert.AreEqual ("message", bif.Message, "#A5");
 			Assert.IsNull (bif.FusionLog, "#A6");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": message"), "#A7");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": message",
 				bif.ToString (), "#A7");
+#endif // TARGET_JVM
 
 			bif = new BadImageFormatException (string.Empty, (string) null);
 
@@ -265,8 +295,12 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#B4");
 			Assert.AreEqual (string.Empty, bif.Message, "#B5");
 			Assert.IsNull (bif.FusionLog, "#B6");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": "), "#B7");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": ",
 				bif.ToString (), "#B7");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -284,7 +318,11 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Message, "#5");
 			Assert.AreEqual (string.Empty, bif.Message, "#6");
 			Assert.IsNull (bif.FusionLog, "#7");
+#if TARGET_JVM // ToString always has a stack trace under TARGET_JVM
+			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType().FullName + ": "), "#8");
+#else
 			Assert.AreEqual (bif.GetType ().FullName + ": ", bif.ToString (), "#8");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -308,7 +346,9 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": "), "#6");
+#if !TARGET_JVM // ToString always has a stack trace under TARGET_JVM
 			Assert.IsFalse (bif.ToString ().IndexOf (Environment.NewLine) != -1, "#7");
+#endif // TARGET_JVM
 		}
 
 		[Test]
@@ -372,7 +412,9 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FusionLog, "#B6");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": "), "#B7");
+#if !TARGET_JVM // ToString always has a stack trace under TARGET_JVM
 			Assert.IsFalse (bif.ToString ().IndexOf (Environment.NewLine) != -1, "#B8");
+#endif // TARGET_JVM
 			Assert.IsTrue (bif.ToString ().IndexOf ("''") != -1, "#B9");
 		}
 	}

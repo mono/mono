@@ -161,6 +161,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category("TargetJvmNotSupported")] // IntPtr native handles are not supported for TARGET_JVM.
 		public void TestHandle()
 		{
 			Mutex Sem = new Mutex();

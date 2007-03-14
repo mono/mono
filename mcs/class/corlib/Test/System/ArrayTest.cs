@@ -470,6 +470,11 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
+#if TARGET_JVM // This is really implementation dependent behaviour.
+			catch (RankException) {
+				errorThrown = true;
+			}
+#endif // TARGET_JVM
 			Assert("#E62", errorThrown);
 		}
 		{
@@ -630,6 +635,7 @@ public class ArrayTest : Assertion
 			Assert("#F03b", errorThrown);
 		}
 #endif
+#if !TARGET_JVM // Arrays lower bounds are not supported for TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -639,6 +645,7 @@ public class ArrayTest : Assertion
 			}
 			Assert("#F04", errorThrown);
 		}
+#endif // TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -649,6 +656,7 @@ public class ArrayTest : Assertion
 			}
 			Assert("#F05", errorThrown);
 		}
+#if !TARGET_JVM // CreateInstance with lower bounds not supported for TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -691,6 +699,7 @@ public class ArrayTest : Assertion
 		Type szarrayType = new int [10].GetType ();
 		Assert (szarrayType == (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0})).GetType ());
 		Assert (szarrayType != (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {1})).GetType ());
+#endif // TARGET_JVM
 	}
 	
 	[Test]
@@ -765,6 +774,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestGetEnumeratorNonZeroLowerBounds() {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -793,6 +803,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Add () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -813,6 +824,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Insert () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -833,6 +845,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Remove () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -853,6 +866,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_RemoveAt () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -873,6 +887,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Contains () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -898,6 +913,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_IndexOf () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -2784,6 +2800,7 @@ public class ArrayTest : Assertion
 
 	}
 
+#if !TARGET_JVM // BugBUG: T[] is not yet ICollection<T> under TARGET_JVM
 	[Test]
 	// From bug #80563
 	public void ICollectionNull ()
@@ -2808,6 +2825,7 @@ public class ArrayTest : Assertion
 		test = new List<object>(test);
 		AssertEquals ("array with test", test.Contains (null), false);
 	}
+#endif // TARGET_JVM
 #endif
 
 	#region Bug 80299

@@ -155,6 +155,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetFile_Null ()
 		{
@@ -162,6 +163,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetFile_Empty ()
 		{
@@ -169,6 +171,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -181,6 +184,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;

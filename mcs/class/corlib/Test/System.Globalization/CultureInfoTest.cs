@@ -39,6 +39,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")] //OptionalCalendars not yet supported for TARGET_JVM.
 		// make sure that all CultureInfo holds non-null calendars.
 		public void OptionalCalendars ()
 		{

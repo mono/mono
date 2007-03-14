@@ -543,6 +543,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")] // BUGBUG Very very slow on TARGET_JVM.
 		public void SerializationTest()
 		{
 			for (int i = 0; i < 50; i++)

@@ -2855,6 +2855,7 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		[Category ("TargetJvmNotWorking")]
 		public void FormatBase64CharArray_OnlyWhitespace ()
 		{
 			Convert.FromBase64CharArray (new char[3] {' ', 
@@ -2984,6 +2985,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void FromBase64_Empty ()
 		{
 			AssertEquals (new byte[0], Convert.FromBase64String (string.Empty));

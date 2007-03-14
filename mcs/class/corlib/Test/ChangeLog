@@ -1,8 +1,12 @@
-﻿200703-05	Eyal Alaluf <eyala@mainsoft.com>
+﻿2007-03-14	Eyal Alaluf <eyala@mainsoft.com>
+
+	* Mark tests as not working under TargetJvm
+
+2007-03-05	Eyal Alaluf <eyala@mainsoft.com>
 
 	* Port tests to run under TARGET_JVM.
 
-200703-05	Roei Erez <roeie@mainsoft.com>
+2007-03-05	Roei Erez <roeie@mainsoft.com>
 
 	* StringTest.cs: add test for string properties.
 

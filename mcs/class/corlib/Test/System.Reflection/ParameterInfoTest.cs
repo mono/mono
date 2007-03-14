@@ -63,7 +63,7 @@ public class ParameterInfoTest : Assertion
 
 	public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {
 	}
-#if !TARGET_JVM
+#if !TARGET_JVM // No support for extern methods in TARGET_JVM
 	[DllImport ("foo")]
 	public extern static void marshalAsMethod (
 		[MarshalAs(UnmanagedType.Bool)]int p0, 
@@ -87,6 +87,7 @@ public class ParameterInfoTest : Assertion
 		AssertEquals (1, info[3].GetCustomAttributes (typeof (OptionalAttribute), true).Length);
 		AssertEquals (2, info[4].GetCustomAttributes (true).Length);
 
+#if !TARGET_JVM // No support for extern methods in TARGET_JVM
 		ParameterInfo[] pi = typeof (ParameterInfoTest).GetMethod ("marshalAsMethod").GetParameters ();
 		MarshalAsAttribute attr;
 
@@ -101,6 +102,7 @@ public class ParameterInfoTest : Assertion
 		AssertEquals (UnmanagedType.CustomMarshaler, attr.Value);
 		AssertEquals ("5", attr.MarshalCookie);
 		AssertEquals (typeof (Marshal1), Type.GetType (attr.MarshalType));
+#endif
 	}
 #endif
 }		

@@ -86,6 +86,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ReturnTypePseudoCustomAttributes () {
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ReturnTypeMarshalAs");
 

@@ -274,10 +274,8 @@ public class DirectoryTest
 #endif
 	
 	[Test]
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif	
     public void GetCreationTimeException1 ()
 	{
 		Directory.GetCreationTime (null as string);
@@ -285,9 +283,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeException2 ()
 	{
 		Directory.GetCreationTime ("");
@@ -297,9 +293,7 @@ public class DirectoryTest
 #if !NET_2_0
 	[ExpectedException(typeof(IOException))]
 #endif
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeException_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetCreationTime.1";
@@ -323,9 +317,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeException4 ()
 	{
 		Directory.GetCreationTime ("    ");
@@ -333,9 +325,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -343,9 +333,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtcException1 ()
 	{
 		Directory.GetCreationTimeUtc (null as string);
@@ -353,9 +341,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtcException2 ()
 	{
 		Directory.GetCreationTimeUtc ("");
@@ -365,9 +351,7 @@ public class DirectoryTest
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
 #endif
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtc_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetCreationTimeUtc.1";
@@ -391,9 +375,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtcException4 ()
 	{
 		Directory.GetCreationTimeUtc ("    ");
@@ -401,9 +383,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtcException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
@@ -411,9 +391,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTime_Null ()
 	{
 		Directory.GetLastAccessTime (null as string);
@@ -421,9 +399,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeException2 ()
 	{
 		Directory.GetLastAccessTime ("");
@@ -433,9 +409,7 @@ public class DirectoryTest
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
 #endif
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTime_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastAccessTime.1";
@@ -460,9 +434,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeException4 ()
 	{
 		Directory.GetLastAccessTime ("    ");
@@ -470,9 +442,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeException5 ()
 	{
 		Directory.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
@@ -480,9 +450,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtc_Null ()
 	{
 		Directory.GetLastAccessTimeUtc (null as string);
@@ -490,9 +458,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtcException2 ()
 	{
 		Directory.GetLastAccessTimeUtc ("");
@@ -502,9 +468,7 @@ public class DirectoryTest
 #if !NET_2_0
 	[ExpectedException (typeof (IOException))]
 #endif
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtc_NonExistingPath ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.GetLastAccessTimeUtc.1";
@@ -527,9 +491,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtcException4 ()
 	{
 		Directory.GetLastAccessTimeUtc ("    ");
@@ -537,9 +499,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtcException5 ()
 	{
 		Directory.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
@@ -781,9 +741,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 	public void CreationTime ()
 	{
 		// check for Unix platforms - see FAQ for more details
@@ -837,9 +795,7 @@ public class DirectoryTest
 	}
 
 	[Test]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // LastAccessTime not supported for TARGET_JVM
 	public void LastAccessTime ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.AccessTime.1";
@@ -1061,9 +1017,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1072,9 +1026,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1083,9 +1035,7 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1100,9 +1050,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1111,9 +1059,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1139,9 +1085,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeUtcException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1150,9 +1094,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1161,9 +1103,7 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1178,9 +1118,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeUtcException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1189,9 +1127,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 	public void SetLastAccessTimeUtcException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1216,9 +1152,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1227,9 +1161,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1238,9 +1170,7 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1256,9 +1186,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1267,9 +1195,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1296,9 +1222,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentNullException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeUtcException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1307,9 +1231,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1318,9 +1240,7 @@ public class DirectoryTest
 	
 	[Test]
 	[ExpectedException(typeof(FileNotFoundException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1337,9 +1257,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeUtcException4 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1348,9 +1266,7 @@ public class DirectoryTest
 
 	[Test]
 	[ExpectedException(typeof(ArgumentException))]
-#if TARGET_JVM
-    [Category("NotWorking")]
-#endif
+	[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 	public void SetCreationTimeUtcException5 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);

@@ -138,9 +138,6 @@ namespace MonoTests.System.Collections {
 		};
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void SerializationRoundtrip ()
 		{
 			CaseInsensitiveHashCodeProvider enus = new CaseInsensitiveHashCodeProvider (new CultureInfo ("en-US"));
@@ -155,12 +152,13 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Deserialize ()
 		{
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
 			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
 
 			MemoryStream ms = new MemoryStream (serialized_en_us);
 			CaseInsensitiveHashCodeProvider enus = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);

@@ -321,6 +321,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void SerializeTest ()
 		{
 			List <int> list = new List <int> ();
@@ -328,7 +329,11 @@ namespace MonoTests.System.Collections.Generic {
 			list.Add (0);
 			list.Add (7);
 
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
 			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, list);
 
@@ -340,13 +345,18 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void DeserializeTest ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			ms.Write (_serializedList, 0, _serializedList.Length);
 			ms.Position = 0;
 
+#if TARGET_JVM
+			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
+#else
 			BinaryFormatter bf = new BinaryFormatter ();
+#endif // TARGET_JVM
 			List<int> list = (List<int>) bf.Deserialize (ms);
 			Assert.AreEqual (3, list.Count, "#1");
 			Assert.AreEqual (5, list [0], "#2");

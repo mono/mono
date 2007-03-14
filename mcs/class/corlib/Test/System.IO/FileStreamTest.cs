@@ -983,9 +983,7 @@ namespace MonoTests.System.IO
 			DeleteFile (path);
 		}
 
-#if TARGET_JVM // File locking is not implemented.
-		[Category ("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // File locking not supported for TARGET_JVM
 		public void TestLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";

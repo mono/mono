@@ -632,9 +632,7 @@ namespace MonoTests.System.IO
 		
 		[Test]
 		[ExpectedException(typeof (IOException))]
-#if TARGET_JVM
-        [Category("NotWorking")]
-#endif
+		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
 		public void OpenReadIOException ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenReadIOException.Test";

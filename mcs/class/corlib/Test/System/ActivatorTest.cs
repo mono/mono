@@ -186,6 +186,7 @@ namespace MonoTests.System {
 #else
 		[ExpectedException(typeof(MemberAccessException))]
 #endif
+		[Category ("TargetJvmNotWorking")]
 		public void CreateInstanceAbstract2 () 
 		{
 			Activator.CreateInstance (typeof (Type), true);
@@ -211,6 +212,7 @@ namespace MonoTests.System {
 #else
 		[ExpectedException (typeof (MemberAccessException))]
 #endif
+		[Category ("TargetJvmNotWorking")]
 		public void CreateInstanceAbstract5 () 
 		{
 			Activator.CreateInstance (typeof (Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
@@ -218,6 +220,7 @@ namespace MonoTests.System {
 
 #if NET_2_0
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void CreateInstance_Nullable ()
 		{
 			Assert.AreEqual (5, Activator.CreateInstance (typeof (Nullable<int>), new object [] { 5 }));
@@ -237,6 +240,7 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("TargetJvmNotWorking")]
 		public void GetObject_UrlNull ()
 		{
 			Activator.GetObject (typeof (COMTest), null);
@@ -291,6 +295,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx10 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx10version));
@@ -298,6 +303,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx11 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx11version));
@@ -305,6 +311,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx20 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx20version));
@@ -312,6 +319,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx99_Corlib ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, "9.99.999.9999"));
@@ -322,6 +330,7 @@ namespace MonoTests.System {
 
 #if NET_2_0
 		[Test]
+		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		[Category ("NotWorking")]
 		public void Unification_FromFx99_System ()
 		{

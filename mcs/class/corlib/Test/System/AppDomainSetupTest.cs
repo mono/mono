@@ -33,6 +33,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ConfigurationFile_Relative_ApplicationBase ()
 		{
 			string fileName = "blar.config";
@@ -54,6 +55,7 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (MemberAccessException))] // The ApplicationBase must be set before retrieving this property
+		[Category ("TargetJvmNotWorking")]
 		public void ConfigurationFile_Relative_NoApplicationBase ()
 		{
 			AppDomainSetup setup = new AppDomainSetup();
@@ -74,6 +76,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");
@@ -101,6 +104,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase2 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -109,6 +113,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase3 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -118,6 +123,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase4 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -145,6 +151,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase5 ()
 		{
 			// This is failing because of (probably) a windows-ism, so don't worry
@@ -173,6 +180,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("TargetJvmNotWorking")]
 		public void ApplicationBase6 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();

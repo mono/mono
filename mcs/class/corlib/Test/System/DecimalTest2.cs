@@ -138,8 +138,8 @@ namespace MonoTests.System
         public void TestRemainder()
         {
             Assert((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
-            Assert((decimal)Decimal.Remainder(79228162514264337593543950335m , 
-                27703302467091960609331879.53200m) == 24420760848422211464106753m);
+            AssertEquals("A02", Decimal.Remainder(79228162514264337593543950335m, 
+                27703302467091960609331879.53200m), 24420760848422211464106753m);
 
             Assert((decimal)Decimal.Remainder(45937986975432m, 43987453m)
                 == 42334506m);

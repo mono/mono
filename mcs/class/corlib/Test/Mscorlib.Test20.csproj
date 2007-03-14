@@ -60,6 +60,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml" />
+    <Reference Include="J2SE.Helpers" >
+	  <HintPath>..\..\lib\J2SE.Helpers.dll</HintPath>
+	  <Private>False</Private>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="resources\AFile.txt" />
@@ -89,7 +93,7 @@
     <Compile Include="System.Collections\SortedListTest.cs" />
     <Compile Include="System.Collections\StackTest.cs" />
     <Compile Include="System.Globalization\CalendarTest.cs" />
-    <Compile Include="System.Globalization\CompareInfoTest.cs" />
+    <Compile Include="System.Globalization\CompareInfoTest.jvm.cs" />
     <Compile Include="System.Globalization\CultureInfoTest.cs" />
     <Compile Include="System.Globalization\DateTimeFormatInfoTest.cs" />
     <Compile Include="System.Globalization\DaylightTimeTest.cs" />
@@ -159,6 +163,7 @@
     <Compile Include="System.Text\EncoderReplacementFallbackBufferTest.cs" />
     <Compile Include="System.Text\EncoderReplacementFallbackTest.cs" />
     <Compile Include="System.Text\EncoderTest.cs" />
+    <Compile Include="System.Text\EncodingTest.cs" />
     <Compile Include="System.Text\EncodingInfoTest.cs" />
     <Compile Include="System.Text\StringBuilderTest.cs" />
     <Compile Include="System.Text\TestEncoding.cs" />
