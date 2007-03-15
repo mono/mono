@@ -2008,8 +2008,20 @@ namespace System.Windows.Forms.X11Internal {
 						ClickPending.Time = (long)xevent.ButtonEvent.time;
 					}
 
-					if (msg.message == Msg.WM_LBUTTONDOWN || msg.message == Msg.WM_MBUTTONDOWN || msg.message == Msg.WM_RBUTTONDOWN)
+					if (msg.message == Msg.WM_LBUTTONDOWN || msg.message == Msg.WM_MBUTTONDOWN || msg.message == Msg.WM_RBUTTONDOWN) {
 						hwnd.SendParentNotify (msg.message, MousePosition.X, MousePosition.Y);
+
+						// Win32 splurts MouseMove events all over the place, regardless of whether the mouse is actually moving or
+						// not, especially after mousedown and mouseup. To support apps relying on mousemove events between and after 
+						// mouse clicks to repaint or whatever, we generate a mousemove event here. *sigh*
+						XEvent motionEvent = new XEvent ();
+						motionEvent.type = XEventName.MotionNotify;
+						motionEvent.MotionEvent.display = display;
+						motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
+						motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
+						motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
+						hwnd.Queue.Enqueue (motionEvent);
+					}
 
 					return true;
 				}
@@ -2073,6 +2085,19 @@ namespace System.Windows.Forms.X11Internal {
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					MousePosition.X = xevent.ButtonEvent.x;
 					MousePosition.Y = xevent.ButtonEvent.y;
+
+						// Win32 splurts MouseMove events all over the place, regardless of whether the mouse is actually moving or
+						// not, especially after mousedown and mouseup. To support apps relying on mousemove events between and after 
+						// mouse clicks to repaint or whatever, we generate a mousemove event here. *sigh*
+					if (msg.message == Msg.WM_LBUTTONUP || msg.message == Msg.WM_MBUTTONUP || msg.message == Msg.WM_RBUTTONUP) {
+						XEvent motionEvent = new XEvent ();
+						motionEvent.type = XEventName.MotionNotify;
+						motionEvent.MotionEvent.display = display;
+						motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
+						motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
+						motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
+						hwnd.Queue.Enqueue (motionEvent);
+					}
 					return true;
 
 				case XEventName.MotionNotify:

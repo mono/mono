@@ -1,3 +1,9 @@
+2007-03-15  Andreia Gaita  <avidigal@novell.com>
+
+	* X11Display.cs: Fire extra MouseMove events right after
+	MouseDown and MouseUp, emulating win32's <censored> behaviour
+	for apps that rely on it.
+	
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11-new.cs: implement VirtualScreen by getting
