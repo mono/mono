@@ -1,5 +1,9 @@
 2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HttpRequest.cs: fixed MapPath () method.
+
+2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* VirtualPathUtility.cs: fixed ToAbsolute() method.
 
 2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>

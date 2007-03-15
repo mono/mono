@@ -264,6 +264,8 @@ namespace System.Web.Hosting {
 			string rest = path.Substring (app_virtual_dir.Length);
 			if (rest.Length > 0 && rest [0] == '/')
 				rest = rest.Substring (1);
+			if (Path.DirectorySeparatorChar != '/') // for windows suport
+				rest = rest.Replace ('/', Path.DirectorySeparatorChar);
 			return Path.Combine (app_physical_dir, rest);
 		}
 

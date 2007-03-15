@@ -147,16 +147,9 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6500
-#endif
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Test_PhysicalApplicationPath ()
 		{
-			//
-			// This does not work because of the WebTest.Run creates a new Web.config
-			// WebTest must be fixed.
-			//
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
 				PhysicalApplicationPathDelegate)));
 			t.Run ();
@@ -172,9 +165,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
-//#if TARGET_JVM //BUG #6500
-		[Category ("NotWorking")]
-//#endif
 		public void Test_MapPath ()
 		{
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
@@ -187,6 +177,7 @@ namespace MonoTests.System.Web {
 			HttpRequest r = HttpContext.Current.Request;
 			string appBase = r.PhysicalApplicationPath.TrimEnd (Path.DirectorySeparatorChar);
 			Assert.AreEqual (appBase, r.MapPath ("~"), "test1");
+			Assert.AreEqual (appBase + Path.DirectorySeparatorChar, r.MapPath ("~/"), "test1");
 			Assert.AreEqual (appBase, r.MapPath ("/NunitWeb"), "test1.1");
 			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
 				r.MapPath ("Web.config"), "test2");
@@ -202,6 +193,13 @@ namespace MonoTests.System.Web {
 				r.MapPath ("Web.config", "/NunitWeb", false), "test7");
 			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
 				r.MapPath ("/NunitWeb/Web.config", "/NunitWeb", false), "test8");
+			
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config", "/NunitWeb/", false), "test8");
+			Assert.AreEqual (Path.Combine (appBase, "Web.config"),
+				r.MapPath ("Web.config", "~", false), "test10");
+			Assert.AreEqual (Path.Combine (appBase, "DIR" + Path.DirectorySeparatorChar + "Web.config"),
+				r.MapPath ("Web.config", "~/DIR", false), "test11");
 		}
 	}
 	

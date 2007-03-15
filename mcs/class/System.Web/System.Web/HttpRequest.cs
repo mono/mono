@@ -1115,9 +1115,13 @@ namespace System.Web {
 					String.Format ("MapPath: Invalid path '{0}', only virtual paths are accepted", virtualPath));
 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
-			if (baseVirtualDir == null)
-				baseVirtualDir = appVirtualPath;
-			virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
+
+			if (!VirtualPathUtility.IsRooted (virtualPath)) {
+				if (StrUtils.IsNullOrEmpty (baseVirtualDir))
+					baseVirtualDir = appVirtualPath;
+				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
+			}
+			virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
 
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
@@ -1125,7 +1129,14 @@ namespace System.Web {
 				if (appVirtualPath.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
 					throw new HttpException ("MapPath: Mapping across applications not allowed");
 			}
+#if TARGET_JVM
 			return worker_request.MapPath (virtualPath);
+#else
+			string path = worker_request.MapPath (virtualPath);
+			if (virtualPath [virtualPath.Length - 1] != '/' && path [path.Length - 1] == System.IO.Path.DirectorySeparatorChar)
+				path = path.TrimEnd (System.IO.Path.DirectorySeparatorChar);
+			return path;
+#endif
 		}
 
 		public void SaveAs (string filename, bool includeHeaders)
