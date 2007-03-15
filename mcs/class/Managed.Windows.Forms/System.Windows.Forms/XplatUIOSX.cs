@@ -1803,7 +1803,7 @@ namespace System.Windows.Forms {
 					} else {
 						if (MouseWindow != null) {
 							if (MouseWindow.Handle != hwnd.Handle) {
-								PostMessage (MouseWindow.Handle, Msg.WM_MOUSE_LEAVE, IntPtr.Zero, IntPtr.Zero);
+								PostMessage (MouseWindow.Handle, Msg.WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
 								PostMessage (hwnd.Handle, Msg.WM_MOUSE_ENTER, IntPtr.Zero, IntPtr.Zero);
 								MouseWindow = hwnd;
 							}

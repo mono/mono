@@ -4529,7 +4529,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				case Msg.WM_MOUSE_LEAVE: {
+				case Msg.WM_MOUSELEAVE: {
 					WmMouseLeave (ref m);
 					return;
 				}

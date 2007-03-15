@@ -339,7 +339,6 @@ namespace System.Windows.Forms {
 
 		// Our "private" ones
 		WM_MOUSE_ENTER            = 0x0401,
-		WM_MOUSE_LEAVE            = 0x0402,
 		WM_ASYNC_MESSAGE          = 0x0403,
 		WM_REFLECT                = WM_USER + 0x1c00,
 		WM_CLOSE_INTERNAL	  = WM_USER + 0x1c01

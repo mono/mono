@@ -225,7 +225,7 @@ namespace System.Windows.Forms {
 				HandleNCMouseLeave (ref m);
 				break;
 			
-			case Msg.WM_MOUSE_LEAVE:
+			case Msg.WM_MOUSELEAVE:
 				HandleMouseLeave (ref m);
 				break;
 

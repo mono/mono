@@ -1290,7 +1290,7 @@ namespace System.Windows.Forms
 				if (textbox_ctrl != null)
 					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
 				break;
-			case Msg.WM_MOUSE_LEAVE:
+			case Msg.WM_MOUSELEAVE:
 				Point location = PointToClient (Control.MousePosition);
 				if (ClientRectangle.Contains (location))
 					return;

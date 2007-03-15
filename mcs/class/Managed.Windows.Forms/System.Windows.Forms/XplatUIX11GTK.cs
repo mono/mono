@@ -3038,7 +3038,7 @@ namespace System.Windows.Forms {
 					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
 						goto ProcessNextMessage;
 					}
-					msg.message = Msg.WM_MOUSE_LEAVE;
+					msg.message = Msg.WM_MOUSELEAVE;
 					HoverState.Timer.Enabled = false;
 					HoverState.Window = IntPtr.Zero;
 					break;

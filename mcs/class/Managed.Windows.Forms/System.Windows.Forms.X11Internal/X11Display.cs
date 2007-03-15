@@ -2142,7 +2142,7 @@ namespace System.Windows.Forms.X11Internal {
 					    (xevent.CrossingEvent.window != hwnd.ClientWindow))
 						goto ProcessNextMessage;
 
-					msg.message=Msg.WM_MOUSE_LEAVE;
+					msg.message=Msg.WM_MOUSELEAVE;
 					HoverState.Timer.Enabled = false;
 					HoverState.Window = IntPtr.Zero;
 

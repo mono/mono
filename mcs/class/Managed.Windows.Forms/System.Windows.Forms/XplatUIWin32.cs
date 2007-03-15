@@ -1634,7 +1634,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			// We need to fake WM_MOUSE_ENTER/WM_MOUSE_LEAVE
+			// We need to fake WM_MOUSE_ENTER
 			switch (msg.message) {
 				case Msg.WM_LBUTTONDOWN: {
 					mouse_state |= MouseButtons.Left;
@@ -1713,7 +1713,6 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_MOUSELEAVE: {
 					prev_mouse_hwnd = IntPtr.Zero;
-					msg.message=Msg.WM_MOUSE_LEAVE;
 					break;
 				}
 

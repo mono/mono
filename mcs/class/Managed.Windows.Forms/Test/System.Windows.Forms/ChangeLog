@@ -1,3 +1,8 @@
+2007-03-15  Ivan N. Zlatev <contact@i-nz.net>
+	
+	* Common.cs, TestHelper.cs: Replaces all uses of the custom
+	WM_MOUSE_LEAVE with the system WM_MOUSELEAVE message.
+
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
 	* ControlTest.cs: add Ivan's WindowTargetTest after fixing them,
