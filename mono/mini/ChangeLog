@@ -1,14 +1,3 @@
-2007-03-15  Jonathan Chambers  <joncham@gmail.com>
-
-	* *.c: Begin WIN64 port.
-	* mini.c:  Use correct register in profiler.
-	* mini-amd64.c: No inline assembly on Win64.
-	* mini-amd64.h: Implement MONO_INIT_CONTEXT_FROM_FUNC for Win64.
-	Only define MONO_ARCH_USE_SIGACTION on non-windows platforms.
-	* exceptions-amd64.c: Only need gregs_from_ucontext if MONO_ARCH_USE_SIGACTION
-	is defined. Implement mono_arch_sigctx_to_monoctx, mono_arch_monoctx_to_sigctx, and
-	mono_arch_ip_from_context for Win64.
-
 2007-03-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-amd64.c (seh_handler): Ditto.
