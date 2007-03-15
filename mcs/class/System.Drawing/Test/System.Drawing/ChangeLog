@@ -1,3 +1,7 @@
+2007-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorTranslator.cs: Add two other #hex cases. Fix typo.
+
 2007-03-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImage.cs: Add test cases for loading invalid files as an Image.

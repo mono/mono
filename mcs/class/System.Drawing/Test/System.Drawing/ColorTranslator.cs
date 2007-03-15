@@ -1,7 +1,7 @@
 //
 // ColorTranslator class testing unit
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -61,7 +61,9 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (1, ColorTranslator.FromHtml ("#1").ToArgb (), "#1");
 			Assert.AreEqual (255, ColorTranslator.FromHtml ("#FF").ToArgb (), "#FF");
 			Assert.AreEqual (65535, ColorTranslator.FromHtml ("#FFFF").ToArgb (), "#FFFF");
+			Assert.AreEqual (-15584170, ColorTranslator.FromHtml ("#123456").ToArgb (), "#123456");
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFFFFF").ToArgb (), "#FFFFFF");
+			Assert.AreEqual (305419896, ColorTranslator.FromHtml ("#12345678").ToArgb (), "#12345678");
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFFFFFFF").ToArgb (), "#FFFFFFFF");
 		}
 
@@ -87,7 +89,7 @@ namespace MonoTests.System.Drawing {
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void FromHtml_Unkown ()
+		public void FromHtml_Unknown ()
 		{
 			ColorTranslator.FromHtml ("unknown-color-test");
 		}
