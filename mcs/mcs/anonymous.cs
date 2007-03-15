@@ -1211,6 +1211,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
+				if (TypeManager.IsGenericParameter (invoke_pd.ParameterType (i)))
+					continue;
+				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
@@ -1506,7 +1509,7 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethod : AnonymousContainer
 	{
-		public readonly Type DelegateType;
+		public Type DelegateType;
 
 		//
 		// The value return by the Compatible call, this ensure that
@@ -1717,6 +1720,9 @@ namespace Mono.CSharp {
 				loc);
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
+			if (type.IsGenericType)
+				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);
+
 			delegate_method = am.GetMethodBuilder (ec);
 			base.Emit (ec);
 

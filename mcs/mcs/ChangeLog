@@ -1,3 +1,11 @@
+2007-03-15  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnomymousMethod): Can be now hosted in generic container.
+
+	* ecore.cs, parameter.cs: More common code for both corlibs.
+
+	* typemanager.cs (IsGenericMethod): Simplified.
+
 2007-03-15  Raja R Harinath  <rharinath@novell.com>
 
 	* flowanalysis.cs (FlowBranching.Reachability): Remove handling of

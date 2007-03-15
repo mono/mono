@@ -2935,14 +2935,6 @@ namespace Mono.CSharp {
 	public static bool IsGenericMethod (MethodBase mb)
 	{
 #if GMCS_SOURCE
-		if (mb.DeclaringType is TypeBuilder) {
-			IMethodData method = (IMethodData) builder_to_method [mb];
-			if (method == null)
-				return false;
-
-			return method.GenericMethod != null;
-		}
-
 		return mb.IsGenericMethod;
 #else
 		return false;

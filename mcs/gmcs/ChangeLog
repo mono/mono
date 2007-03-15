@@ -1,3 +1,9 @@
+2007-03-15  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs (InflatedConstraints): Fixed the check order.
+	(TypeArguments.Resolve): Small optimization for generic parameters.
+	(InferTypeArguments): Add infering support for anonymous methods.
+
 2007-03-15  Martin Baulig  <martin@ximian.com>
 
 	Fix #79984.

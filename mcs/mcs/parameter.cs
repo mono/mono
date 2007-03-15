@@ -807,19 +807,31 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if GMCS_SOURCE
 		[System.Diagnostics.Conditional ("MS_COMPATIBLE")]
-		public void InflateTypes (Type[] genTypes)
+		public void InflateTypes (Type[] genArguments, Type[] argTypes)
 		{
 			int pos = 0;
 			for (int i = 0; i < count; ++i) {
-				if (!FixedParameters[i].IsTypeParameter)
-					continue;
+				if (FixedParameters[i].IsTypeParameter) {
+					for (int ii = 0; ii < genArguments.Length; ++ii) {
+						if (types[i] != genArguments[ii])
+							continue;
 
-				types[i] = genTypes[pos];
-				FixedParameters[i].ParameterType = genTypes[pos];
-				++pos;
+						types[i] = argTypes[ii];
+						FixedParameters[i].ParameterType = types[i];
+						break;
+					}
+					continue;
+				}
+
+				if (types[i].IsGenericType) {
+					types[i] = types[i].GetGenericTypeDefinition().MakeGenericType (argTypes[0]); // FIXME: The order can be different
+					FixedParameters[i].ParameterType = types[i];
+				}
 			}
 		}
+#endif
 
 		public void VerifyClsCompliance ()
 		{

@@ -1003,7 +1003,7 @@ namespace Mono.CSharp {
 				bool has_class_constr = false;
 				if (list.Count > 0) {
 					Type first = (Type) list [0];
-					has_class_constr = !first.IsInterface && !first.IsGenericParameter;
+					has_class_constr = !first.IsGenericParameter && !first.IsInterface;
 				}
 
 				if ((list.Count > 0) && has_class_constr) {
@@ -1264,9 +1264,9 @@ namespace Mono.CSharp {
 				}
 
 				atypes[i] = te.Type;
-
-				if (te is TypeParameterExpr) {
-					has_type_args = true;
+				if (te.Type.IsGenericParameter) {
+					if (te is TypeParameterExpr)
+						has_type_args = true;
 					continue;
 				}
 
@@ -2410,11 +2410,6 @@ namespace Mono.CSharp {
 				if (!UnifyType (param_types [i], arg_types [i], inferred_types))
 					return false;
 			}
-
-			for (int i = 0; i < inferred_types.Length; i++)
-				if (inferred_types [i] == null)
-					return false;
-
 			return true;
 		}
 
@@ -2575,13 +2570,36 @@ namespace Mono.CSharp {
 				param_types [i] = pd.ParameterType (i);
 
 				Argument a = (Argument) arguments [i];
+				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr)
+					continue;
+								
+				if (a.Expr is AnonymousMethodExpression) {
+					if (RootContext.Version != LanguageVersion.LINQ)
+						continue;
+
+					Type dtype = param_types[i];
+					if (!TypeManager.IsDelegateType (dtype))
+						continue;
+
+					AnonymousMethodExpression am = (AnonymousMethodExpression)a.Expr;
+					if (am.Compatible (ec, dtype) != null) {
+						if (!InferTypeArguments (dtype.GetGenericArguments (), am.Parameters.Types, inferred_types))
+							return false;
+
+						Type[] inferred_delegate = new Type[am.Parameters.Types.Length];
+						int index = 0;
+						foreach (Type t in dtype.GetGenericArguments ()) {
+							inferred_delegate[index++] = inferred_types[t.GenericParameterPosition];
+						}
+						am.AnonymousMethod.DelegateType = dtype.GetGenericTypeDefinition().MakeGenericType (inferred_delegate);
+						am.AnonymousMethod.AnonymousDelegate.Type = am.AnonymousMethod.DelegateType; // MSAF NO
+						continue;
+					}
+				}
+
 				if (a.Expr is LambdaExpression)
 					lambdas++;
 				
-				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr) ||
-				    (a.Expr is AnonymousMethodExpression))
-					continue;
-
 				arg_types [i] = a.Type;
 			}
 
@@ -2594,7 +2612,20 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+			for (int i = 0; i < inferred_types.Length; ++i)
+				if (inferred_types[i] == null)
+					return false;
+
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
+
+#if MS_COMPATIBLE
+			// MS implementation throws NotSupportedException for GetParameters
+			// on unbaked generic method
+			Parameters p = ((Parameters)TypeManager.GetParameterData (method)).Clone ();
+			p.InflateTypes (param_types, inferred_types);
+			TypeManager.RegisterMethod (method, p);
+#endif
+
 			return true;
 		}
 
@@ -2624,6 +2655,10 @@ namespace Mono.CSharp {
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types))
 				return false;
+
+			foreach (Type t in inferred_types)
+				if (t == null)
+					return false;
 
 			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
 			return true;
