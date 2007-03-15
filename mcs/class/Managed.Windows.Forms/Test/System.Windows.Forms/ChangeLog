@@ -1,3 +1,8 @@
+2007-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FormTest.cs: Disable FormBorderStyleTest for the moment.
+	* DefaultLayoutTest.cs: Disable BehaviorOverriddenDisplayRectangle for the moment.
+	
 2007-03-14  Jackson Harper  <jackson@ximian.com>
 
 	* TreeViewTest.cs: Some more tests pass now.

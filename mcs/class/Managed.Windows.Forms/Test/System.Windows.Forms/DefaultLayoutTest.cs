@@ -374,6 +374,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]	// bug #80917
+		[Category ("NotWorking")]
 		public void BehaviorOverriddenDisplayRectangle ()
 		{
 			Control c = new Control ();

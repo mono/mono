@@ -30,6 +30,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80574
+		[Category ("NotWorking")]
 		public void FormBorderStyleTest ()
 		{
 			Form form = new Form ();
