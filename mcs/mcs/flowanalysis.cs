@@ -76,28 +76,24 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			TriState returns, throws, barrier;
+			TriState returns, barrier;
 
 			public TriState Returns {
 				get { return returns; }
-			}
-			public TriState Throws {
-				get { return throws; }
 			}
 			public TriState Barrier {
 				get { return barrier; }
 			}
 
-			Reachability (TriState returns, TriState throws, TriState barrier)
+			Reachability (TriState returns, TriState barrier)
 			{
 				this.returns = returns;
-				this.throws = throws;
 				this.barrier = barrier;
 			}
 
 			public Reachability Clone ()
 			{
-				return new Reachability (returns, throws, barrier);
+				return new Reachability (returns, barrier);
 			}
 
 			public static TriState TriState_Meet (TriState a, TriState b)
@@ -121,24 +117,22 @@ namespace Mono.CSharp
 				else
 					returns = TriState_Meet (returns, b.returns);
 
-				throws = TriState_Meet (throws, b.throws);
 				barrier = TriState_Meet (barrier, b.barrier);
 			}
 
 			public void Or (Reachability b)
 			{
 				returns = TriState_Max (returns, b.returns);
-				throws = TriState_Max (throws, b.throws);
 				barrier = TriState_Max (barrier, b.barrier);
 			}
 
 			public static Reachability Always ()
 			{
-				return new Reachability (TriState.Never, TriState.Never, TriState.Never);
+				return new Reachability (TriState.Never, TriState.Never);
 			}
 
 			TriState Unreachable {
-				get { return TriState_Max (returns, TriState_Max (throws, barrier)); }
+				get { return TriState_Max (returns, barrier); }
 			}
 
 			TriState Reachable {
@@ -154,10 +148,6 @@ namespace Mono.CSharp
 				get { return returns == TriState.Always; }
 			}
 
-			public bool AlwaysThrows {
-				get { return throws == TriState.Always; }
-			}
-
 			public bool AlwaysHasBarrier {
 				get { return barrier == TriState.Always; }
 			}
@@ -169,11 +159,6 @@ namespace Mono.CSharp
 			public void SetReturns ()
 			{
 				returns = TriState.Always;
-			}
-
-			public void SetThrows ()
-			{
-				throws = TriState.Always;
 			}
 
 			public void SetBarrier ()
@@ -195,9 +180,8 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}:{1}:{2}:{3}]",
-						      ShortName (returns), ShortName (throws), ShortName (barrier),
-						      ShortName (Reachable));
+				return String.Format ("[{0}:{1}:{2}]",
+						      ShortName (returns), ShortName (barrier), ShortName (Reachable));
 			}
 		}
 
@@ -404,14 +388,6 @@ namespace Mono.CSharp
 					reachability.SetReturns ();
 			}
 
-			public void Throw ()
-			{
-				if (!reachability.IsUnreachable) {
-					reachability.SetThrows ();
-					reachability.SetBarrier ();
-				}
-			}
-
 			public void Goto ()
 			{
 				if (!reachability.IsUnreachable)
@@ -425,69 +401,21 @@ namespace Mono.CSharp
 
 				MyBitVector locals = null;
 				MyBitVector parameters = null;
-				Reachability reachability = null;
+				Reachability reachability = sibling_list.Reachability.Clone ();
 
-				for (UsageVector child = sibling_list; child != null; child = child.Next) {
-					Report.Debug (2, "    MERGING SIBLING   ", reachability, child);
-
-					if (reachability == null)
-						reachability = child.Reachability.Clone ();
-					else
-						reachability.Meet (child.Reachability);
-
-					// A local variable is initialized after a flow branching if it
-					// has been initialized in all its branches which do neither
-					// always return or always throw an exception.
-					//
-					// If a branch may return, but does not always return, then we
-					// can treat it like a never-returning branch here: control will
-					// only reach the code position after the branching if we did not
-					// return here.
-					//
-					// It's important to distinguish between always and sometimes
-					// returning branches here:
-					//
-					//    1   int a;
-					//    2   if (something) {
-					//    3      return;
-					//    4      a = 5;
-					//    5   }
-					//    6   Console.WriteLine (a);
-					//
-					// The if block in lines 3-4 always returns, so we must not look
-					// at the initialization of `a' in line 4 - thus it'll still be
-					// uninitialized in line 6.
-					//
-					// On the other hand, the following is allowed:
-					//
-					//    1   int a;
-					//    2   if (something)
-					//    3      a = 5;
-					//    4   else
-					//    5      return;
-					//    6   Console.WriteLine (a);
-					//
-					// Here, `a' is initialized in line 3 and we must not look at
-					// line 5 since it always returns.
-					// 
-					bool unreachable = child.Reachability.IsUnreachable;
-
-					Report.Debug (2, "    MERGING SIBLING #1", reachability,
-						      child.Type, child.Reachability.IsUnreachable, unreachable);
-
-					if (!unreachable)
-						locals &= child.locals;
-
-					// An `out' parameter must be assigned in all branches which do
-					// not always throw an exception.
-					if (!child.Reachability.AlwaysThrows)
-						parameters &= child.parameters;
-
-					Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
+				if (!sibling_list.Reachability.IsUnreachable) {
+					locals &= sibling_list.locals;
+					parameters &= sibling_list.parameters;
 				}
-				
-				if (reachability == null)
-					throw new InternalErrorException ("Cannot happen: the loop above runs at least twice");
+
+				for (UsageVector child = sibling_list.Next; child != null; child = child.Next) {
+					reachability.Meet (child.Reachability);
+
+					if (!child.Reachability.IsUnreachable) {
+						locals &= child.locals;
+						parameters &= child.parameters;
+					}
+				}
 
 				return new UsageVector (parameters, locals, reachability, null, loc);
 			}

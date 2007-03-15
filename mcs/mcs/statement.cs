@@ -1004,7 +1004,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Throw ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			if (expr != null){
 				expr = expr.Resolve (ec);
@@ -2319,7 +2319,7 @@ namespace Mono.CSharp {
 			// initializer, then we must initialize all of the struct's fields.
 			if ((flags & Flags.IsToplevel) != 0 && 
 			    !Toplevel.IsThisAssigned (ec) &&
-			    !vector.Reachability.AlwaysThrows)
+			    !vector.Reachability.IsUnreachable)
 				ok = false;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
