@@ -4,6 +4,7 @@
 	* TextBoxBase.cs: On MS, a fixed single border is not in NC area,
 	it is drawn on the controls client window and there is no NC
 	area.
+	- Set the background color to gray on 2.0 when we are readonly.
 
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
