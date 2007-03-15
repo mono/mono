@@ -115,6 +115,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void ConstructorCspParameters ()
 	{
 		CspParameters csp = new CspParameters (1, null, "Mono1024");
@@ -129,6 +130,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void ConstructorKeySizeCspParameters ()
 	{
 		int keySize = 512;
@@ -964,6 +966,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	//	http://msdn.microsoft.com/library/en-us/cpguide/html/cpcongeneratingkeysforencryptiondecryption.asp
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void Persistence_PersistKeyInCsp_False () 
 	{
 		CspParameters csp = new CspParameters (1, null, "Persistence_PersistKeyInCsp_False");
@@ -988,6 +991,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void Persistence_PersistKeyInCsp_True () 
 	{
 		CspParameters csp = new CspParameters (1, null, "Persistence_PersistKeyInCsp_True");
@@ -1008,6 +1012,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void Persistence_Delete () 
 	{
 		CspParameters csp = new CspParameters (1, null, "Persistence_Delete");
@@ -1037,6 +1042,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("TargetJvmNotSupported")]
 	public void UseMachineKeyStore () 
 	{
 		// note only applicable when CspParameters isn't used - which don't

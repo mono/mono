@@ -122,7 +122,9 @@ public class CryptoConfigTest {
 		CreateFromName ("RIPEMD-160", "System.Security.Cryptography.RIPEMD160Managed");
 		CreateFromName ("System.Security.Cryptography.RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
 		// x.509 stuff
+#if !TARGET_JVM //TargetJvmNotWorking - this algorithm should be added to System
 		CreateFromName ("X509Chain", "System.Security.Cryptography.X509Certificates.X509Chain");
+#endif
 #endif
 		// note: CryptoConfig can create any object !
 		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");
@@ -142,6 +144,7 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", null);
 		// URL used in DigestMethod element 
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+#if !TARGET_JVM //TargetJvmNotWorking - algorithms from System.Security assembly
 		// URL used in Canonicalization or Transform elements 
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", "System.Security.Cryptography.Xml.XmlDsigC14NTransform");
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", "System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform");
@@ -162,6 +165,7 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/DSAKeyValue", "System.Security.Cryptography.Xml.DSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/RSAKeyValue", "System.Security.Cryptography.Xml.RSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# RetrievalMethod", "System.Security.Cryptography.Xml.KeyInfoRetrievalMethod");
+#endif
 	}
 
 	[Test]
