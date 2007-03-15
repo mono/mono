@@ -1,5 +1,7 @@
-2007-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+2007-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* ColorConverter.cs: Merge ConvertFrom_NotWorking with ConvertFrom as
+	the test cases are now working properly.
 	* ColorTranslator.cs: Add two other #hex cases. Fix typo.
 
 2007-03-14  Sebastien Pouliot  <sebastien@ximian.com>

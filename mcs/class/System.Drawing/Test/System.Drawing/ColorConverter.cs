@@ -156,13 +156,8 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Color.Empty, colconv.ConvertFrom (" "), "CF#4");
 			Assert.AreEqual (Color.Red, colconv.ConvertFrom ("Red"), "CF#5");
 			Assert.AreEqual (Color.Red, colconv.ConvertFrom (" Red "), "CF#6");
-		}
 
-		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
-		public void ConvertFrom_NotWorking ()
-		{
-			Color color = (Color) colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+			color = (Color) colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 				"0x123");
 			Assert.AreEqual (0, color.A, "CF8#1");
 			Assert.AreEqual (0, color.R, "CF8#2");
