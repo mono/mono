@@ -1720,9 +1720,11 @@ namespace Mono.CSharp {
 				loc);
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
+#if GMCS_SOURCE
 			if (type.IsGenericType)
 				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);
-
+#endif
+			
 			delegate_method = am.GetMethodBuilder (ec);
 			base.Emit (ec);
 
