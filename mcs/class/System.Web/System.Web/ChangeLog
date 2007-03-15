@@ -1,3 +1,8 @@
+2007-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: handle cases with no default for the
+	reskey properly.
+
 2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpRequest.cs: fixed MapPath () method.

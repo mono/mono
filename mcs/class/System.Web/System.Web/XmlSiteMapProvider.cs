@@ -141,8 +141,8 @@ namespace System.Web
 			resKey = parts [1];
 			if (parts.Length == 3)
 				resDefault = parts [2];
-			else
-				resDefault = String.Join (",", parts, 3, parts.Length - 2);
+			else if (parts.Length > 3)
+				resDefault = String.Join (",", parts, 2, parts.Length - 2);
 
 			return true;
 		}
