@@ -392,6 +392,11 @@ namespace System.Web.Compilation
 					nsname = String.Format ("Resources.{0}", nsname);
 				classname = classname.Substring(1);
 			}
+
+			if (!String.IsNullOrEmpty (classname))
+				classname = classname.Replace ('.', '_');
+			if (!String.IsNullOrEmpty (nsname))
+				nsname = nsname.Replace ('.', '_');
 			
 			if (!provider.IsValidIdentifier (nsname) || !provider.IsValidIdentifier (classname))
 				throw new ApplicationException ("Invalid resource file name.");

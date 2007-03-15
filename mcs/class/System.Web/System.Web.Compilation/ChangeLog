@@ -1,3 +1,9 @@
+2007-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesCompiler.cs: handle global resource keys with dots
+	the way MS.NET does. All the dots are replaced with underscores
+	when generating the stronly-typed property.
+
 2007-03-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: Fix a bug with global resources file
