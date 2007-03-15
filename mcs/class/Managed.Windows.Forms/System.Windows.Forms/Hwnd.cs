@@ -79,6 +79,7 @@ namespace System.Windows.Forms {
 		internal static Graphics bmp_g = Graphics.FromImage (bmp);
 		internal XEventQueue	queue;
 		internal WindowExStyles	initial_ex_style;
+		internal FormWindowState cached_window_state = (FormWindowState)(-1);  /* X11 only field */
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)

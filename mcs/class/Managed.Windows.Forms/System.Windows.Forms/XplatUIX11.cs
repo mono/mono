@@ -1618,6 +1618,10 @@ namespace System.Windows.Forms {
 							}
 						}
 					}
+					else if (xevent.PropertyEvent.atom == _NET_WM_STATE) {
+						// invalidate our cache - we'll query again the next time someone does GetWindowState.
+						hwnd.cached_window_state = (FormWindowState)(-1);
+					}
 					break;
 
 				}
@@ -2446,7 +2450,7 @@ namespace System.Windows.Forms {
 			}
 
 			lock (XlibLock) {
-				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | EventMask.PropertyChangeMask)));
 				if (hwnd.whole_window != hwnd.client_window)
 					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
 			}
@@ -3982,6 +3986,17 @@ namespace System.Windows.Forms {
 		}
 
 		internal override FormWindowState GetWindowState(IntPtr handle) {
+			Hwnd			hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd.cached_window_state == (FormWindowState)(-1))
+				hwnd.cached_window_state = UpdateWindowState (handle);
+
+			return hwnd.cached_window_state;
+		}
+
+		private FormWindowState UpdateWindowState (IntPtr handle) {
 			IntPtr			actual_atom;
 			int			actual_format;
 			IntPtr			nitems;

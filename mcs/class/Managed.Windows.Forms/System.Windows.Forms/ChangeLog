@@ -1,5 +1,13 @@
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
+	* Hwnd.cs: add an internal field for the cached_window_state.
+
+	* XplatUIX11.cs: cache the window state, invalidating the cache
+	(and thus re-querying the X server) only when we see an update to
+	the _NET_WM_STATE property.
+
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
 	* BindingSource.cs: get a lot of the unit tests working.
 
 2007-03-15  Jonathan Pobst  <monkey@jpobst.com>
