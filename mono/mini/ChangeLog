@@ -1,4 +1,10 @@
 
+Thu Mar 15 13:47:59 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, mini-mips.c, mini-ppc.c, mini-s390.c,
+	mini-s390x.c: fixed peephole optimizations to deal
+	correctly with 1 and 2 byte reload avoidance.
+
 Thu Mar 15 10:17:54 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-s390.md, cpu-s390x.md: update localloc length.
