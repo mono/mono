@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -88,31 +88,31 @@ namespace MonoTests.System.Drawing.Imaging {
 				new float[] { 5.0f, 5.1f, 5.2f, 5.3f, 5.4f, 5.5f }
 			});
 
-			Assert.AreEqual (cm.Matrix00, 0.0f, "00");
-			Assert.AreEqual (cm.Matrix01, 0.1f, "01");
-			Assert.AreEqual (cm.Matrix02, 0.2f, "02");
-			Assert.AreEqual (cm.Matrix03, 0.3f, "03");
-			Assert.AreEqual (cm.Matrix04, 0.4f, "04");
-			Assert.AreEqual (cm.Matrix10, 1.0f, "10");
-			Assert.AreEqual (cm.Matrix11, 1.1f, "11");
-			Assert.AreEqual (cm.Matrix12, 1.2f, "12");
-			Assert.AreEqual (cm.Matrix13, 1.3f, "13");
-			Assert.AreEqual (cm.Matrix14, 1.4f, "14");
-			Assert.AreEqual (cm.Matrix20, 2.0f, "20");
-			Assert.AreEqual (cm.Matrix21, 2.1f, "21");
-			Assert.AreEqual (cm.Matrix22, 2.2f, "22");
-			Assert.AreEqual (cm.Matrix23, 2.3f, "23");
-			Assert.AreEqual (cm.Matrix24, 2.4f, "24");
-			Assert.AreEqual (cm.Matrix30, 3.0f, "30");
-			Assert.AreEqual (cm.Matrix31, 3.1f, "31");
-			Assert.AreEqual (cm.Matrix32, 3.2f, "32");
-			Assert.AreEqual (cm.Matrix33, 3.3f, "33");
-			Assert.AreEqual (cm.Matrix34, 3.4f, "34");
-			Assert.AreEqual (cm.Matrix40, 4.0f, "40");
-			Assert.AreEqual (cm.Matrix41, 4.1f, "41");
-			Assert.AreEqual (cm.Matrix42, 4.2f, "42");
-			Assert.AreEqual (cm.Matrix43, 4.3f, "43");
-			Assert.AreEqual (cm.Matrix44, 4.4f, "44");
+			Assert.AreEqual (0.0f, cm.Matrix00, "00");
+			Assert.AreEqual (0.1f, cm.Matrix01, "01");
+			Assert.AreEqual (0.2f, cm.Matrix02, "02");
+			Assert.AreEqual (0.3f, cm.Matrix03, "03");
+			Assert.AreEqual (0.4f, cm.Matrix04, "04");
+			Assert.AreEqual (1.0f, cm.Matrix10, "10");
+			Assert.AreEqual (1.1f, cm.Matrix11, "11");
+			Assert.AreEqual (1.2f, cm.Matrix12, "12");
+			Assert.AreEqual (1.3f, cm.Matrix13, "13");
+			Assert.AreEqual (1.4f, cm.Matrix14, "14");
+			Assert.AreEqual (2.0f, cm.Matrix20, "20");
+			Assert.AreEqual (2.1f, cm.Matrix21, "21");
+			Assert.AreEqual (2.2f, cm.Matrix22, "22");
+			Assert.AreEqual (2.3f, cm.Matrix23, "23");
+			Assert.AreEqual (2.4f, cm.Matrix24, "24");
+			Assert.AreEqual (3.0f, cm.Matrix30, "30");
+			Assert.AreEqual (3.1f, cm.Matrix31, "31");
+			Assert.AreEqual (3.2f, cm.Matrix32, "32");
+			Assert.AreEqual (3.3f, cm.Matrix33, "33");
+			Assert.AreEqual (3.4f, cm.Matrix34, "34");
+			Assert.AreEqual (4.0f, cm.Matrix40, "40");
+			Assert.AreEqual (4.1f, cm.Matrix41, "41");
+			Assert.AreEqual (4.2f, cm.Matrix42, "42");
+			Assert.AreEqual (4.3f, cm.Matrix43, "43");
+			Assert.AreEqual (4.4f, cm.Matrix44, "44");
 		}
 
 		[Test]
@@ -135,31 +135,31 @@ namespace MonoTests.System.Drawing.Imaging {
 		{
 			ColorMatrix cm = new ColorMatrix ();
 
-			Assert.AreEqual (cm.Matrix00, 1);
-			Assert.AreEqual (cm.Matrix11, 1);
-			Assert.AreEqual (cm.Matrix22, 1);
-			Assert.AreEqual (cm.Matrix33, 1);
-			Assert.AreEqual (cm.Matrix44, 1);
-			Assert.AreEqual (cm.Matrix01, 0);
-			Assert.AreEqual (cm.Matrix02, 0);
-			Assert.AreEqual (cm.Matrix03, 0);
-			Assert.AreEqual (cm.Matrix04, 0);
-			Assert.AreEqual (cm.Matrix10, 0);
-			Assert.AreEqual (cm.Matrix12, 0);
-			Assert.AreEqual (cm.Matrix13, 0);
-			Assert.AreEqual (cm.Matrix14, 0);
-			Assert.AreEqual (cm.Matrix20, 0);
-			Assert.AreEqual (cm.Matrix21, 0);
-			Assert.AreEqual (cm.Matrix23, 0);
-			Assert.AreEqual (cm.Matrix24, 0);
-			Assert.AreEqual (cm.Matrix30, 0);
-			Assert.AreEqual (cm.Matrix31, 0);
-			Assert.AreEqual (cm.Matrix32, 0);
-			Assert.AreEqual (cm.Matrix34, 0);
-			Assert.AreEqual (cm.Matrix40, 0);
-			Assert.AreEqual (cm.Matrix41, 0);
-			Assert.AreEqual (cm.Matrix42, 0);
-			Assert.AreEqual (cm.Matrix43, 0);
+			Assert.AreEqual (1, cm.Matrix00, "0,0");
+			Assert.AreEqual (1, cm.Matrix11, "1,1");
+			Assert.AreEqual (1, cm.Matrix22, "2,2");
+			Assert.AreEqual (1, cm.Matrix33, "3,3");
+			Assert.AreEqual (1, cm.Matrix44, "4,4");
+			Assert.AreEqual (0, cm.Matrix01, "0,1");
+			Assert.AreEqual (0, cm.Matrix02, "0,2");
+			Assert.AreEqual (0, cm.Matrix03, "0,3");
+			Assert.AreEqual (0, cm.Matrix04, "0,4");
+			Assert.AreEqual (0, cm.Matrix10, "1,0");
+			Assert.AreEqual (0, cm.Matrix12, "1,2");
+			Assert.AreEqual (0, cm.Matrix13, "1,3");
+			Assert.AreEqual (0, cm.Matrix14, "1,4");
+			Assert.AreEqual (0, cm.Matrix20, "2,0");
+			Assert.AreEqual (0, cm.Matrix21, "2,1");
+			Assert.AreEqual (0, cm.Matrix23, "2,3");
+			Assert.AreEqual (0, cm.Matrix24, "2,4");
+			Assert.AreEqual (0, cm.Matrix30, "3,0");
+			Assert.AreEqual (0, cm.Matrix31, "3,1");
+			Assert.AreEqual (0, cm.Matrix32, "3,2");
+			Assert.AreEqual (0, cm.Matrix34, "3,4");
+			Assert.AreEqual (0, cm.Matrix40, "4,0");
+			Assert.AreEqual (0, cm.Matrix41, "4,1");
+			Assert.AreEqual (0, cm.Matrix42, "4,2");
+			Assert.AreEqual (0, cm.Matrix43, "4,3");
 #if !TARGET_JVM
 			Assert.AreEqual (100, Marshal.SizeOf (cm), "object");
 			Assert.AreEqual (100, Marshal.SizeOf (typeof (ColorMatrix)), "type");
@@ -177,39 +177,39 @@ namespace MonoTests.System.Drawing.Imaging {
 			        new float[] {     0,      0,      0, 0, 1}
 			});
 
-			Assert.AreEqual (cm.Matrix00, 0.393f);
-			Assert.AreEqual (cm.Matrix01, 0.349f);
-			Assert.AreEqual (cm.Matrix02, 0.272f);
-			Assert.AreEqual (cm.Matrix03, 0);
-			Assert.AreEqual (cm.Matrix04, 0);
+			Assert.AreEqual (0.393f, cm.Matrix00, "00");
+			Assert.AreEqual (0.349f, cm.Matrix01, "01");
+			Assert.AreEqual (0.272f, cm.Matrix02, "02");
+			Assert.AreEqual (0, cm.Matrix03, "03");
+			Assert.AreEqual (0, cm.Matrix04, "04");
 
-			Assert.AreEqual (cm.Matrix10, 0.769f);
-			Assert.AreEqual (cm.Matrix11, 0.686f);
-			Assert.AreEqual (cm.Matrix12, 0.534f);
-			Assert.AreEqual (cm.Matrix13, 0);
-			Assert.AreEqual (cm.Matrix14, 0);
+			Assert.AreEqual (0.769f, cm.Matrix10, "10");
+			Assert.AreEqual (0.686f, cm.Matrix11, "11");
+			Assert.AreEqual (0.534f, cm.Matrix12, "12");
+			Assert.AreEqual (0, cm.Matrix13, "13");
+			Assert.AreEqual (0, cm.Matrix14, "14");
 
-			Assert.AreEqual (cm.Matrix20, 0.189f);
-			Assert.AreEqual (cm.Matrix21, 0.168f);
-			Assert.AreEqual (cm.Matrix22, 0.131f);
-			Assert.AreEqual (cm.Matrix23, 0);
-			Assert.AreEqual (cm.Matrix24, 0);
+			Assert.AreEqual (0.189f, cm.Matrix20, "20");
+			Assert.AreEqual (0.168f, cm.Matrix21, "21");
+			Assert.AreEqual (0.131f, cm.Matrix22, "22");
+			Assert.AreEqual (0, cm.Matrix23, "23");
+			Assert.AreEqual (0, cm.Matrix24, "24");
 
-			Assert.AreEqual (cm.Matrix30, 0);
-			Assert.AreEqual (cm.Matrix31, 0);
-			Assert.AreEqual (cm.Matrix32, 0);
-			Assert.AreEqual (cm.Matrix33, 1);
-			Assert.AreEqual (cm.Matrix34, 0);
+			Assert.AreEqual (0, cm.Matrix30, "30");
+			Assert.AreEqual (0, cm.Matrix31, "31");
+			Assert.AreEqual (0, cm.Matrix32, "32");
+			Assert.AreEqual (1, cm.Matrix33, "33");
+			Assert.AreEqual (0, cm.Matrix34, "34");
 
-			Assert.AreEqual (cm.Matrix40, 0);
-			Assert.AreEqual (cm.Matrix41, 0);
-			Assert.AreEqual (cm.Matrix42, 0);
-			Assert.AreEqual (cm.Matrix43, 0);
-			Assert.AreEqual (cm.Matrix44, 1);
+			Assert.AreEqual (0, cm.Matrix40, "40");
+			Assert.AreEqual (0, cm.Matrix41, "41");
+			Assert.AreEqual (0, cm.Matrix42, "42");
+			Assert.AreEqual (0, cm.Matrix43, "43");
+			Assert.AreEqual (1, cm.Matrix44, "44");
 		}
 
 		[Test]
-		public void Property ()
+		public void IndexerProperty ()
 		{
 			ColorMatrix cm = new ColorMatrix (new float[][] {
 				new float[] 	{1,	0,	0, 	0, 	0},
@@ -219,35 +219,77 @@ namespace MonoTests.System.Drawing.Imaging {
 				new float[] 	{0,	0,	0, 	0, 	0}
 			});
 
-			Assert.AreEqual (cm[0,0], 1);
-			Assert.AreEqual (cm[0,1], 0);
-			Assert.AreEqual (cm[0,2], 0);
-			Assert.AreEqual (cm[0,3], 0);
-			Assert.AreEqual (cm[0,4], 0);
+			Assert.AreEqual (1, cm[0,0], "0,0");
+			Assert.AreEqual (0, cm[0,1], "0,1");
+			Assert.AreEqual (0, cm[0,2], "0,2");
+			Assert.AreEqual (0, cm[0,3], "0,3");
+			Assert.AreEqual (0, cm[0,4], "0,4");
 			
-			Assert.AreEqual (cm[1,0], 0.5f);
-			Assert.AreEqual (cm[1,1], 1);
-			Assert.AreEqual (cm[1,2], 0);
-			Assert.AreEqual (cm[1,3], 0);
-			Assert.AreEqual (cm[1,4], 0);
+			Assert.AreEqual (0.5f, cm[1,0], "1,0");
+			Assert.AreEqual (1, cm[1,1], "1,1");
+			Assert.AreEqual (0, cm[1,2], "1,2");
+			Assert.AreEqual (0, cm[1,3], "1,3");
+			Assert.AreEqual (0, cm[1,4], "1,4");
 			
-			Assert.AreEqual (cm[2,0], 0);
-			Assert.AreEqual (cm[2,1], 0.1f);
-			Assert.AreEqual (cm[2,2], 1.5f);
-			Assert.AreEqual (cm[2,3], 0);
-			Assert.AreEqual (cm[2,4], 0);
+			Assert.AreEqual (0, cm[2,0], "2,0");
+			Assert.AreEqual (0.1f, cm[2,1], "2,1");
+			Assert.AreEqual (1.5f, cm[2,2], "2,2");
+			Assert.AreEqual (0, cm[2,3], "2,3");
+			Assert.AreEqual (0, cm[2,4], "2,4");
 			
-			Assert.AreEqual (cm[3,0], 0.5f);
-			Assert.AreEqual (cm[3,1], 3);
-			Assert.AreEqual (cm[3,2], 0.5f);
-			Assert.AreEqual (cm[3,3], 1);
-			Assert.AreEqual (cm[3,4], 0);
+			Assert.AreEqual (0.5f, cm[3,0], "3,0");
+			Assert.AreEqual (3, cm[3,1], "3,1");
+			Assert.AreEqual (0.5f, cm[3,2], "3,2");
+			Assert.AreEqual (1, cm[3,3], "3,3");
+			Assert.AreEqual (0, cm[3,4], "3,4");
 			
-			Assert.AreEqual (cm[4,0], 0);
-			Assert.AreEqual (cm[4,1], 0);
-			Assert.AreEqual (cm[4,2], 0);
-			Assert.AreEqual (cm[4,3], 0);
-			Assert.AreEqual (cm[4,4], 0);
+			Assert.AreEqual (0, cm[4,0], "4,0");
+			Assert.AreEqual (0, cm[4,1], "4,1");
+			Assert.AreEqual (0, cm[4,2], "4,2");
+			Assert.AreEqual (0, cm[4,3], "4,3");
+			Assert.AreEqual (0, cm[4,4], "4,4");
+		}
+
+		[Test]
+		public void IndividualProperties ()
+		{
+			ColorMatrix cm = new ColorMatrix (new float[][] {
+				new float[] 	{1,	0,	0, 	0, 	0},
+				new float[] 	{0.5f,	1,	0, 	0, 	0},
+				new float[] 	{0,	0.1f,	1.5f, 	0, 	0},
+				new float[] 	{0.5f,	3,	0.5f, 	1, 	0},
+				new float[] 	{0,	0,	0, 	0, 	0}
+			});
+
+			Assert.AreEqual (1, cm.Matrix00, "0,0");
+			Assert.AreEqual (0, cm.Matrix01, "0,1");
+			Assert.AreEqual (0, cm.Matrix02, "0,2");
+			Assert.AreEqual (0, cm.Matrix03, "0,3");
+			Assert.AreEqual (0, cm.Matrix04, "0,4");
+			
+			Assert.AreEqual (0.5f, cm.Matrix10, "1,0");
+			Assert.AreEqual (1, cm.Matrix11, "1,1");
+			Assert.AreEqual (0, cm.Matrix12, "1,2");
+			Assert.AreEqual (0, cm.Matrix13, "1,3");
+			Assert.AreEqual (0, cm.Matrix14, "1,4");
+			
+			Assert.AreEqual (0, cm.Matrix20, "2,0");
+			Assert.AreEqual (0.1f, cm.Matrix21, "2,1");
+			Assert.AreEqual (1.5f, cm.Matrix22, "2,2");
+			Assert.AreEqual (0, cm.Matrix23, "2,3");
+			Assert.AreEqual (0, cm.Matrix24, "2,4");
+			
+			Assert.AreEqual (0.5f, cm.Matrix30, "3,0");
+			Assert.AreEqual (3, cm.Matrix31, "3,1");
+			Assert.AreEqual (0.5f, cm.Matrix32, "3,2");
+			Assert.AreEqual (1, cm.Matrix33, "3,3");
+			Assert.AreEqual (0, cm.Matrix34, "3,4");
+			
+			Assert.AreEqual (0, cm.Matrix40, "4,0");
+			Assert.AreEqual (0, cm.Matrix41, "4,1");
+			Assert.AreEqual (0, cm.Matrix42, "4,2");
+			Assert.AreEqual (0, cm.Matrix43, "4,3");
+			Assert.AreEqual (0, cm.Matrix44, "4,4");
 		}
 	}
 }

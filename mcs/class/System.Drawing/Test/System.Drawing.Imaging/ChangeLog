@@ -1,3 +1,10 @@
+2007-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* EmfPlusRecordTypeTest.cs: New. Unit tests.
+	* TestColorMatrix.cs: Added some test case and reworked existing to
+	fix expected/actual results and add test descriptions (which should 
+	help find where the endian issue is hiding).
+
 2007-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GifCodecTest.cs: Add test cases for a GIF87a image - which is the 
