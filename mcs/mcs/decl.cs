@@ -1019,6 +1019,9 @@ namespace Mono.CSharp {
 				p = TypeManager.GetElementType (p);
 
 #if GMCS_SOURCE
+			if (p.IsGenericParameter)
+				return true;
+
 			if (TypeManager.IsGenericType (p)) {
 				foreach (Type t in p.GetGenericArguments ()) {
 					if (!AsAccessible (t, flags))

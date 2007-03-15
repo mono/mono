@@ -3767,7 +3767,7 @@ namespace Mono.CSharp {
 		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
 		{
 #if GMCS_SOURCE
-			if (args.Resolve (ec) == false)
+			if (!args.Resolve (ec))
 				return null;
 
 			Type[] atypes = args.Arguments;
@@ -3811,12 +3811,12 @@ namespace Mono.CSharp {
 				return new_mg;
 			}
 
-			if (first != null)
+			if (first != null) {
+				Report.SymbolRelatedToPreviousError (first);
 				Report.Error (
-					305, loc, "Using the generic method `{0}' " +
-					"requires {1} type arguments", Name,
-					first_count.ToString ());
-			else
+					305, loc, "Using the generic method `{0}' requires `{1}' type arguments",
+					TypeManager.CSharpSignature (first), first_count.ToString ());
+			} else
 				Report.Error (
 					308, loc, "The non-generic method `{0}' " +
 					"cannot be used with type arguments", Name);
