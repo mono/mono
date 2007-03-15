@@ -73,6 +73,7 @@ EXTRA_DISTFILES = \
 	Test/System.Data/schemas/test101.xsd	\
 	Test/System.Data/schemas/test102.xsd	\
 	Test/System.Data/schemas/test103.xsd	\
+	Test/System.Data/schemas/Items.xsd	\
 	Test/System.Data/TypedDataSet.xml	\
 	Mono.Data.SqlExpressions/Parser.jay	\
 	app_test_2.0.config
