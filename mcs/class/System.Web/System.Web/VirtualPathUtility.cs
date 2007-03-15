@@ -32,6 +32,7 @@
 #if NET_2_0
 
 using System.Web.Util;
+using System.Text;
 
 namespace System.Web {
 
@@ -51,33 +52,23 @@ namespace System.Web {
 
 		public static string Combine (string basePath, string relativePath)
 		{
-			if (basePath == null || basePath == "")
-				throw new ArgumentNullException ("basePath");
+			basePath = Normalize (basePath);
 
-			if (relativePath == null)
-				// LAME SPEC - MSDN Specifies ArgumentNullException but MS throws ArgumentException
-				throw new ArgumentException ("relativePath");
+			if (IsRooted (relativePath))
+				return Normalize (relativePath);
 
-			if (relativePath == "")
-				// MS throw different exception for null or empty string.
-				throw new ArgumentNullException ("relativePath");
-
-			if (relativePath.Length == 1 && relativePath [0] == '~')
-				return HttpRuntime.AppDomainAppVirtualPath;
-
-			if (relativePath [0] == '~' && relativePath [1] == '/')
-				return UrlUtils.RemoveDoubleSlashes ((HttpRuntime.AppDomainAppVirtualPath + relativePath.Substring (1)).Replace ('\\', '/'));
-
-			if (basePath [0] != '/')
-				throw new ArgumentException ("basePath is not an absolute path", "basePath");
-
-			if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
-				int lastSlash = basePath.LastIndexOf ('/');
-				if (lastSlash >= 0)
-					return UrlUtils.Combine (basePath.Substring (0, lastSlash + 1), relativePath);
+			if (basePath [basePath.Length - 1] != '/') {
+				if (basePath.Length > 1) {
+					int lastSlash = basePath.LastIndexOf ('/');
+					if (lastSlash >= 0)
+						basePath = basePath.Substring (0, lastSlash + 1);
+				}
+				else { // "~" only
+					basePath += "/";
+				}
 			}
 
-			return UrlUtils.Combine (basePath, relativePath);
+			return Normalize (basePath + relativePath);
 		}
 
 		public static string GetDirectory (string virtualPath)
@@ -124,9 +115,14 @@ namespace System.Web {
 			return UrlUtils.GetFile (RemoveTrailingSlash (virtualPath));
 		}
 
+		static bool IsRooted (string virtualPath)
+		{
+			return IsAbsolute (virtualPath) || IsAppRelative (virtualPath);
+		}
+
 		public static bool IsAbsolute (string virtualPath)
 		{
-			if (virtualPath == "" || virtualPath == null)
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			return (virtualPath [0] == '/');
@@ -146,6 +142,10 @@ namespace System.Web {
 			return false;
 		}
 
+		// MSDN: If the fromPath and toPath parameters are not rooted; that is, 
+		// they do not equal the root operator (the tilde [~]), do not start with a tilde (~), 
+		// such as a tilde and a slash mark (~/) or a tilde and a double backslash (~//), 
+		// or do not start with a slash mark (/), an ArgumentException exception is thrown.
 		public static string MakeRelative (string fromPath, string toPath)
 		{
 			if (fromPath == null || toPath == null)
@@ -154,14 +154,37 @@ namespace System.Web {
 			if (toPath == "")
 				return toPath;
 
-			if (toPath [0] != '/')
-				throw new ArgumentOutOfRangeException (); // This is what MS does.
+			toPath = ToAbsoluteInternal (toPath);
+			fromPath = ToAbsoluteInternal (fromPath);
 
-			if (fromPath.Length > 0 && fromPath [0] != '/')
-				throw new ArgumentOutOfRangeException (); // This is what MS does.
+			if (String.CompareOrdinal (fromPath, toPath) == 0 && fromPath [fromPath.Length - 1] == '/')
+				return "./";
 
-			Uri from = new Uri ("http://nothing" + fromPath);
-			return from.MakeRelativeUri (new Uri ("http://nothing" + toPath)).AbsolutePath;
+			string [] toPath_parts = toPath.Split ('/');
+			string [] fromPath_parts = fromPath.Split ('/');
+			int dest = 1;
+			while (toPath_parts [dest] == fromPath_parts [dest]) {
+				if (toPath_parts.Length == (dest + 1) || fromPath_parts.Length == (dest + 1)) {
+					break;
+				}
+				dest++;
+			}
+			string res = "";
+			for (int i = 1; i < fromPath_parts.Length - dest; i++) {
+				res += "../";
+			}
+			res += String.Join ("/", toPath_parts, dest, toPath_parts.Length - dest);
+			return res;
+		}
+
+		private static string ToAbsoluteInternal (string virtualPath)
+		{
+			if (IsAppRelative (virtualPath))
+				return ToAbsolute (virtualPath);
+			else if (IsAbsolute (virtualPath))
+				return Normalize (virtualPath);
+
+			throw new ArgumentOutOfRangeException ("Specified argument was out of the range of valid values.");
 		}
 
 		public static string RemoveTrailingSlash (string virtualPath)
@@ -191,22 +214,22 @@ namespace System.Web {
 		// Not rooted, the ToAbsolute method raises an ArgumentOutOfRangeException exception.
 		public static string ToAbsolute (string virtualPath, string applicationPath)
 		{
-			if (applicationPath == null || applicationPath == "")
+			if (String.IsNullOrEmpty (applicationPath))
 				throw new ArgumentNullException ("applicationPath");
 
-			if (virtualPath == null || virtualPath == "")
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			if (IsAppRelative(virtualPath)) {
 				if (applicationPath [0] != '/')
 					throw new ArgumentException ("appPath is not rooted", "applicationPath");
-				return UrlUtils.RemoveDoubleSlashes ((applicationPath + (virtualPath.Length == 1 ? "/" : virtualPath.Substring (1))).Replace ('\\', '/'));
+				return Normalize ((applicationPath + (virtualPath.Length == 1 ? "/" : virtualPath.Substring (1))));
 			}
 
 			if (virtualPath [0] != '/')
 				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
 
-			return UrlUtils.RemoveDoubleSlashes (virtualPath.Replace ('\\', '/'));
+			return Normalize (virtualPath);
 
 		}
 
@@ -216,25 +239,163 @@ namespace System.Web {
 			if (apppath == null)
 				throw new HttpException ("The path to the application is not known");
 
-			return ToAppRelative (apppath, virtualPath);
+			return ToAppRelative (virtualPath, apppath);
 		}
 
 		public static string ToAppRelative (string virtualPath, string applicationPath)
 		{
-			if (applicationPath == null || applicationPath == "")
-				throw new ArgumentNullException ("applicationPath");
+			virtualPath = Normalize (virtualPath);
+			
+			if (IsAppRelative (virtualPath))
+				return virtualPath;
 
-			if (virtualPath == null || virtualPath == "")
-				throw new ArgumentNullException ("virtualPath");
+			if (!IsAbsolute (applicationPath))
+				throw new ArgumentException ("appPath is not absolute", "applicationPath");
+			
+			applicationPath = Normalize (applicationPath);
 
-			if (virtualPath.StartsWith (".."))
-				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
+			if (applicationPath.Length == 1)
+				return "~" + virtualPath;
 
-			if (applicationPath [0] != '/')
-				throw new ArgumentOutOfRangeException ("appPath is not rooted", "applicationPath");
+			int appPath_lenght = applicationPath.Length;
+			if (String.CompareOrdinal (virtualPath, applicationPath) == 0)
+				return "~/";
+			if (String.CompareOrdinal (virtualPath, 0, applicationPath, 0, appPath_lenght) == 0)
+				return "~" + virtualPath.Substring (appPath_lenght);
 
-			return MakeRelative (applicationPath, virtualPath);
+			return virtualPath;
 		}
+
+		static char [] path_sep = { '/' };
+
+		static string Normalize (string path)
+		{
+			if (!IsRooted (path))
+				throw new ArgumentException (String.Format ("The relative virtual path '{0}' is not allowed here.", path));
+
+			if (path.Length == 1) // '/' or '~'
+				return path;
+
+			path = Canonize (path);
+
+			if (path.IndexOf ('.') < 0)
+				return path;
+
+			bool starts_with_tilda = false;
+			bool ends_with_slash = false;
+			string [] apppath_parts= null;
+
+			if (path [0] == '~') {
+				if (path.Length == 2) // "~/"
+					return "~/";
+				starts_with_tilda = true;
+				path = path.Substring (1);
+			}
+			else if (path.Length == 1) { // "/"
+				return "/";
+			}
+
+			if (path [path.Length - 1] == '/')
+				ends_with_slash = true;
+
+			string [] parts = path.Split (path_sep, StringSplitOptions.RemoveEmptyEntries);
+			int end = parts.Length;
+
+			int dest = 0;
+
+			for (int i = 0; i < end; i++) {
+				string current = parts [i];
+				if (current == ".")
+					continue;
+
+				if (current == "..") {
+					dest--;
+
+					if(dest >= 0)
+						continue;
+
+					if (starts_with_tilda) {
+						if (apppath_parts == null) {
+							string apppath = HttpRuntime.AppDomainAppVirtualPath;
+							apppath_parts = apppath.Split (path_sep, StringSplitOptions.RemoveEmptyEntries);
+						}
+
+						if ((apppath_parts.Length + dest) >= 0)
+							continue;
+					}
+					
+					throw new HttpException ("Cannot use a leading .. to exit above the top directory.");
+				}
+
+				if (dest >= 0)
+					parts [dest] = current;
+				else
+					apppath_parts [apppath_parts.Length + dest] = current;
+				
+				dest++;
+			}
+
+			StringBuilder str = new StringBuilder();
+			if (apppath_parts != null) {
+				starts_with_tilda = false;
+				int count = apppath_parts.Length;
+				if (dest < 0)
+					count += dest;
+				for (int i = 0; i < count; i++) {
+					str.Append ('/');
+					str.Append (apppath_parts [i]);
+				}
+			}
+			else if (starts_with_tilda) {
+				str.Append ('~');
+			}
+
+			for (int i = 0; i < dest; i++) {
+				str.Append ('/');
+				str.Append (parts [i]);
+			}
+
+			if (str.Length > 0) {
+				if (ends_with_slash)
+					str.Append ('/');
+			}
+			else {
+				return "/";
+			}
+
+			return str.ToString ();
+		}
+
+		static string Canonize (string path)
+		{
+			int index = -1;
+			for (int i=0; i < path.Length; i++) {
+				if ((path [i] == '\\') || (path [i] == '/' && (i + 1) < path.Length && (path [i + 1] == '/' || path [i + 1] == '\\'))) {
+					index = i;
+					break;
+				}
+			}
+			if (index < 0)
+				return path;
+
+			StringBuilder sb = new StringBuilder (path.Length);
+			sb.Append (path, 0, index);
+
+			for (int i = index; i < path.Length; i++) {
+				if (path [i] == '\\' || path [i] == '/') {
+					int next = i + 1;
+					if (next < path.Length && (path [next] == '\\' || path [next] == '/'))
+						continue;
+					sb.Append ('/');
+				}
+				else {
+					sb.Append (path [i]);
+				}
+			}
+
+			return sb.ToString ();
+		}
+
 	}
 }
 

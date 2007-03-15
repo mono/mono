@@ -58,10 +58,118 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("/there", VPU.Combine ("/hi", "there"), "A1");
 			Assert.AreEqual ("/hi/you", VPU.Combine ("/hi/there", "you"), "A2");
 			Assert.AreEqual ("/hi/there/you", VPU.Combine ("/hi/there/", "you"), "A3");
+			
+			Assert.AreEqual ("/there/", VPU.Combine ("/hi", "there/"), "A1");
+			Assert.AreEqual ("/hi/you/", VPU.Combine ("/hi/there", "you/"), "A2");
+			Assert.AreEqual ("/hi/there/you/", VPU.Combine ("/hi/there/", "you/"), "A3");
+
+			Assert.AreEqual ("/there", VPU.Combine ("/hi", "/there"), "A1");
+			Assert.AreEqual ("/you", VPU.Combine ("/hi/there", "/you"), "A2");
+			Assert.AreEqual ("/you", VPU.Combine ("/hi/there/", "/you"), "A3");
+		}
+
+		[Test]
+		public void Combine3 ()
+		{
+			Assert.AreEqual ("/", VPU.Combine ("/hi/", ".."), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi/there", ".."), "A2");
+			Assert.AreEqual ("/hi", VPU.Combine ("/hi/there/", ".."), "A3");
+
+			Assert.AreEqual ("/", VPU.Combine ("/hi/", "../"), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi/there", "../"), "A2");
+			Assert.AreEqual ("/hi/", VPU.Combine ("/hi/there/", "../"), "A3");
+			
+			Assert.AreEqual ("/", VPU.Combine ("/", "."), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi", "."), "A2");
+			Assert.AreEqual ("/hi", VPU.Combine ("/hi/", "."), "A3");
+
+			Assert.AreEqual ("/", VPU.Combine ("/", "./"), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi", "./"), "A2");
+			Assert.AreEqual ("/hi/", VPU.Combine ("/hi/", "./"), "A3");
+
+			Assert.AreEqual ("/", VPU.Combine ("/hi", "there/../"), "A1");
+			Assert.AreEqual ("/hi", VPU.Combine ("/hi/there", "you/.."), "A2");
+
+			Assert.AreEqual ("/there/", VPU.Combine ("/hi", "there/./"), "A1");
+			Assert.AreEqual ("/hi/you", VPU.Combine ("/hi/there", "you/."), "A2");
+			
+			Assert.AreEqual ("/blah2/", VPU.Combine ("/ROOT", "/blah1/../blah2/"));
+			Assert.AreEqual ("/blah1/blah2/", VPU.Combine ("/ROOT", "/blah1/./blah2/"));
+
+			Assert.AreEqual ("/blah1", VPU.Combine ("/ROOT", "/blah1/blah2/.."));
+			Assert.AreEqual ("/", VPU.Combine ("/ROOT", "/blah1/.."));
+			Assert.AreEqual ("/blah1/", VPU.Combine ("/ROOT", "/blah1/blah2/../"));
+			Assert.AreEqual ("/", VPU.Combine ("/ROOT", "/blah1/../"));
+
+			Assert.AreEqual ("/blah1", VPU.Combine ("/ROOT", "/blah1/."));
+			Assert.AreEqual ("/", VPU.Combine ("/ROOT", "/."));
+			Assert.AreEqual ("/blah1/", VPU.Combine ("/ROOT", "/blah1/./"));
+			Assert.AreEqual ("/", VPU.Combine ("/ROOT", "/./"));
+
+			Assert.AreEqual ("/", VPU.Combine ("///hi/", ".."), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi/there/me/..", ".."), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi/there/../", ".."), "A1");
+			Assert.AreEqual ("/hi/me", VPU.Combine ("/hi/there/../", "me"), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("/hi/there/../you", ".."), "A1");
+			Assert.AreEqual ("/hi/me", VPU.Combine ("/hi/there/../you", "me"), "A1");
+			Assert.AreEqual ("/hi/you/me", VPU.Combine ("/hi/there/../you/", "me"), "A1");
+		}
+
+		[Test]
+		public void Combine4 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (Combine4_Load)).Run ();
+		}
+
+		public static void Combine4_Load (Page p)
+		{
+			Assert.AreEqual ("~", VPU.Combine ("/ROOT", "~"), "/ROOT, ~");
+			Assert.AreEqual ("~/blah1", VPU.Combine ("/ROOT", "~/blah1"), "/ROOT, ~/blah1");
+			Assert.AreEqual ("~/blah1/", VPU.Combine ("/ROOT", "~/blah1/"));
+
+			Assert.AreEqual ("~/blah2/", VPU.Combine ("/ROOT", "~/blah1/../blah2/"));
+			Assert.AreEqual ("~/blah1/blah2/", VPU.Combine ("/ROOT", "~/blah1/./blah2/"));
+
+			Assert.AreEqual ("~/blah1", VPU.Combine ("/ROOT", "~/blah1/blah2/.."));
+			Assert.AreEqual ("~", VPU.Combine ("/ROOT", "~/blah1/.."));
+			Assert.AreEqual ("~/blah1/", VPU.Combine ("/ROOT", "~/blah1/blah2/../"));
+			Assert.AreEqual ("~/", VPU.Combine ("/ROOT", "~/blah1/../"));
+
+			Assert.AreEqual ("~/blah1", VPU.Combine ("/ROOT", "~/blah1/."));
+			Assert.AreEqual ("~", VPU.Combine ("/ROOT", "~/."));
+			Assert.AreEqual ("~/blah1/", VPU.Combine ("/ROOT", "~/blah1/./"));
+			Assert.AreEqual ("~/", VPU.Combine ("/ROOT", "~/./"));
+
+			Assert.AreEqual ("/", VPU.Combine ("~/ROOT", "~/.."), "~/ROOT, ~/..");
+			Assert.AreEqual ("/", VPU.Combine ("~/ROOT", ".."));
+			Assert.AreEqual ("~", VPU.Combine ("~/ROOT/", ".."));
+			Assert.AreEqual ("~/", VPU.Combine ("~/ROOT/", "../"));
+			Assert.AreEqual ("~/folder", VPU.Combine ("~/ROOT", "folder"));
+			Assert.AreEqual ("~/ROOT/folder", VPU.Combine ("~/ROOT/", "folder"));
+			Assert.AreEqual ("~/ROOT/folder/", VPU.Combine ("~/ROOT/", "folder/"));
+
+			Assert.AreEqual ("/", VPU.Combine ("~", ".."));
+			Assert.AreEqual ("~/me", VPU.Combine ("~", "me"));
+			Assert.AreEqual ("/me", VPU.Combine ("~", "../me"));
+			Assert.AreEqual ("~/me", VPU.Combine ("~", "./me"));
+			
+			Assert.AreEqual ("/me", VPU.Combine ("~/..", "me"));
+
+			Assert.AreEqual ("/", VPU.Combine ("~/hi/there/..", ".."), "A1");
+			Assert.AreEqual ("~", VPU.Combine ("~/hi/there/../", ".."), "A1");
+			Assert.AreEqual ("/", VPU.Combine ("~/hi/there/../", "../.."), "A1");
+			Assert.AreEqual ("~/hi/me", VPU.Combine ("~/hi/there/../", "me"), "A1");
+			Assert.AreEqual ("~", VPU.Combine ("~/hi/there/../you", ".."), "A1");
+			Assert.AreEqual ("~/hi/me", VPU.Combine ("~/hi/there/../you", "me"), "A1");
+			Assert.AreEqual ("~/hi/you/me", VPU.Combine ("~/hi/there/../you/", "me"), "A1");
+			
+			Assert.AreEqual (HttpRuntime.AppDomainAppVirtualPath, VPU.Combine ("/ROOT", HttpRuntime.AppDomainAppVirtualPath));
+			Assert.AreEqual (HttpRuntime.AppDomainAppVirtualPath, VPU.Combine ("~/ROOT", HttpRuntime.AppDomainAppVirtualPath));
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		// The relative virtual path 'hi/there' is not allowed here.
 		public void Combine_ArgException1 ()
 		{
 			Assert.AreEqual ("hi/there/you", VPU.Combine ("hi/there", "you"), "A1");
@@ -69,9 +177,32 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		// The relative virtual path 'hi/there' is not allowed here.
 		public void Combine_ArgException2 ()
 		{
 			Assert.AreEqual ("hi/there", VPU.Combine ("hi/there", null), "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Combine_ArgException2_1 ()
+		{
+			Assert.AreEqual ("hi/there", VPU.Combine ("/hi/there", null), "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		// The relative virtual path 'hi/there' is not allowed here.
+		public void Combine_ArgException2_2 ()
+		{
+			Assert.AreEqual ("hi/there", VPU.Combine ("hi/there", "/dir"), "A1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Combine_ArgException2_3 ()
+		{
+			Assert.AreEqual ("hi/there", VPU.Combine ("/../hi", null), "A1");
 		}
 
 		[Test]
@@ -103,6 +234,26 @@ namespace MonoTests.System.Web {
 		public void Combine_ArgException5 ()
 		{
 			Assert.AreEqual ("/hi", VPU.Combine ("/hi", ""), "A1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Combine_ArgException6 ()
+		{
+			VPU.Combine ("/ROOT", "..");
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Combine_ArgException7 ()
+		{
+			VPU.Combine ("/ROOT", "/..");
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Combine_ArgException8 () {
+			VPU.Combine ("/ROOT", "./..");
 		}
 
 		[Test]
@@ -348,6 +499,10 @@ namespace MonoTests.System.Web {
 			VPU.MakeRelative ("", null);
 		}
 
+		// LAMESPEC: MSDN: If the fromPath and toPath parameters are not rooted; that is, 
+		// they do not equal the root operator (the tilde [~]), do not start with a tilde (~), 
+		// such as a tilde and a slash mark (~/) or a tilde and a double backslash (~//), 
+		// or do not start with a slash mark (/), an ArgumentException exception is thrown.
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void MakeRelative3 ()
@@ -373,9 +528,60 @@ namespace MonoTests.System.Web {
         [Category ("NotWorking")]
         public void MakeRelative6()
         {
-            //The test is not working due to the : System.URI.MakeRelativeUri - not implemented exception
-            Assert.AreEqual("./", VPU.MakeRelative("/", "/"));
-        }
+			Assert.AreEqual ("./", VPU.MakeRelative ("/", "/"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1", "/directory1"));
+			Assert.AreEqual ("directory2", VPU.MakeRelative ("/directory1", "/directory2"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("/", "/directory1"));
+			Assert.AreEqual ("", VPU.MakeRelative ("/directory1", "/"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("/directory1/", "/directory1/"));
+			Assert.AreEqual ("directory1/file1.aspx", VPU.MakeRelative ("/directory1", "/directory1/file1.aspx"));
+			Assert.AreEqual ("file1.aspx", VPU.MakeRelative ("/directory1/file1.aspx", "/directory1/file1.aspx"));
+			Assert.AreEqual ("file1.aspx", VPU.MakeRelative ("/directory1/", "/directory1/file1.aspx"));
+			Assert.AreEqual ("../directory2/file2.aspx", VPU.MakeRelative ("/directory1/file1.aspx", "/directory2/file2.aspx"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MakeRelative6_a ()
+		{
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1/../", "/directory1"));
+			Assert.AreEqual ("", VPU.MakeRelative ("/directory1", "/directory1/../"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("/", "/directory1/../"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1", "/directory2/../directory1"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void MakeRelative7 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (MakeRelative7_Load)).Run (); 
+		}
+
+		public static void MakeRelative7_Load (Page p)
+		{
+			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~/", "~/"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~//", "~//"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~//"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1", "~/directory1"));
+			Assert.AreEqual ("directory2", VPU.MakeRelative ("~/directory1", "~/directory2"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/", "~/directory1"));
+			Assert.AreEqual ("", VPU.MakeRelative ("~/directory1", "~/"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~/directory1/", "~/directory1/"));
+			Assert.AreEqual ("directory1/file1.aspx", VPU.MakeRelative ("~/directory1", "~/directory1/file1.aspx"));
+			Assert.AreEqual ("file1.aspx", VPU.MakeRelative ("~/directory1/", "~/directory1/file1.aspx"));
+			Assert.AreEqual ("../directory2/file2.aspx", VPU.MakeRelative ("~/directory1/file1.aspx", "~/directory2/file2.aspx"));
+
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1/../", "~/directory1"));
+			Assert.AreEqual ("", VPU.MakeRelative ("~/directory1", "~/directory1/../"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~/", "~/directory1/../"));
+			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1", "~/directory2/../directory1"));
+
+
+			Assert.AreEqual ("../", VPU.MakeRelative ("~", "/"));
+			Assert.AreEqual ("NunitWeb/", VPU.MakeRelative ("/", "~"));
+		}
 
 		[Test]
 		public void RemoveTrailingSlash2 ()
@@ -472,7 +678,8 @@ namespace MonoTests.System.Web {
 		}
         public static void ToAbsolute7_Load(Page p)
         {
-            Assert.AreEqual("/", VPU.ToAbsolute("/"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("//"));
         }
 		[Test]
 		public void ToAbsolute8 ()
@@ -483,11 +690,142 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		public void ToAbsolute8_a ()
+		{
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1/../blah2/", "/ROOT"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1//../blah2/", "/ROOT"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1/\\../blah2/", "/ROOT"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1\\\\../blah2/", "/ROOT"));
+			Assert.AreEqual ("/blah1/blah2/", VPU.ToAbsolute ("/blah1/./blah2/", "/ROOT"));
+
+			Assert.AreEqual ("/blah1", VPU.ToAbsolute ("/blah1/blah2/..", "/ROOT"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/blah1/..", "/ROOT"));
+			Assert.AreEqual ("/blah1/", VPU.ToAbsolute ("/blah1/blah2/../", "/ROOT"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/blah1/../", "/ROOT"));
+
+			Assert.AreEqual ("/blah1", VPU.ToAbsolute ("/blah1/.", "/ROOT"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/.", "/ROOT"));
+			Assert.AreEqual ("/blah1/", VPU.ToAbsolute ("/blah1/./", "/ROOT"));
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/./", "/ROOT"));
+		}
+
+		[Test]
 		public void ToAbsolute9 ()
 		{
 			Assert.AreEqual ("/ROOT/", VPU.ToAbsolute ("~", "/ROOT"));
 			Assert.AreEqual ("/ROOT/", VPU.ToAbsolute ("~/", "/ROOT"));
 			Assert.AreEqual ("/ROOT/blah", VPU.ToAbsolute ("~/blah", "/ROOT/"));
+		}
+
+		[Test]
+		public void ToAppRelative ()
+		{
+			Assert.AreEqual ("~/hi", VPU.ToAppRelative ("~/hi", null));
+			Assert.AreEqual ("~/hi", VPU.ToAppRelative ("~/hi", ""));
+			Assert.AreEqual ("~/hi", VPU.ToAppRelative ("~/hi", "/.."));
+			Assert.AreEqual ("~/hi", VPU.ToAppRelative ("~/hi", "me"));
+
+			Assert.AreEqual ("~", VPU.ToAppRelative ("~", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("~/", "/ROOT"));
+			Assert.AreEqual ("~/blah", VPU.ToAppRelative ("~/blah", "/ROOT/"));
+			Assert.AreEqual ("~/blah2/", VPU.ToAppRelative ("~/blah1/../blah2/", "/ROOT/"));
+
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT/", "/ROOT"));
+			Assert.AreEqual ("~/blah/blah/", VPU.ToAppRelative ("/ROOT/blah//blah//", "/ROOT"));
+			Assert.AreEqual ("~/blah/blah/", VPU.ToAppRelative ("/ROOT/blah\\blah/", "/ROOT"));
+
+			Assert.AreEqual ("~/blah2/", VPU.ToAppRelative ("/ROOT/blah1/../blah2/", "/ROOT"));
+			Assert.AreEqual ("~/blah1/blah2/", VPU.ToAppRelative ("/ROOT/blah1/./blah2/", "/ROOT"));
+
+			Assert.AreEqual ("~/blah1", VPU.ToAppRelative ("/ROOT/blah1/blah2/..", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT/blah1/..", "/ROOT"));
+			Assert.AreEqual ("~/blah1/", VPU.ToAppRelative ("/ROOT/blah1/blah2/../", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT/blah1/../", "/ROOT"));
+
+			Assert.AreEqual ("~/blah1", VPU.ToAppRelative ("/ROOT/blah1/.", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT/.", "/ROOT"));
+			Assert.AreEqual ("~/blah1/", VPU.ToAppRelative ("/ROOT/blah1/./", "/ROOT"));
+			Assert.AreEqual ("~/", VPU.ToAppRelative ("/ROOT/./", "/ROOT"));
+
+			Assert.AreEqual ("~/ROOT", VPU.ToAppRelative ("/ROOT", "/"));
+			Assert.AreEqual ("~/ROOT", VPU.ToAppRelative ("/ROOT", "/hi/.."));
+			Assert.AreEqual ("~/ROOT", VPU.ToAppRelative ("/ROOT/hi/..", "/"));
+		}
+
+		[Test]
+		public void ToAppRelative2 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (ToAppRelative2_Load)).Run ();
+		}
+		
+		public static void ToAppRelative2_Load (Page p)
+		{
+			Assert.AreEqual ("~/hi", VPU.ToAppRelative ("~/../NunitWeb/hi", "/NunitWeb"));
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ToAppRelative_Exc1 ()
+		{
+			VPU.ToAppRelative ("/ROOT/hi", "");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ToAppRelative_Exc2 ()
+		{
+			VPU.ToAppRelative ("/ROOT/hi", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToAppRelative_Exc3 ()
+		{
+			VPU.ToAppRelative ("/ROOT/hi", "hi");
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void ToAppRelative_Exc4 () {
+			VPU.ToAppRelative ("/ROOT/hi", "/../hi");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ToAppRelative_Exc5 ()
+		{
+			VPU.ToAppRelative (null, "/ROOT");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ToAppRelative_Exc6 ()
+		{
+			VPU.ToAppRelative ("", "/ROOT");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		//The relative virtual path 'hi' is not allowed here.
+		public void ToAppRelative_Exc7 ()
+		{
+			VPU.ToAppRelative ("hi", "/ROOT");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		//The relative virtual path 'hi' is not allowed here.
+		public void ToAppRelative_Exc7_a ()
+		{
+			VPU.ToAppRelative ("hi", null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void ToAppRelative_Exc8 ()
+		{
+			VPU.ToAppRelative ("/../ROOT/hi", "/ROOT");
 		}
 
 		[Test]
