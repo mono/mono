@@ -1,5 +1,15 @@
 2007-03-15  Martin Baulig  <martin@ximian.com>
 
+	Fix #79984.
+
+	* generic.cs
+	(TypeParameter.HasConstructorConstraint): Removed.
+	(ConstraintChecker.HasDefaultConstructor): Removed the
+	`TypeBuilder' argument here; correctly check for the ctor
+	constraint on type parameters.
+
+2007-03-15  Martin Baulig  <martin@ximian.com>
+
 	Fix #79302.
 
 	* generic.cs

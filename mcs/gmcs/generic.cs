@@ -620,10 +620,6 @@ namespace Mono.CSharp {
 			get { return constraints; }
 		}
 
-		public bool HasConstructorConstraint {
-			get { return constraints != null && constraints.HasConstructorConstraint; }
-		}
-
 		public DeclSpace DeclSpace {
 			get { return decl; }
 		}
@@ -929,9 +925,6 @@ namespace Mono.CSharp {
 			if (gc.HasClassConstraint) {
 				MemberList list = TypeManager.FindMembers (
 					gc.ClassConstraint, mt, bf, filter, criteria);
-
-				Report.Debug (128, "TPARAM FIND MEMBERS #1", Name, mt, bf,
-					      filter, criteria, gc.ClassConstraint, list.Count);
 
 				members.AddRange (list);
 			}
@@ -1655,7 +1648,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
-			if (HasDefaultConstructor (ec.DeclContainer.TypeBuilder, atype))
+			if (HasDefaultConstructor (atype))
 				return true;
 
 			Report_SymbolRelatedToPreviousError ();
@@ -1704,7 +1697,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool HasDefaultConstructor (Type containerType, Type atype)
+		bool HasDefaultConstructor (Type atype)
 		{
 			if (atype.IsAbstract)
 				return false;
@@ -1732,8 +1725,12 @@ namespace Mono.CSharp {
 			}
 
 			TypeParameter tparam = TypeManager.LookupTypeParameter (atype);
-			if (tparam != null)
-				return tparam.HasConstructorConstraint;
+			if (tparam != null) {
+				if (tparam.GenericConstraints == null)
+					return false;
+				else
+					return tparam.GenericConstraints.HasConstructorConstraint;
+			}
 
 			MemberList list = TypeManager.FindMembers (
 				atype, MemberTypes.Constructor,
