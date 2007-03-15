@@ -29,14 +29,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Web.Util;
 using System.Text;
 
 namespace System.Web {
 
-	public static class VirtualPathUtility
+#if NET_2_0
+	public
+#endif
+	static class VirtualPathUtility
 	{
 		public static string AppendTrailingSlash (string virtualPath)
 		{
@@ -122,7 +124,7 @@ namespace System.Web {
 
 		public static bool IsAbsolute (string virtualPath)
 		{
-			if (String.IsNullOrEmpty (virtualPath))
+			if (StrUtils.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			return (virtualPath [0] == '/');
@@ -130,7 +132,7 @@ namespace System.Web {
 
 		public static bool IsAppRelative (string virtualPath)
 		{
-			if (String.IsNullOrEmpty (virtualPath))
+			if (StrUtils.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			if (virtualPath.Length == 1 && virtualPath [0] == '~')
@@ -214,10 +216,10 @@ namespace System.Web {
 		// Not rooted, the ToAbsolute method raises an ArgumentOutOfRangeException exception.
 		public static string ToAbsolute (string virtualPath, string applicationPath)
 		{
-			if (String.IsNullOrEmpty (applicationPath))
+			if (StrUtils.IsNullOrEmpty (applicationPath))
 				throw new ArgumentNullException ("applicationPath");
 
-			if (String.IsNullOrEmpty (virtualPath))
+			if (StrUtils.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			if (IsAppRelative(virtualPath)) {
@@ -298,7 +300,7 @@ namespace System.Web {
 			if (path [path.Length - 1] == '/')
 				ends_with_slash = true;
 
-			string [] parts = path.Split (path_sep, StringSplitOptions.RemoveEmptyEntries);
+			string [] parts = StrUtils.SplitRemoveEmptyEntries (path, path_sep);
 			int end = parts.Length;
 
 			int dest = 0;
@@ -317,7 +319,7 @@ namespace System.Web {
 					if (starts_with_tilda) {
 						if (apppath_parts == null) {
 							string apppath = HttpRuntime.AppDomainAppVirtualPath;
-							apppath_parts = apppath.Split (path_sep, StringSplitOptions.RemoveEmptyEntries);
+							apppath_parts = StrUtils.SplitRemoveEmptyEntries (apppath, path_sep);
 						}
 
 						if ((apppath_parts.Length + dest) >= 0)
@@ -398,8 +400,3 @@ namespace System.Web {
 
 	}
 }
-
-#endif
-
-
-

@@ -1,3 +1,7 @@
+2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* VirtualPathUtility.cs: refactoring: class is shared with 1.x.
+
 2007-03-15  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: add support for the enableLocalization
