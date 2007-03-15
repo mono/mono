@@ -1,3 +1,8 @@
+2007-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Add EmfPlusRecordType unit tests to
+	the build.
+
 2007-03-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add the new GIF87a test files to the dist.
