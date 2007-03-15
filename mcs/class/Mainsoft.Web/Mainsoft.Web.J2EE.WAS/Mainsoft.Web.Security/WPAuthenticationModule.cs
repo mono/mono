@@ -86,17 +86,19 @@ namespace Mainsoft.Web.Security
             if (_username == null)
                 return false;
 
-            try
-            {
-                return Roles.IsUserInRole(_username, role);
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Console.WriteLine(e);
-#endif
-                return false;
-            }
+            return false;
+
+//            try
+//            {
+//                return Roles.IsUserInRole(_username, role);
+//            }
+//            catch (Exception e)
+//            {
+//#if DEBUG
+//                Console.WriteLine(e);
+//#endif
+//                return false;
+//            }
 
         }
 
