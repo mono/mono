@@ -206,10 +206,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
 			string html = HtmlDiff.GetControlFromPageHtml (t.Run ());
-			if (html.IndexOf ("onclick") != -1)
-				Assert.Fail ("Validation script created");
-			if (html.IndexOf ("MyValidationGroup") != -1)
-				Assert.Fail ("Validation group set");
+			if (html.IndexOf ("onclick") == -1)
+				Assert.Fail ("Validation script not created");
+			if (html.IndexOf ("MyValidationGroup") == -1)
+				Assert.Fail ("Validation group not set fail");
 		}
 
 		public static void ValidationGroup_Load(Page p)
