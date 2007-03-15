@@ -117,7 +117,7 @@ namespace System.Web {
 			return UrlUtils.GetFile (RemoveTrailingSlash (virtualPath));
 		}
 
-		static bool IsRooted (string virtualPath)
+		internal static bool IsRooted (string virtualPath)
 		{
 			return IsAbsolute (virtualPath) || IsAppRelative (virtualPath);
 		}
@@ -171,18 +171,22 @@ namespace System.Web {
 				}
 				dest++;
 			}
-			string res = "";
+			StringBuilder res = new StringBuilder();
 			for (int i = 1; i < fromPath_parts.Length - dest; i++) {
-				res += "../";
+				res.Append ("../");
 			}
-			res += String.Join ("/", toPath_parts, dest, toPath_parts.Length - dest);
-			return res;
+			for (int i = dest; i < toPath_parts.Length; i++) {
+				res.Append (toPath_parts [i]);
+				if (i < toPath_parts.Length - 1)
+					res.Append ('/');
+			}
+			return res.ToString ();
 		}
 
 		private static string ToAbsoluteInternal (string virtualPath)
 		{
 			if (IsAppRelative (virtualPath))
-				return ToAbsolute (virtualPath);
+				return ToAbsolute (virtualPath, HttpRuntime.AppDomainAppVirtualPath);
 			else if (IsAbsolute (virtualPath))
 				return Normalize (virtualPath);
 
@@ -203,9 +207,15 @@ namespace System.Web {
 
 		public static string ToAbsolute (string virtualPath)
 		{
+			if(IsAbsolute(virtualPath))
+				return Normalize (virtualPath);
+
 			string apppath = HttpRuntime.AppDomainAppVirtualPath;
 			if (apppath == null)
 				throw new HttpException ("The path to the application is not known");
+
+			if (virtualPath.Length == 1 && virtualPath [0] == '~')
+				return apppath;
 
 			return ToAbsolute (virtualPath,apppath);
 		}

@@ -560,10 +560,10 @@ namespace MonoTests.System.Web {
 
 		public static void MakeRelative7_Load (Page p)
 		{
-			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~"), "~, ~");
 			Assert.AreEqual ("./", VPU.MakeRelative ("~/", "~/"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("~//", "~//"));
-			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~//"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~//"), "~, ~//");
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1", "~/directory1"));
 			Assert.AreEqual ("directory2", VPU.MakeRelative ("~/directory1", "~/directory2"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/", "~/directory1"));
@@ -667,8 +667,9 @@ namespace MonoTests.System.Web {
 		}
         public static void ToAbsolute6_Load(Page p)
         {
-            VPU.ToAbsolute("~/");
-        }
+			Assert.AreEqual ("/NunitWeb/", VPU.ToAbsolute ("~/"));
+			Assert.AreEqual ("/NunitWeb", VPU.ToAbsolute ("~"));
+		}
 
 		[Test]
 		[Category("NunitWeb")]
@@ -707,6 +708,16 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("/", VPU.ToAbsolute ("/.", "/ROOT"));
 			Assert.AreEqual ("/blah1/", VPU.ToAbsolute ("/blah1/./", "/ROOT"));
 			Assert.AreEqual ("/", VPU.ToAbsolute ("/./", "/ROOT"));
+		}
+		
+		[Test]
+		public void ToAbsolute8_b ()
+		{
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1/../blah2/"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1//../blah2/"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1/\\../blah2/"));
+			Assert.AreEqual ("/blah2/", VPU.ToAbsolute ("/blah1\\\\../blah2/"));
+			Assert.AreEqual ("/blah1/blah2/", VPU.ToAbsolute ("/blah1/./blah2/"));
 		}
 
 		[Test]
@@ -858,6 +869,7 @@ namespace MonoTests.System.Web {
 }
 
 #endif
+
 
 
 
