@@ -1,3 +1,4 @@
+#if NET_2_0
 //
 // Authors:
 //   Vladimir Krasnov <vladimirk@mainsoft.com>
@@ -48,3 +49,4 @@ namespace System.Configuration
 		}
 	}
 }
+#endif
