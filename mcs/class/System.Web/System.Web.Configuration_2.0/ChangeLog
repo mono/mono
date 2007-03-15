@@ -1,3 +1,9 @@
+2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebConfigurationManager.cs: fixed OpenWebConfiguration, removed 
+	GetBasePath call and locations search, since this not affects
+	configuration initialization, but improves performance
+
 2007-03-12  Marek Habersack  <mhabersack@novell.com>
 
 	* ProvidersHelper.cs: support loading custom providers from

@@ -179,37 +179,16 @@ namespace System.Web.Configuration {
 		
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
 		{
-			if (path == null)
-				path = "";
+			if (path == null || path.Length == 0)
+				path = "/";
 
-			string basePath = GetBasePath (path);
 			_Configuration conf;
-
 			
 			lock (configurations) {
-				conf = (_Configuration) configurations [basePath];
+				conf = (_Configuration) configurations [path];
 				if (conf == null) {
-					conf = ConfigurationFactory.Create (typeof(WebConfigurationHost), null, basePath, site, locationSubPath, server, userName, password);
-					configurations [basePath] = conf;
-				}
-			}
-			if (basePath.Length < path.Length) {
-			
-				// If the path has a file name, look for a location specific configuration
-				
-				int dif = path.Length - basePath.Length;
-				string file = path.Substring (path.Length - dif);
-				int i=0;
-				while (i < file.Length && file [i] == '/')
-					i++;
-				if (i != 0)
-					file = file.Substring (i);
-
-				if (file.Length != 0) {
-					foreach (ConfigurationLocation loc in conf.Locations) {
-						if (loc.Path == file)
-							return loc.OpenConfiguration ();
-					}
+					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
+					configurations [path] = conf;
 				}
 			}
 			return conf;
@@ -286,35 +265,6 @@ namespace System.Web.Configuration {
 			get { return configFactory; }
 		}
 		
-		static string GetBasePath (string path)
-		{
- 			if (path == "/" || path == "")
-				return path;
-
-			/* first if we can, map it to a physical path
-			 * to see if it corresponds to a file */
-			if (HttpContext.Current != null
-			    && HttpContext.Current.Request != null) {
-				string pd = HttpContext.Current.Request.MapPath (path);
-
-				if (!Directory.Exists (pd)) {
-					/* if it does, remove the file from the url */
-					int i = path.LastIndexOf ('/');
-					path = path.Substring (0, i);
-				} 
-			}
-			
-			if (path.Length == 0)
-				return path;
-
-			/* remove excess /'s from the end of the virtual path */
-			while (path [path.Length - 1] == '/')
-				path = path.Substring (0, path.Length - 1);
-
-			return path;
-		}
-
-
 #region stuff copied from WebConfigurationSettings
 #if TARGET_J2EE
 		static internal IConfigurationSystem oldConfig {
