@@ -3737,15 +3737,11 @@ namespace Mono.CSharp {
 
 			ResolveFinally (branching);
 
-			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
-			if (!reachability.AlwaysReturns) {
-				// Unfortunately, System.Reflection.Emit automatically emits
-				// a leave to the end of the finally block.
-				// This is a problem if `returns' is true since we may jump
-				// to a point after the end of the method.
-				// As a workaround, emit an explicit ret here.
-				ec.NeedReturnLabel ();
-			}
+			ec.EndFlowBranching ();
+
+			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
+			// So, ensure there's some IL code after the finally block.
+			ec.NeedReturnLabel ();
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -4390,20 +4386,15 @@ namespace Mono.CSharp {
 			} else
 				emit_finally = Fini != null;
 
-			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+			ec.EndFlowBranching ();
+
+			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
+			// So, ensure there's some IL code after the finally block.
+			ec.NeedReturnLabel ();
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
-			Report.Debug (1, "END OF TRY", ec.CurrentBranching, reachability, vector, f_vector);
-
-			if (!reachability.AlwaysReturns) {
-				// Unfortunately, System.Reflection.Emit automatically emits
-				// a leave to the end of the finally block.  This is a problem
-				// if `returns' is true since we may jump to a point after the
-				// end of the method.
-				// As a workaround, emit an explicit ret here.
-				ec.NeedReturnLabel ();
-			}
+			Report.Debug (1, "END OF TRY", ec.CurrentBranching, vector, f_vector);
 
 			return ok;
 		}
@@ -4733,15 +4724,12 @@ namespace Mono.CSharp {
 			}
 
 			ResolveFinally (branching);
-			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
-			if (!reachability.AlwaysReturns) {
-				// Unfortunately, System.Reflection.Emit automatically emits a leave
-				// to the end of the finally block.  This is a problem if `returns'
-				// is true since we may jump to a point after the end of the method.
-				// As a workaround, emit an explicit ret here.
-				ec.NeedReturnLabel ();
-			}
+			ec.EndFlowBranching ();
+
+			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
+			// So, ensure there's some IL code after the finally block.
+			ec.NeedReturnLabel ();
 
 			return true;
 		}

@@ -1,10 +1,8 @@
 2007-03-15  Raja R Harinath  <rharinath@novell.com>
 
-	* flowanalysis.cs (FlowBranching.Reachability): Remove handling of
-	'throws'.
-	(FlowBranching.UsageVector): Update to changes.
-	(FlowBranching.MergeSiblings): Likewise.
-	* statement.cs: Likewise.
+	* statement.cs (Lock.Resolve): Invoke 'ec.NeedReturnLabel'
+	unconditionally.  Simplify explanation.
+	(Try.Resolve, Using.Resolve): Likewise.
 
 2007-03-15  Martin Baulig  <martin@ximian.com>
 
@@ -12,6 +10,14 @@
 
 	* decl.cs (DeclSpace): If we're a partial class, use our
 	`PartialContainer's `TypeParameters' and `CurrentTypeParameters'.
+
+2007-03-15  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranching.Reachability): Remove handling of
+	'throws'.
+	(FlowBranching.UsageVector): Update to changes.
+	(FlowBranching.MergeSiblings): Likewise.
+	* statement.cs: Likewise.
 
 2007-03-15  Martin Baulig  <martin@ximian.com>
 
