@@ -145,8 +145,14 @@ namespace Mainsoft.Web.Security
         #region Implemented Methods
         public override MembershipUserCollection FindUsersByEmail(string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            if (emailToMatch == null || emailToMatch.Length > 256) // TODO check if the string could be null, if yes replace it with "*" for any email
-                throw new ArgumentException("Argument emailToMatch either null or length > 256", "emailToMatch");
+            if (emailToMatch == null)
+            {
+                totalRecords = 0;
+                return new MembershipUserCollection();
+            }
+
+            if (emailToMatch.Length > 256) 
+                throw new ArgumentException("Argument emailToMatch has length > 256", "emailToMatch");
             if (pageIndex < 0)
                 throw new ArgumentException("Argument pageIndex could not be negative", "pageIndex");
             if (pageSize < 1)
@@ -178,8 +184,10 @@ namespace Mainsoft.Web.Security
 
         public override MembershipUserCollection FindUsersByName(string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            if (usernameToMatch == null || usernameToMatch.Trim().Length == 0 || usernameToMatch.Trim().Length > 256)
-                throw new ArgumentException("Wrong username given as a parameter - could not be null or empty string and could not have more than 255 characters", usernameToMatch);
+            if (usernameToMatch == null)
+                throw new ArgumentNullException("username");
+            if (usernameToMatch.Trim().Length == 0 || usernameToMatch.Trim().Length > 256)
+                throw new ArgumentException("Wrong username given as a parameter - could not have more than 255 characters", usernameToMatch);
             if (pageIndex < 0)
                 throw new ArgumentException("Argument pageIndex could not be negative", "pageIndex");
             if (pageSize < 1)
@@ -235,13 +243,14 @@ namespace Mainsoft.Web.Security
         //the userIsOnline ignored
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
+            if (username == null)
+                throw new ArgumentNullException("username");
             if (username.Length > 256)
                 throw new ArgumentException("The username is too long", username);
-            IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
-            
-            if (username == null || username == String.Empty)
-                return new WPMembershipUser(provider.CurrentUser);
+            if (username.IndexOf(',') != -1)
+                throw new ArgumentException("Comma symbol is not allowed in username");
 
+            IPumaServicesProvider provider = PumaServicesProviderFactory.CreateProvider();
             java.util.List principles =  provider.PumaLocator.findUsersByAttribute("uid", username);
             MembershipUser result = null;
             if (principles.size() > 0)

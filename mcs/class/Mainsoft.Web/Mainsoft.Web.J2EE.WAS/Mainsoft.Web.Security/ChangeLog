@@ -1,4 +1,8 @@
 03-23-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+	
+	* WPMembershipProvider.cs: bug fixes 
+
+03-23-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	* WPAuthenticationModule.cs: fixed in WPPrincipal class method -
 	IsInRole - we are leaving this for RoleBasedPrincipal class to handle
 	this method.
