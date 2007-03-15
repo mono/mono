@@ -905,8 +905,6 @@ namespace Mono.CSharp {
 
 		public MemberCache MemberCache {
 			get {
-				Report.Debug (128, "TPARAM GET MEMBER CACHE", Name, member_cache);
-
 				if (member_cache != null)
 					return member_cache;
 
@@ -914,7 +912,6 @@ namespace Mono.CSharp {
 					return null;
 
 				Type[] ifaces = TypeManager.ExpandInterfaces (gc.InterfaceConstraints);
-				Report.Debug (128, "TPARAM GET MC #1", gc.EffectiveBaseClass, ifaces);
 				member_cache = new MemberCache (this, gc.EffectiveBaseClass, ifaces);
 
 				return member_cache;
@@ -924,8 +921,6 @@ namespace Mono.CSharp {
 		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 					       MemberFilter filter, object criteria)
 		{
-			Report.Debug (128, "TPARAM FIND MEMBERS", Name, mt, bf, filter, criteria, gc);
-
 			if (gc == null)
 				return MemberList.Empty;
 
