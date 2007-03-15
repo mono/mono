@@ -2592,7 +2592,7 @@ namespace Mono.CSharp {
 							inferred_delegate[index++] = inferred_types[t.GenericParameterPosition];
 						}
 						am.AnonymousMethod.DelegateType = dtype.GetGenericTypeDefinition().MakeGenericType (inferred_delegate);
-						am.AnonymousMethod.AnonymousDelegate.Type = am.AnonymousMethod.DelegateType; // MSAF NO
+						am.AnonymousMethod.AnonymousDelegate.Type = am.AnonymousMethod.DelegateType;
 						continue;
 					}
 				}
