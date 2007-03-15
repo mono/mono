@@ -1,3 +1,10 @@
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11-new.cs: implement VirtualScreen by getting
+	X11Display.VirtualScreen instead of using WorkingArea.
+
+	* X11Display.cs: implement VirtualScreen.
+
 2007-03-15  Ivan N. Zlatev <contact@i-nz.net>
 
 	* X11Display.cs: Replaces all uses of the custom 

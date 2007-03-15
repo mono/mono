@@ -136,7 +136,7 @@ namespace System.Windows.Forms {
 		//private static IntPtr _NET_SUPPORTED;
 		//private static IntPtr _NET_CLIENT_LIST;
 		//private static IntPtr _NET_NUMBER_OF_DESKTOPS;
-		//private static IntPtr _NET_DESKTOP_GEOMETRY;
+		private static IntPtr _NET_DESKTOP_GEOMETRY;
 		//private static IntPtr _NET_DESKTOP_VIEWPORT;
 		private static IntPtr _NET_CURRENT_DESKTOP;
 		//private static IntPtr _NET_DESKTOP_NAMES;
@@ -524,7 +524,7 @@ namespace System.Windows.Forms {
 				//"_NET_SUPPORTED",
 				//"_NET_CLIENT_LIST",
 				//"_NET_NUMBER_OF_DESKTOPS",
-				//"_NET_DESKTOP_GEOMETRY",
+				"_NET_DESKTOP_GEOMETRY",
 				//"_NET_DESKTOP_VIEWPORT",
 				"_NET_CURRENT_DESKTOP",
 				//"_NET_DESKTOP_NAMES",
@@ -598,7 +598,7 @@ namespace System.Windows.Forms {
 			//_NET_SUPPORTED = atoms [off++];
 			//_NET_CLIENT_LIST = atoms [off++];
 			//_NET_NUMBER_OF_DESKTOPS = atoms [off++];
-			//_NET_DESKTOP_GEOMETRY = atoms [off++];
+			_NET_DESKTOP_GEOMETRY = atoms [off++];
 			//_NET_DESKTOP_VIEWPORT = atoms [off++];
 			_NET_CURRENT_DESKTOP = atoms [off++];
 			//_NET_DESKTOP_NAMES = atoms [off++];
@@ -2059,7 +2059,33 @@ namespace System.Windows.Forms {
 
 		internal override  Rectangle VirtualScreen {
 			get {
-				return WorkingArea;
+				IntPtr			actual_atom;
+				int			actual_format;
+				IntPtr			nitems;
+				IntPtr			bytes_after;
+				IntPtr			prop = IntPtr.Zero;
+				int			width;
+				int			height;
+
+				XGetWindowProperty(DisplayHandle, RootWindow, _NET_DESKTOP_GEOMETRY, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if ((long)nitems < 2)
+					goto failsafe;
+
+				width = Marshal.ReadIntPtr(prop, 0).ToInt32();
+				height = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
+
+				XFree(prop);
+
+				return new Rectangle(0, 0, width, height);
+
+			failsafe:
+				XWindowAttributes	attributes=new XWindowAttributes();
+
+				lock (XlibLock) {
+					XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+				}
+
+				return new Rectangle(0, 0, attributes.width, attributes.height);
 			}
 		} 
 

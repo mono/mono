@@ -231,7 +231,7 @@ namespace System.Windows.Forms.X11Internal {
 		} 
 
 		internal override Rectangle VirtualScreen {
-			get { return WorkingArea; }
+			get { return display.VirtualScreen; }
 		} 
 
 		internal override Rectangle WorkingArea {

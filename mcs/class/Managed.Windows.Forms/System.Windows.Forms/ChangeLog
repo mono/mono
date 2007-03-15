@@ -1,5 +1,13 @@
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
+	[ Fixes bug #81144 ]
+	
+	* XplatUIX11.cs: implement VirtualScreen independently of
+	WorkingArea, by querying the _NET_DESKTOP_GEOMETRY root window
+	property.
+
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
 	* Hwnd.cs: add an internal field for the cached_window_state.
 
 	* XplatUIX11.cs: cache the window state, invalidating the cache

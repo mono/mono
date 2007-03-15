@@ -1713,6 +1713,38 @@ namespace System.Windows.Forms.X11Internal {
 			get { return HoverState.Interval; }
 		}
 
+		public Rectangle VirtualScreen {
+			get {
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
+				int width;
+				int height;
+
+				Xlib.XGetWindowProperty (display, RootWindow.Handle,
+							 Atoms._NET_DESKTOP_GEOMETRY, IntPtr.Zero, new IntPtr (256), false, Atoms.XA_CARDINAL,
+							 out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+				if ((long)nitems < 2)
+					goto failsafe;
+
+				width = Marshal.ReadIntPtr(prop, 0).ToInt32();
+				height = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
+				Xlib.XFree(prop);
+
+				return new Rectangle(0, 0, width, height);
+
+			failsafe:
+				XWindowAttributes attributes = new XWindowAttributes();
+
+				Xlib.XGetWindowAttributes (display, RootWindow.Handle, ref attributes);
+
+				return new Rectangle(0, 0, attributes.width, attributes.height);
+			}
+		}
+
 		public Rectangle WorkingArea {
 			get {
 				IntPtr actual_atom;
