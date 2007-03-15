@@ -752,7 +752,7 @@ namespace Mono.CSharp {
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			if (unwind_protect)
 				ec.NeedReturnLabel ();
-			ec.CurrentBranching.CurrentUsageVector.Return ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return errors == Report.Errors;
 		}
 		

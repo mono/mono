@@ -1,5 +1,9 @@
 2007-03-15  Raja R Harinath  <rharinath@novell.com>
 
+	* flowanalysis.cs (FlowBranching.Reachability): Remove handling of
+	'returns'.
+	* statement.cs, iterators.cs, lambda.cs: Update to changes.
+
 	* statement.cs (Lock.Resolve): Invoke 'ec.NeedReturnLabel'
 	unconditionally.  Simplify explanation.
 	(Try.Resolve, Using.Resolve): Likewise.

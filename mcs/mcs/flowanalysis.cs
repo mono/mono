@@ -76,24 +76,20 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			TriState returns, barrier;
+			TriState barrier;
 
-			public TriState Returns {
-				get { return returns; }
-			}
 			public TriState Barrier {
 				get { return barrier; }
 			}
 
-			Reachability (TriState returns, TriState barrier)
+			Reachability (TriState barrier)
 			{
-				this.returns = returns;
 				this.barrier = barrier;
 			}
 
 			public Reachability Clone ()
 			{
-				return new Reachability (returns, barrier);
+				return new Reachability (barrier);
 			}
 
 			public static TriState TriState_Meet (TriState a, TriState b)
@@ -112,27 +108,21 @@ namespace Mono.CSharp
 
 			public void Meet (Reachability b)
 			{
-				if ((AlwaysReturns && b.AlwaysHasBarrier) || (AlwaysHasBarrier && b.AlwaysReturns))
-					returns = TriState.Always;
-				else
-					returns = TriState_Meet (returns, b.returns);
-
 				barrier = TriState_Meet (barrier, b.barrier);
 			}
 
 			public void Or (Reachability b)
 			{
-				returns = TriState_Max (returns, b.returns);
 				barrier = TriState_Max (barrier, b.barrier);
 			}
 
 			public static Reachability Always ()
 			{
-				return new Reachability (TriState.Never, TriState.Never);
+				return new Reachability (TriState.Never);
 			}
 
 			TriState Unreachable {
-				get { return TriState_Max (returns, barrier); }
+				get { return barrier; }
 			}
 
 			TriState Reachable {
@@ -144,10 +134,6 @@ namespace Mono.CSharp
 				}
 			}
 
-			public bool AlwaysReturns {
-				get { return returns == TriState.Always; }
-			}
-
 			public bool AlwaysHasBarrier {
 				get { return barrier == TriState.Always; }
 			}
@@ -156,19 +142,14 @@ namespace Mono.CSharp
 				get { return Unreachable == TriState.Always; }
 			}
 
-			public void SetReturns ()
-			{
-				returns = TriState.Always;
-			}
-
 			public void SetBarrier ()
 			{
 				barrier = TriState.Always;
 			}
 
-			static string ShortName (TriState returns)
+			static string ShortName (TriState t)
 			{
-				switch (returns) {
+				switch (t) {
 				case TriState.Never:
 					return "N";
 				case TriState.Sometimes:
@@ -180,8 +161,7 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}:{1}:{2}]",
-						      ShortName (returns), ShortName (barrier), ShortName (Reachable));
+				return String.Format ("[{0}:{1}]", ShortName (barrier), ShortName (Reachable));
 			}
 		}
 
@@ -380,12 +360,6 @@ namespace Mono.CSharp
 
 			public Reachability Reachability {
 				get { return reachability; }
-			}
-
-			public void Return ()
-			{
-				if (!reachability.IsUnreachable)
-					reachability.SetReturns ();
 			}
 
 			public void Goto ()

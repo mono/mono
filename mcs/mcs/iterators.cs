@@ -450,7 +450,7 @@ namespace Mono.CSharp {
 
 					ce = TypeManager.int_interlocked_compare_exchange;
 
-					ec.CurrentBranching.CurrentUsageVector.Return ();
+					ec.CurrentBranching.CurrentUsageVector.Goto ();
 					return true;
 				}
 
@@ -584,7 +584,7 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
-				ec.CurrentBranching.CurrentUsageVector.Return ();
+				ec.CurrentBranching.CurrentUsageVector.Goto ();
 				return true;
 			}
 
@@ -975,7 +975,7 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 
-				ec.CurrentBranching.CurrentUsageVector.Return ();
+				ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 				return true;
 			}
