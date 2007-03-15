@@ -1,5 +1,10 @@
 2007-03-15  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Modify UpdateStyles to store distances when bounds >=
+	0 instead of just bounds > 0.  [Fixes bug #80912]
+
+2007-03-15  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs, ToolStripItem.cs: Implement several new properties
 	and methods.
 

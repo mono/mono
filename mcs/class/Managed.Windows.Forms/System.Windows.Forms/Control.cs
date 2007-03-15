@@ -1748,9 +1748,9 @@ namespace System.Windows.Forms
 
 		private void UpdateDistances() {
 			if (parent != null) {
-				if (bounds.Width > 0)
+				if (bounds.Width >= 0)
 					dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
-				if (bounds.Height > 0)
+				if (bounds.Height >= 0)
 					dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
 		}
