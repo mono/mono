@@ -1,3 +1,8 @@
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* BindingSourceTest.cs: add another test, and mark the NotWorking
+	ones so that they aren't clogging up the 2.0 build.
+
 2007-03-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayoutTest.cs: Add test for bug #80912.

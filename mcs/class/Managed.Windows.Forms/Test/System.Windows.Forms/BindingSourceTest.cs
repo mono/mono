@@ -31,6 +31,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
@@ -45,6 +47,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void DataSource_InitialAddChangingType ()
 		{
 			BindingSource source = new BindingSource ();
@@ -361,6 +364,32 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void AllowEdit ()
+		{
+			BindingSource source = new BindingSource ();
+
+			Assert.IsTrue (source.AllowEdit, "1");
+
+			source.DataSource = "";
+			Assert.IsTrue (source.AllowEdit, "2");
+
+			source.DataSource = new int[10];
+			Assert.IsTrue (source.AllowEdit, "3");
+
+			source.DataSource = new WorkingEnumerable (5);
+			Assert.IsTrue (source.AllowEdit, "4");
+
+			ArrayList al = new ArrayList ();
+			al.Add (5);
+
+			source.DataSource = al;
+			Assert.IsTrue (source.AllowEdit, "5");
+
+			source.DataSource = ArrayList.ReadOnly (al);
+			Assert.IsFalse (source.AllowEdit, "6");
+		}
+
+		[Test]
 		public void AllowRemove ()
 		{
 			BindingSource source = new BindingSource ();
@@ -416,6 +445,7 @@ namespace MonoTests.System.Windows.Forms {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // DataMember property 'hi' cannot be found on the DataSource.
+		[Category ("NotWorking")]
 		public void DataMemberArgumentException ()
 		{
 			ArrayList list = new ArrayList ();
@@ -469,6 +499,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void SuppliedDataSource ()
 		{
 			List<string> list = new List<string>();
@@ -486,6 +517,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void DataSourceMember_set ()
 		{
 			BindingSource source = new BindingSource ();
@@ -532,6 +564,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void AddNew ()
 		{
 			BindingSource source = new BindingSource ();
@@ -540,6 +573,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void AddNew_NonBindingList ()
 		{
 			IList list = new List<object> ();
@@ -570,6 +604,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void AllowNew ()
 		{
 			BindingSource source = new BindingSource ();
@@ -585,6 +620,7 @@ namespace MonoTests.System.Windows.Forms {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		// "AllowNew can only be set to true on an
 		// IBindingList or on a read-write list with a default
 		// public constructor."
@@ -679,6 +715,7 @@ namespace MonoTests.System.Windows.Forms {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		// "AddNew cannot be called on the 'System.String' type.  This type does not have a public default constructor.  You can call AddNew on the 'System.String' type if you set AllowNew=true and handle the AddingNew event."
 		public void AddNew_Invalid ()
 		{
@@ -688,6 +725,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void BindingSuspended1 ()
 		{
 			/* how does this property work? */

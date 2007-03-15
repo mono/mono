@@ -143,7 +143,18 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual bool AllowEdit {
-			get { throw new NotImplementedException (); }
+			get {
+				if (list == null)
+					return false;
+
+				if (list.IsReadOnly)
+					return false;
+
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowEdit;
+
+				return true;
+			}
 		}
 
 		public virtual bool AllowNew {
@@ -151,11 +162,11 @@ namespace System.Windows.Forms {
 				if (allow_new_set)
 					return allow_new;
 
-				if (list is IBindingList)
-					return ((IBindingList)list).AllowNew;
-
 				if (list.IsFixedSize || list.IsReadOnly)
 					return false;
+
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowNew;
 
 				// XXX we need to check the element
 				// type to see if it has a default
@@ -178,7 +189,15 @@ namespace System.Windows.Forms {
 			get {
 				if (list == null)
 					return false;
-				throw new NotImplementedException (); }
+
+				if (list.IsFixedSize || list.IsReadOnly)
+					return false;
+
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowRemove;
+
+				return true;
+			}
 		}
 
 		[Browsable (false)]
