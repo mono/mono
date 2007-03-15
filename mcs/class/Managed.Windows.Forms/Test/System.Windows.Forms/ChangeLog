@@ -1,3 +1,8 @@
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
+	* ControlTest.cs: add Ivan's WindowTargetTest after fixing them,
+	with an extra one included.
+
 2007-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* FormTest.cs: Disable FormBorderStyleTest for the moment.

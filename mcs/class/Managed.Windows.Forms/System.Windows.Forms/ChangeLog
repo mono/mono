@@ -1,3 +1,10 @@
+2007-03-15  Chris Toshok  <toshok@ximian.com>
+
+	[ Fixes #81101 ]
+	
+	* Control.cs: add Ivan's fix for 81101, with a slight modification
+	- you can set control.Target to null.
+
 2007-03-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: If our OwnerItem is null, we can't use 

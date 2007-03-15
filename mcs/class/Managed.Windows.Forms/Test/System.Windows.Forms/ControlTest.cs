@@ -1000,6 +1000,29 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(40, r1.Height, "Scale2");
 		}
 
+		class TestWindowTarget : IWindowTarget
+		{
+			public void OnHandleChange (IntPtr newHandle) {
+			}
+
+			public void OnMessage (ref Message m) {
+			}
+		}
+
+		[Test]
+		public void WindowTargetTest()
+		{
+			Control c = new Control ();
+			Assert.IsNotNull (c.WindowTarget, "WindowTarget1");
+			c.WindowTarget = null;
+			Assert.IsNull (c.WindowTarget, "WindowTarget2");
+
+			IWindowTarget existing_target = c.WindowTarget;
+			IWindowTarget new_target = new TestWindowTarget ();
+			c.WindowTarget = new_target;
+			Assert.AreSame (new_target, c.WindowTarget, "WindowTarget3");
+		}
+
 		[Test]
 		public void TextTest()
 		{

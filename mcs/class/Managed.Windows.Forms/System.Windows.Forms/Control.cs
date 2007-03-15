@@ -69,6 +69,7 @@ namespace System.Windows.Forms
 		Rectangle               explicit_bounds; // explicitly set bounds
 		internal object			creator_thread;		// thread that created the control
 		internal                ControlNativeWindow	window;			// object for native window handle
+		private                 IWindowTarget window_target;
 		string                  name; // for object naming
 
 		// State
@@ -166,6 +167,11 @@ namespace System.Windows.Forms
 				}
 			}
 
+			protected override void OnHandleChange()
+			{
+				this.owner.WindowTarget.OnHandleChange(this.owner.Handle);
+			}
+
 			static internal Control ControlFromHandle(IntPtr hWnd) {
 				ControlNativeWindow	window;
 
@@ -193,7 +199,26 @@ namespace System.Windows.Forms
 			}
 
 			protected override void WndProc(ref Message m) {
-				owner.WndProc(ref m);
+				owner.WindowTarget.OnMessage(ref m);
+			}
+		}
+
+		private class ControlWindowTarget : IWindowTarget
+		{
+			private Control control;
+
+			public ControlWindowTarget(Control control)
+			{
+				this.control = control;
+			}
+
+			public void OnHandleChange(IntPtr newHandle) 
+			{
+			}
+
+			public void OnMessage(ref Message m) 
+			{
+				control.WndProc(ref m);
 			}
 		}
 		#endregion
@@ -970,6 +995,7 @@ namespace System.Windows.Forms
 			text = string.Empty;
 			name = string.Empty;
 
+			window_target = new ControlWindowTarget(this);
 			window = new ControlNativeWindow(this);
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
@@ -2998,13 +3024,8 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IWindowTarget WindowTarget {
-			get {
-				return null;
-			}
-
-			set {
-				;	// MS Internal
-			}
+			get { return window_target; }
+			set { window_target = value; }
 		}
 		#endregion	// Public Instance Properties
 
