@@ -1465,8 +1465,8 @@ namespace Mono.CSharp {
 		MemberCache cache;
 
 #if GMCS_SOURCE && MS_COMPATIBLE
-        if (t.IsGenericType && !t.IsGenericTypeDefinition)
-            t = t.GetGenericTypeDefinition();
+		if (t.IsGenericType && !t.IsGenericTypeDefinition)
+			t = t.GetGenericTypeDefinition();
 #endif
 
 		//
@@ -1514,13 +1514,12 @@ namespace Mono.CSharp {
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
 
-			MemberList list;
-			Timer.StartTimer (TimerType.FindMembers);
-			list = tparam.FindMembers (mt, bf & ~BindingFlags.DeclaredOnly,
-						   FilterWithClosure_delegate, name);
-			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = true;
-			return (MemberInfo []) list;
+			if (tparam.MemberCache == null)
+				return new MemberInfo [0];
+
+			return tparam.MemberCache.FindMembers (
+				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 #endif
 
@@ -3087,7 +3086,7 @@ namespace Mono.CSharp {
 			if (m is FieldInfo){
 				FieldInfo fi = (FieldInfo) m;
 				FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
-				
+
 				if (fa == FieldAttributes.Public)
 					return true;
 
@@ -3186,7 +3185,7 @@ namespace Mono.CSharp {
 		closure.invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure.qualifier_type = qualifier_type;
 		closure.almost_match = almost_match;
-		
+
 		// This is from the first time we find a method
 		// in most cases, we do not actually find a method in the base class
 		// so we can just ignore it, and save the arraylist allocation

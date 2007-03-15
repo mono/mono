@@ -1609,7 +1609,7 @@ namespace Mono.CSharp {
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface &&
 			    // !(type.IsGenericType && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
-			    !TypeManager.IsGenericType (type) &&
+			    !TypeManager.IsGenericType (type) && !TypeManager.IsGenericParameter (type) &&
 			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
 				method_hash = new Hashtable ();
 				AddMethods (type);
@@ -1635,6 +1635,28 @@ namespace Mono.CSharp {
 
 			foreach (Type itype in ifaces)
 				AddCacheContents (TypeManager.LookupMemberCache (itype));
+		}
+
+		public MemberCache (IMemberContainer container, Type base_class, Type[] ifaces)
+		{
+			this.Container = container;
+
+			// If we have a base class (we have a base class unless we're
+			// TypeManager.object_type), we deep-copy its MemberCache here.
+			if (Container.BaseCache != null)
+				member_hash = SetupCache (Container.BaseCache);
+			else
+				member_hash = new Hashtable ();
+
+			if (base_class != null)
+				AddCacheContents (TypeManager.LookupMemberCache (base_class));
+			if (ifaces != null) {
+				foreach (Type itype in ifaces) {
+					MemberCache cache = TypeManager.LookupMemberCache (itype);
+					if (cache != null)
+						AddCacheContents (cache);
+				}
+			}
 		}
 
 		/// <summary>

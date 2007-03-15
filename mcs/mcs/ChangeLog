@@ -1,3 +1,14 @@
+2007-03-15  Martin Baulig  <martin@ximian.com>
+
+	Fix #79302.
+
+	* decl.cs
+	(MemberCache): Added a special .ctor for type parameters.
+
+	* typemanager.cs
+	(TypeManager.MemberLookup_FindMembers): `TypeParameter' now has a
+	`MemberCache'.	
+
 2007-03-09  Martin Baulig  <martin@ximian.com>
 
 	* enum.cs (Enum): Make this a TypeContainer.

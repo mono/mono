@@ -5223,10 +5223,11 @@ namespace Mono.CSharp {
 							if (!TypeManager.IsGenericType (mi.ReturnType))
 								continue;
 
+							MethodBase mb = TypeManager.DropGenericMethodArguments (mi);
 							Report.SymbolRelatedToPreviousError (t);
 							Report.Error(1640, loc, "foreach statement cannot operate on variables of type `{0}' " +
-								"because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-								TypeManager.CSharpName (t), TypeManager.CSharpSignature (mi));
+								     "because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
+								     TypeManager.CSharpName (t), TypeManager.CSharpSignature (mb));
 							return false;
 						}
 

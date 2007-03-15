@@ -600,6 +600,7 @@ namespace Mono.CSharp {
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
+		MemberCache member_cache;
 
 		public TypeParameter (DeclSpace parent, DeclSpace decl, string name,
 				      Constraints constraints, Attributes attrs, Location loc)
@@ -882,11 +883,19 @@ namespace Mono.CSharp {
 		}
 
 		MemberCache IMemberContainer.BaseCache {
-			get { return null; }
+			get {
+				if (gc == null)
+					return null;
+
+				if (gc.EffectiveBaseClass.BaseType == null)
+					return null;
+
+				return TypeManager.LookupMemberCache (gc.EffectiveBaseClass.BaseType);
+			}
 		}
 
 		bool IMemberContainer.IsInterface {
-			get { return true; }
+			get { return false; }
 		}
 
 		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
@@ -894,13 +903,29 @@ namespace Mono.CSharp {
 			return FindMembers (mt, bf, null, null);
 		}
 
-		MemberCache IMemberContainer.MemberCache {
-			get { return null; }
+		public MemberCache MemberCache {
+			get {
+				Report.Debug (128, "TPARAM GET MEMBER CACHE", Name, member_cache);
+
+				if (member_cache != null)
+					return member_cache;
+
+				if (gc == null)
+					return null;
+
+				Type[] ifaces = TypeManager.ExpandInterfaces (gc.InterfaceConstraints);
+				Report.Debug (128, "TPARAM GET MC #1", gc.EffectiveBaseClass, ifaces);
+				member_cache = new MemberCache (this, gc.EffectiveBaseClass, ifaces);
+
+				return member_cache;
+			}
 		}
 
 		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 					       MemberFilter filter, object criteria)
 		{
+			Report.Debug (128, "TPARAM FIND MEMBERS", Name, mt, bf, filter, criteria, gc);
+
 			if (gc == null)
 				return MemberList.Empty;
 
@@ -909,6 +934,9 @@ namespace Mono.CSharp {
 			if (gc.HasClassConstraint) {
 				MemberList list = TypeManager.FindMembers (
 					gc.ClassConstraint, mt, bf, filter, criteria);
+
+				Report.Debug (128, "TPARAM FIND MEMBERS #1", Name, mt, bf,
+					      filter, criteria, gc.ClassConstraint, list.Count);
 
 				members.AddRange (list);
 			}

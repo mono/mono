@@ -1,3 +1,11 @@
+2007-03-15  Martin Baulig  <martin@ximian.com>
+
+	Fix #79302.
+
+	* generic.cs
+	(TypeParameter): Create a `MemberCache' here as well.  Note that
+	we need to create this on-demand when it's actually used.
+
 2007-03-10  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (TypeArguments.Resolve): Avoid redundant checks.
