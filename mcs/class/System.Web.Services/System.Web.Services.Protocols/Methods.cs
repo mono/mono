@@ -46,39 +46,39 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class SoapMethodStubInfo : MethodStubInfo
 	{
-		internal string Action;
-		internal string Binding;
+		internal readonly string Action;
+		internal readonly string Binding;
 
 		// The name/namespace of the request 
-		internal string RequestName;
-		internal string RequestNamespace;
+		internal readonly string RequestName;
+		internal readonly string RequestNamespace;
 
 		// The name/namespace of the response.
-		internal string ResponseName;
-		internal string ResponseNamespace;
-		
-		internal bool OneWay;
-		internal SoapParameterStyle ParameterStyle;
-		internal SoapBindingStyle SoapBindingStyle;
-		internal SoapBindingUse Use;
+		internal readonly string ResponseName;
+		internal readonly string ResponseNamespace;
 
-		internal HeaderInfo[] Headers;
-		internal HeaderInfo[] InHeaders;
-		internal HeaderInfo[] OutHeaders;
-		internal HeaderInfo[] FaultHeaders;
-		internal SoapExtensionRuntimeConfig[] SoapExtensions;
-		
-		internal XmlMembersMapping InputMembersMapping;
-		internal XmlMembersMapping OutputMembersMapping;
-		internal XmlMembersMapping InputHeaderMembersMapping;
-		internal XmlMembersMapping OutputHeaderMembersMapping;
-		internal XmlMembersMapping FaultHeaderMembersMapping;
-		
-		private int requestSerializerId;
-		private int responseSerializerId;
-		private int requestHeadersSerializerId = -1;
-		private int responseHeadersSerializerId = -1;
-		private int faultHeadersSerializerId = -1;
+		internal readonly bool OneWay;
+		internal readonly SoapParameterStyle ParameterStyle;
+		internal readonly SoapBindingStyle SoapBindingStyle;
+		internal readonly SoapBindingUse Use;
+
+		internal readonly HeaderInfo [] Headers;
+		internal readonly HeaderInfo [] InHeaders;
+		internal readonly HeaderInfo [] OutHeaders;
+		internal readonly HeaderInfo [] FaultHeaders;
+		internal readonly SoapExtensionRuntimeConfig [] SoapExtensions;
+
+		internal readonly XmlMembersMapping InputMembersMapping;
+		internal readonly XmlMembersMapping OutputMembersMapping;
+		internal readonly XmlMembersMapping InputHeaderMembersMapping;
+		internal readonly XmlMembersMapping OutputHeaderMembersMapping;
+		internal readonly XmlMembersMapping FaultHeaderMembersMapping;
+
+		private readonly int requestSerializerId;
+		private readonly int responseSerializerId;
+		private readonly int requestHeadersSerializerId = -1;
+		private readonly int responseHeadersSerializerId = -1;
+		private readonly int faultHeadersSerializerId = -1;
 		
 		internal XmlSerializer RequestSerializer
 		{
