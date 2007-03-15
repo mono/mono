@@ -1,3 +1,11 @@
+2007-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ImageButtonTest.cs, LinkButtonTest.cs: the validation tests in
+	the two cases were incorrect in my opinion. MS.NET renders the
+	same HTML (effectively) for no-validation case we do - there are
+	no onclick handlers or MyValidationGroup rendered for the
+	imagebutton/linkbutton controls.
+
 2007-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* LoginTest.cs: Added a test for case-insensitive command name in

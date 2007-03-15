@@ -169,8 +169,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			if (html.IndexOf ("href") == -1)
 				Assert.Fail ("Link button not created");
-			if (html.IndexOf ("MyValidationGroup") == -1)
-				Assert.Fail ("Validation group not set: " + html);
+			if (html.IndexOf ("MyValidationGroup") != -1)
+				Assert.Fail ("Validation group set: " + html);
 		}
 
 		public static void ValidationGroup_Load (Page p)
