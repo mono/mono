@@ -1,4 +1,8 @@
 
+Thu Mar 15 10:17:54 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-s390.md, cpu-s390x.md: update localloc length.
+
 Wed Mar 14 21:00:19 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-g4.md: added missing descriptions.
