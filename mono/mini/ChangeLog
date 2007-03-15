@@ -1,3 +1,8 @@
+2007-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (seh_handler): Ditto.
+
+	* exceptions-x86.c (seh_handler): Fix a memory leak.
 
 Thu Mar 15 13:47:59 CET 2007 Paolo Molaro <lupus@ximian.com>
 
