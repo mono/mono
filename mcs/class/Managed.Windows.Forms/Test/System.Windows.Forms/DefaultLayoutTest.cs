@@ -398,6 +398,19 @@ namespace MonoTests.System.Windows.Forms
 				get { return Rectangle.Empty; }
 			}
 		}
+		
+		[Test]  // bug 80912
+		public void AnchoredControlWithZeroWidthAndHeight ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Control c = new Control ();
+			c.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			f.Controls.Add (c);
+
+			Assert.AreEqual (new Rectangle (0, 0, 0, 0), c.Bounds, "N1");
+		}
 	}
 
 	[TestFixture]	
