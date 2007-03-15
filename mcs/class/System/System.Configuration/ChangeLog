@@ -1,3 +1,8 @@
+2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SettingsPropertyValue.cs: fixed binary deserealization that may be
+	present as base64 string
+
 2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationSettings.cs: On 2.0 profile, use ConfigurationManager

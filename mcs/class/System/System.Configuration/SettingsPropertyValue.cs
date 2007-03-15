@@ -199,7 +199,11 @@ namespace System.Configuration
 #endif
 					case SettingsSerializeAs.Binary:
 						BinaryFormatter bf = new BinaryFormatter ();
-						MemoryStream ms = new MemoryStream ((byte []) serializedValue);
+						MemoryStream ms;
+						if (serializedValue is string)
+							ms = new MemoryStream (Convert.FromBase64String ((string) serializedValue));
+						else
+							ms = new MemoryStream ((byte []) serializedValue);
 						deserializedObject = bf.Deserialize (ms);
 						break;
 				}
