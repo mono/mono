@@ -1254,6 +1254,8 @@ namespace Mono.CSharp {
 			get {
 				if (!IsGeneric)
 					throw new InvalidOperationException ();
+				if ((PartialContainer != null) && (PartialContainer != this))
+					return PartialContainer.TypeParameters;
 				if (type_param_list == null)
 					initialize_type_params ();
 
@@ -1265,6 +1267,8 @@ namespace Mono.CSharp {
 			get {
 				if (!IsGeneric)
 					throw new InvalidOperationException ();
+				if ((PartialContainer != null) && (PartialContainer != this))
+					return PartialContainer.CurrentTypeParameters;
 				if (type_params != null)
 					return type_params;
 				else
