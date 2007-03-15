@@ -1,3 +1,8 @@
+2007-03-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs, ToolStripItem.cs: Implement several new properties
+	and methods.
+
 2007-03-15  Ivan N. Zlatev <contact@i-nz.net>
 	
 	* ComboBox.cs, Control.cs, XplatUIStructs.cs, XplatUIX11GTK.cs,

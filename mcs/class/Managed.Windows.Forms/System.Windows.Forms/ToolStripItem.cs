@@ -64,6 +64,7 @@ namespace System.Windows.Forms
 		private string image_key;
 		private ToolStripItemImageScaling image_scaling;
 		private Color image_transparent_color;
+		private bool is_disposed;
 		internal bool is_pressed;
 		private bool is_selected;
 		private Padding margin;
@@ -324,6 +325,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public bool IsDisposed {
+			get { return this.is_disposed; }
+		}
+		
 		[Browsable (false)]
 		[DefaultValue (DockStyle.None)]
 		public DockStyle Dock {
@@ -790,6 +795,9 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
+			if (!is_disposed && disposing)
+				is_disposed = true;
+				
 			base.Dispose (disposing);
 		}
 		
@@ -969,6 +977,10 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		protected internal virtual void OnOwnerFontChanged (EventArgs e)
+		{
+		}
+		
 		protected virtual void OnPaint (PaintEventArgs e)
 		{
 			if (this.parent != null)
@@ -979,6 +991,11 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		// This is never called.
+		protected virtual void OnParentBackColorChanged (EventArgs e)
+		{
+		}
+		
 		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
 		{
 			if (oldParent != null)
@@ -988,6 +1005,16 @@ namespace System.Windows.Forms
 				newParent.PerformLayout ();
 		}
 
+		protected internal virtual void OnParentEnabledChanged (EventArgs e)
+		{
+			this.OnEnabledChanged (e);
+		}
+
+		// This is never called.
+		protected virtual void OnParentForeColorChanged (EventArgs e)
+		{
+		}
+	
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged (EventArgs e)
 		{

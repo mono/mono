@@ -216,7 +216,14 @@ namespace System.Windows.Forms
 
 		public override Font Font {
 			get { return base.Font; }
-			set { base.Font = value; }
+			set { 
+				if (base.Font != value) {
+					base.Font = value;
+					
+					foreach (ToolStripItem tsi in this.Items)
+						tsi.OnOwnerFontChanged (EventArgs.Empty);
+				}
+			 }
 		}
 		
 		[Browsable (false)]
@@ -335,15 +342,13 @@ namespace System.Windows.Forms
 
 					this.layout_style = value;
 					
-					if (value == ToolStripLayoutStyle.Flow) {
-						this.layout_settings = new FlowLayoutSettings ();
+					if (value == ToolStripLayoutStyle.Flow)
 						this.layout_engine = new FlowLayout ();
-					}
-					else {
-						this.layout_settings = null;
+					else
 						this.layout_engine = new ToolStripSplitStackLayout ();
-					}
-						
+
+					this.layout_settings = this.CreateLayoutSettings (value);
+					
 					this.PerformLayout ();
 					this.OnLayoutStyleChanged (EventArgs.Empty);
 				}
@@ -427,6 +432,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[Browsable (false)]
+		public Control GetChildAtPoint (Point point)
+		{
+			return base.GetChildAtPoint (point);
+		}
+		
 		public ToolStripItem GetItemAt (Point point)
 		{
 			foreach (ToolStripItem tsi in this.displayed_items)
@@ -498,6 +509,21 @@ namespace System.Windows.Forms
 			return new ToolStripButton (text, image, onClick);
 		}
 
+		protected virtual LayoutSettings CreateLayoutSettings (ToolStripLayoutStyle layoutStyle)
+		{
+			switch (layoutStyle) {
+				case ToolStripLayoutStyle.Flow:
+					return new FlowLayoutSettings ();
+				case ToolStripLayoutStyle.Table:
+					//return new TableLayoutSettings ();
+				case ToolStripLayoutStyle.StackWithOverflow:
+				case ToolStripLayoutStyle.HorizontalStackWithOverflow:
+				case ToolStripLayoutStyle.VerticalStackWithOverflow:
+				default:
+					return null;
+			}
+		}
+		
 		protected override void Dispose (bool disposing)
 		{
 			ToolStripManager.RemoveToolStrip (this);
@@ -513,6 +539,9 @@ namespace System.Windows.Forms
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
+			
+			foreach (ToolStripItem tsi in this.Items)
+				tsi.OnParentEnabledChanged (EventArgs.Empty);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -709,6 +738,17 @@ namespace System.Windows.Forms
 				this.overflow_button.FireEvent (e, ToolStripItemEventType.Paint);
 				e.Graphics.ResetTransform ();
 			}
+
+			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
+			Rectangle connected_area = Rectangle.Empty;
+
+			if (this is ToolStripDropDown && (this as ToolStripDropDown).OwnerItem != null && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
+				connected_area = new Rectangle (1, 0, (this as ToolStripDropDown).OwnerItem.Width - 2, 2);
+
+			ToolStripRenderEventArgs pevent = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, Color.Empty);
+			pevent.InternalConnectedArea = connected_area;
+
+			this.Renderer.DrawToolStripBorder (pevent);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -726,7 +766,6 @@ namespace System.Windows.Forms
 			e.InternalConnectedArea = connected_area;
 			
 			this.Renderer.DrawToolStripBackground (e);
-			this.Renderer.DrawToolStripBorder (e);
 		}
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
@@ -794,6 +833,17 @@ namespace System.Windows.Forms
 				this.OverflowButton.DropDown.SetDisplayedItems ();
 		}
 
+		protected internal void SetItemLocation (ToolStripItem item, Point location)
+		{
+			if (item == null)
+				throw new ArgumentNullException ("item");
+				
+			if (item.Owner != this)
+				throw new NotSupportedException ("The item is not owned by this ToolStrip");
+				
+			item.SetBounds (new Rectangle (location, item.Size));
+		}
+		
 		protected static void SetItemParent (ToolStripItem item, ToolStrip parent)
 		{
 			item.Parent = parent;
