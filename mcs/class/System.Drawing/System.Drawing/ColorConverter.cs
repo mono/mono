@@ -83,30 +83,43 @@ namespace System.Drawing
 				return (Color) named;
 
 			String numSeparator = culture.TextInfo.ListSeparator;
-
-			Int32Converter converter = new Int32Converter ();
-
 			object result = null;
 
 			if (s.IndexOf (numSeparator) == -1) {
-				if ((s.Length == 8 && (s.StartsWith ("0x") || s.StartsWith ("0X"))) 
-					|| (s.Length == 7 && s.StartsWith ("#"))) {
-					result = Color.FromArgb (-16777216 | (int) converter.
-						ConvertFromString (context, culture, s));
-				} 
-				else if ((s.Length == 5 && (s.StartsWith ("0x") || s.StartsWith ("0X"))) 
-					|| (s.Length == 4 && s.StartsWith ("#"))) {
-					int i = (int) converter.ConvertFromString (context, culture, s);
-					i = ((i & 0xf00) << 12) | ((i & 0xf00) << 8) |
-						((i & 0xf0) << 8) | ((i & 0xf0) << 4) |
-						((i & 0xf) << 4) | (i & 0xf);
-					result = Color.FromArgb ( -16777216 | i );
-				} else if (s.StartsWith ("#") && (s.Length > 9) && !s.StartsWith ("#0x")) {
-					throw new Exception (Locale.GetText ("{0} isn't a valid color (integer too large).", s));
+				bool sharp = (s[0] == '#');
+				int start = sharp ? 1 : 0;
+				bool hex = false;
+				// deal with #hex, 0xhex and #0xhex
+				if ((s.Length > start + 1) && (s[start] == '0')) {
+					hex = ((s[start + 1] == 'x') || (s[start + 1] == 'X'));
+					if (hex)
+						start += 2;
+				}
+
+				if (sharp || hex) {
+					s = s.Substring (start);
+					int argb;
+					try {
+						argb = Int32.Parse (s, NumberStyles.HexNumber);
+					}
+					catch (Exception e) {
+						// whatever happens MS throws an basic Exception
+						string msg = Locale.GetText ("Invalid Int32 value '{0}'.", s);
+						throw new Exception (msg, e);
+					}
+
+					// note that the default alpha value for a 6 hex digit (i.e. when none are present) is 
+					// 0xFF while shorter string defaults to 0xFF - unless both # an 0x are specified
+					if ((s.Length < 6) || ((s.Length == 6) && sharp && hex))
+						argb &= 0x00FFFFFF;
+					else if ((argb >> 24) == 0)
+						argb |= unchecked((int)0xFF000000);
+					result = Color.FromArgb (argb);
 				}
 			}
 
 			if (result == null) {
+				Int32Converter converter = new Int32Converter ();
 				String [] components = s.Split (numSeparator.ToCharArray ());
 
 				// MS seems to convert the indivual component to int before
