@@ -1,3 +1,17 @@
+2007-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: add support for the enableLocalization
+	<siteMap> attribute and handle per-node localization resource
+	strings for explicit localization as well as the resourceKey
+	attribute to <siteMapNode> for implicit localization (closes bug
+	#81103).
+
+	* SiteMapNode.cs: add support for the resource keys and foreign
+	attributes.
+	Implement GetImplicitResourceString.
+	Add support for translation of the Title and Description
+	attributes (closes bug #81103) as well as foreign attributes.
+
 2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* VirtualPathUtility.cs: fixed: works properly with appRelative path.

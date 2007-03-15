@@ -200,9 +200,15 @@ namespace System.Web {
 				throw new ArgumentNullException ("attributeName");
 			
 			if (resourceKeys != null){
-				string v = resourceKeys [attributeName];
-				if (v != null)
-					return v;
+				string[] values = resourceKeys.GetValues (attributeName);
+				if (values != null && values.Length == 2) {
+					try {
+						object o = HttpContext.GetGlobalResourceObject (values [0], values [1]);
+						if (o is string)
+							return (string) o;
+					} catch (Exception) {
+					}
+				}
 			}
 
 			if (throwIfNotFound && defaultValue == null)
@@ -211,13 +217,28 @@ namespace System.Web {
 			return defaultValue;
 		}
 
-		[MonoTODO("Currently returns the argument passed")]
 		protected string GetImplicitResourceString (string attributeName)
 		{
 			if (attributeName == null)
 				throw new ArgumentNullException ("attributeName");
+
+			if (String.IsNullOrEmpty (implicitResourceKey))
+				return null;
+
+			try {
+				string reskey = provider.ResourceKey;
+
+				if (!String.IsNullOrEmpty (reskey))
+					reskey = String.Format ("{0}.{1}.{2}", reskey, implicitResourceKey, attributeName);
+				else
+					reskey = String.Format ("{0}.{1}", implicitResourceKey, attributeName);
+				object o = HttpContext.GetGlobalResourceObject ("Web.sitemap", reskey);
+				if (o is string)
+					return (string) o;
+			} catch (Exception) {
+			}
 			
-			return attributeName;
+			return null;
 		}
 		
 		public virtual string this [string key]
@@ -225,8 +246,9 @@ namespace System.Web {
 			get {
 				string val = null;
 				if (provider.EnableLocalization) {
-					val = GetExplicitResourceString (key, null, true);
-					if (val == null) val = GetImplicitResourceString (key);
+					val = GetImplicitResourceString (key);
+					if (val == null)
+						val = GetExplicitResourceString (key, null, true);
 				}
 				if (val != null) return null;
 				if (attributes != null) return attributes [key];
@@ -324,13 +346,35 @@ namespace System.Web {
 		
 		[Localizable (true)]
 		public virtual string Description {
-			get { return description != null ? description : ""; }
+			get {
+				string ret = null;
+				
+				if (provider.EnableLocalization) {
+					ret = GetImplicitResourceString ("description");
+					if (ret == null)
+						ret = GetExplicitResourceString ("description", description, true);
+				} else
+					ret = description;
+				
+				return ret != null ? ret : String.Empty;
+			}
 			set { CheckWritable (); description = value; }
 		}
 		
 		[LocalizableAttribute (true)]
 		public virtual string Title {
-			get { return title != null ? title : ""; }
+			get {
+				string ret = null;
+
+				if (provider.EnableLocalization) {
+					ret = GetImplicitResourceString ("title");
+					if (ret == null)
+						ret = GetExplicitResourceString ("title", title, true);
+				} else
+					ret = title;
+				
+				return ret != null ? ret : String.Empty;
+			}
 			set { CheckWritable (); title = value; }
 		}
 		

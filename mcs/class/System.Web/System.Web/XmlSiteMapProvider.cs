@@ -34,6 +34,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 using System.Web.Util;
@@ -75,6 +76,10 @@ namespace System.Web
 						return root;
 					XmlDocument d = new XmlDocument ();
 					d.Load (file);
+
+					XmlNode enloc = d.DocumentElement.Attributes ["enableLocalization"];
+					if (enloc != null && !String.IsNullOrEmpty (enloc.Value))
+						EnableLocalization = (bool) Convert.ChangeType (enloc.Value, typeof (bool));
 					
 					XmlNode nod = d.DocumentElement ["siteMapNode"];
 					if (nod == null)
@@ -98,6 +103,79 @@ namespace System.Web
 		string GetOptionalAttribute (XmlNode n, string name)
 		{
 			return System.Web.Configuration.HandlersUtil.ExtractAttributeValue (name, n, true, true);
+		}
+
+		void PutInCollection (string name, string value, ref NameValueCollection coll)
+		{
+			PutInCollection (name, null, value, ref coll);
+		}
+		
+		void PutInCollection (string name, string classKey, string value, ref NameValueCollection coll)
+		{
+			if (coll == null)
+				coll = new NameValueCollection ();
+			if (!String.IsNullOrEmpty (classKey))
+				coll.Add (name, classKey);
+			coll.Add (name, value);
+		}
+
+		bool GetAttributeLocalization (string value, out string resClass, out string resKey, out string resDefault)
+		{
+			resClass = null;
+			resKey = null;
+			resDefault = null;
+
+			if (String.IsNullOrEmpty (value))
+				return false;
+			string val = value.TrimStart (new char[] {' ', '\t'});
+			if (String.IsNullOrEmpty (value) || !val.ToLower (CultureInfo.InvariantCulture).StartsWith ("$resources:"))
+				return false;
+
+			val = val.Substring (11);
+			if (val.Length == 0)
+				return false;
+			string[] parts = val.Split (',');
+			if (parts.Length < 2)
+				return false;
+			resClass = parts [0];
+			resKey = parts [1];
+			if (parts.Length == 3)
+				resDefault = parts [2];
+			else
+				resDefault = String.Join (",", parts, 3, parts.Length - 2);
+
+			return true;
+		}
+		
+		void CollectLocalizationInfo (XmlNode xmlNode, ref string title, ref string description,
+					      ref NameValueCollection attributes,
+					      ref NameValueCollection explicitResourceKeys)
+		{
+			string resClass;
+			string resKey;
+			string resDefault;
+
+			if (GetAttributeLocalization (title, out resClass, out resKey, out resDefault)) {
+				PutInCollection ("title", resClass, resKey, ref explicitResourceKeys);
+				if (resDefault != null)
+					title = resDefault;
+			}
+			
+			if (GetAttributeLocalization (description, out resClass, out resKey, out resDefault)) {
+				PutInCollection ("description", resClass, resKey, ref explicitResourceKeys);
+				if (resDefault != null)
+					description = resDefault;
+			}
+
+			string value;
+			foreach (XmlNode att in xmlNode.Attributes) {
+				if (GetAttributeLocalization (att.Value, out resClass, out resKey, out resDefault)) {
+					PutInCollection (att.Name, resClass, resKey, ref explicitResourceKeys);
+					value = resDefault != null ? resDefault : String.Empty;
+				} else
+					value = att.Value;
+				PutInCollection (att.Name, value, ref attributes);
+			}
 		}
 		
 		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode)
@@ -125,6 +203,7 @@ namespace System.Web
 				string description = GetOptionalAttribute (xmlNode, "description");
 				string keywords = GetOptionalAttribute (xmlNode, "keywords");
 				string roles = GetOptionalAttribute (xmlNode, "roles");
+				string implicitResourceKey = GetOptionalAttribute (xmlNode, "resourceKey");
 				
 				ArrayList keywordsList = new ArrayList ();
 				if (keywords != null && keywords.Length > 0) {
@@ -148,11 +227,19 @@ namespace System.Web
 					if (UrlUtils.IsRelativeUrl (url))
 						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
 				}
+
+				NameValueCollection attributes = null;
+				NameValueCollection explicitResourceKeys = null;
+				if (EnableLocalization)
+					CollectLocalizationInfo (xmlNode, ref title, ref description, ref attributes,
+								 ref explicitResourceKeys);
 				
 				string key = Guid.NewGuid ().ToString ();
 				SiteMapNode node = new SiteMapNode (this, key, url, title, description,
-					/*ArrayList.ReadOnly (keywordsList), */ArrayList.ReadOnly (rolesList), null,
-					null, null); // TODO what do they want for attributes
+								    ArrayList.ReadOnly (rolesList),
+								    attributes,
+								    explicitResourceKeys,
+								    implicitResourceKey);
 					
 				foreach (XmlNode child in xmlNode.ChildNodes) {
 					if (child.NodeType != XmlNodeType.Element)

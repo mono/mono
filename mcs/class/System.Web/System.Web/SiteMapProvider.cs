@@ -158,8 +158,8 @@ namespace System.Web {
 		public override void Initialize (string name, NameValueCollection attributes)
 		{
 			base.Initialize (name, attributes);
-			if (attributes["securityTrimmingEnabled"] != null)
-				securityTrimming = (bool) Convert.ChangeType (attributes ["securityTrimmingEnabled"], typeof(bool));
+			if (attributes ["securityTrimmingEnabled"] != null)
+				securityTrimming = (bool) Convert.ChangeType (attributes ["securityTrimmingEnabled"], typeof (bool));
 		}
 		
 		[MonoTODO ("need to implement cases 2 and 3")]
