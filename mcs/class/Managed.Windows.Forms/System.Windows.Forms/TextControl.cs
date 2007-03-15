@@ -133,6 +133,8 @@ namespace System.Windows.Forms {
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
 		internal int			DEFAULT_TEXT_LEN;	// 
 		internal bool			recalc;			// Line changed
+		internal int left_margin = 2;  // A left margin for all lines
+		internal int top_margin = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -190,9 +192,10 @@ namespace System.Windows.Forms {
 
 		internal int Y {
 			get {
+				int tm = document.owner.actual_border_style == BorderStyle.FixedSingle ? top_margin : 0;
 				if (!document.multiline)
-					return 0;
-				return offset;
+					return tm;
+				return tm + offset;
 			}
 		}
 
@@ -416,7 +419,7 @@ namespace System.Windows.Forms {
 			tag.shift = 0;
 
 			this.recalc = false;
-			widths[0] = indent;
+			widths[0] = left_margin + indent;
 
 			w = g.MeasureString(doc.password_char, tags.font, 10000, Document.string_format).Width;
 
@@ -465,9 +468,9 @@ namespace System.Windows.Forms {
 			tag.shift = 0;
 
 			if (this.soft_break) {
-				widths[0] = hanging_indent;
+				widths[0] = left_margin + hanging_indent;
 			} else {
-				widths[0] = indent;
+				widths[0] = left_margin + indent;
 			}
 
 			this.recalc = false;
@@ -1912,6 +1915,13 @@ namespace System.Windows.Forms {
 			} else {
 				start = GetLineByPixel(clip.Left + viewport_x, false).line_no;
 				end = GetLineByPixel(clip.Right + viewport_x, false).line_no;
+			}
+
+			///
+			/// We draw the single border ourself
+			///
+			if (owner.actual_border_style == BorderStyle.FixedSingle) {
+				ControlPaint.DrawBorder (g, owner.Bounds, Color.Black, ButtonBorderStyle.Solid);
 			}
 
 			/// Make sure that we aren't drawing one more line then we need to

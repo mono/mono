@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		internal int 			click_point_y;
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
+		internal BorderStyle actual_border_style;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -88,6 +89,7 @@ namespace System.Windows.Forms {
 			accepts_tab = false;
 			auto_size = true;
 			border_style = BorderStyle.Fixed3D;
+			actual_border_style = BorderStyle.Fixed3D;
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;
 			max_length = 32767;
@@ -254,8 +256,18 @@ namespace System.Windows.Forms {
 		[DispId(-504)]
 		[MWFCategory("Appearance")]
 		public BorderStyle BorderStyle {
-			get { return InternalBorderStyle; }
-			set { 
+			get { return actual_border_style; }
+			set {
+				if (value == actual_border_style)
+					return;
+
+				if (actual_border_style != BorderStyle.Fixed3D || value != BorderStyle.Fixed3D)
+					Invalidate ();
+
+				actual_border_style = value;
+				if (value != BorderStyle.Fixed3D)
+					value = BorderStyle.None;
+
 				InternalBorderStyle = value; 
 				OnBorderStyleChanged(EventArgs.Empty);
 			}
@@ -453,7 +465,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return Font.Height + (BorderStyle == BorderStyle.None ? 0 : 7);
+				return Font.Height + (BorderStyle != BorderStyle.Fixed3D ? 0 : 7);
 			}
 		}
 
