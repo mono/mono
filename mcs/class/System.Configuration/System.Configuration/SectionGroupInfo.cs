@@ -396,6 +396,11 @@ namespace System.Configuration
 	
 	internal class ConfigInfoCollection : NameObjectCollectionBase
 	{
+		public ConfigInfoCollection ()
+			: base (OrdinalComparer.Instance)
+		{
+		}
+
 		public ICollection AllKeys
 		{
 			get { return Keys; }

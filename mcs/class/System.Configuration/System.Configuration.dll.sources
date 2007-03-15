@@ -84,6 +84,7 @@ System.Configuration/LongValidator.cs
 System.Configuration/LongValidatorAttribute.cs
 System.Configuration/NameValueConfigurationCollection.cs
 System.Configuration/NameValueConfigurationElement.cs
+System.Configuration/OrdinalComparer.cs
 System.Configuration/PositiveTimeSpanValidator.cs
 System.Configuration/PositiveTimeSpanValidatorAttribute.cs
 System.Configuration/PropertyInformation.cs

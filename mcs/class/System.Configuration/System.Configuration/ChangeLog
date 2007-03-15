@@ -1,3 +1,12 @@
+2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ConfigurationSectionCollection.cs,
+	* ConfigurationSectionGroupCollection.cs,
+	* PropertyInformationCollection.cs, 
+	* SectionGroupInfo.cs: these collections should be based on case
+	insensitive NameObjectCollectionBase
+	* added OrdinalComparer.cs for use in NameObjectCollectionBase
+
 2007-02-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SectionInfo.cs : don't stop at restartOnExternalChanges attribute.

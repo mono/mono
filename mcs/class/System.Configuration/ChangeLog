@@ -1,3 +1,8 @@
+2007-03-15  Vladimir Krasnov  <vladimirk@mainssft.com>
+
+	* System.Configuration.dll.sources, System.Configuration20.vmwcsproj: 
+	added OrdinalComparer.cs
+
 2006-11-05  Vladimir Krasnov  <vladimirk@mainssft.com>
 
 	* System.Configuration.dll.sources, System.Configuration20.vmwcsproj: 

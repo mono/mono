@@ -42,6 +42,7 @@ namespace System.Configuration
 		Configuration config;
 		
 		internal ConfigurationSectionCollection (Configuration config, SectionGroupInfo group)
+			: base (OrdinalComparer.Instance)
 		{
 			this.config = config;
 			this.group = group;

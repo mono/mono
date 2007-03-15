@@ -196,6 +196,7 @@
     <Compile Include="System.Configuration\NameValueConfigurationCollection.cs" />
     <Compile Include="System.Configuration\NameValueConfigurationElement.cs" />
     <Compile Include="System.Configuration\NonEmptyStringFlags.cs" />
+    <Compile Include="System.Configuration\OrdinalComparer.cs" />
     <Compile Include="System.Configuration\PathLevel.cs" />
     <Compile Include="System.Configuration\PositiveTimeSpanValidator.cs" />
     <Compile Include="System.Configuration\PositiveTimeSpanValidatorAttribute.cs" />
