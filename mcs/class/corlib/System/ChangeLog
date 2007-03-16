@@ -1,3 +1,7 @@
+2007-03-16  Lionel Cuir <lionel_email@aulofee.com>
+
+	* DateTime.cs: Added support in 2.0 for Serialization. 
+
 2007-03-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Delegate.cs: Fixed bootstrap build.
