@@ -1,3 +1,7 @@
+2007-03-16  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlUtils.cs: make sure the trailing slash is present.
+
 2007-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlUtils.cs: Make sure GetDirectory returns a directory with the
