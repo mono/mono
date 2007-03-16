@@ -39,6 +39,28 @@ namespace MonoTests.System.Drawing {
 	[TestFixture]
 	public class SystemFontsTest {
 
+		// avoid lots of failures if no fonts are available (e.g. headless systems)
+		static bool font_available;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			try {
+				Font f = SystemFonts.DefaultFont;
+				font_available = true;
+			}
+			catch (ArgumentException) {
+				font_available = false;
+			}
+		}
+
+		[SetUp]
+		public void SetUp ()
+		{
+			if (!font_available)
+				Assert.Ignore ("No font family could be found.");
+		}
+
 		[Test]
 		public void DefaultFont ()
 		{
