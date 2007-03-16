@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using NUnit.Framework;
+using CategoryAttribute=NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms
 {
