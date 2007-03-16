@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 		[ComVisible(true)]
 		public class CheckBoxAccessibleObject : ButtonBaseAccessibleObject {
 			#region CheckBoxAccessibleObject Local Variables
-			private CheckBox owner;
+			private new CheckBox owner;
 			#endregion	// CheckBoxAccessibleObject Local Variables
 
 			#region CheckBoxAccessibleObject Constructors
@@ -373,7 +373,7 @@ namespace System.Windows.Forms {
 		}
 		
 #if NET_2_0
-		public event MouseEventHandler MouseDoubleClick {
+		public new event MouseEventHandler MouseDoubleClick {
 			add { base.MouseDoubleClick += value; }
 			remove { base.MouseDoubleClick -= value; }
 		}

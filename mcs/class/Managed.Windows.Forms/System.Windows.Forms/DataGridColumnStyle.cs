@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 		protected class DataGridColumnHeaderAccessibleObject : AccessibleObject
 		{
 			#region Local Variables
-			private DataGridColumnStyle owner;			
+			private new DataGridColumnStyle owner;			
 			#endregion
 
 			#region Constructors

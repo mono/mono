@@ -49,7 +49,7 @@ namespace System.Windows.Forms {
 		[ComVisible(true)]
 		public class RadioButtonAccessibleObject : ControlAccessibleObject {
 			#region RadioButtonAccessibleObject Local Variables
-			private RadioButton	owner;
+			private new RadioButton	owner;
 			#endregion	// RadioButtonAccessibleObject Local Variables
 
 			#region RadioButtonAccessibleObject Constructors

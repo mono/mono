@@ -65,7 +65,7 @@ namespace System.Windows.Forms {
 		[ComVisible(true)]
 		public class ButtonBaseAccessibleObject : ControlAccessibleObject {
 			#region ButtonBaseAccessibleObject Local Variables
-			private Control	owner;
+			private new Control	owner;
 			#endregion	// ButtonBaseAccessibleObject Local Variables
 
 			#region ButtonBaseAccessibleObject Constructors

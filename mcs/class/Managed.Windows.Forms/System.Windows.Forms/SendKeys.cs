@@ -156,7 +156,6 @@ namespace System.Windows.Forms {
 		private static void Parse(string key_string) {
 			bool isBlock = false;
 			bool isVkey = false;
-			bool isKey = false;
 			bool isRepeat = false;
 			bool isShift = false;
 			bool isCtrl = false;
@@ -195,9 +194,6 @@ namespace System.Windows.Forms {
 						if (start == key_len || start == i+1)
 							throw new ArgumentException("SendKeys string {0} is not valid.", key_string);
 
-						if (group_string.Length == 1) {
-							isKey = true;
-						}
 						else if (SendKeys.keywords.Contains(group_string.ToString().ToUpper())) {
 							isVkey = true;
 						}
@@ -223,7 +219,7 @@ namespace System.Windows.Forms {
 						}
 
 						i = start;
-						isRepeat = isKey = isVkey = false;
+						isRepeat = isVkey = false;
 						if (isShift)
 							AddVKey((int)keywords["+"], false);
 						if (isCtrl)

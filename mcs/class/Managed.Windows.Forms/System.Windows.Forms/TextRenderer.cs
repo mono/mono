@@ -466,6 +466,7 @@ namespace System.Windows.Forms
 #endregion
 
 #region DllImports (Windows)
+#if NET_2_0
 		[DllImport ("user32", CharSet = CharSet.Unicode, EntryPoint = "DrawText")]
 		static extern int Win32DrawText (IntPtr hdc, string lpStr, int nCount, ref XplatUIWin32.RECT lpRect, int wFormat);
 
@@ -486,6 +487,7 @@ namespace System.Windows.Forms
 
 		[DllImport("gdi32")]
 		static extern bool SelectClipRgn(IntPtr hdc, IntPtr hrgn);
+#endif
 #endregion
 	}
 }

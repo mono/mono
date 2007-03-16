@@ -495,7 +495,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		protected virtual void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,5 +1,11 @@
 2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ButtonBase.cs, ToolStrip.cs, SendKeys.cs, TextRenderer.cs,
+	  CheckBox.cs, RadioButton.cs, BindingSource.cs,
+	  DataGridColumnStyle.cs: Remove warnings.
+
+2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Menu.cs: MergeMenu: Check menu argument for null before looping over
 	  it.
 	* MdiWindowManager.cs: Add IsVisiblePending to track the pending

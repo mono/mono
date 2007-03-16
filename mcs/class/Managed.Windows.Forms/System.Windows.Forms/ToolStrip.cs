@@ -433,7 +433,7 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 		[Browsable (false)]
-		public Control GetChildAtPoint (Point point)
+		public new Control GetChildAtPoint (Point point)
 		{
 			return base.GetChildAtPoint (point);
 		}
