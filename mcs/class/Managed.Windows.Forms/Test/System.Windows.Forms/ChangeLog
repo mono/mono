@@ -1,3 +1,12 @@
+2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ApplicationContextTest.cs: Added NotWorking test for nested
+	  application contexts.
+	* ControlHandleTest.cs: Comment out the dnd tests, they create a form
+	  on windows that won't close until the mouse is moved. Add a few
+	  more corner cases to the test.
+	* MdiFormTest.cs: Add TopLevelTest.
+
 2007-03-15  Chris Toshok  <toshok@ximian.com>
 
 	* BindingSourceTest.cs: add another test, and mark the NotWorking

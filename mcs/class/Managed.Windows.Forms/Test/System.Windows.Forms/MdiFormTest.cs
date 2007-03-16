@@ -891,7 +891,25 @@ namespace MonoTests.System.Windows.Forms
 
 			main.Dispose ();
 		}
+		
+		[Test]
+		public void TopLevelTest ()
+		{
+			Form main, child1, child2;
 
+			main = new Form ();
+			main.IsMdiContainer = true;
+			main.Name = "main";
+
+			child1 = new Form ();
+			child1.Name = "child1";
+			Assert.AreEqual (true, child1.TopLevel, "#01");
+			child1.MdiParent = main;
+			Assert.AreEqual (false, child1.TopLevel, "#02");
+			
+			child1.Dispose ();
+			main.Dispose ();
+		}
 		[Test]
 		public void ActiveMdiChild ()
 		{

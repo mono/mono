@@ -361,9 +361,9 @@ namespace MonoTests.System.Windows.Forms
 			c.Dispose ();
 			Assert.IsFalse (c.IsHandleCreated, "A5");
 			c = new Control ();
-			DragDropEffects d = c.DoDragDrop ("yo", DragDropEffects.None);
-			Assert.IsFalse (c.IsHandleCreated, "A6");
-			Assert.AreEqual (DragDropEffects.None, d, "A6b");
+			//DragDropEffects d = c.DoDragDrop ("yo", DragDropEffects.None);
+			//Assert.IsFalse (c.IsHandleCreated, "A6");
+			//Assert.AreEqual (DragDropEffects.None, d, "A6b");
 			//Bitmap b = new Bitmap (100, 100);
 			//c.DrawToBitmap (b, new Rectangle (0, 0, 100, 100));
 			//Assert.IsFalse (c.IsHandleCreated, "A7");
@@ -610,6 +610,10 @@ namespace MonoTests.System.Windows.Forms
 #endif
 			c.PublicUpdateBounds ();
 			Assert.IsFalse (c.IsHandleCreated, "A41");
+			c.PublicUpdateBounds (1, 2, 3, 4);
+			Assert.IsFalse (c.IsHandleCreated, "A41-b");
+			c.PublicUpdateBounds (1, 2, 3, 4, 5, 6);
+			Assert.IsFalse (c.IsHandleCreated, "A41-c");
 			c.PublicUpdateStyles ();
 			Assert.IsFalse (c.IsHandleCreated, "A42");
 			c.PublicUpdateZOrder ();
@@ -669,6 +673,8 @@ namespace MonoTests.System.Windows.Forms
 			public Size PublicSizeFromClientSize (Size clientSize) { return base.SizeFromClientSize (clientSize); }
 #endif
 			public void PublicUpdateBounds () { base.UpdateBounds (); }
+			public void PublicUpdateBounds (int x, int y, int width, int height) { base.UpdateBounds (x, y, width, height); }
+			public void PublicUpdateBounds (int x, int y, int width, int height, int clientWidth, int clientHeight) { base.UpdateBounds (x, y, width, height, clientWidth, clientHeight); }
 			public void PublicUpdateStyles () { base.UpdateStyles (); }
 			public void PublicUpdateZOrder () { base.UpdateZOrder (); }
 		}

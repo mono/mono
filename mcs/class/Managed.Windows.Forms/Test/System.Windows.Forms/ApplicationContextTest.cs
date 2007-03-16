@@ -118,6 +118,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, thread_exit_count, "5");
 		}
 
-		
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void NestedApplicationContextTest ()
+		{
+			using (NestedForm frm = new NestedForm ()) {
+				Application.Run (frm);
+			}
+		}
+
+		private class NestedForm : Form
+		{
+			static int counter = 1;
+			protected override void OnVisibleChanged (EventArgs e)
+			{
+				base.OnVisibleChanged (e);
+
+				Text = counter.ToString ();
+
+				if (counter <= 3) {
+					counter++;
+					Application.Run (new NestedForm ());
+				}
+				Close ();
+			}
+		}
 	}
 }
