@@ -1,3 +1,31 @@
+2007-03-16  Miguel de Icaza  <miguel@novell.com>
+
+	* BitConverter.cs: Revert the patch from 72237 as that introduces
+	a regression and we are not sure yet what we will be doing about
+	that.
+
+	Introduce a new InternalInt64BitsToDouble method that provides the
+	fixed functionality, mark it as internal.
+
+	Introduce a new SwappableToDouble method that includes the
+	swapping ToDouble routine as introduced by Zoltan on 72237, this
+	is used by InternalInt64BitsToDouble.
+
+	* Math.cs (IEEERemainder): Use the InternalInt64BitsToDouble
+	routine here to preserve the semantics from Zoltan.  
+
+	The problem with BitConverter.cs is that it is completely hossed.
+	In .NET 1.1 it is a bitwise copy, no attempt is ever done to do
+	endian-specific swapping.   In .NET 2.0 it is *almost* like that,
+	but it is subtly broken: if data is unaligned then endian
+	conversions happen.  If the data is properly aligned it behaves
+	like 1.0.
+
+	In general BitConverter is a sad class that offers little control,
+	we will be introducing a new mono bit converter and encourage
+	users to use that instead of the entirely broken
+	System.BitConverter. 
+
 2007-03-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Delegate.cs: Fixed bootstrap build.

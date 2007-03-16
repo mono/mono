@@ -145,7 +145,7 @@ namespace System
 			r = x - (y * Math.Round(x/y));
 			if (r != 0)
 				return r;
-			return (x > 0) ? 0: (BitConverter.Int64BitsToDouble (Int64.MinValue));
+			return (x > 0) ? 0: (BitConverter.InternalInt64BitsToDouble (Int64.MinValue));
 		}
 
 		public static double Log (double a, double newBase)

@@ -81,6 +81,11 @@ namespace System {
 			return ToDouble (GetBytes (value), 0);
 		}
 
+		internal static double InternalInt64BitsToDouble (long value)
+		{
+			return SwappableToDouble (GetBytes (value), 0);
+		}
+		
 		unsafe static byte[] GetBytes (byte *ptr, int count)
 		{
 			byte [] ret = new byte [count];
@@ -301,6 +306,40 @@ namespace System {
 
 				return ret;
 			}
+
+			PutBytes ((byte *) &ret, value, startIndex, 8);
+
+			return ret;
+		}
+
+		unsafe internal static double SwappableToDouble (byte[] value, int startIndex)
+		{
+			double ret;
+
+			if (SwappedWordsInDouble) {
+				byte* p = (byte*)&ret;
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				if (startIndex < 0)
+					throw new ArgumentOutOfRangeException ("startIndex < 0");
+
+				// avoid integer overflow (with large pos/neg start_index values)
+				if (value.Length - 8 < startIndex) {
+					throw new ArgumentOutOfRangeException (Locale.GetText (
+						"Value is too big to return the requested type."), "startIndex");
+				}
+				p [0] = value [startIndex + 4];
+				p [1] = value [startIndex + 5];
+				p [2] = value [startIndex + 6];
+				p [3] = value [startIndex + 7];
+				p [4] = value [startIndex + 0];
+				p [5] = value [startIndex + 1];
+				p [6] = value [startIndex + 2];
+				p [7] = value [startIndex + 3];
+
+				return ret;
+			}
 			else if (!IsLittleEndian) {
 				byte* p = (byte*)&ret;
 				if (value == null)
@@ -330,7 +369,7 @@ namespace System {
 
 			return ret;
 		}
-
+		
 		public static string ToString (byte[] value)
 		{
 			if (value == null) {
