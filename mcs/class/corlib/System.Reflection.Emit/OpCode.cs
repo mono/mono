@@ -144,5 +144,17 @@ namespace System.Reflection.Emit {
 				}
 			}
 		}
+
+#if NET_2_0
+		public static bool operator == (OpCode a, OpCode b)
+		{
+			return a.op1 == b.op1 && a.op2 == b.op2;
+		}
+
+		public static bool operator != (OpCode a, OpCode b)
+		{
+			return a.op1 != b.op1 || a.op2 != b.op2;
+		}
+#endif
 	}
 } 
