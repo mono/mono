@@ -1,3 +1,7 @@
+2007-03-16  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: produce message that makes more sense.
+
 2007-03-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: handle global resource keys with dots

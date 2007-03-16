@@ -376,7 +376,7 @@ namespace System.Web.Compilation
 				providerTypeName = FindProviderTypeName (ps, providerName);
 			if (providerTypeName == null)
 				throw new HttpException (String.Format ("Profile provider type not found: {0}",
-									providerTypeName));
+									providerName));
 			
 			Type type = Type.GetType (providerTypeName, false);
 			if (type == null) {
