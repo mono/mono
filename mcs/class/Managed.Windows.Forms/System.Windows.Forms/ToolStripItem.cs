@@ -1030,6 +1030,11 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		protected internal virtual bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			return false;
+		}
+		
 		protected internal virtual void SetBounds (Rectangle bounds)
 		{
 			if (this.bounds != bounds) {
@@ -1420,6 +1425,9 @@ namespace System.Windows.Forms
 					break;
 				case ToolStripItemEventType.Paint:
 					this.OnPaint ((PaintEventArgs)e);
+					break;
+				case ToolStripItemEventType.Click:
+					this.OnClick (e);
 					break;
 			}
 		}

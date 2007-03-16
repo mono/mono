@@ -396,6 +396,9 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
+			if (ToolStripManager.ProcessCmdKey (ref msg, keyData) == true)
+				return true;
+				
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
 #endif

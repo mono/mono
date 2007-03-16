@@ -1,3 +1,11 @@
+2007-03-16  Jonathan Pobst <monkey@jpobst.com>
+
+	* ContainerControl.cs: Give ToolStripManager the opportunity to handle
+	ProcessCmdKey().
+	* ToolStripDownItem.cs, ToolStripItem.cs, ToolStripItemCollection.cs, 
+	ToolStripItemEventType.cs, ToolStripManager.cs, ToolStripMenuItem.cs:
+	Implement keyboard shortcuts.
+
 2007-03-15  Everaldo Canuto  <everaldo@simios.org>
 
 	* CommonDialog.cs: Set StartPosition to CenterScreen on form's constructor.

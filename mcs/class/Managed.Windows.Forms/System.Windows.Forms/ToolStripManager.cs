@@ -40,11 +40,13 @@ namespace System.Windows.Forms
 		private static ToolStripManagerRenderMode render_mode;
 		private static bool visual_styles_enabled;
 		private static List<ToolStrip> toolstrips;
+		private static List<ToolStripMenuItem> menu_items;
 		
 		#region Static Constructor
 		static ToolStripManager ()
 		{
 			toolstrips = new List<ToolStrip> ();
+			menu_items = new List<ToolStripMenuItem> ();
 			ToolStripManager.renderer = new ToolStripProfessionalRenderer ();
 			ToolStripManager.render_mode = ToolStripManagerRenderMode.Professional;
 			ToolStripManager.visual_styles_enabled = Application.RenderWithVisualStyles;
@@ -114,6 +116,58 @@ namespace System.Windows.Forms
 						
 			return null;
 		}
+		
+		public static bool IsValidShortcut (Keys shortcut)
+		{
+			// Anything with an F1 - F12 is a shortcut
+			if ((shortcut & Keys.F1) == Keys.F1)
+				return true;
+			else if ((shortcut & Keys.F2) == Keys.F2)
+				return true;
+			else if ((shortcut & Keys.F3) == Keys.F3)
+				return true;
+			else if ((shortcut & Keys.F4) == Keys.F4)
+				return true;
+			else if ((shortcut & Keys.F5) == Keys.F5)
+				return true;
+			else if ((shortcut & Keys.F6) == Keys.F6)
+				return true;
+			else if ((shortcut & Keys.F7) == Keys.F7)
+				return true;
+			else if ((shortcut & Keys.F8) == Keys.F8)
+				return true;
+			else if ((shortcut & Keys.F9) == Keys.F9)
+				return true;
+			else if ((shortcut & Keys.F10) == Keys.F10)
+				return true;
+			else if ((shortcut & Keys.F11) == Keys.F11)
+				return true;
+			else if ((shortcut & Keys.F12) == Keys.F12)
+				return true;
+				
+			// Modifier keys alone are not shortcuts
+			switch (shortcut) {
+				case Keys.Alt:
+				case Keys.Control:
+				case Keys.Shift:
+				case Keys.Alt | Keys.Control:
+				case Keys.Alt | Keys.Shift:
+				case Keys.Control | Keys.Shift:
+				case Keys.Alt | Keys.Control | Keys.Shift:
+					return false;
+			}
+	
+			// Anything else with a modifier key is a shortcut
+			if ((shortcut & Keys.Alt) == Keys.Alt)
+				return true;
+			else if ((shortcut & Keys.Control) == Keys.Control)
+				return true;
+			else if ((shortcut & Keys.Shift) == Keys.Shift)
+				return true;
+
+			// Anything else is not a shortcut
+			return false;
+		}
 		#endregion
 		
 		#region Public Events
@@ -127,12 +181,34 @@ namespace System.Windows.Forms
 				toolstrips.Add (ts);
 		}
 
+		internal static bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			lock (menu_items)
+				foreach (ToolStripMenuItem tsmi in menu_items)
+					if (tsmi.ProcessCmdKey (ref m, keyData) == true)
+						return true;
+			
+			return false;
+		}
+		
+		internal static void AddToolStripMenuItem (ToolStripMenuItem tsmi)
+		{
+			lock (menu_items)
+				menu_items.Add (tsmi);
+		}
+		
 		internal static void RemoveToolStrip (ToolStrip ts)
 		{
 			lock (toolstrips)
 				toolstrips.Remove (ts);
 		}
-	
+
+		internal static void RemoveToolStripMenuItem (ToolStripMenuItem tsmi)
+		{
+			lock (menu_items)
+				menu_items.Remove (tsmi);
+		}
+
 		internal static void FireAppClicked ()
 		{
 			if (AppClicked != null) AppClicked (null, EventArgs.Empty);
@@ -147,6 +223,7 @@ namespace System.Windows.Forms
 		{
 			if (AppFocusChange != null) AppFocusChange (sender, EventArgs.Empty);
 		}
+		
 		private static void OnRendererChanged (EventArgs e)
 		{
 			if (RendererChanged != null) RendererChanged (null, e);

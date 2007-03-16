@@ -37,7 +37,8 @@ namespace System.Windows.Forms
 		MouseLeave = 4,
 		MouseMove = 5,
 		MouseUp = 6,
-		Paint = 7
+		Paint = 7,
+		Click = 8
 	}
 }
 #endif

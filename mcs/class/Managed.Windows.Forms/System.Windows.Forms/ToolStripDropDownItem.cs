@@ -150,7 +150,13 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			base.Dispose (disposing);
+			if (!IsDisposed) {
+				foreach (ToolStripItem tsi in this.DropDownItems)
+					if (tsi is ToolStripMenuItem)
+						ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
+					
+				base.Dispose (disposing);
+			}
 		}
 
 		protected override void OnBoundsChanged ()
@@ -190,6 +196,16 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+		}
+
+		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			if (this.HasDropDownItems)
+				foreach (ToolStripItem tsi in this.DropDownItems)
+					if (tsi.ProcessCmdKey (ref m, keyData) == true)
+						return true;
+
+			return base.ProcessCmdKey (ref m, keyData);
 		}
 		#endregion
 

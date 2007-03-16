@@ -90,6 +90,9 @@ namespace System.Windows.Forms
 			value.Owner = owner;
 			value.Parent = owner;
 			
+			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
+				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
+				
 			int index = base.Add (value);
 			
 			owner.OnItemAdded (new ToolStripItemEventArgs (value));

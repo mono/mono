@@ -152,7 +152,6 @@ namespace System.Windows.Forms
 			set { base.Overflow = value; }
 		}
 		
-		[MonoTODO ("Renderer doesn't support shortcut keys yet, they will never show.")]
 		[Localizable (true)]
 		[DefaultValue (true)]
 		public bool ShowShortcutKeys {
@@ -160,7 +159,6 @@ namespace System.Windows.Forms
 			set { this.show_shortcut_keys = value; }
 		}
 		
-		[MonoTODO ("Keyboard navigation not implemented.")]
 		[Localizable (true)]
 		[DefaultValue (null)]
 		public string ShortcutKeyDisplayString {
@@ -168,12 +166,18 @@ namespace System.Windows.Forms
 			set { this.shortcut_display_string = value; }
 		}
 		
-		[MonoTODO ("Keyboard navigation not implemented.")]
 		[Localizable (true)]
 		[DefaultValue (Keys.None)]
 		public Keys ShortcutKeys {
 			get { return this.shortcut_keys; }
-			set { this.shortcut_keys = value; }
+			set { 
+				if (this.shortcut_keys != value) {
+					this.shortcut_keys = value;
+					
+					if (this.Parent != null)
+						ToolStripManager.AddToolStripMenuItem (this);
+				}
+			 }
 		}
 		#endregion
 
@@ -355,6 +359,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
+		{
+			if (this.Enabled && keyData == this.shortcut_keys) {
+				this.FireEvent (EventArgs.Empty, ToolStripItemEventType.Click);
+				return true;
+			}
+				
+			return base.ProcessCmdKey (ref m, keyData);
+		}
+		
 		protected internal override void SetBounds (Rectangle bounds)
 		{
 			base.SetBounds (bounds);
