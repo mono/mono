@@ -4598,93 +4598,93 @@ namespace System.Windows.Forms
 				}
 			}
 
-			foreach (ToolBarButton button in control.Buttons)
-				if (button.Visible && clip_rectangle.IntersectsWith (button.Rectangle))
-					DrawToolBarButton (dc, control, button, format);
+			foreach (ToolBarItem item in control.items)
+				if (item.Button.Visible && clip_rectangle.IntersectsWith (item.Rectangle))
+					DrawToolBarButton (dc, control, item, format);
 
 			format.Dispose ();
 		}
 
-		protected virtual void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected virtual void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarItem item, StringFormat format)
 		{
-			bool is_flat = control.Appearance == ToolBarAppearance.Flat;
+			bool is_flat = (control.Appearance == ToolBarAppearance.Flat);
+			
+			DrawToolBarButtonBorder (dc, item, is_flat);
 
-			DrawToolBarButtonBorder (dc, button, is_flat);
-
-			switch (button.Style) {
+			switch (item.Button.Style) {
 			case ToolBarButtonStyle.DropDownButton:
 				if (control.DropDownArrows)
-					DrawToolBarDropDownArrow (dc, button, is_flat);
-				DrawToolBarButtonContents (dc, control, button, format);
+					DrawToolBarDropDownArrow (dc, item, is_flat);
+				DrawToolBarButtonContents (dc, control, item, format);
 				break;
 
 			case ToolBarButtonStyle.Separator:
 				if (is_flat)
-					DrawToolBarSeparator (dc, button);
+					DrawToolBarSeparator (dc, item);
 				break;
 
 			case ToolBarButtonStyle.ToggleButton:
-				DrawToolBarToggleButtonBackground (dc, button);
-				DrawToolBarButtonContents (dc, control, button, format);
+				DrawToolBarToggleButtonBackground (dc, item);
+				DrawToolBarButtonContents (dc, control, item, format);
 				break;
 
 			default:
-				DrawToolBarButtonContents (dc, control, button, format);
+				DrawToolBarButtonContents (dc, control, item, format);
 				break;
 			}
 		}
 
 		const Border3DSide all_sides = Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom;
 
-		protected virtual void DrawToolBarButtonBorder (Graphics dc, ToolBarButton button, bool is_flat)
+		protected virtual void DrawToolBarButtonBorder (Graphics dc, ToolBarItem item, bool is_flat)
 		{
-			if (button.Style == ToolBarButtonStyle.Separator)
+			if (item.Button.Style == ToolBarButtonStyle.Separator)
 				return;
 
 			Border3DStyle style;
 
 			if (is_flat) {
-				if (button.Pushed || button.Pressed)
+				if (item.Button.Pushed || item.Pressed)
 					style = Border3DStyle.SunkenOuter;
-				else if (button.Hilight)
+				else if (item.Hilight)
 					style = Border3DStyle.RaisedInner;
 				else
 					return;
 
 			} else {
-				if (button.Pushed || button.Pressed)
+				if (item.Button.Pushed || item.Pressed)
 					style = Border3DStyle.Sunken;
 				else 
 					style = Border3DStyle.Raised;
 			}
 			
-			Rectangle rect = button.Rectangle;
-			if ((button.Style == ToolBarButtonStyle.DropDownButton) && (button.Parent.DropDownArrows) && is_flat)
+			Rectangle rect = item.Rectangle;
+			if ((item.Button.Style == ToolBarButtonStyle.DropDownButton) && (item.Button.Parent.DropDownArrows) && is_flat)
 				rect.Width -= ToolBarDropDownWidth;
 
 			CPDrawBorder3D (dc, rect, style, all_sides);
 		}
 
-		protected virtual void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
+		protected virtual void DrawToolBarSeparator (Graphics dc, ToolBarItem item)
 		{
-			Rectangle area = button.Rectangle;
+			Rectangle area = item.Rectangle;
 			int offset = (int) SystemPens.Control.Width + 1;
 			dc.DrawLine (SystemPens.ControlDark, area.X + 1, area.Y, area.X + 1, area.Bottom);
 			dc.DrawLine (SystemPens.ControlLight, area.X + offset, area.Y, area.X + offset, area.Bottom);
 		}
 
-		protected virtual void DrawToolBarToggleButtonBackground (Graphics dc, ToolBarButton button)
+		protected virtual void DrawToolBarToggleButtonBackground (Graphics dc, ToolBarItem item)
 		{
 			Brush brush;
-			Rectangle area = button.Rectangle;
+			Rectangle area = item.Rectangle;
 			area.X += ToolBarImageGripWidth;
 			area.Y += ToolBarImageGripWidth;
 			area.Width -= 2 * ToolBarImageGripWidth;
 			area.Height -= 2 * ToolBarImageGripWidth;
 			
-			if (button.Pushed)
+			if (item.Button.Pushed)
 				brush = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorScrollBar, ColorControlLightLight);
-			else if (button.PartialPush)
+			else if (item.Button.PartialPush)
 				brush = SystemBrushes.ControlLight;
 			else
 				brush = SystemBrushes.Control;
@@ -4692,23 +4692,23 @@ namespace System.Windows.Forms
 			dc.FillRectangle (brush, area);
 		}
 
-		protected virtual void DrawToolBarDropDownArrow (Graphics dc, ToolBarButton button, bool is_flat)
+		protected virtual void DrawToolBarDropDownArrow (Graphics dc, ToolBarItem item, bool is_flat)
 		{
-			Rectangle rect = button.Rectangle;
-			rect.X = button.Rectangle.Right - ToolBarDropDownWidth;
+			Rectangle rect = item.Rectangle;
+			rect.X = item.Rectangle.Right - ToolBarDropDownWidth;
 			rect.Width = ToolBarDropDownWidth;
 			
 			if (is_flat) {
-				if (button.dd_pressed)
+				if (item.DDPressed)
 					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
-				else if (button.Pushed || button.Pressed)
+				else if (item.Button.Pushed || item.Pressed)
 					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
-				else if (button.Hilight)
+				else if (item.Hilight)
 					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedInner, all_sides);
 			} else {
-				if (button.dd_pressed)
+				if (item.DDPressed)
 					CPDrawBorder3D (dc, rect, Border3DStyle.Flat, all_sides);
-				else if (button.Pushed || button.Pressed)
+				else if (item.Button.Pushed || item.Pressed)
 					CPDrawBorder3D (dc, Rectangle.Inflate(rect, -1, -1), Border3DStyle.SunkenOuter, all_sides);
 				else
 					CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
@@ -4718,7 +4718,7 @@ namespace System.Windows.Forms
 			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height / 2));
 			
 			// Increase vertical and horizontal position by 1 when button is pressed
-			if (button.Pressed || button.Pushed || button.dd_pressed) {
+			if (item.Pressed || item.Button.Pushed || item.DDPressed) {
 			    ddCenter.X += 1;
 			    ddCenter.Y += 1;
 			}
@@ -4732,37 +4732,37 @@ namespace System.Windows.Forms
 			dc.FillPolygon (SystemBrushes.ControlText, vertices);
 		}
 
-		protected virtual void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected virtual void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarItem item, StringFormat format)
 		{
-			if (button.Image != null) {
-				int x = button.ImageRectangle.X + ToolBarImageGripWidth;
-				int y = button.ImageRectangle.Y + ToolBarImageGripWidth;
+			if (item.Button.Image != null) {
+				int x = item.ImageRectangle.X + ToolBarImageGripWidth;
+				int y = item.ImageRectangle.Y + ToolBarImageGripWidth;
 				
 				// Increase vertical and horizontal position by 1 when button is pressed
-				if (button.Pressed || button.Pushed) {
+				if (item.Pressed || item.Button.Pushed) {
 				    x += 1;
 				    y += 1;
 				}
 				
-				if (button.Enabled)
-					dc.DrawImage (button.Image, x, y);
+				if (item.Button.Enabled)
+					dc.DrawImage (item.Button.Image, x, y);
 				else 
-					CPDrawImageDisabled (dc, button.Image, x, y, ColorControl);
+					CPDrawImageDisabled (dc, item.Button.Image, x, y, ColorControl);
 			}
 
-			Rectangle text_rect = button.TextRectangle;
+			Rectangle text_rect = item.TextRectangle;
 			if (text_rect.Width <= 0 || text_rect.Height <= 0)
 				return;
 
-			if (button.Pressed || button.Pushed) {
+			if (item.Pressed || item.Button.Pushed) {
 				text_rect.X += 1;
 				text_rect.Y += 1;
 			}
 			
-			if (button.Enabled)
-				dc.DrawString (button.Text, control.Font, SystemBrushes.ControlText, text_rect, format);
+			if (item.Button.Enabled)
+				dc.DrawString (item.Button.Text, control.Font, SystemBrushes.ControlText, text_rect, format);
 			else
-				CPDrawStringDisabled (dc, button.Text, control.Font, control.BackColor, text_rect, format);
+				CPDrawStringDisabled (dc, item.Button.Text, control.Font, control.BackColor, text_rect, format);
 		}
 
 		// Grip width for the ToolBar

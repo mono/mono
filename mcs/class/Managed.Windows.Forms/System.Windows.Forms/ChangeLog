@@ -1,3 +1,26 @@
+2007-03-15  Everaldo Canuto  <everaldo@simios.org>
+
+	[ Fixes bug #79828 ]
+
+	* ToolBar.cs:
+	- Rename ToolBarButtonInfor to ToolBarItem.
+	- Add all layout and calculation stuff gtom ToolBarButton to ToolBarItem.
+	- Maintain an array of ToolBarItem, used instead of ToolBarButton
+	collection to be able add same button more than one time on a toolbar.
+	- Refactory all properties and methods to use ToolBarItem. 
+
+	* ToolBarButton.cs: 
+	- Remove all propeties and methods that is now in ToolBarItem.
+	- Rectangle propery now gets the rectangle from first ToolBarItem to
+	mimic win32 behavior.
+	- Size calculation and layout methods also removed.
+
+	* ThemeWin32Classic.cs: Change all ToolBar drawing methods to receive
+	ToolBarItem instead of ToolBarButton to right drawing buttons when
+	same button/separator was added more than one time to ToolBar.
+
+	* ThemeNice.cs: Same as above. 
+
 2007-03-15  Andreia Gaita  <avidigal@novell.com>
 
 	* XplatUIX11.cs: Fire extra MouseMove events right after

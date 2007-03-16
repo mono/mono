@@ -24,14 +24,8 @@
 //	Mike Kestner <mkestner@novell.com>
 //	Everaldo Canuto <ecanuto@novell.com>
 //
-// TODO:
-//   - Tooltip
-//
 // Copyright (C) 2004-2006  Novell, Inc. (http://www.novell.com)
 //
-
-
-// NOT COMPLETE
 
 using System.Collections;
 using System.ComponentModel;
@@ -50,7 +44,8 @@ namespace System.Windows.Forms
 	{
 		#region Instance Variables
 		private bool size_specified = false;
-		private ToolBarButton current_button;
+		private ToolBarItem current_item;
+		internal ToolBarItem[] items;
 		#endregion Instance Variables
 
 		#region Events
@@ -469,10 +464,10 @@ namespace System.Windows.Forms
 				else
 					e.Button.Pushed = false;
 			}
-			e.Button.pressed = false;
-
-			e.Button.Invalidate ();
-
+			
+			current_item.Pressed = false;
+			current_item.Invalidate ();
+			
 			ToolBarButtonClickEventHandler eh = (ToolBarButtonClickEventHandler)(Events [ButtonClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -487,11 +482,12 @@ namespace System.Windows.Forms
 			if (e.Button.DropDownMenu == null)
 				return;
 
-			Point loc = new Point (e.Button.Rectangle.X + 1, e.Button.Rectangle.Bottom + 1);
+			Point loc = new Point (current_item.Rectangle.X + 1, current_item.Rectangle.Bottom + 1);
 			((ContextMenu) e.Button.DropDownMenu).Show (this, loc);
 
-			e.Button.dd_pressed = false;
-			Invalidate (e.Button.Rectangle);
+			current_item.DDPressed = false;
+			current_item.Hilight = false;
+			Invalidate (current_item.Rectangle);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -549,18 +545,18 @@ namespace System.Windows.Forms
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return;
 
-			ToolBarButton prelit = null;
-			foreach (ToolBarButton b in Buttons) {
-				if (b.Hilight) {
-					prelit = b;
+			ToolBarItem prelit = null;
+			foreach (ToolBarItem item in items) {
+				if (item.Hilight) {
+					prelit = item;
 					break;
 				}
 			}
 
 			if (Focused && prelit == null) {
-				foreach (ToolBarButton btn in Buttons) {
-					if (btn.Enabled) {
-						btn.Hilight = true;
+				foreach (ToolBarItem item in items) {
+					if (item.Button.Enabled) {
+						item.Hilight = true;
 						break;
 					}
 				}
@@ -593,15 +589,15 @@ namespace System.Windows.Forms
 			ArrayList enabled = new ArrayList ();
 			int count = 0;
 			int start = -1;
-			ToolBarButton curr_button = null;
-			foreach (ToolBarButton btn in Buttons) {
-				if (btn.Hilight) {
+			ToolBarItem curr_item = null;
+			foreach (ToolBarItem item in items) {
+				if (item.Hilight) {
 					start = count;
-					curr_button = btn;
+					curr_item = item;
 				}
 
-				if (btn.Enabled) {
-					enabled.Add (btn);
+				if (item.Button.Enabled) {
+					enabled.Add (item);
 					count++;
 				}
 			}
@@ -613,9 +609,9 @@ namespace System.Windows.Forms
 			if (next == start)
 				return;
 
-			if (curr_button != null)
-				curr_button.Hilight = false;
-			(enabled [next] as ToolBarButton).Hilight = true;
+			if (curr_item != null)
+				curr_item.Hilight = false;
+			(enabled [next] as ToolBarItem).Hilight = true;
 		}
 
 		private void ToolBar_BackgroundImageChanged (object sender, EventArgs args)
@@ -630,7 +626,7 @@ namespace System.Windows.Forms
 
 			Point loc = new Point (me.X, me.Y);
 
-			if (ButtonAtPoint (loc) == null)
+			if (ItemAtPoint (loc) == null)
 				return;
 			
 			// Hide tooltip when left mouse button 
@@ -640,28 +636,28 @@ namespace System.Windows.Forms
 			}
 			
 			// draw the pushed button
-			foreach (ToolBarButton button in buttons) {
-				if (button.Enabled && button.Rectangle.Contains (loc)) {
+			foreach (ToolBarItem item in items) {
+				if (item.Button.Enabled && item.Rectangle.Contains (loc)) {
 					// Mark the DropDown rect as pressed.
 					// We don't redraw the dropdown rect.
-					if (button.Style == ToolBarButtonStyle.DropDownButton) {
-						Rectangle rect = button.Rectangle;
+					if (item.Button.Style == ToolBarButtonStyle.DropDownButton) {
+						Rectangle rect = item.Rectangle;
 						if (DropDownArrows) {
 							rect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
-							rect.X = button.Rectangle.Right - rect.Width;
+							rect.X = item.Rectangle.Right - rect.Width;
 						}
 						
 						if (rect.Contains (loc)) {
-							if (button.DropDownMenu != null) {
-								button.dd_pressed = true;
+							if (item.Button.DropDownMenu != null) {
+								item.DDPressed = true;
 								Invalidate (rect);
 							}
 							break;
 						}
 					}
-					button.pressed = true;
-					button.inside = true;
-					button.Invalidate ();
+					item.Pressed = true;
+					item.Inside = true;
+					item.Invalidate ();
 					break;
 				}
 			}
@@ -676,34 +672,36 @@ namespace System.Windows.Forms
 
 			// draw the normal button
 			// Make a copy in case the list is modified during enumeration
-			ArrayList buttons = new ArrayList (this.buttons);
-			foreach (ToolBarButton button in buttons) {
-				if (button.Enabled && button.Rectangle.Contains (loc)) {
-					if (button.Style == ToolBarButtonStyle.DropDownButton) {
-						Rectangle ddRect = button.Rectangle;
+			ArrayList items = new ArrayList (this.items);
+			foreach (ToolBarItem item in items) {
+				if (item.Button.Enabled && item.Rectangle.Contains (loc)) {
+					if (item.Button.Style == ToolBarButtonStyle.DropDownButton) {
+						Rectangle ddRect = item.Rectangle;
 						ddRect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
-						ddRect.X = button.Rectangle.Right - ddRect.Width;
+						ddRect.X = item.Rectangle.Right - ddRect.Width;
 						if (ddRect.Contains (loc)) {
-							if (button.dd_pressed)
-								OnButtonDropDown (new ToolBarButtonClickEventArgs (button));
+							current_item = item;
+							if (item.DDPressed)
+								OnButtonDropDown (new ToolBarButtonClickEventArgs (item.Button));
 							continue;
 						}
 					}
 					// Fire a ButtonClick
-					if ((button.pressed) && ((me.Button & MouseButtons.Left) == MouseButtons.Left))
-						OnButtonClick (new ToolBarButtonClickEventArgs (button));
-				} else if (button.pressed) {
-					button.pressed = false;
-					button.Invalidate ();
+					current_item = item;
+					if ((item.Pressed) && ((me.Button & MouseButtons.Left) == MouseButtons.Left))
+						OnButtonClick (new ToolBarButtonClickEventArgs (item.Button));
+				} else if (item.Pressed) {
+					item.Pressed = false;
+					item.Invalidate ();
 				}
 			}
 		}
 
-		private ToolBarButton ButtonAtPoint (Point pt)
+		private ToolBarItem ItemAtPoint (Point pt)
 		{
-			foreach (ToolBarButton button in buttons)
-				if (button.Rectangle.Contains (pt)) 
-					return button;
+			foreach (ToolBarItem item in items)
+				if (item.Rectangle.Contains (pt)) 
+					return item;
 
 			return null;
 		}
@@ -736,13 +734,13 @@ namespace System.Windows.Forms
 			if (tip_window == null)
 				tip_window = new ToolTip.ToolTipWindow ();
 
-			ToolBarButton btn = ButtonAtPoint (PointToClient (Control.MousePosition));
-			current_button = btn;
+			ToolBarItem item = ItemAtPoint (PointToClient (Control.MousePosition));
+			current_item = item;
 
-			if (btn == null || btn.ToolTipText.Length == 0)
+			if (item == null || item.Button.ToolTipText.Length == 0)
 				return;
 
-			tip_window.Present (this, btn.ToolTipText);
+			tip_window.Present (this, item.Button.ToolTipText);
 			TipDownTimer.Start ();
 		}
 
@@ -755,11 +753,11 @@ namespace System.Windows.Forms
 				tip_window.Dispose ();
 			tip_window = null;
 
-			if (!Enabled || current_button == null) 
+			if (!Enabled || current_item == null) 
 				return;
 
-			current_button.Hilight = false;
-			current_button = null;
+			current_item.Hilight = false;
+			current_item = null;
 		}
 
 		private void ToolBar_MouseMove (object sender, MouseEventArgs me)
@@ -777,22 +775,22 @@ namespace System.Windows.Forms
 			if (Capture) {
 				// If the button was pressed and we leave, release the 
 				// button press and vice versa
-				foreach (ToolBarButton button in buttons) {
-					if (button.pressed &&
-					    (button.inside != button.Rectangle.Contains (loc))) {
-						button.inside = button.Rectangle.Contains (loc);
-						button.Hilight = false;
+				foreach (ToolBarItem item in items) {
+					if (item.Pressed &&
+					    (item.Inside != item.Rectangle.Contains (loc))) {
+						item.Inside = item.Rectangle.Contains (loc);
+						item.Hilight = false;
 						break;
 					}
 				}
 				return;
 			} 
 
-			if (current_button != null && current_button.Rectangle.Contains (loc)) {
+			if (current_item != null && current_item.Rectangle.Contains (loc)) {
 				if (appearance == ToolBarAppearance.Flat) {
-					if (current_button.Hilight || current_button.Pushed || !current_button.Enabled)
+					if (current_item.Hilight || current_item.Button.Pushed || !current_item.Button.Enabled)
 						return;
-					current_button.Hilight = true;
+					current_item.Hilight = true;
 				}
 			} else {
 				if (tip_window != null) {
@@ -800,23 +798,23 @@ namespace System.Windows.Forms
 						tip_window.Hide ();
 						TipDownTimer.Stop ();
 					}
-					current_button = ButtonAtPoint (loc);
-					if (current_button != null && current_button.ToolTipText.Length > 0) {
-						tip_window.Present (this, current_button.ToolTipText);
+					current_item = ItemAtPoint (loc);
+					if (current_item != null && current_item.Button.ToolTipText.Length > 0) {
+						tip_window.Present (this, current_item.Button.ToolTipText);
 						TipDownTimer.Start ();
 					}
 				}
 
 				if (appearance == ToolBarAppearance.Flat) {
-					foreach (ToolBarButton button in buttons) {
-						if (button.Rectangle.Contains (loc) && button.Enabled) {
-							current_button = button;
-							if (current_button.Hilight || current_button.Pushed)
+					foreach (ToolBarItem item in items) {
+						if (item.Rectangle.Contains (loc) && item.Button.Enabled) {
+							current_item = item;
+							if (current_item.Hilight || current_item.Button.Pushed)
 								continue;
-							current_button.Hilight = true;
+							current_item.Hilight = true;
 						}
-						else if (button.Hilight) {
-							button.Hilight = false;
+						else if (item.Hilight) {
+							item.Hilight = false;
 						}
 					}
 				}
@@ -852,7 +850,7 @@ namespace System.Windows.Forms
 			get { return (Dock == DockStyle.Left) || (Dock == DockStyle.Right); }
 		}
 
-		const int text_padding = 3;
+		internal const int text_padding = 3;
 
 		private Size CalcButtonSize ()
 		{
@@ -924,25 +922,30 @@ namespace System.Windows.Forms
 			
 			int separator_index = -1;
 
+			items = new ToolBarItem [buttons.Count];
+			
 			for (int i = 0; i < buttons.Count; i++) {
 				ToolBarButton button = buttons [i];
+				
+				ToolBarItem item = new ToolBarItem (button);
+				items [i] = item;
 
 				if (!button.Visible)
 					continue;
 
 				if (size_specified && (button.Style != ToolBarButtonStyle.Separator))
-					changed = button.Layout (adjusted_size);
+					changed = item.Layout (adjusted_size);
 				else
-					changed = button.Layout ();
+					changed = item.Layout ();
 				
 				bool is_separator = button.Style == ToolBarButtonStyle.Separator;
 				
 				if (Vertical) {
-					if (y + button.Rectangle.Height < Height || is_separator || !Wrappable) {
-						if (button.Location.X != x || button.Location.Y != y)
+					if (y + item.Rectangle.Height < Height || is_separator || !Wrappable) {
+						if (item.Location.X != x || item.Location.Y != y)
 							changed = true;
-						button.Location = new Point (x, y);
-						y += button.Rectangle.Height;
+						item.Location = new Point (x, y);
+						y += item.Rectangle.Height;
 						if (is_separator)
 							separator_index = i;
 					} else if (separator_index > 0) {
@@ -953,17 +956,17 @@ namespace System.Windows.Forms
 					} else {
 						y = theme.ToolBarGripWidth;
 						x += calculated_size; 
-						if (button.Location.X != x || button.Location.Y != y)
+						if (item.Location.X != x || item.Location.Y != y)
 							changed = true;
-						button.Location = new Point (x, y);
-						y += button.Rectangle.Height;
+						item.Location = new Point (x, y);
+						y += item.Rectangle.Height;
 					}
 				} else {
-					if (x + button.Rectangle.Width < Width || is_separator || !Wrappable) {
-						if (button.Location.X != x || button.Location.Y != y)
+					if (x + item.Rectangle.Width < Width || is_separator || !Wrappable) {
+						if (item.Location.X != x || item.Location.Y != y)
 							changed = true;
-						button.Location = new Point (x, y);
-						x += button.Rectangle.Width;
+						item.Location = new Point (x, y);
+						x += item.Rectangle.Width;
 						if (is_separator)
 							separator_index = i;
 					} else if (separator_index > 0) {
@@ -974,10 +977,10 @@ namespace System.Windows.Forms
 					} else {
 						x = theme.ToolBarGripWidth;
 						y += calculated_size; 
-						if (button.Location.X != x || button.Location.Y != y)
+						if (item.Location.X != x || item.Location.Y != y)
 							changed = true;
-						button.Location = new Point (x, y);
-						x += button.Rectangle.Width;
+						item.Location = new Point (x, y);
+						x += item.Rectangle.Width;
 					}
 				}
 			}
@@ -1177,171 +1180,207 @@ namespace System.Windows.Forms
 			#endregion methods
 		}
 		
-		// Because same button can be added to toolbar multiple times, we need to maintain
-		// a list of button information for each positions. 
-		internal class ToolBarButtonInfo : Component
-		{
-			#region Instance variables
-			
-			private ToolBar       toolbar;    // Parent toolbar
-			private ToolBarButton button;     // Associated toolBar button 
-			private Rectangle     bounds;     // Toolbar button bounds
-			private Rectangle     image_rect; // Image button bounds
-			private Rectangle     text_rect;  // Text button bounds
-
-			private bool dd_pressed = false;  // to check for a mouse down on dropdown rect
-			private bool hilight    = false;  // to hilight buttons in flat style
-			private bool inside     = false;  // to handle the mouse move event with mouse pressed
-			private bool pressed    = false;  // this is to check for mouse down on a button
-			
-			#endregion
-			
-			#region Constructors
-			
-			public ToolBarButtonInfo (ToolBarButton button)
-			{
-				this.toolbar = button.Parent;
-				this.button  = button;
-			}
-			
-			#endregion Constructors
-		
-			#region Properties
-
-			public ToolBarButton Button {
-				get { return this.button; }
-			}
-			
-			public Rectangle Rectangle {
-				get { return this.bounds; }
-			}
-		
-			public Rectangle ImageRectangle {
-				get {
-					Rectangle result = image_rect;
-					result.X += bounds.X;
-					result.Y += bounds.Y;
-					return result; 
-				}
-			}
-			
-			public Rectangle TextRectangle {
-				get { 
-					Rectangle result = text_rect;
-					result.X += bounds.X;
-					result.Y += bounds.Y;
-					return result; 
-				}
-			}
-
-			private Size TextSize {
-				get {
-					StringFormat text_format = new StringFormat ();
-					text_format.HotkeyPrefix = HotkeyPrefix.Hide;
-
-					SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font, SizeF.Empty, text_format);
-					if (sz == SizeF.Empty)
-						return Size.Empty;
-					return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
-				}
-			}
-			
-			public bool Pressed {
-				get { return (pressed && inside); }
-				set { pressed = value; }
-			}
-			
-			#endregion Properties
-			
-			#region Methods
-
-			public static ToolBarButtonInfo [] GetArray (ToolBarButtonCollection collection)
-			{
-				ToolBarButtonInfo[] info_array = new ToolBarButtonInfo [collection.Count];
-				
-				return info_array;
-			}
-			
-			private Size CalculateSize ()
-			{
-				if (toolbar == null)
-					return Size.Empty;
-
-				Theme theme = ThemeEngine.Current;
-
-				int ht = toolbar.ButtonSize.Height + 2 * theme.ToolBarGripWidth;
-
-				if (button.Style == ToolBarButtonStyle.Separator)
-					return new Size (theme.ToolBarSeparatorWidth, ht);
-
-				Size size = TextSize;
-				Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
-
-				int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
-				int image_height = image_size.Height + 2 * theme.ToolBarImageGripWidth; 
-
-				if (toolbar.TextAlign == ToolBarTextAlign.Right) {
-					size.Width =  image_width + size.Width;
-					size.Height = (size.Height > image_height) ? size.Height : image_height;
-				} else {
-					size.Height = image_height + size.Height;
-					size.Width = (size.Width > image_width) ? size.Width : image_width;
-				}
-
-				size.Width += theme.ToolBarGripWidth;
-				size.Height += theme.ToolBarGripWidth;
-				return size;
-			}
-			
-			public bool Layout ()
-			{
-				if (toolbar == null || !button.Visible)
-					return false;
+		#endregion subclass
+	}
 	
-				Size psize = toolbar.ButtonSize;
-				Size size = psize;
-				if ((!toolbar.SizeSpecified) || (button.Style == ToolBarButtonStyle.Separator)) {
-					size = CalculateSize ();
-					if (size.Width == 0 || size.Height == 0)
-						size = psize;
+	
+	// Because same button can be added to toolbar multiple times, we need to maintain
+	// a list of button information for each positions. 
+	internal class ToolBarItem : Component
+	{
+		#region Instance variables
+		
+		private ToolBar       toolbar;    // Parent toolbar
+		private ToolBarButton button;     // Associated toolBar button 
+		private Rectangle     bounds;     // Toolbar button bounds
+		private Rectangle     image_rect; // Image button bounds
+		private Rectangle     text_rect;  // Text button bounds
+
+		private bool dd_pressed = false;  // to check for a mouse down on dropdown rect
+		private bool inside     = false;  // to handle the mouse move event with mouse pressed
+		private bool hilight    = false;  // to hilight buttons in flat style
+		private bool pressed    = false;  // this is to check for mouse down on a button
+		
+		#endregion
+		
+		#region Constructors
+		
+		public ToolBarItem (ToolBarButton button)
+		{
+			this.toolbar = button.Parent;
+			this.button  = button;
+		}
+		
+		#endregion Constructors
+	
+		#region Properties
+
+		public ToolBarButton Button {
+			get { return this.button; }
+		}
+		
+		public Rectangle Rectangle {
+			get { 
+				if (!button.Visible || toolbar == null)
+					return Rectangle.Empty;
+
+				if (button.Style == ToolBarButtonStyle.DropDownButton && toolbar.DropDownArrows) {
+					Rectangle result = bounds;
+					result.Width += ThemeEngine.Current.ToolBarDropDownWidth;
+					return result;
 				}
-				return Layout (size);
+				 
+				return bounds;
 			}
-			
-			public bool Layout (Size size)
-			{
-				if (toolbar == null || !button.Visible)
-					return false;
-
-				bounds.Size = size;
-
-				Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
-				int grip = ThemeEngine.Current.ToolBarImageGripWidth;
-
-				Rectangle new_image_rect, new_text_rect;
-				
-				if (toolbar.TextAlign == ToolBarTextAlign.Underneath) {
-					new_image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
-					new_text_rect = new Rectangle (0, new_image_rect.Height, bounds.Size.Width, bounds.Size.Height - new_image_rect.Height - 2 * grip);
-				} else {
-					new_image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
-					new_text_rect = new Rectangle (new_image_rect.Width, 0, bounds.Size.Width - new_image_rect.Width, bounds.Size.Height - 2 * grip);
-				}
-
-				bool changed = false;
-
-				if (new_image_rect != image_rect || new_text_rect != text_rect)
-					changed = true;
-
-				image_rect = new_image_rect;
-				text_rect = new_text_rect;
-
-				return changed;
-			}
-			
-			#endregion Methods
+			set { this.bounds = value; }
 		}
 
-		#endregion subclass
+		public Point Location {
+			get { return bounds.Location; }
+			set { bounds.Location = value; }
+		}
+
+		public Rectangle ImageRectangle {
+			get {
+				Rectangle result = image_rect;
+				result.X += bounds.X;
+				result.Y += bounds.Y;
+				return result; 
+			}
+		}
+		
+		public Rectangle TextRectangle {
+			get { 
+				Rectangle result = text_rect;
+				result.X += bounds.X;
+				result.Y += bounds.Y;
+				return result; 
+			}
+		}
+
+		private Size TextSize {
+			get {
+				StringFormat text_format = new StringFormat ();
+				text_format.HotkeyPrefix = HotkeyPrefix.Hide;
+
+				SizeF sz = toolbar.DeviceContext.MeasureString (button.Text, toolbar.Font, SizeF.Empty, text_format);
+				if (sz == SizeF.Empty)
+					return Size.Empty;
+				return new Size ((int) Math.Ceiling (sz.Width) + 2 * ToolBar.text_padding, (int) Math.Ceiling (sz.Height));
+			}
+		}
+		
+		public bool Pressed {
+			get { return (pressed && inside); }
+			set { pressed = value; }
+		}
+
+		public bool DDPressed {
+			get { return dd_pressed; }
+			set { dd_pressed = value; }
+		}
+
+		public bool Inside {
+			get { return inside; }
+			set { inside = value; }
+		}
+
+		public bool Hilight {
+			get { return hilight; }
+			set {
+				if (hilight == value)
+					return;
+
+				hilight = value;
+				Invalidate ();
+			}
+		}	
+		
+		#endregion Properties
+
+		#region Methods
+		
+		public Size CalculateSize ()
+		{
+			Theme theme = ThemeEngine.Current;
+
+			int ht = toolbar.ButtonSize.Height + 2 * theme.ToolBarGripWidth;
+
+			if (button.Style == ToolBarButtonStyle.Separator)
+				return new Size (theme.ToolBarSeparatorWidth, ht);
+
+			Size size = TextSize;
+			Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
+
+			int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
+			int image_height = image_size.Height + 2 * theme.ToolBarImageGripWidth; 
+
+			if (toolbar.TextAlign == ToolBarTextAlign.Right) {
+				size.Width =  image_width + size.Width;
+				size.Height = (size.Height > image_height) ? size.Height : image_height;
+			} else {
+				size.Height = image_height + size.Height;
+				size.Width = (size.Width > image_width) ? size.Width : image_width;
+			}
+
+			size.Width += theme.ToolBarGripWidth;
+			size.Height += theme.ToolBarGripWidth;
+			return size;
+		}
+
+		
+		public bool Layout ()
+		{
+			if (toolbar == null || !button.Visible)
+				return false;
+
+			Size psize = toolbar.ButtonSize;
+			Size size = psize;
+			if ((!toolbar.SizeSpecified) || (button.Style == ToolBarButtonStyle.Separator)) {
+				size = CalculateSize ();
+				if (size.Width == 0 || size.Height == 0)
+					size = psize;
+			}
+			return Layout (size);
+		}
+
+		public bool Layout (Size size)
+		{
+			if (toolbar == null || !button.Visible)
+				return false;
+
+			bounds.Size = size;
+
+			Size image_size = (toolbar.ImageSize == Size.Empty) ? new Size (16, 16) : toolbar.ImageSize;
+			int grip = ThemeEngine.Current.ToolBarImageGripWidth;
+
+			Rectangle new_image_rect, new_text_rect;
+			
+			if (toolbar.TextAlign == ToolBarTextAlign.Underneath) {
+				new_image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
+				new_text_rect = new Rectangle (0, new_image_rect.Height, bounds.Size.Width, bounds.Size.Height - new_image_rect.Height - 2 * grip);
+			} else {
+				new_image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
+				new_text_rect = new Rectangle (new_image_rect.Width, 0, bounds.Size.Width - new_image_rect.Width, bounds.Size.Height - 2 * grip);
+			}
+
+			bool changed = false;
+
+			if (new_image_rect != image_rect || new_text_rect != text_rect)
+				changed = true;
+
+			image_rect = new_image_rect;
+			text_rect = new_text_rect;
+			
+			return changed;
+		}
+		
+		public void Invalidate ()
+		{
+			if (toolbar != null)
+				toolbar.Invalidate (Rectangle);
+		}
+
+		#endregion Methods
 	}
 }

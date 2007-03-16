@@ -961,65 +961,65 @@ namespace System.Windows.Forms
 			
 			dc.FillRectangle (ResPool.GetSolidBrush( NiceBackColor ), clip_rectangle);
 			
-			foreach (ToolBarButton button in control.Buttons)
-				if (button.Visible && clip_rectangle.IntersectsWith (button.Rectangle))
-					DrawToolBarButton (dc, control, button, format);
+			foreach (ToolBarItem item in control.items)
+				if (item.Button.Visible && clip_rectangle.IntersectsWith (item.Rectangle))
+					DrawToolBarButton (dc, control, item, format);
 			
 			format.Dispose ();
 		}
 		
-		protected override void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected override void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarItem item, StringFormat format)
 		{
 			bool is_flat = control.Appearance == ToolBarAppearance.Flat;
 			
-			if (button.Style != ToolBarButtonStyle.Separator)
-				DoDrawToolBarButton (dc, button, is_flat);
+			if (item.Button.Style != ToolBarButtonStyle.Separator)
+				DoDrawToolBarButton (dc, item, is_flat);
 			
-			switch (button.Style) {
+			switch (item.Button.Style) {
 			case ToolBarButtonStyle.DropDownButton:
 				if (control.DropDownArrows)
-					DrawToolBarDropDownArrow (dc, button, is_flat);
-				DrawToolBarButtonContents (dc, control, button, format);
+					DrawToolBarDropDownArrow (dc, item, is_flat);
+				DrawToolBarButtonContents (dc, control, item, format);
 				break;
 				
 			case ToolBarButtonStyle.Separator:
 				if (is_flat)
-					DrawToolBarSeparator (dc, button);
+					DrawToolBarSeparator (dc, item);
 				break;
 				
 			case ToolBarButtonStyle.ToggleButton:
 			default:
-				DrawToolBarButtonContents (dc, control, button, format);
+				DrawToolBarButtonContents (dc, control, item, format);
 				break;
 			}
 		}
 		
 		const Border3DSide all_sides = Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom;
 		
-		void DoDrawToolBarButton (Graphics dc, ToolBarButton button, bool is_flat)
+		void DoDrawToolBarButton (Graphics dc, ToolBarItem item, bool is_flat)
 		{
 			Color use_color = NormalColor;
 			Color first_color = Color.White;
 			
 			if (is_flat) {
-				if (button.Pushed || button.Pressed) {
+				if (item.Button.Pushed || item.Pressed) {
 					first_color = PressedColor;
 					use_color = MouseOverColor;
 				} else
-				if (button.Hilight)
+				if (item.Hilight)
 					use_color = MouseOverColor;
 				else
 					return;
 			} else {
-				if (button.Pushed || button.Pressed) {
+				if (item.Button.Pushed || item.Pressed) {
 					first_color = PressedColor;
 					use_color = MouseOverColor;
 				} else
-				if (button.Hilight)
+				if (item.Hilight)
 					use_color = MouseOverColor;
 			}
 			
-			Rectangle buttonRectangle = button.Rectangle;
+			Rectangle buttonRectangle = item.Rectangle;
 			
 			Rectangle lgbRectangle = Rectangle.Inflate (buttonRectangle, -1, -1);
 			
@@ -1031,27 +1031,27 @@ namespace System.Windows.Forms
 			Internal_DrawButton (dc, buttonRectangle, BorderColor);
 		}
 		
-		protected override void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
+		protected override void DrawToolBarSeparator (Graphics dc, ToolBarItem item)
 		{
-			Rectangle area = button.Rectangle;
+			Rectangle area = item.Rectangle;
 			int offset = (int) ResPool.GetPen (ColorControl).Width + 1;
 			dc.DrawLine (ResPool.GetPen (ColorControlDark), area.X + 1, area.Y, area.X + 1, area.Bottom);
 			dc.DrawLine (ResPool.GetPen (ColorControlLight), area.X + offset, area.Y, area.X + offset, area.Bottom);
 		}
 		
-		protected override void DrawToolBarDropDownArrow (Graphics dc, ToolBarButton button, bool is_flat)
+		protected override void DrawToolBarDropDownArrow (Graphics dc, ToolBarItem item, bool is_flat)
 		{
-			Rectangle rect = button.Rectangle;
-			rect.X = button.Rectangle.Right - ToolBarDropDownWidth;
+			Rectangle rect = item.Rectangle;
+			rect.X = item.Rectangle.Right - ToolBarDropDownWidth;
 			rect.Width = ToolBarDropDownWidth;
 			
-			if (button.dd_pressed) {
+			if (item.DDPressed) {
 				CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
 				CPDrawBorder3D (dc, rect, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
-			} else if (button.Pushed || button.Pressed)
+			} else if (item.Button.Pushed || item.Pressed)
 				CPDrawBorder3D (dc, rect, Border3DStyle.Sunken, all_sides);
 			else if (is_flat) {
-				if (button.Hilight)
+				if (item.Hilight)
 					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedOuter, all_sides);
 			} else
 				CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
@@ -1067,21 +1067,21 @@ namespace System.Windows.Forms
 			dc.FillPolygon (SystemBrushes.ControlText, vertices);
 		}
 		
-		protected override void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected override void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarItem item, StringFormat format)
 		{
-			if (button.Image != null) {
-				int x = button.ImageRectangle.X + ToolBarImageGripWidth;
-				int y = button.ImageRectangle.Y + ToolBarImageGripWidth;
-				if (button.Enabled)
-					dc.DrawImage (button.Image, x, y);
+			if (item.Button.Image != null) {
+				int x = item.ImageRectangle.X + ToolBarImageGripWidth;
+				int y = item.ImageRectangle.Y + ToolBarImageGripWidth;
+				if (item.Button.Enabled)
+					dc.DrawImage (item.Button.Image, x, y);
 				else 
-					CPDrawImageDisabled (dc, button.Image, x, y, ColorControl);
+					CPDrawImageDisabled (dc, item.Button.Image, x, y, ColorControl);
 			}
 			
-			if (button.Enabled)
-				dc.DrawString (button.Text, control.Font, ResPool.GetSolidBrush (ColorControlText), button.TextRectangle, format);
+			if (item.Button.Enabled)
+				dc.DrawString (item.Button.Text, control.Font, ResPool.GetSolidBrush (ColorControlText), item.TextRectangle, format);
 			else
-				CPDrawStringDisabled (dc, button.Text, control.Font, ColorControlLight, button.TextRectangle, format);
+				CPDrawStringDisabled (dc, item.Button.Text, control.Font, ColorControlLight, item.TextRectangle, format);
 		}
 
 		#endregion	// ToolBar

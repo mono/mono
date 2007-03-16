@@ -24,7 +24,7 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //	Mike Kestner <mkestner@novell.com>
-
+//	Everaldo Canuto <ecanuto@novell.com>
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -52,32 +52,20 @@ namespace System.Windows.Forms
 		private string text = "";
 		private string tooltip = "";
 		private bool visible = true;
-		internal bool dd_pressed = false; // to check for a mouse down on dropdown rect
-		internal bool hilight = false;    // to hilight buttons in flat style
-		internal bool inside = false;     // to handle the mouse move event with mouse pressed
-		internal bool pressed = false;    // this is to check for mouse down on a button
 		#endregion
 
 		#region constructors
+		
 		public ToolBarButton () { }
 
 		public ToolBarButton (string text)
 		{
 			this.text = text;
 		}
+		
 		#endregion
 
 		#region internal properties
-		internal bool Hilight {
-			get { return hilight; }
-			set {
-				if (hilight == value)
-					return;
-
-				hilight = value;
-				Invalidate ();
-			}
-		}
 
 		internal Image Image {
 			get {
@@ -92,53 +80,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		Rectangle image_rect;
-		internal Rectangle ImageRectangle {
-			get {
-				Rectangle result = image_rect;
-				result.X += bounds.X;
-				result.Y += bounds.Y;
-				return result; 
-			}
-		}
-
-		Rectangle text_rect;
-		internal Rectangle TextRectangle {
-			get { 
-				Rectangle result = text_rect;
-				result.X += bounds.X;
-				result.Y += bounds.Y;
-				return result; 
-			}
-		}
-
-		Rectangle bounds;
-		internal Point Location {
-			get { return bounds.Location; }
-			set { 
-				if (bounds.Location == value)
-					return;
-
-				if (bounds != Rectangle.Empty)
-					Invalidate ();
-
-				bounds.Location = value;
-				Invalidate ();
-			}
-		}
-
-		internal bool Pressed {
-			get {
-				if (pressed && inside)
-					return true;
-				else
-					return false;
-			}
-			set { pressed = value; }
-		}
 		#endregion internal properties
 
 		#region properties
+
 		[DefaultValue (null)]
 		[TypeConverter (typeof (ReferenceConverter))]
 		public Menu DropDownMenu {
@@ -178,8 +123,11 @@ namespace System.Windows.Forms
 				if (value == image_index)
 					return;
 
+				bool layout = (Parent != null) && ((value == -1) || (image_index == -1));
+				
 				image_index = value;
-				if (bounds.Size != CalculateSize ())
+				
+				if (layout)
 					Parent.Redraw (true);
 				else
 					Invalidate ();
@@ -217,13 +165,12 @@ namespace System.Windows.Forms
 
 		public Rectangle Rectangle {
 			get {
-				if (Visible && Parent != null) {
-					Rectangle result = bounds;
-					if (Style == ToolBarButtonStyle.DropDownButton && Parent.DropDownArrows)
-						result.Width += ThemeEngine.Current.ToolBarDropDownWidth;
-					return result;
-				} else
-					return Rectangle.Empty;
+				if (Visible && Parent != null && Parent.items != null)
+					foreach (ToolBarItem item in Parent.items)
+						if (item.Button == this)
+							return item.Rectangle;
+					
+				return Rectangle.Empty;
 			}
 		}
 
@@ -288,9 +235,11 @@ namespace System.Windows.Forms
 					Parent.Redraw (true);
 			}
 		}
+
 		#endregion
 
 		#region internal methods
+
 		internal void SetParent (ToolBar parent)
 		{
 			if (Parent == parent)
@@ -302,94 +251,6 @@ namespace System.Windows.Forms
 			this.parent = parent;
 		}
 
-		internal bool Layout ()
-		{
-			if (Parent == null || !Visible)
-				return false;
-
-			Size psize = Parent.ButtonSize;
-			Size size = psize;
-			if ((!Parent.SizeSpecified) || (Style == ToolBarButtonStyle.Separator)) {
-				size = CalculateSize ();
-				if (size.Width == 0 || size.Height == 0)
-					size = psize;
-			}
-			return Layout (size);
-		}
-
-		internal bool Layout (Size size)
-		{
-			if (Parent == null || !Visible)
-				return false;
-
-			bounds.Size = size;
-
-			Size image_size = (Parent.ImageSize == Size.Empty) ? new Size (16, 16) : Parent.ImageSize;
-			int grip = ThemeEngine.Current.ToolBarImageGripWidth;
-
-			Rectangle new_image_rect, new_text_rect;
-			
-			if (Parent.TextAlign == ToolBarTextAlign.Underneath) {
-				new_image_rect = new Rectangle ((bounds.Size.Width - image_size.Width) / 2 - grip, 0, image_size.Width + 2 + grip, image_size.Height + 2 * grip);
-				new_text_rect = new Rectangle (0, new_image_rect.Height, bounds.Size.Width, bounds.Size.Height - new_image_rect.Height - 2 * grip);
-			} else {
-				new_image_rect = new Rectangle (0, 0, image_size.Width + 2 * grip, image_size.Height + 2 * grip);
-				new_text_rect = new Rectangle (new_image_rect.Width, 0, bounds.Size.Width - new_image_rect.Width, bounds.Size.Height - 2 * grip);
-			}
-
-			bool changed = false;
-
-			if (new_image_rect != image_rect || new_text_rect != text_rect)
-				changed = true;
-
-			image_rect = new_image_rect;
-			text_rect = new_text_rect;
-
-			return changed;
-		}
-
-		const int text_padding = 3;
-
-		Size TextSize {
-			get {
-				SizeF sz = Parent.DeviceContext.MeasureString (Text, Parent.Font);
-				if (sz == SizeF.Empty)
-					return Size.Empty;
-				return new Size ((int) Math.Ceiling (sz.Width) + 2 * text_padding, (int) Math.Ceiling (sz.Height));
-			}
-		}
-
-		Size CalculateSize ()
-		{
-			if (Parent == null)
-				return Size.Empty;
-
-			Theme theme = ThemeEngine.Current;
-
-			int ht = Parent.ButtonSize.Height + 2 * theme.ToolBarGripWidth;
-
-			if (Style == ToolBarButtonStyle.Separator)
-				return new Size (theme.ToolBarSeparatorWidth, ht);
-
-			Size size = TextSize;
-			Size image_size = (Parent.ImageSize == Size.Empty) ? new Size (16, 16) : Parent.ImageSize;
-
-			int image_width = image_size.Width + 2 * theme.ToolBarImageGripWidth; 
-			int image_height = image_size.Height + 2 * theme.ToolBarImageGripWidth; 
-
-			if (Parent.TextAlign == ToolBarTextAlign.Right) {
-				size.Width =  image_width + size.Width;
-				size.Height = (size.Height > image_height) ? size.Height : image_height;
-			} else {
-				size.Height = image_height + size.Height;
-				size.Width = (size.Width > image_width) ? size.Width : image_width;
-			}
-
-			size.Width += theme.ToolBarGripWidth;
-			size.Height += theme.ToolBarGripWidth;
-			return size;
-		}
-
 		internal void Invalidate ()
 		{
 			if (Parent != null)
@@ -399,6 +260,7 @@ namespace System.Windows.Forms
 		#endregion Internal Methods
 
 		#region methods
+
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
@@ -408,6 +270,7 @@ namespace System.Windows.Forms
 		{
 			return string.Format ("ToolBarButton: {0}, Style: {1}", text, style);
 		}
+		
 		#endregion
 	}
 }
