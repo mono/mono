@@ -893,6 +893,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void TopLevelTest ()
 		{
 			Form main, child1;
