@@ -91,7 +91,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[Ignore ("this fails when using MS GDI+ - with or without Mono")]
+		[Ignore ("this does not work when using MS GDI+ - with or without Mono")]
 		public void Region_Ctor_RegionData ()
 		{
 			Region region = new Region (new GraphicsPath ());
