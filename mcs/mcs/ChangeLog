@@ -1,3 +1,8 @@
+2007-03-16  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (TriState): Remove.
+	(FlowBranching.Reachability.barriers): Make boolean.
+
 2007-03-15  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnomymousMethod): Can be now hosted in generic container.

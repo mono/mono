@@ -17,13 +17,6 @@ using System.Diagnostics;
 
 namespace Mono.CSharp
 {
-	public enum TriState : byte {
-		// Never < Sometimes < Always
-		Never,
-		Sometimes,
-		Always
-	}
-
 	// <summary>
 	//   A new instance of this class is created every time a new block is resolved
 	//   and if there's branching in the block's control flow.
@@ -76,13 +69,13 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			TriState barrier;
+			bool barrier;
 
-			public TriState Barrier {
+			public bool Barrier {
 				get { return barrier; }
 			}
 
-			Reachability (TriState barrier)
+			Reachability (bool barrier)
 			{
 				this.barrier = barrier;
 			}
@@ -92,76 +85,33 @@ namespace Mono.CSharp
 				return new Reachability (barrier);
 			}
 
-			public static TriState TriState_Meet (TriState a, TriState b)
-			{
-				// (1) if both are Never, return Never
-				// (2) if both are Always, return Always
-				// (3) otherwise, return Sometimes
-				// note that (3) => (3') if both are Sometimes, return Sometimes
-				return a == b ? a : TriState.Sometimes;
-			}
-
-			public static TriState TriState_Max (TriState a, TriState b)
-			{
-				return ((byte) a > (byte) b) ? a : b;
-			}
-
 			public void Meet (Reachability b)
 			{
-				barrier = TriState_Meet (barrier, b.barrier);
+				barrier &= b.barrier;
 			}
 
 			public void Or (Reachability b)
 			{
-				barrier = TriState_Max (barrier, b.barrier);
+				barrier |= b.barrier;
 			}
 
 			public static Reachability Always ()
 			{
-				return new Reachability (TriState.Never);
-			}
-
-			TriState Unreachable {
-				get { return barrier; }
-			}
-
-			TriState Reachable {
-				get {
-					TriState unreachable = Unreachable;
-					if (unreachable == TriState.Sometimes)
-						return TriState.Sometimes;
-					return unreachable == TriState.Always ? TriState.Never : TriState.Always;
-				}
-			}
-
-			public bool AlwaysHasBarrier {
-				get { return barrier == TriState.Always; }
+				return new Reachability (false);
 			}
 
 			public bool IsUnreachable {
-				get { return Unreachable == TriState.Always; }
+				get { return barrier; }
 			}
 
 			public void SetBarrier ()
 			{
-				barrier = TriState.Always;
-			}
-
-			static string ShortName (TriState t)
-			{
-				switch (t) {
-				case TriState.Never:
-					return "N";
-				case TriState.Sometimes:
-					return "S";
-				default:
-					return "A";
-				}
+				barrier = true;
 			}
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}:{1}]", ShortName (barrier), ShortName (Reachable));
+				return String.Format ("[{0}]", barrier);
 			}
 		}
 
