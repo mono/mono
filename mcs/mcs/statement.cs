@@ -261,7 +261,7 @@ namespace Mono.CSharp {
 			
 			ok &= TrueStatement.Resolve (ec);
 
-			is_true_ret = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.CurrentBranching.CreateSibling ();
 
@@ -347,14 +347,14 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 
-			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
 			ec.EndFlowBranching ();
 
-			if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable && !was_unreachable)
+			if (ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable && !was_unreachable)
 				Report.Warning (162, 2, expr.Location, "Unreachable code detected");
 
 			expr = Expression.ResolveBoolean (ec, expr, loc);
@@ -573,7 +573,7 @@ namespace Mono.CSharp {
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
-			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
 			if (!Statement.Resolve (ec))
@@ -581,7 +581,7 @@ namespace Mono.CSharp {
 			ec.EndFlowBranching ();
 
 			if (Increment != null){
-				if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable) {
+				if (ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable) {
 					if (!Increment.ResolveUnreachable (ec, !was_unreachable))
 						ok = false;
 				} else {
@@ -2297,7 +2297,7 @@ namespace Mono.CSharp {
 
 				num_statements = ix + 1;
 
-				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+				unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 				if (unreachable && s is LabeledStatement)
 					throw new InternalErrorException ("should not happen");
 			}
@@ -2319,7 +2319,7 @@ namespace Mono.CSharp {
 			// initializer, then we must initialize all of the struct's fields.
 			if ((flags & Flags.IsToplevel) != 0 && 
 			    !Toplevel.IsThisAssigned (ec) &&
-			    !vector.IsUnreachable)
+			    !vector.Reachability.IsUnreachable)
 				ok = false;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
@@ -2331,7 +2331,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, vector);
 
-			if (vector.IsUnreachable)
+			if (vector.Reachability.IsUnreachable)
 				flags |= Flags.HasRet;
 
 			if (ok && (errors == Report.Errors)) {
@@ -3606,10 +3606,11 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.CreateSibling (
 					null, FlowBranching.SiblingType.SwitchSection);
 
-			ec.EndFlowBranching ();
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			ec.Switch = old_switch;
 
-			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching);
+			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching,
+				      reachability);
 
 			return true;
 		}
@@ -4135,8 +4136,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			bool flow_unreachable = ec.EndFlowBranching ();
-			has_ret = flow_unreachable;
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+			has_ret = reachability.IsUnreachable;
 
 			return true;
 		}
