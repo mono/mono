@@ -1021,6 +1021,8 @@ namespace MonoTests.System.Windows.Forms
 			IWindowTarget new_target = new TestWindowTarget ();
 			c.WindowTarget = new_target;
 			Assert.AreSame (new_target, c.WindowTarget, "WindowTarget3");
+			
+			TestHelper.RemoveWarning (existing_target);
 		}
 
 		[Test]

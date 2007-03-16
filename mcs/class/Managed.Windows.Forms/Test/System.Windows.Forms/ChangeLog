@@ -1,5 +1,9 @@
 2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* MdiFormTest.cs, ControlTest.cs: Remove a warning.
+
+2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ApplicationContextTest.cs: Added NotWorking test for nested
 	  application contexts.
 	* ControlHandleTest.cs: Comment out the dnd tests, they create a form

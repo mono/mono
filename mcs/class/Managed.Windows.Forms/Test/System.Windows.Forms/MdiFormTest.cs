@@ -895,7 +895,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TopLevelTest ()
 		{
-			Form main, child1, child2;
+			Form main, child1;
 
 			main = new Form ();
 			main.IsMdiContainer = true;
