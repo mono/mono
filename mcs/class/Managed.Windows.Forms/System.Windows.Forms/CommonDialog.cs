@@ -45,6 +45,7 @@ namespace System.Windows.Forms {
 				MaximizeBox = false;
 				ShowInTaskbar = false;
 				FormBorderStyle = FormBorderStyle.Sizable;
+				StartPosition = FormStartPosition.CenterScreen;
 			}
 			#endregion DialogForm Constructors
 
@@ -64,8 +65,6 @@ namespace System.Windows.Forms {
 
 			#region Internal Methods
 			internal DialogResult RunDialog () {
-				this.StartPosition = FormStartPosition.CenterScreen;
-
 				owner.InitFormsSize (this);
 
 				this.ShowDialog ();

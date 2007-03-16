@@ -1,5 +1,11 @@
 2007-03-15  Everaldo Canuto  <everaldo@simios.org>
 
+	* CommonDialog.cs: Set StartPosition to CenterScreen on form's constructor.
+	Fixes #79560 and #80200, it also fix problem in	FileDialog, SaveDialog, 
+	ColorDialog and all derived classes.
+
+2007-03-15  Everaldo Canuto  <everaldo@simios.org>
+
 	[ Fixes bug #79828 ]
 
 	* ToolBar.cs:
