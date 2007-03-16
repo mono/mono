@@ -1,3 +1,9 @@
+2007-03-16  Andreia Gaita  <avidigal@novell.com>
+	
+	* SqlParameter.cs: Move isVariableSizeType flag to TdsMetaParameter
+	so that the TdsMetaParameter can validate itself for valid size / values.
+	* SqlCommand.cs (Execute): Call Validate on TdsMetaParameter.
+
 2007-03-14  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommand.cs (CommandType): Exception type thrown in 2.0

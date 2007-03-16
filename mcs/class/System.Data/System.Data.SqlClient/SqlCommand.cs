@@ -362,27 +362,9 @@ namespace System.Data.SqlClient {
                         Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			foreach (TdsMetaParameter param in parms) {
-				bool flag = false;
-				string type = "";
-				if (param.Size == 0) {
-					switch (param.TypeName) {
-					case "nvarchar":
-						type = "String";
-						flag = true;
-						break;
-					case "varbinary":
-						type = "Byte[]";
-						flag = true;
-						break;
-					}
-				}
-				if (flag == true)
-					throw new InvalidOperationException (String.Format ("{0}[{1}]: the Size property should " +
-											    "not be of size 0",
-											    type,
-											    index));
-				index++;
+				param.Validate (index++);
 			}
+
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
 				bool keyInfo = ((behavior & CommandBehavior.KeyInfo) > 0);

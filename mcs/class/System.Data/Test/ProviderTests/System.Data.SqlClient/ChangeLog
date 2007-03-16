@@ -1,3 +1,8 @@
+2007-03-16  Andreia Gaita  <avidigal@novell.com>
+
+	* SqlCommandTest.cs: Add OutputParamSizeTest1-4 to test size/value
+	validation exception. 
+
 2007-03-14  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommandTest.cs (ExecuteScalarTest, ExecuteReaderTest)

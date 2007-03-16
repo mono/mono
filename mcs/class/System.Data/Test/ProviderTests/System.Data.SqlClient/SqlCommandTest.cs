@@ -906,6 +906,107 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual(2, cmd.Parameters.Count);
 		}
 
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void OutputParamSizeTest1 ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = new SqlCommand ();
+			cmd.Connection = conn;
+
+			cmd.CommandText = "create procedure #testsize (@p1 as varchar(10) output) as return";
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#testsize";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.InputOutput;
+			p1.DbType = DbType.String;
+			p1.IsNullable = false;
+			cmd.Parameters.Add (p1);
+			cmd.ExecuteNonQuery ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void OutputParamSizeTest2 ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = new SqlCommand ();
+			cmd.Connection = conn;
+
+			cmd.CommandText = "create procedure #testsize (@p1 as varchar(10) output) as return";
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#testsize";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.Output;
+			p1.DbType = DbType.String;
+			p1.IsNullable = false;
+			cmd.Parameters.Add (p1);
+			cmd.ExecuteNonQuery ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void OutputParamSizeTest3 ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = new SqlCommand ();
+			cmd.Connection = conn;
+
+			cmd.CommandText = "create procedure #testsize (@p1 as varchar(10) output) as return";
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#testsize";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.InputOutput;
+			p1.DbType = DbType.String;
+			p1.IsNullable = true;
+			cmd.Parameters.Add (p1);
+			cmd.ExecuteNonQuery ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void OutputParamSizeTest4 ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = new SqlCommand ();
+			cmd.Connection = conn;
+
+			cmd.CommandText = "create procedure #testsize (@p1 as varchar(10) output) as return";
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#testsize";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ();
+			p1.ParameterName = "@p1";
+			p1.Direction = ParameterDirection.Output;
+			p1.DbType = DbType.String;
+			p1.IsNullable = true;
+			cmd.Parameters.Add (p1);
+			cmd.ExecuteNonQuery ();
+		}
+
 		private enum Status { 
 			OK = 0,
 			Error = 3

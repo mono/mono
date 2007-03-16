@@ -61,7 +61,6 @@ namespace System.Data.SqlClient {
 		DbType dbType;
 		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
-		bool isVariableSizeType = false;
 		bool isTypeSet = false;
 		int offset;
 		SqlDbType sqlDbType;
@@ -171,7 +170,7 @@ namespace System.Data.SqlClient {
 			if (!isTypeSet)
 				throw new Exception ("all parameters to have an explicity set type");
 
-			if (isVariableSizeType) {
+			if (MetaParameter.IsVariableSizeType) {
 				if (SqlDbType == SqlDbType.Decimal && Precision == 0)
 					throw new Exception ("Parameter of type 'Decimal' have an explicitly set Precision and Scale");
 				else if (Size == 0)
@@ -489,17 +488,17 @@ namespace System.Data.SqlClient {
 			case DbType.AnsiString:
 				MetaParameter.TypeName = "varchar";
 				sqlDbType = SqlDbType.VarChar;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case DbType.AnsiStringFixedLength:
 				MetaParameter.TypeName = "char";
 				sqlDbType = SqlDbType.Char;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case DbType.Binary:
 				MetaParameter.TypeName = "varbinary";
 				sqlDbType = SqlDbType.VarBinary;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case DbType.Boolean:
 				MetaParameter.TypeName = "bit";
@@ -553,12 +552,12 @@ namespace System.Data.SqlClient {
 			case DbType.String:
 				MetaParameter.TypeName = "nvarchar";
 				sqlDbType = SqlDbType.NVarChar;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case DbType.StringFixedLength:
 				MetaParameter.TypeName = "nchar";
 				sqlDbType = SqlDbType.NChar;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case DbType.Time:
 				MetaParameter.TypeName = "datetime";
@@ -664,7 +663,7 @@ namespace System.Data.SqlClient {
 			case SqlDbType.Binary:
 				MetaParameter.TypeName = "binary";
 				dbType = DbType.Binary;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.Timestamp:
 				MetaParameter.TypeName = "timestamp";
@@ -673,7 +672,7 @@ namespace System.Data.SqlClient {
 			case SqlDbType.VarBinary:
 				MetaParameter.TypeName = "varbinary";
 				dbType = DbType.Binary;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.Bit:
 				MetaParameter.TypeName = "bit";
@@ -682,7 +681,7 @@ namespace System.Data.SqlClient {
 			case SqlDbType.Char:
 				MetaParameter.TypeName = "char";
 				dbType = DbType.AnsiStringFixedLength;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.DateTime:
 				MetaParameter.TypeName = "datetime";
@@ -703,7 +702,7 @@ namespace System.Data.SqlClient {
 			case SqlDbType.Image:
 				MetaParameter.TypeName = "image";
 				dbType = DbType.Binary;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.Int:
 				MetaParameter.TypeName = "int";
@@ -720,17 +719,17 @@ namespace System.Data.SqlClient {
 			case SqlDbType.NChar:
 				MetaParameter.TypeName = "nchar";
 				dbType = DbType.StringFixedLength;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.NText:
 				MetaParameter.TypeName = "ntext";
 				dbType = DbType.String;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.NVarChar:
 				MetaParameter.TypeName = "nvarchar";
 				dbType = DbType.String;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.Real:
 				MetaParameter.TypeName = "real";
@@ -743,12 +742,12 @@ namespace System.Data.SqlClient {
 			case SqlDbType.Text:
 				MetaParameter.TypeName = "text";
 				dbType = DbType.AnsiString;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.VarChar:
 				MetaParameter.TypeName = "varchar";
 				dbType = DbType.AnsiString;
-				isVariableSizeType = true;
+				MetaParameter.IsVariableSizeType = true;
 				break;
 			case SqlDbType.TinyInt:
 				MetaParameter.TypeName = "tinyint";

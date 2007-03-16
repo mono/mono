@@ -46,6 +46,7 @@ namespace Mono.Data.Tds {
 		bool isSizeSet = false;
 		bool isNullable;
 		object value;
+		bool isVariableSizeType;
 
 		#endregion // Fields
 
@@ -124,6 +125,12 @@ namespace Mono.Data.Tds {
 				size = value; 
 				isSizeSet = true;
 			}
+		}
+
+		public bool IsVariableSizeType
+		{
+			get { return isVariableSizeType; }
+			set { isVariableSizeType = value; }
 		}
 
 		#endregion // Properties
@@ -267,6 +274,20 @@ namespace Mono.Data.Tds {
 				return TdsColumnType.VarChar;
 			default:
 				throw new NotSupportedException ();
+			}
+		}
+
+		public void Validate (int index)
+		{
+			Console.WriteLine ("\r\n:{0}: :{1}: :{2}: :{3}:\r\n", this.direction, this.isVariableSizeType, Value, Size);
+			if ((this.direction == TdsParameterDirection.InputOutput || this.direction == TdsParameterDirection.Output) &&
+				 this.isVariableSizeType && (Value == DBNull.Value || Value == null) && Size == 0
+				) 
+			{
+				throw new InvalidOperationException (String.Format ("{0}[{1}]: the Size property should " +
+												"not be of size 0",
+												this.typeName,
+												index));
 			}
 		}
 
