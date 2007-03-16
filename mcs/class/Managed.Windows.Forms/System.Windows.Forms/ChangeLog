@@ -1,3 +1,17 @@
+2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Menu.cs: MergeMenu: Check menu argument for null before looping over
+	  it.
+	* MdiWindowManager.cs: Add IsVisiblePending to track the pending
+	  visibility of mdi child forms. FormSizeChangedHandler: update the
+	  maximized size if size has changed while maximized.
+	* MdiClient.cs: SizeScrollbars/ArrangeWindows/ActivateChild: Avoid
+	  creating the handle.
+	* InternalWindowManager.cs: UpdateBorderStyle/FormSizeChangedHandler:
+	  avoid creating the handle if not created.
+	* XplatUI.cs: Update debug output.
+	* XplatUIStructs.cs: Added ToString's for a couple of structs.
+
 2007-03-16  Jonathan Pobst <monkey@jpobst.com>
 
 	* ContainerControl.cs: Give ToolStripManager the opportunity to handle

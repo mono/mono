@@ -355,6 +355,9 @@ namespace System.Windows.Forms {
 		{
 			if (lock_sizing)
 				return;
+			
+			if (!IsHandleCreated)
+				return;
 
 			if (Controls.Count == 0 || ((Form) Controls [0]).WindowState == FormWindowState.Maximized) {
 				if (hbar != null)
@@ -522,6 +525,9 @@ namespace System.Windows.Forms {
 
 		private void ArrangeWindows ()
 		{
+			if (!IsHandleCreated)
+				return;
+				
 			int change = 0;
 			if (prev_bottom != -1)
 				change = Bottom - prev_bottom;
@@ -673,8 +679,10 @@ namespace System.Windows.Forms {
 			SetWindowStates (wm);
 			if (current != form) {
 				form.has_focus = false;
-				XplatUI.InvalidateNC (current.Handle);
-				XplatUI.InvalidateNC (form.Handle);
+				if (current.IsHandleCreated)
+					XplatUI.InvalidateNC (current.Handle);
+				if (form.IsHandleCreated)
+					XplatUI.InvalidateNC (form.Handle);
 			}
 			active_child = (Form) Controls [0];
 			
@@ -815,8 +823,8 @@ namespace System.Windows.Forms {
 			if (mdiclient_layout)
 				Parent.PerformLayout ();
 
-			//XplatUI.RequestNCRecalc (Parent.Handle);
-			//XplatUI.RequestNCRecalc (form.Handle);
+			XplatUI.RequestNCRecalc (Parent.Handle);
+			XplatUI.RequestNCRecalc (form.Handle);
 			if (!setting_windowstates)
 				SizeScrollBars ();
 		}

@@ -341,7 +341,9 @@ namespace System.Windows.Forms {
 
 		public virtual void UpdateBorderStyle (FormBorderStyle border_style)
 		{
-			XplatUI.SetBorderStyle (form.Handle, border_style);
+			if (form.IsHandleCreated) {
+				XplatUI.SetBorderStyle (form.Handle, border_style);
+			}
 
 			if (ShouldRemoveWindowManager (border_style)) {
 				form.RemoveWindowManager ();
@@ -414,8 +416,10 @@ namespace System.Windows.Forms {
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
-			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
-			XplatUI.InvalidateNC (form.Handle);
+			if (form.IsHandleCreated) {
+				ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
+				XplatUI.InvalidateNC (form.Handle);
+			}
 		}
 
 		protected virtual bool HandleRButtonDown (ref Message m)

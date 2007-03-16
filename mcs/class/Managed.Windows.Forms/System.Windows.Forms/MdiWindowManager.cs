@@ -51,7 +51,17 @@ namespace System.Windows.Forms {
 		private bool icon_dont_show_popup;
 
 		private TitleButtons maximized_title_buttons;
-		
+		private bool is_visible_pending;
+
+		internal bool IsVisiblePending {
+			get {
+				return is_visible_pending;
+			}
+			set {
+				is_visible_pending = value;
+			}
+		}
+
 		private TitleButtons MaximizedTitleButtons {
 			get {
 				if (maximized_title_buttons == null) {
@@ -127,6 +137,9 @@ namespace System.Windows.Forms {
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
+			if (form.window_state == FormWindowState.Maximized && form.Bounds != MaximizedBounds)
+				form.Bounds = MaximizedBounds;
+			
 			form.MdiParent.MdiContainer.SizeScrollBars ();
 		}
 	

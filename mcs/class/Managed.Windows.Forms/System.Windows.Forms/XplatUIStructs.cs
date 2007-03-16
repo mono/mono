@@ -378,6 +378,11 @@ namespace System.Windows.Forms {
 		{
 			return new Point (x, y);
 		}
+
+		public override string ToString ()
+		{
+			return "Point {" + x.ToString () + ", " + y.ToString () + ")";
+		}
 	}
 	
 	[StructLayout(LayoutKind.Sequential)] 
@@ -389,6 +394,11 @@ namespace System.Windows.Forms {
 		internal uint	time;  
 		internal POINT	pt;
 		internal object refobject;
+
+		public override string ToString ()
+		{
+			return String.Format ("msg=0x{0:x} ({1}) hwnd=0x{2:x} wparam=0x{3:x} lparam=0x{4:x} pt=0x{5:x}", (int) message, message.ToString (), hwnd.ToInt32 (), wParam.ToInt32 (), lParam.ToInt32 (), pt);
+		}
 	}
 
 	[Flags]

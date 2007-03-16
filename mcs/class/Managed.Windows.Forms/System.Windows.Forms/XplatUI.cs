@@ -752,7 +752,7 @@ namespace System.Windows.Forms {
 
 		internal static int SendInput (IntPtr hwnd, Queue keys) {
 			#if DriverDebug
-				Console.WriteLine("SendInput({0}): Called", charCode);
+				Console.WriteLine("SendInput({0}, {1}): Called", hwnd, keys);
 			#endif
 			return driver.SendInput (hwnd, keys);
 		}

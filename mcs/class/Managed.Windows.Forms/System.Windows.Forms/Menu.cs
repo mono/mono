@@ -263,6 +263,9 @@ namespace System.Windows.Forms
 			if (menuSrc == this)
 				throw new ArgumentException ("The menu cannot be merged with itself");
 			
+			if (menuSrc == null)
+				return;
+				
 			for (int i = 0; i < menuSrc.MenuItems.Count; i++) {
 				
 				MenuItem sourceitem = menuSrc.MenuItems[i];
