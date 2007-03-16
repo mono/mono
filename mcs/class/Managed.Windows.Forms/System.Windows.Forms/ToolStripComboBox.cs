@@ -104,6 +104,12 @@ namespace System.Windows.Forms
 			set { this.ComboBox.DroppedDown = value; }
 		}
 
+		[LocalizableAttribute (true)]
+		public FlatStyle FlatStyle {
+			get { return ComboBox.FlatStyle; }
+			set { ComboBox.FlatStyle = value; }
+		}
+
 		[Localizable (true)]
 		[DefaultValue (true)]
 		public bool IntegralHeight {
