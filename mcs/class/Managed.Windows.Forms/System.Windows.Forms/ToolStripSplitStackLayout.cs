@@ -44,32 +44,14 @@ namespace System.Windows.Forms
 				if (ts.Items == null)
 					return false;
 					
-				if (ts.Orientation == Orientation.Horizontal) {
-					Rectangle ts_rect = ts.DisplayRectangle;
+				Rectangle ts_rect = ts.DisplayRectangle;
 					
+				if (ts.Orientation == Orientation.Horizontal)					
 					LayoutHorizontalToolStrip (ts, ts_rect);
-					return false;
-				} else {
-					int x = ts.DisplayRectangle.Left;
-					int y = ts.DisplayRectangle.Top + 2;
-
-					foreach (ToolStripItem tsi in ts.Items) {
-						if (!tsi.Visible)
-							continue;
-						
-						Rectangle new_bounds = new Rectangle ();
-
-						y += tsi.Margin.Top;
-
-						new_bounds.Location = new Point (x + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Left), y);
-						new_bounds.Width = ts.DisplayRectangle.Width - tsi.Margin.Horizontal - 3;
-						new_bounds.Height = tsi.GetPreferredSize (new Size (new_bounds.Width, 0)).Height;
-
-						tsi.SetBounds (new_bounds);
-
-						y += new_bounds.Height + tsi.Margin.Bottom;
-					}
-				}
+				else
+					LayoutVerticalToolStrip (ts, ts_rect);
+					
+				return false;
 			} else	{
 				ToolStripContentPanel ts = (ToolStripContentPanel)container;
 				int x = ts.DisplayRectangle.Left;
@@ -165,6 +147,80 @@ namespace System.Windows.Forms
 			
 				i++;
 			}			
+		}
+
+		private void LayoutVerticalToolStrip (ToolStrip ts, Rectangle bounds)
+		{
+			if (!ts.Visible) return;
+
+			ToolStripItemOverflow[] overflow = new ToolStripItemOverflow[ts.Items.Count];
+			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[ts.Items.Count];
+			Size proposedSize = new Size (bounds.Width, 0);
+			int[] heights = new int[ts.Items.Count];
+			int total_height = 0;
+			int toolstrip_height = bounds.Height;
+			int i = 0;
+			bool can_overflow = ts.CanOverflow & !(ts is MenuStrip) & !(ts is StatusStrip);
+
+			foreach (ToolStripItem tsi in ts.Items) {
+				overflow[i] = tsi.Overflow;
+				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.Overflow : ToolStripItemPlacement.Main;
+				heights[i] = tsi.GetPreferredSize (proposedSize).Height + tsi.Margin.Vertical;
+				if (!tsi.Available)
+					placement[i] = ToolStripItemPlacement.None;
+				total_height += placement[i] == ToolStripItemPlacement.Main ? heights[i] : 0;
+				i++;
+			}
+
+			ts.OverflowButton.Visible = false;
+
+			while (total_height > toolstrip_height) {
+				// If we can overflow, get our overflow button setup, and subtract it's width
+				// from our available width				
+				if (can_overflow && !ts.OverflowButton.Visible) {
+					ts.OverflowButton.Visible = true;
+					ts.OverflowButton.SetBounds (new Rectangle (0, ts.Height - 16,  ts.Width, 16));
+					toolstrip_height -= ts.OverflowButton.Height;
+				}
+
+				bool removed_one = false;
+
+				// Start at the right, removing Overflow.AsNeeded first
+				for (int j = heights.Length - 1; j >= 0; j--)
+					if (overflow[j] == ToolStripItemOverflow.AsNeeded && placement[j] == ToolStripItemPlacement.Main) {
+						placement[j] = ToolStripItemPlacement.Overflow;
+						total_height -= heights[j];
+						removed_one = true;
+						break;
+					}
+
+				// If we didn't remove any AsNeeded ones, we have to start removing Never ones
+				// These are not put on the Overflow, they are simply not shown
+				if (!removed_one)
+					for (int j = heights.Length - 1; j >= 0; j--)
+						if (overflow[j] == ToolStripItemOverflow.Never && placement[j] == ToolStripItemPlacement.Main) {
+							placement[j] = ToolStripItemPlacement.None;
+							total_height -= heights[j];
+							removed_one = true;
+							break;
+						}
+			}
+
+			i = 0;
+			Point layout_pointer = new Point (ts.DisplayRectangle.Left, ts.DisplayRectangle.Top);
+			int button_width = ts.DisplayRectangle.Width;
+
+			// Now we should know where everything goes, so lay everything out
+			foreach (ToolStripItem tsi in ts.Items) {
+				tsi.SetPlacement (placement[i]);
+
+				if (placement[i] == ToolStripItemPlacement.Main) {
+					tsi.SetBounds (new Rectangle (layout_pointer.X + tsi.Margin.Left, layout_pointer.Y + tsi.Margin.Top, button_width - tsi.Margin.Horizontal, heights[i] - tsi.Margin.Vertical));
+					layout_pointer.Y += heights[i];
+				}
+
+				i++;
+			}
 		}
 	}
 }

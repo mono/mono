@@ -273,32 +273,27 @@ namespace System.Windows.Forms
 		{
 			base.OnRenderOverflowButtonBackground (e);
 
-			Rectangle paint_here = new Rectangle (e.Item.Width - 11, 0, 11, e.Item.Height - 1);
-
+			Rectangle paint_here;
+			LinearGradientMode gradient_direction = e.ToolStrip.Orientation == Orientation.Vertical ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical;
+			
+			if (e.ToolStrip.Orientation == Orientation.Horizontal)
+				paint_here = new Rectangle (e.Item.Width - 11, 0, 11, e.Item.Height - 1);
+			else
+				paint_here = new Rectangle (0, e.Item.Height - 11, e.Item.Width - 1, 11);
+			
 			// Paint gradient background
 			if (e.Item.Selected && !e.Item.Pressed)
-				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonSelectedGradientBegin, this.ColorTable.ButtonSelectedGradientEnd, LinearGradientMode.Vertical))
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonSelectedGradientBegin, this.ColorTable.ButtonSelectedGradientEnd, gradient_direction))
 					e.Graphics.FillRectangle (b, paint_here);
 			else if (e.Item.Pressed)
-				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonPressedGradientBegin, this.ColorTable.ButtonPressedGradientEnd, LinearGradientMode.Vertical))
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.ButtonPressedGradientBegin, this.ColorTable.ButtonPressedGradientEnd, gradient_direction))
 					e.Graphics.FillRectangle (b, paint_here);
 			else
-				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.OverflowButtonGradientBegin, this.ColorTable.OverflowButtonGradientEnd, LinearGradientMode.Vertical))
+				using (Brush b = new LinearGradientBrush (paint_here, this.ColorTable.OverflowButtonGradientBegin, this.ColorTable.OverflowButtonGradientEnd, gradient_direction))
 					e.Graphics.FillRectangle (b, paint_here);
 
-			// Paint down arrow
-			Point arrow_loc = new Point (paint_here.X + 2, paint_here.Bottom - 9);
-
-			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 1, arrow_loc.Y + 1, arrow_loc.X + 5, arrow_loc.Y + 1);
-			e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y, arrow_loc.X + 4, arrow_loc.Y);
-
-			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 5, arrow_loc.Y + 4);
-			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 5, arrow_loc.X + 4, arrow_loc.Y + 5);
-			e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 6);
-
-			e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y + 3, arrow_loc.X + 4, arrow_loc.Y + 3);
-			e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 1, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 4);
-			e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 2, arrow_loc.Y + 4, arrow_loc.X + 2, arrow_loc.Y + 5);
+			// Paint the arrow
+			PaintOverflowArrow (e, paint_here);
 		}
 
 		protected override void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
@@ -425,6 +420,40 @@ namespace System.Windows.Forms
 		protected override void OnRenderToolStripStatusLabelBackground (ToolStripItemRenderEventArgs e)
 		{
 			base.OnRenderToolStripStatusLabelBackground (e);
+		}
+		#endregion
+
+		#region Private Methods
+		private static void PaintOverflowArrow (ToolStripItemRenderEventArgs e, Rectangle paint_here)
+		{
+			if (e.ToolStrip.Orientation == Orientation.Horizontal) {
+				// Paint down arrow
+				Point arrow_loc = new Point (paint_here.X + 2, paint_here.Bottom - 9);
+
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 1, arrow_loc.Y + 1, arrow_loc.X + 5, arrow_loc.Y + 1);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y, arrow_loc.X + 4, arrow_loc.Y);
+
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 5, arrow_loc.Y + 4);
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 5, arrow_loc.X + 4, arrow_loc.Y + 5);
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 3, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 6);
+
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y + 3, arrow_loc.X + 4, arrow_loc.Y + 3);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 1, arrow_loc.Y + 4, arrow_loc.X + 3, arrow_loc.Y + 4);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 2, arrow_loc.Y + 4, arrow_loc.X + 2, arrow_loc.Y + 5);
+			} else {
+				Point arrow_loc = new Point (paint_here.Right - 9, paint_here.Y + 2);
+
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 1, arrow_loc.Y + 1, arrow_loc.X + 1, arrow_loc.Y + 5);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X, arrow_loc.Y, arrow_loc.X, arrow_loc.Y + 4);
+
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 4, arrow_loc.Y + 3, arrow_loc.X + 4, arrow_loc.Y + 5);
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 5, arrow_loc.Y + 3, arrow_loc.X + 5, arrow_loc.Y + 4);
+				e.Graphics.DrawLine (Pens.White, arrow_loc.X + 4, arrow_loc.Y + 3, arrow_loc.X + 6, arrow_loc.Y + 3);
+
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 3, arrow_loc.Y, arrow_loc.X + 3, arrow_loc.Y + 4);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 4, arrow_loc.Y + 1, arrow_loc.X + 4, arrow_loc.Y + 3);
+				e.Graphics.DrawLine (Pens.Black, arrow_loc.X + 4, arrow_loc.Y + 2, arrow_loc.X + 5, arrow_loc.Y + 2);
+			}
 		}
 		#endregion
 	}

@@ -47,7 +47,6 @@ namespace System.Windows.Forms
 		private ToolStripDropDownDirection default_drop_down_direction;
 		internal ToolStripItemCollection displayed_items;
 		private Color fore_color;
-		private ToolStripGripDisplayStyle grip_display_style;
 		private Padding grip_margin;
 		private ToolStripGripStyle grip_style;
 		private ImageList image_list;
@@ -90,7 +89,6 @@ namespace System.Windows.Forms
 			this.Dock = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
-			this.grip_display_style = ToolStripGripDisplayStyle.Vertical;
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
 			this.image_scaling_size = new Size (16, 16);
@@ -180,10 +178,10 @@ namespace System.Windows.Forms
 					else
 						return new Rectangle (this.GripRectangle.Right + this.GripMargin.Right, this.Padding.Top, this.Width - this.Padding.Horizontal - this.GripRectangle.Right - this.GripMargin.Right, this.Height - this.Padding.Vertical);
 				else
-					if (this.grip_style == ToolStripGripStyle.Hidden)
+					if (this.grip_style == ToolStripGripStyle.Hidden || this.layout_style == ToolStripLayoutStyle.Flow || this.layout_style == ToolStripLayoutStyle.Table)
 						return new Rectangle (this.Padding.Left, this.Padding.Top, this.Width - this.Padding.Horizontal, this.Height - this.Padding.Vertical);
 					else
-						return new Rectangle (this.Padding.Left, this.GripRectangle.Bottom + this.GripMargin.Bottom + this.Padding.Top, this.Width - this.Padding.Horizontal - this.GripRectangle.Right - this.GripMargin.Right, this.Height - this.Padding.Vertical);
+						return new Rectangle (this.Padding.Left, this.GripRectangle.Bottom + this.GripMargin.Bottom + this.Padding.Top, this.Width - this.Padding.Horizontal, this.Height - this.Padding.Vertical - this.GripRectangle.Bottom - this.GripMargin.Bottom);
 			}
 		}
 
@@ -201,11 +199,11 @@ namespace System.Windows.Forms
 						case DockStyle.Top:
 						case DockStyle.Bottom:
 						case DockStyle.None:
-							this.orientation = Orientation.Horizontal;
+							this.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
 							break;
 						case DockStyle.Left:
 						case DockStyle.Right:
-							this.orientation = Orientation.Vertical;
+							this.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
 							break;
 					}
 
@@ -341,12 +339,24 @@ namespace System.Windows.Forms
 						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripLayoutStyle", value));
 
 					this.layout_style = value;
-					
-					if (value == ToolStripLayoutStyle.Flow)
+
+					if (this.layout_style == ToolStripLayoutStyle.Flow)
 						this.layout_engine = new FlowLayout ();
 					else
 						this.layout_engine = new ToolStripSplitStackLayout ();
 
+					if (this.layout_style == ToolStripLayoutStyle.StackWithOverflow) {
+						if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+							this.layout_style = ToolStripLayoutStyle.VerticalStackWithOverflow;
+						else
+							this.layout_style = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+					}
+
+					if (this.layout_style == ToolStripLayoutStyle.HorizontalStackWithOverflow)
+						this.orientation = Orientation.Horizontal;
+					else if (this.layout_style == ToolStripLayoutStyle.VerticalStackWithOverflow)
+						this.orientation = Orientation.Vertical;
+						
 					this.layout_settings = this.CreateLayoutSettings (value);
 					
 					this.PerformLayout ();
@@ -526,9 +536,10 @@ namespace System.Windows.Forms
 		
 		protected override void Dispose (bool disposing)
 		{
-			ToolStripManager.RemoveToolStrip (this);
-			
-			base.Dispose (disposing);
+			if (!IsDisposed) {
+				ToolStripManager.RemoveToolStrip (this);
+				base.Dispose (disposing);
+			}
 		}
 		
 		protected override void OnDockChanged (EventArgs e)
@@ -784,8 +795,8 @@ namespace System.Windows.Forms
 				else
 					e.Graphics.TranslateTransform (0, 2);
 			}
-				
-			this.Renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.grip_display_style, this.grip_style));
+
+			this.Renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.GripDisplayStyle, this.grip_style));
 			e.Graphics.ResetTransform ();
 		}
 
@@ -812,6 +823,11 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 		}
 
+		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		{
+			return base.ProcessCmdKey (ref msg, keyData);
+		}
+		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore (x, y, width, height, specified);
