@@ -1,5 +1,9 @@
 2007-03-16  Neale Ferguson <neale@sinenomine.net>
 
+	* cpu-s390x.md: Correct length of break instruction.
+
+2007-03-16  Neale Ferguson <neale@sinenomine.net>
+
 	* mini-s390x.c, cpu-s390x.md: Fix #80507 for s390x.
 	* mini-s390.c, cpu-s390.md: Fix #80507 for s390.
 
