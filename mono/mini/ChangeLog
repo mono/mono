@@ -1,3 +1,7 @@
+2007-03-16  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c, cpu-s390x.md: Fix #80507 for s390x.
+
 2007-03-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* *.c: Begin WIN64 port.
@@ -2542,7 +2546,7 @@ Tue Jan 24 18:20:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 	* inssel-s390.brg tramp-s390.c cpu-s390.md mini-s390.c mini-s390.h:
 	  Bring s390 up to current level.
 
-2005-12-12  Zoltan Varga  <vargaz@gmail.com>
+2005-12-12  Zltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs: Disable the newly added tests as they do not work yet.
 	
