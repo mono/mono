@@ -1,5 +1,9 @@
 2007-03-16  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ToolStripComboBox.cs: Add AutoComplete*.
+
+2007-03-16  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ToolStripComboBox.cs: Add FlatStyle.
 
 2007-03-16  Jonathan Pobst  <monkey@jpobst.com>

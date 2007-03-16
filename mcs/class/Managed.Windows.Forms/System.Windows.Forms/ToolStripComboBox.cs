@@ -54,6 +54,22 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[LocalizableAttribute (true)]
+		public AutoCompleteStringCollection AutoCompleteCustomSource {
+			get { return ComboBox.AutoCompleteCustomSource; }
+			set { ComboBox.AutoCompleteCustomSource = value; }
+		}
+
+		public AutoCompleteMode AutoCompleteMode {
+			get { return ComboBox.AutoCompleteMode; }
+			set { ComboBox.AutoCompleteMode = value; }
+		}
+
+		public AutoCompleteSource AutoCompleteSource {
+			get { return ComboBox.AutoCompleteSource; }
+			set { ComboBox.AutoCompleteSource = value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
