@@ -542,7 +542,7 @@ namespace System.Web.UI {
 
 			if (src != null && inherits != null) {
 				// Make sure the source exists
-				src = UrlUtils.Combine (BaseVirtualDir, src);
+				src = VirtualPathUtility.Combine (BaseVirtualDir, src);
 				string realPath = MapPath (src, false);
 				if (!File.Exists (realPath))
 					ThrowParseException ("File " + src + " not found");

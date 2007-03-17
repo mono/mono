@@ -68,7 +68,6 @@ namespace System.Web.UI
 		}
 
 
-#if NET_2_0
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
 			if (String.Compare ("MasterType", directive, true) == 0) {
@@ -88,7 +87,6 @@ namespace System.Web.UI
 			else
 				base.AddDirective (directive, atts);
 		}
-#endif
 
 		internal Type MasterType {
 			get { return masterType; }

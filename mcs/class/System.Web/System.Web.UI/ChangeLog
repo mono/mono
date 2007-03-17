@@ -1,3 +1,9 @@
+2007-03-17  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPageParser.cs: remove superfluous #ifdef
+
+	* TemplateParser.cs: use VirtualPathUtility here
+
 2007-03-14  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TemplateControl.jvm.cs: fixed WireupAutomaticEvents, performance
