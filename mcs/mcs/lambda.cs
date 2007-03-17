@@ -76,10 +76,6 @@ namespace Mono.CSharp {
 			try {
 				Report.DisableErrors ();
 				result = DoCompatibleTest (ec, delegate_type, true) != null;
-				if (result)
-					Console.WriteLine ("INFO: Lambda.Compatible Passed for {0}", delegate_type);
-				else
-					Console.WriteLine ("INFO: Lambda.Compatible Failed for {0}", delegate_type);
 			} finally {
 				Report.EnableErrors ();
 			}
