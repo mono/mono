@@ -279,7 +279,6 @@ namespace Mono.Data.Tds {
 
 		public void Validate (int index)
 		{
-			Console.WriteLine ("\r\n:{0}: :{1}: :{2}: :{3}:\r\n", this.direction, this.isVariableSizeType, Value, Size);
 			if ((this.direction == TdsParameterDirection.InputOutput || this.direction == TdsParameterDirection.Output) &&
 				 this.isVariableSizeType && (Value == DBNull.Value || Value == null) && Size == 0
 				) 
