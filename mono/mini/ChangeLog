@@ -1,5 +1,8 @@
 2007-03-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg (SWITCH): Clean out the upper word of the switch value on 64 bit
+	platforms.
+	
 	* inssel.brg (SWITCH): Use an integer comparison. Fixes #80738.
 
 	* basic.cs: Add new regression test.
