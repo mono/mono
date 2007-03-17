@@ -1,3 +1,7 @@
+2007-03-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Consts.cs: Check for runtime not platform.
+
 2007-03-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyTest.cs, ProjectTest.cs: More tests.
