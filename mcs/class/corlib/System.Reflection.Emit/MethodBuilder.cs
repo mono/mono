@@ -313,75 +313,79 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute( CustomAttributeBuilder customBuilder)
+		{
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
-			string attrname = customBuilder.Ctor.ReflectedType.FullName;
-			if (attrname == "System.Runtime.CompilerServices.MethodImplAttribute") {
-				byte[] data = customBuilder.Data;
-				int impla; // the (stupid) ctor takes a short or an int ... 
-				impla = (int)data [2];
-				impla |= ((int)data [3]) << 8;
-				SetImplementationFlags ((MethodImplAttributes)impla);
-				return;
-			}
-			if (attrname == "System.Runtime.InteropServices.DllImportAttribute") {
-				CustomAttributeBuilder.CustomAttributeInfo attr = CustomAttributeBuilder.decode_cattr (customBuilder);
-				bool preserveSig = true;
 
-				/*
-				 * It would be easier to construct a DllImportAttribute from
-				 * the custom attribute builder, but the DllImportAttribute 
-				 * does not contain all the information required here, ie.
-				 * - some parameters, like BestFitMapping has three values
-				 *   ("on", "off", "missing"), but DllImportAttribute only
-				 *   contains two (on/off).
-				 * - PreserveSig is true by default, while it is false by
-				 *   default in DllImportAttribute.
-				 */
+			switch (customBuilder.Ctor.ReflectedType.FullName) {
+				case "System.Runtime.CompilerServices.MethodImplAttribute":
+					byte[] data = customBuilder.Data;
+					int impla; // the (stupid) ctor takes a short or an int ... 
+					impla = (int)data [2];
+					impla |= ((int)data [3]) << 8;
+					SetImplementationFlags ((MethodImplAttributes)impla);
+					return;
 
-				pi_dll = (string)attr.ctorArgs [0];
-				if (pi_dll == null || pi_dll.Length == 0)
-					throw new ArgumentException ("DllName cannot be empty");
-				
-				native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
+				case "System.Runtime.InteropServices.DllImportAttribute":
+					CustomAttributeBuilder.CustomAttributeInfo attr = CustomAttributeBuilder.decode_cattr (customBuilder);
+					bool preserveSig = true;
 
-				for (int i = 0; i < attr.namedParamNames.Length; ++i) {
-					string name = attr.namedParamNames [i];
-					object value = attr.namedParamValues [i];
+					/*
+					 * It would be easier to construct a DllImportAttribute from
+					 * the custom attribute builder, but the DllImportAttribute 
+					 * does not contain all the information required here, ie.
+					 * - some parameters, like BestFitMapping has three values
+					 *   ("on", "off", "missing"), but DllImportAttribute only
+					 *   contains two (on/off).
+					 * - PreserveSig is true by default, while it is false by
+					 *   default in DllImportAttribute.
+					 */
 
-					if (name == "CallingConvention")
-						native_cc = (CallingConvention)value;
-					else if (name == "CharSet")
-						charset = (CharSet)value;
-					else if (name == "EntryPoint")
-						pi_entry = (string)value;
-					else if (name == "ExactSpelling")
-						ExactSpelling = (bool)value;
-					else if (name == "SetLastError")
-						SetLastError = (bool)value;
-					else if (name == "PreserveSig")
-						preserveSig = (bool)value;
+					pi_dll = (string)attr.ctorArgs[0];
+					if (pi_dll == null || pi_dll.Length == 0)
+						throw new ArgumentException ("DllName cannot be empty");
+
+					native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
+
+					for (int i = 0; i < attr.namedParamNames.Length; ++i) {
+						string name = attr.namedParamNames [i];
+						object value = attr.namedParamValues [i];
+
+						if (name == "CallingConvention")
+							native_cc = (CallingConvention)value;
+						else if (name == "CharSet")
+							charset = (CharSet)value;
+						else if (name == "EntryPoint")
+							pi_entry = (string)value;
+						else if (name == "ExactSpelling")
+							ExactSpelling = (bool)value;
+						else if (name == "SetLastError")
+							SetLastError = (bool)value;
+						else if (name == "PreserveSig")
+							preserveSig = (bool)value;
 #if NET_1_1
 					else if (name == "BestFitMapping")
 						BestFitMapping = (bool)value;
 					else if (name == "ThrowOnUnmappableChar")
 						ThrowOnUnmappableChar = (bool)value;
 #endif
-				}
+					}
 
-				attrs |= MethodAttributes.PinvokeImpl;
-				if (preserveSig)
+					attrs |= MethodAttributes.PinvokeImpl;
+					if (preserveSig)
+						iattrs |= MethodImplAttributes.PreserveSig;
+					return;
+
+				case "System.Runtime.InteropServices.PreserveSigAttribute":
 					iattrs |= MethodImplAttributes.PreserveSig;
-				return;
-			}
-
+					return;
 #if NET_2_0
-			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
-				attrs |= MethodAttributes.SpecialName;
-				return;
-			}
+				case "System.Runtime.CompilerServices.SpecialNameAttribute":
+					attrs |= MethodAttributes.SpecialName;
+					return;
 #endif
+			}
 
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
@@ -523,6 +527,9 @@ namespace System.Reflection.Emit {
 
 		public GenericTypeParameterBuilder[] DefineGenericParameters (params string[] names)
 		{
+			if (names == null)
+				throw new ArgumentNullException ("names");
+
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++)
 				generic_params [i] = new GenericTypeParameterBuilder (
@@ -562,7 +569,8 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public void SetSignature (Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
+		public void SetSignature (Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
 			SetReturnType (returnType);
 			SetParameters (parameterTypes);
 			this.returnModReq = returnTypeRequiredCustomModifiers;
