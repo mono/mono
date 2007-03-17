@@ -1,3 +1,8 @@
+2007-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* ILGenerator.cs (Emit): Do not allow ldftn on a DynamicMethod to be
+	compatible with MS.NET. Fixes #81157.
+
 2007-03-13  Miguel de Icaza  <miguel@novell.com>
 
 	* OpCode.cs: Add a couple of operators for jsc.sf.net

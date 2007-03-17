@@ -702,6 +702,12 @@ namespace System.Reflection.Emit {
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
+#if NET_2_0
+			// For compatibility with MS
+			if ((method is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn)))
+				throw new ArgumentException ("Ldtoken, Ldftn and Ldvirtftn OpCodes cannot target DynamicMethods.");
+#endif
+
 			int token = token_gen.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
