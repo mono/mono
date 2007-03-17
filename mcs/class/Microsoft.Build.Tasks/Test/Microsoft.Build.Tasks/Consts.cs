@@ -29,11 +29,15 @@ using System;
 using Microsoft.Build.Utilities;
 
 public static class Consts {
+
+	static bool RunningOnMono ()
+	{
+		return Type.GetType ("Mono.Runtime") != null;
+	}
+	
 	public static string BinPath {
 		get {
-			// FIXME: it should check for runtime not OS
-			int p = (int) Environment.OSVersion.Platform;
-			if (p == 4 || p == 128)
+			if (RunningOnMono ())
 				return "../../tools/xbuild/xbuild";
 			else
 				return ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);

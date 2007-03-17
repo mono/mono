@@ -50,10 +50,22 @@ namespace MonoTests.Microsoft.Build.Tasks {
 					<ItemGroup>
 						<Reference Include='System' />
 					</ItemGroup>
+					<PropertyGroup>
+						<SearchPaths>
+							{CandidateAssemblyFiles};
+							$(ReferencePath);
+							{HintPathFromItem};
+							{TargetFrameworkDirectory};
+							{AssemblyFolders};
+							{GAC};
+							{RawFileName};
+							$(OutputPath)
+						</SearchPaths>
+					</PropertyGroup>
 					<Target Name='A'>
 						<ResolveAssemblyReference
 							Assemblies='@(Reference)'
-							SearchPaths=' '
+							SearchPaths='$(SearchPaths)'
 						>
 							<Output TaskParameter='ResolvedFiles' ItemName='ResolvedFiles'/>
 						</ResolveAssemblyReference>
@@ -78,13 +90,25 @@ namespace MonoTests.Microsoft.Build.Tasks {
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
 						<Reference Include='test'>
-							<HintPath>Test/resources/test.dll</HintPath>
+							<HintPath>Test\resources\test.dll</HintPath>
 						</Reference>
 					</ItemGroup>
+					<PropertyGroup>
+						<SearchPaths>
+							{CandidateAssemblyFiles};
+							$(ReferencePath);
+							{HintPathFromItem};
+							{TargetFrameworkDirectory};
+							{AssemblyFolders};
+							{GAC};
+							{RawFileName};
+							$(OutputPath)
+						</SearchPaths>
+					</PropertyGroup>
 					<Target Name='A'>
 						<ResolveAssemblyReference
 							Assemblies='@(Reference)'
-							SearchPaths=' '
+							SearchPaths='$(SearchPaths)'
 						>
 							<Output TaskParameter='ResolvedFiles' ItemName='ResolvedFiles'/>
 						</ResolveAssemblyReference>
@@ -99,7 +123,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (project.Build ("A"), "A1");
 			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
 			Assert.AreEqual (1, big.Count, "A2");
-			Assert.IsTrue (big [0].Include.EndsWith (".exe"), "A3");
+			Assert.IsTrue (big [0].Include.EndsWith (".dll"), "A3");
 		}
 	}
 } 
