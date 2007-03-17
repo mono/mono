@@ -4075,7 +4075,11 @@ namespace Mono.CSharp {
 						'.' + method_name;
 				}
 
+#if MS_COMPATIBLE
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags, ReturnType, null);
+#else
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags);
+#endif
 
 				if (!GenericMethod.Define (MethodBuilder, block))
 					return false;
@@ -4125,9 +4129,11 @@ namespace Mono.CSharp {
 
 			MethodBuilder = MethodData.MethodBuilder;
 
-			if (MemberType.IsAbstract && MemberType.IsSealed) {
-				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
-				return false;
+			if (!TypeManager.IsGenericParameter (MemberType)) {
+				if (MemberType.IsAbstract && MemberType.IsSealed) {
+					Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
+					return false;
+				}
 			}
 
 			return true;
@@ -5753,6 +5759,9 @@ namespace Mono.CSharp {
 		{
 			if (MemberType == null || Type == null)
 				return false;
+
+			if (TypeManager.IsGenericParameter (MemberType))
+				return true;
 
 			if (MemberType == TypeManager.void_type) {
 				// TODO: wrong location

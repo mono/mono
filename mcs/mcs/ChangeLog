@@ -1,4 +1,8 @@
-ss2007-03-15  Marek Safar  <marek.safar@gmail.com>
+2007-03-17  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: More optimizations for type parameters.
+
+2007-03-15  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnomymousMethod): Can be now hosted in generic container.
 
