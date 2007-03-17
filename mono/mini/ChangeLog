@@ -1,3 +1,8 @@
+2007-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_emit_prolog): Fix an assert when a function has too
+	many arguments.
+
 2007-03-16  Neale Ferguson <neale@sinenomine.net>
 
 	* cpu-s390x.md: Correct length of break instruction.
