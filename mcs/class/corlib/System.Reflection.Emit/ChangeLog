@@ -1,5 +1,7 @@
 2007-03-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* ILGenerator.cs (Emit): Disallow ldtoken on a DynamicMethod as well.
+	
 	* ILGenerator.cs (Emit): Do not allow ldftn on a DynamicMethod to be
 	compatible with MS.NET. Fixes #81157.
 

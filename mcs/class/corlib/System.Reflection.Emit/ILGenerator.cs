@@ -704,7 +704,7 @@ namespace System.Reflection.Emit {
 
 #if NET_2_0
 			// For compatibility with MS
-			if ((method is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn)))
+			if ((method is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn) || (opcode == OpCodes.Ldtoken)))
 				throw new ArgumentException ("Ldtoken, Ldftn and Ldvirtftn OpCodes cannot target DynamicMethods.");
 #endif
 
