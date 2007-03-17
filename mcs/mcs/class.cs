@@ -7224,12 +7224,13 @@ namespace Mono.CSharp {
 				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 					return;
 
-				ILGenerator ig = method_data.MethodBuilder.GetILGenerator ();
+				MethodBuilder mb = method_data.MethodBuilder;
+				ILGenerator ig = mb.GetILGenerator ();
 
 				// TODO: because we cannot use generics yet
 				FieldInfo field_info = ((EventField)method).FieldBuilder;
 
-				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);
+				mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
 				if ((method.ModFlags & Modifiers.STATIC) != 0) {
 					ig.Emit (OpCodes.Ldsfld, field_info);
 					ig.Emit (OpCodes.Ldarg_0);

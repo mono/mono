@@ -1,5 +1,10 @@
 2007-03-17  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs (EventFieldAccessor.EmitMethod): Don't override existing
+	implementation flags.
+
+2007-03-17  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs: More optimizations for type parameters.
 
 2007-03-15  Marek Safar  <marek.safar@gmail.com>
