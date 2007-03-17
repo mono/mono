@@ -1,3 +1,7 @@
+2007-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ComboBoxTest.cs: Added DataBindingTest.
+
 2007-03-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiFormTest.cs: Make TopLevelTest not working until the fix is ready

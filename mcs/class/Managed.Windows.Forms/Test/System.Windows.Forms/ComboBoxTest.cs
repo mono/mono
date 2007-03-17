@@ -27,6 +27,8 @@
 //	Jordi Mas i Hernandez <jordi@ximian.com>
 
 using System;
+using System.Data;
+using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -55,7 +57,49 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Thread.CurrentThread.CurrentCulture = _originalCulture;
 		}
-
+		
+		[Test] // bug 80794
+		public void DataBindingTest ()
+		{
+			string table = 
+@"<?xml version=""1.0"" standalone=""yes""?>
+<DOK>
+<DOK>
+<klient>287</klient>
+</DOK>
+</DOK>
+";
+			string lookup = 
+@"<?xml version=""1.0"" standalone=""yes""?>
+<klient>
+<klient>
+<nimi>FAILED</nimi>
+<kood>316</kood>
+</klient>
+<klient>
+<nimi>SUCCESS</nimi>
+<kood>287</kood>
+</klient>
+</klient>";
+			
+			using (Form frm = new Form ()) {
+				frm.ShowInTaskbar = false;
+				DataSet dsTable = new DataSet ();
+				dsTable.ReadXml (new StringReader (table));
+				DataSet dsLookup = new DataSet ();
+				dsLookup.ReadXml (new StringReader (lookup));
+				ComboBox cb = new ComboBox ();
+				cb.DataSource = dsLookup.Tables [0];
+				cb.DisplayMember = "nimi";
+				cb.ValueMember = "kood";
+				cb.DataBindings.Add ("SelectedValue", dsTable.Tables [0], "klient");
+				frm.Controls.Add (cb);
+				Assert.AreEqual ("", cb.Text, "#01");
+				frm.Show ();
+				Assert.AreEqual ("SUCCESS", cb.Text, "#02");
+			}
+		}
+		
 		[Test]
 		public void ComboBoxPropertyTest ()
 		{
