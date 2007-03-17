@@ -71,7 +71,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (!typesByFullName.ContainsKey (classname)) {
 				if (!typesByShortName.ContainsKey (classname))
-					throw new Exception ("Not registered task.");
+					throw new Exception (String.Format ("Not registered task {0}.", classname));
 				else
 					return typesByShortName [classname];
 			} else
