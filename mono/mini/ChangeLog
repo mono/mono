@@ -1,5 +1,11 @@
 2007-03-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg (SWITCH): Use an integer comparison. Fixes #80738.
+
+	* basic.cs: Add new regression test.
+
+2007-03-17  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ia64.c (mono_arch_emit_prolog): Fix an assert when a function has too
 	many arguments.
 
