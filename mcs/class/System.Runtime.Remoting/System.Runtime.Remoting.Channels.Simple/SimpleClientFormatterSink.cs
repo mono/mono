@@ -135,7 +135,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 				// deserialize resp_stream
 				IMessage result = (IMessage) format.DeserializeResponse (resp_stream, call);
 
-				// it's save to close the stream now
+				// it's safe to close the stream now
 				resp_stream.Close ();
 
 				return result;
