@@ -1,3 +1,8 @@
+2007-03-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBoxBase.cs: In setter for ReadOnly, only chance BackColor if
+	none was explicitly set. Fixes part of bug #79949.
+
 2007-03-16  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ToolStripComboBox.cs: Add AutoComplete*.

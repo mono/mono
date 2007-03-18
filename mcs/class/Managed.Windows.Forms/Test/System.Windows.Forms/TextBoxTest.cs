@@ -374,6 +374,107 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ReadOnly_BackColor_NotSet ()
+		{
+			textBox.ReadOnly = true;
+			Assert.IsTrue (textBox.ReadOnly, "#A1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#A2");
+#else
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#A2");
+#endif
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (textBox);
+			form.Show ();
+
+			Assert.IsTrue (textBox.ReadOnly, "#B1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#B2");
+#else
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#B2");
+#endif
+
+			textBox.ReadOnly = false;
+			Assert.IsFalse (textBox.ReadOnly, "#C1");
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#C2");
+
+			textBox.ReadOnly = true;
+			Assert.IsTrue (textBox.ReadOnly, "#D1");
+#if NET_2_0
+			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#D2");
+#else
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#D2");
+#endif
+
+			textBox.BackColor = Color.Red;
+			Assert.IsTrue (textBox.ReadOnly, "#E1");
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#E2");
+
+			textBox.ReadOnly = false;
+			Assert.IsFalse (textBox.ReadOnly, "#F1");
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#F2");
+
+			textBox.ReadOnly = true;
+			Assert.IsTrue (textBox.ReadOnly, "#G1");
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#G2");
+		}
+
+		[Test]
+		public void ReadOnly_BackColor_Set ()
+		{
+			textBox.BackColor = Color.Blue;
+			textBox.ReadOnly = true;
+			Assert.IsTrue (textBox.ReadOnly, "#A1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#A2");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (textBox);
+			form.Show ();
+
+			Assert.IsTrue (textBox.ReadOnly, "#B1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#B2");
+
+			textBox.ReadOnly = false;
+			Assert.IsFalse (textBox.ReadOnly, "#C1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#C2");
+
+			textBox.ReadOnly = true;
+			Assert.IsTrue (textBox.ReadOnly, "#D1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#D2");
+
+			textBox.BackColor = Color.Red;
+			Assert.IsTrue (textBox.ReadOnly, "#E1");
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#E2");
+
+			textBox.ReadOnly = false;
+			Assert.IsFalse (textBox.ReadOnly, "#F1");
+			Assert.AreEqual (Color.Red, textBox.BackColor, "#F2");
+
+			form.Dispose ();
+
+			textBox = new TextBox ();
+			textBox.ReadOnly = true;
+			textBox.BackColor = Color.Blue;
+			Assert.IsTrue (textBox.ReadOnly, "#G1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#G2");
+
+			form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (textBox);
+			form.Show ();
+
+			Assert.IsTrue (textBox.ReadOnly, "#H1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#H2");
+
+			textBox.ReadOnly = false;
+			Assert.IsFalse (textBox.ReadOnly, "#I1");
+			Assert.AreEqual (Color.Blue, textBox.BackColor, "#I2");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			Assert.AreEqual ("System.Windows.Forms.TextBox, Text: ", textBox.ToString(), "#35");

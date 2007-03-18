@@ -480,10 +480,12 @@ namespace System.Windows.Forms {
 				if (value != read_only) {
 					read_only = value;
 #if NET_2_0
-					if (read_only)
-						background_color = SystemColors.Control;
-					else
-						background_color = SystemColors.Window;
+					if (!backcolor_set) {
+						if (read_only)
+							background_color = SystemColors.Control;
+						else
+							background_color = SystemColors.Window;
+					}
 #endif
 					OnReadOnlyChanged(EventArgs.Empty);
 					Invalidate ();
