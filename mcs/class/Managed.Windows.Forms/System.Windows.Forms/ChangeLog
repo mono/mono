@@ -1,3 +1,13 @@
+2007-03-18  Everaldo Canuto  <everaldo@simios.org>
+
+	* MessageBox.cs:
+	- Set window properties in constructor intead of on CreateParams.
+	- Remove topmost from Window ExStyle.
+	- Set ShowInTaskbar to false.
+	- Set form border to FixedDialog.
+	- Some cosmetic changes and remove unneeded comments.
+	- It fixes itens 2,3 and 4 of bug #80043.
+
 2007-03-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TextBoxBase.cs: In setter for ReadOnly, only chance BackColor if

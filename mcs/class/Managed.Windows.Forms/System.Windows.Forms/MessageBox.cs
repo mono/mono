@@ -26,7 +26,6 @@
 //	Peter Bartok		(pbartok@novell.com)
 //
 // TODO:
-//	- Complete the implementation when Form.BorderStyle is available.
 //	- Add support for MessageBoxOptions and MessageBoxDefaultButton.
 //	- Button size calculations assume fixed height for buttons, that could be bad
 //
@@ -47,7 +46,6 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region MessageBoxFrom Local Variables
-			//internal static string	Yes;
 			internal const int	space_border	= 10;
 			string			msgbox_text;
 			bool			size_known	= false;
@@ -108,6 +106,11 @@ namespace System.Windows.Forms
 					}
 				}
 				this.Text = caption;
+				this.ControlBox = true;
+				this.MinimizeBox = false;
+				this.MaximizeBox = false;
+				this.ShowInTaskbar = false;
+				this.FormBorderStyle = FormBorderStyle.FixedDialog;
 			}
 
 			public MessageBoxForm (IWin32Window owner, string text, string caption,
@@ -128,19 +131,12 @@ namespace System.Windows.Forms
 			#region Protected Instance Properties
 			protected override CreateParams CreateParams {
 				get {
-					CreateParams	cp;
-
-					ControlBox = true;
-					MinimizeBox = false;
-					MaximizeBox = false;
-
-					cp = base.CreateParams;
+					CreateParams cp = base.CreateParams;;
 
 					cp.Style |= (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
-					cp.ExStyle = (int)(WindowExStyles.WS_EX_TOPMOST);
-					if (!is_enabled) {
+					
+					if (!is_enabled)
 						cp.Style |= (int)(WindowStyles.WS_DISABLED);
-					}
 
 					return cp;
 				}
@@ -159,7 +155,6 @@ namespace System.Windows.Forms
 				this.ShowDialog ();
 
 				return this.DialogResult;
-
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs e)
