@@ -152,8 +152,8 @@ namespace System.Web.Configuration
 				string mdir;
 
 				if (map == null)
-#if TARGET_JVM
-					return null;
+#if TARGET_J2EE
+					return "/web.config";
 #else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
 #endif
