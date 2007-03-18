@@ -165,11 +165,15 @@ namespace System.Web.UI {
 				}
 
 				if (noParams) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, methodName);
+					NoParamsInvoker npi = new NoParamsInvoker (this, method);
 					evt.AddEventHandler (this, npi.FakeDelegate);
 				} else {
 					evt.AddEventHandler (this, Delegate.CreateDelegate (
+#if NET_2_0
+							typeof (EventHandler), this, method));
+#else
 							typeof (EventHandler), this, methodName));
+#endif
 				}
 			}
 		}

@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Reflection;
 namespace System.Web
 {
 	delegate void NoParamsDelegate ();
@@ -37,10 +38,14 @@ namespace System.Web
 		EventHandler faked;
 		NoParamsDelegate real;
 
-		public NoParamsInvoker (object o, string method)
+		public NoParamsInvoker (object o, MethodInfo method)
 		{
 			 real = (NoParamsDelegate) Delegate.CreateDelegate (
+#if NET_2_0
 						typeof (NoParamsDelegate), o, method);
+#else
+						typeof (NoParamsDelegate), o, method.Name);
+#endif
 			 faked = new EventHandler (InvokeNoParams);
 		}
 

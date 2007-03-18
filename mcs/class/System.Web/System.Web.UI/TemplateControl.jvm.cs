@@ -62,6 +62,7 @@ namespace System.Web.UI {
 		const BindingFlags bflags = BindingFlags.Public |
 						BindingFlags.NonPublic |
 						BindingFlags.Instance;
+		static readonly Type [] NoParams = new Type [0];
 
 		private static string hashTableMutex = "lock"; //used to sync access ResourceHash property
 		private byte [] GetResourceBytes (Type type)
@@ -161,16 +162,39 @@ namespace System.Web.UI {
 			if (!SupportAutoEvents || !AutoEventWireup)
 				return;
 
+			Type thisType = typeof(TemplateControl);
+			Type voidType = typeof (void);
+			Type [] DefaultParams = new Type [] {
+				typeof (object),
+				typeof (EventArgs) };
+
 			foreach (string methodName in methodNames) {
-				MethodInfo method = null;
-				Type type;
-				for (type = GetType (); type != null && type != typeof(TemplateControl); type = type.BaseType) {
-					method = type.GetMethod (methodName, bflags);
+				MethodInfo method;
+				bool noParams = false;
+				Type type = GetType ();
+				do {
+					method = type.GetMethod (methodName, bflags, null, DefaultParams, null);
 					if (method != null)
 						break;
+
+					type = type.BaseType;
 				}
-				if (method == null)
-					continue;
+				while (type != thisType);
+
+				if (method == null) {
+					type = GetType ();
+					do {
+						method = type.GetMethod (methodName, bflags, null, NoParams, null);
+						if (method != null)
+							break;
+
+						type = type.BaseType;
+					}
+					while (type != thisType);
+
+					if (method == null)
+						continue;
+				}
 
 #if ONLY_1_1
 				if (method.DeclaringType != type) {
@@ -180,32 +204,24 @@ namespace System.Web.UI {
 				}
 #endif
 
-				if (method.ReturnType != typeof (void))
-					continue;
-
-				ParameterInfo [] parms = method.GetParameters ();
-				int length = parms.Length;
-				bool noParams = (length == 0);
-				if (!noParams && (length != 2 ||
-					parms [0].ParameterType != typeof (object) ||
-					parms [1].ParameterType != typeof (EventArgs)))
+				if (method.ReturnType != voidType)
 					continue;
 
 				int pos = methodName.IndexOf ("_");
 				string eventName = methodName.Substring (pos + 1);
-				EventInfo evt = type.GetEvent (eventName);
+				EventInfo evt = GetType ().GetEvent (eventName);
 				if (evt == null) {
 					/* This should never happen */
 					continue;
 				}
 
 				if (noParams) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, methodName);
+					NoParamsInvoker npi = new NoParamsInvoker (this, method);
 					evt.AddEventHandler (this, npi.FakeDelegate);
 				}
 				else {
 					evt.AddEventHandler (this, Delegate.CreateDelegate (
-							typeof (EventHandler), this, methodName));
+							typeof (EventHandler), this, method));
 				}
 			}
 		}

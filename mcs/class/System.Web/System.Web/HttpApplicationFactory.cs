@@ -265,11 +265,15 @@ namespace System.Web {
 			int length = method.GetParameters ().Length;
 
 			if (length == 0) {
-				NoParamsInvoker npi = new NoParamsInvoker (app, method.Name);
+				NoParamsInvoker npi = new NoParamsInvoker (app, method);
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
+#if NET_2_0
+							     evt.EventHandlerType, app, method));
+#else
 							     evt.EventHandlerType, app, method.Name));
+#endif
 			}
 		}
 
