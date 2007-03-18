@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -1245,22 +1246,13 @@ namespace System.Windows.Forms {
 				}
 
 				case RTF.Major.PictAttr:
-					switch (rtf.Minor) {
-					case Minor.PngBlip:
-						FlushText (rtf, false);
-						try {
-							Image img = new Bitmap (new MemoryStream (rtf.Image));
+					if (rtf.Picture != null && rtf.Picture.IsValid ()) {
+						Line line = document.GetLine (rtf_cursor_y);
+						document.InsertPicture (line, 0, rtf.Picture);
+						rtf_cursor_x++;
 
-							Line line = document.GetLine (rtf_cursor_y);
-							document.InsertImage (line, 0, img);
-							rtf_cursor_x++;
-
-							FlushText (rtf, true);
-							rtf.Image = null;
-						} catch (Exception e) {
-							Console.Error.WriteLine ("EXCEPTION while loading image:   {0}", e);
-						}
-						break;
+						FlushText (rtf, true);
+						rtf.Picture = null;
 					}
 					break;
 

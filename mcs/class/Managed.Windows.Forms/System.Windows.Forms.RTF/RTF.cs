@@ -43,7 +43,7 @@ namespace System.Windows.Forms.RTF {
 		private Minor		minor;
 		private int		param;
 		private StringBuilder	text_buffer;
-		private byte [] image_data;
+		private Picture picture;
 		private int		line_num;
 		private int		line_pos;
 
@@ -168,11 +168,9 @@ namespace System.Windows.Forms.RTF {
 			}
 		}
 
-		public byte [] Image {
-			get { return image_data; }
-			set {
-				image_data = value;
-			}
+		public Picture Picture {
+			get { return picture; }
+			set { picture = value; }
 		}
 
 		public Color Colors {
@@ -904,6 +902,7 @@ SkipCRLF:
 			Minor image_type = Minor.Undefined;
 			bool read_image_data = false;
 
+			Picture picture = new Picture ();
 			while (true) {
 				rtf.GetToken ();
 
@@ -912,9 +911,25 @@ SkipCRLF:
 
 				switch (minor) {
 				case Minor.PngBlip:
-					image_type = minor;
+					picture.ImageType = minor;
 					read_image_data = true;
 					break;
+				case Minor.WinMetafile:
+					picture.ImageType = minor;
+					read_image_data = true;
+					continue;
+				case Minor.PicWid:
+					picture.SetWidthFromTwips (param);
+					Console.WriteLine ("SET WIDTH:  {0}", picture.Width);
+					continue;
+				case Minor.PicHt:
+					picture.SetHeightFromTwips (param);
+					Console.WriteLine ("SET HEIGHT:  {0}", picture.Height);
+					continue;
+				case Minor.PicGoalWid:
+					continue;
+				case Minor.PicGoalHt:
+					continue;
 				}
 
 				if (read_image_data && rtf.rtf_class == TokenClass.Text) {
@@ -966,13 +981,15 @@ SkipCRLF:
 					}
 
 					read_image_data = false;
-					Image = (byte []) image_data.ToArray (typeof (byte));
+					picture.Data = (byte []) image_data.ToArray (typeof (byte));
 					break;
 				}
 			}
 
-			if (image_type != Minor.Undefined && !read_image_data)
-				SetToken (TokenClass.Control, Major.PictAttr, image_type, 0, String.Empty);
+			if (image_type != Minor.Undefined && !read_image_data) {
+				this.picture = picture;
+				SetToken (TokenClass.Control, Major.PictAttr, picture.ImageType, 0, String.Empty);
+			}
 		}
 
 		private void ReadObjGroup(RTF rtf) {

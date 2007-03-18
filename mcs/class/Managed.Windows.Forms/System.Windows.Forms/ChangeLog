@@ -1,3 +1,10 @@
+2007-03-18  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Remove image pasting code for now.  There is no
+	way to get an image on the clipboard right now anyways.
+	* TextControl.cs:
+	* RichTextBox.cs: Use the new RTF Picture class for pictures.
+
 2007-03-18  Everaldo Canuto  <everaldo@simios.org>
 
 	* MessageBox.cs:

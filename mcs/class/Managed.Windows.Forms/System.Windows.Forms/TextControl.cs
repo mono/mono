@@ -50,6 +50,7 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
+using RTF=System.Windows.Forms.RTF;
 
 namespace System.Windows.Forms {
 	internal enum LineColor {
@@ -341,7 +342,7 @@ namespace System.Windows.Forms {
 			// Catch what the loop below wont; eliminate 0 length 
 			// tags, but only if there are other tags after us
 			// We only eliminate text tags if there is another text tag
-			// after it.  Otherwise we wind up trying to type on image tags
+			// after it.  Otherwise we wind up trying to type on picture tags
 			//
 			while ((current.length == 0) && (next != null) && (next.IsTextTag)) {
 				tags = next;
@@ -2251,7 +2252,7 @@ namespace System.Windows.Forms {
 
 		}
 		
-		internal void InsertImage (Line line, int pos, Image image)
+		internal void InsertPicture (Line line, int pos, RTF.Picture picture)
 		{
 			LineTag next_tag;
 			LineTag tag;
@@ -2262,25 +2263,25 @@ namespace System.Windows.Forms {
 			// Just a place holder basically
 			line.text.Insert (pos, "I");
 
-			ImageTag image_tag = new ImageTag (line, pos + 1, image);
+			PictureTag picture_tag = new PictureTag (line, pos + 1, picture);
 
 			tag = LineTag.FindTag (line, pos);
-			image_tag.CopyFormattingFrom (tag);
+			picture_tag.CopyFormattingFrom (tag);
 			next_tag = tag.Break (pos + 1);
-			image_tag.previous = tag;
-			image_tag.next = tag.next;
-			tag.next = image_tag;
+			picture_tag.previous = tag;
+			picture_tag.next = tag.next;
+			tag.next = picture_tag;
 
 			//
-			// Images tags need to be surrounded by text tags
+			// Picture tags need to be surrounded by text tags
 			//
-			if (image_tag.next == null) {
-				image_tag.next = new LineTag (line, pos + 1);
-				image_tag.next.CopyFormattingFrom (tag);
-				image_tag.next.previous = image_tag;
+			if (picture_tag.next == null) {
+				picture_tag.next = new LineTag (line, pos + 1);
+				picture_tag.next.CopyFormattingFrom (tag);
+				picture_tag.next.previous = picture_tag;
 			}
 
-			tag = image_tag.next;
+			tag = picture_tag.next;
 			while (tag != null) {
 				tag.start += len;
 				tag = tag.next;
@@ -4321,13 +4322,13 @@ namespace System.Windows.Forms {
 		#endregion	// Administrative
 	}
 
-	internal class ImageTag : LineTag {
+	internal class PictureTag : LineTag {
 
-		internal Image image;
+		internal RTF.Picture picture;
 
-		internal ImageTag (Line line, int start, Image image) : base (line, start)
+		internal PictureTag (Line line, int start, RTF.Picture picture) : base (line, start)
 		{
-			this.image = image;
+			this.picture = picture;
 		}
 
 		public override bool IsTextTag {
@@ -4336,22 +4337,22 @@ namespace System.Windows.Forms {
 
 		internal override SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			return image.Size;
+			return picture.Size;
 		}
 
 		internal override int MaxHeight ()
 		{
-			return image.Height;
+			return (int) (picture.Height + 0.5F);
 		}
 
 		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
 		{
-			dc.DrawImage (image, x, y);
+			picture.DrawImage (dc, x, y, false);
 		}
 
 		internal override void Draw (Graphics dc, Brush brush, float x, float y, int start, int end, string text)
 		{
-			dc.DrawImage (image, x, y);
+			picture.DrawImage (dc, x, y, false);
 		}
 
 		public override string Text ()

@@ -1,3 +1,10 @@
+2007-03-18  Jackson Harper  <jackson@ximian.com>
+
+	* RTF.cs:  Added support for metafiles and use the new picture
+	class.
+	* Picture.cs: New class for handling pictures and their
+	attributes.
+
 2007-02-27  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs: break when we finish loading the image data, otherwise

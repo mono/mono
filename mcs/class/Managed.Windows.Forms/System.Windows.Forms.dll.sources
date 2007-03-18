@@ -28,6 +28,7 @@ System.Windows.Forms.RTF/KeyStruct.cs
 System.Windows.Forms.RTF/KeysInit.cs
 System.Windows.Forms.RTF/Major.cs
 System.Windows.Forms.RTF/Minor.cs
+System.Windows.Forms.RTF/Picture.cs
 System.Windows.Forms.RTF/RTF.cs
 System.Windows.Forms.RTF/RTFException.cs
 System.Windows.Forms.RTF/StandardCharCode.cs
