@@ -1,5 +1,9 @@
 2007-03-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* VirtualPathUtilityTest.cs: new tests, removed dublicated test.
+
+2007-03-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* VirtualPathUtilityTest.cs: new tests.
 
 2007-03-15 Igor Zelmanovich <igorz@mainsoft.com>

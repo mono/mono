@@ -260,50 +260,29 @@ namespace MonoTests.System.Web {
 		public void GetExtension ()
 		{
 			Assert.AreEqual (".aspx", VPU.GetExtension ("/hi/index.aspx"), "A1");
+			Assert.AreEqual ("", VPU.GetExtension ("/hi/index.aspx/"), "A1");
 			Assert.AreEqual (".aspx", VPU.GetExtension ("index.aspx"), "A2");
 			Assert.AreEqual ("", VPU.GetExtension ("/hi/index"), "A3");
-		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetExtension_ArgException1 ()
-		{
-			Assert.AreEqual (null, VPU.GetExtension (null), "A1");
-		}
+			Assert.AreEqual (".aspx", VPU.GetExtension ("/hi/./index.aspx"), "A1");
+			Assert.AreEqual ("", VPU.GetExtension ("hi/index"), "A2");
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetExtension_ArgException2 ()
-		{
-			Assert.AreEqual ("", VPU.GetExtension (""), "A1");
+			Assert.AreEqual ("", VPU.GetExtension ("/hi/index.aspx/file"), "A1");
+			Assert.AreEqual ("", VPU.GetExtension ("/hi/index.aspx\\file"), "A1");
+			Assert.AreEqual ("", VPU.GetExtension ("/hi/index.aspx/../file"), "A1");
+			Assert.AreEqual (".htm", VPU.GetExtension ("/hi/index.aspx/../file.htm"), "A1");
+
+			Assert.AreEqual ("", VPU.GetExtension (".."), "A2");
+			Assert.AreEqual ("", VPU.GetExtension ("../.."), "A2");
+			Assert.AreEqual (".aspx", VPU.GetExtension ("../../file.aspx"), "A2");
 		}
 
 		[Test]
 		public void GetFileName ()
 		{
 			Assert.AreEqual ("index.aspx", VPU.GetFileName ("/hi/index.aspx"), "A1");
+			Assert.AreEqual ("index.aspx", VPU.GetFileName ("/hi/index.aspx/"), "A1");
 			Assert.AreEqual ("hi", VPU.GetFileName ("/hi/"), "A2");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetFileName_ArgException1 ()
-		{
-			Assert.AreEqual (null, VPU.GetFileName (null), "A1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetFileName_ArgException2 ()
-		{
-			Assert.AreEqual ("", VPU.GetFileName (""), "A1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void GetFileName_ArgException3 ()
-		{
-			Assert.AreEqual ("index.aspx", VPU.GetFileName ("index.aspx"), "A1");
 		}
 
 		[Test]
@@ -502,6 +481,37 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual ("", VPU.GetFileName ("/"));
 			Assert.AreEqual ("hola", VPU.GetFileName ("/hola"));
+			Assert.AreEqual ("hola", VPU.GetFileName ("/hola/"));
+			Assert.AreEqual ("hi", VPU.GetFileName ("/hi/there/.."));
+			Assert.AreEqual ("there", VPU.GetFileName ("/hi/there/."));
+		}
+
+		[Test]
+		public void GetFileName4 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (GetFileName4_Load)).Run ();
+		}
+
+		public static void GetFileName4_Load (Page p)
+		{
+			Assert.AreEqual ("NunitWeb", VPU.GetFileName ("~/"));
+			Assert.AreEqual ("hola", VPU.GetFileName ("~/hola"));
+			Assert.AreEqual ("hola", VPU.GetFileName ("~/hola/"));
+			Assert.AreEqual ("hi", VPU.GetFileName ("~/hi/there/.."));
+			Assert.AreEqual ("there", VPU.GetFileName ("~/hi/there/."));
+
+			Assert.AreEqual ("NunitWeb", VPU.GetFileName ("~"));
+			Assert.AreEqual ("", VPU.GetFileName ("~/.."));
+			Assert.AreEqual ("", VPU.GetFileName ("~/../"));
+			Assert.AreEqual ("hi", VPU.GetFileName ("~/../hi"));
+			Assert.AreEqual ("hi", VPU.GetFileName ("~/../hi/"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetFileName5 ()
+		{
+			VPU.GetFileName ("hi");
 		}
 
 		[Test]

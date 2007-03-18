@@ -94,26 +94,33 @@ namespace System.Web {
 
 		public static string GetExtension (string virtualPath)
 		{
-            		if (virtualPath != null && virtualPath != "" && 
-				virtualPath.IndexOf('/') == -1)
-                	{
-				virtualPath = "./" + virtualPath;
-			}
+			if (StrUtils.IsNullOrEmpty (virtualPath))
+				throw new ArgumentNullException ("virtualPath");
 
-            		string filename = GetFileName (virtualPath);
-			int dot = filename.LastIndexOf ('.');
-			if (dot == -1 || dot == filename.Length + 1)
-				return "";
+			virtualPath = Canonize (virtualPath);
 
-			return filename.Substring (dot);
+			int dot = virtualPath.LastIndexOf ('.');
+			if (dot == -1 || dot == virtualPath.Length - 1 || dot < virtualPath.LastIndexOf ('/'))
+				return String.Empty;
+
+			return virtualPath.Substring (dot);
 		}
 
 		public static string GetFileName (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "") // Yes, "" throws an ArgumentNullException
-				throw new ArgumentNullException ("virtualPath");
+			virtualPath = Normalize (virtualPath);
 			
-			return UrlUtils.GetFile (RemoveTrailingSlash (virtualPath));
+			if (IsAppRelative (virtualPath) && virtualPath.Length < 3) { // "~" or "~/"
+				virtualPath = ToAbsolute (virtualPath);
+			}
+
+			if (virtualPath.Length == 1 && virtualPath [0] == '/') { // "/"
+				return String.Empty;
+			}
+
+			virtualPath = RemoveTrailingSlash (virtualPath);
+			int last = virtualPath.LastIndexOf ('/');
+			return virtualPath.Substring (last + 1);
 		}
 
 		internal static bool IsRooted (string virtualPath)

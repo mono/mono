@@ -1,5 +1,9 @@
 2007-03-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* VirtualPathUtility.cs: fixed GetFileName(), GetExtension() methods.
+
+2007-03-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* VirtualPathUtility.cs: fixed GetDirectory() method.
 
 2007-03-15  Marek Habersack  <mhabersack@novell.com>
