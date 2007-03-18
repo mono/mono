@@ -1704,7 +1704,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle below = new Rectangle (0, node.Bounds.Bottom + 2, ViewportRectangle.Width,
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
 					ViewportRectangle.Height - node.Bounds.Bottom);
 
 			int amount = count_to_next * ActualItemHeight;
@@ -1713,7 +1713,6 @@ namespace System.Windows.Forms {
 				XplatUI.ScrollWindow (Handle, below, 0, amount, false);
 
 			if (show_plus_minus) {
-				//int linesx = node.GetLinesX ();
 				Invalidate (new Rectangle (0, node.GetY (), Width, ActualItemHeight));
 			}
 		}
@@ -1725,8 +1724,8 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle below = new Rectangle (0, node.Bounds.Bottom + 2, ViewportRectangle.Width,
-					ViewportRectangle.Height - node.Bounds.Bottom + 2);
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
+					ViewportRectangle.Height - node.Bounds.Bottom);
 
 			int amount = count_to_next * ActualItemHeight;
 
@@ -1734,7 +1733,6 @@ namespace System.Windows.Forms {
 				XplatUI.ScrollWindow (Handle, below, 0, -amount, false);
 
 			if (show_plus_minus) {
-				//int linesx = node.GetLinesX ();
 				Invalidate (new Rectangle (0, node.GetY (), Width, ActualItemHeight));
 			}
 		}
