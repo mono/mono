@@ -1,3 +1,8 @@
+2007-03-18  Alp Toker  <alp@atoker.com>
+
+	* UnmanagedMemoryStream.cs:
+	* Directory.cs: Exception message typo fixes.
+
 2007-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* UnmanagedMemoryStream.cs: Fix a warning.

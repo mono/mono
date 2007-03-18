@@ -253,11 +253,11 @@ namespace System.IO
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
 			if (value < 0 || value > capacity)
-				throw new ArgumentOutOfRangeException("The specified value is negetive exceeds the capacity of the stream");
+				throw new ArgumentOutOfRangeException("The specified value is negative or exceeds the capacity of the stream");
 			if (fileaccess == FileAccess.Read)
 				throw new NotSupportedException("write property is set to false");
 			if (fileaccess == FileAccess.Read)
-				throw new NotSupportedException("Length change not supported see object construction");
+				throw new NotSupportedException("Length change not supported; see object construction");
 			else
 				length = value;
 		}
