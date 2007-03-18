@@ -308,6 +308,7 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				dataObjectTypeName = value;
+				dataObjectType = null;
 			}
 		}
 
@@ -534,7 +535,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (dataObjectType == null) {
 					dataObjectType = LoadType (DataObjectTypeName);
-					if (objectType == null)
+					if (dataObjectType == null)
 						throw new InvalidOperationException ("Type not found: " + DataObjectTypeName);
 				}
 				return dataObjectType;
