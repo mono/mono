@@ -135,7 +135,12 @@ namespace System.Web.UI
 				return baseVDir;
 			}
 
-			set { baseVDir = value; }
+			set { 
+				if (VirtualPathUtility.IsRooted (value))
+					baseVDir = VirtualPathUtility.ToAbsolute (value);
+				else
+					baseVDir = value; 
+			}
 		}
 
 #if NET_2_0
