@@ -1,3 +1,8 @@
+2007-03-18  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlUtils.cs: GetDirectory always returns a path with trailing
+	slash.
+
 2007-03-16  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlUtils.cs: make sure the trailing slash is present.
