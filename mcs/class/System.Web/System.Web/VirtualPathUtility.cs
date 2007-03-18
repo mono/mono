@@ -75,22 +75,21 @@ namespace System.Web {
 
 		public static string GetDirectory (string virtualPath)
 		{
-			if (virtualPath == null || virtualPath == "") // Yes, "" throws an ArgumentNullException
-				throw new ArgumentNullException ("virtualPath");
+			virtualPath = Normalize (virtualPath);
 
-			if (virtualPath [0] != '/')
-				throw new ArgumentException ("The virtual path is not rooted", "virtualPath");
+			if (IsAppRelative (virtualPath) && virtualPath.Length < 3) { // "~" or "~/"
+				virtualPath = ToAbsolute (virtualPath);
+			}
+			
+			if (virtualPath.Length == 1 && virtualPath [0] == '/') { // "/"
+				return null;
+			}
 
-            		if (virtualPath == "/")
-                		return null; //.net behavior
-
-            		//In .Net - will look for one '/' before the last one, and will return it as a directory
-            		//therefor we always should remove the last slash.
-            		if (virtualPath.EndsWith("/")) 
-                		virtualPath = virtualPath.Substring(0, virtualPath.Length - 1);
-
-            		string result = UrlUtils.GetDirectory (virtualPath);
-			return AppendTrailingSlash (result);
+			int last = virtualPath.LastIndexOf ('/', virtualPath.Length - 2, virtualPath.Length - 2);
+			if (last > 0)
+				return virtualPath.Substring (0, last + 1);
+			else
+				return "/";
 		}
 
 		public static string GetExtension (string virtualPath)
@@ -127,7 +126,7 @@ namespace System.Web {
 			if (StrUtils.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
-			return (virtualPath [0] == '/');
+			return (virtualPath [0] == '/' || virtualPath [0] == '\\');
 		}
 
 		public static bool IsAppRelative (string virtualPath)
@@ -138,7 +137,7 @@ namespace System.Web {
 			if (virtualPath.Length == 1 && virtualPath [0] == '~')
 				return true;
 
-			if (virtualPath [0] == '~' && virtualPath [1] == '/')
+			if (virtualPath [0] == '~' && (virtualPath [1] == '/' || virtualPath [1] == '\\'))
 				return true;
 
 			return false;

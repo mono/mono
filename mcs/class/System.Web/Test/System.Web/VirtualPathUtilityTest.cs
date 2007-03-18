@@ -257,26 +257,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		public void GetDirectory ()
-		{
-			Assert.AreEqual ("/hi/", VPU.GetDirectory ("/hi/there"), "A1");
-			Assert.AreEqual ("/hi/", VPU.GetDirectory ("/hi/there/"), "A2");
-			Assert.AreEqual (null, VPU.GetDirectory ("/"), "A3");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		/* stack trace is:
-		   at System.Web.VirtualPath.Create(String virtualPath, VirtualPathOptions options)
-		   at System.Web.VirtualPathUtility.GetDirectory(String virtualPath)
-		   at MonoTests.System.Web.VirtualPathUtilityTest.GetDirectory()
-		 */
-		public void GetDirectory_ArgException1 ()
-		{
-			Assert.AreEqual ("", VPU.GetDirectory (""), "A1");
-		}
-
-		[Test]
 		public void GetExtension ()
 		{
 			Assert.AreEqual (".aspx", VPU.GetExtension ("/hi/index.aspx"), "A1");
@@ -333,6 +313,11 @@ namespace MonoTests.System.Web {
 			Assert.IsTrue (VPU.IsAbsolute ("/hi/there"), "A2");
 			Assert.IsFalse (VPU.IsAbsolute ("hi/there"), "A3");
 			Assert.IsFalse (VPU.IsAbsolute ("./hi"), "A4");
+
+			Assert.IsTrue (VPU.IsAbsolute ("\\"), "A1");
+			Assert.IsTrue (VPU.IsAbsolute ("\\hi\\there"), "A2");
+			Assert.IsFalse (VPU.IsAbsolute ("hi\\there"), "A3");
+			Assert.IsFalse (VPU.IsAbsolute (".\\hi"), "A4");
 		}
 
 		[Test]
@@ -357,6 +342,13 @@ namespace MonoTests.System.Web {
 			Assert.IsFalse (VPU.IsAppRelative ("./Stuff"), "A2");
 			Assert.IsFalse (VPU.IsAppRelative ("/Stuff"), "A3");
 			Assert.IsFalse (VPU.IsAppRelative ("/"), "A4");
+			Assert.IsFalse (VPU.IsAppRelative ("~Stuff"), "A5");
+			
+			Assert.IsTrue (VPU.IsAppRelative ("~"), "A0");
+			Assert.IsTrue (VPU.IsAppRelative ("~\\Stuff"), "A1");
+			Assert.IsFalse (VPU.IsAppRelative (".\\Stuff"), "A2");
+			Assert.IsFalse (VPU.IsAppRelative ("\\Stuff"), "A3");
+			Assert.IsFalse (VPU.IsAppRelative ("\\"), "A4");
 			Assert.IsFalse (VPU.IsAppRelative ("~Stuff"), "A5");
 		}
 
@@ -439,6 +431,47 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("/direc/", VPU.GetDirectory ("/direc/somefilenoextension"));
 			Assert.AreEqual ("/direc/", VPU.GetDirectory ("/direc/somefile.aspx"));
 			Assert.AreEqual ("/direc/", VPU.GetDirectory ("/////direc///somefile.aspx"));
+			Assert.AreEqual ("/direc/", VPU.GetDirectory ("\\\\direc\\///somefile.aspx"));
+			Assert.AreEqual ("/direc/", VPU.GetDirectory ("/direc/somefilenoextension/"));
+			Assert.AreEqual (null, VPU.GetDirectory ("/"), "A3");
+
+			Assert.AreEqual (null, VPU.GetDirectory ("/dir1/.."), "/dir1/..");
+			Assert.AreEqual (null, VPU.GetDirectory ("/dir1/../"), "/dir1/../");
+			Assert.AreEqual ("/", VPU.GetDirectory ("/dir1/../dir2"), "/dir1/../dir2");
+			Assert.AreEqual ("/", VPU.GetDirectory ("/dir1/../dir2/"), "/dir1/../dir2/");
+			Assert.AreEqual ("/dir2/", VPU.GetDirectory ("/dir1/../dir2/somefile.aspx"));
+			
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefilenoextension"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/////direc///somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~\\\\direc\\///somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefilenoextension/"));
+		}
+
+		[Test]
+		public void GetDirectory5 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (GetDirectory5_Load)).Run ();
+		}
+
+		public static void GetDirectory5_Load (Page p)
+		{
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefilenoextension"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/////direc///somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~\\\\direc\\///somefile.aspx"));
+			Assert.AreEqual ("~/direc/", VPU.GetDirectory ("~/direc/somefilenoextension/"));
+			Assert.AreEqual ("/", VPU.GetDirectory ("~/"), "~/");
+			Assert.AreEqual ("/", VPU.GetDirectory ("~"), "~");
+
+			Assert.AreEqual ("/", VPU.GetDirectory ("~/dir1/.."), "/dir1/..");
+			Assert.AreEqual ("/", VPU.GetDirectory ("~/dir1/../"), "/dir1/../");
+			Assert.AreEqual ("~/", VPU.GetDirectory ("~/dir1/../dir2"), "/dir1/../dir2");
+			Assert.AreEqual ("~/", VPU.GetDirectory ("~/dir1/../dir2/"), "/dir1/../dir2/");
+			Assert.AreEqual ("~/dir2/", VPU.GetDirectory ("~/dir1/../dir2/somefile.aspx"));
+
+			Assert.AreEqual ("/dir1/", VPU.GetDirectory ("~/../dir1/dir2"), "~/../dir1");
+			Assert.AreEqual ("/dir1/", VPU.GetDirectory ("~/../dir1/dir2/"), "~/../dir1/");
 		}
 
 		[Test]
