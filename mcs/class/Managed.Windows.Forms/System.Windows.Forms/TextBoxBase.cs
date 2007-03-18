@@ -1762,8 +1762,6 @@ namespace System.Windows.Forms {
 						// Force the first tick
 						ScrollTimerTickHandler (null, EventArgs.Empty);
 					}
-
-					return;
 				}
 
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);

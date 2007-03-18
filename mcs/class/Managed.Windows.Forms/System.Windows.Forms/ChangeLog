@@ -1,5 +1,12 @@
 2007-03-18  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs: Allow updating the selection position when the
+	cursor is outside the textarea, but we have a capture.
+	* TextControl.cs: A special case for when the cursor is outside
+	the bounds of the TB.
+	
+2007-03-18  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Remove image pasting code for now.  There is no
 	way to get an image on the clipboard right now anyways.
 	* TextControl.cs:

@@ -3752,6 +3752,12 @@ namespace System.Windows.Forms {
 			line = GetLineByPixel(multiline ? y : x, false);
 			tag = line.tags;
 
+			/// Special case going leftwards of the first tag
+			if (x < tag.X) {
+				index = 0;
+				return LineTag.GetFinalTag (tag);
+			}
+
 			while (true) {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
 					int	end;
