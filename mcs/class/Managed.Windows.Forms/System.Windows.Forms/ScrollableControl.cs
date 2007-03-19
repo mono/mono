@@ -684,8 +684,6 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
-			width += scroll_position.X;
-			height += scroll_position.Y;
 
 			canvas_size.Width = width;
 			canvas_size.Height = height;

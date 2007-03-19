@@ -1,5 +1,11 @@
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
+	* ScrollableControl.cs: the scroll position should not effect the
+	canvas size.  commit patch from georgegiolfan@yahoo.com, which
+	fixes some really bizarre behavior on resizing.  Fixes bug #80778.
+	
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
 	* ScrollableControl.cs: clean this up a bit.  create the
 	scrollbars in the ctor and just show/hide them as needed.  Also,
 	make hscroll_visible/vscroll_visible internal to Recalculate, and
