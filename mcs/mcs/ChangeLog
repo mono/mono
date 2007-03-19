@@ -1,7 +1,3 @@
-2007-03-19  Marek Safar  <marek.safar@gmail.com>
-
-	* class.cs: Don't override existing implementation flags in all cases.
-
 2007-03-17  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs (EventFieldAccessor.EmitMethod): Don't override existing
