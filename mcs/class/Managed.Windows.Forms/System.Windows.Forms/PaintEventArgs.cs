@@ -90,8 +90,11 @@ namespace System.Windows.Forms {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (!disposed) {
+#if !NET_2_0
+
 				if (graphics != null)
 					graphics.Dispose ();
+#endif
 				disposed = true;
 			}
 		}
