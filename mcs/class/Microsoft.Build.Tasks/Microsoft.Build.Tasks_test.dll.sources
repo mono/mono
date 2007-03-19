@@ -1,4 +1,5 @@
 Microsoft.Build.Tasks/ALTest.cs
+Microsoft.Build.Tasks/CombinePathTest.cs
 Microsoft.Build.Tasks/Consts.cs
 Microsoft.Build.Tasks/CreateItemTest.cs
 Microsoft.Build.Tasks/CreatePropertyTest.cs
