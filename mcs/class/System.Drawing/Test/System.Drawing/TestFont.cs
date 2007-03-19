@@ -567,5 +567,15 @@ namespace MonoTests.System.Drawing{
 			f.ToHfont ();
 #endif
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
+		public void UnavailableStyleException ()
+		{
+			// Marked NotWorking because it is dependent on what fonts/styles are available
+			// on the OS.  This test is written for Windows.
+			Font f = new Font ("Monotype Corsiva", 8, FontStyle.Regular);
+		}
 	}
 }

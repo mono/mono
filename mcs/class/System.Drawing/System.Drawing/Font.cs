@@ -70,6 +70,10 @@ namespace System.Drawing
 
 			setProperties (family, emSize, style, unit, charSet, isVertical);           
 			Status status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
+			
+			if (status == Status.FontStyleNotFound)
+				throw new ArgumentException (Locale.GetText ("Style {0} isn't supported by font {1}.", style.ToString (), familyName));
+				
 			GDIPlus.CheckStatus (status);
 		}
 
