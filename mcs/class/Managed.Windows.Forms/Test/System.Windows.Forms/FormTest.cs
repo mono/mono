@@ -58,6 +58,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void MaximizedParentedFormTest ()
 		{
 			using (Form Main = new Form ()) {
@@ -68,12 +69,32 @@ namespace MonoTests.System.Windows.Forms
 				Main.Show ();
 				
 				Child.WindowState = FormWindowState.Maximized;
+				Child.Visible = true;
 				// The exact negative value depends on the border with, but it should always be < 0.
 				Assert.IsTrue (Child.Location.X < 0 && Child.Location.Y < 0, "#A1");
 			}
 		}
 		[Test]
 		[Category ("NotWorking")]
+		public void ParentedFormEventTest ()
+		{
+
+			using (Form Main = new Form ()) {
+				Form Child = new Form ();
+				Child.TopLevel = false;
+				Child.Visible = true;
+				Main.ShowInTaskbar = false;
+				Main.Show ();
+
+				EventLogger log = new EventLogger (Child);
+				Assert.AreEqual (true, Child.Visible, "#A0");
+				Main.Controls.Add (Child);
+				Assert.AreEqual (true, Child.Visible, "#B0");
+				Assert.AreEqual ("ParentChanged;BindingContextChanged;Layout;VisibleChanged;BindingContextChanged;BindingContextChanged", log.EventsJoined (), "#B1");
+			}
+		}
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void FormCreateParamsStyleTest ()
 		{
 			Form frm;
@@ -344,7 +365,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80020
-		[Category ("NotWorking")]
 		public void IsHandleCreated ()
 		{
 			Form main = new Form ();

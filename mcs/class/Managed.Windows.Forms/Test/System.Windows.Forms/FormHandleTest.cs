@@ -21,7 +21,6 @@ namespace MonoTests.System.Windows.Forms
 {
 	
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class FormHandleTest
 	{
 		[Test]
@@ -425,6 +424,7 @@ namespace MonoTests.System.Windows.Forms
 			c.TopLevel = false;
 			c.Parent = new Form ();
 			Assert.IsFalse (c.IsHandleCreated, "A53");
+			c = new Form ();
 #if NET_2_0
 			o = c.PreferredSize;
 			Assert.IsFalse (c.IsHandleCreated, "A54");
@@ -484,6 +484,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			c.Visible = true;
 			Assert.IsTrue (c.IsHandleCreated, "A69-b");
+			c.Dispose ();
 			c = new Form ();
 			
 			o = c.Width;
@@ -521,8 +522,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "FT1");
 			
 			o = c.TopLevel;
-			c.TopLevel = !c.TopLevel;
-			Assert.IsFalse (c.IsHandleCreated, "FT2");
+			c.TopLevel = true;
+			Assert.IsFalse (c.IsHandleCreated, "FT2-a");
+
+			o = c.TopLevel;
+			c.TopLevel = false;
+			Assert.IsFalse (c.IsHandleCreated, "FT2-b");
 			
 			o = c.TopMost;
 			c.TopMost = !c.TopMost;
@@ -686,6 +691,9 @@ namespace MonoTests.System.Windows.Forms
 
 			c.GetChildAtPoint (new Point (10, 10));
 			Assert.IsTrue (c.IsHandleCreated, "A10");
+			c.Dispose ();
+			c = new Form ();
+			
 			c.GetContainerControl ();
 			Assert.IsFalse (c.IsHandleCreated, "A11");
 			
@@ -836,7 +844,7 @@ namespace MonoTests.System.Windows.Forms
 
 		void HandleCreated_WriteStackTrace (object sender, EventArgs e)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 		}
 
 		public delegate void InvokeDelegate ();
@@ -999,8 +1007,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A36");
 			c.PublicSetStyle (ControlStyles.FixedHeight, true);
 			Assert.IsFalse (c.IsHandleCreated, "A37");
+			
 			c.PublicSetTopLevel (true);
 			Assert.IsFalse (c.IsHandleCreated, "A38");
+			
 			c = new ProtectedMethodsForm ();
 			
 			c.PublicSetVisibleCore (true);

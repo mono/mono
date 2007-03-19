@@ -20,7 +20,6 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class MdiFormHandleTest
 	{
 		private ProtectedForm main;
