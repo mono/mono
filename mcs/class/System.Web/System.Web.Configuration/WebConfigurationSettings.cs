@@ -229,8 +229,9 @@ namespace System.Web.Configuration
 			}
 
 			string tempDir = dir;
-			if (tempDir == HttpRuntime.AppDomainAppVirtualPath ||
-			    tempDir == HttpRuntime.AppDomainAppVirtualPath + "/") {
+			if (tempDir.Length > 1)
+				tempDir = tempDir.Substring (0, tempDir.Length - 1);
+			if (tempDir == HttpRuntime.AppDomainAppVirtualPath) {
 				tempDir = "";
 				realpath = HttpRuntime.AppDomainAppPath;
 			}
