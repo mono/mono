@@ -1,3 +1,8 @@
+2007-03-19  Everaldo Canuto  <everaldo@simios.org>
+
+	* MessageBox.cs: Remove WS_POPUP from CreateParams style, with it form
+	appears in taskbar.
+
 2007-03-18  Everaldo Canuto  <everaldo@simios.org>
 
 	* MessageBox.cs:

@@ -136,7 +136,7 @@ namespace System.Windows.Forms
 				get {
 					CreateParams cp = base.CreateParams;;
 
-					cp.Style |= (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_POPUP | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
+					cp.Style |= (int)(WindowStyles.WS_DLGFRAME | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CAPTION);
 					
 					if (!is_enabled)
 						cp.Style |= (int)(WindowStyles.WS_DISABLED);
