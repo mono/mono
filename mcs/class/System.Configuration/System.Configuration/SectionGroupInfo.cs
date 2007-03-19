@@ -397,7 +397,7 @@ namespace System.Configuration
 	internal class ConfigInfoCollection : NameObjectCollectionBase
 	{
 		public ConfigInfoCollection ()
-			: base (OrdinalComparer.Instance)
+			: base (StringComparer.Ordinal)
 		{
 		}
 

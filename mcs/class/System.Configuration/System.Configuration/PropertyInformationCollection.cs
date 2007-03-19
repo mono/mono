@@ -37,7 +37,7 @@ namespace System.Configuration
 	public sealed class PropertyInformationCollection: NameObjectCollectionBase
 	{
 		internal PropertyInformationCollection ()
-			: base (OrdinalComparer.Instance)
+			: base (StringComparer.Ordinal)
 		{
 		}
 		

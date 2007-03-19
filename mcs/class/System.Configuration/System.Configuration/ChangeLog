@@ -1,3 +1,11 @@
+2007-03-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ConfigurationSectionCollection.cs,
+	* ConfigurationSectionGroupCollection.cs,
+	* PropertyInformationCollection.cs, 
+	* SectionGroupInfo.cs: used StringComparer.Ordinal instead of
+	OrdinalComparer
+
 2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationSectionCollection.cs,
