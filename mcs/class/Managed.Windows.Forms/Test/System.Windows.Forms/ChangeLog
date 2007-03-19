@@ -1,5 +1,9 @@
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* RichBoxTest.cs: Disabled ReadOnly test until I can test it on linux.
+
+2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* RichBoxTest.cs: Enabled ReadOnly test.
 
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
