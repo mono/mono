@@ -3,7 +3,7 @@
 	* ListView.cs : make box selection for Details views without 
 	FullRowSelect dependent on the text bounds, not item bounds.
 	* ListViewItem.cs : add an internal property to obtain the TextBounds
-	in Details view.  [Fixes case 1 of #80374]
+	in Details view.  [Fixes case 1-4 of #80374]
 
 2007-03-19  Andreia Gaita  <avidigal@novell.com>
 
