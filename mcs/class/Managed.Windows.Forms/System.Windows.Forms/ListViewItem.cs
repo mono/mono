@@ -657,6 +657,17 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		Rectangle text_bounds;
+		internal Rectangle TextBounds {
+			get {
+				Rectangle result = text_bounds;
+				Point loc = owner.GetItemLocation (Index);
+				result.X += loc.X;
+				result.Y += loc.Y;
+				return result;
+			}
+		}
+
 		internal ListView Owner {
 			set {
 				if (owner == value)
@@ -715,6 +726,10 @@ namespace System.Windows.Forms
 					label_rect.Width = owner.Columns [0].Wd - label_rect.X;
 				else
 					label_rect.Width = text_size.Width;
+
+				SizeF text_sz = owner.DeviceContext.MeasureString (Text, Font);
+				text_bounds = label_rect;
+				text_bounds.Width = (int) text_sz.Width;
 
 				item_rect = total = Rectangle.Union
 					(Rectangle.Union (checkbox_rect, icon_rect), label_rect);

@@ -1781,17 +1781,33 @@ namespace System.Windows.Forms
 				return Rectangle.FromLTRB (left, top, right, bottom);
 			}
 
+			bool BoxIntersectsItem (int index)
+			{
+				Rectangle r = new Rectangle (owner.GetItemLocation (index), owner.ItemSize);
+				r.X += r.Width / 4;
+				r.Y += r.Height / 4;
+				r.Width /= 2;
+				r.Height /= 2;
+				return BoxSelectRectangle.IntersectsWith (r);
+			}
+
+			bool BoxIntersectsText (int index)
+			{
+				Rectangle r = owner.Items [index].TextBounds;
+				return BoxSelectRectangle.IntersectsWith (r);
+			}
+
 			ArrayList BoxSelectedItems {
 				get {
 					ArrayList result = new ArrayList ();
-					Size item_size = owner.ItemSize;
 					for (int i = 0; i < owner.Items.Count; i++) {
-						Rectangle r = new Rectangle (owner.GetItemLocation (i), item_size);
-						r.X += r.Width / 4;
-						r.Y += r.Height / 4;
-						r.Width /= 2;
-						r.Height /= 2;
-						if (BoxSelectRectangle.IntersectsWith (r))
+						bool intersects;
+						if (owner.View == View.Details && !owner.FullRowSelect)
+							intersects = BoxIntersectsText (i);
+						else
+							intersects = BoxIntersectsItem (i);
+
+						if (intersects)
 							result.Add (owner.Items [i]);
 					}
 					return result;
@@ -1871,12 +1887,13 @@ namespace System.Windows.Forms
 					}
 
 					if (owner.View == View.Details && !owner.FullRowSelect) {
-						if (owner.items [i].GetBounds (ItemBoundsPortion.Label).Contains (pt)) {
+						if (owner.items [i].TextBounds.Contains (pt))
 							clicked_item = owner.items [i];
-							break;
-						}
+						else
+							owner.SetFocusedItem (owner.Items [i]);
 					} else
 						clicked_item = owner.items [i];
+					break;
 				}
 
 
