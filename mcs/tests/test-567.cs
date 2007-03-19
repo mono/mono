@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace preservesig_test
 {
@@ -33,6 +34,7 @@ namespace preservesig_test
 		public event D e;
 		
 		[PreserveSig()]
+		[MethodImpl(MethodImplOptions.InternalCall,MethodCodeType=MethodCodeType.Runtime)]
 		public int DoFoo()
 		{
 			return 0;

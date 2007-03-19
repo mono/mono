@@ -42,45 +42,45 @@ public class Blah {
 			return 2;
 		
 		if (i [2] != 2)
-			return 1;
+			return 3;
 		
 		if (j [1,1] != 3)
-			return 1;
+			return 4;
 
 		for (int t = 0; t < 4; ++t) {
 			if (array [t] != t)
-				return 1;
+				return 5;
 			
 			if (a [t] != (t + 4))
-				return 1;
+				return 6;
 		}
 
 		if (bar [2,1] != 20)
-			return 1;
+			return 7;
 
 		if (k [2] != 5)
-			return 1;
+			return 8;
 
 		if (m [1,1,1] != 9)
-			return 1;
+			return 9;
 
 		if (boo [0,1] != 11)
-			return 1;
+			return 10;
 
 		if (f_array [0] != 1.23F)
-			return 1;
+			return 11;
 
 		if (double_arr [1] != 90.1226)
-			return 1;
+			return 12;
 
 		foreach (string s in names)
 			Console.WriteLine ("Hello, " + s);
 
 		if (names [0] != "Miguel")
-			return 1;
+			return 13;
 
 		if (c_arr [4] != 'R')
-			return 2;
+			return 14;
 
 		int count = 10;
 
@@ -92,17 +92,17 @@ public class Blah {
 		for (int idx = count; idx > 0; ){
 			idx--;
 			if (x [idx] != idx + 1)
-				return 12;
+				return 15;
 		}
 
 		IntPtr [] arr = { new System.IntPtr (1) };
 		if (arr [0] != (IntPtr) 1)
-                        return 13;
+                        return 16;
 
                 IntPtr [] arr_i = { System.IntPtr.Zero };
 
                 if (arr_i [0] != System.IntPtr.Zero)
-                        return 14;
+                        return 17;
                 
 		Console.WriteLine ("Array initialization test okay.");
 				   
