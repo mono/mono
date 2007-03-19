@@ -37,8 +37,6 @@ namespace System.Windows.Forms {
 #endif
 	public class ScrollableControl : Control {
 		#region Local Variables
-		private bool			hscroll_visible;
-		private bool			vscroll_visible;
 		private bool			force_hscroll_visible;
 		private bool			force_vscroll_visible;
 		private bool			auto_scroll;
@@ -219,9 +217,8 @@ namespace System.Windows.Forms {
 		public ScrollableControl() {
 			SetStyle(ControlStyles.ContainerControl, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, false);
+
 			auto_scroll = false;
-			hscroll_visible = false;
-			vscroll_visible = false;
 			force_hscroll_visible = false;
 			force_vscroll_visible = false;
 			auto_scroll_margin = new Size(0, 0);
@@ -232,6 +229,8 @@ namespace System.Windows.Forms {
 			VisibleChanged += new EventHandler(Recalculate);
 			LocationChanged += new EventHandler (LocationChangedHandler);
 			ParentChanged += new EventHandler (ParentChangedHandler);
+
+			CreateScrollbars ();
 		}
 
 		void LocationChangedHandler (object sender, EventArgs e)
@@ -296,7 +295,6 @@ namespace System.Windows.Forms {
 				}
 
 				auto_scroll = value;
-				CreateScrollbars ();
 			}
 		}
 
@@ -349,21 +347,21 @@ namespace System.Windows.Forms {
 
 					shift_x = 0;
 					shift_y = 0;
-					if (hscroll_visible) {
+					if (hscrollbar.VisibleInternal) {
 						shift_x = value.X - scroll_position.X;
 					}
 
-					if (vscroll_visible) {
+					if (vscrollbar.VisibleInternal) {
 						shift_y = value.Y - scroll_position.Y;
 					}
 
 					ScrollWindow(shift_x, shift_y);
 
-					if (hscroll_visible) {
+					if (hscrollbar.VisibleInternal) {
 						hscrollbar.Value = scroll_position.X;
 					}
 
-					if (vscroll_visible) {
+					if (vscrollbar.VisibleInternal) {
 						vscrollbar.Value = scroll_position.Y;
 					}
 
@@ -379,7 +377,7 @@ namespace System.Windows.Forms {
 
 					if (canvas_size.Width <= base.DisplayRectangle.Width) {
 						width = base.DisplayRectangle.Width;
-						if (vscroll_visible) {
+						if (vscrollbar.VisibleInternal) {
 							width -= vscrollbar.Width;
 						}
 					} else {
@@ -388,7 +386,7 @@ namespace System.Windows.Forms {
 
 					if (canvas_size.Height <= base.DisplayRectangle.Height) {
 						height = base.DisplayRectangle.Height;
-						if (hscroll_visible) {
+						if (hscrollbar.VisibleInternal) {
 							height -= hscrollbar.Height;
 						}
 					} else {
@@ -438,11 +436,11 @@ namespace System.Windows.Forms {
 
 		protected bool HScroll {
 			get {
-				return hscroll_visible;
+				return hscrollbar.VisibleInternal;
 			}
 
 			set {
-				if (hscroll_visible != value) {
+				if (hscrollbar.VisibleInternal != value) {
 					force_hscroll_visible = value;
 					Recalculate(this, EventArgs.Empty);
 				}
@@ -451,11 +449,11 @@ namespace System.Windows.Forms {
 
 		protected bool VScroll {
 			get {
-				return vscroll_visible;
+				return vscrollbar.VisibleInternal;
 			}
 
 			set {
-				if (vscroll_visible != value) {
+				if (vscrollbar.VisibleInternal != value) {
 					force_vscroll_visible = value;
 					Recalculate(this, EventArgs.Empty);
 				}
@@ -470,7 +468,7 @@ namespace System.Windows.Forms {
 			int	corner_x;
 			int	corner_y;
 
-			if (!AutoScroll || (!hscroll_visible && !vscroll_visible)) {
+			if (!AutoScroll || (!hscrollbar.VisibleInternal && !vscrollbar.VisibleInternal)) {
 				return;
 			}
 
@@ -500,11 +498,11 @@ namespace System.Windows.Forms {
 			corner_x = Math.Max(0, x + activeControl.Width / 2 - ClientSize.Width / 2);
 			corner_y = Math.Max(0, y + activeControl.Height / 2 - ClientSize.Height / 2);
 
-			if (hscroll_visible && (corner_x > hscrollbar.Maximum)) {
+			if (hscrollbar.VisibleInternal && (corner_x > hscrollbar.Maximum)) {
 				corner_x = Math.Max(0, hscrollbar.Maximum - ClientSize.Width);
 			}
 
-			if (vscroll_visible && (corner_y > vscrollbar.Maximum)) {
+			if (vscrollbar.VisibleInternal && (corner_y > vscrollbar.Maximum)) {
 				corner_y = Math.Max(0, vscrollbar.Maximum - ClientSize.Height);
 			}
 			if ((corner_x == scroll_position.X) && (corner_y == scroll_position.Y)) {
@@ -552,7 +550,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnMouseWheel(MouseEventArgs e) {
-			if (vscroll_visible) {
+			if (vscrollbar.VisibleInternal) {
 				if (e.Delta > 0) {
 					if (vscrollbar.Minimum < (vscrollbar.Value - vscrollbar.LargeChange)) {
 						vscrollbar.Value -= vscrollbar.LargeChange;
@@ -697,10 +695,6 @@ namespace System.Windows.Forms {
 			if (!IsHandleCreated) {
 				return;
 			}
-			CreateScrollbars ();
-			if (!auto_scroll && !force_hscroll_visible && !force_vscroll_visible) {
-				return;
-			}
 
 			Size canvas = canvas_size;
 			Size client = ClientSize;
@@ -712,6 +706,9 @@ namespace System.Windows.Forms {
 			int bottom_edge = client.Height;
 			int prev_right_edge;
 			int prev_bottom_edge;
+
+			bool hscroll_visible;
+			bool vscroll_visible;
 
 			do {
 				prev_right_edge = right_edge;
@@ -763,7 +760,7 @@ namespace System.Windows.Forms {
 				hscrollbar.SmallChange = 5;
 				hscrollbar.Maximum = canvas.Width - 1;
 			} else {
-				if (hscrollbar != null && hscrollbar.Visible) {
+				if (hscrollbar != null && hscrollbar.VisibleInternal) {
 					ScrollWindow (- scroll_position.X, 0);
 				}
 				scroll_position.X = 0;
@@ -774,7 +771,7 @@ namespace System.Windows.Forms {
 				vscrollbar.SmallChange = 5;
 				vscrollbar.Maximum = canvas.Height - 1;
 			} else {
-				if (vscrollbar != null && vscrollbar.Visible) {
+				if (vscrollbar != null && vscrollbar.VisibleInternal) {
 					ScrollWindow (0, - scroll_position.Y);
 				}
 				scroll_position.Y = 0;
@@ -790,27 +787,26 @@ namespace System.Windows.Forms {
 								 SystemInformation.HorizontalScrollBarHeight);
 			}
 			
-			if (hscrollbar != null) {
-				hscrollbar.Bounds = hscroll_bounds;
-				hscrollbar.Visible = hscroll_visible;
-			}
-			if (vscrollbar != null) {
-				vscrollbar.Bounds = vscroll_bounds;
-				vscrollbar.Visible = vscroll_visible;
-			}
+			SuspendLayout ();
+
+			hscrollbar.Bounds = hscroll_bounds;
+			hscrollbar.Visible = hscroll_visible;
+
+			vscrollbar.Bounds = vscroll_bounds;
+			vscrollbar.Visible = vscroll_visible;
+
 			UpdateSizeGripVisible ();
+
+			ResumeLayout ();
 		}
 
 		internal void UpdateSizeGripVisible ()
 		{
-			if (sizegrip == null)
-				return;
-				
 			sizegrip.CapturedControl = Parent;
 			// This is really wierd, the size grip is only showing up 
 			// if the bottom right corner of the scrollable control is within
 			// two pixels from the bottom right corner of its parent.
-			bool show_sizegrip = hscroll_visible && vscroll_visible;
+			bool show_sizegrip = hscrollbar.VisibleInternal && vscrollbar.VisibleInternal;
 			bool enable_sizegrip = false;
 			if (show_sizegrip && Parent != null) {
 				Point diff = new Point (Parent.ClientRectangle.Bottom - Bottom, Parent.ClientRectangle.Right - Right);
@@ -830,54 +826,21 @@ namespace System.Windows.Forms {
 		
 		private void CreateScrollbars ()
 		{
-			bool h, v;
-			h = auto_scroll || force_hscroll_visible;
-			v = auto_scroll || force_vscroll_visible;
-			
-			if ((hscrollbar != null) == h && (vscrollbar != null) == v) {
-				return;
-			}
-			
-			SuspendLayout ();
+			hscrollbar = new ImplicitHScrollBar ();
+			hscrollbar.Visible = false;
+			hscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
+			hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
+			this.Controls.AddImplicit (hscrollbar);
 
-			if (h && (hscrollbar == null)) {
-				hscrollbar = new ImplicitHScrollBar ();
-				hscrollbar.Visible = false;
-				hscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
-				hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
-				this.Controls.AddImplicit (hscrollbar);
-			} else if (!h && (hscrollbar != null)) {
-				Controls.RemoveImplicit (hscrollbar);
-				hscrollbar.Dispose ();
-				hscrollbar = null;
-			}
-			hscroll_visible = h;
+			vscrollbar = new ImplicitVScrollBar ();
+			vscrollbar.Visible = false;
+			vscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
+			vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
+			this.Controls.AddImplicit (vscrollbar);
 
-			if (v && (vscrollbar == null)) {
-				vscrollbar = new ImplicitVScrollBar ();
-				vscrollbar.Visible = false;
-				vscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
-				vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
-				this.Controls.AddImplicit (vscrollbar);
-			} else if (!v && (vscrollbar != null)) {
-				Controls.RemoveImplicit (vscrollbar);
-				vscrollbar.Dispose ();
-				vscrollbar = null;
-
-			}
-			vscroll_visible = v;
-			
-			if (v && h && (sizegrip == null)) {
-				sizegrip = new SizeGrip (this);
-				sizegrip.Visible = false;
-				this.Controls.AddImplicit (sizegrip);
-			} else if (sizegrip != null) {
-				Controls.RemoveImplicit (sizegrip);
-				sizegrip.Dispose ();
-				sizegrip = null;
-			}
-			
-			ResumeLayout ();
+			sizegrip = new SizeGrip (this);
+			sizegrip.Visible = false;
+			this.Controls.AddImplicit (sizegrip);
 		}
 
 		private void ScrollWindow(int XOffset, int YOffset) {

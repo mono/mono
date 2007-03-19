@@ -1,3 +1,13 @@
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollableControl.cs: clean this up a bit.  create the
+	scrollbars in the ctor and just show/hide them as needed.  Also,
+	make hscroll_visible/vscroll_visible internal to Recalculate, and
+	just use hscrollbar.VisibleInternal/vscrollbar.VisibleInternal
+	everywhere else.  This seems to fix the scrollbars appearing
+	beneath the content for me (i have *no* idea why that is,
+	however.)
+
 2007-03-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Don't call DoAutoSize when we change Dock.  Also, remove
