@@ -1515,7 +1515,7 @@ namespace System.Windows.Forms {
 				DisplayCaret ();
 			}
 
-			if (owner.IsHandleCreated && selection_visible) {
+			if (owner.IsHandleCreated && owner.selection_length > 0) {
 				InvalidateSelectionArea ();
 			}
 		}
@@ -3243,9 +3243,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal void SetSelectionStart(Line start, int start_pos) {
+		internal void SetSelectionStart(Line start, int start_pos, bool invalidate) {
 			// Invalidate from the previous to the new start pos
-			Invalidate(selection_start.line, selection_start.pos, start, start_pos);
+			if (invalidate)
+				Invalidate(selection_start.line, selection_start.pos, start, start_pos);
 
 			selection_start.line = start;
 			selection_start.pos = start_pos;
@@ -3264,10 +3265,11 @@ namespace System.Windows.Forms {
 				SetSelectionVisible (false);
 			}
 
-			Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+			if (invalidate)
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 		}
 
-		internal void SetSelectionStart(int character_index) {
+		internal void SetSelectionStart(int character_index, bool invalidate) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
@@ -3277,10 +3279,10 @@ namespace System.Windows.Forms {
 			}
 
 			CharIndexToLineTag(character_index, out line, out tag, out pos);
-			SetSelectionStart(line, pos);
+			SetSelectionStart(line, pos, invalidate);
 		}
 
-		internal void SetSelectionEnd(Line end, int end_pos) {
+		internal void SetSelectionEnd(Line end, int end_pos, bool invalidate) {
 
 			if (end == selection_end.line && end_pos == selection_start.pos) {
 				selection_anchor.line = selection_start.line;
@@ -3316,14 +3318,15 @@ namespace System.Windows.Forms {
 
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
 				SetSelectionVisible (true);
-				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+				if (invalidate)
+					Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			} else {
 				SetSelectionVisible (false);
 				// ?? Do I need to invalidate here, tests seem to work without it, but I don't think they should :-s
 			}
 		}
 
-		internal void SetSelectionEnd(int character_index) {
+		internal void SetSelectionEnd(int character_index, bool invalidate) {
 			Line	line;
 			LineTag	tag;
 			int	pos;
@@ -3333,7 +3336,7 @@ namespace System.Windows.Forms {
 			}
 
 			CharIndexToLineTag(character_index, out line, out tag, out pos);
-			SetSelectionEnd(line, pos);
+			SetSelectionEnd(line, pos, invalidate);
 		}
 
 		internal void SetSelection(Line start, int start_pos) {
@@ -5201,8 +5204,8 @@ namespace System.Windows.Forms {
 				document.Combine(line.line_no, line.line_no + 1);
 
 				if (select) {
-					document.SetSelectionStart (line, pos);
-					document.SetSelectionEnd (line, pos + insert.text.Length);
+					document.SetSelectionStart (line, pos, false);
+					document.SetSelectionEnd (line, pos + insert.text.Length, false);
 				}
 
 				document.UpdateView(line, pos);

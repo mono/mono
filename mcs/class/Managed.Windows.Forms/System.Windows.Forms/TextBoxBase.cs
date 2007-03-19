@@ -75,7 +75,7 @@ namespace System.Windows.Forms {
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
 		internal BorderStyle actual_border_style;
-		internal bool shortcuts_enabled;
+		internal bool shortcuts_enabled = true;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -535,12 +535,12 @@ namespace System.Windows.Forms {
 					start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 
 					document.CharIndexToLineTag(start + value, out line, out tag, out pos);
-					document.SetSelectionEnd(line, pos);
+					document.SetSelectionEnd(line, pos, true);
 					document.PositionCaret(line, pos);
 				} else {
 					selection_length = -1;
 
-					document.SetSelectionEnd(document.selection_start.line, document.selection_start.pos);
+					document.SetSelectionEnd(document.selection_start.line, document.selection_start.pos, true);
 					document.PositionCaret(document.selection_start.line, document.selection_start.pos);
 				}
 			}
@@ -558,11 +558,11 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				document.SetSelectionStart(value);
+				document.SetSelectionStart(value, false);
 				if (selection_length > -1 ) {
-					document.SetSelectionEnd(value + selection_length);
+					document.SetSelectionEnd(value + selection_length, true);
 				} else {
-					document.SetSelectionEnd(value);
+					document.SetSelectionEnd(value, true);
 				}
 				document.PositionCaret(document.selection_start.line, document.selection_start.pos);
 				ScrollToCaret();
@@ -729,8 +729,20 @@ namespace System.Windows.Forms {
 			Line	last;
 
 			last = document.GetLine(document.Lines);
-			document.SetSelectionStart(document.GetLine(1), 0);
-			document.SetSelectionEnd(last, last.text.Length);
+			document.SetSelectionStart(document.GetLine(1), 0, false);
+			document.SetSelectionEnd(last, last.text.Length, true);
+			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
+			selection_length = -1;
+		}
+
+		/// Sync with above (except the invalidation of course)
+		internal void SelectAllNoInvalidate ()
+		{
+			Line last;
+
+			last = document.GetLine(document.Lines);
+			document.SetSelectionStart(document.GetLine(1), 0, false);
+			document.SetSelectionEnd(last, last.text.Length, false);
 			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 			selection_length = -1;
 		}

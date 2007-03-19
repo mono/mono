@@ -1,3 +1,11 @@
+2007-03-19  Jackson Harper  <jackson@ximian.com>
+
+	* TextBox.cs: Reduce the amount of invalidation we do.
+	* TextBoxBase.cs: Make shortcuts enabled true by default, at least
+	some of them are true by default on MS.
+	- Add some functions to reduce the amount of invalidates we do.
+	* TextControl.cs: Less invalidation.
+
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
 	[ Fixes #81773, and *seems* to fix #81553 as well ]

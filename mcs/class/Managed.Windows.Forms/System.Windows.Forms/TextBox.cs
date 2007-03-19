@@ -95,7 +95,8 @@ namespace System.Windows.Forms {
 
 		#region Private & Internal Methods
 		private void TextBox_LostFocus(object sender, EventArgs e) {
-			Invalidate();
+			if (hide_selection)
+				document.InvalidateSelectionArea ();
 		}
 #if NET_2_0
 		void OnAutoCompleteCustomSourceChanged(object sender, CollectionChangeEventArgs e) {
@@ -338,7 +339,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated (e);
-			SelectAll ();
+			SelectAllNoInvalidate ();
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {
