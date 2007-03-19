@@ -1,3 +1,7 @@
+2007-03-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripTest.cs: Enable gert's DockSize test for bug #80762.
+
 2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FormHandleTest.cs: Create new forms at a few specific places + a few

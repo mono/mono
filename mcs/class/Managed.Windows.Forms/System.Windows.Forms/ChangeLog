@@ -1,3 +1,9 @@
+2007-03-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Don't call DoAutoSize when we change Dock.  Also, remove
+	some redundacy for stuff in Anchor and Dock that base will take care of.
+	[Fixes #80762]
+
 2007-03-19  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : make box selection for Details views without 

@@ -113,10 +113,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		public override AnchorStyles Anchor {
 			get { return base.Anchor; }
-			set {
-				base.Anchor = value;
-				base.dock_style = DockStyle.None;
-			}
+			set { base.Anchor = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
@@ -190,10 +187,7 @@ namespace System.Windows.Forms
 			get { return base.Dock; }
 			set {
 				if (base.Dock != value) {
-					if (!Enum.IsDefined (typeof (DockStyle), value))
-						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for DockStyle", value));
 					base.Dock = value;
-					base.anchor_style = AnchorStyles.Left | AnchorStyles.Top;
 					
 					switch (value) {
 						case DockStyle.Top:
@@ -206,8 +200,6 @@ namespace System.Windows.Forms
 							this.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
 							break;
 					}
-
-					DoAutoSize ();
 				}
 			}
 		}

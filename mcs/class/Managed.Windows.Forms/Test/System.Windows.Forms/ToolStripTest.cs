@@ -104,7 +104,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80762
-		[NUnit.Framework.Category ("NotWorking")]
 		public void DockSize ()
 		{
 			ToolStrip ts = new ToolStrip();
