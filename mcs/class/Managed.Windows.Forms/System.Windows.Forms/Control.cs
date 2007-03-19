@@ -3288,13 +3288,13 @@ namespace System.Windows.Forms
 
 			if (!is_created) {
 				is_created = true;
-			}
 
-			if (binding_context == null) {	// seem to be sent whenever it's null?
-				OnBindingContextChanged(EventArgs.Empty);
-			}
+				if (binding_context == null) {	// seem to be sent whenever it's null?
+					OnBindingContextChanged(EventArgs.Empty);
+				}
 
-			OnCreateControl();
+				OnCreateControl();
+			}
 		}
 
 		public Graphics CreateGraphics() {
@@ -4868,6 +4868,7 @@ namespace System.Windows.Forms
 
 		private void WmShowWindow (ref Message m) {
 			if (m.WParam.ToInt32() != 0) {
+				CreateControl ();
 				/* if we're being shown, make sure our child controls all have their handles created */
 				Control [] controls = child_controls.GetAllControls ();
 				for (int i=0; i<controls.Length; i++) {

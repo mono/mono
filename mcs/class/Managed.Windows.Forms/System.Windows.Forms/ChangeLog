@@ -1,3 +1,22 @@
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
+	[ Fixes bug #80604]
+	
+	* XplatUIX11.cs (WaitForHwndMessage): change this to actually
+	swallow the message we're waiting on, instead of delivering it, as
+	this is only used for the WM_SHOWWINDOW raised from
+	MapWindow/UnmapWindow, and the message needs to be generated
+	(MapWindow, UnmapWindow): generate the WM_SHOWWINDOW message
+	before doing the Map/Unmap.  Also make sure that the Hwnd is still
+	alive after the message has been handled.
+
+	*before* the window is shown.
+
+	* Control.cs (CreateControl): guard a few more things inside the
+	if (!is_created) block, as we might end up being called again -
+	yay .net.
+	(WmShowWindow): call CreateControl if we're showing the control.
+
 2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: Fix 2.0 signature for Invoke. Support invoking on

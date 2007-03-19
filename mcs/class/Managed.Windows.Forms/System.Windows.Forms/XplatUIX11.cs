@@ -1282,9 +1282,13 @@ namespace System.Windows.Forms {
 						done = true;
 					}
 					else {
-						if ((msg.hwnd == hwnd.Handle) &&
-						    ((Msg)msg.message == message || (Msg)msg.message == Msg.WM_DESTROY))
-							done = true;
+						if (msg.hwnd == hwnd.Handle) {
+							if ((Msg)msg.message == message)
+								break;
+							else if ((Msg)msg.message == Msg.WM_DESTROY)
+								done = true;
+						}
+
 						TranslateMessage (ref msg);
 						DispatchMessage (ref msg);
 					}
@@ -1297,6 +1301,15 @@ namespace System.Windows.Forms {
 
 		private void MapWindow(Hwnd hwnd, WindowType windows) {
 			if (!hwnd.mapped) {
+				if (Control.FromHandle(hwnd.Handle) is Form)
+					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+
+				// it's possible that our Hwnd is no
+				// longer valid after making that
+				// SendMessage call, so check here.
+				if (hwnd.zombie)
+					return;
+
 				bool need_to_wait = false;
 
 				if ((windows & WindowType.Whole) != 0) {
@@ -1317,6 +1330,15 @@ namespace System.Windows.Forms {
 
 		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
 			if (hwnd.mapped) {
+				if (Control.FromHandle(hwnd.Handle) is Form)
+					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero, IntPtr.Zero);
+
+				// it's possible that our Hwnd is no
+				// longer valid after making that
+				// SendMessage call, so check here.
+				if (hwnd.zombie)
+					return;
+
 				bool need_to_wait = false;
 
 				if ((windows & WindowType.Client) != 0) {
