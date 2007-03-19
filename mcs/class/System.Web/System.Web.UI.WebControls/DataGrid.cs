@@ -353,6 +353,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public virtual DataGridItemCollection Items {
 			get {
+				EnsureChildControls ();
 				if (items == null) {
 					if (items_list == null)
 						items_list = new ArrayList ();
@@ -577,6 +578,11 @@ namespace System.Web.UI.WebControls {
 			b.HeaderText = prop.Name;
 			b.DataField = (tothis ? BoundColumn.thisExpr : prop.Name);
 			b.SortExpression = prop.Name;
+#if NET_2_0
+			if (string.Compare (DataKeyField, b.DataField, StringComparison.InvariantCultureIgnoreCase) == 0) {
+				b.ReadOnly = true;
+			}
+#endif
 			DataSourceColumns.Add (b);
 		}
 
@@ -598,7 +604,10 @@ namespace System.Web.UI.WebControls {
 				selected_style.TrackViewState ();
 			if (edit_item_style != null)
 				edit_item_style.TrackViewState ();
-
+#if NET_2_0
+			if (ControlStyleCreated)
+				ControlStyle.TrackViewState ();
+#endif
 			IStateManager manager = (IStateManager) columns;
 			if (manager != null)
 				manager.TrackViewState ();
@@ -606,7 +615,11 @@ namespace System.Web.UI.WebControls {
 
 		protected override object SaveViewState ()
 		{
+#if NET_2_0
+			object [] res = new object [11];
+#else
 			object [] res = new object [10];
+#endif
 
 			res [0] = base.SaveViewState ();
 			if (columns != null) {
@@ -627,12 +640,21 @@ namespace System.Web.UI.WebControls {
 				res [7] = selected_style.SaveViewState ();
 			if (edit_item_style != null)
 				res [8] = edit_item_style.SaveViewState ();
-
+#if NET_2_0
+			if (ControlStyleCreated)
+				res [9] = ControlStyle.SaveViewState ();
+			
+			if (data_source_columns != null) {
+				IStateManager m = (IStateManager) data_source_columns;
+				res [10] = m.SaveViewState ();
+			}
+#else
 			if (data_source_columns != null) {
 				IStateManager m = (IStateManager) data_source_columns;
 				res [9] = m.SaveViewState ();
 			}
-			
+#endif
+
 			return res;
 		}
 
@@ -663,6 +685,23 @@ namespace System.Web.UI.WebControls {
 			if (pieces [8] != null)
 				EditItemStyle.LoadViewState (pieces [8]);
 
+#if NET_2_0
+			if (pieces [9] != null)
+				ControlStyle.LoadViewState (pieces [8]);
+
+			if (pieces [10] != null) {
+				// IStateManager manager = (IStateManager) DataSourceColumns;
+				// manager.LoadViewState (pieces [10]);
+				object [] cols = (object []) pieces [10];
+				foreach (object o in cols) {
+					BoundColumn c = new BoundColumn ();
+					((IStateManager) c).TrackViewState ();
+					c.Set_Owner (this);
+					((IStateManager) c).LoadViewState (o);
+					DataSourceColumns.Add (c);
+				}
+			}
+#else
 			if (pieces [9] != null) {
 				// IStateManager manager = (IStateManager) DataSourceColumns;
 				// manager.LoadViewState (pieces [9]);
@@ -674,11 +713,16 @@ namespace System.Web.UI.WebControls {
 					DataSourceColumns.Add (c);
 				}
 			}
+#endif
 		}
 
 		protected override Style CreateControlStyle ()
 		{
+#if NET_2_0
+			TableStyle res = new TableStyle ();
+#else
 			TableStyle res = new TableStyle (ViewState);
+#endif
 			res.GridLines = GridLines.Both;
 			res.CellSpacing = 0;
 			return res;
@@ -782,7 +826,11 @@ namespace System.Web.UI.WebControls {
 				l.Text = PagerStyle.PrevPageText;
 				prev = l;
 			} else {
+#if NET_2_0
+				LinkButton l = new DataControlLinkButton ();
+#else
 				LinkButton l = new LinkButton ();
+#endif
 				l.Text = PagerStyle.PrevPageText;
 				l.CommandName = PageCommandName;
 				l.CommandArgument = PrevPageCommandArgument;
@@ -791,7 +839,11 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (paged.Count > 0 && !paged.IsLastPage) {
+#if NET_2_0
+				LinkButton l = new DataControlLinkButton ();
+#else
 				LinkButton l = new LinkButton ();
+#endif
 				l.Text = PagerStyle.NextPageText;
 				l.CommandName = PageCommandName;
 				l.CommandArgument = NextPageCommandArgument;
@@ -889,7 +941,14 @@ namespace System.Web.UI.WebControls {
 			IEnumerable data_source;
 			ArrayList keys = null;
 			if (useDataSource) {
+#if NET_2_0
+				if (IsBoundUsingDataSourceID)
+					data_source = GetData ();
+				else
+#endif
 				data_source = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+				if (data_source == null)
+					return;
 				keys = DataKeysArray;
 				keys.Clear ();
 			} else {
@@ -921,12 +980,7 @@ namespace System.Web.UI.WebControls {
 				render_columns [c] = col;
 			}
 
-			if (useDataSource) {
-				if (DataSource != null)
-					Controls.Add (RenderTable);
-			} else {
-				Controls.Add (RenderTable);
-			}
+			Controls.Add (RenderTable);
 
 			if (pds.IsPagingEnabled)
 				CreateItem (-1, -1, ListItemType.Pager, false, null, pds);
@@ -1033,30 +1087,18 @@ namespace System.Web.UI.WebControls {
 			rt.Enabled = Enabled;
 
 			bool top_pager = true;
-			Style alt = null;
 			foreach (DataGridItem item in rt.Rows) {
 				
 				switch (item.ItemType) {
 				case ListItemType.Item:
-					item.MergeStyle (item_style);
-					ApplyColumnStyle (item.Cells, ListItemType.Item);
+					ApplyItemStyle (item);
 					break;
 				case ListItemType.AlternatingItem:
-					if (alt == null) {
-						if (alt_item_style != null) {
-							alt = new TableItemStyle ();
-							alt.CopyFrom (item_style);
-							alt.CopyFrom (alt_item_style);
-						} else {
-							alt = item_style;
-						}
-					}
-
-					item.MergeStyle (alt);
-					ApplyColumnStyle (item.Cells, ListItemType.AlternatingItem);
+					ApplyItemStyle (item);
 					break;
 				case ListItemType.EditItem:
 					item.MergeStyle (edit_item_style);
+					ApplyItemStyle (item);
 					ApplyColumnStyle (item.Cells, ListItemType.EditItem);
 					break;
 				case ListItemType.Footer:
@@ -1078,10 +1120,8 @@ namespace System.Web.UI.WebControls {
 					ApplyColumnStyle (item.Cells, ListItemType.Header);
 					break;
 				case ListItemType.SelectedItem:
-					if (selected_style != null)
-						item.MergeStyle (selected_style);
-					else
-						item.MergeStyle (item_style);
+					item.MergeStyle (selected_style);
+					ApplyItemStyle (item);
 					ApplyColumnStyle (item.Cells, ListItemType.SelectedItem);
 					break;
 				case ListItemType.Separator:
@@ -1104,6 +1144,15 @@ namespace System.Web.UI.WebControls {
 					break;
 				}
 			}
+		}
+
+		void ApplyItemStyle (DataGridItem item)
+		{
+			if (item.ItemIndex % 2 != 0)
+				item.MergeStyle (alt_item_style);
+
+			item.MergeStyle (item_style);
+			ApplyColumnStyle (item.Cells, ListItemType.Item);
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)

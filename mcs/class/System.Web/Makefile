@@ -90,6 +90,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/Web.sitemap \
 	Test/mainsoft/NunitWebResources/WizardTest.skin \
 	Test/mainsoft/NunitWebResources/FooterTemplateTest.aspx \
+	Test/mainsoft/NunitWebResources/DataGrid.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewTemplates.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx \

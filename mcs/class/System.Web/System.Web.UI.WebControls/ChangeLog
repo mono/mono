@@ -1,3 +1,7 @@
+2007-03-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataGrid.cs: fixed Save/Load view state, applying styles.	
+
 2007-03-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Style.cs: optimization: used CssStyleCollection .ctor w/o parameters.	

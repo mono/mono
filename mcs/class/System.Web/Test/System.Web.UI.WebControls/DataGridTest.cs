@@ -41,6 +41,11 @@ using System.Collections;
 using System.Data;
 using System.ComponentModel;
 using System.Diagnostics;
+#if NET_2_0
+using System.Collections.Generic;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+#endif
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -177,6 +182,24 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	public class DataGridTest {
+
+#if NET_2_0
+		[TestFixtureSetUp()]
+		public void FixtureSetup () 
+		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DataGrid.aspx", "DataGrid.aspx");
+#else
+			WebTest.CopyResource (GetType (), "DataGrid.aspx", "DataGrid.aspx");
+#endif
+		}
+
+		[TestFixtureTearDown()]
+		public void FixtureTearDown () 
+		{
+			WebTest.Unload ();
+		}
+#endif
 
 		[Test]
 		public void Defaults ()
@@ -440,7 +463,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [NUnit.Framework.Category("NotWorking")]
 		public void Styles ()
 		{
 			DataGridPoker p = new DataGridPoker ();
@@ -935,7 +957,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [NUnit.Framework.Category("NotWorking")]
 		public void SaveViewState ()
 		{
 			DataGridPoker p = new DataGridPoker ();
@@ -1007,6 +1028,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 			vs = (object []) p.SaveState ();
 #if NET_2_0
 			Assert.IsNull (vs [9], "A12");
+			p.BackImageUrl = "foobar url";
+			vs = (object []) p.SaveState ();
+			Assert.IsNotNull (vs [9], "A12");
+
+			Assert.IsNotNull (vs [10], "A12");
+			Assert.AreEqual (vs [10].GetType (), typeof (object []), "A12");
+
+			object [] cols = (object []) vs [10];
+			Assert.AreEqual (cols.Length, 3, "A13");
 #else
 			Assert.IsNotNull (vs [9], "A12");
 			Assert.AreEqual (vs [9].GetType (), typeof (object []), "A12");
@@ -1325,6 +1355,713 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("CustomName", ((DataGridColumn) columns [0]).HeaderText, "A2");
 			Assert.AreEqual (0, p.DataKeys.Count, "A3");
 		}
+
+#if NET_2_0
+		public class data
+		{
+			private static ArrayList _data = new ArrayList ();
+
+			static data () {
+				_data.Add (new DataItem (1, "heh1"));
+				_data.Add (new DataItem (2, "heh2"));
+				_data.Add (new DataItem (3, "heh3"));
+				_data.Add (new DataItem (4, "heh4"));
+				_data.Add (new DataItem (5, "heh5"));
+				_data.Add (new DataItem (6, "heh6"));
+				_data.Add (new DataItem (7, "heh7"));
+				_data.Add (new DataItem (8, "heh8"));
+				_data.Add (new DataItem (9, "heh9"));
+				_data.Add (new DataItem (10, "heh10"));
+			}
+
+			public data () {
+			}
+
+			public ArrayList GetAllItems () {
+				return _data;
+			}
+
+			public ArrayList GetPagedItems (int startIndex, int maxRows) 
+			{
+				ArrayList list = new ArrayList ();
+				if (startIndex < _data.Count - 1) {
+					int countToReturn = Math.Min (maxRows, _data.Count - startIndex);
+					for (int i = startIndex; i < startIndex + countToReturn; i++) {
+						list.Add (_data [i]);
+					}
+				}
+
+				return list;
+			}
+
+			public int GetCount () 
+			{
+				return _data.Count;
+			}
+
+			public void UpdateItem (int id, string name) {
+				foreach (DataItem i in _data) {
+					if (i.ID == id) {
+						i.Name = name;
+						return;
+					}
+				}
+			}
+		}
+
+		public class DataItem
+		{
+			int _id = 0;
+			string _name = "";
+
+			public DataItem (int id, string name) {
+				_id = id;
+				_name = name;
+			}
+
+			public int ID {
+				get { return _id; }
+			}
+
+			public string Name {
+				get { return _name; }
+				set { _name = value; }
+			}
+		}
+
+		public class DataSourceObject
+		{
+			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (string sortExpression) {
+				return GetList ();
+			}
+
+			public static List<string> GetList () {
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public static int GetCount () {
+				return GetList ().Count;
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void DataSourceAndDataSourceID () 
+		{
+			Page page = new Page ();
+			DataGridPoker dg = new DataGridPoker ();
+			
+			page.Controls.Add (dg);
+
+			DataTable dt = new DataTable ();
+			dt.Columns.Add (new DataColumn ("something", typeof (Int32)));
+			DataRow dr = dt.NewRow ();
+			dt.Rows.Add (new object [] { 1 });
+			DataView dv = new DataView (dt);
+
+			dg.DataSource = dv;
+
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			ds.SelectMethod = "GetList";
+			ds.SortParameterName = "sortExpression";
+			ds.ID = "Data";
+			page.Controls.Add (ds);
+
+			dg.DataSourceID = "Data";
+
+			dg.DataBind ();
+		}
+
+		[Test]
+		public void DataBindingDataSourceID () 
+		{
+			Page page = new Page ();
+			DataGridPoker dg = new DataGridPoker ();
+			page.Controls.Add (dg);
+
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			ds.SelectMethod = "GetList";
+			ds.SortParameterName = "sortExpression";
+			ds.ID = "Data";
+			page.Controls.Add (ds);
+
+			dg.DataSourceID = "Data";
+			dg.DataBind ();
+
+			Assert.AreEqual (6, dg.Items.Count, "DataBindingDataSourceID");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NunitWeb")]
+		public void DataBindingDataSourceIDAutomatic () 
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates();
+			pd.Load = DataSourceIDAutomatic_Load;
+			pd.PreRender = DataSourceIDAutomatic_PreRender;
+			t.Invoker = new PageInvoker (pd);
+
+			t.Run ();
+		}
+
+		public static void DataSourceIDAutomatic_Load (Page page) 
+		{
+			DataGridPoker dg = new DataGridPoker ();
+			dg.ID = "DataGrid";
+			page.Controls.Add (dg);
+
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			ds.SelectMethod = "GetList";
+			ds.SortParameterName = "sortExpression";
+			ds.ID = "Data";
+			page.Controls.Add (ds);
+
+			dg.DataSourceID = "Data";
+		}
+
+		public static void DataSourceIDAutomatic_PreRender (Page page) 
+		{
+			DataGrid dg = (DataGrid)page.FindControl ("DataGrid");
+
+			Assert.AreEqual (6, dg.Items.Count, "DataBindingDataSourceID");
+		}
+
+		[Test]
+		public void DataSourceIDBindingNoColumns () 
+		{
+			Page page = new Page ();
+			DataGridPoker dg = new DataGridPoker ();
+			dg.ID = "DataGrid";
+			dg.AutoGenerateColumns = false;
+
+			page.Controls.Add (dg);
+
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			ds.SelectMethod = "GetList";
+			ds.SortParameterName = "sortExpression";
+			ds.ID = "Data";
+			page.Controls.Add (ds);
+
+			dg.DataSourceID = "Data";
+			dg.DataBind ();
+
+			Assert.AreEqual (0, dg.Columns.Count, "Columns Count");
+			Assert.AreEqual (0, dg.Items.Count, "Items Count");
+		}
+
+		[Test]
+		public void DataSourceIDBindingManualColumns () 
+		{
+			Page page = new Page ();
+			DataGridPoker dg = new DataGridPoker ();
+			dg.ID = "DataGrid";
+			dg.AutoGenerateColumns = false;
+			BoundColumn col = new BoundColumn();
+			col.DataField = "something";
+			dg.Columns.Add (col);
+
+			page.Controls.Add (dg);
+
+			DataTable dt = new DataTable ();
+			dt.Columns.Add (new DataColumn ("something", typeof (Int32)));
+			DataRow dr = dt.NewRow ();
+			dt.Rows.Add (new object [] { 1 });
+			dt.Rows.Add (new object [] { 2 });
+			dt.Rows.Add (new object [] { 3 });
+			dt.Rows.Add (new object [] { 4 });
+			dt.Rows.Add (new object [] { 5 });
+			dt.Rows.Add (new object [] { 6 });
+
+			DataView dv = new DataView (dt);
+
+			dg.DataSource = dv;
+			dg.DataBind ();
+
+			Assert.AreEqual (1, dg.Columns.Count, "Columns Count");
+			Assert.AreEqual (6, dg.Items.Count, "Items Count");
+			Assert.AreEqual ("1", dg.Items[0].Cells[0].Text, "Cell content");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NunitWeb")]
+		public void Paging ()
+		{
+			WebTest t = new WebTest ("DataGrid.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (DataGrid_OnInit);
+			string html = t.Run ();
+			string gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedFirstPage = @"<table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>heh1</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>heh1</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedFirstPage, gridHtml, "DataGrid initial Render");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl09$ctl01"; 
+#else
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl01c";
+#endif
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedSecondPage = @"<table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>6</td><td>heh6</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>6</td><td>heh6</td><td>Comment 6</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>7</td><td>heh7</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>7</td><td>heh7</td><td>Comment 7</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>8</td><td>heh8</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>8</td><td>heh8</td><td>Comment 8</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>9</td><td>heh9</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>9</td><td>heh9</td><td>Comment 9</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>10</td><td>heh10</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>10</td><td>heh10</td><td>Comment 10</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl00','')"" style=""color:#333333;"">Previous</a>&nbsp;<span>Next</span></td>
+	</tr>
+</table>";
+			HtmlDiff.AssertAreEqual (expectedSecondPage, gridHtml, "DataGrid Paging Next");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl09$ctl00"; 
+#else
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl08$ctl00c";
+#endif
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (expectedFirstPage, gridHtml, "DataGrid Paging Previous");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NunitWeb")]
+		public void EditUpdateDelete ()
+		{
+			WebTest t = new WebTest ("DataGrid.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (DataGrid_OnInit);
+			string html = t.Run ();
+			string gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedFirstPage = @"<table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>heh1</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>heh1</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedFirstPage, gridHtml, "DataGrid initial Render");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl00";
+#else
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl00c";
+#endif
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedSecondPage = @"<table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:Green;font-weight:normal;font-style:normal;text-decoration:none;"">
+		<td>1</td><td><input name=""DataGrid1$ctl03$ctl00"" type=""text"" value=""heh1"" /></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Update</a>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl02','')"" style=""color:#333333;"">Cancel</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl03','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td><input name=""DataGrid1$ctl03$ctl04"" type=""text"" value=""heh1"" /></td><td><input name=""DataGrid1$ctl03$ctl05"" type=""text"" value=""Comment 1"" /></td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+			HtmlDiff.AssertAreEqual (expectedSecondPage, gridHtml, "DataGrid Edit");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl01";
+#else
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl02$ctl01c";
+#endif
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+#if DOT_NET
+			fr.Controls.Add ("DataGrid1$ctl03$ctl00");
+			fr.Controls ["DataGrid1$ctl03$ctl00"].Value = "New Value";
+#else
+			fr.Controls.Add ("DataGrid1$ctl02$ctl00c");
+			fr.Controls ["DataGrid1$ctl02$ctl00c"].Value = "New Value";
+#endif
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedThirdPage = @"
+        <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>New Value</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>New Value</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedThirdPage, gridHtml, "DataGrid Update");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+#if DOT_NET
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl04$ctl01";
+#else
+			fr.Controls ["__EVENTTARGET"].Value = "DataGrid1$ctl03$ctl01c";
+#endif
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedFourthPage = @"
+        <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>New Value</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>New Value</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>6</td><td>heh6</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>6</td><td>heh6</td><td>Comment 6</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedFourthPage, gridHtml, "DataGrid Delete");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NunitWeb")]
+		public void SelectedIndex ()
+		{
+			WebTest t = new WebTest ("DataGrid.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (DataGrid_OnInit);
+			string html = t.Run ();
+			string gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedFirstPage = @"<table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>heh1</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>heh1</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedFirstPage, gridHtml, "DataGrid initial Render");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "Button1";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedSecondPage = @"
+        <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:Navy;background-color:#FFCC66;font-weight:bold;"">
+		<td>1</td><td>heh1</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:Navy;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:Navy;"">Delete</a></td><td>1</td><td>heh1</td><td>Comment 1</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+			HtmlDiff.AssertAreEqual (expectedSecondPage, gridHtml, "DataGrid Selected 1");
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "Button1";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+
+			html = t.Run ();
+			gridHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string expectedThirdPage = @"
+        <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""DataGrid1"" style=""color:#333333;border-collapse:collapse;"">
+	<tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>ID</td><td>Name</td><td>&nbsp;</td><td>&nbsp;</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl00','')"" style=""color:White;"">ID</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl01','')"" style=""color:White;"">Name</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl02$ctl02','')"" style=""color:White;"">Comment</a></td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>1</td><td>heh1</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl03$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>1</td><td>heh1</td><td>Comment 1</td>
+	</tr><tr style=""color:Navy;background-color:#FFCC66;font-weight:bold;"">
+		<td>2</td><td>heh2</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl00','')"" style=""color:Navy;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl04$ctl01','')"" style=""color:Navy;"">Delete</a></td><td>2</td><td>heh2</td><td>Comment 2</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>3</td><td>heh3</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl05$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>3</td><td>heh3</td><td>Comment 3</td>
+	</tr><tr style=""color:#333333;background-color:White;"">
+		<td>4</td><td>heh4</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl06$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>4</td><td>heh4</td><td>Comment 4</td>
+	</tr><tr style=""color:#333333;background-color:#FFFBD6;"">
+		<td>5</td><td>heh5</td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl00','')"" style=""color:#333333;"">Edit</a></td><td><a href=""javascript:__doPostBack('DataGrid1$ctl07$ctl01','')"" style=""color:#333333;"">Delete</a></td><td>5</td><td>heh5</td><td>Comment 5</td>
+	</tr><tr style=""color:White;background-color:#990000;font-weight:bold;"">
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr><tr align=""center"" style=""color:#333333;background-color:#FFCC66;"">
+		<td colspan=""4""><span>Previous</span>&nbsp;<a href=""javascript:__doPostBack('DataGrid1$ctl09$ctl01','')"" style=""color:#333333;"">Next</a></td>
+	</tr>
+</table>";
+
+			HtmlDiff.AssertAreEqual (expectedThirdPage, gridHtml, "DataGrid Selected 2");
+
+		}
+
+		public static void DataGrid_OnInit (Page p) 
+		{
+			if (!p.IsPostBack)
+				MyDataSource.Init ();
+			DataGrid DataGrid1 = (DataGrid)p.FindControl ("DataGrid1");
+			DataGrid1.PageIndexChanged += new DataGridPageChangedEventHandler (DataGrid1_PageIndexChanged);
+			DataGrid1.CancelCommand += new DataGridCommandEventHandler (DataGrid1_CancelCommand);
+			DataGrid1.DeleteCommand += new DataGridCommandEventHandler (DataGrid1_DeleteCommand);
+			DataGrid1.EditCommand += new DataGridCommandEventHandler (DataGrid1_EditCommand);
+			DataGrid1.UpdateCommand += new DataGridCommandEventHandler (DataGrid1_UpdateCommand);
+			DataGrid1.ItemCreated += new DataGridItemEventHandler (DataGrid1_ItemCreated);
+		}
+
+		public static void DataGrid1_ItemCreated (object sender, DataGridItemEventArgs e)
+		{
+			if (e.Item.ItemType == ListItemType.Pager) {
+				e.Item.Cells [0].ColumnSpan = 4;
+			}
+		}
+
+		public static void DataGrid1_PageIndexChanged (object source, DataGridPageChangedEventArgs e) 
+		{
+			DataGrid DataGrid1 = (DataGrid) source;
+			DataGrid1.CurrentPageIndex = e.NewPageIndex;
+			DataGrid1.DataBind ();
+		}
+
+		public static void DataGrid1_EditCommand (object source, DataGridCommandEventArgs e) 
+		{
+			DataGrid DataGrid1 = (DataGrid) source;
+			DataGrid1.EditItemIndex = e.Item.ItemIndex;
+			DataGrid1.DataBind ();
+		}
+
+		public static void DataGrid1_DeleteCommand (object source, DataGridCommandEventArgs e) 
+		{
+			DataGrid DataGrid1 = (DataGrid) source;
+			MyDataSource ds = new MyDataSource ();
+			ds.DeleteItem (e.Item.DataSetIndex);
+			DataGrid1.DataBind ();
+		}
+
+		public static void DataGrid1_UpdateCommand (object source, DataGridCommandEventArgs e) 
+		{
+			DataGrid DataGrid1 = (DataGrid) source;
+			MyDataSource ds = new MyDataSource ();
+			TextBox edittedName = (TextBox) e.Item.Cells [1].Controls [0];
+			ds.UpdateItem (e.Item.DataSetIndex, Int32.Parse (e.Item.Cells [0].Text), edittedName.Text);
+			DataGrid1.EditItemIndex = -1;
+			DataGrid1.DataBind ();
+		}
+
+		public static void DataGrid1_CancelCommand (object source, DataGridCommandEventArgs e) 
+		{
+			DataGrid DataGrid1 = (DataGrid) source;
+			DataGrid1.EditItemIndex = -1;
+			DataGrid1.DataBind ();
+		}
+
+		public class MyDataSource
+		{
+			private static ArrayList _data;
+
+			static MyDataSource () 
+			{
+				Init ();
+			}
+
+			public static void Init ()
+			{
+				_data = new ArrayList ();
+				_data.Add (new MyDataItem (1, "heh1", "Comment 1"));
+				_data.Add (new MyDataItem (2, "heh2", "Comment 2"));
+				_data.Add (new MyDataItem (3, "heh3", "Comment 3"));
+				_data.Add (new MyDataItem (4, "heh4", "Comment 4"));
+				_data.Add (new MyDataItem (5, "heh5", "Comment 5"));
+				_data.Add (new MyDataItem (6, "heh6", "Comment 6"));
+				_data.Add (new MyDataItem (7, "heh7", "Comment 7"));
+				_data.Add (new MyDataItem (8, "heh8", "Comment 8"));
+				_data.Add (new MyDataItem (9, "heh9", "Comment 9"));
+				_data.Add (new MyDataItem (10, "heh10", "Comment 10"));
+			}
+
+			public MyDataSource () 
+			{
+			}
+
+			public ArrayList GetAllItems () 
+			{
+				return _data;
+			}
+
+			public int GetCount () 
+			{
+				return _data.Count;
+			}
+
+			public void UpdateItem (int itemIndex, int id, string name) 
+			{
+				if (itemIndex >= 0 && itemIndex < _data.Count) {
+					MyDataItem item = (MyDataItem) _data [itemIndex];
+					item.Name = name;
+					return;
+				}
+			}
+
+			public void DeleteItem (int p) 
+			{
+				_data.RemoveAt (p);
+			}
+		}
+
+		public class MyDataItem
+		{
+			int _id = 0;
+			string _name = "";
+			string _comment = "";
+
+			public MyDataItem (int id, string name, string comment) 
+			{
+				_id = id;
+				_name = name;
+				_comment = comment;
+			}
+
+			public int ID {
+				get { return _id; }
+			}
+
+			public string Name {
+				get { return _name; }
+				set { _name = value; }
+			}
+
+			public string Comment {
+				get { return _comment; }
+				set { _comment = value; }
+			}
+		}
+
+#endif
 
 		class MyTemplate : ITemplate {
 			string text;
