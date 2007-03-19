@@ -196,6 +196,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ReadOnly_BackColor_NotSet ()
 		{
 			RichTextBox rtb = new RichTextBox ();

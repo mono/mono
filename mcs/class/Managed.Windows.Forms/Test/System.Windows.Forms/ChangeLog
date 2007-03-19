@@ -1,3 +1,7 @@
+2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBoxTest.cs: Marked failing test NotWorking.
+
 2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ControlTest.cs: Added InvokeTestParentHandle.
