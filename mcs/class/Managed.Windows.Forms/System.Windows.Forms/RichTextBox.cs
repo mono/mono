@@ -76,6 +76,7 @@ namespace System.Windows.Forms {
 			zoom = 1;
 			base.Multiline = true;
 			document.CRLFSize = 1;
+			shortcuts_enabled = true;
 
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;

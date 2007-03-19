@@ -75,6 +75,7 @@ namespace System.Windows.Forms {
 		internal CaretSelection		click_mode;
 		internal Bitmap			bmp;
 		internal BorderStyle actual_border_style;
+		internal bool shortcuts_enabled;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -568,6 +569,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		public virtual bool ShortcutsEnabled {
+			get { return shortcuts_enabled; }
+			set { shortcuts_enabled = value; }
+		}
+#endif
+
 		[Localizable(true)]
 		public override string Text {
 			get {
@@ -852,46 +860,117 @@ namespace System.Windows.Forms {
 			control = (Control.ModifierKeys & Keys.Control) != 0;
 			shift = (Control.ModifierKeys & Keys.Shift) != 0;
 
-			switch (keyData & Keys.KeyCode) {
-				case Keys.X: {	// Cut (Ctrl-X)
+			if (shortcuts_enabled) {
+				switch (keyData & Keys.KeyCode) {
+				case Keys.X:
 					if (control) {
 						Cut();
 						return true;
 					}
 					return false;
-				}
 
-				case Keys.C: {	// Copy (Ctrl-C)
+				case Keys.C:
 					if (control) {
 						Copy();
 						return true;
 					}
 					return false;
-				}
 
-				case Keys.V: {	// Paste (Ctrl-V)
+				case Keys.V:
 					if (control) {
 						return Paste(Clipboard.GetDataObject(), null, true);
 					}
 					return false;
-				}
 
-				case Keys.Z: {	// Undo (Ctrl-Z)
+				case Keys.Z:
 					if (control) {
 						Undo();
 						return true;
 					}
 					return false;
-				}
 
-				case Keys.A: {	// Select All (Ctrl-A)
+				case Keys.A:
 					if (control) {
 						SelectAll();
 						return true;
 					}
 					return false;
-				}
 
+				case Keys.Insert:
+					if (shift) {
+						Paste(Clipboard.GetDataObject(), null, true);
+						return true;
+					}
+
+					if (control) {
+						Copy();
+						return true;
+					}
+
+					return false;
+
+				case Keys.Delete:
+					if (shift) {
+						Cut();
+						return true;
+					}
+
+					if (read_only)
+						break;
+
+					if (document.selection_visible) {
+						document.ReplaceSelection("", false);
+					} else {
+						// DeleteChar only deletes on the line, doesn't do the combine
+						if (document.CaretPosition == document.CaretLine.Text.Length) {
+							if (document.CaretLine.LineNo < document.Lines) {
+								Line	line;
+
+								line = document.GetLine(document.CaretLine.LineNo + 1);
+								document.Combine(document.CaretLine, line);
+								document.UpdateView(document.CaretLine, 2, 0);
+
+								#if not_Debug
+								Line	check_first;
+								Line	check_second;
+
+								check_first = document.GetLine(document.CaretLine.LineNo);
+								check_second = document.GetLine(check_first.line_no + 1);
+
+								Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+								#endif
+
+								// Caret doesn't move
+							}
+						} else {
+							if (!control) {
+								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+							} else {
+								int end_pos;
+
+								end_pos = document.CaretPosition;
+
+								while ((end_pos < document.CaretLine.Text.Length) && !Document.IsWordSeparator(document.CaretLine.Text[end_pos])) {
+									end_pos++;
+								}
+
+								if (end_pos < document.CaretLine.Text.Length) {
+									end_pos++;
+								}
+								document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
+							}
+						}
+					}
+
+					OnTextChanged(EventArgs.Empty);
+					document.AlignCaret();
+					document.UpdateCaret();
+					CaretMoved(this, null);
+					return true;
+				}
+			}
+
+			switch (keyData & Keys.KeyCode) {
 				case Keys.Left: {
 					if (control) {
 						document.MoveCaret(CaretDirection.WordBack);
@@ -902,7 +981,7 @@ namespace System.Windows.Forms {
 							document.MoveCaret(CaretDirection.SelectionStart);
 						}
 					}
-
+					
 					if (!shift) {
 						document.SetSelectionToCaret(true);
 					} else {
@@ -1046,21 +1125,6 @@ namespace System.Windows.Forms {
 					break;
 				}
 
-				case Keys.Insert: {
-					if (shift) {
-						Paste(Clipboard.GetDataObject(), null, true);
-						return true;
-					}
-
-					if (control) {
-						Copy();
-						return true;
-					}
-
-					// FIXME - need overwrite/insert toggle?
-					return false;
-				}
-
 				case Keys.PageUp: {
 					if ((Control.ModifierKeys & Keys.Control) != 0) {
 						document.MoveCaret(CaretDirection.CtrlPgUp);
@@ -1078,68 +1142,8 @@ namespace System.Windows.Forms {
 					}
 					return true;
 				}
-
-				case Keys.Delete: {
-					if (shift) {
-						Cut();
-						return true;
-					}
-
-					if (read_only) {
-						break;
-					}
-
-					if (document.selection_visible) {
-						document.ReplaceSelection("", false);
-					} else {
-						// DeleteChar only deletes on the line, doesn't do the combine
-						if (document.CaretPosition == document.CaretLine.Text.Length) {
-							if (document.CaretLine.LineNo < document.Lines) {
-								Line	line;
-
-								line = document.GetLine(document.CaretLine.LineNo + 1);
-								document.Combine(document.CaretLine, line);
-								document.UpdateView(document.CaretLine, 2, 0);
-
-								#if not_Debug
-								Line	check_first;
-								Line	check_second;
-
-								check_first = document.GetLine(document.CaretLine.LineNo);
-								check_second = document.GetLine(check_first.line_no + 1);
-
-								Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
-								#endif
-
-								// Caret doesn't move
-							}
-						} else {
-							if (!control) {
-								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
-							} else {
-								int end_pos;
-
-								end_pos = document.CaretPosition;
-
-								while ((end_pos < document.CaretLine.Text.Length) && !Document.IsWordSeparator(document.CaretLine.Text[end_pos])) {
-									end_pos++;
-								}
-
-								if (end_pos < document.CaretLine.Text.Length) {
-									end_pos++;
-								}
-								document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
-							}
-						}
-					}
-
-					OnTextChanged(EventArgs.Empty);
-					document.AlignCaret();
-					document.UpdateCaret();
-					CaretMoved(this, null);
-					return true;
-				}
 			}
+
 			return false;
 		}
 
