@@ -83,7 +83,9 @@ namespace System.Windows.Forms {
 			LostFocus += new EventHandler(RichTextBox_LostFocus);
 			GotFocus += new EventHandler(RichTextBox_GotFocus);
 			BackColor = ThemeEngine.Current.ColorWindow;
+			backcolor_set = false;
 			ForeColor = ThemeEngine.Current.ColorWindowText;
+
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
 

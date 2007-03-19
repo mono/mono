@@ -1,3 +1,7 @@
+2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBox.cs: Reset backcolor_set after setting default.
+
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
 	* ScrollableControl.cs: the scroll position should not effect the

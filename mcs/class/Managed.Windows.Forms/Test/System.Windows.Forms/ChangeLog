@@ -1,7 +1,10 @@
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* PaintEventArgsTest.cs: Enabled tests for bug #78448 on 2.0 profile.
+	* RichBoxTest.cs: Enabled ReadOnly test.
 
+2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PaintEventArgsTest.cs: Enabled tests for bug #78448 on 2.0 profile.
 
 2007-03-19  Jonathan Pobst  <monkey@jpobst.com>
 
