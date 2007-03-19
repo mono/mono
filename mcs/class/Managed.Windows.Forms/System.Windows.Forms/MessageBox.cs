@@ -27,7 +27,6 @@
 //
 // TODO:
 //	- Add support for MessageBoxOptions and MessageBoxDefaultButton.
-//	- Button size calculations assume fixed height for buttons, that could be bad
 //
 
 
@@ -46,17 +45,21 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region MessageBoxFrom Local Variables
-			internal const int	space_border	= 10;
+			const int space_border = 10;
+			const int button_width = 86;
+			const int button_height = 23;
+			const int button_space = 5;
+			const int space_image_text= 10;
+
 			string			msgbox_text;
 			bool			size_known	= false;
-			const int		space_image_text= 10;
 			Image			icon_image;
 			Point			textleft_up;
 			MessageBoxButtons	msgbox_buttons;
 			MessageBoxDefaultButton	msgbox_default;
 			bool			buttons_placed	= false;
 			int			button_left;
-			Button[]		buttons = new Button[3];
+			Button[]		buttons = new Button[4];
 			bool                    show_help;
 			#endregion	// MessageBoxFrom Local Variables
 			
@@ -188,48 +191,49 @@ namespace System.Windows.Forms
 					tsize.Height += space_border * 2;
 				}
 
-				// Now we want to know the width of buttons
-		
+				// Now we want to know the amount of buttons
+				int buttoncount;
 				switch (msgbox_buttons) {
-					case MessageBoxButtons.OK: {
-						tb_width = 110 * 1;
+					case MessageBoxButtons.OK:
+						buttoncount = 1;
 						break;
-					}
 
-					case MessageBoxButtons.OKCancel: {
-						tb_width = 110 * 2;
+					case MessageBoxButtons.OKCancel:
+						buttoncount = 2;
 						break;
-					}
 
-					case MessageBoxButtons.AbortRetryIgnore: {
-						tb_width = 110 * 3;
+					case MessageBoxButtons.AbortRetryIgnore:
+						buttoncount = 3;
 						break;
-					}
 
-					case MessageBoxButtons.YesNoCancel: {
-						tb_width = 110 * 3;
+					case MessageBoxButtons.YesNoCancel:
+						buttoncount = 3;
 						break;
-					}
 
-					case MessageBoxButtons.YesNo: {
-						tb_width = 110 * 2;
+					case MessageBoxButtons.YesNo:
+						buttoncount = 2;
 						break;
-					}
 
-					case MessageBoxButtons.RetryCancel: {
-						tb_width = 110 * 2;
+					case MessageBoxButtons.RetryCancel:
+						buttoncount = 2;
 						break;
-					}
+					
+					default:
+						buttoncount = 0;
+						break;
+				
 				}
+				if (show_help)
+					buttoncount ++;
+				
+				// Calculate the width based on amount of buttons 
+				tb_width = (button_width + button_space) * buttoncount;  
 
 				// Now we choose the good size for the form
-				if (tsize.ToSize ().Width > tb_width) {
-					//this.Width = tsize.ToSize().Width + 10;
-					this.ClientSize = new Size(tsize.ToSize().Width + 10 + (space_border * 2), Height = tsize.ToSize ().Height + 40 + (space_border * 2));
-				} else {
-					//this.Width = tb_width + 10;
-					this.ClientSize = new Size(tb_width + 10 + (space_border * 2), Height = tsize.ToSize ().Height + 40 + (space_border * 2));
-				}
+				if (tsize.ToSize ().Width > tb_width)
+					this.ClientSize = new Size(tsize.ToSize().Width + (space_border * 2), Height = tsize.ToSize ().Height + 30 + (space_border * 2));
+				else
+					this.ClientSize = new Size(tb_width + (space_border * 2), Height = tsize.ToSize ().Height + 30 + (space_border * 2));
 
 				// Now we set the left of the buttons
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;
@@ -257,7 +261,6 @@ namespace System.Windows.Forms
 						break;
 					}
 				}
-
 			}
 
 			protected override bool ProcessDialogKey(Keys keyData) {
@@ -277,39 +280,39 @@ namespace System.Windows.Forms
 				if (!buttons_placed) {
 					switch (msgbox_buttons) {
 						case MessageBoxButtons.OK: {
-							buttons[0] = AddOkButton (0 + button_left);
+							buttons[0] = AddOkButton (0);
 							break;
 						}
 
 						case MessageBoxButtons.OKCancel: {
-							buttons[0] = AddOkButton (0 + button_left);
-							buttons[1] = AddCancelButton (110 + button_left);
+							buttons[0] = AddOkButton (0);
+							buttons[1] = AddCancelButton (1);
 							break;
 						}
 
 						case MessageBoxButtons.AbortRetryIgnore: {
-							buttons[0] = AddAbortButton (0 + button_left);
-							buttons[1] = AddRetryButton (110 + button_left);
-							buttons[2] = AddIgnoreButton (220 + button_left);
+							buttons[0] = AddAbortButton (0);
+							buttons[1] = AddRetryButton (1);
+							buttons[2] = AddIgnoreButton (2);
 							break;
 						}
 
 						case MessageBoxButtons.YesNoCancel: {
-							buttons[0] = AddYesButton (0 + button_left);
-							buttons[1] = AddNoButton (110 + button_left);
-							buttons[2] = AddCancelButton (220 + button_left);
+							buttons[0] = AddYesButton (0);
+							buttons[1] = AddNoButton (1);
+							buttons[2] = AddCancelButton (2);
 							break;
 						}
 
 						case MessageBoxButtons.YesNo: {
-							buttons[0] = AddYesButton (0 + button_left);
-							buttons[1] = AddNoButton (110 + button_left);
+							buttons[0] = AddYesButton (0);
+							buttons[1] = AddNoButton (1);
 							break;
 						}
 
 						case MessageBoxButtons.RetryCancel: {
-							buttons[0] = AddRetryButton (0 + button_left);
-							buttons[1] = AddCancelButton (110 + button_left);
+							buttons[0] = AddRetryButton (0);
+							buttons[1] = AddCancelButton (1);
 							break;
 						}
 					}
@@ -317,10 +320,9 @@ namespace System.Windows.Forms
 #if NET_2_0
 					if (show_help) {
 						int pos = 0;
-						for (int i = 0; i < 3; i++){
-							pos += 110;
-							if (buttons [i] == null){
-								AddHelpButton (pos + button_left);
+						for (int i = 0; i <= 3; i++) {
+							if (buttons [i] == null) {
+								AddHelpButton (i);
 								break;
 							}
 						}
@@ -330,127 +332,69 @@ namespace System.Windows.Forms
 				}
 			}
 
+			private Button AddButton (string text, int left, EventHandler click_event)
+			{
+				Button button = new Button ();
+				button.Text = Locale.GetText(text);
+				button.Width = button_width;
+				button.Height = button_height;
+				button.Top = this.ClientSize.Height - button.Height - space_border;
+				button.Left =  ((button_width + button_space) * left) + button_left;
+				
+				if (click_event != null)
+					button.Click += click_event;
+				
+				if ((text == "OK") || (text == "Retry") || (text == "Yes")) 
+					AcceptButton = button;
+				else if ((text == "Cancel") || (text == "Abort") || (text == "No"))
+					CancelButton = button;
+				
+				this.Controls.Add (button);
+
+				return button;
+			}
+
 			private Button AddOkButton (int left)
 			{
-				Button bok = new Button ();
-				bok.Text = Locale.GetText("OK");
-				bok.Width = 100;
-				bok.Height = 30;
-				bok.Top = this.ClientSize.Height - 35 - space_border;
-				bok.Left = left;
-				bok.Click += new EventHandler (OkClick);
-				AcceptButton = bok;
-				this.Controls.Add (bok);
-
-				return bok;
+				return AddButton ("OK", left, new EventHandler (OkClick));
 			}
 
 			private Button AddCancelButton (int left)
 			{
-				Button bcan = new Button ();
-				bcan.Text = Locale.GetText("Cancel");
-				bcan.Width = 100;
-				bcan.Height = 30;
-				bcan.Top = this.ClientSize.Height - 35 - space_border;
-				bcan.Left = left;
-				bcan.Click += new EventHandler (CancelClick);
-				CancelButton = bcan;
-				this.Controls.Add (bcan);
-
-				return bcan;
+				return AddButton ("Cancel", left, new EventHandler (CancelClick));
 			}
 
 			private Button AddAbortButton (int left)
 			{
-				Button babort = new Button ();
-				babort.Text = Locale.GetText("Abort");
-				babort.Width = 100;
-				babort.Height = 30;
-				babort.Top = this.ClientSize.Height - 35 - space_border;
-				babort.Left = left;
-				babort.Click += new EventHandler (AbortClick);
-				CancelButton = babort;
-				this.Controls.Add (babort);
-
-				return babort;
+				return AddButton ("Abort", left, new EventHandler (AbortClick));
 			}
 
 			private Button AddRetryButton(int left)
 			{
-				Button bretry = new Button ();
-				bretry.Text = Locale.GetText("Retry");
-				bretry.Width = 100;
-				bretry.Height = 30;
-				bretry.Top = this.ClientSize.Height - 35 - space_border;
-				bretry.Left = left;
-				bretry.Click += new EventHandler (RetryClick);
-				AcceptButton = bretry;
-				this.Controls.Add (bretry);
-
-				return bretry;
+				return AddButton ("Retry", left, new EventHandler (RetryClick));
 			}
 
 			private Button AddIgnoreButton (int left)
 			{
-				Button bignore = new Button ();
-				bignore.Text = Locale.GetText("Ignore");
-				bignore.Width = 100;
-				bignore.Height = 30;
-				bignore.Top = this.ClientSize.Height - 35 - space_border;
-				bignore.Left = left;
-				bignore.Click += new EventHandler (IgnoreClick);
-				this.Controls.Add (bignore);
-
-				return bignore;
+				return AddButton ("Ignore", left, new EventHandler (IgnoreClick));
 			}
 
 			private Button AddYesButton (int left)
 			{
-				Button byes = new Button ();
-				byes.Text = Locale.GetText("Yes");
-				byes.Width = 100;
-				byes.Height = 30;
-				byes.Top = this.ClientSize.Height - 35 - space_border;
-				byes.Left = left;
-				byes.Click += new EventHandler (YesClick);
-				AcceptButton = byes;
-				this.Controls.Add (byes);
-
-				return byes;
+				return AddButton ("Yes", left, new EventHandler (YesClick));
 			}
 
 			private Button AddNoButton (int left)
 			{
-				Button bno = new Button ();
-				bno.Text = Locale.GetText("No");
-				bno.Width = 100;
-				bno.Height = 30;
-				bno.Top = this.ClientSize.Height - 35 - space_border;
-				bno.Left = left;
-				bno.Click += new EventHandler (NoClick);
-				CancelButton = bno;
-				this.Controls.Add (bno);
-
-				return bno;
+				return AddButton ("No", left, new EventHandler (NoClick));
 			}
 
 #if NET_2_0
 			private Button AddHelpButton (int left)
 			{
-				Button bhelp = new Button ();
-				bhelp.Text = Locale.GetText("Help");
-				bhelp.Width = 100;
-				bhelp.Height = 30;
-				bhelp.Top = this.ClientSize.Height - 35 - space_border;
-				bhelp.Left = left;
-				bhelp.Click += delegate {
-					Owner.RaiseHelpRequested (new HelpEventArgs (Owner.Location));
-				};
-
-				
-				this.Controls.Add (bhelp);
-
-				return bhelp;
+				Button button = AddButton ("Help", left, null);
+				button.Click += delegate { Owner.RaiseHelpRequested (new HelpEventArgs (Owner.Location)); };
+				return button;
 			}
 #endif
 			#endregion
@@ -514,7 +458,6 @@ namespace System.Windows.Forms
 			MessageBoxForm form = new MessageBoxForm (null, text, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.None);
 
 			return form.RunDialog ();
-
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text)
@@ -522,7 +465,6 @@ namespace System.Windows.Forms
 			MessageBoxForm form = new MessageBoxForm (owner, text, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.None);
 				
 			return form.RunDialog ();
-
 		}
 
 		public static DialogResult Show (string text, string caption)
@@ -580,7 +522,6 @@ namespace System.Windows.Forms
 								  icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly, false);
 				
 			return form.RunDialog ();
-
 		}
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption,

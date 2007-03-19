@@ -1,3 +1,12 @@
+2007-03-18  Everaldo Canuto  <everaldo@simios.org>
+
+	* MessageBox.cs:
+	- Fixed a problem that dont show help button for messages with 3 buttons.
+	- Refactory button size and position calculations, now dont use	fixed 
+	values, also fixed button sizes (#80043) and form's border space.
+	- AddButton method created, now all other AddButton methods call this one.
+	- Some other source code cosmetic changes.
+
 2007-03-18  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: Don't do this all fonts must match check if
