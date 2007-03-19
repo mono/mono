@@ -519,14 +519,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-			if (OwnerDraw) {
-				DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
-				if (eh != null)
-					eh (this, e);
-				return;
-			}
-
-			ThemeEngine.Current.DrawMenuItem (this, e);	
+			DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 
@@ -592,7 +587,10 @@ namespace System.Windows.Forms
 		internal void PerformDrawItem (DrawItemEventArgs e)
 		{
 			PopulateWindowMenu ();
-			OnDrawItem (e);
+			if (OwnerDraw)
+				OnDrawItem (e);
+			else
+				ThemeEngine.Current.DrawMenuItem (this, e);
 		}
 		
 		private void PopulateWindowMenu ()

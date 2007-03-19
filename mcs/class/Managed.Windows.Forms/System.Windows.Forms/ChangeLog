@@ -1,3 +1,7 @@
+2007-03-19  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuItem.cs: Dont call OnDrawItem when OwnerDraw is false (#81182).  
+
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
 	[ Fixes bug #80604]
