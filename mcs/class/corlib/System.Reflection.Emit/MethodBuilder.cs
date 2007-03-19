@@ -324,7 +324,7 @@ namespace System.Reflection.Emit {
 					int impla; // the (stupid) ctor takes a short or an int ... 
 					impla = (int)data [2];
 					impla |= ((int)data [3]) << 8;
-					SetImplementationFlags ((MethodImplAttributes)impla);
+					iattrs |= (MethodImplAttributes)impla;
 					return;
 
 				case "System.Runtime.InteropServices.DllImportAttribute":

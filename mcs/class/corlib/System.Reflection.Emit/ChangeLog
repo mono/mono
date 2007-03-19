@@ -1,3 +1,8 @@
+2007-03-19  Marek Safar  <marek.safar@gmail.com>
+
+	* MethodBuilder.cs: MethodImplAttribute cannot be destructive and overwrite
+	existing flags.
+
 2007-03-17  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBuilder.cs: Implemented conversion of PreserveSigAttribute pseudo
