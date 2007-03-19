@@ -1,3 +1,10 @@
+2007-03-19  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : make box selection for Details views with 
+	FullRowSelect conform to MS behavior when clicking in the "item" 
+	column and clicking outside the defined columns.
+	[Fixes case 5-6 of #80374]
+
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
 	* ScrollableControl.cs: create the controls from within the ctor,

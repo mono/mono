@@ -1784,10 +1784,12 @@ namespace System.Windows.Forms
 			bool BoxIntersectsItem (int index)
 			{
 				Rectangle r = new Rectangle (owner.GetItemLocation (index), owner.ItemSize);
-				r.X += r.Width / 4;
-				r.Y += r.Height / 4;
-				r.Width /= 2;
-				r.Height /= 2;
+				if (owner.View != View.Details) {
+					r.X += r.Width / 4;
+					r.Y += r.Height / 4;
+					r.Width /= 2;
+					r.Height /= 2;
+				}
 				return BoxSelectRectangle.IntersectsWith (r);
 			}
 
@@ -1872,6 +1874,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				bool box_selecting = false;
 				Size item_size = owner.ItemSize;
 				Point pt = new Point (me.X, me.Y);
 				for (int i = 0; i < owner.items.Count; i++) {
@@ -1886,8 +1889,13 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					if (owner.View == View.Details && !owner.FullRowSelect) {
-						if (owner.items [i].TextBounds.Contains (pt))
+					if (owner.View == View.Details) {
+						bool over_text = owner.items [i].TextBounds.Contains (pt);
+						if (owner.FullRowSelect) {
+							clicked_item = owner.items [i];
+							if (!over_text && owner.MultiSelect)
+								box_selecting = true;
+						} else if (over_text)
 							clicked_item = owner.items [i];
 						else
 							owner.SetFocusedItem (owner.Items [i]);
@@ -1920,19 +1928,22 @@ namespace System.Windows.Forms
 							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
 				} else {
-					if (owner.MultiSelect) {
-						Keys mods = XplatUI.State.ModifierKeys;
-						if ((mods & Keys.Shift) != 0)
-							box_select_mode = BoxSelect.Shift;
-						else if ((mods & Keys.Control) != 0)
-							box_select_mode = BoxSelect.Control;
-						else
-							box_select_mode = BoxSelect.Normal;
-						box_select_start = pt; 
-						prev_selection = owner.SelectedIndices.List;
-					} else if (owner.SelectedItems.Count > 0) {
+					if (owner.MultiSelect)
+						box_selecting = true;
+					else if (owner.SelectedItems.Count > 0)
 						owner.SelectedItems.Clear ();
-					}
+				}
+
+				if (box_selecting) {
+					Keys mods = XplatUI.State.ModifierKeys;
+					if ((mods & Keys.Shift) != 0)
+						box_select_mode = BoxSelect.Shift;
+					else if ((mods & Keys.Control) != 0)
+						box_select_mode = BoxSelect.Control;
+					else
+						box_select_mode = BoxSelect.Normal;
+					box_select_start = pt; 
+					prev_selection = owner.SelectedIndices.List;
 				}
 
 				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
