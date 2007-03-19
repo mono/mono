@@ -86,8 +86,6 @@ namespace System.Windows.Forms
 		
 		private ColorComboBox colorComboBox;
 		
-		private FontFamily[] fontFamilies;
-		
 		private string currentFontName;
 		
 		private float currentSize;
@@ -355,20 +353,6 @@ namespace System.Windows.Forms
 			
 			form.ResumeLayout( false );
 			
-			fontFamilies = FontFamily.Families;
-			
-			fontListBox.BeginUpdate( );
-			foreach ( FontFamily ff in fontFamilies )
-			{
-				if ( !fontHash.ContainsKey (ff.Name) ) {
-					fontListBox.Items.Add( ff.Name );
-					fontHash.Add( ff.Name, ff );
-				}
-			}
-			fontListBox.EndUpdate( );
-			
-			CreateFontSizeListBoxItems ();
-			
 			scriptComboBox.BeginUpdate ();
 			scriptComboBox.Items.AddRange (char_sets_names);
 			scriptComboBox.SelectedIndex = 0;
@@ -405,6 +389,7 @@ namespace System.Windows.Forms
 			fontstyleTextBox.MouseWheel += new MouseEventHandler (OnFontStyleTextBoxMouseWheel);
 			fontsizeTextBox.MouseWheel += new MouseEventHandler (OnFontSizeTextBoxMouseWheel);
 			
+			PopulateFontList ();
 			Font = form.Font;
 		}
 		#endregion	// Public Constructors
@@ -516,7 +501,10 @@ namespace System.Windows.Forms
 		public bool FixedPitchOnly
 		{
 			set {
-				fixedPitchOnly = value;
+				if (fixedPitchOnly != value) {
+					fixedPitchOnly = value;
+					PopulateFontList ();
+				}
 			}
 			
 			get {
@@ -1079,7 +1067,7 @@ namespace System.Windows.Forms
 		
 		void UpdateFontSizeListBox ()
 		{
-			int index = fontsizeListBox.FindString(currentSize.ToString());
+			int index = fontsizeListBox.FindString(((int)(currentSize)).ToString());
 			
 			if (index != -1)
 				fontsizeListBox.SelectedIndex = index;
@@ -1130,8 +1118,24 @@ namespace System.Windows.Forms
 					to_select = index;
 			}
 			
-			if (fontstyleListBox.Items.Count > 0)
+			if (fontstyleListBox.Items.Count > 0) {
 				fontstyleListBox.SelectedIndex = to_select;
+
+				switch ((string)fontstyleListBox.SelectedItem) {
+					case "Regular":
+						currentFontStyle = FontStyle.Regular;
+						break;
+					case "Bold":
+						currentFontStyle = FontStyle.Bold;
+						break;
+					case "Italic":
+						currentFontStyle = FontStyle.Italic;
+						break;
+					case "Bold Italic":
+						currentFontStyle = FontStyle.Bold | FontStyle.Italic;
+						break;
+				}
+			}
 			
 			fontstyleListBox.EndUpdate( );
 		}
@@ -1145,7 +1149,7 @@ namespace System.Windows.Forms
 		{
 			fontsizeListBox.BeginUpdate ();
 			
-			fontsizeListBox.Items. Clear();
+			fontsizeListBox.Items.Clear();
 			
 			if (minSize == 0 && maxSize == 0)
 			{
@@ -1160,6 +1164,58 @@ namespace System.Windows.Forms
 			
 			fontsizeListBox.EndUpdate ();
 		}
+
+		#region Private Methods
+		private void PopulateFontList ()
+		{
+			fontListBox.Items.Clear ();
+			fontHash.Clear ();
+
+			fontListBox.BeginUpdate ();
+
+			foreach (FontFamily ff in FontFamily.Families) {
+				if (!fontHash.ContainsKey (ff.Name)) {
+					if (!fixedPitchOnly || (IsFontFamilyFixedPitch (ff))) {
+						fontListBox.Items.Add (ff.Name);
+						fontHash.Add (ff.Name, ff);
+					}
+				}
+			}
+			
+			fontListBox.EndUpdate ();
+			CreateFontSizeListBoxItems ();
+
+			if (fixedPitchOnly)
+				this.Font = new Font (FontFamily.GenericMonospace, 8.25f);
+			else
+				this.Font = form.Font;	
+		}
+		
+		private bool IsFontFamilyFixedPitch (FontFamily family)
+		{
+			FontStyle fs;
+			
+			if (family.IsStyleAvailable (FontStyle.Regular))
+				fs = FontStyle.Regular;
+			else if (family.IsStyleAvailable (FontStyle.Bold))
+				fs = FontStyle.Bold;
+			else if (family.IsStyleAvailable (FontStyle.Italic))
+				fs = FontStyle.Italic;
+			else if (family.IsStyleAvailable (FontStyle.Strikeout))
+				fs = FontStyle.Strikeout;
+			else if (family.IsStyleAvailable (FontStyle.Underline))
+				fs = FontStyle.Underline;
+			else
+				return false;
+
+			Font f = new Font (family.Name, 10, fs);
+
+			if (Hwnd.bmp_g.MeasureString ("i", f).Width == Hwnd.bmp_g.MeasureString ("w", f).Width)
+				return true;
+				
+			return false;
+		}
+		#endregion
 		
 		internal class ColorComboBox : ComboBox
 		{

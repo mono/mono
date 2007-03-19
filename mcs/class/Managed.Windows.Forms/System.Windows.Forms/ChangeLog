@@ -1,3 +1,9 @@
+2007-03-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FontDialog.cs: Don't crash when we switch to a new font that doesn't
+	have the same style available as the previously selected one.  Also,
+	support FixedPitchOnly property.  [Fixes bugs #80918, #80947]
+
 2007-03-19  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Add an alignment property that all new lines
