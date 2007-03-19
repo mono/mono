@@ -503,20 +503,23 @@ namespace System.Windows.Forms {
 				end = document.selection_end.tag;
 				font = document.selection_start.tag.font;
 
-				tag = start;
-				while (true) {
-					if (!font.Equals(tag.font)) {
-						return null;
-					}
+				if (selection_length > 1) {
+					tag = start;
+					while (true) {
 
-					if (tag == end) {
-						break;
-					}
+						if (!font.Equals(tag.font)) {
+							return null;
+						}
 
-					tag = document.NextTag(tag);
+						if (tag == end) {
+							break;
+						}
 
-					if (tag == null) {
-						break;
+						tag = document.NextTag(tag);
+
+						if (tag == null) {
+							break;
+						}
 					}
 				}
 

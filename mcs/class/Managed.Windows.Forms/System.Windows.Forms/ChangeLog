@@ -1,5 +1,10 @@
 2007-03-18  Jackson Harper  <jackson@ximian.com>
 
+	* RichTextBox.cs: Don't do this all fonts must match check if
+	there is only one char selected.
+
+2007-03-18  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: ScrollWindow works properly now, so we don't need
 	to screw around with the scroll area.  This fixes some artifacts
 	when expanding and collapsing.
