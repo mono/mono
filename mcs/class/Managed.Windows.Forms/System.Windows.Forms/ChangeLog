@@ -1,3 +1,11 @@
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollableControl.cs: create the controls from within the ctor,
+	but don't actually add them until our handle is created.  this
+	fixes a NRE possibility jpobst found (if you override OnLayout in
+	a subclass, it's called before your ctor).  Also, add a
+	IsHandleCreated guard to UpdateSizeGripVisibility as well.
+
 2007-03-19  Jackson Harper  <jackson@ximian.com>
 
 	* TextBox.cs: Reduce the amount of invalidation we do.

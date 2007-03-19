@@ -229,6 +229,7 @@ namespace System.Windows.Forms {
 			VisibleChanged += new EventHandler(Recalculate);
 			LocationChanged += new EventHandler (LocationChangedHandler);
 			ParentChanged += new EventHandler (ParentChangedHandler);
+			HandleCreated += new EventHandler (AddScrollbars);
 
 			CreateScrollbars ();
 		}
@@ -800,6 +801,10 @@ namespace System.Windows.Forms {
 
 		internal void UpdateSizeGripVisible ()
 		{
+			if (!IsHandleCreated) {
+				return;
+			}
+
 			sizegrip.CapturedControl = Parent;
 			// This is really wierd, the size grip is only showing up 
 			// if the bottom right corner of the scrollable control is within
@@ -821,24 +826,29 @@ namespace System.Windows.Forms {
 				ScrollWindow(hscrollbar.Value - scroll_position.X, 0);
 			}
 		}
-		
+
+		private void AddScrollbars (object o, EventArgs e)
+		{
+			Controls.AddImplicit (hscrollbar);
+			Controls.AddImplicit (vscrollbar);
+			Controls.AddImplicit (sizegrip);
+			HandleCreated -= new EventHandler (AddScrollbars);
+		}
+
 		private void CreateScrollbars ()
 		{
 			hscrollbar = new ImplicitHScrollBar ();
 			hscrollbar.Visible = false;
 			hscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
-			this.Controls.AddImplicit (hscrollbar);
 
 			vscrollbar = new ImplicitVScrollBar ();
 			vscrollbar.Visible = false;
 			vscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
-			this.Controls.AddImplicit (vscrollbar);
 
 			sizegrip = new SizeGrip (this);
 			sizegrip.Visible = false;
-			this.Controls.AddImplicit (sizegrip);
 		}
 
 		private void ScrollWindow(int XOffset, int YOffset) {
