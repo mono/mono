@@ -1,3 +1,7 @@
+2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ControlTest.cs: Added InvokeTestParentHandle.
+
 2007-03-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBoxTest.cs: Added tests for ReadOnly effect on BackColor.

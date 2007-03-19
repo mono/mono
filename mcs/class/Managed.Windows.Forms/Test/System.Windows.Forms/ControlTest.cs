@@ -24,6 +24,23 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
+		[Test]
+		public void InvokeTestParentHandle ()
+		{
+			Control child, parent;
+			
+			parent = new Control ();
+			child = new Control ();
+			parent.Controls.Add (child);
+			parent.Visible = true;
+			parent.CreateControl ();
+			child.Invoke (new CrossAppDomainDelegate (dummy)) ;
+		}
+		
+		public void dummy ()
+		{
+		}
+		
 		public class ControlStylesTester : Control {
 			private WindowStyles style;
 			private WindowStyles ex_style;
@@ -1744,6 +1761,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (0, parent_event, "3");
 		}
+		
 	}
 
 	[TestFixture]
