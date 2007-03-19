@@ -1055,8 +1055,8 @@ namespace System.Windows.Forms
 				}
 				
 				if (this.InvokeRequired) {
-					if (Application.MessageLoop) {
-						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
+					if (Application.MessageLoop && IsHandleCreated) {
+						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null);
 					}
 				} else {
 					DestroyHandle();
@@ -1156,23 +1156,18 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args, bool disposing) {
+		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
+			return BeginInvokeInternal (method, args, FindControlToInvokeOn ());
+		}
+
+		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args, Control control) {
 			AsyncMethodResult	result;
 			AsyncMethodData		data;
-
-			if (!disposing) {
-				Control p = this;
-				do {
-					if (!p.IsHandleCreated)
-						throw new InvalidOperationException("Cannot call Invoke or BeginInvoke on a control until the window handle is created");
-					p = p.parent;
-				} while (p != null);
-			}
 
 			result = new AsyncMethodResult ();
 			data = new AsyncMethodData ();
 
-			data.Handle = window.Handle;
+			data.Handle = control.Handle;
 			data.Method = method;
 			data.Args = args;
 			data.Result = result;
@@ -1216,6 +1211,21 @@ namespace System.Windows.Forms
 				}
 				return bmp_g;
 			}
+		}
+		
+		private Control FindControlToInvokeOn ()
+		{
+			Control p = this;
+			do {
+				if (p.IsHandleCreated)
+					break;
+				p = p.parent;
+			} while (p != null);
+
+			if (p == null || !p.IsHandleCreated)
+				throw new InvalidOperationException ("Cannot call Invoke or BeginInvoke on a control until the window handle is created");
+			
+			return p;
 		}
 
 		private void InvalidateBackBuffer () {
@@ -3232,7 +3242,7 @@ namespace System.Windows.Forms
 			object [] prms = null;
 			if (method is EventHandler)
 				prms = new object [] { this, EventArgs.Empty };
-			return BeginInvokeInternal(method, prms, false);
+			return BeginInvokeInternal(method, prms);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3242,7 +3252,7 @@ namespace System.Windows.Forms
 		public IAsyncResult BeginInvoke (Delegate method, object[] args)
 #endif
 		{
-			return BeginInvokeInternal (method, args, false);
+			return BeginInvokeInternal (method, args);
 		}
 
 		public void BringToFront() {
@@ -3459,20 +3469,18 @@ namespace System.Windows.Forms
 
 			return Invoke(method, prms);
 		}
-
+#if NET_2_0
+		public object Invoke (Delegate method, params object [] args) {
+#else
 		public object Invoke (Delegate method, object[] args) {
-			Control p = this;
-			do {
-				if (!p.IsHandleCreated)
-					throw new InvalidOperationException("Cannot call Invoke or BeginInvoke on a control until the window handle is created");
-				p = p.parent;
-			} while (p != null);
+#endif
+			Control control = FindControlToInvokeOn ();
 			
 			if (!this.InvokeRequired) {
 				return method.DynamicInvoke(args);
 			}
 
-			IAsyncResult result = BeginInvoke (method, args);
+			IAsyncResult result = BeginInvokeInternal (method, args, control);
 			return EndInvoke(result);
 		}
 

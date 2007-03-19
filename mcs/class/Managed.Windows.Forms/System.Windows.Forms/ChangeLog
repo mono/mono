@@ -1,3 +1,14 @@
+2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: Fix 2.0 signature for Invoke. Support invoking on
+	  controls without a handle if they have any parent with a handle. In
+	  Dispose add a check whether the handle is created or not before
+	  calling BeginInvoke, this removes the need of the extra disposing
+	  parameter (which was bogus anyway since it didn't prevent the
+	  invoke from happening, it only skipped the check for an existing
+	  handle, meaning that the invoke would call on an inexistent
+	  handle).
+
 2007-03-19  Everaldo Canuto  <everaldo@simios.org>
 
 	* MessageBox.cs: Remove WS_POPUP from CreateParams style, with it form
