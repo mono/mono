@@ -1,3 +1,10 @@
+2007-03-19  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationSettings.cs: another fix to the
+	GetConfigFromFileName logic - the passed "filepath" must not end
+	with a slash when called recursively, or it will lead to endless
+	recursion.
+
 2007-03-18  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationSettings.cs: fix the GetConfigFromFileName
