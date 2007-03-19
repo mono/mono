@@ -1,3 +1,7 @@
+2007-03-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.Common.tasks: Added CombinePath task.
+
 2007-03-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.Common.tasks: Added Vbc task.
