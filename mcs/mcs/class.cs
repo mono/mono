@@ -4020,8 +4020,10 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsInternalMethodImplAttribute) {
-				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+				MethodBuilder.SetImplementationFlags (MethodBuilder.GetMethodImplementationFlags () |
+					MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 				is_external_implementation = true;
+				return;
 			}
 
 			if (a.Type == TypeManager.dllimport_type) {
@@ -4833,7 +4835,8 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsInternalMethodImplAttribute) {
-				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+				ConstructorBuilder.SetImplementationFlags (ConstructorBuilder.GetMethodImplementationFlags() |
+					MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 				is_external_implementation = true;
 			}
 
@@ -6555,7 +6558,8 @@ namespace Mono.CSharp {
 			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 			{
 				if (a.IsInternalMethodImplAttribute) {
-					method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+					MethodBuilder mb = method_data.MethodBuilder;
+					mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 					method.is_external_implementation = true;
 				}
 
@@ -7380,7 +7384,8 @@ namespace Mono.CSharp {
 			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 			{
 				if (a.IsInternalMethodImplAttribute) {
-					method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
+					MethodBuilder mb = method_data.MethodBuilder;
+					mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 					method.is_external_implementation = true;
 				}
 
