@@ -136,6 +136,7 @@ namespace System.Windows.Forms {
 		internal bool			recalc;			// Line changed
 		internal int left_margin = 2;  // A left margin for all lines
 		internal int top_margin = 2;
+		internal int right_margin = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -149,7 +150,7 @@ namespace System.Windows.Forms {
 			text = null;
 			recalc = true;
 			soft_break = false;
-			alignment = HorizontalAlignment.Left;
+			alignment = document.alignment;
 		}
 
 		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color) : this (document) {
@@ -204,7 +205,7 @@ namespace System.Windows.Forms {
 			get {
 				if (document.multiline)
 					return align_shift;
-				return offset;
+				return offset + align_shift;
 			}
 		}
 
@@ -771,6 +772,7 @@ namespace System.Windows.Forms {
 		private int update_start = 1;
 
 		internal bool		multiline;
+		internal HorizontalAlignment alignment;
 		internal bool		wrap;
 
 		internal UndoManager	undo;
@@ -2727,7 +2729,7 @@ namespace System.Windows.Forms {
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
 		internal void Add(int LineNo, string Text, Font font, SolidBrush color) {
-			Add(LineNo, Text, HorizontalAlignment.Left, font, color);
+			Add(LineNo, Text, alignment, font, color);
 		}
 
 		internal void Add(int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color) {
@@ -3846,6 +3848,8 @@ namespace System.Windows.Forms {
 
 			line_no = 1;
 
+
+
 			while (line_no <= lines) {
 				line = GetLine(line_no);
 
@@ -3858,7 +3862,7 @@ namespace System.Windows.Forms {
  						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 						break;
 					case HorizontalAlignment.Right:
- 						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
+ 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - line.right_margin;
 						break;
 					}
 				}

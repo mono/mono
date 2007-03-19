@@ -1,3 +1,12 @@
+2007-03-19  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Add an alignment property that all new lines
+	will be given.
+	- Make sure to use the align shift when calculating the line's X
+	position.
+	* TextBox.cs: Set the alignment on the document as well as on all
+	the document lines.
+
 2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: ControlCollection.Add: Remove a couple of duplicated casts and

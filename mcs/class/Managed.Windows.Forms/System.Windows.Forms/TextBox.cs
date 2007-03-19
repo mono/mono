@@ -285,6 +285,8 @@ namespace System.Windows.Forms {
 				if (value != alignment) {
 					alignment = value;
 
+					document.alignment = value;
+
 					// MS word-wraps if alignment isn't left
 					if (Multiline) {
 						if (alignment != HorizontalAlignment.Left) {
