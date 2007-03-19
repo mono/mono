@@ -352,7 +352,7 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch ((Msg)m.Msg) {
 				case Msg.WM_LBUTTONDOWN:
-					FocusInternal ();
+					FocusInternal (true);
 					break;
 			}
 

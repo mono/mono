@@ -206,6 +206,15 @@ namespace System.Windows.Forms {
 				window_manager.UpdateWindowState (window_state, window_state, true);
 			}
 		}
+
+		internal override bool FocusInternal (bool skip_check)
+		{
+			if (IsMdiChild) {
+				// MS always creates handles when Focus () is called for mdi clients.
+				CreateHandle ();
+			} 
+			return base.FocusInternal (skip_check);
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -497,10 +506,11 @@ namespace System.Windows.Forms {
 				}
 
 				Size current_client_size = ClientSize;
+				UpdateStyles();
 				
 				if (this.IsHandleCreated) {
-					UpdateStyles();
 					this.Size = InternalSizeFromClientSize (current_client_size);
+					XplatUI.InvalidateNC (this.Handle);
 				}
 			}
 		}
@@ -704,6 +714,7 @@ namespace System.Windows.Forms {
 					if (IsHandleCreated)
 						RecreateHandle ();
 				}
+				is_toplevel = mdi_parent == null;
 			}
 		}
 
@@ -934,8 +945,10 @@ namespace System.Windows.Forms {
 					this.show_icon = value;
 					UpdateStyles ();
 					
-					XplatUI.SetIcon (this.Handle, value == true ? this.Icon : null);
-					XplatUI.InvalidateNC (this.Handle);
+					if (IsHandleCreated) {
+						XplatUI.SetIcon (this.Handle, value == true ? this.Icon : null);
+						XplatUI.InvalidateNC (this.Handle);
+					}
 				}
 			}
 		}			
@@ -1079,7 +1092,7 @@ namespace System.Windows.Forms {
 
 				AllowTransparency = true;
 				UpdateStyles();
-				if ((XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0)
+				if (IsHandleCreated && (XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0)
 					XplatUI.SetWindowTransparency(Handle, Opacity, transparency_key);
 			}
 		}
@@ -1407,6 +1420,12 @@ namespace System.Windows.Forms {
 			if (owner == this)
 				throw new InvalidOperationException ("The 'owner' cannot be the form being shown.");
 
+			if (TopLevelControl != this) {
+				throw new InvalidOperationException ("Forms that are not top level"
+					+ " forms cannot be displayed as a modal dialog. Remove the"
+					+ " form from any parent form before calling Show.");
+			}
+
 			base.Show ();
 		}
 #endif
@@ -1559,6 +1578,11 @@ namespace System.Windows.Forms {
 			int	w;
 			int	h;
 
+			// MS creates the handle here.
+			if (TopLevel) {
+				CreateHandle ();
+			}
+			
 			if (Width > 0) {
 				w = Width;
 			} else {
@@ -1588,6 +1612,11 @@ namespace System.Windows.Forms {
 			int	w;
 			int	h;
 
+			// MS creates the handle here.
+			if (TopLevel) {
+				CreateHandle ();
+			}
+			
 			if (Width > 0) {
 				w = Width;
 			} else {
@@ -1643,7 +1672,7 @@ namespace System.Windows.Forms {
 			
 			if (window_manager != null) {
 				if (window_state != FormWindowState.Normal) {
-					window_manager.SetWindowState (FormWindowState.Normal, window_state);
+					window_manager.SetWindowState ((FormWindowState) int.MaxValue, window_state);
 				}
 				XplatUI.RequestNCRecalc (window.Handle);
 			}
@@ -1966,6 +1995,10 @@ namespace System.Windows.Forms {
 		protected override void Select(bool directed, bool forward) {
 			Form	parent;
 
+
+			// MS causes the handle to be created here.
+			CreateHandle ();
+			
 			if (directed) {
 				base.SelectNextControl(null, forward, true, true, true);
 			}
@@ -2011,11 +2044,36 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetVisibleCore(bool value)
 		{
-			is_changing_visible_state = true;
-			has_been_visible = value || has_been_visible;
-			base.SetVisibleCore (value);
-			is_changing_visible_state = false;
+			if (IsMdiChild && !MdiParent.Visible) {
+				if (value != Visible) {
+					MdiWindowManager wm = (MdiWindowManager) window_manager;
+					wm.IsVisiblePending = value;
+					OnVisibleChanged (EventArgs.Empty);
+					return;
+				}
+			} else {
+				is_changing_visible_state = true;
+				has_been_visible = value || has_been_visible;
+				base.SetVisibleCore (value);
+				is_changing_visible_state = false;
+			}
 			
+			if (value && IsMdiContainer) {
+				Form [] children = MdiChildren;
+				for (int i = 0; i < children.Length; i++) {
+					Form child = children [i];
+					MdiWindowManager wm = (MdiWindowManager) child.window_manager;
+					if (!child.IsHandleCreated && wm.IsVisiblePending) {
+						wm.IsVisiblePending = false;
+						child.Visible = true;
+					}
+				}
+			}
+			
+			if (value && IsMdiChild){
+				PerformLayout ();
+				ThemeEngine.Current.ManagedWindowSetButtonLocations (window_manager);
+			}
 #if NET_2_0
 			// Shown event is only called once, the first time the form is made visible
 			if (value && !shown_raised) {
@@ -2520,7 +2578,6 @@ namespace System.Windows.Forms {
 			add { base.TabIndexChanged += value; }
 			remove { base.TabIndexChanged -= value; }
 		}
-		#endregion	// Events
 
 #if NET_2_0
 		[SettingsBindable (true)]
@@ -2694,5 +2751,6 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 #endif
+		#endregion	// Events
 	}
 }

@@ -1,3 +1,27 @@
+2007-03-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: ControlCollection.Add: Remove a couple of duplicated casts and
+	  throw if setting the parent of an mdichild that already has an
+	  mdiparent. Update signature for 2.0 profile. ProductName: If there's no
+	  AssemblyProductAttribute in the assembly, use the type's namespace (as
+	  MS seems to do). CreateControl: don't create the handle if the control
+	  is not visible (according to MS behaviour and spec).  SetTopLevel: Only
+	  create handle if the control is not a form. Change FocusInternal to
+	  virtual so that it can be overriden by Form.
+	* TextBox.cs: Update call to FocusInternal.
+	* Form.cs: Always create the handle when calling Focus on a MdiChild. The
+	  form is not a toplevel form when it's a mdi child, so update is_toplevel
+	  accordingly. ShowIcon/TransparencyKey: avoid creating the handle if it
+	  hasn't been created. Show (IWin32Window): Don't allow this overload for
+	  toplevel windows. CenterToParent/CenterToScreen/Select: create the
+	  handle as MS does. SetVisibleCore: if called on a MdiChild and the
+	  parent isn't visible yet, save the visibility and restore it when the
+	  parent is made visible.
+	* ScrollableControl.cs: Refactor out scrollbar visibility code to separate
+	  methods, since the visibility of the scrollbars can be changed from
+	  several places, not only from AutoScroll.
+	  [Fixes #81179]
+
 2007-03-19  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: Enable shortcuts by default.

@@ -485,12 +485,18 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				bool owner_permits_toplevels = (owner is MdiClient) || (owner is Form && ((Form)owner).IsMdiContainer);
-				bool child_is_toplevel = ((Control)value).GetTopLevel();
-				bool child_is_mdichild = (value is Form && ((Form)value).IsMdiChild);
+				Form form_value = value as Form;
+				Form form_owner = owner as Form;
+				bool owner_permits_toplevels = (owner is MdiClient) || (form_owner != null && form_owner.IsMdiContainer);
+				bool child_is_toplevel = value.GetTopLevel();
+				bool child_is_mdichild = form_value != null && form_value.IsMdiChild;
 
 				if (child_is_toplevel && !(owner_permits_toplevels && child_is_mdichild))
 					throw new ArgumentException("Cannot add a top level control to a control.", "value");
+				
+				if (child_is_mdichild && form_value.MdiParent != null && form_value.MdiParent != owner && form_value.MdiParent != owner.Parent) {
+					throw new ArgumentException ("Form cannot be added to the Controls collection that has a valid MDI parent.", "value");
+				}
 				
 				if (Contains (value)) {
 					owner.PerformLayout();
@@ -2779,6 +2785,9 @@ namespace System.Windows.Forms
 				// set. 
 				if (attrs != null && attrs.Length > 0)
 					a = (AssemblyProductAttribute) attrs [0];
+				if (a == null) {
+					return GetType ().Namespace;
+				}
 				return a.Product;
 			}
 		}
@@ -3282,6 +3291,10 @@ namespace System.Windows.Forms
 				return;
 			}
 
+			if (!is_visible) {
+				return;
+			}
+			
 			if (!IsHandleCreated) {
 				CreateHandle();
 			}
@@ -3333,18 +3346,16 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
 		public bool Focus() {
-			if (CanFocus && IsHandleCreated && !has_focus && !is_focusing) {
+			return FocusInternal (false);
+		}
+
+		internal virtual bool FocusInternal (bool skip_check) {
+			if (skip_check || (CanFocus && IsHandleCreated && !has_focus && !is_focusing)) {
 				is_focusing = true;
 				Select(this);
 				is_focusing = false;
 			}
 			return has_focus;
-		}
-
-		internal void FocusInternal () {
-			is_focusing = true;
-			Select(this);
-			is_focusing = false;
 		}
 
 		public Control GetChildAtPoint(Point pt) {
@@ -3800,7 +3811,8 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			window.CreateHandle(CreateParams);
+			CreateParams create_params = CreateParams;
+			window.CreateHandle(create_params);
 
 			if (window.Handle != IntPtr.Zero) {
 				creator_thread = Thread.CurrentThread;
@@ -4224,19 +4236,13 @@ namespace System.Windows.Forms
 				throw new ArgumentException ("Cannot change toplevel style of a parented control.");
 			}
 
-			// XXX MS.NET causes handle to be created here
-			CreateHandle ();
-
 			if (this is Form) {
-				if (value == true) {
-					if (!Visible) {
-						Visible = true;
-					}
-				} else {
-					if (Visible) {
-						Visible = false;
-					}
+				if (IsHandleCreated && value != Visible) {
+					Visible = value;
 				}
+			} else {
+				// XXX MS.NET causes handle to be created here
+				CreateHandle ();
 			}
 			is_toplevel = value;
 		}
@@ -4890,7 +4896,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (is_toplevel) /* XXX make sure this works for mdi forms */
+			if (is_toplevel || (this is Form && ((Form) this).IsMdiChild)) /* XXX make sure this works for mdi forms */
 				OnVisibleChanged(EventArgs.Empty);
 		}
 
