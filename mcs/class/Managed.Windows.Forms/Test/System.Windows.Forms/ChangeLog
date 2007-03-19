@@ -1,3 +1,7 @@
+2007-03-19  Everaldo Canuto  <everaldo@simios.org>
+
+	* MenuItemTest.cs: Add test for OwnerDraw (#81182).
+
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBoxTest.cs: Marked failing test NotWorking.

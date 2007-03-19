@@ -257,5 +257,33 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (event_reached);
 #endif
 		}
+
+		[Test]
+		public void OwnerDraw() 
+		{
+			Form form = new Form();
+			form.Menu = new MainMenu();
+			form.Menu.MenuItems.Add(new NotOwnerDrawnMenuItem());
+			form.Show();
+			form.Close();
+		}
+
+		class NotOwnerDrawnMenuItem : MenuItem
+		{
+			public NotOwnerDrawnMenuItem() 
+			{
+				Assert.IsFalse(OwnerDraw, "OwnerDraw");
+			}
+
+			protected override void OnMeasureItem(MeasureItemEventArgs e) 
+			{
+				Assert.Fail("OnMeasureItem");
+			}
+
+			protected override void OnDrawItem(DrawItemEventArgs e) 
+			{
+				Assert.Fail("OnDrawItem");
+			}
+		}
 	}
 }
