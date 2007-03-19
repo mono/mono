@@ -28,6 +28,8 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -35,9 +37,9 @@ namespace Microsoft.Build.Tasks {
 	[MonoTODO]
 	public class CombinePath : TaskExtension {
 	
-		string		basePath;
-		ITaskItem[]	combinedPaths;
-		ITaskItem[]	paths;
+		string		base_path;
+		ITaskItem []	combined_paths;
+		ITaskItem []	paths;
 		
 		public CombinePath ()
 		{
@@ -45,22 +47,32 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
+			List <ITaskItem> combined = new List <ITaskItem> ();
+
+			foreach (ITaskItem path in paths)
+				if (String.IsNullOrEmpty (base_path))
+					combined.Add (path);
+				else
+					combined.Add (new TaskItem (Path.Combine (base_path, path.ItemSpec)));
+
+			combined_paths = combined.ToArray ();
+			
 			return true;
 		}
 		
 		public string BasePath {
-			get { return basePath; }
-			set { basePath = value; }
+			get { return base_path; }
+			set { base_path = value; }
 		}
 		
 		[Output]
-		public ITaskItem[] CombinedPaths {
-			get { return combinedPaths; }
-			set { combinedPaths = value; }
+		public ITaskItem [] CombinedPaths {
+			get { return combined_paths; }
+			set { combined_paths = value; }
 		}
 		
 		[Required]
-		public ITaskItem[] Paths {
+		public ITaskItem [] Paths {
 			get { return paths; }
 			set { paths = value; }
 		}
