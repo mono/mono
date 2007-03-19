@@ -73,9 +73,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")] // not working under Mono (see #)
-#else
+#if ONLY_1_1
 		[ExpectedException (typeof (ArgumentException))]
 #endif
 		public void Dispose ()
@@ -87,9 +85,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#else
+#if ONLY_1_1
 		[ExpectedException (typeof (ArgumentException))]
 #endif
 		public void IDisposable_IDispose ()
