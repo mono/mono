@@ -1,3 +1,16 @@
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
+	[ Fixes #81773, and *seems* to fix #81553 as well ]
+
+	* XplatUIX11.cs: remove the assignment of hwnd.zombie = true from
+	AccumulateDestroyedHandles.  We need to do it *after* we send
+	WM_DESTROY, as the user's code can access Control.Handle in
+	OnHandleDestroyed, and this shouldn't cause a recreation.  Also,
+	move the WM_DESTROY/zombie handling to before the call to
+	XDestroyWindow.  For some reason without this ordering
+	FormTest.RecreateHandle hangs.  This ordering is semantically
+	equivalent, however, as XDestroyWindow is async anyway.
+
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBox.cs: Reset backcolor_set after setting default.

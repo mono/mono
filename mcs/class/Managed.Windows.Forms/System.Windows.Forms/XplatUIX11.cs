@@ -1720,7 +1720,6 @@ namespace System.Windows.Forms {
 
 					list.Add (hwnd);
 					CleanupCachedWindows (hwnd);
-					hwnd.zombie = true;
 				}
 
 				for (int  i = 0; i < controls.Length; i ++) {
@@ -2974,6 +2973,12 @@ namespace System.Windows.Forms {
 
 			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
 
+
+			foreach (Hwnd h in windows) {
+				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+				h.zombie = true;
+			}
+
 			lock (XlibLock) {
 				if (hwnd.whole_window != IntPtr.Zero) {
 					#if DriverDebug || DriverDebugDestroy
@@ -2988,10 +2993,6 @@ namespace System.Windows.Forms {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
 
-			}
-
-			foreach (Hwnd h in windows) {
-				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
