@@ -927,9 +927,9 @@ namespace System.Windows.Forms {
 						owner.AddOwnedForm(this);
 					if (IsHandleCreated) {
 						if (owner != null && owner.IsHandleCreated) {
-							XplatUI.SetTopmost(this.window.Handle, owner.window.Handle, true);
+							XplatUI.SetOwner(this.window.Handle, owner.window.Handle);
 						} else {
-							XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, false);
+							XplatUI.SetOwner(this.window.Handle, IntPtr.Zero);
 						}
 					}
 				}
@@ -1662,12 +1662,12 @@ namespace System.Windows.Forms {
 			}
 
 			if ((owner != null) && (owner.IsHandleCreated)) {
-				XplatUI.SetTopmost(window.Handle, owner.window.Handle, true);
+				XplatUI.SetOwner(window.Handle, owner.window.Handle);
 			}
 
 			for (int i = 0; i < owned_forms.Count; i++) {
 				if (owned_forms[i].IsHandleCreated)
-					XplatUI.SetTopmost(owned_forms[i].window.Handle, window.Handle, true);
+					XplatUI.SetOwner(owned_forms[i].window.Handle, window.Handle);
 			}
 			
 			if (window_manager != null) {
@@ -2153,8 +2153,6 @@ namespace System.Windows.Forms {
 							Hide ();
 						}
 					}
-					
-					mdi_parent = null;
 
 					return;
 				}

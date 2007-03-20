@@ -1,3 +1,9 @@
+2007-03-19  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11-new.cs, X11Hwnd.cs: SetOwner implemented using same code from
+	SetTopmost but cheking for null owner to remove transient. The SetTopmost
+	will be change on a decond step.
+
 2007-03-15  Andreia Gaita  <avidigal@novell.com>
 
 	* X11Display.cs: Fire extra MouseMove events right after

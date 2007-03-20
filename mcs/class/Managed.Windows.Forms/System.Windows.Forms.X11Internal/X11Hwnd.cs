@@ -1432,6 +1432,22 @@ namespace System.Windows.Forms.X11Internal {
 			return true;
 		}
 
+		public bool SetOwner (X11Hwnd owner)
+		{
+			if (owner != null) {
+				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
+				if (owner != null)
+					Xlib.XSetTransientForHint (display.Handle, WholeWindow, owner.WholeWindow);
+				else
+					Xlib.XSetTransientForHint (display.Handle, WholeWindow, display.RootWindow.WholeWindow);
+			}
+			else {
+				Xlib.XDeleteProperty (display.Handle, WholeWindow, display.Atoms.XA_WM_TRANSIENT_FOR);
+			}
+
+			return true;
+		}
+
 		public bool SetVisible (bool visible, bool activate)
 		{
 			Visible = visible;

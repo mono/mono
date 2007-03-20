@@ -1,3 +1,22 @@
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
+	[Fixes #80902]
+
+	* XplatUIDriver.cs: Abstract SetOwner method created.
+
+	* XplatUIOSX.cs: Override SetOwner to prevent compilation errors method 
+	must be implemented and was masked as todo.
+
+	* XplatUIWin32.cs: SetOwner implemented using SetWindowLong with 
+	GWL_HWNDPARENT.
+
+	* XplatUIX11.cs: SetOwner implemented using same code from SetTopmost but 
+	cheking for null owner to remove transient. The SetTopmost will be change
+	on a decond step.
+
+	* Form.cs: In set_Owner and CreateHandle uses new SetOwner instead of
+	SetTopmost. Now owned forms will work properly in win32 and X11.
+
 2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MdiWindowManager.cs: Update function name.

@@ -1599,6 +1599,10 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
+		internal override bool SetOwner(IntPtr hWnd, IntPtr hWndOwner) {
+			// TODO: Set window owner. 
+			return true;
+		}
 		
 		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);

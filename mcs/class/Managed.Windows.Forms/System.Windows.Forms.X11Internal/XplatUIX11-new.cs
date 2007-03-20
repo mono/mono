@@ -899,6 +899,20 @@ namespace System.Windows.Forms.X11Internal {
 			return hwnd.SetTopmost (hwnd_owner, enabled);
 		}
 
+		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner)
+		{
+			X11Hwnd hwnd;
+
+			hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd == null)
+				return false;
+
+			X11Hwnd hwnd_owner = (X11Hwnd)Hwnd.ObjectFromHandle(handle_owner);
+
+			return hwnd.SetOwner (hwnd_owner);
+		}
+
 		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);

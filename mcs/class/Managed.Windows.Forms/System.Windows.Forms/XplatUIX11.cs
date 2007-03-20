@@ -4931,6 +4931,36 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner) {
+			Hwnd hwnd;
+			Hwnd hwnd_owner;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (handle_owner != IntPtr.Zero) {
+				hwnd_owner = Hwnd.ObjectFromHandle(handle_owner);
+				lock (XlibLock) {
+					int[]	atoms;
+
+					atoms = new int[8];
+
+					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+
+					if (hwnd_owner != null) {
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
+					} else {
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
+					}
+				}
+			} else {
+				lock (XlibLock) {
+					XDeleteProperty(DisplayHandle, hwnd.whole_window, (IntPtr)Atom.XA_WM_TRANSIENT_FOR);
+				}
+			}
+			return true;
+		}
+
 		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			Hwnd	hwnd;

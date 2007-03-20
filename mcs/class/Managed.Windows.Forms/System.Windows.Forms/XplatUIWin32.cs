@@ -1759,6 +1759,11 @@ namespace System.Windows.Forms {
 				return true;
 			}
 		}
+		
+		internal override bool SetOwner(IntPtr hWnd, IntPtr hWndOwner) {
+			Win32SetWindowLong(hWnd, WindowLong.GWL_HWNDPARENT, (uint) hWndOwner);
+			return true;
+		}
 
 		internal override bool Text(IntPtr handle, string text) {
 			Win32SetWindowText(handle, text);

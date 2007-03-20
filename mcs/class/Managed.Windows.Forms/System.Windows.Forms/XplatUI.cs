@@ -864,6 +864,13 @@ namespace System.Windows.Forms {
 			return driver.SetTopmost(handle, hWndOwner, Enabled);
 		}
 
+		internal static bool SetOwner(IntPtr handle, IntPtr hWndOwner) {
+			#if DriverDebug
+				Console.WriteLine("SetOwner({0}, {1}): Called", Window(handle), Window(hWndOwner));
+			#endif
+			return driver.SetOwner(handle, hWndOwner);
+		}
+
 		internal static bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			#if DriverDebug || DriverDebugState
