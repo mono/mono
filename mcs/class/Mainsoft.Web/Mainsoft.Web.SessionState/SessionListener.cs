@@ -27,6 +27,7 @@ using System;
 using System.Web.SessionState;
 using System.Reflection;
 using javax.servlet.http;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web.SessionState
 {
@@ -58,8 +59,12 @@ namespace Mainsoft.Web.SessionState
 			}
 #endif
 			finally {
-				if (setDomain)
+				if (setDomain) {
 					vmw.@internal.EnvironmentUtils.clearAppDomain ();
+					BaseHttpServlet servlet = (BaseHttpServlet) se.getSession ().getServletContext ().getAttribute (J2EEConsts.CURRENT_SERVLET);
+					if (servlet != null)
+						servlet.CleanupDerby ();
+				}
 			}
 		}
 	}
