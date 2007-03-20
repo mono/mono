@@ -249,7 +249,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsNull (ls.Controls[1].ID, "ID-1");
 			Assert.IsNull (ls.Controls[2].ID, "ID-2");
 			Assert.IsNull (ls.Controls[3].ID, "ID-3");
-
+			
+			ls.CssClass = "loginClass";
 			ls.LoginText = "LoginText";
 			ls.LoginImageUrl = "LoginImageUrl";
 			ls.LogoutText = "LogoutText";
@@ -259,7 +260,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, (ls.Controls[1] as ImageButton).ImageUrl, "ImageUrl-1");
 			Assert.AreEqual (String.Empty, (ls.Controls[2] as LinkButton).Text, "Text-2");
 			Assert.AreEqual (String.Empty, (ls.Controls[3] as ImageButton).ImageUrl, "ImageUrl-3");
-
+			
 			ls.Render ();
 			Assert.IsFalse (ls.OnPreRenderCalled, "!OnPreRender");
 
@@ -272,6 +273,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, (ls.Controls[1] as ImageButton).ImageUrl, "Render-ImageUrl-1");
 			Assert.AreEqual (String.Empty, (ls.Controls[2] as LinkButton).Text, "Render-Text-2");
 			Assert.AreEqual ("LoginImageUrl", (ls.Controls[3] as ImageButton).ImageUrl, "Render-ImageUrl-3");
+			Assert.AreEqual ("loginClass", (ls.Controls[3] as ImageButton).CssClass, "Render-ImageUrl-4");
 		}
 
 		[Test]

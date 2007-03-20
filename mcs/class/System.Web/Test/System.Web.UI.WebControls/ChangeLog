@@ -1,3 +1,8 @@
+2007-03-20  Marek Habersack  <mhabersack@novell.com>
+
+	* LoginStatusTest.cs: add a test for CssClass set on the rendered
+	control
+
 2007-03-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataGridTest.cs: Added new tests.
