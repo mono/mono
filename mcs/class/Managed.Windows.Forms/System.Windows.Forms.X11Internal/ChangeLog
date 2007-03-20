@@ -1,3 +1,8 @@
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11-new.cs, X11Hwnd.cs: Set _NET_WM_STATE_ABOVE on SetTopmost, it 
+	fixes Topmost behavior in X11 environments. 
+
 2007-03-19  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11-new.cs, X11Hwnd.cs: SetOwner implemented using same code from

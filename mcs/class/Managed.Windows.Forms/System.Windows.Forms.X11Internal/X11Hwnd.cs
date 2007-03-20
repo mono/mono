@@ -1416,17 +1416,15 @@ namespace System.Windows.Forms.X11Internal {
 			Xlib.XWarpPointer (display.Handle, IntPtr.Zero, ClientWindow, 0, 0, 0, 0, x, y);
 		}
 		
-		public bool SetTopmost (X11Hwnd owner, bool enabled)
+		public bool SetTopmost (bool enabled)
 		{
 			if (enabled) {
-				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
-				if (owner != null)
-					Xlib.XSetTransientForHint (display.Handle, WholeWindow, owner.WholeWindow);
-				else
-					Xlib.XSetTransientForHint (display.Handle, WholeWindow, display.RootWindow.WholeWindow);
+				int[] atoms = new int[8];
+				atoms[0] = display.Atoms._NET_WM_STATE_ABOVE.ToInt32();
+				Xlib.XChangeProperty (display.Handle, WholeWindow, display.Atoms._NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 			}
 			else {
-				Xlib.XDeleteProperty (display.Handle, WholeWindow, display.Atoms.XA_WM_TRANSIENT_FOR);
+				Xlib.XDeleteProperty (display.Handle, WholeWindow, display.Atoms._NET_WM_STATE);
 			}
 
 			return true;

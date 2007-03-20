@@ -887,16 +887,12 @@ namespace System.Windows.Forms.X11Internal {
 
 		internal override bool SetTopmost(IntPtr handle, IntPtr handle_owner, bool enabled)
 		{
-			X11Hwnd hwnd;
-
-			hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+			X11Hwnd hwnd = (X11Hwnd) Hwnd.ObjectFromHandle (handle);
 
 			if (hwnd == null)
 				return false;
 
-			X11Hwnd hwnd_owner = (X11Hwnd)Hwnd.ObjectFromHandle(handle_owner);
-
-			return hwnd.SetTopmost (hwnd_owner, enabled);
+			return hwnd.SetTopmost (enabled);
 		}
 
 		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner)
