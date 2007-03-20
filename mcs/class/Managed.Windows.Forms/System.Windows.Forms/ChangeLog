@@ -1,3 +1,9 @@
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
+	* Form.cs: Call SetTopmost in CreateHandle when window is topmost, its
+	because on setter of topmost we dont call SetTopmost when handle is not
+	created.
+
 2007-03-20  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Need to use SelectionLength () not

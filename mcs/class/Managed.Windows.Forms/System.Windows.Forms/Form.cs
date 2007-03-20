@@ -1665,6 +1665,10 @@ namespace System.Windows.Forms {
 				XplatUI.SetOwner(window.Handle, owner.window.Handle);
 			}
 
+			if (topmost) {
+				XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, topmost);
+			}
+
 			for (int i = 0; i < owned_forms.Count; i++) {
 				if (owned_forms[i].IsHandleCreated)
 					XplatUI.SetOwner(owned_forms[i].window.Handle, window.Handle);
