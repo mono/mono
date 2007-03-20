@@ -626,6 +626,10 @@ namespace System.Web.Security
 			expiration_cookie.Expires = new DateTime (1999, 10, 12);
 			expiration_cookie.Path = cookiePath;
 			cc.Add (expiration_cookie);
+
+#if NET_2_0
+			Roles.DeleteCookie ();
+#endif
 		}
 
 		public static string FormsCookieName

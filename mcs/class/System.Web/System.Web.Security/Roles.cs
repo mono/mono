@@ -95,13 +95,20 @@ namespace System.Web.Security {
 		public static void DeleteCookie ()
 		{
 			if (CacheRolesInCookie) {
-				HttpCookie clearCookie = new HttpCookie (CookieName, "");
-				clearCookie.Expires = DateTime.MinValue;
-				clearCookie.Path = CookiePath;
-				clearCookie.Domain = Domain;
-				clearCookie.Secure = CookieRequireSSL;
+				HttpContext context = HttpContext.Current;
+				if (context == null)
+					throw new HttpException ("Context is null.");
 
-				HttpContext.Current.Response.SetCookie (clearCookie);
+				HttpResponse response = context.Response;
+				if (response == null)
+					throw new HttpException ("Response is null.");
+
+				HttpCookieCollection cc = response.Cookies;
+				cc.Remove (CookieName);
+				HttpCookie expiration_cookie = new HttpCookie (CookieName, "");
+				expiration_cookie.Expires = new DateTime (1999, 10, 12);
+				expiration_cookie.Path = CookiePath;
+				cc.Add (expiration_cookie);
 			}
 		}
 		
