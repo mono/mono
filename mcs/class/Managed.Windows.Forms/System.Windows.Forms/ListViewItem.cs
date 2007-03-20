@@ -895,8 +895,8 @@ namespace System.Windows.Forms
 			}
 
 			public ListViewSubItem (ListViewItem owner, string text)
-				: this (owner, text, ThemeEngine.Current.ColorWindowText,
-					ThemeEngine.Current.ColorWindow, null)
+				: this (owner, text, Color.Empty,
+					Color.Empty, null)
 			{
 			}
 
@@ -913,11 +913,17 @@ namespace System.Windows.Forms
 
 			#region Public Instance Properties
 			public Color BackColor {
-				get { return back_color; }
+				get {
+					if (this.back_color != Color.Empty)
+						return this.back_color;
+					if (this.owner != null && this.owner.ListView != null)
+						return this.owner.ListView.BackColor;
+					return ThemeEngine.Current.ColorWindow;
+				}
 				set { 
 					back_color = value; 
 					Invalidate ();
-				    }
+				}
 			}
 
 #if NET_2_0
@@ -952,11 +958,17 @@ namespace System.Windows.Forms
 			}
 
 			public Color ForeColor {
-				get { return fore_color; }
+				get {
+					if (this.fore_color != Color.Empty)
+						return this.fore_color;
+					if (this.owner != null && this.owner.ListView != null)
+						return this.owner.ListView.ForeColor;
+					return ThemeEngine.Current.ColorWindowText;
+				}
 				set { 
 					fore_color = value; 
 					Invalidate ();
-				    }
+				}
 			}
 
 #if NET_2_0

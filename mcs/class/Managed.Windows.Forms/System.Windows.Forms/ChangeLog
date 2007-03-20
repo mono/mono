@@ -1,3 +1,10 @@
+2007-03-19  Andreia Gaita  <avidigal@novell.com>
+
+	* ListViewItem.cs: Fix back and fore color. The subitems only
+	use their own colors if they are set, otherwise use the listview's
+	colors. Don't set default colors on constructor for subitem.
+	Fixes #79315.
+
 2007-03-19  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : make box selection for Details views with 
