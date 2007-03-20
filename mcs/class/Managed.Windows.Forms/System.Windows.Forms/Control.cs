@@ -4643,33 +4643,35 @@ namespace System.Windows.Forms
 		private void WmPaint (ref Message m) {
 			PaintEventArgs	paint_event;
 
-			paint_event = XplatUI.PaintEventStart(Handle, true);
+			IntPtr handle = Handle;
 
-			if (paint_event == null) {
+			paint_event = XplatUI.PaintEventStart (handle, true);
+
+			if (paint_event == null)
 				return;
-			}
+
 			DoubleBuffer current_buffer = null;
 			if (UseDoubleBuffering) {
 				current_buffer = GetBackBuffer ();
 				if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
 					// Just blit the previous image
 					current_buffer.Blit (paint_event);
-					XplatUI.PaintEventEnd (Handle, true);
+					XplatUI.PaintEventEnd (handle, true);
 					return;
 				}
 				current_buffer.Start (paint_event);
 			}
 				
 			if (!GetStyle(ControlStyles.Opaque)) {
-				OnPaintBackground(paint_event);
+				OnPaintBackground (paint_event);
 			}
 
 			// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
-			OnPaintBackgroundInternal(paint_event);
+			OnPaintBackgroundInternal (paint_event);
 
 			OnPaintInternal(paint_event);
 			if (!paint_event.Handled) {
-				OnPaint(paint_event);
+				OnPaint (paint_event);
 			}
 
 			if (current_buffer != null) {
@@ -4677,8 +4679,7 @@ namespace System.Windows.Forms
 			}
 
 
-			XplatUI.PaintEventEnd(Handle, true);
-
+			XplatUI.PaintEventEnd (handle, true);
 		}
 
 		private void WmEraseBackground (ref Message m) {

@@ -1,3 +1,10 @@
+2007-03-19  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (WmPaint): don't make use of the Handle property
+	after an event is emitted, as the user could have closed the
+	form/destroyed the control.  Store the Handle in a local variable
+	and make use of that.  Fixes bug #80768.
+
 2007-03-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* XplatUIX11.cs: Set _NET_WM_STATE_ABOVE on SetTopmost, it fixes Topmost
