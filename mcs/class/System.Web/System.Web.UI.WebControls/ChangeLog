@@ -1,3 +1,8 @@
+2007-03-20  Marek Habersack  <mhabersack@novell.com>
+
+	* LoginStatus.cs: render login/logout controls with the CssClass
+	set from the parent control. Fixes bug #81196
+
 2007-03-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataGrid.cs: fixed Save/Load view state, applying styles.	

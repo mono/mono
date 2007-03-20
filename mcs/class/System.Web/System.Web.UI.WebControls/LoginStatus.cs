@@ -52,11 +52,9 @@ namespace System.Web.UI.WebControls {
 		private LinkButton loginLinkButton;
 		private ImageButton loginImageButton;
 
-
 		public LoginStatus ()
 		{
 		}
-
 
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -154,9 +152,7 @@ namespace System.Web.UI.WebControls {
 			get { return HtmlTextWriterTag.A; }
 		}
 
-
 		// methods
-
 		protected internal override void CreateChildControls ()
 		{
 			Controls.Clear ();
@@ -181,7 +177,6 @@ namespace System.Web.UI.WebControls {
 			Controls.Add (loginLinkButton);
 			Controls.Add (loginImageButton);
 		}
-
 
 		protected virtual void OnLoggedOut (EventArgs e)
 		{
@@ -238,17 +233,21 @@ namespace System.Web.UI.WebControls {
 
 			if (logoutLinkButton.Visible) {
 				logoutLinkButton.Text = LogoutText;
+				logoutLinkButton.CssClass = this.CssClass;
 				logoutLinkButton.Render (writer);
 			} else if (logoutImageButton.Visible) {
 				logoutImageButton.AlternateText = LogoutText;
+				logoutImageButton.CssClass = this.CssClass;
 				logoutImageButton.ImageUrl = LogoutImageUrl;
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, logoutImageButton.UniqueID);
 				logoutImageButton.Render (writer);
 			} else if (loginLinkButton.Visible) {
 				loginLinkButton.Text = LoginText;
+				loginLinkButton.CssClass = this.CssClass;
 				loginLinkButton.Render (writer);
 			} else if (loginImageButton.Visible) {
 				loginImageButton.AlternateText = LoginText;
+				loginImageButton.CssClass = this.CssClass;
 				loginImageButton.ImageUrl = LoginImageUrl;
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, loginImageButton.UniqueID);
 				loginImageButton.Render (writer);
@@ -262,7 +261,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// events
-
 		public event EventHandler LoggedOut {
 			add { Events.AddHandler (loggedOutEvent, value); }
 			remove { Events.RemoveHandler (loggedOutEvent, value); }
@@ -274,7 +272,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// private stuff
-
 		private void LogoutClick (object sender, CommandEventArgs e)
 		{
 			LoginCancelEventArgs lcea = new LoginCancelEventArgs (false);
