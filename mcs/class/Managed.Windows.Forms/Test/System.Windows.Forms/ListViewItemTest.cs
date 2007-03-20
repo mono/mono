@@ -73,6 +73,72 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ListViewItemBackColor ()
+		{
+			ListViewItem item = new ListViewItem ();
+
+			ListView lv = new ListView ();
+			lv.Items.Add (item);
+			lv.BackColor = Color.Orange;
+			Assert.AreEqual (lv.BackColor, item.BackColor, "BackColor#1");
+			Assert.AreEqual (lv.BackColor, item.SubItems [0].BackColor, "BackColor#2");
+
+			item.BackColor = Color.Navy;
+			Assert.AreEqual (Color.Navy, item.BackColor, "BackColor#3");
+			Assert.AreEqual (Color.Navy, item.SubItems [0].BackColor, "BackColor#4");
+
+			item.SubItems [0].BackColor = Color.Green;
+			Assert.AreEqual (Color.Green, item.BackColor, "BackColor#5");
+			Assert.AreEqual (Color.Green, item.SubItems [0].BackColor, "BackColor#6");
+		}
+
+		[Test]
+		public void ListViewItemForeColor ()
+		{
+			ListViewItem item = new ListViewItem ();
+
+			ListView lv = new ListView ();
+			lv.Items.Add (item);
+			lv.ForeColor = Color.Orange;
+			Assert.AreEqual (lv.ForeColor, item.ForeColor, "ForeColor#1");
+			Assert.AreEqual (lv.ForeColor, item.SubItems [0].ForeColor, "ForeColor#2");
+
+			item.ForeColor = Color.Navy;
+			Assert.AreEqual (Color.Navy, item.ForeColor, "ForeColor#3");
+			Assert.AreEqual (Color.Navy, item.SubItems [0].ForeColor, "ForeColor#4");
+
+			item.SubItems [0].ForeColor = Color.Green;
+			Assert.AreEqual (Color.Green, item.ForeColor, "ForeColor#5");
+			Assert.AreEqual (Color.Green, item.SubItems [0].ForeColor, "ForeColor#6");
+		}
+
+		[Test]
+		public void ListViewItemUseItemStyleForSubItems ()
+		{
+			ListViewItem item = new ListViewItem ();
+			Assert.AreEqual (1, item.SubItems.Count);
+
+			// UseitemStyleForSubItems works at draw level
+			item.UseItemStyleForSubItems = true;
+
+			ListViewItem.ListViewSubItem subitem0 = item.SubItems [0];
+			Color subitem0_back_color = subitem0.BackColor = Color.Black;
+			Color subitem0_fore_color = subitem0.ForeColor = Color.White;
+
+			Assert.AreEqual (subitem0_back_color, item.SubItems [0].BackColor, "UseItemStyleForSubItems#1");
+			Assert.AreEqual (subitem0_fore_color, item.SubItems [0].ForeColor, "UseItemStyleForSubItems#2");
+			Assert.AreEqual (item.BackColor, item.SubItems [0].BackColor, "UseItemStyleForSubItems#3");
+			Assert.AreEqual (item.ForeColor, item.SubItems [0].ForeColor, "UseItemStyleForSubItems#4");
+
+			ListViewItem.ListViewSubItem subitem1 = item.SubItems.Add ("SubItem");
+			Color subitem1_back_color = subitem1.BackColor = Color.Blue;
+			Color subitem1_fore_color = subitem1.ForeColor = Color.Gray;
+
+			Assert.AreEqual (subitem1_back_color, subitem1.BackColor, "UseItemStyleForSubItem#5");
+			Assert.AreEqual (subitem1_fore_color, subitem1.ForeColor, "UseItemStyleForSubItem#6");
+		}
+
+		[Test]
 		public void ListViewItemTestClone ()
 		{
 			ListViewItem item1 = new ListViewItem ("Hello");
