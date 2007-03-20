@@ -42,7 +42,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public string GetSessionID (HttpContext context) {
-			HttpServletRequest request = ServletSessionStateStoreProvider.GetWorkerRequest (context).ServletRequest;
+			HttpServletRequest request = J2EEUtils.GetWorkerRequest (context).ServletRequest;
 			return request.isRequestedSessionIdValid () ? request.getRequestedSessionId () : null;
 		}
 

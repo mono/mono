@@ -30,6 +30,8 @@ using vmw.@internal.io;
 using vmw.common;
 
 using javax.servlet;
+using System.Web;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web
 {
@@ -96,6 +98,11 @@ namespace Mainsoft.Web
 				path = GetApplicationRealPath (config);
 
 			return path;
+		}
+
+		static internal ServletWorkerRequest GetWorkerRequest (HttpContext context) {
+			IServiceProvider sp = (IServiceProvider) context;
+			return (ServletWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
 		}
 	}
 }

@@ -54,7 +54,7 @@ namespace Mainsoft.Web.SessionState
 				_staticObjects = new HttpStaticObjectsCollection ();
 
 				if (context != null) {
-					ServletConfig config = ServletSessionStateStoreProvider.GetWorkerRequest (context).Servlet.getServletConfig ();
+					ServletConfig config = J2EEUtils.GetWorkerRequest (context).Servlet.getServletConfig ();
 					string sessionPersistance = J2EEUtils.GetInitParameterByHierarchy(config, J2EEConsts.Enable_Session_Persistency);
 					if (sessionPersistance == null)
 						sessionPersistance = config.getServletContext().getInitParameter (J2EEConsts.Enable_Session_Persistency);

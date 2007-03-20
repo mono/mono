@@ -149,6 +149,7 @@
     <Compile Include="Mainsoft.Web.Security\DerbyRoleProvider.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyRolesHelper.cs" />
     <Compile Include="Mainsoft.Web.Security\DerbyDBSchema.cs" />
+    <Compile Include="Mainsoft.Web.Security\ServletAuthenticationModule.cs" />
     <Compile Include="Mainsoft.Web.SessionState\ServletSessionStateItemCollection.cs" />
     <Compile Include="Mainsoft.Web.SessionState\ObjectInputStream.cs" />
     <Compile Include="Mainsoft.Web.SessionState\ObjectOutputStream.cs" />

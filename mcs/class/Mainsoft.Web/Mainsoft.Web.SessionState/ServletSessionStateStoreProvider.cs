@@ -116,11 +116,6 @@ namespace Mainsoft.Web.SessionState
 
 		#region helpers
 
-		static internal ServletWorkerRequest GetWorkerRequest (HttpContext context) {
-			IServiceProvider sp = (IServiceProvider) context;
-			return (ServletWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
-		}
-
 		internal static HttpSessionStateContainer CreateContainer (HttpSession session) {
 			ServletSessionStateItemCollection sessionState = session.getAttribute (J2EEConsts.SESSION_STATE) as ServletSessionStateItemCollection;
 			if (sessionState == null) //was not set
@@ -139,7 +134,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		internal static HttpSession GetSession (HttpContext context, bool create, bool throwOnError) {
-			HttpSession session = GetWorkerRequest (context).ServletRequest.getSession (create);
+			HttpSession session = J2EEUtils.GetWorkerRequest (context).ServletRequest.getSession (create);
 			if (session == null && throwOnError)
 				throw new HttpException ("Session is not established");
 
