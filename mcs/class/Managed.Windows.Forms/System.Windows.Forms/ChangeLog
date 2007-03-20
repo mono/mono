@@ -1,3 +1,8 @@
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
+	* Form.cs: In ShowDialog uses MainForm as transient form when no form is
+	defined. Fixes #80784.
+
 2007-03-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ContextMenuStrip.cs: align with the change introduced in

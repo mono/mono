@@ -1441,6 +1441,10 @@ namespace System.Windows.Forms {
 
 			Form owner_to_be = null;
 
+			if ((ownerWin32 == null) && (Application.MWFThread.Current.Context != null)) {
+				ownerWin32 = Application.MWFThread.Current.Context.MainForm;
+			}
+
 			if (ownerWin32 != null) {
 				Control c = Control.FromHandle (ownerWin32.Handle);
 				if (c != null)
@@ -2158,8 +2162,6 @@ namespace System.Windows.Forms {
 						}
 					}
 
-					mdi_parent = null;
-					
 					return;
 				}
 
