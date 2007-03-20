@@ -1714,12 +1714,12 @@ namespace System.Web.UI.WebControls
 			OnSorting (args);
 			if (args.Cancel) return;
 			
-		if (IsBoundUsingDataSourceID) {
-			EditIndex = -1;
-			PageIndex = 0;
-			SortExpression = args.SortExpression;
-			SortDirection = args.SortDirection;
-		}
+			if (IsBoundUsingDataSourceID) {
+				EditIndex = -1;
+				PageIndex = 0;
+				SortExpression = args.SortExpression;
+				SortDirection = args.SortDirection;
+			}
 			
 			OnSorted (EventArgs.Empty);
 		}

@@ -197,6 +197,8 @@ namespace System.Web.UI.WebControls {
 			if (!IsBoundUsingDataSourceID)
 				OnDataBinding (EventArgs.Empty);
 
+			// prevent recursive calls
+			RequiresDataBinding = false;
 			SelectArguments = CreateDataSourceSelectArguments ();
 			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
 
@@ -216,7 +218,6 @@ namespace System.Web.UI.WebControls {
 			}
 			// The PerformDataBinding method binds the data in the  
 			// retrievedData collection to elements of the data-bound control.
-			RequiresDataBinding = false;
 			PerformDataBinding (data);
 		}
 		
