@@ -1,5 +1,10 @@
 2007-03-20 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseDataBoundControl.cs: fix as per MSDN - the property is set
+	only if data binding doesn't occur.
+
+2007-03-20 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: PageIndex considers PageCount.	
 
 2007-03-20  Marek Habersack  <mhabersack@novell.com>
