@@ -1201,217 +1201,219 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		private const string MetafileEnumeration = "Metafiles enumeration, for both WMF and EMF formats, isn't supported.";
+
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF [] destPoints, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
 		{
 			throw new NotImplementedException ();
