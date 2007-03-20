@@ -168,6 +168,11 @@ namespace Mono.CSharp {
 			foreach (TypeContainer tc in root.Types)
 				tc.DefineType ();
 
+			if (type_container_resolve_order != null) {
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.ResolveMembers ();
+			}
+
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
 					d.DefineType ();

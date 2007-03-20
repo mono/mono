@@ -1,3 +1,14 @@
+2007-03-20  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TypeContainer.DefineType): Don't call ResolveMembers() here.
+	(TypeContainer.DoResolveMembers): Call DefineType() on our
+	`compiler_generated' classes; moved here from DefineNestedTypes().
+
+	* rootcontext.cs
+	(RootContext.ResolveTree): Call ResolveMembers() on all
+	TypeContainer's in the `type_container_resolve_order'.
+
 2007-03-19  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Use corlib to handle InternalMethodImplAttribute.

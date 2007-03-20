@@ -1283,7 +1283,7 @@ namespace Mono.CSharp {
 
 			if (error)
 				return null;
-			
+
 			if (!DefineTypeBuilder ()) {
 				error = true;
 				return null;
@@ -1292,13 +1292,6 @@ namespace Mono.CSharp {
 			if (partial_parts != null) {
 				foreach (TypeContainer part in partial_parts)
 					part.TypeBuilder = TypeBuilder;
-			}
-
-			if (!(this is CompilerGeneratedClass)) {
-				if (!ResolveMembers ()) {
-					error = true;
-					return null;
-				}
 			}
 
 			if (!DefineNestedTypes ()) {
@@ -1371,6 +1364,13 @@ namespace Mono.CSharp {
 					if (!e.Add.ResolveMembers ())
 						return false;
 					if (!e.Remove.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (c.DefineType () == null)
 						return false;
 				}
 			}
@@ -1519,13 +1519,6 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					if (en.DefineType () == null)
 						return false;
-			}
-
-			if (compiler_generated != null) {
-				foreach (CompilerGeneratedClass c in compiler_generated) {
-					if (c.DefineType () == null)
-						return false;
-				}
 			}
 
 			return true;
