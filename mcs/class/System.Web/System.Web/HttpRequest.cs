@@ -329,6 +329,14 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		public string AppRelativeCurrentExecutionFilePath {
+			get {
+				return VirtualPathUtility.ToAppRelative (CurrentExecutionFilePath);
+			}
+		}
+#endif
+
 		public string FilePath {
 			get {
 				if (worker_request == null)
