@@ -1,3 +1,9 @@
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs, XplatUIX11.cs, 
+	XplatUI.cs, Form.cs, ToolTip.cs: Remove unneeded parameter owner 
+	in SetTopmost.
+
 2007-03-19  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (WmPaint): don't make use of the Handle property

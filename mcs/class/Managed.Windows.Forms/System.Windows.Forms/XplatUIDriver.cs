@@ -207,7 +207,7 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr DispatchMessage(ref MSG msg);
 
 		internal abstract bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom);
-		internal abstract bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled);
+		internal abstract bool SetTopmost(IntPtr hWnd, bool Enabled);
 		internal abstract bool SetOwner(IntPtr hWnd, IntPtr hWndOwner);
 
 		internal abstract bool CalculateWindowRect(ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect);

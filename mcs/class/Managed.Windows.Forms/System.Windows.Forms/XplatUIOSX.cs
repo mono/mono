@@ -1594,7 +1594,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
+		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
 			HIViewSetZOrder (hWnd, 1, IntPtr.Zero);
 			return true;
 		}

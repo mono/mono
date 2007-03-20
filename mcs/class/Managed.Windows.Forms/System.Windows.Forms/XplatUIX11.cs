@@ -4896,7 +4896,7 @@ namespace System.Windows.Forms {
 			WakeupMain ();
 		}
 
-		internal override bool SetTopmost(IntPtr handle, IntPtr handle_owner, bool enabled) {
+		internal override bool SetTopmost(IntPtr handle, bool enabled) {
 
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 

@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 			#region ToolTipWindow Class Protected Instance Methods
 			protected override void OnCreateControl() {
 				base.OnCreateControl ();
-				XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, true);
+				XplatUI.SetTopmost(this.window.Handle, true);
 			}
 
 			protected override CreateParams CreateParams {
@@ -138,9 +138,9 @@ namespace System.Windows.Forms {
 				Control control = (Control)sender;
 
 				if (control.is_visible) {
-					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, true);
+					XplatUI.SetTopmost(control.window.Handle, true);
 				} else {
-					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, false);
+					XplatUI.SetTopmost(control.window.Handle, false);
 				}
 			}
 			#endregion	// ToolTipWindow Class Protected Instance Methods

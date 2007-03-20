@@ -857,11 +857,11 @@ namespace System.Windows.Forms {
 			driver.SetTimer (timer);
 		}
 
-		internal static bool SetTopmost(IntPtr handle, IntPtr hWndOwner, bool Enabled) {
+		internal static bool SetTopmost(IntPtr handle, bool Enabled) {
 			#if DriverDebug
-				Console.WriteLine("SetTopMost({0}, {1}, {2}): Called", Window(handle), Window(hWndOwner), Enabled);
+				Console.WriteLine("SetTopMost({0}, {1}): Called", Window(handle), Enabled);
 			#endif
-			return driver.SetTopmost(handle, hWndOwner, Enabled);
+			return driver.SetTopmost(handle, Enabled);
 		}
 
 		internal static bool SetOwner(IntPtr handle, IntPtr hWndOwner) {

@@ -885,7 +885,7 @@ namespace System.Windows.Forms.X11Internal {
 			queue.SetTimer (timer);
 		}
 
-		internal override bool SetTopmost(IntPtr handle, IntPtr handle_owner, bool enabled)
+		internal override bool SetTopmost(IntPtr handle, bool enabled)
 		{
 			X11Hwnd hwnd = (X11Hwnd) Hwnd.ObjectFromHandle (handle);
 

@@ -1750,7 +1750,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		internal override bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
+		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
 			if (Enabled) {
 				Win32SetWindowPos(hWnd, SetWindowPosZOrder.HWND_TOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE);
 				return true;

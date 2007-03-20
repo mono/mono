@@ -1076,7 +1076,7 @@ namespace System.Windows.Forms {
 				if (topmost != value) {
 					topmost = value;
 					if (IsHandleCreated)
-						XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
+						XplatUI.SetTopmost(window.Handle, value);
 				}
 			}
 		}
@@ -1666,7 +1666,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (topmost) {
-				XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, topmost);
+				XplatUI.SetTopmost(window.Handle, topmost);
 			}
 
 			for (int i = 0; i < owned_forms.Count; i++) {
