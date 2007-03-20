@@ -1192,18 +1192,25 @@ namespace System.Web.UI
 #endif
 		string ResolveClientUrl (string relativeUrl)
 		{
-			string absoluteUrl = ResolveUrl (relativeUrl);
 #if TARGET_J2EE
 			// There are no relative paths when rendering a J2EE portlet
 			if (Page != null && Page.PortletNamespace != null)
-				return absoluteUrl;
+				return ResolveUrl (relativeUrl);
 #endif
-			if (Context != null && Context.Request != null) {
-				string baseUrl = Context.Request.BaseVirtualDir;
-				if (absoluteUrl.StartsWith (baseUrl + "/"))
-					return absoluteUrl.Substring (baseUrl.Length + 1);
+			if (relativeUrl == null)
+				throw new ArgumentNullException ("relativeUrl");
+
+			if (relativeUrl.Length == 0)
+				return String.Empty;
+
+			if (Context != null && Context.Request != null && VirtualPathUtility.IsAppRelative (relativeUrl)) {
+				string basePath = Context.Request.FilePath;
+				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/') {
+					basePath = VirtualPathUtility.GetDirectory (basePath);
+				}
+				return VirtualPathUtility.MakeRelative (basePath, relativeUrl);
 			}
-			return absoluteUrl;
+			return relativeUrl;
 		}
 		
 		internal bool HasRenderMethodDelegate () {

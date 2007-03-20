@@ -623,6 +623,27 @@ namespace MonoTests.System.Web.UI
 			p.Controls.Add (ctrl);
 			string url = ctrl.ResolveClientUrl ("~/MyPage.aspx");
 			Assert.AreEqual ("MyPage.aspx", url, "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("", ctrl.ResolveClientUrl (""), "empty string");
+			
+			Assert.AreEqual ("./", ctrl.ResolveClientUrl ("~"), "~");
+			Assert.AreEqual ("./", ctrl.ResolveClientUrl ("~/"), "~/");
+
+			Assert.AreEqual ("../MyPage.aspx", ctrl.ResolveClientUrl ("~/../MyPage.aspx"), "~/../MyPage.aspx");
+			Assert.AreEqual ("../MyPage.aspx", ctrl.ResolveClientUrl ("~\\..\\MyPage.aspx"), "~\\..\\MyPage.aspx");
+			Assert.AreEqual ("MyPage.aspx", ctrl.ResolveClientUrl ("~////MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/MyPage.aspx", ctrl.ResolveClientUrl ("/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/folder/MyPage.aspx", ctrl.ResolveClientUrl ("/folder/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("/NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("\\NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("\\NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("///NunitWeb\\..\\MyPage.aspx", ctrl.ResolveClientUrl ("///NunitWeb\\..\\MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("NunitWeb/../MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("NunitWeb/./MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://google.com/", ctrl.ResolveClientUrl ("http://google.com/"), "ResolveClientUrl Failed");
+
+			Assert.AreEqual ("MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
+			Assert.AreEqual ("../MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 		}
 
 		[Test]
