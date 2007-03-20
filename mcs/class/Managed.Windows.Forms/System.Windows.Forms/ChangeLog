@@ -1,5 +1,14 @@
 2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* ComboBox.cs: PreferredHeight seems to be ItemHeight + 6, but there is
+	  very probably a more complicated calculation there. Update the
+	  textbox' ForeColor and BackColor when the ComboBox' colors are
+	  changed. Change the border change in LayoutComboBox to only affect
+	  the textbox, not all the calculations there. Seems to fix most of
+	  #79436.
+
+2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ComboBox.cs: Handle Home and End keys as well as all combinations of
 	  modifiers + navigation keys as input keys, enables advanced text
 	  selection in the combobox (like Shift+Left Arrow for instance).

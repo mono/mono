@@ -615,7 +615,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public int PreferredHeight {
 			get {
-				return ItemHeight + 5;
+				return ItemHeight + 6;
 			}
 		}
 
@@ -942,6 +942,9 @@ namespace System.Windows.Forms
 		protected override void OnBackColorChanged (EventArgs e)
 		{
 			base.OnBackColorChanged (e);
+
+			if (textbox_ctrl != null)
+				textbox_ctrl.BackColor = BackColor;
 		}
 
 		protected override void OnDataSourceChanged (EventArgs e)
@@ -1027,6 +1030,8 @@ namespace System.Windows.Forms
 		protected override void OnForeColorChanged (EventArgs e)
 		{
 			base.OnForeColorChanged (e);
+			if (textbox_ctrl != null)
+				textbox_ctrl.ForeColor = ForeColor;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1321,7 +1326,7 @@ namespace System.Windows.Forms
 		
 		void LayoutComboBox ()
 		{
-			int border = ThemeEngine.Current.Border3DSize.Width + 1;
+			int border = ThemeEngine.Current.Border3DSize.Width;
 
 			text_area = ClientRectangle;
 			text_area.Height = PreferredHeight;
@@ -1358,9 +1363,10 @@ namespace System.Windows.Forms
 			}
 
 			if (textbox_ctrl != null) {
-				textbox_ctrl.Location = new Point (text_area.X + border, text_area.Y + border);
-				textbox_ctrl.Width = text_area.Width - button_area.Width - border * 2;
-				textbox_ctrl.Height = text_area.Height - border * 2;
+				int text_border = border + 1;
+				textbox_ctrl.Location = new Point (text_area.X + text_border, text_area.Y + text_border);
+				textbox_ctrl.Width = text_area.Width - button_area.Width - text_border * 2;
+				textbox_ctrl.Height = text_area.Height - text_border * 2;
 			}
 
 			if (listbox_ctrl != null && dropdown_style == ComboBoxStyle.Simple) {
