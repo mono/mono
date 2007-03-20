@@ -2387,6 +2387,11 @@ namespace System.Windows.Forms
 			case View.List:
 				Scroll (h_scroll, -ItemSize.Width * lines);
 				break;
+#if NET_2_0
+			case View.Tile:
+				Scroll (v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing) * 2 * lines);
+				break;
+#endif
 			}
 		}
 
