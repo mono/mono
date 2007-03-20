@@ -415,9 +415,6 @@ namespace Mono.CSharp {
 		// Holds the list of constants
 		MemberCoreArrayList constants;
 
-		// Holds the list of
-		MemberCoreArrayList interfaces;
-
 		// Holds the methods.
 		MethodArrayList methods;
 
@@ -515,35 +512,30 @@ namespace Mono.CSharp {
 			constants.Add (constant);
 		}
 
-		public TypeContainer AddTypeContainer (TypeContainer tc, bool is_interface)
+		public TypeContainer AddTypeContainer (TypeContainer tc)
 		{
 			if (!AddMemberType (tc))
 				return tc;
 
-			if (is_interface) {
-				if (interfaces == null)
-					interfaces = new MemberCoreArrayList ();
-				interfaces.Add (tc);
-			} else {
-				if (types == null)
-					types = new ArrayList (2);
-				types.Add (tc);
-			}
+			if (types == null)
+				types = new MemberCoreArrayList ();
+			types.Add (tc);
+
 			return tc;
 		}
 
-		public virtual TypeContainer AddPartial (TypeContainer nextPart, bool is_interface)
+		public virtual TypeContainer AddPartial (TypeContainer nextPart)
 		{
-			return AddPartial (nextPart, nextPart.Basename, is_interface);
+			return AddPartial (nextPart, nextPart.Basename);
 		}
 
-		protected TypeContainer AddPartial (TypeContainer nextPart, string name, bool is_interface)
+		protected TypeContainer AddPartial (TypeContainer nextPart, string name)
 		{
 			nextPart.ModFlags |= Modifiers.PARTIAL;
 			TypeContainer tc = defined_names [name] as TypeContainer;
 
 			if (tc == null)
-				return AddTypeContainer (nextPart, is_interface);
+				return AddTypeContainer (nextPart);
 
 			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
 				Report.SymbolRelatedToPreviousError (tc);
@@ -810,12 +802,6 @@ namespace Mono.CSharp {
 		public ArrayList Constants {
 			get {
 				return constants;
-			}
-		}
-
-		public ArrayList Interfaces {
-			get {
-				return interfaces;
 			}
 		}
 
@@ -1279,15 +1265,6 @@ namespace Mono.CSharp {
 					part.TypeBuilder = TypeBuilder;
 			}
 
-			if (Interfaces != null) {
-				foreach (TypeContainer iface in Interfaces) {
-					if (iface.CreateType () == null) {
-						error = true;
-						return null;
-					}
-				}
-			}
-
 			if (Types != null) {
 				foreach (TypeContainer tc in Types) {
 					if (tc.CreateType () == null) {
@@ -1531,12 +1508,6 @@ namespace Mono.CSharp {
 
 		protected virtual bool DefineNestedTypes ()
 		{
-			if (Interfaces != null) {
-				foreach (TypeContainer iface in Interfaces)
-					if (iface.DefineType () == null)
-						return false;
-			}
-			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
 					if (tc.DefineType () == null)
@@ -1805,7 +1776,7 @@ namespace Mono.CSharp {
 			if (PartialContainer != this)
 				throw new InternalErrorException ("should not happen");
 
-			ArrayList [] lists = { types, delegates, interfaces };
+			ArrayList [] lists = { types, delegates };
 
 			for (int j = 0; j < lists.Length; ++j) {
 				ArrayList list = lists [j];
@@ -1828,7 +1799,7 @@ namespace Mono.CSharp {
 						      BindingFlags bf, MemberFilter filter, object criteria,
 						      ref ArrayList members)
 		{
-			ArrayList [] lists = { types, delegates, interfaces };
+			ArrayList [] lists = { types, delegates };
 
 			for (int j = 0; j < lists.Length; ++j) {
 				ArrayList list = lists [j];
@@ -2471,7 +2442,6 @@ namespace Mono.CSharp {
 			initialized_fields = null;
 			initialized_static_fields = null;
 			constants = null;
-			interfaces = null;
 			methods = null;
 			events = null;
 			indexers = null;

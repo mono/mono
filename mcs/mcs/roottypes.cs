@@ -52,9 +52,9 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override TypeContainer AddPartial (TypeContainer nextPart, bool is_interface)
+		public override TypeContainer AddPartial (TypeContainer nextPart)
 		{
-			return AddPartial (nextPart, nextPart.Name, is_interface);
+			return AddPartial (nextPart, nextPart.Name);
 		}
 	}
 

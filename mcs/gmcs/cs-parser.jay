@@ -843,7 +843,7 @@ struct_declaration
 		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Struct (
 			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1), false, $3);
+			(Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -1658,7 +1658,7 @@ interface_declaration
 
 		push_current_class (new Interface (
 			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1), true, $3);
+			(Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -2688,7 +2688,7 @@ enum_declaration
 			e.AddEnumMember (em);
 		}
 
-		current_container.AddTypeContainer (e, false);
+		current_container.AddTypeContainer (e);
 		$$ = e;
 
 	  }
@@ -4059,7 +4059,7 @@ class_declaration
 
 		push_current_class (new Class (
 			current_namespace, current_class, name,
-			mod_flags, (Attributes) $1), false, $3);
+			mod_flags, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -5413,12 +5413,12 @@ static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier m
   		Parameter.GetModifierSignature (mod));
 }
 
-void push_current_class (TypeContainer tc, bool is_interface, object partial_token)
+void push_current_class (TypeContainer tc, object partial_token)
 {
 	if (partial_token != null)
-		current_container = current_container.AddPartial (tc, is_interface);
+		current_container = current_container.AddPartial (tc);
 	else
-		current_container = current_container.AddTypeContainer (tc, is_interface);
+		current_container = current_container.AddTypeContainer (tc);
 	current_class = tc;
 }
 

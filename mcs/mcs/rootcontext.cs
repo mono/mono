@@ -159,19 +159,8 @@ namespace Mono.CSharp {
 			// a set of interfaces, we need to be able to tell
 			// them appart by just using the TypeManager.
 			//
-			ArrayList ifaces = root.Interfaces;
-			if (ifaces != null) {
-				foreach (TypeContainer i in ifaces) 
-					i.CreateType ();
-			}
-
 			foreach (TypeContainer tc in root.Types)
 				tc.CreateType ();
-
-			if (ifaces != null) {
-				foreach (TypeContainer i in ifaces) 
-					i.DefineType ();
-			}
 
 			foreach (TypeContainer tc in root.Types)
 				tc.DefineType ();
