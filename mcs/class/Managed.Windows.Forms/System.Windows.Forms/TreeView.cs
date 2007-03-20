@@ -1331,7 +1331,7 @@ namespace System.Windows.Forms {
 		{
 			// Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height);
 
-			if (!RectsIntersect (clip, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
+			if (!RectsIntersect (clip, x, y, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
 				return;
 
 			if (ImageList == null)
@@ -1379,7 +1379,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (use_index != -1) {
-				ImageList.Draw (dc, x, y + 2, ImageList.ImageSize.Width, 
+				ImageList.Draw (dc, x, y, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, use_index);
 			}
 		}

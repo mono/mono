@@ -1,3 +1,9 @@
+2007-03-20  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Don't offset the images, this was causing some
+	artifacts when expanding/collapsing with images that were the
+	exact height of the treenode.
+
 2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* TrackBar.cs: Query the theme for the correct value when the mouse
