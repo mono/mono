@@ -212,19 +212,68 @@ namespace System.Collections.Generic {
 				throw new ArgumentNullException ("match");
 		}
 		
-		// Maybe we could make this faster. For example, you could
-		// make a bit set with stackalloc for which elements to copy
-		// then you could size the array correctly.
 		public List <T> FindAll (Predicate <T> match)
 		{
-			CheckMatch (match);
-			List <T> f = new List <T> ();
+			this.CheckMatch (match);
+			if (this._size <= 0x10000) // <= 8 * 1024 * 8 (8k in stack)
+				return this.FindAllStackBits (match);
+			else 
+				return this.FindAllList (match);
+		}
+		
+		private List <T> FindAllStackBits (Predicate <T> match)
+		{
+			unsafe
+			{
+				uint *bits = stackalloc uint [(this._size / 32) + 1];
+				uint *ptr = bits;
+				int found = 0;
+				uint bitmask = 0x80000000;
+				
+				for (int i = 0; i < this._size; i++)
+				{
+					if (match (this._items [i]))
+					{
+						(*ptr) = (*ptr) | bitmask;
+						found++;
+					}
+					
+					bitmask = bitmask >> 1;
+					if (bitmask == 0)
+					{
+						ptr++;
+						bitmask = 0x80000000;
+					}
+				}
+			    	
+				List <T> results = new List <T> (found);
+				bitmask = 0x80000000;
+				ptr = bits;
+				for (int i = 0; i < this._size; i++)
+				{
+					if (((*ptr) & bitmask) == bitmask)
+						results.Add (this._items [i]);
+					
+					bitmask = bitmask >> 1;
+					if (bitmask == 0)
+					{
+						ptr++;
+						bitmask = 0x80000000;
+					}
+				}
+				
+				return results;
+			}
+		}
+		
+		private List <T> FindAllList (Predicate <T> match)
+		{
+			List <T> results = new List <T> ();
+			for (int i = 0; i < this._size; i++)
+				if (match (this._items [i]))
+					results.Add (this._items [i]);
 			
-			foreach (T t in this)
-				if (match (t))
-					f.Add (t);
-			
-			return f;
+			return results;
 		}
 		
 		public int FindIndex (Predicate <T> match)

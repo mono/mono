@@ -467,7 +467,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-		public void FindAllTest ()
+		public void FindAllSmallTest ()
 		{
 			List <int> findings = _list1.FindAll (FindMultipleOfFour);
 			Assert.AreEqual (4, findings.Count);
@@ -479,6 +479,42 @@ namespace MonoTests.System.Collections.Generic {
 			findings = _list1.FindAll (FindMultipleOfTwelve);
 			Assert.IsNotNull (findings);
 			Assert.AreEqual (0, findings.Count);
+		}
+		
+		[Test]
+		public void FindAllMediumTest ()
+		{
+			List <int> integers = new List <int> (10000);
+			for (int i = 1; i <= 10000; i++)
+				integers.Add (i);
+			
+			List <int> results = integers.FindAll (FindMultipleOfFour);
+			
+			Assert.IsNotNull (results);
+			Assert.AreEqual (2500, results.Count);
+			
+			results = integers.FindAll (FindMultipleOfTwelve);
+			
+			Assert.IsNotNull (results);
+			Assert.AreEqual (833, results.Count);
+		}
+		
+		[Test]
+		public void FindAllLargeTest ()
+		{
+			List <int> integers = new List <int> (70000);
+			for (int i = 1; i <= 80000; i++)
+				integers.Add (i);
+			
+			List <int> results = integers.FindAll (FindMultipleOfFour);
+			
+			Assert.IsNotNull (results);
+			Assert.AreEqual (20000, results.Count);
+			
+			results = integers.FindAll (FindMultipleOfTwelve);
+			
+			Assert.IsNotNull (results);
+			Assert.AreEqual (6666, results.Count);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]

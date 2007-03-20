@@ -12,7 +12,7 @@ if [ $# -eq 0 ]; then
 fi
 
 topdir=../../..
-NUNITCONSOLE=$topdir/nunit20/nunit-console.exe
+NUNITCONSOLE=$topdir/class/lib/net_2_0/nunit-console.exe
 MONO_PATH=$topdir/nunit20:$topdir/class/lib:.
 
 for i in $@; do

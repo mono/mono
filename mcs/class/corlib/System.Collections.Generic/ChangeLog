@@ -1,3 +1,48 @@
+2007-03-20  Juan Cristóbal Olivares <juancri@gmail.com>
+
+	* List.cs (FindAll): Optimize FindAll using a bitmask to determine
+	the number of positive matches, this increases the performance in
+	all cases below 10,000,000 elements extensively:
+
+	100 elements:
+	old method:             00:00:00.0126610 (26x)
+	stackalloc bit method:  00:00:00.0004750 (1x)
+	array bit method:       00:00:00.0010700 (2x)
+	heap bit method:        00:00:00.0038830 (8x)
+
+	1,000 elements:
+	old method:             00:00:00.0139250 (24x)
+	stackalloc bit method:  00:00:00.0005670 (1x)
+	array bit method:       00:00:00.0010890 (2x)
+	heap bit method:        00:00:00.0034920 (6x)
+
+	10,000 elements:
+	old method:             00:00:00.0136110 (12x)
+	stackalloc bit method:  00:00:00.0011240 (1x)
+	array bit method:       00:00:00.0016450 (1.4x)
+	heap bit method:        00:00:00.0043110 (3x)
+
+	50,000 elements:
+	old method:             00:00:00.0175970 (3x)
+	stackalloc bit method:  00:00:00.0085630 (1.5x)
+	array bit method:       00:00:00.0055010 (1x)
+	heap bit method:        00:00:00.0099590 (1.8x)
+
+	100,000 elements:
+	old method:             00:00:00.0210330 (2x)
+	array bit method:       00:00:00.0100430 (1x)
+	heap bit method:        00:00:00.0154150 (1.5x)
+
+	1,000,000 elements:
+	old method:             00:00:00.1243730 (1.2x)
+	array bit method:       00:00:00.0973110 (1x)
+	heap bit method:        00:00:00.1285650 (1.3x)
+
+	10,000,000 elements:
+	old method:             00:00:00.9252570 (1x)
+	array bit method:       00:00:00.9632300 ( 1.05x)
+	heap bit method:        00:00:01.1098490 (1.20x)
+
 2007-03-08  David Mitchell <dmitchell@logos.com>
 
 	* List.cs: Fix the case where List.set_Item(int index) throws
