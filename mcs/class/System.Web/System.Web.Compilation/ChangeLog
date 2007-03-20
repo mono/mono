@@ -1,3 +1,9 @@
+2007-03-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ResourceExpressionBuilder.cs: if the resource class key is null
+	or empty, call GetLocalResourceObject, if not,
+	GetGlobalResourceObject. Fixes bug #81174.
+
 2007-03-16  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: produce message that makes more sense.

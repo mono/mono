@@ -54,11 +54,21 @@ namespace System.Web.Compilation {
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
 			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
-			return new CodeMethodInvokeExpression (
-				new CodeThisReferenceExpression (),
-				"GetGlobalResourceObject",
-				new CodeExpression [] { new CodePrimitiveExpression (fields.ClassKey),
-							new CodePrimitiveExpression (fields.ResourceKey) });
+			CodeExpression[] expr;
+			string methodName;
+			
+			if (!String.IsNullOrEmpty (fields.ClassKey)) {
+				expr = new CodeExpression [] {
+					new CodePrimitiveExpression (fields.ClassKey),
+					new CodePrimitiveExpression (fields.ResourceKey)
+				};
+				methodName = "GetGlobalResourceObject";
+			} else {
+				expr = new CodeExpression [] { new CodePrimitiveExpression (fields.ResourceKey) };
+				methodName = "GetLocalResourceObject";
+			}
+			
+			return new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), methodName, expr);
 		}
 
 		public static ResourceExpressionFields ParseExpression (string expression)
