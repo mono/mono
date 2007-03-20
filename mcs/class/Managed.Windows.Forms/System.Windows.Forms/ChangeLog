@@ -1,3 +1,13 @@
+2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ComboBox.cs: Handle Home and End keys as well as all combinations of
+	  modifiers + navigation keys as input keys, enables advanced text
+	  selection in the combobox (like Shift+Left Arrow for instance).
+	  ComboTextBox now overrides Focused and returns whatever
+	  ComboBox.Focused returns, since it really should be focused
+	  whenever the ComboBox is. Fixes #80795. Also make the border around
+	  the text box one pixel bigger, as mentioned in #79436.
+
 2007-03-20  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Don't offset the images, this was causing some

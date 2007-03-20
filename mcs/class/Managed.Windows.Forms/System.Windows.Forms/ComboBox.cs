@@ -923,13 +923,15 @@ namespace System.Windows.Forms
 
 		protected override bool IsInputKey (Keys keyData)
 		{
-			switch (keyData) {
+			switch (keyData & ~Keys.Modifiers) {
 			case Keys.Up:
 			case Keys.Down:
 			case Keys.Left:
 			case Keys.Right:
 			case Keys.PageUp:
 			case Keys.PageDown:
+			case Keys.Home:
+			case Keys.End:
 				return true;
 			
 			default:
@@ -1319,7 +1321,7 @@ namespace System.Windows.Forms
 		
 		void LayoutComboBox ()
 		{
-			int border = ThemeEngine.Current.Border3DSize.Width;
+			int border = ThemeEngine.Current.Border3DSize.Width + 1;
 
 			text_area = ClientRectangle;
 			text_area.Height = PreferredHeight;
@@ -1887,6 +1889,12 @@ namespace System.Windows.Forms
 			protected override void OnLostFocus (EventArgs e)
 			{
 				owner.Select (false, true);
+			}
+
+			public override bool Focused {
+				get {
+					return owner.Focused;
+				}
 			}
 		}
 
