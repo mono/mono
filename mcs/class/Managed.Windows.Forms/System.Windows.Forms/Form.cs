@@ -2158,6 +2158,8 @@ namespace System.Windows.Forms {
 						}
 					}
 
+					mdi_parent = null;
+					
 					return;
 				}
 
