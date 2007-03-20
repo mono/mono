@@ -178,7 +178,7 @@ namespace System.Windows.Forms {
 		private static IntPtr _XEMBED_INFO;
 		private static IntPtr _MOTIF_WM_HINTS;
 		private static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
-		//private static IntPtr _NET_WM_STATE_ABOVE;
+		private static IntPtr _NET_WM_STATE_ABOVE;
 		//private static IntPtr _NET_WM_STATE_MODAL;
 		private static IntPtr _NET_WM_STATE_HIDDEN;
 		private static IntPtr _NET_WM_CONTEXT_HELP;
@@ -566,7 +566,7 @@ namespace System.Windows.Forms {
 				"_XEMBED_INFO",
 				"_MOTIF_WM_HINTS",
 				"_NET_WM_STATE_SKIP_TASKBAR",
-				//"_NET_WM_STATE_ABOVE",
+				"_NET_WM_STATE_ABOVE",
 				//"_NET_WM_STATE_MODAL",
 				"_NET_WM_CONTEXT_HELP",
 				"_NET_WM_WINDOW_OPACITY",
@@ -640,7 +640,7 @@ namespace System.Windows.Forms {
 			_XEMBED_INFO = atoms [off++];
 			_MOTIF_WM_HINTS = atoms [off++];
 			_NET_WM_STATE_SKIP_TASKBAR = atoms [off++];
-			//_NET_WM_STATE_ABOVE = atoms [off++];
+			_NET_WM_STATE_ABOVE = atoms [off++];
 			//_NET_WM_STATE_MODAL = atoms [off++];
 			_NET_WM_CONTEXT_HELP = atoms [off++];
 			_NET_WM_WINDOW_OPACITY = atoms [off++];
@@ -4897,35 +4897,18 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetTopmost(IntPtr handle, IntPtr handle_owner, bool enabled) {
-			Hwnd	hwnd;
-			Hwnd	hwnd_owner;
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			if (handle_owner != IntPtr.Zero) {
-				hwnd_owner = Hwnd.ObjectFromHandle(handle_owner);
-			} else {
-				hwnd_owner = null;
-			}
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (enabled) {
 				lock (XlibLock) {
-					int[]	atoms;
-
-					atoms = new int[8];
-
-					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
-
-					if (hwnd_owner != null) {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
-					} else {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
-					}
+					int[] atoms = new int[8];
+					atoms[0] = _NET_WM_STATE_ABOVE.ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 				}
 			} else {
 				lock (XlibLock) {
-					XDeleteProperty(DisplayHandle, hwnd.whole_window, (IntPtr)Atom.XA_WM_TRANSIENT_FOR);
+					XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE);
 				}
 			}
 			return true;

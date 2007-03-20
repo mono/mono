@@ -1,5 +1,10 @@
 2007-03-20  Everaldo Canuto  <everaldo@simios.org>
 
+	* XplatUIX11.cs: Set _NET_WM_STATE_ABOVE on SetTopmost, it fixes Topmost
+	behavior in X11 environments.
+
+2007-03-20  Everaldo Canuto  <everaldo@simios.org>
+
 	* Form.cs: Call SetTopmost in CreateHandle when window is topmost, its
 	because on setter of topmost we dont call SetTopmost when handle is not
 	created.
