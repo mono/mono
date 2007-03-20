@@ -768,17 +768,7 @@ namespace System.Windows.Forms
 
     			/* Moving the thumb */
     			if (thumb_pressed) {
-								 				
-    				if (orientation == Orientation.Horizontal){
-					if (ClientRectangle.Contains (e.X, thumb_pos.Y))
-						thumb_mouseclick = e.X;	
-				}
-    				else {
-					if (ClientRectangle.Contains (thumb_pos.X, e.Y))
-						thumb_mouseclick = e.Y;
-				}
-
-				Invalidate (thumb_area);
+				Value = ThemeEngine.Current.TrackBarValueFromMousePosition (e.X, e.Y, this);			
     				OnScroll (new EventArgs ());
 			}
     		}

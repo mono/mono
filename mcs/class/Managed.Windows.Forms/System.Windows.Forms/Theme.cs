@@ -919,6 +919,8 @@ namespace System.Windows.Forms
 
 		// Sizing
 		public abstract Size TrackBarDefaultSize{get; }		// Default size for the TrackBar control
+		
+		public abstract int TrackBarValueFromMousePosition (int x, int y, TrackBar tb);
 		#endregion	// TrackBar
 
 		#region VScrollBar

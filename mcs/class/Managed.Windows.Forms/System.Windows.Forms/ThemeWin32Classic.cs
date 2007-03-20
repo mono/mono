@@ -4819,6 +4819,153 @@ namespace System.Windows.Forms
 		#endregion	// ToolTip
 
 		#region	TrackBar
+		public override int TrackBarValueFromMousePosition (int x, int y, TrackBar tb)
+		{
+			int result = tb.Value;
+			int value_pos = tb.Value;
+			float pixels_betweenticks;
+			Rectangle thumb_pos = Rectangle.Empty, thumb_area = Rectangle.Empty;
+			Point channel_startpoint = Point.Empty, na_point = Point.Empty;
+			
+			GetTrackBarDrawingInfo (tb, out pixels_betweenticks, out thumb_area, out thumb_pos, out channel_startpoint, out na_point, out na_point);
+			
+			/* Convert thumb position from mouse position to value*/
+			if (tb.Orientation == Orientation.Vertical) {
+				value_pos = (int)((thumb_area.Bottom - y -(float)pixels_betweenticks / 2) / (float)pixels_betweenticks);
+
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+				else if (value_pos + tb.Minimum < tb.Minimum)
+					value_pos = 0;
+
+				result = value_pos + tb.Minimum;
+			} else {
+				value_pos = (int) ((x - channel_startpoint.X - (float) pixels_betweenticks / 2) / (float) pixels_betweenticks);
+
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+				else if (value_pos + tb.Minimum < tb.Minimum)
+					value_pos = 0;
+
+				result = value_pos + tb.Minimum;
+			}
+			
+			return result;
+		}
+		
+		private void GetTrackBarDrawingInfo (TrackBar tb, out float pixels_betweenticks, out Rectangle thumb_area, out Rectangle thumb_pos, out Point channel_startpoint, out Point bottomtick_startpoint, out Point toptick_startpoint)
+		{
+			thumb_area = Rectangle.Empty;
+			thumb_pos = Rectangle.Empty;
+			
+			if (tb.Orientation == Orientation.Vertical) {
+				toptick_startpoint = new Point ();
+				bottomtick_startpoint = new Point ();
+				channel_startpoint = new Point ();
+				float pixel_len;
+				const int space_from_right = 8;
+				const int space_from_left = 8;
+				const int space_from_bottom = 11;
+				Rectangle area = tb.ClientRectangle;
+
+				switch (tb.TickStyle) {
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 9;
+					bottomtick_startpoint.Y = 13;
+					bottomtick_startpoint.X = 24;
+					break;
+				case TickStyle.TopLeft:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 19;
+					toptick_startpoint.Y = 13;
+					toptick_startpoint.X = 8;
+					break;
+				case TickStyle.Both:
+					channel_startpoint.Y = 8;
+					channel_startpoint.X = 18;
+					bottomtick_startpoint.Y = 13;
+					bottomtick_startpoint.X = 32;
+					toptick_startpoint.Y = 13;
+					toptick_startpoint.X = 8;
+					break;
+				default:
+					break;
+				}
+
+				thumb_area.X = area.X + channel_startpoint.X;
+				thumb_area.Y = area.Y + channel_startpoint.Y;
+				thumb_area.Height = area.Height - space_from_right - space_from_left;
+				thumb_area.Width = 4;
+
+				pixel_len = thumb_area.Height - 11;
+				if (tb.Maximum == tb.Minimum) {
+					pixels_betweenticks = 0;
+				} else {
+					pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+				}
+
+				thumb_pos.Y = thumb_area.Bottom - space_from_bottom - (int)(pixels_betweenticks * (float)(tb.Value - tb.Minimum));
+
+				/* Draw thumb fixed 10x22 size */
+				thumb_pos.Width = 10;
+				thumb_pos.Height = 22;
+			} else {	
+				toptick_startpoint = new Point ();
+				bottomtick_startpoint = new Point ();
+				channel_startpoint = new Point ();
+				float pixel_len;
+				const int space_from_right = 8;
+				const int space_from_left = 8;
+				Rectangle area = tb.ClientRectangle;
+							
+				switch (tb.TickStyle) {
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 9;
+					bottomtick_startpoint.X = 13;
+					bottomtick_startpoint.Y = 24;				
+					break;
+				case TickStyle.TopLeft:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 19;
+					toptick_startpoint.X = 13;
+					toptick_startpoint.Y = 8;
+					break;
+				case TickStyle.Both:
+					channel_startpoint.X = 8;
+					channel_startpoint.Y = 18;	
+					bottomtick_startpoint.X = 13;
+					bottomtick_startpoint.Y = 32;				
+					toptick_startpoint.X = 13;
+					toptick_startpoint.Y = 8;				
+					break;
+				default:
+					break;
+				}
+							
+				thumb_area.X = area.X + channel_startpoint.X;
+				thumb_area.Y = area.Y + channel_startpoint.Y;
+				thumb_area.Width = area.Width - space_from_right - space_from_left;
+				thumb_area.Height = 4;
+
+				pixel_len = thumb_area.Width - 11;
+				if (tb.Maximum == tb.Minimum) {
+					pixels_betweenticks = 0;
+				} else {
+					pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+				}
+
+				thumb_pos.X = channel_startpoint.X + (int)(pixels_betweenticks * (float) (tb.Value - tb.Minimum));
+
+				/* Draw thumb fixed 10x22 size */
+				thumb_pos.Width = 10;
+				thumb_pos.Height = 22;
+			}
+		}
+		
 		private void DrawTrackBar_Vertical (Graphics dc, Rectangle clip_rectangle, TrackBar tb,
 			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
 			float ticks, int value_pos, bool mouse_value) {			
@@ -4828,41 +4975,9 @@ namespace System.Windows.Forms
 			Point channel_startpoint = new Point ();
 			float pixel_len;
 			float pixels_betweenticks;
-			const int space_from_right = 8;
-			const int space_from_left = 8;
-			const int space_from_bottom = 11;
 			Rectangle area = tb.ClientRectangle;
 			
-			switch (tb.TickStyle) 	{
-			case TickStyle.BottomRight:
-			case TickStyle.None:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 9;
-				bottomtick_startpoint.Y = 13;
-				bottomtick_startpoint.X = 24;				
-				break;
-			case TickStyle.TopLeft:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 19;
-				toptick_startpoint.Y = 13;
-				toptick_startpoint.X = 8;
-				break;
-			case TickStyle.Both:
-				channel_startpoint.Y = 8;
-				channel_startpoint.X = 18;	
-				bottomtick_startpoint.Y = 13;
-				bottomtick_startpoint.X = 32;				
-				toptick_startpoint.Y = 13;
-				toptick_startpoint.X = 8;				
-				break;
-			default:
-				break;
-			}
-			
-			thumb_area.X = area.X + channel_startpoint.X;
-			thumb_area.Y = area.Y + channel_startpoint.Y;
-			thumb_area.Height = area.Height - space_from_right - space_from_left;
-			thumb_area.Width = 4;
+			GetTrackBarDrawingInfo (tb, out pixels_betweenticks, out thumb_area, out thumb_pos, out channel_startpoint, out bottomtick_startpoint, out toptick_startpoint);
 
 			/* Draw channel */
 			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
@@ -4874,43 +4989,12 @@ namespace System.Windows.Forms
 			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X + 3, channel_startpoint.Y,
 				1, thumb_area.Height);
 
-			pixel_len = thumb_area.Height - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
-			
-			/* Convert thumb position from mouse position to value*/
-			if (mouse_value) {
-				if (tb.mouse_moved) {
-					value_pos += (int) pixels_betweenticks / 2;
-					if (value_pos < thumb_area.Bottom) {
-						value_pos = (int) ((thumb_area.Bottom - value_pos - (int)(thumb_pos.Width / 2)) / pixels_betweenticks);
-					} else {
-						value_pos = 0;			
-					}
-	
-					if (value_pos + tb.Minimum > tb.Maximum)
-						value_pos = tb.Maximum - tb.Minimum;
-					else if (value_pos + tb.Minimum < tb.Minimum)
-						value_pos = 0;
-
-					tb.Value = value_pos + tb.Minimum;	
-				} else {
-					value_pos = tb.Value - tb.Minimum;
-				}
-			}			
-
-			// thumb_pos.Y = channel_startpoint.Y ; // + (int) (pixels_betweenticks * (float) value_pos);
-			thumb_pos.Y = thumb_area.Bottom - space_from_bottom - (int) (pixels_betweenticks * (float) value_pos);
-			
-			/* Draw thumb fixed 10x22 size */
-			thumb_pos.Width = 10;
-			thumb_pos.Height = 22;
-
 			switch (tb.TickStyle) 	{
 			case TickStyle.BottomRight:
 			case TickStyle.None: {
 				thumb_pos.X = channel_startpoint.X - 8;
 
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
 				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
@@ -4933,7 +5017,7 @@ namespace System.Windows.Forms
 			case TickStyle.TopLeft: {
 				thumb_pos.X = channel_startpoint.X - 10;
 
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
 				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
 
@@ -4957,8 +5041,8 @@ namespace System.Windows.Forms
 
 			case TickStyle.Both: {
 				thumb_pos.X = area.X + 10;
-					
-				Pen pen = SystemPens.ControlLight;
+
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
 
@@ -5043,40 +5127,9 @@ namespace System.Windows.Forms
 			Point channel_startpoint = new Point ();
 			float pixel_len;
 			float pixels_betweenticks;
-			const int space_from_right = 8;
-			const int space_from_left = 8;
 			Rectangle area = tb.ClientRectangle;
-						
-			switch (tb.TickStyle) {
-			case TickStyle.BottomRight:
-			case TickStyle.None:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 9;
-				bottomtick_startpoint.X = 13;
-				bottomtick_startpoint.Y = 24;				
-				break;
-			case TickStyle.TopLeft:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 19;
-				toptick_startpoint.X = 13;
-				toptick_startpoint.Y = 8;
-				break;
-			case TickStyle.Both:
-				channel_startpoint.X = 8;
-				channel_startpoint.Y = 18;	
-				bottomtick_startpoint.X = 13;
-				bottomtick_startpoint.Y = 32;				
-				toptick_startpoint.X = 13;
-				toptick_startpoint.Y = 8;				
-				break;
-			default:
-				break;
-			}
-						
-			thumb_area.X = area.X + channel_startpoint.X;
-			thumb_area.Y = area.Y + channel_startpoint.Y;
-			thumb_area.Width = area.Width - space_from_right - space_from_left;
-			thumb_area.Height = 4;
+			
+			GetTrackBarDrawingInfo (tb , out pixels_betweenticks, out thumb_area, out thumb_pos, out channel_startpoint, out bottomtick_startpoint, out toptick_startpoint);
 			
 			/* Draw channel */
 			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
@@ -5088,41 +5141,12 @@ namespace System.Windows.Forms
 			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X, channel_startpoint.Y +3,
 				thumb_area.Width, 1);
 
-			pixel_len = thumb_area.Width - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
-
-			/* Convert thumb position from mouse position to value*/
-			if (mouse_value) {			
-				if (tb.mouse_moved) {
-					value_pos += (int) pixels_betweenticks / 2;
-					if (value_pos >= channel_startpoint.X) {
-						value_pos = (int)(((float) (value_pos - channel_startpoint.X - (int)(thumb_pos.Width / 2))) / pixels_betweenticks);
-					} else
-						value_pos = 0;				
-	
-					if (value_pos + tb.Minimum > tb.Maximum)
-						value_pos = tb.Maximum - tb.Minimum;
-					else if(value_pos + tb.Minimum < tb.Minimum)
-						value_pos = 0;
-
-					tb.Value = value_pos + tb.Minimum;
-				} else {
-					value_pos = tb.Value - tb.Minimum;
-				}
-			}			
-			
-			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
-			
-			/* Draw thumb fixed 10x22 size */
-			thumb_pos.Width = 10;
-			thumb_pos.Height = 22;
-
 			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
 			case TickStyle.None: {
 				thumb_pos.Y = channel_startpoint.Y - 8;
 
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
@@ -5144,7 +5168,7 @@ namespace System.Windows.Forms
 			case TickStyle.TopLeft:	{
 				thumb_pos.Y = channel_startpoint.Y - 10;
 
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
 
@@ -5168,7 +5192,7 @@ namespace System.Windows.Forms
 			case TickStyle.Both: {
 				thumb_pos.Y = area.Y + 10;
 					
-				Pen pen = SystemPens.ControlLight;
+				Pen pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
 				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
 

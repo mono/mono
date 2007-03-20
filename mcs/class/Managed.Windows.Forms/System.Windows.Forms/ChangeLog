@@ -1,3 +1,18 @@
+2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TrackBar.cs: Query the theme for the correct value when the mouse
+	  moves and the thumb is pressed. 
+	* Theme.cs: Added TrackBarValueFromMousePosition
+	* ThemeWin32Classic.cs: Reworked TrackBar drawing. Earlier
+	  implementation was updating the trackbar value when drawing, now
+	  the drawing methods only draw. Fixes #80900. Refactored the
+	  calculations out to TrackBarValueFromMousePosition and
+	  GetTrackBarDrawingInfo, so that TrackBar can get the correct value
+	  according to the mouse position whenever it wants to. Changed the
+	  light coloured pen when drawing the thumb from ControlLight to
+	  ControlLightLight, because the ControlLight is the same colour as
+	  the background so the 3D effect is lost. 
+
 2007-03-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* Form.cs: In ShowDialog uses MainForm as transient form when no form is
