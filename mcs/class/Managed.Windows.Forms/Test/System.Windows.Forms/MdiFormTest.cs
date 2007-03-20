@@ -11,8 +11,9 @@ using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-
+using System.ComponentModel;
 using NUnit.Framework;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -137,6 +138,76 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (child3, main.ActiveControl, "#03");
 
 			TearDown ();
+		}
+		
+		[TestFixture]
+		public class CloseTest
+		{
+			class ChildForm : Form
+			{
+				public ChildForm ()
+				{
+					Closed += new EventHandler (ChildForm_Closed);
+					Closing += new CancelEventHandler (ChildForm_Closing);
+					FormClosed += new FormClosedEventHandler (ChildForm_FormClosed);
+					FormClosing += new FormClosingEventHandler (ChildForm_FormClosing);
+				}
+
+				void ChildForm_FormClosing (object sender, FormClosingEventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "ChildForm_FormClosing");
+				}
+
+				void ChildForm_FormClosed (object sender, FormClosedEventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "ChildForm_FormClosed");
+				}
+
+				void ChildForm_Closing (object sender, CancelEventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "ChildForm_Closing");
+				}
+
+				void ChildForm_Closed (object sender, EventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "ChildForm_Closed");
+				}
+			
+				protected override void OnClosed (EventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "OnClosed 1");
+					base.OnClosed (e);
+					Assert.IsNotNull (MdiParent, "OnClosed 2");
+				}
+
+				protected override void OnClosing (CancelEventArgs e)
+				{
+					Assert.IsNotNull (MdiParent, "OnClosing 1");
+					base.OnClosing (e);
+					Assert.IsNotNull (MdiParent, "OnClosing 2");
+				}
+				
+			}
+			[Test]
+			public void Test () {
+				using (Form main = new Form ()) {
+					main.IsMdiContainer = true;
+					main.ShowInTaskbar = false;
+					main.Visible = true;
+
+					ChildForm child = new ChildForm ();
+					EventLogger log = new EventLogger (child);
+					child.MdiParent = main;
+					child.Visible = true;
+					child.Close ();
+					
+					Assert.AreEqual (1, log.CountEvents ("Closed"), "#01");
+					Assert.AreEqual (1, log.CountEvents ("Closing"), "#02");
+					Assert.IsNull (child.MdiParent, "#03");
+					Assert.AreEqual (0, main.MdiChildren.Length, "#04");		
+					Assert.AreEqual (false, child.IsMdiChild, "#05");		
+				}
+			}
 		}
 		
 		[Category("NotWorking")]

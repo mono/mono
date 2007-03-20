@@ -46,6 +46,17 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		
+		public int CountEvents (string Name)
+		{
+			int count = 0;
+			foreach (string str in log) {
+				if (Name.Equals (str, StringComparison.Ordinal)) {
+					count++;	
+				}
+			}
+			return count;
+		}
+		
 		public bool EventRaised (string Name) 
 		{
 			return log.Contains (Name);

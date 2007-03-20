@@ -1,3 +1,8 @@
+2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* EventLogger.cs: Add CountEvents.
+	* MdiFormTest.cs: Added CloseTest.
+
 2007-03-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichBoxTest.cs: Disabled ReadOnly test until I can test it on linux.
