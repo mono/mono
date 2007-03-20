@@ -149,10 +149,12 @@ namespace MonoTests.System.Windows.Forms
 				{
 					Closed += new EventHandler (ChildForm_Closed);
 					Closing += new CancelEventHandler (ChildForm_Closing);
+#if NET_2_0					
 					FormClosed += new FormClosedEventHandler (ChildForm_FormClosed);
 					FormClosing += new FormClosingEventHandler (ChildForm_FormClosing);
+#endif
 				}
-
+#if NET_2_0
 				void ChildForm_FormClosing (object sender, FormClosingEventArgs e)
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_FormClosing");
@@ -162,7 +164,7 @@ namespace MonoTests.System.Windows.Forms
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_FormClosed");
 				}
-
+#endif
 				void ChildForm_Closing (object sender, CancelEventArgs e)
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_Closing");

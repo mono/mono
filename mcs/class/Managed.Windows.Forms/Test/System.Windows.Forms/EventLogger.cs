@@ -50,7 +50,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			int count = 0;
 			foreach (string str in log) {
-				if (Name.Equals (str, StringComparison.Ordinal)) {
+				if (Name.Equals (str)) {
 					count++;	
 				}
 			}
