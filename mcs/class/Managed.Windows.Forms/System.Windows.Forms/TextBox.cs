@@ -48,6 +48,8 @@ namespace System.Windows.Forms {
 		private MenuItem	paste;
 		private MenuItem	delete;
 		private MenuItem	select_all;
+
+		private bool has_been_focused;
 #if NET_2_0
 		private bool use_system_password_char = false;
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
@@ -335,11 +337,13 @@ namespace System.Windows.Forms {
 
 		protected override void OnGotFocus(EventArgs e) {
 			base.OnGotFocus (e);
+			if (!has_been_focused)
+				SelectAll ();
+			has_been_focused = true;
 		}
 
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated (e);
-			SelectAllNoInvalidate ();
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {

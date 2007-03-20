@@ -1499,7 +1499,7 @@ namespace System.Windows.Forms {
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
 
-			if (owner.Focused) {
+			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
 			}
@@ -1515,7 +1515,7 @@ namespace System.Windows.Forms {
 				DisplayCaret ();
 			}
 
-			if (owner.IsHandleCreated && owner.selection_length > 0) {
+			if (owner.IsHandleCreated && SelectionLength () > 0) {
 				InvalidateSelectionArea ();
 			}
 		}

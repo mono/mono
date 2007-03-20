@@ -1,3 +1,13 @@
+2007-03-20  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Need to use SelectionLength () not
+	selection_length, since that var is reset to -1.
+	- Draw the caret when we don't have focus.
+	* TextBox.cs: The selectall actually doesn't occur until the first
+	focus.
+	* TextBoxBase.cs: Need to update the caret position after a
+	selectall.
+	
 2007-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Enable scrolling when using Tile view.

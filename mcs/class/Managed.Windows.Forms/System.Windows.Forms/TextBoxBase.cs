@@ -733,6 +733,10 @@ namespace System.Windows.Forms {
 			document.SetSelectionEnd(last, last.text.Length, true);
 			document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 			selection_length = -1;
+
+			CaretMoved (this, null);
+
+			document.DisplayCaret ();
 		}
 
 		/// Sync with above (except the invalidation of course)
