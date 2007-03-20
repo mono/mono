@@ -160,18 +160,21 @@ namespace Mono.CSharp {
 			// them appart by just using the TypeManager.
 			//
 			ArrayList ifaces = root.Interfaces;
-			if (ifaces != null){
+			if (ifaces != null) {
+				foreach (TypeContainer i in ifaces) 
+					i.CreateType ();
+			}
+
+			foreach (TypeContainer tc in root.Types)
+				tc.CreateType ();
+
+			if (ifaces != null) {
 				foreach (TypeContainer i in ifaces) 
 					i.DefineType ();
 			}
 
 			foreach (TypeContainer tc in root.Types)
 				tc.DefineType ();
-
-			if (type_container_resolve_order != null) {
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.ResolveMembers ();
-			}
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
@@ -528,10 +531,8 @@ namespace Mono.CSharp {
 		{
 
 			if (type_container_resolve_order != null){
-#if GMCS_SOURCE
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.ResolveType ();
-#endif
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.DefineMembers ();
 			}

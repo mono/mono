@@ -1148,7 +1148,7 @@ namespace Mono.CSharp {
 			Report.Error (527, loc, "Type `{0}' in interface list is not an interface", type);
 		}
 
-		bool DefineTypeBuilder ()
+		bool CreateTypeBuilder ()
 		{
 			try {
 				Type default_parent = null;
@@ -1192,6 +1192,11 @@ namespace Mono.CSharp {
 			}
 #endif
 
+			return true;
+		}
+
+		bool DefineBaseTypes ()
+		{
 			iface_exprs = GetClassBases (out base_type);
 			if (partial_parts != null) {
 				iface_exprs = GetNormalPartialBases (ref base_type);
@@ -1256,7 +1261,7 @@ namespace Mono.CSharp {
 		//
 		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
 		//
-		public override TypeBuilder DefineType ()
+		public TypeBuilder CreateType ()
 		{
 			if (TypeBuilder != null)
 				return TypeBuilder;
@@ -1264,7 +1269,7 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			if (!DefineTypeBuilder ()) {
+			if (!CreateTypeBuilder ()) {
 				error = true;
 				return null;
 			}
@@ -1272,6 +1277,55 @@ namespace Mono.CSharp {
 			if (partial_parts != null) {
 				foreach (TypeContainer part in partial_parts)
 					part.TypeBuilder = TypeBuilder;
+			}
+
+			if (Interfaces != null) {
+				foreach (TypeContainer iface in Interfaces) {
+					if (iface.CreateType () == null) {
+						error = true;
+						return null;
+					}
+				}
+			}
+
+			if (Types != null) {
+				foreach (TypeContainer tc in Types) {
+					if (tc.CreateType () == null) {
+						error = true;
+						return null;
+					}
+				}
+			}
+
+			return TypeBuilder;
+		}
+
+		bool type_defined;
+
+		public override TypeBuilder DefineType ()
+		{
+			if (error)
+				return null;
+			if (type_defined)
+				return TypeBuilder;
+
+			type_defined = true;
+
+			if (CreateType () == null) {
+				error = true;
+				return null;
+			}
+
+			if (!DefineBaseTypes ()) {
+				error = true;
+				return null;
+			}
+
+			if (!(this is CompilerGeneratedClass)) {
+				if (!ResolveMembers ()) {
+					error = true;
+					return null;
+				}
 			}
 
 			if (!DefineNestedTypes ()) {
@@ -1616,7 +1670,6 @@ namespace Mono.CSharp {
 			if (CurrentType != null) {
 				GenericType = CurrentType;
 			}
-
 
 #if CACHE
 			member_cache = new MemberCache (this);

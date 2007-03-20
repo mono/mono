@@ -1,5 +1,25 @@
 2007-03-20  Martin Baulig  <martin@ximian.com>
 
+	Fix #77963, #80314 and #81019.  Added gtest-317, ..., gtest-320.
+
+	* class.cs (TypeContainer.CreateType): New public method.  This is
+	now called before DefineType() to create the TypeBuilders.
+	(TypeContainer.DefineType): Don't create the TypeBuilder here; it
+	has already been created by CreateType().
+	(TypeContainer.DefineTypeBuilder): Renamed into CreateTypeBuilder();
+	don't resolve our base classes here; this has been moved into
+	DefineBaseTypes().  We're now called from CreateType().
+	(TypeContainer.DefineBaseTypes): New private method; resolve our
+	base classes here.  We're now called from DefineType().
+
+	* rootcontext.cs
+	(RootContext.ResolveTree): Call TypeContainer.CreateType() on all
+	our types first to create all the TypeBuilders.  After that, call
+	TypeContainer.DefineType() on all the types which'll resolve their
+	base classes and setup the resolve order.
+
+2007-03-20  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.Enums): Removed; they're now included in
 	`TypeContainer.Types'.	
 
