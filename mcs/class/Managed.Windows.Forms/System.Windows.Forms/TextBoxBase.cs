@@ -375,7 +375,7 @@ namespace System.Windows.Forms {
 					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
 					if (carriage_return) {
 						Line line = document.GetLine (i + 1);
-						line.carriage_return = true;
+						line.ending = "\r\n";
 					}
 				}
 
@@ -587,10 +587,8 @@ namespace System.Windows.Forms {
 
 				Line line = null;
 				for (int i = 1; i <= document.Lines; i++) {
-					if (line != null && line.carriage_return)
-						sb.Append ("\r");
-					if (line != null && !line.soft_break)
-						sb.Append (Environment.NewLine);
+					if (line != null)
+						sb.Append (line.ending);
 					line = document.GetLine (i);
 					sb.Append(line.text.ToString());
 				}

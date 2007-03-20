@@ -1,3 +1,9 @@
+2007-03-20  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs:
+	* TextBoxBase.cs: Allow different types of line endings. \r, \r\n,
+	\r\r\n, \n.
+
 2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComboBox.cs: PreferredHeight seems to be ItemHeight + 6, but there is

@@ -124,7 +124,7 @@ namespace System.Windows.Forms {
 		internal int			indent;			// Left indent for the first line
 		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
 		internal int			right_indent;		// Right indent for all lines
-		internal bool carriage_return;
+		internal string ending;  // The ending of a line, can be "\r\n", "\r", "\n\r", "\n", or empty.  "\n" is default
 
 
 		// Stuff that's important for the tree
@@ -151,6 +151,8 @@ namespace System.Windows.Forms {
 			recalc = true;
 			soft_break = false;
 			alignment = document.alignment;
+
+			ending = "\n";
 		}
 
 		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color) : this (document) {
@@ -332,6 +334,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void MakeSoft ()
+		{
+			soft_break = true;
+			ending = String.Empty;
+		}
+
 		internal void Streamline(int lines) {
 			LineTag	current;
 			LineTag	next;
@@ -504,7 +512,7 @@ namespace System.Windows.Forms {
 						pos = wrap_pos;
 						len = text.Length;
 						doc.Split(this, tag, pos, this.soft_break);
-						this.soft_break = true;
+						MakeSoft ();
 						len = this.text.Length;
 						
 						retval = true;
@@ -516,7 +524,7 @@ namespace System.Windows.Forms {
 						widths [pos + 1] = widths [pos] + w;
 
 						doc.Split(this, tag, pos, this.soft_break);
-						this.soft_break = true;
+						MakeSoft ();
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
@@ -825,7 +833,7 @@ namespace System.Windows.Forms {
 
 			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
 			Line l = GetLine (1);
-			l.soft_break = true;
+			l.MakeSoft ();
 
 			undo = new UndoManager (this);
 
@@ -1438,7 +1446,7 @@ namespace System.Windows.Forms {
 			// We always have a blank line
 			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
 			Line l = GetLine (1);
-			l.soft_break = true;
+			l.MakeSoft ();
 			
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
@@ -2063,21 +2071,33 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void InsertLineString (Line line, int pos, string s)
+		// these are the patterns I am allowing:  "\r\r\n", "\r\n", "\n", "\r"
+		internal int GetLineEnding (string line, int start, out string ending)
 		{
-			bool carriage_return = false;
+			int res;
 
-			if (s.EndsWith ("\r")) {
-				s = s.Substring (0, s.Length - 1);
-				carriage_return = true;
+			res = line.IndexOf ('\r', start);
+			if (res != -1) {
+				if (res + 2 < line.Length && line [res + 1] == '\r' && line [res + 2] == '\n') {
+					ending = "\r\r\n";
+					return res;
+				}
+				if (res + 1 < line.Length && line [res + 1] == '\n') {
+					ending = "\r\n";
+					return res;
+				}
+				ending = "\r";
+				return res;
 			}
 
-			InsertString (line, pos, s);
-
-			if (carriage_return) {
-				Line l = GetLine (line.line_no);
-				l.carriage_return = true;
+			res = line.IndexOf ('\n', start);
+			if (res != -1) {
+				ending = "\n";
+				return res;
 			}
+
+			ending = String.Empty;
+			return line.Length;
 		}
 
 		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
@@ -2086,6 +2106,7 @@ namespace System.Windows.Forms {
 			int base_line;
 			int old_line_count;
 			int count = 1;
+			string ending;
 			LineTag tag = LineTag.FindTag (line, pos);
 			
 			SuspendRecalc ();
@@ -2093,54 +2114,34 @@ namespace System.Windows.Forms {
 			base_line = line.line_no;
 			old_line_count = lines;
 
-			break_index = s.IndexOf ('\n');
+			break_index = GetLineEnding (s, 0, out ending);
 
 			// Bump the text at insertion point a line down if we're inserting more than one line
-			if (break_index > -1) {
-				Split(line, pos);
+			if (break_index != s.Length) {
+				Split (line, pos);
 				line.soft_break = false;
+				line.ending = ending;
 				// Remainder of start line is now in base_line + 1
 			}
 
-			if (break_index == -1)
-				break_index = s.Length;
+			InsertString (line, pos, s.Substring (0, break_index));
 
-			InsertLineString (line, pos, s.Substring (0, break_index));
-			break_index++;
-
+			break_index += ending.Length;
 			while (break_index < s.Length) {
 				bool soft = false;
-				int next_break = s.IndexOf ('\n', break_index);
-				int adjusted_next_break;
-				bool carriage_return = false;
+				int next_break = GetLineEnding (s, break_index, out ending);
+				string line_text = s.Substring (break_index, next_break - break_index);
 
-				if (next_break == -1) {
-					next_break = s.Length;
-					soft = true;
-				}
-
-				adjusted_next_break = next_break;
-				if (s [next_break - 1] == '\r') {
-					adjusted_next_break--;
-					carriage_return = true;
-				}
-
-				string line_text = s.Substring (break_index, adjusted_next_break - break_index);
 				Add (base_line + count, line_text, line.alignment, tag.font, tag.color);
 
-				if (carriage_return) {
-					Line last = GetLine (base_line + count);
-					last.carriage_return = true;
+				Line last = GetLine (base_line + count);
+				last.ending = ending;
 
-					if (soft)
-						last.soft_break = true;
-				} else if (soft) {
-					Line last = GetLine (base_line + count);
-					last.soft_break = true;
-				}
+				if (soft)
+					last.MakeSoft ();
 
 				count++;
-				break_index = next_break + 1;
+				break_index = next_break + ending.Length;
 			}
 
 			ResumeRecalc (true);
@@ -2503,6 +2504,7 @@ namespace System.Windows.Forms {
 
 			// Maintain the line ending style
 			first.soft_break = second.soft_break;
+			first.ending = second.ending;
 
 			while (last.next != null) {
 				last = last.next;
@@ -2619,9 +2621,9 @@ namespace System.Windows.Forms {
 
 				new_line = GetLine(line.line_no + 1);
 
-				line.carriage_return = false;
-				new_line.carriage_return = line.carriage_return;
-				new_line.soft_break = soft;
+				new_line.ending = line.ending;
+				if (soft)
+					new_line.MakeSoft ();
 				
 				if (move_caret) {
 					caret.line = new_line;
@@ -2649,9 +2651,10 @@ namespace System.Windows.Forms {
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
 
-			line.carriage_return = false;
-			new_line.carriage_return = line.carriage_return;
+			new_line.ending = line.ending;
 			new_line.soft_break = soft;
+			if (soft)
+				new_line.MakeSoft ();
 
 			line.recalc = true;
 			new_line.recalc = true;
