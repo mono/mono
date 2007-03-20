@@ -1213,12 +1213,14 @@ namespace System.Web.UI.WebControls
 				if (AllowPaging) {
 					dataSource.AllowPaging = true;
 					dataSource.PageSize = PageSize;
-					dataSource.CurrentPageIndex = PageIndex;
 					if (view.CanPage) {
 						dataSource.AllowServerPaging = true;
 						if (SelectArguments.RetrieveTotalRowCount)
 							dataSource.VirtualCount = SelectArguments.TotalRowCount;
 					}
+					if (PageIndex >= dataSource.PageCount)
+						pageIndex = dataSource.PageCount - 1;
+					dataSource.CurrentPageIndex = PageIndex;
 				}
 				
 				PageCount = dataSource.PageCount;
