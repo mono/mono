@@ -176,10 +176,6 @@ namespace Mono.CSharp {
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
 					d.DefineType ();
-
-			if (root.Enums != null)
-				foreach (Enum e in root.Enums)
-					e.DefineType ();
 		}
 
 		static void Error_TypeConflict (string name, Location loc)
@@ -454,10 +450,6 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void CloseTypes ()
 		{
-			if (root.Enums != null)
-				foreach (Enum en in root.Enums)
-					en.CloseType ();
-
 			//
 			// We do this in two passes, first we close the structs,
 			// then the classes, because it seems the code needs it this
@@ -550,12 +542,6 @@ namespace Mono.CSharp {
 					d.DefineMembers ();
 			}
 
-			ArrayList enums = root.Enums;
-			if (enums != null){
-				foreach (Enum en in enums)
-					en.DefineMembers ();
-			}
-
 			//
 			// Check for cycles in the struct layout
 			//
@@ -600,12 +586,6 @@ namespace Mono.CSharp {
 
 					tc.Define ();
 				}
-			}
-
-			ArrayList enums = root.Enums;
-			if (enums != null){
-				foreach (Enum en in enums)
-					en.Define ();
 			}
 		}
 

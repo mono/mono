@@ -397,9 +397,6 @@ namespace Mono.CSharp {
 		// Holds the list of properties
 		MemberCoreArrayList properties;
 
-		// Holds the list of enumerations
-		MemberCoreArrayList enums;
-
 		// Holds the list of delegates
 		MemberCoreArrayList delegates;
 		
@@ -516,17 +513,6 @@ namespace Mono.CSharp {
 				constants = new MemberCoreArrayList ();
 			
 			constants.Add (constant);
-		}
-
-		public void AddEnum (Mono.CSharp.Enum e)
-		{
-			if (!AddMemberType (e))
-				return;
-
-			if (enums == null)
-				enums = new MemberCoreArrayList ();
-
-			enums.Add (e);
 		}
 
 		public TypeContainer AddTypeContainer (TypeContainer tc, bool is_interface)
@@ -879,12 +865,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public ArrayList Enums {
-			get {
-				return enums;
-			}
-		}
-
 		public ArrayList Indexers {
 			get {
 				return indexers;
@@ -1515,12 +1495,6 @@ namespace Mono.CSharp {
 						return false;
 			}
 
-			if (Enums != null) {
-				foreach (Enum en in Enums)
-					if (en.DefineType () == null)
-						return false;
-			}
-
 			return true;
 		}
 
@@ -1637,7 +1611,6 @@ namespace Mono.CSharp {
 			DefineContainerMembers (indexers);
 			DefineContainerMembers (methods);
 			DefineContainerMembers (operators);
-			DefineContainerMembers (enums);
 			DefineContainerMembers (delegates);
 
 			if (CurrentType != null) {
@@ -1779,7 +1752,7 @@ namespace Mono.CSharp {
 			if (PartialContainer != this)
 				throw new InternalErrorException ("should not happen");
 
-			ArrayList [] lists = { types, enums, delegates, interfaces };
+			ArrayList [] lists = { types, delegates, interfaces };
 
 			for (int j = 0; j < lists.Length; ++j) {
 				ArrayList list = lists [j];
@@ -1802,7 +1775,7 @@ namespace Mono.CSharp {
 						      BindingFlags bf, MemberFilter filter, object criteria,
 						      ref ArrayList members)
 		{
-			ArrayList [] lists = { types, enums, delegates, interfaces };
+			ArrayList [] lists = { types, delegates, interfaces };
 
 			for (int j = 0; j < lists.Length; ++j) {
 				ArrayList list = lists [j];
@@ -2420,10 +2393,6 @@ namespace Mono.CSharp {
 				throw new InternalErrorException (this, e);
 			}
 			
-			if (Enums != null)
-				foreach (Enum en in Enums)
-					en.CloseType ();
-
 			if (Types != null){
 				foreach (TypeContainer tc in Types)
 					if (tc.Kind == Kind.Struct)
@@ -2444,7 +2413,6 @@ namespace Mono.CSharp {
 			
 			types = null;
 			properties = null;
-			enums = null;
 			delegates = null;
 			fields = null;
 			initialized_fields = null;

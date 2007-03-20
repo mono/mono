@@ -2514,7 +2514,7 @@ enum_declaration
 			e.AddEnumMember (em);
 		}
 
-		current_container.AddEnum (e);
+		current_container.AddTypeContainer (e, false);
 		$$ = e;
 
 	  }

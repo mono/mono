@@ -1,5 +1,10 @@
 2007-03-20  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.Enums): Removed; they're now included in
+	`TypeContainer.Types'.	
+
+2007-03-20  Martin Baulig  <martin@ximian.com>
+
 	* class.cs
 	(TypeContainer.DefineType): Don't call ResolveMembers() here.
 	(TypeContainer.DoResolveMembers): Call DefineType() on our

@@ -65,9 +65,6 @@ namespace Mono.CSharp {
 			if (t.Delegates != null)
 				foreach (Delegate de in t.Delegates)
 					de.GenerateDocComment (t);
-			if (t.Enums != null)
-				foreach (Enum en in t.Enums)
-					en.GenerateDocComment (t);
 
 			if (t.Constants != null)
 				foreach (Const c in t.Constants)
@@ -1040,11 +1037,6 @@ namespace Mono.CSharp {
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
 					DocUtil.GenerateDocComment (d, null);
-
-			if (root.Enums != null)
-				foreach (Enum e in root.Enums)
-					e.GenerateDocComment (null);
-
 		}
 	}
 }
