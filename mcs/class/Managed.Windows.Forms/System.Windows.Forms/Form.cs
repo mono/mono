@@ -2153,6 +2153,8 @@ namespace System.Windows.Forms {
 							Hide ();
 						}
 					}
+					
+					mdi_parent = null;
 
 					return;
 				}

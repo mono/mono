@@ -355,7 +355,7 @@ namespace System.Windows.Forms {
 
 		private void FormClosed (object sender, EventArgs e)
 		{
-			mdi_container.CloseChildForm (form);
+			mdi_container.ChildFormClosed (form);
 
 #if NET_2_0
 			if (form.MdiParent.MainMenuStrip != null)

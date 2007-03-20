@@ -1,3 +1,11 @@
+2007-03-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MdiWindowManager.cs: Update function name.
+	* Form.cs: After closing a form MdiParent is always null.
+	* MdiClient.cs: Rename CloseChildForm to ChildFormClosed to explain
+	  better what it should do: necessary book-keeping when the form is
+	  closed, it should not close the form itself.
+
 2007-03-19  Andreia Gaita  <avidigal@novell.com>
 
 	* ListViewItem.cs: Fix back and fore color. The subitems only

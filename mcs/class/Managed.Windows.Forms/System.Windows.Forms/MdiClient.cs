@@ -605,7 +605,7 @@ namespace System.Windows.Forms {
 			lock_sizing = false;
 		}
 
-		internal void CloseChildForm (Form form)
+		internal void ChildFormClosed (Form form)
 		{
 			if (Controls.Count > 1) {
 				Form next = (Form) Controls [1];
@@ -615,7 +615,6 @@ namespace System.Windows.Forms {
 			}
 
 			Controls.Remove (form);
-			form.Close ();
 
 			if (Controls.Count == 0) {
 				XplatUI.RequestNCRecalc (Parent.Handle);
