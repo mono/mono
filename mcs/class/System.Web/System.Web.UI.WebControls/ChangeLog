@@ -1,8 +1,5 @@
 2007-03-20  Marek Habersack  <mhabersack@novell.com>
 
-	* BaseDataBoundControl.cs: fix as per MSDN - the property is set
-	only if data binding doesn't occur.
-
 	* DataBoundControl.cs: avoid endless recursion here. Fixes bug #81175
 
 	* LoginStatus.cs: render login/logout controls with the CssClass

@@ -98,20 +98,9 @@ namespace System.Web.UI.WebControls {
 		protected bool RequiresDataBinding {
 			get { return requiresDataBinding; }
 			set {
-				// MSDN: If you set the RequiresDataBinding
-				// property to true when the data-bound control
-				// has already begun to render its output to the
-				// page, the current HTTP request is not a
-				// callback, and you are using the DataSourceID
-				// property to identify the data source control
-				// to bind to, the DataBind method is called
-				// immediately. In this case, the
-				// RequiresDataBinding property is _not_ actually
-				// set to true. 
+				requiresDataBinding = value;
 				if (value && preRendered && IsBoundUsingDataSourceID && Page != null && !Page.IsCallback)
 					EnsureDataBound ();
-				else
-					requiresDataBinding = value;
 			}
 		}
 		
