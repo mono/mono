@@ -89,7 +89,8 @@ namespace Mainsoft.Web.SessionState
 			}
 
 			public override int Read (byte [] buffer, int offset, int count) {
-				return _javaObjectInput.read (vmw.common.TypeUtils.ToSByteArray (buffer), offset, count);
+				int rv = _javaObjectInput.read (vmw.common.TypeUtils.ToSByteArray (buffer), offset, count);
+				return rv > 0 ? rv : 0;
 			}
 
 			public override void Write (byte [] buffer, int offset, int count) {
