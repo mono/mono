@@ -244,7 +244,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
