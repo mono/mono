@@ -38,45 +38,11 @@ namespace System.Web.SessionState
 {
 	public sealed class SessionStateItemCollection : NameObjectCollectionBase, ISessionStateItemCollection, ICollection, IEnumerable
 	{
-		static Dictionary <Type, bool> immutables;
 		bool is_dirty;
-		
-		static SessionStateItemCollection ()
-		{
-			immutables = new Dictionary <Type, bool> (14);
-			Type type = typeof(string);
-			immutables.Add (type, true);
-			type = typeof(int);
-			immutables.Add (type, true);
-			type = typeof(bool);
-			immutables.Add (type, true);
-			type = typeof(decimal);
-			immutables.Add (type, true);
-			type = typeof(byte);
-			immutables.Add (type, true);
-			type = typeof(char);
-			immutables.Add (type, true);
-			type = typeof(float);
-			immutables.Add (type, true);
-			type = typeof(double);
-			immutables.Add (type, true);
-			type = typeof(sbyte);
-			immutables.Add (type, true);
-			type = typeof(short);
-			immutables.Add (type, true);
-			type = typeof(long);
-			immutables.Add (type, true);
-			type = typeof(ushort);
-			immutables.Add (type, true);
-			type = typeof(uint);
-			immutables.Add (type, true);
-			type = typeof(ulong);
-			immutables.Add (type, true);
-		}
 
 		static bool IsMutable (object o)
 		{
-			return (immutables.ContainsKey (o.GetType ()) == false);
+			return (o != null && Type.GetTypeCode(o.GetType()) == TypeCode.Object);
 		}
 		
 		public SessionStateItemCollection ()
@@ -96,7 +62,7 @@ namespace System.Web.SessionState
 		public object this [int index] {
 			get {
 				object o = BaseGet (index);
-				if (o != null && IsMutable (o))
+				if (IsMutable (o))
 					is_dirty = true;
 				return o;
 			}
@@ -110,7 +76,7 @@ namespace System.Web.SessionState
                 public object this [string name] {
 			get {
 				object o = BaseGet (name);
-				if (o != null && IsMutable (o))
+				if (IsMutable (o))
 					is_dirty = true;
 				return o;
 			}
@@ -128,38 +94,28 @@ namespace System.Web.SessionState
 
 		public void Clear ()
 		{
-			BaseClear ();
-			is_dirty = true;
+			if (Count > 0) {
+				BaseClear ();
+				is_dirty = true;
+			}
 		}
 
 		public static SessionStateItemCollection Deserialize (BinaryReader reader)
 		{
 			int i = reader.ReadInt32 ();
 			SessionStateItemCollection ret = new SessionStateItemCollection (i);
-			while (i > 0) {
-				i--;
-				string key = reader.ReadString ();
-				int index = reader.ReadInt32 ();
-				if (index == AltSerialization.NullIndex)
-					ret [key] = null;
-				else
-					ret [key] = AltSerialization.DeserializeFromIndex (index, reader);
-			}
+			for (; i > 0; i--)
+				ret [reader.ReadString ()] =
+					System.Web.Util.AltSerialization.Deserialize (reader);
+
 			return ret;
 		}
 
-		public void Serialize (BinaryWriter writer)
-		{
-			lock (this) {
-				writer.Write (Count);
-				foreach (string key in base.Keys) {
-					object val = BaseGet (key);
-					if (val == null) {
-						writer.Write (AltSerialization.NullIndex);
-						continue;
-					}
-					AltSerialization.SerializeByType (writer, val);
-				}
+		public void Serialize (BinaryWriter writer) {
+			writer.Write (Count);
+			foreach (string key in base.Keys) {
+				writer.Write (key);
+				System.Web.Util.AltSerialization.Serialize (writer, BaseGet (key));
 			}
 		}
 		

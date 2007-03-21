@@ -154,18 +154,10 @@ namespace System.Web {
 		internal void Serialize (BinaryWriter writer)
 #endif
 		{
-			lock (_Objects) {
-				writer.Write (Count);
-				foreach (string key in _Objects.Keys) {
-					writer.Write (key);
-					object value = _Objects [key];
-					if (value == null) {
-						writer.Write (System.Web.Util.AltSerialization.NullIndex);
-						continue;
-					}
-
-					System.Web.Util.AltSerialization.SerializeByType (writer, value);
-				}
+			writer.Write (_Objects.Count);
+			foreach (string key in _Objects.Keys) {
+				writer.Write (key);
+				System.Web.Util.AltSerialization.Serialize (writer, _Objects [key]);
 			}
 		}
 
@@ -176,14 +168,9 @@ namespace System.Web {
 #endif
 		{
 			HttpStaticObjectsCollection result = new HttpStaticObjectsCollection ();
-			for (int i = reader.ReadInt32 (); i > 0; i--) {
-				string key = reader.ReadString ();
-				int index = reader.ReadInt32 ();
-				if (index == System.Web.Util.AltSerialization.NullIndex)
-					result.Set (key, null);
-				else
-					result.Set (key, System.Web.Util.AltSerialization.DeserializeFromIndex (index, reader));
-			}
+			for (int i = reader.ReadInt32 (); i > 0; i--)
+				result.Set (reader.ReadString (),
+					System.Web.Util.AltSerialization.Deserialize (reader));
 
 			return result;
 		}

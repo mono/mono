@@ -1,3 +1,7 @@
+2007-03-21  Konstantin Triger <kostat@mainsoft.com>
+
+	AltSerialization.cs: refactoring for Serialize/Deserialize functionality.
+
 2007-03-18  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlUtils.cs: GetDirectory always returns a path with trailing

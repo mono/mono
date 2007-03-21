@@ -78,34 +78,21 @@ internal class SessionDictionary : NameObjectCollectionBase
 			BaseRemoveAt (index);
 	}
 
-	internal void Serialize (BinaryWriter w)
+	internal void Serialize (BinaryWriter writer)
 	{
-		lock (this) {
-			w.Write (Count);
-			foreach (string key in Keys) {
-				w.Write (key);
-				object value = BaseGet (key);
-				if (value == null) {
-					w.Write (System.Web.Util.AltSerialization.NullIndex);
-					continue;
-				}
-
-				System.Web.Util.AltSerialization.SerializeByType (w, value);
-			}
+		writer.Write (Count);
+		foreach (string key in base.Keys) {
+			writer.Write (key);
+			System.Web.Util.AltSerialization.Serialize (writer, BaseGet (key));
 		}
 	}
 
 	internal static SessionDictionary Deserialize (BinaryReader r)
 	{
 		SessionDictionary result = new SessionDictionary ();
-		for (int i = r.ReadInt32 (); i > 0; i--) {
-			string key = r.ReadString ();
-			int index = r.ReadInt32 ();
-			if (index == System.Web.Util.AltSerialization.NullIndex)
-				result [key] = null;
-			else
-				result [key] = System.Web.Util.AltSerialization.DeserializeFromIndex (index, r);
-		}
+		for (int i = r.ReadInt32(); i > 0; i--)
+			result [r.ReadString ()] =
+				System.Web.Util.AltSerialization.Deserialize (r);
 
 		return result;
 	}
