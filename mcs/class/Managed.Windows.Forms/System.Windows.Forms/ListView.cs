@@ -1906,12 +1906,14 @@ namespace System.Windows.Forms
 
 
 				if (clicked_item != null) {
-					owner.SetFocusedItem (clicked_item);
 					bool changed = !clicked_item.Selected;
+					if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
+						owner.SetFocusedItem (clicked_item);
 
 					if (owner.MultiSelect) {
 						bool reselect = (!owner.LabelEdit || changed);
-						owner.UpdateMultiSelection (clicked_item.Index, reselect);
+						if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
+							owner.UpdateMultiSelection (clicked_item.Index, reselect);
 					} else {
 						clicked_item.Selected = true;
 					}
