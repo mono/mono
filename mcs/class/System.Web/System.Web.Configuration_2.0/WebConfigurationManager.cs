@@ -183,12 +183,15 @@ namespace System.Web.Configuration {
 				path = "/";
 
 			_Configuration conf;
-			
-			lock (configurations) {
-				conf = (_Configuration) configurations [path];
-				if (conf == null) {
-					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
-					configurations [path] = conf;
+
+			conf = (_Configuration) configurations [path];
+			if (conf == null) {
+				lock (configurations) {
+					conf = (_Configuration) configurations [path];
+					if (conf == null) {
+						conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
+						configurations [path] = conf;
+					}
 				}
 			}
 			return conf;

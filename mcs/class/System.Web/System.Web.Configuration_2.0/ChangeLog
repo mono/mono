@@ -1,3 +1,8 @@
+2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebConfigurationManager.cs: fixed OpenWebConfiguration, should not
+	lock when checking if configuration is already open
+
 2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebConfigurationManager.cs: fixed OpenWebConfiguration, removed 
