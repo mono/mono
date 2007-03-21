@@ -41,18 +41,27 @@ namespace System.Web {
 
 		[Obsolete ("Don't use this constructor, use the (bool, bool) one, as it's more clear what it does")]
 		internal HttpCookieCollection (HttpResponse Response, bool ReadOnly)
+#if NET_2_0
+			: base (StringComparer.OrdinalIgnoreCase)
+#endif
 		{
 			auto_fill = Response != null;
 			IsReadOnly = ReadOnly;
 		}
 
 		internal HttpCookieCollection (bool auto_fill, bool read_only)
+#if NET_2_0
+			: base (StringComparer.OrdinalIgnoreCase)
+#endif
 		{
 			this.auto_fill = auto_fill;
 			IsReadOnly = read_only;
 		}
 
 		internal HttpCookieCollection (string cookies)
+#if NET_2_0
+			: base (StringComparer.OrdinalIgnoreCase)
+#endif
 		{
 			if (cookies == null || cookies == "")
 				return;
@@ -74,6 +83,9 @@ namespace System.Web {
 		}
 
 		public HttpCookieCollection ()
+#if NET_2_0
+			: base (StringComparer.OrdinalIgnoreCase)
+#endif
 		{
 		}
 

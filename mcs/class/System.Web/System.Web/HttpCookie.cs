@@ -225,6 +225,13 @@ namespace System.Web {
 		 */
 		class CookieNVC : NameValueCollection
 		{
+#if NET_2_0
+			public CookieNVC ()
+				: base (StringComparer.OrdinalIgnoreCase)
+			{
+			}
+#endif
+
 			public override string ToString ()
 			{
 				StringBuilder builder = new StringBuilder ("");

@@ -1,4 +1,9 @@
 2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* HttpCookie.cs, HttpCookieCollection.cs: used OrdinalIgnoreCase
+	StringComparer for cookies and values collections 
+
+2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpApplication.cs: refactred handlers configuration section as
 	member of class
