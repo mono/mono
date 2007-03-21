@@ -719,7 +719,7 @@ namespace System.Windows.Forms {
 				break;
 			}
 
-			return true;
+			return false;
 		}
 	}
 
