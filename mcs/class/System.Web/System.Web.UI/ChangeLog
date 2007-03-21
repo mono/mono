@@ -1,3 +1,14 @@
+2007-03-21  Marek Habersack  <mhabersack@novell.com>
+
+	* UnknownAttributeDescriptor.cs: an internal helper class for
+	custom directive attributes support.
+
+	* BaseParser.cs: ThrowParseException can now take variadic
+	parameters, for convenience.
+
+	* TemplateParser.cs: add support for custom attributes for the
+	Page and Control directives.
+
 2007-03-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Control.cs: fixed ResolveClientUrl method.

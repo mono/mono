@@ -30,6 +30,7 @@
 
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -37,6 +38,10 @@ using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Util;
+
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Web.UI {
 
@@ -74,6 +79,7 @@ namespace System.Web.UI {
 #if NET_2_0
 		string src;
 		string partialClassName;
+		List <UnknownAttributeDescriptor> unknownMainAttributes;
 #endif
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
@@ -575,11 +581,97 @@ namespace System.Web.UI {
 			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
 				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
 
-
+#if NET_2_0
+			if (inherits != null && (this is PageParser || this is UserControlParser) && atts.Count > 0) {
+				if (unknownMainAttributes == null)
+					unknownMainAttributes = new List <UnknownAttributeDescriptor> ();
+				string key, val;
+				
+				foreach (DictionaryEntry de in atts) {
+					key = de.Key as string;
+					val = de.Value as string;
+					
+					if (String.IsNullOrEmpty (key) || String.IsNullOrEmpty (val))
+						continue;
+					CheckUnknownAttribute (key, val, inherits);
+				}
+				return;
+			}
+#endif
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 		}
 
+#if NET_2_0
+		void CheckUnknownAttribute (string name, string val, string inherits)
+		{
+			MemberInfo mi = null;
+			bool missing = false;
+			string memberName = name.Trim ().ToLower (CultureInfo.InvariantCulture);
+			
+			try {
+				MemberInfo[] infos = baseType.GetMember (memberName,
+									 MemberTypes.Field | MemberTypes.Property,
+									 BindingFlags.Public | BindingFlags.Instance |
+									 BindingFlags.IgnoreCase | BindingFlags.Static);
+				if (infos.Length != 0) {
+					// prefer public properties to public methods (it's what MS.NET does)
+					foreach (MemberInfo tmp in infos) {
+						if (tmp is PropertyInfo) {
+							mi = tmp;
+							break;
+						}
+					}
+					if (mi == null)
+						mi = infos [0];
+				} else
+					missing = true;
+			} catch (Exception) {
+				missing = true;
+			}
+			if (missing)
+				ThrowParseException (
+					"Error parsing attribute '{0}': Type '{1}' does not have a public property named '{0}'",
+					memberName, inherits);
+			
+			Type memberType = null;
+			if (mi is PropertyInfo) {
+				PropertyInfo pi = mi as PropertyInfo;
+				
+				if (!pi.CanWrite)
+					ThrowParseException (
+						"Error parsing attribute '{0}': The '{0}' property is read-only and cannot be set.",
+						memberName);
+				memberType = pi.PropertyType;
+			} else if (mi is FieldInfo) {
+				memberType = ((FieldInfo)mi).FieldType;
+			} else
+				ThrowParseException ("Could not determine member the kind of '{0}' in base type '{1}",
+						     memberName, inherits);
+			TypeConverter converter = TypeDescriptor.GetConverter (memberType);
+			bool convertible = true;
+			object value = null;
+			
+			if (converter == null || !converter.CanConvertFrom (typeof (string)))
+				convertible = false;
+
+			if (convertible) {
+				try {
+					value = converter.ConvertFromInvariantString (val);
+				} catch (Exception) {
+					convertible = false;
+				}
+			}
+
+			if (!convertible)
+				ThrowParseException ("Error parsing attribute '{0}': Cannot create an object of type '{1}' from its string representation '{2}' for the '{3}' property.",
+						     memberName, memberType, val, mi.Name);
+			
+			UnknownAttributeDescriptor desc = new UnknownAttributeDescriptor (mi, value);
+			unknownMainAttributes.Add (desc);
+		}
+#endif
+		
 		internal void SetBaseType (string type)
 		{
 			if (type == DefaultBaseTypeName)
@@ -641,6 +733,11 @@ namespace System.Web.UI {
 		internal string PartialClassName
 		{
 			get { return partialClassName; }
+		}
+
+		internal List <UnknownAttributeDescriptor> UnknownMainAttributes
+		{
+			get { return unknownMainAttributes; }
 		}
 #endif
 

@@ -1,3 +1,9 @@
+2007-03-21  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: added support for setting custom
+	attributes of a base class from the Page or Control directive
+	attributes.
+
 2007-03-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ResourceExpressionBuilder.cs: if the resource class key is null

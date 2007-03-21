@@ -648,6 +648,7 @@ System.Web.UI/ThemeableAttribute.cs
 System.Web.UI/ThemeProvider.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
+System.Web.UI/UnknownAttributeDescriptor.cs
 System.Web.UI/UrlPropertyAttribute.cs
 System.Web.UI/UserControlControlBuilder.cs
 System.Web.UI/UserControl.cs

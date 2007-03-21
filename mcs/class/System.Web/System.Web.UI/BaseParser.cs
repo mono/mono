@@ -96,16 +96,16 @@ namespace System.Web.UI
 
 			hash.Remove (key);
 			return val;
+		}		
+
+		internal void ThrowParseException (string message, params object[] parms)
+		{
+			throw new ParseException (location, String.Format (message, parms));
 		}
 		
-		internal void ThrowParseException (string message)
+		internal void ThrowParseException (string message, Exception inner, params object[] parms)
 		{
-			throw new ParseException (location, message);
-		}
-		
-		internal void ThrowParseException (string message, Exception inner)
-		{
-			throw new ParseException (location, message, inner);
+			throw new ParseException (location, String.Format (message, parms), inner);
 		}
 		
 		internal ILocation Location {

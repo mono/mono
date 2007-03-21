@@ -43,6 +43,7 @@ using System.ComponentModel.Design.Serialization;
 #if NET_2_0
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.Configuration;
 #endif
@@ -167,9 +168,13 @@ namespace System.Web.Compilation
 			/* in the case this is the __BuildControlTree
 			 * method, allow subclasses to insert control
 			 * specific code. */
-			if (builder is RootBuilder)
+			if (builder is RootBuilder) {
+#if NET_2_0
+				SetCustomAttributes (method);
+#endif
 				AddStatementsToInitMethod (method);
-
+			}
+			
 			if (builder.HasAspCode) {
 				CodeMemberMethod renderMethod = new CodeMemberMethod ();
 				builder.renderMethod = renderMethod;
@@ -347,6 +352,33 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
+#if NET_2_0
+		void SetCustomAttribute (CodeMemberMethod method, UnknownAttributeDescriptor uad)
+		{
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = new CodePropertyReferenceExpression (
+				new CodeArgumentReferenceExpression("__ctrl"),
+				uad.Info.Name);
+			assign.Right = new CodePrimitiveExpression (uad.Value);
+			
+			method.Statements.Add (assign);
+		}
+		
+		void SetCustomAttributes (CodeMemberMethod method)
+		{
+			Type baseType = parser.BaseType;
+			if (baseType == null)
+				return;
+			
+			List <UnknownAttributeDescriptor> attrs = parser.UnknownMainAttributes;
+			if (attrs == null || attrs.Count == 0)
+				return;
+
+			foreach (UnknownAttributeDescriptor uad in attrs)
+				SetCustomAttribute (method, uad);
+		}
+#endif
+		
 		protected virtual void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
 		}
