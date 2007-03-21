@@ -1,3 +1,12 @@
+2007-03-21  Bill Holmes  <billholmes54@gmail.com>
+
+	* cs3005-6.cs
+	* cs3005-15.cs
+	  With the changes to mcs/class.cs in r74702 these test
+	  outputs are now different.  The error messages are still correct
+	  they are simply reporting the error on the other name due to the
+	  new order objects are processed. 
+
 2007-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	* gcs0411-3.cs: Rename to tests/gtest-309.cs.
