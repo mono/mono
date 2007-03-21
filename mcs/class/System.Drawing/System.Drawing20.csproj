@@ -291,7 +291,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.Xml.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
