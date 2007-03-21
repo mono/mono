@@ -256,7 +256,7 @@ namespace Mainsoft.Web.Hosting
 				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
 				string dataDirectory = J2EEUtils.GetInitParameterByHierarchy(config, "DataDirectory");
 				if (dataDirectory == null)
-					dataDirectory = "APP_DATA";
+					dataDirectory = "App_Data";
 
 				if (!Path.IsPathRooted (dataDirectory)) {
 					java.io.InputStream inputStream = config.getServletContext ().getResourceAsStream ("/WEB-INF/classes/appData.properties");
