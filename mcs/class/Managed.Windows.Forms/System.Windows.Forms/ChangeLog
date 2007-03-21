@@ -1,5 +1,11 @@
 2007-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Don't trigger a layout if an implicit control is added
+	that isn't visible.  Also, don't notify the owner when an implicit control
+	is added.  (Owners shouldn't even know about their implicit controls.)
+
+2007-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollableControl.cs: Add implicit controls with AddRangeImplicit
 	to save some re-layouts.
 

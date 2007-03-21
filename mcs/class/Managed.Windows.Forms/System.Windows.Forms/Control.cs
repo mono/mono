@@ -561,8 +561,11 @@ namespace System.Windows.Forms
 				control.InitLayout ();
 				if (owner.Visible)
 					owner.UpdateChildrenZOrder ();
-				owner.PerformLayout (control, "Parent");
-				owner.OnControlAdded (new ControlEventArgs (control));
+				
+				// If we are adding a new control that isn't
+				// visible, don't trigger a layout
+				if (control.VisibleInternal)
+					owner.PerformLayout (control, "Parent");
 			}
 #if NET_2_0
 			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
