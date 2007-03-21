@@ -85,6 +85,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="J2SE.Helpers">
+      <Private>False</Private>
+      <HintPath>..\..\lib\J2SE.Helpers.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="aspnetconfig\CreateRole.aspx.cs">
