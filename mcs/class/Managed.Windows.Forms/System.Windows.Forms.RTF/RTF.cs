@@ -899,7 +899,6 @@ SkipCRLF:
 
 		private void ReadPictGroup(RTF rtf)
 		{
-			Minor image_type = Minor.Undefined;
 			bool read_image_data = false;
 
 			Picture picture = new Picture ();
@@ -920,11 +919,9 @@ SkipCRLF:
 					continue;
 				case Minor.PicWid:
 					picture.SetWidthFromTwips (param);
-					Console.WriteLine ("SET WIDTH:  {0}", picture.Width);
 					continue;
 				case Minor.PicHt:
 					picture.SetHeightFromTwips (param);
-					Console.WriteLine ("SET HEIGHT:  {0}", picture.Height);
 					continue;
 				case Minor.PicGoalWid:
 					continue;
@@ -986,7 +983,7 @@ SkipCRLF:
 				}
 			}
 
-			if (image_type != Minor.Undefined && !read_image_data) {
+			if (picture.ImageType != Minor.Undefined && !read_image_data) {
 				this.picture = picture;
 				SetToken (TokenClass.Control, Major.PictAttr, picture.ImageType, 0, String.Empty);
 			}
