@@ -156,10 +156,10 @@ namespace System.Web.Services.Description
 			get { return services; }
 		}
 		
-		public object GetDocument (string url)
+		public object GetDocument (string url, string ns)
 		{
 			if (collection != null)
-				return null;
+				return collection[ns];
 			else
 				return webReference.Documents [url];
 		}

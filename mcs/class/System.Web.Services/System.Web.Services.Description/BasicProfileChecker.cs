@@ -56,7 +56,7 @@ namespace System.Web.Services.Description
 			if (!new Uri (value.Namespace, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2803);
 			
-			object doc = ctx.GetDocument (value.Location);
+			object doc = ctx.GetDocument (value.Location, value.Namespace);
 			if (doc == null) ctx.ReportError (value, "Document '" + value.Location + "' not found");
 			
 			if (doc is XmlSchema)
@@ -449,7 +449,7 @@ namespace System.Web.Services.Description
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchemaImport value)
 		{
-			XmlSchema doc = ctx.GetDocument (value.SchemaLocation) as XmlSchema;
+			XmlSchema doc = ctx.GetDocument (value.SchemaLocation, value.Namespace) as XmlSchema;
 			if (doc == null) ctx.ReportError (value, "Schema '" + value.SchemaLocation + "' not found");
 		}
 		

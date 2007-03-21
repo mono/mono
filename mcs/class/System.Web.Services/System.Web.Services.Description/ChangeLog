@@ -1,3 +1,8 @@
+2007-03-21  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConformanceChecker.cs, BasicProfileChecker.cs: enable looking the
+		documents up by namespace.
+
 2007-03-11  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConformanceChecker.cs, WebServicesInteroperability.cs, ProtocolReflector.cs,
