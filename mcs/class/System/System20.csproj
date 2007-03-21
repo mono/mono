@@ -188,7 +188,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-apache_http_client="..\lib\apache_http_client.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.Configuration.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\mscorlib.jar" REFS-JarPath-j2se-helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\J2SE.Helpers.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\framework\System.Xml.jar" />
+      <UserProperties REFS-JarPath-apache_http_client="..\lib\apache_http_client.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mscorlib.jar" REFS-JarPath-j2se-helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\J2SE.Helpers.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>

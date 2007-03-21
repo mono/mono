@@ -53,8 +53,8 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\framework\
-set JAVA_HOME=%VMW_HOME%\jre6
+set JGAC_PATH=%VMW_HOME%\java_refs\framework\
+set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -74,9 +74,9 @@ set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
 
 set NUNIT_PATH=..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%framework\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%util\bin\%PROJECT_CONFIGURATION%\nunit.util.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%core\bin\%PROJECT_CONFIGURATION%\nunit.core.jar
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
@@ -125,6 +125,7 @@ copy %APP_CONFIG_FILE% nunit-console.exe.config
 set TMPDIR=%TMP%
 
 REM @echo on
+echo "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML%
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
