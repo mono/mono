@@ -79,6 +79,8 @@ namespace System.Web.UI {
 #if NET_2_0
 		string src;
 		string partialClassName;
+		string codeFileBaseClass;
+		Type codeFileBaseClassType;
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
 #endif
 		Assembly srcAssembly;
@@ -545,7 +547,11 @@ namespace System.Web.UI {
 			// means that the code file has to be confirmed, but not
 			// used at this point.
 			src = GetString (atts, "CodeFile", null);
+			codeFileBaseClass = GetString (atts, "CodeFileBaseClass", null);
 
+			if (src == null && codeFileBaseClass != null)
+				ThrowParseException ("The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute");
+			
 			if (src != null && inherits != null) {
 				// Make sure the source exists
 				src = UrlUtils.Combine (BaseVirtualDir, src);
@@ -563,6 +569,16 @@ namespace System.Web.UI {
 				// Add the code file as an option to the
 				// compiler. This lets both files be compiled at once.
 				compilerOptions += " \"" + realPath + "\"";
+
+				if (codeFileBaseClass != null) {
+					try {
+						codeFileBaseClassType = LoadType (codeFileBaseClass);
+					} catch (Exception) {
+					}
+
+					if (codeFileBaseClassType == null)
+						ThrowParseException ("Could not load type '{0}'", codeFileBaseClass);
+				}
 			} else if (inherits != null) {
 				// We just set the inherits directly because this is a
 				// Single-Page model.
@@ -608,12 +624,16 @@ namespace System.Web.UI {
 			MemberInfo mi = null;
 			bool missing = false;
 			string memberName = name.Trim ().ToLower (CultureInfo.InvariantCulture);
+			Type parent = codeFileBaseClassType;
+
+			if (parent == null)
+				parent = baseType;
 			
 			try {
-				MemberInfo[] infos = baseType.GetMember (memberName,
-									 MemberTypes.Field | MemberTypes.Property,
-									 BindingFlags.Public | BindingFlags.Instance |
-									 BindingFlags.IgnoreCase | BindingFlags.Static);
+				MemberInfo[] infos = parent.GetMember (memberName,
+								       MemberTypes.Field | MemberTypes.Property,
+								       BindingFlags.Public | BindingFlags.Instance |
+								       BindingFlags.IgnoreCase | BindingFlags.Static);
 				if (infos.Length != 0) {
 					// prefer public properties to public methods (it's what MS.NET does)
 					foreach (MemberInfo tmp in infos) {
@@ -735,6 +755,16 @@ namespace System.Web.UI {
 			get { return partialClassName; }
 		}
 
+		internal string CodeFileBaseClass
+		{
+			get { return codeFileBaseClass; }
+		}
+
+		internal Type CodeFileBaseClassType
+		{
+			get { return codeFileBaseClassType; }
+		}
+		
 		internal List <UnknownAttributeDescriptor> UnknownMainAttributes
 		{
 			get { return unknownMainAttributes; }

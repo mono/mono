@@ -8,6 +8,7 @@
 
 	* TemplateParser.cs: add support for custom attributes for the
 	Page and Control directives.
+	Added support for the CodeFileBaseClass directive. Fixes bug #81132
 
 2007-03-20 Igor Zelmanovich <igorz@mainsoft.com>
 
