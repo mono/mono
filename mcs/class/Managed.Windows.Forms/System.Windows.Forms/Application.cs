@@ -512,6 +512,14 @@ namespace System.Windows.Forms {
 
 			thread = MWFThread.Current;
 
+			/*
+			 * There is a NotWorking test for this, but since we are using this method both for Form.ShowDialog as for ApplicationContexts we'll
+			 * fail on nested ShowDialogs, so disable the check for the moment.
+			 */
+			//if (thread.MessageLoop) {
+			//        throw new InvalidOperationException ("Starting a second message loop on a single thread is not a valid operation. Use Form.ShowDialog instead.");
+			//}
+
 			msg = new MSG();
 
 			if (context == null) {
