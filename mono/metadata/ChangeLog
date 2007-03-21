@@ -1,3 +1,9 @@
+2007-03-21  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Add support for PreserveSigAttribute. 
+	
+	Code is contributed under MIT/X11 license.
+
 2007-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* process.c: Fix endianness issues. Fixes #81126.
