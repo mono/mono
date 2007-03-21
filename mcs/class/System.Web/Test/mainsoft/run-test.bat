@@ -3,7 +3,7 @@
 rem =================================================
 if "%GH_HOME%" == "" (set GH_HOME=c:\Program Files\Mainsoft\Visual MainWin for J2EE)
 if "%JAVA_HOME%" == "" (set JAVA_HOME=%GH_HOME%\jre5) 
-set JGAC_PATH=%GH_HOME%\jgac\framework
+set JGAC_PATH=%GH_HOME%\java_refs\framework
 
 rem =================================================
 echo Hiding svn...

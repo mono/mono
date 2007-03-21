@@ -44,9 +44,9 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\framework\
+set JGAC_PATH=%VMW_HOME%\java_refs\framework\
 set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
-set JAVA_HOME=%VMW_HOME%\jre6
+set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -57,7 +57,7 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%Mainsoft.Web.jar
 rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Drawing.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\derby.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\derby.jar
 
 rem ./Test/mainsoft/MainsoftWebTest/bin/Debug_Java20/HtmlCompare.jar
 
