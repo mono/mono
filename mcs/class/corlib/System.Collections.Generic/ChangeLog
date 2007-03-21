@@ -1,3 +1,10 @@
+2007-03-21  Juraj Skripsky <js@hotfeet.ch>
+
+	* List.cs (FindAllStackBits): Small optimization to the new code.
+	Built resulting List<T> directly as an array, wrap it in a List<T>
+	afterwards. Stop the filling of the result array as soon as all
+	matching items have been processed.
+
 2007-03-20  Juan Cristóbal Olivares <juancri@gmail.com>
 
 	* List.cs (FindAll): Optimize FindAll using a bitmask to determine

@@ -246,13 +246,14 @@ namespace System.Collections.Generic {
 					}
 				}
 			    	
-				List <T> results = new List <T> (found);
+				T [] results = new T [found];
 				bitmask = 0x80000000;
 				ptr = bits;
-				for (int i = 0; i < this._size; i++)
+				int j = 0;
+				for (int i = 0; i < this._size && j < found; i++)
 				{
 					if (((*ptr) & bitmask) == bitmask)
-						results.Add (this._items [i]);
+						results [j++] = this._items [i];
 					
 					bitmask = bitmask >> 1;
 					if (bitmask == 0)
@@ -262,7 +263,7 @@ namespace System.Collections.Generic {
 					}
 				}
 				
-				return results;
+				return new List <T> (results, found);
 			}
 		}
 		
