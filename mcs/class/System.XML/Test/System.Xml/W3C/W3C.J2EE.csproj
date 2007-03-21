@@ -59,7 +59,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-nunit-core="..\..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.core.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" />
+      <UserProperties REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-nunit-core="..\..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.core.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -67,7 +67,7 @@
     <Reference Include="nunit.framework, Version=2.3.6162.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\jre5\rt.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\jre5\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

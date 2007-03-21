@@ -46,7 +46,7 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\framework\
+set JGAC_PATH=%VMW_HOME%\java_refs\framework\
 set JAVA_HOME=%VMW_HOME%\jre5
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
