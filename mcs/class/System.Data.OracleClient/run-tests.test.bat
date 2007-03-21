@@ -53,8 +53,8 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\framework\
-set JAVA_HOME=%VMW_HOME%\jre6
+set JGAC_PATH=%VMW_HOME%\java_refs\framework\
+set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -63,7 +63,7 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Data.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Data.OracleClient.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\ojdbc14.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\ojdbc14.jar
 
 set NUNIT_OPTIONS=/exclude=NotWorking
 
