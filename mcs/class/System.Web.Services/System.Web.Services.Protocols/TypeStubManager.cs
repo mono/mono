@@ -102,6 +102,17 @@ namespace System.Web.Services.Protocols {
 					AddBinding (new BindingInfo (at, defaultBindingName, LogicalType.WebServiceNamespace));
 			else 
 				AddBinding (new BindingInfo (null, defaultBindingName, logicalType.WebServiceNamespace));
+
+#if NET_2_0
+			foreach (Type ifaceType in Type.GetInterfaces ()) {
+				o = ifaceType.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
+				if (o.Length > 0) {
+					defaultBindingName = ifaceType.Name + ProtocolName;
+					foreach (WebServiceBindingAttribute at in o)
+						AddBinding (new BindingInfo (at, defaultBindingName, LogicalType.WebServiceNamespace));
+				}
+			}
+#endif
 		}
 		
 #if NET_2_0

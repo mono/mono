@@ -30,6 +30,7 @@
 using System.Reflection;
 using System.Web.Services;
 using System.Web.Services.Description;
+using System.Collections;
 
 namespace System.Web.Services.Protocols
 {
@@ -90,9 +91,73 @@ namespace System.Web.Services.Protocols
 			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
 
 			WebServiceAbstractNamespace = WebServiceNamespace + sep + "AbstractTypes";
-
+#if ONLY_1_1
 			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
+#else
+			MethodInfo [] type_methods;
+			if (typeof (WebClientProtocol).IsAssignableFrom (Type))
+				type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
+			else {
+				MethodInfo [] all_type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				ArrayList list = new ArrayList (all_type_methods.Length);
+				foreach (MethodInfo mi in all_type_methods) {
+					if (mi.IsPublic && mi.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
+						list.Add (mi);
+					else {
+						foreach (Type ifaceType in Type.GetInterfaces ()) {
+							if (ifaceType.GetCustomAttributes (typeof (WebServiceBindingAttribute), false).Length > 0) {
+								MethodInfo found = FindInInterface (ifaceType, mi);
+								if (found != null) {
+									if (found.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
+										list.Add (found);
+
+									break;
+								}
+							}
+						}
+					}
+				}
+				type_methods = (MethodInfo []) list.ToArray (typeof (MethodInfo));
+			}
+#endif
 			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
+		}
+
+		static MethodInfo FindInInterface (Type ifaceType, MethodInfo method) {
+			int nameStartIndex = 0;
+			if (method.IsPrivate) {
+				nameStartIndex = method.Name.LastIndexOf ('.');
+				if (nameStartIndex < 0)
+					nameStartIndex = 0;
+				else {
+					if (String.CompareOrdinal (
+						ifaceType.FullName.Replace ('+', '.'), 0, method.Name, 0, nameStartIndex) != 0)
+						return null;
+
+					nameStartIndex++;
+				}
+			}
+			foreach (MethodInfo mi in ifaceType.GetMembers ()) {
+				if (method.ReturnType == mi.ReturnType &&
+					String.CompareOrdinal(method.Name, nameStartIndex, mi.Name, 0, mi.Name.Length) == 0) {
+					ParameterInfo [] rpi = method.GetParameters ();
+					ParameterInfo [] lpi = mi.GetParameters ();
+					if (rpi.Length == lpi.Length) {
+						bool match = true;
+						for (int i = 0; i < rpi.Length; i++) {
+							if (rpi [i].ParameterType != lpi [i].ParameterType) {
+								match = false;
+								break;
+							}
+						}
+
+						if (match)
+							return mi;
+					}
+				}
+			}
+
+			return null;
 		}
 
 		internal bool UseEncoded {

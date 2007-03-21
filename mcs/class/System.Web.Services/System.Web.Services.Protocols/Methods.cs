@@ -124,6 +124,10 @@ namespace System.Web.Services.Protocols {
 				ParameterStyle = parent.ParameterStyle;
 				SoapBindingStyle = parent.SoapBindingStyle;
 				OneWay = false;
+#if NET_2_0
+				if (parent.Type != source.DeclaringType)
+					Binding = source.DeclaringType.Name + parent.ProtocolName;
+#endif
 			}
 			else if (kind is SoapDocumentMethodAttribute){
 				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;

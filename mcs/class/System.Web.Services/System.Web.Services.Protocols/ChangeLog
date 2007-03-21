@@ -1,3 +1,9 @@
+2007-03-21  Konstantin Triger <kostat@mainsoft.com>
+
+	* TypeStubManager.cs, Methods.cs, ServerType.cs: add support for the 2.0
+		feature, which enables declaring WebService/WebMethods attributes
+		in interface.
+
 2007-03-11  Konstantin Triger <kostat@mainsoft.com>
 
 	* WebServiceHandlerFactory.cs: throw on protocol version mismatch
