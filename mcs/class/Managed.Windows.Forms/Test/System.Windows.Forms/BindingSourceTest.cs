@@ -711,6 +711,8 @@ namespace MonoTests.System.Windows.Forms {
 			BindingSource source = new BindingSource ();
 			source.DataSource = new ReadOnlyList ();
 			object o = source.AddNew ();
+			
+			TestHelper.RemoveWarning (o);
 		}
 
 		[Test]
@@ -722,6 +724,8 @@ namespace MonoTests.System.Windows.Forms {
 			BindingSource source = new BindingSource ();
 			source.DataSource = new List<string>();
 			object o = source.AddNew ();
+			
+			TestHelper.RemoveWarning (o);
 		}
 
 		[Test]

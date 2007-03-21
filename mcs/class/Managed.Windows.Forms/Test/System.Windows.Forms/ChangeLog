@@ -1,3 +1,8 @@
+2007-03-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DefaultLayoutTest.cs: Fixed line endings.
+	* BindingSourceTest.cs: Remove a couple of warnings.
+
 2007-03-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Add test for BackColor, ForeColor,
