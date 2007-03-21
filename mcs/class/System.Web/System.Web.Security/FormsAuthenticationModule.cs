@@ -39,6 +39,11 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthenticationModule : IHttpModule
 	{
+#if NET_2_0
+		AuthenticationSection _config = null;
+#else
+		AuthConfig _config = null;
+#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public FormsAuthenticationModule ()
 		{
@@ -52,6 +57,11 @@ namespace System.Web.Security
 		{
 			app.AuthenticateRequest += new EventHandler (OnAuthenticateRequest);
 			app.EndRequest += new EventHandler (OnEndRequest);
+#if NET_2_0
+			_config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
+#else
+			_config = (AuthConfig) app.Context.GetConfig ("system.web/authentication");
+#endif
 		}
 
 		void OnAuthenticateRequest (object sender, EventArgs args)
@@ -64,26 +74,20 @@ namespace System.Web.Security
 			string loginPage;
 			bool slidingExpiration;
 
-#if NET_2_0
-			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
-#else
-			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-#endif
-
-			if (config == null || config.Mode != AuthenticationMode.Forms) {
+			if (_config == null || _config.Mode != AuthenticationMode.Forms) {
 				return;
 			}
 
 #if NET_2_0
-			cookieName = config.Forms.Name;
-			cookiePath = config.Forms.Path;
-			loginPage = config.Forms.LoginUrl;
-			slidingExpiration = config.Forms.SlidingExpiration;
+			cookieName = _config.Forms.Name;
+			cookiePath = _config.Forms.Path;
+			loginPage = _config.Forms.LoginUrl;
+			slidingExpiration = _config.Forms.SlidingExpiration;
 #else
-			cookieName = config.CookieName;
-			cookiePath = config.CookiePath;
-			loginPage = config.LoginUrl;
-			slidingExpiration = config.SlidingExpiration;
+			cookieName = _config.CookieName;
+			cookiePath = _config.CookiePath;
+			loginPage = _config.LoginUrl;
+			slidingExpiration = _config.SlidingExpiration;
 #endif
 
 			string reqPath = "";
@@ -154,13 +158,11 @@ namespace System.Web.Security
 
 			string loginPage;
 #if NET_2_0
-			AuthenticationSection config = (AuthenticationSection) WebConfigurationManager.GetSection ("system.web/authentication");
-			loginPage = config.Forms.LoginUrl;
+			loginPage = _config.Forms.LoginUrl;
 #else
-			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-			loginPage = config.LoginUrl;
+			loginPage = _config.LoginUrl;
 #endif
-			if (config == null || config.Mode != AuthenticationMode.Forms)
+			if (_config == null || _config.Mode != AuthenticationMode.Forms)
 				return;
 
 			StringBuilder login = new StringBuilder ();

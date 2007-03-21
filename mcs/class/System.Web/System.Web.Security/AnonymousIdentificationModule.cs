@@ -110,7 +110,20 @@ namespace System.Web.Security {
 		{
 			get
 			{
+#if TARGET_JVM
+				AnonymousIdentificationSection config = (AnonymousIdentificationSection) AppDomain.CurrentDomain.GetData ("Anonymous.Config");
+				if (config == null) {
+					lock (typeof (AnonymousIdentificationModule)) {
+						config = (AnonymousIdentificationSection) AppDomain.CurrentDomain.GetData ("Anonymous.Config");
+						if (config == null)
+							config = (AnonymousIdentificationSection) WebConfigurationManager.GetSection ("system.web/anonymousIdentification");
+						AppDomain.CurrentDomain.SetData ("Anonymous.Config", config);
+					}
+				}
+				return config;
+#else
 				return (AnonymousIdentificationSection) WebConfigurationManager.GetSection ("system.web/anonymousIdentification");
+#endif
 			}
 		}
 	}

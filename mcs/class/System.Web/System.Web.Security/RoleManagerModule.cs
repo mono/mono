@@ -38,6 +38,8 @@ using System.Web.Configuration;
 
 namespace System.Web.Security {
 	public sealed class RoleManagerModule : IHttpModule {
+		RoleManagerSection _config = null;
+
 		public event RoleManagerEventHandler GetRoles;
 
 		public void Dispose ()
@@ -46,23 +48,21 @@ namespace System.Web.Security {
 
 		void ClearCookie (HttpApplication app, string cookieName)
 		{
-			RoleManagerSection config = (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
-			HttpCookie clearCookie = new HttpCookie (config.CookieName, "");
+			HttpCookie clearCookie = new HttpCookie (_config.CookieName, "");
 
-			clearCookie.Path = config.CookiePath;
+			clearCookie.Path = _config.CookiePath;
 			clearCookie.Expires = DateTime.MinValue;
-			clearCookie.Domain = config.Domain;
-			clearCookie.Secure = config.CookieRequireSSL;
+			clearCookie.Domain = _config.Domain;
+			clearCookie.Secure = _config.CookieRequireSSL;
 			app.Response.SetCookie (clearCookie);
 		}
 
 		void OnPostAuthenticateRequest (object sender, EventArgs args)
 		{
 			HttpApplication app = (HttpApplication)sender;
-			RoleManagerSection config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 
 			/* if we're disabled, bail out early */
-			if (!config.Enabled)
+			if (!_config.Enabled)
 				return;
 
 			/* allow the user to populate the Role */
@@ -77,16 +77,16 @@ namespace System.Web.Security {
 
 			RolePrincipal principal;
 
-			HttpCookie cookie = app.Request.Cookies[config.CookieName];
+			HttpCookie cookie = app.Request.Cookies [_config.CookieName];
 
 			IIdentity currentIdentity = app.Context.User.Identity;
 			if (app.Request.IsAuthenticated) {
 				if (cookie != null) {
-					if (!config.CacheRolesInCookie)
+					if (!_config.CacheRolesInCookie)
 						cookie = null;
-					else if (config.CookieRequireSSL && !app.Request.IsSecureConnection) {
+					else if (_config.CookieRequireSSL && !app.Request.IsSecureConnection) {
 						cookie = null;
-						ClearCookie (app, config.CookieName);
+						ClearCookie (app, _config.CookieName);
 					}
 						
 				}
@@ -100,7 +100,7 @@ namespace System.Web.Security {
 				/* anonymous request */
 
 				if (cookie != null) {
-					ClearCookie (app, config.CookieName);
+					ClearCookie (app, _config.CookieName);
 				}
 
 				principal = new RolePrincipal (currentIdentity);
@@ -113,11 +113,10 @@ namespace System.Web.Security {
 		void OnEndRequest (object sender, EventArgs args)
 		{
 			HttpApplication app = (HttpApplication)sender;
-			RoleManagerSection config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 
 			/* if we're not enabled or configured to cache
 			 * cookies, bail out */
-			if (!config.Enabled || !config.CacheRolesInCookie)
+			if (!_config.Enabled || !_config.CacheRolesInCookie)
 				return;
 
 			/* if the user isn't authenticated, bail
@@ -128,7 +127,7 @@ namespace System.Web.Security {
 			/* if the configuration requires ssl for
 			 * cookies and we're not on an ssl connection,
 			 * bail out */
-			if (config.CookieRequireSSL && !app.Request.IsSecureConnection)
+			if (_config.CookieRequireSSL && !app.Request.IsSecureConnection)
 				return;
 
 			RolePrincipal principal = app.Context.User as RolePrincipal;
@@ -140,19 +139,19 @@ namespace System.Web.Security {
 
 			string ticket = principal.ToEncryptedTicket ();
 			if (ticket == null || ticket.Length > 4096) {
-				ClearCookie (app, config.CookieName);
+				ClearCookie (app, _config.CookieName);
 				return;
 			}
 
-			HttpCookie cookie = new HttpCookie (config.CookieName, ticket);
+			HttpCookie cookie = new HttpCookie (_config.CookieName, ticket);
 
 			cookie.HttpOnly = true;
-			if (!string.IsNullOrEmpty (config.Domain))
-				cookie.Domain = config.Domain;
-			if (config.CookieRequireSSL)
+			if (!string.IsNullOrEmpty (_config.Domain))
+				cookie.Domain = _config.Domain;
+			if (_config.CookieRequireSSL)
 				cookie.Secure = true;
-			if (config.CookiePath.Length > 1) // more than '/'
-				cookie.Path = config.CookiePath;
+			if (_config.CookiePath.Length > 1) // more than '/'
+				cookie.Path = _config.CookiePath;
 			app.Response.SetCookie (cookie);
 		}
 
@@ -160,6 +159,8 @@ namespace System.Web.Security {
 		{
 			app.PostAuthenticateRequest += OnPostAuthenticateRequest;
 			app.EndRequest += OnEndRequest;
+
+			_config = (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
 	}
 }
