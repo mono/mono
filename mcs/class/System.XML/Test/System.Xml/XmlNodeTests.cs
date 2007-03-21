@@ -426,7 +426,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Ignore ("MS.NET has a bug; it fails to return nodes in document order.")]
+		[Ignore ("MS.NET has a bug; it does not return nodes in document order.")]
 		public void SelectNodes2 ()
 		{
 			// This test is done in this class since it tests only XmlDocumentNavigator.
