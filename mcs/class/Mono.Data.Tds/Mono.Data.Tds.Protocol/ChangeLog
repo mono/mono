@@ -1,3 +1,8 @@
+2007-03-21  Nagappan A  <anagappan@novell.com>
+
+	* Tds70.cs (BuildParameters, FormatParameter): Include @ before
+	parameter name, if doesnot exist.
+
 2006-07-18  Dean Brettle <dean@brettle.com>
 
 	* Tds70.cs : Fixed bug in FormatParameter() which caused 
