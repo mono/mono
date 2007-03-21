@@ -1,3 +1,8 @@
+2007-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScrollableControl.cs: Add implicit controls with AddRangeImplicit
+	to save some re-layouts.
+
 2007-03-21  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: In ProcessKeys returns false when key is not processed.

@@ -574,7 +574,7 @@ namespace System.Windows.Forms {
 		protected override void OnVisibleChanged(EventArgs e) {
 			if (Visible) {
 				UpdateChildrenZOrder ();
-				PerformLayout();
+				PerformLayout(this, "Visible");
 			}
 			base.OnVisibleChanged(e);
 		}
@@ -829,9 +829,7 @@ namespace System.Windows.Forms {
 
 		private void AddScrollbars (object o, EventArgs e)
 		{
-			Controls.AddImplicit (hscrollbar);
-			Controls.AddImplicit (vscrollbar);
-			Controls.AddImplicit (sizegrip);
+			Controls.AddRangeImplicit (new Control[] {hscrollbar, vscrollbar, sizegrip});
 			HandleCreated -= new EventHandler (AddScrollbars);
 		}
 
