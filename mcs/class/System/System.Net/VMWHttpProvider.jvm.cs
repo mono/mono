@@ -14,12 +14,13 @@ namespace System.Net
 	/// </summary>
 	internal class VMWHttpProvider : HttpProvider
 	{
-		protected static HttpClient _client;     //todo init it in static constructor
+		protected static HttpClient _sclient;
 		protected static HttpStateCache _stateCache = new HttpStateCache();
 
 		protected static object LOCK_OBJECT = new object();
 		
-		
+		protected HttpClient _client;
+		protected bool _disableHttpConnectionPooling = false;
 
 		protected HttpMethod _method;
 		protected HttpState _state;
@@ -57,6 +58,11 @@ namespace System.Net
 		}
 		public VMWHttpProvider(Uri uri) : base (uri)
 		{
+			string s = System.Configuration.ConfigurationSettings.AppSettings["disableHttpConnectionPooling"];
+			if (s != null) 
+			{
+				_disableHttpConnectionPooling = bool.Parse(s);
+			}
 		}
 
 		internal override ServicePoint ServicePoint
@@ -365,10 +371,14 @@ namespace System.Net
 			
 		}
 
-		private static void InitClient()
+		private void InitClient()
 		{
 			lock(LOCK_OBJECT)
 			{
+				if((!_disableHttpConnectionPooling) && (_client == null))
+				{
+					_client = _sclient;
+				}
 				if(_client == null)
 				{
 					mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager manager =
@@ -384,6 +394,10 @@ namespace System.Net
 					_client.getParams().setParameter(HttpClientParams.CONNECTION_MANAGER_TIMEOUT, new java.lang.Long(30000));
 					_client.getParams().setParameter(HttpClientParams.USER_AGENT, 
 							"VMW4J HttpClient (based on Jakarta Commons HttpClient)");
+					if(!_disableHttpConnectionPooling) 
+					{
+						_sclient = _client;
+					}
 				}
 			}
 		}
