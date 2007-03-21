@@ -1,3 +1,8 @@
+2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* BaseHttpServlet.cs: fixed service, should not update context
+	in AppDomain on every request
+
 2007-03-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ServletWorkerRequest.jvm.cs: fixed ctor, adding welcome page to

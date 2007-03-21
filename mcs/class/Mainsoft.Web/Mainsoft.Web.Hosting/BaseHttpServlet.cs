@@ -50,6 +50,7 @@ namespace Mainsoft.Web.Hosting
 		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
 		bool _performedInit = false;
+		bool _appVirDirInited = false;
 		Field _derbyContextService;
 		java.lang.ThreadLocal _derbyLocal;
 
@@ -159,8 +160,11 @@ namespace Mainsoft.Web.Hosting
 			{
 				// Very important - to update Virtual Path!!!
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
-				servletDomain.SetData(IAppDomainConfig.APP_VIRT_DIR, req.getContextPath());
-				servletDomain.SetData(".hostingVirtualPath", req.getContextPath());
+				if (!_appVirDirInited) {
+					servletDomain.SetData (IAppDomainConfig.APP_VIRT_DIR, req.getContextPath ());
+					servletDomain.SetData (".hostingVirtualPath", req.getContextPath ());
+					_appVirDirInited = true;
+				}
 
 				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
