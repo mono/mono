@@ -54,8 +54,8 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\framework\
-set JAVA_HOME=%VMW_HOME%\jre6
+set JGAC_PATH=%VMW_HOME%\java_refs\framework\
+set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -63,18 +63,18 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Data.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
-rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\msbase.jar
-rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\mssqlserver.jar
-rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\msutil.jar
+rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\msbase.jar
+rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\mssqlserver.jar
+rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\msutil.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\sqljdbc.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\sqljdbc.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\postgresql-8.0.309.jdbc3.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\postgresql-8.0.309.jdbc3.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\ojdbc14.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\ojdbc14.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\db2jcc.jar
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\db2jcc_license_cu.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\db2jcc.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\java_refs\jdbc\db2jcc_license_cu.jar
 
 set NUNIT_OPTIONS=/exclude=NotWorking
 

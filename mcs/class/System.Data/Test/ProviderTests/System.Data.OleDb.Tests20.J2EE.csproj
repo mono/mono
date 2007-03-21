@@ -248,7 +248,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.Xml.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\framework\mscorlib.jar" />
+      <UserProperties REFS-JarPath-rt="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
