@@ -40,6 +40,7 @@ namespace System.Windows.Forms
 	public class ToolStripPanel : ContainerControl, IComponent, IDisposable, IBindableComponent, IDropTarget
 	{
 		private bool done_first_layout;
+		private LayoutEngine layout_engine;
 		private bool locked;
 		private Orientation orientation;
 		private ToolStripRenderer renderer;
@@ -102,7 +103,12 @@ namespace System.Windows.Forms
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return new Layout.FlowLayout (); }
+			get { 
+				if (this.layout_engine == null)
+					this.layout_engine = new FlowLayout ();
+					
+				return this.layout_engine;
+			}
 		}
 
 		[Browsable (false)]

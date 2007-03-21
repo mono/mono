@@ -71,7 +71,12 @@ namespace System.Windows.Forms
 		}
 
 		public LayoutEngine LayoutEngine {
-			get { return this.layout_engine; }
+			get { 
+				if (this.layout_engine == null)
+					this.layout_engine = new DefaultLayout ();
+					
+				return this.layout_engine;
+			}
 		}
 
 		public Padding Margin {

@@ -1,3 +1,8 @@
+2007-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlowLayoutSettings.cs, ToolStrip.cs, ToolStripPanel.cs,
+	ToolStripPanelRow.cs: Lazy instantiate the LayoutEngine.
+
 2007-03-21  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : disable selection update for non-left button clicks

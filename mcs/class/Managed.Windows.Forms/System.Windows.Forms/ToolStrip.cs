@@ -92,7 +92,6 @@ namespace System.Windows.Forms
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
 			this.image_scaling_size = new Size (16, 16);
-			this.layout_engine = new ToolStripSplitStackLayout ();
 			this.layout_style = ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.orientation = Orientation.Horizontal;
 			if (!(this is ToolStripDropDown))
@@ -311,7 +310,12 @@ namespace System.Windows.Forms
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return this.layout_engine;; }
+			get { 
+				 if (layout_engine == null)
+					this.layout_engine = new ToolStripSplitStackLayout ();
+					
+				 return this.layout_engine;
+			}
 		}
 
 		[Browsable (false)]

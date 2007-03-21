@@ -43,7 +43,6 @@ namespace System.Windows.Forms
 
 		internal FlowLayoutSettings ()
 		{
-			layout_engine = new FlowLayout ();
 			flow_breaks = new Dictionary<object, bool> ();
 			wrap_contents = true;
 			flow_direction = FlowDirection.LeftToRight;
@@ -57,7 +56,12 @@ namespace System.Windows.Forms
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return layout_engine; }
+			get { 
+				if (this.layout_engine == null)
+					this.layout_engine = new FlowLayout ();
+					
+				return this.layout_engine;
+			}
 		}
 
 		[DefaultValue (true)]
