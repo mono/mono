@@ -1,4 +1,9 @@
 2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpContext.jvm.cs, HttpRuntime.cs: cached instance of HttpRuntime
+	in context in addition to AppDomain
+
+2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* HttpCookie.cs, HttpCookieCollection.cs: used OrdinalIgnoreCase
 	StringComparer for cookies and values collections 

@@ -64,5 +64,15 @@ namespace System.Web {
 		internal HttpServletResponse ServletResponse {
 			get { return (HttpServletResponse)GetWorkerService(typeof(HttpServletResponse)); }
 		}
+
+		HttpRuntime _httpRuntime = null;
+		internal HttpRuntime HttpRuntimeInstance {
+			get
+			{
+				if (_httpRuntime == null)
+					_httpRuntime = (HttpRuntime) AppDomain.CurrentDomain.GetData ("HttpRuntime");
+				return _httpRuntime;
+			}
+		}
 	}
 }

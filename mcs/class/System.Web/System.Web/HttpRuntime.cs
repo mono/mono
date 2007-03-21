@@ -75,18 +75,28 @@ namespace System.Web {
 			_cache = new Cache ();
 		}
 
-		static private HttpRuntime _runtime {
+		static private HttpRuntime _runtimeInstance {
 			get {
-				HttpRuntime runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+				HttpRuntime runtime = (HttpRuntime) AppDomain.CurrentDomain.GetData ("HttpRuntime");
 				if (runtime == null)
-					lock (typeof(HttpRuntime)) {
-						runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+					lock (typeof (HttpRuntime)) {
+						runtime = (HttpRuntime) AppDomain.CurrentDomain.GetData ("HttpRuntime");
 						if (runtime == null) {
-							runtime = new HttpRuntime();
-							AppDomain.CurrentDomain.SetData("HttpRuntime", runtime);
+							runtime = new HttpRuntime ();
+							AppDomain.CurrentDomain.SetData ("HttpRuntime", runtime);
 						}
 					}
 				return runtime;
+			}
+		}
+		static private HttpRuntime _runtime
+		{
+			get
+			{
+				if (HttpContext.Current != null)
+					return HttpContext.Current.HttpRuntimeInstance;
+				else
+					return _runtimeInstance;
 			}
 		}
 #else
