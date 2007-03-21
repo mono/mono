@@ -137,6 +137,9 @@ namespace System.Web {
 		IPrincipal prev_user;
 #if NET_2_0
 		static Exception initialization_exception;
+		HttpHandlersSection httpHandlersSection;
+#else
+		HandlerFactoryConfiguration factory_config;
 #endif
 
 		//
@@ -186,6 +189,12 @@ namespace System.Web {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
 				}
+#endif
+
+#if NET_2_0
+				httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
+#else
+				factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 #endif
 			}
 		}
@@ -1128,10 +1137,8 @@ namespace System.Web {
 			
 			IHttpHandler handler = null;
 #if NET_2_0
-			HttpHandlersSection section = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
-			object o = section.LocateHandler (verb, url);
+			object o = httpHandlersSection.LocateHandler (verb, url);
 #else
-			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 			object o = factory_config.LocateHandler (verb, url);
 #endif
 
