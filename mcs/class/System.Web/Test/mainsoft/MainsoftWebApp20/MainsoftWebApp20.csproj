@@ -71,6 +71,7 @@
     <Content Include="Bluehills.jpg" />
     <Content Include="CallbackTest1.aspx" />
     <Content Include="CallbackTest2.aspx" />
+    <Content Include="DataGrid.aspx" />
     <Content Include="DetailsViewDataActions.aspx" />
     <Content Include="DetailsViewProperties1.aspx" />
     <Content Include="DetailsViewTemplates.aspx" />
