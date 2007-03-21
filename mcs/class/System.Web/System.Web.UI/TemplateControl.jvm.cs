@@ -185,8 +185,10 @@ namespace System.Web.UI {
 					type = GetType ();
 					do {
 						method = type.GetMethod (methodName, bflags, null, NoParams, null);
-						if (method != null)
+						if (method != null) {
+							noParams = true;
 							break;
+						}
 
 						type = type.BaseType;
 					}
