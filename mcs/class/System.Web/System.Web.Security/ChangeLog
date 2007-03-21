@@ -1,5 +1,9 @@
 2007-03-21 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* AnonymousIdentificationModule.cs: optimized Config property
+
+2007-03-21 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* AnonymousIdentificationModule.cs: added configuration section caching
 	to AppDomain for TARGET_JVM
 	* RoleManagerModule.cs:

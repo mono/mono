@@ -106,11 +106,11 @@ namespace System.Web.Security {
 			}
 		}
 
+#if TARGET_JVM
 		static AnonymousIdentificationSection Config
 		{
 			get
 			{
-#if TARGET_JVM
 				AnonymousIdentificationSection config = (AnonymousIdentificationSection) AppDomain.CurrentDomain.GetData ("Anonymous.Config");
 				if (config == null) {
 					lock (typeof (AnonymousIdentificationModule)) {
@@ -121,11 +121,11 @@ namespace System.Web.Security {
 					}
 				}
 				return config;
-#else
-				return (AnonymousIdentificationSection) WebConfigurationManager.GetSection ("system.web/anonymousIdentification");
-#endif
 			}
 		}
+#else
+		static AnonymousIdentificationSection Config = (AnonymousIdentificationSection) WebConfigurationManager.GetSection ("system.web/anonymousIdentification");
+#endif
 	}
 }
 #endif
