@@ -1,4 +1,4 @@
-// gcs0111-2.cs: `Blah.I.M<T>(int)' is already defined. Rename this member or use different parameter types
+// gcs0111-2.cs: `Blah.I.M<U>(int)' is already defined. Rename this member or use different parameter types
 // Line : 12
 
 public interface I

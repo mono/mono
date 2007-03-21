@@ -1,4 +1,13 @@
 2007-03-21  Bill Holmes  <billholmes54@gmail.com>
+	* gcs0111-2.cs:
+	With the new member ordering change in class.cs, the error message
+	for this test has changed and now matches csc output.
+
+	For Defect #79434
+
+	All code is contributed under the MIT/X11 license.
+
+2007-03-21  Bill Holmes  <billholmes54@gmail.com>
 
 	* cs3005-6.cs
 	* cs3005-15.cs

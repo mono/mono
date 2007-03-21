@@ -1,3 +1,28 @@
+2007-03-20  Bill Holmes  <billholmes54@gmail.com>
+	* class.cs: 
+	Added 2 MemberCoreArrayList objects, ordered_explicit_member_list and
+	ordered_member_list, to TypeBuilder to store members to be defined
+	in the order they were parsed in.
+	- ordered_explicit_member_list contains all properties indexers
+	  and methods that are defined as explicit implementation of an
+	  interface or base class.
+	- ordered_member_list contains all properties indexers and methods
+	  that are not defined as explicit implementation of an interface
+	  or base class.
+
+	Removed MethodArrayList and IndexerArrayList from TypeBuilder.  The 
+	functionality in these removed classes has been replaced with 
+	ComputeIndexerName, EmitIndexerName, HasEqualss, HasGetHashCode, and 
+	CheckEqualsAndGetHashCode members defined and called in the TypeBuilderClass.
+
+	Adding CheckForDuplications to PropertyBase.PropertyMethod and calls
+ 	to CheckForDuplications inside GetMethod and SetMethod Define Method
+ 	to handle method property and indexer name conflicts.
+
+	Fixes #79434
+
+	All code is contributed under the MIT/X11 license.
+
 2007-03-20  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.Interfaces): Removed; they're now

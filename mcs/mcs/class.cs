@@ -88,130 +88,6 @@ namespace Mono.CSharp {
 			}
  		}
 
- 		public class MethodArrayList : MemberCoreArrayList
- 		{
- 			[Flags]
- 			enum CachedMethods {
- 				Equals			= 1,
- 				GetHashCode		= 1 << 1
- 			}
- 
- 			CachedMethods cached_method;
-			TypeContainer container;
-
-			public MethodArrayList (TypeContainer container)
-			{
-				this.container = container;
-			}
- 
- 			/// <summary>
- 			/// Method container contains Equals method
- 			/// </summary>
- 			public bool HasEquals {
- 				set {
- 					cached_method |= CachedMethods.Equals;
- 				}
- 
- 				get {
- 					return (cached_method & CachedMethods.Equals) != 0;
- 				}
- 			}
- 
- 			/// <summary>
- 			/// Method container contains GetHashCode method
- 			/// </summary>
- 			public bool HasGetHashCode {
- 				set {
- 					cached_method |= CachedMethods.GetHashCode;
- 				}
- 
- 				get {
- 					return (cached_method & CachedMethods.GetHashCode) != 0;
- 				}
- 			}
- 
- 			public override void DefineContainerMembers ()
- 			{
- 				base.DefineContainerMembers ();
- 
- 				if (HasEquals && !HasGetHashCode) {
- 					Report.Warning (659, 3, container.Location, "`{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
- 				}
- 			}
- 		}
-
-		public sealed class IndexerArrayList : MemberCoreArrayList
-		{
-			/// <summary>
-			/// The indexer name for this container
-			/// </summary>
- 			public string IndexerName = DefaultIndexerName;
-
-			bool seen_normal_indexers = false;
-
-			TypeContainer container;
-
-			public IndexerArrayList (TypeContainer container)
-			{
-				this.container = container;
-			}
-
-			/// <summary>
-			/// Defines the indexers, and also verifies that the IndexerNameAttribute in the
-			/// class is consistent.  Either it is `Item' or it is the name defined by all the
-			/// indexers with the `IndexerName' attribute.
-			///
-			/// Turns out that the IndexerNameAttribute is applied to each indexer,
-			/// but it is never emitted, instead a DefaultMember attribute is attached
-			/// to the class.
-			/// </summary>
-			public override void DefineContainerMembers()
-			{
-				base.DefineContainerMembers ();
-
-				string class_indexer_name = null;
-
-				//
-				// If there's both an explicit and an implicit interface implementation, the
-				// explicit one actually implements the interface while the other one is just
-				// a normal indexer.  See bug #37714.
-				//
-
-				// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
-				foreach (Indexer i in this) {
-					if (i.InterfaceType != null) {
-						if (seen_normal_indexers)
-							throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
-						continue;
-					}
-
-					seen_normal_indexers = true;
-
-					if (class_indexer_name == null) {
-						class_indexer_name = i.ShortName;
-						continue;
-					}
-
-					if (i.ShortName != class_indexer_name)
-						Report.Error (668, i.Location, "Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type");
-				}
-
-				if (class_indexer_name != null)
-					IndexerName = class_indexer_name;
-			}
-
-			public override void Emit ()
-			{
-				base.Emit ();
-
-				if (!seen_normal_indexers)
-					return;
-
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
-				container.TypeBuilder.SetCustomAttribute (cb);
-			}
-		}
-
  		public class OperatorArrayList: MemberCoreArrayList
 		{
 			TypeContainer container;
@@ -372,10 +248,10 @@ namespace Mono.CSharp {
 				}
 
  				if (has_equality_or_inequality && (RootContext.WarningLevel > 2)) {
- 					if (container.Methods == null || !container.Methods.HasEquals)
+ 					if (container.Methods == null || !container.HasEquals)
  						Report.Warning (660, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
  
- 					if (container.Methods == null || !container.Methods.HasGetHashCode)
+ 					if (container.Methods == null || !container.HasGetHashCode)
  						Report.Warning (661, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.GetHashCode()", container.GetSignatureForError ());
  				}
 			}
@@ -387,12 +263,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		[Flags]
+		enum CachedMethods {
+			Equals			= 1,
+			GetHashCode		= 1 << 1
+		}
+
 
 		// Whether this is a struct, class or interface
 		public readonly Kind Kind;
 
 		// Holds a list of classes and structures
 		protected ArrayList types;
+
+		MemberCoreArrayList ordered_explicit_member_list;
+		MemberCoreArrayList ordered_member_list;
 
 		// Holds the list of properties
 		MemberCoreArrayList properties;
@@ -416,13 +301,13 @@ namespace Mono.CSharp {
 		MemberCoreArrayList constants;
 
 		// Holds the methods.
-		MethodArrayList methods;
+		MemberCoreArrayList methods;
 
 		// Holds the events
 		protected MemberCoreArrayList events;
 
 		// Holds the indexers
-		IndexerArrayList indexers;
+		ArrayList indexers;
 
 		// Holds the operators
 		MemberCoreArrayList operators;
@@ -467,6 +352,11 @@ namespace Mono.CSharp {
 		MemberCache member_cache;
 
 		public const string DefaultIndexerName = "Item";
+
+		private bool seen_normal_indexers = false;
+		private string indexer_name = DefaultIndexerName;
+
+		private CachedMethods cached_method;
 
 #if GMCS_SOURCE
 		GenericTypeParameterBuilder[] gen_params;
@@ -603,18 +493,36 @@ namespace Mono.CSharp {
 			delegates.Add (d);
 		}
 
+		private void AddMemberToList (MemberCore mc, ArrayList alist, bool isexplicit)
+		{
+			if (ordered_explicit_member_list == null)  {
+				ordered_explicit_member_list = new MemberCoreArrayList ();
+				ordered_member_list = new MemberCoreArrayList ();
+			}
+
+			if(isexplicit) {
+				ordered_explicit_member_list.Add (mc);
+				alist.Insert (0, mc);
+			} 
+			else {
+				ordered_member_list.Add (mc);
+				alist.Add (mc);
+			}
+
+		}
+		
 		public void AddMethod (Method method)
 		{
 			if (!AddMember (method))
 				return;
 
 			if (methods == null)
-				methods = new MethodArrayList (this);
-			
-			if (method.MemberName.Left != null)
-				methods.Insert (0, method);
+				methods = new MemberCoreArrayList ();
+
+			if (method.MemberName.Left != null) 
+				AddMemberToList (method, methods, true);
 			else 
-				methods.Add (method);
+				AddMemberToList (method, methods, false);
 		}
 
 		//
@@ -628,9 +536,9 @@ namespace Mono.CSharp {
 				return;
 
 			if (methods == null)
-				methods = new MethodArrayList (this);
+				methods = new MemberCoreArrayList ();
 
-			methods.Add (method);
+			AddMemberToList (method, methods, false);
 		}
 
 		public void AddConstructor (Constructor c)
@@ -710,9 +618,9 @@ namespace Mono.CSharp {
 				properties = new MemberCoreArrayList ();
 
 			if (prop.MemberName.Left != null)
-				properties.Insert (0, prop);
-			else
-				properties.Add (prop);
+				AddMemberToList (prop, properties, true);
+			else 
+				AddMemberToList (prop, properties, false);
 		}
 
 		public void AddEvent (Event e)
@@ -740,12 +648,12 @@ namespace Mono.CSharp {
 		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
-				indexers = new IndexerArrayList (this);
+				indexers = new ArrayList ();
 
 			if (i.IsExplicitImpl)
-				indexers.Insert (0, i);
-			else
-				indexers.Add (i);
+				AddMemberToList (i, indexers, true);
+			else 
+				AddMemberToList (i, indexers, false);
 		}
 
 		public void AddOperator (Operator op)
@@ -793,7 +701,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public MethodArrayList Methods {
+		public MemberCoreArrayList Methods {
 			get {
 				return methods;
 			}
@@ -877,7 +785,7 @@ namespace Mono.CSharp {
 
 		public string IndexerName {
 			get {
-				return indexers == null ? DefaultIndexerName : indexers.IndexerName;
+				return indexers == null ? DefaultIndexerName : indexer_name;
 			}
 		}
 
@@ -1631,12 +1539,15 @@ namespace Mono.CSharp {
 			//
 			DefineContainerMembers (instance_constructors);
 		
-			DefineContainerMembers (properties);
 			DefineContainerMembers (events);
-			DefineContainerMembers (indexers);
-			DefineContainerMembers (methods);
+			DefineContainerMembers (ordered_explicit_member_list);
+			DefineContainerMembers (ordered_member_list);
+
 			DefineContainerMembers (operators);
 			DefineContainerMembers (delegates);
+
+			ComputeIndexerName();
+			CheckEqualsAndGetHashCode();
 
 			if (CurrentType != null) {
 				GenericType = CurrentType;
@@ -1657,6 +1568,61 @@ namespace Mono.CSharp {
 		{
 			if (mcal != null)
 				mcal.DefineContainerMembers ();
+		}
+		
+		protected virtual void ComputeIndexerName ()
+		{
+			if (indexers == null)
+				return;
+
+			string class_indexer_name = null;
+
+			//
+			// If there's both an explicit and an implicit interface implementation, the
+			// explicit one actually implements the interface while the other one is just
+			// a normal indexer.  See bug #37714.
+			//
+
+			// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
+			foreach (Indexer i in indexers) {
+				if (i.InterfaceType != null) {
+					if (seen_normal_indexers)
+						throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
+					continue;
+				}
+
+				seen_normal_indexers = true;
+
+				if (class_indexer_name == null) {
+					class_indexer_name = i.ShortName;
+					continue;
+				}
+
+				if (i.ShortName != class_indexer_name)
+					Report.Error (668, i.Location, "Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type");
+			}
+
+			if (class_indexer_name != null)
+				indexer_name = class_indexer_name;
+		}
+
+		protected virtual void EmitIndexerName ()
+		{
+			if (!seen_normal_indexers)
+				return;
+
+			CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
+			TypeBuilder.SetCustomAttribute (cb);
+		}
+
+		protected virtual void CheckEqualsAndGetHashCode ()
+		{
+			if (methods == null)
+				return;
+
+			if (HasEquals && !HasGetHashCode) {
+				Report.Warning (659, 3, this.Location, "`{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", this.GetSignatureForError ());
+			}
 		}
 
 		public override bool Define ()
@@ -2363,8 +2329,10 @@ namespace Mono.CSharp {
 				foreach (Property p in properties)
 					p.Emit ();
 
-			if (indexers != null){
-				indexers.Emit ();
+			if (indexers != null) {
+				foreach (Indexer indx in indexers)
+					indx.Emit ();
+				EmitIndexerName ();
 			}
 			
 			if (fields != null)
@@ -2442,6 +2410,8 @@ namespace Mono.CSharp {
 			initialized_fields = null;
 			initialized_static_fields = null;
 			constants = null;
+			ordered_explicit_member_list = null;
+			ordered_member_list = null;
 			methods = null;
 			events = null;
 			indexers = null;
@@ -2642,12 +2612,30 @@ namespace Mono.CSharp {
 
 		public void Mark_HasEquals ()
 		{
-			Methods.HasEquals = true;
+			cached_method |= CachedMethods.Equals;
 		}
 
 		public void Mark_HasGetHashCode ()
 		{
-			Methods.HasGetHashCode = true;
+			cached_method |= CachedMethods.GetHashCode;
+		}
+
+		/// <summary>
+		/// Method container contains Equals method
+		/// </summary>
+		public bool HasEquals {
+			get {
+				return (cached_method & CachedMethods.Equals) != 0;
+			}
+		}
+ 
+		/// <summary>
+		/// Method container contains GetHashCode method
+		/// </summary>
+		public bool HasGetHashCode {
+			get {
+				return (cached_method & CachedMethods.GetHashCode) != 0;
+			}
 		}
 
 		//
@@ -6335,7 +6323,7 @@ namespace Mono.CSharp {
 
 			Type[] param_types = method.ParameterTypes;
 
-			if (param_types.Length != ParameterTypes.Length)
+			if (param_types == null || param_types.Length != ParameterTypes.Length)
 				return false;
 
 			for (int i = 0; i < param_types.Length; i++)
@@ -6399,6 +6387,12 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
+				if (!CheckForDuplications ())
+					return null;
+
+				if (IsDummy)
+					return null;
+				
 				base.Define (parent);
 				
 				method_data = new MethodData (method, ModFlags, flags, this);
@@ -6474,6 +6468,9 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
+				if (!CheckForDuplications ())
+					return null;
+				
 				if (IsDummy)
 					return null;
 
@@ -6657,6 +6654,25 @@ namespace Mono.CSharp {
 				caching_flags |= Flags.TestMethodDuplication;
 				return true;
 			}
+
+			protected bool CheckForDuplications () 
+			{
+				if ((caching_flags & Flags.TestMethodDuplication) == 0)
+					return true;
+				
+				ArrayList ar = Parent.PartialContainer.Methods;
+				if (ar != null) {
+					int arLen = ar.Count;
+   					
+					for (int i = 0; i < arLen; i++) {
+						Method m = (Method) ar [i];
+						if (IsDuplicateImplementation (m))
+							return false;
+					}
+				}
+
+				return true;
+			}
 		}
 
 		public PropertyMethod Get, Set;
@@ -6732,20 +6748,17 @@ namespace Mono.CSharp {
 
 		bool DefineGet ()
 		{
-			if (Get.IsDummy)
-				return true;
-
 			GetBuilder = Get.Define (Parent);
-			return GetBuilder != null;
+			return (Get.IsDummy) ? true : GetBuilder != null;
 		}
 
 		bool DefineSet (bool define)
 		{
-			if (!define || Set.IsDummy)
+			if (!define)
 				return true;
 
 			SetBuilder = Set.Define (Parent);
-			return SetBuilder != null;
+			return (Set.IsDummy) ? true : SetBuilder != null;
 		}
 
 		protected bool DefineAccessors ()
