@@ -1,3 +1,8 @@
+2007-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (Reachability): Reorganize slightly, and remove
+	unused properties.
+
 2007-03-20  Bill Holmes  <billholmes54@gmail.com>
 	* class.cs: 
 	Added 2 MemberCoreArrayList objects, ordered_explicit_member_list and

@@ -17,13 +17,6 @@ using System.Diagnostics;
 
 namespace Mono.CSharp
 {
-	public enum TriState : byte {
-		// Never < Sometimes < Always
-		Never,
-		Sometimes,
-		Always
-	}
-
 	// <summary>
 	//   A new instance of this class is created every time a new block is resolved
 	//   and if there's branching in the block's control flow.
@@ -76,11 +69,14 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			TriState barrier;
-
-			public TriState Barrier {
-				get { return barrier; }
+			public enum TriState : byte {
+				// Never < Sometimes < Always
+				Never,
+				Sometimes,
+				Always
 			}
+
+			TriState barrier;
 
 			Reachability (TriState barrier)
 			{
@@ -92,7 +88,7 @@ namespace Mono.CSharp
 				return new Reachability (barrier);
 			}
 
-			public static TriState TriState_Meet (TriState a, TriState b)
+			static TriState TriState_Meet (TriState a, TriState b)
 			{
 				// (1) if both are Never, return Never
 				// (2) if both are Always, return Always
@@ -101,7 +97,7 @@ namespace Mono.CSharp
 				return a == b ? a : TriState.Sometimes;
 			}
 
-			public static TriState TriState_Max (TriState a, TriState b)
+			static TriState TriState_Max (TriState a, TriState b)
 			{
 				return ((byte) a > (byte) b) ? a : b;
 			}
@@ -121,25 +117,8 @@ namespace Mono.CSharp
 				return new Reachability (TriState.Never);
 			}
 
-			TriState Unreachable {
-				get { return barrier; }
-			}
-
-			TriState Reachable {
-				get {
-					TriState unreachable = Unreachable;
-					if (unreachable == TriState.Sometimes)
-						return TriState.Sometimes;
-					return unreachable == TriState.Always ? TriState.Never : TriState.Always;
-				}
-			}
-
-			public bool AlwaysHasBarrier {
-				get { return barrier == TriState.Always; }
-			}
-
 			public bool IsUnreachable {
-				get { return Unreachable == TriState.Always; }
+				get { return barrier == TriState.Always; }
 			}
 
 			public void SetBarrier ()
@@ -161,7 +140,7 @@ namespace Mono.CSharp
 
 			public override string ToString ()
 			{
-				return String.Format ("[{0}:{1}]", ShortName (barrier), ShortName (Reachable));
+				return String.Format ("[{0}]", ShortName (barrier));
 			}
 		}
 
