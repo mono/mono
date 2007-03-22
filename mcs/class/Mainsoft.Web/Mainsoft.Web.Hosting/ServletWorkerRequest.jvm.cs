@@ -334,35 +334,33 @@ namespace Mainsoft.Web.Hosting {
 		public override string MapPath (string virtualPath) {
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
-			int appVirtualPathIndex = virtualPath.IndexOf ('/', 1);
-			string appVirtualPath;
-			if (appVirtualPathIndex < 0) {
-				appVirtualPathIndex = virtualPath.Length;
-				appVirtualPath = String.Empty;
-			}
-			else
-				appVirtualPath = virtualPath.Substring(appVirtualPathIndex);
 
 			ServletConfig config = _HttpServlet.getServletConfig ();			
 
 			string contextPath = GetAppPath ();
-			if (contextPath.Length != appVirtualPathIndex ||
-				string.Compare (contextPath, 0, virtualPath, 0, appVirtualPathIndex, StringComparison.InvariantCultureIgnoreCase) != 0) {
+			if ((virtualPath.Length > contextPath.Length && virtualPath [contextPath.Length] != '/') ||
+				string.Compare (contextPath, 0, virtualPath, 0, contextPath.Length, StringComparison.OrdinalIgnoreCase) != 0) {
 
-				string crossContextPath = virtualPath;
-				if (virtualPath.Length > appVirtualPathIndex)
-					crossContextPath = virtualPath.Remove (appVirtualPathIndex);
-				ServletContext context = config.getServletContext ().getContext (virtualPath);
-				string retVal;
-				if (context == null || ((retVal = context.getRealPath (appVirtualPath)) == null))
-					throw new HttpException (
-						String.Format ("MapPath: Mapping across applications is not allowed. ApplicationPath is '{0}', VirtualPath is '{1}'.",
-						contextPath, virtualPath));
+				for (int appVirtualPathIndex = 0; appVirtualPathIndex > 0 && virtualPath.Length > appVirtualPathIndex; ) {
+					appVirtualPathIndex = virtualPath.IndexOf ('/', appVirtualPathIndex + 1);
+					string crossContextPath = appVirtualPathIndex > 0 ?
+						virtualPath.Remove (appVirtualPathIndex) : virtualPath;
+					ServletContext context = config.getServletContext ().getContext (crossContextPath);
+					if (context != null) {
+						string appVirtualPath = appVirtualPathIndex > 0 ?
+							virtualPath.Substring (appVirtualPathIndex) : String.Empty;
+						return context.getRealPath (appVirtualPath);
+					}
+				}
 
-				return retVal;
+				throw new HttpException (
+					String.Format ("MapPath: Mapping across applications is not allowed. ApplicationPath is '{0}', VirtualPath is '{1}'.",
+					contextPath, virtualPath));
 			}
-			else
-				return J2EEUtils.GetApplicationRealPath (config, appVirtualPath);
+
+			string thisAppVirtualPath = virtualPath.Length > contextPath.Length ? virtualPath.Substring (contextPath.Length) : String.Empty;
+			return J2EEUtils.GetApplicationRealPath (config, thisAppVirtualPath);
+
 		}
 
 		public override void SendResponseFromFile (IntPtr handle, long offset, long length) {
