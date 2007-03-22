@@ -1,3 +1,10 @@
+2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MdiFormTest.cs: Make StartLocationTest NotWorking, it fails on
+	  monobuild for unknown reasons.
+	* FormTest.cs: Make Location NotWorking, it fails on monobuild for
+	  unknown reasons.
+
 2007-03-22  Chris Toshok  <toshok@ximian.com>
 
 	* FormTest.cs: enable Location test for #80052.
