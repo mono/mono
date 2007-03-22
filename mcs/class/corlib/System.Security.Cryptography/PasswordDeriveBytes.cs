@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -242,10 +242,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 			throw new IndexOutOfRangeException ("cb");
 
 		if (state == 0) {
-			state = 1;
 			// it's now impossible to change the HashName, Salt
 			// and IterationCount
 			Reset ();
+			state = 1;
 		}
 
 		byte[] result = new byte [cb];
@@ -298,7 +298,11 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 	public override void Reset () 
 	{
+#if NET_2_0
+		state = 0;
+#else
 		// note: Reset doesn't change state
+#endif
 		position = 0;
 		hashnumber = 0;
 
