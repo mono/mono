@@ -1,3 +1,10 @@
+2007-03-22  Chris Toshok  <toshok@ximian.com>
+
+	* BindingSource.cs (AddNew): partially implement.
+
+	remove a couple of NotImplementedException's
+	to get bug #81148 closed.
+
 2007-03-22  Everaldo Canuto  <everaldo@simios.org>
 
 	[Fixes #80380]

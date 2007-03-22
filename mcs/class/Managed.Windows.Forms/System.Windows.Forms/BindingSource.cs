@@ -39,6 +39,8 @@ namespace System.Windows.Forms {
 		IList, ISupportInitializeNotification, ICollection,
 		IComponent, ICurrencyManagerProvider, IEnumerable 
 	{
+		ISite site;
+
 		IList list;
 		bool list_defaulted;
 
@@ -460,6 +462,21 @@ namespace System.Windows.Forms {
 			    (list is IBindingList && !((IBindingList)list).AllowNew))
 				throw new InvalidOperationException ("Item cannot be added to a read-onlyor fixed-size list.");
 
+			EndEdit ();
+
+			AddingNewEventArgs args = new AddingNewEventArgs ();
+			OnAddingNew (args);
+
+			if (args.NewObject != null) {
+				// XXX verify the type here and make sure it matches our internal list
+				list.Add (args.NewObject);
+				return args.NewObject;
+			}
+
+			// if the list is a IBindingList, try to use IBindingList.AddNew
+			if (list is IBindingList)
+				return ((IBindingList)list).AddNew ();
+
 			throw new NotImplementedException ();
 		}
 
@@ -703,12 +720,10 @@ namespace System.Windows.Forms {
 		
 		void ISupportInitialize.BeginInit ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		void ISupportInitialize.EndInit ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		void IBindingList.AddIndex (PropertyDescriptor property)
@@ -741,8 +756,8 @@ namespace System.Windows.Forms {
 		}
 
 		ISite IComponent.Site {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return site; }
+			set { site = value; }
 		}
 
 		event EventHandler IComponent.Disposed {
