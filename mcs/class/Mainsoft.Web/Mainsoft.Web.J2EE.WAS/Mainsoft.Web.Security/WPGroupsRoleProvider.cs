@@ -37,6 +37,12 @@ using System.Web.Security;
 using System.Text;
 using System.Configuration.Provider;
 
+
+using javax.portlet;
+using javax.servlet.http;
+using vmw.portlet;
+using vmw.j2ee;
+
 namespace Mainsoft.Web.Security
 {
     public class WPGroupsRoleProvider : RoleProvider 
@@ -45,6 +51,8 @@ namespace Mainsoft.Web.Security
         
         private static readonly string PROVIDER_NAME = "WPGroupsRoleProvider";
         private static readonly string DESCRIPTION = "WebSphere Groups Role provider";
+
+        private static readonly string VMW_STORED_IN_SESSION_ROLES = "VMW_CURR_USER_ROLES_";
 
         private string applicationName;
 
@@ -168,9 +176,24 @@ namespace Mainsoft.Web.Security
 
             com.ibm.portal.um.User user = (com.ibm.portal.um.User) users.get(0);
 
-            java.util.List groups = pumaServices.PumaLocator.findGroupsByPrincipal(user, true);
-            return GroupsToStringArray(pumaServices, groups);
+            try
+            {
+                java.util.List groups = pumaServices.PumaLocator.findGroupsByPrincipal(user, true);
+                return GroupsToStringArray(pumaServices, groups);
+            }
+            catch 
+            {
+                if (username != HttpContext.Current.User.Identity.Name)
+                    return new string[0];
 
+                HttpSession session = HttpSession;
+                string[] result = null;
+
+                if (session != null)
+                    result = (string[])session.getAttribute(VMW_STORED_IN_SESSION_ROLES);
+
+                return (result == null) ? new string[0] : result;
+            }
         }
 
         internal protected static string[] GetRolesForUser(com.ibm.portal.um.User user)
@@ -289,7 +312,7 @@ namespace Mainsoft.Web.Security
 
         private string NormalizeRoleName(IPumaServicesProvider provider, string roleName)
         {
-            string groupNamespace = provider.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
+            string groupNamespace = GetGroupsNamespaceName(provider);
             if (groupNamespace == null)
                 return roleName;
 
@@ -298,7 +321,7 @@ namespace Mainsoft.Web.Security
 
         private string DeNormalizeRoleName(IPumaServicesProvider provider, string groupName)
         {
-            string groupNamespace = provider.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
+            string groupNamespace = GetGroupsNamespaceName(provider);
             if (groupNamespace == null)
                 return groupName;
             if (groupName.StartsWith(groupNamespace))
@@ -307,10 +330,10 @@ namespace Mainsoft.Web.Security
                 return groupName;
         }
 
-        private static string[] GroupsToStringArray(IPumaServicesProvider pumaServices, java.util.List groups)
+        internal static string[] GroupsToStringArray(IPumaServicesProvider pumaServices, java.util.List groups)
         {
             java.util.ArrayList res = new java.util.ArrayList(groups.size());
-            string groupNamespace = pumaServices.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
+            string groupNamespace = GetGroupsNamespaceName(pumaServices);
 
             java.util.ArrayList groupAttribs = new java.util.ArrayList();
             groupAttribs.add("cn");
@@ -329,6 +352,37 @@ namespace Mainsoft.Web.Security
                 }
             }
             return (string[])res.toArray(new string[res.size()]);
+        }
+
+        private PortletSession PortletSession
+        {
+            get
+            {
+                PortletRequest pr = PortletUtils.getPortletRequest();
+                if (pr == null)
+                    return null;
+                return pr.getPortletSession(true);
+            }
+        }
+
+        private HttpSession HttpSession
+        {
+            get
+            {
+                HttpServletRequest req = J2EEUtils.getHttpServletRequest();
+                if (req == null)
+                    return null;
+                return req.getSession(true);
+            }
+        }
+
+        private static string GetGroupsNamespaceName(IPumaServicesProvider provider)
+        {
+            string res = provider.GetConfigAttribute(GROUP_NAMESPACE_ATTRIBUTE);
+            if (res != null)
+                return res + '.';
+
+            return null;
         }
         #endregion
     }

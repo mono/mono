@@ -1,8 +1,15 @@
-03-23-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+03-22-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+	
+	* WPAuthenticationModule.cs, WPGroupsRoleProvider.cs,
+	IPumaServicesProvider.cs, PumaServicesProvider.cs:
+	added ability to perform auth checking also in context of 
+	servlets and provided fix for 'namespace' bug.
+
+03-13-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	
 	* WPMembershipProvider.cs: bug fixes 
 
-03-23-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
+03-13-2007      Ilya Kharmatsky    <ilyak -at- mainsoft.com>
 	* WPAuthenticationModule.cs: fixed in WPPrincipal class method -
 	IsInRole - we are leaving this for RoleBasedPrincipal class to handle
 	this method.

@@ -178,6 +178,15 @@ namespace Mainsoft.Web.Security
             }
         }
 
+        public string[] GetRolesForUser(com.ibm.portal.um.User user)
+        {
+            if (user == null)
+                return new string[0];
+            
+            java.util.List groups = PumaLocator.findGroupsByPrincipal(user, true);
+            return WPGroupsRoleProvider.GroupsToStringArray(this, groups);
+        }
+
         public void AddAttribute(com.ibm.portal.um.Principal p, string attributeName, string attributeValue)
         {
             HashMap map = new HashMap();

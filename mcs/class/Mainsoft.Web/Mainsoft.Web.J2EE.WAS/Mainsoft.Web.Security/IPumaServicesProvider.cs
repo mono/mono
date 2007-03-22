@@ -145,6 +145,14 @@ namespace Mainsoft.Web.Security
         /// <returns>null in case no configuration attribute defined with given name, otherwise
         /// string representation of value</returns>
         string GetConfigAttribute(string attribName);
+
+        /// <summary>
+        /// Returns the array of the names of groups defined in Portal Server, 
+        /// where the given user is a member.
+        /// </summary>
+        /// <param name="user">com.ibm.portal.um.User instance - to be checked for membership</param>
+        /// <returns>string array of groups name, defined in portal server for given user</returns>
+        string[] GetRolesForUser(com.ibm.portal.um.User user);
         
     }
 }
