@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -120,15 +120,14 @@ namespace System.Security.Cryptography {
 
 		private byte[] F (byte[] s, int c, int i) 
 		{
-			byte[] data = new byte [s.Length + 4];
-			Buffer.BlockCopy (s, 0, data, 0, s.Length);
-			byte[] int4 = BitConverter.GetBytes (i);
-			Array.Reverse (int4, 0, 4);
-			Buffer.BlockCopy (int4, 0, data, s.Length, 4);
+			s [s.Length - 4] = (byte)(i >> 24);
+			s [s.Length - 3] = (byte)(i >> 16);
+			s [s.Length - 2] = (byte)(i >> 8);
+			s [s.Length - 1] = (byte)i;
 
 			// this is like j=0
-			byte[] u1 = _hmac.ComputeHash (data);
-			data = u1;
+			byte[] u1 = _hmac.ComputeHash (s);
+			byte[] data = u1;
 			// so we start at j=1
 			for (int j=1; j < c; j++) {
 				byte[] un = _hmac.ComputeHash (data);
@@ -162,8 +161,11 @@ namespace System.Security.Cryptography {
 				r = cb - rpos;
 			}
 
+			byte[] data = new byte [_salt.Length + 4];
+			Buffer.BlockCopy (_salt, 0, data, 0, _salt.Length);
+
 			for (int i=1; i <= l; i++) {
-				_buffer = F (_salt, _iteration, ++_f);
+				_buffer = F (data, _iteration, ++_f);
 				int count = ((i == l) ? r : 20);
 				Buffer.BlockCopy (_buffer, _pos, result, rpos, count);
 				rpos += _pos + count;
