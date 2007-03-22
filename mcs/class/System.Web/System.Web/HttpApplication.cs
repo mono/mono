@@ -1127,6 +1127,7 @@ namespace System.Web {
 				initialization_exception = e;
 #endif
 				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
+				PipelineDone ();
 				return;
 			}
 

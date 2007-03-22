@@ -1,3 +1,8 @@
+2007-03-23  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpApplication.cs: complete the pipeline in case of exception during
+		InitOnce() to avoid a deadlock.
+
 2007-03-22  Adar Wesley <adarw@mainsoft.com>
 
         * BrowserCapabilities.cs: Added implementation for all capabilities.
