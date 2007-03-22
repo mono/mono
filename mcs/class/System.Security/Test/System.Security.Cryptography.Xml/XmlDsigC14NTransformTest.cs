@@ -486,5 +486,38 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = t.GetOutput () as Stream;
 			AssertEquals (expected, new StreamReader (s, Encoding.UTF8).ReadToEnd ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void PrefixlessNamespaceOutput ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
+			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
+			AssertEquals ("#1", String.Empty, doc.DocumentElement.GetAttribute ("xmlns"));
+			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
+			t.LoadInput (doc);
+			Stream s = t.GetOutput () as Stream;
+			AssertEquals ("<foo xmlns=\"urn:foo\"><bar xmlns=\"urn:bar\"></bar></foo>", new StreamReader (s, Encoding.UTF8).ReadToEnd ());
+			AssertEquals ("#2", "urn:foo", doc.DocumentElement.GetAttribute ("xmlns"));
+		}
+
+		[Test]
+		[Ignore ("find out how PropagatedNamespaces returns non-null instance on .NET")]
+		public void PropagatedNamespaces ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
+			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
+			AssertEquals ("#1", String.Empty, doc.DocumentElement.GetAttribute ("xmlns:f"));
+			XmlDsigExcC14NTransform t = new XmlDsigExcC14NTransform ();
+			t.LoadInput (doc);
+			t.PropagatedNamespaces.Add ("f", "urn:foo");
+			t.PropagatedNamespaces.Add ("b", "urn:bar");
+			Stream s = t.GetOutput () as Stream;
+			AssertEquals ("<f:foo xmlns:f=\"urn:foo\"><b:bar xmlns:b=\"urn:bar\"></b:bar></f:foo>", new StreamReader (s, Encoding.UTF8).ReadToEnd ());
+			AssertEquals ("#2", "urn:foo", doc.DocumentElement.GetAttribute ("xmlns:f"));
+		}
+#endif
 	}    
 }

@@ -1,3 +1,9 @@
+2007-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NTransformTest.cs : added test for xmlns attribute 
+	  completion for input nodes, as well as test for
+	  PropagatedNamespaces (ignored so far).
+
 2007-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedXmlTest.cs : enable SignElementWithPrefixedNamespace().

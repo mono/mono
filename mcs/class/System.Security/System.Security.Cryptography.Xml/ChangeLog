@@ -1,3 +1,8 @@
+2007-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Transform.cs, XmlDsigC14NTransform.cs, XmlDsigExcC14NTransform.cs :
+	  handle PropagatedNamespaces.
+
 2007-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedXml.cs : for internal URI (#blah) resolution, use

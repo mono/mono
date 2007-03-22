@@ -51,12 +51,12 @@ namespace System.Security.Cryptography.Xml {
 		public XmlDsigC14NTransform () 
 		{
 			Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-			canonicalizer = new XmlCanonicalizer (false, false);
+			canonicalizer = new XmlCanonicalizer (false, false, PropagatedNamespaces);
 		}
 
 		public XmlDsigC14NTransform (bool includeComments) 
 		{
-			canonicalizer = new XmlCanonicalizer (includeComments, false);
+			canonicalizer = new XmlCanonicalizer (includeComments, false, PropagatedNamespaces);
 		}
 
 		public override Type[] InputTypes {

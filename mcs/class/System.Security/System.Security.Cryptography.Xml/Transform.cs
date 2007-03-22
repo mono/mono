@@ -43,6 +43,7 @@ namespace System.Security.Cryptography.Xml {
 
 		private string algo;
 		private XmlResolver xmlResolver;
+		private Hashtable propagated_namespaces = new Hashtable ();
 
 #if NET_2_0
 		protected Transform ()
@@ -86,13 +87,17 @@ namespace System.Security.Cryptography.Xml {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-
-		[MonoTODO]
-		[ComVisible (false)]
-		public Hashtable PropagatedNamespaces {
-			get { throw new NotImplementedException (); }
-		}
 #endif
+
+		[ComVisible (false)]
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		Hashtable PropagatedNamespaces {
+			get { return propagated_namespaces; }
+		}
 
 		#endregion // Properties
 

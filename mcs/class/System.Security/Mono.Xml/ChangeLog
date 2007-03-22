@@ -1,3 +1,9 @@
+2007-03-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlCanonicalizer.cs : fill prefixes which should be actually
+	  written. It must be actually done before canonicalization (so
+	  that node list filtering still takes spec-conformant effect).
+
 2007-01-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlCanonicalizer.cs : in Canonicalize(XmlNodeList), nodes [0] could

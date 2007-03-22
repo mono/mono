@@ -68,7 +68,7 @@ namespace System.Security.Cryptography.Xml {
 		public XmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList)
 		{
 			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform;
-			canonicalizer = new XmlCanonicalizer (includeComments, true);
+			canonicalizer = new XmlCanonicalizer (includeComments, true, PropagatedNamespaces);
 		}
 
 		public string InclusiveNamespacesPrefixList {

@@ -59,12 +59,14 @@ namespace Mono.Xml {
 		private ArrayList visibleNamespaces;
 		private int prevVisibleNamespacesStart;
 		private int prevVisibleNamespacesEnd;
+		private Hashtable propagatedNss;
 
-		public XmlCanonicalizer (bool withComments, bool excC14N)
+		public XmlCanonicalizer (bool withComments, bool excC14N, Hashtable propagatedNamespaces)
 		{	    
 			res = new StringBuilder ();
 			comments = withComments;
 			exclusive = excC14N;
+			propagatedNss = propagatedNamespaces;
 		}
 		
 		void Initialize ()
@@ -82,6 +84,7 @@ namespace Mono.Xml {
 				throw new ArgumentNullException ("doc");
 			Initialize ();
 			
+			FillMissingPrefixes (doc, new XmlNamespaceManager (doc.NameTable), new ArrayList ());
 			WriteDocumentNode (doc);
 			
 			UTF8Encoding utf8 = new UTF8Encoding ();
@@ -102,6 +105,55 @@ namespace Mono.Xml {
 		public string InclusiveNamespacesPrefixList {
 			get { return inclusiveNamespacesPrefixList; }
 			set { inclusiveNamespacesPrefixList = value; }
+		}
+
+		XmlAttribute CreateXmlns (XmlNode n)
+		{
+			XmlAttribute a = n.Prefix.Length == 0 ?
+				n.OwnerDocument.CreateAttribute ("xmlns", "http://www.w3.org/2000/xmlns/") :
+				n.OwnerDocument.CreateAttribute ("xmlns", n.Prefix, "http://www.w3.org/2000/xmlns/");
+			a.Value = n.NamespaceURI;
+			return a;
+		}
+
+		// Note that this must be done *before* filtering nodes out
+		// by context node list.
+		private void FillMissingPrefixes (XmlNode n, XmlNamespaceManager nsmgr, ArrayList tmpList)
+		{
+			if (n.Prefix.Length == 0 && propagatedNss != null) {
+				foreach (DictionaryEntry de in propagatedNss)
+					if ((string) de.Value == n.NamespaceURI) {
+						n.Prefix = (string) de.Key;
+						break;
+					}
+			}
+			
+			if (n.NodeType == XmlNodeType.Element && ((XmlElement) n).HasAttributes) {
+				foreach (XmlAttribute a in n.Attributes)
+					if (a.NamespaceURI == "http://www.w3.org/2000/xmlns/")
+						nsmgr.AddNamespace (a.Prefix.Length == 0 ? String.Empty : a.LocalName, a.Value);
+				nsmgr.PushScope ();
+			}
+
+			if (n.NamespaceURI.Length > 0 && nsmgr.LookupPrefix (n.NamespaceURI) == null)
+				tmpList.Add (CreateXmlns (n));
+
+			if (n.NodeType == XmlNodeType.Element && ((XmlElement) n).HasAttributes) {
+				foreach (XmlAttribute a in n.Attributes)
+					if (a.NamespaceURI.Length > 0 && nsmgr.LookupNamespace (a.Prefix) == null)
+						tmpList.Add (CreateXmlns (a));
+			}
+
+			foreach (XmlAttribute a in tmpList)
+				((XmlElement) n).SetAttributeNode (a);
+			tmpList.Clear ();
+
+			if (n.HasChildNodes) {
+				for (XmlNode c = n.FirstChild; c != null; c = c.NextSibling)
+					if (c.NodeType == XmlNodeType.Element)
+						FillMissingPrefixes (c, nsmgr, tmpList);
+			}
+			nsmgr.PopScope ();
 		}
 
 		private void WriteNode (XmlNode node)
