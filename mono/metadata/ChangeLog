@@ -1,3 +1,8 @@
+2007-03-22  Jb Evain  <jbevain@gmail.com>
+
+	* class.c (mono_type_get_name_recurse): Fix the creation of assembly
+	qualified names for pointer types. Fixes #81208.
+
 2007-03-21  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Add support for PreserveSigAttribute. 
