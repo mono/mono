@@ -22,6 +22,432 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class FormTest
 	{
+	
+		[Test]
+		public void FormStartupPositionChangeTest ()
+		{
+			using (Form frm = new Form ())
+			{
+				frm.ShowInTaskbar = false;
+				frm.StartPosition = FormStartPosition.Manual;
+				frm.Location = new Point (0, 0);
+				frm.Show ();
+
+				// On X there seem to be pending messages in the queue aren't processed
+				// before Show returns, so process them. Otherwise the Location returns
+				// something like (5,23)
+				Application.DoEvents ();
+				
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#01");
+
+				frm.StartPosition = FormStartPosition.CenterParent;
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#02");
+
+				frm.StartPosition = FormStartPosition.CenterScreen;
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#03");
+
+				frm.StartPosition = FormStartPosition.Manual;
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#04");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#05");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+				Assert.AreEqual ("{X=0,Y=0}", frm.Location.ToString (), "#06");
+			}
+		}
+		
+		[Test]
+		public void FormStartupPositionTest ()
+		{
+			CreateParams cp;
+			
+			using (Form frm = new Form ())
+			{
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#01");
+
+				frm.StartPosition = FormStartPosition.CenterParent;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#02");
+
+				frm.StartPosition = FormStartPosition.CenterScreen;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (Screen.PrimaryScreen.WorkingArea.Width / 2 - frm.Width / 2, Screen.PrimaryScreen.WorkingArea.Height / 2 - frm.Height / 2).ToString (), new Point (cp.X, cp.Y).ToString (), "#03");
+
+				frm.StartPosition = FormStartPosition.Manual;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#04");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#05");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$01");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#06");
+				
+			}
+
+
+			using (Form frm = new Form ()) {
+				frm.Location = new Point (23, 45);
+
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A1");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A1");
+
+				frm.StartPosition = FormStartPosition.CenterParent;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$A2");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A2");
+
+				frm.StartPosition = FormStartPosition.CenterScreen;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$A3");
+				Assert.AreEqual (new Point (Screen.PrimaryScreen.WorkingArea.Width / 2 - frm.Width / 2, Screen.PrimaryScreen.WorkingArea.Height / 2 - frm.Height / 2).ToString (), new Point (cp.X, cp.Y).ToString (), "#A3");
+
+				frm.StartPosition = FormStartPosition.Manual;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$A4");
+				Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A4");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$A5");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A5");
+
+				frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+				cp = TestHelper.GetCreateParams (frm);
+				Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A6");
+				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A6");
+				
+
+			}
+		}
+		
+		[Test]
+		public void MdiFormStartupPositionTest ()
+		{
+			CreateParams cp;
+			using (Form Main = new Form ()) {
+				Main.IsMdiContainer = true;
+				Main.ShowInTaskbar = false;
+				Main.Show ();
+				
+				using (Form frm = new Form ()) {
+					frm.MdiParent = Main;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#01");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#02");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#03");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#04");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#05");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#06");
+					frm.Show ();
+				}
+
+
+				using (Form frm = new Form ()) {
+					frm.MdiParent = Main;
+					frm.Location = new Point (23, 45);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A1");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$A2");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$A3");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#A3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$A4");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$A5");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A6");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A6");
+
+					frm.Show ();
+				}
+
+
+
+				using (Form frm = new Form ()) {
+					frm.MdiParent = Main;
+					frm.Location = new Point (34, 56);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$B1");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#B1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$B2");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#B2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$B3");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#B3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$B4");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$B5");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#B5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$B6");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#B6");
+
+					frm.Show ();
+				}
+
+				Main.Size = new Size (600, 600);
+				using (Form frm = new Form ()) {
+					frm.MdiParent = Main;
+					frm.Location = new Point (34, 56);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$C1");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#C1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$C2");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#C2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$C3");
+					Assert.AreEqual (new Point (Main.Controls [0].ClientSize.Width / 2 - frm.Width / 2, Main.Controls [0].ClientSize.Height / 2 - frm.Height / 2).ToString (), new Point (cp.X, cp.Y).ToString (), "#C3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$C4");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$C5");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#C5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$C6");
+					Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#C6");
+
+					frm.Show ();
+				}
+			}
+		}
+
+		[Test]
+		public void ParentedFormStartupPositionTest ()
+		{
+			CreateParams cp;
+			using (Form Main = new Form ()) {
+				Main.ShowInTaskbar = false;
+				Main.Show ();
+
+				using (Form frm = new Form ()) {
+					frm.TopLevel = false;
+					Main.Controls.Add (frm);
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$01");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#01");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$02");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#02");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$03");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#03");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$04");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#04");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$05");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#05");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$06");
+					Assert.AreEqual (new Point (0, 0).ToString (), new Point (cp.X, cp.Y).ToString (), "#06");
+					frm.Show ();
+				}
+
+
+				using (Form frm = new Form ()) {
+					frm.TopLevel = false;
+					Main.Controls.Add (frm);
+					frm.Location = new Point (23, 45);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A1");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$A2");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$A3");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$A4");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$A5");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A6");
+					Assert.AreEqual (new Point (23, 45).ToString (), new Point (cp.X, cp.Y).ToString (), "#A6");
+
+					frm.Show ();
+				}
+
+
+
+				using (Form frm = new Form ()) {
+					frm.TopLevel = false;
+					Main.Controls.Add (frm);
+					frm.Location = new Point (34, 56);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$B1");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$B2");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$B3");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$B4");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$B5");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$B6");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#B6");
+
+					frm.Show ();
+				}
+
+
+				Main.Size = new Size (600, 600);
+				using (Form frm = new Form ()) {
+					frm.TopLevel = false;
+					Main.Controls.Add (frm);
+					frm.Location = new Point (34, 56);
+
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$C1");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C1");
+
+					frm.StartPosition = FormStartPosition.CenterParent;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterParent, frm.StartPosition, "$C2");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C2");
+
+					frm.StartPosition = FormStartPosition.CenterScreen;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.CenterScreen, frm.StartPosition, "$C3");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C3");
+
+					frm.StartPosition = FormStartPosition.Manual;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.Manual, frm.StartPosition, "$C4");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C4");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultBounds;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, frm.StartPosition, "$C5");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C5");
+
+					frm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+					cp = TestHelper.GetCreateParams (frm);
+					Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$C6");
+					Assert.AreEqual (new Point (34, 56).ToString (), new Point (cp.X, cp.Y).ToString (), "#C6");
+
+					frm.Show ();
+				}
+			}
+		}
+		
 		[Test] // bug #80791
 		public void ClientSizeTest ()
 		{

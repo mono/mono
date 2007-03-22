@@ -1,3 +1,10 @@
+2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MdiFormTest.cs: Added a StartLocationTest, and commented out all old
+	  StartLocationTest*s, since they are failiing on WinXP with XP
+	  theme.
+	* FormTest.cs: Added tests for StartPosition.
+
 2007-03-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DefaultLayoutTest.cs: Fixed line endings.
