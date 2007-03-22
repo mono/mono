@@ -2000,7 +2000,8 @@ namespace System.Windows.Forms {
 
 
 			// MS causes the handle to be created here.
-			CreateHandle ();
+			if (!IsHandleCreated)
+				CreateHandle ();
 			
 			if (directed) {
 				base.SelectNextControl(null, forward, true, true, true);

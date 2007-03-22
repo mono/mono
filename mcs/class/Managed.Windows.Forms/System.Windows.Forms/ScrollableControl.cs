@@ -613,6 +613,22 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods
+		internal override IntPtr AfterTopMostControl ()
+		{
+			// order of scrollbars:
+			// top = vertical
+			//       sizegrid
+			// bottom = horizontal
+			if (hscrollbar != null && hscrollbar.Visible)
+				return hscrollbar.Handle;
+			// no need to check for sizegrip since it will only
+			// be visible if hbar is visible.
+			if (vscrollbar != null && vscrollbar.Visible)
+				return hscrollbar.Handle;
+
+			return base.AfterTopMostControl ();
+		}
+
 		private void CalculateCanvasSize() {
 			Control		child;
 			int		num_of_children;
@@ -713,7 +729,7 @@ namespace System.Windows.Forms {
 				prev_right_edge = right_edge;
 				prev_bottom_edge = bottom_edge;
 
-				if ((force_hscroll_visible || canvas.Width > right_edge) && client.Width > 0) {
+				if ((force_hscroll_visible || (canvas.Width > right_edge && auto_scroll)) && client.Width > 0) {
 					hscroll_visible = true;
 					bottom_edge = client.Height - SystemInformation.HorizontalScrollBarHeight;
 				} else {
@@ -721,7 +737,7 @@ namespace System.Windows.Forms {
 					bottom_edge = client.Height;
 				}
 
-				if ((force_vscroll_visible || canvas.Height > bottom_edge) && client.Height > 0) {
+				if ((force_vscroll_visible || (canvas.Height > bottom_edge && auto_scroll)) && client.Height > 0) {
 					vscroll_visible = true;
 					right_edge = client.Width - SystemInformation.VerticalScrollBarWidth;
 				} else {
@@ -790,9 +806,13 @@ namespace System.Windows.Forms {
 
 			hscrollbar.Bounds = hscroll_bounds;
 			hscrollbar.Visible = hscroll_visible;
+			if (hscrollbar.Visible)
+				XplatUI.SetZOrder (hscrollbar.Handle, IntPtr.Zero, true, false);
 
 			vscrollbar.Bounds = vscroll_bounds;
 			vscrollbar.Visible = vscroll_visible;
+			if (vscrollbar.Visible)
+				XplatUI.SetZOrder (vscrollbar.Handle, IntPtr.Zero, true, false);
 
 			UpdateSizeGripVisible ();
 
@@ -817,6 +837,8 @@ namespace System.Windows.Forms {
 			}
 			sizegrip.Visible = show_sizegrip;
 			sizegrip.Enabled = enable_sizegrip || sizegrip.Capture;
+			if (sizegrip.Visible)
+				XplatUI.SetZOrder (sizegrip.Handle, vscrollbar.Handle, false, false);
 		}
 
 		private void HandleScrollBar(object sender, EventArgs e) {

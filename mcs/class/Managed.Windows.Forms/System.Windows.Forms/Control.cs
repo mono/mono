@@ -1706,11 +1706,11 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				XplatUI.SetParent(Handle,
 						  (new_parent == null || !new_parent.IsHandleCreated) ? IntPtr.Zero : new_parent.Handle);
-				if (this is Form ) {
-					((Form) this).ChangingParent (new_parent);
-				}
 			}
-
+			if (this is Form) {
+				((Form)this).ChangingParent (new_parent);
+			}
+			
 			OnParentChanged(EventArgs.Empty);
 
 			if (pre_enabled != Enabled) {

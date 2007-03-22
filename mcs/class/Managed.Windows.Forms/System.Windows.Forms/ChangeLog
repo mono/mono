@@ -1,3 +1,19 @@
+2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Control.cs: ChangeParent: Call Form's ChangingParent even if the
+	  handle is not created yet.
+	* Form.cs: Select: Don't call CreateHandle if the handle is already
+	  created, avoids a stack overflow on Windows when we are recreating
+	  controls.
+	* ScrollableControl.cs: Set the correct z-order for the scrollbars when
+	  they are made visible, and override AfterTopMostControl to keep
+	  them on top when other controls are brought to front.
+	  CalculateCanvas: Scrollbars are only visible if auto_scroll is true
+	  or force_*scroll_visible is true (old implementation always shows
+	  scrollbars when needed, no matter what auto_scroll was set to).
+	* InternalWindowManager.cs: UpdateWindowDecorations: Add a
+	  IsHandleCreated check.
+
 2007-03-22  Andreia Gaita  <avidigal@novell.com>
 
 	* DataGrid.cs: Implement Column and Row auto sizing when double-clicking on

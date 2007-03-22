@@ -164,7 +164,8 @@ namespace System.Windows.Forms {
 		public virtual void UpdateWindowDecorations (FormWindowState window_state)
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
-			XplatUI.RequestNCRecalc (form.Handle);
+			if (form.IsHandleCreated)
+				XplatUI.RequestNCRecalc (form.Handle);
 		}
 		
 		public virtual bool WndProc (ref Message m)
