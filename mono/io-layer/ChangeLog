@@ -1,3 +1,10 @@
+2007-03-22  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_connect): Do additional checks when connect(2)
+	fails, because some systems don't let it be restarted.  Patch
+	based on one submitted by Robert S Wojciechowski <robertw@ssgx.com>,
+	fixes bug 81010.
+
 2007-03-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* io-layer.h:  Remove UNICODE and _UNICODE defines as 
