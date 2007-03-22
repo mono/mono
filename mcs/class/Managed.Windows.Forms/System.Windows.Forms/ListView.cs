@@ -1893,7 +1893,8 @@ namespace System.Windows.Forms
 						bool over_text = owner.items [i].TextBounds.Contains (pt);
 						if (owner.FullRowSelect) {
 							clicked_item = owner.items [i];
-							if (!over_text && owner.MultiSelect)
+							bool over_item_column = (me.X > owner.Columns[0].X && me.X < owner.Columns[0].X + owner.Columns[0].Width);
+							if (!over_text && over_item_column && owner.MultiSelect)
 								box_selecting = true;
 						} else if (over_text)
 							clicked_item = owner.items [i];

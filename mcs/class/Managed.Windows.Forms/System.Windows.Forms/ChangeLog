@@ -1,3 +1,9 @@
+2007-03-22  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : in FullRowSelect Details mode, only enable box
+	selection if the user clicks over the "item" column outside of the
+	text area.  Mmmmm, compatibility.  [Fixes #80374 subpart 7]
+
 2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Control.cs: ChangeParent: Call Form's ChangingParent even if the
