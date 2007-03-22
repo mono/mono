@@ -80,6 +80,8 @@ namespace System.Windows.Forms {
 		internal XEventQueue	queue;
 		internal WindowExStyles	initial_ex_style;
 		internal FormWindowState cached_window_state = (FormWindowState)(-1);  /* X11 only field */
+		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
+		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)

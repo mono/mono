@@ -2389,6 +2389,7 @@ namespace System.Windows.Forms {
 		{
 			XSetWindowAttributes	Attributes;
 			Hwnd			hwnd;
+			Hwnd			parent_hwnd = null;
 			int			X;
 			int			Y;
 			int			Width;
@@ -2412,7 +2413,8 @@ namespace System.Windows.Forms {
 			if (Height<1) Height=1;
 
 			if (cp.Parent != IntPtr.Zero) {
-				ParentHandle = Hwnd.ObjectFromHandle(cp.Parent).client_window;
+				parent_hwnd = Hwnd.ObjectFromHandle(cp.Parent);
+				ParentHandle = parent_hwnd.client_window;
 			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 					// We need to use our foster parent window until this poor child gets it's parent assigned
@@ -2427,6 +2429,39 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			// Set the default location location for forms.
+			Point previous, next;
+			Rectangle within;
+			if (cp.control is Form) {
+				if (parent_hwnd != null) {
+					previous = parent_hwnd.previous_child_startup_location;
+					within = parent_hwnd.client_rectangle;
+				} else {
+					previous = Hwnd.previous_main_startup_location;
+					within = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+				}
+				
+				if (previous.X == int.MinValue || previous.Y == int.MaxValue) {
+					next = Point.Empty;
+				} else {
+					next = new Point (previous.X + 22, previous.Y + 22);
+				}
+				
+				if (!within.Contains (next.X * 3, next.Y * 3)) {
+					next = Point.Empty;
+				}
+				
+				if (parent_hwnd != null) {
+					parent_hwnd.previous_child_startup_location = next;
+				} else {
+					Hwnd.previous_main_startup_location = next;
+				}
+				
+				if (X == int.MinValue && Y == int.MinValue) {
+					X = next.X;
+					Y = next.Y;
+				}
+			}
 			ValueMask = SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity;
 
 			Attributes.bit_gravity = Gravity.NorthWestGravity;
@@ -2483,7 +2518,7 @@ namespace System.Windows.Forms {
 			#if DriverDebug || DriverDebugCreate
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			#endif
-
+			
 			if (!StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 				if ((X != unchecked((int)0x80000000)) && (Y != unchecked((int)0x80000000))) {
 					XSizeHints	hints;

@@ -1,3 +1,12 @@
+2007-03-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: Implement default locations for forms.
+	* Form.cs: Completely rework startup location for forms. Fixes #79964.
+	* Hwnd.cs: Add previous_child_startup_location (to track the current
+	  startup location for any child forms of the current form) and
+	  previous_main_startup_location (to track the startup location for
+	  the current toplevel form).
+
 2007-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Don't trigger a layout if an implicit control is added

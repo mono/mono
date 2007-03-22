@@ -1001,32 +1001,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (start_position == FormStartPosition.WindowsDefaultLocation) {		// Only do this if it's not set yet
-					start_position = value;
-					if (IsHandleCreated) {
-						switch(start_position) {
-							case FormStartPosition.CenterParent: {
-								CenterToParent();
-								break;
-							}
-
-							case FormStartPosition.CenterScreen: {
-								CenterToScreen();
-								break;
-							}
-
-							case FormStartPosition.Manual: {
-								Left = CreateParams.X;
-								Top = CreateParams.Y;
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
-					}
-				}
+				start_position = value;
 			}
 		}
 
@@ -1146,12 +1121,32 @@ namespace System.Windows.Forms {
 				cp.menu = ActiveMenu;
 				cp.control = this;
 
-				if (start_position == FormStartPosition.WindowsDefaultLocation && !IsMdiChild && Parent == null) {
-					cp.X = unchecked ((int)0x80000000);
-					cp.Y = unchecked ((int)0x80000000);
-				} else {
+				if (Parent != null && !IsMdiChild) {
+					// Parented forms always gets the specified location, no matter what
 					cp.X = Left;
 					cp.Y = Top;
+				} else {
+					switch (start_position) {
+					case FormStartPosition.Manual:
+						cp.X = Left;
+						cp.Y = Top;
+						break;
+					case FormStartPosition.CenterScreen:
+						if (IsMdiChild) {
+							cp.X = Math.Max ((MdiParent.mdi_container.ClientSize.Width - Width) / 2, 0);
+							cp.Y = Math.Max ((MdiParent.mdi_container.ClientSize.Height - Height) / 2, 0);
+						} else {
+							cp.X = Math.Max ((Screen.PrimaryScreen.WorkingArea.Width - Width) / 2, 0);
+							cp.Y = Math.Max ((Screen.PrimaryScreen.WorkingArea.Height - Height) / 2, 0);
+						}
+						break;
+					case FormStartPosition.CenterParent:
+					case FormStartPosition.WindowsDefaultBounds:
+					case FormStartPosition.WindowsDefaultLocation:
+						cp.X = int.MinValue;
+						cp.Y = int.MinValue;
+						break;
+					}
 				}
 				cp.Width = Width;
 				cp.Height = Height;
