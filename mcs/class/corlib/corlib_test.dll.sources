@@ -179,6 +179,7 @@ System.Security.Cryptography/PKCS1MaskGenerationMethodTest.cs
 System.Security.Cryptography/RandomNumberGeneratorTest.cs
 System.Security.Cryptography/RC2CryptoServiceProviderTest.cs
 System.Security.Cryptography/RC2Test.cs
+System.Security.Cryptography/Rfc2898DeriveBytesTest.cs
 System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/RijndaelTest.cs
 System.Security.Cryptography/RIPEMD160ManagedTest.cs

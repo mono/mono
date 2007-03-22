@@ -1,3 +1,8 @@
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added missing Rfc2898DeriveBytes unit tests
+	to the build.
+
 2007-03-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added StringComparerTest.cs.
