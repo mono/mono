@@ -136,7 +136,15 @@ namespace System.Web {
 		CultureInfo prev_appui_culture;
 		IPrincipal prev_user;
 #if NET_2_0
+#if TARGET_J2EE
+		const string initialization_exception_key = "System.Web.HttpApplication.initialization_exception";
+		static Exception initialization_exception {
+			get { return (Exception) AppDomain.CurrentDomain.GetData (initialization_exception_key); }
+			set { AppDomain.CurrentDomain.SetData (initialization_exception_key, value); }
+		}
+#else
 		static Exception initialization_exception;
+#endif
 		HttpHandlersSection httpHandlersSection;
 #else
 		HandlerFactoryConfiguration factory_config;
