@@ -37,11 +37,6 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class UrlAuthorizationModule : IHttpModule
 	{
-#if NET_2_0
-		AuthorizationSection _config;
-#else
-		AuthorizationConfig _config;
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public UrlAuthorizationModule ()
 		{
@@ -54,11 +49,6 @@ namespace System.Web.Security
 		public void Init (HttpApplication app)
 		{
 			app.AuthorizeRequest += new EventHandler (OnAuthorizeRequest);
-#if NET_2_0
-			_config = (AuthorizationSection) WebConfigurationManager.GetSection ("system.web/authorization");
-#else
-			_config = (AuthorizationConfig) app.Context.GetConfig ("system.web/authorization");
-#endif
 		}
 
 		void OnAuthorizeRequest (object sender, EventArgs args)
@@ -68,10 +58,14 @@ namespace System.Web.Security
 			if (context.SkipAuthorization)
 				return;
 
-			if (_config == null)
+#if NET_2_0
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection ("system.web/authorization");
+#else
+			AuthorizationConfig config = (AuthorizationConfig) context.GetConfig ("system.web/authorization");
+			if (config == null)
 				return;
-
-			if (!_config.IsValidUser (context.User, context.Request.HttpMethod)) {
+#endif
+			if (!config.IsValidUser (context.User, context.Request.HttpMethod)) {
 				HttpException e = new HttpException (401, "Unauthorized");
 				
 				context.Response.StatusCode = 401;
