@@ -1,3 +1,20 @@
+2007-03-22  Everaldo Canuto  <everaldo@simios.org>
+
+	[Fixes #80380]
+	
+	* Control.cs:
+	- UpdateCursor method added to update the screen cursor.
+	- GetAvailableCursor method added to return cursor for enabled tree,
+	it searches for cursor on control and it's parent's for enabled control.
+	- Call UpdateCursor method on setter of Cursor property.
+	- On setter of Enabled call UpdateCursor when it is false, we need to
+	change cursor to normal (or to this parent cursor) because cursor 
+	setting theres no effect to disabled controls.
+	- Some minor source changes to follow the coding style guidelines.
+
+	* XplatUIX11.cs: In MotionNotify only dispatch SET_CURSOR event for enabled 
+	controls.
+
 2007-03-22  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: ignore the BadPicture errors cairo+render

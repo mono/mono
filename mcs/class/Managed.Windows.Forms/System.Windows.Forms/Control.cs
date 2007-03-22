@@ -1774,6 +1774,41 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		private Cursor GetAvailableCursor ()
+		{
+			if (Cursor != null && Enabled) {
+				return Cursor;
+			}
+
+			if (Parent != null) {
+				return Parent.GetAvailableCursor ();
+			}
+
+			return Cursors.Default;
+		}
+		
+		private void UpdateCursor ()
+		{
+			if (!IsHandleCreated)
+				return;
+			
+			if (!Enabled) {
+				XplatUI.SetCursor (window.Handle, GetAvailableCursor ().handle);
+				return;
+			}
+
+			Point pt = PointToClient (Cursor.Position);
+
+			if ((!bounds.Contains (pt) && !Capture) || (GetChildAtPoint (pt) != null))
+				return;
+
+			if (cursor != null) {
+				XplatUI.SetCursor (window.Handle, cursor.handle);
+			} else {
+				XplatUI.SetCursor (window.Handle, GetAvailableCursor ().handle);
+			}
+		}
+		
 		private bool UseDoubleBuffering {
 			get {
 				if (!ThemeEngine.Current.DoubleBufferingSupported)
@@ -2324,7 +2359,7 @@ namespace System.Windows.Forms
 				return (!is_disposed && is_created);
 			}
 		}
-
+		
 		[AmbientValue(null)]
 		[MWFCategory("Appearance")]
 		public virtual Cursor Cursor {
@@ -2341,31 +2376,14 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (cursor != value) {
-					Point pt;
-
-					cursor = value;
-					
-					if (IsHandleCreated) {
-						pt = Cursor.Position;
-
-						if (bounds.Contains(pt) || Capture) {
-							if (GetChildAtPoint(pt) == null) {
-								if (cursor != null) {
-									XplatUI.SetCursor(window.Handle, cursor.handle);
-								} else {
-									if (parent != null) {
-										XplatUI.SetCursor(window.Handle, parent.Cursor.handle);
-									} else {
-										XplatUI.SetCursor(window.Handle, Cursors.Default.handle);
-									}
-								}
-							}
-						}
-					}
-
-					OnCursorChanged(EventArgs.Empty);
+				if (cursor == value) {
+					return;
 				}
+
+				cursor = value;
+				UpdateCursor ();
+
+				OnCursorChanged (EventArgs.Empty);
 			}
 		}
 
@@ -2475,15 +2493,20 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (this.is_enabled != value) {
-					bool old_value = is_enabled;
+				if (this.is_enabled == value)
+					return;
 
-					is_enabled = value;
-					if (old_value != value && !value && this.has_focus)
-						SelectNextControl(this, true, true, true, true);
+				bool old_value = is_enabled;
 
-					OnEnabledChanged (EventArgs.Empty);
-				}
+				is_enabled = value;
+
+				if (!value)
+					UpdateCursor ();
+
+				if (old_value != value && !value && this.has_focus)
+					SelectNextControl(this, true, true, true, true);
+
+				OnEnabledChanged (EventArgs.Empty);
 			}
 		}
 

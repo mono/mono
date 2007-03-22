@@ -3662,7 +3662,9 @@ namespace System.Windows.Forms {
 						if (Grab.Hwnd != IntPtr.Zero) {
 							msg.hwnd = Grab.Hwnd;
 						} else {
-							NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+							if (hwnd.Enabled) {
+								NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+							}
 						}
 
 						msg.message = Msg.WM_MOUSEMOVE;
