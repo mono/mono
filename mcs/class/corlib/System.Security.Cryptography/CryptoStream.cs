@@ -145,10 +145,13 @@ namespace System.Security.Cryptography {
 					Locale.GetText ("buffer overflow"));
 			}
 			// for some strange reason ObjectDisposedException isn't throw
-			// instead we get a ArgumentNullException (probably from an internal method)
 			if (_workingBlock == null) {
-				throw new ArgumentNullException (
-					Locale.GetText ("object _disposed"));
+#if NET_2_0
+				return 0;
+#else
+				// instead we get a ArgumentNullException (probably from an internal method)
+				throw new ArgumentNullException (Locale.GetText ("CryptoStream was disposed."));
+#endif
 			}
 
 			int result = 0;
@@ -312,15 +315,17 @@ namespace System.Security.Cryptography {
 
 		public void FlushFinalBlock ()
 		{
-			if (_flushedFinalBlock) {
-				throw new NotSupportedException (
-					Locale.GetText ("This method cannot be called twice."));
-			}
-			if (_mode != CryptoStreamMode.Write) {
-				throw new NotSupportedException (
-					Locale.GetText ("cannot flush a non-writeable CryptoStream"));
-			}
-
+			if (_flushedFinalBlock)
+				throw new NotSupportedException (Locale.GetText ("This method cannot be called twice."));
+#if NET_2_0
+			if (_disposed)
+				throw new NotSupportedException (Locale.GetText ("CryptoStream was disposed."));
+			if (_mode != CryptoStreamMode.Write)
+				return;
+#else
+			if (_mode != CryptoStreamMode.Write)
+				throw new NotSupportedException (Locale.GetText ("cannot flush a non-writeable CryptoStream"));
+#endif
 			_flushedFinalBlock = true;
 			byte[] finalBuffer = _transform.TransformFinalBlock (_workingBlock, 0, _partialCount);
 			if (_stream != null) {

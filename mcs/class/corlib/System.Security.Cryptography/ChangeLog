@@ -1,6 +1,8 @@
-2007-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+2007-03-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoConfig.cs: Names are case-insensitive only since fx 2.0.
+	* CryptoStream.cs: 2.0 introduce different exceptions/behaviors in 
+	corner cases.
 
 2007-03-05  Sebastien Pouliot  <sebastien@ximian.com>
 
