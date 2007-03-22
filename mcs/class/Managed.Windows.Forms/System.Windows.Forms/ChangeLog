@@ -1,5 +1,9 @@
 2007-03-22  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuAPI.cs: Remove unneeded check for grab_control in UpdateCursor.
+
+2007-03-22  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs: UpdateCursor method added, it is calling in OnMotion to update
 	cursor for child controls. In ShowWindow and HideWindow now call SetCursor 
 	every time. Fixes #81410.

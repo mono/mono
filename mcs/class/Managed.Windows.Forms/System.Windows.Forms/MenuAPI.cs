@@ -81,9 +81,6 @@ namespace System.Windows.Forms {
 
 		private void UpdateCursor (int x, int y)
 		{
-			if (grab_control == null)
-				return;
-			
 			Point pt = grab_control.PointToClient (new Point (x, y));
 			
 			Control child_control = grab_control.GetChildAtPoint (pt);
