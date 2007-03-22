@@ -42,6 +42,7 @@ namespace System.Windows.Forms
 		#region Private Variables
 		private AccessibleObject accessibility_object;
 		private string accessible_default_action_description;
+		private bool allow_drop;
 		private ToolStripItemAlignment alignment;
 		private AnchorStyles anchor;
 		private bool auto_size;
@@ -208,6 +209,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[MonoTODO]
+		public virtual bool AllowDrop {
+			get {
+				return this.allow_drop;
+			}
+			
+			set {
+				this.allow_drop = value;
+			}
+		}
+		
 		[Browsable (false)]
 		[DefaultValue (AnchorStyles.Top | AnchorStyles.Left)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

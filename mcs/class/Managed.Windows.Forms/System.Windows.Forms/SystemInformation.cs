@@ -313,6 +313,12 @@ namespace System.Windows.Forms
 				return XplatUI.MouseHoverTime;
 			}
 		}
+
+		public static int MouseWheelScrollDelta {
+			get {
+				return XplatUI.MouseWheelScrollDelta;
+			}
+		}
 #endif
 
 		public static bool MousePresent {

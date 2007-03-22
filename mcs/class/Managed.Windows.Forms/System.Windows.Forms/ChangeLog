@@ -1,3 +1,11 @@
+2007-03-22  Miguel de Icaza  <miguel@novell.com>
+
+	* SystemInformation.cs (MouseWheelScrollDelta): Expose this
+	property, its only implemented for Win32, on X11 it defaults to
+	some hardcoded value.
+
+	* ToolStripItem.cs (AllowDrop): Add property
+
 2007-03-22  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : in FullRowSelect Details mode, only enable box

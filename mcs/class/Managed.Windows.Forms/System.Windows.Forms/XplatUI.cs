@@ -235,6 +235,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public int MouseWheelScrollDelta {
+			get {
+				return driver.MouseWheelScrollDelta;
+			}
+		}
+		
 		static public bool MouseWheelPresent {
 			get {
 				return driver.MouseWheelPresent;

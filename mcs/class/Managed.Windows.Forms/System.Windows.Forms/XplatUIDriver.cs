@@ -80,6 +80,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual int MouseWheelScrollDelta {
+			get {
+				return 120;
+			}
+		}
+		
 		internal virtual Point MousePosition {
 			get {
 				return Point.Empty;

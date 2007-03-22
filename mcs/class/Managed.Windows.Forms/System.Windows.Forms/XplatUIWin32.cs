@@ -151,6 +151,7 @@ namespace System.Windows.Forms {
 			SPI_GETMOUSEHOVERWIDTH	= 0x0062,
 			SPI_GETMOUSEHOVERHEIGHT	= 0x0064,
 			SPI_GETMOUSEHOVERTIME	= 0x0066,
+			SPI_GETWHEELSCROLLLINES = 0x0068
 		}
 
 		internal enum WindowPlacementFlags {
@@ -1027,6 +1028,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override int MouseWheelScrollDelta {
+			get {
+				int delta = 120;
+				Win32SystemParametersInfo(SPIAction.SPI_GETWHEELSCROLLLINES, 0, ref delta, 0);
+				return delta;
+			}
+		}
+		
 		internal override int HorizontalScrollBarHeight {
 			get {
 				return scroll_height;
