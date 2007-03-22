@@ -78,14 +78,17 @@ namespace Mono.Data.Tds.Protocol {
 
 			StringBuilder result = new StringBuilder ();
 			foreach (TdsMetaParameter p in Parameters) {
+				string includeAt = "@";
+				if (p.ParameterName [0] == '@')
+					includeAt = "";
 				if (p.Direction != TdsParameterDirection.ReturnValue) {
-				if (result.Length > 0)
-					result.Append (", ");
+					if (result.Length > 0)
+						result.Append (", ");
 					if (p.Direction == TdsParameterDirection.InputOutput)
-						result.Append (String.Format("{0}={0} output", p.ParameterName));
+						result.Append (String.Format("{0}{1}={1} output", includeAt, p.ParameterName));
 					else
-				result.Append (FormatParameter (p));
-			}
+						result.Append (FormatParameter (p));
+				}
 			}
 			return result.ToString ();
 		}
@@ -133,7 +136,7 @@ namespace Mono.Data.Tds.Protocol {
 							if( p.Direction == TdsParameterDirection.InputOutput )
 								set.Append (String.Format ("set {0}\n", FormatParameter(p)));
 							else
-						set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
+								set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
 						}
 					
 						count += 1;
@@ -430,8 +433,11 @@ namespace Mono.Data.Tds.Protocol {
 
 		private string FormatParameter (TdsMetaParameter parameter)
 		{
+			string includeAt = "@";
+			if (parameter.ParameterName [0] == '@')
+				includeAt = "";
 			if (parameter.Direction == TdsParameterDirection.Output)
-				return String.Format ("{0}={0} output", parameter.ParameterName);
+				return String.Format ("{0}{1}={1} output", includeAt, parameter.ParameterName);
 
 			if (parameter.Value == null || parameter.Value == DBNull.Value)
 				return parameter.ParameterName + "=NULL";
@@ -490,7 +496,7 @@ namespace Mono.Data.Tds.Protocol {
 				break;
 			}
 
-			return parameter.ParameterName + "=" + value;
+			return includeAt + parameter.ParameterName + "=" + value;
 		}
 
 		public override string Prepare (string commandText, TdsMetaParameterCollection parameters)
