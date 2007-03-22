@@ -36,10 +36,12 @@ namespace System.Resources
 	public sealed class NeutralResourcesLanguageAttribute : Attribute
 	{
 		
-		private string culture;
-		
+		string culture;
+#if NET_2_0
+		UltimateResourceFallbackLocation loc;
+#endif
 		// Constructors
-		public NeutralResourcesLanguageAttribute (string cultureName)
+		public NeutralResourcesLanguageAttribute (string cultureName) 
 		{
 			if(cultureName==null) {
 				throw new ArgumentNullException("culture is null");
@@ -47,9 +49,30 @@ namespace System.Resources
 			
 			culture = cultureName;
 		}
+
 		public string CultureName
 		{
-				get { return culture; }
+			get {
+				return culture;
+			}
 		}
+
+#if NET_2_0
+		public NeutralResourcesLanguageAttribute (string cultureName, UltimateResourceFallbackLocation location)
+		{
+			if(cultureName==null) {
+				throw new ArgumentNullException("culture is null");
+			}
+			
+			culture = cultureName;
+			loc = location;
+		}
+		
+		public UltimateResourceFallbackLocation Location {
+			get {
+				return loc;
+			}  
+		}
+#endif
 	}
 }
