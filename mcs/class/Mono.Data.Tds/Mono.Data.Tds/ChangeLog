@@ -1,3 +1,8 @@
+2007-03-21  Nagappan A  <anagappan@novell.com>
+
+	* TdsMetaParameter.cs (Prepare): Include @ before parameter name,
+	if doesnot exist.
+
 2007-03-16  Andreia Gaita  <avidigal@novell.com>
 
 	* TdsMetaParameter.cs: Add Validate() method. For now, validate 

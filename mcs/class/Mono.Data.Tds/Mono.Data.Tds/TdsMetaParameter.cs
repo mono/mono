@@ -152,7 +152,10 @@ namespace Mono.Data.Tds {
 				}
 			}
 			
-			StringBuilder result = new StringBuilder (String.Format ("{0} {1}", ParameterName, typeName));
+			string includeAt = "@";
+			if (ParameterName [0] == '@')
+				includeAt = "";
+			StringBuilder result = new StringBuilder (String.Format ("{0}{1} {2}", includeAt, ParameterName, typeName));
 			switch (typeName) {
 			case "decimal":
 			case "numeric":
