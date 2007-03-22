@@ -1,3 +1,8 @@
+2007-03-22  Adar Wesley <adarw@mainsoft.com>
+
+	* HttpCapabilitiesBase.cs: implemented all capabilities.  Capabilities
+	still throw if there is no value in browscaps.ini and the property is called.
+
 2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebConfigurationManager.cs: fixed OpenWebConfiguration, should not

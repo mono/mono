@@ -46,32 +46,121 @@ namespace System.Web {
 	public class HttpBrowserCapabilities : HttpCapabilitiesBase
 #endif
 	{
-		const int HaveActiveXControls = 1;
-		const int HaveAOL = 2;
-		const int HaveBackGroundSounds = 3;
-		const int HaveBeta = 4;
-		const int HaveBrowser = 5;
-		const int HaveCDF = 6;
-		//const int HaveClrVersion = 7;
-		const int HaveCookies = 8;
-		const int HaveCrawler = 9;
-		const int HaveEcmaScriptVersion = 10;
-		const int HaveFrames = 11;
-		const int HaveJavaApplets = 12;
-		const int HaveJavaScript = 13;
-		const int HaveMajorVersion = 14;
-		const int HaveMinorVersion = 15;
-		const int HaveMSDomVersion = 16;
-		const int HavePlatform = 17;
-		const int HaveTables = 18;
-		//const int HaveTagWriter = 19;
-		const int HaveVBScript = 20;
-		const int HaveVersion = 21;
-		const int HaveW3CDomVersion = 22;
-		const int HaveWin16 = 23;
-		const int HaveWin32 = 24;
+		const int HaveActiveXControls = 1; // 1;
+		const int HaveAdapters = 2;
+		const int HaveAOL = 3; // 2;
+		const int HaveBackGroundSounds = 4; // 3;
+		const int HaveBeta = 5; // 4;
+		const int HaveBrowser = 6; // 5;
+		const int HaveBrowsers = 7;
+		const int HaveCanCombineFormsInDeck = 8;
+		const int HaveCanInitiateVoiceCall = 9;
+		const int HaveCanRenderAfterInputOrSelectElement = 10;
+		const int HaveCanRenderEmptySelects = 11;
+		const int HaveCanRenderInputAndSelectElementsTogether = 12;
+		const int HaveCanRenderMixedSelects = 13;
+		const int HaveCanRenderOneventAndPrevElementsTogether = 14;
+		const int HaveCanRenderPostBackCards = 15;
+		const int HaveCanRenderSetvarZeroWithMultiSelectionList = 16;
+		const int HaveCanSendMail = 17;
+		const int HaveCDF = 18; // 6;
+		//const int HaveClrVersion = 19; // 7;
+		const int HaveCookies = 20; // 8;
+		const int HaveCrawler = 21; // 9;
+		const int HaveDefaultSubmitButtonLimit = 22;
+		const int HaveEcmaScriptVersion = 23;
+		const int HaveFrames = 24; // 11;
+		const int HaveGatewayMajorVersion = 25;
+		const int HaveGatewayMinorVersion = 26;
+		const int HaveGatewayVersion = 27;
+		const int HaveHasBackButton = 28;
+		const int HaveHidesRightAlignedMultiselectScrollbars = 29;
+		const int HaveHtmlTextWriter = 30;
+		const int HaveId = 31;
+		const int HaveInputType = 32;
+		const int HaveIsColor = 33;
+		const int HaveIsMobileDevice = 34;
+		const int HaveJavaApplets = 35; // 12;
+		const int HaveJavaScript = 36; // 13;
+		const int HaveJScriptVersion = 37;
+		const int HaveMajorVersion = 38; // 14;
+		const int HaveMaximumHrefLength = 39;
+		const int HaveMaximumRenderedPageSize = 40;
+		const int HaveMaximumSoftkeyLabelLength = 41;
+		const int HaveMinorVersion = 42; // 15;
+		const int HaveMinorVersionString = 43;
+		const int HaveMobileDeviceManufacturer = 44;
+		const int HaveMobileDeviceModel = 45;
+		const int HaveMSDomVersion = 46; // 16;
+		const int HaveNumberOfSoftkeys = 47;
+		const int HavePlatform = 48; // 17;
+		const int HavePreferredImageMime = 49;
+		const int HavePreferredRenderingMime = 50;
+		const int HavePreferredRenderingType = 51;
+		const int HavePreferredRequestEncoding = 52;
+		const int HavePreferredResponseEncoding = 53;
+		const int HaveRendersBreakBeforeWmlSelectAndInput = 54;
+		const int HaveRendersBreaksAfterHtmlLists = 55;
+		const int HaveRendersBreaksAfterWmlAnchor = 56;
+		const int HaveRendersBreaksAfterWmlInput = 57;
+		const int HaveRendersWmlDoAcceptsInline = 58;
+		const int HaveRendersWmlSelectsAsMenuCards = 59;
+		const int HaveRequiredMetaTagNameValue = 60;
+		const int HaveRequiresAttributeColonSubstitution = 61;
+		const int HaveRequiresContentTypeMetaTag = 62;
+		const int HaveRequiresControlStateInSession = 63;
+		const int HaveRequiresDBCSCharacter = 64;
+		const int HaveRequiresHtmlAdaptiveErrorReporting = 65;
+		const int HaveRequiresLeadingPageBreak = 66;
+		const int HaveRequiresNoBreakInFormatting = 67;
+		const int HaveRequiresOutputOptimization = 68;
+		const int HaveRequiresPhoneNumbersAsPlainText = 69;
+		const int HaveRequiresSpecialViewStateEncoding = 70;
+		const int HaveRequiresUniqueFilePathSuffix = 71;
+		const int HaveRequiresUniqueHtmlCheckboxNames = 72;
+		const int HaveRequiresUniqueHtmlInputNames = 73;
+		const int HaveRequiresUrlEncodedPostfieldValues = 74;
+		const int HaveScreenBitDepth = 75;
+		const int HaveScreenCharactersHeight = 76;
+		const int HaveScreenCharactersWidth = 77;
+		const int HaveScreenPixelsHeight = 78;
+		const int HaveScreenPixelsWidth = 79;
+		const int HaveSupportsAccesskeyAttribute = 80;
+		const int HaveSupportsBodyColor = 81;
+		const int HaveSupportsBold = 82;
+		const int HaveSupportsCacheControlMetaTag = 83;
+		const int HaveSupportsCallback = 84;
+		const int HaveSupportsCss = 85;
+		const int HaveSupportsDivAlign = 86;
+		const int HaveSupportsDivNoWrap = 87;
+		const int HaveSupportsEmptyStringInCookieValue = 88;
+		const int HaveSupportsFontColor = 89;
+		const int HaveSupportsFontName = 90;
+		const int HaveSupportsFontSize = 91;
+		const int HaveSupportsImageSubmit = 92;
+		const int HaveSupportsIModeSymbols = 93;
+		const int HaveSupportsInputIStyle = 94;
+		const int HaveSupportsInputMode = 95;
+		const int HaveSupportsItalic = 96;
+		const int HaveSupportsJPhoneMultiMediaAttributes = 97;
+		const int HaveSupportsJPhoneSymbols = 98;
+		const int HaveSupportsQueryStringInFormAction = 99;
+		const int HaveSupportsRedirectWithCookie = 100;
+		const int HaveSupportsSelectMultiple = 101;
+		const int HaveSupportsUncheck = 102;
+		const int HaveSupportsXmlHttp = 103;
+		const int HaveTables = 104; // 18;
+		//const int HaveTagWriter = 105; // 19;
+		const int HaveType = 106;
+		const int HaveUseOptimizedCacheKey = 107;
+		const int HaveVBScript = 108; // 20;
+		const int HaveVersion = 109; // 21;
+		const int HaveW3CDomVersion = 110; // 22;
+		const int HaveWin16 = 111; // 23;
+		const int HaveWin32 = 112; // 24;
+		const int LastHaveFlag = 113;
 
-		int flags;
+		BitArray flags = new BitArray (LastHaveFlag);
 		bool activeXControls;
 		bool aol;
 		bool backgroundSounds;
@@ -108,8 +197,8 @@ namespace System.Web {
 		public bool ActiveXControls {
 			get {
 				if (!Get (HaveActiveXControls)) {
+					activeXControls = ReadBoolean ("activexcontrols");
 					Set (HaveActiveXControls);
-					activeXControls = ReadBoolean ("activexcontrols", false);
 				}
 
 				return activeXControls;
@@ -119,8 +208,8 @@ namespace System.Web {
 		public bool AOL {
 			get {
 				if (!Get (HaveAOL)) {
+					aol = ReadBoolean ("aol");
 					Set (HaveAOL);
-					aol = ReadBoolean ("aol", false);
 				}
 
 				return aol;
@@ -130,8 +219,8 @@ namespace System.Web {
 		public bool BackgroundSounds {
 			get {
 				if (!Get (HaveBackGroundSounds)) {
+					backgroundSounds = ReadBoolean ("backgroundsounds");
 					Set (HaveBackGroundSounds);
-					backgroundSounds = ReadBoolean ("backgroundsounds", false);
 				}
 
 				return backgroundSounds;
@@ -141,8 +230,8 @@ namespace System.Web {
 		public bool Beta {
 			get {
 				if (!Get (HaveBeta)) {
+					beta = ReadBoolean ("beta");
 					Set (HaveBeta);
-					beta = ReadBoolean ("beta", false);
 				}
 
 				return beta;
@@ -152,26 +241,31 @@ namespace System.Web {
 		public string Browser {
 			get {
 				if (!Get (HaveBrowser)) {
+					browser = ReadString("browser");
 					Set (HaveBrowser);
-					browser = this ["browser"];
-					if (browser == null)
-						browser = "Unknown";
 				}
 
 				return browser;
 			}
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
+		ArrayList browsers = null;
 		public ArrayList Browsers {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveBrowsers)) {
+					browsers = ReadArrayList ("browsers");
+					Set (HaveBrowsers);
+				}
+
+				return browsers;
+			}
 		}
 #endif
 		public bool CDF {
 			get {
 				if (!Get (HaveCDF)) {
+					cdf = ReadBoolean ("cdf");
 					Set (HaveCDF);
-					cdf = ReadBoolean ("cdf", false);
 				}
 
 				return cdf;
@@ -190,8 +284,8 @@ namespace System.Web {
 		public bool Cookies {
 			get {
 				if (!Get (HaveCookies)) {
+					cookies = ReadBoolean ("cookies");
 					Set (HaveCookies);
-					cookies = ReadBoolean ("cookies", false);
 				}
 
 				return cookies;
@@ -201,8 +295,8 @@ namespace System.Web {
 		public bool Crawler {
 			get {
 				if (!Get (HaveCrawler)) {
+					crawler = ReadBoolean ("crawler");
 					Set (HaveCrawler);
-					crawler = ReadBoolean ("crawler", false);
 				}
 
 				return crawler;
@@ -212,13 +306,8 @@ namespace System.Web {
 		public Version EcmaScriptVersion {
 			get {
 				if (!Get (HaveEcmaScriptVersion)) {
-					string ver_str;
+					ecmaScriptVersion = ReadVersion ("ecmascriptversion");
 					Set (HaveEcmaScriptVersion);
-					ver_str = this ["ecmascriptversion"];
-					if (ver_str == null)
-						ecmaScriptVersion = new Version (0, 0);
-					else
-						ecmaScriptVersion = new Version (ver_str);
 				}
 
 				return ecmaScriptVersion;
@@ -228,8 +317,8 @@ namespace System.Web {
 		public bool Frames {
 			get {
 				if (!Get (HaveFrames)) {
+					frames = ReadBoolean ("frames");
 					Set (HaveFrames);
-					frames = ReadBoolean ("frames", false);
 				}
 
 				return frames;
@@ -239,8 +328,8 @@ namespace System.Web {
 		public bool JavaApplets {
 			get {
 				if (!Get (HaveJavaApplets)) {
+					javaApplets = ReadBoolean ("javaapplets");
 					Set (HaveJavaApplets);
-					javaApplets = ReadBoolean ("javaapplets", false);
 				}
 
 				return javaApplets;
@@ -250,8 +339,8 @@ namespace System.Web {
 		public bool JavaScript {
 			get {
 				if (!Get (HaveJavaScript)) {
+					javaScript = ReadBoolean ("javascript");
 					Set (HaveJavaScript);
-					javaScript = ReadBoolean ("javascript", false);
 				}
 
 				return javaScript;
@@ -261,8 +350,8 @@ namespace System.Web {
 		public int MajorVersion {
 			get {
 				if (!Get (HaveMajorVersion)) {
+					majorVersion = ReadInt32 ("majorver");
 					Set (HaveMajorVersion);
-					majorVersion = ReadInt32 ("majorver", 0);
 				}
 
 				return majorVersion;
@@ -272,8 +361,8 @@ namespace System.Web {
 		public double MinorVersion {
 			get {
 				if (!Get (HaveMinorVersion)) {
+					minorVersion = ReadDouble ("minorver");
 					Set (HaveMinorVersion);
-					minorVersion = ReadDouble ("minorver", 0);
 				}
 
 				return minorVersion;
@@ -283,13 +372,8 @@ namespace System.Web {
 		public Version MSDomVersion {
 			get {
 				if (!Get (HaveMSDomVersion)) {
-					string ver_str;
+					msDomVersion = ReadVersion ("msdomversion");
 					Set (HaveMSDomVersion);
-					ver_str = this ["msdomversion"];
-					if (ver_str == null)
-						msDomVersion = new Version (0, 0);
-					else
-						msDomVersion = new Version (ver_str);
 				}
 
 				return msDomVersion;
@@ -299,10 +383,8 @@ namespace System.Web {
 		public string Platform {
 			get {
 				if (!Get (HavePlatform)) {
+					platform = ReadString ("platform");
 					Set (HavePlatform);
-					platform = this ["platform"];
-					if (platform == null)
-						platform = "";
 				}
 
 				return platform;
@@ -312,8 +394,8 @@ namespace System.Web {
 		public bool Tables {
 			get {
 				if (!Get (HaveTables)) {
+					tables = ReadBoolean ("tables");
 					Set (HaveTables);
-					tables = ReadBoolean ("tables", false);
 				}
 
 				return tables;
@@ -335,8 +417,8 @@ namespace System.Web {
 		public bool VBScript {
 			get {
 				if (!Get (HaveVBScript)) {
+					vbscript = ReadBoolean ("vbscript");
 					Set (HaveVBScript);
-					vbscript = ReadBoolean ("vbscript", false);
 				}
 
 				return vbscript;
@@ -346,10 +428,8 @@ namespace System.Web {
 		public string Version {
 			get {
 				if (!Get (HaveVersion)) {
+					version = ReadString ("version");
 					Set (HaveVersion);
-					version = this ["version"];
-					if (version == null)
-						version = "";
 				}
 
 				return version;
@@ -359,13 +439,8 @@ namespace System.Web {
 		public Version W3CDomVersion {
 			get {
 				if (!Get (HaveW3CDomVersion)) {
-					string ver_str;
+					w3CDomVersion = ReadVersion ("w3cdomversion");
 					Set (HaveW3CDomVersion);
-					ver_str = this ["w3cdomversion"];
-					if (ver_str == null)
-						w3CDomVersion = new Version (0, 0);
-					else
-						w3CDomVersion = new Version (ver_str);
 				}
 
 				return w3CDomVersion;
@@ -375,8 +450,8 @@ namespace System.Web {
 		public bool Win16 {
 			get {
 				if (!Get (HaveWin16)) {
+					win16 = ReadBoolean ("win16");
 					Set (HaveWin16);
-					win16 = ReadBoolean ("win16", false);
 				}
 
 				return win16;
@@ -388,9 +463,9 @@ namespace System.Web {
 				// This is the list of different windows platforms that browscap.ini has.
 				// Win16 Win2000 Win2003 Win32 Win95 Win98 WinME WinNT WinVI WinXP
 				if (!Get (HaveWin32)) {
-					Set (HaveWin32);
 					string platform = Platform;
 					win32 = (platform != "Win16" && platform.StartsWith ("Win"));
+					Set (HaveWin32);
 				}
 				return win32;
 			}
@@ -399,7 +474,7 @@ namespace System.Web {
 #if NET_1_1
 		public Version [] GetClrVersions ()
 		{
-			if ((clrVersions == null) && (clrVersion == null))
+			if (clrVersions == null)
 				InternalGetClrVersions ();
 
 			return clrVersions;
@@ -445,49 +520,89 @@ namespace System.Web {
 			}
 		}
 
-		bool ReadBoolean (string key, bool dflt)
+		bool ReadBoolean (string key)
 		{
 			string v = this [key];
-			if (v == null)
-				return dflt;
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
 
 			return (String.Compare (v, "True", true, CultureInfo.InvariantCulture) == 0);
 		}
 
-		int ReadInt32 (string key, int dflt)
+		int ReadInt32 (string key)
 		{
 			string v = this [key];
-			if (v == null)
-				return dflt;
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
 
 			try {
 				return Int32.Parse (v);
 			} catch {
-				return dflt;
+				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
 			}
 		}
 
-		double ReadDouble (string key, double dflt)
+		double ReadDouble (string key)
 		{
 			string v = this [key];
-			if (v == null)
-				return dflt;
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
 
 			try {
 				return Double.Parse (v);
 			} catch {
-				return dflt;
+				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
 			}
 		}
 
+		private string ReadString (string key) 
+		{
+			string v = this [key];
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
+
+			return v;
+		}
+
+		Version ReadVersion (string key) 
+		{
+			string v = this [key];
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
+
+			try {
+				return new Version (v);
+			}
+			catch {
+				throw new ArgumentNullException (String.Format ("browscaps.ini contains an invalid definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
+		}
+
+#if NET_2_0
+		private ArrayList ReadArrayList (string key) 
+		{
+			ArrayList v = (ArrayList)this.capabilities [key];
+			if (v == null) {
+				throw new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, this.Browser));
+			}
+
+			return v;
+		}
+#endif
+
 		bool Get (int idx)
 		{
-			return (flags & (1 << idx)) != 0;
+			return flags.Get (idx);
 		}
 
 		void Set (int idx)
 		{
-			flags |= (1 << idx);
+			flags.Set (idx, true);
 		}
 	}
 }

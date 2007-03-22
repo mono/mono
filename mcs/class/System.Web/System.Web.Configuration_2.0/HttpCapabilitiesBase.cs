@@ -53,366 +53,1045 @@ namespace System.Web.Configuration
 
 		public HtmlTextWriter CreateHtmlTextWriter (TextWriter w)
 		{
-			throw new NotImplementedException ();
+			return new HtmlTextWriter (w);
 		}
 
 		public void DisableOptimizedCacheKey ()
 		{
-		}
-
-		public HttpCapabilitiesBase GetConfigCapabilities ()
-		{
 			throw new NotImplementedException ();
 		}
 
+		IDictionary adapters = null;
 		public IDictionary Adapters {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveAdapters)) {
+					adapters = new Hashtable ();
+					Set (HaveAdapters);
+				}
+
+				return adapters;
+			}
 		}
 
+		bool canCombineFormsInDeck;
 		public virtual bool CanCombineFormsInDeck {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanCombineFormsInDeck)) {
+					canCombineFormsInDeck = ReadBoolean ("cancombineformsindeck");
+					Set (HaveCanCombineFormsInDeck);
+				}
+
+				return canCombineFormsInDeck;
+			}
 		}
 
+		bool canInitiateVoiceCall;
 		public virtual bool CanInitiateVoiceCall {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanInitiateVoiceCall)) {
+					canInitiateVoiceCall = ReadBoolean ("caninitiatevoicecall");
+					Set (HaveCanInitiateVoiceCall);
+				}
+
+				return canInitiateVoiceCall;
+			}
 		}
 
+		bool canRenderAfterInputOrSelectElement;
 		public virtual bool CanRenderAfterInputOrSelectElement {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderAfterInputOrSelectElement)) {
+					canRenderAfterInputOrSelectElement = ReadBoolean ("canrenderafterinputorselectelement");
+					Set (HaveCanRenderAfterInputOrSelectElement);
+				}
+
+				return canRenderAfterInputOrSelectElement;
+			}
 		}
 
+		bool canRenderEmptySelects;
 		public virtual bool CanRenderEmptySelects {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderEmptySelects)) {
+					canRenderEmptySelects = ReadBoolean ("canrenderemptyselects");
+					Set (HaveCanRenderEmptySelects);
+				}
+
+				return canRenderEmptySelects;
+			}
 		}
 
+		bool canRenderInputAndSelectElementsTogether;
 		public virtual bool CanRenderInputAndSelectElementsTogether {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderInputAndSelectElementsTogether)) {
+					canRenderInputAndSelectElementsTogether = ReadBoolean ("canrenderinputandselectelementstogether");
+					Set (HaveCanRenderInputAndSelectElementsTogether);
+				}
+
+				return canRenderInputAndSelectElementsTogether;
+			}
 		}
 
+		bool canRenderMixedSelects;
 		public virtual bool CanRenderMixedSelects {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderMixedSelects)) {
+					canRenderMixedSelects = ReadBoolean ("canrendermixedselects");
+					Set (HaveCanRenderMixedSelects);
+				}
+
+				return canRenderMixedSelects;
+			}
 		}
 
+		bool canRenderOneventAndPrevElementsTogether;
 		public virtual bool CanRenderOneventAndPrevElementsTogether {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderOneventAndPrevElementsTogether)) {
+					canRenderOneventAndPrevElementsTogether = ReadBoolean ("canrenderoneventandprevelementstogether");
+					Set (HaveCanRenderOneventAndPrevElementsTogether);
+				}
+
+				return canRenderOneventAndPrevElementsTogether;
+			}
 		}
 
+		bool canRenderPostBackCards;
 		public virtual bool CanRenderPostBackCards {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderPostBackCards)) {
+					canRenderPostBackCards = ReadBoolean ("canrenderpostbackcards");
+					Set (HaveCanRenderPostBackCards);
+				}
+
+				return canRenderPostBackCards;
+			}
 		}
 
+		bool canRenderSetvarZeroWithMultiSelectionList;
 		public virtual bool CanRenderSetvarZeroWithMultiSelectionList {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanRenderSetvarZeroWithMultiSelectionList)) {
+					canRenderSetvarZeroWithMultiSelectionList = ReadBoolean ("canrendersetvarzerowithmultiselectionlist");
+					Set (HaveCanRenderSetvarZeroWithMultiSelectionList);
+				}
+
+				return canRenderSetvarZeroWithMultiSelectionList;
+			}
 		}
 
+		bool canSendMail;
 		public virtual bool CanSendMail {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveCanSendMail)) {
+					canSendMail = ReadBoolean ("cansendmail");
+					Set (HaveCanSendMail);
+				}
+
+				return canSendMail;
+			}
 		}
 
 		public IDictionary Capabilities {
-			get { throw new NotImplementedException (); }
-			set { }
+			get { return capabilities; }
+			set { capabilities = value; }
 		}
 
+		int defaultSubmitButtonLimit;
 		public virtual int DefaultSubmitButtonLimit {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveDefaultSubmitButtonLimit)) {
+					defaultSubmitButtonLimit = ReadInt32 ("defaultsubmitbuttonlimit");
+					Set (HaveDefaultSubmitButtonLimit);
+				}
+
+				return defaultSubmitButtonLimit;
+			}
 		}
 
+		int gatewayMajorVersion;
 		public virtual int GatewayMajorVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveGatewayMajorVersion)) {
+					gatewayMajorVersion = ReadInt32 ("gatewaymajorversion");
+					Set (HaveGatewayMajorVersion);
+				}
+
+				return gatewayMajorVersion;
+			}
 		}
 
+		Double gatewayMinorVersion;
 		public virtual Double GatewayMinorVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveGatewayMinorVersion)) {
+					gatewayMinorVersion = ReadDouble ("gatewayminorversion");
+					Set (HaveGatewayMinorVersion);
+				}
+
+				return gatewayMinorVersion;
+			}
 		}
 
+		string gatewayVersion;
 		public virtual string GatewayVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveGatewayVersion)) {
+					gatewayVersion = ReadString ("gatewayversion");
+					Set (HaveGatewayVersion);
+				}
+
+				return gatewayVersion;
+			}
 		}
 
+		bool hasBackButton;
 		public virtual bool HasBackButton {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveHasBackButton)) {
+					hasBackButton = ReadBoolean ("hasbackbutton");
+					Set (HaveHasBackButton);
+				}
+
+				return hasBackButton;
+			}
 		}
 
+		bool hidesRightAlignedMultiselectScrollbars;
 		public virtual bool HidesRightAlignedMultiselectScrollbars {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveHidesRightAlignedMultiselectScrollbars)) {
+					hidesRightAlignedMultiselectScrollbars = ReadBoolean ("hidesrightalignedmultiselectscrollbars");
+					Set (HaveHidesRightAlignedMultiselectScrollbars);
+				}
+				
+				return hidesRightAlignedMultiselectScrollbars;
+			}
 		}
 
+		string htmlTextWriter;
 		public string HtmlTextWriter {
-			get { throw new NotImplementedException (); }
-			set { }
+			get {
+				if (!Get (HaveHtmlTextWriter)) {
+					htmlTextWriter = ReadString ("htmlTextWriter");
+					Set (HaveHtmlTextWriter);
+				}
+
+				return htmlTextWriter;
+			}
+			set {
+				Set (HaveHtmlTextWriter);
+				htmlTextWriter = value;
+			}
 		}
 
 		public string Id {
-			get { throw new NotImplementedException (); }
+			get { return this.Browser; }
 		}
 
+		string inputType;
 		public virtual string InputType {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveInputType)) {
+					inputType = ReadString ("inputtype");
+					Set (HaveInputType);
+				}
+
+				return inputType;
+			}
 		}
 
+		bool isColor;
 		public virtual bool IsColor {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveIsColor)) {
+					isColor = ReadBoolean ("iscolor");
+					Set (HaveIsColor);
+				}
+
+				return isColor;
+			}
 		}
 
+		bool isMobileDevice;
 		public virtual bool IsMobileDevice {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveIsMobileDevice)) {
+					isMobileDevice = ReadBoolean ("ismobiledevice");
+					Set (HaveIsMobileDevice);
+				}
+
+				return isMobileDevice;
+			}
 		}
 
+		Version jscriptVersion;
 		public Version JScriptVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveJScriptVersion)) {
+					jscriptVersion = ReadVersion ("jscriptversion");
+					Set (HaveJScriptVersion);
+				}
+
+				return jscriptVersion;
+			}
 		}
 
+		int maximumHrefLength;
 		public virtual int MaximumHrefLength {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMaximumHrefLength)) {
+					maximumHrefLength = ReadInt32 ("maximumhreflength");
+					Set (HaveMaximumHrefLength);
+				}
+
+				return maximumHrefLength;
+			}
 		}
 
+		int maximumRenderedPageSize;
 		public virtual int MaximumRenderedPageSize {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMaximumRenderedPageSize)) {
+					maximumRenderedPageSize = ReadInt32 ("maximumrenderedpagesize");
+					Set (HaveMaximumRenderedPageSize);
+				}
+
+				return maximumRenderedPageSize;
+			}
 		}
 
+		int maximumSoftkeyLabelLength;
 		public virtual int MaximumSoftkeyLabelLength {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMaximumSoftkeyLabelLength)) {
+					maximumSoftkeyLabelLength = ReadInt32 ("maximumsoftkeylabellength");
+					Set (HaveMaximumSoftkeyLabelLength);
+				}
+
+				return maximumSoftkeyLabelLength;
+			}
 		}
 
+		string minorVersionString;
 		public string MinorVersionString {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMinorVersionString)) {
+					minorVersionString = ReadString ("minorversionstring");
+					Set (HaveMinorVersionString);
+				}
+
+				return minorVersionString;
+			}
 		}
 
+		string mobileDeviceManufacturer;
 		public virtual string MobileDeviceManufacturer {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMobileDeviceManufacturer)) {
+					mobileDeviceManufacturer = ReadString ("mobiledevicemanufacturer");
+					Set (HaveMobileDeviceManufacturer);
+				}
+
+				return mobileDeviceManufacturer;
+			}
 		}
 
+		string mobileDeviceModel;
 		public virtual string MobileDeviceModel {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveMobileDeviceModel)) {
+					mobileDeviceModel = ReadString ("mobiledevicemodel");
+					Set (HaveMobileDeviceModel);
+				}
+
+				return mobileDeviceModel;
+			}
 		}
 
+		int numberOfSoftkeys;
 		public virtual int NumberOfSoftkeys {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveNumberOfSoftkeys)) {
+					numberOfSoftkeys = ReadInt32 ("numberofsoftkeys");
+					Set (HaveNumberOfSoftkeys);
+				}
+
+				return numberOfSoftkeys;
+			}
 		}
 
+		string preferredImageMime;
 		public virtual string PreferredImageMime {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HavePreferredImageMime)) {
+					preferredImageMime = ReadString ("preferredimagemime");
+					Set (HavePreferredImageMime);
+				}
+
+				return preferredImageMime;
+			}
 		}
 
+		string preferredRenderingMime;
 		public virtual string PreferredRenderingMime {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HavePreferredRenderingMime)) {
+					preferredRenderingMime = ReadString ("preferredrenderingmime");
+					Set (HavePreferredRenderingMime);
+				}
+
+				return preferredRenderingMime;
+			}
 		}
 
+		string preferredRenderingType;
 		public virtual string PreferredRenderingType {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HavePreferredRenderingType)) {
+					preferredRenderingType = ReadString ("preferredrenderingtype");
+					Set (HavePreferredRenderingType);
+				}
+
+				return preferredRenderingType;
+			}
 		}
 
+		string preferredRequestEncoding;
 		public virtual string PreferredRequestEncoding {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HavePreferredRequestEncoding)) {
+					preferredRequestEncoding = ReadString ("preferredrequestencoding");
+					Set (HavePreferredRequestEncoding);
+				}
+
+				return preferredRequestEncoding;
+			}
 		}
 
+		string preferredResponseEncoding;
 		public virtual string PreferredResponseEncoding {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HavePreferredResponseEncoding)) {
+					preferredResponseEncoding = ReadString ("preferredresponseencoding");
+					Set (HavePreferredResponseEncoding);
+				}
+
+				return preferredResponseEncoding;
+			}
 		}
 
+		bool rendersBreakBeforeWmlSelectAndInput;
 		public virtual bool RendersBreakBeforeWmlSelectAndInput {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersBreakBeforeWmlSelectAndInput)) {
+					rendersBreakBeforeWmlSelectAndInput = ReadBoolean ("rendersbreakbeforewmlselectandinput");
+					Set (HaveRendersBreakBeforeWmlSelectAndInput);
+				}
+
+				return rendersBreakBeforeWmlSelectAndInput;
+			}
 		}
 
+		bool rendersBreaksAfterHtmlLists;
 		public virtual bool RendersBreaksAfterHtmlLists {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersBreaksAfterHtmlLists)) {
+					rendersBreaksAfterHtmlLists = ReadBoolean ("rendersbreaksafterhtmllists");
+					Set (HaveRendersBreaksAfterHtmlLists);
+				}
+
+				return rendersBreaksAfterHtmlLists;
+			}
 		}
 
+		bool rendersBreaksAfterWmlAnchor;
 		public virtual bool RendersBreaksAfterWmlAnchor {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersBreaksAfterWmlAnchor)) {
+					rendersBreaksAfterWmlAnchor = ReadBoolean ("rendersbreaksafterwmlanchor");
+					Set (HaveRendersBreaksAfterWmlAnchor);
+				}
+
+				return rendersBreaksAfterWmlAnchor;
+			}
 		}
 
+		bool rendersBreaksAfterWmlInput;
 		public virtual bool RendersBreaksAfterWmlInput {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersBreaksAfterWmlInput)) {
+					rendersBreaksAfterWmlInput = ReadBoolean ("rendersbreaksafterwmlinput");
+					Set (HaveRendersBreaksAfterWmlInput);
+				}
+
+				return rendersBreaksAfterWmlInput;
+			}
 		}
 
+		bool rendersWmlDoAcceptsInline;
 		public virtual bool RendersWmlDoAcceptsInline {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersWmlDoAcceptsInline)) {
+					rendersWmlDoAcceptsInline = ReadBoolean ("renderswmldoacceptsinline");
+					Set (HaveRendersWmlDoAcceptsInline);
+				}
+
+				return rendersWmlDoAcceptsInline;
+			}
 		}
 
+		bool rendersWmlSelectsAsMenuCards;
 		public virtual bool RendersWmlSelectsAsMenuCards {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRendersWmlSelectsAsMenuCards)) {
+					rendersWmlSelectsAsMenuCards = ReadBoolean ("renderswmlselectsasmenucards");
+					Set (HaveRendersWmlSelectsAsMenuCards);
+				}
+
+				return rendersWmlSelectsAsMenuCards;
+			}
 		}
 
+		string requiredMetaTagNameValue;
 		public virtual string RequiredMetaTagNameValue {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiredMetaTagNameValue)) {
+					requiredMetaTagNameValue = ReadString ("requiredmetatagnamevalue");
+					Set (HaveRequiredMetaTagNameValue);
+				}
+
+				return requiredMetaTagNameValue;
+			}
 		}
 
+		bool requiresAttributeColonSubstitution;
 		public virtual bool RequiresAttributeColonSubstitution {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresAttributeColonSubstitution)) {
+					requiresAttributeColonSubstitution = ReadBoolean ("requiresattributecolonsubstitution");
+					Set (HaveRequiresAttributeColonSubstitution);
+				}
+
+				return requiresAttributeColonSubstitution;
+			}
 		}
 
+		bool requiresContentTypeMetaTag;
 		public virtual bool RequiresContentTypeMetaTag {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresContentTypeMetaTag)) {
+					requiresContentTypeMetaTag = ReadBoolean ("requiresContentTypeMetaTag");
+					Set (HaveRequiresContentTypeMetaTag);
+				}
+
+				return requiresContentTypeMetaTag;
+			}
 		}
 
+		bool requiresControlStateInSession;
 		public bool RequiresControlStateInSession {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresControlStateInSession)) {
+					requiresControlStateInSession = ReadBoolean ("requiresControlStateInSession");
+					Set (HaveRequiresControlStateInSession);
+				}
+
+				return requiresControlStateInSession;
+			}
 		}
 
+		bool requiresDBCSCharacter;
 		public virtual bool RequiresDBCSCharacter {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresDBCSCharacter)) {
+					requiresDBCSCharacter = ReadBoolean ("requiresdbcscharacter");
+					Set (HaveRequiresDBCSCharacter);
+				}
+
+				return requiresDBCSCharacter;
+			}
 		}
 
+		bool requiresHtmlAdaptiveErrorReporting;
 		public virtual bool RequiresHtmlAdaptiveErrorReporting {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresHtmlAdaptiveErrorReporting)) {
+					requiresHtmlAdaptiveErrorReporting = ReadBoolean ("requireshtmladaptiveerrorreporting");
+					Set (HaveRequiresHtmlAdaptiveErrorReporting);
+				}
+
+				return requiresHtmlAdaptiveErrorReporting;
+			}
 		}
 
+		bool requiresLeadingPageBreak;
 		public virtual bool RequiresLeadingPageBreak {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresLeadingPageBreak)) {
+					requiresLeadingPageBreak = ReadBoolean ("requiresleadingpagebreak");
+					Set (HaveRequiresLeadingPageBreak);
+				}
+
+				return requiresLeadingPageBreak;
+			}
 		}
 
+		bool requiresNoBreakInFormatting;
 		public virtual bool RequiresNoBreakInFormatting {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresNoBreakInFormatting)) {
+					requiresNoBreakInFormatting = ReadBoolean ("requiresnobreakinformatting");
+					Set (HaveRequiresNoBreakInFormatting);
+				}
+
+				return requiresNoBreakInFormatting;
+			}
 		}
 
+		bool requiresOutputOptimization;
 		public virtual bool RequiresOutputOptimization {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresOutputOptimization)) {
+					requiresOutputOptimization = ReadBoolean ("requiresoutputoptimization");
+					Set (HaveRequiresOutputOptimization);
+				}
+
+				return requiresOutputOptimization;
+			}
 		}
 
+		bool requiresPhoneNumbersAsPlainText;
 		public virtual bool RequiresPhoneNumbersAsPlainText {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresPhoneNumbersAsPlainText)) {
+					requiresPhoneNumbersAsPlainText = ReadBoolean ("requiresphonenumbersasplaintext");
+					Set (HaveRequiresPhoneNumbersAsPlainText);
+				}
+
+				return requiresPhoneNumbersAsPlainText;
+			}
 		}
 
+		bool requiresSpecialViewStateEncoding;
 		public virtual bool RequiresSpecialViewStateEncoding {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresSpecialViewStateEncoding)) {
+					requiresSpecialViewStateEncoding = ReadBoolean ("requiresspecialviewstateencoding");
+					Set (HaveRequiresSpecialViewStateEncoding);
+				}
+
+				return requiresSpecialViewStateEncoding;
+			}
 		}
 
+		bool requiresUniqueFilePathSuffix;
 		public virtual bool RequiresUniqueFilePathSuffix {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresUniqueFilePathSuffix)) {
+					requiresUniqueFilePathSuffix = ReadBoolean ("requiresuniquefilepathsuffix");
+					Set (HaveRequiresUniqueFilePathSuffix);
+				}
+
+				return requiresUniqueFilePathSuffix;
+			}
 		}
 
+		bool requiresUniqueHtmlCheckboxNames;
 		public virtual bool RequiresUniqueHtmlCheckboxNames {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresUniqueHtmlCheckboxNames)) {
+					requiresUniqueHtmlCheckboxNames = ReadBoolean ("requiresuniquehtmlcheckboxnames");
+					Set (HaveRequiresUniqueHtmlCheckboxNames);
+				}
+
+				return requiresUniqueHtmlCheckboxNames;
+			}
 		}
 
+		bool requiresUniqueHtmlInputNames;
 		public virtual bool RequiresUniqueHtmlInputNames {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresUniqueHtmlInputNames)) {
+					requiresUniqueHtmlInputNames = ReadBoolean ("requiresuniquehtmlinputnames");
+					Set (HaveRequiresUniqueHtmlInputNames);
+				}
+
+				return requiresUniqueHtmlInputNames;
+			}
 		}
 
+		bool requiresUrlEncodedPostfieldValues;
 		public virtual bool RequiresUrlEncodedPostfieldValues {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveRequiresUrlEncodedPostfieldValues)) {
+					requiresUrlEncodedPostfieldValues = ReadBoolean ("requiresurlencodedpostfieldvalues");
+					Set (HaveRequiresUrlEncodedPostfieldValues);
+				}
+
+				return requiresUrlEncodedPostfieldValues;
+			}
 		}
 
+		int screenBitDepth;
 		public virtual int ScreenBitDepth {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveScreenBitDepth)) {
+					screenBitDepth = ReadInt32 ("screenbitdepth");
+					Set (HaveScreenBitDepth);
+				}
+
+				return screenBitDepth;
+			}
 		}
 
+		int screenCharactersHeight;
 		public virtual int ScreenCharactersHeight {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveScreenCharactersHeight)) {
+					screenCharactersHeight = ReadInt32 ("screencharactersheight");
+					Set (HaveScreenCharactersHeight);
+				}
+
+				return screenCharactersHeight;
+			}
 		}
 
+		int screenCharactersWidth;
 		public virtual int ScreenCharactersWidth {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveScreenCharactersWidth)) {
+					screenCharactersWidth = ReadInt32 ("screencharacterswidth");
+					Set (HaveScreenCharactersWidth);
+				}
+
+				return screenCharactersWidth;
+			}
 		}
 
+		int screenPixelsHeight;
 		public virtual int ScreenPixelsHeight {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveScreenPixelsHeight)) {
+					screenPixelsHeight = ReadInt32 ("screenpixelsheight");
+					Set (HaveScreenPixelsHeight);
+				}
+
+				return screenPixelsHeight;
+			}
 		}
 
+		int screenPixelsWidth;
 		public virtual int ScreenPixelsWidth {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveScreenPixelsWidth)) {
+					screenPixelsWidth = ReadInt32 ("screenpixelswidth");
+					Set (HaveScreenPixelsWidth);
+				}
+
+				return screenPixelsWidth;
+			}
 		}
 
+		bool supportsAccesskeyAttribute;
 		public virtual bool SupportsAccesskeyAttribute {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsAccesskeyAttribute)) {
+					supportsAccesskeyAttribute = ReadBoolean ("supportsaccesskeyattribute");
+					Set (HaveSupportsAccesskeyAttribute);
+				}
+
+				return supportsAccesskeyAttribute;
+			}
 		}
 
+		bool supportsBodyColor;
 		public virtual bool SupportsBodyColor {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsBodyColor)) {
+					supportsBodyColor = ReadBoolean ("supportsbodycolor");
+					Set (HaveSupportsBodyColor);
+				}
+
+				return supportsBodyColor;
+			}
 		}
 
+		bool supportsBold;
 		public virtual bool SupportsBold {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsBold)) {
+					supportsBold = ReadBoolean ("supportsbold");
+					Set (HaveSupportsBold);
+				}
+
+				return supportsBold;
+			}
 		}
 
+		bool supportsCacheControlMetaTag;
 		public virtual bool SupportsCacheControlMetaTag {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsCacheControlMetaTag)) {
+					supportsCacheControlMetaTag = ReadBoolean ("supportscachecontrolmetatag");
+					Set (HaveSupportsCacheControlMetaTag);
+				}
+
+				return supportsCacheControlMetaTag;
+			}
 		}
 
+		bool supportsCallback;
 		public virtual bool SupportsCallback {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsCallback)) {
+					supportsCallback = ReadBoolean ("supportscallback");
+					Set (HaveSupportsCallback);
+				}
+
+				return supportsCallback;
+			}
 		}
 
+		bool supportsCss;
 		public virtual bool SupportsCss {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsCss)) {
+					supportsCss = ReadBoolean ("supportscss");
+					Set (HaveSupportsCss);
+				}
+
+				return supportsCss;
+			}
 		}
 
+		bool supportsDivAlign;
 		public virtual bool SupportsDivAlign {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsDivAlign)) {
+					supportsDivAlign = ReadBoolean ("supportsdivalign");
+					Set (HaveSupportsDivAlign);
+				}
+
+				return supportsDivAlign;
+			}
 		}
 
+		bool supportsDivNoWrap;
 		public virtual bool SupportsDivNoWrap {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsDivNoWrap)) {
+					supportsDivNoWrap = ReadBoolean ("supportsdivnowrap");
+					Set (HaveRequiresDBCSCharacter);
+				}
+
+				return supportsDivNoWrap;
+			}
 		}
 
+		bool supportsEmptyStringInCookieValue;
 		public virtual bool SupportsEmptyStringInCookieValue {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsEmptyStringInCookieValue)) {
+					supportsEmptyStringInCookieValue = ReadBoolean ("supportsemptystringincookievalue");
+					Set (HaveSupportsEmptyStringInCookieValue);
+				}
+
+				return supportsEmptyStringInCookieValue;
+			}
 		}
 
+		bool supportsFontColor;
 		public virtual bool SupportsFontColor {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsFontColor)) {
+					supportsFontColor = ReadBoolean ("supportsfontcolor");
+					Set (HaveSupportsFontColor);
+				}
+
+				return supportsFontColor;
+			}
 		}
 
+		bool supportsFontName;
 		public virtual bool SupportsFontName {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsFontName)) {
+					supportsFontName = ReadBoolean ("supportsfontname");
+					Set (HaveSupportsFontName);
+				}
+
+				return supportsFontName;
+			}
 		}
 
+		bool supportsFontSize;
 		public virtual bool SupportsFontSize {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsFontSize)) {
+					supportsFontSize = ReadBoolean ("supportsfontsize");
+					Set (HaveSupportsFontSize);
+				}
+
+				return supportsFontSize;
+			}
 		}
 
+		bool supportsImageSubmit;
 		public virtual bool SupportsImageSubmit {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsImageSubmit)) {
+					supportsImageSubmit = ReadBoolean ("supportsimagesubmit");
+					Set (HaveSupportsImageSubmit);
+				}
+
+				return supportsImageSubmit;
+			}
 		}
 
+		bool supportsIModeSymbols;
 		public virtual bool SupportsIModeSymbols {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsIModeSymbols)) {
+					supportsIModeSymbols = ReadBoolean ("supportsimodesymbols");
+					Set (HaveSupportsIModeSymbols);
+				}
+
+				return supportsIModeSymbols;
+			}
 		}
 
+		bool supportsInputIStyle;
 		public virtual bool SupportsInputIStyle {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsInputIStyle)) {
+					supportsInputIStyle = ReadBoolean ("supportsinputistyle");
+					Set (HaveSupportsInputIStyle);
+				}
+
+				return supportsInputIStyle;
+			}
 		}
 
+		bool supportsInputMode;
 		public virtual bool SupportsInputMode {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsInputMode)) {
+					supportsInputMode = ReadBoolean ("supportsinputmode");
+					Set (HaveSupportsInputMode);
+				}
+
+				return supportsInputMode;
+			}
 		}
 
+		bool supportsItalic;
 		public virtual bool SupportsItalic {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsItalic)) {
+					supportsItalic = ReadBoolean ("supportsitalic");
+					Set (HaveSupportsItalic);
+				}
+
+				return supportsItalic;
+			}
 		}
 
+		bool supportsJPhoneMultiMediaAttributes;
 		public virtual bool SupportsJPhoneMultiMediaAttributes {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsJPhoneMultiMediaAttributes)) {
+					supportsJPhoneMultiMediaAttributes = ReadBoolean ("supportsjphonemultimediaattributes");
+					Set (HaveSupportsJPhoneMultiMediaAttributes);
+				}
+
+				return supportsJPhoneMultiMediaAttributes;
+			}
 		}
 
+		bool supportsJPhoneSymbols;
 		public virtual bool SupportsJPhoneSymbols {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsJPhoneSymbols)) {
+					supportsJPhoneSymbols = ReadBoolean ("supportsjphonesymbols");
+					Set (HaveSupportsJPhoneSymbols);
+				}
+
+				return supportsJPhoneSymbols;
+			}
 		}
 
+		bool supportsQueryStringInFormAction;
 		public virtual bool SupportsQueryStringInFormAction {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsQueryStringInFormAction)) {
+					supportsQueryStringInFormAction = ReadBoolean ("supportsquerystringinformaction");
+					Set (HaveSupportsQueryStringInFormAction);
+				}
+
+				return supportsQueryStringInFormAction;
+			}
 		}
 
+		bool supportsRedirectWithCookie;
 		public virtual bool SupportsRedirectWithCookie {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsRedirectWithCookie)) {
+					supportsRedirectWithCookie = ReadBoolean ("supportsredirectwithcookie");
+					Set (HaveSupportsRedirectWithCookie);
+				}
+
+				return supportsRedirectWithCookie;
+			}
 		}
 
+		bool supportsSelectMultiple;
 		public virtual bool SupportsSelectMultiple {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsSelectMultiple)) {
+					supportsSelectMultiple = ReadBoolean ("supportsselectmultiple");
+					Set (HaveSupportsSelectMultiple);
+				}
+
+				return supportsSelectMultiple;
+			}
 		}
 
+		bool supportsUncheck;
 		public virtual bool SupportsUncheck {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsUncheck)) {
+					supportsUncheck = ReadBoolean ("supportsuncheck");
+					Set (HaveSupportsUncheck);
+				}
+
+				return supportsUncheck;
+			}
 		}
 
+		bool supportsXmlHttp;
 		public virtual bool SupportsXmlHttp {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveSupportsXmlHttp)) {
+					supportsXmlHttp = ReadBoolean ("supportsxmlhttp");
+					Set (HaveSupportsXmlHttp);
+				}
+
+				return supportsXmlHttp;
+			}
 		}
 
+		bool useOptimizedCacheKey;
 		public bool UseOptimizedCacheKey {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!Get (HaveUseOptimizedCacheKey)) {
+					useOptimizedCacheKey = ReadBoolean ("useoptimizedcachekey");
+					Set (HaveUseOptimizedCacheKey);
+				}
+
+				return useOptimizedCacheKey;
+			}
 		}
 	}
 }

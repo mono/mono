@@ -1,3 +1,11 @@
+2007-03-22  Adar Wesley <adarw@mainsoft.com>
+
+        * BrowserCapabilities.cs: Added implementation for all capabilities.
+        changed implementation to throw when capability is not defined in browscaps.ini.
+
+        * CapabilitiesLoader.cs: fixed parent resultion bug.  added internal support for
+        browser and browsers capabilities.
+
 2007-03-21  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.jvm.cs, HttpRuntime.cs: cached instance of HttpRuntime

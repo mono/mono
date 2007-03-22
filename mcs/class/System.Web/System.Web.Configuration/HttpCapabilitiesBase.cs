@@ -41,7 +41,7 @@ namespace System.Web.Configuration
 	public class HttpCapabilitiesBase
 #endif
 	{
-		Hashtable capabilities;
+		IDictionary capabilities;
 
 		public HttpCapabilitiesBase () { }
 
@@ -81,4 +81,5 @@ namespace System.Web.Configuration
 		}
 	}
 }
+
 

@@ -90,6 +90,19 @@ namespace System.Web
 			if (parent != null)
 				parent.GetProperties (tbl);
 
+			if (data ["browser"] != null) { // Last one (most derived) will win.
+				tbl ["browser"] = data ["browser"];
+			}
+			else if (tbl ["browser"] == null) { // If none so far defined value set to Unknown
+				tbl ["browser"] = "Unknown";
+			}
+
+			if (!tbl.ContainsKey ("browsers")) {
+				tbl ["browsers"] = new ArrayList ();
+			}
+
+			((ArrayList) tbl ["browsers"]).Add (tbl["browser"]);
+
 			foreach (string key in data.Keys)
 				tbl [key] = data [key];
 
@@ -98,7 +111,7 @@ namespace System.Web
 		
 		public string GetParentName ()
 		{
-			return (string) data ["parent"];
+			return (string)(data.Contains("parent")? data ["parent"] : null);
 		}
 		
 		public string GetAlternateBrowser ()
@@ -206,7 +219,7 @@ namespace System.Web
 			if (alldata == null || userAgent == null || userAgent == "")
 				return defaultCaps;
 
-			Hashtable userBrowserCaps = (Hashtable) userAgentsCache [userAgent];
+			Hashtable userBrowserCaps = (Hashtable) (userAgentsCache.Contains(userAgent)? userAgentsCache [userAgent] : null);
 			if (userBrowserCaps == null) {
 				foreach (BrowserData bd in alldata) {
 					if (bd.IsMatch (userAgent)) {
@@ -330,12 +343,11 @@ namespace System.Web
 
 			alldata = allhash.Values;
 			foreach (BrowserData data in alldata) {
-				if (data.Parent != null)
+				string pname = data.GetParentName ();
+				if (pname == null)
 					continue;
 
-				string pname = data.GetParentName ();
-				if (pname != null)
-					data.Parent = (BrowserData) allhash [pname];
+				data.Parent = (BrowserData) allhash [pname];
 			}
 		}
 
@@ -350,4 +362,5 @@ namespace System.Web
 		}
 	}
 }
+
 
